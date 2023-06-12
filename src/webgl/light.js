@@ -1047,9 +1047,9 @@ p5.prototype.spotLight = function(
  * Three white spheres. Each appears as a different
  * color due to lighting.
  */
-p5.prototype.noLights = function() {
+p5.prototype.noLights = function(...args) {
   this._assert3d('noLights');
-  p5._validateParameters('noLights', arguments);
+  p5._validateParameters('noLights', args);
 
   this._renderer._enableLighting = false;
 

@@ -560,19 +560,16 @@ p5.prototype.loadTable = function(path) {
 
 // helper function to turn a row into a JSON object
 function makeObject(row, headers) {
-  const ret = {};
   headers = headers || [];
   if (typeof headers === 'undefined') {
     for (let j = 0; j < row.length; j++) {
       headers[j.toString()] = j;
     }
   }
-  for (let i = 0; i < headers.length; i++) {
-    const key = headers[i];
-    const val = row[i];
-    ret[key] = val;
-  }
-  return ret;
+  return Object.fromEntries(
+    headers
+      .map((key,i) => [key, row[i]])
+  );
 }
 
 /**
@@ -1075,7 +1072,7 @@ p5.prototype.httpDo = function(...args) {
       method,
       mode: 'cors',
       body: data,
-      headers: headers
+      headers
     });
   }
   // do some sort of smart type checking

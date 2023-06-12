@@ -23,7 +23,7 @@ import * as constants from './constants';
  * @param {p5} [pInst]          pointer to p5 instance
  */
 p5.Graphics = class extends p5.Element {
-  constructor (w, h, renderer, pInst) {
+  constructor(w, h, renderer, pInst) {
     let canvas = document.createElement('canvas');
     super(canvas, pInst);
     const r = renderer || constants.P2D;
@@ -56,7 +56,7 @@ p5.Graphics = class extends p5.Element {
     pInst._elements.push(this);
 
     Object.defineProperty(this, 'deltaTime', {
-      get: function() {
+      get() {
         return this._pInst.deltaTime;
       }
     });
@@ -184,19 +184,20 @@ p5.Graphics = class extends p5.Element {
       this.elt.removeEventListener(elt_ev, this._events[elt_ev]);
     }
   }
-};
 
-/**
- * Creates and returns a new <a href="#/p5.Framebuffer">p5.Framebuffer</a>
- * inside a p5.Graphics WebGL context.
- *
- * This takes the same parameters as the <a href="#/p5/createFramebuffer">global
- * createFramebuffer function.</a>
- *
- * @method createFramebuffer
- */
-p5.Graphics.prototype.createFramebuffer = function(options) {
-  return new p5.Framebuffer(this, options);
+
+  /**
+   * Creates and returns a new <a href="#/p5.Framebuffer">p5.Framebuffer</a>
+   * inside a p5.Graphics WebGL context.
+   *
+   * This takes the same parameters as the <a href="#/p5/createFramebuffer">global
+   * createFramebuffer function.</a>
+   *
+   * @method createFramebuffer
+   */
+  createFramebuffer(options) {
+    return new p5.Framebuffer(this, options);
+  }
 };
 
 export default p5.Graphics;

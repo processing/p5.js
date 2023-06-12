@@ -23,18 +23,13 @@ import p5 from '../core/main';
 p5.TableRow = class {
   constructor(str, separator){
     let arr = [];
-    const obj = {};
     if (str) {
       separator = separator || ',';
       arr = str.split(separator);
     }
-    for (let i = 0; i < arr.length; i++) {
-      const key = i;
-      const val = arr[i];
-      obj[key] = val;
-    }
+
     this.arr = arr;
-    this.obj = obj;
+    this.obj = Object.fromEntries(arr.entries());
     this.table = null;
   }
 

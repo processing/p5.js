@@ -3679,6 +3679,15 @@
       ]
     },
     {
+      "login": "neondev27",
+      "name": "Ahmet Kaya",
+      "avatar_url": "https://avatars.githubusercontent.com/u/88967833?v=4",
+      "profile": "https://github.com/neondev27",
+      "contributions": [
+        "translation"
+      ]
+     },
+    {
       "login": "ozramos",
       "name": "oz",
       "avatar_url": "https://avatars.githubusercontent.com/u/69949201?v=4",
@@ -3726,6 +3735,17 @@
         "code",
         "design",
         "doc"
+      ]
+    },
+    {
+      "login": "shujuuu",
+      "name": "shujulin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43021463?v=4",
+      "profile": "https://github.com/shujuuu",
+      "contributions": [
+        "bug",
+        "ideas",
+        "design"
       ]
     }
   ],
