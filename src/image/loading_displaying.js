@@ -319,8 +319,9 @@ p5.prototype.saveGif = async function(
   if (document.getElementById(notificationID) !== null)
     document.getElementById(notificationID).remove();
 
+  let p;
   if (!silent){
-    let p = this.createP('');
+    p = this.createP('');
     p.id(notificationID);
     p.style('font-size', '16px');
     p.style('font-family', 'Montserrat');
@@ -332,10 +333,10 @@ p5.prototype.saveGif = async function(
 
   let pixels;
   let gl;
-  if (this.drawingContext instanceof WebGLRenderingContext) {
+  if (this._renderer instanceof p5.RendererGL) {
     // if we have a WEBGL context, initialize the pixels array
     // and the gl context to use them inside the loop
-    gl = document.getElementById('defaultCanvas0').getContext('webgl');
+    gl = this.drawingContext;
     pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
   }
 
@@ -363,7 +364,7 @@ p5.prototype.saveGif = async function(
     // or another
     let data = undefined;
 
-    if (this.drawingContext instanceof WebGLRenderingContext) {
+    if (this._renderer instanceof p5.RendererGL) {
       pixels = new Uint8Array(
         gl.drawingBufferWidth * gl.drawingBufferHeight * 4
       );
