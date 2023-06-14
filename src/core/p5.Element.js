@@ -13,11 +13,13 @@ import p5 from './main';
  * <a href="#/p5/createDiv">createDiv()</a>, <a href="#/p5/createImg">createImg()</a>, <a href="#/p5/createInput">createInput()</a>, etc.
  *
  * @class p5.Element
- * @constructor
- * @param {String} elt DOM node that is wrapped
- * @param {p5} [pInst] pointer to p5 instance
  */
-p5.Element = class {
+class Element {
+  /**
+   * @constructor
+   * @param {HTMLElement} elt DOM node that is wrapped
+   * @param {p5} [pInst] pointer to p5 instance
+   */
   constructor(elt, pInst) {
     /**
      * Underlying HTML element. All normal HTML methods can be called on this.
@@ -39,9 +41,19 @@ p5.Element = class {
      * @readOnly
      */
     this.elt = elt;
+    /**
+     * @private
+     * @type {p5.Element}
+     */
     this._pInst = this._pixelsState = pInst;
     this._events = {};
+    /**
+     * @type {Number}
+     */
     this.width = this.elt.offsetWidth;
+    /**
+     * @type {Number}
+     */
     this.height = this.elt.offsetHeight;
   }
 
@@ -105,7 +117,7 @@ p5.Element = class {
         p = p.substring(1);
       }
       p = document.getElementById(p);
-    } else if (p instanceof p5.Element) {
+    } else if (p instanceof Element) {
       p = p.elt;
     }
     p.appendChild(this.elt);
@@ -240,7 +252,7 @@ p5.Element = class {
       return fxn.call(this, event);
     };
     // Pass along the event-prepended form of the callback.
-    p5.Element._adjustListener('mousedown', eventPrependedFxn, this);
+    Element._adjustListener('mousedown', eventPrependedFxn, this);
     return this;
   }
 
@@ -256,6 +268,7 @@ p5.Element = class {
    *                                firing function will no longer fire.
    * @return {p5.Element}
    * @example
+   * @chainable
    * <div class='norender'><code>
    * let cnv, d, g;
    * function setup() {
@@ -286,7 +299,7 @@ p5.Element = class {
    * no display.
    */
   doubleClicked(fxn) {
-    p5.Element._adjustListener('dblclick', fxn, this);
+    Element._adjustListener('dblclick', fxn, this);
     return this;
   }
 
@@ -348,7 +361,7 @@ p5.Element = class {
    * no display.
    */
   mouseWheel(fxn) {
-    p5.Element._adjustListener('wheel', fxn, this);
+    Element._adjustListener('wheel', fxn, this);
     return this;
   }
 
@@ -397,7 +410,7 @@ p5.Element = class {
    * no display.
    */
   mouseReleased(fxn) {
-    p5.Element._adjustListener('mouseup', fxn, this);
+    Element._adjustListener('mouseup', fxn, this);
     return this;
   }
 
@@ -448,7 +461,7 @@ p5.Element = class {
    * no display.
    */
   mouseClicked(fxn) {
-    p5.Element._adjustListener('click', fxn, this);
+    Element._adjustListener('click', fxn, this);
     return this;
   }
 
@@ -504,7 +517,7 @@ p5.Element = class {
    * no display.
    */
   mouseMoved(fxn) {
-    p5.Element._adjustListener('mousemove', fxn, this);
+    Element._adjustListener('mousemove', fxn, this);
     return this;
   }
 
@@ -545,7 +558,7 @@ p5.Element = class {
    * no display.
    */
   mouseOver(fxn) {
-    p5.Element._adjustListener('mouseover', fxn, this);
+    Element._adjustListener('mouseover', fxn, this);
     return this;
   }
 
@@ -586,7 +599,7 @@ p5.Element = class {
    * no display.
    */
   mouseOut(fxn) {
-    p5.Element._adjustListener('mouseout', fxn, this);
+    Element._adjustListener('mouseout', fxn, this);
     return this;
   }
 
@@ -633,7 +646,7 @@ p5.Element = class {
    * no display.
    */
   touchStarted(fxn) {
-    p5.Element._adjustListener('touchstart', fxn, this);
+    Element._adjustListener('touchstart', fxn, this);
     return this;
   }
 
@@ -672,7 +685,7 @@ p5.Element = class {
    * no display.
    */
   touchMoved(fxn) {
-    p5.Element._adjustListener('touchmove', fxn, this);
+    Element._adjustListener('touchmove', fxn, this);
     return this;
   }
 
@@ -719,7 +732,7 @@ p5.Element = class {
    * no display.
    */
   touchEnded(fxn) {
-    p5.Element._adjustListener('touchend', fxn, this);
+    Element._adjustListener('touchend', fxn, this);
     return this;
   }
 
@@ -757,7 +770,7 @@ p5.Element = class {
    * nothing displayed
    */
   dragOver(fxn) {
-    p5.Element._adjustListener('dragover', fxn, this);
+    Element._adjustListener('dragover', fxn, this);
     return this;
   }
 
@@ -795,30 +808,54 @@ p5.Element = class {
    * nothing displayed
    */
   dragLeave(fxn) {
-    p5.Element._adjustListener('dragleave', fxn, this);
+    Element._adjustListener('dragleave', fxn, this);
     return this;
   }
 
-  // General handler for event attaching and detaching
+
+  /**
+   *
+   * @private
+   * @static
+   * @param {String} ev
+   * @param {Boolean|Function} fxn
+   * @param {Element} ctx
+   * @chainable
+   * @alt
+   * General handler for event attaching and detaching
+   */
   static _adjustListener(ev, fxn, ctx) {
     if (fxn === false) {
-      p5.Element._detachListener(ev, ctx);
+      Element._detachListener(ev, ctx);
     } else {
-      p5.Element._attachListener(ev, fxn, ctx);
+      Element._attachListener(ev, fxn, ctx);
     }
     return this;
   }
-
+  /**
+   *
+   * @private
+   * @static
+   * @param {String} ev
+   * @param {Function} fxn
+   * @param {Element} ctx
+   */
   static _attachListener(ev, fxn, ctx) {
     // detach the old listener if there was one
     if (ctx._events[ev]) {
-      p5.Element._detachListener(ev, ctx);
+      Element._detachListener(ev, ctx);
     }
     const f = fxn.bind(ctx);
     ctx.elt.addEventListener(ev, f, false);
     ctx._events[ev] = f;
   }
-
+  /**
+   *
+   * @private
+   * @static
+   * @param {String} ev
+   * @param {Element} ctx
+   */
   static _detachListener(ev, ctx) {
     const f = ctx._events[ev];
     ctx.elt.removeEventListener(ev, f, false);
@@ -831,6 +868,8 @@ p5.Element = class {
   _setProperty(prop, value) {
     this[prop] = value;
   }
-};
+}
+
+p5.Element = Element;
 
 export default p5.Element;
