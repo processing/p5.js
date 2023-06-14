@@ -276,6 +276,18 @@ suite('p5.Vector', function() {
           0.01
         );
       });
+
+      test('For the same vectors, the angle between them should always be 0.', function() {
+        v1 = myp5.createVector(288, 814);
+        v2 = myp5.createVector(288, 814);
+        expect(v1.angleBetween(v2)).to.equal(0);
+      });
+
+      test('The angle between vectors pointing in opposite is always PI.', function() {
+        v1 = myp5.createVector(219, 560);
+        v2 = myp5.createVector(-219, -560);
+        expect(v1.angleBetween(v2)).to.be.closeTo(Math.PI, 0.0000001);
+      });
     });
 
     suite('p5.Vector.angleBetween() [CLASS]', function() {
