@@ -266,9 +266,9 @@ class Element {
    *                                double clicked over the element.
    *                                if `false` is passed instead, the previously
    *                                firing function will no longer fire.
-   * @return {p5.Element}
-   * @example
    * @chainable
+   * @example
+
    * <div class='norender'><code>
    * let cnv, d, g;
    * function setup() {
