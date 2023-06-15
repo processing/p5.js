@@ -12,6 +12,7 @@ Read through the [reference](http://p5js.org/reference/), and look for typos, br
 * Here are instructions for [getting setup for the first time with the p5.js repo](./README.md).
 * The reference is built from the inline documentation in the source code (found in the `src/` folder).
 * Here is information on [how to update or add inline documentation and examples](./inline_documentation.md).
+* Here is the [documentation style guide](./documentation_style_guide.md) for writing and code samples.
 * If you find errors with the [spanish documentation](http://p5js.org/es), there are instructions to update this [here](https://github.com/processing/p5.js-website#internationalization-i18n-and-structure).
 * Community-maintained Typescript definitions are [here](https://github.com/p5-types/p5.ts).
 
