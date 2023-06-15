@@ -151,8 +151,7 @@ p5.Geometry = class  {
 
     // loop through all the faces adding its normal to the normal
     // of each of its vertices
-    for (let f = 0; f < faces.length; ++f) {
-      const face = faces[f];
+    faces.forEach((face, f) => {
       const faceNormal = this._getFaceNormal(f);
 
       // all three vertices get the normal added
@@ -160,7 +159,7 @@ p5.Geometry = class  {
         const vertexIndex = face[fv];
         vertexNormals[vertexIndex].add(faceNormal);
       }
-    }
+    });
 
     // normalize the normals
     for (iv = 0; iv < vertices.length; ++iv) {

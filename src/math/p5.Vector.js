@@ -1637,15 +1637,16 @@ p5.Vector = class {
  */
 
   angleBetween(v) {
-    const dotmagmag = this.dot(v) / (this.mag() * v.mag());
-    // Mathematically speaking: the dotmagmag variable will be between -1 and 1
-    // inclusive. Practically though it could be slightly outside this range due
-    // to floating-point rounding issues. This can make Math.acos return NaN.
-    //
-    // Solution: we'll clamp the value to the -1,1 range
-    let angle;
-    angle = Math.acos(Math.min(1, Math.max(-1, dotmagmag)));
-    angle = angle * Math.sign(this.cross(v).z || 1);
+    const magSqMult = this.magSq() * v.magSq();
+    // Returns NaN if either vector is the zero vector.
+    if (magSqMult === 0) {
+      return NaN;
+    }
+    const u = this.cross(v);
+    // The dot product computes the cos value, and the cross product computes
+    // the sin value. Find the angle based on them. In addition, in the case of
+    // 2D vectors, a sign is added according to the direction of the vector.
+    let angle = Math.atan2(u.mag(), this.dot(v)) * Math.sign(u.z || 1);
     if (this.isPInst) {
       angle = this._fromRadians(angle);
     }

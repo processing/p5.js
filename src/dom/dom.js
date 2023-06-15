@@ -146,10 +146,10 @@ p5.prototype._wrapElement = function (elt) {
   const children = Array.prototype.slice.call(elt.children);
   if (elt.tagName === 'INPUT' && elt.type === 'checkbox') {
     let converted = new p5.Element(elt, this);
-    converted.checked = function () {
-      if (arguments.length === 0) {
+    converted.checked = function(...args) {
+      if (args.length === 0) {
         return this.elt.checked;
-      } else if (arguments[0]) {
+      } else if (args[0]) {
         this.elt.checked = true;
       } else {
         this.elt.checked = false;
@@ -565,8 +565,8 @@ p5.prototype.createButton = function (label, value) {
  * }
  * </code></div>
  */
-p5.prototype.createCheckbox = function () {
-  p5._validateParameters('createCheckbox', arguments);
+p5.prototype.createCheckbox = function(...args) {
+  p5._validateParameters('createCheckbox', args);
 
   // Create a container element
   const elt = document.createElement('div');
@@ -585,12 +585,12 @@ p5.prototype.createCheckbox = function () {
   //checkbox must be wrapped in p5.Element before label so that label appears after
   const self = addElement(elt, this);
 
-  self.checked = function () {
+  self.checked = function(...args) {
     const cb = self.elt.firstElementChild.getElementsByTagName('input')[0];
     if (cb) {
-      if (arguments.length === 0) {
+      if (args.length === 0) {
         return cb.checked;
-      } else if (arguments[0]) {
+      } else if (args[0]) {
         cb.checked = true;
       } else {
         cb.checked = false;
@@ -605,15 +605,15 @@ p5.prototype.createCheckbox = function () {
   };
 
   // Set the span element innerHTML as the label value if passed
-  if (arguments[0]) {
-    self.value(arguments[0]);
+  if (args[0]) {
+    self.value(args[0]);
     const span = document.createElement('span');
-    span.innerHTML = arguments[0];
+    span.innerHTML = args[0];
     label.appendChild(span);
   }
 
   // Set the checked value of checkbox if passed
-  if (arguments[1]) {
+  if (args[1]) {
     checkbox.checked = true;
   }
 
@@ -697,10 +697,10 @@ p5.prototype.createCheckbox = function () {
  * @return {p5.Element}
  */
 
-p5.prototype.createSelect = function () {
-  p5._validateParameters('createSelect', arguments);
+p5.prototype.createSelect = function(...args) {
+  p5._validateParameters('createSelect', args);
   let self;
-  let arg = arguments[0];
+  let arg = args[0];
   if (arg instanceof p5.Element && arg.elt instanceof HTMLSelectElement) {
     // If given argument is p5.Element of select type
     self = arg;
@@ -877,7 +877,7 @@ p5.prototype.createSelect = function () {
  * @method createRadio
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  */
-p5.prototype.createRadio = function () {
+p5.prototype.createRadio = function(...args) {
   // Creates a div, adds each option as an individual input inside it.
   // If already given with a containerEl, will search for all input[radio]
   // it, create a p5.Element out of it, add options to it and return the p5.Element.
@@ -885,7 +885,7 @@ p5.prototype.createRadio = function () {
   let self;
   let radioElement;
   let name;
-  const arg0 = arguments[0];
+  const arg0 = args[0];
   if (
     arg0 instanceof p5.Element &&
     (arg0.elt instanceof HTMLDivElement || arg0.elt instanceof HTMLSpanElement)
@@ -901,7 +901,7 @@ p5.prototype.createRadio = function () {
     self = addElement(arg0, this);
     this.elt = arg0;
     radioElement = arg0;
-    if (typeof arguments[1] === 'string') name = arguments[1];
+    if (typeof args[1] === 'string') name = args[1];
   } else {
     if (typeof arg0 === 'string') name = arg0;
     radioElement = document.createElement('div');
@@ -1472,8 +1472,8 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * </code>
  * </div>
  */
-p5.prototype.createCapture = function () {
-  p5._validateParameters('createCapture', arguments);
+p5.prototype.createCapture = function(...args) {
+  p5._validateParameters('createCapture', args);
 
   // return if getUserMedia is not supported by browser
   if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
@@ -1484,7 +1484,7 @@ p5.prototype.createCapture = function () {
   let useAudio = true;
   let constraints;
   let callback;
-  for (const arg of arguments) {
+  for (const arg of args) {
     if (arg === p5.prototype.VIDEO) useAudio = false;
     else if (arg === p5.prototype.AUDIO) useVideo = false;
     else if (typeof arg === 'object') constraints = arg;
@@ -1802,14 +1802,14 @@ p5.Element.prototype.center = function (align) {
  * @param  {boolean} [append] whether to append HTML to existing
  * @chainable
  */
-p5.Element.prototype.html = function () {
-  if (arguments.length === 0) {
+p5.Element.prototype.html = function(...args) {
+  if (args.length === 0) {
     return this.elt.innerHTML;
-  } else if (arguments[1]) {
-    this.elt.insertAdjacentHTML('beforeend', arguments[0]);
+  } else if (args[1]) {
+    this.elt.insertAdjacentHTML('beforeend', args[0]);
     return this;
   } else {
-    this.elt.innerHTML = arguments[0];
+    this.elt.innerHTML = args[0];
     return this;
   }
 };
@@ -1854,32 +1854,32 @@ p5.Element.prototype.html = function () {
  * @param  {String} [positionType] it can be static, fixed, relative, sticky, initial or inherit (optional)
  * @chainable
  */
-p5.Element.prototype.position = function () {
-  if (arguments.length === 0) {
+p5.Element.prototype.position = function(...args) {
+  if (args.length === 0) {
     return { x: this.elt.offsetLeft, y: this.elt.offsetTop };
   } else {
     let positionType = 'absolute';
     if (
-      arguments[2] === 'static' ||
-      arguments[2] === 'fixed' ||
-      arguments[2] === 'relative' ||
-      arguments[2] === 'sticky' ||
-      arguments[2] === 'initial' ||
-      arguments[2] === 'inherit'
+      args[2] === 'static' ||
+      args[2] === 'fixed' ||
+      args[2] === 'relative' ||
+      args[2] === 'sticky' ||
+      args[2] === 'initial' ||
+      args[2] === 'inherit'
     ) {
-      positionType = arguments[2];
+      positionType = args[2];
     }
     this.elt.style.position = positionType;
-    this.elt.style.left = arguments[0] + 'px';
-    this.elt.style.top = arguments[1] + 'px';
-    this.x = arguments[0];
-    this.y = arguments[1];
+    this.elt.style.left = args[0] + 'px';
+    this.elt.style.top = args[1] + 'px';
+    this.x = args[0];
+    this.y = args[1];
     return this;
   }
 };
 
 /* Helper method called by p5.Element.style() */
-p5.Element.prototype._translate = function () {
+p5.Element.prototype._translate = function(...args) {
   this.elt.style.position = 'absolute';
   // save out initial non-translate transform styling
   let transform = '';
@@ -1887,22 +1887,22 @@ p5.Element.prototype._translate = function () {
     transform = this.elt.style.transform.replace(/translate3d\(.*\)/g, '');
     transform = transform.replace(/translate[X-Z]?\(.*\)/g, '');
   }
-  if (arguments.length === 2) {
+  if (args.length === 2) {
     this.elt.style.transform =
-      'translate(' + arguments[0] + 'px, ' + arguments[1] + 'px)';
-  } else if (arguments.length > 2) {
+      'translate(' + args[0] + 'px, ' + args[1] + 'px)';
+  } else if (args.length > 2) {
     this.elt.style.transform =
       'translate3d(' +
-      arguments[0] +
+      args[0] +
       'px,' +
-      arguments[1] +
+      args[1] +
       'px,' +
-      arguments[2] +
+      args[2] +
       'px)';
-    if (arguments.length === 3) {
+    if (args.length === 3) {
       this.elt.parentElement.style.perspective = '1000px';
     } else {
-      this.elt.parentElement.style.perspective = arguments[3] + 'px';
+      this.elt.parentElement.style.perspective = args[3] + 'px';
     }
   }
   // add any extra transform styling back on end
@@ -1911,7 +1911,7 @@ p5.Element.prototype._translate = function () {
 };
 
 /* Helper method called by p5.Element.style() */
-p5.Element.prototype._rotate = function () {
+p5.Element.prototype._rotate = function(...args) {
   // save out initial non-rotate transform styling
   let transform = '';
   if (this.elt.style.transform) {
@@ -1919,15 +1919,15 @@ p5.Element.prototype._rotate = function () {
     transform = transform.replace(/rotate[X-Z]?\(.*\)/g, '');
   }
 
-  if (arguments.length === 1) {
-    this.elt.style.transform = 'rotate(' + arguments[0] + 'deg)';
-  } else if (arguments.length === 2) {
+  if (args.length === 1) {
+    this.elt.style.transform = 'rotate(' + args[0] + 'deg)';
+  } else if (args.length === 2) {
     this.elt.style.transform =
-      'rotate(' + arguments[0] + 'deg, ' + arguments[1] + 'deg)';
-  } else if (arguments.length === 3) {
-    this.elt.style.transform = 'rotateX(' + arguments[0] + 'deg)';
-    this.elt.style.transform += 'rotateY(' + arguments[1] + 'deg)';
-    this.elt.style.transform += 'rotateZ(' + arguments[2] + 'deg)';
+      'rotate(' + args[0] + 'deg, ' + args[1] + 'deg)';
+  } else if (args.length === 3) {
+    this.elt.style.transform = 'rotateX(' + args[0] + 'deg)';
+    this.elt.style.transform += 'rotateY(' + args[1] + 'deg)';
+    this.elt.style.transform += 'rotateZ(' + args[2] + 'deg)';
   }
   // add remaining transform back on
   this.elt.style.transform += transform;
@@ -2153,9 +2153,9 @@ p5.Element.prototype.removeAttribute = function (attr) {
  * @param  {String|Number}     value
  * @chainable
  */
-p5.Element.prototype.value = function () {
-  if (arguments.length > 0) {
-    this.elt.value = arguments[0];
+p5.Element.prototype.value = function(...args) {
+  if (args.length > 0) {
+    this.elt.value = args[0];
     return this;
   } else {
     if (this.elt.type === 'range') {
@@ -2408,8 +2408,7 @@ p5.Element.prototype.drop = function (callback, fxn) {
         const files = evt.dataTransfer.files;
 
         // Load each one and trigger the callback
-        for (let i = 0; i < files.length; i++) {
-          const f = files[i];
+        for (const f of files) {
           p5.File._load(f, callback);
         }
       },
@@ -3225,9 +3224,9 @@ class MediaElement extends p5.Element {
       this._frameOnCanvas = this._pInst.frameCount;
     }
   }
-  loadPixels() {
+  loadPixels(...args) {
     this._ensureCanvas();
-    return p5.Renderer2D.prototype.loadPixels.apply(this, arguments);
+    return p5.Renderer2D.prototype.loadPixels.apply(this, args);
   }
   updatePixels(x, y, w, h) {
     if (this.loadedmetadata) {
@@ -3238,13 +3237,13 @@ class MediaElement extends p5.Element {
     this.setModified(true);
     return this;
   }
-  get() {
+  get(...args) {
     this._ensureCanvas();
-    return p5.Renderer2D.prototype.get.apply(this, arguments);
+    return p5.Renderer2D.prototype.get.apply(this, args);
   }
-  _getPixel() {
+  _getPixel(...args) {
     this.loadPixels();
-    return p5.Renderer2D.prototype._getPixel.apply(this, arguments);
+    return p5.Renderer2D.prototype._getPixel.apply(this, args);
   }
 
   set(x, y, imgOrCol) {
@@ -3255,14 +3254,14 @@ class MediaElement extends p5.Element {
       this.setModified(true);
     }
   }
-  copy() {
+  copy(...args) {
     this._ensureCanvas();
-    p5.prototype.copy.apply(this, arguments);
+    p5.prototype.copy.apply(this, args);
   }
-  mask() {
+  mask(...args) {
     this.loadPixels();
     this.setModified(true);
-    p5.Image.prototype.mask.apply(this, arguments);
+    p5.Image.prototype.mask.apply(this, args);
   }
   /**
    * helper method for web GL mode to figure out if the element

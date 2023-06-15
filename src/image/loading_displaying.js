@@ -319,8 +319,9 @@ p5.prototype.saveGif = async function(
   if (document.getElementById(notificationID) !== null)
     document.getElementById(notificationID).remove();
 
+  let p;
   if (!silent){
-    let p = this.createP('');
+    p = this.createP('');
     p.id(notificationID);
     p.style('font-size', '16px');
     p.style('font-family', 'Montserrat');
@@ -332,10 +333,10 @@ p5.prototype.saveGif = async function(
 
   let pixels;
   let gl;
-  if (this.drawingContext instanceof WebGLRenderingContext) {
+  if (this._renderer instanceof p5.RendererGL) {
     // if we have a WEBGL context, initialize the pixels array
     // and the gl context to use them inside the loop
-    gl = document.getElementById('defaultCanvas0').getContext('webgl');
+    gl = this.drawingContext;
     pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
   }
 
@@ -363,7 +364,7 @@ p5.prototype.saveGif = async function(
     // or another
     let data = undefined;
 
-    if (this.drawingContext instanceof WebGLRenderingContext) {
+    if (this._renderer instanceof p5.RendererGL) {
       pixels = new Uint8Array(
         gl.drawingBufferWidth * gl.drawingBufferHeight * 4
       );
@@ -467,7 +468,7 @@ p5.prototype.saveGif = async function(
       gif.writeFrame(indexedFrame, this.width, this.height, {
         delay: gifFrameDelay,
         transparent: true,
-        transparentIndex: transparentIndex,
+        transparentIndex,
         dispose: 1
       });
     }
@@ -516,14 +517,14 @@ function _flipPixels(pixels) {
   // this stack overflow answer:
   // https://stackoverflow.com/questions/41969562/how-can-i-flip-the-result-of-webglrenderingcontext-readpixels
 
-  var halfHeight = parseInt(height / 2);
-  var bytesPerRow = width * 4;
+  const halfHeight = parseInt(height / 2);
+  const bytesPerRow = width * 4;
 
   // make a temp buffer to hold one row
-  var temp = new Uint8Array(width * 4);
-  for (var y = 0; y < halfHeight; ++y) {
-    var topOffset = y * bytesPerRow;
-    var bottomOffset = (height - y - 1) * bytesPerRow;
+  const temp = new Uint8Array(width * 4);
+  for (let y = 0; y < halfHeight; ++y) {
+    const topOffset = y * bytesPerRow;
+    const bottomOffset = (height - y - 1) * bytesPerRow;
 
     // make copy of a row on the top half
     temp.set(pixels.subarray(topOffset, topOffset + bytesPerRow));
