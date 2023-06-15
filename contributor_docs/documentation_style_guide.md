@@ -36,6 +36,7 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
 - [Functions](#functions)
 - [Arrow Functions](#arrow-functions)
 - [Classes](#classes)
+- [Assets](#assets)
 
 ## YUIDoc
 
@@ -107,7 +108,7 @@ If you need to declare a variable, it is recommended that you use `const` or `le
 use this style:
 
 ```
-Use `const` or `let` to declare variables.
+Always use `const` or `let` to declare variables.
 ```
 
 **Pronouns**
@@ -125,7 +126,7 @@ Use `const` or `let` to declare variables.
 ## Accessibility and Disability
 
 - Emphasize the reader rather than underlining their inconveniences.
-- Don’t refer to a person with a disability as a disabled person. Use approved terminology for people with specific disabilities.
+- Don’t refer to a person with a disability as a disabled person. Use [approved terminology](https://make.wordpress.org/docs/style-guide/general-guidelines/inclusivity/#accessibility-terminology) for people with specific disabilities.
 - Maintain a uniform structure throughout the p5.js documentation. Emphasize important points both stylistically and visually.
 - Use a screen reader to test documentation. To test a screen reader, see [List of screen readers](https://en.wikipedia.org/wiki/List_of_screen_readers).
 - Consider multi-platform accessibility for all types of devices and operating systems.
@@ -135,6 +136,8 @@ Use `const` or `let` to declare variables.
 - Use simple tables and tabular formats. Avoid span tags (such as rowspan and colspan). Tables prove to be difficult for screen readers.
 
 **Accessibility terminology**
+
+The following terminiology is adapted from the WordPress documentation guidelines for [Writing inclusive documentation](https://make.wordpress.org/docs/style-guide/general-guidelines/inclusivity/#accessibility-terminology). For more background on people-first language, see the CDC's guide on [Communicating With and About People with Disabilities](https://www.cdc.gov/ncbddd/disabilityandhealth/materials/factsheets/fs-communicating-with-people.html).
 
 | Recommended |	Not Recommended |
 | -- | -- |
@@ -368,6 +371,20 @@ class Spy {
 **[⬆ back to top](#table-of-contents)**
 
 ## Variables
+
+- Avoid using `var` to declare variables.
+
+> Why? Doing so ensures that references aren't reassigned, which can lead to subtle bugs.
+
+```javascript
+// Bad.
+var constant = 1;
+var variable = 2;
+
+// Good.
+const constant = 1;
+let variable = 2;
+```
 
 - Always use `const` or `let` to declare variables.
 
@@ -733,7 +750,7 @@ for (let i = 0; i < numPetals; i += 1) {
 
 > Why? Pure functions are easier to reason about than side effects.
 
-> Use `forEach()` / `map()` / `every()` / `filter()` / `find()` / `findIndex()` / `reduce()` / `some()` / `...` to iterate over arrays. Use `Object.keys()` / `Object.values()` / `Object.entries()` to produce arrays so you can iterate over objects.
+> Use `forEach()` / `map()` / `every()` / `filter()` / `find()` / `findIndex()` / `reduce()` / `some()` / `...` to iterate over arrays. Use `Object.keys()` / `Object.values()` / `Object.entries()` to produce arrays for iterating over objects.
 
 ```javascript
 const diameters = [50, 40, 30, 20, 10];
@@ -977,22 +994,31 @@ function drawSpiral(length, angle = 90) {
 
 ```javascript
 // Bad.
-loadImage(function (img) {
-  image(img, 0, 0);
-});
+function setup() {
+  loadImage('assets/moonwalk.jpg', function (img) {
+    image(img, 0, 0);
+  });
+}
+
 
 // Good.
-loadImage((img) => {
-  image(img, 0, 0);
-});
+function setup() {
+  loadImage('assets/moonwalk.jpg', (img) => {
+    image(img, 0, 0);
+  });
+}
 
 // Bad.
-loadImage(function (img) {
-  // Complex preprocessing...
-});
+function preload() {
+  loadImage('assets/moonwalk.jpg', (img) => {
+    // Complex preprocessing...
+  });
+}
 
 // Good.
-loadImage(processImage);
+function preload() {
+  loadImage('assets/moonwalk.jpg', processImage);
+}
 
 function processImage(img) {
   // Complex preprocessing...
@@ -1034,7 +1060,7 @@ function processImage(img) {
 
 ## Classes
 
-- Always use `class`. Avoid manipulating `prototype` directly.
+- Always use `class`. Avoid manipulating `prototype` directly. The only exception is explaining how to [create libraries](./creating_libraries.md).
 
 > Why? `class` syntax is more concise and easier to reason about.
 
@@ -1178,6 +1204,31 @@ class Mover {
     this.x = 0;
     this.y = 0;
   }
+}
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+## Assets
+
+- Always load assets from a folder called "assets".
+
+> Why? It models good project organization. It's also required for assets to load on the p5.js website. Place assets in the following folders to include them in our online documentation:
+- Examples: [src/data/examples/assets](https://github.com/processing/p5.js-website/tree/main/src/data/examples)
+- Reference Pages: [src/templates/pages/reference/assets](https://github.com/processing/p5.js-website/tree/main/src/templates/pages/reference/assets)
+- Learn Pages: [src/assets/learn](https://github.com/processing/p5.js-website/tree/main/src/assets/learn)
+
+```javascript
+let img;
+
+// Bad.
+function preload() {
+  img = loadImage('moonwalk.jpg');
+}
+
+// Good.
+function preload() {
+  img = loadImage('assets/moonwalk.jpg');
 }
 ```
 
