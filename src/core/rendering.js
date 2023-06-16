@@ -156,6 +156,10 @@ p5.prototype.createCanvas = function(w, h, renderer) {
 p5.prototype.resizeCanvas = function(w, h, noRedraw) {
   p5._validateParameters('resizeCanvas', arguments);
   if (this._renderer) {
+    // save camera matrices
+    const camMat = new Float32Array(this._renderer._curCamera.cameraMatrix.mat4);
+    const projMat = new Float32Array(this._renderer._curCamera.projMatrix.mat4);
+    
     // save canvas properties
     const props = {};
     for (const key in this.drawingContext) {
@@ -175,10 +179,19 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
         // ignore read-only property errors
       }
     }
+    
+    // reapply camera matrices
+    this._renderer._curCamera.cameraMatrix.mat4 = camMat;
+    if (this._renderer._curCamera.cameraType === "custom") {
+      this._renderer._curCamera.projMatrix.mat4 = projMat;
+      this._renderer.uPMatrix.mat4 = projMat;
+    }
+    
     if (!noRedraw) {
       this.redraw();
     }
   }
+  
   //accessible Outputs
   if (this._addAccsOutput()) {
     this._updateAccsOutput();
