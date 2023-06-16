@@ -157,9 +157,9 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
   p5._validateParameters('resizeCanvas', arguments);
   if (this._renderer) {
     // save camera matrices
-    const camMat = 
+    const camMat =
       new Float32Array(this._renderer._curCamera.cameraMatrix.mat4);
-    const projMat = 
+    const projMat =
       new Float32Array(this._renderer._curCamera.projMatrix.mat4);
     // save canvas properties
     const props = {};
