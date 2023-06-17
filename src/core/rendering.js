@@ -157,8 +157,9 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
   p5._validateParameters('resizeCanvas', arguments);
   if (this._renderer) {
     // copy camera
+    let cam;
     if (this._renderer._curCamera !== undefined) {
-      const cam =
+      cam =
         this._renderer._curCamera.copy();
     }
     // save canvas properties
