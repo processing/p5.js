@@ -101,13 +101,13 @@ p5.prototype._normalizeArcAngles = (
 
 /**
  * Draws an arc to the canvas. Arcs are drawn along the outer edge of an ellipse
- * (oval) defined by the x, y, w, and h parameters. Use the start and stop
+ * (oval) defined by the `x`, `y`, `w`, and `h` parameters. Use the `start` and `stop`
  * parameters to specify the angles (in radians) at which to draw the arc. Arcs are
- * always drawn clockwise from start to stop. The origin of the arc's ellipse may
+ * always drawn clockwise from `start` to `stop`. The origin of the arc's ellipse may
  * be changed with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.
  *
- * The optional mode parameter determines the arc's fill style. The fill modes are
- * a semi-circle (OPEN), a closed semi-circle (CHORD), or a closed pie segment (PIE).
+ * The optional `mode` parameter determines the arc's fill style. The fill modes are
+ * a semi-circle (`OPEN`), a closed semi-circle (`CHORD`), or a closed pie segment (`PIE`).
  *
  * @method arc
  * @param  {Number} x      x-coordinate of the arc's ellipse.
@@ -332,14 +332,14 @@ p5.prototype._renderEllipse = function(x, y, w, h, detailX) {
 
 /**
  * Draws a line, a straight path between two points. Its default width is one pixel.
- * The version of line() with four parameters draws the line in 2D. To color a line,
+ * The version of `line()` with four parameters draws the line in 2D. To color a line,
  * use the <a href="#/p5/stroke">stroke()</a> function. To change its width, use the
  * <a href="#/p5/strokeWeight">strokeWeight()</a> function. A line
  * can't be filled, so the <a href="#/p5/fill">fill()</a> function won't affect
  * the color of a  line.
  *
- * The version of line() with six parameters allows the line to be drawn in 3D
- * space. Doing so requires adding the WEBGL argument to
+ * The version of `line()` with six parameters allows the line to be drawn in 3D
+ * space. Doing so requires adding the `WEBGL` argument to
  * <a href="#/p5/createCanvas">createCanvas()</a>.
  *
  * @method line
@@ -418,8 +418,8 @@ p5.prototype.line = function(...args) {
  * the <a href="#/p5/stroke">stroke()</a> function. To change its size, use the
  * <a href="#/p5/strokeWeight">strokeWeight()</a> function.
  *
- * The version of point() with three parameters allows the point to be drawn in 3D
- * space. Doing so requires adding the WEBGL argument to
+ * The version of `point()` with three parameters allows the point to be drawn in 3D
+ * space. Doing so requires adding the `WEBGL` argument to
  * <a href="#/p5/createCanvas">createCanvas()</a>.
  *
  * The version of point() with one parameter allows the point's location to be set with
@@ -506,12 +506,12 @@ p5.prototype.point = function(...args) {
 /**
  * Draws a quad to the canvas. A quad is a quadrilateral, a four-sided polygon.
  * Some examples of quads include rectangles, squares, rhombuses, trapezoids,
- * and so on. The first pair of parameters (x1,y1) sets the first point. The
+ * and so on. The first pair of parameters `(x1,y1)` sets the first point. The
  * following pairs should proceed clockwise or counter-clockwise around the defined
  * shape.
  *
- * The version of quad() with twelve arguments allows the quad to be drawn in 3D
- * space. Doing so requires adding the WEBGL argument to
+ * The version of `quad()` with twelve parameters allows the quad to be drawn in 3D
+ * space. Doing so requires adding the `WEBGL` argument to
  * <a href="#/p5/createCanvas">createCanvas()</a>.
  *
  * @method quad
@@ -586,10 +586,10 @@ p5.prototype.quad = function(...args) {
  * interpreted may be changed with the <a href="#/p5/rectMode">rectMode()</a>
  * function.
  *
- * The version of rect() with five parameters creates a rounded rectangle. The
+ * The version of `rect()` with five parameters creates a rounded rectangle. The
  * fifth parameter is used as the radius value for all four corners.
  *
- * The version of rect() with eight parameters also creates a rounded rectangle.
+ * The version of `rect()` with eight parameters also creates a rounded rectangle.
  * When using eight parameters, the latter four set the radius of the arc at
  * each corner separately. The radii start with the top-left corner and move
  * clockwise around the rectangle. If any of these parameters are omitted, they
@@ -653,10 +653,10 @@ p5.prototype.rect = function(...args) {
  * parameter sets its side size. The way these parameters are interpreted may
  * be changed with the <a href="#/p5/rectMode">rectMode()</a> function.
  *
- * The version of square() with four parameters creates a rounded square. The
+ * The version of `square()` with four parameters creates a rounded square. The
  * fourth parameter is used as the radius value for all four corners.
  *
- * The version of square() with seven parameters also creates a rounded square.
+ * The version of `square()` with seven parameters also creates a rounded square.
  * When using seven parameters, the latter four set the radius of the arc at
  * each corner separately. The radii start with the top-left corner and move
  * clockwise around the square. If any of these parameters are omitted, they
@@ -736,9 +736,9 @@ p5.prototype._renderRect = function() {
 
 /**
  * Draws a triangle to the canvas. A triangle is a three-sided polygon. The
- * first two parameters specify the triangle's first point (x1,y1). The middle
- * two parameters specify its second point (x2,y2). And the last two parameters
- * specify its third point (x3, y3).
+ * first two parameters specify the triangle's first point `(x1,y1)`. The middle
+ * two parameters specify its second point `(x2,y2)`. And the last two parameters
+ * specify its third point `(x3, y3)`.
  *
  * @method triangle
  * @param  {Number} x1 x-coordinate of the first point.
