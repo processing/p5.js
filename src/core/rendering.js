@@ -181,7 +181,7 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
     // reapply camera
     this._renderer._curCamera = cam;
     if (this._renderer._curCamera.cameraType
-        !== 'custom') {
+        === 'custom') {
       this._renderer.uPMatrix =
         this._renderer._curCamera.projMatrix;
     }
