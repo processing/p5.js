@@ -272,10 +272,11 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
 };
 
 /**
- * Draws a circle to the canvas. By default, the first two parameters set the
- * location of the center of the circle. The third parameter sets the shape's
- * width and height (diameter). The origin may be changed with the
- * <a href="#/p5/ellipseMode">ellipseMode()</a> function.
+ * Draws a circle to the canvas. A circle is a round shape. Every point on the
+ * edge of a circle is the same distance from its center. By default, the first
+ * two parameters set the location of the center of the circle. The third
+ * parameter sets the shape's width and height (diameter). The origin may be
+ * changed with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.
  *
  * @method circle
  * @param  {Number} x  x-coordinate of the center of the circle.
