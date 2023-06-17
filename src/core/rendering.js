@@ -157,8 +157,10 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
   p5._validateParameters('resizeCanvas', arguments);
   if (this._renderer) {
     // copy camera
-    const cam =
-      this._renderer._curCamera.copy();
+    if (this._renderer._curCamera !== undefined) {
+      const cam =
+        this._renderer._curCamera.copy();
+    }
     // save canvas properties
     const props = {};
     for (const key in this.drawingContext) {
@@ -179,11 +181,13 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
       }
     }
     // reapply camera
-    this._renderer._curCamera = cam;
-    if (this._renderer._curCamera.cameraType
-        === 'custom') {
-      this._renderer.uPMatrix =
-        this._renderer._curCamera.projMatrix;
+    if (this._renderer._curCamera !== undefined) {
+      this._renderer._curCamera = cam;
+      if (this._renderer._curCamera.cameraType
+          === 'custom') {
+        this._renderer.uPMatrix =
+          this._renderer._curCamera.projMatrix;
+      }
     }
     if (!noRedraw) {
       this.redraw();
