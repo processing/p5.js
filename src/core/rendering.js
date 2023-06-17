@@ -178,7 +178,7 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
         // ignore read-only property errors
       }
     }
-    // reapply camera matrices
+    // reapply camera
     this._renderer._curCamera = cam;
     if (this._renderer._curCamera.cameraType
         === 'custom') {
