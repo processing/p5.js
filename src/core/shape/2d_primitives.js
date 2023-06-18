@@ -505,14 +505,15 @@ p5.prototype.point = function(...args) {
 };
 
 /**
- * Draws a quad to the canvas. A quad is a quadrilateral, a four-sided polygon.
- * Some examples of quads include rectangles, squares, rhombuses, trapezoids,
- * and so on. The first pair of parameters `(x1,y1)` sets the first point. The
- * following pairs should proceed clockwise or counter-clockwise around the defined
- * shape.
+ * Draws a quad to the canvas. A quad is a quadrilateral, a four-sided
+ * polygon. Some examples of quads include rectangles, squares, rhombuses,
+ * and trapezoids. The first pair of parameters (`x1`,`y1`) sets the quad's
+ * first point. The following pairs of parameters set the coordinates for
+ * its next three points. Parameters should proceed clockwise or
+ * counter-clockwise around the shape.
  *
- * The version of `quad()` with twelve parameters allows the quad to be drawn in 3D
- * space. Doing so requires adding the `WEBGL` argument to
+ * The version of `quad()` with twelve parameters allows the quad to be drawn
+ * in 3D space. Doing so requires adding the `WEBGL` argument to
  * <a href="#/p5/createCanvas">createCanvas()</a>.
  *
  * @method quad
@@ -530,11 +531,31 @@ p5.prototype.point = function(...args) {
  * @example
  * <div>
  * <code>
- * quad(38, 31, 86, 20, 69, 63, 30, 76);
- * describe('An irregular white quadrilateral with a black outline.');
+ * quad(20, 20, 80, 20, 80, 80, 20, 80);
+ * describe('A white square with a black outline drawn on a gray canvas.');
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * quad(20, 30, 80, 30, 80, 70, 20, 70);
+ * describe('A white rectangle with a black outline drawn on a gray canvas.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * quad(50, 62, 86, 50, 50, 38, 14, 50);
+ * describe('A white rhombus with a black outline drawn on a gray canvas.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * quad(20, 50, 80, 30, 80, 70, 20, 70);
+ * describe('A white trapezoid with a black outline drawn on a gray canvas.');
+ * </code>
+ * </div>
  */
 /**
  * @method quad
@@ -684,7 +705,7 @@ p5.prototype.rect = function(...args) {
  * <code>
  * square(30, 20, 55, 20);
  * describe(
- *   'A white square with black outline and round edges on a gray canvas.'
+ *   'A white square with a black outline and round edges on a gray canvas.'
  * );
  * </code>
  * </div>
