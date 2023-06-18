@@ -142,7 +142,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
       const funcName =
         methodParts.length === 1 ? func : methodParts.slice(2).join('/');
-      msgWithReference = `${message} (http://p5js.org/reference/#/${referenceSection}/${funcName})`;
+
+      //Whenever func having p5.[Class] is encountered, we need to have the error link as mentioned below else different link
+      funcName.substring(0,2) === 'p5.' ?               
+        msgWithReference = `${message} (http://p5js.org/reference/#/${referenceSection}.${funcName})` : 
+        msgWithReference = `${message} (http://p5js.org/reference/#/${referenceSection}/${funcName})`; 
     }
     return msgWithReference;
   };
