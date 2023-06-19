@@ -173,7 +173,7 @@ import './p5.Color';
  * @param  {Number}  [a]
  * @chainable
  */
-p5.prototype.background = function (...args) {
+p5.prototype.background = function(...args) {
   this._renderer.background(...args);
   return this;
 };
@@ -216,7 +216,7 @@ p5.prototype.background = function (...args) {
  * @param {Number} b normalized blue val.
  * @param {Number} a normalized alpha val.
  */
-p5.prototype.clear = function (...args) {
+p5.prototype.clear = function(...args) {
   const _r = args[0] || 0;
   const _g = args[1] || 0;
   const _b = args[2] || 0;
@@ -320,7 +320,7 @@ p5.prototype.clear = function (...args) {
  * @param {Number} [maxA]   Range for the alpha.
  * @chainable
  */
-p5.prototype.colorMode = function (mode, max1, max2, max3, maxA) {
+p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
   p5._validateParameters('colorMode', arguments);
   if (
     mode === constants.RGB ||
@@ -502,7 +502,7 @@ p5.prototype.colorMode = function (mode, max1, max2, max3, maxA) {
  * @param  {p5.Color}      color   the fill color
  * @chainable
  */
-p5.prototype.fill = function (...args) {
+p5.prototype.fill = function(...args) {
   this._renderer._setProperty('_fillSet', true);
   this._renderer._setProperty('_doFill', true);
   this._renderer.fill(...args);
@@ -544,7 +544,7 @@ p5.prototype.fill = function (...args) {
  * </code>
  * </div>
  */
-p5.prototype.noFill = function () {
+p5.prototype.noFill = function() {
   this._renderer._setProperty('_doFill', false);
   return this;
 };
@@ -582,7 +582,7 @@ p5.prototype.noFill = function () {
  * </code>
  * </div>
  */
-p5.prototype.noStroke = function () {
+p5.prototype.noStroke = function() {
   this._renderer._setProperty('_doStroke', false);
   return this;
 };
@@ -750,7 +750,7 @@ p5.prototype.noStroke = function () {
  * @chainable
  */
 
-p5.prototype.stroke = function (...args) {
+p5.prototype.stroke = function(...args) {
   this._renderer._setProperty('_strokeSet', true);
   this._renderer._setProperty('_doStroke', true);
   this._renderer.stroke(...args);
@@ -832,7 +832,7 @@ p5.prototype.stroke = function (...args) {
  * </code>
  * </div>
  */
-p5.prototype.erase = function (opacityFill = 255, opacityStroke = 255) {
+p5.prototype.erase = function(opacityFill = 255, opacityStroke = 255) {
   this._renderer.erase(opacityFill, opacityStroke);
 
   return this;
@@ -863,7 +863,7 @@ p5.prototype.erase = function (opacityFill = 255, opacityStroke = 255) {
  * </div>
  */
 
-p5.prototype.noErase = function () {
+p5.prototype.noErase = function() {
   this._renderer.noErase();
   return this;
 };
