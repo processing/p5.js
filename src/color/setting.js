@@ -12,20 +12,22 @@ import './p5.Color';
 
 /**
  * The <a href="#/p5/background">background()</a> function sets the color used
- * for the background of the p5.js canvas. The default background is transparent.
+ * for the background of the canvas. By default, the background is transparent.
  * This function is typically used within <a href="#/p5/draw">draw()</a> to clear
- * the display window at the beginning of each frame, but it can be used inside
+ * the display window at the beginning of each frame. It can also be used inside
  * <a href="#/p5/setup">setup()</a> to set the background on the first frame of
- * animation or if the background need only be set once.
+ * animation.
  *
- * The color is either specified in terms of the RGB, HSB, or HSL color depending
- * on the current <a href="#/p5/colorMode">colorMode</a>. (The default color space
- * is RGB, with each value in the range from 0 to 255). The alpha range by default
- * is also 0 to 255.<br><br>
+ * By default, colors are specified in RGB values. (`background(255, 204, 0)` sets
+ * the background a bright yellow color) HSL or HSB can be used instead by using
+ * the <a href="#/p5/colorMode">colorMode()</a> function.
  *
- * If a single string argument is provided, RGB, RGBA and Hex CSS color strings
- * and all named color strings are supported. In this case, an alpha number
- * value as a second argument is not supported, the RGBA form should be used.
+ * If a single string argument is provided, RGB, RGBA and Hex CSS color strings and
+ * all named color strings are supported. In this case, an alpha number value as a
+ * second argument is not supported, the RGBA form should be used.
+ *
+ * <a href="#/p5/background">background()</a> supports  RGB, RGBA, and Hex CSS color strings, as well as named color strings. In this case, providing an alpha value as a second argument is not supported, and the RGBA form should be used if you need to specify transparency.
+ *
  *
  * A <a href="#/p5.Color">p5.Color</a> object can also be provided to set the background color.
  *
