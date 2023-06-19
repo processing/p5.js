@@ -23,8 +23,18 @@ import './p5.Color';
  *
  * <a href="#/p5/background">background()</a> supports RGB, RGBA, and Hex CSS
  * color strings, as well as named color strings. In this case, providing an
- * alpha value as a second argument is not supported, so the RGBA form should be
- * used if you need to specify transparency.
+ * alpha value as a second argument is not supported for CSS color strings, so
+ * the RGBA form should be used if you need to specify transparency.
+ *
+ * The version of `background()` with one parameter interprets the value one of two
+ * ways. If the parameter is a number, it's interpreted as a grayscale value.
+ * If the parameter is a string, it's interpreted as a CSS color string.
+ *
+ * The version of `background()` with two parameters interprets the first one as a
+ * grayscale value. The second parameter sets the alpha (transparency) value.
+ *
+ * The version of `background()` with three parameters interprets them as RGB, HSB,
+ * or HSL colors, depending on the current `colorMode()`.
  *
  * A <a href="#/p5.Color">p5.Color</a> object can also be provided to set the
  * background color.
@@ -39,15 +49,15 @@ import './p5.Color';
  * @example
  * <div>
  * <code>
- * // Grayscale integer value
+ * // A grayscale integer value.
  * background(51);
- * describe('A canvas with a dark charcoal grey background.');
+ * describe('A canvas with a dark charcoal gray background.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // R, G & B integer values
+ * // R, G & B integer values.
  * background(255, 204, 0);
  * describe('A canvas with a yellow background.');
  * </code>
@@ -55,7 +65,7 @@ import './p5.Color';
  *
  * <div>
  * <code>
- * // H, S & B integer values
+ * // H, S & B integer values.
  * colorMode(HSB);
  * background(255, 204, 100);
  * describe('A canvas with a royal blue background.');
@@ -64,7 +74,7 @@ import './p5.Color';
  *
  * <div>
  * <code>
- * // Named SVG/CSS color string
+ * // A CSS named color.
  * background('red');
  * describe('A canvas with a red background.');
  * </code>
@@ -72,7 +82,7 @@ import './p5.Color';
  *
  * <div>
  * <code>
- * // three-digit hexadecimal RGB notation
+ * // Three-digit hexadecimal RGB notation.
  * background('#fae');
  * describe('A canvas with a pink background.');
  * </code>
@@ -80,7 +90,7 @@ import './p5.Color';
  *
  * <div>
  * <code>
- * // six-digit hexadecimal RGB notation
+ * // Six-digit hexadecimal RGB notation.
  * background('#222222');
  * describe('A canvas with a black background.');
  * </code>
@@ -88,7 +98,7 @@ import './p5.Color';
  *
  * <div>
  * <code>
- * // integer RGB notation
+ * // Integer RGB notation.
  * background('rgb(0,255,0)');
  * describe('A canvas with a bright green background.');
  * </code>
@@ -96,7 +106,7 @@ import './p5.Color';
  *
  * <div>
  * <code>
- * // integer RGBA notation
+ * // Integer RGBA notation.
  * background('rgba(0,255,0, 0.25)');
  * describe('A canvas with a transparent green background.');
  * </code>
@@ -104,7 +114,7 @@ import './p5.Color';
  *
  * <div>
  * <code>
- * // percentage RGB notation
+ * // Percentage RGB notation.
  * background('rgb(100%,0%,10%)');
  * describe('A canvas with a red background.');
  * </code>
@@ -112,7 +122,7 @@ import './p5.Color';
  *
  * <div>
  * <code>
- * // percentage RGBA notation
+ * // Percentage RGBA notation.
  * background('rgba(100%,0%,100%,0.5)');
  * describe('A canvas with a transparent purple background.');
  * </code>
@@ -140,33 +150,30 @@ import './p5.Color';
 
 /**
  * @method background
- * @param {Number} gray   specifies a value between white and black.
+ * @param {Number} gray   Specifies a value between white and black.
  * @param {Number} [a]
  * @chainable
  */
 
 /**
  * @method background
- * @param {Number} v1     red or hue value (depending on the current color
- *                        mode).
- * @param {Number} v2     green or saturation value (depending on the current
- *                        color mode).
- * @param {Number} v3     blue or brightness value (depending on the current
- *                        color mode).
+ * @param {Number} v1     Red value if color mode is RGB, or hue value if color mode is HSB.
+ * @param {Number} v2     Green value if color mode is RGB, or saturation value if color mode is HSB.
+ * @param {Number} v3     Blue value if color mode is RGB, or brightness value if color mode is HSB.
  * @param  {Number} [a]
  * @chainable
  */
 
 /**
  * @method background
- * @param  {Number[]}      values  an array containing the red, green, blue
+ * @param  {Number[]}      values  An array containing the red, green, blue
  *                                 and alpha components of the color.
  * @chainable
  */
 
 /**
  * @method background
- * @param {p5.Image} image     image created with <a href="#/p5/loadImage">loadImage()</a>
+ * @param {p5.Image} image     Image created with <a href="#/p5/loadImage">loadImage()</a>
  *                             or <a href="#/p5/createImage">createImage()</a>,
  *                             to set as background
  *                             (must be same size as the sketch window).
@@ -198,7 +205,7 @@ p5.prototype.background = function(...args) {
  * @example
  * <div>
  * <code>
- * // Clear the screen on mouse press.
+ * // Clear the screen on mouse press after drawing some ellipses.
  * function draw() {
  *   ellipse(mouseX, mouseY, 20, 20);
  *   describe('A white ellipse is drawn at mouse x and y coordinates.');
@@ -248,6 +255,7 @@ p5.prototype.clear = function(...args) {
  * @example
  * <div>
  * <code>
+ * // Make a gradient by setting colorMode to (RGB, 100) and looping from 0 to 100 (the maximum value) to gradually add red and green.
  * noStroke();
  * colorMode(RGB, 100);
  * for (let i = 0; i < 100; i++) {
@@ -264,6 +272,7 @@ p5.prototype.clear = function(...args) {
  *
  * <div>
  * <code>
+ * // Make a gradient by setting colorMode to (HSB, 100) and looping from 0 to 100 (the maximum value) to gradually hue and saturation.
  * noStroke();
  * colorMode(HSB, 100);
  * for (let i = 0; i < 100; i++) {
@@ -381,7 +390,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // Grayscale integer value
  * fill(51);
  * rect(20, 20, 60, 60);
- * describe('dark charcoal grey rect with black outline in center of canvas');
+ * describe('dark charcoal gray rect with black outline in center of canvas');
  * </code>
  * </div>
  *
@@ -618,7 +627,7 @@ p5.prototype.noStroke = function() {
  * strokeWeight(4);
  * stroke(51);
  * rect(20, 20, 60, 60);
- * describe('White rect at center with dark charcoal grey outline.');
+ * describe('White rect at center with dark charcoal gray outline.');
  * </code>
  * </div>
  *
