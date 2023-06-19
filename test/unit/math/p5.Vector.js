@@ -1422,6 +1422,72 @@ suite('p5.Vector', function() {
     });
   });
 
+  suite('v1.slerp(v2, amt)', function() {
+    var w, res;
+    setup(function() {
+      v.set(1, 2, 3);
+      w = new.p5.Vector(4, 6, 8);
+    });
+
+    test('should return a new product', function() {
+      expect(v.slerp(new p5.Vector(), 0)).to.not.eql(v);
+    });
+
+    test('if amt is 0, returns original vector', function() {
+      res = v.slerp(w, 0);
+      expect(res.x).to.eql(1);
+      expect(res.y).to.eql(2);
+      expect(res.z).to.eql(3);
+    });
+
+    test('if amt is 1, returns argument vector', function() {
+      res = v.slerp(w, 1);
+      expect(res.x).to.eql(4);
+      expect(res.y).to.eql(6);
+      expect(res.z).to.eql(8);
+    });
+
+    test('if both v and w are 2D, then w will also be 2D.', function() {
+      v.set(2, 3, 0);
+
+      w.set(3, -2, 0);
+      res = v.slerp(w, 0.3);
+      expect(res.z).to.eql(0);
+
+      w.set(-2, -3, 0);
+      res = v.slerp(w, 0.8);
+      expect(res.z).to.eql(0);
+    });
+  });
+
+  suite('p5.Vector.slerp(v1, v2, amt)', function() {
+    var res, v1, v2;
+    setup(function() {
+      v1 = new p5.Vector(1, 0, 0);
+      v2 = new p5.Vector(0, 0, 1);
+      res = p5.Vector.slerp(v1, v2, 1/3);
+    });
+
+    test('should not be undefined', function() {
+      expect(res).to.not.eql(undefined);
+    });
+
+    test('should be a p5.Vector', function() {
+      expect(res).to.be.an.instanceof(p5.Vector);
+    });
+
+    test('should return neither v1 nor v2', function() {
+      expect(res).to.not.eql(v1);
+      expect(res).to.not.eql(v2);
+    });
+
+    test('should res to be [cos(PI/6), 0, sin(PI/6)]', function() {
+      expect(res.x).to.be.closeTo(Math.cos(Math.PI/6), 0.00001);
+      expect(res.y).to.be.closeTo(0, 0.00001);
+      expect(res.z).to.be.closeTo(Math.sin(Math.PI/6), 0.00001);
+    });
+  });
+
   suite('p5.Vector.fromAngle(angle)', function() {
     var res, angle;
     setup(function() {
