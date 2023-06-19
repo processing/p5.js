@@ -226,10 +226,10 @@ p5.prototype.background = function(...args) {
  * </code>
  * </div>
  *
- * @param {Number} r normalized red val.
- * @param {Number} g normalized green val.
- * @param {Number} b normalized blue val.
- * @param {Number} a normalized alpha val.
+ * @param {Number} r Normalized red val.
+ * @param {Number} g Normalized green val.
+ * @param {Number} b Normalized blue val.
+ * @param {Number} a Normalized alpha val.
  */
 p5.prototype.clear = function(...args) {
   const _r = args[0] || 0;
@@ -247,6 +247,9 @@ p5.prototype.clear = function(...args) {
  * <a href="#/p5/stroke">stroke()</a>, <a href="#/p5/background">background()</a>,
  * and <a href="#/p5/color">color()</a> are defined by values between 0 and 255
  * using the RGB color model.
+ *
+ * Setting colorMode(RGB, 100) sets colors to be interpreted as RGB color values
+ * between 0 and 100.
  *
  * Setting colorMode(HSB) or colorMode(HSL) changes to HSB or HSL system instead of RGB.
  *
@@ -391,128 +394,128 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * @example
  * <div>
  * <code>
- * // Grayscale integer value
+ * // Grayscale integer value.
  * fill(51);
  * rect(20, 20, 60, 60);
- * describe('dark charcoal gray rect with black outline in center of canvas');
+ * describe('A dark charcoal gray rectangle with a black outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // R, G & B integer values
+ * // R, G & B integer values.
  * fill(255, 204, 0);
  * rect(20, 20, 60, 60);
- * describe('yellow rect with black outline in center of canvas');
+ * describe('A yellow rectangle with a black outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // H, S & B integer values
+ * // H, S & B integer values.
  * colorMode(HSB);
  * fill(255, 204, 100);
  * rect(20, 20, 60, 60);
- * describe('royal blue rect with black outline in center of canvas');
+ * describe('A royal blue rectange with a black outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Named SVG/CSS color string
+ * // A CSS named color.
  * fill('red');
  * rect(20, 20, 60, 60);
- * describe('red rect with black outline in center of canvas');
+ * describe('A red rectangle with a black outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // three-digit hexadecimal RGB notation
+ * // Three-digit hexadecimal RGB notation.
  * fill('#fae');
  * rect(20, 20, 60, 60);
- * describe('pink rect with black outline in center of canvas');
+ * describe('A pink rectangle with a black outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // six-digit hexadecimal RGB notation
- * fill('#222222');
+ * // Six-digit hexadecimal RGB notation.
+ * fill('#A251FA');
  * rect(20, 20, 60, 60);
- * describe('black rect with black outline in center of canvas');
+ * describe('A purple rectangle with a black outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // integer RGB notation
+ * // Integer RGB notation.
  * fill('rgb(0,255,0)');
  * rect(20, 20, 60, 60);
- * describe('bright green rect with black outline in center of canvas');
+ * describe('A bright green rectangle with a black outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // integer RGBA notation
+ * // Integer RGBA notation.
  * fill('rgba(0,255,0, 0.25)');
  * rect(20, 20, 60, 60);
- * describe('soft green rect with black outline in center of canvas');
+ * describe('A soft green rectange with a black outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // percentage RGB notation
+ * // Percentage RGB notation.
  * fill('rgb(100%,0%,10%)');
  * rect(20, 20, 60, 60);
- * describe('red rect with black outline in center of canvas');
+ * describe('A red rectange with a black outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // percentage RGBA notation
+ * // Percentage RGBA notation.
  * fill('rgba(100%,0%,100%,0.5)');
  * rect(20, 20, 60, 60);
- * describe('dark fuchsia rect with black outline in center of canvas');
+ * describe('A dark fuchsia rectangle with a black outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // p5 Color object
+ * // p5 Color object.
  * fill(color(0, 0, 255));
  * rect(20, 20, 60, 60);
- * describe('blue rect with black outline in center of canvas');
+ * describe('A blue rectangle with a black outline.');
  * </code>
  * </div>
  */
 
 /**
  * @method fill
- * @param  {String}        value   a color string
+ * @param  {String}        value   A color string.
  * @chainable
  */
 
 /**
  * @method fill
- * @param  {Number}        gray   a gray value
+ * @param  {Number}        gray   A gray value.
  * @param  {Number}        [alpha]
  * @chainable
  */
 
 /**
  * @method fill
- * @param  {Number[]}      values  an array containing the red,green,blue &
- *                                 and alpha components of the color
+ * @param  {Number[]}      values  An array containing the red, green, blue &
+ *                                 and alpha components of the color.
  * @chainable
  */
 
 /**
  * @method fill
- * @param  {p5.Color}      color   the fill color
+ * @param  {p5.Color}      color   The fill color.
  * @chainable
  */
 p5.prototype.fill = function(...args) {
@@ -531,11 +534,10 @@ p5.prototype.fill = function(...args) {
  * @example
  * <div>
  * <code>
- * rect(15, 10, 55, 55);
+ * rect(32, 10, 35, 35);
  * noFill();
- * rect(20, 20, 60, 60);
- * describe(`White rect at top middle and noFill rect center,
- * both with black outlines.`);
+ * rect(32, 55, 35, 35);
+ * describe('A white rectangle on top of an empty noFill rectangle.');
  * </code>
  * </div>
  *
@@ -552,7 +554,7 @@ p5.prototype.fill = function(...args) {
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
  *   box(45, 45, 45);
- *   describe('black canvas with purple cube wireframe spinning');
+ *   describe('A purple cube wireframe spinning on a black canvas.');
  * }
  * </code>
  * </div>
@@ -573,7 +575,7 @@ p5.prototype.noFill = function() {
  * <code>
  * noStroke();
  * rect(20, 20, 60, 60);
- * describe('White rect at center; no outline.');
+ * describe('A white rectangle with no outline.');
  * </code>
  * </div>
  *
@@ -590,7 +592,7 @@ p5.prototype.noFill = function() {
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
  *   box(45, 45, 45);
- *   describe('black canvas with pink cube spinning');
+ *   describe('A pink cube with no edge outlines spinning on a black canvas.');
  * }
  * </code>
  * </div>
