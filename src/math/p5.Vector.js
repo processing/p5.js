@@ -2516,23 +2516,10 @@ p5.Vector = class {
  * @param {p5.Vector} v1 old vector
  * @param {p5.Vector} v2 new vectpr
  * @param {Number} amt
- * @param {p5.Vector} [target] The vector to receive the result
  * @return {p5.Vector} slerped vector between v1 and v2
  */
-  static slerp(v1, v2, amt, target) {
-    if (!target) {
-      target = v1.copy();
-      if (arguments.length === 4) {
-        p5._friendlyError(
-          'The target parameter is undefined, it should be of type p5.Vector',
-          'p5.Vector.slerp'
-        );
-      }
-    } else {
-      target.set(v1);
-    }
-    target.slerp(v2, amt);
-    return target;
+  static slerp(v1, v2, amt) {
+    return v1.slerp(v2, amt);
   }
 
   /**
