@@ -1430,7 +1430,8 @@ suite('p5.Vector', function() {
     });
 
     test('should return a new product', function() {
-      expect(v.slerp(new p5.Vector(), 0)).to.not.eql(v);
+      res = v.slerp(w, 0);
+      expect(res).to.not.eql(v);
     });
 
     test('if amt is 0, returns original vector', function() {
