@@ -1426,7 +1426,7 @@ suite('p5.Vector', function() {
     var w, res;
     setup(function() {
       v.set(1, 2, 3);
-      w = new.p5.Vector(4, 6, 8);
+      w = new p5.Vector(4, 6, 8);
     });
 
     test('should return a new product', function() {
