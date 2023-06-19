@@ -34,7 +34,7 @@ import './p5.Color';
  * grayscale value. The second parameter sets the alpha (transparency) value.
  *
  * The version of `background()` with three parameters interprets them as RGB, HSB,
- * or HSL colors, depending on the current `colorMode()`.
+ * or HSL colors, depending on the current <a href="#/p5/colorMode">colorMode()</a>.
  *
  * A <a href="#/p5.Color">p5.Color</a> object can also be provided to set the
  * background color.
@@ -52,6 +52,14 @@ import './p5.Color';
  * // A grayscale integer value.
  * background(51);
  * describe('A canvas with a dark charcoal gray background.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // A grayscale integer value and an alpha value.
+ * background(51, 0.4);
+ * describe('A canvas with a transparent gray background.');
  * </code>
  * </div>
  *
@@ -362,26 +370,22 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
 };
 
 /**
- * Sets the color used to fill shapes. For example, if you run fill(204, 102, 0),
- * all shapes drawn after the fill command will be filled with the color orange.
- * This color is either specified in terms of the RGB or HSB color depending on
- * the current <a href="#/p5/colorMode">colorMode()</a>. (The default color space
- * is RGB, with each value in the range from 0 to 255). The alpha range by default
- * is also 0 to 255.
+ * Sets the color used to fill shapes. Calling `fill(255, 165, 0)` or fill('orange')
+ * means all shapes drawn after the fill command will be filled with the color orange.
  *
- * If a single string argument is provided, RGB, RGBA and Hex CSS color strings
- * and all named color strings are supported. In this case, an alpha number
- * value as a second argument is not supported, the RGBA form should be used.
+ * The version of `fill()` with one parameter interprets the value one of two
+ * ways. If the parameter is a number, it's interpreted as a grayscale value.
+ * If the parameter is a string, it's interpreted as a CSS color string. A
+ * <a href="#/p5.Color">p5.Color</a> object can also be provided to set the fill color.
  *
- * A <a href="#/p5.Color">p5.Color</a> object can also be provided to set the fill color.
+ * The version of `fill()` with three parameters interprets them as RGB, HSB,
+ * or HSL colors, depending on the current <a href="#/p5/colorMode">colorMode()</a>.
+ * (The default color space is RGB, with each value in the range from 0 to 255)
  *
  * @method fill
- * @param  {Number}        v1      red or hue value relative to
- *                                 the current color range
- * @param  {Number}        v2      green or saturation value
- *                                 relative to the current color range
- * @param  {Number}        v3      blue or brightness value
- *                                 relative to the current color range
+ * @param  {Number}        v1      Red value if color mode is RGB or hue value if color mode is HSB.
+ * @param  {Number}        v2      Green value if color mode is RGB or saturation value if color mode is HSB.
+ * @param  {Number}        v3      Blue value if color mode is RGB or brightness value if color mode is HSB.
  * @param  {Number}        [alpha]
  * @chainable
  * @example
