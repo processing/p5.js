@@ -603,165 +603,165 @@ p5.prototype.noStroke = function() {
 };
 
 /**
- * Sets the color used to draw lines and borders around shapes. This color
- * is either specified in terms of the RGB or HSB color depending on the
- * current <a href="#/p5/colorMode">colorMode()</a> (the default color space
- * is RGB, with each value in the range from 0 to 255). The alpha range by
- * default is also 0 to 255.
+ * Sets the color used to draw lines and borders around shapes. Calling `stroke(255, 165, 0)`
+ * or stroke('orange') means all shapes drawn after the stroke command will be filled with \
+ * the color orange.
  *
- * If a single string argument is provided, RGB, RGBA and Hex CSS color
- * strings and all named color strings are supported. In this case, an alpha
- * number value as a second argument is not supported, the RGBA form should be
- * used.
+ * The version of `stroke()` with one parameter interprets the value one of two
+ * ways. If the parameter is a number, it's interpreted as a grayscale value.
+ * If the parameter is a string, it's interpreted as a CSS color string. A
+ * <a href="#/p5.Color">p5.Color</a> object can also be provided to set the stroke color.
  *
- * A <a href="#/p5.Color">p5.Color</a> object can also be provided to set the stroke color.
+ * The version of `stroke()` with three parameters interprets them as RGB, HSB,
+ * or HSL colors, depending on the current <a href="#/p5/colorMode">colorMode()</a>.
+ * (The default color space is RGB, with each value in the range from 0 to 255)
  *
  * @method stroke
- * @param  {Number}        v1      red or hue value relative to
- *                                 the current color range
- * @param  {Number}        v2      green or saturation value
- *                                 relative to the current color range
- * @param  {Number}        v3      blue or brightness value
- *                                 relative to the current color range
+ * @param  {Number}        v1      Red or hue value relative to
+ *                                 the current color range.
+ * @param  {Number}        v2      Green or saturation value
+ *                                 relative to the current color range.
+ * @param  {Number}        v3      Blue or brightness value
+ *                                 relative to the current color range.
  * @param  {Number}        [alpha]
  * @chainable
  *
  * @example
  * <div>
  * <code>
- * // Grayscale integer value
+ * // Grayscale integer value.
  * strokeWeight(4);
  * stroke(51);
  * rect(20, 20, 60, 60);
- * describe('White rect at center with dark charcoal gray outline.');
+ * describe('A white rectangle with a dark charcoal gray outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // R, G & B integer values
+ * // R, G & B integer values.
  * stroke(255, 204, 0);
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('White rect at center with yellow outline.');
+ * describe('A white rectangle with a yellow outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // H, S & B integer values
+ * // H, S & B integer values.
  * colorMode(HSB);
  * strokeWeight(4);
  * stroke(255, 204, 100);
  * rect(20, 20, 60, 60);
- * describe('White rect at center with royal blue outline.');
+ * describe('A white rectangle with a royal blue outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Named SVG/CSS color string
+ * // A CSS namee color.
  * stroke('red');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('White rect at center with red outline.');
+ * describe('A white rectangle with a red outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // three-digit hexadecimal RGB notation
+ * // Three-digit hexadecimal RGB notation.
  * stroke('#fae');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('White rect at center with pink outline.');
+ * describe('A white rectangle with a pink outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // six-digit hexadecimal RGB notation
+ * // Six-digit hexadecimal RGB notation.
  * stroke('#222222');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('White rect at center with black outline.');
+ * describe('A white rectangle with a black outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // integer RGB notation
+ * // Integer RGB notation.
  * stroke('rgb(0,255,0)');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('White rect at center with bright green outline.');
+ * describe('A whiite rectangle with a bright green outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // integer RGBA notation
+ * // Integer RGBA notation.
  * stroke('rgba(0,255,0,0.25)');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('White rect at center with soft green outline.');
+ * describe('A white rectangle with a soft green outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // percentage RGB notation
+ * // Percentage RGB notation.
  * stroke('rgb(100%,0%,10%)');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('White rect at center with red outline.');
+ * describe('A white rectangle with a red outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // percentage RGBA notation
+ * // Percentage RGBA notation.
  * stroke('rgba(100%,0%,100%,0.5)');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('White rect at center with dark fuchsia outline.');
+ * describe('A white rectangle with a dark fuchsia outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // p5 Color object
+ * // p5 Color object.
  * stroke(color(0, 0, 255));
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('White rect at center with blue outline.');
+ * describe('A white rectangle with a blue outline.');
  * </code>
  * </div>
  */
 
 /**
  * @method stroke
- * @param  {String}        value   a color string
+ * @param  {String}        value   A color string.
  * @chainable
  */
 
 /**
  * @method stroke
- * @param  {Number}        gray   a gray value
+ * @param  {Number}        gray   A gray value.
  * @param  {Number}        [alpha]
  * @chainable
  */
 
 /**
  * @method stroke
- * @param  {Number[]}      values  an array containing the red,green,blue &
- *                                 and alpha components of the color
+ * @param  {Number[]}      values  An array containing the red, green, blue,
+ *                                 and alpha components of the color.
  * @chainable
  */
 
 /**
  * @method stroke
- * @param  {p5.Color}      color   the stroke color
+ * @param  {p5.Color}      color   The stroke color.
  * @chainable
  */
 
