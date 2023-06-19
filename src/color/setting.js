@@ -11,23 +11,20 @@ import * as constants from '../core/constants';
 import './p5.Color';
 
 /**
- * The <a href="#/p5/background">background()</a> function sets the color used
- * for the background of the canvas. By default, the background is transparent.
- * This function is typically used within <a href="#/p5/draw">draw()</a> to clear
- * the display window at the beginning of each frame. It can also be used inside
- * <a href="#/p5/setup">setup()</a> to set the background on the first frame of
+ * Sets the color used for the background of the canvas. By default, the
+ * background is transparent. This function is typically used within
+ * <a href="#/p5/draw">draw()</a> to clear the display window at the beginning of each frame. It can
+ * also be used inside <a href="#/p5/setup">setup()</a> to set the background on the first frame of
  * animation.
  *
- * By default, colors are specified in RGB values. (`background(255, 204, 0)` sets
- * the background a bright yellow color) HSL or HSB can be used instead by using
- * the <a href="#/p5/colorMode">colorMode()</a> function.
+ * By default, colors are specified in RGB values. (`background(255, 204, 0)`
+ * sets the background a bright yellow color.) HSL or HSB can be used instead by
+ * using the <a href="#/p5/colorMode">colorMode()</a> function.
  *
- * If a single string argument is provided, RGB, RGBA and Hex CSS color strings and
- * all named color strings are supported. In this case, an alpha number value as a
- * second argument is not supported, the RGBA form should be used.
- *
- * <a href="#/p5/background">background()</a> supports  RGB, RGBA, and Hex CSS color strings, as well as named color strings. In this case, providing an alpha value as a second argument is not supported, and the RGBA form should be used if you need to specify transparency.
- *
+ * <a href="#/p5/background">background()</a> supports RGB, RGBA, and Hex CSS color strings, as well as named
+ * color strings. In this case, providing an alpha value as a second argument is
+ * not supported, so the RGBA form should be used if you need to specify
+ * transparency.
  *
  * A <a href="#/p5.Color">p5.Color</a> object can also be provided to set the background color.
  *
@@ -42,7 +39,7 @@ import './p5.Color';
  * <code>
  * // Grayscale integer value
  * background(51);
- * describe('canvas with darkest charcoal grey background');
+ * describe('A canvas with a dark charcoal grey background.');
  * </code>
  * </div>
  *
@@ -50,7 +47,7 @@ import './p5.Color';
  * <code>
  * // R, G & B integer values
  * background(255, 204, 0);
- * describe('canvas with yellow background');
+ * describe('A canvas with a yellow background.');
  * </code>
  * </div>
  *
@@ -59,7 +56,7 @@ import './p5.Color';
  * // H, S & B integer values
  * colorMode(HSB);
  * background(255, 204, 100);
- * describe('canvas with royal blue background');
+ * describe('A canvas with a royal blue background.');
  * </code>
  * </div>
  *
@@ -67,7 +64,7 @@ import './p5.Color';
  * <code>
  * // Named SVG/CSS color string
  * background('red');
- * describe('canvas with red background');
+ * describe('A canvas with a red background.');
  * </code>
  * </div>
  *
@@ -75,7 +72,7 @@ import './p5.Color';
  * <code>
  * // three-digit hexadecimal RGB notation
  * background('#fae');
- * describe('canvas with pink background');
+ * describe('A canvas with a pink background.');
  * </code>
  * </div>
  *
@@ -83,7 +80,7 @@ import './p5.Color';
  * <code>
  * // six-digit hexadecimal RGB notation
  * background('#222222');
- * describe('canvas with black background');
+ * describe('A canvas with a black background.');
  * </code>
  * </div>
  *
@@ -91,7 +88,7 @@ import './p5.Color';
  * <code>
  * // integer RGB notation
  * background('rgb(0,255,0)');
- * describe('canvas with bright green background');
+ * describe('A canvas with a bright green background.');
  * </code>
  * </div>
  *
@@ -99,7 +96,7 @@ import './p5.Color';
  * <code>
  * // integer RGBA notation
  * background('rgba(0,255,0, 0.25)');
- * describe('canvas with soft green background');
+ * describe('A canvas with a transparent green background.');
  * </code>
  * </div>
  *
@@ -107,7 +104,7 @@ import './p5.Color';
  * <code>
  * // percentage RGB notation
  * background('rgb(100%,0%,10%)');
- * describe('canvas with red background');
+ * describe('A canvas with a red background.');
  * </code>
  * </div>
  *
@@ -115,7 +112,7 @@ import './p5.Color';
  * <code>
  * // percentage RGBA notation
  * background('rgba(100%,0%,100%,0.5)');
- * describe('canvas with light purple background');
+ * describe('A canvas with a transparent purple background.');
  * </code>
  * </div>
  *
@@ -123,7 +120,7 @@ import './p5.Color';
  * <code>
  * // p5 Color object
  * background(color(0, 0, 255));
- * describe('canvas with blue background');
+ * describe('A canvas with a blue background.');
  * </code>
  * </div>
  *
@@ -133,15 +130,15 @@ import './p5.Color';
  * @method background
  * @param {String} colorstring color string, possible formats include: integer
  *                         rgb() or rgba(), percentage rgb() or rgba(),
- *                         3-digit hex, 6-digit hex
+ *                         3-digit hex, 6-digit hex.
  * @param {Number} [a]         opacity of the background relative to current
- *                             color range (default is 0-255)
+ *                             color range (default is 0-255).
  * @chainable
  */
 
 /**
  * @method background
- * @param {Number} gray   specifies a value between white and black
+ * @param {Number} gray   specifies a value between white and black.
  * @param {Number} [a]
  * @chainable
  */
@@ -149,11 +146,11 @@ import './p5.Color';
 /**
  * @method background
  * @param {Number} v1     red or hue value (depending on the current color
- *                        mode)
+ *                        mode).
  * @param {Number} v2     green or saturation value (depending on the current
- *                        color mode)
+ *                        color mode).
  * @param {Number} v3     blue or brightness value (depending on the current
- *                        color mode)
+ *                        color mode).
  * @param  {Number} [a]
  * @chainable
  */
@@ -161,7 +158,7 @@ import './p5.Color';
 /**
  * @method background
  * @param  {Number[]}      values  an array containing the red, green, blue
- *                                 and alpha components of the color
+ *                                 and alpha components of the color.
  * @chainable
  */
 
@@ -169,7 +166,7 @@ import './p5.Color';
  * @method background
  * @param {p5.Image} image     image created with <a href="#/p5/loadImage">loadImage()</a> or <a href="#/p5/createImage">createImage()</a>,
  *                             to set as background
- *                             (must be same size as the sketch window)
+ *                             (must be same size as the sketch window).
  * @param  {Number}  [a]
  * @chainable
  */
@@ -180,16 +177,13 @@ p5.prototype.background = function(...args) {
 
 /**
  * Clears the pixels within a buffer. This function only clears the canvas.
- * It will not clear objects created by createX() methods such as
- * <a href="#/p5/createVideo">createVideo()</a> or <a href="#/p5/createDiv">createDiv()</a>.
- * Unlike the main graphics context, pixels in additional graphics areas created
+ * It does not clear objects created by createX() methods such as
+ * <a href="#/p5/createVideo">createVideo()</a> or <a href="#/p5/createDiv">createDiv()</a>. Unlike the main graphics context,
+ * pixels in additional graphics areas created
  * with <a href="#/p5/createGraphics">createGraphics()</a> can be entirely
- * or partially transparent. This function clears everything to make all of
- * the pixels 100% transparent.
+ * or partially transparent. This function makes all of the pixels 100% transparent.
  *
- * Note: In WebGL mode, this function can be passed normalized RGBA color values in
- * order to clear the screen to a specific color. In addition to color, it will also
- * clear the depth buffer. If you are not using the webGL renderer
+ * Note: In WebGL mode, this function can be passed normalized RGBA color values in order to clear the screen to a specific color. It also clears the depth buffer. If you are not using the webGL renderer
  * these color values will have no effect.
  *
  * @method clear
