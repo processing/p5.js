@@ -1429,11 +1429,6 @@ suite('p5.Vector', function() {
       w = new p5.Vector(4, 6, 8);
     });
 
-    test('should return a new product', function() {
-      res = v.slerp(w, 0);
-      expect(res).to.not.eql(v);
-    });
-
     test('if amt is 0, returns original vector', function() {
       res = v.slerp(w, 0);
       expect(res.x).to.eql(1);
