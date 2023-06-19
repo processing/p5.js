@@ -13,22 +13,24 @@ import './p5.Color';
 /**
  * Sets the color used for the background of the canvas. By default, the
  * background is transparent. This function is typically used within
- * <a href="#/p5/draw">draw()</a> to clear the display window at the beginning of each frame. It can
- * also be used inside <a href="#/p5/setup">setup()</a> to set the background on the first frame of
- * animation.
+ * <a href="#/p5/draw">draw()</a> to clear the display window at the beginning
+ * of each frame. It can also be used inside <a href="#/p5/setup">setup()</a> to
+ * set the background on the first frame of animation.
  *
  * By default, colors are specified in RGB values. (`background(255, 204, 0)`
  * sets the background a bright yellow color.) HSL or HSB can be used instead by
  * using the <a href="#/p5/colorMode">colorMode()</a> function.
  *
- * <a href="#/p5/background">background()</a> supports RGB, RGBA, and Hex CSS color strings, as well as named
- * color strings. In this case, providing an alpha value as a second argument is
- * not supported, so the RGBA form should be used if you need to specify
- * transparency.
+ * <a href="#/p5/background">background()</a> supports RGB, RGBA, and Hex CSS
+ * color strings, as well as named color strings. In this case, providing an
+ * alpha value as a second argument is not supported, so the RGBA form should be
+ * used if you need to specify transparency.
  *
- * A <a href="#/p5.Color">p5.Color</a> object can also be provided to set the background color.
+ * A <a href="#/p5.Color">p5.Color</a> object can also be provided to set the
+ * background color.
  *
- * A <a href="#/p5.Image">p5.Image</a> can also be provided to set the background image.
+ * A <a href="#/p5.Image">p5.Image</a> can also be provided to set the
+ * background image.
  *
  * @method background
  * @param {p5.Color} color  any value created by the <a href="#/p5/color">color()</a> function
@@ -164,26 +166,31 @@ import './p5.Color';
 
 /**
  * @method background
- * @param {p5.Image} image     image created with <a href="#/p5/loadImage">loadImage()</a> or <a href="#/p5/createImage">createImage()</a>,
+ * @param {p5.Image} image     image created with <a href="#/p5/loadImage">loadImage()</a>
+ *                             or <a href="#/p5/createImage">createImage()</a>,
  *                             to set as background
  *                             (must be same size as the sketch window).
  * @param  {Number}  [a]
  * @chainable
  */
-p5.prototype.background = function(...args) {
+p5.prototype.background = function (...args) {
   this._renderer.background(...args);
   return this;
 };
 
 /**
- * Clears the pixels within a buffer. This function only clears the canvas.
+ * Clears the pixels within a buffer, specifically the canvas.
  * It does not clear objects created by createX() methods such as
- * <a href="#/p5/createVideo">createVideo()</a> or <a href="#/p5/createDiv">createDiv()</a>. Unlike the main graphics context,
- * pixels in additional graphics areas created
- * with <a href="#/p5/createGraphics">createGraphics()</a> can be entirely
- * or partially transparent. This function makes all of the pixels 100% transparent.
+ * <a href="#/p5/createVideo">createVideo()</a> or
+ * <a href="#/p5/createDiv">createDiv()</a>. Unlike the main graphics
+ * context, pixels in additional graphics areas created with
+ * <a href="#/p5/createGraphics">createGraphics()</a>
+ * can be any level of transparency. This function makes
+ * every pixel 100% transparent.
  *
- * Note: In WebGL mode, this function can be passed normalized RGBA color values in order to clear the screen to a specific color. It also clears the depth buffer. If you are not using the webGL renderer
+ * Note: In WebGL mode, this function can be passed normalized
+ * RGBA color values in order to clear the screen to a specific color.
+ * It also clears the depth buffer. If you are not using the webGL renderer,
  * these color values will have no effect.
  *
  * @method clear
@@ -194,15 +201,12 @@ p5.prototype.background = function(...args) {
  * // Clear the screen on mouse press.
  * function draw() {
  *   ellipse(mouseX, mouseY, 20, 20);
- *   describe(`small white ellipses are continually drawn at mouse’s x and y
- *   coordinates.`);
+ *   describe('A white ellipse is drawn at mouse x and y coordinates.');
  * }
  * function mousePressed() {
  *   clear();
  *   background(128);
- *   describe(
- *     'canvas is cleared, small white ellipse is drawn at mouse X and mouse Y'
- *   );
+ *   describe('The canvas is cleared when mouse is clicked.');
  * }
  * </code>
  * </div>
@@ -212,7 +216,7 @@ p5.prototype.background = function(...args) {
  * @param {Number} b normalized blue val.
  * @param {Number} a normalized alpha val.
  */
-p5.prototype.clear = function(...args) {
+p5.prototype.clear = function (...args) {
   const _r = args[0] || 0;
   const _g = args[1] || 0;
   const _b = args[2] || 0;
@@ -223,22 +227,22 @@ p5.prototype.clear = function(...args) {
 };
 
 /**
- * <a href="#/p5/colorMode">colorMode()</a> changes the way p5.js interprets
- * color data. By default, the parameters for <a href="#/p5/fill">fill()</a>,
+ * Changes the way p5.js interprets color data. By default, it is set to
+ * colorMode(RGB, 255) so the parameters for <a href="#/p5/fill">fill()</a>,
  * <a href="#/p5/stroke">stroke()</a>, <a href="#/p5/background">background()</a>,
  * and <a href="#/p5/color">color()</a> are defined by values between 0 and 255
- * using the RGB color model. This is equivalent to setting colorMode(RGB, 255).
- * Setting colorMode(HSB) lets you use the HSB system instead. By default, this
- * is colorMode(HSB, 360, 100, 100, 1). You can also use HSL.
+ * using the RGB color model.
+ *
+ * Setting colorMode(HSB) or colorMode(HSL) changes to HSB or HSL system instead of RGB.
  *
  * Note: existing color objects remember the mode that they were created in,
  * so you can change modes as you like without affecting their appearance.
  *
  * @method colorMode
- * @param {Constant} mode   either RGB, HSB or HSL, corresponding to
+ * @param {Constant} mode   Either RGB, HSB or HSL, corresponding to
  *                          Red/Green/Blue and Hue/Saturation/Brightness
- *                          (or Lightness)
- * @param {Number}  [max]  range for all values
+ *                          (or Lightness).
+ * @param {Number}  [max]  Range for all values.
  * @chainable
  *
  * @example
@@ -253,7 +257,7 @@ p5.prototype.clear = function(...args) {
  *   }
  * }
  * describe(
- *   'Green to red gradient from bottom left to top right with shading from top left'
+ *   'A diagonal green to red gradient from bottom-left to top-right with shading transitioning to black at top-left corner.'
  * );
  * </code>
  * </div>
@@ -268,19 +272,24 @@ p5.prototype.clear = function(...args) {
  *     point(i, j);
  *   }
  * }
- * describe(`Rainbow gradient from left to right.
- * Brightness increasing to white at top.`);
+ * describe(` A rainbow gradient left-to-right gradient with brightness
+ * transitioning to white at the top.`);
  * </code>
  * </div>
  *
  * <div>
  * <code>
  * colorMode(RGB, 255);
- * let c = color(127, 255, 0);
+ * const myColor = color(180, 175, 230);
+ * background(myColor);
  * colorMode(RGB, 1);
- * let myColor = c._getRed();
- * text(myColor, 10, 10, 80, 80);
- * describe('value of color red 0.4980... written on canvas');
+ * const redValue = red(myColor);
+ * const greenValue = green(myColor);
+ * const blueValue = blue(myColor);
+ * text('Red:' + redValue, 10, 10, 80, 80);
+ * text('Green:' + greenValue, 10, 40, 80, 80);
+ * text('Blue:' + blueValue, 10, 70, 80, 80);
+ * describe('A purple canvas with the red, green, and blue decimal values of the color written on it.');
  * </code>
  * </div>
  *
@@ -292,8 +301,8 @@ p5.prototype.clear = function(...args) {
  * strokeWeight(4);
  * stroke(255, 0, 10, 0.3);
  * ellipse(40, 40, 50, 50);
- * ellipse(50, 50, 40, 40);
- * describe('two translucent pink ellipse outlines at middle left and at center');
+ * ellipse(50, 60, 50, 50);
+ * describe('Two overlapping translucent pink ellipse outlines.');
  * </code>
  * </div>
  *
@@ -302,16 +311,16 @@ p5.prototype.clear = function(...args) {
 /**
  * @method colorMode
  * @param {Constant} mode
- * @param {Number} max1     range for the red or hue depending on the
- *                              current color mode
- * @param {Number} max2     range for the green or saturation depending
- *                              on the current color mode
- * @param {Number} max3     range for the blue or brightness/lightness
- *                              depending on the current color mode
- * @param {Number} [maxA]   range for the alpha
+ * @param {Number} max1     Range for the red or hue depending on the
+ *                              current color mode.
+ * @param {Number} max2     Range for the green or saturation depending
+ *                              on the current color mode.
+ * @param {Number} max3     Range for the blue or brightness/lightness
+ *                              depending on the current color mode.
+ * @param {Number} [maxA]   Range for the alpha.
  * @chainable
  */
-p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
+p5.prototype.colorMode = function (mode, max1, max2, max3, maxA) {
   p5._validateParameters('colorMode', arguments);
   if (
     mode === constants.RGB ||
@@ -493,7 +502,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * @param  {p5.Color}      color   the fill color
  * @chainable
  */
-p5.prototype.fill = function(...args) {
+p5.prototype.fill = function (...args) {
   this._renderer._setProperty('_fillSet', true);
   this._renderer._setProperty('_doFill', true);
   this._renderer.fill(...args);
@@ -535,7 +544,7 @@ p5.prototype.fill = function(...args) {
  * </code>
  * </div>
  */
-p5.prototype.noFill = function() {
+p5.prototype.noFill = function () {
   this._renderer._setProperty('_doFill', false);
   return this;
 };
@@ -573,7 +582,7 @@ p5.prototype.noFill = function() {
  * </code>
  * </div>
  */
-p5.prototype.noStroke = function() {
+p5.prototype.noStroke = function () {
   this._renderer._setProperty('_doStroke', false);
   return this;
 };
@@ -741,7 +750,7 @@ p5.prototype.noStroke = function() {
  * @chainable
  */
 
-p5.prototype.stroke = function(...args) {
+p5.prototype.stroke = function (...args) {
   this._renderer._setProperty('_strokeSet', true);
   this._renderer._setProperty('_doStroke', true);
   this._renderer.stroke(...args);
@@ -823,7 +832,7 @@ p5.prototype.stroke = function(...args) {
  * </code>
  * </div>
  */
-p5.prototype.erase = function(opacityFill = 255, opacityStroke = 255) {
+p5.prototype.erase = function (opacityFill = 255, opacityStroke = 255) {
   this._renderer.erase(opacityFill, opacityStroke);
 
   return this;
@@ -854,7 +863,7 @@ p5.prototype.erase = function(opacityFill = 255, opacityStroke = 255) {
  * </div>
  */
 
-p5.prototype.noErase = function() {
+p5.prototype.noErase = function () {
   this._renderer.noErase();
   return this;
 };
