@@ -1785,7 +1785,8 @@ p5.Vector = class {
  *   const theta = Math.atan2(mouseY-50, mouseX-50);
  *   const v = createVector(50 * Math.cos(theta), 50 * Math.sin(theta));
  *   // slerp between v and needle
- *   needle.set(needle.slerp(v, 0.05));
+ *   // needle vector is changed by slerp function.
+ *   needle.slerp(v, 0.05);
  *
  *   line(0, 0, needle.x, needle.y);
  * }
@@ -1798,10 +1799,11 @@ p5.Vector = class {
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
  *   noStroke();
- *   v1 = createVector(30, -30, 0);
- *   v2 = createVector(0, 30, -30);
- *   v3 = createVector(-30, 0, 30);
+ *   v1 = createVector(30, 0, 0);
+ *   v2 = createVector(0, 30, 0);
+ *   v3 = createVector(0, 0, 30);
  * }
+ *
  * function draw(){
  *   background(0);
  *   lights();
@@ -1809,9 +1811,11 @@ p5.Vector = class {
  *   ambientMaterial(255);
  *
  *   const t = (frameCount % 60) / 60;
- *   const v4 = v1.slerp(v2, t);
- *   const v5 = v2.slerp(v3, t);
- *   const v6 = v3.slerp(v1, t);
+ *   // v1, v2, v3 is not changed by slerp function.
+ *   // because this function is static version.
+ *   const v4 = p5.Vector.slerp(v1, v2, t);
+ *   const v5 = p5.Vector.slerp(v2, v3, t);
+ *   const v6 = p5.Vector.slerp(v3, v1, t);
  *   translate(v4.x, v4.y, v4.z);
  *   sphere(5);
  *   translate(v5.x - v4.x, v5.y - v4.y, v5.z - v4.z);
@@ -1823,10 +1827,9 @@ p5.Vector = class {
  * </div>
  */
   slerp(v, amt) {
-    const result = this.copy();
     // edge cases.
-    if (amt === 0) { return result; }
-    if (amt === 1) { return v.copy(); }
+    if (amt === 0) { return this; }
+    if (amt === 1) { return this.set(v); }
 
     // calculate magnitudes
     const selfMag = this.mag();
@@ -1834,8 +1837,8 @@ p5.Vector = class {
     const magmag = selfMag * vMag;
     // if either is a zero vector, linearly interpolate by these vectors
     if (magmag === 0) {
-      result.mult(1 - amt).add(v.x * amt, v.y * amt, v.z * amt);
-      return result;
+      this.mult(1 - amt).add(v.x * amt, v.y * amt, v.z * amt);
+      return this;
     }
     // the cross product of 'this' and 'v' is the axis of rotation
     const axis = this.cross(v);
@@ -1852,8 +1855,8 @@ p5.Vector = class {
     } else if (theta < Math.PI * 0.5) {
       // if the norm is 0 and the angle is less than PI/2,
       // the angle is very close to 0, so do linear interpolation.
-      result.mult(1 - amt).add(v.x * amt, v.y * amt, v.z * amt);
-      return result;
+      this.mult(1 - amt).add(v.x * amt, v.y * amt, v.z * amt);
+      return this;
     } else {
       // If the norm is 0 and the angle is more than PI/2, the angle is
       // very close to PI.
@@ -1873,7 +1876,7 @@ p5.Vector = class {
     }
 
     // Since 'axis' is a unit vector, ey is a vector of the same length as 'result'.
-    const ey = axis.cross(result);
+    const ey = axis.cross(this);
     // interpolate the length with 'this' and 'v'.
     const lerpedMagFactor = (1 - amt) + amt * vMag / selfMag;
     // imagine an orthonormal basis where "axis", "result" and "ey" are
@@ -1882,11 +1885,11 @@ p5.Vector = class {
     const cosMultiplier = lerpedMagFactor * Math.cos(amt * theta);
     const sinMultiplier = lerpedMagFactor * Math.sin(amt * theta);
     // then, calculate 'result'.
-    result.x = result.x * cosMultiplier + ey.x * sinMultiplier;
-    result.y = result.y * cosMultiplier + ey.y * sinMultiplier;
-    result.z = result.z * cosMultiplier + ey.z * sinMultiplier;
+    this.x = this.x * cosMultiplier + ey.x * sinMultiplier;
+    this.y = this.y * cosMultiplier + ey.y * sinMultiplier;
+    this.z = this.z * cosMultiplier + ey.z * sinMultiplier;
 
-    return result;
+    return this;
   }
 
   /**
@@ -2516,10 +2519,23 @@ p5.Vector = class {
  * @param {p5.Vector} v1 old vector
  * @param {p5.Vector} v2 new vectpr
  * @param {Number} amt
+ * @param {p5.Vector} [target] The vector to receive the result
  * @return {p5.Vector} slerped vector between v1 and v2
  */
-  static slerp(v1, v2, amt) {
-    return v1.slerp(v2, amt);
+  static slerp(v1, v2, amt, target) {
+    if (!target) {
+      target = v1.copy();
+      if (arguments.length === 4) {
+        p5._friendlyError(
+          'The target parameter is undefined, it should be of type p5.Vector',
+          'p5.Vector.slerp'
+        );
+      }
+    } else {
+      target.set(v1);
+    }
+    target.slerp(v2, amt);
+    return target;
   }
 
   /**
