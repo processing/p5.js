@@ -1814,11 +1814,11 @@ p5.Vector = class {
  *   const vSlerpZX = p5.Vector.slerp(vz, vx, t);
  *   strokeWeight(6);
  *   strokeCap(SQUARE);
- *   stroke("red");
+ *   stroke('red');
  *   line(0, 0, 0, vSlerpXY.x, vSlerpXY.y, vSlerpXY.z);
- *   stroke("green");
+ *   stroke('green');
  *   line(0, 0, 0, vSlerpYZ.x, vSlerpYZ.y, vSlerpYZ.z);
- *   stroke("blue");
+ *   stroke('blue');
  *   line(0, 0, 0, vSlerpZX.x, vSlerpZX.y, vSlerpZX.z);
  * }
  * </code>
