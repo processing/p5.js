@@ -1801,7 +1801,7 @@ p5.Vector = class {
  *
  * function draw(){
  *   background(255);
- *  
+ *
  *   const vx = createVector(30, 0, 0);
  *   const vy = createVector(0, 30, 0);
  *   const vz = createVector(0, 0, 30);
