@@ -242,11 +242,39 @@ p5.prototype.noCanvas = function() {
  * }
  * </code>
  * </div>
+ * <div>
+ * <code>
+ * let ar;
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   ar = createGraphics(100, 100, document.getElementById('canvas-ar'));
+ * }
+ *
+ * function draw() {
+ *   circle(random(width), random(height), random(15));
+ *
+ *   // grab visuals and pass to ar layer
+ *   ar.image(get(0, 0, width, height), 0, 0, ar.width, ar.height);
+ * }
+ * </code>
+ * </div>
  *
  * @alt
  * 4 grey squares alternating light and dark grey. White quarter circle mid-left.
+ * Random circles across the page.
+ */
+/**
+ * @method createGraphics
+ * @param  {Number} w
+ * @param  {Number} h
+ * @param  {Object} [canvas]
+ * @return {p5.Graphics} offscreen graphics buffer
  */
 p5.prototype.createGraphics = function(w, h, renderer, canvas) {
+  if (arguments[2] instanceof HTMLCanvasElement) {
+    renderer = constants.P2D;
+    canvas = arguments[2];
+  }
   p5._validateParameters('createGraphics', arguments);
   return new p5.Graphics(w, h, renderer, this, canvas);
 };
