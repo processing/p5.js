@@ -604,7 +604,7 @@ p5.prototype.noStroke = function() {
 
 /**
  * Sets the color used to draw lines and borders around shapes. Calling `stroke(255, 165, 0)`
- * or stroke('orange') means all shapes drawn after the stroke command will be filled with \
+ * or stroke('orange') means all shapes drawn after the stroke command will be filled with
  * the color orange.
  *
  * The version of `stroke()` with one parameter interprets the value one of two
@@ -774,12 +774,21 @@ p5.prototype.stroke = function(...args) {
 
 /**
  * All drawing that follows <a href="#/p5/erase">erase()</a> will subtract from
- * the canvas. Erased areas will reveal the web page underneath the canvas. Erasing
- * can be canceled with <a href="#/p5/noErase">noErase()</a>.
+ * the canvas, revealing the web page underneath. The erased areas will become transparent,
+ * allowing the content behind the canvas to show through.
+ *
+ * The `erase()` function can take two optional arguments. The first argument is a number
+ * ranging from 0 to 255, which represents the strength of erasing for the shape's fill.
+ * A value of 255 means the shape will fully erase the content underneath, while a value
+ * of 50 will only partially erase the content, making it fainter but still visible. The
+ * second argument, also a numbeer ranging from 0 to 255, represents the strength of
+ * erasing for the shape's outline. By default, both values will be set to 255.
+ *
+ * To cancel the erasing effect, use the <a href="#/p5/noErase">noErase()</a> function.
  *
  * Drawing done with <a href="#/p5/image">image()</a> and <a href="#/p5/background">
  * background()</a> in between <a href="#/p5/erase">erase()</a> and
- * <a href="#/p5/noErase">noErase()</a> will not erase the canvas but works as usual.
+ * <a href="#/p5/noErase">noErase()</a> will work as usual without erasing anything.
  *
  * @method erase
  * @param  {Number}   [strengthFill]      A number (0-255) for the strength of erasing for a shape's fill.
@@ -799,8 +808,33 @@ p5.prototype.stroke = function(...args) {
  * erase();
  * ellipse(25, 30, 30);
  * noErase();
- * describe(`60×60 centered pink rect, purple background.
- * Elliptical area in top-left of rect is erased white.`);
+ * describe(`A purple canvas with a black-outlined pink rectangle,
+ * and a circle in the top-left which is erased white.`);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ * // A canvas with an erase circle that reveals a <div> dom element behind the canvas.
+ *   const cnv = createCanvas(100, 100);
+ *   cnv.style('zIndex','1');
+ *   const div = createDiv('I am a dom element');
+ *   div.style('font-size', '15px');
+ *   div.style('background-color', 'purple');
+ *   div.style('color', 'white');
+ *   div.style('width', '65px');
+ *   div.style('text-align', 'center');
+ *   div.position(18, 18);
+ * }
+ * function draw() {
+ *   background(100, 170, 210);
+ *   erase();
+ *   ellipse(50, 50, 77);
+ *   noErase();
+ *   describe(`A blue canvas with an ellipse that erases to reveal a purple square behind
+ *   the canvas with the text "I am a dom element".`);
+ * }
  * </code>
  * </div>
  *
@@ -813,8 +847,8 @@ p5.prototype.stroke = function(...args) {
  * erase(150, 255);
  * triangle(50, 10, 70, 50, 90, 10);
  * noErase();
- * describe(`60×60 centered purple rect, mint green background.
- * Triangle in top-right is partially erased with fully erased outline.`);
+ * describe(`A mint green canvas with a purple rectangle, and triangle in the top-right
+ * corner with a partially erasing fill and a fully erasing outline.`);
  * </code>
  * </div>
  *
@@ -823,26 +857,19 @@ p5.prototype.stroke = function(...args) {
  * function setup() {
  *   smooth();
  *   createCanvas(100, 100, WEBGL);
- *   // Make a &lt;p&gt; element and put it behind the canvas
- *   let p = createP('I am a dom element');
- *   p.center();
- *   p.style('font-size', '20px');
- *   p.style('text-align', 'center');
- *   p.style('z-index', '-9999');
  * }
  *
  * function draw() {
  *   background(250, 250, 150);
  *   fill(15, 195, 185);
  *   noStroke();
- *   sphere(30);
+ *   sphere(25);
  *   erase();
  *   rotateY(frameCount * 0.02);
  *   translate(0, 0, 40);
  *   torus(15, 5);
  *   noErase();
- *   describe(`60×60 centered teal sphere, yellow background.
- *   Torus rotating around sphere erases to reveal black text underneath.`);
+ *   describe('A yellow canvas with a centered teal sphere and an erased torus rotating around the sphere.');
  * }
  * </code>
  * </div>
@@ -872,8 +899,8 @@ p5.prototype.erase = function(opacityFill = 255, opacityStroke = 255) {
  * ellipse(50, 50, 60);
  * noErase();
  * rect(70, 10, 10, 80);
- * describe(`Orange background, with two tall blue rectangles.
- * A centered ellipse erased the first blue rect but not the second.`);
+ * describe(`An orange background, with two tall blue rectangles.
+ * A centered ellipse erases the first blue rectangle but not the second.`);
  * </code>
  * </div>
  */
