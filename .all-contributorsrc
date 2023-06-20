@@ -3686,7 +3686,7 @@
       "contributions": [
         "translation"
       ]
-     },
+    },
     {
       "login": "ozramos",
       "name": "oz",
@@ -3746,6 +3746,16 @@
         "bug",
         "ideas",
         "design"
+      ]
+    },
+    {
+      "login": "wong-justin",
+      "name": "J Wong",
+      "avatar_url": "https://avatars.githubusercontent.com/u/28441593?v=4",
+      "profile": "http://wonger.dev",
+      "contributions": [
+        "code",
+        "doc"
       ]
     }
   ],
