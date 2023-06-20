@@ -847,7 +847,7 @@ p5.prototype.stroke = function(...args) {
  * erase(150, 255);
  * triangle(50, 10, 70, 50, 90, 10);
  * noErase();
- * describe(`A mint green canvas with a purple rectangle, and triangle in the top-right
+ * describe(`A mint green canvas with a purple rectangle, and a triangle in the top-right
  * corner with a partially erasing fill and a fully erasing outline.`);
  * </code>
  * </div>
@@ -899,8 +899,8 @@ p5.prototype.erase = function(opacityFill = 255, opacityStroke = 255) {
  * ellipse(50, 50, 60);
  * noErase();
  * rect(70, 10, 10, 80);
- * describe(`An orange background, with two tall blue rectangles.
- * A centered ellipse erases the first blue rectangle but not the second.`);
+ * describe(`An orange background, with two tall blue rectangles,
+ * and a centered ellipse that erases the first blue rectangle but not the second.`);
  * </code>
  * </div>
  */
