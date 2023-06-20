@@ -34,6 +34,8 @@ const defaultClass = 'p5Canvas';
  * function. If <a href="#/p5/createCanvas">createCanvas()</a> is not used, the
  * window will be given a default size of 100×100 pixels.
  *
+ * Optionally, an existing canvas can be passed using a selector, ie. document.getElementById('').
+ *
  * For more ways to position the canvas, see the
  * <a href='https://github.com/processing/p5.js/wiki/Positioning-your-canvas'>
  * positioning the canvas</a> wiki page.
@@ -42,6 +44,7 @@ const defaultClass = 'p5Canvas';
  * @param  {Number} w width of the canvas
  * @param  {Number} h height of the canvas
  * @param  {Constant} [renderer] either P2D or WEBGL
+ * @param  {Object} [canvas] existing html canvas element
  * @return {p5.Renderer} pointer to p5.Renderer holding canvas
  * @example
  * <div>
@@ -57,56 +60,84 @@ const defaultClass = 'p5Canvas';
  * @alt
  * Black line extending from top-left of canvas to bottom right.
  */
-p5.prototype.createCanvas = function(w, h, renderer) {
+/**
+ * @method createCanvas
+ * @param  {Number} w
+ * @param  {Number} h
+ * @param  {Object} [canvas]
+ * @return {p5.Renderer} pointer to p5.Renderer holding canvas
+ */
+p5.prototype.createCanvas = function(w, h, renderer, canvas) {
   p5._validateParameters('createCanvas', arguments);
   //optional: renderer, otherwise defaults to p2d
-  const r = renderer || constants.P2D;
+
+  let r;
+  if (arguments[2] instanceof HTMLCanvasElement) {
+    renderer = constants.P2D;
+    canvas = arguments[2];
+  } else {
+    r = renderer || constants.P2D;
+  }
+
   let c;
 
-  if (r === constants.WEBGL) {
+  if (canvas) {
     c = document.getElementById(defaultId);
     if (c) {
-      //if defaultCanvas already exists
       c.parentNode.removeChild(c); //replace the existing defaultCanvas
-      const thisRenderer = this._renderer;
-      this._elements = this._elements.filter(e => e !== thisRenderer);
     }
-    c = document.createElement('canvas');
-    c.id = defaultId;
-    c.classList.add(defaultClass);
+    c = canvas;
+    this._defaultGraphicsCreated = false;
   } else {
-    if (!this._defaultGraphicsCreated) {
-      c = document.createElement('canvas');
-      let i = 0;
-      while (document.getElementById(`defaultCanvas${i}`)) {
-        i++;
+    if (r === constants.WEBGL) {
+      c = document.getElementById(defaultId);
+      if (c) {
+        //if defaultCanvas already exists
+        c.parentNode.removeChild(c); //replace the existing defaultCanvas
+        const thisRenderer = this._renderer;
+        this._elements = this._elements.filter(e => e !== thisRenderer);
       }
-      defaultId = `defaultCanvas${i}`;
+      c = document.createElement('canvas');
       c.id = defaultId;
       c.classList.add(defaultClass);
     } else {
-      // resize the default canvas if new one is created
-      c = this.canvas;
+      if (!this._defaultGraphicsCreated) {
+        if (canvas) {
+          c = canvas;
+        } else {
+          c = document.createElement('canvas');
+        }
+        let i = 0;
+        while (document.getElementById(`defaultCanvas${i}`)) {
+          i++;
+        }
+        defaultId = `defaultCanvas${i}`;
+        c.id = defaultId;
+        c.classList.add(defaultClass);
+      } else {
+        // resize the default canvas if new one is created
+        c = this.canvas;
+      }
     }
-  }
 
-  // set to invisible if still in setup (to prevent flashing with manipulate)
-  if (!this._setupDone) {
-    c.dataset.hidden = true; // tag to show later
-    c.style.visibility = 'hidden';
-  }
-
-  if (this._userNode) {
-    // user input node case
-    this._userNode.appendChild(c);
-  } else {
-    //create main element
-    if (document.getElementsByTagName('main').length === 0) {
-      let m = document.createElement('main');
-      document.body.appendChild(m);
+    // set to invisible if still in setup (to prevent flashing with manipulate)
+    if (!this._setupDone) {
+      c.dataset.hidden = true; // tag to show later
+      c.style.visibility = 'hidden';
     }
-    //append canvas to main
-    document.getElementsByTagName('main')[0].appendChild(c);
+
+    if (this._userNode) {
+      // user input node case
+      this._userNode.appendChild(c);
+    } else {
+      //create main element
+      if (document.getElementsByTagName('main').length === 0) {
+        let m = document.createElement('main');
+        document.body.appendChild(m);
+      }
+      //append canvas to main
+      document.getElementsByTagName('main')[0].appendChild(c);
+    }
   }
 
   // Init our graphics renderer
@@ -216,6 +247,9 @@ p5.prototype.noCanvas = function() {
  * to check what version is being used, or call <a href="#/p5/setAttributes">pg.setAttributes({ version: 1 })</a>
  * to create a WebGL1 context.
  *
+ * Optionally, an existing canvas can be passed using a selector, ie. document.getElementById('').
+ * By default this canvas will be hidden (offscreen buffer), to make visible, set element's style to display:block;
+ *
  * @method createGraphics
  * @param  {Number} w width of the offscreen graphics buffer
  * @param  {Number} h height of the offscreen graphics buffer
@@ -239,22 +273,6 @@ p5.prototype.noCanvas = function() {
  *   pg.ellipse(pg.width / 2, pg.height / 2, 50, 50);
  *   image(pg, 50, 50);
  *   image(pg, 0, 0, 50, 50);
- * }
- * </code>
- * </div>
- * <div>
- * <code>
- * let ar;
- * function setup() {
- *   createCanvas(100, 100);
- *   ar = createGraphics(100, 100, document.getElementById('canvas-ar'));
- * }
- *
- * function draw() {
- *   circle(random(width), random(height), random(15));
- *
- *   // grab visuals and pass to ar layer
- *   ar.image(get(0, 0, width, height), 0, 0, ar.width, ar.height);
  * }
  * </code>
  * </div>
