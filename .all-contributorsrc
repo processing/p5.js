@@ -3749,6 +3749,16 @@
       ]
     },
     {
+      "login": "wong-justin",
+      "name": "J Wong",
+      "avatar_url": "https://avatars.githubusercontent.com/u/28441593?v=4",
+      "profile": "http://wonger.dev",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
       "login": "aceslowman",
       "name": "Austin Lee Slominski",
       "avatar_url": "https://avatars.githubusercontent.com/u/6826702?v=4",
@@ -3757,7 +3767,7 @@
         "code",
         "doc"
       ]
-    }
+    },
   ],
   "repoType": "github",
   "repoHost": "https://github.com",
