@@ -316,22 +316,22 @@ const colorPatterns = {
 };
 
 /**
- * Each color stores the color mode and level maxes that were applied at the
- * time of its construction. These are used to interpret the input arguments
- * (at construction and later for that instance of color) and to format the
- * output e.g. when <a href="#/p5/saturation">saturation()</a> is requested.
+ * A class to describe a color. Each `p5.Color` object stores the color mode
+ * and level maxes that were active during its construction. These values are
+ * used to interpret the arguments passed to the object's constructor. They
+ * also determine output formatting such as when
+ * <a href="#/p5/saturation">saturation()</a> is called.
  *
- * Internally, we store an array representing the ideal RGBA values in floating
- * point form, normalized from 0 to 1. From this we calculate the closest
- * screen color (RGBA levels from 0 to 255) and expose this to the renderer.
+ * Color is stored internally as an array of ideal RGBA values in floating
+ * point form, normalized from 0 to 1. These values are used to calculate the
+ * closest screen colors, which are RGBA levels from 0 to 255. Screen colors
+ * are sent to the renderer.
  *
- * We also cache normalized, floating-point components of the color in various
- * representations as they are calculated. This is done to prevent repeating a
- * conversion that has already been performed.
+ * When different color representations are calculated, the results are cached
+ * for performance. These values are normalized, floating-point numbers.
  *
  * <a href="#/p5/color">color()</a> is the recommended way to create an instance
- * of this class. However, one can also create a color instace from the constructor
- * using the parameters below.
+ * of this class.
  *
  * @class p5.Color
  * @constructor
@@ -358,38 +358,38 @@ p5.Color = class Color {
   }
 
   /**
-   * This method returns the color formatted as a string. This can be useful
-   * for debugging, or for using p5.js with other libraries.
+   * Returns the color formatted as a string. Doing so can be useful for
+   * debugging, or for using p5.js with other libraries.
    *
    * @method toString
-   * @param {String} [format] How the color string will be formatted.
+   * @param {String} [format] how the color string will be formatted.
    * Leaving this empty formats the string as rgba(r, g, b, a).
    * '#rgb' '#rgba' '#rrggbb' and '#rrggbbaa' format as hexadecimal color codes.
    * 'rgb' 'hsb' and 'hsl' return the color formatted in the specified color mode.
    * 'rgba' 'hsba' and 'hsla' are the same as above but with alpha channels.
    * 'rgb%' 'hsb%' 'hsl%' 'rgba%' 'hsba%' and 'hsla%' format as percentages.
-   * @return {String} the formatted string
+   * @return {String} the formatted string.
    *
    * @example
    * <div>
    * <code>
    * createCanvas(200, 100);
-   * let myColor;
    * stroke(255);
-   * myColor = color(100, 100, 250);
+   * const myColor = color(100, 100, 250);
    * fill(myColor);
    * rotate(HALF_PI);
    * text(myColor.toString(), 0, -5);
    * text(myColor.toString('#rrggbb'), 0, -30);
    * text(myColor.toString('rgba%'), 0, -55);
-   * describe('A canvas with 3 text representation of their color.');
+   * describe('Three text representation of a color written sideways.');
    * </code>
    * </div>
    *
    * <div>
    * <code>
-   * let myColor = color(100, 130, 250);
+   * const myColor = color(100, 130, 250);
    * text(myColor.toString('#rrggbb'), 25, 25);
+   * describe('A hexadecimal representation of a color.');
    * </code>
    * </div>
    */
@@ -561,10 +561,13 @@ p5.Color = class Color {
   }
 
   /**
-   * The setRed method sets the red component of a color.
-   * The range depends on your color mode, in the default RGB mode it's between 0 and 255.
+   * Sets the red component of a color. The range depends on the
+   * <a href="#/colorMode">colorMode()</a>. In the default RGB mode it's
+   * between 0 and 255.
+   *
    * @method setRed
-   * @param {Number} red the new red value
+   * @param {Number} red the new red value.
+   *
    * @example
    * <div>
    * <code>
@@ -577,7 +580,7 @@ p5.Color = class Color {
    * function draw() {
    *   backgroundColor.setRed(128 + 128 * sin(millis() / 1000));
    *   background(backgroundColor);
-   *   describe('canvas with gradually changing background color');
+   *   describe('A canvas with a gradually changing background color.');
    * }
    * </code>
    * </div>
@@ -588,22 +591,29 @@ p5.Color = class Color {
   }
 
   /**
-   * The setGreen method sets the green component of a color.
-   * The range depends on your color mode, in the default RGB mode it's between 0 and 255.
+   * Sets the green component of a color. The range depends on the
+   * <a href="#/colorMode">colorMode()</a>. In the default RGB mode it's
+   * between 0 and 255.
+   *
    * @method setGreen
-   * @param {Number} green the new green value
+   * @param {Number} green the new green value.
+   *
    * @example
    * <div>
    * <code>
-   * let backgroundColor = color(100, 50, 150);
+   * let backgroundColor;
+   *
+   * function setup() {
+   *   backgroundColor = color(100, 50, 150);
+   * }
+   *
    * function draw() {
    *   backgroundColor.setGreen(128 + 128 * sin(millis() / 1000));
    *   background(backgroundColor);
-   *   describe('canvas with gradually changing background color');
+   *   describe('A canvas with a gradually changing background color.');
    * }
    * </code>
    * </div>
-   *
    **/
   setGreen(new_green) {
     this._array[1] = new_green / this.maxes[constants.RGB][1];
@@ -611,22 +621,29 @@ p5.Color = class Color {
   }
 
   /**
-   * The setBlue method sets the blue component of a color.
-   * The range depends on your color mode, in the default RGB mode it's between 0 and 255.
+   * Sets the blue component of a color. The range depends on the
+   * <a href="#/colorMode">colorMode()</a>. In the default RGB mode it's
+   * between 0 and 255.
+   *
    * @method setBlue
-   * @param {Number} blue the new blue value
+   * @param {Number} blue the new blue value.
+   *
    * @example
    * <div>
    * <code>
-   * let backgroundColor = color(100, 50, 150);
+   * let backgroundColor;
+   *
+   * function setup() {
+   *   backgroundColor = color(100, 50, 150);
+   * }
+   *
    * function draw() {
    *   backgroundColor.setBlue(128 + 128 * sin(millis() / 1000));
    *   background(backgroundColor);
-   *   describe('canvas with gradually changing background color');
+   *   describe('A canvas with a gradually changing background color.');
    * }
    * </code>
    * </div>
-   *
    **/
   setBlue(new_blue) {
     this._array[2] = new_blue / this.maxes[constants.RGB][2];
@@ -634,21 +651,26 @@ p5.Color = class Color {
   }
 
   /**
-   * The setAlpha method sets the transparency (alpha) value of a color.
-   * The range depends on your color mode, in the default RGB mode it's between 0 and 255.
+   * Sets the alpha (transparency) value of a color. The range depends on the
+   * <a href="#/colorMode">colorMode()</a>. In the default RGB mode it's
+   * between 0 and 255.
+   *
    * @method setAlpha
-   * @param {Number} alpha the new alpha value
+   * @param {Number} alpha the new alpha value.
+   *
    * @example
    * <div>
    * <code>
    * function draw() {
    *   clear();
    *   background(200);
-   *   squareColor = color(100, 50, 100);
+   *   const squareColor = color(100, 50, 100);
    *   squareColor.setAlpha(128 + 128 * sin(millis() / 1000));
    *   fill(squareColor);
    *   rect(13, 13, width - 26, height - 26);
-   *   describe('a square with gradually changing opacity on a gray background');
+   *   describe(
+   *     'A purple square with gradually changing opacity drawn on a gray background.'
+   *   );
    * }
    * </code>
    * </div>
