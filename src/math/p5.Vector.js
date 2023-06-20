@@ -1745,7 +1745,8 @@ p5.Vector = class {
   /**
  * Performs spherical linear interpolation with the other vector
  * and returns the resulting vector.
- * The result of slerping between 2D vectors is always a 2D vector.
+ * This works in both 3D and 2D. As for 2D, the result of slerping
+ * between 2D vectors is always a 2D vector.
  *
  * @method slerp
  * @param {p5.Vector} v the p5.Vector to slerp to
@@ -1782,9 +1783,8 @@ p5.Vector = class {
  *   background(255);
  *   translate(50, 50);
  *
- *   const theta = Math.atan2(mouseY-50, mouseX-50);
- *   const v = createVector(50 * Math.cos(theta), 50 * Math.sin(theta));
- *   // slerp between v and needle
+ *   const v = createVector(mouseX - 50, mouseY - 50).setMag(50);
+ *   // slerp between v and needle vector.
  *   // needle vector is changed by slerp function.
  *   needle.slerp(v, 0.05);
  *
@@ -1795,33 +1795,31 @@ p5.Vector = class {
  *
  * <div>
  * <code>
- * let v1, v2, v3;
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
- *   noStroke();
- *   v1 = createVector(30, 0, 0);
- *   v2 = createVector(0, 30, 0);
- *   v3 = createVector(0, 0, 30);
  * }
  *
  * function draw(){
- *   background(0);
- *   lights();
- *   fill(255);
- *   ambientMaterial(255);
+ *   background(255);
+ *  
+ *   const vx = createVector(30, 0, 0);
+ *   const vy = createVector(0, 30, 0);
+ *   const vz = createVector(0, 0, 30);
  *
- *   const t = (frameCount % 60) / 60;
+ *   const t = map(sin(frameCount * TAU / 120), -1, 1, 0, 1);
  *   // v1, v2, v3 is not changed by slerp function.
  *   // because this function is static version.
- *   const v4 = p5.Vector.slerp(v1, v2, t);
- *   const v5 = p5.Vector.slerp(v2, v3, t);
- *   const v6 = p5.Vector.slerp(v3, v1, t);
- *   translate(v4.x, v4.y, v4.z);
- *   sphere(5);
- *   translate(v5.x - v4.x, v5.y - v4.y, v5.z - v4.z);
- *   sphere(5);
- *   translate(v6.x - v5.x, v6.y - v5.y, v6.z - v5.z);
- *   sphere(5);
+ *   const vSlerpXY = p5.Vector.slerp(vx, vy, t);
+ *   const vSlerpYZ = p5.Vector.slerp(vy, vz, t);
+ *   const vSlerpZX = p5.Vector.slerp(vz, vx, t);
+ *   strokeWeight(6);
+ *   strokeCap(SQUARE);
+ *   stroke("red");
+ *   line(0, 0, 0, vSlerpXY.x, vSlerpXY.y, vSlerpXY.z);
+ *   stroke("green");
+ *   line(0, 0, 0, vSlerpYZ.x, vSlerpYZ.y, vSlerpYZ.z);
+ *   stroke("blue");
+ *   line(0, 0, 0, vSlerpZX.x, vSlerpZX.y, vSlerpZX.z);
  * }
  * </code>
  * </div>
@@ -1875,13 +1873,13 @@ p5.Vector = class {
       }
     }
 
-    // Since 'axis' is a unit vector, ey is a vector of the same length as 'result'.
+    // Since 'axis' is a unit vector, ey is a vector of the same length as 'this'.
     const ey = axis.cross(this);
     // interpolate the length with 'this' and 'v'.
     const lerpedMagFactor = (1 - amt) + amt * vMag / selfMag;
-    // imagine an orthonormal basis where "axis", "result" and "ey" are
-    // the unit vectors of the z, x and y axes respectively.
-    // rotates "result" around "axis" by t*angle towards "ey".
+    // imagine a situation where 'axis', 'this', and 'ey' are pointing
+    // along the z, x, and y axes, respectively.
+    // rotates 'this' around 'axis' by amt * theta towards 'ey'.
     const cosMultiplier = lerpedMagFactor * Math.cos(amt * theta);
     const sinMultiplier = lerpedMagFactor * Math.sin(amt * theta);
     // then, calculate 'result'.
@@ -2511,7 +2509,8 @@ p5.Vector = class {
   /**
  * Performs spherical linear interpolation with the other vector
  * and returns the resulting vector.
- * The result of slerping between 2D vectors is always a 2D vector.
+ * This works in both 3D and 2D. As for 2D, the result of slerping
+ * between 2D vectors is always a 2D vector.
  */
   /**
  * @method slerp
