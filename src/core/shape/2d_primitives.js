@@ -392,10 +392,10 @@ p5.prototype._renderEllipse = function(x, y, w, h, detailX) {
  * @method line
  * @param  {Number} x1
  * @param  {Number} y1
- * @param  {Number} z1 the z-coordinate of the first point (for WEBGL mode)
+ * @param  {Number} z1 the z-coordinate of the first point
  * @param  {Number} x2
  * @param  {Number} y2
- * @param  {Number} z2 the z-coordinate of the second point (for WEBGL mode)
+ * @param  {Number} z2 the z-coordinate of the second point
  * @chainable
  */
 p5.prototype.line = function(...args) {
