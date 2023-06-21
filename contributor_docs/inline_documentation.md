@@ -195,7 +195,7 @@ describe('shattered outline of ellipse created using four arcs');
 ```
 
 You can have multiple examples for one function, just make sure you have only
-one @example followed by each example having it's own `<div>` wrapping separated
+one @example followed by each example having its own `<div>` wrapping separated
 by a line break. 
 
 ```
