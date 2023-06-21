@@ -257,7 +257,7 @@ p5.prototype.clear = function(...args) {
  * so you can change modes as you like without affecting their appearance.
  *
  * @method colorMode
- * @param {Constant} mode   Either RGB, HSB or HSL, corresponding to
+ * @param {Constant} mode   either RGB, HSB or HSL, corresponding to
  *                          Red/Green/Blue and Hue/Saturation/Brightness
  *                          (or Lightness).
  * @param {Number}  [max]  Range for all values.
@@ -300,12 +300,12 @@ p5.prototype.clear = function(...args) {
  * <div>
  * <code>
  * colorMode(RGB, 255);
- * const myColor = color(180, 175, 230);
+ * let myColor = color(180, 175, 230);
  * background(myColor);
  * colorMode(RGB, 1);
- * const redValue = red(myColor);
- * const greenValue = green(myColor);
- * const blueValue = blue(myColor);
+ * let redValue = red(myColor);
+ * let greenValue = green(myColor);
+ * let blueValue = blue(myColor);
  * text('Red:' + redValue, 10, 10, 80, 80);
  * text('Green:' + greenValue, 10, 40, 80, 80);
  * text('Blue:' + blueValue, 10, 70, 80, 80);
@@ -816,10 +816,10 @@ p5.prototype.stroke = function(...args) {
  * <div>
  * <code>
  * function setup() {
- * // A canvas with an erase circle that reveals a <div> dom element behind the canvas.
- *   const cnv = createCanvas(100, 100);
+ * // A canvas with an erase circle that reveals a &lt;div&gt; dom element behind the canvas.
+ *   let cnv = createCanvas(100, 100);
  *   cnv.style('zIndex','1');
- *   const div = createDiv('I am a dom element');
+ *   let div = createDiv('I am a dom element');
  *   div.style('font-size', '15px');
  *   div.style('background-color', 'purple');
  *   div.style('color', 'white');
@@ -829,7 +829,7 @@ p5.prototype.stroke = function(...args) {
  * }
  * function draw() {
  *   background(100, 170, 210);
- *   erase();
+ *   erase(200, 100);
  *   ellipse(50, 50, 77);
  *   noErase();
  *   describe(`A blue canvas with an ellipse that erases to reveal a purple square behind
