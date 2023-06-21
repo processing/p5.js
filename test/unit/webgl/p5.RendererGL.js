@@ -1660,13 +1660,13 @@ suite('p5.RendererGL', function() {
       const attributes = renderer._curShader.attributes;
       const loc = attributes.aTexCoord.location;
 
-      assert.equal(renderer.registerEnabled[loc], true);
+      assert.equal(renderer.registerEnabled.has(loc), true);
 
       myp5.model(myGeom);
-      assert.equal(renderer.registerEnabled[loc], false);
+      assert.equal(renderer.registerEnabled.has(loc), false);
 
       myp5.triangle(-8, -8, 8, 8, -8, 8);
-      assert.equal(renderer.registerEnabled[loc], true);
+      assert.equal(renderer.registerEnabled.has(loc), true);
 
       done();
     });

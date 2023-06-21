@@ -565,10 +565,10 @@ p5.Shader = class {
       if (loc !== -1) {
         const gl = this._renderer.GL;
         // Enable register even if it is disabled
-        if (!this._renderer.registerEnabled[loc]) {
+        if (!this._renderer.registerEnabled.has(loc)) {
           gl.enableVertexAttribArray(loc);
           // Record register availability
-          this._renderer.registerEnabled[loc] = true;
+          this._renderer.registerEnabled.add(loc);
         }
         this._renderer.GL.vertexAttribPointer(
           loc,
