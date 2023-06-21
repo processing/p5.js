@@ -1,5 +1,14 @@
 import p5 from '../core/main';
 
+/**
+ * An internal class to store data that will be sent to a p5.RenderBuffer.
+ * Those need to eventually go into a Float32Array, so this class provides a
+ * variable-length array container backed by a Float32Array so that it can be
+ * sent to the GPU without allocating a new array each frame.
+ *
+ * Like a C++ vector, its fixed-length Float32Array backing its contents will
+ * double in size when it goes over its capacity.
+ */
 p5.DataVector = class DataVector {
   constructor(initialLength = 128) {
     this.length = 0;
@@ -7,10 +16,24 @@ p5.DataVector = class DataVector {
     this.initialLength = initialLength;
   }
 
+  /**
+   * Returns a Float32Array window sized to the exact length of the data
+   */
+  dataArray() {
+    return this.subArray(0, this.length);
+  }
+
+  /**
+   * A "soft" clear, which keeps the underlying storage size the same, but
+   * empties the contents of its dataArray()
+   */
   clear() {
     this.length = 0;
   }
 
+  /**
+   * Can be used to scale a DataVector back down to fit its contents.
+   */
   rescale() {
     if (this.length < this.data.length / 2) {
       // Find the power of 2 size that fits the data
@@ -21,25 +44,44 @@ p5.DataVector = class DataVector {
     }
   }
 
+  /**
+   * A full reset, which allocates a new underlying Float32Array at its initial
+   * length
+   */
   reset() {
     this.clear();
     this.data = new Float32Array(this.initialLength);
   }
 
+  /**
+   * Adds values to the DataVector, expanding its internal storage to
+   * accommodate the new items.
+   */
   push(...values) {
     this.ensureLength(this.length + values.length);
     this.data.set(values, this.length);
     this.length += values.length;
   }
 
+  /**
+   * Returns a copy of the data from the index `from`, inclusive, to the index
+   * `to`, exclusive
+   */
   slice(from, to) {
     return this.data.slice(from, Math.min(to, this.length));
   }
 
+  /**
+   * Returns a mutable Float32Array window from the index `from`, inclusive, to
+   * the index `to`, exclusive
+   */
   subArray(from, to) {
     return this.data.subarray(from, Math.min(to, this.length));
   }
 
+  /**
+   * Expand capacity of the internal storage until it can fit a target size
+   */
   ensureLength(target) {
     while (this.data.length < target) {
       const newData = new Float32Array(this.data.length * 2);
