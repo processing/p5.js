@@ -199,7 +199,7 @@ For "Changes", you should give a clear description of the changes you have made 
 Once done, click on "Create pull request".
 
 ### Rebase and resolve conflicts
-You should now inpect the opened pull request and pay attention to a few things:
+You should now inspect the opened pull request and pay attention to a few things:
 
 1. The number of commits should match the number of commits you have made, meaning if you have commited 2 times while working on this PR, it should only show two commits in the "Commits" tab.
 2. The "Files changed" tab should show you the changes you have made as compared with the p5.js repo and nothing more.
