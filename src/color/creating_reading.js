@@ -184,7 +184,7 @@ p5.prototype.brightness = function(c) {
  *
  * <div>
  * <code>
- * // CSS hexadecimal color codes.
+ * // CSS hex color codes.
  * noStroke();
  * let c = color('#0f0');
  * fill(c);
