@@ -735,7 +735,6 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
       if (gi.uGlyphRect) {
         const rowInfo = gi.rowInfo;
         const colInfo = gi.colInfo;
-        const gl = this.GL;
         sh.setUniform('uSamplerStrokes', gi.strokeImageInfo.imageData);
         sh.setUniform('uSamplerRowStrokes', rowInfo.cellImageInfo.imageData);
         sh.setUniform('uSamplerRows', rowInfo.dimImageInfo.imageData);
