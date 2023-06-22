@@ -8,6 +8,22 @@ import p5 from '../core/main';
  *
  * Like a C++ vector, its fixed-length Float32Array backing its contents will
  * double in size when it goes over its capacity.
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Initialize storage with a capacity of 4
+ * const storage = new DataArray(4);
+ * console.log(storage.data.length); // 4
+ * console.log(storage.length); // 0
+ * console.log(storage.dataArray()); // Empty Float32Array
+ *
+ * storage.push(1, 2, 3, 4, 5, 6);
+ * console.log(storage.data.length); // 8
+ * console.log(storage.length); // 6
+ * console.log(storage.dataArray()); // Float32Array{1, 2, 3, 4, 5, 6}
+ * </code>
+ * </div>
  */
 p5.DataArray = class DataArray {
   constructor(initialLength = 128) {
