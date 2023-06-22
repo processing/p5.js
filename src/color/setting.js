@@ -17,30 +17,21 @@ import './p5.Color';
  * of each frame. It can also be used inside <a href="#/p5/setup">setup()</a> to
  * set the background on the first frame of animation.
  *
- * By default, colors are specified in RGB values. (`background(255, 204, 0)`
- * sets the background a bright yellow color.) HSL or HSB can be used instead by
- * using the <a href="#/p5/colorMode">colorMode()</a> function.
- *
- * <a href="#/p5/background">background()</a> supports RGB, RGBA, and Hex CSS
- * color strings, as well as named color strings. In this case, providing an
- * alpha value as a second argument is not supported for CSS color strings, so
- * the RGBA form should be used if you need to specify transparency.
- *
- * The version of `background()` with one parameter interprets the value one of two
+ * The version of `background()` with one parameter interprets the value one of four
  * ways. If the parameter is a number, it's interpreted as a grayscale value.
- * If the parameter is a string, it's interpreted as a CSS color string.
+ * If the parameter is a string, it's interpreted as a CSS color string.  RGB, RGBA,
+ * HSL, HSLA, hex, and named color strings are supported. If the parameter is a
+ * <a href="#/p5.Color">p5.Color</a> object, it will be used as the background color.
+ * If the parameter is a <a href="#/p5.Image">p5.Image</a> object, it will be used as
+ * the background image.
  *
  * The version of `background()` with two parameters interprets the first one as a
  * grayscale value. The second parameter sets the alpha (transparency) value.
  *
  * The version of `background()` with three parameters interprets them as RGB, HSB,
  * or HSL colors, depending on the current <a href="#/p5/colorMode">colorMode()</a>.
- *
- * A <a href="#/p5.Color">p5.Color</a> object can also be provided to set the
- * background color.
- *
- * A <a href="#/p5.Image">p5.Image</a> can also be provided to set the
- * background image.
+ * By default, colors are specified in RGB values. Calling background(255, 204, 0)
+ * sets the background a bright yellow color.
  *
  * @method background
  * @param {p5.Color} color  any value created by the <a href="#/p5/color">color()</a> function
