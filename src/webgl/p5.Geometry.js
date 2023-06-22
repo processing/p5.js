@@ -24,21 +24,21 @@ p5.Geometry = class Geometry {
     this.vertices = [];
 
     //an array containing every vertex for stroke drawing
-    this.lineVertices = new p5.DataVector();
+    this.lineVertices = new p5.DataArray();
 
     // The tangents going into or out of a vertex on a line. Along a straight
     // line segment, both should be equal. At an endpoint, one or the other
     // will not exist and will be all 0. In joins between line segments, they
     // may be different, as they will be the tangents on either side of the join.
-    this.lineTangentsIn = new p5.DataVector();
-    this.lineTangentsOut = new p5.DataVector();
+    this.lineTangentsIn = new p5.DataArray();
+    this.lineTangentsOut = new p5.DataArray();
 
     // When drawing lines with thickness, entries in this buffer represent which
     // side of the centerline the vertex will be placed. The sign of the number
     // will represent the side of the centerline, and the absolute value will be
     // used as an enum to determine which part of the cap or join each vertex
     // represents. See the doc comments for _addCap and _addJoin for diagrams.
-    this.lineSides = new p5.DataVector();
+    this.lineSides = new p5.DataArray();
 
     //an array containing 1 normal per vertex
     //@type [p5.Vector]
@@ -60,7 +60,7 @@ p5.Geometry = class Geometry {
 
     // One color per line vertex, generated automatically based on
     // vertexStrokeColors in _edgesToVertices()
-    this.lineVertexColors = new p5.DataVector();
+    this.lineVertexColors = new p5.DataArray();
     this.detailX = detailX !== undefined ? detailX : 1;
     this.detailY = detailY !== undefined ? detailY : 1;
     this.dirtyFlags = {};

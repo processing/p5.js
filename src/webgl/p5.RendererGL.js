@@ -1623,7 +1623,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.GL.bindBuffer(target, buffer);
     if (values !== undefined) {
       let data = values;
-      if (values instanceof p5.DataVector) {
+      if (values instanceof p5.DataArray) {
         data = values.dataArray();
       } else if (!(data instanceof (type || Float32Array))) {
         data = new (type || Float32Array)(data);

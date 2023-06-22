@@ -9,7 +9,7 @@ import p5 from '../core/main';
  * Like a C++ vector, its fixed-length Float32Array backing its contents will
  * double in size when it goes over its capacity.
  */
-p5.DataVector = class DataVector {
+p5.DataArray = class DataArray {
   constructor(initialLength = 128) {
     this.length = 0;
     this.data = new Float32Array(initialLength);
@@ -32,7 +32,7 @@ p5.DataVector = class DataVector {
   }
 
   /**
-   * Can be used to scale a DataVector back down to fit its contents.
+   * Can be used to scale a DataArray back down to fit its contents.
    */
   rescale() {
     if (this.length < this.data.length / 2) {
@@ -54,7 +54,7 @@ p5.DataVector = class DataVector {
   }
 
   /**
-   * Adds values to the DataVector, expanding its internal storage to
+   * Adds values to the DataArray, expanding its internal storage to
    * accommodate the new items.
    */
   push(...values) {
@@ -91,4 +91,4 @@ p5.DataVector = class DataVector {
   }
 };
 
-export default p5.DataVector;
+export default p5.DataArray;
