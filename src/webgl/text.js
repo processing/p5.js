@@ -719,6 +719,7 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
 
   // this will have to do for now...
   sh.setUniform('uMaterialColor', this.curFillColor);
+  gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
 
   try {
     let dx = 0; // the x position in the line
@@ -734,6 +735,7 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
       if (gi.uGlyphRect) {
         const rowInfo = gi.rowInfo;
         const colInfo = gi.colInfo;
+        const gl = this.GL;
         sh.setUniform('uSamplerStrokes', gi.strokeImageInfo.imageData);
         sh.setUniform('uSamplerRowStrokes', rowInfo.cellImageInfo.imageData);
         sh.setUniform('uSamplerRows', rowInfo.dimImageInfo.imageData);
@@ -757,6 +759,7 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
 
     this._doStroke = doStroke;
     this.drawMode = drawMode;
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 
     p.pop();
   }
