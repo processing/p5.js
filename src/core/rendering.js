@@ -164,9 +164,11 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
         props[key] = val;
       }
     }
-    this._renderer.resize(w, h);
     this.width = w;
     this.height = h;
+    // Make sure width and height are updated before the renderer resizes so
+    // that framebuffers updated from the resize read the correct size
+    this._renderer.resize(w, h);
     // reset canvas properties
     for (const savedKey in props) {
       try {
