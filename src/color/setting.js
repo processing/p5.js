@@ -129,8 +129,9 @@ import './p5.Color';
  *
  * <div>
  * <code>
- * // p5 Color object
- * background(color(0, 0, 255));
+ * // A p5 Color object.
+ * let c = color(0, 0, 255);
+ * background(c);
  * describe('A canvas with a blue background.');
  * </code>
  * </div>
@@ -149,30 +150,30 @@ import './p5.Color';
 
 /**
  * @method background
- * @param {Number} gray   Specifies a value between white and black.
+ * @param {Number} gray   specifies a value between white and black.
  * @param {Number} [a]
  * @chainable
  */
 
 /**
  * @method background
- * @param {Number} v1     Red value if color mode is RGB, or hue value if color mode is HSB.
- * @param {Number} v2     Green value if color mode is RGB, or saturation value if color mode is HSB.
- * @param {Number} v3     Blue value if color mode is RGB, or brightness value if color mode is HSB.
+ * @param {Number} v1     red value if color mode is RGB, or hue value if color mode is HSB.
+ * @param {Number} v2     green value if color mode is RGB, or saturation value if color mode is HSB.
+ * @param {Number} v3     blue value if color mode is RGB, or brightness value if color mode is HSB.
  * @param  {Number} [a]
  * @chainable
  */
 
 /**
  * @method background
- * @param  {Number[]}      values  An array containing the red, green, blue
+ * @param  {Number[]}      values  an array containing the red, green, blue
  *                                 and alpha components of the color.
  * @chainable
  */
 
 /**
  * @method background
- * @param {p5.Image} image     Image created with <a href="#/p5/loadImage">loadImage()</a>
+ * @param {p5.Image} image     image created with <a href="#/p5/loadImage">loadImage()</a>
  *                             or <a href="#/p5/createImage">createImage()</a>,
  *                             to set as background
  *                             (must be same size as the sketch window).
@@ -185,19 +186,15 @@ p5.prototype.background = function(...args) {
 };
 
 /**
- * Clears the pixels within a buffer, specifically the canvas.
- * It does not clear objects created by createX() methods such as
+ * Clears the pixels on the canvas. This function makes every pixel 100% transparent.
+ * Calling clear() does not clear objects created by createX() functtions such as
  * <a href="#/p5/createVideo">createVideo()</a> or
- * <a href="#/p5/createDiv">createDiv()</a>. Unlike the main graphics
- * context, pixels in additional graphics areas created with
- * <a href="#/p5/createGraphics">createGraphics()</a>
- * can be any level of transparency. This function makes
- * every pixel 100% transparent.
+ * <a href="#/p5/createDiv">createDiv()</a>. These objects will remain unchanged after
+ * calling clear() and can be redrawn.
  *
- * Note: In WebGL mode, this function can be passed normalized
- * RGBA color values in order to clear the screen to a specific color.
- * It also clears the depth buffer. If you are not using the webGL renderer,
- * these color values will have no effect.
+ * In WebGL mode,  this function can clear the screen to a specific color. It interprets
+ * four numeric parameters as normalized RGBA color values. It also clears the depth
+ * buffer. If you are not using the WebGL renderer, these parameters will have no effect.
  *
  * @method clear
  * @chainable
@@ -217,10 +214,32 @@ p5.prototype.background = function(...args) {
  * </code>
  * </div>
  *
- * @param {Number} r Normalized red val.
- * @param {Number} g Normalized green val.
- * @param {Number} b Normalized blue val.
- * @param {Number} a Normalized alpha val.
+ * <div>
+ * <code>
+ * // The 'pg' graphic can still be used even after the screen is cleared with clear()
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   background(200);
+ *
+ *   pg = createGraphics(60, 60);
+ *   pg.background(200);
+ *   pg.noStroke();
+ *   pg.circle(pg.width / 2, pg.height / 2, 15);
+ *   image(pg, 20, 20);
+ *   describe('A white circle drawn on a gray square. The square gets smaller when the mouse is pressed.');
+ * }
+ *
+ * function mousePressed() {
+ *   clear();
+ *   image(pg, 20, 20);
+ * }
+ * </code>
+ * </div>
+ *
+ * @param {Number} r normalized red val.
+ * @param {Number} g normalized green val.
+ * @param {Number} b normalized blue val.
+ * @param {Number} a normalized alpha val.
  */
 p5.prototype.clear = function(...args) {
   const _r = args[0] || 0;
@@ -251,7 +270,7 @@ p5.prototype.clear = function(...args) {
  * @param {Constant} mode   either RGB, HSB or HSL, corresponding to
  *                          Red/Green/Blue and Hue/Saturation/Brightness
  *                          (or Lightness).
- * @param {Number}  [max]  Range for all values.
+ * @param {Number}  [max]  range for all values.
  * @chainable
  *
  * @example
@@ -322,13 +341,13 @@ p5.prototype.clear = function(...args) {
 /**
  * @method colorMode
  * @param {Constant} mode
- * @param {Number} max1     Range for the red or hue depending on the
+ * @param {Number} max1     range for the red or hue depending on the
  *                              current color mode.
- * @param {Number} max2     Range for the green or saturation depending
+ * @param {Number} max2     range for the green or saturation depending
  *                              on the current color mode.
- * @param {Number} max3     Range for the blue or brightness/lightness
+ * @param {Number} max3     range for the blue or brightness/lightness
  *                              depending on the current color mode.
- * @param {Number} [maxA]   Range for the alpha.
+ * @param {Number} [maxA]   range for the alpha.
  * @chainable
  */
 p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
@@ -377,9 +396,9 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * (The default color space is RGB, with each value in the range from 0 to 255)
  *
  * @method fill
- * @param  {Number}        v1      Red value if color mode is RGB or hue value if color mode is HSB.
- * @param  {Number}        v2      Green value if color mode is RGB or saturation value if color mode is HSB.
- * @param  {Number}        v3      Blue value if color mode is RGB or brightness value if color mode is HSB.
+ * @param  {Number}        v1      red value if color mode is RGB or hue value if color mode is HSB.
+ * @param  {Number}        v2      green value if color mode is RGB or saturation value if color mode is HSB.
+ * @param  {Number}        v3      blue value if color mode is RGB or brightness value if color mode is HSB.
  * @param  {Number}        [alpha]
  * @chainable
  * @example
@@ -486,27 +505,27 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
 
 /**
  * @method fill
- * @param  {String}        value   A color string.
+ * @param  {String}        value   a color string.
  * @chainable
  */
 
 /**
  * @method fill
- * @param  {Number}        gray   A gray value.
+ * @param  {Number}        gray   a grayscale value.
  * @param  {Number}        [alpha]
  * @chainable
  */
 
 /**
  * @method fill
- * @param  {Number[]}      values  An array containing the red, green, blue &
+ * @param  {Number[]}      values  an array containing the red, green, blue &
  *                                 and alpha components of the color.
  * @chainable
  */
 
 /**
  * @method fill
- * @param  {p5.Color}      color   The fill color.
+ * @param  {p5.Color}      color   the fill color.
  * @chainable
  */
 p5.prototype.fill = function(...args) {
@@ -608,12 +627,9 @@ p5.prototype.noStroke = function() {
  * (The default color space is RGB, with each value in the range from 0 to 255)
  *
  * @method stroke
- * @param  {Number}        v1      Red or hue value relative to
- *                                 the current color range.
- * @param  {Number}        v2      Green or saturation value
- *                                 relative to the current color range.
- * @param  {Number}        v3      Blue or brightness value
- *                                 relative to the current color range.
+ * @param  {Number}        v1      red value if color mode is RGB or hue value if color mode is HSB.
+ * @param  {Number}        v2      green value if color mode is RGB or saturation value if color mode is HSB.
+ * @param  {Number}        v3      blue value if color mode is RGB or brightness value if color mode is HSB.
  * @param  {Number}        [alpha]
  * @chainable
  *
@@ -732,27 +748,27 @@ p5.prototype.noStroke = function() {
 
 /**
  * @method stroke
- * @param  {String}        value   A color string.
+ * @param  {String}        value   a color string.
  * @chainable
  */
 
 /**
  * @method stroke
- * @param  {Number}        gray   A gray value.
+ * @param  {Number}        gray   a grayscale value.
  * @param  {Number}        [alpha]
  * @chainable
  */
 
 /**
  * @method stroke
- * @param  {Number[]}      values  An array containing the red, green, blue,
+ * @param  {Number[]}      values  an array containing the red, green, blue,
  *                                 and alpha components of the color.
  * @chainable
  */
 
 /**
  * @method stroke
- * @param  {p5.Color}      color   The stroke color.
+ * @param  {p5.Color}      color   the stroke color.
  * @chainable
  */
 
@@ -782,10 +798,10 @@ p5.prototype.stroke = function(...args) {
  * <a href="#/p5/noErase">noErase()</a> will work as usual without erasing anything.
  *
  * @method erase
- * @param  {Number}   [strengthFill]      A number (0-255) for the strength of erasing for a shape's fill.
+ * @param  {Number}   [strengthFill]      a number (0-255) for the strength of erasing for a shape's fill.
  *                                        This will default to 255 when no argument is given, which
  *                                        is full strength.
- * @param  {Number}   [strengthStroke]    A number (0-255) for the strength of erasing for a shape's stroke.
+ * @param  {Number}   [strengthStroke]    a number (0-255) for the strength of erasing for a shape's stroke.
  *                                        This will default to 255 when no argument is given, which
  *                                        is full strength.
  *
