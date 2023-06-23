@@ -577,6 +577,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // set of framebuffers in use
     this.framebuffers = new Set();
 
+    // for post processing step
+    this.filterShader = undefined;
+    this.filterFramebuffer = undefined;
+
     this.textureMode = constants.IMAGE;
     // default wrap settings
     this.textureWrapX = constants.CLAMP;
