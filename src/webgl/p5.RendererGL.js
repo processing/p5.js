@@ -5,6 +5,7 @@ import './p5.Shader';
 import './p5.Camera';
 import '../core/p5.Renderer';
 import './p5.Matrix';
+import './p5.Framebuffer';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
