@@ -476,6 +476,12 @@ p5.prototype._copyHelper = (
  */
 p5.prototype.filter = function(operation, value) {
   p5._validateParameters('filter', arguments);
+
+  if (this._renderer.isP3D) {
+    p5.RendererGL.prototype.filter.call(this._renderer, arguments);
+    return;
+  }
+
   if (this.canvas !== undefined) {
     Filters.apply(this.canvas, Filters[operation], value);
   } else {
