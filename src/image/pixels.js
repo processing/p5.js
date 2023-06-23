@@ -469,6 +469,11 @@ p5.prototype._copyHelper = (
  * image of a brickwall
  * image of a brickwall with less detail
  */
+
+/**
+ * @method filter
+ * @param {p5.Shader}  shaderFilter  A shader that's been loaded
+ */
 p5.prototype.filter = function(operation, value) {
   p5._validateParameters('filter', arguments);
   if (this.canvas !== undefined) {
