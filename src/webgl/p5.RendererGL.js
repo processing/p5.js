@@ -879,12 +879,31 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.curStrokeJoin = join;
   }
 
-  filter(filterType) {
-    // filter can be achieved using custom shaders.
-    // https://github.com/aferriss/p5jsShaderExamples
-    // https://itp-xstory.github.io/p5js-shaders/#/
-    p5._friendlyError('filter() does not work in WEBGL mode');
+  filter(...args) {
+    // Couldn't create filterFramebuffer in RendererGL constructor
+    // (.framebuffers was still undefined)
+    // so it's just created here once on the initial filter call.
+    if (!this.filterFramebuffer) {
+      this.filterFramebuffer = new p5.Framebuffer(this._pInst);
+    }
+
+    // TODO:
+    // if args[0] is a p5.Shader,
+    //   this.filterShader = args[0]
+    // else
+    //   this.filterShader = selectFromShaderFilterDefaults(args[0])
+    //   filterOperation = undefined or args[1]
+    //
+    // this.filterFramebuffer.begin();
+    //
+    // apply shader
+    // transfer pixels to main canvas
+    //
+    // this.filterFramebuffer.end();
+
+    p5._friendlyError('webgl filter implementation in progress');
   }
+
   blendMode(mode) {
     if (
       mode === constants.DARKEST ||
