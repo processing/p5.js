@@ -3767,6 +3767,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "nbriz",
+      "name": "Nick Briz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2506806?v=4",
+      "profile": "http://nickbriz.com",
+      "contributions": [
+        "review"
+      ]
     }
   ],
   "repoType": "github",
