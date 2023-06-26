@@ -654,6 +654,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="14.28%"><a href="http://aceslowman.com"><img src="https://avatars.githubusercontent.com/u/6826702?v=4?s=100" width="100px;" alt="Austin Lee Slominski"/><br /><sub><b>Austin Lee Slominski</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=aceslowman" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=aceslowman" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://nickbriz.com"><img src="https://avatars.githubusercontent.com/u/2506806?v=4?s=100" width="100px;" alt="Nick Briz"/><br /><sub><b>Nick Briz</b></sub></a><br /><a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3Anbriz" title="Reviewed Pull Requests">👀</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://ayush23dash.github.io"><img src="https://avatars.githubusercontent.com/u/40827680?v=4?s=100" width="100px;" alt="Ayush Shankar"/><br /><sub><b>Ayush Shankar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Ayush23Dash" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
