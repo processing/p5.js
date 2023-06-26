@@ -460,13 +460,13 @@ p5.prototype.line = function(...args) {
  *
  * <div>
  * <code>
- * const a = createVector(10, 10);
+ * let a = createVector(10, 10);
  * point(a);
- * const b = createVector(10, 20);
+ * let b = createVector(10, 20);
  * point(b);
- * const c = createVector(20, 10);
+ * let c = createVector(20, 10);
  * point(c);
- * const d = createVector(20, 20);
+ * let d = createVector(20, 20);
  * point(d);
  * describe(
  *   'Four small, black points drawn on a gray canvas. The points form the corners of a square.'
