@@ -378,8 +378,8 @@ suite('p5.Camera', function() {
     });
 
     test('test for matrix manipulation with set()', function() {
-      myCam = p5.createCamera();
-      p5.setCamera(myCam);
+      myCam = myp5.createCamera();
+      myp5.setCamera(myCam);
       const copyCam = myCam.copy();
       copyCam.camera(100, 100, 100, 20, 30, 40, 0, 0, -1);
       myCam.set(copyCam);
