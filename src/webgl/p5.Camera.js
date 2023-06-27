@@ -1618,11 +1618,15 @@ p5.Camera = class Camera {
  * the initial state.
  */
   set(cam) {
-    ['eyeX', 'eyeY', 'eyeZ',
-     'centerX', 'centerY', 'centerZ',
-     'upX', 'upY', 'upZ',
-     'cameraFOV', 'aspectRatio', 'cameraNear', 'cameraFar', 'cameraType'
-    ].forEach((keyName) => { this[keyName] = cam[keyName]; });
+    const keyNamesOfThePropToCopy = [
+      'eyeX', 'eyeY', 'eyeZ',
+      'centerX', 'centerY', 'centerZ',
+      'upX', 'upY', 'upZ',
+      'cameraFOV', 'aspectRatio', 'cameraNear', 'cameraFar', 'cameraType'
+    ];
+    for (const keyName of keyNamesOfThePropToCopy) {
+      this[keyName] = cam[keyName];
+    }
 
     this.cameraMatrix = cam.cameraMatrix.copy();
     this.projMatrix = cam.projMatrix.copy();
