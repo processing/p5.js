@@ -279,7 +279,6 @@ p5.prototype.noCanvas = function() {
  *
  * @alt
  * 4 grey squares alternating light and dark grey. White quarter circle mid-left.
- * Random circles across the page.
  */
 /**
  * @method createGraphics
