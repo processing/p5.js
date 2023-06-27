@@ -1621,9 +1621,8 @@ p5.Camera = class Camera {
     ['eyeX', 'eyeY', 'eyeZ',
      'centerX', 'centerY', 'centerZ',
      'upX', 'upY', 'upZ',
-     'cameraFOV', 'aspectRatio', 'cameraNear', 'cameraFar', 'cameraType']
-      .forEach((keyName) => { this[keyName] = cam[keyName]; }
-    );
+     'cameraFOV', 'aspectRatio', 'cameraNear', 'cameraFar', 'cameraType'
+    ].forEach((keyName) => { this[keyName] = cam[keyName]; });
 
     this.cameraMatrix = cam.cameraMatrix.copy();
     this.projMatrix = cam.projMatrix.copy();
