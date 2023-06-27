@@ -1569,6 +1569,72 @@ p5.Camera = class Camera {
     );
   }
 
+  /**
+ * Copies information about the argument camera's view and projection to
+ * the target camera. If the target camera is active, it will be reflected
+ * on the screen.
+ *
+ * @method set
+ * @param {p5.Camera} cam source camera
+ *
+ * @example
+ * <div>
+ * <code>
+ * let cam, initialCam;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   strokeWeight(3);
+ *
+ *   // Set the initial state to initialCamera and set it to the camera
+ *   // used for drawing. Then set cam to be the active camera.
+ *   cam = createCamera();
+ *   initialCam = createCamera();
+ *   initialCam.camera(100, 100, 100, 0, 0, 0, 0, 0, -1);
+ *   cam.set(initialCam);
+ *
+ *   setCamera(cam);
+ * }
+ *
+ * function draw() {
+ *   orbitControl();
+ *   background(255);
+ *   box(50);
+ *   translate(0, 0, -25);
+ *   plane(100);
+ * }
+ *
+ * function doubleClicked(){
+ *   // Double-click to return the camera to its initial position.
+ *   cam.set(initialCam);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * Prepare two cameras. One is the camera that sets the initial state,
+ * and the other is the camera that moves with interaction.
+ * Draw a plane and a box on top of it, operate the camera using orbitControl().
+ * Double-click to set the camera in the initial state and return to
+ * the initial state.
+ */
+  set(cam) {
+    ['eyeX', 'eyeY', 'eyeZ',
+     'centerX', 'centerY', 'centerZ',
+     'upX', 'upY', 'upZ',
+     'cameraFOV', 'aspectRatio', 'cameraNear', 'cameraFar', 'cameraType']
+      .forEach((keyName) => { this[keyName] = cam[keyName]; }
+    );
+
+    this.cameraMatrix = cam.cameraMatrix.copy();
+    this.projMatrix = cam.projMatrix.copy();
+
+    // If the target camera is active, update uMVMatrix and uPMatrix.
+    if (this._isActive()) {
+      this._renderer.uMVMatrix.mat4 = this.cameraMatrix.mat4.slice();
+      this._renderer.uPMatrix.mat4 = this.projMatrix.mat4.slice();
+    }
+  }
+
   ////////////////////////////////////////////////////////////////////////////////
   // Camera Helper Methods
   ////////////////////////////////////////////////////////////////////////////////
