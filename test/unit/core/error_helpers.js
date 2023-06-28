@@ -589,6 +589,28 @@ suite('Global Error Handling', function() {
     });
   });
 
+  testUnMinified(
+    'identifies errors happenning internally in ES6 classes',
+    function() {
+      return new Promise(function(resolve) {
+        prepSyntaxTest(
+          [
+            'function setup() {',
+            'let cnv = createCanvas(10, 10, WEBGL);',
+            'let fbo = createFramebuffer();',
+            'fbo.draw();', // Error in p5 library as no callback passed
+            '}'
+          ],
+          resolve
+        );
+      }).then(function() {
+        assert.strictEqual(log.length, 1);
+        assert.match(log[0], /inside the p5js library/);
+        assert.match(log[0], /draw/);
+      });
+    }
+  );
+
   testUnMinified('identifies errors in preload', function() {
     return new Promise(function(resolve) {
       prepSyntaxTest(
