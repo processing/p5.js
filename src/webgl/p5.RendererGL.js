@@ -579,7 +579,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     // for post processing step
     this.filterShader = undefined;
-    this.filterFramebuffer = undefined;
+    this.filterGraphicsLayer = undefined;
 
     this.textureMode = constants.IMAGE;
     // default wrap settings
@@ -879,12 +879,13 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.curStrokeJoin = join;
   }
 
-  filter(...args) {
-    // Couldn't create filterFramebuffer in RendererGL constructor
-    // (.framebuffers was still undefined)
+  filter(userShader) {
+    // Couldn't create graphics in RendererGL constructor
+    // (led to infinite loop)
     // so it's just created here once on the initial filter call.
-    if (!this.filterFramebuffer) {
-      this.filterFramebuffer = new p5.Framebuffer(this._pInst);
+    if (!this.filterGraphicsLayer) {
+      this.filterGraphicsLayer = 
+        new p5.Graphics(this.width, this.height, constants.WEBGL, this._pInst);
     }
 
     // TODO:
