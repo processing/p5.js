@@ -377,6 +377,29 @@ suite('p5.Camera', function() {
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
 
+    test('test for matrix manipulation with set()', function() {
+      myCam = myp5.createCamera();
+      myp5.setCamera(myCam);
+      const copyCam = myCam.copy();
+      copyCam.camera(100, 100, 100, 20, 30, 40, 0, 0, -1);
+      myCam.set(copyCam);
+
+      // Confirmation that the argument camera and the matrix of the camera
+      // that received set() match
+      assert.deepEqual(copyCam.cameraMatrix.mat4, myCam.cameraMatrix.mat4);
+      assert.deepEqual(copyCam.projMatrix.mat4, myCam.projMatrix.mat4);
+      // If the set()ed camera is active,
+      // the renderer's matrix will also change.
+      assert.deepEqual(
+        copyCam.cameraMatrix.mat4,
+        myp5._renderer.uMVMatrix.mat4
+      );
+      assert.deepEqual(
+        copyCam.projMatrix.mat4,
+        myp5._renderer.uPMatrix.mat4
+      );
+    });
+
     test('_orbit(1,0,0) sets correct matrix', function() {
       var expectedMatrix = new Float32Array([
         0.5403022766113281, -5.1525235865883254e-17, 0.8414709568023682, 0,
