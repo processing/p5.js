@@ -14,7 +14,7 @@ import * as constants from '../core/constants';
  *
  * @class p5.Renderer
  */
-p5.Renderer = class Renderer extends p5.Element {
+class Renderer extends p5.Element {
   /**
     * @class p5.Renderer
     * @constructor
@@ -63,6 +63,8 @@ p5.Renderer = class Renderer extends p5.Element {
     this._leadingSet = false;
   }
 }
+
+p5.Renderer = Renderer;
 
 // the renderer should return a 'style' object that it wishes to
 // store on the push stack.
