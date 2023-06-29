@@ -62,170 +62,167 @@ class Renderer extends p5.Element {
     this._fillSet = false;
     this._leadingSet = false;
   }
-}
 
-p5.Renderer = Renderer;
-
-// the renderer should return a 'style' object that it wishes to
-// store on the push stack.
-p5.Renderer.prototype.push = function () {
-  return {
-    properties: {
-      _doStroke: this._doStroke,
-      _strokeSet: this._strokeSet,
-      _doFill: this._doFill,
-      _fillSet: this._fillSet,
-      _tint: this._tint,
-      _imageMode: this._imageMode,
-      _rectMode: this._rectMode,
-      _ellipseMode: this._ellipseMode,
-      _textFont: this._textFont,
-      _textLeading: this._textLeading,
-      _leadingSet: this._leadingSet,
-      _textSize: this._textSize,
-      _textAlign: this._textAlign,
-      _textBaseline: this._textBaseline,
-      _textStyle: this._textStyle,
-      _textWrap: this._textWrap
-    }
-  };
-};
-
-// a pop() operation is in progress
-// the renderer is passed the 'style' object that it returned
-// from its push() method.
-p5.Renderer.prototype.pop = function (style) {
-  if (style.properties) {
-    // copy the style properties back into the renderer
-    Object.assign(this, style.properties);
+  // the renderer should return a 'style' object that it wishes to
+  // store on the push stack.
+  push () {
+    return {
+      properties: {
+        _doStroke: this._doStroke,
+        _strokeSet: this._strokeSet,
+        _doFill: this._doFill,
+        _fillSet: this._fillSet,
+        _tint: this._tint,
+        _imageMode: this._imageMode,
+        _rectMode: this._rectMode,
+        _ellipseMode: this._ellipseMode,
+        _textFont: this._textFont,
+        _textLeading: this._textLeading,
+        _leadingSet: this._leadingSet,
+        _textSize: this._textSize,
+        _textAlign: this._textAlign,
+        _textBaseline: this._textBaseline,
+        _textStyle: this._textStyle,
+        _textWrap: this._textWrap
+      }
+    };
   }
-};
 
-/**
+  // a pop() operation is in progress
+  // the renderer is passed the 'style' object that it returned
+  // from its push() method.
+  pop (style) {
+    if (style.properties) {
+    // copy the style properties back into the renderer
+      Object.assign(this, style.properties);
+    }
+  }
+
+  /**
  * Resize our canvas element.
  */
-p5.Renderer.prototype.resize = function (w, h) {
-  this.width = w;
-  this.height = h;
-  this.elt.width = w * this._pInst._pixelDensity;
-  this.elt.height = h * this._pInst._pixelDensity;
-  this.elt.style.width = `${w}px`;
-  this.elt.style.height = `${h}px`;
-  if (this._isMainCanvas) {
-    this._pInst._setProperty('width', this.width);
-    this._pInst._setProperty('height', this.height);
+  resize (w, h) {
+    this.width = w;
+    this.height = h;
+    this.elt.width = w * this._pInst._pixelDensity;
+    this.elt.height = h * this._pInst._pixelDensity;
+    this.elt.style.width = `${w}px`;
+    this.elt.style.height = `${h}px`;
+    if (this._isMainCanvas) {
+      this._pInst._setProperty('width', this.width);
+      this._pInst._setProperty('height', this.height);
+    }
   }
-};
 
-p5.Renderer.prototype.get = function (x, y, w, h) {
-  const pixelsState = this._pixelsState;
-  const pd = pixelsState._pixelDensity;
-  const canvas = this.canvas;
+  get (x, y, w, h) {
+    const pixelsState = this._pixelsState;
+    const pd = pixelsState._pixelDensity;
+    const canvas = this.canvas;
 
-  if (typeof x === 'undefined' && typeof y === 'undefined') {
+    if (typeof x === 'undefined' && typeof y === 'undefined') {
     // get()
-    x = y = 0;
-    w = pixelsState.width;
-    h = pixelsState.height;
-  } else {
-    x *= pd;
-    y *= pd;
+      x = y = 0;
+      w = pixelsState.width;
+      h = pixelsState.height;
+    } else {
+      x *= pd;
+      y *= pd;
 
-    if (typeof w === 'undefined' && typeof h === 'undefined') {
+      if (typeof w === 'undefined' && typeof h === 'undefined') {
       // get(x,y)
-      if (x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) {
-        return [0, 0, 0, 0];
+        if (x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) {
+          return [0, 0, 0, 0];
+        }
+
+        return this._getPixel(x, y);
       }
-
-      return this._getPixel(x, y);
-    }
     // get(x,y,w,h)
-  }
-
-  const region = new p5.Image(w, h);
-  region.canvas
-    .getContext('2d')
-    .drawImage(canvas, x, y, w * pd, h * pd, 0, 0, w, h);
-
-  return region;
-};
-
-p5.Renderer.prototype.textLeading = function (l) {
-  if (typeof l === 'number') {
-    this._setProperty('_leadingSet', true);
-    this._setProperty('_textLeading', l);
-    return this._pInst;
-  }
-
-  return this._textLeading;
-};
-
-p5.Renderer.prototype.textSize = function (s) {
-  if (typeof s === 'number') {
-    this._setProperty('_textSize', s);
-    if (!this._leadingSet) {
-      // only use a default value if not previously set (#5181)
-      this._setProperty('_textLeading', s * constants._DEFAULT_LEADMULT);
     }
-    return this._applyTextProperties();
+
+    const region = new p5.Image(w, h);
+    region.canvas
+      .getContext('2d')
+      .drawImage(canvas, x, y, w * pd, h * pd, 0, 0, w, h);
+
+    return region;
   }
 
-  return this._textSize;
-};
+  textLeading (l) {
+    if (typeof l === 'number') {
+      this._setProperty('_leadingSet', true);
+      this._setProperty('_textLeading', l);
+      return this._pInst;
+    }
 
-p5.Renderer.prototype.textStyle = function (s) {
-  if (s) {
-    if (
-      s === constants.NORMAL ||
+    return this._textLeading;
+  }
+
+  textSize (s) {
+    if (typeof s === 'number') {
+      this._setProperty('_textSize', s);
+      if (!this._leadingSet) {
+      // only use a default value if not previously set (#5181)
+        this._setProperty('_textLeading', s * constants._DEFAULT_LEADMULT);
+      }
+      return this._applyTextProperties();
+    }
+
+    return this._textSize;
+  }
+
+  textStyle (s) {
+    if (s) {
+      if (
+        s === constants.NORMAL ||
       s === constants.ITALIC ||
       s === constants.BOLD ||
       s === constants.BOLDITALIC
-    ) {
-      this._setProperty('_textStyle', s);
+      ) {
+        this._setProperty('_textStyle', s);
+      }
+
+      return this._applyTextProperties();
     }
 
-    return this._applyTextProperties();
+    return this._textStyle;
   }
 
-  return this._textStyle;
-};
-
-p5.Renderer.prototype.textAscent = function () {
-  if (this._textAscent === null) {
-    this._updateTextMetrics();
-  }
-  return this._textAscent;
-};
-
-p5.Renderer.prototype.textDescent = function () {
-  if (this._textDescent === null) {
-    this._updateTextMetrics();
-  }
-  return this._textDescent;
-};
-
-p5.Renderer.prototype.textAlign = function (h, v) {
-  if (typeof h !== 'undefined') {
-    this._setProperty('_textAlign', h);
-
-    if (typeof v !== 'undefined') {
-      this._setProperty('_textBaseline', v);
+  textAscent () {
+    if (this._textAscent === null) {
+      this._updateTextMetrics();
     }
-
-    return this._applyTextProperties();
-  } else {
-    return {
-      horizontal: this._textAlign,
-      vertical: this._textBaseline
-    };
+    return this._textAscent;
   }
-};
 
-p5.Renderer.prototype.textWrap = function (wrapStyle) {
-  this._setProperty('_textWrap', wrapStyle);
-  return this._textWrap;
-};
+  textDescent () {
+    if (this._textDescent === null) {
+      this._updateTextMetrics();
+    }
+    return this._textDescent;
+  }
 
+  textAlign (h, v) {
+    if (typeof h !== 'undefined') {
+      this._setProperty('_textAlign', h);
+
+      if (typeof v !== 'undefined') {
+        this._setProperty('_textBaseline', v);
+      }
+
+      return this._applyTextProperties();
+    } else {
+      return {
+        horizontal: this._textAlign,
+        vertical: this._textBaseline
+      };
+    }
+  }
+
+  textWrap (wrapStyle) {
+    this._setProperty('_textWrap', wrapStyle);
+    return this._textWrap;
+  }
+}
 p5.Renderer.prototype.text = function (str, x, y, maxWidth, maxHeight) {
   const p = this._pInst;
   const textWrapStyle = this._textWrap;
@@ -531,5 +528,7 @@ function calculateOffset(object) {
   }
   return [currentLeft, currentTop];
 }
+
+p5.Renderer = Renderer;
 
 export default p5.Renderer;
