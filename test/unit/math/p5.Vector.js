@@ -1422,6 +1422,100 @@ suite('p5.Vector', function() {
     });
   });
 
+  suite('v.slerp(w, amt)', function() {
+    var w;
+    setup(function() {
+      v.set(1, 2, 3);
+      w = new p5.Vector(4, 6, 8);
+    });
+
+    test('if amt is 0, returns original vector', function() {
+      v.slerp(w, 0);
+      expect(v.x).to.eql(1);
+      expect(v.y).to.eql(2);
+      expect(v.z).to.eql(3);
+    });
+
+    test('if amt is 1, returns argument vector', function() {
+      v.slerp(w, 1);
+      expect(v.x).to.eql(4);
+      expect(v.y).to.eql(6);
+      expect(v.z).to.eql(8);
+    });
+
+    test('if both v and w are 2D, then result will also be 2D.', function() {
+      v.set(2, 3, 0);
+      w.set(3, -2, 0);
+      v.slerp(w, 0.3);
+      expect(v.z).to.eql(0);
+
+      v.set(1, 4, 0);
+      w.set(-1, -4, 0);
+      v.slerp(w, 0.8);
+      expect(v.z).to.eql(0);
+    });
+
+    test('if one side is a zero vector, linearly interpolate.', function() {
+      v.set(0, 0, 0);
+      w.set(2, 4, 6);
+      v.slerp(w, 0.5);
+      expect(v.x).to.eql(1);
+      expect(v.y).to.eql(2);
+      expect(v.z).to.eql(3);
+    });
+
+    test('If they are pointing in the same direction, linearly interpolate.', function() {
+      v.set(5, 11, 16);
+      w.set(15, 33, 48);
+      v.slerp(w, 0.5);
+      expect(v.x).to.eql(10);
+      expect(v.y).to.eql(22);
+      expect(v.z).to.eql(32);
+    });
+  });
+
+  suite('p5.Vector.slerp(v1, v2, amt)', function() {
+    var res, v1, v2;
+    setup(function() {
+      v1 = new p5.Vector(1, 0, 0);
+      v2 = new p5.Vector(0, 0, 1);
+      res = p5.Vector.slerp(v1, v2, 1/3);
+    });
+
+    test('should not be undefined', function() {
+      expect(res).to.not.eql(undefined);
+    });
+
+    test('should be a p5.Vector', function() {
+      expect(res).to.be.an.instanceof(p5.Vector);
+    });
+
+    test('should return neither v1 nor v2', function() {
+      expect(res).to.not.eql(v1);
+      expect(res).to.not.eql(v2);
+    });
+
+    test('Make sure the interpolation in 1/3 is correct', function() {
+      expect(res.x).to.be.closeTo(Math.cos(Math.PI/6), 0.00001);
+      expect(res.y).to.be.closeTo(0, 0.00001);
+      expect(res.z).to.be.closeTo(Math.sin(Math.PI/6), 0.00001);
+    });
+
+    test('Make sure the interpolation in -1/3 is correct', function() {
+      p5.Vector.slerp(v1, v2, -1/3, res);
+      expect(res.x).to.be.closeTo(Math.cos(-Math.PI/6), 0.00001);
+      expect(res.y).to.be.closeTo(0, 0.00001);
+      expect(res.z).to.be.closeTo(Math.sin(-Math.PI/6), 0.00001);
+    });
+
+    test('Make sure the interpolation in 5/3 is correct', function() {
+      p5.Vector.slerp(v1, v2, 5/3, res);
+      expect(res.x).to.be.closeTo(Math.cos(5*Math.PI/6), 0.00001);
+      expect(res.y).to.be.closeTo(0, 0.00001);
+      expect(res.z).to.be.closeTo(Math.sin(5*Math.PI/6), 0.00001);
+    });
+  });
+
   suite('p5.Vector.fromAngle(angle)', function() {
     var res, angle;
     setup(function() {

@@ -3686,7 +3686,7 @@
       "contributions": [
         "translation"
       ]
-     },
+    },
     {
       "login": "ozramos",
       "name": "oz",
@@ -3746,6 +3746,44 @@
         "bug",
         "ideas",
         "design"
+      ]
+    },
+    {
+      "login": "wong-justin",
+      "name": "J Wong",
+      "avatar_url": "https://avatars.githubusercontent.com/u/28441593?v=4",
+      "profile": "http://wonger.dev",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "aceslowman",
+      "name": "Austin Lee Slominski",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6826702?v=4",
+      "profile": "http://aceslowman.com",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "nbriz",
+      "name": "Nick Briz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2506806?v=4",
+      "profile": "http://nickbriz.com",
+      "contributions": [
+        "review"
+      ]
+    },
+    {
+      "login": "Ayush23Dash",
+      "name": "Ayush Shankar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/40827680?v=4",
+      "profile": "http://ayush23dash.github.io",
+      "contributions": [
+        "code"
       ]
     }
   ],

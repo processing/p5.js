@@ -13,11 +13,13 @@ import p5 from './main';
  * <a href="#/p5/createDiv">createDiv()</a>, <a href="#/p5/createImg">createImg()</a>, <a href="#/p5/createInput">createInput()</a>, etc.
  *
  * @class p5.Element
- * @constructor
- * @param {String} elt DOM node that is wrapped
- * @param {p5} [pInst] pointer to p5 instance
  */
 p5.Element = class {
+  /**
+   * @constructor
+   * @param {HTMLElement} elt DOM node that is wrapped
+   * @param {p5} [pInst] pointer to p5 instance
+ */
   constructor(elt, pInst) {
     /**
      * Underlying HTML element. All normal HTML methods can be called on this.
@@ -39,9 +41,21 @@ p5.Element = class {
      * @readOnly
      */
     this.elt = elt;
+    /**
+     * @private
+     * @type {p5.Element}
+     */
     this._pInst = this._pixelsState = pInst;
     this._events = {};
+    /**
+     * @type {Number}
+     * @property width
+     */
     this.width = this.elt.offsetWidth;
+    /**
+     * @type {Number}
+     * @property height
+     */
     this.height = this.elt.offsetHeight;
   }
 
@@ -254,7 +268,7 @@ p5.Element = class {
    *                                double clicked over the element.
    *                                if `false` is passed instead, the previously
    *                                firing function will no longer fire.
-   * @return {p5.Element}
+   * @chainable
    * @example
    * <div class='norender'><code>
    * let cnv, d, g;
@@ -799,7 +813,18 @@ p5.Element = class {
     return this;
   }
 
-  // General handler for event attaching and detaching
+
+  /**
+   *
+   * @private
+   * @static
+   * @param {String} ev
+   * @param {Boolean|Function} fxn
+   * @param {Element} ctx
+   * @chainable
+   * @alt
+   * General handler for event attaching and detaching
+   */
   static _adjustListener(ev, fxn, ctx) {
     if (fxn === false) {
       p5.Element._detachListener(ev, ctx);
@@ -808,7 +833,14 @@ p5.Element = class {
     }
     return this;
   }
-
+  /**
+   *
+   * @private
+   * @static
+   * @param {String} ev
+   * @param {Function} fxn
+   * @param {Element} ctx
+   */
   static _attachListener(ev, fxn, ctx) {
     // detach the old listener if there was one
     if (ctx._events[ev]) {
@@ -818,7 +850,13 @@ p5.Element = class {
     ctx.elt.addEventListener(ev, f, false);
     ctx._events[ev] = f;
   }
-
+  /**
+   *
+   * @private
+   * @static
+   * @param {String} ev
+   * @param {Element} ctx
+   */
   static _detachListener(ev, ctx) {
     const f = ctx._events[ev];
     ctx.elt.removeEventListener(ev, f, false);

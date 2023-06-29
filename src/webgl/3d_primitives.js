@@ -988,6 +988,9 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
 ///////////////////////
 /// 2D primitives
 /////////////////////////
+//
+// Note: Documentation is not generated on the p5.js website for functions on
+// the p5.RendererGL prototype.
 
 /**
  * Draws a point, a coordinate in space at the dimension of one pixel,
