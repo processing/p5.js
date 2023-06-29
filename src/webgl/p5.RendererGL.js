@@ -884,25 +884,39 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // (led to infinite loop)
     // so it's just created here once on the initial filter call.
     if (!this.filterGraphicsLayer) {
-      this.filterGraphicsLayer = 
+      this.filterGraphicsLayer =
         new p5.Graphics(this.width, this.height, constants.WEBGL, this._pInst);
     }
 
-    // TODO:
+    // TODO, handle different signatures:
     // if args[0] is a p5.Shader,
     //   this.filterShader = args[0]
     // else
-    //   this.filterShader = selectFromShaderFilterDefaults(args[0])
-    //   filterOperation = undefined or args[1]
-    //
-    // this.filterFramebuffer.begin();
-    //
-    // apply shader
-    // transfer pixels to main canvas
-    //
-    // this.filterFramebuffer.end();
+    //   this.filterShader = map(args[0], {GRAYSCALE: grayscaleShader, ...})
+    //   filterOperationParameter = undefined or args[1]
 
-    p5._friendlyError('webgl filter implementation in progress');
+    let pg = this.filterGraphicsLayer;
+
+    // not sure why userShader[0] is the actual shader object
+    // and userShader is Arguments instead
+    userShader = userShader[0];
+    // perhaps necessary: bind the shader to the pg renderer, not the main
+    // let userShaderCopy =
+    //   new p5.Shader(pg._renderer, userShader._vertSrc, userShader._fragSrc);
+
+    // apply shader to pg
+    // TODO: shader isn't being applied properly
+    pg.shader(userShader);
+    userShader.setUniform('tex0', this);
+
+    // draw pg contents onto main renderer
+    this._pInst.push();
+    this._pInst.noStroke(); // don't draw triangles for plane() geometry
+    this._pInst.texture(pg);
+    this._pInst.plane(this.width, this.height);
+    this._pInst.pop();
+
+    // p5._friendlyError('webgl filter implementation in progress');
   }
 
   blendMode(mode) {
