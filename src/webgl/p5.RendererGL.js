@@ -600,8 +600,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.fontInfos = {};
 
     this._curShader = undefined;
-
-    return this;
   }
 
   //////////////////////////////////////////////
