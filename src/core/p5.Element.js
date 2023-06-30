@@ -13,13 +13,11 @@ import p5 from './main';
  * <a href="#/p5/createDiv">createDiv()</a>, <a href="#/p5/createImg">createImg()</a>, <a href="#/p5/createInput">createInput()</a>, etc.
  *
  * @class p5.Element
+ * @constructor
+ * @param {HTMLElement} elt DOM node that is wrapped
+ * @param {p5} [pInst] pointer to p5 instance
  */
 p5.Element = class {
-  /**
-   * @constructor
-   * @param {HTMLElement} elt DOM node that is wrapped
-   * @param {p5} [pInst] pointer to p5 instance
- */
   constructor(elt, pInst) {
     /**
      * Underlying HTML element. All normal HTML methods can be called on this.
