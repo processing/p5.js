@@ -157,19 +157,6 @@ class Renderer extends p5.Element {
     return this._textLeading;
   }
 
-  textSize (s) {
-    if (typeof s === 'number') {
-      this._setProperty('_textSize', s);
-      if (!this._leadingSet) {
-      // only use a default value if not previously set (#5181)
-        this._setProperty('_textLeading', s * constants._DEFAULT_LEADMULT);
-      }
-      return this._applyTextProperties();
-    }
-
-    return this._textSize;
-  }
-
   textStyle (s) {
     if (s) {
       if (
@@ -527,6 +514,19 @@ function calculateOffset(object) {
     currentTop += object.offsetTop;
   }
   return [currentLeft, currentTop];
+}
+// maybe because of this.
+Renderer.prototype.textSize = function(s) {
+  if (typeof s === 'number') {
+    this._setProperty('_textSize', s);
+    if (!this._leadingSet) {
+    // only use a default value if not previously set (#5181)
+      this._setProperty('_textLeading', s * constants._DEFAULT_LEADMULT);
+    }
+    return this._applyTextProperties();
+  }
+
+  return this._textSize;
 }
 
 p5.Renderer = Renderer;
