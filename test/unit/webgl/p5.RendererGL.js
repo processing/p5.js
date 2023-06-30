@@ -118,6 +118,85 @@ suite('p5.RendererGL', function() {
     });
   });
 
+  suite('filter shader', function() {
+    setup(function() {
+      vert = `attribute vec3 aPosition;
+      attribute vec2 aTexCoord;
+      
+      varying vec2 vTexCoord;
+      
+      void main() {
+        vTexCoord = aTexCoord;
+        vec4 positionVec4 = vec4(aPosition, 1.0);
+        positionVec4.xy = positionVec4.xy * 2.0 - 1.0;
+        gl_Position = positionVec4;
+      }`;
+
+      frag = `precision mediump float;
+      varying mediump vec2 vTexCoord;
+      
+      uniform sampler2D tex0;
+      
+      float luma(vec3 color) {
+        return dot(color, vec3(0.299, 0.587, 0.114));
+      }
+      
+      void main() {
+        vec2 uv = vTexCoord;
+        uv.y = 1.0 - uv.y;
+        vec4 sampledColor = texture2D(tex0, uv);
+        float gray = luma(sampledColor.rgb);
+        gl_FragColor = vec4(gray, gray, gray, 1);
+      }`;
+    });
+
+    teardown(function() {
+    });
+
+    test('filter accepts correct params', function() {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      let s = myp5.createShader(vert, frag);
+      myp5.filter(s);
+      // TODO: myp5.filter(myp5.POSTERIZE, 64)
+    });
+
+    test('secondary graphics layer is instantiated', function() {
+      let renderer = myp5.createCanvas(5, 5, myp5.WEBGL);
+      let s = myp5.createShader(vert, frag);
+      myp5.filter(s);
+      assert.notStrictEqual(renderer.filterGraphicsLayer, undefined);
+    });
+
+    test('custom shader makes changes to main canvas', function() {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      let s = myp5.createShader(vert, frag);
+      myp5.background('RED');
+      myp5.loadPixels();
+      let p1 = myp5.pixels.slice(); // copy before pixels is reassigned
+      myp5.filter(s);
+      myp5.loadPixels();
+      let p2 = myp5.pixels;
+      assert.notDeepEqual(p1, p2);
+    });
+
+    test('default shader makes changes to main canvas', function() {
+    });
+
+    test('create graphics is unaffected after filter', function() {
+    });
+
+    test('framebuffer is unaffected after filter', function() {
+    });
+
+    test('stroke and other settings are unaffected after filter', function() {
+    });
+
+    test('geometries added after filter do not have shader applied', function() {
+    });
+
+
+  });
+
   suite('text shader', function() {
     test('rendering looks the same in WebGL1 and 2', function(done) {
       myp5.loadFont('manual-test-examples/p5.Font/Inconsolata-Bold.ttf', function(font) {
