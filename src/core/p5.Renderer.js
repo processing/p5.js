@@ -527,7 +527,7 @@ Renderer.prototype.textSize = function(s) {
   }
 
   return this._textSize;
-}
+};
 
 p5.Renderer = Renderer;
 
