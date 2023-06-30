@@ -879,7 +879,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.curStrokeJoin = join;
   }
 
-  filter(userShader) {
+  filter(args) {
     // Couldn't create graphics in RendererGL constructor
     // (led to infinite loop)
     // so it's just created here once on the initial filter call.
@@ -897,12 +897,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     let pg = this.filterGraphicsLayer;
 
-    // not sure why userShader[0] is the actual shader object
-    // and userShader is Arguments instead
-    userShader = userShader[0];
     // perhaps necessary: bind the shader to the pg renderer, not the main
     // let userShaderCopy =
     //   new p5.Shader(pg._renderer, userShader._vertSrc, userShader._fragSrc);
+    let userShader = args[0];
 
     // apply shader to pg
     // TODO: shader isn't being applied properly
