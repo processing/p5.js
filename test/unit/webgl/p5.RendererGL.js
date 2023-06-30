@@ -182,6 +182,19 @@ suite('p5.RendererGL', function() {
     test('default shader makes changes to main canvas', function() {
     });
 
+    test('secondary graphics layer matches main canvas size', function() {
+      let g1 = myp5.createCanvas(5, 5, myp5.WEBGL);
+      let s = myp5.createShader(vert, frag);
+      myp5.filter(s);
+      let g2 = g1.filterGraphicsLayer;
+      assert.deepEqual([g1.width, g1.height], [g2.width, g2.height]);
+      myp5.resizeCanvas(4, 4);
+      assert.deepEqual([g1.width, g1.height], [g2.width, g2.height]);
+    });
+
+    test('secondary graphics layer matches main output resolution', function() {
+    });
+
     test('create graphics is unaffected after filter', function() {
     });
 
