@@ -1177,28 +1177,7 @@ class Renderer2D extends p5.Renderer{
   //
   //////////////////////////////////////////////
 
-  text  (str, x, y, maxWidth, maxHeight) {
-    let baselineHacked;
 
-    // baselineHacked: (HACK)
-    // A temporary fix to conform to Processing's implementation
-    // of BASELINE vertical alignment in a bounding box
-
-    if (typeof maxWidth !== 'undefined') {
-      if (this.drawingContext.textBaseline === constants.BASELINE) {
-        baselineHacked = true;
-        this.drawingContext.textBaseline = constants.TOP;
-      }
-    }
-
-    const p = p5.Renderer.prototype.text.apply(this, arguments);
-
-    if (baselineHacked) {
-      this.drawingContext.textBaseline = constants.BASELINE;
-    }
-
-    return p;
-  }
 
   _renderText  (p, line, x, y, maxY, minY) {
     if (y < minY || y >= maxY) {
@@ -1298,6 +1277,30 @@ class Renderer2D extends p5.Renderer{
     p5.Renderer.prototype.pop.call(this, style);
   }
 }
+
+// Fix test
+Renderer2D.prototype.text = function(str, x, y, maxWidth, maxHeight) {
+  let baselineHacked;
+
+  // baselineHacked: (HACK)
+  // A temporary fix to conform to Processing's implementation
+  // of BASELINE vertical alignment in a bounding box
+
+  if (typeof maxWidth !== 'undefined') {
+    if (this.drawingContext.textBaseline === constants.BASELINE) {
+      baselineHacked = true;
+      this.drawingContext.textBaseline = constants.TOP;
+    }
+  }
+
+  const p = p5.Renderer.prototype.text.apply(this, arguments);
+
+  if (baselineHacked) {
+    this.drawingContext.textBaseline = constants.BASELINE;
+  }
+
+  return p;
+};
 
 p5.Renderer2D = Renderer2D;
 
