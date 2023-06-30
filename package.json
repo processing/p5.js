@@ -119,7 +119,9 @@
         {
           "locales": [
             "en",
-            "es"
+            "es",
+            "ko",
+            "zh"
           ],
           "outputPath": "translations/{{locale}}/{{ns}}.json",
           "tFunctionNames": [

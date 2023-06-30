@@ -162,7 +162,6 @@ module.exports = grunt => {
           reporter: 'spec',
           require: '@babel/register',
           ui: 'tdd',
-          parallel: true
         }
       }
     },
