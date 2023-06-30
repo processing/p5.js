@@ -515,7 +515,7 @@ function calculateOffset(object) {
   }
   return [currentLeft, currentTop];
 }
-// maybe because of this.
+// This caused the test to failed.
 Renderer.prototype.textSize = function(s) {
   if (typeof s === 'number') {
     this._setProperty('_textSize', s);
