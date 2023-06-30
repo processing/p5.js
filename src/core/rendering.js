@@ -34,7 +34,8 @@ const defaultClass = 'p5Canvas';
  * function. If <a href="#/p5/createCanvas">createCanvas()</a> is not used, the
  * window will be given a default size of 100×100 pixels.
  *
- * Optionally, an existing canvas can be passed using a selector, ie. document.getElementById('').
+ * Optionally, an existing canvas can be passed using a selector, ie. `document.getElementById('')`.
+ * If specified, avoid using `setAttributes()` afterwards, as this will remove and recreate the existing canvas.
  *
  * For more ways to position the canvas, see the
  * <a href='https://github.com/processing/p5.js/wiki/Positioning-your-canvas'>
