@@ -29,7 +29,7 @@ class Renderer2D extends p5.Renderer{
   }
 
   resize(w, h) {
-    p5.Renderer.prototype.resize.call(this, w, h);
+    super.resize(w, h);
     this.drawingContext.scale(
       this._pInst._pixelDensity,
       this._pInst._pixelDensity
@@ -1260,7 +1260,7 @@ class Renderer2D extends p5.Renderer{
     this.drawingContext.save();
 
     // get the base renderer style
-    return p5.Renderer.prototype.push.apply(this);
+    return super.push();
   }
 
   // a pop() operation is in progress
@@ -1274,7 +1274,7 @@ class Renderer2D extends p5.Renderer{
     this._cachedFillStyle = this.drawingContext.fillStyle;
     this._cachedStrokeStyle = this.drawingContext.strokeStyle;
 
-    p5.Renderer.prototype.pop.call(this, style);
+    super.pop(style);
   }
 }
 
