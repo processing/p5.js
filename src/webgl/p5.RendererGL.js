@@ -895,12 +895,11 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     //   this.filterShader = map(args[0], {GRAYSCALE: grayscaleShader, ...})
     //   filterOperationParameter = undefined or args[1]
 
-    let pg = this.filterGraphicsLayer;
-
-    // perhaps necessary: bind the shader to the pg renderer, not the main
-    // let userShaderCopy =
-    //   new p5.Shader(pg._renderer, userShader._vertSrc, userShader._fragSrc);
     let userShader = args[0];
+    // Bind the shader to the pg renderer,
+    // since when the user makes it with createShader() it binds to the main
+    userShader =
+      new p5.Shader(pg._renderer, userShader._vertSrc, userShader._fragSrc);
 
     // apply shader to pg
     // TODO: shader isn't being applied properly
