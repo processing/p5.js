@@ -412,8 +412,8 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * <code>
  * // Grayscale integer value.
  * fill(51);
- * rect(20, 20, 60, 60);
- * describe('A dark charcoal gray rectangle with a black outline.');
+ * square(20, 20, 60);
+ * describe('A dark charcoal gray square with a black outline.');
  * </code>
  * </div>
  *
@@ -421,8 +421,8 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * <code>
  * // R, G & B integer values.
  * fill(255, 204, 0);
- * rect(20, 20, 60, 60);
- * describe('A yellow rectangle with a black outline.');
+ * square(20, 20, 60);
+ * describe('A yellow square with a black outline.');
  * </code>
  * </div>
  *
@@ -431,8 +431,8 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // H, S & B integer values.
  * colorMode(HSB);
  * fill(255, 204, 100);
- * rect(20, 20, 60, 60);
- * describe('A royal blue rectange with a black outline.');
+ * square(20, 20, 60);
+ * describe('A royal blue square with a black outline.');
  * </code>
  * </div>
  *
@@ -440,8 +440,8 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * <code>
  * // A CSS named color.
  * fill('red');
- * rect(20, 20, 60, 60);
- * describe('A red rectangle with a black outline.');
+ * square(20, 20, 60);
+ * describe('A red square with a black outline.');
  * </code>
  * </div>
  *
@@ -449,8 +449,8 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * <code>
  * // Three-digit hex RGB notation.
  * fill('#fae');
- * rect(20, 20, 60, 60);
- * describe('A pink rectangle with a black outline.');
+ * square(20, 20, 60);
+ * describe('A pink square with a black outline.');
  * </code>
  * </div>
  *
@@ -458,8 +458,8 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * <code>
  * // Six-digit hex RGB notation.
  * fill('#A251FA');
- * rect(20, 20, 60, 60);
- * describe('A purple rectangle with a black outline.');
+ * square(20, 20, 60);
+ * describe('A purple square with a black outline.');
  * </code>
  * </div>
  *
@@ -467,8 +467,8 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * <code>
  * // Integer RGB notation.
  * fill('rgb(0,255,0)');
- * rect(20, 20, 60, 60);
- * describe('A bright green rectangle with a black outline.');
+ * square(20, 20, 60);
+ * describe('A bright green square with a black outline.');
  * </code>
  * </div>
  *
@@ -476,7 +476,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * <code>
  * // Integer RGBA notation.
  * fill('rgba(0,255,0, 0.25)');
- * rect(20, 20, 60, 60);
+ * square(20, 20, 60);
  * describe('A soft green rectange with a black outline.');
  * </code>
  * </div>
@@ -485,8 +485,8 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * <code>
  * // Percentage RGB notation.
  * fill('rgb(100%,0%,10%)');
- * rect(20, 20, 60, 60);
- * describe('A red rectange with a black outline.');
+ * square(20, 20, 60);
+ * describe('A red square with a black outline.');
  * </code>
  * </div>
  *
@@ -494,17 +494,18 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * <code>
  * // Percentage RGBA notation.
  * fill('rgba(100%,0%,100%,0.5)');
- * rect(20, 20, 60, 60);
- * describe('A dark fuchsia rectangle with a black outline.');
+ * square(20, 20, 60);
+ * describe('A dark fuchsia square with a black outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
  * // p5.Color object.
- * fill(color(0, 0, 255));
- * rect(20, 20, 60, 60);
- * describe('A blue rectangle with a black outline.');
+ * let c = color(0, 0, 255);
+ * fill(c);
+ * square(20, 20, 60);
+ * describe('A blue square with a black outline.');
  * </code>
  * </div>
  */
