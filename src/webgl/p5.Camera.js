@@ -1768,10 +1768,14 @@ p5.Camera = class Camera {
     // Linearly interpolates the distance between the viewpoint and the center,
     // and the position of the center.
     const eyeDist0 = Math.hypot(
-      cam0.eyeX - cam0.centerX, cam0.eyeY - cam0.centerY, cam0.eyeZ - cam0.centerZ
+      cam0.eyeX - cam0.centerX,
+      cam0.eyeY - cam0.centerY,
+      cam0.eyeZ - cam0.centerZ
     );
     const eyeDist1 = Math.hypot(
-      cam1.eyeX - cam1.centerX, cam1.eyeY - cam1.centerY, cam1.eyeZ - cam1.centerZ
+      cam1.eyeX - cam1.centerX,
+      cam1.eyeY - cam1.centerY,
+      cam1.eyeZ - cam1.centerZ
     );
     const eyeDist = (1 - amt) * eyeDist0 + amt * eyeDist1;
     const lerpedCenterX = (1 - amt) * cam0.centerX + amt * cam1.centerX;
