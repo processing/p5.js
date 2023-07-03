@@ -1638,6 +1638,272 @@ p5.Camera = class Camera {
     }
   }
 
+  /**
+ * For the cameras cam0 and cam1 with the given arguments, their view are combined
+ * with the parameter amt that represents the quantity, and the obtained view is applied.
+ * For example, if cam0 is looking straight ahead and cam1 is looking straight
+ * to the right and amt is 0.5, the applied camera will look to the halfway
+ * between front and right.
+ * If the applied camera is active, the applied result will be reflected on the screen.
+ * When applying this function, the projection modes of all appearing cameras
+ * must match. For example, if one is perspective, ortho, frustum, the other
+ * two must also be perspective, ortho, frustum respectively.
+ *
+ * @method slerp
+ * @param {p5.Camera} cam0 first p5.Camera
+ * @param {p5.Camera} cam1 second p5.Camera
+ * @param {Number} amt amount to use for interpolation during slerp
+ *
+ * @example
+ * <div>
+ * <code>
+ * let cam0, cam1, cam;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   strokeWeight(3);
+ *
+ *   // camera for slerp.
+ *   cam = createCamera();
+ *   // cam0 is looking at the cube from the front.
+ *   // cam1 is pointing straight to the right in the cube
+ *   // at the same position as cam0 by doing a pan(-PI/2).
+ *   cam0 = createCamera();
+ *   cam1 = createCamera();
+ *   cam1.pan(-PI/2);
+ *
+ *   // we only use cam.
+ *   setCamera(cam);
+ * }
+ *
+ * function draw() {
+ *   // calculate amount.
+ *   const amt = 0.5 - 0.5 * cos(frameCount * TAU / 120);
+ *   // slerp cam0 and cam1 with amt, set to cam.
+ *   // When amt moves from 0 to 1, cam moves from cam0 to cam1,
+ *   // shaking the camera to the right.
+ *   cam.slerp(cam0, cam1, amt);
+ *
+ *   background(255);
+ *   // Every time the camera turns right, the cube drifts left.
+ *   box(40);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * Prepare two cameras. One camera is facing straight ahead to the cube and the other
+ * camera is in the same position and looking straight to the right.
+ * If you use a camera which interpolates these with slerp(), the facing direction
+ * of the camera will change smoothly between the front and the right.
+ *
+ * @example
+ * <div>
+ * <code>
+ * let cam, lastCam, initialCam;
+ * let countForReset = 30;
+ * // This sample uses orbitControl() to move the camera.
+ * // Double-clicking the canvas restores the camera to its initial state.
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   strokeWeight(3);
+ *
+ *   cam = createCamera(); // main camera
+ *   lastCam = createCamera(); // Camera for recording loc info before reset
+ *   initialCam = createCamera(); // Camera for recording the initial state
+ *
+ *   setCamera(cam); // set main camera
+ * }
+ *
+ * function draw() {
+ *   if (countForReset < 30) {
+ *     // if the reset count is less than 30,
+ *     // it will move closer to the original camera as it increases.
+ *     countForReset++;
+ *     cam.slerp(lastCam, initialCam, countForReset / 30);
+ *   } else {
+ *     // if the count is 30,
+ *     // you can freely move the main camera with orbitControl().
+ *     orbitControl();
+ *   }
+ *
+ *   background(255);
+ *   box(40);
+ * }
+ * // A double-click sets countForReset to 0 and initiates a reset.
+ * function doubleClicked() {
+ *   if (countForReset === 30) {
+ *     countForReset = 0;
+ *     lastCam.set(cam);
+ *   }
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * There is a camera, drawing a cube. The camera can be moved freely with
+ * orbitControl(). Double-click to smoothly return the camera to its initial state.
+ * The camera cannot be moved during that time.
+ */
+  slerp(cam0, cam1, amt) {
+    // If t is 0 or 1, do not interpolate and set the argument camera.
+    if (amt === 0) {
+      this.set(cam0);
+      return;
+    } else if (amt === 1) {
+      this.set(cam1);
+      return;
+    }
+
+    // For this cameras is ortho, assume that cam0 and cam1 are also ortho
+    // and interpolate the elements of the projection matrix.
+    if (this.projMatrix.mat4[15] !== 0) {
+      this.projMatrix.mat4[0] =
+        (1 - amt) * cam0.projMatrix.mat4[0] + amt * cam1.projMatrix.mat4[0];
+      this.projMatrix.mat4[5] =
+        (1 - amt) * cam0.projMatrix.mat4[5] + amt * cam1.projMatrix.mat4[5];
+    }
+    // If the camera is active, make uPMatrix reflect changes in projMatrix.
+    if (this._isActive()) {
+      this._renderer.uPMatrix.mat4 = this.projMatrix.mat4.slice();
+    }
+
+    // Linearly interpolates the distance between the viewpoint and the center,
+    // and the position of the center.
+    const eyeDist0 = Math.hypot(
+      cam0.eyeX - cam0.centerX, cam0.eyeY - cam0.centerY, cam0.eyeZ - cam0.centerZ
+    );
+    const eyeDist1 = Math.hypot(
+      cam1.eyeX - cam1.centerX, cam1.eyeY - cam1.centerY, cam1.eyeZ - cam1.centerZ
+    );
+    const eyeDist = (1 - amt) * eyeDist0 + amt * eyeDist1;
+    const lerpedCenterX = (1 - amt) * cam0.centerX + amt * cam1.centerX;
+    const lerpedCenterY = (1 - amt) * cam0.centerY + amt * cam1.centerY;
+    const lerpedCenterZ = (1 - amt) * cam0.centerZ + amt * cam1.centerZ;
+
+    // Prepare each of rotation matrix from their camera matrix
+    const mat0 = cam0.cameraMatrix.mat4;
+    const mat1 = cam1.cameraMatrix.mat4;
+    const m0 = [
+      mat0[0], mat0[1], mat0[2],
+      mat0[4], mat0[5], mat0[6],
+      mat0[8], mat0[9], mat0[10]
+    ];
+    const m1 = [
+      mat1[0], mat1[1], mat1[2],
+      mat1[4], mat1[5], mat1[6],
+      mat1[8], mat1[9], mat1[10]
+    ];
+    // Create the inverse matrix of mat0 by transposing mat0,
+    // and multiply it to mat1 from the right.
+    // This matrix represents the difference between the two.
+    const m = [
+      m1[0] * m0[0] + m1[1] * m0[1] + m1[2] * m0[2],
+      m1[0] * m0[3] + m1[1] * m0[4] + m1[2] * m0[5],
+      m1[0] * m0[6] + m1[1] * m0[7] + m1[2] * m0[8],
+
+      m1[3] * m0[0] + m1[4] * m0[1] + m1[5] * m0[2],
+      m1[3] * m0[3] + m1[4] * m0[4] + m1[5] * m0[5],
+      m1[3] * m0[6] + m1[4] * m0[7] + m1[5] * m0[8],
+
+      m1[6] * m0[0] + m1[7] * m0[1] + m1[8] * m0[2],
+      m1[6] * m0[3] + m1[7] * m0[4] + m1[8] * m0[5],
+      m1[6] * m0[6] + m1[7] * m0[7] + m1[8] * m0[8]
+    ];
+
+    // Calculate the trace and from it the cos value of the angle.
+    // trace = 1 + 2 * cosTheta.
+    let cosTheta = 0.5 * (m[0] + m[4] + m[8] - 1);
+    // If the angle is close to 0, the two matrices are very close,
+    // so in that case we execute linearly interpolate.
+    if (1 - cosTheta < 0.0000001) {
+      // Obtain the front vector and up vector by linear interpolation
+      // and normalize them.
+      const lerpedFront = new p5.Vector(
+        (1 - amt) * m0[2] + amt * m1[2],
+        (1 - amt) * m0[5] + amt * m1[5],
+        (1 - amt) * m0[8] + amt * m1[8]
+      ).normalize();
+      const lerpedUp = new p5.Vector(
+        (1 - amt) * m0[1] + amt * m1[1],
+        (1 - amt) * m0[4] + amt * m1[4],
+        (1 - amt) * m0[7] + amt * m1[7]
+      ).normalize();
+      // set the camera
+      this.camera(
+        lerpedCenterX + lerpedFront.x * eyeDist,
+        lerpedCenterY + lerpedFront.y * eyeDist,
+        lerpedCenterZ + lerpedFront.z * eyeDist,
+        lerpedCenterX, lerpedCenterY, lerpedCenterZ,
+        lerpedUp.x, lerpedUp.y, lerpedUp.z
+      );
+      return;
+    }
+
+    // Calculates the axis vector and the angle of the difference orthogonal matrix.
+    // similar calculation is here:
+    // https://github.com/mrdoob/three.js/blob/dev/src/math/Quaternion.js#L294
+    let a, b, c, sinTheta;
+    let invOneMinusCosTheta = 1 / (1 - cosTheta);
+    if (m[0] > m[4] && m[0] > m[8]) {
+      a = Math.sqrt((m[0] - cosTheta) * invOneMinusCosTheta); // not zero.
+      invOneMinusCosTheta /= a;
+      b = 0.5 * (m[1] + m[3]) * invOneMinusCosTheta;
+      c = 0.5 * (m[2] + m[6]) * invOneMinusCosTheta;
+      sinTheta = 0.5 * (m[7] - m[5]) / a;
+    } else if (m[4] > m[8]) {
+      b = Math.sqrt((m[4] - cosTheta) * invOneMinusCosTheta); // not zero.
+      invOneMinusCosTheta /= b;
+      c = 0.5 * (m[5] + m[7]) * invOneMinusCosTheta;
+      a = 0.5 * (m[1] + m[3]) * invOneMinusCosTheta;
+      sinTheta = 0.5 * (m[2] - m[6]) / b;
+    } else {
+      c = Math.sqrt((m[8] - cosTheta) * invOneMinusCosTheta); // not zero.
+      invOneMinusCosTheta /= c;
+      a = 0.5 * (m[2] + m[6]) * invOneMinusCosTheta;
+      b = 0.5 * (m[5] + m[7]) * invOneMinusCosTheta;
+      sinTheta = 0.5 * (m[3] - m[1]) / c;
+    }
+
+    // Constructs a new matrix after interpolating the angles.
+    // Multiplying mat0 by the first matrix yields mat1, but by creating a state
+    // in the middle of that matrix, you can obtain a matrix that is
+    // an intermediate state between mat0 and mat1.
+    const angle = amt * Math.atan2(sinTheta, cosTheta);
+    const cosAngle = Math.cos(angle);
+    const sinAngle = Math.sin(angle);
+    const oneMinusCosAngle = 1 - cosAngle;
+    const ab = a * b;
+    const bc = b * c;
+    const ca = c * a;
+    const result = [
+      cosAngle + oneMinusCosAngle * a * a,
+      oneMinusCosAngle * ab - sinAngle * c,
+      oneMinusCosAngle * ca + sinAngle * b,
+      oneMinusCosAngle * ab + sinAngle * c,
+      cosAngle + oneMinusCosAngle * b * b,
+      oneMinusCosAngle * bc - sinAngle * a,
+      oneMinusCosAngle * ca - sinAngle * b,
+      oneMinusCosAngle * bc + sinAngle * a,
+      cosAngle + oneMinusCosAngle * c * c
+    ];
+
+    // Multiply this to mat0 from left to get the interpolated front vector.
+    const front = new p5.Vector(
+      result[0] * m0[2] + result[1] * m0[5] + result[2] * m0[8],
+      result[3] * m0[2] + result[4] * m0[5] + result[5] * m0[8],
+      result[6] * m0[2] + result[7] * m0[5] + result[8] * m0[8]
+    );
+
+    // We also get the up vector in the same way and set the camera.
+    this.camera(
+      lerpedCenterX + front.x * eyeDist,
+      lerpedCenterY + front.y * eyeDist,
+      lerpedCenterZ + front.z * eyeDist,
+      lerpedCenterX, lerpedCenterY, lerpedCenterZ,
+      result[0] * m0[1] + result[1] * m0[4] + result[2] * m0[7],
+      result[3] * m0[1] + result[4] * m0[4] + result[5] * m0[7],
+      result[6] * m0[1] + result[7] * m0[4] + result[8] * m0[7]
+    );
+  }
+
   ////////////////////////////////////////////////////////////////////////////////
   // Camera Helper Methods
   ////////////////////////////////////////////////////////////////////////////////
