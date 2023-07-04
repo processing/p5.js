@@ -1759,28 +1759,67 @@ p5.Camera = class Camera {
         (1 - amt) * cam0.projMatrix.mat4[0] + amt * cam1.projMatrix.mat4[0];
       this.projMatrix.mat4[5] =
         (1 - amt) * cam0.projMatrix.mat4[5] + amt * cam1.projMatrix.mat4[5];
-    }
-    // If the camera is active, make uPMatrix reflect changes in projMatrix.
-    if (this._isActive()) {
-      this._renderer.uPMatrix.mat4 = this.projMatrix.mat4.slice();
+      // If the camera is active, make uPMatrix reflect changes in projMatrix.
+      if (this._isActive()) {
+        this._renderer.uPMatrix.mat4 = this.projMatrix.mat4.slice();
+      }
     }
 
-    // Linearly interpolates the distance between the viewpoint and the center,
-    // and the position of the center.
-    const eyeDist0 = Math.hypot(
+    // Calculate the distance between eye and center for each camera.
+    const dist0 = Math.hypot(
       cam0.eyeX - cam0.centerX,
       cam0.eyeY - cam0.centerY,
       cam0.eyeZ - cam0.centerZ
     );
-    const eyeDist1 = Math.hypot(
+    const dist1 = Math.hypot(
       cam1.eyeX - cam1.centerX,
       cam1.eyeY - cam1.centerY,
       cam1.eyeZ - cam1.centerZ
     );
-    const eyeDist = (1 - amt) * eyeDist0 + amt * eyeDist1;
-    const lerpedCenterX = (1 - amt) * cam0.centerX + amt * cam1.centerX;
-    const lerpedCenterY = (1 - amt) * cam0.centerY + amt * cam1.centerY;
-    const lerpedCenterZ = (1 - amt) * cam0.centerZ + amt * cam1.centerZ;
+    // Then linearly interpolate them by amt.
+    const lerpedDist = (1 - amt) * dist0 + amt * dist1;
+
+    // Next, calculate the ratio to interpolate the eye and center by a constant
+    // ratio for each camera. This ratio is the same for both. Also, with this ratio
+    // of points, the distance is the minimum distance of the two points of
+    // the same ratio.
+    // With this method, if the viewpoint is fixed, linear interpolation is performed
+    // at the viewpoint, and if the center is fixed, linear interpolation is performed
+    // at the center, resulting in reasonable interpolation. If both move, the point
+    // halfway between them is taken.
+    const eyeDiff = new p5.Vector(
+      cam0.eyeX - cam1.eyeX, cam0.eyeY - cam1.eyeY, cam0.eyeZ - cam1.eyeZ
+    );
+    const diffDiff = new p5.Vector(
+      cam0.eyeX - cam1.eyeX - cam0.centerX + cam1.centerX,
+      cam0.eyeY - cam1.eyeY - cam0.centerY + cam1.centerY,
+      cam0.eyeZ - cam1.eyeZ - cam0.centerZ + cam1.centerZ
+    );
+    // Suppose there are two line segments. Consider the distance between the points
+    // above them as if they were taken in the same ratio. This calculation figures out
+    // a ratio that minimizes this.
+    // Each line segment is, a line segment connecting the viewpoint and the center
+    // for each camera.
+    const divider = diffDiff.magSq();
+    let ratio = 1; // default.
+    if (divider > 0.000001){
+      ratio = p5.Vector.dot(eyeDiff, diffDiff) / divider;
+      ratio = Math.max(0, Math.min(ratio, 1));
+    }
+
+    // Take the appropriate proportions and work out the points
+    // that are between the new viewpoint and the new center position.
+    const medium0X = (1-ratio) * cam0.eyeX + ratio * cam0.centerX;
+    const medium0Y = (1-ratio) * cam0.eyeY + ratio * cam0.centerY;
+    const medium0Z = (1-ratio) * cam0.eyeZ + ratio * cam0.centerZ;
+
+    const medium1X = (1-ratio) * cam1.eyeX + ratio * cam1.centerX;
+    const medium1Y = (1-ratio) * cam1.eyeY + ratio * cam1.centerY;
+    const medium1Z = (1-ratio) * cam1.eyeZ + ratio * cam1.centerZ;
+
+    const lerpedMediumX = medium0X * (1-amt) + medium1X * amt;
+    const lerpedMediumY = medium0Y * (1-amt) + medium1Y * amt;
+    const lerpedMediumZ = medium0Z * (1-amt) + medium1Z * amt;
 
     // Prepare each of rotation matrix from their camera matrix
     const mat0 = cam0.cameraMatrix.mat4;
@@ -1813,7 +1852,9 @@ p5.Camera = class Camera {
     ];
 
     // Calculate the trace and from it the cos value of the angle.
-    // trace = 1 + 2 * cosTheta.
+    // An orthogonal matrix is just an orthonormal basis. If this is not the identity
+    // matrix, it is a centered orthonormal basis plus some angle of rotation about
+    // some axis. That's the angle. Letting this be theta, trace becomes 1+2cos(theta).
     let cosTheta = 0.5 * (m[0] + m[4] + m[8] - 1);
     // If the angle is close to 0, the two matrices are very close,
     // so in that case we execute linearly interpolate.
@@ -1830,18 +1871,23 @@ p5.Camera = class Camera {
         (1 - amt) * m0[4] + amt * m1[4],
         (1 - amt) * m0[7] + amt * m1[7]
       ).normalize();
+
       // set the camera
+      // The eye position and center position are calculated based on the front vector.
       this.camera(
-        lerpedCenterX + lerpedFront.x * eyeDist,
-        lerpedCenterY + lerpedFront.y * eyeDist,
-        lerpedCenterZ + lerpedFront.z * eyeDist,
-        lerpedCenterX, lerpedCenterY, lerpedCenterZ,
+        lerpedMediumX + ratio * lerpedDist * lerpedFront.x,
+        lerpedMediumY + ratio * lerpedDist * lerpedFront.y,
+        lerpedMediumZ + ratio * lerpedDist * lerpedFront.z,
+        lerpedMediumX + (ratio-1) * lerpedDist * lerpedFront.x,
+        lerpedMediumY + (ratio-1) * lerpedDist * lerpedFront.y,
+        lerpedMediumZ + (ratio-1) * lerpedDist * lerpedFront.z,
         lerpedUp.x, lerpedUp.y, lerpedUp.z
       );
       return;
     }
 
     // Calculates the axis vector and the angle of the difference orthogonal matrix.
+    // The axis vector is what I explained earlier in the comments.
     // similar calculation is here:
     // https://github.com/mrdoob/three.js/blob/dev/src/math/Quaternion.js#L294
     let a, b, c, sinTheta;
@@ -1890,18 +1936,19 @@ p5.Camera = class Camera {
     ];
 
     // Multiply this to mat0 from left to get the interpolated front vector.
-    const front = new p5.Vector(
-      result[0] * m0[2] + result[1] * m0[5] + result[2] * m0[8],
-      result[3] * m0[2] + result[4] * m0[5] + result[5] * m0[8],
-      result[6] * m0[2] + result[7] * m0[5] + result[8] * m0[8]
-    );
+    const newFrontX = result[0] * m0[2] + result[1] * m0[5] + result[2] * m0[8];
+    const newFrontY = result[3] * m0[2] + result[4] * m0[5] + result[5] * m0[8];
+    const newFrontZ = result[6] * m0[2] + result[7] * m0[5] + result[8] * m0[8];
 
     // We also get the up vector in the same way and set the camera.
+    // The eye position and center position are calculated based on the front vector.
     this.camera(
-      lerpedCenterX + front.x * eyeDist,
-      lerpedCenterY + front.y * eyeDist,
-      lerpedCenterZ + front.z * eyeDist,
-      lerpedCenterX, lerpedCenterY, lerpedCenterZ,
+      lerpedMediumX + ratio * lerpedDist * newFrontX,
+      lerpedMediumY + ratio * lerpedDist * newFrontY,
+      lerpedMediumZ + ratio * lerpedDist * newFrontZ,
+      lerpedMediumX + (ratio-1) * lerpedDist * newFrontX,
+      lerpedMediumY + (ratio-1) * lerpedDist * newFrontY,
+      lerpedMediumZ + (ratio-1) * lerpedDist * newFrontZ,
       result[0] * m0[1] + result[1] * m0[4] + result[2] * m0[7],
       result[3] * m0[1] + result[4] * m0[4] + result[5] * m0[7],
       result[6] * m0[1] + result[7] * m0[4] + result[8] * m0[7]
