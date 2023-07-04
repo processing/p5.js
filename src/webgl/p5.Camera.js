@@ -1856,6 +1856,7 @@ p5.Camera = class Camera {
     // An orthogonal matrix is just an orthonormal basis. If this is not the identity
     // matrix, it is a centered orthonormal basis plus some angle of rotation about
     // some axis. That's the angle. Letting this be theta, trace becomes 1+2cos(theta).
+    // reference: https://en.wikipedia.org/wiki/Rotation_matrix#Determining_the_angle
     let cosTheta = 0.5 * (m[0] + m[4] + m[8] - 1);
     // If the angle is close to 0, the two matrices are very close,
     // so in that case we execute linearly interpolate.
@@ -1890,7 +1891,7 @@ p5.Camera = class Camera {
     // Calculates the axis vector and the angle of the difference orthogonal matrix.
     // The axis vector is what I explained earlier in the comments.
     // similar calculation is here:
-    // https://github.com/mrdoob/three.js/blob/dev/src/math/Quaternion.js#L294
+    // https://github.com/mrdoob/three.js/blob/883249620049d1632e8791732808fefd1a98c871/src/math/Quaternion.js#L294
     let a, b, c, sinTheta;
     let invOneMinusCosTheta = 1 / (1 - cosTheta);
     if (m[0] > m[4] && m[0] > m[8]) {
