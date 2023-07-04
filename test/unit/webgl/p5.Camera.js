@@ -881,9 +881,9 @@ suite('p5.Camera', function() {
       // Run slerp() and compare viewpoints.
       for (let i = 1; i < 100; i++) {
         myCam.slerp(cam0, cam1, i * 0.01);
-        assert(myCam.eyeX === cam0.eyeX);
-        assert(myCam.eyeY === cam0.eyeY);
-        assert(myCam.eyeZ === cam0.eyeZ);
+        assert.strictEqual(myCam.eyeX, cam0.eyeX);
+        assert.strictEqual(myCam.eyeY, cam0.eyeY);
+        assert.strictEqual(myCam.eyeZ, cam0.eyeZ);
       }
     });
     test('if center of cam0, cam1 are same, all the same.', function() {
@@ -896,9 +896,9 @@ suite('p5.Camera', function() {
       // Run slerp() and compare centers.
       for (let i = 1; i < 100; i++) {
         myCam.slerp(cam0, cam1, i * 0.01);
-        assert(myCam.centerX === cam0.centerX);
-        assert(myCam.centerY === cam0.centerY);
-        assert(myCam.centerZ === cam0.centerZ);
+        assert.strictEqual(myCam.centerX, cam0.centerX);
+        assert.strictEqual(myCam.centerY, cam0.centerY);
+        assert.strictEqual(myCam.centerZ, cam0.centerZ);
       }
     });
     test('if all camera is ortho, 0,5 component is interpolated', function() {
