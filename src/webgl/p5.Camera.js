@@ -1645,9 +1645,10 @@ p5.Camera = class Camera {
  * to the right and amt is 0.5, the applied camera will look to the halfway
  * between front and right.
  * If the applied camera is active, the applied result will be reflected on the screen.
- * When applying this function, the projection modes of all appearing cameras
- * must match. For example, if one is perspective, ortho, frustum, the other
- * two must also be perspective, ortho, frustum respectively.
+ * When applying this function, all cameras involved must have exactly the same projection
+ * settings. For example, if one is perspective, ortho, frustum, the other two must also be
+ * perspective, ortho, frustum respectively. However, if all cameras have ortho settings,
+ * only orbitControl's change of the projection settings is permissive.
  *
  * @method slerp
  * @param {p5.Camera} cam0 first p5.Camera
