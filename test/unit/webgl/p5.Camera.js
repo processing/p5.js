@@ -822,7 +822,7 @@ suite('p5.Camera', function() {
       const cam3 = myCam.copy();
       cam3._orbit(Math.PI * 0.3, 0, 0);
       const cam4 = myCam.copy();
-      cam4._orbit(-Math.PI * 0.5, 0, 0);
+      cam4._orbit(-Math.PI * 0.7, 0, 0);
       const cam5 = myCam.copy();
       cam5._orbit(Math.PI * 1.1, 0, 0);
 
@@ -830,21 +830,21 @@ suite('p5.Camera', function() {
       const cam6 = myCam.copy();
       cam6._orbit(0, Math.PI * 0.3, 0);
       const cam7 = myCam.copy();
-      cam7._orbit(0, -Math.PI * 0.5, 0);
+      cam7._orbit(0, -Math.PI * 0.4, 0);
       const cam8 = myCam.copy();
       cam8._orbit(0, Math.PI * 1.1, 0);
 
       // Compare these views with the view set by slerp().
       myCam.slerp(cam0, cam1, 3/8);
       expectCameraMatricesAreClose(myCam, cam3);
-      myCam.slerp(cam0, cam1, -5/8);
+      myCam.slerp(cam0, cam1, -7/8);
       expectCameraMatricesAreClose(myCam, cam4);
       myCam.slerp(cam0, cam1, 11/8);
       expectCameraMatricesAreClose(myCam, cam5);
 
       myCam.slerp(cam0, cam2, 3/7);
       expectCameraMatricesAreClose(myCam, cam6);
-      myCam.slerp(cam0, cam2, -5/7);
+      myCam.slerp(cam0, cam2, -4/7);
       expectCameraMatricesAreClose(myCam, cam7);
       myCam.slerp(cam0, cam2, 11/7);
       expectCameraMatricesAreClose(myCam, cam8);
