@@ -745,6 +745,12 @@ suite('p5.Camera', function() {
   });
 
   suite('slerp()', function() {
+    const expectCameraMatricesAreClose = function(cam0, cam1) {
+      for (let i = 0; i < cam0.cameraMatrix.mat4.length; i++) {
+        expect(cam0.cameraMatrix.mat4[i])
+        .to.be.closeTo(cam1.cameraMatrix.mat4[i], 0.001);
+      }
+    }
     test('if amt is 0 or 1, the argument camera is set', function() {
       myCam = myp5.createCamera();
       const cam0 = myCam.copy();
@@ -759,6 +765,28 @@ suite('p5.Camera', function() {
       // if amt is 1, cam is set to cam1.
       myCam.slerp(cam0, cam1, 1);
       assert.deepEqual(myCam.cameraMatrix.mat4, cam1.cameraMatrix.mat4);
+    });
+    test('Behavior of slerp() for camera moved by pan()', function() {
+      myCam = myp5.createCamera();
+      const cam0 = myCam.copy();
+      const cam1 = myCam.copy();
+      cam1.pan(Math.PI * 0.9);
+
+      // Prepare cameras supposed to be obtained by slerp cam0 and cam1.
+      const cam2 = myCam.copy();
+      cam2.pan(Math.PI * 0.4);
+      const cam3 = myCam.copy();
+      cam3.pan(-Math.PI * 0.2);
+      const cam4 = myCam.copy();
+      cam4.pan(Math.PI * 1.1);
+
+      // Compare these views with the view set by slerp().
+      myCam.slerp(cam0, cam1, 4/9);
+      expectCameraMatricesAreClose(myCam, cam2);
+      myCam.slerp(cam0, cam1, -2/9);
+      expectCameraMatricesAreClose(myCam, cam3);
+      myCam.slerp(cam0, cam1, 11/9);
+      expectCameraMatricesAreClose(myCam, cam4);
     });
   });
 
