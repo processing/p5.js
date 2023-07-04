@@ -871,6 +871,58 @@ suite('p5.Camera', function() {
       myCam.slerp(cam0, cam1, 3/2);
       expectCameraMatricesAreClose(myCam, cam4);
     });
+    test('if viewpoints of cam0, cam1 are same, all the same.', function() {
+      myCam = myp5.createCamera();
+      const cam0 = myCam.copy();
+      cam0.camera(22, 37, 49, 0, 1, 2, 3, 4, -1);
+      const cam1 = myCam.copy();
+      cam1.camera(22, 37, 49, 2, 1, 0, 9, 8, 11);
+
+      // Run slerp() and compare viewpoints.
+      for (let i = 1; i < 100; i++) {
+        myCam.slerp(cam0, cam1, i * 0.01);
+        assert(myCam.eyeX === cam0.eyeX);
+        assert(myCam.eyeY === cam0.eyeY);
+        assert(myCam.eyeZ === cam0.eyeZ);
+      }
+    });
+    test('if center of cam0, cam1 are same, all the same.', function() {
+      myCam = myp5.createCamera();
+      const cam0 = myCam.copy();
+      cam0.camera(0, 1, 2, 22, 37, 49, 3, 4, -1);
+      const cam1 = myCam.copy();
+      cam1.camera(2, 1, 0, 22, 37, 49, 9, 8, 11);
+
+      // Run slerp() and compare centers.
+      for (let i = 1; i < 100; i++) {
+        myCam.slerp(cam0, cam1, i * 0.01);
+        assert(myCam.centerX === cam0.centerX);
+        assert(myCam.centerY === cam0.centerY);
+        assert(myCam.centerZ === cam0.centerZ);
+      }
+    });
+    test('if all camera is ortho, 0,5 component is interpolated', function() {
+      myCam = myp5.createCamera();
+      myCam.ortho(-50, 50, -50, 50, 0, 1000);
+      const cam0 = myCam.copy();
+      cam0.ortho(-20, 20, -20, 20, 0, 1000);
+      const cam1 = myCam.copy();
+      cam1.ortho(-100, 100, -100, 100, 0, 1000);
+
+      // interpolate cam0 and cam1
+      myCam.slerp(cam0, cam1, 0.3);
+
+      // Next, check the 0th and 5th entries of the projection matrix
+      // to make sure they are interpolated.
+      const p0_0 = cam0.projMatrix.mat4[0];
+      const p1_0 = cam1.projMatrix.mat4[0];
+      expect(myCam.projMatrix.mat4[0])
+        .to.be.closeTo(0.7 * p0_0 + 0.3 * p1_0, 0.0001);
+      const p0_5 = cam0.projMatrix.mat4[5];
+      const p1_5 = cam1.projMatrix.mat4[5];
+      expect(myCam.projMatrix.mat4[5])
+        .to.be.closeTo(0.7 * p0_5 + 0.3 * p1_5, 0.0001);
+    });
   });
 
   suite('Helper Functions', function() {
