@@ -748,9 +748,9 @@ suite('p5.Camera', function() {
     const expectCameraMatricesAreClose = function(cam0, cam1) {
       for (let i = 0; i < cam0.cameraMatrix.mat4.length; i++) {
         expect(cam0.cameraMatrix.mat4[i])
-        .to.be.closeTo(cam1.cameraMatrix.mat4[i], 0.001);
+          .to.be.closeTo(cam1.cameraMatrix.mat4[i], 0.001);
       }
-    }
+    };
     test('if amt is 0 or 1, the argument camera is set', function() {
       myCam = myp5.createCamera();
       const cam0 = myCam.copy();
