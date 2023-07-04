@@ -744,6 +744,24 @@ suite('p5.Camera', function() {
     });
   });
 
+  suite('slerp()', function() {
+    test('if amt is 0 or 1, the argument camera is set', function() {
+      myCam = myp5.createCamera();
+      const cam0 = myCam.copy();
+      cam0.camera(20, 30, 40, 2, 3, 8, 0, 9, -6);
+      const cam1 = myCam.copy();
+      cam1.camera(90, 70, 33, 4, 1, 9, -3, 2, 5);
+
+      // if amt is 0, cam is set to cam0.
+      myCam.slerp(cam0, cam1, 0);
+      assert.deepEqual(myCam.cameraMatrix.mat4, cam0.cameraMatrix.mat4);
+
+      // if amt is 1, cam is set to cam1.
+      myCam.slerp(cam0, cam1, 1);
+      assert.deepEqual(myCam.cameraMatrix.mat4, cam1.cameraMatrix.mat4);
+    });
+  });
+
   suite('Helper Functions', function() {
     test('copy() returns a new p5.Camera object', function() {
       var newCam = myCam.copy();
