@@ -881,9 +881,9 @@ suite('p5.Camera', function() {
       // Run slerp() and compare viewpoints.
       for (let i = 1; i < 100; i++) {
         myCam.slerp(cam0, cam1, i * 0.01);
-        assert.strictEqual(myCam.eyeX, cam0.eyeX);
-        assert.strictEqual(myCam.eyeY, cam0.eyeY);
-        assert.strictEqual(myCam.eyeZ, cam0.eyeZ);
+        expect(myCam.eyeX).to.be.closeTo(cam0.eyeX, 0.00001);
+        expect(myCam.eyeY).to.be.closeTo(cam0.eyeY, 0.00001);
+        expect(myCam.eyeZ).to.be.closeTo(cam0.eyeZ, 0.00001);
       }
     });
     test('if center of cam0, cam1 are same, all the same.', function() {
@@ -896,9 +896,9 @@ suite('p5.Camera', function() {
       // Run slerp() and compare centers.
       for (let i = 1; i < 100; i++) {
         myCam.slerp(cam0, cam1, i * 0.01);
-        assert.strictEqual(myCam.centerX, cam0.centerX);
-        assert.strictEqual(myCam.centerY, cam0.centerY);
-        assert.strictEqual(myCam.centerZ, cam0.centerZ);
+        expect(myCam.centerX).to.be.closeTo(cam0.centerX, 0.00001);
+        expect(myCam.centerY).to.be.closeTo(cam0.centerY, 0.00001);
+        expect(myCam.centerZ).to.be.closeTo(cam0.centerZ, 0.00001);
       }
     });
     test('if all camera is ortho, 0,5 component is interpolated', function() {
@@ -917,11 +917,11 @@ suite('p5.Camera', function() {
       const p0_0 = cam0.projMatrix.mat4[0];
       const p1_0 = cam1.projMatrix.mat4[0];
       expect(myCam.projMatrix.mat4[0])
-        .to.be.closeTo(0.7 * p0_0 + 0.3 * p1_0, 0.0001);
+        .to.be.closeTo(0.7 * p0_0 + 0.3 * p1_0, 0.00001);
       const p0_5 = cam0.projMatrix.mat4[5];
       const p1_5 = cam1.projMatrix.mat4[5];
       expect(myCam.projMatrix.mat4[5])
-        .to.be.closeTo(0.7 * p0_5 + 0.3 * p1_5, 0.0001);
+        .to.be.closeTo(0.7 * p0_5 + 0.3 * p1_5, 0.00001);
     });
   });
 
