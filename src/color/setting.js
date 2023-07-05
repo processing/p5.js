@@ -81,7 +81,7 @@ import './p5.Color';
  *
  * <div>
  * <code>
- * // Three-digit hexadecimal RGB notation.
+ * // Three-digit hex RGB notation.
  * background('#fae');
  * describe('A canvas with a pink background.');
  * </code>
@@ -89,7 +89,7 @@ import './p5.Color';
  *
  * <div>
  * <code>
- * // Six-digit hexadecimal RGB notation.
+ * // Six-digit hex RGB notation.
  * background('#222222');
  * describe('A canvas with a black background.');
  * </code>
@@ -129,7 +129,7 @@ import './p5.Color';
  *
  * <div>
  * <code>
- * // A p5 Color object.
+ * // A p5.Color object.
  * let c = color(0, 0, 255);
  * background(c);
  * describe('A canvas with a blue background.');
@@ -175,7 +175,7 @@ import './p5.Color';
  * @method background
  * @param {p5.Image} image     image created with <a href="#/p5/loadImage">loadImage()</a>
  *                             or <a href="#/p5/createImage">createImage()</a>,
- *                             to set as background
+ *                             to set as background.
  *                             (must be same size as the sketch window).
  * @param  {Number}  [a]
  * @chainable
@@ -186,37 +186,40 @@ p5.prototype.background = function(...args) {
 };
 
 /**
- * Clears the pixels on the canvas. This function makes every pixel 100% transparent.
- * Calling clear() does not clear objects created by createX() functtions such as
- * <a href="#/p5/createVideo">createVideo()</a> or
- * <a href="#/p5/createDiv">createDiv()</a>. These objects will remain unchanged after
- * calling clear() and can be redrawn.
+ * Clears the pixels on the canvas. This function makes every pixel 100%
+ * transparent. Calling `clear()` doesn't clear objects created by `createX()`
+ * functions such as <a href="#/p5/createGraphics">createGraphics()</a>,
+ * <a href="#/p5/createVideo">createVideo()</a>, and
+ * <a href="#/p5/createImg">createImg()</a>. These objects will remain
+ * unchanged after calling clear() and can be redrawn.
  *
- * In WebGL mode,  this function can clear the screen to a specific color. It interprets
- * four numeric parameters as normalized RGBA color values. It also clears the depth
- * buffer. If you are not using the WebGL renderer, these parameters will have no effect.
+ * In WebGL mode, this function can clear the screen to a specific color. It
+ * interprets four numeric parameters as normalized RGBA color values. It also
+ * clears the depth buffer. If you are not using the WebGL renderer, these
+ * parameters will have no effect.
  *
  * @method clear
  * @chainable
  * @example
  * <div>
  * <code>
- * // Clear the screen on mouse press after drawing some ellipses.
  * function draw() {
- *   ellipse(mouseX, mouseY, 20, 20);
- *   describe('A white ellipse is drawn at mouse x and y coordinates.');
+ *   circle(mouseX, mouseY, 20);
+ *   describe('A white circle is drawn at the mouse x- and y-coordinates.');
  * }
+ *
  * function mousePressed() {
  *   clear();
  *   background(128);
- *   describe('The canvas is cleared when mouse is clicked.');
+ *   describe('The canvas is cleared when the mouse is clicked.');
  * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // The 'pg' graphic can still be used even after the screen is cleared with clear()
+ * let pg;
+ *
  * function setup() {
  *   createCanvas(100, 100);
  *   background(200);
@@ -236,10 +239,10 @@ p5.prototype.background = function(...args) {
  * </code>
  * </div>
  *
- * @param {Number} r normalized red val.
- * @param {Number} g normalized green val.
- * @param {Number} b normalized blue val.
- * @param {Number} a normalized alpha val.
+ * @param {Number} r normalized red value.
+ * @param {Number} g normalized green value.
+ * @param {Number} b normalized blue value.
+ * @param {Number} a normalized alpha value.
  */
 p5.prototype.clear = function(...args) {
   const _r = args[0] || 0;
@@ -252,19 +255,22 @@ p5.prototype.clear = function(...args) {
 };
 
 /**
- * Changes the way p5.js interprets color data. By default, it is set to
- * colorMode(RGB, 255) so the parameters for <a href="#/p5/fill">fill()</a>,
- * <a href="#/p5/stroke">stroke()</a>, <a href="#/p5/background">background()</a>,
- * and <a href="#/p5/color">color()</a> are defined by values between 0 and 255
- * using the RGB color model.
+ * Changes the way p5.js interprets color data. By default, the numeric
+ * parameters for <a href="#/p5/fill">fill()</a>,
+ * <a href="#/p5/stroke">stroke()</a>,
+ * <a href="#/p5/background">background()</a>, and
+ * <a href="#/p5/color">color()</a> are defined by values between 0 and 255
+ * using the RGB color model. This is equivalent to calling
+ * `colorMode(RGB, 255)`. Pure red is `color(255, 0, 0)` in this model.
  *
- * Setting colorMode(RGB, 100) sets colors to be interpreted as RGB color values
- * between 0 and 100.
+ * Calling `colorMode(RGB, 100)` sets colors to be interpreted as RGB color
+ * values between 0 and 100.  Pure red is `color(100, 0, 0)` in this model.
  *
- * Setting colorMode(HSB) or colorMode(HSL) changes to HSB or HSL system instead of RGB.
+ * Calling `colorMode(HSB)` or `colorMode(HSL)` changes to HSB or HSL system
+ * instead of RGB.
  *
- * Note: existing color objects remember the mode that they were created in,
- * so you can change modes as you like without affecting their appearance.
+ * <a href="#/p5.Color">p5.Color</a> objects remember the mode that they were
+ * created in. Changing modes doesn't affect their appearance.
  *
  * @method colorMode
  * @param {Constant} mode   either RGB, HSB or HSL, corresponding to
@@ -276,11 +282,10 @@ p5.prototype.clear = function(...args) {
  * @example
  * <div>
  * <code>
- * // Make a gradient by setting colorMode to (RGB, 100) and looping from 0 to 100 (the maximum value) to gradually add red and green.
  * noStroke();
  * colorMode(RGB, 100);
- * for (let i = 0; i < 100; i++) {
- *   for (let j = 0; j < 100; j++) {
+ * for (let i = 0; i < 100; i += 1) {
+ *   for (let j = 0; j < 100; j += 1) {
  *     stroke(i, j, 0);
  *     point(i, j);
  *   }
@@ -293,7 +298,6 @@ p5.prototype.clear = function(...args) {
  *
  * <div>
  * <code>
- * // Make a gradient by setting colorMode to (HSB, 100) and looping from 0 to 100 (the maximum value) to gradually hue and saturation.
  * noStroke();
  * colorMode(HSB, 100);
  * for (let i = 0; i < 100; i++) {
@@ -302,8 +306,7 @@ p5.prototype.clear = function(...args) {
  *     point(i, j);
  *   }
  * }
- * describe(` A rainbow gradient left-to-right gradient with brightness
- * transitioning to white at the top.`);
+ * describe('A rainbow gradient from left-to-right. Brightness transitions to white at the top.');
  * </code>
  * </div>
  *
@@ -316,9 +319,9 @@ p5.prototype.clear = function(...args) {
  * let redValue = red(myColor);
  * let greenValue = green(myColor);
  * let blueValue = blue(myColor);
- * text('Red:' + redValue, 10, 10, 80, 80);
- * text('Green:' + greenValue, 10, 40, 80, 80);
- * text('Blue:' + blueValue, 10, 70, 80, 80);
+ * text(`Red: ${redValue}`, 10, 10, 80, 80);
+ * text(`Green: ${greenValue}`, 10, 40, 80, 80);
+ * text(`Blue: ${blueValue}`, 10, 70, 80, 80);
  * describe('A purple canvas with the red, green, and blue decimal values of the color written on it.');
  * </code>
  * </div>
@@ -330,9 +333,9 @@ p5.prototype.clear = function(...args) {
  * background(255);
  * strokeWeight(4);
  * stroke(255, 0, 10, 0.3);
- * ellipse(40, 40, 50, 50);
- * ellipse(50, 60, 50, 50);
- * describe('Two overlapping translucent pink ellipse outlines.');
+ * circle(40, 40, 50);
+ * circle(50, 60, 50);
+ * describe('Two overlapping translucent pink circle outlines.');
  * </code>
  * </div>
  *
@@ -383,17 +386,20 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
 };
 
 /**
- * Sets the color used to fill shapes. Calling `fill(255, 165, 0)` or fill('orange')
- * means all shapes drawn after the fill command will be filled with the color orange.
+ * Sets the color used to fill shapes. Calling `fill(255, 165, 0)` or
+ * `fill('orange')` means all shapes drawn after the fill command will be
+ * filled with the color orange.
  *
- * The version of `fill()` with one parameter interprets the value one of two
- * ways. If the parameter is a number, it's interpreted as a grayscale value.
- * If the parameter is a string, it's interpreted as a CSS color string. A
- * <a href="#/p5.Color">p5.Color</a> object can also be provided to set the fill color.
+ * The version of `fill()` with one parameter interprets the value one of
+ * three ways. If the parameter is a number, it's interpreted as a grayscale
+ * value. If the parameter is a string, it's interpreted as a CSS color
+ * string. A <a href="#/p5.Color">p5.Color</a> object can also be provided to
+ * set the fill color.
  *
  * The version of `fill()` with three parameters interprets them as RGB, HSB,
- * or HSL colors, depending on the current <a href="#/p5/colorMode">colorMode()</a>.
- * (The default color space is RGB, with each value in the range from 0 to 255)
+ * or HSL colors, depending on the current
+ * <a href="#/p5/colorMode">colorMode()</a>. The default color space is RGB,
+ * with each value in the range from 0 to 255.
  *
  * @method fill
  * @param  {Number}        v1      red value if color mode is RGB or hue value if color mode is HSB.
@@ -406,8 +412,8 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * <code>
  * // Grayscale integer value.
  * fill(51);
- * rect(20, 20, 60, 60);
- * describe('A dark charcoal gray rectangle with a black outline.');
+ * square(20, 20, 60);
+ * describe('A dark charcoal gray square with a black outline.');
  * </code>
  * </div>
  *
@@ -415,8 +421,8 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * <code>
  * // R, G & B integer values.
  * fill(255, 204, 0);
- * rect(20, 20, 60, 60);
- * describe('A yellow rectangle with a black outline.');
+ * square(20, 20, 60);
+ * describe('A yellow square with a black outline.');
  * </code>
  * </div>
  *
@@ -425,8 +431,8 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // H, S & B integer values.
  * colorMode(HSB);
  * fill(255, 204, 100);
- * rect(20, 20, 60, 60);
- * describe('A royal blue rectange with a black outline.');
+ * square(20, 20, 60);
+ * describe('A royal blue square with a black outline.');
  * </code>
  * </div>
  *
@@ -434,26 +440,26 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * <code>
  * // A CSS named color.
  * fill('red');
- * rect(20, 20, 60, 60);
- * describe('A red rectangle with a black outline.');
+ * square(20, 20, 60);
+ * describe('A red square with a black outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Three-digit hexadecimal RGB notation.
+ * // Three-digit hex RGB notation.
  * fill('#fae');
- * rect(20, 20, 60, 60);
- * describe('A pink rectangle with a black outline.');
+ * square(20, 20, 60);
+ * describe('A pink square with a black outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Six-digit hexadecimal RGB notation.
+ * // Six-digit hex RGB notation.
  * fill('#A251FA');
- * rect(20, 20, 60, 60);
- * describe('A purple rectangle with a black outline.');
+ * square(20, 20, 60);
+ * describe('A purple square with a black outline.');
  * </code>
  * </div>
  *
@@ -461,8 +467,8 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * <code>
  * // Integer RGB notation.
  * fill('rgb(0,255,0)');
- * rect(20, 20, 60, 60);
- * describe('A bright green rectangle with a black outline.');
+ * square(20, 20, 60);
+ * describe('A bright green square with a black outline.');
  * </code>
  * </div>
  *
@@ -470,7 +476,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * <code>
  * // Integer RGBA notation.
  * fill('rgba(0,255,0, 0.25)');
- * rect(20, 20, 60, 60);
+ * square(20, 20, 60);
  * describe('A soft green rectange with a black outline.');
  * </code>
  * </div>
@@ -479,8 +485,8 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * <code>
  * // Percentage RGB notation.
  * fill('rgb(100%,0%,10%)');
- * rect(20, 20, 60, 60);
- * describe('A red rectange with a black outline.');
+ * square(20, 20, 60);
+ * describe('A red square with a black outline.');
  * </code>
  * </div>
  *
@@ -488,17 +494,18 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * <code>
  * // Percentage RGBA notation.
  * fill('rgba(100%,0%,100%,0.5)');
- * rect(20, 20, 60, 60);
- * describe('A dark fuchsia rectangle with a black outline.');
+ * square(20, 20, 60);
+ * describe('A dark fuchsia square with a black outline.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // p5 Color object.
- * fill(color(0, 0, 255));
- * rect(20, 20, 60, 60);
- * describe('A blue rectangle with a black outline.');
+ * // p5.Color object.
+ * let c = color(0, 0, 255);
+ * fill(c);
+ * square(20, 20, 60);
+ * describe('A blue square with a black outline.');
  * </code>
  * </div>
  */
@@ -536,18 +543,21 @@ p5.prototype.fill = function(...args) {
 };
 
 /**
- * Disables filling geometry. If both <a href="#/p5/noStroke">noStroke()</a> and <a href="#/p5/noFill">noFill()</a> are called,
- * nothing will be drawn to the screen.
+ * Disables setting the interior color of shapes. This is the same as making
+ * the fill completely transparent. If both
+ * <a href="#/p5/noStroke">noStroke()</a> and
+ * <a href="#/p5/noFill">noFill()</a> are called, nothing will be drawn to the
+ * screen.
  *
  * @method noFill
  * @chainable
  * @example
  * <div>
  * <code>
- * rect(32, 10, 35, 35);
+ * square(32, 10, 35);
  * noFill();
- * rect(32, 55, 35, 35);
- * describe('A white rectangle on top of an empty noFill rectangle.');
+ * square(32, 55, 35);
+ * describe('A white square on top of an empty square. Both squares have black outlines.');
  * </code>
  * </div>
  *
@@ -575,8 +585,10 @@ p5.prototype.noFill = function() {
 };
 
 /**
- * Disables drawing the stroke (outline). If both <a href="#/p5/noStroke">noStroke()</a> and <a href="#/p5/noFill">noFill()</a>
- * are called, nothing will be drawn to the screen.
+ * Disables drawing the stroke (outline). If both
+ * <a href="#/p5/noStroke">noStroke()</a> and
+ * <a href="#/p5/noFill">noFill()</a> are called, nothing will be drawn to the
+ * screen.
  *
  * @method noStroke
  * @chainable
@@ -584,8 +596,8 @@ p5.prototype.noFill = function() {
  * <div>
  * <code>
  * noStroke();
- * rect(20, 20, 60, 60);
- * describe('A white rectangle with no outline.');
+ * square(20, 20, 60);
+ * describe('A white square with no outline.');
  * </code>
  * </div>
  *
@@ -613,18 +625,27 @@ p5.prototype.noStroke = function() {
 };
 
 /**
- * Sets the color used to draw lines and borders around shapes. Calling `stroke(255, 165, 0)`
- * or stroke('orange') means all shapes drawn after the stroke command will be filled with
- * the color orange.
+ * Sets the color used to draw lines and borders around shapes. Calling
+ * `stroke(255, 165, 0)` or `stroke('orange')` means all shapes drawn after
+ * the `stroke()` command will be filled with the color orange. The way these
+ * parameters are interpreted may be changed with the
+ * <a href="#/p5/colorMode">colorMode()</a> function.
  *
- * The version of `stroke()` with one parameter interprets the value one of two
- * ways. If the parameter is a number, it's interpreted as a grayscale value.
- * If the parameter is a string, it's interpreted as a CSS color string. A
- * <a href="#/p5.Color">p5.Color</a> object can also be provided to set the stroke color.
+ * The version of `stroke()` with one parameter interprets the value one of
+ * three ways. If the parameter is a number, it's interpreted as a grayscale
+ * value. If the parameter is a string, it's interpreted as a CSS color
+ * string. A <a href="#/p5.Color">p5.Color</a> object can also be provided to
+ * set the stroke color.
+ *
+ * The version of `stroke()` with two parameters interprets the first one as a
+ * grayscale value. The second parameter sets the alpha (transparency) value.
  *
  * The version of `stroke()` with three parameters interprets them as RGB, HSB,
- * or HSL colors, depending on the current <a href="#/p5/colorMode">colorMode()</a>.
- * (The default color space is RGB, with each value in the range from 0 to 255)
+ * or HSL colors, depending on the current `colorMode()`.
+ *
+ * The version of `stroke()` with four parameters interprets them as RGBA, HSBA,
+ * or HSLA colors, depending on the current `colorMode()`. The last parameter
+ * sets the alpha (transparency) value.
  *
  * @method stroke
  * @param  {Number}        v1      red value if color mode is RGB or hue value if color mode is HSB.
@@ -667,7 +688,7 @@ p5.prototype.noStroke = function() {
  *
  * <div>
  * <code>
- * // A CSS namee color.
+ * // A CSS named color.
  * stroke('red');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
@@ -677,7 +698,7 @@ p5.prototype.noStroke = function() {
  *
  * <div>
  * <code>
- * // Three-digit hexadecimal RGB notation.
+ * // Three-digit hex RGB notation.
  * stroke('#fae');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
@@ -687,7 +708,7 @@ p5.prototype.noStroke = function() {
  *
  * <div>
  * <code>
- * // Six-digit hexadecimal RGB notation.
+ * // Six-digit hex RGB notation.
  * stroke('#222222');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
@@ -737,7 +758,7 @@ p5.prototype.noStroke = function() {
  *
  * <div>
  * <code>
- * // p5 Color object.
+ * // p5.Color object.
  * stroke(color(0, 0, 255));
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
@@ -780,30 +801,36 @@ p5.prototype.stroke = function(...args) {
 };
 
 /**
- * All drawing that follows <a href="#/p5/erase">erase()</a> will subtract from
- * the canvas, revealing the web page underneath. The erased areas will become transparent,
- * allowing the content behind the canvas to show through.
+ * All drawing that follows <a href="#/p5/erase">erase()</a> will subtract
+ * from the canvas, revealing the web page underneath. The erased areas will
+ * become transparent, allowing the content behind the canvas to show through.
+ * The <a href="#/p5/fill">fill()</a>, <a href="#/p5/stroke">stroke()</a>, and
+ * <a href="#/p5/blendMode">blendMode()</a> have no effect once `erase()` is
+ * called.
  *
- * The `erase()` function can take two optional arguments. The first argument is a number
- * ranging from 0 to 255, which represents the strength of erasing for the shape's fill.
- * A value of 255 means the shape will fully erase the content underneath, while a value
- * of 50 will only partially erase the content, making it fainter but still visible. The
- * second argument, also a numbeer ranging from 0 to 255, represents the strength of
- * erasing for the shape's outline. By default, both values will be set to 255.
+ * The `erase()` function has two optional parameters. The first parameter
+ * sets the strength of erasing by the shape's interior. A value of 0 means
+ * that no erasing will occur. A value of 255 means that the shape's interior
+ * will fully erase the content underneath. The default value is 255
+ * (full strength).
  *
- * To cancel the erasing effect, use the <a href="#/p5/noErase">noErase()</a> function.
+ * The second parameter sets the strength of erasing by the shape's edge. A
+ * value of 0 means that no erasing will occur. A value of 255 means that the
+ * shape's edge will fully erase the content underneath. The default value is
+ * 255 (full strength).
  *
- * Drawing done with <a href="#/p5/image">image()</a> and <a href="#/p5/background">
- * background()</a> in between <a href="#/p5/erase">erase()</a> and
- * <a href="#/p5/noErase">noErase()</a> will work as usual without erasing anything.
+ * To cancel the erasing effect, use the <a href="#/p5/noErase">noErase()</a>
+ * function.
+ *
+ * `erase()` has no effect on drawing done with the
+ * <a href="#/p5/image">image()</a> and
+ * <a href="#/p5/background">background()</a> functions.
  *
  * @method erase
- * @param  {Number}   [strengthFill]      a number (0-255) for the strength of erasing for a shape's fill.
- *                                        This will default to 255 when no argument is given, which
- *                                        is full strength.
- * @param  {Number}   [strengthStroke]    a number (0-255) for the strength of erasing for a shape's stroke.
- *                                        This will default to 255 when no argument is given, which
- *                                        is full strength.
+ * @param  {Number}   [strengthFill]      a number (0-255) for the strength of erasing under a shape's interior.
+ *                                        Defaults to 255, which is full strength.
+ * @param  {Number}   [strengthStroke]    a number (0-255) for the strength of erasing under a shape's edge.
+ *                                        Defaults to 255, which is full strength.
  *
  * @chainable
  * @example
@@ -811,37 +838,27 @@ p5.prototype.stroke = function(...args) {
  * <code>
  * background(100, 100, 250);
  * fill(250, 100, 100);
- * rect(20, 20, 60, 60);
+ * square(20, 20, 60);
  * erase();
- * ellipse(25, 30, 30);
+ * circle(25, 30, 30);
  * noErase();
- * describe(`A purple canvas with a black-outlined pink rectangle,
- * and a circle in the top-left which is erased white.`);
+ * describe('A purple canvas with a pink square in the middle. A circle is erased from the top-left, leaving a white hole.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * function setup() {
- * // A canvas with an erase circle that reveals a &lt;div&gt; dom element behind the canvas.
- *   let cnv = createCanvas(100, 100);
- *   cnv.style('zIndex','1');
- *   let div = createDiv('I am a dom element');
- *   div.style('font-size', '15px');
- *   div.style('background-color', 'purple');
- *   div.style('color', 'white');
- *   div.style('width', '65px');
- *   div.style('text-align', 'center');
- *   div.position(18, 18);
- * }
- * function draw() {
- *   background(100, 170, 210);
- *   erase(200, 100);
- *   ellipse(50, 50, 77);
- *   noErase();
- *   describe(`A blue canvas with an ellipse that erases to reveal a purple square behind
- *   the canvas with the text "I am a dom element".`);
- * }
+ * let p = createP('I am a DOM element');
+ * p.style('font-size', '12px');
+ * p.style('width', '65px');
+ * p.style('text-align', 'center');
+ * p.position(18, 26);
+ *
+ * background(100, 170, 210);
+ * erase(200, 100);
+ * circle(50, 50, 77);
+ * noErase();
+ * describe('A blue canvas with a circular hole in the center that reveals the message "I am a DOM element".');
  * </code>
  * </div>
  *
@@ -849,35 +866,12 @@ p5.prototype.stroke = function(...args) {
  * <code>
  * background(150, 250, 150);
  * fill(100, 100, 250);
- * rect(20, 20, 60, 60);
+ * square(20, 20, 60);
  * strokeWeight(5);
  * erase(150, 255);
  * triangle(50, 10, 70, 50, 90, 10);
  * noErase();
- * describe(`A mint green canvas with a purple rectangle, and a triangle in the top-right
- * corner with a partially erasing fill and a fully erasing outline.`);
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   smooth();
- *   createCanvas(100, 100, WEBGL);
- * }
- *
- * function draw() {
- *   background(250, 250, 150);
- *   fill(15, 195, 185);
- *   noStroke();
- *   sphere(25);
- *   erase();
- *   rotateY(frameCount * 0.02);
- *   translate(0, 0, 40);
- *   torus(15, 5);
- *   noErase();
- *   describe('A yellow canvas with a centered teal sphere and an erased torus rotating around the sphere.');
- * }
+ * describe('A mint green canvas with a purple square in the center. A triangle in the top-right corner partially erases its interior and a fully erases its outline.');
  * </code>
  * </div>
  */
@@ -890,8 +884,8 @@ p5.prototype.erase = function(opacityFill = 255, opacityStroke = 255) {
 /**
  * Ends erasing that was started with <a href="#/p5/erase">erase()</a>.
  * The <a href="#/p5/fill">fill()</a>, <a href="#/p5/stroke">stroke()</a>, and
- * <a href="#/p5/blendMode">blendMode()</a> settings will return to what they were
- * prior to calling <a href="#/p5/erase">erase()</a>.
+ * <a href="#/p5/blendMode">blendMode()</a> settings will return to what they
+ * were prior to calling <a href="#/p5/erase">erase()</a>.
  *
  * @method noErase
  * @chainable
@@ -903,15 +897,13 @@ p5.prototype.erase = function(opacityFill = 255, opacityStroke = 255) {
  * fill(30, 45, 220);
  * rect(30, 10, 10, 80);
  * erase();
- * ellipse(50, 50, 60);
+ * circle(50, 50, 60);
  * noErase();
  * rect(70, 10, 10, 80);
- * describe(`An orange background, with two tall blue rectangles,
- * and a centered ellipse that erases the first blue rectangle but not the second.`);
+ * describe('An orange canvas with two tall blue rectangles. A circular hole in the center erases the rectangle on the left but not the one on the right.');
  * </code>
  * </div>
  */
-
 p5.prototype.noErase = function() {
   this._renderer.noErase();
   return this;
