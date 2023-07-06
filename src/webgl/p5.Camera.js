@@ -1766,19 +1766,17 @@ p5.Camera = class Camera {
       }
     }
 
+    // prepare eye vector and center vector of argument cameras.
+    const eye0 = new p5.Vector(cam0.eyeX, cam0.eyeY, cam0.eyeZ);
+    const eye1 = new p5.Vector(cam1.eyeX, cam1.eyeY, cam1.eyeZ);
+    const center0 = new p5.Vector(cam0.centerX, cam0.centerY, cam0.centerZ);
+    const center1 = new p5.Vector(cam1.centerX, cam1.centerY, cam1.centerZ);
+
     // Calculate the distance between eye and center for each camera.
-    const dist0 = Math.hypot(
-      cam0.eyeX - cam0.centerX,
-      cam0.eyeY - cam0.centerY,
-      cam0.eyeZ - cam0.centerZ
-    );
-    const dist1 = Math.hypot(
-      cam1.eyeX - cam1.centerX,
-      cam1.eyeY - cam1.centerY,
-      cam1.eyeZ - cam1.centerZ
-    );
     // Then linearly interpolate them by amt.
-    const lerpedDist = (1 - amt) * dist0 + amt * dist1;
+    const lerpedDist = lerp(
+      p5.Vector.dist(eye0, center0), p5.Vector.dist(eye1, center1), amt
+    );
 
     // Next, calculate the ratio to interpolate the eye and center by a constant
     // ratio for each camera. This ratio is the same for both. Also, with this ratio
@@ -1788,14 +1786,8 @@ p5.Camera = class Camera {
     // at the viewpoint, and if the center is fixed, linear interpolation is performed
     // at the center, resulting in reasonable interpolation. If both move, the point
     // halfway between them is taken.
-    const eyeDiff = new p5.Vector(
-      cam0.eyeX - cam1.eyeX, cam0.eyeY - cam1.eyeY, cam0.eyeZ - cam1.eyeZ
-    );
-    const diffDiff = new p5.Vector(
-      cam0.eyeX - cam1.eyeX - cam0.centerX + cam1.centerX,
-      cam0.eyeY - cam1.eyeY - cam0.centerY + cam1.centerY,
-      cam0.eyeZ - cam1.eyeZ - cam0.centerZ + cam1.centerZ
-    );
+    const eyeDiff = p5.Vector.sub(eye0, eye1);
+    const diffDiff = eye0.copy().sub(eye1).sub(center0).add(center1);
     // Suppose there are two line segments. Consider the distance between the points
     // above them as if they were taken in the same ratio. This calculation figures out
     // a ratio that minimizes this.
@@ -1810,80 +1802,60 @@ p5.Camera = class Camera {
 
     // Take the appropriate proportions and work out the points
     // that are between the new viewpoint and the new center position.
-    const medium0X = (1-ratio) * cam0.eyeX + ratio * cam0.centerX;
-    const medium0Y = (1-ratio) * cam0.eyeY + ratio * cam0.centerY;
-    const medium0Z = (1-ratio) * cam0.eyeZ + ratio * cam0.centerZ;
-
-    const medium1X = (1-ratio) * cam1.eyeX + ratio * cam1.centerX;
-    const medium1Y = (1-ratio) * cam1.eyeY + ratio * cam1.centerY;
-    const medium1Z = (1-ratio) * cam1.eyeZ + ratio * cam1.centerZ;
-
-    const lerpedMediumX = medium0X * (1-amt) + medium1X * amt;
-    const lerpedMediumY = medium0Y * (1-amt) + medium1Y * amt;
-    const lerpedMediumZ = medium0Z * (1-amt) + medium1Z * amt;
+    const lerpedMedium = p5.Vector.lerp(
+      p5.Vector.lerp(eye0, center0, ratio),
+      p5.Vector.lerp(eye1, center1, ratio),
+      amt
+    );
 
     // Prepare each of rotation matrix from their camera matrix
-    const mat0 = cam0.cameraMatrix.mat4;
-    const mat1 = cam1.cameraMatrix.mat4;
-    const m0 = [
-      mat0[0], mat0[1], mat0[2],
-      mat0[4], mat0[5], mat0[6],
-      mat0[8], mat0[9], mat0[10]
-    ];
-    const m1 = [
-      mat1[0], mat1[1], mat1[2],
-      mat1[4], mat1[5], mat1[6],
-      mat1[8], mat1[9], mat1[10]
-    ];
+    const rotMat0 = cam0.cameraMatrix.createSubMatrix3x3();
+    const rotMat1 = cam1.cameraMatrix.createSubMatrix3x3();
+
+    // get front and up vector from local-coordinate-system.
+    const front0 = rotMat0.column(2);
+    const front1 = rotMat1.column(2);
+    const up0 = rotMat0.column(1);
+    const up1 = rotMat1.column(1);
+
+    // prepare new vectors.
+    const newFront = new p5.Vector();
+    const newUp = new p5.Vector();
+    const newEye = new p5.Vector();
+    const newCenter = new p5.Vector();
+
     // Create the inverse matrix of mat0 by transposing mat0,
     // and multiply it to mat1 from the right.
     // This matrix represents the difference between the two.
-    const m = [
-      m1[0] * m0[0] + m1[1] * m0[1] + m1[2] * m0[2],
-      m1[0] * m0[3] + m1[1] * m0[4] + m1[2] * m0[5],
-      m1[0] * m0[6] + m1[1] * m0[7] + m1[2] * m0[8],
-
-      m1[3] * m0[0] + m1[4] * m0[1] + m1[5] * m0[2],
-      m1[3] * m0[3] + m1[4] * m0[4] + m1[5] * m0[5],
-      m1[3] * m0[6] + m1[4] * m0[7] + m1[5] * m0[8],
-
-      m1[6] * m0[0] + m1[7] * m0[1] + m1[8] * m0[2],
-      m1[6] * m0[3] + m1[7] * m0[4] + m1[8] * m0[5],
-      m1[6] * m0[6] + m1[7] * m0[7] + m1[8] * m0[8]
-    ];
+    // 'deltaRot' means 'difference of rotation matrices'.
+    const deltaRot = rotMat1.mult3x3(rotMat0.copy().transpose3x3());
 
     // Calculate the trace and from it the cos value of the angle.
     // An orthogonal matrix is just an orthonormal basis. If this is not the identity
     // matrix, it is a centered orthonormal basis plus some angle of rotation about
     // some axis. That's the angle. Letting this be theta, trace becomes 1+2cos(theta).
     // reference: https://en.wikipedia.org/wiki/Rotation_matrix#Determining_the_angle
-    let cosTheta = 0.5 * (m[0] + m[4] + m[8] - 1);
+    const diag = deltaRot.diagonal();
+    let cosTheta = 0.5 * (diag[0] + diag[1] + diag[2] - 1);
+
     // If the angle is close to 0, the two matrices are very close,
     // so in that case we execute linearly interpolate.
     if (1 - cosTheta < 0.0000001) {
       // Obtain the front vector and up vector by linear interpolation
       // and normalize them.
-      const lerpedFront = new p5.Vector(
-        (1 - amt) * m0[2] + amt * m1[2],
-        (1 - amt) * m0[5] + amt * m1[5],
-        (1 - amt) * m0[8] + amt * m1[8]
-      ).normalize();
-      const lerpedUp = new p5.Vector(
-        (1 - amt) * m0[1] + amt * m1[1],
-        (1 - amt) * m0[4] + amt * m1[4],
-        (1 - amt) * m0[7] + amt * m1[7]
-      ).normalize();
+      // calculate newEye, newCenter with newFront vector.
+      newFront.set(p5.Vector.lerp(front0, front1, amt)).normalize();
+
+      newEye.set(newFront).mult(ratio * lerpedDist).add(lerpedMedium);
+      newCenter.set(newFront).mult((ratio-1) * lerpedDist).add(lerpedMedium);
+
+      newUp.set(p5.Vector.lerp(up0, up1, amt)).normalize();
 
       // set the camera
-      // The eye position and center position are calculated based on the front vector.
       this.camera(
-        lerpedMediumX + ratio * lerpedDist * lerpedFront.x,
-        lerpedMediumY + ratio * lerpedDist * lerpedFront.y,
-        lerpedMediumZ + ratio * lerpedDist * lerpedFront.z,
-        lerpedMediumX + (ratio-1) * lerpedDist * lerpedFront.x,
-        lerpedMediumY + (ratio-1) * lerpedDist * lerpedFront.y,
-        lerpedMediumZ + (ratio-1) * lerpedDist * lerpedFront.z,
-        lerpedUp.x, lerpedUp.y, lerpedUp.z
+        newEye.x, newEye.y, newEye.z,
+        newCenter.x, newCenter.y, newCenter.z,
+        newUp.x, newUp.y, newUp.z
       );
       return;
     }
@@ -1894,24 +1866,31 @@ p5.Camera = class Camera {
     // https://github.com/mrdoob/three.js/blob/883249620049d1632e8791732808fefd1a98c871/src/math/Quaternion.js#L294
     let a, b, c, sinTheta;
     let invOneMinusCosTheta = 1 / (1 - cosTheta);
-    if (m[0] > m[4] && m[0] > m[8]) {
-      a = Math.sqrt((m[0] - cosTheta) * invOneMinusCosTheta); // not zero.
+    const maxDiag = Math.max(diag[0], diag[1], diag[2]);
+    const offDiagSum13 = deltaRot.mat3[1] + deltaRot.mat3[3];
+    const offDiagSum26 = deltaRot.mat3[2] + deltaRot.mat3[6];
+    const offDiagSum57 = deltaRot.mat3[5] + deltaRot.mat3[7];
+
+    if (maxDiag === diag[0]) {
+      a = Math.sqrt((diag[0] - cosTheta) * invOneMinusCosTheta); // not zero.
       invOneMinusCosTheta /= a;
-      b = 0.5 * (m[1] + m[3]) * invOneMinusCosTheta;
-      c = 0.5 * (m[2] + m[6]) * invOneMinusCosTheta;
-      sinTheta = 0.5 * (m[7] - m[5]) / a;
-    } else if (m[4] > m[8]) {
-      b = Math.sqrt((m[4] - cosTheta) * invOneMinusCosTheta); // not zero.
+      b = 0.5 * offDiagSum13 * invOneMinusCosTheta;
+      c = 0.5 * offDiagSum26 * invOneMinusCosTheta;
+      sinTheta = 0.5 * (deltaRot.mat3[7] - deltaRot.mat3[5]) / a;
+
+    } else if (maxDiag === diag[1]) {
+      b = Math.sqrt((diag[1] - cosTheta) * invOneMinusCosTheta); // not zero.
       invOneMinusCosTheta /= b;
-      c = 0.5 * (m[5] + m[7]) * invOneMinusCosTheta;
-      a = 0.5 * (m[1] + m[3]) * invOneMinusCosTheta;
-      sinTheta = 0.5 * (m[2] - m[6]) / b;
+      c = 0.5 * offDiagSum57 * invOneMinusCosTheta;
+      a = 0.5 * offDiagSum13 * invOneMinusCosTheta;
+      sinTheta = 0.5 * (deltaRot.mat3[2] - deltaRot.mat3[6]) / b;
+
     } else {
-      c = Math.sqrt((m[8] - cosTheta) * invOneMinusCosTheta); // not zero.
+      c = Math.sqrt((diag[2] - cosTheta) * invOneMinusCosTheta); // not zero.
       invOneMinusCosTheta /= c;
-      a = 0.5 * (m[2] + m[6]) * invOneMinusCosTheta;
-      b = 0.5 * (m[5] + m[7]) * invOneMinusCosTheta;
-      sinTheta = 0.5 * (m[3] - m[1]) / c;
+      a = 0.5 * offDiagSum26 * invOneMinusCosTheta;
+      b = 0.5 * offDiagSum57 * invOneMinusCosTheta;
+      sinTheta = 0.5 * (deltaRot.mat3[3] - deltaRot.mat3[1]) / c;
     }
 
     // Constructs a new matrix after interpolating the angles.
@@ -1925,7 +1904,7 @@ p5.Camera = class Camera {
     const ab = a * b;
     const bc = b * c;
     const ca = c * a;
-    const result = [
+    const lerpedRotMat = new p5.Matrix('mat3', [
       cosAngle + oneMinusCosAngle * a * a,
       oneMinusCosAngle * ab - sinAngle * c,
       oneMinusCosAngle * ca + sinAngle * b,
@@ -1935,25 +1914,23 @@ p5.Camera = class Camera {
       oneMinusCosAngle * ca - sinAngle * b,
       oneMinusCosAngle * bc + sinAngle * a,
       cosAngle + oneMinusCosAngle * c * c
-    ];
+    ]);
 
     // Multiply this to mat0 from left to get the interpolated front vector.
-    const newFrontX = result[0] * m0[2] + result[1] * m0[5] + result[2] * m0[8];
-    const newFrontY = result[3] * m0[2] + result[4] * m0[5] + result[5] * m0[8];
-    const newFrontZ = result[6] * m0[2] + result[7] * m0[5] + result[8] * m0[8];
+    // calculate newEye, newCenter with newFront vector.
+    lerpedRotMat.multiplyVec3(front0, newFront);
+
+    newEye.set(newFront).mult(ratio * lerpedDist).add(lerpedMedium);
+    newCenter.set(newFront).mult((ratio-1) * lerpedDist).add(lerpedMedium);
+
+    lerpedRotMat.multiplyVec3(up0, newUp);
 
     // We also get the up vector in the same way and set the camera.
     // The eye position and center position are calculated based on the front vector.
     this.camera(
-      lerpedMediumX + ratio * lerpedDist * newFrontX,
-      lerpedMediumY + ratio * lerpedDist * newFrontY,
-      lerpedMediumZ + ratio * lerpedDist * newFrontZ,
-      lerpedMediumX + (ratio-1) * lerpedDist * newFrontX,
-      lerpedMediumY + (ratio-1) * lerpedDist * newFrontY,
-      lerpedMediumZ + (ratio-1) * lerpedDist * newFrontZ,
-      result[0] * m0[1] + result[1] * m0[4] + result[2] * m0[7],
-      result[3] * m0[1] + result[4] * m0[4] + result[5] * m0[7],
-      result[6] * m0[1] + result[7] * m0[4] + result[8] * m0[7]
+      newEye.x, newEye.y, newEye.z,
+      newCenter.x, newCenter.y, newCenter.z,
+      newUp.x, newUp.y, newUp.z
     );
   }
 
