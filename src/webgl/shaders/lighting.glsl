@@ -33,6 +33,9 @@ uniform float uConstantAttenuation;
 uniform float uLinearAttenuation;
 uniform float uQuadraticAttenuation;
 
+// uniform bool uUseImageLight;
+uniform sampler2D equiRectangularTextures;
+
 const float specularFactor = 2.0;
 const float diffuseFactor = 0.73;
 
@@ -66,6 +69,40 @@ LightResult _light(vec3 viewDirection, vec3 normal, vec3 lightVector) {
   lr.diffuse = _lambertDiffuse(lightDir, normal);
   return lr;
 }
+
+vec2 mapTextureToNormal( vec3 normal ){
+  // x = r sin(phi) cos(theta)
+  // y = r cos(phi)
+  // z = r sin(phi) sin(theta)
+  float phi = acos( normal.y );
+  // if phi is 0, then there are no x, z components
+  float theta = 0.0;
+  // else 
+  if(  abs(sin(phi)) > 0.0 ){
+    theta = acos( normal.x / sin(phi) );
+  }   
+
+    vec2 newTexCoor = vec2(
+      map(theta, 0., PI, 0., 1.),
+      map(phi, 0., PI, 1., 0.)
+  );
+  return newTexCoor;
+}
+
+vec3 calculateImageDiffuse( vec3 vNormal, vec3 vViewPosition ){
+  // put the code from the sketch frag here
+  // hardcoded world camera position
+  vec3 worldCameraPosition =  [0.0, 0.0, 0.0];
+  vec3 worldNormal = normalize(vNormal);
+  vec3 lightDirection = normalize( vViewPosition - worldCameraPosition );
+  vec3 R = reflect(lightDirection, worldNormal);
+  vec2 newTexCoor = mapTextureToNormal( R );
+  vec4 texture = texture2D( equiRectangularTextures, newTexCoor );
+  return texture.xyz;
+}
+
+// TODO
+// vec3 calculateImageSpecular(){}
 
 void totalLight(
   vec3 modelPosition,
@@ -136,6 +173,12 @@ void totalLight(
       totalDiffuse += result.diffuse * lightColor * lightFalloff;
       totalSpecular += result.specular * lightColor * specularColor * lightFalloff;
     }
+  }
+
+  if( equiRectangularTextures !== NULL ){
+    totalDiffuse += calculateImageDiffuse(normal, modelPosition);
+    // TODO
+    // totalSpecular += calculateImageSpecular();
   }
 
   totalDiffuse *= diffuseFactor;

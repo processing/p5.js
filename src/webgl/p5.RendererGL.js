@@ -438,6 +438,12 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.spotLightAngle = [];
     this.spotLightConc = [];
 
+  // Null if no image light is set, otherwise, it is set to a p5.Image
+    this.textures = new Map();
+    // { img: newGraphic }
+    this.activeImageLight = null;
+    // img
+
     this.drawMode = constants.FILL;
 
     this.curFillColor = this._cachedFillStyle = [1, 1, 1, 1];
@@ -1545,6 +1551,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     fillShader.setUniform('uEmissive', this._useEmissiveMaterial);
     fillShader.setUniform('uShininess', this._useShininess);
 
+    this._setImageLightUniforms(fillShader);
+
     fillShader.setUniform('uUseLighting', this._enableLighting);
 
     const pointLightCount = this.pointLightDiffuseColors.length / 3;
@@ -1593,6 +1601,19 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     fillShader.setUniform('uQuadraticAttenuation', this.quadraticAttenuation);
 
     fillShader.bindTextures();
+  }
+
+  // getting called from _setFillUniforms
+  _setImageLightUniforms(shader){
+    //set uniform values
+    shader.setUniform('useImageLight', this.activeImageLight !== null );
+    // true
+    if (this.activeImageLight) {
+      // Use this.activeImageLight as a key to look up the blurry image from
+      // this.textures
+      shader.setUniform('irradiance', this.textures.get(this.activeImageLight));
+      // newGraphic
+    }
   }
 
   _setPointUniforms(pointShader) {

@@ -494,6 +494,28 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
   return this;
 };
 
+p5.prototype.imageLight = function(img){
+  const graphic = this.textures.get(img);
+  if (!graphic){
+    let newGraphic = this.createGraphics(); // maybe switch to framebuffer
+    // draw the blurry image
+    // set the shader on the graphic and set the shader on the image
+
+    this.textures.set(img, newGraphic);
+    let width = smallWidth;
+    let height = Math.floor(smallWidth * (img.height / img.width));
+    newGraphic = createGraphics(width, height, WEBGL);
+    irradiance = newGraphic.createShader(irradianceVert, irradianceFrag);
+    newGraphic.shader(irradiance);
+    irradiance.setUniform('environmentMap', img);
+    newGraphic.noStroke();
+    newGraphic.rectMode(newGraphic.CENTER);
+    newGraphic.rect(0, 0, newGraphic.width, newGraphic.height);
+  }
+  this._renderer.activeImageLight = img;
+  return tex;
+};
+
 /**
  * Places an ambient and directional light in the scene.
  * The lights are set to ambientLight(128, 128, 128) and
