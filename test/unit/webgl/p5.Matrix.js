@@ -382,6 +382,10 @@ suite('p5.Matrix', function() {
       const multVector = new p5.Vector(3, 2, 1);
       const result = m.multiplyVec3(multVector);
       assert.deepEqual(result.array(), [10, 28, 46]);
+      // If there is a target, set result and return that.
+      const target = new p5.Vector();
+      m.multiplyVec3(multVector, target);
+      assert.deepEqual(target.array(), [10, 28, 46]);
     });
     test('createSubMatrix3x3', function() {
       const m4x4 = new p5.Matrix([
