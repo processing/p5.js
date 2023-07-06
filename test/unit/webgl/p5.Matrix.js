@@ -266,13 +266,140 @@ suite('p5.Matrix', function() {
     });
   });
 
+
   suite('p5.Matrix3x3', function() {
-    test('copy3x3', function() {
-      const m = new p5.Matrix('mat3', [1,2,3,4,5,6,7,8,9]);
+    test('apply copy() to 3x3Matrix', function() {
+      const m = new p5.Matrix('mat3', [
+        1, 2, 3,
+        4, 5, 6,
+        7, 8, 9
+      ]);
       const mCopy = m.copy();
+
+      // The matrix created by copying is different from the original matrix
       assert.notEqual(m, mCopy);
       assert.notEqual(m.mat3, mCopy.mat3);
+
+      // The matrix created by copying has the same elements as the original matrix
       assert.deepEqual([].slice.call(m.mat3), [].slice.call(mCopy.mat3));
+    });
+    test('transpose3x3()', function() {
+      const m = new p5.Matrix('mat3', [
+        1, 2, 3,
+        4, 5, 6,
+        7, 8, 9
+      ]);
+      const mTp = new p5.Matrix('mat3', [
+        1, 4, 7,
+        2, 5, 8,
+        3, 6, 9
+      ]);
+
+      // If no arguments, transpose itself
+      m.transpose();
+      assert.deepEqual([].slice.call(m.mat3), [].slice.call(mTp.mat3));
+
+      // If there is an array of arguments, set it by transposing it
+      m.transpose([
+        1, 2, 3,
+        10, 20, 30,
+        100, 200, 300
+      ]);
+      assert.deepEqual([].slice.call(m.mat3), [
+        1, 10, 100,
+        2, 20, 200,
+        3, 30, 300
+      ]);
+    });
+    test('mult3x3()', function() {
+      const m = new p5.Matrix('mat3', [
+        1, 2, 3,
+        4, 5, 6,
+        7, 8, 9
+      ]);
+      const m1 = m.copy();
+      const m2 = m.copy();
+      const multMatrix = new p5.Matrix('mat3', [
+        1, 1, 1,
+        0, 1, 1,
+        1, 0, 1
+      ]);
+
+      // When taking a matrix as an argument
+      m.mult3x3(multMatrix);
+      assert.deepEqual([].slice.call(m.mat3), [
+         4,  3,  6,
+        10,  9, 15,
+        16, 15, 24
+      ]);
+
+      // if the argument is an array or an enumerated number
+      m1.mult3x3(1, 1, 1, 0, 1, 1, 1, 0, 1);
+      m2.mult3x3([1, 1, 1, 0, 1, 1, 1, 0, 1]);
+      assert.deepEqual([].slice.call(m.mat3), [].slice.call(m1.mat3));
+      assert.deepEqual([].slice.call(m.mat3), [].slice.call(m2.mat3));
+    });
+    test('column() and row()', function(){
+      const m = new p5.Matrix('mat3', [
+        1, 2, 3,
+        4, 5, 6,
+        7, 8, 9
+      ]);
+      const column0 = m.column(0);
+      const column1 = m.column(1);
+      const column2 = m.column(2);
+      assert.deepEqual(column0.array(), [1, 4, 7]);
+      assert.deepEqual(column1.array(), [2, 5, 8]);
+      assert.deepEqual(column2.array(), [3, 6, 9]);
+      const row0 = m.row(0);
+      const row1 = m.row(1);
+      const row2 = m.row(2);
+      assert.deepEqual(row0.array(), [1, 2, 3]);
+      assert.deepEqual(row1.array(), [4, 5, 6]);
+      assert.deepEqual(row2.array(), [7, 8, 9]);
+    });
+    test('diagonal()', function() {
+      const m = new p5.Matrix('mat3', [
+        1, 2, 3,
+        4, 5, 6,
+        7, 8, 9
+      ]);
+      const m4x4 = new p5.Matrix([
+        1, 2, 3, 4,
+        5, 6, 7, 8,
+        9, 10, 11, 12,
+        13, 14, 15, 16
+      ]);
+      assert.deepEqual(m.diagonal(), [1, 5, 9]);
+      assert.deepEqual(m4x4.diagonal(), [1, 6, 11, 16]);
+    });
+    test('multiplyVec3', function() {
+      const m = new p5.Matrix('mat3', [
+        1, 2, 3,
+        4, 5, 6,
+        7, 8, 9
+      ]);
+      const multVector = new p5.Vector(3, 2, 1);
+      const result = m.multiplyVec3(multVector);
+      assert.deepEqual(result.array(), [10, 28, 46]);
+    });
+    test('createSubMatrix3x3', function() {
+      const m4x4 = new p5.Matrix([
+        1, 2, 3, 4,
+        5, 6, 7, 8,
+        9, 10, 11, 12,
+        13, 14, 15, 16
+      ]);
+      const result = new p5.Matrix('mat3', [
+        1, 2, 3,
+        5, 6, 7,
+        9, 10, 11
+      ]);
+      const subMatrix3x3 = m4x4.createSubMatrix3x3();
+      assert.deepEqual(
+        [].slice.call(result.mat3),
+        [].slice.call(subMatrix3x3.mat3)
+      );
     });
   });
 });
