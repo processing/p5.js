@@ -265,4 +265,14 @@ suite('p5.Matrix', function() {
       assert.deepEqual([].slice.call(m.mat4), rm);
     });
   });
+
+  suite('p5.Matrix3x3', function() {
+    test('copy3x3', function() {
+      const m = new p5.Matrix('mat3', [1,2,3,4,5,6,7,8,9]);
+      const mCopy = m.copy();
+      assert.notEqual(m, mCopy);
+      assert.notEqual(m.mat3, mCopy.mat3);
+      assert.deepEqual([].slice.call(m.mat3), [].slice.call(mCopy.mat3));
+    });
+  });
 });
