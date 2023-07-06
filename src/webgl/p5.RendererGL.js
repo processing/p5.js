@@ -438,7 +438,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.spotLightAngle = [];
     this.spotLightConc = [];
 
-  // Null if no image light is set, otherwise, it is set to a p5.Image
+    // Null if no image light is set, otherwise, it is set to a p5.Image
     this.textures = new Map();
     // { img: newGraphic }
     this.activeImageLight = null;
