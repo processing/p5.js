@@ -110,18 +110,9 @@ p5.Matrix = class {
  */
   copy() {
     if (this.mat3 !== undefined) {
-      return new p5.Matrix('mat3', [
-        this.mat3[0], this.mat3[1], this.mat3[2],
-        this.mat3[3], this.mat3[4], this.mat3[5],
-        this.mat3[6], this.mat3[7], this.mat3[8]
-      ], this.p5);
+      return new p5.Matrix('mat3', this.mat3.slice(), this.p5);
     }
-    return new p5.Matrix([
-      this.mat4[0], this.mat4[1], this.mat4[2], this.mat4[3],
-      this.mat4[4], this.mat4[5], this.mat4[6], this.mat4[7],
-      this.mat4[8], this.mat4[9], this.mat4[10], this.mat4[11],
-      this.mat4[12], this.mat4[13], this.mat4[14], this.mat4[15]
-    ], this.p5);
+    return new p5.Matrix(this.mat4.slice(), this.p5);
   }
 
   /**
