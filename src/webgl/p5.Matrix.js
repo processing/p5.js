@@ -940,11 +940,17 @@ p5.Matrix = class {
  * @return {p5.Matrix}
  */
   createSubMatrix3x3() {
-    return new p5.Matrix('mat3', [
-      this.mat4[0], this.mat4[1], this.mat4[2],
-      this.mat4[4], this.mat4[5], this.mat4[6],
-      this.mat4[8], this.mat4[9], this.mat4[10]
-    ]);
+    const result = new p5.Matrix('mat3');
+    result.mat3[0] = this.mat4[0];
+    result.mat3[1] = this.mat4[1];
+    result.mat3[2] = this.mat4[2];
+    result.mat3[3] = this.mat4[4];
+    result.mat3[4] = this.mat4[5];
+    result.mat3[5] = this.mat4[6];
+    result.mat3[6] = this.mat4[8];
+    result.mat3[7] = this.mat4[9];
+    result.mat3[8] = this.mat4[10];
+    return result;
   }
 
   /**
