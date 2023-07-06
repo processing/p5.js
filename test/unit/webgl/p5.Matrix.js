@@ -296,11 +296,11 @@ suite('p5.Matrix', function() {
       ]);
 
       // If no arguments, transpose itself
-      m.transpose();
+      m.transpose3x3();
       assert.deepEqual([].slice.call(m.mat3), [].slice.call(mTp.mat3));
 
       // If there is an array of arguments, set it by transposing it
-      m.transpose([
+      m.transpose3x3([
         1, 2, 3,
         10, 20, 30,
         100, 200, 300
