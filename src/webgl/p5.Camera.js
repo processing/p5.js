@@ -1774,9 +1774,9 @@ p5.Camera = class Camera {
 
     // Calculate the distance between eye and center for each camera.
     // Then linearly interpolate them by amt.
-    const lerpedDist = lerp(
-      p5.Vector.dist(eye0, center0), p5.Vector.dist(eye1, center1), amt
-    );
+    const dist0 = p5.Vector.dist(eye0, center0);
+    const dist1 = p5.Vector.dist(eye1, center1);
+    const lerpedDist = (1 - amt) * dist0 + amt * dist1;
 
     // Next, calculate the ratio to interpolate the eye and center by a constant
     // ratio for each camera. This ratio is the same for both. Also, with this ratio
