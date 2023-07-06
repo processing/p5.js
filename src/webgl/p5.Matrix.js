@@ -110,9 +110,36 @@ p5.Matrix = class {
  */
   copy() {
     if (this.mat3 !== undefined) {
-      return new p5.Matrix('mat3', this.mat3.slice(), this.p5);
+      const copied3x3 = new p5.Matrix('mat3', this.p5);
+      copied3x3.mat3[0] = this.mat3[0];
+      copied3x3.mat3[1] = this.mat3[1];
+      copied3x3.mat3[2] = this.mat3[2];
+      copied3x3.mat3[3] = this.mat3[3];
+      copied3x3.mat3[4] = this.mat3[4];
+      copied3x3.mat3[5] = this.mat3[5];
+      copied3x3.mat3[6] = this.mat3[6];
+      copied3x3.mat3[7] = this.mat3[7];
+      copied3x3.mat3[8] = this.mat3[8];
+      return copied3x3;
     }
-    return new p5.Matrix(this.mat4.slice(), this.p5);
+    const copied = new p5.Matrix(this.p5);
+    copied.mat4[0] = this.mat4[0];
+    copied.mat4[1] = this.mat4[1];
+    copied.mat4[2] = this.mat4[2];
+    copied.mat4[3] = this.mat4[3];
+    copied.mat4[4] = this.mat4[4];
+    copied.mat4[5] = this.mat4[5];
+    copied.mat4[6] = this.mat4[6];
+    copied.mat4[7] = this.mat4[7];
+    copied.mat4[8] = this.mat4[8];
+    copied.mat4[9] = this.mat4[9];
+    copied.mat4[10] = this.mat4[10];
+    copied.mat4[11] = this.mat4[11];
+    copied.mat4[12] = this.mat4[12];
+    copied.mat4[13] = this.mat4[13];
+    copied.mat4[14] = this.mat4[14];
+    copied.mat4[15] = this.mat4[15];
+    return copied;
   }
 
   /**
