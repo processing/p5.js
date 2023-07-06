@@ -328,8 +328,8 @@ suite('p5.Matrix', function() {
       // When taking a matrix as an argument
       m.mult3x3(multMatrix);
       assert.deepEqual([].slice.call(m.mat3), [
-         4,  3,  6,
-        10,  9, 15,
+        4, 3, 6,
+        10, 9, 15,
         16, 15, 24
       ]);
 
