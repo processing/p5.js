@@ -922,14 +922,17 @@ p5.Matrix = class {
  *
  * @method multiplyVec3
  * @param {p5.Vector} multVector the vector to which this matrix applies
+ * @param {p5.Vector} [target] The vector to receive the result
  * @return {p5.Vector}
  */
-  multiplyVec3(multVector) {
-    return new p5.Vector(
-      p5.Vector.dot(this.row(0), multVector),
-      p5.Vector.dot(this.row(1), multVector),
-      p5.Vector.dot(this.row(2), multVector)
-    );
+  multiplyVec3(multVector, target) {
+    if (target === undefined) {
+      target = multVector.copy();
+    }
+    target.x = this.row(0).dot(multVector);
+    target.y = this.row(1).dot(multVector);
+    target.z = this.row(2).dot(multVector);
+    return target;
   }
 
   /**
