@@ -120,7 +120,7 @@ p5.Matrix = class {
       this.mat4[0], this.mat4[1], this.mat4[2], this.mat4[3],
       this.mat4[4], this.mat4[5], this.mat4[6], this.mat4[7],
       this.mat4[8], this.mat4[9], this.mat4[10], this.mat4[11],
-      this.mat4[12], this.mat4[13], this.mat4[14], this.mat4[15],
+      this.mat4[12], this.mat4[13], this.mat4[14], this.mat4[15]
     ], this.p5);
   }
 
