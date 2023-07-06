@@ -101,29 +101,27 @@ p5.Matrix = class {
   }
 
   /**
- * return a copy of a matrix
+ * return a copy of this matrix.
+ * If this matrix is 4x4, a 4x4 matrix with exactly the same entries will be
+ * generated. The same is true if this matrix is 3x3.
+ *
  * @method copy
  * @return {p5.Matrix}   the result matrix
  */
   copy() {
-    const copied = new p5.Matrix(this.p5);
-    copied.mat4[0] = this.mat4[0];
-    copied.mat4[1] = this.mat4[1];
-    copied.mat4[2] = this.mat4[2];
-    copied.mat4[3] = this.mat4[3];
-    copied.mat4[4] = this.mat4[4];
-    copied.mat4[5] = this.mat4[5];
-    copied.mat4[6] = this.mat4[6];
-    copied.mat4[7] = this.mat4[7];
-    copied.mat4[8] = this.mat4[8];
-    copied.mat4[9] = this.mat4[9];
-    copied.mat4[10] = this.mat4[10];
-    copied.mat4[11] = this.mat4[11];
-    copied.mat4[12] = this.mat4[12];
-    copied.mat4[13] = this.mat4[13];
-    copied.mat4[14] = this.mat4[14];
-    copied.mat4[15] = this.mat4[15];
-    return copied;
+    if (this.mat3 !== undefined) {
+      return new p5.Matrix('mat3', [
+        this.mat3[0], this.mat3[1], this.mat3[2],
+        this.mat3[3], this.mat3[4], this.mat3[5],
+        this.mat3[6], this.mat3[7], this.mat3[8]
+      ], this.p5);
+    }
+    return new p5.Matrix([
+      this.mat4[0], this.mat4[1], this.mat4[2], this.mat4[3],
+      this.mat4[4], this.mat4[5], this.mat4[6], this.mat4[7],
+      this.mat4[8], this.mat4[9], this.mat4[10], this.mat4[11],
+      this.mat4[12], this.mat4[13], this.mat4[14], this.mat4[15],
+    ], this.p5);
   }
 
   /**
@@ -321,21 +319,33 @@ p5.Matrix = class {
   }
 
   /**
+ * This function is only for 3x3 matrices.
  * transposes a 3×3 p5.Matrix by a mat3
+ * If there is an array of arguments, the matrix obtained by transposing
+ * the 3x3 matrix generated based on that array is set.
+ * If no arguments, it transposes itself and returns it.
+ *
  * @method transpose3x3
  * @param  {Number[]} mat3 1-dimensional array
  * @chainable
  */
   transpose3x3(mat3) {
-    const a01 = mat3[1],
-      a02 = mat3[2],
-      a12 = mat3[5];
+    if (mat3 === undefined) {
+      mat3 = this.mat3;
+    }
+    const a01 = mat3[1];
+    const a02 = mat3[2];
+    const a12 = mat3[5];
+    this.mat3[0] = mat3[0];
     this.mat3[1] = mat3[3];
     this.mat3[2] = mat3[6];
     this.mat3[3] = a01;
+    this.mat3[4] = mat3[4];
     this.mat3[5] = mat3[7];
     this.mat3[6] = a02;
     this.mat3[7] = a12;
+    this.mat3[8] = mat3[8];
+
     return this;
   }
 
@@ -785,6 +795,138 @@ p5.Matrix = class {
   multiplyDirection({ x, y, z }) {
     const array = this.multiplyVec4(x, y, z, 0);
     return new p5.Vector(array[0], array[1], array[2]);
+  }
+
+  /**
+ * This function is only for 3x3 matrices.
+ * multiply two mat3s. It is an operation to multiply the 3x3 matrix of
+ * the argument from the right. Arguments can be a 3x3 p5.Matrix,
+ * a Float32Array of length 9, or a javascript array of length 9.
+ * In addition, it can also be done by enumerating 9 numbers.
+ *
+ * @method mult3x3
+ * @param {p5.Matrix|Float32Array|Number[]} multMatrix The matrix
+ *                                                we want to multiply by
+ * @chainable
+ */
+  mult3x3(multMatrix) {
+    let _src;
+
+    if (multMatrix === this || multMatrix === this.mat3) {
+      _src = this.copy().mat3; // only need to allocate in this rare case
+    } else if (multMatrix instanceof p5.Matrix) {
+      _src = multMatrix.mat3;
+    } else if (isMatrixArray(multMatrix)) {
+      _src = multMatrix;
+    } else if (arguments.length === 9) {
+      _src = arguments;
+    } else {
+      return; // nothing to do.
+    }
+
+    // each row is used for the multiplier
+    let b0 = this.mat3[0];
+    let b1 = this.mat3[1];
+    let b2 = this.mat3[2];
+    this.mat3[0] = b0 * _src[0] + b1 * _src[3] + b2 * _src[6];
+    this.mat3[1] = b0 * _src[1] + b1 * _src[4] + b2 * _src[7];
+    this.mat3[2] = b0 * _src[2] + b1 * _src[5] + b2 * _src[8];
+
+    b0 = this.mat3[3];
+    b1 = this.mat3[4];
+    b2 = this.mat3[5];
+    this.mat3[3] = b0 * _src[0] + b1 * _src[3] + b2 * _src[6];
+    this.mat3[4] = b0 * _src[1] + b1 * _src[4] + b2 * _src[7];
+    this.mat3[5] = b0 * _src[2] + b1 * _src[5] + b2 * _src[8];
+
+    b0 = this.mat3[6];
+    b1 = this.mat3[7];
+    b2 = this.mat3[8];
+    this.mat3[6] = b0 * _src[0] + b1 * _src[3] + b2 * _src[6];
+    this.mat3[7] = b0 * _src[1] + b1 * _src[4] + b2 * _src[7];
+    this.mat3[8] = b0 * _src[2] + b1 * _src[5] + b2 * _src[8];
+
+    return this;
+  }
+
+  /**
+ * This function is only for 3x3 matrices.
+ * A function that returns a column vector of a 3x3 matrix.
+ *
+ * @method column
+ * @param {Number} columnIndex matrix column number
+ * @return {p5.Vector}
+ */
+  column(columnIndex) {
+    return new p5.Vector(
+      this.mat3[columnIndex],
+      this.mat3[columnIndex + 3],
+      this.mat3[columnIndex + 6]
+    );
+  }
+
+  /**
+ * This function is only for 3x3 matrices.
+ * A function that returns a row vector of a 3x3 matrix.
+ *
+ * @method row
+ * @param {Number} columnIndex matrix row number
+ * @return {p5.Vector}
+ */
+  row(rowIndex) {
+    return new p5.Vector(
+      this.mat3[3 * rowIndex],
+      this.mat3[3 * rowIndex + 1],
+      this.mat3[3 * rowIndex + 2]
+    );
+  }
+
+  /**
+ * Returns the diagonal elements of the matrix in the form of an array.
+ * A 3x3 matrix will return an array of length 3.
+ * A 4x4 matrix will return an array of length 4.
+ *
+ * @method diagonal
+ * @return {Number[]} An array obtained by arranging the diagonal elements
+ *                    of the matrix in ascending order of index
+ */
+  diagonal() {
+    if (this.mat3 !== undefined) {
+      return [this.mat3[0], this.mat3[4], this.mat3[8]];
+    }
+    return [this.mat4[0], this.mat4[5], this.mat4[10], this.mat4[15]];
+  }
+
+  /**
+ * This function is only for 3x3 matrices.
+ * Takes a vector and returns the vector resulting from multiplying to
+ * that vector by this matrix from left.
+ *
+ * @method multiplyVec3
+ * @param {p5.Vector} multVector the vector to which this matrix applies
+ * @return {p5.Vector}
+ */
+  multiplyVec3(multVector) {
+    return new p5.Vector(
+      p5.Vector.dot(this.row(0), multVector),
+      p5.Vector.dot(this.row(1), multVector),
+      p5.Vector.dot(this.row(2), multVector)
+    );
+  }
+
+  /**
+ * This function is only for 4x4 matrices.
+ * Creates a 3x3 matrix whose entries are the top left 3x3 part and returns it.
+ *
+ * @method createSubMatrix3x3
+ * @return {p5.Matrix}
+ */
+  createSubMatrix3x3() {
+    return new p5.Matrix('mat3', [
+      this.mat4[0], this.mat4[1], this.mat4[2],
+      this.mat4[4], this.mat4[5], this.mat4[6],
+      this.mat4[8], this.mat4[9], this.mat4[10]
+    ]);
   }
 
   /**
