@@ -221,7 +221,7 @@ p5.prototype.textStyle = function(theStyle) {
  * let aChar = 'text\nWidth()';
  * let cWidth = textWidth(aChar);
  * text(aChar, 0, 40);
- * line(cWidth, 0, cWidth, 100);
+ * line(cWidth, 0, cWidth, 50);
  *
  * describe('Text text and Width() are displayed with vertical lines at end of Width().');
  * </code>
@@ -233,11 +233,21 @@ p5.prototype.textWidth = function (...args) {
   if (args[0].length === 0) {
     return 0;
   }
-  // Only use the line with the longest width, and replace tabs with double-space
-  const textLines = args[0].split(/\r?\n|\r|\n/g);
-  const longest = seperateArr.reduce((a, b) => (a.length > b.length ? a : b), '').replace(/\t/g, '  ');
 
-  return this._renderer.textWidth(longest);
+  // Only use the line with the longest width, and replace tabs with double-space
+  const textLines = args[0].replace(/\t/g, '  ').split(/\r?\n|\r|\n/g);
+
+  const newArr = [];
+
+  // Reutrn the textWidth for every line
+  for(let i=0; i<textLines.length; i++){
+    newArr.push(this._renderer.textWidth(textLines[i]));
+  }
+
+  // Return the largest textWidth
+  const largestWidth = Math.max(...newArr);
+
+  return largestWidth;
 };
 
 /**
