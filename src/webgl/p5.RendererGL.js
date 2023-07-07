@@ -1141,6 +1141,11 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       // can also update their size
       framebuffer._canvasSizeChanged();
     }
+
+    // resize filter graphics layer
+    if (this.filterGraphicsLayer) {
+      p5.Renderer.prototype.resize.call(this.filterGraphicsLayer, w, h);
+    }
   }
 
   /**
