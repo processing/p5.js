@@ -200,9 +200,6 @@ suite('p5.RendererGL', function() {
       assert.deepEqual([g1.width, g1.height], [g2.width, g2.height]);
     });
 
-    test('secondary graphics layer matches main output resolution', function() {
-    });
-
     test('create graphics is unaffected after filter', function() {
     });
 
