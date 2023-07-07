@@ -179,8 +179,16 @@ suite('p5.RendererGL', function() {
       assert.notDeepEqual(p1, p2);
     });
 
-    test('default shader makes changes to main canvas', function() {
-    });
+    // test('default constant shader makes changes to main canvas', function() {
+    //   myp5.createCanvas(5, 5, myp5.WEBGL);
+    //   myp5.circle(1,1,2);
+    //   myp5.loadPixels();
+    //   let p1 = myp5.pixels.slice();
+    //   myp5.filter(myp5.BLUR);
+    //   myp5.loadPixels();
+    //   let p2 = myp5.pixels;
+    //   assert.notDeepEqual(p1, p2);
+    // });
 
     test('secondary graphics layer matches main canvas size', function() {
       let g1 = myp5.createCanvas(5, 5, myp5.WEBGL);
