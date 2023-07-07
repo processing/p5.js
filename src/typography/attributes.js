@@ -233,10 +233,8 @@ p5.prototype.textWidth = function (...args) {
   if (args[0].length === 0) {
     return 0;
   }
-  //   replace choose the max lengthed text
-  const seperateArr = args[0].split(/\r?\n|\r|\n/g);
-
-  //   replace choose the max lengthed text & replace the tab
+  // Only use the line with the longest width, and replace tabs with double-space
+  const textLines = args[0].split(/\r?\n|\r|\n/g);
   const longest = seperateArr.reduce((a, b) => (a.length > b.length ? a : b), '').replace(/\t/g, '  ');
 
   return this._renderer.textWidth(longest);
