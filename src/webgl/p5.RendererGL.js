@@ -887,6 +887,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this.filterGraphicsLayer =
         new p5.Graphics(this.width, this.height, constants.WEBGL, this._pInst);
     }
+    let pg = this.filterGraphicsLayer;
 
     // TODO, handle different signatures:
     // if args[0] is a p5.Shader,
@@ -895,16 +896,28 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     //   this.filterShader = map(args[0], {GRAYSCALE: grayscaleShader, ...})
     //   filterOperationParameter = undefined or args[1]
 
+    if (typeof args[0] === 'string') {
+      p5._friendlyError('webgl filter implementation in progress');
+      return;
+    }
     let userShader = args[0];
-    // Bind the shader to the pg renderer,
-    // since when the user makes it with createShader() it binds to the main
-    userShader =
-      new p5.Shader(pg._renderer, userShader._vertSrc, userShader._fragSrc);
+
+    // Copy the user shader once on the initial filter call,
+    // since it has to be bound to pg and not main
+    let isSameUserShader = (
+      this.filterShader !== undefined &&
+      userShader._vertSrc === this.filterShader._vertSrc &&
+      userShader._fragSrc === this.filterShader._fragSrc
+    );
+    if (!isSameUserShader) {
+      this.filterShader =
+        new p5.Shader(pg._renderer, userShader._vertSrc, userShader._fragSrc);
+    }
 
     // apply shader to pg
-    // TODO: shader isn't being applied properly
-    pg.shader(userShader);
-    userShader.setUniform('tex0', this);
+    pg.shader(this.filterShader);
+    this.filterShader.setUniform('tex0', this);
+    pg.rect(0,0,this.width,this.height);
 
     // draw pg contents onto main renderer
     this._pInst.push();
@@ -912,8 +925,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this._pInst.texture(pg);
     this._pInst.plane(this.width, this.height);
     this._pInst.pop();
-
-    // p5._friendlyError('webgl filter implementation in progress');
   }
 
   blendMode(mode) {
