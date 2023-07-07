@@ -54,10 +54,15 @@ Stewards are contributors that are particularly involved, familiar, or responsiv
 
 Anyone interested can volunteer to be a steward! There are no specific requirements for expertise, just an interest in actively learning and participating.  If you’re familiar with or interested in actively learning and participating in some of p5.js areas below, please reply to [this issue](https://github.com/processing/p5.js/issues/5719) mentioning which area(s) you are interested to volunteer as a steward! 👋👋👋
 
+Current Lead/Mentor
 * [@qianqianye](https://github.com/qianqianye) - p5.js Project Lead
-* [@outofambit](https://github.com/outofambit) - p5.js Mentor
+* [@limzykenneth](https://github.com/limzykenneth) - p5.js Mentor
 * [@lmccart](https://github.com/lmccart)- p5.js Creator
 
+Lead/Mentor Alumni
+* [@outofambit](https://github.com/outofambit) - p5.js Co-Lead 2021-22, Mentor 2022-2023
+* [@mcturner1995](https://github.com/mcturner1995) - p5.js Lead 2020
+  
 | Area                                                                                 | Steward(s)                                                                                                               |
 | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
 | Overall                                                                              | [@qianqianye](https://github.com/qianqianye)                                                                                                             |
