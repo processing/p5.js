@@ -157,7 +157,7 @@ suite('p5.RendererGL', function() {
       myp5.createCanvas(5, 5, myp5.WEBGL);
       let s = myp5.createShader(vert, frag);
       myp5.filter(s);
-      // TODO: myp5.filter(myp5.POSTERIZE, 64)
+      myp5.filter(myp5.POSTERIZE, 64);
     });
 
     test('secondary graphics layer is instantiated', function() {
@@ -201,14 +201,47 @@ suite('p5.RendererGL', function() {
     });
 
     test('create graphics is unaffected after filter', function() {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      let pg = myp5.createGraphics(5, 5, myp5.WEBGL);
+      pg.circle(1, 1, 1);
+      pg.loadPixels();
+      let p1 = pg.pixels.slice();
+      let s = myp5.createShader(vert, frag);
+      myp5.filter(s);
+      pg.loadPixels();
+      let p2 = pg.pixels;
+      assert.deepEqual(p1, p2);
     });
 
     test('stroke and other settings are unaffected after filter', function() {
+      let c = myp5.createCanvas(5, 5, myp5.WEBGL);
+      let getShapeAttributes = () => [
+        c._ellipseMode,
+        c.drawingContext.imageSmoothingEnabled,
+        c._rectMode,
+        c.curStrokeWeight,
+        c.curStrokeCap,
+        c.curStrokeJoin,
+        c.curStrokeColor
+      ];
+      let a1 = getShapeAttributes();
+      let s = myp5.createShader(vert, frag);
+      myp5.filter(s);
+      let a2 = getShapeAttributes();
+      console.log(a1);
+      assert.deepEqual(a1, a2);
     });
 
     test('geometries added after filter do not have shader applied', function() {
+      myp5.createCanvas(4, 4, myp5.WEBGL);
+      let s = myp5.createShader(vert, frag);
+      myp5.filter(s);
+      myp5.fill('RED');
+      myp5.noStroke();
+      myp5.rect(-2,-2,2,2);
+      myp5.loadPixels();
+      assert.equal(myp5.pixels[0], 255);
     });
-
 
   });
 
