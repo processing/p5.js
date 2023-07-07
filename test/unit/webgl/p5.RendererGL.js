@@ -203,9 +203,6 @@ suite('p5.RendererGL', function() {
     test('create graphics is unaffected after filter', function() {
     });
 
-    test('framebuffer is unaffected after filter', function() {
-    });
-
     test('stroke and other settings are unaffected after filter', function() {
     });
 
