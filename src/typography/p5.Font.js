@@ -475,8 +475,7 @@ p5.Font = class {
   _handleAlignment(renderer, line, x, y, textWidth) {
     const fontSize = renderer._textSize;
 
-    if (typeof textWidth === 'undefined' &&
-    renderer._textAlign !== constants.LEFT) {
+    if (typeof textWidth === 'undefined') {
       textWidth = this._textWidth(line, fontSize);
     }
 
