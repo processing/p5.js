@@ -382,6 +382,18 @@ p5.Shader = class {
    * canvas toggles between a circular gradient of orange and blue vertically. and a circular gradient of red and green moving horizontally when mouse is clicked/pressed.
    */
   setUniform(uniformName, data) {
+    let other = this._renderer.filterShader;
+    let thisIsDuplicateShader = (
+      other !== undefined &&
+      this !== other &&
+      this._vertSrc === other._vertSrc &&
+      this._fragSrc === other._fragSrc
+    );
+    if (thisIsDuplicateShader) {
+      other.setUniform(uniformName, data);
+      return;
+    }
+
     const uniform = this.uniforms[uniformName];
     if (!uniform) {
       return;
