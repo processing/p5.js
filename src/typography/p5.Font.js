@@ -235,7 +235,7 @@ p5.Font = class {
     const xOriginal = x;
     const result = [];
 
-    let lines = txt.split('\n');
+    let lines = txt.split(/\r?\n|\r|\n/g);
     fontSize = fontSize || this.parent._renderer._textSize;
 
     function isSpace(i, text, glyphsLine) {
