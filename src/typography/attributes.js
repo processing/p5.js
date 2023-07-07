@@ -221,7 +221,7 @@ p5.prototype.textStyle = function(theStyle) {
  * let aChar = 'text\nWidth()';
  * let cWidth = textWidth(aChar);
  * text(aChar, 0, 40);
- * line(cWidth, 0, cWidth, 50);
+ * line(cWidth, 0, cWidth, 100);
  *
  * describe('Text text and Width() are displayed with vertical lines at end of Width().');
  * </code>
