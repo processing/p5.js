@@ -1648,7 +1648,8 @@ p5.Camera = class Camera {
  * When applying this function, all cameras involved must have exactly the same projection
  * settings. For example, if one is perspective, ortho, frustum, the other two must also be
  * perspective, ortho, frustum respectively. However, if all cameras have ortho settings,
- * only orbitControl's change of the projection settings is permissive.
+ * interpolation is possible if the ratios of left, right, top and bottom are equal to each other.
+ * For example, when it is changed by orbitControl().
  *
  * @method slerp
  * @param {p5.Camera} cam0 first p5.Camera
@@ -1755,11 +1756,14 @@ p5.Camera = class Camera {
 
     // For this cameras is ortho, assume that cam0 and cam1 are also ortho
     // and interpolate the elements of the projection matrix.
+    // Use logarithmic interpolation for interpolation.
     if (this.projMatrix.mat4[15] !== 0) {
       this.projMatrix.mat4[0] =
-        (1 - amt) * cam0.projMatrix.mat4[0] + amt * cam1.projMatrix.mat4[0];
+        cam0.projMatrix.mat4[0] *
+        Math.pow(cam1.projMatrix.mat4[0] / cam0.projMatrix.mat4[0], amt);
       this.projMatrix.mat4[5] =
-        (1 - amt) * cam0.projMatrix.mat4[5] + amt * cam1.projMatrix.mat4[5];
+        cam0.projMatrix.mat4[5] *
+        Math.pow(cam1.projMatrix.mat4[5] / cam0.projMatrix.mat4[5], amt);
       // If the camera is active, make uPMatrix reflect changes in projMatrix.
       if (this._isActive()) {
         this._renderer.uPMatrix.mat4 = this.projMatrix.mat4.slice();
@@ -1773,10 +1777,10 @@ p5.Camera = class Camera {
     const center1 = new p5.Vector(cam1.centerX, cam1.centerY, cam1.centerZ);
 
     // Calculate the distance between eye and center for each camera.
-    // Then linearly interpolate them by amt.
+    // Logarithmically interpolate these with amt.
     const dist0 = p5.Vector.dist(eye0, center0);
     const dist1 = p5.Vector.dist(eye1, center1);
-    const lerpedDist = (1 - amt) * dist0 + amt * dist1;
+    const lerpedDist = dist0 * Math.pow(dist1 / dist0, amt);
 
     // Next, calculate the ratio to interpolate the eye and center by a constant
     // ratio for each camera. This ratio is the same for both. Also, with this ratio

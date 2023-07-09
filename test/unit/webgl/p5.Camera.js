@@ -814,25 +814,25 @@ suite('p5.Camera', function() {
       myCam = myp5.createCamera();
       const cam0 = myCam.copy();
       const cam1 = myCam.copy();
-      cam1._orbit(Math.PI * 0.8, 0, 0);
+      cam1._orbit(Math.PI * 0.8, 0, 0.08);
       const cam2 = myCam.copy();
-      cam2._orbit(0, Math.PI * 0.7, 0);
+      cam2._orbit(0, Math.PI * 0.7, 0.07);
 
       // Prepare cameras supposed to be obtained by slerp cam0 and cam1.
       const cam3 = myCam.copy();
-      cam3._orbit(Math.PI * 0.3, 0, 0);
+      cam3._orbit(Math.PI * 0.3, 0, 0.03);
       const cam4 = myCam.copy();
-      cam4._orbit(-Math.PI * 0.7, 0, 0);
+      cam4._orbit(-Math.PI * 0.7, 0, -0.07);
       const cam5 = myCam.copy();
-      cam5._orbit(Math.PI * 1.1, 0, 0);
+      cam5._orbit(Math.PI * 1.1, 0, 0.11);
 
       // Prepare cameras supposed to be obtained by slerp cam0 and cam2.
       const cam6 = myCam.copy();
-      cam6._orbit(0, Math.PI * 0.3, 0);
+      cam6._orbit(0, Math.PI * 0.3, 0.03);
       const cam7 = myCam.copy();
-      cam7._orbit(0, -Math.PI * 0.4, 0);
+      cam7._orbit(0, -Math.PI * 0.4, -0.04);
       const cam8 = myCam.copy();
-      cam8._orbit(0, Math.PI * 1.1, 0);
+      cam8._orbit(0, Math.PI * 1.1, 0.11);
 
       // Compare these views with the view set by slerp().
       myCam.slerp(cam0, cam1, 3/8);
@@ -853,15 +853,15 @@ suite('p5.Camera', function() {
       myCam = myp5.createCamera();
       const cam0 = myCam.copy();
       const cam1 = myCam.copy();
-      cam1._orbitFree(Math.PI * 0.8, Math.PI * 0.6, 0);
+      cam1._orbitFree(Math.PI * 0.8, Math.PI * 0.6, 0.08);
 
       // Prepare cameras supposed to be obtained by slerp cam0 and cam1.
       const cam2 = myCam.copy();
-      cam2._orbitFree(Math.PI * 0.4, Math.PI * 0.3, 0);
+      cam2._orbitFree(Math.PI * 0.4, Math.PI * 0.3, 0.04);
       const cam3 = myCam.copy();
-      cam3._orbitFree(-Math.PI * 0.2, -Math.PI * 0.15, 0);
+      cam3._orbitFree(-Math.PI * 0.2, -Math.PI * 0.15, -0.02);
       const cam4 = myCam.copy();
-      cam4._orbitFree(Math.PI * 1.2, Math.PI * 0.9, 0);
+      cam4._orbitFree(Math.PI * 1.2, Math.PI * 0.9, 0.12);
 
       // Compare these views with the view set by slerp().
       myCam.slerp(cam0, cam1, 1/2);
@@ -913,15 +913,15 @@ suite('p5.Camera', function() {
       myCam.slerp(cam0, cam1, 0.3);
 
       // Next, check the 0th and 5th entries of the projection matrix
-      // to make sure they are interpolated.
+      // to make sure it is logarithmically interpolated.
       const p0_0 = cam0.projMatrix.mat4[0];
       const p1_0 = cam1.projMatrix.mat4[0];
       expect(myCam.projMatrix.mat4[0])
-        .to.be.closeTo(0.7 * p0_0 + 0.3 * p1_0, 0.00001);
+        .to.be.closeTo(p0_0 * Math.pow(p1_0 / p0_0, 0.3), 0.00001);
       const p0_5 = cam0.projMatrix.mat4[5];
       const p1_5 = cam1.projMatrix.mat4[5];
       expect(myCam.projMatrix.mat4[5])
-        .to.be.closeTo(0.7 * p0_5 + 0.3 * p1_5, 0.00001);
+        .to.be.closeTo(p0_5 * Math.pow(p1_5 / p0_5, 0.3), 0.00001);
     });
   });
 
