@@ -239,7 +239,7 @@ p5.prototype.textWidth = function (...args) {
 
   const newArr = [];
 
-  // Reutrn the textWidth for every line
+  // Return the textWidth for every line
   for(let i=0; i<textLines.length; i++){
     newArr.push(this._renderer.textWidth(textLines[i]));
   }
