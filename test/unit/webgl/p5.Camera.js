@@ -744,6 +744,187 @@ suite('p5.Camera', function() {
     });
   });
 
+  suite('slerp()', function() {
+    const expectCameraMatricesAreClose = function(cam0, cam1) {
+      for (let i = 0; i < cam0.cameraMatrix.mat4.length; i++) {
+        expect(cam0.cameraMatrix.mat4[i])
+          .to.be.closeTo(cam1.cameraMatrix.mat4[i], 0.001);
+      }
+    };
+    test('if amt is 0 or 1, the argument camera is set', function() {
+      myCam = myp5.createCamera();
+      const cam0 = myCam.copy();
+      cam0.camera(20, 30, 40, 2, 3, 8, 0, 9, -6);
+      const cam1 = myCam.copy();
+      cam1.camera(90, 70, 33, 4, 1, 9, -3, 2, 5);
+
+      // if amt is 0, cam is set to cam0.
+      myCam.slerp(cam0, cam1, 0);
+      assert.deepEqual(myCam.cameraMatrix.mat4, cam0.cameraMatrix.mat4);
+
+      // if amt is 1, cam is set to cam1.
+      myCam.slerp(cam0, cam1, 1);
+      assert.deepEqual(myCam.cameraMatrix.mat4, cam1.cameraMatrix.mat4);
+    });
+    test('Behavior of slerp() for camera moved by pan()', function() {
+      myCam = myp5.createCamera();
+      const cam0 = myCam.copy();
+      const cam1 = myCam.copy();
+      cam1.pan(Math.PI * 0.9);
+
+      // Prepare cameras supposed to be obtained by slerp cam0 and cam1.
+      const cam2 = myCam.copy();
+      cam2.pan(Math.PI * 0.4);
+      const cam3 = myCam.copy();
+      cam3.pan(-Math.PI * 0.2);
+      const cam4 = myCam.copy();
+      cam4.pan(Math.PI * 1.1);
+
+      // Compare these views with the view set by slerp().
+      myCam.slerp(cam0, cam1, 4/9);
+      expectCameraMatricesAreClose(myCam, cam2);
+      myCam.slerp(cam0, cam1, -2/9);
+      expectCameraMatricesAreClose(myCam, cam3);
+      myCam.slerp(cam0, cam1, 11/9);
+      expectCameraMatricesAreClose(myCam, cam4);
+    });
+    test('Behavior of slerp() for camera moved by tilt()', function() {
+      myCam = myp5.createCamera();
+      const cam0 = myCam.copy();
+      const cam1 = myCam.copy();
+      cam1.tilt(Math.PI * 0.3);
+
+      // Prepare cameras supposed to be obtained by slerp cam0 and cam1.
+      const cam2 = myCam.copy();
+      cam2.tilt(Math.PI * 0.1);
+      const cam3 = myCam.copy();
+      cam3.tilt(-Math.PI * 0.2);
+      const cam4 = myCam.copy();
+      cam4.tilt(Math.PI * 0.4);
+
+      // Compare these views with the view set by slerp().
+      myCam.slerp(cam0, cam1, 1/3);
+      expectCameraMatricesAreClose(myCam, cam2);
+      myCam.slerp(cam0, cam1, -2/3);
+      expectCameraMatricesAreClose(myCam, cam3);
+      myCam.slerp(cam0, cam1, 4/3);
+      expectCameraMatricesAreClose(myCam, cam4);
+    });
+    test('Behavior of slerp() for camera moved by _orbit()', function() {
+      myCam = myp5.createCamera();
+      const cam0 = myCam.copy();
+      const cam1 = myCam.copy();
+      cam1._orbit(Math.PI * 0.8, 0, 0.08);
+      const cam2 = myCam.copy();
+      cam2._orbit(0, Math.PI * 0.7, 0.07);
+
+      // Prepare cameras supposed to be obtained by slerp cam0 and cam1.
+      const cam3 = myCam.copy();
+      cam3._orbit(Math.PI * 0.3, 0, 0.03);
+      const cam4 = myCam.copy();
+      cam4._orbit(-Math.PI * 0.7, 0, -0.07);
+      const cam5 = myCam.copy();
+      cam5._orbit(Math.PI * 1.1, 0, 0.11);
+
+      // Prepare cameras supposed to be obtained by slerp cam0 and cam2.
+      const cam6 = myCam.copy();
+      cam6._orbit(0, Math.PI * 0.3, 0.03);
+      const cam7 = myCam.copy();
+      cam7._orbit(0, -Math.PI * 0.4, -0.04);
+      const cam8 = myCam.copy();
+      cam8._orbit(0, Math.PI * 1.1, 0.11);
+
+      // Compare these views with the view set by slerp().
+      myCam.slerp(cam0, cam1, 3/8);
+      expectCameraMatricesAreClose(myCam, cam3);
+      myCam.slerp(cam0, cam1, -7/8);
+      expectCameraMatricesAreClose(myCam, cam4);
+      myCam.slerp(cam0, cam1, 11/8);
+      expectCameraMatricesAreClose(myCam, cam5);
+
+      myCam.slerp(cam0, cam2, 3/7);
+      expectCameraMatricesAreClose(myCam, cam6);
+      myCam.slerp(cam0, cam2, -4/7);
+      expectCameraMatricesAreClose(myCam, cam7);
+      myCam.slerp(cam0, cam2, 11/7);
+      expectCameraMatricesAreClose(myCam, cam8);
+    });
+    test('Behavior of slerp() for camera moved by _orbitFree()', function() {
+      myCam = myp5.createCamera();
+      const cam0 = myCam.copy();
+      const cam1 = myCam.copy();
+      cam1._orbitFree(Math.PI * 0.8, Math.PI * 0.6, 0.08);
+
+      // Prepare cameras supposed to be obtained by slerp cam0 and cam1.
+      const cam2 = myCam.copy();
+      cam2._orbitFree(Math.PI * 0.4, Math.PI * 0.3, 0.04);
+      const cam3 = myCam.copy();
+      cam3._orbitFree(-Math.PI * 0.2, -Math.PI * 0.15, -0.02);
+      const cam4 = myCam.copy();
+      cam4._orbitFree(Math.PI * 1.2, Math.PI * 0.9, 0.12);
+
+      // Compare these views with the view set by slerp().
+      myCam.slerp(cam0, cam1, 1/2);
+      expectCameraMatricesAreClose(myCam, cam2);
+      myCam.slerp(cam0, cam1, -1/4);
+      expectCameraMatricesAreClose(myCam, cam3);
+      myCam.slerp(cam0, cam1, 3/2);
+      expectCameraMatricesAreClose(myCam, cam4);
+    });
+    test('if viewpoints of cam0, cam1 are same, all the same.', function() {
+      myCam = myp5.createCamera();
+      const cam0 = myCam.copy();
+      cam0.camera(22, 37, 49, 0, 1, 2, 3, 4, -1);
+      const cam1 = myCam.copy();
+      cam1.camera(22, 37, 49, 2, 1, 0, 9, 8, 11);
+
+      // Run slerp() and compare viewpoints.
+      for (let i = 1; i < 100; i++) {
+        myCam.slerp(cam0, cam1, i * 0.01);
+        expect(myCam.eyeX).to.be.closeTo(cam0.eyeX, 0.00001);
+        expect(myCam.eyeY).to.be.closeTo(cam0.eyeY, 0.00001);
+        expect(myCam.eyeZ).to.be.closeTo(cam0.eyeZ, 0.00001);
+      }
+    });
+    test('if center of cam0, cam1 are same, all the same.', function() {
+      myCam = myp5.createCamera();
+      const cam0 = myCam.copy();
+      cam0.camera(0, 1, 2, 22, 37, 49, 3, 4, -1);
+      const cam1 = myCam.copy();
+      cam1.camera(2, 1, 0, 22, 37, 49, 9, 8, 11);
+
+      // Run slerp() and compare centers.
+      for (let i = 1; i < 100; i++) {
+        myCam.slerp(cam0, cam1, i * 0.01);
+        expect(myCam.centerX).to.be.closeTo(cam0.centerX, 0.00001);
+        expect(myCam.centerY).to.be.closeTo(cam0.centerY, 0.00001);
+        expect(myCam.centerZ).to.be.closeTo(cam0.centerZ, 0.00001);
+      }
+    });
+    test('if all camera is ortho, 0,5 component is interpolated', function() {
+      myCam = myp5.createCamera();
+      myCam.ortho(-50, 50, -50, 50, 0, 1000);
+      const cam0 = myCam.copy();
+      cam0.ortho(-20, 20, -20, 20, 0, 1000);
+      const cam1 = myCam.copy();
+      cam1.ortho(-100, 100, -100, 100, 0, 1000);
+
+      // interpolate cam0 and cam1
+      myCam.slerp(cam0, cam1, 0.3);
+
+      // Next, check the 0th and 5th entries of the projection matrix
+      // to make sure it is logarithmically interpolated.
+      const p0_0 = cam0.projMatrix.mat4[0];
+      const p1_0 = cam1.projMatrix.mat4[0];
+      expect(myCam.projMatrix.mat4[0])
+        .to.be.closeTo(p0_0 * Math.pow(p1_0 / p0_0, 0.3), 0.00001);
+      const p0_5 = cam0.projMatrix.mat4[5];
+      const p1_5 = cam1.projMatrix.mat4[5];
+      expect(myCam.projMatrix.mat4[5])
+        .to.be.closeTo(p0_5 * Math.pow(p1_5 / p0_5, 0.3), 0.00001);
+    });
+  });
+
   suite('Helper Functions', function() {
     test('copy() returns a new p5.Camera object', function() {
       var newCam = myCam.copy();

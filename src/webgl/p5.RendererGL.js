@@ -606,8 +606,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.fontInfos = {};
 
     this._curShader = undefined;
-
-    return this;
   }
 
   //////////////////////////////////////////////
@@ -1654,7 +1652,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   _arraysEqual(a, b) {
     const aLength = a.length;
     if (aLength !== b.length) return false;
-    return a.every((ai,i) => ai === b[i]);
+    return a.every((ai, i) => ai === b[i]);
   }
 
   _isTypedArray(arr) {
@@ -1720,7 +1718,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   // function to calculate BezierVertex Coefficients
-  _bezierCoefficients (t) {
+  _bezierCoefficients(t) {
     const t2 = t * t;
     const t3 = t2 * t;
     const mt = 1 - t;
@@ -1730,7 +1728,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   // function to calculate QuadraticVertex Coefficients
-  _quadraticCoefficients (t) {
+  _quadraticCoefficients(t) {
     const t2 = t * t;
     const mt = 1 - t;
     const mt2 = mt * mt;
@@ -1738,7 +1736,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   // function to convert Bezier coordinates to Catmull Rom Splines
-  _bezierToCatmull (w) {
+  _bezierToCatmull(w) {
     const p1 = w[1];
     const p2 = w[1] + (w[2] - w[0]) / this._curveTightness;
     const p3 = w[2] - (w[3] - w[1]) / this._curveTightness;
@@ -1746,7 +1744,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     const p = [p1, p2, p3, p4];
     return p;
   }
-  _initTessy () {
+  _initTessy() {
     // function called for each vertex of tesselator output
     function vertexCallback(data, polyVertArray) {
       for (let i = 0; i < data.length; i++) {
@@ -1790,7 +1788,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     return tessy;
   }
 
-  _triangulate (contours) {
+  _triangulate(contours) {
     // libtess will take 3d verts and flatten to a plane for tesselation.
     // libtess is capable of calculating a plane to tesselate on, but
     // if all of the vertices have the same z values, we'll just
@@ -1820,7 +1818,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     const triangleVerts = [];
     this._tessy.gluTessBeginPolygon(triangleVerts);
 
-    for(const contour of contours){
+    for (const contour of contours) {
       this._tessy.gluTessBeginContour();
       for (
         let j = 0;
