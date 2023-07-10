@@ -1070,11 +1070,12 @@ p5.RendererGL.prototype.triangle = function(args) {
   // origin appropriately.
   const uMVMatrix = this.uMVMatrix.copy();
   try {
+    // triangle orientation.
     const orientation = Math.sign(x1*y2-x2*y1 + x2*y3-x3*y2 + x3*y1-x1*y3);
     const mult = new p5.Matrix([
       x2 - x1, y2 - y1, 0, 0, // the resulting unit X-axis
       x3 - x1, y3 - y1, 0, 0, // the resulting unit Y-axis
-      0, 0, orientation, 0,   // the resulting unit Z-axis (unchanged)
+      0, 0, orientation, 0,   // the resulting unit Z-axis (Reflect the specified order of vertices)
       x1, y1, 0, 1            // the resulting origin
     ]).mult(this.uMVMatrix);
 
