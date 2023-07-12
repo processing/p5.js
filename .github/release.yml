@@ -11,6 +11,9 @@ changelog:
       exclude:
         labels:
           - Dependencies
+        authors:
+          - allcontributors
+          - dependabot
     - title: New Contributors 💗
       authors:
         - allcontributors
