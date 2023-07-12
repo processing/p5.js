@@ -49,10 +49,12 @@ jobs:
 
       # 3. Release p5.js
       - name: Create GitHub release
-        uses: softprops/action-gh-release@v0.1.14
+        uses: softprops/action-gh-release@v0.1.15
         with:
+          draft: true
           files: release/*
           generate_release_notes: true
+          token: ${{ secrets.ACCESS_TOKEN }}
       - name: Publish to NPM
         uses: JS-DevTools/npm-publish@v1
         with:
