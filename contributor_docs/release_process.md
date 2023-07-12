@@ -27,7 +27,7 @@ The actual release steps are all run on Github Actions CI.
 ## Monitor and check results
 Once the above commands have been executed, the build and release action can be monitored from the ["Actions" tab](https://github.com/processing/p5.js/actions) on the p5.js GitHub repo page (look for a job that says "New p5.js release"), clicking into the job can give a more detailed job log of what's running.
 
-[Screenshot of GitHub action running the "New p5.js release" job](images/release-action.png)
+![Screenshot of GitHub action running the "New p5.js release" job](images/release-action.png)
 
 Once the job has completed, the library will have been released on GitHub and NPM. Check the [release](https://github.com/processing/p5.js/releases) and [NPM](https://www.npmjs.com/package/p5) pages to see that the latest version is released. You should view the draft release on GitHub, make changes to changelog if necessary, then publish the release.
 
