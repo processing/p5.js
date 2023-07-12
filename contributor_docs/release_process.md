@@ -29,7 +29,9 @@ Once the above commands have been executed, the build and release action can be 
 
 [Screenshot of GitHub action running the "New p5.js release" job](images/release-action.png)
 
-Once the job has completed, the library will have been released on GitHub and NPM. Check the [release](https://github.com/processing/p5.js/releases) and [NPM](https://www.npmjs.com/package/p5) pages to see that the latest version is released. The website will be updated as soon as its own build and deploy job is completed, this can also be monitored in the relevant ["Actions" page](https://github.com/processing/p5.js-website/actions) if desired, and after that check the ["Downloads" page](https://p5js.org/download/) on the website for the latest version number.
+Once the job has completed, the library will have been released on GitHub and NPM. Check the [release](https://github.com/processing/p5.js/releases) and [NPM](https://www.npmjs.com/package/p5) pages to see that the latest version is released. You should view the draft release on GitHub, make changes to changelog if necessary, then publish the release.
+
+The website will be updated as soon as its own build and deploy job is completed, this can also be monitored in the relevant ["Actions" page](https://github.com/processing/p5.js-website/actions) if desired, and after that check the ["Downloads" page](https://p5js.org/download/) on the website for the latest version number.
 
 CDNs will take a bit more time (a day or two) to update but they will automatically pull from NPM upon release so no specific action is required.
 
