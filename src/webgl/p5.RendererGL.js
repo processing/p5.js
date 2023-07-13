@@ -887,14 +887,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
     let pg = this.filterGraphicsLayer;
 
-    // TODO, handle different signatures:
-    // if args[0] is a p5.Shader,
-    //   this.filterShader = args[0]
-    // else
-    //   this.filterShader = map(args[0], {GRAYSCALE: grayscaleShader, ...})
-    //   filterOperationParameter = undefined or args[1]
-
     if (typeof args[0] === 'string') {
+      // TODO, handle filter constants:
+      //   this.filterShader = map(args[0], {GRAYSCALE: grayscaleShader, ...})
+      //   filterOperationParameter = undefined or args[1]
       p5._friendlyError('webgl filter implementation in progress');
       return;
     }
@@ -910,6 +906,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (!isSameUserShader) {
       this.filterShader =
         new p5.Shader(pg._renderer, userShader._vertSrc, userShader._fragSrc);
+			this.filterShader.parentShader = userShader;
     }
 
     // apply shader to pg
