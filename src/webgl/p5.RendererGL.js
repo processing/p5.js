@@ -74,7 +74,9 @@ const defaultShaders = {
   lineFrag:
     lineDefs + readFileSync(join(__dirname, '/shaders/line.frag'), 'utf-8'),
   pointVert: readFileSync(join(__dirname, '/shaders/point.vert'), 'utf-8'),
-  pointFrag: readFileSync(join(__dirname, '/shaders/point.frag'), 'utf-8')
+  pointFrag: readFileSync(join(__dirname, '/shaders/point.frag'), 'utf-8'),
+  imageLightVert : readFileSync(join(__dirname, '/shaders/imageLight.vert'), 'utf-8'),
+  imageLightFrag : readFileSync(join(__dirname, '/shaders/imageLight.frag'), 'utf-8')
 };
 
 /**
