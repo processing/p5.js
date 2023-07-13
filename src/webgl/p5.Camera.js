@@ -1617,11 +1617,6 @@ p5.Camera = class Camera {
     if (this.cameraType === 'default') {
       this._computeCameraDefaultSettings();
       this._setDefaultCamera();
-    } else {
-      this.perspective(
-        this.cameraFOV,
-        this._renderer.width / this._renderer.height
-      );
     }
   }
 
