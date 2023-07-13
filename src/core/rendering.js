@@ -156,12 +156,6 @@ p5.prototype.createCanvas = function(w, h, renderer) {
 p5.prototype.resizeCanvas = function(w, h, noRedraw) {
   p5._validateParameters('resizeCanvas', arguments);
   if (this._renderer) {
-    // copy camera
-    let cam;
-    if (this._renderer._curCamera !== undefined) {
-      cam =
-        this._renderer._curCamera.copy();
-    }
     // save canvas properties
     const props = {};
     for (const key in this.drawingContext) {
@@ -170,24 +164,17 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
         props[key] = val;
       }
     }
-    this._renderer.resize(w, h);
     this.width = w;
     this.height = h;
+    // Make sure width and height are updated before the renderer resizes so
+    // that framebuffers updated from the resize read the correct size
+    this._renderer.resize(w, h);
     // reset canvas properties
     for (const savedKey in props) {
       try {
         this.drawingContext[savedKey] = props[savedKey];
       } catch (err) {
         // ignore read-only property errors
-      }
-    }
-    // reapply camera
-    if (this._renderer._curCamera !== undefined) {
-      this._renderer._curCamera = cam;
-      if (this._renderer._curCamera.cameraType
-          === 'custom') {
-        this._renderer.uPMatrix =
-          this._renderer._curCamera.projMatrix;
       }
     }
     if (!noRedraw) {
