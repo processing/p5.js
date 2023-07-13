@@ -26,7 +26,7 @@
   - '\[[xX]\]\s*Build Process'
 "Unit Testing":
   - '\[[xX]\]\s*Unit Testing'
-"Internalization":
-  - '\[[xX]\]\s*Internalization'
+"Internationalization":
+  - '\[[xX]\]\s*Internationalization'
 "Friendly Errors":
   - '\[[xX]\]\s*Friendly Errors'

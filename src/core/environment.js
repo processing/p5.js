@@ -16,6 +16,7 @@ p5.prototype._lastFrameTime = window.performance.now();
 p5.prototype._targetFrameRate = 60;
 
 const _windowPrint = window.print;
+let windowPrintDisabled = false;
 
 /**
  * The <a href="#/p5/print">print()</a> function writes to the console area of
@@ -43,7 +44,16 @@ const _windowPrint = window.print;
  */
 p5.prototype.print = function(...args) {
   if (!args.length) {
-    _windowPrint();
+    if (!windowPrintDisabled) {
+      _windowPrint();
+      if (
+        window.confirm(
+          'You just tried to print the webpage. Do you want to prevent this from running again?'
+        )
+      ) {
+        windowPrintDisabled = true;
+      }
+    }
   } else {
     console.log(...args);
   }
