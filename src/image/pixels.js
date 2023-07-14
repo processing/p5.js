@@ -522,6 +522,7 @@ p5.prototype._copyHelper = (
 p5.prototype.filter = function(operation, value) {
   p5._validateParameters('filter', arguments);
 
+  // TODO: use shader filters always, and provide an opt out
   if (this._renderer.isP3D) {
     p5.RendererGL.prototype.filter.call(this._renderer, arguments);
     return;
