@@ -184,7 +184,7 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
 };
 
 /**
- * Like <a href="#/createShader">createShader()</a>, but with 
+ * Like <a href="#/createShader">createShader()</a>, but with
  * a default vertex shader so that only a fragment shader is supplied.
  * Creates a new <a href="#/p5.Shader">p5.Shader</a> object.
  *
@@ -200,13 +200,13 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  * function setup() {
  *   let frag = `precision mediump float;
  *   varying mediump vec2 vTexCoord;
- *   
+ *
  *   uniform sampler2D tex0;
- *   
+ *
  *   float luma(vec3 color) {
  *     return dot(color, vec3(0.299, 0.587, 0.114));
  *   }
- *   
+ *
  *   void main() {
  *     vec2 uv = vTexCoord;
  *     // gets flipped vertically
@@ -226,9 +226,9 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  * </div>
  */
 p5.prototype.createFilterShader = function(fragSrc) {
-	this._assert3d('createFilterShader');
-	p5._validateParameters('createFilterShader', arguments);
-	let defaultVertSrc = `attribute vec3 aPosition;
+  this._assert3d('createFilterShader');
+  p5._validateParameters('createFilterShader', arguments);
+  let defaultVertSrc = `attribute vec3 aPosition;
   attribute vec2 aTexCoord;
   
   varying vec2 vTexCoord;
@@ -239,8 +239,8 @@ p5.prototype.createFilterShader = function(fragSrc) {
     positionVec4.xy = positionVec4.xy * 2.0 - 1.0;
     gl_Position = positionVec4;
   }`;
-	return new p5.Shader(this._renderer, defaultVertSrc, fragSrc);
-}
+  return new p5.Shader(this._renderer, defaultVertSrc, fragSrc);
+};
 
 /**
  * Sets the <a href="#/p5.Shader">p5.Shader</a> object to
