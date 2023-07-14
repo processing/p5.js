@@ -184,6 +184,65 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
 };
 
 /**
+ * Like <a href="#/createShader">createShader()</a>, but with 
+ * a default vertex shader so that only a fragment shader is supplied.
+ * Creates a new <a href="#/p5.Shader">p5.Shader</a> object.
+ *
+ * Note, shaders can only be used in WEBGL mode.
+ *
+ * @method createFilterShader
+ * @param {String} fragSrc source code for the fragment shader
+ * @returns {p5.Shader} a shader object created from the provided
+ *                      fragment shader.
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * function setup() {
+ *   let frag = `precision mediump float;
+ *   varying mediump vec2 vTexCoord;
+ *   
+ *   uniform sampler2D tex0;
+ *   
+ *   float luma(vec3 color) {
+ *     return dot(color, vec3(0.299, 0.587, 0.114));
+ *   }
+ *   
+ *   void main() {
+ *     vec2 uv = vTexCoord;
+ *     // gets flipped vertically
+ *     uv.y = 1.0 - uv.y;
+ *     vec4 sampledColor = texture2D(tex0, uv);
+ *     float gray = luma(sampledColor.rgb);
+ *     gl_FragColor = vec4(gray, gray, gray, 1.0);
+ *   }`;
+ *
+ *   createCanvas(100, 100, WEBGL);
+ *   let s = createFilterShader(frag);
+ *   background('RED');
+ *   filter(s);
+ *   describe('a plain gray canvas');
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.createFilterShader = function(fragSrc) {
+	this._assert3d('createFilterShader');
+	p5._validateParameters('createFilterShader', arguments);
+	let defaultVertSrc = `attribute vec3 aPosition;
+  attribute vec2 aTexCoord;
+  
+  varying vec2 vTexCoord;
+  
+  void main() {
+    vTexCoord = aTexCoord;
+    vec4 positionVec4 = vec4(aPosition, 1.0);
+    positionVec4.xy = positionVec4.xy * 2.0 - 1.0;
+    gl_Position = positionVec4;
+  }`;
+	return new p5.Shader(this._renderer, defaultVertSrc, fragSrc);
+}
+
+/**
  * Sets the <a href="#/p5.Shader">p5.Shader</a> object to
  * be used to render subsequent shapes.
  *
