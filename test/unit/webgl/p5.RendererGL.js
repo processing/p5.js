@@ -243,6 +243,15 @@ suite('p5.RendererGL', function() {
       assert.equal(myp5.pixels[0], 255);
     });
 
+    test('createFilterShader takes a custom frag shader src', function() {
+      let testCreateFilterShader = () => {
+        myp5.createCanvas(4, 4, myp5.WEBGL);
+        let s = myp5.createFilterShader(frag);
+        myp5.filter(s);
+      };
+      assert.doesNotThrow(testCreateFilterShader, 'this should not throw');
+    });
+
   });
 
   suite('text shader', function() {
