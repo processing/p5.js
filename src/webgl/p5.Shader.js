@@ -382,10 +382,9 @@ p5.Shader = class {
    * canvas toggles between a circular gradient of orange and blue vertically. and a circular gradient of red and green moving horizontally when mouse is clicked/pressed.
    */
   setUniform(uniformName, data) {
-		// detect when to set uniforms on duplicate filter shader copy
+    // detect when to set uniforms on duplicate filter shader copy
     let other = this._renderer.filterShader;
     if (other !== undefined && other.parentShader === this) {
-			console.log('duplicate');
       other.setUniform(uniformName, data);
       return;
     }

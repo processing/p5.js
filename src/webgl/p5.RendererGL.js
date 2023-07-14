@@ -906,7 +906,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (!isSameUserShader) {
       this.filterShader =
         new p5.Shader(pg._renderer, userShader._vertSrc, userShader._fragSrc);
-			this.filterShader.parentShader = userShader;
+      this.filterShader.parentShader = userShader;
     }
 
     // apply shader to pg
