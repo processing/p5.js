@@ -35,24 +35,27 @@ p5.prototype._lcgSetSeed = function(stateProperty, val) {
 };
 
 /**
- * Sets the seed value for <a href="#/p5/random">random()</a>.
- *
- * By default, <a href="#/p5/random">random()</a> produces different results each time the program
- * is run. Set the seed parameter to a constant to return the same
- * pseudo-random numbers each time the software is run.
+ * Sets the seed value for <a href="#/p5/random">random()</a> and
+ * <a href="#/p5/randomGaussian">randomGaussian()</a>. By default,
+ * <a href="#/p5/random">random()</a> and
+ * <a href="#/p5/randomGaussian">randomGaussian()</a> produce different
+ * results each time a sketch is run. Set the `seed` parameter to a constant
+ * to return the same pseudo-random numbers each time the sketch is run.
  *
  * @method randomSeed
- * @param {Number} seed   the seed value
+ * @param {Number} seed   the seed value.
  * @example
  * <div>
  * <code>
+ * let x = random(width);
+ * let y = random(height);
+ * circle(x, y, 10);
  * randomSeed(99);
- * for (let i = 0; i < 100; i++) {
- *   let r = random(0, 255);
- *   stroke(r);
- *   line(i, 0, i, 100);
- * }
- * describe('many vertical lines drawn in white, black, or grey.');
+ * x = random(width);
+ * y = random(height);
+ * fill(0);
+ * circle(x, y, 10);
+ * describe('A white circle appears at a random position. A black circle appears at (27.4, 25.8).');
  * </code>
  * </div>
  */
@@ -62,55 +65,65 @@ p5.prototype.randomSeed = function(seed) {
 };
 
 /**
- * Return a random floating-point number.
+ * Returns a random number or a random element from an array.
  *
- * Takes either 0, 1 or 2 arguments.
+ * `random()` follows uniform distribution, which is like rolling a die. When
+ * `random()` is used to generate numbers, all numbers are equally likely.
+ * When it's used to select elements from an array, all elements are equally
+ * likely to be chosen.
  *
- * If no argument is given, returns a random number from 0
- * up to (but not including) 1.
+ * The version of `random()` with no parameters returns a random number from 0
+ * up to but not including 1.
  *
- * If one argument is given and it is a number, returns a random number from 0
- * up to (but not including) the number.
+ * The version of `random()` with one parameter works one of two ways. If the
+ * argument passed is a number, `random()` returns a random number from 0 up
+ * to but not including the number. For example, calling `random(5)` returns
+ * values between 0 and 5. If the argument passed is an array, `random()`
+ * returns a random element from that array. For example, calling
+ * `random(['🦁', '🐯', '🐻'])` returns either a lion, tiger, or bear emoji.
  *
- * If one argument is given and it is an array, returns a random element from
- * that array.
- *
- * If two arguments are given, returns a random number from the
- * first argument up to (but not including) the second argument.
+ * The version of `random()` with two parameters returns a random number from
+ * a given range. The arguments passed set the range's lower and upper bounds.
+ * For example, calling `random(-5, 10.2)` returns values from -5 up to but
+ * not including 10.2.
  *
  * @method random
- * @param  {Number} [min]   the lower bound (inclusive)
- * @param  {Number} [max]   the upper bound (exclusive)
- * @return {Number} the random number
+ * @param  {Number} [min]   the lower bound (inclusive).
+ * @param  {Number} [max]   the upper bound (exclusive).
+ * @return {Number} the random number.
  * @example
  * <div>
  * <code>
- * for (let i = 0; i < 100; i++) {
- *   let r = random(50);
- *   stroke(r * 5);
- *   line(50, i, 50 + r, i);
+ * function draw() {
+ *   background(204);
+ *
+ *   frameRate(5);
+ *   let d = random(width);
+ *   circle(50, 50, d);
+ *
+ *   describe('A white circle randomly changes size from a single point to the width of its containing square.');
  * }
- * describe(`100 horizontal lines from center canvas to right.
- *   The size and fill change each time.`);
  * </code>
  * </div>
  * <div>
  * <code>
- * for (let i = 0; i < 100; i++) {
- *   let r = random(-50, 50);
- *   line(50, i, 50 + r, i);
+ * function draw() {
+ *   background(204);
+ *
+ *   frameRate(5);
+ *   let d = random(45, 55);
+ *   circle(50, 50, d);
+ *
+ *   describe('A white circle randomly changes size. It is always about half the width of its containing square.');
  * }
- * describe(`100 horizontal lines from center of canvas.
- *   The height & side change each render.`);
  * </code>
  * </div>
  * <div>
  * <code>
- * // Get a random element from an array using the random(Array) syntax
- * let words = ['apple', 'bear', 'cat', 'dog'];
- * let word = random(words); // select random word
- * text(word, 10, 50); // draw the word
- * describe('word displayed at random. Either apple, bear, cat, or dog.');
+ * let animals = ['🦁', '🐯', '🐻'];
+ * let animal = random(animals);
+ * text(animal, 50, 50);
+ * describe('An animal face is displayed at random. Either a lion, tiger, or bear.');
  * </code>
  * </div>
  */
@@ -149,59 +162,47 @@ p5.prototype.random = function(min, max) {
 };
 
 /**
+ * Returns a random number fitting a Gaussian, or normal, distribution.
+ * Values from a normal distribution cluster around a central value called
+ * the mean. The cluster's standard deviation describes its spread.
  *
- * Returns a random number fitting a Gaussian, or
- * normal, distribution. There is theoretically no minimum or maximum
- * value that <a href="#/p5/randomGaussian">randomGaussian()</a> might return. Rather, there is
- * just a very low probability that values far from the mean will be
- * returned; and a higher probability that numbers near the mean will
- * be returned.
+ * There's no minimum or maximum  value that `randomGaussian()` might return.
+ * Values far from the mean are very unlikely and values near the mean are
+ * very likely.
  *
- * Takes either 0, 1 or 2 arguments.<br>
- * If no args, the mean is 0 and the standard deviation is 1.<br>
- * If one arg, that arg is the mean and the standard deviation is 1.<br>
- * If two args, the first arg is the mean and the second is the standard deviation.
+ * The version of `randomGaussian()` with no parameters returns values with a
+ * mean of 0 and standard deviation of 1.
+ *
+ * The version of `randomGaussian()` with one parameter interprets the
+ * argument passed as the mean. The standard deviation is 1.
+ *
+ * The version of `randomGaussian()` with two parameters interprets the first
+ * argument passed as the mean and the second as the standard deviation.
  *
  * @method randomGaussian
- * @param  {Number} [mean]  the mean
- * @param  {Number} [sd]    the standard deviation
- * @return {Number} the random number
+ * @param  {Number} [mean]  the mean.
+ * @param  {Number} [sd]    the standard deviation.
+ * @return {Number} the random number.
  * @example
  * <div>
  * <code>
- * for (let y = 0; y < 100; y++) {
- *   let x = randomGaussian(50, 15);
- *   line(50, y, x, y);
- * }
- * describe(`100 horizontal lines from center of canvas.
- *   The height & side change each render.`);
- * </code>
- * </div>
- * <div>
- * <code>
- * let distribution = new Array(360);
- *
- * function setup() {
- *   createCanvas(100, 100);
- *   for (let i = 0; i < distribution.length; i++) {
- *     distribution[i] = floor(randomGaussian(0, 15));
- *   }
- * }
- *
  * function draw() {
- *   background(204);
+ *   noStroke();
+ *   fill(0, 10);
+ *   // Uniform distribution.
+ *   let x = random(width);
+ *   let y = 25;
+ *   circle(x, y, 5);
+ *   // Gaussian distribution with sd = 1.
+ *   x = randomGaussian(50);
+ *   y = 50;
+ *   circle(x, y, 5);
+ *   // Gaussian distribution with sd = 10.
+ *   x = randomGaussian(50, 10);
+ *   y = 75;
+ *   circle(x, y, 5);
  *
- *   translate(width / 2, width / 2);
- *
- *   for (let i = 0; i < distribution.length; i++) {
- *     rotate(TWO_PI / distribution.length);
- *     stroke(0);
- *     let dist = abs(distribution[i]);
- *     line(0, 0, dist, 0);
- *   }
- *
- *   describe(`black lines radiate from center of canvas.
- *     The size changes each render.`);
+ *   describe('Three horizontal black lines are filled in randomly. The top line spans entire canvas. The middle line is very short. The bottom line spans two-thirds of the canvas.');
  * }
  * </code>
  * </div>
