@@ -34,41 +34,37 @@ const scaled_cosine = i => 0.5 * (1.0 - Math.cos(i * Math.PI));
 let perlin; // will be initialized lazily by noise() or noiseSeed()
 
 /**
- * Returns the Perlin noise value at specified coordinates. The value returned
- * will always be between 0.0 and 1.0.
+ * Returns random numbers that can be tuned to feel more organic. The value
+ * returned will always be between 0.0 and 1.0.
  *
- * Perlin noise values are random numbers that can be tuned to feel more
- * organic. `noise()` produces a sequence of pseudo-random numbers that are
- * "smooth". Noise is used to produce textures, motion, shapes, terrains, and
- * so on. Ken Perlin invented `noise()` while animating the original
- * <em>Tron</em> film in the 1980s.
- *
- * Perlin noise is defined in an infinite n-dimensional space. In theory,
- * `noise()` could output pseudo-random numbers given any number of inputs.
- * The p5.js `noise()` function can compute 1D, 2D, and 3D noise, depending on
- * the number of input coordinates given.
+ * `noise()` produces a sequence of "smooth" pseudo-random numbers called
+ * Perlin noise. Noise is used to create textures, motion, shapes, terrains,
+ * and so on. Ken Perlin invented `noise()` while animating the original
+ * <em>Tron</em> film in the 1980s. The `noise()` function can compute 1D, 2D,
+ * and 3D noise.
  *
  * `noise()` returns the same value for a given input while a sketch is
- * running. `noise()` returns different values each time a sketch runs. The
- * <a href="#/p5/noiseSeed">noiseSeed()</a> function can be used to generate a
- * specific sequence of noise values.
+ * running. That's because the sequence of noise values is set when the
+ * sketch begins. `noise()` returns different values each time a sketch runs.
+ * The <a href="#/p5/noiseSeed">noiseSeed()</a> function can be used to
+ * generate a specific sequence of noise values.
  *
- * One way to adjust the character of the noise values is to scale the input
- * coordinates. As a general rule, the sequence of noise values will be
- * smoother when the input coordinates are closer together. Steps of
- * 0.005-0.03 work best for most applications, but this will differ depending
- * on use.
+ * One way to adjust the character of the noise values is to scale the inputs.
+ * `noise()` interprets inputs as coordinates. The sequence of noise values
+ * will be smoother when the input coordinates are closer. Spacing the inputs
+ * 0.005-0.03 units apart works best for most applications.
  *
  * The version of `noise()` with one parameter computes noise values in one
- * dimension. This dimension is often interpreted as space, as in `noise(x)`.
+ * dimension. This dimension can be thought of as space, as in `noise(x)`, or
+ * time, as in `noise(t)`.
  *
  * The version of `noise()` with two parameters computes noise values in two
- * dimensions. The dimensions are often interpreted as space or space and time, as in
- * `noise(x, y)` or `noise(x, t)`.
+ * dimensions. These dimensions can be thought of as space, as in
+ * `noise(x, y)`, or spacetime, as in `noise(x, t)`.
  *
  * The version of `noise()` with three parameters computes noise values in
- * three dimensions. The dimensions are often interpreted as space or space and time,
- * as in `noise(x, y, z)` or `noise(x, y, t)`.
+ * three dimensions. These dimensions can be thought of as space, as in
+ * `noise(x, y, z)`, or spacetime, as in `noise(x, y, t)`.
  *
  * @method noise
  * @param  {Number} x   x-coordinate in noise space.
@@ -82,8 +78,9 @@ let perlin; // will be initialized lazily by noise() or noiseSeed()
  * function draw() {
  *   background(204);
  *   let noiseScale = 0.005;
- *   let x = width * noise(noiseScale * frameCount);
- *   let y = height * noise(noiseScale * frameCount + 10000);
+ *   let t = frameCount;
+ *   let x = width * noise(noiseScale * t);
+ *   let y = height * noise(noiseScale * t + 10000);
  *   circle(x, y, 5);
  *
  *   describe('A white circle moves randomly on a gray square.');
@@ -95,14 +92,29 @@ let perlin; // will be initialized lazily by noise() or noiseSeed()
  * <code>
  * function draw() {
  *   background(255);
- *
- *   let noiseScale = map(mouseX, 0, width, 0.001, 0.1);
+ *   let noiseScale = 0.02;
  *   for (let x = 0; x < width; x += 1) {
  *     let y = height * noise(noiseScale * x);
  *     line(x, 0, x, y);
  *   }
  *
- *   describe('A wave pattern that changes based on the mouse position.');
+ *   describe('A hilly terrain drawn in white against a black sky.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(255);
+ *   let noiseScale = 0.003;
+ *   let t = frameCount;
+ *   for (let x = 0; x < width; x += 1) {
+ *     let y = height * noise(noiseScale * x, noiseScale * t);
+ *     line(x, 0, x, y);
+ *   }
+ *
+ *   describe('A calm sea drawn in white against a black sky.');
  * }
  * </code>
  * </div>

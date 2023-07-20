@@ -104,14 +104,14 @@ p5.prototype.constrain = function(n, low, high) {
 /**
  * Calculates the distance between two points.
  *
- * The version of `point()` with four parameters calculates distance in two
+ * The version of `dist()` with four parameters calculates distance in two
  * dimensions.
  *
- * The version of `point()` with six parameters calculates distance in three
+ * The version of `dist()` with six parameters calculates distance in three
  * dimensions.
  *
- * Use <a href="#/p5.Vector/dist>p5.Vector.dist()</a> to compute the distance
- * between two <a href="#/p5.Vector>p5.Vector</a> objects.
+ * Use <a href="#/p5.Vector/dist">p5.Vector.dist()</a> to calculate the
+ * distance between two <a href="#/p5.Vector">p5.Vector</a> objects.
  *
  * @method dist
  * @param  {Number} x1 x-coordinate of the first point.
@@ -123,26 +123,20 @@ p5.prototype.constrain = function(n, low, high) {
  * @example
  * <div>
  * <code>
- * function draw() {
- *   background(200);
+ * let x1 = 10;
+ * let y1 = 50;
+ * let x2 = 90;
+ * let y2 = 50;
  *
- *   // Coordinates for two points 80 pixels apart.
- *   let x1 = 10;
- *   let y1 = 50;
- *   let x2 = 90;
- *   let y2 = 50;
+ * line(x1, y1, x2, y2);
+ * strokeWeight(5);
+ * point(x1, y1);
+ * point(x2, y2);
  *
- *   line(x1, y1, x2, y2);
- *   fill(0);
- *   circle(x1, y1, 7);
- *   circle(x2, y2, 7);
+ * let d = dist(x1, y1, x2, y2);
+ * text(d, 43, 40);
  *
- *   let d = dist(x1, y1, x2, y2);
- *   textAlign(CENTER, CENTER);
- *   text(d, 50, 40);
- *
- *   describe('Two circles connected by a horizontal line. The number 80 is written above the center of the line.');
- * }
+ * describe('Two dots connected by a horizontal line. The number 80 is written above the center of the line.');
  * </code>
  * </div>
  */
