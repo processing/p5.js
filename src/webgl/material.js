@@ -185,10 +185,9 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
 
 /**
  * Like <a href="#/createShader">createShader()</a>, but with
- * a default vertex shader so that only a fragment shader is supplied.
+ * a default vertex shader so that only a fragment shader is needed.
  * Creates a new <a href="#/p5.Shader">p5.Shader</a> object.
  *
- * Note, shaders can only be used in WEBGL mode.
  * The fragment shader is given a uniform, or variable, called `tex0`.
  * This is created specificially for filter shaders to access the canvas contents.
  *
@@ -203,6 +202,11 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  *   - Example: `setUniform('x', img)` becomes `uniform sampler2D x`
  *
  * ---
+ *
+ * Note: shaders can only be used in `WEBGL` mode.
+ * For more info about filters and shaders, see Adam Ferriss' <a href="https://github.com/aferriss/p5jsShaderExamples">repo of shader examples</a>
+ * or the <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">introduction to shaders</a> page.
+ *
  * @method createFilterShader
  * @param {String} fragSrc source code for the fragment shader
  * @returns {p5.Shader} a shader object created from the provided
