@@ -252,6 +252,22 @@ suite('p5.RendererGL', function() {
       assert.doesNotThrow(testCreateFilterShader, 'this should not throw');
     });
 
+    test('default vertex shader behaves the same as supplied vertex shader', function() {
+      myp5.createCanvas(4,4, myp5.WEBGL);
+      let s1 = myp5.createFilterShader(frag);
+      let s2 = myp5.createShader(vert, frag);
+      myp5.background('RED');
+      myp5.filter(s1);
+      myp5.loadPixels();
+      let p1 = myp5.pixels.slice();
+      myp5.clear();
+      myp5.background('RED');
+      myp5.filter(s2);
+      myp5.loadPixels();
+      let p2 = myp5.pixels;
+      assert.deepEqual(p1, p2);
+    });
+
   });
 
   suite('text shader', function() {
