@@ -211,29 +211,53 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  * <div modernizr='webgl'>
  * <code>
  * function setup() {
- *   let frag = `precision mediump float;
- *   varying mediump vec2 vTexCoord;
- *
- *   uniform sampler2D tex0;
- *
- *   float luma(vec3 color) {
- *     return dot(color, vec3(0.299, 0.587, 0.114));
- *   }
- *
+ *   let fragSrc = `precision highp float;
  *   void main() {
- *     vec2 uv = vTexCoord;
- *     // gets flipped vertically
- *     uv.y = 1.0 - uv.y;
- *     vec4 sampledColor = texture2D(tex0, uv);
- *     float gray = luma(sampledColor.rgb);
- *     gl_FragColor = vec4(gray, gray, gray, 1.0);
+ *     gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
  *   }`;
  *
  *   createCanvas(100, 100, WEBGL);
- *   let s = createFilterShader(frag);
- *   background('RED');
+ *   let s = createFilterShader(fragSrc);
  *   filter(s);
- *   describe('a plain gray canvas');
+ *   describe('a yellow square');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div modernizr='webgl'>
+ * <code>
+ * let img, s;
+ * function preload() {
+ *   img = loadImage('assets/bricks.jpg');
+ * }
+ * function setup() {
+ *   let fragSrc = `precision highp float;
+ *
+ *   // x,y coordinates, given from the vertex shader
+ *   varying vec2 vTexCoord;
+ *
+ *   // the canvas contents, given from filter()
+ *   uniform sampler2D tex0;
+ *   // a custom variable from the sketch
+ *   uniform float darkness;
+ *
+ *   void main() {
+ *     // get the color at current pixel
+ *     vec4 color = texture2D(tex0, vTexCoord);
+ *     // set the output color
+ *     color.b = 1.0;
+ *     color *= darkness;
+ *     gl_FragColor = vec4(color.rgb, 1.0);
+ *   }`;
+ *
+ *   createCanvas(100, 100, WEBGL);
+ *   s = createFilterShader(fragSrc);
+ * }
+ * function draw() {
+ *   image(img, -50, -50);
+ *   s.setUniform('darkness', 0.5);
+ *   filter(s);
+ *   describe('a image of bricks tinted dark blue');
  * }
  * </code>
  * </div>
