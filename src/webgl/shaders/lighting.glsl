@@ -38,6 +38,8 @@ uniform sampler2D equiRectangularTextures;
 
 const float specularFactor = 2.0;
 const float diffuseFactor = 0.73;
+const float PI = 3.141;
+
 
 struct LightResult {
   float specular;
