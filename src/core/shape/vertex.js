@@ -615,6 +615,11 @@ p5.prototype.endContour = function() {
  */
 p5.prototype.endShape = function(mode, count = 1) {
   p5._validateParameters('endShape', arguments);
+  if (count < 1) {
+    console.log('🌸 p5.js says: You can not have less than one instance');
+    count = 1;
+  }
+
   if (this._renderer.isP3D) {
     this._renderer.endShape(
       mode,
