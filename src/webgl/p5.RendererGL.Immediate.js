@@ -185,7 +185,7 @@ p5.RendererGL.prototype.endShape = function(
   shapeKind,
   count = 1
 ) {
-  if (this.immediateMode.shapeMode === POINTS) { // REPLACE with constants.POINTS
+  if (this.immediateMode.shapeMode === constants.POINTS) {
     this._drawPoints(
       this.immediateMode.geometry.vertices,
       this.immediateMode.buffers.point
@@ -381,12 +381,12 @@ p5.RendererGL.prototype._drawImmediateFill = function(count = 1) {
   }
 
   // LINE_STRIP and LINES are not used for rendering, instead
-  // they only indicate a way to modify vertices during the _processVertices() step // REPLACE with constants.POINTS
+  // they only indicate a way to modify vertices during the _processVertices() step
   if (
-    this.immediateMode.shapeMode === LINE_STRIP || 
-    this.immediateMode.shapeMode === LINES
+    this.immediateMode.shapeMode === constants.LINE_STRIP ||
+    this.immediateMode.shapeMode === constants.LINES
   ) {
-    this.immediateMode.shapeMode = TRIANGLE_FAN;
+    this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
   }
 
   // WebGL 1 doesn't support the QUADS and QUAD_STRIP modes, so we
@@ -399,8 +399,8 @@ p5.RendererGL.prototype._drawImmediateFill = function(count = 1) {
   }
 
   this._applyColorBlend(this.curFillColor);
-  
-  if (count == 1) {
+
+  if (count === 1) {
     gl.drawArrays(
       this.immediateMode.shapeMode,
       0,
@@ -417,7 +417,7 @@ p5.RendererGL.prototype._drawImmediateFill = function(count = 1) {
       );
     }
     catch (e) {
-      console.log("🌸 p5.js says: Instancing is only supported in WebGL2 mode");
+      console.log('🌸 p5.js says: Instancing is only supported in WebGL2 mode');
     }
   }
 

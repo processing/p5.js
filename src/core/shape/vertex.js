@@ -626,10 +626,9 @@ p5.prototype.endShape = function(mode, count = 1) {
       count
     );
   } else {
-    if (count != 1) {
-      console.log("🌸 p5.js says: Instancing is only supported in WebGL2 mode");
+    if (count !== 1) {
+      console.log('🌸 p5.js says: Instancing is only supported in WebGL2 mode');
     }
-    
     if (vertices.length === 0) {
       return this;
     }
