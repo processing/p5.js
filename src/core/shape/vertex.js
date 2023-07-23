@@ -589,6 +589,7 @@ p5.prototype.endContour = function() {
  *
  * @method endShape
  * @param  {Constant} [mode] use CLOSE to close the shape
+ * @param  {Integer} [count] number of times you want to draw/instance the shape (for WebGL mode).
  * @chainable
  * @example
  * <div>
@@ -612,18 +613,23 @@ p5.prototype.endContour = function() {
  * @alt
  * Triangle line shape with smallest interior angle on bottom and upside-down L.
  */
-p5.prototype.endShape = function(mode) {
+p5.prototype.endShape = function(mode, count = 1) {
   p5._validateParameters('endShape', arguments);
   if (this._renderer.isP3D) {
     this._renderer.endShape(
       mode,
-      isCurve,
-      isBezier,
-      isQuadratic,
-      isContour,
-      shapeKind
+      this.isCurve,
+      this.isBezier,
+      this.isQuadratic,
+      this.isContour,
+      this.shapeKind,
+      count
     );
   } else {
+    if (count != 1) {
+      console.log("🌸 p5.js says: Instancing is only supported in WebGL2 mode");
+    }
+    
     if (vertices.length === 0) {
       return this;
     }

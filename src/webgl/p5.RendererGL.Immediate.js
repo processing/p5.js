@@ -182,9 +182,10 @@ p5.RendererGL.prototype.endShape = function(
   isBezier,
   isQuadratic,
   isContour,
-  shapeKind
+  shapeKind,
+  count = 1
 ) {
-  if (this.immediateMode.shapeMode === constants.POINTS) {
+  if (this.immediateMode.shapeMode === POINTS) { // REPLACE with constants.POINTS
     this._drawPoints(
       this.immediateMode.geometry.vertices,
       this.immediateMode.buffers.point
@@ -196,7 +197,7 @@ p5.RendererGL.prototype.endShape = function(
   this.isProcessingVertices = false;
   if (this._doFill) {
     if (this.immediateMode.geometry.vertices.length > 1) {
-      this._drawImmediateFill();
+      this._drawImmediateFill(count);
     }
   }
   if (this._doStroke) {
@@ -368,7 +369,7 @@ p5.RendererGL.prototype._tesselateShape = function() {
  * enabling all appropriate buffers, applying color blend, and drawing the fill geometry.
  * @private
  */
-p5.RendererGL.prototype._drawImmediateFill = function() {
+p5.RendererGL.prototype._drawImmediateFill = function(count = 1) {
   const gl = this.GL;
   this._useVertexColor = (this.immediateMode.geometry.vertexColors.length > 0);
   const shader = this._getImmediateFillShader();
@@ -380,29 +381,45 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
   }
 
   // LINE_STRIP and LINES are not used for rendering, instead
-  // they only indicate a way to modify vertices during the _processVertices() step
+  // they only indicate a way to modify vertices during the _processVertices() step // REPLACE with constants.POINTS
   if (
-    this.immediateMode.shapeMode === constants.LINE_STRIP ||
-    this.immediateMode.shapeMode === constants.LINES
+    this.immediateMode.shapeMode === LINE_STRIP || 
+    this.immediateMode.shapeMode === LINES
   ) {
-    this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
+    this.immediateMode.shapeMode = TRIANGLE_FAN;
   }
 
   // WebGL 1 doesn't support the QUADS and QUAD_STRIP modes, so we
   // need to convert them to a supported format. In `vertex()`, we reformat
   // the input data into the formats specified below.
-  if (this.immediateMode.shapeMode === constants.QUADS) {
-    this.immediateMode.shapeMode = constants.TRIANGLES;
-  } else if (this.immediateMode.shapeMode === constants.QUAD_STRIP) {
-    this.immediateMode.shapeMode = constants.TRIANGLE_STRIP;
+  if (this.immediateMode.shapeMode === QUADS) {
+    this.immediateMode.shapeMode = TRIANGLES;
+  } else if (this.immediateMode.shapeMode === QUAD_STRIP) {
+    this.immediateMode.shapeMode = TRIANGLE_STRIP;
   }
 
   this._applyColorBlend(this.curFillColor);
-  gl.drawArrays(
-    this.immediateMode.shapeMode,
-    0,
-    this.immediateMode.geometry.vertices.length
-  );
+  
+  if (count == 1) {
+    gl.drawArrays(
+      this.immediateMode.shapeMode,
+      0,
+      this.immediateMode.geometry.vertices.length
+    );
+  }
+  else {
+    try {
+      gl.drawArraysInstanced(
+        this.immediateMode.shapeMode,
+        0,
+        this.immediateMode.geometry.vertices.length,
+        count
+      );
+    }
+    catch (e) {
+      console.log("🌸 p5.js says: Instancing is only supported in WebGL2 mode");
+    }
+  }
 
   shader.unbindShader();
 };
