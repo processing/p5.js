@@ -392,10 +392,10 @@ p5.RendererGL.prototype._drawImmediateFill = function(count = 1) {
   // WebGL 1 doesn't support the QUADS and QUAD_STRIP modes, so we
   // need to convert them to a supported format. In `vertex()`, we reformat
   // the input data into the formats specified below.
-  if (this.immediateMode.shapeMode === QUADS) {
-    this.immediateMode.shapeMode = TRIANGLES;
-  } else if (this.immediateMode.shapeMode === QUAD_STRIP) {
-    this.immediateMode.shapeMode = TRIANGLE_STRIP;
+  if (this.immediateMode.shapeMode === constants.QUADS) {
+    this.immediateMode.shapeMode = constants.TRIANGLES;
+  } else if (this.immediateMode.shapeMode === constants.QUAD_STRIP) {
+    this.immediateMode.shapeMode = constants.TRIANGLE_STRIP;
   }
 
   this._applyColorBlend(this.curFillColor);
