@@ -37,13 +37,14 @@ jobs:
       - run: rm ./lib/p5-test.js ./lib/p5.pre-min.js
 
       # 2. Prepare release files
-      - run: mkdir release
+      - run: mkdir release && mkdir p5 && cp -r ./lib/* p5/
       - name: Create release zip file
         uses: TheDoctor0/zip-release@0.6.2
         with:
           type: zip
           filename: release/p5.zip
-          path: ./lib/*
+          path: ./p5/*
+
       - name: Copy release files
         run: cp lib/p5.js lib/p5.min.js lib/addons/p5.sound.js lib/addons/p5.sound.min.js release/
 
