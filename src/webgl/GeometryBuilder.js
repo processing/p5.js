@@ -85,7 +85,7 @@ class GeometryBuilder {
             faces.push([i, i - 2, i - 1]);
           }
         }
-      } else if (shapeMode === this.p5.TRIANGLE_FAN) {
+      } else if (shapeMode === constants.TRIANGLE_FAN) {
         for (let i = 2; i < geometry.vertices.length; i++) {
           faces.push([0, i - 1, i]);
         }
