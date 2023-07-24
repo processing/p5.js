@@ -4,7 +4,7 @@ import * as constants from '../core/constants';
 class GeometryBuilder {
   constructor(renderer) {
     this.renderer = renderer;
-    renderer.push();
+    renderer._pInst.push();
     this.identityMatrix = new p5.Matrix();
     renderer.uMVMatrix = new p5.Matrix();
     this.geometry = new p5.Geometry();
@@ -36,7 +36,7 @@ class GeometryBuilder {
    */
   addGeometry(input) {
     this.hasTransform = this.renderer.uMVMatrix.mat4
-      .every((v, i) => v === this.identity.mat4[i]);
+      .every((v, i) => v === this.identityMatrix.mat4[i]);
 
     if (this.hasTransform) {
       this.renderer.uNMatrix.inverseTranspose(this.renderer.uMVMatrix);
@@ -102,7 +102,7 @@ class GeometryBuilder {
   }
 
   finish() {
-    renderer.pop();
+    this.renderer._pInst.pop();
     return this.geometry;
   }
 }

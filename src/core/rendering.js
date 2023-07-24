@@ -328,6 +328,31 @@ p5.prototype.createFramebuffer = function(options) {
 };
 
 /**
+ * Starts creating a new p5.Geometry.
+ * TODO add examples
+ */
+p5.prototype.beginGeometry = function() {
+  return this._renderer.beginGeometry();
+};
+
+/**
+ * Finishes creating a new p5.Geometry.
+ * @returns p5.Geometry The model that was built
+ */
+p5.prototype.endGeometry = function() {
+  return this._renderer.endGeometry();
+};
+
+/**
+ * @param callback Function A function that draws shapes to store in a
+ * p5.Geometry for faster rendering.
+ * @returns p5.Geometry The model that was built from the draw functions
+ */
+p5.prototype.buildGeometry = function(callback) {
+  return this._renderer.buildGeometry(callback);
+};
+
+/**
  * Blends the pixels in the display window according to the defined mode.
  * There is a choice of the following modes to blend the source pixels (A)
  * with the ones of pixels already in the display window (B):
