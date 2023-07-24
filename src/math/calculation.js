@@ -20,12 +20,16 @@ import p5 from '../core/main';
  * <div>
  * <code>
  * function draw() {
- *   background(200);
- *   line(width / 2, 0, width / 2, height);
- *   let d = abs(mouseX - width / 2);
- *   text(d, mouseX, mouseY);
+ *   // Invert the y-axis.
+ *   scale(1, -1);
+ *   translate(0, -height);
  *
- *   describe("The mouse's horizontal distance from center is displayed at its current position.");
+ *   let centerX = width / 2;
+ *   let x = frameCount;
+ *   let y = abs(x - centerX);
+ *   point(x, y);
+ *
+ *   describe('A series of black dots that form a "V" shape.');
  * }
  * </code>
  * </div>
@@ -171,18 +175,17 @@ p5.prototype.dist = function(...args) {
  * @example
  * <div>
  * <code>
- * // Invert the y-axis.
- * scale(1, -1);
- * translate(0, -height);
+ * function draw() {
+ *   // Invert the y-axis.
+ *   scale(1, -1);
+ *   translate(0, -height);
  *
- * // Draw a scaled version of e^n.
- * for (let x = 0; x < width; x += 10) {
- *   let n = map(x, 0, width, 0, 5);
- *   let y = exp(n);
- *   line(x, 0, x, y);
+ *   let x = frameCount;
+ *   let y = 0.005 * exp(x * 0.1);
+ *   point(x, y);
+ *
+ *   describe('A series of black dots that grow exponentially from left to right.');
  * }
- *
- * describe('A series of vertical lines that grow exponentially taller from left to right.');
  * </code>
  * </div>
  */
@@ -280,17 +283,17 @@ p5.prototype.lerp = function(start, stop, amt) {
  * @example
  * <div>
  * <code>
- * // Invert the y-axis.
- * scale(1, -1);
- * translate(0, -height);
+ * function draw() {
+ *   // Invert the y-axis.
+ *   scale(1, -1);
+ *   translate(0, -height);
  *
- * // Draw a scaled version of log(n).
- * for (let x = 0; x < width; x += 10) {
+ *   let x = frameCount;
  *   let y = 15 * log(x);
- *   line(x, 0, x, y);
- * }
+ *   point(x, y);
  *
- * describe('A series of vertical lines that slowly grow taller from left to right.');
+ *   describe('A series of black dots that get higher slowly from left to right.');
+ * }
  * </code>
  * </div>
  */
@@ -298,8 +301,7 @@ p5.prototype.log = Math.log;
 
 /**
  * Calculates the magnitude, or length, of a vector. A vector is like an arrow
- * pointing in space. Vectors are commonly used in computer graphics and
- * linear algebra.
+ * pointing in space. Vectors are commonly used for programming motion.
  *
  * Vectors don't have a "start" position because the same arrow can be drawn
  * anywhere. A vector's magnitude can be thought of as the distance from the
@@ -529,7 +531,7 @@ p5.prototype.norm = function(n, start, stop) {
  * Calculates exponential expressions such as 2^3.
  *
  * For example, `pow(2, 3)` is equivalent to the expression
- * 2 &times; 2 &times; 2. `pow(2, -3)` is equivalent to 1 /
+ * 2 &times; 2 &times; 2. `pow(2, -3)` is equivalent to 1 &#247;
  * (2 &times; 2 &times; 2).
  *
  * @method pow
@@ -572,6 +574,7 @@ p5.prototype.pow = Math.pow;
  * <code>
  * let x = round(3.7);
  * text(x, width / 2, height / 2);
+ *
  * describe('The number 4 written in middle of canvas.');
  * </code>
  * </div>
@@ -580,6 +583,7 @@ p5.prototype.pow = Math.pow;
  * <code>
  * let x = round(12.782383, 2);
  * text(x, width / 2, height / 2);
+ *
  * describe('The number 12.78 written in middle of canvas.');
  * </code>
  * </div>
@@ -606,15 +610,17 @@ p5.prototype.round = function(n, decimals) {
  * @example
  * <div>
  * <code>
- * let a = sq(4);
- * let b = sq(-6);
- * let c = sq(8);
+ * function draw() {
+ *   // Invert the y-axis.
+ *   scale(1, -1);
+ *   translate(0, -height);
  *
- * rect(0, 10, a, 20);
- * rect(0, 40, b, 20);
- * rect(0, 70, c, 20);
+ *   let x = frameCount;
+ *   let y = 0.01 * sq(x);
+ *   point(x, y);
  *
- * describe('Three rectangles stacked on top of each other. The top one is the thinnest and the bottom one is the widest.');
+ *   describe('A series of black dots that get higher quickly from left to right.');
+ * }
  * </code>
  * </div>
  */
@@ -634,15 +640,17 @@ p5.prototype.sq = n => n * n;
  * @example
  * <div>
  * <code>
- * let a = sqrt(16);
- * let b = sqrt(36);
- * let c = sqrt(64);
+ * function draw() {
+ *   // Invert the y-axis.
+ *   scale(1, -1);
+ *   translate(0, -height);
  *
- * rect(0, 10, a, 20);
- * rect(0, 40, b, 20);
- * rect(0, 70, c, 20);
+ *   let x = frameCount;
+ *   let y = 5 * sqrt(x);
+ *   point(x, y);
  *
- * describe('Three rectangles stacked on top of each other. The top one is the thinnest and the bottom one is the widest.');
+ *   describe('A series of black dots that get higher slowly from left to right.');
+ * }
  * </code>
  * </div>
  */

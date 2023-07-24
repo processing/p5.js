@@ -116,6 +116,7 @@ p5.prototype.asin = function(ratio) {
  * text(`${round(a, 3)}`, 35, 25);
  * text(`${round(t, 3)}`, 35, 50);
  * text(`${round(at, 3)}`, 35, 75);
+ *
  * describe('The numbers 1.047, 1.732, and 1.047 written on separate rows.');
  * </code>
  * </div>
@@ -128,6 +129,7 @@ p5.prototype.asin = function(ratio) {
  * text(`${round(a, 3)}`, 35, 25);
  * text(`${round(t, 3)}`, 35, 50);
  * text(`${round(at, 3)}`, 35, 75);
+ *
  * describe('The numbers 4.189, 1.732, and 1.047 written on separate rows.');
  * </code>
  * </div>
@@ -156,13 +158,14 @@ p5.prototype.atan = function(ratio) {
  * <div>
  * <code>
  * function draw() {
- *   background(204);
+ *   background(200);
  *   translate(width / 2, height / 2);
  *   let x = mouseX - width / 2;
  *   let y = mouseY - height / 2;
  *   let a = atan2(y, x);
  *   rotate(a);
  *   rect(-30, -5, 60, 10);
+ *
  *   describe('A rectangle at the center of the canvas rotates with mouse movements.');
  * }
  * </code>
@@ -173,9 +176,10 @@ p5.prototype.atan2 = function(y, x) {
 };
 
 /**
- * Calculates the cosine of an angle. This function takes into account the
- * current <a href="#/p5/angleMode">angleMode</a>. Values are returned in the
- * range -1 to 1.
+ * Calculates the cosine of an angle. `cos()` is useful for many geometric
+ * tasks in creative coding. The values returned oscillate between -1 and 1.
+ * `cos()` takes into account the current
+ * <a href="#/p5/angleMode">angleMode</a>.
  *
  * @method cos
  * @param  {Number} angle the angle.
@@ -184,12 +188,42 @@ p5.prototype.atan2 = function(y, x) {
  * @example
  * <div>
  * <code>
- * translate(0, height / 2);
- * for (let x = 0; x < width; x += 5) {
- *   let y = 40 * cos(x * 0.1);
- *   line(x, 0, x, y);
+ * function draw() {
+ *   background(200);
+ *
+ *   let t = frameCount;
+ *   let x = 30 * cos(t * 0.05) + 50;
+ *   let y = 50;
+ *   line(50, y, x, y);
+ *   circle(x, y, 20);
+ *
+ *   describe('A white ball on a string oscillates left and right.');
  * }
- * describe('Vertical black lines form a wave pattern.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   let x = frameCount;
+ *   let y = 30 * cos(x * 0.1) + 50;
+ *   point(x, y);
+ *
+ *   describe('A series of black dots form a wave pattern.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   let t = frameCount;
+ *   let x = 30 * cos(t * 0.1) + 50;
+ *   let y = 10 * sin(t * 0.2) + 50;
+ *   point(x, y);
+ *
+ *   describe('A series of black dots form an infinity symbol.');
+ * }
  * </code>
  * </div>
  */
@@ -198,9 +232,9 @@ p5.prototype.cos = function(angle) {
 };
 
 /**
- * Calculates the sine of an angle. This function takes into account the
- * current <a href="#/p5/angleMode">angleMode</a>. Values are returned in the
- * range -1 to 1.
+ * Calculates the sine of an angle. `sin()` is useful for many geometric tasks
+ * in creative coding. The values returned oscillate between -1 and 1. `sin()`
+ * takes into account the current <a href="#/p5/angleMode">angleMode</a>.
  *
  * @method sin
  * @param  {Number} angle the angle.
@@ -209,12 +243,42 @@ p5.prototype.cos = function(angle) {
  * @example
  * <div>
  * <code>
- * translate(0, height / 2);
- * for (let x = 0; x < width; x += 5) {
- *   let y = 40 * sin(x * 0.1);
- *   line(x, 0, x, y);
+ * function draw() {
+ *   background(200);
+ *
+ *   let t = frameCount;
+ *   let x = 50;
+ *   let y = 30 * sin(t * 0.05) + 50;
+ *   line(x, 50, x, y);
+ *   circle(x, y, 20);
+ *
+ *   describe('A white ball on a string oscillates up and down.');
  * }
- * describe('Vertical black lines form a wave pattern.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   let x = frameCount;
+ *   let y = 30 * sin(x * 0.1) + 50;
+ *   point(x, y);
+ *
+ *   describe('A series of black dots form a wave pattern.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   let t = frameCount;
+ *   let x = 30 * cos(t * 0.1) + 50;
+ *   let y = 10 * sin(t * 0.2) + 50;
+ *   point(x, y);
+ *
+ *   describe('A series of black dots form an infinity symbol.');
+ * }
  * </code>
  * </div>
  */
@@ -223,9 +287,10 @@ p5.prototype.sin = function(angle) {
 };
 
 /**
- * Calculates the tangent of an angle. This function takes into account
- * the current <a href="#/p5/angleMode">angleMode</a>. Values are returned in
- * the range -Infinity to Infinity.
+ * Calculates the tangent of an angle. `tan()` is useful for many geometric
+ * tasks in creative coding. The values returned oscillate between -Infinity
+ * and Infinity. `tan()` takes into account the current
+ * <a href="#/p5/angleMode">angleMode</a>.
  *
  * @method tan
  * @param  {Number} angle the angle.
@@ -234,13 +299,15 @@ p5.prototype.sin = function(angle) {
  * @example
  * <div>
  * <code>
- * translate(0, height / 2);
- * for (let x = 0; x < width; x += 5) {
- *   let y = 10 * tan(x * 0.07);
- *   line(x, 0, x, y);
+ * function draw() {
+ *   let x = frameCount;
+ *   let y = 5 * tan(x * 0.1) + 50;
+ *   point(x, y);
+ *
+ *   describe('A series of curves drawn with black dots. The curves start from the top of the canvas, continue down at a slight angle, flatten out at the middle of the canvas, then continue to the bottom.');
  * }
- * describe('Vertical black lines form a series of spike patterns.');
  * </code>
+ * </div>
  */
 p5.prototype.tan = function(angle) {
   return Math.tan(this._toRadians(angle));
@@ -263,6 +330,7 @@ p5.prototype.tan = function(angle) {
  * let rad = PI / 4;
  * let deg = degrees(rad);
  * text(`${round(rad, 3)} rad = ${deg}˚`, 10, 50);
+ *
  * describe('The text "0.785 rad = 45˚".');
  * </code>
  * </div>
@@ -286,6 +354,7 @@ p5.prototype.degrees = angle => angle * constants.RAD_TO_DEG;
  * let deg = 45;
  * let rad = radians(deg);
  * text(`${deg}˚ = ${round(rad, 3)} rad`, 10, 50);
+ *
  * describe('The text "45˚ = 0.785 rad".');
  * </code>
  * </div>

@@ -39,8 +39,9 @@ p5.prototype._lcgSetSeed = function(stateProperty, val) {
  * <a href="#/p5/randomGaussian">randomGaussian()</a>. By default,
  * <a href="#/p5/random">random()</a> and
  * <a href="#/p5/randomGaussian">randomGaussian()</a> produce different
- * results each time a sketch is run. Set the `seed` parameter to a constant
- * to return the same pseudo-random numbers each time the sketch is run.
+ * results each time a sketch is run. Calling `randomSeed()` with a constant
+ * argument, such as `randomSeed(99)`, makes these functions produce the same
+ * results each time a sketch is run.
  *
  * @method randomSeed
  * @param {Number} seed   the seed value.
@@ -50,11 +51,13 @@ p5.prototype._lcgSetSeed = function(stateProperty, val) {
  * let x = random(width);
  * let y = random(height);
  * circle(x, y, 10);
+ *
  * randomSeed(99);
  * x = random(width);
  * y = random(height);
  * fill(0);
  * circle(x, y, 10);
+ *
  * describe('A white circle appears at a random position. A black circle appears at (27.4, 25.8).');
  * </code>
  * </div>
@@ -95,7 +98,7 @@ p5.prototype.randomSeed = function(seed) {
  * <div>
  * <code>
  * function draw() {
- *   background(204);
+ *   background(200);
  *
  *   frameRate(5);
  *   let d = random(width);
@@ -108,7 +111,7 @@ p5.prototype.randomSeed = function(seed) {
  * <div>
  * <code>
  * function draw() {
- *   background(204);
+ *   background(200);
  *
  *   frameRate(5);
  *   let d = random(45, 55);

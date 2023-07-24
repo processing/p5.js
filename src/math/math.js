@@ -9,8 +9,9 @@ import p5 from '../core/main';
 
 /**
  * Creates a new <a href="#/p5.Vector">p5.Vector</a> object. A vector is like
- * an arrow pointing in 2D or 3D space. Vectors have both magnitude (length)
- * and direction. They are often used to program motion.
+ * an arrow pointing in space. Vectors have both magnitude (length)
+ * and direction. They are often used to program motion because they simplify
+ * the math.
  *
  * @method createVector
  * @param {Number} [x] x component of the vector.
@@ -47,7 +48,7 @@ import p5 from '../core/main';
  * }
  *
  * function draw() {
- *   background(220);
+ *   background(200);
  *
  *   pos.add(vel);
  *
