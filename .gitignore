@@ -1,4 +1,4 @@
-*.DS_STORE
+*.DS_Store
 .project
 node_modules/*
 experiments/*

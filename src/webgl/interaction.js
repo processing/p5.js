@@ -154,7 +154,7 @@ p5.prototype.orbitControl = function(
   const moveAccelerationFactor = 0.15;
   // For touches, the appropriate scale is different
   // because the distance difference is multiplied.
-  const mouseZoomScaleFactor = 0.0001;
+  const mouseZoomScaleFactor = 0.01;
   const touchZoomScaleFactor = 0.0004;
   const scaleFactor = this.height < this.width ? this.height : this.width;
   // Flag whether the mouse or touch pointer is inside the canvas
@@ -214,7 +214,7 @@ p5.prototype.orbitControl = function(
     if (this._mouseWheelDeltaY !== 0) {
       // zoom the camera depending on the value of _mouseWheelDeltaY.
       // move away if positive, move closer if negative
-      deltaRadius = this._mouseWheelDeltaY * sensitivityZ;
+      deltaRadius = Math.sign(this._mouseWheelDeltaY) * sensitivityZ;
       deltaRadius *= mouseZoomScaleFactor;
       this._mouseWheelDeltaY = 0;
       // start zoom when the mouse is wheeled within the canvas.
@@ -249,24 +249,27 @@ p5.prototype.orbitControl = function(
   if (Math.abs(this._renderer.zoomVelocity) > 0.001) {
     // if freeRotation is true, we use _orbitFree() instead of _orbit()
     if (freeRotation) {
-      this._renderer._curCamera._orbitFree(
+      cam._orbitFree(
         0, 0, this._renderer.zoomVelocity
       );
     } else {
-      this._renderer._curCamera._orbit(
+      cam._orbit(
         0, 0, this._renderer.zoomVelocity
       );
     }
     // In orthogonal projection, the scale does not change even if
     // the distance to the gaze point is changed, so the projection matrix
     // needs to be modified.
-    if (this._renderer.uPMatrix.mat4[15] !== 0) {
-      this._renderer.uPMatrix.mat4[0] *= Math.pow(
+    if (cam.projMatrix.mat4[15] !== 0) {
+      cam.projMatrix.mat4[0] *= Math.pow(
         10, -this._renderer.zoomVelocity
       );
-      this._renderer.uPMatrix.mat4[5] *= Math.pow(
+      cam.projMatrix.mat4[5] *= Math.pow(
         10, -this._renderer.zoomVelocity
       );
+      // modify uPMatrix
+      this._renderer.uPMatrix.mat4[0] = cam.projMatrix.mat4[0];
+      this._renderer.uPMatrix.mat4[5] = cam.projMatrix.mat4[5];
     }
     // damping
     this._renderer.zoomVelocity *= damping;
@@ -286,13 +289,13 @@ p5.prototype.orbitControl = function(
   if (this._renderer.rotateVelocity.magSq() > 0.000001) {
     // if freeRotation is true, the camera always rotates freely in the direction the pointer moves
     if (freeRotation) {
-      this._renderer._curCamera._orbitFree(
+      cam._orbitFree(
         -this._renderer.rotateVelocity.x,
         this._renderer.rotateVelocity.y,
         0
       );
     } else {
-      this._renderer._curCamera._orbit(
+      cam._orbit(
         this._renderer.rotateVelocity.x,
         this._renderer.rotateVelocity.y,
         0
