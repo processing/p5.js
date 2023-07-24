@@ -768,24 +768,6 @@ p5.Matrix = class {
   }
 
   /**
-   * TODO pull and remove
- */
-  multiplyVec3(x, y, z) {
-    const result = new Array(3);
-    const m = this.mat3;
-
-    result[0] = m[0] * x + m[3] * y + m[6] * z;
-    result[1] = m[1] * x + m[4] * y + m[7] * z;
-    result[2] = m[2] * x + m[5] * y + m[8] * z;
-
-    return result;
-  }
-
-  multiplyVec3Direction({ x, y, z }) {
-    return new p5.Vector(...this.multiplyVec3(x, y, z));
-  }
-
-  /**
  * Applies a matrix to a vector.
  * The fourth component is set to 1.
  * Returns a vector consisting of the first
@@ -895,9 +877,9 @@ p5.Matrix = class {
  */
   column(columnIndex) {
     return new p5.Vector(
-      this.mat3[columnIndex],
-      this.mat3[columnIndex + 3],
-      this.mat3[columnIndex + 6]
+      this.mat3[3 * columnIndex],
+      this.mat3[3 * columnIndex + 1],
+      this.mat3[3 * columnIndex + 2]
     );
   }
 
@@ -911,9 +893,9 @@ p5.Matrix = class {
  */
   row(rowIndex) {
     return new p5.Vector(
-      this.mat3[3 * rowIndex],
-      this.mat3[3 * rowIndex + 1],
-      this.mat3[3 * rowIndex + 2]
+      this.mat3[rowIndex],
+      this.mat3[rowIndex + 3],
+      this.mat3[rowIndex + 6]
     );
   }
 

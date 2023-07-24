@@ -400,6 +400,14 @@ p5.prototype.buildGeometry = function(callback) {
 };
 
 /**
+ * TODO
+ * @param {p5.Geometry} The geometry whose resources should be freed
+ */
+p5.prototype.freeGeometry = function(geometry) {
+  this._renderer._freeBuffers(geometry.gid);
+};
+
+/**
  * Blends the pixels in the display window according to the defined mode.
  * There is a choice of the following modes to blend the source pixels (A)
  * with the ones of pixels already in the display window (B):

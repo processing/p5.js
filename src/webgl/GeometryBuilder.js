@@ -28,14 +28,16 @@ class GeometryBuilder {
   transformNormals(normals) {
     if (!this.hasTransform) return normals;
 
-    return normals.map(v => this.renderer.uNMatrix.multiplyVec3Direction(v));
+    return normals.map(
+      v => this.renderer.uNMatrix.multiplyVec3(v)
+    );
   }
 
   /**
    * @private
    */
   addGeometry(input) {
-    this.hasTransform = this.renderer.uMVMatrix.mat4
+    this.hasTransform = !this.renderer.uMVMatrix.mat4
       .every((v, i) => v === this.identityMatrix.mat4[i]);
 
     if (this.hasTransform) {
@@ -61,7 +63,7 @@ class GeometryBuilder {
     }
     const vertexColors = [...input.vertexColors];
     while (vertexColors.length < input.vertices.length * 4) {
-      vertexColors.push(this.renderer.curFillColor);
+      vertexColors.push(...this.renderer.curFillColor);
     }
     this.geometry.vertexColors.push(...vertexColors);
   }
