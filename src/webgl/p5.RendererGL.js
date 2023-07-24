@@ -1,5 +1,6 @@
 import p5 from '../core/main';
 import * as constants from '../core/constants';
+import GeometryBuilder from './GeometryBuilder';
 import libtess from 'libtess';
 import './p5.Shader';
 import './p5.Camera';
@@ -409,6 +410,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this._initContext();
     this.isP3D = true; //lets us know we're in 3d mode
 
+    // When constructing a new p5.Geometry, this will represent the builder
+    this.geometryBuilder = undefined;
+    this.nextGeometryId = 0;
+
     // This redundant property is useful in reminding you that you are
     // interacting with WebGLRenderingContext, still worth considering future removal
     this.GL = this.drawingContext;
@@ -602,6 +607,38 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this._curShader = undefined;
 
     return this;
+  }
+
+  /**
+   * Starts creating a new p5.Geometry.
+   * TODO add examples
+   */
+  beginGeometry() {
+    this.geometryBuilder = new GeometryBuilder(this);
+  }
+
+  /**
+   * Finishes creating a new p5.Geometry.
+   * @returns p5.Geometry The model that was built
+   */
+  endGeometry() {
+    if (!this.geometryBuilder) {
+      throw new Error('Make sure you call beginGeometry() before endGeometry()!');
+    }
+    const geometry = this.geometryBuilder.finish();
+    this.geometryBuilder = undefined;
+    return geometry;
+  }
+
+  /**
+   * @param callback Function A function that draws shapes to store in a
+   * p5.Geometry for faster rendering.
+   * @returns p5.Geometry The model that was built from the draw functions
+   */
+  buildGeometry(callback) {
+    this.beginGeometry();
+    callback();
+    return this.endGeometry();
   }
 
   //////////////////////////////////////////////

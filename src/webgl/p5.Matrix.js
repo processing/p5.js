@@ -740,6 +740,24 @@ p5.Matrix = class {
   }
 
   /**
+   * TODO pull and remove
+ */
+  multiplyVec3(x, y, z) {
+    const result = new Array(3);
+    const m = this.mat3;
+
+    result[0] = m[0] * x + m[3] * y + m[6] * z;
+    result[1] = m[1] * x + m[4] * y + m[7] * z;
+    result[2] = m[2] * x + m[5] * y + m[8] * z;
+
+    return result;
+  }
+
+  multiplyVec3Direction({ x, y, z }) {
+    return new p5.Vector(...this.multiplyVec3(x, y, z));
+  }
+
+  /**
  * Applies a matrix to a vector.
  * The fourth component is set to 1.
  * Returns a vector consisting of the first

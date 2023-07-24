@@ -194,15 +194,44 @@ p5.RendererGL.prototype.endShape = function(
   this.isProcessingVertices = true;
   this._processVertices(...arguments);
   this.isProcessingVertices = false;
+
+  // LINE_STRIP and LINES are not used for rendering, instead
+  // they only indicate a way to modify vertices during the _processVertices() step
+  if (
+    this.immediateMode.shapeMode === constants.LINE_STRIP ||
+    this.immediateMode.shapeMode === constants.LINES
+  ) {
+    this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
+  }
+
+  // WebGL doesn't support the QUADS and QUAD_STRIP modes, so we
+  // need to convert them to a supported format. In `vertex()`, we reformat
+  // the input data into the formats specified below.
+  if (this.immediateMode.shapeMode === constants.QUADS) {
+    this.immediateMode.shapeMode = constants.TRIANGLES;
+  } else if (this.immediateMode.shapeMode === constants.QUAD_STRIP) {
+    this.immediateMode.shapeMode = constants.TRIANGLE_STRIP;
+  }
+
   if (this._doFill) {
-    if (this.immediateMode.geometry.vertices.length > 1) {
+    if (
+      !this.geometryBuilder &&
+      this.immediateMode.geometry.vertices.length > 1
+    ) {
       this._drawImmediateFill();
     }
   }
   if (this._doStroke) {
-    if (this.immediateMode.geometry.lineVertices.length > 1) {
+    if (
+      !this.geometryBuilder &&
+      this.immediateMode.geometry.lineVertices.length > 1
+    ) {
       this._drawImmediateStroke();
     }
+  }
+
+  if (this.geometryBuilder) {
+    this.geometryBuilder.addImmediate();
   }
 
   this.isBezier = false;
@@ -371,7 +400,9 @@ p5.RendererGL.prototype._tesselateShape = function() {
 p5.RendererGL.prototype._drawImmediateFill = function() {
   const gl = this.GL;
   this._useVertexColor = (this.immediateMode.geometry.vertexColors.length > 0);
-  const shader = this._getImmediateFillShader();
+
+  let shader;
+  shader = this._getImmediateFillShader();
 
   this._setFillUniforms(shader);
 
@@ -379,31 +410,15 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
   }
 
-  // LINE_STRIP and LINES are not used for rendering, instead
-  // they only indicate a way to modify vertices during the _processVertices() step
-  if (
-    this.immediateMode.shapeMode === constants.LINE_STRIP ||
-    this.immediateMode.shapeMode === constants.LINES
-  ) {
-    this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
-  }
-
-  // WebGL 1 doesn't support the QUADS and QUAD_STRIP modes, so we
-  // need to convert them to a supported format. In `vertex()`, we reformat
-  // the input data into the formats specified below.
-  if (this.immediateMode.shapeMode === constants.QUADS) {
-    this.immediateMode.shapeMode = constants.TRIANGLES;
-  } else if (this.immediateMode.shapeMode === constants.QUAD_STRIP) {
-    this.immediateMode.shapeMode = constants.TRIANGLE_STRIP;
-  }
-
   this._applyColorBlend(this.curFillColor);
+
+  this.drawImmediateArrays();
+
   gl.drawArrays(
     this.immediateMode.shapeMode,
     0,
     this.immediateMode.geometry.vertices.length
   );
-
   shader.unbindShader();
 };
 
@@ -415,18 +430,20 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
 p5.RendererGL.prototype._drawImmediateStroke = function() {
   const gl = this.GL;
 
+  this._useLineColor =
+    (this.immediateMode.geometry.vertexStrokeColors.length > 0);
+
   const faceCullingEnabled = gl.isEnabled(gl.CULL_FACE);
   // Prevent strokes from getting removed by culling
   gl.disable(gl.CULL_FACE);
 
   const shader = this._getImmediateStrokeShader();
-  this._useLineColor =
-    (this.immediateMode.geometry.vertexStrokeColors.length > 0);
   this._setStrokeUniforms(shader);
   for (const buff of this.immediateMode.buffers.stroke) {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
   }
   this._applyColorBlend(this.curStrokeColor);
+
   gl.drawArrays(
     gl.TRIANGLES,
     0,
