@@ -11,24 +11,25 @@ import p5 from '../core/main';
  * Creates a new <a href="#/p5.Vector">p5.Vector</a> object. A vector is like
  * an arrow pointing in space. Vectors have both magnitude (length)
  * and direction. They are often used to program motion because they simplify
- * the math.
+ * the math. Calling `createVector()` without arguments sets the new vector's
+ * components to 0.
  *
  * @method createVector
  * @param {Number} [x] x component of the vector.
  * @param {Number} [y] y component of the vector.
  * @param {Number} [z] z component of the vector.
- * @return {p5.Vector}
+ * @return {p5.Vector} new <a href="#/p5.Vector">p5.Vector</a> object.
  * @example
  * <div>
  * <code>
- * let v1 = createVector(25, 25);
- * let v2 = createVector(50, 50);
- * let v3 = createVector(75, 75);
+ * let p1 = createVector(25, 25);
+ * let p2 = createVector(50, 50);
+ * let p3 = createVector(75, 75);
  *
  * strokeWeight(5);
- * point(v1);
- * point(v2);
- * point(v3);
+ * point(p1);
+ * point(p2);
+ * point(p3);
  *
  * describe('Three black dots form a diagonal line from top left to bottom right.');
  * </code>
@@ -43,8 +44,6 @@ import p5 from '../core/main';
  *   createCanvas(100, 100);
  *   pos = createVector(50, 50);
  *   vel = createVector(1, 0);
- *
- *   describe('A black dot moves from left to right on a gray square. The dot returns to the left when it reaches the right.');
  * }
  *
  * function draw() {
@@ -58,6 +57,8 @@ import p5 from '../core/main';
  *   if (pos.x > width) {
  *     pos.x = 0;
  *   }
+ *
+ *   describe('A black dot moves from left to right on a gray square. The dot reappears on the left when it reaches the right.');
  * }
  * </code>
  * </div>

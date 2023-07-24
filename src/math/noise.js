@@ -34,21 +34,21 @@ const scaled_cosine = i => 0.5 * (1.0 - Math.cos(i * Math.PI));
 let perlin; // will be initialized lazily by noise() or noiseSeed()
 
 /**
- * Returns random numbers that can be tuned to feel more organic. `noise()`
- * is used to create textures, motion, shapes, terrains, and so on. Ken Perlin
- * invented `noise()` while animating the original <em>Tron</em> film in the
- * 1980s. The values returned will always be between 0 and 1.
+ * Returns random numbers that can be tuned to feel more organic. The values
+ * returned will always be between 0 and 1. `noise()` is used to create
+ * textures, motion, shapes, terrains, and so on. Ken Perlin invented
+ * `noise()` while animating the original <em>Tron</em> film in the 1980s.
  *
  * `noise()` returns the same value for a given input while a sketch is
- * running. It returns different values each time a sketch runs. The
+ * running. It produces different results each time a sketch runs. The
  * <a href="#/p5/noiseSeed">noiseSeed()</a> function can be used to generate a
  * specific sequence of Perlin noise values.
  *
- * One way to adjust the character of the noise is to scale the inputs.
- * `noise()` interprets inputs as coordinates. The sequence of noise values
- * will be smoother when the input coordinates are closer. The
- * <a href="#/p5/noiseDetail">noiseDetail()</a> function can also be used to
- * make adjustments.
+ * The character of the noise can be adjusted two ways. The first way is to
+ * scale the inputs. `noise()` interprets inputs as coordinates. The sequence
+ * of noise values will be smoother when the input coordinates are closer. The
+ * second way is to use the <a href="#/p5/noiseDetail">noiseDetail()</a>
+ * function.
  *
  * The version of `noise()` with one parameter computes noise values in one
  * dimension. This dimension can be thought of as space, as in `noise(x)`, or
@@ -66,8 +66,7 @@ let perlin; // will be initialized lazily by noise() or noiseSeed()
  * @param  {Number} x   x-coordinate in noise space.
  * @param  {Number} [y] y-coordinate in noise space.
  * @param  {Number} [z] z-coordinate in noise space.
- * @return {Number}     Perlin noise value (between 0 and 1) at specified
- *                      coordinates.
+ * @return {Number}     Perlin noise value at specified coordinates.
  * @example
 * <div>
  * <code>
@@ -132,7 +131,7 @@ let perlin; // will be initialized lazily by noise() or noiseSeed()
  * <div>
  * <code>
  * let noiseLevel = 255;
- * let noiseScale = 0.05;
+ * let noiseScale = 0.01;
  * for (let y = 0; y < height; y += 1) {
  *   for (let x = 0; x < width; x += 1) {
  *     // Scale input coordinates.
@@ -152,23 +151,25 @@ let perlin; // will be initialized lazily by noise() or noiseSeed()
  *
  * <div>
  * <code>
- * let noiseLevel = 255;
- * let noiseScale = 0.05;
- * for (let y = 0; y < height; y += 1) {
- *   for (let x = 0; x < width; x += 1) {
- *     // Scale input coordinates.
- *     let nx = noiseScale * x;
- *     let ny = noiseScale * y;
- *     let nt = noiseScale * frameCount;
- *     // Compute noise value.
- *     let c = noiseLevel * noise(nx, ny, nt);
- *     // Render.
- *     stroke(c);
- *     point(x, y);
+ * function draw() {
+ *   let noiseLevel = 255;
+ *   let noiseScale = 0.009;
+ *   for (let y = 0; y < height; y += 1) {
+ *     for (let x = 0; x < width; x += 1) {
+ *       // Scale input coordinates.
+ *       let nx = noiseScale * x;
+ *       let ny = noiseScale * y;
+ *       let nt = noiseScale * frameCount;
+ *       // Compute noise value.
+ *       let c = noiseLevel * noise(nx, ny, nt);
+ *       // Render.
+ *       stroke(c);
+ *       point(x, y);
+ *     }
  *   }
- * }
  *
- * describe('A gray cloudy pattern that changes.');
+ *   describe('A gray cloudy pattern that changes.');
+ * }
  * </code>
  * </div>
  */
@@ -316,10 +317,10 @@ p5.prototype.noiseDetail = function(lod, falloff) {
  * <a href="#/p5/noise">noise()</a> produces different results each time
  * a sketch is run. Calling `noiseSeed()` with a constant
  * argument, such as `noiseSeed(99)`, makes <a href="#/p5/noise">noise()</a>
- * functions produce the same results each time a sketch is run.
+ * produce the same results each time a sketch is run.
  *
  * @method noiseSeed
- * @param {Number} seed   the seed value.
+ * @param {Number} seed   seed value.
  * @example
  * <div>
  * <code>

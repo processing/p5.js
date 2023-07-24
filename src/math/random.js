@@ -44,7 +44,7 @@ p5.prototype._lcgSetSeed = function(stateProperty, val) {
  * results each time a sketch is run.
  *
  * @method randomSeed
- * @param {Number} seed   the seed value.
+ * @param {Number} seed   seed value.
  * @example
  * <div>
  * <code>
@@ -91,9 +91,9 @@ p5.prototype.randomSeed = function(seed) {
  * not including 10.2.
  *
  * @method random
- * @param  {Number} [min]   the lower bound (inclusive).
- * @param  {Number} [max]   the upper bound (exclusive).
- * @return {Number} the random number.
+ * @param  {Number} [min]   lower bound (inclusive).
+ * @param  {Number} [max]   upper bound (exclusive).
+ * @return {Number} random number.
  * @example
  * <div>
  * <code>
@@ -132,8 +132,8 @@ p5.prototype.randomSeed = function(seed) {
  */
 /**
  * @method random
- * @param  {Array} choices   the array to choose from
- * @return {*} the random element from the array
+ * @param  {Array} choices   array to choose from.
+ * @return {*} random element from the array.
  * @example
  */
 p5.prototype.random = function(min, max) {
@@ -183,9 +183,9 @@ p5.prototype.random = function(min, max) {
  * argument passed as the mean and the second as the standard deviation.
  *
  * @method randomGaussian
- * @param  {Number} [mean]  the mean.
- * @param  {Number} [sd]    the standard deviation.
- * @return {Number} the random number.
+ * @param  {Number} [mean]  mean.
+ * @param  {Number} [sd]    standard deviation.
+ * @return {Number} random number.
  * @example
  * <div>
  * <code>
