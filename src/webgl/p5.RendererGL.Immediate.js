@@ -412,8 +412,6 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
 
   this._applyColorBlend(this.curFillColor);
 
-  this.drawImmediateArrays();
-
   gl.drawArrays(
     this.immediateMode.shapeMode,
     0,
