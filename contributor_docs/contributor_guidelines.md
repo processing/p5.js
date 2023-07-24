@@ -37,7 +37,7 @@ This is a fairly long and comprehensive document but we will try to deliniate al
 The majority of the activity on p5.js' Github repositories (repo for short) happens in issues and issues will most likely be the place to start your contribution process as well.
 
 ## What are issues?
-Issue is the generic name for a post on Github that aims to describe, well, an issue. This "issue" can be a bug report, a request to add new feature, a discussion, a question, an announcement, or anything that works as a post. Comments can be added below each issue by anyone with a Github account, including bots! It is the place where contributors dicusses topics related to the development of the project in the repo.
+Issue is the generic name for a post on Github that aims to describe, well, an issue. This "issue" can be a bug report, a request to add new feature, a discussion, a question, an announcement, or anything that works as a post. Comments can be added below each issue by anyone with a Github account, including bots! It is the place where contributors discuss topics related to the development of the project in the repo.
 
 While an issue can be opened for a wide variety of reasons, for p5.js' repos we usually only use issues to discuss p5.js source code development related topics. Topics such as debugging your own code, inviting collaborators to your project, or other unrelated topics should be discuss either on the [forum](https://discourse.processing.com) or on other platforms.
 
