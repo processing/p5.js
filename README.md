@@ -663,6 +663,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="14.28%"><a href="http://ayush23dash.github.io"><img src="https://avatars.githubusercontent.com/u/40827680?v=4?s=100" width="100px;" alt="Ayush Shankar"/><br /><sub><b>Ayush Shankar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Ayush23Dash" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/zelf0"><img src="https://avatars.githubusercontent.com/u/84274405?v=4?s=100" width="100px;" alt="zelf0"/><br /><sub><b>zelf0</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=zelf0" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://jtn.im"><img src="https://avatars.githubusercontent.com/u/183796?v=4?s=100" width="100px;" alt="JT Nimoy"/><br /><sub><b>JT Nimoy</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=jtnimoy" title="Code">💻</a> <a href="#plugin-jtnimoy" title="Plugin/utility libraries">🔌</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/SilasVM"><img src="https://avatars.githubusercontent.com/u/124199231?v=4?s=100" width="100px;" alt="Victor Morgan"/><br /><sub><b>Victor Morgan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=SilasVM" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

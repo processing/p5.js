@@ -3804,6 +3804,15 @@
         "code",
         "plugin"
       ]
+    },
+    {
+      "login": "SilasVM",
+      "name": "Victor Morgan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/124199231?v=4",
+      "profile": "https://github.com/SilasVM",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
