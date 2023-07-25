@@ -17,6 +17,10 @@ import * as constants from '../core/constants';
  * <a href="#/p5/buildGeometry">buildGeometry()</a> to pass a function that
  * draws shapes.
  *
+ * If you need to draw complex shapes every frame which don't change over time,
+ * combining them upfront with `beginGeometry()` and `endGeometry()` and then
+ * drawing that will run faster than repeatedly drawing the individual pieces.
+ *
  * @method beginGeometry
  *
  * @example
@@ -101,8 +105,8 @@ p5.prototype.endGeometry = function() {
  * can then be drawn all at once using <a href="#/p5/model">model()</a>.
  *
  * If you need to draw complex shapes every frame which don't change over time,
- * combining them with `buildGeometry()` once and then drawing that will likely
- * run faster than repeatedly drawing the individual pieces.
+ * combining them with `buildGeometry()` once and then drawing that will run
+ * faster than repeatedly drawing the individual pieces.
  *
  * One can also draw shapes directly between
  * <a href="#/p5/beginGeometry">beginGeometry()</a> and
@@ -116,56 +120,45 @@ p5.prototype.endGeometry = function() {
  * @example
  * <div>
  * <code>
- * let tree;
+ * let particles;
  * let button;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   button = createButton('New');
- *   button.mousePressed(makeTree);
- *   makeTree();
+ *   button.mousePressed(makeParticles);
+ *   makeParticles();
  * }
  *
- * function makeTree() {
- *   if (tree) freeGeometry(tree);
- *   tree = buildGeometry(() => {
- *     const addBranch = function(depth) {
+ * function makeParticles() {
+ *   if (particles) freeGeometry(particles);
+ *
+ *   particles = buildGeometry(() => {
+ *     for (let i = 0; i < 60; i++) {
  *       push();
- *       translate(0, -50);
- *       cylinder(15, 100);
- *       translate(0, -50);
- *       if (depth >= 5) {
- *         sphere(30);
- *       } else {
- *         const numChildren = round(random(1, 3));
- *         for (let i = 0; i < numChildren; i++) {
- *           push();
- *           rotateZ(random(-0.3, 0.3) * PI);
- *           rotateY(random(TWO_PI));
- *           addBranch(depth + 1);
- *           pop();
- *         }
- *       }
+ *       translate(
+ *         randomGaussian(0, 20),
+ *         randomGaussian(0, 20),
+ *         randomGaussian(0, 20)
+ *       );
+ *       sphere(5);
  *       pop();
- *     };
- *     translate(0, 25);
- *     scale(0.18);
- *     addBranch(0);
+ *     }
  *   });
  * }
  *
  * function draw() {
  *   background(255);
- *   lights();
  *   noStroke();
+ *   lights();
  *   orbitControl();
- *   model(tree);
+ *   model(particles);
  * }
  * </code>
  * </div>
  *
  * @alt
- * A 3D tree made of multiple cylinders and spheres.
+ * A cluster of spheres.
  */
 p5.prototype.buildGeometry = function(callback) {
   return this._renderer.buildGeometry(callback);
@@ -175,6 +168,10 @@ p5.prototype.buildGeometry = function(callback) {
  * Clears the resources of a model to free up browser memory. A model whose
  * resources have been cleared can still be drawn, but the first time it is
  * drawn again, it might take longer.
+ *
+ * This method works on models generated with
+ * <a href="#/p5/buildGeometry">buildGeometry()</a> as well as those loaded
+ * from <a href="#/p5/loadModel">loadModel()</a>.
  *
  * @method freeGeometry
  * @param {p5.Geometry} The geometry whose resources should be freed
