@@ -8,11 +8,11 @@ import * as constants from '../core/constants';
 let hashCount = 0;
 
 /**
- * @param geometry p5.Geometry The model whose resources will be freed
+ * @param {p5.Geometry} geometry The model whose resources will be freed
  */
 p5.RendererGL.prototype.freeGeometry = function(geometry) {
   if (!geometry.gid) {
-    console.warn('The model you passed to freeModel does not have an id!');
+    console.warn('The model you passed to freeGeometry does not have an id!');
     return;
   }
   this._freeBuffers(geometry.gid);
