@@ -33,7 +33,7 @@ uniform float uConstantAttenuation;
 uniform float uLinearAttenuation;
 uniform float uQuadraticAttenuation;
 
-// uniform bool uUseImageLight;
+uniform bool uUseImageLight;
 uniform sampler2D equiRectangularTextures;
 
 const float specularFactor = 2.0;
@@ -181,7 +181,7 @@ void totalLight(
     }
   }
 
-  if( equiRectangularTextures !== null ){
+  if( uUseImageLight ){
     totalDiffuse += calculateImageDiffuse(normal, modelPosition);
     // TODO
     // totalSpecular += calculateImageSpecular();
