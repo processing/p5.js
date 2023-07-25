@@ -559,6 +559,62 @@ p5.prototype.curveVertex = function(...args) {
  * </code>
  * </div>
  *
+ * @example
+ * <div>
+ * <code>
+ * let fx;
+ * let vs = `#version 300 es
+ * 
+ * precision mediump float;
+ * 
+ * in vec3 aPosition;
+ * 
+ * uniform mat4 uModelViewMatrix;
+ * uniform mat4 uProjectionMatrix;
+ * 
+ * void main() {
+ * 
+ *   vec4 positionVec4 = vec4(aPosition, 1.0);
+ *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4 - 
+ *   vec4(vec2(float(gl_InstanceID) * 100.0, 0.0), 0.0, 0.0);
+ * }
+ * `;
+ * let fs = `#version 300 es
+ * 
+ * precision mediump float;
+ * 
+ * out vec4 outColor;
+ * 
+ * void main() {
+ *   outColor = vec4(255, 0, 0, 255);
+ * }
+ * `;
+ * 
+ * function setup() {
+ *   createCanvas(400, 400, WEBGL);
+ *   // Please note that it's best practice to put shaders in other files
+ *   fx = createShader(vs, fs);
+ * }
+ * 
+ * function draw() {
+ *   background(220);
+ * 
+ *   // strokes aren't instanced, and are rather used for debug purposes
+ *   shader(fx);
+ *   
+ *   beginShape();
+ *   vertex(30, 20);
+ *   vertex(85, 20);
+ *   vertex(85, 75);
+ *   vertex(30, 75);
+ *   vertex(30, 20);
+ *   endShape(CLOSE, 4);
+ *   
+ *   resetShader();
+ * }
+ * </code>
+ * </div>
+ * 
  * @alt
  * white rect and smaller grey rect with red outlines in center of canvas.
  */
