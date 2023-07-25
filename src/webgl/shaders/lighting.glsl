@@ -98,7 +98,7 @@ vec2 mapTextureToNormal( vec3 normal ){
 vec3 calculateImageDiffuse( vec3 vNormal, vec3 vViewPosition ){
   // put the code from the sketch frag here
   // hardcoded world camera position
-  vec3 worldCameraPosition =  [0.0, 0.0, 0.0];
+  vec3 worldCameraPosition =  vec3(0.0, 0.0, 0.0);
   vec3 worldNormal = normalize(vNormal);
   vec3 lightDirection = normalize( vViewPosition - worldCameraPosition );
   vec3 R = reflect(lightDirection, worldNormal);
@@ -181,7 +181,7 @@ void totalLight(
     }
   }
 
-  if( equiRectangularTextures !== NULL ){
+  if( equiRectangularTextures !== null ){
     totalDiffuse += calculateImageDiffuse(normal, modelPosition);
     // TODO
     // totalSpecular += calculateImageSpecular();
