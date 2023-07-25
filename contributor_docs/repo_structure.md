@@ -15,7 +15,7 @@ There are a lot of files here! Here's a brief overview. It can be confusing, but
 
 - 📁`contributor_docs/` contains  documents that explain practices and principles for contributors
 - 📁`docs/` does not actually contain docs! Rather, it contains the code used to *generate* the [online reference manual](https://p5js.org/reference/).
-- 📁`lib/` contains an empty example and the p5.sound add-on, which is periodically updated via pull request from the [p5.js-sound repository](https://github.com/processing/p5.js-sound). This is also where the built p5.js library gets placed after being compiled to a single file using [Grunt](https://gruntjs.com/). It does not need to be checked into the github repository when you make a pull request.
+- 📁`lib/` contains an empty example and the p5.sound add-on, which is periodically updated via pull request from the [p5.js-sound repository](https://github.com/processing/p5.js-sound). This is also where the built p5.js library gets placed after being compiled to a single file using [Grunt](https://gruntjs.com/). It does not need to be checked into the gitHub repository when you make a pull request.
 - 📁`src/` contains all the source code for the library, which is topically organized into separated modules. This is what you'll work on if you are changing p5.js. Most folders have their own readme.md files inside to help you find your way around.
 - 📁`tasks/` contains scripts which perform automated tasks related to the build, deployment, and release of new versions of p5.js.
 - 📁`tests/` contains unit tests which ensure the library continues to function correctly as changes are made.

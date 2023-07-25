@@ -22,7 +22,7 @@ $ npm version [major|minor|patch] # Choose the appropriate version tag
 $ git push origin main
 $ git push origin v1.4.2 # Replace the version number with the one just created above
 ```
-The actual release steps are all run on Github Actions CI.
+The actual release steps are all run on GitHub Actions CI.
 
 ## Monitor and check results
 Once the above commands have been executed, the build and release action can be monitored from the ["Actions" tab](https://github.com/processing/p5.js/actions) on the p5.js GitHub repo page (look for a job that says "New p5.js release"), clicking into the job can give a more detailed job log of what's running.
@@ -38,13 +38,13 @@ CDNs will take a bit more time (a day or two) to update but they will automatica
 ---
 
 ## What's actually happening
-The Github Action ["New p5.js release"](../.github/workflows/release.yml) is triggered on a tag that matches the pattern `v*.*.*` which is created by the `npm version ___` command.
+The GitHub Action ["New p5.js release"](../.github/workflows/release.yml) is triggered on a tag that matches the pattern `v*.*.*` which is created by the `npm version ___` command.
 
 Once triggered, it will run the following steps:
 
 1. Clone the repository, setup node.js, extract version number, install dependencies with `npm`, and run test with `npm test`.
-2. Create the release files that will be uploaded to Github releases.
-3. Create a release on Github and publish latest version on NPM.
+2. Create the release files that will be uploaded to GitHub releases.
+3. Create a release on GitHub and publish latest version on NPM.
 4. Update website files
 	1. Clone the website repository
 	2. Copy `data.json` and `data.min.json` to the right location
