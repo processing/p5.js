@@ -3822,6 +3822,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "e-coucou",
+      "name": "e-Coucou",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4691474?v=4",
+      "profile": "https://github.com/e-coucou",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
