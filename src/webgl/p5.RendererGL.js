@@ -412,7 +412,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     // When constructing a new p5.Geometry, this will represent the builder
     this.geometryBuilder = undefined;
-    this.nextGeometryId = 0;
 
     // This redundant property is useful in reminding you that you are
     // interacting with WebGLRenderingContext, still worth considering future removal
@@ -609,15 +608,17 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
   /**
    * Starts creating a new p5.Geometry.
-   * TODO add examples
    */
   beginGeometry() {
+    if (this.geometryBuilder) {
+      throw new Error('It looks like `beginGeometry()` is being called while another p5.Geometry is already being build.');
+    }
     this.geometryBuilder = new GeometryBuilder(this);
   }
 
   /**
-   * Finishes creating a new p5.Geometry.
-   * @returns p5.Geometry The model that was built
+   * Finishes creating a new p5.Geometry and returns it.
+   * @returns {p5.Geometry} The combined model that was built.
    */
   endGeometry() {
     if (!this.geometryBuilder) {
@@ -629,9 +630,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   /**
-   * @param callback Function A function that draws shapes to store in a
-   * p5.Geometry for faster rendering.
-   * @returns p5.Geometry The model that was built from the draw functions
+   * @param {Function} callback A function that draws shapes.
+   * @returns {p5.Geometry} The model that was built from the callback function.
    */
   buildGeometry(callback) {
     this.beginGeometry();

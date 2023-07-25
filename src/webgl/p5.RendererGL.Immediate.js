@@ -263,7 +263,9 @@ p5.RendererGL.prototype._processVertices = function(mode) {
       this.immediateMode.geometry.vertices,
       shouldClose
     );
-    this.immediateMode.geometry._edgesToVertices();
+    if (!this.geometryBuilder) {
+      this.immediateMode.geometry._edgesToVertices();
+    }
   }
   // For hollow shapes, user must set mode to TESS
   const convexShape = this.immediateMode.shapeMode === constants.TESS;
@@ -376,6 +378,7 @@ p5.RendererGL.prototype._tesselateShape = function() {
     ]))
   ];
   const polyTriangles = this._triangulate(contours);
+  const originalVertices = this.immediateMode.geometry.vertices;
   this.immediateMode.geometry.vertices = [];
   this.immediateMode.geometry.vertexNormals = [];
   this.immediateMode.geometry.uvs = [];
@@ -388,6 +391,30 @@ p5.RendererGL.prototype._tesselateShape = function() {
     colors.push(...polyTriangles.slice(j + 5, j + 9));
     this.normal(...polyTriangles.slice(j + 9, j + 12));
     this.vertex(...polyTriangles.slice(j, j + 5));
+  }
+  if (this.geometryBuilder) {
+    // Tesselating the face causes the indices of edge vertices to stop being
+    // correct. When rendering, this is not a problem, since _edgesToVertices
+    // will have been called before this, and edge vertex indices are no longer
+    // needed. However, the geometry builder still needs this information, so
+    // when one is active, we need to update the indices.
+    //
+    // We record index mappings in a Map so that once we have found a
+    // corresponding vertex, we don't need to loop to find it again.
+    const newIndex = new Map();
+    this.immediateMode.geometry.edges =
+      this.immediateMode.geometry.edges.map(edge => edge.map(origIdx => {
+        if (!newIndex.has(origIdx)) {
+          const orig = originalVertices[origIdx];
+          newIndex.set(origIdx, this.immediateMode.geometry.vertices.findIndex(
+            v =>
+              orig.x === v.x &&
+              orig.y === v.y &&
+              orig.z === v.z
+          ));
+        }
+        return newIndex.get(origIdx);
+      }));
   }
   this.immediateMode.geometry.vertexColors = colors;
 };
