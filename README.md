@@ -666,6 +666,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/SilasVM"><img src="https://avatars.githubusercontent.com/u/124199231?v=4?s=100" width="100px;" alt="Victor Morgan"/><br /><sub><b>Victor Morgan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=SilasVM" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/snwarner22"><img src="https://avatars.githubusercontent.com/u/137221902?v=4?s=100" width="100px;" alt="Sekani Warner"/><br /><sub><b>Sekani Warner</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=snwarner22" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/e-coucou"><img src="https://avatars.githubusercontent.com/u/4691474?v=4?s=100" width="100px;" alt="e-Coucou"/><br /><sub><b>e-Coucou</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Ae-coucou" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/thatguyseven"><img src="https://avatars.githubusercontent.com/u/137221692?v=4?s=100" width="100px;" alt="Aaron Ni"/><br /><sub><b>Aaron Ni</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=thatguyseven" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
