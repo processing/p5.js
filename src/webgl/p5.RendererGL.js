@@ -543,6 +543,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.immediateMode = {
       geometry: new p5.Geometry(),
       shapeMode: constants.TRIANGLE_FAN,
+      contourIndices: [],
       _bezierVertex: [],
       _quadraticVertex: [],
       _curveVertex: [],
@@ -1763,6 +1764,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_ERROR, errorcallback);
     tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_COMBINE, combinecallback);
     tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_EDGE_FLAG, edgeCallback);
+    tessy.gluTessProperty(
+      libtess.gluEnum.GLU_TESS_WINDING_RULE,
+      libtess.windingRule.GLU_TESS_WINDING_NONZERO
+    );
 
     return tessy;
   }
