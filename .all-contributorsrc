@@ -3831,6 +3831,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "thatguyseven",
+      "name": "Aaron Ni",
+      "avatar_url": "https://avatars.githubusercontent.com/u/137221692?v=4",
+      "profile": "https://github.com/thatguyseven",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
