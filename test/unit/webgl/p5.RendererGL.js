@@ -129,7 +129,7 @@ suite('p5.RendererGL', function() {
         myp5.translate(-myp5.width/2, -myp5.height/2);
       }
       myp5.stroke('black');
-      myp5.strokeWeight(1);
+      myp5.strokeWeight(2);
       myp5.translate(25, 25);
       myp5.beginShape();
       // Exterior part of shape, clockwise winding
@@ -145,7 +145,6 @@ suite('p5.RendererGL', function() {
       myp5.vertex(10, -10);
       myp5.endContour();
       myp5.endShape(myp5.CLOSE);
-      console.log(myp5._renderer.elt.toDataURL());
       myp5.loadPixels();
       return [...myp5.pixels];
     };
