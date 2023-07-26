@@ -249,15 +249,12 @@ p5.prototype.cursor = function(type, x, y) {
  * Calling <a href="#/p5/frameRate">frameRate()</a> with no arguments or
  * with arguments that are not of type Number or are non-positive returns
  * an approximation of the current frame rate. The draw function must run at
- * least once before it will return a value. This is the same as using
- * <a href="#/p5/getFrameRate">getFrameRate()</a>.
+ * least once before it will return a value.
  *
- * The returned frame rate value is technically the rate at which the draw 
- * function is called per second. This value can vary wildly, even if the 
- * actual display rate achieved is consistent. To accurately test the
- * performance of your sketches, use your browser's performance profiling tools.
- *
- *  also returns current framerate.
+ * Even if the code in your draw() function consistently produces frames in time
+ * for them to be displayed at the desired frame rate, the value frameRate() returns
+ * will vary frame to frame because it's an inaccurate approximation. To accurately
+ * test the performance of your sketches, use your browser's performance profiling tools.
  *
  * @method frameRate
  * @param  {Number} fps number of frames to be displayed every second
@@ -281,7 +278,7 @@ p5.prototype.cursor = function(type, x, y) {
  *   rectX += 1; // Move Rectangle
  *
  *   if (rectX >= width) {
-    // If you go off screen.
+ *     // If you go off screen.
  *     if (fr === 30) {
  *       clr = color(0, 0, 255);
  *       fr = 10;
