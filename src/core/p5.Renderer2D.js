@@ -1016,6 +1016,7 @@ class Renderer2D extends p5.Renderer{
           v = vertices[i];
           if (v.isVert) {
             if (v.moveTo) {
+              if (closeShape) this.drawingContext.closePath();
               this.drawingContext.moveTo(v[0], v[1]);
             } else {
               this.drawingContext.lineTo(v[0], v[1]);
