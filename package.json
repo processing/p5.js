@@ -31,7 +31,7 @@
       "node --require @babel/register ./utils/sample-linter.js"
     ]
   },
-  "version": "1.6.0",
+  "version": "1.7.0",
   "devDependencies": {
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.10.2",
@@ -73,7 +73,7 @@
     "lint-staged": "^4.3.0",
     "marked": "^4.0.10",
     "mocha": "^10.2.0",
-    "np": "^7.6.2",
+    "np": "^8.0.4",
     "omggif": "^1.0.10",
     "open": "^7.0.3",
     "opentype.js": "^0.9.0",

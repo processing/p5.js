@@ -24,5 +24,6 @@ export default {
 export const languages = [
   'en',
   'es',
-  'ko'
+  'ko',
+  'zh'
 ];

@@ -266,10 +266,8 @@ p5.Geometry = class Geometry {
     this.lineTangentsOut.clear();
     this.lineSides.clear();
 
-    const closed =
-      this.edges.length > 1 &&
-      this.edges[0][0] === this.edges[this.edges.length - 1][1];
-    let addedStartingCap = false;
+    const potentialCaps = new Map();
+    const connected = new Set();
     let lastValidDir;
     for (let i = 0; i < this.edges.length; i++) {
       const prevEdge = this.edges[i - 1];
@@ -298,52 +296,89 @@ p5.Geometry = class Geometry {
       }
 
       if (i > 0 && prevEdge[1] === currEdge[0]) {
-      // Add a join if this segment shares a vertex with the previous. Skip
-      // actually adding join vertices if either the previous segment or this
-      // one has a length of 0.
-      //
-      // Don't add a join if the tangents point in the same direction, which
-      // would mean the edges line up exactly, and there is no need for a join.
-        if (lastValidDir && dirOK && dir.dot(lastValidDir) < 1 - 1e-8) {
-          this._addJoin(begin, lastValidDir, dir, fromColor);
-        }
-        if (dirOK && !addedStartingCap && !closed) {
-          this._addCap(begin, dir.copy().mult(-1), fromColor);
-          addedStartingCap = true;
+        if (!connected.has(currEdge[0])) {
+          connected.add(currEdge[0]);
+          potentialCaps.delete(currEdge[0]);
+          // Add a join if this segment shares a vertex with the previous. Skip
+          // actually adding join vertices if either the previous segment or this
+          // one has a length of 0.
+          //
+          // Don't add a join if the tangents point in the same direction, which
+          // would mean the edges line up exactly, and there is no need for a join.
+          if (lastValidDir && dirOK && dir.dot(lastValidDir) < 1 - 1e-8) {
+            this._addJoin(begin, lastValidDir, dir, fromColor);
+          }
         }
       } else {
-        addedStartingCap = false;
         // Start a new line
-        if (dirOK && (!closed || i > 0)) {
-          this._addCap(begin, dir.copy().mult(-1), fromColor);
-          addedStartingCap = true;
+        if (dirOK && !connected.has(currEdge[0])) {
+          const existingCap = potentialCaps.get(currEdge[0]);
+          if (existingCap) {
+            this._addJoin(
+              begin,
+              existingCap.dir,
+              dir,
+              fromColor
+            );
+            potentialCaps.delete(currEdge[0]);
+            connected.add(currEdge[0]);
+          } else {
+            potentialCaps.set(currEdge[0], {
+              point: begin,
+              dir: dir.copy().mult(-1),
+              color: fromColor
+            });
+          }
         }
-        if (lastValidDir && (!closed || i < this.edges.length - 1)) {
-        // Close off the last segment with a cap
-          this._addCap(this.vertices[prevEdge[1]], lastValidDir, fromColor);
+        if (lastValidDir && !connected.has(prevEdge[1])) {
+          const existingCap = potentialCaps.get(prevEdge[1]);
+          if (existingCap) {
+            this._addJoin(
+              this.vertices[prevEdge[1]],
+              lastValidDir,
+              existingCap.dir.copy().mult(-1),
+              fromColor
+            );
+            potentialCaps.delete(prevEdge[1]);
+            connected.add(prevEdge[1]);
+          } else {
+            // Close off the last segment with a cap
+            potentialCaps.set(prevEdge[1], {
+              point: this.vertices[prevEdge[1]],
+              dir: lastValidDir,
+              color: fromColor
+            });
+          }
           lastValidDir = undefined;
         }
       }
 
-      if (i === this.edges.length - 1) {
-        if (closed) {
+      if (i === this.edges.length - 1 && !connected.has(currEdge[1])) {
+        const existingCap = potentialCaps.get(currEdge[1]);
+        if (existingCap) {
           this._addJoin(
             end,
             dir,
-            this.vertices[this.edges[0][1]]
-              .copy()
-              .sub(end)
-              .normalize(),
+            existingCap.dir.copy().mult(-1),
             toColor
           );
+          potentialCaps.delete(currEdge[1]);
+          connected.add(currEdge[1]);
         } else {
-          this._addCap(end, dir, toColor);
+          potentialCaps.set(currEdge[1], {
+            point: end,
+            dir,
+            color: toColor
+          });
         }
       }
 
       if (dirOK) {
         lastValidDir = dir;
       }
+    }
+    for (const { point, dir, color } of potentialCaps.values()) {
+      this._addCap(point, dir, color);
     }
     return this;
   }

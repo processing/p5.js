@@ -1569,6 +1569,375 @@ p5.Camera = class Camera {
     );
   }
 
+  /**
+ * Copies information about the argument camera's view and projection to
+ * the target camera. If the target camera is active, it will be reflected
+ * on the screen.
+ *
+ * @method set
+ * @param {p5.Camera} cam source camera
+ *
+ * @example
+ * <div>
+ * <code>
+ * let cam, initialCam;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   strokeWeight(3);
+ *
+ *   // Set the initial state to initialCamera and set it to the camera
+ *   // used for drawing. Then set cam to be the active camera.
+ *   cam = createCamera();
+ *   initialCam = createCamera();
+ *   initialCam.camera(100, 100, 100, 0, 0, 0, 0, 0, -1);
+ *   cam.set(initialCam);
+ *
+ *   setCamera(cam);
+ * }
+ *
+ * function draw() {
+ *   orbitControl();
+ *   background(255);
+ *   box(50);
+ *   translate(0, 0, -25);
+ *   plane(100);
+ * }
+ *
+ * function doubleClicked(){
+ *   // Double-click to return the camera to its initial position.
+ *   cam.set(initialCam);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * Prepare two cameras. One is the camera that sets the initial state,
+ * and the other is the camera that moves with interaction.
+ * Draw a plane and a box on top of it, operate the camera using orbitControl().
+ * Double-click to set the camera in the initial state and return to
+ * the initial state.
+ */
+  set(cam) {
+    const keyNamesOfThePropToCopy = [
+      'eyeX', 'eyeY', 'eyeZ',
+      'centerX', 'centerY', 'centerZ',
+      'upX', 'upY', 'upZ',
+      'cameraFOV', 'aspectRatio', 'cameraNear', 'cameraFar', 'cameraType'
+    ];
+    for (const keyName of keyNamesOfThePropToCopy) {
+      this[keyName] = cam[keyName];
+    }
+
+    this.cameraMatrix = cam.cameraMatrix.copy();
+    this.projMatrix = cam.projMatrix.copy();
+
+    // If the target camera is active, update uMVMatrix and uPMatrix.
+    if (this._isActive()) {
+      this._renderer.uMVMatrix.mat4 = this.cameraMatrix.mat4.slice();
+      this._renderer.uPMatrix.mat4 = this.projMatrix.mat4.slice();
+    }
+  }
+
+  /**
+ * For the cameras cam0 and cam1 with the given arguments, their view are combined
+ * with the parameter amt that represents the quantity, and the obtained view is applied.
+ * For example, if cam0 is looking straight ahead and cam1 is looking straight
+ * to the right and amt is 0.5, the applied camera will look to the halfway
+ * between front and right.
+ * If the applied camera is active, the applied result will be reflected on the screen.
+ * When applying this function, all cameras involved must have exactly the same projection
+ * settings. For example, if one is perspective, ortho, frustum, the other two must also be
+ * perspective, ortho, frustum respectively. However, if all cameras have ortho settings,
+ * interpolation is possible if the ratios of left, right, top and bottom are equal to each other.
+ * For example, when it is changed by orbitControl().
+ *
+ * @method slerp
+ * @param {p5.Camera} cam0 first p5.Camera
+ * @param {p5.Camera} cam1 second p5.Camera
+ * @param {Number} amt amount to use for interpolation during slerp
+ *
+ * @example
+ * <div>
+ * <code>
+ * let cam0, cam1, cam;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   strokeWeight(3);
+ *
+ *   // camera for slerp.
+ *   cam = createCamera();
+ *   // cam0 is looking at the cube from the front.
+ *   // cam1 is pointing straight to the right in the cube
+ *   // at the same position as cam0 by doing a pan(-PI/2).
+ *   cam0 = createCamera();
+ *   cam1 = createCamera();
+ *   cam1.pan(-PI/2);
+ *
+ *   // we only use cam.
+ *   setCamera(cam);
+ * }
+ *
+ * function draw() {
+ *   // calculate amount.
+ *   const amt = 0.5 - 0.5 * cos(frameCount * TAU / 120);
+ *   // slerp cam0 and cam1 with amt, set to cam.
+ *   // When amt moves from 0 to 1, cam moves from cam0 to cam1,
+ *   // shaking the camera to the right.
+ *   cam.slerp(cam0, cam1, amt);
+ *
+ *   background(255);
+ *   // Every time the camera turns right, the cube drifts left.
+ *   box(40);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * Prepare two cameras. One camera is facing straight ahead to the cube and the other
+ * camera is in the same position and looking straight to the right.
+ * If you use a camera which interpolates these with slerp(), the facing direction
+ * of the camera will change smoothly between the front and the right.
+ *
+ * @example
+ * <div>
+ * <code>
+ * let cam, lastCam, initialCam;
+ * let countForReset = 30;
+ * // This sample uses orbitControl() to move the camera.
+ * // Double-clicking the canvas restores the camera to its initial state.
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   strokeWeight(3);
+ *
+ *   cam = createCamera(); // main camera
+ *   lastCam = createCamera(); // Camera for recording loc info before reset
+ *   initialCam = createCamera(); // Camera for recording the initial state
+ *
+ *   setCamera(cam); // set main camera
+ * }
+ *
+ * function draw() {
+ *   if (countForReset < 30) {
+ *     // if the reset count is less than 30,
+ *     // it will move closer to the original camera as it increases.
+ *     countForReset++;
+ *     cam.slerp(lastCam, initialCam, countForReset / 30);
+ *   } else {
+ *     // if the count is 30,
+ *     // you can freely move the main camera with orbitControl().
+ *     orbitControl();
+ *   }
+ *
+ *   background(255);
+ *   box(40);
+ * }
+ * // A double-click sets countForReset to 0 and initiates a reset.
+ * function doubleClicked() {
+ *   if (countForReset === 30) {
+ *     countForReset = 0;
+ *     lastCam.set(cam);
+ *   }
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * There is a camera, drawing a cube. The camera can be moved freely with
+ * orbitControl(). Double-click to smoothly return the camera to its initial state.
+ * The camera cannot be moved during that time.
+ */
+  slerp(cam0, cam1, amt) {
+    // If t is 0 or 1, do not interpolate and set the argument camera.
+    if (amt === 0) {
+      this.set(cam0);
+      return;
+    } else if (amt === 1) {
+      this.set(cam1);
+      return;
+    }
+
+    // For this cameras is ortho, assume that cam0 and cam1 are also ortho
+    // and interpolate the elements of the projection matrix.
+    // Use logarithmic interpolation for interpolation.
+    if (this.projMatrix.mat4[15] !== 0) {
+      this.projMatrix.mat4[0] =
+        cam0.projMatrix.mat4[0] *
+        Math.pow(cam1.projMatrix.mat4[0] / cam0.projMatrix.mat4[0], amt);
+      this.projMatrix.mat4[5] =
+        cam0.projMatrix.mat4[5] *
+        Math.pow(cam1.projMatrix.mat4[5] / cam0.projMatrix.mat4[5], amt);
+      // If the camera is active, make uPMatrix reflect changes in projMatrix.
+      if (this._isActive()) {
+        this._renderer.uPMatrix.mat4 = this.projMatrix.mat4.slice();
+      }
+    }
+
+    // prepare eye vector and center vector of argument cameras.
+    const eye0 = new p5.Vector(cam0.eyeX, cam0.eyeY, cam0.eyeZ);
+    const eye1 = new p5.Vector(cam1.eyeX, cam1.eyeY, cam1.eyeZ);
+    const center0 = new p5.Vector(cam0.centerX, cam0.centerY, cam0.centerZ);
+    const center1 = new p5.Vector(cam1.centerX, cam1.centerY, cam1.centerZ);
+
+    // Calculate the distance between eye and center for each camera.
+    // Logarithmically interpolate these with amt.
+    const dist0 = p5.Vector.dist(eye0, center0);
+    const dist1 = p5.Vector.dist(eye1, center1);
+    const lerpedDist = dist0 * Math.pow(dist1 / dist0, amt);
+
+    // Next, calculate the ratio to interpolate the eye and center by a constant
+    // ratio for each camera. This ratio is the same for both. Also, with this ratio
+    // of points, the distance is the minimum distance of the two points of
+    // the same ratio.
+    // With this method, if the viewpoint is fixed, linear interpolation is performed
+    // at the viewpoint, and if the center is fixed, linear interpolation is performed
+    // at the center, resulting in reasonable interpolation. If both move, the point
+    // halfway between them is taken.
+    const eyeDiff = p5.Vector.sub(eye0, eye1);
+    const diffDiff = eye0.copy().sub(eye1).sub(center0).add(center1);
+    // Suppose there are two line segments. Consider the distance between the points
+    // above them as if they were taken in the same ratio. This calculation figures out
+    // a ratio that minimizes this.
+    // Each line segment is, a line segment connecting the viewpoint and the center
+    // for each camera.
+    const divider = diffDiff.magSq();
+    let ratio = 1; // default.
+    if (divider > 0.000001){
+      ratio = p5.Vector.dot(eyeDiff, diffDiff) / divider;
+      ratio = Math.max(0, Math.min(ratio, 1));
+    }
+
+    // Take the appropriate proportions and work out the points
+    // that are between the new viewpoint and the new center position.
+    const lerpedMedium = p5.Vector.lerp(
+      p5.Vector.lerp(eye0, center0, ratio),
+      p5.Vector.lerp(eye1, center1, ratio),
+      amt
+    );
+
+    // Prepare each of rotation matrix from their camera matrix
+    const rotMat0 = cam0.cameraMatrix.createSubMatrix3x3();
+    const rotMat1 = cam1.cameraMatrix.createSubMatrix3x3();
+
+    // get front and up vector from local-coordinate-system.
+    const front0 = rotMat0.column(2);
+    const front1 = rotMat1.column(2);
+    const up0 = rotMat0.column(1);
+    const up1 = rotMat1.column(1);
+
+    // prepare new vectors.
+    const newFront = new p5.Vector();
+    const newUp = new p5.Vector();
+    const newEye = new p5.Vector();
+    const newCenter = new p5.Vector();
+
+    // Create the inverse matrix of mat0 by transposing mat0,
+    // and multiply it to mat1 from the right.
+    // This matrix represents the difference between the two.
+    // 'deltaRot' means 'difference of rotation matrices'.
+    const deltaRot = rotMat1.mult3x3(rotMat0.copy().transpose3x3());
+
+    // Calculate the trace and from it the cos value of the angle.
+    // An orthogonal matrix is just an orthonormal basis. If this is not the identity
+    // matrix, it is a centered orthonormal basis plus some angle of rotation about
+    // some axis. That's the angle. Letting this be theta, trace becomes 1+2cos(theta).
+    // reference: https://en.wikipedia.org/wiki/Rotation_matrix#Determining_the_angle
+    const diag = deltaRot.diagonal();
+    let cosTheta = 0.5 * (diag[0] + diag[1] + diag[2] - 1);
+
+    // If the angle is close to 0, the two matrices are very close,
+    // so in that case we execute linearly interpolate.
+    if (1 - cosTheta < 0.0000001) {
+      // Obtain the front vector and up vector by linear interpolation
+      // and normalize them.
+      // calculate newEye, newCenter with newFront vector.
+      newFront.set(p5.Vector.lerp(front0, front1, amt)).normalize();
+
+      newEye.set(newFront).mult(ratio * lerpedDist).add(lerpedMedium);
+      newCenter.set(newFront).mult((ratio-1) * lerpedDist).add(lerpedMedium);
+
+      newUp.set(p5.Vector.lerp(up0, up1, amt)).normalize();
+
+      // set the camera
+      this.camera(
+        newEye.x, newEye.y, newEye.z,
+        newCenter.x, newCenter.y, newCenter.z,
+        newUp.x, newUp.y, newUp.z
+      );
+      return;
+    }
+
+    // Calculates the axis vector and the angle of the difference orthogonal matrix.
+    // The axis vector is what I explained earlier in the comments.
+    // similar calculation is here:
+    // https://github.com/mrdoob/three.js/blob/883249620049d1632e8791732808fefd1a98c871/src/math/Quaternion.js#L294
+    let a, b, c, sinTheta;
+    let invOneMinusCosTheta = 1 / (1 - cosTheta);
+    const maxDiag = Math.max(diag[0], diag[1], diag[2]);
+    const offDiagSum13 = deltaRot.mat3[1] + deltaRot.mat3[3];
+    const offDiagSum26 = deltaRot.mat3[2] + deltaRot.mat3[6];
+    const offDiagSum57 = deltaRot.mat3[5] + deltaRot.mat3[7];
+
+    if (maxDiag === diag[0]) {
+      a = Math.sqrt((diag[0] - cosTheta) * invOneMinusCosTheta); // not zero.
+      invOneMinusCosTheta /= a;
+      b = 0.5 * offDiagSum13 * invOneMinusCosTheta;
+      c = 0.5 * offDiagSum26 * invOneMinusCosTheta;
+      sinTheta = 0.5 * (deltaRot.mat3[7] - deltaRot.mat3[5]) / a;
+
+    } else if (maxDiag === diag[1]) {
+      b = Math.sqrt((diag[1] - cosTheta) * invOneMinusCosTheta); // not zero.
+      invOneMinusCosTheta /= b;
+      c = 0.5 * offDiagSum57 * invOneMinusCosTheta;
+      a = 0.5 * offDiagSum13 * invOneMinusCosTheta;
+      sinTheta = 0.5 * (deltaRot.mat3[2] - deltaRot.mat3[6]) / b;
+
+    } else {
+      c = Math.sqrt((diag[2] - cosTheta) * invOneMinusCosTheta); // not zero.
+      invOneMinusCosTheta /= c;
+      a = 0.5 * offDiagSum26 * invOneMinusCosTheta;
+      b = 0.5 * offDiagSum57 * invOneMinusCosTheta;
+      sinTheta = 0.5 * (deltaRot.mat3[3] - deltaRot.mat3[1]) / c;
+    }
+
+    // Constructs a new matrix after interpolating the angles.
+    // Multiplying mat0 by the first matrix yields mat1, but by creating a state
+    // in the middle of that matrix, you can obtain a matrix that is
+    // an intermediate state between mat0 and mat1.
+    const angle = amt * Math.atan2(sinTheta, cosTheta);
+    const cosAngle = Math.cos(angle);
+    const sinAngle = Math.sin(angle);
+    const oneMinusCosAngle = 1 - cosAngle;
+    const ab = a * b;
+    const bc = b * c;
+    const ca = c * a;
+    const lerpedRotMat = new p5.Matrix('mat3', [
+      cosAngle + oneMinusCosAngle * a * a,
+      oneMinusCosAngle * ab - sinAngle * c,
+      oneMinusCosAngle * ca + sinAngle * b,
+      oneMinusCosAngle * ab + sinAngle * c,
+      cosAngle + oneMinusCosAngle * b * b,
+      oneMinusCosAngle * bc - sinAngle * a,
+      oneMinusCosAngle * ca - sinAngle * b,
+      oneMinusCosAngle * bc + sinAngle * a,
+      cosAngle + oneMinusCosAngle * c * c
+    ]);
+
+    // Multiply this to mat0 from left to get the interpolated front vector.
+    // calculate newEye, newCenter with newFront vector.
+    lerpedRotMat.multiplyVec3(front0, newFront);
+
+    newEye.set(newFront).mult(ratio * lerpedDist).add(lerpedMedium);
+    newCenter.set(newFront).mult((ratio-1) * lerpedDist).add(lerpedMedium);
+
+    lerpedRotMat.multiplyVec3(up0, newUp);
+
+    // We also get the up vector in the same way and set the camera.
+    // The eye position and center position are calculated based on the front vector.
+    this.camera(
+      newEye.x, newEye.y, newEye.z,
+      newCenter.x, newCenter.y, newCenter.z,
+      newUp.x, newUp.y, newUp.z
+    );
+  }
+
   ////////////////////////////////////////////////////////////////////////////////
   // Camera Helper Methods
   ////////////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,19 @@
+changelog:
+  exclude:
+    labels:
+      - Dependencies
+    authors:
+      - dependabot
+  categories:
+    - title: What's Changed 🎊
+      labels:
+        - '*'
+      exclude:
+        labels:
+          - Dependencies
+        authors:
+          - allcontributors
+          - dependabot
+    - title: New Contributors 💗
+      authors:
+        - allcontributors

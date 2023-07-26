@@ -3,6 +3,7 @@
  * @submodule Acceleration
  * @for p5
  * @requires core
+ * @main Events
  */
 
 import p5 from '../core/main';

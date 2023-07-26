@@ -102,13 +102,13 @@ While writing unbiased documentation:
 Prefer wordings that avoid "you"s and "your"s. For example, instead of:
 
 ```
-If you need to declare a variable, it is recommended that you use `const` or `let`.
+If you need to declare a variable, it is recommended that you use `let`.
 ```
 
 use this style:
 
 ```
-Always use `const` or `let` to declare variables.
+Always use `let` to declare variables.
 ```
 
 **Pronouns**
@@ -162,11 +162,11 @@ Choose meaningful code samples that cover the basics as well as gotchas. Only us
 
 ```javascript
 // Bad.
-const magicWord = 'Please';  // Remember this.
+let magicWord = 'Please';  // Remember this.
 
 // Good.
 // Remember this.
-const magicWord = 'Please';
+let magicWord = 'Please';
 
 // Bad.
 if (keyIsPressed === true) {
@@ -189,11 +189,11 @@ if (keyIsPressed === true) {
 ```javascript
 // Bad.
 //Remember this.
-const magicWord = 'Please';
+let magicWord = 'Please';
 
 // Good.
 // Remember this.
-const magicWord = 'Please';
+let magicWord = 'Please';
 ```
 
 - Use `/** ... */` for multiline comments.
@@ -281,10 +281,10 @@ function setup() {
 
 ```javascript
 // Bad.
-const y=x+5;
+let y=x+5;
 
 // Good.
-const y = x + 5;
+let y = x + 5;
 ```
 
 ## Semicolons
@@ -321,13 +321,13 @@ function vectorField(x, y) {
 
 ```javascript
 // Bad.
-const OBJEcttsssss = {};
+let OBJEcttsssss = {};
 
 // Bad.
-const this_is_my_object = {};
+let this_is_my_object = {};
 
 // Good.
-const thisIsMyObject = {};
+let thisIsMyObject = {};
 ```
 
 - Name classes using PascalCase.
@@ -374,86 +374,58 @@ class Spy {
 
 - Avoid using `var` to declare variables.
 
-> Why? Doing so ensures that references aren't reassigned, which can lead to subtle bugs.
+> Why? Variables declared with `var` have confusing scoping rules. These lead to subtle bugs.
+
+```javascript
+// Bad, because it looks reasonable.
+circle(x, y, 50);
+var x = 200;
+var y = 200;
+
+// Good, because it throws a ReferenceError.
+circle(x, y, 50);
+let x = 200;
+let y = 200;
+```
+
+- Always use `let` to declare variables. Avoid using `const`.
+
+> Why? Variables declared with `let` are easier to reason about than those declared with `var`. Variables are often reassigned in sketches, so it's helpful to default to `let`.
 
 ```javascript
 // Bad.
-var constant = 1;
-var variable = 2;
+flower = '🌸';
+var flower = '🌸';
+const flower = '🌸';
 
 // Good.
-const constant = 1;
-let variable = 2;
+let flower = '🌸';
 ```
 
-- Always use `const` or `let` to declare variables.
-
-> Why? Declaring a variable without `const` or `let` will make it global. We want to avoid polluting the global namespace. Captain Planet warned us of that.
-
-```javascript
-// Bad.
-power = '🌍';
-
-// Good.
-const power = '🌍';
-
-// Good.
-let power = '🌍';
-power = '🔥';
-power = '🌬️';
-power = '🌊';
-power = '💜';
-```
-
-- Use one `const` or `let` declaration per variable or assignment.
+- Use one `let` declaration per variable or assignment.
 
 > Why? It’s easier to read and to add new variable declarations.
 
 ```javascript
 // Bad.
-const positions = getPositions(),
+let positions = getPositions(),
   startSearch = true,
   dragonball = 'z';
 
 // Good.
-const positions = getPositions();
-const startSearch = true;
-const dragonball = 'z';
-```
-
-- Group all `const`'s and then group all `let`'s.
-
-> Why? It's easier to read.
-
-```javascript
-// Bad.
-let i, len, dragonball,
-  positions = getPositions(),
-  startSearch = true;
-
-// Bad.
-let i;
-const positions = getPositions();
-let dragonball;
-const startSearch = true;
-let len;
-
-// Good.
-const startSearch = true;
-const positions = getPositions();
-let dragonball;
-let i;
-let len;
+let positions = getPositions();
+let startSearch = true;
+let dragonball = 'z';
 ```
 
 - Assign variables where needed and place them in a reasonable place.
 
-> Why? `let` and `const` are block scoped and not function scoped.
+> Why? `let` is block scoped and not function scoped.
 
 ```javascript
 // Bad - unnecessary search.
 function getCharacter(name = 'default') {
-  const character = characters.find((c) => c.name === name);
+  let character = characters.find((c) => c.name === name);
 
   if (name === 'default') {
     return false;
@@ -472,7 +444,7 @@ function getCharacter(name = 'default') {
     return false;
   }
 
-  const character = characters.find((c) => c.name === name);
+  let character = characters.find((c) => c.name === name);
 
   if (character) {
     return character;
@@ -506,13 +478,13 @@ num -= 1;
 
 ```javascript
 // Bad.
-const name = "Hilma af Klint";
+let name = "Hilma af Klint";
 
 // Bad - template literals should contain interpolation or newlines.
-const name = `Hilma af Klint`;
+let name = `Hilma af Klint`;
 
 // Good.
-const name = 'Hilma af Klint';
+let name = 'Hilma af Klint';
 ```
 
 - Don't concatenate strings that cause the line to go over 80 characters.
@@ -521,15 +493,15 @@ const name = 'Hilma af Klint';
 
 ```javascript
 // Bad.
-const essay = 'You see us as you want to see us: \
+let essay = 'You see us as you want to see us: \
 in the simplest terms, in the most convenient definitions.';
 
 // Bad.
-const essay = 'You see us as you want to see us: ' +
+let essay = 'You see us as you want to see us: ' +
   'in the simplest terms, in the most convenient definitions.';
 
 // Good.
-const essay = 'You see us as you want to see us: in the simplest terms, in the most convenient definitions.';
+let essay = 'You see us as you want to see us: in the simplest terms, in the most convenient definitions.';
 ```
 
 - Use template strings instead of concatenation when needed.
@@ -537,7 +509,7 @@ const essay = 'You see us as you want to see us: in the simplest terms, in the m
 > Why? Template strings have a concise syntax. They also provide proper newlines and string interpolation features.
 
 ```javascript
-const name = 'Dave';
+let name = 'Dave';
 
 // Bad.
 text(name + ', this conversation can serve no purpose anymore. Goodbye.' + name, 0, 0);
@@ -552,10 +524,10 @@ text(`${name}, this conversation can serve no purpose anymore. Goodbye.`, 0, 0);
 
 ```javascript
 // Bad.
-const bad = '\'this\' \i\s \"quoted\"';
+let bad = '\'this\' \i\s \"quoted\"';
 
 // Good.
-const good = 'Air quotes make you look "cool".';
+let good = 'Air quotes make you look "cool".';
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -608,10 +580,10 @@ if (collection.length > 0) {
 
 ```javascript
 // Bad.
-const huh = a && b < 0 || c > 0 || d + 1 === 0;
+let huh = a && b < 0 || c > 0 || d + 1 === 0;
 
 // Good.
-const huh = (a && b < 0) || c > 0 || (d + 1 === 0);
+let huh = (a && b < 0) || c > 0 || (d + 1 === 0);
 
 // Bad.
 if (a || b && c) {
@@ -624,10 +596,10 @@ if (a || (b && c)) {
 }
 
 // Bad.
-const what = a + b / c * d;
+let what = a + b / c * d;
 
 // Good.
-const what = a + (b / c) * d;
+let what = a + (b / c) * d;
 ```
 
 ## Conditionals
@@ -729,7 +701,7 @@ if (
 - Don’t use a `while` or `do-while` loops unless it's necessary. Use `for` loops to iterate a fixed number of times.
 
 ```javascript
-const numPetals = 7;
+let numPetals = 7;
 
 // Bad.
 let i = 0;
@@ -753,7 +725,7 @@ for (let i = 0; i < numPetals; i += 1) {
 > Use `forEach()` / `map()` / `every()` / `filter()` / `find()` / `findIndex()` / `reduce()` / `some()` / `...` to iterate over arrays. Use `Object.keys()` / `Object.values()` / `Object.entries()` to produce arrays for iterating over objects.
 
 ```javascript
-const diameters = [50, 40, 30, 20, 10];
+let diameters = [50, 40, 30, 20, 10];
 
 // Bad.
 for (let i = 0; i < diameters.length; i += 1) {
@@ -761,7 +733,7 @@ for (let i = 0; i < diameters.length; i += 1) {
 }
 
 // Bad.
-for (const d of diameters) {
+for (let d of diameters) {
   circle(0, 0, d);
 }
 
@@ -777,10 +749,10 @@ diameters.forEach((d) => circle(0, 0, d));
 
 ```javascript
 // Bad.
-const ball = new Object();
+let ball = new Object();
 
 // Good.
-const ball = {};
+let ball = {};
 ```
 
 - Only quote properties that are invalid identifiers.
@@ -789,14 +761,14 @@ const ball = {};
 
 ```javascript
 // Bad.
-const secretObject = {
+let secretObject = {
   'x': 100,
   'y': 200,
   'top-secret': 'classified',
 };
 
 // Good.
-const secretObject = {
+let secretObject = {
   x: 3,
   y: 4,
   'top-secret': 'classified',
@@ -806,7 +778,7 @@ const secretObject = {
 - Use dot notation to access properties.
 
 ```javascript
-const turtle = {
+let turtle = {
   name: 'Leonardo',
   color: 'dodgerblue',
   weapon: '🗡️',
@@ -814,16 +786,16 @@ const turtle = {
 };
 
 // Bad.
-const turtleName = turtle['name'];
+let turtleName = turtle['name'];
 
 // Good.
-const turtleName = turtle.name;
+let turtleName = turtle.name;
 ```
 
 - Use bracket notation `[]` to access properties with a variable.
 
 ```javascript
-const turtle = {
+let turtle = {
   name: 'Leonardo',
   color: 'dodgerblue',
   weapon: '🗡️',
@@ -834,20 +806,20 @@ function getProp(prop) {
   return turtle[prop];
 }
 
-const turtleName = getProp('name');
+let turtleName = getProp('name');
 ```
 
 - Don't use leading commas.
 
 ```javascript
 // Bad.
-const mathematician = {
+let mathematician = {
     firstName: 'Ada'
   , lastName: 'Lovelace'
 };
 
 // Good.
-const mathematician = {
+let mathematician = {
   firstName: 'Ada',
   lastName: 'Lovelace',
 };
@@ -857,13 +829,13 @@ const mathematician = {
 
 ```javascript
 // Bad.
-const artist = {
+let artist = {
   firstName: 'Lauren',
   lastName: 'McCarthy'
 };
 
 // Good.
-const artist = {
+let artist = {
   firstName: 'Lauren',
   lastName: 'McCarthy',
 };
@@ -877,16 +849,16 @@ const artist = {
 
 ```javascript
 // Bad.
-const images = new Array();
+let images = new Array();
 
 // Good.
-const images = [];
+let images = [];
 ```
 
 - Use [Array#push](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/push) instead of direct assignment to add items to an array.
 
 ```javascript
-const lyrics = [];
+let lyrics = [];
 
 // Bad.
 lyrics[lyrics.length] = 'Little rough around the edges, but I keep it smooth';
@@ -899,33 +871,33 @@ lyrics.push('Little rough around the edges, but I keep it smooth');
 
 ```javascript
 // Bad.
-const numbersCopy = [];
+let numbersCopy = [];
 
 for (let i = 0; i < numbers.length; i += 1) {
   numbersCopy[i] = numbers[i];
 }
 
 // Good.
-const numbersCopy = numbers.slice();
+let numbersCopy = numbers.slice();
 ```
 
 - Write arrays on multiple lines when it improves readibility. Use line breaks after the opening bracket and before the closing bracket. Add a trailing comma.
 
 ```javascript
 // Bad.
-const matrix = [[1, 0, 0],
+let matrix = [[1, 0, 0],
                 [0, 1, 0],
                 [0, 0, 1]];
 
 // Good.
-const matrix = [
+let matrix = [
   [1, 0, 0],
   [0, 1, 0],
   [0, 0, 1],
 ];
 
 // Also good.
-const matrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+let matrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -938,12 +910,12 @@ const matrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
 
 ```javascript
 // Bad.
-const foo = function () {
+let foo = function () {
   // ...
 };
 
 // Bad.
-const foo = () => {
+let foo = () => {
   // ...
 };
 
@@ -1032,13 +1004,13 @@ function processImage(img) {
 ```javascript
 // Bad.
 [1, 2, 3].map((number) => {
-  const squared = number ** 2;
+  let squared = number ** 2;
   `${number} squared is ${squared}.`;
 });
 
 // Bad.
 [1, 2, 3].map((number) => {
-  const squared = number ** 2;
+  let squared = number ** 2;
   return `${number} squared is ${squared}.`;
 });
 

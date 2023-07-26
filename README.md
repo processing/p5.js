@@ -54,10 +54,15 @@ Stewards are contributors that are particularly involved, familiar, or responsiv
 
 Anyone interested can volunteer to be a steward! There are no specific requirements for expertise, just an interest in actively learning and participating.  If you’re familiar with or interested in actively learning and participating in some of p5.js areas below, please reply to [this issue](https://github.com/processing/p5.js/issues/5719) mentioning which area(s) you are interested to volunteer as a steward! 👋👋👋
 
+Current Lead/Mentor
 * [@qianqianye](https://github.com/qianqianye) - p5.js Project Lead
-* [@outofambit](https://github.com/outofambit) - p5.js Mentor
+* [@limzykenneth](https://github.com/limzykenneth) - p5.js Mentor
 * [@lmccart](https://github.com/lmccart)- p5.js Creator
 
+Lead/Mentor Alumni
+* [@outofambit](https://github.com/outofambit) - p5.js Co-Lead 2021-22, Mentor 2022-2023
+* [@mcturner1995](https://github.com/mcturner1995) - p5.js Lead 2020
+  
 | Area                                                                                 | Steward(s)                                                                                                               |
 | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
 | Overall                                                                              | [@qianqianye](https://github.com/qianqianye)                                                                                                             |
@@ -646,10 +651,22 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="14.28%"><a href="http://munusshih.com"><img src="https://avatars.githubusercontent.com/u/34775424?v=4?s=100" width="100px;" alt="Munus Shih"/><br /><sub><b>Munus Shih</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=munusshih" title="Code">💻</a></td>
     </tr>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/peilingjiang"><img src="https://avatars.githubusercontent.com/u/25191575?v=4?s=100" width="100px;" alt="Peiling Jiang"/><br /><sub><b>Peiling Jiang</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=peilingjiang" title="Code">💻</a> <a href="#design-peilingjiang" title="Design">🎨</a> <a href="#translation-peilingjiang" title="Translation">🌍</a></td> 
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/peilingjiang"><img src="https://avatars.githubusercontent.com/u/25191575?v=4?s=100" width="100px;" alt="Peiling Jiang"/><br /><sub><b>Peiling Jiang</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=peilingjiang" title="Code">💻</a> <a href="#design-peilingjiang" title="Design">🎨</a> <a href="#translation-peilingjiang" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Decoy4ever"><img src="https://avatars.githubusercontent.com/u/50310148?v=4?s=100" width="100px;" alt="Decoy4ever"/><br /><sub><b>Decoy4ever</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Decoy4ever" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://lindapaiste.com"><img src="https://avatars.githubusercontent.com/u/28965286?v=4?s=100" width="100px;" alt="Linda Paiste"/><br /><sub><b>Linda Paiste</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Alindapaiste" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=lindapaiste" title="Code">💻</a> <a href="#design-lindapaiste" title="Design">🎨</a> <a href="https://github.com/processing/p5.js/commits?author=lindapaiste" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/shujuuu"><img src="https://avatars.githubusercontent.com/u/43021463?v=4?s=100" width="100px;" alt="shujulin"/><br /><sub><b>shujulin</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Ashujuuu" title="Bug reports">🐛</a> <a href="#ideas-shujuuu" title="Ideas, Planning, & Feedback">🤔</a> <a href="#design-shujuuu" title="Design">🎨</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://wonger.dev"><img src="https://avatars.githubusercontent.com/u/28441593?v=4?s=100" width="100px;" alt="J Wong"/><br /><sub><b>J Wong</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=wong-justin" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=wong-justin" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://aceslowman.com"><img src="https://avatars.githubusercontent.com/u/6826702?v=4?s=100" width="100px;" alt="Austin Lee Slominski"/><br /><sub><b>Austin Lee Slominski</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=aceslowman" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=aceslowman" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://nickbriz.com"><img src="https://avatars.githubusercontent.com/u/2506806?v=4?s=100" width="100px;" alt="Nick Briz"/><br /><sub><b>Nick Briz</b></sub></a><br /><a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3Anbriz" title="Reviewed Pull Requests">👀</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://ayush23dash.github.io"><img src="https://avatars.githubusercontent.com/u/40827680?v=4?s=100" width="100px;" alt="Ayush Shankar"/><br /><sub><b>Ayush Shankar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Ayush23Dash" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/zelf0"><img src="https://avatars.githubusercontent.com/u/84274405?v=4?s=100" width="100px;" alt="zelf0"/><br /><sub><b>zelf0</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=zelf0" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://jtn.im"><img src="https://avatars.githubusercontent.com/u/183796?v=4?s=100" width="100px;" alt="JT Nimoy"/><br /><sub><b>JT Nimoy</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=jtnimoy" title="Code">💻</a> <a href="#plugin-jtnimoy" title="Plugin/utility libraries">🔌</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/SilasVM"><img src="https://avatars.githubusercontent.com/u/124199231?v=4?s=100" width="100px;" alt="Victor Morgan"/><br /><sub><b>Victor Morgan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=SilasVM" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/snwarner22"><img src="https://avatars.githubusercontent.com/u/137221902?v=4?s=100" width="100px;" alt="Sekani Warner"/><br /><sub><b>Sekani Warner</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=snwarner22" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/e-coucou"><img src="https://avatars.githubusercontent.com/u/4691474?v=4?s=100" width="100px;" alt="e-Coucou"/><br /><sub><b>e-Coucou</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Ae-coucou" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/thatguyseven"><img src="https://avatars.githubusercontent.com/u/137221692?v=4?s=100" width="100px;" alt="Aaron Ni"/><br /><sub><b>Aaron Ni</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=thatguyseven" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
