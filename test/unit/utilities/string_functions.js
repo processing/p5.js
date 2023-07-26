@@ -105,6 +105,12 @@ suite('String functions', function() {
       result = myp5.nf(num, '3', '4'); // automatic conversion?
       assert.equal(result, '31415160.0000');
     });
+
+    test('should return correct string', function() {
+      var num = 123.45;
+      result = myp5.nf(num, 3, 0);
+      assert.equal(result, '123');
+    });
   });
 
   suite('p5.prototype.nfc', function() {

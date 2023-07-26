@@ -3794,6 +3794,43 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "jtnimoy",
+      "name": "JT Nimoy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/183796?v=4",
+      "profile": "http://jtn.im",
+      "contributions": [
+        "code",
+        "plugin"
+      ]
+    },
+    {
+      "login": "SilasVM",
+      "name": "Victor Morgan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/124199231?v=4",
+      "profile": "https://github.com/SilasVM",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "snwarner22",
+      "name": "Sekani Warner",
+      "avatar_url": "https://avatars.githubusercontent.com/u/137221902?v=4",
+      "profile": "https://github.com/snwarner22",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "e-coucou",
+      "name": "e-Coucou",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4691474?v=4",
+      "profile": "https://github.com/e-coucou",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
