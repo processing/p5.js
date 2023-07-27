@@ -76,6 +76,10 @@ p5.Font = class {
   // Check cache for existing bounds. Take into consideration the text alignment
   // settings. Default alignment should match opentype's origin: left-aligned &
   // alphabetic baseline.
+    if (typeof str !== 'string') {
+      console.error('Error: Text parameter must be a string.');
+      return null;
+    }
     const p = (opts && opts.renderer && opts.renderer._pInst) || this.parent;
 
     const ctx = p._renderer.drawingContext;
