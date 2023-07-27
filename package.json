@@ -152,5 +152,8 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
+  },
+  "dependencies": {
+    "puppeteer-core": "^20.9.0"
   }
 }
