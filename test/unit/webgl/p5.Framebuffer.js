@@ -452,4 +452,36 @@ suite('p5.Framebuffer', function() {
       assert.deepEqual(myp5.get(0, 0), [0, 0, 255, 255]);
     }
   );
+
+  test('Strokes work on and off of framebuffers', function() {
+    myp5.createCanvas(20, 20, myp5.WEBGL);
+    const fbo = myp5.createFramebuffer();
+
+    const drawCircle = () => {
+      myp5.clear();
+      myp5.noFill();
+      myp5.stroke(0);
+      myp5.strokeWeight(20);
+      myp5.beginShape();
+      for (let i = 0; i < 20; i++) {
+        const angle = i/20*myp5.TWO_PI;
+        myp5.vertex(
+          100 * myp5.cos(angle),
+          // Add an offset to make sure results don't get flipped
+          100 * myp5.sin(angle) - 50
+        );
+      }
+      myp5.endShape(myp5.CLOSE);
+    };
+
+    fbo.draw(drawCircle);
+    fbo.loadPixels();
+    const fboPixels = [...fbo.pixels];
+
+    drawCircle();
+    myp5.loadPixels();
+    const mainPixels = [...myp5.pixels];
+
+    assert.deepEqual(fboPixels, mainPixels);
+  });
 });
