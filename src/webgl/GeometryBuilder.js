@@ -126,6 +126,21 @@ class GeometryBuilder {
    */
   finish() {
     this.renderer._pInst.pop();
+
+    // If all vertices are the same color (no per-vertex colors were
+    // supplied), remove the vertex color data so that one may override the
+    // fill when drawing the geometry with `model()`
+    let allVertexColorsSame = true;
+    for (let i = 4; i < this.geometry.vertexColors.length; i++) {
+      if (this.geometry.vertexColors[i] !== this.geometry.vertexColors[i % 4]) {
+        allVertexColorsSame = false;
+        break;
+      }
+    }
+    if (allVertexColorsSame) {
+      this.geometry.vertexColors = [];
+    }
+
     return this.geometry;
   }
 }

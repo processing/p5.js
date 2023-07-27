@@ -147,6 +147,14 @@ suite('p5.Geometry', function() {
 
   suite('buildGeometry', function() {
     const checkLights = () => myp5.lights();
+    const checkMaterials = () => {
+      myp5.fill('#ffea30');
+      myp5.ambientMaterial(myp5.color('#f2b988'));
+      myp5.specularMaterial(255);
+      myp5.shininess(200);
+      myp5.ambientLight(myp5.color('#88989e'));
+      myp5.pointLight(200, -100, -50, 255, 255, 255);
+    };
     const checkNormals = () => myp5.normalMaterial();
     function assertGeometryRendersMatch(drawGeometry, lightingModes) {
       myp5.createCanvas(50, 50, myp5.WEBGL);
@@ -190,7 +198,7 @@ suite('p5.Geometry', function() {
           myp5.rotateY(myp5.PI * 0.2);
         }
         myp5.pop();
-      }, [checkLights, checkNormals]);
+      }, [checkLights, checkMaterials, checkNormals]);
     });
 
     test('Immediate mode constructs are translated correctly', function() {
@@ -225,7 +233,7 @@ suite('p5.Geometry', function() {
         myp5.vertex(-120, -110);
         myp5.vertex(-105, -100);
         myp5.endShape();
-      }, [checkLights, checkNormals]);
+      }, [checkLights, checkMaterials, checkNormals]);
     });
 
     test('Vertex colors are captured', function() {
