@@ -80,6 +80,22 @@ p5.prototype.ceil = Math.ceil;
  * function draw() {
  *   background(200);
  *
+ *   let x = constrain(mouseX, 33, 67);
+ *   let y = 50;
+ *
+ *   strokeWeight(5);
+ *   point(x, y);
+ *
+ *   describe('A black dot drawn on a gray square follows the mouse from left to right. Its movement is constrained to the middle third of the square.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(200);
+ *
  *   // Set boundaries and draw them.
  *   let leftWall = width * 0.25;
  *   let rightWall = width * 0.75;
@@ -240,31 +256,28 @@ p5.prototype.floor = Math.floor;
  * @example
  * <div>
  * <code>
- * function setup() {
- *   background(200);
- *   let a = 20;
- *   let b = 80;
- *   let c = lerp(a, b, 0.2);
- *   let d = lerp(a, b, 0.5);
- *   let e = lerp(a, b, 0.8);
+ * let a = 20;
+ * let b = 80;
+ * let c = lerp(a, b, 0.2);
+ * let d = lerp(a, b, 0.5);
+ * let e = lerp(a, b, 0.8);
  *
- *   let y = 50;
+ * let y = 50;
  *
- *   strokeWeight(5);
+ * strokeWeight(5);
  *
- *   // Draw the original points in black.
- *   stroke(0);
- *   point(a, y);
- *   point(b, y);
+ * // Draw the original points in black.
+ * stroke(0);
+ * point(a, y);
+ * point(b, y);
  *
- *   // Draw the lerped points in gray.
- *   stroke(100);
- *   point(c, y);
- *   point(d, y);
- *   point(e, y);
+ * // Draw the lerped points in gray.
+ * stroke(100);
+ * point(c, y);
+ * point(d, y);
+ * point(e, y);
  *
- *   describe('Five points in a horizontal line. The outer points are black and the inner points are gray.');
- * }
+ * describe('Five points in a horizontal line. The outer points are black and the inner points are gray.');
  * </code>
  * </div>
  */
@@ -351,11 +364,33 @@ p5.prototype.mag = function(x, y) {
  * @example
  * <div>
  * <code>
- * let value = 25;
- * let m = map(value, 0, 100, 0, width);
- * circle(m, 50, 10);
+ * let n = map(7, 0, 10, 0, 100);
+ * text(n, 50, 50);
+ *
+ * describe('The number 70 written in the middle of a gray square.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let x = map(2, 0, 10, 0, width);
+ * circle(x, 50, 10);
  *
  * describe('A white circle drawn on the left side of a gray square.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(200);
+ *
+ *   let c = map(mouseX, 0, width, 0, 255);
+ *   fill(c);
+ *   circle(50, 50, 20);
+ *
+ *   describe('A circle changes color from black to white as the mouse moves from left to right.');
+ * }
  * </code>
  * </div>
  */
@@ -386,6 +421,24 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
  * @param  {Number} n1 second number to compare.
  * @return {Number}             maximum number.
  * @example
+ * <div>
+ * <code>
+ * let m = max(10, 20);
+ * text(m, 50, 50);
+ *
+ * describe('The number 20 written in the middle of a gray square.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let m = max([10, 20]);
+ * text(m, 50, 50);
+ *
+ * describe('The number 20 written in the middle of a gray square.');
+ * </code>
+ * </div>
+ *
  * <div>
  * <code>
  * let numbers = [2, 1, 5, 4, 8, 9];
@@ -446,6 +499,24 @@ p5.prototype.max = function(...args) {
  * @param  {Number} n1 second number to compare.
  * @return {Number}             minimum number.
  * @example
+ * <div>
+ * <code>
+ * let m = min(10, 20);
+ * text(m, 50, 50);
+ *
+ * describe('The number 10 written in the middle of a gray square.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let m = min([10, 20]);
+ * text(m, 50, 50);
+ *
+ * describe('The number 10 written in the middle of a gray square.');
+ * </code>
+ * </div>
+ *
  * <div>
  * <code>
  * let numbers = [2, 1, 5, 4, 8, 9];
@@ -712,6 +783,7 @@ function hypot(x, y, z) {
  * text(n, 20, 33);
  * let f = fract(n);
  * text(f, 20, 66);
+ *
  * describe('The number 56.78 written above the number 0.78.');
  * </code>
  * </div>

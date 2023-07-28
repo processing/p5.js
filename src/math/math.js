@@ -10,9 +10,18 @@ import p5 from '../core/main';
 /**
  * Creates a new <a href="#/p5.Vector">p5.Vector</a> object. A vector is like
  * an arrow pointing in space. Vectors have both magnitude (length)
- * and direction. They are often used to program motion because they simplify
- * the math. Calling `createVector()` without arguments sets the new vector's
- * components to 0.
+ * and direction. Calling `createVector()` without arguments sets the new
+ * vector's components to 0.
+ *
+ * <a href="#/p5.Vector">p5.Vector</a> objects are often used to program
+ * motion because they simplify the math. For example, a moving ball has a
+ * position and a velocity. Position describes where the ball is in space. The
+ * ball's position vector extends from the origin to the ball's center.
+ * Velocity describes the ball's speed and the direction it's moving. If the
+ * ball is moving straight up, its velocity vector points straight up. Adding
+ * the ball's velocity vector to its position vector moves it, as in
+ * `pos.add(vel)`. Vector math relies on methods inside the
+ * <a href="#/p5.Vector">p5.Vector</a>` class.
  *
  * @method createVector
  * @param {Number} [x] x component of the vector.
@@ -42,8 +51,8 @@ import p5 from '../core/main';
  *
  * function setup() {
  *   createCanvas(100, 100);
- *   pos = createVector(50, 50);
- *   vel = createVector(1, 0);
+ *   pos = createVector(width / 2, height);
+ *   vel = createVector(0, -1);
  * }
  *
  * function draw() {
@@ -51,14 +60,14 @@ import p5 from '../core/main';
  *
  *   pos.add(vel);
  *
+ *   if (pos.y < 0) {
+ *     pos.y = height;
+ *   }
+ *
  *   strokeWeight(5);
  *   point(pos);
  *
- *   if (pos.x > width) {
- *     pos.x = 0;
- *   }
- *
- *   describe('A black dot moves from left to right on a gray square. The dot reappears on the left when it reaches the right.');
+ *   describe('A black dot moves from bottom to top on a gray square. The dot reappears at the bottom when it reaches the top.');
  * }
  * </code>
  * </div>

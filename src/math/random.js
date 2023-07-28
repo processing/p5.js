@@ -70,10 +70,15 @@ p5.prototype.randomSeed = function(seed) {
 /**
  * Returns a random number or a random element from an array.
  *
- * `random()` follows uniform distribution, which is like rolling a die. When
- * `random()` is used to generate numbers, all numbers are equally likely.
- * When it's used to select elements from an array, all elements are equally
- * likely to be chosen.
+ * `random()` follows uniform distribution, which means that all outcomes are
+ * equally likely. When `random()` is used to generate numbers, all
+ * numbers in the output range are equally likely to be returned. When
+ * `random()` is used to select elements from an array, all elements are
+ * equally likely to be chosen.
+ *
+ * By default, `random()` produces different results each time a sketch runs.
+ * The <a href="#/p5/randomSeed">randomSeed()</a> function can be used to
+ * generate the same sequence of numbers or choices each time a sketch runs.
  *
  * The version of `random()` with no parameters returns a random number from 0
  * up to but not including 1.
@@ -97,36 +102,57 @@ p5.prototype.randomSeed = function(seed) {
  * @example
  * <div>
  * <code>
- * function draw() {
- *   background(200);
+ * let x = random(width);
+ * let y = random(height);
  *
- *   frameRate(5);
- *   let d = random(width);
- *   circle(50, 50, d);
+ * strokeWeight(5);
+ * point(x, y);
  *
- *   describe('A white circle randomly changes size from a single point to the width of its containing square.');
- * }
+ * describe('A black dot appears in a random posiiton on a gray square.');
  * </code>
  * </div>
- * <div>
- * <code>
- * function draw() {
- *   background(200);
  *
- *   frameRate(5);
- *   let d = random(45, 55);
- *   circle(50, 50, d);
- *
- *   describe('A white circle randomly changes size. It is always about half the width of its containing square.');
- * }
- * </code>
- * </div>
  * <div>
  * <code>
  * let animals = ['🦁', '🐯', '🐻'];
  * let animal = random(animals);
  * text(animal, 50, 50);
+ *
  * describe('An animal face is displayed at random. Either a lion, tiger, or bear.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(200);
+ *
+ *   frameRate(5);
+ *   let x = random(width);
+ *   let y = random(height);
+ *
+ *   strokeWeight(5);
+ *   point(x, y);
+ *
+ *   describe('A black dot moves around randomly on a gray square.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(200);
+ *
+ *   frameRate(5);
+ *   let x = random(45, 55);
+ *   let y = random(45, 55);
+ *
+ *   strokeWeight(5);
+ *   point(x, y);
+ *
+ *   describe('A black dot moves around randomly in the middle of a gray square.');
+ * }
  * </code>
  * </div>
  */
@@ -165,11 +191,16 @@ p5.prototype.random = function(min, max) {
 };
 
 /**
- * Returns a random number fitting a Gaussian, or normal, distribution.
- * Values from a normal distribution cluster around a central value called
- * the mean. The cluster's standard deviation describes its spread.
+ * Returns a random number fitting a Gaussian, or normal, distribution. Normal
+ * distributions look like bell curves when plotted. Values from a normal
+ * distribution cluster around a central value called the mean. The cluster's
+ * standard deviation describes its spread.
  *
- * There's no minimum or maximum  value that `randomGaussian()` might return.
+ * By default, `randomGaussian()` produces different results each time a
+ * sketch runs. The <a href="#/p5/randomSeed">randomSeed()</a> function can be
+ * used to generate the same sequence of numbers each time a sketch runs.
+ *
+ * There's no minimum or maximum value that `randomGaussian()` might return.
  * Values far from the mean are very unlikely and values near the mean are
  * very likely.
  *
@@ -192,14 +223,17 @@ p5.prototype.random = function(min, max) {
  * function draw() {
  *   noStroke();
  *   fill(0, 10);
+ *
  *   // Uniform distribution.
  *   let x = random(width);
  *   let y = 25;
  *   circle(x, y, 5);
+ *
  *   // Gaussian distribution with sd = 1.
  *   x = randomGaussian(50);
  *   y = 50;
  *   circle(x, y, 5);
+ *
  *   // Gaussian distribution with sd = 10.
  *   x = randomGaussian(50, 10);
  *   y = 75;
