@@ -439,11 +439,11 @@ p5.Font = class {
     }
 
     // only draw stroke if manually set by user
-    if (pg._doStroke && pg._strokeSet) {
+    if (pg._doStroke && pg._strokeSet && !pg._clipping) {
       ctx.stroke();
     }
 
-    if (pg._doFill) {
+    if (pg._doFill && !pg._clipping) {
     // if fill hasn't been set by user, use default-text-fill
       if (!pg._fillSet) {
         pg._setFill(constants._DEFAULT_TEXT_FILL);

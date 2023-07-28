@@ -11,6 +11,208 @@ import * as constants from '../core/constants';
 import './p5.Color';
 
 /**
+ * Start defining a shape that will mask subsequent things drawn to the canvas.
+ * Only opaque regions of the mask shape will allow content to be drawn.
+ * Any shapes drawn between this and <a href="#/p5/endClip">endClip()</a> will
+ * contribute to the mask shape.
+ *
+ * The mask will apply to anything drawn after this call. To draw without a mask, contain
+ * the code to apply the mask and to draw the masked content between
+ * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
+ *
+ * Alternatively, rather than drawing the mask between this and
+ * <a href="#/p5/endClip">endClip()</a>, draw the mask in a callback function
+ * passed to <a href="#/p5/clip">clip()</a>.
+ *
+ * Options can include:
+ * - `invert`: A boolean specifying whether or not to mask the areas *not* filled by the mask shape. Defaults to false.
+ *
+ * @method beginClip
+ * @param {Object} [options] An object containing clip settings.
+ *
+ * @example
+ * <div>
+ * <code>
+ * noStroke();
+ *
+ * // Mask in some shapes
+ * push();
+ * beginClip();
+ * triangle(15, 37, 30, 13, 43, 37);
+ * circle(45, 45, 7);
+ * endClip();
+ *
+ * fill('red');
+ * rect(5, 5, 45, 45);
+ * pop();
+ *
+ * translate(50, 50);
+ *
+ * // Mask out the same shapes
+ * push();
+ * beginClip({ invert: true });
+ * triangle(15, 37, 30, 13, 43, 37);
+ * circle(45, 45, 7);
+ * endClip();
+ *
+ * fill('red');
+ * rect(5, 5, 45, 45);
+ * pop();
+ * </code>
+ * </div>
+ *
+ * @alt
+ * In the top left, a red triangle and circle. In the bottom right, a red
+ * square with a triangle and circle cut out of it.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   noStroke();
+ *
+ *   beginClip();
+ *   push();
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   scale(0.5);
+ *   torus(30, 15);
+ *   pop();
+ *   endClip();
+ *
+ *   beginShape(QUAD_STRIP);
+ *   fill(0, 255, 255);
+ *   vertex(-width/2, -height/2);
+ *   vertex(width/2, -height/2);
+ *   fill(100, 0, 100);
+ *   vertex(-width/2, height/2);
+ *   vertex(width/2, height/2);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * A silhouette of a rotating torus colored with a gradient from
+ * cyan to purple
+ */
+p5.prototype.beginClip = function(options = {}) {
+  this._renderer.beginClip(options);
+};
+
+/**
+ * Finishes defining a shape that will mask subsequent things drawn to the canvas.
+ * Only opaque regions of the mask shape will allow content to be drawn.
+ * Any shapes drawn between <a href="#/p5/beginClip">beginClip()</a> and this
+ * will contribute to the mask shape.
+ *
+ * @method endClip
+ */
+p5.prototype.endClip = function() {
+  this._renderer.endClip();
+};
+
+/**
+ * Use the shape drawn by a callback function to mask subsequent things drawn to the canvas.
+ * Only opaque regions of the mask shape will allow content to be drawn.
+ *
+ * The mask will apply to anything drawn after this call. To draw without a mask, contain
+ * the code to apply the mask and to draw the masked content between
+ * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
+ *
+ * Alternatively, rather than drawing the mask shape in a function, draw the
+ * shape between <a href="#/p5/beginClip">beginClip()</a> and <a href="#/p5/endClip">endClip()</a>.
+ *
+ * Options can include:
+ * - `invert`: A boolean specifying whether or not to mask the areas *not* filled by the mask shape. Defaults to false.
+ *
+ * @method clip
+ * @param {Function} callback A function that draws the mask shape.
+ * @param {Object} [options] An object containing clip settings.
+ *
+ * @example
+ * <div>
+ * <code>
+ * noStroke();
+ *
+ * // Mask in some shapes
+ * push();
+ * clip(() => {
+ *   triangle(15, 37, 30, 13, 43, 37);
+ *   circle(45, 45, 7);
+ * });
+ *
+ * fill('red');
+ * rect(5, 5, 45, 45);
+ * pop();
+ *
+ * translate(50, 50);
+ *
+ * // Mask out the same shapes
+ * push();
+ * clip(() => {
+ *   triangle(15, 37, 30, 13, 43, 37);
+ *   circle(45, 45, 7);
+ * }, { invert: true });
+ *
+ * fill('red');
+ * rect(5, 5, 45, 45);
+ * pop();
+ * </code>
+ * </div>
+ *
+ * @alt
+ * In the top left, a red triangle and circle. In the bottom right, a red
+ * square with a triangle and circle cut out of it.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   noStroke();
+ *
+ *   clip(() => {
+ *     push();
+ *     rotateX(frameCount * 0.01);
+ *     rotateY(frameCount * 0.01);
+ *     scale(0.5);
+ *     torus(30, 15);
+ *     pop();
+ *   });
+ *
+ *   beginShape(QUAD_STRIP);
+ *   fill(0, 255, 255);
+ *   vertex(-width/2, -height/2);
+ *   vertex(width/2, -height/2);
+ *   fill(100, 0, 100);
+ *   vertex(-width/2, height/2);
+ *   vertex(width/2, height/2);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * A silhouette of a rotating torus colored with a gradient from
+ * cyan to purple
+ */
+p5.prototype.clip = function(callback, options) {
+  this._renderer.beginClip(options);
+  callback();
+  this._renderer.endClip(options);
+};
+
+/**
  * Sets the color used for the background of the canvas. By default, the
  * background is transparent. This function is typically used within
  * <a href="#/p5/draw">draw()</a> to clear the display window at the beginning

@@ -417,6 +417,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // erasing
     this._isErasing = false;
 
+    // clipping
+    this._clipDepth = null;
+
     // lights
     this._enableLighting = false;
 
@@ -771,7 +774,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this._tint = [255, 255, 255, 255];
 
     //Clear depth every frame
-    this.GL.clear(this.GL.DEPTH_BUFFER_BIT);
+    this.GL.clearStencil(0);
+    this.GL.clear(this.GL.DEPTH_BUFFER_BIT | this.GL.STENCIL_BUFFER_BIT);
+    this.GL.disable(this.GL.STENCIL_TEST);
   }
 
   /**
@@ -926,6 +931,59 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this.curStrokeColor = this._cachedStrokeStyle.slice();
       this.blendMode(this._cachedBlendMode);
     }
+  }
+
+  beginClip(options = {}) {
+    super.beginClip(options);
+    const gl = this.GL;
+    gl.clearStencil(0);
+    gl.clear(gl.STENCIL_BUFFER_BIT);
+    gl.enable(gl.STENCIL_TEST);
+    gl.stencilFunc(
+      gl.ALWAYS, // the test
+      1, // reference value
+      0xff // mask
+    );
+    gl.stencilOp(
+      gl.KEEP, // what to do if the stencil test fails
+      gl.KEEP, // what to do if the depth test fails
+      gl.REPLACE // what to do if both tests pass
+    );
+    gl.disable(gl.DEPTH_TEST);
+
+    this._pInst.push();
+    this._pInst.resetShader();
+    if (this._doFill) this._pInst.fill(0, 0);
+    if (this._doStroke) this._pInst.stroke(0, 0);
+  }
+
+  endClip() {
+    this._pInst.pop();
+
+    const gl = this.GL;
+    gl.stencilOp(
+      gl.KEEP, // what to do if the stencil test fails
+      gl.KEEP, // what to do if the depth test fails
+      gl.KEEP // what to do if both tests pass
+    );
+    gl.stencilFunc(
+      this._clipInvert ? gl.EQUAL : gl.NOTEQUAL, // the test
+      0, // reference value
+      0xff // mask
+    );
+    gl.enable(gl.DEPTH_TEST);
+
+    // Mark the depth at which the clip has been applied so that we can clear it
+    // when we pop past this depth
+    this._clipDepth = this._pushPopDepth;
+
+    super.endClip();
+  }
+
+  _clearClip() {
+    this.GL.clearStencil(1);
+    this.GL.clear(this.GL.STENCIL_BUFFER_BIT);
+    this._clipDepth = null;
   }
 
   /**
@@ -1260,6 +1318,13 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     properties.curBlendMode = this.curBlendMode;
 
     return style;
+  }
+  pop(...args) {
+    if (this._pushPopDepth === this._clipDepth) {
+      this._clearClip();
+      this.GL.disable(this.GL.STENCIL_TEST);
+    }
+    super.pop(...args);
   }
   resetMatrix() {
     this.uMVMatrix.set(
