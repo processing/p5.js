@@ -410,7 +410,7 @@ p5.newObject = function(parameter) {
    this.name = 'p5.newObject';
 };
 ````
-* Inline documentation: allowed parameter types are `Boolean`, `Number`, `String`, and name of the object (see the above bullet point). Use `Array` for any types of Array parameters. If needed, explain what kind of the specific types of array parameter are allowed (e.g. `Number[]`, `String[]`) in the description section.
+* Inline documentation: allowed parameter types are `Boolean`, `Number`, `String`, and name of the object (see the above bullet point). Use `Array` for any types of array parameters. If needed, explain what specific types of array parameters are allowed (e.g. `Number[]`, `String[]`) in the description section.
 * Currently supported class types (have their `name` parameter): `p5.Color`, `p5.Element`, `p5.Graphics`, `p5.Renderer`, `p5.Renderer2D`, `p5.Image`, `p5.Table`, `p5.TableRow`, `p5.XML`, `p5.Vector`, `p5.Font`, `p5.Geometry`, `p5.Matrix`, `p5.RendererGL`.
 
 #### Performance Issue with the FES
@@ -443,7 +443,7 @@ line(0, 0, 100, 100, x3, Math.PI);
 ```
 will escape FES, because there is an acceptable parameter pattern (`Number`, `Number`, `Number`, `Number`) in `line()`'s inline documentation for drawing in 2D setting. This also means the current version of FES doesn't check for the environmental variables such as `_renderer.isP3D`.
 
-* FES is only able to detect global variables overwritten when declared using `const` or `var`. If `let` is used, they go undetected. This is not currently solvable due to the way `let` instantiates variables.
+* FES is only able to detect global variables that have been overwritten if they were declared using `const` or `var`. If `let` is used for variable declaration, they go undetected. This is not currently solvable due to the way `let` instantiates variables.
 
 * The functionality described under **`fesErrorMonitor()`** currently only works on the web editor or if running on a local server. For more details see pull request [#4730](https://github.com/processing/p5.js/pull/4730).
 
