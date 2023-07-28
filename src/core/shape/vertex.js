@@ -558,6 +558,57 @@ p5.prototype.curveVertex = function(...args) {
  * endShape(CLOSE);
  * </code>
  * </div>
+ * 
+ * @alt
+ * white rect and smaller grey rect with red outlines in center of canvas.
+ */
+p5.prototype.endContour = function() {
+  const vert = contourVertices[0].slice(); // copy all data
+  vert.isVert = contourVertices[0].isVert;
+  vert.moveTo = false;
+  contourVertices.push(vert);
+
+  // prevent stray lines with multiple contours
+  if (isFirstContour) {
+    vertices.push(vertices[0]);
+    isFirstContour = false;
+  }
+
+  for (let i = 0; i < contourVertices.length; i++) {
+    vertices.push(contourVertices[i]);
+  }
+  return this;
+};
+
+/**
+ * The <a href="#/p5/endShape">endShape()</a> function is the companion to <a href="#/p5/beginShape">beginShape()</a> and may only be
+ * called after <a href="#/p5/beginShape">beginShape()</a>. When <a href="#/p5/endshape">endShape()</a> is called, all of the image
+ * data defined since the previous call to <a href="#/p5/beginShape">beginShape()</a> is written into the image
+ * buffer. The constant CLOSE as the value for the `mode` parameter to close
+ * the shape (to connect the beginning and the end).
+ *
+ * @method endShape
+ * @param  {Constant} [mode] use CLOSE to close the shape
+ * @param  {Integer} [count] number of times you want to draw/instance the shape (for WebGL mode).
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * noFill();
+ *
+ * beginShape();
+ * vertex(20, 20);
+ * vertex(45, 20);
+ * vertex(45, 80);
+ * endShape(CLOSE);
+ *
+ * beginShape();
+ * vertex(50, 20);
+ * vertex(75, 20);
+ * vertex(75, 80);
+ * endShape();
+ * </code>
+ * </div>
  *
  * @example
  * <div>
@@ -615,57 +666,6 @@ p5.prototype.curveVertex = function(...args) {
  * </code>
  * </div>
  * 
- * @alt
- * white rect and smaller grey rect with red outlines in center of canvas.
- */
-p5.prototype.endContour = function() {
-  const vert = contourVertices[0].slice(); // copy all data
-  vert.isVert = contourVertices[0].isVert;
-  vert.moveTo = false;
-  contourVertices.push(vert);
-
-  // prevent stray lines with multiple contours
-  if (isFirstContour) {
-    vertices.push(vertices[0]);
-    isFirstContour = false;
-  }
-
-  for (let i = 0; i < contourVertices.length; i++) {
-    vertices.push(contourVertices[i]);
-  }
-  return this;
-};
-
-/**
- * The <a href="#/p5/endShape">endShape()</a> function is the companion to <a href="#/p5/beginShape">beginShape()</a> and may only be
- * called after <a href="#/p5/beginShape">beginShape()</a>. When <a href="#/p5/endshape">endShape()</a> is called, all of the image
- * data defined since the previous call to <a href="#/p5/beginShape">beginShape()</a> is written into the image
- * buffer. The constant CLOSE as the value for the `mode` parameter to close
- * the shape (to connect the beginning and the end).
- *
- * @method endShape
- * @param  {Constant} [mode] use CLOSE to close the shape
- * @param  {Integer} [count] number of times you want to draw/instance the shape (for WebGL mode).
- * @chainable
- * @example
- * <div>
- * <code>
- * noFill();
- *
- * beginShape();
- * vertex(20, 20);
- * vertex(45, 20);
- * vertex(45, 80);
- * endShape(CLOSE);
- *
- * beginShape();
- * vertex(50, 20);
- * vertex(75, 20);
- * vertex(75, 80);
- * endShape();
- * </code>
- * </div>
- *
  * @alt
  * Triangle line shape with smallest interior angle on bottom and upside-down L.
  */
