@@ -210,7 +210,11 @@ function doNf(num, left, right) {
     let roundedOff = num.toFixed(right);
     [leftPart, rightPart] = roundedOff.toString().split('.');
     leftPart = leftPart.padStart(left, '0');
-    return leftPart + '.' + rightPart;
+    if(typeof rightPart === 'undefined'){
+      return leftPart;
+    }else{
+      return leftPart + '.' + rightPart;
+    }
   }
 }
 

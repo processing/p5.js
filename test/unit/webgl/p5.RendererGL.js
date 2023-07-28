@@ -280,7 +280,40 @@ suite('p5.RendererGL', function() {
       let p2 = pg.pixels;
       assert.notDeepEqual(p1, p2);
     });
+  });
 
+  test('contours match 2D', function() {
+    const getColors = function(mode) {
+      myp5.createCanvas(50, 50, mode);
+      myp5.pixelDensity(1);
+      myp5.background(200);
+      myp5.strokeCap(myp5.SQUARE);
+      myp5.strokeJoin(myp5.MITER);
+      if (mode === myp5.WEBGL) {
+        myp5.translate(-myp5.width/2, -myp5.height/2);
+      }
+      myp5.stroke('black');
+      myp5.strokeWeight(2);
+      myp5.translate(25, 25);
+      myp5.beginShape();
+      // Exterior part of shape, clockwise winding
+      myp5.vertex(-20, -20);
+      myp5.vertex(20, -20);
+      myp5.vertex(20, 20);
+      myp5.vertex(-20, 20);
+      // Interior part of shape, counter-clockwise winding
+      myp5.beginContour();
+      myp5.vertex(-10, -10);
+      myp5.vertex(-10, 10);
+      myp5.vertex(10, 10);
+      myp5.vertex(10, -10);
+      myp5.endContour();
+      myp5.endShape(myp5.CLOSE);
+      myp5.loadPixels();
+      return [...myp5.pixels];
+    };
+
+    assert.deepEqual(getColors(myp5.P2D), getColors(myp5.WEBGL));
   });
 
   suite('text shader', function() {

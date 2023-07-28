@@ -34,6 +34,7 @@ p5.RendererGL.prototype.beginShape = function(mode) {
   this.immediateMode.shapeMode =
     mode !== undefined ? mode : constants.TESS;
   this.immediateMode.geometry.reset();
+  this.immediateMode.contourIndices = [];
   return this;
 };
 
@@ -43,6 +44,15 @@ const immediateBufferStrides = {
   vertexColors: 4,
   vertexStrokeColors: 4,
   uvs: 2
+};
+
+p5.RendererGL.prototype.beginContour = function() {
+  if (this.immediateMode.shapeMode !== constants.TESS) {
+    throw new Error('WebGL mode can only use contours with beginShape(TESS).');
+  }
+  this.immediateMode.contourIndices.push(
+    this.immediateMode.geometry.vertices.length
+  );
 };
 
 /**
@@ -238,10 +248,19 @@ p5.RendererGL.prototype._processVertices = function(mode) {
   }
   // For hollow shapes, user must set mode to TESS
   const convexShape = this.immediateMode.shapeMode === constants.TESS;
+  // If the shape has a contour, we have to re-triangulate to cut out the
+  // contour region
+  const hasContour = this.immediateMode.contourIndices.length > 0;
   // We tesselate when drawing curves or convex shapes
   const shouldTess =
     this._doFill &&
-    (this.isBezier || this.isQuadratic || this.isCurve || convexShape) &&
+    (
+      this.isBezier ||
+      this.isQuadratic ||
+      this.isCurve ||
+      convexShape ||
+      hasContour
+    ) &&
     this.immediateMode.shapeMode !== constants.LINES;
 
   if (shouldTess) {
@@ -262,6 +281,8 @@ p5.RendererGL.prototype._calculateEdges = function(
 ) {
   const res = [];
   let i = 0;
+  const contourIndices = this.immediateMode.contourIndices.slice();
+  let contourStart = 0;
   switch (shapeMode) {
     case constants.TRIANGLE_STRIP:
       for (i = 0; i < verts.length - 2; i++) {
@@ -313,12 +334,23 @@ p5.RendererGL.prototype._calculateEdges = function(
       res.push([i, i + 1]);
       break;
     default:
-      for (i = 0; i < verts.length - 1; i++) {
-        res.push([i, i + 1]);
+      // TODO: handle contours in other modes too
+      for (i = 0; i < verts.length; i++) {
+        // Handle breaks between contours
+        if (i + 1 < verts.length && i + 1 !== contourIndices[0]) {
+          res.push([i, i + 1]);
+        } else {
+          if (shouldClose || contourStart) {
+            res.push([i, contourStart]);
+          }
+          if (contourIndices.length > 0) {
+            contourStart = contourIndices.shift();
+          }
+        }
       }
       break;
   }
-  if (shouldClose) {
+  if (shapeMode !== constants.TESS && shouldClose) {
     res.push([verts.length - 1, 0]);
   }
   return res;
@@ -329,12 +361,21 @@ p5.RendererGL.prototype._calculateEdges = function(
  * @private
  */
 p5.RendererGL.prototype._tesselateShape = function() {
+  // TODO: handle non-TESS shape modes that have contours
   this.immediateMode.shapeMode = constants.TRIANGLES;
-  const contours = [
-    this._flatten(this.immediateMode.geometry.vertices.map((vert, i) => [
-      vert.x,
-      vert.y,
-      vert.z,
+  const contours = [[]];
+  for (let i = 0; i < this.immediateMode.geometry.vertices.length; i++) {
+    if (
+      this.immediateMode.contourIndices.length > 0 &&
+      this.immediateMode.contourIndices[0] === i
+    ) {
+      this.immediateMode.contourIndices.shift();
+      contours.push([]);
+    }
+    contours[contours.length-1].push(
+      this.immediateMode.geometry.vertices[i].x,
+      this.immediateMode.geometry.vertices[i].y,
+      this.immediateMode.geometry.vertices[i].z,
       this.immediateMode.geometry.uvs[i * 2],
       this.immediateMode.geometry.uvs[i * 2 + 1],
       this.immediateMode.geometry.vertexColors[i * 4],
@@ -344,8 +385,8 @@ p5.RendererGL.prototype._tesselateShape = function() {
       this.immediateMode.geometry.vertexNormals[i].x,
       this.immediateMode.geometry.vertexNormals[i].y,
       this.immediateMode.geometry.vertexNormals[i].z
-    ]))
-  ];
+    );
+  }
   const polyTriangles = this._triangulate(contours);
   this.immediateMode.geometry.vertices = [];
   this.immediateMode.geometry.vertexNormals = [];
