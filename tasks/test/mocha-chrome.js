@@ -15,8 +15,18 @@ module.exports = function(grunt) {
 
     // Launch Chrome in headless mode
     const browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      headless: 'new',
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--ignore-gpu-blocklist',
+        '--use-cmd-decoder=passthrough',
+        '--enable-webgl2-compute-context',
+        '--enable-webgl-image-chromium',
+        '--enable-webgl-draft-extensions',
+        '--gpu',
+        '--enable-logging'
+      ]
     });
 
     try {
@@ -26,6 +36,12 @@ module.exports = function(grunt) {
       for (const testURL of options.urls) {
         const event = new EventEmitter();
         const page = await browser.newPage();
+
+        const client = await page.target().createCDPSession();
+        await client.send('Page.setDownloadBehavior', {
+          behavior: 'deny',
+          downloadPath: '/dev/null'
+        });
 
         try {
           // Using eval to start the test in the browser

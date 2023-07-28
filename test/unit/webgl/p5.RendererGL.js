@@ -1718,30 +1718,38 @@ suite('p5.RendererGL', function() {
   });
 
   suite('clip()', function() {
-    let graphic;
+    //let myp5;
     function getClippedPixels(mode, mask) {
-      graphic = myp5.createGraphics(50, 50, mode);
-      graphic.pixelDensity(1);
+      // Clean up the last myp5 instance, since this may be called more than
+      // once per test
+      myp5.remove();
+      myp5 = new p5(function(p) {
+        p.setup = function() {};
+        p.draw = function() {};
+      });
+
+      myp5.createCanvas(50, 50, mode);
+      myp5.pixelDensity(1);
       if (mode === myp5.WEBGL) {
-        graphic.translate(-graphic.width / 2, -graphic.height / 2);
+        myp5.translate(-myp5.width / 2, -myp5.height / 2);
       }
       mask();
-      graphic.loadPixels();
-      return [...graphic.pixels];
+      myp5.loadPixels();
+      return [...myp5.pixels];
     }
 
     function getPixel(pixels, x, y) {
-      const start = (y * graphic.width + x) * 4;
+      const start = (y * myp5.width + x) * 4;
       return pixels.slice(start, start + 4);
     }
 
     test('It can mask in a shape', function() {
       const mask = () => {
-        graphic.background(255);
-        graphic.noStroke();
-        graphic.clip(() => graphic.rect(10, 10, 30, 30));
-        graphic.fill('red');
-        graphic.rect(5, 5, 40, 40);
+        myp5.background(255);
+        myp5.noStroke();
+        myp5.clip(() => myp5.rect(10, 10, 30, 30));
+        myp5.fill('red');
+        myp5.rect(5, 5, 40, 40);
       };
       const pixels = getClippedPixels(myp5.WEBGL, mask);
 
@@ -1760,11 +1768,11 @@ suite('p5.RendererGL', function() {
 
     test('It can mask out a shape', function() {
       const mask = () => {
-        graphic.background(255);
-        graphic.noStroke();
-        graphic.clip(() => graphic.rect(10, 10, 30, 30), { invert: true });
-        graphic.fill('red');
-        graphic.rect(5, 5, 40, 40);
+        myp5.background(255);
+        myp5.noStroke();
+        myp5.clip(() => myp5.rect(10, 10, 30, 30), { invert: true });
+        myp5.fill('red');
+        myp5.rect(5, 5, 40, 40);
       };
       const pixels = getClippedPixels(myp5.WEBGL, mask);
 
@@ -1783,14 +1791,14 @@ suite('p5.RendererGL', function() {
 
     test('It can mask multiple shapes', function() {
       const mask = () => {
-        graphic.background(255);
-        graphic.noStroke();
-        graphic.clip(() => {
-          graphic.rect(10, 10, 5, 5);
-          graphic.rect(20, 20, 5, 5);
+        myp5.background(255);
+        myp5.noStroke();
+        myp5.clip(() => {
+          myp5.rect(10, 10, 5, 5);
+          myp5.rect(20, 20, 5, 5);
         });
-        graphic.fill('red');
-        graphic.rect(5, 5, 40, 40);
+        myp5.fill('red');
+        myp5.rect(5, 5, 40, 40);
       };
       const pixels = getClippedPixels(myp5.WEBGL, mask);
 
@@ -1815,17 +1823,17 @@ suite('p5.RendererGL', function() {
 
     test('It can mask in a shape in a framebuffer', function() {
       const mask = () => {
-        const fbo = graphic.createFramebuffer();
-        graphic.background(255);
-        graphic.noStroke();
+        const fbo = myp5.createFramebuffer({ antialias: false });
+        myp5.background(255);
+        myp5.noStroke();
         fbo.begin();
-        graphic.translate(-graphic.width / 2, -graphic.height / 2);
-        graphic.clip(() => graphic.rect(10, 10, 30, 30));
-        graphic.fill('red');
-        graphic.rect(5, 5, 40, 40);
+        myp5.translate(-myp5.width / 2, -myp5.height / 2);
+        myp5.clip(() => myp5.rect(10, 10, 30, 30));
+        myp5.fill('red');
+        myp5.rect(5, 5, 40, 40);
         fbo.end();
-        graphic.image(fbo, 0, 0);
-        console.log(graphic.elt.toDataURL());
+        fbo.loadPixels();
+        myp5.image(fbo, 0, 0);
       };
       const pixels = getClippedPixels(myp5.WEBGL, mask);
 
