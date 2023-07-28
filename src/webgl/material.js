@@ -246,8 +246,11 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  *   uniform float darkness;
  *
  *   void main() {
+ *     // unflip the y coordinates
+ *     vec2 uv = vTexCoord;
+ *     uv.y = 1.0 - uv.y;
  *     // get the color at current pixel
- *     vec4 color = texture2D(tex0, vTexCoord);
+ *     vec4 color = texture2D(tex0, uv);
  *     // set the output color
  *     color.b = 1.0;
  *     color *= darkness;
@@ -279,8 +282,6 @@ p5.prototype.createFilterShader = function(fragSrc) {
     void main() {
       // transferring texcoords for the frag shader
       vTexCoord = aTexCoord;
-      // pre-flip the texcoords vertically (else user has to flip it right side up)
-      vTexCoord.y = 1.0 - vTexCoord.y;
     
       // copy position with a fourth coordinate for projection (1.0 is normal)
       vec4 positionVec4 = vec4(aPosition, 1.0);

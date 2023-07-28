@@ -127,7 +127,6 @@ suite('p5.RendererGL', function() {
       
       void main() {
         vTexCoord = aTexCoord;
-        vTexCoord.y = 1.0 - vTexCoord.y;
         vec4 positionVec4 = vec4(aPosition, 1.0);
         positionVec4.xy = positionVec4.xy * 2.0 - 1.0;
         gl_Position = positionVec4;
@@ -144,6 +143,7 @@ suite('p5.RendererGL', function() {
       
       void main() {
         vec2 uv = vTexCoord;
+        uv.y = 1.0 - uv.y;
         vec4 sampledColor = texture2D(tex0, uv);
         float gray = luma(sampledColor.rgb);
         gl_FragColor = vec4(gray, gray, gray, 1);
