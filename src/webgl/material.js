@@ -184,16 +184,19 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
 };
 
 /**
- * Like <a href="#/createShader">createShader()</a>, but with
- * a default vertex shader so that only a fragment shader is needed.
- * Creates a new <a href="#/p5.Shader">p5.Shader</a> object.
+ * Creates a new <a href="#/p5.Shader">p5.Shader</a> object with only a fragment shader, intended for creating image effects on the canvas.
+ * Like <a href="#/createShader">createShader()</a>, but with a default vertex shader included.
  *
- * The fragment shader is given a uniform, or variable, called `tex0`.
+ * Note:
+ * - The fragment shader is given a uniform, or variable, called `tex0`.
  * This is created specificially for filter shaders to access the canvas contents.
  *
+ * - `vTexCoord.y` must be flipped in order for things to render right-side up.
  *
+ * - A filter shader will not apply to a 3D geometry.
  *
- * Note: shaders can only be used in `WEBGL` mode.
+ * - Shaders can only be used in `WEBGL` mode.
+ *
  * For more info about filters and shaders, see Adam Ferriss' <a href="https://github.com/aferriss/p5jsShaderExamples">repo of shader examples</a>
  * or the <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">introduction to shaders</a> page.
  *
