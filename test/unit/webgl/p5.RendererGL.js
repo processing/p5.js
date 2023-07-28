@@ -268,6 +268,19 @@ suite('p5.RendererGL', function() {
       assert.deepEqual(p1, p2);
     });
 
+    test('filter shader works on a p5.Graphics', function() {
+      myp5.createCanvas(3,3, myp5.WEBGL);
+      let pg = myp5.createGraphics(3,3, myp5.WEBGL);
+      let s = pg.createFilterShader(frag);
+      pg.background('RED');
+      pg.loadPixels();
+      let p1 = pg.pixels.slice();
+      pg.filter(s);
+      pg.loadPixels();
+      let p2 = pg.pixels;
+      assert.notDeepEqual(p1, p2);
+    });
+
   });
 
   suite('text shader', function() {
