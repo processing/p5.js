@@ -196,6 +196,8 @@ class Framebuffer {
     const prevCam = this.target._renderer._curCamera;
     this.defaultCamera = this.createCamera();
     this.target._renderer._curCamera = prevCam;
+
+    this.draw(() => this.target.clear());
   }
 
   /**
