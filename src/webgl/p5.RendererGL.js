@@ -883,8 +883,17 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // (led to infinite loop)
     // so it's just created here once on the initial filter call.
     if (!this.filterGraphicsLayer) {
+      // the real _pInst is buried when this is a secondary p5.Graphics
+      const pInst =
+        this._pInst instanceof p5.Graphics ? this._pInst._pInst : this._pInst;
+      // create secondary layer
       this.filterGraphicsLayer =
-        new p5.Graphics(this.width, this.height, constants.WEBGL, this._pInst);
+        new p5.Graphics(
+          this.width,
+          this.height,
+          constants.WEBGL,
+          pInst
+        );
     }
     let pg = this.filterGraphicsLayer;
 
