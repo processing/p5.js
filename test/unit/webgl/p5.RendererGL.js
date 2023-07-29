@@ -13,7 +13,7 @@ suite('p5.RendererGL', function() {
   });
 
   teardown(function() {
-    myp5.remove();
+    //myp5.remove();
   });
 
   suite('createCanvas(w, h, WEBGL)', function() {
@@ -1827,6 +1827,7 @@ suite('p5.RendererGL', function() {
         myp5.background(255);
         myp5.noStroke();
         fbo.begin();
+        myp5.clear();
         myp5.translate(-myp5.width / 2, -myp5.height / 2);
         myp5.clip(() => myp5.rect(10, 10, 30, 30));
         myp5.fill('red');
