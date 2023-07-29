@@ -184,11 +184,13 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
 };
 
 /**
- * Creates a new <a href="#/p5.Shader">p5.Shader</a> object with only a fragment shader, intended for creating image effects on the canvas.
- * Like <a href="#/createShader">createShader()</a>, but with a default vertex shader included.
+ * Creates a new <a href="#/p5.Shader">p5.Shader</a> using only a fragment shader, as a convenience method for creating image effects.
+ * It's like <a href="#/createShader">createShader()</a> but with a default vertex shader included.
+ *
+ * <a href="#/createFilterShader">createFilterShader()</a> is intended to be used along with <a href="#/filter">filter()</a> for filtering the entire contents of a canvas in WebGL mode.
  *
  * Note:
- * - The fragment shader is given a uniform, or variable, called `tex0`.
+ * - The fragment shader is provided with a single texture input uniform called `tex0`.
  * This is created specificially for filter shaders to access the canvas contents.
  *
  * - A filter shader will not apply to a 3D geometry.
@@ -214,7 +216,7 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  *   createCanvas(100, 100, WEBGL);
  *   let s = createFilterShader(fragSrc);
  *   filter(s);
- *   describe('a yellow square');
+ *   describe('a yellow canvas');
  * }
  * </code>
  * </div>
