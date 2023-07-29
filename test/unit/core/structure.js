@@ -219,9 +219,8 @@ suite('Structure', function() {
       return new Promise(function(resolve, reject) {
         myp5.draw = function() {
           myp5.background(0);
-          myp5.fill(255);
-          myp5.noStroke();
-          myp5.circle(10, 10, 2);
+          myp5.stroke(255);
+          myp5.point(10, 10);
           if (myp5.get(10, 10)[0] === 0) {
             reject(new Error("Drawing matrix doesn't appear to be reset"));
           }
