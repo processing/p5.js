@@ -918,6 +918,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // draw pg contents onto main renderer
     this._pInst.push();
     this._pInst.noStroke(); // don't draw triangles for plane() geometry
+    this._pInst.scale(1, -1); // vertically flip output
     this._pInst.texture(pg);
     this._pInst.plane(this.width, this.height);
     this._pInst.pop();

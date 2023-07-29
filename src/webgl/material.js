@@ -191,8 +191,6 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  * - The fragment shader is given a uniform, or variable, called `tex0`.
  * This is created specificially for filter shaders to access the canvas contents.
  *
- * - `vTexCoord.y` must be flipped in order for things to render right-side up.
- *
  * - A filter shader will not apply to a 3D geometry.
  *
  * - Shaders can only be used in `WEBGL` mode.
@@ -239,11 +237,8 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  *   uniform float darkness;
  *
  *   void main() {
- *     // unflip the y coordinates
- *     vec2 uv = vTexCoord;
- *     uv.y = 1.0 - uv.y;
  *     // get the color at current pixel
- *     vec4 color = texture2D(tex0, uv);
+ *     vec4 color = texture2D(tex0, vTexCoord);
  *     // set the output color
  *     color.b = 1.0;
  *     color *= darkness;
