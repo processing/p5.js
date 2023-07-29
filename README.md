@@ -668,6 +668,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/e-coucou"><img src="https://avatars.githubusercontent.com/u/4691474?v=4?s=100" width="100px;" alt="e-Coucou"/><br /><sub><b>e-Coucou</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Ae-coucou" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/thatguyseven"><img src="https://avatars.githubusercontent.com/u/137221692?v=4?s=100" width="100px;" alt="Aaron Ni"/><br /><sub><b>Aaron Ni</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=thatguyseven" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/OnexiMedina"><img src="https://avatars.githubusercontent.com/u/112675769?v=4?s=100" width="100px;" alt="Onexi"/><br /><sub><b>Onexi</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=OnexiMedina" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 
