@@ -283,8 +283,8 @@ p5.prototype.noise = function(x, y = 0, z = 0) {
  * octaves contribute more to the output signal. They define the overall
  * intensity of the noise. Higher octaves create finer-grained details.
  *
- * By default, noise values combine four octaves. Each higher octave
- * contributes half as much (50% less) compared to its predecessor.
+ * By default, noise values are created by combining four octaves. Each higher
+ * octave contributes half as much (50% less) compared to its predecessor.
  * `noiseDetail()` changes the number of octaves and the falloff amount. For
  * example, calling `noiseDetail(6, 0.25)` ensures that
  * <a href="#/p5/noise">noise()</a> will use six octaves. Each higher octave
