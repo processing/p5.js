@@ -112,8 +112,6 @@ If you want to work/contribute to P5's🌸 codebase as a developer, either direc
     `npm test`
   (it takes time, but it ensures that existing behaviours are not being broken)
 8. Once it is done, you can commit the changes and create a [Pull Request](https://p5js.org/contributor-docs/#/./contributor_guidelines?id=pull-requests). 
-   
-If you are still not sure, how to start with contributing to P5🌸 do not worry we have got you covered, detailed information present [here](https://p5js.org/contributor-docs/#/./contributor_guidelines).
 
 ## Using the Github edit functionality
 When viewing a file on the Github web interface, near the top of the content of the file you are viewing will be a pencil icon button. This button is a convenient edit feature provided by Github that simplifies many of the processes we will be covering below and can be used to make quick and simple edits to the file you are viewing.
