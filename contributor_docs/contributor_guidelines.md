@@ -6,15 +6,13 @@ If you are looking to contribute outside of the p5.js repositories (writing tuto
 This is a fairly long and comprehensive document but we will try to deliniate all steps and points as clearly as possible. Do utilize the table of contents, the browser search functionality (`Ctrl + f` or `Cmd + f`) to find sections relevant to you. Feel free to skip sections if they are not relevant to your planned contributions as well.
 
 # Table of Contents
-- [Contributor Guidelines](#contributor-guidelines)
-- [Table of Contents](#table-of-contents)
 - [All about issues](#all-about-issues)
 	- [What are issues?](#what-are-issues)
 	- [Issue templates](#issue-templates)
-		- ["Found a bug"](#found-a-bug)
-		- ["Existing Feature Enhancement"](#existing-feature-enhancement)
-		- ["New Feature Request"](#new-feature-request)
-		- ["Discussion"](#discussion)
+		- [Found a bug](#found-a-bug)
+		- [Existing Feature Enhancement](#existing-feature-enhancement)
+		- [New Feature Request](#new-feature-request)
+		- [Discussion](#discussion)
 - [Working on p5.js codebase](#working-on-p5js-codebase)
 	- [Quick Get Started For Developers](#quick-get-started-for-developers)
 	- [Using the Github edit functionality](#using-the-github-edit-functionality)
@@ -98,7 +96,7 @@ You should not "jump the queue" by filing a PR for an issue that either someone 
 ## Quick Get Started For Developers
 If you want to work/contribute to P5's🌸 codebase as a developer, either directly for improving P5 or for improving it's sub projects like [Friendly Error Systems](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md), you can follow the following steps directly :
 
-1. Create a fork of P5 repo.
+1. Create a fork of p5.js.
 2. Clone your locally created fork.
 3. Add upstream using the following command : 
    `git remote add upstream https://github.com/processing/p5.js`
