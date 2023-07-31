@@ -51,25 +51,7 @@ If you have found a bug in the p5.js library, you can file it here under the [�
 
 
 ## Get Started for Developers
-
-If you want to work/contribute to P5's🌸 codebase as a developer, either directly for improving P5 or for improving it's sub projects like [Friendly Error Systems](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md), you can follow the following steps directly :
-
-1. Create a fork of P5 repo.
-2. Clone your locally created fork.
-3. Add upstream using the following command : 
-   `git remote add upstream https://github.com/processing/p5.js`
-   [More information on Configuring a remote repository for a fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-repository-for-a-fork)
-4. Make sure your machine has [NodeJs](https://nodejs.org/en/download) installed, check it with the        following command : 
-   `node -v`
-5. Run : `npm ci`
-6. Create a git branch of the `main` branch having a descriptive branch name using :
-   `git checkout -b [branch_name]`
-7. As you start making changes to the codebase, frequently run : 
-    `npm test`
-  (it takes time, but it ensures that existing behaviours are not being broken)
-8. Once it is done, you can commit the changes and create a [Pull Request](https://p5js.org/contributor-docs/#/./contributor_guidelines?id=pull-requests). 
-   
-If you are still not sure, how to start with contributing to P5🌸 do not worry we have got you covered, detailed information present [here](https://p5js.org/contributor-docs/#/./contributor_guidelines).
+A quick Getting Started with the Build and setting up the repository could be found [here](https://p5js.org/contributor-docs/#/contributor_guidelines?id=quick-get-started-for-developers)
 
 
 ## Stewards

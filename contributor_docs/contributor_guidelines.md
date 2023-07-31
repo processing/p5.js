@@ -6,14 +6,17 @@ If you are looking to contribute outside of the p5.js repositories (writing tuto
 This is a fairly long and comprehensive document but we will try to deliniate all steps and points as clearly as possible. Do utilize the table of contents, the browser search functionality (`Ctrl + f` or `Cmd + f`) to find sections relevant to you. Feel free to skip sections if they are not relevant to your planned contributions as well.
 
 # Table of Contents
+- [Contributor Guidelines](#contributor-guidelines)
+- [Table of Contents](#table-of-contents)
 - [All about issues](#all-about-issues)
 	- [What are issues?](#what-are-issues)
 	- [Issue templates](#issue-templates)
-		- [Found a bug](#found-a-bug)
-		- [Existing Feature Enhancement](#existing-feature-enhancement)
-		- [New Feature Request](#new-feature-request)
-		- [Discussion](#discussion)
+		- ["Found a bug"](#found-a-bug)
+		- ["Existing Feature Enhancement"](#existing-feature-enhancement)
+		- ["New Feature Request"](#new-feature-request)
+		- ["Discussion"](#discussion)
 - [Working on p5.js codebase](#working-on-p5js-codebase)
+	- [Quick Get Started For Developers](#quick-get-started-for-developers)
 	- [Using the Github edit functionality](#using-the-github-edit-functionality)
 	- [Forking p5.js and working from your fork](#forking-p5js-and-working-from-your-fork)
 	- [Codebase breakdown](#codebase-breakdown)
@@ -91,6 +94,26 @@ Now that your issue has been discussed, an implementation approved by stewards, 
 Similarly, if you have come across an issue or joined in discussions of an issue and an implementation has been approved by stewards but neither the original issue author nor other members of the community has indicated they are willing to work on the issue, you may volunteer for submit a contribution here and have the stewards assign the issue to you.
 
 You should not "jump the queue" by filing a PR for an issue that either someone else has indicated willingness to submit a contribution or has already been assigned to someone else. We will always prioritise "first assigned first serve" order for accepting code contribution for an issue, if you file a PR for an issue while someone else is still working on the same issue, your PR will be closed. If you see that it has been a few months since last activity on an issue with an assigned individual, you can check in with them by leaving a polite comment on the issue asking for progress and if they need help with the implementation. We generally allow for fairly long time frame for people to work on their contributions as we understand that most people will often be working on a volunteer basis or it simply takes more time for them to work on the feature; similarly, you should work at your own pace and be confident that there is no hard time limit on how long you can spend working on something. That being said, if you are having trouble with any aspect of your code contribution, do not hesitate to ask for help in the issue, the stewards and maintainers, as well as members of our community, will do their best to guide you!
+
+## Quick Get Started For Developers
+If you want to work/contribute to P5's🌸 codebase as a developer, either directly for improving P5 or for improving it's sub projects like [Friendly Error Systems](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md), you can follow the following steps directly :
+
+1. Create a fork of P5 repo.
+2. Clone your locally created fork.
+3. Add upstream using the following command : 
+   `git remote add upstream https://github.com/processing/p5.js`
+   [More information on Configuring a remote repository for a fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-repository-for-a-fork)
+4. Make sure your machine has [NodeJs](https://nodejs.org/en/download) installed, check it with the        following command : 
+   `node -v`
+5. Run : `npm ci`
+6. Create a git branch of the `main` branch having a descriptive branch name using :
+   `git checkout -b [branch_name]`
+7. As you start making changes to the codebase, frequently run : 
+    `npm test`
+  (it takes time, but it ensures that existing behaviours are not being broken)
+8. Once it is done, you can commit the changes and create a [Pull Request](https://p5js.org/contributor-docs/#/./contributor_guidelines?id=pull-requests). 
+   
+If you are still not sure, how to start with contributing to P5🌸 do not worry we have got you covered, detailed information present [here](https://p5js.org/contributor-docs/#/./contributor_guidelines).
 
 ## Using the Github edit functionality
 When viewing a file on the Github web interface, near the top of the content of the file you are viewing will be a pencil icon button. This button is a convenient edit feature provided by Github that simplifies many of the processes we will be covering below and can be used to make quick and simple edits to the file you are viewing.
