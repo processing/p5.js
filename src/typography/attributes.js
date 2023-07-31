@@ -189,7 +189,7 @@ p5.prototype.textStyle = function(theStyle) {
 };
 
 /**
- * Calculates and returns the width of any character or text string.
+ * Calculates and returns the width of any character or the maximum width of any paragrph.
  *
  * @method textWidth
  * @param {String} theText the String of characters to measure
@@ -212,14 +212,42 @@ p5.prototype.textStyle = function(theStyle) {
  * describe('Letter P and p5.js are displayed with vertical lines at end.');
  * </code>
  * </div>
+ *
+ *
+ * <div>
+ * <code>
+ * textSize(28);
+ *
+ * let aChar = 'text\nWidth';
+ * let cWidth = textWidth(aChar);
+ * text(aChar, 0, 40);
+ * line(cWidth, 0, cWidth, 100);
+ *
+ * describe('Text text and Width() are displayed with vertical lines at end of Width().');
+ * </code>
+ * </div>
  */
-p5.prototype.textWidth = function(...args) {
+p5.prototype.textWidth = function (...args) {
   args[0] += '';
   p5._validateParameters('textWidth', args);
   if (args[0].length === 0) {
     return 0;
   }
-  return this._renderer.textWidth(...args);
+
+  // Only use the line with the longest width, and replace tabs with double-space
+  const textLines = args[0].replace(/\t/g, '  ').split(/\r?\n|\r|\n/g);
+
+  const newArr = [];
+
+  // Return the textWidth for every line
+  for(let i=0; i<textLines.length; i++){
+    newArr.push(this._renderer.textWidth(textLines[i]));
+  }
+
+  // Return the largest textWidth
+  const largestWidth = Math.max(...newArr);
+
+  return largestWidth;
 };
 
 /**

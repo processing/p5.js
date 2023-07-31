@@ -59,8 +59,12 @@ let isFirstContour = true;
  * white rect and smaller grey rect with red outlines in center of canvas.
  */
 p5.prototype.beginContour = function() {
-  contourVertices = [];
-  isContour = true;
+  if (this._renderer.isP3D) {
+    this._renderer.beginContour();
+  } else {
+    contourVertices = [];
+    isContour = true;
+  }
   return this;
 };
 
@@ -563,6 +567,10 @@ p5.prototype.curveVertex = function(...args) {
  * white rect and smaller grey rect with red outlines in center of canvas.
  */
 p5.prototype.endContour = function() {
+  if (this._renderer.isP3D) {
+    return this;
+  }
+
   const vert = contourVertices[0].slice(); // copy all data
   vert.isVert = contourVertices[0].isVert;
   vert.moveTo = false;

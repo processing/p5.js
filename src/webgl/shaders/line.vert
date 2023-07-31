@@ -137,8 +137,10 @@ void main() {
     // Perspective ---
     // convert from world to clip by multiplying with projection scaling factor
     // to get the right thickness (see https://github.com/processing/processing/issues/5182)
-    // invert Y, projections in Processing invert Y
-    curPerspScale = (uProjectionMatrix * vec4(1, -1, 0, 0)).xy;
+
+    // The y value of the projection matrix may be flipped if rendering to a Framebuffer.
+    // Multiplying again by its sign here negates the flip to get just the scale.
+    curPerspScale = (uProjectionMatrix * vec4(1, sign(uProjectionMatrix[1][1]), 0, 0)).xy;
   } else {
     // No Perspective ---
     // multiply by W (to cancel out division by W later in the pipeline) and

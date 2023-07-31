@@ -174,6 +174,12 @@ class Framebuffer {
 
     this._checkIfFormatsAvailable();
 
+    if (settings.stencil && !this.useDepth) {
+      console.warn('A stencil buffer can only be used if also using depth. Since the framebuffer has no depth buffer, the stencil buffer will be ignored.');
+    }
+    this.useStencil = this.useDepth &&
+      (settings.stencil === undefined ? true : settings.stencil);
+
     this.framebuffer = gl.createFramebuffer();
     if (!this.framebuffer) {
       throw new Error('Unable to create a framebuffer');
@@ -190,6 +196,8 @@ class Framebuffer {
     const prevCam = this.target._renderer._curCamera;
     this.defaultCamera = this.createCamera();
     this.target._renderer._curCamera = prevCam;
+
+    this.draw(() => this.target.clear());
   }
 
   /**
@@ -445,7 +453,7 @@ class Framebuffer {
 
       gl.framebufferTexture2D(
         gl.FRAMEBUFFER,
-        gl.DEPTH_ATTACHMENT,
+        this.useStencil ? gl.DEPTH_STENCIL_ATTACHMENT : gl.DEPTH_ATTACHMENT,
         gl.TEXTURE_2D,
         depthTexture,
         0
@@ -494,7 +502,7 @@ class Framebuffer {
       if (this.useDepth) {
         gl.framebufferRenderbuffer(
           gl.FRAMEBUFFER,
-          gl.DEPTH_ATTACHMENT,
+          this.useStencil ? gl.DEPTH_STENCIL_ATTACHMENT : gl.DEPTH_ATTACHMENT,
           gl.RENDERBUFFER,
           this.depthRenderbuffer
         );
@@ -612,15 +620,37 @@ class Framebuffer {
     let type, format, internalFormat;
     const gl = this.gl;
 
-    if (this.depthFormat === constants.FLOAT) {
-      type = gl.FLOAT;
+    if (this.useStencil) {
+      if (this.depthFormat === constants.FLOAT) {
+        type = gl.FLOAT_32_UNSIGNED_INT_24_8_REV;
+      } else if (this.target.webglVersion === constants.WEBGL2) {
+        type = gl.UNSIGNED_INT_24_8;
+      } else {
+        type = gl.getExtension('WEBGL_depth_texture').UNSIGNED_INT_24_8_WEBGL;
+      }
     } else {
-      type = gl.UNSIGNED_INT;
+      if (this.depthFormat === constants.FLOAT) {
+        type = gl.FLOAT;
+      } else {
+        type = gl.UNSIGNED_INT;
+      }
     }
 
-    format = gl.DEPTH_COMPONENT;
+    if (this.useStencil) {
+      format = gl.DEPTH_STENCIL;
+    } else {
+      format = gl.DEPTH_COMPONENT;
+    }
 
-    if (this.target.webglVersion === constants.WEBGL2) {
+    if (this.useStencil) {
+      if (this.depthFormat === constants.FLOAT) {
+        internalFormat = gl.DEPTH32F_STENCIL8;
+      } else if (this.target.webglVersion === constants.WEBGL2) {
+        internalFormat = gl.DEPTH24_STENCIL8;
+      } else {
+        internalFormat = gl.DEPTH_STENCIL;
+      }
+    } else if (this.target.webglVersion === constants.WEBGL2) {
       if (this.depthFormat === constants.FLOAT) {
         internalFormat = gl.DEPTH_COMPONENT32F;
       } else {

@@ -4,7 +4,7 @@ Thanks for your interest in contributing to p5.js! Our community values contribu
 
 This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. We use the @all-contributors bot to handle adding people to the README.md file. You can ask @all-contributors bot to add you in an issue or PR comment like so:
 ```
-@all-contributors please add @[your github handle] for [your contribution type]
+@all-contributors please add @[your GitHub handle] for [your contribution type]
 ```
 You can find relevant contribution type [here](https://allcontributors.org/docs/en/emoji-key). Although we will usually automatically add you to the contributor list using the bot after merging your PR. The contributor docs are published on p5.js [website](https://p5js.org/contributor-docs/#/), and hosted on p5.js [GitHub repository](https://github.com/processing/p5.js/tree/main/contributor_docs).
 
