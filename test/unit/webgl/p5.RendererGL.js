@@ -13,7 +13,7 @@ suite('p5.RendererGL', function() {
   });
 
   teardown(function() {
-    myp5.remove();
+    //myp5.remove();
   });
 
   suite('createCanvas(w, h, WEBGL)', function() {
@@ -1714,6 +1714,138 @@ suite('p5.RendererGL', function() {
       myp5.setAttributes({ alpha: true });
       assert.equal(myp5.canvas, renderer.canvas);
       done();
+    });
+  });
+
+  suite('clip()', function() {
+    //let myp5;
+    function getClippedPixels(mode, mask) {
+      // Clean up the last myp5 instance, since this may be called more than
+      // once per test
+      myp5.remove();
+      myp5 = new p5(function(p) {
+        p.setup = function() {};
+        p.draw = function() {};
+      });
+
+      myp5.createCanvas(50, 50, mode);
+      myp5.pixelDensity(1);
+      if (mode === myp5.WEBGL) {
+        myp5.translate(-myp5.width / 2, -myp5.height / 2);
+      }
+      mask();
+      myp5.loadPixels();
+      return [...myp5.pixels];
+    }
+
+    function getPixel(pixels, x, y) {
+      const start = (y * myp5.width + x) * 4;
+      return pixels.slice(start, start + 4);
+    }
+
+    test('It can mask in a shape', function() {
+      const mask = () => {
+        myp5.background(255);
+        myp5.noStroke();
+        myp5.clip(() => myp5.rect(10, 10, 30, 30));
+        myp5.fill('red');
+        myp5.rect(5, 5, 40, 40);
+      };
+      const pixels = getClippedPixels(myp5.WEBGL, mask);
+
+      // Regions where nothing is drawn should be white
+      assert.deepEqual(getPixel(pixels, 0, 0), [255, 255, 255, 255]);
+
+      // Outside the clipped region should be white
+      assert.deepEqual(getPixel(pixels, 7, 7), [255, 255, 255, 255]);
+
+      // Inside the clipped region should be red
+      assert.deepEqual(getPixel(pixels, 15, 15), [255, 0, 0, 255]);
+
+      // It should match 2D mode
+      assert.deepEqual(pixels, getClippedPixels(myp5.P2D, mask));
+    });
+
+    test('It can mask out a shape', function() {
+      const mask = () => {
+        myp5.background(255);
+        myp5.noStroke();
+        myp5.clip(() => myp5.rect(10, 10, 30, 30), { invert: true });
+        myp5.fill('red');
+        myp5.rect(5, 5, 40, 40);
+      };
+      const pixels = getClippedPixels(myp5.WEBGL, mask);
+
+      // Regions where nothing is drawn should be white
+      assert.deepEqual(getPixel(pixels, 0, 0), [255, 255, 255, 255]);
+
+      // Outside the clipped region should be red
+      assert.deepEqual(getPixel(pixels, 7, 7), [255, 0, 0, 255]);
+
+      // Inside the clipped region should be white
+      assert.deepEqual(getPixel(pixels, 15, 15), [255, 255, 255, 255]);
+
+      // It should match 2D mode
+      assert.deepEqual(pixels, getClippedPixels(myp5.P2D, mask));
+    });
+
+    test('It can mask multiple shapes', function() {
+      const mask = () => {
+        myp5.background(255);
+        myp5.noStroke();
+        myp5.clip(() => {
+          myp5.rect(10, 10, 5, 5);
+          myp5.rect(20, 20, 5, 5);
+        });
+        myp5.fill('red');
+        myp5.rect(5, 5, 40, 40);
+      };
+      const pixels = getClippedPixels(myp5.WEBGL, mask);
+
+      // Regions where nothing is drawn should be white
+      assert.deepEqual(getPixel(pixels, 0, 0), [255, 255, 255, 255]);
+
+      // Outside the clipped region should be white
+      assert.deepEqual(getPixel(pixels, 7, 7), [255, 255, 255, 255]);
+
+      // Inside the first rectangle should be red
+      assert.deepEqual(getPixel(pixels, 12, 12), [255, 0, 0, 255]);
+
+      // Between the rectangles should be white
+      assert.deepEqual(getPixel(pixels, 17, 17), [255, 255, 255, 255]);
+
+      // Inside the second rectangle should be red
+      assert.deepEqual(getPixel(pixels, 22, 22), [255, 0, 0, 255]);
+
+      // It should match 2D mode
+      assert.deepEqual(pixels, getClippedPixels(myp5.P2D, mask));
+    });
+
+    test('It can mask in a shape in a framebuffer', function() {
+      const mask = () => {
+        const fbo = myp5.createFramebuffer({ antialias: false });
+        myp5.background(255);
+        myp5.noStroke();
+        fbo.begin();
+        myp5.clear();
+        myp5.translate(-myp5.width / 2, -myp5.height / 2);
+        myp5.clip(() => myp5.rect(10, 10, 30, 30));
+        myp5.fill('red');
+        myp5.rect(5, 5, 40, 40);
+        fbo.end();
+        fbo.loadPixels();
+        myp5.image(fbo, 0, 0);
+      };
+      const pixels = getClippedPixels(myp5.WEBGL, mask);
+
+      // Regions where nothing is drawn should be white
+      assert.deepEqual(getPixel(pixels, 0, 0), [255, 255, 255, 255]);
+
+      // Outside the clipped region should be white
+      assert.deepEqual(getPixel(pixels, 7, 7), [255, 255, 255, 255]);
+
+      // Inside the clipped region should be red
+      assert.deepEqual(getPixel(pixels, 15, 15), [255, 0, 0, 255]);
     });
   });
 });
