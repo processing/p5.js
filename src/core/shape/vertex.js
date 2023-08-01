@@ -586,6 +586,7 @@ p5.prototype.endContour = function() {
  * data defined since the previous call to <a href="#/p5/beginShape">beginShape()</a> is written into the image
  * buffer. The constant CLOSE as the value for the `mode` parameter to close
  * the shape (to connect the beginning and the end).
+ * When using instancing with <a href="#/p5/endShape">endShape()</a> the instancing will not apply to the strokes.
  *
  * @method endShape
  * @param  {Constant} [mode] use CLOSE to close the shape
@@ -626,8 +627,12 @@ p5.prototype.endContour = function() {
  * void main() {
  *
  *   vec4 positionVec4 = vec4(aPosition, 1.0);
+ * 
+ *   // gl_InstanceID represents a numeric value for each instance
+ *   // using gl_InstanceID allows us to move each instance separately
+ *   // here we move each instance horizontally by id * 100
  *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4 -
- *   vec4(vec2(float(gl_InstanceID) * 100.0, 0.0), 0.0, 0.0);
+ *     vec4(vec2(float(gl_InstanceID) * 100.0, 0.0), 0.0, 0.0);
  * }
  * `;
  * let fs = `#version 300 es
@@ -643,7 +648,6 @@ p5.prototype.endContour = function() {
  *
  * function setup() {
  *   createCanvas(400, 400, WEBGL);
- *   // Please note that it's best practice to put shaders in other files
  *   fx = createShader(vs, fs);
  * }
  *
