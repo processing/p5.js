@@ -627,12 +627,15 @@ p5.prototype.endContour = function() {
  * void main() {
  *
  *   vec4 positionVec4 = vec4(aPosition, 1.0);
- * 
+ *
  *   // gl_InstanceID represents a numeric value for each instance
  *   // using gl_InstanceID allows us to move each instance separately
  *   // here we move each instance horizontally by id * 100
+ *   float xOffset = float(gl_InstanceID) * 100.0;
+ *
+ *   // apply the offset to the final position
  *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4 -
- *     vec4(vec2(float(gl_InstanceID) * 100.0, 0.0), 0.0, 0.0);
+ *     vec4(xOffset, 0.0, 0.0, 0.0);
  * }
  * `;
  * let fs = `#version 300 es
