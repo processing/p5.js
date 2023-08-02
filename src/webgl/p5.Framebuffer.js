@@ -882,9 +882,10 @@ class Framebuffer {
   }
 
   /**
-   * When setting up a framebuffer to be written to, which WebGL framebuffer
-   * should be active. Antialiased framebuffers first write to a multisampled
-   * renderbuffer, which other framebuffers can write directly to their main
+   * When making a p5.Framebuffer active so that it may be drawn to, this method
+   * returns the underlying WebGL framebuffer that needs to be active to
+   * support this. Antialiased framebuffers first write to a multisampled
+   * renderbuffer, while other framebuffers can write directly to their main
    * framebuffers.
    *
    * @method _framebufferToBind
