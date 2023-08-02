@@ -850,25 +850,13 @@ class Framebuffer {
    * canvas: once in the top left, and again, larger, in the bottom right.
    */
   begin() {
-    const gl = this.gl;
-    this.prevFramebuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
-    if (this.antialias) {
-      // If antialiasing, draw to an antialiased renderbuffer rather
-      // than directly to the texture. In end() we will copy from the
-      // renderbuffer to the texture.
-      gl.bindFramebuffer(gl.FRAMEBUFFER, this.aaFramebuffer);
-    } else {
-      gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
+    this.prevFramebuffer = this.target._renderer.activeFramebuffer();
+    if (this.prevFramebuffer) {
+      this.prevFramebuffer._beforeEnd();
     }
-    this.prevViewport = gl.getParameter(gl.VIEWPORT);
-    gl.viewport(
-      0,
-      0,
-      this.width * this.density,
-      this.height * this.density
-    );
+    this.target._renderer.activeFramebuffers.push(this);
+    this._beforeBegin();
     this.target.push();
-
     // Apply the framebuffer's camera. This does almost what
     // RendererGL.reset() does, but this does not try to clear any buffers;
     // it only sets the camera.
@@ -894,17 +882,51 @@ class Framebuffer {
   }
 
   /**
-   * After having previously called
-   * <a href="#/p5.Framebuffer/begin">begin()</a>, this method stops drawing
-   * functions from going to the framebuffer's texture, allowing them to go
-   * right to the canvas again. After this, one can read from the framebuffer's
-   * texture.
+   * When setting up a framebuffer to be written to, which WebGL framebuffer
+   * should be active. Antialiased framebuffers first write to a multisampled
+   * renderbuffer, which other framebuffers can write directly to their main
+   * framebuffers.
    *
-   * @method end
+   * @method _framebufferToBind
+   * @private
    */
-  end() {
-    const gl = this.gl;
+  _framebufferToBind() {
     if (this.antialias) {
+      // If antialiasing, draw to an antialiased renderbuffer rather
+      // than directly to the texture. In end() we will copy from the
+      // renderbuffer to the texture.
+      return this.aaFramebuffer;
+    } else {
+      return this.framebuffer;
+    }
+  }
+
+  /**
+   * Ensures that the framebuffer is ready to be drawn to
+   *
+   * @method _beforeBegin
+   * @private
+   */
+  _beforeBegin() {
+    const gl = this.gl;
+    gl.bindFramebuffer(gl.FRAMEBUFFER, this._framebufferToBind());
+    gl.viewport(
+      0,
+      0,
+      this.width * this.density,
+      this.height * this.density
+    );
+  }
+
+  /**
+   * Ensures that the framebuffer is ready to be read by other framebuffers.
+   *
+   * @method _beforeEnd
+   * @private
+   */
+  _beforeEnd() {
+    if (this.antialias) {
+      const gl = this.gl;
       gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.aaFramebuffer);
       gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, this.framebuffer);
       const partsToCopy = [
@@ -926,9 +948,31 @@ class Framebuffer {
         );
       }
     }
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this.prevFramebuffer);
-    gl.viewport(...this.prevViewport);
+  }
+
+  /**
+   * After having previously called
+   * <a href="#/p5.Framebuffer/begin">begin()</a>, this method stops drawing
+   * functions from going to the framebuffer's texture, allowing them to go
+   * right to the canvas again. After this, one can read from the framebuffer's
+   * texture.
+   *
+   * @method end
+   */
+  end() {
+    const gl = this.gl;
+    const fbo = this.target._renderer.activeFramebuffers.pop();
+    if (fbo !== this) {
+      throw new Error("It looks like you've called end() while another Framebuffer is active.");
+    }
+    this._beforeEnd();
     this.target.pop();
+    if (this.prevFramebuffer) {
+      this.prevFramebuffer._beforeBegin();
+    } else {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      gl.viewport(...this.target._renderer._viewport);
+    }
   }
 
   /**
@@ -989,7 +1033,7 @@ class Framebuffer {
    */
   loadPixels() {
     const gl = this.gl;
-    const prevFramebuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
+    const prevFramebuffer = this.target._renderer.activeFramebuffer();
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
     const colorFormat = this._glColorFormat();
     this.pixels = readPixelsWebGL(
@@ -1003,7 +1047,11 @@ class Framebuffer {
       colorFormat.format,
       colorFormat.type
     );
-    gl.bindFramebuffer(gl.FRAMEBUFFER, prevFramebuffer);
+    if (prevFramebuffer) {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, prevFramebuffer._framebufferToBind());
+    } else {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    }
   }
 
   /**
@@ -1219,7 +1267,7 @@ class Framebuffer {
     );
     this.colorP5Texture.unbindTexture();
 
-    this.prevFramebuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
+    const prevFramebuffer = this.target._renderer.activeFramebuffer();
     if (this.antialias) {
       // We need to make sure the antialiased framebuffer also has the updated
       // pixels so that if more is drawn to it, it goes on top of the updated
@@ -1247,7 +1295,14 @@ class Framebuffer {
         gl.clearDepth(1);
         gl.clear(gl.DEPTH_BUFFER_BIT);
       }
-      gl.bindFramebuffer(gl.FRAMEBUFFER, this.prevFramebuffer);
+      if (prevFramebuffer) {
+        gl.bindFramebuffer(
+          gl.FRAMEBUFFER,
+          prevFramebuffer._framebufferToBind()
+        );
+      } else {
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      }
     }
   }
 }
