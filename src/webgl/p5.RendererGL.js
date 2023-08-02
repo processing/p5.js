@@ -5,6 +5,7 @@ import './p5.Shader';
 import './p5.Camera';
 import '../core/p5.Renderer';
 import './p5.Matrix';
+import './p5.Framebuffer';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -580,6 +581,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // set of framebuffers in use
     this.framebuffers = new Set();
 
+    // for post processing step
+    this.filterShader = undefined;
+    this.filterGraphicsLayer = undefined;
+
     this.textureMode = constants.IMAGE;
     // default wrap settings
     this.textureWrapX = constants.CLAMP;
@@ -878,12 +883,61 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.curStrokeJoin = join;
   }
 
-  filter(filterType) {
-    // filter can be achieved using custom shaders.
-    // https://github.com/aferriss/p5jsShaderExamples
-    // https://itp-xstory.github.io/p5js-shaders/#/
-    p5._friendlyError('filter() does not work in WEBGL mode');
+  filter(args) {
+    // Couldn't create graphics in RendererGL constructor
+    // (led to infinite loop)
+    // so it's just created here once on the initial filter call.
+    if (!this.filterGraphicsLayer) {
+      // the real _pInst is buried when this is a secondary p5.Graphics
+      const pInst =
+        this._pInst instanceof p5.Graphics ? this._pInst._pInst : this._pInst;
+      // create secondary layer
+      this.filterGraphicsLayer =
+        new p5.Graphics(
+          this.width,
+          this.height,
+          constants.WEBGL,
+          pInst
+        );
+    }
+    let pg = this.filterGraphicsLayer;
+
+    if (typeof args[0] === 'string') {
+      // TODO, handle filter constants:
+      //   this.filterShader = map(args[0], {GRAYSCALE: grayscaleShader, ...})
+      //   filterOperationParameter = undefined or args[1]
+      p5._friendlyError('webgl filter implementation in progress');
+      return;
+    }
+    let userShader = args[0];
+
+    // Copy the user shader once on the initial filter call,
+    // since it has to be bound to pg and not main
+    let isSameUserShader = (
+      this.filterShader !== undefined &&
+      userShader._vertSrc === this.filterShader._vertSrc &&
+      userShader._fragSrc === this.filterShader._fragSrc
+    );
+    if (!isSameUserShader) {
+      this.filterShader =
+        new p5.Shader(pg._renderer, userShader._vertSrc, userShader._fragSrc);
+      this.filterShader.parentShader = userShader;
+    }
+
+    // apply shader to pg
+    pg.shader(this.filterShader);
+    this.filterShader.setUniform('tex0', this);
+    pg.rect(0,0,this.width,this.height);
+
+    // draw pg contents onto main renderer
+    this._pInst.push();
+    this._pInst.noStroke(); // don't draw triangles for plane() geometry
+    this._pInst.scale(1, -1); // vertically flip output
+    this._pInst.texture(pg);
+    this._pInst.plane(this.width, this.height);
+    this._pInst.pop();
   }
+
   blendMode(mode) {
     if (
       mode === constants.DARKEST ||
@@ -1161,6 +1215,11 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       // Notify framebuffers of the resize so that any auto-sized framebuffers
       // can also update their size
       framebuffer._canvasSizeChanged();
+    }
+
+    // resize filter graphics layer
+    if (this.filterGraphicsLayer) {
+      p5.Renderer.prototype.resize.call(this.filterGraphicsLayer, w, h);
     }
   }
 

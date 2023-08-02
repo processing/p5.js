@@ -118,6 +118,159 @@ suite('p5.RendererGL', function() {
     });
   });
 
+  suite('filter shader', function() {
+    setup(function() {
+      vert = `attribute vec3 aPosition;
+      attribute vec2 aTexCoord;
+      
+      varying vec2 vTexCoord;
+      
+      void main() {
+        vTexCoord = aTexCoord;
+        vec4 positionVec4 = vec4(aPosition, 1.0);
+        positionVec4.xy = positionVec4.xy * 2.0 - 1.0;
+        gl_Position = positionVec4;
+      }`;
+
+      frag = `precision highp float;
+      varying vec2 vTexCoord;
+      
+      uniform sampler2D tex0;
+      
+      float luma(vec3 color) {
+        return dot(color, vec3(0.299, 0.587, 0.114));
+      }
+      
+      void main() {
+        vec2 uv = vTexCoord;
+        uv.y = 1.0 - uv.y;
+        vec4 sampledColor = texture2D(tex0, uv);
+        float gray = luma(sampledColor.rgb);
+        gl_FragColor = vec4(gray, gray, gray, 1);
+      }`;
+    });
+
+    teardown(function() {
+    });
+
+    test('filter accepts correct params', function() {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      let s = myp5.createShader(vert, frag);
+      myp5.filter(s);
+      myp5.filter(myp5.POSTERIZE, 64);
+    });
+
+    test('secondary graphics layer is instantiated', function() {
+      let renderer = myp5.createCanvas(5, 5, myp5.WEBGL);
+      let s = myp5.createShader(vert, frag);
+      myp5.filter(s);
+      assert.notStrictEqual(renderer.filterGraphicsLayer, undefined);
+    });
+
+    test('custom shader makes changes to main canvas', function() {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      let s = myp5.createShader(vert, frag);
+      myp5.background('RED');
+      myp5.loadPixels();
+      let p1 = myp5.pixels.slice(); // copy before pixels is reassigned
+      myp5.filter(s);
+      myp5.loadPixels();
+      let p2 = myp5.pixels;
+      assert.notDeepEqual(p1, p2);
+    });
+
+    test('secondary graphics layer matches main canvas size', function() {
+      let g1 = myp5.createCanvas(5, 5, myp5.WEBGL);
+      let s = myp5.createShader(vert, frag);
+      myp5.filter(s);
+      let g2 = g1.filterGraphicsLayer;
+      assert.deepEqual([g1.width, g1.height], [g2.width, g2.height]);
+      myp5.resizeCanvas(4, 4);
+      assert.deepEqual([g1.width, g1.height], [g2.width, g2.height]);
+    });
+
+    test('create graphics is unaffected after filter', function() {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      let pg = myp5.createGraphics(5, 5, myp5.WEBGL);
+      pg.circle(1, 1, 1);
+      pg.loadPixels();
+      let p1 = pg.pixels.slice();
+      let s = myp5.createShader(vert, frag);
+      myp5.filter(s);
+      pg.loadPixels();
+      let p2 = pg.pixels;
+      assert.deepEqual(p1, p2);
+    });
+
+    test('stroke and other settings are unaffected after filter', function() {
+      let c = myp5.createCanvas(5, 5, myp5.WEBGL);
+      let getShapeAttributes = () => [
+        c._ellipseMode,
+        c.drawingContext.imageSmoothingEnabled,
+        c._rectMode,
+        c.curStrokeWeight,
+        c.curStrokeCap,
+        c.curStrokeJoin,
+        c.curStrokeColor
+      ];
+      let a1 = getShapeAttributes();
+      let s = myp5.createShader(vert, frag);
+      myp5.filter(s);
+      let a2 = getShapeAttributes();
+      console.log(a1);
+      assert.deepEqual(a1, a2);
+    });
+
+    test('geometries added after filter do not have shader applied', function() {
+      myp5.createCanvas(4, 4, myp5.WEBGL);
+      let s = myp5.createShader(vert, frag);
+      myp5.filter(s);
+      myp5.fill('RED');
+      myp5.noStroke();
+      myp5.rect(-2,-2,2,2);
+      myp5.loadPixels();
+      assert.equal(myp5.pixels[0], 255);
+    });
+
+    test('createFilterShader takes a custom frag shader src', function() {
+      let testCreateFilterShader = () => {
+        myp5.createCanvas(4, 4, myp5.WEBGL);
+        let s = myp5.createFilterShader(frag);
+        myp5.filter(s);
+      };
+      assert.doesNotThrow(testCreateFilterShader, 'this should not throw');
+    });
+
+    test('default vertex shader behaves the same as supplied vertex shader', function() {
+      myp5.createCanvas(4,4, myp5.WEBGL);
+      let s1 = myp5.createFilterShader(frag);
+      let s2 = myp5.createShader(vert, frag);
+      myp5.background('RED');
+      myp5.filter(s1);
+      myp5.loadPixels();
+      let p1 = myp5.pixels.slice();
+      myp5.clear();
+      myp5.background('RED');
+      myp5.filter(s2);
+      myp5.loadPixels();
+      let p2 = myp5.pixels;
+      assert.deepEqual(p1, p2);
+    });
+
+    test('filter shader works on a p5.Graphics', function() {
+      myp5.createCanvas(3,3, myp5.WEBGL);
+      let pg = myp5.createGraphics(3,3, myp5.WEBGL);
+      let s = pg.createFilterShader(frag);
+      pg.background('RED');
+      pg.loadPixels();
+      let p1 = pg.pixels.slice();
+      pg.filter(s);
+      pg.loadPixels();
+      let p2 = pg.pixels;
+      assert.notDeepEqual(p1, p2);
+    });
+  });
+
   test('contours match 2D', function() {
     const getColors = function(mode) {
       myp5.createCanvas(50, 50, mode);
