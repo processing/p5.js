@@ -580,6 +580,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     // set of framebuffers in use
     this.framebuffers = new Set();
+    // stack of active framebuffers
+    this.activeFramebuffers = [];
 
     // for post processing step
     this.filterShader = undefined;
@@ -1631,6 +1633,16 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     const tex = new p5.Texture(this, src);
     this.textures.set(src, tex);
     return tex;
+  }
+
+  /**
+   * @method activeFramebuffer
+   * @private
+   * @returns {p5.Framebuffer|null} The currently active framebuffer, or null if
+   * the main canvas is the current draw target.
+   */
+  activeFramebuffer() {
+    return this.activeFramebuffers[this.activeFramebuffers.length - 1] || null;
   }
 
   createFramebuffer(options) {
