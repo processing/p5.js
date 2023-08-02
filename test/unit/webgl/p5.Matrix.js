@@ -341,6 +341,9 @@ suite('p5.Matrix', function() {
     });
     test('column() and row()', function(){
       const m = new p5.Matrix('mat3', [
+        // The matrix data is stored column-major, so each line below is
+        // a column rather than a row. Imagine you are looking at the
+        // transpose of the matrix in the source code.
         1, 2, 3,
         4, 5, 6,
         7, 8, 9
@@ -348,15 +351,15 @@ suite('p5.Matrix', function() {
       const column0 = m.column(0);
       const column1 = m.column(1);
       const column2 = m.column(2);
-      assert.deepEqual(column0.array(), [1, 4, 7]);
-      assert.deepEqual(column1.array(), [2, 5, 8]);
-      assert.deepEqual(column2.array(), [3, 6, 9]);
+      assert.deepEqual(column0.array(), [1, 2, 3]);
+      assert.deepEqual(column1.array(), [4, 5, 6]);
+      assert.deepEqual(column2.array(), [7, 8, 9]);
       const row0 = m.row(0);
       const row1 = m.row(1);
       const row2 = m.row(2);
-      assert.deepEqual(row0.array(), [1, 2, 3]);
-      assert.deepEqual(row1.array(), [4, 5, 6]);
-      assert.deepEqual(row2.array(), [7, 8, 9]);
+      assert.deepEqual(row0.array(), [1, 4, 7]);
+      assert.deepEqual(row1.array(), [2, 5, 8]);
+      assert.deepEqual(row2.array(), [3, 6, 9]);
     });
     test('diagonal()', function() {
       const m = new p5.Matrix('mat3', [
@@ -381,11 +384,11 @@ suite('p5.Matrix', function() {
       ]);
       const multVector = new p5.Vector(3, 2, 1);
       const result = m.multiplyVec3(multVector);
-      assert.deepEqual(result.array(), [10, 28, 46]);
+      assert.deepEqual(result.array(), [18, 24, 30]);
       // If there is a target, set result and return that.
       const target = new p5.Vector();
       m.multiplyVec3(multVector, target);
-      assert.deepEqual(target.array(), [10, 28, 46]);
+      assert.deepEqual(target.array(), [18, 24, 30]);
     });
     test('createSubMatrix3x3', function() {
       const m4x4 = new p5.Matrix([

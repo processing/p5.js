@@ -1910,13 +1910,13 @@ p5.Camera = class Camera {
     const ca = c * a;
     const lerpedRotMat = new p5.Matrix('mat3', [
       cosAngle + oneMinusCosAngle * a * a,
-      oneMinusCosAngle * ab - sinAngle * c,
-      oneMinusCosAngle * ca + sinAngle * b,
       oneMinusCosAngle * ab + sinAngle * c,
-      cosAngle + oneMinusCosAngle * b * b,
-      oneMinusCosAngle * bc - sinAngle * a,
       oneMinusCosAngle * ca - sinAngle * b,
+      oneMinusCosAngle * ab - sinAngle * c,
+      cosAngle + oneMinusCosAngle * b * b,
       oneMinusCosAngle * bc + sinAngle * a,
+      oneMinusCosAngle * ca + sinAngle * b,
+      oneMinusCosAngle * bc - sinAngle * a,
       cosAngle + oneMinusCosAngle * c * c
     ]);
 
