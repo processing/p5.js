@@ -319,6 +319,16 @@ p5.Shader = class {
    * (which run on the GPU) with values from a sketch
    * (which runs on the CPU).
    *
+   * Here are some examples of uniforms you can make:
+   * - booleans
+   *   - Example: `setUniform('x', true)` becomes `uniform float x` with the value `1.0`
+   * - numbers
+   *   - Example: `setUniform('x', -2)` becomes `uniform float x` with the value `-2.0`
+   * - arrays of numbers
+   *   - Example: `setUniform('x', [0, 0.5, 1])` becomes `uniform vec3 x` with the value `vec3(0.0, 0.5, 1.0)`
+   * - a p5.Image, p5.Graphics, p5.MediaElement, or p5.Texture
+   *   - Example: `setUniform('x', img)` becomes `uniform sampler2D x`
+   *
    * @method setUniform
    * @chainable
    * @param {String} uniformName the name of the uniform.
@@ -382,6 +392,13 @@ p5.Shader = class {
    * canvas toggles between a circular gradient of orange and blue vertically. and a circular gradient of red and green moving horizontally when mouse is clicked/pressed.
    */
   setUniform(uniformName, data) {
+    // detect when to set uniforms on duplicate filter shader copy
+    let other = this._renderer.filterShader;
+    if (other !== undefined && other.parentShader === this) {
+      other.setUniform(uniformName, data);
+      return;
+    }
+
     const uniform = this.uniforms[uniformName];
     if (!uniform) {
       return;

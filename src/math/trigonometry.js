@@ -16,33 +16,40 @@ import * as constants from '../core/constants';
 p5.prototype._angleMode = constants.RADIANS;
 
 /**
- * The inverse of <a href="#/p5/cos">cos()</a>, returns the arc cosine of a value.
- * This function expects the values in the range of -1 to 1 and values are returned in
- * the range 0 to PI (3.1415927) if the <a href="#/p5/angleMode">angleMode()</a> is RADIANS
- * or 0 to 180 if the <a href="#/p5/angleMode">angleMode()</a> is DEGREES.
+ * The inverse of <a href="#/p5/cos">cos()</a>, returns the arc cosine of a
+ * value. This function expects arguments in the range -1 to 1. By default,
+ * `acos()` returns values in the range 0 to &pi; (about 3.14). If the
+ * <a href="#/p5/angleMode">angleMode()</a> is `DEGREES`, then values are
+ * returned in the range 0 to 180.
  *
  * @method acos
- * @param  {Number} value the value whose arc cosine is to be returned
- * @return {Number}       the arc cosine of the given value
+ * @param  {Number} value value whose arc cosine is to be returned.
+ * @return {Number}       arc cosine of the given value.
  *
  * @example
- * <div class= “norender">
+ * <div>
  * <code>
  * let a = PI;
  * let c = cos(a);
  * let ac = acos(c);
- * // Prints: "3.1415927 : -1.0 : 3.1415927"
- * print(a + ' : ' + c + ' : ' + ac);
+ * text(`${round(a, 3)}`, 35, 25);
+ * text(`${round(c, 3)}`, 35, 50);
+ * text(`${round(ac, 3)}`, 35, 75);
+ *
+ * describe('The numbers 3.142, -1, and 3.142 written on separate rows.');
  * </code>
  * </div>
  *
- * <div class= “norender">
+ * <div>
  * <code>
- * let a = PI + PI / 4.0;
+ * let a = PI;
  * let c = cos(a);
  * let ac = acos(c);
- * // Prints: "3.926991 : -0.70710665 : 2.3561943"
- * print(a + ' : ' + c + ' : ' + ac);
+ * text(`${round(a, 3)}`, 35, 25);
+ * text(`${round(c, 3)}`, 35, 50);
+ * text(`${round(ac, 3)}`, 35, 75);
+ *
+ * describe('The numbers 3.927, -0.707, and 2.356 written on separate rows.');
  * </code>
  * </div>
  */
@@ -51,33 +58,41 @@ p5.prototype.acos = function(ratio) {
 };
 
 /**
- * The inverse of <a href="#/p5/sin">sin()</a>, returns the arc sine of a value.
- * This function expects the values in the range of -1 to 1 and values are returned
- * in the range -PI/2 to PI/2 if the angleMode is RADIANS or -90 to 90 if the angle
- * mode is DEGREES.
+ * The inverse of <a href="#/p5/sin">sin()</a>, returns the arc sine of a
+ * value. This function expects input values in the range of -1 to 1. By
+ * default, `asin()` returns values in the range -&pi; &divide; 2
+ * (about -1.57) to &pi; &divide; 2 (about 1.57). If the
+ * <a href="#/p5/angleMode">angleMode()</a> is `DEGREES` then values are
+ * returned in the range -90 to 90.
  *
  * @method asin
- * @param  {Number} value the value whose arc sine is to be returned
- * @return {Number}       the arc sine of the given value
+ * @param  {Number} value value whose arc sine is to be returned.
+ * @return {Number}       arc sine of the given value.
  *
  * @example
- * <div class= “norender">
+ * <div>
  * <code>
- * let a = PI / 3.0;
+ * let a = PI / 3;
  * let s = sin(a);
  * let as = asin(s);
- * // Prints: "1.0471975 : 0.86602540 : 1.0471975"
- * print(a + ' : ' + s + ' : ' + as);
+ * text(`${round(a, 3)}`, 35, 25);
+ * text(`${round(s, 3)}`, 35, 50);
+ * text(`${round(as, 3)}`, 35, 75);
+ *
+ * describe('The numbers 1.047, 0.866, and 1.047 written on separate rows.');
  * </code>
  * </div>
  *
- * <div class= “norender">
+ * <div>
  * <code>
- * let a = PI + PI / 3.0;
+ * let a = PI + PI / 3;
  * let s = sin(a);
  * let as = asin(s);
- * // Prints: "4.1887902 : -0.86602540 : -1.0471975"
- * print(a + ' : ' + s + ' : ' + as);
+ * text(`${round(a, 3)}`, 35, 25);
+ * text(`${round(s, 3)}`, 35, 50);
+ * text(`${round(as, 3)}`, 35, 75);
+ *
+ * describe('The numbers 4.189, -0.866, and -1.047 written on separate rows.');
  * </code>
  * </div>
  */
@@ -86,33 +101,41 @@ p5.prototype.asin = function(ratio) {
 };
 
 /**
- * The inverse of <a href="#/p5/tan">tan()</a>, returns the arc tangent of a value.
- * This function expects the values in the range of -Infinity to Infinity (exclusive) and
- * values are returned in the range -PI/2 to PI/2 if the angleMode is RADIANS or
- * -90 to 90 if the angle mode is DEGREES.
+ * The inverse of <a href="#/p5/tan">tan()</a>, returns the arc tangent of a
+ * value. This function expects input values in the range of -Infinity to
+ * Infinity. By default, `atan()` returns values in the range -&pi; &divide; 2
+ * (about -1.57) to &pi; &divide; 2 (about 1.57). If the
+ * <a href="#/p5/angleMode">angleMode()</a> is `DEGREES` then values are
+ * returned in the range -90 to 90.
  *
  * @method atan
- * @param  {Number} value the value whose arc tangent is to be returned
- * @return {Number}       the arc tangent of the given value
+ * @param  {Number} value value whose arc tangent is to be returned.
+ * @return {Number}       arc tangent of the given value.
  *
  * @example
- * <div class= “norender">
+ * <div>
  * <code>
- * let a = PI / 3.0;
+ * let a = PI / 3;
  * let t = tan(a);
  * let at = atan(t);
- * // Prints: "1.0471975 : 1.7320508 : 1.0471975"
- * print(a + ' : ' + t + ' : ' + at);
+ * text(`${round(a, 3)}`, 35, 25);
+ * text(`${round(t, 3)}`, 35, 50);
+ * text(`${round(at, 3)}`, 35, 75);
+ *
+ * describe('The numbers 1.047, 1.732, and 1.047 written on separate rows.');
  * </code>
  * </div>
  *
- * <div class= “norender">
+ * <div>
  * <code>
- * let a = PI + PI / 3.0;
+ * let a = PI + PI / 3;
  * let t = tan(a);
  * let at = atan(t);
- * // Prints: "4.1887902 : 1.7320508 : 1.0471975"
- * print(a + ' : ' + t + ' : ' + at);
+ * text(`${round(a, 3)}`, 35, 25);
+ * text(`${round(t, 3)}`, 35, 50);
+ * text(`${round(at, 3)}`, 35, 75);
+ *
+ * describe('The numbers 4.189, 1.732, and 1.047 written on separate rows.');
  * </code>
  * </div>
  */
@@ -121,32 +144,34 @@ p5.prototype.atan = function(ratio) {
 };
 
 /**
- * Calculates the angle (in radians) from a specified point to the coordinate
- * origin as measured from the positive x-axis. Values are returned as a
- * float in the range from PI to -PI if the <a href="#/p5/angleMode">angleMode()</a>
- * is RADIANS or 180 to -180 if the <a href="#/p5/angleMode">angleMode()</a> is DEGREES.
- * The <a href="#/p5/">atan2()</a> function is most often used for orienting geometry
- * to the position of the cursor.
+ * Calculates the angle formed by a specified point, the origin, and the
+ * positive x-axis. By default, `atan2()` returns values in the range
+ * -&pi; (about -3.14) to &pi; (3.14). If the
+ * <a href="#/p5/angleMode">angleMode()</a> is `DEGREES`, then values are
+ * returned in the range -180 to 180. The `atan2()` function is most often
+ * used for orienting geometry to the mouse's position.
  *
- * Note: The y-coordinate of the point is the first parameter, and the
- * x-coordinate is the second parameter, due to the structure of calculating
- * the tangent.
+ * Note: The y-coordinate of the point is the first parameter and the
+ * x-coordinate is the second parameter.
  *
  * @method atan2
- * @param  {Number} y y-coordinate of the point
- * @param  {Number} x x-coordinate of the point
- * @return {Number}   the arc tangent of the given point
+ * @param  {Number} y y-coordinate of the point.
+ * @param  {Number} x x-coordinate of the point.
+ * @return {Number}   arc tangent of the given point.
  *
  * @example
  * <div>
  * <code>
  * function draw() {
- *   background(204);
+ *   background(200);
  *   translate(width / 2, height / 2);
- *   let a = atan2(mouseY - height / 2, mouseX - width / 2);
+ *   let x = mouseX - width / 2;
+ *   let y = mouseY - height / 2;
+ *   let a = atan2(y, x);
  *   rotate(a);
  *   rect(-30, -5, 60, 10);
- *   describe('60×10 rect at center of canvas rotates with mouse movements');
+ *
+ *   describe('A rectangle at the center of the canvas rotates with mouse movements.');
  * }
  * </code>
  * </div>
@@ -156,24 +181,54 @@ p5.prototype.atan2 = function(y, x) {
 };
 
 /**
- * Calculates the cosine of an angle. This function takes into account the
- * current <a href="#/p5/angleMode">angleMode</a>. Values are returned in the range -1 to 1.
+ * Calculates the cosine of an angle. `cos()` is useful for many geometric
+ * tasks in creative coding. The values returned oscillate between -1 and 1
+ * as the input angle increases. `cos()` takes into account the current
+ * <a href="#/p5/angleMode">angleMode</a>.
  *
  * @method cos
- * @param  {Number} angle the angle
- * @return {Number}       the cosine of the angle
+ * @param  {Number} angle the angle.
+ * @return {Number}       cosine of the angle.
  *
  * @example
  * <div>
  * <code>
- * let a = 0.0;
- * let inc = TWO_PI / 25.0;
- * for (let i = 0; i < 25; i++) {
- *   line(i * 4, 50, i * 4, 50 + cos(a) * 40.0);
- *   a = a + inc;
+ * function draw() {
+ *   background(200);
+ *
+ *   let t = frameCount;
+ *   let x = 30 * cos(t * 0.05) + 50;
+ *   let y = 50;
+ *   line(50, y, x, y);
+ *   circle(x, y, 20);
+ *
+ *   describe('A white ball on a string oscillates left and right.');
  * }
- * describe(`vertical black lines form wave patterns, extend-down on
- *   left and right side`);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   let x = frameCount;
+ *   let y = 30 * cos(x * 0.1) + 50;
+ *   point(x, y);
+ *
+ *   describe('A series of black dots form a wave pattern.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   let t = frameCount;
+ *   let x = 30 * cos(t * 0.1) + 50;
+ *   let y = 10 * sin(t * 0.2) + 50;
+ *   point(x, y);
+ *
+ *   describe('A series of black dots form an infinity symbol.');
+ * }
  * </code>
  * </div>
  */
@@ -182,24 +237,54 @@ p5.prototype.cos = function(angle) {
 };
 
 /**
- * Calculates the sine of an angle. This function takes into account the
- * current <a href="#/p5/angleMode">angleMode</a>. Values are returned in the range -1 to 1.
+ * Calculates the sine of an angle. `sin()` is useful for many geometric tasks
+ * in creative coding. The values returned oscillate between -1 and 1 as the
+ * input angle increases. `sin()` takes into account the current
+ * <a href="#/p5/angleMode">angleMode</a>.
  *
  * @method sin
- * @param  {Number} angle the angle
- * @return {Number}       the sine of the angle
+ * @param  {Number} angle the angle.
+ * @return {Number}       sine of the angle.
  *
  * @example
  * <div>
  * <code>
- * let a = 0.0;
- * let inc = TWO_PI / 25.0;
- * for (let i = 0; i < 25; i++) {
- *   line(i * 4, 50, i * 4, 50 + sin(a) * 40.0);
- *   a = a + inc;
+ * function draw() {
+ *   background(200);
+ *
+ *   let t = frameCount;
+ *   let x = 50;
+ *   let y = 30 * sin(t * 0.05) + 50;
+ *   line(x, 50, x, y);
+ *   circle(x, y, 20);
+ *
+ *   describe('A white ball on a string oscillates up and down.');
  * }
- * describe(`vertical black lines extend down and up from center
- *   to form wave pattern.`);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   let x = frameCount;
+ *   let y = 30 * sin(x * 0.1) + 50;
+ *   point(x, y);
+ *
+ *   describe('A series of black dots form a wave pattern.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   let t = frameCount;
+ *   let x = 30 * cos(t * 0.1) + 50;
+ *   let y = 10 * sin(t * 0.2) + 50;
+ *   point(x, y);
+ *
+ *   describe('A series of black dots form an infinity symbol.');
+ * }
  * </code>
  * </div>
  */
@@ -208,100 +293,107 @@ p5.prototype.sin = function(angle) {
 };
 
 /**
- * Calculates the tangent of an angle. This function takes into account
- * the current <a href="#/p5/angleMode">angleMode</a>. Values are returned in the range of all real numbers.
+ * Calculates the tangent of an angle. `tan()` is useful for many geometric
+ * tasks in creative coding. The values returned range from -Infinity
+ * to Infinity and repeat periodically as the input angle increases. `tan()`
+ * takes into account the current <a href="#/p5/angleMode">angleMode</a>.
  *
  * @method tan
- * @param  {Number} angle the angle
- * @return {Number}       the tangent of the angle
+ * @param  {Number} angle the angle.
+ * @return {Number}       tangent of the angle.
  *
  * @example
  * <div>
  * <code>
- * let a = 0.0;
- * let inc = TWO_PI / 50.0;
- * for (let i = 0; i < 100; i = i + 2) {
- *   line(i, 50, i, 50 + tan(a) * 2.0);
- *   a = a + inc;
+ * function draw() {
+ *   let x = frameCount;
+ *   let y = 5 * tan(x * 0.1) + 50;
+ *   point(x, y);
+ *
+ *   describe('A series of identical curves drawn with black dots. Each curve starts from the top of the canvas, continues down at a slight angle, flattens out at the middle of the canvas, then continues to the bottom.');
  * }
- * describe(`vertical black lines end down and up from center to
- *   form spike pattern.`);
  * </code>
+ * </div>
  */
 p5.prototype.tan = function(angle) {
   return Math.tan(this._toRadians(angle));
 };
 
 /**
- * Converts a radian measurement to its corresponding value in degrees.
- * Radians and degrees are two ways of measuring the same thing. There are
- * 360 degrees in a circle and 2*PI radians in a circle. For example,
- * 90° = PI/2 = 1.5707964. This function does not take into account the
- * current <a href="#/p5/angleMode">angleMode()</a>.
+ * Converts an angle measurement in radians to its corresponding value in
+ * degrees. Degrees and radians are two ways of measuring the same thing.
+ * There are 360 degrees in a circle and 2 &times; &pi; (about 6.28)
+ * radians in a circle. For example, 90° = &pi; &divide; 2 (about 1.57)
+ * radians. This function doesn't take into account the current
+ * <a href="#/p5/angleMode">angleMode()</a>.
  *
  * @method degrees
- * @param  {Number} radians the radians value to convert to degrees
- * @return {Number}         the converted angle
+ * @param  {Number} radians radians value to convert to degrees.
+ * @return {Number}         converted angle.
  *
  * @example
- * <div class= “norender">
+ * <div>
  * <code>
- * let rad = PI / 4;
+ * let rad = QUARTER_PI;
  * let deg = degrees(rad);
- * print(rad + ' radians is ' + deg + ' degrees');
- * // Prints: 0.7853981633974483 radians is 45 degrees
+ * text(`${round(rad, 2)} rad = ${deg}˚`, 10, 50);
+ *
+ * describe('The text "0.79 rad = 45˚".');
  * </code>
  * </div>
  */
 p5.prototype.degrees = angle => angle * constants.RAD_TO_DEG;
 
 /**
- * Converts a degree measurement to its corresponding value in radians.
- * Radians and degrees are two ways of measuring the same thing. There are
- * 360 degrees in a circle and 2*PI radians in a circle. For example,
- * 90° = PI/2 = 1.5707964. This function does not take into account the
- * current <a href="#/p5/angleMode">angleMode</a>.
+ * Converts an angle measurement in degrees to its corresponding value in
+ * radians. Degrees and radians are two ways of measuring the same thing.
+ * There are 360 degrees in a circle and 2 &times; &pi; (about 6.28)
+ * radians in a circle. For example, 90° = &pi; &divide; 2 (about 1.57)
+ * radians. This function doesn't take into account the current
+ * <a href="#/p5/angleMode">angleMode()</a>.
  *
  * @method radians
- * @param  {Number} degrees the degree value to convert to radians
- * @return {Number}         the converted angle
+ * @param  {Number} degrees degree value to convert to radians.
+ * @return {Number}         converted angle.
  *
  * @example
- * <div class= “norender">
+ * <div>
  * <code>
- * let deg = 45.0;
+ * let deg = 45;
  * let rad = radians(deg);
- * print(deg + ' degrees is ' + rad + ' radians');
- * // Prints: 45 degrees is 0.7853981633974483 radians
+ * text(`${deg}˚ = ${round(rad, 3)} rad`, 10, 50);
+ *
+ * describe('The text "45˚ = 0.785 rad".');
  * </code>
  * </div>
  */
 p5.prototype.radians = angle => angle * constants.DEG_TO_RAD;
 
 /**
- * Sets the current mode of p5 to the given mode. Default mode is RADIANS.
+ * Changes the way trigonometric functions interpret angle values. By default,
+ * the mode is `RADIANS`.
  *
- * Calling <a href="#/p5/angleMode">angleMode()</a> with no arguments returns current anglemode.
+ * Calling `angleMode()` with no arguments returns current angle mode.
  * @method angleMode
- * @param {Constant} mode either RADIANS or DEGREES
+ * @param {Constant} mode either RADIANS or DEGREES.
  * @example
  * <div>
  * <code>
- * function draw() {
- *   background(204);
- *   angleMode(DEGREES); // Change the mode to DEGREES
- *   let a = atan2(mouseY - height / 2, mouseX - width / 2);
- *   translate(width / 2, height / 2);
- *   push();
- *   rotate(a);
- *   rect(-20, -5, 40, 10); // Larger rectangle is rotating in degrees
- *   pop();
- *   angleMode(RADIANS); // Change the mode to RADIANS
- *   rotate(a); // variable a stays the same
- *   rect(-40, -5, 20, 10); // Smaller rectangle is rotating in radians
- *   describe(`40×10 rect in center rotates with mouse moves.
- *     20×10 rect moves faster.`);
- * }
+ * let r = 40;
+ * push();
+ * rotate(PI / 6);
+ * line(0, 0, r, 0);
+ * text('0.524 rad', r, 0);
+ * pop();
+ *
+ * angleMode(DEGREES);
+ * push();
+ * rotate(60);
+ * line(0, 0, r, 0);
+ * text('60˚', r, 0);
+ * pop();
+ *
+ * describe('Two diagonal lines radiating from the top left corner of a square. The lines are oriented 30 degrees from the edges of the square and 30 degrees apart from each other.');
  * </code>
  * </div>
  *

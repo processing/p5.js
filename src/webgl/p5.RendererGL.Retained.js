@@ -6,6 +6,18 @@ import './p5.RenderBuffer';
 import * as constants from '../core/constants';
 
 let hashCount = 0;
+
+/**
+ * @param {p5.Geometry} geometry The model whose resources will be freed
+ */
+p5.RendererGL.prototype.freeGeometry = function(geometry) {
+  if (!geometry.gid) {
+    console.warn('The model you passed to freeGeometry does not have an id!');
+    return;
+  }
+  this._freeBuffers(geometry.gid);
+};
+
 /**
  * _initBufferDefaults
  * @private
@@ -120,7 +132,11 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   const gl = this.GL;
   const geometry = this.retainedMode.geometry[gId];
 
-  if (this._doFill && this.retainedMode.geometry[gId].vertexCount > 0) {
+  if (
+    !this.geometryBuilder &&
+    this._doFill &&
+    this.retainedMode.geometry[gId].vertexCount > 0
+  ) {
     this._useVertexColor = (geometry.model.vertexColors.length > 0);
     const fillShader = this._getRetainedFillShader();
     this._setFillUniforms(fillShader);
@@ -136,9 +152,9 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     fillShader.unbindShader();
   }
 
-  if (this._doStroke && geometry.lineVertexCount > 0) {
-    const strokeShader = this._getRetainedStrokeShader();
+  if (!this.geometryBuilder && this._doStroke && geometry.lineVertexCount > 0) {
     this._useLineColor = (geometry.model.vertexStrokeColors.length > 0);
+    const strokeShader = this._getRetainedStrokeShader();
     this._setStrokeUniforms(strokeShader);
     for (const buff of this.retainedMode.buffers.stroke) {
       buff._prepareBuffer(geometry, strokeShader);
@@ -146,6 +162,10 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     this._applyColorBlend(this.curStrokeColor);
     this._drawArrays(gl.TRIANGLES, gId);
     strokeShader.unbindShader();
+  }
+
+  if (this.geometryBuilder) {
+    this.geometryBuilder.addRetained(geometry);
   }
 
   return this;

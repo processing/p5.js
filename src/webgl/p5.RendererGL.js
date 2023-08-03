@@ -1,10 +1,12 @@
 import p5 from '../core/main';
 import * as constants from '../core/constants';
+import GeometryBuilder from './GeometryBuilder';
 import libtess from 'libtess';
 import './p5.Shader';
 import './p5.Camera';
 import '../core/p5.Renderer';
 import './p5.Matrix';
+import './p5.Framebuffer';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -409,6 +411,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this._initContext();
     this.isP3D = true; //lets us know we're in 3d mode
 
+    // When constructing a new p5.Geometry, this will represent the builder
+    this.geometryBuilder = undefined;
+
     // This redundant property is useful in reminding you that you are
     // interacting with WebGLRenderingContext, still worth considering future removal
     this.GL = this.drawingContext;
@@ -416,6 +421,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     // erasing
     this._isErasing = false;
+
+    // clipping
+    this._clipDepth = null;
 
     // lights
     this._enableLighting = false;
@@ -576,6 +584,12 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     // set of framebuffers in use
     this.framebuffers = new Set();
+    // stack of active framebuffers
+    this.activeFramebuffers = [];
+
+    // for post processing step
+    this.filterShader = undefined;
+    this.filterGraphicsLayer = undefined;
 
     this.textureMode = constants.IMAGE;
     // default wrap settings
@@ -601,6 +615,68 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.fontInfos = {};
 
     this._curShader = undefined;
+  }
+
+  /**
+    * Starts creating a new p5.Geometry. Subsequent shapes drawn will be added
+     * to the geometry and then returned when
+     * <a href="#/p5/endGeometry">endGeometry()</a> is called. One can also use
+     * <a href="#/p5/buildGeometry">buildGeometry()</a> to pass a function that
+     * draws shapes.
+     *
+     * If you need to draw complex shapes every frame which don't change over time,
+     * combining them upfront with `beginGeometry()` and `endGeometry()` and then
+     * drawing that will run faster than repeatedly drawing the individual pieces.
+     *
+     * @method beginGeometry
+   */
+  beginGeometry() {
+    if (this.geometryBuilder) {
+      throw new Error('It looks like `beginGeometry()` is being called while another p5.Geometry is already being build.');
+    }
+    this.geometryBuilder = new GeometryBuilder(this);
+  }
+
+  /**
+   * Finishes creating a new <a href="#/p5.Geometry">p5.Geometry</a> that was
+   * started using <a href="#/p5/beginGeometry">beginGeometry()</a>. One can also
+   * use <a href="#/p5/buildGeometry">buildGeometry()</a> to pass a function that
+   * draws shapes.
+   *
+   * @method endGeometry
+   * @returns {p5.Geometry} The model that was built.
+   */
+  endGeometry() {
+    if (!this.geometryBuilder) {
+      throw new Error('Make sure you call beginGeometry() before endGeometry()!');
+    }
+    const geometry = this.geometryBuilder.finish();
+    this.geometryBuilder = undefined;
+    return geometry;
+  }
+
+  /**
+   * Creates a new <a href="#/p5.Geometry">p5.Geometry</a> that contains all
+   * the shapes drawn in a provided callback function. The returned combined shape
+   * can then be drawn all at once using <a href="#/p5/model">model()</a>.
+   *
+   * If you need to draw complex shapes every frame which don't change over time,
+   * combining them with `buildGeometry()` once and then drawing that will run
+   * faster than repeatedly drawing the individual pieces.
+   *
+   * One can also draw shapes directly between
+   * <a href="#/p5/beginGeometry">beginGeometry()</a> and
+   * <a href="#/p5/endGeometry">endGeometry()</a> instead of using a callback
+   * function.
+   *
+   * @method buildGeometry
+   * @param {Function} callback A function that draws shapes.
+   * @returns {p5.Geometry} The model that was built from the callback function.
+   */
+  buildGeometry(callback) {
+    this.beginGeometry();
+    callback();
+    return this.endGeometry();
   }
 
   //////////////////////////////////////////////
@@ -771,7 +847,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this._tint = [255, 255, 255, 255];
 
     //Clear depth every frame
-    this.GL.clear(this.GL.DEPTH_BUFFER_BIT);
+    this.GL.clearStencil(0);
+    this.GL.clear(this.GL.DEPTH_BUFFER_BIT | this.GL.STENCIL_BUFFER_BIT);
+    this.GL.disable(this.GL.STENCIL_TEST);
   }
 
   /**
@@ -873,12 +951,61 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.curStrokeJoin = join;
   }
 
-  filter(filterType) {
-    // filter can be achieved using custom shaders.
-    // https://github.com/aferriss/p5jsShaderExamples
-    // https://itp-xstory.github.io/p5js-shaders/#/
-    p5._friendlyError('filter() does not work in WEBGL mode');
+  filter(args) {
+    // Couldn't create graphics in RendererGL constructor
+    // (led to infinite loop)
+    // so it's just created here once on the initial filter call.
+    if (!this.filterGraphicsLayer) {
+      // the real _pInst is buried when this is a secondary p5.Graphics
+      const pInst =
+        this._pInst instanceof p5.Graphics ? this._pInst._pInst : this._pInst;
+      // create secondary layer
+      this.filterGraphicsLayer =
+        new p5.Graphics(
+          this.width,
+          this.height,
+          constants.WEBGL,
+          pInst
+        );
+    }
+    let pg = this.filterGraphicsLayer;
+
+    if (typeof args[0] === 'string') {
+      // TODO, handle filter constants:
+      //   this.filterShader = map(args[0], {GRAYSCALE: grayscaleShader, ...})
+      //   filterOperationParameter = undefined or args[1]
+      p5._friendlyError('webgl filter implementation in progress');
+      return;
+    }
+    let userShader = args[0];
+
+    // Copy the user shader once on the initial filter call,
+    // since it has to be bound to pg and not main
+    let isSameUserShader = (
+      this.filterShader !== undefined &&
+      userShader._vertSrc === this.filterShader._vertSrc &&
+      userShader._fragSrc === this.filterShader._fragSrc
+    );
+    if (!isSameUserShader) {
+      this.filterShader =
+        new p5.Shader(pg._renderer, userShader._vertSrc, userShader._fragSrc);
+      this.filterShader.parentShader = userShader;
+    }
+
+    // apply shader to pg
+    pg.shader(this.filterShader);
+    this.filterShader.setUniform('tex0', this);
+    pg.rect(0,0,this.width,this.height);
+
+    // draw pg contents onto main renderer
+    this._pInst.push();
+    this._pInst.noStroke(); // don't draw triangles for plane() geometry
+    this._pInst.scale(1, -1); // vertically flip output
+    this._pInst.texture(pg);
+    this._pInst.plane(this.width, this.height);
+    this._pInst.pop();
   }
+
   blendMode(mode) {
     if (
       mode === constants.DARKEST ||
@@ -926,6 +1053,59 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this.curStrokeColor = this._cachedStrokeStyle.slice();
       this.blendMode(this._cachedBlendMode);
     }
+  }
+
+  beginClip(options = {}) {
+    super.beginClip(options);
+    const gl = this.GL;
+    gl.clearStencil(0);
+    gl.clear(gl.STENCIL_BUFFER_BIT);
+    gl.enable(gl.STENCIL_TEST);
+    gl.stencilFunc(
+      gl.ALWAYS, // the test
+      1, // reference value
+      0xff // mask
+    );
+    gl.stencilOp(
+      gl.KEEP, // what to do if the stencil test fails
+      gl.KEEP, // what to do if the depth test fails
+      gl.REPLACE // what to do if both tests pass
+    );
+    gl.disable(gl.DEPTH_TEST);
+
+    this._pInst.push();
+    this._pInst.resetShader();
+    if (this._doFill) this._pInst.fill(0, 0);
+    if (this._doStroke) this._pInst.stroke(0, 0);
+  }
+
+  endClip() {
+    this._pInst.pop();
+
+    const gl = this.GL;
+    gl.stencilOp(
+      gl.KEEP, // what to do if the stencil test fails
+      gl.KEEP, // what to do if the depth test fails
+      gl.KEEP // what to do if both tests pass
+    );
+    gl.stencilFunc(
+      this._clipInvert ? gl.EQUAL : gl.NOTEQUAL, // the test
+      0, // reference value
+      0xff // mask
+    );
+    gl.enable(gl.DEPTH_TEST);
+
+    // Mark the depth at which the clip has been applied so that we can clear it
+    // when we pop past this depth
+    this._clipDepth = this._pushPopDepth;
+
+    super.endClip();
+  }
+
+  _clearClip() {
+    this.GL.clearStencil(1);
+    this.GL.clear(this.GL.STENCIL_BUFFER_BIT);
+    this._clipDepth = null;
   }
 
   /**
@@ -1104,6 +1284,11 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       // can also update their size
       framebuffer._canvasSizeChanged();
     }
+
+    // resize filter graphics layer
+    if (this.filterGraphicsLayer) {
+      p5.Renderer.prototype.resize.call(this.filterGraphicsLayer, w, h);
+    }
   }
 
   /**
@@ -1260,6 +1445,13 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     properties.curBlendMode = this.curBlendMode;
 
     return style;
+  }
+  pop(...args) {
+    if (this._pushPopDepth === this._clipDepth) {
+      this._clearClip();
+      this.GL.disable(this.GL.STENCIL_TEST);
+    }
+    super.pop(...args);
   }
   resetMatrix() {
     this.uMVMatrix.set(
@@ -1507,6 +1699,16 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     const tex = new p5.Texture(this, src);
     this.textures.set(src, tex);
     return tex;
+  }
+
+  /**
+   * @method activeFramebuffer
+   * @private
+   * @returns {p5.Framebuffer|null} The currently active framebuffer, or null if
+   * the main canvas is the current draw target.
+   */
+  activeFramebuffer() {
+    return this.activeFramebuffers[this.activeFramebuffers.length - 1] || null;
   }
 
   createFramebuffer(options) {

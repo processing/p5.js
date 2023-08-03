@@ -4,8 +4,11 @@ Documentation is essential for new learners and experienced programmers alike. I
 
 There are several ways to contribute to documentation:
 
-## ☝️ Open issues
-If you're just getting started, one really helpful way you can contribute is by opening issues for documentation needs. If you notice a typo, a missing or broken example, or a function description that is confusing, [open an issue for it](https://github.com/processing/p5.js/issues)! Please include a link to the page that needs fixing so we can find it easily.
+## ☝️ Make changes
+If you're just getting started, one really helpful way you can contribute is by improving our documentation. If you notice a typo, a missing or broken example, or a function description that is confusing, here are some things you can do:
+* If you are just correcting a small typo, feel free to go ahead and work on it and send in a PR when you're finished! 
+* If you don't feel like fixing it yourself, that's alright. Let us know by [opening an issue](https://github.com/processing/p5.js/issues).
+* If you're unsure about anything, [open an issue](https://github.com/processing/p5.js/issues) anyway!
 
 ## 🗯 Contribute to the reference  
 Read through the [reference](http://p5js.org/reference/), and look for typos, broken examples, or confusing documentation. If it's a straightforward fix, go ahead and work on it! If it's a more involved question that requires discussion, create an [issue](https://github.com/processing/p5.js/issues/new).

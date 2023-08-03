@@ -18,7 +18,6 @@ class Renderer2D extends p5.Renderer{
     this._pInst._setProperty('drawingContext', this.drawingContext);
   }
 
-
   _applyDefaults() {
     this._cachedFillStyle = this._cachedStrokeStyle = undefined;
     this._cachedBlendMode = constants.BLEND;
@@ -110,17 +109,17 @@ class Renderer2D extends p5.Renderer{
 
   erase(opacityFill, opacityStroke) {
     if (!this._isErasing) {
-    // cache the fill style
+      // cache the fill style
       this._cachedFillStyle = this.drawingContext.fillStyle;
       const newFill = this._pInst.color(255, opacityFill).toString();
       this.drawingContext.fillStyle = newFill;
 
-      //cache the stroke style
+      // cache the stroke style
       this._cachedStrokeStyle = this.drawingContext.strokeStyle;
       const newStroke = this._pInst.color(255, opacityStroke).toString();
       this.drawingContext.strokeStyle = newStroke;
 
-      //cache blendMode
+      // cache blendMode
       const tempBlendMode = this._cachedBlendMode;
       this.blendMode(constants.REMOVE);
       this._cachedBlendMode = tempBlendMode;
@@ -137,6 +136,63 @@ class Renderer2D extends p5.Renderer{
       this.blendMode(this._cachedBlendMode);
       this._isErasing = false;
     }
+  }
+
+  beginClip(options = {}) {
+    super.beginClip(options);
+
+    // cache the fill style
+    this._cachedFillStyle = this.drawingContext.fillStyle;
+    const newFill = this._pInst.color(255, 0).toString();
+    this.drawingContext.fillStyle = newFill;
+
+    // cache the stroke style
+    this._cachedStrokeStyle = this.drawingContext.strokeStyle;
+    const newStroke = this._pInst.color(255, 0).toString();
+    this.drawingContext.strokeStyle = newStroke;
+
+    // cache blendMode
+    const tempBlendMode = this._cachedBlendMode;
+    this.blendMode(constants.BLEND);
+    this._cachedBlendMode = tempBlendMode;
+
+    // Start a new path. Everything from here on out should become part of this
+    // one path so that we can clip to the whole thing.
+    this.drawingContext.beginPath();
+
+    if (this._clipInvert) {
+      // Slight hack: draw a big rectangle over everything with reverse winding
+      // order. This is hopefully large enough to cover most things.
+      this.drawingContext.moveTo(
+        -2 * this.width,
+        -2 * this.height
+      );
+      this.drawingContext.lineTo(
+        -2 * this.width,
+        2 * this.height
+      );
+      this.drawingContext.lineTo(
+        2 * this.width,
+        2 * this.height
+      );
+      this.drawingContext.lineTo(
+        2 * this.width,
+        -2 * this.height
+      );
+      this.drawingContext.closePath();
+    }
+  }
+
+  endClip() {
+    this._doFillStrokeClose();
+    this.drawingContext.clip();
+
+    super.endClip();
+
+    this.drawingContext.fillStyle = this._cachedFillStyle;
+    this.drawingContext.strokeStyle = this._cachedStrokeStyle;
+
+    this.blendMode(this._cachedBlendMode);
   }
 
   //////////////////////////////////////////////
@@ -506,7 +562,7 @@ class Renderer2D extends p5.Renderer{
 
     // Fill curves
     if (this._doFill) {
-      ctx.beginPath();
+      if (!this._clipping) ctx.beginPath();
       curves.forEach((curve, index) => {
         if (index === 0) {
           ctx.moveTo(x + curve.ax * rx, y + curve.ay * ry);
@@ -521,12 +577,12 @@ class Renderer2D extends p5.Renderer{
         ctx.lineTo(x, y);
       }
       ctx.closePath();
-      ctx.fill();
+      if (!this._clipping) ctx.fill();
     }
 
     // Stroke curves
     if (this._doStroke) {
-      ctx.beginPath();
+      if (!this._clipping) ctx.beginPath();
       curves.forEach((curve, index) => {
         if (index === 0) {
           ctx.moveTo(x + curve.ax * rx, y + curve.ay * ry);
@@ -543,7 +599,7 @@ class Renderer2D extends p5.Renderer{
       } else if (mode === constants.CHORD) {
         ctx.closePath();
       }
-      ctx.stroke();
+      if (!this._clipping) ctx.stroke();
     }
     return this;
   }
@@ -577,16 +633,16 @@ class Renderer2D extends p5.Renderer{
       // x-middle
       xm = x + w / 2,
       ym = y + h / 2; // y-middle
-    ctx.beginPath();
+    if (!this._clipping) ctx.beginPath();
     ctx.moveTo(x, ym);
     ctx.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
     ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
     ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
     ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
-    if (doFill) {
+    if (!this._clipping && doFill) {
       ctx.fill();
     }
-    if (doStroke) {
+    if (!this._clipping && doStroke) {
       ctx.stroke();
     }
   }
@@ -598,7 +654,7 @@ class Renderer2D extends p5.Renderer{
     } else if (this._getStroke() === styleEmpty) {
       return this;
     }
-    ctx.beginPath();
+    if (!this._clipping) ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
     ctx.stroke();
@@ -614,12 +670,16 @@ class Renderer2D extends p5.Renderer{
     }
     const s = this._getStroke();
     const f = this._getFill();
-    // swapping fill color to stroke and back after for correct point rendering
-    this._setFill(s);
-    ctx.beginPath();
+    if (!this._clipping) {
+      // swapping fill color to stroke and back after for correct point rendering
+      this._setFill(s);
+    }
+    if (!this._clipping) ctx.beginPath();
     ctx.arc(x, y, ctx.lineWidth / 2, 0, constants.TWO_PI, false);
-    ctx.fill();
-    this._setFill(f);
+    if (!this._clipping) {
+      ctx.fill();
+      this._setFill(f);
+    }
   }
 
   quad  (x1, y1, x2, y2, x3, y3, x4, y4) {
@@ -635,16 +695,16 @@ class Renderer2D extends p5.Renderer{
         return this;
       }
     }
-    ctx.beginPath();
+    if (!this._clipping) ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
     ctx.lineTo(x3, y3);
     ctx.lineTo(x4, y4);
     ctx.closePath();
-    if (doFill) {
+    if (!this._clipping && doFill) {
       ctx.fill();
     }
-    if (doStroke) {
+    if (!this._clipping && doStroke) {
       ctx.stroke();
     }
     return this;
@@ -671,7 +731,7 @@ class Renderer2D extends p5.Renderer{
         return this;
       }
     }
-    ctx.beginPath();
+    if (!this._clipping) ctx.beginPath();
 
     if (typeof tl === 'undefined') {
     // No rounded corners
@@ -722,7 +782,7 @@ class Renderer2D extends p5.Renderer{
       }
 
       // Draw shape
-      ctx.beginPath();
+      if (!this._clipping) ctx.beginPath();
       ctx.moveTo(x + tl, y);
       ctx.arcTo(x + w, y, x + w, y + h, tr);
       ctx.arcTo(x + w, y + h, x, y + h, br);
@@ -730,10 +790,10 @@ class Renderer2D extends p5.Renderer{
       ctx.arcTo(x, y, x + w, y, tl);
       ctx.closePath();
     }
-    if (this._doFill) {
+    if (!this._clipping && this._doFill) {
       ctx.fill();
     }
-    if (this._doStroke) {
+    if (!this._clipping && this._doStroke) {
       ctx.stroke();
     }
     return this;
@@ -759,15 +819,15 @@ class Renderer2D extends p5.Renderer{
         return this;
       }
     }
-    ctx.beginPath();
+    if (!this._clipping) ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
     ctx.lineTo(x3, y3);
     ctx.closePath();
-    if (doFill) {
+    if (!this._clipping && doFill) {
       ctx.fill();
     }
-    if (doStroke) {
+    if (!this._clipping && doStroke) {
       ctx.stroke();
     }
   }
@@ -798,7 +858,7 @@ class Renderer2D extends p5.Renderer{
       if (numVerts > 3) {
         const b = [],
           s = 1 - this._curveTightness;
-        this.drawingContext.beginPath();
+        if (!this._clipping) this.drawingContext.beginPath();
         this.drawingContext.moveTo(vertices[1][0], vertices[1][1]);
         for (i = 1; i + 2 < numVerts; i++) {
           v = vertices[i];
@@ -832,7 +892,7 @@ class Renderer2D extends p5.Renderer{
       isBezier &&
     (shapeKind === constants.POLYGON || shapeKind === null)
     ) {
-      this.drawingContext.beginPath();
+      if (!this._clipping) this.drawingContext.beginPath();
       for (i = 0; i < numVerts; i++) {
         if (vertices[i].isVert) {
           if (vertices[i].moveTo) {
@@ -856,7 +916,7 @@ class Renderer2D extends p5.Renderer{
       isQuadratic &&
     (shapeKind === constants.POLYGON || shapeKind === null)
     ) {
-      this.drawingContext.beginPath();
+      if (!this._clipping) this.drawingContext.beginPath();
       for (i = 0; i < numVerts; i++) {
         if (vertices[i].isVert) {
           if (vertices[i].moveTo) {
@@ -894,16 +954,16 @@ class Renderer2D extends p5.Renderer{
       } else if (shapeKind === constants.TRIANGLES) {
         for (i = 0; i + 2 < numVerts; i += 3) {
           v = vertices[i];
-          this.drawingContext.beginPath();
+          if (!this._clipping) this.drawingContext.beginPath();
           this.drawingContext.moveTo(v[0], v[1]);
           this.drawingContext.lineTo(vertices[i + 1][0], vertices[i + 1][1]);
           this.drawingContext.lineTo(vertices[i + 2][0], vertices[i + 2][1]);
           this.drawingContext.closePath();
-          if (this._doFill) {
+          if (!this._clipping && this._doFill) {
             this._pInst.fill(vertices[i + 2][5]);
             this.drawingContext.fill();
           }
-          if (this._doStroke) {
+          if (!this._clipping && this._doStroke) {
             this._pInst.stroke(vertices[i + 2][6]);
             this.drawingContext.stroke();
           }
@@ -911,21 +971,21 @@ class Renderer2D extends p5.Renderer{
       } else if (shapeKind === constants.TRIANGLE_STRIP) {
         for (i = 0; i + 1 < numVerts; i++) {
           v = vertices[i];
-          this.drawingContext.beginPath();
+          if (!this._clipping) this.drawingContext.beginPath();
           this.drawingContext.moveTo(vertices[i + 1][0], vertices[i + 1][1]);
           this.drawingContext.lineTo(v[0], v[1]);
-          if (this._doStroke) {
+          if (!this._clipping && this._doStroke) {
             this._pInst.stroke(vertices[i + 1][6]);
           }
-          if (this._doFill) {
+          if (!this._clipping && this._doFill) {
             this._pInst.fill(vertices[i + 1][5]);
           }
           if (i + 2 < numVerts) {
             this.drawingContext.lineTo(vertices[i + 2][0], vertices[i + 2][1]);
-            if (this._doStroke) {
+            if (!this._clipping && this._doStroke) {
               this._pInst.stroke(vertices[i + 2][6]);
             }
-            if (this._doFill) {
+            if (!this._clipping && this._doFill) {
               this._pInst.fill(vertices[i + 2][5]);
             }
           }
@@ -935,7 +995,7 @@ class Renderer2D extends p5.Renderer{
         if (numVerts > 2) {
         // For performance reasons, try to batch as many of the
         // fill and stroke calls as possible.
-          this.drawingContext.beginPath();
+          if (!this._clipping) this.drawingContext.beginPath();
           for (i = 2; i < numVerts; i++) {
             v = vertices[i];
             this.drawingContext.moveTo(vertices[0][0], vertices[0][1]);
@@ -948,18 +1008,18 @@ class Renderer2D extends p5.Renderer{
                 (this._doFill && v[5] !== vertices[i + 1][5]) ||
               (this._doStroke && v[6] !== vertices[i + 1][6])
               ) {
-                if (this._doFill) {
+                if (!this._clipping && this._doFill) {
                   this._pInst.fill(v[5]);
                   this.drawingContext.fill();
                   this._pInst.fill(vertices[i + 1][5]);
                 }
-                if (this._doStroke) {
+                if (!this._clipping && this._doStroke) {
                   this._pInst.stroke(v[6]);
                   this.drawingContext.stroke();
                   this._pInst.stroke(vertices[i + 1][6]);
                 }
                 this.drawingContext.closePath();
-                this.drawingContext.beginPath(); // Begin the next one
+                if (!this._clipping) this.drawingContext.beginPath(); // Begin the next one
               }
             }
           }
@@ -968,16 +1028,16 @@ class Renderer2D extends p5.Renderer{
       } else if (shapeKind === constants.QUADS) {
         for (i = 0; i + 3 < numVerts; i += 4) {
           v = vertices[i];
-          this.drawingContext.beginPath();
+          if (!this._clipping) this.drawingContext.beginPath();
           this.drawingContext.moveTo(v[0], v[1]);
           for (j = 1; j < 4; j++) {
             this.drawingContext.lineTo(vertices[i + j][0], vertices[i + j][1]);
           }
           this.drawingContext.lineTo(v[0], v[1]);
-          if (this._doFill) {
+          if (!this._clipping && this._doFill) {
             this._pInst.fill(vertices[i + 3][5]);
           }
-          if (this._doStroke) {
+          if (!this._clipping && this._doStroke) {
             this._pInst.stroke(vertices[i + 3][6]);
           }
           this._doFillStrokeClose(closeShape);
@@ -986,7 +1046,7 @@ class Renderer2D extends p5.Renderer{
         if (numVerts > 3) {
           for (i = 0; i + 1 < numVerts; i += 2) {
             v = vertices[i];
-            this.drawingContext.beginPath();
+            if (!this._clipping) this.drawingContext.beginPath();
             if (i + 3 < numVerts) {
               this.drawingContext.moveTo(
                 vertices[i + 2][0], vertices[i + 2][1]);
@@ -995,10 +1055,10 @@ class Renderer2D extends p5.Renderer{
                 vertices[i + 1][0], vertices[i + 1][1]);
               this.drawingContext.lineTo(
                 vertices[i + 3][0], vertices[i + 3][1]);
-              if (this._doFill) {
+              if (!this._clipping && this._doFill) {
                 this._pInst.fill(vertices[i + 3][5]);
               }
-              if (this._doStroke) {
+              if (!this._clipping && this._doStroke) {
                 this._pInst.stroke(vertices[i + 3][6]);
               }
             } else {
@@ -1010,7 +1070,7 @@ class Renderer2D extends p5.Renderer{
           }
         }
       } else {
-        this.drawingContext.beginPath();
+        if (!this._clipping) this.drawingContext.beginPath();
         this.drawingContext.moveTo(vertices[0][0], vertices[0][1]);
         for (i = 1; i < numVerts; i++) {
           v = vertices[i];
@@ -1129,10 +1189,10 @@ class Renderer2D extends p5.Renderer{
     if (closeShape) {
       this.drawingContext.closePath();
     }
-    if (this._doFill) {
+    if (!this._clipping && this._doFill) {
       this.drawingContext.fill();
     }
-    if (this._doStroke) {
+    if (!this._clipping && this._doStroke) {
       this.drawingContext.stroke();
     }
   }
@@ -1195,7 +1255,7 @@ class Renderer2D extends p5.Renderer{
         this.drawingContext.strokeText(line, x, y);
       }
 
-      if (this._doFill) {
+      if (!this._clipping && this._doFill) {
       // if fill hasn't been set by user, use default text fill
         if (!this._fillSet) {
           this._setFill(constants._DEFAULT_TEXT_FILL);
