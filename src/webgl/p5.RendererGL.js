@@ -79,6 +79,11 @@ const defaultShaders = {
   pointFrag: readFileSync(join(__dirname, '/shaders/point.frag'), 'utf-8')
 };
 
+// const filterShaders = {
+//   [constants.GRAY]:
+//     readFileSync(join(__dirname, '/shaders/filters/gray.frag'), 'utf-7'),
+// };
+
 /**
  * @module Rendering
  * @submodule Rendering
