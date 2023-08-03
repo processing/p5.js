@@ -5,8 +5,6 @@ import './p5.RendererGL';
 import './p5.RenderBuffer';
 import * as constants from '../core/constants';
 
-let hashCount = 0;
-
 /**
  * @param {p5.Geometry} geometry The model whose resources will be freed
  */
@@ -30,11 +28,9 @@ p5.RendererGL.prototype._initBufferDefaults = function(gId) {
   this._freeBuffers(gId);
 
   //@TODO remove this limit on hashes in retainedMode.geometry
-  hashCount++;
-  if (hashCount > 1000) {
+  if (Object.keys(this.retainedMode.geometry).length > 1000) {
     const key = Object.keys(this.retainedMode.geometry)[0];
-    delete this.retainedMode.geometry[key];
-    hashCount--;
+    this._freeBuffers(key);
   }
 
   //create a new entry in our retainedMode.geometry
@@ -48,7 +44,6 @@ p5.RendererGL.prototype._freeBuffers = function(gId) {
   }
 
   delete this.retainedMode.geometry[gId];
-  hashCount--;
 
   const gl = this.GL;
   if (buffers.indexBuffer) {
@@ -143,6 +138,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     for (const buff of this.retainedMode.buffers.fill) {
       buff._prepareBuffer(geometry, fillShader);
     }
+    fillShader.disableRemainingAttributes();
     if (geometry.indexBuffer) {
       //vertex index buffer
       this._bindBuffer(geometry.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
@@ -159,6 +155,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     for (const buff of this.retainedMode.buffers.stroke) {
       buff._prepareBuffer(geometry, strokeShader);
     }
+    strokeShader.disableRemainingAttributes();
     this._applyColorBlend(this.curStrokeColor);
     this._drawArrays(gl.TRIANGLES, gId);
     strokeShader.unbindShader();

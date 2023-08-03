@@ -599,6 +599,23 @@ p5.Shader = class {
     }
     return this;
   }
+
+  /**
+   * @method disableRemainingAttributes
+   * @private
+   */
+  disableRemainingAttributes() {
+    for (const location of this._renderer.registerEnabled.values()) {
+      if (
+        !Object.keys(this.attributes).some(
+          key => this.attributes[key].location === location
+        )
+      ) {
+        this._renderer.GL.disableVertexAttribArray(location);
+        this._renderer.registerEnabled.delete(location);
+      }
+    }
+  }
 };
 
 export default p5.Shader;
