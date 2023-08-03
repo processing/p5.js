@@ -956,7 +956,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.curStrokeJoin = join;
   }
 
-  filter(args) {
+  filter(...args) {
     // Couldn't create graphics in RendererGL constructor
     // (led to infinite loop)
     // so it's just created here once on the initial filter call.
@@ -978,7 +978,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (typeof args[0] === 'string') {
       // TODO, handle filter constants:
       //   this.filterShader = map(args[0], {GRAYSCALE: grayscaleShader, ...})
-      //   filterOperationParameter = undefined or args[1]
+      //   this.filterShader.setUniform(args[1] if it exists)
       p5._friendlyError('webgl filter implementation in progress');
       return;
     }
