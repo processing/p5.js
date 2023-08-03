@@ -601,6 +601,9 @@ p5.Shader = class {
   }
 
   /**
+   * Once all buffers have been bound, this checks to see if there are any
+   * remaining active attributes, likely left over from previous renders,
+   * and disables them so that they don't affect rendering.
    * @method disableRemainingAttributes
    * @private
    */
