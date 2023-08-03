@@ -8,14 +8,7 @@
     "docs:dev": "grunt yui:dev",
     "test": "grunt",
     "lint": "grunt lint",
-    "lint:source": "grunt lint:source",
-    "lint:samples": "grunt lint:samples",
-    "lint:fix": "grunt lint-fix",
-    "contributors:add": "all-contributors add",
-    "contributors:generate": "all-contributors generate",
-    "generate": "all-contributors generate",
-    "release": "grunt release-p5",
-    "prepublishOnly": "grunt prerelease"
+    "lint:fix": "grunt lint-fix"
   },
   "lint-staged": {
     "ignore": [
@@ -54,9 +47,7 @@
     "grunt": "^1.6.1",
     "grunt-cli": "^1.4.3",
     "grunt-contrib-clean": "^2.0.1",
-    "grunt-contrib-compress": "^2.0.0",
     "grunt-contrib-connect": "^3.0.0",
-    "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-uglify": "^5.2.2",
     "grunt-contrib-watch": "^1.1.0",
     "grunt-contrib-yuidoc": "1.0.0",
