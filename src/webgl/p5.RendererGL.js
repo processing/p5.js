@@ -79,10 +79,12 @@ const defaultShaders = {
   pointFrag: readFileSync(join(__dirname, '/shaders/point.frag'), 'utf-8')
 };
 
-// const filterShaders = {
-//   [constants.GRAY]:
-//     readFileSync(join(__dirname, '/shaders/filters/gray.frag'), 'utf-7'),
-// };
+// TODO: add remaining filter shaders
+const filterShaderFrags = {
+  [constants.GRAY]:
+    readFileSync(join(__dirname, '/shaders/filters/gray.frag'), 'utf-8')
+};
+const filterShaderVert = readFileSync(join(__dirname, '/shaders/filters/default.vert'), 'utf-8');
 
 /**
  * @module Rendering
@@ -975,26 +977,34 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
     let pg = this.filterGraphicsLayer;
 
+    // use internal shader for filter constants BLUR, INVERT, etc
     if (typeof args[0] === 'string') {
-      // TODO, handle filter constants:
-      //   this.filterShader = map(args[0], {GRAYSCALE: grayscaleShader, ...})
-      //   this.filterShader.setUniform(args[1] if it exists)
-      p5._friendlyError('webgl filter implementation in progress');
-      return;
+      let operation = args[0];
+      let value = args[1];
+      this.filterShader = new p5.Shader(
+        this,
+        filterShaderVert,
+        filterShaderFrags[operation]
+      );
+      this.filterShader.setUniform('filterParameter', value);
+      // TODO: fix error 'INVALID_OPERATION: no valid shader program in use'
     }
-    let userShader = args[0];
+    // use custom user-supplied shader
+    else {
+      let userShader = args[0];
 
-    // Copy the user shader once on the initial filter call,
-    // since it has to be bound to pg and not main
-    let isSameUserShader = (
-      this.filterShader !== undefined &&
-      userShader._vertSrc === this.filterShader._vertSrc &&
-      userShader._fragSrc === this.filterShader._fragSrc
-    );
-    if (!isSameUserShader) {
-      this.filterShader =
-        new p5.Shader(pg._renderer, userShader._vertSrc, userShader._fragSrc);
-      this.filterShader.parentShader = userShader;
+      // Copy the user shader once on the initial filter call,
+      // since it has to be bound to pg and not main
+      let isSameUserShader = (
+        this.filterShader !== undefined &&
+        userShader._vertSrc === this.filterShader._vertSrc &&
+        userShader._fragSrc === this.filterShader._fragSrc
+      );
+      if (!isSameUserShader) {
+        this.filterShader =
+          new p5.Shader(pg._renderer, userShader._vertSrc, userShader._fragSrc);
+        this.filterShader.parentShader = userShader;
+      }
     }
 
     // apply shader to pg
