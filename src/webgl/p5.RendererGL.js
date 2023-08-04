@@ -442,6 +442,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     // Null if no image light is set, otherwise, it is set to a p5.Image
     this.textures = new Map();
+    // make a blurrytextuer here
+    
     // { img: newGraphic }
     this.activeImageLight = null;
     // img
@@ -1551,6 +1553,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     fillShader.setUniform('uEmissive', this._useEmissiveMaterial);
     fillShader.setUniform('uShininess', this._useShininess);
 
+    // calling the set Image light uniforms from here
     this._setImageLightUniforms(fillShader);
 
     fillShader.setUniform('uUseLighting', this._enableLighting);
@@ -1611,7 +1614,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (this.activeImageLight) {
       // Use this.activeImageLight as a key to look up the blurry image from
       // this.textures
-      shader.setUniform('irradiance', this.textures.get(this.activeImageLight));
+      // make a seperate map called blurry textures, 
+      // instead readin frm this.tex read from blurry texture
+      // 
+      shader.setUniform('equiRectangularTextures', this.textures.get(this.activeImageLight));
       // newGraphic
     }
   }
