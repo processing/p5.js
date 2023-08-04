@@ -339,7 +339,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @method isNumber
    * @private
    *
-   * @returns {String} a string indicating the type
+   * @returns {Boolean} a boolean indicating whether input type is Number
    */
   const isNumber = param => {
     if (isNaN(parseFloat(param))) return false;
