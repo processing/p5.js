@@ -561,10 +561,11 @@ p5.prototype.filter = function(...args) {
 };
 
 function parseFilterArgs(...args) {
-	// possible parameters:
-	// - operation, value, [useWebGL]
-	// - operation, [useWebGL]
-	// - shader
+  // args could be:
+  // - operation, value, [useWebGL]
+  // - operation, [useWebGL]
+  // - shader
+
   let result = {
     shader: undefined,
     operation: undefined,
