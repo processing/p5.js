@@ -11,6 +11,176 @@ import './p5.Geometry';
 import * as constants from '../core/constants';
 
 /**
+ * Starts creating a new p5.Geometry. Subsequent shapes drawn will be added
+ * to the geometry and then returned when
+ * <a href="#/p5/endGeometry">endGeometry()</a> is called. One can also use
+ * <a href="#/p5/buildGeometry">buildGeometry()</a> to pass a function that
+ * draws shapes.
+ *
+ * If you need to draw complex shapes every frame which don't change over time,
+ * combining them upfront with `beginGeometry()` and `endGeometry()` and then
+ * drawing that will run faster than repeatedly drawing the individual pieces.
+ *
+ * @method beginGeometry
+ *
+ * @example
+ * <div>
+ * <code>
+ * let shapes;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   makeShapes();
+ * }
+ *
+ * function makeShapes() {
+ *   beginGeometry();
+ *   scale(0.18);
+ *
+ *   push();
+ *   translate(100, -50);
+ *   scale(0.5);
+ *   rotateX(PI/4);
+ *   cone();
+ *   pop();
+ *   cone();
+ *
+ *   beginShape();
+ *   vertex(-20, -50);
+ *   quadraticVertex(
+ *     -40, -70,
+ *     0, -60
+ *   );
+ *   endShape();
+ *
+ *   beginShape(TRIANGLE_STRIP);
+ *   for (let y = 20; y <= 60; y += 10) {
+ *     for (let x of [20, 60]) {
+ *       vertex(x, y);
+ *     }
+ *   }
+ *   endShape();
+ *
+ *   beginShape();
+ *   vertex(-100, -120);
+ *   vertex(-120, -110);
+ *   vertex(-105, -100);
+ *   endShape();
+ *
+ *   shapes = endGeometry();
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   lights();
+ *   orbitControl();
+ *   model(shapes);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * A series of different flat, curved, and 3D shapes floating in space.
+ */
+p5.prototype.beginGeometry = function() {
+  return this._renderer.beginGeometry();
+};
+
+/**
+ * Finishes creating a new <a href="#/p5.Geometry">p5.Geometry</a> that was
+ * started using <a href="#/p5/beginGeometry">beginGeometry()</a>. One can also
+ * use <a href="#/p5/buildGeometry">buildGeometry()</a> to pass a function that
+ * draws shapes.
+ *
+ * @method endGeometry
+ * @returns {p5.Geometry} The model that was built.
+ */
+p5.prototype.endGeometry = function() {
+  return this._renderer.endGeometry();
+};
+
+/**
+ * Creates a new <a href="#/p5.Geometry">p5.Geometry</a> that contains all
+ * the shapes drawn in a provided callback function. The returned combined shape
+ * can then be drawn all at once using <a href="#/p5/model">model()</a>.
+ *
+ * If you need to draw complex shapes every frame which don't change over time,
+ * combining them with `buildGeometry()` once and then drawing that will run
+ * faster than repeatedly drawing the individual pieces.
+ *
+ * One can also draw shapes directly between
+ * <a href="#/p5/beginGeometry">beginGeometry()</a> and
+ * <a href="#/p5/endGeometry">endGeometry()</a> instead of using a callback
+ * function.
+ *
+ * @method buildGeometry
+ * @param {Function} callback A function that draws shapes.
+ * @returns {p5.Geometry} The model that was built from the callback function.
+ *
+ * @example
+ * <div>
+ * <code>
+ * let particles;
+ * let button;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   button = createButton('New');
+ *   button.mousePressed(makeParticles);
+ *   makeParticles();
+ * }
+ *
+ * function makeParticles() {
+ *   if (particles) freeGeometry(particles);
+ *
+ *   particles = buildGeometry(() => {
+ *     for (let i = 0; i < 60; i++) {
+ *       push();
+ *       translate(
+ *         randomGaussian(0, 20),
+ *         randomGaussian(0, 20),
+ *         randomGaussian(0, 20)
+ *       );
+ *       sphere(5);
+ *       pop();
+ *     }
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   noStroke();
+ *   lights();
+ *   orbitControl();
+ *   model(particles);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * A cluster of spheres.
+ */
+p5.prototype.buildGeometry = function(callback) {
+  return this._renderer.buildGeometry(callback);
+};
+
+/**
+ * Clears the resources of a model to free up browser memory. A model whose
+ * resources have been cleared can still be drawn, but the first time it is
+ * drawn again, it might take longer.
+ *
+ * This method works on models generated with
+ * <a href="#/p5/buildGeometry">buildGeometry()</a> as well as those loaded
+ * from <a href="#/p5/loadModel">loadModel()</a>.
+ *
+ * @method freeGeometry
+ * @param {p5.Geometry} The geometry whose resources should be freed
+ */
+p5.prototype.freeGeometry = function(geometry) {
+  this._renderer._freeBuffers(geometry.gid);
+};
+
+/**
  * Draw a plane with given a width and height
  * @method plane
  * @param  {Number} [width]    width of the plane

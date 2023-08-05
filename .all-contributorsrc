@@ -3804,6 +3804,51 @@
         "code",
         "plugin"
       ]
+    },
+    {
+      "login": "SilasVM",
+      "name": "Victor Morgan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/124199231?v=4",
+      "profile": "https://github.com/SilasVM",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "snwarner22",
+      "name": "Sekani Warner",
+      "avatar_url": "https://avatars.githubusercontent.com/u/137221902?v=4",
+      "profile": "https://github.com/snwarner22",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "e-coucou",
+      "name": "e-Coucou",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4691474?v=4",
+      "profile": "https://github.com/e-coucou",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "thatguyseven",
+      "name": "Aaron Ni",
+      "avatar_url": "https://avatars.githubusercontent.com/u/137221692?v=4",
+      "profile": "https://github.com/thatguyseven",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "OnexiMedina",
+      "name": "Onexi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/112675769?v=4",
+      "profile": "https://github.com/OnexiMedina",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",

@@ -8,104 +8,113 @@
 import p5 from '../core/main';
 
 /**
- * Calculates the absolute value (magnitude) of a number. Maps to Math.abs().
- * The absolute value of a number is always positive.
+ * Calculates the absolute value of a number. A number's absolute value is its
+ * distance from zero on the number line. -5 and 5 are both five units away
+ * from zero, so calling `abs(-5)` and `abs(5)` both return 5. The absolute
+ * value of a number is always positive.
  *
  * @method abs
- * @param  {Number} n number to compute
- * @return {Number}   absolute value of given number
+ * @param  {Number} n number to compute.
+ * @return {Number}   absolute value of given number.
  * @example
- * <div class = "norender"><code>
- * function setup() {
- *   let x = -3;
- *   let y = abs(x);
+ * <div>
+ * <code>
+ * function draw() {
+ *   // Invert the y-axis.
+ *   scale(1, -1);
+ *   translate(0, -height);
  *
- *   print(x); // -3
- *   print(y); // 3
+ *   let centerX = width / 2;
+ *   let x = frameCount;
+ *   let y = abs(x - centerX);
+ *   point(x, y);
  *
- *   describe('no image displayed');
+ *   describe('A series of black dots that form a "V" shape.');
  * }
- * </code></div>
+ * </code>
+ * </div>
  */
 p5.prototype.abs = Math.abs;
 
 /**
- * Calculates the closest int value that is greater than or equal to the
- * value of the parameter. Maps to Math.ceil(). For example, ceil(9.03)
- * returns the value 10.
+ * Calculates the closest integer value that is greater than or equal to the
+ * parameter's value. For example, calling `ceil(9.03)` returns the value
+ * 10.
  *
  * @method ceil
- * @param  {Number} n number to round up
- * @return {Integer}   rounded up number
+ * @param  {Number} n number to round up.
+ * @return {Integer}   rounded up number.
  * @example
- * <div><code>
- * function draw() {
- *   background(200);
- *   // map, mouseX between 0 and 5.
- *   let ax = map(mouseX, 0, 100, 0, 5);
- *   let ay = 66;
+ * <div>
+ * <code>
+ * // Set the range for RGB values from 0 to 1.
+ * colorMode(RGB, 1);
+ * noStroke();
  *
- *   //Get the ceiling of the mapped number.
- *   let bx = ceil(map(mouseX, 0, 100, 0, 5));
- *   let by = 33;
+ * let r = 0.3;
+ * fill(r, 0, 0);
+ * rect(0, 0, width / 2, height);
  *
- *   // Multiply the mapped numbers by 20 to more easily
- *   // see the changes.
- *   stroke(0);
- *   fill(0);
- *   line(0, ay, ax * 20, ay);
- *   line(0, by, bx * 20, by);
+ * // Round r up to 1.
+ * r = ceil(r);
+ * fill(r, 0, 0);
+ * rect(width / 2, 0, width / 2, height);
  *
- *   // Reformat the float returned by map and draw it.
- *   noStroke();
- *   text(nfc(ax, 2), ax, ay - 5);
- *   text(nfc(bx, 1), bx, by - 5);
- *
- *   describe(`2 horizontal lines & number sets. increase with
- *     mouse x. bottom to 2 decimals`);
- * }
- * </code></div>
+ * describe('Two rectangles. The one on the left is dark red and the one on the right is bright red.');
+ * </code>
+ * </div>
  */
 p5.prototype.ceil = Math.ceil;
 
 /**
- * Constrains a value between a minimum and maximum value.
+ * Constrains a number between a minimum and maximum value.
  *
  * @method constrain
- * @param  {Number} n    number to constrain
- * @param  {Number} low  minimum limit
- * @param  {Number} high maximum limit
- * @return {Number}      constrained number
+ * @param  {Number} n    number to constrain.
+ * @param  {Number} low  minimum limit.
+ * @param  {Number} high maximum limit.
+ * @return {Number}      constrained number.
  * @example
- * <div><code>
+ * <div>
+ * <code>
  * function draw() {
  *   background(200);
  *
- *   let leftWall = 25;
- *   let rightWall = 75;
+ *   let x = constrain(mouseX, 33, 67);
+ *   let y = 50;
  *
- *   // xm is just the mouseX, while
- *   // xc is the mouseX, but constrained
- *   // between the leftWall and rightWall!
- *   let xm = mouseX;
- *   let xc = constrain(mouseX, leftWall, rightWall);
+ *   strokeWeight(5);
+ *   point(x, y);
  *
- *   // Draw the walls.
- *   stroke(150);
+ *   describe('A black dot drawn on a gray square follows the mouse from left to right. Its movement is constrained to the middle third of the square.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(200);
+ *
+ *   // Set boundaries and draw them.
+ *   let leftWall = width * 0.25;
+ *   let rightWall = width * 0.75;
  *   line(leftWall, 0, leftWall, height);
  *   line(rightWall, 0, rightWall, height);
  *
- *   // Draw xm and xc as circles.
- *   noStroke();
- *   fill(150);
- *   ellipse(xm, 33, 9, 9); // Not Constrained
- *   fill(0);
- *   ellipse(xc, 66, 9, 9); // Constrained
+ *   // Draw a circle that follows the mouse freely.
+ *   fill(255);
+ *   circle(mouseX, height / 3, 9);
  *
- *   describe(`2 vertical lines. 2 ellipses move with mouse X,
- *     1 does not move past lines`);
+ *   // Draw a circle that's constrained.
+ *   let xc = constrain(mouseX, leftWall, rightWall);
+ *   fill(0);
+ *   circle(xc, 2 * height / 3, 9);
+ *
+ *   describe('Two vertical lines. Two circles move horizontally with the mouse. One circle stops at the vertical lines.');
  * }
- * </code></div>
+ * </code>
+ * </div>
  */
 p5.prototype.constrain = function(n, low, high) {
   p5._validateParameters('constrain', arguments);
@@ -113,59 +122,53 @@ p5.prototype.constrain = function(n, low, high) {
 };
 
 /**
- * Calculates the distance between two points, in either two or three dimensions.
- * If you looking for distance between two vectors see <a herf="#/p5.Vector/dist">p5.Vector.dist()</a>
+ * Calculates the distance between two points.
+ *
+ * The version of `dist()` with four parameters calculates distance in two
+ * dimensions.
+ *
+ * The version of `dist()` with six parameters calculates distance in three
+ * dimensions.
+ *
+ * Use <a href="#/p5.Vector/dist">p5.Vector.dist()</a> to calculate the
+ * distance between two <a href="#/p5.Vector">p5.Vector</a> objects.
  *
  * @method dist
- * @param  {Number} x1 x-coordinate of the first point
- * @param  {Number} y1 y-coordinate of the first point
- * @param  {Number} x2 x-coordinate of the second point
- * @param  {Number} y2 y-coordinate of the second point
- * @return {Number}    distance between the two points
+ * @param  {Number} x1 x-coordinate of the first point.
+ * @param  {Number} y1 y-coordinate of the first point.
+ * @param  {Number} x2 x-coordinate of the second point.
+ * @param  {Number} y2 y-coordinate of the second point.
+ * @return {Number}    distance between the two points.
  *
  * @example
- * <div><code>
- * // Move your mouse inside the canvas to see the
- * // change in distance between two points!
- * function draw() {
- *   background(200);
- *   fill(0);
+ * <div>
+ * <code>
+ * let x1 = 10;
+ * let y1 = 50;
+ * let x2 = 90;
+ * let y2 = 50;
  *
- *   let x1 = 10;
- *   let y1 = 90;
- *   let x2 = mouseX;
- *   let y2 = mouseY;
+ * line(x1, y1, x2, y2);
+ * strokeWeight(5);
+ * point(x1, y1);
+ * point(x2, y2);
  *
- *   line(x1, y1, x2, y2);
- *   ellipse(x1, y1, 7, 7);
- *   ellipse(x2, y2, 7, 7);
+ * let d = dist(x1, y1, x2, y2);
+ * text(d, 43, 40);
  *
- *   // d is the length of the line
- *   // the distance from point 1 to point 2.
- *   let d = dist(x1, y1, x2, y2);
- *
- *   // Let's write d along the line we are drawing!
- *   push();
- *   translate((x1 + x2) / 2, (y1 + y2) / 2);
- *   rotate(atan2(y2 - y1, x2 - x1));
- *   text(nfc(d, 1), 0, -5);
- *   pop();
- *   // Fancy!
- *
- *   describe(`2 ellipses joined by line. 1 ellipse moves with
- *     mouse X&Y. Distance displayed.`);
- * }
- * </code></div>
+ * describe('Two dots connected by a horizontal line. The number 80 is written above the center of the line.');
+ * </code>
+ * </div>
  */
 /**
  * @method dist
  * @param  {Number} x1
  * @param  {Number} y1
- * @param  {Number} z1 z-coordinate of the first point
+ * @param  {Number} z1 z-coordinate of the first point.
  * @param  {Number} x2
  * @param  {Number} y2
- * @param  {Number} z2 z-coordinate of the second point
- * @return {Number}    distance between the two points
+ * @param  {Number} z2 z-coordinate of the second point.
+ * @return {Number}    distance between the two points.
  */
 p5.prototype.dist = function(...args) {
   p5._validateParameters('dist', args);
@@ -179,132 +182,104 @@ p5.prototype.dist = function(...args) {
 };
 
 /**
- * Returns Euler's number e (2.71828...) raised to the power of the n
- * parameter. Maps to Math.exp().
+ * Returns Euler's number e (2.71828...) raised to the power of the `n`
+ * parameter.
  *
  * @method exp
- * @param  {Number} n exponent to raise
+ * @param  {Number} n exponent to raise.
  * @return {Number}   e^n
  * @example
- * <div><code>
+ * <div>
+ * <code>
  * function draw() {
- *   background(200);
+ *   // Invert the y-axis.
+ *   scale(1, -1);
+ *   translate(0, -height);
  *
- *   // Compute the exp() function with a value between 0 and 2
- *   let xValue = map(mouseX, 0, width, 0, 2);
- *   let yValue = exp(xValue);
+ *   let x = frameCount;
+ *   let y = 0.005 * exp(x * 0.1);
+ *   point(x, y);
  *
- *   let y = map(yValue, 0, 8, height, 0);
- *
- *   let legend = 'exp (' + nfc(xValue, 3) + ')\n= ' + nf(yValue, 1, 4);
- *   stroke(150);
- *   line(mouseX, y, mouseX, height);
- *   fill(0);
- *   text(legend, 5, 15);
- *   noStroke();
- *   ellipse(mouseX, y, 7, 7);
- *
- *   // Draw the exp(x) curve,
- *   // over the domain of x from 0 to 2
- *   noFill();
- *   stroke(0);
- *   beginShape();
- *   for (let x = 0; x < width; x++) {
- *     xValue = map(x, 0, width, 0, 2);
- *     yValue = exp(xValue);
- *     y = map(yValue, 0, 8, height, 0);
- *     vertex(x, y);
- *   }
- *
- *   endShape();
- *   line(0, 0, 0, height);
- *   line(0, height - 1, width, height - 1);
- *
- *   describe('ellipse moves along a curve with mouse x. e^n displayed.');
+ *   describe('A series of black dots that grow exponentially from left to right.');
  * }
- * </code></div>
+ * </code>
+ * </div>
  */
 p5.prototype.exp = Math.exp;
 
 /**
- * Calculates the closest int value that is less than or equal to the
- * value of the parameter. Maps to Math.floor().
+ * Calculates the closest integer value that is less than or equal to the
+ * value of the `n` parameter.
  *
  * @method floor
- * @param  {Number} n number to round down
- * @return {Integer}  rounded down number
+ * @param  {Number} n number to round down.
+ * @return {Integer}  rounded down number.
  * @example
- * <div><code>
- * function draw() {
- *   background(200);
- *   //map, mouseX between 0 and 5.
- *   let ax = map(mouseX, 0, 100, 0, 5);
- *   let ay = 66;
+ * <div>
+ * <code>
+ * // Set the range for RGB values from 0 to 1.
+ * colorMode(RGB, 1);
+ * noStroke();
  *
- *   //Get the floor of the mapped number.
- *   let bx = floor(map(mouseX, 0, 100, 0, 5));
- *   let by = 33;
+ * let r = 0.8;
+ * fill(r, 0, 0);
+ * rect(0, 0, width / 2, height);
  *
- *   // Multiply the mapped numbers by 20 to more easily
- *   // see the changes.
- *   stroke(0);
- *   fill(0);
- *   line(0, ay, ax * 20, ay);
- *   line(0, by, bx * 20, by);
+ * // Round r down to 0.
+ * r = floor(r);
+ * fill(r, 0, 0);
+ * rect(width / 2, 0, width / 2, height);
  *
- *   // Reformat the float returned by map and draw it.
- *   noStroke();
- *   text(nfc(ax, 2), ax, ay - 5);
- *   text(nfc(bx, 1), bx, by - 5);
- *
- *   describe(`2 horizontal lines & number sets.
- *     increase with mouse x. bottom to 2 decimals`);
- * }
- * </code></div>
+ * describe('Two rectangles. The one on the left is bright red and the one on the right is black.');
+ * </code>
+ * </div>
  */
 p5.prototype.floor = Math.floor;
 
 /**
- * Calculates a number between two numbers at a specific increment. The amt
- * parameter is the amount to interpolate between the two values where 0.0
- * is equal to the first point, 0.1 is very near the first point, 0.5 is
- * half-way in between, and 1.0 is equal to the second point. If the
- * value of amt is more than 1.0 or less than 0.0, the number will be
- * calculated accordingly in the ratio of the two given numbers. The lerp()
- * function is convenient for creating motion along a straight
- * path and for drawing dotted lines.
+ * Calculates a number between two numbers at a specific increment. The `amt`
+ * parameter is the amount to interpolate between the two numbers. 0.0 is
+ * equal to the first number, 0.1 is very near the first number, 0.5 is
+ * half-way in between, and 1.0 is equal to the second number. The `lerp()`
+ * function is convenient for creating motion along a straight path and for
+ * drawing dotted lines.
+ *
+ * If the value of `amt` is less than 0 or more than 1, `lerp()` will return a
+ * number outside of the original interval. For example, calling
+ * `lerp(0, 10, 1.5)` will return 15.
  *
  * @method lerp
- * @param  {Number} start first value
- * @param  {Number} stop  second value
- * @param  {Number} amt   number
- * @return {Number}       lerped value
+ * @param  {Number} start first value.
+ * @param  {Number} stop  second value.
+ * @param  {Number} amt   number.
+ * @return {Number}       lerped value.
  * @example
- * <div><code>
- * function setup() {
- *   background(200);
- *   let a = 20;
- *   let b = 80;
- *   let c = lerp(a, b, 0.2);
- *   let d = lerp(a, b, 0.5);
- *   let e = lerp(a, b, 0.8);
+ * <div>
+ * <code>
+ * let a = 20;
+ * let b = 80;
+ * let c = lerp(a, b, 0.2);
+ * let d = lerp(a, b, 0.5);
+ * let e = lerp(a, b, 0.8);
  *
- *   let y = 50;
+ * let y = 50;
  *
- *   strokeWeight(5);
- *   stroke(0); // Draw the original points in black
- *   point(a, y);
- *   point(b, y);
+ * strokeWeight(5);
  *
- *   stroke(100); // Draw the lerp points in gray
- *   point(c, y);
- *   point(d, y);
- *   point(e, y);
+ * // Draw the original points in black.
+ * stroke(0);
+ * point(a, y);
+ * point(b, y);
  *
- *   describe(`5 points horizontally staggered mid-canvas.
- *     mid 3 are grey, outer black`);
- * }
- * </code></div>
+ * // Draw the lerped points in gray.
+ * stroke(100);
+ * point(c, y);
+ * point(d, y);
+ * point(e, y);
+ *
+ * describe('Five points in a horizontal line. The outer points are black and the inner points are gray.');
+ * </code>
+ * </div>
  */
 p5.prototype.lerp = function(start, stop, amt) {
   p5._validateParameters('lerp', arguments);
@@ -313,90 +288,56 @@ p5.prototype.lerp = function(start, stop, amt) {
 
 /**
  * Calculates the natural logarithm (the base-e logarithm) of a number. This
- * function expects the n parameter to be a value greater than 0.0. Maps to
- * Math.log().
+ * function expects the `n` parameter to be a value greater than 0.0.
  *
  * @method log
- * @param  {Number} n number greater than 0
- * @return {Number}   natural logarithm of n
+ * @param  {Number} n number greater than 0.
+ * @return {Number}   natural logarithm of n.
  * @example
- * <div><code>
+ * <div>
+ * <code>
  * function draw() {
- *   background(200);
- *   let maxX = 2.8;
- *   let maxY = 1.5;
+ *   // Invert the y-axis.
+ *   scale(1, -1);
+ *   translate(0, -height);
  *
- *   // Compute the natural log of a value between 0 and maxX
- *   let xValue = map(mouseX, 0, width, 0, maxX);
- *   let yValue, y;
- *   if (xValue > 0) {
-    // Cannot take the log of a negative number.
- *     yValue = log(xValue);
- *     y = map(yValue, -maxY, maxY, height, 0);
+ *   let x = frameCount;
+ *   let y = 15 * log(x);
+ *   point(x, y);
  *
- *     // Display the calculation occurring.
- *     let legend = 'log(' + nf(xValue, 1, 2) + ')\n= ' + nf(yValue, 1, 3);
- *     stroke(150);
- *     line(mouseX, y, mouseX, height);
- *     fill(0);
- *     text(legend, 5, 15);
- *     noStroke();
- *     ellipse(mouseX, y, 7, 7);
- *   }
- *
- *   // Draw the log(x) curve,
- *   // over the domain of x from 0 to maxX
- *   noFill();
- *   stroke(0);
- *   beginShape();
- *   for (let x = 0; x < width; x++) {
- *     xValue = map(x, 0, width, 0, maxX);
- *     yValue = log(xValue);
- *     y = map(yValue, -maxY, maxY, height, 0);
- *     vertex(x, y);
- *   }
- *   endShape();
- *   line(0, 0, 0, height);
- *   line(0, height / 2, width, height / 2);
- *
- *   describe(`ellipse moves along a curve with mouse x.
- *     natural logarithm of n displayed.`);
+ *   describe('A series of black dots that get higher slowly from left to right.');
  * }
- * </code></div>
+ * </code>
+ * </div>
  */
 p5.prototype.log = Math.log;
 
 /**
- * Calculates the magnitude (or length) of a vector. A vector is a direction
- * in space commonly used in computer graphics and linear algebra. Because it
- * has no "start" position, the magnitude of a vector can be thought of as
- * the distance from the coordinate 0,0 to its x,y value. Therefore, <a href="#/p5/mag">mag()</a> is
- * a shortcut for writing dist(0, 0, x, y).
+ * Calculates the magnitude, or length, of a vector. A vector is like an arrow
+ * pointing in space. Vectors are commonly used for programming motion.
+ *
+ * Vectors don't have a "start" position because the same arrow can be drawn
+ * anywhere. A vector's magnitude can be thought of as the distance from the
+ * origin (0, 0) to its tip at (x, y). `mag(x, y)` is a shortcut for calling
+ * `dist(0, 0, x, y)`.
  *
  * @method mag
- * @param  {Number} a first value
- * @param  {Number} b second value
- * @return {Number}   magnitude of vector from (0,0) to (a,b)
+ * @param  {Number} x first component.
+ * @param  {Number} y second component.
+ * @return {Number}   magnitude of vector from (0,0) to (x,y).
  * @example
- * <div><code>
- * function setup() {
- *   let x1 = 20;
- *   let x2 = 80;
- *   let y1 = 30;
- *   let y2 = 70;
+ * <div>
+ * <code>
+ * let x = 30;
+ * let y = 40;
+ * let m = mag(x, y);
  *
- *   line(0, 0, x1, y1);
- *   print(mag(x1, y1)); // Prints "36.05551275463989"
- *   line(0, 0, x2, y1);
- *   print(mag(x2, y1)); // Prints "85.44003745317531"
- *   line(0, 0, x1, y2);
- *   print(mag(x1, y2)); // Prints "72.80109889280519"
- *   line(0, 0, x2, y2);
- *   print(mag(x2, y2)); // Prints "106.3014581273465"
+ * line(0, 0, x, y);
+ * text(m, x, y);
  *
- *   describe('4 lines of different length radiate from top left of canvas.');
- * }
- * </code></div>
+ * describe('A diagonal line is drawn from the top left of the canvas. The number 50 is written at the end of the line.');
+ * </code>
+ * </div>
  */
 p5.prototype.mag = function(x, y) {
   p5._validateParameters('mag', arguments);
@@ -406,44 +347,52 @@ p5.prototype.mag = function(x, y) {
 /**
  * Re-maps a number from one range to another.
  *
- * In the first example above, the number 25 is converted from a value in the
- * range of 0 to 100 into a value that ranges from the left edge of the
- * window (0) to the right edge (width).
+ * For example, calling `map(2, 0, 10, 0, 100)` returns 20. The first three
+ * arguments set the original value to 2 and the original range from 0 to 10.
+ * The last two arguments set the target range from 0 to 100. 20's position
+ * in the target range [0, 100] is proportional to 2's position in the
+ * original range [0, 10].
  *
  * @method map
- * @param  {Number} value  the incoming value to be converted
- * @param  {Number} start1 lower bound of the value's current range
- * @param  {Number} stop1  upper bound of the value's current range
- * @param  {Number} start2 lower bound of the value's target range
- * @param  {Number} stop2  upper bound of the value's target range
- * @param  {Boolean} [withinBounds] constrain the value to the newly mapped range
- * @return {Number}        remapped number
+ * @param  {Number} value  the incoming value to be converted.
+ * @param  {Number} start1 lower bound of the value's current range.
+ * @param  {Number} stop1  upper bound of the value's current range.
+ * @param  {Number} start2 lower bound of the value's target range.
+ * @param  {Number} stop2  upper bound of the value's target range.
+ * @param  {Boolean} [withinBounds] constrain the value to the newly mapped range.
+ * @return {Number}        remapped number.
  * @example
- *   <div><code>
- * let value = 25;
- * let m = map(value, 0, 100, 0, width);
- * ellipse(m, 50, 10, 10);
- * describe('10×10 white ellipse with in mid left canvas');
-</code></div>
+ * <div>
+ * <code>
+ * let n = map(7, 0, 10, 0, 100);
+ * text(n, 50, 50);
  *
- *   <div><code>
- * function setup() {
- *   noStroke();
- * }
+ * describe('The number 70 written in the middle of a gray square.');
+ * </code>
+ * </div>
  *
+ * <div>
+ * <code>
+ * let x = map(2, 0, 10, 0, width);
+ * circle(x, 50, 10);
+ *
+ * describe('A white circle drawn on the left side of a gray square.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
  * function draw() {
- *   background(204);
- *   let x1 = map(mouseX, 0, width, 25, 75);
- *   ellipse(x1, 25, 25, 25);
- *   //This ellipse is constrained to the 0-100 range
- *   //after setting withinBounds to true
- *   let x2 = map(mouseX, 0, width, 0, 100, true);
- *   ellipse(x2, 75, 25, 25);
+ *   background(200);
  *
- *   describe(`Two 25×25 white ellipses move with mouse x.
- *     Bottom has more range from X`);
+ *   let c = map(mouseX, 0, width, 0, 255);
+ *   fill(c);
+ *   circle(50, 50, 20);
+ *
+ *   describe('A circle changes color from black to white as the mouse moves from left to right.');
  * }
-</code></div>
+ * </code>
+ * </div>
  */
 p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
   p5._validateParameters('map', arguments);
@@ -459,43 +408,65 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
 };
 
 /**
- * Determines the largest value in a sequence of numbers, and then returns
- * that value. <a href="#/p5/max">max()</a> accepts any number of Number parameters, or an Array
- * of any length.
+ * Returns the largest value in a sequence of numbers.
+ *
+ * The version of `max()` with one parameter interprets it as an array of
+ * numbers and returns the largest number.
+ *
+ * The version of `max()` with two or more parameters interprets them as
+ * individual numbers and returns the largest number.
  *
  * @method max
- * @param  {Number} n0 Number to compare
- * @param  {Number} n1 Number to compare
- * @return {Number}             maximum Number
+ * @param  {Number} n0 first number to compare.
+ * @param  {Number} n1 second number to compare.
+ * @return {Number}             maximum number.
  * @example
- * <div><code>
- * function setup() {
- *   // Change the elements in the array and run the sketch
- *   // to show how max() works!
- *   let numArray = [2, 1, 5, 4, 8, 9];
- *   fill(0);
- *   noStroke();
- *   text('Array Elements', 0, 10);
- *   // Draw all numbers in the array
- *   let spacing = 15;
- *   let elemsY = 25;
- *   for (let i = 0; i < numArray.length; i++) {
- *     text(numArray[i], i * spacing, elemsY);
- *   }
- *   let maxX = 33;
- *   let maxY = 80;
- *   // Draw the Maximum value in the array.
- *   textSize(32);
- *   text(max(numArray), maxX, maxY);
+ * <div>
+ * <code>
+ * let m = max(10, 20);
+ * text(m, 50, 50);
  *
- *   describe(`Small text at top reads: Array Elements 2 1 5 4 8 9.
- *     Large text at center: 9`);
- * }
- * </code></div>
+ * describe('The number 20 written in the middle of a gray square.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let m = max([10, 20]);
+ * text(m, 50, 50);
+ *
+ * describe('The number 20 written in the middle of a gray square.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let numbers = [2, 1, 5, 4, 8, 9];
+ *
+ * // Draw all of the numbers in the array.
+ * noStroke();
+ * let spacing = 15;
+ * numbers.forEach((n, index) => {
+ *   let x = index * spacing;
+ *   let y = 25;
+ *   text(n, x, y);
+ * });
+ *
+ * // Draw the maximum value in the array.
+ * let m = max(numbers);
+ * let maxX = 33;
+ * let maxY = 80;
+ *
+ * textSize(32);
+ * text(m, maxX, maxY);
+ *
+ * describe('The numbers 2 1 5 4 8 9 are written in small text at the top of a gray square. The number 9 is written in large text at the center of the square.');
+ * </code>
+ * </div>
  */
 /**
  * @method max
- * @param  {Number[]} nums Numbers to compare
+ * @param  {Number[]} nums numbers to compare.
  * @return {Number}
  */
 p5.prototype.max = function(...args) {
@@ -515,43 +486,65 @@ p5.prototype.max = function(...args) {
 };
 
 /**
- * Determines the smallest value in a sequence of numbers, and then returns
- * that value. <a href="#/p5/min">min()</a> accepts any number of Number parameters, or an Array
- * of any length.
+ * Returns the smallest value in a sequence of numbers.
+ *
+ * The version of `min()` with one parameter interprets it as an array of
+ * numbers and returns the smallest number.
+ *
+ * The version of `min()` with two or more parameters interprets them as
+ * individual numbers and returns the smallest number.
  *
  * @method min
- * @param  {Number} n0 Number to compare
- * @param  {Number} n1 Number to compare
- * @return {Number}             minimum Number
+ * @param  {Number} n0 first number to compare.
+ * @param  {Number} n1 second number to compare.
+ * @return {Number}             minimum number.
  * @example
- * <div><code>
- * function setup() {
- *   // Change the elements in the array and run the sketch
- *   // to show how min() works!
- *   let numArray = [2, 1, 5, 4, 8, 9];
- *   fill(0);
- *   noStroke();
- *   text('Array Elements', 0, 10);
- *   // Draw all numbers in the array
- *   let spacing = 15;
- *   let elemsY = 25;
- *   for (let i = 0; i < numArray.length; i++) {
- *     text(numArray[i], i * spacing, elemsY);
- *   }
- *   let maxX = 33;
- *   let maxY = 80;
- *   // Draw the Minimum value in the array.
- *   textSize(32);
- *   text(min(numArray), maxX, maxY);
+ * <div>
+ * <code>
+ * let m = min(10, 20);
+ * text(m, 50, 50);
  *
- *   describe(`Small text at top reads: Array Elements 2 1 5 4 8 9.
- *     Large text at center: 1`);
- * }
- * </code></div>
+ * describe('The number 10 written in the middle of a gray square.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let m = min([10, 20]);
+ * text(m, 50, 50);
+ *
+ * describe('The number 10 written in the middle of a gray square.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let numbers = [2, 1, 5, 4, 8, 9];
+ *
+ * // Draw all of the numbers in the array.
+ * noStroke();
+ * let spacing = 15;
+ * numbers.forEach((n, index) => {
+ *   let x = index * spacing;
+ *   let y = 25;
+ *   text(n, x, y);
+ * });
+ *
+ * // Draw the minimum value in the array.
+ * let m = min(numbers);
+ * let minX = 33;
+ * let minY = 80;
+ *
+ * textSize(32);
+ * text(m, minX, minY);
+ *
+ * describe('The numbers 2 1 5 4 8 9 are written in small text at the top of a gray square. The number 1 is written in large text at the center of the square.');
+ * </code>
+ * </div>
  */
 /**
  * @method min
- * @param  {Number[]} nums Numbers to compare
+ * @param  {Number[]} nums numbers to compare.
  * @return {Number}
  */
 p5.prototype.min = function(...args) {
@@ -571,51 +564,34 @@ p5.prototype.min = function(...args) {
 };
 
 /**
- * Normalizes a number from another range into a value between 0 and 1.
- * Identical to map(value, low, high, 0, 1).
- * Numbers outside of the range are not clamped to 0 and 1, because
- * out-of-range values are often intentional and useful. (See the example above.)
+ * Maps a number from one range to a value between 0 and 1.
+ *
+ * For example, `norm(2, 0, 10)` returns 0.2. 2's position in the original
+ * range [0, 10] is proportional to 0.2's position in the range [0, 1]. This
+ * is equivalent to calling `map(2, 0, 10, 0, 1)`.
+ *
+ * Numbers outside of the original range are not constrained between 0 and 1.
+ * Out-of-range values are often intentional and useful.
  *
  * @method norm
- * @param  {Number} value incoming value to be normalized
- * @param  {Number} start lower bound of the value's current range
- * @param  {Number} stop  upper bound of the value's current range
- * @return {Number}       normalized number
+ * @param  {Number} value incoming value to be normalized.
+ * @param  {Number} start lower bound of the value's current range.
+ * @param  {Number} stop  upper bound of the value's current range.
+ * @return {Number}       normalized number.
  * @example
- * <div><code>
+ * <div>
+ * <code>
  * function draw() {
- *   background(200);
- *   let currentNum = mouseX;
- *   let lowerBound = 0;
- *   let upperBound = width; //100;
- *   let normalized = norm(currentNum, lowerBound, upperBound);
- *   let lineY = 70;
- *   stroke(3);
- *   line(0, lineY, width, lineY);
- *   //Draw an ellipse mapped to the non-normalized value.
- *   noStroke();
- *   fill(50);
- *   let s = 7; // ellipse size
- *   ellipse(currentNum, lineY, s, s);
+ *   // Set the range for RGB values from 0 to 1.
+ *   colorMode(RGB, 1);
  *
- *   // Draw the guide
- *   let guideY = lineY + 15;
- *   text('0', 0, guideY);
- *   textAlign(RIGHT);
- *   text('100', width, guideY);
+ *   let r = norm(mouseX, 0, width);
+ *   background(r, 0, 0);
  *
- *   // Draw the normalized value
- *   textAlign(LEFT);
- *   fill(0);
- *   textSize(32);
- *   let normalY = 40;
- *   let normalX = 20;
- *   text(normalized, normalX, normalY);
- *
- *   describe(`ellipse moves with mouse. 0 shown left, 100 right,
- *     and updating values center`);
+ *   describe('A square changes color from black to red as the mouse moves from left to right.');
  * }
- * </code></div>
+ * </code>
+ * </div>
  */
 p5.prototype.norm = function(n, start, stop) {
   p5._validateParameters('norm', arguments);
@@ -623,83 +599,65 @@ p5.prototype.norm = function(n, start, stop) {
 };
 
 /**
- * Facilitates exponential expressions. The <a href="#/p5/pow">pow()</a> function is an efficient
- * way of multiplying numbers by themselves (or their reciprocals) in large
- * quantities. For example, pow(3, 5) is equivalent to the expression
- * 3 &times; 3 &times; 3 &times; 3 &times; 3 and pow(3, -5) is equivalent to 1 /
- * 3 &times; 3 &times; 3 &times; 3 &times; 3. Maps to
- * Math.pow().
+ * Calculates exponential expressions such as 2^3.
+ *
+ * For example, `pow(2, 3)` is equivalent to the expression
+ * 2 &times; 2 &times; 2. `pow(2, -3)` is equivalent to 1 &#247;
+ * (2 &times; 2 &times; 2).
  *
  * @method pow
- * @param  {Number} n base of the exponential expression
- * @param  {Number} e power by which to raise the base
- * @return {Number}   n^e
+ * @param  {Number} n base of the exponential expression.
+ * @param  {Number} e power by which to raise the base.
+ * @return {Number}   n^e.
  * @example
- * <div><code>
- * function setup() {
- *   //Exponentially increase the size of an ellipse.
- *   let eSize = 3; // Original Size
- *   let eLoc = 10; // Original Location
+ * <div>
+ * <code>
+ * let base = 3;
  *
- *   ellipse(eLoc, eLoc, eSize, eSize);
+ * let d = pow(base, 1);
+ * circle(10, 10, d);
  *
- *   ellipse(eLoc * 2, eLoc * 2, pow(eSize, 2), pow(eSize, 2));
+ * d = pow(base, 2);
+ * circle(20, 20, d);
  *
- *   ellipse(eLoc * 4, eLoc * 4, pow(eSize, 3), pow(eSize, 3));
+ * d = pow(base, 3);
+ * circle(40, 40, d);
  *
- *   ellipse(eLoc * 8, eLoc * 8, pow(eSize, 4), pow(eSize, 4));
+ * d = pow(base, 4);
+ * circle(80, 80, d);
  *
- *   describe('small to large ellipses radiating from top left of canvas');
- * }
- * </code></div>
+ * describe('A series of circles that grow exponentially from top left to bottom right.');
+ * </code>
+ * </div>
  */
 p5.prototype.pow = Math.pow;
 
 /**
- * Calculates the integer closest to the n parameter. For example,
- * round(133.8) returns the value 134. Maps to Math.round().
+ * Calculates the integer closest to the `n` parameter. For example,
+ * `round(133.8)` returns the value 134.
  *
  * @method round
- * @param  {Number} n number to round
- * @param  {Number} [decimals] number of decimal places to round to, default is 0
- * @return {Integer}  rounded number
+ * @param  {Number} n number to round.
+ * @param  {Number} [decimals] number of decimal places to round to, default is 0.
+ * @return {Integer}  rounded number.
  * @example
- * <div><code>
+ * <div>
+ * <code>
  * let x = round(3.7);
  * text(x, width / 2, height / 2);
- * describe('"4" written in middle of canvas');
- * </code></div>
- * <div><code>
+ *
+ * describe('The number 4 written in middle of canvas.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
  * let x = round(12.782383, 2);
  * text(x, width / 2, height / 2);
- * describe('"12.78" written in middle of canvas');
- * </code></div>
- * <div><code>
- * function draw() {
- *   background(200);
- *   //map, mouseX between 0 and 5.
- *   let ax = map(mouseX, 0, 100, 0, 5);
- *   let ay = 66;
  *
- *   // Round the mapped number.
- *   let bx = round(map(mouseX, 0, 100, 0, 5));
- *   let by = 33;
- *
- *   // Multiply the mapped numbers by 20 to more easily
- *   // see the changes.
- *   stroke(0);
- *   fill(0);
- *   line(0, ay, ax * 20, ay);
- *   line(0, by, bx * 20, by);
- *
- *   // Reformat the float returned by map and draw it.
- *   noStroke();
- *   text(nfc(ax, 2), ax, ay - 5);
- *   text(nfc(bx, 1), bx, by - 5);
- *
- *   describe('two horizontal lines rounded values displayed on top.');
- * }
- * </code></div>
+ * describe('The number 12.78 written in middle of canvas.');
+ * </code>
+ * </div>
  */
 p5.prototype.round = function(n, decimals) {
   if (!decimals) {
@@ -710,91 +668,62 @@ p5.prototype.round = function(n, decimals) {
 };
 
 /**
- * Squares a number (multiplies a number by itself). The result is always a
- * positive number, as multiplying two negative numbers always yields a
- * positive result. For example, -1 * -1 = 1.
+ * Squares a number, which means multiplying the number by itself. The value
+ * returned is always a positive number.
+ *
+ * For example, `sq(3)` evaluates 3 &times; 3  which is 9. `sq(-3)` evaluates
+ * -3 &times; -3 which is also 9.  Multiplying two negative numbers produces
+ * a positive number.
  *
  * @method sq
- * @param  {Number} n number to square
- * @return {Number}   squared number
+ * @param  {Number} n number to square.
+ * @return {Number}   squared number.
  * @example
- * <div><code>
+ * <div>
+ * <code>
  * function draw() {
- *   background(200);
- *   let eSize = 7;
- *   let x1 = map(mouseX, 0, width, 0, 10);
- *   let y1 = 80;
- *   let x2 = sq(x1);
- *   let y2 = 20;
+ *   // Invert the y-axis.
+ *   scale(1, -1);
+ *   translate(0, -height);
  *
- *   // Draw the non-squared.
- *   line(0, y1, width, y1);
- *   ellipse(x1, y1, eSize, eSize);
+ *   let x = frameCount;
+ *   let y = 0.01 * sq(x);
+ *   point(x, y);
  *
- *   // Draw the squared.
- *   line(0, y2, width, y2);
- *   ellipse(x2, y2, eSize, eSize);
- *
- *   // Draw dividing line.
- *   stroke(100);
- *   line(0, height / 2, width, height / 2);
- *
- *   // Draw text.
- *   let spacing = 15;
- *   noStroke();
- *   fill(0);
- *   text('x = ' + x1, 0, y1 + spacing);
- *   text('sq(x) = ' + x2, 0, y2 + spacing);
- *
- *   describe(`horizontal center line squared values displayed on
- *     top and regular on bottom.`);
+ *   describe('A series of black dots that get higher quickly from left to right.');
  * }
- * </code></div>
+ * </code>
+ * </div>
  */
 p5.prototype.sq = n => n * n;
 
 /**
- * Calculates the square root of a number. The square root of a number is
- * always positive, even though there may be a valid negative root. The
- * square root s of number a is such that s*s = a. It is the opposite of
- * squaring. Maps to Math.sqrt().
+ * Calculates the square root of a number. A number's square root can be
+ * multiplied by itself to produce the original number.
+ *
+ * For example, `sqrt(9)` returns 3 because 3 &times; 3 = 9. `sqrt()` always
+ * returns a positive value. `sqrt()` doesn't work with negative arguments
+ * such as `sqrt(-9)`.
  *
  * @method sqrt
- * @param  {Number} n non-negative number to square root
- * @return {Number}   square root of number
+ * @param  {Number} n non-negative number to square root.
+ * @return {Number}   square root of number.
  * @example
- * <div><code>
+ * <div>
+ * <code>
  * function draw() {
- *   background(200);
- *   let eSize = 7;
- *   let x1 = mouseX;
- *   let y1 = 80;
- *   let x2 = sqrt(x1);
- *   let y2 = 20;
+ *   // Invert the y-axis.
+ *   scale(1, -1);
+ *   translate(0, -height);
  *
- *   // Draw the non-squared.
- *   line(0, y1, width, y1);
- *   ellipse(x1, y1, eSize, eSize);
+ *   let x = frameCount;
+ *   let y = 5 * sqrt(x);
+ *   point(x, y);
  *
- *   // Draw the squared.
- *   line(0, y2, width, y2);
- *   ellipse(x2, y2, eSize, eSize);
- *
- *   // Draw dividing line.
- *   stroke(100);
- *   line(0, height / 2, width, height / 2);
- *
- *   // Draw text.
- *   noStroke();
- *   fill(0);
- *   let spacing = 15;
- *   text('x = ' + x1, 0, y1 + spacing);
- *   text('sqrt(x) = ' + x2, 0, y2 + spacing);
- *
- *   describe(`horizontal center line squareroot values displayed on
- *     top and regular on bottom.`);
+ *   describe('A series of black dots that get higher slowly from left to right.');
  * }
- * </code></div>
+ * </code>
+ * </div>
  */
 p5.prototype.sqrt = Math.sqrt;
 
@@ -841,25 +770,23 @@ function hypot(x, y, z) {
 }
 
 /**
- * Calculates the fractional part of a number.
+ * Calculates the fractional part of a number. For example,
+ * `fract(12.34)` returns 0.34.
  *
  * @method fract
- * @param {Number} num Number whose fractional part needs to be found out
- * @returns {Number} fractional part of x, i.e, {x}
+ * @param {Number} n number whose fractional part will be found.
+ * @returns {Number} fractional part of n.
  * @example
- * <div><code>
- * text(7345.73472742, 10, 25);
- * text(fract(7345.73472742), 10, 75);
- * describe(`first row having a number and the second having
- *   the fractional part of the number`);
- * </code></div>
+ * <div>
+ * <code>
+ * let n = 56.78;
+ * text(n, 20, 33);
+ * let f = fract(n);
+ * text(f, 20, 66);
  *
- * <div><code>
- * text(1.4215e-15, 10, 25);
- * text(fract(1.4215e-15), 10, 75);
- * describe(`first row having a number expressed in scientific
- *   notation and the second having the fractional part of the number`);
- * </code></div>
+ * describe('The number 56.78 written above the number 0.78.');
+ * </code>
+ * </div>
  */
 p5.prototype.fract = function(toConvert) {
   p5._validateParameters('fract', arguments);

@@ -18,13 +18,13 @@ Whether you have just joined us as a steward, a seasoned maintainer of p5.js, or
 - [Release Process](#release-process)
 - [Tips & Tricks](#tips--tricks)
 	- [Reply templates](#reply-templates)
-	- [Github CLI](#github-cli)
+	- [GitHub CLI](#github-cli)
 	- [Managing notifications](#managing-notifications)
 
 ---
 
 # Issues
-We encourage most source code contributions to start with an issue and as such issues are the place where most of the discussions will take place. The steps you can take when reviewing an issue will depend on what kind of issue it is. The repo uses [Github issue templates](../.github/ISSUE_TEMPLATE) in order to better organize different kinds of issues and encourage issue author to provide all relevant information about their problem. The first step in reviewing the issue will often be looking through the filled out template and determine if you need additional information (either because some fields weren't filled in or the incorrect template was used).
+We encourage most source code contributions to start with an issue and as such issues are the place where most of the discussions will take place. The steps you can take when reviewing an issue will depend on what kind of issue it is. The repo uses [GitHub issue templates](../.github/ISSUE_TEMPLATE) in order to better organize different kinds of issues and encourage issue author to provide all relevant information about their problem. The first step in reviewing the issue will often be looking through the filled out template and determine if you need additional information (either because some fields weren't filled in or the incorrect template was used).
 
 ## Bug report
 For bug report issues, they should be using the "Found a bug" issue template.
@@ -84,7 +84,7 @@ For feature enhancement issues, they should be using the "Existing Feature Enhan
 This type of issue has a minimal template ("Discussion") and should be use only if a particular discussion doesn't fall under the other three existing templates or be better suited to the forum or Discord.
 
 - If an issue is opened as a discussion but should be, for example, a bug report, the correct labeled should be applied and the "discussion" label removed. Additional info about the bug should also be requested from the author if not already included (following [Bug report](#bug-report)) above.
-- If an issue is opened as a discussion but isn't relevant to source code contribution or otherwise relevant to the Github repositories/contribution process/contribution community (eg. a discussion about the best kind of projector to use for an exhibition showing sketches done with p5.js), they should be redirected to the forum or Discord and the issue closed.
+- If an issue is opened as a discussion but isn't relevant to source code contribution or otherwise relevant to the GitHub repositories/contribution process/contribution community (eg. a discussion about the best kind of projector to use for an exhibition showing sketches done with p5.js), they should be redirected to the forum or Discord and the issue closed.
 - If relevant, additional labels should be added to discussion issues to further signal what type of discussion it is at a glance.
 
 ---
@@ -104,7 +104,7 @@ Simple fix such as small typo fix can be merged directly by anyone with merge ac
 ## Bug fix
 1. Bug fixes should be reviewed by the relevant area steward, ideally the same one that approved the referenced issue for fixing.
 2. The PR "Files Changed" tab can be used to initially review whether the fix is as described in the discussion in the issue.
-3. The PR should be tested locally whenever possible and relevant. The Github CLI can be helpful in streamlining some of the process. (See more below in [Tips & Tricks](#tips-tricks)).
+3. The PR should be tested locally whenever possible and relevant. The GitHub CLI can be helpful in streamlining some of the process. (See more below in [Tips & Tricks](#tips-tricks)).
 	- The fix should address the original issue sufficiently
 	- The fix should not change any existing behaviours unless agreed upon in the original issue
 	- The fix should not have significant performance impact on p5.js
@@ -118,7 +118,7 @@ Simple fix such as small typo fix can be merged directly by anyone with merge ac
 5. Once the PR has been reviewed and no additional changes are required, a steward can mark the PR as "Approved" by choosing the "Approve" option in the previous step (instead of "Comment" or "Request changes") with or without additional comments. The steward can then either request additional review by another steward or maintainer if desired, or merge the PR if they have merge access or a maintainer will merge the approved PR.
 6. @all-contributors bot should be called to add any new contributors to the list of contributors in the README.md file.
 ```
-@all-contributors please add @[github handle] for [contribution type]
+@all-contributors please add @[GitHub handle] for [contribution type]
 ```
 
 ## New feature/feature enhancement
@@ -253,7 +253,7 @@ Below are some of the Saved Replies that are being used by p5.js maintainers, yo
 > I'm closing this for organizational purposes. Please reopen if you can provide a code snippet that illustrates the issue. Thanks!
 
 #### Closing: Use the Forum!
-> The github issues here are a good place for bugs and issues with the p5.js library itself. for questions about writing your own code, tests, or following tutorials, the [forum](https://discourse.processing.org/) is the best place to post. Thanks!
+> The GitHub issues here are a good place for bugs and issues with the p5.js library itself. for questions about writing your own code, tests, or following tutorials, the [forum](https://discourse.processing.org/) is the best place to post. Thanks!
 
 #### Closing: GSOC
 > Thanks! The best place to discuss GSOC proposals is on our [forum](https://discourse.processing.org/c/summer-of-code).
@@ -275,7 +275,7 @@ You can go ahead with a fix. Thanks.
 #### Merged PR
 Looks good. Thanks!
 
-## Github CLI
+## GitHub CLI
 Reviewing a complex PR can be difficult with seemingly arcane git commands required to get the PR's version of code locally for you to test. Fortunately the [GitHub CLI](https://cli.github.com/) tool can help greatly with this process and more.
 
 After installing the CLI and logging in, reviewing a PR locally can be done by just running the command `gh pr checkout [pull_request_id]` and the process of fetching remote fork, creating a branch, and checking out the branch are all done automatically for you. Going back to the main branch will just be the same as switching a branch by running `git checkout main`. You can even leave a comment in the PR from the CLI without needing to visit the webpage at all!

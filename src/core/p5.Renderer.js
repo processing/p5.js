@@ -37,6 +37,9 @@ class Renderer extends p5.Element {
       this._styles = []; // non-main elt styles stored in p5.Renderer
     }
 
+    this._clipping = false;
+    this._clipInvert = false;
+
     this._textSize = 12;
     this._textLeading = 15;
     this._textFont = 'sans-serif';
@@ -58,11 +61,14 @@ class Renderer extends p5.Element {
     this._strokeSet = false;
     this._fillSet = false;
     this._leadingSet = false;
+
+    this._pushPopDepth = 0;
   }
 
   // the renderer should return a 'style' object that it wishes to
   // store on the push stack.
   push () {
+    this._pushPopDepth++;
     return {
       properties: {
         _doStroke: this._doStroke,
@@ -89,10 +95,26 @@ class Renderer extends p5.Element {
   // the renderer is passed the 'style' object that it returned
   // from its push() method.
   pop (style) {
+    this._pushPopDepth--;
     if (style.properties) {
     // copy the style properties back into the renderer
       Object.assign(this, style.properties);
     }
+  }
+
+  beginClip(options = {}) {
+    if (this._clipping) {
+      throw new Error("It looks like you're trying to clip while already in the middle of clipping. Did you forget to endClip()?");
+    }
+    this._clipping = true;
+    this._clipInvert = options.invert;
+  }
+
+  endClip() {
+    if (!this._clipping) {
+      throw new Error("It looks like you've called endClip() without beginClip(). Did you forget to call beginClip() first?");
+    }
+    this._clipping = false;
   }
 
   /**
