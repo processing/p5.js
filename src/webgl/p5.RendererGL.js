@@ -1694,6 +1694,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     return this._emptyTexture;
   }
 
+  // make a getBlurryTexture like function here
   getTexture(input) {
     let src = input;
     if (src instanceof p5.Framebuffer) {

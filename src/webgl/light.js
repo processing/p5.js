@@ -495,13 +495,15 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
 };
 
 p5.prototype.imageLight = function(img){
-  const graphic = this.textures.get(img);
+  // rename it to the diffused light
+  // look from blurry texts
+  let graphic = this._renderer.getTexture(img);
+  // always true
   if (!graphic){
     let newGraphic = this.createGraphics(); // maybe switch to framebuffer
     // draw the blurry image
     // set the shader on the graphic and set the shader on the image
-
-    this.textures.set(img, newGraphic);
+    this._renderer._applyTextProperties(img, newGraphic);
     let width = smallWidth;
     let height = Math.floor(smallWidth * (img.height / img.width));
     newGraphic = createGraphics(width, height, WEBGL);
@@ -513,7 +515,6 @@ p5.prototype.imageLight = function(img){
     newGraphic.rect(0, 0, newGraphic.width, newGraphic.height);
   }
   this._renderer.activeImageLight = img;
-  return tex;
 };
 
 /**
