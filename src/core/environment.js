@@ -246,12 +246,15 @@ p5.prototype.cursor = function(type, x, y) {
  * frames per second (usual for movies) or above will be enough for smooth
  * animations. This is the same as setFrameRate(val).
  *
- * Calling <a href="#/p5/frameRate">frameRate()</a> with no arguments returns
- * the current framerate. The draw function must run at least once before it will
- * return a value. This is the same as <a href="#/p5/getFrameRate">getFrameRate()</a>.
+ * Calling <a href="#/p5/frameRate">frameRate()</a> with no arguments or
+ * with arguments that are not of type Number or are non-positive returns
+ * an approximation of the current frame rate. The draw function must run at
+ * least once before it will return a value.
  *
- * Calling <a href="#/p5/frameRate">frameRate()</a> with arguments that are not
- * of the type Number or are non-positive also returns current framerate.
+ * Even if the code in your draw() function consistently produces frames in time
+ * for them to be displayed at the desired frame rate, the value frameRate() returns
+ * will vary frame to frame because it's an inaccurate approximation. To accurately
+ * test the performance of your sketches, use your browser's performance profiling tools.
  *
  * @method frameRate
  * @param  {Number} fps number of frames to be displayed every second
@@ -275,7 +278,7 @@ p5.prototype.cursor = function(type, x, y) {
  *   rectX += 1; // Move Rectangle
  *
  *   if (rectX >= width) {
-    // If you go off screen.
+ *     // If you go off screen.
  *     if (fr === 30) {
  *       clr = color(0, 0, 255);
  *       fr = 10;

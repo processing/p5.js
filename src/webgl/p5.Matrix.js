@@ -22,7 +22,7 @@ if (typeof Float32Array !== 'undefined') {
  * @class p5.Matrix
  * @private
  * @constructor
- * @param {Array} [mat4] array literal of our 4×4 matrix
+ * @param {Array} [mat4] column-major array literal of our 4×4 matrix
  */
 p5.Matrix = class {
   constructor(...args){
@@ -877,9 +877,9 @@ p5.Matrix = class {
  */
   column(columnIndex) {
     return new p5.Vector(
-      this.mat3[columnIndex],
-      this.mat3[columnIndex + 3],
-      this.mat3[columnIndex + 6]
+      this.mat3[3 * columnIndex],
+      this.mat3[3 * columnIndex + 1],
+      this.mat3[3 * columnIndex + 2]
     );
   }
 
@@ -888,14 +888,14 @@ p5.Matrix = class {
  * A function that returns a row vector of a 3x3 matrix.
  *
  * @method row
- * @param {Number} columnIndex matrix row number
+ * @param {Number} rowIndex matrix row number
  * @return {p5.Vector}
  */
   row(rowIndex) {
     return new p5.Vector(
-      this.mat3[3 * rowIndex],
-      this.mat3[3 * rowIndex + 1],
-      this.mat3[3 * rowIndex + 2]
+      this.mat3[rowIndex],
+      this.mat3[rowIndex + 3],
+      this.mat3[rowIndex + 6]
     );
   }
 
