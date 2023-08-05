@@ -1947,6 +1947,8 @@ suite('p5.RendererGL', function() {
         );
       }
       myp5.resetShader();
+    });
+  });
 
   suite('clip()', function() {
     //let myp5;
