@@ -448,12 +448,16 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.spotLightAngle = [];
     this.spotLightConc = [];
 
-    // Null if no image light is set, otherwise, it is set to a p5.Image
+    // repetition
     this.textures = new Map();
-    // make a blurrytextuer here
-    // { img: newGraphic }
+    // Null if no image light is set, otherwise, it is set to a p5.Image
+    // made a blurrytexture attribute to be used in imageLight function
+    // this is to lookup image from blurrytexture Map rather from a
+    // texture map
+    this.blurryTextures = new Map();
+    // property to be set true after imageLight is called
+    // then if it is true the setUniform would be done on shader
     this.activeImageLight = null;
-    // img
 
     this.drawMode = constants.FILL;
 
@@ -588,6 +592,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.curStrokeCap = constants.ROUND;
     this.curStrokeJoin = constants.ROUND;
 
+    // repetition
     // map of texture sources to textures created in this gl context via this.getTexture(src)
     this.textures = new Map();
 
@@ -1694,7 +1699,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     return this._emptyTexture;
   }
 
-  // make a getBlurryTexture like function here
   getTexture(input) {
     let src = input;
     if (src instanceof p5.Framebuffer) {
@@ -1709,6 +1713,14 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     const tex = new p5.Texture(this, src);
     this.textures.set(src, tex);
     return tex;
+  }
+
+  // used in imageLight
+  // create a new texture from the img input
+  getBlurryTexture(input){
+    const blurrytex = new p5.Texture(this, input);
+    this.blurryTextures.set(input, blurrytex);
+    return blurrytex;
   }
 
   /**
@@ -1756,7 +1768,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     fillShader.setUniform('uEmissive', this._useEmissiveMaterial);
     fillShader.setUniform('uShininess', this._useShininess);
 
-    // calling the set Image light uniforms from here
+    // calling the _setImageLightUniforms from here
     this._setImageLightUniforms(fillShader);
 
     fillShader.setUniform('uUseLighting', this._enableLighting);
@@ -1812,15 +1824,15 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   // getting called from _setFillUniforms
   _setImageLightUniforms(shader){
     //set uniform values
-    shader.setUniform('useImageLight', this.activeImageLight !== null );
+    if( this.activeImageLight == null ){
+      console.log('activeImageLight prop is null');
+    }
+    shader.setUniform('uUseImageLight', this.activeImageLight != null );
     // true
     if (this.activeImageLight) {
-      // Use this.activeImageLight as a key to look up the blurry image from
-      // this.textures
-      // make a seperate map called blurry textures,
-      // instead readin frm this.tex read from blurry texture
-      shader.setUniform('equiRectangularTextures', this.textures.get(this.activeImageLight));
-      // newGraphic
+      // this.activeImageLight has image as a key
+      // look up the texture from the blurryTexture map
+      shader.setUniform('equiRectangularTextures', this.blurryTextures.get(this.activeImageLight));
     }
   }
 

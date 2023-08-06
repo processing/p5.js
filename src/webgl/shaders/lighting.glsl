@@ -33,7 +33,10 @@ uniform float uConstantAttenuation;
 uniform float uLinearAttenuation;
 uniform float uQuadraticAttenuation;
 
+// setting from  _setImageLightUniforms()
+// boolean to initiate the calculateImageDiffuse and calculateImageSpecular
 uniform bool uUseImageLight;
+// storing the texture
 uniform sampler2D equiRectangularTextures;
 
 const float specularFactor = 2.0;
