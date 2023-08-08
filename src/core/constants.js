@@ -779,7 +779,7 @@ export const UNSIGNED_INT = 'unsigned-int';
 export const FLOAT = 'float';
 
 /**
- * @property {String} FLOAT
+ * @property {String} HALF_FLOAT
  * @final
  */
 export const HALF_FLOAT = 'half-float';
