@@ -37,7 +37,7 @@ uniform float uQuadraticAttenuation;
 // boolean to initiate the calculateImageDiffuse and calculateImageSpecular
 uniform bool uUseImageLight;
 // storing the texture
-uniform sampler2D equiRectangularTextures;
+uniform sampler2D environmentMap;
 
 const float specularFactor = 2.0;
 const float diffuseFactor = 0.73;
@@ -106,7 +106,7 @@ vec3 calculateImageDiffuse( vec3 vNormal, vec3 vViewPosition ){
   vec3 lightDirection = normalize( vViewPosition - worldCameraPosition );
   vec3 R = reflect(lightDirection, worldNormal);
   vec2 newTexCoor = mapTextureToNormal( R );
-  vec4 texture = texture2D( equiRectangularTextures, newTexCoor );
+  vec4 texture = texture2D( environmentMap, newTexCoor );
   return texture.xyz;
 }
 

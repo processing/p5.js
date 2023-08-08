@@ -495,9 +495,9 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
 };
 
 p5.prototype.imageLight = function(img){
-  // ! returns a p5 texture created using input image, what is the use of this
   // setting activeImageLight so that the setUniform is executed
   this._renderer.activeImageLight = img;
+  this._renderer._enableLighting = true;
 };
 
 /**

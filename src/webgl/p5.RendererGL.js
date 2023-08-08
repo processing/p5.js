@@ -1722,8 +1722,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   */
   getBlurryTexture(input){
     // if one already exists for a given input image
-    if(this.blurryTextures(input)!=null){
-      return this.blurryTextures(input);
+    if(this.blurryTextures.get(input)!=null){
+      return this.blurryTextures.get(input);
     }
     // if not, then create one
     let newGraphic; // maybe switch to framebuffer
@@ -1732,19 +1732,23 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // this._renderer._applyTextProperties(img, newGraphic);
     // make small width, hardcode to 200px
     let smallWidth = 200;
+    //let smallWidth = input.width;
     let width = smallWidth;
-    let height = Math.floor(smallWidth * (img.height / img.width));
+    let height = Math.floor(smallWidth * (input.height / input.width));
     newGraphic = createGraphics(width, height, WEBGL);
     // create graphics is like making a new sketch, all functions on main
     // sketch it would be available on graphics
-    irradiance = newGraphic.createShader(irradianceVert, irradianceFrag);
+    let irradiance = newGraphic.createShader(
+      defaultShaders.imageLightVert,
+      defaultShaders.imageLightFrag
+    );
     newGraphic.shader(irradiance);
-    irradiance.setUniform('environmentMap', img);
+    irradiance.setUniform('environmentMap', input);
     newGraphic.noStroke();
     newGraphic.rectMode(newGraphic.CENTER);
     newGraphic.rect(0, 0, newGraphic.width, newGraphic.height);
-    this.blurryTextures.set(img, newGraphic);
-    return blurrytex;
+    this.blurryTextures.set(input, newGraphic);
+    return newGraphic;
   }
 
 
