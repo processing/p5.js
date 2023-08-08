@@ -495,28 +495,7 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
 };
 
 p5.prototype.imageLight = function(img){
-  // ! if the graphic is always true, do we really need this section?
-  // if (!graphic){
-  //   let newGraphic = this.createGraphics(); // maybe switch to framebuffer
-  //   // draw the blurry image
-  //   // set the shader on the graphic and set the shader on the image
-  //   this._renderer._applyTextProperties(img, newGraphic);
-  //   let width = smallWidth;
-  //   let height = Math.floor(smallWidth * (img.height / img.width));
-  //   newGraphic = createGraphics(width, height, WEBGL);
-  //   irradiance = newGraphic.createShader(irradianceVert, irradianceFrag);
-  //   newGraphic.shader(irradiance);
-  //   irradiance.setUniform('environmentMap', img);
-  //   newGraphic.noStroke();
-  //   newGraphic.rectMode(newGraphic.CENTER);
-  //   newGraphic.rect(0, 0, newGraphic.width, newGraphic.height);
-  // }
-
   // ! returns a p5 texture created using input image, what is the use of this
-  // let diffusedLight = this._renderer.getBlurryTexture(img);
-  // ask what is the senario where this the diffused light would be false
-  // if(!diffusedLight){
-  // }
   // setting activeImageLight so that the setUniform is executed
   this._renderer.activeImageLight = img;
 };

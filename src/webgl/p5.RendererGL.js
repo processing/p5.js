@@ -448,8 +448,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.spotLightAngle = [];
     this.spotLightConc = [];
 
-    // repetition
-    this.textures = new Map();
     // Null if no image light is set, otherwise, it is set to a p5.Image
     // made a blurrytexture attribute to be used in imageLight function
     // this is to lookup image from blurrytexture Map rather from a
@@ -1717,11 +1715,39 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
   // used in imageLight
   // create a new texture from the img input
+  /*
+  To create a blurry image from the input non blurry img
+  Add it to the blurryTexture map
+  Returns the blurry image
+  */
   getBlurryTexture(input){
-    const blurrytex = new p5.Texture(this, input);
-    this.blurryTextures.set(input, blurrytex);
+    // if one already exists for a given input image
+    if(this.blurryTextures(input)!=null){
+      return this.blurryTextures(input);
+    }
+    // if not, then create one
+    let newGraphic; // maybe switch to framebuffer
+    // draw the blurry image
+    // set the shader on the graphic and set the shader on the image
+    // this._renderer._applyTextProperties(img, newGraphic);
+    // make small width, hardcode to 200px
+    let smallWidth = 200;
+    let width = smallWidth;
+    let height = Math.floor(smallWidth * (img.height / img.width));
+    newGraphic = createGraphics(width, height, WEBGL);
+    // create graphics is like making a new sketch, all functions on main
+    // sketch it would be available on graphics
+    irradiance = newGraphic.createShader(irradianceVert, irradianceFrag);
+    newGraphic.shader(irradiance);
+    irradiance.setUniform('environmentMap', img);
+    newGraphic.noStroke();
+    newGraphic.rectMode(newGraphic.CENTER);
+    newGraphic.rect(0, 0, newGraphic.width, newGraphic.height);
+    this.blurryTextures.set(img, newGraphic);
     return blurrytex;
   }
+
+
 
   /**
    * @method activeFramebuffer
@@ -1832,7 +1858,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (this.activeImageLight) {
       // this.activeImageLight has image as a key
       // look up the texture from the blurryTexture map
-      shader.setUniform('equiRectangularTextures', this.blurryTextures.get(this.activeImageLight));
+      let diffusedLight = this.getBlurryTexture(this.activeImageLight);
+      shader.setUniform('environmentMap', diffusedLight);
     }
   }
 
