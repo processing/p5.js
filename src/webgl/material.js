@@ -184,6 +184,107 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
 };
 
 /**
+ * Creates a new <a href="#/p5.Shader">p5.Shader</a> using only a fragment shader, as a convenience method for creating image effects.
+ * It's like <a href="#/createShader">createShader()</a> but with a default vertex shader included.
+ *
+ * <a href="#/createFilterShader">createFilterShader()</a> is intended to be used along with <a href="#/filter">filter()</a> for filtering the entire contents of a canvas in WebGL mode.
+ *
+ * Note:
+ * - The fragment shader is provided with a single texture input uniform called `tex0`.
+ * This is created specificially for filter shaders to access the canvas contents.
+ *
+ * - A filter shader will not apply to a 3D geometry.
+ *
+ * - Shaders can only be used in `WEBGL` mode.
+ *
+ * For more info about filters and shaders, see Adam Ferriss' <a href="https://github.com/aferriss/p5jsShaderExamples">repo of shader examples</a>
+ * or the <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">introduction to shaders</a> page.
+ *
+ * @method createFilterShader
+ * @param {String} fragSrc source code for the fragment shader
+ * @returns {p5.Shader} a shader object created from the provided
+ *                      fragment shader.
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * function setup() {
+ *   let fragSrc = `precision highp float;
+ *   void main() {
+ *     gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+ *   }`;
+ *
+ *   createCanvas(100, 100, WEBGL);
+ *   let s = createFilterShader(fragSrc);
+ *   filter(s);
+ *   describe('a yellow canvas');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div modernizr='webgl'>
+ * <code>
+ * let img, s;
+ * function preload() {
+ *   img = loadImage('assets/bricks.jpg');
+ * }
+ * function setup() {
+ *   let fragSrc = `precision highp float;
+ *
+ *   // x,y coordinates, given from the vertex shader
+ *   varying vec2 vTexCoord;
+ *
+ *   // the canvas contents, given from filter()
+ *   uniform sampler2D tex0;
+ *   // a custom variable from the sketch
+ *   uniform float darkness;
+ *
+ *   void main() {
+ *     // get the color at current pixel
+ *     vec4 color = texture2D(tex0, vTexCoord);
+ *     // set the output color
+ *     color.b = 1.0;
+ *     color *= darkness;
+ *     gl_FragColor = vec4(color.rgb, 1.0);
+ *   }`;
+ *
+ *   createCanvas(100, 100, WEBGL);
+ *   s = createFilterShader(fragSrc);
+ * }
+ * function draw() {
+ *   image(img, -50, -50);
+ *   s.setUniform('darkness', 0.5);
+ *   filter(s);
+ *   describe('a image of bricks tinted dark blue');
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.createFilterShader = function(fragSrc) {
+  this._assert3d('createFilterShader');
+  p5._validateParameters('createFilterShader', arguments);
+  let defaultVertSrc = `
+    attribute vec3 aPosition;
+    // texcoords only come from p5 to vertex shader
+    // so pass texcoords on to the fragment shader in a varying variable
+    attribute vec2 aTexCoord;
+    varying vec2 vTexCoord;
+    
+    void main() {
+      // transferring texcoords for the frag shader
+      vTexCoord = aTexCoord;
+    
+      // copy position with a fourth coordinate for projection (1.0 is normal)
+      vec4 positionVec4 = vec4(aPosition, 1.0);
+      // scale by two and center to achieve correct positioning
+      positionVec4.xy = positionVec4.xy * 2.0 - 1.0;
+    
+      gl_Position = positionVec4;
+    }
+  `;
+  return new p5.Shader(this._renderer, defaultVertSrc, fragSrc);
+};
+
+/**
  * Sets the <a href="#/p5.Shader">p5.Shader</a> object to
  * be used to render subsequent shapes.
  *

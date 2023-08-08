@@ -484,4 +484,61 @@ suite('p5.Framebuffer', function() {
 
     assert.deepEqual(fboPixels, mainPixels);
   });
+
+  suite('nesting', function() {
+    for (const antialias of [false, true]) {
+      suite(`with antialiasing ${antialias ? 'on' : 'off'}`, function() {
+        let fbo1;
+        let fbo2;
+        setup(function() {
+          myp5.createCanvas(10, 10, myp5.WEBGL);
+          myp5.pixelDensity(1);
+          fbo1 = myp5.createFramebuffer({ antialias });
+          fbo2 = myp5.createFramebuffer({ antialias });
+        });
+
+        test('one can nest active framebuffers', function() {
+          fbo1.begin();
+          myp5.fill('red');
+          myp5.circle(0, 0, 10);
+
+          fbo2.begin();
+          myp5.fill('blue');
+          myp5.circle(0, 0, 10);
+          fbo2.end();
+
+          fbo1.end();
+
+          assert.deepEqual(fbo1.get(5, 5), [255, 0, 0, 255]);
+          assert.deepEqual(fbo2.get(5, 5), [0, 0, 255, 255]);
+        });
+
+        test('end() in the wrong order throws an error', function() {
+          expect(function() {
+            fbo1.begin();
+            fbo2.begin();
+            fbo1.end();
+            fbo2.end();
+          }).to.throw(/another Framebuffer is active/);
+        });
+
+        test('one can read a nested framebuffer', function() {
+          myp5.imageMode(myp5.CENTER);
+
+          fbo1.begin();
+          myp5.fill('red');
+          myp5.circle(0, 0, 10);
+
+          fbo2.begin();
+          myp5.image(fbo1, 0, 0);
+          fbo2.end();
+
+          fbo1.end();
+
+          assert.deepEqual(fbo1.get(5, 5), [255, 0, 0, 255]);
+          assert.deepEqual(fbo2.get(5, 5), [255, 0, 0, 255]);
+        });
+      });
+    }
+  });
 });

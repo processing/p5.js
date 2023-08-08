@@ -23,4 +23,4 @@ jobs:
         env:
           CI: true
       - name: Lint source code
-        run: npm run lint:source
+        run: npm run lint
