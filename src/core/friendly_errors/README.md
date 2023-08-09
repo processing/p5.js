@@ -1,5 +1,11 @@
+This folder contains the core functionality of Friendly Error Systems. [Here is a diagram](
+https://sketchboard.me/jDWn1eYNgktY) that outlines how the FES Functions are being used in various files throughout p5.js repository and also specifies the files in which the code for these FES functions sits in.
+
+![class diagram, interactive version viewable in above link](../../../contributor_docs/images/FES.jpg)
+
+
 # FES Reference and Notes from Developers
-This document contains reference and development notes for the p5.js Friendly Error System (FES). The FES houses several functions responsible for generating friendly error messages for different types of errors. These functions gather errors from various locations, including error events triggered by the browser, mistakes found while scanning the user code, parameter checking within the library, etc.
+The following information contains reference and development notes for the p5.js Friendly Error System (FES). The FES houses several functions responsible for generating friendly error messages for different types of errors. These functions gather errors from various locations, including error events triggered by the browser, mistakes found while scanning the user code, parameter checking within the library, etc.
 
 Main functions for generating the friendly error messages are:
 * `_validateParameters()`
@@ -8,7 +14,7 @@ Main functions for generating the friendly error messages are:
 * `helpForMisusedAtTopLevelCode()`
 * `_fesErrorMontitor()`
 
-These functions are located throughout the `core/friendly_errors/` folder.
+These functions are located throughout this folder.
 * `fes_core.js` contains the core as well as miscellaneous functionality of the FES.
 * `_validateParameters()` is located in `validate_params.js` along with other code used for parameter validation.
 * `_friendlyFileLoadError()` is located in `file_errors.js` along with other code used for dealing with file load errors.
@@ -137,7 +143,7 @@ FES will generate the following message in the console:
 
 
 ##### Location
-core/friendly_errors/file_errors.js
+/friendly_errors/file_errors.js
 
 ### `validateParameters()`
 ##### Description
@@ -345,7 +351,7 @@ FES will generate the following message in the console:
 
 
 ##### Location
-core/friendly_errors/sketch_reader.js
+/friendly_errors/sketch_reader.js
 
 ### `checkForUserDefinedFunctions()`
 ##### Description
@@ -372,7 +378,7 @@ FES will generate the following message in the console:
 > 🌸 p5.js says: It seems that you may have accidentally written preLoad instead of preload. Please correct it if it's not intentional. (http://p5js.org/reference/#/p5/preload)
 
 ##### Location
-core/friendly_errors/fes_core.js
+/friendly_errors/fes_core.js
 
 ### `_friendlyAutoplayError()`
 ##### Description
@@ -394,7 +400,7 @@ Generates and prints a friendly error message using key: `fes.misusedTopLevel`.
 @param {Boolean}  log    false
 ```
 ##### Location
-core/friendly_errors/fes_core.js
+/friendly_errors/fes_core.js
 
 ## Development Notes: Notes from Developers
 #### Misc. FES Functions that Generates Friendly Errors
