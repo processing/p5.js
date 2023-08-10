@@ -84,7 +84,9 @@ const filterShaderFrags = {
   [constants.GRAY]:
     readFileSync(join(__dirname, '/shaders/filters/gray.frag'), 'utf-8'),
   [constants.ERODE]:
-    readFileSync(join(__dirname, '/shaders/filters/erode.frag'), 'utf-8')
+    readFileSync(join(__dirname, '/shaders/filters/erode.frag'), 'utf-8'),
+  [constants.DILATE]:
+    readFileSync(join(__dirname, '/shaders/filters/dilate.frag'), 'utf-8')
 };
 const filterShaderVert = readFileSync(join(__dirname, '/shaders/filters/default.vert'), 'utf-8');
 
