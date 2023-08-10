@@ -982,12 +982,11 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       let operation = args[0];
       let value = args[1];
       this.filterShader = new p5.Shader(
-        this,
+        pg._renderer,
         filterShaderVert,
         filterShaderFrags[operation]
       );
       this.filterShader.setUniform('filterParameter', value);
-      // TODO: fix error 'INVALID_OPERATION: no valid shader program in use'
     }
     // use custom user-supplied shader
     else {
