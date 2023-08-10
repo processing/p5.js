@@ -89,6 +89,8 @@ const filterShaderFrags = {
     readFileSync(join(__dirname, '/shaders/filters/dilate.frag'), 'utf-8'),
   [constants.BLUR]:
     readFileSync(join(__dirname, '/shaders/filters/blur.frag'), 'utf-8'),
+  [constants.POSTERIZE]:
+    readFileSync(join(__dirname, '/shaders/filters/posterize.frag'), 'utf-8')
 };
 const filterShaderVert = readFileSync(join(__dirname, '/shaders/filters/default.vert'), 'utf-8');
 
