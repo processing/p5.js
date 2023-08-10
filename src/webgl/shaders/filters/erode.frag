@@ -1,4 +1,4 @@
-// Increase the bright areas in an image
+// Reduces the bright areas in an image
 
 precision highp float;
 
