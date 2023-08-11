@@ -986,15 +986,15 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     let pg = this.filterGraphicsLayer;
 
     // use internal shader for filter constants BLUR, INVERT, etc
+    let filterParameter = undefined;
     if (typeof args[0] === 'string') {
       let operation = args[0];
-      let value = args[1];
+      filterParameter = args[1];
       this.filterShader = new p5.Shader(
         pg._renderer,
         filterShaderVert,
         filterShaderFrags[operation]
       );
-      this.filterShader.setUniform('filterParameter', value);
     }
     // use custom user-supplied shader
     else {
@@ -1018,6 +1018,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     pg.shader(this.filterShader);
     this.filterShader.setUniform('tex0', this);
     this.filterShader.setUniform('texelSize', [1.0/this.width, 1.0/this.height]);
+    // filterParameter only used for POSTERIZE, BLUR, and THRESHOLD
+    // but shouldn't hurt to always set
+    this.filterShader.setUniform('filterParameter', filterParameter);
     pg.rect(0,0,this.width,this.height);
 
     // draw pg contents onto main renderer
