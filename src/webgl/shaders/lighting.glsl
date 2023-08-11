@@ -1,3 +1,5 @@
+#define PI 3.141592
+
 precision highp float;
 precision highp int;
 
@@ -41,7 +43,7 @@ uniform sampler2D environmentMap;
 
 const float specularFactor = 2.0;
 const float diffuseFactor = 0.73;
-const float PI = 3.141;
+// const float PI = 3.141;
 
 
 struct LightResult {
@@ -75,6 +77,7 @@ LightResult _light(vec3 viewDirection, vec3 normal, vec3 lightVector) {
   return lr;
 }
 
+// converts the range of "value" from [min1 to max1] to [min2 to max2]
 float map(float value, float min1, float max1, float min2, float max2) {
   return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
 }
@@ -91,10 +94,11 @@ vec2 mapTextureToNormal( vec3 normal ){
     theta = acos( normal.x / sin(phi) );
   }   
 
-    vec2 newTexCoor = vec2(
-      map(theta, 0., PI, 0., 1.),
-      map(phi, 0., PI, 1., 0.)
+  vec2 newTexCoor = vec2(
+    map(theta, 0., PI, 0., 1.),
+    map(phi, 0., PI, 1., 0.)
   );
+
   return newTexCoor;
 }
 
