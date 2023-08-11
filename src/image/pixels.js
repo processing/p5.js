@@ -340,15 +340,14 @@ p5.prototype._copyHelper = (
  *
  * ---
  *
- * In WEBGL mode, `filter()` can also accept a shader. The fragment shader
- * is given a `uniform sampler2D` named `tex0` that contains the current
- * state of the canvas. For more information on using shaders, check
- * <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">
- * the introduction to shaders</a> tutorial.
+ * These filter options use WebGL in the background by default (they're faster that way).
+ * To opt out of this in P2D mode, add a `false` parameter when calling `filter()`.
+ * This may be useful to keep computation off the GPU or to work around a lack of WebGL support.
  *
- * See also <a href="https://github.com/aferriss/p5jsShaderExamples"
- * target='_blank'>a selection of shader examples</a> by Adam Ferriss
- * that contains many similar filter effects.
+ * On a renderer in WEBGL mode, `filter()` can also accept a user-provided shader.
+ * The shader will be applied to the canvas and not to any geometries.
+ * For more information, see <a href="#/p5/createFilterShader">createFilterShader()</a>.
+ *
  *
  * @method filter
  * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
