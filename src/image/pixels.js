@@ -8,6 +8,7 @@
 import p5 from '../core/main';
 import Filters from './filters';
 import '../color/p5.Color';
+import * as constants from '../core/constants';
 
 /**
  * <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference
@@ -567,8 +568,40 @@ p5.prototype.filter = function(...args) {
 
   // when this is P2D renderer, create/use hidden webgl renderer
   else {
-    // TODO: create/use hidden webgl renderer and transfer contents to this p2d
-    p5._friendlyError('webgl filter implementation in progress');
+    // create/use hidden webgl renderer
+    if (!this.filterGraphicsLayer) {
+      // the real _pInst is buried when this is a secondary p5.Graphics
+      const pInst =
+        this._renderer._pInst instanceof p5.Graphics ?
+          this._renderer._pInst._pInst :
+          this._renderer._pInst;
+
+      // create secondary layer
+      this.filterGraphicsLayer =
+        new p5.Graphics(
+          this.width,
+          this.height,
+          constants.WEBGL,
+          pInst
+        );
+    }
+
+    // copy p2d canvas contents to secondary webgl renderer
+    // dest
+    this.filterGraphicsLayer.copy(
+      // src
+      this._renderer,
+      // src coods
+      0, 0, this.width, this.height,
+      // dest coords
+      -this.width/2, -this.height/2, this.width, this.height
+    );
+
+    // filter it with shaders
+    this.filterGraphicsLayer.filter(operation, value);
+
+    // copy secondary webgl renderer back to original p2d canvas
+    this._renderer._pInst.image(this.filterGraphicsLayer, 0, 0);
   }
 };
 
