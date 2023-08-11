@@ -468,39 +468,52 @@ p5.prototype._copyHelper = (
  *
  * <div>
  * <code>
- * createCanvas(100, 100, WEBGL);
- * let myShader = createShader(
- *   `attribute vec3 aPosition;
- *   attribute vec2 aTexCoord;
+ * let img;
+ * function preload() {
+ *   img = loadImage('assets/bricks.jpg');
+ * }
+ * function setup() {
+ *   image(img, 0, 0);
+ *   filter(BLUR, 3, useWebGL=false);
+ * }
+ * </code>
+ * </div>
  *
+ * <div>
+ * <code>
+ * let img, s;
+ * function preload() {
+ *   img = loadImage('assets/bricks.jpg');
+ * }
+ * function setup() {
+ *   let fragSrc = `precision highp float;
+ *
+ *   // x,y coordinates, given from the vertex shader
  *   varying vec2 vTexCoord;
  *
- *   void main() {
- *     vTexCoord = aTexCoord;
- *     vec4 positionVec4 = vec4(aPosition, 1.0);
- *     positionVec4.xy = positionVec4.xy * 2.0 - 1.0;
- *     gl_Position = positionVec4;
- *   }`,
- *   `precision mediump float;
- *   varying mediump vec2 vTexCoord;
- *
+ *   // the canvas contents, given from filter()
  *   uniform sampler2D tex0;
- *
- *   float luma(vec3 color) {
- *     return dot(color, vec3(0.299, 0.587, 0.114));
- *   }
+ *   // a custom variable from the sketch
+ *   uniform float darkness;
  *
  *   void main() {
- *     vec2 uv = vTexCoord;
- *     uv.y = 1.0 - uv.y;
- *     vec4 sampledColor = texture2D(tex0, uv);
- *     float gray = luma(sampledColor.rgb);
- *     gl_FragColor = vec4(gray, gray, gray, 1);
- *   }`
- * );
- * background('RED');
- * filter(myShader);
- * describe('a canvas becomes gray after being filtered by shader');
+ *     // get the color at current pixel
+ *     vec4 color = texture2D(tex0, vTexCoord);
+ *     // set the output color
+ *     color.b = 1.0;
+ *     color *= darkness;
+ *     gl_FragColor = vec4(color.rgb, 1.0);
+ *   }`;
+ *
+ *   createCanvas(100, 100, WEBGL);
+ *   s = createFilterShader(fragSrc);
+ * }
+ * function draw() {
+ *   image(img, -50, -50);
+ *   s.setUniform('darkness', 0.5);
+ *   filter(s);
+ *   describe('a image of bricks tinted dark blue');
+ * }
  * </code>
  * </div>
  *
