@@ -1,4 +1,6 @@
 [![npm version](https://badge.fury.io/js/p5.svg)](https://www.npmjs.com/package/p5)
+[![All Contributors](https://img.shields.io/github/all-contributors/processing/p5.js?color=ee8449&style=flat-square)](#contributors-)
+
 
 # [p5.js](https://p5js.org)
 
