@@ -447,12 +447,36 @@ p5.RendererGL.prototype._tesselateShape = function() {
       this.immediateMode.geometry.edges.map(edge => edge.map(origIdx => {
         if (!newIndex.has(origIdx)) {
           const orig = originalVertices[origIdx];
-          newIndex.set(origIdx, this.immediateMode.geometry.vertices.findIndex(
+          let newVertIndex = this.immediateMode.geometry.vertices.findIndex(
             v =>
               orig.x === v.x &&
               orig.y === v.y &&
               orig.z === v.z
-          ));
+          );
+          if (newVertIndex === -1) {
+            // The tesselation process didn't output a vertex with the exact
+            // coordinate as before, potentially due to numerical issues. This
+            // doesn't happen often, but in this case, pick the closest point
+            let closestDist = Infinity;
+            let closestIndex = 0;
+            for (
+              let i = 0;
+              i < this.immediateMode.geometry.vertices.length;
+              i++
+            ) {
+              const vert = this.immediateMode.geometry.vertices[i];
+              const dX = orig.x - vert.x;
+              const dY = orig.y - vert.y;
+              const dZ = orig.z - vert.z;
+              const dist = dX*dX + dY*dY + dZ*dZ;
+              if (dist < closestDist) {
+                closestDist = dist;
+                closestIndex = i;
+              }
+            }
+            newVertIndex = closestIndex;
+          }
+          newIndex.set(origIdx, newVertIndex);
         }
         return newIndex.get(origIdx);
       }));
