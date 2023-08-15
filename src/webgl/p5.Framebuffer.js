@@ -911,9 +911,7 @@ class Framebuffer {
   _beforeBegin() {
     const gl = this.gl;
     gl.bindFramebuffer(gl.FRAMEBUFFER, this._framebufferToBind());
-    gl.viewport(
-      0,
-      0,
+    this.target._renderer.viewport(
       this.width * this.density,
       this.height * this.density
     );
@@ -972,7 +970,10 @@ class Framebuffer {
       this.prevFramebuffer._beforeBegin();
     } else {
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-      gl.viewport(...this.target._renderer._viewport);
+      this.target._renderer.viewport(
+        this.target._renderer._origViewport.width,
+        this.target._renderer._origViewport.height
+      );
     }
   }
 
