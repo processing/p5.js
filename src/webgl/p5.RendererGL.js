@@ -1250,6 +1250,11 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     return this.retainedMode.geometry[gId] !== undefined;
   }
 
+  viewport(w, h) {
+    this._viewport = [0, 0, w, h];
+    this.GL.viewport(0, 0, w, h);
+  }
+
   /**
  * [resize description]
  * @private
@@ -1258,13 +1263,14 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
  */
   resize(w, h) {
     p5.Renderer.prototype.resize.call(this, w, h);
-    this.GL.viewport(
-      0,
-      0,
-      this.GL.drawingBufferWidth,
-      this.GL.drawingBufferHeight
+    this._origViewport = {
+      width: this.GL.drawingBufferWidth,
+      height: this.GL.drawingBufferHeight
+    };
+    this.viewport(
+      this._origViewport.width,
+      this._origViewport.height
     );
-    this._viewport = this.GL.getParameter(this.GL.VIEWPORT);
 
     this._curCamera._resize();
 
