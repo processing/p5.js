@@ -4,7 +4,8 @@
   "files": [
     "README.md"
   ],
-  "imageSize": 100,
+  "imageSize": 120,
+  "contributorsPerLine": 6,
   "commit": true,
   "contributors": [
     {
@@ -3853,7 +3854,6 @@
   ],
   "repoType": "github",
   "repoHost": "https://github.com",
-  "contributorsPerLine": 7,
   "skipCi": true,
   "commitConvention": "angular",
   "commitType": "docs"
