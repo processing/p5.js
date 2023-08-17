@@ -3930,6 +3930,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "acasmith",
+      "name": "Adam Smith",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30869791?v=4",
+      "profile": "https://github.com/acasmith",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
