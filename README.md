@@ -700,6 +700,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="http://www.annacarreras.com"><img src="https://avatars.githubusercontent.com/u/2182422?v=4?s=120" width="120px;" alt="Anna Carreras"/><br /><sub><b>Anna Carreras</b></sub></a><br /><a href="#example-acarreras" title="Examples">💡</a> <a href="#talk-acarreras" title="Talks">📢</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://cenkhor.org"><img src="https://avatars.githubusercontent.com/u/39242?v=4?s=120" width="120px;" alt="takawo"/><br /><sub><b>takawo</b></sub></a><br /><a href="#example-takawo" title="Examples">💡</a> <a href="#eventOrganizing-takawo" title="Event Organizing">📋</a> <a href="#blog-takawo" title="Blogposts">📝</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/13sfaith"><img src="https://avatars.githubusercontent.com/u/45831293?v=4?s=120" width="120px;" alt="Spencer Faith"/><br /><sub><b>Spencer Faith</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=13sfaith" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/a-y-u-s-h"><img src="https://avatars.githubusercontent.com/u/19586719?v=4?s=120" width="120px;" alt="Ayush Sharma"/><br /><sub><b>Ayush Sharma</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=a-y-u-s-h" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
