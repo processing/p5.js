@@ -854,6 +854,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://stellartux.github.io/"><img src="https://avatars.githubusercontent.com/u/18706683?v=4?s=120" width="120px;" alt="Danny Robinson"/><br /><sub><b>Danny Robinson</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=stellartux" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/stormCup"><img src="https://avatars.githubusercontent.com/u/52805485?v=4?s=120" width="120px;" alt="stormCup"/><br /><sub><b>stormCup</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=stormCup" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://www.cliffsu.me/"><img src="https://avatars.githubusercontent.com/u/22230889?v=4?s=120" width="120px;" alt="Cliff Su"/><br /><sub><b>Cliff Su</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=stu01509" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
