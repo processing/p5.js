@@ -838,6 +838,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/reijovosu"><img src="https://avatars.githubusercontent.com/u/378124?v=4?s=120" width="120px;" alt="Reijo Vosu"/><br /><sub><b>Reijo Vosu</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=reijovosu" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/risingBirdSong"><img src="https://avatars.githubusercontent.com/u/52929863?v=4?s=120" width="120px;" alt="peter"/><br /><sub><b>peter</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=risingBirdSong" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://sachinvarghese.github.io/"><img src="https://avatars.githubusercontent.com/u/24502613?v=4?s=120" width="120px;" alt="Sachin Varghese"/><br /><sub><b>Sachin Varghese</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=SachinVarghese" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
