@@ -4,7 +4,8 @@
   "files": [
     "README.md"
   ],
-  "imageSize": 100,
+  "imageSize": 120,
+  "contributorsPerLine": 6,
   "commit": true,
   "contributors": [
     {
@@ -3849,11 +3850,20 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "vijithassar",
+      "name": "Vijith Assar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3488572?v=4",
+      "profile": "http://www.vijithassar.com",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
   "repoHost": "https://github.com",
-  "contributorsPerLine": 7,
   "skipCi": true,
   "commitConvention": "angular",
   "commitType": "docs"

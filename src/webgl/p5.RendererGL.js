@@ -473,7 +473,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this._useLineColor = false;
     this._useVertexColor = false;
 
-    this.registerEnabled = [];
+    this.registerEnabled = new Set();
 
     this._tint = [255, 255, 255, 255];
 
@@ -525,10 +525,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       geometry: {},
       buffers: {
         stroke: [
-          new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this, this._flatten),
-          new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this, this._flatten),
-          new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this, this._flatten),
-          new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this, this._flatten),
+          new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this),
+          new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this),
+          new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this),
+          new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this),
           new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
         ],
         fill: [
@@ -564,10 +564,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
           new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
         ],
         stroke: [
-          new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this, this._flatten),
-          new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this, this._flatten),
-          new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this, this._flatten),
-          new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this, this._flatten),
+          new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this),
+          new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this),
+          new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this),
+          new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this),
           new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
         ],
         point: this.GL.createBuffer()
@@ -1250,6 +1250,11 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     return this.retainedMode.geometry[gId] !== undefined;
   }
 
+  viewport(w, h) {
+    this._viewport = [0, 0, w, h];
+    this.GL.viewport(0, 0, w, h);
+  }
+
   /**
  * [resize description]
  * @private
@@ -1258,13 +1263,14 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
  */
   resize(w, h) {
     p5.Renderer.prototype.resize.call(this, w, h);
-    this.GL.viewport(
-      0,
-      0,
-      this.GL.drawingBufferWidth,
-      this.GL.drawingBufferHeight
+    this._origViewport = {
+      width: this.GL.drawingBufferWidth,
+      height: this.GL.drawingBufferHeight
+    };
+    this.viewport(
+      this._origViewport.width,
+      this._origViewport.height
     );
-    this._viewport = this.GL.getParameter(this.GL.VIEWPORT);
 
     this._curCamera._resize();
 
@@ -1823,7 +1829,12 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (!target) target = this.GL.ARRAY_BUFFER;
     this.GL.bindBuffer(target, buffer);
     if (values !== undefined) {
-      const data = new (type || Float32Array)(values);
+      let data = values;
+      if (values instanceof p5.DataArray) {
+        data = values.dataArray();
+      } else if (!(data instanceof (type || Float32Array))) {
+        data = new (type || Float32Array)(data);
+      }
       this.GL.bufferData(target, data, usage || this.GL.STATIC_DRAW);
     }
   }
