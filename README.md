@@ -870,6 +870,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://www.orangutan.or.id/"><img src="https://avatars.githubusercontent.com/u/11317451?v=4?s=120" width="120px;" alt="XTY"/><br /><sub><b>XTY</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=xty" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://www.xujenna.com/"><img src="https://avatars.githubusercontent.com/u/13280722?v=4?s=120" width="120px;" alt="Jenna"/><br /><sub><b>Jenna</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=xujenna" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/yifanmai"><img src="https://avatars.githubusercontent.com/u/185227?v=4?s=120" width="120px;" alt="Yifan Mai"/><br /><sub><b>Yifan Mai</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=yifanmai" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
