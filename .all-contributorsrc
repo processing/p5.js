@@ -3872,6 +3872,16 @@
         "fundingFinding",
         "talk"
       ]
+    },
+    {
+      "login": "tonipizza",
+      "name": "tonipizza",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3420966?v=4",
+      "profile": "https://github.com/tonipizza",
+      "contributions": [
+        "fundingFinding",
+        "financial"
+      ]
     }
   ],
   "repoType": "github",
