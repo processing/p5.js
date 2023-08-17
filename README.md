@@ -750,6 +750,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://cosme.dev/"><img src="https://avatars.githubusercontent.com/u/24755643?v=4?s=120" width="120px;" alt="Cosme Escobedo"/><br /><sub><b>Cosme Escobedo</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=cosmeoes" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://cotsog.wordpress.com/"><img src="https://avatars.githubusercontent.com/u/149366?v=4?s=120" width="120px;" alt="Dominic Jodoin"/><br /><sub><b>Dominic Jodoin</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=cotsog" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/dabe"><img src="https://avatars.githubusercontent.com/u/32162370?v=4?s=120" width="120px;" alt="Dabe Andre Enajada"/><br /><sub><b>Dabe Andre Enajada</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=dabe" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
