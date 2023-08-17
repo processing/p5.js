@@ -736,6 +736,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://subculturecreations.com/"><img src="https://avatars.githubusercontent.com/u/9775178?v=4?s=120" width="120px;" alt="Ben Scheiner"/><br /><sub><b>Ben Scheiner</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=brmscheiner" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://www.bryanleister.com/"><img src="https://avatars.githubusercontent.com/u/3446093?v=4?s=120" width="120px;" alt="Bryan"/><br /><sub><b>Bryan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=bryanrtboy" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
