@@ -764,6 +764,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="http://edbrannin.com/"><img src="https://avatars.githubusercontent.com/u/121909?v=4?s=120" width="120px;" alt="Ed Brannin"/><br /><sub><b>Ed Brannin</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=edbrannin" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://www.linkedin.com/in/drewanjohnstone/"><img src="https://avatars.githubusercontent.com/u/30697825?v=4?s=120" width="120px;" alt="Ewan Johnstone"/><br /><sub><b>Ewan Johnstone</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=eJohnstonePhd1991" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/emclaren"><img src="https://avatars.githubusercontent.com/u/6835324?v=4?s=120" width="120px;" alt="elgin mclaren"/><br /><sub><b>elgin mclaren</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=emclaren" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/epramer-godaddy"><img src="https://avatars.githubusercontent.com/u/63809970?v=4?s=120" width="120px;" alt="epramer-godaddy"/><br /><sub><b>epramer-godaddy</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=epramer-godaddy" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
