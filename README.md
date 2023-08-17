@@ -792,6 +792,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://jithinks.netlify.app/"><img src="https://avatars.githubusercontent.com/u/19987520?v=4?s=120" width="120px;" alt="Jithin KS"/><br /><sub><b>Jithin KS</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=JithinKS97" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/jmandel1027"><img src="https://avatars.githubusercontent.com/u/13109165?v=4?s=120" width="120px;" alt="Jason Mandel"/><br /><sub><b>Jason Mandel</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=jmandel1027" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
