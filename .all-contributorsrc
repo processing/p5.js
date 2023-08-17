@@ -4664,6 +4664,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "micuat",
+      "name": "Naoto Hieda",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1835081?v=4",
+      "profile": "http://naotohieda.com/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
