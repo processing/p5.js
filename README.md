@@ -840,6 +840,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://sachinvarghese.github.io/"><img src="https://avatars.githubusercontent.com/u/24502613?v=4?s=120" width="120px;" alt="Sachin Varghese"/><br /><sub><b>Sachin Varghese</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=SachinVarghese" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://art.sarahghp.com/"><img src="https://avatars.githubusercontent.com/u/1477362?v=4?s=120" width="120px;" alt="Sarah Groff Hennigh-Palermo"/><br /><sub><b>Sarah Groff Hennigh-Palermo</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sarahghp" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
