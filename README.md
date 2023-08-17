@@ -866,6 +866,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://verma-varsha.github.io/"><img src="https://avatars.githubusercontent.com/u/20443665?v=4?s=120" width="120px;" alt="Varsha Verma"/><br /><sub><b>Varsha Verma</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=verma-varsha" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/vipulrawat"><img src="https://avatars.githubusercontent.com/u/26515826?v=4?s=120" width="120px;" alt="vipulrawat"/><br /><sub><b>vipulrawat</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=vipulrawat" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/with-a-k"><img src="https://avatars.githubusercontent.com/u/6319591?v=4?s=120" width="120px;" alt="Erik Butcher"/><br /><sub><b>Erik Butcher</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=with-a-k" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/wmmnola"><img src="https://avatars.githubusercontent.com/u/13511578?v=4?s=120" width="120px;" alt="Wade Marshall"/><br /><sub><b>Wade Marshall</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=wmmnola" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
