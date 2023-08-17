@@ -628,12 +628,15 @@ p5.prototype.endContour = function() {
  * precision mediump float;
  *
  * in vec3 aPosition;
+ * out int instanceId;
  *
  * uniform mat4 uModelViewMatrix;
  * uniform mat4 uProjectionMatrix;
  *
  * void main() {
  *
+ *   // copy the instance ID to the fragment shder
+ *   instanceId = gl_InstanceID;
  *   vec4 positionVec4 = vec4(aPosition, 1.0);
  *
  *   // gl_InstanceID represents a numeric value for each instance
@@ -651,9 +654,18 @@ p5.prototype.endContour = function() {
  * precision mediump float;
  *
  * out vec4 outColor;
+ * in int instanceID;
+ * uniform float numInstances;
  *
  * void main() {
- *   outColor = vec4(255, 0, 0, 255);
+ *   vec4 red = vec4(1.0, 0.0, 0.0, 1.0);
+ *   vec4 blue = vec4(0.0, 0.0, 1.0, 1.0);
+ *   
+ *   // Normalize the instance id
+ *   float normId = float(instanceID) / (numInstances - 1.0);
+ *
+ *   // Mix between two colors using the normalized instance id
+ *   outColor = mix(red, blue, normId);
  * }
  * `;
  *
@@ -667,6 +679,7 @@ p5.prototype.endContour = function() {
  *
  *   // strokes aren't instanced, and are rather used for debug purposes
  *   shader(fx);
+ *   fx.setUniform('numInstances', 4);
  *
  *   beginShape();
  *   vertex(30, 20);
