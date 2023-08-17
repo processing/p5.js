@@ -846,6 +846,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="http://sheamus.dev/"><img src="https://avatars.githubusercontent.com/u/8462408?v=4?s=120" width="120px;" alt="sheamus"/><br /><sub><b>sheamus</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sheamusburns" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/shinytang6"><img src="https://avatars.githubusercontent.com/u/22241503?v=4?s=120" width="120px;" alt="Liang Tang"/><br /><sub><b>Liang Tang</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=shinytang6" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Siphonophora"><img src="https://avatars.githubusercontent.com/u/32316111?v=4?s=120" width="120px;" alt="Michael J Conrad"/><br /><sub><b>Michael J Conrad</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Siphonophora" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
