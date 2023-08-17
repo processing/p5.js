@@ -1,9 +1,9 @@
 # Common settings that generally should always be used with your language specific settings
 
-# Auto detect text files and perform LF normalization
+# Turn on line ending normalization
+* text=auto
 
-# Scripts
-*.bash     text eol=lf
+# Set the line ending for .js files to ensure linting scripts work
 *.js       text eol=lf
 
 #
