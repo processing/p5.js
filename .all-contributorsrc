@@ -4808,6 +4808,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "rbwendt",
+      "name": "Ben Wendt",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11400743?v=4",
+      "profile": "http://benwendt.ca/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
