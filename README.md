@@ -697,6 +697,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://processingfoundation.org/"><img src="https://avatars.githubusercontent.com/u/66838497?v=4?s=120" width="120px;" alt="Dorothy R. Santos"/><br /><sub><b>Dorothy R. Santos</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=drsantos8791" title="Documentation">📖</a> <a href="#eventOrganizing-drsantos8791" title="Event Organizing">📋</a> <a href="#fundingFinding-drsantos8791" title="Funding Finding">🔍</a> <a href="#talk-drsantos8791" title="Talks">📢</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/tonipizza"><img src="https://avatars.githubusercontent.com/u/3420966?v=4?s=120" width="120px;" alt="tonipizza"/><br /><sub><b>tonipizza</b></sub></a><br /><a href="#fundingFinding-tonipizza" title="Funding Finding">🔍</a> <a href="#financial-tonipizza" title="Financial">💵</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://www.annacarreras.com"><img src="https://avatars.githubusercontent.com/u/2182422?v=4?s=120" width="120px;" alt="Anna Carreras"/><br /><sub><b>Anna Carreras</b></sub></a><br /><a href="#example-acarreras" title="Examples">💡</a> <a href="#talk-acarreras" title="Talks">📢</a></td>
     </tr>
   </tbody>
 </table>
