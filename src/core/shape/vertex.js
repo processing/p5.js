@@ -634,7 +634,7 @@ p5.prototype.endContour = function() {
  * precision mediump float;
  *
  * in vec3 aPosition;
- * out int instanceId;
+ * flat out int instanceID;
  *
  * uniform mat4 uModelViewMatrix;
  * uniform mat4 uProjectionMatrix;
@@ -642,7 +642,7 @@ p5.prototype.endContour = function() {
  * void main() {
  *
  *   // copy the instance ID to the fragment shader
- *   instanceId = gl_InstanceID;
+ *   instanceID = gl_InstanceID;
  *   vec4 positionVec4 = vec4(aPosition, 1.0);
  *
  *   // gl_InstanceID represents a numeric value for each instance
@@ -660,7 +660,7 @@ p5.prototype.endContour = function() {
  * precision mediump float;
  *
  * out vec4 outColor;
- * in int instanceID;
+ * flat in int instanceID;
  * uniform float numInstances;
  *
  * void main() {
@@ -668,7 +668,7 @@ p5.prototype.endContour = function() {
  *   vec4 blue = vec4(0.0, 0.0, 1.0, 1.0);
  *
  *   // Normalize the instance id
- *   float normId = float(instanceID) / (numInstances - 1.0);
+ *   float normId = float(instanceID) / numInstances;
  *
  *   // Mix between two colors using the normalized instance id
  *   outColor = mix(red, blue, normId);
