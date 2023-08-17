@@ -635,7 +635,7 @@ p5.prototype.endContour = function() {
  *
  * void main() {
  *
- *   // copy the instance ID to the fragment shder
+ *   // copy the instance ID to the fragment shader
  *   instanceId = gl_InstanceID;
  *   vec4 positionVec4 = vec4(aPosition, 1.0);
  *
@@ -660,7 +660,7 @@ p5.prototype.endContour = function() {
  * void main() {
  *   vec4 red = vec4(1.0, 0.0, 0.0, 1.0);
  *   vec4 blue = vec4(0.0, 0.0, 1.0, 1.0);
- *   
+ *
  *   // Normalize the instance id
  *   float normId = float(instanceID) / (numInstances - 1.0);
  *
