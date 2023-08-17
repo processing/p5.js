@@ -708,6 +708,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Acha0203"><img src="https://avatars.githubusercontent.com/u/74553433?v=4?s=120" width="120px;" alt="Acha"/><br /><sub><b>Acha</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Acha0203" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/aditya-siddheshwar"><img src="https://avatars.githubusercontent.com/u/46048299?v=4?s=120" width="120px;" alt="Aditya Siddheshwar"/><br /><sub><b>Aditya Siddheshwar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=aditya-siddheshwar" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/adwaith007"><img src="https://avatars.githubusercontent.com/u/37845277?v=4?s=120" width="120px;" alt="Adwaith D"/><br /><sub><b>Adwaith D</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=adwaith007" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/aemonm"><img src="https://avatars.githubusercontent.com/u/1058915?v=4?s=120" width="120px;" alt="æmon"/><br /><sub><b>æmon</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=aemonm" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
