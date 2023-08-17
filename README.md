@@ -760,6 +760,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/dummyAccount22"><img src="https://avatars.githubusercontent.com/u/115959622?v=4?s=120" width="120px;" alt="dummyAccount22"/><br /><sub><b>dummyAccount22</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=dummyAccount22" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://duskvirkus.com/links"><img src="https://avatars.githubusercontent.com/u/43045568?v=4?s=120" width="120px;" alt="Dusk"/><br /><sub><b>Dusk</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=duskvirkus" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
