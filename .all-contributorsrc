@@ -3903,6 +3903,15 @@
         "eventOrganizing",
         "blog"
       ]
+    },
+    {
+      "login": "13sfaith",
+      "name": "Spencer Faith",
+      "avatar_url": "https://avatars.githubusercontent.com/u/45831293?v=4",
+      "profile": "https://github.com/13sfaith",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
