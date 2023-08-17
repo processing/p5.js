@@ -844,6 +844,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/seagalputra"><img src="https://avatars.githubusercontent.com/u/15377132?v=4?s=120" width="120px;" alt="Dwiferdio Seagal Putra"/><br /><sub><b>Dwiferdio Seagal Putra</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=seagalputra" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/shakeabi"><img src="https://avatars.githubusercontent.com/u/36559835?v=4?s=120" width="120px;" alt="Abishake"/><br /><sub><b>Abishake</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=shakeabi" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://sheamus.dev/"><img src="https://avatars.githubusercontent.com/u/8462408?v=4?s=120" width="120px;" alt="sheamus"/><br /><sub><b>sheamus</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sheamusburns" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/shinytang6"><img src="https://avatars.githubusercontent.com/u/22241503?v=4?s=120" width="120px;" alt="Liang Tang"/><br /><sub><b>Liang Tang</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=shinytang6" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
