@@ -798,6 +798,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="http://junagao.com/"><img src="https://avatars.githubusercontent.com/u/615616?v=4?s=120" width="120px;" alt="juliane nagao"/><br /><sub><b>juliane nagao</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=junagao" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://junshern.github.io/"><img src="https://avatars.githubusercontent.com/u/7796965?v=4?s=120" width="120px;" alt="Chan Jun Shern"/><br /><sub><b>Chan Jun Shern</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=JunShern" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://ashleykang.dev/"><img src="https://avatars.githubusercontent.com/u/12789512?v=4?s=120" width="120px;" alt="Ashley Kang"/><br /><sub><b>Ashley Kang</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=kangashley" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
