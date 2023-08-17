@@ -726,6 +726,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/ArshM17"><img src="https://avatars.githubusercontent.com/u/107296445?v=4?s=120" width="120px;" alt="ArshM17"/><br /><sub><b>ArshM17</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ArshM17" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://asukaminato.eu.org/"><img src="https://avatars.githubusercontent.com/u/30024051?v=4?s=120" width="120px;" alt="AsukaMinato"/><br /><sub><b>AsukaMinato</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=asukaminato0721" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="http://jareddonovan.com/"><img src="https://avatars.githubusercontent.com/u/92529?v=4?s=120" width="120px;" alt="Jared Donovan"/><br /><sub><b>Jared Donovan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=awarua" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 

@@ -4079,6 +4079,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "awarua",
+      "name": "Jared Donovan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/92529?v=4",
+      "profile": "http://jareddonovan.com/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
