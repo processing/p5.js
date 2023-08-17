@@ -868,6 +868,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/with-a-k"><img src="https://avatars.githubusercontent.com/u/6319591?v=4?s=120" width="120px;" alt="Erik Butcher"/><br /><sub><b>Erik Butcher</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=with-a-k" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/wmmnola"><img src="https://avatars.githubusercontent.com/u/13511578?v=4?s=120" width="120px;" alt="Wade Marshall"/><br /><sub><b>Wade Marshall</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=wmmnola" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://www.orangutan.or.id/"><img src="https://avatars.githubusercontent.com/u/11317451?v=4?s=120" width="120px;" alt="XTY"/><br /><sub><b>XTY</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=xty" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://www.xujenna.com/"><img src="https://avatars.githubusercontent.com/u/13280722?v=4?s=120" width="120px;" alt="Jenna"/><br /><sub><b>Jenna</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=xujenna" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
