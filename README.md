@@ -872,6 +872,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/yifanmai"><img src="https://avatars.githubusercontent.com/u/185227?v=4?s=120" width="120px;" alt="Yifan Mai"/><br /><sub><b>Yifan Mai</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=yifanmai" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://yinhwa.art/"><img src="https://avatars.githubusercontent.com/u/51147158?v=4?s=120" width="120px;" alt="Inhwa"/><br /><sub><b>Inhwa</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=yinhwa" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
