@@ -787,6 +787,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://www.linkedin.com/in/jai-kotia/"><img src="https://avatars.githubusercontent.com/u/32239054?v=4?s=120" width="120px;" alt="Jai Kotia"/><br /><sub><b>Jai Kotia</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=JaiKotia" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/jatin33"><img src="https://avatars.githubusercontent.com/u/13780467?v=4?s=120" width="120px;" alt="Jatin Panjwani"/><br /><sub><b>Jatin Panjwani</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=jatin33" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/jeong"><img src="https://avatars.githubusercontent.com/u/749767?v=4?s=120" width="120px;" alt="jeong"/><br /><sub><b>jeong</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=jeong" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/jesi-rgb"><img src="https://avatars.githubusercontent.com/u/50735312?v=4?s=120" width="120px;" alt="Jesús Enrique Rascón"/><br /><sub><b>Jesús Enrique Rascón</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=jesi-rgb" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
