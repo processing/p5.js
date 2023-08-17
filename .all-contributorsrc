@@ -4295,6 +4295,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "dummyAccount22",
+      "name": "dummyAccount22",
+      "avatar_url": "https://avatars.githubusercontent.com/u/115959622?v=4",
+      "profile": "https://github.com/dummyAccount22",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",

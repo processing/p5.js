@@ -758,6 +758,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://twitter.com/digitalfrost"><img src="https://avatars.githubusercontent.com/u/286763?v=4?s=120" width="120px;" alt="digitalfrost"/><br /><sub><b>digitalfrost</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=digitalfrost" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://thomasdiewald.com/"><img src="https://avatars.githubusercontent.com/u/743399?v=4?s=120" width="120px;" alt="Thomas Diewald"/><br /><sub><b>Thomas Diewald</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=diwi" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/dummyAccount22"><img src="https://avatars.githubusercontent.com/u/115959622?v=4?s=120" width="120px;" alt="dummyAccount22"/><br /><sub><b>dummyAccount22</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=dummyAccount22" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
