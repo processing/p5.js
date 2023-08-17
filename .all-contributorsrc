@@ -4871,6 +4871,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "sheamusburns",
+      "name": "sheamus",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8462408?v=4",
+      "profile": "http://sheamus.dev/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
