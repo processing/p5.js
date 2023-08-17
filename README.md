@@ -742,6 +742,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/cacoollib"><img src="https://avatars.githubusercontent.com/u/53848442?v=4?s=120" width="120px;" alt="cacoollib"/><br /><sub><b>cacoollib</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=cacoollib" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://caitelatte.com/"><img src="https://avatars.githubusercontent.com/u/4994062?v=4?s=120" width="120px;" alt="Caitlin"/><br /><sub><b>Caitlin</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=caitelatte" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/calebegg"><img src="https://avatars.githubusercontent.com/u/782920?v=4?s=120" width="120px;" alt="Caleb Eggensperger"/><br /><sub><b>Caleb Eggensperger</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=calebegg" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
