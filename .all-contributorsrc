@@ -3892,6 +3892,17 @@
         "example",
         "talk"
       ]
+    },
+    {
+      "login": "takawo",
+      "name": "takawo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/39242?v=4",
+      "profile": "http://cenkhor.org",
+      "contributions": [
+        "example",
+        "eventOrganizing",
+        "blog"
+      ]
     }
   ],
   "repoType": "github",
