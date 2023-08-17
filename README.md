@@ -729,6 +729,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="http://jareddonovan.com/"><img src="https://avatars.githubusercontent.com/u/92529?v=4?s=120" width="120px;" alt="Jared Donovan"/><br /><sub><b>Jared Donovan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=awarua" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/beau-muylle"><img src="https://avatars.githubusercontent.com/u/95020280?v=4?s=120" width="120px;" alt="beau-muylle"/><br /><sub><b>beau-muylle</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=beau-muylle" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://bekicot.github.io/"><img src="https://avatars.githubusercontent.com/u/1826884?v=4?s=120" width="120px;" alt="Yana Agun Siswanto"/><br /><sub><b>Yana Agun Siswanto</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=bekicot" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
