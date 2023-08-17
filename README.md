@@ -852,6 +852,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/stalgiag"><img src="https://avatars.githubusercontent.com/u/10382506?v=4?s=120" width="120px;" alt="Stalgia Grigg"/><br /><sub><b>Stalgia Grigg</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=stalgiag" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://steftervel.de/"><img src="https://avatars.githubusercontent.com/u/4988953?v=4?s=120" width="120px;" alt="Stef Tervelde"/><br /><sub><b>Stef Tervelde</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Stefterv" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://stellartux.github.io/"><img src="https://avatars.githubusercontent.com/u/18706683?v=4?s=120" width="120px;" alt="Danny Robinson"/><br /><sub><b>Danny Robinson</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=stellartux" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/stormCup"><img src="https://avatars.githubusercontent.com/u/52805485?v=4?s=120" width="120px;" alt="stormCup"/><br /><sub><b>stormCup</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=stormCup" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
