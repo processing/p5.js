@@ -4394,6 +4394,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "gr2m",
+      "name": "Gregor Martynus",
+      "avatar_url": "https://avatars.githubusercontent.com/u/39992?v=4",
+      "profile": "https://dev.to/gr2m",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",

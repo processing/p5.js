@@ -772,6 +772,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://rwell.org/"><img src="https://avatars.githubusercontent.com/u/416575?v=4?s=120" width="120px;" alt="Corey Farwell"/><br /><sub><b>Corey Farwell</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=frewsxcv" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://rathoresaab.wordpress.com/"><img src="https://avatars.githubusercontent.com/u/9786291?v=4?s=120" width="120px;" alt="Shubham Rathore"/><br /><sub><b>Shubham Rathore</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=GABBAR1947" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/glneto"><img src="https://avatars.githubusercontent.com/u/7269097?v=4?s=120" width="120px;" alt="Geraldo Neto"/><br /><sub><b>Geraldo Neto</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=glneto" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://dev.to/gr2m"><img src="https://avatars.githubusercontent.com/u/39992?v=4?s=120" width="120px;" alt="Gregor Martynus"/><br /><sub><b>Gregor Martynus</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=gr2m" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
