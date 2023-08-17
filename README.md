@@ -824,6 +824,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://www.behance.net/nikiartito2d54"><img src="https://avatars.githubusercontent.com/u/85363556?v=4?s=120" width="120px;" alt="Niki Ito"/><br /><sub><b>Niki Ito</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=niki-ito" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://nikolas.us.to/"><img src="https://avatars.githubusercontent.com/u/59292?v=4?s=120" width="120px;" alt="Nik Nyby"/><br /><sub><b>Nik Nyby</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nikolas" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

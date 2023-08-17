@@ -4736,6 +4736,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "nikolas",
+      "name": "Nik Nyby",
+      "avatar_url": "https://avatars.githubusercontent.com/u/59292?v=4",
+      "profile": "http://nikolas.us.to/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
