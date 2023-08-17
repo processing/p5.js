@@ -4655,6 +4655,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "meodai",
+      "name": "David Aerne",
+      "avatar_url": "https://avatars.githubusercontent.com/u/608386?v=4",
+      "profile": "https://bento.me/meodai",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
