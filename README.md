@@ -766,6 +766,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/emclaren"><img src="https://avatars.githubusercontent.com/u/6835324?v=4?s=120" width="120px;" alt="elgin mclaren"/><br /><sub><b>elgin mclaren</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=emclaren" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/epramer-godaddy"><img src="https://avatars.githubusercontent.com/u/63809970?v=4?s=120" width="120px;" alt="epramer-godaddy"/><br /><sub><b>epramer-godaddy</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=epramer-godaddy" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://bob.ippoli.to/"><img src="https://avatars.githubusercontent.com/u/26596?v=4?s=120" width="120px;" alt="Bob Ippolito"/><br /><sub><b>Bob Ippolito</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=etrepum" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 

@@ -4349,6 +4349,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "etrepum",
+      "name": "Bob Ippolito",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26596?v=4",
+      "profile": "https://bob.ippoli.to/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
