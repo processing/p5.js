@@ -769,6 +769,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://bob.ippoli.to/"><img src="https://avatars.githubusercontent.com/u/26596?v=4?s=120" width="120px;" alt="Bob Ippolito"/><br /><sub><b>Bob Ippolito</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=etrepum" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://www.fal-works.com/"><img src="https://avatars.githubusercontent.com/u/33595446?v=4?s=120" width="120px;" alt="FAL"/><br /><sub><b>FAL</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=fal-works" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://rwell.org/"><img src="https://avatars.githubusercontent.com/u/416575?v=4?s=120" width="120px;" alt="Corey Farwell"/><br /><sub><b>Corey Farwell</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=frewsxcv" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
