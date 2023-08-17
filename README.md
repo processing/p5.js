@@ -833,6 +833,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://prateek93a.medium.com/"><img src="https://avatars.githubusercontent.com/u/44807945?v=4?s=120" width="120px;" alt="Prateek Jain"/><br /><sub><b>Prateek Jain</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Prateek93a" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/quinox"><img src="https://avatars.githubusercontent.com/u/739770?v=4?s=120" width="120px;" alt="Ceesjan Luiten"/><br /><sub><b>Ceesjan Luiten</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=quinox" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://niinomi.art/"><img src="https://avatars.githubusercontent.com/u/3589344?v=4?s=120" width="120px;" alt="NIINOMI"/><br /><sub><b>NIINOMI</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=r21nomi" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
