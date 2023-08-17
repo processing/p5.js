@@ -17,28 +17,28 @@ import p5 from '../core/main';
  * @param  {Integer} [detailY] number of vertices along the y-axis.
  * @param {function} [callback] function to call upon object instantiation.
  */
-p5.Geometry = class  {
+p5.Geometry = class Geometry {
   constructor(detailX, detailY, callback){
   //an array containing every vertex
   //@type [p5.Vector]
     this.vertices = [];
 
     //an array containing every vertex for stroke drawing
-    this.lineVertices = [];
+    this.lineVertices = new p5.DataArray();
 
     // The tangents going into or out of a vertex on a line. Along a straight
     // line segment, both should be equal. At an endpoint, one or the other
     // will not exist and will be all 0. In joins between line segments, they
     // may be different, as they will be the tangents on either side of the join.
-    this.lineTangentsIn = [];
-    this.lineTangentsOut = [];
+    this.lineTangentsIn = new p5.DataArray();
+    this.lineTangentsOut = new p5.DataArray();
 
     // When drawing lines with thickness, entries in this buffer represent which
     // side of the centerline the vertex will be placed. The sign of the number
     // will represent the side of the centerline, and the absolute value will be
     // used as an enum to determine which part of the cap or join each vertex
     // represents. See the doc comments for _addCap and _addJoin for diagrams.
-    this.lineSides = [];
+    this.lineSides = new p5.DataArray();
 
     //an array containing 1 normal per vertex
     //@type [p5.Vector]
@@ -60,7 +60,7 @@ p5.Geometry = class  {
 
     // One color per line vertex, generated automatically based on
     // vertexStrokeColors in _edgesToVertices()
-    this.lineVertexColors = [];
+    this.lineVertexColors = new p5.DataArray();
     this.detailX = detailX !== undefined ? detailX : 1;
     this.detailY = detailY !== undefined ? detailY : 1;
     this.dirtyFlags = {};
@@ -72,16 +72,16 @@ p5.Geometry = class  {
   }
 
   reset() {
-    this.lineVertices.length = 0;
-    this.lineTangentsIn.length = 0;
-    this.lineTangentsOut.length = 0;
-    this.lineSides.length = 0;
+    this.lineVertices.clear();
+    this.lineTangentsIn.clear();
+    this.lineTangentsOut.clear();
+    this.lineSides.clear();
 
     this.vertices.length = 0;
     this.edges.length = 0;
     this.vertexColors.length = 0;
     this.vertexStrokeColors.length = 0;
-    this.lineVertexColors.length = 0;
+    this.lineVertexColors.clear();
     this.vertexNormals.length = 0;
     this.uvs.length = 0;
 
@@ -261,10 +261,10 @@ p5.Geometry = class  {
  * @chainable
  */
   _edgesToVertices() {
-    this.lineVertices.length = 0;
-    this.lineTangentsIn.length = 0;
-    this.lineTangentsOut.length = 0;
-    this.lineSides.length = 0;
+    this.lineVertices.clear();
+    this.lineTangentsIn.clear();
+    this.lineTangentsOut.clear();
+    this.lineSides.clear();
 
     const potentialCaps = new Map();
     const connected = new Set();
@@ -409,18 +409,20 @@ p5.Geometry = class  {
     const a = begin.array();
     const b = end.array();
     const dirArr = dir.array();
-    this.lineSides.push(1, -1, 1, 1, -1, -1);
+    this.lineSides.push(1, 1, -1, 1, -1, -1);
     for (const tangents of [this.lineTangentsIn, this.lineTangentsOut]) {
-      tangents.push(dirArr, dirArr, dirArr, dirArr, dirArr, dirArr);
+      for (let i = 0; i < 6; i++) {
+        tangents.push(...dirArr);
+      }
     }
-    this.lineVertices.push(a, a, b, b, a, b);
+    this.lineVertices.push(...a, ...b, ...a, ...b, ...b, ...a);
     this.lineVertexColors.push(
-      fromColor,
-      fromColor,
-      toColor,
-      toColor,
-      fromColor,
-      toColor
+      ...fromColor,
+      ...toColor,
+      ...fromColor,
+      ...toColor,
+      ...toColor,
+      ...fromColor
     );
     return this;
   }
@@ -446,12 +448,12 @@ p5.Geometry = class  {
     const tanInArray = tangent.array();
     const tanOutArray = [0, 0, 0];
     for (let i = 0; i < 6; i++) {
-      this.lineVertices.push(ptArray);
-      this.lineTangentsIn.push(tanInArray);
-      this.lineTangentsOut.push(tanOutArray);
-      this.lineVertexColors.push(color);
+      this.lineVertices.push(...ptArray);
+      this.lineTangentsIn.push(...tanInArray);
+      this.lineTangentsOut.push(...tanOutArray);
+      this.lineVertexColors.push(...color);
     }
-    this.lineSides.push(-1, -2, 2, 2, 1, -1);
+    this.lineSides.push(-1, 2, -2, 1, 2, -1);
     return this;
   }
 
@@ -488,14 +490,13 @@ p5.Geometry = class  {
     const tanInArray = fromTangent.array();
     const tanOutArray = toTangent.array();
     for (let i = 0; i < 12; i++) {
-      this.lineVertices.push(ptArray);
-      this.lineTangentsIn.push(tanInArray);
-      this.lineTangentsOut.push(tanOutArray);
-      this.lineVertexColors.push(color);
+      this.lineVertices.push(...ptArray);
+      this.lineTangentsIn.push(...tanInArray);
+      this.lineTangentsOut.push(...tanOutArray);
+      this.lineVertexColors.push(...color);
     }
-    for (const side of [-1, 1]) {
-      this.lineSides.push(side, 2 * side, 3 * side, side, 3 * side, 0);
-    }
+    this.lineSides.push(-1, -3, -2, -1, 0, -3);
+    this.lineSides.push(3, 1, 2, 3, 0, 1);
     return this;
   }
 

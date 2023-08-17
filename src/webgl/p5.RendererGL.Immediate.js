@@ -226,7 +226,7 @@ p5.RendererGL.prototype.endShape = function(
   if (this._doFill) {
     if (
       !this.geometryBuilder &&
-      this.immediateMode.geometry.vertices.length > 1
+      this.immediateMode.geometry.vertices.length >= 3
     ) {
       this._drawImmediateFill();
     }
@@ -234,7 +234,7 @@ p5.RendererGL.prototype.endShape = function(
   if (this._doStroke) {
     if (
       !this.geometryBuilder &&
-      this.immediateMode.geometry.lineVertices.length > 1
+      this.immediateMode.geometry.lineVertices.length >= 1
     ) {
       this._drawImmediateStroke();
     }
@@ -501,6 +501,7 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
   for (const buff of this.immediateMode.buffers.fill) {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
   }
+  shader.disableRemainingAttributes();
 
   this._applyColorBlend(this.curFillColor);
 
@@ -523,25 +524,19 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
   this._useLineColor =
     (this.immediateMode.geometry.vertexStrokeColors.length > 0);
 
-  const faceCullingEnabled = gl.isEnabled(gl.CULL_FACE);
-  // Prevent strokes from getting removed by culling
-  gl.disable(gl.CULL_FACE);
-
   const shader = this._getImmediateStrokeShader();
   this._setStrokeUniforms(shader);
   for (const buff of this.immediateMode.buffers.stroke) {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
   }
+  shader.disableRemainingAttributes();
   this._applyColorBlend(this.curStrokeColor);
 
   gl.drawArrays(
     gl.TRIANGLES,
     0,
-    this.immediateMode.geometry.lineVertices.length
+    this.immediateMode.geometry.lineVertices.length / 3
   );
-  if (faceCullingEnabled) {
-    gl.enable(gl.CULL_FACE);
-  }
   shader.unbindShader();
 };
 
