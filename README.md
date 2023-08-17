@@ -710,6 +710,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/adwaith007"><img src="https://avatars.githubusercontent.com/u/37845277?v=4?s=120" width="120px;" alt="Adwaith D"/><br /><sub><b>Adwaith D</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=adwaith007" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/aemonm"><img src="https://avatars.githubusercontent.com/u/1058915?v=4?s=120" width="120px;" alt="æmon"/><br /><sub><b>æmon</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=aemonm" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Ajayneethikannan"><img src="https://avatars.githubusercontent.com/u/35770004?v=4?s=120" width="120px;" alt="ajayTDM"/><br /><sub><b>ajayTDM</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Ajayneethikannan" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
