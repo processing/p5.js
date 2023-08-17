@@ -715,6 +715,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://akashgutha.github.io/"><img src="https://avatars.githubusercontent.com/u/10159531?v=4?s=120" width="120px;" alt="Akash"/><br /><sub><b>Akash</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=AkashGutha" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/AliLordLoss"><img src="https://avatars.githubusercontent.com/u/45513491?v=4?s=120" width="120px;" alt="AliLordLoss"/><br /><sub><b>AliLordLoss</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=AliLordLoss" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://amethyst.codes/"><img src="https://avatars.githubusercontent.com/u/16910219?v=4?s=120" width="120px;" alt="Lauren"/><br /><sub><b>Lauren</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Amethystix" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/anagondesign"><img src="https://avatars.githubusercontent.com/u/83731139?v=4?s=120" width="120px;" alt="anagondesign"/><br /><sub><b>anagondesign</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=anagondesign" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
