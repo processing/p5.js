@@ -4268,6 +4268,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "dhoizner",
+      "name": "Dan Hoizner",
+      "avatar_url": "https://avatars.githubusercontent.com/u/419620?v=4",
+      "profile": "https://github.com/dhoizner",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
