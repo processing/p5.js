@@ -746,6 +746,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/calebegg"><img src="https://avatars.githubusercontent.com/u/782920?v=4?s=120" width="120px;" alt="Caleb Eggensperger"/><br /><sub><b>Caleb Eggensperger</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=calebegg" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/cdfuller"><img src="https://avatars.githubusercontent.com/u/2310581?v=4?s=120" width="120px;" alt="Cody Fuller"/><br /><sub><b>Cody Fuller</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=cdfuller" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/ChrisJohnRyan"><img src="https://avatars.githubusercontent.com/u/8646106?v=4?s=120" width="120px;" alt="Christopher John Ryan"/><br /><sub><b>Christopher John Ryan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ChrisJohnRyan" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/constanceyu"><img src="https://avatars.githubusercontent.com/u/19146133?v=4?s=120" width="120px;" alt="Constance Yu"/><br /><sub><b>Constance Yu</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=constanceyu" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
