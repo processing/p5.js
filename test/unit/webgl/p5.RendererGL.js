@@ -1908,7 +1908,7 @@ suite('p5.RendererGL', function() {
       }
       `;
 
-      myp5.createCanvas(2, 1, WEBGL);
+      myp5.createCanvas(2, 1, myp5.WEBGL);
       myp5.noStroke();
       myp5.pixelDensity(1);
 
@@ -1934,7 +1934,7 @@ suite('p5.RendererGL', function() {
         myp5.vertex(0, siz);
         myp5.vertex(siz, siz);
         myp5.vertex(siz, 0);
-        myp5.endShape(CLOSE, 1);
+        myp5.endShape(myp5.CLOSE, 1);
 
         // check the pixels after instancing to make sure that they're the correct color
         assert.deepEqual(
