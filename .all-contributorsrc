@@ -4232,6 +4232,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "cotsog",
+      "name": "Dominic Jodoin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/149366?v=4",
+      "profile": "http://cotsog.wordpress.com/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
