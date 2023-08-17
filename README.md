@@ -826,6 +826,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://www.behance.net/nikiartito2d54"><img src="https://avatars.githubusercontent.com/u/85363556?v=4?s=120" width="120px;" alt="Niki Ito"/><br /><sub><b>Niki Ito</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=niki-ito" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://nikolas.us.to/"><img src="https://avatars.githubusercontent.com/u/59292?v=4?s=120" width="120px;" alt="Nik Nyby"/><br /><sub><b>Nik Nyby</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nikolas" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/nully0x"><img src="https://avatars.githubusercontent.com/u/40327060?v=4?s=120" width="120px;" alt="nully0x"/><br /><sub><b>nully0x</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nully0x" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://whatoscarhasmade.com/blog/mise"><img src="https://avatars.githubusercontent.com/u/20306697?v=4?s=120" width="120px;" alt="odm275"/><br /><sub><b>odm275</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=odm275" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
