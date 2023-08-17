@@ -732,6 +732,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://bekicot.github.io/"><img src="https://avatars.githubusercontent.com/u/1826884?v=4?s=120" width="120px;" alt="Yana Agun Siswanto"/><br /><sub><b>Yana Agun Siswanto</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=bekicot" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Benjamin-Davies"><img src="https://avatars.githubusercontent.com/u/25046874?v=4?s=120" width="120px;" alt="Benjamin Davies"/><br /><sub><b>Benjamin Davies</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Benjamin-Davies" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/BerfinA"><img src="https://avatars.githubusercontent.com/u/50386960?v=4?s=120" width="120px;" alt="BerfinA"/><br /><sub><b>BerfinA</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=BerfinA" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Bernice55231"><img src="https://avatars.githubusercontent.com/u/78245731?v=4?s=120" width="120px;" alt="Bernice Wu"/><br /><sub><b>Bernice Wu</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Bernice55231" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
