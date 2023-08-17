@@ -4286,6 +4286,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "diwi",
+      "name": "Thomas Diewald",
+      "avatar_url": "https://avatars.githubusercontent.com/u/743399?v=4",
+      "profile": "http://thomasdiewald.com/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",

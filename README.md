@@ -756,6 +756,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/demc"><img src="https://avatars.githubusercontent.com/u/3744617?v=4?s=120" width="120px;" alt="Derrick McMillen"/><br /><sub><b>Derrick McMillen</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=demc" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/dhoizner"><img src="https://avatars.githubusercontent.com/u/419620?v=4?s=120" width="120px;" alt="Dan Hoizner"/><br /><sub><b>Dan Hoizner</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=dhoizner" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://twitter.com/digitalfrost"><img src="https://avatars.githubusercontent.com/u/286763?v=4?s=120" width="120px;" alt="digitalfrost"/><br /><sub><b>digitalfrost</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=digitalfrost" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://thomasdiewald.com/"><img src="https://avatars.githubusercontent.com/u/743399?v=4?s=120" width="120px;" alt="Thomas Diewald"/><br /><sub><b>Thomas Diewald</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=diwi" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
