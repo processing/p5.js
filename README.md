@@ -806,6 +806,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/leslieyip02"><img src="https://avatars.githubusercontent.com/u/90888680?v=4?s=120" width="120px;" alt="Leslie Yip"/><br /><sub><b>Leslie Yip</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=leslieyip02" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/linnhallonqvist"><img src="https://avatars.githubusercontent.com/u/24587690?v=4?s=120" width="120px;" alt="linnhallonqvist"/><br /><sub><b>linnhallonqvist</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=linnhallonqvist" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://www.frederikring.com/"><img src="https://avatars.githubusercontent.com/u/1662740?v=4?s=120" width="120px;" alt="Frederik Ring"/><br /><sub><b>Frederik Ring</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=m90" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
