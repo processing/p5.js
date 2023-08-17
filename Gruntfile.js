@@ -1,13 +1,3 @@
-/**
- *  Please see the contributor docs for usage of the build steps.
- *  This header will only describe some of the more obscure tasks.
- *
- *  Contributors list can be updated using all-contributors-cli:
- *  https://www.npmjs.com/package/all-contributors-cli
- *
- *  all-contributors generate - Generates new contributors list for README
- */
-
 // these requires allow us to use es6 features such as
 // `import`/`export` and `async`/`await` in the Grunt tasks
 // we load from other files (`tasks/`)
