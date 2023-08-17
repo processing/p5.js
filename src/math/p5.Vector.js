@@ -1743,6 +1743,154 @@ p5.Vector = class {
   }
 
   /**
+ * Performs spherical linear interpolation with the other vector
+ * and returns the resulting vector.
+ * This works in both 3D and 2D. As for 2D, the result of slerping
+ * between 2D vectors is always a 2D vector.
+ *
+ * @method slerp
+ * @param {p5.Vector} v the p5.Vector to slerp to
+ * @param {Number} amt The amount of interpolation. some value between 0.0
+ *                     (old vector) and 1.0 (new vector). 0.9 is very near
+ *                     the new vector. 0.5 is halfway in between.
+ * @return {p5.Vector}
+ *
+ * @example
+ * <div class="norender">
+ * <code>
+ *
+ * const v1 = createVector(1, 0, 0);
+ * const v2 = createVector(0, 1, 0);
+ *
+ * const v = v1.slerp(v2, 1/3);
+ * print(v.toString());
+ * // v's components are almost [cos(30°), sin(30°), 0]
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let needle;
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   stroke(0);
+ *   strokeWeight(4);
+ *
+ *   needle = createVector(50, 0);
+ * }
+ *
+ * function draw(){
+ *   background(255);
+ *   translate(50, 50);
+ *
+ *   const v = createVector(mouseX - 50, mouseY - 50).setMag(50);
+ *   // slerp between v and needle vector.
+ *   // needle vector is changed by slerp function.
+ *   needle.slerp(v, 0.05);
+ *
+ *   line(0, 0, needle.x, needle.y);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup(){
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw(){
+ *   background(255);
+ *
+ *   const vx = createVector(30, 0, 0);
+ *   const vy = createVector(0, 30, 0);
+ *   const vz = createVector(0, 0, 30);
+ *
+ *   const t = map(sin(frameCount * TAU / 120), -1, 1, 0, 1);
+ *   // v1, v2, v3 is not changed by slerp function.
+ *   // because this function is static version.
+ *   const vSlerpXY = p5.Vector.slerp(vx, vy, t);
+ *   const vSlerpYZ = p5.Vector.slerp(vy, vz, t);
+ *   const vSlerpZX = p5.Vector.slerp(vz, vx, t);
+ *   strokeWeight(6);
+ *   strokeCap(SQUARE);
+ *   stroke('red');
+ *   line(0, 0, 0, vSlerpXY.x, vSlerpXY.y, vSlerpXY.z);
+ *   stroke('green');
+ *   line(0, 0, 0, vSlerpYZ.x, vSlerpYZ.y, vSlerpYZ.z);
+ *   stroke('blue');
+ *   line(0, 0, 0, vSlerpZX.x, vSlerpZX.y, vSlerpZX.z);
+ * }
+ * </code>
+ * </div>
+ */
+  slerp(v, amt) {
+    // edge cases.
+    if (amt === 0) { return this; }
+    if (amt === 1) { return this.set(v); }
+
+    // calculate magnitudes
+    const selfMag = this.mag();
+    const vMag = v.mag();
+    const magmag = selfMag * vMag;
+    // if either is a zero vector, linearly interpolate by these vectors
+    if (magmag === 0) {
+      this.mult(1 - amt).add(v.x * amt, v.y * amt, v.z * amt);
+      return this;
+    }
+    // the cross product of 'this' and 'v' is the axis of rotation
+    const axis = this.cross(v);
+    const axisMag = axis.mag();
+    // Calculates the angle between 'this' and 'v'
+    const theta = Math.atan2(axisMag, this.dot(v));
+
+    // However, if the norm of axis is 0, normalization cannot be performed,
+    // so we will divide the cases
+    if (axisMag > 0) {
+      axis.x /= axisMag;
+      axis.y /= axisMag;
+      axis.z /= axisMag;
+    } else if (theta < Math.PI * 0.5) {
+      // if the norm is 0 and the angle is less than PI/2,
+      // the angle is very close to 0, so do linear interpolation.
+      this.mult(1 - amt).add(v.x * amt, v.y * amt, v.z * amt);
+      return this;
+    } else {
+      // If the norm is 0 and the angle is more than PI/2, the angle is
+      // very close to PI.
+      // In this case v can be regarded as '-this', so take any vector
+      // that is orthogonal to 'this' and use that as the axis.
+      if (this.z === 0 && v.z === 0) {
+        // if both this and v are 2D vectors, use (0,0,1)
+        // this makes the result also a 2D vector.
+        axis.set(0, 0, 1);
+      } else if (this.x !== 0) {
+        // if the x components is not 0, use (y, -x, 0)
+        axis.set(this.y, -this.x, 0).normalize();
+      } else {
+        // if the x components is 0, use (1,0,0)
+        axis.set(1, 0, 0);
+      }
+    }
+
+    // Since 'axis' is a unit vector, ey is a vector of the same length as 'this'.
+    const ey = axis.cross(this);
+    // interpolate the length with 'this' and 'v'.
+    const lerpedMagFactor = (1 - amt) + amt * vMag / selfMag;
+    // imagine a situation where 'axis', 'this', and 'ey' are pointing
+    // along the z, x, and y axes, respectively.
+    // rotates 'this' around 'axis' by amt * theta towards 'ey'.
+    const cosMultiplier = lerpedMagFactor * Math.cos(amt * theta);
+    const sinMultiplier = lerpedMagFactor * Math.sin(amt * theta);
+    // then, calculate 'result'.
+    this.x = this.x * cosMultiplier + ey.x * sinMultiplier;
+    this.y = this.y * cosMultiplier + ey.y * sinMultiplier;
+    this.z = this.z * cosMultiplier + ey.z * sinMultiplier;
+
+    return this;
+  }
+
+  /**
  * Reflect a vector about a normal to a line in 2D, or about a normal to a
  * plane in 3D.
  *
@@ -2355,6 +2503,37 @@ p5.Vector = class {
       target.set(v1);
     }
     target.lerp(v2, amt);
+    return target;
+  }
+
+  /**
+ * Performs spherical linear interpolation with the other vector
+ * and returns the resulting vector.
+ * This works in both 3D and 2D. As for 2D, the result of slerping
+ * between 2D vectors is always a 2D vector.
+ */
+  /**
+ * @method slerp
+ * @static
+ * @param {p5.Vector} v1 old vector
+ * @param {p5.Vector} v2 new vectpr
+ * @param {Number} amt
+ * @param {p5.Vector} [target] The vector to receive the result
+ * @return {p5.Vector} slerped vector between v1 and v2
+ */
+  static slerp(v1, v2, amt, target) {
+    if (!target) {
+      target = v1.copy();
+      if (arguments.length === 4) {
+        p5._friendlyError(
+          'The target parameter is undefined, it should be of type p5.Vector',
+          'p5.Vector.slerp'
+        );
+      }
+    } else {
+      target.set(v1);
+    }
+    target.slerp(v2, amt);
     return target;
   }
 

@@ -142,7 +142,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
       const funcName =
         methodParts.length === 1 ? func : methodParts.slice(2).join('/');
-      msgWithReference = `${message} (http://p5js.org/reference/#/${referenceSection}/${funcName})`;
+
+      //Whenever func having p5.[Class] is encountered, we need to have the error link as mentioned below else different link
+      funcName.startsWith('p5.')  ?
+        msgWithReference = `${message} (http://p5js.org/reference/#/${referenceSection}.${funcName})` :
+        msgWithReference = `${message} (http://p5js.org/reference/#/${referenceSection}/${funcName})`;
     }
     return msgWithReference;
   };
@@ -493,6 +497,17 @@ if (typeof IS_MINIFIED !== 'undefined') {
     // isInternal - Did this error happen inside the library
     let isInternal = false;
     let p5FileName, friendlyStack, currentEntryPoint;
+
+    // Intentionally throw an error that we catch so that we can check the name
+    // of the current file. Any errors we see from this file, we treat as
+    // internal errors.
+    try {
+      throw new Error();
+    } catch (testError) {
+      const testStacktrace = p5._getErrorStackParser().parse(testError);
+      p5FileName = testStacktrace[0].fileName;
+    }
+
     for (let i = stacktrace.length - 1; i >= 0; i--) {
       let splitted = stacktrace[i].functionName.split('.');
       if (entryPoints.includes(splitted[splitted.length - 1])) {
@@ -500,15 +515,14 @@ if (typeof IS_MINIFIED !== 'undefined') {
         // (it's usually the internal initialization calls)
         friendlyStack = stacktrace.slice(0, i + 1);
         currentEntryPoint = splitted[splitted.length - 1];
-        for (let j = 0; j < i; j++) {
-          // Due to the current build process, all p5 functions have
-          // _main.default in their names in the final build. This is the
-          // easiest way to check if a function is inside the p5 library
-          if (stacktrace[j].functionName.search('_main.default') !== -1) {
-            isInternal = true;
-            p5FileName = stacktrace[j].fileName;
-            break;
-          }
+        // We call the error "internal" if the source of the error was a
+        // function from within the p5.js library file, but called from the
+        // user's code directly. We only need to check the topmost frame in
+        // the stack trace since any function internal to p5 should pass this
+        // check, not just public p5 functions.
+        if (stacktrace[0].fileName === p5FileName) {
+          isInternal = true;
+          break;
         }
         break;
       }

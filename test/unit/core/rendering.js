@@ -73,6 +73,22 @@ suite('Rendering', function() {
       myp5.resizeCanvas(10, 10);
       assert.equal(myp5.drawingContext.lineCap, myp5.PROJECT);
     });
+
+    test('should resize framebuffers', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      const fbo = myp5.createFramebuffer();
+      myp5.resizeCanvas(5, 15);
+      assert.equal(fbo.width, 5);
+      assert.equal(fbo.height, 15);
+    });
+
+    test('should resize graphic framebuffers', function() {
+      const graphic = myp5.createGraphics(10, 10, myp5.WEBGL);
+      const fbo = graphic.createFramebuffer();
+      graphic.resizeCanvas(5, 15);
+      assert.equal(fbo.width, 5);
+      assert.equal(fbo.height, 15);
+    });
   });
 
   suite('p5.prototype.blendMode', function() {

@@ -4,7 +4,8 @@
   "files": [
     "README.md"
   ],
-  "imageSize": 100,
+  "imageSize": 120,
+  "contributorsPerLine": 6,
   "commit": true,
   "contributors": [
     {
@@ -3686,7 +3687,7 @@
       "contributions": [
         "translation"
       ]
-     },
+    },
     {
       "login": "ozramos",
       "name": "oz",
@@ -3747,11 +3748,122 @@
         "ideas",
         "design"
       ]
+    },
+    {
+      "login": "wong-justin",
+      "name": "J Wong",
+      "avatar_url": "https://avatars.githubusercontent.com/u/28441593?v=4",
+      "profile": "http://wonger.dev",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "aceslowman",
+      "name": "Austin Lee Slominski",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6826702?v=4",
+      "profile": "http://aceslowman.com",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "nbriz",
+      "name": "Nick Briz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2506806?v=4",
+      "profile": "http://nickbriz.com",
+      "contributions": [
+        "review"
+      ]
+    },
+    {
+      "login": "Ayush23Dash",
+      "name": "Ayush Shankar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/40827680?v=4",
+      "profile": "http://ayush23dash.github.io",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "zelf0",
+      "name": "zelf0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/84274405?v=4",
+      "profile": "https://github.com/zelf0",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "jtnimoy",
+      "name": "JT Nimoy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/183796?v=4",
+      "profile": "http://jtn.im",
+      "contributions": [
+        "code",
+        "plugin"
+      ]
+    },
+    {
+      "login": "SilasVM",
+      "name": "Victor Morgan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/124199231?v=4",
+      "profile": "https://github.com/SilasVM",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "snwarner22",
+      "name": "Sekani Warner",
+      "avatar_url": "https://avatars.githubusercontent.com/u/137221902?v=4",
+      "profile": "https://github.com/snwarner22",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "e-coucou",
+      "name": "e-Coucou",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4691474?v=4",
+      "profile": "https://github.com/e-coucou",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "thatguyseven",
+      "name": "Aaron Ni",
+      "avatar_url": "https://avatars.githubusercontent.com/u/137221692?v=4",
+      "profile": "https://github.com/thatguyseven",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "OnexiMedina",
+      "name": "Onexi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/112675769?v=4",
+      "profile": "https://github.com/OnexiMedina",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "vijithassar",
+      "name": "Vijith Assar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3488572?v=4",
+      "profile": "http://www.vijithassar.com",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
   "repoHost": "https://github.com",
-  "contributorsPerLine": 7,
   "skipCi": true,
   "commitConvention": "angular",
   "commitType": "docs"

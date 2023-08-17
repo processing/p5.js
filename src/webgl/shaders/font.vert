@@ -17,9 +17,12 @@ void main() {
 
   // Expand glyph bounding boxes by 1px on each side to give a bit of room
   // for antialiasing
+  vec3 newOrigin = (uModelViewMatrix * vec4(0., 0., 0., 1.)).xyz;
+  vec3 newDX = (uModelViewMatrix * vec4(1., 0., 0., 1.)).xyz;
+  vec3 newDY = (uModelViewMatrix * vec4(0., 1., 0., 1.)).xyz;
   vec2 pixelScale = vec2(
-    1. / uModelViewMatrix[0][0],
-    1. / uModelViewMatrix[1][1]
+    1. / length(newOrigin - newDX),
+    1. / length(newOrigin - newDY)
   );
   vec2 offset = pixelScale * normalize(aTexCoord - vec2(0.5, 0.5)) * vec2(1., -1.);
   vec2 textureOffset = offset * (1. / vec2(

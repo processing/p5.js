@@ -34,65 +34,164 @@ const scaled_cosine = i => 0.5 * (1.0 - Math.cos(i * Math.PI));
 let perlin; // will be initialized lazily by noise() or noiseSeed()
 
 /**
- * Returns the Perlin noise value at specified coordinates. Perlin noise is
- * a random sequence generator producing a more naturally ordered, harmonic
- * succession of numbers compared to the standard <a href="#/p5/random">random()</a> function.
- * It was invented by Ken Perlin in the 1980s and been used since in
- * graphical applications to produce procedural textures, natural motion,
- * shapes, terrains etc.<br /><br /> The main difference to the
- * <a href="#/p5/random">random()</a> function is that Perlin noise is defined in an infinite
- * n-dimensional space where each pair of coordinates corresponds to a
- * fixed semi-random value (fixed only for the lifespan of the program; see
- * the <a href="#/p5/noiseSeed">noiseSeed()</a> function). p5.js can compute 1D, 2D and 3D noise,
- * depending on the number of coordinates given. The resulting value will
- * always be between 0.0 and 1.0. The noise value can be animated by moving
- * through the noise space as demonstrated in the example above. The 2nd
- * and 3rd dimensions can also be interpreted as time.<br /><br />The actual
- * noise is structured similar to an audio signal, in respect to the
- * function's use of frequencies. Similar to the concept of harmonics in
- * physics, Perlin noise is computed over several octaves which are added
- * together for the final result. <br /><br />Another way to adjust the
- * character of the resulting sequence is the scale of the input
- * coordinates. As the function works within an infinite space the value of
- * the coordinates doesn't matter as such, only the distance between
- * successive coordinates does (eg. when using <a href="#/p5/noise">noise()</a> within a
- * loop). As a general rule the smaller the difference between coordinates,
- * the smoother the resulting noise sequence will be. Steps of 0.005-0.03
- * work best for most applications, but this will differ depending on use.
+ * Returns random numbers that can be tuned to feel more organic. The values
+ * returned will always be between 0 and 1.
+ *
+ * Values returned by <a href="#/p5/random">random()</a> and
+ * <a href="#/p5/randomGaussian">randomGaussian()</a> can change by large
+ * amounts between function calls. By contrast, values returned by `noise()`
+ * can be made "smooth". Calls to `noise()` with similar inputs will produce
+ * similar outputs. `noise()` is used to create textures, motion, shapes,
+ * terrains, and so on. Ken Perlin invented `noise()` while animating the
+ * original <em>Tron</em> film in the 1980s.
+ *
+ * `noise()` returns the same value for a given input while a sketch is
+ * running. It produces different results each time a sketch runs. The
+ * <a href="#/p5/noiseSeed">noiseSeed()</a> function can be used to generate
+ * the same sequence of Perlin noise values each time a sketch runs.
+ *
+ * The character of the noise can be adjusted in two ways. The first way is to
+ * scale the inputs. `noise()` interprets inputs as coordinates. The sequence
+ * of noise values will be smoother when the input coordinates are closer. The
+ * second way is to use the <a href="#/p5/noiseDetail">noiseDetail()</a>
+ * function.
+ *
+ * The version of `noise()` with one parameter computes noise values in one
+ * dimension. This dimension can be thought of as space, as in `noise(x)`, or
+ * time, as in `noise(t)`.
+ *
+ * The version of `noise()` with two parameters computes noise values in two
+ * dimensions. These dimensions can be thought of as space, as in
+ * `noise(x, y)`, or space and time, as in `noise(x, t)`.
+ *
+ * The version of `noise()` with three parameters computes noise values in
+ * three dimensions. These dimensions can be thought of as space, as in
+ * `noise(x, y, z)`, or space and time, as in `noise(x, y, t)`.
  *
  * @method noise
- * @param  {Number} x   x-coordinate in noise space
- * @param  {Number} [y] y-coordinate in noise space
- * @param  {Number} [z] z-coordinate in noise space
- * @return {Number}     Perlin noise value (between 0 and 1) at specified
- *                      coordinates
+ * @param  {Number} x   x-coordinate in noise space.
+ * @param  {Number} [y] y-coordinate in noise space.
+ * @param  {Number} [z] z-coordinate in noise space.
+ * @return {Number}     Perlin noise value at specified coordinates.
  * @example
  * <div>
  * <code>
- * let xoff = 0.0;
- *
  * function draw() {
- *   background(204);
- *   xoff = xoff + 0.01;
- *   let n = noise(xoff) * width;
- *   line(n, 0, n, height);
- *   describe(`vertical line moves left to right with updating
- *     noise values.`);
+ *   background(200);
+ *
+ *   let x = 100 * noise(0.005 * frameCount);
+ *   let y = 100 * noise(0.005 * frameCount + 10000);
+ *
+ *   strokeWeight(5);
+ *   point(x, y);
+ *
+ *   describe('A black dot moves randomly on a gray square.');
  * }
  * </code>
  * </div>
- * <div>
- * <code>let noiseScale=0.02;
  *
+ * <div>
+ * <code>
  * function draw() {
- *   background(0);
- *   for (let x=0; x < width; x++) {
- *     let noiseVal = noise((mouseX+x)*noiseScale, mouseY*noiseScale);
- *     stroke(noiseVal*255);
- *     line(x, mouseY+noiseVal*80, x, height);
+ *   background(200);
+ *
+ *   let noiseLevel = 100;
+ *   let noiseScale = 0.005;
+ *   // Scale input coordinate.
+ *   let nt = noiseScale * frameCount;
+ *   // Compute noise value.
+ *   let x = noiseLevel * noise(nt);
+ *   let y = noiseLevel * noise(nt + 10000);
+ *   // Render.
+ *   strokeWeight(5);
+ *   point(x, y);
+ *
+ *   describe('A black dot moves randomly on a gray square.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   let noiseLevel = 100;
+ *   let noiseScale = 0.02;
+ *   // Scale input coordinate.
+ *   let x = frameCount;
+ *   let nx = noiseScale * x;
+ *   // Compute noise value.
+ *   let y = noiseLevel * noise(nx);
+ *   // Render.
+ *   line(x, 0, x, y);
+ *
+ *   describe('A hilly terrain drawn in gray against a black sky.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(200);
+ *
+ *   let noiseLevel = 100;
+ *   let noiseScale = 0.002;
+ *   for (let x = 0; x < width; x += 1) {
+ *     // Scale input coordinates.
+ *     let nx = noiseScale * x;
+ *     let nt = noiseScale * frameCount;
+ *     // Compute noise value.
+ *     let y = noiseLevel * noise(nx, nt);
+ *     // Render.
+ *     line(x, 0, x, y);
  *   }
- *   describe(`horizontal wave pattern effected by mouse x-position
- *     & updating noise values.`);
+ *
+ *   describe('A calm sea drawn in gray against a black sky.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let noiseLevel = 255;
+ * let noiseScale = 0.01;
+ * for (let y = 0; y < height; y += 1) {
+ *   for (let x = 0; x < width; x += 1) {
+ *     // Scale input coordinates.
+ *     let nx = noiseScale * x;
+ *     let ny = noiseScale * y;
+ *     // Compute noise value.
+ *     let c = noiseLevel * noise(nx, ny);
+ *     // Render.
+ *     stroke(c);
+ *     point(x, y);
+ *   }
+ * }
+ *
+ * describe('A gray cloudy pattern.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   let noiseLevel = 255;
+ *   let noiseScale = 0.009;
+ *   for (let y = 0; y < height; y += 1) {
+ *     for (let x = 0; x < width; x += 1) {
+ *       // Scale input coordinates.
+ *       let nx = noiseScale * x;
+ *       let ny = noiseScale * y;
+ *       let nt = noiseScale * frameCount;
+ *       // Compute noise value.
+ *       let c = noiseLevel * noise(nx, ny, nt);
+ *       // Render.
+ *       stroke(c);
+ *       point(x, y);
+ *     }
+ *   }
+ *
+ *   describe('A gray cloudy pattern that changes.');
  * }
  * </code>
  * </div>
@@ -176,57 +275,54 @@ p5.prototype.noise = function(x, y = 0, z = 0) {
 };
 
 /**
+ * Adjusts the character of the noise produced by the
+ * <a href="#/p5/noise">noise()</a> function.
  *
- * Adjusts the character and level of detail produced by the Perlin noise
- * function. Similar to harmonics in physics, noise is computed over
- * several octaves. Lower octaves contribute more to the output signal and
- * as such define the overall intensity of the noise, whereas higher octaves
- * create finer-grained details in the noise sequence.
+ * Perlin noise values are created by adding layers of noise together. The
+ * noise layers, called octaves, are similar to harmonics in music. Lower
+ * octaves contribute more to the output signal. They define the overall
+ * intensity of the noise. Higher octaves create finer-grained details.
  *
- * By default, noise is computed over 4 octaves with each octave contributing
- * exactly half as much as its predecessor, starting at 50% strength for the 1st
- * octave. This falloff amount can be changed by adding an additional function
- * parameter. Eg. a falloff factor of 0.75 means each octave will now have
- * 75% impact (25% less) of the previous lower octave. Any value between
- * 0.0 and 1.0 is valid, however, note that values greater than 0.5 might
- * result in greater than 1.0 values returned by <a href="#/p5/noise">noise()</a>.
- *
- * By changing these parameters, the signal created by the <a href="#/p5/noise">noise()</a>
- * function can be adapted to fit very specific needs and characteristics.
+ * By default, noise values are created by combining four octaves. Each higher
+ * octave contributes half as much (50% less) compared to its predecessor.
+ * `noiseDetail()` changes the number of octaves and the falloff amount. For
+ * example, calling `noiseDetail(6, 0.25)` ensures that
+ * <a href="#/p5/noise">noise()</a> will use six octaves. Each higher octave
+ * will contribute 25% as much (75% less) compared to its predecessor. Falloff
+ * values between 0 and 1 are valid. However, falloff values greater than 0.5
+ * might result in noise values greater than 1.
  *
  * @method noiseDetail
- * @param {Number} lod number of octaves to be used by the noise
- * @param {Number} falloff falloff factor for each octave
+ * @param {Number} lod number of octaves to be used by the noise.
+ * @param {Number} falloff falloff factor for each octave.
  * @example
  * <div>
  * <code>
- * let noiseVal;
+ * let noiseLevel = 255;
  * let noiseScale = 0.02;
+ * for (let y = 0; y < height; y += 1) {
+ *   for (let x = 0; x < width / 2; x += 1) {
+ *     // Scale input coordinates.
+ *     let nx = noiseScale * x;
+ *     let ny = noiseScale * y;
  *
- * function setup() {
- *   createCanvas(100, 100);
- * }
+ *     // Compute noise value.
+ *     noiseDetail(6, 0.25);
+ *     let c = noiseLevel * noise(nx, ny);
+ *     // Render left side.
+ *     stroke(c);
+ *     point(x, y);
  *
- * function draw() {
- *   background(0);
- *   for (let y = 0; y < height; y++) {
- *     for (let x = 0; x < width / 2; x++) {
- *       noiseDetail(2, 0.2);
- *       noiseVal = noise((mouseX + x) * noiseScale, (mouseY + y) * noiseScale);
- *       stroke(noiseVal * 255);
- *       point(x, y);
- *       noiseDetail(8, 0.65);
- *       noiseVal = noise(
- *         (mouseX + x + width / 2) * noiseScale,
- *         (mouseY + y) * noiseScale
- *       );
- *       stroke(noiseVal * 255);
- *       point(x + width / 2, y);
- *     }
+ *     // Compute noise value.
+ *     noiseDetail(4, 0.5);
+ *     c = noiseLevel * noise(nx, ny);
+ *     // Render right side.
+ *     stroke(c);
+ *     point(x + width / 2, y);
  *   }
- *   describe(`2 vertical grey smokey patterns affected by
- *     mouse x-position and noise.`);
  * }
+ *
+ * describe('Two gray cloudy patterns. The pattern on the right is cloudier than the pattern on the left.');
  * </code>
  * </div>
  */
@@ -242,25 +338,31 @@ p5.prototype.noiseDetail = function(lod, falloff) {
 /**
  * Sets the seed value for <a href="#/p5/noise">noise()</a>. By default,
  * <a href="#/p5/noise">noise()</a> produces different results each time
- * the program is run. Set the `seed` parameter to a constant to return
- * the same pseudo-random numbers each time the software is run.
+ * a sketch is run. Calling `noiseSeed()` with a constant
+ * argument, such as `noiseSeed(99)`, makes <a href="#/p5/noise">noise()</a>
+ * produce the same results each time a sketch is run.
  *
  * @method noiseSeed
- * @param {Number} seed   the seed value
+ * @param {Number} seed   seed value.
  * @example
  * <div>
- * <code>let xoff = 0.0;
- *
+ * <code>
  * function setup() {
  *   noiseSeed(99);
- *   stroke(0, 10);
+ *   background(255);
  * }
  *
  * function draw() {
- *   xoff = xoff + .01;
- *   let n = noise(xoff) * width;
- *   line(n, 0, n, height);
- *   describe(`vertical grey lines drawing in pattern affected by noise.`);
+ *   let noiseLevel = 100;
+ *   let noiseScale = 0.005;
+ *   // Scale input coordinate.
+ *   let nt = noiseScale * frameCount;
+ *   // Compute noise value.
+ *   let x = noiseLevel * noise(nt);
+ *   // Render.
+ *   line(x, 0, x, height);
+ *
+ *   describe('A black rectangle that grows randomly, first to the right and then to the left.');
  * }
  * </code>
  * </div>

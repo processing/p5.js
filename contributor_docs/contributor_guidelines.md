@@ -14,7 +14,7 @@ This is a fairly long and comprehensive document but we will try to deliniate al
 		- [New Feature Request](#new-feature-request)
 		- [Discussion](#discussion)
 - [Working on p5.js codebase](#working-on-p5js-codebase)
-	- [Using the Github edit functionality](#using-the-github-edit-functionality)
+	- [Using the GitHub edit functionality](#using-the-github-edit-functionality)
 	- [Forking p5.js and working from your fork](#forking-p5js-and-working-from-your-fork)
 	- [Codebase breakdown](#codebase-breakdown)
 	- [Build setup](#build-setup)
@@ -34,14 +34,15 @@ This is a fairly long and comprehensive document but we will try to deliniate al
 
 ---
 # All about issues
-The majority of the activity on p5.js' Github repositories (repo for short) happens in issues and issues will most likely be the place to start your contribution process as well.
+The majority of the activity on p5.js' GitHub repositories (repo for short) happens in issues and issues will most likely be the place to start your contribution process as well.
 
 ## What are issues?
-Issue is the generic name for a post on Github that aims to describe, well, an issue. This "issue" can be a bug report, a request to add new feature, a discussion, a question, an announcement, or anything that works as a post. Comments can be added below each issue by anyone with a Github account, including bots! It is the place where contributors dicusses topics related to the development of the project in the repo.
+
+Issue is the generic name for a post on GitHub that aims to describe, well, an issue. This "issue" can be a bug report, a request to add new feature, a discussion, a question, an announcement, or anything that works as a post. Comments can be added below each issue by anyone with a GitHub account, including bots! It is the place where contributors dicuss topics related to the development of the project in the repo.
 
 While an issue can be opened for a wide variety of reasons, for p5.js' repos we usually only use issues to discuss p5.js source code development related topics. Topics such as debugging your own code, inviting collaborators to your project, or other unrelated topics should be discuss either on the [forum](https://discourse.processing.com) or on other platforms.
 
-We have created easy to use issue templates to aid you in deciding whether a topic should be a Github issue or it should be posted somewhere else!
+We have created easy to use issue templates to aid you in deciding whether a topic should be a GitHub issue or it should be posted somewhere else!
 
 ## Issue templates
 p5.js' issue templates not only makes it easier for stewards and maintainers to understand and review issues, it also makes it simpler for you to file the relevant issue and receive a reply faster. Although they are called templates, from your perspective, it will just be like filling in a simple form where all the different fields of the form are the potentially important information that issue reviewers will need to properly diagnose your issue.
@@ -60,7 +61,7 @@ There are few fields for you to fill in for this template:
 
 As alluded to above, many of the different fields in this template is aimed at replicating the bug. The more information you can provide us about your sketch's environment and how others can replicate what you are seeing, the easier it is for anyone to understand your issue and start looking into solutions. **Be as detailed as you can and avoid generic statements**, eg. do not say "image() function does not work" but rather be more specific such as "image() function does not display the loaded GIF image at the right size". A helpful way to describe the bug you are facing is to describe two things: 1. what you expect the sample code you share to do (expected bahaviour); 2. what the sample code is actually doing (actual behaviour).
 
-If you wish to contribute a fix to the bug you just reported, you can indicate so in the description. If you can provide a simple suggestion as to how you would fix the bug you just described, it would be very helpful for the issue reviewer to know how uch support you would need to contribute the fix. For bug reports to be accepted for fixing they must be approved by at least 1 area steward or maintainer before work can begin on a pull request. Any pull requests filed before the issue has been approved for fixing will be closed until approval is given to the issue. **You should not file a pull request (or start working on code changes) without a corresponding issue or before an issue has been approved for implementation**, that is because there is no guarantee that the proposal will be accepted, and you won't have done work that isn't going to be merged in the first place.
+If you wish to contribute a fix to the bug you just reported, you can indicate so in the description. If you can provide a simple suggestion as to how you would fix the bug you just described, it would be very helpful for the issue reviewer to know how much support you would need to contribute the fix. For bug reports to be accepted for fixing, they must be approved by at least 1 area steward or maintainer before work can begin on a pull request. Any pull requests filed before the issue has been approved for fixing will be closed until approval is given to the issue. **You should not file a pull request (or start working on code changes) without a corresponding issue or before an issue has been approved for implementation**, that is because there is no guarantee that the proposal will be accepted, and you won't have done work that isn't going to be merged in the first place.
 
 ### "Existing Feature Enhancement"
 This template should be used if you wish to modify or otherwise add functionalities to existing features of p5.js (functions, constants, rendering, etc). For example if you want to add a new way to define a color to the `color()` function and other functions that accept colors, this is the template to use.
@@ -92,13 +93,13 @@ Similarly, if you have come across an issue or joined in discussions of an issue
 
 You should not "jump the queue" by filing a PR for an issue that either someone else has indicated willingness to submit a contribution or has already been assigned to someone else. We will always prioritise "first assigned first serve" order for accepting code contribution for an issue, if you file a PR for an issue while someone else is still working on the same issue, your PR will be closed. If you see that it has been a few months since last activity on an issue with an assigned individual, you can check in with them by leaving a polite comment on the issue asking for progress and if they need help with the implementation. We generally allow for fairly long time frame for people to work on their contributions as we understand that most people will often be working on a volunteer basis or it simply takes more time for them to work on the feature; similarly, you should work at your own pace and be confident that there is no hard time limit on how long you can spend working on something. That being said, if you are having trouble with any aspect of your code contribution, do not hesitate to ask for help in the issue, the stewards and maintainers, as well as members of our community, will do their best to guide you!
 
-## Using the Github edit functionality
-When viewing a file on the Github web interface, near the top of the content of the file you are viewing will be a pencil icon button. This button is a convenient edit feature provided by Github that simplifies many of the processes we will be covering below and can be used to make quick and simple edits to the file you are viewing.
+## Using the GitHub edit functionality
+When viewing a file on the GitHub web interface, near the top of the content of the file you are viewing will be a pencil icon button. This button is a convenient edit feature provided by GitHub that simplifies many of the processes we will be covering below and can be used to make quick and simple edits to the file you are viewing.
 
 However, it is not recommended to use this feature other than for very simple changes. One of the main reason for this is that for more complex changes to the source code, it should be built and tested locally before being filed as a PR. Using a local development environment is also often much more fluent for most as compared to the basic editing environment provided by this edit functionality.
 
 ## Forking p5.js and working from your fork
-The first step is to fork the p5.js repository. Forking has a specific meaning in open source but for our purpose it means creating a copy of the repository and storing it in your own Github account. To fork a repo, simply click on the "Fork" button near the top of the page and Github will make a copy of the repo in your account.
+The first step is to fork the p5.js repository. Forking has a specific meaning in open source but for our purpose it means creating a copy of the repository and storing it in your own GitHub account. To fork a repo, simply click on the "Fork" button near the top of the page and GitHub will make a copy of the repo in your account.
 
 Working from your fork of the p5.js repository is necessary because you will likely not have direct write access to the official p5.js repository and working on a fork allows you to make changes and later submit them back to the official repository.
 
@@ -199,7 +200,7 @@ For "Changes", you should give a clear description of the changes you have made 
 Once done, click on "Create pull request".
 
 ### Rebase and resolve conflicts
-You should now inpect the opened pull request and pay attention to a few things:
+You should now inspect the opened pull request and pay attention to a few things:
 
 1. The number of commits should match the number of commits you have made, meaning if you have commited 2 times while working on this PR, it should only show two commits in the "Commits" tab.
 2. The "Files changed" tab should show you the changes you have made as compared with the p5.js repo and nothing more.
@@ -223,7 +224,7 @@ The checklist above may clear out after these steps but if not, we'll guide you 
 ## Discuss and amend
 Now that your PR is opened, a steward or maintainer will review your PR. It may take several days before a steward is able to reply to your PR so be patient and why not checkout some of the other open issues in the meantime!
 
-Once a steward has reviewed your PR, one of two things may happen: 1. your PR is approved and merged, hurray! 2. The steward may ask some question regarding the PR or request some changes to the PR. If it's the latter, don't panic, it's perfectly normal and the stewards are always here to help you complete your contribution!
+Once a steward has reviewed your PR, one of two things may happen: 1. Your PR is approved and merged, hurray! 2. The steward may ask some question regarding the PR or request some changes to the PR. If it's the latter, don't panic, it's perfectly normal and the stewards are always here to help you complete your contribution!
 
 If changes are requested of your PR and you are able to make those changes, follow the [same process as before](#git-workflow) but just continue from your local copy of the repo and relevant branch, make those changes, commit them into git, and push them to your forked remote repo. Once you have pushed additional commits to your forked remote repo, you will see that the new commits automatically show up in the PR. Leave a comment in the PR to let the reviewer know you have made the changes requested and if no additional changes are needed, your PR will be merged!
 

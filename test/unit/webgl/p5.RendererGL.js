@@ -13,7 +13,7 @@ suite('p5.RendererGL', function() {
   });
 
   teardown(function() {
-    myp5.remove();
+    //myp5.remove();
   });
 
   suite('createCanvas(w, h, WEBGL)', function() {
@@ -116,6 +116,193 @@ suite('p5.RendererGL', function() {
       assert.deepEqual(getColors(myp5.P2D), getColors(myp5.WEBGL));
       done();
     });
+  });
+
+  suite('filter shader', function() {
+    setup(function() {
+      vert = `attribute vec3 aPosition;
+      attribute vec2 aTexCoord;
+      
+      varying vec2 vTexCoord;
+      
+      void main() {
+        vTexCoord = aTexCoord;
+        vec4 positionVec4 = vec4(aPosition, 1.0);
+        positionVec4.xy = positionVec4.xy * 2.0 - 1.0;
+        gl_Position = positionVec4;
+      }`;
+
+      frag = `precision highp float;
+      varying vec2 vTexCoord;
+      
+      uniform sampler2D tex0;
+      
+      float luma(vec3 color) {
+        return dot(color, vec3(0.299, 0.587, 0.114));
+      }
+      
+      void main() {
+        vec2 uv = vTexCoord;
+        uv.y = 1.0 - uv.y;
+        vec4 sampledColor = texture2D(tex0, uv);
+        float gray = luma(sampledColor.rgb);
+        gl_FragColor = vec4(gray, gray, gray, 1);
+      }`;
+    });
+
+    teardown(function() {
+    });
+
+    test('filter accepts correct params', function() {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      let s = myp5.createShader(vert, frag);
+      myp5.filter(s);
+      myp5.filter(myp5.POSTERIZE, 64);
+    });
+
+    test('secondary graphics layer is instantiated', function() {
+      let renderer = myp5.createCanvas(5, 5, myp5.WEBGL);
+      let s = myp5.createShader(vert, frag);
+      myp5.filter(s);
+      assert.notStrictEqual(renderer.filterGraphicsLayer, undefined);
+    });
+
+    test('custom shader makes changes to main canvas', function() {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      let s = myp5.createShader(vert, frag);
+      myp5.background('RED');
+      myp5.loadPixels();
+      let p1 = myp5.pixels.slice(); // copy before pixels is reassigned
+      myp5.filter(s);
+      myp5.loadPixels();
+      let p2 = myp5.pixels;
+      assert.notDeepEqual(p1, p2);
+    });
+
+    test('secondary graphics layer matches main canvas size', function() {
+      let g1 = myp5.createCanvas(5, 5, myp5.WEBGL);
+      let s = myp5.createShader(vert, frag);
+      myp5.filter(s);
+      let g2 = g1.filterGraphicsLayer;
+      assert.deepEqual([g1.width, g1.height], [g2.width, g2.height]);
+      myp5.resizeCanvas(4, 4);
+      assert.deepEqual([g1.width, g1.height], [g2.width, g2.height]);
+    });
+
+    test('create graphics is unaffected after filter', function() {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      let pg = myp5.createGraphics(5, 5, myp5.WEBGL);
+      pg.circle(1, 1, 1);
+      pg.loadPixels();
+      let p1 = pg.pixels.slice();
+      let s = myp5.createShader(vert, frag);
+      myp5.filter(s);
+      pg.loadPixels();
+      let p2 = pg.pixels;
+      assert.deepEqual(p1, p2);
+    });
+
+    test('stroke and other settings are unaffected after filter', function() {
+      let c = myp5.createCanvas(5, 5, myp5.WEBGL);
+      let getShapeAttributes = () => [
+        c._ellipseMode,
+        c.drawingContext.imageSmoothingEnabled,
+        c._rectMode,
+        c.curStrokeWeight,
+        c.curStrokeCap,
+        c.curStrokeJoin,
+        c.curStrokeColor
+      ];
+      let a1 = getShapeAttributes();
+      let s = myp5.createShader(vert, frag);
+      myp5.filter(s);
+      let a2 = getShapeAttributes();
+      console.log(a1);
+      assert.deepEqual(a1, a2);
+    });
+
+    test('geometries added after filter do not have shader applied', function() {
+      myp5.createCanvas(4, 4, myp5.WEBGL);
+      let s = myp5.createShader(vert, frag);
+      myp5.filter(s);
+      myp5.fill('RED');
+      myp5.noStroke();
+      myp5.rect(-2,-2,2,2);
+      myp5.loadPixels();
+      assert.equal(myp5.pixels[0], 255);
+    });
+
+    test('createFilterShader takes a custom frag shader src', function() {
+      let testCreateFilterShader = () => {
+        myp5.createCanvas(4, 4, myp5.WEBGL);
+        let s = myp5.createFilterShader(frag);
+        myp5.filter(s);
+      };
+      assert.doesNotThrow(testCreateFilterShader, 'this should not throw');
+    });
+
+    test('default vertex shader behaves the same as supplied vertex shader', function() {
+      myp5.createCanvas(4,4, myp5.WEBGL);
+      let s1 = myp5.createFilterShader(frag);
+      let s2 = myp5.createShader(vert, frag);
+      myp5.background('RED');
+      myp5.filter(s1);
+      myp5.loadPixels();
+      let p1 = myp5.pixels.slice();
+      myp5.clear();
+      myp5.background('RED');
+      myp5.filter(s2);
+      myp5.loadPixels();
+      let p2 = myp5.pixels;
+      assert.deepEqual(p1, p2);
+    });
+
+    test('filter shader works on a p5.Graphics', function() {
+      myp5.createCanvas(3,3, myp5.WEBGL);
+      let pg = myp5.createGraphics(3,3, myp5.WEBGL);
+      let s = pg.createFilterShader(frag);
+      pg.background('RED');
+      pg.loadPixels();
+      let p1 = pg.pixels.slice();
+      pg.filter(s);
+      pg.loadPixels();
+      let p2 = pg.pixels;
+      assert.notDeepEqual(p1, p2);
+    });
+  });
+
+  test('contours match 2D', function() {
+    const getColors = function(mode) {
+      myp5.createCanvas(50, 50, mode);
+      myp5.pixelDensity(1);
+      myp5.background(200);
+      myp5.strokeCap(myp5.SQUARE);
+      myp5.strokeJoin(myp5.MITER);
+      if (mode === myp5.WEBGL) {
+        myp5.translate(-myp5.width/2, -myp5.height/2);
+      }
+      myp5.stroke('black');
+      myp5.strokeWeight(2);
+      myp5.translate(25, 25);
+      myp5.beginShape();
+      // Exterior part of shape, clockwise winding
+      myp5.vertex(-20, -20);
+      myp5.vertex(20, -20);
+      myp5.vertex(20, 20);
+      myp5.vertex(-20, 20);
+      // Interior part of shape, counter-clockwise winding
+      myp5.beginContour();
+      myp5.vertex(-10, -10);
+      myp5.vertex(-10, 10);
+      myp5.vertex(10, 10);
+      myp5.vertex(10, -10);
+      myp5.endContour();
+      myp5.endShape(myp5.CLOSE);
+      myp5.loadPixels();
+      return [...myp5.pixels];
+    };
+
+    assert.deepEqual(getColors(myp5.P2D), getColors(myp5.WEBGL));
   });
 
   suite('text shader', function() {
@@ -1660,13 +1847,13 @@ suite('p5.RendererGL', function() {
       const attributes = renderer._curShader.attributes;
       const loc = attributes.aTexCoord.location;
 
-      assert.equal(renderer.registerEnabled[loc], true);
+      assert.equal(renderer.registerEnabled.has(loc), true);
 
       myp5.model(myGeom);
-      assert.equal(renderer.registerEnabled[loc], false);
+      assert.equal(renderer.registerEnabled.has(loc), false);
 
       myp5.triangle(-8, -8, 8, 8, -8, 8);
-      assert.equal(renderer.registerEnabled[loc], true);
+      assert.equal(renderer.registerEnabled.has(loc), true);
 
       done();
     });
@@ -1680,6 +1867,138 @@ suite('p5.RendererGL', function() {
       myp5.setAttributes({ alpha: true });
       assert.equal(myp5.canvas, renderer.canvas);
       done();
+    });
+  });
+
+  suite('clip()', function() {
+    //let myp5;
+    function getClippedPixels(mode, mask) {
+      // Clean up the last myp5 instance, since this may be called more than
+      // once per test
+      myp5.remove();
+      myp5 = new p5(function(p) {
+        p.setup = function() {};
+        p.draw = function() {};
+      });
+
+      myp5.createCanvas(50, 50, mode);
+      myp5.pixelDensity(1);
+      if (mode === myp5.WEBGL) {
+        myp5.translate(-myp5.width / 2, -myp5.height / 2);
+      }
+      mask();
+      myp5.loadPixels();
+      return [...myp5.pixels];
+    }
+
+    function getPixel(pixels, x, y) {
+      const start = (y * myp5.width + x) * 4;
+      return pixels.slice(start, start + 4);
+    }
+
+    test('It can mask in a shape', function() {
+      const mask = () => {
+        myp5.background(255);
+        myp5.noStroke();
+        myp5.clip(() => myp5.rect(10, 10, 30, 30));
+        myp5.fill('red');
+        myp5.rect(5, 5, 40, 40);
+      };
+      const pixels = getClippedPixels(myp5.WEBGL, mask);
+
+      // Regions where nothing is drawn should be white
+      assert.deepEqual(getPixel(pixels, 0, 0), [255, 255, 255, 255]);
+
+      // Outside the clipped region should be white
+      assert.deepEqual(getPixel(pixels, 7, 7), [255, 255, 255, 255]);
+
+      // Inside the clipped region should be red
+      assert.deepEqual(getPixel(pixels, 15, 15), [255, 0, 0, 255]);
+
+      // It should match 2D mode
+      assert.deepEqual(pixels, getClippedPixels(myp5.P2D, mask));
+    });
+
+    test('It can mask out a shape', function() {
+      const mask = () => {
+        myp5.background(255);
+        myp5.noStroke();
+        myp5.clip(() => myp5.rect(10, 10, 30, 30), { invert: true });
+        myp5.fill('red');
+        myp5.rect(5, 5, 40, 40);
+      };
+      const pixels = getClippedPixels(myp5.WEBGL, mask);
+
+      // Regions where nothing is drawn should be white
+      assert.deepEqual(getPixel(pixels, 0, 0), [255, 255, 255, 255]);
+
+      // Outside the clipped region should be red
+      assert.deepEqual(getPixel(pixels, 7, 7), [255, 0, 0, 255]);
+
+      // Inside the clipped region should be white
+      assert.deepEqual(getPixel(pixels, 15, 15), [255, 255, 255, 255]);
+
+      // It should match 2D mode
+      assert.deepEqual(pixels, getClippedPixels(myp5.P2D, mask));
+    });
+
+    test('It can mask multiple shapes', function() {
+      const mask = () => {
+        myp5.background(255);
+        myp5.noStroke();
+        myp5.clip(() => {
+          myp5.rect(10, 10, 5, 5);
+          myp5.rect(20, 20, 5, 5);
+        });
+        myp5.fill('red');
+        myp5.rect(5, 5, 40, 40);
+      };
+      const pixels = getClippedPixels(myp5.WEBGL, mask);
+
+      // Regions where nothing is drawn should be white
+      assert.deepEqual(getPixel(pixels, 0, 0), [255, 255, 255, 255]);
+
+      // Outside the clipped region should be white
+      assert.deepEqual(getPixel(pixels, 7, 7), [255, 255, 255, 255]);
+
+      // Inside the first rectangle should be red
+      assert.deepEqual(getPixel(pixels, 12, 12), [255, 0, 0, 255]);
+
+      // Between the rectangles should be white
+      assert.deepEqual(getPixel(pixels, 17, 17), [255, 255, 255, 255]);
+
+      // Inside the second rectangle should be red
+      assert.deepEqual(getPixel(pixels, 22, 22), [255, 0, 0, 255]);
+
+      // It should match 2D mode
+      assert.deepEqual(pixels, getClippedPixels(myp5.P2D, mask));
+    });
+
+    test('It can mask in a shape in a framebuffer', function() {
+      const mask = () => {
+        const fbo = myp5.createFramebuffer({ antialias: false });
+        myp5.background(255);
+        myp5.noStroke();
+        fbo.begin();
+        myp5.clear();
+        myp5.translate(-myp5.width / 2, -myp5.height / 2);
+        myp5.clip(() => myp5.rect(10, 10, 30, 30));
+        myp5.fill('red');
+        myp5.rect(5, 5, 40, 40);
+        fbo.end();
+        fbo.loadPixels();
+        myp5.image(fbo, 0, 0);
+      };
+      const pixels = getClippedPixels(myp5.WEBGL, mask);
+
+      // Regions where nothing is drawn should be white
+      assert.deepEqual(getPixel(pixels, 0, 0), [255, 255, 255, 255]);
+
+      // Outside the clipped region should be white
+      assert.deepEqual(getPixel(pixels, 7, 7), [255, 255, 255, 255]);
+
+      // Inside the clipped region should be red
+      assert.deepEqual(getPixel(pixels, 15, 15), [255, 0, 0, 255]);
     });
   });
 });

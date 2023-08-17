@@ -171,14 +171,16 @@ Constructors are defined with `@class`. Each constructor should have the tag `@c
    * @param {Object} [node] The canvas element. A canvas will be added to the DOM if not provided.
    * @param {Object} [sketch] The sketch object.
    */
-   const p5 = function( node, sketch) {
+   const p5 = function(node, sketch) {
      ...
    }
 ```
 
-## Adding example code
+## Adding code samples
 
-Optionally, you can add examples with `@example`. Example code should be placed between `<code></code>` tags with comments included. Unless otherwise specified with a `setup()` function, each `<code>` block is automatically run on a canvas of 100x100 pixels with a gray background. Define all variables with `let` in examples, as the lowest barrier for beginners learning JS. Please see examples in other src files to make sure it is formatted correctly. If your example creates other HTML elements apart from the canvas, they will be rendered with a width of 100 pixels.
+You can add code samples with `@example`. Code samples should be placed between `<code></code>` tags with comments included. Please review the [documentation style guide](./documentation_style_guide.md) for more information on style.
+
+Unless otherwise specified with a `setup()` function, each `<code>` block is automatically run on a canvas of 100x100 pixels with a gray background. If your code sample creates other HTML elements apart from the canvas, they will be rendered with a width of 100 pixels.
 
 ```
 @example
@@ -187,46 +189,46 @@ Optionally, you can add examples with `@example`. Example code should be placed 
 arc(50, 55, 50, 50, 0, HALF_PI);
 noFill();
 arc(50, 55, 60, 60, HALF_PI, PI);
-arc(50, 55, 70, 70, PI, PI+QUARTER_PI);
-arc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);
-describe('shattered outline of ellipse created using four arcs');
+arc(50, 55, 70, 70, PI, PI + QUARTER_PI);
+arc(50, 55, 80, 80, PI + QUARTER_PI, TWO_PI);
+describe('A shattered outline of an ellipse created using four arcs.');
 </code>
 </div>
 ```
 
 You can have multiple examples for one function, just make sure you have only
-one @example followed by each example having it's own `<div>` wrapping separated
+one `@example` followed by each example having its own `<div>` wrapping separated
 by a line break. 
 
 ```
 @example
 <div>
 <code>
-arc(50, 50, 80, 80, 0, PI+QUARTER_PI, OPEN);
-describe('ellipse created using arc with its top right open');
+arc(50, 50, 80, 80, 0, PI + QUARTER_PI, OPEN);
+describe('An ellipse created using an arc with its top right open.');
 </code>
 </div>
 
 <div>
 <code>
 arc(50, 50, 80, 80, 0, PI, OPEN);
-describe('bottom half of an ellipse created using arc');
+describe('The bottom half of an ellipse created using arc.');
 </code>
 </div>
 ```
 
-If you do not want the example to execute your code (i.e. you just want the code to show up), include the class "norender" in the div:
+If you do not want the example to execute your code (i.e. you just want the code to show up), include the class `"norender"` in the `<div>`:
 ```
 @example
 <div class="norender">
 <code>
-arc(50, 50, 80, 80, 0, PI+QUARTER_PI, OPEN);
+arc(50, 50, 80, 80, 0, PI + QUARTER_PI, OPEN);
 describe('ellipse created using arc with its top right open');
 </code>
 </div>
 ```
 
-If you do not want the example to be run as part of the build tests (for example, if the example requires user interaction, or uses functionality not supported by the headless-Chrome test framework), include the class "notest" in the div:
+If you do not want the example to be run as part of the build tests (for example, if the example requires user interaction, or uses functionality not supported by the headless-Chrome test framework), include the class `"notest"` in the `<div>`:
 
 ```
 @example
@@ -252,22 +254,22 @@ function draw() {
   xoff = xoff + 0.01;
   let n = noise(xoff) * width;
   line(n, 0, n, height);
-  decribe('vertical line moves left to right with updating noise values');
+  decribe('A vertical line moves randomly from left to right.');
 }
 </code>
 </div>
 
 <div>
 <code>
-let noiseScale=0.02;
+let noiseScale = 0.02;
 function draw() {
   background(0);
-  for (let x=0; x < width; x++) {
-    let noiseVal = noise((mouseX+x)*noiseScale, mouseY*noiseScale);
+  for (let x = 0; x < width; x += 1) {
+    let noiseVal = noise((mouseX + x) * noiseScale, mouseY * noiseScale);
     stroke(noiseVal*255);
-    line(x, mouseY+noiseVal*80, x, height);
+    line(x, mouseY + noiseVal * 80, x, height);
   }
-  describe('horizontal wave pattern effected by mouse x-position & updating noise values');
+  describe('A horizontal wave pattern moves in the opposite direction of the mouse.');
 }
 </code>
 </div>
@@ -292,13 +294,13 @@ function draw() {
 
 <div>
 <code>
-let noiseScale=0.02;
+let noiseScale = 0.02;
 function draw() {
   background(0);
-  for (let x=0; x < width; x++) {
-    let noiseVal = noise((mouseX+x)*noiseScale, mouseY*noiseScale);
-    stroke(noiseVal*255);
-    line(x, mouseY+noiseVal*80, x, height);
+  for (let x = 0; x < width; x += 1) {
+    let noiseVal = noise((mouseX + x) * noiseScale, mouseY * noiseScale);
+    stroke(noiseVal * 255);
+    line(x, mouseY + noiseVal * 80, x, height);
   }
 }
 </code>
