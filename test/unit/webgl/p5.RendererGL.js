@@ -1934,7 +1934,7 @@ suite('p5.RendererGL', function() {
         myp5.vertex(0, siz);
         myp5.vertex(siz, siz);
         myp5.vertex(siz, 0);
-        myp5.endShape(myp5.CLOSE, 1);
+        myp5.endShape(myp5.CLOSE, 2);
 
         // check the pixels after instancing to make sure that they're the correct color
         assert.deepEqual(
