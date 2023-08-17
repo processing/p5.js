@@ -5100,6 +5100,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "okdalto",
+      "name": "Seonghyeon Kim",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22714667?v=4",
+      "profile": "https://github.com/okdalto",
+      "contributions": [
+        "code",
+        "translation"
+      ]
     }
   ],
   "repoType": "github",

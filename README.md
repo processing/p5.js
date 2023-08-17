@@ -876,6 +876,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/ykabusalah"><img src="https://avatars.githubusercontent.com/u/42948521?v=4?s=120" width="120px;" alt="Yousef Abu-Salah"/><br /><sub><b>Yousef Abu-Salah</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ykabusalah" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://harvestplugins.com/"><img src="https://avatars.githubusercontent.com/u/7537243?v=4?s=120" width="120px;" alt="Zoe Stenger"/><br /><sub><b>Zoe Stenger</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=zoalst" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/mcturner1995"><img src="https://avatars.githubusercontent.com/u/36084197?v=4?s=120" width="120px;" alt="mcturner1995"/><br /><sub><b>mcturner1995</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=mcturner1995" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/okdalto"><img src="https://avatars.githubusercontent.com/u/22714667?v=4?s=120" width="120px;" alt="Seonghyeon Kim"/><br /><sub><b>Seonghyeon Kim</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=okdalto" title="Code">💻</a> <a href="#translation-okdalto" title="Translation">🌍</a></td>
     </tr>
   </tbody>
 </table>
