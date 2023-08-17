@@ -835,6 +835,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/quinox"><img src="https://avatars.githubusercontent.com/u/739770?v=4?s=120" width="120px;" alt="Ceesjan Luiten"/><br /><sub><b>Ceesjan Luiten</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=quinox" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://niinomi.art/"><img src="https://avatars.githubusercontent.com/u/3589344?v=4?s=120" width="120px;" alt="NIINOMI"/><br /><sub><b>NIINOMI</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=r21nomi" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://benwendt.ca/"><img src="https://avatars.githubusercontent.com/u/11400743?v=4?s=120" width="120px;" alt="Ben Wendt"/><br /><sub><b>Ben Wendt</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=rbwendt" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/reijovosu"><img src="https://avatars.githubusercontent.com/u/378124?v=4?s=120" width="120px;" alt="Reijo Vosu"/><br /><sub><b>Reijo Vosu</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=reijovosu" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
