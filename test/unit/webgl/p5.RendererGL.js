@@ -1920,11 +1920,11 @@ suite('p5.RendererGL', function() {
         // Check to make sure that pixels are empty first
         assert.deepEqual(
           myp5.get(0, 0),
-          [0, 0, 0, 0]
+          [0, 0, 0, 255]
         );
         assert.deepEqual(
           myp5.get(1, 0),
-          [0, 0, 0, 0]
+          [0, 0, 0, 255]
         );
 
         const siz = 1;
