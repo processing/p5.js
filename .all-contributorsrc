@@ -4682,6 +4682,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "minortext",
+      "name": "M",
+      "avatar_url": "https://avatars.githubusercontent.com/u/62758084?v=4",
+      "profile": "https://github.com/minortext",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
