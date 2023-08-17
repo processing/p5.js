@@ -1928,7 +1928,7 @@ suite('p5.RendererGL', function() {
         );
 
         const siz = 1;
-        myp5.translate(-width / 2, -height / 2);
+        myp5.translate(-myp5.width / 2, -myp5.height / 2);
         myp5.beginShape();
         myp5.vertex(0, 0);
         myp5.vertex(0, siz);
