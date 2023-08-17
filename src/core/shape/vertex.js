@@ -641,7 +641,7 @@ p5.prototype.endContour = function() {
  *
  * void main() {
  *
- *   // copy the instance ID to the fragment shder
+ *   // copy the instance ID to the fragment shader
  *   instanceId = gl_InstanceID;
  *   vec4 positionVec4 = vec4(aPosition, 1.0);
  *
