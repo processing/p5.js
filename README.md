@@ -721,6 +721,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/AndrasGG"><img src="https://avatars.githubusercontent.com/u/36957076?v=4?s=120" width="120px;" alt="AndrasGG"/><br /><sub><b>AndrasGG</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=AndrasGG" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Aqmalp99"><img src="https://avatars.githubusercontent.com/u/64822387?v=4?s=120" width="120px;" alt="Aqmalp99"/><br /><sub><b>Aqmalp99</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Aqmalp99" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://arbaaz.io/"><img src="https://avatars.githubusercontent.com/u/5406232?v=4?s=120" width="120px;" alt="Arbaaz"/><br /><sub><b>Arbaaz</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=arbaaz" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
