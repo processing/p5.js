@@ -4259,6 +4259,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "demc",
+      "name": "Derrick McMillen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3744617?v=4",
+      "profile": "https://github.com/demc",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
