@@ -828,6 +828,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/nully0x"><img src="https://avatars.githubusercontent.com/u/40327060?v=4?s=120" width="120px;" alt="nully0x"/><br /><sub><b>nully0x</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nully0x" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://whatoscarhasmade.com/blog/mise"><img src="https://avatars.githubusercontent.com/u/20306697?v=4?s=120" width="120px;" alt="odm275"/><br /><sub><b>odm275</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=odm275" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/OleksiiBulba"><img src="https://avatars.githubusercontent.com/u/41155673?v=4?s=120" width="120px;" alt="Oleksii Bulba"/><br /><sub><b>Oleksii Bulba</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=OleksiiBulba" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/paollabd"><img src="https://avatars.githubusercontent.com/u/31938051?v=4?s=120" width="120px;" alt="paollabd"/><br /><sub><b>paollabd</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=paollabd" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
