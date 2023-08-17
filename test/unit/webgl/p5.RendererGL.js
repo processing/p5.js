@@ -1912,7 +1912,7 @@ suite('p5.RendererGL', function() {
       myp5.noStroke();
       myp5.pixelDensity(1);
 
-      defShader = createShader(vertShader, fragShader);
+      defShader = myp5.createShader(vertShader, fragShader);
 
       myp5.background(0);
       myp5.shader(defShader);
