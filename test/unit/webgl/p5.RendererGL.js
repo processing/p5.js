@@ -1871,7 +1871,7 @@ suite('p5.RendererGL', function() {
   });
 
   suite('instancing', function() {
-    test('instanced', function(done) {
+    test('instanced', function() {
       let defShader;
 
       const vertShader = `#version 300 es
