@@ -1354,7 +1354,9 @@
       "avatar_url": "https://avatars2.githubusercontent.com/u/15272015?v=4",
       "profile": "https://github.com/adilrabbani",
       "contributions": [
-        "code"
+        "code",
+        "bug",
+        "example"
       ]
     },
     {
@@ -1387,7 +1389,9 @@
       "avatar_url": "https://avatars1.githubusercontent.com/u/6486359?s=460&v=4",
       "profile": "https://github.com/AidanNelson",
       "contributions": [
-        "code"
+        "code",
+        "bug",
+        "example"
       ]
     },
     {
