@@ -595,6 +595,12 @@ p5.prototype.endContour = function() {
  * buffer. The constant CLOSE is the value for the `mode` parameter to close
  * the shape (to connect the beginning and the end).
  * When using instancing with <a href="#/p5/endShape">endShape()</a> the instancing will not apply to the strokes.
+ * When the count parameter is used with a value greater than 1, it enables instancing for shapes built when in WEBGL mode. Instancing
+ * is a feature that allows the GPU to efficiently draw multiples of the same shape. It's often used for particle effects or other
+ * times when you need a lot of repetition. In order to take advantage of instancing, you will also need to write your own custom
+ * shader using the gl_InstanceID keyword. You can read more about instancing
+ * <a href="https://webglfundamentals.org/webgl/lessons/webgl-instanced-drawing.html">here</a> or by working from the example on this
+ * page.
  *
  * @method endShape
  * @param  {Constant} [mode] use CLOSE to close the shape
@@ -660,7 +666,7 @@ p5.prototype.endContour = function() {
  * void main() {
  *   vec4 red = vec4(1.0, 0.0, 0.0, 1.0);
  *   vec4 blue = vec4(0.0, 0.0, 1.0, 1.0);
- *   
+ *
  *   // Normalize the instance id
  *   float normId = float(instanceID) / (numInstances - 1.0);
  *
