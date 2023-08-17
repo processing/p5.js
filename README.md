@@ -795,6 +795,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/jmandel1027"><img src="https://avatars.githubusercontent.com/u/13109165?v=4?s=120" width="120px;" alt="Jason Mandel"/><br /><sub><b>Jason Mandel</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=jmandel1027" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/JoeCastor"><img src="https://avatars.githubusercontent.com/u/79670830?v=4?s=120" width="120px;" alt="JoeCastor"/><br /><sub><b>JoeCastor</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=JoeCastor" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://prototyping.barcelona/"><img src="https://avatars.githubusercontent.com/u/5341183?v=4?s=120" width="120px;" alt="Juan Irache"/><br /><sub><b>Juan Irache</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=JuanIrache" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://junagao.com/"><img src="https://avatars.githubusercontent.com/u/615616?v=4?s=120" width="120px;" alt="juliane nagao"/><br /><sub><b>juliane nagao</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=junagao" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
