@@ -694,6 +694,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/OnexiMedina"><img src="https://avatars.githubusercontent.com/u/112675769?v=4?s=120" width="120px;" alt="Onexi"/><br /><sub><b>Onexi</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=OnexiMedina" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://www.vijithassar.com"><img src="https://avatars.githubusercontent.com/u/3488572?v=4?s=120" width="120px;" alt="Vijith Assar"/><br /><sub><b>Vijith Assar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=vijithassar" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=vijithassar" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://processingfoundation.org/"><img src="https://avatars.githubusercontent.com/u/66838497?v=4?s=120" width="120px;" alt="Dorothy R. Santos"/><br /><sub><b>Dorothy R. Santos</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=drsantos8791" title="Documentation">📖</a> <a href="#eventOrganizing-drsantos8791" title="Event Organizing">📋</a> <a href="#fundingFinding-drsantos8791" title="Funding Finding">🔍</a> <a href="#talk-drsantos8791" title="Talks">📢</a></td>
+    </tr>
   </tbody>
 </table>
 
