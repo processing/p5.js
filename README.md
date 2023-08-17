@@ -804,6 +804,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/LadySith"><img src="https://avatars.githubusercontent.com/u/9806760?v=4?s=120" width="120px;" alt="Sithe Ncube"/><br /><sub><b>Sithe Ncube</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=LadySith" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/LakshSingla"><img src="https://avatars.githubusercontent.com/u/30999375?v=4?s=120" width="120px;" alt="Laksh Singla"/><br /><sub><b>Laksh Singla</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=LakshSingla" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/leslieyip02"><img src="https://avatars.githubusercontent.com/u/90888680?v=4?s=120" width="120px;" alt="Leslie Yip"/><br /><sub><b>Leslie Yip</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=leslieyip02" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/linnhallonqvist"><img src="https://avatars.githubusercontent.com/u/24587690?v=4?s=120" width="120px;" alt="linnhallonqvist"/><br /><sub><b>linnhallonqvist</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=linnhallonqvist" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
