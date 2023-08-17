@@ -718,6 +718,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/anagondesign"><img src="https://avatars.githubusercontent.com/u/83731139?v=4?s=120" width="120px;" alt="anagondesign"/><br /><sub><b>anagondesign</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=anagondesign" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/AndrasGardos"><img src="https://avatars.githubusercontent.com/u/53218984?v=4?s=120" width="120px;" alt="András Gárdos"/><br /><sub><b>András Gárdos</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=AndrasGardos" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/AndrasGG"><img src="https://avatars.githubusercontent.com/u/36957076?v=4?s=120" width="120px;" alt="AndrasGG"/><br /><sub><b>AndrasGG</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=AndrasGG" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
