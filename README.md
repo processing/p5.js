@@ -860,6 +860,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/tau-"><img src="https://avatars.githubusercontent.com/u/1418502?v=4?s=120" width="120px;" alt="Alex Troesch"/><br /><sub><b>Alex Troesch</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=tau-" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/tawez"><img src="https://avatars.githubusercontent.com/u/177306?v=4?s=120" width="120px;" alt="Maciej Stankiewicz"/><br /><sub><b>Maciej Stankiewicz</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=tawez" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://tito21.github.io/"><img src="https://avatars.githubusercontent.com/u/1232343?v=4?s=120" width="120px;" alt="Alberto Di Biase"/><br /><sub><b>Alberto Di Biase</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=tito21" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/vedhant"><img src="https://avatars.githubusercontent.com/u/32607479?v=4?s=120" width="120px;" alt="Vedhant Agarwal"/><br /><sub><b>Vedhant Agarwal</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=vedhant" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
