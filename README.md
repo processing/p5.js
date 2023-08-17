@@ -858,6 +858,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://www.cliffsu.me/"><img src="https://avatars.githubusercontent.com/u/22230889?v=4?s=120" width="120px;" alt="Cliff Su"/><br /><sub><b>Cliff Su</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=stu01509" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/sz245"><img src="https://avatars.githubusercontent.com/u/25470283?v=4?s=120" width="120px;" alt="sz245"/><br /><sub><b>sz245</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sz245" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/tau-"><img src="https://avatars.githubusercontent.com/u/1418502?v=4?s=120" width="120px;" alt="Alex Troesch"/><br /><sub><b>Alex Troesch</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=tau-" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/tawez"><img src="https://avatars.githubusercontent.com/u/177306?v=4?s=120" width="120px;" alt="Maciej Stankiewicz"/><br /><sub><b>Maciej Stankiewicz</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=tawez" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
