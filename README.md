@@ -774,6 +774,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/glneto"><img src="https://avatars.githubusercontent.com/u/7269097?v=4?s=120" width="120px;" alt="Geraldo Neto"/><br /><sub><b>Geraldo Neto</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=glneto" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://dev.to/gr2m"><img src="https://avatars.githubusercontent.com/u/39992?v=4?s=120" width="120px;" alt="Gregor Martynus"/><br /><sub><b>Gregor Martynus</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=gr2m" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Gracia-zhang"><img src="https://avatars.githubusercontent.com/u/70793865?v=4?s=120" width="120px;" alt="Gracia-zhang"/><br /><sub><b>Gracia-zhang</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Gracia-zhang" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
