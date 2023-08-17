@@ -790,6 +790,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/jesi-rgb"><img src="https://avatars.githubusercontent.com/u/50735312?v=4?s=120" width="120px;" alt="Jesús Enrique Rascón"/><br /><sub><b>Jesús Enrique Rascón</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=jesi-rgb" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/jhongover9000"><img src="https://avatars.githubusercontent.com/u/57396665?v=4?s=120" width="120px;" alt="Joseph Hong"/><br /><sub><b>Joseph Hong</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=jhongover9000" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://jithinks.netlify.app/"><img src="https://avatars.githubusercontent.com/u/19987520?v=4?s=120" width="120px;" alt="Jithin KS"/><br /><sub><b>Jithin KS</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=JithinKS97" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
