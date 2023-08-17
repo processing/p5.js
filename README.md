@@ -785,6 +785,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://jtajuelo.com/"><img src="https://avatars.githubusercontent.com/u/11405820?v=4?s=120" width="120px;" alt="José Miguel Tajuelo Garrigós"/><br /><sub><b>José Miguel Tajuelo Garrigós</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=J-888" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://www.linkedin.com/in/jai-kotia/"><img src="https://avatars.githubusercontent.com/u/32239054?v=4?s=120" width="120px;" alt="Jai Kotia"/><br /><sub><b>Jai Kotia</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=JaiKotia" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/jatin33"><img src="https://avatars.githubusercontent.com/u/13780467?v=4?s=120" width="120px;" alt="Jatin Panjwani"/><br /><sub><b>Jatin Panjwani</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=jatin33" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
