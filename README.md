@@ -880,6 +880,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/cgusb"><img src="https://avatars.githubusercontent.com/u/60982210?v=4?s=120" width="120px;" alt="Gus Becker"/><br /><sub><b>Gus Becker</b></sub></a><br /><a href="#maintenance-cgusb" title="Maintenance">🚧</a> <a href="#ideas-cgusb" title="Ideas, Planning, & Feedback">🤔</a> <a href="#question-cgusb" title="Answering Questions">💬</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://holoshow.senbaku.info/"><img src="https://avatars.githubusercontent.com/u/10251300?v=4?s=120" width="120px;" alt="senbaku"/><br /><sub><b>senbaku</b></sub></a><br /><a href="#example-senbaku" title="Examples">💡</a> <a href="#blog-senbaku" title="Blogposts">📝</a> <a href="#translation-senbaku" title="Translation">🌍</a> <a href="#tutorial-senbaku" title="Tutorials">✅</a></td>
     </tr>
   </tbody>
 </table>

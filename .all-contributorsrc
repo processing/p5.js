@@ -5121,6 +5121,18 @@
         "ideas",
         "question"
       ]
+    },
+    {
+      "login": "senbaku",
+      "name": "senbaku",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10251300?v=4",
+      "profile": "https://holoshow.senbaku.info/",
+      "contributions": [
+        "example",
+        "blog",
+        "translation",
+        "tutorial"
+      ]
     }
   ],
   "repoType": "github",
