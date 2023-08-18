@@ -187,15 +187,13 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  * Creates a new <a href="#/p5.Shader">p5.Shader</a> using only a fragment shader, as a convenience method for creating image effects.
  * It's like <a href="#/createShader">createShader()</a> but with a default vertex shader included.
  *
- * <a href="#/createFilterShader">createFilterShader()</a> is intended to be used along with <a href="#/filter">filter()</a> for filtering the entire contents of a canvas in WebGL mode.
+ * <a href="#/createFilterShader">createFilterShader()</a> is intended to be used along with <a href="#/filter">filter()</a> for filtering the contents of a canvas in WebGL mode.
+ * A filter shader will not be applied to any geometries.
  *
- * Note:
- * - The fragment shader is provided with a single texture input uniform called `tex0`.
- * This is created specificially for filter shaders to access the canvas contents.
- *
- * - A filter shader will not apply to a 3D geometry.
- *
- * - Shaders can only be used in `WEBGL` mode.
+ * The fragment shader receives some uniforms:
+ * - `sampler2D tex0`, which contains the canvas contents as a texture
+ * - `vec2 canvasSize`, which is the width and height of the canvas
+ * - `vec2 texelSize`, which is the size of a pixel (`1.0/width`, `1.0/height`)
  *
  * For more info about filters and shaders, see Adam Ferriss' <a href="https://github.com/aferriss/p5jsShaderExamples">repo of shader examples</a>
  * or the <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">introduction to shaders</a> page.
@@ -235,7 +233,10 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  *
  *   // the canvas contents, given from filter()
  *   uniform sampler2D tex0;
- *   // a custom variable from the sketch
+ *   // other useful information from the canvas
+ *   uniform vec2 texelSize;
+ *   uniform vec2 canvasSize;
+ *   // a custom variable from this sketch
  *   uniform float darkness;
  *
  *   void main() {
