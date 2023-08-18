@@ -610,6 +610,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // for post processing step
     this.filterShader = undefined;
     this.filterGraphicsLayer = undefined;
+    this.defaultFilterShaders = {};
 
     this.textureMode = constants.IMAGE;
     // default wrap settings
@@ -1002,11 +1003,17 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       let useDefaultParam = operation in defaults && args[1] === undefined;
       filterParameter = useDefaultParam ? defaults[operation] : args[1];
 
-      this.filterShader = new p5.Shader(
-        pg._renderer,
-        filterShaderVert,
-        filterShaderFrags[operation]
-      );
+      // Create and store shader for constants once on initial filter call.
+      // Need to store multiple in case user calls different filters,
+      // eg. filter(BLUR) then filter(GRAY)
+      if ( !(operation in this.defaultFilterShaders) ) {
+        this.defaultFilterShaders[operation] = new p5.Shader(
+          pg._renderer,
+          filterShaderVert,
+          filterShaderFrags[operation]
+        );
+      }
+      this.filterShader = this.defaultFilterShaders[operation];
     }
     // use custom user-supplied shader
     else {
