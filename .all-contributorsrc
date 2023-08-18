@@ -5176,6 +5176,17 @@
         "tutorial",
         "video"
       ]
+    },
+    {
+      "login": "sarahciston",
+      "name": "Sarah Ciston",
+      "avatar_url": "https://avatars.githubusercontent.com/u/31395144?v=4",
+      "profile": "http://sarahciston.com",
+      "contributions": [
+        "mentoring",
+        "doc",
+        "eventOrganizing"
+      ]
     }
   ],
   "repoType": "github",
