@@ -994,7 +994,14 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     let filterParameter = undefined;
     if (typeof args[0] === 'string') {
       let operation = args[0];
-      filterParameter = args[1];
+      let defaults = {
+        [constants.BLUR]: 4,
+        [constants.POSTERIZE]: 4,
+        [constants.THRESHOLD]: 0.5
+      };
+      let useDefaultParam = operation in defaults && args[1] === undefined;
+      filterParameter = useDefaultParam ? defaults[operation] : args[1];
+
       this.filterShader = new p5.Shader(
         pg._renderer,
         filterShaderVert,
