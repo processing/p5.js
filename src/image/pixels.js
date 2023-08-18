@@ -326,12 +326,12 @@ p5.prototype._copyHelper = (
  * `POSTERIZE`
  * Limits each channel of the image to the number of colors specified as the
  * parameter. The parameter can be set to values between 2 and 255, but
- * results are most noticeable in the lower ranges.
+ * results are most noticeable in the lower ranges. The default parameter is 4.
  *
  * `BLUR`
  * Executes a Gaussian blur with the level parameter specifying the extent
  * of the blurring. If no parameter is used, the blur is equivalent to
- * Gaussian blur of radius 1. Larger values increase the blur.
+ * Gaussian blur of radius 4. Larger values increase the blur.
  *
  * `ERODE`
  * Reduces the light areas. No parameter is used.
