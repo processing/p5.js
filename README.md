@@ -878,6 +878,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/mcturner1995"><img src="https://avatars.githubusercontent.com/u/36084197?v=4?s=120" width="120px;" alt="mcturner1995"/><br /><sub><b>mcturner1995</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=mcturner1995" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/okdalto"><img src="https://avatars.githubusercontent.com/u/22714667?v=4?s=120" width="120px;" alt="Seonghyeon Kim"/><br /><sub><b>Seonghyeon Kim</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=okdalto" title="Code">💻</a> <a href="#translation-okdalto" title="Translation">🌍</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/cgusb"><img src="https://avatars.githubusercontent.com/u/60982210?v=4?s=120" width="120px;" alt="Gus Becker"/><br /><sub><b>Gus Becker</b></sub></a><br /><a href="#maintenance-cgusb" title="Maintenance">🚧</a> <a href="#ideas-cgusb" title="Ideas, Planning, & Feedback">🤔</a> <a href="#question-cgusb" title="Answering Questions">💬</a></td>
+    </tr>
   </tbody>
 </table>
 
