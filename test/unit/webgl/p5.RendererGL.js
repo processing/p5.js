@@ -122,9 +122,9 @@ suite('p5.RendererGL', function() {
     setup(function() {
       vert = `attribute vec3 aPosition;
       attribute vec2 aTexCoord;
-      
+
       varying vec2 vTexCoord;
-      
+
       void main() {
         vTexCoord = aTexCoord;
         vec4 positionVec4 = vec4(aPosition, 1.0);
@@ -134,13 +134,13 @@ suite('p5.RendererGL', function() {
 
       frag = `precision highp float;
       varying vec2 vTexCoord;
-      
+
       uniform sampler2D tex0;
-      
+
       float luma(vec3 color) {
         return dot(color, vec3(0.299, 0.587, 0.114));
       }
-      
+
       void main() {
         vec2 uv = vTexCoord;
         uv.y = 1.0 - uv.y;
@@ -148,9 +148,18 @@ suite('p5.RendererGL', function() {
         float gray = luma(sampledColor.rgb);
         gl_FragColor = vec4(gray, gray, gray, 1);
       }`;
-    });
 
-    teardown(function() {
+      notAllBlack = pixels => {
+        // black canvas could be an indicator of failed shader logic
+        for (let i = 0; i < pixels.length; i++) {
+          if (pixels[i]   !== 255 ||
+              pixels[i+1] !== 255 ||
+              pixels[i+2] !== 255) {
+            return true;
+          }
+        }
+        return false;
+      };
     });
 
     test('filter accepts correct params', function() {
@@ -268,6 +277,48 @@ suite('p5.RendererGL', function() {
       pg.loadPixels();
       let p2 = pg.pixels;
       assert.notDeepEqual(p1, p2);
+    });
+
+    test('POSTERIZE, BLUR, THRESHOLD work without supplied param', function() {
+      let testDefaultParams = () => {
+        myp5.createCanvas(3,3, myp5.WEBGL);
+        myp5.filter(myp5.POSTERIZE);
+        myp5.filter(myp5.BLUR);
+        myp5.filter(myp5.THRESHOLD);
+      };
+      assert.doesNotThrow(testDefaultParams, 'this should not throw');
+    });
+
+    test('filter() uses WEBGL implementation behind main P2D canvas', function() {
+      let renderer = myp5.createCanvas(3,3);
+      myp5.filter(myp5.BLUR);
+      assert.isDefined(renderer._pInst.filterGraphicsLayer);
+    });
+
+    test('filter() can opt out of WEBGL implementation', function() {
+      let renderer = myp5.createCanvas(3,3);
+      myp5.filter(myp5.BLUR, useWebGL=false);
+      assert.isUndefined(renderer._pInst.filterGraphicsLayer);
+    });
+
+    test('filters make changes to canvas', function() {
+      myp5.createCanvas(20,20);
+      myp5.circle(10,10,12);
+      let operations = [
+        myp5.BLUR,
+        myp5.THRESHOLD,
+        myp5.POSTERIZE,
+        myp5.INVERT,
+        myp5.DILATE,
+        myp5.ERODE,
+        myp5.GRAY,
+        myp5.OPAQUE
+      ];
+      for (let operation of operations) {
+        myp5.filter(operation);
+        myp5.loadPixels();
+        assert(notAllBlack(myp5.pixels));
+      }
     });
   });
 
