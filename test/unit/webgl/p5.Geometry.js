@@ -175,7 +175,6 @@ suite('p5.Geometry', function() {
         // Geometry mode
         myp5.fill(255);
         const geom = myp5.buildGeometry(drawGeometry);
-        console.log(geom);
         myp5.background(255);
         myp5.push();
         applyLights();
@@ -256,6 +255,41 @@ suite('p5.Geometry', function() {
         myp5.sphere(5, 10, 5);
         myp5.pop();
       }, [checkLights]);
+    });
+
+    test('freeGeometry() cleans up resources', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      myp5.pixelDensity(1);
+
+      const drawShape = () => {
+        myp5.fill('blue');
+        myp5.stroke(0);
+        myp5.beginShape(myp5.QUAD_STRIP);
+        myp5.vertex(-5, -5);
+        myp5.vertex(5, -5);
+        myp5.vertex(-5, 5);
+        myp5.vertex(5, 5);
+        myp5.endShape();
+      };
+
+      const geom = myp5.buildGeometry(drawShape);
+
+      myp5.background('red');
+      myp5.fill('blue');
+      myp5.stroke(0);
+      myp5.model(geom);
+      assert.deepEqual(myp5.get(5, 5), [0, 0, 255, 255]);
+
+      // Using immediate mode after freeing the geometry should work
+      myp5.freeGeometry(geom);
+      myp5.background('red');
+      drawShape();
+      assert.deepEqual(myp5.get(5, 5), [0, 0, 255, 255]);
+
+      // You can still draw the geometry even after freeing it
+      myp5.background('red');
+      myp5.model(geom);
+      assert.deepEqual(myp5.get(5, 5), [0, 0, 255, 255]);
     });
   });
 });

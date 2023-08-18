@@ -88,6 +88,7 @@ import './webgl/light';
 import './webgl/loading';
 import './webgl/material';
 import './webgl/p5.Camera';
+import './webgl/p5.DataArray';
 import './webgl/p5.Geometry';
 import './webgl/p5.Matrix';
 import './webgl/p5.RendererGL.Immediate';

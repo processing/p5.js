@@ -25,5 +25,6 @@ export const languages = [
   'en',
   'es',
   'ko',
-  'zh'
+  'zh',
+  'hi'
 ];

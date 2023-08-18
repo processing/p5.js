@@ -45,7 +45,7 @@ const defaultClass = 'p5Canvas';
  * @param  {Number} w width of the canvas
  * @param  {Number} h height of the canvas
  * @param  {Constant} [renderer] either P2D or WEBGL
- * @param  {Object} [canvas] existing html canvas element
+ * @param  {HTMLCanvasElement} [canvas] existing html canvas element
  * @return {p5.Renderer} pointer to p5.Renderer holding canvas
  * @example
  * <div>
@@ -65,7 +65,7 @@ const defaultClass = 'p5Canvas';
  * @method createCanvas
  * @param  {Number} w
  * @param  {Number} h
- * @param  {Object} [canvas]
+ * @param  {HTMLCanvasElement} [canvas]
  * @return {p5.Renderer} pointer to p5.Renderer holding canvas
  */
 p5.prototype.createCanvas = function(w, h, renderer, canvas) {
@@ -258,7 +258,7 @@ p5.prototype.noCanvas = function() {
  * @param  {Number} h height of the offscreen graphics buffer
  * @param  {Constant} [renderer] either P2D or WEBGL
  *                               undefined defaults to p2d
- * @param  {Object} [canvas] existing html canvas element
+ * @param  {HTMLCanvasElement} [canvas] existing html canvas element
  * @return {p5.Graphics} offscreen graphics buffer
  * @example
  * <div>
@@ -287,7 +287,7 @@ p5.prototype.noCanvas = function() {
  * @method createGraphics
  * @param  {Number} w
  * @param  {Number} h
- * @param  {Object} [canvas]
+ * @param  {HTMLCanvasElement} [canvas]
  * @return {p5.Graphics} offscreen graphics buffer
  */
 p5.prototype.createGraphics = function(w, h, renderer, canvas) {
