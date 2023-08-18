@@ -5143,6 +5143,17 @@
         "example",
         "translation"
       ]
+    },
+    {
+      "login": "maveme",
+      "name": "Mauricio Verano Merino",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3525794?v=4",
+      "profile": "http://maveme.github.com/",
+      "contributions": [
+        "eventOrganizing",
+        "research",
+        "mentoring"
+      ]
     }
   ],
   "repoType": "github",
