@@ -192,7 +192,8 @@ p5.RendererGL.prototype.endShape = function(
   isBezier,
   isQuadratic,
   isContour,
-  shapeKind
+  shapeKind,
+  count = 1
 ) {
   if (this.immediateMode.shapeMode === constants.POINTS) {
     this._drawPoints(
@@ -228,7 +229,7 @@ p5.RendererGL.prototype.endShape = function(
       !this.geometryBuilder &&
       this.immediateMode.geometry.vertices.length >= 3
     ) {
-      this._drawImmediateFill();
+      this._drawImmediateFill(count);
     }
   }
   if (this._doStroke) {
@@ -489,7 +490,7 @@ p5.RendererGL.prototype._tesselateShape = function() {
  * enabling all appropriate buffers, applying color blend, and drawing the fill geometry.
  * @private
  */
-p5.RendererGL.prototype._drawImmediateFill = function() {
+p5.RendererGL.prototype._drawImmediateFill = function(count = 1) {
   const gl = this.GL;
   this._useVertexColor = (this.immediateMode.geometry.vertexColors.length > 0);
 
@@ -505,11 +506,26 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
 
   this._applyColorBlend(this.curFillColor);
 
-  gl.drawArrays(
-    this.immediateMode.shapeMode,
-    0,
-    this.immediateMode.geometry.vertices.length
-  );
+  if (count === 1) {
+    gl.drawArrays(
+      this.immediateMode.shapeMode,
+      0,
+      this.immediateMode.geometry.vertices.length
+    );
+  }
+  else {
+    try {
+      gl.drawArraysInstanced(
+        this.immediateMode.shapeMode,
+        0,
+        this.immediateMode.geometry.vertices.length,
+        count
+      );
+    }
+    catch (e) {
+      console.log('🌸 p5.js says: Instancing is only supported in WebGL2 mode');
+    }
+  }
   shader.unbindShader();
 };
 

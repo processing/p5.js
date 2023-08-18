@@ -1870,6 +1870,86 @@ suite('p5.RendererGL', function() {
     });
   });
 
+  suite('instancing', function() {
+    test('instanced', function() {
+      let defShader;
+
+      const vertShader = `#version 300 es
+
+      in vec3 aPosition;
+      in vec2 aTexCoord;
+
+      uniform mat4 uModelViewMatrix;
+      uniform mat4 uProjectionMatrix;
+
+      out vec2 vTexCoord;
+
+      void main() {
+        vTexCoord = aTexCoord;
+
+        vec4 pos = vec4(aPosition, 1.0);
+        pos.x += float(gl_InstanceID);
+        vec4 wPos = uProjectionMatrix * uModelViewMatrix * pos;
+        gl_Position = wPos;
+      }`;
+
+      const fragShader = `#version 300 es
+
+      #ifdef GL_ES
+      precision mediump float;
+      #endif
+
+      in vec2 vTexCoord;
+
+      out vec4 fragColor;
+
+      void main() {
+        fragColor = vec4(1.0, 0.0, 0.0, 1.0);
+      }
+      `;
+
+      myp5.createCanvas(2, 1, myp5.WEBGL);
+      myp5.noStroke();
+      myp5.pixelDensity(1);
+
+      defShader = myp5.createShader(vertShader, fragShader);
+
+      myp5.background(0);
+      myp5.shader(defShader);
+      {
+        // Check to make sure that pixels are empty first
+        assert.deepEqual(
+          myp5.get(0, 0),
+          [0, 0, 0, 255]
+        );
+        assert.deepEqual(
+          myp5.get(1, 0),
+          [0, 0, 0, 255]
+        );
+
+        const siz = 1;
+        myp5.translate(-myp5.width / 2, -myp5.height / 2);
+        myp5.beginShape();
+        myp5.vertex(0, 0);
+        myp5.vertex(0, siz);
+        myp5.vertex(siz, siz);
+        myp5.vertex(siz, 0);
+        myp5.endShape(myp5.CLOSE, 2);
+
+        // check the pixels after instancing to make sure that they're the correct color
+        assert.deepEqual(
+          myp5.get(0, 0),
+          [255, 0, 0, 255]
+        );
+        assert.deepEqual(
+          myp5.get(1, 0),
+          [255, 0, 0, 255]
+        );
+      }
+      myp5.resetShader();
+    });
+  });
+
   suite('clip()', function() {
     //let myp5;
     function getClippedPixels(mode, mask) {
