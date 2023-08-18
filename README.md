@@ -886,6 +886,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/RandomGamingDev"><img src="https://avatars.githubusercontent.com/u/83996185?v=4?s=120" width="120px;" alt="RandomGamingDev"/><br /><sub><b>RandomGamingDev</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=RandomGamingDev" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3ARandomGamingDev" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://cheyuwu.com/"><img src="https://avatars.githubusercontent.com/u/4727572?v=4?s=120" width="120px;" alt="Wu Che Yu"/><br /><sub><b>Wu Che Yu</b></sub></a><br /><a href="#eventOrganizing-frank890417" title="Event Organizing">📋</a> <a href="#blog-frank890417" title="Blogposts">📝</a> <a href="#tutorial-frank890417" title="Tutorials">✅</a> <a href="#video-frank890417" title="Videos">📹</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="http://sarahciston.com"><img src="https://avatars.githubusercontent.com/u/31395144?v=4?s=120" width="120px;" alt="Sarah Ciston"/><br /><sub><b>Sarah Ciston</b></sub></a><br /><a href="#mentoring-sarahciston" title="Mentoring">🧑‍🏫</a> <a href="https://github.com/processing/p5.js/commits?author=sarahciston" title="Documentation">📖</a> <a href="#eventOrganizing-sarahciston" title="Event Organizing">📋</a></td>
+    </tr>
   </tbody>
 </table>
 
