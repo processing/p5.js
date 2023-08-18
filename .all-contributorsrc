@@ -5110,6 +5110,17 @@
         "code",
         "translation"
       ]
+    },
+    {
+      "login": "cgusb",
+      "name": "Gus Becker",
+      "avatar_url": "https://avatars.githubusercontent.com/u/60982210?v=4",
+      "profile": "https://github.com/cgusb",
+      "contributions": [
+        "maintenance",
+        "ideas",
+        "question"
+      ]
     }
   ],
   "repoType": "github",
