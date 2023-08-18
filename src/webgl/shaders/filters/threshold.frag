@@ -18,5 +18,5 @@ void main() {
   float gray = luma(color.rgb);
   float threshold = filterParameter;
   float blackOrWhite = step(threshold, gray);
-  gl_FragColor = vec4(vec3(blackOrWhite), 1.0);
+  gl_FragColor = vec4(vec3(blackOrWhite), color.a);
 }
