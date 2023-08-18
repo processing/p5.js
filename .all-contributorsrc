@@ -5187,6 +5187,16 @@
         "doc",
         "eventOrganizing"
       ]
+    },
+    {
+      "login": "tiagohermano",
+      "name": "Tiago Hermano",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5157960?v=4",
+      "profile": "https://tiagohermano.dev",
+      "contributions": [
+        "translation",
+        "review"
+      ]
     }
   ],
   "repoType": "github",
