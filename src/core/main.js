@@ -9,7 +9,6 @@ import './shim';
 
 // Core needs the PVariables object
 import * as constants from './constants';
-
 /**
  * This is the p5 instance constructor.
  *
@@ -178,6 +177,7 @@ class p5 {
     this._preloadCount = 0;
     this._isGlobal = false;
     this._loop = true;
+    this._startListener = null;
     this._initializeInstanceVariables();
     this._defaultCanvasSize = {
       width: 100,
@@ -452,6 +452,10 @@ class p5 {
      *
      */
     this.remove = () => {
+      // Remove start listener to prevent orphan canvas being created
+      if(this._startListener){
+        window.removeEventListener('load', this._startListener, false);
+      }
       const loadingScreen = document.getElementById(this._loadingScreenId);
       if (loadingScreen) {
         loadingScreen.parentNode.removeChild(loadingScreen);
@@ -586,7 +590,8 @@ class p5 {
     if (document.readyState === 'complete') {
       this._start();
     } else {
-      window.addEventListener('load', this._start.bind(this), false);
+      this._startListener = this._start.bind(this);
+      window.addEventListener('load', this._startListener, false);
     }
   }
 
