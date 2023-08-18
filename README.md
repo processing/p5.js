@@ -888,6 +888,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="http://sarahciston.com"><img src="https://avatars.githubusercontent.com/u/31395144?v=4?s=120" width="120px;" alt="Sarah Ciston"/><br /><sub><b>Sarah Ciston</b></sub></a><br /><a href="#mentoring-sarahciston" title="Mentoring">🧑‍🏫</a> <a href="https://github.com/processing/p5.js/commits?author=sarahciston" title="Documentation">📖</a> <a href="#eventOrganizing-sarahciston" title="Event Organizing">📋</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://tiagohermano.dev"><img src="https://avatars.githubusercontent.com/u/5157960?v=4?s=120" width="120px;" alt="Tiago Hermano"/><br /><sub><b>Tiago Hermano</b></sub></a><br /><a href="#translation-tiagohermano" title="Translation">🌍</a> <a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3Atiagohermano" title="Reviewed Pull Requests">👀</a></td>
     </tr>
   </tbody>
 </table>
