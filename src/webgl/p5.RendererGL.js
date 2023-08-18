@@ -1030,6 +1030,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     pg.shader(this.filterShader);
     this.filterShader.setUniform('tex0', this);
     this.filterShader.setUniform('texelSize', [1.0/this.width, 1.0/this.height]);
+    this.filterShader.setUniform('canvasSize', [this.width, this.height]);
     // filterParameter only used for POSTERIZE, BLUR, and THRESHOLD
     // but shouldn't hurt to always set
     this.filterShader.setUniform('filterParameter', filterParameter);
