@@ -346,7 +346,6 @@ p5.prototype._copyHelper = (
  * This may be useful to keep computation off the GPU or to work around a lack of WebGL support.
  *
  * On a renderer in WEBGL mode, `filter()` can also accept a user-provided shader.
- * The shader will be applied to the canvas and not to any geometries.
  * For more information, see <a href="#/p5/createFilterShader">createFilterShader()</a>.
  *
  *
@@ -488,21 +487,15 @@ p5.prototype._copyHelper = (
  * function setup() {
  *   let fragSrc = `precision highp float;
  *
- *   // x,y coordinates, given from the vertex shader
- *   varying vec2 vTexCoord;
- *
- *   // the canvas contents, given from filter()
- *   uniform sampler2D tex0;
- *   // a custom variable from the sketch
- *   uniform float darkness;
+ *   varying vec2 vTexCoord;  // x,y coordinates
+ *   uniform sampler2D tex0;  // the canvas contents
  *
  *   void main() {
  *     // get the color at current pixel
  *     vec4 color = texture2D(tex0, vTexCoord);
  *     // set the output color
  *     color.b = 1.0;
- *     color *= darkness;
- *     gl_FragColor = vec4(color.rgb, 1.0);
+ *     gl_FragColor = vec4(color);
  *   }`;
  *
  *   createCanvas(100, 100, WEBGL);
@@ -510,9 +503,8 @@ p5.prototype._copyHelper = (
  * }
  * function draw() {
  *   image(img, -50, -50);
- *   s.setUniform('darkness', 0.5);
  *   filter(s);
- *   describe('a image of bricks tinted dark blue');
+ *   describe('a image of bricks tinted blue');
  * }
  * </code>
  * </div>
