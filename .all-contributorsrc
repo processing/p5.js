@@ -5164,6 +5164,18 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "frank890417",
+      "name": "Wu Che Yu",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4727572?v=4",
+      "profile": "https://cheyuwu.com/",
+      "contributions": [
+        "eventOrganizing",
+        "blog",
+        "tutorial",
+        "video"
+      ]
     }
   ],
   "repoType": "github",
