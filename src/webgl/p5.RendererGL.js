@@ -79,7 +79,6 @@ const defaultShaders = {
   pointFrag: readFileSync(join(__dirname, '/shaders/point.frag'), 'utf-8')
 };
 
-// TODO: add remaining filter shaders
 const filterShaderFrags = {
   [constants.GRAY]:
     readFileSync(join(__dirname, '/shaders/filters/gray.frag'), 'utf-8'),
@@ -95,6 +94,8 @@ const filterShaderFrags = {
     readFileSync(join(__dirname, '/shaders/filters/opaque.frag'), 'utf-8'),
   [constants.INVERT]:
     readFileSync(join(__dirname, '/shaders/filters/invert.frag'), 'utf-8'),
+  [constants.THRESHOLD]:
+    readFileSync(join(__dirname, '/shaders/filters/threshold.frag'), 'utf-8')
 };
 const filterShaderVert = readFileSync(join(__dirname, '/shaders/filters/default.vert'), 'utf-8');
 
