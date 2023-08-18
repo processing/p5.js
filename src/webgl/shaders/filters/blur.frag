@@ -22,10 +22,7 @@ void main() {
 
   // spread controls how far away from the center we should pull a sample from
   // you will start to see artifacts if you crank this up too high
-  float spread = 4.0;
-  if (filterParameter > 0.0) {
-    spread = filterParameter;
-  }
+  float spread = max(0.0, filterParameter);
 
   // create our offset variable by multiplying the size of a texel with spread
   vec2 offset = texelSize * spread;
