@@ -5197,6 +5197,17 @@
         "translation",
         "review"
       ]
+    },
+    {
+      "login": "unicar9",
+      "name": "Unicar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/27838326?v=4",
+      "profile": "https://unicar9.github.io/weijia/",
+      "contributions": [
+        "translation",
+        "tutorial",
+        "example"
+      ]
     }
   ],
   "repoType": "github",
