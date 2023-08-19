@@ -5217,6 +5217,18 @@
       "contributions": [
         "eventOrganizing"
       ]
+    },
+    {
+      "login": "SableRaf",
+      "name": "Raphaël de Courville",
+      "avatar_url": "https://avatars.githubusercontent.com/u/290261?v=4",
+      "profile": "https://github.com/SableRaf",
+      "contributions": [
+        "eventOrganizing",
+        "video",
+        "ideas",
+        "promotion"
+      ]
     }
   ],
   "repoType": "github",
