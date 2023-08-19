@@ -5208,6 +5208,15 @@
         "tutorial",
         "example"
       ]
+    },
+    {
+      "login": "yulicai",
+      "name": "Yolonanido",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14118438?v=4",
+      "profile": "https://github.com/yulicai",
+      "contributions": [
+        "eventOrganizing"
+      ]
     }
   ],
   "repoType": "github",
