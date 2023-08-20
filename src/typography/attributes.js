@@ -20,7 +20,7 @@ import p5 from '../core/main';
  * So if you write textAlign(LEFT), you are aligning the left
  * edge of your text to the x value you give in <a href="#/p5/text">text()</a>.
  * If you write textAlign(RIGHT, TOP), you are aligning the right edge
- * of your text to the x value and the top of edge of the text
+ * of your text to the x value and the top edge of the text
  * to the y value.
  *
  * @method textAlign
@@ -39,6 +39,8 @@ import p5 from '../core/main';
  * text('EFGH', 50, 50);
  * textAlign(LEFT);
  * text('IJKL', 50, 70);
+ * describe(`Letters ABCD displayed at top left, EFGH at center, and
+ *   IJKL at bottom right.`);
  * </code>
  * </div>
  *
@@ -59,15 +61,15 @@ import p5 from '../core/main';
  * textAlign(CENTER, BASELINE);
  * text('BASELINE', 0, 62, width);
  *
- * line(0, 87, width, 87);
+ * line(0, 97, width, 97);
  * textAlign(CENTER, BOTTOM);
- * text('BOTTOM', 0, 87, width);
+ * text('BOTTOM', 0, 97, width);
+ *
+ * describe(`The names of the four vertical alignments (TOP, CENTER, BASELINE,
+ *   and BOTTOM) rendered each showing that alignment's placement relative to a
+ *   horizontal line.`);
  * </code>
  * </div>
- *
- * @alt
- * Letters ABCD displayed at top left, EFGH at center and IJKL at bottom right.
- * The names of the four vertical alignments (TOP, CENTER, BASELINE & BOTTOM) rendered each showing that alignment's placement relative to a horizontal line.
  */
 /**
  * @method textAlign
@@ -100,11 +102,11 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  *
  * textLeading(30);
  * text(lines, 70, 25);
+ *
+ * describe(`A set of L1, L2, and L3, displayed vertically 3 times.
+ *   Spacing increases for each set.`);
  * </code>
  * </div>
- *
- * @alt
- * A set of L1 L2 & L3 displayed vertically 3 times. spacing increases for each set
  */
 /**
  * @method textLeading
@@ -132,11 +134,12 @@ p5.prototype.textLeading = function(theLeading) {
  * text('Font Size 14', 10, 60);
  * textSize(16);
  * text('Font Size 16', 10, 90);
+ *
+ * describe(`'Font Size 12' displayed small,
+ *   'Font Size 14' medium, and
+ *   'Font Size 16' large`);
  * </code>
  * </div>
- *
- * @alt
- * 'Font Size 12' displayed small, 'Font Size 14' medium & 'Font Size 16' large
  */
 /**
  * @method textSize
@@ -169,11 +172,12 @@ p5.prototype.textSize = function(theSize) {
  * text('Font Style Bold', 10, 65);
  * textStyle(BOLDITALIC);
  * text('Font Style Bold Italic', 10, 90);
+ * describe(`The words “Font Style Normal” displayed normally,
+ *   “Font Style Italic” in italic,
+ *   “Font Style Bold” in bold, and
+ *   “Font Style Bold Italic” in bold italics.`);
  * </code>
  * </div>
- *
- * @alt
- * Words Font Style Normal displayed normally, Italic in italic, bold in bold and bold italic in bold italics.
  */
 /**
  * @method textStyle
@@ -185,7 +189,7 @@ p5.prototype.textStyle = function(theStyle) {
 };
 
 /**
- * Calculates and returns the width of any character or text string.
+ * Calculates and returns the width of any character or the maximum width of any paragrph.
  *
  * @method textWidth
  * @param {String} theText the String of characters to measure
@@ -204,19 +208,46 @@ p5.prototype.textStyle = function(theStyle) {
  * let sWidth = textWidth(aString);
  * text(aString, 0, 85);
  * line(sWidth, 50, sWidth, 100);
+ *
+ * describe('Letter P and p5.js are displayed with vertical lines at end.');
  * </code>
  * </div>
  *
- * @alt
- * Letter P and p5.js are displayed with vertical lines at end.
+ *
+ * <div>
+ * <code>
+ * textSize(28);
+ *
+ * let aChar = 'text\nWidth';
+ * let cWidth = textWidth(aChar);
+ * text(aChar, 0, 40);
+ * line(cWidth, 0, cWidth, 100);
+ *
+ * describe('Text text and Width() are displayed with vertical lines at end of Width().');
+ * </code>
+ * </div>
  */
-p5.prototype.textWidth = function(...args) {
+p5.prototype.textWidth = function (...args) {
   args[0] += '';
   p5._validateParameters('textWidth', args);
   if (args[0].length === 0) {
     return 0;
   }
-  return this._renderer.textWidth(...args);
+
+  // Only use the line with the longest width, and replace tabs with double-space
+  const textLines = args[0].replace(/\t/g, '  ').split(/\r?\n|\r|\n/g);
+
+  const newArr = [];
+
+  // Return the textWidth for every line
+  for(let i=0; i<textLines.length; i++){
+    newArr.push(this._renderer.textWidth(textLines[i]));
+  }
+
+  // Return the largest textWidth
+  const largestWidth = Math.max(...newArr);
+
+  return largestWidth;
 };
 
 /**
@@ -261,12 +292,12 @@ p5.prototype.textAscent = function(...args) {
  * let scalar = 0.8; // Different for each font
  *
  * textSize(32); // Set initial text size
- * let desc = textDescent() * scalar; // Calc ascent
+ * let desc = textDescent() * scalar; // Calc descent
  * line(0, base + desc, width, base + desc);
  * text('dp', 0, base); // Draw text on baseline
  *
  * textSize(64); // Increase text size
- * desc = textDescent() * scalar; // Recalc ascent
+ * desc = textDescent() * scalar; // Recalc descent
  * line(40, base + desc, width, base + desc);
  * text('dp', 40, base); // Draw text on baseline
  * </code>

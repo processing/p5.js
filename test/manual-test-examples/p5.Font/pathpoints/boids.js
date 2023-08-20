@@ -1,32 +1,34 @@
 // adapted from Shiffman's The Nature of Code
 // http://natureofcode.com
 
-function Boid(target) {
-  this.acceleration = createVector(0, 0);
-  this.velocity = createVector(random(-1, 1), random(-1, 1));
-  this.position = createVector(width / 2, height / 2);
+class Boid {
+  constructor(target) {
+    this.acceleration = createVector(0, 0);
+    this.velocity = createVector(random(-1, 1), random(-1, 1));
+    this.position = createVector(width / 2, height / 2);
 
-  this.r = 3.0;
-  this.maxspeed = 3; // Maximum speed
-  this.maxforce = 0.05; // Maximum steering force
+    this.r = 3.0;
+    this.maxspeed = 3; // Maximum speed
+    this.maxforce = 0.05; // Maximum steering force
 
-  this.theta =
-    p5.Vector.fromAngle(radians(target.alpha)).heading() + radians(90);
-  this.target = createVector(target.x, target.y);
-  this.arrived = false;
-  this.hidden = true;
-
-  this.place = function(x, y) {
+    this.theta =
+      p5.Vector.fromAngle(radians(target.alpha)).heading() + radians(90);
+    this.target = createVector(target.x, target.y);
+    this.arrived = false;
+    this.hidden = true;
+  }
+  place (x, y) {
     this.position = createVector(mouseX, mouseY);
     this.velocity = p5.Vector.sub(
       createVector(mouseX, mouseY),
       createVector(pmouseX, pmouseY)
     );
     this.hidden = false;
-  };
+  }
 
-  this.run = function(boids) {
-    if (this.hidden) return;
+  run (boids) {
+    if (this.hidden)
+      return;
 
     if (flock.assemble) {
       this.arrive(this.target);
@@ -36,18 +38,19 @@ function Boid(target) {
     this.update();
     this.borders();
     this.render();
-  };
+  }
 
-  this.applyForce = function(force) {
+  applyForce (force) {
     // We could add mass here if we want A = F / M
     this.acceleration.add(force);
-  };
+  }
 
   // We accumulate a new acceleration each time based on three rules
-  this.flock = function(boids) {
+  flock (boids) {
     var sep = this.separate(boids); // Separation
     var ali = this.align(boids); // Alignment
     var coh = this.cohesion(boids); // Cohesion
+
     // Arbitrarily weight these forces
     sep.mult(1.5);
     ali.mult(1.0);
@@ -56,15 +59,13 @@ function Boid(target) {
     this.applyForce(sep);
     this.applyForce(ali);
     this.applyForce(coh);
-  };
+  }
 
   // Method to update location
-  this.update = function() {
-    if (
-      flock.assemble &&
-      !this.arrived &&
-      this.target.dist(this.position) < 1
-    ) {
+  update () {
+    if (flock.assemble &&
+        !this.arrived &&
+        this.target.dist(this.position) < 1) {
       this.arrived = true;
       this.velocity = p5.Vector.fromAngle(this.theta + radians(90));
     } else {
@@ -73,9 +74,9 @@ function Boid(target) {
       this.position.add(this.velocity);
       this.acceleration.mult(0);
     }
-  };
+  }
 
-  this.seek = function(target) {
+  seek (target) {
     var desired = p5.Vector.sub(target, this.position);
     // Normalize desired and scale to maximum speed
     desired.normalize();
@@ -84,9 +85,9 @@ function Boid(target) {
     var steer = p5.Vector.sub(desired, this.velocity);
     steer.limit(this.maxforce); // Limit to maximum steering force
     return steer;
-  };
+  }
 
-  this.render = function() {
+  render () {
     // Draw a triangle rotated in the direction of velocity
     var theta = this.velocity.heading() + radians(90);
     fill(255);
@@ -100,19 +101,23 @@ function Boid(target) {
     vertex(this.r, this.r * 2);
     endShape(CLOSE);
     pop();
-  };
+  }
 
   // Wraparound
-  this.borders = function() {
-    if (this.position.x < -this.r) this.position.x = width + this.r;
-    if (this.position.y < -this.r) this.position.y = height + this.r;
-    if (this.position.x > width + this.r) this.position.x = -this.r;
-    if (this.position.y > height + this.r) this.position.y = -this.r;
-  };
+  borders () {
+    if (this.position.x < -this.r)
+      this.position.x = width + this.r;
+    if (this.position.y < -this.r)
+      this.position.y = height + this.r;
+    if (this.position.x > width + this.r)
+      this.position.x = -this.r;
+    if (this.position.y > height + this.r)
+      this.position.y = -this.r;
+  }
 
   // Separation
   // Method checks for nearby boids and steers away
-  this.separate = function(boids) {
+  separate (boids) {
     var desiredseparation = 25.0;
     var steer = createVector(0, 0);
     var count = 0;
@@ -143,11 +148,11 @@ function Boid(target) {
       steer.limit(this.maxforce);
     }
     return steer;
-  };
+  }
 
   // Alignment
   // For every nearby boid in the system, calculate the average velocity
-  this.align = function(boids) {
+  align (boids) {
     var neighbordist = 50;
     var sum = createVector(0, 0);
     var count = 0;
@@ -168,11 +173,11 @@ function Boid(target) {
     } else {
       return createVector(0, 0);
     }
-  };
+  }
 
   // Cohesion
   // For the average location (i.e. center) of all nearby boids, calculate steering vector towards that location
-  this.cohesion = function(boids) {
+  cohesion (boids) {
     var neighbordist = 50;
     var sum = createVector(0, 0); // Start with empty vector to accumulate all locations
     var num = 0;
@@ -188,12 +193,11 @@ function Boid(target) {
     } else {
       return createVector(0, 0);
     }
-  };
+  }
 
-  Boid.prototype.arrive = function(target) {
+  arrive (target) {
     // A vector pointing from the location to the target
-    var desired = p5.Vector.sub(target, this.position),
-      d = desired.mag();
+    var desired = p5.Vector.sub(target, this.position), d = desired.mag();
 
     // Scale with arbitrary damping within 100 pixels
     desired.setMag(d < 100 ? map(d, 0, 100, 0, this.maxspeed) : this.maxspeed);
@@ -202,19 +206,21 @@ function Boid(target) {
     var steer = p5.Vector.sub(desired, this.velocity);
     steer.limit(this.maxforce); // Limit to maximum steering force
     this.applyForce(steer);
-  };
+  }
+
 }
 
 function mouseOnScreen() {
   return mouseX && mouseX <= width && mouseY && mouseY <= height;
 }
 
-function Flock() {
-  this.count = 0;
-  this.boids = [];
-  this.assemble = false;
-
-  this.arrived = function() {
+class Flock {
+  constructor() {
+    this.count = 0;
+    this.boids = [];
+    this.assemble = false;
+  }
+  arrived() {
     var i;
     if (arguments.length) {
       for (i = 0; i < this.boids.length; i++)
@@ -225,14 +231,14 @@ function Flock() {
         if (!this.boids[i].arrived) return false;
       return true;
     }
-  };
+  }
 
-  this.run = function() {
+  run() {
     this.assemble = this.count === flock.boids.length;
 
     if (!this.assemble && mouseOnScreen())
       this.boids[this.count++].place(mouseX, mouseY);
 
     for (var i = 0; i < this.boids.length; i++) this.boids[i].run(this.boids);
-  };
+  }
 }

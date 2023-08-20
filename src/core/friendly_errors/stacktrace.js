@@ -24,8 +24,6 @@ import p5 from '../main';
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 function ErrorStackParser() {
-  'use strict';
-
   let FIREFOX_SAFARI_STACK_REGEXP = /(^|@)\S+:\d+/;
   let CHROME_IE_STACK_REGEXP = /^\s*at .*(\S+:\d+|\(native\))/m;
   let SAFARI_NATIVE_CODE_REGEXP = /^(eval@)?(\[native code])?$/;
@@ -101,8 +99,8 @@ function ErrorStackParser() {
             : locationParts[0];
 
         return {
-          functionName: functionName,
-          fileName: fileName,
+          functionName,
+          fileName,
           lineNumber: locationParts[1],
           columnNumber: locationParts[2],
           source: line
@@ -138,7 +136,7 @@ function ErrorStackParser() {
           );
 
           return {
-            functionName: functionName,
+            functionName,
             fileName: locationParts[0],
             lineNumber: locationParts[1],
             columnNumber: locationParts[2],
@@ -228,8 +226,8 @@ function ErrorStackParser() {
             : argsRaw.split(',');
 
         return {
-          functionName: functionName,
-          args: args,
+          functionName,
+          args,
           fileName: locationParts[0],
           lineNumber: locationParts[1],
           columnNumber: locationParts[2],

@@ -10,28 +10,24 @@ import p5 from '../main';
 import * as constants from '../constants';
 
 /**
- * Modifies the location from which ellipses are drawn by changing the way in
- * which parameters given to <a href="#/p5/ellipse">ellipse()</a>,
- * <a href="#/p5/circle">circle()</a> and <a href="#/p5/arc">arc()</a> are interpreted.
+ * Modifies the location from which ellipses, circles, and arcs are drawn. By default, the
+ * first two parameters are the x- and y-coordinates of the shape's center. The next
+ * parameters are its width and height. This is equivalent to calling `ellipseMode(CENTER)`.
  *
- * The default mode is CENTER, in which the first two parameters are interpreted
- * as the shape's center point's x and y coordinates respectively, while the third
- * and fourth parameters are its width and height.
+ * `ellipseMode(RADIUS)` also uses the first two parameters to set the x- and y-coordinates
+ * of the shape's center. The next parameters are half of the shapes's width and height.
+ * Calling `ellipse(0, 0, 10, 15)` draws a shape with a width of 20 and height of 30.
  *
- * ellipseMode(RADIUS) also uses the first two parameters as the shape's center
- * point's x and y coordinates, but uses the third and fourth parameters to
- * specify half of the shapes's width and height.
+ * `ellipseMode(CORNER)` uses the first two parameters as the upper-left corner of the
+ * shape. The next parameters are its width and height.
  *
- * ellipseMode(CORNER) interprets the first two parameters as the upper-left
- * corner of the shape, while the third and fourth parameters are its width
- * and height.
+ * `ellipseMode(CORNERS)` uses the first two parameters as the location of one corner
+ * of the ellipse's bounding box. The third and fourth parameters are the location of the
+ * opposite corner.
  *
- * ellipseMode(CORNERS) interprets the first two parameters as the location of
- * one corner of the ellipse's bounding box, and the third and fourth parameters
- * as the location of the opposite corner.
- *
- * The parameter to this method must be written in ALL CAPS because they are
- * predefined as constants in ALL CAPS and Javascript is a case-sensitive language.
+ * The argument passed to `ellipseMode()` must be written in ALL CAPS because the constants
+ * `CENTER`, `RADIUS`, `CORNER`, and `CORNERS` are defined this way. JavaScript is a
+ * case-sensitive language.
  *
  * @method ellipseMode
  * @param  {Constant} mode either CENTER, RADIUS, CORNER, or CORNERS
@@ -39,31 +35,27 @@ import * as constants from '../constants';
  * @example
  * <div>
  * <code>
- * // Example showing RADIUS and CENTER ellipsemode with 2 overlaying ellipses
  * ellipseMode(RADIUS);
  * fill(255);
- * ellipse(50, 50, 30, 30); // Outer white ellipse
+ * ellipse(50, 50, 30, 30);
  * ellipseMode(CENTER);
  * fill(100);
- * ellipse(50, 50, 30, 30); // Inner gray ellipse
+ * ellipse(50, 50, 30, 30);
+ * describe('A white circle with a gray circle at its center. Both circles have black outlines.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Example showing CORNER and CORNERS ellipseMode with 2 overlaying ellipses
  * ellipseMode(CORNER);
  * fill(255);
- * ellipse(25, 25, 50, 50); // Outer white ellipse
+ * ellipse(25, 25, 50, 50);
  * ellipseMode(CORNERS);
  * fill(100);
- * ellipse(25, 25, 50, 50); // Inner gray ellipse
+ * ellipse(25, 25, 50, 50);
+ * describe('A white circle with a gray circle at its top-left corner. Both circles have black outlines.');
  * </code>
  * </div>
- *
- * @alt
- * 60x60 white ellipse and 30x30 grey ellipse with black outlines at center.
- * 60x60 white ellipse and 30x30 grey ellipse top-right with black outlines.
  */
 p5.prototype.ellipseMode = function(m) {
   p5._validateParameters('ellipseMode', arguments);
@@ -79,11 +71,13 @@ p5.prototype.ellipseMode = function(m) {
 };
 
 /**
- * Draws all geometry with jagged (aliased) edges. Note that <a href="#/p5/smooth">smooth()</a> is
- * active by default in 2D mode, so it is necessary to call <a href="#/p5/noSmooth">noSmooth()</a> to disable
- * smoothing of geometry, images, and fonts. In 3D mode, <a href="#/p5/noSmooth">noSmooth()</a> is enabled
- * by default, so it is necessary to call <a href="#/p5/smooth">smooth()</a> if you would like
- * smooth (antialiased) edges on your geometry.
+ * Draws all geometry with jagged (aliased) edges.
+ *
+ * <a href="#/p5/smooth">smooth()</a> is active by default in 2D mode. It's necessary to call
+ * <a href="#/p5/noSmooth">noSmooth()</a> to disable smoothing of geometry, images, and fonts.
+ *
+ * In WebGL mode, <a href="#/p5/noSmooth">noSmooth()</a> is active by default. It's necessary
+ * to call <a href="#/p5/smooth">smooth()</a> to draw smooth (antialiased) edges.
  *
  * @method noSmooth
  * @chainable
@@ -96,45 +90,41 @@ p5.prototype.ellipseMode = function(m) {
  * ellipse(30, 48, 36, 36);
  * noSmooth();
  * ellipse(70, 48, 36, 36);
+ * describe('Two pixelated white circles on a black background.');
  * </code>
  * </div>
- *
- * @alt
- * 2 pixelated 36x36 white ellipses to left & right of center, black background
  */
 p5.prototype.noSmooth = function() {
-  this.setAttributes('antialias', false);
   if (!this._renderer.isP3D) {
     if ('imageSmoothingEnabled' in this.drawingContext) {
       this.drawingContext.imageSmoothingEnabled = false;
     }
+  } else {
+    this.setAttributes('antialias', false);
   }
   return this;
 };
 
 /**
- * Modifies the location from which rectangles are drawn by changing the way
- * in which parameters given to <a href="#/p5/rect">rect()</a> are interpreted.
+ * Modifies the location from which rectangles and squares are drawn. By default,
+ * the first two parameters are the x- and y-coordinates of the shape's upper-left
+ * corner. The next parameters are its width and height. This is equivalent to
+ * calling `rectMode(CORNER)`.
  *
- * The default mode is CORNER, which interprets the first two parameters as the
- * upper-left corner of the shape, while the third and fourth parameters are its
- * width and height.
- *
- * rectMode(CORNERS) interprets the first two parameters as the location of
- * one of the corners, and the third and fourth parameters as the location of
- * the diagonally opposite corner. Note, the rectangle is drawn between the
- * coordinates, so it is not neccesary that the first corner be the upper left
+ * `rectMode(CORNERS)` also uses the first two parameters as the location of one of
+ * the corners. The third and fourth parameters are the location of the opposite
  * corner.
  *
- * rectMode(CENTER) interprets the first two parameters as the shape's center
- * point, while the third and fourth parameters are its width and height.
+ * `rectMode(CENTER)` uses the first two parameters as the x- and y-coordinates of
+ * the shape's center. The next parameters are its width and height.
  *
- * rectMode(RADIUS) also uses the first two parameters as the shape's center
- * point, but uses the third and fourth parameters to specify half of the shape's
- * width and height respectively.
+ * `rectMode(RADIUS)` also uses the first two parameters as the x- and y-coordinates
+ * of the shape's center. The next parameters are half of the shape's width and
+ * height.
  *
- * The parameter to this method must be written in ALL CAPS because they are
- * predefined as constants in ALL CAPS and Javascript is a case-sensitive language.
+ * The argument passed to `rectMode()` must be written in ALL CAPS because the
+ * constants `CENTER`, `RADIUS`, `CORNER`, and `CORNERS` are defined this way.
+ * JavaScript is a case-sensitive language.
  *
  * @method rectMode
  * @param  {Constant} mode either CORNER, CORNERS, CENTER, or RADIUS
@@ -144,11 +134,13 @@ p5.prototype.noSmooth = function() {
  * <code>
  * rectMode(CORNER);
  * fill(255);
- * rect(25, 25, 50, 50); // Draw white rectangle using CORNER mode
+ * rect(25, 25, 50, 50);
  *
  * rectMode(CORNERS);
  * fill(100);
- * rect(25, 25, 50, 50); // Draw gray rectangle using CORNERS mode
+ * rect(25, 25, 50, 50);
+ *
+ * describe('A small gray square drawn at the top-left corner of a white square.');
  * </code>
  * </div>
  *
@@ -156,17 +148,15 @@ p5.prototype.noSmooth = function() {
  * <code>
  * rectMode(RADIUS);
  * fill(255);
- * rect(50, 50, 30, 30); // Draw white rectangle using RADIUS mode
+ * rect(50, 50, 30, 30);
  *
  * rectMode(CENTER);
  * fill(100);
- * rect(50, 50, 30, 30); // Draw gray rectangle using CENTER mode
+ * rect(50, 50, 30, 30);
+ *
+ * describe('A small gray square drawn at the center of a white square.');
  * </code>
  * </div>
- *
- * @alt
- * 50x50 white rect at center and 25x25 grey rect in the top left of the other.
- * 50x50 white rect at center and 25x25 grey rect in the center of the other.
  */
 p5.prototype.rectMode = function(m) {
   p5._validateParameters('rectMode', arguments);
@@ -183,11 +173,13 @@ p5.prototype.rectMode = function(m) {
 
 /**
  * Draws all geometry with smooth (anti-aliased) edges. <a href="#/p5/smooth">smooth()</a> will also
- * improve image quality of resized images. Note that <a href="#/p5/smooth">smooth()</a> is active by
- * default in 2D mode; <a href="#/p5/noSmooth">noSmooth()</a> can be used to disable smoothing of geometry,
- * images, and fonts. In 3D mode, <a href="#/p5/noSmooth">noSmooth()</a> is enabled
- * by default, so it is necessary to call <a href="#/p5/smooth">smooth()</a> if you would like
- * smooth (antialiased) edges on your geometry.
+ * improve image quality of resized images.
+ *
+ * <a href="#/p5/smooth">smooth()</a> is active by default in 2D mode. It's necessary to call
+ * <a href="#/p5/noSmooth">noSmooth()</a> to disable smoothing of geometry, images, and fonts.
+ *
+ * In WebGL mode, <a href="#/p5/noSmooth">noSmooth()</a> is active by default. It's necessary
+ * to call <a href="#/p5/smooth">smooth()</a> to draw smooth (antialiased) edges.
  *
  * @method smooth
  * @chainable
@@ -200,11 +192,9 @@ p5.prototype.rectMode = function(m) {
  * ellipse(30, 48, 36, 36);
  * noSmooth();
  * ellipse(70, 48, 36, 36);
+ * describe('Two pixelated white circles on a black background.');
  * </code>
  * </div>
- *
- * @alt
- * 2 pixelated 36x36 white ellipses one left one right of center. On black.
  */
 p5.prototype.smooth = function() {
   this.setAttributes('antialias', true);
@@ -217,20 +207,20 @@ p5.prototype.smooth = function() {
 };
 
 /**
- * Sets the style for rendering line endings. These ends are either rounded,
- * squared or extended, each of which specified with the corresponding
- * parameters: ROUND, SQUARE and PROJECT. The default cap is ROUND.
+ * Sets the style for rendering line endings. These ends are either rounded
+ * (`ROUND`), squared (`SQUARE`), or extended (`PROJECT`). The default cap is
+ * `ROUND`.
  *
- * The parameter to this method must be written in ALL CAPS because they are
- * predefined as constants in ALL CAPS and Javascript is a case-sensitive language.
+ * The argument passed to `strokeCap()` must be written in ALL CAPS because
+ * the constants `ROUND`, `SQUARE`, and `PROJECT` are defined this way.
+ * JavaScript is a case-sensitive language.
  *
  * @method strokeCap
- * @param  {Constant} cap either ROUND, SQUARE or PROJECT
+ * @param  {Constant} cap either ROUND, SQUARE, or PROJECT
  * @chainable
  * @example
  * <div>
  * <code>
- * // Example of different strokeCaps
  * strokeWeight(12.0);
  * strokeCap(ROUND);
  * line(20, 30, 80, 30);
@@ -238,11 +228,9 @@ p5.prototype.smooth = function() {
  * line(20, 50, 80, 50);
  * strokeCap(PROJECT);
  * line(20, 70, 80, 70);
+ * describe('Three horizontal lines. The top line has rounded ends, the middle line has squared ends, and the bottom line has longer, squared ends.');
  * </code>
  * </div>
- *
- * @alt
- * 3 lines. Top line: rounded ends, mid: squared, bottom:longer squared ends.
  */
 p5.prototype.strokeCap = function(cap) {
   p5._validateParameters('strokeCap', arguments);
@@ -257,21 +245,20 @@ p5.prototype.strokeCap = function(cap) {
 };
 
 /**
- * Sets the style of the joints which connect line segments. These joints
- * are either mitered, beveled or rounded and specified with the
- * corresponding parameters MITER, BEVEL and ROUND. The default joint is
- * MITER.
+ * Sets the style of the joints which connect line segments. These joints are
+ * either mitered (`MITER`), beveled (`BEVEL`), or rounded (`ROUND`). The default
+ * joint is `MITER` in 2D mode and `ROUND` in WebGL mode.
  *
- * The parameter to this method must be written in ALL CAPS because they are
- * predefined as constants in ALL CAPS and Javascript is a case-sensitive language.
+ * The argument passed to `strokeJoin()` must be written in ALL CAPS because
+ * the constants `MITER`, `BEVEL`, and `ROUND` are defined this way.
+ * JavaScript is a case-sensitive language.
  *
  * @method strokeJoin
- * @param  {Constant} join either MITER, BEVEL, ROUND
+ * @param  {Constant} join either MITER, BEVEL, or ROUND
  * @chainable
  * @example
  * <div>
  * <code>
- * // Example of MITER type of joints
  * noFill();
  * strokeWeight(10.0);
  * strokeJoin(MITER);
@@ -280,12 +267,12 @@ p5.prototype.strokeCap = function(cap) {
  * vertex(65, 50);
  * vertex(35, 80);
  * endShape();
+ * describe('A right-facing arrowhead shape with a pointed tip in center of canvas.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Example of BEVEL type of joints
  * noFill();
  * strokeWeight(10.0);
  * strokeJoin(BEVEL);
@@ -294,12 +281,12 @@ p5.prototype.strokeCap = function(cap) {
  * vertex(65, 50);
  * vertex(35, 80);
  * endShape();
+ * describe('A right-facing arrowhead shape with a flat tip in center of canvas.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Example of ROUND type of joints
  * noFill();
  * strokeWeight(10.0);
  * strokeJoin(ROUND);
@@ -308,13 +295,9 @@ p5.prototype.strokeCap = function(cap) {
  * vertex(65, 50);
  * vertex(35, 80);
  * endShape();
+ * describe('A right-facing arrowhead shape with a rounded tip in center of canvas.');
  * </code>
  * </div>
- *
- * @alt
- * Right-facing arrowhead shape with pointed tip in center of canvas.
- * Right-facing arrowhead shape with flat tip in center of canvas.
- * Right-facing arrowhead shape with rounded tip in center of canvas.
  */
 p5.prototype.strokeJoin = function(join) {
   p5._validateParameters('strokeJoin', arguments);
@@ -329,27 +312,41 @@ p5.prototype.strokeJoin = function(join) {
 };
 
 /**
- * Sets the width of the stroke used for lines, points and the border around
+ * Sets the width of the stroke used for lines, points, and the border around
  * shapes. All widths are set in units of pixels.
  *
+ * Note that `strokeWeight()` is affected by any transformation or scaling that
+ * has been applied previously.
+ *
  * @method strokeWeight
- * @param  {Number} weight the weight of the stroke (in pixels)
+ * @param  {Number} weight the weight of the stroke (in pixels).
  * @chainable
  * @example
  * <div>
  * <code>
- * // Example of different stroke weights
- * strokeWeight(1); // Default
+ * // Default.
  * line(20, 20, 80, 20);
- * strokeWeight(4); // Thicker
+ * // Thicker.
+ * strokeWeight(4);
  * line(20, 40, 80, 40);
- * strokeWeight(10); // Beastly
+ * // Beastly.
+ * strokeWeight(10);
  * line(20, 70, 80, 70);
+ * describe('Three horizontal black lines. The top line is thin, the middle is medium, and the bottom is thick.');
  * </code>
  * </div>
  *
- * @alt
- * 3 horizontal black lines. Top line: thin, mid: medium, bottom:thick.
+ * <div>
+ * <code>
+ * // Default.
+ * line(20, 20, 80, 20);
+ * // Adding scale transformation.
+ * scale(5);
+ * // Coordinates adjusted for scaling.
+ * line(4, 8, 16, 8);
+ * describe('Two horizontal black lines. The top line is thin and the bottom is five times thicker than the top.');
+ * </code>
+ * </div>
  */
 p5.prototype.strokeWeight = function(w) {
   p5._validateParameters('strokeWeight', arguments);

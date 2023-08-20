@@ -6,6 +6,34 @@
 
 var balls = [];
 var gravity = 0.1;
+class Ball {
+  constructor(tempX, tempY, tempW) {
+    this.x = tempX;
+    this.y = tempY;
+    this.w = tempW;
+    this.speed = 0;
+  }
+  gravity() {
+    // Add gravity to speed
+    this.speed = this.speed + gravity;
+  }
+  move() {
+    // Add speed to y location
+    this.y = this.y + this.speed;
+    // If square reaches the bottom
+    // Reverse speed
+    if (this.y > height) {
+      this.speed = this.speed * -0.95;
+      this.y = height;
+    }
+  }
+  display() {
+    // Display the circle
+    fill(175);
+    stroke(0);
+    ellipse(this.x, this.y, this.w, this.w);
+  }
+}
 
 function setup() {
   createCanvas(200, 200);
@@ -40,33 +68,3 @@ function mousePressed() {
   // In addition, the append() function requires that you explicitly state the type of data in the array again by putting the
   // array data type in parentheses: (Ball[]) This is known as casting.
 }
-
-function Ball(tempX, tempY, tempW) {
-  this.x = tempX;
-  this.y = tempY;
-  this.w = tempW;
-  this.speed = 0;
-}
-
-Ball.prototype.gravity = function() {
-  // Add gravity to speed
-  this.speed = this.speed + gravity;
-};
-
-Ball.prototype.move = function() {
-  // Add speed to y location
-  this.y = this.y + this.speed;
-  // If square reaches the bottom
-  // Reverse speed
-  if (this.y > height) {
-    this.speed = this.speed * -0.95;
-    this.y = height;
-  }
-};
-
-Ball.prototype.display = function() {
-  // Display the circle
-  fill(175);
-  stroke(0);
-  ellipse(this.x, this.y, this.w, this.w);
-};

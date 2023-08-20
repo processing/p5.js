@@ -16,6 +16,7 @@ p5.prototype._lastFrameTime = window.performance.now();
 p5.prototype._targetFrameRate = 60;
 
 const _windowPrint = window.print;
+let windowPrintDisabled = false;
 
 /**
  * The <a href="#/p5/print">print()</a> function writes to the console area of
@@ -43,7 +44,16 @@ const _windowPrint = window.print;
  */
 p5.prototype.print = function(...args) {
   if (!args.length) {
-    _windowPrint();
+    if (!windowPrintDisabled) {
+      _windowPrint();
+      if (
+        window.confirm(
+          'You just tried to print the webpage. Do you want to prevent this from running again?'
+        )
+      ) {
+        windowPrintDisabled = true;
+      }
+    }
   } else {
     console.log(...args);
   }
@@ -53,7 +63,7 @@ p5.prototype.print = function(...args) {
  * The system variable <a href="#/p5/frameCount">frameCount</a> contains the
  * number of frames that have been displayed since the program started. Inside
  * <a href="#/p5/setup">setup()</a> the value is 0, after the first iteration
- * of draw it is 1, etc.
+ * of <a href="#/p5/draw">draw()</a> it is 1, etc.
  *
  * @property {Integer} frameCount
  * @readOnly
@@ -153,14 +163,14 @@ p5.prototype.deltaTime = 0;
  * </code></div>
  *
  * @alt
- * green 50x50 ellipse at top left. Red X covers canvas when page focus changes
+ * green 50×50 ellipse at top left. Red X covers canvas when page focus changes
  */
 p5.prototype.focused = document.hasFocus();
 
 /**
  * Sets the cursor to a predefined symbol or an image, or makes it visible
  * if already hidden. If you are trying to set an image as the cursor, the
- * recommended size is 16x16 or 32x32 pixels. The values for parameters x and y
+ * recommended size is 16×16 or 32×32 pixels. The values for parameters x and y
  * must be less than the dimensions of the image.
  *
  * @method cursor
@@ -229,19 +239,22 @@ p5.prototype.cursor = function(type, x, y) {
  * Specifies the number of frames to be displayed every second. For example,
  * the function call frameRate(30) will attempt to refresh 30 times a second.
  * If the processor is not fast enough to maintain the specified rate, the
- * frame rate will not be achieved. Setting the frame rate within 
+ * frame rate will not be achieved. Setting the frame rate within
  * <a href="#/p5/setup">setup()</a> is recommended. The default frame rate is
- * based on the frame rate of the display (here also called "refresh rate"), 
+ * based on the frame rate of the display (here also called "refresh rate"),
  * which is set to 60 frames per second on most computers. A frame rate of 24
- * frames per second (usual for movies) or above will be enough for smooth 
+ * frames per second (usual for movies) or above will be enough for smooth
  * animations. This is the same as setFrameRate(val).
- * 
- * Calling <a href="#/p5/frameRate">frameRate()</a> with no arguments returns
- * the current framerate. The draw function must run at least once before it will
- * return a value. This is the same as <a href="#/p5/getFrameRate">getFrameRate()</a>.
  *
- * Calling <a href="#/p5/frameRate">frameRate()</a> with arguments that are not
- * of the type numbers or are non positive also returns current framerate.
+ * Calling <a href="#/p5/frameRate">frameRate()</a> with no arguments or
+ * with arguments that are not of type Number or are non-positive returns
+ * an approximation of the current frame rate. The draw function must run at
+ * least once before it will return a value.
+ *
+ * Even if the code in your draw() function consistently produces frames in time
+ * for them to be displayed at the desired frame rate, the value frameRate() returns
+ * will vary frame to frame because it's an inaccurate approximation. To accurately
+ * test the performance of your sketches, use your browser's performance profiling tools.
  *
  * @method frameRate
  * @param  {Number} fps number of frames to be displayed every second
@@ -262,10 +275,10 @@ p5.prototype.cursor = function(type, x, y) {
  *
  * function draw() {
  *   background(200);
- *   rectX = rectX += 1; // Move Rectangle
+ *   rectX += 1; // Move Rectangle
  *
  *   if (rectX >= width) {
-    // If you go off screen.
+ *     // If you go off screen.
  *     if (fr === 30) {
  *       clr = color(0, 0, 255);
  *       fr = 10;
@@ -329,6 +342,24 @@ p5.prototype.setFrameRate = function(fps) {
 };
 
 /**
+ * Returns _targetFrameRate variable. The default _targetFrameRate is set to 60.
+ * This could be changed by calling frameRate() and setting it to the desired
+ * value. When getTargetFrameRate() is called, it should return the value that was set.
+ * @method getTargetFrameRate
+ * @return {Number} _targetFrameRate
+ * @example
+ * <div><code>
+ * function draw() {
+ *   frameRate(20);
+ *   text(getTargetFrameRate(), width / 2, height / 2);
+ * }
+ * </code></div>
+ */
+p5.prototype.getTargetFrameRate = function() {
+  return this._targetFrameRate;
+};
+
+/**
  * Hides the cursor from view.
  *
  * @method noCursor
@@ -345,11 +376,69 @@ p5.prototype.setFrameRate = function(fps) {
  * </code></div>
  *
  * @alt
- * cursor becomes 10x 10 white ellipse the moves with mouse x and y.
+ * cursor becomes 10×10 white ellipse the moves with mouse x and y.
  */
 p5.prototype.noCursor = function() {
   this._curElement.elt.style.cursor = 'none';
 };
+
+/**
+ * If the sketch was created in WebGL mode, then `weglVersion` will indicate
+ * which version of WebGL it is using. It will try to create a WebGL2 canvas
+ * unless you have requested WebGL1 via `setAttributes({ version: 1 })`, and
+ * will fall back to WebGL1 if WebGL2 is not available.
+ *
+ * `webglVersion` will always be either `WEBGL2`, `WEBGL`, or `P2D` if not in
+ * WebGL mode.
+ * @property {String} webglVersion
+ * @readOnly
+ * @example
+ * <div><code>
+ * let myFont;
+ * function preload() {
+ *   myFont = loadFont('assets/inconsolata.otf');
+ * }
+ * function setup() {
+ *   createCanvas(100, 50, WEBGL);
+ *   // Uncomment the following line to see the behavior change in WebGL 1:
+ *   // setAttributes({ version: 1 })
+ *
+ *   const graphic = createGraphics(30, 30);
+ *   graphic.background(255);
+ *   graphic.noStroke();
+ *   graphic.fill(200);
+ *   graphic.rect(0, 0, graphic.width/2, graphic.height/2);
+ *   graphic.rect(
+ *     graphic.width/2, graphic.height/2,
+ *     graphic.width/2, graphic.height/2
+ *   );
+ *
+ *   noStroke();
+ *   translate(-width/2, -height/2);
+ *   textureWrap(REPEAT);
+ *   texture(graphic);
+ *   beginShape(QUADS);
+ *   vertex(0, 0, 0, 0, 0);
+ *   vertex(width, 0, 0, width, 0);
+ *   vertex(width, height, 0, width, height);
+ *   vertex(0, height, 0, 0, height);
+ *   endShape();
+ *
+ *   textFont(myFont);
+ *   textAlign(CENTER, CENTER);
+ *   textSize(30);
+ *   fill(0);
+ *   text('WebGL' + (webglVersion === WEBGL2 ? 2 : 1), 0, 0, width, height);
+ * }
+ * </code></div>
+ *
+ * @alt
+ * This example writes either 'WebGL1' or 'WebGL2' on the canvas, depending on
+ * the capabilities of the device it runs on. If it says WebGL2, the background
+ * will be checkered. Otherwise, the background will have just one checker tile
+ * with colors stretched to the edges of the canvas.
+ */
+p5.prototype.webglVersion = C.P2D;
 
 /**
  * System variable that stores the width of the screen display according to The
@@ -580,8 +669,8 @@ p5.prototype.fullscreen = function(val) {
  * </div>
  *
  * @alt
- * fuzzy 50x50 white ellipse with black outline in center of canvas.
- * sharp 50x50 white ellipse with black outline in center of canvas.
+ * fuzzy 50×50 white ellipse with black outline in center of canvas.
+ * sharp 50×50 white ellipse with black outline in center of canvas.
  */
 /**
  * @method pixelDensity
@@ -621,7 +710,7 @@ p5.prototype.pixelDensity = function(val) {
  * </div>
  *
  * @alt
- * 50x50 white ellipse with black outline in center of canvas.
+ * 50×50 white ellipse with black outline in center of canvas.
  */
 p5.prototype.displayDensity = () => window.devicePixelRatio;
 
@@ -661,7 +750,7 @@ function exitFullscreen() {
  * Gets the current URL. Note: when using the
  * p5 Editor, this will return an empty object because the sketch
  * is embedded in an iframe. It will work correctly if you view the
- * sketch using sketch the edtior's present or share URLs.
+ * sketch using the editor's present or share URLs.
  * @method getURL
  * @return {String} url
  * @example
@@ -692,7 +781,7 @@ p5.prototype.getURL = () => location.href;
  * Gets the current URL path as an array. Note: when using the
  * p5 Editor, this will return an empty object because the sketch
  * is embedded in an iframe. It will work correctly if you view the
- * sketch using sketch the edtior's present or share URLs.
+ * sketch using the editor's present or share URLs.
  * @method getURLPath
  * @return {String[]} path components
  * @example
@@ -714,7 +803,7 @@ p5.prototype.getURLPath = () =>
  * Gets the current URL params as an Object. Note: when using the
  * p5 Editor, this will return an empty object because the sketch
  * is embedded in an iframe. It will work correctly if you view the
- * sketch using sketch the edtior's present or share URLs.
+ * sketch using the editor's present or share URLs.
  * @method getURLParams
  * @return {Object} URL params
  * @example

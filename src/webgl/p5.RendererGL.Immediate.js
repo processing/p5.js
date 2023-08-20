@@ -26,14 +26,33 @@ import './p5.RenderBuffer';
  * @param  {Number} mode webgl primitives mode.  beginShape supports the
  *                       following modes:
  *                       POINTS,LINES,LINE_STRIP,LINE_LOOP,TRIANGLES,
- *                       TRIANGLE_STRIP, TRIANGLE_FAN and TESS(WEBGL only)
+ *                       TRIANGLE_STRIP, TRIANGLE_FAN, QUADS, QUAD_STRIP,
+ *                       and TESS(WEBGL only)
  * @chainable
  */
 p5.RendererGL.prototype.beginShape = function(mode) {
   this.immediateMode.shapeMode =
-    mode !== undefined ? mode : constants.TRIANGLE_FAN;
+    mode !== undefined ? mode : constants.TESS;
   this.immediateMode.geometry.reset();
+  this.immediateMode.contourIndices = [];
   return this;
+};
+
+const immediateBufferStrides = {
+  vertices: 1,
+  vertexNormals: 1,
+  vertexColors: 4,
+  vertexStrokeColors: 4,
+  uvs: 2
+};
+
+p5.RendererGL.prototype.beginContour = function() {
+  if (this.immediateMode.shapeMode !== constants.TESS) {
+    throw new Error('WebGL mode can only use contours with beginShape(TESS).');
+  }
+  this.immediateMode.contourIndices.push(
+    this.immediateMode.geometry.vertices.length
+  );
 };
 
 /**
@@ -47,9 +66,35 @@ p5.RendererGL.prototype.beginShape = function(mode) {
  * @TODO implement handling of <a href="#/p5.Vector">p5.Vector</a> args
  */
 p5.RendererGL.prototype.vertex = function(x, y) {
+  // WebGL 1 doesn't support QUADS or QUAD_STRIP, so we duplicate data to turn
+  // QUADS into TRIANGLES and QUAD_STRIP into TRIANGLE_STRIP. (There is no extra
+  // work to convert QUAD_STRIP here, since the only difference is in how edges
+  // are rendered.)
+  if (this.immediateMode.shapeMode === constants.QUADS) {
+    // A finished quad turned into triangles should leave 6 vertices in the
+    // buffer:
+    // 0--3     0   3--5
+    // |  | --> | \  \ |
+    // 1--2     1--2   4
+    // When vertex index 3 is being added, add the necessary duplicates.
+    if (this.immediateMode.geometry.vertices.length % 6 === 3) {
+      for (const key in immediateBufferStrides) {
+        const stride = immediateBufferStrides[key];
+        const buffer = this.immediateMode.geometry[key];
+        buffer.push(
+          ...buffer.slice(
+            buffer.length - 3 * stride,
+            buffer.length - 2 * stride
+          ),
+          ...buffer.slice(buffer.length - stride, buffer.length)
+        );
+      }
+    }
+  }
+
   let z, u, v;
 
-  // default to (x, y) mode: all other arugments assumed to be 0.
+  // default to (x, y) mode: all other arguments assumed to be 0.
   z = u = v = 0;
 
   if (arguments.length === 3) {
@@ -67,12 +112,20 @@ p5.RendererGL.prototype.vertex = function(x, y) {
   }
   const vert = new p5.Vector(x, y, z);
   this.immediateMode.geometry.vertices.push(vert);
+  this.immediateMode.geometry.vertexNormals.push(this._currentNormal);
   const vertexColor = this.curFillColor || [0.5, 0.5, 0.5, 1.0];
   this.immediateMode.geometry.vertexColors.push(
     vertexColor[0],
     vertexColor[1],
     vertexColor[2],
     vertexColor[3]
+  );
+  const lineVertexColor = this.curStrokeColor || [0.5, 0.5, 0.5, 1];
+  this.immediateMode.geometry.vertexStrokeColors.push(
+    lineVertexColor[0],
+    lineVertexColor[1],
+    lineVertexColor[2],
+    lineVertexColor[3]
   );
 
   if (this.textureMode === constants.IMAGE) {
@@ -81,7 +134,11 @@ p5.RendererGL.prototype.vertex = function(x, y) {
         u /= this._tex.width;
         v /= this._tex.height;
       }
-    } else if (this._tex === null && arguments.length >= 4) {
+    } else if (
+      !this.isProcessingVertices &&
+      this._tex === null &&
+      arguments.length >= 4
+    ) {
       // Only throw this warning if custom uv's have  been provided
       console.warn(
         'You must first call texture() before using' +
@@ -104,6 +161,28 @@ p5.RendererGL.prototype.vertex = function(x, y) {
 };
 
 /**
+ * Sets the normal to use for subsequent vertices.
+ * @method vertexNormal
+ * @param  {Number} x
+ * @param  {Number} y
+ * @param  {Number} z
+ * @chainable
+ *
+ * @method vertexNormal
+ * @param  {Vector} v
+ * @chainable
+ */
+p5.RendererGL.prototype.normal = function(xorv, y, z) {
+  if (xorv instanceof p5.Vector) {
+    this._currentNormal = xorv;
+  } else {
+    this._currentNormal = new p5.Vector(xorv, y, z);
+  }
+
+  return this;
+};
+
+/**
  * End shape drawing and render vertices to screen.
  * @chainable
  */
@@ -113,7 +192,8 @@ p5.RendererGL.prototype.endShape = function(
   isBezier,
   isQuadratic,
   isContour,
-  shapeKind
+  shapeKind,
+  count = 1
 ) {
   if (this.immediateMode.shapeMode === constants.POINTS) {
     this._drawPoints(
@@ -122,16 +202,47 @@ p5.RendererGL.prototype.endShape = function(
     );
     return this;
   }
+  this.isProcessingVertices = true;
   this._processVertices(...arguments);
+  this.isProcessingVertices = false;
+
+  // LINE_STRIP and LINES are not used for rendering, instead
+  // they only indicate a way to modify vertices during the _processVertices() step
+  if (
+    this.immediateMode.shapeMode === constants.LINE_STRIP ||
+    this.immediateMode.shapeMode === constants.LINES
+  ) {
+    this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
+  }
+
+  // WebGL doesn't support the QUADS and QUAD_STRIP modes, so we
+  // need to convert them to a supported format. In `vertex()`, we reformat
+  // the input data into the formats specified below.
+  if (this.immediateMode.shapeMode === constants.QUADS) {
+    this.immediateMode.shapeMode = constants.TRIANGLES;
+  } else if (this.immediateMode.shapeMode === constants.QUAD_STRIP) {
+    this.immediateMode.shapeMode = constants.TRIANGLE_STRIP;
+  }
+
   if (this._doFill) {
-    if (this.immediateMode.geometry.vertices.length > 1) {
-      this._drawImmediateFill();
+    if (
+      !this.geometryBuilder &&
+      this.immediateMode.geometry.vertices.length >= 3
+    ) {
+      this._drawImmediateFill(count);
     }
   }
   if (this._doStroke) {
-    if (this.immediateMode.geometry.lineVertices.length > 1) {
+    if (
+      !this.geometryBuilder &&
+      this.immediateMode.geometry.lineVertices.length >= 1
+    ) {
       this._drawImmediateStroke();
     }
+  }
+
+  if (this.geometryBuilder) {
+    this.geometryBuilder.addImmediate();
   }
 
   this.isBezier = false;
@@ -155,7 +266,7 @@ p5.RendererGL.prototype.endShape = function(
 p5.RendererGL.prototype._processVertices = function(mode) {
   if (this.immediateMode.geometry.vertices.length === 0) return;
 
-  const calculateStroke = this._doStroke && this.drawMode !== constants.TEXTURE;
+  const calculateStroke = this._doStroke;
   const shouldClose = mode === constants.CLOSE;
   if (calculateStroke) {
     this.immediateMode.geometry.edges = this._calculateEdges(
@@ -163,13 +274,25 @@ p5.RendererGL.prototype._processVertices = function(mode) {
       this.immediateMode.geometry.vertices,
       shouldClose
     );
-    this.immediateMode.geometry._edgesToVertices();
+    if (!this.geometryBuilder) {
+      this.immediateMode.geometry._edgesToVertices();
+    }
   }
   // For hollow shapes, user must set mode to TESS
   const convexShape = this.immediateMode.shapeMode === constants.TESS;
+  // If the shape has a contour, we have to re-triangulate to cut out the
+  // contour region
+  const hasContour = this.immediateMode.contourIndices.length > 0;
   // We tesselate when drawing curves or convex shapes
   const shouldTess =
-    (this.isBezier || this.isQuadratic || this.isCurve || convexShape) &&
+    this._doFill &&
+    (
+      this.isBezier ||
+      this.isQuadratic ||
+      this.isCurve ||
+      convexShape ||
+      hasContour
+    ) &&
     this.immediateMode.shapeMode !== constants.LINES;
 
   if (shouldTess) {
@@ -190,6 +313,8 @@ p5.RendererGL.prototype._calculateEdges = function(
 ) {
   const res = [];
   let i = 0;
+  const contourIndices = this.immediateMode.contourIndices.slice();
+  let contourStart = 0;
   switch (shapeMode) {
     case constants.TRIANGLE_STRIP:
       for (i = 0; i < verts.length - 2; i++) {
@@ -197,6 +322,13 @@ p5.RendererGL.prototype._calculateEdges = function(
         res.push([i, i + 2]);
       }
       res.push([i, i + 1]);
+      break;
+    case constants.TRIANGLE_FAN:
+      for (i = 1; i < verts.length - 1; i++) {
+        res.push([0, i]);
+        res.push([i, i + 1]);
+      }
+      res.push([0, verts.length - 1]);
       break;
     case constants.TRIANGLES:
       for (i = 0; i < verts.length - 2; i = i + 3) {
@@ -210,13 +342,47 @@ p5.RendererGL.prototype._calculateEdges = function(
         res.push([i, i + 1]);
       }
       break;
-    default:
-      for (i = 0; i < verts.length - 1; i++) {
+    case constants.QUADS:
+      // Quads have been broken up into two triangles by `vertex()`:
+      // 0   3--5
+      // | \  \ |
+      // 1--2   4
+      for (i = 0; i < verts.length - 5; i += 6) {
         res.push([i, i + 1]);
+        res.push([i + 1, i + 2]);
+        res.push([i + 3, i + 5]);
+        res.push([i + 4, i + 5]);
+      }
+      break;
+    case constants.QUAD_STRIP:
+      // 0---2---4
+      // |   |   |
+      // 1---3---5
+      for (i = 0; i < verts.length - 2; i += 2) {
+        res.push([i, i + 1]);
+        res.push([i, i + 2]);
+        res.push([i + 1, i + 3]);
+      }
+      res.push([i, i + 1]);
+      break;
+    default:
+      // TODO: handle contours in other modes too
+      for (i = 0; i < verts.length; i++) {
+        // Handle breaks between contours
+        if (i + 1 < verts.length && i + 1 !== contourIndices[0]) {
+          res.push([i, i + 1]);
+        } else {
+          if (shouldClose || contourStart) {
+            res.push([i, contourStart]);
+          }
+          if (contourIndices.length > 0) {
+            contourStart = contourIndices.shift();
+          }
+        }
       }
       break;
   }
-  if (shouldClose) {
+  if (shapeMode !== constants.TESS && shouldClose) {
     res.push([verts.length - 1, 0]);
   }
   return res;
@@ -227,19 +393,96 @@ p5.RendererGL.prototype._calculateEdges = function(
  * @private
  */
 p5.RendererGL.prototype._tesselateShape = function() {
+  // TODO: handle non-TESS shape modes that have contours
   this.immediateMode.shapeMode = constants.TRIANGLES;
-  const contours = [
-    new Float32Array(this._vToNArray(this.immediateMode.geometry.vertices))
-  ];
+  const contours = [[]];
+  for (let i = 0; i < this.immediateMode.geometry.vertices.length; i++) {
+    if (
+      this.immediateMode.contourIndices.length > 0 &&
+      this.immediateMode.contourIndices[0] === i
+    ) {
+      this.immediateMode.contourIndices.shift();
+      contours.push([]);
+    }
+    contours[contours.length-1].push(
+      this.immediateMode.geometry.vertices[i].x,
+      this.immediateMode.geometry.vertices[i].y,
+      this.immediateMode.geometry.vertices[i].z,
+      this.immediateMode.geometry.uvs[i * 2],
+      this.immediateMode.geometry.uvs[i * 2 + 1],
+      this.immediateMode.geometry.vertexColors[i * 4],
+      this.immediateMode.geometry.vertexColors[i * 4 + 1],
+      this.immediateMode.geometry.vertexColors[i * 4 + 2],
+      this.immediateMode.geometry.vertexColors[i * 4 + 3],
+      this.immediateMode.geometry.vertexNormals[i].x,
+      this.immediateMode.geometry.vertexNormals[i].y,
+      this.immediateMode.geometry.vertexNormals[i].z
+    );
+  }
   const polyTriangles = this._triangulate(contours);
+  const originalVertices = this.immediateMode.geometry.vertices;
   this.immediateMode.geometry.vertices = [];
+  this.immediateMode.geometry.vertexNormals = [];
+  this.immediateMode.geometry.uvs = [];
+  const colors = [];
   for (
     let j = 0, polyTriLength = polyTriangles.length;
     j < polyTriLength;
-    j = j + 3
+    j = j + p5.RendererGL.prototype.tessyVertexSize
   ) {
-    this.vertex(polyTriangles[j], polyTriangles[j + 1], polyTriangles[j + 2]);
+    colors.push(...polyTriangles.slice(j + 5, j + 9));
+    this.normal(...polyTriangles.slice(j + 9, j + 12));
+    this.vertex(...polyTriangles.slice(j, j + 5));
   }
+  if (this.geometryBuilder) {
+    // Tesselating the face causes the indices of edge vertices to stop being
+    // correct. When rendering, this is not a problem, since _edgesToVertices
+    // will have been called before this, and edge vertex indices are no longer
+    // needed. However, the geometry builder still needs this information, so
+    // when one is active, we need to update the indices.
+    //
+    // We record index mappings in a Map so that once we have found a
+    // corresponding vertex, we don't need to loop to find it again.
+    const newIndex = new Map();
+    this.immediateMode.geometry.edges =
+      this.immediateMode.geometry.edges.map(edge => edge.map(origIdx => {
+        if (!newIndex.has(origIdx)) {
+          const orig = originalVertices[origIdx];
+          let newVertIndex = this.immediateMode.geometry.vertices.findIndex(
+            v =>
+              orig.x === v.x &&
+              orig.y === v.y &&
+              orig.z === v.z
+          );
+          if (newVertIndex === -1) {
+            // The tesselation process didn't output a vertex with the exact
+            // coordinate as before, potentially due to numerical issues. This
+            // doesn't happen often, but in this case, pick the closest point
+            let closestDist = Infinity;
+            let closestIndex = 0;
+            for (
+              let i = 0;
+              i < this.immediateMode.geometry.vertices.length;
+              i++
+            ) {
+              const vert = this.immediateMode.geometry.vertices[i];
+              const dX = orig.x - vert.x;
+              const dY = orig.y - vert.y;
+              const dZ = orig.z - vert.z;
+              const dist = dX*dX + dY*dY + dZ*dZ;
+              if (dist < closestDist) {
+                closestDist = dist;
+                closestIndex = i;
+              }
+            }
+            newVertIndex = closestIndex;
+          }
+          newIndex.set(origIdx, newVertIndex);
+        }
+        return newIndex.get(origIdx);
+      }));
+  }
+  this.immediateMode.geometry.vertexColors = colors;
 };
 
 /**
@@ -247,33 +490,42 @@ p5.RendererGL.prototype._tesselateShape = function() {
  * enabling all appropriate buffers, applying color blend, and drawing the fill geometry.
  * @private
  */
-p5.RendererGL.prototype._drawImmediateFill = function() {
+p5.RendererGL.prototype._drawImmediateFill = function(count = 1) {
   const gl = this.GL;
-  const shader = this._getImmediateFillShader();
+  this._useVertexColor = (this.immediateMode.geometry.vertexColors.length > 0);
 
-  this._calculateNormals(this.immediateMode.geometry);
+  let shader;
+  shader = this._getImmediateFillShader();
+
   this._setFillUniforms(shader);
 
   for (const buff of this.immediateMode.buffers.fill) {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
   }
-
-  // LINE_STRIP and LINES are not used for rendering, instead
-  // they only indicate a way to modify vertices during the _processVertices() step
-  if (
-    this.immediateMode.shapeMode === constants.LINE_STRIP ||
-    this.immediateMode.shapeMode === constants.LINES
-  ) {
-    this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
-  }
+  shader.disableRemainingAttributes();
 
   this._applyColorBlend(this.curFillColor);
-  gl.drawArrays(
-    this.immediateMode.shapeMode,
-    0,
-    this.immediateMode.geometry.vertices.length
-  );
 
+  if (count === 1) {
+    gl.drawArrays(
+      this.immediateMode.shapeMode,
+      0,
+      this.immediateMode.geometry.vertices.length
+    );
+  }
+  else {
+    try {
+      gl.drawArraysInstanced(
+        this.immediateMode.shapeMode,
+        0,
+        this.immediateMode.geometry.vertices.length,
+        count
+      );
+    }
+    catch (e) {
+      console.log('🌸 p5.js says: Instancing is only supported in WebGL2 mode');
+    }
+  }
   shader.unbindShader();
 };
 
@@ -284,30 +536,24 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
  */
 p5.RendererGL.prototype._drawImmediateStroke = function() {
   const gl = this.GL;
+
+  this._useLineColor =
+    (this.immediateMode.geometry.vertexStrokeColors.length > 0);
+
   const shader = this._getImmediateStrokeShader();
   this._setStrokeUniforms(shader);
   for (const buff of this.immediateMode.buffers.stroke) {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
   }
+  shader.disableRemainingAttributes();
   this._applyColorBlend(this.curStrokeColor);
+
   gl.drawArrays(
     gl.TRIANGLES,
     0,
-    this.immediateMode.geometry.lineVertices.length
+    this.immediateMode.geometry.lineVertices.length / 3
   );
   shader.unbindShader();
-};
-
-/**
- * Called from _drawImmediateFill(). Currently adds default normals which
- * only work for flat shapes.
- * @parem
- * @private
- */
-p5.RendererGL.prototype._calculateNormals = function(geometry) {
-  geometry.vertices.forEach(() => {
-    geometry.vertexNormals.push(new p5.Vector(0, 0, 1));
-  });
 };
 
 export default p5.RendererGL;

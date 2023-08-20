@@ -1,15 +1,21 @@
+# Contributing Documentation
+
 Documentation is essential for new learners and experienced programmers alike. It helps make our community inclusive by extending a friendly hand to those who are less familiar with p5.js. It also helps us find the bugs and issues with the code itself, because we test and try things out as we document.
 
 There are several ways to contribute to documentation:
 
-## ☝️ Open issues
-If you're just getting started, one really helpful way you can contribute is by opening issues for documentation needs. If you notice a typo, a missing or broken example, or a function description that is confusing, [open an issue for it](https://github.com/processing/p5.js/issues)! Please include a link to the page that needs fixing so we can find it easily.
+## ☝️ Make changes
+If you're just getting started, one really helpful way you can contribute is by improving our documentation. If you notice a typo, a missing or broken example, or a function description that is confusing, here are some things you can do:
+* If you are just correcting a small typo, feel free to go ahead and work on it and send in a PR when you're finished! 
+* If you don't feel like fixing it yourself, that's alright. Let us know by [opening an issue](https://github.com/processing/p5.js/issues).
+* If you're unsure about anything, [open an issue](https://github.com/processing/p5.js/issues) anyway!
 
 ## 🗯 Contribute to the reference  
 Read through the [reference](http://p5js.org/reference/), and look for typos, broken examples, or confusing documentation. If it's a straightforward fix, go ahead and work on it! If it's a more involved question that requires discussion, create an [issue](https://github.com/processing/p5.js/issues/new).
 * Here are instructions for [getting setup for the first time with the p5.js repo](./README.md).
 * The reference is built from the inline documentation in the source code (found in the `src/` folder).
 * Here is information on [how to update or add inline documentation and examples](./inline_documentation.md).
+* Here is the [documentation style guide](./documentation_style_guide.md) for writing and code samples.
 * If you find errors with the [spanish documentation](http://p5js.org/es), there are instructions to update this [here](https://github.com/processing/p5.js-website#internationalization-i18n-and-structure).
 * Community-maintained Typescript definitions are [here](https://github.com/p5-types/p5.ts).
 
@@ -28,9 +34,6 @@ While the examples in the reference are meant to be very simplistic snippets of 
 ## 👉 Getting started
 * Read the [p5.js community statement](http://p5js.org/community/)
 * Optional: Check out the [contributor docs](./README.md) to get an overview of the repository and learn how to build the code (if relevant for you).
-* All discussion happens on github issues, so there's no slack/gitter/etc channel you need to join.
+* All discussion happens on GitHub issues, so there's no slack/gitter/etc channel you need to join.
 * Add your name to the [contributors list](https://github.com/processing/p5.js#contributors) in the readme.md file! Instructions [here](https://github.com/processing/p5.js/issues/2309).
 * And of course, if you're more of a bug fixer kind of person, feel free to jump into any of the [issues](https://github.com/processing/p5.js/issues)!
-
-Welcome! We're so glad you're here!
-❤️ the p5.js community

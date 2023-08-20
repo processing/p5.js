@@ -1,0 +1,72 @@
+{
+  "fes": {
+    "autoplay": "미디어('{{src}}')가 이 브라우저에서는 재생되지 않았습니다. 사용하고 계신 브라우저의 자동 재생 정책 때문일 수 있습니다.\n\n+ 추가 정보: {{url}}",
+    "checkUserDefinedFns": "혹시 {{actualName}} 대신 {{name}}를 쓴 것이 아닌지 살펴보세요.",
+    "fileLoadError": {
+      "bytes": "파일을 로드하는 중에 문제가 발생했습니다. {{suggestion}}",
+      "font": "글꼴을 로드하는 중에 문제가 발생했습니다. {{suggestion}}",
+      "gif": "GIF 파일을 로드하는 중에 문제가 발생했습니다. GIF 파일의 인코딩 방식이 87a이거나 89a인지를 확인해보세요.",
+      "image": "이미지를 로드하는 중에 문제가 발생했습니다. {{suggestion}}",
+      "json": "JSON 파일을 로드하는 중에 문제가 발생했습니다. {{suggestion}}",
+      "large": "용량이 큰 파일을 한꺼번에 로드하는 중에 문제가 발생했습니다. 파일 용량을 줄여 보세요.",
+      "strings": "텍스트 파일을 로드하는 중에 문제가 발생했습니다. {{suggestion}}",
+      "suggestion": "파일 경로({{filePath}})가 올바른지 확인해보세요. 혹은 해당 파일을 호스팅 서비스를 이용하거나 로컬 서버를 구동하여 웹에 올리는 방법을 고려해 보세요.\n\n+ 추가 정보: {{url}}",
+      "table": "테이블 파일을 로드하는 중에 문제가 발생했습니다. {{suggestion}}",
+      "xml": "XML 파일을 로드하는 중에 문제가 발생했습니다. {{suggestion}}"
+    },
+    "friendlyParamError": {
+      "type_EMPTY_VAR": "{{location}} {{formatType}} 타입 값을 받는 {{func}}()의 {{position}} 매개변수(parameter)에 아무 값도 전달되지 않았습니다. 범위(scope)와 관련된 문제일 수 있습니다.\n\n+ 추가 정보: {{url}}",
+      "type_TOO_FEW_ARGUMENTS": "{{location}} 최소 {{minParams}}개의 인수(argument)를 받는 함수 {{func}}()에 인수가 {{argCount}}개만 입력되었습니다.",
+      "type_TOO_MANY_ARGUMENTS": "{{location}} 최대 {{maxParams}}개의 인수(argument)를 받는 함수 {{func}}()에 인수가 {{argCount}}개나 입력되었습니다.",
+      "type_WRONG_TYPE": "{{location}} {{formatType}} 타입의 값을 받는 {{func}}()의 {{position}} 매개변수(parameter)에 {{argType}} 타입의 값이 입력되었습니다."
+    },
+    "globalErrors": {
+      "reference": {
+        "cannotAccess": "\n{{location}} \"{{symbol}}\"가 선언되지 않은 채 사용되었습니다. 변수를 사용하기 전, 먼저 선언했는지 확인해보세요.\n\n+ 추가 정보: {{url}}",
+        "notDefined": "\n{{location}} \"{{symbol}}\"은 현재 범위(scope) 안에 정의되지 않았습니다. 만약 정의를 했다면, 해당 범위와 오탈자, 대소문자 등을 확인해보세요 (자바스크립트에서는 대소문자를 구분합니다).\n\n+ 추가 정보: {{url}}"
+      },
+      "stackSubseq": "└[{{location}}] \n\t {{func}}()에 있는 줄{{line}}에서 호출\n",
+      "stackTop": "┌[{{location}}] \n\t {{func}}()에 있는 줄{{line}}에서 오류 발생\n",
+      "syntax": {
+        "badReturnOrYield": "\n구문 오류 - 대괄호가 제대로 쓰였는지 확인해 본 후, return을 함수 안에 넣어주세요.\n\n+ 추가 정보: {{url}}",
+        "invalidToken": "\n구문 오류 - 자바스크립트가 인식할 수 없거나, 적합하지 않은 기호나 문구가 입력되었습니다.\n\n+ 추가 정보: {{url}}",
+        "missingInitializer": "\n구문 오류 - const 변수가 선언되었지만 초기화되지 않았습니다. 변수가 선언된 명령문 안에서 값을 지정해주세요.\n\n+ 추가 정보: {{url}}",
+        "redeclaredVariable": "\n구문 오류 - 이미 선언된 \"{{symbol}}\"가 재선언되었습니다. 자바스크립트에서는 같은 변수를 한 번 이상 선언할 수 없습니다.\n\n+ 추가 정보: {{url}}",
+        "unexpectedToken": "\n구문 오류 - 입력된 문구가 예상하지 못한 위치에 있습니다.보통 이런 상황은 오탈자 때문에 일어나는 경우가 많습니다. 누락되거나 추가된 내용이 없는지 확인하세요.\n\n+ 추가 정보: {{url}}"
+      },
+      "type": {
+        "constAssign": "\n{{location}} const 변수가 재지정되었습니다. 자바스크립트에서는 const 변수에 다른 값을 여러 번 지정할 수 없으므로 새로운 값을 여러 번 지정하시려면, const 대신 var나 let을 써서 변수를 선언해 주세요.\n\n+ 추가 정보: {{url}}",
+        "notfunc": "\n{{location}} \"{{symbol}}\"는 함수로 호출할 수 없습니다. 타입과 오탈자, 대소문자 등을 확인해주세요.\n\n+ 추가 정보: {{url}}",
+        "notfuncObj": "\n{{location}} \"{{symbol}}\"는 함수로 호출할 수 없습니다. \"{{obj}}\"가 \"{{symbol}}\"를 가지고 있는지 살펴보고, 타입과 오탈자, 대소문자 등을 확인해주세요.\n\n+ 추가 정보: {{url}}",
+        "readFromNull": "\n{{location}} null의 속성(property)을 읽을 수 없습니다. 자바스크립트에서 null이란, 객체(object)에 주어진 값이 비어있다는 뜻입니다.\n\n+ 추가 정보: {{url}}",
+        "readFromUndefined": "\n{{location}} undefined의 속성(property)을 읽을 수 없습니다. 혹시 연산 중인 변수가 정의되지 않았는지 확인하세요.\n\n+ 추가 정보: {{url}}"
+      }
+    },
+    "libraryError": "{{location}} 함수 {{func}}가 호출되었을 때,  \"{{error}}\" 오류가 p5js 라이브러리 내에서 발생했습니다. 함수 {{func}}에 전달한 인수(argument)가 문제일 수 있습니다.",
+    "location": "[{{file}}, 줄{{line}}]",
+    "misspelling": "{{location}} 혹시 p5.js의 {{type}}를 사용하시려면 \"{{name}}\"를 {{actualName}}로 고쳐 보세요.",
+    "misspelling_plural": "{{location}} 혹시 p5.js의 {{type}}를 사용하시려면 \"{{name}}\"를 다음 중 하나로 고쳐보세요: \n{{suggestions}}",
+    "misusedTopLevel": "{{location}} 혹시 p5.js의 {{symbolType}} 타입 {{symbolName}}을 사용하셨나요? 그렇다면 {{symbolName}}을 작성 중인 setup() 함수의 대괄호 안으로 옮겨보세요.\n\n+ 추가 정보: {{url}}",
+    "positions": {
+      "p_1": "1번째",
+      "p_10": "10번째",
+      "p_11": "11번째",
+      "p_12": "12번째",
+      "p_2": "2번째",
+      "p_3": "3번째",
+      "p_4": "4번째",
+      "p_5": "5번째",
+      "p_6": "6번째",
+      "p_7": "7번째",
+      "p_8": "8번째",
+      "p_9": "9번째"
+    },
+    "pre": "\n🌸 p5.js says: {{message}}",
+    "sketchReaderErrors": {
+      "reservedConst": "p5.js에서 이미 쓰고 있는 변수 \"{{symbol}}\"를 사용하셨습니다. 해당 변수를 다른 이름으로 바꾸어 주세요.\n\n+ 추가 정보: {{url}}",
+      "reservedFunc": "p5.js에서 이미 쓰고 있는 함수 \"{{symbol}}\"를 사용하셨습니다. 해당 함수를 다른 이름으로 바꾸어 주세요.\n\n+ 추가 정보: {{url}}"
+    },
+    "welcome": "{{logo}} 환영합니다, 이 메세지는 에러를 찾는 디버깅 안내문입니다. 안내가 필요없는 경우 p5.js대신 p5.min.js를 사용하세요.",
+    "wrongPreload": "{{location}} \"{{func}}\"가 호출되며 p5js 라이브러리 내부에서 다음 오류가 발생했습니다: \"{{error}}\".\n\n 함수 \"{{func}}\"가 preload()에서 호출되었기 때문일 수 있습니다. preload() 함수 안에서는 지정된 함수(예: loadImage, loadJSON, loadFont, loadStrings 등)만 호출할 수 있습니다."
+  }
+}

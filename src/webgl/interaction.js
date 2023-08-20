@@ -1,5 +1,5 @@
 /**
- * @module Lights, Camera
+ * @module 3D
  * @submodule Interaction
  * @for p5
  * @requires core
@@ -9,20 +9,32 @@ import p5 from '../core/main';
 import * as constants from '../core/constants';
 
 /**
- * Allows movement around a 3D sketch using a mouse or trackpad.  Left-clicking
- * and dragging will rotate the camera position about the center of the sketch,
- * right-clicking and dragging will pan the camera position without rotation,
- * and using the mouse wheel (scrolling) will move the camera closer or further
+ * Allows movement around a 3D sketch using a mouse or trackpad or touch.
+ * Left-clicking and dragging or swipe motion will rotate the camera position
+ * about the center of the sketch, right-clicking and dragging or multi-swipe
+ * will pan the camera position without rotation, and using the mouse wheel
+ * (scrolling) or pinch in/out will move the camera further or closer
  * from the center of the sketch. This function can be called with parameters
- * dictating sensitivity to mouse movement along the X and Y axes.  Calling
- * this function without parameters is equivalent to calling orbitControl(1,1).
- * To reverse direction of movement in either axis, enter a negative number
- * for sensitivity.
+ * dictating sensitivity to mouse/touch movement along the X and Y axes.
+ * Calling this function without parameters is equivalent to calling
+ * orbitControl(1,1). To reverse direction of movement in either axis,
+ * enter a negative number for sensitivity.
  * @method orbitControl
  * @for p5
  * @param  {Number} [sensitivityX] sensitivity to mouse movement along X axis
  * @param  {Number} [sensitivityY] sensitivity to mouse movement along Y axis
  * @param  {Number} [sensitivityZ] sensitivity to scroll movement along Z axis
+ * @param  {Object} [options] An optional object that can contain additional settings,
+ * disableTouchActions - Boolean, default value is true.
+ * Setting this to true makes mobile interactions smoother by preventing
+ * accidental interactions with the page while orbiting. But if you're already
+ * doing it via css or want the default touch actions, consider setting it to false.
+ * freeRotation - Boolean, default value is false.
+ * By default, horizontal movement of the mouse or touch pointer rotates the camera
+ * around the y-axis, and vertical movement rotates the camera around the x-axis.
+ * But if setting this option to true, the camera always rotates in the direction
+ * the pointer is moving. For zoom and move, the behavior is the same regardless of
+ * true/false.
  * @chainable
  * @example
  * <div>
@@ -30,10 +42,18 @@ import * as constants from '../core/constants';
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   normalMaterial();
+ *   describe(
+ *     'Camera orbits around a box when mouse is hold-clicked & then moved.'
+ *   );
  * }
  * function draw() {
  *   background(200);
+ *
+ *   // If you execute the line commented out instead of next line, the direction of rotation
+ *   // will be the direction the mouse or touch pointer moves, not around the X or Y axis.
  *   orbitControl();
+ *   // orbitControl(1, 1, 1, {freeRotation: true});
+ *
  *   rotateY(0.5);
  *   box(30, 50);
  * }
@@ -45,18 +65,15 @@ import * as constants from '../core/constants';
  */
 
 // implementation based on three.js 'orbitControls':
-// https://github.com/mrdoob/three.js/blob/dev/examples/js/controls/OrbitControls.js
-p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
+// https://github.com/mrdoob/three.js/blob/6afb8595c0bf8b2e72818e42b64e6fe22707d896/examples/jsm/controls/OrbitControls.js#L22
+p5.prototype.orbitControl = function(
+  sensitivityX,
+  sensitivityY,
+  sensitivityZ,
+  options
+) {
   this._assert3d('orbitControl');
   p5._validateParameters('orbitControl', arguments);
-
-  // If the mouse is not in bounds of the canvas, disable all behaviors:
-  const mouseInCanvas =
-    this.mouseX < this.width &&
-    this.mouseX > 0 &&
-    this.mouseY < this.height &&
-    this.mouseY > 0;
-  if (!mouseInCanvas) return;
 
   const cam = this._renderer._curCamera;
 
@@ -67,12 +84,15 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
     sensitivityY = sensitivityX;
   }
   if (typeof sensitivityZ === 'undefined') {
-    sensitivityZ = 0.5;
+    sensitivityZ = 1;
+  }
+  if (typeof options !== 'object') {
+    options = {};
   }
 
   // default right-mouse and mouse-wheel behaviors (context menu and scrolling,
   // respectively) are disabled here to allow use of those events for panning and
-  // zooming
+  // zooming. However, whether or not to disable touch actions is an option.
 
   // disable context menu for canvas element and add 'contextMenuDisabled'
   // flag to p5 instance
@@ -88,59 +108,270 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
     this._setProperty('wheelDefaultDisabled', true);
   }
 
-  const scaleFactor = this.height < this.width ? this.height : this.width;
+  // disable default touch behavior on the canvas element and add
+  // 'touchActionsDisabled' flag to p5 instance
+  const { disableTouchActions = true } = options;
+  if (this.touchActionsDisabled !== true && disableTouchActions) {
+    this.canvas.style['touch-action'] = 'none';
+    this._setProperty('touchActionsDisabled', true);
+  }
 
-  // ZOOM if there is a change in mouseWheelDelta
-  if (this._mouseWheelDeltaY !== this._pmouseWheelDeltaY) {
-    // zoom according to direction of mouseWheelDeltaY rather than value
-    if (this._mouseWheelDeltaY > 0) {
-      this._renderer._curCamera._orbit(0, 0, sensitivityZ * scaleFactor);
+  // If option.freeRotation is true, the camera always rotates freely in the direction
+  // the pointer moves. default value is false (normal behavior)
+  const { freeRotation = false } = options;
+
+  // get moved touches.
+  const movedTouches = [];
+
+  this.touches.forEach(curTouch => {
+    this._renderer.prevTouches.forEach(prevTouch => {
+      if (curTouch.id === prevTouch.id) {
+        const movedTouch = {
+          x: curTouch.x,
+          y: curTouch.y,
+          px: prevTouch.x,
+          py: prevTouch.y
+        };
+        movedTouches.push(movedTouch);
+      }
+    });
+  });
+
+  this._renderer.prevTouches = this.touches;
+
+  // The idea of using damping is based on the following website. thank you.
+  // https://github.com/freshfork/p5.EasyCam/blob/9782964680f6a5c4c9bee825c475d9f2021d5134/p5.easycam.js#L1124
+
+  // variables for interaction
+  let deltaRadius = 0;
+  let deltaTheta = 0;
+  let deltaPhi = 0;
+  let moveDeltaX = 0;
+  let moveDeltaY = 0;
+  // constants for dampingProcess
+  const damping = 0.85;
+  const rotateAccelerationFactor = 0.6;
+  const moveAccelerationFactor = 0.15;
+  // For touches, the appropriate scale is different
+  // because the distance difference is multiplied.
+  const mouseZoomScaleFactor = 0.01;
+  const touchZoomScaleFactor = 0.0004;
+  const scaleFactor = this.height < this.width ? this.height : this.width;
+  // Flag whether the mouse or touch pointer is inside the canvas
+  let pointersInCanvas = false;
+
+  // calculate and determine flags and variables.
+  if (movedTouches.length > 0) {
+    /* for touch */
+    // if length === 1, rotate
+    // if length > 1, zoom and move
+
+    // for touch, it is calculated based on one moved touch pointer position.
+    pointersInCanvas =
+      movedTouches[0].x > 0 && movedTouches[0].x < this.width &&
+      movedTouches[0].y > 0 && movedTouches[0].y < this.height;
+
+    if (movedTouches.length === 1) {
+      const t = movedTouches[0];
+      deltaTheta = -sensitivityX * (t.x - t.px) / scaleFactor;
+      deltaPhi = sensitivityY * (t.y - t.py) / scaleFactor;
     } else {
-      this._renderer._curCamera._orbit(0, 0, -sensitivityZ * scaleFactor);
+      const t0 = movedTouches[0];
+      const t1 = movedTouches[1];
+      const distWithTouches = Math.hypot(t0.x - t1.x, t0.y - t1.y);
+      const prevDistWithTouches = Math.hypot(t0.px - t1.px, t0.py - t1.py);
+      const changeDist = distWithTouches - prevDistWithTouches;
+      // move the camera farther when the distance between the two touch points
+      // decreases, move the camera closer when it increases.
+      deltaRadius = -changeDist * sensitivityZ * touchZoomScaleFactor;
+      // Move the center of the camera along with the movement of
+      // the center of gravity of the two touch points.
+      moveDeltaX = 0.5 * (t0.x + t1.x) - 0.5 * (t0.px + t1.px);
+      moveDeltaY = 0.5 * (t0.y + t1.y) - 0.5 * (t0.py + t1.py);
+    }
+    if (this.touches.length > 0) {
+      if (pointersInCanvas) {
+        // Initiate an interaction if touched in the canvas
+        this._renderer.executeRotateAndMove = true;
+        this._renderer.executeZoom = true;
+      }
+    } else {
+      // End an interaction when the touch is released
+      this._renderer.executeRotateAndMove = false;
+      this._renderer.executeZoom = false;
+    }
+  } else {
+    /* for mouse */
+    // if wheelDeltaY !== 0, zoom
+    // if mouseLeftButton is down, rotate
+    // if mouseRightButton is down, move
+
+    // For mouse, it is calculated based on the mouse position.
+    pointersInCanvas =
+      (this.mouseX > 0 && this.mouseX < this.width) &&
+      (this.mouseY > 0 && this.mouseY < this.height);
+
+    if (this._mouseWheelDeltaY !== 0) {
+      // zoom the camera depending on the value of _mouseWheelDeltaY.
+      // move away if positive, move closer if negative
+      deltaRadius = Math.sign(this._mouseWheelDeltaY) * sensitivityZ;
+      deltaRadius *= mouseZoomScaleFactor;
+      this._mouseWheelDeltaY = 0;
+      // start zoom when the mouse is wheeled within the canvas.
+      if (pointersInCanvas) this._renderer.executeZoom = true;
+    } else {
+      // quit zoom when you stop wheeling.
+      this._renderer.zoomFlag = false;
+    }
+    if (this.mouseIsPressed) {
+      if (this.mouseButton === this.LEFT) {
+        deltaTheta = -sensitivityX * this.movedX / scaleFactor;
+        deltaPhi = sensitivityY * this.movedY / scaleFactor;
+      } else if (this.mouseButton === this.RIGHT) {
+        moveDeltaX = this.movedX;
+        moveDeltaY = this.movedY;
+      }
+      // start rotate and move when mouse is pressed within the canvas.
+      if (pointersInCanvas) this._renderer.executeRotateAndMove = true;
+    } else {
+      // quit rotate and move if mouse is released.
+      this._renderer.executeRotateAndMove = false;
     }
   }
 
-  if (this.mouseIsPressed) {
-    // ORBIT BEHAVIOR
-    if (this.mouseButton === this.LEFT) {
-      const deltaTheta =
-        -sensitivityX * (this.mouseX - this.pmouseX) / scaleFactor;
-      const deltaPhi =
-        sensitivityY * (this.mouseY - this.pmouseY) / scaleFactor;
-      this._renderer._curCamera._orbit(deltaTheta, deltaPhi, 0);
-    } else if (this.mouseButton === this.RIGHT) {
-      // PANNING BEHAVIOR along X/Z camera axes and restricted to X/Z plane
-      // in world space
-      const local = cam._getLocalAxes();
+  // interactions
 
-      // normalize portions along X/Z axes
-      const xmag = Math.sqrt(local.x[0] * local.x[0] + local.x[2] * local.x[2]);
-      if (xmag !== 0) {
-        local.x[0] /= xmag;
-        local.x[2] /= xmag;
-      }
-
-      // normalize portions along X/Z axes
-      const ymag = Math.sqrt(local.y[0] * local.y[0] + local.y[2] * local.y[2]);
-      if (ymag !== 0) {
-        local.y[0] /= ymag;
-        local.y[2] /= ymag;
-      }
-
-      // move along those vectors by amount controlled by mouseX, pmouseY
-      const dx = -1 * sensitivityX * (this.mouseX - this.pmouseX);
-      const dz = -1 * sensitivityY * (this.mouseY - this.pmouseY);
-
-      // restrict movement to XZ plane in world space
-      cam.setPosition(
-        cam.eyeX + dx * local.x[0] + dz * local.z[0],
-        cam.eyeY,
-        cam.eyeZ + dx * local.x[2] + dz * local.z[2]
+  // zoom process
+  if (deltaRadius !== 0 && this._renderer.executeZoom) {
+    // accelerate zoom velocity
+    this._renderer.zoomVelocity += deltaRadius;
+  }
+  if (Math.abs(this._renderer.zoomVelocity) > 0.001) {
+    // if freeRotation is true, we use _orbitFree() instead of _orbit()
+    if (freeRotation) {
+      cam._orbitFree(
+        0, 0, this._renderer.zoomVelocity
+      );
+    } else {
+      cam._orbit(
+        0, 0, this._renderer.zoomVelocity
       );
     }
+    // In orthogonal projection, the scale does not change even if
+    // the distance to the gaze point is changed, so the projection matrix
+    // needs to be modified.
+    if (cam.projMatrix.mat4[15] !== 0) {
+      cam.projMatrix.mat4[0] *= Math.pow(
+        10, -this._renderer.zoomVelocity
+      );
+      cam.projMatrix.mat4[5] *= Math.pow(
+        10, -this._renderer.zoomVelocity
+      );
+      // modify uPMatrix
+      this._renderer.uPMatrix.mat4[0] = cam.projMatrix.mat4[0];
+      this._renderer.uPMatrix.mat4[5] = cam.projMatrix.mat4[5];
+    }
+    // damping
+    this._renderer.zoomVelocity *= damping;
+  } else {
+    this._renderer.zoomVelocity = 0;
   }
+
+  // rotate process
+  if ((deltaTheta !== 0 || deltaPhi !== 0) &&
+  this._renderer.executeRotateAndMove) {
+    // accelerate rotate velocity
+    this._renderer.rotateVelocity.add(
+      deltaTheta * rotateAccelerationFactor,
+      deltaPhi * rotateAccelerationFactor
+    );
+  }
+  if (this._renderer.rotateVelocity.magSq() > 0.000001) {
+    // if freeRotation is true, the camera always rotates freely in the direction the pointer moves
+    if (freeRotation) {
+      cam._orbitFree(
+        -this._renderer.rotateVelocity.x,
+        this._renderer.rotateVelocity.y,
+        0
+      );
+    } else {
+      cam._orbit(
+        this._renderer.rotateVelocity.x,
+        this._renderer.rotateVelocity.y,
+        0
+      );
+    }
+    // damping
+    this._renderer.rotateVelocity.mult(damping);
+  } else {
+    this._renderer.rotateVelocity.set(0, 0);
+  }
+
+  // move process
+  if ((moveDeltaX !== 0 || moveDeltaY !== 0) &&
+  this._renderer.executeRotateAndMove) {
+    // Normalize movement distance
+    const ndcX = moveDeltaX * 2/this.width;
+    const ndcY = -moveDeltaY * 2/this.height;
+    // accelerate move velocity
+    this._renderer.moveVelocity.add(
+      ndcX * moveAccelerationFactor,
+      ndcY * moveAccelerationFactor
+    );
+  }
+  if (this._renderer.moveVelocity.magSq() > 0.000001) {
+    // Translate the camera so that the entire object moves
+    // perpendicular to the line of sight when the mouse is moved
+    // or when the centers of gravity of the two touch pointers move.
+    const local = cam._getLocalAxes();
+
+    // Calculate the z coordinate in the view coordinates of
+    // the center, that is, the distance to the view point
+    const diffX = cam.eyeX - cam.centerX;
+    const diffY = cam.eyeY - cam.centerY;
+    const diffZ = cam.eyeZ - cam.centerZ;
+    const viewZ = Math.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
+
+    // position vector of the center.
+    let cv = new p5.Vector(cam.centerX, cam.centerY, cam.centerZ);
+
+    // Calculate the normalized device coordinates of the center.
+    cv = cam.cameraMatrix.multiplyPoint(cv);
+    cv = this._renderer.uPMatrix.multiplyAndNormalizePoint(cv);
+
+    // Move the center by this distance
+    // in the normalized device coordinate system.
+    cv.x -= this._renderer.moveVelocity.x;
+    cv.y -= this._renderer.moveVelocity.y;
+
+    // Calculate the translation vector
+    // in the direction perpendicular to the line of sight of center.
+    let dx, dy;
+    const uP = this._renderer.uPMatrix.mat4;
+
+    if (uP[15] === 0) {
+      dx = ((uP[8] + cv.x)/uP[0]) * viewZ;
+      dy = ((uP[9] + cv.y)/uP[5]) * viewZ;
+    } else {
+      dx = (cv.x - uP[12])/uP[0];
+      dy = (cv.y - uP[13])/uP[5];
+    }
+
+    // translate the camera.
+    cam.setPosition(
+      cam.eyeX + dx * local.x[0] + dy * local.y[0],
+      cam.eyeY + dx * local.x[1] + dy * local.y[1],
+      cam.eyeZ + dx * local.x[2] + dy * local.y[2]
+    );
+    // damping
+    this._renderer.moveVelocity.mult(damping);
+  } else {
+    this._renderer.moveVelocity.set(0, 0);
+  }
+
   return this;
 };
+
 
 /**
  * debugMode() helps visualize 3D space by adding a grid to indicate where the
@@ -167,6 +398,9 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
  *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
  *   normalMaterial();
  *   debugMode();
+ *   describe(
+ *     'a 3D box is centered on a grid in a 3D sketch. an icon indicates the direction of each axis: a red line points +X, a green line +Y, and a blue line +Z. the grid and icon disappear when the spacebar is pressed.'
+ *   );
  * }
  *
  * function draw() {
@@ -194,6 +428,7 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
  *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
  *   normalMaterial();
  *   debugMode(GRID);
+ *   describe('a 3D box is centered on a grid in a 3D sketch.');
  * }
  *
  * function draw() {
@@ -214,6 +449,9 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
  *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
  *   normalMaterial();
  *   debugMode(AXES);
+ *   describe(
+ *     'a 3D box is centered in a 3D sketch. an icon indicates the direction of each axis: a red line points +X, a green line +Y, and a blue line +Z.'
+ *   );
  * }
  *
  * function draw() {
@@ -236,6 +474,7 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
  *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
  *   normalMaterial();
  *   debugMode(GRID, 100, 10, 0, 0, 0);
+ *   describe('a 3D box is centered on a grid in a 3D sketch');
  * }
  *
  * function draw() {
@@ -256,6 +495,9 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
  *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
  *   normalMaterial();
  *   debugMode(100, 10, 0, 0, 0, 20, 0, -40, 0);
+ *   describe(
+ *     'a 3D box is centered on a grid in a 3D sketch. an icon indicates the direction of each axis: a red line points +X, a green line +Y, and a blue line +Z.'
+ *   );
  * }
  *
  * function draw() {
@@ -361,6 +603,9 @@ p5.prototype.debugMode = function(...args) {
  *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
  *   normalMaterial();
  *   debugMode();
+ *   describe(
+ *     'a 3D box is centered on a grid in a 3D sketch. an icon indicates the direction of each axis: a red line points +X, a green line +Y, and a blue line +Z. the grid and icon disappear when the spacebar is pressed.'
+ *   );
  * }
  *
  * function draw() {

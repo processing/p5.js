@@ -2,6 +2,10 @@ suite('p5.Texture', function() {
   var myp5;
   var texImg1;
   var texImg2;
+  var texImg3;
+  var imgElementNotPowerOfTwo;
+  var imgElementPowerOfTwo;
+  var canvas;
 
   if (!window.Modernizr.webgl) {
     //assert(false, 'could not run gl tests');
@@ -11,16 +15,34 @@ suite('p5.Texture', function() {
   setup(function(done) {
     myp5 = new p5(function(p) {
       p.preload = function() {
+        // texImg2 must have powerOfTwo dimensions
         texImg2 = p.loadImage('unit/assets/target.gif');
-
+        // texImg3 must NOT have powerOfTwo dimensions
+        texImg3 = p.loadImage('unit/assets/nyan_cat.gif');
         // texture object isn't created until it's used for something:
         //p.box(70, 70, 70);
       };
       p.setup = function() {
-        p.createCanvas(100, 100, p.WEBGL);
+        canvas = p.createCanvas(100, 100, p.WEBGL);
         texImg1 = p.createGraphics(2, 2, p.WEBGL);
-        p.texture(texImg1);
-        done();
+        new Promise(resolve => {
+          p.createImg(texImg2.canvas.toDataURL(), '', 'anonymous', el => {
+            el.size(50, 50);
+            imgElementPowerOfTwo = el;
+            p.texture(imgElementPowerOfTwo);
+            resolve();
+          });
+        }).then(() => new Promise(resolve => {
+          p.createImg(texImg3.canvas.toDataURL(), '', 'anonymous', el => {
+            el.size(50, 50);
+            imgElementNotPowerOfTwo = el;
+            p.texture(imgElementNotPowerOfTwo);
+            resolve();
+          });
+        })).then(() => {
+          p.texture(texImg1);
+          done();
+        });
       };
     });
   });
@@ -86,6 +108,31 @@ suite('p5.Texture', function() {
       assert.deepEqual(tex.glWrapS, myp5._renderer.GL.MIRRORED_REPEAT);
       assert.deepEqual(tex.glWrapT, myp5._renderer.GL.MIRRORED_REPEAT);
     });
+    test('Set wrap mode REPEAT if src dimensions is powerOfTwo', function() {
+      const tex = myp5._renderer.getTexture(imgElementPowerOfTwo);
+      tex.setWrapMode(myp5.REPEAT, myp5.REPEAT);
+      assert.deepEqual(tex.glWrapS, myp5._renderer.GL.REPEAT);
+      assert.deepEqual(tex.glWrapT, myp5._renderer.GL.REPEAT);
+    });
+    test(
+      'Set default wrap mode REPEAT if WEBGL2 and src dimensions != powerOfTwo',
+      function() {
+        const tex = myp5._renderer.getTexture(imgElementNotPowerOfTwo);
+        tex.setWrapMode(myp5.REPEAT, myp5.REPEAT);
+        assert.deepEqual(tex.glWrapS, myp5._renderer.GL.REPEAT);
+        assert.deepEqual(tex.glWrapT, myp5._renderer.GL.REPEAT);
+      }
+    );
+    test(
+      'Set default wrap mode CLAMP if WEBGL1 and src dimensions != powerOfTwo',
+      function() {
+        myp5.setAttributes({ version: 1 });
+        const tex = myp5._renderer.getTexture(imgElementNotPowerOfTwo);
+        tex.setWrapMode(myp5.REPEAT, myp5.REPEAT);
+        assert.deepEqual(tex.glWrapS, myp5._renderer.GL.CLAMP_TO_EDGE);
+        assert.deepEqual(tex.glWrapT, myp5._renderer.GL.CLAMP_TO_EDGE);
+      }
+    );
     test('Set textureMode to NORMAL', function() {
       myp5.textureMode(myp5.NORMAL);
       assert.deepEqual(myp5._renderer.textureMode, myp5.NORMAL);
@@ -120,6 +167,33 @@ suite('p5.Texture', function() {
       assert.deepEqual(tex1.glWrapT, myp5._renderer.GL.MIRRORED_REPEAT);
       assert.deepEqual(tex2.glWrapS, myp5._renderer.GL.MIRRORED_REPEAT);
       assert.deepEqual(tex2.glWrapT, myp5._renderer.GL.MIRRORED_REPEAT);
+    });
+    test('Handles changes to p5.Image size', function() {
+      const tex = myp5._renderer.getTexture(texImg2);
+      expect(tex.width).to.equal(texImg2.width);
+      expect(tex.height).to.equal(texImg2.height);
+      texImg2.resize(texImg2.width * 2, texImg2.height * 2);
+      tex.update();
+      expect(tex.width).to.equal(texImg2.width);
+      expect(tex.height).to.equal(texImg2.height);
+    });
+    test('Handles changes to p5.Graphics size', function() {
+      const tex = myp5._renderer.getTexture(texImg1);
+      expect(tex.width).to.equal(texImg1.width);
+      expect(tex.height).to.equal(texImg1.height);
+      texImg1.resizeCanvas(texImg1.width * 2, texImg1.height * 2);
+      tex.update();
+      expect(tex.width).to.equal(texImg1.width);
+      expect(tex.height).to.equal(texImg1.height);
+    });
+    test('Handles changes to p5.Renderer size', function() {
+      const tex = texImg1._renderer.getTexture(canvas);
+      expect(tex.width).to.equal(canvas.width);
+      expect(tex.height).to.equal(canvas.height);
+      myp5.resizeCanvas(canvas.width / 2, canvas.height / 2);
+      tex.update();
+      expect(tex.width).to.equal(canvas.width);
+      expect(tex.height).to.equal(canvas.height);
     });
   });
 });

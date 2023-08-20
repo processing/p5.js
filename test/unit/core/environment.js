@@ -120,6 +120,89 @@ suite('Environment', function() {
     test('p5.prototype.getFrameRate', function() {
       assert.strictEqual(myp5.getFrameRate(), 0);
     });
+
+    suite('drawing with target frame rates', function() {
+      let clock;
+      let prevRequestAnimationFrame;
+      let nextFrameCallback = () => {};
+      let controlledP5;
+
+      setup(function() {
+        clock = sinon.useFakeTimers(0);
+        sinon.stub(window.performance, 'now', Date.now);
+
+        // Save the real requestAnimationFrame so we can restore it later
+        prevRequestAnimationFrame = window.requestAnimationFrame;
+        // Use a fake requestAnimationFrame that just stores a ref to the callback
+        // so that we can call it manually
+        window.requestAnimationFrame = function(cb) {
+          nextFrameCallback = cb;
+        };
+
+        return new Promise(function(resolve) {
+          controlledP5 = new p5(function(p) {
+            p.setup = function() {
+              p.createCanvas(10, 10);
+              p.frameRate(60);
+              p.loop();
+              resolve(p);
+            };
+
+            p.draw = function() {};
+          });
+        });
+      });
+
+      teardown(function() {
+        clock.restore();
+        window.performance.now.restore();
+        window.requestAnimationFrame = prevRequestAnimationFrame;
+        nextFrameCallback = function() {};
+        controlledP5.remove();
+      });
+
+      test('draw() is called at the correct frame rate given a faster display', function() {
+        sinon.spy(controlledP5, 'draw');
+
+        clock.tick(1000 / 200); // Simulate a 200Hz refresh rate
+        nextFrameCallback(); // trigger the next requestAnimationFrame
+        assert(controlledP5.draw.notCalled, 'draw() should not be called before 1s/60');
+
+        // Advance until 5ms before the next frame should render.
+        // This should be within p5's threshold for rendering the frame.
+        clock.tick(1000 / 60 - 1000 / 200 - 5);
+        nextFrameCallback(); // trigger the next requestAnimationFrame
+        assert(controlledP5.draw.calledOnce, 'one frame should have been drawn');
+        // deltaTime should reflect real elapsed time
+        assert.equal(controlledP5.deltaTime, 1000 / 60 - 5);
+
+        // Advance enough time forward to be 1s/60 - 5ms from the last draw
+        clock.tick(1000 / 60 - 5);
+        nextFrameCallback(); // trigger the next requestAnimationFrame
+        // Even though this is 1s/60 - 5ms from the last draw, the last frame came
+        // in early, so we still shouldn't draw
+        assert(controlledP5.draw.calledOnce, 'draw() should not be called before 1s/60 past the last target draw time');
+
+        // Advance enough time forward to be 1s/60 from the last draw
+        clock.tick(5);
+        nextFrameCallback();
+        assert(controlledP5.draw.calledTwice); // Now it should draw again!
+        // deltaTime should reflect real elapsed time
+        assert.equal(controlledP5.deltaTime, 1000 / 60);
+      });
+    });
+  });
+
+  suite('p5.prototype.getTargetFrameRate', function() {
+    test('returns 60 on the first call', function() {
+      assert.strictEqual(myp5.getTargetFrameRate(), 60);
+    });
+
+    test('returns set value of randomize integer', function() {
+      let randVal = Math.floor(Math.random()*120);
+      myp5.frameRate(randVal);
+      assert.strictEqual(myp5.getTargetFrameRate(), randVal);
+    });
   });
 
   suite('Canvas dimensions', function() {

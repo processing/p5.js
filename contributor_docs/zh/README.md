@@ -63,20 +63,20 @@ p5.js 项目除了这个代码库外还包括了以下几个其他的代码库�
 
 3. [复制](https://help.github.com/articles/cloning-a-repository/) 此代码库的新 fork 到本地电脑：
 
-   ```
+   ```shell
    $ git clone https://github.com/您的用户名/p5.js.git
    ```
 
 4. 导航到项目文件夹，并使用 npm 安装其所有所需的程式包。
 
-   ```
+   ```shell
    $ cd p5.js
    $ npm ci
    ```
 
 5. [Grunt](https://gruntjs.com/) 需要被安装，您可以使用它从源代码构建程式库。
 
-   ```
+   ```shell
    $ npm run grunt
    ```
 
@@ -84,7 +84,7 @@ p5.js 项目除了这个代码库外还包括了以下几个其他的代码库�
 
 6. 在本地源代码更改然后用 Git [commit](https://help.github.com/articles/github-glossary/#commit) 它们。
 
-   ```
+   ```shell
    $ git add -u
    $ git commit -m "YOUR COMMIT MESSAGE"
    ```
@@ -93,7 +93,7 @@ p5.js 项目除了这个代码库外还包括了以下几个其他的代码库�
 
 8. 将您对 GitHub 上的 fork 上载（[Push](https://help.github.com/articles/github-glossary/#push)）新更改。
 
-   ```
+   ```shell
    $ git push
    ```
 
@@ -105,17 +105,17 @@ p5.js 代码库附带的开发人员工具在某些方面特意非常严格。�
 
 ## 代码语法
 
-p5.js 要求整齐且在风格上一致的代码语法，它使用称为 [Prettier](https://prettier.io/) 和 [ESlint](https://eslint.org/) 的工具帮助检查代码。提交前这些工具会检查某些样式规则，但是您也可以为代码编辑器安装 [ESlint 插件](https://eslint.org/docs/user-guide/integrations#editors)，以在键入代码后立即显示错误。总的来说，在代码风格方面我们会趋向选择灵活性，以减少参与和贡献的阻碍。
+p5.js 要求整齐且在风格上一致的代码语法，它使用 [ESlint](https://eslint.org/) 帮助检查代码。提交前这些工具会检查某些样式规则，但是您也可以为代码编辑器安装 [ESlint 插件](https://eslint.org/docs/user-guide/integrations#editors)，以在键入代码后立即显示错误。总的来说，在代码风格方面我们会趋向选择灵活性，以减少参与和贡献的阻碍。
 
 要检查错误，在命令行输入以下指令（不要键入 `$` 提示符）：
 
-```
+```shell
 $ npm run lint
 ```
 
 一些语法错误可以自动修复：
 
-```
+```shell
 $ npm run lint:fix
 ```
 
@@ -142,7 +142,7 @@ $ npm run lint:fix
 
 以运行单元测试，您需要确保已安装项目的依赖项。
 
-```
+```shell
 $ npm ci
 ```
 
@@ -153,13 +153,13 @@ $ npm ci
 
 一旦安装了依赖项，请使用Grunt运行单元测试。
 
-```
+```shell
 $ grunt
 ```
 
 在浏览器而不是命令行中运行测试有时很有用。 为此，请首先启动 [connect](https://github.com/gruntjs/grunt-contrib-connect) 服务器：
 
-```
+```shell
 $ npm run dev
 ```
 

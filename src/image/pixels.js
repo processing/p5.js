@@ -19,7 +19,7 @@ import '../color/p5.Color';
  * left to right across each row, then down each column. Retina and other
  * high density displays will have more pixels[] (by a factor of
  * pixelDensity^2).
- * For example, if the image is 100x100 pixels, there will be 40,000. On a
+ * For example, if the image is 100×100 pixels, there will be 40,000. On a
  * retina display, there will be 160,000.
  *
  * The first four values (indices 0-3) in the array will be the R, G, B, A
@@ -307,43 +307,48 @@ p5.prototype._copyHelper = (
 /**
  * Applies a filter to the canvas. The presets options are:
  *
- * THRESHOLD
+ * `THRESHOLD`
  * Converts the image to black and white pixels depending if they are above or
  * below the threshold defined by the level parameter. The parameter must be
  * between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
  *
- * GRAY
+ * `GRAY`
  * Converts any colors in the image to grayscale equivalents. No parameter
  * is used.
  *
- * OPAQUE
+ * `OPAQUE`
  * Sets the alpha channel to entirely opaque. No parameter is used.
  *
- * INVERT
+ * `INVERT`
  * Sets each pixel to its inverse value. No parameter is used.
  *
- * POSTERIZE
+ * `POSTERIZE`
  * Limits each channel of the image to the number of colors specified as the
  * parameter. The parameter can be set to values between 2 and 255, but
  * results are most noticeable in the lower ranges.
  *
- * BLUR
+ * `BLUR`
  * Executes a Gaussian blur with the level parameter specifying the extent
  * of the blurring. If no parameter is used, the blur is equivalent to
  * Gaussian blur of radius 1. Larger values increase the blur.
  *
- * ERODE
+ * `ERODE`
  * Reduces the light areas. No parameter is used.
  *
- * DILATE
+ * `DILATE`
  * Increases the light areas. No parameter is used.
  *
- * filter() does not work in WEBGL mode.
- * A similar effect can be achieved in WEBGL mode using custom
- * shaders. Adam Ferriss has written
- * a <a href="https://github.com/aferriss/p5jsShaderExamples"
- * target='_blank'>selection of shader examples</a> that contains many
- * of the effects present in the filter examples.
+ * ---
+ *
+ * In WEBGL mode, `filter()` can also accept a shader. The fragment shader
+ * is given a `uniform sampler2D` named `tex0` that contains the current
+ * state of the canvas. For more information on using shaders, check
+ * <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">
+ * the introduction to shaders</a> tutorial.
+ *
+ * See also <a href="https://github.com/aferriss/p5jsShaderExamples"
+ * target='_blank'>a selection of shader examples</a> by Adam Ferriss
+ * that contains many similar filter effects.
  *
  * @method filter
  * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
@@ -458,6 +463,44 @@ p5.prototype._copyHelper = (
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * createCanvas(100, 100, WEBGL);
+ * let myShader = createShader(
+ *   `attribute vec3 aPosition;
+ *   attribute vec2 aTexCoord;
+ *
+ *   varying vec2 vTexCoord;
+ *
+ *   void main() {
+ *     vTexCoord = aTexCoord;
+ *     vec4 positionVec4 = vec4(aPosition, 1.0);
+ *     positionVec4.xy = positionVec4.xy * 2.0 - 1.0;
+ *     gl_Position = positionVec4;
+ *   }`,
+ *   `precision mediump float;
+ *   varying mediump vec2 vTexCoord;
+ *
+ *   uniform sampler2D tex0;
+ *
+ *   float luma(vec3 color) {
+ *     return dot(color, vec3(0.299, 0.587, 0.114));
+ *   }
+ *
+ *   void main() {
+ *     vec2 uv = vTexCoord;
+ *     uv.y = 1.0 - uv.y;
+ *     vec4 sampledColor = texture2D(tex0, uv);
+ *     float gray = luma(sampledColor.rgb);
+ *     gl_FragColor = vec4(gray, gray, gray, 1);
+ *   }`
+ * );
+ * background('RED');
+ * filter(myShader);
+ * describe('a canvas becomes gray after being filtered by shader');
+ * </code>
+ * </div>
+ *
  * @alt
  * black and white image of a brick wall.
  * greyscale image of a brickwall
@@ -468,9 +511,23 @@ p5.prototype._copyHelper = (
  * blurry image of a brickwall
  * image of a brickwall
  * image of a brickwall with less detail
+ * gray square
+ */
+
+/**
+ * @method filter
+ * @param {p5.Shader}  shaderFilter  A shader that's been loaded, with the
+ *                                   frag shader using a `tex0` uniform
  */
 p5.prototype.filter = function(operation, value) {
   p5._validateParameters('filter', arguments);
+
+  // TODO: use shader filters always, and provide an opt out
+  if (this._renderer.isP3D) {
+    p5.RendererGL.prototype.filter.call(this._renderer, arguments);
+    return;
+  }
+
   if (this.canvas !== undefined) {
     Filters.apply(this.canvas, Filters[operation], value);
   } else {
@@ -510,8 +567,8 @@ p5.prototype.filter = function(operation, value) {
  * @method get
  * @param  {Number}         x x-coordinate of the pixel
  * @param  {Number}         y y-coordinate of the pixel
- * @param  {Number}         w width
- * @param  {Number}         h height
+ * @param  {Number}         w width of the section to be returned
+ * @param  {Number}         h height of the section to be returned
  * @return {p5.Image}       the rectangle <a href="#/p5.Image">p5.Image</a>
  * @example
  * <div>
@@ -546,7 +603,7 @@ p5.prototype.filter = function(operation, value) {
  *
  * @alt
  * 2 images of the rocky mountains, side-by-side
- * Image of the rocky mountains with 50x50 green rect in center of canvas
+ * Image of the rocky mountains with 50×50 green rect in center of canvas
  */
 /**
  * @method get

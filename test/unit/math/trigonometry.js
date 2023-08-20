@@ -48,17 +48,33 @@ suite('Trigonometry', function() {
   suite('p5.prototype.angleMode', function() {
     test('should set constant to DEGREES', function() {
       myp5.angleMode(DEGREES);
-      assert.equal(myp5._angleMode, 'degrees');
+      assert.equal(myp5.angleMode(), 'degrees');
     });
 
     test('should set constant to RADIANS', function() {
       myp5.angleMode(RADIANS);
-      assert.equal(myp5._angleMode, 'radians');
+      assert.equal(myp5.angleMode(), 'radians');
+    });
+
+    test('wrong param type', function() {
+      assert.validationError(function() {
+        myp5.angleMode('wtflolzkk');
+      });
+    });
+
+    test('should return radians', function() {
+      myp5.angleMode(RADIANS);
+      assert.equal(myp5.angleMode(), 'radians');
+    });
+
+    test('should return degrees', function() {
+      myp5.angleMode(DEGREES);
+      assert.equal(myp5.angleMode(), 'degrees');
     });
 
     test('should always be RADIANS or DEGREES', function() {
       myp5.angleMode('wtflolzkk');
-      assert.equal(myp5._angleMode, 'radians');
+      assert.equal(myp5.angleMode(), 'radians');
     });
   });
 

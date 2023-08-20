@@ -71,13 +71,12 @@ suite('p5.Camera', function() {
      eyeXYZ or upXYZ', function() {
       var orig = getVals(myCam);
 
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
         0.5403022766113281, -0, 0.8414710164070129, 0,
         0, 1, 0, 0,
         -0.8414710164070129, 0, 0.5403022766113281, 0,
         72.87352752685547, 0, -46.79154968261719, 1
-        ]);
+      ]);
 
       myCam.pan(1);
 
@@ -96,12 +95,12 @@ suite('p5.Camera', function() {
      eyeXYZ or upXYZ', function() {
       var orig = getVals(myCam);
 
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
         0.5403022766113281, 0, -0.8414710164070129, 0,
-         -0, 1, 0, 0,
-         0.8414710164070129, 0, 0.5403022766113281, 0,
-         -72.87352752685547, 0, -46.79154968261719, 1]);
+        -0, 1, 0, 0,
+        0.8414710164070129, 0, 0.5403022766113281, 0,
+        -72.87352752685547, 0, -46.79154968261719, 1
+      ]);
 
       myCam.pan(-1);
 
@@ -118,7 +117,6 @@ suite('p5.Camera', function() {
     test('Pan(0) sets correct matrix w/o changing eyeXYZ or upXYZ', function() {
       var orig = getVals(myCam);
 
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 1, 0, 0,
@@ -142,12 +140,12 @@ suite('p5.Camera', function() {
     changing eyeXYZ', function() {
       var orig = getVals(myCam);
 
-      //prettier-ignore
-      var expectedMatrix = new Float32Array(
-        [1, 0, 0, 0,
-          0, 0.07073719799518585, -0.9974949955940247, 0,
-          -0, 0.9974949955940247, 0.07073719799518585, 0,
-          0, -86.3855972290039, -6.126020908355713, 1]);
+      var expectedMatrix = new Float32Array([
+        1, 0, 0, 0,
+        0, 0.07073719799518585, -0.9974949955940247, 0,
+        -0, 0.9974949955940247, 0.07073719799518585, 0,
+        0, -86.3855972290039, -6.126020908355713, 1
+      ]);
 
       myCam.tilt(1.5);
 
@@ -162,12 +160,12 @@ suite('p5.Camera', function() {
     changing eyeXYZ', function() {
       var orig = getVals(myCam);
 
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
-          1, 0, 0, 0,
-          0, 0.07073719799518585, 0.9974949955940247, 0,
-          0, -0.9974949955940247, 0.07073719799518585, 0,
-          0, 86.3855972290039, -6.126020908355713, 1]);
+        1, 0, 0, 0,
+        0, 0.07073719799518585, 0.9974949955940247, 0,
+        0, -0.9974949955940247, 0.07073719799518585, 0,
+        0, 86.3855972290039, -6.126020908355713, 1
+      ]);
 
       myCam.tilt(-1.5);
 
@@ -180,12 +178,12 @@ suite('p5.Camera', function() {
     test('Tilt(0) sets correct matrix w/o changing eyeXYZ', function() {
       var orig = getVals(myCam);
 
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
-        0, 0, -86.6025390625, 1]);
+        0, 0, -86.6025390625, 1
+      ]);
 
       myCam.tilt(0);
 
@@ -230,13 +228,12 @@ suite('p5.Camera', function() {
      eyeXYZ or upXYZ', function() {
       var orig = getVals(myCam);
 
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
         0.5403022766113281, -0, 0.8414710164070129, 0,
         0, 1, 0, 0,
         -0.8414710164070129, 0, 0.5403022766113281, 0,
         72.87352752685547, 0, -46.79154968261719, 1
-        ]);
+      ]);
 
       myCam.pan(1 * 180 / Math.PI);
 
@@ -255,7 +252,6 @@ suite('p5.Camera', function() {
     changing eyeXYZ', function() {
       var orig = getVals(myCam);
 
-      //prettier-ignore
       var expectedMatrix = new Float32Array(
         [1, 0, 0, 0,
           0, 0.07073719799518585, -0.9974949955940247, 0,
@@ -309,45 +305,42 @@ suite('p5.Camera', function() {
     });
 
     test('Move() with positive parameters sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
-                        1, 0, 0, 0,
-                        0, 1, 0, 0,
-                        0, 0, 1, 0,
-                        -1, -2, -89.6025390625, 1
-                      ]);
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        -1, -2, -89.6025390625, 1
+      ]);
 
       myCam.move(1, 2, 3);
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
 
     test('Move() with negative parameters sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
-                      1, 0, 0, 0,
-                      0, 1, 0, 0,
-                      0, 0, 1, 0,
-                      1, 2, -83.6025390625, 1
-                    ]);
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        1, 2, -83.6025390625, 1
+      ]);
 
       myCam.move(-1, -2, -3);
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
 
     test('Move(0,0,0) sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
-        0, 0, -86.6025390625, 1]);
+        0, 0, -86.6025390625, 1
+      ]);
 
       myCam.move(0, 0, 0);
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
 
     test('SetPosition() with positive parameters sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 1, 0, 0,
@@ -360,7 +353,6 @@ suite('p5.Camera', function() {
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
     test('SetPosition() with negative parameters sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 1, 0, 0,
@@ -373,72 +365,90 @@ suite('p5.Camera', function() {
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
     test('SetPosition(0,0,0) sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
-        0, 0, 0, 1]);
+        0, 0, 0, 1
+      ]);
 
       myCam.setPosition(0, 0, 0);
 
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
 
+    test('test for matrix manipulation with set()', function() {
+      myCam = myp5.createCamera();
+      myp5.setCamera(myCam);
+      const copyCam = myCam.copy();
+      copyCam.camera(100, 100, 100, 20, 30, 40, 0, 0, -1);
+      myCam.set(copyCam);
+
+      // Confirmation that the argument camera and the matrix of the camera
+      // that received set() match
+      assert.deepEqual(copyCam.cameraMatrix.mat4, myCam.cameraMatrix.mat4);
+      assert.deepEqual(copyCam.projMatrix.mat4, myCam.projMatrix.mat4);
+      // If the set()ed camera is active,
+      // the renderer's matrix will also change.
+      assert.deepEqual(
+        copyCam.cameraMatrix.mat4,
+        myp5._renderer.uMVMatrix.mat4
+      );
+      assert.deepEqual(
+        copyCam.projMatrix.mat4,
+        myp5._renderer.uPMatrix.mat4
+      );
+    });
+
     test('_orbit(1,0,0) sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
-          0.5403022766113281, -5.1525235865883254e-17, 0.8414709568023682, 0,
-          0, 1, 6.123234262925839e-17, 0,
-          -0.8414709568023682, -3.3083975336675e-17, 0.5403022766113281, 0,
-          8.216248374992574e-7, -7.180680227154989e-23, -86.6025390625, 1
-        ]);
+        0.5403022766113281, -5.1525235865883254e-17, 0.8414709568023682, 0,
+        0, 1, 6.123234262925839e-17, 0,
+        -0.8414709568023682, -3.3083975336675e-17, 0.5403022766113281, 0,
+        8.216248374992574e-7, -7.180680227154989e-23, -86.6025390625, 1
+      ]);
 
       myCam._orbit(1, 0, 0);
 
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
     test('_orbit(0,1,0) sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
-          1, 0, 0, 0,
-          0, 0.5403022766113281, -0.8414709568023682, 0,
-          -0, 0.8414709568023682, 0.5403022766113281, 0,
-          0, -8.216248374992574e-7, -86.6025390625, 1
-        ]);
+        1, 0, 0, 0,
+        0, 0.5403022766113281, -0.8414709568023682, 0,
+        -0, 0.8414709568023682, 0.5403022766113281, 0,
+        0, -8.216248374992574e-7, -86.6025390625, 1
+      ]);
 
       myCam._orbit(0, 1, 0);
 
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
     test('_orbit(0,0,1) sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
-          1, 0, 0, 0,
-          0, 1, 6.123234262925839e-17, 0,
-          0, -6.123234262925839e-17, 1, 0,
-          0, 2.3406442117928995e-22, -87.6025390625, 1
-        ]);
+        1, 0, 0, 0,
+        0, 1, 6.123234262925839e-17, 0,
+        0, -6.123234262925839e-17, 1, 0,
+        0, 2.3139252783628976e-21, -866.025390625, 1
+      ]);
 
       myCam._orbit(0, 0, 1);
 
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
     test('_orbit(-1,0,0) sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
-          0.5403022766113281, 5.1525235865883254e-17, -0.8414709568023682, 0,
-          -0, 1, 6.123234262925839e-17, 0,
-          0.8414709568023682, -3.3083975336675e-17, 0.5403022766113281, 0,
-          -8.216248374992574e-7, -7.180680227154989e-23, -86.6025390625, 1
-        ]);
+        0.5403022766113281, 5.1525235865883254e-17, -0.8414709568023682, 0,
+        -0, 1, 6.123234262925839e-17, 0,
+        0.8414709568023682, -3.3083975336675e-17, 0.5403022766113281, 0,
+        -8.216248374992574e-7, -7.180680227154989e-23, -86.6025390625, 1
+      ]);
 
       myCam._orbit(-1, 0, 0);
 
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
     test('_orbit(0,-1,0) sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 0.5403022766113281, 0.8414709568023682, 0,
@@ -451,46 +461,167 @@ suite('p5.Camera', function() {
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
     test('_orbit(0,0,-1) sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 1, 6.123234262925839e-17, 0,
         0, -6.123234262925839e-17, 1, 0,
-        0, 2.2872063954199937e-22, -85.6025390625, 1
+        0, 2.3139253036064466e-23, -8.66025447845459, 1
       ]);
 
       myCam._orbit(0, 0, -1);
 
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
-    test('_orbit() ensures altitude phi <= PI', function() {
-      var myCamCopy = myCam.copy();
+    test('_orbit() does not force up vector to be parallel to y-axis', function() {
+      // Check the shape of the camera matrix to make sure that the up vector
+      // does not become (0,1,0) or (0,-1,0) after running _orbit()
+      var expectedMatrix = new Float32Array([
+        -0.2129584103822708, 0.9760860204696655, -0.04364387318491936, 0,
+        -0.9770612716674805, -0.21274586021900177, 0.009512536227703094, 0,
+        -0, 0.04466851428151131, 0.9990018606185913, 0,
+        2.445493976210855e-7, -1.4983223195486062e-7, -866.025390625, 1
+      ]);
 
-      // the following should produce the same values because phi is capped at PI
-      myCamCopy._orbit(0, 10, 0);
-      myCam._orbit(0, 20, 0);
+      myCam.camera(100, 100, 100, 0, 0, 0, 0, 0, -1);
+      myCam._orbit(1, 1, 1);
 
-      assert.deepEqual(myCam.cameraMatrix.mat4, myCamCopy.cameraMatrix.mat4);
+      assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
-    test('_orbit() ensures altitude phi > 0', function() {
+    test('up vector of an arbitrary direction reverses by _orbit(0,PI,0)', function() {
+      // Make sure the up vector is reversed by doing _orbit(0, Math.PI, 0)
+      myCam.camera(100, 100, 100, 0, 0, 0, 1, 2, 3);
+      const prevUpX = myCam.upX;
+      const prevUpY = myCam.upY;
+      const prevUpZ = myCam.upZ;
+      myCam._orbit(0, Math.PI, 0);
+      const currUpX = myCam.upX;
+      const currUpY = myCam.upY;
+      const currUpZ = myCam.upZ;
+
+      expect(currUpX).to.be.closeTo(-prevUpX, 0.001);
+      expect(currUpY).to.be.closeTo(-prevUpY, 0.001);
+      expect(currUpZ).to.be.closeTo(-prevUpZ, 0.001);
+    });
+    test('_orbit() ensures myCam.upY switches direction (from 1 to -1) at camPhi <= 0', function() {
+      // the following should produce the upY with inverted direction(from 1 to -1)
+      // when camPhi changes from positive to negative or zero
+      myCam._orbit(0, -Math.PI, 0);
+      // upY should switch from 1(dPhi=0) to -1 (dPhi=-PI)
+      // myCam.upY should be -1
+      assert(myCam.upY === -1);
+    });
+    test('_orbit() ensures myCam.upY switches direction (from -1 to 1) at camPhi <= 0', function() {
+      // the following should produce the upY with inverted direction(from -1 to 1)
+      // when camPhi changes from negative to positive or zero
+      myCam._orbit(0, -Math.PI, 0);
+      myCam._orbit(0, Math.PI, 0);
+      // upY should switch from -1(dPhi=-PI) to 1 (dPhi=PI)
+      // myCam.upY should be 1
+      assert(myCam.upY === 1);
+    });
+    test('_orbit() ensures myCam.upY switches direction (from 1 to -1) at camPhi >= PI', function() {
+      // the following should produce the upY with inverted direction(from 1 to -1)
+      // when camPhi reaches PI
+      myCam._orbit(0, Math.PI, 0);
+      // upY should switch from 1(dPhi=0) to -1 (dPhi=PI)
+      // myCam.upY should be -1
+      assert(myCam.upY === -1);
+    });
+    test('_orbit() ensures myCam.upY switches direction (from -1 to 1) at camPhi >= PI', function() {
+      // the following should produce the upY with inverted direction(from -1 to 1)
+      // when camPhi reaches PI
+      myCam._orbit(0, Math.PI, 0);
+      myCam._orbit(0, -Math.PI, 0);
+      // upY should switch from -1(dPhi=PI) to 1 (dPhi=-PI)
+      // myCam.upY should be 1
+      assert(myCam.upY === 1);
+    });
+    test('_orbit() ensures camera can do multiple continuous 360deg rotations', function() {
+      // the following should produce two camera objects having same properties.
+      myCam._orbit(0, Math.PI, 0);
       var myCamCopy = myCam.copy();
-
-      // the following should produce the same values because phi is restricted
-      // to > 0
-      myCamCopy._orbit(0, -10, 0);
-      myCam._orbit(0, -20, 0);
-
-      assert.deepEqual(myCam.cameraMatrix.mat4, myCamCopy.cameraMatrix.mat4);
+      myCamCopy._orbit(0, Math.PI, 0);
+      myCamCopy._orbit(0, Math.PI, 0);
+      for (let i = 0; i < myCamCopy.cameraMatrix.mat4.length; i++) {
+        expect(
+          myCamCopy.cameraMatrix.mat4[i]).to.be.closeTo(
+          myCam.cameraMatrix.mat4[i], 0.001);
+      }
+    });
+    test('Returns to the origin after a 360° rotation regardless of the up vector', function() {
+      // Even if the up vector is not (0,1,0) or (0,-1,0), _orbit() makes sure that
+      // the camera returns to its original position when rotated 360 degrees vertically.
+      myCam.camera(100, 100, 100, 0, 0, 0, 1, 2, 3);
+      var myCamCopy = myCam.copy();
+      // Performing 200 rotations of Math.PI*0.01 makes exactly one rotation.
+      for (let i = 0; i < 200; i++) {
+        myCamCopy._orbit(0, Math.PI * 0.01, 0);
+      }
+      for (let i = 0; i < myCamCopy.cameraMatrix.mat4.length; i++) {
+        expect(
+          myCamCopy.cameraMatrix.mat4[i]).to.be.closeTo(
+          myCam.cameraMatrix.mat4[i], 0.001);
+      }
     });
     test('_orbit() ensures radius > 0', function() {
+      // the following should produce two camera objects having same properties.
+      myCam._orbit(0, Math.PI, 0);
       var myCamCopy = myCam.copy();
+      myCamCopy._orbit(0, 0, -100);
+      myCam._orbit(0, 0, -250);
+      assert.deepEqual(myCam.cameraMatrix.mat4, myCamCopy.cameraMatrix.mat4, 'deep equal is failing');
+    });
+    test('_orbitFree(1,0,0) sets correct matrix', function() {
+      var expectedMatrix = new Float32Array([
+        0.5403022766113281, 0, -0.8414709568023682, 0,
+        -0, 1, 0, 0,
+        0.8414709568023682, 0, 0.5403022766113281, 0,
+        -8.216248374992574e-7, 0, -86.6025390625, 1
+      ]);
 
-      // the following should produce the same values because radius is
-      // restricted to > 0
-      myCamCopy._orbit(0, 0, -200);
-      myCam._orbit(0, 0, -300);
+      myCam._orbitFree(1, 0, 0);
 
-      assert.deepEqual(myCam.cameraMatrix.mat4, myCamCopy.cameraMatrix.mat4);
+      assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
+    });
+    test('_orbitFree(0,1,0) sets correct matrix', function() {
+      var expectedMatrix = new Float32Array([
+        1, -2.8148363983860944e-17, -5.1525235865883254e-17, 0,
+        -2.8148363983860944e-17, 0.5403022766113281, -0.8414709568023682, 0,
+        5.1525235865883254e-17, 0.8414709568023682, 0.5403022766113281, 0,
+        1.8143673340160988e-22, -8.216248374992574e-7, -86.6025390625, 1
+      ]);
+
+      myCam._orbitFree(0, 1, 0);
+
+      assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
+    });
+    test('_orbitFree(0,0,1) sets correct matrix', function() {
+      var expectedMatrix = new Float32Array([
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, -866.025390625, 1
+      ]);
+
+      myCam._orbitFree(0, 0, 1);
+
+      assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
+    });
+    test('Rotate camera 360° with _orbitFree() returns it to its original position', function() {
+      // Rotate the camera 360 degrees in any direction using _orbitFree()
+      // and it will return to its original state.
+      myCam.camera(100, 100, 100, 0, 0, 0, 1, 2, 3);
+      var myCamCopy = myCam.copy();
+      // Performing 200 rotations of Math.PI*0.01 makes exactly one rotation.
+      // However, we test in a slightly slanted direction instead of parallel with axis.
+      for (let i = 0; i < 200; i++) {
+        myCamCopy._orbitFree(Math.PI * 0.006, Math.PI * 0.008, 0);
+      }
+      for (let i = 0; i < myCamCopy.cameraMatrix.mat4.length; i++) {
+        expect(
+          myCamCopy.cameraMatrix.mat4[i]).to.be.closeTo(
+          myCam.cameraMatrix.mat4[i], 0.001);
+      }
     });
   });
 
@@ -505,12 +636,14 @@ suite('p5.Camera', function() {
       test('ortho() sets projection matrix correctly', function() {
         // expectedMatrix array needs to match Float32Array type of
         // p5.Camera projMatrix's mat4 array for deepEqual to work
-        //prettier-ignore
-        var expectedMatrix = new Float32Array(
-                      [1,  0,  0, 0,
-                       0, -1,  0, 0,
-                       0,  0, -1, 0,
-                      -0, -0, -1, 1]);
+        /* eslint-disable indent */
+        var expectedMatrix = new Float32Array([
+           1,  0,  0,  0,
+           0, -1,  0,  0,
+           0,  0, -1,  0,
+          -0, -0, -1,  1
+        ]);
+        /* eslint-enable indent */
 
         myCam.ortho(-1, 1, -1, 1, 0, 2);
 
@@ -518,7 +651,6 @@ suite('p5.Camera', function() {
       });
 
       test('ortho() with no parameters specified (sets default)', function() {
-        //prettier-ignore
         var expectedMatrix = new Float32Array([
           0.019999999552965164, 0, 0, 0,
           0, -0.019999999552965164, 0,0,
@@ -541,12 +673,12 @@ suite('p5.Camera', function() {
         assert.deepEqual(myCam.projMatrix.mat4, myp5._renderer.uPMatrix.mat4);
       });
       test('perspective() sets projection matrix correctly', function() {
-        //prettier-ignore
-        var expectedMatrix = new Float32Array(
-                      [1,  0,   0,  0,
-                       0, -1,   0,  0,
-                       0,  0,  -3, -1,
-                       0,  0, -40,  0]);
+        var expectedMatrix = new Float32Array([
+          1,  0,   0,  0,
+          0, -1,   0,  0,
+          0,  0,  -3, -1,
+          0,  0, -40,  0
+        ]);
 
         myCam.perspective(Math.PI / 2, 1, 10, 20);
 
@@ -554,7 +686,6 @@ suite('p5.Camera', function() {
       });
 
       test('perspective() with no parameters specified (sets default)', function() {
-        // prettier-ignore
         var expectedMatrix = new Float32Array([
           1.7320507764816284,0,0,0,
           0,-1.7320507764816284,0,0,
@@ -579,12 +710,14 @@ suite('p5.Camera', function() {
         assert.deepEqual(myCam.projMatrix.mat4, myp5._renderer.uPMatrix.mat4);
       });
       test('frustum() sets projection matrix correctly', function() {
-        //prettier-ignore
-        var expectedMatrix = new Float32Array(
-                      [ -2,  0,  0,  0,
-                         0, -2,  0,  0,
-                         0,  0, -0, -1,
-                         0,  0,  2,  0]);
+        /* eslint-disable indent */
+        var expectedMatrix = new Float32Array([
+          -2,  0,  0,  0,
+           0,  2,  0,  0,
+           0,  0, -0, -1,
+           0,  0,  2,  0
+        ]);
+        /* eslint-enable indent */
 
         myCam.frustum(-1, 1, -1, 1, -2, 2);
 
@@ -592,12 +725,11 @@ suite('p5.Camera', function() {
       });
 
       test('frustum() with no parameters specified (sets default)', function() {
-        // prettier-ignore
         var expectedMatrix = new Float32Array([
-          0, 0,  0,  0,
-          0, 0,  0,  0, 
-          0, 0, -1, -1, 
-          0, 0, -0,  0
+          1.7320507764816284, 0, 0, 0,
+          0, 1.7320507764816284, 0, 0,
+          0, -0, -1.0202020406723022, -1,
+          0, 0, -17.49546241760254, 0
         ]);
 
         myCam.frustum();
@@ -609,6 +741,187 @@ suite('p5.Camera', function() {
         myCam.frustum(-1, 1, -1, 1, -2, 2);
         assert.deepEqual(myCam.cameraType, 'custom');
       });
+    });
+  });
+
+  suite('slerp()', function() {
+    const expectCameraMatricesAreClose = function(cam0, cam1) {
+      for (let i = 0; i < cam0.cameraMatrix.mat4.length; i++) {
+        expect(cam0.cameraMatrix.mat4[i])
+          .to.be.closeTo(cam1.cameraMatrix.mat4[i], 0.001);
+      }
+    };
+    test('if amt is 0 or 1, the argument camera is set', function() {
+      myCam = myp5.createCamera();
+      const cam0 = myCam.copy();
+      cam0.camera(20, 30, 40, 2, 3, 8, 0, 9, -6);
+      const cam1 = myCam.copy();
+      cam1.camera(90, 70, 33, 4, 1, 9, -3, 2, 5);
+
+      // if amt is 0, cam is set to cam0.
+      myCam.slerp(cam0, cam1, 0);
+      assert.deepEqual(myCam.cameraMatrix.mat4, cam0.cameraMatrix.mat4);
+
+      // if amt is 1, cam is set to cam1.
+      myCam.slerp(cam0, cam1, 1);
+      assert.deepEqual(myCam.cameraMatrix.mat4, cam1.cameraMatrix.mat4);
+    });
+    test('Behavior of slerp() for camera moved by pan()', function() {
+      myCam = myp5.createCamera();
+      const cam0 = myCam.copy();
+      const cam1 = myCam.copy();
+      cam1.pan(Math.PI * 0.9);
+
+      // Prepare cameras supposed to be obtained by slerp cam0 and cam1.
+      const cam2 = myCam.copy();
+      cam2.pan(Math.PI * 0.4);
+      const cam3 = myCam.copy();
+      cam3.pan(-Math.PI * 0.2);
+      const cam4 = myCam.copy();
+      cam4.pan(Math.PI * 1.1);
+
+      // Compare these views with the view set by slerp().
+      myCam.slerp(cam0, cam1, 4/9);
+      expectCameraMatricesAreClose(myCam, cam2);
+      myCam.slerp(cam0, cam1, -2/9);
+      expectCameraMatricesAreClose(myCam, cam3);
+      myCam.slerp(cam0, cam1, 11/9);
+      expectCameraMatricesAreClose(myCam, cam4);
+    });
+    test('Behavior of slerp() for camera moved by tilt()', function() {
+      myCam = myp5.createCamera();
+      const cam0 = myCam.copy();
+      const cam1 = myCam.copy();
+      cam1.tilt(Math.PI * 0.3);
+
+      // Prepare cameras supposed to be obtained by slerp cam0 and cam1.
+      const cam2 = myCam.copy();
+      cam2.tilt(Math.PI * 0.1);
+      const cam3 = myCam.copy();
+      cam3.tilt(-Math.PI * 0.2);
+      const cam4 = myCam.copy();
+      cam4.tilt(Math.PI * 0.4);
+
+      // Compare these views with the view set by slerp().
+      myCam.slerp(cam0, cam1, 1/3);
+      expectCameraMatricesAreClose(myCam, cam2);
+      myCam.slerp(cam0, cam1, -2/3);
+      expectCameraMatricesAreClose(myCam, cam3);
+      myCam.slerp(cam0, cam1, 4/3);
+      expectCameraMatricesAreClose(myCam, cam4);
+    });
+    test('Behavior of slerp() for camera moved by _orbit()', function() {
+      myCam = myp5.createCamera();
+      const cam0 = myCam.copy();
+      const cam1 = myCam.copy();
+      cam1._orbit(Math.PI * 0.8, 0, 0.08);
+      const cam2 = myCam.copy();
+      cam2._orbit(0, Math.PI * 0.7, 0.07);
+
+      // Prepare cameras supposed to be obtained by slerp cam0 and cam1.
+      const cam3 = myCam.copy();
+      cam3._orbit(Math.PI * 0.3, 0, 0.03);
+      const cam4 = myCam.copy();
+      cam4._orbit(-Math.PI * 0.7, 0, -0.07);
+      const cam5 = myCam.copy();
+      cam5._orbit(Math.PI * 1.1, 0, 0.11);
+
+      // Prepare cameras supposed to be obtained by slerp cam0 and cam2.
+      const cam6 = myCam.copy();
+      cam6._orbit(0, Math.PI * 0.3, 0.03);
+      const cam7 = myCam.copy();
+      cam7._orbit(0, -Math.PI * 0.4, -0.04);
+      const cam8 = myCam.copy();
+      cam8._orbit(0, Math.PI * 1.1, 0.11);
+
+      // Compare these views with the view set by slerp().
+      myCam.slerp(cam0, cam1, 3/8);
+      expectCameraMatricesAreClose(myCam, cam3);
+      myCam.slerp(cam0, cam1, -7/8);
+      expectCameraMatricesAreClose(myCam, cam4);
+      myCam.slerp(cam0, cam1, 11/8);
+      expectCameraMatricesAreClose(myCam, cam5);
+
+      myCam.slerp(cam0, cam2, 3/7);
+      expectCameraMatricesAreClose(myCam, cam6);
+      myCam.slerp(cam0, cam2, -4/7);
+      expectCameraMatricesAreClose(myCam, cam7);
+      myCam.slerp(cam0, cam2, 11/7);
+      expectCameraMatricesAreClose(myCam, cam8);
+    });
+    test('Behavior of slerp() for camera moved by _orbitFree()', function() {
+      myCam = myp5.createCamera();
+      const cam0 = myCam.copy();
+      const cam1 = myCam.copy();
+      cam1._orbitFree(Math.PI * 0.8, Math.PI * 0.6, 0.08);
+
+      // Prepare cameras supposed to be obtained by slerp cam0 and cam1.
+      const cam2 = myCam.copy();
+      cam2._orbitFree(Math.PI * 0.4, Math.PI * 0.3, 0.04);
+      const cam3 = myCam.copy();
+      cam3._orbitFree(-Math.PI * 0.2, -Math.PI * 0.15, -0.02);
+      const cam4 = myCam.copy();
+      cam4._orbitFree(Math.PI * 1.2, Math.PI * 0.9, 0.12);
+
+      // Compare these views with the view set by slerp().
+      myCam.slerp(cam0, cam1, 1/2);
+      expectCameraMatricesAreClose(myCam, cam2);
+      myCam.slerp(cam0, cam1, -1/4);
+      expectCameraMatricesAreClose(myCam, cam3);
+      myCam.slerp(cam0, cam1, 3/2);
+      expectCameraMatricesAreClose(myCam, cam4);
+    });
+    test('if viewpoints of cam0, cam1 are same, all the same.', function() {
+      myCam = myp5.createCamera();
+      const cam0 = myCam.copy();
+      cam0.camera(22, 37, 49, 0, 1, 2, 3, 4, -1);
+      const cam1 = myCam.copy();
+      cam1.camera(22, 37, 49, 2, 1, 0, 9, 8, 11);
+
+      // Run slerp() and compare viewpoints.
+      for (let i = 1; i < 100; i++) {
+        myCam.slerp(cam0, cam1, i * 0.01);
+        expect(myCam.eyeX).to.be.closeTo(cam0.eyeX, 0.00001);
+        expect(myCam.eyeY).to.be.closeTo(cam0.eyeY, 0.00001);
+        expect(myCam.eyeZ).to.be.closeTo(cam0.eyeZ, 0.00001);
+      }
+    });
+    test('if center of cam0, cam1 are same, all the same.', function() {
+      myCam = myp5.createCamera();
+      const cam0 = myCam.copy();
+      cam0.camera(0, 1, 2, 22, 37, 49, 3, 4, -1);
+      const cam1 = myCam.copy();
+      cam1.camera(2, 1, 0, 22, 37, 49, 9, 8, 11);
+
+      // Run slerp() and compare centers.
+      for (let i = 1; i < 100; i++) {
+        myCam.slerp(cam0, cam1, i * 0.01);
+        expect(myCam.centerX).to.be.closeTo(cam0.centerX, 0.00001);
+        expect(myCam.centerY).to.be.closeTo(cam0.centerY, 0.00001);
+        expect(myCam.centerZ).to.be.closeTo(cam0.centerZ, 0.00001);
+      }
+    });
+    test('if all camera is ortho, 0,5 component is interpolated', function() {
+      myCam = myp5.createCamera();
+      myCam.ortho(-50, 50, -50, 50, 0, 1000);
+      const cam0 = myCam.copy();
+      cam0.ortho(-20, 20, -20, 20, 0, 1000);
+      const cam1 = myCam.copy();
+      cam1.ortho(-100, 100, -100, 100, 0, 1000);
+
+      // interpolate cam0 and cam1
+      myCam.slerp(cam0, cam1, 0.3);
+
+      // Next, check the 0th and 5th entries of the projection matrix
+      // to make sure it is logarithmically interpolated.
+      const p0_0 = cam0.projMatrix.mat4[0];
+      const p1_0 = cam1.projMatrix.mat4[0];
+      expect(myCam.projMatrix.mat4[0])
+        .to.be.closeTo(p0_0 * Math.pow(p1_0 / p0_0, 0.3), 0.00001);
+      const p0_5 = cam0.projMatrix.mat4[5];
+      const p1_5 = cam1.projMatrix.mat4[5];
+      expect(myCam.projMatrix.mat4[5])
+        .to.be.closeTo(p0_5 * Math.pow(p1_5 / p0_5, 0.3), 0.00001);
     });
   });
 

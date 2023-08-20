@@ -1,0 +1,54 @@
+{
+  "env": {
+    "node": true,
+    "browser": true,
+    "amd": true,
+    "es6": true
+  },
+  "globals": {
+    "p5": true
+  },
+  "root": true,
+  "extends": ["eslint:recommended"],
+  "parserOptions": {
+    "ecmaVersion": 2017,
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-cond-assign": [2, "except-parens"],
+    "eqeqeq": ["error", "smart"],
+    "no-use-before-define": [
+      2,
+      {
+        "functions": false
+      }
+    ],
+    "new-cap": 0,
+    "no-caller": 2,
+    "no-undef": 0,
+    "no-unused-vars": ["error", { "args": "none" }],
+    "no-empty": ["error", { "allowEmptyCatch": true }],
+    "no-console": "off",
+    "max-len": ["error", {
+      "code": 80,
+      "ignoreComments": true,
+      "ignoreStrings": true,
+      "ignoreTemplateLiterals": true,
+      "ignoreRegExpLiterals": true
+    }],
+    "indent": ["error", 2, {
+      "SwitchCase": 1
+    }],
+    "semi": ["error", "always"],
+    "quotes": ["error", "single", {
+      "avoidEscape": true
+    }],
+    "comma-dangle": ["error", "never"],
+    "object-curly-spacing": ["error", "always"],
+    "arrow-parens": ["error", "as-needed"],
+    "linebreak-style": ["error", "unix"],
+    "no-trailing-spaces": ["error"],
+    "no-prototype-builtins": "off",
+    "no-async-promise-executor": "off"
+  }
+}

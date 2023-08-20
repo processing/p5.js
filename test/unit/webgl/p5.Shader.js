@@ -92,7 +92,6 @@ suite('p5.Shader', function() {
         'uMaterialColor',
         'uSampler',
         'isTexture',
-        'uEmissive',
         'uConstantAttenuation',
         'uLinearAttenuation',
         'uQuadraticAttenuation'
@@ -260,6 +259,54 @@ suite('p5.Shader', function() {
       myp5.resetShader();
       var curShader = myp5._renderer.userFillShader;
       assert.isTrue(curShader === null);
+    });
+
+    test('isTextureShader returns true if there is a sampler', function() {
+      var s = myp5._renderer._getLightShader();
+      myp5.shader(s);
+      assert.isTrue(s.isTextureShader());
+    });
+
+    test('isTextureShader returns false if there is no sampler', function() {
+      var s = myp5._renderer._getColorShader();
+      myp5.shader(s);
+      assert.isFalse(s.isTextureShader());
+    });
+
+    test('isLightShader returns true if there are lighting uniforms', function() {
+      var s = myp5._renderer._getLightShader();
+      myp5.shader(s);
+      assert.isTrue(s.isLightShader());
+    });
+
+    test('isLightShader returns false if there are no lighting uniforms', function() {
+      var s = myp5._renderer._getPointShader();
+      myp5.shader(s);
+      assert.isFalse(s.isLightShader());
+    });
+
+    test('isNormalShader returns true if there is a normal attribute', function() {
+      var s = myp5._renderer._getNormalShader();
+      myp5.shader(s);
+      assert.isTrue(s.isNormalShader());
+    });
+
+    test('isNormalShader returns false if there is no normal attribute', function() {
+      var s = myp5._renderer._getPointShader();
+      myp5.shader(s);
+      assert.isFalse(s.isNormalShader());
+    });
+
+    test('isStrokeShader returns true if there is a stroke weight uniform', function() {
+      var s = myp5._renderer._getLineShader();
+      myp5.shader(s);
+      assert.isTrue(s.isStrokeShader());
+    });
+
+    test('isStrokeShader returns false if there is no stroke weight uniform', function() {
+      var s = myp5._renderer._getLightShader();
+      myp5.shader(s);
+      assert.isFalse(s.isStrokeShader());
     });
   });
 });

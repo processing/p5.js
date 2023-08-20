@@ -100,28 +100,24 @@ p5.prototype._normalizeArcAngles = (
 };
 
 /**
- * Draw an arc to the screen. If called with only x, y, w, h, start and stop,
- * the arc will be drawn and filled as an open pie segment. If a mode parameter
- * is provided, the arc will be filled like an open semi-circle (OPEN), a closed
- * semi-circle (CHORD), or as a closed pie segment (PIE). The origin may be changed
- * with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.
+ * Draws an arc to the canvas. Arcs are drawn along the outer edge of an ellipse
+ * (oval) defined by the `x`, `y`, `w`, and `h` parameters. Use the `start` and `stop`
+ * parameters to specify the angles (in radians) at which to draw the arc. Arcs are
+ * always drawn clockwise from `start` to `stop`. The origin of the arc's ellipse may
+ * be changed with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.
  *
- * The arc is always drawn clockwise from wherever start falls to wherever stop
- * falls on the ellipse.Adding or subtracting TWO_PI to either angle does not
- * change where they fall. If both start and stop fall at the same place, a full
- * ellipse will be drawn. Be aware that the y-axis increases in the downward
- * direction, therefore angles are measured clockwise from the positive
- * x-direction ("3 o'clock").
+ * The optional `mode` parameter determines the arc's fill style. The fill modes are
+ * a semi-circle (`OPEN`), a closed semi-circle (`CHORD`), or a closed pie segment (`PIE`).
  *
  * @method arc
- * @param  {Number} x      x-coordinate of the arc's ellipse
- * @param  {Number} y      y-coordinate of the arc's ellipse
- * @param  {Number} w      width of the arc's ellipse by default
- * @param  {Number} h      height of the arc's ellipse by default
- * @param  {Number} start  angle to start the arc, specified in radians
- * @param  {Number} stop   angle to stop the arc, specified in radians
+ * @param  {Number} x      x-coordinate of the arc's ellipse.
+ * @param  {Number} y      y-coordinate of the arc's ellipse.
+ * @param  {Number} w      width of the arc's ellipse by default.
+ * @param  {Number} h      height of the arc's ellipse by default.
+ * @param  {Number} start  angle to start the arc, specified in radians.
+ * @param  {Number} stop   angle to stop the arc, specified in radians.
  * @param  {Constant} [mode] optional parameter to determine the way of drawing
- *                         the arc. either CHORD, PIE or OPEN
+ *                         the arc. either CHORD, PIE, or OPEN.
  * @param  {Integer} [detail] optional parameter for WebGL mode only. This is to
  *                         specify the number of vertices that makes up the
  *                         perimeter of the arc. Default value is 25. Won't
@@ -136,39 +132,42 @@ p5.prototype._normalizeArcAngles = (
  * arc(50, 55, 60, 60, HALF_PI, PI);
  * arc(50, 55, 70, 70, PI, PI + QUARTER_PI);
  * arc(50, 55, 80, 80, PI + QUARTER_PI, TWO_PI);
+ * describe(
+ *   'A shattered outline of an ellipse with a quarter of a white circle at the bottom-right.'
+ * );
  * </code>
  * </div>
  *
  * <div>
  * <code>
  * arc(50, 50, 80, 80, 0, PI + QUARTER_PI);
+ * describe('A white ellipse with the top-right third missing. The bottom is outlined in black.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
  * arc(50, 50, 80, 80, 0, PI + QUARTER_PI, OPEN);
+ * describe(
+ *   'A white ellipse missing a section from the top-right. The bottom is outlined in black.'
+ * );
  * </code>
  * </div>
  *
  * <div>
  * <code>
  * arc(50, 50, 80, 80, 0, PI + QUARTER_PI, CHORD);
+ * describe('A white ellipse with a black outline missing a section from the top-right.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
  * arc(50, 50, 80, 80, 0, PI + QUARTER_PI, PIE);
+ * describe('A white ellipse with a black outline. The top-right third is missing.');
  * </code>
  * </div>
  *
- * @alt
- *shattered outline of an ellipse with a quarter of a white circle bottom-right.
- *white ellipse with top right quarter missing.
- *white ellipse with black outline with top right missing.
- *white ellipse with top right missing with black outline around shape.
- *white ellipse with top right quarter missing with black outline around the shape.
  */
 p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
   p5._validateParameters('arc', arguments);
@@ -230,18 +229,19 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
 };
 
 /**
- * Draws an ellipse (oval) to the screen. By default, the first two parameters
- * set the location of the center of the ellipse, and the third and fourth
- * parameters set the shape's width and height. If no height is specified, the
- * value of width is used for both the width and height. If a negative height or
- * width is specified, the absolute value is taken.
+ * Draws an ellipse (oval) to the canvas. An ellipse with equal width and height
+ * is a circle. By default, the first two parameters set the location of the
+ * center of the ellipse. The third and fourth parameters set the shape's width
+ * and height, respectively. The origin may be changed with the
+ * <a href="#/p5/ellipseMode">ellipseMode()</a> function.
  *
- * An ellipse with equal width and height is a circle. The origin may be changed
- * with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.
+ * If no height is specified, the value of width is used for both the width and
+ * height. If a negative height or width is specified, the absolute value is
+ * taken.
  *
  * @method ellipse
- * @param  {Number} x x-coordinate of the center of ellipse.
- * @param  {Number} y y-coordinate of the center of ellipse.
+ * @param  {Number} x x-coordinate of the center of the ellipse.
+ * @param  {Number} y y-coordinate of the center of the ellipse.
  * @param  {Number} w width of the ellipse.
  * @param  {Number} [h] height of the ellipse.
  * @chainable
@@ -249,11 +249,10 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
  * <div>
  * <code>
  * ellipse(56, 46, 55, 55);
+ * describe('A white ellipse with black outline in middle of a gray canvas.');
  * </code>
  * </div>
  *
- * @alt
- *white ellipse with black outline in middle-right of canvas that is 55x55
  */
 
 /**
@@ -269,40 +268,36 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
  */
 p5.prototype.ellipse = function(x, y, w, h, detailX) {
   p5._validateParameters('ellipse', arguments);
-  return this._renderEllipse.apply(this, arguments);
+  return this._renderEllipse(...arguments);
 };
 
 /**
- * Draws a circle to the screen. A circle is a simple closed shape. It is the set
- * of all points in a plane that are at a given distance from a given point,
- * the centre. This function is a special case of the ellipse() function, where
- * the width and height of the ellipse are the same. Height and width of the
- * ellipse correspond to the diameter of the circle. By default, the first two
- * parameters set the location of the centre of the circle, the third sets the
- * diameter of the circle.
+ * Draws a circle to the canvas. A circle is a round shape. Every point on the
+ * edge of a circle is the same distance from its center. By default, the first
+ * two parameters set the location of the center of the circle. The third
+ * parameter sets the shape's width and height (diameter). The origin may be
+ * changed with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.
  *
  * @method circle
- * @param  {Number} x  x-coordinate of the centre of the circle.
- * @param  {Number} y  y-coordinate of the centre of the circle.
+ * @param  {Number} x  x-coordinate of the center of the circle.
+ * @param  {Number} y  y-coordinate of the center of the circle.
  * @param  {Number} d  diameter of the circle.
  * @chainable
  * @example
  * <div>
  * <code>
- * // Draw a circle at location (30, 30) with a diameter of 20.
  * circle(30, 30, 20);
+ * describe('A white circle with black outline in the middle of a gray canvas.');
  * </code>
  * </div>
  *
- * @alt
- * white circle with black outline in mid of canvas that is 55x55.
  */
 p5.prototype.circle = function() {
   p5._validateParameters('circle', arguments);
   const args = Array.prototype.slice.call(arguments, 0, 2);
   args.push(arguments[2]);
   args.push(arguments[2]);
-  return this._renderEllipse.apply(this, args);
+  return this._renderEllipse(...args);
 };
 
 // internal method for drawing ellipses (without parameter validation)
@@ -337,23 +332,30 @@ p5.prototype._renderEllipse = function(x, y, w, h, detailX) {
 };
 
 /**
- * Draws a line (a direct path between two points) to the screen. If called with
- * only 4 parameters, it will draw a line in 2D with a default width of 1 pixel.
- * This width can be modified by using the <a href="#/p5/strokeWeight">
- * strokeWeight()</a> function. A line cannot be filled, therefore the <a
- * href="#/p5/fill">fill()</a> function will not affect the color of a line. So to
- * color a line, use the <a href="#/p5/stroke">stroke()</a> function.
+ * Draws a line, a straight path between two points. Its default width is one pixel.
+ * The version of `line()` with four parameters draws the line in 2D. To color a line,
+ * use the <a href="#/p5/stroke">stroke()</a> function. To change its width, use the
+ * <a href="#/p5/strokeWeight">strokeWeight()</a> function. A line
+ * can't be filled, so the <a href="#/p5/fill">fill()</a> function won't affect
+ * the color of a  line.
+ *
+ * The version of `line()` with six parameters allows the line to be drawn in 3D
+ * space. Doing so requires adding the `WEBGL` argument to
+ * <a href="#/p5/createCanvas">createCanvas()</a>.
  *
  * @method line
- * @param  {Number} x1 the x-coordinate of the first point
- * @param  {Number} y1 the y-coordinate of the first point
- * @param  {Number} x2 the x-coordinate of the second point
- * @param  {Number} y2 the y-coordinate of the second point
+ * @param  {Number} x1 the x-coordinate of the first point.
+ * @param  {Number} y1 the y-coordinate of the first point.
+ * @param  {Number} x2 the x-coordinate of the second point.
+ * @param  {Number} y2 the y-coordinate of the second point.
  * @chainable
  * @example
  * <div>
  * <code>
  * line(30, 20, 85, 75);
+ * describe(
+ *   'A black line on a gray canvas running from top-center to bottom-right.'
+ * );
  * </code>
  * </div>
  *
@@ -364,22 +366,36 @@ p5.prototype._renderEllipse = function(x, y, w, h, detailX) {
  * line(85, 20, 85, 75);
  * stroke(255);
  * line(85, 75, 30, 75);
+ * describe(
+ *   'Three lines drawn in grayscale on a gray canvas. They form the top, right, and bottom sides of a square.'
+ * );
  * </code>
  * </div>
  *
- * @alt
- * An example showing a line 78 pixels long running from mid-top to bottom-right of canvas.
- * An example showing 3 lines of various stroke sizes. Form top, bottom and right sides of a square.
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   describe('A black line drawn on a gray canvas.');
+ * }
+ *
+ * function draw() {
+ *   background(220);
+ *   line(0, 0, 0, 10, 10, 0);
+ * }
+ * </code>
+ * </div>
+ *
  */
 
 /**
  * @method line
  * @param  {Number} x1
  * @param  {Number} y1
- * @param  {Number} z1 the z-coordinate of the first point
+ * @param  {Number} z1 the z-coordinate of the first point.
  * @param  {Number} x2
  * @param  {Number} y2
- * @param  {Number} z2 the z-coordinate of the second point
+ * @param  {Number} z2 the z-coordinate of the second point.
  * @chainable
  */
 p5.prototype.line = function(...args) {
@@ -398,16 +414,22 @@ p5.prototype.line = function(...args) {
 };
 
 /**
- * Draws a point, a coordinate in space at the dimension of one pixel.
- * The first parameter is the horizontal value for the point, the second
- * param is the vertical value for the point. The color of the point is
- * changed with the <a href="#/p5/stroke">stroke()</a> function. The size of the point
- * can be changed with the <a href="#/p5/strokeWeight">strokeWeight()</a> function.
+ * Draws a point, a single coordinate in space. Its default size is one pixel. The first two
+ * parameters are the point's x- and y-coordinates, respectively. To color a point, use
+ * the <a href="#/p5/stroke">stroke()</a> function. To change its size, use the
+ * <a href="#/p5/strokeWeight">strokeWeight()</a> function.
+ *
+ * The version of `point()` with three parameters allows the point to be drawn in 3D
+ * space. Doing so requires adding the `WEBGL` argument to
+ * <a href="#/p5/createCanvas">createCanvas()</a>.
+ *
+ * The version of point() with one parameter allows the point's location to be set with
+ * a <a href="#/p5/p5.Vector">p5.Vector</a> object.
  *
  * @method point
- * @param  {Number} x the x-coordinate
- * @param  {Number} y the y-coordinate
- * @param  {Number} [z] the z-coordinate (for WebGL mode)
+ * @param  {Number} x the x-coordinate.
+ * @param  {Number} y the y-coordinate.
+ * @param  {Number} [z] the z-coordinate (for WebGL mode).
  * @chainable
  * @example
  * <div>
@@ -416,6 +438,9 @@ p5.prototype.line = function(...args) {
  * point(85, 20);
  * point(85, 75);
  * point(30, 75);
+ * describe(
+ *   'Four small, black points drawn on a gray canvas. The points form the corners of a square.'
+ * );
  * </code>
  * </div>
  *
@@ -423,10 +448,13 @@ p5.prototype.line = function(...args) {
  * <code>
  * point(30, 20);
  * point(85, 20);
- * stroke('purple'); // Change the color
- * strokeWeight(10); // Make the points 10 pixels in size
+ * stroke('purple');
+ * strokeWeight(10);
  * point(85, 75);
  * point(30, 75);
+ * describe(
+ *   'Four points drawn on a gray canvas. Two are black and two are purple. The points form the corners of a square.'
+ * );
  * </code>
  * </div>
  *
@@ -436,20 +464,21 @@ p5.prototype.line = function(...args) {
  * point(a);
  * let b = createVector(10, 20);
  * point(b);
- * point(createVector(20, 10));
- * point(createVector(20, 20));
+ * let c = createVector(20, 10);
+ * point(c);
+ * let d = createVector(20, 20);
+ * point(d);
+ * describe(
+ *   'Four small, black points drawn on a gray canvas. The points form the corners of a square.'
+ * );
  * </code>
  * </div>
  *
- * @alt
- * 4 points centered in the middle-right of the canvas.
- * 2 large points and 2 large purple points centered in the middle-right of the canvas.
- * Vertices of a square of length 10 pixels towards the top-left of the canvas.
  */
 
 /**
  * @method point
- * @param {p5.Vector} coordinate_vector the coordinate vector
+ * @param {p5.Vector} coordinateVector the coordinate vector.
  * @chainable
  */
 p5.prototype.point = function(...args) {
@@ -476,49 +505,72 @@ p5.prototype.point = function(...args) {
 };
 
 /**
- * Draws a quad on the canvas. A quad is a quadrilateral, a four sided polygon. It is
- * similar to a rectangle, but the angles between its edges are not
- * constrained to ninety degrees. The first pair of parameters (x1,y1)
- * sets the first vertex and the subsequent pairs should proceed
- * clockwise or counter-clockwise around the defined shape.
- * z-arguments only work when quad() is used in WEBGL mode.
+ * Draws a quad to the canvas. A quad is a quadrilateral, a four-sided
+ * polygon. Some examples of quads include rectangles, squares, rhombuses,
+ * and trapezoids. The first pair of parameters (`x1`,`y1`) sets the quad's
+ * first point. The following pairs of parameters set the coordinates for
+ * its next three points. Parameters should proceed clockwise or
+ * counter-clockwise around the shape.
+ *
+ * The version of `quad()` with twelve parameters allows the quad to be drawn
+ * in 3D space. Doing so requires adding the `WEBGL` argument to
+ * <a href="#/p5/createCanvas">createCanvas()</a>.
  *
  * @method quad
- * @param {Number} x1 the x-coordinate of the first point
- * @param {Number} y1 the y-coordinate of the first point
- * @param {Number} x2 the x-coordinate of the second point
- * @param {Number} y2 the y-coordinate of the second point
- * @param {Number} x3 the x-coordinate of the third point
- * @param {Number} y3 the y-coordinate of the third point
- * @param {Number} x4 the x-coordinate of the fourth point
- * @param {Number} y4 the y-coordinate of the fourth point
- * @param {Integer} [detailX] number of segments in the x-direction
- * @param {Integer} [detailY] number of segments in the y-direction
+ * @param {Number} x1 the x-coordinate of the first point.
+ * @param {Number} y1 the y-coordinate of the first point.
+ * @param {Number} x2 the x-coordinate of the second point.
+ * @param {Number} y2 the y-coordinate of the second point.
+ * @param {Number} x3 the x-coordinate of the third point.
+ * @param {Number} y3 the y-coordinate of the third point.
+ * @param {Number} x4 the x-coordinate of the fourth point.
+ * @param {Number} y4 the y-coordinate of the fourth point.
+ * @param {Integer} [detailX] number of segments in the x-direction.
+ * @param {Integer} [detailY] number of segments in the y-direction.
  * @chainable
  * @example
  * <div>
  * <code>
- * quad(38, 31, 86, 20, 69, 63, 30, 76);
+ * quad(20, 20, 80, 20, 80, 80, 20, 80);
+ * describe('A white square with a black outline drawn on a gray canvas.');
  * </code>
  * </div>
  *
- * @alt
- *irregular white quadrilateral shape with black outline mid-right of canvas.
+ * <div>
+ * <code>
+ * quad(20, 30, 80, 30, 80, 70, 20, 70);
+ * describe('A white rectangle with a black outline drawn on a gray canvas.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * quad(50, 62, 86, 50, 50, 38, 14, 50);
+ * describe('A white rhombus with a black outline drawn on a gray canvas.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * quad(20, 50, 80, 30, 80, 70, 20, 70);
+ * describe('A white trapezoid with a black outline drawn on a gray canvas.');
+ * </code>
+ * </div>
  */
 /**
  * @method quad
  * @param {Number} x1
  * @param {Number} y1
- * @param {Number} z1 the z-coordinate of the first point
+ * @param {Number} z1 the z-coordinate of the first point.
  * @param {Number} x2
  * @param {Number} y2
- * @param {Number} z2 the z-coordinate of the second point
+ * @param {Number} z2 the z-coordinate of the second point.
  * @param {Number} x3
  * @param {Number} y3
- * @param {Number} z3 the z-coordinate of the third point
+ * @param {Number} z3 the z-coordinate of the third point.
  * @param {Number} x4
  * @param {Number} y4
- * @param {Number} z4 the z-coordinate of the fourth point
+ * @param {Number} z4 the z-coordinate of the fourth point.
  * @param {Integer} [detailX]
  * @param {Integer} [detailY]
  * @chainable
@@ -527,9 +579,8 @@ p5.prototype.quad = function(...args) {
   p5._validateParameters('quad', args);
 
   if (this._renderer._doStroke || this._renderer._doFill) {
-    if (this._renderer.isP3D && args.length <= 12) {
+    if (this._renderer.isP3D && args.length < 12) {
       // if 3D and we weren't passed 12 args, assume Z is 0
-      // prettier-ignore
       this._renderer.quad.call(
         this._renderer,
         args[0], args[1], 0,
@@ -550,16 +601,21 @@ p5.prototype.quad = function(...args) {
 };
 
 /**
- * Draws a rectangle on the canvas. A rectangle is a four-sided closed shape with
- * every angle at ninety degrees. By default, the first two parameters set
- * the location of the upper-left corner, the third sets the width, and the
- * fourth sets the height. The way these parameters are interpreted, may be
- * changed with the <a href="#/p5/rectMode">rectMode()</a> function.
+ * Draws a rectangle to the canvas. A rectangle is a four-sided polygon with
+ * every angle at ninety degrees. By default, the first two parameters set the
+ * location of the rectangle's upper-left corner. The third and fourth set the
+ * shape's the width and height, respectively. The way these parameters are
+ * interpreted may be changed with the <a href="#/p5/rectMode">rectMode()</a>
+ * function.
  *
- * The fifth, sixth, seventh and eighth parameters, if specified,
- * determine corner radius for the top-left, top-right, lower-right and
- * lower-left corners, respectively. An omitted corner radius parameter is set
- * to the value of the previously specified radius value in the parameter list.
+ * The version of `rect()` with five parameters creates a rounded rectangle. The
+ * fifth parameter is used as the radius value for all four corners.
+ *
+ * The version of `rect()` with eight parameters also creates a rounded rectangle.
+ * When using eight parameters, the latter four set the radius of the arc at
+ * each corner separately. The radii start with the top-left corner and move
+ * clockwise around the rectangle. If any of these parameters are omitted, they
+ * are set to the value of the last specified corner radius.
  *
  * @method rect
  * @param  {Number} x  x-coordinate of the rectangle.
@@ -574,30 +630,27 @@ p5.prototype.quad = function(...args) {
  * @example
  * <div>
  * <code>
- * // Draw a rectangle at location (30, 20) with a width and height of 55.
  * rect(30, 20, 55, 55);
+ * describe('A white rectangle with a black outline on a gray canvas.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Draw a rectangle with rounded corners, each having a radius of 20.
  * rect(30, 20, 55, 55, 20);
+ * describe(
+ *   'A white rectangle with a black outline and round edges on a gray canvas.'
+ * );
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Draw a rectangle with rounded corners having the following radii:
- * // top-left = 20, top-right = 15, bottom-right = 10, bottom-left = 5.
  * rect(30, 20, 55, 55, 20, 15, 10, 5);
+ * describe('A white rectangle with a black outline and round edges of different radii.');
  * </code>
  * </div>
  *
- * @alt
- * 55x55 white rect with black outline in mid-right of canvas.
- * 55x55 white rect with black outline and rounded edges in mid-right of canvas.
- * 55x55 white rect with black outline and rounded edges of different radii.
  */
 
 /**
@@ -606,28 +659,30 @@ p5.prototype.quad = function(...args) {
  * @param  {Number} y
  * @param  {Number} w
  * @param  {Number} h
- * @param  {Integer} [detailX] number of segments in the x-direction (for WebGL mode)
- * @param  {Integer} [detailY] number of segments in the y-direction (for WebGL mode)
+ * @param  {Integer} [detailX] number of segments in the x-direction (for WebGL mode).
+ * @param  {Integer} [detailY] number of segments in the y-direction (for WebGL mode).
  * @chainable
  */
-p5.prototype.rect = function() {
-  p5._validateParameters('rect', arguments);
-  return this._renderRect.apply(this, arguments);
+p5.prototype.rect = function(...args) {
+  p5._validateParameters('rect', args);
+  return this._renderRect(...args);
 };
 
 /**
- * Draws a square to the screen. A square is a four-sided shape with every angle
- * at ninety degrees, and equal side size. This function is a special case of the
- * rect() function, where the width and height are the same, and the parameter
- * is called "s" for side size. By default, the first two parameters set the
- * location of the upper-left corner, the third sets the side size of the square.
- * The way these parameters are interpreted, may be changed with the <a
- * href="#/p5/rectMode">rectMode()</a> function.
+ * Draws a square to the canvas. A square is a four-sided polygon with every
+ * angle at ninety degrees and equal side lengths. By default, the first two
+ * parameters set the location of the square's upper-left corner. The third
+ * parameter sets its side size. The way these parameters are interpreted may
+ * be changed with the <a href="#/p5/rectMode">rectMode()</a> function.
  *
- * The fourth, fifth, sixth and seventh parameters, if specified,
- * determine corner radius for the top-left, top-right, lower-right and
- * lower-left corners, respectively. An omitted corner radius parameter is set
- * to the value of the previously specified radius value in the parameter list.
+ * The version of `square()` with four parameters creates a rounded square. The
+ * fourth parameter is used as the radius value for all four corners.
+ *
+ * The version of `square()` with seven parameters also creates a rounded square.
+ * When using seven parameters, the latter four set the radius of the arc at
+ * each corner separately. The radii start with the top-left corner and move
+ * clockwise around the square. If any of these parameters are omitted, they
+ * are set to the value of the last specified corner radius.
  *
  * @method square
  * @param  {Number} x  x-coordinate of the square.
@@ -641,30 +696,27 @@ p5.prototype.rect = function() {
  * @example
  * <div>
  * <code>
- * // Draw a square at location (30, 20) with a side size of 55.
  * square(30, 20, 55);
+ * describe('A white square with a black outline in on a gray canvas.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Draw a square with rounded corners, each having a radius of 20.
  * square(30, 20, 55, 20);
+ * describe(
+ *   'A white square with a black outline and round edges on a gray canvas.'
+ * );
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Draw a square with rounded corners having the following radii:
- * // top-left = 20, top-right = 15, bottom-right = 10, bottom-left = 5.
  * square(30, 20, 55, 20, 15, 10, 5);
+ * describe('A white square with a black outline and round edges of different radii.');
  * </code>
  * </div>
  *
- * @alt
- * 55x55 white square with black outline in mid-right of canvas.
- * 55x55 white square with black outline and rounded edges in mid-right of canvas.
- * 55x55 white square with black outline and rounded edges of different radii.
  */
 p5.prototype.square = function(x, y, s, tl, tr, br, bl) {
   p5._validateParameters('square', arguments);
@@ -705,28 +757,27 @@ p5.prototype._renderRect = function() {
 };
 
 /**
- * Draws a triangle to the canvas. A triangle is a plane created by connecting
- * three points. The first two arguments specify the first point, the middle two
- * arguments specify the second point, and the last two arguments specify the
- * third point.
+ * Draws a triangle to the canvas. A triangle is a three-sided polygon. The
+ * first two parameters specify the triangle's first point `(x1,y1)`. The middle
+ * two parameters specify its second point `(x2,y2)`. And the last two parameters
+ * specify its third point `(x3, y3)`.
  *
  * @method triangle
- * @param  {Number} x1 x-coordinate of the first point
- * @param  {Number} y1 y-coordinate of the first point
- * @param  {Number} x2 x-coordinate of the second point
- * @param  {Number} y2 y-coordinate of the second point
- * @param  {Number} x3 x-coordinate of the third point
- * @param  {Number} y3 y-coordinate of the third point
+ * @param  {Number} x1 x-coordinate of the first point.
+ * @param  {Number} y1 y-coordinate of the first point.
+ * @param  {Number} x2 x-coordinate of the second point.
+ * @param  {Number} y2 y-coordinate of the second point.
+ * @param  {Number} x3 x-coordinate of the third point.
+ * @param  {Number} y3 y-coordinate of the third point.
  * @chainable
  * @example
  * <div>
  * <code>
  * triangle(30, 75, 58, 20, 86, 75);
+ * describe('A white triangle with a black outline on a gray canvas.');
  * </code>
  * </div>
  *
- *@alt
- * white triangle with black outline in mid-right of canvas.
  */
 p5.prototype.triangle = function(...args) {
   p5._validateParameters('triangle', args);

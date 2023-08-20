@@ -104,7 +104,7 @@ FetchResources.type = 'backend';
 
 /**
  * This is our translation function. Give it a key and
- * it will retreive the appropriate string
+ * it will retrieve the appropriate string
  * (within supported languages) according to the
  * user's browser's language settings.
  * @function translator
@@ -166,4 +166,29 @@ export const initialize = () => {
   // are loaded. We use this in core/init.js to hold p5 initialization until
   // we have the translation files.
   return i18init;
+};
+
+/**
+ * Returns a list of languages we have translations loaded for
+ */
+export const availableTranslatorLanguages = () => {
+  return i18next.languages;
+};
+
+/**
+ * Returns the current language selected for translation
+ */
+export const currentTranslatorLanguage = language => {
+  return i18next.language;
+};
+
+/**
+ * Sets the current language for translation
+ * Returns a promise that resolved when loading is finished,
+ * or rejects if it fails.
+ */
+export const setTranslatorLanguage = language => {
+  return i18next.changeLanguage(language || undefined, e =>
+    console.debug(`Translations failed to load (${e})`)
+  );
 };

@@ -3,6 +3,7 @@
  * @submodule Acceleration
  * @for p5
  * @requires core
+ * @main Events
  */
 
 import p5 from '../core/main';
@@ -35,11 +36,10 @@ p5.prototype.deviceOrientation =
  *   background(220, 50);
  *   fill('magenta');
  *   ellipse(width / 2, height / 2, accelerationX);
+ *   describe('Magnitude of device acceleration is displayed as ellipse size.');
  * }
  * </code>
  * </div>
- * @alt
- * Magnitude of device acceleration is displayed as ellipse size
  */
 p5.prototype.accelerationX = 0;
 
@@ -58,11 +58,10 @@ p5.prototype.accelerationX = 0;
  *   background(220, 50);
  *   fill('magenta');
  *   ellipse(width / 2, height / 2, accelerationY);
+ *   describe('Magnitude of device acceleration is displayed as ellipse size');
  * }
  * </code>
  * </div>
- * @alt
- * Magnitude of device acceleration is displayed as ellipse size
  */
 p5.prototype.accelerationY = 0;
 
@@ -82,12 +81,10 @@ p5.prototype.accelerationY = 0;
  *   background(220, 50);
  *   fill('magenta');
  *   ellipse(width / 2, height / 2, accelerationZ);
+ *   describe('Magnitude of device acceleration is displayed as ellipse size');
  * }
  * </code>
  * </div>
- *
- * @alt
- * Magnitude of device acceleration is displayed as ellipse size
  */
 p5.prototype.accelerationZ = 0;
 
@@ -157,11 +154,11 @@ p5.prototype._updatePAccelerations = function() {
  *   rotateX(radians(rotationX));
  *   //rotateY(radians(rotationY));
  *   box(200, 200, 200);
+ *   describe(`red horizontal line right, green vertical line bottom.
+ *     black background.`);
  * }
  * </code>
  * </div>
- * @alt
- * red horizontal line right, green vertical line bottom. black background.
  */
 p5.prototype.rotationX = 0;
 
@@ -190,11 +187,11 @@ p5.prototype.rotationX = 0;
  *   //rotateX(radians(rotationX));
  *   rotateY(radians(rotationY));
  *   box(200, 200, 200);
+ *   describe(`red horizontal line right, green vertical line bottom.
+ *     black background.`);
  * }
  * </code>
  * </div>
- * @alt
- * red horizontal line right, green vertical line bottom. black background.
  */
 p5.prototype.rotationY = 0;
 
@@ -224,15 +221,14 @@ p5.prototype.rotationY = 0;
  *   //rotateX(radians(rotationX));
  *   //rotateY(radians(rotationY));
  *   box(200, 200, 200);
+ *   describe(`red horizontal line right, green vertical line bottom.
+ *     black background.`);
  * }
  * </code>
  * </div>
  *
  * @property {Number} rotationZ
  * @readOnly
- *
- * @alt
- * red horizontal line right, green vertical line bottom. black background.
  */
 p5.prototype.rotationZ = 0;
 
@@ -271,11 +267,9 @@ p5.prototype.rotationZ = 0;
  * }
  *
  * print(rotateDirection);
+ * describe('no image to display.');
  * </code>
  * </div>
- *
- * @alt
- * no image to display.
  *
  * @property {Number} pRotationX
  * @readOnly
@@ -316,11 +310,9 @@ p5.prototype.pRotationX = 0;
  *   rotateDirection = 'counter-clockwise';
  * }
  * print(rotateDirection);
+ * describe('no image to display.');
  * </code>
  * </div>
- *
- * @alt
- * no image to display.
  *
  * @property {Number} pRotationY
  * @readOnly
@@ -357,11 +349,9 @@ p5.prototype.pRotationY = 0;
  *   rotateDirection = 'counter-clockwise';
  * }
  * print(rotateDirection);
+ * describe('no image to display.');
  * </code>
  * </div>
- *
- * @alt
- * no image to display.
  *
  * @property {Number} pRotationZ
  * @readOnly
@@ -403,6 +393,10 @@ p5.prototype._updatePRotations = function() {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
+ *   describe(`50-by-50 black rect in center of canvas.
+ *     turns white on mobile when device turns`);
+ *   describe(`50-by-50 black rect in center of canvas.
+ *     turns white on mobile when x-axis turns`);
  * }
  * function deviceTurned() {
  *   if (turnAxis === 'X') {
@@ -415,10 +409,6 @@ p5.prototype._updatePRotations = function() {
  * }
  * </code>
  * </div>
- *
- * @alt
- * 50x50 black rect in center of canvas. turns white on mobile when device turns
- * 50x50 black rect in center of canvas. turns white on mobile when x-axis turns
  */
 p5.prototype.turnAxis = undefined;
 
@@ -446,6 +436,8 @@ let shake_threshold = 30;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
+ *   describe(`50-by-50 black rect in center of canvas.
+ *     turns white on mobile when device moves`);
  * }
  * function deviceMoved() {
  *   value = value + 5;
@@ -458,9 +450,6 @@ let shake_threshold = 30;
  * }
  * </code>
  * </div>
- *
- * @alt
- * 50x50 black rect in center of canvas. turns white on mobile when device moves
  */
 
 p5.prototype.setMoveThreshold = function(val) {
@@ -489,6 +478,8 @@ p5.prototype.setMoveThreshold = function(val) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
+ *   describe(`50-by-50 black rect in center of canvas.
+ *     turns white on mobile when device is being shaked`);
  * }
  * function deviceMoved() {
  *   value = value + 5;
@@ -501,10 +492,6 @@ p5.prototype.setMoveThreshold = function(val) {
  * }
  * </code>
  * </div>
- *
- * @alt
- * 50x50 black rect in center of canvas. turns white on mobile when device
- * is being shaked
  */
 
 p5.prototype.setShakeThreshold = function(val) {
@@ -529,6 +516,8 @@ p5.prototype.setShakeThreshold = function(val) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
+ *   describe(`50-by-50 black rect in center of canvas.
+ *     turns white on mobile when device moves`);
  * }
  * function deviceMoved() {
  *   value = value + 5;
@@ -538,9 +527,6 @@ p5.prototype.setShakeThreshold = function(val) {
  * }
  * </code>
  * </div>
- *
- * @alt
- * 50x50 black rect in center of canvas. turns white on mobile when device moves
  */
 
 /**
@@ -563,6 +549,8 @@ p5.prototype.setShakeThreshold = function(val) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
+ *   describe(`50-by-50 black rect in center of canvas.
+ *     turns white on mobile when device turns`);
  * }
  * function deviceTurned() {
  *   if (value === 0) {
@@ -583,6 +571,8 @@ p5.prototype.setShakeThreshold = function(val) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
+ *   describe(`50-by-50 black rect in center of canvas.
+ *     turns white on mobile when x-axis turns`);
  * }
  * function deviceTurned() {
  *   if (turnAxis === 'X') {
@@ -595,10 +585,6 @@ p5.prototype.setShakeThreshold = function(val) {
  * }
  * </code>
  * </div>
- *
- * @alt
- * 50x50 black rect in center of canvas. turns white on mobile when device turns
- * 50x50 black rect in center of canvas. turns white on mobile when x-axis turns
  */
 
 /**
@@ -618,6 +604,8 @@ p5.prototype.setShakeThreshold = function(val) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
+ *   describe(`50-by-50 black rect in center of canvas.
+ *     turns white on mobile when device shakes`);
  * }
  * function deviceShaken() {
  *   value = value + 5;
@@ -627,9 +615,6 @@ p5.prototype.setShakeThreshold = function(val) {
  * }
  * </code>
  * </div>
- *
- * @alt
- * 50x50 black rect in center of canvas. turns white on mobile when device shakes
  */
 
 p5.prototype._ondeviceorientation = function(e) {

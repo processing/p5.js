@@ -26,7 +26,6 @@ function setup() {
     // Three coins in a row
     var x = 70;
     for (var i = 0; i < 3; i++) {
-      // prettier-ignore
       image(
         spriteSheet,
         (x += 75), spriteSheet.height + 10, 75, 75,

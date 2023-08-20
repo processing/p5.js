@@ -6,10 +6,10 @@
  */
 
 import p5 from '../core/main';
-import Filters from './filters';
 import canvas from '../core/helpers';
 import * as constants from '../core/constants';
 import omggif from 'omggif';
+import { GIFEncoder, quantize, nearestColorIndex } from 'gifenc';
 
 import '../core/friendly_errors/validate_params';
 import '../core/friendly_errors/file_errors';
@@ -104,6 +104,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
           e => {
             if (typeof failureCallback === 'function') {
               failureCallback(e);
+              self._decrementPreload();
             } else {
               console.error(e);
             }
@@ -130,6 +131,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
           p5._friendlyFileLoadError(0, img.src);
           if (typeof failureCallback === 'function') {
             failureCallback(e);
+            self._decrementPreload();
           } else {
             console.error(e);
           }
@@ -152,12 +154,434 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
       p5._friendlyFileLoadError(0, path);
       if (typeof failureCallback === 'function') {
         failureCallback(e);
+        self._decrementPreload();
       } else {
         console.error(e);
       }
     });
   return pImg;
 };
+
+/**
+ * Generates a gif of your current animation and downloads it to your computer!
+ *
+ * The duration argument specifies how many seconds you want to record from your animation.
+ * This value is then converted to the necessary number of frames to generate it, depending
+ * on the value of units. More on that on the next paragraph.
+ *
+ * An optional object that can contain two more arguments: delay (number) and units (string).
+ *
+ * `delay`, specifying how much time we should wait before recording
+ *
+ * `units`, a string that can be either 'seconds' or 'frames'. By default it's 'seconds'.
+ *
+ * `units` specifies how the duration and delay arguments will behave.
+ * If 'seconds', these arguments will correspond to seconds, meaning that 3 seconds worth of animation
+ * will be created. If 'frames', the arguments now correspond to the number of frames you want your
+ * animation to be, if you are very sure of this number.
+ *
+ * This may be called in setup, or, like in the example below, inside an event function,
+ * like keyPressed or mousePressed.
+ *
+ * @method saveGif
+ * @param  {String} filename File name of your gif
+ * @param  {Number} duration Duration in seconds that you wish to capture from your sketch
+ * @param  {Object} options An optional object that can contain five more arguments:
+ * delay, specifying how much time we should wait before recording;
+ * units, a string that can be either 'seconds' or 'frames'. By default it's 'seconds’;
+ * silent, a boolean that defines presence of progress notifications. By default it’s false;
+ * notificationDuration, a number that defines how long in seconds the final notification
+ * will live. 0, the default value, means that the notification will never be removed;
+ * notificationID, a string that specifies the notification DOM element id. By default it’s 'progressBar’.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ * }
+ *
+ * function draw() {
+ *   colorMode(RGB);
+ *   background(30);
+ *
+ *   // create a bunch of circles that move in... circles!
+ *   for (let i = 0; i < 10; i++) {
+ *     let opacity = map(i, 0, 10, 0, 255);
+ *     noStroke();
+ *     fill(230, 250, 90, opacity);
+ *     circle(
+ *       30 * sin(frameCount / (30 - i)) + width / 2,
+ *       30 * cos(frameCount / (30 - i)) + height / 2,
+ *       10
+ *     );
+ *   }
+ * }
+ *
+ * // you can put it in the mousePressed function,
+ * // or keyPressed for example
+ * function keyPressed() {
+ *   // this will download the first 5 seconds of the animation!
+ *   if (key === 's') {
+ *     saveGif('mySketch', 5);
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * animation of a group of yellow circles moving in circles over a dark background
+ */
+p5.prototype.saveGif = async function(
+  fileName,
+  duration,
+  options = {
+    delay: 0,
+    units: 'seconds',
+    silent: false,
+    notificationDuration: 0,
+    notificationID: 'progressBar'
+  }
+) {
+  // validate parameters
+  if (typeof fileName !== 'string') {
+    throw TypeError('fileName parameter must be a string');
+  }
+  if (typeof duration !== 'number') {
+    throw TypeError('Duration parameter must be a number');
+  }
+
+  // extract variables for more comfortable use
+  const delay = (options && options.delay) || 0;  // in seconds
+  const units = (options && options.units) || 'seconds';  // either 'seconds' or 'frames'
+  const silent = (options && options.silent) || false;
+  const notificationDuration = (options && options.notificationDuration) || 0;
+  const notificationID = (options && options.notificationID) || 'progressBar';
+
+  // if arguments in the options object are not correct, cancel operation
+  if (typeof delay !== 'number') {
+    throw TypeError('Delay parameter must be a number');
+  }
+  // if units is not seconds nor frames, throw error
+  if (units !== 'seconds' && units !== 'frames') {
+    throw TypeError('Units parameter must be either "frames" or "seconds"');
+  }
+
+  if (typeof silent !== 'boolean') {
+    throw TypeError('Silent parameter must be a boolean');
+  }
+
+  if (typeof notificationDuration !== 'number') {
+    throw TypeError('Notification duration parameter must be a number');
+  }
+
+  if (typeof notificationID !== 'string') {
+    throw TypeError('Notification ID parameter must be a string');
+  }
+
+  this._recording = true;
+
+  // get the project's framerate
+  let _frameRate = this._targetFrameRate;
+  // if it is undefined or some non useful value, assume it's 60
+  if (_frameRate === Infinity || _frameRate === undefined || _frameRate === 0) {
+    _frameRate = 60;
+  }
+
+  // calculate frame delay based on frameRate
+
+  // this delay has nothing to do with the
+  // delay in options, but rather is the delay
+  // we have to specify to the gif encoder between frames.
+  let gifFrameDelay = 1 / _frameRate * 1000;
+
+  // constrain it to be always greater than 20,
+  // otherwise it won't work in some browsers and systems
+  // reference: https://stackoverflow.com/questions/64473278/gif-frame-duration-seems-slower-than-expected
+  gifFrameDelay = gifFrameDelay < 20 ? 20 : gifFrameDelay;
+
+  // check the mode we are in and how many frames
+  // that duration translates to
+  const nFrames = units === 'seconds' ? duration * _frameRate : duration;
+  const nFramesDelay = units === 'seconds' ? delay * _frameRate : delay;
+  const totalNumberOfFrames = nFrames + nFramesDelay;
+
+  // initialize variables for the frames processing
+  let frameIterator = nFramesDelay;
+  this.frameCount = frameIterator;
+
+  const lastPixelDensity = this._pixelDensity;
+  this.pixelDensity(1);
+
+  // We first take every frame that we are going to use for the animation
+  let frames = [];
+
+  if (document.getElementById(notificationID) !== null)
+    document.getElementById(notificationID).remove();
+
+  let p;
+  if (!silent){
+    p = this.createP('');
+    p.id(notificationID);
+    p.style('font-size', '16px');
+    p.style('font-family', 'Montserrat');
+    p.style('background-color', '#ffffffa0');
+    p.style('padding', '8px');
+    p.style('border-radius', '10px');
+    p.position(0, 0);
+  }
+
+  let pixels;
+  let gl;
+  if (this._renderer instanceof p5.RendererGL) {
+    // if we have a WEBGL context, initialize the pixels array
+    // and the gl context to use them inside the loop
+    gl = this.drawingContext;
+    pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+  }
+
+  // stop the loop since we are going to manually redraw
+  this.noLoop();
+
+  // Defer execution until the rest of the call stack finishes, allowing the
+  // rest of `setup` to be called (and, importantly, canvases hidden in setup
+  // to be unhidden.)
+  //
+  // Waiting on this empty promise means we'll continue as soon as setup
+  // finishes without waiting for another frame.
+  await Promise.resolve();
+
+  while (frameIterator < totalNumberOfFrames) {
+    /*
+      we draw the next frame. this is important, since
+      busy sketches or low end devices might take longer
+      to render some frames. So we just wait for the frame
+      to be drawn and immediately save it to a buffer and continue
+    */
+    this.redraw();
+
+    // depending on the context we'll extract the pixels one way
+    // or another
+    let data = undefined;
+
+    if (this._renderer instanceof p5.RendererGL) {
+      pixels = new Uint8Array(
+        gl.drawingBufferWidth * gl.drawingBufferHeight * 4
+      );
+      gl.readPixels(
+        0,
+        0,
+        gl.drawingBufferWidth,
+        gl.drawingBufferHeight,
+        gl.RGBA,
+        gl.UNSIGNED_BYTE,
+        pixels
+      );
+
+      data = _flipPixels(pixels);
+    } else {
+      data = this.drawingContext.getImageData(0, 0, this.width, this.height)
+        .data;
+    }
+
+    frames.push(data);
+    frameIterator++;
+
+    if (!silent) {
+      p.html(
+        'Saved frame <b>' +
+        frames.length.toString() +
+        '</b> out of ' +
+        nFrames.toString()
+      );
+    }
+    await new Promise(resolve => setTimeout(resolve, 0));
+  }
+  if (!silent) p.html('Frames processed, generating color palette...');
+
+  this.loop();
+  this.pixelDensity(lastPixelDensity);
+
+  // create the gif encoder and the colorspace format
+  const gif = GIFEncoder();
+
+  // calculate the global palette for this set of frames
+  const globalPalette = _generateGlobalPalette(frames);
+
+  // Rather than using applyPalette() from the gifenc library, we use our
+  // own function to map frame pixels to a palette color. This way, we can
+  // cache palette color mappings between frames for extra performance, and
+  // use our own caching mechanism to avoid flickering colors from cache
+  // key collisions.
+  const paletteCache = {};
+  const getIndexedFrame = frame => {
+    const length = frame.length / 4;
+    const index = new Uint8Array(length);
+    for (let i = 0; i < length; i++) {
+      const key =
+        (frame[i * 4] << 24) |
+        (frame[i * 4 + 1] << 16) |
+        (frame[i * 4 + 2] << 8) |
+        frame[i * 4 + 3];
+      if (paletteCache[key] === undefined) {
+        paletteCache[key] = nearestColorIndex(
+          globalPalette,
+          frame.slice(i * 4, (i + 1) * 4)
+        );
+      }
+      index[i] = paletteCache[key];
+    }
+    return index;
+  };
+
+  // the way we designed the palette means we always take the last index for transparency
+  const transparentIndex = globalPalette.length - 1;
+
+  // we are going to iterate the frames in pairs, n-1 and n
+  let prevIndexedFrame = [];
+  for (let i = 0; i < frames.length; i++) {
+    //const indexedFrame = applyPalette(frames[i], globalPaletteWithoutAlpha, 'rgba565');
+    const indexedFrame = getIndexedFrame(frames[i]);
+
+    // Make a copy of the palette-applied frame before editing the original
+    // to use transparent pixels
+    const originalIndexedFrame = indexedFrame.slice();
+
+    if (i === 0) {
+      gif.writeFrame(indexedFrame, this.width, this.height, {
+        palette: globalPalette,
+        delay: gifFrameDelay,
+        dispose: 1
+      });
+    } else {
+      // Matching pixels between frames can be set to full transparency,
+      // allowing the previous frame's pixels to show through. We only do
+      // this for pixels that get mapped to the same quantized color so that
+      // the resulting image would be the same.
+      for (let i = 0; i < indexedFrame.length; i++) {
+        if (indexedFrame[i] === prevIndexedFrame[i]) {
+          indexedFrame[i] = transparentIndex;
+        }
+      }
+
+      // Write frame into the encoder
+      gif.writeFrame(indexedFrame, this.width, this.height, {
+        delay: gifFrameDelay,
+        transparent: true,
+        transparentIndex,
+        dispose: 1
+      });
+    }
+
+    prevIndexedFrame = originalIndexedFrame;
+
+    if (!silent) {
+      p.html(
+        'Rendered frame <b>' + i.toString() + '</b> out of ' + nFrames.toString()
+      );
+    }
+
+
+    // this just makes the process asynchronous, preventing
+    // that the encoding locks up the browser
+    await new Promise(resolve => setTimeout(resolve, 0));
+  }
+
+  gif.finish();
+
+  // Get a direct typed array view into the buffer to avoid copying it
+  const buffer = gif.bytesView();
+  const extension = 'gif';
+
+  const blob = new Blob([buffer], {
+    type: 'image/gif'
+  });
+
+  frames = [];
+  this._recording = false;
+  this.loop();
+
+  if (!silent){
+    p.html('Done. Downloading your gif!🌸');
+    if(notificationDuration > 0)
+      setTimeout(() => p.remove(), notificationDuration * 1000);
+  }
+
+  p5.prototype.downloadFile(blob, fileName, extension);
+};
+
+function _flipPixels(pixels) {
+  // extracting the pixels using readPixels returns
+  // an upside down image. we have to flip it back
+  // first. this solution is proposed by gman on
+  // this stack overflow answer:
+  // https://stackoverflow.com/questions/41969562/how-can-i-flip-the-result-of-webglrenderingcontext-readpixels
+
+  const halfHeight = parseInt(height / 2);
+  const bytesPerRow = width * 4;
+
+  // make a temp buffer to hold one row
+  const temp = new Uint8Array(width * 4);
+  for (let y = 0; y < halfHeight; ++y) {
+    const topOffset = y * bytesPerRow;
+    const bottomOffset = (height - y - 1) * bytesPerRow;
+
+    // make copy of a row on the top half
+    temp.set(pixels.subarray(topOffset, topOffset + bytesPerRow));
+
+    // copy a row from the bottom half to the top
+    pixels.copyWithin(topOffset, bottomOffset, bottomOffset + bytesPerRow);
+
+    // copy the copy of the top half row to the bottom half
+    pixels.set(temp, bottomOffset);
+  }
+  return pixels;
+}
+
+function _generateGlobalPalette(frames) {
+  // make an array the size of every possible color in every possible frame
+  // that is: width * height * frames.
+  let allColors = new Uint8Array(frames.length * frames[0].length);
+
+  // put every frame one after the other in sequence.
+  // this array will hold absolutely every pixel from the animation.
+  // the set function on the Uint8Array works super fast tho!
+  for (let f = 0; f < frames.length; f++) {
+    allColors.set(frames[f], f * frames[0].length);
+  }
+
+  // quantize this massive array into 256 colors and return it!
+  let colorPalette = quantize(allColors, 256, {
+    format: 'rgba4444',
+    oneBitAlpha: true
+  });
+
+  // when generating the palette, we have to leave space for 1 of the
+  // indices to be a random color that does not appear anywhere in our
+  // animation to use for transparency purposes. So, if the palette is full
+  // (has 256 colors), we overwrite the last one with a random, fully transparent
+  // color. Otherwise, we just push a new color into the palette the same way.
+
+  // this guarantees that when using the transparency index, there are no matches
+  // between some colors of the animation and the "holes" we want to dig on them,
+  // which would cause pieces of some frames to be transparent and thus look glitchy.
+  if (colorPalette.length === 256) {
+    colorPalette[colorPalette.length - 1] = [
+      Math.random() * 255,
+      Math.random() * 255,
+      Math.random() * 255,
+      0
+    ];
+  } else {
+    colorPalette.push([
+      Math.random() * 255,
+      Math.random() * 255,
+      Math.random() * 255,
+      0
+    ]);
+  }
+  return colorPalette;
+}
 
 /**
  * Helper function for loading GIF-based images
@@ -175,62 +599,94 @@ function _createGif(
   const frames = [];
   const numFrames = gifReader.numFrames();
   let framePixels = new Uint8ClampedArray(pImg.width * pImg.height * 4);
-  if (numFrames > 1) {
-    const loadGIFFrameIntoImage = (frameNum, gifReader) => {
-      try {
-        gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
-      } catch (e) {
-        p5._friendlyFileLoadError(8, pImg.src);
-        if (typeof failureCallback === 'function') {
-          failureCallback(e);
-        } else {
-          console.error(e);
-        }
-      }
-    };
-    for (let j = 0; j < numFrames; j++) {
-      const frameInfo = gifReader.frameInfo(j);
-      // Some GIFs are encoded so that they expect the previous frame
-      // to be under the current frame. This can occur at a sub-frame level
-      // There are possible disposal codes but I didn't encounter any
-      if (gifReader.frameInfo(j).disposal === 1 && j > 0) {
-        pImg.drawingContext.putImageData(frames[j - 1].image, 0, 0);
+  const loadGIFFrameIntoImage = (frameNum, gifReader) => {
+    try {
+      gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
+    } catch (e) {
+      p5._friendlyFileLoadError(8, pImg.src);
+      if (typeof failureCallback === 'function') {
+        failureCallback(e);
       } else {
-        pImg.drawingContext.clearRect(0, 0, pImg.width, pImg.height);
-        framePixels = new Uint8ClampedArray(pImg.width * pImg.height * 4);
+        console.error(e);
       }
-      loadGIFFrameIntoImage(j, gifReader);
-      const imageData = new ImageData(framePixels, pImg.width, pImg.height);
-      pImg.drawingContext.putImageData(imageData, 0, 0);
-      let frameDelay = frameInfo.delay;
-      // To maintain the default of 10FPS when frameInfo.delay equals to 0
-      if (frameDelay === 0) {
-        frameDelay = 10;
-      }
-      frames.push({
-        image: pImg.drawingContext.getImageData(0, 0, pImg.width, pImg.height),
-        delay: frameDelay * 10 //GIF stores delay in one-hundredth of a second, shift to ms
-      });
     }
-
-    //Uses Netscape block encoding
-    //to repeat forever, this will be 0
-    //to repeat just once, this will be null
-    //to repeat N times (1<N), should contain integer for loop number
-    //this is changed to more usable values for us
-    //to repeat forever, loopCount = null
-    //everything else is just the number of loops
-    let loopLimit = gifReader.loopCount();
-    if (loopLimit === null) {
-      loopLimit = 1;
-    } else if (loopLimit === 0) {
-      loopLimit = null;
+  };
+  for (let j = 0; j < numFrames; j++) {
+    const frameInfo = gifReader.frameInfo(j);
+    const prevFrameData = pImg.drawingContext.getImageData(
+      0,
+      0,
+      pImg.width,
+      pImg.height
+    );
+    framePixels = prevFrameData.data.slice();
+    loadGIFFrameIntoImage(j, gifReader);
+    const imageData = new ImageData(framePixels, pImg.width, pImg.height);
+    pImg.drawingContext.putImageData(imageData, 0, 0);
+    let frameDelay = frameInfo.delay;
+    // To maintain the default of 10FPS when frameInfo.delay equals to 0
+    if (frameDelay === 0) {
+      frameDelay = 10;
     }
+    frames.push({
+      image: pImg.drawingContext.getImageData(0, 0, pImg.width, pImg.height),
+      delay: frameDelay * 10 //GIF stores delay in one-hundredth of a second, shift to ms
+    });
 
-    // we used the pImg for painting and saving during load
-    // so we have to reset it to the first frame
-    pImg.drawingContext.putImageData(frames[0].image, 0, 0);
+    // Some GIFs are encoded so that they expect the previous frame
+    // to be under the current frame. This can occur at a sub-frame level
+    //
+    // Values :    0 -   No disposal specified. The decoder is
+    //                   not required to take any action.
+    //             1 -   Do not dispose. The graphic is to be left
+    //                   in place.
+    //             2 -   Restore to background color. The area used by the
+    //                   graphic must be restored to the background color.
+    //             3 -   Restore to previous. The decoder is required to
+    //                   restore the area overwritten by the graphic with
+    //                   what was there prior to rendering the graphic.
+    //          4-7 -    To be defined.
+    if (frameInfo.disposal === 2) {
+      // Restore background color
+      pImg.drawingContext.clearRect(
+        frameInfo.x,
+        frameInfo.y,
+        frameInfo.width,
+        frameInfo.height
+      );
+    } else if (frameInfo.disposal === 3) {
+      // Restore previous
+      pImg.drawingContext.putImageData(
+        prevFrameData,
+        0,
+        0,
+        frameInfo.x,
+        frameInfo.y,
+        frameInfo.width,
+        frameInfo.height
+      );
+    }
+  }
 
+  //Uses Netscape block encoding
+  //to repeat forever, this will be 0
+  //to repeat just once, this will be null
+  //to repeat N times (1<N), should contain integer for loop number
+  //this is changed to more usable values for us
+  //to repeat forever, loopCount = null
+  //everything else is just the number of loops
+  let loopLimit = gifReader.loopCount();
+  if (loopLimit === null) {
+    loopLimit = 1;
+  } else if (loopLimit === 0) {
+    loopLimit = null;
+  }
+
+  // we used the pImg for painting and saving during load
+  // so we have to reset it to the first frame
+  pImg.drawingContext.putImageData(frames[0].image, 0, 0);
+
+  if (frames.length > 1) {
     pImg.gifProperties = {
       displayIndex: 0,
       loopLimit,
@@ -247,6 +703,116 @@ function _createGif(
     successCallback(pImg);
   }
   finishCallback();
+}
+
+/**
+ * @private
+ * @param {Constant} xAlign either LEFT, RIGHT or CENTER
+ * @param {Constant} yAlign either TOP, BOTTOM or CENTER
+ * @param {Number} dx
+ * @param {Number} dy
+ * @param {Number} dw
+ * @param {Number} dh
+ * @param {Number} sw
+ * @param {Number} sh
+ * @returns {Object}
+ */
+
+function _imageContain(xAlign, yAlign, dx, dy, dw, dh, sw, sh) {
+  const r = Math.max(sw / dw, sh / dh);
+  const [adjusted_dw, adjusted_dh] = [sw / r, sh / r];
+  let x = dx;
+  let y = dy;
+
+  if (xAlign === constants.CENTER) {
+    x += (dw - adjusted_dw) / 2;
+  } else if (xAlign === constants.RIGHT) {
+    x += dw - adjusted_dw;
+  }
+
+  if (yAlign === constants.CENTER) {
+    y += (dh - adjusted_dh) / 2;
+  } else if (yAlign === constants.BOTTOM) {
+    y += dh - adjusted_dh;
+  }
+  return { x, y, w: adjusted_dw, h: adjusted_dh };
+}
+
+/**
+ * @private
+ * @param {Constant} xAlign either LEFT, RIGHT or CENTER
+ * @param {Constant} yAlign either TOP, BOTTOM or CENTER
+ * @param {Number} dw
+ * @param {Number} dh
+ * @param {Number} sx
+ * @param {Number} sy
+ * @param {Number} sw
+ * @param {Number} sh
+ * @returns {Object}
+ */
+function _imageCover(xAlign, yAlign, dw, dh, sx, sy, sw, sh) {
+  const r = Math.max(dw / sw, dh / sh);
+  const [adjusted_sw, adjusted_sh] = [dw / r, dh / r];
+
+  let x = sx;
+  let y = sy;
+
+  if (xAlign === constants.CENTER) {
+    x += (sw - adjusted_sw) / 2;
+  } else if (xAlign === constants.RIGHT) {
+    x += sw - adjusted_sw;
+  }
+
+  if (yAlign === constants.CENTER) {
+    y += (sh - adjusted_sh) / 2;
+  } else if (yAlign === constants.BOTTOM) {
+    y += sh - adjusted_sh;
+  }
+
+  return { x, y, w: adjusted_sw, h: adjusted_sh };
+}
+
+/**
+ * @private
+ * @param {Constant} [fit] either CONTAIN or COVER
+ * @param {Constant} xAlign either LEFT, RIGHT or CENTER
+ * @param {Constant} yAlign either TOP, BOTTOM or CENTER
+ * @param {Number} dx
+ * @param {Number} dy
+ * @param {Number} dw
+ * @param {Number} dh
+ * @param {Number} sx
+ * @param {Number} sy
+ * @param {Number} sw
+ * @param {Number} sh
+ * @returns {Object}
+ */
+function _imageFit(fit, xAlign, yAlign, dx, dy, dw, dh, sx, sy, sw, sh) {
+  if (fit === constants.COVER) {
+    const { x, y, w, h } = _imageCover(xAlign, yAlign, dw, dh, sx, sy, sw, sh);
+    sx = x;
+    sy = y;
+    sw = w;
+    sh = h;
+  }
+
+  if (fit === constants.CONTAIN) {
+    const { x, y, w, h } = _imageContain(
+      xAlign,
+      yAlign,
+      dx,
+      dy,
+      dw,
+      dh,
+      sw,
+      sh
+    );
+    dx = x;
+    dy = y;
+    dw = w;
+    dh = h;
+  }
+  return { sx, sy, sw, sh, dx, dy, dw, dh };
 }
 
 /**
@@ -274,7 +840,7 @@ function _sAssign(sVal, iVal) {
  * the position of the image. Two more parameters can optionally be added to
  * specify the width and height of the image.
  *
- * This function can also be used with all eight Number parameters. To
+ * This function can also be used with eight Number parameters. To
  * differentiate between all these parameters, p5.js uses the language of
  * "destination rectangle" (which corresponds to "dx", "dy", etc.) and "source
  * image" (which corresponds to "sx", "sy", etc.) below. Specifying the
@@ -283,8 +849,16 @@ function _sAssign(sVal, iVal) {
  * to explain further:
  * <img src="assets/drawImage.png"></img>
  *
+ * This function can also be used to draw images without distorting the orginal aspect ratio,
+ * by adding 9th parameter, fit, which can either be COVER or CONTAIN.
+ * CONTAIN, as the name suggests, contains the whole image within the specified destination box
+ * without distorting the image ratio.
+ * COVER covers the entire destination box.
+ *
+ *
+ *
  * @method image
- * @param  {p5.Image|p5.Element} img    the image to display
+ * @param  {p5.Image|p5.Element|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} img    the image to display
  * @param  {Number}   x     the x-coordinate of the top-left corner of the image
  * @param  {Number}   y     the y-coordinate of the top-left corner of the image
  * @param  {Number}   [width]  the width to draw the image
@@ -312,7 +886,7 @@ function _sAssign(sVal, iVal) {
  * function setup() {
  *   background(50);
  *   // Top-left corner of the img is at (10, 10)
- *   // Width and height are 50 x 50
+ *   // Width and height are 50×50
  *   image(img, 10, 10, 50, 50);
  * }
  * </code>
@@ -336,16 +910,47 @@ function _sAssign(sVal, iVal) {
  * function setup() {
  *   // 1. Background image
  *   // Top-left corner of the img is at (0, 0)
- *   // Width and height are the img's original width and height, 100 x 100
+ *   // Width and height are the img's original width and height, 100×100
  *   image(img, 0, 0);
  *   // 2. Top right image
  *   // Top-left corner of destination rectangle is at (50, 0)
- *   // Destination rectangle width and height are 40 x 20
+ *   // Destination rectangle width and height are 40×20
  *   // The next parameters are relative to the source image:
- *   // - Starting at position (50, 50) on the source image, capture a 50 x 50
+ *   // - Starting at position (50, 50) on the source image, capture a 50×50
  *   // subsection
  *   // - Draw this subsection to fill the dimensions of the destination rectangle
  *   image(img, 50, 0, 40, 20, 50, 50, 50, 50);
+ * }
+ * </code>
+ * </div>
+ * <div>
+ * <code>
+ * let img;
+ * function preload() {
+ *   // dimensions of image are 780 x 440
+ *   // dimensions of canvas are 100 x 100
+ *   img = loadImage('assets/moonwalk.jpg');
+ * }
+ * function setup() {
+ *   // CONTAIN the whole image without distorting the image's aspect ratio
+ *   // CONTAIN the image within the specified destination box and display at LEFT,CENTER position
+ *   background(color('green'));
+ *   image(img, 0, 0, width, height, 0, 0, img.width, img.height, CONTAIN, LEFT);
+ * }
+ * </code>
+ * </div>
+ * <div>
+ * <code>
+ * let img;
+ * function preload() {
+ *   img = loadImage('assets/laDefense50.png'); // dimensions of image are 50 x 50
+ * }
+ * function setup() {
+ *   // COVER the whole destination box without distorting the image's aspect ratio
+ *   // COVER the specified destination box which is of dimension 100 x 100
+ *   // Without specifying xAlign or yAlign, the image will be
+ *   // centered in the destination box in both axes
+ *   image(img, 0, 0, width, height, 0, 0, img.width, img.height, COVER);
  * }
  * </code>
  * </div>
@@ -355,7 +960,7 @@ function _sAssign(sVal, iVal) {
  */
 /**
  * @method image
- * @param  {p5.Image|p5.Element} img
+ * @param  {p5.Image|p5.Element|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} img
  * @param  {Number}   dx     the x-coordinate of the destination
  *                           rectangle in which to draw the source image
  * @param  {Number}   dy     the y-coordinate of the destination
@@ -371,6 +976,9 @@ function _sAssign(sVal, iVal) {
  *                           rectangle
  * @param {Number}    [sHeight] the height of the subsection of the
  *                            source image to draw into the destination rectangle
+ * @param {Constant} [fit] either CONTAIN or COVER
+ * @param {Constant} [xAlign] either LEFT, RIGHT or CENTER default is CENTER
+ * @param {Constant} [yAlign] either TOP, BOTTOM or CENTER default is CENTER
  */
 p5.prototype.image = function(
   img,
@@ -381,25 +989,34 @@ p5.prototype.image = function(
   sx,
   sy,
   sWidth,
-  sHeight
+  sHeight,
+  fit,
+  xAlign,
+  yAlign
 ) {
   // set defaults per spec: https://goo.gl/3ykfOq
 
   p5._validateParameters('image', arguments);
 
-  let defW = img.width !== undefined ? img.width : img.elt.width;
-  let defH = img.height !== undefined ? img.height : img.elt.height;
+  let defW = img.width;
+  let defH = img.height;
+  yAlign = yAlign || constants.CENTER;
+  xAlign = xAlign || constants.CENTER;
 
+  if (img.elt) {
+    defW = defW !== undefined ? defW : img.elt.width;
+    defH = defH !== undefined ? defH : img.elt.height;
+  }
   if (img.elt && img.elt.videoWidth && !img.canvas) {
     // video no canvas
     defW = defW !== undefined ? defW : img.elt.videoWidth;
     defH = defH !== undefined ? defH : img.elt.videoHeight;
   }
 
-  const _dx = dx;
-  const _dy = dy;
-  const _dw = dWidth !== undefined ? dWidth : defW;
-  const _dh = dHeight !== undefined ? dHeight : defH;
+  let _dx = dx;
+  let _dy = dy;
+  let _dw = dWidth || defW;
+  let _dh = dHeight || defH;
   let _sx = sx || 0;
   let _sy = sy || 0;
   let _sw = sWidth !== undefined ? sWidth : defW;
@@ -430,10 +1047,33 @@ p5.prototype.image = function(
   _sh *= pd;
   _sw *= pd;
 
-  const vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer._imageMode);
+  let vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer._imageMode);
+  vals = _imageFit(
+    fit,
+    xAlign,
+    yAlign,
+    vals.x,
+    vals.y,
+    vals.w,
+    vals.h,
+    _sx,
+    _sy,
+    _sw,
+    _sh
+  );
 
   // tint the image if there is a tint
-  this._renderer.image(img, _sx, _sy, _sw, _sh, vals.x, vals.y, vals.w, vals.h);
+  this._renderer.image(
+    img,
+    vals.sx,
+    vals.sy,
+    vals.sw,
+    vals.sh,
+    vals.dx,
+    vals.dy,
+    vals.dw,
+    vals.dh
+  );
 };
 
 /**
@@ -570,33 +1210,8 @@ p5.prototype.noTint = function() {
  * @param {p5.Image} The image to be tinted
  * @return {canvas} The resulting tinted canvas
  */
-p5.prototype._getTintedImageCanvas = function(img) {
-  if (!img.canvas) {
-    return img;
-  }
-  const pixels = Filters._toPixels(img.canvas);
-  const tmpCanvas = document.createElement('canvas');
-  tmpCanvas.width = img.canvas.width;
-  tmpCanvas.height = img.canvas.height;
-  const tmpCtx = tmpCanvas.getContext('2d');
-  const id = tmpCtx.createImageData(img.canvas.width, img.canvas.height);
-  const newPixels = id.data;
-
-  for (let i = 0; i < pixels.length; i += 4) {
-    const r = pixels[i];
-    const g = pixels[i + 1];
-    const b = pixels[i + 2];
-    const a = pixels[i + 3];
-
-    newPixels[i] = r * this._renderer._tint[0] / 255;
-    newPixels[i + 1] = g * this._renderer._tint[1] / 255;
-    newPixels[i + 2] = b * this._renderer._tint[2] / 255;
-    newPixels[i + 3] = a * this._renderer._tint[3] / 255;
-  }
-
-  tmpCtx.putImageData(id, 0, 0);
-  return tmpCanvas;
-};
+p5.prototype._getTintedImageCanvas =
+  p5.Renderer2D.prototype._getTintedImageCanvas;
 
 /**
  * Set image mode. Modifies the location from which images are drawn by

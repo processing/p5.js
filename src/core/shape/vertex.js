@@ -59,8 +59,12 @@ let isFirstContour = true;
  * white rect and smaller grey rect with red outlines in center of canvas.
  */
 p5.prototype.beginContour = function() {
-  contourVertices = [];
-  isContour = true;
+  if (this._renderer.isP3D) {
+    this._renderer.beginContour();
+  } else {
+    contourVertices = [];
+    isContour = true;
+  }
   return this;
 };
 
@@ -89,12 +93,12 @@ p5.prototype.beginContour = function() {
  * Draw a series of connected triangles in strip fashion
  *
  * QUADS
- * Draw a series of seperate quad
+ * Draw a series of separate quads
  *
  * QUAD_STRIP
  * Draw quad strip using adjacent edges to form the next quad
  *
- * TESS (WebGl only)
+ * TESS (WEBGL only)
  * Handle irregular polygon for filling curve by explicit tessellation
  *
  * After calling the <a href="#/p5/beginShape">beginShape()</a> function, a series of <a href="#/p5/vertex">vertex()</a> commands must follow. To stop
@@ -261,7 +265,7 @@ p5.prototype.beginContour = function() {
  * 2 white triangle shapes mid-right canvas. left one pointing up and right down.
  * 5 horizontal interlocking and alternating white triangles in mid-right canvas.
  * 4 interlocking white triangles in 45 degree rotated square-shape.
- * 2 white rectangle shapes in mid-right canvas. Both 20x55.
+ * 2 white rectangle shapes in mid-right canvas. Both 20×55.
  * 3 side-by-side white rectangles center rect is smaller in mid-right canvas.
  * Thick white l-shape with black outline mid-top-left of canvas.
  */
@@ -420,7 +424,7 @@ p5.prototype.bezierVertex = function(...args) {
  * 2D mode expects 2 parameters, while 3D mode expects 3 parameters.
  *
  * The first and last points in a series of curveVertex() lines will be used to
- * guide the beginning and end of a the curve. A minimum of four
+ * guide the beginning and end of the curve. A minimum of four
  * points is required to draw a tiny curve between the second and
  * third points. Adding a fifth point with curveVertex() will draw
  * the curve between the second, third, and fourth points. The
@@ -563,6 +567,10 @@ p5.prototype.curveVertex = function(...args) {
  * white rect and smaller grey rect with red outlines in center of canvas.
  */
 p5.prototype.endContour = function() {
+  if (this._renderer.isP3D) {
+    return this;
+  }
+
   const vert = contourVertices[0].slice(); // copy all data
   vert.isVert = contourVertices[0].isVert;
   vert.moveTo = false;
@@ -582,13 +590,21 @@ p5.prototype.endContour = function() {
 
 /**
  * The <a href="#/p5/endShape">endShape()</a> function is the companion to <a href="#/p5/beginShape">beginShape()</a> and may only be
- * called after <a href="#/p5/beginShape">beginShape()</a>. When <a href="#/p5/endshape">endShape()</a> is called, all of image data
- * defined since the previous call to <a href="#/p5/beginShape">beginShape()</a> is written into the image
- * buffer. The constant CLOSE as the value for the MODE parameter to close
+ * called after <a href="#/p5/beginShape">beginShape()</a>. When <a href="#/p5/endshape">endShape()</a> is called, all of the image
+ * data defined since the previous call to <a href="#/p5/beginShape">beginShape()</a> is written into the image
+ * buffer. The constant CLOSE is the value for the `mode` parameter to close
  * the shape (to connect the beginning and the end).
+ * When using instancing with <a href="#/p5/endShape">endShape()</a> the instancing will not apply to the strokes.
+ * When the count parameter is used with a value greater than 1, it enables instancing for shapes built when in WEBGL mode. Instancing
+ * is a feature that allows the GPU to efficiently draw multiples of the same shape. It's often used for particle effects or other
+ * times when you need a lot of repetition. In order to take advantage of instancing, you will also need to write your own custom
+ * shader using the gl_InstanceID keyword. You can read more about instancing
+ * <a href="https://webglfundamentals.org/webgl/lessons/webgl-instanced-drawing.html">here</a> or by working from the example on this
+ * page.
  *
  * @method endShape
  * @param  {Constant} [mode] use CLOSE to close the shape
+ * @param  {Integer} [count] number of times you want to draw/instance the shape (for WebGL mode).
  * @chainable
  * @example
  * <div>
@@ -609,11 +625,91 @@ p5.prototype.endContour = function() {
  * </code>
  * </div>
  *
+ * @example
+ * <div>
+ * <code>
+ * let fx;
+ * let vs = `#version 300 es
+ *
+ * precision mediump float;
+ *
+ * in vec3 aPosition;
+ * flat out int instanceID;
+ *
+ * uniform mat4 uModelViewMatrix;
+ * uniform mat4 uProjectionMatrix;
+ *
+ * void main() {
+ *
+ *   // copy the instance ID to the fragment shader
+ *   instanceID = gl_InstanceID;
+ *   vec4 positionVec4 = vec4(aPosition, 1.0);
+ *
+ *   // gl_InstanceID represents a numeric value for each instance
+ *   // using gl_InstanceID allows us to move each instance separately
+ *   // here we move each instance horizontally by id * 100
+ *   float xOffset = float(gl_InstanceID) * 100.0;
+ *
+ *   // apply the offset to the final position
+ *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4 -
+ *     vec4(xOffset, 0.0, 0.0, 0.0);
+ * }
+ * `;
+ * let fs = `#version 300 es
+ *
+ * precision mediump float;
+ *
+ * out vec4 outColor;
+ * flat in int instanceID;
+ * uniform float numInstances;
+ *
+ * void main() {
+ *   vec4 red = vec4(1.0, 0.0, 0.0, 1.0);
+ *   vec4 blue = vec4(0.0, 0.0, 1.0, 1.0);
+ *
+ *   // Normalize the instance id
+ *   float normId = float(instanceID) / numInstances;
+ *
+ *   // Mix between two colors using the normalized instance id
+ *   outColor = mix(red, blue, normId);
+ * }
+ * `;
+ *
+ * function setup() {
+ *   createCanvas(400, 400, WEBGL);
+ *   fx = createShader(vs, fs);
+ * }
+ *
+ * function draw() {
+ *   background(220);
+ *
+ *   // strokes aren't instanced, and are rather used for debug purposes
+ *   shader(fx);
+ *   fx.setUniform('numInstances', 4);
+ *
+ *   beginShape();
+ *   vertex(30, 20);
+ *   vertex(85, 20);
+ *   vertex(85, 75);
+ *   vertex(30, 75);
+ *   vertex(30, 20);
+ *   endShape(CLOSE, 4);
+ *
+ *   resetShader();
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * Triangle line shape with smallest interior angle on bottom and upside-down L.
  */
-p5.prototype.endShape = function(mode) {
+p5.prototype.endShape = function(mode, count = 1) {
   p5._validateParameters('endShape', arguments);
+  if (count < 1) {
+    console.log('🌸 p5.js says: You can not have less than one instance');
+    count = 1;
+  }
+
   if (this._renderer.isP3D) {
     this._renderer.endShape(
       mode,
@@ -621,9 +717,13 @@ p5.prototype.endShape = function(mode) {
       isBezier,
       isQuadratic,
       isContour,
-      shapeKind
+      shapeKind,
+      count
     );
   } else {
+    if (count !== 1) {
+      console.log('🌸 p5.js says: Instancing is only supported in WebGL2 mode');
+    }
     if (vertices.length === 0) {
       return this;
     }
@@ -781,7 +881,7 @@ p5.prototype.endShape = function(mode) {
  * </div>
  *
  * @alt
- * backwards s-shaped black line with the same s-shaped line in postive z-axis.
+ * backwards s-shaped black line with the same s-shaped line in positive z-axis.
  */
 p5.prototype.quadraticVertex = function(...args) {
   p5._validateParameters('quadraticVertex', args);
@@ -958,9 +1058,17 @@ p5.prototype.quadraticVertex = function(...args) {
  * @method vertex
  * @param  {Number} x
  * @param  {Number} y
- * @param  {Number} z   z-coordinate of the vertex
- * @param  {Number} [u] the vertex's texture u-coordinate
- * @param  {Number} [v] the vertex's texture v-coordinate
+ * @param  {Number} [z]   z-coordinate of the vertex.
+ *                       Defaults to 0 if not specified.
+ * @chainable
+ */
+/**
+ * @method vertex
+ * @param  {Number} x
+ * @param  {Number} y
+ * @param  {Number} [z]
+ * @param  {Number} [u]   the vertex's texture u-coordinate
+ * @param  {Number} [v]   the vertex's texture v-coordinate
  * @chainable
  */
 p5.prototype.vertex = function(x, y, moveTo, u, v) {
@@ -989,6 +1097,58 @@ p5.prototype.vertex = function(x, y, moveTo, u, v) {
       vertices.push(vert);
     }
   }
+  return this;
+};
+
+/**
+ * Sets the 3d vertex normal to use for subsequent vertices drawn with
+ * <a href="#/p5/vertex">vertex()</a>. A normal is a vector that is generally
+ * nearly perpendicular to a shape's surface which controls how much light will
+ * be reflected from that part of the surface.
+ *
+ * @method normal
+ * @param  {Vector} vector A p5.Vector representing the vertex normal.
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   noStroke();
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   rotateY(frameCount / 100);
+ *   normalMaterial();
+ *   beginShape(TRIANGLE_STRIP);
+ *   normal(-0.4, 0.4, 0.8);
+ *   vertex(-30, 30, 0);
+ *
+ *   normal(0, 0, 1);
+ *   vertex(-30, -30, 30);
+ *   vertex(30, 30, 30);
+ *
+ *   normal(0.4, -0.4, 0.8);
+ *   vertex(30, -30, 0);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * @method normal
+ * @param  {Number} x The x component of the vertex normal.
+ * @param  {Number} y The y component of the vertex normal.
+ * @param  {Number} z The z component of the vertex normal.
+ * @chainable
+ */
+p5.prototype.normal = function(x, y, z) {
+  this._assert3d('normal');
+  p5._validateParameters('normal', arguments);
+  this._renderer.normal(...arguments);
+
   return this;
 };
 

@@ -13,11 +13,11 @@ let defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
 const defaultClass = 'p5Canvas';
 
 /**
- * Creates a canvas element in the document, and sets the dimensions of it
- * in pixels. This method should be called only once at the start of setup.
+ * Creates a canvas element in the document and sets its dimensions
+ * in pixels. This method should be called only once at the start of <a href="#/p5/setup">setup()</a>.
  * Calling <a href="#/p5/createCanvas">createCanvas</a> more than once in a
  * sketch will result in very unpredictable behavior. If you want more than
- * one drawing canvas you could use <a href="#/p5/createGraphics">createGraphics</a>
+ * one drawing canvas you could use <a href="#/p5/createGraphics">createGraphics()</a>
  * (hidden by default but it can be shown).
  *
  * Important note: in 2D mode (i.e. when `p5.Renderer` is not set) the origin (0,0)
@@ -25,9 +25,17 @@ const defaultClass = 'p5Canvas';
  * is set to `WEBGL`), the origin is positioned at the center of the canvas.
  * See [this issue](https://github.com/processing/p5.js/issues/1545) for more information.
  *
+ * A WebGL canvas will use a WebGL2 context if it is supported by the browser.
+ * Check the <a href="#/p5/webglVersion">webglVersion</a> property to check what
+ * version is being used, or call <a href="#/p5/setAttributes">setAttributes({ version: 1 })</a>
+ * to create a WebGL1 context.
+ *
  * The system variables width and height are set by the parameters passed to this
  * function. If <a href="#/p5/createCanvas">createCanvas()</a> is not used, the
- * window will be given a default size of 100x100 pixels.
+ * window will be given a default size of 100×100 pixels.
+ *
+ * Optionally, an existing canvas can be passed using a selector, ie. `document.getElementById('')`.
+ * If specified, avoid using `setAttributes()` afterwards, as this will remove and recreate the existing canvas.
  *
  * For more ways to position the canvas, see the
  * <a href='https://github.com/processing/p5.js/wiki/Positioning-your-canvas'>
@@ -37,7 +45,8 @@ const defaultClass = 'p5Canvas';
  * @param  {Number} w width of the canvas
  * @param  {Number} h height of the canvas
  * @param  {Constant} [renderer] either P2D or WEBGL
- * @return {p5.Renderer}
+ * @param  {HTMLCanvasElement} [canvas] existing html canvas element
+ * @return {p5.Renderer} pointer to p5.Renderer holding canvas
  * @example
  * <div>
  * <code>
@@ -52,56 +61,84 @@ const defaultClass = 'p5Canvas';
  * @alt
  * Black line extending from top-left of canvas to bottom right.
  */
-p5.prototype.createCanvas = function(w, h, renderer) {
+/**
+ * @method createCanvas
+ * @param  {Number} w
+ * @param  {Number} h
+ * @param  {HTMLCanvasElement} [canvas]
+ * @return {p5.Renderer} pointer to p5.Renderer holding canvas
+ */
+p5.prototype.createCanvas = function(w, h, renderer, canvas) {
   p5._validateParameters('createCanvas', arguments);
   //optional: renderer, otherwise defaults to p2d
-  const r = renderer || constants.P2D;
+
+  let r;
+  if (arguments[2] instanceof HTMLCanvasElement) {
+    renderer = constants.P2D;
+    canvas = arguments[2];
+  } else {
+    r = renderer || constants.P2D;
+  }
+
   let c;
 
-  if (r === constants.WEBGL) {
+  if (canvas) {
     c = document.getElementById(defaultId);
     if (c) {
-      //if defaultCanvas already exists
       c.parentNode.removeChild(c); //replace the existing defaultCanvas
-      const thisRenderer = this._renderer;
-      this._elements = this._elements.filter(e => e !== thisRenderer);
     }
-    c = document.createElement('canvas');
-    c.id = defaultId;
-    c.classList.add(defaultClass);
+    c = canvas;
+    this._defaultGraphicsCreated = false;
   } else {
-    if (!this._defaultGraphicsCreated) {
-      c = document.createElement('canvas');
-      let i = 0;
-      while (document.getElementById(`defaultCanvas${i}`)) {
-        i++;
+    if (r === constants.WEBGL) {
+      c = document.getElementById(defaultId);
+      if (c) {
+        //if defaultCanvas already exists
+        c.parentNode.removeChild(c); //replace the existing defaultCanvas
+        const thisRenderer = this._renderer;
+        this._elements = this._elements.filter(e => e !== thisRenderer);
       }
-      defaultId = `defaultCanvas${i}`;
+      c = document.createElement('canvas');
       c.id = defaultId;
       c.classList.add(defaultClass);
     } else {
-      // resize the default canvas if new one is created
-      c = this.canvas;
+      if (!this._defaultGraphicsCreated) {
+        if (canvas) {
+          c = canvas;
+        } else {
+          c = document.createElement('canvas');
+        }
+        let i = 0;
+        while (document.getElementById(`defaultCanvas${i}`)) {
+          i++;
+        }
+        defaultId = `defaultCanvas${i}`;
+        c.id = defaultId;
+        c.classList.add(defaultClass);
+      } else {
+        // resize the default canvas if new one is created
+        c = this.canvas;
+      }
     }
-  }
 
-  // set to invisible if still in setup (to prevent flashing with manipulate)
-  if (!this._setupDone) {
-    c.dataset.hidden = true; // tag to show later
-    c.style.visibility = 'hidden';
-  }
-
-  if (this._userNode) {
-    // user input node case
-    this._userNode.appendChild(c);
-  } else {
-    //create main element
-    if (document.getElementsByTagName('main').length === 0) {
-      let m = document.createElement('main');
-      document.body.appendChild(m);
+    // set to invisible if still in setup (to prevent flashing with manipulate)
+    if (!this._setupDone) {
+      c.dataset.hidden = true; // tag to show later
+      c.style.visibility = 'hidden';
     }
-    //append canvas to main
-    document.getElementsByTagName('main')[0].appendChild(c);
+
+    if (this._userNode) {
+      // user input node case
+      this._userNode.appendChild(c);
+    } else {
+      //create main element
+      if (document.getElementsByTagName('main').length === 0) {
+        let m = document.createElement('main');
+        document.body.appendChild(m);
+      }
+      //append canvas to main
+      document.getElementsByTagName('main')[0].appendChild(c);
+    }
   }
 
   // Init our graphics renderer
@@ -159,9 +196,11 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
         props[key] = val;
       }
     }
-    this._renderer.resize(w, h);
     this.width = w;
     this.height = h;
+    // Make sure width and height are updated before the renderer resizes so
+    // that framebuffers updated from the resize read the correct size
+    this._renderer.resize(w, h);
     // reset canvas properties
     for (const savedKey in props) {
       try {
@@ -202,15 +241,24 @@ p5.prototype.noCanvas = function() {
 };
 
 /**
- * Creates and returns a new p5.Renderer object. Use this class if you need
+ * Creates and returns a new p5.Graphics object. Use this class if you need
  * to draw into an off-screen graphics buffer. The two parameters define the
  * width and height in pixels.
+ *
+ * A WebGL p5.Graphics will use a WebGL2 context if it is supported by the browser.
+ * Check the <a href="#/p5/webglVersion">pg.webglVersion</a> property of the renderer
+ * to check what version is being used, or call <a href="#/p5/setAttributes">pg.setAttributes({ version: 1 })</a>
+ * to create a WebGL1 context.
+ *
+ * Optionally, an existing canvas can be passed using a selector, ie. document.getElementById('').
+ * By default this canvas will be hidden (offscreen buffer), to make visible, set element's style to display:block;
  *
  * @method createGraphics
  * @param  {Number} w width of the offscreen graphics buffer
  * @param  {Number} h height of the offscreen graphics buffer
  * @param  {Constant} [renderer] either P2D or WEBGL
  *                               undefined defaults to p2d
+ * @param  {HTMLCanvasElement} [canvas] existing html canvas element
  * @return {p5.Graphics} offscreen graphics buffer
  * @example
  * <div>
@@ -235,9 +283,96 @@ p5.prototype.noCanvas = function() {
  * @alt
  * 4 grey squares alternating light and dark grey. White quarter circle mid-left.
  */
-p5.prototype.createGraphics = function(w, h, renderer) {
+/**
+ * @method createGraphics
+ * @param  {Number} w
+ * @param  {Number} h
+ * @param  {HTMLCanvasElement} [canvas]
+ * @return {p5.Graphics} offscreen graphics buffer
+ */
+p5.prototype.createGraphics = function(w, h, renderer, canvas) {
+  if (arguments[2] instanceof HTMLCanvasElement) {
+    renderer = constants.P2D;
+    canvas = arguments[2];
+  }
   p5._validateParameters('createGraphics', arguments);
-  return new p5.Graphics(w, h, renderer, this);
+  return new p5.Graphics(w, h, renderer, this, canvas);
+};
+
+/**
+ * Creates and returns a new <a href="#/p5.Framebuffer">p5.Framebuffer</a>, a
+ * high-performance WebGL object that you can draw to and then use as a texture.
+ *
+ * Options can include:
+ * - `format`: The data format of the texture, either `UNSIGNED_BYTE`, `FLOAT`, or `HALF_FLOAT`. The default is `UNSIGNED_BYTE`.
+ * - `channels`: What color channels to store, either `RGB` or `RGBA`. The default is to match the channels in the main canvas (with alpha unless disabled with `setAttributes`.)
+ * - `depth`: A boolean, whether or not to include a depth buffer. Defaults to true.
+ * - `depthFormat`: The data format for depth information, either `UNSIGNED_INT` or `FLOAT`. The default is `FLOAT` if available, or `UNSIGNED_INT` otherwise.
+ * - `stencil`: A boolean, whether or not to include a stencil buffer, which can be used for masking. This may only be used if also using a depth buffer. Defaults to the value of `depth`, which is true if not provided.
+ * - `antialias`: Boolean or Number, whether or not to render with antialiased edges, and if so, optionally the number of samples to use. Defaults to whether or not the main canvas is antialiased, using a default of 2 samples if so. Antialiasing is only supported when WebGL 2 is available.
+ * - `width`: The width of the texture. Defaults to matching the main canvas.
+ * - `height`: The height of the texture. Defaults to matching the main canvas.
+ * - `density`: The pixel density of the texture. Defaults to the pixel density of the main canvas.
+ * - `textureFiltering`: Either `LINEAR` (nearby pixels will be interpolated when reading values from the color texture) or `NEAREST` (no interpolation.) Generally, use `LINEAR` when using the texture as an image, and use `NEAREST` if reading the texture as data. Defaults to `LINEAR`.
+ *
+ * If `width`, `height`, or `density` are specified, then the framebuffer will
+ * keep that size until manually changed. Otherwise, it will be autosized, and
+ * it will update to match the main canvas's size and density when the main
+ * canvas changes.
+ *
+ * @method createFramebuffer
+ * @param {Object} [options] An optional object with configuration
+ *
+ * @example
+ * <div>
+ * <code>
+ * let prev, next, cam;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   prev = createFramebuffer({ format: FLOAT });
+ *   next = createFramebuffer({ format: FLOAT });
+ *   cam = createCamera();
+ *   noStroke();
+ * }
+ *
+ * function draw() {
+ *   // Swap prev and next so that we can use the previous
+ *   // frame as a texture when drawing the current frame
+ *   [prev, next] = [next, prev];
+ *
+ *   // Draw to the framebuffer
+ *   next.begin();
+ *   background(255);
+ *
+ *   push();
+ *   // Draw the previous texture farther away, but scaled
+ *   // up to fill the screen, plus a bit extra scale so it grows
+ *   translate(0, 0, -200);
+ *   scale(1.001 * (200 + cam.eyeZ) / cam.eyeZ);
+ *   tint(255, 253);
+ *   image(prev, -width/2, -height/2);
+ *   pop();
+ *
+ *   push();
+ *   normalMaterial();
+ *   translate(25*sin(frameCount * 0.014), 25*sin(frameCount * 0.02), 0);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   box(12);
+ *   pop();
+ *   next.end();
+ *
+ *   image(next, -width/2, -height/2);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * A red, green, and blue box (using normalMaterial) moves and rotates around
+ * the canvas, leaving a trail behind it that slowly grows and fades away.
+ */
+p5.prototype.createFramebuffer = function(options) {
+  return new p5.Framebuffer(this, options);
 };
 
 /**
@@ -252,7 +387,8 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  * min(A*factor, B).</li>
  * <li><code>LIGHTEST</code> - only the lightest colour succeeds: C =
  * max(A*factor, B).</li>
- * <li><code>DIFFERENCE</code> - subtract colors from underlying image.</li>
+ * <li><code>DIFFERENCE</code> - subtract colors from underlying image.
+ * <em>(2D)</em></li>
  * <li><code>EXCLUSION</code> - similar to <code>DIFFERENCE</code>, but less
  * extreme.</li>
  * <li><code>MULTIPLY</code> - multiply the colors, result will always be

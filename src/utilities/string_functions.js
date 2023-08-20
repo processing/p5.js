@@ -130,10 +130,13 @@ p5.prototype.matchAll = function(str, reg) {
 /**
  * Utility function for formatting numbers into strings. There are two
  * versions: one for formatting floats, and one for formatting ints.
+ *
  * The values for the digits, left, and right parameters should always
  * be positive integers.
+ *
  * (NOTE): Be cautious when using left and right parameters as it prepends numbers of 0's if the parameter
  * if greater than the current length of the number.
+ *
  * For example if number is 123.2 and left parameter passed is 4 which is greater than length of 123
  * (integer part) i.e 3 than result will be 0123.2. Same case for right parameter i.e. if right is 3 than
  * the result will be 123.200.
@@ -149,10 +152,6 @@ p5.prototype.matchAll = function(str, reg) {
  * @example
  * <div>
  * <code>
- * let myFont;
- * function preload() {
- *   myFont = loadFont('assets/fonts/inconsolata.ttf');
- * }
  * function setup() {
  *   background(200);
  *   let num1 = 321;
@@ -160,8 +159,7 @@ p5.prototype.matchAll = function(str, reg) {
  *
  *   noStroke();
  *   fill(0);
- *   textFont(myFont);
- *   textSize(22);
+ *   textSize(16);
  *
  *   text(nf(num1, 4, 2), 10, 30);
  *   text(nf(num2, 4, 2), 10, 80);
@@ -203,36 +201,20 @@ p5.prototype.nf = function(nums, left, right) {
 };
 
 function doNf(num, left, right) {
-  const neg = num < 0;
-  const n = neg ? num.toString().substring(1) : num.toString();
-  const decimalInd = n.indexOf('.');
-  const intPart = decimalInd !== -1 ? n.substring(0, decimalInd) : n;
-  let decPart = decimalInd !== -1 ? n.substring(decimalInd + 1) : '';
-  let str = neg ? '-' : '';
-  if (typeof right !== 'undefined') {
-    let decimal = '';
-    if (decimalInd !== -1 || right - decPart.length > 0) {
-      decimal = '.';
-    }
-    if (decPart.length > right) {
-      decPart = decPart.substring(0, right);
-    }
-    for (let i = 0; i < left - intPart.length; i++) {
-      str += '0';
-    }
-    str += intPart;
-    str += decimal;
-    str += decPart;
-    for (let j = 0; j < right - decPart.length; j++) {
-      str += '0';
-    }
-    return str;
+  let [leftPart, rightPart] = num.toString().split('.');
+
+  if (typeof right === 'undefined') {
+    leftPart = leftPart.padStart(left, '0');
+    return rightPart ? leftPart + '.' + rightPart : leftPart;
   } else {
-    for (let k = 0; k < Math.max(left - intPart.length, 0); k++) {
-      str += '0';
+    let roundedOff = num.toFixed(right);
+    [leftPart, rightPart] = roundedOff.toString().split('.');
+    leftPart = leftPart.padStart(left, '0');
+    if(typeof rightPart === 'undefined'){
+      return leftPart;
+    }else{
+      return leftPart + '.' + rightPart;
     }
-    str += n;
-    return str;
   }
 }
 
@@ -376,13 +358,18 @@ function addNfp(num) {
  * Utility function for formatting numbers into strings. Similar to <a href="#/p5/nf">nf()</a> but
  * puts an additional "_" (space) in front of positive numbers just in case to align it with negative
  * numbers which includes "-" (minus) sign.
+ *
  * The main usecase of nfs() can be seen when one wants to align the digits (place values) of a non-negative
  * number with some negative number (See the example to get a clear picture).
  * There are two versions: one for formatting float, and one for formatting int.
+ *
  * The values for the digits, left, and right parameters should always be positive integers.
+ *
  * (IMP): The result on the canvas basically the expected alignment can vary based on the typeface you are using.
+ *
  * (NOTE): Be cautious when using left and right parameters as it prepends numbers of 0's if the parameter
  * if greater than the current length of the number.
+ *
  * For example if number is 123.2 and left parameter passed is 4 which is greater than length of 123
  * (integer part) i.e 3 than result will be 0123.2. Same case for right parameter i.e. if right is 3 than
  * the result will be 123.200.
@@ -398,10 +385,6 @@ function addNfp(num) {
  * @example
  * <div>
  * <code>
- * let myFont;
- * function preload() {
- *   myFont = loadFont('assets/fonts/inconsolata.ttf');
- * }
  * function setup() {
  *   background(200);
  *   let num1 = 321;
@@ -409,8 +392,7 @@ function addNfp(num) {
  *
  *   noStroke();
  *   fill(0);
- *   textFont(myFont);
- *   textSize(22);
+ *   textSize(16);
  *
  *   // nfs() aligns num1 (positive number) with num2 (negative number) by
  *   // adding a blank space in front of the num1 (positive number)

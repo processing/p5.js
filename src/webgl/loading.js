@@ -50,6 +50,7 @@ import './p5.Geometry';
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('Vertically rotating 3-d octahedron.');
  * }
  *
  * function draw() {
@@ -77,6 +78,7 @@ import './p5.Geometry';
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('Vertically rotating 3-d teapot with red, green and blue gradient.');
  * }
  *
  * function draw() {
@@ -168,7 +170,7 @@ p5.prototype.loadModel = function(path) {
     if (failureCallback) {
       failureCallback();
     } else {
-      console.error(
+      p5._friendlyError(
         'Sorry, the file type is invalid. Only OBJ and STL files are supported.'
       );
     }
@@ -602,6 +604,7 @@ function parseASCIISTL(model, lines) {
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('Vertically rotating 3-d octahedron.');
  * }
  *
  * function draw() {
@@ -621,7 +624,12 @@ p5.prototype.model = function(model) {
   p5._validateParameters('model', arguments);
   if (model.vertices.length > 0) {
     if (!this._renderer.geometryInHash(model.gid)) {
-      model._makeTriangleEdges()._edgesToVertices();
+
+      if (model.edges.length === 0) {
+        model._makeTriangleEdges();
+      }
+
+      model._edgesToVertices();
       this._renderer.createBuffers(model.gid, model);
     }
 

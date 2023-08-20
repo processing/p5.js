@@ -12,21 +12,21 @@
 ### 변경사항을 확인해주세요
 upstream p5.js 저장소를 트래킹하고 있는지 확인해주세요.
 
-    git remote show upstream
+    $ git remote show upstream
 
 에러를 보게 되면, 메인 p5.js 저장소를 "upstream" 원격 저장소로 트래킹해야 합니다. 이 작업은 한 번만 하면 됩니다! 하지만, 두 번 실행해도 아무 문제 없습니다.
 
-    git remote add upstream https://github.com/processing/p5.js
+    $ git remote add upstream https://github.com/processing/p5.js
 
 그런 다음 git에서 최신 변경 사항을 확인해 봅니다.
 
-    git fetch upstream 
+    $ git fetch upstream 
 
 ### 만일의 경우를 대비해, 변경사항을 새 브랜치로 복사하세요.
-    git branch your-branch-name-backup 
+    $ git branch your-branch-name-backup 
 
 ### main 브랜치로부터의 변경사항을 *적용한 후* 여러분이 작업한 변경 사항을 추가하세요
-    git rebase upstream/main 
+    $ git rebase upstream/main 
 
 ### 충돌 해결하기
 충돌이 있을 수 있습니다!
@@ -39,7 +39,7 @@ lib/p5.js와 lib/p5.min.js라면 쉽게 고칠 수 있습니다. grunt로 프로
 다른 파일과 충돌이 있고, 어떻게 해결해야 하는지 모른다면... 도움을 요청해 주세요!
 
 ### 마침내
-    git push origin
+    $ git push origin
 
 기술적으로 세부사항에 대해 궁금한 점이 있을 경우, 여기 리베이싱에 대한 좋은 레퍼런스가 있습니다. https://www.atlassian.com/git/tutorials/merging-vs-rebasing
 

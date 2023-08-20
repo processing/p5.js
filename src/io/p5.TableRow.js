@@ -20,24 +20,20 @@ import p5 from '../core/main';
  *                              separator
  *  @param {String} [separator] comma separated values (csv) by default
  */
-p5.TableRow = function(str, separator) {
-  let arr = [];
-  const obj = {};
-  if (str) {
-    separator = separator || ',';
-    arr = str.split(separator);
-  }
-  for (let i = 0; i < arr.length; i++) {
-    const key = i;
-    const val = arr[i];
-    obj[key] = val;
-  }
-  this.arr = arr;
-  this.obj = obj;
-  this.table = null;
-};
+p5.TableRow = class {
+  constructor(str, separator){
+    let arr = [];
+    if (str) {
+      separator = separator || ',';
+      arr = str.split(separator);
+    }
 
-/**
+    this.arr = arr;
+    this.obj = Object.fromEntries(arr.entries());
+    this.table = null;
+  }
+
+  /**
  *  Stores a value in the TableRow's specified column.
  *  The column may be specified by either its ID or title.
  *
@@ -71,35 +67,34 @@ p5.TableRow = function(str, separator) {
  *
  *   //print the results
  *   print(table.getArray());
+ *
+ *   describe('no image displayed');
  * }
  * </code></div>
- *
- * @alt
- * no image displayed
  */
-p5.TableRow.prototype.set = function(column, value) {
+  set(column, value) {
   // if typeof column is string, use .obj
-  if (typeof column === 'string') {
-    const cPos = this.table.columns.indexOf(column); // index of columnID
-    if (cPos >= 0) {
-      this.obj[column] = value;
-      this.arr[cPos] = value;
+    if (typeof column === 'string') {
+      const cPos = this.table.columns.indexOf(column); // index of columnID
+      if (cPos >= 0) {
+        this.obj[column] = value;
+        this.arr[cPos] = value;
+      } else {
+        throw new Error(`This table has no column named "${column}"`);
+      }
     } else {
-      throw new Error(`This table has no column named "${column}"`);
-    }
-  } else {
     // if typeof column is number, use .arr
-    if (column < this.table.columns.length) {
-      this.arr[column] = value;
-      const cTitle = this.table.columns[column];
-      this.obj[cTitle] = value;
-    } else {
-      throw new Error(`Column #${column} is out of the range of this table`);
+      if (column < this.table.columns.length) {
+        this.arr[column] = value;
+        const cTitle = this.table.columns[column];
+        this.obj[cTitle] = value;
+      } else {
+        throw new Error(`Column #${column} is out of the range of this table`);
+      }
     }
   }
-};
 
-/**
+  /**
  *  Stores a Float value in the TableRow's specified column.
  *  The column may be specified by either its ID or title.
  *
@@ -132,18 +127,17 @@ p5.TableRow.prototype.set = function(column, value) {
  *   }
  *
  *   print(table.getArray());
+ *
+ *   describe('no image displayed');
  * }
  * </code></div>
- *
- * @alt
- * no image displayed
  */
-p5.TableRow.prototype.setNum = function(column, value) {
-  const floatVal = parseFloat(value);
-  this.set(column, floatVal);
-};
+  setNum(column, value) {
+    const floatVal = parseFloat(value);
+    this.set(column, floatVal);
+  }
 
-/**
+  /**
  *  Stores a String value in the TableRow's specified column.
  *  The column may be specified by either its ID or title.
  *
@@ -177,18 +171,17 @@ p5.TableRow.prototype.setNum = function(column, value) {
  *   }
  *
  *   print(table.getArray());
+ *
+ *   describe('no image displayed');
  * }
  * </code></div>
- *
- * @alt
- * no image displayed
  */
-p5.TableRow.prototype.setString = function(column, value) {
-  const stringVal = value.toString();
-  this.set(column, stringVal);
-};
+  setString(column, value) {
+    const stringVal = value.toString();
+    this.set(column, stringVal);
+  }
 
-/**
+  /**
  *  Retrieves a value from the TableRow's specified column.
  *  The column may be specified by either its ID or title.
  *
@@ -222,21 +215,20 @@ p5.TableRow.prototype.setString = function(column, value) {
  *   }
  *
  *   print(names);
+ *
+ *   describe('no image displayed');
  * }
  * </code></div>
- *
- * @alt
- * no image displayed
  */
-p5.TableRow.prototype.get = function(column) {
-  if (typeof column === 'string') {
-    return this.obj[column];
-  } else {
-    return this.arr[column];
+  get(column) {
+    if (typeof column === 'string') {
+      return this.obj[column];
+    } else {
+      return this.arr[column];
+    }
   }
-};
 
-/**
+  /**
  *  Retrieves a Float value from the TableRow's specified
  *  column. The column may be specified by either its ID or
  *  title.
@@ -272,27 +264,25 @@ p5.TableRow.prototype.get = function(column) {
  *     maxId = min(maxId, id);
  *   }
  *   print('minimum id = ' + minId + ', maximum id = ' + maxId);
+ *   describe('no image displayed');
  * }
  * </code></div>
- *
- * @alt
- * no image displayed
  */
-p5.TableRow.prototype.getNum = function(column) {
-  let ret;
-  if (typeof column === 'string') {
-    ret = parseFloat(this.obj[column]);
-  } else {
-    ret = parseFloat(this.arr[column]);
+  getNum(column) {
+    let ret;
+    if (typeof column === 'string') {
+      ret = parseFloat(this.obj[column]);
+    } else {
+      ret = parseFloat(this.arr[column]);
+    }
+
+    if (ret.toString() === 'NaN') {
+      throw `Error: ${this.obj[column]} is NaN (Not a Number)`;
+    }
+    return ret;
   }
 
-  if (ret.toString() === 'NaN') {
-    throw `Error: ${this.obj[column]} is NaN (Not a Number)`;
-  }
-  return ret;
-};
-
-/**
+  /**
  *  Retrieves an String value from the TableRow's specified
  *  column. The column may be specified by either its ID or
  *  title.
@@ -329,18 +319,17 @@ p5.TableRow.prototype.getNum = function(column) {
  *   }
  *
  *   print('longest: ' + longest);
+ *
+ *   describe('no image displayed');
  * }
  * </code></div>
- *
- * @alt
- * no image displayed
  */
-p5.TableRow.prototype.getString = function(column) {
-  if (typeof column === 'string') {
-    return this.obj[column].toString();
-  } else {
-    return this.arr[column].toString();
+  getString(column) {
+    if (typeof column === 'string') {
+      return this.obj[column].toString();
+    } else {
+      return this.arr[column].toString();
+    }
   }
 };
-
 export default p5;

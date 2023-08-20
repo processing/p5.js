@@ -21,53 +21,62 @@ import * as constants from './constants';
  * @param {Number} h            height
  * @param {Constant} renderer   the renderer to use, either P2D or WEBGL
  * @param {p5} [pInst]          pointer to p5 instance
+ * @param {HTMLCanvasElement} [canvas]     existing html canvas element
  */
-p5.Graphics = function(w, h, renderer, pInst) {
-  const r = renderer || constants.P2D;
+p5.Graphics = class extends p5.Element {
+  constructor(w, h, renderer, pInst, canvas) {
+    let canvasTemp;
+    if (canvas) {
+      canvasTemp = canvas;
+    } else {
+      canvasTemp = document.createElement('canvas');
+    }
 
-  this.canvas = document.createElement('canvas');
-  const node = pInst._userNode || document.body;
-  node.appendChild(this.canvas);
+    super(canvasTemp, pInst);
+    this.canvas = canvasTemp;
 
-  p5.Element.call(this, this.canvas, pInst);
+    const r = renderer || constants.P2D;
 
-  // bind methods and props of p5 to the new object
-  for (const p in p5.prototype) {
-    if (!this[p]) {
-      if (typeof p5.prototype[p] === 'function') {
-        this[p] = p5.prototype[p].bind(this);
-      } else {
-        this[p] = p5.prototype[p];
+    const node = pInst._userNode || document.body;
+    if (!canvas) {
+      node.appendChild(this.canvas);
+    }
+
+    // bind methods and props of p5 to the new object
+    for (const p in p5.prototype) {
+      if (!this[p]) {
+        if (typeof p5.prototype[p] === 'function') {
+          this[p] = p5.prototype[p].bind(this);
+        } else {
+          this[p] = p5.prototype[p];
+        }
       }
     }
-  }
 
-  p5.prototype._initializeInstanceVariables.apply(this);
-  this.width = w;
-  this.height = h;
-  this._pixelDensity = pInst._pixelDensity;
+    p5.prototype._initializeInstanceVariables.apply(this);
+    this.width = w;
+    this.height = h;
+    this._pixelDensity = pInst._pixelDensity;
 
-  if (r === constants.WEBGL) {
-    this._renderer = new p5.RendererGL(this.canvas, this, false);
-  } else {
-    this._renderer = new p5.Renderer2D(this.canvas, this, false);
-  }
-  pInst._elements.push(this);
-
-  Object.defineProperty(this, 'deltaTime', {
-    get: function() {
-      return this._pInst.deltaTime;
+    if (r === constants.WEBGL) {
+      this._renderer = new p5.RendererGL(this.canvas, this, false);
+    } else {
+      this._renderer = new p5.Renderer2D(this.canvas, this, false);
     }
-  });
+    pInst._elements.push(this);
 
-  this._renderer.resize(w, h);
-  this._renderer._applyDefaults();
-  return this;
-};
+    Object.defineProperty(this, 'deltaTime', {
+      get() {
+        return this._pInst.deltaTime;
+      }
+    });
 
-p5.Graphics.prototype = Object.create(p5.Element.prototype);
+    this._renderer.resize(w, h);
+    this._renderer._applyDefaults();
+    return this;
+  }
 
-/**
+  /**
  * Resets certain values such as those modified by functions in the Transform category
  * and in the Lights category that are not automatically reset
  * with graphics buffer objects. Calling this in <a href='#/p5/draw'>draw()</a> will copy the behavior
@@ -112,14 +121,14 @@ p5.Graphics.prototype = Object.create(p5.Element.prototype);
  * A black line animates from top to bottom on a white background on the right half.
  * When clicked, the black line starts back over at the top.
  */
-p5.Graphics.prototype.reset = function() {
-  this._renderer.resetMatrix();
-  if (this._renderer.isP3D) {
-    this._renderer._update();
+  reset() {
+    this._renderer.resetMatrix();
+    if (this._renderer.isP3D) {
+      this._renderer._update();
+    }
   }
-};
 
-/**
+  /**
  * Removes a Graphics object from the page and frees any resources
  * associated with it.
  *
@@ -173,16 +182,31 @@ p5.Graphics.prototype.reset = function() {
  * no image
  * a multi-colored circle moving back and forth over a scrolling background.
  */
-p5.Graphics.prototype.remove = function() {
-  if (this.elt.parentNode) {
-    this.elt.parentNode.removeChild(this.elt);
+  remove() {
+    if (this.elt.parentNode) {
+      this.elt.parentNode.removeChild(this.elt);
+    }
+    const idx = this._pInst._elements.indexOf(this);
+    if (idx !== -1) {
+      this._pInst._elements.splice(idx, 1);
+    }
+    for (const elt_ev in this._events) {
+      this.elt.removeEventListener(elt_ev, this._events[elt_ev]);
+    }
   }
-  const idx = this._pInst._elements.indexOf(this);
-  if (idx !== -1) {
-    this._pInst._elements.splice(idx, 1);
-  }
-  for (const elt_ev in this._events) {
-    this.elt.removeEventListener(elt_ev, this._events[elt_ev]);
+
+
+  /**
+   * Creates and returns a new <a href="#/p5.Framebuffer">p5.Framebuffer</a>
+   * inside a p5.Graphics WebGL context.
+   *
+   * This takes the same parameters as the <a href="#/p5/createFramebuffer">global
+   * createFramebuffer function.</a>
+   *
+   * @method createFramebuffer
+   */
+  createFramebuffer(options) {
+    return new p5.Framebuffer(this, options);
   }
 };
 

@@ -1,5 +1,6 @@
+#ifndef WEBGL2
 #extension GL_OES_standard_derivatives : enable
-precision mediump float;
+#endif
 
 #if 0
   // simulate integer math using floats
@@ -35,11 +36,11 @@ uniform ivec2 uGridOffset;
 uniform ivec2 uGridSize;
 uniform vec4 uMaterialColor;
 
-varying vec2 vTexCoord;
+IN vec2 vTexCoord;
 
 // some helper functions
-int round(float v) { return ifloor(v + 0.5); }
-ivec2 round(vec2 v) { return ifloor(v + 0.5); }
+int ROUND(float v) { return ifloor(v + 0.5); }
+ivec2 ROUND(vec2 v) { return ifloor(v + 0.5); }
 float saturate(float v) { return clamp(v, 0.0, 1.0); }
 vec2 saturate(vec2 v) { return clamp(v, 0.0, 1.0); }
 
@@ -53,7 +54,7 @@ ivec2 mul(vec2 v1, ivec2 v2) {
 
 // unpack a 16-bit integer from a float vec2
 int getInt16(vec2 v) {
-  ivec2 iv = round(v * 255.0);
+  ivec2 iv = ROUND(v * 255.0);
   return iv.x * INT(128) + iv.y;
 }
 
@@ -72,7 +73,7 @@ vec4 getTexel(sampler2D sampler, int pos, ivec2 size) {
   int y = ifloor(pos / width);
   int x = pos - y * width;  // pos % width
 
-  return texture2D(sampler, (vec2(x, y) + 0.5) / vec2(size));
+  return TEXTURE(sampler, (vec2(x, y) + 0.5) / vec2(size));
 }
 
 void calulateCrossings(vec2 p0, vec2 p1, vec2 p2, out vec2 C1, out vec2 C2) {
@@ -210,6 +211,6 @@ void main() {
   float distance = max(weight.x + weight.y, minDistance); // manhattan approx.
   float antialias = abs(dot(coverage, weight) / distance);
   float cover = min(abs(coverage.x), abs(coverage.y));
-  gl_FragColor = uMaterialColor;
-  gl_FragColor.a *= saturate(max(antialias, cover));
+  OUT_COLOR = vec4(uMaterialColor.rgb, 1.) * uMaterialColor.a;
+  OUT_COLOR *= saturate(max(antialias, cover));
 }

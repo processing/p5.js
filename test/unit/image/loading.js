@@ -34,6 +34,10 @@ suite('loading images', function() {
         myp5 = p;
         done();
       };
+
+      // Make sure draw() exists so timing functions still run each frame
+      // and we can test gif animation
+      p.draw = function() {};
     });
   });
 
@@ -110,6 +114,81 @@ suite('loading images', function() {
     });
   });
 
+  test('animated gifs animate correctly', function() {
+    const wait = function(ms) {
+      return new Promise(function(resolve) {
+        setTimeout(resolve, ms);
+      });
+    };
+    let img;
+    return new Promise(function(resolve, reject) {
+      img = myp5.loadImage('unit/assets/nyan_cat.gif', resolve, reject);
+    }).then(function() {
+      assert.equal(img.gifProperties.displayIndex, 0);
+      myp5.image(img, 0, 0);
+
+      // This gif has frames that are around for 100ms each.
+      // After 100ms has elapsed, the display index should
+      // increment when we draw the image.
+      return wait(100);
+    }).then(function() {
+      return new Promise(function(resolve) {
+        window.requestAnimationFrame(resolve);
+      });
+    }).then(function() {
+      myp5.image(img, 0, 0);
+      assert.equal(img.gifProperties.displayIndex, 1);
+    });
+  });
+
+  var backgroundColor = [135, 206, 235, 255];
+  var blue = [0, 0, 255, 255];
+  var transparent = [0, 0, 0, 0];
+  test('animated gifs work with no disposal', function() {
+    return new Promise(function(resolve, reject) {
+      myp5.loadImage('unit/assets/dispose_none.gif', resolve, reject);
+    }).then(function(img) {
+      // Frame 0 shows the background
+      assert.deepEqual(img.get(7, 12), backgroundColor);
+      // Frame 1 draws on top of the background
+      img.setFrame(1);
+      assert.deepEqual(img.get(7, 12), blue);
+      // Frame 2 does not erase untouched parts of frame 2
+      img.setFrame(2);
+      assert.deepEqual(img.get(7, 12), blue);
+    });
+  });
+
+  test('animated gifs work with background disposal', function() {
+    return new Promise(function(resolve, reject) {
+      myp5.loadImage('unit/assets/dispose_background.gif', resolve, reject);
+    }).then(function(img) {
+      // Frame 0 shows the background
+      assert.deepEqual(img.get(7, 12), backgroundColor);
+      // Frame 1 draws on top of the background
+      img.setFrame(1);
+      assert.deepEqual(img.get(7, 12), blue);
+      // Frame 2 erases the content added in frame 2
+      img.setFrame(2);
+      assert.deepEqual(img.get(7, 12), transparent);
+    });
+  });
+
+  test('animated gifs work with previous disposal', function() {
+    return new Promise(function(resolve, reject) {
+      myp5.loadImage('unit/assets/dispose_previous.gif', resolve, reject);
+    }).then(function(img) {
+      // Frame 0 shows the background
+      assert.deepEqual(img.get(7, 12), backgroundColor);
+      // Frame 1 draws on top of the background
+      img.setFrame(1);
+      assert.deepEqual(img.get(7, 12), blue);
+      // Frame 2 returns the content added in frame 2 to its previous value
+      img.setFrame(2);
+      assert.deepEqual(img.get(7, 12), backgroundColor);
+    });
+  });
+
   /* TODO: make this resilient to platform differences in image resizing.
   test('should draw cropped image', function() {
     return new Promise(function(resolve, reject) {
@@ -167,6 +246,49 @@ suite('loading images', function() {
         test('should be loaded now preload() finished', function(done) {
           assert.isTrue(myImage instanceof p5.Image);
           assert.isTrue(myImage.width > 0 && myImage.height > 0);
+          done();
+        });
+      });
+    };
+  };
+  new p5(mySketch, null, false);
+
+  // Test loading image failure in preload() without failure callback
+  mySketch = function(this_p5) {
+    this_p5.preload = function() {
+      this_p5.loadImage('', function() {
+        throw new Error('Should not be called');
+      });
+    };
+
+    this_p5.setup = function() {
+      throw new Error('Should not be called');
+    };
+  };
+  new p5(mySketch, null, false);
+
+  // Test loading image failure in preload() with failure callback
+  mySketch = function(this_p5) {
+    var myImage;
+    this_p5.preload = function() {
+      suite('Test loading image failure in preload() with failure callback', function() {
+        test('Load fail and use failure callback', function(done) {
+          myImage = this_p5.loadImage('', function() {
+            assert.fail();
+            done();
+          }, function() {
+            assert.ok(myImage);
+            done();
+          });
+        });
+      });
+    };
+
+    this_p5.setup = function() {
+      suite('setup() after preload() failure with failure callback', function() {
+        test('should be loaded now preload() finished', function(done) {
+          assert.isTrue(myImage instanceof p5.Image);
+          assert.isTrue(myImage.width === 1 && myImage.height === 1);
           done();
         });
       });
@@ -290,5 +412,163 @@ suite('loading animated gif images', function() {
       };
     };
     new p5(mySketch, null, false);
+  });
+});
+
+suite('displaying images', function() {
+  var myp5;
+  var pImg;
+  var imagePath = 'unit/assets/cat-with-hole.png';
+  var chanNames = ['red', 'green', 'blue', 'alpha'];
+
+  setup(function(done) {
+    new p5(function(p) {
+      p.setup = function() {
+        myp5 = p;
+        myp5.pixelDensity(1);
+        myp5.loadImage(
+          imagePath,
+          function(img) {
+            pImg = img;
+            myp5.resizeCanvas(pImg.width, pImg.height);
+            done();
+          },
+          function() {
+            throw new Error('Error loading image');
+          }
+        );
+      };
+    });
+  });
+
+  teardown(function() {
+    myp5.remove();
+  });
+
+  function checkTint(tintColor) {
+    myp5.loadPixels();
+    pImg.loadPixels();
+    for (var i = 0; i < myp5.pixels.length; i += 4) {
+      var x = (i / 4) % myp5.width;
+      var y = Math.floor(i / 4 / myp5.width);
+      for (var chan = 0; chan < tintColor.length; chan++) {
+        var inAlpha = 1;
+        var outAlpha = 1;
+        if (chan < 3) {
+          // The background of the canvas is black, so after applying the
+          // image's own alpha + the tint alpha to its color channels, we
+          // should arrive at the same color that we see on the canvas.
+          inAlpha = tintColor[3] / 255;
+          outAlpha = pImg.pixels[i + 3] / 255;
+
+          // Applying the tint involves un-multiplying the alpha of the source
+          // image, which causes a bit of loss of precision. I'm allowing a
+          // loss of 10 / 255 in this test.
+          assert.approximately(
+            myp5.pixels[i + chan],
+            pImg.pixels[i + chan] *
+              (tintColor[chan] / 255) *
+              outAlpha *
+              inAlpha,
+            10,
+            'Tint output for the ' +
+              chanNames[chan] +
+              ' channel of pixel (' +
+              x +
+              ', ' +
+              y +
+              ') should be equivalent to multiplying the image value by tint fraction'
+          );
+        }
+      }
+    }
+  }
+
+  test('tint() with color', function() {
+    assert.ok(pImg, 'image loaded');
+    var tintColor = [150, 100, 50, 255];
+    myp5.clear();
+    myp5.background(0);
+    myp5.tint(tintColor[0], tintColor[1], tintColor[2], tintColor[3]);
+    myp5.image(pImg, 0, 0);
+
+    checkTint(tintColor);
+  });
+
+  test('tint() with alpha', function() {
+    assert.ok(pImg, 'image loaded');
+    var tintColor = [255, 255, 255, 100];
+    myp5.clear();
+    myp5.background(0);
+    myp5.tint(tintColor[0], tintColor[1], tintColor[2], tintColor[3]);
+    myp5.image(pImg, 0, 0);
+
+    checkTint(tintColor);
+  });
+
+  test('tint() with color and alpha', function() {
+    assert.ok(pImg, 'image loaded');
+    var tintColor = [255, 100, 50, 100];
+    myp5.clear();
+    myp5.background(0);
+    myp5.tint(tintColor[0], tintColor[1], tintColor[2], tintColor[3]);
+    myp5.image(pImg, 0, 0);
+
+    checkTint(tintColor);
+  });
+});
+
+suite('displaying images that use fit mode', function() {
+  var myp5;
+
+  setup(function(done) {
+    new p5(function(p) {
+      p.setup = function() {
+        myp5 = p;
+        done();
+      };
+    });
+  });
+
+  teardown(function() {
+    myp5.remove();
+  });
+
+  test('CONTAIN when source image is larger than destination', function() {
+    let src = myp5.createImage(400, 1000);
+    sinon.spy(myp5._renderer, 'image');
+    myp5.image(src, 0, 0, 300, 400, 0, 0, 400, 1000, myp5.CONTAIN);
+    assert(myp5._renderer.image.calledOnce);
+    assert.equal(myp5._renderer.image.getCall(0).args[7], 400 / (1000 / 400)); //  dw
+    assert.equal(myp5._renderer.image.getCall(0).args[8], 1000 / (1000 / 400)); // dh
+  });
+
+  test('CONTAIN when source image is smaller than destination', function() {
+    let src = myp5.createImage(40, 90);
+    sinon.spy(myp5._renderer, 'image');
+    myp5.image(src, 0, 0, 300, 500, 0, 0, 400, 1000, myp5.CONTAIN);
+    assert(myp5._renderer.image.calledOnce);
+    assert.equal(myp5._renderer.image.getCall(0).args[7], 40 / (90 / 500)); //  dw
+    assert.equal(myp5._renderer.image.getCall(0).args[8], 90 / (90 / 500)); // dh
+  });
+
+  test('COVER when source image is larger than destination', function() {
+    let src = myp5.createImage(400, 1000);
+    sinon.spy(myp5._renderer, 'image');
+    myp5.image(src, 0, 0, 300, 400, 0, 0, 400, 1000, myp5.COVER);
+    const r = Math.max(300 / 400, 400 / 1000);
+    assert(myp5._renderer.image.calledOnce);
+    assert.equal(myp5._renderer.image.getCall(0).args[3], 300 / r); //  sw
+    assert.equal(myp5._renderer.image.getCall(0).args[4], 400 / r); // sh
+  });
+
+  test('COVER when source image is smaller than destination', function() {
+    let src = myp5.createImage(20, 100);
+    sinon.spy(myp5._renderer, 'image');
+    myp5.image(src, 0, 0, 300, 400, 0, 0, 20, 100, myp5.COVER);
+    const r = Math.max(300 / 20, 400 / 100);
+    assert(myp5._renderer.image.calledOnce);
+    assert.equal(myp5._renderer.image.getCall(0).args[3], 300 / r); //  sw
+    assert.equal(myp5._renderer.image.getCall(0).args[4], 400 / r); // sh
   });
 });

@@ -1,5 +1,3 @@
-'use strict';
-
 import p5 from './main';
 
 p5.prototype._promisePreloads = [
@@ -81,7 +79,7 @@ p5.prototype._wrapPromisePreload = function(thisValue, fn, addCallbacks) {
         callback = args.pop();
       }
     }
-    // Call the underlying funciton and pass it to Promise.resolve,
+    // Call the underlying function and pass it to Promise.resolve,
     // so that even if it didn't return a promise we can still
     // act on the result as if it did.
     const promise = Promise.resolve(fn.apply(this, args));
@@ -117,13 +115,13 @@ p5.prototype._legacyPreloadGenerator = function(
   // of a specific class.
   const baseValueGenerator =
     legacyPreloadSetup.createBaseObject || objectCreator;
-  let returnedFunction = function() {
+  let returnedFunction = function(...args) {
     // Our then clause needs to run before setup, so we also increment the preload counter
     this._incrementPreload();
     // Generate the return value based on the generator.
-    const returnValue = baseValueGenerator.apply(this, arguments);
+    const returnValue = baseValueGenerator.apply(this, args);
     // Run the original wrapper
-    fn.apply(this, arguments).then(data => {
+    fn.apply(this, args).then(data => {
       // Copy each key from the resolved value into returnValue
       Object.assign(returnValue, data);
       // Decrement the preload counter, to allow setup to continue.

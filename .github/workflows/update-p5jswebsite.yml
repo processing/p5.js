@@ -9,8 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Dispatch event to p5.js-website 
     steps:
-      - name: Clone repository
-        uses: actions/checkout@v1
       - name: Dispatch event to p5.js-website
         uses: peter-evans/repository-dispatch@v1
         with:

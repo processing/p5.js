@@ -14,6 +14,13 @@ suite('Rendering', function() {
     myp5.remove();
   });
 
+  suite('p5.prototype.webglVersion', function() {
+    test('should return P2D if not using WebGL at all', function() {
+      myp5.createCanvas(10, 10);
+      assert.equal(myp5.webglVersion, myp5.P2D);
+    });
+  });
+
   suite('p5.prototype.createCanvas', function() {
     test('should have correct initial colors', function() {
       var white = myp5.color(255, 255, 255).levels;
@@ -66,6 +73,22 @@ suite('Rendering', function() {
       myp5.resizeCanvas(10, 10);
       assert.equal(myp5.drawingContext.lineCap, myp5.PROJECT);
     });
+
+    test('should resize framebuffers', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      const fbo = myp5.createFramebuffer();
+      myp5.resizeCanvas(5, 15);
+      assert.equal(fbo.width, 5);
+      assert.equal(fbo.height, 15);
+    });
+
+    test('should resize graphic framebuffers', function() {
+      const graphic = myp5.createGraphics(10, 10, myp5.WEBGL);
+      const fbo = graphic.createFramebuffer();
+      graphic.resizeCanvas(5, 15);
+      assert.equal(fbo.width, 5);
+      assert.equal(fbo.height, 15);
+    });
   });
 
   suite('p5.prototype.blendMode', function() {
@@ -105,7 +128,6 @@ suite('Rendering', function() {
     });
   });
 
-  // prettier-ignore
   var webglMethods = [
     'rotateX', 'rotateY', 'rotateZ',
     'camera', 'perspective', 'ortho', 'frustum', 'orbitControl',
@@ -114,7 +136,7 @@ suite('Rendering', function() {
     'createShader', 'shader',
     'normalMaterial', 'texture', 'ambientMaterial', 'emissiveMaterial', 'specularMaterial',
     'shininess', 'lightFalloff',
-    'plane', 'box', 'sphere', 'cylinder', 'cone', 'ellipsoid', 'torus',
+    'plane', 'box', 'sphere', 'cylinder', 'cone', 'ellipsoid', 'torus'
   ];
 
   suite('webgl assertions', function() {

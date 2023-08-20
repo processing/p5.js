@@ -46,13 +46,13 @@ Vývojárske nástroje zahrnuté v kóde p5.js sú zámerne veľmi striktné oh�
 
 p5.js požaduje čistý a štylisticky konzistentnú syntax kódu, ktorá je presadzovaná pomocou [Prettier](https://prettier.io/) a [ESlint](https://eslint.org/). Pravidlá sa kontrolujú pred odovzdaním kódu, avšak môžes si nainštalovať [ESlint plugin](https://eslint.org/docs/user-guide/integrations#editors) do svojho editora kódu, aby ti zvýraznil chyby hneď ako ich píšeš, čo ti pravdepodobne pomože predčasne predísť problémom s odovzdaním kódu s Gitom. Vo všeobecnosti sa mýlime na strane flexibility, pokiaľ ide o štýl kódovania, aby sme znížili prekážky účasti a príspevku. Pre odhalenie chýb vykonaj nasledujúci príkaz vo svojom oblúbenom príkazovom riadku (nepíš znak `$`):
 
-```
+```shell
 $ npm run lint
 ```
 
 Niektoré syntaktické chyby je však možné opraviť automaticky pomocou príkazu:
 
-```
+```shell
 $ npm run lint:fix
 ```
 Lepšie je držať sa zavedeného štýlu projektu, ale [príležitostne](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=) by sa mohla použiť alternatívna syntax. Uľahčite tým pochopenie kódu. V týchto prípadoch Prettier [ponúka výnimky](https://prettier.io/docs/en/ignore.html), komentár `// prettier-ignore`, ktorý môžete použiť na získanie podrobných výnimiek. Pokúste sa vyhnúť použitiu tohto, ak je to možné, pretože existujú dobré dôvody pre väčšinu preferencií štýlov vynútených štylistickým procesorom.
@@ -72,7 +72,7 @@ Unit testy sú malé časti kódu, ktoré sú vytvorené ako doplnok k hlavnej l
 
 Aby bolo možné spustiť unit testy, budeš musieť nainštalovať závislosti projektu.
 
-```
+```shell
 $ npm ci
 ```
 
@@ -83,13 +83,13 @@ Tento príkaz nainštaluje *všetky* závislosti p5.js; stručne, najdôležitej
 
 Ak sú závislosti nainštalované, použi Grunt pre spustenie unit testov.
 
-```
+```shell
 $ grunt
 ```
 
 Niekedy je užitočné spustiť testy v priamo v prehliadači miesto príkazového riadku. Aby si tak urobil, najprv naštartuj [connect](https://github.com/gruntjs/grunt-contrib-connect) server:
 
-```
+```shell
 $ npm run dev
 ```
 
@@ -103,20 +103,20 @@ Kompletný návod k unit testovaniu je nad rámec rozsahu p5.js dokumentácie, a
 2. [Rozvetvi](https://help.github.com/articles/fork-a-repo) [repozitár p5.js](https://github.com/processing/p5.js) do svojho GitHub účtu.
 3. [Vyklonuj](https://help.github.com/articles/cloning-a-repository/) svoj novo-rozvetvený repozitár z GitHub-u do svoj lokálneho počítača.
 
-   ```
+   ```shell
    $ git clone https://github.com/YOUR_USERNAME/p5.js.git
    ```
 
 4. Prejdi do priečniku projektu a nainštaluj všetky nevyhnutné závislosti s npm.
 
-   ```
+   ```shell
    $ cd p5.js
    $ npm ci
    ```
 
 5. [Grunt](https://gruntjs.com/) by mal byť teraz nainštalovaný a môžeš ho teda použiť na vybudovanie knižnice zo zdrojového kódu.
 
-   ```
+   ```shell
    $ npm run grunt
    ```
 
@@ -124,7 +124,7 @@ Kompletný návod k unit testovaniu je nad rámec rozsahu p5.js dokumentácie, a
 
 6. Vykonaj nejaké zmeny v lokálnom kóde a [odovzdaj](https://help.github.com/articles/github-glossary/#commit) ich s Git-om.
 
-   ```
+   ```shell
    $ git add -u
    $ git commit -m "YOUR COMMIT MESSAGE"
    ```
@@ -133,7 +133,7 @@ Kompletný návod k unit testovaniu je nad rámec rozsahu p5.js dokumentácie, a
 
 8. [Vypropaguj](https://help.github.com/articles/github-glossary/#push) svoje nové zmeny do svojho rozvetveného repozitára na GitHub-e.
 
-   ```
+   ```shell
    $ git push
    ```
 
@@ -145,7 +145,7 @@ Tento proces je tiež pokrytý [vo videu od The Coding Train.](https://youtu.be/
 
 Vnorené komentáre v p5.js sa budujú do verejnej [referenčnej príručky](https://p5js.org/reference/). Túto príručku si vieš pozrieť aj lokálne:
 
-```
+```shell
 $ npm run docs:dev
 ```
 

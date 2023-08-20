@@ -8,6 +8,27 @@
 
 var myCar1;
 var myCar2; // Two objects!
+class Car {
+  constructor(tempC, tempXpos, tempYpos, tempXspeed) {
+    // Even though there are multiple objects, we still only need one class. No matter how many cookies we make, only one cookie cutter is needed.Isn’t object-oriented programming swell?
+    this.c = tempC;
+    this.xpos = tempXpos;
+    this.ypos = tempYpos;
+    this.xspeed = tempXspeed;
+  }
+  display() {
+    stroke(0);
+    fill(this.c);
+    rectMode(CENTER);
+    rect(this.xpos, this.ypos, 20, 10);
+  }
+  move() {
+    this.xpos = this.xpos + this.xspeed;
+    if (this.xpos > width) {
+      this.xpos = 0;
+    }
+  }
+}
 
 function setup() {
   createCanvas(200, 200);
@@ -22,25 +43,3 @@ function draw() {
   myCar2.move();
   myCar2.display();
 }
-
-function Car(tempC, tempXpos, tempYpos, tempXspeed) {
-  // Even though there are multiple objects, we still only need one class. No matter how many cookies we make, only one cookie cutter is needed.Isn’t object-oriented programming swell?
-  this.c = tempC;
-  this.xpos = tempXpos;
-  this.ypos = tempYpos;
-  this.xspeed = tempXspeed;
-}
-
-Car.prototype.display = function() {
-  stroke(0);
-  fill(this.c);
-  rectMode(CENTER);
-  rect(this.xpos, this.ypos, 20, 10);
-};
-
-Car.prototype.move = function() {
-  this.xpos = this.xpos + this.xspeed;
-  if (this.xpos > width) {
-    this.xpos = 0;
-  }
-};

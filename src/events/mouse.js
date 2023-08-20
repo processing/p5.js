@@ -32,11 +32,11 @@ import * as constants from '../core/constants';
  *   background(237, 34, 93);
  *   fill(0);
  *   rect(x, 50, 50, 50);
+ *   describe(`box moves left and right according to mouse movement
+ *     then slowly back towards the center`);
  * }
  * </code>
  * </div>
- * @alt
- * box moves left and right according to mouse movement then slowly back towards the center
  */
 p5.prototype.movedX = 0;
 
@@ -61,12 +61,12 @@ p5.prototype.movedX = 0;
  *   y += floor(movedY / 5);
  *   background(237, 34, 93);
  *   fill(0);
- *   rect(y, 50, 50, 50);
+ *   rect(50, y, 50, 50);
+ *   describe(`box moves up and down according to mouse movement then
+ *     slowly back towards the center`);
  * }
  * </code>
  * </div>
- * @alt
- * box moves up and down according to mouse movement then slowly back towards the center
  */
 p5.prototype.movedY = 0;
 /*
@@ -94,12 +94,10 @@ p5.prototype._hasMouseInteracted = false;
  * function draw() {
  *   background(244, 248, 252);
  *   line(mouseX, 0, mouseX, 100);
+ *   describe('horizontal black line moves left and right with mouse x-position');
  * }
  * </code>
  * </div>
- *
- * @alt
- * horizontal black line moves left and right with mouse x-position
  */
 p5.prototype.mouseX = 0;
 
@@ -120,12 +118,10 @@ p5.prototype.mouseX = 0;
  * function draw() {
  *   background(244, 248, 252);
  *   line(0, mouseY, 100, mouseY);
+ *   describe('vertical black line moves up and down with mouse y-position');
  * }
  * </code>
  * </div>
- *
- * @alt
- * vertical black line moves up and down with mouse y-position
  */
 p5.prototype.mouseY = 0;
 
@@ -152,12 +148,11 @@ p5.prototype.mouseY = 0;
  *   background(244, 248, 252);
  *   line(mouseX, mouseY, pmouseX, pmouseY);
  *   print(pmouseX + ' -> ' + mouseX);
+ *   describe(`line trail is created from cursor movements.
+ *     faster movement make longer line.`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * line trail is created from cursor movements. faster movement make longer line.
  */
 p5.prototype.pmouseX = 0;
 
@@ -183,12 +178,11 @@ p5.prototype.pmouseX = 0;
  *   }
  *
  *   print(pmouseY + ' -> ' + mouseY);
+ *   describe(`60-by-60 black rect center, fuchsia background.
+ *     rect flickers on mouse movement`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * 60x60 black rect center, fuchsia background. rect flickers on mouse movement
  */
 p5.prototype.pmouseY = 0;
 
@@ -221,12 +215,11 @@ p5.prototype.pmouseY = 0;
  *
  *   //the y of the square is relative to the canvas
  *   rect(20, mouseY, 60, 60);
+ *   describe(`60-by-60 black rect y moves with mouse y and fuchsia
+ *     canvas moves with mouse x`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * 60x60 black rect y moves with mouse y and fuchsia canvas moves with mouse x
  */
 p5.prototype.winMouseX = 0;
 
@@ -259,12 +252,11 @@ p5.prototype.winMouseX = 0;
  *
  *   //the x of the square is relative to the canvas
  *   rect(mouseX, 20, 60, 60);
+ *   describe(`60-by-60 black rect x moves with mouse x and
+ *     fuchsia canvas y moves with mouse y`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * 60x60 black rect x moves with mouse x and fuchsia canvas y moves with mouse y
  */
 p5.prototype.winMouseY = 0;
 
@@ -299,12 +291,11 @@ p5.prototype.winMouseY = 0;
  *   ellipse(50, 50, 10 + speed * 5, 10 + speed * 5);
  *   //move the canvas to the mouse position
  *   myCanvas.position(winMouseX + 1, winMouseY + 1);
+ *   describe(`fuchsia ellipse moves with mouse x and y.
+ *     Grows and shrinks with mouse speed`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * fuchsia ellipse moves with mouse x and y. Grows and shrinks with mouse speed
  */
 p5.prototype.pwinMouseX = 0;
 
@@ -339,17 +330,16 @@ p5.prototype.pwinMouseX = 0;
  *   ellipse(50, 50, 10 + speed * 5, 10 + speed * 5);
  *   //move the canvas to the mouse position
  *   myCanvas.position(winMouseX + 1, winMouseY + 1);
+ *   describe(`fuchsia ellipse moves with mouse x and y.
+ *     Grows and shrinks with mouse speed`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * fuchsia ellipse moves with mouse x and y. Grows and shrinks with mouse speed
  */
 p5.prototype.pwinMouseY = 0;
 
 /**
- * Processing automatically tracks if the mouse button is pressed and which
+ * p5 automatically tracks if the mouse button is pressed and which
  * button is pressed. The value of the system variable mouseButton is either
  * LEFT, RIGHT, or CENTER depending on which button was pressed last.
  * Warning: different browsers may track mouseButton differently.
@@ -364,7 +354,7 @@ p5.prototype.pwinMouseY = 0;
  *   background(237, 34, 93);
  *   fill(0);
  *
- *   if (mouseIsPressed) {
+ *   if (mouseIsPressed === true) {
  *     if (mouseButton === LEFT) {
  *       ellipse(50, 50, 50, 50);
  *     }
@@ -377,12 +367,11 @@ p5.prototype.pwinMouseY = 0;
  *   }
  *
  *   print(mouseButton);
+ *   describe(`50-by-50 black ellipse appears on center of fuchsia
+ *     canvas on mouse click/press.`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * 50x50 black ellipse appears on center of fuchsia canvas on mouse click/press.
  */
 p5.prototype.mouseButton = 0;
 
@@ -400,19 +389,18 @@ p5.prototype.mouseButton = 0;
  *   background(237, 34, 93);
  *   fill(0);
  *
- *   if (mouseIsPressed) {
+ *   if (mouseIsPressed === true) {
  *     ellipse(50, 50, 50, 50);
  *   } else {
  *     rect(25, 25, 50, 50);
  *   }
  *
  *   print(mouseIsPressed);
+ *   describe(`black 50-by-50 rect becomes ellipse with mouse click/press.
+ *     fuchsia background.`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * black 50x50 rect becomes ellipse with mouse click/press. fuchsia background.
  */
 p5.prototype.mouseIsPressed = false;
 
@@ -486,7 +474,7 @@ p5.prototype._setMouseButton = function(e) {
  * behavior for this event, add "return false" to the end of the method.
  *
  * @method mouseMoved
- * @param  {Object} [event] optional MouseEvent callback argument.
+ * @param  {MouseEvent} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -497,6 +485,8 @@ p5.prototype._setMouseButton = function(e) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
+ *   describe(`black 50-by-50 rect becomes lighter with mouse movements until
+ *   white then resets no image displayed`);
  * }
  * function mouseMoved() {
  *   value = value + 5;
@@ -526,10 +516,6 @@ p5.prototype._setMouseButton = function(e) {
  * }
  * </code>
  * </div>
- *
- * @alt
- * black 50x50 rect becomes lighter with mouse movements until white then resets
- * no image displayed
  */
 
 /**
@@ -538,10 +524,10 @@ p5.prototype._setMouseButton = function(e) {
  * <a href="#/p5/touchMoved">touchMoved()</a> function will be called instead if it is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * behavior for this event, add "return false" to the end of the function.
  *
  * @method mouseDragged
- * @param  {Object} [event] optional MouseEvent callback argument.
+ * @param  {MouseEvent} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -552,6 +538,8 @@ p5.prototype._setMouseButton = function(e) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
+ *   describe(`black 50-by-50 rect turns lighter with mouse click and
+ *     drag until white, resets`);
  * }
  * function mouseDragged() {
  *   value = value + 5;
@@ -581,10 +569,6 @@ p5.prototype._setMouseButton = function(e) {
  * }
  * </code>
  * </div>
- *
- * @alt
- * black 50x50 rect turns lighter with mouse click and drag until white, resets
- * no image displayed
  */
 p5.prototype._onmousemove = function(e) {
   const context = this._isGlobal ? window : this;
@@ -620,26 +604,27 @@ p5.prototype._onmousemove = function(e) {
  * called instead if it is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * behavior for this event, add "return false" to the end of the function.
  *
  * @method mousePressed
- * @param  {Object} [event] optional MouseEvent callback argument.
+ * @param  {MouseEvent} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
- * // Click within the image to change
- * // the value of the rectangle
+ * // Click anywhere in the webpage to change
+ * // the color value of the rectangle
  *
- * let value = 0;
+ * let colorValue = 0;
  * function draw() {
- *   fill(value);
+ *   fill(colorValue);
  *   rect(25, 25, 50, 50);
+ *   describe('black 50-by-50 rect turns white with mouse click/press.');
  * }
  * function mousePressed() {
  *   if (value === 0) {
- *     value = 255;
+ *     colorValue = 255;
  *   } else {
- *     value = 0;
+ *     colorValue = 0;
  *   }
  * }
  * </code>
@@ -664,10 +649,6 @@ p5.prototype._onmousemove = function(e) {
  * }
  * </code>
  * </div>
- *
- * @alt
- * black 50x50 rect turns white with mouse click/press.
- * no image displayed
  */
 p5.prototype._onmousedown = function(e) {
   const context = this._isGlobal ? window : this;
@@ -699,10 +680,10 @@ p5.prototype._onmousedown = function(e) {
  * function will be called instead if it is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * behavior for this event, add "return false" to the end of the function.
  *
  * @method mouseReleased
- * @param  {Object} [event] optional MouseEvent callback argument.
+ * @param  {MouseEvent} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -714,6 +695,7 @@ p5.prototype._onmousedown = function(e) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
+ *   describe('black 50-by-50 rect turns white with mouse click/press.');
  * }
  * function mouseReleased() {
  *   if (value === 0) {
@@ -744,10 +726,6 @@ p5.prototype._onmousedown = function(e) {
  * }
  * </code>
  * </div>
- *
- * @alt
- * black 50x50 rect turns white with mouse click/press.
- * no image displayed
  */
 p5.prototype._onmouseup = function(e) {
   const context = this._isGlobal ? window : this;
@@ -777,10 +755,10 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * being pressed or released, see <a href="#/p5/mousePressed">mousePressed()</a> or <a href="#/p5/mouseReleased">mouseReleased()</a>.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * behavior for this event, add "return false" to the end of the function.
  *
  * @method mouseClicked
- * @param  {Object} [event] optional MouseEvent callback argument.
+ * @param  {MouseEvent} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -792,6 +770,7 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
+ *   describe('black 50-by-50 rect turns white with mouse click/press.');
  * }
  *
  * function mouseClicked() {
@@ -823,10 +802,6 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * }
  * </code>
  * </div>
- *
- * @alt
- * black 50x50 rect turns white with mouse click/press.
- * no image displayed
  */
 p5.prototype._onclick = function(e) {
   const context = this._isGlobal ? window : this;
@@ -848,7 +823,7 @@ p5.prototype._onclick = function(e) {
  * https://developer.mozilla.org/en-US/docs/Web/Events/dblclick
  *
  * @method doubleClicked
- * @param  {Object} [event] optional MouseEvent callback argument.
+ * @param  {MouseEvent} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -860,6 +835,7 @@ p5.prototype._onclick = function(e) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
+ *   describe('black 50-by-50 rect turns white with mouse doubleClick/press.');
  * }
  *
  * function doubleClicked() {
@@ -891,10 +867,6 @@ p5.prototype._onclick = function(e) {
  * }
  * </code>
  * </div>
- *
- * @alt
- * black 50x50 rect turns white with mouse doubleClick/press.
- * no image displayed
  */
 
 p5.prototype._ondblclick = function(e) {
@@ -929,7 +901,7 @@ p5.prototype._pmouseWheelDeltaY = 0;
  * touchpad.<br><br>
  * The event.delta property returns the amount the mouse wheel
  * have scrolled. The values can be positive or negative depending on the
- * scroll direction (on OS X with "natural" scrolling enabled, the signs
+ * scroll direction (on macOS with "natural" scrolling enabled, the signs
  * are inverted).<br><br>
  * Browsers may have different default behaviors attached to various
  * mouse events. To prevent any default behavior for this event, add
@@ -938,7 +910,7 @@ p5.prototype._pmouseWheelDeltaY = 0;
  * may only work as expected if "return false" is included while using Safari.
  *
  * @method mouseWheel
- * @param  {Object} [event] optional WheelEvent callback argument.
+ * @param  {WheelEvent} [event] optional WheelEvent callback argument.
  *
  * @example
  * <div>
@@ -949,6 +921,8 @@ p5.prototype._pmouseWheelDeltaY = 0;
  *   background(237, 34, 93);
  *   fill(0);
  *   rect(25, pos, 50, 50);
+ *   describe(`black 50-by-50 rect moves up and down with vertical scroll.
+ *     fuchsia background`);
  * }
  *
  * function mouseWheel(event) {
@@ -960,9 +934,6 @@ p5.prototype._pmouseWheelDeltaY = 0;
  * }
  * </code>
  * </div>
- *
- * @alt
- * black 50x50 rect moves up and down with vertical scroll. fuchsia background
  */
 p5.prototype._onwheel = function(e) {
   const context = this._isGlobal ? window : this;
@@ -1002,12 +973,11 @@ p5.prototype._onwheel = function(e) {
  *   cam.pan(-movedX * 0.001);
  *   cam.tilt(movedY * 0.001);
  *   sphere(25);
+ *   describe(`3D scene moves according to mouse mouse movement in a
+ *     first person perspective`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * 3D scene moves according to mouse mouse movement in a first person perspective
  */
 p5.prototype.requestPointerLock = function() {
   // pointer lock object forking for cross browser
@@ -1036,6 +1006,7 @@ p5.prototype.requestPointerLock = function() {
  * let locked = false;
  * function draw() {
  *   background(237, 34, 93);
+ *   describe('cursor gets locked / unlocked on mouse-click');
  * }
  * function mouseClicked() {
  *   if (!locked) {
@@ -1048,9 +1019,6 @@ p5.prototype.requestPointerLock = function() {
  * }
  * </code>
  * </div>
- *
- * @alt
- * cursor gets locked / unlocked on mouse-click
  */
 p5.prototype.exitPointerLock = function() {
   document.exitPointerLock();

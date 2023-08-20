@@ -167,6 +167,7 @@ class p5 {
     //////////////////////////////////////////////
 
     this._setupDone = false;
+    this._preloadDone = false;
     // for handling hidpi
     this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
     this._userNode = node;
@@ -203,6 +204,7 @@ class p5 {
       blur: null
     };
     this._millisStart = -1;
+    this._recording = false;
 
     // States used in the custom random generators
     this._lcg_random_state = null;
@@ -271,7 +273,9 @@ class p5 {
         this._runIfPreloadsAreDone();
       } else {
         this._setup();
-        this._draw();
+        if (!this._recording) {
+          this._draw();
+        }
       }
     };
 
@@ -283,16 +287,19 @@ class p5 {
           loadingScreen.parentNode.removeChild(loadingScreen);
         }
         if (!this._setupDone) {
-          this._lastFrameTime = window.performance.now();
+          this._lastTargetFrameTime = window.performance.now();
+          this._lastRealFrameTime = window.performance.now();
           context._setup();
-          context._draw();
+          if (!this._recording) {
+            context._draw();
+          }
         }
       }
     };
 
     this._decrementPreload = function() {
       const context = this._isGlobal ? window : this;
-      if (typeof context.preload === 'function') {
+      if (!context._preloadDone && typeof context.preload === 'function') {
         context._setProperty('_preloadCount', context._preloadCount - 1);
         context._runIfPreloadsAreDone();
       }
@@ -309,6 +316,8 @@ class p5 {
 
     this._incrementPreload = function() {
       const context = this._isGlobal ? window : this;
+      // Do nothing if we tried to increment preloads outside of `preload`
+      if (context._preloadDone) return;
       context._setProperty('_preloadCount', context._preloadCount + 1);
     };
 
@@ -336,6 +345,8 @@ class p5 {
       // Record the time when sketch starts
       this._millisStart = window.performance.now();
 
+      context._preloadDone = true;
+
       // Short-circuit on this, in case someone used the library in "global"
       // mode earlier
       if (typeof context.setup === 'function') {
@@ -352,7 +363,8 @@ class p5 {
         }
       }
 
-      this._lastFrameTime = window.performance.now();
+      this._lastTargetFrameTime = window.performance.now();
+      this._lastRealFrameTime = window.performance.now();
       this._setupDone = true;
       if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
         this._updateAccsOutput();
@@ -361,7 +373,7 @@ class p5 {
 
     this._draw = () => {
       const now = window.performance.now();
-      const time_since_last = now - this._lastFrameTime;
+      const time_since_last = now - this._lastTargetFrameTime;
       const target_time_between_frames = 1000 / this._targetFrameRate;
 
       // only draw if we really need to; don't overextend the browser.
@@ -377,12 +389,14 @@ class p5 {
         !this._loop ||
         time_since_last >= target_time_between_frames - epsilon
       ) {
-        //mandatory update values(matrixs and stack)
-        this.redraw();
-        this._frameRate = 1000.0 / (now - this._lastFrameTime);
-        this.deltaTime = now - this._lastFrameTime;
+        //mandatory update values(matrixes and stack)
+        this.deltaTime = now - this._lastRealFrameTime;
         this._setProperty('deltaTime', this.deltaTime);
-        this._lastFrameTime = now;
+        this._frameRate = 1000.0 / this.deltaTime;
+        this.redraw();
+        this._lastTargetFrameTime = Math.max(this._lastTargetFrameTime
+          + target_time_between_frames, now);
+        this._lastRealFrameTime = now;
 
         // If the user is actually using mouse module, then update
         // coordinates, otherwise skip. We can test this by simply
@@ -675,9 +689,8 @@ class p5 {
             }
           });
         } catch (e) {
-          log(
-            `p5 had problems creating the global function "${prop}", possibly because your code is already using that name as a variable. You may want to rename your variable to something else.`
-          );
+          let message = `p5 had problems creating the global function "${prop}", possibly because your code is already using that name as a variable. You may want to rename your variable to something else.`;
+          p5._friendlyError(message, prop);
           globalObject[prop] = value;
         }
       } else {
@@ -692,8 +705,15 @@ class p5 {
 p5.instance = null;
 
 /**
- * Allows for the friendly error system (FES) to be turned off when creating a sketch,
- * which can give a significant boost to performance when needed.
+ * Turn off some features of the friendly error system (FES), which can give
+ * a significant boost to performance when needed.
+ *
+ * Note that this will disable the parts of the FES that cause performance
+ * slowdown (like argument checking). Friendly errors that have no performance
+ * cost (like giving a descriptive error if a file load fails, or warning you
+ * if you try to override p5.js functions in the global space),
+ * will remain in place.
+ *
  * See <a href='https://github.com/processing/p5.js/wiki/Optimizing-p5.js-Code-for-Performance#disable-the-friendly-error-system-fes'>
  * disabling the friendly error system</a>.
  *
@@ -713,6 +733,10 @@ p5.disableFriendlyErrors = false;
 for (const k in constants) {
   p5.prototype[k] = constants[k];
 }
+
+// makes the `VERSION` constant available on the p5 object
+// in instance mode, even if it hasn't been instatiated yet
+p5.VERSION = constants.VERSION;
 
 // functions that cause preload to wait
 // more can be added by using registerPreloadMethod(func)

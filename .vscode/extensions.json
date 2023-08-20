@@ -5,7 +5,6 @@
   // List of extensions which should be recommended for users of this workspace.
   "recommendations": [
     "eg2.vscode-npm-script",
-    "esbenp.prettier-vscode",
     "yzhang.markdown-all-in-one",
     "dbaeumer.vscode-eslint"
   ],
