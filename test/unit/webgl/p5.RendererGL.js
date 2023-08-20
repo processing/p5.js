@@ -1364,6 +1364,31 @@ suite('p5.RendererGL', function() {
       done();
     });
 
+    test('TESS does not affect texture coordinates', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+      const texture = new p5.Image(25, 25);
+
+      myp5.textureMode(myp5.IMAGE);
+      myp5.texture(texture);
+      renderer.beginShape(myp5.TESS);
+      myp5.noFill();
+      renderer.vertex(-10, -10, 0, 0);
+      renderer.vertex(10, -10, 25, 0);
+      renderer.vertex(10, 10, 25, 25);
+      renderer.vertex(-10, 10, 0, 25);
+      renderer.endShape(myp5.CLOSE);
+
+      // UVs are correctly translated through tessy
+      assert.deepEqual(renderer.immediateMode.geometry.uvs, [
+        0, 0,
+        1, 0,
+        1, 1,
+        0, 1
+      ]);
+
+      done();
+    });
+
     test('TESS interpolates vertex data at intersections', function(done) {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
 
