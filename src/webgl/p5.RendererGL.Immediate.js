@@ -128,14 +128,13 @@ p5.RendererGL.prototype.vertex = function(x, y) {
     lineVertexColor[3]
   );
 
-  if (this.textureMode === constants.IMAGE) {
+  if (this.textureMode === constants.IMAGE && !this.isProcessingVertices) {
     if (this._tex !== null) {
       if (this._tex.width > 0 && this._tex.height > 0) {
         u /= this._tex.width;
         v /= this._tex.height;
       }
     } else if (
-      !this.isProcessingVertices &&
       this._tex === null &&
       arguments.length >= 4
     ) {
