@@ -196,24 +196,35 @@ let magicWord = 'Please';
 let magicWord = 'Please';
 ```
 
-- Use `/** ... */` for multiline comments.
+- Use `//` for multiline comments.
 
 ```javascript
+
 // Bad.
-// I will not use // for multiline comments.
-// I will not use // for multiline comments.
-// I will not use // for multiline comments.
-// I will not use // for multiline comments.
-// I will not use // for multiline comments.
+/**
+ * I will use // for multiline comments.
+ * I will use // for multiline comments.
+ * I will use // for multiline comments.
+ * I will use // for multiline comments.
+ * I will use // for multiline comments.
+ */
+
+//Bad.
+/*
+ I will use // for multiline comments.
+ I will use // for multiline comments.
+ I will use // for multiline comments.
+ I will use // for multiline comments.
+ I will use // for multiline comments.
+ */
 
 // Good.
-/**
- * I will not use // for multiline comments.
- * I will not use // for multiline comments.
- * I will not use // for multiline comments.
- * I will not use // for multiline comments.
- * I will not use // for multiline comments.
- */
+// I will use // for multiline comments.
+// I will use // for multiline comments.
+// I will use // for multiline comments.
+// I will use // for multiline comments.
+// I will use // for multiline comments.
+
 ```
 
 **[⬆ back to top](#table-of-contents)**

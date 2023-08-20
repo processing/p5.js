@@ -3213,6 +3213,12 @@ class MediaElement extends p5.Element {
         this.height = this.canvas.height;
       }
 
+      this.drawingContext.clearRect(
+        0,
+        0,
+        this.canvas.width,
+        this.canvas.height
+      );
       this.drawingContext.drawImage(
         this.elt,
         0,

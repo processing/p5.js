@@ -192,7 +192,8 @@ p5.RendererGL.prototype.endShape = function(
   isBezier,
   isQuadratic,
   isContour,
-  shapeKind
+  shapeKind,
+  count = 1
 ) {
   if (this.immediateMode.shapeMode === constants.POINTS) {
     this._drawPoints(
@@ -204,15 +205,44 @@ p5.RendererGL.prototype.endShape = function(
   this.isProcessingVertices = true;
   this._processVertices(...arguments);
   this.isProcessingVertices = false;
+
+  // LINE_STRIP and LINES are not used for rendering, instead
+  // they only indicate a way to modify vertices during the _processVertices() step
+  if (
+    this.immediateMode.shapeMode === constants.LINE_STRIP ||
+    this.immediateMode.shapeMode === constants.LINES
+  ) {
+    this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
+  }
+
+  // WebGL doesn't support the QUADS and QUAD_STRIP modes, so we
+  // need to convert them to a supported format. In `vertex()`, we reformat
+  // the input data into the formats specified below.
+  if (this.immediateMode.shapeMode === constants.QUADS) {
+    this.immediateMode.shapeMode = constants.TRIANGLES;
+  } else if (this.immediateMode.shapeMode === constants.QUAD_STRIP) {
+    this.immediateMode.shapeMode = constants.TRIANGLE_STRIP;
+  }
+
   if (this._doFill) {
-    if (this.immediateMode.geometry.vertices.length > 1) {
-      this._drawImmediateFill();
+    if (
+      !this.geometryBuilder &&
+      this.immediateMode.geometry.vertices.length >= 3
+    ) {
+      this._drawImmediateFill(count);
     }
   }
   if (this._doStroke) {
-    if (this.immediateMode.geometry.lineVertices.length > 1) {
+    if (
+      !this.geometryBuilder &&
+      this.immediateMode.geometry.lineVertices.length >= 1
+    ) {
       this._drawImmediateStroke();
     }
+  }
+
+  if (this.geometryBuilder) {
+    this.geometryBuilder.addImmediate();
   }
 
   this.isBezier = false;
@@ -244,7 +274,9 @@ p5.RendererGL.prototype._processVertices = function(mode) {
       this.immediateMode.geometry.vertices,
       shouldClose
     );
-    this.immediateMode.geometry._edgesToVertices();
+    if (!this.geometryBuilder) {
+      this.immediateMode.geometry._edgesToVertices();
+    }
   }
   // For hollow shapes, user must set mode to TESS
   const convexShape = this.immediateMode.shapeMode === constants.TESS;
@@ -388,6 +420,7 @@ p5.RendererGL.prototype._tesselateShape = function() {
     );
   }
   const polyTriangles = this._triangulate(contours);
+  const originalVertices = this.immediateMode.geometry.vertices;
   this.immediateMode.geometry.vertices = [];
   this.immediateMode.geometry.vertexNormals = [];
   this.immediateMode.geometry.uvs = [];
@@ -401,6 +434,54 @@ p5.RendererGL.prototype._tesselateShape = function() {
     this.normal(...polyTriangles.slice(j + 9, j + 12));
     this.vertex(...polyTriangles.slice(j, j + 5));
   }
+  if (this.geometryBuilder) {
+    // Tesselating the face causes the indices of edge vertices to stop being
+    // correct. When rendering, this is not a problem, since _edgesToVertices
+    // will have been called before this, and edge vertex indices are no longer
+    // needed. However, the geometry builder still needs this information, so
+    // when one is active, we need to update the indices.
+    //
+    // We record index mappings in a Map so that once we have found a
+    // corresponding vertex, we don't need to loop to find it again.
+    const newIndex = new Map();
+    this.immediateMode.geometry.edges =
+      this.immediateMode.geometry.edges.map(edge => edge.map(origIdx => {
+        if (!newIndex.has(origIdx)) {
+          const orig = originalVertices[origIdx];
+          let newVertIndex = this.immediateMode.geometry.vertices.findIndex(
+            v =>
+              orig.x === v.x &&
+              orig.y === v.y &&
+              orig.z === v.z
+          );
+          if (newVertIndex === -1) {
+            // The tesselation process didn't output a vertex with the exact
+            // coordinate as before, potentially due to numerical issues. This
+            // doesn't happen often, but in this case, pick the closest point
+            let closestDist = Infinity;
+            let closestIndex = 0;
+            for (
+              let i = 0;
+              i < this.immediateMode.geometry.vertices.length;
+              i++
+            ) {
+              const vert = this.immediateMode.geometry.vertices[i];
+              const dX = orig.x - vert.x;
+              const dY = orig.y - vert.y;
+              const dZ = orig.z - vert.z;
+              const dist = dX*dX + dY*dY + dZ*dZ;
+              if (dist < closestDist) {
+                closestDist = dist;
+                closestIndex = i;
+              }
+            }
+            newVertIndex = closestIndex;
+          }
+          newIndex.set(origIdx, newVertIndex);
+        }
+        return newIndex.get(origIdx);
+      }));
+  }
   this.immediateMode.geometry.vertexColors = colors;
 };
 
@@ -409,42 +490,42 @@ p5.RendererGL.prototype._tesselateShape = function() {
  * enabling all appropriate buffers, applying color blend, and drawing the fill geometry.
  * @private
  */
-p5.RendererGL.prototype._drawImmediateFill = function() {
+p5.RendererGL.prototype._drawImmediateFill = function(count = 1) {
   const gl = this.GL;
   this._useVertexColor = (this.immediateMode.geometry.vertexColors.length > 0);
-  const shader = this._getImmediateFillShader();
+
+  let shader;
+  shader = this._getImmediateFillShader();
 
   this._setFillUniforms(shader);
 
   for (const buff of this.immediateMode.buffers.fill) {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
   }
-
-  // LINE_STRIP and LINES are not used for rendering, instead
-  // they only indicate a way to modify vertices during the _processVertices() step
-  if (
-    this.immediateMode.shapeMode === constants.LINE_STRIP ||
-    this.immediateMode.shapeMode === constants.LINES
-  ) {
-    this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
-  }
-
-  // WebGL 1 doesn't support the QUADS and QUAD_STRIP modes, so we
-  // need to convert them to a supported format. In `vertex()`, we reformat
-  // the input data into the formats specified below.
-  if (this.immediateMode.shapeMode === constants.QUADS) {
-    this.immediateMode.shapeMode = constants.TRIANGLES;
-  } else if (this.immediateMode.shapeMode === constants.QUAD_STRIP) {
-    this.immediateMode.shapeMode = constants.TRIANGLE_STRIP;
-  }
+  shader.disableRemainingAttributes();
 
   this._applyColorBlend(this.curFillColor);
-  gl.drawArrays(
-    this.immediateMode.shapeMode,
-    0,
-    this.immediateMode.geometry.vertices.length
-  );
 
+  if (count === 1) {
+    gl.drawArrays(
+      this.immediateMode.shapeMode,
+      0,
+      this.immediateMode.geometry.vertices.length
+    );
+  }
+  else {
+    try {
+      gl.drawArraysInstanced(
+        this.immediateMode.shapeMode,
+        0,
+        this.immediateMode.geometry.vertices.length,
+        count
+      );
+    }
+    catch (e) {
+      console.log('🌸 p5.js says: Instancing is only supported in WebGL2 mode');
+    }
+  }
   shader.unbindShader();
 };
 
@@ -456,26 +537,22 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
 p5.RendererGL.prototype._drawImmediateStroke = function() {
   const gl = this.GL;
 
-  const faceCullingEnabled = gl.isEnabled(gl.CULL_FACE);
-  // Prevent strokes from getting removed by culling
-  gl.disable(gl.CULL_FACE);
-
-  const shader = this._getImmediateStrokeShader();
   this._useLineColor =
     (this.immediateMode.geometry.vertexStrokeColors.length > 0);
+
+  const shader = this._getImmediateStrokeShader();
   this._setStrokeUniforms(shader);
   for (const buff of this.immediateMode.buffers.stroke) {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
   }
+  shader.disableRemainingAttributes();
   this._applyColorBlend(this.curStrokeColor);
+
   gl.drawArrays(
     gl.TRIANGLES,
     0,
-    this.immediateMode.geometry.lineVertices.length
+    this.immediateMode.geometry.lineVertices.length / 3
   );
-  if (faceCullingEnabled) {
-    gl.enable(gl.CULL_FACE);
-  }
   shader.unbindShader();
 };
 
