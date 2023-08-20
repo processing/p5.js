@@ -1034,6 +1034,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
 
     // apply shader to pg
+    pg.clear(); // prevent undesirable feedback effects accumulating secretly
     pg.shader(this.filterShader);
     this.filterShader.setUniform('tex0', this);
     this.filterShader.setUniform('texelSize', [1.0/this.width, 1.0/this.height]);

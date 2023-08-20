@@ -594,6 +594,7 @@ p5.prototype.filter = function(...args) {
 
     // copy secondary webgl renderer back to original p2d canvas
     this._renderer._pInst.image(this.filterGraphicsLayer, 0, 0);
+    this.filterGraphicsLayer.clear();
   }
 };
 
