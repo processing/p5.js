@@ -560,7 +560,7 @@ p5.prototype.filter = function(...args) {
 
   // when this is P2D renderer, create/use hidden webgl renderer
   else {
-    // create/use hidden webgl renderer
+    // create hidden webgl renderer if it doesn't exist
     if (!this.filterGraphicsLayer) {
       // the real _pInst is buried when this is a secondary p5.Graphics
       const pInst =
@@ -594,7 +594,7 @@ p5.prototype.filter = function(...args) {
 
     // copy secondary webgl renderer back to original p2d canvas
     this._renderer._pInst.image(this.filterGraphicsLayer, 0, 0);
-    this.filterGraphicsLayer.clear();
+    this.filterGraphicsLayer.clear(); // prevent feedback effects on p2d canvas
   }
 };
 
