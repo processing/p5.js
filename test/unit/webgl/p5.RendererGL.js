@@ -347,7 +347,7 @@ suite('p5.RendererGL', function() {
     });
 
     test('createFilterShader() accepts shader fragments in webgl version 2', function() {
-			myp5.createCanvas(5, 5, myp5.WEBGL);
+      myp5.createCanvas(5, 5, myp5.WEBGL);
       let s = myp5.createFilterShader(`#version 300 es
         precision highp float;
         in vec2 vTexCoord;
