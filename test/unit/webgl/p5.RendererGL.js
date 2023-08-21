@@ -345,6 +345,24 @@ suite('p5.RendererGL', function() {
 
       assert.deepEqual(p1, p2);
     });
+
+    test('createFilterShader() accepts shader fragments in webgl version 2', function() {
+			myp5.createCanvas(5, 5, myp5.WEBGL);
+      let s = myp5.createFilterShader(`#version 300 es
+        precision highp float;
+        in vec2 vTexCoord;
+        out vec4 outColor;
+
+        uniform sampler2D tex0;
+
+        void main() {
+          vec4 sampledColor = texture(tex0, vTexCoord);
+          sampledColor.b = 1.0;
+          outColor = sampledColor;
+        }
+      `);
+      myp5.filter(s);
+    });
   });
 
   test('contours match 2D', function() {

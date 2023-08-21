@@ -263,7 +263,7 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
 p5.prototype.createFilterShader = function(fragSrc) {
   this._assert3d('createFilterShader');
   p5._validateParameters('createFilterShader', arguments);
-  let defaultVertSrc = `
+  let defaultVertV1 = `
     attribute vec3 aPosition;
     // texcoords only come from p5 to vertex shader
     // so pass texcoords on to the fragment shader in a varying variable
@@ -282,7 +282,25 @@ p5.prototype.createFilterShader = function(fragSrc) {
       gl_Position = positionVec4;
     }
   `;
-  return new p5.Shader(this._renderer, defaultVertSrc, fragSrc);
+  let defaultVertV2 = `#version 300 es
+    in vec3 aPosition;
+    in vec2 aTexCoord;
+    out vec2 vTexCoord;
+
+    void main() {
+      // transferring texcoords for the frag shader
+      vTexCoord = aTexCoord;
+
+      // copy position with a fourth coordinate for projection (1.0 is normal)
+      vec4 positionVec4 = vec4(aPosition, 1.0);
+      // scale by two and center to achieve correct positioning
+      positionVec4.xy = positionVec4.xy * 2.0 - 1.0;
+
+      gl_Position = positionVec4;
+    }
+  `;
+  let vertSrc = fragSrc.includes('#version 300 es') ? defaultVertV2 : defaultVertV1;
+  return new p5.Shader(this._renderer, vertSrc, fragSrc);
 };
 
 /**
