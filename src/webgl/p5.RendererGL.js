@@ -993,10 +993,11 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     // use internal shader for filter constants BLUR, INVERT, etc
     let filterParameter = undefined;
+    let operation = undefined;
     if (typeof args[0] === 'string') {
-      let operation = args[0];
+      operation = args[0];
       let defaults = {
-        [constants.BLUR]: 4,
+        [constants.BLUR]: 3,
         [constants.POSTERIZE]: 4,
         [constants.THRESHOLD]: 0.5
       };
@@ -1033,16 +1034,46 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       }
     }
 
-    // apply shader to pg
     pg.clear(); // prevent undesirable feedback effects accumulating secretly
-    pg.shader(this.filterShader);
-    this.filterShader.setUniform('tex0', this);
-    this.filterShader.setUniform('texelSize', [1.0/this.width, 1.0/this.height]);
-    this.filterShader.setUniform('canvasSize', [this.width, this.height]);
-    // filterParameter only used for POSTERIZE, BLUR, and THRESHOLD
-    // but shouldn't hurt to always set
-    this.filterShader.setUniform('filterParameter', filterParameter);
-    pg.rect(0,0,this.width,this.height);
+
+    // apply blur shader with multiple passes
+    if (operation === constants.BLUR) {
+
+      // pg is the accumulator. initialize with contents of main renderer (this)
+      pg.copy(
+        this,
+        0, 0, this.width, this.height,
+        -this.width/2, -this.height/2, this.width, this.height
+      );
+      // how much to blur, given by user
+      let steps = filterParameter;
+
+      for (let i = 0; i < steps; i++) {
+        // first pass averaging horizontal neighbors
+        pg.shader(this.filterShader);
+        this.filterShader.setUniform('texelSize', [1/this.width, 1/this.height]);
+        this.filterShader.setUniform('tex0', pg);
+        this.filterShader.setUniform('direction', [2, 0]); // 2 is a decent
+        pg.rect(0,0,this.width,this.height);               //  default spread
+        // another pass, this time vertically
+        pg.shader(this.filterShader);
+        // this.filterShader.setUniform('texelSize', [1/this.width, 1/this.height]);
+        this.filterShader.setUniform('tex0', pg);
+        this.filterShader.setUniform('direction', [0, 2]);
+        pg.rect(0,0,this.width,this.height);
+      }
+    }
+    // every other shader gets single pass onto pg
+    else {
+      pg.shader(this.filterShader);
+      this.filterShader.setUniform('tex0', this);
+      this.filterShader.setUniform('texelSize', [1/this.width, 1/this.height]);
+      this.filterShader.setUniform('canvasSize', [this.width, this.height]);
+      // filterParameter uniform only used for POSTERIZE, and THRESHOLD
+      // but shouldn't hurt to always set
+      this.filterShader.setUniform('filterParameter', filterParameter);
+      pg.rect(0,0,this.width,this.height);
+    }
 
     // draw pg contents onto main renderer
     this._pInst.push();
