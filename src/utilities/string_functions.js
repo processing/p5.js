@@ -29,7 +29,7 @@ import '../core/friendly_errors/fes_core';
  * let separator = ' ';
  * let message = join(array, separator);
  * text(message, 5, 50);
- * describe(`“hello world!” displayed middle left of canvas.`);
+ * describe(`“Hello world!” displayed middle left of canvas.`);
  * </code>
  * </div>
  */
