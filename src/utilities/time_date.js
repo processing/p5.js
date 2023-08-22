@@ -18,7 +18,7 @@ import p5 from '../core/main';
  * <code>
  * let d = day();
  * text('Current day: \n' + d, 5, 50);
- * describe(`Current day is displayed`);
+ * describe('Current day is displayed');
  * </code>
  * </div>
  */
@@ -37,7 +37,7 @@ p5.prototype.day = function() {
  * <code>
  * let h = hour();
  * text('Current hour:\n' + h, 5, 50);
- * describe(`Current hour is displayed`);
+ * describe('Current hour is displayed');
  * </code>
  * </div>
  */
@@ -56,7 +56,7 @@ p5.prototype.hour = function() {
  * <code>
  * let m = minute();
  * text('Current minute: \n' + m, 5, 50);
- * describe(`Current minute is displayed`);
+ * describe('Current minute is displayed');
  * </code>
  * </div>
  */
@@ -76,8 +76,8 @@ p5.prototype.minute = function() {
  * <code>
  * let millisecond = millis();
  * text('Milliseconds \nrunning: \n' + millisecond, 5, 40);
- * describe(`number of milliseconds since sketch has started
- *   displayed`);
+ * describe('number of milliseconds since sketch has started
+ *   displayed');
  * </code>
  * </div>
  */
@@ -101,7 +101,7 @@ p5.prototype.millis = function() {
  * <code>
  * let m = month();
  * text('Current month: \n' + m, 5, 50);
- * describe(`Current month is displayed`);
+ * describe('Current month is displayed');
  * </code>
  * </div>
  */
@@ -121,7 +121,7 @@ p5.prototype.month = function() {
  * <code>
  * let s = second();
  * text('Current second: \n' + s, 5, 50);
- * describe(`Current second is displayed`);
+ * describe('Current second is displayed');
  * </code>
  * </div>
  */
@@ -140,7 +140,7 @@ p5.prototype.second = function() {
  * <code>
  * let y = year();
  * text('Current year: \n' + y, 5, 50);
- * describe(`Current year is displayed`);
+ * describe('Current year is displayed');
  * </code>
  * </div>
  */
