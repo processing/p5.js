@@ -29,7 +29,7 @@ import '../core/friendly_errors/fes_core';
  * let separator = ' ';
  * let message = join(array, separator);
  * text(message, 5, 50);
- * describe(`“Hello world!” displayed middle left of canvas.`);
+ * describe(`'Hello world!' displayed middle left of canvas.`);
  * </code>
  * </div>
  */
@@ -67,7 +67,7 @@ p5.prototype.join = function(list, separator) {
  * let regexp = 'p5js\\*';
  * let m = match(string, regexp);
  * text(m, 5, 50);
- * describe(`“p5js*” displayed middle left of canvas.`);
+ * describe(`'p5js*' displayed middle left of canvas.`);
  * </code>
  * </div>
  */
@@ -163,7 +163,7 @@ p5.prototype.matchAll = function(str, reg) {
  *   stroke(120);
  *   line(0, 50, width, 50);
  *
- *   describe(`“0321.00” middle top, “-1321.00” middle bottom canvas`);
+ *   describe(`'0321.00' middle top, '-1321.00' middle bottom canvas`);
  * }
  * </code>
  * </div>
@@ -261,8 +261,8 @@ function doNf(num, left, right) {
  *   stroke(120);
  *   line(0, 50, width, 50);
  *
- *   describe(`“11,253,106.115” top middle and
- *     “1.00,1.00,2.00” displayed bottom mid`);
+ *   describe(`'11,253,106.115' top middle and
+ *     '1.00,1.00,2.00' displayed bottom mid`);
  * }
  * </code>
  * </div>
@@ -338,8 +338,8 @@ function doNfc(num, right) {
  *   stroke(120);
  *   line(0, 50, width, 50);
  *
- *   describe(`“+11253106.11” top middle and
- *     “-11253106.11” displayed bottom middle`);
+ *   describe(`'+11253106.11' top middle and
+ *     '-11253106.11' displayed bottom middle`);
  * }
  * </code>
  * </div>
@@ -416,7 +416,7 @@ function addNfp(num) {
  *   stroke(120);
  *   line(0, 50, width, 50);
  *
- *   describe(`“0321.00” top middle and “-1321.00” displayed bottom middle`);
+ *   describe(`'0321.00' top middle and '-1321.00' displayed bottom middle`);
  * }
  * </code>
  * </div>
@@ -464,7 +464,7 @@ function addNfs(num) {
  * text(splitString[0], 5, 30);
  * text(splitString[1], 5, 50);
  * text(splitString[2], 5, 70);
- * describe(`“pat” top left, “Xio” mid left, and
+ * describe(`'pat' top left, 'Xio' mid left, and
  *   “Alex” displayed bottom left`);
  * </code>
  * </div>
@@ -541,7 +541,7 @@ p5.prototype.splitTokens = function(value, delims) {
  * <code>
  * let string = trim('  No new lines\n   ');
  * text(string + ' here', 2, 50);
- * describe(`“No new lines here” displayed center canvas`);
+ * describe(`'No new lines here' displayed center canvas`);
  * </code>
  * </div>
  */
