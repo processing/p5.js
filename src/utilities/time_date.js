@@ -76,8 +76,7 @@ p5.prototype.minute = function() {
  * <code>
  * let millisecond = millis();
  * text('Milliseconds \nrunning: \n' + millisecond, 5, 40);
- * describe('number of milliseconds since sketch has started
- *   displayed');
+ * describe('number of milliseconds since sketch has started displayed');
  * </code>
  * </div>
  */
