@@ -24,7 +24,7 @@ import p5 from '../core/main';
  * let str = '20';
  * let diameter = float(str);
  * ellipse(width / 2, height / 2, diameter, diameter);
- * describe(`20-by-20 white ellipse in the center of the canvas`);
+ * describe('20-by-20 white ellipse in the center of the canvas');
  * </code></div>
  * <div class='norender'><code>
  * print(float('10.31')); // 10.31
