@@ -261,8 +261,7 @@ function doNf(num, left, right) {
  *   stroke(120);
  *   line(0, 50, width, 50);
  *
- *   describe('“11,253,106.115” top middle and
- *     “1.00,1.00,2.00” displayed bottom mid');
+ *   describe('“11,253,106.115” top middle and “1.00,1.00,2.00” displayed bottom mid');
  * }
  * </code>
  * </div>
@@ -338,8 +337,7 @@ function doNfc(num, right) {
  *   stroke(120);
  *   line(0, 50, width, 50);
  *
- *   describe('“+11253106.11” top middle and
- *     “-11253106.11” displayed bottom middle');
+ *   describe('“+11253106.11” top middle and “-11253106.11” displayed bottom middle');
  * }
  * </code>
  * </div>
@@ -464,8 +462,7 @@ function addNfs(num) {
  * text(splitString[0], 5, 30);
  * text(splitString[1], 5, 50);
  * text(splitString[2], 5, 70);
- * describe('“pat” top left, “Xio” mid left, and
- *   “Alex” displayed bottom left');
+ * describe('“Pat” top left, “Xio” mid left, and “Alex” displayed bottom left');
  * </code>
  * </div>
  */
