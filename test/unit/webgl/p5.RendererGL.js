@@ -2102,8 +2102,13 @@ suite('p5.RendererGL', function() {
         myp5.fill('blue');
         myp5.rect(0, 0, myp5.width, myp5.height);
         expect(myp5._renderer._clipDepths.length).to.equal(2);
+        expect(myp5._renderer.drawTarget()).to.equal(fbo);
+        expect(fbo._isClipApplied).to.equal(true);
         fbo.end();
+        expect(fbo._isClipApplied).to.equal(false);
         expect(myp5._renderer._clipDepths.length).to.equal(1);
+        expect(myp5._renderer.drawTarget()).to.equal(myp5._renderer);
+        expect(myp5._renderer._isClipApplied).to.equal(true);
 
         myp5.imageMode(myp5.CENTER);
         myp5.image(fbo, 0, 0);

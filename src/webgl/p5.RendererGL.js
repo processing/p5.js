@@ -424,6 +424,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     // clipping
     this._clipDepths = [];
+    this._isClipApplied = false;
+    this._stencilTestOn = false;
 
     // lights
     this._enableLighting = false;
@@ -1055,12 +1057,20 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
   }
 
+  drawTarget() {
+    return this.activeFramebuffers[this.activeFramebuffers.length - 1] || this;
+  }
+
   beginClip(options = {}) {
     super.beginClip(options);
+
+    this.drawTarget()._isClipApplied = true;
+
     const gl = this.GL;
     gl.clearStencil(0);
     gl.clear(gl.STENCIL_BUFFER_BIT);
     gl.enable(gl.STENCIL_TEST);
+    this._stencilTestOn = true;
     gl.stencilFunc(
       gl.ALWAYS, // the test
       1, // reference value
@@ -1108,6 +1118,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (this._clipDepths.length > 0) {
       this._clipDepths.pop();
     }
+    this.drawTarget()._isClipApplied = false;
   }
 
   /**
@@ -1460,11 +1471,21 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this._pushPopDepth === this._clipDepths[this._clipDepths.length - 1]
     ) {
       this._clearClip();
-      if (this._clipDepths.length === 0) {
-        this.GL.disable(this.GL.STENCIL_TEST);
-      }
     }
     super.pop(...args);
+    this._applyStencilTestIfClipping();
+  }
+  _applyStencilTestIfClipping() {
+    const drawTarget = this.drawTarget();
+    if (drawTarget._isClipApplied !== this._stencilTestOn) {
+      if (drawTarget._isClipApplied) {
+        this.GL.enable(this.GL.STENCIL_TEST);
+        this._stencilTestOn = true;
+      } else {
+        this.GL.disable(this.GL.STENCIL_TEST);
+        this._stencilTestOn = false;
+      }
+    }
   }
   resetMatrix() {
     this.uMVMatrix.set(
