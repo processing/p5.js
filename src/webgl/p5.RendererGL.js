@@ -1054,25 +1054,19 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this.filterShader.setUniform('direction', [0, 2]); // 2 is a decent
       pg.rect(0,0,this.width,this.height);               //  default spread
 
-      // how much to blur, given by user
-      let steps = filterParameter;
-
-      for (let i = 0; i < steps; i++) {
-        // first pass averaging horizontal neighbors
-        pg.shader(this.filterShader);
-        this.filterShader.setUniform('texelSize', [1/this.width, 1/this.height]);
+      // perform remaining steps, accumulating on pg
+      let steps = filterParameter; // how much to blur, given by user
+      for (let i = 1; i < steps; i++) {
         this.filterShader.setUniform('tex0', pg);
-        this.filterShader.setUniform('direction', [2, 0]); // 2 is a decent
-        pg.rect(0,0,this.width,this.height);               //  default spread
-        // another pass, this time vertically
-        pg.shader(this.filterShader);
-        // this.filterShader.setUniform('texelSize', [1/this.width, 1/this.height]);
+        this.filterShader.setUniform('direction', [2, 0]);
+        pg.rect(0,0,this.width,this.height);
+
         this.filterShader.setUniform('tex0', pg);
         this.filterShader.setUniform('direction', [0, 2]);
         pg.rect(0,0,this.width,this.height);
       }
     }
-    // every other shader gets single pass onto pg
+    // every other non-blur shader uses single pass
     else {
       pg.shader(this.filterShader);
       this.filterShader.setUniform('tex0', this);
