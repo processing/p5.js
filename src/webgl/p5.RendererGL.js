@@ -423,7 +423,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this._isErasing = false;
 
     // clipping
-    this._clipDepth = null;
+    this._clipDepths = [];
 
     // lights
     this._enableLighting = false;
@@ -1097,7 +1097,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     // Mark the depth at which the clip has been applied so that we can clear it
     // when we pop past this depth
-    this._clipDepth = this._pushPopDepth;
+    this._clipDepths.push(this._pushPopDepth);
 
     super.endClip();
   }
@@ -1105,7 +1105,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   _clearClip() {
     this.GL.clearStencil(1);
     this.GL.clear(this.GL.STENCIL_BUFFER_BIT);
-    this._clipDepth = null;
+    if (this._clipDepths.length > 0) {
+      this._clipDepths.pop();
+    }
   }
 
   /**
@@ -1453,9 +1455,14 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     return style;
   }
   pop(...args) {
-    if (this._pushPopDepth === this._clipDepth) {
+    if (
+      this._clipDepths.length > 0 &&
+      this._pushPopDepth === this._clipDepths[this._clipDepths.length - 1]
+    ) {
       this._clearClip();
-      this.GL.disable(this.GL.STENCIL_TEST);
+      if (this._clipDepths.length === 0) {
+        this.GL.disable(this.GL.STENCIL_TEST);
+      }
     }
     super.pop(...args);
   }
