@@ -8,12 +8,18 @@ uniform sampler2D tex0;
 varying vec2 vTexCoord;
 uniform vec2 direction;
 uniform vec2 texelSize;
+uniform float flipped;
 
 void main(){
+
+  vec2 uv = vTexCoord;
+  if (flipped == 1.0) {
+    uv.y = 1.0 - uv.y;
+  }
   
-  vec4 tex = texture2D(tex0, vTexCoord);
-  tex += texture2D(tex0, vTexCoord - texelSize * direction);
-  tex += texture2D(tex0, vTexCoord + texelSize * direction);
+  vec4 tex = texture2D(tex0, uv);
+  tex += texture2D(tex0, uv - texelSize * direction);
+  tex += texture2D(tex0, uv + texelSize * direction);
   
   tex /= 3.0;
 
