@@ -1039,12 +1039,21 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // apply blur shader with multiple passes
     if (operation === constants.BLUR) {
 
-      // pg is the accumulator. initialize with contents of main renderer (this)
-      pg.copy(
-        this,
-        0, 0, this.width, this.height,
-        -this.width/2, -this.height/2, this.width, this.height
-      );
+      // initial binding and setup
+      pg.shader(this.filterShader);
+      this.filterShader.setUniform('texelSize', [1/this.width, 1/this.height]);
+
+      // do initial horizontal and vertical pass,
+      // starting with parent renderer as tex0 uniform
+      this.filterShader.setUniform('tex0', this);     // vertically flips first
+      this.filterShader.setUniform('flipped', false); // so undo it
+      this.filterShader.setUniform('direction', [2, 0]);
+      pg.rect(0,0,this.width,this.height);
+      this.filterShader.setUniform('tex0', pg);   // all other passes are unflipped
+      this.filterShader.setUniform('flipped', true);
+      this.filterShader.setUniform('direction', [0, 2]); // 2 is a decent
+      pg.rect(0,0,this.width,this.height);               //  default spread
+
       // how much to blur, given by user
       let steps = filterParameter;
 
