@@ -335,7 +335,14 @@ const colorPatterns = {
  *
  * @class p5.Color
  * @constructor
- * @param {p5} [pInst]                      pointer to p5 instance.
+ * @param {Number[]|String} vals            an array containing the color values
+ *                                          for red, green, blue and alpha channel
+ *                                          or CSS color.
+ */
+/**
+ * @class p5.Color
+ * @constructor
+ * @param {p5} pInst                        pointer to p5 instance.
  *
  * @param {Number[]|String} vals            an array containing the color values
  *                                          for red, green, blue and alpha channel
