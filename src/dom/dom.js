@@ -2421,6 +2421,93 @@ p5.Element.prototype.drop = function (callback, fxn) {
   return this;
 };
 
+/**
+ * Turns p5.Element into a draggable item with the mouse. If argument is given, it will drag a different p5.Element (parent container) instead, ie. for a GUI title bar.
+ *
+ * @method draggable
+ * @param  {p5.Element} [elmnt]       pass a parent container
+ * @chainable
+ *
+ * @example
+ * <div><code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   background(200);
+ *
+ *   createDiv('Post-It')
+ *     .position(5, 5)
+ *     .size(75, 20)
+ *     .style('font-size', '16px')
+ *     .style('background', 'yellow')
+ *     .style('color', '#000')
+ *     .style('border', '1px solid #aaaa00')
+ *     .style('padding', '5px')
+ *     .draggable();
+ *   // .style('cursor', 'help') // override cursor
+ *
+ *   let gui = createDiv('')
+ *     .position(5, 40)
+ *     .size(85, 50)
+ *     .style('font-size', '16px')
+ *     .style('background', 'yellow')
+ *     .style('z-index', '100')
+ *     .style('border', '1px solid #00aaaa');
+ *
+ *   createDiv('= PANEL =')
+ *     .parent(gui)
+ *     .style('background', 'cyan')
+ *     .style('padding', '2px')
+ *     .style('text-align', 'center')
+ *     .draggable(gui);
+ *
+ *   createSlider(0, 100, random(100))
+ *     .style('cursor', 'pointer')
+ *     .size(80, 5)
+ *     .parent(gui);
+ * }
+ * </code></div>
+ */
+p5.Element.prototype.draggable = function (elmnt = this.elt) {
+  let pos1 = 0,
+    pos2 = 0,
+    pos3 = 0,
+    pos4 = 0;
+  if (elmnt !== this.elt && elmnt.elt !== this.elt) {
+    elmnt = elmnt.elt;
+    this.elt.onmousedown = dragMouseDown;
+    this.elt.style.cursor = 'move';
+  } else {
+    elmnt.onmousedown = dragMouseDown;
+    elmnt.style.cursor = 'move';
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+    pos3 = parseInt(e.clientX);
+    pos4 = parseInt(e.clientY);
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+    return false;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    pos1 = pos3 - parseInt(e.clientX);
+    pos2 = pos4 - parseInt(e.clientY);
+    pos3 = parseInt(e.clientX);
+    pos4 = parseInt(e.clientY);
+    elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
+    elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
+  }
+
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+
+  return this;
+};
+
 /*** SCHEDULE EVENTS ***/
 
 // Cue inspired by JavaScript setTimeout, and the
