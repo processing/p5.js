@@ -1,5 +1,5 @@
 This folder contains the core functionality of Friendly Error Systems. [Here is a diagram](
-https://sketchboard.me/jDWn1eYNgktY) that outlines how the FES Functions are being used in various files throughout p5.js repository and also specifies the files in which the code for these FES functions sits in.
+https://sketchboard.me/NDYnl9RGJdU) that outlines how the FES Functions are being used in various files throughout p5.js repository and also specifies the files in which the code for these FES functions sits in.
 
 ![class diagram, interactive version viewable in above link](../../../contributor_docs/images/FES.jpg)
 
