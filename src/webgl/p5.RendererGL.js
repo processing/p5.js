@@ -1015,8 +1015,18 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
           filterShaderVert,
           filterShaderFrags[operation]
         );
+
+        // two-pass blur filter needs another shader attached to main
+        if (operation === constants.BLUR) {
+          this.otherBlurShader = new p5.Shader(
+            this,
+            filterShaderVert,
+            filterShaderFrags[constants.BLUR]
+          );
+        }
       }
       this.filterShader = this.defaultFilterShaders[operation];
+
     }
     // use custom user-supplied shader
     else {
@@ -1041,32 +1051,30 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // apply blur shader with multiple passes
     if (operation === constants.BLUR) {
 
-      // initial binding and setup
+      // setup
+      this._pInst.push();
+      this._pInst.noStroke();
       pg.shader(this.filterShader);
+      this._pInst.shader(this.otherBlurShader);
       this.filterShader.setUniform('texelSize', [1/this.width, 1/this.height]);
+      this.otherBlurShader.setUniform('texelSize', [1/this.width, 1/this.height]);
 
-      // do initial horizontal and vertical pass,
-      // starting with parent renderer as tex0 uniform
-      this.filterShader.setUniform('tex0', this);     // vertically flips first
-      this.filterShader.setUniform('flipped', false); // so undo it
-      this.filterShader.setUniform('direction', [2, 0]);
-      pg.rect(0,0,this.width,this.height);
-      this.filterShader.setUniform('tex0', pg);   // all other passes are unflipped
-      this.filterShader.setUniform('flipped', true);
-      this.filterShader.setUniform('direction', [0, 2]); // 2 is a decent
-      pg.rect(0,0,this.width,this.height);               //  default spread
+      // two-pass blur, repeated more with higher parameter
+      let steps = filterParameter;
+      for (let i = 0; i < steps; i++) {
+        // main contents onto pg
+        this.filterShader.setUniform('tex0', this);
+        this.filterShader.setUniform('direction', [1, 0]);  // horiz pass
+        pg.rect(-this.width/2, -this.height/2, this.width, this.height);
 
-      // perform remaining steps, accumulating on pg
-      let steps = filterParameter; // how much to blur, given by user
-      for (let i = 1; i < steps; i++) {
-        this.filterShader.setUniform('tex0', pg);
-        this.filterShader.setUniform('direction', [2, 0]);
-        pg.rect(0,0,this.width,this.height);
-
-        this.filterShader.setUniform('tex0', pg);
-        this.filterShader.setUniform('direction', [0, 2]);
-        pg.rect(0,0,this.width,this.height);
+        // pg contents onto main
+        this.otherBlurShader.setUniform('tex0', pg);
+        this.otherBlurShader.setUniform('direction', [0, 1]); // vert pass
+        this._pInst.rect(
+          -this.width/2, -this.height/2, this.width, this.height
+        );
       }
+      this._pInst.pop();
     }
     // every other non-blur shader uses single pass
     else {
@@ -1078,14 +1086,14 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       // but shouldn't hurt to always set
       this.filterShader.setUniform('filterParameter', filterParameter);
       pg.rect(-this.width/2, -this.height/2, this.width, this.height);
-    }
 
-    // draw pg contents onto main renderer
-    this._pInst.push();
-    this._pInst.noStroke(); // don't draw triangles for plane() geometry
-    this._pInst.texture(pg);
-    this._pInst.plane(this.width, this.height);
-    this._pInst.pop();
+      // draw pg contents onto main renderer
+      this._pInst.push();
+      this._pInst.noStroke(); // don't draw triangles for plane() geometry
+      this._pInst.texture(pg);
+      this._pInst.plane(this.width, this.height);
+      this._pInst.pop();
+    }
   }
 
   blendMode(mode) {
