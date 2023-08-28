@@ -28,15 +28,6 @@ Make your first sketch in the [p5.js Editor](https://editor.p5js.org/)! Learn mo
 
 To get the complete p5.js library on your own computer, you can [download it here](https://p5js.org/download). If you are interested in the most recent, less stable version, or even simply in (**new!**) certain components of p5.js, you can clone this repository and run `grunt` from the command line to generate the library from source. See the [contributor docs](https://p5js.org/contributor-docs/#/) for more information about our build process.
 
-## Issues
-
-If you have found a bug in the p5.js library, you can file it here under the [“issues” tab](https://github.com/processing/p5.js/issues). You can also request new features here. A set of templates for reporting issues and requesting features are provided to assist you (and us!). p5.js is maintained mostly by volunteers, so we thank you for your patience as we try to address your issues as soon as we can. Please post in the correct repository if you can:
-
-* p5.js general: [https://github.com/processing/p5.js/issues](https://github.com/processing/p5.js/issues)
-* p5.sound: [https://github.com/processing/p5.js-sound/issues](https://github.com/processing/p5.js-sound/issues)
-* p5.js website: [https://github.com/processing/p5.js-website/issues](https://github.com/processing/p5.js-website/issues)
-* p5.js web editor: [https://github.com/processing/p5.js-web-editor/issues](https://github.com/processing/p5.js-web-editor/issues)
-
 
 ## Learning
 
@@ -49,6 +40,21 @@ Check out [p5js.org](https://p5js.org) for lots more! Here are some quick-links 
 * [Forum](https://discourse.processing.org/c/p5js): Ask and answers questions about how to make things with p5.js here
 * [Libraries](https://p5js.org/libraries): Extend p5 functionality to interact with HTML, manipulate sound, and more!
 * [The Coding Train p5.js Tutorials](https://thecodingtrain.com/beginners/p5js/): A huge trove of tutorials created by Dan Shiffman and friends
+
+
+## Issues
+
+If you have found a bug in the p5.js library, you can file it here under the [“issues” tab](https://github.com/processing/p5.js/issues). You can also request new features here. A set of templates for reporting issues and requesting features are provided to assist you (and us!). p5.js is maintained mostly by volunteers, so we thank you for your patience as we try to address your issues as soon as we can. Please post in the correct repository if you can:
+
+* p5.js general: [https://github.com/processing/p5.js/issues](https://github.com/processing/p5.js/issues)
+* p5.sound: [https://github.com/processing/p5.js-sound/issues](https://github.com/processing/p5.js-sound/issues)
+* p5.js website: [https://github.com/processing/p5.js-website/issues](https://github.com/processing/p5.js-website/issues)
+* p5.js web editor: [https://github.com/processing/p5.js-web-editor/issues](https://github.com/processing/p5.js-web-editor/issues)
+
+
+## Get Started for Developers
+A quick Getting Started with the Build and setting up the repository could be found [here](https://p5js.org/contributor-docs/#/contributor_guidelines?id=quick-get-started-for-developers)
+
 
 ## Stewards
 
