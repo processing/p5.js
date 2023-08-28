@@ -29,11 +29,9 @@ import '../core/friendly_errors/fes_core';
  * let separator = ' ';
  * let message = join(array, separator);
  * text(message, 5, 50);
+ * describe('“Hello world!” displayed middle left of canvas.');
  * </code>
  * </div>
- *
- * @alt
- * "hello world!" displayed middle left of canvas.
  */
 p5.prototype.join = function(list, separator) {
   p5._validateParameters('join', arguments);
@@ -69,11 +67,9 @@ p5.prototype.join = function(list, separator) {
  * let regexp = 'p5js\\*';
  * let m = match(string, regexp);
  * text(m, 5, 50);
+ * describe('“p5js*” displayed middle left of canvas.');
  * </code>
  * </div>
- *
- * @alt
- * "p5js*" displayed middle left of canvas.
  */
 p5.prototype.match = function(str, reg) {
   p5._validateParameters('match', arguments);
@@ -166,12 +162,11 @@ p5.prototype.matchAll = function(str, reg) {
  *   // Draw dividing line
  *   stroke(120);
  *   line(0, 50, width, 50);
+ *
+ *   describe('“0321.00” middle top, “-1321.00” middle bottom canvas');
  * }
  * </code>
  * </div>
- *
- * @alt
- * "0321.00" middle top, -1321.00" middle bottom canvas
  */
 /**
  * @method nf
@@ -249,12 +244,11 @@ function doNf(num, left, right) {
  *   // Draw dividing line
  *   stroke(120);
  *   line(0, 50, width, 50);
+ *
+ *   describe('“11,253,106.115” top middle and “1.00,1.00,2.00” displayed bottom mid');
  * }
  * </code>
  * </div>
- *
- * @alt
- * "11,253,106.115" top middle and "1.00,1.00,2.00" displayed bottom mid
  */
 /**
  * @method nfc
@@ -326,12 +320,11 @@ function doNfc(num, right) {
  *   // Draw dividing line
  *   stroke(120);
  *   line(0, 50, width, 50);
+ *
+ *   describe('“+11253106.11” top middle and “-11253106.11” displayed bottom middle');
  * }
  * </code>
  * </div>
- *
- * @alt
- * "+11253106.11" top middle and "-11253106.11" displayed bottom middle
  */
 /**
  * @method nfp
@@ -404,12 +397,11 @@ function addNfp(num) {
  *   // Draw dividing line
  *   stroke(120);
  *   line(0, 50, width, 50);
+ *
+ *   describe('“0321.00” top middle and “-1321.00” displayed bottom middle');
  * }
  * </code>
  * </div>
- *
- * @alt
- * "0321.00" top middle and "-1321.00" displayed bottom middle
  */
 /**
  * @method nfs
@@ -454,11 +446,9 @@ function addNfs(num) {
  * text(splitString[0], 5, 30);
  * text(splitString[1], 5, 50);
  * text(splitString[2], 5, 70);
+ * describe('“Pat” top left, “Xio” mid left, and “Alex” displayed bottom left');
  * </code>
  * </div>
- *
- * @alt
- * "pat" top left, "Xio" mid left and "Alex" displayed bottom left
  */
 p5.prototype.split = function(str, delim) {
   p5._validateParameters('split', arguments);
@@ -532,11 +522,9 @@ p5.prototype.splitTokens = function(value, delims) {
  * <code>
  * let string = trim('  No new lines\n   ');
  * text(string + ' here', 2, 50);
+ * describe('“No new lines here” displayed center canvas');
  * </code>
  * </div>
- *
- * @alt
- * "No new lines here" displayed center canvas
  */
 /**
  * @method trim

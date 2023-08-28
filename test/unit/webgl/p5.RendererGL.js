@@ -1364,6 +1364,31 @@ suite('p5.RendererGL', function() {
       done();
     });
 
+    test('TESS does not affect texture coordinates', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+      const texture = new p5.Image(25, 25);
+
+      myp5.textureMode(myp5.IMAGE);
+      myp5.texture(texture);
+      renderer.beginShape(myp5.TESS);
+      myp5.noFill();
+      renderer.vertex(-10, -10, 0, 0);
+      renderer.vertex(10, -10, 25, 0);
+      renderer.vertex(10, 10, 25, 25);
+      renderer.vertex(-10, 10, 0, 25);
+      renderer.endShape(myp5.CLOSE);
+
+      // UVs are correctly translated through tessy
+      assert.deepEqual(renderer.immediateMode.geometry.uvs, [
+        0, 0,
+        1, 0,
+        1, 1,
+        0, 1
+      ]);
+
+      done();
+    });
+
     test('TESS interpolates vertex data at intersections', function(done) {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
 
@@ -1847,13 +1872,13 @@ suite('p5.RendererGL', function() {
       const attributes = renderer._curShader.attributes;
       const loc = attributes.aTexCoord.location;
 
-      assert.equal(renderer.registerEnabled[loc], true);
+      assert.equal(renderer.registerEnabled.has(loc), true);
 
       myp5.model(myGeom);
-      assert.equal(renderer.registerEnabled[loc], false);
+      assert.equal(renderer.registerEnabled.has(loc), false);
 
       myp5.triangle(-8, -8, 8, 8, -8, 8);
-      assert.equal(renderer.registerEnabled[loc], true);
+      assert.equal(renderer.registerEnabled.has(loc), true);
 
       done();
     });
@@ -1867,6 +1892,86 @@ suite('p5.RendererGL', function() {
       myp5.setAttributes({ alpha: true });
       assert.equal(myp5.canvas, renderer.canvas);
       done();
+    });
+  });
+
+  suite('instancing', function() {
+    test('instanced', function() {
+      let defShader;
+
+      const vertShader = `#version 300 es
+
+      in vec3 aPosition;
+      in vec2 aTexCoord;
+
+      uniform mat4 uModelViewMatrix;
+      uniform mat4 uProjectionMatrix;
+
+      out vec2 vTexCoord;
+
+      void main() {
+        vTexCoord = aTexCoord;
+
+        vec4 pos = vec4(aPosition, 1.0);
+        pos.x += float(gl_InstanceID);
+        vec4 wPos = uProjectionMatrix * uModelViewMatrix * pos;
+        gl_Position = wPos;
+      }`;
+
+      const fragShader = `#version 300 es
+
+      #ifdef GL_ES
+      precision mediump float;
+      #endif
+
+      in vec2 vTexCoord;
+
+      out vec4 fragColor;
+
+      void main() {
+        fragColor = vec4(1.0, 0.0, 0.0, 1.0);
+      }
+      `;
+
+      myp5.createCanvas(2, 1, myp5.WEBGL);
+      myp5.noStroke();
+      myp5.pixelDensity(1);
+
+      defShader = myp5.createShader(vertShader, fragShader);
+
+      myp5.background(0);
+      myp5.shader(defShader);
+      {
+        // Check to make sure that pixels are empty first
+        assert.deepEqual(
+          myp5.get(0, 0),
+          [0, 0, 0, 255]
+        );
+        assert.deepEqual(
+          myp5.get(1, 0),
+          [0, 0, 0, 255]
+        );
+
+        const siz = 1;
+        myp5.translate(-myp5.width / 2, -myp5.height / 2);
+        myp5.beginShape();
+        myp5.vertex(0, 0);
+        myp5.vertex(0, siz);
+        myp5.vertex(siz, siz);
+        myp5.vertex(siz, 0);
+        myp5.endShape(myp5.CLOSE, 2);
+
+        // check the pixels after instancing to make sure that they're the correct color
+        assert.deepEqual(
+          myp5.get(0, 0),
+          [255, 0, 0, 255]
+        );
+        assert.deepEqual(
+          myp5.get(1, 0),
+          [255, 0, 0, 255]
+        );
+      }
+      myp5.resetShader();
     });
   });
 

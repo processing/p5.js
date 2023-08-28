@@ -592,11 +592,19 @@ p5.prototype.endContour = function() {
  * The <a href="#/p5/endShape">endShape()</a> function is the companion to <a href="#/p5/beginShape">beginShape()</a> and may only be
  * called after <a href="#/p5/beginShape">beginShape()</a>. When <a href="#/p5/endshape">endShape()</a> is called, all of the image
  * data defined since the previous call to <a href="#/p5/beginShape">beginShape()</a> is written into the image
- * buffer. The constant CLOSE as the value for the `mode` parameter to close
+ * buffer. The constant CLOSE is the value for the `mode` parameter to close
  * the shape (to connect the beginning and the end).
+ * When using instancing with <a href="#/p5/endShape">endShape()</a> the instancing will not apply to the strokes.
+ * When the count parameter is used with a value greater than 1, it enables instancing for shapes built when in WEBGL mode. Instancing
+ * is a feature that allows the GPU to efficiently draw multiples of the same shape. It's often used for particle effects or other
+ * times when you need a lot of repetition. In order to take advantage of instancing, you will also need to write your own custom
+ * shader using the gl_InstanceID keyword. You can read more about instancing
+ * <a href="https://webglfundamentals.org/webgl/lessons/webgl-instanced-drawing.html">here</a> or by working from the example on this
+ * page.
  *
  * @method endShape
  * @param  {Constant} [mode] use CLOSE to close the shape
+ * @param  {Integer} [count] number of times you want to draw/instance the shape (for WebGL mode).
  * @chainable
  * @example
  * <div>
@@ -617,11 +625,91 @@ p5.prototype.endContour = function() {
  * </code>
  * </div>
  *
+ * @example
+ * <div>
+ * <code>
+ * let fx;
+ * let vs = `#version 300 es
+ *
+ * precision mediump float;
+ *
+ * in vec3 aPosition;
+ * flat out int instanceID;
+ *
+ * uniform mat4 uModelViewMatrix;
+ * uniform mat4 uProjectionMatrix;
+ *
+ * void main() {
+ *
+ *   // copy the instance ID to the fragment shader
+ *   instanceID = gl_InstanceID;
+ *   vec4 positionVec4 = vec4(aPosition, 1.0);
+ *
+ *   // gl_InstanceID represents a numeric value for each instance
+ *   // using gl_InstanceID allows us to move each instance separately
+ *   // here we move each instance horizontally by id * 100
+ *   float xOffset = float(gl_InstanceID) * 100.0;
+ *
+ *   // apply the offset to the final position
+ *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4 -
+ *     vec4(xOffset, 0.0, 0.0, 0.0);
+ * }
+ * `;
+ * let fs = `#version 300 es
+ *
+ * precision mediump float;
+ *
+ * out vec4 outColor;
+ * flat in int instanceID;
+ * uniform float numInstances;
+ *
+ * void main() {
+ *   vec4 red = vec4(1.0, 0.0, 0.0, 1.0);
+ *   vec4 blue = vec4(0.0, 0.0, 1.0, 1.0);
+ *
+ *   // Normalize the instance id
+ *   float normId = float(instanceID) / numInstances;
+ *
+ *   // Mix between two colors using the normalized instance id
+ *   outColor = mix(red, blue, normId);
+ * }
+ * `;
+ *
+ * function setup() {
+ *   createCanvas(400, 400, WEBGL);
+ *   fx = createShader(vs, fs);
+ * }
+ *
+ * function draw() {
+ *   background(220);
+ *
+ *   // strokes aren't instanced, and are rather used for debug purposes
+ *   shader(fx);
+ *   fx.setUniform('numInstances', 4);
+ *
+ *   beginShape();
+ *   vertex(30, 20);
+ *   vertex(85, 20);
+ *   vertex(85, 75);
+ *   vertex(30, 75);
+ *   vertex(30, 20);
+ *   endShape(CLOSE, 4);
+ *
+ *   resetShader();
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * Triangle line shape with smallest interior angle on bottom and upside-down L.
  */
-p5.prototype.endShape = function(mode) {
+p5.prototype.endShape = function(mode, count = 1) {
   p5._validateParameters('endShape', arguments);
+  if (count < 1) {
+    console.log('🌸 p5.js says: You can not have less than one instance');
+    count = 1;
+  }
+
   if (this._renderer.isP3D) {
     this._renderer.endShape(
       mode,
@@ -629,9 +717,13 @@ p5.prototype.endShape = function(mode) {
       isBezier,
       isQuadratic,
       isContour,
-      shapeKind
+      shapeKind,
+      count
     );
   } else {
+    if (count !== 1) {
+      console.log('🌸 p5.js says: Instancing is only supported in WebGL2 mode');
+    }
     if (vertices.length === 0) {
       return this;
     }

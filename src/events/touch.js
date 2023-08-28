@@ -76,7 +76,7 @@ function getTouchInfo(canvas, w, h, e, i = 0) {
  * to the end of the method.
  *
  * @method touchStarted
- * @param  {Object} [event] optional TouchEvent callback argument.
+ * @param  {TouchEvent} [event] optional TouchEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -155,7 +155,7 @@ p5.prototype._ontouchstart = function(e) {
  * to the end of the method.
  *
  * @method touchMoved
- * @param  {Object} [event] optional TouchEvent callback argument.
+ * @param  {TouchEvent} [event] optional TouchEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -226,7 +226,7 @@ p5.prototype._ontouchmove = function(e) {
  * to the end of the method.
  *
  * @method touchEnded
- * @param  {Object} [event] optional TouchEvent callback argument.
+ * @param  {TouchEvent} [event] optional TouchEvent callback argument.
  * @example
  * <div>
  * <code>

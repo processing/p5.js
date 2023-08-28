@@ -513,7 +513,7 @@ p5.prototype.windowHeight = getWindowHeight();
  * canvas or do any other adjustments to accommodate the new window size.
  *
  * @method windowResized
- * @param {Object} [event] optional Event callback argument.
+ * @param {UIEvent} [event] optional Event callback argument.
  * @example
  * <div class="norender"><code>
  * function setup() {

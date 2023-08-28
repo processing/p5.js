@@ -128,14 +128,13 @@ p5.RendererGL.prototype.vertex = function(x, y) {
     lineVertexColor[3]
   );
 
-  if (this.textureMode === constants.IMAGE) {
+  if (this.textureMode === constants.IMAGE && !this.isProcessingVertices) {
     if (this._tex !== null) {
       if (this._tex.width > 0 && this._tex.height > 0) {
         u /= this._tex.width;
         v /= this._tex.height;
       }
     } else if (
-      !this.isProcessingVertices &&
       this._tex === null &&
       arguments.length >= 4
     ) {
@@ -192,7 +191,8 @@ p5.RendererGL.prototype.endShape = function(
   isBezier,
   isQuadratic,
   isContour,
-  shapeKind
+  shapeKind,
+  count = 1
 ) {
   if (this.immediateMode.shapeMode === constants.POINTS) {
     this._drawPoints(
@@ -226,15 +226,15 @@ p5.RendererGL.prototype.endShape = function(
   if (this._doFill) {
     if (
       !this.geometryBuilder &&
-      this.immediateMode.geometry.vertices.length > 1
+      this.immediateMode.geometry.vertices.length >= 3
     ) {
-      this._drawImmediateFill();
+      this._drawImmediateFill(count);
     }
   }
   if (this._doStroke) {
     if (
       !this.geometryBuilder &&
-      this.immediateMode.geometry.lineVertices.length > 1
+      this.immediateMode.geometry.lineVertices.length >= 1
     ) {
       this._drawImmediateStroke();
     }
@@ -489,7 +489,7 @@ p5.RendererGL.prototype._tesselateShape = function() {
  * enabling all appropriate buffers, applying color blend, and drawing the fill geometry.
  * @private
  */
-p5.RendererGL.prototype._drawImmediateFill = function() {
+p5.RendererGL.prototype._drawImmediateFill = function(count = 1) {
   const gl = this.GL;
   this._useVertexColor = (this.immediateMode.geometry.vertexColors.length > 0);
 
@@ -501,14 +501,30 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
   for (const buff of this.immediateMode.buffers.fill) {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
   }
+  shader.disableRemainingAttributes();
 
   this._applyColorBlend(this.curFillColor);
 
-  gl.drawArrays(
-    this.immediateMode.shapeMode,
-    0,
-    this.immediateMode.geometry.vertices.length
-  );
+  if (count === 1) {
+    gl.drawArrays(
+      this.immediateMode.shapeMode,
+      0,
+      this.immediateMode.geometry.vertices.length
+    );
+  }
+  else {
+    try {
+      gl.drawArraysInstanced(
+        this.immediateMode.shapeMode,
+        0,
+        this.immediateMode.geometry.vertices.length,
+        count
+      );
+    }
+    catch (e) {
+      console.log('🌸 p5.js says: Instancing is only supported in WebGL2 mode');
+    }
+  }
   shader.unbindShader();
 };
 
@@ -523,25 +539,19 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
   this._useLineColor =
     (this.immediateMode.geometry.vertexStrokeColors.length > 0);
 
-  const faceCullingEnabled = gl.isEnabled(gl.CULL_FACE);
-  // Prevent strokes from getting removed by culling
-  gl.disable(gl.CULL_FACE);
-
   const shader = this._getImmediateStrokeShader();
   this._setStrokeUniforms(shader);
   for (const buff of this.immediateMode.buffers.stroke) {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
   }
+  shader.disableRemainingAttributes();
   this._applyColorBlend(this.curStrokeColor);
 
   gl.drawArrays(
     gl.TRIANGLES,
     0,
-    this.immediateMode.geometry.lineVertices.length
+    this.immediateMode.geometry.lineVertices.length / 3
   );
-  if (faceCullingEnabled) {
-    gl.enable(gl.CULL_FACE);
-  }
   shader.unbindShader();
 };
 
