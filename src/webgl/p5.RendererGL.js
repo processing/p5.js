@@ -988,6 +988,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
           constants.WEBGL,
           pInst
         );
+      // geometries/borders on this layer should always be invisible
+      this.filterGraphicsLayer.noStroke();
     }
     let pg = this.filterGraphicsLayer;
 
@@ -1075,7 +1077,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       // filterParameter uniform only used for POSTERIZE, and THRESHOLD
       // but shouldn't hurt to always set
       this.filterShader.setUniform('filterParameter', filterParameter);
-      pg.rect(0,0,this.width,this.height);
+      pg.rect(-this.width/2, -this.height/2, this.width, this.height);
     }
 
     // draw pg contents onto main renderer
