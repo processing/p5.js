@@ -544,13 +544,17 @@ p5.prototype.filter = function(...args) {
   }
 
   // when opting out of webgl, use old pixels method
-  if (!useWebGL) {
+  if (!useWebGL && !this._renderer.isP3D) {
     if (this.canvas !== undefined) {
       Filters.apply(this.canvas, Filters[operation], value);
     } else {
       Filters.apply(this.elt, Filters[operation], value);
     }
     return;
+  }
+
+  if(!useWebGL && this._renderer.isP3D) {
+    console.warn('filter() with useWebGL=false is not supported in WEBGL');
   }
 
   // when this is a webgl renderer, apply constant shader filter
