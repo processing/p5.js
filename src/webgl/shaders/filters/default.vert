@@ -13,7 +13,6 @@ void main() {
 
   // copy position with a fourth coordinate for projection (1.0 is normal)
   vec4 positionVec4 = vec4(aPosition, 1.0);
-  // positionVec4.y = 1.0 - positionVec4.y;
 
   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
 }
