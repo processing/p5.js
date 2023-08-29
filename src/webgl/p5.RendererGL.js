@@ -610,6 +610,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // for post processing step
     this.filterShader = undefined;
     this.filterGraphicsLayer = undefined;
+    this.filterGraphicsLayerTemp = undefined;
     this.defaultFilterShaders = {};
 
     this.textureMode = constants.IMAGE;
@@ -978,8 +979,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // so it's just created here once on the initial filter call.
     if (!this.filterGraphicsLayer) {
       // the real _pInst is buried when this is a secondary p5.Graphics
+
       const pInst =
         this._pInst instanceof p5.Graphics ? this._pInst._pInst : this._pInst;
+
       // create secondary layer
       this.filterGraphicsLayer =
         new p5.Graphics(
@@ -991,6 +994,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       // geometries/borders on this layer should always be invisible
       this.filterGraphicsLayer.noStroke();
     }
+
+
     let pg = this.filterGraphicsLayer;
 
     // use internal shader for filter constants BLUR, INVERT, etc
@@ -1016,13 +1021,19 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
           filterShaderFrags[operation]
         );
 
-        // two-pass blur filter needs another shader attached to main
-        if (operation === constants.BLUR) {
-          this.otherBlurShader = new p5.Shader(
-            this,
-            filterShaderVert,
-            filterShaderFrags[constants.BLUR]
-          );
+        // two-pass blur filter needs another graphics layer
+        if(!this.filterGraphicsLayerTemp) {
+          const pInst = this._pInst instanceof p5.Graphics ?
+            this._pInst._pInst : this._pInst;
+          // create secondary layer
+          this.filterGraphicsLayerTemp =
+            new p5.Graphics(
+              this.width,
+              this.height,
+              constants.WEBGL,
+              pInst
+            );
+          this.filterGraphicsLayerTemp.noStroke();
         }
       }
       this.filterShader = this.defaultFilterShaders[operation];
@@ -1047,6 +1058,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
 
     pg.clear(); // prevent undesirable feedback effects accumulating secretly
+    this.filterGraphicsLayerTemp.clear();
 
     // apply blur shader with multiple passes
     if (operation === constants.BLUR) {
@@ -1054,26 +1066,27 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       // setup
       this._pInst.push();
       this._pInst.noStroke();
+
+      // draw main to temp buffer
+      this.filterGraphicsLayerTemp.image(this, -this.width/2, -this.height/2);
+
       pg.shader(this.filterShader);
-      this._pInst.shader(this.otherBlurShader);
       this.filterShader.setUniform('texelSize', [1/this.width, 1/this.height]);
-      this.otherBlurShader.setUniform('texelSize', [1/this.width, 1/this.height]);
+      this.filterShader.setUniform('steps', Math.max(1, filterParameter));
 
-      // two-pass blur, repeated more with higher parameter
-      let steps = filterParameter;
-      for (let i = 0; i < steps; i++) {
-        // main contents onto pg
-        this.filterShader.setUniform('tex0', this);
-        this.filterShader.setUniform('direction', [1, 0]);  // horiz pass
-        pg.rect(-this.width/2, -this.height/2, this.width, this.height);
+      // horiz pass
+      this.filterShader.setUniform('direction', [1, 0]);
+      this.filterShader.setUniform('tex0', this.filterGraphicsLayerTemp);
+      pg.rect(-this.width/2, -this.height/2, this.width, this.height);
 
-        // pg contents onto main
-        this.otherBlurShader.setUniform('tex0', pg);
-        this.otherBlurShader.setUniform('direction', [0, 1]); // vert pass
-        this._pInst.rect(
-          -this.width/2, -this.height/2, this.width, this.height
-        );
-      }
+      // read back to temp buffer
+      this.filterGraphicsLayerTemp.image(pg, -this.width/2, -this.height/2);
+
+      // vert pass
+      this.filterShader.setUniform('direction', [0, 1]);
+      this.filterShader.setUniform('tex0', this.filterGraphicsLayerTemp);
+      pg.rect(-this.width/2, -this.height/2, this.width, this.height);
+
       this._pInst.pop();
     }
     // every other non-blur shader uses single pass
@@ -1087,13 +1100,13 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this.filterShader.setUniform('filterParameter', filterParameter);
       pg.rect(-this.width/2, -this.height/2, this.width, this.height);
 
-      // draw pg contents onto main renderer
-      this._pInst.push();
-      this._pInst.noStroke(); // don't draw triangles for plane() geometry
-      this._pInst.texture(pg);
-      this._pInst.plane(this.width, this.height);
-      this._pInst.pop();
     }
+    // draw pg contents onto main renderer
+    this._pInst.push();
+    this._pInst.noStroke();
+    this._pInst.image(pg, -this.width/2, -this.height/2,
+      this.width, this.height);
+    this._pInst.pop();
   }
 
   blendMode(mode) {
