@@ -1058,10 +1058,11 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
 
     pg.clear(); // prevent undesirable feedback effects accumulating secretly
-    this.filterGraphicsLayerTemp.clear();
 
     // apply blur shader with multiple passes
     if (operation === constants.BLUR) {
+
+      this.filterGraphicsLayerTemp.clear(); // prevent feedback effects here too
 
       // setup
       this._pInst.push();
