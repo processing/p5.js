@@ -363,6 +363,72 @@ suite('p5.RendererGL', function() {
       `);
       myp5.filter(s);
     });
+
+    test('BLUR parameters make different output', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      let startDraw = () => {
+        myp5.clear();
+        myp5.fill('RED');
+        myp5.circle(0,0,8);
+      };
+      let getPixels = () => {
+        myp5.loadPixels();
+        return myp5.pixels.slice();
+      };
+      startDraw();
+      myp5.filter(myp5.BLUR, 3);
+      let p1 = getPixels();
+      startDraw();
+      myp5.filter(myp5.BLUR, 10);
+      let p2 = getPixels();
+      startDraw();
+      myp5.filter(myp5.BLUR, 50);
+      let p3 = getPixels();
+      assert.notDeepEqual(p1,p2);
+      assert.notDeepEqual(p2,p3);
+    });
+
+    test('POSTERIZE parameters make different output', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      let startDraw = () => {
+        myp5.clear();
+        myp5.fill('CORAL');
+        myp5.circle(0,0,8);
+        myp5.fill('CORNFLOWERBLUE');
+        myp5.circle(2,2,8);
+      };
+      let getPixels = () => {
+        myp5.loadPixels();
+        return myp5.pixels.slice();
+      };
+      startDraw();
+      myp5.filter(myp5.POSTERIZE, 2);
+      let p1 = getPixels();
+      startDraw();
+      myp5.filter(myp5.POSTERIZE, 4);
+      let p2 = getPixels();
+      assert.notDeepEqual(p1,p2);
+    });
+
+    test('THRESHOLD parameters make different output', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      let startDraw = () => {
+        myp5.clear();
+        myp5.fill('RED');
+        myp5.circle(0,0,8);
+      };
+      let getPixels = () => {
+        myp5.loadPixels();
+        return myp5.pixels.slice();
+      };
+      startDraw();
+      myp5.filter(myp5.THRESHOLD, 0.1);
+      let p1 = getPixels();
+      startDraw();
+      myp5.filter(myp5.THRESHOLD, 0.9);
+      let p2 = getPixels();
+      assert.notDeepEqual(p1,p2);
+    });
   });
 
   test('contours match 2D', function() {
