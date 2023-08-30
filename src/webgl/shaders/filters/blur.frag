@@ -9,16 +9,12 @@ uniform sampler2D tex0;
 varying vec2 vTexCoord;
 uniform vec2 direction;
 uniform vec2 texelSize;
-uniform float flipped;
 uniform float steps;
 
 void main(){
   const float maxIterations = 100.0;
 
   vec2 uv = vTexCoord;
-  if (flipped == 1.0) {
-    uv.y = 1.0 - uv.y;
-  }
 
   vec4 tex = texture2D(tex0, uv);
   float sum = 1.0;
