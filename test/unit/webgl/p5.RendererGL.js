@@ -2265,5 +2265,57 @@ suite('p5.RendererGL', function() {
       // Inside the clipped region should be red
       assert.deepEqual(getPixel(pixels, 15, 15), [255, 0, 0, 255]);
     });
+
+    test(
+      'It can mask a separate shape in a framebuffer from the main canvas',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const fbo = myp5.createFramebuffer({ antialias: false });
+        myp5.rectMode(myp5.CENTER);
+        myp5.background('red');
+        expect(myp5._renderer._clipDepths.length).to.equal(0);
+        myp5.push();
+        myp5.beginClip();
+        myp5.rect(-5, -5, 20, 20);
+        myp5.endClip();
+        expect(myp5._renderer._clipDepths.length).to.equal(1);
+
+        fbo.begin();
+        myp5.beginClip();
+        myp5.rect(5, 5, 20, 20);
+        myp5.endClip();
+        myp5.fill('blue');
+        myp5.rect(0, 0, myp5.width, myp5.height);
+        expect(myp5._renderer._clipDepths.length).to.equal(2);
+        expect(myp5._renderer.drawTarget()).to.equal(fbo);
+        expect(fbo._isClipApplied).to.equal(true);
+        fbo.end();
+        expect(fbo._isClipApplied).to.equal(false);
+        expect(myp5._renderer._clipDepths.length).to.equal(1);
+        expect(myp5._renderer.drawTarget()).to.equal(myp5._renderer);
+        expect(myp5._renderer._isClipApplied).to.equal(true);
+
+        myp5.imageMode(myp5.CENTER);
+        myp5.image(fbo, 0, 0);
+        myp5.pop();
+        expect(myp5._renderer._clipDepths.length).to.equal(0);
+
+        // In the middle of the canvas, the framebuffer's clip and the
+        // main canvas's clip intersect, so the blue should show through
+        assert.deepEqual(
+          myp5.get(myp5.width / 2, myp5.height / 2),
+          [0, 0, 255, 255]
+        );
+
+        // To either side of the center, nothing should be on top of
+        // the red background color
+        for (const side of [-1, 1]) {
+          assert.deepEqual(
+            myp5.get(myp5.width / 2 + side * 10, myp5.height / 2 + side * 10),
+            [255, 0, 0, 255]
+          );
+        }
+      }
+    );
   });
 });
