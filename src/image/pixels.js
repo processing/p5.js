@@ -329,9 +329,11 @@ p5.prototype._copyHelper = (
  * results are most noticeable in the lower ranges. The default parameter is 4.
  *
  * `BLUR`
- * Executes a Gaussian blur with the level parameter specifying the extent
+ * Executes a blur with the level parameter specifying the extent
  * of the blurring. If no parameter is used, the blur is equivalent to
- * Gaussian blur of radius 4. Larger values increase the blur.
+ * a blur of radius 4. Larger values increase the blur. In P2D mode a
+ * gaussian blur is performed on the CPU. When in webGL mode, a box blur is
+ * used instead.
  *
  * `ERODE`
  * Reduces the light areas. No parameter is used.
