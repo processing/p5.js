@@ -1610,10 +1610,6 @@ p5.Vector = class {
  * <a href="#/p5/createVector">createVector()</a>, `setHeading()` uses
  * the units of the current <a href="#/p5/angleMode">angleMode()</a>.
  *
- * The static version of `setHeading()`, as in `p5.Vector.setHeading(v, PI)`,
- * returns a new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change
- * the original.
- *
  * @method setHeading
  * @param  {number}    angle angle of rotation.
  * @chainable
