@@ -79,6 +79,26 @@ const defaultShaders = {
   pointFrag: readFileSync(join(__dirname, '/shaders/point.frag'), 'utf-8')
 };
 
+const filterShaderFrags = {
+  [constants.GRAY]:
+    readFileSync(join(__dirname, '/shaders/filters/gray.frag'), 'utf-8'),
+  [constants.ERODE]:
+    readFileSync(join(__dirname, '/shaders/filters/erode.frag'), 'utf-8'),
+  [constants.DILATE]:
+    readFileSync(join(__dirname, '/shaders/filters/dilate.frag'), 'utf-8'),
+  [constants.BLUR]:
+    readFileSync(join(__dirname, '/shaders/filters/blur.frag'), 'utf-8'),
+  [constants.POSTERIZE]:
+    readFileSync(join(__dirname, '/shaders/filters/posterize.frag'), 'utf-8'),
+  [constants.OPAQUE]:
+    readFileSync(join(__dirname, '/shaders/filters/opaque.frag'), 'utf-8'),
+  [constants.INVERT]:
+    readFileSync(join(__dirname, '/shaders/filters/invert.frag'), 'utf-8'),
+  [constants.THRESHOLD]:
+    readFileSync(join(__dirname, '/shaders/filters/threshold.frag'), 'utf-8')
+};
+const filterShaderVert = readFileSync(join(__dirname, '/shaders/filters/default.vert'), 'utf-8');
+
 /**
  * @module Rendering
  * @submodule Rendering
@@ -590,6 +610,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // for post processing step
     this.filterShader = undefined;
     this.filterGraphicsLayer = undefined;
+    this.filterGraphicsLayerTemp = undefined;
+    this.defaultFilterShaders = {};
 
     this.textureMode = constants.IMAGE;
     // default wrap settings
@@ -951,14 +973,16 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.curStrokeJoin = join;
   }
 
-  filter(args) {
+  filter(...args) {
     // Couldn't create graphics in RendererGL constructor
     // (led to infinite loop)
     // so it's just created here once on the initial filter call.
     if (!this.filterGraphicsLayer) {
       // the real _pInst is buried when this is a secondary p5.Graphics
+
       const pInst =
         this._pInst instanceof p5.Graphics ? this._pInst._pInst : this._pInst;
+
       // create secondary layer
       this.filterGraphicsLayer =
         new p5.Graphics(
@@ -967,42 +991,122 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
           constants.WEBGL,
           pInst
         );
+      // geometries/borders on this layer should always be invisible
+      this.filterGraphicsLayer.noStroke();
     }
+
+
     let pg = this.filterGraphicsLayer;
 
+    // use internal shader for filter constants BLUR, INVERT, etc
+    let filterParameter = undefined;
+    let operation = undefined;
     if (typeof args[0] === 'string') {
-      // TODO, handle filter constants:
-      //   this.filterShader = map(args[0], {GRAYSCALE: grayscaleShader, ...})
-      //   filterOperationParameter = undefined or args[1]
-      p5._friendlyError('webgl filter implementation in progress');
-      return;
+      operation = args[0];
+      let defaults = {
+        [constants.BLUR]: 3,
+        [constants.POSTERIZE]: 4,
+        [constants.THRESHOLD]: 0.5
+      };
+      let useDefaultParam = operation in defaults && args[1] === undefined;
+      filterParameter = useDefaultParam ? defaults[operation] : args[1];
+
+      // Create and store shader for constants once on initial filter call.
+      // Need to store multiple in case user calls different filters,
+      // eg. filter(BLUR) then filter(GRAY)
+      if ( !(operation in this.defaultFilterShaders) ) {
+        this.defaultFilterShaders[operation] = new p5.Shader(
+          pg._renderer,
+          filterShaderVert,
+          filterShaderFrags[operation]
+        );
+
+        // two-pass blur filter needs another graphics layer
+        if(!this.filterGraphicsLayerTemp) {
+          const pInst = this._pInst instanceof p5.Graphics ?
+            this._pInst._pInst : this._pInst;
+          // create secondary layer
+          this.filterGraphicsLayerTemp =
+            new p5.Graphics(
+              this.width,
+              this.height,
+              constants.WEBGL,
+              pInst
+            );
+          this.filterGraphicsLayerTemp.noStroke();
+        }
+      }
+      this.filterShader = this.defaultFilterShaders[operation];
+
     }
-    let userShader = args[0];
+    // use custom user-supplied shader
+    else {
+      let userShader = args[0];
 
-    // Copy the user shader once on the initial filter call,
-    // since it has to be bound to pg and not main
-    let isSameUserShader = (
-      this.filterShader !== undefined &&
-      userShader._vertSrc === this.filterShader._vertSrc &&
-      userShader._fragSrc === this.filterShader._fragSrc
-    );
-    if (!isSameUserShader) {
-      this.filterShader =
-        new p5.Shader(pg._renderer, userShader._vertSrc, userShader._fragSrc);
-      this.filterShader.parentShader = userShader;
+      // Copy the user shader once on the initial filter call,
+      // since it has to be bound to pg and not main
+      let isSameUserShader = (
+        this.filterShader !== undefined &&
+        userShader._vertSrc === this.filterShader._vertSrc &&
+        userShader._fragSrc === this.filterShader._fragSrc
+      );
+      if (!isSameUserShader) {
+        this.filterShader =
+          new p5.Shader(pg._renderer, userShader._vertSrc, userShader._fragSrc);
+        this.filterShader.parentShader = userShader;
+      }
     }
 
-    // apply shader to pg
-    pg.shader(this.filterShader);
-    this.filterShader.setUniform('tex0', this);
-    pg.rect(0,0,this.width,this.height);
+    pg.clear(); // prevent undesirable feedback effects accumulating secretly
 
+    // apply blur shader with multiple passes
+    if (operation === constants.BLUR) {
+
+      this.filterGraphicsLayerTemp.clear(); // prevent feedback effects here too
+
+      // setup
+      this._pInst.push();
+      this._pInst.noStroke();
+
+      // draw main to temp buffer
+      this.filterGraphicsLayerTemp.image(this, -this.width/2, -this.height/2);
+
+      pg.shader(this.filterShader);
+      this.filterShader.setUniform('texelSize', [1/this.width, 1/this.height]);
+      this.filterShader.setUniform('steps', Math.max(1, filterParameter));
+
+      // horiz pass
+      this.filterShader.setUniform('direction', [1, 0]);
+      this.filterShader.setUniform('tex0', this.filterGraphicsLayerTemp);
+      pg.rect(-this.width/2, -this.height/2, this.width, this.height);
+
+      // read back to temp buffer
+      this.filterGraphicsLayerTemp.image(pg, -this.width/2, -this.height/2);
+
+      // vert pass
+      this.filterShader.setUniform('direction', [0, 1]);
+      this.filterShader.setUniform('tex0', this.filterGraphicsLayerTemp);
+      pg.rect(-this.width/2, -this.height/2, this.width, this.height);
+
+      this._pInst.pop();
+    }
+    // every other non-blur shader uses single pass
+    else {
+      pg.shader(this.filterShader);
+      this.filterShader.setUniform('tex0', this);
+      this.filterShader.setUniform('texelSize', [1/this.width, 1/this.height]);
+      this.filterShader.setUniform('canvasSize', [this.width, this.height]);
+      // filterParameter uniform only used for POSTERIZE, and THRESHOLD
+      // but shouldn't hurt to always set
+      this.filterShader.setUniform('filterParameter', filterParameter);
+      pg.rect(-this.width/2, -this.height/2, this.width, this.height);
+
+    }
     // draw pg contents onto main renderer
     this._pInst.push();
-    this._pInst.noStroke(); // don't draw triangles for plane() geometry
-    this._pInst.scale(1, -1); // vertically flip output
-    this._pInst.texture(pg);
-    this._pInst.plane(this.width, this.height);
+    this._pInst.noStroke();
+    this._pInst.image(pg, -this.width/2, -this.height/2,
+      this.width, this.height);
     this._pInst.pop();
   }
 
