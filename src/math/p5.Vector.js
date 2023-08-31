@@ -243,7 +243,7 @@ p5.Vector = class {
   /**
  * Adds to a vector's `x`, `y`, and `z` components using separate numbers,
  * another <a href="#/p5.Vector">p5.Vector</a> object, or an array of numbers.
- * Calling `add()` with no arguments sets the vector's components to 0.
+ * Calling `add()` with no arguments has no effect.
  *
  * The static version of `add()`, as in `p5.Vector.add(v2, v1)`, returns a new
  * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
@@ -479,8 +479,7 @@ p5.Vector = class {
   /**
  * Subtracts from a vector's `x`, `y`, and `z` components using separate
  * numbers, another <a href="#/p5.Vector">p5.Vector</a> object, or an array of
- * numbers. Calling `sub()` with no arguments sets the vector's components to
- * 0.
+ * numbers. Calling `sub()` with no arguments has no effect.
  *
  * The static version of `sub()`, as in `p5.Vector.sub(v2, v1)`, returns a new
  * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
@@ -1098,7 +1097,9 @@ p5.Vector = class {
   /**
  * Returns the dot product of two vectors. The dot product is a number that
  * describes the overlap between two vectors. Visually, the dot product can be
- * thought of as the "shadow" one vector casts on another.
+ * thought of as the "shadow" one vector casts on another. The dot product's
+ * magnitude is largest when two vectors point in the same or opposite
+ * directions. Its magnitude is 0 when two vectors form a right angle.
  *
  * The version of `dot()` with one parameter interprets it as another
  * <a href="#/p5.Vector">p5.Vector</a> object.
@@ -1133,6 +1134,40 @@ p5.Vector = class {
  * let dp = p5.Vector.dot(v1, v2);
  * // Prints "0" to the console.
  * print(dp);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(200);
+ *
+ *   let v0 = createVector(width / 2, height / 2);
+ *   let v1 = createVector(30, 0);
+ *   drawArrow(v0, v1, 'black');
+ *
+ *   let v2 = createVector(mouseX - width / 2, mouseY - height / 2);
+ *   drawArrow(v0, v2, 'red');
+ *
+ *   let dp = v2.dot(v1);
+ *   text(`v2 • v1 = ${dp}`, 15, 20);
+ *
+ *   describe('Two arrows drawn on a gray square. A black arrow points to the right and a red arrow follows the mouse. The text "v1 • v2 = something" changes as the mouse moves.');
+ * }
+ *
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   let arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
+ * }
  * </code>
  * </div>
  */
@@ -1193,14 +1228,14 @@ p5.Vector = class {
   }
 
   /**
- * Returns the distance between the tips of two vectors extending from the
- * origin.
+ * Returns the distance between two points represented by vectors. A point's
+ * coordinates can be thought of as a vector's components.
  *
  * The static version of `dist()`, as in `p5.Vector.dist(v1, v2)`, is the same
  * as calling `v1.dist(v2)`.
  *
  * Use <a href="#/p5/dist">dist()</a> to calculate the distance between points
- * using coordinates.
+ * using coordinates as in `dist(x1, y1, x2, y2)`.
  *
  * @method dist
  * @param  {p5.Vector} v x, y, and z coordinates of a <a href="#/p5.Vector">p5.Vector</a>.
@@ -1568,6 +1603,8 @@ p5.Vector = class {
 
   /**
  * Rotates a 2D vector to a specific angle without changing its magnitude.
+ * By convention, the positive x-axis has an angle of 0. Angles increase in
+ * the clockwise direction.
  *
  * If the vector was created with
  * <a href="#/p5/createVector">createVector()</a>, `setHeading()` uses
@@ -1603,29 +1640,6 @@ p5.Vector = class {
  * v.setHeading(180);
  * // Prints "180" to the console.
  * print(v.heading());
- * </code>
- * </div>
- *
- * <div class="norender">
- * <code>
- * let v0 = createVector(0, 1);
- * let v1 = p5.Vector.setHeading(v0, PI);
- * // Prints "1.570..." to the console.
- * print(v0.heading());
- * // Prints "3.141..." to the console.
- * print(v1.heading());
- * </code>
- * </div>
- *
- * <div class="norender">
- * <code>
- * angleMode(DEGREES);
- * let v0 = createVector(0, 1);
- * let v1 = p5.Vector.setHeading(v0, 180);
- * // Prints "90" to the console.
- * print(v0.heading());
- * // Prints "180" to the console.
- * print(v1.heading());
  * </code>
  * </div>
  *
@@ -1672,6 +1686,8 @@ p5.Vector = class {
 
   /**
  * Rotates a 2D vector by an angle without changing its magnitude.
+ * By convention, the positive x-axis has an angle of 0. Angles increase in
+ * the clockwise direction.
  *
  * If the vector was created with
  * <a href="#/p5/createVector">createVector()</a>, `rotate()` uses
@@ -1777,7 +1793,8 @@ p5.Vector = class {
   }
 
   /**
- * Returns the angle between two vectors.
+ * Returns the angle between two vectors. The angles returned are signed,
+ * which means that `v1.angleBetween(v2) === -v2.angleBetween(v1)`.
  *
  * If the vector was created with
  * <a href="#/p5/createVector">createVector()</a>, `angleBetween()` returns
@@ -1794,6 +1811,8 @@ p5.Vector = class {
  * let v1 = createVector(0, 1);
  * // Prints "1.570..." to the console.
  * print(v0.angleBetween(v1));
+ * // Prints "-1.570..." to the console.
+ * print(v1.angleBetween(v0));
  * </code>
  * </div>
  *
@@ -1804,6 +1823,8 @@ p5.Vector = class {
  * let v1 = createVector(0, 1);
  * // Prints "90" to the console.
  * print(v0.angleBetween(v1));
+ * // Prints "-90" to the console.
+ * print(v1.angleBetween(v0));
  * </code>
  * </div>
  *
@@ -1813,6 +1834,8 @@ p5.Vector = class {
  * let v1 = createVector(0, 1);
  * // Prints "1.570..." to the console.
  * print(p5.Vector.angleBetween(v0, v1));
+ * // Prints "-1.570..." to the console.
+ * print(p5.Vector.angleBetween(v1, v0));
  * </code>
  * </div>
  *
@@ -1823,6 +1846,8 @@ p5.Vector = class {
  * let v1 = createVector(0, 1);
  * // Prints "90" to the console.
  * print(p5.Vector.angleBetween(v0, v1));
+ * // Prints "-90" to the console.
+ * print(p5.Vector.angleBetween(v1, v0));
  * </code>
  * </div>
  *
@@ -1985,6 +2010,11 @@ p5.Vector = class {
  * the new vector. 0.0 keeps the heading and magnitude equal to the old
  * vector's, 0.5 sets them halfway between, and 1.0 sets the heading and
  * magnitude equal to the new vector's.
+ *
+ * `slerp()` differs from <a href="#/p5.Vector/lerp">lerp()</a> because
+ * it interpolates magnitude. Calling `v0.slerp(v1, 0.5)` sets `v0`'s
+ * magnitude to a value halfway between its original magnitude and `v1`'s.
+ * Calling `v0.lerp(v1, 0.5)` makes no such guarantee.
  *
  * The static version of `slerp()`, as in `p5.Vector.slerp(v0, v1, 0.5)`,
  * returns a new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change
