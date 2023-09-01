@@ -340,7 +340,6 @@ const colorPatterns = {
  *                                          or CSS color.
  */
 /**
- * @class p5.Color
  * @constructor
  * @param {p5} pInst                        pointer to p5 instance.
  *
