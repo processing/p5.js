@@ -2474,10 +2474,10 @@ p5.Element.prototype.draggable = function (elmnt = this.elt) {
     pos4 = 0;
   if (elmnt !== this.elt && elmnt.elt !== this.elt) {
     elmnt = elmnt.elt;
-    this.elt.onmousedown = dragMouseDown;
+    this.elt.addEventListener('mousedown', dragMouseDown, false);
     this.elt.style.cursor = 'move';
   } else {
-    elmnt.onmousedown = dragMouseDown;
+    elmnt.addEventListener('mousedown', dragMouseDown, false);
     elmnt.style.cursor = 'move';
   }
 
@@ -2485,8 +2485,8 @@ p5.Element.prototype.draggable = function (elmnt = this.elt) {
     e = e || window.event;
     pos3 = parseInt(e.clientX);
     pos4 = parseInt(e.clientY);
-    document.onmouseup = closeDragElement;
-    document.onmousemove = elementDrag;
+    document.addEventListener('mouseup', closeDragElement, false);
+    document.addEventListener('mousemove', elementDrag, false);
     return false;
   }
 
@@ -2501,8 +2501,8 @@ p5.Element.prototype.draggable = function (elmnt = this.elt) {
   }
 
   function closeDragElement() {
-    document.onmouseup = null;
-    document.onmousemove = null;
+    document.removeEventListener('mouseup', closeDragElement, false);
+    document.removeEventListener('mousemove', elementDrag, false);
   }
 
   return this;
