@@ -260,9 +260,9 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  * }
  * function setup() {
  *   background(210);
- *   fill(0)
-    .strokeWeight(0)
-    .textSize(10);
+ *   fill(0);
+ *   strokeWeight(0);
+ *   textSize(10);
  *   textFont(fontRegular);
  *   text('Font Style Normal', 10, 30);
  *   textFont(fontItalic);
