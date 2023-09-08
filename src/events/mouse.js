@@ -474,7 +474,7 @@ p5.prototype._setMouseButton = function(e) {
  * behavior for this event, add "return false" to the end of the method.
  *
  * @method mouseMoved
- * @param  {Object} [event] optional MouseEvent callback argument.
+ * @param  {MouseEvent} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -527,7 +527,7 @@ p5.prototype._setMouseButton = function(e) {
  * behavior for this event, add "return false" to the end of the function.
  *
  * @method mouseDragged
- * @param  {Object} [event] optional MouseEvent callback argument.
+ * @param  {MouseEvent} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -607,7 +607,7 @@ p5.prototype._onmousemove = function(e) {
  * behavior for this event, add "return false" to the end of the function.
  *
  * @method mousePressed
- * @param  {Object} [event] optional MouseEvent callback argument.
+ * @param  {MouseEvent} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -683,7 +683,7 @@ p5.prototype._onmousedown = function(e) {
  * behavior for this event, add "return false" to the end of the function.
  *
  * @method mouseReleased
- * @param  {Object} [event] optional MouseEvent callback argument.
+ * @param  {MouseEvent} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -758,7 +758,7 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * behavior for this event, add "return false" to the end of the function.
  *
  * @method mouseClicked
- * @param  {Object} [event] optional MouseEvent callback argument.
+ * @param  {MouseEvent} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -823,7 +823,7 @@ p5.prototype._onclick = function(e) {
  * https://developer.mozilla.org/en-US/docs/Web/Events/dblclick
  *
  * @method doubleClicked
- * @param  {Object} [event] optional MouseEvent callback argument.
+ * @param  {MouseEvent} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -910,7 +910,7 @@ p5.prototype._pmouseWheelDeltaY = 0;
  * may only work as expected if "return false" is included while using Safari.
  *
  * @method mouseWheel
- * @param  {Object} [event] optional WheelEvent callback argument.
+ * @param  {WheelEvent} [event] optional WheelEvent callback argument.
  *
  * @example
  * <div>

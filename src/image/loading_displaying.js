@@ -1003,10 +1003,14 @@ p5.prototype.image = function(
   yAlign = yAlign || constants.CENTER;
   xAlign = xAlign || constants.CENTER;
 
+  if (img.elt) {
+    defW = defW !== undefined ? defW : img.elt.width;
+    defH = defH !== undefined ? defH : img.elt.height;
+  }
   if (img.elt && img.elt.videoWidth && !img.canvas) {
     // video no canvas
-    defW = img.elt.videoWidth;
-    defH = img.elt.videoHeight;
+    defW = defW !== undefined ? defW : img.elt.videoWidth;
+    defH = defH !== undefined ? defH : img.elt.videoHeight;
   }
 
   let _dx = dx;
@@ -1015,8 +1019,8 @@ p5.prototype.image = function(
   let _dh = dHeight || defH;
   let _sx = sx || 0;
   let _sy = sy || 0;
-  let _sw = sWidth || defW;
-  let _sh = sHeight || defH;
+  let _sw = sWidth !== undefined ? sWidth : defW;
+  let _sh = sHeight !== undefined ? sHeight : defH;
 
   _sw = _sAssign(_sw, defW);
   _sh = _sAssign(_sh, defH);

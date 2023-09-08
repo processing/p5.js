@@ -61,11 +61,11 @@ p5.RenderBuffer = class {
       shader.enableAttrib(attr, this.size);
     } else {
       const loc = attr.location;
-      if (loc === -1 || !this._renderer.registerEnabled[loc]) { return; }
+      if (loc === -1 || !this._renderer.registerEnabled.has(loc)) { return; }
       // Disable register corresponding to unused attribute
       gl.disableVertexAttribArray(loc);
       // Record register availability
-      this._renderer.registerEnabled[loc] = false;
+      this._renderer.registerEnabled.delete(loc);
     }
   }
 };

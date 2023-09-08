@@ -8,6 +8,7 @@
 import p5 from '../core/main';
 import Filters from './filters';
 import '../color/p5.Color';
+import * as constants from '../core/constants';
 
 /**
  * <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference
@@ -325,12 +326,14 @@ p5.prototype._copyHelper = (
  * `POSTERIZE`
  * Limits each channel of the image to the number of colors specified as the
  * parameter. The parameter can be set to values between 2 and 255, but
- * results are most noticeable in the lower ranges.
+ * results are most noticeable in the lower ranges. The default parameter is 4.
  *
  * `BLUR`
- * Executes a Gaussian blur with the level parameter specifying the extent
+ * Executes a blur with the level parameter specifying the extent
  * of the blurring. If no parameter is used, the blur is equivalent to
- * Gaussian blur of radius 1. Larger values increase the blur.
+ * a blur of radius 4. Larger values increase the blur. In P2D mode a
+ * gaussian blur is performed on the CPU. When in webGL mode, a box blur is
+ * used instead.
  *
  * `ERODE`
  * Reduces the light areas. No parameter is used.
@@ -340,23 +343,24 @@ p5.prototype._copyHelper = (
  *
  * ---
  *
- * In WEBGL mode, `filter()` can also accept a shader. The fragment shader
- * is given a `uniform sampler2D` named `tex0` that contains the current
- * state of the canvas. For more information on using shaders, check
- * <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">
- * the introduction to shaders</a> tutorial.
+ * These filter options use WebGL in the background by default (they're faster that way).
+ * To opt out of this in P2D mode, add a `false` parameter when calling `filter()`.
+ * This may be useful to keep computation off the GPU or to work around a lack of WebGL support.
  *
- * See also <a href="https://github.com/aferriss/p5jsShaderExamples"
- * target='_blank'>a selection of shader examples</a> by Adam Ferriss
- * that contains many similar filter effects.
+ * On a renderer in WEBGL mode, `filter()` can also accept a user-provided shader.
+ * For more information, see <a href="#/p5/createFilterShader">createFilterShader()</a>.
+ *
  *
  * @method filter
  * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
  *                                POSTERIZE, BLUR, ERODE, DILATE or BLUR.
  *                                See Filters.js for docs on
  *                                each available filter
- * @param  {Number} [filterParam] an optional parameter unique
+ * @param  {Number} filterParam   an optional parameter unique
  *                                to each filter, see above
+ * @param  {Boolean} [useWebGL]   a flag to control whether to use fast
+ *                                WebGL filters (GPU) or original image
+ *                                filters (CPU); defaults to true
  *
  * @example
  * <div>
@@ -465,39 +469,45 @@ p5.prototype._copyHelper = (
  *
  * <div>
  * <code>
- * createCanvas(100, 100, WEBGL);
- * let myShader = createShader(
- *   `attribute vec3 aPosition;
- *   attribute vec2 aTexCoord;
+ * let img;
+ * function preload() {
+ *   img = loadImage('assets/bricks.jpg');
+ * }
+ * function setup() {
+ *   image(img, 0, 0);
+ *   filter(BLUR, 3, useWebGL=false);
+ * }
+ * </code>
+ * </div>
  *
- *   varying vec2 vTexCoord;
+ * <div>
+ * <code>
+ * let img, s;
+ * function preload() {
+ *   img = loadImage('assets/bricks.jpg');
+ * }
+ * function setup() {
+ *   let fragSrc = `precision highp float;
+ *
+ *   varying vec2 vTexCoord;  // x,y coordinates
+ *   uniform sampler2D tex0;  // the canvas contents
  *
  *   void main() {
- *     vTexCoord = aTexCoord;
- *     vec4 positionVec4 = vec4(aPosition, 1.0);
- *     positionVec4.xy = positionVec4.xy * 2.0 - 1.0;
- *     gl_Position = positionVec4;
- *   }`,
- *   `precision mediump float;
- *   varying mediump vec2 vTexCoord;
+ *     // get the color at current pixel
+ *     vec4 color = texture2D(tex0, vTexCoord);
+ *     // set the output color
+ *     color.b = 1.0;
+ *     gl_FragColor = vec4(color);
+ *   }`;
  *
- *   uniform sampler2D tex0;
- *
- *   float luma(vec3 color) {
- *     return dot(color, vec3(0.299, 0.587, 0.114));
- *   }
- *
- *   void main() {
- *     vec2 uv = vTexCoord;
- *     uv.y = 1.0 - uv.y;
- *     vec4 sampledColor = texture2D(tex0, uv);
- *     float gray = luma(sampledColor.rgb);
- *     gl_FragColor = vec4(gray, gray, gray, 1);
- *   }`
- * );
- * background('RED');
- * filter(myShader);
- * describe('a canvas becomes gray after being filtered by shader');
+ *   createCanvas(100, 100, WEBGL);
+ *   s = createFilterShader(fragSrc);
+ * }
+ * function draw() {
+ *   image(img, -50, -50);
+ *   filter(s);
+ *   describe('a image of bricks tinted blue');
+ * }
  * </code>
  * </div>
  *
@@ -516,24 +526,114 @@ p5.prototype._copyHelper = (
 
 /**
  * @method filter
+ * @param  {Constant} filterType
+ * @param  {Boolean} [useWebGL]
+ */
+/**
+ * @method filter
  * @param {p5.Shader}  shaderFilter  A shader that's been loaded, with the
  *                                   frag shader using a `tex0` uniform
  */
-p5.prototype.filter = function(operation, value) {
+p5.prototype.filter = function(...args) {
   p5._validateParameters('filter', arguments);
 
-  // TODO: use shader filters always, and provide an opt out
-  if (this._renderer.isP3D) {
-    p5.RendererGL.prototype.filter.call(this._renderer, arguments);
+  let { shader, operation, value, useWebGL } = parseFilterArgs(...args);
+
+  // when passed a shader, use it directly
+  if (shader) {
+    p5.RendererGL.prototype.filter.call(this._renderer, shader);
     return;
   }
 
-  if (this.canvas !== undefined) {
-    Filters.apply(this.canvas, Filters[operation], value);
-  } else {
-    Filters.apply(this.elt, Filters[operation], value);
+  // when opting out of webgl, use old pixels method
+  if (!useWebGL && !this._renderer.isP3D) {
+    if (this.canvas !== undefined) {
+      Filters.apply(this.canvas, Filters[operation], value);
+    } else {
+      Filters.apply(this.elt, Filters[operation], value);
+    }
+    return;
+  }
+
+  if(!useWebGL && this._renderer.isP3D) {
+    console.warn('filter() with useWebGL=false is not supported in WEBGL');
+  }
+
+  // when this is a webgl renderer, apply constant shader filter
+  if (this._renderer.isP3D) {
+    p5.RendererGL.prototype.filter.call(this._renderer, operation, value);
+  }
+
+  // when this is P2D renderer, create/use hidden webgl renderer
+  else {
+    // create hidden webgl renderer if it doesn't exist
+    if (!this.filterGraphicsLayer) {
+      // the real _pInst is buried when this is a secondary p5.Graphics
+      const pInst =
+        this._renderer._pInst instanceof p5.Graphics ?
+          this._renderer._pInst._pInst :
+          this._renderer._pInst;
+
+      // create secondary layer
+      this.filterGraphicsLayer =
+        new p5.Graphics(
+          this.width,
+          this.height,
+          constants.WEBGL,
+          pInst
+        );
+    }
+
+    // copy p2d canvas contents to secondary webgl renderer
+    // dest
+    this.filterGraphicsLayer.copy(
+      // src
+      this._renderer,
+      // src coods
+      0, 0, this.width, this.height,
+      // dest coords
+      -this.width/2, -this.height/2, this.width, this.height
+    );
+
+    // filter it with shaders
+    this.filterGraphicsLayer.filter(operation, value);
+
+    // copy secondary webgl renderer back to original p2d canvas
+    this._renderer._pInst.image(this.filterGraphicsLayer, 0, 0);
+    this.filterGraphicsLayer.clear(); // prevent feedback effects on p2d canvas
   }
 };
+
+function parseFilterArgs(...args) {
+  // args could be:
+  // - operation, value, [useWebGL]
+  // - operation, [useWebGL]
+  // - shader
+
+  let result = {
+    shader: undefined,
+    operation: undefined,
+    value: undefined,
+    useWebGL: true
+  };
+
+  if (args[0] instanceof p5.Shader) {
+    result.shader = args[0];
+    return result;
+  }
+  else {
+    result.operation = args[0];
+  }
+
+  if (args.length > 1 && typeof args[1] === 'number') {
+    result.value = args[1];
+  }
+
+  if (args[args.length-1] === false) {
+    result.useWebGL = false;
+  }
+  return result;
+}
 
 /**
  * Get a region of pixels, or a single pixel, from the canvas.
