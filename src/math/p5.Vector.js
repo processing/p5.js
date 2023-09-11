@@ -32,42 +32,63 @@ const calculateRemainder3D = function(xComponent, yComponent, zComponent) {
 };
 
 /**
- * A class to describe a two or three-dimensional vector, specifically
- * a Euclidean (also known as geometric) vector. A vector is an entity
- * that has both magnitude and direction. The datatype, however, stores
- * the components of the vector (`x`, `y` for 2D; or `x`, `y`, `z` for 3D). The magnitude
- * and direction can be accessed via the methods <a href="#/p5.Vector/mag">p5.Vector.mag()</a> and <a href="#/p5.Vector/heading">heading()</a>.
+ * A class to describe a two or three-dimensional vector. A vector is like an
+ * arrow pointing in space. Vectors have both magnitude (length) and
+ * direction.
  *
- * In many of the p5.js examples, you will see <a href="#/p5.Vector">p5.Vector</a> used to describe a
- * position, velocity, or acceleration. For example, if you consider a rectangle
- * moving across the screen, at any given instant it has a position (a vector
- * that points from the origin to its location), a velocity (the rate at which
- * the object's position changes per time unit, expressed as a vector), and
- * acceleration (the rate at which the object's velocity changes per time
- * unit, expressed as a vector).
- *
- * Since vectors represent groupings of values, we cannot simply use
- * traditional addition/multiplication/etc. Instead, we'll need to do some
- * "vector" math, which is made easy by the methods inside the <a href="#/p5.Vector">p5.Vector</a> class.
+ * `p5.Vector` objects are often used to program motion because they simplify
+ * the math. For example, a moving ball has a position and a velocity.
+ * Position describes where the ball is in space. The ball's position vector
+ * extends from the origin to the ball's center. Velocity describes the ball's
+ * speed and the direction it's moving. If the ball is moving straight up, its
+ * velocity vector points straight up. Adding the ball's velocity vector to
+ * its position vector moves it, as in `pos.add(vel)`. Vector math relies on
+ * methods inside the `p5.Vector` class.
  *
  * @class p5.Vector
  * @constructor
- * @param {Number} [x] x component of the vector
- * @param {Number} [y] y component of the vector
- * @param {Number} [z] z component of the vector
+ * @param {Number} [x] x component of the vector.
+ * @param {Number} [y] y component of the vector.
+ * @param {Number} [z] z component of the vector.
  * @example
  * <div>
  * <code>
- * let v1 = createVector(40, 50);
- * let v2 = createVector(40, 50);
+ * let p1 = createVector(25, 25);
+ * let p2 = createVector(75, 75);
  *
- * ellipse(v1.x, v1.y, 50, 50);
- * ellipse(v2.x, v2.y, 50, 50);
- * v1.add(v2);
- * ellipse(v1.x, v1.y, 50, 50);
+ * strokeWeight(5);
+ * point(p1);
+ * point(p2.x, p2.y);
  *
- * describe(`2 white ellipses. One center-left the other
- *   bottom right and off canvas`);
+ * describe('Two black dots on a gray square, one at the top left and the other at the bottom right.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let pos;
+ * let vel;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   pos = createVector(width / 2, height);
+ *   vel = createVector(0, -1);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   pos.add(vel);
+ *
+ *   if (pos.y < 0) {
+ *     pos.y = height;
+ *   }
+ *
+ *   strokeWeight(5);
+ *   point(pos);
+ *
+ *   describe('A black dot moves from bottom to top on a gray square. The dot reappears at the bottom when it reaches the top.');
+ * }
  * </code>
  * </div>
  */
@@ -107,47 +128,17 @@ p5.Vector = class {
   }
 
   /**
- * Returns a string representation of a vector `v` by calling `String(v)`
- * or `v.toString()`. This method is useful for logging vectors in the
- * console.
+ * Returns a string representation of a vector. This method is useful for
+ * printing vectors to the console while debugging.
  * @method  toString
- * @return {String}
+ * @return {String} string representation of the vector.
  * @example
  * <div class = "norender">
  * <code>
  * function setup() {
  *   let v = createVector(20, 30);
- *   print(String(v)); // prints "p5.Vector Object : [20, 30, 0]"
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function draw() {
- *   background(240);
- *
- *   let v0 = createVector(0, 0);
- *   let v1 = createVector(mouseX, mouseY);
- *   drawArrow(v0, v1, 'black');
- *
- *   noStroke();
- *   text(v1.toString(), 10, 25, 90, 75);
- * }
- *
- * // draw an arrow for a vector at a given base position
- * function drawArrow(base, vec, myColor) {
- *   push();
- *   stroke(myColor);
- *   strokeWeight(3);
- *   fill(myColor);
- *   translate(base.x, base.y);
- *   line(0, 0, vec.x, vec.y);
- *   rotate(vec.heading());
- *   let arrowSize = 7;
- *   translate(vec.mag() - arrowSize, 0);
- *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
- *   pop();
+ *   // Prints 'p5.Vector Object : [20, 30, 0]'.
+ *   print(v.toString());
  * }
  * </code>
  * </div>
@@ -157,67 +148,45 @@ p5.Vector = class {
   }
 
   /**
- * Sets the `x`, `y`, and `z` components of the vector using two or three separate
- * variables, the data from a <a href="#/p5.Vector">p5.Vector</a>, or the values from a float array.
+ * Sets the `x`, `y`, and `z` components of the vector using separate numbers,
+ * a <a href="#/p5.Vector">p5.Vector</a> object, or an array of numbers.
+ * Calling `set()` with no arguments sets the vector's components to 0.
+ *
  * @method set
- * @param {Number} [x] The x component of the vector
- * @param {Number} [y] The y component of the vector
- * @param {Number} [z] The z component of the vector
+ * @param {Number} [x] x component of the vector.
+ * @param {Number} [y] y component of the vector.
+ * @param {Number} [z] z component of the vector.
  * @chainable
  * @example
- * <div class="norender">
- * <code>
- * function setup() {
- *   let v = createVector(1, 2, 3);
- *   v.set(4, 5, 6); // Sets vector to [4, 5, 6]
- *
- *   let v1 = createVector(0, 0, 0);
- *   let arr = [1, 2, 3];
- *   v1.set(arr); // Sets vector to [1, 2, 3]
- * }
- * </code>
- * </div>
- *
  * <div>
  * <code>
- * let v0, v1;
- * function setup() {
- *   createCanvas(100, 100);
+ * strokeWeight(5);
  *
- *   v0 = createVector(0, 0);
- *   v1 = createVector(50, 50);
- * }
+ * // Top left.
+ * let pos = createVector(25, 25);
+ * point(pos);
  *
- * function draw() {
- *   background(240);
+ * // Top right.
+ * pos.set(75, 25);
+ * point(pos);
  *
- *   drawArrow(v0, v1, 'black');
- *   v1.set(v1.x + random(-1, 1), v1.y + random(-1, 1));
+ * // Bottom right.
+ * let p2 = createVector(75, 75);
+ * pos.set(p2);
+ * point(pos);
  *
- *   noStroke();
- *   text('x: ' + round(v1.x) + ' y: ' + round(v1.y), 20, 90);
- * }
+ * // Bottom left.
+ * let arr = [25, 75];
+ * pos.set(arr);
+ * point(pos);
  *
- * // draw an arrow for a vector at a given base position
- * function drawArrow(base, vec, myColor) {
- *   push();
- *   stroke(myColor);
- *   strokeWeight(3);
- *   fill(myColor);
- *   translate(base.x, base.y);
- *   line(0, 0, vec.x, vec.y);
- *   rotate(vec.heading());
- *   let arrowSize = 7;
- *   translate(vec.mag() - arrowSize, 0);
- *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
- *   pop();
- * }
+ * describe('Four black dots arranged in a square on a gray background.');
  * </code>
  * </div>
  */
   /**
  * @method set
- * @param {p5.Vector|Number[]} value The vector to set
+ * @param {p5.Vector|Number[]} value vector to set.
  * @chainable
  */
   set (x, y, z) {
@@ -240,17 +209,20 @@ p5.Vector = class {
   }
 
   /**
- * Gets a copy of the vector, returns a <a href="#/p5.Vector">p5.Vector</a> object.
+ * Returns a copy of the <a href="#/p5.Vector">p5.Vector</a> object.
  *
  * @method copy
- * @return {p5.Vector} A copy of the <a href="#/p5.Vector">p5.Vector</a> object
+ * @return {p5.Vector} copy of the <a href="#/p5.Vector">p5.Vector</a> object.
  * @example
- * <div class="norender">
+ * <div>
  * <code>
- * let v1 = createVector(1, 2, 3);
- * let v2 = v1.copy();
- * print(v1.x === v2.x && v1.y === v2.y && v1.z === v2.z);
- * // Prints "true"
+ * let pos = createVector(50, 50);
+ * let pc = pos.copy();
+ *
+ * strokeWeight(5);
+ * point(pc);
+ *
+ * describe('A black point drawn in the middle of a gray square.');
  * </code>
  * </div>
  */
@@ -269,66 +241,84 @@ p5.Vector = class {
   }
 
   /**
- * Adds `x`, `y`, and `z` components to a vector, adds one vector to another, or
- * adds two independent vectors together. The version of the method that adds
- * two vectors together is a static method and returns a <a href="#/p5.Vector">p5.Vector</a>, the others
- * act directly on the vector. Additionally, you may provide arguments to this method as an array.
- * See the examples for more context.
+ * Adds to a vector's `x`, `y`, and `z` components using separate numbers,
+ * another <a href="#/p5.Vector">p5.Vector</a> object, or an array of numbers.
+ * Calling `add()` with no arguments has no effect.
+ *
+ * The static version of `add()`, as in `p5.Vector.add(v2, v1)`, returns a new
+ * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
+ * originals.
  *
  * @method add
- * @param  {Number} x   The x component of the vector to be added
- * @param  {Number} [y] The y component of the vector to be added
- * @param  {Number} [z] The z component of the vector to be added
+ * @param  {Number} x   x component of the vector to be added.
+ * @param  {Number} [y] y component of the vector to be added.
+ * @param  {Number} [z] z component of the vector to be added.
  * @chainable
  * @example
- * <div class="norender">
+ * <div>
  * <code>
- * let v = createVector(1, 2, 3);
- * v.add(4, 5, 6);
- * // v's components are set to [5, 7, 9]
- * </code>
- * </div>
+ * strokeWeight(5);
  *
- * <div class="norender">
- * <code>
- * let v = createVector(1, 2, 3);
- * // Provide arguments as an array
- * let arr = [4, 5, 6];
- * v.add(arr);
- * // v's components are set to [5, 7, 9]
- * </code>
- * </div>
+ * // Top left.
+ * let pos = createVector(25, 25);
+ * point(pos);
  *
- * <div class="norender">
- * <code>
- * // Static method
- * let v1 = createVector(1, 2, 3);
- * let v2 = createVector(2, 3, 4);
+ * // Top right.
+ * pos.add(50, 0);
+ * point(pos);
  *
- * let v3 = p5.Vector.add(v1, v2);
- * // v3 has components [3, 5, 7]
- * print(v3);
+ * // Bottom right.
+ * let p2 = createVector(0, 50);
+ * pos.add(p2);
+ * point(pos);
+ *
+ * // Bottom left.
+ * let arr = [-50, 0];
+ * pos.add(arr);
+ * point(pos);
+ *
+ * describe('Four black dots arranged in a square on a gray background.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // red vector + blue vector = purple vector
- * function draw() {
- *   background(240);
+ * // Top left.
+ * let p1 = createVector(25, 25);
  *
- *   let v0 = createVector(0, 0);
- *   let v1 = createVector(mouseX, mouseY);
- *   drawArrow(v0, v1, 'red');
+ * // Center.
+ * let p2 = createVector(50, 50);
+ *
+ * // Bottom right.
+ * let p3 = p5.Vector.add(p1, p2);
+ *
+ * strokeWeight(5);
+ * point(p1);
+ * point(p2);
+ * point(p3);
+ *
+ * describe('Three black dots in a diagonal line from top left to bottom right.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(200);
+ *
+ *   let origin = createVector(0, 0);
+ *   let v1 = createVector(50, 50);
+ *   drawArrow(origin, v1, 'red');
  *
  *   let v2 = createVector(-30, 20);
  *   drawArrow(v1, v2, 'blue');
  *
  *   let v3 = p5.Vector.add(v1, v2);
- *   drawArrow(v0, v3, 'purple');
+ *   drawArrow(origin, v3, 'purple');
+ *
+ *   describe('Three arrows drawn on a gray square. A red arrow extends from the top left corner to the center. A blue arrow extends from the tip of the red arrow. A purple arrow extends from the origin to the tip of the blue arrow.');
  * }
  *
- * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
  *   push();
  *   stroke(myColor);
@@ -370,37 +360,65 @@ p5.Vector = class {
   }
 
   /**
- * Gives the remainder of a vector when it is divided by another vector.
- * See examples for more context.
+ * Performs modulo (remainder) division with a vector's `x`, `y`, and `z`
+ * components using separate numbers, another
+ * <a href="#/p5.Vector">p5.Vector</a> object, or an array of numbers.
+ *
+ * The static version of `rem()` as in `p5.Vector.rem(v2, v1)`, returns a new
+ * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
+ * originals.
  *
  * @method rem
- * @param {Number} x The x component of divisor vector
- * @param {Number} y The y component of divisor vector
- * @param {Number} z The z component of divisor vector
+ * @param {Number} x x component of divisor vector.
+ * @param {Number} y y component of divisor vector.
+ * @param {Number} z z component of divisor vector.
  * @chainable
  * @example
  * <div class='norender'>
  * <code>
  * let v = createVector(3, 4, 5);
  * v.rem(2, 3, 4);
- * // v's components are set to [1, 1, 1]
+ * // Prints 'p5.Vector Object : [1, 1, 1]'.
+ * print(v.toString());
  * </code>
  * </div>
- * <div class="norender">
+ *
+ * <div class='norender'>
  * <code>
- * // Static method
  * let v1 = createVector(3, 4, 5);
  * let v2 = createVector(2, 3, 4);
+ * v1.rem(v2);
  *
+ * // Prints 'p5.Vector Object : [1, 1, 1]'.
+ * print(v1.toString());
+ * </code>
+ * </div>
+ *
+ * <div class='norender'>
+ * <code>
+ * let v = createVector(3, 4, 5);
+ * let arr = [2, 3, 4];
+ * v.rem(arr);
+ *
+ * // Prints 'p5.Vector Object : [1, 1, 1]'.
+ * print(v.toString());
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let v1 = createVector(3, 4, 5);
+ * let v2 = createVector(2, 3, 4);
  * let v3 = p5.Vector.rem(v1, v2);
- * // v3 has components [1, 1, 1]
- * print(v3);
+ *
+ * // Prints 'p5.Vector Object : [1, 1, 1]'.
+ * print(v3.toString());
  * </code>
  * </div>
  */
   /**
  * @method rem
- * @param {p5.Vector | Number[]}  value  The divisor vector
+ * @param {p5.Vector | Number[]}  value  divisor vector.
  * @chainable
  */
   rem (x, y, z) {
@@ -459,66 +477,84 @@ p5.Vector = class {
   }
 
   /**
- * Subtracts `x`, `y`, and `z` components from a vector, subtracts one vector from
- * another, or subtracts two independent vectors. The version of the method
- * that subtracts two vectors is a static method and returns a <a href="#/p5.Vector">p5.Vector</a>, the
- * others act directly on the vector. Additionally, you may provide arguments to this method as an array.
- * See the examples for more context.
+ * Subtracts from a vector's `x`, `y`, and `z` components using separate
+ * numbers, another <a href="#/p5.Vector">p5.Vector</a> object, or an array of
+ * numbers. Calling `sub()` with no arguments has no effect.
+ *
+ * The static version of `sub()`, as in `p5.Vector.sub(v2, v1)`, returns a new
+ * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
+ * originals.
  *
  * @method sub
- * @param  {Number} x   The x component of the vector to subtract
- * @param  {Number} [y] The y component of the vector to subtract
- * @param  {Number} [z] The z component of the vector to subtract
+ * @param  {Number} x   x component of the vector to subtract.
+ * @param  {Number} [y] y component of the vector to subtract.
+ * @param  {Number} [z] z component of the vector to subtract.
  * @chainable
  * @example
- * <div class="norender">
+ * <div>
  * <code>
- * let v = createVector(4, 5, 6);
- * v.sub(1, 1, 1);
- * // v's components are set to [3, 4, 5]
- * </code>
- * </div>
+ * strokeWeight(5);
  *
- * <div class="norender">
- * <code>
- * let v = createVector(4, 5, 6);
- * // Provide arguments as an array
- * let arr = [1, 1, 1];
- * v.sub(arr);
- * // v's components are set to [3, 4, 5]
- * </code>
- * </div>
+ * // Bottom right.
+ * let pos = createVector(75, 75);
+ * point(pos);
  *
- * <div class="norender">
- * <code>
- * // Static method
- * let v1 = createVector(2, 3, 4);
- * let v2 = createVector(1, 2, 3);
+ * // Top right.
+ * pos.sub(0, 50);
+ * point(pos);
  *
- * let v3 = p5.Vector.sub(v1, v2);
- * // v3 has components [1, 1, 1]
- * print(v3);
+ * // Top left.
+ * let p2 = createVector(50, 0);
+ * pos.sub(p2);
+ * point(pos);
+ *
+ * // Bottom left.
+ * let arr = [0, -50];
+ * pos.sub(arr);
+ * point(pos);
+ *
+ * describe('Four black dots arranged in a square on a gray background.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // red vector - blue vector = purple vector
+ * // Bottom right.
+ * let p1 = createVector(75, 75);
+ *
+ * // Center.
+ * let p2 = createVector(50, 50);
+ *
+ * // Top left.
+ * let p3 = p5.Vector.sub(p1, p2);
+ *
+ * strokeWeight(5);
+ * point(p1);
+ * point(p2);
+ * point(p3);
+ *
+ * describe('Three black dots in a diagonal line from top left to bottom right.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
  * function draw() {
- *   background(240);
+ *   background(200);
  *
- *   let v0 = createVector(0, 0);
- *   let v1 = createVector(70, 50);
- *   drawArrow(v0, v1, 'red');
+ *   let origin = createVector(0, 0);
+ *   let v1 = createVector(50, 50);
+ *   drawArrow(origin, v1, 'red');
  *
- *   let v2 = createVector(mouseX, mouseY);
- *   drawArrow(v0, v2, 'blue');
+ *   let v2 = createVector(20, 70);
+ *   drawArrow(origin, v2, 'blue');
  *
- *   let v3 = p5.Vector.sub(v1, v2);
- *   drawArrow(v2, v3, 'purple');
+ *   let v3 = p5.Vector.sub(v2, v1);
+ *   drawArrow(v1, v3, 'purple');
+ *
+ *   describe('Three arrows drawn on a gray square. A red and a blue arrow extend from the top left. A purple arrow extends from the tip of the red arrow to the tip of the blue arrow.');
  * }
  *
- * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
  *   push();
  *   stroke(myColor);
@@ -560,81 +596,107 @@ p5.Vector = class {
   }
 
   /**
- * Multiplies the vector by a scalar, multiplies the `x`, `y`, and `z` components from a vector, or multiplies
- * the `x`, `y`, and `z` components of two independent vectors. When multiplying a vector by a scalar, the `x`, `y`,
- * and `z` components of the vector are all multiplied by the scalar. When multiplying a vector by a vector,
- * the `x`, `y`, `z` components of both vectors are multiplied by each other
- * (for example, with two vectors `a` and `b`: `a.x * b.x`, `a.y * b.y`, `a.z * b.z`). The static version of this method
- * creates a new <a href="#/p5.Vector">p5.Vector</a> while the non-static version acts on the vector
- * directly. Additionally, you may provide arguments to this function as an array.
- * See the examples for more context.
+ * Multiplies a vector's `x`, `y`, and `z` components by the same number,
+ * separate numbers, the components of another
+ * <a href="#/p5.Vector">p5.Vector</a> object, or an array of numbers. Calling
+ * `mult()` with no arguments has no effect.
+ *
+ * The static version of `mult()`, as in `p5.Vector.mult(v, 2)`, returns a new
+ * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
+ * originals.
  *
  * @method mult
  * @param  {Number} n The number to multiply with the vector
  * @chainable
  * @example
- * <div class="norender">
+ * <div>
  * <code>
- * let v = createVector(1, 2, 3);
- * v.mult(2);
- * // v's components are set to [2, 4, 6]
+ * strokeWeight(5);
+ *
+ * let p = createVector(25, 25);
+ * point(p);
+ *
+ * p.mult(2);
+ * point(p);
+ *
+ * describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the center.');
  * </code>
  * </div>
  *
- * <div class="norender">
+ * <div>
  * <code>
- * let v0 = createVector(1, 2, 3);
- * let v1 = createVector(2, 3, 4);
- * v0.mult(v1); // v0's components are set to [2, 6, 12]
+ * strokeWeight(5);
+ *
+ * let p = createVector(25, 25);
+ * point(p);
+ *
+ * p.mult(2, 3);
+ * point(p);
+ *
+ * describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
  * </code>
  * </div>
  *
- * <div class="norender">
+ * <div>
  * <code>
- * let v0 = createVector(1, 2, 3);
- * // Provide arguments as an array
- * let arr = [2, 3, 4];
- * v0.mult(arr); // v0's components are set to [2, 6, 12]
+ * strokeWeight(5);
+ *
+ * let p = createVector(25, 25);
+ * point(p);
+ *
+ * let arr = [2, 3];
+ * p.mult(arr);
+ * point(p);
+ *
+ * describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
  * </code>
  * </div>
  *
- * <div class="norender">
+ * <div>
  * <code>
- * let v0 = createVector(1, 2, 3);
- * let v1 = createVector(2, 3, 4);
- * const result = p5.Vector.mult(v0, v1);
- * print(result); // result's components are set to [2, 6, 12]
+ * strokeWeight(5);
+ *
+ * let p = createVector(25, 25);
+ * point(p);
+ *
+ * let p2 = createVector(2, 3);
+ * p.mult(p2);
+ * point(p);
+ *
+ * describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
  * </code>
  * </div>
  *
- * <div class="norender">
+ * <div>
  * <code>
- * // Static method
- * let v1 = createVector(1, 2, 3);
- * let v2 = p5.Vector.mult(v1, 2);
- * // v2 has components [2, 4, 6]
- * print(v2);
+ * strokeWeight(5);
+ *
+ * let p = createVector(25, 25);
+ * point(p);
+ *
+ * let p2 = createVector(2, 3);
+ * let p3 = p5.Vector.mult(p, p2);
+ * point(p3);
+ *
+ * describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
  * function draw() {
- *   background(240);
+ *   background(200);
  *
- *   let v0 = createVector(50, 50);
- *   let v1 = createVector(25, -25);
- *   drawArrow(v0, v1, 'red');
+ *   let origin = createVector(0, 0);
+ *   let v1 = createVector(25, 25);
+ *   drawArrow(origin, v1, 'red');
  *
- *   let num = map(mouseX, 0, width, -2, 2, true);
- *   let v2 = p5.Vector.mult(v1, num);
- *   drawArrow(v0, v2, 'blue');
+ *   let v2 = p5.Vector.mult(v1, 2);
+ *   drawArrow(origin, v2, 'blue');
  *
- *   noStroke();
- *   text('multiplied by ' + num.toFixed(2), 5, 90);
+ *   describe('Two arrows extending from the top left corner. The blue arrow is twice the length of the red arrow.');
  * }
  *
- * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
  *   push();
  *   stroke(myColor);
@@ -654,21 +716,21 @@ p5.Vector = class {
 
   /**
  * @method mult
- * @param  {Number} x The number to multiply with the x component of the vector
- * @param  {Number} y The number to multiply with the y component of the vector
- * @param  {Number} [z] The number to multiply with the z component of the vector
+ * @param  {Number} x number to multiply with the x component of the vector.
+ * @param  {Number} y number to multiply with the y component of the vector.
+ * @param  {Number} [z] number to multiply with the z component of the vector.
  * @chainable
  */
 
   /**
  * @method mult
- * @param  {Number[]} arr The array to multiply with the components of the vector
+ * @param  {Number[]} arr array to multiply with the components of the vector.
  * @chainable
  */
 
   /**
  * @method mult
- * @param  {p5.Vector} v The vector to multiply with the components of the original vector
+ * @param  {p5.Vector} v vector to multiply with the components of the original vector.
  * @chainable
  */
 
@@ -752,84 +814,107 @@ p5.Vector = class {
   }
 
   /**
- * Divides the vector by a scalar, divides a vector by the `x`, `y`, and `z` arguments, or divides the `x`, `y`, and
- * `z` components of two vectors against each other. When dividing a vector by a scalar, the `x`, `y`,
- * and `z` components of the vector are all divided by the scalar. When dividing a vector by a vector,
- * the `x`, `y`, `z` components of the source vector are treated as the dividend, and the `x`, `y`, `z` components
- * of the argument is treated as the divisor. (For example, with two vectors
- * `a` and `b`: `a.x / b.x`, `a.y / b.y`, `a.z / b.z`.) If any component of the second vector is 0, a division by 0
- * error will be logged, unless both two vectors have 0 in their `z` components, in which case only the `x` and `y`
- * components will be divided.
- * The static version of this method creates a
- * new <a href="#/p5.Vector">p5.Vector</a> while the non-static version acts on the vector directly.
- * Additionally, you may provide arguments to this method as an array.
- * See the examples for more context.
+ * Divides a vector's `x`, `y`, and `z` components by the same number,
+ * separate numbers, the components of another
+ * <a href="#/p5.Vector">p5.Vector</a> object, or an array of numbers. Calling
+ * `div()` with no arguments has no effect.
+ *
+ * The static version of `div()`, as in `p5.Vector.div(v, 2)`, returns a new
+ * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
+ * originals.
  *
  * @method div
  * @param  {number}    n The number to divide the vector by
  * @chainable
  * @example
- * <div class="norender">
+ * <div>
  * <code>
- * let v = createVector(6, 4, 2);
- * v.div(2); //v's components are set to [3, 2, 1]
+ * strokeWeight(5);
+ *
+ * let p = createVector(50, 50);
+ * point(p);
+ *
+ * p.div(2);
+ * point(p);
+ *
+ * describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the center.');
  * </code>
  * </div>
  *
- * <div class="norender">
+ * <div>
  * <code>
- * let v0 = createVector(9, 4, 2);
- * let v1 = createVector(3, 2, 4);
- * v0.div(v1); // v0's components are set to [3, 2, 0.5]
+ * strokeWeight(5);
+ *
+ * let p = createVector(50, 75);
+ * point(p);
+ *
+ * p.div(2, 3);
+ * point(p);
+ *
+ * describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
  * </code>
  * </div>
  *
- * <div class="norender">
+ * <div>
  * <code>
- * let v0 = createVector(9, 4, 2);
- * // Provide arguments as an array
- * let arr = [3, 2, 4];
- * v0.div(arr); // v0's components are set to [3, 2, 0.5]
+ * strokeWeight(5);
+ *
+ * let p = createVector(50, 75);
+ * point(p);
+ *
+ * let arr = [2, 3];
+ * p.div(arr);
+ * point(p);
+ *
+ * describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
  * </code>
  * </div>
  *
- * <div class="norender">
+ * <div>
  * <code>
- * let v0 = createVector(9, 4, 2);
- * let v1 = createVector(3, 2, 4);
- * let result = p5.Vector.div(v0, v1);
- * print(result); // result's components are set to [3, 2, 0.5]
+ * strokeWeight(5);
+ *
+ * let p = createVector(50, 75);
+ * point(p);
+ *
+ * let p2 = createVector(2, 3);
+ * p.div(p2);
+ * point(p);
+ *
+ * describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
  * </code>
  * </div>
  *
- * <div class="norender">
+ * <div>
  * <code>
- * // Static method
- * let v1 = createVector(6, 4, 2);
- * let v2 = p5.Vector.div(v1, 2);
- * // v2 has components [3, 2, 1]
- * print(v2);
+ * strokeWeight(5);
+ *
+ * let p = createVector(50, 75);
+ * point(p);
+ *
+ * let p2 = createVector(2, 3);
+ * let p3 = p5.Vector.div(p, p2);
+ * point(p3);
+ *
+ * describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
  * function draw() {
- *   background(240);
+ *   background(200);
  *
- *   let v0 = createVector(0, 100);
- *   let v1 = createVector(50, -50);
- *   drawArrow(v0, v1, 'red');
+ *   let origin = createVector(0, 0);
+ *   let v1 = createVector(50, 50);
+ *   drawArrow(origin, v1, 'red');
  *
- *   let num = map(mouseX, 0, width, 10, 0.5, true);
- *   let v2 = p5.Vector.div(v1, num);
- *   drawArrow(v0, v2, 'blue');
+ *   let v2 = p5.Vector.div(v1, 2);
+ *   drawArrow(origin, v2, 'blue');
  *
- *   noStroke();
- *   text('divided by ' + num.toFixed(2), 10, 90);
+ *   describe('Two arrows extending from the top left corner. The blue arrow is half the length of the red arrow.');
  * }
  *
- * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
  *   push();
  *   stroke(myColor);
@@ -849,21 +934,21 @@ p5.Vector = class {
 
   /**
  * @method div
- * @param  {Number} x The number to divide with the x component of the vector
- * @param  {Number} y The number to divide with the y component of the vector
- * @param  {Number} [z] The number to divide with the z component of the vector
+ * @param  {Number} x number to divide with the x component of the vector.
+ * @param  {Number} y number to divide with the y component of the vector.
+ * @param  {Number} [z] number to divide with the z component of the vector.
  * @chainable
  */
 
   /**
  * @method div
- * @param  {Number[]} arr The array to divide the components of the vector by
+ * @param  {Number[]} arr array to divide the components of the vector by.
  * @chainable
  */
 
   /**
  * @method div
- * @param  {p5.Vector} v The vector to divide the components of the original vector by
+ * @param  {p5.Vector} v vector to divide the components of the original vector by.
  * @chainable
  */
   div(x, y, z) {
@@ -963,46 +1048,20 @@ p5.Vector = class {
     return this;
   }
   /**
- * Calculates the magnitude (length) of the vector and returns the result as
- * a float. (This is simply the equation `sqrt(x*x + y*y + z*z)`.)
+ * Returns the magnitude (length) of the vector.
  *
  * @method mag
- * @return {Number} The magnitude of the vector
+ * @return {Number} magnitude of the vector.
  * @example
  * <div>
  * <code>
- * function draw() {
- *   background(240);
+ * let p = createVector(30, 40);
+ * line(0, 0, p.x, p.y);
  *
- *   let v0 = createVector(0, 0);
- *   let v1 = createVector(mouseX, mouseY);
- *   drawArrow(v0, v1, 'black');
+ * let m = p.mag();
+ * text(m, p.x, p.y);
  *
- *   noStroke();
- *   text('vector length: ' + v1.mag().toFixed(2), 10, 70, 90, 30);
- * }
- *
- * // draw an arrow for a vector at a given base position
- * function drawArrow(base, vec, myColor) {
- *   push();
- *   stroke(myColor);
- *   strokeWeight(3);
- *   fill(myColor);
- *   translate(base.x, base.y);
- *   line(0, 0, vec.x, vec.y);
- *   rotate(vec.heading());
- *   let arrowSize = 7;
- *   translate(vec.mag() - arrowSize, 0);
- *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
- *   pop();
- * }
- * </code>
- * </div>
- * <div class="norender">
- * <code>
- * let v = createVector(20.0, 30.0, 40.0);
- * let m = v.mag();
- * print(m); // Prints "53.85164807134504"
+ * describe('A diagonal black line extends from the top left corner of a gray square. The number 50 is written at the end of the line.');
  * </code>
  * </div>
  */
@@ -1011,49 +1070,20 @@ p5.Vector = class {
   }
 
   /**
- * Calculates the squared magnitude of the vector and returns the result
- * as a float. (This is simply the equation `x*x + y*y + z*z`.)
- * Faster if the real length is not required in the
- * case of comparing vectors, etc.
+ * Returns the magnitude (length) of the vector squared.
  *
  * @method magSq
- * @return {number} The squared magnitude of the vector
+ * @return {number} squared magnitude of the vector.
  * @example
- * <div class="norender">
- * <code>
- * // Static method
- * let v1 = createVector(6, 4, 2);
- * print(v1.magSq()); // Prints "56"
- * </code>
- * </div>
- *
  * <div>
  * <code>
- * function draw() {
- *   background(240);
+ * let p = createVector(30, 40);
+ * line(0, 0, p.x, p.y);
  *
- *   let v0 = createVector(0, 0);
- *   let v1 = createVector(mouseX, mouseY);
- *   drawArrow(v0, v1, 'black');
+ * let m = p.magSq();
+ * text(m, p.x, p.y);
  *
- *   noStroke();
- *   text('vector length squared: ' + v1.magSq().toFixed(2), 10, 45, 90, 55);
- * }
- *
- * // draw an arrow for a vector at a given base position
- * function drawArrow(base, vec, myColor) {
- *   push();
- *   stroke(myColor);
- *   strokeWeight(3);
- *   fill(myColor);
- *   translate(base.x, base.y);
- *   line(0, 0, vec.x, vec.y);
- *   rotate(vec.heading());
- *   let arrowSize = 7;
- *   translate(vec.mag() - arrowSize, 0);
- *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
- *   pop();
- * }
+ * describe('A diagonal black line extends from the top left corner of a gray square. The number 2500 is written at the end of the line.');
  * </code>
  * </div>
  */
@@ -1065,38 +1095,85 @@ p5.Vector = class {
   }
 
   /**
- * Calculates the dot product of two vectors. The version of the method
- * that computes the dot product of two independent vectors is a static
- * method. See the examples for more context.
+ * Returns the dot product of two vectors. The dot product is a number that
+ * describes the overlap between two vectors. Visually, the dot product can be
+ * thought of as the "shadow" one vector casts on another. The dot product's
+ * magnitude is largest when two vectors point in the same or opposite
+ * directions. Its magnitude is 0 when two vectors form a right angle.
+ *
+ * The version of `dot()` with one parameter interprets it as another
+ * <a href="#/p5.Vector">p5.Vector</a> object.
+ *
+ * The version of `dot()` with multiple parameters interprets them as the
+ * `x`, `y`, and `z` components of another vector.
+ *
+ * The static version of `dot()`, as in `p5.Vector.dot(v1, v2)`, is the same
+ * as calling `v1.dot(v2)`.
  *
  * @method dot
- * @param  {Number} x   The x component of the vector
- * @param  {Number} [y] The y component of the vector
- * @param  {Number} [z] The z component of the vector
- * @return {Number}       The dot product
+ * @param  {Number} x   x component of the vector.
+ * @param  {Number} [y] y component of the vector.
+ * @param  {Number} [z] z component of the vector.
+ * @return {Number}     dot product.
  *
  * @example
  * <div class="norender">
  * <code>
- * let v1 = createVector(1, 2, 3);
- * let v2 = createVector(2, 3, 4);
- *
- * print(v1.dot(v2)); // Prints "20"
+ * let v1 = createVector(3, 4);
+ * let v2 = createVector(3, 0);
+ * let dp = v1.dot(v2);
+ * // Prints "9" to the console.
+ * print(dp);
  * </code>
  * </div>
  *
  * <div class="norender">
  * <code>
- * //Static method
- * let v1 = createVector(1, 2, 3);
- * let v2 = createVector(3, 2, 1);
- * print(p5.Vector.dot(v1, v2)); // Prints "10"
+ * let v1 = createVector(1, 0);
+ * let v2 = createVector(0, 1);
+ * let dp = p5.Vector.dot(v1, v2);
+ * // Prints "0" to the console.
+ * print(dp);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(200);
+ *
+ *   let v0 = createVector(width / 2, height / 2);
+ *   let v1 = createVector(30, 0);
+ *   drawArrow(v0, v1, 'black');
+ *
+ *   let v2 = createVector(mouseX - width / 2, mouseY - height / 2);
+ *   drawArrow(v0, v2, 'red');
+ *
+ *   let dp = v2.dot(v1);
+ *   text(`v2 • v1 = ${dp}`, 15, 20);
+ *
+ *   describe('Two arrows drawn on a gray square. A black arrow points to the right and a red arrow follows the mouse. The text "v1 • v2 = something" changes as the mouse moves.');
+ * }
+ *
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   let arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
+ * }
  * </code>
  * </div>
  */
   /**
  * @method dot
- * @param  {p5.Vector} value value component of the vector or a <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector} v <a href="#/p5.Vector">p5.Vector</a> to be dotted.
  * @return {Number}
  */
   dot(x, y, z) {
@@ -1107,33 +1184,35 @@ p5.Vector = class {
   }
 
   /**
- * Calculates and returns a vector composed of the cross product between
- * two vectors. Both the static and non-static methods return a new <a href="#/p5.Vector">p5.Vector</a>.
- * See the examples for more context.
+ * Returns the cross product of two vectors. The cross product is a vector
+ * that points straight out of the plane created by two vectors. The cross
+ * product's magnitude is the area of the parallelogram formed by the original
+ * two vectors.
+ *
+ * The static version of `cross()`, as in `p5.Vector.cross(v1, v2)`, is the same
+ * as calling `v1.cross(v2)`.
  *
  * @method cross
- * @param  {p5.Vector} v <a href="#/p5.Vector">p5.Vector</a> to be crossed
- * @return {p5.Vector}   <a href="#/p5.Vector">p5.Vector</a> composed of cross product
+ * @param  {p5.Vector} v <a href="#/p5.Vector">p5.Vector</a> to be crossed.
+ * @return {p5.Vector}   cross product as a <a href="#/p5.Vector">p5.Vector</a>.
  * @example
  * <div class="norender">
  * <code>
- * let v1 = createVector(1, 2, 3);
- * let v2 = createVector(1, 2, 3);
- *
- * let v = v1.cross(v2); // v's components are [0, 0, 0]
- * print(v);
+ * let v1 = createVector(1, 0);
+ * let v2 = createVector(3, 4);
+ * let cp = v1.cross(v2);
+ * // Prints "p5.Vector Object : [0, 0, 4]" to the console.
+ * print(cp.toString());
  * </code>
  * </div>
  *
  * <div class="norender">
  * <code>
- * // Static method
- * let v1 = createVector(1, 0, 0);
- * let v2 = createVector(0, 1, 0);
- *
- * let crossProduct = p5.Vector.cross(v1, v2);
- * // crossProduct has components [0, 0, 1]
- * print(crossProduct);
+ * let v1 = createVector(1, 0);
+ * let v2 = createVector(3, 4);
+ * let cp = p5.Vector.cross(v1, v2);
+ * // Prints "p5.Vector Object : [0, 0, 4]" to the console.
+ * print(cp.toString());
  * </code>
  * </div>
  */
@@ -1149,54 +1228,60 @@ p5.Vector = class {
   }
 
   /**
- * Calculates the Euclidean distance between two points (considering a
- * point as a vector object).
- * If you are looking to calculate distance between 2 points see <a href="#/p5/dist">dist()</a>
+ * Returns the distance between two points represented by vectors. A point's
+ * coordinates can be thought of as a vector's components.
+ *
+ * The static version of `dist()`, as in `p5.Vector.dist(v1, v2)`, is the same
+ * as calling `v1.dist(v2)`.
+ *
+ * Use <a href="#/p5/dist">dist()</a> to calculate the distance between points
+ * using coordinates as in `dist(x1, y1, x2, y2)`.
  *
  * @method dist
- * @param  {p5.Vector} v The x, y, and z coordinates of a <a href="#/p5.Vector">p5.Vector</a>
- * @return {Number}      The distance
+ * @param  {p5.Vector} v x, y, and z coordinates of a <a href="#/p5.Vector">p5.Vector</a>.
+ * @return {Number}      distance.
  * @example
  * <div class="norender">
  * <code>
- * let v1 = createVector(1, 0, 0);
- * let v2 = createVector(0, 1, 0);
- *
- * let distance = v1.dist(v2); // distance is 1.4142...
- * print(distance);
+ * let v1 = createVector(1, 0);
+ * let v2 = createVector(0, 1);
+ * let d = v1.dist(v2);
+ * // Prints "1.414..." to the console.
+ * print(d);
  * </code>
  * </div>
  *
  * <div class="norender">
  * <code>
- * // Static method
- * let v1 = createVector(1, 0, 0);
- * let v2 = createVector(0, 1, 0);
- *
- * let distance = p5.Vector.dist(v1, v2);
- * // distance is 1.4142...
- * print(distance);
+ * let v1 = createVector(1, 0);
+ * let v2 = createVector(0, 1);
+ * let d = p5.Vector.dist(v1, v2);
+ * // Prints "1.414..." to the console.
+ * print(d);
  * </code>
  * </div>
  *
  * <div>
  * <code>
  * function draw() {
- *   background(240);
+ *   background(200);
  *
- *   let v0 = createVector(0, 0);
+ *   let origin = createVector(0, 0);
+ *   let v1 = createVector(50, 50);
+ *   drawArrow(origin, v1, 'red');
  *
- *   let v1 = createVector(70, 50);
- *   drawArrow(v0, v1, 'red');
+ *   let v2 = createVector(20, 70);
+ *   drawArrow(origin, v2, 'blue');
  *
- *   let v2 = createVector(mouseX, mouseY);
- *   drawArrow(v0, v2, 'blue');
+ *   let v3 = p5.Vector.sub(v2, v1);
+ *   drawArrow(v1, v3, 'purple');
  *
- *   noStroke();
- *   text('distance between vectors: ' + v2.dist(v1).toFixed(2), 5, 50, 95, 50);
+ *   let m = floor(v3.mag());
+ *   text(m, 50, 75);
+ *
+ *   describe('Three arrows drawn on a gray square. A red and a blue arrow extend from the top left. A purple arrow extends from the tip of the red arrow to the tip of the blue arrow. The number 36 is written in black near the purple arrow.');
  * }
  *
- * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
  *   push();
  *   stroke(myColor);
@@ -1221,31 +1306,33 @@ p5.Vector = class {
   }
 
   /**
- * Normalize the vector to length 1 (make it a unit vector).
+ * Scales the components of a <a href="#/p5.Vector">p5.Vector</a> object so
+ * that its magnitude is 1.
+ *
+ * The static version of `normalize()`,  as in `p5.Vector.normalize(v)`,
+ * returns a new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change
+ * the original.
  *
  * @method normalize
- * @return {p5.Vector} The normalized <a href="#/p5.Vector">p5.Vector</a>
+ * @return {p5.Vector} normalized <a href="#/p5.Vector">p5.Vector</a>.
  * @example
  * <div class="norender">
  * <code>
  * let v = createVector(10, 20, 2);
- * // v has components [10.0, 20.0, 2.0]
  * v.normalize();
- * // v's components are set to
- * // [0.4454354, 0.8908708, 0.089087084]
+ * // Prints "p5.Vector Object : [0.445..., 0.890..., 0.089...]" to the console.
+ * print(v.toString());
  * </code>
  * </div>
  *
  * <div class="norender">
  * <code>
- * // Static method
- * let v_initial = createVector(10, 20, 2);
- * // v_initial has components [10.0, 20.0, 2.0]
- * let v_normalized = p5.Vector.normalize(v_initial);
- * print(v_normalized);
- * // returns a new vector with components set to
- * // [0.4454354, 0.8908708, 0.089087084]
- * // v_initial remains unchanged
+ * let v0 = createVector(10, 20, 2);
+ * let v1 = p5.Vector.normalize(v0);
+ * // Prints "p5.Vector Object : [10, 20, 2]" to the console.
+ * print(v0.toString());
+ * // Prints "p5.Vector Object : [0.445..., 0.890..., 0.089...]" to the console.
+ * print(v1.toString());
  * </code>
  * </div>
  *
@@ -1257,15 +1344,17 @@ p5.Vector = class {
  *   let v0 = createVector(50, 50);
  *   let v1 = createVector(mouseX - 50, mouseY - 50);
  *
+ *   let r = 25;
  *   drawArrow(v0, v1, 'red');
  *   v1.normalize();
- *   drawArrow(v0, v1.mult(35), 'blue');
+ *   drawArrow(v0, v1.mult(r), 'blue');
  *
  *   noFill();
- *   ellipse(50, 50, 35 * 2);
+ *   circle(50, 50, r * 2);
+ *
+ *   describe("A red and blue arrow extend from the center of a circle. Both arrows follow the mouse, but the blue arrow's length is fixed to the circle's radius.");
  * }
  *
- * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
  *   push();
  *   stroke(myColor);
@@ -1291,22 +1380,34 @@ p5.Vector = class {
   }
 
   /**
- * Limit the magnitude of this vector to the value used for the `max`
- * parameter.
+ * Limits a vector's magnitude to a maximum value.
+ *
+ * The static version of `limit()`, as in `p5.Vector.limit(v, 5)`, returns a
+ * new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
+ * original.
  *
  * @method limit
- * @param  {Number}    max The maximum magnitude for the vector
+ * @param  {Number}    max maximum magnitude for the vector.
  * @chainable
  * @example
  * <div class="norender">
  * <code>
  * let v = createVector(10, 20, 2);
- * // v has components [10.0, 20.0, 2.0]
  * v.limit(5);
- * // v's components are set to
- * // [2.2271771, 4.4543543, 0.4454354]
+ * // Prints "p5.Vector Object : [2.227..., 4.454..., 0.445...]" to the console.
+ * print(v.toString());
  * </code>
  * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let v0 = createVector(10, 20, 2);
+ * let v1 = p5.Vector.limit(v0, 5);
+ * // Prints "p5.Vector Object : [2.227..., 4.454..., 0.445...]" to the console.
+ * print(v1.toString());
+ * </code>
+ * </div>
+ *
  * <div>
  * <code>
  * function draw() {
@@ -1315,14 +1416,16 @@ p5.Vector = class {
  *   let v0 = createVector(50, 50);
  *   let v1 = createVector(mouseX - 50, mouseY - 50);
  *
+ *   let r = 25;
  *   drawArrow(v0, v1, 'red');
- *   drawArrow(v0, v1.limit(35), 'blue');
+ *   drawArrow(v0, v1.limit(r), 'blue');
  *
  *   noFill();
- *   ellipse(50, 50, 35 * 2);
+ *   circle(50, 50, r * 2);
+ *
+ *   describe("A red and blue arrow extend from the center of a circle. Both arrows follow the mouse, but the blue arrow never crosses the circle's edge.");
  * }
  *
- * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
  *   push();
  *   stroke(myColor);
@@ -1349,19 +1452,36 @@ p5.Vector = class {
   }
 
   /**
- * Set the magnitude of this vector to the value used for the `len`
- * parameter.
+ * Sets a vector's magnitude to a given value.
+ *
+ * The static version of `setMag()`, as in `p5.Vector.setMag(v, 10)`, returns
+ * a new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
+ * original.
  *
  * @method setMag
- * @param  {number}    len The new length for this vector
+ * @param  {number}    len new length for this vector.
  * @chainable
  * @example
  * <div class="norender">
  * <code>
  * let v = createVector(3, 4, 0);
- * // v has components [3.0, 4.0, 0.0]
+ * // Prints "5" to the console.
+ * print(v.mag());
+ *
  * v.setMag(10);
- * // v's components are set to [6.0, 8.0, 0.0]
+ * // Prints "p5.Vector Object : [6, 8, 0]" to the console.
+ * print(v.toString());
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let v0 = createVector(3, 4, 0);
+ * let v1 = p5.Vector.setMag(v0, 10);
+ * // Prints "5" to the console.
+ * print(v0.mag());
+ * // Prints "p5.Vector Object : [6, 8, 0]" to the console.
+ * print(v1.toString());
  * </code>
  * </div>
  *
@@ -1370,20 +1490,17 @@ p5.Vector = class {
  * function draw() {
  *   background(240);
  *
- *   let v0 = createVector(0, 0);
- *   let v1 = createVector(50, 50);
+ *   let origin = createVector(0, 0);
+ *   let v = createVector(50, 50);
  *
- *   drawArrow(v0, v1, 'red');
+ *   drawArrow(origin, v, 'red');
  *
- *   let length = map(mouseX, 0, width, 0, 141, true);
- *   v1.setMag(length);
- *   drawArrow(v0, v1, 'blue');
+ *   v.setMag(30);
+ *   drawArrow(origin, v, 'blue');
  *
- *   noStroke();
- *   text('magnitude set to: ' + length.toFixed(2), 10, 70, 90, 30);
+ *   describe('Two arrows extend from the top left corner of a square toward its center. The red arrow reaches the center and the blue arrow only extends part of the way.');
  * }
  *
- * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
  *   push();
  *   stroke(myColor);
@@ -1405,55 +1522,63 @@ p5.Vector = class {
   }
 
   /**
- * Calculate the angle of rotation for this vector (only 2D vectors).
- * p5.Vectors created using <a href="#/p5/createVector">createVector()</a>
- * will take the current <a href="#/p5/angleMode">angleMode()</a> into
- * consideration, and give the angle in radians or degrees accordingly.
+ * Calculates the angle a 2D vector makes with the positive x-axis. Angles
+ * increase in the clockwise direction.
+ *
+ * If the vector was created with
+ * <a href="#/p5/createVector">createVector()</a>, `heading()` returns angles
+ * in the units of the current <a href="#/p5/angleMode">angleMode()</a>.
+ *
+ * The static version of `heading()`, as in `p5.Vector.heading(v)`, works the
+ * same way.
  *
  * @method heading
- * @return {Number} The angle of rotation
+ * @return {Number} angle of rotation.
  * @example
  * <div class = "norender">
  * <code>
- * function setup() {
- *   let v1 = createVector(30, 50);
- *   print(v1.heading()); // 1.0303768265243125
+ * let v = createVector(1, 1);
+ * // Prints "0.785..." to the console.
+ * print(v.heading());
  *
- *   v1 = createVector(40, 50);
- *   print(v1.heading()); // 0.8960553845713439
+ * angleMode(DEGREES);
+ * // Prints "45" to the console.
+ * print(v.heading());
+ * </code>
+ * </div>
  *
- *   v1 = createVector(30, 70);
- *   print(v1.heading()); // 1.1659045405098132
- * }
+ * <div class = "norender">
+ * <code>
+ * let v = createVector(1, 1);
+ * // Prints "0.785..." to the console.
+ * print(p5.Vector.heading(v));
+ *
+ * angleMode(DEGREES);
+ * // Prints "45" to the console.
+ * print(p5.Vector.heading(v));
  * </code>
  * </div>
  *
  * <div>
  * <code>
  * function draw() {
- *   background(240);
+ *   background(200);
  *
- *   let v0 = createVector(50, 50);
- *   let v1 = createVector(mouseX - 50, mouseY - 50);
+ *   let origin = createVector(0, 0);
+ *   let v = createVector(50, 50);
  *
- *   drawArrow(v0, v1, 'black');
+ *   drawArrow(origin, v, 'black');
  *
- *   let myHeading = v1.heading();
- *   noStroke();
- *   text(
- *     'vector heading: ' +
- *       myHeading.toFixed(2) +
- *       ' radians or ' +
- *       degrees(myHeading).toFixed(2) +
- *       ' degrees',
- *     10,
- *     50,
- *     90,
- *     50
- *   );
+ *   angleMode(RADIANS);
+ *   let h = round(v.heading(), 2);
+ *   text(`Radians: ${h}`, 20, 70);
+ *   angleMode(DEGREES);
+ *   h = v.heading();
+ *   text(`Degrees: ${h}`, 20, 85);
+ *
+ *   describe('A black arrow extends from the top left of a square to its center. The text "Radians: 0.79" and "Degrees: 45" is written near the tip of the arrow.');
  * }
  *
- * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
  *   push();
  *   stroke(myColor);
@@ -1477,19 +1602,72 @@ p5.Vector = class {
   }
 
   /**
- * Rotate the vector to a specific angle (only 2D vectors); magnitude remains the
- * same.
+ * Rotates a 2D vector to a specific angle without changing its magnitude.
+ * By convention, the positive x-axis has an angle of 0. Angles increase in
+ * the clockwise direction.
+ *
+ * If the vector was created with
+ * <a href="#/p5/createVector">createVector()</a>, `setHeading()` uses
+ * the units of the current <a href="#/p5/angleMode">angleMode()</a>.
  *
  * @method setHeading
- * @param  {number}    angle The angle of rotation
+ * @param  {number}    angle angle of rotation.
  * @chainable
  * @example
  * <div class="norender">
  * <code>
- * let v = createVector(10.0, 20.0);
- * // result of v.heading() is 1.1071487177940904
- * v.setHeading(Math.PI);
- * // result of v.heading() is now 3.141592653589793
+ * let v = createVector(0, 1);
+ * // Prints "1.570..." to the console.
+ * print(v.heading());
+ *
+ * v.setHeading(PI);
+ * // Prints "3.141..." to the console.
+ * print(v.heading());
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * angleMode(DEGREES);
+ * let v = createVector(0, 1);
+ * // Prints "90" to the console.
+ * print(v.heading());
+ *
+ * v.setHeading(180);
+ * // Prints "180" to the console.
+ * print(v.heading());
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(200);
+ *
+ *   let v0 = createVector(50, 50);
+ *   let v1 = createVector(30, 0);
+ *
+ *   drawArrow(v0, v1, 'red');
+ *
+ *   v1.setHeading(HALF_PI);
+ *   drawArrow(v0, v1, 'blue');
+ *
+ *   describe('Two arrows extend from the center of a gray square. The red arrow points to the right and the blue arrow points down.');
+ * }
+ *
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   let arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
+ * }
  * </code>
  * </div>
  */
@@ -1503,49 +1681,88 @@ p5.Vector = class {
   }
 
   /**
- * Rotate the vector by an angle (only 2D vectors); magnitude remains the
- * same.
+ * Rotates a 2D vector by an angle without changing its magnitude.
+ * By convention, the positive x-axis has an angle of 0. Angles increase in
+ * the clockwise direction.
+ *
+ * If the vector was created with
+ * <a href="#/p5/createVector">createVector()</a>, `rotate()` uses
+ * the units of the current <a href="#/p5/angleMode">angleMode()</a>.
+ *
+ * The static version of `rotate()`, as in `p5.Vector.rotate(v, PI)`,
+ * returns a new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change
+ * the original.
  *
  * @method rotate
- * @param  {number}    angle The angle of rotation
+ * @param  {number}    angle angle of rotation.
  * @chainable
  * @example
  * <div class="norender">
  * <code>
- * let v = createVector(10.0, 20.0);
- * // v has components [10.0, 20.0, 0.0]
+ * let v = createVector(1, 0);
+ * // Prints "p5.Vector Object : [1, 0, 0]" to the console.
+ * print(v.toString());
  * v.rotate(HALF_PI);
- * // v's components are set to [-20.0, 9.999999, 0.0]
+ * // Prints "p5.Vector Object : [0, 1, 0]" to the console.
+ * print(v.toString());
  * </code>
  * </div>
  *
  * <div class="norender">
  * <code>
- * // static function implementation
- * let v = createVector(10.0, 20.0);
- * // v has components [10.0, 20.0, 0.0]
- * let rotated_v = p5.Vector.rotate(v, HALF_PI);
- * console.log(rotated_v);
- * // rotated_v's components are set to [-20.0, 9.999999, 0.0]
- * console.log(v);
- * // v's components remains the same (i.e, [10.0, 20.0, 0.0])
+ * angleMode(DEGREES);
+ * let v = createVector(1, 0);
+ * // Prints "p5.Vector Object : [1, 0, 0]" to the console.
+ * print(v.toString());
+ * v.rotate(90);
+ * // Prints "p5.Vector Object : [0, 1, 0]" to the console.
+ * print(v.toString());
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let v0 = createVector(1, 0);
+ * let v1 = p5.Vector.rotate(v0, HALF_PI);
+ * // Prints "p5.Vector Object : [1, 0, 0]" to the console.
+ * print(v0.toString());
+ * // Prints "p5.Vector Object : [0, 1, 0]" to the console.
+ * print(v1.toString());
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * angleMode(DEGREES);
+ * let v0 = createVector(1, 0);
+ * let v1 = p5.Vector.rotate(v0, 90);
+ * // Prints "p5.Vector Object : [1, 0, 0]" to the console.
+ * print(v0.toString());
+ * // Prints "p5.Vector Object : [0, 1, 0]" to the console.
+ * print(v1.toString());
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * let angle = 0;
+ * let v0;
+ * let v1;
+ *
+ * function setup() {
+ *   v0 = createVector(50, 50);
+ *   v1 = createVector(30, 0);
+ * }
+ *
  * function draw() {
  *   background(240);
  *
- *   let v0 = createVector(50, 50);
- *   let v1 = createVector(50, 0);
+ *   v1.rotate(0.01);
  *
- *   drawArrow(v0, v1.rotate(angle), 'black');
- *   angle += 0.01;
+ *   drawArrow(v0, v1, 'black');
+ *
+ *   describe('A black arrow extends from the center of a gray square. The arrow rotates counterclockwise.');
  * }
  *
- * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
  *   push();
  *   stroke(myColor);
@@ -1572,53 +1789,86 @@ p5.Vector = class {
   }
 
   /**
- * Calculates and returns the angle between two vectors. This method will take
- * the current <a href="#/p5/angleMode">angleMode</a> into consideration, and
- * give the angle in radians or degrees accordingly.
+ * Returns the angle between two vectors. The angles returned are signed,
+ * which means that `v1.angleBetween(v2) === -v2.angleBetween(v1)`.
+ *
+ * If the vector was created with
+ * <a href="#/p5/createVector">createVector()</a>, `angleBetween()` returns
+ * angles in the units of the current
+ * <a href="#/p5/angleMode">angleMode()</a>.
  *
  * @method angleBetween
- * @param  {p5.Vector}    value The x, y, and z components of a <a href="#/p5.Vector">p5.Vector</a>
- * @return {Number}       The angle between
+ * @param  {p5.Vector}    value x, y, and z components of a <a href="#/p5.Vector">p5.Vector</a>.
+ * @return {Number}       angle between the vectors.
  * @example
  * <div class="norender">
  * <code>
- * let v1 = createVector(1, 0, 0);
- * let v2 = createVector(0, 1, 0);
+ * let v0 = createVector(1, 0);
+ * let v1 = createVector(0, 1);
+ * // Prints "1.570..." to the console.
+ * print(v0.angleBetween(v1));
+ * // Prints "-1.570..." to the console.
+ * print(v1.angleBetween(v0));
+ * </code>
+ * </div>
  *
- * let angle = v1.angleBetween(v2);
- * // angle is PI/2
- * print(angle);
+ * <div class="norender">
+ * <code>
+ * angleMode(DEGREES);
+ * let v0 = createVector(1, 0);
+ * let v1 = createVector(0, 1);
+ * // Prints "90" to the console.
+ * print(v0.angleBetween(v1));
+ * // Prints "-90" to the console.
+ * print(v1.angleBetween(v0));
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let v0 = createVector(1, 0);
+ * let v1 = createVector(0, 1);
+ * // Prints "1.570..." to the console.
+ * print(p5.Vector.angleBetween(v0, v1));
+ * // Prints "-1.570..." to the console.
+ * print(p5.Vector.angleBetween(v1, v0));
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * angleMode(DEGREES);
+ * let v0 = createVector(1, 0);
+ * let v1 = createVector(0, 1);
+ * // Prints "90" to the console.
+ * print(p5.Vector.angleBetween(v0, v1));
+ * // Prints "-90" to the console.
+ * print(p5.Vector.angleBetween(v1, v0));
  * </code>
  * </div>
  *
  * <div>
  * <code>
  * function draw() {
- *   background(240);
+ *   background(200);
+ *
  *   let v0 = createVector(50, 50);
+ *   let v1 = createVector(30, 0);
+ *   let v2 = createVector(0, 30);
  *
- *   let v1 = createVector(50, 0);
  *   drawArrow(v0, v1, 'red');
- *
- *   let v2 = createVector(mouseX - 50, mouseY - 50);
  *   drawArrow(v0, v2, 'blue');
  *
- *   let angleBetween = v1.angleBetween(v2);
- *   noStroke();
- *   text(
- *     'angle between: ' +
- *       angleBetween.toFixed(2) +
- *       ' radians or ' +
- *       degrees(angleBetween).toFixed(2) +
- *       ' degrees',
- *     10,
- *     50,
- *     90,
- *     50
- *   );
+ *   angleMode(RADIANS);
+ *   let angle = round(v1.angleBetween(v2), 2);
+ *   text(`Radians: ${angle}`, 20, 20);
+ *   angleMode(DEGREES);
+ *   angle = round(v1.angleBetween(v2), 2);
+ *   text(`Degrees: ${angle}`, 20, 35);
+ *
+ *   describe('Two arrows extend from the center of a gray square. A red arrow points to the right and a blue arrow points down. The text "Radians: 1.57" and "Degrees: 90" is written above the arrows.');
  * }
  *
- * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
  *   push();
  *   stroke(myColor);
@@ -1635,7 +1885,6 @@ p5.Vector = class {
  * </code>
  * </div>
  */
-
   angleBetween(v) {
     const magSqMult = this.magSq() * v.magSq();
     // Returns NaN if either vector is the zero vector.
@@ -1654,62 +1903,71 @@ p5.Vector = class {
   }
 
   /**
- * Linear interpolate the vector to another vector.
+ * Calculates new `x`, `y`, and `z` components that are proportionally the
+ * same distance between two vectors. The `amt` parameter is the amount to
+ * interpolate between the old vector and the new vector. 0.0 keeps all
+ * components equal to the old vector's, 0.5 is halfway between, and 1.0 sets
+ * all components equal to the new vector's.
+ *
+ * The static version of `lerp()`, as in `p5.Vector.lerp(v0, v1, 0.5)`,
+ * returns a new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change
+ * the original.
  *
  * @method lerp
- * @param  {Number}    x   The x component
- * @param  {Number}    y   The y component
- * @param  {Number}    z   The z component
- * @param  {Number}    amt The amount of interpolation; some value between 0.0
- *                         (old vector) and 1.0 (new vector). 0.9 is very near
- *                         the new vector. 0.5 is halfway in between.
+ * @param  {Number}    x   x component.
+ * @param  {Number}    y   y component.
+ * @param  {Number}    z   z component.
+ * @param  {Number}    amt amount of interpolation between 0.0 (old vector)
+ *                         and 1.0 (new vector). 0.5 is halfway between.
  * @chainable
  *
  * @example
  * <div class="norender">
  * <code>
- * let v = createVector(1, 1, 0);
- *
- * v.lerp(3, 3, 0, 0.5); // v now has components [2,2,0]
+ * let v0 = createVector(1, 1, 1);
+ * let v1 = createVector(3, 3, 3);
+ * v0.lerp(v1, 0.5);
+ * // Prints "p5.Vector Object : [2, 2, 2]" to the console.
+ * print(v0.toString());
  * </code>
  * </div>
  *
  * <div class="norender">
  * <code>
- * let v1 = createVector(0, 0, 0);
- * let v2 = createVector(100, 100, 0);
+ * let v = createVector(1, 1, 1);
+ * v.lerp(3, 3, 3, 0.5);
+ * // Prints "p5.Vector Object : [2, 2, 2]" to the console.
+ * print(v.toString());
+ * </code>
+ * </div>
  *
- * let v3 = p5.Vector.lerp(v1, v2, 0.5);
- * // v3 has components [50,50,0]
- * print(v3);
+ * <div class="norender">
+ * <code>
+ * let v0 = createVector(1, 1, 1);
+ * let v1 = createVector(3, 3, 3);
+ * let v2 = p5.Vector.lerp(v0, v1, 0.5);
+ * // Prints "p5.Vector Object : [2, 2, 2]" to the console.
+ * print(v2.toString());
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * let step = 0.01;
- * let amount = 0;
- *
  * function draw() {
- *   background(240);
- *   let v0 = createVector(0, 0);
+ *   background(200);
  *
- *   let v1 = createVector(mouseX, mouseY);
+ *   let v0 = createVector(50, 50);
+ *   let v1 = createVector(30, 0);
+ *   let v2 = createVector(0, 30);
+ *   let v3 = p5.Vector.lerp(v1, v2, 0.5);
+ *
  *   drawArrow(v0, v1, 'red');
- *
- *   let v2 = createVector(90, 90);
  *   drawArrow(v0, v2, 'blue');
- *
- *   if (amount > 1 || amount < 0) {
- *     step *= -1;
- *   }
- *   amount += step;
- *   let v3 = p5.Vector.lerp(v1, v2, amount);
- *
  *   drawArrow(v0, v3, 'purple');
+ *
+ *   describe('Three arrows extend from the center of a gray square. A red arrow points to the right, a blue arrow points down, and a purple arrow points to the bottom right.');
  * }
  *
- * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
  *   push();
  *   stroke(myColor);
@@ -1728,7 +1986,7 @@ p5.Vector = class {
  */
   /**
  * @method lerp
- * @param  {p5.Vector} v   The <a href="#/p5.Vector">p5.Vector</a> to lerp to
+ * @param  {p5.Vector} v  <a href="#/p5.Vector">p5.Vector</a> to lerp toward.
  * @param  {Number}    amt
  * @chainable
  */
@@ -1743,83 +2001,101 @@ p5.Vector = class {
   }
 
   /**
- * Performs spherical linear interpolation with the other vector
- * and returns the resulting vector.
- * This works in both 3D and 2D. As for 2D, the result of slerping
- * between 2D vectors is always a 2D vector.
+ * Calculates a new heading and magnitude that are between two vectors. The
+ * `amt` parameter is the amount to interpolate between the old vector and
+ * the new vector. 0.0 keeps the heading and magnitude equal to the old
+ * vector's, 0.5 sets them halfway between, and 1.0 sets the heading and
+ * magnitude equal to the new vector's.
+ *
+ * `slerp()` differs from <a href="#/p5.Vector/lerp">lerp()</a> because
+ * it interpolates magnitude. Calling `v0.slerp(v1, 0.5)` sets `v0`'s
+ * magnitude to a value halfway between its original magnitude and `v1`'s.
+ * Calling `v0.lerp(v1, 0.5)` makes no such guarantee.
+ *
+ * The static version of `slerp()`, as in `p5.Vector.slerp(v0, v1, 0.5)`,
+ * returns a new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change
+ * the original.
  *
  * @method slerp
- * @param {p5.Vector} v the p5.Vector to slerp to
- * @param {Number} amt The amount of interpolation. some value between 0.0
- *                     (old vector) and 1.0 (new vector). 0.9 is very near
- *                     the new vector. 0.5 is halfway in between.
+ * @param {p5.Vector} v <a href="#/p5.Vector">p5.Vector</a> to slerp toward.
+ * @param {Number} amt  amount of interpolation between 0.0 (old vector)
+ *                      and 1.0 (new vector). 0.5 is halfway between.
  * @return {p5.Vector}
  *
  * @example
  * <div class="norender">
  * <code>
+ * let v0 = createVector(3, 0);
+ * // Prints "3" to the console.
+ * print(v0.mag());
+ * // Prints "0" to the console.
+ * print(v0.heading());
  *
- * const v1 = createVector(1, 0, 0);
- * const v2 = createVector(0, 1, 0);
+ * let v1 = createVector(0, 1);
+ * // Prints "1" to the console.
+ * print(v1.mag());
+ * // Prints "1.570..." to the console.
+ * print(v1.heading());
  *
- * const v = v1.slerp(v2, 1/3);
- * print(v.toString());
- * // v's components are almost [cos(30°), sin(30°), 0]
+ * v0.slerp(v1, 0.5);
+ * // Prints "2" to the console.
+ * print(v0.mag());
+ * // Prints "0.785..." to the console.
+ * print(v0.heading());
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let v0 = createVector(3, 0);
+ * // Prints "3" to the console.
+ * print(v0.mag());
+ * // Prints "0" to the console.
+ * print(v0.heading());
+ *
+ * let v1 = createVector(0, 1);
+ * // Prints "1" to the console.
+ * print(v1.mag());
+ * // Prints "1.570..." to the console.
+ * print(v1.heading());
+ *
+ * let v3 = p5.Vector.slerp(v0, v1, 0.5);
+ * // Prints "2" to the console.
+ * print(v3.mag());
+ * // Prints "0.785..." to the console.
+ * print(v3.heading());
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * let needle;
- * function setup() {
- *   createCanvas(100, 100);
- *   stroke(0);
- *   strokeWeight(4);
+ * function draw() {
+ *   background(200);
  *
- *   needle = createVector(50, 0);
+ *   let v0 = createVector(50, 50);
+ *   let v1 = createVector(20, 0);
+ *   let v2 = createVector(-40, 0);
+ *   let v3 = p5.Vector.slerp(v1, v2, 0.5);
+ *
+ *   drawArrow(v0, v1, 'red');
+ *   drawArrow(v0, v2, 'blue');
+ *   drawArrow(v0, v3, 'purple');
+ *
+ *   describe('Three arrows extend from the center of a gray square. A red arrow points to the right, a blue arrow points to the left, and a purple arrow points down.');
  * }
  *
- * function draw(){
- *   background(255);
- *   translate(50, 50);
- *
- *   const v = createVector(mouseX - 50, mouseY - 50).setMag(50);
- *   // slerp between v and needle vector.
- *   // needle vector is changed by slerp function.
- *   needle.slerp(v, 0.05);
- *
- *   line(0, 0, needle.x, needle.y);
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup(){
- *   createCanvas(100, 100, WEBGL);
- * }
- *
- * function draw(){
- *   background(255);
- *
- *   const vx = createVector(30, 0, 0);
- *   const vy = createVector(0, 30, 0);
- *   const vz = createVector(0, 0, 30);
- *
- *   const t = map(sin(frameCount * TAU / 120), -1, 1, 0, 1);
- *   // v1, v2, v3 is not changed by slerp function.
- *   // because this function is static version.
- *   const vSlerpXY = p5.Vector.slerp(vx, vy, t);
- *   const vSlerpYZ = p5.Vector.slerp(vy, vz, t);
- *   const vSlerpZX = p5.Vector.slerp(vz, vx, t);
- *   strokeWeight(6);
- *   strokeCap(SQUARE);
- *   stroke('red');
- *   line(0, 0, 0, vSlerpXY.x, vSlerpXY.y, vSlerpXY.z);
- *   stroke('green');
- *   line(0, 0, 0, vSlerpYZ.x, vSlerpYZ.y, vSlerpYZ.z);
- *   stroke('blue');
- *   line(0, 0, 0, vSlerpZX.x, vSlerpZX.y, vSlerpZX.z);
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   let arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
  * }
  * </code>
  * </div>
@@ -1891,40 +2167,59 @@ p5.Vector = class {
   }
 
   /**
- * Reflect a vector about a normal to a line in 2D, or about a normal to a
- * plane in 3D.
+ * Reflects a vector about a line in 2D or a plane in 3D. The orientation of
+ * the line or plane is described by a normal vector that points away from the
+ * shape.
+ *
+ * The static version of `reflect()`, as in `p5.Vector.reflect(v, n)`,
+ * returns a new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change
+ * the original.
  *
  * @method reflect
- * @param  {p5.Vector} surfaceNormal  the <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector} surfaceNormal  <a href="#/p5.Vector">p5.Vector</a>
  *                                    to reflect about.
  * @chainable
  * @example
  * <div class="norender">
  * <code>
- * let v = createVector(4, 6); // incoming vector, this example vector is heading to the right and downward
- * let n = createVector(0, -1); // surface normal to a plane (this example normal points directly upwards)
- * v.reflect(n); // v is reflected about the surface normal n.  v's components are now set to [4, -6]
+ * let n = createVector(0, 1);
+ * let v = createVector(4, 6);
+ * v.reflect(n);
+ * // Prints "p5.Vector Object : [4, -6, 0]" to the console.
+ * print(v.toString());
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let n = createVector(0, 1);
+ * let v0 = createVector(4, 6);
+ * let v1 = p5.Vector.reflect(v0, n);
+ * // Prints "p5.Vector Object : [4, -6, 0]" to the console.
+ * print(v1.toString());
  * </code>
  * </div>
  *
  * <div>
  * <code>
  * function draw() {
- *   background(240);
+ *   background(200);
  *
- *   let v0 = createVector(0, 0);
- *   let v1 = createVector(mouseX, mouseY);
+ *   line(50, 0, 50, 100);
+ *   let n = createVector(1, 0);
+ *
+ *   let v0 = createVector(50, 50);
+ *   let v1 = createVector(30, 40);
+ *   let v2 = p5.Vector.reflect(v1, n);
+ *
+ *   n.setMag(30);
+ *   drawArrow(v0, n, 'black');
  *   drawArrow(v0, v1, 'red');
+ *   drawArrow(v0, v2, 'blue');
  *
- *   let n = createVector(0, -30);
- *   drawArrow(v1, n, 'blue');
- *
- *   let r = v1.copy();
- *   r.reflect(n);
- *   drawArrow(v1, r, 'purple');
+ *   describe('Three arrows extend from the center of a gray square with a vertical line down its middle. A black arrow points to the right, a blue arrow points to the bottom left, and a red arrow points to the bottom right.');
  * }
  *
- * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
  *   push();
  *   stroke(myColor);
@@ -1947,30 +2242,16 @@ p5.Vector = class {
   }
 
   /**
- * Return a representation of this vector as a float array. This is only
- * for temporary use. If used in any other fashion, the contents should be
- * copied by using the <b>p5.Vector.<a href="#/p5.Vector/copy">copy()</a></b>
- * method to copy into your own vector.
+ * Returns the vector's components as an array of numbers.
  *
  * @method array
- * @return {Number[]} An Array with the 3 values
+ * @return {Number[]} array with the vector's components.
  * @example
  * <div class = "norender">
  * <code>
- * function setup() {
- *   let v = createVector(20, 30);
- *   print(v.array()); // Prints : Array [20, 30, 0]
- * }
- * </code>
- * </div>
- *
- * <div class="norender">
- * <code>
- * let v = createVector(10.0, 20.0, 30.0);
- * let f = v.array();
- * print(f[0]); // Prints "10.0"
- * print(f[1]); // Prints "20.0"
- * print(f[2]); // Prints "30.0"
+ * let v = createVector(20, 30);
+ * // Prints "[20, 30, 0]" to the console.
+ * print(v.array());
  * </code>
  * </div>
  */
@@ -1979,38 +2260,67 @@ p5.Vector = class {
   }
 
   /**
- * Equality check against a <a href="#/p5.Vector">p5.Vector</a>.
+ * Returns `true` if the vector's components are all the same as another
+ * vector's and `false` if not.
+ *
+ * The version of `equals()` with one parameter interprets it as another
+ * <a href="#/p5.Vector">p5.Vector</a> object.
+ *
+ * The version of `equals()` with multiple parameters interprets them as the
+ * components of another vector. Any missing parameters are assigned the value
+ * 0.
+ *
+ * The static version of `equals()`, as in `p5.Vector.equals(v0, v1)`,
+ * interprets both parameters as <a href="#/p5.Vector">p5.Vector</a> objects.
  *
  * @method equals
- * @param {Number} [x] The x component of the vector
- * @param {Number} [y] The y component of the vector
- * @param {Number} [z] The z component of the vector
- * @return {Boolean} Whether the vectors are equal
+ * @param {Number} [x] x component of the vector.
+ * @param {Number} [y] y component of the vector.
+ * @param {Number} [z] z component of the vector.
+ * @return {Boolean} whether the vectors are equal.
  * @example
+ * <div class="norender">
+ * <code>
+ * let v0 = createVector(10, 20, 30);
+ * let v1 = createVector(10, 20, 30);
+ * let v2 = createVector(0, 0, 0);
+ *
+ * // Prints "true" to the console.
+ * print(v0.equals(v1));
+ * // Prints "false" to the console.
+ * print(v0.equals(v2));
+ * </code>
+ * </div>
+ *
  * <div class = "norender">
  * <code>
+ * let v0 = createVector(5, 10, 20);
  * let v1 = createVector(5, 10, 20);
- * let v2 = createVector(5, 10, 20);
- * let v3 = createVector(13, 10, 19);
+ * let v2 = createVector(13, 10, 19);
  *
- * print(v1.equals(v2.x, v2.y, v2.z)); // true
- * print(v1.equals(v3.x, v3.y, v3.z)); // false
+ * // Prints "true" to the console.
+ * print(v0.equals(v1.x, v1.y, v1.z));
+ * // Prints "false" to the console.
+ * print(v0.equals(v2.x, v2.y, v2.z));
  * </code>
  * </div>
  *
  * <div class="norender">
  * <code>
- * let v1 = createVector(10.0, 20.0, 30.0);
- * let v2 = createVector(10.0, 20.0, 30.0);
- * let v3 = createVector(0.0, 0.0, 0.0);
- * print(v1.equals(v2)); // true
- * print(v1.equals(v3)); // false
+ * let v0 = createVector(10, 20, 30);
+ * let v1 = createVector(10, 20, 30);
+ * let v2 = createVector(0, 0, 0);
+ *
+ * // Prints "true" to the console.
+ * print(p5.Vector.equals(v0, v1));
+ * // Prints "false" to the console.
+ * print(p5.Vector.equals(v0, v2));
  * </code>
  * </div>
  */
   /**
  * @method equals
- * @param {p5.Vector|Array} value The vector to compare
+ * @param {p5.Vector|Array} value vector to compare.
  * @return {Boolean}
  */
   equals(x, y, z) {
@@ -2038,40 +2348,42 @@ p5.Vector = class {
  *
  * @method fromAngle
  * @static
- * @param {Number}     angle The desired angle, in radians (unaffected by <a href="#/p5/angleMode">angleMode</a>)
- * @param {Number}     [length] The length of the new vector (defaults to 1)
- * @return {p5.Vector}       The new <a href="#/p5.Vector">p5.Vector</a> object
+ * @param {Number}     angle desired angle, in radians. Unaffected by <a href="#/p5/angleMode">angleMode()</a>.
+ * @param {Number}     [length] length of the new vector (defaults to 1).
+ * @return {p5.Vector}       new <a href="#/p5.Vector">p5.Vector</a> object.
  * @example
+ * <div class="norender">
+ * <code>
+ * let v = p5.Vector.fromAngle(0);
+ * // Prints "p5.Vector Object : [1, 0, 0]" to the console.
+ * print(v.toString());
+ * </code>
+ * </div>
+ *
  * <div>
  * <code>
  * function draw() {
  *   background(200);
  *
- *   // Create a variable, proportional to the mouseX,
- *   // varying from 0-360, to represent an angle in degrees.
- *   let myDegrees = map(mouseX, 0, width, 0, 360);
+ *   let v0 = createVector(50, 50);
+ *   let v1 = p5.Vector.fromAngle(0, 30);
  *
- *   // Display that variable in an onscreen text.
- *   // (Note the nfc() function to truncate additional decimal places,
- *   // and the "\xB0" character for the degree symbol.)
- *   let readout = 'angle = ' + nfc(myDegrees, 1) + '\xB0';
- *   noStroke();
- *   fill(0);
- *   text(readout, 5, 15);
+ *   drawArrow(v0, v1, 'black');
  *
- *   // Create a p5.Vector using the fromAngle function,
- *   // and extract its x and y components.
- *   let v = p5.Vector.fromAngle(radians(myDegrees), 30);
- *   let vx = v.x;
- *   let vy = v.y;
+ *   describe('A black arrow extends from the center of a gray square. It points to the right.');
+ * }
  *
+ * function drawArrow(base, vec, myColor) {
  *   push();
- *   translate(width / 2, height / 2);
- *   noFill();
- *   stroke(150);
- *   line(0, 0, 30, 0);
- *   stroke(0);
- *   line(0, 0, vx, vy);
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   let arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
  *   pop();
  * }
  * </code>
@@ -2089,30 +2401,41 @@ p5.Vector = class {
  *
  * @method fromAngles
  * @static
- * @param {Number}     theta    The polar angle, in radians (zero is up)
- * @param {Number}     phi      The azimuthal angle, in radians
- *                               (zero is out of the screen)
- * @param {Number}     [length] The length of the new vector (defaults to 1)
- * @return {p5.Vector}          A new <a href="#/p5.Vector">p5.Vector</a> object
+ * @param {Number}     theta    polar angle in radians (zero is up).
+ * @param {Number}     phi      azimuthal angle in radians
+ *                               (zero is out of the screen).
+ * @param {Number}     [length] length of the new vector (defaults to 1).
+ * @return {p5.Vector}          new <a href="#/p5.Vector">p5.Vector</a> object.
  * @example
- * <div modernizr='webgl'>
+ * <div class="norender">
+ * <code>
+ * let v = p5.Vector.fromAngles(0, 0);
+ * // Prints "p5.Vector Object : [0, -1, 0]" to the console.
+ * print(v.toString());
+ * </code>
+ * </div>
+ *
+ * <div>
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *
  *   fill(255);
  *   noStroke();
- * }
- * function draw() {
- *   background(255);
  *
- *   let t = millis() / 1000;
- *
- *   // add three point lights
- *   pointLight(color('#f00'), p5.Vector.fromAngles(t * 1.0, t * 1.3, 100));
- *   pointLight(color('#0f0'), p5.Vector.fromAngles(t * 1.1, t * 1.2, 100));
- *   pointLight(color('#00f'), p5.Vector.fromAngles(t * 1.2, t * 1.1, 100));
+ *   let theta = frameCount *  0.05;
+ *   let phi = 0;
+ *   let v = p5.Vector.fromAngles(theta, phi, 100);
+ *   let c = color('deeppink');
+ *   pointLight(c, v);
  *
  *   sphere(35);
+ *
+ *   describe('A light shines on a pink sphere as it orbits.');
  * }
  * </code>
  * </div>
@@ -2134,38 +2457,36 @@ p5.Vector = class {
   }
 
   /**
- * Make a new 2D unit vector from a random angle.
+ * Make a new 2D unit vector with a random heading.
  *
  * @method random2D
  * @static
- * @return {p5.Vector} A new <a href="#/p5.Vector">p5.Vector</a> object
+ * @return {p5.Vector} new <a href="#/p5.Vector">p5.Vector</a> object.
  * @example
  * <div class="norender">
  * <code>
  * let v = p5.Vector.random2D();
- * // May make v's attributes something like:
- * // [0.61554617, -0.51195765, 0.0] or
- * // [-0.4695841, -0.14366731, 0.0] or
- * // [0.6091097, -0.22805278, 0.0]
- * print(v);
+ * // Prints "p5.Vector Object : [x, y, 0]" to the console
+ * // where x and y are small random numbers.
+ * print(v.toString());
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * function setup() {
- *   frameRate(1);
- * }
- *
  * function draw() {
- *   background(240);
+ *   background(200);
+ *
+ *   frameRate(1);
  *
  *   let v0 = createVector(50, 50);
  *   let v1 = p5.Vector.random2D();
- *   drawArrow(v0, v1.mult(50), 'black');
+ *   v1.mult(30);
+ *   drawArrow(v0, v1, 'black');
+ *
+ *   describe('A black arrow in extends from the center of a gray square. It changes direction once per second.');
  * }
  *
- * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
  *   push();
  *   stroke(myColor);
@@ -2187,20 +2508,18 @@ p5.Vector = class {
   }
 
   /**
- * Make a new random 3D unit vector.
+ * Make a new 3D unit vector with a random heading.
  *
  * @method random3D
  * @static
- * @return {p5.Vector} A new <a href="#/p5.Vector">p5.Vector</a> object
+ * @return {p5.Vector} new <a href="#/p5.Vector">p5.Vector</a> object.
  * @example
  * <div class="norender">
  * <code>
  * let v = p5.Vector.random3D();
- * // May make v's attributes something like:
- * // [0.61554617, -0.51195765, 0.599168] or
- * // [-0.4695841, -0.14366731, -0.8711202] or
- * // [0.6091097, -0.22805278, -0.7595902]
- * print(v);
+ * // Prints "p5.Vector Object : [x, y, z]" to the console
+ * // where x, y, and z are small random numbers.
+ * print(v.toString());
  * </code>
  * </div>
  */
@@ -2231,8 +2550,8 @@ p5.Vector = class {
  * @static
  * @param  {p5.Vector} v1 A <a href="#/p5.Vector">p5.Vector</a> to add
  * @param  {p5.Vector} v2 A <a href="#/p5.Vector">p5.Vector</a> to add
- * @param  {p5.Vector} [target] The vector to receive the result
- * @return {p5.Vector} The resulting <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector} [target] vector to receive the result.
+ * @return {p5.Vector} resulting <a href="#/p5.Vector">p5.Vector</a>.
  */
 
   static add(v1, v2, target) {
@@ -2282,7 +2601,7 @@ p5.Vector = class {
  * @static
  * @param  {p5.Vector} v1 A <a href="#/p5.Vector">p5.Vector</a> to subtract from
  * @param  {p5.Vector} v2 A <a href="#/p5.Vector">p5.Vector</a> to subtract
- * @param  {p5.Vector} [target] The vector to receive the result
+ * @param  {p5.Vector} [target] vector to receive the result.
  * @return {p5.Vector} The resulting <a href="#/p5.Vector">p5.Vector</a>
  */
 
@@ -2312,7 +2631,7 @@ p5.Vector = class {
  * @param  {Number} x
  * @param  {Number} y
  * @param  {Number} [z]
- * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
+ * @return {p5.Vector} resulting new <a href="#/p5.Vector">p5.Vector</a>.
  */
 
   /**
@@ -2320,7 +2639,7 @@ p5.Vector = class {
  * @static
  * @param  {p5.Vector} v
  * @param  {Number}  n
- * @param  {p5.Vector} [target] the vector to receive the result
+ * @param  {p5.Vector} [target] vector to receive the result.
  */
 
   /**
@@ -2440,9 +2759,9 @@ p5.Vector = class {
   /**
  * @method dot
  * @static
- * @param  {p5.Vector} v1 The first <a href="#/p5.Vector">p5.Vector</a>
- * @param  {p5.Vector} v2 The second <a href="#/p5.Vector">p5.Vector</a>
- * @return {Number}     The dot product
+ * @param  {p5.Vector} v1 first <a href="#/p5.Vector">p5.Vector</a>.
+ * @param  {p5.Vector} v2 second <a href="#/p5.Vector">p5.Vector</a>.
+ * @return {Number}     dot product.
  */
   static dot(v1, v2) {
     return v1.dot(v2);
@@ -2454,9 +2773,9 @@ p5.Vector = class {
   /**
  * @method cross
  * @static
- * @param  {p5.Vector} v1 The first <a href="#/p5.Vector">p5.Vector</a>
- * @param  {p5.Vector} v2 The second <a href="#/p5.Vector">p5.Vector</a>
- * @return {Number}     The cross product
+ * @param  {p5.Vector} v1 first <a href="#/p5.Vector">p5.Vector</a>.
+ * @param  {p5.Vector} v2 second <a href="#/p5.Vector">p5.Vector</a>.
+ * @return {Number}     cross product.
  */
   static cross(v1, v2) {
     return v1.cross(v2);
@@ -2515,10 +2834,10 @@ p5.Vector = class {
   /**
  * @method slerp
  * @static
- * @param {p5.Vector} v1 old vector
- * @param {p5.Vector} v2 new vectpr
+ * @param {p5.Vector} v1 old vector.
+ * @param {p5.Vector} v2 new vector.
  * @param {Number} amt
- * @param {p5.Vector} [target] The vector to receive the result
+ * @param {p5.Vector} [target] vector to receive the result.
  * @return {p5.Vector} slerped vector between v1 and v2
  */
   static slerp(v1, v2, amt, target) {
@@ -2670,9 +2989,9 @@ p5.Vector = class {
   /**
  * @method angleBetween
  * @static
- * @param  {p5.Vector}    v1 the first vector
- * @param  {p5.Vector}    v2 the second vector
- * @return {Number}       the angle between the two vectors
+ * @param  {p5.Vector}    v1 the first vector.
+ * @param  {p5.Vector}    v2 the second vector.
+ * @return {Number}       angle between the two vectors.
  */
   static angleBetween(v1, v2) {
     return v1.angleBetween(v2);
@@ -2685,9 +3004,9 @@ p5.Vector = class {
   /**
  * @method reflect
  * @static
- * @param  {p5.Vector} incidentVector vector to be reflected
+ * @param  {p5.Vector} incidentVector vector to be reflected.
  * @param  {p5.Vector} surfaceNormal
- * @param  {p5.Vector} [target] the vector to receive the result (Optional)
+ * @param  {p5.Vector} [target] vector to receive the result.
  * @return {p5.Vector} the reflected vector
  */
   static reflect(incidentVector, surfaceNormal, target) {
