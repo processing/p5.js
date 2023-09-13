@@ -106,16 +106,16 @@ p5.prototype.pixels = [];
 
 /**
  * Copies a region of pixels from one image to another. The `blendMode`
- * paramter blends the images' colors to create different effects.
+ * parameter blends the images' colors to create different effects.
  *
  * @method blend
  * @param  {p5.Image} srcImage source image.
- * @param  {Integer} sx x-coordinate of the source's upper left corner.
- * @param  {Integer} sy y-coordinate of the source's upper left corner.
+ * @param  {Integer} sx x-coordinate of the source's upper-left corner.
+ * @param  {Integer} sy y-coordinate of the source's upper-left corner.
  * @param  {Integer} sw source image width.
  * @param  {Integer} sh source image height.
- * @param  {Integer} dx x-coordinate of the destination's upper left corner.
- * @param  {Integer} dy y-coordinate of the destination's upper left corner.
+ * @param  {Integer} dx x-coordinate of the destination's upper-left corner.
+ * @param  {Integer} dy y-coordinate of the destination's upper-left corner.
  * @param  {Integer} dw destination image width.
  * @param  {Integer} dh destination image height.
  * @param  {Constant} blendMode the blend mode. either
@@ -213,12 +213,12 @@ p5.prototype.blend = function(...args) {
  *
  * @method copy
  * @param  {p5.Image|p5.Element} srcImage source image.
- * @param  {Integer} sx x-coordinate of the source's upper left corner.
- * @param  {Integer} sy y-coordinate of the source's upper left corner.
+ * @param  {Integer} sx x-coordinate of the source's upper-left corner.
+ * @param  {Integer} sy y-coordinate of the source's upper-left corner.
  * @param  {Integer} sw source image width.
  * @param  {Integer} sh source image height.
- * @param  {Integer} dx x-coordinate of the destination's upper left corner.
- * @param  {Integer} dy y-coordinate of the destination's upper left corner.
+ * @param  {Integer} dx x-coordinate of the destination's upper-left corner.
+ * @param  {Integer} dy y-coordinate of the destination's upper-left corner.
  * @param  {Integer} dw destination image width.
  * @param  {Integer} dh destination image height.
  *
@@ -383,11 +383,10 @@ p5.prototype._copyHelper = (
  * @method filter
  * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
  *                                POSTERIZE, BLUR, ERODE, DILATE or BLUR.
- * @param  {Number} filterParam   an optional parameter unique
- *                                to each filter, see above.
- * @param  {Boolean} [useWebGL]   a flag to control whether to use fast
+ * @param  {Number} [filterParam] parameter unique to each filter.
+ * @param  {Boolean} [useWebGL]   flag to control whether to use fast
  *                                WebGL filters (GPU) or original image
- *                                filters (CPU); defaults to true.
+ *                                filters (CPU); defaults to `true`.
  *
  * @example
  * <div>
@@ -552,7 +551,7 @@ p5.prototype._copyHelper = (
  */
 /**
  * @method filter
- * @param {p5.Shader}  shaderFilter  a shader that's been loaded, with the
+ * @param {p5.Shader}  shaderFilter  shader that's been loaded, with the
  *                                   frag shader using a `tex0` uniform.
  */
 p5.prototype.filter = function(...args) {
@@ -657,8 +656,11 @@ function parseFilterArgs(...args) {
 }
 
 /**
- * Gets a pixel or a region of pixels from the canvas. `get()` is easy to use
- * but it's not as fast as <a href="#/p5/pixels">pixels</a>.
+ * Gets a pixel or a region of pixels from the canvas.
+ *
+ * `get()` is easy to use but it's not as fast as
+ * <a href="#/p5/pixels">pixels</a>. Use <a href="#/p5/pixels">pixels</a>
+ * to read many pixel values.
  *
  * The version of `get()` with no parameters returns the entire canvas.
  *
@@ -667,10 +669,10 @@ function parseFilterArgs(...args) {
  * pixel at the given point.
  *
  * The version of `get()` with four parameters interprets them as coordinates
- * and dimensions. The first two parameters are the coordinates for the
- * upper-left corner of the image, regardless of the current
- * <a href="#/p5/imageMode">imageMode()</a>. The last two parameters are the
- * width and height of the image section.
+ * and dimensions. It returns a subsection of the canvas as a
+ * <a href="#/p5.Image">p5.Image</a> object. The first two parameters are the
+ * coordinates for the upper-left corner of the subsection. The last two
+ * parameters are the width and height of the subsection.
  *
  * Use <a href="#/p5.Image/get">p5.Image.get()</a> to work directly with
  * <a href="#/p5.Image">p5.Image</a> objects.
@@ -678,9 +680,9 @@ function parseFilterArgs(...args) {
  * @method get
  * @param  {Number}         x x-coordinate of the pixel.
  * @param  {Number}         y y-coordinate of the pixel.
- * @param  {Number}         w width of the section to be returned.
- * @param  {Number}         h height of the section to be returned.
- * @return {p5.Image}       the rectangle <a href="#/p5.Image">p5.Image</a>.
+ * @param  {Number}         w width of the subsection to be returned.
+ * @param  {Number}         h height of the subsection to be returned.
+ * @return {p5.Image}       subsection as a <a href="#/p5.Image">p5.Image</a> object.
  * @example
  * <div>
  * <code>
@@ -740,13 +742,13 @@ function parseFilterArgs(...args) {
  */
 /**
  * @method get
- * @return {p5.Image}      the whole <a href="#/p5.Image">p5.Image</a>
+ * @return {p5.Image}      whole canvas as a <a href="#/p5.Image">p5.Image</a>.
  */
 /**
  * @method get
  * @param  {Number}        x
  * @param  {Number}        y
- * @return {Number[]}      color of pixel at x,y in array format [R, G, B, A]
+ * @return {Number[]}      color of the pixel at (x, y) in array format `[R, G, B, A]`.
  */
 p5.prototype.get = function(x, y, w, h) {
   p5._validateParameters('get', arguments);
@@ -790,14 +792,17 @@ p5.prototype.loadPixels = function(...args) {
 };
 
 /**
- * Sets the color of a pixel or draws an image to the canvas. `set()` is easy
- * to use but it's not as fast as <a href="#/p5/pixels">pixels</a>.
+ * Sets the color of a pixel or draws an image to the canvas.
+ *
+ * `set()` is easy to use but it's not as fast as
+ * <a href="#/p5/pixels">pixels</a>. Use <a href="#/p5/pixels">pixels</a>
+ * to set many pixel values.
  *
  * `set()` interprets the first two parameters as x- and y-coordinates. It
  * interprets the last parameter as a grayscale value, a `[R, G, B, A]` pixel
  * array, a <a href="#/p5.Color">p5.Color</a> object, or a
  * <a href="#/p5.Image">p5.Image</a> object. If an image is passed, the first
- * two parameters set the coordinates for the image's upper left corner,
+ * two parameters set the coordinates for the image's upper-left corner,
  * regardless of the current <a href="#/p5/imageMode">imageMode()</a>.
  *
  * <a href="#/p5/updatePixels">updatePixels()</a> must be called after using
@@ -806,8 +811,8 @@ p5.prototype.loadPixels = function(...args) {
  * @method set
  * @param {Number}              x x-coordinate of the pixel.
  * @param {Number}              y y-coordinate of the pixel.
- * @param {Number|Number[]|Object} c a grayscale value | a pixel array |
- *                                a <a href="#/p5.Color">p5.Color</a> object | a <a href="#/p5.Image">p5.Image</a> to copy.
+ * @param {Number|Number[]|Object} c grayscale value | pixel array |
+ *                                <a href="#/p5.Color">p5.Color</a> object | <a href="#/p5.Image">p5.Image</a> to copy.
  * @example
  * <div>
  * <code>
