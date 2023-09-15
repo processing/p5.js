@@ -1,6 +1,6 @@
-// these requires allow us to use es6 features such as
-// `import`/`export` and `async`/`await` in the Grunt tasks
-// we load from other files (`tasks/`)
+/* these requires allow us to use es6 features such as
+ `import`/`export` and `async`/`await` in the Grunt tasks
+  we load from other files (`tasks/`) */
 require('regenerator-runtime/runtime');
 require('@babel/register');
 
