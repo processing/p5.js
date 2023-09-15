@@ -86,10 +86,10 @@ module.exports = grunt => {
       }
     },
 
-    // Set up the watch task, used for live-reloading during development.
-    // This watches both the codebase and the yuidoc theme.  Changing the
-    // code touches files within the theme, so it will also recompile the
-    // documentation.
+    /* Set up the watch task, used for live-reloading during development.
+       This watches both the codebase and the yuidoc theme.  Changing the
+       code touches files within the theme, so it will also recompile the
+       documentation.*/
     watch: {
       quick: {
         files: [
@@ -281,13 +281,13 @@ module.exports = grunt => {
 
   grunt.initConfig(gruntConfig);
 
-  // Load build tasks.
-  // This contains the complete build task ("browserify")
-  // and the task to generate user select modules of p5
-  // ("combineModules") which can be invoked directly by
-  // `grunt combineModules:module_1:module_2` where core
-  // is included by default in all combinations always.
-  // NOTE: "module_x" is the name of it's folder in /src.
+  /* Load build tasks.
+     This contains the complete build task ("browserify")
+     and the task to generate user select modules of p5
+     ("combineModules") which can be invoked directly by
+     `grunt combineModules:module_1:module_2` where core
+      is included by default in all combinations always.
+      NOTE: "module_x" is the name of it's folder in /src.*/
   grunt.loadTasks('tasks/build');
 
   // Load tasks for testing
