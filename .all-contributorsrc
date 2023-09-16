@@ -5242,6 +5242,18 @@
         "talk",
         "question"
       ]
+    },
+    {
+      "login": "tetunori",
+      "name": "tetunori",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14086390?v=4",
+      "profile": "https://qiita.com/tetunori_lego",
+      "contributions": [
+        "blog",
+        "code",
+        "example",
+        "tool"
+      ]
     }
   ],
   "repoType": "github",
