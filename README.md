@@ -900,6 +900,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/mykongee"><img src="https://avatars.githubusercontent.com/u/10676303?v=4?s=120" width="120px;" alt="Mike "/><br /><sub><b>Mike </b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=mykongee" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3Amykongee" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://my-portfolio-ankush263.vercel.app/"><img src="https://avatars.githubusercontent.com/u/86042508?v=4?s=120" width="120px;" alt="Ankush Banik"/><br /><sub><b>Ankush Banik</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AAnkush263" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=Ankush263" title="Code">💻</a> <a href="#talk-Ankush263" title="Talks">📢</a> <a href="#question-Ankush263" title="Answering Questions">💬</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://qiita.com/tetunori_lego"><img src="https://avatars.githubusercontent.com/u/14086390?v=4?s=120" width="120px;" alt="tetunori"/><br /><sub><b>tetunori</b></sub></a><br /><a href="#blog-tetunori" title="Blogposts">📝</a> <a href="https://github.com/processing/p5.js/commits?author=tetunori" title="Code">💻</a> <a href="#example-tetunori" title="Examples">💡</a> <a href="#tool-tetunori" title="Tools">🔧</a></td>
+    </tr>
   </tbody>
 </table>
 
