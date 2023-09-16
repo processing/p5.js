@@ -8,60 +8,88 @@
 import p5 from '../core/main';
 import Filters from './filters';
 import '../color/p5.Color';
+import * as constants from '../core/constants';
 
 /**
- * <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference
- * /Global_Objects/Uint8ClampedArray' target='_blank'>Uint8ClampedArray</a>
- * containing the values for all the pixels in the display window.
- * These values are numbers. This array is the size (include an appropriate
- * factor for <a href="#/p5/pixelDensity">pixelDensity</a>) of the display window x4,
- * representing the R, G, B, A values in order for each pixel, moving from
- * left to right across each row, then down each column. Retina and other
- * high density displays will have more pixels[] (by a factor of
- * pixelDensity^2).
- * For example, if the image is 100×100 pixels, there will be 40,000. On a
- * retina display, there will be 160,000.
+ * An array containing the color of each pixel on the canvas. Colors are
+ * stored as numbers representing red, green, blue, and alpha (RGBA) values.
+ * `pixels` is a one-dimensional array for performance reasons.
  *
- * The first four values (indices 0-3) in the array will be the R, G, B, A
- * values of the pixel at (0, 0). The second four values (indices 4-7) will
- * contain the R, G, B, A values of the pixel at (1, 0). More generally, to
- * set values for a pixel at (x, y):
- * ```javascript
- * let d = pixelDensity();
- * for (let i = 0; i < d; i++) {
- *   for (let j = 0; j < d; j++) {
- *     // loop over
- *     index = 4 * ((y * d + j) * width * d + (x * d + i));
- *     pixels[index] = r;
- *     pixels[index+1] = g;
- *     pixels[index+2] = b;
- *     pixels[index+3] = a;
- *   }
- * }
- * ```
- * While the above method is complex, it is flexible enough to work with
- * any pixelDensity. Note that <a href="#/p5/set">set()</a> will automatically take care of
- * setting all the appropriate values in <a href="#/p5/pixels">pixels[]</a> for a given (x, y) at
- * any pixelDensity, but the performance may not be as fast when lots of
- * modifications are made to the pixel array.
+ * Each pixel occupies four elements in the `pixels` array, one for each RGBA
+ * value. For example, the pixel at coordinates (0, 0) stores its RGBA values
+ * at `pixels[0]`, `pixels[1]`, `pixels[2]`, and `pixels[3]`, respectively.
+ * The next pixel at coordinates (1, 0) stores its RGBA values at `pixels[4]`,
+ * `pixels[5]`, `pixels[6]`, and `pixels[7]`. And so on. The `pixels` array
+ * for a 100&times;100 canvas has 100 &times; 100 &times; 4 = 40,000 elements.
  *
- * Before accessing this array, the data must loaded with the <a href="#/p5/loadPixels">loadPixels()</a>
- * function. After the array data has been modified, the <a href="#/p5/updatePixels">updatePixels()</a>
- * function must be run to update the changes.
+ * Some displays use several smaller pixels to set the color at a single
+ * point. The <a href="#/p5/pixelDensity">pixelDensity()</a> function returns
+ * the pixel density of the canvas. High density displays often have a
+ * <a href="#/p5/pixelDensity">pixelDensity()</a> of 2. On such a display, the
+ * `pixels` array for a 100&times;100 canvas has 200 &times; 200 &times; 4 =
+ * 160,000 elements.
  *
- * Note that this is not a standard javascript array.  This means that
- * standard javascript functions such as <a href="#/p5/slice">slice()</a> or
- * <a href="#/p5/arrayCopy">arrayCopy()</a> do not
- * work.
+ * Accessing the RGBA values for a point on the canvas requires a little math
+ * as shown below. The <a href="#/p5/loadPixels">loadPixels()</a> function
+ * must be called before accessing the `pixels` array. The
+ * <a href="#/p5/updatePixels">updatePixels()</a> function must be called
+ * after any changes are made.
  *
  * @property {Number[]} pixels
+ *
  * @example
+ * <div>
+ * <code>
+ * loadPixels();
+ * let x = 50;
+ * let y = 50;
+ * let d = pixelDensity();
+ * for (let i = 0; i < d; i += 1) {
+ *   for (let j = 0; j < d; j += 1) {
+ *     let index = 4 * ((y * d + j) * width * d + (x * d + i));
+ *     // Red.
+ *     pixels[index] = 0;
+ *     // Green.
+ *     pixels[index + 1] = 0;
+ *     // Blue.
+ *     pixels[index + 2] = 0;
+ *     // Alpha.
+ *     pixels[index + 3] = 255;
+ *   }
+ * }
+ * updatePixels();
+ *
+ * describe('A black dot in the middle of a gray rectangle.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * loadPixels();
+ * let d = pixelDensity();
+ * let halfImage = 4 * (d * width) * (d * height / 2);
+ * for (let i = 0; i < halfImage; i += 4) {
+ *   // Red.
+ *   pixels[i] = 255;
+ *   // Green.
+ *   pixels[i + 1] = 0;
+ *   // Blue.
+ *   pixels[i + 2] = 0;
+ *   // Alpha.
+ *   pixels[i + 3] = 255;
+ * }
+ * updatePixels();
+ *
+ * describe('A red rectangle drawn above a gray rectangle.');
+ * </code>
+ * </div>
+ *
  * <div>
  * <code>
  * let pink = color(255, 102, 204);
  * loadPixels();
  * let d = pixelDensity();
- * let halfImage = 4 * (width * d) * (height / 2 * d);
+ * let halfImage = 4 * (d * width) * (d * height / 2);
  * for (let i = 0; i < halfImage; i += 4) {
  *   pixels[i] = red(pink);
  *   pixels[i + 1] = green(pink);
@@ -69,35 +97,35 @@ import '../color/p5.Color';
  *   pixels[i + 3] = alpha(pink);
  * }
  * updatePixels();
+ *
+ * describe('A pink rectangle drawn above a gray rectangle.');
  * </code>
  * </div>
- *
- * @alt
- * top half of canvas pink, bottom grey
  */
 p5.prototype.pixels = [];
 
 /**
- * Copies a region of pixels from one image to another, using a specified
- * blend mode to do the operation.
+ * Copies a region of pixels from one image to another. The `blendMode`
+ * parameter blends the images' colors to create different effects.
  *
  * @method blend
- * @param  {p5.Image} srcImage source image
- * @param  {Integer} sx X coordinate of the source's upper left corner
- * @param  {Integer} sy Y coordinate of the source's upper left corner
- * @param  {Integer} sw source image width
- * @param  {Integer} sh source image height
- * @param  {Integer} dx X coordinate of the destination's upper left corner
- * @param  {Integer} dy Y coordinate of the destination's upper left corner
- * @param  {Integer} dw destination image width
- * @param  {Integer} dh destination image height
+ * @param  {p5.Image} srcImage source image.
+ * @param  {Integer} sx x-coordinate of the source's upper-left corner.
+ * @param  {Integer} sy y-coordinate of the source's upper-left corner.
+ * @param  {Integer} sw source image width.
+ * @param  {Integer} sh source image height.
+ * @param  {Integer} dx x-coordinate of the destination's upper-left corner.
+ * @param  {Integer} dy y-coordinate of the destination's upper-left corner.
+ * @param  {Integer} dw destination image width.
+ * @param  {Integer} dh destination image height.
  * @param  {Constant} blendMode the blend mode. either
  *     BLEND, DARKEST, LIGHTEST, DIFFERENCE,
  *     MULTIPLY, EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
  *     SOFT_LIGHT, DODGE, BURN, ADD or NORMAL.
  *
  * @example
- * <div><code>
+ * <div>
+ * <code>
  * let img0;
  * let img1;
  *
@@ -110,9 +138,14 @@ p5.prototype.pixels = [];
  *   background(img0);
  *   image(img1, 0, 0);
  *   blend(img1, 0, 0, 33, 100, 67, 0, 33, 100, LIGHTEST);
+ *
+ *   describe('A wall of bricks in front of a mountain landscape. The same wall of bricks appears faded on the right of the image.');
  * }
- * </code></div>
- * <div><code>
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
  * let img0;
  * let img1;
  *
@@ -125,9 +158,14 @@ p5.prototype.pixels = [];
  *   background(img0);
  *   image(img1, 0, 0);
  *   blend(img1, 0, 0, 33, 100, 67, 0, 33, 100, DARKEST);
+ *
+ *   describe('A wall of bricks in front of a mountain landscape. The same wall of bricks appears transparent on the right of the image.');
  * }
- * </code></div>
- * <div><code>
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
  * let img0;
  * let img1;
  *
@@ -140,14 +178,11 @@ p5.prototype.pixels = [];
  *   background(img0);
  *   image(img1, 0, 0);
  *   blend(img1, 0, 0, 33, 100, 67, 0, 33, 100, ADD);
+ *
+ *   describe('A wall of bricks in front of a mountain landscape. The same wall of bricks appears washed out on the right of the image.');
  * }
- * </code></div>
- *
- * @alt
- * image of rocky mountains. Brick images on left and right. Right overexposed
- * image of rockies. Brickwall images on left and right. Right mortar transparent
- * image of rockies. Brickwall images on left and right. Right translucent
- *
+ * </code>
+ * </div>
  */
 /**
  * @method blend
@@ -171,26 +206,25 @@ p5.prototype.blend = function(...args) {
 };
 
 /**
- * Copies a region of the canvas to another region of the canvas
- * and copies a region of pixels from an image used as the srcImg parameter
- * into the canvas srcImage is specified this is used as the source. If
- * the source and destination regions aren't the same size, it will
- * automatically resize source pixels to fit the specified
- * target region.
+ * Copies pixels from a source image to a region of the canvas. The source
+ * image can be the canvas itself or a <a href="#/p5.Image">p5.Image</a>
+ * object. `copy()` will scale pixels from the source region if it isn't the
+ * same size as the destination region.
  *
  * @method copy
- * @param  {p5.Image|p5.Element} srcImage source image
- * @param  {Integer} sx X coordinate of the source's upper left corner
- * @param  {Integer} sy Y coordinate of the source's upper left corner
- * @param  {Integer} sw source image width
- * @param  {Integer} sh source image height
- * @param  {Integer} dx X coordinate of the destination's upper left corner
- * @param  {Integer} dy Y coordinate of the destination's upper left corner
- * @param  {Integer} dw destination image width
- * @param  {Integer} dh destination image height
+ * @param  {p5.Image|p5.Element} srcImage source image.
+ * @param  {Integer} sx x-coordinate of the source's upper-left corner.
+ * @param  {Integer} sy y-coordinate of the source's upper-left corner.
+ * @param  {Integer} sw source image width.
+ * @param  {Integer} sh source image height.
+ * @param  {Integer} dx x-coordinate of the destination's upper-left corner.
+ * @param  {Integer} dy y-coordinate of the destination's upper-left corner.
+ * @param  {Integer} dw destination image width.
+ * @param  {Integer} dh destination image height.
  *
  * @example
- * <div><code>
+ * <div>
+ * <code>
  * let img;
  *
  * function preload() {
@@ -200,17 +234,15 @@ p5.prototype.blend = function(...args) {
  * function setup() {
  *   background(img);
  *   copy(img, 7, 22, 10, 10, 35, 25, 50, 50);
+ *   // Show copied region.
  *   stroke(255);
  *   noFill();
- *   // Rectangle shows area being copied
- *   rect(7, 22, 10, 10);
- * }
- * </code></div>
+ *   square(7, 22, 10);
  *
- * @alt
- * image of rocky mountains. Brick images on left and right. Right overexposed
- * image of rockies. Brickwall images on left and right. Right mortar transparent
- * image of rockies. Brickwall images on left and right. Right translucent
+ *   describe('An image of a mountain landscape. A square region is outlined in white. A larger square contains a pixelated view of the outlined region.');
+ * }
+ * </code>
+ * </div>
  */
 /**
  * @method copy
@@ -305,32 +337,32 @@ p5.prototype._copyHelper = (
 };
 
 /**
- * Applies a filter to the canvas. The presets options are:
+ * Applies an image filter to the canvas. The preset options are:
  *
- * `THRESHOLD`
- * Converts the image to black and white pixels depending if they are above or
- * below the threshold defined by the level parameter. The parameter must be
- * between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
+ * `INVERT`
+ * Inverts the colors in the image. No parameter is used.
  *
  * `GRAY`
- * Converts any colors in the image to grayscale equivalents. No parameter
- * is used.
+ * Converts the image to grayscale. No parameter is used.
+ *
+ * `THRESHOLD`
+ * Converts the image to black and white. Pixels with a grayscale value
+ * above a given threshold are converted to white. The rest are converted to
+ * black. The threshold must be between 0.0 (black) and 1.0 (white). If no
+ * value is specified, 0.5 is used.
  *
  * `OPAQUE`
  * Sets the alpha channel to entirely opaque. No parameter is used.
  *
- * `INVERT`
- * Sets each pixel to its inverse value. No parameter is used.
- *
  * `POSTERIZE`
- * Limits each channel of the image to the number of colors specified as the
- * parameter. The parameter can be set to values between 2 and 255, but
- * results are most noticeable in the lower ranges.
+ * Limits the number of colors in the image. Each color channel is limited to
+ * the number of colors specified. Values between 2 and 255 are valid, but
+ * results are most noticeable with lower values. The default value is 4.
  *
  * `BLUR`
- * Executes a Gaussian blur with the level parameter specifying the extent
- * of the blurring. If no parameter is used, the blur is equivalent to
- * Gaussian blur of radius 1. Larger values increase the blur.
+ * Blurs the image. The level of blurring is specified by a blur radius. Larger
+ * values increase the blur. The default value is 4. A gaussian blur is used
+ * in `P2D` mode. A box blur is used in `WEBGL` mode.
  *
  * `ERODE`
  * Reduces the light areas. No parameter is used.
@@ -338,75 +370,38 @@ p5.prototype._copyHelper = (
  * `DILATE`
  * Increases the light areas. No parameter is used.
  *
- * ---
+ * `filter()` uses WebGL in the background by default because it's faster.
+ * This can be disabled in `P2D` mode by adding a `false` argument, as in
+ * `filter(BLUR, false)`. This may be useful to keep computation off the GPU
+ * or to work around a lack of WebGL support.
  *
- * In WEBGL mode, `filter()` can also accept a shader. The fragment shader
- * is given a `uniform sampler2D` named `tex0` that contains the current
- * state of the canvas. For more information on using shaders, check
- * <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">
- * the introduction to shaders</a> tutorial.
+ * In `WEBGL` mode, `filter()` can also use custom shaders. See
+ * <a href="#/p5/createFilterShader">createFilterShader()</a> for more
+ * information.
  *
- * See also <a href="https://github.com/aferriss/p5jsShaderExamples"
- * target='_blank'>a selection of shader examples</a> by Adam Ferriss
- * that contains many similar filter effects.
  *
  * @method filter
  * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
  *                                POSTERIZE, BLUR, ERODE, DILATE or BLUR.
- *                                See Filters.js for docs on
- *                                each available filter
- * @param  {Number} [filterParam] an optional parameter unique
- *                                to each filter, see above
+ * @param  {Number} [filterParam] parameter unique to each filter.
+ * @param  {Boolean} [useWebGL]   flag to control whether to use fast
+ *                                WebGL filters (GPU) or original image
+ *                                filters (CPU); defaults to `true`.
  *
  * @example
  * <div>
  * <code>
  * let img;
- * function preload() {
- *   img = loadImage('assets/bricks.jpg');
- * }
- * function setup() {
- *   image(img, 0, 0);
- *   filter(THRESHOLD);
- * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
- * let img;
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
- * function setup() {
- *   image(img, 0, 0);
- *   filter(GRAY);
- * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
- * let img;
- * function preload() {
- *   img = loadImage('assets/bricks.jpg');
- * }
- * function setup() {
- *   image(img, 0, 0);
- *   filter(OPAQUE);
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * let img;
- * function preload() {
- *   img = loadImage('assets/bricks.jpg');
- * }
  * function setup() {
  *   image(img, 0, 0);
  *   filter(INVERT);
+ *
+ *   describe('A blue brick wall.');
  * }
  * </code>
  * </div>
@@ -414,12 +409,67 @@ p5.prototype._copyHelper = (
  * <div>
  * <code>
  * let img;
+ *
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
+ *
+ * function setup() {
+ *   image(img, 0, 0);
+ *   filter(GRAY);
+ *
+ *   describe('A brick wall drawn in grayscale.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/bricks.jpg');
+ * }
+ *
+ * function setup() {
+ *   image(img, 0, 0);
+ *   filter(THRESHOLD);
+ *
+ *   describe('A brick wall drawn in black and white.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/bricks.jpg');
+ * }
+ *
+ * function setup() {
+ *   image(img, 0, 0);
+ *   filter(OPAQUE);
+ *
+ *   describe('A red brick wall.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/bricks.jpg');
+ * }
+ *
  * function setup() {
  *   image(img, 0, 0);
  *   filter(POSTERIZE, 3);
+ *
+ *   describe('An image of a red brick wall drawn with limited color palette.');
  * }
  * </code>
  * </div>
@@ -427,25 +477,16 @@ p5.prototype._copyHelper = (
  * <div>
  * <code>
  * let img;
- * function preload() {
- *   img = loadImage('assets/bricks.jpg');
- * }
- * function setup() {
- *   image(img, 0, 0);
- *   filter(DILATE);
- * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
- * let img;
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
+ *
  * function setup() {
  *   image(img, 0, 0);
  *   filter(BLUR, 3);
+ *
+ *   describe('A blurry image of a red brick wall.');
  * }
  * </code>
  * </div>
@@ -453,134 +494,210 @@ p5.prototype._copyHelper = (
  * <div>
  * <code>
  * let img;
+ *
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
+ *
  * function setup() {
  *   image(img, 0, 0);
- *   filter(ERODE);
+ *   filter(DILATE);
+ *
+ *   describe('A red brick wall with bright lines between each brick.');
  * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * createCanvas(100, 100, WEBGL);
- * let myShader = createShader(
- *   `attribute vec3 aPosition;
- *   attribute vec2 aTexCoord;
+ * let img;
  *
- *   varying vec2 vTexCoord;
+ * function preload() {
+ *   img = loadImage('assets/bricks.jpg');
+ * }
  *
- *   void main() {
- *     vTexCoord = aTexCoord;
- *     vec4 positionVec4 = vec4(aPosition, 1.0);
- *     positionVec4.xy = positionVec4.xy * 2.0 - 1.0;
- *     gl_Position = positionVec4;
- *   }`,
- *   `precision mediump float;
- *   varying mediump vec2 vTexCoord;
+ * function setup() {
+ *   image(img, 0, 0);
+ *   filter(ERODE);
  *
- *   uniform sampler2D tex0;
- *
- *   float luma(vec3 color) {
- *     return dot(color, vec3(0.299, 0.587, 0.114));
- *   }
- *
- *   void main() {
- *     vec2 uv = vTexCoord;
- *     uv.y = 1.0 - uv.y;
- *     vec4 sampledColor = texture2D(tex0, uv);
- *     float gray = luma(sampledColor.rgb);
- *     gl_FragColor = vec4(gray, gray, gray, 1);
- *   }`
- * );
- * background('RED');
- * filter(myShader);
- * describe('a canvas becomes gray after being filtered by shader');
+ *   describe('A red brick wall with faint lines between each brick.');
+ * }
  * </code>
  * </div>
  *
- * @alt
- * black and white image of a brick wall.
- * greyscale image of a brickwall
- * image of a brickwall
- * jade colored image of a brickwall
- * red and pink image of a brickwall
- * image of a brickwall
- * blurry image of a brickwall
- * image of a brickwall
- * image of a brickwall with less detail
- * gray square
+ * <div>
+ * <code>
+ * let img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/bricks.jpg');
+ * }
+ *
+ * function setup() {
+ *   image(img, 0, 0);
+ *   // Don't use WebGL.
+ *   filter(BLUR, 3, false);
+ *
+ *   describe('A blurry image of a red brick wall.');
+ * }
+ * </code>
+ * </div>
  */
 
 /**
  * @method filter
- * @param {p5.Shader}  shaderFilter  A shader that's been loaded, with the
- *                                   frag shader using a `tex0` uniform
+ * @param  {Constant} filterType
+ * @param  {Boolean} [useWebGL]
  */
-p5.prototype.filter = function(operation, value) {
+/**
+ * @method filter
+ * @param {p5.Shader}  shaderFilter  shader that's been loaded, with the
+ *                                   frag shader using a `tex0` uniform.
+ */
+p5.prototype.filter = function(...args) {
   p5._validateParameters('filter', arguments);
 
-  // TODO: use shader filters always, and provide an opt out
-  if (this._renderer.isP3D) {
-    p5.RendererGL.prototype.filter.call(this._renderer, arguments);
+  let { shader, operation, value, useWebGL } = parseFilterArgs(...args);
+
+  // when passed a shader, use it directly
+  if (shader) {
+    p5.RendererGL.prototype.filter.call(this._renderer, shader);
     return;
   }
 
-  if (this.canvas !== undefined) {
-    Filters.apply(this.canvas, Filters[operation], value);
-  } else {
-    Filters.apply(this.elt, Filters[operation], value);
+  // when opting out of webgl, use old pixels method
+  if (!useWebGL && !this._renderer.isP3D) {
+    if (this.canvas !== undefined) {
+      Filters.apply(this.canvas, Filters[operation], value);
+    } else {
+      Filters.apply(this.elt, Filters[operation], value);
+    }
+    return;
+  }
+
+  if(!useWebGL && this._renderer.isP3D) {
+    console.warn('filter() with useWebGL=false is not supported in WEBGL');
+  }
+
+  // when this is a webgl renderer, apply constant shader filter
+  if (this._renderer.isP3D) {
+    p5.RendererGL.prototype.filter.call(this._renderer, operation, value);
+  }
+
+  // when this is P2D renderer, create/use hidden webgl renderer
+  else {
+    // create hidden webgl renderer if it doesn't exist
+    if (!this.filterGraphicsLayer) {
+      // the real _pInst is buried when this is a secondary p5.Graphics
+      const pInst =
+        this._renderer._pInst instanceof p5.Graphics ?
+          this._renderer._pInst._pInst :
+          this._renderer._pInst;
+
+      // create secondary layer
+      this.filterGraphicsLayer =
+        new p5.Graphics(
+          this.width,
+          this.height,
+          constants.WEBGL,
+          pInst
+        );
+    }
+
+    // copy p2d canvas contents to secondary webgl renderer
+    // dest
+    this.filterGraphicsLayer.copy(
+      // src
+      this._renderer,
+      // src coods
+      0, 0, this.width, this.height,
+      // dest coords
+      -this.width/2, -this.height/2, this.width, this.height
+    );
+
+    // filter it with shaders
+    this.filterGraphicsLayer.filter(operation, value);
+
+    // copy secondary webgl renderer back to original p2d canvas
+    this._renderer._pInst.image(this.filterGraphicsLayer, 0, 0);
+    this.filterGraphicsLayer.clear(); // prevent feedback effects on p2d canvas
   }
 };
 
+function parseFilterArgs(...args) {
+  // args could be:
+  // - operation, value, [useWebGL]
+  // - operation, [useWebGL]
+  // - shader
+
+  let result = {
+    shader: undefined,
+    operation: undefined,
+    value: undefined,
+    useWebGL: true
+  };
+
+  if (args[0] instanceof p5.Shader) {
+    result.shader = args[0];
+    return result;
+  }
+  else {
+    result.operation = args[0];
+  }
+
+  if (args.length > 1 && typeof args[1] === 'number') {
+    result.value = args[1];
+  }
+
+  if (args[args.length-1] === false) {
+    result.useWebGL = false;
+  }
+  return result;
+}
+
 /**
- * Get a region of pixels, or a single pixel, from the canvas.
+ * Gets a pixel or a region of pixels from the canvas.
  *
- * Returns an array of [R,G,B,A] values for any pixel or grabs a section of
- * an image. If no parameters are specified, the entire image is returned.
- * Use the x and y parameters to get the value of one pixel. Get a section of
- * the display window by specifying additional w and h parameters. When
- * getting an image, the x and y parameters define the coordinates for the
- * upper-left corner of the image, regardless of the current <a href="#/p5/imageMode">imageMode()</a>.
+ * `get()` is easy to use but it's not as fast as
+ * <a href="#/p5/pixels">pixels</a>. Use <a href="#/p5/pixels">pixels</a>
+ * to read many pixel values.
  *
- * Getting the color of a single pixel with get(x, y) is easy, but not as fast
- * as grabbing the data directly from <a href="#/p5/pixels">pixels[]</a>. The equivalent statement to
- * get(x, y) using <a href="#/p5/pixels">pixels[]</a> with pixel density d is
- * ```javascript
- * let x, y, d; // set these to the coordinates
- * let off = (y * width + x) * d * 4;
- * let components = [
- *   pixels[off],
- *   pixels[off + 1],
- *   pixels[off + 2],
- *   pixels[off + 3]
- * ];
- * print(components);
- * ```
- * See the reference for <a href="#/p5/pixels">pixels[]</a> for more information.
+ * The version of `get()` with no parameters returns the entire canvas.
  *
- * If you want to extract an array of colors or a subimage from an p5.Image object,
- * take a look at <a href="#/p5.Image/get">p5.Image.get()</a>
+ * The version of `get()` with two parameters interprets them as
+ * coordinates. It returns an array with the `[R, G, B, A]` values of the
+ * pixel at the given point.
+ *
+ * The version of `get()` with four parameters interprets them as coordinates
+ * and dimensions. It returns a subsection of the canvas as a
+ * <a href="#/p5.Image">p5.Image</a> object. The first two parameters are the
+ * coordinates for the upper-left corner of the subsection. The last two
+ * parameters are the width and height of the subsection.
+ *
+ * Use <a href="#/p5.Image/get">p5.Image.get()</a> to work directly with
+ * <a href="#/p5.Image">p5.Image</a> objects.
  *
  * @method get
- * @param  {Number}         x x-coordinate of the pixel
- * @param  {Number}         y y-coordinate of the pixel
- * @param  {Number}         w width of the section to be returned
- * @param  {Number}         h height of the section to be returned
- * @return {p5.Image}       the rectangle <a href="#/p5.Image">p5.Image</a>
+ * @param  {Number}         x x-coordinate of the pixel.
+ * @param  {Number}         y y-coordinate of the pixel.
+ * @param  {Number}         w width of the subsection to be returned.
+ * @param  {Number}         h height of the subsection to be returned.
+ * @return {p5.Image}       subsection as a <a href="#/p5.Image">p5.Image</a> object.
  * @example
  * <div>
  * <code>
  * let img;
+ *
  * function preload() {
  *   img = loadImage('assets/rockies.jpg');
  * }
+ *
  * function setup() {
  *   image(img, 0, 0);
  *   let c = get();
  *   image(c, width / 2, 0);
+ *
+ *   describe('Two identical mountain landscapes shown side-by-side.');
  * }
  * </code>
  * </div>
@@ -588,32 +705,50 @@ p5.prototype.filter = function(operation, value) {
  * <div>
  * <code>
  * let img;
+ *
  * function preload() {
  *   img = loadImage('assets/rockies.jpg');
  * }
+ *
  * function setup() {
  *   image(img, 0, 0);
  *   let c = get(50, 90);
  *   fill(c);
  *   noStroke();
- *   rect(25, 25, 50, 50);
+ *   square(25, 25, 50);
+ *
+ *   describe('A mountain landscape with an olive green square in its center.');
  * }
  * </code>
  * </div>
  *
- * @alt
- * 2 images of the rocky mountains, side-by-side
- * Image of the rocky mountains with 50×50 green rect in center of canvas
+ * <div>
+ * <code>
+ * let img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/rockies.jpg');
+ * }
+ *
+ * function setup() {
+ *   image(img, 0, 0);
+ *   let c = get(0, 0, width / 2, height / 2);
+ *   image(c, width / 2, height / 2);
+ *
+ *   describe('A mountain landscape drawn on top of another mountain landscape.');
+ * }
+ * </code>
+ * </div>
  */
 /**
  * @method get
- * @return {p5.Image}      the whole <a href="#/p5.Image">p5.Image</a>
+ * @return {p5.Image}      whole canvas as a <a href="#/p5.Image">p5.Image</a>.
  */
 /**
  * @method get
  * @param  {Number}        x
  * @param  {Number}        y
- * @return {Number[]}      color of pixel at x,y in array format [R, G, B, A]
+ * @return {Number[]}      color of the pixel at (x, y) in array format `[R, G, B, A]`.
  */
 p5.prototype.get = function(x, y, w, h) {
   p5._validateParameters('get', arguments);
@@ -621,16 +756,17 @@ p5.prototype.get = function(x, y, w, h) {
 };
 
 /**
- * Loads the pixel data for the display window into the <a href="#/p5/pixels">pixels[]</a> array. This
- * function must always be called before reading from or writing to <a href="#/p5/pixels">pixels[]</a>.
- * Note that only changes made with <a href="#/p5/set">set()</a> or direct manipulation of <a href="#/p5/pixels">pixels[]</a>
- * will occur.
+ * Loads the current value of each pixel on the canvas into the
+ * <a href="#/p5/pixels">pixels</a> array. This
+ * function must be called before reading from or writing to
+ * <a href="#/p5/pixels">pixels</a>.
  *
  * @method loadPixels
  * @example
  * <div>
  * <code>
  * let img;
+ *
  * function preload() {
  *   img = loadImage('assets/rockies.jpg');
  * }
@@ -638,18 +774,17 @@ p5.prototype.get = function(x, y, w, h) {
  * function setup() {
  *   image(img, 0, 0, width, height);
  *   let d = pixelDensity();
- *   let halfImage = 4 * (width * d) * (height * d / 2);
+ *   let halfImage = 4 * (d * width) * (d * height / 2);
  *   loadPixels();
- *   for (let i = 0; i < halfImage; i++) {
+ *   for (let i = 0; i < halfImage; i += 1) {
  *     pixels[i + halfImage] = pixels[i];
  *   }
  *   updatePixels();
+ *
+ *   describe('Two identical images of mountain landscapes, one on top of the other.');
  * }
  * </code>
  * </div>
- *
- * @alt
- * two images of the rocky mountains. one on top, one on bottom of canvas.
  */
 p5.prototype.loadPixels = function(...args) {
   p5._validateParameters('loadPixels', args);
@@ -657,30 +792,40 @@ p5.prototype.loadPixels = function(...args) {
 };
 
 /**
- * Changes the color of any pixel, or writes an image directly to the
- * display window.
- * The x and y parameters specify the pixel to change and the c parameter
- * specifies the color value. This can be a <a href="#/p5.Color">p5.Color</a> object, or [R, G, B, A]
- * pixel array. It can also be a single grayscale value.
- * When setting an image, the x and y parameters define the coordinates for
- * the upper-left corner of the image, regardless of the current <a href="#/p5/imageMode">imageMode()</a>.
+ * Sets the color of a pixel or draws an image to the canvas.
  *
- * After using <a href="#/p5/set">set()</a>, you must call <a href="#/p5/updatePixels">updatePixels()</a> for your changes to appear.
- * This should be called once all pixels have been set, and must be called before
- * calling .<a href="#/p5/get">get()</a> or drawing the image.
+ * `set()` is easy to use but it's not as fast as
+ * <a href="#/p5/pixels">pixels</a>. Use <a href="#/p5/pixels">pixels</a>
+ * to set many pixel values.
  *
- * Setting the color of a single pixel with set(x, y) is easy, but not as
- * fast as putting the data directly into <a href="#/p5/pixels">pixels[]</a>. Setting the <a href="#/p5/pixels">pixels[]</a>
- * values directly may be complicated when working with a retina display,
- * but will perform better when lots of pixels need to be set directly on
- * every loop. See the reference for <a href="#/p5/pixels">pixels[]</a> for more information.
+ * `set()` interprets the first two parameters as x- and y-coordinates. It
+ * interprets the last parameter as a grayscale value, a `[R, G, B, A]` pixel
+ * array, a <a href="#/p5.Color">p5.Color</a> object, or a
+ * <a href="#/p5.Image">p5.Image</a> object. If an image is passed, the first
+ * two parameters set the coordinates for the image's upper-left corner,
+ * regardless of the current <a href="#/p5/imageMode">imageMode()</a>.
+ *
+ * <a href="#/p5/updatePixels">updatePixels()</a> must be called after using
+ * `set()` for changes to appear.
  *
  * @method set
- * @param {Number}              x x-coordinate of the pixel
- * @param {Number}              y y-coordinate of the pixel
- * @param {Number|Number[]|Object} c insert a grayscale value | a pixel array |
- *                                a <a href="#/p5.Color">p5.Color</a> object | a <a href="#/p5.Image">p5.Image</a> to copy
+ * @param {Number}              x x-coordinate of the pixel.
+ * @param {Number}              y y-coordinate of the pixel.
+ * @param {Number|Number[]|Object} c grayscale value | pixel array |
+ *                                <a href="#/p5.Color">p5.Color</a> object | <a href="#/p5.Image">p5.Image</a> to copy.
  * @example
+ * <div>
+ * <code>
+ * set(30, 20, 0);
+ * set(85, 20, 0);
+ * set(85, 75, 0);
+ * set(30, 75, 0);
+ * updatePixels();
+ *
+ * describe('Four black dots arranged in a square drawn on a gray background.');
+ * </code>
+ * </div>
+ *
  * <div>
  * <code>
  * let black = color(0);
@@ -689,24 +834,29 @@ p5.prototype.loadPixels = function(...args) {
  * set(85, 75, black);
  * set(30, 75, black);
  * updatePixels();
+ *
+ * describe('Four black dots arranged in a square drawn on a gray background.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * for (let i = 30; i < width - 15; i++) {
- *   for (let j = 20; j < height - 25; j++) {
- *     let c = color(204 - j, 153 - i, 0);
- *     set(i, j, c);
+ * for (let x = 0; x < width; x += 1) {
+ *   for (let y = 0; y < height; y += 1) {
+ *     let c = map(x, 0, width, 0, 255);
+ *     set(x, y, c);
  *   }
  * }
  * updatePixels();
+ *
+ * describe('A horiztonal color gradient from black to white.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
  * let img;
+ *
  * function preload() {
  *   img = loadImage('assets/rockies.jpg');
  * }
@@ -714,39 +864,37 @@ p5.prototype.loadPixels = function(...args) {
  * function setup() {
  *   set(0, 0, img);
  *   updatePixels();
- *   line(0, 0, width, height);
- *   line(0, height, width, 0);
+ *
+ *   describe('An image of a mountain landscape.');
  * }
  * </code>
  * </div>
- *
- * @alt
- * 4 black points in the shape of a square middle-right of canvas.
- * square with orangey-brown gradient lightening at bottom right.
- * image of the rocky mountains. with lines like an 'x' through the center.
  */
 p5.prototype.set = function(x, y, imgOrCol) {
   this._renderer.set(x, y, imgOrCol);
 };
+
 /**
- * Updates the display window with the data in the <a href="#/p5/pixels">pixels[]</a> array.
- * Use in conjunction with <a href="#/p5/loadPixels">loadPixels()</a>. If you're only reading pixels from
- * the array, there's no need to call <a href="#/p5/updatePixels">updatePixels()</a> — updating is only
- * necessary to apply changes. <a href="#/p5/updatePixels">updatePixels()</a> should be called anytime the
- * pixels array is manipulated or <a href="#/p5/set">set()</a> is called, and only changes made with
- * <a href="#/p5/set">set()</a> or direct changes to <a href="#/p5/pixels">pixels[]</a> will occur.
+ * Updates the canvas with the RGBA values in the
+ * <a href="#/p5/pixels">pixels</a> array.
+ *
+ * `updatePixels()` only needs to be called after changing values in the
+ * <a href="#/p5/pixels">pixels</a> array. Such changes can be made directly
+ * after calling <a href="#/p5/loadPixels">loadPixels()</a> or by calling
+ * <a href="#/p5/set">set()</a>.
  *
  * @method updatePixels
  * @param  {Number} [x]    x-coordinate of the upper-left corner of region
- *                         to update
+ *                         to update.
  * @param  {Number} [y]    y-coordinate of the upper-left corner of region
- *                         to update
- * @param  {Number} [w]    width of region to update
- * @param  {Number} [h]    height of region to update
+ *                         to update.
+ * @param  {Number} [w]    width of region to update.
+ * @param  {Number} [h]    height of region to update.
  * @example
  * <div>
  * <code>
  * let img;
+ *
  * function preload() {
  *   img = loadImage('assets/rockies.jpg');
  * }
@@ -754,17 +902,17 @@ p5.prototype.set = function(x, y, imgOrCol) {
  * function setup() {
  *   image(img, 0, 0, width, height);
  *   let d = pixelDensity();
- *   let halfImage = 4 * (width * d) * (height * d / 2);
+ *   let halfImage = 4 * (d * width) * (d * height / 2);
  *   loadPixels();
- *   for (let i = 0; i < halfImage; i++) {
+ *   for (let i = 0; i < halfImage; i += 1) {
  *     pixels[i + halfImage] = pixels[i];
  *   }
  *   updatePixels();
+ *
+ *   describe('Two identical images of mountain landscapes, one on top of the other.');
  * }
  * </code>
  * </div>
- * @alt
- * two images of the rocky mountains. one on top, one on bottom of canvas.
  */
 p5.prototype.updatePixels = function(x, y, w, h) {
   p5._validateParameters('updatePixels', arguments);

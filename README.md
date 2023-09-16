@@ -1,5 +1,5 @@
 [![npm version](https://badge.fury.io/js/p5.svg)](https://www.npmjs.com/package/p5)
-[![All Contributors](https://img.shields.io/github/all-contributors/processing/p5.js?color=ee8449&style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/github/all-contributors/processing/p5.js?color=ee8449&style=flat-square)](#contributors)
 
 
 # [p5.js](https://p5js.org)
@@ -93,7 +93,7 @@ Lead/Mentor Alumni
 
 ## Contributors
 
-We recognize all types of contributions. This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification and the [Emoji Key](https://allcontributors.org/docs/en/emoji-key) ✨ for contribution types. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309). You can also post an issue or comment on a pull request with the text: `@all-contributors please add @YOUR-USERNAME for THING(S)` and our nice bot will add you.
+We recognize all types of contributions. This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification and the [Emoji Key](https://allcontributors.org/docs/en/emoji-key) ✨ for contribution types. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309). You can also post an issue or comment on a pull request with the text: `@all-contributors please add @YOUR-USERNAME for THING(S)` and our nice bot will add you.
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
@@ -898,6 +898,10 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/yulicai"><img src="https://avatars.githubusercontent.com/u/14118438?v=4?s=120" width="120px;" alt="Yolonanido"/><br /><sub><b>Yolonanido</b></sub></a><br /><a href="#eventOrganizing-yulicai" title="Event Organizing">📋</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/SableRaf"><img src="https://avatars.githubusercontent.com/u/290261?v=4?s=120" width="120px;" alt="Raphaël de Courville"/><br /><sub><b>Raphaël de Courville</b></sub></a><br /><a href="#eventOrganizing-SableRaf" title="Event Organizing">📋</a> <a href="#video-SableRaf" title="Videos">📹</a> <a href="#ideas-SableRaf" title="Ideas, Planning, & Feedback">🤔</a> <a href="#promotion-SableRaf" title="Promotion">📣</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/mykongee"><img src="https://avatars.githubusercontent.com/u/10676303?v=4?s=120" width="120px;" alt="Mike "/><br /><sub><b>Mike </b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=mykongee" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3Amykongee" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://my-portfolio-ankush263.vercel.app/"><img src="https://avatars.githubusercontent.com/u/86042508?v=4?s=120" width="120px;" alt="Ankush Banik"/><br /><sub><b>Ankush Banik</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AAnkush263" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=Ankush263" title="Code">💻</a> <a href="#talk-Ankush263" title="Talks">📢</a> <a href="#question-Ankush263" title="Answering Questions">💬</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://qiita.com/tetunori_lego"><img src="https://avatars.githubusercontent.com/u/14086390?v=4?s=120" width="120px;" alt="tetunori"/><br /><sub><b>tetunori</b></sub></a><br /><a href="#blog-tetunori" title="Blogposts">📝</a> <a href="https://github.com/processing/p5.js/commits?author=tetunori" title="Code">💻</a> <a href="#example-tetunori" title="Examples">💡</a> <a href="#tool-tetunori" title="Tools">🔧</a></td>
     </tr>
   </tbody>
 </table>

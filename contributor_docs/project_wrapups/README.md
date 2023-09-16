@@ -5,6 +5,9 @@ This folder contains wrap-up reports from p5.js related [Google Summer of Code](
 
 ## Google Summer of Code
 
+### Google Summer of Code 2023
+* [Mobile/Responsive Design Implementation of p5.js Web Editor](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/dewansDT_gsoc_2023.md) by Dewansh Thakur, 2023
+  
 ### Google Summer of Code 2022
 * [p5 /teach reorganize & update](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/graciazhang_gsoc_2022.md) by Gracia Zhang, 2022
 * [p5xr Immersive Session Process and Controller API update](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/smrghsh_gsoc_2022.md) by Samir Ghosh, 2022
