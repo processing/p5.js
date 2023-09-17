@@ -5230,6 +5230,30 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "Ankush263",
+      "name": "Ankush Banik",
+      "avatar_url": "https://avatars.githubusercontent.com/u/86042508?v=4",
+      "profile": "https://my-portfolio-ankush263.vercel.app/",
+      "contributions": [
+        "bug",
+        "code",
+        "talk",
+        "question"
+      ]
+    },
+    {
+      "login": "tetunori",
+      "name": "tetunori",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14086390?v=4",
+      "profile": "https://qiita.com/tetunori_lego",
+      "contributions": [
+        "blog",
+        "code",
+        "example",
+        "tool"
+      ]
     }
   ],
   "repoType": "github",
