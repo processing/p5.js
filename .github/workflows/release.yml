@@ -25,7 +25,10 @@ jobs:
         id: version-number
         run: |
           version=$(echo ${{ github.ref_name }} | cut -c 2-)
-          echo "::set-output name=version::$version"
+          echo "version=$version" >> $GITHUB_OUTPUT
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +"%B %Oe, %Y")" >> $GITHUB_OUTPUT
       - name: Install dependencies
         run: npm ci
         env:
@@ -81,6 +84,11 @@ jobs:
           value: ${{ steps.version-number.outputs.version }}
           commitChange: false
           updateFile: true
+      - name: Update version.json on website repo
+        uses: restackio/update-json-values-action@v1.0.0
+        with:
+          file: website/dist/download/version.json
+          values: "{'version': '${{ steps.version-number.outputs.version }}', 'date': '${{ steps.date.outputs.date }}'}"
       - name: Update en.json on website repo
         run: |
           cd website
