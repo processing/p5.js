@@ -141,7 +141,7 @@ p5.prototype.getItem = function(key) {
   const type = localStorage.getItem(`${key}p5TypeID`);
   if (typeof type === 'undefined') {
     console.log(
-      `Unable to determine type of item stored under ${key}in local storage. Did you save the item with something other than setItem()?`
+      `Unable to determine type of item stored under ${key} in local storage. Did you save the item with something other than setItem()?`
     );
   } else if (value !== null) {
     switch (type) {
