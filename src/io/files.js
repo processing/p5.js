@@ -6,9 +6,6 @@
  */
 
 import p5 from '../core/main';
-import 'whatwg-fetch';
-// import 'es6-promise/auto';
-// import * as fetchJsonp from 'fetch-jsonp';
 import * as fileSaver from 'file-saver';
 import '../core/friendly_errors/validate_params';
 import '../core/friendly_errors/file_errors';
@@ -127,7 +124,7 @@ p5.prototype.loadJSON = function(...args) {
   for (let i = 1; i < args.length; i++) {
     const arg = args[i];
     if (typeof arg === 'string') {
-      if (arg === 'jsonp' || arg === 'json') {
+      if (arg === 'json') {
         t = arg;
       }
     } else if (typeof arg === 'function') {
@@ -136,13 +133,6 @@ p5.prototype.loadJSON = function(...args) {
       } else {
         errorCallback = arg;
       }
-    } else if (
-      typeof arg === 'object' &&
-      (arg.hasOwnProperty('jsonpCallback') ||
-        arg.hasOwnProperty('jsonpCallbackFunction'))
-    ) {
-      t = 'jsonp';
-      options = arg;
     }
   }
 
@@ -991,7 +981,6 @@ p5.prototype.httpDo = function(...args) {
   let errorCallback;
   let request;
   let promise;
-  const jsonpOptions = {};
   let cbCount = 0;
   let contentType = 'text/plain';
   // Trim the callbacks off the end to get an idea of how many arguments are passed
@@ -1026,7 +1015,6 @@ p5.prototype.httpDo = function(...args) {
           method = a;
         } else if (
           a === 'json' ||
-          a === 'jsonp' ||
           a === 'binary' ||
           a === 'arrayBuffer' ||
           a === 'xml' ||
@@ -1040,14 +1028,7 @@ p5.prototype.httpDo = function(...args) {
       } else if (typeof a === 'number') {
         data = a.toString();
       } else if (typeof a === 'object') {
-        if (
-          a.hasOwnProperty('jsonpCallback') ||
-          a.hasOwnProperty('jsonpCallbackFunction')
-        ) {
-          for (const attr in a) {
-            jsonpOptions[attr] = a[attr];
-          }
-        } else if (a instanceof p5.XML) {
+        if (a instanceof p5.XML) {
           data = a.serialize();
           contentType = 'application/xml';
         } else {
@@ -1086,11 +1067,7 @@ p5.prototype.httpDo = function(...args) {
     }
   }
 
-  // if (type === 'jsonp') {
-  //   promise = fetchJsonp(path, jsonpOptions);
-  // } else {
   promise = fetch(request);
-  // }
   promise = promise.then(res => {
     if (!res.ok) {
       const err = new Error(res.body);
@@ -1098,16 +1075,8 @@ p5.prototype.httpDo = function(...args) {
       err.ok = false;
       throw err;
     } else {
-      let fileSize = 0;
-      if (type !== 'jsonp') {
-        fileSize = res.headers.get('content-length');
-      }
-      if (fileSize && fileSize > 64000000) {
-        p5._friendlyFileLoadError(7, path);
-      }
       switch (type) {
         case 'json':
-        case 'jsonp':
           return res.json();
         case 'binary':
           return res.blob();
