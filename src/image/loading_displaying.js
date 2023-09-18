@@ -8,7 +8,7 @@
 import p5 from '../core/main';
 import canvas from '../core/helpers';
 import * as constants from '../core/constants';
-import omggif from 'omggif';
+import * as omggif from 'omggif';
 import { GIFEncoder, quantize, nearestColorIndex } from 'gifenc';
 
 import '../core/friendly_errors/validate_params';

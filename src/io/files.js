@@ -7,9 +7,9 @@
 
 import p5 from '../core/main';
 import 'whatwg-fetch';
-import 'es6-promise/auto';
-import fetchJsonp from 'fetch-jsonp';
-import fileSaver from 'file-saver';
+// import 'es6-promise/auto';
+// import * as fetchJsonp from 'fetch-jsonp';
+import * as fileSaver from 'file-saver';
 import '../core/friendly_errors/validate_params';
 import '../core/friendly_errors/file_errors';
 import '../core/friendly_errors/fes_core';
@@ -1086,11 +1086,11 @@ p5.prototype.httpDo = function(...args) {
     }
   }
 
-  if (type === 'jsonp') {
-    promise = fetchJsonp(path, jsonpOptions);
-  } else {
-    promise = fetch(request);
-  }
+  // if (type === 'jsonp') {
+  //   promise = fetchJsonp(path, jsonpOptions);
+  // } else {
+  promise = fetch(request);
+  // }
   promise = promise.then(res => {
     if (!res.ok) {
       const err = new Error(res.body);

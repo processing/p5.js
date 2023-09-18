@@ -1,11 +1,12 @@
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
+import translationsModule from '../../translations';
 
 let fallbackResources, languages;
 if (typeof IS_MINIFIED === 'undefined') {
   // internationalization is only for the unminified build
 
-  const translationsModule = require('../../translations');
+  // const translationsModule = require('../../translations');
   fallbackResources = translationsModule.default;
   languages = translationsModule.languages;
 

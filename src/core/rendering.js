@@ -8,7 +8,7 @@ import p5 from './main';
 import * as constants from './constants';
 import './p5.Graphics';
 import './p5.Renderer2D';
-import '../webgl/p5.RendererGL';
+// import '../webgl/p5.RendererGL';
 let defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
 const defaultClass = 'p5Canvas';
 

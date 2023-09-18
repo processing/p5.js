@@ -29,6 +29,8 @@
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.10.2",
     "@babel/register": "^7.7.7",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.2.1",
     "all-contributors-cli": "^6.19.0",
     "babel-plugin-i18next-extract": "^0.5.0",
     "babel-plugin-istanbul": "^5.2.0",
@@ -72,6 +74,7 @@
     "promise-map-series": "^0.2.3",
     "puppeteer": "^18.2.1",
     "regenerator-runtime": "^0.13.3",
+    "rollup": "^3.29.2",
     "simple-git": "^3.16.1",
     "whatwg-fetch": "^2.0.4"
   },
@@ -143,5 +146,6 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
-  }
+  },
+  "dependencies": {}
 }

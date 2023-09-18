@@ -5,12 +5,13 @@
 import p5 from '../main';
 import * as constants from '../constants';
 import { translator } from '../internationalization';
+import dataDoc from '../../../docs/parameterData.json';
 
 if (typeof IS_MINIFIED !== 'undefined') {
   p5._validateParameters = p5._clearValidateParamsCache = () => {};
 } else {
   // for parameter validation
-  const dataDoc = require('../../../docs/parameterData.json');
+  // const dataDoc = require('../../../docs/parameterData.json');
   const arrDoc = JSON.parse(JSON.stringify(dataDoc));
 
   const docCache = {};
@@ -263,7 +264,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
               constant = mapConstants[format.name];
             } else {
               // parse possible constant values from description
-              const myRe = /either\s+(?:[A-Z0-9_]+\s*,?\s*(?:or)?\s*)+/g;
+              // const myRe = /either\s+(?:[A-Z0-9_]+\s*,?\s*(?:or)?\s*)+/g;
               const values = {};
               const names = [];
 
@@ -272,21 +273,21 @@ if (typeof IS_MINIFIED !== 'undefined') {
                 names
               };
 
-              const myArray = myRe.exec(format.description);
+              // const myArray = myRe.exec(format.description);
               if (func === 'endShape' && format.name === 'mode') {
                 values[constants.CLOSE] = true;
                 names.push('CLOSE');
               } else {
-                const match = myArray[0];
-                const reConst = /[A-Z0-9_]+/g;
-                let matchConst;
-                while ((matchConst = reConst.exec(match)) !== null) {
-                  const name = matchConst[0];
-                  if (constants.hasOwnProperty(name)) {
-                    values[constants[name]] = true;
-                    names.push(name);
-                  }
-                }
+                // const match = myArray[0];
+                // const reConst = /[A-Z0-9_]+/g;
+                // let matchConst;
+                // while ((matchConst = reConst.exec(match)) !== null) {
+                //   const name = matchConst[0];
+                //   if (constants.hasOwnProperty(name)) {
+                //     values[constants[name]] = true;
+                //     names.push(name);
+                //   }
+                // }
               }
             }
             return {
