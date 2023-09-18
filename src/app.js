@@ -6,7 +6,7 @@ import './core/friendly_errors/stacktrace';
 import './core/friendly_errors/validate_params';
 import './core/friendly_errors/file_errors';
 import './core/friendly_errors/fes_core';
-// import './core/friendly_errors/sketch_reader';
+import './core/friendly_errors/sketch_reader';
 import './core/helpers';
 import './core/legacy';
 import './core/preload';
@@ -72,7 +72,7 @@ import './math/trigonometry';
 
 // typography
 import './typography/attributes';
-// import './typography/loading_displaying';
+import './typography/loading_displaying';
 import './typography/p5.Font';
 
 // utilities
@@ -102,5 +102,4 @@ import './webgl/text';
 
 import './core/init';
 
-// module.exports = p5;
 export default p5;
