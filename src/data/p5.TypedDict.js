@@ -191,7 +191,7 @@ p5.TypedDict = class TypedDict {
     if (this._validate(value)) {
       this.data[key] = value;
     } else {
-      console.log('Those values dont work for this dictionary type.');
+      console.log("Those values don't work for this dictionary type.");
     }
   }
 
