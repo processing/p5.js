@@ -1,5 +1,5 @@
 import p5 from '../core/main';
-// import { initialize as initTranslator } from './internationalization';
+import { initialize as initTranslator } from './internationalization';
 
 /**
  * _globalInit
@@ -52,6 +52,7 @@ const waitForDocumentReady = () =>
 
 // only load translations if we're using the full, un-minified library
 const waitingForTranslator =
-   Promise.resolve();
+  typeof IS_MINIFIED === 'undefined' ? initTranslator() :
+    Promise.resolve();
 
 Promise.all([waitForDocumentReady(), waitingForTranslator]).then(_globalInit);
