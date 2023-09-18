@@ -75,6 +75,7 @@
     "puppeteer": "^18.2.1",
     "regenerator-runtime": "^0.13.3",
     "rollup": "^3.29.2",
+    "rollup-plugin-string": "^3.0.0",
     "simple-git": "^3.16.1",
     "whatwg-fetch": "^2.0.4"
   },
@@ -146,6 +147,5 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
-  },
-  "dependencies": {}
+  }
 }
