@@ -82,23 +82,23 @@ import './utilities/string_functions';
 import './utilities/time_date';
 
 // webgl
-// import './webgl/3d_primitives';
-// import './webgl/interaction';
-// import './webgl/light';
-// import './webgl/loading';
-// import './webgl/material';
-// import './webgl/p5.Camera';
-// import './webgl/p5.DataArray';
-// import './webgl/p5.Geometry';
-// import './webgl/p5.Matrix';
-// import './webgl/p5.RendererGL.Immediate';
-// import './webgl/p5.RendererGL';
-// import './webgl/p5.RendererGL.Retained';
-// import './webgl/p5.Framebuffer';
-// import './webgl/p5.Shader';
-// import './webgl/p5.RenderBuffer';
-// import './webgl/p5.Texture';
-// import './webgl/text';
+import './webgl/3d_primitives';
+import './webgl/interaction';
+import './webgl/light';
+import './webgl/loading';
+import './webgl/material';
+import './webgl/p5.Camera';
+import './webgl/p5.DataArray';
+import './webgl/p5.Geometry';
+import './webgl/p5.Matrix';
+import './webgl/p5.RendererGL.Immediate';
+import './webgl/p5.RendererGL';
+import './webgl/p5.RendererGL.Retained';
+import './webgl/p5.Framebuffer';
+import './webgl/p5.Shader';
+import './webgl/p5.RenderBuffer';
+import './webgl/p5.Texture';
+import './webgl/text';
 
 import './core/init';
 
