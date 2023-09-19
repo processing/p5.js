@@ -5254,6 +5254,16 @@
         "example",
         "tool"
       ]
+    },
+    {
+      "login": "KeyboardSounds",
+      "name": "Emma Krantz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3796838?v=4",
+      "profile": "https://github.com/KeyboardSounds",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "repoType": "github",
