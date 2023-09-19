@@ -541,4 +541,34 @@ suite('p5.Framebuffer', function() {
       });
     }
   });
+
+  suite('texture filtering', function() {
+    test('can create a framebuffer that uses NEAREST texture filtering',
+      function() {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        const fbo = myp5.createFramebuffer({
+          textureFiltering: myp5.NEAREST
+        });
+
+        assert.equal(
+          fbo.color.framebuffer.colorP5Texture.glMinFilter, fbo.gl.NEAREST
+        );
+        assert.equal(
+          fbo.color.framebuffer.colorP5Texture.glMagFilter, fbo.gl.NEAREST
+        );
+      });
+    test('can create a framebuffer that uses LINEAR texture filtering',
+      function() {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        // LINEAR should be the default
+        const fbo = myp5.createFramebuffer({});
+
+        assert.equal(
+          fbo.color.framebuffer.colorP5Texture.glMinFilter, fbo.gl.LINEAR
+        );
+        assert.equal(
+          fbo.color.framebuffer.colorP5Texture.glMagFilter, fbo.gl.LINEAR
+        );
+      });
+  });
 });
