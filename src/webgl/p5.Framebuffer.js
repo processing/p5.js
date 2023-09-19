@@ -533,8 +533,8 @@ class Framebuffer {
       this.target._renderer,
       this.color,
       {
-        glMinFilter: filter,
-        glMagFilter: filter
+        minFilter: filter,
+        magFilter: filter
       }
     );
     this.target._renderer.textures.set(this.color, this.colorP5Texture);
