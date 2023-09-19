@@ -902,6 +902,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://qiita.com/tetunori_lego"><img src="https://avatars.githubusercontent.com/u/14086390?v=4?s=120" width="120px;" alt="tetunori"/><br /><sub><b>tetunori</b></sub></a><br /><a href="#blog-tetunori" title="Blogposts">📝</a> <a href="https://github.com/processing/p5.js/commits?author=tetunori" title="Code">💻</a> <a href="#example-tetunori" title="Examples">💡</a> <a href="#tool-tetunori" title="Tools">🔧</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/KeyboardSounds"><img src="https://avatars.githubusercontent.com/u/3796838?v=4?s=120" width="120px;" alt="Emma Krantz"/><br /><sub><b>Emma Krantz</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AKeyboardSounds" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=KeyboardSounds" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
