@@ -5264,6 +5264,18 @@
         "bug",
         "code"
       ]
+    },
+    {
+      "login": "ZacTolle",
+      "name": "Zac Tolle",
+      "avatar_url": "https://avatars.githubusercontent.com/u/139601580?v=4",
+      "profile": "https://zactolle.notion.site",
+      "contributions": [
+        "a11y",
+        "code",
+        "tool",
+        "example"
+      ]
     }
   ],
   "repoType": "github",
