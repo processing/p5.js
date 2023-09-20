@@ -628,6 +628,24 @@ class p5 {
     target._registeredMethods[name].push(m);
   }
 
+  unregisterMethod(name, m) {
+    const target = this || p5.prototype;
+    if (target._registeredMethods.hasOwnProperty(name)) {
+      const methods = target._registeredMethods[name];
+      const indexesToRemove = [];
+      // Find all indexes of the method `m` in the array of registered methods
+      for (let i = 0; i < methods.length; i++) {
+        if (methods[i] === m) {
+          indexesToRemove.push(i);
+        }
+      }
+      // Remove all instances of the method `m` from the array
+      for (let i = indexesToRemove.length - 1; i >= 0; i--) {
+        methods.splice(indexesToRemove[i], 1);
+      }
+    }
+  }
+
   // create a function which provides a standardized process for binding
   // globals; this is implemented as a factory primarily so that there's a
   // way to redefine what "global" means for the binding function so it
