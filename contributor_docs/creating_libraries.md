@@ -73,17 +73,20 @@ p5.prototype.getData = function (callback) {
   return ret;
 };
 ```
-  
-### Use **registerMethod()** to register functions with _**p5**_ that should be called at various times.
+
+### Use **registerMethod()** and **unregisterMethod()** to register and unregister functions with _**p5**_ that should be called at various times
 
   ```js
   p5.prototype.doRemoveStuff = function () { 
     // library cleanup stuff
   };
   p5.prototype.registerMethod('remove', p5.prototype.doRemoveStuff);
+
+  // Unregister the method when it's no longer needed.
+  p5.prototype.unregisterMethod('remove', p5.prototype.doRemoveStuff);
   ```
-  
-Method names you can register include the following list. Note that you may need to define the function before you register it.
+
+Method names you can register and unregister include the following list. Note that you may need to define the function before you register it.
 
   * **pre** — Called at the beginning of `draw()`. It can affect drawing.
   * **post** — Called at the end of `draw()`.
