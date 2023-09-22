@@ -1427,7 +1427,22 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     const _r = args[0] || 0;
     const _g = args[1] || 0;
     const _b = args[2] || 0;
-    const _a = args[3] || 0;
+    let _a = args[3] || 0;
+
+    const activeFramebuffer = this.activeFramebuffer();
+    if (
+      activeFramebuffer &&
+      activeFramebuffer.format === constants.UNSIGNED_BYTE &&
+      !activeFramebuffer.antialias &&
+      _a === 0
+    ) {
+      // Drivers on Intel Macs check for 0,0,0,0 exactly when drawing to a
+      // framebuffer and ignore the command if it's the only drawing command to
+      // the framebuffer. To work around it, we can set the alpha to a value so
+      // low that it still rounds down to 0, but that circumvents the buggy
+      // check in the driver.
+      _a = 1e-10;
+    }
 
     this.GL.clearColor(_r * _a, _g * _a, _b * _a, _a);
     this.GL.clearDepth(1);
