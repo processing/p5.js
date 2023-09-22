@@ -74,7 +74,7 @@ p5.prototype.getData = function (callback) {
 };
 ```
 
-### Use **registerMethod()** and **unregisterMethod()** to register and unregister functions with _**p5**_ that should be called at various times
+### Use **registerMethod()** and **unregisterMethod()** to register and unregister functions with _**p5**_ that should be called at various times.
 
   ```js
   p5.prototype.doRemoveStuff = function () { 
