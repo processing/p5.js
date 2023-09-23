@@ -90,6 +90,8 @@ class Framebuffer {
     this.target = target;
     this.target._renderer.framebuffers.add(this);
 
+    this._isClipApplied = false;
+
     /**
      * A <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference
      * /Global_Objects/Uint8ClampedArray' target='_blank'>Uint8ClampedArray</a>
@@ -511,8 +513,8 @@ class Framebuffer {
       this.target._renderer,
       this.color,
       {
-        glMinFilter: filter,
-        glMagFilter: filter
+        minFilter: filter,
+        magFilter: filter
       }
     );
     this.target._renderer.textures.set(this.color, this.colorP5Texture);
@@ -940,12 +942,12 @@ class Framebuffer {
    */
   end() {
     const gl = this.gl;
+    this.target.pop();
     const fbo = this.target._renderer.activeFramebuffers.pop();
     if (fbo !== this) {
       throw new Error("It looks like you've called end() while another Framebuffer is active.");
     }
     this._beforeEnd();
-    this.target.pop();
     if (this.prevFramebuffer) {
       this.prevFramebuffer._beforeBegin();
     } else {
@@ -955,6 +957,7 @@ class Framebuffer {
         this.target._renderer._origViewport.height
       );
     }
+    this.target._renderer._applyStencilTestIfClipping();
   }
 
   /**

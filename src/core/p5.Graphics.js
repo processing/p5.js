@@ -21,7 +21,7 @@ import * as constants from './constants';
  * @param {Number} h            height
  * @param {Constant} renderer   the renderer to use, either P2D or WEBGL
  * @param {p5} [pInst]          pointer to p5 instance
- * @param {Object} [canvas]     existing html canvas element
+ * @param {HTMLCanvasElement} [canvas]     existing html canvas element
  */
 p5.Graphics = class extends p5.Element {
   constructor(w, h, renderer, pInst, canvas) {

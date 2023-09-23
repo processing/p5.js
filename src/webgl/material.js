@@ -187,15 +187,13 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  * Creates a new <a href="#/p5.Shader">p5.Shader</a> using only a fragment shader, as a convenience method for creating image effects.
  * It's like <a href="#/createShader">createShader()</a> but with a default vertex shader included.
  *
- * <a href="#/createFilterShader">createFilterShader()</a> is intended to be used along with <a href="#/filter">filter()</a> for filtering the entire contents of a canvas in WebGL mode.
+ * <a href="#/createFilterShader">createFilterShader()</a> is intended to be used along with <a href="#/filter">filter()</a> for filtering the contents of a canvas in WebGL mode.
+ * A filter shader will not be applied to any geometries.
  *
- * Note:
- * - The fragment shader is provided with a single texture input uniform called `tex0`.
- * This is created specificially for filter shaders to access the canvas contents.
- *
- * - A filter shader will not apply to a 3D geometry.
- *
- * - Shaders can only be used in `WEBGL` mode.
+ * The fragment shader receives some uniforms:
+ * - `sampler2D tex0`, which contains the canvas contents as a texture
+ * - `vec2 canvasSize`, which is the width and height of the canvas
+ * - `vec2 texelSize`, which is the size of a pixel (`1.0/width`, `1.0/height`)
  *
  * For more info about filters and shaders, see Adam Ferriss' <a href="https://github.com/aferriss/p5jsShaderExamples">repo of shader examples</a>
  * or the <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">introduction to shaders</a> page.
@@ -235,7 +233,10 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  *
  *   // the canvas contents, given from filter()
  *   uniform sampler2D tex0;
- *   // a custom variable from the sketch
+ *   // other useful information from the canvas
+ *   uniform vec2 texelSize;
+ *   uniform vec2 canvasSize;
+ *   // a custom variable from this sketch
  *   uniform float darkness;
  *
  *   void main() {
@@ -262,26 +263,48 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
 p5.prototype.createFilterShader = function(fragSrc) {
   this._assert3d('createFilterShader');
   p5._validateParameters('createFilterShader', arguments);
-  let defaultVertSrc = `
+  let defaultVertV1 = `
+    uniform mat4 uModelViewMatrix;
+    uniform mat4 uProjectionMatrix;
+
     attribute vec3 aPosition;
     // texcoords only come from p5 to vertex shader
     // so pass texcoords on to the fragment shader in a varying variable
     attribute vec2 aTexCoord;
     varying vec2 vTexCoord;
-    
+
     void main() {
       // transferring texcoords for the frag shader
       vTexCoord = aTexCoord;
-    
+
       // copy position with a fourth coordinate for projection (1.0 is normal)
       vec4 positionVec4 = vec4(aPosition, 1.0);
-      // scale by two and center to achieve correct positioning
-      positionVec4.xy = positionVec4.xy * 2.0 - 1.0;
-    
-      gl_Position = positionVec4;
+
+      // project to 3D space
+      gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
     }
   `;
-  return new p5.Shader(this._renderer, defaultVertSrc, fragSrc);
+  let defaultVertV2 = `#version 300 es
+    uniform mat4 uModelViewMatrix;
+    uniform mat4 uProjectionMatrix;
+
+    in vec3 aPosition;
+    in vec2 aTexCoord;
+    out vec2 vTexCoord;
+
+    void main() {
+      // transferring texcoords for the frag shader
+      vTexCoord = aTexCoord;
+
+      // copy position with a fourth coordinate for projection (1.0 is normal)
+      vec4 positionVec4 = vec4(aPosition, 1.0);
+
+      // project to 3D space
+      gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+    }
+  `;
+  let vertSrc = fragSrc.includes('#version 300 es') ? defaultVertV2 : defaultVertV1;
+  return new p5.Shader(this._renderer, vertSrc, fragSrc);
 };
 
 /**

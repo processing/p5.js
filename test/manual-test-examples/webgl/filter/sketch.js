@@ -1,44 +1,29 @@
+
+let img;
+
+function preload() {
+  img = loadImage('../../../../docs/reference/assets/moonwalk.jpg');
+}
+
+let pg;
+
 function setup() {
-  createCanvas(100, 100, WEBGL);
-
-  let s = createShader(vert, frag);
-
-  // check to see if frag shader changes color as intended
-  // and that vertex shader preserves position, orientation, scale
-  background('RED');
-  circle(10,25,30);
-
-  filter(s);
-
-  // and that there's no side effects after filter()
-  circle(-35,-35,30);
+  // img.resize(600, 600);
+  createCanvas(img.width, img.height);
+  pg = createGraphics(img.width, img.height, WEBGL);
 }
 
-vert = `attribute vec3 aPosition;
-attribute vec2 aTexCoord;
 
-varying vec2 vTexCoord;
+function draw() {
+  if(pg.webglVersion === P2D){
+    pg.image(img, 0, 0, width, height);
+  } else {
+    pg.image(img, -width / 2, -height / 2, width, height);
+  }
 
-void main() {
-  vTexCoord = aTexCoord;
-  vec4 positionVec4 = vec4(aPosition, 1.0);
-  positionVec4.xy = positionVec4.xy * 2.0 - 1.0;
-  gl_Position = positionVec4;
-}`;
+  if(mouseIsPressed){
+    pg.filter(BLUR, 10);
+  }
 
-frag = `precision mediump float;
-varying mediump vec2 vTexCoord;
-
-uniform sampler2D tex0;
-
-float luma(vec3 color) {
-  return dot(color, vec3(0.299, 0.587, 0.114));
+  image(pg, 0, 0, width, height);
 }
-
-void main() {
-  vec2 uv = vTexCoord;
-  uv.y = 1.0 - uv.y;
-  vec4 sampledColor = texture2D(tex0, uv);
-  float gray = luma(sampledColor.rgb);
-  gl_FragColor = vec4(gray, gray, gray, 1);
-}`;

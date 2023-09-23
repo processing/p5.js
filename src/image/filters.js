@@ -308,7 +308,7 @@ const Filters = {
   },
 
   /**
- * reduces the bright areas in an image
+ * increases the bright areas in an image
  * @private
  * @param  {Canvas} canvas
  */
@@ -395,7 +395,7 @@ const Filters = {
   },
 
   /**
- * increases the bright areas in an image
+ * reduces the bright areas in an image
  * @private
  * @param  {Canvas} canvas
  */
