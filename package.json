@@ -2,7 +2,7 @@
   "name": "p5",
   "repository": "processing/p5.js",
   "scripts": {
-    "build": "grunt build",
+    "build": "rollup -c",
     "dev": "grunt yui browserify:dev connect:yui watch:quick",
     "docs": "grunt yui",
     "docs:dev": "grunt yui:dev",
@@ -29,6 +29,7 @@
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.10.2",
     "@babel/register": "^7.7.7",
+    "@rollup/plugin-commonjs": "^25.0.4",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.2.1",
     "all-contributors-cli": "^6.19.0",
@@ -74,7 +75,8 @@
     "regenerator-runtime": "^0.13.3",
     "rollup": "^3.29.2",
     "rollup-plugin-string": "^3.0.0",
-    "simple-git": "^3.16.1"
+    "simple-git": "^3.16.1",
+    "unplugin-swc": "^1.4.2"
   },
   "license": "LGPL-2.1",
   "main": "./lib/p5.min.js",

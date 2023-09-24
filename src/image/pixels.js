@@ -560,6 +560,7 @@ p5.prototype.getFilterGraphicsLayer = function() {
 /**
  * @method filter
  * @param  {Constant} filterType
+ * @param  {Number} [filterParam]
  * @param  {Boolean} [useWebGL]
  */
 /**

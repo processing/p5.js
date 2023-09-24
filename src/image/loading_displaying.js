@@ -113,15 +113,25 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
           arrayBuffer => {
             if (arrayBuffer) {
               const byteArray = new Uint8Array(arrayBuffer);
-              _createGif(
-                byteArray,
-                pImg,
-                successCallback,
-                failureCallback,
-                (pImg => {
+              try{
+                _createGif(
+                  byteArray,
+                  pImg,
+                  successCallback,
+                  failureCallback,
+                  (pImg => {
+                    self._decrementPreload();
+                  }).bind(self)
+                );
+              }catch(e){
+                console.error(e.toString(), e.stack);
+                if (typeof failureCallback === 'function') {
+                  failureCallback(e);
                   self._decrementPreload();
-                }).bind(self)
-              );
+                } else {
+                  console.error(e);
+                }
+              }
             }
           },
           e => {
