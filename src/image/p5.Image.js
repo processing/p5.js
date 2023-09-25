@@ -371,6 +371,7 @@ p5.Image = class {
    * describe('A black square drawn in the middle of a gray square.');
    * </code>
    * </div>
+   */
   /**
    * @method updatePixels
    */
@@ -563,7 +564,6 @@ p5.Image = class {
    * function setup() {
    *   let img2 = createImage(100, 100);
    *   img2.set(0, 0, img);
-   *   img2.updatePixels();
    *   image(img2, 0, 0);
    *
    *   describe('An image of a mountain landscape.');
@@ -1409,9 +1409,9 @@ p5.Image = class {
    *   image(gif, 0, 0);
    *   let total = gif.numFrames();
    *   let index = gif.getCurrentFrame();
-   *   text(`Frame ${index} out of ${total}.`, 10, 80);
+   *   text(`${index} / ${total}`, 30, 90);
    *
-   *   display('A cartoon eye looks around. The text "Frame n out of 125." is shown at the bottom-left of the canvas.');
+   *   describe('A cartoon eye looks around. The text "n / 125" is shown at the bottom of the canvas.');
    * }
    * </code>
    * </div>
