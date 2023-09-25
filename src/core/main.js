@@ -231,6 +231,11 @@ class p5 {
       this._events.devicemotion = null;
     }
 
+    this._beforePreload = function () {};
+    this._afterPreload = function () {};
+    this._beforeSetup = function () {};
+    this._afterSetup = function () {};
+
     this._start = () => {
       // Find node if id given
       if (this._userNode) {
@@ -241,6 +246,7 @@ class p5 {
 
       const context = this._isGlobal ? window : this;
       if (context.preload) {
+        this._beforePreload();
         // Setup loading screen
         // Set loading screen into dom if not present
         // Otherwise displays and removes user provided loading screen
@@ -271,8 +277,11 @@ class p5 {
 
         context.preload();
         this._runIfPreloadsAreDone();
+        this._afterPreload();
       } else {
+        this._beforeSetup();
         this._setup();
+        this._afterSetup();
         if (!this._recording) {
           this._draw();
         }
