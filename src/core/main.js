@@ -231,6 +231,7 @@ class p5 {
       this._events.devicemotion = null;
     }
 
+    // before and after hooks for preload and setup
     this._beforePreload = function () {};
     this._afterPreload = function () {};
     this._beforeSetup = function () {};
@@ -277,11 +278,8 @@ class p5 {
 
         context.preload();
         this._runIfPreloadsAreDone();
-        this._afterPreload();
       } else {
-        this._beforeSetup();
         this._setup();
-        this._afterSetup();
         if (!this._recording) {
           this._draw();
         }
@@ -304,6 +302,7 @@ class p5 {
           }
         }
       }
+      this._afterPreload();
     };
 
     this._decrementPreload = function() {
@@ -331,6 +330,7 @@ class p5 {
     };
 
     this._setup = () => {
+      this._beforeSetup();
       // Always create a default canvas.
       // Later on if the user calls createCanvas, this default one
       // will be replaced
@@ -378,6 +378,7 @@ class p5 {
       if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
         this._updateAccsOutput();
       }
+      this._afterSetup();
     };
 
     this._draw = () => {
