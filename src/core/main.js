@@ -231,11 +231,18 @@ class p5 {
       this._events.devicemotion = null;
     }
 
-    // before and after hooks for preload and setup
-    this._beforePreload = function () {};
-    this._afterPreload = function () {};
-    this._beforeSetup = function () {};
-    this._afterSetup = function () {};
+    // Function to call registered before and after hooks for preload and setup
+    function callRegisteredHooksFor(hookName) {
+      const target = this || p5.prototype;
+      if (target._registeredMethods.hasOwnProperty(hookName)) {
+        const methods = target._registeredMethods[hookName];
+        for (const method of methods) {
+          if (typeof method === 'function') {
+            method.call(this);
+          }
+        }
+      }
+    }
 
     this._start = () => {
       // Find node if id given
@@ -247,7 +254,7 @@ class p5 {
 
       const context = this._isGlobal ? window : this;
       if (context.preload) {
-        this._beforePreload();
+        callRegisteredHooksFor('beforePreload');
         // Setup loading screen
         // Set loading screen into dom if not present
         // Otherwise displays and removes user provided loading screen
@@ -293,6 +300,7 @@ class p5 {
         if (loadingScreen) {
           loadingScreen.parentNode.removeChild(loadingScreen);
         }
+        callRegisteredHooksFor('afterPreload');
         if (!this._setupDone) {
           this._lastTargetFrameTime = window.performance.now();
           this._lastRealFrameTime = window.performance.now();
@@ -302,7 +310,6 @@ class p5 {
           }
         }
       }
-      this._afterPreload();
     };
 
     this._decrementPreload = function() {
@@ -330,7 +337,7 @@ class p5 {
     };
 
     this._setup = () => {
-      this._beforeSetup();
+      callRegisteredHooksFor('beforeSetup');
       // Always create a default canvas.
       // Later on if the user calls createCanvas, this default one
       // will be replaced
@@ -378,7 +385,7 @@ class p5 {
       if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
         this._updateAccsOutput();
       }
-      this._afterSetup();
+      callRegisteredMethods('afterSetup');
     };
 
     this._draw = () => {
