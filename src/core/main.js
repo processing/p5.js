@@ -385,7 +385,7 @@ class p5 {
       if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
         this._updateAccsOutput();
       }
-      callRegisteredMethods('afterSetup');
+      callRegisteredHooksFor('afterSetup');
     };
 
     this._draw = () => {
