@@ -232,9 +232,9 @@ class p5 {
     }
 
     // Function to invoke registered hooks before or after events such as preload, setup, and pre/post draw.
-    const context = this._isGlobal ? window : this;
-    function callRegisteredHooksFor(hookName) {
+    p5.prototype.callRegisteredHooksFor = function (hookName) {
       const target = this || p5.prototype;
+      const context = this._isGlobal ? window : this;
       if (target._registeredMethods.hasOwnProperty(hookName)) {
         const methods = target._registeredMethods[hookName];
         for (const method of methods) {
@@ -243,7 +243,7 @@ class p5 {
           }
         }
       }
-    }
+    };
 
     this._start = () => {
       // Find node if id given
@@ -255,7 +255,7 @@ class p5 {
 
       const context = this._isGlobal ? window : this;
       if (context.preload) {
-        callRegisteredHooksFor('beforePreload');
+        this.callRegisteredHooksFor('beforePreload');
         // Setup loading screen
         // Set loading screen into dom if not present
         // Otherwise displays and removes user provided loading screen
@@ -301,7 +301,7 @@ class p5 {
         if (loadingScreen) {
           loadingScreen.parentNode.removeChild(loadingScreen);
         }
-        callRegisteredHooksFor('afterPreload');
+        this.callRegisteredHooksFor('afterPreload');
         if (!this._setupDone) {
           this._lastTargetFrameTime = window.performance.now();
           this._lastRealFrameTime = window.performance.now();
@@ -338,7 +338,7 @@ class p5 {
     };
 
     this._setup = () => {
-      callRegisteredHooksFor('beforeSetup');
+      this.callRegisteredHooksFor('beforeSetup');
       // Always create a default canvas.
       // Later on if the user calls createCanvas, this default one
       // will be replaced
@@ -386,7 +386,7 @@ class p5 {
       if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
         this._updateAccsOutput();
       }
-      callRegisteredHooksFor('afterSetup');
+      this.callRegisteredHooksFor('afterSetup');
     };
 
     this._draw = () => {

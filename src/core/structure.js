@@ -6,7 +6,6 @@
  */
 
 import p5 from './main';
-import callRegisteredHooksFor from './main';
 /**
  * Stops p5.js from continuously executing the code within <a href="#/p5/draw">draw()</a>.
  * If <a href="#/p5/loop">loop()</a> is called, the code in <a href="#/p5/draw">draw()</a>
@@ -480,14 +479,14 @@ p5.prototype.redraw = function(n) {
         context._renderer._update();
       }
       context._setProperty('frameCount', context.frameCount + 1);
-      callRegisteredHooksFor.call(context, 'pre');
+      this.callRegisteredHooksFor('pre');
       this._inUserDraw = true;
       try {
         context.draw();
       } finally {
         this._inUserDraw = false;
       }
-      callRegisteredHooksFor.call(context, 'post');
+      this.callRegisteredHooksFor('post');
     }
   }
 };
