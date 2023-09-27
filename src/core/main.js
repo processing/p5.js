@@ -231,14 +231,15 @@ class p5 {
       this._events.devicemotion = null;
     }
 
-    // Function to call registered before and after hooks for preload and setup
+    // Function to invoke registered hooks before or after events such as preload, setup, and pre/post draw.
     function callRegisteredHooksFor(hookName) {
       const target = this || p5.prototype;
+      const context = this._isGlobal ? window : this;
       if (target._registeredMethods.hasOwnProperty(hookName)) {
         const methods = target._registeredMethods[hookName];
         for (const method of methods) {
           if (typeof method === 'function') {
-            method.call(this);
+            method.call(context);
           }
         }
       }
