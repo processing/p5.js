@@ -232,9 +232,9 @@ class p5 {
     }
 
     // Function to invoke registered hooks before or after events such as preload, setup, and pre/post draw.
+    const context = this._isGlobal ? window : this;
     function callRegisteredHooksFor(hookName) {
       const target = this || p5.prototype;
-      const context = this._isGlobal ? window : this;
       if (target._registeredMethods.hasOwnProperty(hookName)) {
         const methods = target._registeredMethods[hookName];
         for (const method of methods) {
