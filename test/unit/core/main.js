@@ -1,4 +1,4 @@
-const { expect } = require('chai');
+const { expect, assert } = require('chai');
 
 suite('Core', function() {
   suite('p5.prototype.registerMethod', function() {
@@ -30,6 +30,91 @@ suite('Core', function() {
       } finally {
         p5.prototype._registeredMethods.init = originalInit;
       }
+    });
+    test('should register and call before and after "preload" hooks', function() {
+      return new Promise(resolve => {
+        let beforePreloadCalled = false;
+        let preloadCalled = false;
+        let afterPreloadCalled = false;
+
+        p5.prototype.registerMethod('beforePreload', () => {
+          beforePreloadCalled = true;
+        });
+
+        p5.prototype.registerMethod('preload', () => {
+          assert.equal(beforePreloadCalled, true);
+          preloadCalled = true;
+        });
+
+        p5.prototype.registerMethod('afterPreload', () => {
+          if(beforePreloadCalled && preloadCalled)
+            afterPreloadCalled = true;
+        });
+
+        myp5 = new p5(function(sketch) {
+          sketch.preload = () => {};
+          sketch.setup = () => {
+            assert.equal(afterPreloadCalled, true);
+          };
+          resolve();
+        });
+      });
+    });
+    test('should register and call before and after "setup" hooks', function() {
+      return new Promise(resolve => {
+        let beforeSetupCalled = false;
+        let setupCalled = false;
+        let afterSetupCalled = false;
+
+        p5.prototype.registerMethod('beforeSetup', () => {
+          beforeSetupCalled = true;
+        });
+
+        p5.prototype.registerMethod('setup', () => {
+          assert.equal(beforeSetupCalled, true);
+          setupCalled = true;
+        });
+
+        p5.prototype.registerMethod('afterSetup', () => {
+          if(beforeSetupCalled && setupCalled)
+            afterSetupCalled = true;
+        });
+
+        myp5 = new p5(function(sketch) {
+          sketch.setup = () => {};
+          sketch.draw = () => {
+            assert.equal(afterSetupCalled, true);
+            resolve();
+          };
+        });
+      });
+    });
+    test('should register and call pre and post "draw" hooks', function() {
+      return new Promise(resolve => {
+        let preDrawCalled = false;
+        let drawCalled = false;
+        let postDrawCalled = false;
+
+        p5.prototype.registerMethod('pre', () => {
+          preDrawCalled = true;
+        });
+
+        p5.prototype.registerMethod('draw', () => {
+          assert.equal(preDrawCalled, true);
+          drawCalled = true;
+        });
+
+        p5.prototype.registerMethod('post', () => {
+          if(preDrawCalled && drawCalled)
+            postDrawCalled = true;
+        });
+
+        myp5 = new p5(function(sketch) {
+          sketch.draw = () => {};
+        });
+        assert.equal(postDrawCalled, true);
+        resolve();
+      });
     });
   });
 
