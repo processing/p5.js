@@ -221,6 +221,32 @@ p5.Image = class {
   }
 
   /**
+   * Set the pixel density of the image.
+   *
+   * @method setPixelDensity
+   * @param {Number} density - The pixel density to set.
+   * @example
+   * <div><code>
+   * let img = new p5.Image(100, 100);
+   * img.setPixelDensity(2);
+   * </code></div>
+   */
+  setPixelDensity(density) {
+    if (density <= 0) {
+      console.error('Pixel density must be greater than 0.');
+      return;
+    }
+
+    this._pixelDensity = density;
+
+    // Adjust canvas dimensions based on pixel density
+    this.canvas.width = this.width * density;
+    this.canvas.height = this.height * density;
+
+    // Update the drawing context
+    this.drawingContext = this.canvas.getContext('2d');
+  }
+  /**
    * Helper function for animating GIF-based images with time
    */
   _animateGif(pInst) {
