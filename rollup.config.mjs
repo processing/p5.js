@@ -18,6 +18,11 @@ export default {
       format: 'iife',
       name: 'p5',
       plugins: [terser({
+        compress: {
+          global_defs: {
+            IS_MINIFIED: true
+          }
+        },
         format: {
           comments: false
         }
