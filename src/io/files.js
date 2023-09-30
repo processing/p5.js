@@ -758,7 +758,7 @@ p5.prototype.loadBytes = function(file, callback, errorCallback) {
  *   let url =
     'https://earthquake.usgs.gov/fdsnws/event/1/query?' +
  *     'format=geojson&limit=1&orderby=time';
- *   httpGet(url, 'json', false, function(response) {
+ *   httpGet(url, 'json', function(response) {
  *     // when the HTTP request completes, populate the variable that holds the
  *     // earthquake data used in the visualization.
  *     earthquakes = response;
