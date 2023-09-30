@@ -223,6 +223,33 @@ p5.Image = class {
   /**
    * Helper function for animating GIF-based images with time
    */
+  /**
+   * Set the pixel density of the image.
+   *
+   * @method _setPixelDensity
+   * @param {Number} density - The pixel density to set.
+   * @example
+   * <div><code>
+   * let img = new p5.Image(100, 100);
+   * img._setPixelDensity(2);
+   * </code></div>
+   */
+  _setPixelDensity(density) {
+    if (density <= 0) {
+      console.error('Pixel density must be greater than 0.');
+      return;
+    }
+
+    this._pixelDensity = density;
+
+    // Adjust canvas dimensions based on pixel density
+    this.canvas.width = this.width * density;
+    this.canvas.height = this.height * density;
+
+    // Update the drawing context
+    this.drawingContext = this.canvas.getContext('2d');
+  }
+
   _animateGif(pInst) {
     const props = this.gifProperties;
     const curTime = pInst._lastRealFrameTime;
@@ -482,9 +509,9 @@ p5.Image = class {
       width = this.canvas.width;
       height = this.canvas.height;
     } else if (width === 0) {
-      width = this.canvas.width * height / this.canvas.height;
+      width = (this.canvas.width * height) / this.canvas.height;
     } else if (height === 0) {
-      height = this.canvas.height * width / this.canvas.width;
+      height = (this.canvas.height * width) / this.canvas.width;
     }
 
     width = Math.floor(width);
@@ -501,8 +528,8 @@ p5.Image = class {
         let pos = 0;
         for (let y = 0; y < dst.height; y++) {
           for (let x = 0; x < dst.width; x++) {
-            const srcX = Math.floor(x * src.width / dst.width);
-            const srcY = Math.floor(y * src.height / dst.height);
+            const srcX = Math.floor((x * src.width) / dst.width);
+            const srcY = Math.floor((y * src.height) / dst.height);
             let srcPos = (srcY * src.width + srcX) * 4;
             dst.data[pos++] = src.data[srcPos++]; // R
             dst.data[pos++] = src.data[srcPos++]; // G
@@ -521,11 +548,19 @@ p5.Image = class {
       }
     }
 
-    tempCanvas.getContext('2d').drawImage(
-      this.canvas,
-      0, 0, this.canvas.width, this.canvas.height,
-      0, 0, tempCanvas.width, tempCanvas.height
-    );
+    tempCanvas
+      .getContext('2d')
+      .drawImage(
+        this.canvas,
+        0,
+        0,
+        this.canvas.width,
+        this.canvas.height,
+        0,
+        0,
+        tempCanvas.width,
+        tempCanvas.height
+      );
 
     // Resize the original canvas, which will clear its contents
     this.canvas.width = this.width = width;
@@ -534,8 +569,14 @@ p5.Image = class {
     //Copy the image back
     this.drawingContext.drawImage(
       tempCanvas,
-      0, 0, width, height,
-      0, 0, width, height
+      0,
+      0,
+      width,
+      height,
+      0,
+      0,
+      width,
+      height
     );
 
     if (this.pixels.length > 0) {
