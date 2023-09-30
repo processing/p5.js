@@ -3,14 +3,27 @@ import json from '@rollup/plugin-json';
 import { string } from 'rollup-plugin-string';
 import swc from 'unplugin-swc';
 import commonjs from '@rollup/plugin-commonjs';
+import terser from '@rollup/plugin-terser';
 
 export default {
   input: 'src/app.js',
-  output: {
-    file: './lib/p5.rollup.js',
-    format: 'iife',
-    name: 'p5'
-  },
+  output: [
+    {
+      file: './lib/p5.rollup.js',
+      format: 'iife',
+      name: 'p5'
+    },
+    {
+      file: './lib/p5.rollup.min.js',
+      format: 'iife',
+      name: 'p5',
+      plugins: [terser({
+        format: {
+          comments: false
+        }
+      })]
+    }
+  ],
   plugins: [
     commonjs(),
     nodeResolve(),
