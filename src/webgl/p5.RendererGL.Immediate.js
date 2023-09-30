@@ -205,6 +205,12 @@ p5.RendererGL.prototype.endShape = function(
   this._processVertices(...arguments);
   this.isProcessingVertices = false;
 
+  // Check the number of vertices and if equal to 3
+  // Change the shapemode to traingle
+  if (this.immediateMode.geometry.vertices.length === 3) {
+    this.immediateMode.shapeMode === constants.TRIANGLES;
+  }
+
   // LINE_STRIP and LINES are not used for rendering, instead
   // they only indicate a way to modify vertices during the _processVertices() step
   if (
