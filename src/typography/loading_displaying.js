@@ -226,6 +226,17 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  *
  * <div>
  * <code>
+ * background('skyblue');
+ * textSize(100);
+ * // Emoji.
+ * text('🌈', 0, 100);
+ *
+ * describe('A rainbow in a blue sky.');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
  * textSize(32);
  * fill(255);
  * stroke(0);
@@ -325,7 +336,7 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  * <code>
  * textFont('Courier New');
  * textSize(24);
- * text('hi', 40, 55);
+ * text('hi', 35, 55);
  *
  * describe('The text "hi" written in a black, monospace font on a gray background.');
  * </code>
@@ -336,9 +347,10 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  * background('black');
  * fill('palegreen');
  * textFont('Courier New', 10);
- * text('Wake up, Neo...', 6, 52);
+ * text('You turn to the left and see a door. Do you enter?', 5, 5, 90, 90);
+ * text('>', 5, 70);
  *
- * describe('The text "Wake up, Neo..." written in a green, monospace font on a black background.');
+ * describe('A text prompt from a game is written in a green, monospace font on a black background.');
  * </code>
  * </div>
  *
@@ -348,7 +360,7 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  * let currentFont = textFont();
  * text(currentFont, 25, 50);
  *
- * describe('The text "Verdana" written in black, sans-serif font on a gray background.');
+ * describe('The text "Verdana" written in a black, sans-serif font on a gray background.');
  * </code>
  * </div>
  *
@@ -373,7 +385,7 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  *   textFont(fontBold);
  *   text('I am Bold', 10, 70);
  *
- *   describe('The statements "I am Normal", "I am Italic", and "I am Bold" written in black on separate lines. The phrases have normal, italic, and bold fonts, respectively.');
+ *   describe('The statements "I am Normal", "I am Italic", and "I am Bold" written in black on separate lines. The statements have normal, italic, and bold fonts, respectively.');
  * }
  * </code>
  * </div>
