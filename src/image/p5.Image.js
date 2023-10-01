@@ -233,8 +233,16 @@ p5.Image = class {
    */
   setPixelDensity(density) {
     if (density <= 0) {
-      console.error('Pixel density must be greater than 0.');
-      return;
+      const errorObj = {
+        type: 'INVALID_VALUE',
+        format: { types: ['Number'] },
+        position: 1,
+      };
+
+      p5._friendlyParamError(errorObj, 'setPixelDensity');
+
+      // Default to 1 in case of an invalid value
+      density = 1;
     }
 
     this._pixelDensity = density;
