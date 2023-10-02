@@ -5295,6 +5295,15 @@
         "design",
         "code"
       ]
+    },
+    {
+      "login": "Gaurav-1306",
+      "name": "Gaurav Tiwary",
+      "avatar_url": "https://avatars.githubusercontent.com/u/97665755?v=4",
+      "profile": "https://gaurav-personal-portfolio.netlify.app/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
