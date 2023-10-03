@@ -893,7 +893,7 @@ p5.Image = class {
    * value is specified, 0.5 is used.
    *
    * `OPAQUE`
-   * Sets the alpha channel to entirely opaque. No parameter is used.
+   * Sets the alpha channel to be entirely opaque. No parameter is used.
    *
    * `POSTERIZE`
    * Limits the number of colors in the image. Each color channel is limited to
@@ -910,15 +910,6 @@ p5.Image = class {
    *
    * `DILATE`
    * Increases the light areas. No parameter is used.
-   *
-   * `img.filter()` uses WebGL in the background by default because it's faster.
-   * This can be disabled in `P2D` mode by adding a `false` argument, as in
-   * `img.filter(BLUR, false)`. This may be useful to keep computation off the GPU
-   * or to work around a lack of WebGL support.
-   *
-   * In `WEBGL` mode, `img.filter()` can also use custom shaders. See
-   * <a href="#/p5/createFilterShader">createFilterShader()</a> for more
-   * information.
    *
    * @method filter
    * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
@@ -1005,7 +996,7 @@ p5.Image = class {
    *   img.filter(POSTERIZE, 3);
    *   image(img, 0, 0);
    *
-   *   describe('An image of a red brick wall drawn with limited color palette.');
+   *   describe('An image of a red brick wall drawn with a limited color palette.');
    * }
    * </code>
    * </div>
@@ -1057,24 +1048,6 @@ p5.Image = class {
    *   image(img, 0, 0);
    *
    *   describe('A red brick wall with faint lines between each brick.');
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * let img;
-   *
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
-   *
-   * function setup() {
-   *   // Don't use WebGL.
-   *   img.filter(BLUR, 3, false);
-   *   image(img, 0, 0);
-   *
-   *   describe('A blurry image of a red brick wall.');
    * }
    * </code>
    * </div>
