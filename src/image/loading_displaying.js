@@ -18,7 +18,7 @@ import '../core/friendly_errors/fes_core';
 /**
  * Loads an image to create a <a href="#/p5.Image">p5.Image</a> object.
  *
- * `loadImage()` interprets the first parameter one of two ways. If the path
+ * `loadImage()` interprets the first parameter one of three ways. If the path
  * to an image file is provided, `loadImage()` will load it. Paths to local
  * files should be relative, such as `'assets/thundercat.jpg'`. URLs such as
  * `'https://example.com/thundercat.jpg'` may be blocked due to browser
@@ -186,9 +186,9 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
 };
 
 /**
- * Generates a gif from a sketch and downloads it. `saveGif()` may be called
- * in <a href="#/p5/setup">setup()</a> or at any point while a sketch is
- * running.
+ * Generates a gif from a sketch and saves it to a file. `saveGif()` may be
+ * called in <a href="#/p5/setup">setup()</a> or at any point while a sketch
+ * is running.
  *
  * The first parameter, `fileName`, sets the gif's file name. The second
  * parameter, `duration`, sets the gif's duration in seconds.
