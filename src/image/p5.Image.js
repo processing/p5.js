@@ -230,7 +230,7 @@ p5.Image = class {
  *
  * @method pixelDensity
  * @param {Number} [density] A scaling factor for the number of pixels per
- * side of the framebuffer
+ * side
  * @returns {Number} The current density if called without arguments, or the instance for chaining if setting density.
  */
   pixelDensity(density) {
