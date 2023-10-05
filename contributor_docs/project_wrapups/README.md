@@ -9,7 +9,7 @@ This folder contains wrap-up reports from p5.js related [Google Summer of Code](
 * [Mobile/Responsive Design Implementation of p5.js Web Editor](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/dewansDT_gsoc_2023.md) by Dewansh Thakur, 2023
 * [Friendly Error System(FES) and Documentation](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/ayush23dash_gsoc_2023.md) by Ayush Shankar, 2023
 * [Supporting shader-based filters in p5js](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/wong_gsoc_2023.md) by Justin Wong, 2023
-* [Updating p5js.org Site Documentation and Accessibility]([contributor_docs/](https://github.com/processing/p5.js/blob/main/contributor_docs/)project_wrapups/lichlyter_gsoc_2023.md), by Kathryn Lichlyter, 2023
+* [Updating p5js.org Site Documentation and Accessibility](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/lichlyter_gsoc_2023.md), by Kathryn Lichlyter, 2023
   
 ### Google Summer of Code 2022
 * [p5 /teach reorganize & update](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/graciazhang_gsoc_2022.md) by Gracia Zhang, 2022
