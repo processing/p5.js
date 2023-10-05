@@ -221,39 +221,47 @@ p5.Image = class {
   }
 
   /**
-   * Set the pixel density of the image.
-   *
-   * @method setPixelDensity
-   * @param {Number} density - The pixel density to set.
-   * @example
-   * <div><code>
-   * let img = new p5.Image(100, 100);
-   * img.setPixelDensity(2);
-   * </code></div>
-   */
-  setPixelDensity(density) {
-    if (density <= 0) {
-      const errorObj = {
-        type: 'INVALID_VALUE',
-        format: { types: ['Number'] },
-        position: 1,
-      };
+ * Gets or sets the pixel density for high pixel density displays. By default,
+ * the density will be set to 1.
+ *
+ * Call this method with no arguments to get the default density, or pass
+ * in a number to set the density. If a non-positive number is provided,
+ * it defaults to 1.
+ *
+ * @method pixelDensity
+ * @param {Number} [density] A scaling factor for the number of pixels per
+ * side of the framebuffer
+ * @returns {Number} The current density if called without arguments, or the instance for chaining if setting density.
+ */
+  pixelDensity(density) {
+    if (typeof density !== 'undefined') {
+    // Setter: set the density and handle resize
+      if (density <= 0) {
+        const errorObj = {
+          type: 'INVALID_VALUE',
+          format: { types: ['Number'] },
+          position: 1
+        };
 
-      p5._friendlyParamError(errorObj, 'setPixelDensity');
+        p5._friendlyParamError(errorObj, 'pixelDensity');
 
-      // Default to 1 in case of an invalid value
-      density = 1;
+        // Default to 1 in case of an invalid value
+        density = 1;
+      }
+
+      this._pixelDensity = density;
+
+      // Adjust canvas dimensions based on pixel density
+      this.canvas.width = this.width * density;
+      this.canvas.height = this.height * density;
+
+      return this; // Return the image instance for chaining if needed
+    } else {
+    // Getter: return the default density
+      return this._pixelDensity;
     }
-
-    this._pixelDensity = density;
-
-    // Adjust canvas dimensions based on pixel density
-    this.canvas.width = this.width * density;
-    this.canvas.height = this.height * density;
-
-    // Update the drawing context
-    this.drawingContext = this.canvas.getContext('2d');
   }
+
   /**
    * Helper function for animating GIF-based images with time
    */
