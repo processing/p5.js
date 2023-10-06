@@ -252,8 +252,8 @@ p5.Image = class {
       this._pixelDensity = density;
 
       // Adjust canvas dimensions based on pixel density
-      this.canvas.width = this.width * density;
-      this.canvas.height = this.height * density;
+      this.width /= density;
+      this.height /= density;
 
       return this; // Return the image instance for chaining if needed
     } else {

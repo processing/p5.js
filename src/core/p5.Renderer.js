@@ -159,6 +159,7 @@ class Renderer extends p5.Element {
     }
 
     const region = new p5.Image(w, h);
+    region._pixelDensity = pd;
     region.canvas
       .getContext('2d')
       .drawImage(canvas, x, y, w * pd, h * pd, 0, 0, w, h);
