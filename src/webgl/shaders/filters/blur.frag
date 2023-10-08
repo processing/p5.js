@@ -9,23 +9,57 @@ uniform sampler2D tex0;
 varying vec2 vTexCoord;
 uniform vec2 direction;
 uniform vec2 texelSize;
-uniform float steps;
+uniform float radius;
+
+float random2 (vec2 st) {
+  return fract(sin(dot(st.xy, vec2(12.9898,78.233))) *
+      43758.5453123);
+}
+
+float random(vec2 p) {
+  vec3 p3  = fract(vec3(p.xyx) * .1031);
+  p3 += dot(p3, p3.yzx + 33.33);
+  return fract((p3.x + p3.y) * p3.z);
+}
+
+// This isn't a real Gaussian weight, it's a quadratic weight. It's what the
+// CPU mode's blur uses though, so we also use it here to match.
+float quadWeight(float x, float e) {
+  return pow(e-abs(x), 2.);
+}
 
 void main(){
-  const float maxIterations = 100.0;
-
   vec2 uv = vTexCoord;
 
-  vec4 tex = texture2D(tex0, uv);
-  float sum = 1.0;
+  // A reasonable maximum number of samples
+  const float maxSamples = 64.0;
 
-  vec2 offset = direction * texelSize;
-  for(float i = 1.0; i <= maxIterations; i++) {
-    if( i > steps) break;
-    tex += texture2D(tex0, uv + i * offset);
-    tex += texture2D(tex0, uv - i * offset);
-    sum += 2.0;
+  float numSamples = floor(7. * radius);
+  if (fract(numSamples / 2.) == 0.) {
+    numSamples++;
+  }
+  vec4 avg = vec4(0.0);
+  float total = 0.0;
+
+  // Calculate the spacing to avoid skewing if numSamples > maxSamples
+  float spacing = 1.0;
+  if (numSamples > maxSamples) {
+    spacing = numSamples / maxSamples;
+    numSamples = maxSamples;
   }
 
-  gl_FragColor = tex / sum;
+  float randomOffset = (spacing - 1.0) * mix(-0.5, 0.5, random(gl_FragCoord.xy));
+  for (float i = 0.0; i < maxSamples; i++) {
+    if (i >= numSamples) break;
+
+    float sample = i * spacing - (numSamples - 1.0) * 0.5 * spacing + randomOffset;
+    vec2 sampleCoord = uv + vec2(sample, sample) * texelSize * direction;
+    float weight = quadWeight(sample, (numSamples - 1.0) * 0.5 * spacing);
+
+    avg += weight * texture2D(tex0, sampleCoord);
+    total += weight;
+  }
+
+  avg /= total;
+  gl_FragColor = avg;
 }
