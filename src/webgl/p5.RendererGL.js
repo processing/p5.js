@@ -1061,6 +1061,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     pg.clear(); // prevent undesirable feedback effects accumulating secretly
 
+    let pd = this._pInst.pixelDensity();
+    let texelSize = [1 / (this.width * pd), 1 / (this.height * pd)];
+
     // apply blur shader with multiple passes
     if (operation === constants.BLUR) {
 
@@ -1074,7 +1077,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this.filterGraphicsLayerTemp.image(this, -this.width/2, -this.height/2);
 
       pg.shader(this.filterShader);
-      this.filterShader.setUniform('texelSize', [1/this.width, 1/this.height]);
+      this.filterShader.setUniform('texelSize', texelSize);
+      this.filterShader.setUniform('canvasSize', [this.width, this.height]);
       this.filterShader.setUniform('radius', Math.max(1, filterParameter));
 
       // horiz pass
@@ -1096,7 +1100,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     else {
       pg.shader(this.filterShader);
       this.filterShader.setUniform('tex0', this);
-      this.filterShader.setUniform('texelSize', [1/this.width, 1/this.height]);
+      this.filterShader.setUniform('texelSize', texelSize);
       this.filterShader.setUniform('canvasSize', [this.width, this.height]);
       // filterParameter uniform only used for POSTERIZE, and THRESHOLD
       // but shouldn't hurt to always set

@@ -19,65 +19,65 @@ import Filters from './filters';
  */
 
 /**
- * Creates a new <a href="#/p5.Image">p5.Image</a>. A <a href="#/p5.Image">p5.Image</a> is a canvas backed representation of an
- * image.
+ * A class to describe an image. Images are rectangular grids of pixels that
+ * can be displayed and modified.
  *
- * p5 can display .gif, .jpg and .png images. Images may be displayed
- * in 2D and 3D space. Before an image is used, it must be loaded with the
- * <a href="#/p5/loadImage">loadImage()</a> function. The <a href="#/p5.Image">p5.Image</a> class contains fields for the width and
- * height of the image, as well as an array called <a href="#/p5.Image/pixels">pixels[]</a> that contains the
- * values for every pixel in the image.
+ * Existing images can be loaded by calling
+ * <a href="#/p5/loadImage">loadImage()</a>. Blank images can be created by
+ * calling <a href="#/p5/createImage">createImage()</a>. `p5.Image` objects
+ * have methods for common tasks such as applying filters and modifying
+ * pixel values.
  *
- * The methods described below allow easy access to the image's pixels and
- * alpha channel and simplify the process of compositing.
- *
- * Before using the <a href="#/p5.Image/pixels">pixels[]</a> array, be sure to use the <a href="#/p5.Image/loadPixels">loadPixels()</a> method on
- * the image to make sure that the pixel data is properly loaded.
  * @example
- * <div><code>
- * function setup() {
- *   let img = createImage(100, 100); // same as new p5.Image(100, 100);
- *   img.loadPixels();
- *   createCanvas(100, 100);
- *   background(0);
+ * <div>
+ * <code>
+ * let img;
  *
- *   // helper for writing color to array
- *   function writeColor(image, x, y, red, green, blue, alpha) {
- *     let index = (x + y * width) * 4;
- *     image.pixels[index] = red;
- *     image.pixels[index + 1] = green;
- *     image.pixels[index + 2] = blue;
- *     image.pixels[index + 3] = alpha;
- *   }
- *
- *   let x, y;
- *   // fill with random colors
- *   for (y = 0; y < img.height; y++) {
- *     for (x = 0; x < img.width; x++) {
- *       let red = random(255);
- *       let green = random(255);
- *       let blue = random(255);
- *       let alpha = 255;
- *       writeColor(img, x, y, red, green, blue, alpha);
- *     }
- *   }
- *
- *   // draw a red line
- *   y = 0;
- *   for (x = 0; x < img.width; x++) {
- *     writeColor(img, x, y, 255, 0, 0, 255);
- *   }
- *
- *   // draw a green line
- *   y = img.height - 1;
- *   for (x = 0; x < img.width; x++) {
- *     writeColor(img, x, y, 0, 255, 0, 255);
- *   }
- *
- *   img.updatePixels();
- *   image(img, 0, 0);
+ * function preload() {
+ *   img = loadImage('assets/bricks.jpg');
  * }
- * </code></div>
+ *
+ * function setup() {
+ *   image(img, 0, 0);
+ *
+ *   describe('An image of a brick wall.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/bricks.jpg');
+ * }
+ *
+ * function setup() {
+ *   img.filter(GRAY);
+ *   image(img, 0, 0);
+ *
+ *   describe('A grayscale image of a brick wall.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * background(200);
+ * let img = createImage(66, 66);
+ * img.loadPixels();
+ * for (let x = 0; x < img.width; x += 1) {
+ *   for (let y = 0; y < img.height; y += 1) {
+ *     img.set(x, y, 0);
+ *   }
+ * }
+ * img.updatePixels();
+ * image(img, 17, 17);
+ *
+ * describe('A black square drawn in the middle of a gray square.');
+ * </code>
+ * </div>
  *
  * @class p5.Image
  * @constructor
@@ -91,26 +91,25 @@ p5.Image = class {
      * @property {Number} width
      * @readOnly
      * @example
-     * <div><code>
+     * <div>
+     * <code>
      * let img;
+     *
      * function preload() {
      *   img = loadImage('assets/rockies.jpg');
      * }
      *
      * function setup() {
-     *   createCanvas(100, 100);
      *   image(img, 0, 0);
-     *   for (let i = 0; i < img.width; i++) {
-     *     let c = img.get(i, img.height / 2);
-     *     stroke(c);
-     *     line(i, height / 2, i, height);
-     *   }
+     *   let x = img.width / 2;
+     *   let y = img.height / 2;
+     *   let d = 20;
+     *   circle(x, y, d);
+     *
+     *   describe('An image of a mountain landscape with a white circle drawn in the middle.');
      * }
-     * </code></div>
-     *
-     * @alt
-     * rocky mountains in top and horizontal lines in corresponding colors in bottom.
-     *
+     * </code>
+     * </div>
      */
     this.width = width;
     /**
@@ -118,26 +117,25 @@ p5.Image = class {
      * @property {Number} height
      * @readOnly
      * @example
-     * <div><code>
+     * <div>
+     * <code>
      * let img;
+     *
      * function preload() {
      *   img = loadImage('assets/rockies.jpg');
      * }
      *
      * function setup() {
-     *   createCanvas(100, 100);
      *   image(img, 0, 0);
-     *   for (let i = 0; i < img.height; i++) {
-     *     let c = img.get(img.width / 2, i);
-     *     stroke(c);
-     *     line(0, i, width / 2, i);
-     *   }
+     *   let x = img.width / 2;
+     *   let y = img.height / 2;
+     *   let d = 20;
+     *   circle(x, y, d);
+     *
+     *   describe('An image of a mountain landscape with a white circle drawn in the middle.');
      * }
-     * </code></div>
-     *
-     * @alt
-     * rocky mountains on right and vertical lines in corresponding colors on left.
-     *
+     * </code>
+     * </div>
      */
     this.height = height;
     this.canvas = document.createElement('canvas');
@@ -151,71 +149,72 @@ p5.Image = class {
     //For WebGL Texturing only: used to determine whether to reupload texture to GPU
     this._modified = false;
     /**
-     * Array containing the values for all the pixels in the display window.
-     * These values are numbers. This array is the size (include an appropriate
-     * factor for pixelDensity) of the display window x4,
-     * representing the R, G, B, A values in order for each pixel, moving from
-     * left to right across each row, then down each column. Retina and other
-     * high density displays may have more pixels (by a factor of
-     * pixelDensity^2).
-     * For example, if the image is 100×100 pixels, there will be 40,000. With
-     * pixelDensity = 2, there will be 160,000. The first four values
-     * (indices 0-3) in the array will be the R, G, B, A values of the pixel at
-     * (0, 0). The second four values (indices 4-7) will contain the R, G, B, A
-     * values of the pixel at (1, 0). More generally, to set values for a pixel
-     * at (x, y):
-     * ```javascript
-     * let d = pixelDensity();
-     * for (let i = 0; i < d; i++) {
-     *   for (let j = 0; j < d; j++) {
-     *     // loop over
-     *     index = 4 * ((y * d + j) * width * d + (x * d + i));
-     *     pixels[index] = r;
-     *     pixels[index+1] = g;
-     *     pixels[index+2] = b;
-     *     pixels[index+3] = a;
-     *   }
-     * }
-     * ```
+     * An array containing the color of each pixel in the
+     * <a href="#/p5.Image">p5.Image</a> object. Colors are stored as numbers
+     * representing red, green, blue, and alpha (RGBA) values. `img.pixels` is a
+     * one-dimensional array for performance reasons.
      *
-     * Before accessing this array, the data must loaded with the <a href="#/p5.Image/loadPixels">loadPixels()</a>
-     * function. After the array data has been modified, the <a href="#/p5.Image/updatePixels">updatePixels()</a>
-     * function must be run to update the changes.
+     * Each pixel occupies four elements in the pixels array, one for each
+     * RGBA value. For example, the pixel at coordinates (0, 0) stores its
+     * RGBA values at `img.pixels[0]`, `img.pixels[1]`, `img.pixels[2]`,
+     * and `img.pixels[3]`, respectively. The next pixel at coordinates (1, 0)
+     * stores its RGBA values at `img.pixels[4]`, `img.pixels[5]`,
+     * `img.pixels[6]`, and `img.pixels[7]`. And so on. The `img.pixels` array
+     * for a 100×100 <a href="#/p5.Image">p5.Image</a> object has
+     * 100 × 100 × 4 = 40,000 elements.
+     *
+     * Accessing the RGBA values for a pixel in the
+     * <a href="#/p5.Image">p5.Image</a> object requires a little math as
+     * shown below. The <a href="#/p5.Image/loadPixels">img.loadPixels()</a>
+     * method must be called before accessing the `img.pixels` array. The
+     * <a href="#/p5.Image/updatePixels">img.updatePixels()</a> method must be
+     * called after any changes are made.
+     *
      * @property {Number[]} pixels
      * @example
      * <div>
      * <code>
      * let img = createImage(66, 66);
      * img.loadPixels();
-     * for (let i = 0; i < img.width; i++) {
-     *   for (let j = 0; j < img.height; j++) {
-     *     img.set(i, j, color(0, 90, 102));
-     *   }
+     * let numPixels = 4 * img.width * img.height;
+     * for (let i = 0; i < numPixels; i += 4) {
+     *   // Red.
+     *   img.pixels[i] = 0;
+     *   // Green.
+     *   img.pixels[i + 1] = 0;
+     *   // Blue.
+     *   img.pixels[i + 2] = 0;
+     *   // Alpha.
+     *   img.pixels[i + 3] = 255;
      * }
      * img.updatePixels();
      * image(img, 17, 17);
+     *
+     * describe('A black square drawn in the middle of a gray square.');
      * </code>
      * </div>
+     *
      * <div>
      * <code>
-     * let pink = color(255, 102, 204);
      * let img = createImage(66, 66);
      * img.loadPixels();
-     * for (let i = 0; i < 4 * (width * height / 2); i += 4) {
-     *   img.pixels[i] = red(pink);
-     *   img.pixels[i + 1] = green(pink);
-     *   img.pixels[i + 2] = blue(pink);
-     *   img.pixels[i + 3] = alpha(pink);
+     * let numPixels = 4 * img.width * img.height;
+     * for (let i = 0; i < numPixels; i += 4) {
+     *   // Red.
+     *   img.pixels[i] = 255;
+     *   // Green.
+     *   img.pixels[i + 1] = 0;
+     *   // Blue.
+     *   img.pixels[i + 2] = 0;
+     *   // Alpha.
+     *   img.pixels[i + 3] = 255;
      * }
      * img.updatePixels();
      * image(img, 17, 17);
+     *
+     * describe('A red square drawn in the middle of a gray square.');
      * </code>
      * </div>
-     *
-     * @alt
-     * 66×66 turquoise rect in center of canvas
-     * 66×66 pink rect in center of canvas
-     *
      */
     this.pixels = [];
   }
@@ -260,34 +259,49 @@ p5.Image = class {
   }
 
   /**
-   * Loads the pixels data for this image into the [pixels] attribute.
+   * Loads the current value of each pixel in the
+   * <a href="#/p5.Image">p5.Image</a> object into the `img.pixels` array.
+   * This method must be called before reading or modifying pixel values.
    *
    * @method loadPixels
    * @example
-   * <div><code>
-   * let myImage;
-   * let halfImage;
-   *
-   * function preload() {
-   *   myImage = loadImage('assets/rockies.jpg');
-   * }
-   *
-   * function setup() {
-   *   myImage.loadPixels();
-   *   halfImage = 4 * myImage.width * myImage.height / 2;
-   *   for (let i = 0; i < halfImage; i++) {
-   *     myImage.pixels[i + halfImage] = myImage.pixels[i];
+   * <div>
+   * <code>
+   * let img = createImage(66, 66);
+   * img.loadPixels();
+   * for (let x = 0; x < img.width; x += 1) {
+   *   for (let y = 0; y < img.height; y += 1) {
+   *     img.set(x, y, 0);
    *   }
-   *   myImage.updatePixels();
    * }
+   * img.updatePixels();
+   * image(img, 17, 17);
    *
-   * function draw() {
-   *   image(myImage, 0, 0, width, height);
-   * }
-   * </code></div>
+   * describe('A black square drawn in the middle of a gray square.');
+   * </code>
+   * </div>
    *
-   * @alt
-   * 2 images of rocky mountains vertically stacked
+   * <div>
+     * <code>
+     * let img = createImage(66, 66);
+     * img.loadPixels();
+     * let numPixels = 4 * img.width * img.height;
+     * for (let i = 0; i < numPixels; i += 4) {
+     *   // Red.
+     *   img.pixels[i] = 0;
+     *   // Green.
+     *   img.pixels[i + 1] = 0;
+     *   // Blue.
+     *   img.pixels[i + 2] = 0;
+     *   // Alpha.
+     *   img.pixels[i + 3] = 255;
+     * }
+     * img.updatePixels();
+     * image(img, 17, 17);
+     *
+     * describe('A black square drawn in the middle of a gray square.');
+     * </code>
+     * </div>
    */
   loadPixels() {
     p5.Renderer2D.prototype.loadPixels.call(this);
@@ -295,46 +309,68 @@ p5.Image = class {
   }
 
   /**
-   * Updates the backing canvas for this image with the contents of
-   * the [pixels] array.
+   * Updates the canvas with the RGBA values in the
+   * <a href="#/p5.Image/pixels">img.pixels</a> array.
    *
-   * If this image is an animated GIF then the pixels will be updated
-   * in the frame that is currently displayed.
+   * `img.updatePixels()` only needs to be called after changing values in
+   * the <a href="#/p5.Image/pixels">img.pixels</a> array. Such changes can be
+   * made directly after calling
+   * <a href="#/p5.Image/loadPixels">img.loadPixels()</a> or by calling
+   * <a href="#/p5.Image/set">img.set()</a>.
+   *
+   * The optional parameters `x`, `y`, `width`, and `height` define a
+   * subsection of the <a href="#/p5.Image">p5.Image</a> object to update.
+   * Doing so can improve performance in some cases.
+   *
+   * If the <a href="#/p5.Image">p5.Image</a> object was loaded from a GIF,
+   * then calling `img.updatePixels()` will update the pixels in current
+   * frame.
    *
    * @method updatePixels
-   * @param {Integer} x x-offset of the target update area for the
-   *                              underlying canvas
-   * @param {Integer} y y-offset of the target update area for the
-   *                              underlying canvas
-   * @param {Integer} w width of the target update area for the
-   *                              underlying canvas
-   * @param {Integer} h height of the target update area for the
-   *                              underlying canvas
+   * @param {Integer} x x-coordinate of the upper-left corner
+   *                    of the subsection to update.
+   * @param {Integer} y y-coordinate of the upper-left corner
+   *                    of the subsection to update.
+   * @param {Integer} w width of the subsection to update.
+   * @param {Integer} h height of the subsection to update.
    * @example
-   * <div><code>
-   * let myImage;
-   * let halfImage;
-   *
-   * function preload() {
-   *   myImage = loadImage('assets/rockies.jpg');
-   * }
-   *
-   * function setup() {
-   *   myImage.loadPixels();
-   *   halfImage = 4 * myImage.width * myImage.height / 2;
-   *   for (let i = 0; i < halfImage; i++) {
-   *     myImage.pixels[i + halfImage] = myImage.pixels[i];
+   * <div>
+   * <code>
+   * let img = createImage(66, 66);
+   * img.loadPixels();
+   * for (let x = 0; x < img.width; x += 1) {
+   *   for (let y = 0; y < img.height; y += 1) {
+   *     img.set(x, y, 0);
    *   }
-   *   myImage.updatePixels();
    * }
+   * img.updatePixels();
+   * image(img, 17, 17);
    *
-   * function draw() {
-   *   image(myImage, 0, 0, width, height);
+   * describe('A black square drawn in the middle of a gray square.');
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let img = createImage(66, 66);
+   * img.loadPixels();
+   * let numPixels = 4 * img.width * img.height;
+   * for (let i = 0; i < numPixels; i += 4) {
+   *   // Red.
+   *   img.pixels[i] = 0;
+   *   // Green.
+   *   img.pixels[i + 1] = 0;
+   *   // Blue.
+   *   img.pixels[i + 2] = 0;
+   *   // Alpha.
+   *   img.pixels[i + 3] = 255;
    * }
-   * </code></div>
+   * img.updatePixels();
+   * image(img, 17, 17);
    *
-   * @alt
-   * 2 images of rocky mountains vertically stacked
+   * describe('A black square drawn in the middle of a gray square.');
+   * </code>
+   * </div>
    */
   /**
    * @method updatePixels
@@ -345,51 +381,100 @@ p5.Image = class {
   }
 
   /**
-   * Get a region of pixels from an image.
+   * Gets a pixel or a region of pixels from a
+   * <a href="#/p5.Image">p5.Image</a> object.
    *
-   * If no params are passed, the whole image is returned.
-   * If x and y are the only params passed a single pixel is extracted.
-   * If all params are passed a rectangle region is extracted and a <a href="#/p5.Image">p5.Image</a>
-   * is returned.
+   * `img.get()` is easy to use but it's not as fast as
+   * <a href="#/p5.Image/pixels">img.pixels</a>. Use
+   * <a href="#/p5.Image/pixels">img.pixels</a> to read many pixel values.
+   *
+   * The version of `img.get()` with no parameters returns the entire image.
+   *
+   * The version of `img.get()` with two parameters interprets them as
+   * coordinates. It returns an array with the `[R, G, B, A]` values of the
+   * pixel at the given point.
+   *
+   * The version of `img.get()` with four parameters interprets them as
+   * coordinates and dimensions. It returns a subsection of the canvas as a
+   * <a href="#/p5.Image">p5.Image</a> object. The first two parameters are
+   * the coordinates for the upper-left corner of the subsection. The last two
+   * parameters are the width and height of the subsection.
+   *
+   * Use <a href="#/p5.Image/get">img.get()</a> to work directly with
+   * <a href="#/p5.Image">p5.Image</a> objects.
    *
    * @method get
-   * @param  {Number}               x x-coordinate of the pixel
-   * @param  {Number}               y y-coordinate of the pixel
-   * @param  {Number}               w width
-   * @param  {Number}               h height
-   * @return {p5.Image}             the rectangle <a href="#/p5.Image">p5.Image</a>
+   * @param  {Number}               x x-coordinate of the pixel.
+   * @param  {Number}               y y-coordinate of the pixel.
+   * @param  {Number}               w width of the subsection to be returned.
+   * @param  {Number}               h height of the subsection to be returned.
+   * @return {p5.Image}             subsection as a <a href="#/p5.Image">p5.Image</a> object.
    * @example
-   * <div><code>
-   * let myImage;
-   * let c;
+   * <div>
+   * <code>
+   * let img;
    *
    * function preload() {
-   *   myImage = loadImage('assets/rockies.jpg');
+   *   img = loadImage('assets/rockies.jpg');
    * }
    *
    * function setup() {
-   *   background(myImage);
-   *   noStroke();
-   *   c = myImage.get(60, 90);
-   *   fill(c);
-   *   rect(25, 25, 50, 50);
+   *   image(img, 0, 0);
+   *   let img2 = get();
+   *   image(img2, width / 2, 0);
+   *
+   *   describe('Two identical mountain landscapes shown side-by-side.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let img;
+   *
+   * function preload() {
+   *   img = loadImage('assets/rockies.jpg');
    * }
    *
-   * //get() returns color here
-   * </code></div>
+   * function setup() {
+   *   image(img, 0, 0);
+   *   let c = img.get(50, 90);
+   *   fill(c);
+   *   noStroke();
+   *   square(25, 25, 50);
    *
-   * @alt
-   * image of rocky mountains with 50×50 green rect in front
+   *   describe('A mountain landscape with an olive green square in its center.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let img;
+   *
+   * function preload() {
+   *   img = loadImage('assets/rockies.jpg');
+   * }
+   *
+   * function setup() {
+   *   image(img, 0, 0);
+   *   let img2 = img.get(0, 0, img.width / 2, img.height / 2);
+   *   image(img2, width / 2, height / 2);
+   *
+   *   describe('A mountain landscape drawn on top of another mountain landscape.');
+   * }
+   * </code>
+   * </div>
    */
   /**
    * @method get
-   * @return {p5.Image}      the whole <a href="#/p5.Image">p5.Image</a>
+   * @return {p5.Image}      whole <a href="#/p5.Image">p5.Image</a>
    */
   /**
    * @method get
    * @param  {Number}        x
    * @param  {Number}        y
-   * @return {Number[]}      color of pixel at x,y in array format [R, G, B, A]
+   * @return {Number[]}      color of the pixel at (x, y) in array format `[R, G, B, A]`.
    */
   get(x, y, w, h) {
     p5._validateParameters('p5.Image.get', arguments);
@@ -401,36 +486,90 @@ p5.Image = class {
   }
 
   /**
-   * Set the color of a single pixel or write an image into
-   * this <a href="#/p5.Image">p5.Image</a>.
+   * Sets the color of one or more pixels within a
+   * <a href="#/p5.Image">p5.Image</a> object.
    *
-   * Note that for a large number of pixels this will
-   * be slower than directly manipulating the pixels array
-   * and then calling <a href="#/p5.Image/updatePixels">updatePixels()</a>.
+   * `img.set()` is easy to use but it's not as fast as
+   * <a href="#/p5.Image/pixels">img.pixels</a>. Use
+   * <a href="#/p5.Image/pixels">img.pixels</a> to set many pixel values.
+   *
+   * `img.set()` interprets the first two parameters as x- and y-coordinates. It
+   * interprets the last parameter as a grayscale value, a `[R, G, B, A]` pixel
+   * array, a <a href="#/p5.Color">p5.Color</a> object, or another
+   * <a href="#/p5.Image">p5.Image</a> object.
+   *
+   * <a href="#/p5.Image/updatePixels">img.updatePixels()</a> must be called
+   * after using `img.set()` for changes to appear.
    *
    * @method set
-   * @param {Number}              x x-coordinate of the pixel
-   * @param {Number}              y y-coordinate of the pixel
+   * @param {Number}              x x-coordinate of the pixel.
+   * @param {Number}              y y-coordinate of the pixel.
    * @param {Number|Number[]|Object}   a grayscale value | pixel array |
-   *                                a <a href="#/p5.Color">p5.Color</a> | image to copy
+   *                                   <a href="#/p5.Color">p5.Color</a> object |
+   *                                   <a href="#/p5.Image">p5.Image</a> to copy.
    * @example
    * <div>
    * <code>
+   * let img = createImage(100, 100);
+   * img.set(30, 20, 0);
+   * img.set(85, 20, 0);
+   * img.set(85, 75, 0);
+   * img.set(30, 75, 0);
+   * img.updatePixels();
+   * image(img, 0, 0);
+   *
+   * describe('Four black dots arranged in a square drawn on a gray background.');
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let img = createImage(100, 100);
+   * let black = color(0);
+   * img.set(30, 20, black);
+   * img.set(85, 20, black);
+   * img.set(85, 75, black);
+   * img.set(30, 75, black);
+   * img.updatePixels();
+   * image(img, 0, 0);
+   *
+   * describe('Four black dots arranged in a square drawn on a gray background.');
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
    * let img = createImage(66, 66);
-   * img.loadPixels();
-   * for (let i = 0; i < img.width; i++) {
-   *   for (let j = 0; j < img.height; j++) {
-   *     img.set(i, j, color(0, 90, 102, (i % img.width) * 2));
+   * for (let x = 0; x < img.width; x += 1) {
+   *   for (let y = 0; y < img.height; y += 1) {
+   *     let c = map(x, 0, img.width, 0, 255);
+   *     img.set(x, y, c);
    *   }
    * }
    * img.updatePixels();
    * image(img, 17, 17);
-   * image(img, 34, 34);
+   *
+   * describe('A square with a horiztonal color gradient from black to white drawn on a gray background.');
    * </code>
    * </div>
    *
-   * @alt
-   * 2 gradated dark turquoise rects fade left. 1 center 1 bottom right of canvas
+   * <div>
+   * <code>
+   * let img;
+   *
+   * function preload() {
+   *   img = loadImage('assets/rockies.jpg');
+   * }
+   *
+   * function setup() {
+   *   let img2 = createImage(100, 100);
+   *   img2.set(0, 0, img);
+   *   image(img2, 0, 0);
+   *
+   *   describe('An image of a mountain landscape.');
+   * }
+   * </code>
+   * </div>
    */
   set(x, y, imgOrCol) {
     p5.Renderer2D.prototype.set.call(this, x, y, imgOrCol);
@@ -438,33 +577,69 @@ p5.Image = class {
   }
 
   /**
-   * Resize the image to a new width and height. To make the image scale
-   * proportionally, use 0 as the value for the wide or high parameter.
-   * For instance, to make the width of an image 150 pixels, and change
-   * the height using the same proportion, use resize(150, 0).
+   * Resizes the <a href="#/p5.Image">p5.Image</a> object to a given `width`
+   * and `height`. The image's original aspect ratio can be kept by passing 0
+   * for either `width` or `height`. For example, calling `img.resize(50, 0)`
+   * on an image that was 500 &times; 300 pixels will resize it to
+   * 50 &times; 30 pixels.
    *
    * @method resize
-   * @param {Number} width the resized image width
-   * @param {Number} height the resized image height
+   * @param {Number} width resized image width.
+   * @param {Number} height resized image height.
    * @example
-   * <div><code>
+   * <div>
+   * <code>
    * let img;
    *
    * function preload() {
    *   img = loadImage('assets/rockies.jpg');
    * }
 
-   * function draw() {
+   * function setup() {
    *   image(img, 0, 0);
-   * }
-   *
-   * function mousePressed() {
    *   img.resize(50, 100);
-   * }
-   * </code></div>
+   *   image(img, 0, 0);
    *
-   * @alt
-   * image of rocky mountains. zoomed in
+   *   describe('Two images of a mountain landscape. One copy of the image is squeezed horizontally.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let img;
+   *
+   * function preload() {
+   *   img = loadImage('assets/rockies.jpg');
+   * }
+
+   * function setup() {
+   *   image(img, 0, 0);
+   *   img.resize(0, 30);
+   *   image(img, 0, 0);
+   *
+   *   describe('Two images of a mountain landscape. The small copy of the image covers the top-left corner of the larger image.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let img;
+   *
+   * function preload() {
+   *   img = loadImage('assets/rockies.jpg');
+   * }
+
+   * function setup() {
+   *   image(img, 0, 0);
+   *   img.resize(60, 0);
+   *   image(img, 0, 0);
+   *
+   *   describe('Two images of a mountain landscape. The small copy of the image covers the top-left corner of the larger image.');
+   * }
+   * </code>
+   * </div>
    */
   resize(width, height) {
     // Copy contents to a temporary canvas, resize the original
@@ -546,44 +721,64 @@ p5.Image = class {
   }
 
   /**
-   * Copies a region of pixels from one image to another. If no
-   * srcImage is specified this is used as the source. If the source
-   * and destination regions aren't the same size, it will
-   * automatically resize source pixels to fit the specified
-   * target region.
+   *
+   * Copies pixels from a source <a href="#/p5.Image">p5.Image</a>
+   * to this one. Calling `img.copy()` will scale pixels from the source
+   * region if it isn't the same size as the destination region.
    *
    * @method copy
-   * @param  {p5.Image|p5.Element} srcImage source image
-   * @param  {Integer} sx X coordinate of the source's upper left corner
-   * @param  {Integer} sy Y coordinate of the source's upper left corner
-   * @param  {Integer} sw source image width
-   * @param  {Integer} sh source image height
-   * @param  {Integer} dx X coordinate of the destination's upper left corner
-   * @param  {Integer} dy Y coordinate of the destination's upper left corner
-   * @param  {Integer} dw destination image width
-   * @param  {Integer} dh destination image height
+   * @param  {p5.Image|p5.Element} srcImage source image.
+   * @param  {Integer} sx x-coordinate of the source's upper-left corner.
+   * @param  {Integer} sy y-coordinate of the source's upper-left corner.
+   * @param  {Integer} sw source image width.
+   * @param  {Integer} sh source image height.
+   * @param  {Integer} dx x-coordinate of the destination's upper-left corner.
+   * @param  {Integer} dy y-coordinate of the destination's upper-left corner.
+   * @param  {Integer} dw destination image width.
+   * @param  {Integer} dh destination image height.
+   *
    * @example
-   * <div><code>
-   * let photo;
-   * let bricks;
-   * let x;
-   * let y;
+   * <div>
+   * <code>
+   * let img;
    *
    * function preload() {
-   *   photo = loadImage('assets/rockies.jpg');
+   *   img = loadImage('assets/rockies.jpg');
+   * }
+   *
+   * function setup() {
+   *   img.copy(7, 22, 10, 10, 35, 25, 50, 50);
+   *   image(img, 0, 0);
+   *   // Outline copied region.
+   *   stroke(255);
+   *   noFill();
+   *   square(7, 22, 10);
+   *
+   *   describe('An image of a mountain landscape. A square region is outlined in white. A larger square contains a pixelated view of the outlined region.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let mountains;
+   * let bricks;
+   *
+   * function preload() {
+   *   mountains = loadImage('assets/rockies.jpg');
    *   bricks = loadImage('assets/bricks.jpg');
    * }
    *
    * function setup() {
-   *   x = bricks.width / 2;
-   *   y = bricks.height / 2;
-   *   photo.copy(bricks, 0, 0, x, y, 0, 0, x, y);
-   *   image(photo, 0, 0);
-   * }
-   * </code></div>
+   *   let x = bricks.width / 2;
+   *   let y = bricks.height / 2;
+   *   mountains.copy(bricks, 0, 0, x, y, 0, 0, x, y);
+   *   image(mountains, 0, 0);
    *
-   * @alt
-   * image of rocky mountains and smaller image on top of bricks at top left
+   *   describe('An image of a brick wall drawn at the top-left of an image of a mountain landscape.');
+   * }
+   * </code>
+   * </div>
    */
   /**
    * @method copy
@@ -607,26 +802,27 @@ p5.Image = class {
    * object, they cannot be removed.
    *
    * @method mask
-   * @param {p5.Image} srcImage source image
+   * @param {p5.Image} srcImage source image.
+   *
    * @example
-   * <div><code>
-   * let photo, maskImage;
+   * <div>
+   * <code>
+   * let photo;
+   * let maskImage;
+   *
    * function preload() {
    *   photo = loadImage('assets/rockies.jpg');
    *   maskImage = loadImage('assets/mask2.png');
    * }
    *
    * function setup() {
-   *   createCanvas(100, 100);
    *   photo.mask(maskImage);
    *   image(photo, 0, 0);
+   *
+   *   describe('An image of a mountain landscape. The right side of the image has a faded patch of white.');
    * }
-   * </code></div>
-   *
-   * @alt
-   * image of rocky mountains with white at right
-   *
-   * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
+   * </code>
+   * </div>
    */
   // TODO: - Accept an array of alpha values.
   mask(p5Image) {
@@ -681,72 +877,180 @@ p5.Image = class {
   }
 
   /**
-   * Applies an image filter to a <a href="#/p5.Image">p5.Image</a>
+   * Applies an image filter to the <a href="#/p5.Image">p5.Image</a> object.
+   * The preset options are:
    *
-   * THRESHOLD
-   * Converts the image to black and white pixels depending if they are above or
-   * below the threshold defined by the level parameter. The parameter must be
-   * between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
+   * `INVERT`
+   * Inverts the colors in the image. No parameter is used.
    *
-   * GRAY
-   * Converts any colors in the image to grayscale equivalents. No parameter
-   * is used.
+   * `GRAY`
+   * Converts the image to grayscale. No parameter is used.
    *
-   * OPAQUE
-   * Sets the alpha channel to entirely opaque. No parameter is used.
+   * `THRESHOLD`
+   * Converts the image to black and white. Pixels with a grayscale value
+   * above a given threshold are converted to white. The rest are converted to
+   * black. The threshold must be between 0.0 (black) and 1.0 (white). If no
+   * value is specified, 0.5 is used.
    *
-   * INVERT
-   * Sets each pixel to its inverse value. No parameter is used.
+   * `OPAQUE`
+   * Sets the alpha channel to be entirely opaque. No parameter is used.
    *
-   * POSTERIZE
-   * Limits each channel of the image to the number of colors specified as the
-   * parameter. The parameter can be set to values between 2 and 255, but
-   * results are most noticeable in the lower ranges.
+   * `POSTERIZE`
+   * Limits the number of colors in the image. Each color channel is limited to
+   * the number of colors specified. Values between 2 and 255 are valid, but
+   * results are most noticeable with lower values. The default value is 4.
    *
-   * BLUR
-   * Executes a Gaussian blur with the level parameter specifying the extent
-   * of the blurring. If no parameter is used, the blur is equivalent to
-   * Gaussian blur of radius 1. Larger values increase the blur.
+   * `BLUR`
+   * Blurs the image. The level of blurring is specified by a blur radius. Larger
+   * values increase the blur. The default value is 4. A gaussian blur is used
+   * in `P2D` mode. A box blur is used in `WEBGL` mode.
    *
-   * ERODE
+   * `ERODE`
    * Reduces the light areas. No parameter is used.
    *
-   * DILATE
+   * `DILATE`
    * Increases the light areas. No parameter is used.
-   *
-   * filter() does not work in WEBGL mode.
-   * A similar effect can be achieved in WEBGL mode using custom
-   * shaders. Adam Ferriss has written
-   * a <a href="https://github.com/aferriss/p5jsShaderExamples"
-   * target='_blank'>selection of shader examples</a> that contains many
-   * of the effects present in the filter examples.
    *
    * @method filter
    * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
    *                                POSTERIZE, ERODE, DILATE or BLUR.
-   *                                See Filters.js for docs on
-   *                                each available filter
-   * @param  {Number} [filterParam] an optional parameter unique
-   *                                to each filter, see above
+   * @param  {Number} [filterParam] parameter unique to each filter.
    * @example
-   * <div><code>
-   * let photo1;
-   * let photo2;
+   * <div>
+   * <code>
+   * let img;
    *
    * function preload() {
-   *   photo1 = loadImage('assets/rockies.jpg');
-   *   photo2 = loadImage('assets/rockies.jpg');
+   *   img = loadImage('assets/bricks.jpg');
    * }
    *
    * function setup() {
-   *   photo2.filter(GRAY);
-   *   image(photo1, 0, 0);
-   *   image(photo2, width / 2, 0);
-   * }
-   * </code></div>
+   *   img.filter(INVERT);
+   *   image(img, 0, 0);
    *
-   * @alt
-   * 2 images of rocky mountains left one in color, right in black and white
+   *   describe('A blue brick wall.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let img;
+   *
+   * function preload() {
+   *   img = loadImage('assets/bricks.jpg');
+   * }
+   *
+   * function setup() {
+   *   img.filter(GRAY);
+   *   image(img, 0, 0);
+   *
+   *   describe('A brick wall drawn in grayscale.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let img;
+   *
+   * function preload() {
+   *   img = loadImage('assets/bricks.jpg');
+   * }
+   *
+   * function setup() {
+   *   img.filter(THRESHOLD);
+   *   image(img, 0, 0);
+   *
+   *   describe('A brick wall drawn in black and white.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let img;
+   *
+   * function preload() {
+   *   img = loadImage('assets/bricks.jpg');
+   * }
+   *
+   * function setup() {
+   *   img.filter(OPAQUE);
+   *   image(img, 0, 0);
+   *
+   *   describe('A red brick wall.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let img;
+   *
+   * function preload() {
+   *   img = loadImage('assets/bricks.jpg');
+   * }
+   *
+   * function setup() {
+   *   img.filter(POSTERIZE, 3);
+   *   image(img, 0, 0);
+   *
+   *   describe('An image of a red brick wall drawn with a limited color palette.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let img;
+   *
+   * function preload() {
+   *   img = loadImage('assets/bricks.jpg');
+   * }
+   *
+   * function setup() {
+   *   img.filter(BLUR, 3);
+   *   image(img, 0, 0);
+   *
+   *   describe('A blurry image of a red brick wall.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let img;
+   *
+   * function preload() {
+   *   img = loadImage('assets/bricks.jpg');
+   * }
+   *
+   * function setup() {
+   *   img.filter(DILATE);
+   *   image(img, 0, 0);
+   *
+   *   describe('A red brick wall with bright lines between each brick.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let img;
+   *
+   * function preload() {
+   *   img = loadImage('assets/bricks.jpg');
+   * }
+   *
+   * function setup() {
+   *   img.filter(ERODE);
+   *   image(img, 0, 0);
+   *
+   *   describe('A red brick wall with faint lines between each brick.');
+   * }
+   * </code>
+   * </div>
    */
   filter(operation, value) {
     Filters.apply(this.canvas, Filters[operation], value);
@@ -754,19 +1058,20 @@ p5.Image = class {
   }
 
   /**
-   * Copies a region of pixels from one image to another, using a specified
-   * blend mode to do the operation.
+   * Copies a region of pixels from another
+   * <a href="#/p5.Image">p5.Image</a> object into this one. The `blendMode`
+   * parameter blends the images' colors to create different effects.
    *
    * @method blend
    * @param  {p5.Image} srcImage source image
-   * @param  {Integer} sx X coordinate of the source's upper left corner
-   * @param  {Integer} sy Y coordinate of the source's upper left corner
-   * @param  {Integer} sw source image width
-   * @param  {Integer} sh source image height
-   * @param  {Integer} dx X coordinate of the destination's upper left corner
-   * @param  {Integer} dy Y coordinate of the destination's upper left corner
-   * @param  {Integer} dw destination image width
-   * @param  {Integer} dh destination image height
+   * @param  {Integer} sx x-coordinate of the source's upper-left corner.
+   * @param  {Integer} sy y-coordinate of the source's upper-left corner.
+   * @param  {Integer} sw source image width.
+   * @param  {Integer} sh source image height.
+   * @param  {Integer} dx x-coordinate of the destination's upper-left corner.
+   * @param  {Integer} dy y-coordinate of the destination's upper-left corner.
+   * @param  {Integer} dw destination image width.
+   * @param  {Integer} dh destination image height.
    * @param  {Constant} blendMode the blend mode. either
    *     BLEND, DARKEST, LIGHTEST, DIFFERENCE,
    *     MULTIPLY, EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
@@ -779,7 +1084,8 @@ p5.Image = class {
    *
    * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
    * @example
-   * <div><code>
+   * <div>
+   * <code>
    * let mountains;
    * let bricks;
    *
@@ -792,9 +1098,14 @@ p5.Image = class {
    *   mountains.blend(bricks, 0, 0, 33, 100, 67, 0, 33, 100, ADD);
    *   image(mountains, 0, 0);
    *   image(bricks, 0, 0);
+   *
+   *   describe('A wall of bricks in front of a mountain landscape. The same wall of bricks appears faded on the right of the image.');
    * }
-   * </code></div>
-   * <div><code>
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
    * let mountains;
    * let bricks;
    *
@@ -807,9 +1118,14 @@ p5.Image = class {
    *   mountains.blend(bricks, 0, 0, 33, 100, 67, 0, 33, 100, DARKEST);
    *   image(mountains, 0, 0);
    *   image(bricks, 0, 0);
+   *
+   *   describe('A wall of bricks in front of a mountain landscape. The same wall of bricks appears transparent on the right of the image.');
    * }
-   * </code></div>
-   * <div><code>
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
    * let mountains;
    * let bricks;
    *
@@ -822,13 +1138,11 @@ p5.Image = class {
    *   mountains.blend(bricks, 0, 0, 33, 100, 67, 0, 33, 100, LIGHTEST);
    *   image(mountains, 0, 0);
    *   image(bricks, 0, 0);
-   * }
-   * </code></div>
    *
-   * @alt
-   * image of rocky mountains. Brick images on left and right. Right overexposed
-   * image of rockies. Brickwall images on left and right. Right mortar transparent
-   * image of rockies. Brickwall images on left and right. Right translucent
+   *   describe('A wall of bricks in front of a mountain landscape. The same wall of bricks appears washed out on the right of the image.');
+   * }
+   * </code>
+   * </div>
    */
   /**
    * @method blend
@@ -875,36 +1189,52 @@ p5.Image = class {
   }
 
   /**
-   * Saves the image to a file and force the browser to download it.
-   * Accepts two strings for filename and file extension
-   * Supports png (default), jpg, and gif
-   *<br><br>
-   * Note that the file will only be downloaded as an animated GIF
-   * if the p5.Image was loaded from a GIF file.
+   * Saves the <a href="#/p5.Image">p5.Image</a> object to a file.
+   * The browser will either save the file immediately or prompt the user
+   * with a dialogue window.
+   *
+   * By default, calling `img.save()` will save the image as `untitled.png`.
+   *
+   * Calling `img.save()` with one argument, as in `img.save('photo.png')`,
+   * will set the image's filename and type together.
+   *
+   * Calling `img.save()` with two arguments, as in
+   * `image.save('photo', 'png')`, will set the image's filename and type
+   * separately.
+   *
+   * The image will only be downloaded as an animated GIF if the
+   * <a href="#/p5.Image">p5.Image</a> object was loaded from a GIF file.
+   * See <a href="#/p5/saveGif">saveGif()</a> to create new GIFs.
    * @method save
-   * @param {String} filename give your file a name
-   * @param  {String} extension 'png' or 'jpg'
+   * @param {String} filename filename. Defaults to 'untitled'.
+   * @param  {String} [extension] file extension, either 'png' or 'jpg'.
+   *                            Defaults to 'png'.
    * @example
-   * <div><code>
-   * let photo;
+   * <div>
+   * <code>
+   * let img;
    *
    * function preload() {
-   *   photo = loadImage('assets/rockies.jpg');
+   *   img = loadImage('assets/rockies.jpg');
    * }
    *
    * function draw() {
-   *   image(photo, 0, 0);
+   *   image(img, 0, 0);
+   *
+   *   describe('An image of a mountain landscape.');
    * }
    *
-   * function keyTyped() {
+   * function keyPressed() {
    *   if (key === 's') {
-   *     photo.save('photo', 'png');
+   *     img.save();
+   *   } else if (key === 'j') {
+   *     img.save('rockies.jpg');
+   *   } else if (key === 'p') {
+   *     img.save('rockies', 'png');
    *   }
    * }
-   * </code></div>
-   *
-   * @alt
-   * image of rocky mountains.
+   * </code>
+   * </div>
    */
   save(filename, extension) {
     if (this.gifProperties) {
@@ -916,11 +1246,12 @@ p5.Image = class {
 
   // GIF Section
   /**
-   * Starts an animated GIF over at the beginning state.
+   * Restarts an animated GIF at its first frame.
    *
    * @method reset
    * @example
-   * <div><code>
+   * <div>
+   * <code>
    * let gif;
    *
    * function preload() {
@@ -929,19 +1260,16 @@ p5.Image = class {
    *
    * function draw() {
    *   background(255);
-   *   // The GIF file that we loaded only loops once
-   *   // so it freezes on the last frame after playing through
    *   image(gif, 0, 0);
+   *
+   *   describe('A cartoon face winks once and then freezes. Clicking resets the face and makes it wink again.');
    * }
    *
    * function mousePressed() {
-   *   // Click to reset the GIF and begin playback from start
    *   gif.reset();
    * }
-   * </code></div>
-   * @alt
-   * Animated image of a cartoon face that winks once and then freezes
-   * When you click it animates again, winks once and freezes
+   * </code>
+   * </div>
    */
   reset() {
     if (this.gifProperties) {
@@ -957,12 +1285,13 @@ p5.Image = class {
   }
 
   /**
-   * Gets the index for the frame that is currently visible in an animated GIF.
+   * Gets the index of the current frame in an animated GIF.
    *
    * @method getCurrentFrame
-   * @return {Number}       The index for the currently displaying frame in animated GIF
+   * @return {Number}       index of the GIF's current frame.
    * @example
-   * <div><code>
+   * <div>
+   * <code>
    * let gif;
    *
    * function preload() {
@@ -970,15 +1299,14 @@ p5.Image = class {
    * }
    *
    * function draw() {
-   *   let frame = gif.getCurrentFrame();
+   *   let index = gif.getCurrentFrame();
    *   image(gif, 0, 0);
-   *   text(frame, 10, 90);
+   *   text(index, 10, 90);
+   *
+   *   describe('A cartoon eye repeatedly looks around, then outwards. A number displayed in the bottom-left corner increases from 0 to 124, then repeats.');
    * }
-   * </code></div>
-   * @alt
-   * Animated image of a cartoon eye looking around and then
-   * looking outwards, in the lower-left hand corner a number counts
-   * up quickly to 124 and then starts back over at 0
+   * </code>
+   * </div>
    */
   getCurrentFrame() {
     if (this.gifProperties) {
@@ -988,33 +1316,36 @@ p5.Image = class {
   }
 
   /**
-   * Sets the index of the frame that is currently visible in an animated GIF
+   * Sets the current frame in an animated GIF.
    *
    * @method setFrame
-   * @param {Number}       index the index for the frame that should be displayed
+   * @param {Number} index index of the frame to display.
    * @example
-   * <div><code>
+   * <div>
+   * <code>
    * let gif;
+   * let frameSlider;
    *
    * function preload() {
    *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
    * }
    *
-   * // Move your mouse up and down over canvas to see the GIF
-   * // frames animate
-   * function draw() {
-   *   gif.pause();
-   *   image(gif, 0, 0);
-   *   // Get the highest frame number which is the number of frames - 1
+   * function setup() {
    *   let maxFrame = gif.numFrames() - 1;
-   *   // Set the current frame that is mapped to be relative to mouse position
-   *   let frameNumber = floor(map(mouseY, 0, height, 0, maxFrame, true));
-   *   gif.setFrame(frameNumber);
+   *   frameSlider = createSlider(0, maxFrame);
+   *   frameSlider.position(10, 80);
+   *   frameSlider.size(80);
    * }
-   * </code></div>
-   * @alt
-   * A still image of a cartoon eye that looks around when you move your mouse
-   * up and down over the canvas
+   *
+   * function draw() {
+   *   let index = frameSlider.value();
+   *   gif.setFrame(index);
+   *   image(gif, 0, 0);
+   *
+   *   describe('A cartoon eye looks around when a slider is moved.');
+   * }
+   * </code>
+   * </div>
    */
   setFrame(index) {
     if (this.gifProperties) {
@@ -1033,33 +1364,30 @@ p5.Image = class {
   }
 
   /**
-   * Returns the number of frames in an animated GIF
+   * Returns the number of frames in an animated GIF.
    *
    * @method numFrames
-   * @return {Number}
-   * @example     The number of frames in the animated GIF
-   * <div><code>
+   * @return {Number} number of frames in the GIF.
+   *
+   * @example
+   * <div>
+   * <code>
    * let gif;
    *
    * function preload() {
    *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
    * }
    *
-   * // Move your mouse up and down over canvas to see the GIF
-   * // frames animate
    * function draw() {
-   *   gif.pause();
    *   image(gif, 0, 0);
-   *   // Get the highest frame number which is the number of frames - 1
-   *   let maxFrame = gif.numFrames() - 1;
-   *   // Set the current frame that is mapped to be relative to mouse position
-   *   let frameNumber = floor(map(mouseY, 0, height, 0, maxFrame, true));
-   *   gif.setFrame(frameNumber);
+   *   let total = gif.numFrames();
+   *   let index = gif.getCurrentFrame();
+   *   text(`${index} / ${total}`, 30, 90);
+   *
+   *   describe('A cartoon eye looks around. The text "n / 125" is shown at the bottom of the canvas.');
    * }
-   * </code></div>
-   * @alt
-   * A still image of a cartoon eye that looks around when you move your mouse
-   * up and down over the canvas
+   * </code>
+   * </div>
    */
   numFrames() {
     if (this.gifProperties) {
@@ -1069,11 +1397,13 @@ p5.Image = class {
 
   /**
    * Plays an animated GIF that was paused with
-   * <a href="#/p5.Image/pause">pause()</a>
+   * <a href="#/p5.Image/pause">img.pause()</a>.
    *
    * @method play
+   *
    * @example
-   * <div><code>
+   * <div>
+   * <code>
    * let gif;
    *
    * function preload() {
@@ -1083,6 +1413,8 @@ p5.Image = class {
    * function draw() {
    *   background(255);
    *   image(gif, 0, 0);
+   *
+   *   describe('A drawing of a child with hair blowing in the wind. The animation freezes when clicked and resumes when released.');
    * }
    *
    * function mousePressed() {
@@ -1092,11 +1424,8 @@ p5.Image = class {
    * function mouseReleased() {
    *   gif.play();
    * }
-   * </code></div>
-   * @alt
-   * An animated GIF of a drawing of small child with
-   * hair blowing in the wind, when you click the image
-   * freezes when you release it animates again
+   * </code>
+   * </div>
    */
   play() {
     if (this.gifProperties) {
@@ -1105,11 +1434,14 @@ p5.Image = class {
   }
 
   /**
-   * Pauses an animated GIF.
+   * Pauses an animated GIF. The GIF can be resumed by calling
+   * <a href="#/p5.Image/play">img.play()</a>.
    *
    * @method pause
+   *
    * @example
-   * <div><code>
+   * <div>
+   * <code>
    * let gif;
    *
    * function preload() {
@@ -1119,6 +1451,8 @@ p5.Image = class {
    * function draw() {
    *   background(255);
    *   image(gif, 0, 0);
+   *
+   *   describe('A drawing of a child with hair blowing in the wind. The animation freezes when clicked and resumes when released.');
    * }
    *
    * function mousePressed() {
@@ -1128,11 +1462,8 @@ p5.Image = class {
    * function mouseReleased() {
    *   gif.play();
    * }
-   * </code></div>
-   * @alt
-   * An animated GIF of a drawing of small child with
-   * hair blowing in the wind, when you click the image
-   * freezes when you release it animates again
+   * </code>
+   * </div>
    */
   pause() {
     if (this.gifProperties) {
@@ -1141,16 +1472,21 @@ p5.Image = class {
   }
 
   /**
-   * Changes the delay between frames in an animated GIF. There is an optional second parameter that
-   * indicates an index for a specific frame that should have its delay modified. If no index is given, all frames
-   * will have the new delay.
+   * Changes the delay between frames in an animated GIF.
+   *
+   * The second parameter, `index`, is optional. If provided, only the frame
+   * at `index` will have its delay modified. All other frames will keep
+   * their default delay.
    *
    * @method delay
-   * @param {Number}    d the amount in milliseconds to delay between switching frames
-   * @param {Number}    [index] the index of the frame that should have the new delay value {optional}
+   * @param {Number} d delay in milliseconds between switching frames.
+   * @param {Number} [index] index of the frame that will have its delay modified.
+   *
    * @example
-   * <div><code>
-   * let gifFast, gifSlow;
+   * <div>
+   * <code>
+   * let gifFast;
+   * let gifSlow;
    *
    * function preload() {
    *   gifFast = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
@@ -1158,24 +1494,40 @@ p5.Image = class {
    * }
    *
    * function setup() {
-   *   gifFast.resize(width / 2, height / 2);
-   *   gifSlow.resize(width / 2, height / 2);
-   *
-   *   //Change the delay here
+   *   gifFast.resize(50, 50);
+   *   gifSlow.resize(50, 50);
    *   gifFast.delay(10);
    *   gifSlow.delay(100);
    * }
    *
    * function draw() {
-   *   background(255);
    *   image(gifFast, 0, 0);
-   *   image(gifSlow, width / 2, 0);
+   *   image(gifSlow, 50, 0);
+   *
+   *   describe('Two animated eyes looking around. The eye on the left moves faster than the eye on the right.');
    * }
-   * </code></div>
-   * @alt
-   * Two animated gifs of cartoon eyes looking around
-   * The gif on the left animates quickly, on the right
-   * the animation is much slower
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let gif;
+   *
+   * function preload() {
+   *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
+   * }
+   *
+   * function setup() {
+   *   gif.delay(3000, 67);
+   * }
+   *
+   * function draw() {
+   *   image(gif, 0, 0);
+   *
+   *   describe('An animated eye looking around. It pauses for three seconds while it looks down.');
+   * }
+   * </code>
+   * </div>
    */
   delay(d, index) {
     if (this.gifProperties) {

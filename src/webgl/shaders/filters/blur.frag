@@ -8,7 +8,7 @@ precision highp float;
 uniform sampler2D tex0;
 varying vec2 vTexCoord;
 uniform vec2 direction;
-uniform vec2 texelSize;
+uniform vec2 canvasSize;
 uniform float radius;
 
 float random2 (vec2 st) {
@@ -53,7 +53,7 @@ void main(){
     if (i >= numSamples) break;
 
     float sample = i * spacing - (numSamples - 1.0) * 0.5 * spacing + randomOffset;
-    vec2 sampleCoord = uv + vec2(sample, sample) * texelSize * direction;
+    vec2 sampleCoord = uv + vec2(sample, sample) / canvasSize * direction;
     float weight = quadWeight(sample, (numSamples - 1.0) * 0.5 * spacing);
 
     avg += weight * texture2D(tex0, sampleCoord);
