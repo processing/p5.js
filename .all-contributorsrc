@@ -5230,6 +5230,80 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "Ankush263",
+      "name": "Ankush Banik",
+      "avatar_url": "https://avatars.githubusercontent.com/u/86042508?v=4",
+      "profile": "https://my-portfolio-ankush263.vercel.app/",
+      "contributions": [
+        "bug",
+        "code",
+        "talk",
+        "question"
+      ]
+    },
+    {
+      "login": "tetunori",
+      "name": "tetunori",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14086390?v=4",
+      "profile": "https://qiita.com/tetunori_lego",
+      "contributions": [
+        "blog",
+        "code",
+        "example",
+        "tool"
+      ]
+    },
+    {
+      "login": "KeyboardSounds",
+      "name": "Emma Krantz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3796838?v=4",
+      "profile": "https://github.com/KeyboardSounds",
+      "contributions": [
+        "bug",
+        "code"
+      ]
+    },
+    {
+      "login": "ZacTolle",
+      "name": "Zac Tolle",
+      "avatar_url": "https://avatars.githubusercontent.com/u/139601580?v=4",
+      "profile": "https://zactolle.notion.site",
+      "contributions": [
+        "a11y",
+        "code",
+        "tool",
+        "example"
+      ]
+    },
+    {
+      "login": "capGoblin",
+      "name": "Dharshan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/78524377?v=4",
+      "profile": "https://github.com/capGoblin",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "skbhagat0502",
+      "name": "Sandeep Kumar Bhagat",
+      "avatar_url": "https://avatars.githubusercontent.com/u/109683163?v=4",
+      "profile": "https://github.com/skbhagat0502",
+      "contributions": [
+        "design",
+        "code"
+      ]
+    },
+    {
+      "login": "Gaurav-1306",
+      "name": "Gaurav Tiwary",
+      "avatar_url": "https://avatars.githubusercontent.com/u/97665755?v=4",
+      "profile": "https://gaurav-personal-portfolio.netlify.app/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",

@@ -621,7 +621,7 @@ p5.prototype._onmousemove = function(e) {
  *   describe('black 50-by-50 rect turns white with mouse click/press.');
  * }
  * function mousePressed() {
- *   if (value === 0) {
+ *   if (colorValue === 0) {
  *     colorValue = 255;
  *   } else {
  *     colorValue = 0;

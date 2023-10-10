@@ -6,7 +6,6 @@
  */
 
 import p5 from './main';
-
 /**
  * Stops p5.js from continuously executing the code within <a href="#/p5/draw">draw()</a>.
  * If <a href="#/p5/loop">loop()</a> is called, the code in <a href="#/p5/draw">draw()</a>
@@ -471,9 +470,6 @@ p5.prototype.redraw = function(n) {
     if (typeof context.setup === 'undefined') {
       context.scale(context._pixelDensity, context._pixelDensity);
     }
-    const callMethod = f => {
-      f.call(context);
-    };
     for (let idxRedraw = 0; idxRedraw < numberOfRedraws; idxRedraw++) {
       context.resetMatrix();
       if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
@@ -483,14 +479,14 @@ p5.prototype.redraw = function(n) {
         context._renderer._update();
       }
       context._setProperty('frameCount', context.frameCount + 1);
-      context._registeredMethods.pre.forEach(callMethod);
+      this.callRegisteredHooksFor('pre');
       this._inUserDraw = true;
       try {
         context.draw();
       } finally {
         this._inUserDraw = false;
       }
-      context._registeredMethods.post.forEach(callMethod);
+      this.callRegisteredHooksFor('post');
     }
   }
 };

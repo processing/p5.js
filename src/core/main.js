@@ -231,6 +231,20 @@ class p5 {
       this._events.devicemotion = null;
     }
 
+    // Function to invoke registered hooks before or after events such as preload, setup, and pre/post draw.
+    p5.prototype.callRegisteredHooksFor = function (hookName) {
+      const target = this || p5.prototype;
+      const context = this._isGlobal ? window : this;
+      if (target._registeredMethods.hasOwnProperty(hookName)) {
+        const methods = target._registeredMethods[hookName];
+        for (const method of methods) {
+          if (typeof method === 'function') {
+            method.call(context);
+          }
+        }
+      }
+    };
+
     this._start = () => {
       // Find node if id given
       if (this._userNode) {
@@ -241,6 +255,7 @@ class p5 {
 
       const context = this._isGlobal ? window : this;
       if (context.preload) {
+        this.callRegisteredHooksFor('beforePreload');
         // Setup loading screen
         // Set loading screen into dom if not present
         // Otherwise displays and removes user provided loading screen
@@ -286,6 +301,7 @@ class p5 {
         if (loadingScreen) {
           loadingScreen.parentNode.removeChild(loadingScreen);
         }
+        this.callRegisteredHooksFor('afterPreload');
         if (!this._setupDone) {
           this._lastTargetFrameTime = window.performance.now();
           this._lastRealFrameTime = window.performance.now();
@@ -322,6 +338,7 @@ class p5 {
     };
 
     this._setup = () => {
+      this.callRegisteredHooksFor('beforeSetup');
       // Always create a default canvas.
       // Later on if the user calls createCanvas, this default one
       // will be replaced
@@ -369,6 +386,7 @@ class p5 {
       if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
         this._updateAccsOutput();
       }
+      this.callRegisteredHooksFor('afterSetup');
     };
 
     this._draw = () => {
@@ -626,6 +644,24 @@ class p5 {
       target._registeredMethods[name] = [];
     }
     target._registeredMethods[name].push(m);
+  }
+
+  unregisterMethod(name, m) {
+    const target = this || p5.prototype;
+    if (target._registeredMethods.hasOwnProperty(name)) {
+      const methods = target._registeredMethods[name];
+      const indexesToRemove = [];
+      // Find all indexes of the method `m` in the array of registered methods
+      for (let i = 0; i < methods.length; i++) {
+        if (methods[i] === m) {
+          indexesToRemove.push(i);
+        }
+      }
+      // Remove all instances of the method `m` from the array
+      for (let i = indexesToRemove.length - 1; i >= 0; i--) {
+        methods.splice(indexesToRemove[i], 1);
+      }
+    }
   }
 
   // create a function which provides a standardized process for binding
