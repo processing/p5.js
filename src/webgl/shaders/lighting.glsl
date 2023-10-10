@@ -1,3 +1,6 @@
+#define PI 3.141592
+
+precision highp float;
 precision highp int;
 
 uniform mat4 uViewMatrix;
@@ -32,8 +35,16 @@ uniform float uConstantAttenuation;
 uniform float uLinearAttenuation;
 uniform float uQuadraticAttenuation;
 
+// setting from  _setImageLightUniforms()
+// boolean to initiate the calculateImageDiffuse and calculateImageSpecular
+uniform bool uUseImageLight;
+// storing the texture
+uniform sampler2D environmentMap;
+
 const float specularFactor = 2.0;
 const float diffuseFactor = 0.73;
+// const float PI = 3.141;
+
 
 struct LightResult {
   float specular;
@@ -65,6 +76,46 @@ LightResult _light(vec3 viewDirection, vec3 normal, vec3 lightVector) {
   lr.diffuse = _lambertDiffuse(lightDir, normal);
   return lr;
 }
+
+// converts the range of "value" from [min1 to max1] to [min2 to max2]
+float map(float value, float min1, float max1, float min2, float max2) {
+  return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
+}
+
+vec2 mapTextureToNormal( vec3 normal ){
+  // x = r sin(phi) cos(theta)
+  // y = r cos(phi)
+  // z = r sin(phi) sin(theta)
+  float phi = acos( normal.y );
+  // if phi is 0, then there are no x, z components
+  float theta = 0.0;
+  // else 
+  if(  abs(sin(phi)) > 0.0 ){
+    theta = acos( normal.x / sin(phi) );
+  }   
+
+  vec2 newTexCoor = vec2(
+    map(theta, 0., PI, 0., 1.),
+    map(phi, 0., PI, 1., 0.)
+  );
+
+  return newTexCoor;
+}
+
+vec3 calculateImageDiffuse( vec3 vNormal, vec3 vViewPosition ){
+  // put the code from the sketch frag here
+  // hardcoded world camera position
+  vec3 worldCameraPosition =  vec3(0.0, 0.0, 0.0);
+  vec3 worldNormal = normalize(vNormal);
+  vec3 lightDirection = normalize( vViewPosition - worldCameraPosition );
+  vec3 R = reflect(lightDirection, worldNormal);
+  vec2 newTexCoor = mapTextureToNormal( R );
+  vec4 texture = texture2D( environmentMap, newTexCoor );
+  return texture.xyz;
+}
+
+// TODO
+// vec3 calculateImageSpecular(){}
 
 void totalLight(
   vec3 modelPosition,
@@ -135,6 +186,12 @@ void totalLight(
       totalDiffuse += result.diffuse * lightColor * lightFalloff;
       totalSpecular += result.specular * lightColor * specularColor * lightFalloff;
     }
+  }
+
+  if( uUseImageLight ){
+    totalDiffuse += calculateImageDiffuse(normal, modelPosition);
+    // TODO
+    // totalSpecular += calculateImageSpecular();
   }
 
   totalDiffuse *= diffuseFactor;

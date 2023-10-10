@@ -1,5 +1,5 @@
 [![npm version](https://badge.fury.io/js/p5.svg)](https://www.npmjs.com/package/p5)
-[![All Contributors](https://img.shields.io/github/all-contributors/processing/p5.js?color=ee8449&style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/github/all-contributors/processing/p5.js?color=ee8449&style=flat-square)](#contributors)
 
 
 # [p5.js](https://p5js.org)
@@ -28,15 +28,6 @@ Make your first sketch in the [p5.js Editor](https://editor.p5js.org/)! Learn mo
 
 To get the complete p5.js library on your own computer, you can [download it here](https://p5js.org/download). If you are interested in the most recent, less stable version, or even simply in (**new!**) certain components of p5.js, you can clone this repository and run `grunt` from the command line to generate the library from source. See the [contributor docs](https://p5js.org/contributor-docs/#/) for more information about our build process.
 
-## Issues
-
-If you have found a bug in the p5.js library, you can file it here under the [“issues” tab](https://github.com/processing/p5.js/issues). You can also request new features here. A set of templates for reporting issues and requesting features are provided to assist you (and us!). p5.js is maintained mostly by volunteers, so we thank you for your patience as we try to address your issues as soon as we can. Please post in the correct repository if you can:
-
-* p5.js general: [https://github.com/processing/p5.js/issues](https://github.com/processing/p5.js/issues)
-* p5.sound: [https://github.com/processing/p5.js-sound/issues](https://github.com/processing/p5.js-sound/issues)
-* p5.js website: [https://github.com/processing/p5.js-website/issues](https://github.com/processing/p5.js-website/issues)
-* p5.js web editor: [https://github.com/processing/p5.js-web-editor/issues](https://github.com/processing/p5.js-web-editor/issues)
-
 
 ## Learning
 
@@ -49,6 +40,21 @@ Check out [p5js.org](https://p5js.org) for lots more! Here are some quick-links 
 * [Forum](https://discourse.processing.org/c/p5js): Ask and answers questions about how to make things with p5.js here
 * [Libraries](https://p5js.org/libraries): Extend p5 functionality to interact with HTML, manipulate sound, and more!
 * [The Coding Train p5.js Tutorials](https://thecodingtrain.com/beginners/p5js/): A huge trove of tutorials created by Dan Shiffman and friends
+
+
+## Issues
+
+If you have found a bug in the p5.js library, you can file it here under the [“issues” tab](https://github.com/processing/p5.js/issues). You can also request new features here. A set of templates for reporting issues and requesting features are provided to assist you (and us!). p5.js is maintained mostly by volunteers, so we thank you for your patience as we try to address your issues as soon as we can. Please post in the correct repository if you can:
+
+* p5.js general: [https://github.com/processing/p5.js/issues](https://github.com/processing/p5.js/issues)
+* p5.sound: [https://github.com/processing/p5.js-sound/issues](https://github.com/processing/p5.js-sound/issues)
+* p5.js website: [https://github.com/processing/p5.js-website/issues](https://github.com/processing/p5.js-website/issues)
+* p5.js web editor: [https://github.com/processing/p5.js-web-editor/issues](https://github.com/processing/p5.js-web-editor/issues)
+
+
+## Get Started for Developers
+A quick Getting Started with the Build and setting up the repository could be found [here](https://p5js.org/contributor-docs/#/contributor_guidelines?id=quick-get-started-for-developers)
+
 
 ## Stewards
 
@@ -87,7 +93,7 @@ Lead/Mentor Alumni
 
 ## Contributors
 
-We recognize all types of contributions. This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification and the [Emoji Key](https://allcontributors.org/docs/en/emoji-key) ✨ for contribution types. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309). You can also post an issue or comment on a pull request with the text: `@all-contributors please add @YOUR-USERNAME for THING(S)` and our nice bot will add you.
+We recognize all types of contributions. This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification and the [Emoji Key](https://allcontributors.org/docs/en/emoji-key) ✨ for contribution types. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309). You can also post an issue or comment on a pull request with the text: `@all-contributors please add @YOUR-USERNAME for THING(S)` and our nice bot will add you.
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
@@ -818,7 +824,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/min-kim42"><img src="https://avatars.githubusercontent.com/u/13192500?v=4?s=120" width="120px;" alt="min-kim42"/><br /><sub><b>min-kim42</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=min-kim42" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/minortext"><img src="https://avatars.githubusercontent.com/u/62758084?v=4?s=120" width="120px;" alt="M"/><br /><sub><b>M</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=minortext" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/N4M3L355"><img src="https://avatars.githubusercontent.com/u/16424778?v=4?s=120" width="120px;" alt="Adam Král"/><br /><sub><b>Adam Král</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=N4M3L355" title="Code">💻</a></td>
-      <td align="center" valign="top" width="16.66%"><a href="https://www.linkedin.com/in/bsdgreenberg/"><img src="https://avatars.githubusercontent.com/u/12599555?v=4?s=120" width="120px;" alt="Ben Greenberg"/><br /><sub><b>Ben Greenberg</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nebbles" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/nebbles"><img src="https://avatars.githubusercontent.com/u/12599555?v=4?s=120" width="120px;" alt="Ben Greenberg"/><br /><sub><b>Ben Greenberg</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nebbles" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Neilblaze"><img src="https://avatars.githubusercontent.com/u/48355572?v=4?s=120" width="120px;" alt="Pratyay Banerjee"/><br /><sub><b>Pratyay Banerjee</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Neilblaze" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/nikhilhvr"><img src="https://avatars.githubusercontent.com/u/97503662?v=4?s=120" width="120px;" alt="Nikhil"/><br /><sub><b>Nikhil</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nikhilhvr" title="Code">💻</a></td>
     </tr>
@@ -851,37 +857,47 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/smrghsh"><img src="https://avatars.githubusercontent.com/u/22751315?v=4?s=120" width="120px;" alt="Samir Ghosh"/><br /><sub><b>Samir Ghosh</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=smrghsh" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/stalgiag"><img src="https://avatars.githubusercontent.com/u/10382506?v=4?s=120" width="120px;" alt="Stalgia Grigg"/><br /><sub><b>Stalgia Grigg</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=stalgiag" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://steftervel.de/"><img src="https://avatars.githubusercontent.com/u/4988953?v=4?s=120" width="120px;" alt="Stef Tervelde"/><br /><sub><b>Stef Tervelde</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Stefterv" title="Code">💻</a></td>
-      <td align="center" valign="top" width="16.66%"><a href="https://stellartux.github.io/"><img src="https://avatars.githubusercontent.com/u/18706683?v=4?s=120" width="120px;" alt="Danny Robinson"/><br /><sub><b>Danny Robinson</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=stellartux" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/stormCup"><img src="https://avatars.githubusercontent.com/u/52805485?v=4?s=120" width="120px;" alt="stormCup"/><br /><sub><b>stormCup</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=stormCup" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://www.cliffsu.me/"><img src="https://avatars.githubusercontent.com/u/22230889?v=4?s=120" width="120px;" alt="Cliff Su"/><br /><sub><b>Cliff Su</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=stu01509" title="Code">💻</a></td>
     </tr>
     <tr>
-      <td align="center" valign="top" width="16.66%"><a href="https://www.cliffsu.me/"><img src="https://avatars.githubusercontent.com/u/22230889?v=4?s=120" width="120px;" alt="Cliff Su"/><br /><sub><b>Cliff Su</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=stu01509" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/sz245"><img src="https://avatars.githubusercontent.com/u/25470283?v=4?s=120" width="120px;" alt="sz245"/><br /><sub><b>sz245</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sz245" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/tau-"><img src="https://avatars.githubusercontent.com/u/1418502?v=4?s=120" width="120px;" alt="Alex Troesch"/><br /><sub><b>Alex Troesch</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=tau-" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/tawez"><img src="https://avatars.githubusercontent.com/u/177306?v=4?s=120" width="120px;" alt="Maciej Stankiewicz"/><br /><sub><b>Maciej Stankiewicz</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=tawez" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://tito21.github.io/"><img src="https://avatars.githubusercontent.com/u/1232343?v=4?s=120" width="120px;" alt="Alberto Di Biase"/><br /><sub><b>Alberto Di Biase</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=tito21" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/vedhant"><img src="https://avatars.githubusercontent.com/u/32607479?v=4?s=120" width="120px;" alt="Vedhant Agarwal"/><br /><sub><b>Vedhant Agarwal</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=vedhant" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://verma-varsha.github.io/"><img src="https://avatars.githubusercontent.com/u/20443665?v=4?s=120" width="120px;" alt="Varsha Verma"/><br /><sub><b>Varsha Verma</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=verma-varsha" title="Code">💻</a></td>
     </tr>
     <tr>
-      <td align="center" valign="top" width="16.66%"><a href="https://verma-varsha.github.io/"><img src="https://avatars.githubusercontent.com/u/20443665?v=4?s=120" width="120px;" alt="Varsha Verma"/><br /><sub><b>Varsha Verma</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=verma-varsha" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/vipulrawat"><img src="https://avatars.githubusercontent.com/u/26515826?v=4?s=120" width="120px;" alt="vipulrawat"/><br /><sub><b>vipulrawat</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=vipulrawat" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/with-a-k"><img src="https://avatars.githubusercontent.com/u/6319591?v=4?s=120" width="120px;" alt="Erik Butcher"/><br /><sub><b>Erik Butcher</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=with-a-k" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/wmmnola"><img src="https://avatars.githubusercontent.com/u/13511578?v=4?s=120" width="120px;" alt="Wade Marshall"/><br /><sub><b>Wade Marshall</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=wmmnola" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://www.orangutan.or.id/"><img src="https://avatars.githubusercontent.com/u/11317451?v=4?s=120" width="120px;" alt="XTY"/><br /><sub><b>XTY</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=xty" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://www.xujenna.com/"><img src="https://avatars.githubusercontent.com/u/13280722?v=4?s=120" width="120px;" alt="Jenna"/><br /><sub><b>Jenna</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=xujenna" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/yifanmai"><img src="https://avatars.githubusercontent.com/u/185227?v=4?s=120" width="120px;" alt="Yifan Mai"/><br /><sub><b>Yifan Mai</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=yifanmai" title="Code">💻</a></td>
     </tr>
     <tr>
-      <td align="center" valign="top" width="16.66%"><a href="https://github.com/yifanmai"><img src="https://avatars.githubusercontent.com/u/185227?v=4?s=120" width="120px;" alt="Yifan Mai"/><br /><sub><b>Yifan Mai</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=yifanmai" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://yinhwa.art/"><img src="https://avatars.githubusercontent.com/u/51147158?v=4?s=120" width="120px;" alt="Inhwa"/><br /><sub><b>Inhwa</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=yinhwa" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/ykabusalah"><img src="https://avatars.githubusercontent.com/u/42948521?v=4?s=120" width="120px;" alt="Yousef Abu-Salah"/><br /><sub><b>Yousef Abu-Salah</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ykabusalah" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://harvestplugins.com/"><img src="https://avatars.githubusercontent.com/u/7537243?v=4?s=120" width="120px;" alt="Zoe Stenger"/><br /><sub><b>Zoe Stenger</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=zoalst" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/mcturner1995"><img src="https://avatars.githubusercontent.com/u/36084197?v=4?s=120" width="120px;" alt="mcturner1995"/><br /><sub><b>mcturner1995</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=mcturner1995" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/okdalto"><img src="https://avatars.githubusercontent.com/u/22714667?v=4?s=120" width="120px;" alt="Seonghyeon Kim"/><br /><sub><b>Seonghyeon Kim</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=okdalto" title="Code">💻</a> <a href="#translation-okdalto" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/cgusb"><img src="https://avatars.githubusercontent.com/u/60982210?v=4?s=120" width="120px;" alt="Gus Becker"/><br /><sub><b>Gus Becker</b></sub></a><br /><a href="#maintenance-cgusb" title="Maintenance">🚧</a> <a href="#ideas-cgusb" title="Ideas, Planning, & Feedback">🤔</a> <a href="#question-cgusb" title="Answering Questions">💬</a></td>
     </tr>
     <tr>
-      <td align="center" valign="top" width="16.66%"><a href="https://github.com/cgusb"><img src="https://avatars.githubusercontent.com/u/60982210?v=4?s=120" width="120px;" alt="Gus Becker"/><br /><sub><b>Gus Becker</b></sub></a><br /><a href="#maintenance-cgusb" title="Maintenance">🚧</a> <a href="#ideas-cgusb" title="Ideas, Planning, & Feedback">🤔</a> <a href="#question-cgusb" title="Answering Questions">💬</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://holoshow.senbaku.info/"><img src="https://avatars.githubusercontent.com/u/10251300?v=4?s=120" width="120px;" alt="senbaku"/><br /><sub><b>senbaku</b></sub></a><br /><a href="#example-senbaku" title="Examples">💡</a> <a href="#blog-senbaku" title="Blogposts">📝</a> <a href="#translation-senbaku" title="Translation">🌍</a> <a href="#tutorial-senbaku" title="Tutorials">✅</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://reona396.com/"><img src="https://avatars.githubusercontent.com/u/10163980?v=4?s=120" width="120px;" alt="reona396"/><br /><sub><b>reona396</b></sub></a><br /><a href="#example-reona396" title="Examples">💡</a> <a href="#translation-reona396" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://maveme.github.com/"><img src="https://avatars.githubusercontent.com/u/3525794?v=4?s=120" width="120px;" alt="Mauricio Verano Merino"/><br /><sub><b>Mauricio Verano Merino</b></sub></a><br /><a href="#eventOrganizing-maveme" title="Event Organizing">📋</a> <a href="#research-maveme" title="Research">🔬</a> <a href="#mentoring-maveme" title="Mentoring">🧑‍🏫</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/RandomGamingDev"><img src="https://avatars.githubusercontent.com/u/83996185?v=4?s=120" width="120px;" alt="RandomGamingDev"/><br /><sub><b>RandomGamingDev</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=RandomGamingDev" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3ARandomGamingDev" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://cheyuwu.com/"><img src="https://avatars.githubusercontent.com/u/4727572?v=4?s=120" width="120px;" alt="Wu Che Yu"/><br /><sub><b>Wu Che Yu</b></sub></a><br /><a href="#eventOrganizing-frank890417" title="Event Organizing">📋</a> <a href="#blog-frank890417" title="Blogposts">📝</a> <a href="#tutorial-frank890417" title="Tutorials">✅</a> <a href="#video-frank890417" title="Videos">📹</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://sarahciston.com"><img src="https://avatars.githubusercontent.com/u/31395144?v=4?s=120" width="120px;" alt="Sarah Ciston"/><br /><sub><b>Sarah Ciston</b></sub></a><br /><a href="#mentoring-sarahciston" title="Mentoring">🧑‍🏫</a> <a href="https://github.com/processing/p5.js/commits?author=sarahciston" title="Documentation">📖</a> <a href="#eventOrganizing-sarahciston" title="Event Organizing">📋</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://tiagohermano.dev"><img src="https://avatars.githubusercontent.com/u/5157960?v=4?s=120" width="120px;" alt="Tiago Hermano"/><br /><sub><b>Tiago Hermano</b></sub></a><br /><a href="#translation-tiagohermano" title="Translation">🌍</a> <a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3Atiagohermano" title="Reviewed Pull Requests">👀</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://unicar9.github.io/weijia/"><img src="https://avatars.githubusercontent.com/u/27838326?v=4?s=120" width="120px;" alt="Unicar"/><br /><sub><b>Unicar</b></sub></a><br /><a href="#translation-unicar9" title="Translation">🌍</a> <a href="#tutorial-unicar9" title="Tutorials">✅</a> <a href="#example-unicar9" title="Examples">💡</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/yulicai"><img src="https://avatars.githubusercontent.com/u/14118438?v=4?s=120" width="120px;" alt="Yolonanido"/><br /><sub><b>Yolonanido</b></sub></a><br /><a href="#eventOrganizing-yulicai" title="Event Organizing">📋</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/SableRaf"><img src="https://avatars.githubusercontent.com/u/290261?v=4?s=120" width="120px;" alt="Raphaël de Courville"/><br /><sub><b>Raphaël de Courville</b></sub></a><br /><a href="#eventOrganizing-SableRaf" title="Event Organizing">📋</a> <a href="#video-SableRaf" title="Videos">📹</a> <a href="#ideas-SableRaf" title="Ideas, Planning, & Feedback">🤔</a> <a href="#promotion-SableRaf" title="Promotion">📣</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/mykongee"><img src="https://avatars.githubusercontent.com/u/10676303?v=4?s=120" width="120px;" alt="Mike "/><br /><sub><b>Mike </b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=mykongee" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3Amykongee" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
 </table>

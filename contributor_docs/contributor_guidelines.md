@@ -14,7 +14,8 @@ This is a fairly long and comprehensive document but we will try to deliniate al
 		- [New Feature Request](#new-feature-request)
 		- [Discussion](#discussion)
 - [Working on p5.js codebase](#working-on-p5js-codebase)
-	- [Using the GitHub edit functionality](#using-the-github-edit-functionality)
+	- [Quick Get Started For Developers](#quick-get-started-for-developers)
+	- [Using the Github edit functionality](#using-the-github-edit-functionality)
 	- [Forking p5.js and working from your fork](#forking-p5js-and-working-from-your-fork)
 	- [Codebase breakdown](#codebase-breakdown)
 	- [Build setup](#build-setup)
@@ -37,7 +38,6 @@ This is a fairly long and comprehensive document but we will try to deliniate al
 The majority of the activity on p5.js' GitHub repositories (repo for short) happens in issues and issues will most likely be the place to start your contribution process as well.
 
 ## What are issues?
-
 Issue is the generic name for a post on GitHub that aims to describe, well, an issue. This "issue" can be a bug report, a request to add new feature, a discussion, a question, an announcement, or anything that works as a post. Comments can be added below each issue by anyone with a GitHub account, including bots! It is the place where contributors dicuss topics related to the development of the project in the repo.
 
 While an issue can be opened for a wide variety of reasons, for p5.js' repos we usually only use issues to discuss p5.js source code development related topics. Topics such as debugging your own code, inviting collaborators to your project, or other unrelated topics should be discuss either on the [forum](https://discourse.processing.com) or on other platforms.
@@ -93,8 +93,26 @@ Similarly, if you have come across an issue or joined in discussions of an issue
 
 You should not "jump the queue" by filing a PR for an issue that either someone else has indicated willingness to submit a contribution or has already been assigned to someone else. We will always prioritise "first assigned first serve" order for accepting code contribution for an issue, if you file a PR for an issue while someone else is still working on the same issue, your PR will be closed. If you see that it has been a few months since last activity on an issue with an assigned individual, you can check in with them by leaving a polite comment on the issue asking for progress and if they need help with the implementation. We generally allow for fairly long time frame for people to work on their contributions as we understand that most people will often be working on a volunteer basis or it simply takes more time for them to work on the feature; similarly, you should work at your own pace and be confident that there is no hard time limit on how long you can spend working on something. That being said, if you are having trouble with any aspect of your code contribution, do not hesitate to ask for help in the issue, the stewards and maintainers, as well as members of our community, will do their best to guide you!
 
-## Using the GitHub edit functionality
-When viewing a file on the GitHub web interface, near the top of the content of the file you are viewing will be a pencil icon button. This button is a convenient edit feature provided by GitHub that simplifies many of the processes we will be covering below and can be used to make quick and simple edits to the file you are viewing.
+## Quick Get Started For Developers
+If you want to work/contribute to p5.js'🌸 codebase as a developer, either directly for improving p5.js or for improving it's sub projects like [Friendly Error Systems](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md), you can follow the following steps directly :
+
+1. Create a fork of p5.js.
+2. Clone your locally created fork.
+3. Add upstream using the following command : 
+   `git remote add upstream https://github.com/processing/p5.js`
+   [More information on Configuring a remote repository for a fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-repository-for-a-fork)
+4. Make sure your machine has [NodeJs](https://nodejs.org/en/download) installed, check it with the        following command : 
+   `node -v`
+5. Run : `npm ci`
+6. Create a git branch of the `main` branch having a descriptive branch name using :
+   `git checkout -b [branch_name]`
+7. As you start making changes to the codebase, frequently run : 
+    `npm test`
+  (it takes time, but it ensures that existing behaviours are not being broken)
+8. Once it is done, you can commit the changes and create a [Pull Request](https://p5js.org/contributor-docs/#/./contributor_guidelines?id=pull-requests). 
+
+## Using the Github edit functionality
+When viewing a file on the Github web interface, near the top of the content of the file you are viewing will be a pencil icon button. This button is a convenient edit feature provided by Github that simplifies many of the processes we will be covering below and can be used to make quick and simple edits to the file you are viewing.
 
 However, it is not recommended to use this feature other than for very simple changes. One of the main reason for this is that for more complex changes to the source code, it should be built and tested locally before being filed as a PR. Using a local development environment is also often much more fluent for most as compared to the basic editing environment provided by this edit functionality.
 

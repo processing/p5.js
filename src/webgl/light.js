@@ -494,6 +494,12 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
   return this;
 };
 
+p5.prototype.imageLight = function(img){
+  // setting activeImageLight so that the setUniform is executed
+  this._renderer.activeImageLight = img;
+  this._renderer._enableLighting = true;
+};
+
 /**
  * Places an ambient and directional light in the scene.
  * The lights are set to ambientLight(128, 128, 128) and
