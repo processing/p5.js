@@ -115,7 +115,9 @@ vec3 calculateImageDiffuse( vec3 vNormal, vec3 vViewPosition ){
 }
 
 // TODO
-// vec3 calculateImageSpecular(){}
+vec3 calculateImageSpecular(){
+  // not sure what to do here
+}
 
 void totalLight(
   vec3 modelPosition,
@@ -191,7 +193,7 @@ void totalLight(
   if( uUseImageLight ){
     totalDiffuse += calculateImageDiffuse(normal, modelPosition);
     // TODO
-    // totalSpecular += calculateImageSpecular();
+    totalSpecular += calculateImageSpecular();
   }
 
   totalDiffuse *= diffuseFactor;

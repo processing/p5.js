@@ -5,8 +5,9 @@ varying vec3 localPos;
 uniform sampler2D environmentMap;
 varying vec2 vTexCoord;
 
-const float PI = 3.141;
+const float PI = 3.14159265359;
 
+// not needed
 vec2 normalToEquirectangular( vec3 v){
   vec2 uv;
   // taking the arctangent of the v.z and v.x components and dividing it by the circumference of a circle
@@ -75,6 +76,7 @@ void main()
 	}
 	// divide by the total number of samples taken, giving us the average sampled irradiance.
 	irradiance = PI * irradiance * (1.0 / float(nrSamples )) ;
+  
  
 	gl_FragColor = vec4(irradiance, 1.0);
 }

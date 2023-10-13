@@ -78,7 +78,8 @@ const defaultShaders = {
   pointVert: readFileSync(join(__dirname, '/shaders/point.vert'), 'utf-8'),
   pointFrag: readFileSync(join(__dirname, '/shaders/point.frag'), 'utf-8'),
   imageLightVert : readFileSync(join(__dirname, '/shaders/imageLight.vert'), 'utf-8'),
-  imageLightFrag : readFileSync(join(__dirname, '/shaders/imageLight.frag'), 'utf-8')
+  imageLightFrag : readFileSync(join(__dirname, '/shaders/imageLight.frag'), 'utf-8'),
+  imageLightSpecularFrag : readFileSync(join(__dirname, '/shaders/imageLightSpecular.frag'), 'utf-8')
 };
 
 const filterShaderFrags = {
@@ -475,6 +476,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // this is to lookup image from blurrytexture Map rather from a
     // texture map
     this.blurryTextures = new Map();
+    // map to store the created textures to prevent mis calculation
+    this.specularTextures = new Map();
     // property to be set true after imageLight is called
     // then if it is true the setUniform would be done on shader
     this.activeImageLight = null;
