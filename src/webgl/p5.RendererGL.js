@@ -67,10 +67,8 @@ const defaultShaders = {
   phongFrag:
     lightingShader +
     readFileSync(join(__dirname, '/shaders/phong.frag'), 'utf-8'),
-  fontVert: webgl2CompatibilityShader +
-    readFileSync(join(__dirname, '/shaders/font.vert'), 'utf-8'),
-  fontFrag: webgl2CompatibilityShader +
-    readFileSync(join(__dirname, '/shaders/font.frag'), 'utf-8'),
+  fontVert: readFileSync(join(__dirname, '/shaders/font.vert'), 'utf-8'),
+  fontFrag: readFileSync(join(__dirname, '/shaders/font.frag'), 'utf-8'),
   lineVert:
     lineDefs + readFileSync(join(__dirname, '/shaders/line.vert'), 'utf-8'),
   lineFrag:
@@ -81,6 +79,9 @@ const defaultShaders = {
   imageLightFrag : readFileSync(join(__dirname, '/shaders/imageLight.frag'), 'utf-8'),
   imageLightSpecularFrag : readFileSync(join(__dirname, '/shaders/imageLightSpecular.frag'), 'utf-8')
 };
+for (const key in defaultShaders) {
+  defaultShaders[key] = webgl2CompatibilityShader + defaultShaders[key];
+}
 
 const filterShaderFrags = {
   [constants.GRAY]:
@@ -1738,14 +1739,18 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       if (this._pInst._glAttributes.perPixelLighting) {
         this._defaultLightShader = new p5.Shader(
           this,
-          defaultShaders.phongVert,
-          defaultShaders.phongFrag
+          this._webGL2CompatibilityPrefix('vert', 'highp') +
+            defaultShaders.phongVert,
+          this._webGL2CompatibilityPrefix('frag', 'highp') +
+            defaultShaders.phongFrag
         );
       } else {
         this._defaultLightShader = new p5.Shader(
           this,
-          defaultShaders.lightVert,
-          defaultShaders.lightTextureFrag
+          this._webGL2CompatibilityPrefix('vert', 'highp') +
+            defaultShaders.lightVert,
+          this._webGL2CompatibilityPrefix('frag', 'highp') +
+            defaultShaders.lightTextureFrag
         );
       }
     }
@@ -1757,8 +1762,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (!this._defaultImmediateModeShader) {
       this._defaultImmediateModeShader = new p5.Shader(
         this,
-        defaultShaders.immediateVert,
-        defaultShaders.vertexColorFrag
+        this._webGL2CompatibilityPrefix('vert', 'mediump') +
+          defaultShaders.immediateVert,
+        this._webGL2CompatibilityPrefix('frag', 'mediump') +
+          defaultShaders.vertexColorFrag
       );
     }
 
@@ -1769,8 +1776,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (!this._defaultNormalShader) {
       this._defaultNormalShader = new p5.Shader(
         this,
-        defaultShaders.normalVert,
-        defaultShaders.normalFrag
+        this._webGL2CompatibilityPrefix('vert', 'mediump') +
+          defaultShaders.normalVert,
+        this._webGL2CompatibilityPrefix('frag', 'mediump') +
+          defaultShaders.normalFrag
       );
     }
 
@@ -1781,8 +1790,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (!this._defaultColorShader) {
       this._defaultColorShader = new p5.Shader(
         this,
-        defaultShaders.normalVert,
-        defaultShaders.basicFrag
+        this._webGL2CompatibilityPrefix('vert', 'mediump') +
+          defaultShaders.normalVert,
+        this._webGL2CompatibilityPrefix('frag', 'mediump') +
+          defaultShaders.basicFrag
       );
     }
 
@@ -1793,8 +1804,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (!this._defaultPointShader) {
       this._defaultPointShader = new p5.Shader(
         this,
-        defaultShaders.pointVert,
-        defaultShaders.pointFrag
+        this._webGL2CompatibilityPrefix('vert', 'mediump') +
+          defaultShaders.pointVert,
+        this._webGL2CompatibilityPrefix('frag', 'mediump') +
+          defaultShaders.pointFrag
       );
     }
     return this._defaultPointShader;
@@ -1804,8 +1817,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (!this._defaultLineShader) {
       this._defaultLineShader = new p5.Shader(
         this,
-        defaultShaders.lineVert,
-        defaultShaders.lineFrag
+        this._webGL2CompatibilityPrefix('vert', 'mediump') +
+          defaultShaders.lineVert,
+        this._webGL2CompatibilityPrefix('frag', 'mediump') +
+          defaultShaders.lineFrag
       );
     }
 
