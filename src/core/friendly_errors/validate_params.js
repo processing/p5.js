@@ -569,7 +569,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
         const argType =
           arg instanceof Array
             ? 'array'
-            : arg === null ? 'null' : arg.name || typeof arg;
+            : arg === null ? 'null' : arg === undefined ? 'undefined' : typeof arg === 'number' && isNaN(arg) ? 'NaN' : arg.name || typeof arg;
 
         translationObj = {
           func,

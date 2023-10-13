@@ -1093,7 +1093,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
       pg.shader(this.filterShader);
       this.filterShader.setUniform('texelSize', texelSize);
-      this.filterShader.setUniform('steps', Math.max(1, filterParameter));
+      this.filterShader.setUniform('canvasSize', [this.width, this.height]);
+      this.filterShader.setUniform('radius', Math.max(1, filterParameter));
 
       // horiz pass
       this.filterShader.setUniform('direction', [1, 0]);
