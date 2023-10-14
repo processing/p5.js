@@ -40,6 +40,9 @@ uniform float uQuadraticAttenuation;
 uniform bool uUseImageLight;
 // storing the texture
 uniform sampler2D environmentMap;
+// make a diffused texture and specular texture differently
+uniform sampler2D environmentMapSpecular;
+uniform float lod;
 
 const float specularFactor = 2.0;
 const float diffuseFactor = 0.73;
@@ -105,18 +108,28 @@ vec2 mapTextureToNormal( vec3 normal ){
 vec3 calculateImageDiffuse( vec3 vNormal, vec3 vViewPosition ){
   // put the code from the sketch frag here
   // hardcoded world camera position
+  // make 2 seperate builds 
   vec3 worldCameraPosition =  vec3(0.0, 0.0, 0.0);
   vec3 worldNormal = normalize(vNormal);
   vec3 lightDirection = normalize( vViewPosition - worldCameraPosition );
   vec3 R = reflect(lightDirection, worldNormal);
+  // use worldNormal instead of R
   vec2 newTexCoor = mapTextureToNormal( R );
   vec4 texture = texture2D( environmentMap, newTexCoor );
   return texture.xyz;
 }
 
 // TODO
-vec3 calculateImageSpecular(){
+vec3 calculateImageSpecular( vec3 vNormal, vec3 vViewPosition ){
   // not sure what to do here
+  vec3 worldCameraPosition =  vec3(0.0, 0.0, 0.0);
+  vec3 worldNormal = normalize(vNormal);
+  vec3 lightDirection = normalize( vViewPosition - worldCameraPosition );
+  vec3 R = reflect(lightDirection, worldNormal);
+  vec2 newTexCoor = mapTextureToNormal( R );
+  
+  vec4 outColor = textureLod(environmentMapSpecular, newTexCoor, lod);
+  return outColor.xyz;
 }
 
 void totalLight(
@@ -193,7 +206,7 @@ void totalLight(
   if( uUseImageLight ){
     totalDiffuse += calculateImageDiffuse(normal, modelPosition);
     // TODO
-    totalSpecular += calculateImageSpecular();
+    totalSpecular += calculateImageSpecular(normal, modelPosition);
   }
 
   totalDiffuse *= diffuseFactor;

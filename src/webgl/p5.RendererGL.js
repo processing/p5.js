@@ -76,7 +76,7 @@ const defaultShaders = {
   pointVert: readFileSync(join(__dirname, '/shaders/point.vert'), 'utf-8'),
   pointFrag: readFileSync(join(__dirname, '/shaders/point.frag'), 'utf-8'),
   imageLightVert : readFileSync(join(__dirname, '/shaders/imageLight.vert'), 'utf-8'),
-  imageLightFrag : readFileSync(join(__dirname, '/shaders/imageLight.frag'), 'utf-8'),
+  imageLightFrag : readFileSync(join(__dirname, '/shaders/imageLightDiffused.frag'), 'utf-8'),
   imageLightSpecularFrag : readFileSync(join(__dirname, '/shaders/imageLightSpecular.frag'), 'utf-8')
 };
 for (const key in defaultShaders) {
@@ -1926,7 +1926,30 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     return newGraphic;
   }
 
+  getSpecularTexture(){
+    // check if already exits (there are tex of diff resolution so which one to check)
+    // currently doing the whole array
+    if(this.specularTextures.length !== 0){
+      return this.specularTextures;
+    }
 
+    const graphic = createGraphics(size, size, WEBGL);
+    let count = Math.log(size)/Math.log(2);
+    graphic.pixelDensity(1);
+    for (let w = size; w >= 1; w /= 2) {
+      graphic.resizeCanvas(w, w);
+      let currCount = Math.log(w)/Math.log(2);
+      let roughness = 1-currCount/count;
+      console.log(roughness);
+      graphic.shader(myShader);
+      graphic.clear();
+      myShader.setUniform('environmentMap', img);
+      myShader.setUniform('roughness', roughness);
+      graphic.noStroke();
+      graphic.plane(w, w);
+      levels.push(graphic.get().drawingContext.getImageData(0, 0, w, w));
+    }
+  }
 
   /**
    * @method activeFramebuffer
@@ -2037,8 +2060,16 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (this.activeImageLight) {
       // this.activeImageLight has image as a key
       // look up the texture from the blurryTexture map
+      // change the name of shader of diffused to prevent confusion
       let diffusedLight = this.getBlurryTexture(this.activeImageLight);
+      // change the name of this uniform as diff for diffused and specular
       shader.setUniform('environmentMap', diffusedLight);
+      let specularLight = this.getSpecularTexture();
+      // shine >= 1 so
+      let roughness = 1/this._useShininess;
+      // 0 - 1
+      shader.setUniform('lod', roughness*8);
+      shader.setUniform('environmentMapSpecular', specularLight);
     }
   }
 
