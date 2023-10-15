@@ -1622,7 +1622,8 @@ p5.Camera = class Camera {
       'eyeX', 'eyeY', 'eyeZ',
       'centerX', 'centerY', 'centerZ',
       'upX', 'upY', 'upZ',
-      'cameraFOV', 'aspectRatio', 'cameraNear', 'cameraFar', 'cameraType'
+      'cameraFOV', 'aspectRatio', 'cameraNear', 'cameraFar', 'cameraType',
+      'yScale'
     ];
     for (const keyName of keyNamesOfThePropToCopy) {
       this[keyName] = cam[keyName];
@@ -2019,6 +2020,7 @@ p5.Camera = class Camera {
 
     _cam.cameraMatrix = this.cameraMatrix.copy();
     _cam.projMatrix = this.projMatrix.copy();
+    _cam.yScale = this.yScale;
 
     return _cam;
   }
