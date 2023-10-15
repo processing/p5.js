@@ -347,6 +347,7 @@ p5.Texture = class Texture {
   }
 
   glFilter(filter) {
+    const gl = this._renderer.GL;
     if (filter === constants.NEAREST) {
       return gl.NEAREST;
     } else {
@@ -461,6 +462,7 @@ export class MipmapTexture extends p5.Texture {
   }
 
   glFilter(_filter) {
+    const gl = this._renderer.GL;
     // TODO: support others
     return gl.LINEAR_MIPMAP_LINEAR;
   }

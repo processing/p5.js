@@ -20,7 +20,7 @@ out vec4 outColor;
 #define TEXTURE texture2D
 
 #ifdef FRAGMENT_SHADER
-#define OUT_COLOR OUT_COLOR
+#define OUT_COLOR gl_FragColor
 #endif
 
 #endif
