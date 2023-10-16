@@ -86,7 +86,7 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  * Sets the spacing between lines of text when
  * <a href="#/p5/text">text()</a> is called. Spacing is measured in pixels.
  *
- * Calling `textLeading()` without an arugment returns the current spacing.
+ * Calling `textLeading()` without an argument returns the current spacing.
  *
  * @method textLeading
  * @param {Number} leading spacing between lines of text in units of pixels.
@@ -255,13 +255,34 @@ p5.prototype.textWidth = function (...args) {
  * @example
  * <div>
  * <code>
- * textSize(28);
- * strokeWeight(0.5);
- * text('Hi', 50, 50);
- * let a = textAscent();
- * line(48, 50, 48, 50 - a);
+ * let font;
  *
- * describe('The word "Hi" written in black on a gray background. A thin vertical line measures its ascent.');
+ * function preload()  {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
+ * function setup()  {
+ *   background(200);
+ *
+ *   textFont(font);
+ *   // Different for each font.
+ *   let scalar = 0.8;
+ *
+ *   let base = 75;
+ *   strokeWeight(0.5);
+ *
+ *   textSize(24);
+ *   let a = textAscent() * scalar;
+ *   line(0, base - a, 25, base - a);
+ *   text('dp', 0, base);
+ *
+ *   textSize(48);
+ *   a = textAscent() * scalar;
+ *   line(50, base - a, 100, base - a);
+ *   text('dp', 50, base);
+ *
+ *   describe('The letters "dp" written twice in different sizes. Each version has a horizontal line above it that touches the top of the "d".');
+ * }
  * </code>
  * </div>
  */
@@ -280,13 +301,34 @@ p5.prototype.textAscent = function(...args) {
  * @example
  * <div>
  * <code>
- * textSize(28);
- * strokeWeight(0.5);
- * text('qypgj', 20, 50);
- * let d = textDescent();
- * line(18, 50, 18, 50 + d);
+ * let font;
  *
- * describe('The text "qypgj" written in black on a gray background. A thin vertical line measures its descent.');
+ * function preload()  {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
+ * function setup()  {
+ *   background(200);
+ *
+ *   textFont(font);
+ *   // Different for each font.
+ *   let scalar = 0.9;
+ *
+ *   let base = 75;
+ *   strokeWeight(0.5);
+ *
+ *   textSize(24);
+ *   let d = textDescent() * scalar;
+ *   line(0, base + d, 25, base + d);
+ *   text('dp', 0, base);
+ *
+ *   textSize(48);
+ *   d = textDescent() * scalar;
+ *   line(50, base + d, 100, base + d);
+ *   text('dp', 50, base);
+ *
+ *   describe('The letters "dp" written twice in different sizes. Each version has a horizontal line underneath it that touches the bottom of the "p".');
+ * }
  * </code>
  * </div>
  */
@@ -336,6 +378,14 @@ p5.prototype._updateTextMetrics = function() {
  * textSize(20);
  * textWrap(CHAR);
  * text('Have a wonderful day', 0, 10, 100);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * textSize(20);
+ * textWrap(CHAR);
+ * text('祝你有美好的一天', 0, 10, 100);
  * </code>
  * </div>
  */
