@@ -266,7 +266,7 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  *
  * <div>
  * <code>
- * let s = 'The quick brown fox jumped over the lazy dog.';
+ * let s = 'The quick brown fox jumps over the lazy dog.';
  * text(s, 10, 10, 70, 80);
  *
  * describe('The sample text "The quick brown fox..." written in black across several lines.');
@@ -276,7 +276,7 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  * <div>
  * <code>
  * rectMode(CENTER);
- * let s = 'The quick brown fox jumped over the lazy dog.';
+ * let s = 'The quick brown fox jumps over the lazy dog.';
  * text(s, 50, 50, 70, 80);
  *
  * describe('The sample text "The quick brown fox..." written in black across several lines.');
