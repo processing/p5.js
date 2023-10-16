@@ -32,7 +32,8 @@ p5.Font = class {
   }
 
   /**
- * Returns the bounding box for a string of text written in this font.
+ * Returns the bounding box for a string of text written using this
+ * <a href="#/p5.Font">p5.Font</a>.
  *
  * The first parameter, `str`, is a string of text. The second and third
  * parameters, `x` and `y`, are the text's position. By default, they set the
@@ -225,7 +226,8 @@ p5.Font = class {
   }
 
   /**
- * Returns an array of points outlining a string of text.
+ * Returns an array of points outlining a string of text written using this
+ * <a href="#/p5.Font">p5.Font</a>.
  *
  * The first parameter, `str`, is a string of text. The second and third
  * parameters, `x` and `y`, are the text's position. By default, they set the
