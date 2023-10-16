@@ -909,6 +909,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/skbhagat0502"><img src="https://avatars.githubusercontent.com/u/109683163?v=4?s=120" width="120px;" alt="Sandeep Kumar Bhagat"/><br /><sub><b>Sandeep Kumar Bhagat</b></sub></a><br /><a href="#design-skbhagat0502" title="Design">🎨</a> <a href="https://github.com/processing/p5.js/commits?author=skbhagat0502" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://gaurav-personal-portfolio.netlify.app/"><img src="https://avatars.githubusercontent.com/u/97665755?v=4?s=120" width="120px;" alt="Gaurav Tiwary"/><br /><sub><b>Gaurav Tiwary</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Gaurav-1306" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Garima3110"><img src="https://avatars.githubusercontent.com/u/110815240?v=4?s=120" width="120px;" alt="Garima"/><br /><sub><b>Garima</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Garima3110" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
