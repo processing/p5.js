@@ -999,11 +999,11 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     else if(
       this.filterGraphicsLayer.width !== this.width ||
        this.filterGraphicsLayer.height !== this.height ||
-       this.filterGraphicsLayer.pixelDensity() !== this.pixelDensity()
+       this.filterGraphicsLayer.pixelDensity !== this._pInst.pixelDensity()
     ){
       // Resize the graphics layer
       this.filterGraphicsLayer.resizeCanvas(this.width, this.height);
-      this.filterGraphicsLayer.pixelDensity(this.pixelDensity());
+      this.filterGraphicsLayer.pixelDensity(this._pInst.pixelDensity());
     }
 
     let pg = this.filterGraphicsLayer;
