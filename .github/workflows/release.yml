@@ -88,7 +88,7 @@ jobs:
         uses: restackio/update-json-values-action@v1.0.0
         with:
           file: website/dist/download/version.json
-          values: "{'version': '${{ steps.version-number.outputs.version }}', 'date': '${{ steps.date.outputs.date }}'}"
+          values: '{"version": "${{ steps.version-number.outputs.version }}", "date": "${{ steps.date.outputs.date }}"}'
       - name: Update en.json on website repo
         run: |
           cd website
