@@ -38,16 +38,15 @@ uniform float uQuadraticAttenuation;
 // setting from  _setImageLightUniforms()
 // boolean to initiate the calculateImageDiffuse and calculateImageSpecular
 uniform bool uUseImageLight;
-// storing the texture
-uniform sampler2D environmentMap;
-// make a diffused texture and specular texture differently
+// texture for use in calculateImageDiffuse
+uniform sampler2D environmentMapDiffused;
+// texture for use in calculateImageSpecular
 uniform sampler2D environmentMapSpecular;
-uniform float lod;
+// roughness for use in calculateImageSpecular
+uniform float levelOfDetail;
 
 const float specularFactor = 2.0;
 const float diffuseFactor = 0.73;
-// const float PI = 3.141;
-
 
 struct LightResult {
   float specular;
@@ -106,29 +105,24 @@ vec2 mapTextureToNormal( vec3 normal ){
 }
 
 vec3 calculateImageDiffuse( vec3 vNormal, vec3 vViewPosition ){
-  // put the code from the sketch frag here
-  // hardcoded world camera position
   // make 2 seperate builds 
-  vec3 worldCameraPosition =  vec3(0.0, 0.0, 0.0);
+  vec3 worldCameraPosition =  vec3(0.0, 0.0, 0.0);  // hardcoded world camera position
   vec3 worldNormal = normalize(vNormal);
   vec3 lightDirection = normalize( vViewPosition - worldCameraPosition );
   vec3 R = reflect(lightDirection, worldNormal);
   // use worldNormal instead of R
   vec2 newTexCoor = mapTextureToNormal( R );
-  vec4 texture = texture2D( environmentMap, newTexCoor );
+  vec4 texture = texture2D( environmentMapDiffused, newTexCoor );
   return texture.xyz;
 }
 
-// TODO
 vec3 calculateImageSpecular( vec3 vNormal, vec3 vViewPosition ){
-  // not sure what to do here
   vec3 worldCameraPosition =  vec3(0.0, 0.0, 0.0);
   vec3 worldNormal = normalize(vNormal);
   vec3 lightDirection = normalize( vViewPosition - worldCameraPosition );
   vec3 R = reflect(lightDirection, worldNormal);
   vec2 newTexCoor = mapTextureToNormal( R );
-  
-  vec4 outColor = textureLod(environmentMapSpecular, newTexCoor, lod);
+  vec4 outColor = textureLod(environmentMapSpecular, newTexCoor, levelOfDetail);
   return outColor.xyz;
 }
 
@@ -205,7 +199,6 @@ void totalLight(
 
   if( uUseImageLight ){
     totalDiffuse += calculateImageDiffuse(normal, modelPosition);
-    // TODO
     totalSpecular += calculateImageSpecular(normal, modelPosition);
   }
 
