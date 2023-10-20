@@ -1573,7 +1573,7 @@ p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, 
         quadGeom.faces.push([pt0, pt2, pt3]);
       }
     }
-    quadGeom.computeNormals()
+    quadGeom.computeNormals();
     quadGeom.edges.length = 0;
     const vertexOrder = [0, 2, 3, 1];
     for (let i = 0; i < vertexOrder.length; i++) {
