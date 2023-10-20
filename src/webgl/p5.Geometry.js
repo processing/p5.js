@@ -18,9 +18,9 @@ import p5 from '../core/main';
  * @param {function} [callback] function to call upon object instantiation.
  */
 p5.Geometry = class Geometry {
-  constructor(detailX, detailY, callback){
-  //an array containing every vertex
-  //@type [p5.Vector]
+  constructor(detailX, detailY, callback) {
+    //an array containing every vertex
+    //@type [p5.Vector]
     this.vertices = [];
 
     //an array containing every vertex for stroke drawing
@@ -111,7 +111,7 @@ p5.Geometry = class Geometry {
   }
 
   _getFaceNormal(faceId) {
-  //This assumes that vA->vB->vC is a counter-clockwise ordering
+    //This assumes that vA->vB->vC is a counter-clockwise ordering
     const face = this.faces[faceId];
     const vA = this.vertices[face[0]];
     const vB = this.vertices[face[1]];
@@ -196,7 +196,7 @@ p5.Geometry = class Geometry {
  * @chainable
  */
   averagePoleNormals() {
-  //average the north pole
+    //average the north pole
     let sum = new p5.Vector(0, 0, 0);
     for (let i = 0; i < this.detailX; i++) {
       sum.add(this.vertexNormals[i]);
@@ -225,6 +225,25 @@ p5.Geometry = class Geometry {
     ) {
       this.vertexNormals[i] = sum;
     }
+    return this;
+  }
+  /**
+* Create a 2D array for establishing stroke connections
+* @private
+* @chainable
+*/
+  _makeQuadEdges() {
+    this.edges.length = 0;
+
+    const vertexOrder = [0, 2, 3, 1];
+
+    for (let i = 0; i < vertexOrder.length; i++) {
+      const startVertex = vertexOrder[i];
+      const endVertex = vertexOrder[(i + 1) % vertexOrder.length];
+
+      this.edges.push([startVertex, endVertex]);
+    }
+
     return this;
   }
 
@@ -507,7 +526,7 @@ p5.Geometry = class Geometry {
  */
   normalize() {
     if (this.vertices.length > 0) {
-    // Find the corners of our bounding box
+      // Find the corners of our bounding box
       const maxPosition = this.vertices[0].copy();
       const minPosition = this.vertices[0].copy();
 

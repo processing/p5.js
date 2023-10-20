@@ -1575,7 +1575,7 @@ p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, 
     }
     quadGeom
       .computeNormals()
-      ._makeTriangleEdges()
+      ._makeQuadEdges()
       ._edgesToVertices();
     this.createBuffers(gId, quadGeom);
   }
