@@ -122,7 +122,11 @@ vec3 calculateImageSpecular( vec3 vNormal, vec3 vViewPosition ){
   vec3 lightDirection = normalize( vViewPosition - worldCameraPosition );
   vec3 R = reflect(lightDirection, worldNormal);
   vec2 newTexCoor = mapTextureToNormal( R );
+#ifdef WEBGL2
   vec4 outColor = textureLod(environmentMapSpecular, newTexCoor, levelOfDetail);
+#else
+  vec4 outColor = TEXTURE(environmentMapSpecular, newTexCoor);
+#endif
   return outColor.xyz;
 }
 
