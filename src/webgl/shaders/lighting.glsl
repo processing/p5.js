@@ -112,7 +112,7 @@ vec3 calculateImageDiffuse( vec3 vNormal, vec3 vViewPosition ){
   vec3 R = reflect(lightDirection, worldNormal);
   // use worldNormal instead of R
   vec2 newTexCoor = mapTextureToNormal( R );
-  vec4 texture = texture2D( environmentMapDiffused, newTexCoor );
+  vec4 texture = TEXTURE( environmentMapDiffused, newTexCoor );
   return texture.xyz;
 }
 
