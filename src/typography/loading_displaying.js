@@ -335,9 +335,9 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 /**
  * Sets the font used by the <a href="#/p5/text">text()</a> function.
  *
- * The first parameter, `font`, sets the font. `textFont()` recognizes both
- * <a href="#/p5.Font">p5.Font</a> objects and the names of system fonts such
- * as `'Courier New'`.
+ * The first parameter, `font`, sets the font. `textFont()` recognizes either
+ * a <a href="#/p5.Font">p5.Font</a> object or a string with the name of a
+ * system font. For example, `'Courier New'`.
  *
  * The second parameter, `size`, is optional. It sets the font size in pixels.
  * This has the same effect as calling <a href="#/p5/textSize">textSize()</a>.
