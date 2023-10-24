@@ -15,6 +15,26 @@ import * as constants from '../core/constants';
  * @class p5.Font
  * @constructor
  * @param {p5} [pInst] pointer to p5 instance.
+ * @example
+ * <div>
+ * <code>
+ * let font;
+ *
+ * function preload() {
+ *   // Creates a p5.Font object.
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
+ * function setup() {
+ *   fill('deeppink');
+ *   textFont(font);
+ *   textSize(36);
+ *   text('p5*js', 10, 50);
+ *
+ *   describe('The text "p5*js" written in pink on a white background.');
+ * }
+ * </code>
+ * </div>
  */
 p5.Font = class {
   constructor(p){
