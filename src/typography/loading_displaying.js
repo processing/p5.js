@@ -18,9 +18,12 @@ import '../core/friendly_errors/fes_core';
  * `loadFont()` can load fonts in either .otf or .ttf format. Loaded fonts can
  * be used to style text on the canvas and in HTML elements.
  *
- * `loadFont()` interprets the first parameter as the path to a font file.
- * Paths to local files should be relative, such as
- * `'assets/inconsolata.otf'`. Paths to remote files should be URLs, such as
+ * The first parameter, `path`, is the path to a font file.
+ * Paths to local files should be relative. For example,
+ * `'assets/inconsolata.otf'`. The Inconsolata font used in the following
+ * examples can be downloaded for free
+ * <a href="https://www.fontsquirrel.com/fonts/inconsolata" target="_blank">here</a>.
+ * Paths to remote files should be URLs. For example,
  * `'https://example.com/inconsolata.otf'`. URLs may be blocked due to browser
  * security.
  *
@@ -218,68 +221,82 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  * @example
  * <div>
  * <code>
- * text('hi', 50, 50);
+ * function setup() {
+ *   background(200);
+ *   text('hi', 50, 50);
  *
- * describe('The text "hi" written in black in the middle of a gray square.');
+ *   describe('The text "hi" written in black in the middle of a gray square.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * background('skyblue');
- * textSize(100);
- * // Emoji.
- * text('🌈', 0, 100);
+ * function setup() {
+ *   background('skyblue');
+ *   textSize(100);
+ *   text('🌈', 0, 100);
  *
- * describe('A rainbow in a blue sky.');
+ *   describe('A rainbow in a blue sky.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * textSize(32);
- * fill(255);
- * stroke(0);
- * strokeWeight(4);
- * text('hi', 50, 50);
+ * function setup() {
+ *   textSize(32);
+ *   fill(255);
+ *   stroke(0);
+ *   strokeWeight(4);
+ *   text('hi', 50, 50);
  *
- * describe('The text "hi" written in white with a black outline.');
+ *   describe('The text "hi" written in white with a black outline.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * background('black');
- * textSize(22);
- * fill('yellow');
- * text('rainbows', 6, 20);
- * fill('cornflowerblue');
- * text('rainbows', 6, 45);
- * fill('tomato');
- * text('rainbows', 6, 70);
- * fill('limegreen');
- * text('rainbows', 6, 95);
+ * function setup() {
+ *   background('black');
+ *   textSize(22);
+ *   fill('yellow');
+ *   text('rainbows', 6, 20);
+ *   fill('cornflowerblue');
+ *   text('rainbows', 6, 45);
+ *   fill('tomato');
+ *   text('rainbows', 6, 70);
+ *   fill('limegreen');
+ *   text('rainbows', 6, 95);
  *
- * describe('The text "rainbows" written on several lines, each in a different color.');
+ *   describe('The text "rainbows" written on several lines, each in a different color.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * let s = 'The quick brown fox jumps over the lazy dog.';
- * text(s, 10, 10, 70, 80);
+ * function setup() {
+ *   background(200);
+ *   let s = 'The quick brown fox jumps over the lazy dog.';
+ *   text(s, 10, 10, 70, 80);
  *
- * describe('The sample text "The quick brown fox..." written in black across several lines.');
+ *   describe('The sample text "The quick brown fox..." written in black across several lines.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * rectMode(CENTER);
- * let s = 'The quick brown fox jumps over the lazy dog.';
- * text(s, 50, 50, 70, 80);
+ * function setup() {
+ *   background(200);
+ *   rectMode(CENTER);
+ *   let s = 'The quick brown fox jumps over the lazy dog.';
+ *   text(s, 50, 50, 70, 80);
  *
- * describe('The sample text "The quick brown fox..." written in black across several lines.');
+ *   describe('The sample text "The quick brown fox..." written in black across several lines.');
+ * }
  * </code>
  * </div>
  *
@@ -318,7 +335,7 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 /**
  * Sets the font used by the <a href="#/p5/text">text()</a> function.
  *
- * `textFont()` uses the first parameter to set the font. It recognizes both
+ * The first parameter, `font`, sets the font. `textFont()` recognizes both
  * <a href="#/p5.Font">p5.Font</a> objects and the names of system fonts such
  * as `'Courier New'`.
  *
@@ -334,33 +351,41 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  * @example
  * <div>
  * <code>
- * textFont('Courier New');
- * textSize(24);
- * text('hi', 35, 55);
+ * function setup() {
+ *   background(200);
+ *   textFont('Courier New');
+ *   textSize(24);
+ *   text('hi', 35, 55);
  *
- * describe('The text "hi" written in a black, monospace font on a gray background.');
+ *   describe('The text "hi" written in a black, monospace font on a gray background.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * background('black');
- * fill('palegreen');
- * textFont('Courier New', 10);
- * text('You turn to the left and see a door. Do you enter?', 5, 5, 90, 90);
- * text('>', 5, 70);
+ * function setup() {
+ *   background('black');
+ *   fill('palegreen');
+ *   textFont('Courier New', 10);
+ *   text('You turn to the left and see a door. Do you enter?', 5, 5, 90, 90);
+ *   text('>', 5, 70);
  *
- * describe('A text prompt from a game is written in a green, monospace font on a black background.');
+ *   describe('A text prompt from a game is written in a green, monospace font on a black background.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * textFont('Verdana');
- * let currentFont = textFont();
- * text(currentFont, 25, 50);
+ * function setup() {
+ *   background(200);
+ *   textFont('Verdana');
+ *   let currentFont = textFont();
+ *   text(currentFont, 25, 50);
  *
- * describe('The text "Verdana" written in a black, sans-serif font on a gray background.');
+ *   describe('The text "Verdana" written in a black, sans-serif font on a gray background.');
+ * }
  * </code>
  * </div>
  *
