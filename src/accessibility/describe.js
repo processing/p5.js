@@ -27,6 +27,10 @@ const labelTableElId = '_lte_'; //Label Table Element
  * `describe('A description.', FALLBACK)`, the description will only be
  * visible to screen readers. This is the default mode.
  *
+ * Read
+ * <a href="/learn/labeling-canvases.html">How to label your p5.js code</a> to
+ * learn more about making sketches accessible.
+ *
  * @method describe
  * @param  {String} text        description of the canvas.
  * @param  {Constant} [display] either LABEL or FALLBACK.
@@ -34,14 +38,16 @@ const labelTableElId = '_lte_'; //Label Table Element
  * @example
  * <div>
  * <code>
- * background('pink');
- * fill('red');
- * noStroke();
- * circle(67, 67, 20);
- * circle(83, 67, 20);
- * triangle(91, 73, 75, 95, 59, 73);
+ * function setup() {
+ *   background('pink');
+ *   fill('red');
+ *   noStroke();
+ *   circle(67, 67, 20);
+ *   circle(83, 67, 20);
+ *   triangle(91, 73, 75, 95, 59, 73);
  *
- * describe('A pink square with a red heart in the bottom-right corner.');
+ *   describe('A pink square with a red heart in the bottom-right corner.');
+ * }
  * </code>
  * </div>
  *
@@ -120,6 +126,10 @@ p5.prototype.describe = function(text, display) {
  * description will only be visible to screen readers. This is the default
  * mode.
  *
+ * Read
+ * <a href="/learn/labeling-canvases.html">How to label your p5.js code</a> to
+ * learn more about making sketches accessible.
+ *
  * @method describeElement
  * @param  {String} name        name of the element.
  * @param  {String} text        description of the element.
@@ -128,20 +138,22 @@ p5.prototype.describe = function(text, display) {
  * @example
  * <div>
  * <code>
- * background('pink');
+ * function setup() {
+ *   background('pink');
  *
- * noStroke();
- * describeElement('Circle', 'A yellow circle in the top-left corner.');
- * fill('yellow');
- * circle(25, 25, 40);
+ *   noStroke();
+ *   describeElement('Circle', 'A yellow circle in the top-left corner.');
+ *   fill('yellow');
+ *   circle(25, 25, 40);
  *
- * describeElement('Heart', 'A red heart in the bottom-right corner.');
- * fill('red');
- * circle(66.6, 66.6, 20);
- * circle(83.2, 66.6, 20);
- * triangle(91.2, 72.6, 75, 95, 58.6, 72.6);
+ *   describeElement('Heart', 'A red heart in the bottom-right corner.');
+ *   fill('red');
+ *   circle(66.6, 66.6, 20);
+ *   circle(83.2, 66.6, 20);
+ *   triangle(91.2, 72.6, 75, 95, 58.6, 72.6);
  *
- * describe('A red heart and yellow circle over a pink background.');
+ *   describe('A red heart and yellow circle over a pink background.');
+ * }
  * </code>
  * </div>
  */

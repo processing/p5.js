@@ -9,6 +9,8 @@ import p5 from '../core/main';
 
 /**
  * Creates a screen reader-accessible description for shapes on the canvas.
+ * `textOutput()` adds a general description, list of shapes, and
+ * table of shapes to the web page.
  *
  * The general description includes the canvas size, canvas color, and number
  * of shapes. For example,
@@ -19,9 +21,10 @@ import p5 from '../core/main';
  * `a red circle at middle covering 3% of the canvas`. Each shape can be
  * selected to get more details.
  *
- * A table of shapes is also provided. The table describes the shape, color,
- * location, coordinates and area. For example,
- * `red circle location = middle area = 3%`.
+ * `textOutput()` uses its table of shapes as a list. The table describes the
+ * shape, color, location, coordinates and area. For example,
+ * `red circle location = middle area = 3%`. This is different from
+ * <a href="#/p5/gridOutput">gridOutput()</a>, which uses its table as a grid.
  *
  * The `display` parameter is optional. It determines how the description is
  * displayed. If `LABEL` is passed, as in `textOutput(LABEL)`, the description
@@ -31,18 +34,26 @@ import p5 from '../core/main';
  * description will only be visible to screen readers. This is the default
  * mode.
  *
+ * Read
+ * <a href="/learn/labeling-canvases.html">How to label your p5.js code</a> to
+ * learn more about making sketches accessible.
+ *
  * @method textOutput
  * @param  {Constant} [display] either FALLBACK or LABEL.
  *
  * @example
  * <div>
  * <code>
- * textOutput();
- * background(200);
- * fill(255, 0, 0);
- * circle(20, 20, 20);
- * fill(0, 0, 255);
- * square(50, 50, 50);
+ * function setup() {
+ *   textOutput();
+ *   background(200);
+ *   fill(255, 0, 0);
+ *   circle(20, 20, 20);
+ *   fill(0, 0, 255);
+ *   square(50, 50, 50);
+ *
+ *   describe('A red circle and a blue square on a gray background.');
+ * }
  * </code>
  * </div>
  *
@@ -56,6 +67,8 @@ import p5 from '../core/main';
  *   circle(x, 20, 20);
  *   fill(0, 0, 255);
  *   square(50, 50, 50);
+ *
+ *   describe('A red circle moves from left to right above a blue square.');
  * }
  * </code>
  * </div>
@@ -82,18 +95,20 @@ p5.prototype.textOutput = function(display) {
 };
 
 /**
- * Lays out the content of the canvas in a table element, which is a grid.
- * Each shape's location in the grid corresponds to its location on the
- * canvas.
+ * Creates a screen reader-accessible description for shapes on the canvas.
+ * `gridOutput()` adds a general description, table of shapes, and list of
+ * shapes to the web page.
  *
- * A screen reader-accessible description appears before the grid. The
- * general description includes the canvas size, canvas color, and number of
+ * The general description includes the canvas size, canvas color, and number of
  * shapes. For example,
  * `gray canvas, 100 by 100 pixels, contains 2 shapes:  1 circle 1 square`.
  *
- * The grid cells describe the color and type of shape at that location. For
- * example, `red circle`. These descriptions can be selected individually to
- * get more details.
+ * `gridOutput()` uses its table of shapes as a grid. Each shape in the grid
+ * is placed in a cell whose row and column correspond to the shape's location
+ * on the canvas. The grid cells describe the color and type of shape at that
+ * location. For example, `red circle`. These descriptions can be selected
+ * individually to get more details. This is different from
+ * <a href="#/p5/textOutput">textOutput()</a>, which uses its table as a list.
  *
  * A list of shapes follows the table. The list describes the color, type,
  * location, and area of each shape. For example,
@@ -107,18 +122,26 @@ p5.prototype.textOutput = function(display) {
  * description will only be visible to screen readers. This is the default
  * mode.
  *
+ * Read
+ * <a href="/learn/labeling-canvases.html">How to label your p5.js code</a> to
+ * learn more about making sketches accessible.
+ *
  * @method gridOutput
  * @param  {Constant} [display] either FALLBACK or LABEL.
  *
  * @example
  * <div>
  * <code>
- * gridOutput();
- * background(200);
- * fill(255, 0, 0);
- * ellipse(20, 20, 20, 20);
- * fill(0, 0, 255);
- * square(50, 50, 50);
+ * function setup() {
+ *   gridOutput();
+ *   background(200);
+ *   fill(255, 0, 0);
+ *   circle(20, 20, 20);
+ *   fill(0, 0, 255);
+ *   square(50, 50, 50);
+ *
+ *   describe('A red circle and a blue square on a gray background.');
+ * }
  * </code>
  * </div>
  *
@@ -132,6 +155,8 @@ p5.prototype.textOutput = function(display) {
  *   circle(x, 20, 20);
  *   fill(0, 0, 255);
  *   square(50, 50, 50);
+ *
+ *   describe('A red circle moves from left to right above a blue square.');
  * }
  * </code>
  * </div>
