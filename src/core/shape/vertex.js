@@ -647,8 +647,8 @@ p5.prototype.endContour = function() {
  *
  *   // gl_InstanceID represents a numeric value for each instance
  *   // using gl_InstanceID allows us to move each instance separately
- *   // here we move each instance horizontally by id * 100
- *   float xOffset = float(gl_InstanceID) * 100.0;
+ *   // here we move each instance horizontally by id * 40
+ *   float xOffset = float(gl_InstanceID) * 40.0;
  *
  *   // apply the offset to the final position
  *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4 -
@@ -676,7 +676,7 @@ p5.prototype.endContour = function() {
  * `;
  *
  * function setup() {
- *   createCanvas(400, 400, WEBGL);
+ *   createCanvas(100, 100, WEBGL);
  *   fx = createShader(vs, fs);
  * }
  *
@@ -687,12 +687,16 @@ p5.prototype.endContour = function() {
  *   shader(fx);
  *   fx.setUniform('numInstances', 4);
  *
+ *   // this doesn't have to do with instancing, this is just for centering the squares
+ *   translate(25, -10);
+ *
+ *   // here we draw the squares we want to instance
  *   beginShape();
- *   vertex(30, 20);
- *   vertex(85, 20);
- *   vertex(85, 75);
- *   vertex(30, 75);
- *   vertex(30, 20);
+ *   vertex(0, 0);
+ *   vertex(0, 20);
+ *   vertex(20, 20);
+ *   vertex(20, 0);
+ *   vertex(0, 0);
  *   endShape(CLOSE, 4);
  *
  *   resetShader();
