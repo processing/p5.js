@@ -911,6 +911,8 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Garima3110"><img src="https://avatars.githubusercontent.com/u/110815240?v=4?s=120" width="120px;" alt="Garima"/><br /><sub><b>Garima</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Garima3110" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/perminder-17"><img src="https://avatars.githubusercontent.com/u/127239756?v=4?s=120" width="120px;" alt="perminder-17"/><br /><sub><b>perminder-17</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=perminder-17" title="Code">💻</a></td>
+     <td align="center" valign="top" width="16.66%"><a href="https://github.com/lakshay451"><img src="https://avatars.githubusercontent.com/u/89472581?v=4" width="120px;" alt="Lakshay Joshi"/><br /><sub><b>Lakshay Joshi</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=lakshay451" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

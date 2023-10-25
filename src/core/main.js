@@ -33,7 +33,7 @@ import * as constants from './constants';
  * @return {p5}                 a p5 instance
  */
 class p5 {
-  constructor(sketch, node, sync) {
+  constructor(sketch, node) {
     //////////////////////////////////////////////
     // PUBLIC p5 PROPERTIES AND METHODS
     //////////////////////////////////////////////
@@ -776,7 +776,7 @@ for (const k in constants) {
 }
 
 // makes the `VERSION` constant available on the p5 object
-// in instance mode, even if it hasn't been instatiated yet
+// in instance mode, even if it hasn't been instantiated yet
 p5.VERSION = constants.VERSION;
 
 // functions that cause preload to wait

@@ -304,7 +304,9 @@ p5.prototype.createFilterShader = function(fragSrc) {
     }
   `;
   let vertSrc = fragSrc.includes('#version 300 es') ? defaultVertV2 : defaultVertV1;
-  return new p5.Shader(this._renderer, vertSrc, fragSrc);
+  const shader = new p5.Shader(this._renderer, vertSrc, fragSrc);
+  shader.ensureCompiledOnContext(this._renderer.getFilterGraphicsLayer());
+  return shader;
 };
 
 /**
@@ -393,11 +395,7 @@ p5.prototype.shader = function(s) {
   this._assert3d('shader');
   p5._validateParameters('shader', arguments);
 
-  if (s._renderer === undefined) {
-    s._renderer = this._renderer;
-  }
-
-  s.init();
+  s.ensureCompiledOnContext(this);
 
   if (s.isStrokeShader()) {
     this._renderer.userStrokeShader = s;
