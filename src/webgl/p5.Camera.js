@@ -1050,8 +1050,6 @@ p5.Camera = class Camera {
  * @private
  */
   _rotateView(a, x, y, z) {
-    this.cameraType = 'custom';
-
     let centerX = this.centerX;
     let centerY = this.centerY;
     let centerZ = this.centerZ;
@@ -1144,7 +1142,6 @@ p5.Camera = class Camera {
  * camera view pans left and right across a series of rotating 3D boxes.
  */
   pan(amount) {
-    this.cameraType = 'custom';
     const local = this._getLocalAxes();
     this._rotateView(amount, local.y[0], local.y[1], local.y[2]);
   }
@@ -1203,7 +1200,6 @@ p5.Camera = class Camera {
  * camera view tilts up and down across a series of rotating 3D boxes.
  */
   tilt(amount) {
-    this.cameraType = 'custom';
     const local = this._getLocalAxes();
     this._rotateView(amount, local.x[0], local.x[1], local.x[2]);
   }
@@ -1258,7 +1254,6 @@ p5.Camera = class Camera {
  * point every second .
  */
   lookAt(x, y, z) {
-    this.cameraType = 'custom';
     this.camera(
       this.eyeX,
       this.eyeY,
@@ -1493,7 +1488,6 @@ p5.Camera = class Camera {
  * orientation throughout the move
  */
   move(x, y, z) {
-    this.cameraType = 'custom';
     const local = this._getLocalAxes();
 
     // scale local axes by movement amounts
@@ -1560,7 +1554,6 @@ p5.Camera = class Camera {
  * camera position changes as the user presses keys, altering view of a 3D box
  */
   setPosition(x, y, z) {
-    this.cameraType = 'custom';
     const diffX = x - this.eyeX;
     const diffY = y - this.eyeY;
     const diffZ = z - this.eyeZ;
@@ -1755,7 +1748,6 @@ p5.Camera = class Camera {
  * The camera cannot be moved during that time.
  */
   slerp(cam0, cam1, amt) {
-    this.cameraType = 'custom';
     // If t is 0 or 1, do not interpolate and set the argument camera.
     if (amt === 0) {
       this.set(cam0);
@@ -2098,7 +2090,6 @@ p5.Camera = class Camera {
  * @param {Number} dRadius change in radius
  */
   _orbit(dTheta, dPhi, dRadius) {
-    this.cameraType = 'custom';
     // Calculate the vector and its magnitude from the center to the viewpoint
     const diffX = this.eyeX - this.centerX;
     const diffY = this.eyeY - this.centerY;
@@ -2169,7 +2160,6 @@ p5.Camera = class Camera {
  * @param {Number} dRadius change in radius
  */
   _orbitFree(dx, dy, dRadius) {
-    this.cameraType = 'custom';
     // Calculate the vector and its magnitude from the center to the viewpoint
     const diffX = this.eyeX - this.centerX;
     const diffY = this.eyeY - this.centerY;
