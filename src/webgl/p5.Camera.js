@@ -1369,9 +1369,10 @@ p5.Camera = class Camera {
     centerZ,
     upX,
     upY,
-    upZ
+    upZ,
+    cameraType = 'default'
   ) {
-    this.cameraType = 'custom';
+    this.cameraType = cameraType;
     if (typeof eyeX === 'undefined') {
       eyeX = this.defaultEyeX;
       eyeY = this.defaultEyeY;

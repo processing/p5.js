@@ -1013,4 +1013,10 @@ suite('p5.Camera', function() {
       assert.deepEqual(myCam2._renderer, myp5._renderer);
     });
   });
+
+  suite('Camera attributes after resizing', function() {
+    test('Camera position is the same', function() {
+
+    });
+  });
 });
