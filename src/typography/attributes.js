@@ -227,7 +227,7 @@ p5.prototype.textStyle = function(theStyle) {
  *   text(s, 22, 55);
  *   line(22, 55, 22 + w, 55);
  *
- *   describe('The word "yo" written twice on separate lines. The words are divided by a horizontal line.');
+ *   describe('The word "yo" written twice, one copy beneath the other. The words are divided by a horizontal line.');
  * }
  * </code>
  * </div>
