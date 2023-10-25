@@ -1946,12 +1946,12 @@ p5.Camera = class Camera {
   // @TODO: combine this function with _setDefaultCamera to compute these values
   // as-needed
   _computeCameraDefaultSettings() {
-    this.defaultCameraFOV =
-      2 * Math.atan(this._renderer.height / 2 / this.defaultEyeZ);
     this.defaultAspectRatio = this._renderer.width / this._renderer.height;
     this.defaultEyeX = 0;
     this.defaultEyeY = 0;
     this.defaultEyeZ = 800;
+    this.defaultCameraFOV =
+      2 * Math.atan(this._renderer.height / 2 / this.defaultEyeZ);
     this.defaultCenterX = 0;
     this.defaultCenterY = 0;
     this.defaultCenterZ = 0;
