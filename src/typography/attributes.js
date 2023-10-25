@@ -199,26 +199,36 @@ p5.prototype.textStyle = function(theStyle) {
  * @example
  * <div>
  * <code>
- * textSize(28);
- * let str = 'hi';
- * let w = textWidth(str);
- * text(str, 35, 55);
- * line(35, 55, 35 + w, 55);
+ * function setup() {
+ *   background(200);
  *
- * describe('The text "hi" underlined.');
+ *   textSize(28);
+ *   strokeWeight(0.5);
+ *   let s = 'yoyo';
+ *   let w = textWidth(s);
+ *   text(s, 22, 55);
+ *   line(22, 55, 22 + w, 55);
+ *
+ *   describe('The word "yoyo" underlined.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * textSize(28);
- * // "\n" starts a new line.
- * let str = 'yo\nyo';
- * let w = textWidth(str);
- * text(str, 10, 40);
- * line(10, 40, 10 + w, 40);
+ * function setup() {
+ *   background(200);
  *
- * describe('The word "yo" written twice on separate lines. The words are divided by a horizontal line.');
+ *   textSize(28);
+ *   strokeWeight(0.5);
+ *   // "\n" starts a new line.
+ *   let s = 'yo\nyo';
+ *   let w = textWidth(s);
+ *   text(s, 22, 55);
+ *   line(22, 55, 22 + w, 55);
+ *
+ *   describe('The word "yo" written twice on separate lines. The words are divided by a horizontal line.');
+ * }
  * </code>
  * </div>
  */
@@ -263,25 +273,31 @@ p5.prototype.textWidth = function (...args) {
  *
  * function setup()  {
  *   background(200);
- *
  *   textFont(font);
- *   // Different for each font.
- *   let scalar = 0.8;
  *
- *   let base = 75;
+ *   // Different for each font.
+ *   let fontScale = 0.8;
+ *
+ *   let baseY = 75;
  *   strokeWeight(0.5);
  *
+ *   // Draw small text.
  *   textSize(24);
- *   let a = textAscent() * scalar;
- *   line(0, base - a, 25, base - a);
- *   text('dp', 0, base);
+ *   text('dp', 0, baseY);
+ *   // Draw baseline and ascent.
+ *   let a = textAscent() * fontScale;
+ *   line(0, baseY, 23, baseY);
+ *   line(23, baseY - a, 23, baseY);
  *
+ *   // Draw large text.
  *   textSize(48);
- *   a = textAscent() * scalar;
- *   line(50, base - a, 100, base - a);
- *   text('dp', 50, base);
+ *   text('dp', 45, baseY);
+ *   // Draw baseline and ascent.
+ *   a = textAscent() * fontScale;
+ *   line(45, baseY, 91, baseY);
+ *   line(91, baseY - a, 91, baseY);
  *
- *   describe('The letters "dp" written twice in different sizes. Each version has a horizontal line above it that touches the top of the "d".');
+ *   describe('The letters "dp" written twice in different sizes. Each version has a horizontal baseline. A vertical line extends upward from each baseline to the top of the "d".');
  * }
  * </code>
  * </div>
@@ -309,25 +325,31 @@ p5.prototype.textAscent = function(...args) {
  *
  * function setup()  {
  *   background(200);
- *
  *   textFont(font);
- *   // Different for each font.
- *   let scalar = 0.9;
  *
- *   let base = 75;
+ *   // Different for each font.
+ *   let fontScale = 0.9;
+ *
+ *   let baseY = 75;
  *   strokeWeight(0.5);
  *
+ *   // Draw small text.
  *   textSize(24);
- *   let d = textDescent() * scalar;
- *   line(0, base + d, 25, base + d);
- *   text('dp', 0, base);
+ *   text('dp', 0, baseY);
+ *   // Draw baseline and descent.
+ *   let d = textDescent() * fontScale;
+ *   line(0, baseY, 23, baseY);
+ *   line(23, baseY, 23, baseY + d);
  *
+ *   // Draw large text.
  *   textSize(48);
- *   d = textDescent() * scalar;
- *   line(50, base + d, 100, base + d);
- *   text('dp', 50, base);
+ *   text('dp', 45, baseY);
+ *   // Draw baseline and descent.
+ *   d = textDescent() * fontScale;
+ *   line(45, baseY, 91, baseY);
+ *   line(91, baseY, 91, baseY + d);
  *
- *   describe('The letters "dp" written twice in different sizes. Each version has a horizontal line underneath it that touches the bottom of the "p".');
+ *   describe('The letters "dp" written twice in different sizes. Each version has a horizontal baseline. A vertical line extends downward from each baseline to the bottom of the "p".');
  * }
  * </code>
  * </div>
