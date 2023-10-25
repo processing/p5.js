@@ -12,7 +12,7 @@ Main functions for generating the friendly error messages are:
 * `_friendlyFileLoadError()`
 * `_friendlyError()`
 * `helpForMisusedAtTopLevelCode()`
-* `_fesErrorMontitor()`
+* `_fesErrorMonitor()`
 
 These functions are located throughout this folder.
 * `fes_core.js` contains the core as well as miscellaneous functionality of the FES.

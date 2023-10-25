@@ -8,7 +8,7 @@
  *
  * The FES may be invoked by a call to either
  * (1) _validateParameters, (2) _friendlyFileLoadError, (3) _friendlyError,
- * (4) helpForMisusedAtTopLevelCode, or (5) _fesErrorMontitor.
+ * (4) helpForMisusedAtTopLevelCode, or (5) _fesErrorMonitor.
  *
  * _validateParameters is located in validate_params.js along with other code
  * used for parameter validation.
@@ -321,7 +321,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   /**
-   * Compares the symbol caught in the ReferenceErrror to everything in
+   * Compares the symbol caught in the ReferenceError to everything in
    * misusedAtTopLevel ( all public p5 properties ).
    *
    * Generates and prints a friendly error message using key: "fes.misspelling".
@@ -468,12 +468,12 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * Generates and prints a friendly error message using key:
    * "fes.wrongPreload", "fes.libraryError".
    *
-   * The processed stack is used to find whether the error happended internally
+   * The processed stack is used to find whether the error happened internally
    * within the library, and if the error was due to a non-loadX() method
    * being used in preload.
    *
    * "Internally" here means that the exact location of the error (the top of
-   * the stack) is a piece of code write in the p5.js library (which may or
+   * the stack) is a piece of code written in the p5.js library (which may or
    * may not have been called from the user's sketch).
    *
    * @method processStack

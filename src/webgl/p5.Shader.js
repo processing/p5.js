@@ -104,6 +104,42 @@ p5.Shader = class {
   }
 
   /**
+   * Shaders belong to the main canvas or a p5.Graphics. Once they are compiled,
+   * they can only be used in the context they were compiled on.
+   *
+   * Use this method to make a new copy of a shader that gets compiled on a
+   * different context.
+   *
+   * @method copyToContext
+   * @param {p5|p5.Graphics} context The graphic or instance to copy this shader to.
+   * Pass `window` if you need to copy to the main canvas.
+   * @returns {p5.Shader} A new shader on the target context.
+   */
+  copyToContext(context) {
+    const shader = new p5.Shader(
+      context._renderer,
+      this._vertSrc,
+      this._fragSrc
+    );
+    shader.ensureCompiledOnContext(context);
+    return shader;
+  }
+
+  /**
+   * @private
+   */
+  ensureCompiledOnContext(context) {
+    if (this._glProgram !== 0 && this._renderer !== context._renderer) {
+      throw new Error(
+        'The shader being run is attached to a different context. Do you need to copy it to this context first with .copyToContext()?'
+      );
+    } else if (this._glProgram === 0) {
+      this._renderer = context._renderer;
+      this.init();
+    }
+  }
+
+  /**
    * Queries the active attributes for this shader and loads
    * their names and locations into the attributes array.
    * @method _loadAttributes
@@ -392,13 +428,6 @@ p5.Shader = class {
    * canvas toggles between a circular gradient of orange and blue vertically. and a circular gradient of red and green moving horizontally when mouse is clicked/pressed.
    */
   setUniform(uniformName, data) {
-    // detect when to set uniforms on duplicate filter shader copy
-    let other = this._renderer.filterShader;
-    if (other !== undefined && other.parentShader === this) {
-      other.setUniform(uniformName, data);
-      return;
-    }
-
     const uniform = this.uniforms[uniformName];
     if (!uniform) {
       return;
@@ -582,10 +611,10 @@ p5.Shader = class {
       if (loc !== -1) {
         const gl = this._renderer.GL;
         // Enable register even if it is disabled
-        if (!this._renderer.registerEnabled[loc]) {
+        if (!this._renderer.registerEnabled.has(loc)) {
           gl.enableVertexAttribArray(loc);
           // Record register availability
-          this._renderer.registerEnabled[loc] = true;
+          this._renderer.registerEnabled.add(loc);
         }
         this._renderer.GL.vertexAttribPointer(
           loc,
@@ -598,6 +627,26 @@ p5.Shader = class {
       }
     }
     return this;
+  }
+
+  /**
+   * Once all buffers have been bound, this checks to see if there are any
+   * remaining active attributes, likely left over from previous renders,
+   * and disables them so that they don't affect rendering.
+   * @method disableRemainingAttributes
+   * @private
+   */
+  disableRemainingAttributes() {
+    for (const location of this._renderer.registerEnabled.values()) {
+      if (
+        !Object.keys(this.attributes).some(
+          key => this.attributes[key].location === location
+        )
+      ) {
+        this._renderer.GL.disableVertexAttribArray(location);
+        this._renderer.registerEnabled.delete(location);
+      }
+    }
   }
 };
 
