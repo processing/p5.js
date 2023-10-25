@@ -1985,8 +1985,9 @@ p5.Camera = class Camera {
   _resize() {
     // If we're using the default camera, update the aspect ratio
     if (this.cameraType === 'default') {
+      this._computeCameraDefaultSettings();
       this.cameraFOV = this.defaultCameraFOV;
-      this._setDefaultCamera();
+      this.aspectRatio = this.defaultAspectRatio;
       this.perspective();
     }
   }
