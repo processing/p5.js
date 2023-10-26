@@ -90,7 +90,7 @@ p5.Geometry = class Geometry {
   /**
    * Removes the internal Colors of p5.Geometry
    * Using clearColors, you can use 'fill()' to supply new colors before drawing each shape.
-   * If clearColors() is not used, the shapes will use their internal colors.
+   * If clearColors() is not used, the shapes will use their internal colors by ignoring 'fill()'.
    *
    * @method clearColors
    *
