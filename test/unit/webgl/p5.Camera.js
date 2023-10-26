@@ -1038,8 +1038,8 @@ suite('p5.Camera', function() {
       assert.deepEqual(myp5.get(0, 0), [0, 0, 0, 0]);
       assert.equal(cam.eyeX, 10);
 
-      resizeCanvas(2, 1);
-      resizeCanvas(1, 1);
+      myp5.resizeCanvas(2, 1);
+      myp5.resizeCanvas(1, 1);
       testShape();
       assert.deepEqual(myp5.get(0, 0), [0, 0, 0, 0]);
       assert.equal(cam.eyeX, 10);
@@ -1066,8 +1066,8 @@ suite('p5.Camera', function() {
       testShape();
       assert.deepEqual(myp5.get(0, 0), [0, 0, 0, 0]);
 
-      resizeCanvas(2, 1);
-      resizeCanvas(1, 1);
+      myp5.resizeCanvas(2, 1);
+      myp5.resizeCanvas(1, 1);
       testShape();
       assert.deepEqual(myp5.get(0, 0), [0, 0, 0, 0]);
     });
