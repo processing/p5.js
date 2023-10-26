@@ -170,9 +170,9 @@ void main() {
         // find where the lines intersect to find the elbow of the join
         vec2 c = (posp.xy/posp.w + vec2(1.,1.)) * 0.5 * uViewport.zw;
         vec2 intersection = lineIntersection(
-          c + (side * normalIn * uStrokeWeight / 2.) * curPerspScale,
+          c + (side * normalIn * uStrokeWeight / 2.),
           tangentIn,
-          c + (side * normalOut * uStrokeWeight / 2.) * curPerspScale,
+          c + (side * normalOut * uStrokeWeight / 2.),
           tangentOut
         );
         offset = (intersection - c);
@@ -187,9 +187,9 @@ void main() {
           offset *= maxMag / mag;
         }
       } else if (sideEnum == 1.) {
-        offset = side * normalIn * curPerspScale * uStrokeWeight / 2.;
+        offset = side * normalIn * uStrokeWeight / 2.;
       } else if (sideEnum == 3.) {
-        offset = side * normalOut * curPerspScale * uStrokeWeight / 2.;
+        offset = side * normalOut * uStrokeWeight / 2.;
       }
     }
     if (uStrokeJoin == STROKE_JOIN_BEVEL) {
@@ -208,12 +208,12 @@ void main() {
     // extends out from the line
     float tangentOffset = abs(aSide) - 1.;
     offset = (normal * normalOffset + tangent * tangentOffset) *
-      uStrokeWeight * 0.5 * curPerspScale;
+      uStrokeWeight * 0.5;
     vMaxDist = uStrokeWeight / 2.;
   }
-  vPosition = vCenter + offset / curPerspScale;
+  vPosition = vCenter + offset;
 
-  gl_Position.xy = p.xy + offset.xy;
+  gl_Position.xy = p.xy + offset.xy * curPerspScale;
   gl_Position.zw = p.zw;
   
   vColor = (uUseLineColor ? aVertexColor : uMaterialColor);
