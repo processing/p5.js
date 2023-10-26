@@ -33,10 +33,8 @@ class FramebufferCamera extends p5.Camera {
   _computeCameraDefaultSettings() {
     super._computeCameraDefaultSettings();
     this.defaultAspectRatio = this.fbo.width / this.fbo.height;
-    this.defaultEyeZ =
-      this.fbo.height / 2.0 / Math.tan(this.defaultCameraFOV / 2.0);
-    this.defaultCameraNear = this.defaultEyeZ * 0.1;
-    this.defaultCameraFar = this.defaultEyeZ * 10;
+    this.defaultCameraFOV =
+      2 * Math.atan(this.fbo.height / 2 / this.defaultEyeZ);
   }
 }
 

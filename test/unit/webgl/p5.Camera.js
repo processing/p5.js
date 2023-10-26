@@ -687,10 +687,10 @@ suite('p5.Camera', function() {
 
       test('perspective() with no parameters specified (sets default)', function() {
         var expectedMatrix = new Float32Array([
-          1.7320507764816284,0,0,0,
-          0,-1.7320507764816284,0,0,
+          16,0,0,0,
+          0,-16,0,0,
           0,0,-1.0202020406723022,-1,
-          0,0,-17.49546241760254,0
+          0,0,-161.6161651611328,0
         ]);
 
         myCam.perspective();
@@ -726,10 +726,10 @@ suite('p5.Camera', function() {
 
       test('frustum() with no parameters specified (sets default)', function() {
         var expectedMatrix = new Float32Array([
-          1.7320507764816284, 0, 0, 0,
-          0, 1.7320507764816284, 0, 0,
-          0, -0, -1.0202020406723022, -1,
-          0, 0, -17.49546241760254, 0
+          16,0,0,0,
+          0,16,0,0,
+          0,-0,-1.0202020406723022,-1,
+          0,0,-161.6161651611328,0
         ]);
 
         myCam.frustum();
