@@ -130,6 +130,9 @@ p5.prototype.loadShader = function(
  * // the 'varying's are shared between both vertex & fragment shaders
  * let varying = 'precision highp float; varying vec2 vPos;';
  *
+ * Shaders can alter the positioning of shapes drawn with them.
+ * To ensure consistency in rendering, it's recommended to use the vertex shader, as in the example below.
+ *
  * // the vertex shader is called for each vertex
  *let vs = `
 * uniform mat4 uModelViewMatrix;
