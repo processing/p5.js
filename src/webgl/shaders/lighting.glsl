@@ -127,6 +127,8 @@ vec3 calculateImageSpecular( vec3 vNormal, vec3 vViewPosition ){
 #else
   vec4 outColor = TEXTURE(environmentMapSpecular, newTexCoor);
 #endif
+  // this is to make the darker sections more dark
+  // png and jpg usually flatten the brightness so it is to reverse that
   return pow(outColor.xyz, 10.0);
 }
 
