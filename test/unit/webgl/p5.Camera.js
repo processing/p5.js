@@ -1016,7 +1016,7 @@ suite('p5.Camera', function() {
 
   suite('Camera attributes after resizing', function() {
     test('Camera position is the same', function() {
-      myp5.createCanvas(1, 1, WEBGL);
+      myp5.createCanvas(1, 1, myp5.WEBGL);
       myp5.noStroke();
       myp5.pixelDensity(1);
 
@@ -1046,7 +1046,7 @@ suite('p5.Camera', function() {
     });
 
     test('Camera rotation is the same', function() {
-      myp5.createCanvas(1, 1, WEBGL);
+      myp5.createCanvas(1, 1, myp5.WEBGL);
       myp5.noStroke();
       myp5.pixelDensity(1);
 
