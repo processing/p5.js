@@ -331,7 +331,7 @@ p5.prototype.createFilterShader = function(fragSrc) {
  * be used to render subsequent shapes.
  *
  * Shaders can alter the positioning of shapes drawn with them.
- * To ensure consistency in rendering, it's recommended to use the vertex shader in the <a href="#/p5/createShader">createShader example</a>
+ * To ensure consistency in rendering, it's recommended to use the vertex shader in the <a href="#/p5/createShader">createShader example</a>.
  *
  * Custom shaders can be created using the
  * <a href="#/p5/createShader">createShader()</a> and
