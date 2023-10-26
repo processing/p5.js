@@ -89,6 +89,8 @@ p5.Geometry = class Geometry {
   }
   /**
    * Removes the internal Colors of p5.Geometry
+   * Using clearColors you can use the `fill()` to supply new colors before drawing each shape. 
+   * If clearColors() is not used, the shapes will use their internal colors.
    *
    * @method clearColors
    *
@@ -100,7 +102,7 @@ p5.Geometry = class Geometry {
    * let points = [];
    *
    * function setup() {
-   *   renderer = createCanvas(600, 600, WEBGL);
+   *   createCanvas(600, 600, WEBGL);
    *   points.push(new p5.Vector(-1, -1, 0), new p5.Vector(-1, 1, 0),
    *     new p5.Vector(1, -1, 0), new p5.Vector(-1, -1, 0));
    *   buildShape01();
@@ -110,7 +112,6 @@ p5.Geometry = class Geometry {
    *   background(0);
    *   fill('pink'); // shape01 retains its internal blue color, so it won't turn pink.
    *   model(shape01);
-   *   shape02.clearColors(); // Resets shape02's colors.
    *   fill('yellow'); // Now, shape02 is yellow.
    *   model(shape02);
    * }
@@ -131,7 +132,7 @@ p5.Geometry = class Geometry {
    *   for (let vec of points) vertex(vec.x * 200, vec.y * 200, vec.z * 200);
    *   endShape(CLOSE);
    *   shape02 = endGeometry();
-   *   // You can also call shape02.clearColors() here.
+   *   shape02.clearColors(); // Resets shape02's colors.
    * }
    * </code>
    * </div>
