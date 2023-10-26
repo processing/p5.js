@@ -181,14 +181,6 @@ p5.prototype.freeGeometry = function(geometry) {
 };
 
 /**
- * Clears the internal Color of the Geometry.
- * @method clearColors
- */
-p5.prototype.clearColors = function () {
-  return this._renderer.clearColors();
-};
-
-/**
  * Draw a plane with given a width and height
  * @method plane
  * @param  {Number} [width]    width of the plane
