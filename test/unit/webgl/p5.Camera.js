@@ -1016,7 +1016,33 @@ suite('p5.Camera', function() {
 
   suite('Camera attributes after resizing', function() {
     test('Camera position is the same', function() {
+      myp5.createCanvas(1, 1);
+      myp5.noStroke();
+      myp5.pixelDensity(1);
 
+      let cam = myp5.createCamera();
+
+      myp5.fill(255, 0, 0);
+
+      const testShape = () => {
+        myp5.clear();
+        myp5.rect(-myp5.width, -myp5.height, myp5.width * 2, myp5.height * 2);
+      };
+
+      testShape();
+      assert.deepEqual(myp5.get(0, 0), [255, 0, 0, 255]);
+      assert.equal(cam.eyeX, 0);
+
+      cam.move(10, 0, 0);
+      testShape();
+      assert.deepEqual(myp5.get(0, 0), [0, 0, 0, 0]);
+      assert.equal(cam.eyeX, 10);
+
+      resizeCanvas(2, 1);
+      resizeCanvas(1, 1);
+      testShape();
+      assert.deepEqual(myp5.get(0, 0), [0, 0, 0, 0]);
+      assert.equal(cam.eyeX, 10);
     });
   });
 });
