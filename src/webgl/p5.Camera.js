@@ -465,7 +465,7 @@ p5.prototype.createCamera = function () {
  * camera view pans left and right across a series of rotating 3D boxes.
  */
 p5.Camera = class Camera {
-  constructor(renderer) { // change
+  constructor(renderer) {
     this._renderer = renderer;
 
     this.cameraType = 'default';
