@@ -101,24 +101,23 @@ p5.Geometry = class Geometry {
    *
    * function setup() {
    *   renderer = createCanvas(600, 600, WEBGL);
-   *   points.push(new p5.Vector(-1, -1, 0), new p5.Vector(-1, 1, 0), new p5.Vector(1, -1, 0), new p5.Vector(-1, -1, 0));
+   *   points.push(new p5.Vector(-1, -1, 0), new p5.Vector(-1, 1, 0),
+   *     new p5.Vector(1, -1, 0), new p5.Vector(-1, -1, 0));
    *   buildShape01();
    *   buildShape02();
    * }
    * function draw() {
    *   background(0);
-   *
-   *   fill("pink"); // shape01 retains its internal blue color, so it won't turn pink.
+   *   fill('pink'); // shape01 retains its internal blue color, so it won't turn pink.
    *   model(shape01);
-   *
    *   shape02.clearColors(); // Resets shape02's colors.
-   *   fill("yellow"); // Now, shape02 is yellow.
+   *   fill('yellow'); // Now, shape02 is yellow.
    *   model(shape02);
    * }
    *
    * function buildShape01() {
    *   beginGeometry();
-   *   fill("blue"); // shape01's color is blue because its internal colors remain.
+   *   fill('blue'); // shape01's color is blue because its internal colors remain.
    *   beginShape();
    *   for (let vec of points) vertex(vec.x * 100, vec.y * 100, vec.z * 100);
    *   endShape(CLOSE);
@@ -127,7 +126,7 @@ p5.Geometry = class Geometry {
    *
    * function buildShape02() {
    *   beginGeometry();
-   *   fill("red");  // shape02.clearColors() removes its internal colors. Now, shape02 is red.
+   *   fill('red');  // shape02.clearColors() removes its internal colors. Now, shape02 is red.
    *   beginShape();
    *   for (let vec of points) vertex(vec.x * 200, vec.y * 200, vec.z * 200);
    *   endShape(CLOSE);
