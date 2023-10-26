@@ -134,7 +134,7 @@ p5.prototype.loadShader = function(
  * To ensure consistency in rendering, it's recommended to use the vertex shader, as in the example below.
  *
  * // the vertex shader is called for each vertex
- *let vs = `
+ * let vs = `
  * uniform mat4 uModelViewMatrix;
  * uniform mat4 uProjectionMatrix;
  *
