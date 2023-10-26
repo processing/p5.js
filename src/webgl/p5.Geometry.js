@@ -87,7 +87,14 @@ p5.Geometry = class Geometry {
 
     this.dirtyFlags = {};
   }
-
+/**
+   * @method clearColors
+   * @chainable
+   */
+  clearColors() {
+    this.vertexColors = [];
+    return this;
+  }
   /**
  * computes faces for geometry objects based on the vertices.
  * @method computeFaces
