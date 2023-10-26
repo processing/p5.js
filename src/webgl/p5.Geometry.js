@@ -87,10 +87,7 @@ p5.Geometry = class Geometry {
 
     this.dirtyFlags = {};
   }
-/**
-   * @method clearColors
-   * @chainable
-   */
+
   clearColors() {
     this.vertexColors = [];
     return this;
