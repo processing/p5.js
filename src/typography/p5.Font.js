@@ -11,10 +11,30 @@ import p5 from '../core/main';
 import * as constants from '../core/constants';
 
 /**
- * Base class for font handling
+ * A class to describe fonts.
  * @class p5.Font
  * @constructor
- * @param {p5} [pInst] pointer to p5 instance
+ * @param {p5} [pInst] pointer to p5 instance.
+ * @example
+ * <div>
+ * <code>
+ * let font;
+ *
+ * function preload() {
+ *   // Creates a p5.Font object.
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
+ * function setup() {
+ *   fill('deeppink');
+ *   textFont(font);
+ *   textSize(36);
+ *   text('p5*js', 10, 50);
+ *
+ *   describe('The text "p5*js" written in pink on a white background.');
+ * }
+ * </code>
+ * </div>
  */
 p5.Font = class {
   constructor(p){
@@ -23,51 +43,103 @@ p5.Font = class {
     this.cache = {};
 
     /**
-   * Underlying opentype font implementation
+   * Underlying
+   * <a href="https://opentype.js.org/" target="_blank">opentype.js</a>
+   * font object.
    * @property font
    */
     this.font = undefined;
   }
 
   /**
- * Returns a tight bounding box for the given text string using this
- * font
+ * Returns the bounding box for a string of text written using this
+ * <a href="#/p5.Font">p5.Font</a>.
+ *
+ * The first parameter, `str`, is a string of text. The second and third
+ * parameters, `x` and `y`, are the text's position. By default, they set the
+ * coordinates of the bounding box's bottom-left corner. See
+ * <a href="#/p5/textAlign">textAlign()</a> for more ways to align text.
+ *
+ * The fourth parameter, `fontSize`, is optional. It sets the font size used to
+ * determine the bounding box. By default, `font.textBounds()` will use the
+ * current <a href="#/p5/textSize">textSize()</a>.
  *
  * @method textBounds
- * @param  {String} line     a line of text
- * @param  {Number} x        x-position
- * @param  {Number} y        y-position
- * @param  {Number} [fontSize] font size to use (optional) Default is 12.
- * @param  {Object} [options] opentype options (optional)
- *                            opentype fonts contains alignment and baseline options.
- *                            Default is 'LEFT' and 'alphabetic'
- *
- * @return {Object}          a rectangle object with properties: x, y, w, h
+ * @param  {String} str        string of text.
+ * @param  {Number} x          x-coordinate of the text.
+ * @param  {Number} y          y-coordinate of the text.
+ * @param  {Number} [fontSize] font size. Defaults to the current
+ *                             <a href="#/p5/textSize">textSize()</a>.
+ * @return {Object}            object describing the bounding box with
+ *                             properties x, y, w, and h.
  *
  * @example
  * <div>
  * <code>
  * let font;
- * let textString = 'Lorem ipsum dolor sit amet.';
- * function preload() {
- *   font = loadFont('./assets/Regular.otf');
- * }
- * function setup() {
- *   background(210);
  *
- *   let bbox = font.textBounds(textString, 10, 30, 12);
- *   fill(255);
- *   stroke(0);
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
+ * function setup() {
+ *   background(200);
+ *
+ *   let bbox = font.textBounds('p5*js', 35, 53);
  *   rect(bbox.x, bbox.y, bbox.w, bbox.h);
- *   fill(0);
- *   noStroke();
  *
  *   textFont(font);
- *   textSize(12);
- *   text(textString, 10, 30);
+ *   text('p5*js', 35, 53);
  *
- *   describe(`Words “Lorem ipsum dol” go off canvas and
- *     contained by white bounding box`);
+ *   describe('The text "p5*js" written in black inside a white rectangle.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let font;
+ *
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
+ * function setup() {
+ *   background(200);
+ *
+ *   textFont(font);
+ *   textSize(15);
+ *   textAlign(CENTER, CENTER);
+ *
+ *   let bbox = font.textBounds('p5*js', 50, 50);
+ *   rect(bbox.x, bbox.y, bbox.w, bbox.h);
+ *
+ *   text('p5*js', 50, 50);
+ *
+ *   describe('The text "p5*js" written in black inside a white rectangle.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let font;
+ *
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
+ * function setup() {
+ *   background(200);
+ *
+ *   let bbox = font.textBounds('p5*js', 31, 53, 15);
+ *   rect(bbox.x, bbox.y, bbox.w, bbox.h);
+ *
+ *   textFont(font);
+ *   textSize(15);
+ *   text('p5*js', 31, 53);
+ *
+ *   describe('The text "p5*js" written in black inside a white rectangle.');
  * }
  * </code>
  * </div>
@@ -174,59 +246,55 @@ p5.Font = class {
   }
 
   /**
- * Computes an array of points following the path for specified text
+ * Returns an array of points outlining a string of text written using this
+ * <a href="#/p5.Font">p5.Font</a>.
+ *
+ * The first parameter, `str`, is a string of text. The second and third
+ * parameters, `x` and `y`, are the text's position. By default, they set the
+ * coordinates of the bounding box's bottom-left corner. See
+ * <a href="#/p5/textAlign">textAlign()</a> for more ways to align text.
+ *
+ * The fourth parameter, `fontSize`, is optional. It sets the text's font
+ * size. By default, `font.textToPoints()` will use the current
+ * <a href="#/p5/textSize">textSize()</a>.
+ *
+ * The fifth parameter, `options`, is also optional. `font.textToPoints()`
+ * expects an object with the following properties:
+ *
+ * `sampleFactor` is the ratio of the text's path length to the number of
+ * samples. It defaults to 0.1. Higher values produce more points along the
+ * path and are more precise.
+ *
+ * `simplifyThreshold` removes collinear points if it's set to a number other
+ * than 0. The value represents the threshold angle to use when determining
+ * whether two edges are collinear.
  *
  * @method textToPoints
- * @param  {String} txt     a line of text
- * @param  {Number} x        x-position
- * @param  {Number} y        y-position
- * @param  {Number} fontSize font size to use (optional)
- * @param  {Object} [options] an (optional) object that can contain:
- *
- * <br>sampleFactor - the ratio of path-length to number of samples
- * (default=.1); higher values yield more points and are therefore
- * more precise
- *
- * <br>simplifyThreshold - if set to a non-zero value, collinear points will be
- * be removed from the polygon; the value represents the threshold angle to use
- * when determining whether two edges are collinear
- *
- * @return {Array}  an array of points, each with x, y, alpha (the path angle)
+ * @param  {String} str        string of text.
+ * @param  {Number} x          x-coordinate of the text.
+ * @param  {Number} y          y-coordinate of the text.
+ * @param  {Number} [fontSize] font size. Defaults to the current
+ *                             <a href="#/p5/textSize">textSize()</a>.
+ * @param  {Object} [options]  object with sampleFactor and simplifyThreshold
+ *                             properties.
+ * @return {Array} array of point objects, each with x, y, and alpha (path angle) properties.
  * @example
  * <div>
  * <code>
  * let font;
+ *
  * function preload() {
  *   font = loadFont('assets/inconsolata.otf');
  * }
  *
- * let points;
- * let bounds;
  * function setup() {
- *   createCanvas(100, 100);
- *   stroke(0);
- *   fill(255, 104, 204);
- *
- *   points = font.textToPoints('p5', 0, 0, 10, {
- *     sampleFactor: 5,
- *     simplifyThreshold: 0
+ *   background(200);
+ *   let points = font.textToPoints('p5*js', 6, 60, 35, { sampleFactor:  0.5 });
+ *   points.forEach(p =>  {
+ *     point(p.x, p.y);
  *   });
- *   bounds = font.textBounds(' p5 ', 0, 0, 10);
- * }
  *
- * function draw() {
- *   background(255);
- *   beginShape();
- *   translate(-bounds.x * width / bounds.w, -bounds.y * height / bounds.h);
- *   for (let i = 0; i < points.length; i++) {
- *     let p = points[i];
- *     vertex(
- *       p.x * width / bounds.w +
- *         sin(20 * p.y / bounds.h + millis() / 1000) * width / 30,
- *       p.y * height / bounds.h
- *     );
- *   }
- *   endShape(CLOSE);
+ *   describe('A set of black dots outlining the text "p5*js" on a gray background.');
  * }
  * </code>
  * </div>
