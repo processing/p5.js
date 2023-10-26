@@ -221,7 +221,7 @@ suite('p5.Framebuffer', function() {
       myp5.plane(myp5.width, -myp5.height);
 
       // Just check the red channel, other channels might vary across browsers
-      assert.equal(myp5.get(5, 5)[0], 221);
+      assert.equal(myp5.get(5, 5)[0], 232);
     });
   });
 
@@ -287,7 +287,11 @@ suite('p5.Framebuffer', function() {
     suite('the default camera', function() {
       test('it uses the aspect ratio of the framebuffer', function() {
         expect(fbo.defaultCamera.aspectRatio).to.equal(5 / 15);
-        const z = -fbo.height / 2.0 / Math.tan(Math.PI / 3 / 2);
+        expect(fbo.defaultCamera.cameraFOV).to.be.closeTo(
+          2.0 * Math.atan(15 / 2 / 800),
+          0.01
+        );
+        const z = -800;
         const expectedCameraMatrix = [
           1, 0, 0, 0,
           0, 1, 0, 0,
@@ -303,8 +307,11 @@ suite('p5.Framebuffer', function() {
       test('it updates the aspect ratio after resizing', function() {
         fbo.resize(20, 10);
         expect(fbo.defaultCamera.aspectRatio).to.equal(2);
-
-        const z = -fbo.height / 2.0 / Math.tan(Math.PI / 3 / 2);
+        expect(fbo.defaultCamera.cameraFOV).to.be.closeTo(
+          2.0 * Math.atan(10 / 2 / 800),
+          0.01
+        );
+        const z = -800;
         const expectedCameraMatrix = [
           1, 0, 0, 0,
           0, 1, 0, 0,
