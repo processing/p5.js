@@ -1968,16 +1968,16 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       );
       graphic.shader(myShader);
       graphic.clear();
-      myShader.setUniform('environmentMap', img);
+      myShader.setUniform('environmentMap', input);
       myShader.setUniform('roughness', roughness);
       graphic.noStroke();
       graphic.plane(w, w);
       levels.push(graphic.get().drawingContext.getImageData(0, 0, w, w));
       // please check this line?
-      this.specularTextures.set(input,levels);
     }
     graphic.remove();
     tex = new MipmapTexture(this, levels, {});
+    this.specularTextures.set(input,tex);
     return tex;
   }
 
@@ -2096,8 +2096,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       shader.setUniform('environmentMapDiffused', diffusedLight);
       let specularLight = this.getSpecularTexture(this.activeImageLight);
       // shine >= 1 so
-      let roughness = 1/this._useShininess;
       // 0-1*8 = 0-8
+      // 0-8 * 20 = 0-160
+      let roughness = 20/this._useShininess;
       shader.setUniform('levelOfDetail', roughness*8);
       shader.setUniform('environmentMapSpecular', specularLight);
     }
