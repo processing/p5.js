@@ -17,7 +17,7 @@ import './p5.Texture';
  * background, so this method should be used in <a href="#/p5/preload">preload()</a>.
  *
  * Shaders can alter the positioning of shapes drawn with them.
- * To ensure consistency in rendering, it's recommended to use the vertex shader in the <a href="#/p5/createShader">createShader example</a>
+ * To ensure consistency in rendering, it's recommended to use the vertex shader in the <a href="#/p5/createShader">createShader example</a>.
  *
  * Note, shaders can only be used in WEBGL mode.
  *
