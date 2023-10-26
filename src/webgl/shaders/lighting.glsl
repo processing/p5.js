@@ -116,6 +116,10 @@ vec3 calculateImageDiffuse( vec3 vNormal, vec3 vViewPosition ){
   return texture.xyz;
 }
 
+vec3 powCustom(vec3 x, float y) {
+  return exp(y * log(x));
+}
+
 vec3 calculateImageSpecular( vec3 vNormal, vec3 vViewPosition ){
   vec3 worldCameraPosition =  vec3(0.0, 0.0, 0.0);
   vec3 worldNormal = normalize(vNormal);
@@ -129,7 +133,8 @@ vec3 calculateImageSpecular( vec3 vNormal, vec3 vViewPosition ){
 #endif
   // this is to make the darker sections more dark
   // png and jpg usually flatten the brightness so it is to reverse that
-  return pow(outColor.xyz, 10.0);
+  return pow(outColor.xyz, vec3(10.0));
+  // return powCustom(outColor.xyz, 10.0);
 }
 
 void totalLight(

@@ -1905,14 +1905,12 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.textures.set(src, tex);
     return tex;
   }
-
-  // used in imageLight
-  // create a new texture from the img input
   /*
-  To create a blurry image from the input non blurry img
-  Add it to the blurryTexture map
-  Returns the blurry image
-  */
+    *  used in imageLight,
+    *  To create a blurry image from the input non blurry img,
+    *  Add it to the blurryTexture map,
+    *  Returns the blurry image
+   */
   getBlurryTexture(input){
     // if one already exists for a given input image
     if(this.diffusedTextures.get(input)!=null){
@@ -1944,20 +1942,27 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     return newGraphic;
   }
 
+  /*
+   *  used in imageLight,
+   *  To create a texture from the input non blurry image,
+   *  Creating 8 different levels of textures according to different sizes and atoring them in `levels` array
+   *  Creating a new Mipmap texture with that `levels` array
+   *  Storing the texture for input image in map called `specularTextures`
+   */
   getSpecularTexture(input){
     // check if already exits (there are tex of diff resolution so which one to check)
     // currently doing the whole array
-    // please check this line ?
     if(this.specularTextures.get(input)!=null){
       return this.specularTextures.get(input);
     }
-    // What should be the size?
+    // Hardcoded size
     const size = 512;
     let tex;
     const levels = [];
     const graphic = createGraphics(size, size, WEBGL);
     let count = Math.log(size)/Math.log(2);
     graphic.pixelDensity(1);
+    // currently only 8 levels
     for (let w = size; w >= 1; w /= 2) {
       graphic.resizeCanvas(w, w);
       let currCount = Math.log(w)/Math.log(2);
@@ -1973,7 +1978,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       graphic.noStroke();
       graphic.plane(w, w);
       levels.push(graphic.get().drawingContext.getImageData(0, 0, w, w));
-      // please check this line?
     }
     graphic.remove();
     tex = new MipmapTexture(this, levels, {});
