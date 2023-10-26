@@ -127,7 +127,7 @@ vec3 calculateImageSpecular( vec3 vNormal, vec3 vViewPosition ){
 #else
   vec4 outColor = TEXTURE(environmentMapSpecular, newTexCoor);
 #endif
-  return outColor.xyz;
+  return pow(outColor.xyz, 10.0);
 }
 
 void totalLight(
