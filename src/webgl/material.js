@@ -135,20 +135,20 @@ p5.prototype.loadShader = function(
  *
  * // the vertex shader is called for each vertex
  *let vs = `
-* uniform mat4 uModelViewMatrix;
-* uniform mat4 uProjectionMatrix;
-*
-* attribute vec3 aPosition;
-* attribute vec2 aTexCoord;
-* varying vec2 vTexCoord;
-*
-* void main() {
-*   vTexCoord = aTexCoord;
-*   vec4 positionVec4 = vec4(aPosition, 1.0);
-*   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
-* }
-*`;
-
+ * uniform mat4 uModelViewMatrix;
+ * uniform mat4 uProjectionMatrix;
+ *
+ * attribute vec3 aPosition;
+ * attribute vec2 aTexCoord;
+ * varying vec2 vTexCoord;
+ *
+ * void main() {
+ *   vTexCoord = aTexCoord;
+ *   vec4 positionVec4 = vec4(aPosition, 1.0);
+ *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+ *  }
+ *`;
+ *
  *
  * // the fragment shader is called for each pixel
  * let fs =
