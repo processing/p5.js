@@ -118,6 +118,9 @@ p5.prototype.loadShader = function(
  *
  * Note, shaders can only be used in WEBGL mode.
  *
+ * Shaders can alter the positioning of shapes drawn with them.
+ * To ensure consistency in rendering, it's recommended to use the vertex shader shown in the example below.
+ *
  * @method createShader
  * @param {String} vertSrc source code for the vertex shader
  * @param {String} fragSrc source code for the fragment shader
@@ -129,9 +132,6 @@ p5.prototype.loadShader = function(
  * <code>
  * // the 'varying's are shared between both vertex & fragment shaders
  * let varying = 'precision highp float; varying vec2 vPos;';
- *
- * Shaders can alter the positioning of shapes drawn with them.
- * To ensure consistency in rendering, it's recommended to use the vertex shader, as in the example below.
  *
  * // the vertex shader is called for each vertex
  * let vs = `
