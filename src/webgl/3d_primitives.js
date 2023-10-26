@@ -174,7 +174,7 @@ p5.prototype.buildGeometry = function(callback) {
  * from <a href="#/p5/loadModel">loadModel()</a>.
  *
  * @method freeGeometry
- * @param {p5.Geometry} The geometry whose resources should be freed
+ * @param {p5.Geometry} geometry The geometry whose resources should be freed
  */
 p5.prototype.freeGeometry = function(geometry) {
   this._renderer._freeBuffers(geometry.gid);
