@@ -473,16 +473,18 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.spotLightAngle = [];
     this.spotLightConc = [];
 
-    // Null if no image light is set, otherwise, it is set to a p5.Image
-    // made a blurrytexture attribute to be used in imageLight function
-    // this is to lookup image from blurrytexture Map rather from a
-    // texture map
-    this.diffusedTextures = new Map();
-    // map to store the created textures to prevent mis calculation
-    this.specularTextures = new Map();
-    // property to be set true after imageLight is called
-    // then if it is true the setUniform would be done on shader
+    // This property contains the input image if imageLight function
+    // is called.
+    // activeImageLight is checked by _setFillUniforms
+    // for sending uniforms to the fillshader
     this.activeImageLight = null;
+    // If activeImageLight property is Null, diffusedTextures,
+    // specularTextures are Empty.
+    // Else, it maps a p5.Image used by imageLight() to a p5.Graphics.
+    // p5.Graphics for this are calculated in getDiffusedTexture function
+    this.diffusedTextures = new Map();
+    // p5.Graphics for this are calculated in getSpecularTexture function
+    this.specularTextures = new Map();
 
     this.drawMode = constants.FILL;
 
@@ -617,7 +619,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.curStrokeCap = constants.ROUND;
     this.curStrokeJoin = constants.ROUND;
 
-    // repetition
     // map of texture sources to textures created in this gl context via this.getTexture(src)
     this.textures = new Map();
 
@@ -1620,6 +1621,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     properties._currentNormal = this._currentNormal;
     properties.curBlendMode = this.curBlendMode;
 
+    // So that the activeImageLight gets reset in push/pop
+    properties.activeImageLight = this.activeImageLight;
+
     return style;
   }
   pop(...args) {
@@ -1907,23 +1911,20 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
   /*
     *  used in imageLight,
-    *  To create a blurry image from the input non blurry img,
-    *  Add it to the blurryTexture map,
+    *  To create a blurry image from the input non blurry img, if it doesn't already exist
+    *  Add it to the diffusedTexture map,
     *  Returns the blurry image
+    *  maps a p5.Image used by imageLight() to a p5.Graphics
    */
-  getBlurryTexture(input){
+  getDiffusedTexture(input){
     // if one already exists for a given input image
     if(this.diffusedTextures.get(input)!=null){
       return this.diffusedTextures.get(input);
     }
-    // if not, then create one
+    // if not, only then create one
     let newGraphic; // maybe switch to framebuffer
-    // draw the blurry image
-    // set the shader on the graphic and set the shader on the image
-    // this._renderer._applyTextProperties(img, newGraphic);
-    // make small width, hardcode to 200px
+    // hardcoded to 200px, because it's going to be blurry and smooth
     let smallWidth = 200;
-    //let smallWidth = input.width;
     let width = smallWidth;
     let height = Math.floor(smallWidth * (input.height / input.width));
     newGraphic = createGraphics(width, height, WEBGL);
@@ -1944,10 +1945,12 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
   /*
    *  used in imageLight,
-   *  To create a texture from the input non blurry image,
-   *  Creating 8 different levels of textures according to different sizes and atoring them in `levels` array
+   *  To create a texture from the input non blurry image, if it doesn't already exist
+   *  Creating 8 different levels of textures according to different
+   *  sizes and atoring them in `levels` array
    *  Creating a new Mipmap texture with that `levels` array
    *  Storing the texture for input image in map called `specularTextures`
+   *  maps the input p5.Image to a p5.MipmapTexture
    */
   getSpecularTexture(input){
     // check if already exits (there are tex of diff resolution so which one to check)
@@ -1963,6 +1966,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     let count = Math.log(size)/Math.log(2);
     graphic.pixelDensity(1);
     // currently only 8 levels
+    // This loop calculates 8 graphics of varying size of canvas
+    // and corresponding different roughness levels.
+    // Roughness increases with the decrease in canvas size,
+    // because rougher surfaces have less detailed/more blurry reflections.
     for (let w = size; w >= 1; w /= 2) {
       graphic.resizeCanvas(w, w);
       let currCount = Math.log(w)/Math.log(2);
@@ -2030,7 +2037,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     fillShader.setUniform('uEmissive', this._useEmissiveMaterial);
     fillShader.setUniform('uShininess', this._useShininess);
 
-    // calling the _setImageLightUniforms from here
     this._setImageLightUniforms(fillShader);
 
     fillShader.setUniform('uUseLighting', this._enableLighting);
@@ -2086,22 +2092,20 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   // getting called from _setFillUniforms
   _setImageLightUniforms(shader){
     //set uniform values
-    if( this.activeImageLight == null ){
-      console.log('activeImageLight prop is null');
-    }
     shader.setUniform('uUseImageLight', this.activeImageLight != null );
     // true
     if (this.activeImageLight) {
       // this.activeImageLight has image as a key
-      // look up the texture from the blurryTexture map
-      // change the name of shader of diffused to prevent confusion
-      let diffusedLight = this.getBlurryTexture(this.activeImageLight);
-      // change the name of this uniform as diff for diffused and specular
+      // look up the texture from the diffusedTexture map
+      let diffusedLight = this.getDiffusedTexture(this.activeImageLight);
       shader.setUniform('environmentMapDiffused', diffusedLight);
       let specularLight = this.getSpecularTexture(this.activeImageLight);
-      // shine >= 1 so
-      // 0-1*8 = 0-8
-      // 0-8 * 20 = 0-160
+      // In p5js the range of shininess is >= 1,
+      // Therefore roughness range will be ([0,1]*8)*20 or [0, 160]
+      // The factor of 8 is because currently the getSpecularTexture
+      // only calculated 8 different levels of roughness
+      // The factor of 20 is just to spread up this range so that,
+      // [1, max] of shininess is converted to [0,160] of roughness
       let roughness = 20/this._useShininess;
       shader.setUniform('levelOfDetail', roughness*8);
       shader.setUniform('environmentMapSpecular', specularLight);

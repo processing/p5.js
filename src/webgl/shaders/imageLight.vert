@@ -1,5 +1,4 @@
-// add precision
-
+precision highp float;
 attribute vec3 aPosition;
 attribute vec3 aNormal;
 attribute vec2 aTexCoord;

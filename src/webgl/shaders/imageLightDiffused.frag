@@ -1,4 +1,4 @@
-precision mediump float;
+precision highp float;
 varying vec3 localPos;
 
 // the HDR cubemap converted (can be from an equirectangular environment map.)
@@ -6,17 +6,6 @@ uniform sampler2D environmentMap;
 varying vec2 vTexCoord;
 
 const float PI = 3.14159265359;
-
-// not needed
-vec2 normalToEquirectangular( vec3 v){
-  vec2 uv;
-  // taking the arctangent of the v.z and v.x components and dividing it by the circumference of a circle
-  // Adding 0.5 ensures that the resulting value is in the range [0, 1].
-  uv.x = atan(v.z, v.x) / 3.14159 + 0.5;
-  // taking the arcsine of the v.y component and dividing it by the half circumference of a circle
-  uv.y = asin(v.y) / 3.14159 + 0.5;
-  return uv;
-}
 
 vec2 nTOE( vec3 v ){
   // x = r sin(phi) cos(theta)   
@@ -49,13 +38,16 @@ void main()
   float z = cos(theta);
   vec3 normal = vec3( x, y, z);
 
-	// Discretely sampling the hemisphere given the integral's spherical coordinates translates to the following fragment code:
+	// Discretely sampling the hemisphere given the integral's
+  // spherical coordinates translates to the following fragment code:
 	vec3 irradiance = vec3(0.0);  
 	vec3 up	= vec3(0.0, 1.0, 0.0);
 	vec3 right = normalize(cross(up, normal));
 	up = normalize(cross(normal, right));
 
-	//  We specify a fixed sampleDelta delta value to traverse the hemisphere; decreasing or increasing the sample delta will increase or decrease the accuracy respectively.
+	//  We specify a fixed sampleDelta delta value to traverse
+  // the hemisphere; decreasing or increasing the sample delta
+  // will increase or decrease the accuracy respectively.
 	const float sampleDelta = 0.025;
 	float nrSamples = 0.0;
   

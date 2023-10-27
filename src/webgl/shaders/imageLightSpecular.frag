@@ -1,5 +1,4 @@
-precision mediump float;
-
+precision highp float;
 varying vec3 localPos;
 varying vec2 vTexCoord;
 
