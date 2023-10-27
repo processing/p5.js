@@ -621,18 +621,13 @@ class Renderer2D extends p5.Renderer{
         return this;
       }
     }
-    const xm = x + w / 2, // x-middle
-      ym = y + h / 2, // y-middle
+    const centerX = x + w / 2,
+      centerY = y + h / 2,
       radiusX = w / 2,
       radiusY = h / 2;
     if (!this._clipping) ctx.beginPath();
-    // ctx.moveTo(x, y);
-    // ctx.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
-    // ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
-    // ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-    // ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
 
-    this.drawingContext.ellipse(xm, ym,radiusX, radiusY, 0, 0, 2 * Math.PI);
+    ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
 
     if (!this._clipping && doFill) {
       ctx.fill();
