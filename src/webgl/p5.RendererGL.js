@@ -1927,7 +1927,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     let smallWidth = 200;
     let width = smallWidth;
     let height = Math.floor(smallWidth * (input.height / input.width));
-    newGraphic = this._pInst.createGraphics(width, height, WEBGL);
+    newGraphic = this._pInst.createGraphics(width, height, constants.WEBGL);
     // create graphics is like making a new sketch, all functions on main
     // sketch it would be available on graphics
     let irradiance = newGraphic.createShader(
@@ -1962,7 +1962,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     const size = 512;
     let tex;
     const levels = [];
-    const graphic = this._pInst.createGraphics(size, size, WEBGL);
+    const graphic = this._pInst.createGraphics(size, size, constants.WEBGL);
     let count = Math.log(size)/Math.log(2);
     graphic.pixelDensity(1);
     // currently only 8 levels

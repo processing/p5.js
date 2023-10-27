@@ -533,7 +533,7 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  *   imageLight(img);
  *   // This will use specular once we add it
  *   specularMaterial(20);
- *   shininess(slider.value());
+ *   // shininess(slider.value());
  *   // orbitControl();
  *   noStroke();
  *   scale(2);
