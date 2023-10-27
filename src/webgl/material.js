@@ -186,7 +186,7 @@ p5.prototype.loadShader = function(
  * function draw() {
  *   // 'r' is the size of the image in Mandelbrot-space
  *   mandel.setUniform('r', 1.5 * exp(-6.5 * (1 + sin(millis() / 2000))));
- *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
+ *   plane(width, height);
  * }
  * </code>
  * </div>
