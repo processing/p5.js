@@ -516,7 +516,7 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  * @method imageLight
  * @param  {p5.image}    img  image for the background
  * @example
- * <div>
+ * <div class="notest">
  * <code>
  * let img;
  * function preload() {
@@ -546,7 +546,7 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  * @alt
  * image light example
  * @example
- * <div>
+ * <div class="notest">
  * <code>
  * let img;
  * let slider;
