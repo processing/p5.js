@@ -498,20 +498,20 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  * Creates an image light with the given image.
  *
  * The image light stimulates light from all the directions.
- * This is done by using the image as a texture for a relatively
- * very huge light in a form of a sphere. This sphere contains
+ * This is done by using the image as a texture for an infinitely
+ * large sphere light. This sphere contains
  * or encapsulates the whole scene/drawing.
  * It will have different effect for varying shininess of the
  * object in the drawing.
  * Under the hood it is mainly doing 2 types of calculations,
- * first one is creating an irradiance map from the
+ * the first one is creating an irradiance map the
  * environment map of the input image.
- * Second one is managing reflections based on the shininess
+ * The second one is managing reflections based on the shininess
  * or roughness of the material used in the scene.
  *
  * Note: The image's diffuse light will be affected by fill()
  * and the specular reflections will be affected by specularMaterial()
- * and shininess()
+ * and shininess().
  *
  * @method imageLight
  * @param  {p5.image}    img  image for the background
@@ -520,26 +520,27 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  * <code>
  * let img;
  * function preload() {
- *   img = loadImage('assets/laDefense.jpg');
+ *   img = loadImage('assets/outdoor_spheremap.jpg');
  * }
  * function setup() {
- *   createCanvas(windowWidth, 400, WEBGL);
+ *   createCanvas(100, 100, WEBGL);
  * }
  * function draw() {
  *   background(220);
  *   imageMode(CENTER);
+ *   push();
+ *   translate(0, 0, -200);
+ *   scale(2);
  *   image(img, 0, 0, width, height);
+ *   pop();
  *   ambientLight(50);
  *   imageLight(img);
- *   // This will use specular once we add it
  *   specularMaterial(20);
- *   // shininess(slider.value());
- *   // orbitControl();
  *   noStroke();
  *   scale(2);
  *   rotateX(frameCount * 0.005);
  *   rotateY(frameCount * 0.005);
- *   box(50);
+ *   box(25);
  * }
  * </code>
  * </div>
@@ -551,29 +552,28 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  * let img;
  * let slider;
  * function preload() {
- *   img = loadImage('assets/laDefense.jpg');
+ *   img = loadImage('assets/outdoor_spheremap.jpg');
  * }
  * function setup() {
- *   createCanvas(windowWidth, 400, WEBGL);
- *   slider = createSlider(0, 800, 100, 1);
+ *   createCanvas(100, 100, WEBGL);
+ *   slider = createSlider(0, 400, 100, 1);
  *   slider.position(0, height);
  * }
  * function draw() {
  *   background(220);
  *   imageMode(CENTER);
+ *   push();
+ *   translate(0, 0, -200);
+ *   scale(2);
  *   image(img, 0, 0, width, height);
+ *   pop();
  *   ambientLight(50);
  *   imageLight(img);
- *   // This will use specular once we add it
  *   specularMaterial(20);
  *   shininess(slider.value());
- *   // orbitControl();
  *   noStroke();
  *   scale(2);
- *   // sphere(50)
- *   rotateX(frameCount * 0.005);
- *   rotateY(frameCount * 0.005);
- *   box(50);
+ *   sphere(15);
  * }
  * </code>
  * </div>

@@ -84,29 +84,7 @@ float map(float value, float min1, float max1, float min2, float max2) {
   return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
 }
 
-/*
-vec2 mapTextureToNormal( vec3 normal ){
-  // x = r sin(phi) cos(theta)
-  // y = r cos(phi)
-  // z = r sin(phi) sin(theta)
-  float phi = acos( normal.y );
-  // if phi is 0, then there are no x, z components
-  float theta = 0.0;
-  // else 
-  if(  abs(sin(phi)) > 0.0 ){
-    theta = acos( normal.x / sin(phi) );
-  }   
-
-  vec2 newTexCoor = vec2(
-    map(theta, 0., PI, 0., 1.),
-    map(phi, 0., PI, 1., 0.)
-  );
-
-  return newTexCoor;
-}
-*/
-
-vec2 nToE( vec3 v ){
+vec2 mapTextureToNormal( vec3 v ){
   // x = r sin(phi) cos(theta)   
   // y = r cos(phi)  
   // z = r sin(phi) sin(theta)
@@ -123,7 +101,7 @@ vec2 nToE( vec3 v ){
   theta = theta / (2.0 * 3.14159);
   phi = phi / 3.14159 ;
   
-  vec2 angles = vec2( phi, theta );
+  vec2 angles = vec2( fract(theta + 0.75), 1.0 - phi );
   return angles;
 }
 
@@ -135,19 +113,11 @@ vec3 calculateImageDiffuse( vec3 vNormal, vec3 vViewPosition ){
   vec3 lightDirection = normalize( vViewPosition - worldCameraPosition );
   vec3 R = reflect(lightDirection, worldNormal);
   // use worldNormal instead of R
-  // added nToE instead of this, remove this completely if the
-  // new function works
-  // vec2 newTexCoor = mapTextureToNormal( R );
-  vec2 newTexCoor = nToE( R );
+  vec2 newTexCoor = mapTextureToNormal( R );
   vec4 texture = TEXTURE( environmentMapDiffused, newTexCoor );
-  // return texture.xyz;
   // this is to make the darker sections more dark
   // png and jpg usually flatten the brightness so it is to reverse that
-  return pow(texture.xyz, vec3(10.0));
-}
-
-vec3 powCustom(vec3 x, float y) {
-  return exp(y * log(x));
+  return smoothstep(vec3(0.0), vec3(0.8), texture.xyz);
 }
 
 vec3 calculateImageSpecular( vec3 vNormal, vec3 vViewPosition ){
@@ -155,9 +125,7 @@ vec3 calculateImageSpecular( vec3 vNormal, vec3 vViewPosition ){
   vec3 worldNormal = normalize(vNormal);
   vec3 lightDirection = normalize( vViewPosition - worldCameraPosition );
   vec3 R = reflect(lightDirection, worldNormal);
-  // new function works
-  // vec2 newTexCoor = mapTextureToNormal( R );
-  vec2 newTexCoor = nToE( R );
+  vec2 newTexCoor = mapTextureToNormal( R );
 #ifdef WEBGL2
   vec4 outColor = textureLod(environmentMapSpecular, newTexCoor, levelOfDetail);
 #else
@@ -166,7 +134,6 @@ vec3 calculateImageSpecular( vec3 vNormal, vec3 vViewPosition ){
   // this is to make the darker sections more dark
   // png and jpg usually flatten the brightness so it is to reverse that
   return pow(outColor.xyz, vec3(10.0));
-  // return powCustom(outColor.xyz, 10.0);
 }
 
 void totalLight(
