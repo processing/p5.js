@@ -1127,6 +1127,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
     // draw pg contents onto main renderer
     this._pInst.push();
+    this._pInst.resetMatrix();     // Reset the transformation matrix to identity
+    this._pInst.clear();   // Clear the canvas
+    this._pInst.blendMode(this._pInst.BLEND);   // Set blend mode to BLEND
     this._pInst.noStroke();
     this._pInst.image(pg, -this.width/2, -this.height/2,
       this.width, this.height);
