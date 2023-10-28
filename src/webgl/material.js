@@ -135,6 +135,7 @@ p5.prototype.loadShader = function(
  *
  * // the vertex shader is called for each vertex
  * let vs = `
+ * precision highp float;
  * uniform mat4 uModelViewMatrix;
  * uniform mat4 uProjectionMatrix;
  *
