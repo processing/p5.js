@@ -130,8 +130,6 @@ p5.prototype.loadShader = function(
  * @example
  * <div modernizr='webgl'>
  * <code>
- * // the 'varying's are shared between both vertex & fragment shaders
- * let varying = 'precision highp float; varying vec2 vPos;';
  *
  * // the vertex shader is called for each vertex
  * let vs = `
@@ -157,6 +155,7 @@ p5.prototype.loadShader = function(
  *    uniform vec2 p; 
  *    uniform float r; 
  *    const int I = 500; 
+ *    varying vec2 vTexCoord;
  *    void main() { 
  *      vec2 c = p + gl_FragCoord.xy * r, z = c; 
  *      float n = 0.0; 
