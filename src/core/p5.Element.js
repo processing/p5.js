@@ -25,21 +25,6 @@ import p5 from './main';
  * <div>
  * <code>
  * function setup() {
- *   let cnv = createCanvas(100, 100);
- *   cnv.mousePressed(() => {
- *     circle(mouseX, mouseY, 20);
- *   });
- *
- *   background(200);
- *
- *   describe('White circles appear on a gray square where the mouse is pressed.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
  *   createCanvas(100, 100);
  *
  *   background(200);
