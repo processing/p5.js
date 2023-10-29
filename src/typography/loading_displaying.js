@@ -14,75 +14,117 @@ import '../core/friendly_errors/file_errors';
 import '../core/friendly_errors/fes_core';
 
 /**
- * Loads an opentype font file (.otf, .ttf) from a file or a URL,
- * and returns a <a href="#/p5.Font">p5.Font</a> object. This function
- * is asynchronous, meaning it may not finish before the next line in
- * your sketch is executed.
+ * Loads a font and creates a <a href="#/p5.Font">p5.Font</a> object.
+ * `loadFont()` can load fonts in either .otf or .ttf format. Loaded fonts can
+ * be used to style text on the canvas and in HTML elements.
  *
- * The path to the font should be relative to the HTML file
- * that links in your sketch. Loading fonts from a URL or other
- * remote location may be blocked due to your browser's built-in
+ * The first parameter, `path`, is the path to a font file.
+ * Paths to local files should be relative. For example,
+ * `'assets/inconsolata.otf'`. The Inconsolata font used in the following
+ * examples can be downloaded for free
+ * <a href="https://www.fontsquirrel.com/fonts/inconsolata" target="_blank">here</a>.
+ * Paths to remote files should be URLs. For example,
+ * `'https://example.com/inconsolata.otf'`. URLs may be blocked due to browser
  * security.
  *
+ * The second parameter, `successCallback`, is optional. If a function is
+ * passed, it will be called once the font has loaded. The callback function
+ * may use the new <a href="#/p5.Font">p5.Font</a> object if needed.
+ *
+ * The third parameter, `failureCallback`, is also optional. If a function is
+ * passed, it will be called if the font fails to load. The callback function
+ * may use the error
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/Event" target="_blank">Event</a>
+ * object if needed.
+ *
+ * Fonts can take time to load. Calling `loadFont()` in
+ * <a href="#/p5/preload">preload()</a> ensures fonts load before they're
+ * used in <a href="#/p5/setup">setup()</a> or
+ * <a href="#/p5/draw">draw()</a>.
+ *
  * @method loadFont
- * @param  {String}        path       name of the file or url to load
- * @param  {Function}      [callback] function to be executed after
- *                                    <a href="#/p5/loadFont">loadFont()</a> completes
- * @param  {Function}      [onError]  function to be executed if
- *                                    an error occurs
- * @return {p5.Font}                  <a href="#/p5.Font">p5.Font</a> object
+ * @param  {String}        path              path of the font to be loaded.
+ * @param  {Function}      [successCallback] function called with the
+ *                                           <a href="#/p5.Font">p5.Font</a> object after it
+ *                                           loads.
+ * @param  {Function}      [failureCallback] function called with the error
+ *                                           <a href="https://developer.mozilla.org/en-US/docs/Web/API/Event" target="_blank">Event</a>
+ *                                           object if the font fails to load.
+ * @return {p5.Font}                         <a href="#/p5.Font">p5.Font</a> object.
  * @example
  *
- * Calling loadFont() inside <a href="#/p5/preload">preload()</a> guarantees
- * that the load operation will have completed before <a href="#/p5/setup">setup()</a>
- * and <a href="#/p5/draw">draw()</a> are called.
+ * <div>
+ * <code>
+ * let font;
  *
- * <div><code>
- * let myFont;
  * function preload() {
- *   myFont = loadFont('assets/inconsolata.otf');
+ *   font = loadFont('assets/inconsolata.otf');
  * }
  *
  * function setup() {
- *   fill('#ED225D');
- *   textFont(myFont);
+ *   fill('deeppink');
+ *   textFont(font);
  *   textSize(36);
  *   text('p5*js', 10, 50);
+ *
+ *   describe('The text "p5*js" written in pink on a white background.');
  * }
- * </code></div>
+ * </code>
+ * </div>
  *
- * Outside of <a href="#/p5/preload">preload()</a>, you may supply a
- * callback function to handle the object:
- *
- * <div><code>
+ * <div>
+ * <code>
  * function setup() {
- *   loadFont('assets/inconsolata.otf', drawText);
+ *   loadFont('assets/inconsolata.otf', font => {
+ *     fill('deeppink');
+ *     textFont(font);
+ *     textSize(36);
+ *     text('p5*js', 10, 50);
+ *
+ *     describe('The text "p5*js" written in pink on a white background.');
+ *   });
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   loadFont('assets/inconsolata.otf', success, failure);
  * }
  *
- * function drawText(font) {
- *   fill('#ED225D');
- *   textFont(font, 36);
+ * function success(font) {
+ *   fill('deeppink');
+ *   textFont(font);
+ *   textSize(36);
  *   text('p5*js', 10, 50);
+ *
+ *   describe('The text "p5*js" written in pink on a white background.');
  * }
- * </code></div>
  *
- * You can also use the font filename string (without the file extension) to
- * style other HTML elements.
+ * function failure(event) {
+ *   console.error('Oops!', event);
+ * }
+ * </code>
+ * </div>
  *
- * <div><code>
+ * <div>
+ * <code>
  * function preload() {
  *   loadFont('assets/inconsolata.otf');
  * }
  *
  * function setup() {
- *   let myDiv = createDiv('hello there');
- *   myDiv.style('font-family', 'Inconsolata');
- * }
- * </code></div>
+ *   let p = createP('p5*js');
+ *   p.style('color', 'deeppink');
+ *   p.style('font-family', 'Inconsolata');
+ *   p.style('font-size', '36px');
+ *   p.position(10, 50);
  *
- * @alt
- * p5*js in p5's theme dark pink
- * p5*js in p5's theme dark pink
+ *   describe('The text "p5*js" written in pink on a white background.');
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.loadFont = function(path, onSuccess, onError) {
   p5._validateParameters('loadFont', arguments);
@@ -138,88 +180,150 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
 };
 
 /**
- * Draws text to the screen. Displays the information specified in the first
- * parameter on the screen in the position specified by the additional
- * parameters. A default font will be used unless a font is set with the
- * <a href="#/p5/textFont">textFont()</a> function and a default size will be
- * used unless a font is set with <a href="#/p5/textSize">textSize()</a>. Change
- * the color of the text with the <a href="#/p5/fill">fill()</a> function. Change
- * the outline of the text with the <a href="#/p5/stroke">stroke()</a> and
- * <a href="#/p5/strokeWeight">strokeWeight()</a> functions.
+ * Draws text to the canvas.
  *
- * The text displays in relation to the <a href="#/p5/textAlign">textAlign()</a>
- * function, which gives the option to draw to the left, right, and center of the
- * coordinates.
+ * The first parameter, `str`, is the text to be drawn. The second and third
+ * parameters, `x` and `y`, set the coordinates of the text's bottom-left
+ * corner. See <a href="#/p5/textAlign">textAlign()</a> for other ways to
+ * align text.
  *
- * The x2 and y2 parameters define a rectangular area to display within and
- * may only be used with string data. When these parameters are specified,
- * they are interpreted based on the current <a href="#/p5/rectMode">rectMode()</a>
- * setting. Text that does not fit completely within the rectangle specified will
- * not be drawn to the screen. If x2 and y2 are not specified, the baseline
- * alignment is the default, which means that the text will be drawn upwards
- * from x and y.
+ * The fourth and fifth parameters, `maxWidth` and `maxHeight`, are optional.
+ * They set the dimensions of the invisible rectangle containing the text. By
+ * default, they set its  maximum width and height. See
+ * <a href="#/p5/rectMode">rectMode()</a> for other ways to define the
+ * rectangular text box. Text will wrap to fit within the text box. Text
+ * outside of the box won't be drawn.
  *
- * <b>WEBGL</b>: Only opentype/truetype fonts are supported. You must load a font
- * using the <a href="#/p5/loadFont">loadFont()</a> method (see the example above).
- * <a href="#/p5/stroke">stroke()</a> currently has no effect in webgl mode.
- * Learn more about working with text in webgl mode on the
- * <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5#text">wiki</a>.
+ * Text can be styled a few ways. Call the <a href="#/p5/fill">fill()</a>
+ * function to set the text's fill color. Call
+ * <a href="#/p5/stroke">stroke()</a> and
+ * <a href="#/p5/strokeWeight">strokeWeight()</a> to set the text's outline.
+ * Call <a href="#/p5/textSize">textSize()</a> and
+ * <a href="#/p5/textFont">textFont()</a> to set the text's size and font,
+ * respectively.
+ *
+ * Note: `WEBGL` mode only supports fonts loaded with
+ * <a href="#/p5/loadFont">loadFont()</a>. Calling
+ * <a href="#/p5/stroke">stroke()</a> has no effect in `WEBGL` mode.
  *
  * @method text
- * @param {String|Object|Array|Number|Boolean} str the alphanumeric
- *                                             symbols to be displayed
- * @param {Number} x   x-coordinate of text
- * @param {Number} y   y-coordinate of text
- * @param {Number} [x2]  by default, the width of the text box,
- *                     see <a href="#/p5/rectMode">rectMode()</a> for more info
- * @param {Number} [y2]  by default, the height of the text box,
- *                     see <a href="#/p5/rectMode">rectMode()</a> for more info
+ * @param {String|Object|Array|Number|Boolean} str text to be displayed.
+ * @param {Number} x          x-coordinate of the text box.
+ * @param {Number} y          y-coordinate of the text box.
+ * @param {Number} [maxWidth] maximum width of the text box. See
+ *                            <a href="#/p5/rectMode">rectMode()</a> for
+ *                            other options.
+ * @param {Number} [maxHeight] maximum height of the text box. See
+ *                            <a href="#/p5/rectMode">rectMode()</a> for
+ *                            other options.
+ *
  * @chainable
  * @example
  * <div>
  * <code>
- * textSize(32);
- * text('word', 10, 30);
- * fill(0, 102, 153);
- * text('word', 10, 60);
- * fill(0, 102, 153, 51);
- * text('word', 10, 90);
+ * function setup() {
+ *   background(200);
+ *   text('hi', 50, 50);
+ *
+ *   describe('The text "hi" written in black in the middle of a gray square.');
+ * }
  * </code>
  * </div>
+ *
  * <div>
  * <code>
- * let s = 'The quick brown fox jumped over the lazy dog.';
- * fill(50);
- * text(s, 10, 10, 70, 80); // Text wraps within text box
+ * function setup() {
+ *   background('skyblue');
+ *   textSize(100);
+ *   text('🌈', 0, 100);
+ *
+ *   describe('A rainbow in a blue sky.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   textSize(32);
+ *   fill(255);
+ *   stroke(0);
+ *   strokeWeight(4);
+ *   text('hi', 50, 50);
+ *
+ *   describe('The text "hi" written in white with a black outline.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   background('black');
+ *   textSize(22);
+ *   fill('yellow');
+ *   text('rainbows', 6, 20);
+ *   fill('cornflowerblue');
+ *   text('rainbows', 6, 45);
+ *   fill('tomato');
+ *   text('rainbows', 6, 70);
+ *   fill('limegreen');
+ *   text('rainbows', 6, 95);
+ *
+ *   describe('The text "rainbows" written on several lines, each in a different color.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   background(200);
+ *   let s = 'The quick brown fox jumps over the lazy dog.';
+ *   text(s, 10, 10, 70, 80);
+ *
+ *   describe('The sample text "The quick brown fox..." written in black across several lines.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   background(200);
+ *   rectMode(CENTER);
+ *   let s = 'The quick brown fox jumps over the lazy dog.';
+ *   text(s, 50, 50, 70, 80);
+ *
+ *   describe('The sample text "The quick brown fox..." written in black across several lines.');
+ * }
  * </code>
  * </div>
  *
  * <div modernizr='webgl'>
  * <code>
- * let inconsolata;
+ * let font;
+ *
  * function preload() {
- *   inconsolata = loadFont('assets/inconsolata.otf');
+ *   font = loadFont('assets/inconsolata.otf');
  * }
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   textFont(inconsolata);
- *   textSize(width / 3);
+ *   textFont(font);
+ *   textSize(32);
  *   textAlign(CENTER, CENTER);
  * }
+ *
  * function draw() {
  *   background(0);
- *   let time = millis();
- *   rotateX(time / 1000);
- *   rotateZ(time / 1234);
- *   text('p5.js', 0, 0);
+ *   rotateY(frameCount / 30);
+ *   text('p5*js', 0, 0);
+ *
+ *   describe('The text "p5*js" written in white and spinning in 3D.');
  * }
  * </code>
  * </div>
- *
- * @alt
- * 'word' displayed 3 times going from black, blue to translucent blue
- * The text 'The quick brown fox jumped over the lazy dog' displayed.
- * The text 'p5.js' spinning in 3d
  */
 p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   p5._validateParameters('text', arguments);
@@ -229,60 +333,92 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 };
 
 /**
- * Sets the current font that will be drawn with the <a href="#/p5/text">text()</a> function.
- * If textFont() is called without any argument, it will return the current font if one has
- * been set already. If not, it will return the name of the default font as a string.
- * If textFont() is called with a font to use, it will return the p5 object.
+ * Sets the font used by the <a href="#/p5/text">text()</a> function.
  *
- * <b>WEBGL</b>: Only fonts loaded via <a href="#/p5/loadFont">loadFont()</a> are supported.
+ * The first parameter, `font`, sets the font. `textFont()` recognizes either
+ * a <a href="#/p5.Font">p5.Font</a> object or a string with the name of a
+ * system font. For example, `'Courier New'`.
+ *
+ * The second parameter, `size`, is optional. It sets the font size in pixels.
+ * This has the same effect as calling <a href="#/p5/textSize">textSize()</a>.
+ *
+ * Note: `WEBGL` mode only supports fonts loaded with
+ * <a href="#/p5/loadFont">loadFont()</a>.
  *
  * @method textFont
- * @return {Object} the current font / p5 Object
+ * @return {Object} current font or p5 Object.
  *
  * @example
  * <div>
  * <code>
- * fill(0);
- * textSize(12);
- * textFont('Georgia');
- * text('Georgia', 12, 30);
- * textFont('Helvetica');
- * text('Helvetica', 12, 60);
+ * function setup() {
+ *   background(200);
+ *   textFont('Courier New');
+ *   textSize(24);
+ *   text('hi', 35, 55);
+ *
+ *   describe('The text "hi" written in a black, monospace font on a gray background.');
+ * }
  * </code>
  * </div>
+ *
  * <div>
  * <code>
- * let fontRegular, fontItalic, fontBold;
+ * function setup() {
+ *   background('black');
+ *   fill('palegreen');
+ *   textFont('Courier New', 10);
+ *   text('You turn to the left and see a door. Do you enter?', 5, 5, 90, 90);
+ *   text('>', 5, 70);
+ *
+ *   describe('A text prompt from a game is written in a green, monospace font on a black background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   background(200);
+ *   textFont('Verdana');
+ *   let currentFont = textFont();
+ *   text(currentFont, 25, 50);
+ *
+ *   describe('The text "Verdana" written in a black, sans-serif font on a gray background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let fontRegular;
+ * let fontItalic;
+ * let fontBold;
+ *
  * function preload() {
  *   fontRegular = loadFont('assets/Regular.otf');
  *   fontItalic = loadFont('assets/Italic.ttf');
  *   fontBold = loadFont('assets/Bold.ttf');
  * }
+ *
  * function setup() {
- *   background(210);
- *   fill(0);
- *   strokeWeight(0);
- *   textSize(10);
+ *   background(200);
  *   textFont(fontRegular);
- *   text('Font Style Normal', 10, 30);
+ *   text('I am Normal', 10, 30);
  *   textFont(fontItalic);
- *   text('Font Style Italic', 10, 50);
+ *   text('I am Italic', 10, 50);
  *   textFont(fontBold);
- *   text('Font Style Bold', 10, 70);
+ *   text('I am Bold', 10, 70);
+ *
+ *   describe('The statements "I am Normal", "I am Italic", and "I am Bold" written in black on separate lines. The statements have normal, italic, and bold fonts, respectively.');
  * }
  * </code>
  * </div>
- *
- * @alt
- * word 'Georgia' displayed in font Georgia and 'Helvetica' in font Helvetica
- * words Font Style Normal displayed normally, Italic in italic and bold in bold
  */
 /**
  * @method textFont
- * @param {Object|String} font a font loaded via <a href="#/p5/loadFont">loadFont()</a>,
- * or a String representing a <a href="https://mzl.la/2dOw8WD">web safe font</a>
- * (a font that is generally available across all systems)
- * @param {Number} [size] the font size to use
+ * @param {Object|String} font font as a <a href="#/p5.Font">p5.Font</a> object or a string.
+ * @param {Number} [size] font size in pixels.
  * @chainable
  */
 p5.prototype.textFont = function(theFont, theSize) {

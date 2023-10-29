@@ -1622,7 +1622,8 @@ p5.Camera = class Camera {
       'eyeX', 'eyeY', 'eyeZ',
       'centerX', 'centerY', 'centerZ',
       'upX', 'upY', 'upZ',
-      'cameraFOV', 'aspectRatio', 'cameraNear', 'cameraFar', 'cameraType'
+      'cameraFOV', 'aspectRatio', 'cameraNear', 'cameraFar', 'cameraType',
+      'yScale'
     ];
     for (const keyName of keyNamesOfThePropToCopy) {
       this[keyName] = cam[keyName];
@@ -1945,12 +1946,12 @@ p5.Camera = class Camera {
   // @TODO: combine this function with _setDefaultCamera to compute these values
   // as-needed
   _computeCameraDefaultSettings() {
-    this.defaultCameraFOV = 60 / 180 * Math.PI;
     this.defaultAspectRatio = this._renderer.width / this._renderer.height;
     this.defaultEyeX = 0;
     this.defaultEyeY = 0;
-    this.defaultEyeZ =
-      this._renderer.height / 2.0 / Math.tan(this.defaultCameraFOV / 2.0);
+    this.defaultEyeZ = 800;
+    this.defaultCameraFOV =
+      2 * Math.atan(this._renderer.height / 2 / this.defaultEyeZ);
     this.defaultCenterX = 0;
     this.defaultCenterY = 0;
     this.defaultCenterZ = 0;
@@ -1985,12 +1986,9 @@ p5.Camera = class Camera {
     // If we're using the default camera, update the aspect ratio
     if (this.cameraType === 'default') {
       this._computeCameraDefaultSettings();
-      this._setDefaultCamera();
-    } else {
-      this.perspective(
-        this.cameraFOV,
-        this._renderer.width / this._renderer.height
-      );
+      this.cameraFOV = this.defaultCameraFOV;
+      this.aspectRatio = this.defaultAspectRatio;
+      this.perspective();
     }
   }
 
@@ -2019,6 +2017,7 @@ p5.Camera = class Camera {
 
     _cam.cameraMatrix = this.cameraMatrix.copy();
     _cam.projMatrix = this.projMatrix.copy();
+    _cam.yScale = this.yScale;
 
     return _cam;
   }
