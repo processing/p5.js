@@ -497,7 +497,7 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
 /**
  * Creates an image light with the given image.
  *
- * The image light stimulates light from all the directions.
+ * The image light simulates light from all the directions.
  * This is done by using the image as a texture for an infinitely
  * large sphere light. This sphere contains
  * or encapsulates the whole scene/drawing.
