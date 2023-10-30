@@ -5331,6 +5331,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "yashpandey06",
+      "name": "Yash Pandey",
+      "avatar_url": "https://avatars.githubusercontent.com/u/97700473?v=4",
+      "profile": "https://yash-portfolio-bice.vercel.app/",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "repoType": "github",
