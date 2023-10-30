@@ -1818,10 +1818,10 @@ p5.Camera = class Camera {
     const rotMat1 = cam1.cameraMatrix.createSubMatrix3x3();
 
     // get front and up vector from local-coordinate-system.
-    const front0 = rotMat0.column(2);
-    const front1 = rotMat1.column(2);
-    const up0 = rotMat0.column(1);
-    const up1 = rotMat1.column(1);
+    const front0 = rotMat0.row(2);
+    const front1 = rotMat1.row(2);
+    const up0 = rotMat0.row(1);
+    const up1 = rotMat1.row(1);
 
     // prepare new vectors.
     const newFront = new p5.Vector();
