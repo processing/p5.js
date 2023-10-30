@@ -101,5 +101,11 @@ import './webgl/p5.Texture';
 import './webgl/text';
 
 import './core/init';
+import initializeInternationalization from './i18n/index';
+
+initializeInternationalization(p5);
+
+
+
 
 module.exports = p5;

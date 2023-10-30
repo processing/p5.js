@@ -16,13 +16,13 @@ module.exports = grunt => {
         },
         port: 9001,
         open,
-        middleware: function(connect, options, middlewares) {
+        middleware: function (connect, options, middlewares) {
           middlewares.unshift(
             require('connect-modrewrite')([
               '^/assets/js/p5(\\.min)?\\.js(.*) /lib/p5$1.js$2 [L]',
               '^/assets/js/p5\\.(sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
             ]),
-            function(req, res, next) {
+            function (req, res, next) {
               res.setHeader('Access-Control-Allow-Origin', '*');
               res.setHeader('Access-Control-Allow-Methods', '*');
               return next();
@@ -311,7 +311,8 @@ module.exports = grunt => {
     'browserify',
     'browserify:min',
     'uglify',
-    'browserify:test'
+    'browserify:test',
+    'generateLangFiles'
   ]);
   grunt.registerTask('lint', ['lint:source', 'lint:samples']);
   grunt.registerTask('lint:source', [
@@ -342,4 +343,43 @@ module.exports = grunt => {
   grunt.registerTask('yui:test', ['yui', 'connect:yui', 'mochaChrome:yui']);
   grunt.registerTask('yui:dev', ['yui', 'build', 'connect:yui', 'watch:yui']);
   grunt.registerTask('default', ['lint', 'test']);
+
+  grunt.registerTask('generateLangFiles', 'Generate p5 language files', function () {
+    // Define the target languages and their respective aliases
+    const languages = {
+      ru: {
+        point: 'Точка'
+        // Russian aliases
+        // Example: 'rect' : 'прямоугольник'
+      },
+      te: {
+        // Telugu aliases
+        // Example: 'rect' : 'రెక్ట్'
+      },
+      fr: {
+        // French aliases
+        // Example: 'rect' : 'rectangle'
+      }
+    };
+    // Read the p5.js file
+    const p5js = grunt.file.read('lib/p5.js');
+
+
+    // Loop through each language and generate the language file
+    for (const lang in languages) {
+      const aliases = languages[lang];
+      const langFile = `p5.${lang}.js`;
+
+      // Replace all the method/function names with their aliases
+      let langJs = p5js;
+      for (const alias in aliases) {
+        const regex = new RegExp(`(p5.prototype.${alias})`, 'g');
+        langJs = langJs.replace(regex, `p5.prototype.${aliases[alias]}`);
+      }
+      // Write the language file
+      grunt.file.write(`lib/${langFile}`, langJs);
+      // Log the success message
+      grunt.log.writeln(`Generated ${langFile} file.`);
+    }
+  });
 };

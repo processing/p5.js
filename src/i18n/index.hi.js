@@ -1,0 +1,30 @@
+const hindiTranslations = [
+  { draw: 'ड्रा' },
+  { point: 'बिंदु' },
+  { line: 'रेखा' },
+  { curve: 'कर्व' },
+  { circle: 'वृत्त' },
+  { ellipse: 'अंडाकार' },
+  { rect: 'आयत' },
+  { rectMode: 'आयत_मोड' },
+  { text: 'टेक्स्ट' },
+  { push: 'धकेलो' },
+  { pop: 'हटाना' },
+  { stroke: 'प्रहार' },
+  { strokeWeight: 'प्रहारवजन' },
+  { fill: 'भरना' },
+  { noFill: 'भरनानहीं' },
+  { background: 'पृष्ठभूमि' },
+  { clear: 'स्पष्ट' },
+  { translate: 'अनुवाद' },
+  { rotate: 'घुमाना' },
+  { scale: 'पैमाना' },
+  { shearX: 'घुमानाX' },
+  { shearY: 'घुमानाY' },
+  { textSize: 'टेक्स्ट_साइज़' },
+  { textFont: 'टेक्स्ट_फ़ॉन्ट' },
+  { textAlign: 'टेक्स्ट_एलाइन' },
+  { strokeCap: 'प्रहार_टोपी' }
+];
+
+export default hindiTranslations;
