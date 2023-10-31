@@ -153,7 +153,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
           return obj;
         }
       }
-      // nothing worked, put the type as is
+      // nothing worked, put the type as it is
       obj = obj[type] || (obj[type] = {});
     }
 
@@ -256,7 +256,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
           let lowerType = type.toLowerCase();
 
-          // contant
+          // constant
           if (lowerType === 'constant') {
             let constant;
             if (mapConstants.hasOwnProperty(format.name)) {
@@ -569,7 +569,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
         const argType =
           arg instanceof Array
             ? 'array'
-            : arg === null ? 'null' : arg.name || typeof arg;
+            : arg === null ? 'null' : arg === undefined ? 'undefined' : typeof arg === 'number' && isNaN(arg) ? 'NaN' : arg.name || typeof arg;
 
         translationObj = {
           func,
@@ -694,7 +694,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @example:
    *  const a;
    *  ellipse(10,10,a,5);
-   * console ouput:
+   * console output:
    *  "It looks like ellipse received an empty variable in spot #2."
    *
    * @example:

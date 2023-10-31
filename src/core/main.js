@@ -9,7 +9,6 @@ import './shim';
 
 // Core needs the PVariables object
 import * as constants from './constants';
-
 /**
  * This is the p5 instance constructor.
  *
@@ -34,7 +33,7 @@ import * as constants from './constants';
  * @return {p5}                 a p5 instance
  */
 class p5 {
-  constructor(sketch, node, sync) {
+  constructor(sketch, node) {
     //////////////////////////////////////////////
     // PUBLIC p5 PROPERTIES AND METHODS
     //////////////////////////////////////////////
@@ -178,6 +177,7 @@ class p5 {
     this._preloadCount = 0;
     this._isGlobal = false;
     this._loop = true;
+    this._startListener = null;
     this._initializeInstanceVariables();
     this._defaultCanvasSize = {
       width: 100,
@@ -231,6 +231,20 @@ class p5 {
       this._events.devicemotion = null;
     }
 
+    // Function to invoke registered hooks before or after events such as preload, setup, and pre/post draw.
+    p5.prototype.callRegisteredHooksFor = function (hookName) {
+      const target = this || p5.prototype;
+      const context = this._isGlobal ? window : this;
+      if (target._registeredMethods.hasOwnProperty(hookName)) {
+        const methods = target._registeredMethods[hookName];
+        for (const method of methods) {
+          if (typeof method === 'function') {
+            method.call(context);
+          }
+        }
+      }
+    };
+
     this._start = () => {
       // Find node if id given
       if (this._userNode) {
@@ -241,6 +255,7 @@ class p5 {
 
       const context = this._isGlobal ? window : this;
       if (context.preload) {
+        this.callRegisteredHooksFor('beforePreload');
         // Setup loading screen
         // Set loading screen into dom if not present
         // Otherwise displays and removes user provided loading screen
@@ -286,6 +301,7 @@ class p5 {
         if (loadingScreen) {
           loadingScreen.parentNode.removeChild(loadingScreen);
         }
+        this.callRegisteredHooksFor('afterPreload');
         if (!this._setupDone) {
           this._lastTargetFrameTime = window.performance.now();
           this._lastRealFrameTime = window.performance.now();
@@ -322,6 +338,7 @@ class p5 {
     };
 
     this._setup = () => {
+      this.callRegisteredHooksFor('beforeSetup');
       // Always create a default canvas.
       // Later on if the user calls createCanvas, this default one
       // will be replaced
@@ -369,6 +386,7 @@ class p5 {
       if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
         this._updateAccsOutput();
       }
+      this.callRegisteredHooksFor('afterSetup');
     };
 
     this._draw = () => {
@@ -452,6 +470,10 @@ class p5 {
      *
      */
     this.remove = () => {
+      // Remove start listener to prevent orphan canvas being created
+      if(this._startListener){
+        window.removeEventListener('load', this._startListener, false);
+      }
       const loadingScreen = document.getElementById(this._loadingScreenId);
       if (loadingScreen) {
         loadingScreen.parentNode.removeChild(loadingScreen);
@@ -586,7 +608,8 @@ class p5 {
     if (document.readyState === 'complete') {
       this._start();
     } else {
-      window.addEventListener('load', this._start.bind(this), false);
+      this._startListener = this._start.bind(this);
+      window.addEventListener('load', this._startListener, false);
     }
   }
 
@@ -753,7 +776,7 @@ for (const k in constants) {
 }
 
 // makes the `VERSION` constant available on the p5 object
-// in instance mode, even if it hasn't been instatiated yet
+// in instance mode, even if it hasn't been instantiated yet
 p5.VERSION = constants.VERSION;
 
 // functions that cause preload to wait

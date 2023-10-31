@@ -135,6 +135,12 @@ p5.RendererGL.prototype.vertex = function(x, y) {
         v /= this._tex.height;
       }
     } else if (
+      this.userFillShader !== undefined ||
+      this.userStrokeShader !== undefined ||
+      this.userPointShader !== undefined
+    ) {
+    // Do nothing if user-defined shaders are present
+    } else if (
       this._tex === null &&
       arguments.length >= 4
     ) {
@@ -201,6 +207,15 @@ p5.RendererGL.prototype.endShape = function(
     );
     return this;
   }
+  // When we are drawing a shape then the shape mode is TESS,
+  // but in case of triangle we can skip the breaking into small triangle
+  // this can optimize performance by skipping the step of breaking it into triangles
+  if (this.immediateMode.geometry.vertices.length === 3 &&
+      this.immediateMode.shapeMode === constants.TESS
+  ) {
+    this.immediateMode.shapeMode === constants.TRIANGLES;
+  }
+
   this.isProcessingVertices = true;
   this._processVertices(...arguments);
   this.isProcessingVertices = false;
