@@ -101,7 +101,7 @@ vec2 mapTextureToNormal( vec3 v ){
   theta = theta / (2.0 * 3.14159);
   phi = phi / 3.14159 ;
   
-  vec2 angles = vec2( fract(theta + 0.75), 1.0 - phi );
+  vec2 angles = vec2( fract(theta + 0.25), 1.0 - phi );
   return angles;
 }
 
