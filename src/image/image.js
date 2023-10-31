@@ -96,7 +96,7 @@ p5.prototype.createImage = function(width, height) {
  *  file immediately, or prompt the user with a dialogue window.
  *
  *  @method saveCanvas
- *  @param  {p5.Graphics|p5.Element|HTMLCanvasElement} selectedCanvas   a variable
+ *  @param  {p5.Framebuffer|p5.Element|HTMLCanvasElement} selectedCanvas   a variable
  *                                  representing a specific html5 canvas (optional)
  *  @param  {String} [filename]
  *  @param  {String} [extension]      'jpg' or 'png'
@@ -143,7 +143,7 @@ p5.prototype.saveCanvas = function() {
 
   // copy arguments to array
   const args = [].slice.call(arguments);
-  let htmlCanvas, filename, extension;
+  let htmlCanvas, filename, extension, temporaryGraphics;
 
   if (arguments[0] instanceof HTMLCanvasElement) {
     htmlCanvas = arguments[0];
@@ -151,8 +151,15 @@ p5.prototype.saveCanvas = function() {
   } else if (arguments[0] instanceof p5.Element) {
     htmlCanvas = arguments[0].elt;
     args.shift();
-  } else if (arguments[0] instanceof p5.Graphics) {
-    htmlCanvas = arguments[0].elt;
+  } else if (arguments[0] instanceof p5.Framebuffer) {
+    const framebuffer = arguments[0];
+    temporaryGraphics = createGraphics(framebuffer.width, framebuffer.height);
+    framebuffer.loadPixels();
+    temporaryGraphics.loadPixels();
+    temporaryGraphics.pixels.set(framebuffer.pixels);
+    temporaryGraphics.updatePixels();
+
+    htmlCanvas = temporaryGraphics.elt;
     args.shift();
   } else {
     htmlCanvas = this._curElement && this._curElement.elt;
@@ -184,6 +191,9 @@ p5.prototype.saveCanvas = function() {
 
   htmlCanvas.toBlob(blob => {
     p5.prototype.downloadFile(blob, filename, extension);
+    if (temporaryGraphics) {
+      temporaryGraphics.remove();
+    }
   }, mimeType);
 };
 
