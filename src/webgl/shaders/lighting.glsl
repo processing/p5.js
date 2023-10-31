@@ -110,10 +110,10 @@ vec3 calculateImageDiffuse( vec3 vNormal, vec3 vViewPosition ){
   // make 2 seperate builds 
   vec3 worldCameraPosition =  vec3(0.0, 0.0, 0.0);  // hardcoded world camera position
   vec3 worldNormal = normalize(vNormal);
-  vec3 lightDirection = normalize( vViewPosition - worldCameraPosition );
-  vec3 R = reflect(lightDirection, worldNormal);
+  // vec3 lightDirection = normalize( vViewPosition - worldCameraPosition );
+  // vec3 R = reflect(lightDirection, worldNormal);
   // use worldNormal instead of R
-  vec2 newTexCoor = mapTextureToNormal( R );
+  vec2 newTexCoor = mapTextureToNormal( worldNormal );
   vec4 texture = TEXTURE( environmentMapDiffused, newTexCoor );
   // this is to make the darker sections more dark
   // png and jpg usually flatten the brightness so it is to reverse that
