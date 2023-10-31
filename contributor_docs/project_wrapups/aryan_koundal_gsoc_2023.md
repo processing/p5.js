@@ -1,8 +1,7 @@
-# Improving p5.js WebGL/3d functionality(On-going)
+# Improving p5.js WebGL/3d functionality
 
-By Aryan Koundal(@AryanKoundal) || Mentored by : Dave Pagurek(@davepagurek ), Tanvi Kumar(@TanviKumar )
-
-> This is just a draft of the report and not the final report.
+#### By Aryan Koundal(@AryanKoundal)
+#### Mentored by : Dave Pagurek(@davepagurek ), Tanvi Kumar(@TanviKumar )
 
 ## Overview
 
