@@ -520,7 +520,7 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  * <code>
  * let img;
  * function preload() {
- *   img = loadImage('assets/outdoor_spheremap.jpg');
+ *   img = loadImage('assets/outdoor_image.jpg');
  * }
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
