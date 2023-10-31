@@ -13,38 +13,38 @@ import p5 from '../core/main';
 import omggif from 'omggif';
 
 /**
- * Creates a new <a href="#/p5.Image">p5.Image</a> (the datatype for storing images). This provides a
- * fresh buffer of pixels to play with. Set the size of the buffer with the
- * width and height parameters.
+ * Creates a new <a href="#/p5.Image">p5.Image</a> object. The new image is
+ * transparent by default.
  *
- * .<a href="#/p5.Image/pixels">pixels</a> gives access to an array containing the values for all the pixels
- * in the display window.
- * These values are numbers. This array is the size (including an appropriate
- * factor for the <a href="#/p5/pixelDensity">pixelDensity</a>) of the display window x4,
- * representing the R, G, B, A values in order for each pixel, moving from
- * left to right across each row, then down each column. See .<a href="#/p5.Image/pixels">pixels</a> for
- * more info. It may also be simpler to use <a href="#/p5.Image/set">set()</a> or <a href="#/p5.Image/get">get()</a>.
- *
- * Before accessing the pixels of an image, the data must loaded with the
- * <a href="#/p5.Image/loadPixels">loadPixels()</a> function. After the array data has been modified, the
- * <a href="#/p5.Image/updatePixels">updatePixels()</a> function must be run to update the changes.
+ * `createImage()` uses the `width` and `height` paremeters to set the new
+ * <a href="#/p5.Image">p5.Image</a> object's dimensions in pixels. The new
+ * <a href="#/p5.Image">p5.Image</a> can be modified by updating its
+ * <a href="#/p5.Image/pixels">pixels</a> array or by calling its
+ * <a href="#/p5.Image/get">get()</a> and
+ * <a href="#/p5.Image/set">set()</a> methods. The
+ * <a href="#/p5.Image/loadPixels">loadPixels()</a> method must be called
+ * before reading or modifying pixel values. The
+ * <a href="#/p5.Image/updatePixels">updatePixels()</a> method must be called
+ * for updates to take effect.
  *
  * @method createImage
- * @param  {Integer} width  width in pixels
- * @param  {Integer} height height in pixels
- * @return {p5.Image}       the <a href="#/p5.Image">p5.Image</a> object
+ * @param  {Integer} width  width in pixels.
+ * @param  {Integer} height height in pixels.
+ * @return {p5.Image}       new <a href="#/p5.Image">p5.Image</a> object.
  * @example
  * <div>
  * <code>
  * let img = createImage(66, 66);
  * img.loadPixels();
- * for (let i = 0; i < img.width; i++) {
- *   for (let j = 0; j < img.height; j++) {
- *     img.set(i, j, color(0, 90, 102));
+ * for (let x = 0; x < img.width; x += 1) {
+ *   for (let y = 0; y < img.height; y += 1) {
+ *     img.set(x, y, 0);
  *   }
  * }
  * img.updatePixels();
  * image(img, 17, 17);
+ *
+ * describe('A black square drawn in the middle of a gray square.');
  * </code>
  * </div>
  *
@@ -52,39 +52,42 @@ import omggif from 'omggif';
  * <code>
  * let img = createImage(66, 66);
  * img.loadPixels();
- * for (let i = 0; i < img.width; i++) {
- *   for (let j = 0; j < img.height; j++) {
- *     img.set(i, j, color(0, 90, 102, (i % img.width) * 2));
+ * for (let x = 0; x < img.width; x += 1) {
+ *   for (let y = 0; y < img.height; y += 1) {
+ *     let a = map(x, 0, img.width, 0, 255);
+ *     let c = color(0, a);
+ *     img.set(x, y, c);
  *   }
  * }
  * img.updatePixels();
  * image(img, 17, 17);
- * image(img, 34, 34);
+ *
+ * describe('A square with a horizontal color gradient that transitions from gray to black.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * let pink = color(255, 102, 204);
  * let img = createImage(66, 66);
  * img.loadPixels();
  * let d = pixelDensity();
- * let halfImage = 4 * (img.width * d) * (img.height / 2 * d);
+ * let halfImage = 4 * (d * img.width) * (d * img.height / 2);
  * for (let i = 0; i < halfImage; i += 4) {
- *   img.pixels[i] = red(pink);
- *   img.pixels[i + 1] = green(pink);
- *   img.pixels[i + 2] = blue(pink);
- *   img.pixels[i + 3] = alpha(pink);
+ *   // Red.
+ *   img.pixels[i] = 0;
+ *   // Green.
+ *   img.pixels[i + 1] = 0;
+ *   // Blue.
+ *   img.pixels[i + 2] = 0;
+ *   // Alpha.
+ *   img.pixels[i + 3] = 255;
  * }
  * img.updatePixels();
  * image(img, 17, 17);
+ *
+ * describe('A black square drawn in the middle of a gray square.');
  * </code>
  * </div>
- *
- * @alt
- * 66×66 dark turquoise rect in center of canvas.
- * 2 gradated dark turquoise rects fade left. 1 center 1 bottom right of canvas
- * no image displayed
  */
 p5.prototype.createImage = function(width, height) {
   p5._validateParameters('createImage', arguments);
@@ -92,46 +95,75 @@ p5.prototype.createImage = function(width, height) {
 };
 
 /**
- *  Save the current canvas as an image. The browser will either save the
- *  file immediately, or prompt the user with a dialogue window.
+ *  Saves the current canvas as an image. The browser will either save the
+ *  file immediately or prompt the user with a dialogue window.
  *
  *  @method saveCanvas
- *  @param  {p5.Framebuffer|p5.Element|HTMLCanvasElement} selectedCanvas   a variable
- *                                  representing a specific html5 canvas (optional)
- *  @param  {String} [filename]
- *  @param  {String} [extension]      'jpg' or 'png'
+ *  @param  {p5.Graphics|p5.Element|HTMLCanvasElement} selectedCanvas   reference to a
+ *                                                          specific HTML5 canvas element.
+ *  @param  {String} [filename]  file name. Defaults to 'untitled'.
+ *  @param  {String} [extension] file extension, either 'jpg' or 'png'. Defaults to 'png'.
  *
  *  @example
- * <div class='norender notest'><code>
+ * <div class='norender'>
+ * <code>
  * function setup() {
- *   let c = createCanvas(100, 100);
- *   background(255, 0, 0);
- *   saveCanvas(c, 'myCanvas', 'jpg');
- * }
- * </code></div>
- * <div class='norender notest'><code>
- * // note that this example has the same result as above
- * // if no canvas is specified, defaults to main canvas
- * function setup() {
- *   let c = createCanvas(100, 100);
- *   background(255, 0, 0);
- *   saveCanvas('myCanvas', 'jpg');
- *
- *   // all of the following are valid
- *   saveCanvas(c, 'myCanvas', 'jpg');
- *   saveCanvas(c, 'myCanvas.jpg');
- *   saveCanvas(c, 'myCanvas');
- *   saveCanvas(c);
- *   saveCanvas('myCanvas', 'png');
- *   saveCanvas('myCanvas');
+ *   createCanvas(100, 100);
+ *   background(255);
  *   saveCanvas();
  * }
- * </code></div>
+ * </code>
+ * </div>
  *
- * @alt
- * no image displayed
- * no image displayed
- * no image displayed
+ * <div class='norender'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   background(255);
+ *   saveCanvas('myCanvas.jpg');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class='norender'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   background(255);
+ *   saveCanvas('myCanvas', 'jpg');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class='norender'>
+ * <code>
+ * function setup() {
+ *   let cnv = createCanvas(100, 100);
+ *   background(255);
+ *   saveCanvas(cnv);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class='norender'>
+ * <code>
+ * function setup() {
+ *   let cnv = createCanvas(100, 100);
+ *   background(255);
+ *   saveCanvas(cnv, 'myCanvas.jpg');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class='norender'>
+ * <code>
+ * function setup() {
+ *   let cnv = createCanvas(100, 100);
+ *   background(255);
+ *   saveCanvas(cnv, 'myCanvas', 'jpg');
+ * }
+ * </code>
+ * </div>
  */
 /**
  *  @method saveCanvas
@@ -143,7 +175,7 @@ p5.prototype.saveCanvas = function() {
 
   // copy arguments to array
   const args = [].slice.call(arguments);
-  let htmlCanvas, filename, extension, temporaryGraphics;
+  let htmlCanvas, filename, extension;
 
   if (arguments[0] instanceof HTMLCanvasElement) {
     htmlCanvas = arguments[0];
@@ -151,15 +183,8 @@ p5.prototype.saveCanvas = function() {
   } else if (arguments[0] instanceof p5.Element) {
     htmlCanvas = arguments[0].elt;
     args.shift();
-  } else if (arguments[0] instanceof p5.Framebuffer) {
-    const framebuffer = arguments[0];
-    temporaryGraphics = createGraphics(framebuffer.width, framebuffer.height);
-    framebuffer.loadPixels();
-    temporaryGraphics.loadPixels();
-    temporaryGraphics.pixels.set(framebuffer.pixels);
-    temporaryGraphics.updatePixels();
-
-    htmlCanvas = temporaryGraphics.elt;
+  } else if (arguments[0] instanceof p5.Graphics) {
+    htmlCanvas = arguments[0].elt;
     args.shift();
   } else {
     htmlCanvas = this._curElement && this._curElement.elt;
@@ -191,9 +216,6 @@ p5.prototype.saveCanvas = function() {
 
   htmlCanvas.toBlob(blob => {
     p5.prototype.downloadFile(blob, filename, extension);
-    if (temporaryGraphics) {
-      temporaryGraphics.remove();
-    }
   }, mimeType);
 };
 
@@ -426,50 +448,78 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
 };
 
 /**
- *  Capture a sequence of frames that can be used to create a movie.
- *  Accepts a callback. For example, you may wish to send the frames
- *  to a server where they can be stored or converted into a movie.
- *  If no callback is provided, the browser will pop up save dialogues in an
- *  attempt to download all of the images that have just been created. With the
- *  callback provided the image data isn't saved by default but instead passed
- *  as an argument to the callback function as an array of objects, with the
- *  size of array equal to the total number of frames.
+ * Captures a sequence of frames from the canvas that can be used to create a
+ * movie. Frames are downloaded as individual image files by default.
  *
- *  The arguments `duration` and `framerate` are constrained to be less or equal to 15 and 22, respectively, which means you
- *  can only download a maximum of 15 seconds worth of frames at 22 frames per second, adding up to 330 frames.
- *  This is done in order to avoid memory problems since a large enough canvas can fill up the memory in your computer
- *  very easily and crash your program or even your browser.
+ * The first parameter, `filename`, sets the prefix for the file names. For
+ * example, setting the prefix to `'frame'` would generate the image files
+ * `frame0.png`, `frame1.png`, and so on. The second parameter, `extension`,
+ * sets the file type to either `'png'` or `'jpg'`.
  *
- *  To export longer animations, you might look into a library like
- *  <a href="https://github.com/spite/ccapture.js/">ccapture.js</a>.
+ * The third parameter, `duration`, sets the duration to record in seconds.
+ * The maximum duration is 15 seconds. The fourth parameter, `framerate`, sets
+ * the number of frames to record per second. The maximum frame rate value is
+ * 22. Limits are placed on `duration` and `framerate` to avoid using too much
+ * memory. Recording large canvases can easily crash sketches or even web
+ * browsers.
  *
- *  @method saveFrames
- *  @param  {String}   filename
- *  @param  {String}   extension 'jpg' or 'png'
- *  @param  {Number}   duration  Duration in seconds to save the frames for. This parameter will be constrained to be less or equal to 15.
- *  @param  {Number}   framerate  Framerate to save the frames in. This parameter will be constrained to be less or equal to 22.
- *  @param  {function(Array)} [callback] A callback function that will be executed
+ * The fifth parameter, `callback`, is optional. If a function is passed,
+ * image files won't be saved by default. The callback function can be used
+ * to process an array containing the data for each captured frame. The array
+ * of image data contains a sequence of objects with three properties for each
+ * frame: `imageData`, `filename`, and `extension`.
+ *
+ * @method saveFrames
+ * @param  {String}   filename  prefix of file name.
+ * @param  {String}   extension file extension, either 'jpg' or 'png'.
+ * @param  {Number}   duration  duration in seconds to record. This parameter will be constrained to be less or equal to 15.
+ * @param  {Number}   framerate number of frames to save per second. This parameter will be constrained to be less or equal to 22.
+ * @param  {function(Array)} [callback] callback function that will be executed
                                   to handle the image data. This function
                                   should accept an array as argument. The
                                   array will contain the specified number of
                                   frames of objects. Each object has three
-                                  properties: imageData - an
-                                  image/octet-stream, filename and extension.
- *  @example
- *  <div><code>
+                                  properties: `imageData`, `filename`, and `extension`.
+ * @example
+ * <div>
+ * <code>
  * function draw() {
- *   background(mouseX);
+ *   let r = frameCount % 255;
+ *   let g = 50;
+ *   let b = 100;
+ *   background(r, g, b);
+ *
+ *   describe('A square repeatedly changes color from blue to pink.');
+ * }
+ *
+ * function keyPressed() {
+ *   if (key === 's') {
+ *     saveFrames('frame', 'png', 1, 5);
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   let r = frameCount % 255;
+ *   let g = 50;
+ *   let b = 100;
+ *   background(r, g, b);
+ *
+ *   describe('A square repeatedly changes color from blue to pink.');
  * }
  *
  * function mousePressed() {
- *   saveFrames('out', 'png', 1, 25, data => {
+ *   saveFrames('frame', 'png', 1, 5, data => {
+ *     // Prints an array of objects containing raw image data,
+ *     // filenames, and extensions.
  *     print(data);
  *   });
  * }
-</code></div>
- *
- * @alt
- * canvas background goes from light to dark with mouse x.
+ * </code>
+ * </div>
  */
 p5.prototype.saveFrames = function(fName, ext, _duration, _fps, callback) {
   p5._validateParameters('saveFrames', arguments);

@@ -687,10 +687,10 @@ suite('p5.Camera', function() {
 
       test('perspective() with no parameters specified (sets default)', function() {
         var expectedMatrix = new Float32Array([
-          1.7320507764816284,0,0,0,
-          0,-1.7320507764816284,0,0,
+          16,0,0,0,
+          0,-16,0,0,
           0,0,-1.0202020406723022,-1,
-          0,0,-17.49546241760254,0
+          0,0,-161.6161651611328,0
         ]);
 
         myCam.perspective();
@@ -726,10 +726,10 @@ suite('p5.Camera', function() {
 
       test('frustum() with no parameters specified (sets default)', function() {
         var expectedMatrix = new Float32Array([
-          1.7320507764816284, 0, 0, 0,
-          0, 1.7320507764816284, 0, 0,
-          0, -0, -1.0202020406723022, -1,
-          0, 0, -17.49546241760254, 0
+          16,0,0,0,
+          0,16,0,0,
+          0,-0,-1.0202020406723022,-1,
+          0,0,-161.6161651611328,0
         ]);
 
         myCam.frustum();
@@ -1011,6 +1011,65 @@ suite('p5.Camera', function() {
       assert.deepEqual(myCam2, myp5._renderer._curCamera);
       myp5.setAttributes('antialias', true);
       assert.deepEqual(myCam2._renderer, myp5._renderer);
+    });
+  });
+
+  suite('Camera attributes after resizing', function() {
+    test('Camera position is the same', function() {
+      myp5.createCanvas(1, 1, myp5.WEBGL);
+      myp5.noStroke();
+      myp5.pixelDensity(1);
+
+      let cam = myp5.createCamera();
+
+      myp5.fill(255, 0, 0);
+
+      const testShape = () => {
+        myp5.clear();
+        myp5.rect(-myp5.width, -myp5.height, myp5.width * 2, myp5.height * 2);
+      };
+
+      testShape();
+      assert.deepEqual(myp5.get(0, 0), [255, 0, 0, 255]);
+      assert.equal(cam.eyeX, 0);
+
+      cam.move(10, 0, 0);
+      testShape();
+      assert.deepEqual(myp5.get(0, 0), [0, 0, 0, 0]);
+      assert.equal(cam.eyeX, 10);
+
+      myp5.resizeCanvas(2, 1);
+      myp5.resizeCanvas(1, 1);
+      testShape();
+      assert.deepEqual(myp5.get(0, 0), [0, 0, 0, 0]);
+      assert.equal(cam.eyeX, 10);
+    });
+
+    test('Camera rotation is the same', function() {
+      myp5.createCanvas(1, 1, myp5.WEBGL);
+      myp5.noStroke();
+      myp5.pixelDensity(1);
+
+      let cam = myp5.createCamera();
+
+      myp5.fill(255, 0, 0);
+
+      const testShape = () => {
+        myp5.clear();
+        myp5.rect(-myp5.width, -myp5.height, myp5.width * 2, myp5.height * 2);
+      };
+
+      testShape();
+      assert.deepEqual(myp5.get(0, 0), [255, 0, 0, 255]);
+
+      cam.pan(10);
+      testShape();
+      assert.deepEqual(myp5.get(0, 0), [0, 0, 0, 0]);
+
+      myp5.resizeCanvas(2, 1);
+      myp5.resizeCanvas(1, 1);
+      testShape();
+      assert.deepEqual(myp5.get(0, 0), [0, 0, 0, 0]);
     });
   });
 });

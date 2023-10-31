@@ -33,30 +33,8 @@ class FramebufferCamera extends p5.Camera {
   _computeCameraDefaultSettings() {
     super._computeCameraDefaultSettings();
     this.defaultAspectRatio = this.fbo.width / this.fbo.height;
-    this.defaultEyeZ =
-      this.fbo.height / 2.0 / Math.tan(this.defaultCameraFOV / 2.0);
-    this.defaultCameraNear = this.defaultEyeZ * 0.1;
-    this.defaultCameraFar = this.defaultEyeZ * 10;
-  }
-
-  /**
-   * Resets the camera to a default perspective camera sized to match
-   * the p5.Framebuffer it is attached to.
-   *
-   * @method resize
-   * @private
-   */
-  _resize() {
-    // If we're using the default camera, update the aspect ratio
-    if (this.cameraType === 'default') {
-      this._computeCameraDefaultSettings();
-      this._setDefaultCamera();
-    } else {
-      this.perspective(
-        this.cameraFOV,
-        this.fbo.width / this.fbo.height
-      );
-    }
+    this.defaultCameraFOV =
+      2 * Math.atan(this.fbo.height / 2 / this.defaultEyeZ);
   }
 }
 
