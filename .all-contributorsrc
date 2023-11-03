@@ -5351,6 +5351,16 @@
         "bug",
         "doc"
       ]
+    },
+    {
+      "login": "acamposuribe",
+      "name": "Alejandro",
+      "avatar_url": "https://avatars.githubusercontent.com/u/121937906?v=4",
+      "profile": "http://art.arqtistic.com",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "repoType": "github",
