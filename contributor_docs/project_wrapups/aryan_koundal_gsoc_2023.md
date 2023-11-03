@@ -116,8 +116,21 @@ referenced from "https://learnopengl.com/PBR/IBL/Specular-IBL"
 1. src/webgl/shaders/vertexColor.frag
 1. src/webgl/shaders/vertexColor.vert
 
-### Sketches we made, which might be useful 
-1. 
+### Sketches I made, which might be useful 
+1. Example 1 in imagelight          https://editor.p5js.org/aryan_koundal/sketches/OEsyk6uZI
+1. Example 2 in imagelight         https://editor.p5js.org/aryan_koundal/sketches/XjalPP7s4
+1. Final Prototype Diffused + Roughness (Variable Roughness)  https://editor.p5js.org/aryan_koundal/sketches/4V790dB9Z
+1. Diffuse light final prototype https://editor.p5js.org/aryan_koundal/sketches/q_Zg37OB2
+1. Mipmap  Specular roughness Prototype (visible variation) https://editor.p5js.org/aryan_koundal/sketches/Bi2BN7zjK
+1. Specular prefilterconvolution with chessboard https://editor.p5js.org/aryan_koundal/sketches/qaIhxRZHI
+1. Prefilterconvolution cubemaps prototypes 8 levels https://editor.p5js.org/aryan_koundal/sketches/YJTSFKhqt
+1. Specular prefilterconvolution with image https://editor.p5js.org/aryan_koundal/sketches/8divJgdQxO
+1. Specular mipmaps prototype with colors https://editor.p5js.org/aryan_koundal/sketches/3V9iDH8ax
+1. Sphere with point Lights https://editor.p5js.org/aryan_koundal/sketches/9NdeCtfdW
+1. Diffused texture Shader Prototype https://editor.p5js.org/aryan_koundal/sketches/DcFDcOFUn
+1. Resolution Pixelwise             https://editor.p5js.org/aryan_koundal/sketches/5RfDIy2I9
+1. Cube reflecting mountain spheremap https://editor.p5js.org/aryan_koundal/sketches/2QS5-Fy0V
+1. Cube reflecting sky spheremap 	 https://editor.p5js.org/aryan_koundal/sketches/O1NwI4ufp
 
 ## Further Improvement
 While working on this project, I realised that there is scope for improvement. Like increasing efficiency by using cubemaps instead of environment maps for Diffused Lighting. Also using framebuffers would improve the efficiency and reduce the time taken to render the lights.
@@ -129,8 +142,8 @@ development within the open-source domain. I successfully overcame initial obsta
 setting up the project and navigating the codebase, steadily advancing through my contributions.
 Throughout this summer, I actively participated in the p5.js open-source community, surpassing my 
 initial expectations for my first major open-source venture and further igniting my enthusiasm. I
-want to express my heartfelt appreciation to my mentors, Dave and Tanvi, for their invaluable
-guidance in navigating coding challenges. Effective teamwork, collaboration, and communication 
-proved essential in this open-source journey. I eagerly anticipate expanding my contributions and 
-honing my skills. This summer has instilled a sense of purpose in me, and I'm profoundly grateful
-for the mentorship and knowledge gained.
+want to express my heartfelt appreciation to my mentors,  Dave Pagurek(@davepagurek ), 
+Tanvi Kumar(@TanviKumar ), for their invaluable guidance in navigating coding challenges. 
+Effective teamwork, collaboration, and communication proved essential in this open-source journey.
+I eagerly anticipate expanding my contributions and honing my skills. This summer has instilled
+a sense of purpose in me, and I'm profoundly grateful for the mentorship and knowledge gained.
