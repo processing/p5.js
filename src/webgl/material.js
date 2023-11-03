@@ -16,6 +16,9 @@ import './p5.Texture';
  * The shader files are loaded asynchronously in the
  * background, so this method should be used in <a href="#/p5/preload">preload()</a>.
  *
+ * Shaders can alter the positioning of shapes drawn with them.
+ * To ensure consistency in rendering, it's recommended to use the vertex shader in the <a href="#/p5/createShader">createShader example</a>.
+ *
  * Note, shaders can only be used in WEBGL mode.
  *
  * @method loadShader
@@ -115,6 +118,9 @@ p5.prototype.loadShader = function(
  *
  * Note, shaders can only be used in WEBGL mode.
  *
+ * Shaders can alter the positioning of shapes drawn with them.
+ * To ensure consistency in rendering, it's recommended to use the vertex shader shown in the example below.
+ *
  * @method createShader
  * @param {String} vertSrc source code for the vertex shader
  * @param {String} fragSrc source code for the fragment shader
@@ -124,33 +130,44 @@ p5.prototype.loadShader = function(
  * @example
  * <div modernizr='webgl'>
  * <code>
- * // the 'varying's are shared between both vertex & fragment shaders
- * let varying = 'precision highp float; varying vec2 vPos;';
  *
  * // the vertex shader is called for each vertex
- * let vs =
- *   varying +
- *   'attribute vec3 aPosition;' +
- *   'void main() { vPos = (gl_Position = vec4(aPosition,1.0)).xy; }';
+ * let vs = `
+ * precision highp float;
+ * uniform mat4 uModelViewMatrix;
+ * uniform mat4 uProjectionMatrix;
+ *
+ * attribute vec3 aPosition;
+ * attribute vec2 aTexCoord;
+ * varying vec2 vTexCoord;
+ *
+ * void main() {
+ *   vTexCoord = aTexCoord;
+ *   vec4 positionVec4 = vec4(aPosition, 1.0);
+ *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+ *  }
+ * `;
+ *
  *
  * // the fragment shader is called for each pixel
- * let fs =
- *   varying +
- *   'uniform vec2 p;' +
- *   'uniform float r;' +
- *   'const int I = 500;' +
- *   'void main() {' +
- *   '  vec2 c = p + vPos * r, z = c;' +
- *   '  float n = 0.0;' +
- *   '  for (int i = I; i > 0; i --) {' +
- *   '    if(z.x*z.x+z.y*z.y > 4.0) {' +
- *   '      n = float(i)/float(I);' +
- *   '      break;' +
- *   '    }' +
- *   '    z = vec2(z.x*z.x-z.y*z.y, 2.0*z.x*z.y) + c;' +
- *   '  }' +
- *   '  gl_FragColor = vec4(0.5-cos(n*17.0)/2.0,0.5-cos(n*13.0)/2.0,0.5-cos(n*23.0)/2.0,1.0);' +
- *   '}';
+ * let fs = `
+ *    precision highp float;
+ *    uniform vec2 p;
+ *    uniform float r;
+ *    const int I = 500;
+ *    varying vec2 vTexCoord;
+ *    void main() {
+ *      vec2 c = p + gl_FragCoord.xy * r, z = c;
+ *      float n = 0.0;
+ *      for (int i = I; i > 0; i --) {
+ *        if(z.x*z.x+z.y*z.y > 4.0) {
+ *          n = float(i)/float(I);
+ *          break;
+ *        }
+ *        z = vec2(z.x*z.x-z.y*z.y, 2.0*z.x*z.y) + c;
+ *      }
+ *      gl_FragColor = vec4(0.5-cos(n*17.0)/2.0,0.5-cos(n*13.0)/2.0,0.5-cos(n*23.0)/2.0,1.0);
+ *    }`;
  *
  * let mandel;
  * function setup() {
@@ -169,7 +186,7 @@ p5.prototype.loadShader = function(
  * function draw() {
  *   // 'r' is the size of the image in Mandelbrot-space
  *   mandel.setUniform('r', 1.5 * exp(-6.5 * (1 + sin(millis() / 2000))));
- *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
+ *   plane(width, height);
  * }
  * </code>
  * </div>
@@ -312,6 +329,9 @@ p5.prototype.createFilterShader = function(fragSrc) {
 /**
  * Sets the <a href="#/p5.Shader">p5.Shader</a> object to
  * be used to render subsequent shapes.
+ *
+ * Shaders can alter the positioning of shapes drawn with them.
+ * To ensure consistency in rendering, it's recommended to use the vertex shader in the <a href="#/p5/createShader">createShader example</a>.
  *
  * Custom shaders can be created using the
  * <a href="#/p5/createShader">createShader()</a> and
