@@ -185,7 +185,8 @@ p5.prototype.saveCanvas = function() {
     args.shift();
   } else if (arguments[0] instanceof p5.Framebuffer) {
     const framebuffer = arguments[0];
-    temporaryGraphics = createGraphics(framebuffer.width, framebuffer.height);
+    temporaryGraphics = this.createGraphics(framebuffer.width,
+      framebuffer.height);
     temporaryGraphics.pixelDensity(pixelDensity());
     framebuffer.loadPixels();
     temporaryGraphics.loadPixels();
