@@ -1158,6 +1158,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     pg._pInst.blendMode(constants.BLEND);
     this.clear();
     this._pInst.push();
+    this.filterCamera._resize();
     this._pInst.setCamera(this.filterCamera);
     this._pInst.resetMatrix();
     this._pInst.image(pg, -this.width / 2, -this.height / 2,
