@@ -1180,12 +1180,11 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
   erase(opacityFill, opacityStroke) {
     if (!this._isErasing) {
-      this._applyBlendMode(constants.REMOVE);
+      this._cachedBlendMode = this.curBlendMode;
       this._isErasing = true;
-
+      this.blendMode(constants.REMOVE);
       this._cachedFillStyle = this.curFillColor.slice();
       this.curFillColor = [1, 1, 1, opacityFill / 255];
-
       this._cachedStrokeStyle = this.curStrokeColor.slice();
       this.curStrokeColor = [1, 1, 1, opacityStroke / 255];
     }
@@ -1193,10 +1192,14 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
   noErase() {
     if (this._isErasing) {
-      this._isErasing = false;
       this.curFillColor = this._cachedFillStyle.slice();
       this.curStrokeColor = this._cachedStrokeStyle.slice();
+      // It's necessary to restore post-erase state. Needs rework
+      let temp = this.curBlendMode;
       this.blendMode(this._cachedBlendMode);
+      this._cachedBlendMode = temp; // If we don't do this, applyBlendMode() returns null
+      this._isErasing = false;
+      this._applyBlendMode(); // This sets _cachedBlendMode back to the original blendmode
     }
   }
 
