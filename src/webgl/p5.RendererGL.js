@@ -9,6 +9,7 @@ import './p5.Matrix';
 import './p5.Framebuffer';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { MipmapTexture } from './p5.Texture';
 
 const STROKE_CAP_ENUM = {};
 const STROKE_JOIN_ENUM = {};
@@ -67,17 +68,21 @@ const defaultShaders = {
   phongFrag:
     lightingShader +
     readFileSync(join(__dirname, '/shaders/phong.frag'), 'utf-8'),
-  fontVert: webgl2CompatibilityShader +
-    readFileSync(join(__dirname, '/shaders/font.vert'), 'utf-8'),
-  fontFrag: webgl2CompatibilityShader +
-    readFileSync(join(__dirname, '/shaders/font.frag'), 'utf-8'),
+  fontVert: readFileSync(join(__dirname, '/shaders/font.vert'), 'utf-8'),
+  fontFrag: readFileSync(join(__dirname, '/shaders/font.frag'), 'utf-8'),
   lineVert:
     lineDefs + readFileSync(join(__dirname, '/shaders/line.vert'), 'utf-8'),
   lineFrag:
     lineDefs + readFileSync(join(__dirname, '/shaders/line.frag'), 'utf-8'),
   pointVert: readFileSync(join(__dirname, '/shaders/point.vert'), 'utf-8'),
-  pointFrag: readFileSync(join(__dirname, '/shaders/point.frag'), 'utf-8')
+  pointFrag: readFileSync(join(__dirname, '/shaders/point.frag'), 'utf-8'),
+  imageLightVert : readFileSync(join(__dirname, '/shaders/imageLight.vert'), 'utf-8'),
+  imageLightDiffusedFrag : readFileSync(join(__dirname, '/shaders/imageLightDiffused.frag'), 'utf-8'),
+  imageLightSpecularFrag : readFileSync(join(__dirname, '/shaders/imageLightSpecular.frag'), 'utf-8')
 };
+for (const key in defaultShaders) {
+  defaultShaders[key] = webgl2CompatibilityShader + defaultShaders[key];
+}
 
 const filterShaderFrags = {
   [constants.GRAY]:
@@ -467,6 +472,19 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.spotLightSpecularColors = [];
     this.spotLightAngle = [];
     this.spotLightConc = [];
+
+    // This property contains the input image if imageLight function
+    // is called.
+    // activeImageLight is checked by _setFillUniforms
+    // for sending uniforms to the fillshader
+    this.activeImageLight = null;
+    // If activeImageLight property is Null, diffusedTextures,
+    // specularTextures are Empty.
+    // Else, it maps a p5.Image used by imageLight() to a p5.Graphics.
+    // p5.Graphics for this are calculated in getDiffusedTexture function
+    this.diffusedTextures = new Map();
+    // p5.Graphics for this are calculated in getSpecularTexture function
+    this.specularTextures = new Map();
 
     this.drawMode = constants.FILL;
 
@@ -1603,6 +1621,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     properties._currentNormal = this._currentNormal;
     properties.curBlendMode = this.curBlendMode;
 
+    // So that the activeImageLight gets reset in push/pop
+    properties.activeImageLight = this.activeImageLight;
+
     return style;
   }
   pop(...args) {
@@ -1740,14 +1761,18 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       if (this._pInst._glAttributes.perPixelLighting) {
         this._defaultLightShader = new p5.Shader(
           this,
-          defaultShaders.phongVert,
-          defaultShaders.phongFrag
+          this._webGL2CompatibilityPrefix('vert', 'highp') +
+            defaultShaders.phongVert,
+          this._webGL2CompatibilityPrefix('frag', 'highp') +
+            defaultShaders.phongFrag
         );
       } else {
         this._defaultLightShader = new p5.Shader(
           this,
-          defaultShaders.lightVert,
-          defaultShaders.lightTextureFrag
+          this._webGL2CompatibilityPrefix('vert', 'highp') +
+            defaultShaders.lightVert,
+          this._webGL2CompatibilityPrefix('frag', 'highp') +
+            defaultShaders.lightTextureFrag
         );
       }
     }
@@ -1759,8 +1784,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (!this._defaultImmediateModeShader) {
       this._defaultImmediateModeShader = new p5.Shader(
         this,
-        defaultShaders.immediateVert,
-        defaultShaders.vertexColorFrag
+        this._webGL2CompatibilityPrefix('vert', 'mediump') +
+          defaultShaders.immediateVert,
+        this._webGL2CompatibilityPrefix('frag', 'mediump') +
+          defaultShaders.vertexColorFrag
       );
     }
 
@@ -1771,8 +1798,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (!this._defaultNormalShader) {
       this._defaultNormalShader = new p5.Shader(
         this,
-        defaultShaders.normalVert,
-        defaultShaders.normalFrag
+        this._webGL2CompatibilityPrefix('vert', 'mediump') +
+          defaultShaders.normalVert,
+        this._webGL2CompatibilityPrefix('frag', 'mediump') +
+          defaultShaders.normalFrag
       );
     }
 
@@ -1783,8 +1812,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (!this._defaultColorShader) {
       this._defaultColorShader = new p5.Shader(
         this,
-        defaultShaders.normalVert,
-        defaultShaders.basicFrag
+        this._webGL2CompatibilityPrefix('vert', 'mediump') +
+          defaultShaders.normalVert,
+        this._webGL2CompatibilityPrefix('frag', 'mediump') +
+          defaultShaders.basicFrag
       );
     }
 
@@ -1795,8 +1826,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (!this._defaultPointShader) {
       this._defaultPointShader = new p5.Shader(
         this,
-        defaultShaders.pointVert,
-        defaultShaders.pointFrag
+        this._webGL2CompatibilityPrefix('vert', 'mediump') +
+          defaultShaders.pointVert,
+        this._webGL2CompatibilityPrefix('frag', 'mediump') +
+          defaultShaders.pointFrag
       );
     }
     return this._defaultPointShader;
@@ -1806,8 +1839,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (!this._defaultLineShader) {
       this._defaultLineShader = new p5.Shader(
         this,
-        defaultShaders.lineVert,
-        defaultShaders.lineFrag
+        this._webGL2CompatibilityPrefix('vert', 'mediump') +
+          defaultShaders.lineVert,
+        this._webGL2CompatibilityPrefix('frag', 'mediump') +
+          defaultShaders.lineFrag
       );
     }
 
@@ -1874,6 +1909,88 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.textures.set(src, tex);
     return tex;
   }
+  /*
+    *  used in imageLight,
+    *  To create a blurry image from the input non blurry img, if it doesn't already exist
+    *  Add it to the diffusedTexture map,
+    *  Returns the blurry image
+    *  maps a p5.Image used by imageLight() to a p5.Graphics
+   */
+  getDiffusedTexture(input){
+    // if one already exists for a given input image
+    if(this.diffusedTextures.get(input)!=null){
+      return this.diffusedTextures.get(input);
+    }
+    // if not, only then create one
+    let newGraphic; // maybe switch to framebuffer
+    // hardcoded to 200px, because it's going to be blurry and smooth
+    let smallWidth = 200;
+    let width = smallWidth;
+    let height = Math.floor(smallWidth * (input.height / input.width));
+    newGraphic = this._pInst.createGraphics(width, height, constants.WEBGL);
+    // create graphics is like making a new sketch, all functions on main
+    // sketch it would be available on graphics
+    let irradiance = newGraphic.createShader(
+      defaultShaders.imageLightVert,
+      defaultShaders.imageLightDiffusedFrag
+    );
+    newGraphic.shader(irradiance);
+    irradiance.setUniform('environmentMap', input);
+    newGraphic.noStroke();
+    newGraphic.rectMode(newGraphic.CENTER);
+    newGraphic.rect(0, 0, newGraphic.width, newGraphic.height);
+    this.diffusedTextures.set(input, newGraphic);
+    return newGraphic;
+  }
+
+  /*
+   *  used in imageLight,
+   *  To create a texture from the input non blurry image, if it doesn't already exist
+   *  Creating 8 different levels of textures according to different
+   *  sizes and atoring them in `levels` array
+   *  Creating a new Mipmap texture with that `levels` array
+   *  Storing the texture for input image in map called `specularTextures`
+   *  maps the input p5.Image to a p5.MipmapTexture
+   */
+  getSpecularTexture(input){
+    // check if already exits (there are tex of diff resolution so which one to check)
+    // currently doing the whole array
+    if(this.specularTextures.get(input)!=null){
+      return this.specularTextures.get(input);
+    }
+    // Hardcoded size
+    const size = 512;
+    let tex;
+    const levels = [];
+    const graphic = this._pInst.createGraphics(size, size, constants.WEBGL);
+    let count = Math.log(size)/Math.log(2);
+    graphic.pixelDensity(1);
+    // currently only 8 levels
+    // This loop calculates 8 graphics of varying size of canvas
+    // and corresponding different roughness levels.
+    // Roughness increases with the decrease in canvas size,
+    // because rougher surfaces have less detailed/more blurry reflections.
+    for (let w = size; w >= 1; w /= 2) {
+      graphic.resizeCanvas(w, w);
+      let currCount = Math.log(w)/Math.log(2);
+      let roughness = 1-currCount/count;
+      let myShader = graphic.createShader(
+        defaultShaders.imageLightVert,
+        defaultShaders.imageLightSpecularFrag
+      );
+      graphic.shader(myShader);
+      graphic.clear();
+      myShader.setUniform('environmentMap', input);
+      myShader.setUniform('roughness', roughness);
+      graphic.noStroke();
+      graphic.plane(w, w);
+      levels.push(graphic.get().drawingContext.getImageData(0, 0, w, w));
+    }
+    graphic.remove();
+    tex = new MipmapTexture(this, levels, {});
+    this.specularTextures.set(input,tex);
+    return tex;
+  }
 
   /**
    * @method activeFramebuffer
@@ -1919,6 +2036,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     fillShader.setUniform('uSpecular', this._useSpecularMaterial);
     fillShader.setUniform('uEmissive', this._useEmissiveMaterial);
     fillShader.setUniform('uShininess', this._useShininess);
+
+    this._setImageLightUniforms(fillShader);
 
     fillShader.setUniform('uUseLighting', this._enableLighting);
 
@@ -1968,6 +2087,29 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     fillShader.setUniform('uQuadraticAttenuation', this.quadraticAttenuation);
 
     fillShader.bindTextures();
+  }
+
+  // getting called from _setFillUniforms
+  _setImageLightUniforms(shader){
+    //set uniform values
+    shader.setUniform('uUseImageLight', this.activeImageLight != null );
+    // true
+    if (this.activeImageLight) {
+      // this.activeImageLight has image as a key
+      // look up the texture from the diffusedTexture map
+      let diffusedLight = this.getDiffusedTexture(this.activeImageLight);
+      shader.setUniform('environmentMapDiffused', diffusedLight);
+      let specularLight = this.getSpecularTexture(this.activeImageLight);
+      // In p5js the range of shininess is >= 1,
+      // Therefore roughness range will be ([0,1]*8)*20 or [0, 160]
+      // The factor of 8 is because currently the getSpecularTexture
+      // only calculated 8 different levels of roughness
+      // The factor of 20 is just to spread up this range so that,
+      // [1, max] of shininess is converted to [0,160] of roughness
+      let roughness = 20/this._useShininess;
+      shader.setUniform('levelOfDetail', roughness*8);
+      shader.setUniform('environmentMapSpecular', specularLight);
+    }
   }
 
   _setPointUniforms(pointShader) {
