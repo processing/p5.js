@@ -1183,7 +1183,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this._cachedBlendMode = this.curBlendMode;
       this._isErasing = true;
       this.blendMode(constants.REMOVE);
-      this._applyBlendMode();
       this._cachedFillStyle = this.curFillColor.slice();
       this.curFillColor = [1, 1, 1, opacityFill / 255];
       this._cachedStrokeStyle = this.curStrokeColor.slice();
