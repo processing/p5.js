@@ -142,7 +142,7 @@ development within the open-source domain. I successfully overcame initial obsta
 setting up the project and navigating the codebase, steadily advancing through my contributions.
 Throughout this summer, I actively participated in the p5.js open-source community, surpassing my 
 initial expectations for my first major open-source venture and further igniting my enthusiasm. I
-want to express my heartfelt appreciation to my mentors,  Dave Pagurek(@davepagurek ), 
+want to express my heartfelt appreciation to my mentors,  Dave Pagurek(@davepagurek ), and
 Tanvi Kumar(@TanviKumar ), for their invaluable guidance in navigating coding challenges. 
 Effective teamwork, collaboration, and communication proved essential in this open-source journey.
 I eagerly anticipate expanding my contributions and honing my skills. This summer has instilled
