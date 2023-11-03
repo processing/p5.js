@@ -1180,7 +1180,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
   erase(opacityFill, opacityStroke) {
     if (!this._isErasing) {
-      this._applyBlendMode(constants.REMOVE);
+      this.currentBlendMode = this._cachedBlendMode;
+      this.blendMode(constants.REMOVE);
+      this._applyBlendMode();
       this._isErasing = true;
 
       this._cachedFillStyle = this.curFillColor.slice();
@@ -1196,7 +1198,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this._isErasing = false;
       this.curFillColor = this._cachedFillStyle.slice();
       this.curStrokeColor = this._cachedStrokeStyle.slice();
-      this.blendMode(this._cachedBlendMode);
+      this.blendMode(this.currentBlendMode);
     }
   }
 
