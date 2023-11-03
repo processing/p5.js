@@ -6,14 +6,14 @@
 ## Overview
 
 In p5.js, there are two render modes: P2D (default renderer) and WebGL. WEBGL 
-enables the user to draw in 3D. There are many ways to implement lightning. 
-Currently, p5js has implemented 8. To add lightning to a 3D object, one can
+enables the user to draw in 3D. There are many ways to implement lighting. 
+Currently, p5js has implemented 8. To add lighting to a 3D object, one can
 use these functionalities. But there is another technique to light objects,
 not by direct light, but using the surrounding environment as a single light
-source, which we call Image-Based Lightning. 
-This project aims to add lightning to a 3D object, using the surrounding 
+source, which we call Image-Based lighting. 
+This project aims to add lighting to a 3D object, using the surrounding 
 environment as a single light source, which is generally called Image-Based 
-Lightning. In simple words, one can very quickly drop in an image from real 
+lighting. In simple words, one can very quickly drop in an image from real 
 life to use as surrounding lights, rather than continuously tweaking the colors 
 and positions of ambient, point, etc lights.
 
