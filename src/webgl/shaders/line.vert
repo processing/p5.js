@@ -18,7 +18,6 @@
 
 #define PROCESSING_LINE_SHADER
 
-precision mediump float;
 precision mediump int;
 
 uniform mat4 uModelViewMatrix;
@@ -32,19 +31,19 @@ uniform vec4 uViewport;
 uniform int uPerspective;
 uniform int uStrokeJoin;
 
-attribute vec4 aPosition;
-attribute vec3 aTangentIn;
-attribute vec3 aTangentOut;
-attribute float aSide;
-attribute vec4 aVertexColor;
+IN vec4 aPosition;
+IN vec3 aTangentIn;
+IN vec3 aTangentOut;
+IN float aSide;
+IN vec4 aVertexColor;
 
-varying vec4 vColor;
-varying vec2 vTangent;
-varying vec2 vCenter;
-varying vec2 vPosition;
-varying float vMaxDist;
-varying float vCap;
-varying float vJoin;
+OUT vec4 vColor;
+OUT vec2 vTangent;
+OUT vec2 vCenter;
+OUT vec2 vPosition;
+OUT float vMaxDist;
+OUT float vCap;
+OUT float vJoin;
 
 vec2 lineIntersection(vec2 aPoint, vec2 aDir, vec2 bPoint, vec2 bDir) {
   // Rotate and translate so a starts at the origin and goes out to the right

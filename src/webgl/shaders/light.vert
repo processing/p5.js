@@ -1,9 +1,9 @@
 // include lighting.glgl
 
-attribute vec3 aPosition;
-attribute vec3 aNormal;
-attribute vec2 aTexCoord;
-attribute vec4 aVertexColor;
+IN vec3 aPosition;
+IN vec3 aNormal;
+IN vec2 aTexCoord;
+IN vec4 aVertexColor;
 
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
@@ -12,10 +12,10 @@ uniform mat3 uNormalMatrix;
 uniform bool uUseVertexColor;
 uniform vec4 uMaterialColor;
 
-varying highp vec2 vVertTexCoord;
-varying vec3 vDiffuseColor;
-varying vec3 vSpecularColor;
-varying vec4 vColor;
+OUT highp vec2 vVertTexCoord;
+OUT vec3 vDiffuseColor;
+OUT vec3 vSpecularColor;
+OUT vec4 vColor;
 
 void main(void) {
 

@@ -1,7 +1,6 @@
-precision mediump float;
 precision mediump int;
 uniform vec4 uMaterialColor;
-varying float vStrokeWeight;
+IN float vStrokeWeight;
 
 void main(){
   float mask = 0.0;
@@ -24,5 +23,5 @@ void main(){
     discard;
   }
 
-  gl_FragColor = vec4(uMaterialColor.rgb, 1.) * uMaterialColor.a;
+  OUT_COLOR = vec4(uMaterialColor.rgb, 1.) * uMaterialColor.a;
 }
