@@ -3,7 +3,7 @@
     "node": true,
     "browser": true,
     "amd": true,
-    "es6": true
+    "es2022": true
   },
   "globals": {
     "p5": true
@@ -11,7 +11,6 @@
   "root": true,
   "extends": ["eslint:recommended"],
   "parserOptions": {
-    "ecmaVersion": 2017,
     "sourceType": "module"
   },
   "rules": {
