@@ -1,5 +1,4 @@
-precision mediump float;
-varying vec3 vVertexNormal;
+IN vec3 vVertexNormal;
 void main(void) {
-  gl_FragColor = vec4(vVertexNormal, 1.0);
+  OUT_COLOR = vec4(vVertexNormal, 1.0);
 }
