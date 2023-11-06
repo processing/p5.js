@@ -127,16 +127,31 @@ p5.prototype.camera = function (...args) {
  * vertical field of view, aspect ratio (usually width/height), and near and far
  * clipping planes.
  *
- * If no parameters are given, the following default is used:
- * perspective(PI/3, width/height, eyeZ/10, eyeZ*10),
- * where eyeZ is equal to ((height/2) / tan(PI/6)).
+ * If no parameters are given, the default values are used, with a fixed location and a variable field of view.
  * @method  perspective
  * @for p5
- * @param  {Number} [fovy]   camera frustum vertical field of view,
- *                           from bottom to top of view, in <a href="#/p5/angleMode">angleMode</a> units
- * @param  {Number} [aspect] camera frustum aspect ratio
- * @param  {Number} [near]   frustum near plane length
- * @param  {Number} [far]    frustum far plane length
+ * @param  {Number} [fovy]  - camera frustum vertical field of view,
+ *                           from bottom to top of view, in <a href="#/p5/angleMode">angleMode</a> units.
+ *  The default value is now variable and based on the canvas size as:
+ *  this.defaultEyeZ = 800;
+ *  defaultCameraFOV = 2 * Math.atan(this._renderer.height / 2 / this.defaultEyeZ);
+ *
+ * @param  {Number} [aspect] camera frustum aspect ratio .The default value = this._renderer.width / this._renderer.height;
+ * @param  {Number} [near]   frustum near plane length or the near clipping plane. The default value = this.defaultEyeZ * 0.1;
+ * @param  {Number} [far]    frustum far plane length or the far clipping plane. The default value = this.defaultEyeZ * 10;
+ *
+ * However,If you prefer a fixed field of view, you can use the old defaults:
+ *
+ * - Field of view: PI/3 (60 degrees)
+ * - Canvas aspect ratio: width / height
+ * - Near clipping plane: eyeZ / 10
+ * - Far clipping plane: eyeZ * 10
+ *
+ * @example
+ * Set a fixed field of view
+ * perspective(PI/3, width / height, eyeZ / 10, eyeZ * 10);
+ * where eyeZ is equal to ((height/2) / tan(PI/6)).
+ *
  * @chainable
  * @example
  * <div>
