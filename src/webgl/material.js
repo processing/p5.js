@@ -204,13 +204,13 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  * Creates a new <a href="#/p5.Shader">p5.Shader</a> using only a fragment shader, as a convenience method for creating image effects.
  * It's like <a href="#/createShader">createShader()</a> but with a default vertex shader included.
  *
- * <a href="#/createFilterShader">createFilterShader()</a> is intended to be used along with <a href="#/filter">filter()</a> for filtering the contents of a canvas in WebGL mode.
+ * <a href="#/createFilterShader">createFilterShader()</a> is intended to be used along with <a href="#/filter">filter()</a> for filtering the contents of a canvas.
  * A filter shader will not be applied to any geometries.
  *
  * The fragment shader receives some uniforms:
  * - `sampler2D tex0`, which contains the canvas contents as a texture
- * - `vec2 canvasSize`, which is the width and height of the canvas
- * - `vec2 texelSize`, which is the size of a pixel (`1.0/width`, `1.0/height`)
+ * - `vec2 canvasSize`, which is the p5 width and height of the canvas (not including pixel density)
+ * - `vec2 texelSize`, which is the size of a physical pixel including pixel density (`1.0/(width*density)`, `1.0/(height*density)`)
  *
  * For more info about filters and shaders, see Adam Ferriss' <a href="https://github.com/aferriss/p5jsShaderExamples">repo of shader examples</a>
  * or the <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">introduction to shaders</a> page.
@@ -278,7 +278,6 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  * </div>
  */
 p5.prototype.createFilterShader = function(fragSrc) {
-  this._assert3d('createFilterShader');
   p5._validateParameters('createFilterShader', arguments);
   let defaultVertV1 = `
     uniform mat4 uModelViewMatrix;
@@ -322,7 +321,17 @@ p5.prototype.createFilterShader = function(fragSrc) {
   `;
   let vertSrc = fragSrc.includes('#version 300 es') ? defaultVertV2 : defaultVertV1;
   const shader = new p5.Shader(this._renderer, vertSrc, fragSrc);
-  shader.ensureCompiledOnContext(this._renderer.getFilterGraphicsLayer());
+  if (this._renderer.isP3D) {
+    shader.ensureCompiledOnContext(this._renderer.getFilterGraphicsLayer());
+  } else {
+    // In 2D mode, the image is copied to a WebGL p5.Graphics, and then the
+    // filter is applied there, which has its own graphic for running the
+    // shader. This may be simplified in the future by using framebuffers on
+    // a WebGL canvas instead of separate graphics.
+    shader.ensureCompiledOnContext(
+      this._renderer.getFilterGraphicsLayer().getFilterGraphicsLayer()
+    );
+  }
   return shader;
 };
 

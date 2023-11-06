@@ -13,7 +13,7 @@ suite('p5.RendererGL', function() {
   });
 
   teardown(function() {
-    //myp5.remove();
+    myp5.remove();
   });
 
   suite('createCanvas(w, h, WEBGL)', function() {
@@ -163,6 +163,44 @@ suite('p5.RendererGL', function() {
       };
     });
 
+    suite('custom shaders', function() {
+      function testFilterShader(target) {
+        const fragSrc = `precision highp float;
+        void main() {
+          gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+        }`;
+        const s = target.createFilterShader(fragSrc);
+        target.filter(s);
+        target.loadPixels();
+        assert.deepEqual(
+          target.get(target.width/2, target.height/2),
+          [255, 255, 0, 255]
+        );
+      }
+
+      test('work with a 2D main canvas', function() {
+        myp5.createCanvas(10, 10);
+        testFilterShader(myp5);
+      });
+
+      test('work with a WebGL main canvas', function() {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        testFilterShader(myp5);
+      });
+
+      test('work with a 2D graphic', function() {
+        myp5.createCanvas(10, 10);
+        const graphic = myp5.createGraphics(10, 10);
+        testFilterShader(graphic);
+      });
+
+      test('work with a WebGL graphic', function() {
+        myp5.createCanvas(10, 10);
+        const graphic = myp5.createGraphics(10, 10, myp5.WEBGL);
+        testFilterShader(graphic);
+      });
+    });
+
     test('filter accepts correct params', function() {
       myp5.createCanvas(5, 5, myp5.WEBGL);
       let s = myp5.createShader(vert, frag);
@@ -293,13 +331,13 @@ suite('p5.RendererGL', function() {
     test('filter() uses WEBGL implementation behind main P2D canvas', function() {
       let renderer = myp5.createCanvas(3,3);
       myp5.filter(myp5.BLUR);
-      assert.isDefined(renderer._pInst.filterGraphicsLayer);
+      assert.isDefined(renderer.filterGraphicsLayer);
     });
 
     test('filter() can opt out of WEBGL implementation', function() {
       let renderer = myp5.createCanvas(3,3);
       myp5.filter(myp5.BLUR, useWebGL=false);
-      assert.isUndefined(renderer._pInst.filterGraphicsLayer);
+      assert.isUndefined(renderer.filterGraphicsLayer);
     });
 
     test('filters make changes to canvas', function() {
