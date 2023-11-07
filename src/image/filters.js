@@ -537,17 +537,26 @@ function buildBlurKernel(r) {
   }
 }
 
-// Port of https://github.com/processing/processing/blob/
-// main/core/src/processing/core/PImage.java#L1433
+/* Port of https://github.com/processing/processing/blob/
+ *  main/core/src/processing/core/PImage.java#L1433
+
+ * Applies a blur filter to the canvas with a specified radius.
+ * The blur effect is a Gaussian blur.
+ */
 function blurARGB(canvas, radius) {
+
+  // Get the pixel data from the canvas
   const pixels = Filters._toPixels(canvas);
   const width = canvas.width;
   const height = canvas.height;
   const numPackedPixels = width * height;
   const argb = new Int32Array(numPackedPixels);
+
+  // Extract and store the pixel data of the canvas
   for (let j = 0; j < numPackedPixels; j++) {
     argb[j] = Filters._getARGB(pixels, j);
   }
+
   let sum, cr, cg, cb, ca;
   let read, ri, ym, ymi, bk0;
   const a2 = new Int32Array(numPackedPixels);
@@ -555,13 +564,18 @@ function blurARGB(canvas, radius) {
   const g2 = new Int32Array(numPackedPixels);
   const b2 = new Int32Array(numPackedPixels);
   let yi = 0;
+
+  // Build the Gaussian blur kernel based on the specified radius
   buildBlurKernel(radius);
+
   let x, y, i;
   let bm;
   for (y = 0; y < height; y++) {
     for (x = 0; x < width; x++) {
       cb = cg = cr = ca = sum = 0;
       read = x - blurRadius;
+
+      // Handle boundary conditions and ensure we don't go out of bounds
       if (read < 0) {
         bk0 = -read;
         read = 0;
@@ -571,10 +585,13 @@ function blurARGB(canvas, radius) {
         }
         bk0 = 0;
       }
+
+      // Apply the blur kernel to calculate the weighted average
       for (i = bk0; i < blurKernelSize; i++) {
         if (read >= width) {
           break;
         }
+
         const c = argb[read + yi];
         bm = blurMult[i];
         ca += bm[(c & -16777216) >>> 24];
@@ -584,7 +601,10 @@ function blurARGB(canvas, radius) {
         sum += blurKernel[i];
         read++;
       }
+
       ri = yi + x;
+
+      // Store the calculated weighted averages
       a2[ri] = ca / sum;
       r2[ri] = cr / sum;
       g2[ri] = cg / sum;
@@ -592,12 +612,17 @@ function blurARGB(canvas, radius) {
     }
     yi += width;
   }
+
   yi = 0;
   ym = -blurRadius;
   ymi = ym * width;
+
+  // Process the image in the opposite direction to handle boundary conditions
   for (y = 0; y < height; y++) {
     for (x = 0; x < width; x++) {
       cb = cg = cr = ca = sum = 0;
+
+      // Handle boundary conditions for the other direction
       if (ym < 0) {
         bk0 = ri = -ym;
         read = x;
@@ -609,6 +634,8 @@ function blurARGB(canvas, radius) {
         ri = ym;
         read = x + ymi;
       }
+
+      // Apply the blur kernel to calculate the weighted average
       for (i = bk0; i < blurKernelSize; i++) {
         if (ri >= height) {
           break;
@@ -622,6 +649,8 @@ function blurARGB(canvas, radius) {
         ri++;
         read += width;
       }
+
+      // Update the original pixel data with the blurred values
       argb[x + yi] =
         ((ca / sum) << 24) |
         ((cr / sum) << 16) |
@@ -632,8 +661,11 @@ function blurARGB(canvas, radius) {
     ymi += width;
     ym++;
   }
+
+  // Update the canvas with the modified pixel data
   Filters._setPixels(pixels, argb);
 }
+
 
 
 
