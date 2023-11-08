@@ -1177,14 +1177,17 @@ p5.prototype.shininess = function(shine) {
  * @private blends colors according to color components.
  * If alpha value is less than 1, or non-standard blendMode
  * we need to enable blending on our gl context.
- * @param  {Number[]} color [description]
+ * @param  {Number[]} color The currently set color, with values in 0-1 range
+ * @param  {Boolean} [hasTransparency] Whether the shape being drawn has other
+ * transparency internally, e.g. via vertex colors
  * @return {Number[]]}  Normalized numbers array
  */
-p5.RendererGL.prototype._applyColorBlend = function(colors) {
+p5.RendererGL.prototype._applyColorBlend = function(colors, hasTransparency) {
   const gl = this.GL;
 
   const isTexture = this.drawMode === constants.TEXTURE;
   const doBlend =
+    hasTransparency ||
     this.userFillShader ||
     this.userStrokeShader ||
     this.userPointShader ||

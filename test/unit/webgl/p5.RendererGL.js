@@ -1137,6 +1137,30 @@ suite('p5.RendererGL', function() {
       assert.deepEqual(myp5.get(16, 16), [255, 0, 255, 255]);
       done();
     });
+
+    test('transparency works the same with per-vertex colors', function() {
+      myp5.createCanvas(20, 20, myp5.WEBGL);
+      myp5.noStroke();
+
+      function drawShapes() {
+        myp5.fill(255, 0, 0, 100);
+        myp5.rect(-10, -10, 15, 15);
+        myp5.fill(0, 0, 255, 100);
+        myp5.rect(-5, -5, 15, 15);
+      }
+
+      drawShapes();
+      myp5.loadPixels();
+      const eachShapeResult = [...myp5.pixels];
+
+      myp5.clear();
+      const shapes = myp5.buildGeometry(drawShapes);
+      myp5.model(shapes);
+      myp5.loadPixels();
+      const singleShapeResult = [...myp5.pixels];
+
+      assert.deepEqual(eachShapeResult, singleShapeResult);
+    });
   });
 
   suite('BufferDef', function() {
