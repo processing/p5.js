@@ -229,7 +229,7 @@ p5.prototype.orbitControl = function(
         deltaPhi = sensitivityY * this.movedY / scaleFactor;
       } else if (this.mouseButton === this.RIGHT) {
         moveDeltaX = this.movedX;
-        moveDeltaY = (this.movedY * -1);
+        moveDeltaY = (this.movedY * (cam.projMatrix.mat4[5] < 0 ? 1 : -1));
       }
       // start rotate and move when mouse is pressed within the canvas.
       if (pointersInCanvas) this._renderer.executeRotateAndMove = true;
