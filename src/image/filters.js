@@ -20,27 +20,34 @@ const Filters = {
    */
 
   /**
-   * Returns the pixel buffer for a canvas
+   * Returns the pixel buffer for a canvas.
    *
    * @private
    *
    * @param  {Canvas|ImageData} canvas the canvas to get pixels from
    * @return {Uint8ClampedArray}       a one-dimensional array containing
-   *                                   the data in thc RGBA order, with integer
-   *                                   values between 0 and 255
+   *                                   the data in the RGBA order, with integer
+   *                                   values between 0 and 255.
    */
   _toPixels(canvas) {
+    // Return pixel data if 'canvas' is an ImageData object.
     if (canvas instanceof ImageData) {
       return canvas.data;
     } else {
+      // Check 2D context support.
       if (canvas.getContext('2d')) {
+        // Retrieve pixel data.
         return canvas
           .getContext('2d')
           .getImageData(0, 0, canvas.width, canvas.height).data;
-      } else if (canvas.getContext('webgl')) {
+      } else if (canvas.getContext('webgl')) { //Check WebGL context support
         const gl = canvas.getContext('webgl');
+        // Calculate the size of pixel data
+        // (4 bytes per pixel - one byte for each RGBA channel).
         const len = gl.drawingBufferWidth * gl.drawingBufferHeight * 4;
         const data = new Uint8Array(len);
+        // Use gl.readPixels to fetch pixel data from the WebGL
+        // canvas, storing it in the data array as UNSIGNED_BYTE integers.
         gl.readPixels(
           0,
           0,
@@ -56,23 +63,25 @@ const Filters = {
   },
 
   /**
- * Returns a 32 bit number containing ARGB data at ith pixel in the
+ * Returns a 32-bit number containing ARGB data at the ith pixel in the
  * 1D array containing pixels data.
  *
  * @private
  *
  * @param  {Uint8ClampedArray} data array returned by _toPixels()
  * @param  {Integer}           i    index of a 1D Image Array
- * @return {Integer}                32 bit integer value representing
+ * @return {Integer}                32-bit integer value representing
  *                                  ARGB value.
  */
   _getARGB(data, i) {
+    // Determine the starting position in the 'data' array for the 'i'-th pixel.
     const offset = i * 4;
     return (
-      ((data[offset + 3] << 24) & 0xff000000) |
-      ((data[offset] << 16) & 0x00ff0000) |
-      ((data[offset + 1] << 8) & 0x0000ff00) |
-      (data[offset + 2] & 0x000000ff)
+      // Combining the extracted components using bitwise OR operations to form the final ARGB value.
+      ((data[offset + 3] << 24) & 0xff000000) | //Extract alpha component
+      ((data[offset] << 16) & 0x00ff0000) | //Extract Red component
+      ((data[offset + 1] << 8) & 0x0000ff00) | //Extract green component
+      (data[offset + 2] & 0x000000ff) //Extract blue component
     );
   },
 
@@ -98,7 +107,7 @@ const Filters = {
 
 
   /**
- * Returns the ImageData object for a canvas
+ * Returns the ImageData object for a canvas.
  * https://developer.mozilla.org/en-US/docs/Web/API/ImageData
  *
  * @private
@@ -148,9 +157,9 @@ const Filters = {
  * the canvas in between everystep.
  *
  * @private
- * @param  {HTMLCanvasElement} canvas [description]
- * @param  {function(ImageData,Object)} func   [description]
- * @param  {Object} filterParam  [description]
+ * @param  {HTMLCanvasElement} canvas The input canvas to apply the filter on.
+ * @param  {function(ImageData,Object)} func The filter function to apply to the canvas's pixel data.
+ * @param  {Object} filterParam An optional parameter to pass to the filter function.
  */
   apply(canvas, func, filterParam) {
     const pixelsState = canvas.getContext('2d');
@@ -160,6 +169,7 @@ const Filters = {
     //Filters can either return a new ImageData object, or just modify
     //the one they received.
     const newImageData = func(imageData, filterParam);
+    //If new ImageData is returned, replace the canvas's pixel data with it.
     if (newImageData instanceof ImageData) {
       pixelsState.putImageData(
         newImageData,
@@ -170,7 +180,7 @@ const Filters = {
         canvas.width,
         canvas.height
       );
-    } else {
+    } else {  //Restore the original pixel.
       pixelsState.putImageData(
         imageData,
         0,
@@ -195,8 +205,8 @@ const Filters = {
  * Borrowed from http://www.html5rocks.com/en/tutorials/canvas/imagefilters/
  *
  * @private
- * @param  {Canvas} canvas
- * @param  {Float} level
+ * @param  {Canvas} canvas Canvas to apply thershold filter on.
+ * @param  {Float} level Threshold level (0-1).
  */
   threshold(canvas, level) {
     const pixels = Filters._toPixels(canvas);
@@ -204,12 +214,14 @@ const Filters = {
     if (level === undefined) {
       level = 0.5;
     }
+    // Calculate thershold value on a (0-255) scale.
     const thresh = Math.floor(level * 255);
 
     for (let i = 0; i < pixels.length; i += 4) {
       const r = pixels[i];
       const g = pixels[i + 1];
       const b = pixels[i + 2];
+      // CIE luminance for RGB
       const gray = 0.2126 * r + 0.7152 * g + 0.0722 * b;
       let val;
       if (gray >= thresh) {
@@ -217,7 +229,7 @@ const Filters = {
       } else {
         val = 0;
       }
-      pixels[i] = pixels[i + 1] = pixels[i + 2] = val;
+      pixels[i] = pixels[i + 1] = pixels[i + 2] = val; //set pixel to val.
     }
   },
 
@@ -228,7 +240,7 @@ const Filters = {
  * Borrowed from http://www.html5rocks.com/en/tutorials/canvas/imagefilters/
  *
  * @private
- * @param {Canvas} canvas
+ * @param {Canvas} canvas Canvas to apply gray filter on.
  */
   gray(canvas) {
     const pixels = Filters._toPixels(canvas);
@@ -240,7 +252,7 @@ const Filters = {
 
       // CIE luminance for RGB
       const gray = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-      pixels[i] = pixels[i + 1] = pixels[i + 2] = gray;
+      pixels[i] = pixels[i + 1] = pixels[i + 2] = gray; // set pixel to gray.
     }
   },
 
@@ -288,7 +300,9 @@ const Filters = {
  */
   posterize(canvas, level) {
     const pixels = Filters._toPixels(canvas);
-
+    if (level === undefined) {
+      level = 4;
+    }
     if (level < 2 || level > 255) {
       throw new Error(
         'Level must be greater than 2 and less than 255 for posterize'
@@ -301,6 +315,7 @@ const Filters = {
       const glevel = pixels[i + 1];
       const blevel = pixels[i + 2];
 
+      // New pixel value by posterizing each color.
       pixels[i] = ((rlevel * level) >> 8) * 255 / levels1;
       pixels[i + 1] = ((glevel * level) >> 8) * 255 / levels1;
       pixels[i + 2] = ((blevel * level) >> 8) * 255 / levels1;
@@ -308,7 +323,7 @@ const Filters = {
   },
 
   /**
- * increases the bright areas in an image
+ * Increases the bright areas in an image.
  * @private
  * @param  {Canvas} canvas
  */
@@ -322,17 +337,20 @@ const Filters = {
     let idxRight, idxLeft, idxUp, idxDown;
     let colRight, colLeft, colUp, colDown;
     let lumRight, lumLeft, lumUp, lumDown;
-
+    // Iterates through rows of pixels.
     while (currIdx < maxIdx) {
       currRowIdx = currIdx;
       maxRowIdx = currIdx + canvas.width;
+      // Iterates through pixels within the current row.
       while (currIdx < maxRowIdx) {
+        // Get original color of current pixel.
         colOrig = colOut = Filters._getARGB(pixels, currIdx);
         idxLeft = currIdx - 1;
         idxRight = currIdx + 1;
         idxUp = currIdx - canvas.width;
         idxDown = currIdx + canvas.width;
 
+        // Adjust the indices to avoid going out of bounds.
         if (idxLeft < currRowIdx) {
           idxLeft = currIdx;
         }
@@ -350,7 +368,7 @@ const Filters = {
         colDown = Filters._getARGB(pixels, idxDown);
         colRight = Filters._getARGB(pixels, idxRight);
 
-        //compute luminance
+        // Compute luminance
         currLum =
           77 * ((colOrig >> 16) & 0xff) +
           151 * ((colOrig >> 8) & 0xff) +
@@ -372,6 +390,7 @@ const Filters = {
           151 * ((colDown >> 8) & 0xff) +
           28 * (colDown & 0xff);
 
+        // Update the output color based on the highest luminance value
         if (lumLeft > currLum) {
           colOut = colLeft;
           currLum = lumLeft;
@@ -388,6 +407,7 @@ const Filters = {
           colOut = colDown;
           currLum = lumDown;
         }
+        // Store the updated color.
         out[currIdx++] = colOut;
       }
     }
@@ -395,7 +415,8 @@ const Filters = {
   },
 
   /**
- * reduces the bright areas in an image
+ * Reduces the bright areas in an image.
+ * Similar to `dilate()`, but updates the output color based on the lowest luminance value.
  * @private
  * @param  {Canvas} canvas
  */
@@ -474,7 +495,7 @@ const Filters = {
           colOut = colDown;
           currLum = lumDown;
         }
-
+        // Store the updated color.
         out[currIdx++] = colOut;
       }
     }
@@ -488,7 +509,7 @@ const Filters = {
 
 // BLUR
 
-// internal kernel stuff for the gaussian blur filter
+// Internal kernel stuff for the gaussian blur filter.
 let blurRadius;
 let blurKernelSize;
 let blurKernel;
@@ -510,6 +531,7 @@ function buildBlurKernel(r) {
 
   if (blurRadius !== radius) {
     blurRadius = radius;
+    // Calculating the size of the blur kernel
     blurKernelSize = (1 + blurRadius) << 1;
     blurKernel = new Int32Array(blurKernelSize);
     blurMult = new Array(blurKernelSize);
@@ -519,7 +541,7 @@ function buildBlurKernel(r) {
 
     let bk, bki;
     let bm, bmi;
-
+    // Generating blur kernel values.
     for (let i = 1, radiusi = radius - 1; i < radius; i++) {
       blurKernel[radius + i] = blurKernel[radiusi] = bki = radiusi * radiusi;
       bm = blurMult[radius + i];
@@ -540,6 +562,7 @@ function buildBlurKernel(r) {
 // Port of https://github.com/processing/processing/blob/
 // main/core/src/processing/core/PImage.java#L1433
 function blurARGB(canvas, radius) {
+  // Get pixel data.
   const pixels = Filters._toPixels(canvas);
   const width = canvas.width;
   const height = canvas.height;
@@ -558,10 +581,12 @@ function blurARGB(canvas, radius) {
   buildBlurKernel(radius);
   let x, y, i;
   let bm;
+  // Horizontal pass.
   for (y = 0; y < height; y++) {
     for (x = 0; x < width; x++) {
       cb = cg = cr = ca = sum = 0;
       read = x - blurRadius;
+      // Handle edge cases.
       if (read < 0) {
         bk0 = -read;
         read = 0;
@@ -595,9 +620,11 @@ function blurARGB(canvas, radius) {
   yi = 0;
   ym = -blurRadius;
   ymi = ym * width;
+  //  Vertical pass.
   for (y = 0; y < height; y++) {
     for (x = 0; x < width; x++) {
       cb = cg = cr = ca = sum = 0;
+      // Handle edge cases.
       if (ym < 0) {
         bk0 = ri = -ym;
         read = x;
@@ -622,6 +649,7 @@ function blurARGB(canvas, radius) {
         ri++;
         read += width;
       }
+      // Set final ARGB value
       argb[x + yi] =
         ((ca / sum) << 24) |
         ((cr / sum) << 16) |
