@@ -5331,6 +5331,45 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "yashpandey06",
+      "name": "Yash Pandey",
+      "avatar_url": "https://avatars.githubusercontent.com/u/97700473?v=4",
+      "profile": "https://yash-portfolio-bice.vercel.app/",
+      "contributions": [
+        "bug",
+        "code"
+      ]
+    },
+    {
+      "login": "adityadeshpande09",
+      "name": "Aditya Deshpande",
+      "avatar_url": "https://avatars.githubusercontent.com/u/98452243?v=4",
+      "profile": "https://github.com/adityadeshpande09",
+      "contributions": [
+        "bug",
+        "doc"
+      ]
+    },
+    {
+      "login": "acamposuribe",
+      "name": "Alejandro",
+      "avatar_url": "https://avatars.githubusercontent.com/u/121937906?v=4",
+      "profile": "http://art.arqtistic.com",
+      "contributions": [
+        "bug",
+        "code"
+      ]
+    },
+    {
+      "login": "diyaayay",
+      "name": "Diya Solanki",
+      "avatar_url": "https://avatars.githubusercontent.com/u/110971977?v=4",
+      "profile": "https://github.com/diyaayay",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",

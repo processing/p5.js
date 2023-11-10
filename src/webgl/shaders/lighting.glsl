@@ -1,3 +1,5 @@
+#define PI 3.141592
+
 precision highp float;
 precision highp int;
 
@@ -33,6 +35,16 @@ uniform float uConstantAttenuation;
 uniform float uLinearAttenuation;
 uniform float uQuadraticAttenuation;
 
+// setting from  _setImageLightUniforms()
+// boolean to initiate the calculateImageDiffuse and calculateImageSpecular
+uniform bool uUseImageLight;
+// texture for use in calculateImageDiffuse
+uniform sampler2D environmentMapDiffused;
+// texture for use in calculateImageSpecular
+uniform sampler2D environmentMapSpecular;
+// roughness for use in calculateImageSpecular
+uniform float levelOfDetail;
+
 const float specularFactor = 2.0;
 const float diffuseFactor = 0.73;
 
@@ -65,6 +77,60 @@ LightResult _light(vec3 viewDirection, vec3 normal, vec3 lightVector) {
     lr.specular = _phongSpecular(lightDir, viewDirection, normal, uShininess);
   lr.diffuse = _lambertDiffuse(lightDir, normal);
   return lr;
+}
+
+// converts the range of "value" from [min1 to max1] to [min2 to max2]
+float map(float value, float min1, float max1, float min2, float max2) {
+  return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
+}
+
+vec2 mapTextureToNormal( vec3 v ){
+  // x = r sin(phi) cos(theta)   
+  // y = r cos(phi)  
+  // z = r sin(phi) sin(theta)
+  float phi = acos( v.y );
+  // if phi is 0, then there are no x, z components
+  float theta = 0.0;
+  // else 
+  theta = acos(v.x / sin(phi));
+  float sinTheta = v.z / sin(phi);
+  if (sinTheta < 0.0) {
+    // Turn it into -theta, but in the 0-2PI range
+    theta = 2.0 * PI - theta;
+  }
+  theta = theta / (2.0 * 3.14159);
+  phi = phi / 3.14159 ;
+  
+  vec2 angles = vec2( fract(theta + 0.25), 1.0 - phi );
+  return angles;
+}
+
+
+vec3 calculateImageDiffuse( vec3 vNormal, vec3 vViewPosition ){
+  // make 2 seperate builds 
+  vec3 worldCameraPosition =  vec3(0.0, 0.0, 0.0);  // hardcoded world camera position
+  vec3 worldNormal = normalize(vNormal);
+  vec2 newTexCoor = mapTextureToNormal( worldNormal );
+  vec4 texture = TEXTURE( environmentMapDiffused, newTexCoor );
+  // this is to make the darker sections more dark
+  // png and jpg usually flatten the brightness so it is to reverse that
+  return smoothstep(vec3(0.0), vec3(0.8), texture.xyz);
+}
+
+vec3 calculateImageSpecular( vec3 vNormal, vec3 vViewPosition ){
+  vec3 worldCameraPosition =  vec3(0.0, 0.0, 0.0);
+  vec3 worldNormal = normalize(vNormal);
+  vec3 lightDirection = normalize( vViewPosition - worldCameraPosition );
+  vec3 R = reflect(lightDirection, worldNormal);
+  vec2 newTexCoor = mapTextureToNormal( R );
+#ifdef WEBGL2
+  vec4 outColor = textureLod(environmentMapSpecular, newTexCoor, levelOfDetail);
+#else
+  vec4 outColor = TEXTURE(environmentMapSpecular, newTexCoor);
+#endif
+  // this is to make the darker sections more dark
+  // png and jpg usually flatten the brightness so it is to reverse that
+  return pow(outColor.xyz, vec3(10.0));
 }
 
 void totalLight(
@@ -136,6 +202,11 @@ void totalLight(
       totalDiffuse += result.diffuse * lightColor * lightFalloff;
       totalSpecular += result.specular * lightColor * specularColor * lightFalloff;
     }
+  }
+
+  if( uUseImageLight ){
+    totalDiffuse += calculateImageDiffuse(normal, modelPosition);
+    totalSpecular += calculateImageSpecular(normal, modelPosition);
   }
 
   totalDiffuse *= diffuseFactor;

@@ -614,7 +614,8 @@ p5.prototype.filter = function(...args) {
       // dest coords
       -this.width/2, -this.height/2, this.width, this.height
     );
-
+    //clearing the main canvas
+    this._renderer.clear();
     // filter it with shaders
     this.filterGraphicsLayer.filter(operation, value);
 

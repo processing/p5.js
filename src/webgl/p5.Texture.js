@@ -337,22 +337,22 @@ p5.Texture = class Texture {
   setInterpolation (downScale, upScale) {
     const gl = this._renderer.GL;
 
-    if (downScale === constants.NEAREST) {
-      this.glMinFilter = gl.NEAREST;
-    } else {
-      this.glMinFilter = gl.LINEAR;
-    }
-
-    if (upScale === constants.NEAREST) {
-      this.glMagFilter = gl.NEAREST;
-    } else {
-      this.glMagFilter = gl.LINEAR;
-    }
+    this.glMinFilter = this.glFilter(downScale);
+    this.glMagFilter = this.glFilter(upScale);
 
     this.bindTexture();
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this.glMinFilter);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this.glMagFilter);
     this.unbindTexture();
+  }
+
+  glFilter(filter) {
+    const gl = this._renderer.GL;
+    if (filter === constants.NEAREST) {
+      return gl.NEAREST;
+    } else {
+      return gl.LINEAR;
+    }
   }
 
   /**
@@ -451,6 +451,51 @@ p5.Texture = class Texture {
     this.unbindTexture();
   }
 };
+
+export class MipmapTexture extends p5.Texture {
+  constructor(renderer, levels, settings) {
+    super(renderer, levels, settings);
+    const gl = this._renderer.GL;
+    if (this.glMinFilter === gl.LINEAR) {
+      this.glMinFilter = gl.LINEAR_MIPMAP_LINEAR;
+    }
+  }
+
+  glFilter(_filter) {
+    const gl = this._renderer.GL;
+    // TODO: support others
+    return gl.LINEAR_MIPMAP_LINEAR;
+  }
+
+  _getTextureDataFromSource() {
+    return this.src;
+  }
+
+  init(levels) {
+    const gl = this._renderer.GL;
+    this.glTex = gl.createTexture();
+
+    this.bindTexture();
+    for (let level = 0; level < levels.length; level++) {
+      gl.texImage2D(
+        this.glTarget,
+        level,
+        this.glFormat,
+        this.glFormat,
+        this.glDataType,
+        levels[level]
+      );
+    }
+
+    this.glMinFilter = gl.LINEAR_MIPMAP_LINEAR;
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this.glMagFilter);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this.glMinFilter);
+
+    this.unbindTexture();
+  }
+
+  update() {}
+}
 
 export function checkWebGLCapabilities({ GL, webglVersion }) {
   const gl = GL;

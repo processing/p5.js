@@ -1,10 +1,9 @@
-precision highp float;
 precision highp int;
 
-attribute vec3 aPosition;
-attribute vec3 aNormal;
-attribute vec2 aTexCoord;
-attribute vec4 aVertexColor;
+IN vec3 aPosition;
+IN vec3 aNormal;
+IN vec2 aTexCoord;
+IN vec4 aVertexColor;
 
 uniform vec3 uAmbientColor[5];
 
@@ -16,11 +15,11 @@ uniform int uAmbientLightCount;
 uniform bool uUseVertexColor;
 uniform vec4 uMaterialColor;
 
-varying vec3 vNormal;
-varying vec2 vTexCoord;
-varying vec3 vViewPosition;
-varying vec3 vAmbientColor;
-varying vec4 vColor;
+OUT vec3 vNormal;
+OUT vec2 vTexCoord;
+OUT vec3 vViewPosition;
+OUT vec3 vAmbientColor;
+OUT vec4 vColor;
 
 void main(void) {
 
