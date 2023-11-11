@@ -174,10 +174,10 @@ p5.prototype.dist = function(...args) {
   p5._validateParameters('dist', args);
   if (args.length === 4) {
     //2D
-    return hypot(args[2] - args[0], args[3] - args[1]);
+    return Math.hypot(args[2] - args[0], args[3] - args[1]);
   } else if (args.length === 6) {
     //3D
-    return hypot(args[3] - args[0], args[4] - args[1], args[5] - args[2]);
+    return Math.hypot(args[3] - args[0], args[4] - args[1], args[5] - args[2]);
   }
 };
 
@@ -341,7 +341,7 @@ p5.prototype.log = Math.log;
  */
 p5.prototype.mag = function(x, y) {
   p5._validateParameters('mag', arguments);
-  return hypot(x, y);
+  return Math.hypot(x, y);
 };
 
 /**
@@ -726,48 +726,6 @@ p5.prototype.sq = n => n * n;
  * </div>
  */
 p5.prototype.sqrt = Math.sqrt;
-
-// Calculate the length of the hypotenuse of a right triangle
-// This won't under- or overflow in intermediate steps
-// https://en.wikipedia.org/wiki/Hypot
-function hypot(x, y, z) {
-  // Use the native implementation if it's available
-  if (typeof Math.hypot === 'function') {
-    return Math.hypot.apply(null, arguments);
-  }
-
-  // Otherwise use the V8 implementation
-  // https://github.com/v8/v8/blob/8cd3cf297287e581a49e487067f5cbd991b27123/src/js/math.js#L217
-  const length = arguments.length;
-  const args = [];
-  let max = 0;
-  for (let i = 0; i < length; i++) {
-    let n = arguments[i];
-    n = +n;
-    if (n === Infinity || n === -Infinity) {
-      return Infinity;
-    }
-    n = Math.abs(n);
-    if (n > max) {
-      max = n;
-    }
-    args[i] = n;
-  }
-
-  if (max === 0) {
-    max = 1;
-  }
-  let sum = 0;
-  let compensation = 0;
-  for (let j = 0; j < length; j++) {
-    const m = args[j] / max;
-    const summand = m * m - compensation;
-    const preliminary = sum + summand;
-    compensation = preliminary - sum - summand;
-    sum = preliminary;
-  }
-  return Math.sqrt(sum) * max;
-}
 
 /**
  * Calculates the fractional part of a number. For example,

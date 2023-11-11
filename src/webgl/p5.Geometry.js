@@ -18,9 +18,9 @@ import p5 from '../core/main';
  * @param {function} [callback] function to call upon object instantiation.
  */
 p5.Geometry = class Geometry {
-  constructor(detailX, detailY, callback){
-  //an array containing every vertex
-  //@type [p5.Vector]
+  constructor(detailX, detailY, callback) {
+    //an array containing every vertex
+    //@type [p5.Vector]
     this.vertices = [];
 
     //an array containing every vertex for stroke drawing
@@ -87,9 +87,55 @@ p5.Geometry = class Geometry {
 
     this.dirtyFlags = {};
   }
-/**
+  /**
+   * Removes the internal colors of p5.Geometry.
+   * Using `clearColors()`, you can use `fill()` to supply new colors before drawing each shape.
+   * If `clearColors()` is not used, the shapes will use their internal colors by ignoring `fill()`.
+   *
    * @method clearColors
-   * @chainable
+   *
+   * @example
+   * <div>
+   * <code>
+   * let shape01;
+   * let shape02;
+   * let points = [];
+   *
+   * function setup() {
+   *   createCanvas(600, 600, WEBGL);
+   *   points.push(new p5.Vector(-1, -1, 0), new p5.Vector(-1, 1, 0),
+   *     new p5.Vector(1, -1, 0), new p5.Vector(-1, -1, 0));
+   *   buildShape01();
+   *   buildShape02();
+   * }
+   * function draw() {
+   *   background(0);
+   *   fill('pink'); // shape01 retains its internal blue color, so it won't turn pink.
+   *   model(shape01);
+   *   fill('yellow'); // Now, shape02 is yellow.
+   *   model(shape02);
+   * }
+   *
+   * function buildShape01() {
+   *   beginGeometry();
+   *   fill('blue'); // shape01's color is blue because its internal colors remain.
+   *   beginShape();
+   *   for (let vec of points) vertex(vec.x * 100, vec.y * 100, vec.z * 100);
+   *   endShape(CLOSE);
+   *   shape01 = endGeometry();
+   * }
+   *
+   * function buildShape02() {
+   *   beginGeometry();
+   *   fill('red');  // shape02.clearColors() removes its internal colors. Now, shape02 is red.
+   *   beginShape();
+   *   for (let vec of points) vertex(vec.x * 200, vec.y * 200, vec.z * 200);
+   *   endShape(CLOSE);
+   *   shape02 = endGeometry();
+   *   shape02.clearColors(); // Resets shape02's colors.
+   * }
+   * </code>
+   * </div>
    */
   clearColors() {
     this.vertexColors = [];
@@ -118,7 +164,7 @@ p5.Geometry = class Geometry {
   }
 
   _getFaceNormal(faceId) {
-  //This assumes that vA->vB->vC is a counter-clockwise ordering
+    //This assumes that vA->vB->vC is a counter-clockwise ordering
     const face = this.faces[faceId];
     const vA = this.vertices[face[0]];
     const vB = this.vertices[face[1]];
@@ -203,7 +249,7 @@ p5.Geometry = class Geometry {
  * @chainable
  */
   averagePoleNormals() {
-  //average the north pole
+    //average the north pole
     let sum = new p5.Vector(0, 0, 0);
     for (let i = 0; i < this.detailX; i++) {
       sum.add(this.vertexNormals[i]);
@@ -514,7 +560,7 @@ p5.Geometry = class Geometry {
  */
   normalize() {
     if (this.vertices.length > 0) {
-    // Find the corners of our bounding box
+      // Find the corners of our bounding box
       const maxPosition = this.vertices[0].copy();
       const minPosition = this.vertices[0].copy();
 
