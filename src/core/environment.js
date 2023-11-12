@@ -32,16 +32,20 @@ let windowPrintDisabled = false;
  * @example
  * <div>
  * <code class="norender">
- * // Prints "hello, world" to the console.
- * print('hello, world');
+ * function setup() {
+ *   // Prints "hello, world" to the console.
+ *   print('hello, world');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code class="norender">
- * let name = 'ada';
- * // Prints "hello, ada" to the console.
- * print(`hello, ${name}`);
+ * function setup() {
+ *   let name = 'ada';
+ *   // Prints "hello, ada" to the console.
+ *   print(`hello, ${name}`);
+ * }
  * </code>
  * </div>
  */
@@ -76,6 +80,9 @@ p5.prototype.print = function(...args) {
  * <code>
  * function setup() {
  *   background(200);
+ *
+ *   // Display the value of
+ *   // frameCount.
  *   textSize(30);
  *   textAlign(CENTER, CENTER);
  *   text(frameCount, 50, 50);
@@ -88,13 +95,18 @@ p5.prototype.print = function(...args) {
  * <div>
  * <code>
  * function setup() {
+ *   // Set the frameRate to 30.
  *   frameRate(30);
+ *
  *   textSize(30);
  *   textAlign(CENTER, CENTER);
  * }
  *
  * function draw() {
  *   background(200);
+ *
+ *   // Display the value of
+ *   // frameCount.
  *   text(frameCount, 50, 50);
  *
  *   describe('A number written in black in the middle of a gray square. Its value increases rapidly.');
@@ -118,19 +130,28 @@ p5.prototype.frameCount = 0;
  * let speed = 0.05;
  *
  * function setup()  {
+ *   // Set the frameRate to 30.
  *   frameRate(30);
  * }
  *
  * function draw() {
  *   background(200);
  *
+ *   // Use deltaTime to calculate
+ *   // a change in position.
  *   let deltaX = speed * deltaTime;
+ *
+ *   // Update the x variable.
  *   x += deltaX;
  *
+ *   // Reset x to 0 if it's
+ *   // greater than 100.
  *   if (x > 100)  {
  *     x = 0;
  *   }
  *
+ *   // Use x to set the circle's
+ *   // position.
  *   circle(x, 50, 20);
  *
  *   describe('A white circle moves from left to right on a gray background. It reappears on the left side when it reaches the right side.');
@@ -151,8 +172,12 @@ p5.prototype.deltaTime = 0;
  * <code>
  * // Open this example in two separate browser
  * // windows placed side-by-side to demonstrate.
+ *
  * function draw() {
- *   if (focused) {
+ *   // Change the background color
+ *   // when the browser window
+ *   // goes in/out of focus.
+ *   if (focused === true) {
  *     background(0, 255, 0);
  *   } else {
  *     background(255, 0, 0);
@@ -192,6 +217,8 @@ p5.prototype.focused = document.hasFocus();
  * <code>
  * function draw() {
  *   background(200);
+ *
+ *   // Set the cursor to crosshairs: +
  *   cursor(CROSS);
  *
  *   describe('A gray square. The cursor appears as crosshairs.');
@@ -229,7 +256,9 @@ p5.prototype.focused = document.hasFocus();
  * function draw() {
  *   background(200);
  *
- *   if (mouseIsPressed) {
+ *   // Change the cursor's active spot
+ *   // when the mouse is pressed.
+ *   if (mouseIsPressed === true) {
  *     cursor('https://avatars0.githubusercontent.com/u/1617169?s=16', 8, 8);
  *   } else {
  *     cursor('https://avatars0.githubusercontent.com/u/1617169?s=16');
@@ -292,14 +321,20 @@ p5.prototype.cursor = function(type, x, y) {
  * function draw() {
  *   background(200);
  *
+ *   // Set the x variable based
+ *   // on the current frameCount.
  *   let x = frameCount % 100;
  *
- *   if (mouseIsPressed) {
+ *   // If the mouse is pressed,
+ *   // decrease the frame rate.
+ *   if (mouseIsPressed === true) {
  *     frameRate(10);
  *   } else {
  *     frameRate(60);
  *   }
  *
+ *   // Use x to set the circle's
+ *   // position.
  *   circle(x, 50, 20);
  *
  *   describe('A white circle on a gray background. The circle moves from left to right in a loop. It slows down when the mouse is pressed.');
@@ -312,13 +347,16 @@ p5.prototype.cursor = function(type, x, y) {
  * function draw() {
  *   background(200);
  *
- *   if (mouseIsPressed) {
- *     // Do lots of math.
+ *   // If the mouse is pressed, do lots
+ *   // of math to slow down drawing.
+ *   if (mouseIsPressed === true) {
  *     for (let i = 0; i < 1000000; i += 1) {
  *       random();
  *     }
  *   }
  *
+ *   // Get the current frame rate
+ *   // and display it.
  *   let fps = frameRate();
  *   text(fps, 50, 50);
  *
@@ -382,8 +420,11 @@ p5.prototype.setFrameRate = function(fps) {
  * function draw() {
  *   background(200);
  *
+ *   // Set the frame rate to 20.
  *   frameRate(20);
  *
+ *   // Get the target frame rate and
+ *   // display it.
  *   let fps = getTargetFrameRate();
  *   text(fps, 43, 54);
  *
@@ -404,11 +445,13 @@ p5.prototype.getTargetFrameRate = function() {
  * <div>
  * <code>
  * function setup() {
+ *   // Hide the cursor.
  *   noCursor();
  * }
  *
  * function draw() {
  *   background(200);
+ *
  *   circle(mouseX, mouseY, 10);
  *
  *   describe('A white circle on a gray background. The circle follows the mouse as it moves. The cursor is hidden.');
@@ -434,6 +477,8 @@ p5.prototype.noCursor = function() {
  * <code>
  * function setup() {
  *   background(200);
+ *
+ *   // Display the current WebGL version.
  *   text(webglVersion, 42, 54);
  *
  *   describe('The text "p2d" written in black on a gray background.');
@@ -446,6 +491,7 @@ p5.prototype.noCursor = function() {
  * let font;
  *
  * function preload() {
+ *   // Load a font to use.
  *   font = loadFont('assets/inconsolata.otf');
  * }
  *
@@ -453,6 +499,7 @@ p5.prototype.noCursor = function() {
  *   createCanvas(100, 50, WEBGL);
  *   background(200);
  *
+ *   // Display the current WebGL version.
  *   fill(0);
  *   textFont(font);
  *   text(webglVersion, -15, 5);
@@ -467,6 +514,7 @@ p5.prototype.noCursor = function() {
  * let font;
  *
  * function preload() {
+ *   // Load a font to use.
  *   font = loadFont('assets/inconsolata.otf');
  * }
  *
@@ -478,6 +526,7 @@ p5.prototype.noCursor = function() {
  *
  *   background(200);
  *
+ *   // Display the current WebGL version.
  *   fill(0);
  *   textFont(font);
  *   text(webglVersion, -14, 5);
@@ -503,7 +552,10 @@ p5.prototype.webglVersion = C.P2D;
  * <div class="norender">
  * <code>
  * function setup() {
+ *   // Set the canvas' width and height
+ *   // using the display's dimensions.
  *   createCanvas(displayWidth, displayHeight);
+ *
  *   background(200);
  *
  *   describe('A gray canvas that is the same size as the display.');
@@ -530,7 +582,10 @@ p5.prototype.displayWidth = screen.width;
  * <div class="norender">
  * <code>
  * function setup() {
+ *   // Set the canvas' width and height
+ *   // using the display's dimensions.
  *   createCanvas(displayWidth, displayHeight);
+ *
  *   background(200);
  *
  *   describe('A gray canvas that is the same size as the display.');
@@ -554,7 +609,10 @@ p5.prototype.displayHeight = screen.height;
  * <div class="norender">
  * <code>
  * function setup() {
+ *   // Set the canvas' width and height
+ *   // using the browser's dimensions.
  *   createCanvas(windowWidth, windowHeight);
+ *
  *   background(200);
  *
  *   describe('A gray canvas that takes up the entire browser window.');
@@ -578,7 +636,10 @@ p5.prototype.windowWidth = getWindowWidth();
  * <div class="norender">
  * <code>
  * function setup() {
+ *   // Set the canvas' width and height
+ *   // using the browser's dimensions.
  *   createCanvas(windowWidth, windowHeight);
+ *
  *   background(200);
  *
  *   describe('A gray canvas that takes up the entire browser window.');
@@ -614,6 +675,8 @@ p5.prototype.windowHeight = getWindowHeight();
  *   describe('A gray canvas that takes up the entire browser window. It changes size to match the browser window.');
  * }
  *
+ * // Resize the canvas when the
+ * // browser's size changes.
  * function windowResized() {
  *   resizeCanvas(windowWidth, windowHeight);
  * }
@@ -635,7 +698,10 @@ p5.prototype.windowHeight = getWindowHeight();
  * }
  *
  * function windowResized(event) {
+ *   // Resize the canvas when the
+ *   // browser's size changes.
  *   resizeCanvas(windowWidth, windowHeight);
+ *
  *   // Print the resize event to the console for debugging.
  *   print(event);
  * }
@@ -690,6 +756,7 @@ function getWindowHeight() {
  * function setup() {
  *   background(200);
  *
+ *   // Display the canvas' width.
  *   text(width, 42, 54);
  *
  *   describe('The number 100 written in black on a gray square.');
@@ -701,8 +768,10 @@ function getWindowHeight() {
  * <code>
  * function setup() {
  *   createCanvas(50, 100);
+ *
  *   background(200);
  *
+ *   // Display the canvas' width.
  *   text(width, 21, 54);
  *
  *   describe('The number 50 written in black on a gray rectangle.');
@@ -714,19 +783,23 @@ function getWindowHeight() {
  * <code>
  * function setup() {
  *   createCanvas(100, 100);
+ *
  *   background(200);
  *
+ *   // Display the canvas' width.
  *   text(width, 42, 54);
  *
  *   describe('The number 100 written in black on a gray square. When the mouse is pressed, the square becomes a rectangle and the number becomes 50.');
  * }
  *
+ * // If the mouse is pressed, reisze
+ * // the canvas and display its new
+ * // width.
  * function mousePressed() {
  *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
- *     resizeCanvas(100, 50);
+ *     resizeCanvas(50, 100);
  *     background(200);
- *
- *     text(height, 42, 27);
+ *     text(width, 42, 27);
  *   }
  * }
  * </code>
@@ -752,6 +825,7 @@ p5.prototype.width = 0;
  * function setup() {
  *   background(200);
  *
+ *   // Display the canvas' height.
  *   text(height, 42, 54);
  *
  *   describe('The number 100 written in black on a gray square.');
@@ -763,9 +837,11 @@ p5.prototype.width = 0;
  * <code>
  * function setup() {
  *   createCanvas(100, 50);
+ *
  *   background(200);
  *
- *   text(height, 42, 27);
+ *   // Display the canvas' height.
+ *   text(height, 21, 54);
  *
  *   describe('The number 50 written in black on a gray rectangle.');
  * }
@@ -776,18 +852,22 @@ p5.prototype.width = 0;
  * <code>
  * function setup() {
  *   createCanvas(100, 100);
+ *
  *   background(200);
  *
+ *   // Display the canvas' height.
  *   text(height, 42, 54);
  *
  *   describe('The number 100 written in black on a gray square. When the mouse is pressed, the square becomes a rectangle and the number becomes 50.');
  * }
  *
+ * // If the mouse is pressed, reisze
+ * // the canvas and display its new
+ * // height.
  * function mousePressed() {
  *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
  *     resizeCanvas(100, 50);
  *     background(200);
- *
  *     text(height, 42, 27);
  *   }
  * }
@@ -823,6 +903,8 @@ p5.prototype.height = 0;
  *   describe('A gray canvas that switches between default and full-screen display when clicked.');
  * }
  *
+ * // If the mouse is pressed,
+ * // toggle full-screen mode.
  * function mousePressed() {
  *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
  *     let fs = fullscreen();
@@ -868,7 +950,11 @@ p5.prototype.fullscreen = function(val) {
  * <div>
  * <code>
  * function setup() {
+ *   // Set the pixel density to 1.
  *   pixelDensity(1);
+ *
+ *   // Create a canvas and draw
+ *   // a circle.
  *   createCanvas(100, 100);
  *   background(200);
  *   circle(50, 50, 70);
@@ -881,7 +967,12 @@ p5.prototype.fullscreen = function(val) {
  * <div>
  * <code>
  * function setup() {
+ *   // Set the pixel density to 3.
  *   pixelDensity(3);
+ *
+ *   // Create a canvas, paint the
+ *   // background, and draw a
+ *   // circle.
  *   createCanvas(100, 100);
  *   background(200);
  *   circle(50, 50, 70);
@@ -893,7 +984,7 @@ p5.prototype.fullscreen = function(val) {
  */
 /**
  * @method pixelDensity
- * @returns {Number} current pixel density of the sketch
+ * @returns {Number} current pixel density of the sketch.
  */
 p5.prototype.pixelDensity = function(val) {
   p5._validateParameters('pixelDensity', arguments);
@@ -911,7 +1002,7 @@ p5.prototype.pixelDensity = function(val) {
 };
 
 /**
- * Returns the current pixel density of the display.
+ * Returns the display's current pixel density.
  *
  * @method displayDensity
  * @returns {Number} current pixel density of the display.
@@ -919,7 +1010,11 @@ p5.prototype.pixelDensity = function(val) {
  * <div>
  * <code>
  * function setup() {
+ *   // Set the pixel density to 1.
  *   pixelDensity(1);
+ *
+ *   // Create a canvas and draw
+ *   // a circle.
  *   createCanvas(100, 100);
  *   background(200);
  *   circle(50, 50, 70);
@@ -928,8 +1023,15 @@ p5.prototype.pixelDensity = function(val) {
  * }
  *
  * function mousePressed() {
+ *   // Get the current display density.
  *   let d = displayDensity();
+ *
+ *   // Use the display density to set
+ *   // the sketch's pixel density.
  *   pixelDensity(d);
+ *
+ *   // Paint the background and
+ *   // draw a circle.
  *   background(200);
  *   circle(50, 50, 70);
  * }
@@ -971,7 +1073,9 @@ function exitFullscreen() {
 }
 
 /**
- * Returns the current URL as a string.
+ * Returns the sketch's current
+ * <a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL" target="_blank">URL</a>
+ * as a string.
  *
  * @method getURL
  * @return {String} url
@@ -981,8 +1085,10 @@ function exitFullscreen() {
  * function setup() {
  *   background(200);
  *
- *   textWrap(CHAR);
+ *   // Get the sketch's URL
+ *   // and display it.
  *   let url = getURL();
+ *   textWrap(CHAR);
  *   text(url, 0, 40, 100);
  *
  *   describe('The URL "https://p5js.org/reference/#/p5/getURL" written in black on a gray background.');
@@ -993,7 +1099,9 @@ function exitFullscreen() {
 p5.prototype.getURL = () => location.href;
 
 /**
- * Returns the current URL path as an array of strings.
+ * Returns the current
+ * <a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL#path_to_resource" target="_blank">URL</a>
+ * path as an array of strings.
  *
  * For example, consider a sketch hosted at the URL
  * `https://example.com/sketchbook`. Calling `getURLPath()` returns
@@ -1008,6 +1116,10 @@ p5.prototype.getURL = () => location.href;
  * <code>
  * function setup() {
  *   background(200);
+ *
+ *   // Get the sketch's URL path
+ *   // and display the first
+ *   // part.
  *   let path = getURLPath();
  *   text(path[0], 25, 54);
  *
@@ -1039,6 +1151,9 @@ p5.prototype.getURLPath = () =>
  * function setup() {
  *   background(200);
  *
+ *   // Get the sketch's URL
+ *   // parameters and display
+ *   // them.
  *   let params = getURLParams();
  *   text(params.day, 10, 20);
  *   text(params.month, 10, 40);
