@@ -188,8 +188,8 @@ p5.Geometry = class Geometry {
    * computes smooth normals per vertex as an average of each
    * face.
    * @method computeNormals
-   * @param {String} [shadingType] (optional) To specify the shading type ('FLAT' for flat shading or 'SMOOTH' for smooth shading).
-   * @param {Object} [settings={ roundToPrecision: 3 }] (optional) Additional settings object with the precision for rounding vertex coordinates (optional).
+   * @param {String} [shadingType] (optional) Shading type ('FLAT' for flat shading or 'SMOOTH' for smooth shading) for buildGeometry() outputs.
+   * @param {Object} [settings={ roundToPrecision: 3 }] (optional) Additional settings object with rounding precision for vertex coordinates when shadingType is 'SMOOTH'.
    * @chainable
    */
   computeNormals(shadingType = 'FLAT', { roundToPrecision = 3 } = {}) {
