@@ -185,11 +185,13 @@ p5.Geometry = class Geometry {
     return n.mult(Math.asin(sinAlpha) / ln);
   }
   /**
- * computes smooth normals per vertex as an average of each
- * face.
- * @method computeNormals
- * @chainable
- */
+   * computes smooth normals per vertex as an average of each
+   * face.
+   * @method computeNormals
+   * @param {String} [shadingType] (optional) To specify the shading type ('FLAT' for flat shading or 'SMOOTH' for smooth shading).
+   * @param {Object} [settings={ roundToPrecision: 3 }] (optional) Additional settings object with the precision for rounding vertex coordinates (optional).
+   * @chainable
+   */
   computeNormals(shadingType = 'FLAT', { roundToPrecision = 3 } = {}) {
     const vertexNormals = this.vertexNormals;
     let vertices = this.vertices;
