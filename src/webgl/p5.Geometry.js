@@ -190,11 +190,39 @@ p5.Geometry = class Geometry {
  * @method computeNormals
  * @chainable
  */
-  computeNormals() {
+  computeNormals(shadingType = 'FLAT', { roundToPrecision = 3 } = {}) {
     const vertexNormals = this.vertexNormals;
-    const vertices = this.vertices;
+    let vertices = this.vertices;
     const faces = this.faces;
     let iv;
+
+    if (shadingType === 'SMOOTH') {
+      const vertexIndices = {};
+      const uniqueVertices = [];
+
+      // loop through each vertex and add uniqueVertices
+      for (let i = 0; i < vertices.length; i++) {
+        const vertex = vertices[i];
+        const key = `${vertex.x.toFixed(roundToPrecision)},${vertex.y.toFixed(roundToPrecision)},${vertex.z.toFixed(roundToPrecision)}`;
+        if (vertexIndices[key] === undefined) {
+          vertexIndices[key] = uniqueVertices.length;
+          uniqueVertices.push(vertex);
+        }
+      }
+
+      // update face indices to use the new deduplicated vertex indices
+      faces.forEach(face => {
+        for (let fv = 0; fv < 3; ++fv) {
+          const originalVertexIndex = face[fv];
+          const originalVertex = vertices[originalVertexIndex];
+          const key = `${originalVertex.x.toFixed(roundToPrecision)},${originalVertex.y.toFixed(roundToPrecision)},${originalVertex.z.toFixed(roundToPrecision)}`;
+          face[fv] = vertexIndices[key];
+        }
+      });
+
+      // update the deduplicated vertices
+      vertices = uniqueVertices;
+    }
 
     // initialize the vertexNormals array with empty vectors
     vertexNormals.length = 0;
