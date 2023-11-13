@@ -45,7 +45,7 @@ import p5 from '../core/main';
  * <div>
  * <code>
  * function setup() {
- *   // Add the description.
+ *   // Add the text description.
  *   textOutput();
  *
  *   // Draw a couple of shapes.
@@ -55,6 +55,7 @@ import p5 from '../core/main';
  *   fill(0, 0, 255);
  *   square(50, 50, 50);
  *
+ *   // Add a general description of the canvas.
  *   describe('A red circle and a blue square on a gray background.');
  * }
  * </code>
@@ -63,7 +64,7 @@ import p5 from '../core/main';
  * <div>
  * <code>
  * function setup() {
- *   // Add the description and
+ *   // Add the text description and
  *   // display it for debugging.
  *   textOutput(LABEL);
  *
@@ -74,6 +75,7 @@ import p5 from '../core/main';
  *   fill(0, 0, 255);
  *   square(50, 50, 50);
  *
+ *   // Add a general description of the canvas.
  *   describe('A red circle and a blue square on a gray background.');
  * }
  * </code>
@@ -82,7 +84,7 @@ import p5 from '../core/main';
  * <div>
  * <code>
  * function draw() {
- *   // Add the description.
+ *   // Add the text description.
  *   textOutput();
  *
  *   // Draw a moving circle.
@@ -93,6 +95,7 @@ import p5 from '../core/main';
  *   fill(0, 0, 255);
  *   square(50, 50, 50);
  *
+ *   // Add a general description of the canvas.
  *   describe('A red circle moves from left to right above a blue square.');
  * }
  * </code>
@@ -101,7 +104,7 @@ import p5 from '../core/main';
  * <div>
  * <code>
  * function draw() {
- *   // Add the description and
+ *   // Add the text description and
  *   // display it for debugging.
  *   textOutput(LABEL);
  *
@@ -113,6 +116,7 @@ import p5 from '../core/main';
  *   fill(0, 0, 255);
  *   square(50, 50, 50);
  *
+ *   // Add a general description of the canvas.
  *   describe('A red circle moves from left to right above a blue square.');
  * }
  * </code>
@@ -177,7 +181,7 @@ p5.prototype.textOutput = function(display) {
  * <div>
  * <code>
  * function setup() {
- *   // Add the description.
+ *   // Add the grid description.
  *   gridOutput();
  *
  *   // Draw a couple of shapes.
@@ -187,6 +191,7 @@ p5.prototype.textOutput = function(display) {
  *   fill(0, 0, 255);
  *   square(50, 50, 50);
  *
+ *   // Add a general description of the canvas.
  *   describe('A red circle and a blue square on a gray background.');
  * }
  * </code>
@@ -195,7 +200,7 @@ p5.prototype.textOutput = function(display) {
  * <div>
  * <code>
  * function setup() {
- *   // Add the description and
+ *   // Add the grid description and
  *   // display it for debugging.
  *   gridOutput(LABEL);
  *
@@ -206,6 +211,7 @@ p5.prototype.textOutput = function(display) {
  *   fill(0, 0, 255);
  *   square(50, 50, 50);
  *
+ *   // Add a general description of the canvas.
  *   describe('A red circle and a blue square on a gray background.');
  * }
  * </code>
@@ -214,7 +220,7 @@ p5.prototype.textOutput = function(display) {
  * <div>
  * <code>
  * function draw() {
- *   // Add the description.
+ *   // Add the grid description.
  *   gridOutput();
  *
  *   // Draw a moving circle.
@@ -225,6 +231,7 @@ p5.prototype.textOutput = function(display) {
  *   fill(0, 0, 255);
  *   square(50, 50, 50);
  *
+ *   // Add a general description of the canvas.
  *   describe('A red circle moves from left to right above a blue square.');
  * }
  * </code>
@@ -233,7 +240,7 @@ p5.prototype.textOutput = function(display) {
  * <div>
  * <code>
  * function draw() {
- *   // Add the description and
+ *   // Add the grid description and
  *   // display it for debugging.
  *   gridOutput(LABEL);
  *
@@ -245,6 +252,7 @@ p5.prototype.textOutput = function(display) {
  *   fill(0, 0, 255);
  *   square(50, 50, 50);
  *
+ *   // Add a general description of the canvas.
  *   describe('A red circle moves from left to right above a blue square.');
  * }
  * </code>

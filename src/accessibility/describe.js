@@ -48,6 +48,7 @@ const labelTableElId = '_lte_'; //Label Table Element
  *   circle(83, 67, 20);
  *   triangle(91, 73, 75, 95, 59, 73);
  *
+ *   // Add a general description of the canvas.
  *   describe('A pink square with a red heart in the bottom-right corner.');
  * }
  * </code>
@@ -65,7 +66,8 @@ const labelTableElId = '_lte_'; //Label Table Element
  *   circle(83, 67, 20);
  *   triangle(91, 73, 75, 95, 59, 73);
  *
- *   // Show the description for debugging.
+ *   // Add a general description of the canvas
+ *   // and display it for debugging.
  *   describe('A pink square with a red heart in the bottom-right corner.', LABEL);
  * }
  * </code>
@@ -86,6 +88,7 @@ const labelTableElId = '_lte_'; //Label Table Element
  *   fill(0, 255, 0);
  *   circle(x, 50, 40);
  *
+ *   // Add a general description of the canvas.
  *   describe(`A green circle at (${x}, 50) moves from left to right on a gray square.`);
  * }
  * </code>
@@ -106,7 +109,8 @@ const labelTableElId = '_lte_'; //Label Table Element
  *   fill(0, 255, 0);
  *   circle(x, 50, 40);
  *
- *   // Show the description for debugging.
+ *   // Add a general description of the canvas
+ *   // and display it for debugging.
  *   describe(`A green circle at (${x}, 50) moves from left to right on a gray square.`, LABEL);
  * }
  * </code>
@@ -187,17 +191,50 @@ p5.prototype.describe = function(text, display) {
  * function setup() {
  *   background('pink');
  *
- *   noStroke();
+ *   // Describe the first element
+ *   // and draw it.
  *   describeElement('Circle', 'A yellow circle in the top-left corner.');
+ *   noStroke();
  *   fill('yellow');
  *   circle(25, 25, 40);
  *
+ *   // Describe the second element
+ *   // and draw it.
  *   describeElement('Heart', 'A red heart in the bottom-right corner.');
  *   fill('red');
  *   circle(66.6, 66.6, 20);
  *   circle(83.2, 66.6, 20);
  *   triangle(91.2, 72.6, 75, 95, 58.6, 72.6);
  *
+ *   // Add a general description of the canvas.
+ *   describe('A red heart and yellow circle over a pink background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   background('pink');
+ *
+ *   // Describe the first element
+ *   // and draw it. Display the
+ *   // description for debugging.
+ *   describeElement('Circle', 'A yellow circle in the top-left corner.', LABEL);
+ *   noStroke();
+ *   fill('yellow');
+ *   circle(25, 25, 40);
+ *
+ *   // Describe the second element
+ *   // and draw it. Display the
+ *   // description for debugging.
+ *   describeElement('Heart', 'A red heart in the bottom-right corner.', LABEL);
+ *   fill('red');
+ *   circle(66.6, 66.6, 20);
+ *   circle(83.2, 66.6, 20);
+ *   triangle(91.2, 72.6, 75, 95, 58.6, 72.6);
+ *
+ *   // Add a general description of the canvas.
  *   describe('A red heart and yellow circle over a pink background.');
  * }
  * </code>
