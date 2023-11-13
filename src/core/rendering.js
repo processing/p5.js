@@ -290,13 +290,17 @@ p5.prototype.noCanvas = function() {
  * @param  {HTMLCanvasElement} [canvas]
  * @return {p5.Graphics} offscreen graphics buffer
  */
-p5.prototype.createGraphics = function(w, h, renderer, canvas) {
-  if (arguments[2] instanceof HTMLCanvasElement) {
-    renderer = constants.P2D;
-    canvas = arguments[2];
+p5.prototype.createGraphics = function(w, h, ...args) {
+/**
+  * args[0] is expected to be renderer
+  * args[1] is expected to be canvas
+  */
+  if (args[0] instanceof HTMLCanvasElement) {
+    args[0] = constants.P2D;
+    args[1] = args[0];
   }
-  p5._validateParameters('createGraphics', arguments);
-  return new p5.Graphics(w, h, renderer, this, canvas);
+  p5._validateParameters('createGraphics', [w, h, ...args]);
+  return new p5.Graphics(w, h, args[0], this, args[1]);
 };
 
 /**
