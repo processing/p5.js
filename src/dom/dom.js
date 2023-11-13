@@ -3930,6 +3930,82 @@ p5.MediaElement = MediaElement;
  * @class p5.File
  * @constructor
  * @param {File} file wrapped file.
+ * @example
+ * <div>
+ * <code>
+ * // Use the file input to load a
+ * // file and display its info.
+ *
+ * function setup() {
+ *   background(200);
+ *
+ *   // Create a file input and place it beneath
+ *   // the canvas. Call displayInfo() when
+ *   // the file loads.
+ *   let input = createFileInput(displayInfo);
+ *   input.position(0, 100);
+ *
+ *   describe('A gray square with a file input beneath it. If the user loads a file, its info is written in black.');
+ * }
+ *
+ * // Display the p5.File's info
+ * // once it loads.
+ * function displayInfo(file) {
+ *   background(200);
+ *
+ *   // Display the p5.File's name.
+ *   text(file.name, 10, 10, 80, 40);
+ *   // Display the p5.File's type and subtype.
+ *   text(`${file.type}/${file.subtype}`, 10, 70);
+ *   // Display the p5.File's size in bytes.
+ *   text(file.size, 10, 90);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Use the file input to select an image to
+ * // load and display.
+ * let img;
+ *
+ * function setup() {
+ *   // Create a file input and place it beneath
+ *   // the canvas. Call handleImage() when
+ *   // the file image loads.
+ *   let input = createFileInput(handleImage);
+ *   input.position(0, 100);
+ *
+ *   describe('A gray square with a file input beneath it. If the user selects an image file to load, it is displayed on the square.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Draw the image if it's ready.
+ *   if (img) {
+ *     image(img, 0, 0, width, height);
+ *   }
+ * }
+ *
+ * // Use the p5.File's data once
+ * // it loads.
+ * function handleImage(file) {
+ *   // Check the p5.File's type.
+ *   if (file.type === 'image') {
+ *     // Create an image using using
+ *     // the p5.File's data.
+ *     img = createImg(file.data, '');
+ *
+ *     // Hide the image element so it
+ *     // doesn't appear twice.
+ *     img.hide();
+ *   } else {
+ *     img = null;
+ *   }
+ * }
+ * </code>
+ * </div>
  */
 class File {
   constructor(file, pInst) {
@@ -3939,6 +4015,38 @@ class File {
      * object. All `File` properties and methods are accessible.
      *
      * @property file
+     * @example
+     * <div>
+     * <code>
+     * // Use the file input to load a
+     * // file and display its info.
+     *
+     * function setup() {
+     *   background(200);
+     *
+     *   // Create a file input and place it beneath
+     *   // the canvas. Call displayInfo() when
+     *   // the file loads.
+     *   let input = createFileInput(displayInfo);
+     *   input.position(0, 100);
+     *
+     *   describe('A gray square with a file input beneath it. If the user loads a file, its info is written in black.');
+     * }
+     *
+     * // Use the p5.File once
+     * // it loads.
+     * function displayInfo(file) {
+     *   background(200);
+     *
+     *   // Display the p5.File's name.
+     *   text(file.name, 10, 10, 80, 40);
+     *   // Display the p5.File's type and subtype.
+     *   text(`${file.type}/${file.subtype}`, 10, 70);
+     *   // Display the p5.File's size in bytes.
+     *   text(file.size, 10, 90);
+     * }
+     * </code>
+     * </div>
      */
     this.file = file;
 
@@ -3953,6 +4061,34 @@ class File {
      * as a string. For example, `'image'`, `'text'`, and so on.
      *
      * @property type
+     * @example
+     * <div>
+     * <code>
+     * // Use the file input to load a
+     * // file and display its info.
+     *
+     * function setup() {
+     *   background(200);
+     *
+     *   // Create a file input and place it beneath
+     *   // the canvas. Call displayType() when
+     *   // the file loads.
+     *   let input = createFileInput(displayType);
+     *   input.position(0, 100);
+     *
+     *   describe('A gray square with a file input beneath it. If the user loads a file, its type is written in black.');
+     * }
+     *
+     * // Display the p5.File's type
+     * // once it loads.
+     * function displayType(file) {
+     *   background(200);
+     *
+     *   // Display the p5.File's type.
+     *   text(`This is file's type is: ${file.type}`, 10, 10, 80, 80);
+     * }
+     * </code>
+     * </div>
      */
     this.type = typeList[0];
     /**
@@ -3961,18 +4097,102 @@ class File {
      * may have a subtype such as ``png`` or ``jpeg``.
      *
      * @property subtype
+     * @example
+     * <div>
+     * <code>
+     * // Use the file input to load a
+     * // file and display its info.
+     *
+     * function setup() {
+     *   background(200);
+     *
+     *   // Create a file input and place it beneath
+     *   // the canvas. Call displaySubtype() when
+     *   // the file loads.
+     *   let input = createFileInput(displaySubtype);
+     *   input.position(0, 100);
+     *
+     *   describe('A gray square with a file input beneath it. If the user loads a file, its subtype is written in black.');
+     * }
+     *
+     * // Display the p5.File's type
+     * // once it loads.
+     * function displaySubtype(file) {
+     *   background(200);
+     *
+     *   // Display the p5.File's subtype.
+     *   text(`This is file's subtype is: ${file.subtype}`, 10, 10, 80, 80);
+     * }
+     * </code>
+     * </div>
      */
     this.subtype = typeList[1];
     /**
      * The file name as a string.
      *
      * @property name
+     * @example
+     * <div>
+     * <code>
+     * // Use the file input to load a
+     * // file and display its info.
+     *
+     * function setup() {
+     *   background(200);
+     *
+     *   // Create a file input and place it beneath
+     *   // the canvas. Call displayName() when
+     *   // the file loads.
+     *   let input = createFileInput(displayName);
+     *   input.position(0, 100);
+     *
+     *   describe('A gray square with a file input beneath it. If the user loads a file, its name is written in black.');
+     * }
+     *
+     * // Display the p5.File's name
+     * // once it loads.
+     * function displayName(file) {
+     *   background(200);
+     *
+     *   // Display the p5.File's name.
+     *   text(`This is file's name is: ${file.name}`, 10, 10, 80, 80);
+     * }
+     * </code>
+     * </div>
      */
     this.name = file.name;
     /**
      * The number of bytes in the file.
      *
      * @property size
+     * @example
+     * <div>
+     * <code>
+     * // Use the file input to load a
+     * // file and display its info.
+     *
+     * function setup() {
+     *   background(200);
+     *
+     *   // Create a file input and place it beneath
+     *   // the canvas. Call displaySize() when
+     *   // the file loads.
+     *   let input = createFileInput(displaySize);
+     *   input.position(0, 100);
+     *
+     *   describe('A gray square with a file input beneath it. If the user loads a file, its size in bytes is written in black.');
+     * }
+     *
+     * // Display the p5.File's size
+     * // in bytes once it loads.
+     * function displaySize(file) {
+     *   background(200);
+     *
+     *   // Display the p5.File's size.
+     *   text(`This is file has ${file.size} bytes.`, 10, 10, 80, 80);
+     * }
+     * </code>
+     * </div>
      */
     this.size = file.size;
 
@@ -3982,6 +4202,36 @@ class File {
      * <a href="#/p5.XML">p5.XML</a> objects.
      *
      * @property data
+     * @example
+     * <div>
+     * <code>
+     * // Use the file input to load a
+     * // file and display its info.
+     *
+     * function setup() {
+     *   background(200);
+     *
+     *   // Create a file input and place it beneath
+     *   // the canvas. Call displayData() when
+     *   // the file loads.
+     *   let input = createFileInput(displayData);
+     *   input.position(0, 100);
+     *
+     *   describe('A gray square with a file input beneath it. If the user loads a file, its data is written in black.');
+     * }
+     *
+     * // Display the p5.File's data
+     * // once it loads.
+     * function displayData(file) {
+     *   background(200);
+     *
+     *   // Display the p5.File's data,
+     *   // which looks like a random
+     *   // string of characters.
+     *   text(file.data, 10, 10, 80, 80);
+     * }
+     * </code>
+     * </div>
      */
     this.data = undefined;
   }
