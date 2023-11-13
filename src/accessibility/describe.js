@@ -40,6 +40,8 @@ const labelTableElId = '_lte_'; //Label Table Element
  * <code>
  * function setup() {
  *   background('pink');
+ *
+ *   // Draw a heart.
  *   fill('red');
  *   noStroke();
  *   circle(67, 67, 20);
@@ -53,18 +55,62 @@ const labelTableElId = '_lte_'; //Label Table Element
  *
  * <div>
  * <code>
- * function draw() {
- *   background(200);
+ * function setup() {
+ *   background('pink');
  *
- *   let x = frameCount % 100;
- *   fill(0, 255, 0);
- *   circle(x, 50, 40);
+ *   // Draw a heart.
+ *   fill('red');
+ *   noStroke();
+ *   circle(67, 67, 20);
+ *   circle(83, 67, 20);
+ *   triangle(91, 73, 75, 95, 59, 73);
  *
- *   describe('A green circle moves from left to right on a gray square. It restarts on the left edge after reaching the right edge.');
+ *   // Show the description for debugging.
+ *   describe('A pink square with a red heart in the bottom-right corner.', LABEL);
  * }
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(200);
+ *
+ *   // The expression
+ *   // frameCount % 100
+ *   // causes x to increase from 0
+ *   // to 99, then restart from 0.
+ *   let x = frameCount % 100;
+ *
+ *   // Draw the circle.
+ *   fill(0, 255, 0);
+ *   circle(x, 50, 40);
+ *
+ *   describe(`A green circle at (${x}, 50) moves from left to right on a gray square.`);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(200);
+ *
+ *   // The expression
+ *   // frameCount % 100
+ *   // causes x to increase from 0
+ *   // to 99, then restart from 0.
+ *   let x = frameCount % 100;
+ *
+ *   // Draw the circle.
+ *   fill(0, 255, 0);
+ *   circle(x, 50, 40);
+ *
+ *   // Show the description for debugging.
+ *   describe(`A green circle at (${x}, 50) moves from left to right on a gray square.`, LABEL);
+ * }
+ * </code>
+ * </div>
  */
 
 p5.prototype.describe = function(text, display) {

@@ -45,7 +45,29 @@ import p5 from '../core/main';
  * <div>
  * <code>
  * function setup() {
+ *   // Add the description.
  *   textOutput();
+ *
+ *   // Draw a couple of shapes.
+ *   background(200);
+ *   fill(255, 0, 0);
+ *   circle(20, 20, 20);
+ *   fill(0, 0, 255);
+ *   square(50, 50, 50);
+ *
+ *   describe('A red circle and a blue square on a gray background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   // Add the description and
+ *   // display it for debugging.
+ *   textOutput(LABEL);
+ *
+ *   // Draw a couple of shapes.
  *   background(200);
  *   fill(255, 0, 0);
  *   circle(20, 20, 20);
@@ -60,7 +82,10 @@ import p5 from '../core/main';
  * <div>
  * <code>
  * function draw() {
+ *   // Add the description.
  *   textOutput();
+ *
+ *   // Draw a moving circle.
  *   background(200);
  *   let x = frameCount * 0.1;
  *   fill(255, 0, 0);
@@ -73,6 +98,25 @@ import p5 from '../core/main';
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * function draw() {
+ *   // Add the description and
+ *   // display it for debugging.
+ *   textOutput(LABEL);
+ *
+ *   // Draw a moving circle.
+ *   background(200);
+ *   let x = frameCount * 0.1;
+ *   fill(255, 0, 0);
+ *   circle(x, 20, 20);
+ *   fill(0, 0, 255);
+ *   square(50, 50, 50);
+ *
+ *   describe('A red circle moves from left to right above a blue square.');
+ * }
+ * </code>
+ * </div>
  */
 
 p5.prototype.textOutput = function(display) {
@@ -133,7 +177,29 @@ p5.prototype.textOutput = function(display) {
  * <div>
  * <code>
  * function setup() {
+ *   // Add the description.
  *   gridOutput();
+ *
+ *   // Draw a couple of shapes.
+ *   background(200);
+ *   fill(255, 0, 0);
+ *   circle(20, 20, 20);
+ *   fill(0, 0, 255);
+ *   square(50, 50, 50);
+ *
+ *   describe('A red circle and a blue square on a gray background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   // Add the description and
+ *   // display it for debugging.
+ *   gridOutput(LABEL);
+ *
+ *   // Draw a couple of shapes.
  *   background(200);
  *   fill(255, 0, 0);
  *   circle(20, 20, 20);
@@ -148,7 +214,10 @@ p5.prototype.textOutput = function(display) {
  * <div>
  * <code>
  * function draw() {
+ *   // Add the description.
  *   gridOutput();
+ *
+ *   // Draw a moving circle.
  *   background(200);
  *   let x = frameCount * 0.1;
  *   fill(255, 0, 0);
@@ -161,6 +230,25 @@ p5.prototype.textOutput = function(display) {
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * function draw() {
+ *   // Add the description and
+ *   // display it for debugging.
+ *   gridOutput(LABEL);
+ *
+ *   // Draw a moving circle.
+ *   background(200);
+ *   let x = frameCount * 0.1;
+ *   fill(255, 0, 0);
+ *   circle(x, 20, 20);
+ *   fill(0, 0, 255);
+ *   square(50, 50, 50);
+ *
+ *   describe('A red circle moves from left to right above a blue square.');
+ * }
+ * </code>
+ * </div>
  */
 
 p5.prototype.gridOutput = function(display) {
