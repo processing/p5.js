@@ -3140,7 +3140,7 @@ class MediaElement extends p5.Element {
    * @param {Boolean} [shouldAutoplay] whether the element should autoplay.
    * @chainable
    * @example
-   * <div>
+   * <div class='notest'>
    * <code>
    * function setup() {
    *   noCanvas();
@@ -3156,7 +3156,7 @@ class MediaElement extends p5.Element {
    * </code>
    * </div>
    *
-   * <div>
+   * <div class='notest'>
    * <code>
    * function setup() {
    *   noCanvas();
