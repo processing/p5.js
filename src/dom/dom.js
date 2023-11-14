@@ -113,7 +113,7 @@ p5.prototype.select = function (e, p) {
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement" target="_blank">HTMLElement</a> object.
  *
  * @method selectAll
- * @param  {String} selectors CSS selector string of element to search for..
+ * @param  {String} selectors CSS selector string of element to search for.
  * @param  {String|p5.Element|HTMLElement} [container] CSS selector string, <a href="#/p5.Element">p5.Element</a>, or
  *                                             <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement" target="_blank">HTMLElement</a> to search within.
  * @return {p5.Element[]} array of <a href="#/p5.Element">p5.Element</a>s containing any elements found.
@@ -486,7 +486,7 @@ p5.prototype.createDiv = function (html = '') {
 };
 
 /**
- * Creates a `&lt;p&gt;&lt;/p&gt;` element. It's commonly use for
+ * Creates a `&lt;p&gt;&lt;/p&gt;` element. It's commonly used for
  * paragraph-length text.
  *
  * The parameter `html` is optional. It accepts a string that sets the
@@ -517,7 +517,9 @@ p5.prototype.createP = function (html = '') {
 
 /**
  * Creates a `&lt;span&gt;&lt;/span&gt;` element. It's commonly used as a
- * container for other elements.
+ * container for inline elements. For example, a `&lt;span&gt;&lt;/span&gt;`
+ * can hold part of a sentence that's a
+ * <span style="color: deeppink;">different</span> style.
  *
  * The parameter `html` is optional. It accepts a string that sets the
  * inner HTML of the new `&lt;span&gt;&lt;/span&gt;`.
@@ -531,6 +533,7 @@ p5.prototype.createP = function (html = '') {
  * function setup() {
  *   background(200);
  *
+ *   // Create a span element.
  *   let span = createSpan('p5*js');
  *   span.position(25, 35);
  *
@@ -544,11 +547,29 @@ p5.prototype.createP = function (html = '') {
  * function setup() {
  *   background(200);
  *
- *   // Create an h3 element within the span.
- *   let span = createSpan('<h3>p5*js</h3>');
- *   span.position(20, 5);
+ *   // Create a div element as
+ *   // a container.
+ *   let div = createDiv();
+ *   // Place the div at the
+ *   // center.
+ *   div.position(25, 35);
  *
- *   describe('A gray square with the text "p5*js" written in its center.');
+ *   // Create a span element.
+ *   let s1 = createSpan('p5');
+ *   // Create a second span element.
+ *   let s2 = createSpan('*');
+ *   // Set the span's font color.
+ *   s2.style('color', 'deeppink');
+ *   // Create a third span element.
+ *   let s3 = createSpan('js');
+ *
+ *   // Add all the spans to the
+ *   // container div.
+ *   s1.parent(div);
+ *   s2.parent(div);
+ *   s3.parent(div);
+ *
+ *   describe('A gray square with the text "p5*js" written in black at its center. The asterisk is pink.');
  * }
  * </code>
  * </div>
@@ -560,7 +581,7 @@ p5.prototype.createSpan = function (html = '') {
 };
 
 /**
- * Creates an `&lt;img&gt;` element.
+ * Creates an `&lt;img&gt;` element that can appear outside of the canvas.
  *
  * The first parameter, `src`, is a string with the path to the image file.
  * `src` should be a relative path, as in `'assets/image.png'`, or a URL, as
@@ -825,8 +846,9 @@ p5.prototype.createSlider = function (min, max, value, step) {
  * the button.
  *
  * The second parameter, `value`, is optional. It's a string that sets the
- * button's value. See <a href="#/p5.Element/value">p5.Element.value()</a> for
- * more details.
+ * button's value. See
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#value" target="_blank">MDN</a>
+ * for more details.
  *
  * @method createButton
  * @param  {String} label label displayed on the button.
@@ -1956,10 +1978,12 @@ function createMedia(pInst, type, src, callback) {
  *   noCanvas();
  *
  *   // Load a video and add it to the page.
- *   // This may not work in some browsers.
- *   createVideo('assets/small.mp4');
+ *   // Note: this may not work in some browsers.
+ *   let video = createVideo('assets/small.mp4');
+ *   // Show the default video controls.
+ *   video.showControls();
  *
- *   describe('A video of a toy robot.');
+ *   describe('A video of a toy robot with playback controls beneath it.');
  * }
  * </code>
  * </div>
@@ -1971,11 +1995,13 @@ function createMedia(pInst, type, src, callback) {
  *
  *   // Load a video and add it to the page.
  *   // Provide an array options for different file formats.
- *   createVideo(
+ *   let video = createVideo(
  *     ['assets/small.mp4', 'assets/small.ogv', 'assets/small.webm']
  *   );
+ *   // Show the default video controls.
+ *   video.showControls();
  *
- *   describe('A video of a toy robot.');
+ *   describe('A video of a toy robot with playback controls beneath it.');
  * }
  * </code>
  * </div>
@@ -1989,19 +2015,19 @@ function createMedia(pInst, type, src, callback) {
  *
  *   // Load a video and add it to the page.
  *   // Provide an array options for different file formats.
- *   // Use a callback function to set up the video once
- *   // it's loaded.
+ *   // Call mute() once the video loads.
  *   video = createVideo(
  *     ['assets/small.mp4', 'assets/small.ogv', 'assets/small.webm'],
- *     handleVideo
+ *     muteVideo
  *   );
+ *   // Show the default video controls.
+ *   video.showControls();
  *
- *   describe('A video of a toy robot that plays in a loop.');
+ *   describe('A video of a toy robot with playback controls beneath it.');
  * }
  *
- * function handleVideo() {
- *   video.size(100, 100);
- *   video.loop();
+ * // Mute the video once it loads.
+ * function muteVideo() {
  *   video.volume(0);
  * }
  * </code>
@@ -2038,23 +2064,15 @@ p5.prototype.createVideo = function (src, callback) {
  * @example
  * <div>
  * <code>
- * let beat;
- *
  * function setup() {
- *   background(200);
- *   text('Double-click to stop', 25, 55);
+ *   noCanvas();
  *
  *   // Load the audio.
- *   beat = createAudio('assets/beat.mp3', () => {
- *     // Play the audio in a loop once it's loaded.
- *     beat.loop();
- *   });
+ *   let beat = createAudio('assets/beat.mp3');
+ *   // Show the default audio controls.
+ *   beat.showControls();
  *
- *   describe('The text "Double-click to stop" written in black on a gray square. A beat that is playing on repeat stops when the user double-clicks the square.');
- * }
- *
- * function doubleClicked() {
- *   beat.stop();
+ *   describe('An audio  beat plays when the user double-clicks the square.');
  * }
  * </code>
  * </div>
