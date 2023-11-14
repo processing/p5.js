@@ -2062,7 +2062,7 @@ p5.prototype.createVideo = function (src, callback) {
  * @param  {Function} [callback]   function to call once the audio is ready to play.
  * @return {p5.MediaElement}       new <a href="#/p5.MediaElement">p5.MediaElement</a> object.
  * @example
- * <div>
+ * <div class='notest'>
  * <code>
  * function setup() {
  *   noCanvas();
