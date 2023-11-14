@@ -7,30 +7,71 @@
 import p5 from './main';
 
 /**
- * Base class for all elements added to a sketch, including canvas,
- * graphics buffers, and other HTML elements. It is not called directly, but <a href="#/p5.Element">p5.Element</a>
- * objects are created by calling <a href="#/p5/createCanvas">createCanvas()</a>, <a href="#/p5/createGraphics">createGraphics()</a>,
- * <a href="#/p5/createDiv">createDiv()</a>, <a href="#/p5/createImg">createImg()</a>, <a href="#/p5/createInput">createInput()</a>, etc.
+ * A class to describe an
+ * <a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Getting_started" target="_blank">HTML element</a>.
+ * Sketches can use many elements. Common elements include the drawing canvas,
+ * buttons, sliders, webcam feeds, and so on.
+ *
+ * All elements share the methods of the `p5.Element` class. They're created
+ * with functions such as <a href="#/p5/createCanvas">createCanvas()</a> and
+ * <a href="#/p5/createButton">createButton()</a>.
  *
  * @class p5.Element
  * @constructor
- * @param {HTMLElement} elt DOM node that is wrapped
- * @param {p5} [pInst] pointer to p5 instance
+ * @param {HTMLElement} elt wrapped DOM element.
+ * @param {p5} [pInst] pointer to p5 instance.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a button element and
+ *   // place it beneath the canvas.
+ *   let btn = createButton('change');
+ *   btn.position(0, 100);
+ *
+ *   // Call randomColor() when
+ *   // the button is pressed.
+ *   btn.mousePressed(randomColor);
+ *
+ *   describe('A gray square with a button that says "change" beneath it. The square changes color when the user presses the button.');
+ * }
+ *
+ * // Paint the background either
+ * // red, yellow, blue, or green.
+ * function randomColor() {
+ *   let c = random(['red', 'yellow', 'blue', 'green']);
+ *   background(c);
+ * }
+ * </code>
+ * </div>
  */
 p5.Element = class {
   constructor(elt, pInst) {
     /**
-     * Underlying HTML element. All normal HTML methods can be called on this.
+     * Underlying
+     * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement" target="_blank">HTMLElement</a>
+     * object. Its properties and methods can be used directly.
+     *
      * @example
      * <div>
      * <code>
      * function setup() {
-     *   let c = createCanvas(50, 50);
-     *   c.elt.style.border = '5px solid red';
-     * }
+     *   // Create a canvas element and
+     *   // assign it to cnv.
+     *   let cnv = createCanvas(100, 100);
      *
-     * function draw() {
-     *   background(220);
+     *   background(200);
+     *
+     *   // Set the border style for the
+     *   // canvas.
+     *   cnv.elt.style.border = '5px dashed deeppink';
+     *
+     *   describe('A gray square with a pink border drawn with dashed lines.');
      * }
      * </code>
      * </div>
@@ -58,50 +99,111 @@ p5.Element = class {
   }
 
   /**
+   * Attaches this element to a parent element.
    *
-   * Attaches the element to the parent specified. A way of setting
-   * the container for the element. Accepts either a string ID, DOM
-   * node, or <a href="#/p5.Element">p5.Element</a>. If no arguments are given, parent node is returned.
-   * For more ways to position the canvas, see the
-   * <a href='https://github.com/processing/p5.js/wiki/Positioning-your-canvas'>
-   * positioning the canvas</a> wiki page.
+   * For example, a `&lt;div&gt;&lt;/div&gt;` element may be used as a box to
+   * hold two pieces of text, a header and a paragraph. The
+   * `&lt;div&gt;&lt;/div&gt;` is the parent element of both the header and
+   * paragraph.
+   *
+   * The parameter `parent` can have one of three types. `parent` can be a
+   * string with the parent element's ID, as in
+   * `myElement.parent('container')`. It can also be another
+   * <a href="#/p5.Element">p5.Element</a> object, as in
+   * `myElement.parent(myDiv)`. Finally, `parent` can be an `HTMLElement`
+   * object, as in `myElement.parent(anotherElement)`.
+   *
+   * Calling `myElement.parent()` without an argument returns this element's
+   * parent.
    *
    * @method parent
-   * @param  {String|p5.Element|Object} parent the ID, DOM node, or <a href="#/p5.Element">p5.Element</a>
-   *                         of desired parent element
+   * @param  {String|p5.Element|Object} parent ID, <a href="#/p5.Element">p5.Element</a>,
+   *                                           or HTMLElement of desired parent element.
    * @chainable
    *
    * @example
-   * <div class="norender notest"><code>
-   * // Add the following comment to html file.
-   * // &lt;div id="myContainer">&lt;/div>
+   * <div>
+   * <code>
+   * function setup()  {
+   *   background(200);
    *
-   * // The js code
-   * let cnv = createCanvas(100, 100);
-   * cnv.parent('myContainer');
-   * </code></div>
+   *   // Create a div element.
+   *   let div = createDiv();
+   *   // Place the div in the top-left corner.
+   *   div.position(10, 20);
+   *   // Set its width and height.
+   *   div.size(80, 60);
+   *   // Set its background color to white
+   *   div.style('background-color', 'white');
+   *   // Align any text to the center.
+   *   div.style('text-align', 'center');
+   *   // Set its ID to "container".
+   *   div.id('container');
    *
-   * <div class='norender'><code>
-   * let div0 = createDiv('this is the parent');
-   * let div1 = createDiv('this is the child');
-   * div1.parent(div0); // use p5.Element
-   * </code></div>
+   *   // Create a paragraph element.
+   *   let p = createP('p5*js');
+   *   // Make the div its parent
+   *   // using its ID "container".
+   *   p.parent('container');
    *
-   * <div class='norender'><code>
-   * let div0 = createDiv('this is the parent');
-   * div0.id('apples');
-   * let div1 = createDiv('this is the child');
-   * div1.parent('apples'); // use id
-   * </code></div>
+   *   describe('The text "p5*js" written in black at the center of a white rectangle. The rectangle is inside a gray square.');
+   * }
+   * </code>
+   * </div>
    *
-   * <div class='norender notest'><code>
-   * let elt = document.getElementById('myParentDiv');
-   * let div1 = createDiv('this is the child');
-   * div1.parent(elt); // use element from page
-   * </code></div>
+   * <div>
+   * <code>
+   * function setup()  {
+   *   background(200);
    *
-   * @alt
-   * no display.
+   *   // Create rectangular div element.
+   *   let div = createDiv();
+   *   // Place the div in the top-left corner.
+   *   div.position(10, 20);
+   *   // Set its width and height.
+   *   div.size(80, 60);
+   *   // Set its background color and align
+   *   // any text to the center.
+   *   div.style('background-color', 'white');
+   *   div.style('text-align', 'center');
+   *
+   *   // Create a paragraph element.
+   *   let p = createP('p5*js');
+   *   // Make the div its parent.
+   *   p.parent(div);
+   *
+   *   describe('The text "p5*js" written in black at the center of a white rectangle. The rectangle is inside a gray square.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup()  {
+   *   background(200);
+   *
+   *   // Create rectangular div element.
+   *   let div = createDiv();
+   *   // Place the div in the top-left corner.
+   *   div.position(10, 20);
+   *   // Set its width and height.
+   *   div.size(80, 60);
+   *   // Set its background color and align
+   *   // any text to the center.
+   *   div.style('background-color', 'white');
+   *   div.style('text-align', 'center');
+   *
+   *   // Create a paragraph element.
+   *   let p = createP('p5*js');
+   *   // Make the div its parent
+   *   // using the underlying
+   *   // HTMLElement.
+   *   p.parent(div.elt);
+   *
+   *   describe('The text "p5*js" written in black at the center of a white rectangle. The rectangle is inside a gray square.');
+   * }
+   * </code>
+   * </div>
    */
   /**
    * @method parent
@@ -125,33 +227,40 @@ p5.Element = class {
   }
 
   /**
+   * Sets this element's ID using a given string.
    *
-   * Sets the ID of the element. If no ID argument is passed in, it instead
-   * returns the current ID of the element.
-   * Note that only one element can have a particular id in a page.
-   * The <a href="#/p5.Element/class">class()</a> method can be used
-   * to identify multiple elements with the same class name.
+   * Calling `myElement.id()` without an argument returns its ID as a string.
    *
    * @method id
-   * @param  {String} id ID of the element
+   * @param  {String} id ID of the element.
    * @chainable
    *
    * @example
-   * <div class='norender'><code>
+   * <div>
+   * <code>
    * function setup() {
+   *   // Create a canvas element and
+   *   // assign it to cnv.
    *   let cnv = createCanvas(100, 100);
-   *   // Assigns a CSS selector ID to
-   *   // the canvas element.
-   *   cnv.id('mycanvas');
-   * }
-   * </code></div>
    *
-   * @alt
-   * no display.
+   *   background(200);
+   *
+   *   // Set the canvas' ID
+   *   // to "mycanvas".
+   *   cnv.id('mycanvas');
+   *
+   *   // Get the canvas' ID.
+   *   let id = cnv.id();
+   *   text(id, 24, 54);
+   *
+   *   describe('The text "mycanvas" written in black on a gray background.');
+   * }
+   * </code>
+   * </div>
    */
   /**
    * @method id
-   * @return {String} the id of the element
+   * @return {String} ID of the element.
    */
   id(id) {
     if (typeof id === 'undefined') {
@@ -165,30 +274,44 @@ p5.Element = class {
   }
 
   /**
+   * Adds a
+   * <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/class" target="_blank">class attribute</a>
+   * to the element.
    *
-   * Adds given class to the element. If no class argument is passed in, it
-   * instead returns a string containing the current class(es) of the element.
+   * Calling `myElement.class()` without an argument returns a string with its current classes.
    *
    * @method class
-   * @param  {String} class class to add
+   * @param  {String} class class to add.
    * @chainable
    *
    * @example
-   * <div class='norender'><code>
+   * <div>
+   * <code>
    * function setup() {
+   *   // Create a canvas element and
+   *   // assign it to cnv.
    *   let cnv = createCanvas(100, 100);
-   *   // Assigns a CSS selector class 'small'
-   *   // to the canvas element.
-   *   cnv.class('small');
-   * }
-   * </code></div>
    *
-   * @alt
-   * no display.
+   *   background(200);
+   *
+   *   // Add the class "small" to the
+   *   // canvas element.
+   *   cnv.class('small');
+   *
+   *   // Get the canvas element's class
+   *   // and display it.
+   *   let c = cnv.class();
+   *   text(c, 35, 54);
+   *
+   *   describe('The word "small" written in black on a gray canvas.');
+   *
+   * }
+   * </code>
+   * </div>
    */
   /**
    * @method class
-   * @return {String} the class of the element
+   * @return {String} element's classes, if any.
    */
   class(c) {
     if (typeof c === 'undefined') {
@@ -200,46 +323,64 @@ p5.Element = class {
   }
 
   /**
-   * The <a href="#/p5.Element/mousePressed">mousePressed()</a> method is called
-   * once after every time a mouse button is pressed over the element. Some mobile
-   * browsers may also trigger this event on a touch screen, if the user performs
-   * a quick tap. This can be used to attach element-specific event listeners.
+   * Calls a function when the mouse is pressed over the element.
+   * Calling `myElement.mousePressed(false)` disables the function.
+   *
+   * Note: Some mobile browsers may also trigger this event when the element
+   * receives a quick tap.
    *
    * @method mousePressed
-   * @param  {Function|Boolean} fxn function to be fired when mouse is
+   * @param  {Function|Boolean} fxn function to call when the mouse is
    *                                pressed over the element.
-   *                                if `false` is passed instead, the previously
-   *                                firing function will no longer fire.
+   *                                `false` disables the function.
    * @chainable
    * @example
-   * <div class='norender'><code>
-   * let cnv, d, g;
+   * <div>
+   * <code>
    * function setup() {
-   *   cnv = createCanvas(100, 100);
-   *   cnv.mousePressed(changeGray); // attach listener for
-   *   // canvas click only
-   *   d = 10;
-   *   g = 100;
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Call randomColor() when the canvas
+   *   // is pressed.
+   *   cnv.mousePressed(randomColor);
+   *
+   *   describe('A gray square changes color when the mouse is pressed.');
    * }
    *
-   * function draw() {
-   *   background(g);
-   *   ellipse(width / 2, height / 2, d, d);
+   * // Paint the background either
+   * // red, yellow, blue, or green.
+   * function randomColor() {
+   *   let c = random(['red', 'yellow', 'blue', 'green']);
+   *   background(c);
    * }
+   * </code>
+   * </div>
    *
-   * // this function fires with any click anywhere
-   * function mousePressed() {
-   *   d = d + 10;
+   * <div>
+   * <code>
+   * function setup() {
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Paint the background either
+   *   // red, yellow, blue, or green
+   *   // when the canvas is pressed.
+   *   cnv.mousePressed(() => {
+   *     let c = random(['red', 'yellow', 'blue', 'green']);
+   *     background(c);
+   *   });
+   *
+   *   describe('A gray square changes color when the mouse is pressed.');
    * }
-   *
-   * // this function fires only when cnv is clicked
-   * function changeGray() {
-   *   g = random(0, 255);
-   * }
-   * </code></div>
-   *
-   * @alt
-   * no display.
+   * </code>
+   * </div>
    */
   mousePressed(fxn) {
     // Prepend the mouse property setters to the event-listener.
@@ -257,45 +398,61 @@ p5.Element = class {
   }
 
   /**
-   * The <a href="#/p5.Element/doubleClicked">doubleClicked()</a> method is called once after every time a
-   * mouse button is pressed twice over the element. This can be used to
-   * attach element and action-specific event listeners.
+   * Calls a function when the mouse is pressed twice over the element.
+   * Calling `myElement.doubleClicked(false)` disables the function.
    *
    * @method doubleClicked
-   * @param  {Function|Boolean} fxn function to be fired when mouse is
+   * @param  {Function|Boolean} fxn function to call when the mouse is
    *                                double clicked over the element.
-   *                                if `false` is passed instead, the previously
-   *                                firing function will no longer fire.
+   *                                `false` disables the function.
    * @chainable
    * @example
-   * <div class='norender'><code>
-   * let cnv, d, g;
+   * <div>
+   * <code>
    * function setup() {
-   *   cnv = createCanvas(100, 100);
-   *   cnv.doubleClicked(changeGray); // attach listener for
-   *   // canvas double click only
-   *   d = 10;
-   *   g = 100;
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Call randomColor() when the
+   *   // canvas is double-clicked.
+   *   cnv.doubleClicked(randomColor);
+   *
+   *   describe('A gray square changes color when the user double-clicks the canvas.');
    * }
    *
-   * function draw() {
-   *   background(g);
-   *   ellipse(width / 2, height / 2, d, d);
+   * // Paint the background either
+   * // red, yellow, blue, or green.
+   * function randomColor() {
+   *   let c = random(['red', 'yellow', 'blue', 'green']);
+   *   background(c);
    * }
+   * </code>
+   * </div>
    *
-   * // this function fires with any double click anywhere
-   * function doubleClicked() {
-   *   d = d + 10;
+   * <div>
+   * <code>
+   * function setup() {
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Paint the background either
+   *   // red, yellow, blue, or green
+   *   // when the canvas is double-clicked.
+   *   cnv.doubleClicked(() => {
+   *     let c = random(['red', 'yellow', 'blue', 'green']);
+   *     background(c);
+   *   });
+   *
+   *   describe('A gray square changes color when the user double-clicks the canvas.');
    * }
-   *
-   * // this function fires only when cnv is double clicked
-   * function changeGray() {
-   *   g = random(0, 255);
-   * }
-   * </code></div>
-   *
-   * @alt
-   * no display.
+   * </code>
+   * </div>
    */
   doubleClicked(fxn) {
     p5.Element._adjustListener('dblclick', fxn, this);
@@ -303,61 +460,106 @@ p5.Element = class {
   }
 
   /**
-   * The <a href="#/p5.Element/mouseWheel">mouseWheel()</a> method is called
-   * once after every time a mouse wheel is scrolled over the element. This can
-   * be used to attach element-specific event listeners.
+   * Calls a function when the mouse wheel scrolls over th element.
    *
-   * The method accepts a callback function as argument which will be executed
-   * when the `wheel` event is triggered on the element, the callback function is
-   * passed one argument `event`. The `event.deltaY` property returns negative
-   * values if the mouse wheel is rotated up or away from the user and positive
-   * in the other direction. The `event.deltaX` does the same as `event.deltaY`
-   * except it reads the horizontal wheel scroll of the mouse wheel.
+   * The callback function, `fxn`, is passed an `event` object. `event` has
+   * two numeric properties, `deltaY` and `deltaX`. `event.deltaY` is
+   * negative if the mouse wheel rotates away from the user. It's positive if
+   * the mouse wheel rotates toward the user. `event.deltaX` is positive if
+   * the mouse wheel moves to the right. It's negative if the mouse wheel moves
+   * to the left.
    *
-   * On macOS with "natural" scrolling enabled, the `event.deltaY` values are
-   * reversed.
+   * Calling `myElement.mouseWheel(false)` disables the function.
    *
    * @method mouseWheel
-   * @param  {Function|Boolean} fxn function to be fired when mouse is
+   * @param  {Function|Boolean} fxn function to call when the mouse wheel is
    *                                scrolled over the element.
-   *                                if `false` is passed instead, the previously
-   *                                firing function will no longer fire.
+   *                                `false` disables the function.
    * @chainable
    * @example
-   * <div class='norender'><code>
-   * let cnv, d, g;
+   * <div>
+   * <code>
    * function setup() {
-   *   cnv = createCanvas(100, 100);
-   *   cnv.mouseWheel(changeSize); // attach listener for
-   *   // activity on canvas only
-   *   d = 10;
-   *   g = 100;
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Call randomColor() when the
+   *   // mouse wheel moves.
+   *   cnv.mouseWheel(randomColor);
+   *
+   *   describe('A gray square changes color when the user scrolls the mouse wheel over the canvas.');
    * }
    *
-   * function draw() {
-   *   background(g);
-   *   ellipse(width / 2, height / 2, d, d);
+   * // Paint the background either
+   * // red, yellow, blue, or green.
+   * function randomColor() {
+   *   let c = random(['red', 'yellow', 'blue', 'green']);
+   *   background(c);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Paint the background either
+   *   // red, yellow, blue, or green
+   *   // when the mouse wheel moves.
+   *   cnv.mouseWheel(() => {
+   *     let c = random(['red', 'yellow', 'blue', 'green']);
+   *     background(c);
+   *   });
+   *
+   *   describe('A gray square changes color when the user scrolls the mouse wheel over the canvas.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Call changeBackground() when the
+   *   // mouse wheel moves.
+   *   cnv.mouseWheel(changeBackground);
+   *
+   *   describe('A gray square. When the mouse wheel scrolls over the square, it changes color and displays shapes.');
    * }
    *
-   * // this function fires with mousewheel movement
-   * // anywhere on screen
-   * function mouseWheel() {
-   *   g = g + 10;
-   * }
-   *
-   * // this function fires with mousewheel movement
-   * // over canvas only
-   * function changeSize(event) {
+   * function changeBackground(event) {
+   *   // Change the background color
+   *   // based on deltaY.
    *   if (event.deltaY > 0) {
-   *     d = d + 10;
+   *     background('deeppink');
+   *   } else if (event.deltaY < 0) {
+   *     background('cornflowerblue');
    *   } else {
-   *     d = d - 10;
+   *     background(200);
+   *   }
+   *
+   *   // Draw a shape based on deltaX.
+   *   if (event.deltaX > 0) {
+   *     circle(50, 50, 20);
+   *   } else if (event.deltaX < 0) {
+   *     square(40, 40, 20);
    *   }
    * }
-   * </code></div>
-   *
-   * @alt
-   * no display.
+   * </code>
+   * </div>
    */
   mouseWheel(fxn) {
     p5.Element._adjustListener('wheel', fxn, this);
@@ -365,48 +567,64 @@ p5.Element = class {
   }
 
   /**
-   * The <a href="#/p5.Element/mouseReleased">mouseReleased()</a> method is
-   * called once after every time a mouse button is released over the element.
-   * Some mobile browsers may also trigger this event on a touch screen, if the
-   * user performs a quick tap. This can be used to attach element-specific event listeners.
+   * Calls a function when the mouse is released over the element. Calling
+   * `myElement.mouseReleased(false)` disables the function.
+   *
+   * Note: Some mobile browsers may also trigger this event when the element
+   * receives a quick tap.
    *
    * @method mouseReleased
-   * @param  {Function|Boolean} fxn function to be fired when mouse is
-   *                                released over the element.
-   *                                if `false` is passed instead, the previously
-   *                                firing function will no longer fire.
+   * @param  {Function|Boolean} fxn function to call when the mouse is
+   *                                pressed over the element.
+   *                                `false` disables the function.
    * @chainable
    * @example
-   * <div class='norender'><code>
-   * let cnv, d, g;
+   * <div>
+   * <code>
    * function setup() {
-   *   cnv = createCanvas(100, 100);
-   *   cnv.mouseReleased(changeGray); // attach listener for
-   *   // activity on canvas only
-   *   d = 10;
-   *   g = 100;
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Call randomColor() when a
+   *   // mouse press ends.
+   *   cnv.mouseReleased(randomColor);
+   *
+   *   describe('A gray square changes color when the user releases a mouse press.');
    * }
    *
-   * function draw() {
-   *   background(g);
-   *   ellipse(width / 2, height / 2, d, d);
+   * // Paint the background either
+   * // red, yellow, blue, or green.
+   * function randomColor() {
+   *   let c = random(['red', 'yellow', 'blue', 'green']);
+   *   background(c);
    * }
+   * </code>
+   * </div>
    *
-   * // this function fires after the mouse has been
-   * // released
-   * function mouseReleased() {
-   *   d = d + 10;
+   * <div>
+   * <code>
+   * function setup() {
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Paint the background either
+   *   // red, yellow, blue, or green
+   *   // when a mouse press ends.
+   *   cnv.mouseReleased(() => {
+   *     let c = random(['red', 'yellow', 'blue', 'green']);
+   *     background(c);
+   *   });
+   *
+   *   describe('A gray square changes color when the user releases a mouse press.');
    * }
-   *
-   * // this function fires after the mouse has been
-   * // released while on canvas
-   * function changeGray() {
-   *   g = random(0, 255);
-   * }
-   * </code></div>
-   *
-   * @alt
-   * no display.
+   * </code>
+   * </div>
    */
   mouseReleased(fxn) {
     p5.Element._adjustListener('mouseup', fxn, this);
@@ -414,50 +632,64 @@ p5.Element = class {
   }
 
   /**
-   * The <a href="#/p5.Element/mouseClicked">mouseClicked()</a> method is
-   * called once after a mouse button is pressed and released over the element.
-   * Some mobile browsers may also trigger this event on a touch screen, if the
-   * user performs a quick tap. This can be used to attach element-specific event listeners.
+   * Calls a function when the mouse is pressed and released over the element.
+   * Calling `myElement.mouseReleased(false)` disables the function.
+   *
+   * Note: Some mobile browsers may also trigger this event when the element
+   * receives a quick tap.
    *
    * @method mouseClicked
-   * @param  {Function|Boolean} fxn function to be fired when mouse is
-   *                                clicked over the element.
-   *                                if `false` is passed instead, the previously
-   *                                firing function will no longer fire.
+   * @param  {Function|Boolean} fxn function to call when the mouse is
+   *                                pressed and released over the element.
+   *                                `false` disables the function.
    * @chainable
    * @example
-   * <div class="norender">
+   * <div>
    * <code>
-   * let cnv, d, g;
    * function setup() {
-   *   cnv = createCanvas(100, 100);
-   *   cnv.mouseClicked(changeGray); // attach listener for
-   *   // activity on canvas only
-   *   d = 10;
-   *   g = 100;
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Call randomColor() when a
+   *   // mouse press ends.
+   *   cnv.mouseClicked(randomColor);
+   *
+   *   describe('A gray square changes color when the user releases a mouse press.');
    * }
    *
-   * function draw() {
-   *   background(g);
-   *   ellipse(width / 2, height / 2, d, d);
-   * }
-   *
-   * // this function fires after the mouse has been
-   * // clicked anywhere
-   * function mouseClicked() {
-   *   d = d + 10;
-   * }
-   *
-   * // this function fires after the mouse has been
-   * // clicked on canvas
-   * function changeGray() {
-   *   g = random(0, 255);
+   * // Paint the background either
+   * // red, yellow, blue, or green.
+   * function randomColor() {
+   *   let c = random(['red', 'yellow', 'blue', 'green']);
+   *   background(c);
    * }
    * </code>
    * </div>
    *
-   * @alt
-   * no display.
+   * <div>
+   * <code>
+   * function setup() {
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Paint the background either
+   *   // red, yellow, blue, or green
+   *   // when a mouse press ends.
+   *   cnv.mouseClicked(() => {
+   *     let c = random(['red', 'yellow', 'blue', 'green']);
+   *     background(c);
+   *   });
+   *
+   *   describe('A gray square changes color when the user releases a mouse press.');
+   * }
+   * </code>
+   * </div>
    */
   mouseClicked(fxn) {
     p5.Element._adjustListener('click', fxn, this);
@@ -465,55 +697,61 @@ p5.Element = class {
   }
 
   /**
-   * The <a href="#/p5.Element/mouseMoved">mouseMoved()</a> method is called once every time a
-   * mouse moves over the element. This can be used to attach an
-   * element-specific event listener.
+   * Calls a function when the mouse moves over the element. Calling
+   * `myElement.mouseMoved(false)` disables the function.
    *
    * @method mouseMoved
-   * @param  {Function|Boolean} fxn function to be fired when a mouse moves
-   *                                over the element.
-   *                                if `false` is passed instead, the previously
-   *                                firing function will no longer fire.
+   * @param  {Function|Boolean} fxn function to call when the mouse
+   *                                moves over the element.
+   *                                `false` disables the function.
    * @chainable
    * @example
-   * <div class='norender'><code>
-   * let cnv;
-   * let d = 30;
-   * let g;
+   * <div>
+   * <code>
    * function setup() {
-   *   cnv = createCanvas(100, 100);
-   *   cnv.mouseMoved(changeSize); // attach listener for
-   *   // activity on canvas only
-   *   d = 10;
-   *   g = 100;
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Call randomColor() when the
+   *   // mouse moves.
+   *   cnv.mouseMoved(randomColor);
+   *
+   *   describe('A gray square changes color when the mouse moves over the canvas.');
    * }
    *
-   * function draw() {
-   *   background(g);
-   *   fill(200);
-   *   ellipse(width / 2, height / 2, d, d);
+   * // Paint the background either
+   * // red, yellow, blue, or green.
+   * function randomColor() {
+   *   let c = random(['red', 'yellow', 'blue', 'green']);
+   *   background(c);
    * }
+   * </code>
+   * </div>
    *
-   * // this function fires when mouse moves anywhere on
-   * // page
-   * function mouseMoved() {
-   *   g = g + 5;
-   *   if (g > 255) {
-   *     g = 0;
-   *   }
+   * <div>
+   * <code>
+   * function setup() {
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Paint the background either
+   *   // red, yellow, blue, or green
+   *   // when the mouse moves.
+   *   cnv.mouseMoved(() => {
+   *     let c = random(['red', 'yellow', 'blue', 'green']);
+   *     background(c);
+   *   });
+   *
+   *   describe('A gray square changes color when the mouse moves over the canvas.');
    * }
-   *
-   * // this function fires when mouse moves over canvas
-   * function changeSize() {
-   *   d = d + 2;
-   *   if (d > 100) {
-   *     d = 0;
-   *   }
-   * }
-   * </code></div>
-   *
-   * @alt
-   * no display.
+   * </code>
+   * </div>
    */
   mouseMoved(fxn) {
     p5.Element._adjustListener('mousemove', fxn, this);
@@ -521,40 +759,62 @@ p5.Element = class {
   }
 
   /**
-   * The <a href="#/p5.Element/mouseOver">mouseOver()</a> method is called once after every time a
-   * mouse moves onto the element. This can be used to attach an
-   * element-specific event listener.
+   * Calls a function when the mouse moves onto the element. Calling
+   * `myElement.mouseOver(false)` disables the function.
    *
    * @method mouseOver
-   * @param  {Function|Boolean} fxn function to be fired when a mouse moves
-   *                                onto the element.
-   *                                if `false` is passed instead, the previously
-   *                                firing function will no longer fire.
+   * @param  {Function|Boolean} fxn function to call when the mouse
+   *                                moves onto the element.
+   *                                `false` disables the function.
    * @chainable
    * @example
-   * <div class='norender'><code>
-   * let cnv;
-   * let d;
+   * <div>
+   * <code>
    * function setup() {
-   *   cnv = createCanvas(100, 100);
-   *   cnv.mouseOver(changeGray);
-   *   d = 10;
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Call randomColor() when the
+   *   // mouse moves onto the canvas.
+   *   cnv.mouseOver(randomColor);
+   *
+   *   describe('A gray square changes color when the mouse moves onto the canvas.');
    * }
    *
-   * function draw() {
-   *   ellipse(width / 2, height / 2, d, d);
+   * // Paint the background either
+   * // red, yellow, blue, or green.
+   * function randomColor() {
+   *   let c = random(['red', 'yellow', 'blue', 'green']);
+   *   background(c);
    * }
+   * </code>
+   * </div>
    *
-   * function changeGray() {
-   *   d = d + 10;
-   *   if (d > 100) {
-   *     d = 0;
-   *   }
+   * <div>
+   * <code>
+   * function setup() {
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Paint the background either
+   *   // red, yellow, blue, or green
+   *   // when the mouse moves onto
+   *   // the canvas.
+   *   cnv.mouseOver(() => {
+   *     let c = random(['red', 'yellow', 'blue', 'green']);
+   *     background(c);
+   *   });
+   *
+   *   describe('A gray square changes color when the mouse moves onto the canvas.');
    * }
-   * </code></div>
-   *
-   * @alt
-   * no display.
+   * </code>
+   * </div>
    */
   mouseOver(fxn) {
     p5.Element._adjustListener('mouseover', fxn, this);
@@ -562,40 +822,62 @@ p5.Element = class {
   }
 
   /**
-   * The <a href="#/p5.Element/mouseOut">mouseOut()</a> method is called once after every time a
-   * mouse moves off the element. This can be used to attach an
-   * element-specific event listener.
+   * Calls a function when the mouse moves off the element. Calling
+   * `myElement.mouseOut(false)` disables the function.
    *
    * @method mouseOut
-   * @param  {Function|Boolean} fxn function to be fired when a mouse
-   *                                moves off of an element.
-   *                                if `false` is passed instead, the previously
-   *                                firing function will no longer fire.
+   * @param  {Function|Boolean} fxn function to call when the mouse
+   *                                moves off the element.
+   *                                `false` disables the function.
    * @chainable
    * @example
-   * <div class='norender'><code>
-   * let cnv;
-   * let d;
+   * <div>
+   * <code>
    * function setup() {
-   *   cnv = createCanvas(100, 100);
-   *   cnv.mouseOut(changeGray);
-   *   d = 10;
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Call randomColor() when the
+   *   // mouse moves off the canvas.
+   *   cnv.mouseOut(randomColor);
+   *
+   *   describe('A gray square changes color when the mouse moves off the canvas.');
    * }
    *
-   * function draw() {
-   *   ellipse(width / 2, height / 2, d, d);
+   * // Paint the background either
+   * // red, yellow, blue, or green.
+   * function randomColor() {
+   *   let c = random(['red', 'yellow', 'blue', 'green']);
+   *   background(c);
    * }
+   * </code>
+   * </div>
    *
-   * function changeGray() {
-   *   d = d + 10;
-   *   if (d > 100) {
-   *     d = 0;
-   *   }
+   * <div>
+   * <code>
+   * function setup() {
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Paint the background either
+   *   // red, yellow, blue, or green
+   *   // when the mouse moves off
+   *   // the canvas.
+   *   cnv.mouseOut(() => {
+   *     let c = random(['red', 'yellow', 'blue', 'green']);
+   *     background(c);
+   *   });
+   *
+   *   describe('A gray square changes color when the mouse moves off the canvas.');
    * }
-   * </code></div>
-   *
-   * @alt
-   * no display.
+   * </code>
+   * </div>
    */
   mouseOut(fxn) {
     p5.Element._adjustListener('mouseout', fxn, this);
@@ -603,46 +885,64 @@ p5.Element = class {
   }
 
   /**
-   * The <a href="#/p5.Element/touchStarted">touchStarted()</a> method is called once after every time a touch is
-   * registered. This can be used to attach element-specific event listeners.
+   * Calls a function when the element is touched. Calling
+   * `myElement.touchStarted(false)` disables the function.
+   *
+   * Note: Touch functions only work on mobile devices.
    *
    * @method touchStarted
-   * @param  {Function|Boolean} fxn function to be fired when a touch
-   *                                starts over the element.
-   *                                if `false` is passed instead, the previously
-   *                                firing function will no longer fire.
+   * @param  {Function|Boolean} fxn function to call when the touch
+   *                                starts.
+   *                                `false` disables the function.
    * @chainable
    * @example
-   * <div class='norender'><code>
-   * let cnv;
-   * let d;
-   * let g;
+   * <div>
+   * <code>
    * function setup() {
-   *   cnv = createCanvas(100, 100);
-   *   cnv.touchStarted(changeGray); // attach listener for
-   *   // canvas click only
-   *   d = 10;
-   *   g = 100;
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Call randomColor() when the
+   *   // user touches the canvas.
+   *   cnv.touchStarted(randomColor);
+   *
+   *   describe('A gray square changes color when the user touches the canvas.');
    * }
    *
-   * function draw() {
-   *   background(g);
-   *   ellipse(width / 2, height / 2, d, d);
+   * // Paint the background either
+   * // red, yellow, blue, or green.
+   * function randomColor() {
+   *   let c = random(['red', 'yellow', 'blue', 'green']);
+   *   background(c);
    * }
+   * </code>
+   * </div>
    *
-   * // this function fires with any touch anywhere
-   * function touchStarted() {
-   *   d = d + 10;
+   * <div>
+   * <code>
+   * function setup() {
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Paint the background either
+   *   // red, yellow, blue, or green
+   *   // when the user touches the
+   *   // canvas.
+   *   cnv.touchStarted(() => {
+   *     let c = random(['red', 'yellow', 'blue', 'green']);
+   *     background(c);
+   *   });
+   *
+   *   describe('A gray square changes color when the user touches the canvas.');
    * }
-   *
-   * // this function fires only when cnv is clicked
-   * function changeGray() {
-   *   g = random(0, 255);
-   * }
-   * </code></div>
-   *
-   * @alt
-   * no display.
+   * </code>
+   * </div>
    */
   touchStarted(fxn) {
     p5.Element._adjustListener('touchstart', fxn, this);
@@ -650,38 +950,66 @@ p5.Element = class {
   }
 
   /**
-   * The <a href="#/p5.Element/touchMoved">touchMoved()</a> method is called once after every time a touch move is
-   * registered. This can be used to attach element-specific event listeners.
+   * Calls a function when the user touches the element and moves their
+   * finger. Calling `myElement.touchMoved(false)` disables the
+   * function.
+   *
+   * Note: Touch functions only work on mobile devices.
    *
    * @method touchMoved
-   * @param  {Function|Boolean} fxn function to be fired when a touch moves over
-   *                                the element.
-   *                                if `false` is passed instead, the previously
-   *                                firing function will no longer fire.
+   * @param  {Function|Boolean} fxn function to call when the touch
+   *                                moves over the element.
+   *                                `false` disables the function.
    * @chainable
    * @example
-   * <div class='norender'><code>
-   * let cnv;
-   * let g;
+   * <div>
+   * <code>
    * function setup() {
-   *   cnv = createCanvas(100, 100);
-   *   cnv.touchMoved(changeGray); // attach listener for
-   *   // canvas click only
-   *   g = 100;
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Call randomColor() when the
+   *   // user touches the canvas
+   *   // and moves.
+   *   cnv.touchMoved(randomColor);
+   *
+   *   describe('A gray square changes color when the user touches the canvas and moves.');
    * }
    *
-   * function draw() {
-   *   background(g);
+   * // Paint the background either
+   * // red, yellow, blue, or green.
+   * function randomColor() {
+   *   let c = random(['red', 'yellow', 'blue', 'green']);
+   *   background(c);
    * }
+   * </code>
+   * </div>
    *
-   * // this function fires only when cnv is clicked
-   * function changeGray() {
-   *   g = random(0, 255);
+   * <div>
+   * <code>
+   * function setup() {
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Paint the background either
+   *   // red, yellow, blue, or green
+   *   // when the user touches the
+   *   // canvas and moves.
+   *   cnv.touchMoved(() => {
+   *     let c = random(['red', 'yellow', 'blue', 'green']);
+   *     background(c);
+   *   });
+   *
+   *   describe('A gray square changes color when the user touches the canvas and moves.');
    * }
-   * </code></div>
-   *
-   * @alt
-   * no display.
+   * </code>
+   * </div>
    */
   touchMoved(fxn) {
     p5.Element._adjustListener('touchmove', fxn, this);
@@ -689,46 +1017,66 @@ p5.Element = class {
   }
 
   /**
-   * The <a href="#/p5.Element/touchEnded">touchEnded()</a> method is called once after every time a touch is
-   * registered. This can be used to attach element-specific event listeners.
+   * Calls a function when the user stops touching the element. Calling
+   * `myElement.touchMoved(false)` disables the function.
+   *
+   * Note: Touch functions only work on mobile devices.
    *
    * @method touchEnded
-   * @param  {Function|Boolean} fxn function to be fired when a touch ends
-   *                                over the element.
-   *                                if `false` is passed instead, the previously
-   *                                firing function will no longer fire.
+   * @param  {Function|Boolean} fxn function to call when the touch
+   *                                ends.
+   *                                `false` disables the function.
    * @chainable
    * @example
-   * <div class='norender'><code>
-   * let cnv;
-   * let d;
-   * let g;
+   * <div>
+   * <code>
    * function setup() {
-   *   cnv = createCanvas(100, 100);
-   *   cnv.touchEnded(changeGray); // attach listener for
-   *   // canvas click only
-   *   d = 10;
-   *   g = 100;
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Call randomColor() when the
+   *   // user touches the canvas,
+   *   // then lifts their finger.
+   *   cnv.touchEnded(randomColor);
+   *
+   *   describe('A gray square changes color when the user touches the canvas, then lifts their finger.');
    * }
    *
-   * function draw() {
-   *   background(g);
-   *   ellipse(width / 2, height / 2, d, d);
+   * // Paint the background either
+   * // red, yellow, blue, or green.
+   * function randomColor() {
+   *   let c = random(['red', 'yellow', 'blue', 'green']);
+   *   background(c);
    * }
+   * </code>
+   * </div>
    *
-   * // this function fires with any touch anywhere
-   * function touchEnded() {
-   *   d = d + 10;
+   * <div>
+   * <code>
+   * function setup() {
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Paint the background either
+   *   // red, yellow, blue, or green
+   *   // when the user touches the
+   *   // canvas, then lifts their
+   *   // finger.
+   *   cnv.touchEnded(() => {
+   *     let c = random(['red', 'yellow', 'blue', 'green']);
+   *     background(c);
+   *   });
+   *
+   *   describe('A gray square changes color when the user touches the canvas, then lifts their finger.');
    * }
-   *
-   * // this function fires only when cnv is clicked
-   * function changeGray() {
-   *   g = random(0, 255);
-   * }
-   * </code></div>
-   *
-   * @alt
-   * no display.
+   * </code>
+   * </div>
    */
   touchEnded(fxn) {
     p5.Element._adjustListener('touchend', fxn, this);
@@ -736,37 +1084,62 @@ p5.Element = class {
   }
 
   /**
-   * The <a href="#/p5.Element/dragOver">dragOver()</a> method is called once after every time a
-   * file is dragged over the element. This can be used to attach an
-   * element-specific event listener.
+   * Calls a function when a file is dragged over the element. Calling
+   * `myElement.dragOver(false)` disables the function.
    *
    * @method dragOver
-   * @param  {Function|Boolean} fxn function to be fired when a file is
+   * @param  {Function|Boolean} fxn function to call when the file is
    *                                dragged over the element.
-   *                                if `false` is passed instead, the previously
-   *                                firing function will no longer fire.
+   *                                `false` disables the function.
    * @chainable
    * @example
-   * <div><code>
-   * // To test this sketch, simply drag a
-   * // file over the canvas
+   * <div>
+   * <code>
+   * // Drag a file over the canvas to test.
+   *
    * function setup() {
-   *   let c = createCanvas(100, 100);
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
    *   background(200);
-   *   textAlign(CENTER);
-   *   text('Drag file', width / 2, height / 2);
-   *   c.dragOver(dragOverCallback);
+   *
+   *   // Call helloFile() when a
+   *   // file is dragged over
+   *   // the canvas.
+   *   cnv.dragOver(helloFile);
+   *
+   *   describe('A gray square. The text "hello, file" appears when a file is dragged over the square.');
    * }
    *
-   * // This function will be called whenever
-   * // a file is dragged over the canvas
-   * function dragOverCallback() {
-   *   background(240);
-   *   text('Dragged over', width / 2, height / 2);
+   * function helloFile() {
+   *   text('hello, file', 50, 50);
    * }
-   * </code></div>
-   * @alt
-   * nothing displayed
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // Drag a file over the canvas to test.
+   *
+   * function setup() {
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Say "hello, file" when a
+   *   // file is dragged over
+   *   // the canvas.
+   *   cnv.dragOver(() => {
+   *     text('hello, file', 50, 50);
+   *   });
+   *
+   *   describe('A gray square. The text "hello, file" appears when a file is dragged over the square.');
+   * }
+   * </code>
+   * </div>
    */
   dragOver(fxn) {
     p5.Element._adjustListener('dragover', fxn, this);
@@ -774,37 +1147,64 @@ p5.Element = class {
   }
 
   /**
-   * The <a href="#/p5.Element/dragLeave">dragLeave()</a> method is called once after every time a
-   * dragged file leaves the element area. This can be used to attach an
-   * element-specific event listener.
+   * Calls a function when a file is dragged off the element. Calling
+   * Calling `myElement.dragLeave(false)` disables the function.
    *
    * @method dragLeave
-   * @param  {Function|Boolean} fxn function to be fired when a file is
+   * @param  {Function|Boolean} fxn function to call when the file is
    *                                dragged off the element.
-   *                                if `false` is passed instead, the previously
-   *                                firing function will no longer fire.
+   *                                `false` disables the function.
    * @chainable
    * @example
-   * <div><code>
-   * // To test this sketch, simply drag a file
-   * // over and then out of the canvas area
+   * <div>
+   * <code>
+   * // Drag a file over, then off
+   * // the canvas to test.
+   *
    * function setup() {
-   *   let c = createCanvas(100, 100);
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
    *   background(200);
-   *   textAlign(CENTER);
-   *   text('Drag file', width / 2, height / 2);
-   *   c.dragLeave(dragLeaveCallback);
+   *
+   *   // Call byeFile() when a
+   *   // file is dragged over,
+   *   // then off the canvas.
+   *   cnv.dragLeave(byeFile);
+   *
+   *   describe('A gray square. The text "bye, file" appears when a file is dragged over, then off the square.');
    * }
    *
-   * // This function will be called whenever
-   * // a file is dragged out of the canvas
-   * function dragLeaveCallback() {
-   *   background(240);
-   *   text('Dragged off', width / 2, height / 2);
+   * function byeFile() {
+   *   text('bye, file', 50, 50);
    * }
-   * </code></div>
-   * @alt
-   * nothing displayed
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // Drag a file over, then off
+   * // the canvas to test.
+   *
+   * function setup() {
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Say "bye, file" when a
+   *   // file is dragged over,
+   *   // then off the canvas.
+   *   cnv.dragLeave(() => {
+   *     text('bye, file', 50, 50);
+   *   });
+   *
+   *   describe('A gray square. The text "bye, file" appears when a file is dragged over, then off the square.');
+   * }
+   * </code>
+   * </div>
    */
   dragLeave(fxn) {
     p5.Element._adjustListener('dragleave', fxn, this);
