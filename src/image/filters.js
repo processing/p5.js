@@ -214,7 +214,7 @@ const Filters = {
     if (level === undefined) {
       level = 0.5;
     }
-    // Calculate thershold value on a (0-255) scale.
+    // Calculate threshold value on a (0-255) scale.
     const thresh = Math.floor(level * 255);
 
     for (let i = 0; i < pixels.length; i += 4) {
