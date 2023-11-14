@@ -464,8 +464,9 @@ p5.prototype.noCursor = function() {
 };
 
 /**
- * A string variable with the WebGL version in use. The value is either
- * `'webgl2'`, `'webgl'`, or `'p2d'`, which is the default for 2D sketches.
+ * A string variable with the WebGL version in use. The value equals one of
+ * the string constants `WEBGL2`, `WEBGL`, or `P2D`, which is the default for
+ * 2D sketches.
  *
  * See <a href="#/p5/setAttributes">setAttributes()</a> for ways to set the
  * WebGL version.
@@ -571,7 +572,7 @@ p5.prototype.displayWidth = screen.width;
 /**
  * A numeric variable that stores the height of the screen display. Its value
  * depends on the current <a href="#/p5/pixelDensity">pixelDensity()</a>.
- * `displayHeight()` is useful for running full-screen programs.
+ * `displayHeight` is useful for running full-screen programs.
  *
  * Note: The actual screen height can be computed as
  * `displayHeight * pixelDensity()`.
