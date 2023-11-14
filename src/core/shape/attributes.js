@@ -101,6 +101,7 @@ p5.prototype.noSmooth = function() {
     }
   } else {
     this.setAttributes('antialias', false);
+    this._renderer._setProperty('_smooth', false);
   }
   return this;
 };
