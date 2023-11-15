@@ -185,12 +185,94 @@ p5.Geometry = class Geometry {
     return n.mult(Math.asin(sinAlpha) / ln);
   }
   /**
-   * computes smooth normals per vertex as an average of each
-   * face.
+   * This function calculates normals for each face, where each vertex's normal is the average of the normals of all faces it's connected to.
+   * i.e computes smooth normals per vertex as an average of each face.
+   * When using 'FLAT' shading, vertices are disconnected/duplicated i.e each face has its own copy of vertices.
+   * When using 'SMOOTH' shading, vertices are connected/deduplicated i.e each face has its vertices shared with other faces.
+   *
    * @method computeNormals
-   * @param {String} [shadingType] (optional) Shading type ('FLAT' for flat shading or 'SMOOTH' for smooth shading) for buildGeometry() outputs.
-   * @param {Object} [settings={ roundToPrecision: 3 }] (optional) Additional settings object with rounding precision for vertex coordinates when shadingType is 'SMOOTH'.
+   * @param {String} [shadingType] (optional) shading type ('FLAT' for flat shading or 'SMOOTH' for smooth shading) for buildGeometry() outputs.
+   * @param {Object} [options] (optional) object with roundToPrecision property.
    * @chainable
+   *
+   * @example
+   * <div>
+   * <code>
+   * let helix;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   helix = buildGeometry(() => {
+   *     beginShape();
+   *
+   *     for (let i = 0; i < TWO_PI * 3; i += 0.1) {
+   *       let radius = 20;
+   *       let x = cos(i) * radius;
+   *       let y = sin(i) * radius;
+   *       let z = i * 10;
+   *       vertex(x, y, z);
+   *     }
+   *     endShape();
+   *   });
+   *   helix.computeNormals();
+   * }
+   * function draw() {
+   *   background(255);
+   *   stroke(0);
+   *   fill(150, 200, 250);
+   *   lights();
+   *   orbitControl();
+   *   model(helix);
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt
+   * A 3D helix using the computeNormals() function by default uses 'FLAT' to create a flat shading effect on the helix.
+   *
+   * @example
+   * <div>
+   * <code>
+   * let star;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   star = buildGeometry(() => {
+   *     beginShape();
+   *     for (let i = 0; i < TWO_PI; i += PI / 5) {
+   *       let outerRadius = 60;
+   *       let innerRadius = 30;
+   *       let xOuter = cos(i) * outerRadius;
+   *       let yOuter = sin(i) * outerRadius;
+   *       let zOuter = random(-20, 20);
+   *       vertex(xOuter, yOuter, zOuter);
+   *
+   *       let nextI = i + PI / 5 / 2;
+   *       let xInner = cos(nextI) * innerRadius;
+   *       let yInner = sin(nextI) * innerRadius;
+   *       let zInner = random(-20, 20);
+   *       vertex(xInner, yInner, zInner);
+   *     }
+   *     endShape(CLOSE);
+   *   });
+   *   star.computeNormals('SMOOTH');
+   * }
+   * function draw() {
+   *   background(255);
+   *   stroke(0);
+   *   fill(150, 200, 250);
+   *   lights();
+   *   orbitControl();
+   *   model(star);
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt
+   * A star-like geometry, here the computeNormals('SMOOTH') is applied for a smooth shading effect.
+   * This helps to avoid the faceted appearance that can occur with flat shading.
    */
   computeNormals(shadingType = 'FLAT', { roundToPrecision = 3 } = {}) {
     const vertexNormals = this.vertexNormals;
@@ -202,10 +284,13 @@ p5.Geometry = class Geometry {
       const vertexIndices = {};
       const uniqueVertices = [];
 
+      const getKey = vert =>
+        `${vert.x.toFixed(roundToPrecision)},${vert.y.toFixed(roundToPrecision)},${vert.z.toFixed(roundToPrecision)}`;
+
       // loop through each vertex and add uniqueVertices
       for (let i = 0; i < vertices.length; i++) {
         const vertex = vertices[i];
-        const key = `${vertex.x.toFixed(roundToPrecision)},${vertex.y.toFixed(roundToPrecision)},${vertex.z.toFixed(roundToPrecision)}`;
+        const key = getKey(vertex);
         if (vertexIndices[key] === undefined) {
           vertexIndices[key] = uniqueVertices.length;
           uniqueVertices.push(vertex);
@@ -217,13 +302,13 @@ p5.Geometry = class Geometry {
         for (let fv = 0; fv < 3; ++fv) {
           const originalVertexIndex = face[fv];
           const originalVertex = vertices[originalVertexIndex];
-          const key = `${originalVertex.x.toFixed(roundToPrecision)},${originalVertex.y.toFixed(roundToPrecision)},${originalVertex.z.toFixed(roundToPrecision)}`;
+          const key = getKey(originalVertex);
           face[fv] = vertexIndices[key];
         }
       });
 
       // update the deduplicated vertices
-      vertices = uniqueVertices;
+      this.vertices = vertices = uniqueVertices;
     }
 
     // initialize the vertexNormals array with empty vectors
