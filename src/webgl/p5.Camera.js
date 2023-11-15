@@ -129,26 +129,16 @@ p5.prototype.camera = function (...args) {
  *
  * If no parameters are given, the default values are used as:
  *
- * fov- The default field of view for the camera is such that the full height of renderer is visible when it is positioned at a default distance of 800 units from the camera.
- *
- * aspect- The default aspect ratio is the ratio of renderer's width to renderer's height.
- *
- * near - The default value for the near clipping plane is 0.1 times the default distance from the camera to the point it is looking at i.e 800.
- *
- * far - The default value for the far clipping plane is 10 times the default distance from the camera to the point it is looking at i.e 800.
+ * - `fov` : The default field of view for the camera is such that the full height of renderer is visible when it is positioned at a default distance of 800 units from the camera.
+ * - `aspect` : The default aspect ratio is the ratio of renderer's width to renderer's height.
+ * - `near` : The default value for the near clipping plane is 80, which is 0.1 times the default distance from the camera to its subject.
+ * - `far` : The default value for the far clipping plane is 8000, which is 10 times the default distance from the camera to its subject.
  *
  * If you prefer a fixed field of view, follow these steps:
- *
- * 1.Choose your desired field of view angle (`fovy`). This is how wide the camera can see.
- *
- * 2.To position the camera correctly, use the formula:
- *   cameraDistance = (height / 2) / tan(fovy / 2);
- *   This ensures that you can see the entire width across horizontally and height across vertically at the fixed field of view.
- *
- * 3.Set the near value to  cameraDistance / 10 and the far value to  cameraDistance * 10 .
- *
- * 4.Simply, call perspective with the chosen field of view, canvas aspect ratio, and near/far values:
- *    perspective(fovy, width / height, cameraDistance / 10, cameraDistance * 10);
+ * 1. Choose your desired field of view angle (`fovy`). This is how wide the camera can see.
+ * 2. To ensure that you can see the entire width across horizontally and height across vertically, place the camera a distance of `(height / 2) / tan(fovy / 2)` back from its subject.
+ * 3. Call perspective with the chosen field of view, canvas aspect ratio, and near/far values:
+ *    `perspective(fovy, width / height, cameraDistance / 10, cameraDistance * 10);`
  *
  * @method  perspective
  * @for p5
@@ -176,7 +166,7 @@ p5.prototype.camera = function (...args) {
  *
  *   rotateX(-0.3);
  *   rotateY(-0.2);
- *   translate(0, 0, -100);
+ *   translate(0, 0, -85);
  *
  *   push();
  *   translate(-15, 0, sin(frameCount / 30) * 95);
