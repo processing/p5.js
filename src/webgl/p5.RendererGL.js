@@ -997,74 +997,13 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.curStrokeJoin = join;
   }
 
-  getFilterGraphicsLayer() {
-    // Lazily initialize the filter graphics layer. We only do this on demand
-    // because the graphics layer itself has a p5.RendererGL, which would then
-    // try to make its own filter layer, infinitely looping.
-    if (!this.filterGraphicsLayer) {
-      // the real _pInst is buried when this is a secondary p5.Graphics
-
-      const pInst =
-        this._pInst instanceof p5.Graphics ? this._pInst._pInst : this._pInst;
-
-      // create secondary layer
-      this.filterGraphicsLayer =
-        new p5.Graphics(
-          this.width,
-          this.height,
-          constants.WEBGL,
-          pInst
-        );
-      // geometries/borders on this layer should always be invisible
-      this.filterGraphicsLayer.noStroke();
-    }
-    if (
-      this.filterGraphicsLayer.width !== this.width ||
-      this.filterGraphicsLayer.height !== this.height
-    ) {
-      // Resize the graphics layer
-      this.filterGraphicsLayer.resizeCanvas(this.width, this.height);
-    }
-    if (
-      this.filterGraphicsLayer.pixelDensity() !== this._pInst.pixelDensity()
-    ) {
-      this.filterGraphicsLayer.pixelDensity(this._pInst.pixelDensity());
-    }
-    return this.filterGraphicsLayer;
-  }
-
-  getFilterGraphicsLayerTemp() {
-    // two-pass blur filter needs another graphics layer
-    if (!this.filterGraphicsLayerTemp) {
-      const pInst = this._pInst instanceof p5.Graphics ?
-        this._pInst._pInst : this._pInst;
-      // create secondary layer
-      this.filterGraphicsLayerTemp =
-        new p5.Graphics(
-          this.width,
-          this.height,
-          constants.WEBGL,
-          pInst
-        );
-      this.filterGraphicsLayerTemp.noStroke();
-    }
-    if (
-      this.filterGraphicsLayerTemp.width !== this.width ||
-      this.filterGraphicsLayerTemp.height !== this.height
-    ) {
-      // Resize the graphics layer
-      this.filterGraphicsLayerTemp.resizeCanvas(this.width, this.height);
-    }
-    if (
-      this.filterGraphicsLayerTemp.pixelDensity() !== this._pInst.pixelDensity()
-    ) {
-      this.filterGraphicsLayerTemp.pixelDensity(this._pInst.pixelDensity());
-    }
-    return this.filterGraphicsLayerTemp;
-  }
-
   filter(...args) {
-    let pg = this.getFilterGraphicsLayer();
+
+    if (!this.filterGraphicsLayer) {
+      this.filterGraphicsLayer = this._pInst.createFramebuffer();
+    }
+    // Treating 'pg' as a framebuffer.
+    let pg = this.filterGraphicsLayer;
 
     // use internal shader for filter constants BLUR, INVERT, etc
     let filterParameter = undefined;
@@ -1097,65 +1036,103 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this.filterShader = args[0];
     }
 
-    pg.clear(); // prevent undesirable feedback effects accumulating secretly
+    // Setting the target to the framebuffer when applying a filter to a framebuffer.
 
-    let pd = this._pInst.pixelDensity();
-    let texelSize = [1 / (this.width * pd), 1 / (this.height * pd)];
+    const target = this.activeFramebuffer() || this;
+
+    // Resize the framebuffer 'pg' and adjust its pixel density if it doesn't match the target.
+
+    if (
+      pg.width !== this.width ||
+      pg.height !== this.height
+    ) {
+      // Resize pg
+      pg.resizeCanvas(this.width, this.height);
+    }
+    if (
+      pg.pixelDensity() !== this._pInst.pixelDensity()
+    ) {
+      pg.pixelDensity(this._pInst.pixelDensity());
+    }
+
+    // Set the yScale of the filterCamera for framebuffers.
+    if (target !== this) {
+      this.filterCamera.yScale = this._curCamera.yScale;
+    }
+    pg.draw(() => this._pInst.clear()); // prevent undesirable feedback effects accumulating secretly
+
+    let texelSize = [
+      1 / (target.width * target.pixelDensity()),
+      1 / (target.height * target.pixelDensity())
+    ];
 
     // apply blur shader with multiple passes
     if (operation === constants.BLUR) {
-
-      const tmp = this.getFilterGraphicsLayerTemp();
-      tmp.clear(); // prevent feedback effects here too
+      if (!this.filterGraphicsLayerTemp) {
+        this.filterGraphicsLayerTemp = this._pInst.createFramebuffer();
+      }
+      // Treating 'tmp' as a framebuffer.
+      const tmp = this.filterGraphicsLayerTemp;
+      tmp.draw(() => this._pInst.clear()); // prevent feedback effects here too
 
       // setup
       this._pInst.push();
       this._pInst.noStroke();
 
       // draw main to temp buffer
-      tmp.image(this, -this.width / 2, -this.height / 2);
+      tmp.draw(() =>
+        this._pInst.image(target, -target.width / 2, -target.height / 2));
 
-      pg.shader(this.filterShader);
-      this.filterShader.setUniform('texelSize', texelSize);
-      this.filterShader.setUniform('canvasSize', [this.width, this.height]);
-      this.filterShader.setUniform('radius', Math.max(1, filterParameter));
+      pg.draw(() => {
+        this._pInst.shader(this.filterShader);
+        this.filterShader.setUniform('texelSize', texelSize);
+        this.filterShader.setUniform('canvasSize', [target.width, target.height]);
+        this.filterShader.setUniform('radius', Math.max(1, filterParameter));
 
-      // horiz pass
-      this.filterShader.setUniform('direction', [1, 0]);
-      this.filterShader.setUniform('tex0', tmp);
-      pg.clear();
-      pg.rect(-this.width / 2, -this.height / 2, this.width, this.height);
+        // horiz pass
+        tmp.draw(() => {
+          this.filterShader.setUniform('direction', [1, 0]);
+          this.filterShader.setUniform('tex0', tmp);
+          this._pInst.clear();
+          this._pInst.rect(-target.width / 2,
+            -target.height / 2, target.width, target.height);
 
-      // read back to temp buffer
-      tmp.clear();
-      tmp.image(pg, -this.width / 2, -this.height / 2);
+          // read back to temp buffer
+          this._pInst.image(pg, -this.width / 2, -this.height / 2);
 
-      // vert pass
-      this.filterShader.setUniform('direction', [0, 1]);
-      this.filterShader.setUniform('tex0', tmp);
-      pg.clear();
-      pg.rect(-this.width / 2, -this.height / 2, this.width, this.height);
+          // vert pass
+          this.filterShader.setUniform('direction', [0, 1]);
+          this.filterShader.setUniform('tex0', tmp);
+        });
+        this._pInst.clear();
+        this._pInst.rect(-target.width / 2,
+          -target.height / 2, target.width, target.height);
+      });
 
       this._pInst.pop();
     }
     // every other non-blur shader uses single pass
     else {
-      pg.shader(this.filterShader);
-      this.filterShader.setUniform('tex0', this);
-      this.filterShader.setUniform('texelSize', texelSize);
-      this.filterShader.setUniform('canvasSize', [this.width, this.height]);
-      // filterParameter uniform only used for POSTERIZE, and THRESHOLD
-      // but shouldn't hurt to always set
-      this.filterShader.setUniform('filterParameter', filterParameter);
-      pg.rect(-this.width / 2, -this.height / 2, this.width, this.height);
+      pg.draw(() => {
+        this._pInst.noStroke();
+        this._pInst.shader(this.filterShader);
+        this.filterShader.setUniform('tex0', target);
+        this.filterShader.setUniform('texelSize', texelSize);
+        this.filterShader.setUniform('canvasSize', [target.width, target.height]);
+        // filterParameter uniform only used for POSTERIZE, and THRESHOLD
+        // but shouldn't hurt to always set
+        this.filterShader.setUniform('filterParameter', filterParameter);
+        this._pInst.rect(-target.width / 2, -target.height / 2,
+          target.width, target.height);
+      });
 
     }
     // draw pg contents onto main renderer
     this._pInst.push();
-    pg._pInst.resetMatrix();
+    pg.draw(() => resetMatrix());
     this._pInst.noStroke();
-    pg._pInst.imageMode(constants.CORNER);
-    pg._pInst.blendMode(constants.BLEND);
+    pg.draw(() => imageMode(constants.CORNER));
+    pg.draw(() => blendMode(constants.BLEND));
     this.clear();
     this._pInst.push();
     this.filterCamera._resize();
@@ -1165,6 +1142,16 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this.width, this.height);
     this._pInst.pop();
     this._pInst.pop();
+  }
+
+  // Pass this off to the host instance so that we can treat a renderer and a
+  // framebuffer the same in filter()
+
+  pixelDensity(newDensity) {
+    if (newDensity) {
+      return this._pInst.pixelDensity(newDensity);
+    }
+    return this._pInst.pixelDensity();
   }
 
   blendMode(mode) {
