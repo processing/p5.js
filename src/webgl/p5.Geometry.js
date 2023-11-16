@@ -186,13 +186,13 @@ p5.Geometry = class Geometry {
   }
   /**
    * This function calculates normals for each face, where each vertex's normal is the average of the normals of all faces it's connected to.
-   * i.e computes smooth normals per vertex as an average of each face.
-   * When using 'FLAT' shading, vertices are disconnected/duplicated i.e each face has its own copy of vertices.
-   * When using 'SMOOTH' shading, vertices are connected/deduplicated i.e each face has its vertices shared with other faces.
+   * i.e computes smooth normals per vertex as an average of each face.<br>
+   * When using 'FLAT' shading, vertices are disconnected/duplicated i.e each face has its own copy of vertices.<br>
+   * When using 'SMOOTH' shading, vertices are connected/deduplicated i.e each face has its vertices shared with other faces.<br>
    *
    * @method computeNormals
-   * @param {String} [shadingType] (optional) shading type ('FLAT' for flat shading or 'SMOOTH' for smooth shading) for buildGeometry() outputs.
-   * @param {Object} [options] (optional) object with roundToPrecision property.
+   * @param {String} [shadingType] shading type ('FLAT' for flat shading or 'SMOOTH' for smooth shading) for buildGeometry() outputs.
+   * @param {Object} [options] object with roundToPrecision property.
    * @chainable
    *
    * @example
@@ -297,13 +297,23 @@ p5.Geometry = class Geometry {
         }
       }
 
-      // update face indices to use the new deduplicated vertex indices
+      // update face indices to use the deduplicated vertex indices
       faces.forEach(face => {
         for (let fv = 0; fv < 3; ++fv) {
           const originalVertexIndex = face[fv];
           const originalVertex = vertices[originalVertexIndex];
           const key = getKey(originalVertex);
           face[fv] = vertexIndices[key];
+        }
+      });
+
+      // update edge indices to use the deduplicated vertex indices
+      this.edges.forEach(edge => {
+        for (let ev = 0; ev < 2; ++ev) {
+          const originalVertexIndex = edge[ev];
+          const originalVertex = vertices[originalVertexIndex];
+          const key = getKey(originalVertex);
+          edge[ev] = vertexIndices[key];
         }
       });
 
