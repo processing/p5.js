@@ -1059,7 +1059,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (target !== this) {
       this.filterCamera.yScale = this._curCamera.yScale;
     }
-    pg.draw(() => this._pInst.clear()); // prevent undesirable feedback effects accumulating secretly
+    pg.draw(() => this._pInst.clear()); // prevent undesirable feedback effects accumulating secretly.
 
     let texelSize = [
       1 / (target.width * target.pixelDensity()),
