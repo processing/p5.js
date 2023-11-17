@@ -3395,7 +3395,7 @@ class MediaElement extends p5.Element {
    *   // Show the default media controls.
    *   dragon.showControls();
    *
-   *   describe('The text "S seconds" on a gray square with media controls beneath it. The number "S" decreases as the song plays.');
+   *   describe('The text "S seconds" on a gray square with media controls beneath it. The number "S" increases as the song plays.');
    * }
    *
    * function draw() {
@@ -3422,7 +3422,8 @@ class MediaElement extends p5.Element {
    *   // Show the default media controls.
    *   dragon.showControls();
    *
-   *   // Jump to 2 seconds.
+   *   // Jump to 2 seconds
+   *   // to start.
    *   dragon.time(2);
    *
    *   describe('The text "S seconds" on a gray square with media controls beneath it. The number "S" increases as the song plays.');
