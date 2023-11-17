@@ -9,6 +9,7 @@
 //some of the functions are adjusted from Three.js(http://threejs.org)
 
 import p5 from '../core/main';
+import * as constants from 'constants';
 /**
  * p5 Geometry class
  * @class p5.Geometry
@@ -186,13 +187,17 @@ p5.Geometry = class Geometry {
   }
   /**
    * This function calculates normals for each face, where each vertex's normal is the average of the normals of all faces it's connected to.
-   * i.e computes smooth normals per vertex as an average of each face.<br>
-   * When using 'FLAT' shading, vertices are disconnected/duplicated i.e each face has its own copy of vertices.<br>
-   * When using 'SMOOTH' shading, vertices are connected/deduplicated i.e each face has its vertices shared with other faces.<br>
+   * i.e computes smooth normals per vertex as an average of each face.
+   *
+   * When using `FLAT` shading, vertices are disconnected/duplicated i.e each face has its own copy of vertices.
+   * When using `SMOOTH` shading, vertices are connected/deduplicated i.e each face has its vertices shared with other faces.
+   *
+   * Options can include:
+   * - `roundToPrecision`: Precision value for rounding computations. Defaults to 3.
    *
    * @method computeNormals
-   * @param {String} [shadingType] shading type ('FLAT' for flat shading or 'SMOOTH' for smooth shading) for buildGeometry() outputs.
-   * @param {Object} [options] object with roundToPrecision property.
+   * @param {String} [shadingType] shading type (`FLAT` for flat shading or `SMOOTH` for smooth shading) for buildGeometry() outputs. Defaults to `FLAT`.
+   * @param {Object} [options] An optional object with configuration.
    * @chainable
    *
    * @example
@@ -206,11 +211,11 @@ p5.Geometry = class Geometry {
    *   helix = buildGeometry(() => {
    *     beginShape();
    *
-   *     for (let i = 0; i < TWO_PI * 3; i += 0.1) {
+   *     for (let i = 0; i < TWO_PI * 3; i += 0.6) {
    *       let radius = 20;
    *       let x = cos(i) * radius;
    *       let y = sin(i) * radius;
-   *       let z = i * 10;
+   *       let z = map(i, 0, TWO_PI * 3, -30, 30);
    *       vertex(x, y, z);
    *     }
    *     endShape();
@@ -222,6 +227,7 @@ p5.Geometry = class Geometry {
    *   stroke(0);
    *   fill(150, 200, 250);
    *   lights();
+   *   rotateX(PI*0.2);
    *   orbitControl();
    *   model(helix);
    * }
@@ -229,7 +235,7 @@ p5.Geometry = class Geometry {
    * </div>
    *
    * @alt
-   * A 3D helix using the computeNormals() function by default uses 'FLAT' to create a flat shading effect on the helix.
+   * A 3D helix using the computeNormals() function by default uses `FLAT` to create a flat shading effect on the helix.
    *
    * @example
    * <div>
@@ -257,13 +263,14 @@ p5.Geometry = class Geometry {
    *     }
    *     endShape(CLOSE);
    *   });
-   *   star.computeNormals('SMOOTH');
+   *   star.computeNormals(SMOOTH);
    * }
    * function draw() {
    *   background(255);
    *   stroke(0);
    *   fill(150, 200, 250);
    *   lights();
+   *   rotateX(PI*0.2);
    *   orbitControl();
    *   model(star);
    * }
@@ -271,16 +278,16 @@ p5.Geometry = class Geometry {
    * </div>
    *
    * @alt
-   * A star-like geometry, here the computeNormals('SMOOTH') is applied for a smooth shading effect.
+   * A star-like geometry, here the computeNormals(SMOOTH) is applied for a smooth shading effect.
    * This helps to avoid the faceted appearance that can occur with flat shading.
    */
-  computeNormals(shadingType = 'FLAT', { roundToPrecision = 3 } = {}) {
+  computeNormals(shadingType = constants.FLAT, { roundToPrecision = 3 } = {}) {
     const vertexNormals = this.vertexNormals;
     let vertices = this.vertices;
     const faces = this.faces;
     let iv;
 
-    if (shadingType === 'SMOOTH') {
+    if (shadingType === constants.SMOOTH) {
       const vertexIndices = {};
       const uniqueVertices = [];
 
