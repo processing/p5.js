@@ -996,14 +996,22 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   strokeJoin(join) {
     this.curStrokeJoin = join;
   }
-
-  filter(...args) {
-
+  getFilterGraphicsLayer() {
     if (!this.filterGraphicsLayer) {
       this.filterGraphicsLayer = this._pInst.createFramebuffer();
     }
+    return this.filterGraphicsLayer;
+  }
+  getFilterGraphicsLayerTemp() {
+    if (!this.filterGraphicsLayerTemp) {
+      this.filterGraphicsLayerTemp = this._pInst.createFramebuffer();
+    }
+    return this.filterGraphicsLayerTemp;
+  }
+  filter(...args) {
+
     // Treating 'pg' as a framebuffer.
-    let pg = this.filterGraphicsLayer;
+    let pg = this.getFilterGraphicsLayer();
 
     // use internal shader for filter constants BLUR, INVERT, etc
     let filterParameter = undefined;
@@ -1068,11 +1076,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     // apply blur shader with multiple passes
     if (operation === constants.BLUR) {
-      if (!this.filterGraphicsLayerTemp) {
-        this.filterGraphicsLayerTemp = this._pInst.createFramebuffer();
-      }
       // Treating 'tmp' as a framebuffer.
-      const tmp = this.filterGraphicsLayerTemp;
+      const tmp = this.getFilterGraphicsLayerTemp();
       tmp.draw(() => this._pInst.clear()); // prevent feedback effects here too
 
       // setup
@@ -1129,10 +1134,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
     // draw pg contents onto main renderer
     this._pInst.push();
-    pg.draw(() => resetMatrix());
     this._pInst.noStroke();
-    pg.draw(() => imageMode(constants.CORNER));
-    pg.draw(() => blendMode(constants.BLEND));
     this.clear();
     this._pInst.push();
     this.filterCamera._resize();
