@@ -2933,7 +2933,7 @@ class MediaElement extends p5.Element {
 
   /**
    * Stops a media element and sets its current time to zero. Calling
-   * `myMedia.play()` will restart playing audio/video from the beginning.
+   * `media.play()` will restart playing audio/video from the beginning.
    *
    * @method stop
    * @chainable
@@ -2986,7 +2986,7 @@ class MediaElement extends p5.Element {
   }
 
   /**
-   * Pauses a media element. Calling `myMedia.play()` will resume playing
+   * Pauses a media element. Calling `media.play()` will resume playing
    * audio/video from the moment it paused.
    *
    * @method pause
@@ -3177,10 +3177,10 @@ class MediaElement extends p5.Element {
    * Sets the audio/video to play once it's loaded.
    *
    * The parameter, `shouldAutoplay`, is optional. Calling
-   * `myMedia.autoplay()` without an argument causes the media to play
-   * automatically. If `true` is passed, as in `myMedia.autoplay(true)`, the
+   * `media.autoplay()` without an argument causes the media to play
+   * automatically. If `true` is passed, as in `media.autoplay(true)`, the
    * media will automatically play. If `false` is passed, as in
-   * `myMedia.autoPlay(false)`, it won't play automatically.
+   * `media.autoPlay(false)`, it won't play automatically.
    *
    * @method autoplay
    * @param {Boolean} [shouldAutoplay] whether the element should autoplay.
@@ -3249,11 +3249,11 @@ class MediaElement extends p5.Element {
   /**
    * Manages the audio/video volume.
    *
-   * Calling `myMedia.volume()` without an argument returns the current volume
+   * Calling `media.volume()` without an argument returns the current volume
    * as a number in the range 0 (off) to 1 (maximum).
    *
    * The parameter, `val`, is optional. It's a number that sets the volume
-   * from 0 (off) to 1 (maximum). For example, calling `myMedia.volume(0.5)`
+   * from 0 (off) to 1 (maximum). For example, calling `media.volume(0.5)`
    * sets the volume to half of its maximum.
    *
    * @method volume
@@ -3307,7 +3307,7 @@ class MediaElement extends p5.Element {
   }
 
   /**
-   * Manages the audio/video playback speed. Calling `myMedia.speed()` returns
+   * Manages the audio/video playback speed. Calling `media.speed()` returns
    * the current speed as a number.
    *
    * The parameter, `val`, is optional. It's a number that sets the playback
@@ -3374,7 +3374,7 @@ class MediaElement extends p5.Element {
   }
 
   /**
-   * Manages the media element's playback time. Calling `myMedia.time()`
+   * Manages the media element's playback time. Calling `media.time()`
    * returns the number of seconds the audio/video has played. Time resets to
    * 0 when the looping media restarts.
    *
@@ -3422,10 +3422,8 @@ class MediaElement extends p5.Element {
    *   // Show the default media controls.
    *   dragon.showControls();
    *
-   *   // Jump to a random starting time.
-   *   let d = dragon.duration();
-   *   let s = random(0, d);
-   *   dragon.time(s);
+   *   // Jump to 2 seconds.
+   *   dragon.time(2);
    *
    *   describe('The text "S seconds" on a gray square with media controls beneath it. The number "S" increases as the song plays.');
    * }
@@ -3828,7 +3826,7 @@ class MediaElement extends p5.Element {
  * The third parameter, `value`, is optional and can be any type of value.
  * `value` is passed to `callback`.
  *
- * Calling `myMedia.addCue()` returns an ID as a string. This is useful for
+ * Calling `media.addCue()` returns an ID as a string. This is useful for
  * removing the cue later.
  *
  * @method  addCue
@@ -3837,7 +3835,7 @@ class MediaElement extends p5.Element {
  * @param {Object} [value]    object to pass as the argument to
  *                            `callback`.
  * @return {Number} id ID of this cue,
- *                     useful for `myMedia.removeCue(id)`.
+ *                     useful for `media.removeCue(id)`.
  * @example
  * <div>
  * <code>
@@ -3879,7 +3877,7 @@ class MediaElement extends p5.Element {
  * Remove a callback based on its ID.
  *
  * @method removeCue
- * @param  {Number} id ID of the cue, created by `myMedia.addCue()`.
+ * @param  {Number} id ID of the cue, created by `media.addCue()`.
  * @example
  * <div>
  * <code>
@@ -3940,7 +3938,7 @@ class MediaElement extends p5.Element {
   }
 
   /**
- * Removes all functions scheduled with `myMedia.addCue()`.
+ * Removes all functions scheduled with `media.addCue()`.
  *
  * @method  clearCues
  * @example
