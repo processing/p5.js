@@ -278,6 +278,12 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  * </div>
  */
 p5.prototype.createFilterShader = function(fragSrc) {
+  let iswebgl;
+  if(this._renderer.GL){
+    iswebgl = true;
+  }else{
+    iswebgl = false;
+  }
   this._assert3d('createFilterShader');
   p5._validateParameters('createFilterShader', arguments);
   let defaultVertV1 = `
@@ -322,7 +328,13 @@ p5.prototype.createFilterShader = function(fragSrc) {
   `;
   let vertSrc = fragSrc.includes('#version 300 es') ? defaultVertV2 : defaultVertV1;
   const shader = new p5.Shader(this._renderer, vertSrc, fragSrc);
-  shader.ensureCompiledOnContext(this._renderer.getFilterGraphicsLayer());
+  let target;
+  if(!iswebgl){
+    target = this._renderer.getFilterGraphicsLayer();
+  }else{
+    target = this;
+  }
+  shader.ensureCompiledOnContext(target);
   return shader;
 };
 
