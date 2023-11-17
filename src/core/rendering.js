@@ -299,7 +299,7 @@ p5.prototype.createGraphics = function(w, h, ...args) {
     args[1] = args[0];
     args[0] = constants.P2D;
   }
-  p5._validateParameters('createGraphics', [w, h, ...args]);
+  p5._validateParameters('createGraphics', arguments);
   return new p5.Graphics(w, h, args[0], this, args[1]);
 };
 
