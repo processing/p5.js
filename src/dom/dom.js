@@ -2838,7 +2838,7 @@ class MediaElement extends p5.Element {
      *   background(200);
      *
      *   textWrap(CHAR);
-     *   text(beat.src, 20, 20);
+     *   text(beat.src, 10, 10, 80, 80);
      * }
      * </code>
      * </div>
@@ -2885,16 +2885,17 @@ class MediaElement extends p5.Element {
    *   background(200);
    *
    *   textAlign(CENTER);
-   *   text('Double-click to play!', 50, 50);
+   *   text('Click to play', 50, 50);
    *
    *   // Create a p5.MediaElement using createAudio().
    *   beat = createAudio('assets/beat.mp3');
    *
-   *   describe('The text "Double-click to play!" written in black on a gray background. A beat plays when the user double-clicks the square.');
+   *   describe('The text "Click to play" written in black on a gray background. A beat plays when the user clicks the square.');
    * }
    *
-   * // Play the beat when double-clicked.
-   * function doubleClicked() {
+   * // Play the beat when the user
+   * // presses the mouse.
+   * function mousePressed() {
    *   beat.play();
    * }
    * </code>
@@ -2946,7 +2947,7 @@ class MediaElement extends p5.Element {
    *   // Create a p5.MediaElement using createAudio().
    *   beat = createAudio('assets/beat.mp3');
    *
-   *   describe('The text "Double-click to start!" written in black on a gray background. The beat starts or stops when the user double-clicks the square.');
+   *   describe('The text "Click to start" written in black on a gray background. The beat starts or stops when the user presses the mouse.');
    * }
    *
    * function draw() {
@@ -2954,13 +2955,15 @@ class MediaElement extends p5.Element {
    *
    *   textAlign(CENTER);
    *   if (isStopped === true) {
-   *     text('Double-click to start!', 50, 50);
+   *     text('Click to start', 50, 50);
    *   } else {
-   *     text('Double-click to stop!', 50, 50);
+   *     text('Click to stop', 50, 50);
    *   }
    * }
    *
-   * function doubleClicked() {
+   * // Adjust playback when the user
+   * // presses the mouse.
+   * function mousePressed() {
    *   if (isStopped === true) {
    *     // If the beat is stopped,
    *     // play it.
@@ -2998,21 +3001,25 @@ class MediaElement extends p5.Element {
    *   // Create a p5.MediaElement using createAudio().
    *   beat = createAudio('assets/beat.mp3');
    *
-   *   describe('The text "Double-click to start!" written in black on a gray background. The beat starts or pauses when the user double-clicks the square.');
+   *   describe('The text "Click to play" written in black on a gray background. The beat plays or pauses when the user clicks the square.');
    * }
    *
    * function draw() {
    *   background(200);
    *
+   *   // Display different instructions
+   *   // based on playback.
    *   textAlign(CENTER);
    *   if (isPaused === true) {
-   *     text('Double-click to start!', 50, 50);
+   *     text('Click to play', 50, 50);
    *   } else {
-   *     text('Double-click to pause!', 50, 50);
+   *     text('Click to pause', 50, 50);
    *   }
    * }
    *
-   * function doubleClicked() {
+   * // Adjust playback when the user
+   * // presses the mouse.
+   * function mousePressed() {
    *   if (isPaused === true) {
    *     // If the beat is paused,
    *     // play it.
@@ -3042,24 +3049,44 @@ class MediaElement extends p5.Element {
    * <div>
    * <code>
    * let beat;
+   * let isLooping = false;
    *
    * function setup() {
    *   background(200);
    *
-   *   textAlign(CENTER);
-   *   text('Double-click to stop!', 50, 50);
-   *
    *   // Create a p5.MediaElement using createAudio().
    *   beat = createAudio('assets/beat.mp3');
-   *   // Play the beat in a loop.
-   *   beat.loop();
    *
-   *   describe('The text "Double-click to stop!" written in black on a gray background. A beat plays repeatedly in a loop. The beat stops when the user double-clicks the square.');
+   *   describe('The text "Click to loop" written in black on a gray background. A beat plays repeatedly in a loop when the user clicks. The beat stops when the user clicks again.');
    * }
    *
-   * // Stop the beat when double-clicked.
-   * function doubleClicked() {
-   *   beat.stop();
+   * function draw() {
+   *   background(200);
+   *
+   *   // Display different instructions
+   *   // based on playback.
+   *   textAlign(CENTER);
+   *   if (isLooping === true) {
+   *     text('Click to stop', 50, 50);
+   *   } else {
+   *     text('Click to loop', 50, 50);
+   *   }
+   * }
+   *
+   * // Adjust playback when the user
+   * // presses the mouse.
+   * function mousePressed() {
+   *   if (isLooping === true) {
+   *     // If the beat is looping,
+   *     // stop it.
+   *     beat.stop();
+   *     isLooping = false;
+   *   } else {
+   *     // If the beat is stopped,
+   *     // loop it.
+   *     beat.loop();
+   *     isLooping = true;
+   *   }
    * }
    * </code>
    * </div>
@@ -3079,25 +3106,44 @@ class MediaElement extends p5.Element {
    * <div>
    * <code>
    * let beat;
+   * let isPlaying = false;
    *
    * function setup() {
    *   background(200);
    *
-   *   textAlign(CENTER);
-   *   text('Double-click to stop!', 50, 50);
-   *
    *   // Create a p5.MediaElement using createAudio().
    *   beat = createAudio('assets/beat.mp3');
-   *   // Play the beat in a loop.
-   *   beat.loop();
    *
-   *   describe('The text "Double-click to stop!" written in black on a gray background. A beat plays repeatedly in a loop. The beat stops looping when the user double-clicks the square.');
+   *   describe('The text "Click to play" written in black on a gray background. A beat plays when the user clicks. The beat stops when the user clicks again.');
    * }
    *
-   * // Stop the beat from looping
-   * // when double-clicked.
-   * function doubleClicked() {
-   *   beat.noLoop();
+   * function draw() {
+   *   background(200);
+   *
+   *   // Display different instructions
+   *   // based on playback.
+   *   textAlign(CENTER);
+   *   if (isPlaying === true) {
+   *     text('Click to stop', 50, 50);
+   *   } else {
+   *     text('Click to play', 50, 50);
+   *   }
+   * }
+   *
+   * // Adjust playback when the user
+   * // presses the mouse.
+   * function mousePressed() {
+   *   if (isPlaying === true) {
+   *     // If the beat is playing,
+   *     // stop it.
+   *     beat.stop();
+   *     isPlaying = false;
+   *   } else {
+   *     // If the beat is stopped,
+   *     // play it.
+   *     beat.play();
+   *     isPlaying = true;
+   *   }
    * }
    * </code>
    * </div>
@@ -3217,34 +3263,30 @@ class MediaElement extends p5.Element {
    * <div>
    * <code>
    * let dragon;
-   * let volumeSlider;
    *
    * function setup() {
    *   // Create a p5.MediaElement using createAudio().
-   *   dragon = createAudio('assets/lucky_dragons.mp3', () => {
-   *     // Play the audio in a loop once it's loaded.
-   *     dragon.loop();
-   *   });
+   *   dragon = createAudio('assets/lucky_dragons.mp3');
+   *   // Show the default media controls.
+   *   dragon.showControls();
    *
-   *   // Create a range slider to control
-   *   // volume. Place it beneath the canvas.
-   *   volumeSlider = createSlider(0, 1, 1, 0);
-   *   volumeSlider.position(0, 100);
-   *
-   *   describe('The text "Volume: 1" on a gray square with a range slider beneath it. A song plays in a loop. The volume and text change when the user moves the slider.');
+   *   describe('The text "Volume: V" on a gray square with media controls beneath it. The number "V" oscillates between 0 and 1 as the music plays.');
    * }
    *
    * function draw() {
    *   background(200);
    *
-   *   // Use the slider to set
-   *   // the volume.
-   *   let v = volumeSlider.value();
-   *   dragon.volume(v);
+   *   // Produce a number between 0 and 1.
+   *   let n = 0.5 * sin(frameCount * 0.01) + 0.5;
+   *   // Use n to set the volume.
+   *   dragon.volume(n);
    *
    *   // Get the current volume
    *   // and display it.
-   *   v = dragon.volume();
+   *   let v = dragon.volume();
+   *   // Round v to 1 decimal place
+   *   // for display.
+   *   v = round(v, 1);
    *   textAlign(CENTER);
    *   text(`Volume: ${v}`, 50, 50);
    * }
@@ -3283,34 +3325,31 @@ class MediaElement extends p5.Element {
    * <div>
    * <code>
    * let dragon;
-   * let speedSlider;
    *
    * function setup() {
    *   // Create a p5.MediaElement using createAudio().
-   *   dragon = createAudio('assets/lucky_dragons.mp3', () => {
-   *     // Play the audio in a loop once it's loaded.
-   *     dragon.loop();
-   *   });
+   *   dragon = createAudio('assets/lucky_dragons.mp3');
    *
-   *   // Create a range slider to control
-   *   // speed. Place it beneath the canvas.
-   *   speedSlider = createSlider(0.5, 2, 1, 0);
-   *   speedSlider.position(0, 100);
+   *   // Show the default media controls.
+   *   dragon.showControls();
    *
-   *   describe('The text "Speed: 1" on a gray square with a range slider beneath it. A song plays in a loop. The speed and text change when the user moves the slider.');
+   *   describe('The text "Speed: S" on a gray square with media controls beneath it. The number "S" oscillates between 0 and 1 as the music plays.');
    * }
    *
    * function draw() {
    *   background(200);
    *
-   *   // Use the slider to set
-   *   // the speed.
-   *   let s = speedSlider.value();
-   *   dragon.speed(s);
+   *   // Produce a number between 0 and 2.
+   *   let n = sin(frameCount * 0.01) + 1;
+   *   // Use n to set the playback speed.
+   *   dragon.speed(n);
    *
    *   // Get the current speed
    *   // and display it.
-   *   s = dragon.speed();
+   *   let s = dragon.speed();
+   *   // Round s to 1 decimal place
+   *   // for display.
+   *   s = round(s, 1);
    *   textAlign(CENTER);
    *   text(`Speed: ${s}`, 50, 50);
    * }
@@ -3319,7 +3358,7 @@ class MediaElement extends p5.Element {
 
   /**
    * @method speed
-   * @param {Number} speed  speed multiplier for element playback.
+   * @param {Number} speed  speed multiplier for playback.
    * @chainable
    */
   speed(val) {
@@ -3337,7 +3376,7 @@ class MediaElement extends p5.Element {
   /**
    * Manages the media element's playback time. Calling `myMedia.time()`
    * returns the number of seconds the audio/video has played. Time resets to
-   * 0 when looping media restarts.
+   * 0 when the looping media restarts.
    *
    * The parameter, `time`, is optional. It's a number that specifies the
    * time, in seconds, to jump to when playback begins.
@@ -3351,24 +3390,56 @@ class MediaElement extends p5.Element {
    * let dragon;
    *
    * function setup() {
-   *   background(200);
-   *
-   *   textAlign(CENTER);
-   *   textWrap(CHAR);
-   *   text('Double-click to goto 2 seconds', 10, 10);
-   *
    *   // Create a p5.MediaElement using createAudio().
    *   dragon = createAudio('assets/lucky_dragons.mp3');
-   *   // Play the audio in a loop.
-   *   dragon.loop();
+   *   // Show the default media controls.
+   *   dragon.showControls();
    *
-   *   describe('The text "Double-click to goto 2 seconds" written in black on a gray square. A song plays repeatedly in the background. The audio jumps to the 2 second mark when the user double-clicks the square.');
+   *   describe('The text "S seconds" on a gray square with media controls beneath it. The number "S" decreases as the song plays.');
    * }
    *
-   * // Jump to the 2 second mark when the
-   * // user double-clicks the canvas.
-   * function doubleClicked() {
-   *   dragon.time(2);
+   * function draw() {
+   *   background(200);
+   *
+   *   // Display the current time.
+   *   let s = dragon.time();
+   *   // Round s to 1 decimal place
+   *   // for display.
+   *   s = round(s, 1);
+   *   textAlign(CENTER);
+   *   text(`${s} seconds`, 50, 50);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let dragon;
+   *
+   * function setup() {
+   *   // Create a p5.MediaElement using createAudio().
+   *   dragon = createAudio('assets/lucky_dragons.mp3');
+   *   // Show the default media controls.
+   *   dragon.showControls();
+   *
+   *   // Jump to a random starting time.
+   *   let d = dragon.duration();
+   *   let s = random(0, d);
+   *   dragon.time(s);
+   *
+   *   describe('The text "S seconds" on a gray square with media controls beneath it. The number "S" increases as the song plays.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Display the current time.
+   *   let s = dragon.time();
+   *   // Round s to 1 decimal place
+   *   // for display.
+   *   s = round(s, 1);
+   *   textAlign(CENTER);
+   *   text(`${s} seconds`, 50, 50);
    * }
    * </code>
    * </div>
@@ -3403,23 +3474,24 @@ class MediaElement extends p5.Element {
    *
    *   // Create a p5.MediaElement using createAudio().
    *   dragon = createAudio('assets/lucky_dragons.mp3');
-   *   // Play the audio in a loop.
-   *   dragon.loop();
+   *   // Show the default media controls.
+   *   dragon.showControls();
    *
-   *   describe('The text "N seconds left" written in black on a gray square. A song plays repeatedly in the background. The number N decreases as the song plays.');
+   *   describe('The text "S seconds left" on a gray square with media controls beneath it. The number "S" decreases as the song plays.');
    * }
    *
    * function draw() {
    *   background(200);
    *
    *   // Calculate the time remaining.
-   *   let remaining = dragon.duration() - dragon.time();
-   *   // Round the time to 1 decimal place.
-   *   remaining = round(remaining, 1);
+   *   let s = dragon.duration() - dragon.time();
+   *   // Round s to 1 decimal place
+   *   // for display.
+   *   s = round(s, 1);
    *
    *   // Display the time remaining.
    *   textAlign(CENTER);
-   *   text(`${remaining} seconds left`, 50, 50);
+   *   text(`${s} seconds left`, 50, 50);
    * }
    * </code>
    * </div>
@@ -3530,35 +3602,59 @@ class MediaElement extends p5.Element {
     this._modified = value;
   }
   /**
-   * Sets a function to call when the audio/video reaches the end of its
-   * playback. The function won't be called if the media is looping.
+   * Calls a function when the audio/video reaches the end of its playback
+   * The function won't be called if the media is looping.
    *
    * The `p5.MediaElement` is passed as an argument to the callback function.
    *
    * @method  onended
-   * @param  {Function} callback function to call when the
-   *                             soundfile ends. The `p5.MediaElement`
-   *                             will be passed in as the argument.
+   * @param  {Function} callback function to call when playback ends.
+   *                             The `p5.MediaElement` is passed as
+   *                             the argument.
    * @chainable
    * @example
    * <div>
    * <code>
+   * let beat;
+   * let isPlaying = false;
+   * let isDone = false;
+   *
    * function setup() {
-   *   background(200);
    *
-   *   textAlign(CENTER);
-   *   text('Playing...', 50, 50);
+   *   // Create a p5.MediaElement using createAudio().
+   *   beat = createAudio('assets/beat.mp3');
    *
-   *   // Create a p5.MediaElement using createAudio();
-   *   let beat = createAudio('assets/beat.mp3');
-   *   beat.autoplay(true);
-   *
-   *   beat.onended(media => {
-   *     background(200);
-   *     text('Done!', 50, 50);
+   *   // Set isDone to false when
+   *   // the beat finishes.
+   *   beat.onended(() => {
+   *     isDone = true;
    *   });
    *
-   *   describe('The text "Playing..." written in black on a gray square. A beat plays in the background. The text "Done!" appears when the audio finishes playing.');
+   *   describe('The text "Click to play" written in black on a gray square. A beat plays when the user clicks. The text "Done!" appears when the beat finishes playing.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Display different messages
+   *   // based on playback.
+   *   textAlign(CENTER);
+   *   if (isDone === true) {
+   *     text('Done!', 50, 50);
+   *   } else if (isPlaying === false) {
+   *     text('Click to play', 50, 50);
+   *   } else {
+   *     text('Playing...', 50, 50);
+   *   }
+   * }
+   *
+   * // Play the beat when the
+   * // user presses the mouse.
+   * function mousePressed() {
+   *   if (isPlaying === false) {
+   *     isPlaying = true;
+   *     beat.play();
+   *   }
    * }
    * </code>
    * </div>
