@@ -1818,10 +1818,10 @@ p5.Camera = class Camera {
     const rotMat1 = cam1.cameraMatrix.createSubMatrix3x3();
 
     // get front and up vector from local-coordinate-system.
-    const front0 = rotMat0.column(2);
-    const front1 = rotMat1.column(2);
-    const up0 = rotMat0.column(1);
-    const up1 = rotMat1.column(1);
+    const front0 = rotMat0.row(2);
+    const front1 = rotMat1.row(2);
+    const up0 = rotMat0.row(1);
+    const up1 = rotMat1.row(1);
 
     // prepare new vectors.
     const newFront = new p5.Vector();
@@ -1946,12 +1946,12 @@ p5.Camera = class Camera {
   // @TODO: combine this function with _setDefaultCamera to compute these values
   // as-needed
   _computeCameraDefaultSettings() {
-    this.defaultCameraFOV = 60 / 180 * Math.PI;
     this.defaultAspectRatio = this._renderer.width / this._renderer.height;
     this.defaultEyeX = 0;
     this.defaultEyeY = 0;
-    this.defaultEyeZ =
-      this._renderer.height / 2.0 / Math.tan(this.defaultCameraFOV / 2.0);
+    this.defaultEyeZ = 800;
+    this.defaultCameraFOV =
+      2 * Math.atan(this._renderer.height / 2 / this.defaultEyeZ);
     this.defaultCenterX = 0;
     this.defaultCenterY = 0;
     this.defaultCenterZ = 0;
@@ -1986,12 +1986,9 @@ p5.Camera = class Camera {
     // If we're using the default camera, update the aspect ratio
     if (this.cameraType === 'default') {
       this._computeCameraDefaultSettings();
-      this._setDefaultCamera();
-    } else {
-      this.perspective(
-        this.cameraFOV,
-        this._renderer.width / this._renderer.height
-      );
+      this.cameraFOV = this.defaultCameraFOV;
+      this.aspectRatio = this.defaultAspectRatio;
+      this.perspective();
     }
   }
 

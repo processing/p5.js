@@ -1,7 +1,7 @@
-attribute vec3 aPosition;
-attribute vec3 aNormal;
-attribute vec2 aTexCoord;
-attribute vec4 aVertexColor;
+IN vec3 aPosition;
+IN vec3 aNormal;
+IN vec2 aTexCoord;
+IN vec4 aVertexColor;
 
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
@@ -10,9 +10,9 @@ uniform mat3 uNormalMatrix;
 uniform vec4 uMaterialColor;
 uniform bool uUseVertexColor;
 
-varying vec3 vVertexNormal;
-varying highp vec2 vVertTexCoord;
-varying vec4 vColor;
+OUT vec3 vVertexNormal;
+OUT highp vec2 vVertTexCoord;
+OUT vec4 vColor;
 
 void main(void) {
   vec4 positionVec4 = vec4(aPosition, 1.0);
