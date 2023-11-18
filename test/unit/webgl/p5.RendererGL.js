@@ -212,6 +212,30 @@ suite('p5.RendererGL', function() {
       assert.deepEqual(p1, p2);
     });
 
+    test('Applying filter when a camera is applied', function () {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      let s1 = myp5.createShader(vert, frag);
+      myp5.push();
+      myp5.background('RED');
+      myp5.camera(0, 0, 800);
+      myp5.fill('blue');
+      myp5.square(-120, -120, -50);
+      myp5.filter(s1);
+      myp5.loadPixels();
+      let p1 = myp5.pixels.slice();
+      myp5.pop();
+      myp5.clear();
+      myp5.push();
+      myp5.background('RED');
+      myp5.fill('blue');
+      myp5.square(-120, -120, -50);
+      myp5.filter(s1);
+      myp5.loadPixels();
+      let p2 = myp5.pixels.slice();
+      myp5.pop();
+      assert.deepEqual(p1, p2);
+    });
+
     test('stroke and other settings are unaffected after filter', function() {
       let c = myp5.createCanvas(5, 5, myp5.WEBGL);
       let getShapeAttributes = () => [
