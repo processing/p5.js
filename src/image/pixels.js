@@ -616,6 +616,8 @@ p5.prototype.filter = function(...args) {
     );
     //clearing the main canvas
     this._renderer.clear();
+    // Resetting the matrix of the canvas
+    this._renderer.resetMatrix();
     // filter it with shaders
     this.filterGraphicsLayer.filter(operation, value);
 
