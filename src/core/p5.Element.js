@@ -77,23 +77,27 @@ p5.Element = class {
      * </div>
      *
      * @property elt
+     * @name elt
      * @readOnly
      */
     this.elt = elt;
     /**
      * @private
      * @type {p5.Element}
+     * @name _pInst
      */
     this._pInst = this._pixelsState = pInst;
     this._events = {};
     /**
      * @type {Number}
      * @property width
+     * @name width
      */
     this.width = this.elt.offsetWidth;
     /**
      * @type {Number}
      * @property height
+     * @name height
      */
     this.height = this.elt.offsetHeight;
   }
