@@ -13,6 +13,7 @@
   "parserOptions": {
     "sourceType": "module"
   },
+  "ignorePatterns": ["node_modules/**/*", "test/js/*", "lib/**/*", "contributor_docs/**/*"],
   "rules": {
     "no-cond-assign": [2, "except-parens"],
     "eqeqeq": ["error", "smart"],

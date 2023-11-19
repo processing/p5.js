@@ -6,8 +6,8 @@
     "dev": "grunt yui browserify:dev connect:yui watch:quick",
     "docs": "documentation build ./src/app.js -o ./docs/data.json",
     "test": "grunt",
-    "lint": "grunt lint",
-    "lint:fix": "grunt lint-fix"
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
   },
   "lint-staged": {
     "ignore": [
@@ -44,7 +44,7 @@
     "dayjs": "^1.11.10",
     "derequire": "^2.0.0",
     "documentation": "^14.0.2",
-    "eslint": "^8.23.1",
+    "eslint": "^8.54.0",
     "file-saver": "^1.3.8",
     "gifenc": "^1.0.3",
     "grunt": "^1.6.1",
