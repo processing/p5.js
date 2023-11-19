@@ -20,3 +20,4 @@ lib/p5-test.js
 release/
 parameterData.json
 yarn.lock
+docs/data.json
