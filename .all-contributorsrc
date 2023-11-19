@@ -5361,6 +5361,34 @@
         "bug",
         "code"
       ]
+    },
+    {
+      "login": "diyaayay",
+      "name": "Diya Solanki",
+      "avatar_url": "https://avatars.githubusercontent.com/u/110971977?v=4",
+      "profile": "https://github.com/diyaayay",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "mhsh312",
+      "name": "mhsh312",
+      "avatar_url": "https://avatars.githubusercontent.com/u/135870090?v=4",
+      "profile": "https://github.com/mhsh312",
+      "contributions": [
+        "code",
+        "bug"
+      ]
+    },
+    {
+      "login": "wackbyte",
+      "name": "wackbyte",
+      "avatar_url": "https://avatars.githubusercontent.com/u/29505620?v=4",
+      "profile": "https://github.com/wackbyte",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",

@@ -16,57 +16,105 @@ const labelTableId = '_labelTable'; //Label Table
 const labelTableElId = '_lte_'; //Label Table Element
 
 /**
- * Creates a screen reader accessible description for the canvas.
- * The first parameter should be a string with a description of the canvas.
- * The second parameter is optional. If specified, it determines how the
- * description is displayed.
+ * Creates a screen reader-accessible description for the canvas.
  *
- * <code class="language-javascript">describe(text, LABEL)</code> displays
- * the description to all users as a <a
- * href="https://en.wikipedia.org/wiki/Museum_label" target="_blank">
- * tombstone or exhibit label/caption</a> in a div
- * adjacent to the canvas. You can style it as you wish in your CSS.
+ * The first parameter, `text`, is the description of the canvas.
  *
- * <code class="language-javascript">describe(text, FALLBACK)</code> makes the
- * description accessible to screen-reader users only, in
- * <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Hit_regions_and_accessibility" target="_blank">
- * a sub DOM inside the canvas element</a>. If a second parameter is not
- * specified, by default, the description will only be available to
- * screen-reader users.
+ * The second parameter, `display`, is optional. It determines how the
+ * description is displayed. If `LABEL` is passed, as in
+ * `describe('A description.', LABEL)`, the description will be visible in
+ * a div element next to the canvas. If `FALLBACK` is passed, as in
+ * `describe('A description.', FALLBACK)`, the description will only be
+ * visible to screen readers. This is the default mode.
+ *
+ * Read
+ * <a href="/learn/labeling-canvases.html">How to label your p5.js code</a> to
+ * learn more about making sketches accessible.
  *
  * @method describe
- * @param  {String} text      description of the canvas
- * @param  {Constant} [display] either LABEL or FALLBACK
+ * @param  {String} text        description of the canvas.
+ * @param  {Constant} [display] either LABEL or FALLBACK.
  *
  * @example
  * <div>
  * <code>
- * describe('pink square with red heart in the bottom right corner');
- * background('pink');
- * fill('red');
- * noStroke();
- * ellipse(67, 67, 20, 20);
- * ellipse(83, 67, 20, 20);
- * triangle(91, 73, 75, 95, 59, 73);
+ * function setup() {
+ *   background('pink');
+ *
+ *   // Draw a heart.
+ *   fill('red');
+ *   noStroke();
+ *   circle(67, 67, 20);
+ *   circle(83, 67, 20);
+ *   triangle(91, 73, 75, 95, 59, 73);
+ *
+ *   // Add a general description of the canvas.
+ *   describe('A pink square with a red heart in the bottom-right corner.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * let x = 0;
- * function draw() {
- *   if (x > 100) {
- *     x = 0;
- *   }
- *   background(220);
- *   fill(0, 255, 0);
- *   ellipse(x, 50, 40, 40);
- *   x = x + 0.1;
- *   describe('green circle at x pos ' + round(x) + ' moving to the right');
+ * function setup() {
+ *   background('pink');
+ *
+ *   // Draw a heart.
+ *   fill('red');
+ *   noStroke();
+ *   circle(67, 67, 20);
+ *   circle(83, 67, 20);
+ *   triangle(91, 73, 75, 95, 59, 73);
+ *
+ *   // Add a general description of the canvas
+ *   // and display it for debugging.
+ *   describe('A pink square with a red heart in the bottom-right corner.', LABEL);
  * }
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(200);
+ *
+ *   // The expression
+ *   // frameCount % 100
+ *   // causes x to increase from 0
+ *   // to 99, then restart from 0.
+ *   let x = frameCount % 100;
+ *
+ *   // Draw the circle.
+ *   fill(0, 255, 0);
+ *   circle(x, 50, 40);
+ *
+ *   // Add a general description of the canvas.
+ *   describe(`A green circle at (${x}, 50) moves from left to right on a gray square.`);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(200);
+ *
+ *   // The expression
+ *   // frameCount % 100
+ *   // causes x to increase from 0
+ *   // to 99, then restart from 0.
+ *   let x = frameCount % 100;
+ *
+ *   // Draw the circle.
+ *   fill(0, 255, 0);
+ *   circle(x, 50, 40);
+ *
+ *   // Add a general description of the canvas
+ *   // and display it for debugging.
+ *   describe(`A green circle at (${x}, 50) moves from left to right on a gray square.`, LABEL);
+ * }
+ * </code>
+ * </div>
  */
 
 p5.prototype.describe = function(text, display) {
@@ -112,45 +160,83 @@ p5.prototype.describe = function(text, display) {
 };
 
 /**
- * This function creates a screen-reader accessible
- * description for elements —shapes or groups of shapes that create
- * meaning together— in the canvas. The first paramater should
- * be the name of the element. The second parameter should be a string
- * with a description of the element. The third parameter is optional.
- * If specified, it determines how the element description is displayed.
+ * Creates a screen reader-accessible description for elements in the canvas.
+ * Elements are shapes or groups of shapes that create meaning together.
  *
- * <code class="language-javascript">describeElement(name, text, LABEL)</code>
- * displays the element description to all users as a
- * <a href="https://en.wikipedia.org/wiki/Museum_label" target="_blank">
- * tombstone or exhibit label/caption</a> in a div
- * adjacent to the canvas. You can style it as you wish in your CSS.
+ * The first parameter, `name`, is the name of the element.
  *
- * <code class="language-javascript">describeElement(name, text, FALLBACK)</code>
- * makes the element description accessible to screen-reader users
- * only, in <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Hit_regions_and_accessibility" target="_blank">
- * a sub DOM inside the canvas element</a>. If a second parameter is not
- * specified, by default, the element description will only be available
- * to screen-reader users.
+ * The second parameter, `text`, is the description of the element.
+ *
+ * The third parameter, `display`, is optional. It determines how the
+ * description is displayed. If `LABEL` is passed, as in
+ * `describe('A description.', LABEL)`, the description will be visible in
+ * a div element next to the canvas. Using `LABEL` creates unhelpful
+ * duplicates for screen readers. Only use `LABEL` during development. If
+ * `FALLBACK` is passed, as in `describe('A description.', FALLBACK)`, the
+ * description will only be visible to screen readers. This is the default
+ * mode.
+ *
+ * Read
+ * <a href="/learn/labeling-canvases.html">How to label your p5.js code</a> to
+ * learn more about making sketches accessible.
  *
  * @method describeElement
- * @param  {String} name      name of the element
- * @param  {String} text      description of the element
- * @param  {Constant} [display] either LABEL or FALLBACK
+ * @param  {String} name        name of the element.
+ * @param  {String} text        description of the element.
+ * @param  {Constant} [display] either LABEL or FALLBACK.
  *
  * @example
  * <div>
  * <code>
- * describe('Heart and yellow circle over pink background');
- * noStroke();
- * background('pink');
- * describeElement('Circle', 'Yellow circle in the top left corner');
- * fill('yellow');
- * ellipse(25, 25, 40, 40);
- * describeElement('Heart', 'red heart in the bottom right corner');
- * fill('red');
- * ellipse(66.6, 66.6, 20, 20);
- * ellipse(83.2, 66.6, 20, 20);
- * triangle(91.2, 72.6, 75, 95, 58.6, 72.6);
+ * function setup() {
+ *   background('pink');
+ *
+ *   // Describe the first element
+ *   // and draw it.
+ *   describeElement('Circle', 'A yellow circle in the top-left corner.');
+ *   noStroke();
+ *   fill('yellow');
+ *   circle(25, 25, 40);
+ *
+ *   // Describe the second element
+ *   // and draw it.
+ *   describeElement('Heart', 'A red heart in the bottom-right corner.');
+ *   fill('red');
+ *   circle(66.6, 66.6, 20);
+ *   circle(83.2, 66.6, 20);
+ *   triangle(91.2, 72.6, 75, 95, 58.6, 72.6);
+ *
+ *   // Add a general description of the canvas.
+ *   describe('A red heart and yellow circle over a pink background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   background('pink');
+ *
+ *   // Describe the first element
+ *   // and draw it. Display the
+ *   // description for debugging.
+ *   describeElement('Circle', 'A yellow circle in the top-left corner.', LABEL);
+ *   noStroke();
+ *   fill('yellow');
+ *   circle(25, 25, 40);
+ *
+ *   // Describe the second element
+ *   // and draw it. Display the
+ *   // description for debugging.
+ *   describeElement('Heart', 'A red heart in the bottom-right corner.', LABEL);
+ *   fill('red');
+ *   circle(66.6, 66.6, 20);
+ *   circle(83.2, 66.6, 20);
+ *   triangle(91.2, 72.6, 75, 95, 58.6, 72.6);
+ *
+ *   // Add a general description of the canvas.
+ *   describe('A red heart and yellow circle over a pink background.');
+ * }
  * </code>
  * </div>
  */

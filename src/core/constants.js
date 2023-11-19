@@ -709,6 +709,18 @@ export const CLAMP = 'clamp';
  */
 export const MIRROR = 'mirror';
 
+// WEBGL GEOMETRY SHADING
+/**
+ * @property {String} FLAT
+ * @final
+ */
+export const FLAT = 'flat';
+/**
+ * @property {String} SMOOTH
+ * @final
+ */
+export const SMOOTH = 'smooth';
+
 // DEVICE-ORIENTATION
 /**
  * @property {String} LANDSCAPE

@@ -917,6 +917,11 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/adityadeshpande09"><img src="https://avatars.githubusercontent.com/u/98452243?v=4?s=120" width="120px;" alt="Aditya Deshpande"/><br /><sub><b>Aditya Deshpande</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aadityadeshpande09" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=adityadeshpande09" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://art.arqtistic.com"><img src="https://avatars.githubusercontent.com/u/121937906?v=4?s=120" width="120px;" alt="Alejandro"/><br /><sub><b>Alejandro</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aacamposuribe" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=acamposuribe" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/diyaayay"><img src="https://avatars.githubusercontent.com/u/110971977?v=4?s=120" width="120px;" alt="Diya Solanki"/><br /><sub><b>Diya Solanki</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=diyaayay" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/mhsh312"><img src="https://avatars.githubusercontent.com/u/135870090?v=4?s=120" width="120px;" alt="mhsh312"/><br /><sub><b>mhsh312</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=mhsh312" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3Amhsh312" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/wackbyte"><img src="https://avatars.githubusercontent.com/u/29505620?v=4?s=120" width="120px;" alt="wackbyte"/><br /><sub><b>wackbyte</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=wackbyte" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 

@@ -26,7 +26,7 @@ import * as constants from './constants';
  *
  * @class p5
  * @constructor
- * @param  {function}           sketch a closure that can set optional <a href="#/p5/preload">preload()</a>,
+ * @param  {function(p5)}       sketch a closure that can set optional <a href="#/p5/preload">preload()</a>,
  *                              <a href="#/p5/setup">setup()</a>, and/or <a href="#/p5/draw">draw()</a> properties on the
  *                              given p5 instance
  * @param  {HTMLElement}        [node] element to attach canvas to
