@@ -87,7 +87,7 @@
   "bugs": {
     "url": "https://github.com/processing/p5.js/issues"
   },
-  "homepage": "https://github.com/processing/p5.js#readme",
+  "homepage": "https://p5js.org",
   "directories": {
     "doc": "docs",
     "test": "test"
