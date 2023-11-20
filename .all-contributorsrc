@@ -5389,6 +5389,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "apsinghdev",
+      "name": "Ajeet Pratap Singh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/109718740?v=4",
+      "profile": "https://github.com/apsinghdev",
+      "contributions": [
+        "code",
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
