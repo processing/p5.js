@@ -1008,6 +1008,18 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
     return this.filterGraphicsLayerTemp;
   }
+  matchSize(fboToMatch, target) {
+    if (
+      fboToMatch.width !== target.width ||
+      fboToMatch.height !== target.height
+    ) {
+      fboToMatch.resizeCanvas(target.width, target.height);
+    }
+
+    if (fboToMatch.pixelDensity() !== target._pInst.pixelDensity()) {
+      fboToMatch.pixelDensity(target._pInst.pixelDensity());
+    }
+  }
   filter(...args) {
 
     let fbo = this.getFilterLayer();
@@ -1048,19 +1060,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     const target = this.activeFramebuffer() || this;
 
     // Resize the framebuffer 'fbo' and adjust its pixel density if it doesn't match the target.
-
-    if (
-      fbo.width !== this.width ||
-      fbo.height !== this.height
-    ) {
-      // Resize fbo
-      fbo.resizeCanvas(this.width, this.height);
-    }
-    if (
-      fbo.pixelDensity() !== this._pInst.pixelDensity()
-    ) {
-      fbo.pixelDensity(this._pInst.pixelDensity());
-    }
+    this.matchSize(fbo, target);
 
     // Set the yScale of the filterCamera for framebuffers.
     if (target !== this) {
@@ -1077,6 +1077,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (operation === constants.BLUR) {
       // Treating 'tmp' as a framebuffer.
       const tmp = this.getFilterLayerTemp();
+      // Resize the framebuffer 'fbo' and adjust its pixel density if it doesn't match the target.
+      this.matchSize(tmp, target);
       tmp.draw(() => this._pInst.clear()); // prevent feedback effects here too
 
       // setup
