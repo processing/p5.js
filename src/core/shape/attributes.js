@@ -100,6 +100,13 @@ p5.prototype.noSmooth = function() {
       this.drawingContext.imageSmoothingEnabled = false;
     }
   } else {
+    // Get the WebGL context
+    var gl = this._renderer.GL;
+
+    // Set texture interpolation to NEAREST
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
     this.setAttributes('antialias', false);
   }
   return this;
