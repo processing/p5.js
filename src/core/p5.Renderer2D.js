@@ -24,6 +24,7 @@ class Renderer2D extends p5.Renderer{
     this._setFill(constants._DEFAULT_FILL);
     this._setStroke(constants._DEFAULT_STROKE);
     this.drawingContext.lineCap = constants.ROUND;
+    this.miterLimit = 10;
     this.drawingContext.font = 'normal 12px sans-serif';
   }
 
@@ -1129,6 +1130,11 @@ class Renderer2D extends p5.Renderer{
     } else {
       this.drawingContext.lineWidth = w;
     }
+    return this;
+  }
+
+  miterLimit (l) {
+    this.drawingContext.miterLimit = l;
     return this;
   }
 

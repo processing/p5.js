@@ -57,7 +57,7 @@ import * as constants from '../constants';
  * </code>
  * </div>
  */
-p5.prototype.ellipseMode = function(m) {
+p5.prototype.ellipseMode = function (m) {
   p5._validateParameters('ellipseMode', arguments);
   if (
     m === constants.CORNER ||
@@ -94,7 +94,7 @@ p5.prototype.ellipseMode = function(m) {
  * </code>
  * </div>
  */
-p5.prototype.noSmooth = function() {
+p5.prototype.noSmooth = function () {
   if (!this._renderer.isP3D) {
     if ('imageSmoothingEnabled' in this.drawingContext) {
       this.drawingContext.imageSmoothingEnabled = false;
@@ -158,7 +158,7 @@ p5.prototype.noSmooth = function() {
  * </code>
  * </div>
  */
-p5.prototype.rectMode = function(m) {
+p5.prototype.rectMode = function (m) {
   p5._validateParameters('rectMode', arguments);
   if (
     m === constants.CORNER ||
@@ -196,7 +196,7 @@ p5.prototype.rectMode = function(m) {
  * </code>
  * </div>
  */
-p5.prototype.smooth = function() {
+p5.prototype.smooth = function () {
   this.setAttributes('antialias', true);
   if (!this._renderer.isP3D) {
     if ('imageSmoothingEnabled' in this.drawingContext) {
@@ -232,7 +232,7 @@ p5.prototype.smooth = function() {
  * </code>
  * </div>
  */
-p5.prototype.strokeCap = function(cap) {
+p5.prototype.strokeCap = function (cap) {
   p5._validateParameters('strokeCap', arguments);
   if (
     cap === constants.ROUND ||
@@ -299,7 +299,7 @@ p5.prototype.strokeCap = function(cap) {
  * </code>
  * </div>
  */
-p5.prototype.strokeJoin = function(join) {
+p5.prototype.strokeJoin = function (join) {
   p5._validateParameters('strokeJoin', arguments);
   if (
     join === constants.ROUND ||
@@ -348,9 +348,75 @@ p5.prototype.strokeJoin = function(join) {
  * </code>
  * </div>
  */
-p5.prototype.strokeWeight = function(w) {
+p5.prototype.strokeWeight = function (w) {
   p5._validateParameters('strokeWeight', arguments);
   this._renderer.strokeWeight(w);
+  return this;
+};
+
+/**
+ * A number specifying the miter limit at which point the `MITER` style is forced to `BEVEL`.
+ *
+ * @method miterLimit
+ * @param  {Number} limit the limit of the miter (in pixels).
+ * @chainable
+ * @example
+ * <div><code>
+ * function setup() {
+ *   frameRate(30);
+ * }
+ *
+ * function draw() {
+ *   background(204);
+ *   noFill();
+ *   strokeWeight(10.0);
+ *   strokeJoin(MITER);
+ *   beginShape();
+ *   vertex(35, 20);
+ *   vertex(65, 50);
+ *   vertex(35, 80);
+ *   endShape();
+ *
+ *   strokeWeight(2);
+ *   miterLimit(map(mouseX, 0, width, 0, 5));
+ *   stroke('red');
+ *   line(28, 0, 28, height);
+ *   stroke('black');
+ *   line(mouseX, 0, mouseX, height);
+ * }
+ * </code></div>
+ *
+ * <div><code>
+ * function preload() {
+ *   font = loadFont('Kingthings_Trypewriter.ttf');
+ * }
+ *
+ * function setup() {
+ *   frameRate(30);
+ * }
+ *
+ * function draw() {
+ *   background(204);
+ *   textFont(font);
+ *   textSize(42);
+ *   strokeWeight(30);
+ *   stroke(0);
+ *
+ *   fill(255);
+ *   textAlign(CENTER, CENTER);
+ *   text('HI', width/2, height/2);
+ *   miterLimit(map(mouseX, 0, width, 0, 5));
+ *
+ *   stroke(0);
+ *   noFill();
+ *   strokeWeight(1);
+ *   line(mouseX, 0, mouseX, height);
+ * }
+ * </code></div>
+ */
+p5.prototype.miterLimit = function (limit) {
+  p5._validateParameters('miterLimit', arguments);
+  this._renderer.miterLimit(limit);
   return this;
 };
 
