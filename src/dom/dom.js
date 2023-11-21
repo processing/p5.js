@@ -2422,10 +2422,10 @@ p5.Element.prototype.drop = function (callback, fxn) {
 };
 
 /**
- * Turns p5.Element into a draggable item with the mouse. If argument is given, it will drag a different p5.Element (parent container) instead, ie. for a GUI title bar.
+ * Turns p5.Element into a draggable item. If an argument is given, it will drag that p5.Element instead, ie. drag a entire GUI panel (parent container) with the panel's title bar.
  *
  * @method draggable
- * @param  {p5.Element} [elmnt]       pass a parent container
+ * @param  {p5.Element} [elmnt]       pass another p5.Element
  * @chainable
  *
  * @example
@@ -2467,42 +2467,69 @@ p5.Element.prototype.drop = function (callback, fxn) {
  * }
  * </code></div>
  */
-p5.Element.prototype.draggable = function (elmnt = this.elt) {
-  let pos1 = 0,
-    pos2 = 0,
-    pos3 = 0,
-    pos4 = 0;
-  if (elmnt !== this.elt && elmnt.elt !== this.elt) {
-    elmnt = elmnt.elt;
-    this.elt.addEventListener('mousedown', dragMouseDown, false);
-    this.elt.style.cursor = 'move';
-  } else {
-    elmnt.addEventListener('mousedown', dragMouseDown, false);
-    elmnt.style.cursor = 'move';
+p5.Element.prototype.draggable = function (elmMove) {
+  let isTouch = 'ontouchstart' in window;
+
+  let x = 0,
+    y = 0,
+    px = 0,
+    py = 0,
+    elmDrag,
+    dragMouseDownEvt = isTouch ? 'touchstart' : 'mousedown',
+    closeDragElementEvt = isTouch ? 'touchend' : 'mouseup',
+    elementDragEvt = isTouch ? 'touchmove' : 'mousemove';
+
+  if(elmMove === undefined){
+    elmMove = this.elt;
+    elmDrag = elmMove;
+  }else if(elmMove !== this.elt && elmMove.elt !== this.elt){
+    elmMove = elmMove.elt;
+    elmDrag = this.elt;
   }
+
+  elmDrag.addEventListener(dragMouseDownEvt, dragMouseDown, false);
+  elmDrag.style.cursor = 'move';
 
   function dragMouseDown(e) {
     e = e || window.event;
-    pos3 = parseInt(e.clientX);
-    pos4 = parseInt(e.clientY);
-    document.addEventListener('mouseup', closeDragElement, false);
-    document.addEventListener('mousemove', elementDrag, false);
+
+    if(isTouch){
+      const touches = e.changedTouches;
+      px = parseInt(touches[0].clientX);
+      py = parseInt(touches[0].clientY);
+    }else{
+      px = parseInt(e.clientX);
+      py = parseInt(e.clientY);
+    }
+
+    document.addEventListener(closeDragElementEvt, closeDragElement, false);
+    document.addEventListener(elementDragEvt, elementDrag, false);
     return false;
   }
 
   function elementDrag(e) {
     e = e || window.event;
-    pos1 = pos3 - parseInt(e.clientX);
-    pos2 = pos4 - parseInt(e.clientY);
-    pos3 = parseInt(e.clientX);
-    pos4 = parseInt(e.clientY);
-    elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
-    elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
+
+    if(isTouch){
+      const touches = e.changedTouches;
+      x = px - parseInt(touches[0].clientX);
+      y = py - parseInt(touches[0].clientY);
+      px = parseInt(touches[0].clientX);
+      py = parseInt(touches[0].clientY);
+    }else{
+      x = px - parseInt(e.clientX);
+      y = py - parseInt(e.clientY);
+      px = parseInt(e.clientX);
+      py = parseInt(e.clientY);
+    }
+
+    elmMove.style.left = elmMove.offsetLeft - x + 'px';
+    elmMove.style.top = elmMove.offsetTop - y + 'px';
   }
 
   function closeDragElement() {
-    document.removeEventListener('mouseup', closeDragElement, false);
-    document.removeEventListener('mousemove', elementDrag, false);
+    document.removeEventListener(closeDragElementEvt, closeDragElement, false);
+    document.removeEventListener(elementDragEvt, elementDrag, false);
   }
 
   return this;
