@@ -330,7 +330,7 @@ p5.prototype.createFilterShader = function(fragSrc) {
   const shader = new p5.Shader(this._renderer, vertSrc, fragSrc);
   let target;
   if(!iswebgl){
-    target = this._renderer.getFilterGraphicsLayer();
+    target = this._renderer.getFilterLayer();
   }else{
     target = this;
   }
