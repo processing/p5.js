@@ -9,7 +9,7 @@
 //some of the functions are adjusted from Three.js(http://threejs.org)
 
 import p5 from '../core/main';
-import * as constants from 'constants';
+import * as constants from '../core/constants';
 /**
  * p5 Geometry class
  * @class p5.Geometry
