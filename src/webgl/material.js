@@ -61,7 +61,7 @@ import './p5.Texture';
  * @alt
  * zooming Mandelbrot set. a colorful, infinitely detailed fractal.
  */
-p5.prototype.loadShader = function(
+p5.prototype.loadShader = function (
   vertFilename,
   fragFilename,
   callback,
@@ -194,8 +194,7 @@ p5.prototype.loadShader = function(
  * @alt
  * zooming Mandelbrot set. a colorful, infinitely detailed fractal.
  */
-p5.prototype.createShader = function(vertSrc, fragSrc) {
-  this._assert3d('createShader');
+p5.prototype.createShader = function (vertSrc, fragSrc) {
   p5._validateParameters('createShader', arguments);
   return new p5.Shader(this._renderer, vertSrc, fragSrc);
 };
@@ -204,13 +203,13 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  * Creates a new <a href="#/p5.Shader">p5.Shader</a> using only a fragment shader, as a convenience method for creating image effects.
  * It's like <a href="#/createShader">createShader()</a> but with a default vertex shader included.
  *
- * <a href="#/createFilterShader">createFilterShader()</a> is intended to be used along with <a href="#/filter">filter()</a> for filtering the contents of a canvas in WebGL mode.
+ * <a href="#/createFilterShader">createFilterShader()</a> is intended to be used along with <a href="#/filter">filter()</a> for filtering the contents of a canvas.
  * A filter shader will not be applied to any geometries.
  *
  * The fragment shader receives some uniforms:
  * - `sampler2D tex0`, which contains the canvas contents as a texture
- * - `vec2 canvasSize`, which is the width and height of the canvas
- * - `vec2 texelSize`, which is the size of a pixel (`1.0/width`, `1.0/height`)
+* - `vec2 canvasSize`, which is the p5 width and height of the canvas (not including pixel density)
+ * - `vec2 texelSize`, which is the size of a physical pixel including pixel density (`1.0/(width*density)`, `1.0/(height*density)`)
  *
  * For more info about filters and shaders, see Adam Ferriss' <a href="https://github.com/aferriss/p5jsShaderExamples">repo of shader examples</a>
  * or the <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">introduction to shaders</a> page.
@@ -277,14 +276,7 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  * </code>
  * </div>
  */
-p5.prototype.createFilterShader = function(fragSrc) {
-  let iswebgl;
-  if(this._renderer.GL){
-    iswebgl = true;
-  }else{
-    iswebgl = false;
-  }
-  this._assert3d('createFilterShader');
+p5.prototype.createFilterShader = function (fragSrc) {
   p5._validateParameters('createFilterShader', arguments);
   let defaultVertV1 = `
     uniform mat4 uModelViewMatrix;
@@ -328,13 +320,11 @@ p5.prototype.createFilterShader = function(fragSrc) {
   `;
   let vertSrc = fragSrc.includes('#version 300 es') ? defaultVertV2 : defaultVertV1;
   const shader = new p5.Shader(this._renderer, vertSrc, fragSrc);
-  let target;
-  if(!iswebgl){
-    target = this._renderer.getFilterLayer();
-  }else{
-    target = this;
+  if (this._renderer.GL) {
+    shader.ensureCompiledOnContext(this);
+  } else {
+    shader.ensureCompiledOnContext(this._renderer.getFilterGraphicsLayer());
   }
-  shader.ensureCompiledOnContext(target);
   return shader;
 };
 
@@ -423,7 +413,7 @@ p5.prototype.createFilterShader = function(fragSrc) {
  * @alt
  * canvas toggles between a circular gradient of orange and blue vertically. and a circular gradient of red and green moving horizontally when mouse is clicked/pressed.
  */
-p5.prototype.shader = function(s) {
+p5.prototype.shader = function (s) {
   this._assert3d('shader');
   p5._validateParameters('shader', arguments);
 
@@ -523,7 +513,7 @@ p5.prototype.shader = function(s) {
  * Two rotating cubes. The left one is painted using a custom (user-defined) shader,
  * while the right one is painted using the default fill shader.
  */
-p5.prototype.resetShader = function() {
+p5.prototype.resetShader = function () {
   this._renderer.userFillShader = this._renderer.userStrokeShader = null;
   return this;
 };
@@ -658,7 +648,7 @@ p5.prototype.resetShader = function() {
  * @alt
  * quad with a texture, mapped using normalized coordinates
  */
-p5.prototype.texture = function(tex) {
+p5.prototype.texture = function (tex) {
   this._assert3d('texture');
   p5._validateParameters('texture', arguments);
   if (tex.gifProperties) {
@@ -741,7 +731,7 @@ p5.prototype.texture = function(tex) {
  * @alt
  * quad with a texture, mapped using image coordinates
  */
-p5.prototype.textureMode = function(mode) {
+p5.prototype.textureMode = function (mode) {
   if (mode !== constants.IMAGE && mode !== constants.NORMAL) {
     console.warn(
       `You tried to set ${mode} textureMode only supports IMAGE & NORMAL `
@@ -814,7 +804,7 @@ p5.prototype.textureMode = function(mode) {
  * @alt
  * an image of the rocky mountains repeated in mirrored tiles
  */
-p5.prototype.textureWrap = function(wrapX, wrapY = wrapX) {
+p5.prototype.textureWrap = function (wrapX, wrapY = wrapX) {
   this._renderer.textureWrapX = wrapX;
   this._renderer.textureWrapY = wrapY;
 
@@ -855,7 +845,7 @@ p5.prototype.textureWrap = function(wrapX, wrapY = wrapX) {
  * @alt
  * Sphere with normal material
  */
-p5.prototype.normalMaterial = function(...args) {
+p5.prototype.normalMaterial = function (...args) {
   this._assert3d('normalMaterial');
   p5._validateParameters('normalMaterial', args);
   this._renderer.drawMode = constants.FILL;
@@ -968,7 +958,7 @@ p5.prototype.normalMaterial = function(...args) {
  *            as an array, or as a CSS string
  * @chainable
  */
-p5.prototype.ambientMaterial = function(v1, v2, v3) {
+p5.prototype.ambientMaterial = function (v1, v2, v3) {
   this._assert3d('ambientMaterial');
   p5._validateParameters('ambientMaterial', arguments);
 
@@ -1039,7 +1029,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3) {
  *            as an array, or as a CSS string
  * @chainable
  */
-p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
+p5.prototype.emissiveMaterial = function (v1, v2, v3, a) {
   this._assert3d('emissiveMaterial');
   p5._validateParameters('emissiveMaterial', arguments);
 
@@ -1125,7 +1115,7 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
  *            as an array, or as a CSS string
  * @chainable
  */
-p5.prototype.specularMaterial = function(v1, v2, v3, alpha) {
+p5.prototype.specularMaterial = function (v1, v2, v3, alpha) {
   this._assert3d('specularMaterial');
   p5._validateParameters('specularMaterial', arguments);
 
@@ -1174,7 +1164,7 @@ p5.prototype.specularMaterial = function(v1, v2, v3, alpha) {
  * @alt
  * two spheres, one more shiny than the other
  */
-p5.prototype.shininess = function(shine) {
+p5.prototype.shininess = function (shine) {
   this._assert3d('shininess');
   p5._validateParameters('shininess', arguments);
 
@@ -1192,7 +1182,7 @@ p5.prototype.shininess = function(shine) {
  * @param  {Number[]} color [description]
  * @return {Number[]]}  Normalized numbers array
  */
-p5.RendererGL.prototype._applyColorBlend = function(colors) {
+p5.RendererGL.prototype._applyColorBlend = function (colors) {
   const gl = this.GL;
 
   const isTexture = this.drawMode === constants.TEXTURE;
@@ -1227,7 +1217,7 @@ p5.RendererGL.prototype._applyColorBlend = function(colors) {
  * @param  {Number[]} color [description]
  * @return {Number[]]}  Normalized numbers array
  */
-p5.RendererGL.prototype._applyBlendMode = function() {
+p5.RendererGL.prototype._applyBlendMode = function () {
   if (this._cachedBlendMode === this.curBlendMode) {
     return;
   }

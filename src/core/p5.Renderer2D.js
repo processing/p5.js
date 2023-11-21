@@ -18,6 +18,28 @@ class Renderer2D extends p5.Renderer{
     this._pInst._setProperty('drawingContext', this.drawingContext);
   }
 
+  getFilterGraphicsLayer() {
+    // create hidden webgl renderer if it doesn't exist
+    if (!this.filterGraphicsLayer) {
+      // the real _pInst is buried when this is a secondary p5.Graphics
+      const pInst =
+        this._pInst instanceof p5.Graphics ?
+          this._pInst._pInst :
+          this._pInst;
+
+      // create secondary layer
+      this.filterGraphicsLayer =
+        new p5.Graphics(
+          this.width,
+          this.height,
+          constants.WEBGL,
+          pInst
+        );
+    }
+
+    return this.filterGraphicsLayer;
+  }
+
   _applyDefaults() {
     this._cachedFillStyle = this._cachedStrokeStyle = undefined;
     this._cachedBlendMode = constants.BLEND;
