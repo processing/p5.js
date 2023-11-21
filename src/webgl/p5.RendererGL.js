@@ -1087,7 +1087,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       tmp.draw(() =>
         this._pInst.image(target, -target.width / 2, -target.height / 2));
 
-      // fbo.draw(() => {
       this._pInst.shader(this.filterShader);
       this.filterShader.setUniform('texelSize', texelSize);
       this.filterShader.setUniform('canvasSize', [target.width, target.height]);
