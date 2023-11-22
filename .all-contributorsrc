@@ -5408,6 +5408,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "cabbage63",
+      "name": "cab_kyabe",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7237868?v=4",
+      "profile": "https://kyabe.net",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "repoType": "github",
