@@ -1079,16 +1079,11 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       const tmp = this.getFilterLayerTemp();
       // Resize the framebuffer 'tmp' and adjust its pixel density if it doesn't match the target.
       this.matchSize(tmp, target);
-      tmp.draw(() => this._pInst.clear()); // prevent feedback effects here too
-
       // setup
       this._pInst.push();
       this._pInst.noStroke();
 
       // draw main to temp buffer
-      tmp.draw(() =>
-        this._pInst.image(target, -target.width / 2, -target.height / 2));
-
       this._pInst.shader(this.filterShader);
       this.filterShader.setUniform('texelSize', texelSize);
       this.filterShader.setUniform('canvasSize', [target.width, target.height]);
