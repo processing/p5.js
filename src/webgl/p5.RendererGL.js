@@ -1062,7 +1062,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // Resize the framebuffer 'fbo' and adjust its pixel density if it doesn't match the target.
     this.matchSize(fbo, target);
 
-    // Set the yScale of the filterCamera for framebuffers.
+    // Set filterCamera for framebuffers.
     if (target !== this) {
       this.filterCamera = this.getFilterLayer().createCamera();
     }
@@ -1073,11 +1073,11 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       1 / (target.height * target.pixelDensity())
     ];
 
-    // apply blur shader with multiple passes
+    // apply blur shader with multiple passes.
     if (operation === constants.BLUR) {
       // Treating 'tmp' as a framebuffer.
       const tmp = this.getFilterLayerTemp();
-      // Resize the framebuffer 'fbo' and adjust its pixel density if it doesn't match the target.
+      // Resize the framebuffer 'tmp' and adjust its pixel density if it doesn't match the target.
       this.matchSize(tmp, target);
       tmp.draw(() => this._pInst.clear()); // prevent feedback effects here too
 
@@ -1132,7 +1132,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       });
 
     }
-    // draw fbo contents onto main renderer
+    // draw fbo contents onto main renderer.
     this._pInst.push();
     this._pInst.noStroke();
     this.clear();
