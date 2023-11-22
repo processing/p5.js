@@ -1016,8 +1016,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       fboToMatch.resizeCanvas(target.width, target.height);
     }
 
-    if (fboToMatch.pixelDensity() !== target._pInst.pixelDensity()) {
-      fboToMatch.pixelDensity(target._pInst.pixelDensity());
+    if (fboToMatch.pixelDensity() !== target.pixelDensity()) {
+      fboToMatch.pixelDensity(target.pixelDensity());
     }
   }
   filter(...args) {
