@@ -41,7 +41,7 @@ class Renderer2D extends p5.Renderer {
       this.filterGraphicsLayer.height !== this.height
     ) {
       // Resize the graphics layer
-      this.filterGraphicsLayer.resize(this.width, this.height);
+      this.filterGraphicsLayer.resizeCanvas(this.width, this.height);
     }
     if (
       this.filterGraphicsLayer.pixelDensity() !== this._pInst.pixelDensity()
