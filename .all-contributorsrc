@@ -5380,6 +5380,44 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "wackbyte",
+      "name": "wackbyte",
+      "avatar_url": "https://avatars.githubusercontent.com/u/29505620?v=4",
+      "profile": "https://github.com/wackbyte",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "apsinghdev",
+      "name": "Ajeet Pratap Singh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/109718740?v=4",
+      "profile": "https://github.com/apsinghdev",
+      "contributions": [
+        "code",
+        "bug"
+      ]
+    },
+    {
+      "login": "Jaivignesh-afk",
+      "name": "Jai Vignesh J",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108923524?v=4",
+      "profile": "https://github.com/Jaivignesh-afk",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "cabbage63",
+      "name": "cab_kyabe",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7237868?v=4",
+      "profile": "https://kyabe.net",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "repoType": "github",
