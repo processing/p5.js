@@ -296,7 +296,7 @@ p5.prototype.ortho = function (...args) {
  *   background(200);
  *   orbitControl();
  *   normalMaterial();
- *
+ *   translate(0,0,700);
  *   rotateY(-0.2);
  *   rotateX(-0.3);
  *   push();
@@ -977,7 +977,7 @@ p5.Camera = class Camera {
  *   background(200);
  *   orbitControl();
  *   normalMaterial();
- *
+ *   translate(0,0,700);
  *   rotateY(-0.2);
  *   rotateX(-0.3);
  *   push();
