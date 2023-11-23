@@ -1507,6 +1507,15 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
   }
 
+  /**
+   * Resets all depth information so that nothing previously drawn will
+   * occlude anything subsequently drawn.
+   */
+  clearDepth() {
+    this.GL.clearDepth(1);
+    this.GL.clear(this.GL.DEPTH_BUFFER_BIT);
+  }
+
   applyMatrix(a, b, c, d, e, f) {
     if (arguments.length === 16) {
       p5.Matrix.prototype.apply.apply(this.uMVMatrix, arguments);

@@ -326,12 +326,11 @@ p5.prototype.createGraphics = function(w, h, renderer, canvas) {
  * @example
  * <div>
  * <code>
- * let prev, next, cam;
+ * let prev, next;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   prev = createFramebuffer({ format: FLOAT });
  *   next = createFramebuffer({ format: FLOAT });
- *   cam = createCamera();
  *   noStroke();
  * }
  *
@@ -345,12 +344,11 @@ p5.prototype.createGraphics = function(w, h, renderer, canvas) {
  *   background(255);
  *
  *   push();
- *   // Draw the previous texture farther away, but scaled
- *   // up to fill the screen, plus a bit extra scale so it grows
- *   translate(0, 0, -200);
- *   scale(1.001 * (200 + cam.eyeZ) / cam.eyeZ);
  *   tint(255, 253);
  *   image(prev, -width/2, -height/2);
+ *   // Make sure the image plane doesn't block you from seeing any part
+ *   // of the scene
+ *   clearDepth();
  *   pop();
  *
  *   push();
@@ -373,6 +371,72 @@ p5.prototype.createGraphics = function(w, h, renderer, canvas) {
  */
 p5.prototype.createFramebuffer = function(options) {
   return new p5.Framebuffer(this, options);
+};
+
+/**
+ * This makes the canvas forget how far from the camera everything that has
+ * been drawn was. Use this if you want to make sure the next thing you draw
+ * will not draw behind anything that is already on the canvas.
+ *
+ * This is useful for things like feedback effects, where you want the previous
+ * frame to act like a background for the next frame, and not like a plane in
+ * 3D space in the scene.
+ *
+ * This method is only available in WebGL mode. Since 2D mode does not have
+ * 3D depth, anything you draw will always go on top of the previous content on
+ * the canvas anyway.
+ *
+ * @method clearDepth
+ *
+ * @example
+ * <div>
+ * <code>
+ * let prev, next;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   prev = createFramebuffer({ format: FLOAT });
+ *   next = createFramebuffer({ format: FLOAT });
+ *   noStroke();
+ * }
+ *
+ * function draw() {
+ *   // Swap prev and next so that we can use the previous
+ *   // frame as a texture when drawing the current frame
+ *   [prev, next] = [next, prev];
+ *
+ *   // Draw to the framebuffer
+ *   next.begin();
+ *   background(255);
+ *
+ *   push();
+ *   tint(255, 253);
+ *   image(prev, -width/2, -height/2);
+ *   // Make sure the image plane doesn't block you from seeing any part
+ *   // of the scene
+ *   clearDepth();
+ *   pop();
+ *
+ *   push();
+ *   normalMaterial();
+ *   translate(25*sin(frameCount * 0.014), 25*sin(frameCount * 0.02), 0);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   box(12);
+ *   pop();
+ *   next.end();
+ *
+ *   image(next, -width/2, -height/2);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * A red, green, and blue box (using normalMaterial) moves and rotates around
+ * the canvas, leaving a trail behind it that slowly grows and fades away.
+ */
+p5.prototype.clearDepth = function() {
+  this._assert3d('clearDepth');
+  this._renderer.clearDepth();
 };
 
 /**
