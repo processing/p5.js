@@ -298,7 +298,6 @@ p5.prototype._copyHelper = (
   dw,
   dh
 ) => {
-  srcImage.loadPixels();
   const s = srcImage.canvas.width / srcImage.width;
   // adjust coord system for 3D when renderer
   // ie top-left = -width/2, -height/2
