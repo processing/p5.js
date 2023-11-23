@@ -164,9 +164,9 @@ p5.prototype.camera = function (...args) {
  *   orbitControl();
  *   normalMaterial();
  *
+ *   translate(0, 0, 550);
  *   rotateX(-0.3);
  *   rotateY(-0.2);
- *   translate(0, 0, -85);
  *
  *   push();
  *   translate(-15, 0, sin(frameCount / 30) * 95);
@@ -229,6 +229,7 @@ p5.prototype.perspective = function (...args) {
  *   orbitControl();
  *   normalMaterial();
  *
+ *   translate(0,0,500);
  *   rotateX(0.2);
  *   rotateY(-0.2);
  *   push();
@@ -759,9 +760,9 @@ p5.Camera = class Camera {
  *   orbitControl();
  *   normalMaterial();
  *
+ *   translate(0, 0, 550);
  *   rotateX(-0.3);
  *   rotateY(-0.2);
- *   translate(0, 0, -50);
  *
  *   push();
  *   translate(-15, 0, sin(frameCount / 30) * 95);
@@ -877,7 +878,7 @@ p5.Camera = class Camera {
  *   background(200);
  *   orbitControl();
  *   normalMaterial();
- *
+ *   translate(0,0,500);
  *   rotateX(0.2);
  *   rotateY(-0.2);
  *   push();
