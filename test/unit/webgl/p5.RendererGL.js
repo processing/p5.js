@@ -212,7 +212,7 @@ suite('p5.RendererGL', function() {
       let renderer = myp5.createCanvas(5, 5, myp5.WEBGL);
       let s = myp5.createShader(vert, frag);
       myp5.filter(s);
-      assert.notStrictEqual(renderer.filterGraphicsLayer, undefined);
+      assert.notStrictEqual(renderer.filterLayer, undefined);
     });
 
     test('custom shader makes changes to main canvas', function() {
@@ -231,7 +231,7 @@ suite('p5.RendererGL', function() {
       let g1 = myp5.createCanvas(5, 5, myp5.WEBGL);
       let s = myp5.createShader(vert, frag);
       myp5.filter(s);
-      let g2 = g1.filterGraphicsLayer;
+      let g2 = g1.filterLayer;
       assert.deepEqual([g1.width, g1.height], [g2.width, g2.height]);
       myp5.resizeCanvas(4, 4);
       assert.deepEqual([g1.width, g1.height], [g2.width, g2.height]);
