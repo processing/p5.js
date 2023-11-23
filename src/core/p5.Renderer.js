@@ -67,7 +67,7 @@ class Renderer extends p5.Element {
 
   // the renderer should return a 'style' object that it wishes to
   // store on the push stack.
-  push() {
+  push () {
     this._pushPopDepth++;
     return {
       properties: {
@@ -94,10 +94,10 @@ class Renderer extends p5.Element {
   // a pop() operation is in progress
   // the renderer is passed the 'style' object that it returned
   // from its push() method.
-  pop(style) {
+  pop (style) {
     this._pushPopDepth--;
     if (style.properties) {
-      // copy the style properties back into the renderer
+    // copy the style properties back into the renderer
       Object.assign(this, style.properties);
     }
   }
@@ -120,26 +120,26 @@ class Renderer extends p5.Element {
   /**
  * Resize our canvas element.
  */
-  resize(w, h) {
-      this.width = w;
-      this.height = h;
-      this.elt.width = w * this._pInst._pixelDensity;
-      this.elt.height = h * this._pInst._pixelDensity;
-      this.elt.style.width = `${w}px`;
-      this.elt.style.height = `${h}px`;
-      if (this._isMainCanvas) {
-        this._pInst._setProperty('width', this.width);
-        this._pInst._setProperty('height', this.height);
-      }
+  resize (w, h) {
+    this.width = w;
+    this.height = h;
+    this.elt.width = w * this._pInst._pixelDensity;
+    this.elt.height = h * this._pInst._pixelDensity;
+    this.elt.style.width = `${w}px`;
+    this.elt.style.height = `${h}px`;
+    if (this._isMainCanvas) {
+      this._pInst._setProperty('width', this.width);
+      this._pInst._setProperty('height', this.height);
+    }
   }
 
-  get(x, y, w, h) {
+  get (x, y, w, h) {
     const pixelsState = this._pixelsState;
     const pd = pixelsState._pixelDensity;
     const canvas = this.canvas;
 
     if (typeof x === 'undefined' && typeof y === 'undefined') {
-      // get()
+    // get()
       x = y = 0;
       w = pixelsState.width;
       h = pixelsState.height;
@@ -148,26 +148,26 @@ class Renderer extends p5.Element {
       y *= pd;
 
       if (typeof w === 'undefined' && typeof h === 'undefined') {
-        // get(x,y)
+      // get(x,y)
         if (x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) {
           return [0, 0, 0, 0];
         }
 
         return this._getPixel(x, y);
       }
-      // get(x,y,w,h)
+    // get(x,y,w,h)
     }
 
-    const region = new p5.Image(w * pd, h * pd);
+    const region = new p5.Image(w*pd, h*pd);
     region._pixelDensity = pd;
     region.canvas
       .getContext('2d')
-      .drawImage(canvas, x, y, w * pd, h * pd, 0, 0, w * pd, h * pd);
+      .drawImage(canvas, x, y, w * pd, h * pd, 0, 0, w*pd, h*pd);
 
     return region;
   }
 
-  textLeading(l) {
+  textLeading (l) {
     if (typeof l === 'number') {
       this._setProperty('_leadingSet', true);
       this._setProperty('_textLeading', l);
@@ -177,13 +177,13 @@ class Renderer extends p5.Element {
     return this._textLeading;
   }
 
-  textStyle(s) {
+  textStyle (s) {
     if (s) {
       if (
         s === constants.NORMAL ||
-        s === constants.ITALIC ||
-        s === constants.BOLD ||
-        s === constants.BOLDITALIC
+      s === constants.ITALIC ||
+      s === constants.BOLD ||
+      s === constants.BOLDITALIC
       ) {
         this._setProperty('_textStyle', s);
       }
@@ -194,21 +194,21 @@ class Renderer extends p5.Element {
     return this._textStyle;
   }
 
-  textAscent() {
+  textAscent () {
     if (this._textAscent === null) {
       this._updateTextMetrics();
     }
     return this._textAscent;
   }
 
-  textDescent() {
+  textDescent () {
     if (this._textDescent === null) {
       this._updateTextMetrics();
     }
     return this._textDescent;
   }
 
-  textAlign(h, v) {
+  textAlign (h, v) {
     if (typeof h !== 'undefined') {
       this._setProperty('_textAlign', h);
 
@@ -225,7 +225,7 @@ class Renderer extends p5.Element {
     }
   }
 
-  textWrap(wrapStyle) {
+  textWrap (wrapStyle) {
     this._setProperty('_textWrap', wrapStyle);
     return this._textWrap;
   }
@@ -306,10 +306,10 @@ class Renderer extends p5.Element {
           finalMaxHeight = originalY + maxHeight - ascent / 2;
         }
       } else {
-        // no text-height specified, show warning for BOTTOM / CENTER
+      // no text-height specified, show warning for BOTTOM / CENTER
         if (this._textBaseline === constants.BOTTOM ||
-          this._textBaseline === constants.CENTER) {
-          // use rectHeight as an approximation for text height
+        this._textBaseline === constants.CENTER) {
+        // use rectHeight as an approximation for text height
           let rectHeight = p.textSize() * this._textLeading;
           finalMinHeight = y - rectHeight / 2;
           finalMaxHeight = y + rectHeight / 2;
@@ -435,8 +435,8 @@ class Renderer extends p5.Element {
         y += p.textLeading();
       }
     } else {
-      // Offset to account for vertically centering multiple lines of text - no
-      // need to adjust anything for vertical align top or baseline
+    // Offset to account for vertically centering multiple lines of text - no
+    // need to adjust anything for vertical align top or baseline
       let offset = 0;
       if (this._textBaseline === constants.CENTER) {
         offset = (lines.length - 1) * p.textLeading() / 2;
@@ -536,11 +536,11 @@ function calculateOffset(object) {
   return [currentLeft, currentTop];
 }
 // This caused the test to failed.
-Renderer.prototype.textSize = function (s) {
+Renderer.prototype.textSize = function(s) {
   if (typeof s === 'number') {
     this._setProperty('_textSize', s);
     if (!this._leadingSet) {
-      // only use a default value if not previously set (#5181)
+    // only use a default value if not previously set (#5181)
       this._setProperty('_textLeading', s * constants._DEFAULT_LEADMULT);
     }
     return this._applyTextProperties();
