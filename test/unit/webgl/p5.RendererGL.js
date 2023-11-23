@@ -242,6 +242,7 @@ suite('p5.RendererGL', function() {
       let s = myp5.createShader(vert, frag);
       myp5.filter(s);
       myp5.resizeCanvas(5, 15);
+      myp5.filter(s);
       assert.equal(g1.width, 5);
       assert.equal(g1.height, 15);
     });
