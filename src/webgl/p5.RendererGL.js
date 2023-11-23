@@ -633,8 +633,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     // for post processing step
     this.filterShader = undefined;
-    this.filterGraphicsLayer = undefined;
-    this.filterGraphicsLayerTemp = undefined;
+    this.filterLayer = undefined;
+    this.filterLayerTemp = undefined;
     this.defaultFilterShaders = {};
 
     this.textureMode = constants.IMAGE;
@@ -997,16 +997,16 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.curStrokeJoin = join;
   }
   getFilterLayer() {
-    if (!this.filterGraphicsLayer) {
-      this.filterGraphicsLayer = this._pInst.createFramebuffer();
+    if (!this.filterLayer) {
+      this.filterLayer = this._pInst.createFramebuffer();
     }
-    return this.filterGraphicsLayer;
+    return this.filterLayer;
   }
   getFilterLayerTemp() {
-    if (!this.filterGraphicsLayerTemp) {
-      this.filterGraphicsLayerTemp = this._pInst.createFramebuffer();
+    if (!this.filterLayerTemp) {
+      this.filterLayerTemp = this._pInst.createFramebuffer();
     }
-    return this.filterGraphicsLayerTemp;
+    return this.filterLayerTemp;
   }
   matchSize(fboToMatch, target) {
     if (
@@ -1450,11 +1450,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       // Notify framebuffers of the resize so that any auto-sized framebuffers
       // can also update their size
       framebuffer._canvasSizeChanged();
-    }
-
-    // resize filter graphics layer
-    if (this.filterGraphicsLayer) {
-      p5.Renderer.prototype.resize.call(this.filterGraphicsLayer, w, h);
     }
   }
 
