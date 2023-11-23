@@ -121,7 +121,6 @@ class Renderer extends p5.Element {
  * Resize our canvas element.
  */
   resize(w, h) {
-    if (this._pInst && this._pInst._pixelDensity) {
       this.width = w;
       this.height = h;
       this.elt.width = w * this._pInst._pixelDensity;
@@ -132,7 +131,6 @@ class Renderer extends p5.Element {
         this._pInst._setProperty('width', this.width);
         this._pInst._setProperty('height', this.height);
       }
-    }
   }
 
   get(x, y, w, h) {
