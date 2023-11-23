@@ -237,6 +237,15 @@ suite('p5.RendererGL', function() {
       assert.deepEqual([g1.width, g1.height], [g2.width, g2.height]);
     });
 
+    test('Filter graphics layer get resized in 2D mode', function () {
+      let g1 = myp5.createCanvas(10, 10);
+      let s = myp5.createShader(vert, frag);
+      myp5.filter(s);
+      myp5.resizeCanvas(5, 15);
+      assert.equal(g1.width, 5);
+      assert.equal(g1.height, 15);
+    });
+
     test('create graphics is unaffected after filter', function() {
       myp5.createCanvas(5, 5, myp5.WEBGL);
       let pg = myp5.createGraphics(5, 5, myp5.WEBGL);
