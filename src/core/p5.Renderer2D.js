@@ -854,7 +854,7 @@ class Renderer2D extends p5.Renderer{
     }
     let i, j;
     const numVerts = vertices.length;
-    if (isCurve && (shapeKind === constants.POLYGON || shapeKind === null)) {
+    if (isCurve && shapeKind === null) {
       if (numVerts > 3) {
         const b = [],
           s = 1 - this._curveTightness;
@@ -890,7 +890,7 @@ class Renderer2D extends p5.Renderer{
       }
     } else if (
       isBezier &&
-    (shapeKind === constants.POLYGON || shapeKind === null)
+      shapeKind === null
     ) {
       if (!this._clipping) this.drawingContext.beginPath();
       for (i = 0; i < numVerts; i++) {
@@ -914,7 +914,7 @@ class Renderer2D extends p5.Renderer{
       this._doFillStrokeClose(closeShape);
     } else if (
       isQuadratic &&
-    (shapeKind === constants.POLYGON || shapeKind === null)
+      shapeKind === null
     ) {
       if (!this._clipping) this.drawingContext.beginPath();
       for (i = 0; i < numVerts; i++) {
