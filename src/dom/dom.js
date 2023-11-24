@@ -3510,6 +3510,120 @@ p5.Element.prototype.drop = function (callback, fxn) {
   return this;
 };
 
+/**
+ * Turns p5.Element into a draggable item. If an argument is given, it will drag that p5.Element instead, ie. drag a entire GUI panel (parent container) with the panel's title bar.
+ *
+ * @method draggable
+ * @param  {p5.Element} [elmnt]       pass another p5.Element
+ * @chainable
+ *
+ * @example
+ * <div><code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   background(200);
+ *
+ *   createDiv('Post-It')
+ *     .position(5, 5)
+ *     .size(75, 20)
+ *     .style('font-size', '16px')
+ *     .style('background', 'yellow')
+ *     .style('color', '#000')
+ *     .style('border', '1px solid #aaaa00')
+ *     .style('padding', '5px')
+ *     .draggable();
+ *   // .style('cursor', 'help') // override cursor
+ *
+ *   let gui = createDiv('')
+ *     .position(5, 40)
+ *     .size(85, 50)
+ *     .style('font-size', '16px')
+ *     .style('background', 'yellow')
+ *     .style('z-index', '100')
+ *     .style('border', '1px solid #00aaaa');
+ *
+ *   createDiv('= PANEL =')
+ *     .parent(gui)
+ *     .style('background', 'cyan')
+ *     .style('padding', '2px')
+ *     .style('text-align', 'center')
+ *     .draggable(gui);
+ *
+ *   createSlider(0, 100, random(100))
+ *     .style('cursor', 'pointer')
+ *     .size(80, 5)
+ *     .parent(gui);
+ * }
+ * </code></div>
+ */
+p5.Element.prototype.draggable = function (elmMove) {
+  let isTouch = 'ontouchstart' in window;
+
+  let x = 0,
+    y = 0,
+    px = 0,
+    py = 0,
+    elmDrag,
+    dragMouseDownEvt = isTouch ? 'touchstart' : 'mousedown',
+    closeDragElementEvt = isTouch ? 'touchend' : 'mouseup',
+    elementDragEvt = isTouch ? 'touchmove' : 'mousemove';
+
+  if(elmMove === undefined){
+    elmMove = this.elt;
+    elmDrag = elmMove;
+  }else if(elmMove !== this.elt && elmMove.elt !== this.elt){
+    elmMove = elmMove.elt;
+    elmDrag = this.elt;
+  }
+
+  elmDrag.addEventListener(dragMouseDownEvt, dragMouseDown, false);
+  elmDrag.style.cursor = 'move';
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+
+    if(isTouch){
+      const touches = e.changedTouches;
+      px = parseInt(touches[0].clientX);
+      py = parseInt(touches[0].clientY);
+    }else{
+      px = parseInt(e.clientX);
+      py = parseInt(e.clientY);
+    }
+
+    document.addEventListener(closeDragElementEvt, closeDragElement, false);
+    document.addEventListener(elementDragEvt, elementDrag, false);
+    return false;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+
+    if(isTouch){
+      const touches = e.changedTouches;
+      x = px - parseInt(touches[0].clientX);
+      y = py - parseInt(touches[0].clientY);
+      px = parseInt(touches[0].clientX);
+      py = parseInt(touches[0].clientY);
+    }else{
+      x = px - parseInt(e.clientX);
+      y = py - parseInt(e.clientY);
+      px = parseInt(e.clientX);
+      py = parseInt(e.clientY);
+    }
+
+    elmMove.style.left = elmMove.offsetLeft - x + 'px';
+    elmMove.style.top = elmMove.offsetTop - y + 'px';
+  }
+
+  function closeDragElement() {
+    document.removeEventListener(closeDragElementEvt, closeDragElement, false);
+    document.removeEventListener(elementDragEvt, elementDrag, false);
+  }
+
+  return this;
+};
+
 /*** SCHEDULE EVENTS ***/
 
 // Cue inspired by JavaScript setTimeout, and the

@@ -127,9 +127,19 @@ p5.prototype.camera = function (...args) {
  * vertical field of view, aspect ratio (usually width/height), and near and far
  * clipping planes.
  *
- * If no parameters are given, the following default is used:
- * perspective(PI/3, width/height, eyeZ/10, eyeZ*10),
- * where eyeZ is equal to ((height/2) / tan(PI/6)).
+ * If no parameters are given, the default values are used as:
+ *
+ * - `fov` : The default field of view for the camera is such that the full height of renderer is visible when it is positioned at a default distance of 800 units from the camera.
+ * - `aspect` : The default aspect ratio is the ratio of renderer's width to renderer's height.
+ * - `near` : The default value for the near clipping plane is 80, which is 0.1 times the default distance from the camera to its subject.
+ * - `far` : The default value for the far clipping plane is 8000, which is 10 times the default distance from the camera to its subject.
+ *
+ * If you prefer a fixed field of view, follow these steps:
+ * 1. Choose your desired field of view angle (`fovy`). This is how wide the camera can see.
+ * 2. To ensure that you can see the entire width across horizontally and height across vertically, place the camera a distance of `(height / 2) / tan(fovy / 2)` back from its subject.
+ * 3. Call perspective with the chosen field of view, canvas aspect ratio, and near/far values:
+ *    `perspective(fovy, width / height, cameraDistance / 10, cameraDistance * 10);`
+ *
  * @method  perspective
  * @for p5
  * @param  {Number} [fovy]   camera frustum vertical field of view,
@@ -154,9 +164,9 @@ p5.prototype.camera = function (...args) {
  *   orbitControl();
  *   normalMaterial();
  *
+ *   translate(0, 0, 550);
  *   rotateX(-0.3);
  *   rotateY(-0.2);
- *   translate(0, 0, -50);
  *
  *   push();
  *   translate(-15, 0, sin(frameCount / 30) * 95);
@@ -219,6 +229,7 @@ p5.prototype.perspective = function (...args) {
  *   orbitControl();
  *   normalMaterial();
  *
+ *   translate(0,0,500);
  *   rotateX(0.2);
  *   rotateY(-0.2);
  *   push();
@@ -285,7 +296,7 @@ p5.prototype.ortho = function (...args) {
  *   background(200);
  *   orbitControl();
  *   normalMaterial();
- *
+ *   translate(0,0,700);
  *   rotateY(-0.2);
  *   rotateX(-0.3);
  *   push();
@@ -749,9 +760,9 @@ p5.Camera = class Camera {
  *   orbitControl();
  *   normalMaterial();
  *
+ *   translate(0, 0, 550);
  *   rotateX(-0.3);
  *   rotateY(-0.2);
- *   translate(0, 0, -50);
  *
  *   push();
  *   translate(-15, 0, sin(frameCount / 30) * 95);
@@ -867,7 +878,7 @@ p5.Camera = class Camera {
  *   background(200);
  *   orbitControl();
  *   normalMaterial();
- *
+ *   translate(0,0,500);
  *   rotateX(0.2);
  *   rotateY(-0.2);
  *   push();
@@ -966,7 +977,7 @@ p5.Camera = class Camera {
  *   background(200);
  *   orbitControl();
  *   normalMaterial();
- *
+ *   translate(0,0,700);
  *   rotateY(-0.2);
  *   rotateX(-0.3);
  *   push();
