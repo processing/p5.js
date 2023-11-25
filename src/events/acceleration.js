@@ -619,14 +619,14 @@ p5.prototype.setShakeThreshold = function(val) {
 
 p5.prototype._ondeviceorientation = function(e) {
   this._updatePRotations();
+
+  let multiplier = 1;
   if (this._angleMode === constants.RADIANS) {
-    e.beta = e.beta * (_PI / 180.0);
-    e.gamma = e.gamma * (_PI / 180.0);
-    e.alpha = e.alpha * (_PI / 180.0);
+    multiplier = constants.PI / 180.0;
   }
-  this._setProperty('rotationX', e.beta);
-  this._setProperty('rotationY', e.gamma);
-  this._setProperty('rotationZ', e.alpha);
+  this._setProperty('rotationX', e.beta * multiplier);
+  this._setProperty('rotationY', e.gamma * multiplier);
+  this._setProperty('rotationZ', e.alpha * multiplier);
   this._handleMotion();
 };
 p5.prototype._ondevicemotion = function(e) {
