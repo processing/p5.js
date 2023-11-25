@@ -1,7 +1,10 @@
+import p5 from '../../../src/app.js';
+
 suite('Transform', function() {
   var sketch1; // sketch without WEBGL Mode
   var sketch2; // skecth with WEBGL mode
-  setup(function(done) {
+
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         sketch1 = p;
@@ -13,10 +16,9 @@ suite('Transform', function() {
         sketch2 = p;
       };
     });
-    done();
   });
 
-  teardown(function() {
+  afterAll(function() {
     sketch1.remove();
     sketch2.remove();
   });

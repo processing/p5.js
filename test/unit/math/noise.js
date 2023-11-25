@@ -1,16 +1,17 @@
+import p5 from '../../../src/app.js';
+
 suite('Noise', function() {
   var myp5;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
@@ -22,7 +23,7 @@ suite('Noise', function() {
   var results = [];
 
   suite('p5.prototype.noise', function() {
-    setup(function() {
+    beforeEach(function() {
       result = myp5.noise(0);
     });
     test('should return a number', function() {
@@ -36,7 +37,7 @@ suite('Noise', function() {
 
   // Test for noiseSeed
   suite('p5.prototype.noiseSeed', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.noiseSeed(99);
       var t = 0;
       for (var i = 0; i < 5; i++) {

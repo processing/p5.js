@@ -1,17 +1,19 @@
+import p5 from '../../../src/app.js';
+
 suite('Vertex', function() {
   var myp5;
   let _friendlyErrorSpy;
-  setup(function(done) {
+
+  beforeEach(function() {
     _friendlyErrorSpy = sinon.spy(p5, '_friendlyError');
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterEach(function() {
     _friendlyErrorSpy.restore();
     myp5.remove();
   });

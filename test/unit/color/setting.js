@@ -1,22 +1,34 @@
-suite('color/Setting', function() {
+import p5 from '../../../src/app.js';
+
+// NOTE: Require ESM compatible libtess
+suite.skip('color/Setting', function() {
   let myp5; // sketch without WEBGL Mode
   let my3D; // sketch with WEBGL mode
-  setup(function(done) {
-    new p5(function(p) {
-      p.setup = function() {
-        myp5 = p;
-      };
+
+  beforeEach(async function() {
+    await new Promise(resolve => {
+      new p5(function(p) {
+        p.setup = function() {
+          p.createCanvas(100, 100, p.WEBGL);
+          console.log('here', p);
+          my3D = p;
+          resolve();
+        };
+      });
     });
-    new p5(function(p) {
-      p.setup = function() {
-        p.createCanvas(100, 100, p.WEBGL);
-        my3D = p;
-      };
+
+    await new Promise(resolve => {
+      new p5(function(p) {
+        p.setup = function() {
+          console.log('there', p);
+          myp5 = p;
+          resolve();
+        };
+      });
     });
-    done();
   });
 
-  teardown(function() {
+  afterEach(function() {
     myp5.remove();
     my3D.remove();
   });

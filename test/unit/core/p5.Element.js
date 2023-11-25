@@ -1,3 +1,5 @@
+import p5 from '../../../src/app.js';
+
 suite('p5.Element', function() {
   var myp5 = new p5(function(sketch) {
     sketch.setup = function() {};
@@ -6,7 +8,7 @@ suite('p5.Element', function() {
 
   var elt;
 
-  teardown(function() {
+  afterAll(function() {
     if (elt && elt.parentNode) {
       elt.parentNode.removeChild(elt);
       elt = null;

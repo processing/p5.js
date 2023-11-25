@@ -1,16 +1,17 @@
+import p5 from '../../../src/app.js';
+
 suite('Keyboard Events', function() {
   var myp5;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
@@ -53,7 +54,7 @@ suite('Keyboard Events', function() {
   });
 
   suite('p5.prototype.key', function() {
-    test('key should be a string', function() {
+    test('key should be a string', async function() {
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 's' }));
       assert.isString(myp5.key);
     });

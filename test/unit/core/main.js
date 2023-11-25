@@ -1,8 +1,8 @@
-const { expect, assert } = require('chai');
+import p5 from '../../../src/app.js';
 
 suite('Core', function () {
   suite('p5.prototype.registerMethod', function () {
-    teardown(function() {
+    afterAll(function() {
       p5.prototype._registeredMethods.init = [];
       p5.prototype._registeredMethods.beforePreload = [];
       p5.prototype._registeredMethods.preload = [];
@@ -125,7 +125,7 @@ suite('Core', function () {
   suite('new p5() / global mode', function () {
     var iframe;
 
-    teardown(function () {
+    afterAll(function () {
       if (iframe) {
         iframe.teardown();
         iframe = null;
@@ -195,14 +195,14 @@ suite('Core', function () {
     var createBinder = p5.prototype._createFriendlyGlobalFunctionBinder;
     var logMsg, globalObject, bind, iframe;
 
-    teardown(function () {
+    afterAll(function () {
       if (iframe) {
         iframe.teardown();
         iframe = null;
       }
     });
 
-    setup(function () {
+    beforeAll(function () {
       globalObject = {};
       logMsg = undefined;
       bind = createBinder({

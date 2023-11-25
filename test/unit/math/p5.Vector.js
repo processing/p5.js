@@ -1,3 +1,5 @@
+import p5 from '../../../src/app.js';
+
 suite('p5.Vector', function() {
   var RADIANS = 'radians';
   var DEGREES = 'degrees';
@@ -5,21 +7,20 @@ suite('p5.Vector', function() {
   var myp5;
   var v;
 
-  setup(function(done) {
+  beforeEach(async function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterEach(function() {
     myp5.remove();
   });
 
   suite('p5.prototype.setHeading() RADIANS', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.angleMode(RADIANS);
       v = myp5.createVector(1, 1);
       v.setHeading(1);
@@ -30,7 +31,7 @@ suite('p5.Vector', function() {
   });
 
   suite('p5.prototype.setHeading() DEGREES', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.angleMode(DEGREES);
       v = myp5.createVector(1, 1);
       v.setHeading(1);
@@ -41,7 +42,7 @@ suite('p5.Vector', function() {
   });
 
   suite('p5.prototype.createVector()', function() {
-    setup(function() {
+    beforeEach(function() {
       v = myp5.createVector();
     });
     test('should create instance of p5.Vector', function() {
@@ -56,7 +57,7 @@ suite('p5.Vector', function() {
   });
 
   suite('p5.prototype.createVector(1, 2, 3)', function() {
-    setup(function() {
+    beforeEach(function() {
       v = myp5.createVector(1, 2, 3);
     });
 
@@ -68,7 +69,7 @@ suite('p5.Vector', function() {
   });
 
   suite('new p5.Vector()', function() {
-    setup(function() {
+    beforeEach(function() {
       v = new p5.Vector();
     });
     test('should set constant to DEGREES', function() {
@@ -83,7 +84,7 @@ suite('p5.Vector', function() {
   });
 
   suite('new p5.Vector(1, 2, 3)', function() {
-    setup(function() {
+    beforeEach(function() {
       v = new p5.Vector(1, 2, 3);
     });
 
@@ -95,7 +96,7 @@ suite('p5.Vector', function() {
   });
 
   suite('new p5.Vector(1,2,undefined)', function() {
-    setup(function() {
+    beforeEach(function() {
       v = new p5.Vector(1, 2, undefined);
     });
 
@@ -114,7 +115,7 @@ suite('p5.Vector', function() {
       });
 
       suite('radians', function() {
-        setup(function() {
+        beforeEach(function() {
           myp5.angleMode(RADIANS);
         });
 
@@ -144,7 +145,7 @@ suite('p5.Vector', function() {
       });
 
       suite('degrees', function() {
-        setup(function() {
+        beforeEach(function() {
           myp5.angleMode(DEGREES);
         });
 
@@ -167,7 +168,7 @@ suite('p5.Vector', function() {
     });
 
     suite('p5.Vector.rotate() [CLASS]', function() {
-      setup(function() {
+      beforeEach(function() {
         myp5.angleMode(RADIANS);
       });
 
@@ -199,7 +200,7 @@ suite('p5.Vector', function() {
 
   suite('angleBetween', function() {
     let v1, v2;
-    setup(function() {
+    beforeEach(function() {
       v1 = new p5.Vector(1, 0, 0);
       v2 = new p5.Vector(2, 2, 0);
     });
@@ -350,7 +351,7 @@ suite('p5.Vector', function() {
   });
 
   suite('copy', function() {
-    setup(function() {
+    beforeEach(function() {
       v = new p5.Vector(2, 3, 4);
     });
 
@@ -384,7 +385,7 @@ suite('p5.Vector', function() {
   });
 
   suite('add()', function() {
-    setup(function() {
+    beforeEach(function() {
       v = new p5.Vector();
     });
 
@@ -435,7 +436,7 @@ suite('p5.Vector', function() {
 
     suite('p5.Vector.add(v1, v2)', function() {
       var v1, v2, res;
-      setup(function() {
+      beforeEach(function() {
         v1 = new p5.Vector(2, 0, 3);
         v2 = new p5.Vector(0, 1, 3);
         res = p5.Vector.add(v1, v2);
@@ -455,7 +456,7 @@ suite('p5.Vector', function() {
   });
 
   suite('rem()', function() {
-    setup(function() {
+    beforeEach(function() {
       v = myp5.createVector(3, 4, 5);
     });
 
@@ -519,7 +520,7 @@ suite('p5.Vector', function() {
 
     suite('with negative vectors', function() {
       let v;
-      setup(function() {
+      beforeEach(function() {
         v = new p5.Vector(-15, -5, -2);
       });
       test('should return correct output', () => {
@@ -561,7 +562,7 @@ suite('p5.Vector', function() {
 
     suite('p5.Vector.rem(v1,v2)', function() {
       let v1, v2, res;
-      setup(function() {
+      beforeEach(function() {
         v1 = new p5.Vector(2, 3, 4);
         v2 = new p5.Vector(1, 2, 3);
         res = p5.Vector.rem(v1, v2);
@@ -581,7 +582,7 @@ suite('p5.Vector', function() {
   });
 
   suite('sub()', function() {
-    setup(function() {
+    beforeEach(function() {
       v.x = 0;
       v.y = 0;
       v.z = 0;
@@ -633,7 +634,7 @@ suite('p5.Vector', function() {
 
     suite('p5.Vector.sub(v1, v2)', function() {
       var v1, v2, res;
-      setup(function() {
+      beforeEach(function() {
         v1 = new p5.Vector(2, 0, 3);
         v2 = new p5.Vector(0, 1, 3);
         res = p5.Vector.sub(v1, v2);
@@ -653,7 +654,7 @@ suite('p5.Vector', function() {
   });
 
   suite('mult()', function() {
-    setup(function() {
+    beforeEach(function() {
       v = new p5.Vector(1, 1, 1);
     });
 
@@ -686,7 +687,7 @@ suite('p5.Vector', function() {
 
     suite('v0.mult(v1)', function() {
       var v0, v1;
-      setup(function() {
+      beforeEach(function() {
         v0 = new p5.Vector(1, 2, 3);
         v1 = new p5.Vector(2, 3, 4);
         v0.mult(v1);
@@ -701,7 +702,7 @@ suite('p5.Vector', function() {
 
     suite('v0.mult(arr)', function() {
       var v0, arr;
-      setup(function() {
+      beforeEach(function() {
         v0 = new p5.Vector(1, 2, 3);
         arr = [2, 3, 4];
         v0.mult(arr);
@@ -716,7 +717,7 @@ suite('p5.Vector', function() {
 
     suite('p5.Vector.mult(v, n)', function() {
       var v, res;
-      setup(function() {
+      beforeEach(function() {
         v = new p5.Vector(1, 2, 3);
         res = p5.Vector.mult(v, 4);
       });
@@ -734,7 +735,7 @@ suite('p5.Vector', function() {
 
     suite('p5.Vector.mult(v, v', function() {
       var v0, v1, res;
-      setup(function() {
+      beforeEach(function() {
         v0 = new p5.Vector(1, 2, 3);
         v1 = new p5.Vector(2, 3, 4);
         res = p5.Vector.mult(v0, v1);
@@ -749,7 +750,7 @@ suite('p5.Vector', function() {
 
     suite('p5.Vector.mult(v, arr', function() {
       var v0, arr, res;
-      setup(function() {
+      beforeEach(function() {
         v0 = new p5.Vector(1, 2, 3);
         arr = [2, 3, 4];
         res = p5.Vector.mult(v0, arr);
@@ -764,7 +765,7 @@ suite('p5.Vector', function() {
   });
 
   suite('div()', function() {
-    setup(function() {
+    beforeEach(function() {
       v = new p5.Vector(1, 1, 1);
     });
 
@@ -804,7 +805,7 @@ suite('p5.Vector', function() {
 
     suite('p5.Vector.div(v, n)', function() {
       var v, res;
-      setup(function() {
+      beforeEach(function() {
         v = new p5.Vector(1, 1, 1);
         res = p5.Vector.div(v, 4);
       });
@@ -826,7 +827,7 @@ suite('p5.Vector', function() {
 
     suite('v0.div(v1)', function() {
       var v0, v1, v2, v3;
-      setup(function() {
+      beforeEach(function() {
         v0 = new p5.Vector(2, 6, 9);
         v1 = new p5.Vector(2, 2, 3);
         v2 = new p5.Vector(1, 1, 1);
@@ -878,7 +879,7 @@ suite('p5.Vector', function() {
 
     suite('v0.div(arr)', function() {
       var v0, v1, arr;
-      setup(function() {
+      beforeEach(function() {
         v0 = new p5.Vector(2, 6, 9);
         v1 = new p5.Vector(1, 1, 1);
         arr = [2, 2, 3];
@@ -901,7 +902,7 @@ suite('p5.Vector', function() {
 
     suite('p5.Vector.div(v, v', function() {
       var v0, v1, res;
-      setup(function() {
+      beforeEach(function() {
         v0 = new p5.Vector(2, 6, 9);
         v1 = new p5.Vector(2, 2, 3);
         res = p5.Vector.div(v0, v1);
@@ -916,7 +917,7 @@ suite('p5.Vector', function() {
 
     suite('p5.Vector.div(v, arr', function() {
       var v0, arr, res;
-      setup(function() {
+      beforeEach(function() {
         v0 = new p5.Vector(2, 6, 9);
         arr = [2, 2, 3];
         res = p5.Vector.div(v0, arr);
@@ -931,7 +932,7 @@ suite('p5.Vector', function() {
   });
 
   suite('dot', function() {
-    setup(function() {
+    beforeEach(function() {
       v.x = 1;
       v.y = 1;
       v.z = 1;
@@ -959,7 +960,7 @@ suite('p5.Vector', function() {
 
     suite('p5.Vector.dot(v, n)', function() {
       var v1, v2, res;
-      setup(function() {
+      beforeEach(function() {
         v1 = new p5.Vector(1, 1, 1);
         v2 = new p5.Vector(2, 3, 4);
         res = p5.Vector.dot(v1, v2);
@@ -977,7 +978,7 @@ suite('p5.Vector', function() {
 
   suite('cross', function() {
     var res;
-    setup(function() {
+    beforeEach(function() {
       v.x = 1;
       v.y = 1;
       v.z = 1;
@@ -998,7 +999,7 @@ suite('p5.Vector', function() {
 
     suite('p5.Vector.cross(v1, v2)', function() {
       var v1, v2, res;
-      setup(function() {
+      beforeEach(function() {
         v1 = new p5.Vector(3, 6, 9);
         v2 = new p5.Vector(1, 1, 1);
         res = p5.Vector.cross(v1, v2);
@@ -1023,7 +1024,7 @@ suite('p5.Vector', function() {
 
   suite('dist', function() {
     var b, c;
-    setup(function() {
+    beforeEach(function() {
       v.x = 0;
       v.y = 0;
       v.z = 1;
@@ -1050,7 +1051,7 @@ suite('p5.Vector', function() {
 
   suite('p5.Vector.dist(v1, v2)', function() {
     var v1, v2;
-    setup(function() {
+    beforeEach(function() {
       v1 = new p5.Vector(0, 0, 0);
       v2 = new p5.Vector(0, 3, 4);
     });
@@ -1066,7 +1067,7 @@ suite('p5.Vector', function() {
 
   suite('normalize', function() {
     suite('p5.Vector.prototype.normalize() [INSTANCE]', function() {
-      setup(function() {
+      beforeEach(function() {
         v = myp5.createVector(1, 1, 1);
       });
 
@@ -1097,7 +1098,7 @@ suite('p5.Vector', function() {
 
     suite('p5.Vector.normalize(v) [CLASS]', function() {
       var res;
-      setup(function() {
+      beforeEach(function() {
         v = myp5.createVector(1, 0, 0);
         res = p5.Vector.normalize(v);
       });
@@ -1131,7 +1132,7 @@ suite('p5.Vector', function() {
   suite('limit', function() {
     let v;
 
-    setup(function() {
+    beforeEach(function() {
       v = new p5.Vector(5, 5, 5);
     });
 
@@ -1197,7 +1198,7 @@ suite('p5.Vector', function() {
   suite('setMag', function() {
     let v;
 
-    setup(function() {
+    beforeEach(function() {
       v = new p5.Vector(1, 0, 0);
     });
 
@@ -1260,7 +1261,7 @@ suite('p5.Vector', function() {
   });
 
   suite('heading', function() {
-    setup(function() {
+    beforeEach(function() {
       v = myp5.createVector();
     });
 
@@ -1291,7 +1292,7 @@ suite('p5.Vector', function() {
       });
 
       suite('with `angleMode(DEGREES)`', function() {
-        setup(function() {
+        beforeEach(function() {
           myp5.angleMode(DEGREES);
         });
 
@@ -1361,7 +1362,7 @@ suite('p5.Vector', function() {
     // });
 
     suite('with x, y, z, amt', function() {
-      setup(function() {
+      beforeEach(function() {
         v.x = 0;
         v.y = 0;
         v.z = 0;
@@ -1396,7 +1397,7 @@ suite('p5.Vector', function() {
 
   suite('p5.Vector.lerp(v1, v2, amt)', function() {
     var res, v1, v2;
-    setup(function() {
+    beforeEach(function() {
       v1 = new p5.Vector(0, 0, 0);
       v2 = new p5.Vector(2, 2, 2);
       res = p5.Vector.lerp(v1, v2, 0.5);
@@ -1424,7 +1425,7 @@ suite('p5.Vector', function() {
 
   suite('v.slerp(w, amt)', function() {
     var w;
-    setup(function() {
+    beforeEach(function() {
       v.set(1, 2, 3);
       w = new p5.Vector(4, 6, 8);
     });
@@ -1476,7 +1477,7 @@ suite('p5.Vector', function() {
 
   suite('p5.Vector.slerp(v1, v2, amt)', function() {
     var res, v1, v2;
-    setup(function() {
+    beforeEach(function() {
       v1 = new p5.Vector(1, 0, 0);
       v2 = new p5.Vector(0, 0, 1);
       res = p5.Vector.slerp(v1, v2, 1/3);
@@ -1518,7 +1519,7 @@ suite('p5.Vector', function() {
 
   suite('p5.Vector.fromAngle(angle)', function() {
     var res, angle;
-    setup(function() {
+    beforeEach(function() {
       angle = Math.PI / 2;
       res = p5.Vector.fromAngle(angle);
     });
@@ -1531,7 +1532,7 @@ suite('p5.Vector', function() {
 
   suite('p5.Vector.random2D()', function() {
     var res;
-    setup(function() {
+    beforeEach(function() {
       res = p5.Vector.random2D();
     });
 
@@ -1542,7 +1543,7 @@ suite('p5.Vector', function() {
 
   suite('p5.Vector.random3D()', function() {
     var res;
-    setup(function() {
+    beforeEach(function() {
       res = p5.Vector.random3D();
     });
     test('should be a unit p5.Vector', function() {
@@ -1551,7 +1552,7 @@ suite('p5.Vector', function() {
   });
 
   suite('array', function() {
-    setup(function() {
+    beforeEach(function() {
       v = new p5.Vector(1, 23, 4);
     });
 
@@ -1578,7 +1579,12 @@ suite('p5.Vector', function() {
 
   suite('reflect', function() {
     suite('p5.Vector.prototype.reflect() [INSTANCE]', function() {
-      setup(function() {
+      let incoming_x, incoming_y, incoming_z, original_incoming;
+      let x_normal, y_normal, z_normal;
+      let x_bounce_incoming, x_bounce_outgoing,
+        y_bounce_incoming, y_bounce_outgoing,
+        z_bounce_incoming, z_bounce_outgoing;
+      beforeEach(function() {
         incoming_x = 1;
         incoming_y = 1;
         incoming_z = 1;
@@ -1649,7 +1655,14 @@ suite('p5.Vector', function() {
     });
 
     suite('p5.Vector.reflect() [CLASS]', function() {
-      setup(function() {
+      let incoming_x, incoming_y, incoming_z, original_incoming;
+      let x_target, y_target, z_target;
+      let x_normal, y_normal, z_normal;
+      let x_bounce_incoming, x_bounce_outgoing,
+        y_bounce_incoming, y_bounce_outgoing,
+        z_bounce_incoming, z_bounce_outgoing;
+
+      beforeEach(function() {
         incoming_x = 1;
         incoming_y = 1;
         incoming_z = 1;
@@ -1747,7 +1760,7 @@ suite('p5.Vector', function() {
     let v0;
     let v1;
 
-    setup(function() {
+    beforeEach(function() {
       v0 = new p5.Vector(0, 0, 0);
       v1 = new p5.Vector(1, 2, 3);
     });
@@ -1773,7 +1786,7 @@ suite('p5.Vector', function() {
     let v0;
     let v1;
 
-    setup(function() {
+    beforeEach(function() {
       v0 = new p5.Vector(0, 0, 0);
       v1 = new p5.Vector(1, 2, 3);
     });

@@ -1,3 +1,5 @@
+import p5 from '../../../src/app.js';
+
 suite('Mouse Events', function() {
   let myp5;
 
@@ -10,7 +12,7 @@ suite('Mouse Events', function() {
   let touchEvent1;
   let touchEvent2;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
@@ -36,12 +38,11 @@ suite('Mouse Events', function() {
         touchEvent2 = new TouchEvent('touchmove', {
           touches: [touchObj2]
         });
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 

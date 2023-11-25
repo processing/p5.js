@@ -1,31 +1,32 @@
+import p5 from '../../../src/app.js';
+
 suite('downloading animated gifs', function() {
   let myp5;
   let myGif;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
   let imagePath = 'unit/assets/nyan_cat.gif';
 
-  setup(function disableFileLoadError() {
+  beforeEach(function disableFileLoadError() {
     sinon.stub(p5, '_friendlyFileLoadError');
   });
 
-  teardown(function restoreFileLoadError() {
+  afterEach(function restoreFileLoadError() {
     p5._friendlyFileLoadError.restore();
   });
 
-  setup(function loadMyGif(done) {
+  beforeEach(function loadMyGif(done) {
     myp5.loadImage(imagePath, function(pImg) {
       myGif = pImg;
       done();

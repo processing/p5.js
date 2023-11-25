@@ -1,3 +1,5 @@
+import p5 from '../../../src/app.js';
+
 suite('DOM', function() {
   suite('p5.prototype.select', function() {
     /**
@@ -8,18 +10,17 @@ suite('DOM', function() {
     let myp5;
     let myp5Container;
 
-    setup(function(done) {
+    beforeEach(function() {
       myp5Container = document.createElement('div');
       document.body.appendChild(myp5Container);
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       }, myp5Container);
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (myp5Container && myp5Container.parentNode) {
         myp5Container.parentNode.removeChild(myp5Container);
@@ -138,7 +139,7 @@ suite('DOM', function() {
     let myp5;
     let myp5Container;
 
-    setup(function(done) {
+    beforeEach(function() {
       myp5Container = document.createElement('div');
       document.body.appendChild(myp5Container);
       new p5(function(p) {
@@ -157,7 +158,7 @@ suite('DOM', function() {
       }, myp5Container);
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (myp5Container && myp5Container.parentNode) {
         myp5Container.parentNode.removeChild(myp5Container);
@@ -232,7 +233,7 @@ suite('DOM', function() {
     let myp5;
     let myp5Container;
 
-    setup(function(done) {
+    beforeEach(function() {
       myp5Container = document.createElement('div');
       document.body.appendChild(myp5Container);
       new p5(function(p) {
@@ -240,12 +241,11 @@ suite('DOM', function() {
           // configure p5 to not add a canvas by default.
           p.noCanvas();
           myp5 = p;
-          done();
         };
       }, myp5Container);
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (myp5Container && myp5Container.parentNode) {
         myp5Container.parentNode.removeChild(myp5Container);
@@ -329,16 +329,15 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
@@ -367,16 +366,15 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
@@ -405,16 +403,15 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
@@ -444,16 +441,15 @@ suite('DOM', function() {
     let testElement;
     const imagePath = 'unit/assets/cat.jpg';
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
@@ -503,16 +499,15 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
@@ -546,16 +541,15 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
@@ -591,15 +585,14 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
@@ -630,15 +623,14 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
@@ -713,16 +705,15 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
@@ -853,16 +844,15 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
@@ -1033,16 +1023,15 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
@@ -1093,16 +1082,15 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
@@ -1147,16 +1135,15 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
       }
@@ -1234,16 +1221,15 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
@@ -1384,16 +1370,15 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
@@ -1459,16 +1444,15 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
       }
@@ -1525,16 +1509,15 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
@@ -1574,16 +1557,15 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
@@ -1624,16 +1606,15 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
@@ -1679,16 +1660,15 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
@@ -1728,16 +1708,15 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
@@ -1783,16 +1762,15 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
@@ -1861,16 +1839,15 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
@@ -1901,16 +1878,15 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);
@@ -1974,16 +1950,15 @@ suite('DOM', function() {
     let myp5;
     let testElement;
 
-    setup(function(done) {
+    beforeEach(function() {
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
-          done();
         };
       });
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.remove();
       if (testElement && testElement.parentNode) {
         testElement.parentNode.removeChild(testElement);

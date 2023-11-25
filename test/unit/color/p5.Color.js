@@ -1,23 +1,27 @@
+import p5 from '../../../src/app.js';
+
 suite('p5.Color', function() {
   var myp5;
 
-  setup(function(done) {
-    new p5(function(p) {
-      p.setup = function() {
-        myp5 = p;
-        done();
-      };
+  beforeEach(async function() {
+    await new Promise(resolve => {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          resolve();
+        };
+      });
     });
   });
 
-  teardown(function() {
+  afterEach(function() {
     myp5.remove();
   });
 
   var c;
 
   suite('p5.prototype.color(r,g,b)', function() {
-    setup(function() {
+    beforeEach(function() {
       c = myp5.color(255, 0, 102);
     });
     test('should create instance of p5.Color', function() {
@@ -44,7 +48,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.prototype.color("#rgb")', function() {
-    setup(function() {
+    beforeEach(function() {
       c = myp5.color('#f06');
     });
     test('should create instance of p5.Color', function() {
@@ -89,7 +93,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.prototype.color("#rgba")', function() {
-    setup(function() {
+    beforeEach(function() {
       c = myp5.color('#f016');
     });
     test('should create instance of p5.Color', function() {
@@ -126,7 +130,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.prototype.color("#rrggbb")', function() {
-    setup(function() {
+    beforeEach(function() {
       c = myp5.color('#ff0066');
     });
 
@@ -164,7 +168,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.prototype.color("#rrggbbaa")', function() {
-    setup(function() {
+    beforeEach(function() {
       c = myp5.color('#f01dab1e');
     });
 
@@ -202,7 +206,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.prototype.color("rgb(r,g,b)")', function() {
-    setup(function() {
+    beforeEach(function() {
       c = myp5.color('rgb(255,0,102)');
     });
     test('should create instance of p5.Color', function() {
@@ -253,7 +257,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.prototype.color("rgb(r%,g%,b%)")', function() {
-    setup(function() {
+    beforeEach(function() {
       c = myp5.color('rgb(100%, 0%, 40%)');
     });
     test('should create instance of p5.Color', function() {
@@ -310,7 +314,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.prototype.color("rgba(r,g,b,a)")', function() {
-    setup(function() {
+    beforeEach(function() {
       c = myp5.color('rgba(255,0,102,0.8)');
     });
 
@@ -362,7 +366,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.prototype.color("rgba(r%,g%,b%,a)")', function() {
-    setup(function() {
+    beforeEach(function() {
       c = myp5.color('rgba(100.0%,0.0%,40%,0.8)');
     });
 
@@ -432,7 +436,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.prototype.color("hsl(h, s%, l%)")', function() {
-    setup(function() {
+    beforeEach(function() {
       c = myp5.color('hsl(336, 100%, 50%)');
     });
     test('should create instance of p5.Color', function() {
@@ -444,7 +448,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.prototype.color("hsla(h, s%, l%, a)")', function() {
-    setup(function() {
+    beforeEach(function() {
       c = myp5.color('hsla(336, 100%, 50%, 0.8)');
     });
     test('should create instance of p5.Color', function() {
@@ -456,7 +460,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.prototype.color("hsb(h, s%, b%)")', function() {
-    setup(function() {
+    beforeEach(function() {
       c = myp5.color('hsb(336, 100%, 100%)');
     });
     test('should create instance of p5.Color', function() {
@@ -468,7 +472,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.prototype.color("hsba(h, s%, b%, a)")', function() {
-    setup(function() {
+    beforeEach(function() {
       c = myp5.color('hsba(336, 100%, 100%, 0.8)');
     });
     test('should create instance of p5.Color', function() {
@@ -480,7 +484,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.prototype.color("svgnamedcolor")', function() {
-    setup(function() {
+    beforeEach(function() {
       c = myp5.color('papayawhip');
     });
 
@@ -503,7 +507,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.prototype.color([])', function() {
-    setup(function() {
+    beforeEach(function() {
       c = myp5.color([255, 0, 102]);
     });
     test('should create instance of p5.Color', function() {
@@ -515,7 +519,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.prototype.color(r,g,b,a)', function() {
-    setup(function() {
+    beforeEach(function() {
       c = myp5.color(255, 0, 102, 204);
     });
     test('should create instance of p5.Color', function() {
@@ -567,7 +571,7 @@ suite('p5.Color', function() {
 
   // Color Mode
   suite('p5.Color in RGB mode with custom range', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.RGB, 1);
       c = myp5.color(1, 0, 0.4, 0.8);
     });
@@ -597,7 +601,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.Color in HSL mode', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.HSL);
       c = myp5.color(336, 100, 50);
     });
@@ -625,7 +629,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.Color in HSL mode with Alpha', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.HSL);
       c = myp5.color(336, 100, 50, 0.8);
     });
@@ -645,7 +649,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.Color in HSL mode with custom range', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.HSL, 100, 200, 300, 10);
       c = myp5.color(93.33, 200, 150, 8);
     });
@@ -683,7 +687,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.Color in HSL mode with RGB string', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.HSL, 360, 100, 100, 1);
       c = myp5.color('rgba(255, 0, 102, 0.8)');
     });
@@ -705,7 +709,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.Color in HSL mode with HSL string', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.HSL, 360, 100, 100, 1);
       c = myp5.color('hsla(336, 100%, 50%, 0.8)');
     });
@@ -727,7 +731,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.Color in HSL mode with HSB string', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.HSL, 360, 100, 100, 1);
       c = myp5.color('hsba(336, 100%, 100%, 0.8)');
     });
@@ -749,7 +753,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.Color in HSB mode', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.HSB);
       c = myp5.color(336, 100, 100);
     });
@@ -777,7 +781,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.Color in HSB mode with Alpha', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.HSB);
       c = myp5.color(336, 100, 100, 0.8);
     });
@@ -797,7 +801,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.Color in HSB mode with custom range', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.HSB, 100, 200, 300, 10);
       c = myp5.color(93.33, 200, 300, 8);
     });
@@ -819,7 +823,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.Color in HSB mode with RGB string', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.HSB, 360, 100, 100, 1);
       c = myp5.color('rgba(255, 0, 102, 0.8)');
     });
@@ -841,7 +845,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.Color in HSB mode with HSB string', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.HSB, 360, 100, 100, 1);
       c = myp5.color('hsba(336, 100%, 100%, 0.8)');
     });
@@ -863,7 +867,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.Color in HSB mode with HSL string', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.HSB, 360, 100, 100, 1);
       c = myp5.color('hsla(336, 100%, 50%, 0.8)');
     });
@@ -885,7 +889,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.Color in RGB mode with grayscale value', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.RGB);
       c = myp5.color(100);
     });
@@ -900,7 +904,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.Color in RGB mode with grayscale value and alpha', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.RGB);
       c = myp5.color(100, 70);
     });
@@ -915,7 +919,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.Color in HSB mode with grayscale value', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.HSB);
       c = myp5.color(39.3);
     });
@@ -930,7 +934,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.Color in HSB mode with grayscale value and alpha', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.HSB);
       c = myp5.color(39.3, 0.275);
     });
@@ -945,7 +949,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.Color in HSL mode with grayscale value', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.HSL);
       c = myp5.color(39.3);
     });
@@ -960,7 +964,7 @@ suite('p5.Color', function() {
   });
 
   suite('p5.Color in HSL mode with grayscale value and alpha', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.HSL);
       c = myp5.color(39.3, 0.275);
     });
@@ -977,7 +981,7 @@ suite('p5.Color', function() {
   suite('p5.Color.prototype.toString', function() {
     var colorStr;
 
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.RGB, 255, 255, 255, 255);
       c = myp5.color(128, 0, 128, 128);
       colorStr = c.toString();

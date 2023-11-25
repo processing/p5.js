@@ -1,3 +1,5 @@
+import p5 from '../../../src/app.js';
+
 suite('local storage', function() {
   var myp5;
   var myBoolean = false;
@@ -9,7 +11,7 @@ suite('local storage', function() {
 
   var hardCodedTypeID = 'p5TypeID';
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
@@ -21,12 +23,11 @@ suite('local storage', function() {
         myp5.storeItem('myString', myString);
         myp5.storeItem('myColor', myColor);
         myp5.storeItem('myVector', myVector);
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 

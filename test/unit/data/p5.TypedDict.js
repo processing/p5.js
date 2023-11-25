@@ -1,20 +1,21 @@
+import p5 from '../../../src/app.js';
+
 suite('Dictionary Objects', function() {
   var myp5;
   var stringDict;
   var numberDict;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
         stringDict = myp5.createStringDict('happy', 'coding');
         numberDict = myp5.createNumberDict(1, 2);
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 

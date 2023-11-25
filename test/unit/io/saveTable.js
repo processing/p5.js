@@ -1,33 +1,36 @@
+import p5 from '../../../src/app.js';
+
 suite('saveTable', function() {
   let validFile = 'unit/assets/csv.csv';
   let myp5;
   let myTable;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
-  setup(function disableFileLoadError() {
+  beforeEach(function disableFileLoadError() {
     sinon.stub(p5, '_friendlyFileLoadError');
   });
 
-  teardown(function restoreFileLoadError() {
+  afterEach(function restoreFileLoadError() {
     p5._friendlyFileLoadError.restore();
   });
 
-  setup(function loadMyTable(done) {
-    myp5.loadTable(validFile, 'csv', 'header', function(table) {
-      myTable = table;
-      done();
+  beforeEach(async function loadMyTable() {
+    await new Promise(resolve => {
+      myp5.loadTable(validFile, 'csv', 'header', function(table) {
+        myTable = table;
+        resolve();
+      });
     });
   });
 

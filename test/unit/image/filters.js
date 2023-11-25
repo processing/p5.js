@@ -1,7 +1,10 @@
+import p5 from '../../../src/app.js';
+
 suite('Filters', function() {
   var myp5;
   let img;
-  setup(function(done) {
+
+  beforeEach(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
@@ -15,12 +18,11 @@ suite('Filters', function() {
           }
         }
         img.updatePixels();
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterEach(function() {
     myp5.remove();
   });
 

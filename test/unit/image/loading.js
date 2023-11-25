@@ -1,3 +1,5 @@
+import p5 from '../../../src/app.js';
+
 /**
  * Expects an image file and a p5 instance with an image file loaded and drawn
  * and checks that they are exactly the same. Sends result to the callback.
@@ -28,11 +30,10 @@ var testImageRender = function(file, sketch) {
 suite('loading images', function() {
   var myp5;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
 
       // Make sure draw() exists so timing functions still run each frame
@@ -41,17 +42,17 @@ suite('loading images', function() {
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
   var imagePath = 'unit/assets/cat.jpg';
 
-  setup(function disableFileLoadError() {
+  beforeEach(function disableFileLoadError() {
     sinon.stub(p5, '_friendlyFileLoadError');
   });
 
-  teardown(function restoreFileLoadError() {
+  afterEach(function restoreFileLoadError() {
     p5._friendlyFileLoadError.restore();
   });
 
@@ -300,26 +301,25 @@ suite('loading images', function() {
 suite('loading animated gif images', function() {
   var myp5;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
   var imagePath = 'unit/assets/nyan_cat.gif';
 
-  setup(function disableFileLoadError() {
+  beforeEach(function disableFileLoadError() {
     sinon.stub(p5, '_friendlyFileLoadError');
   });
 
-  teardown(function restoreFileLoadError() {
+  afterEach(function restoreFileLoadError() {
     p5._friendlyFileLoadError.restore();
   });
 
@@ -421,27 +421,29 @@ suite('displaying images', function() {
   var imagePath = 'unit/assets/cat-with-hole.png';
   var chanNames = ['red', 'green', 'blue', 'alpha'];
 
-  setup(function(done) {
-    new p5(function(p) {
-      p.setup = function() {
-        myp5 = p;
-        myp5.pixelDensity(1);
-        myp5.loadImage(
-          imagePath,
-          function(img) {
-            pImg = img;
-            myp5.resizeCanvas(pImg.width, pImg.height);
-            done();
-          },
-          function() {
-            throw new Error('Error loading image');
-          }
-        );
-      };
+  beforeAll(async function() {
+    new Promise(resolve => {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          myp5.pixelDensity(1);
+          myp5.loadImage(
+            imagePath,
+            function(img) {
+              pImg = img;
+              myp5.resizeCanvas(pImg.width, pImg.height);
+              resolve();
+            },
+            function() {
+              throw new Error('Error loading image');
+            }
+          );
+        };
+      });
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
@@ -521,16 +523,15 @@ suite('displaying images', function() {
 suite('displaying images that use fit mode', function() {
   var myp5;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 

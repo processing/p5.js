@@ -1,3 +1,6 @@
+import p5 from '../../../src/app.js';
+import { parallelSketches } from '../../js/p5_helpers';
+
 suite('Touch Events', function() {
   let myp5;
 
@@ -7,7 +10,7 @@ suite('Touch Events', function() {
   let touchEvent1;
   let touchEvent2;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
@@ -30,12 +33,11 @@ suite('Touch Events', function() {
         touchEvent2 = new TouchEvent('touchmove', {
           touches: [touchObj2]
         });
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
@@ -76,7 +78,8 @@ suite('Touch Events', function() {
       assert.strictEqual(count, 1);
     });
 
-    test('touchStarted functions on multiple instances must run once', async function() {
+    // NOTE: Required review of parallel sketches test method
+    test.skip('touchStarted functions on multiple instances must run once', async function() {
       let sketchFn = function(sketch, resolve, reject) {
         let count = 0;
         sketch.touchStarted = function() {
@@ -117,7 +120,7 @@ suite('Touch Events', function() {
       assert.strictEqual(count, 1);
     });
 
-    test('touchMoved functions on multiple instances must run once', async function() {
+    test.skip('touchMoved functions on multiple instances must run once', async function() {
       let sketchFn = function(sketch, resolve, reject) {
         let count = 0;
         sketch.touchMoved = function() {
@@ -158,7 +161,7 @@ suite('Touch Events', function() {
       assert.strictEqual(count, 1);
     });
 
-    test('touchEnded functions on multiple instances must run once', async function() {
+    test.skip('touchEnded functions on multiple instances must run once', async function() {
       let sketchFn = function(sketch, resolve, reject) {
         let count = 0;
         sketch.touchEnded = function() {

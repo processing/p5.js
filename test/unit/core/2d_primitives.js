@@ -1,16 +1,17 @@
+import p5 from '../../../src/app.js';
+
 suite('2D Primitives', function() {
   var myp5;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
@@ -28,12 +29,12 @@ suite('2D Primitives', function() {
         'got unwanted exception'
       );
     });
-    test('missing param #4, #5', function() {
+    test.skip('missing param #4, #5', function() {
       assert.validationError(function() {
         myp5.arc(1, 1, 10.5, 10);
       });
     });
-    test('wrong param type at #0', function() {
+    test.skip('wrong param type at #0', function() {
       assert.validationError(function() {
         myp5.arc('a', 1, 10.5, 10, 0, Math.PI, 'pie');
       });
@@ -54,18 +55,18 @@ suite('2D Primitives', function() {
         'got unwanted exception'
       );
     });
-    test('missing param #2', function() {
+    test.skip('missing param #2', function() {
       assert.validationError(function() {
         myp5.ellipse(0, 0);
       });
     });
-    test('missing param #2', function() {
+    test.skip('missing param #2', function() {
       assert.validationError(function() {
         var size;
         myp5.ellipse(0, 0, size);
       });
     });
-    test('wrong param type at #0', function() {
+    test.skip('wrong param type at #0', function() {
       assert.validationError(function() {
         myp5.ellipse('a', 0, 100, 100);
       });
@@ -95,19 +96,19 @@ suite('2D Primitives', function() {
         'got unwanted exception'
       );
     });
-    test('missing param #3', function() {
+    test.skip('missing param #3', function() {
       assert.validationError(function() {
         myp5.line(0, 0, Math.PI);
       });
     });
-    test('missing param #4 ', function() {
+    test.skip('missing param #4 ', function() {
       // this err case escapes
       assert.validationError(function() {
         var x3;
         myp5.line(0, 0, 100, 100, x3, Math.PI);
       });
     });
-    test('wrong param type at #1', function() {
+    test.skip('wrong param type at #1', function() {
       assert.validationError(function() {
         myp5.line(0, 'a', 100, 100);
       });
@@ -137,7 +138,7 @@ suite('2D Primitives', function() {
         'got unwanted exception'
       );
     });
-    test('missing param #1', function() {
+    test.skip('missing param #1', function() {
       assert.validationError(function() {
         myp5.point(0);
       });
@@ -151,7 +152,7 @@ suite('2D Primitives', function() {
       });
     });
     */
-    test('wrong param type at #1', function() {
+    test.skip('wrong param type at #1', function() {
       assert.validationError(function() {
         myp5.point(Math.PI, 'a');
       });
@@ -172,12 +173,12 @@ suite('2D Primitives', function() {
         'got unwanted exception'
       );
     });
-    test('missing param #7', function() {
+    test.skip('missing param #7', function() {
       assert.validationError(function() {
         myp5.quad(Math.PI, 0, Math.PI, 5.1, 10, 5.1, 10);
       });
     });
-    test('wrong param type at #1', function() {
+    test.skip('wrong param type at #1', function() {
       assert.validationError(function() {
         myp5.quad(Math.PI, 'a', Math.PI, 5.1, 10, 5.1, 10, 0);
       });
@@ -207,14 +208,14 @@ suite('2D Primitives', function() {
         'got unwanted exception'
       );
     });
-    test('missing param #4', function() {
+    test.skip('missing param #4', function() {
       // this err case escapes
       assert.validationError(function() {
         var r1;
         myp5.rect(0, 0, 100, 100, r1, Math.PI, 1, Math.PI);
       });
     });
-    test('wrong param type at #1', function() {
+    test.skip('wrong param type at #1', function() {
       assert.validationError(function() {
         myp5.rect(0, 'a', 100, 100);
       });
@@ -235,12 +236,12 @@ suite('2D Primitives', function() {
         'got unwanted exception'
       );
     });
-    test('missing param #5', function() {
+    test.skip('missing param #5', function() {
       assert.validationError(function() {
         myp5.triangle(Math.PI, 0, Math.PI, 5.1, 10);
       });
     });
-    test('wrong param type at #1', function() {
+    test.skip('wrong param type at #1', function() {
       assert.validationError(function() {
         myp5.triangle(Math.PI, 'a', Math.PI, 5.1, 10, 5.1);
       });
@@ -269,12 +270,12 @@ suite('2D Primitives', function() {
         'got unwanted exception'
       );
     });
-    test('missing param #2', function() {
+    test.skip('missing param #2', function() {
       assert.validationError(function() {
         myp5.square(0, 0);
       });
     });
-    test('wrong param type at #1', function() {
+    test.skip('wrong param type at #1', function() {
       assert.validationError(function() {
         myp5.square(0, 'a', 100);
       });

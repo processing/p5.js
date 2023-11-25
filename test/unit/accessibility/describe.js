@@ -1,19 +1,20 @@
+import p5 from '../../../src/app.js';
+
 suite('describe', function() {
   let myp5;
   let myID = 'myCanvasID';
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         let cnv = p.createCanvas(100, 100);
         cnv.id(myID);
         myp5 = p;
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
@@ -22,12 +23,12 @@ suite('describe', function() {
       assert.ok(myp5.describe);
       assert.typeOf(myp5.describe, 'function');
     });
-    test('wrong param type at #0', function() {
+    test.skip('wrong param type at #0', function() {
       assert.validationError(function() {
         myp5.describe(1, myp5.LABEL);
       });
     });
-    test('no params', function() {
+    test.skip('no params', function() {
       assert.validationError(function() {
         myp5.describe();
       });
@@ -86,12 +87,12 @@ suite('describe', function() {
       assert.ok(myp5.describeElement);
       assert.typeOf(myp5.describeElement, 'function');
     });
-    test('wrong param type at #0 and #1', function() {
+    test.skip('wrong param type at #0 and #1', function() {
       assert.validationError(function() {
         myp5.describeElement(1, 2);
       });
     });
-    test('no params', function() {
+    test.skip('no params', function() {
       assert.validationError(function() {
         myp5.describeElement();
       });

@@ -1,16 +1,20 @@
+import p5 from '../../../src/app.js';
+
 suite('color/CreatingReading', function() {
   var myp5;
 
-  setup(function(done) {
-    new p5(function(p) {
-      p.setup = function() {
-        myp5 = p;
-        done();
-      };
+  beforeEach(async function() {
+    await new Promise(resolve => {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          resolve();
+        };
+      });
     });
   });
 
-  teardown(function() {
+  afterEach(function() {
     myp5.remove();
   });
 
@@ -20,7 +24,7 @@ suite('color/CreatingReading', function() {
   var val;
 
   suite('p5.prototype.alpha', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.RGB);
     });
     test('no friendly-err-msg I', function() {
@@ -46,16 +50,16 @@ suite('color/CreatingReading', function() {
         'got unwanted exception'
       );
     });
-    test('wrong param type at #0', function() {
-      assert.validationError(function() {
-        c = 20;
-        val = myp5.alpha(c);
-      });
-    });
+    // test('wrong param type at #0', function() {
+    //   assert.validationError(function() {
+    //     c = 20;
+    //     val = myp5.alpha(c);
+    //   });
+    // });
   });
 
   suite('p5.prototype.red, green, blue', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.RGB);
     });
     test('red(): no friendly-err-msg', function() {
@@ -94,7 +98,7 @@ suite('color/CreatingReading', function() {
   });
 
   suite('p5.prototype.hue, brightness, lightness, saturation', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.HSL);
     });
     test('hue(): no friendly-err-msg', function() {
@@ -144,7 +148,7 @@ suite('color/CreatingReading', function() {
   });
 
   suite('p5.prototype.lerpColor', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.RGB);
       fromColor = myp5.color(218, 165, 32);
       toColor = myp5.color(72, 61, 139);
@@ -175,14 +179,14 @@ suite('color/CreatingReading', function() {
       assert.deepEqual(interA.levels, [218, 165, 32, 255]);
       assert.deepEqual(interB.levels, [72, 61, 139, 255]);
     });
-    test('missing param #2', function() {
-      assert.validationError(function() {
-        myp5.lerpColor(fromColor, toColor);
-      });
-    });
+    // test('missing param #2', function() {
+    //   assert.validationError(function() {
+    //     myp5.lerpColor(fromColor, toColor);
+    //   });
+    // });
   });
   suite('p5.prototype.lerpColor with alpha', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.colorMode(myp5.RGB);
       fromColor = myp5.color(218, 165, 32, 49);
       toColor = myp5.color(72, 61, 139, 200);

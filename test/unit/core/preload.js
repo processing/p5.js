@@ -1,11 +1,13 @@
+import p5 from '../../../src/app.js';
+
 suite('preloads', () => {
   let preloadCache = null;
-  setup(() => {
+  beforeAll(() => {
     preloadCache = p5.prototype._promisePreloads;
     p5.prototype._promisePreloads = [...preloadCache];
   });
 
-  teardown(() => {
+  afterAll(() => {
     p5.prototype._promisePreloads = preloadCache;
   });
 

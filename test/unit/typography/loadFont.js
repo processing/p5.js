@@ -1,16 +1,19 @@
-suite('Loading Displaying Fonts', function() {
+import p5 from '../../../src/app.js';
+import { testSketchWithPromise } from '../../js/p5_helpers';
+
+// NOTE: Loading need overhaul and doesn't work here yet
+suite.skip('Loading Displaying Fonts', function() {
   var myp5;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 

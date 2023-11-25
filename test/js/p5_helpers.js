@@ -1,6 +1,6 @@
 /* eslint no-unused-vars: 0 */
 
-function promisedSketch(sketch_fn) {
+export function promisedSketch(sketch_fn) {
   var myInstance;
   var promise = new Promise(function(resolve, reject) {
     myInstance = new p5(function(sketch) {
@@ -14,7 +14,7 @@ function promisedSketch(sketch_fn) {
   return promise;
 }
 
-function testSketchWithPromise(name, sketch_fn) {
+export function testSketchWithPromise(name, sketch_fn) {
   var test_fn = function() {
     return promisedSketch(sketch_fn);
   };
@@ -76,7 +76,7 @@ function testUnMinified(name, test_fn) {
   return !window.IS_TESTING_MINIFIED_VERSION ? test(name, test_fn) : null;
 }
 
-function parallelSketches(sketch_fns) {
+export function parallelSketches(sketch_fns) {
   var setupPromises = [];
   var resultPromises = [];
   var endCallbacks = [];
