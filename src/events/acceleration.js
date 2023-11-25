@@ -656,60 +656,83 @@ p5.prototype._handleMotion = function() {
   }
 
   if (typeof context.deviceTurned === 'function') {
-    // The angles given by rotationX etc is from range -180 to 180.
-    // The following will convert them to 0 to 360 for ease of calculation
+    // The angles given by rotationX etc is from range [-180 to 180] or [-PI to PI].
+    // The following will convert them to [0 to 360] or [0 to 2*PI] for ease of calculation
     // of cases when the angles wrapped around.
     // _startAngleX will be converted back at the end and updated.
-    const wRX = this.rotationX + 180;
-    const wPRX = this.pRotationX + 180;
-    let wSAX = startAngleX + 180;
-    if ((wRX - wPRX > 0 && wRX - wPRX < 270) || wRX - wPRX < -270) {
+
+    // This is multiplied to all constant rotation values used in calculations
+    // to make the equations agnostic to the angleMode
+    let rotationMultipler = 1;
+    if(this._angleMode === constants.RADIANS) {
+      rotationMultipler = constants.DEG_TO_RAD;
+    }
+
+    const wRX = this.rotationX + (180 * rotationMultipler);
+    const wPRX = this.pRotationX + (180 * rotationMultipler);
+    let wSAX = startAngleX + (180 * rotationMultipler);
+    if (
+      (wRX - wPRX > 0 && wRX - wPRX < (270 * rotationMultipler)) ||
+      wRX - wPRX < (-270 * rotationMultipler)
+    ) {
       rotateDirectionX = 'clockwise';
-    } else if (wRX - wPRX < 0 || wRX - wPRX > 270) {
+    } else if (wRX - wPRX < 0 || wRX - wPRX > (270 * rotationMultipler)) {
       rotateDirectionX = 'counter-clockwise';
     }
     if (rotateDirectionX !== this.pRotateDirectionX) {
       wSAX = wRX;
     }
-    if (Math.abs(wRX - wSAX) > 90 && Math.abs(wRX - wSAX) < 270) {
+    if (
+      Math.abs(wRX - wSAX) > (90 * rotationMultipler) &&
+      Math.abs(wRX - wSAX) < (270 * rotationMultipler)
+    ) {
       wSAX = wRX;
       this._setProperty('turnAxis', 'X');
       context.deviceTurned();
     }
     this.pRotateDirectionX = rotateDirectionX;
-    startAngleX = wSAX - 180;
+    startAngleX = wSAX - (180 * rotationMultipler);
 
     // Y-axis is identical to X-axis except for changing some names.
-    const wRY = this.rotationY + 180;
-    const wPRY = this.pRotationY + 180;
-    let wSAY = startAngleY + 180;
-    if ((wRY - wPRY > 0 && wRY - wPRY < 270) || wRY - wPRY < -270) {
+    const wRY = this.rotationY + (180 * rotationMultipler);
+    const wPRY = this.pRotationY + (180 * rotationMultipler);
+    let wSAY = startAngleY + (180 * rotationMultipler);
+    if (
+      (wRY - wPRY > 0 && wRY - wPRY < (270 * rotationMultipler)) ||
+      wRY - wPRY < (-270 * rotationMultipler)
+    ) {
       rotateDirectionY = 'clockwise';
-    } else if (wRY - wPRY < 0 || wRY - this.pRotationY > 270) {
+    } else if (
+      wRY - wPRY < 0 ||
+      wRY - this.pRotationY > (270 * rotationMultipler)
+    ) {
       rotateDirectionY = 'counter-clockwise';
     }
     if (rotateDirectionY !== this.pRotateDirectionY) {
       wSAY = wRY;
     }
-    if (Math.abs(wRY - wSAY) > 90 && Math.abs(wRY - wSAY) < 270) {
+    if (
+      Math.abs(wRY - wSAY) > (90 * rotationMultipler) &&
+      Math.abs(wRY - wSAY) < (270 * rotationMultipler)
+    ) {
       wSAY = wRY;
       this._setProperty('turnAxis', 'Y');
       context.deviceTurned();
     }
     this.pRotateDirectionY = rotateDirectionY;
-    startAngleY = wSAY - 180;
+    startAngleY = wSAY - (180 * rotationMultipler);
 
     // Z-axis is already in the range 0 to 360
     // so no conversion is needed.
     if (
       (this.rotationZ - this.pRotationZ > 0 &&
-        this.rotationZ - this.pRotationZ < 270) ||
-      this.rotationZ - this.pRotationZ < -270
+        this.rotationZ - this.pRotationZ < (270 * rotationMultipler)) ||
+      this.rotationZ - this.pRotationZ < (-270 * rotationMultipler)
     ) {
       rotateDirectionZ = 'clockwise';
     } else if (
       this.rotationZ - this.pRotationZ < 0 ||
-      this.rotationZ - this.pRotationZ > 270
+      this.rotationZ - this.pRotationZ > (270 * rotationMultipler)
     ) {
       rotateDirectionZ = 'counter-clockwise';
     }
@@ -717,8 +740,8 @@ p5.prototype._handleMotion = function() {
       startAngleZ = this.rotationZ;
     }
     if (
-      Math.abs(this.rotationZ - startAngleZ) > 90 &&
-      Math.abs(this.rotationZ - startAngleZ) < 270
+      Math.abs(this.rotationZ - startAngleZ) > (90 * rotationMultipler) &&
+      Math.abs(this.rotationZ - startAngleZ) < (270 * rotationMultipler)
     ) {
       startAngleZ = this.rotationZ;
       this._setProperty('turnAxis', 'Z');
