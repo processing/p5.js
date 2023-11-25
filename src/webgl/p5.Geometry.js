@@ -291,8 +291,10 @@ p5.Geometry = class Geometry {
       const vertexIndices = {};
       const uniqueVertices = [];
 
+      const power = Math.pow(10, roundToPrecision);
+      const rounded = val => Math.round(val * power) / power;
       const getKey = vert =>
-        `${vert.x.toFixed(roundToPrecision)},${vert.y.toFixed(roundToPrecision)},${vert.z.toFixed(roundToPrecision)}`;
+        `${rounded(vert.x)},${rounded(vert.y)},${rounded(vert.z)}`;
 
       // loop through each vertex and add uniqueVertices
       for (let i = 0; i < vertices.length; i++) {
