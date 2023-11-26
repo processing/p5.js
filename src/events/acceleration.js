@@ -7,7 +7,6 @@
  */
 
 import p5 from '../core/main';
-import * as constants from '../core/constants';
 
 /**
  * The system variable deviceOrientation always contains the orientation of
@@ -620,13 +619,10 @@ p5.prototype.setShakeThreshold = function(val) {
 p5.prototype._ondeviceorientation = function(e) {
   this._updatePRotations();
 
-  let multiplier = 1;
-  if (this._angleMode === constants.RADIANS) {
-    multiplier = constants.PI / 180.0;
-  }
-  this._setProperty('rotationX', e.beta * multiplier);
-  this._setProperty('rotationY', e.gamma * multiplier);
-  this._setProperty('rotationZ', e.alpha * multiplier);
+  // Convert from degrees into current angle mode
+  this._setProperty('rotationX', this._fromDegrees(e.beta));
+  this._setProperty('rotationY', this._fromDegrees(e.gamma));
+  this._setProperty('rotationZ', this._fromDegrees(e.alpha));
   this._handleMotion();
 };
 p5.prototype._ondevicemotion = function(e) {
@@ -656,94 +652,74 @@ p5.prototype._handleMotion = function() {
   }
 
   if (typeof context.deviceTurned === 'function') {
-    // The angles given by rotationX etc is from range [-180 to 180] or [-PI to PI].
-    // The following will convert them to [0 to 360] or [0 to 2*PI] for ease of calculation
+    // The angles given by rotationX etc is from range [-180 to 180].
+    // The following will convert them to [0 to 360] for ease of calculation
     // of cases when the angles wrapped around.
     // _startAngleX will be converted back at the end and updated.
 
-    // This is multiplied to all constant rotation values used in calculations
-    // to make the equations agnostic to the angleMode
-    let rotationMultipler = 1;
-    if(this._angleMode === constants.RADIANS) {
-      rotationMultipler = constants.DEG_TO_RAD;
-    }
-
-    const wRX = this.rotationX + (180 * rotationMultipler);
-    const wPRX = this.pRotationX + (180 * rotationMultipler);
-    let wSAX = startAngleX + (180 * rotationMultipler);
-    if (
-      (wRX - wPRX > 0 && wRX - wPRX < (270 * rotationMultipler)) ||
-      wRX - wPRX < (-270 * rotationMultipler)
-    ) {
+    // Rotations are converted to degrees and all calculations are done in degrees
+    const wRX = this._toDegrees(this.rotationX) + 180;
+    const wPRX = this._toDegrees(this.pRotationX) + 180;
+    let wSAX = startAngleX + 180;
+    if ((wRX - wPRX > 0 && wRX - wPRX < 270) || wRX - wPRX < -270) {
       rotateDirectionX = 'clockwise';
-    } else if (wRX - wPRX < 0 || wRX - wPRX > (270 * rotationMultipler)) {
+    } else if (wRX - wPRX < 0 || wRX - wPRX > 270) {
       rotateDirectionX = 'counter-clockwise';
     }
     if (rotateDirectionX !== this.pRotateDirectionX) {
       wSAX = wRX;
     }
-    if (
-      Math.abs(wRX - wSAX) > (90 * rotationMultipler) &&
-      Math.abs(wRX - wSAX) < (270 * rotationMultipler)
-    ) {
+    if (Math.abs(wRX - wSAX) > 90 && Math.abs(wRX - wSAX) < 270) {
       wSAX = wRX;
       this._setProperty('turnAxis', 'X');
       context.deviceTurned();
     }
     this.pRotateDirectionX = rotateDirectionX;
-    startAngleX = wSAX - (180 * rotationMultipler);
+    startAngleX = wSAX - 180;
 
     // Y-axis is identical to X-axis except for changing some names.
-    const wRY = this.rotationY + (180 * rotationMultipler);
-    const wPRY = this.pRotationY + (180 * rotationMultipler);
-    let wSAY = startAngleY + (180 * rotationMultipler);
-    if (
-      (wRY - wPRY > 0 && wRY - wPRY < (270 * rotationMultipler)) ||
-      wRY - wPRY < (-270 * rotationMultipler)
-    ) {
+    const wRY = this._toDegrees(this.rotationY) + 180;
+    const wPRY = this._toDegrees(this.pRotationY) + 180;
+    let wSAY = startAngleY + 180;
+    if ((wRY - wPRY > 0 && wRY - wPRY < 270) || wRY - wPRY < -270) {
       rotateDirectionY = 'clockwise';
-    } else if (
-      wRY - wPRY < 0 ||
-      wRY - this.pRotationY > (270 * rotationMultipler)
-    ) {
+    } else if (wRY - wPRY < 0 || wRY - this.pRotationY > 270) {
       rotateDirectionY = 'counter-clockwise';
     }
     if (rotateDirectionY !== this.pRotateDirectionY) {
       wSAY = wRY;
     }
-    if (
-      Math.abs(wRY - wSAY) > (90 * rotationMultipler) &&
-      Math.abs(wRY - wSAY) < (270 * rotationMultipler)
-    ) {
+    if (Math.abs(wRY - wSAY) > 90 && Math.abs(wRY - wSAY) < 270) {
       wSAY = wRY;
       this._setProperty('turnAxis', 'Y');
       context.deviceTurned();
     }
     this.pRotateDirectionY = rotateDirectionY;
-    startAngleY = wSAY - (180 * rotationMultipler);
+    startAngleY = wSAY - 180;
 
     // Z-axis is already in the range 0 to 360
     // so no conversion is needed.
+    const rotZ = this._toDegrees(this.rotationZ);
+    const pRotZ = this._toDegrees(this.pRotationZ);
     if (
-      (this.rotationZ - this.pRotationZ > 0 &&
-        this.rotationZ - this.pRotationZ < (270 * rotationMultipler)) ||
-      this.rotationZ - this.pRotationZ < (-270 * rotationMultipler)
+      (rotZ - pRotZ > 0 && rotZ - pRotZ < 270) ||
+      rotZ - pRotZ < -270
     ) {
       rotateDirectionZ = 'clockwise';
     } else if (
-      this.rotationZ - this.pRotationZ < 0 ||
-      this.rotationZ - this.pRotationZ > (270 * rotationMultipler)
+      rotZ - pRotZ < 0 ||
+      rotZ - pRotZ > 270
     ) {
       rotateDirectionZ = 'counter-clockwise';
     }
     if (rotateDirectionZ !== this.pRotateDirectionZ) {
-      startAngleZ = this.rotationZ;
+      startAngleZ = rotZ;
     }
     if (
-      Math.abs(this.rotationZ - startAngleZ) > (90 * rotationMultipler) &&
-      Math.abs(this.rotationZ - startAngleZ) < (270 * rotationMultipler)
+      Math.abs(rotZ - startAngleZ) > 90 &&
+      Math.abs(rotZ - startAngleZ) < 270
     ) {
-      startAngleZ = this.rotationZ;
+      startAngleZ = rotZ;
       this._setProperty('turnAxis', 'Z');
       context.deviceTurned();
     }
