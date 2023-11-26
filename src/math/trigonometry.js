@@ -475,4 +475,19 @@ p5.prototype._fromRadians = function(angle) {
   return angle;
 };
 
+/**
+ * converts angles from DEGREES into the current angleMode
+ *
+ * @method _fromDegrees
+ * @private
+ * @param {Number} angle
+ * @returns {Number}
+ */
+p5.prototype._fromDegrees = function(angle) {
+  if (this._angleMode === constants.RADIANS) {
+    return angle * constants.DEG_TO_RAD;
+  }
+  return angle;
+};
+
 export default p5;
