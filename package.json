@@ -3,6 +3,7 @@
   "repository": "processing/p5.js",
   "scripts": {
     "build": "rollup -c",
+    "preview": "vite preview",
     "dev": "grunt yui browserify:dev connect:yui watch:quick",
     "docs": "documentation build ./src/app.js -o ./docs/data.json",
     "test": "vitest run",

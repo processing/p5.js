@@ -1,3 +1,5 @@
+import p5 from '../../../src/app.js';
+
 suite('p5.Camera', function() {
   var myp5;
   var myCam;
@@ -18,11 +20,7 @@ suite('p5.Camera', function() {
     };
   };
 
-  if (!window.Modernizr.webgl) {
-    return;
-  }
-
-  setup(function() {
+  beforeAll(function() {
     myp5 = new p5(function(p) {
       p.setup = function() {
         p.createCanvas(100, 100, p.WEBGL);
@@ -50,7 +48,7 @@ suite('p5.Camera', function() {
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
@@ -215,12 +213,12 @@ suite('p5.Camera', function() {
   });
 
   suite('Rotation with angleMode(DEGREES)', function() {
-    setup(function() {
+    beforeEach(function() {
       myp5.push();
       myp5.angleMode(myp5.DEGREES);
     });
 
-    teardown(function() {
+    afterEach(function() {
       myp5.pop();
     });
 

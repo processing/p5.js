@@ -128,7 +128,7 @@ suite('Environment', function() {
       let nextFrameCallback = () => {};
       let controlledP5;
 
-      setup(function() {
+      beforeEach(function() {
         clock = sinon.useFakeTimers(0);
         sinon.stub(window.performance, 'now', Date.now);
 
@@ -154,7 +154,7 @@ suite('Environment', function() {
         });
       });
 
-      teardown(function() {
+      afterEach(function() {
         clock.restore();
         window.performance.now.restore();
         window.requestAnimationFrame = prevRequestAnimationFrame;

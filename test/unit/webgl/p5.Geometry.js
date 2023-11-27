@@ -1,32 +1,30 @@
+import p5 from '../../../src/app.js';
+
 suite('p5.Geometry', function() {
   let myp5;
 
-  if (!window.Modernizr.webgl) {
-    return;
-  }
-
-  setup(function() {
+  beforeAll(function() {
     myp5 = new p5(function(p) {
       p.setup = function() {};
       p.draw = function() {};
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
   suite('generating edge geometry', function() {
     let geom;
 
-    setup(function() {
+    beforeEach(function() {
       geom = new p5.Geometry();
       sinon.spy(geom, '_addCap');
       sinon.spy(geom, '_addJoin');
       sinon.spy(geom, '_addSegment');
     });
 
-    teardown(function() {
+    afterEach(function() {
       geom._addCap.restore();
       geom._addJoin.restore();
       geom._addSegment.restore();

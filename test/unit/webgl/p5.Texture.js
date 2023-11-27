@@ -1,3 +1,5 @@
+import p5 from '../../../src/app.js';
+
 suite('p5.Texture', function() {
   var myp5;
   var texImg1;
@@ -7,12 +9,7 @@ suite('p5.Texture', function() {
   var imgElementPowerOfTwo;
   var canvas;
 
-  if (!window.Modernizr.webgl) {
-    //assert(false, 'could not run gl tests');
-    return;
-  }
-
-  setup(function(done) {
+  beforeAll(function(done) {
     myp5 = new p5(function(p) {
       p.preload = function() {
         // texImg2 must have powerOfTwo dimensions
@@ -47,7 +44,7 @@ suite('p5.Texture', function() {
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 

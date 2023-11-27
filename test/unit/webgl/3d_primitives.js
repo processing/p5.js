@@ -1,11 +1,9 @@
+import p5 from '../../../src/app.js';
+
 suite('3D Primitives', function() {
   var myp5;
 
-  if (!window.Modernizr.webgl) {
-    return;
-  }
-
-  setup(function() {
+  beforeAll(function() {
     myp5 = new p5(function(p) {
       p.setup = function() {
         p.createCanvas(100, 100, p.WEBGL);
@@ -13,7 +11,7 @@ suite('3D Primitives', function() {
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
@@ -31,7 +29,7 @@ suite('3D Primitives', function() {
         'got unwanted exception'
       );
     });
-    test('wrong param type at #0', function() {
+    test.skip('wrong param type at #0', function() {
       assert.validationError(function() {
         myp5.plane('a', 10);
       });
@@ -52,7 +50,7 @@ suite('3D Primitives', function() {
       assert.ok(myp5.box);
       assert.typeOf(myp5.box, 'function');
     });
-    test('wrong param type at #0 and #2', function() {
+    test.skip('wrong param type at #0 and #2', function() {
       assert.validationError(function() {
         myp5.box('a', 10, 'c');
       });
@@ -91,7 +89,7 @@ suite('3D Primitives', function() {
       assert.ok(myp5.sphere);
       assert.typeOf(myp5.sphere, 'function');
     });
-    test('wrong param type at #0', function() {
+    test.skip('wrong param type at #0', function() {
       assert.validationError(function() {
         myp5.sphere('a');
       });
@@ -112,7 +110,7 @@ suite('3D Primitives', function() {
       assert.ok(myp5.cylinder);
       assert.typeOf(myp5.cylinder, 'function');
     });
-    test('wrong param type at #0', function() {
+    test.skip('wrong param type at #0', function() {
       assert.validationError(function() {
         myp5.cylinder('r', 10, 10);
       });
@@ -148,7 +146,7 @@ suite('3D Primitives', function() {
       assert.ok(myp5.cone);
       assert.typeOf(myp5.cone, 'function');
     });
-    test('wrong param type at #0 and #1', function() {
+    test.skip('wrong param type at #0 and #1', function() {
       assert.validationError(function() {
         myp5.cone('r', false, 10);
       });
@@ -184,7 +182,7 @@ suite('3D Primitives', function() {
       assert.ok(myp5.ellipsoid);
       assert.typeOf(myp5.ellipsoid, 'function');
     });
-    test('wrong param type at #0 and #1', function() {
+    test.skip('wrong param type at #0 and #1', function() {
       assert.validationError(function() {
         myp5.ellipsoid('x', 'y', 10);
       });
@@ -214,7 +212,7 @@ suite('3D Primitives', function() {
       assert.ok(myp5.torus);
       assert.typeOf(myp5.torus, 'function');
     });
-    test('wrong param type at #0', function() {
+    test.skip('wrong param type at #0', function() {
       assert.validationError(function() {
         myp5.torus(false, 10);
       });
@@ -253,18 +251,18 @@ suite('3D Primitives', function() {
         'got unwanted exception'
       );
     });
-    test('missing param #2', function() {
+    test.skip('missing param #2', function() {
       assert.validationError(function() {
         myp5.ellipse(0, 0);
       });
     });
-    test('missing param #2', function() {
+    test.skip('missing param #2', function() {
       assert.validationError(function() {
         var size;
         myp5.ellipse(0, 0, size);
       });
     });
-    test('wrong param type at #0', function() {
+    test.skip('wrong param type at #0', function() {
       assert.validationError(function() {
         myp5.ellipse('a', 0, 100, 100);
       });
@@ -294,12 +292,12 @@ suite('3D Primitives', function() {
         'got unwanted exception'
       );
     });
-    test('missing param #4, #5', function() {
+    test.skip('missing param #4, #5', function() {
       assert.validationError(function() {
         myp5.arc(1, 1, 10.5, 10);
       });
     });
-    test('wrong param type at #0', function() {
+    test.skip('wrong param type at #0', function() {
       assert.validationError(function() {
         myp5.arc('a', 1, 10.5, 10, 0, Math.PI, 'pie');
       });

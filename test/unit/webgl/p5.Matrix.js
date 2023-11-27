@@ -1,3 +1,5 @@
+import p5 from '../../../src/app.js';
+
 /* eslint-disable indent */
 var mat4 = [
    1,  2,  3,  4,
@@ -23,16 +25,15 @@ var mat3 = [
 suite('p5.Matrix', function() {
   var myp5;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 

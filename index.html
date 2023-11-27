@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>P5 test</title>
+  <meta http-equiv="pragma" content="no-cache" />
+  <meta http-equiv="cache-control" content="no-cache" />
+  <meta charset="utf-8">
+
+  <style>
+  body{
+    margin:0;
+    overflow: hidden;
+  }
+  </style>
+</head>
+<body>
+<script type="module">
+import p5 from './src/app.js';
+
+const sketch = function(p){
+  p.setup = function(){
+    p.createCanvas(200, 200, p.WEBGL);
+  };
+
+  p.draw = function(){
+    p.background(200);
+    p.circle(100, 100, 50);
+  };
+};
+
+new p5(sketch);
+</script>
+</body>
+</html>

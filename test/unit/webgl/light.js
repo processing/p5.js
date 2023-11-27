@@ -1,11 +1,9 @@
+import p5 from '../../../src/app.js';
+
 suite('light', function() {
   var myp5;
 
-  if (!window.Modernizr.webgl) {
-    return;
-  }
-
-  setup(function() {
+  beforeAll(function() {
     myp5 = new p5(function(p) {
       p.setup = function() {
         p.createCanvas(100, 100, p.WEBGL);
@@ -13,7 +11,7 @@ suite('light', function() {
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 

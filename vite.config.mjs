@@ -76,5 +76,5 @@ export default defineConfig({
       name: 'chrome'
     }
   },
-  plugins: [glsl()]
+  plugins: []
 });
