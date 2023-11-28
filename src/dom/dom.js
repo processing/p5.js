@@ -3254,8 +3254,8 @@ p5.Element.prototype.size = function (w, h) {
     let aW = w;
     let aH = h;
     const AUTO = p5.prototype.AUTO;
-    let originalWidth = aW;
-    let originalHeight = aH;
+    let styleWidth= null;
+    let styleHeight = null;
     if (aW !== AUTO || aH !== AUTO) {
       if (aW === AUTO) {
         aW = h * this.width / this.height;
@@ -3274,25 +3274,31 @@ p5.Element.prototype.size = function (w, h) {
         this.elt.setAttribute('height', aH * this._pInst._pixelDensity);
         this.elt.style.width = aW + 'px';
         this.elt.style.height = aH + 'px';
+        this.elt.style.width = styleWidth;
+        this.elt.style.height = styleHeight;
         this._pInst.scale(this._pInst._pixelDensity, this._pInst._pixelDensity);
         for (prop in j) {
           this.elt.getContext('2d')[prop] = j[prop];
         }
       } else {
+        styleWidth = aW + 'px';
+        styleHeight = aH + 'px';
         this.elt.style.width = aW + 'px';
         this.elt.style.height = aH + 'px';
-        this.elt.width = aW;
-        this.elt.height = aH;
       }
 
-      originalWidth = aW;
-      originalHeight = aH;
+      this.elt.width = styleWidth; // Set elt.width to the recorded value
+      this.elt.height = styleHeight; // Set elt.height to the recorded value
+
+      
+      this.width = aW;
+      this.height = aH;
 
       if (this._pInst && this._pInst._curElement) {
         // main canvas associated with p5 instance
         if (this._pInst._curElement.elt === this.elt) {
-          this._pInst._setProperty('width', originalWidth);
-          this._pInst._setProperty('height', originalHeight);
+          this._pInst._setProperty('width', aW);
+          this._pInst._setProperty('height', aH);
         }
       }
     }
