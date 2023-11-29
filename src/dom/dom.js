@@ -3254,7 +3254,6 @@ p5.Element.prototype.size = function (w, h) {
     let aW = w;
     let aH = h;
     const AUTO = p5.prototype.AUTO;
-    
     if (aW !== AUTO || aH !== AUTO) {
       if (aW === AUTO) {
         aW = h * this.width / this.height;
@@ -3273,7 +3272,6 @@ p5.Element.prototype.size = function (w, h) {
         this.elt.setAttribute('height', aH * this._pInst._pixelDensity);
         this.elt.style.width = aW + 'px';
         this.elt.style.height = aH + 'px';
-        
         this._pInst.scale(this._pInst._pixelDensity, this._pInst._pixelDensity);
         for (prop in j) {
           this.elt.getContext('2d')[prop] = j[prop];
@@ -3284,11 +3282,8 @@ p5.Element.prototype.size = function (w, h) {
         this.elt.width = aW;
         this.elt.height = aH;
       }
-
-      
       this.width = aW;
       this.height = aH;
-
       if (this._pInst && this._pInst._curElement) {
         // main canvas associated with p5 instance
         if (this._pInst._curElement.elt === this.elt) {
