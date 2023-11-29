@@ -103,7 +103,7 @@ p5.Geometry = class Geometry {
    * let points = [];
    *
    * function setup() {
-   *   createCanvas(600, 600, WEBGL);
+   *   createCanvas(100, 100, WEBGL);
    *   points.push(new p5.Vector(-1, -1, 0), new p5.Vector(-1, 1, 0),
    *     new p5.Vector(1, -1, 0), new p5.Vector(-1, -1, 0));
    *   buildShape01();
