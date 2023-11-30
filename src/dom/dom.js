@@ -3282,15 +3282,13 @@ p5.Element.prototype.size = function (w, h) {
         this.elt.width = aW;
         this.elt.height = aH;
       }
-
-      this.width = this.elt.offsetWidth;
-      this.height = this.elt.offsetHeight;
-
+      this.width = aW;
+      this.height = aH;
       if (this._pInst && this._pInst._curElement) {
         // main canvas associated with p5 instance
         if (this._pInst._curElement.elt === this.elt) {
-          this._pInst._setProperty('width', this.elt.offsetWidth);
-          this._pInst._setProperty('height', this.elt.offsetHeight);
+          this._pInst._setProperty('width', aW);
+          this._pInst._setProperty('height', aH);
         }
       }
     }
