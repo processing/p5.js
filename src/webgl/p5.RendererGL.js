@@ -1095,6 +1095,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this.filterShader.setUniform('tex0', target);
         this._pInst.clear();
         this._pInst.shader(this.filterShader);
+        this._pInst.noLights();
         this._pInst.rect(-target.width / 2,
           -target.height / 2, target.width, target.height);
       });
@@ -1105,6 +1106,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this.filterShader.setUniform('tex0', tmp);
         this._pInst.clear();
         this._pInst.shader(this.filterShader);
+        this._pInst.noLights();
         this._pInst.rect(-target.width / 2,
           -target.height / 2, target.width, target.height);
       });
@@ -1122,6 +1124,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         // filterParameter uniform only used for POSTERIZE, and THRESHOLD
         // but shouldn't hurt to always set
         this.filterShader.setUniform('filterParameter', filterParameter);
+        this._pInst.noLights();
         this._pInst.rect(-target.width / 2, -target.height / 2,
           target.width, target.height);
       });
