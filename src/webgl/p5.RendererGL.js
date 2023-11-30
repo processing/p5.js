@@ -554,6 +554,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.executeRotateAndMove = false;
 
     this.specularShader = undefined;
+    this.diffusedShader = undefined;
     this._defaultLightShader = undefined;
     this._defaultImmediateModeShader = undefined;
     this._defaultNormalShader = undefined;
@@ -1928,16 +1929,20 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     let smallWidth = 200;
     let width = smallWidth;
     let height = Math.floor(smallWidth * (input.height / input.width));
-    newFramebuffer = this._pInst.createFramebuffer();
+    newFramebuffer = this._pInst.createFramebuffer({
+      width, height, density: 1
+    });
     // create framebuffer is like making a new sketch, all functions on main
     // sketch it would be available on framebuffer
-    newFramebuffer.draw(() => {
-      let irradiance = this._pInst.createShader(
+    if (!this.diffusedShader) {
+      this.diffusedShader = this._pInst.createShader(
         defaultShaders.imageLightVert,
         defaultShaders.imageLightDiffusedFrag
       );
-      this._pInst.shader(irradiance);
-      irradiance.setUniform('environmentMap', input);
+    }
+    newFramebuffer.draw(() => {
+      this._pInst.shader(this.diffusedShader);
+      this.diffusedShader.setUniform('environmentMap', input);
       this._pInst.noStroke();
       this._pInst.rectMode(constants.CENTER);
       this._pInst.noLights();
@@ -1966,9 +1971,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     const size = 512;
     let tex;
     const levels = [];
-    const framebuffer = this._pInst.createFramebuffer();
+    const framebuffer = this._pInst.createFramebuffer({
+      width: size, height: size, density: 1
+    });
     let count = Math.log(size) / Math.log(2);
-    framebuffer.pixelDensity(1);
     if (!this.specularShader) {
       this.specularShader = this._pInst.createShader(
         defaultShaders.imageLightVert,
