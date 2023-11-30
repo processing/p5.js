@@ -1144,6 +1144,7 @@ p5.prototype.noLights = function(...args) {
   this._assert3d('noLights');
   p5._validateParameters('noLights', args);
 
+  this._renderer.activeImageLight = null;
   this._renderer._enableLighting = false;
 
   this._renderer.ambientLightColors.length = 0;

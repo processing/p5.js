@@ -480,10 +480,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.activeImageLight = null;
     // If activeImageLight property is Null, diffusedTextures,
     // specularTextures are Empty.
-    // Else, it maps a p5.Image used by imageLight() to a p5.Graphics.
-    // p5.Graphics for this are calculated in getDiffusedTexture function
+    // Else, it maps a p5.Image used by imageLight() to a p5.framebuffer.
+    // p5.framebuffer for this are calculated in getDiffusedTexture function
     this.diffusedTextures = new Map();
-    // p5.Graphics for this are calculated in getSpecularTexture function
+    // p5.framebuffer for this are calculated in getSpecularTexture function
     this.specularTextures = new Map();
 
     this.drawMode = constants.FILL;
@@ -553,6 +553,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.executeZoom = false;
     this.executeRotateAndMove = false;
 
+    this.specularShader = undefined;
+    this.diffusedShader = undefined;
     this._defaultLightShader = undefined;
     this._defaultImmediateModeShader = undefined;
     this._defaultNormalShader = undefined;
@@ -1917,7 +1919,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     *  To create a blurry image from the input non blurry img, if it doesn't already exist
     *  Add it to the diffusedTexture map,
     *  Returns the blurry image
-    *  maps a p5.Image used by imageLight() to a p5.Graphics
+    *  maps a p5.Image used by imageLight() to a p5.Framebuffer
    */
   getDiffusedTexture(input) {
     // if one already exists for a given input image
@@ -1925,25 +1927,32 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       return this.diffusedTextures.get(input);
     }
     // if not, only then create one
-    let newGraphic; // maybe switch to framebuffer
+    let newFramebuffer;
     // hardcoded to 200px, because it's going to be blurry and smooth
     let smallWidth = 200;
     let width = smallWidth;
     let height = Math.floor(smallWidth * (input.height / input.width));
-    newGraphic = this._pInst.createGraphics(width, height, constants.WEBGL);
-    // create graphics is like making a new sketch, all functions on main
-    // sketch it would be available on graphics
-    let irradiance = newGraphic.createShader(
-      defaultShaders.imageLightVert,
-      defaultShaders.imageLightDiffusedFrag
-    );
-    newGraphic.shader(irradiance);
-    irradiance.setUniform('environmentMap', input);
-    newGraphic.noStroke();
-    newGraphic.rectMode(newGraphic.CENTER);
-    newGraphic.rect(0, 0, newGraphic.width, newGraphic.height);
-    this.diffusedTextures.set(input, newGraphic);
-    return newGraphic;
+    newFramebuffer = this._pInst.createFramebuffer({
+      width, height, density: 1
+    });
+    // create framebuffer is like making a new sketch, all functions on main
+    // sketch it would be available on framebuffer
+    if (!this.diffusedShader) {
+      this.diffusedShader = this._pInst.createShader(
+        defaultShaders.imageLightVert,
+        defaultShaders.imageLightDiffusedFrag
+      );
+    }
+    newFramebuffer.draw(() => {
+      this._pInst.shader(this.diffusedShader);
+      this.diffusedShader.setUniform('environmentMap', input);
+      this._pInst.noStroke();
+      this._pInst.rectMode(constants.CENTER);
+      this._pInst.noLights();
+      this._pInst.rect(0, 0, width, height);
+    });
+    this.diffusedTextures.set(input, newFramebuffer);
+    return newFramebuffer;
   }
 
   /*
@@ -1965,31 +1974,38 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     const size = 512;
     let tex;
     const levels = [];
-    const graphic = this._pInst.createGraphics(size, size, constants.WEBGL);
+    const framebuffer = this._pInst.createFramebuffer({
+      width: size, height: size, density: 1
+    });
     let count = Math.log(size) / Math.log(2);
-    graphic.pixelDensity(1);
+    if (!this.specularShader) {
+      this.specularShader = this._pInst.createShader(
+        defaultShaders.imageLightVert,
+        defaultShaders.imageLightSpecularFrag
+      );
+    }
     // currently only 8 levels
-    // This loop calculates 8 graphics of varying size of canvas
+    // This loop calculates 8 framebuffers of varying size of canvas
     // and corresponding different roughness levels.
     // Roughness increases with the decrease in canvas size,
     // because rougher surfaces have less detailed/more blurry reflections.
     for (let w = size; w >= 1; w /= 2) {
-      graphic.resizeCanvas(w, w);
+      framebuffer.resize(w, w);
       let currCount = Math.log(w) / Math.log(2);
       let roughness = 1 - currCount / count;
-      let myShader = graphic.createShader(
-        defaultShaders.imageLightVert,
-        defaultShaders.imageLightSpecularFrag
-      );
-      graphic.shader(myShader);
-      graphic.clear();
-      myShader.setUniform('environmentMap', input);
-      myShader.setUniform('roughness', roughness);
-      graphic.noStroke();
-      graphic.plane(w, w);
-      levels.push(graphic.get().drawingContext.getImageData(0, 0, w, w));
+      framebuffer.draw(() => {
+        this._pInst.shader(this.specularShader);
+        this._pInst.clear();
+        this.specularShader.setUniform('environmentMap', input);
+        this.specularShader.setUniform('roughness', roughness);
+        this._pInst.noStroke();
+        this._pInst.noLights();
+        this._pInst.plane(w, w);
+      });
+      levels.push(framebuffer.get().drawingContext.getImageData(0, 0, w, w));
     }
-    graphic.remove();
+    // Free the Framebuffer
+    framebuffer.remove();
     tex = new MipmapTexture(this, levels, {});
     this.specularTextures.set(input, tex);
     return tex;
