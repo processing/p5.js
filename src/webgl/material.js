@@ -208,7 +208,7 @@ p5.prototype.createShader = function (vertSrc, fragSrc) {
  *
  * The fragment shader receives some uniforms:
  * - `sampler2D tex0`, which contains the canvas contents as a texture
-* - `vec2 canvasSize`, which is the p5 width and height of the canvas (not including pixel density)
+ * - `vec2 canvasSize`, which is the p5 width and height of the canvas (not including pixel density)
  * - `vec2 texelSize`, which is the size of a physical pixel including pixel density (`1.0/(width*density)`, `1.0/(height*density)`)
  *
  * For more info about filters and shaders, see Adam Ferriss' <a href="https://github.com/aferriss/p5jsShaderExamples">repo of shader examples</a>
