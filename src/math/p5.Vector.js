@@ -112,17 +112,23 @@ p5.Vector = class {
     }
     /**
      * The x component of the vector
-     * @property x {Number}
+     * @type {Number}
+     * @property x
+     * @name x
      */
     this.x = x;
     /**
      * The y component of the vector
-     * @property y {Number}
+     * @type {Number}
+     * @property y
+     * @name y
      */
     this.y = y;
     /**
      * The z component of the vector
-     * @property z {Number}
+     * @type {Number}
+     * @property z
+     * @name z
      */
     this.z = z;
   }

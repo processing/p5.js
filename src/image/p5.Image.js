@@ -88,7 +88,9 @@ p5.Image = class {
   constructor(width, height) {
     /**
      * Image width.
+     * @type {Number}
      * @property {Number} width
+     * @name width
      * @readOnly
      * @example
      * <div>
@@ -114,7 +116,9 @@ p5.Image = class {
     this.width = width;
     /**
      * Image height.
-     * @property {Number} height
+     * @type {Number}
+     * @property height
+     * @name height
      * @readOnly
      * @example
      * <div>
@@ -171,6 +175,7 @@ p5.Image = class {
      * called after any changes are made.
      *
      * @property {Number[]} pixels
+     * @name pixels
      * @example
      * <div>
      * <code>

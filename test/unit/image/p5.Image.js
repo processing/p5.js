@@ -122,4 +122,23 @@ suite('p5.Image', function() {
       });
     });
   });
+
+  suite('p5.Graphics.get()', function() {
+    for (const density of [1, 2]) {
+      test(`width and height match at pixel density ${density}`, function() {
+        const g = myp5.createGraphics(10, 10);
+        g.pixelDensity(density);
+        g.rect(2, 2, 5, 5);
+
+        const img = g.get();
+        assert.equal(g.width, img.width);
+        assert.equal(g.height, img.height);
+        assert.equal(g.pixelDensity(), img.pixelDensity());
+
+        g.loadPixels();
+        img.loadPixels();
+        assert.deepEqual([...g.pixels], [...img.pixels]);
+      });
+    }
+  });
 });

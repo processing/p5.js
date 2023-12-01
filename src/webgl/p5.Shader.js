@@ -114,6 +114,18 @@ p5.Shader = class {
    * @param {p5|p5.Graphics} context The graphic or instance to copy this shader to.
    * Pass `window` if you need to copy to the main canvas.
    * @returns {p5.Shader} A new shader on the target context.
+   *
+   * @example
+   * <div class='norender notest'>
+   * <code>
+   * let graphic = createGraphics(200, 200, WEBGL);
+   * let graphicShader = graphic.createShader(vert, frag);
+   * graphic.shader(graphicShader); // Use graphicShader on the graphic
+   *
+   * let mainShader = graphicShader.copyToContext(window);
+   * shader(mainShader); // Use `mainShader` on the main canvas
+   * </code>
+   * </div>
    */
   copyToContext(context) {
     const shader = new p5.Shader(

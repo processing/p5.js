@@ -9,29 +9,34 @@
 import p5 from '../core/main';
 
 /**
- * Sets the current alignment for drawing text. Accepts two
- * arguments: horizAlign (LEFT, CENTER, or RIGHT) and
- * vertAlign (TOP, BOTTOM, CENTER, or BASELINE).
+ * Sets the way text is aligned when <a href="#/p5/text">text()</a> is called.
  *
- * The horizAlign parameter is in reference to the x value
- * of the <a href="#/p5/text">text()</a> function, while the vertAlign parameter
- * is in reference to the y value.
+ * By default, calling `text('hi', 10, 20)` places the bottom-left corner of
+ * the text's bounding box at (10, 20).
  *
- * So if you write textAlign(LEFT), you are aligning the left
- * edge of your text to the x value you give in <a href="#/p5/text">text()</a>.
- * If you write textAlign(RIGHT, TOP), you are aligning the right edge
- * of your text to the x value and the top edge of the text
- * to the y value.
+ * The first parameter, `horizAlign`, changes the way
+ * <a href="#/p5/text">text()</a> interprets x-coordinates. By default, the
+ * x-coordinate sets the left edge of the bounding box. `textAlign()` accepts
+ * the following values for `horizAlign`: `LEFT`, `CENTER`, or `RIGHT`.
+ *
+ * The second parameter, `vertAlign`, is optional. It changes the way
+ * <a href="#/p5/text">text()</a> interprets y-coordinates. By default, the
+ * y-coordinate sets the bottom edge of the bounding box. `textAlign()`
+ * accepts the following values for `vertAlign`: `TOP`, `BOTTOM`, `CENTER`,
+ * or `BASELINE`.
  *
  * @method textAlign
  * @param {Constant} horizAlign horizontal alignment, either LEFT,
- *                            CENTER, or RIGHT
+ *                            CENTER, or RIGHT.
  * @param {Constant} [vertAlign] vertical alignment, either TOP,
- *                            BOTTOM, CENTER, or BASELINE
+ *                            BOTTOM, CENTER, or BASELINE.
  * @chainable
  * @example
  * <div>
  * <code>
+ * strokeWeight(0.5);
+ * line(50, 0, 50, 100);
+ *
  * textSize(16);
  * textAlign(RIGHT);
  * text('ABCD', 50, 30);
@@ -39,35 +44,32 @@ import p5 from '../core/main';
  * text('EFGH', 50, 50);
  * textAlign(LEFT);
  * text('IJKL', 50, 70);
- * describe(`Letters ABCD displayed at top left, EFGH at center, and
- *   IJKL at bottom right.`);
+ *
+ * describe('The letters ABCD displayed at top-left, EFGH at center, and IJKL at bottom-right. A vertical line divides the canvas in half.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * textSize(16);
  * strokeWeight(0.5);
  *
  * line(0, 12, width, 12);
  * textAlign(CENTER, TOP);
- * text('TOP', 0, 12, width);
+ * text('TOP', 50, 12);
  *
  * line(0, 37, width, 37);
  * textAlign(CENTER, CENTER);
- * text('CENTER', 0, 37, width);
+ * text('CENTER', 50, 37);
  *
  * line(0, 62, width, 62);
  * textAlign(CENTER, BASELINE);
- * text('BASELINE', 0, 62, width);
+ * text('BASELINE', 50, 62);
  *
  * line(0, 97, width, 97);
  * textAlign(CENTER, BOTTOM);
- * text('BOTTOM', 0, 97, width);
+ * text('BOTTOM', 50, 97);
  *
- * describe(`The names of the four vertical alignments (TOP, CENTER, BASELINE,
- *   and BOTTOM) rendered each showing that alignment's placement relative to a
- *   horizontal line.`);
+ * describe('The words "TOP", "CENTER", "BASELINE", and "BOTTOM" each drawn relative to a horizontal line. Their positions demonstrate different vertical alignments.');
  * </code>
  * </div>
  */
@@ -81,30 +83,27 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
 };
 
 /**
- * Sets/gets the spacing, in pixels, between lines of text. This setting will be
- * used in all subsequent calls to the <a href="#/p5/text">text()</a> function.
+ * Sets the spacing between lines of text when
+ * <a href="#/p5/text">text()</a> is called. Spacing is measured in pixels.
+ *
+ * Calling `textLeading()` without an argument returns the current spacing.
  *
  * @method textLeading
- * @param {Number} leading the size in pixels for spacing between lines
+ * @param {Number} leading spacing between lines of text in units of pixels.
  * @chainable
  *
  * @example
  * <div>
  * <code>
- * let lines = 'L1\nL2\nL3'; // "\n" is a "new line" character
- * textSize(12);
+ * // "\n" starts a new line of text.
+ * let lines = 'one\ntwo';
  *
- * textLeading(10);
  * text(lines, 10, 25);
- *
- * textLeading(20);
- * text(lines, 40, 25);
  *
  * textLeading(30);
  * text(lines, 70, 25);
  *
- * describe(`A set of L1, L2, and L3, displayed vertically 3 times.
- *   Spacing increases for each set.`);
+ * describe('The words "one" and "two" written on separate lines twice. The words on the left have less vertical spacing than the words on the right.');
  * </code>
  * </div>
  */
@@ -118,11 +117,13 @@ p5.prototype.textLeading = function(theLeading) {
 };
 
 /**
- * Sets/gets the current font size. This size will be used in all subsequent
- * calls to the <a href="#/p5/text">text()</a> function. Font size is measured in pixels.
+ * Sets the font size when
+ * <a href="#/p5/text">text()</a> is called. Font size is measured in pixels.
+ *
+ * Calling `textSize()` without an arugment returns the current size.
  *
  * @method textSize
- * @param {Number} theSize the size of the letters in units of pixels
+ * @param {Number} size size of the letters in units of pixels
  * @chainable
  *
  * @example
@@ -135,9 +136,7 @@ p5.prototype.textLeading = function(theLeading) {
  * textSize(16);
  * text('Font Size 16', 10, 90);
  *
- * describe(`'Font Size 12' displayed small,
- *   'Font Size 14' medium, and
- *   'Font Size 16' large`);
+ * describe('The text "Font Size 12" drawn small, "Font Size 14" drawn medium, and "Font Size 16" drawn large.');
  * </code>
  * </div>
  */
@@ -151,31 +150,33 @@ p5.prototype.textSize = function(theSize) {
 };
 
 /**
- * Sets/gets the style of the text for system fonts to NORMAL, ITALIC, BOLD or BOLDITALIC.
- * Note: this may be is overridden by CSS styling. For non-system fonts
- * (opentype, truetype, etc.) please load styled fonts instead.
+ * Sets the style for system fonts when
+ * <a href="#/p5/text">text()</a> is called. `textStyle()` accepts the
+ * following values: `NORMAL`, `ITALIC`, `BOLD` or `BOLDITALIC`.
+ *
+ * `textStyle()` may be overridden by CSS styling. This function doesn't
+ * affect fonts loaded with <a href="#/p5/loadFont">loadFont()</a>.
  *
  * @method textStyle
- * @param {Constant} theStyle styling for text, either NORMAL,
+ * @param {Constant} style styling for text, either NORMAL,
  *                            ITALIC, BOLD or BOLDITALIC
  * @chainable
  * @example
  * <div>
  * <code>
- * strokeWeight(0);
  * textSize(12);
+ * textAlign(CENTER);
+ *
  * textStyle(NORMAL);
- * text('Font Style Normal', 10, 15);
+ * text('Normal', 50, 15);
  * textStyle(ITALIC);
- * text('Font Style Italic', 10, 40);
+ * text('Italic', 50, 40);
  * textStyle(BOLD);
- * text('Font Style Bold', 10, 65);
+ * text('Bold', 50, 65);
  * textStyle(BOLDITALIC);
- * text('Font Style Bold Italic', 10, 90);
- * describe(`The words “Font Style Normal” displayed normally,
- *   “Font Style Italic” in italic,
- *   “Font Style Bold” in bold, and
- *   “Font Style Bold Italic” in bold italics.`);
+ * text('Bold Italic', 50, 90);
+ *
+ * describe('The words "Normal" displayed normally, "Italic" in italic, "Bold" in bold, and "Bold Italic" in bold italics.');
  * </code>
  * </div>
  */
@@ -189,41 +190,45 @@ p5.prototype.textStyle = function(theStyle) {
 };
 
 /**
- * Calculates and returns the width of any character or the maximum width of any paragrph.
+ * Returns the maximum width of a string of text drawn when
+ * <a href="#/p5/text">text()</a> is called.
  *
  * @method textWidth
- * @param {String} theText the String of characters to measure
- * @return {Number} the calculated width
+ * @param {String} str string of text to measure.
+ * @return {Number} width measured in units of pixels.
  * @example
  * <div>
  * <code>
- * textSize(28);
+ * function setup() {
+ *   background(200);
  *
- * let aChar = 'P';
- * let cWidth = textWidth(aChar);
- * text(aChar, 0, 40);
- * line(cWidth, 0, cWidth, 50);
+ *   textSize(28);
+ *   strokeWeight(0.5);
+ *   let s = 'yoyo';
+ *   let w = textWidth(s);
+ *   text(s, 22, 55);
+ *   line(22, 55, 22 + w, 55);
  *
- * let aString = 'p5.js';
- * let sWidth = textWidth(aString);
- * text(aString, 0, 85);
- * line(sWidth, 50, sWidth, 100);
- *
- * describe('Letter P and p5.js are displayed with vertical lines at end.');
+ *   describe('The word "yoyo" underlined.');
+ * }
  * </code>
  * </div>
  *
- *
  * <div>
  * <code>
- * textSize(28);
+ * function setup() {
+ *   background(200);
  *
- * let aChar = 'text\nWidth';
- * let cWidth = textWidth(aChar);
- * text(aChar, 0, 40);
- * line(cWidth, 0, cWidth, 100);
+ *   textSize(28);
+ *   strokeWeight(0.5);
+ *   // "\n" starts a new line.
+ *   let s = 'yo\nyo';
+ *   let w = textWidth(s);
+ *   text(s, 22, 55);
+ *   line(22, 55, 22 + w, 55);
  *
- * describe('Text text and Width() are displayed with vertical lines at end of Width().');
+ *   describe('The word "yo" written twice, one copy beneath the other. The words are divided by a horizontal line.');
+ * }
  * </code>
  * </div>
  */
@@ -254,23 +259,46 @@ p5.prototype.textWidth = function (...args) {
  * Returns the ascent of the current font at its current size. The ascent
  * represents the distance, in pixels, of the tallest character above
  * the baseline.
+ *
  * @method textAscent
- * @return {Number}
+ * @return {Number} ascent measured in units of pixels.
  * @example
  * <div>
  * <code>
- * let base = height * 0.75;
- * let scalar = 0.8; // Different for each font
+ * let font;
  *
- * textSize(32); // Set initial text size
- * let asc = textAscent() * scalar; // Calc ascent
- * line(0, base - asc, width, base - asc);
- * text('dp', 0, base); // Draw text on baseline
+ * function preload()  {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
  *
- * textSize(64); // Increase text size
- * asc = textAscent() * scalar; // Recalc ascent
- * line(40, base - asc, width, base - asc);
- * text('dp', 40, base); // Draw text on baseline
+ * function setup()  {
+ *   background(200);
+ *   textFont(font);
+ *
+ *   // Different for each font.
+ *   let fontScale = 0.8;
+ *
+ *   let baseY = 75;
+ *   strokeWeight(0.5);
+ *
+ *   // Draw small text.
+ *   textSize(24);
+ *   text('dp', 0, baseY);
+ *   // Draw baseline and ascent.
+ *   let a = textAscent() * fontScale;
+ *   line(0, baseY, 23, baseY);
+ *   line(23, baseY - a, 23, baseY);
+ *
+ *   // Draw large text.
+ *   textSize(48);
+ *   text('dp', 45, baseY);
+ *   // Draw baseline and ascent.
+ *   a = textAscent() * fontScale;
+ *   line(45, baseY, 91, baseY);
+ *   line(91, baseY - a, 91, baseY);
+ *
+ *   describe('The letters "dp" written twice in different sizes. Each version has a horizontal baseline. A vertical line extends upward from each baseline to the top of the "d".');
+ * }
  * </code>
  * </div>
  */
@@ -283,23 +311,46 @@ p5.prototype.textAscent = function(...args) {
  * Returns the descent of the current font at its current size. The descent
  * represents the distance, in pixels, of the character with the longest
  * descender below the baseline.
+ *
  * @method textDescent
- * @return {Number}
+ * @return {Number} descent measured in units of pixels.
  * @example
  * <div>
  * <code>
- * let base = height * 0.75;
- * let scalar = 0.8; // Different for each font
+ * let font;
  *
- * textSize(32); // Set initial text size
- * let desc = textDescent() * scalar; // Calc descent
- * line(0, base + desc, width, base + desc);
- * text('dp', 0, base); // Draw text on baseline
+ * function preload()  {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
  *
- * textSize(64); // Increase text size
- * desc = textDescent() * scalar; // Recalc descent
- * line(40, base + desc, width, base + desc);
- * text('dp', 40, base); // Draw text on baseline
+ * function setup()  {
+ *   background(200);
+ *   textFont(font);
+ *
+ *   // Different for each font.
+ *   let fontScale = 0.9;
+ *
+ *   let baseY = 75;
+ *   strokeWeight(0.5);
+ *
+ *   // Draw small text.
+ *   textSize(24);
+ *   text('dp', 0, baseY);
+ *   // Draw baseline and descent.
+ *   let d = textDescent() * fontScale;
+ *   line(0, baseY, 23, baseY);
+ *   line(23, baseY, 23, baseY + d);
+ *
+ *   // Draw large text.
+ *   textSize(48);
+ *   text('dp', 45, baseY);
+ *   // Draw baseline and descent.
+ *   d = textDescent() * fontScale;
+ *   line(45, baseY, 91, baseY);
+ *   line(91, baseY, 91, baseY + d);
+ *
+ *   describe('The letters "dp" written twice in different sizes. Each version has a horizontal baseline. A vertical line extends downward from each baseline to the bottom of the "p".');
+ * }
  * </code>
  * </div>
  */
@@ -316,17 +367,25 @@ p5.prototype._updateTextMetrics = function() {
 };
 
 /**
- * Specifies how lines of text are wrapped within a text box. This requires a max-width set on the text area, specified in <a href="#/p5/text">text()</a> as parameter `x2`.
+ * Sets the style for wrapping text when
+ * <a href="#/p5/text">text()</a> is called. `textWrap()` accepts the
+ * following values:
  *
- * WORD wrap style only breaks lines at spaces. A single string without spaces that exceeds the boundaries of the canvas or text area is not truncated, and will overflow the desired area, disappearing at the canvas edge.
+ * `WORD` starts new lines of text at spaces. If a string of text doesn't
+ * have spaces, it may overflow the text box and the canvas. This is the
+ * default style.
  *
- * CHAR wrap style breaks lines wherever needed to stay within the text box.
+ * `CHAR` starts new lines as needed to stay within the text box.
  *
- * WORD is the default wrap style, and both styles will still break lines at any line breaks (`\n`) specified in the original text. The text area max-height parameter (`y2`) also still applies to wrapped text in both styles, lines of text that do not fit within the text area will not be drawn to the screen.
+ * `textWrap()` only works when the maximum width is set for a text box. For
+ * example, calling `text('Have a wonderful day', 0, 10, 100)` sets the
+ * maximum width to 100 pixels.
+ *
+ * Calling `textWrap()` without an argument returns the current style.
  *
  * @method textWrap
- * @param {Constant} wrapStyle text wrapping style, either WORD or CHAR
- * @return {String} wrapStyle
+ * @param {Constant} style text wrapping style, either WORD or CHAR.
+ * @return {String} style
  * @example
  * <div>
  * <code>
@@ -335,6 +394,7 @@ p5.prototype._updateTextMetrics = function() {
  * text('Have a wonderful day', 0, 10, 100);
  * </code>
  * </div>
+ *
  * <div>
  * <code>
  * textSize(20);
@@ -342,38 +402,12 @@ p5.prototype._updateTextMetrics = function() {
  * text('Have a wonderful day', 0, 10, 100);
  * </code>
  * </div>
+ *
  * <div>
  * <code>
  * textSize(20);
  * textWrap(CHAR);
  * text('祝你有美好的一天', 0, 10, 100);
- * </code>
- * </div>
- * <div>
- * <code>
- * const scream = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
- * textSize(20);
- * textWrap(WORD);
- * text(scream, 0, 0, 100);
- * fill(0, 0, 0, 75);
- * text(scream, 0, 20, 100);
- * fill(0, 0, 0, 50);
- * text(scream, 0, 40, 100);
- * fill(0, 0, 0, 25);
- * text(scream, 0, 60, 100);
- * strokeWeight(2);
- * ellipseMode(CENTER);
- * fill(255);
- * ellipse(15, 50, 15, 15);
- * fill(0);
- * ellipse(11, 47, 1, 1);
- * ellipse(19, 47, 1, 1);
- * ellipse(15, 52, 5, 5);
- * line(15, 60, 15, 70);
- * line(15, 65, 5, 55);
- * line(15, 65, 25, 55);
- * line(15, 70, 10, 80);
- * line(15, 70, 20, 80);
  * </code>
  * </div>
  */

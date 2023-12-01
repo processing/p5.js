@@ -15,9 +15,9 @@ float luma(vec3 color) {
 
 void main() {
   vec4 color = texture2D(tex0, vTexCoord);
-  float gray = luma(color.rgb);
+  float gray = luma(color.rgb / color.a);
   // floor() used to match src/image/filters.js
   float threshold = floor(filterParameter * 255.0) / 255.0;
   float blackOrWhite = step(threshold, gray);
-  gl_FragColor = vec4(vec3(blackOrWhite), color.a);
+  gl_FragColor = vec4(vec3(blackOrWhite) * color.a, color.a);
 }
