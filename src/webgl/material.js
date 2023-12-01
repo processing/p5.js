@@ -343,12 +343,12 @@ p5.prototype.createFilterShader = function (fragSrc) {
  * restore the default shaders.
  *
  * **Additional Information:**
-   * The shader will be used for:
+ * The shader will be used for:
    - Fills when a texture is enabled if it includes a uniform `sampler2D`.
    - Fills when lights are enabled if it includes the attribute `aNormal`, or if it has any of the following uniforms: `uUseLighting`, `uAmbientLightCount`, `uDirectionalLightCount`, `uPointLightCount`, `uAmbientColor`, `uDirectionalDiffuseColors`, `uDirectionalSpecularColors`, `uPointLightLocation`, `uPointLightDiffuseColors`, `uPointLightSpecularColors`, `uLightingDirection`, or `uSpecular`.
    - Fills whenever there are no lights or textures.
    - Strokes if it includes the uniform `uStrokeWeight`.
-   * **Note:** This behavior is considered experimental, and changes are planned in future releases.
+ * **Note:** This behavior is considered experimental, and changes are planned in future releases.
  *
  * Note, shaders can only be used in WEBGL mode.
  *
