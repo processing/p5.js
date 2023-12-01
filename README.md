@@ -925,6 +925,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Jaivignesh-afk"><img src="https://avatars.githubusercontent.com/u/108923524?v=4?s=120" width="120px;" alt="Jai Vignesh J"/><br /><sub><b>Jai Vignesh J</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Jaivignesh-afk" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://kyabe.net"><img src="https://avatars.githubusercontent.com/u/7237868?v=4?s=120" width="120px;" alt="cab_kyabe"/><br /><sub><b>cab_kyabe</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Acabbage63" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=cabbage63" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/vishwassrivastava"><img src="https://avatars.githubusercontent.com/u/84739867?v=4?s=120" width="120px;" alt="Vishwas Srivastava"/><br /><sub><b>Vishwas Srivastava</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=vishwassrivastava" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
