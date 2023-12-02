@@ -157,7 +157,7 @@ window.visualTest = function(
         );
       }
       if (!expectedScreenshots) {
-        writeFile(
+        writeTextFile(
           `unit/visual/screenshots/${name}/metadata.json`,
           JSON.stringify({ numScreenshots: actual.length }, null, 2)
         );

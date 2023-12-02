@@ -43,7 +43,7 @@ module.exports = function(grunt) {
               'base64'
             );
           });
-          await page.exposeFunction('writeFile', function(filename, data) {
+          await page.exposeFunction('writeTextFile', function(filename, data) {
             fs.mkdirSync('test/' + path.dirname(filename), { recursive: true });
             fs.writeFileSync(
               'test/' + filename,
