@@ -8,15 +8,21 @@
 
 import p5 from '../main';
 import * as constants from '../constants';
+import {
+  ContourSegment2D,
+  Shape,
+  Vertex,
+  Contour,
+  BezierVertex, QuadraticVertex, CurveVertex
+} from './shape';
+
+let shape = null;
 let shapeKind = null;
-let vertices = [];
-let contourVertices = [];
 let isBezier = false;
 let isCurve = false;
 let isQuadratic = false;
 let isContour = false;
 let isFirstContour = true;
-
 /**
  * Use the <a href="#/p5/beginContour">beginContour()</a> and
  * <a href="#/p5/endContour">endContour()</a> functions to create negative shapes
@@ -58,11 +64,11 @@ let isFirstContour = true;
  * @alt
  * white rect and smaller grey rect with red outlines in center of canvas.
  */
-p5.prototype.beginContour = function() {
+p5.prototype.beginContour = function () {
   if (this._renderer.isP3D) {
     this._renderer.beginContour();
   } else {
-    contourVertices = [];
+    shape.addContour(new Contour());
     isContour = true;
   }
   return this;
@@ -269,7 +275,7 @@ p5.prototype.beginContour = function() {
  * 3 side-by-side white rectangles center rect is smaller in mid-right canvas.
  * Thick white l-shape with black outline mid-top-left of canvas.
  */
-p5.prototype.beginShape = function(kind) {
+p5.prototype.beginShape = function (kind) {
   p5._validateParameters('beginShape', arguments);
   if (this._renderer.isP3D) {
     this._renderer.beginShape(...arguments);
@@ -287,9 +293,9 @@ p5.prototype.beginShape = function(kind) {
     } else {
       shapeKind = null;
     }
-
-    vertices = [];
-    contourVertices = [];
+    shape = new Shape();
+    // initialise first contour
+    shape.addContour(new Contour());
   }
   return this;
 };
@@ -389,28 +395,26 @@ p5.prototype.beginShape = function(kind) {
  * @param  {Number} z4 z-coordinate for the anchor point (for WebGL mode)
  * @chainable
  */
-p5.prototype.bezierVertex = function(...args) {
+p5.prototype.bezierVertex = function (...args) {
   p5._validateParameters('bezierVertex', args);
   if (this._renderer.isP3D) {
     this._renderer.bezierVertex(...args);
   } else {
-    if (vertices.length === 0) {
+    let currentContour = shape.contourss[shape.contourss.length - 1];
+    if (currentContour.segmentss.length === 0) {
       p5._friendlyError(
         'vertex() must be used once before calling bezierVertex()',
         'bezierVertex'
       );
     } else {
-      isBezier = true;
       const vert = [];
       for (let i = 0; i < args.length; i++) {
         vert[i] = args[i];
       }
-      vert.isVert = false;
-      if (isContour) {
-        contourVertices.push(vert);
-      } else {
-        vertices.push(vert);
-      }
+
+      let cs = new ContourSegment2D();
+      cs.addVertex(new BezierVertex(vert));
+      currentContour.addSegment(cs);
     }
   }
   return this;
@@ -514,13 +518,33 @@ p5.prototype.bezierVertex = function(...args) {
  * @alt
  * Upside-down u-shape line, mid canvas with the same shape in positive z-axis.
  */
-p5.prototype.curveVertex = function(...args) {
+p5.prototype.curveVertex = function (...args) {
   p5._validateParameters('curveVertex', args);
   if (this._renderer.isP3D) {
     this._renderer.curveVertex(...args);
   } else {
-    isCurve = true;
-    this.vertex(args[0], args[1]);
+    let allVertObj = [];
+
+    shape.contourss.forEach(c => {
+      c.segmentss.forEach(s => {
+        s.verticess.forEach(v => {
+          allVertObj.push(v);
+        });
+      });
+    });
+
+    let lastVertex = allVertObj.at(-1);
+    if (allVertObj.length === 0 || lastVertex.type === undefined) {
+      // first curveVertex
+      let cs = new ContourSegment2D();
+      cs.addVertex(new CurveVertex(args[0], args[1]));
+      let currentContour = shape.contourss[shape.contourss.length - 1];
+      currentContour.addSegment(cs);
+    } else {
+      lastVertex.data.push(args[0], args[1]);
+    }
+
+
   }
   return this;
 };
@@ -566,24 +590,21 @@ p5.prototype.curveVertex = function(...args) {
  * @alt
  * white rect and smaller grey rect with red outlines in center of canvas.
  */
-p5.prototype.endContour = function() {
+p5.prototype.endContour = function () {
   if (this._renderer.isP3D) {
     return this;
   }
 
-  const vert = contourVertices[0].slice(); // copy all data
-  vert.isVert = contourVertices[0].isVert;
-  vert.moveTo = false;
-  contourVertices.push(vert);
+  let currentContour = shape.contourss[shape.contourss.length - 1];
+  const vert = currentContour.firstSegment.verticess[0].coordinates.slice();
+  let cs = new ContourSegment2D();
+  cs.addVertex(new Vertex(vert));
+  currentContour.addSegment(cs);
 
-  // prevent stray lines with multiple contours
   if (isFirstContour) {
-    vertices.push(vertices[0]);
+    // pushing first contour's first segment to the end
+    shape.contourss[0].addSegment(shape.contourss[0].segmentss[0]);
     isFirstContour = false;
-  }
-
-  for (let i = 0; i < contourVertices.length; i++) {
-    vertices.push(contourVertices[i]);
   }
   return this;
 };
@@ -707,7 +728,7 @@ p5.prototype.endContour = function() {
  * @alt
  * Triangle line shape with smallest interior angle on bottom and upside-down L.
  */
-p5.prototype.endShape = function(mode, count = 1) {
+p5.prototype.endShape = function (mode, count = 1) {
   p5._validateParameters('endShape', arguments);
   if (count < 1) {
     console.log('🌸 p5.js says: You can not have less than one instance');
@@ -728,7 +749,10 @@ p5.prototype.endShape = function(mode, count = 1) {
     if (count !== 1) {
       console.log('🌸 p5.js says: Instancing is only supported in WebGL2 mode');
     }
-    if (vertices.length === 0) {
+
+    let currentContour = shape.contourss[shape.contourss.length - 1];
+
+    if (currentContour.segmentss.length === 0) {
       return this;
     }
     if (!this._renderer._doStroke && !this._renderer._doFill) {
@@ -739,18 +763,33 @@ p5.prototype.endShape = function(mode, count = 1) {
 
     // if the shape is closed, the first element is also the last element
     if (closeShape && !isContour) {
-      vertices.push(vertices[0]);
+      currentContour.addSegment(currentContour.firstSegment);
     }
+
+    // all verts from shape
+    let allVertObj = [];
+    shape.contourss.forEach(c => {
+      c.segmentss.forEach(s => {
+        s.verticess.forEach(v => {
+          allVertObj.push(v);
+        });
+      });
+    });
 
     this._renderer.endShape(
       mode,
-      vertices,
       isCurve,
       isBezier,
       isQuadratic,
       isContour,
-      shapeKind
+      shapeKind,
+      allVertObj,
+      currentContour,
+      closeShape
     );
+
+    // Reset shape
+    shape.contourss.length = 0;
 
     // Reset some settings
     isCurve = false;
@@ -763,7 +802,7 @@ p5.prototype.endShape = function(mode, count = 1) {
     // We must remove it again to prevent the list of vertices from growing
     // over successive calls to endShape(CLOSE)
     if (closeShape) {
-      vertices.pop();
+      currentContour.segmentss.pop();
     }
   }
   return this;
@@ -887,7 +926,7 @@ p5.prototype.endShape = function(mode, count = 1) {
  * @alt
  * backwards s-shaped black line with the same s-shaped line in positive z-axis.
  */
-p5.prototype.quadraticVertex = function(...args) {
+p5.prototype.quadraticVertex = function (...args) {
   p5._validateParameters('quadraticVertex', args);
   if (this._renderer.isP3D) {
     this._renderer.quadraticVertex(...args);
@@ -905,18 +944,17 @@ p5.prototype.quadraticVertex = function(...args) {
 
       return this;
     }
-    if (vertices.length > 0) {
-      isQuadratic = true;
+    let currentContour = shape.contourss[shape.contourss.length - 1];
+
+    if (currentContour.segmentss.length > 0) {
       const vert = [];
       for (let i = 0; i < args.length; i++) {
         vert[i] = args[i];
       }
-      vert.isVert = false;
-      if (isContour) {
-        contourVertices.push(vert);
-      } else {
-        vertices.push(vert);
-      }
+
+      let cs = new ContourSegment2D();
+      cs.addVertex(new QuadraticVertex(vert));
+      currentContour.addSegment(cs);
     } else {
       p5._friendlyError(
         'vertex() must be used once before calling quadraticVertex()',
@@ -1075,12 +1113,11 @@ p5.prototype.quadraticVertex = function(...args) {
  * @param  {Number} [v]   the vertex's texture v-coordinate
  * @chainable
  */
-p5.prototype.vertex = function(x, y, moveTo, u, v) {
+p5.prototype.vertex = function (x, y, moveTo, u, v) {
   if (this._renderer.isP3D) {
     this._renderer.vertex(...arguments);
   } else {
     const vert = [];
-    vert.isVert = true;
     vert[0] = x;
     vert[1] = y;
     vert[2] = 0;
@@ -1088,18 +1125,12 @@ p5.prototype.vertex = function(x, y, moveTo, u, v) {
     vert[4] = 0;
     vert[5] = this._renderer._getFill();
     vert[6] = this._renderer._getStroke();
+    let currentContour = shape.contourss[shape.contourss.length - 1];
 
-    if (moveTo) {
-      vert.moveTo = moveTo;
-    }
-    if (isContour) {
-      if (contourVertices.length === 0) {
-        vert.moveTo = true;
-      }
-      contourVertices.push(vert);
-    } else {
-      vertices.push(vert);
-    }
+    let cs = new ContourSegment2D();
+    cs.addVertex(new Vertex(vert));
+
+    currentContour.addSegment(cs);
   }
   return this;
 };
@@ -1148,7 +1179,7 @@ p5.prototype.vertex = function(x, y, moveTo, u, v) {
  * @param  {Number} z The z component of the vertex normal.
  * @chainable
  */
-p5.prototype.normal = function(x, y, z) {
+p5.prototype.normal = function (x, y, z) {
   this._assert3d('normal');
   p5._validateParameters('normal', arguments);
   this._renderer.normal(...arguments);
