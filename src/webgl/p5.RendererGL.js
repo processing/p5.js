@@ -1064,10 +1064,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // Resize the framebuffer 'fbo' and adjust its pixel density if it doesn't match the target.
     this.matchSize(fbo, target);
 
-    // Set filterCamera for framebuffers.
-    if (target !== this) {
-      this.filterCamera = this.getFilterLayer().createCamera();
-    }
     fbo.draw(() => this._pInst.clear()); // prevent undesirable feedback effects accumulating secretly.
 
     let texelSize = [
@@ -1084,6 +1080,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       // setup
       this._pInst.push();
       this._pInst.noStroke();
+      this._pInst.blendMode(constants.BLEND);
 
       // draw main to temp buffer
       this._pInst.shader(this.filterShader);
@@ -1098,8 +1095,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this._pInst.clear();
         this._pInst.shader(this.filterShader);
         this._pInst.noLights();
-        this._pInst.rect(-target.width / 2,
-          -target.height / 2, target.width, target.height);
+        this._pInst.plane(target.width, target.height);
       });
 
       // Vert pass: draw `tmp` to `fbo`
@@ -1109,8 +1105,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this._pInst.clear();
         this._pInst.shader(this.filterShader);
         this._pInst.noLights();
-        this._pInst.rect(-target.width / 2,
-          -target.height / 2, target.width, target.height);
+        this._pInst.plane(target.width, target.height);
       });
 
       this._pInst.pop();
@@ -1119,6 +1114,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     else {
       fbo.draw(() => {
         this._pInst.noStroke();
+        this._pInst.blendMode(constants.BLEND);
         this._pInst.shader(this.filterShader);
         this.filterShader.setUniform('tex0', target);
         this.filterShader.setUniform('texelSize', texelSize);
@@ -1127,8 +1123,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         // but shouldn't hurt to always set
         this.filterShader.setUniform('filterParameter', filterParameter);
         this._pInst.noLights();
-        this._pInst.rect(-target.width / 2, -target.height / 2,
-          target.width, target.height);
+        this._pInst.plane(target.width, target.height);
       });
 
     }
@@ -1139,8 +1134,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this._pInst.push();
     this._pInst.imageMode(constants.CORNER);
     this._pInst.blendMode(constants.BLEND);
-    this.filterCamera._resize();
-    this._pInst.setCamera(this.filterCamera);
+    target.filterCamera._resize();
+    this._pInst.setCamera(target.filterCamera);
     this._pInst.resetMatrix();
     this._pInst.image(fbo, -this.width / 2, -this.height / 2,
       this.width, this.height);
