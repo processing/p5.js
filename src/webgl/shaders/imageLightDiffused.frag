@@ -28,6 +28,12 @@ vec2 nTOE( vec3 v ){
   return angles;
 }
 
+float random(vec2 p) {
+  vec3 p3  = fract(vec3(p.xyx) * .1031);
+  p3 += dot(p3, p3.yzx + 33.33);
+  return fract((p3.x + p3.y) * p3.z);
+}
+
 void main()
 {   	 
 	// the sample direction equals the hemisphere's orientation
@@ -48,7 +54,7 @@ void main()
 	//  We specify a fixed sampleDelta delta value to traverse
   // the hemisphere; decreasing or increasing the sample delta
   // will increase or decrease the accuracy respectively.
-	const float sampleDelta = 0.025;
+	const float sampleDelta = 0.100;
 	float nrSamples = 0.0;
   
 	for(float phi = 0.0; phi < 2.0 * PI; phi += sampleDelta)
@@ -61,7 +67,8 @@ void main()
       float z = cos(theta);
       vec3 tangentSample = vec3( x, y, z);
       
-      vec3 sampleVec = tangentSample.x * right + tangentSample.y * up + tangentSample.z * normal;
+      float randomOffset = mix(-0.1, 0.1, random(gl_FragCoord.xy));
+      vec3 sampleVec = tangentSample.x * right + tangentSample.y * up + tangentSample.z * normal + randomOffset;
         irradiance += (texture2D(environmentMap, nTOE(sampleVec)).xyz) * cos(theta) * sin(theta);
       nrSamples++;
     }
