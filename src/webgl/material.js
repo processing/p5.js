@@ -1188,20 +1188,17 @@ p5.prototype.shininess = function (shine) {
  * @method metalness
  * @param {Number} metallic - The degree of metalness (ranging from 0 to 100).
  * @example
- * <div>
+ * <div class="notest">
  * <code>
  * let img;
  * let slider;
- * let slider2;
  * function preload() {
- *   img = loadImage('https://inaridarkfox4231.github.io/assets/season/summer_small.png');
+ *   img = loadImage('assets/outdoor_spheremap.jpg');
  * }
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   slider = createSlider(0, 100, 10, 1);
+ *   slider = createSlider(0, 400, 100, 1);
  *   slider.position(0, height);
- *   slider2 = createSlider(0, 500, 10, 1);
- *   slider2.position(0, height + 20);
  * }
  * function draw() {
  *   background(220);
@@ -1212,20 +1209,16 @@ p5.prototype.shininess = function (shine) {
  *   image(img, 0, 0, width, height);
  *   pop();
  *   imageLight(img);
- *   specularMaterial('gray');
- *   shininess(slider2.value());
- *   metalness(slider.value());
+ *   specularMaterial(20);
+ *   shininess(slider.value());
+ *   metalness(100);
  *   noStroke();
  *   scale(2);
  *   sphere(15);
- *   metalness(100);
  * }
  * </code>
  * </div>
- *  @alt
- *  A 3D scene with two sliders and a sphere, by increasing
- *  the value of the 1st slider,
- *  you will notice the sphere starts becoming metallic.
+ * @example
  * <div>
  * <code>
  * function setup() {
