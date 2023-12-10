@@ -1,9 +1,6 @@
 import p5 from '../../../src/app.js';
 
 suite('p5.Vector', function() {
-  var RADIANS = 'radians';
-  var DEGREES = 'degrees';
-
   var myp5;
   var v;
 
@@ -21,7 +18,7 @@ suite('p5.Vector', function() {
 
   suite('p5.prototype.setHeading() RADIANS', function() {
     beforeEach(function() {
-      myp5.angleMode(RADIANS);
+      myp5.angleMode(myp5.RADIANS);
       v = myp5.createVector(1, 1);
       v.setHeading(1);
     });
@@ -32,7 +29,7 @@ suite('p5.Vector', function() {
 
   suite('p5.prototype.setHeading() DEGREES', function() {
     beforeEach(function() {
-      myp5.angleMode(DEGREES);
+      myp5.angleMode(myp5.DEGREES);
       v = myp5.createVector(1, 1);
       v.setHeading(1);
     });
@@ -116,7 +113,7 @@ suite('p5.Vector', function() {
 
       suite('radians', function() {
         beforeEach(function() {
-          myp5.angleMode(RADIANS);
+          myp5.angleMode(myp5.RADIANS);
         });
 
         test('should rotate the vector [0, 1, 0] by pi radians to [0, -1, 0]', function() {
@@ -146,7 +143,7 @@ suite('p5.Vector', function() {
 
       suite('degrees', function() {
         beforeEach(function() {
-          myp5.angleMode(DEGREES);
+          myp5.angleMode(myp5.DEGREES);
         });
 
         test('should rotate the vector [0, 1, 0] by 180 degrees to [0, -1, 0]', function() {
@@ -169,7 +166,7 @@ suite('p5.Vector', function() {
 
     suite('p5.Vector.rotate() [CLASS]', function() {
       beforeEach(function() {
-        myp5.angleMode(RADIANS);
+        myp5.angleMode(myp5.RADIANS);
       });
 
       test('should not change the original object', function() {
@@ -234,14 +231,14 @@ suite('p5.Vector', function() {
       });
 
       test('between [1,0,0] and [1,0,0] should be 0 degrees', function() {
-        myp5.angleMode(DEGREES);
+        myp5.angleMode(myp5.DEGREES);
         v1 = myp5.createVector(1, 0, 0);
         v2 = myp5.createVector(1, 0, 0);
         expect(v1.angleBetween(v2)).to.equal(0);
       });
 
       test('between [0,3,0] and [0,-3,0] should be 180 degrees', function() {
-        myp5.angleMode(DEGREES);
+        myp5.angleMode(myp5.DEGREES);
         v1 = myp5.createVector(0, 3, 0);
         v2 = myp5.createVector(0, -3, 0);
         expect(v1.angleBetween(v2)).to.be.closeTo(180, 0.01);
@@ -300,7 +297,7 @@ suite('p5.Vector', function() {
       });
 
       test('between [1,0,0] and [0,-1,0] should be -90 degrees', function() {
-        myp5.angleMode(DEGREES);
+        myp5.angleMode(myp5.DEGREES);
         v1 = myp5.createVector(1, 0, 0);
         v2 = myp5.createVector(0, -1, 0);
         expect(p5.Vector.angleBetween(v1, v2)).to.be.closeTo(-90, 0.01);
@@ -1293,7 +1290,7 @@ suite('p5.Vector', function() {
 
       suite('with `angleMode(DEGREES)`', function() {
         beforeEach(function() {
-          myp5.angleMode(DEGREES);
+          myp5.angleMode(myp5.DEGREES);
         });
 
         test('heading for vector pointing right is 0', function() {
