@@ -15,14 +15,6 @@ export default defineConfig({
     minify: false,
     esbuild: false,
     appType: 'custom',
-    lib: {
-      // Could also be a dictionary or array of multiple entry points
-      entry: './src/app.js',
-      name: 'p5',
-      formats: ['iife'],
-      // the proper extensions will be added
-      fileName: () => 'p5.vite.js'
-    },
     rollupOptions: {
       input: './src/app.js',
       output: [
@@ -46,7 +38,7 @@ export default defineConfig({
               }
             },
             format: {
-              comments: false
+              comments: /^! p5\.js/
             }
           })]
         }
@@ -75,6 +67,5 @@ export default defineConfig({
       headless: true,
       name: 'chrome'
     }
-  },
-  plugins: []
+  }
 });
