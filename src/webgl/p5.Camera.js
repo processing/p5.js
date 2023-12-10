@@ -26,7 +26,7 @@ import p5 from '../core/main';
  * to view the position of your camera.
  *
  * If no parameters are given, the following default is used:
- * camera(0, 0, (height/2) / tan(PI/6), 0, 0, 0, 0, 1, 0)
+ * camera(0, 0, 800, 0, 0, 0, 0, 1, 0)
  * @method camera
  * @constructor
  * @for p5
@@ -205,7 +205,7 @@ p5.prototype.perspective = function (...args) {
  * maximum z values.
  *
  * If no parameters are given, the following default is used:
- * ortho(-width/2, width/2, -height/2, height/2).
+ * ortho(-width/2, width/2, -height/2, height/2, 0, max(width, height)).
  * @method  ortho
  * @for p5
  * @param  {Number} [left]   camera frustum left plane
@@ -274,7 +274,7 @@ p5.prototype.ortho = function (...args) {
  *
  * If no parameters are given, the following default is used:
  * frustum(-width/20, width/20, height/20, -height/20, eyeZ/10, eyeZ*10),
- * where eyeZ is equal to ((height/2) / tan(PI/6)).
+ * where eyeZ is equal to 800.
  * @method frustum
  * @for p5
  * @param  {Number} [left]   camera frustum left plane
@@ -423,7 +423,7 @@ p5.prototype.createCamera = function () {
  * <a href="#/p5.Camera/setPosition">setPosition()</a>
  * method sets the camera's position in world-space.
  *
- * The camera object propreties
+ * The camera object properties
  * <code>eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ</code>
  * which describes camera position, orientation, and projection
  * are also accessible via the camera object generated using
@@ -494,7 +494,7 @@ p5.Camera = class Camera {
     this.yScale = 1;
   }
   /**
- * camera position value on x axis
+ * camera position value on x axis. default value is 0
  * @property {Number} eyeX
  * @readonly
  * @example
@@ -523,7 +523,7 @@ p5.Camera = class Camera {
  */
 
   /**
- * camera position value on y axis
+ * camera position value on y axis. default value is 0
  * @property {Number} eyeY
  * @readonly
  * @example
@@ -551,7 +551,7 @@ p5.Camera = class Camera {
  */
 
   /**
- * camera position value on z axis
+ * camera position value on z axis. default value is 800
  * @property {Number} eyeZ
  * @readonly
  * @example
