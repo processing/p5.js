@@ -1,14 +1,12 @@
 import p5 from '../core/main';
 import * as constants from '../core/constants';
 import GeometryBuilder from './GeometryBuilder';
-import libtess from 'libtess';
+import libtess from 'libtess'; // Fixed with exporting module from libtess
 import './p5.Shader';
 import './p5.Camera';
 import '../core/p5.Renderer';
 import './p5.Matrix';
 import './p5.Framebuffer';
-import { readFileSync } from 'fs';
-import { join } from 'path';
 import { MipmapTexture } from './p5.Texture';
 
 const STROKE_CAP_ENUM = {};
@@ -32,77 +30,79 @@ defineStrokeJoinEnum('ROUND', 0);
 defineStrokeJoinEnum('MITER', 1);
 defineStrokeJoinEnum('BEVEL', 2);
 
-const lightingShader = readFileSync(
-  join(__dirname, '/shaders/lighting.glsl'),
-  'utf-8'
-);
-const webgl2CompatibilityShader = readFileSync(
-  join(__dirname, '/shaders/webgl2Compatibility.glsl'),
-  'utf-8'
-);
+import lightingShader from './shaders/lighting.glsl?raw';
+import webgl2CompatibilityShader from './shaders/webgl2Compatibility.glsl?raw';
+import immediateVert from './shaders/immediate.vert?raw';
+import vertexColorVert from './shaders/vertexColor.vert?raw';
+import vertexColorFrag from './shaders/vertexColor.frag?raw';
+import normalVert from './shaders/normal.vert?raw';
+import normalFrag from './shaders/normal.frag?raw';
+import basicFrag from './shaders/basic.frag?raw';
+import lightVert from './shaders/light.vert?raw';
+import lightTextureFrag from './shaders/light_texture.frag?raw';
+import phongVert from './shaders/phong.vert?raw';
+import phongFrag from './shaders/phong.frag?raw';
+import fontVert from './shaders/font.vert?raw';
+import fontFrag from './shaders/font.frag?raw';
+import lineVert from './shaders/line.vert?raw';
+import lineFrag from './shaders/line.frag?raw';
+import pointVert from './shaders/point.vert?raw';
+import pointFrag from './shaders/point.frag?raw';
+import imageLightVert from './shaders/imageLight.vert?raw';
+import imageLightDiffusedFrag from './shaders/imageLightDiffused.frag?raw';
+import imageLightSpecularFrag from './shaders/imageLightSpecular.frag?raw';
 
 const defaultShaders = {
-  immediateVert: readFileSync(
-    join(__dirname, '/shaders/immediate.vert'),
-    'utf-8'
-  ),
-  vertexColorVert: readFileSync(
-    join(__dirname, '/shaders/vertexColor.vert'),
-    'utf-8'
-  ),
-  vertexColorFrag: readFileSync(
-    join(__dirname, '/shaders/vertexColor.frag'),
-    'utf-8'
-  ),
-  normalVert: readFileSync(join(__dirname, '/shaders/normal.vert'), 'utf-8'),
-  normalFrag: readFileSync(join(__dirname, '/shaders/normal.frag'), 'utf-8'),
-  basicFrag: readFileSync(join(__dirname, '/shaders/basic.frag'), 'utf-8'),
+  immediateVert,
+  vertexColorVert,
+  vertexColorFrag,
+  normalVert,
+  normalFrag,
+  basicFrag,
   lightVert:
     lightingShader +
-    readFileSync(join(__dirname, '/shaders/light.vert'), 'utf-8'),
-  lightTextureFrag: readFileSync(
-    join(__dirname, '/shaders/light_texture.frag'),
-    'utf-8'
-  ),
-  phongVert: readFileSync(join(__dirname, '/shaders/phong.vert'), 'utf-8'),
+    lightVert,
+  lightTextureFrag,
+  phongVert,
   phongFrag:
     lightingShader +
-    readFileSync(join(__dirname, '/shaders/phong.frag'), 'utf-8'),
-  fontVert: readFileSync(join(__dirname, '/shaders/font.vert'), 'utf-8'),
-  fontFrag: readFileSync(join(__dirname, '/shaders/font.frag'), 'utf-8'),
+    phongFrag,
+  fontVert,
+  fontFrag,
   lineVert:
-    lineDefs + readFileSync(join(__dirname, '/shaders/line.vert'), 'utf-8'),
+    lineDefs + lineVert,
   lineFrag:
-    lineDefs + readFileSync(join(__dirname, '/shaders/line.frag'), 'utf-8'),
-  pointVert: readFileSync(join(__dirname, '/shaders/point.vert'), 'utf-8'),
-  pointFrag: readFileSync(join(__dirname, '/shaders/point.frag'), 'utf-8'),
-  imageLightVert: readFileSync(join(__dirname, '/shaders/imageLight.vert'), 'utf-8'),
-  imageLightDiffusedFrag: readFileSync(join(__dirname, '/shaders/imageLightDiffused.frag'), 'utf-8'),
-  imageLightSpecularFrag: readFileSync(join(__dirname, '/shaders/imageLightSpecular.frag'), 'utf-8')
+    lineDefs + lineFrag,
+  pointVert,
+  pointFrag,
+  imageLightVert,
+  imageLightDiffusedFrag,
+  imageLightSpecularFrag
 };
 for (const key in defaultShaders) {
   defaultShaders[key] = webgl2CompatibilityShader + defaultShaders[key];
 }
 
+import filterGrayFrag from './shaders/filters/gray.frag?raw';
+import filterErodeFrag from './shaders/filters/erode.frag?raw';
+import filterDilateFrag from './shaders/filters/dilate.frag?raw';
+import filterBlurFrag from './shaders/filters/blur.frag?raw';
+import filterPosterizeFrag from './shaders/filters/posterize.frag?raw';
+import filterOpaqueFrag from './shaders/filters/opaque.frag?raw';
+import filterInvertFrag from './shaders/filters/invert.frag?raw';
+import filterThresholdFrag from './shaders/filters/threshold.frag?raw';
+import filterShaderVert from './shaders/filters/default.vert?raw';
+
 const filterShaderFrags = {
-  [constants.GRAY]:
-    readFileSync(join(__dirname, '/shaders/filters/gray.frag'), 'utf-8'),
-  [constants.ERODE]:
-    readFileSync(join(__dirname, '/shaders/filters/erode.frag'), 'utf-8'),
-  [constants.DILATE]:
-    readFileSync(join(__dirname, '/shaders/filters/dilate.frag'), 'utf-8'),
-  [constants.BLUR]:
-    readFileSync(join(__dirname, '/shaders/filters/blur.frag'), 'utf-8'),
-  [constants.POSTERIZE]:
-    readFileSync(join(__dirname, '/shaders/filters/posterize.frag'), 'utf-8'),
-  [constants.OPAQUE]:
-    readFileSync(join(__dirname, '/shaders/filters/opaque.frag'), 'utf-8'),
-  [constants.INVERT]:
-    readFileSync(join(__dirname, '/shaders/filters/invert.frag'), 'utf-8'),
-  [constants.THRESHOLD]:
-    readFileSync(join(__dirname, '/shaders/filters/threshold.frag'), 'utf-8')
+  [constants.GRAY]: filterGrayFrag,
+  [constants.ERODE]: filterErodeFrag,
+  [constants.DILATE]: filterDilateFrag,
+  [constants.BLUR]: filterBlurFrag,
+  [constants.POSTERIZE]: filterPosterizeFrag,
+  [constants.OPAQUE]: filterOpaqueFrag,
+  [constants.INVERT]: filterInvertFrag,
+  [constants.THRESHOLD]: filterThresholdFrag
 };
-const filterShaderVert = readFileSync(join(__dirname, '/shaders/filters/default.vert'), 'utf-8');
 
 /**
  * @module Rendering
