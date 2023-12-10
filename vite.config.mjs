@@ -72,7 +72,7 @@ export default defineConfig({
     globals: true,
     browser: {
       enabled: true,
-      // headless: true,
+      headless: true,
       name: 'chrome'
     }
   },
