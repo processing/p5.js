@@ -1176,6 +1176,83 @@ p5.prototype.shininess = function (shine) {
 };
 
 /**
+ * Sets the metalness property of a material used in 3D rendering.
+ *
+ * The metalness property controls the degree to which the material
+ * appears metallic. A higher metalness value makes the material more
+ * metallic, while a lower value makes it appear less metallic.
+ *
+ * The default and minimum value is 0, indicating a non-metallic appearance,
+ * while a maximum value of 100 represents a fully metallic appearance.
+ *
+ * @method metalness
+ * @param {Number} metallic - The degree of metalness (ranging from 0 to 100).
+ * @example
+ * <div>
+ * <code>
+ * let img;
+ * let slider;
+ * let slider2;
+ * function preload() {
+ *   img = loadImage('https://inaridarkfox4231.github.io/assets/season/summer_small.png');
+ * }
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   slider = createSlider(0, 100, 10, 1);
+ *   slider.position(0, height);
+ *   slider2 = createSlider(0, 500, 10, 1);
+ *   slider2.position(0, height + 20);
+ * }
+ * function draw() {
+ *   background(220);
+ *   imageMode(CENTER);
+ *   push();
+ *   translate(0, 0, -200);
+ *   scale(2);
+ *   image(img, 0, 0, width, height);
+ *   pop();
+ *   imageLight(img);
+ *   specularMaterial('gray');
+ *   shininess(slider2.value());
+ *   metalness(slider.value());
+ *   noStroke();
+ *   scale(2);
+ *   sphere(15);
+ *   metalness(100);
+ * }
+ * </code>
+ * </div>
+ *  @alt
+ *  A 3D scene with two sliders and a sphere, by increasing
+ *  the value of the 1st slider,
+ *  you will notice the sphere starts becoming metallic.
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   noStroke();
+ *   background('black');
+ *   fill(255, 215, 0);
+ *   pointLight(255, 255, 255, 200, 150, 8000);
+ *   pointLight(255, 255, 255, 5000, 5000, 75);
+ *   specularMaterial('gray');
+ *   shininess(2);
+ *   metalness(100);
+ *   sphere(45);
+ * }
+ * </code>
+ * </div>
+ */
+
+p5.prototype.metalness = function (metallic) {
+  this._assert3d('metalness');
+  this._renderer._useMetalness = metallic;
+  return this;
+};
+
+/**
  * @private blends colors according to color components.
  * If alpha value is less than 1, or non-standard blendMode
  * we need to enable blending on our gl context.
