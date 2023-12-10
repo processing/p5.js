@@ -519,28 +519,31 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  * <div class="notest">
  * <code>
  * let img;
+ *
  * function preload() {
  *   img = loadImage('assets/outdoor_image.jpg');
  * }
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0 ,1, 0);
+ *   perspective(PI/3, 1, 5, 500);
  * }
  * function draw() {
  *   background(220);
- *   imageMode(CENTER);
+ *
  *   push();
- *   translate(0, 0, -200);
- *   scale(2);
- *   image(img, 0, 0, width, height);
+ *   camera(0, 0, 1, 0, 0, 0, 0, 1, 0);
+ *   ortho(-50, 50, -50, 50, 0, 1);
+ *   image(img, -50, -50, 100, 100);
  *   pop();
+ *
  *   ambientLight(50);
  *   imageLight(img);
  *   specularMaterial(20);
  *   noStroke();
- *   scale(2);
  *   rotateX(frameCount * 0.005);
  *   rotateY(frameCount * 0.005);
- *   box(25);
+ *   box(50);
  * }
  * </code>
  * </div>
@@ -551,6 +554,7 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  * <code>
  * let img;
  * let slider;
+ *
  * function preload() {
  *   img = loadImage('assets/outdoor_spheremap.jpg');
  * }
@@ -558,22 +562,24 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  *   createCanvas(100, 100, WEBGL);
  *   slider = createSlider(0, 400, 100, 1);
  *   slider.position(0, height);
+ *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0 ,1, 0);
+ *   perspective(PI/3, 1, 5, 500);
  * }
  * function draw() {
  *   background(220);
- *   imageMode(CENTER);
+ *
  *   push();
- *   translate(0, 0, -200);
- *   scale(2);
- *   image(img, 0, 0, width, height);
+ *   camera(0, 0, 1, 0, 0, 0, 0, 1, 0);
+ *   ortho(-50, 50, -50, 50, 0, 1);
+ *   image(img, -50, -50, 100, 100);
  *   pop();
+ *
  *   ambientLight(50);
  *   imageLight(img);
  *   specularMaterial(20);
  *   shininess(slider.value());
  *   noStroke();
- *   scale(2);
- *   sphere(15);
+ *   sphere(30);
  * }
  * </code>
  * </div>
@@ -604,6 +610,8 @@ p5.prototype.imageLight = function(img){
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   describe('the light is partially ambient and partially directional');
  * }
  * function draw() {
