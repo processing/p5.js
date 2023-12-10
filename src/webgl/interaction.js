@@ -45,8 +45,8 @@ import * as constants from '../core/constants';
  *   describe(
  *     'Camera orbits around a box when mouse is hold-clicked & then moved.'
  *   );
- *    camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *    perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
+ *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  * }
  * function draw() {
  *   background(200);
@@ -499,7 +499,7 @@ p5.prototype.orbitControl = function(
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
- +   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
+ *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   normalMaterial();
  *   debugMode(100, 10, 0, 0, 0, 20, 0, -40, 0);
  *   describe(
