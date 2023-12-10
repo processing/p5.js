@@ -2305,10 +2305,12 @@ p5.Camera = class Camera {
  *   normalMaterial();
  *
  *   cam1 = createCamera();
+ *   cam1.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   cam1.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   cam2 = createCamera();
  *   cam2.setPosition(30, 0, 50);
  *   cam2.lookAt(0, 0, 0);
- *   cam2.ortho();
+ *   cam2.ortho(-50, 50, -50, 50, 0, 200);
  *
  *   // set variable for previously active camera:
  *   currentCamera = 1;
@@ -2321,10 +2323,6 @@ p5.Camera = class Camera {
  * function draw() {
  *   background(200);
  *
- *   // camera 1:
- *   cam1.lookAt(0, 0, 0);
- *   cam1.setPosition(sin(frameCount / 60) * 200, 0, 100);
- *
  *   // every 100 frames, switch between the two cameras
  *   if (frameCount % 100 === 0) {
  *     if (currentCamera === 1) {
@@ -2335,6 +2333,10 @@ p5.Camera = class Camera {
  *       currentCamera = 1;
  *     }
  *   }
+ *
+ *   // camera 1:
+ *   cam1.lookAt(0, 0, 0);
+ *   cam1.setPosition(sin(frameCount / 60) * 200, 0, 100);
  *
  *   drawBoxes();
  * }
