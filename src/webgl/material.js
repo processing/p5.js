@@ -1209,7 +1209,7 @@ p5.prototype.shininess = function (shine) {
  *   image(img, 0, 0, width, height);
  *   pop();
  *   imageLight(img);
- *   specularMaterial(20);
+ *   specularMaterial('gray');
  *   shininess(slider.value());
  *   metalness(100);
  *   noStroke();
