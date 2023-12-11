@@ -1,7 +1,5 @@
 import { defineConfig } from 'vitest/config';
-import glsl from 'vite-plugin-glsl';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
-import { string } from 'rollup-plugin-string';
 import swc from 'unplugin-swc';
 import commonjs from '@rollup/plugin-commonjs';
 import terser from '@rollup/plugin-terser';
@@ -46,9 +44,6 @@ export default defineConfig({
       plugins: [
         commonjs(),
         nodeResolve(),
-        string({
-          include: 'src/webgl/shaders/**/*'
-        }),
         swc.rollup()
       ]
     }

@@ -67,10 +67,8 @@
     "puppeteer": "^18.2.1",
     "regenerator-runtime": "^0.13.3",
     "rollup": "^3.29.2",
-    "rollup-plugin-string": "^3.0.0",
     "unplugin-swc": "^1.4.2",
     "vite": "^5.0.2",
-    "vite-plugin-glsl": "^1.2.0",
     "vitest": "^0.34.6",
     "webdriverio": "^8.24.1"
   },
@@ -142,8 +140,5 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
-  },
-  "dependencies": {
-
   }
 }
