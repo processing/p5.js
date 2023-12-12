@@ -7,12 +7,13 @@
 import p5 from './main';
 import * as constants from './constants';
 import './p5.Graphics';
-import './p5.Renderer2D';
+import Renderer2D from './p5.Renderer2D';
 import '../webgl/p5.RendererGL';
 let defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
 const defaultClass = 'p5Canvas';
-const renderers = {
-  [constants.P2D]: p5.Renderer2D,
+// Attach renderers object to p5 class, new renderer can be similarly attached
+const renderers = p5.renderers = {
+  [constants.P2D]: Renderer2D,
   [constants.WEBGL]: p5.RendererGL
 };
 
