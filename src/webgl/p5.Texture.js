@@ -8,6 +8,7 @@
 
 import p5 from '../core/main';
 import * as constants from '../core/constants';
+import Renderer from '../core/p5.Renderer';
 
 /**
  * Texture class for WEBGL Mode
@@ -96,10 +97,10 @@ p5.Texture = class Texture {
       typeof p5.Element !== 'undefined' &&
       obj instanceof p5.Element &&
       !(obj instanceof p5.Graphics) &&
-      !(obj instanceof p5.Renderer);
+      !(obj instanceof Renderer);
     this.isSrcP5Image = obj instanceof p5.Image;
     this.isSrcP5Graphics = obj instanceof p5.Graphics;
-    this.isSrcP5Renderer = obj instanceof p5.Renderer;
+    this.isSrcP5Renderer = obj instanceof Renderer;
     this.isImageData =
       typeof ImageData !== 'undefined' && obj instanceof ImageData;
     this.isFramebufferTexture = obj instanceof p5.FramebufferTexture;

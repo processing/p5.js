@@ -4,7 +4,7 @@ import GeometryBuilder from './GeometryBuilder';
 import libtess from 'libtess'; // Fixed with exporting module from libtess
 import './p5.Shader';
 import './p5.Camera';
-import '../core/p5.Renderer';
+import Renderer from '../core/p5.Renderer';
 import './p5.Matrix';
 import './p5.Framebuffer';
 import { MipmapTexture } from './p5.Texture';
@@ -429,7 +429,7 @@ export function readPixelWebGL(
  * @todo extend class to include public method for offscreen
  * rendering (FBO).
  */
-p5.RendererGL = class RendererGL extends p5.Renderer {
+p5.RendererGL = class RendererGL extends Renderer {
   constructor(elt, pInst, isMainCanvas, attr) {
     super(elt, pInst, isMainCanvas);
     this._setAttributeDefaults(pInst);
@@ -1423,7 +1423,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
  * @param  {Number} h [description]
  */
   resize(w, h) {
-    p5.Renderer.prototype.resize.call(this, w, h);
+    Renderer.prototype.resize.call(this, w, h);
     this._origViewport = {
       width: this.GL.drawingBufferWidth,
       height: this.GL.drawingBufferHeight
@@ -1558,7 +1558,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
   push() {
     // get the base renderer style
-    const style = p5.Renderer.prototype.push.apply(this);
+    const style = Renderer.prototype.push.apply(this);
 
     // add webgl-specific style properties
     const properties = style.properties;

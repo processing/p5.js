@@ -345,7 +345,7 @@ class p5 {
       this.createCanvas(
         this._defaultCanvasSize.width,
         this._defaultCanvasSize.height,
-        'p2d'
+        constants.P2D
       );
 
       // return preload functions to their normal vals if switched by preload

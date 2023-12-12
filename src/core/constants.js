@@ -20,7 +20,7 @@ export const VERSION =
  * @property {String} P2D
  * @final
  */
-export const P2D = 'p2d';
+export const P2D = Symbol('p2d');
 /**
  * One of the two render modes in p5.js, used for computationally intensive tasks like 3D rendering and shaders.
  *
@@ -41,7 +41,7 @@ export const P2D = 'p2d';
  * @property {String} WEBGL
  * @final
  */
-export const WEBGL = 'webgl';
+export const WEBGL = Symbol('webgl');
 /**
  * One of the two possible values of a WebGL canvas (either WEBGL or WEBGL2),
  * which can be used to determine what capabilities the rendering environment

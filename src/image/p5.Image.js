@@ -13,6 +13,7 @@
 
 import p5 from '../core/main';
 import Filters from './filters';
+import Renderer from '../core/p5.Renderer';
 
 /*
  * Class methods
@@ -879,7 +880,7 @@ p5.Image = class {
     const currBlend = this.drawingContext.globalCompositeOperation;
 
     let scaleFactor = 1;
-    if (p5Image instanceof p5.Renderer) {
+    if (p5Image instanceof Renderer) {
       scaleFactor = p5Image._pInst._pixelDensity;
     }
 

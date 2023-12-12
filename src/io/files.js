@@ -10,6 +10,7 @@ import * as fileSaver from 'file-saver';
 import '../core/friendly_errors/validate_params';
 import '../core/friendly_errors/file_errors';
 import '../core/friendly_errors/fes_core';
+import Renderer from '../core/p5.Renderer';
 
 /**
  * Loads a JSON file from a file or a URL, and returns an Object.
@@ -1455,7 +1456,7 @@ p5.prototype.save = function(object, _filename, _options) {
   if (args.length === 0) {
     p5.prototype.saveCanvas(cnv);
     return;
-  } else if (args[0] instanceof p5.Renderer || args[0] instanceof p5.Graphics) {
+  } else if (args[0] instanceof Renderer || args[0] instanceof p5.Graphics) {
     // otherwise, parse the arguments
 
     // if first param is a p5Graphics, then saveCanvas

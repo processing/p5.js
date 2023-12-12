@@ -549,6 +549,4 @@ Renderer.prototype.textSize = function(s) {
   return this._textSize;
 };
 
-p5.Renderer = Renderer;
-
-export default p5.Renderer;
+export default Renderer;

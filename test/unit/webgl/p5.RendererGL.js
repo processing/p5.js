@@ -490,7 +490,7 @@ suite('p5.RendererGL', function() {
       const getFilteredPixels = (mode, initialize, filterType) => {
         myp5.createCanvas(10, 10, mode);
         myp5.background(255);
-        if (mode === 'webgl') {
+        if (mode === myp5.WEBGL) {
           myp5.translate(-5, -5);
         }
         myp5.noStroke();
@@ -507,11 +507,14 @@ suite('p5.RendererGL', function() {
 
       for (const filterType of ['blur', 'invert']) {
         suite(`${filterType} filter`, function() {
-          for (const mode of ['p2d', 'webgl']) {
-            suite(`${mode} mode`, function() {
+          for (const mode of [myp5.P2D, myp5.WEBGL]) {
+            suite(`${mode.description} mode`, function() {
               let defaultPixels;
               setup(() => {
-                defaultPixels = getFilteredPixels('p2d', () => {}, filterType);
+                defaultPixels = getFilteredPixels(
+                  myp5.P2D,
+                  () => {}, filterType
+                );
               });
 
               for (const [name, initialize] of cases) {

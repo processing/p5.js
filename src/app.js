@@ -12,7 +12,7 @@ import './core/legacy';
 import './core/preload';
 import './core/p5.Element';
 import './core/p5.Graphics';
-import './core/p5.Renderer';
+// import './core/p5.Renderer';
 import './core/p5.Renderer2D';
 import './core/rendering';
 import './core/shim';

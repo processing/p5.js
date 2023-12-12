@@ -11,6 +11,10 @@ import './p5.Renderer2D';
 import '../webgl/p5.RendererGL';
 let defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
 const defaultClass = 'p5Canvas';
+const renderers = {
+  [constants.P2D]: p5.Renderer2D,
+  [constants.WEBGL]: p5.RendererGL
+};
 
 /**
  * Creates a canvas element in the document and sets its dimensions
@@ -83,6 +87,7 @@ p5.prototype.createCanvas = function(w, h, renderer, canvas) {
   let c;
 
   if (canvas) {
+    // NOTE: this is to guard against multiple default canvas being created
     c = document.getElementById(defaultId);
     if (c) {
       c.parentNode.removeChild(c); //replace the existing defaultCanvas
@@ -143,17 +148,20 @@ p5.prototype.createCanvas = function(w, h, renderer, canvas) {
 
   // Init our graphics renderer
   //webgl mode
-  if (r === constants.WEBGL) {
-    this._setProperty('_renderer', new p5.RendererGL(c, this, true));
-    this._elements.push(this._renderer);
-  } else {
-    //P2D mode
-    if (!this._defaultGraphicsCreated) {
-      this._setProperty('_renderer', new p5.Renderer2D(c, this, true));
-      this._defaultGraphicsCreated = true;
-      this._elements.push(this._renderer);
-    }
-  }
+  // if (r === constants.WEBGL) {
+  //   this._setProperty('_renderer', new p5.RendererGL(c, this, true));
+  //   this._elements.push(this._renderer);
+  // } else {
+  //   //P2D mode
+  //   if (!this._defaultGraphicsCreated) {
+  //     this._setProperty('_renderer', new p5.Renderer2D(c, this, true));
+  //     this._defaultGraphicsCreated = true;
+  //     this._elements.push(this._renderer);
+  //   }
+  // }
+  this._setProperty('_renderer', new renderers[r](c, this, true));
+  this._defaultGraphicsCreated = true;
+  this._elements.push(this._renderer);
   this._renderer.resize(w, h);
   this._renderer._applyDefaults();
   return this._renderer;
