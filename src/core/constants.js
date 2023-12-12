@@ -49,7 +49,7 @@ export const WEBGL = Symbol('webgl');
  * @property {String} WEBGL2
  * @final
  */
-export const WEBGL2 = 'webgl2';
+export const WEBGL2 = Symbol('webgl2');
 
 // ENVIRONMENT
 /**
