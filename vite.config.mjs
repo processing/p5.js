@@ -13,20 +13,25 @@ export default defineConfig({
     minify: false,
     esbuild: false,
     appType: 'custom',
+    lib: {
+      entry: './src/app.js',
+      name: 'p5',
+      formats: ['umd']
+    },
     rollupOptions: {
       input: './src/app.js',
       output: [
         {
           dir: './lib',
           entryFileNames: 'p5.vite.js',
-          format: 'iife',
+          format: 'umd',
           name: 'p5',
           banner: `/*! p5.js v${pkg.version} ${dayjs().format('MMMM D, YYYY')} */`
         },
         {
           dir: './lib',
           entryFileNames: 'p5.vite.min.js',
-          format: 'iife',
+          format: 'umd',
           name: 'p5',
           banner: `/*! p5.js v${pkg.version} ${dayjs().format('MMMM D, YYYY')} */`,
           plugins: [terser({
