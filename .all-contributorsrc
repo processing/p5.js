@@ -5436,6 +5436,15 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "dexterco",
+      "name": "Nabeel (Dexter)",
+      "avatar_url": "https://avatars.githubusercontent.com/u/63152089?v=4",
+      "profile": "https://github.com/dexterco",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
