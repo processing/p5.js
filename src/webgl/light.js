@@ -533,8 +533,10 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  *
  *   push();
  *   camera(0, 0, 1, 0, 0, 0, 0, 1, 0);
- *   ortho(-50, 50, -50, 50, 0, 1);
- *   image(img, -50, -50, 100, 100);
+ *   ortho(-1, 1, -1, 1, 0, 1);
+ *   noStroke();
+ *   texture(img);
+ *   plane(2);
  *   pop();
  *
  *   ambientLight(50);
@@ -570,8 +572,10 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  *
  *   push();
  *   camera(0, 0, 1, 0, 0, 0, 0, 1, 0);
- *   ortho(-50, 50, -50, 50, 0, 1);
- *   image(img, -50, -50, 100, 100);
+ *   ortho(-1, 1, -1, 1, 0, 1);
+ *   noStroke();
+ *   texture(img);
+ *   plane(2);
  *   pop();
  *
  *   ambientLight(50);
