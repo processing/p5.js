@@ -534,6 +534,7 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  *   push();
  *   camera(0, 0, 1, 0, 0, 0, 0, 1, 0);
  *   ortho(-1, 1, -1, 1, 0, 1);
+ *   noLights();
  *   noStroke();
  *   texture(img);
  *   plane(2);
@@ -573,6 +574,7 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  *   push();
  *   camera(0, 0, 1, 0, 0, 0, 0, 1, 0);
  *   ortho(-1, 1, -1, 1, 0, 1);
+ *   noLights();
  *   noStroke();
  *   texture(img);
  *   plane(2);
