@@ -1,0 +1,45 @@
+<svg width="375" height="115" viewBox="0 0 375 115" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="375" height="115" fill="white"/>
+<rect x="268.983" y="51.8931" width="47.4062" height="28.0285" transform="rotate(-45 268.983 51.8931)" fill="black" fill-opacity="0.05"/>
+<rect x="269.69" y="51.8931" width="46.4062" height="27.0285" transform="rotate(-45 269.69 51.8931)" stroke="black" stroke-opacity="0.5"/>
+<rect x="336.025" y="71.7123" width="47.4062" height="28.0285" transform="rotate(-135 336.025 71.7123)" fill="black" fill-opacity="0.05"/>
+<rect x="336.025" y="71.0052" width="46.4062" height="27.0285" transform="rotate(-135 336.025 71.0052)" stroke="black" stroke-opacity="0.5"/>
+<rect x="302.514" y="19.0487" width="14" height="14" transform="rotate(-45 302.514 19.0487)" fill="black" fill-opacity="0.2" stroke="black"/>
+<rect x="303.211" y="38.1911" width="13.0143" height="13.0143" transform="rotate(-45 303.211 38.1911)" fill="black" fill-opacity="0.2" stroke="black"/>
+<text fill="black" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="7" letter-spacing="0em"><tspan x="292.416" y="18.9173">-1</tspan></text>
+<text fill="black" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="7" letter-spacing="0em"><tspan x="297.526" y="40.7365">1</tspan></text>
+<text fill="black" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="7" letter-spacing="0em"><tspan x="325.377" y="18.9173">-3</tspan></text>
+<text fill="black" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="7" letter-spacing="0em"><tspan x="322.323" y="40.7365">3</tspan></text>
+<text fill="black" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="7" letter-spacing="0em"><tspan x="308.804" y="6.54545">-2</tspan></text>
+<text fill="black" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="7" letter-spacing="0em"><tspan x="310.795" y="56.6461">2</tspan></text>
+<circle cx="312.414" cy="29.0503" r="2.0002" fill="#FF3232"/>
+<path d="M297.299 44.1999C297.299 43.6476 296.852 43.1999 296.299 43.1999H287.299C286.747 43.1999 286.299 43.6476 286.299 44.1999C286.299 44.7521 286.747 45.1999 287.299 45.1999H295.299V53.1999C295.299 53.7521 295.747 54.1999 296.299 54.1999C296.852 54.1999 297.299 53.7521 297.299 53.1999V44.1999ZM279.516 62.3979L297.006 44.907L295.592 43.4927L278.101 60.9837L279.516 62.3979Z" fill="#32C8FF"/>
+<path d="M346.325 60.7748C346.877 60.7748 347.325 60.3271 347.325 59.7748V50.7748C347.325 50.2225 346.877 49.7748 346.325 49.7748C345.772 49.7748 345.325 50.2225 345.325 50.7748V58.7748H337.325C336.772 58.7748 336.325 59.2225 336.325 59.7748C336.325 60.3271 336.772 60.7748 337.325 60.7748H346.325ZM328.615 43.4791L345.618 60.4819L347.032 59.0677L330.029 42.0649L328.615 43.4791Z" fill="#FF32FF"/>
+<rect x="162.124" y="27.1768" width="47.4062" height="28.0285" fill="black" fill-opacity="0.05"/>
+<rect x="162.624" y="27.6768" width="46.4062" height="27.0285" stroke="black" stroke-opacity="0.5"/>
+<rect x="210.031" y="27.6768" width="13" height="27.0285" fill="black" fill-opacity="0.2" stroke="black"/>
+<circle cx="209.531" cy="41.1911" r="2.0002" fill="#FF3232"/>
+<circle cx="216.864" cy="41.1788" r="0.937478" fill="#FF32FF"/>
+<path d="M203.841 41.8982C204.232 41.5076 204.232 40.8745 203.841 40.484L197.478 34.12C197.087 33.7295 196.454 33.7295 196.063 34.12C195.673 34.5105 195.673 35.1437 196.063 35.5342L201.72 41.1911L196.063 46.8479C195.673 47.2384 195.673 47.8716 196.063 48.2621C196.454 48.6527 197.087 48.6527 197.478 48.2621L203.841 41.8982ZM180.644 42.1911L203.134 42.1911L203.134 40.1911L180.644 40.1911L180.644 42.1911Z" fill="#32C8FF"/>
+<text fill="black" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="7" letter-spacing="0em"><tspan x="205.057" y="22.9173">-1</tspan></text>
+<text fill="black" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="7" letter-spacing="0em"><tspan x="208.667" y="64.3006">1</tspan></text>
+<text fill="black" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="7" letter-spacing="0em"><tspan x="218.312" y="22.9173">-2</tspan></text>
+<text fill="black" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="7" letter-spacing="0em"><tspan x="221.302" y="64.3006">2</tspan></text>
+<rect x="39.7315" y="27.6645" width="71.0259" height="27.0285" fill="black" fill-opacity="0.2" stroke="black"/>
+<circle cx="39.2315" cy="41.1788" r="2.0002" fill="#FF3232"/>
+<circle cx="111.257" cy="41.1788" r="2.0002" fill="#FF3232"/>
+<path d="M35.4174 41.8859C35.8079 41.4954 35.8079 40.8622 35.4174 40.4717L29.0535 34.1077C28.6629 33.7172 28.0298 33.7172 27.6392 34.1077C27.2487 34.4982 27.2487 35.1314 27.6392 35.5219L33.2961 41.1788L27.6392 46.8356C27.2487 47.2262 27.2487 47.8593 27.6392 48.2498C28.0298 48.6404 28.6629 48.6404 29.0535 48.2498L35.4174 41.8859ZM12.2195 42.1788L34.7103 42.1788L34.7103 40.1788L12.2195 40.1788L12.2195 42.1788Z" fill="#32C8FF"/>
+<path d="M138.976 41.8859C139.367 41.4954 139.367 40.8622 138.976 40.4717L132.613 34.1077C132.222 33.7172 131.589 33.7172 131.198 34.1077C130.808 34.4982 130.808 35.1314 131.198 35.5219L136.855 41.1788L131.198 46.8356C130.808 47.2262 130.808 47.8593 131.198 48.2498C131.589 48.6404 132.222 48.6404 132.613 48.2498L138.976 41.8859ZM115.779 42.1788L138.269 42.1788L138.269 40.1788L115.779 40.1788L115.779 42.1788Z" fill="#FF32FF"/>
+<text fill="black" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="7" letter-spacing="0em"><tspan x="35.9947" y="24.9173">-1</tspan></text>
+<text fill="black" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="7" letter-spacing="0em"><tspan x="106.039" y="24.9173">-2</tspan></text>
+<text fill="black" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="7" letter-spacing="0em"><tspan x="37.1046" y="62.5315">1</tspan></text>
+<text fill="black" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="7" letter-spacing="0em"><tspan x="108.029" y="62.5315">2</tspan></text>
+<text fill="#969696" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="12" letter-spacing="0em"><tspan x="53.5991" y="105.972">Segment</tspan></text>
+<text fill="#32C8FF" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="8" letter-spacing="0em"><tspan x="6.62343" y="74.6214">Tangent In</tspan></text>
+<text fill="#32C8FF" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="8" letter-spacing="0em"><tspan x="6.62343" y="74.6214">Tangent In</tspan></text>
+<text fill="#FF32FF" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="8" letter-spacing="0em"><tspan x="101.599" y="74.6214">Tangent Out</tspan></text>
+<text fill="#FF3232" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="8" letter-spacing="0em"><tspan x="183.937" y="76.6214">Center Point</tspan></text>
+<text fill="black" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="8" letter-spacing="0em"><tspan x="305.239" y="76.6214">Side</tspan></text>
+<text fill="#969696" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="12" letter-spacing="0em"><tspan x="181.892" y="105.972">Cap</tspan></text>
+<text fill="#969696" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="12" letter-spacing="0em"><tspan x="298.65" y="105.972">Join</tspan></text>
+</svg>
