@@ -221,7 +221,7 @@ p5.prototype.orbitControl = function(
       if (pointersInCanvas) this._renderer.executeZoom = true;
     } else {
       // quit zoom when you stop wheeling.
-      this._renderer.zoomFlag = false;
+      this._renderer.executeZoom = false;
     }
     if (this.mouseIsPressed) {
       if (this.mouseButton === this.LEFT) {
