@@ -26,7 +26,7 @@ import p5 from '../core/main';
  * to view the position of your camera.
  *
  * If no parameters are given, the following default is used:
- * camera(0, 0, (height/2) / tan(PI/6), 0, 0, 0, 0, 1, 0)
+ * camera(0, 0, 800, 0, 0, 0, 0, 1, 0)
  * @method camera
  * @constructor
  * @for p5
@@ -45,6 +45,7 @@ import p5 from '../core/main';
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   describe('a square moving closer and then away from the camera.');
  * }
  * function draw() {
@@ -72,6 +73,7 @@ import p5 from '../core/main';
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   //create sliders
  *   for (var i = 0; i < 6; i++) {
  *     if (i === 2) {
@@ -154,6 +156,7 @@ p5.prototype.camera = function (...args) {
  * //drag the mouse to look around!
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
  *   perspective(PI / 3.0, width / height, 0.1, 500);
  *   describe(
  *     'two colored 3D boxes move back and forth, rotating as mouse is dragged.'
@@ -164,16 +167,16 @@ p5.prototype.camera = function (...args) {
  *   orbitControl();
  *   normalMaterial();
  *
- *   translate(0, 0, 550);
  *   rotateX(-0.3);
  *   rotateY(-0.2);
+ *   translate(0, 0, -50);
  *
  *   push();
- *   translate(-15, 0, sin(frameCount / 30) * 95);
+ *   translate(-15, 0, sin(frameCount / 30) * 65);
  *   box(30);
  *   pop();
  *   push();
- *   translate(15, 0, sin(frameCount / 30 + PI) * 95);
+ *   translate(15, 0, sin(frameCount / 30 + PI) * 65);
  *   box(30);
  *   pop();
  * }
@@ -202,7 +205,7 @@ p5.prototype.perspective = function (...args) {
  * maximum z values.
  *
  * If no parameters are given, the following default is used:
- * ortho(-width/2, width/2, -height/2, height/2).
+ * ortho(-width/2, width/2, -height/2, height/2, 0, max(width, height)).
  * @method  ortho
  * @for p5
  * @param  {Number} [left]   camera frustum left plane
@@ -219,6 +222,7 @@ p5.prototype.perspective = function (...args) {
  * //there's no vanishing point
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
  *   ortho(-width / 2, width / 2, height / 2, -height / 2, 0, 500);
  *   describe(
  *     'two 3D boxes move back and forth along same plane, rotating as mouse is dragged.'
@@ -229,7 +233,6 @@ p5.prototype.perspective = function (...args) {
  *   orbitControl();
  *   normalMaterial();
  *
- *   translate(0,0,500);
  *   rotateX(0.2);
  *   rotateY(-0.2);
  *   push();
@@ -271,7 +274,7 @@ p5.prototype.ortho = function (...args) {
  *
  * If no parameters are given, the following default is used:
  * frustum(-width/20, width/20, height/20, -height/20, eyeZ/10, eyeZ*10),
- * where eyeZ is equal to ((height/2) / tan(PI/6)).
+ * where eyeZ is equal to 800.
  * @method frustum
  * @for p5
  * @param  {Number} [left]   camera frustum left plane
@@ -287,6 +290,7 @@ p5.prototype.ortho = function (...args) {
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   setAttributes('antialias', true);
+ *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
  *   frustum(-0.1, 0.1, -0.1, 0.1, 0.1, 200);
  *   describe(
  *     'two 3D boxes move back and forth along same plane, rotating as mouse is dragged.'
@@ -296,7 +300,7 @@ p5.prototype.ortho = function (...args) {
  *   background(200);
  *   orbitControl();
  *   normalMaterial();
- *   translate(0,0,700);
+ *
  *   rotateY(-0.2);
  *   rotateX(-0.3);
  *   push();
@@ -353,6 +357,8 @@ p5.prototype.frustum = function (...args) {
  *   createCanvas(100, 100, WEBGL);
  *   background(0);
  *   camera = createCamera();
+ *   camera.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   camera.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   describe('An example that creates a camera and moves it around the box.');
  * }
  *
@@ -417,7 +423,7 @@ p5.prototype.createCamera = function () {
  * <a href="#/p5.Camera/setPosition">setPosition()</a>
  * method sets the camera's position in world-space.
  *
- * The camera object propreties
+ * The camera object properties
  * <code>eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ</code>
  * which describes camera position, orientation, and projection
  * are also accessible via the camera object generated using
@@ -435,6 +441,8 @@ p5.prototype.createCamera = function () {
  *   createCanvas(100, 100, WEBGL);
  *   normalMaterial();
  *   cam = createCamera();
+ *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   cam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   // set initial pan angle
  *   cam.pan(-0.8);
  *   describe(
@@ -486,7 +494,7 @@ p5.Camera = class Camera {
     this.yScale = 1;
   }
   /**
- * camera position value on x axis
+ * camera position value on x axis. default value is 0
  * @property {Number} eyeX
  * @readonly
  * @example
@@ -515,7 +523,7 @@ p5.Camera = class Camera {
  */
 
   /**
- * camera position value on y axis
+ * camera position value on y axis. default value is 0
  * @property {Number} eyeY
  * @readonly
  * @example
@@ -543,7 +551,7 @@ p5.Camera = class Camera {
  */
 
   /**
- * camera position value on z axis
+ * camera position value on z axis. default value is 800
  * @property {Number} eyeZ
  * @readonly
  * @example
@@ -751,6 +759,7 @@ p5.Camera = class Camera {
  *   createCanvas(100, 100, WEBGL);
  *   // create a camera
  *   cam = createCamera();
+ *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
  *   // give it a perspective projection
  *   cam.perspective(PI / 3.0, width / height, 0.1, 500);
  * }
@@ -760,16 +769,16 @@ p5.Camera = class Camera {
  *   orbitControl();
  *   normalMaterial();
  *
- *   translate(0, 0, 550);
  *   rotateX(-0.3);
  *   rotateY(-0.2);
+ *   translate(0, 0, -50);
  *
  *   push();
- *   translate(-15, 0, sin(frameCount / 30) * 95);
+ *   translate(-15, 0, sin(frameCount / 30) * 65);
  *   box(30);
  *   pop();
  *   push();
- *   translate(15, 0, sin(frameCount / 30 + PI) * 95);
+ *   translate(15, 0, sin(frameCount / 30 + PI) * 65);
  *   box(30);
  *   pop();
  * }
@@ -871,6 +880,7 @@ p5.Camera = class Camera {
  *   createCanvas(100, 100, WEBGL);
  *   // create a camera
  *   cam = createCamera();
+ *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
  *   // give it an orthographic projection
  *   cam.ortho(-width / 2, width / 2, height / 2, -height / 2, 0, 500);
  * }
@@ -878,7 +888,7 @@ p5.Camera = class Camera {
  *   background(200);
  *   orbitControl();
  *   normalMaterial();
- *   translate(0,0,500);
+ *
  *   rotateX(0.2);
  *   rotateY(-0.2);
  *   push();
@@ -969,6 +979,7 @@ p5.Camera = class Camera {
  *   setAttributes('antialias', true);
  *   // create a camera
  *   cam = createCamera();
+ *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
  *   // set its frustum
  *   cam.frustum(-0.1, 0.1, -0.1, 0.1, 0.1, 200);
  * }
@@ -977,7 +988,7 @@ p5.Camera = class Camera {
  *   background(200);
  *   orbitControl();
  *   normalMaterial();
- *   translate(0,0,700);
+ *
  *   rotateY(-0.2);
  *   rotateX(-0.3);
  *   push();
@@ -1115,6 +1126,8 @@ p5.Camera = class Camera {
  *   createCanvas(100, 100, WEBGL);
  *   normalMaterial();
  *   cam = createCamera();
+ *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   cam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   // set initial pan angle
  *   cam.pan(-0.8);
  * }
@@ -1173,6 +1186,8 @@ p5.Camera = class Camera {
  *   createCanvas(100, 100, WEBGL);
  *   normalMaterial();
  *   cam = createCamera();
+ *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   cam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   // set initial tilt
  *   cam.tilt(-0.8);
  * }
@@ -1231,6 +1246,8 @@ p5.Camera = class Camera {
  *   createCanvas(100, 100, WEBGL);
  *   normalMaterial();
  *   cam = createCamera();
+ *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   cam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  * }
  *
  * function draw() {
@@ -1333,6 +1350,7 @@ p5.Camera = class Camera {
  *   createCanvas(100, 100, WEBGL);
  *   // create a camera
  *   cam = createCamera();
+ *   cam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   // create sliders
  *   for (var i = 0; i < 6; i++) {
  *     if (i === 2) {
@@ -1463,6 +1481,8 @@ p5.Camera = class Camera {
  *   createCanvas(100, 100, WEBGL);
  *   normalMaterial();
  *   cam = createCamera();
+ *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   cam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  * }
  *
  * function draw() {
@@ -1536,6 +1556,8 @@ p5.Camera = class Camera {
  *   createCanvas(100, 100, WEBGL);
  *   normalMaterial();
  *   cam = createCamera();
+ *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   cam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  * }
  *
  * function draw() {
@@ -1600,8 +1622,11 @@ p5.Camera = class Camera {
  *   // Set the initial state to initialCamera and set it to the camera
  *   // used for drawing. Then set cam to be the active camera.
  *   cam = createCamera();
+ *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   cam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   initialCam = createCamera();
  *   initialCam.camera(100, 100, 100, 0, 0, 0, 0, 0, -1);
+ *   initialCam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   cam.set(initialCam);
  *
  *   setCamera(cam);
@@ -1678,11 +1703,17 @@ p5.Camera = class Camera {
  *
  *   // camera for slerp.
  *   cam = createCamera();
+ *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   cam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   // cam0 is looking at the cube from the front.
+ *   cam0 = createCamera();
+ *   cam0.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   cam0.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   // cam1 is pointing straight to the right in the cube
  *   // at the same position as cam0 by doing a pan(-PI/2).
- *   cam0 = createCamera();
  *   cam1 = createCamera();
+ *   cam1.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   cam1.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   cam1.pan(-PI/2);
  *
  *   // we only use cam.
@@ -1720,9 +1751,18 @@ p5.Camera = class Camera {
  *   createCanvas(100, 100, WEBGL);
  *   strokeWeight(3);
  *
- *   cam = createCamera(); // main camera
- *   lastCam = createCamera(); // Camera for recording loc info before reset
- *   initialCam = createCamera(); // Camera for recording the initial state
+ *   // main camera
+ *   cam = createCamera();
+ *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   cam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
+ *   // Camera for recording loc info before reset
+ *   lastCam = createCamera();
+ *   lastCam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   lastCam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
+ *   // Camera for recording the initial state
+ *   initialCam = createCamera();
+ *   initialCam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   initialCam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *
  *   setCamera(cam); // set main camera
  * }
@@ -2265,10 +2305,12 @@ p5.Camera = class Camera {
  *   normalMaterial();
  *
  *   cam1 = createCamera();
+ *   cam1.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   cam1.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   cam2 = createCamera();
  *   cam2.setPosition(30, 0, 50);
  *   cam2.lookAt(0, 0, 0);
- *   cam2.ortho();
+ *   cam2.ortho(-50, 50, -50, 50, 0, 200);
  *
  *   // set variable for previously active camera:
  *   currentCamera = 1;
@@ -2281,10 +2323,6 @@ p5.Camera = class Camera {
  * function draw() {
  *   background(200);
  *
- *   // camera 1:
- *   cam1.lookAt(0, 0, 0);
- *   cam1.setPosition(sin(frameCount / 60) * 200, 0, 100);
- *
  *   // every 100 frames, switch between the two cameras
  *   if (frameCount % 100 === 0) {
  *     if (currentCamera === 1) {
@@ -2295,6 +2333,10 @@ p5.Camera = class Camera {
  *       currentCamera = 1;
  *     }
  *   }
+ *
+ *   // camera 1:
+ *   cam1.lookAt(0, 0, 0);
+ *   cam1.setPosition(sin(frameCount / 60) * 200, 0, 100);
  *
  *   drawBoxes();
  * }
