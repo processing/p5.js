@@ -387,6 +387,10 @@ p5.prototype.createFramebuffer = function(options) {
  * the canvas anyway.
  *
  * @method clearDepth
+ * @parameter [depth] The value, between 0 and 1, to reset the depth to, where
+ * 0 corresponds to a value as close as possible to the camera before getting
+ * clipped, and 1 corresponds to a value as far away from the camera as possible.
+ * The default value is 1.
  *
  * @example
  * <div>
@@ -434,9 +438,9 @@ p5.prototype.createFramebuffer = function(options) {
  * A red, green, and blue box (using normalMaterial) moves and rotates around
  * the canvas, leaving a trail behind it that slowly grows and fades away.
  */
-p5.prototype.clearDepth = function() {
+p5.prototype.clearDepth = function(depth) {
   this._assert3d('clearDepth');
-  this._renderer.clearDepth();
+  this._renderer.clearDepth(depth);
 };
 
 /**
