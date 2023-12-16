@@ -927,7 +927,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/vishwassrivastava"><img src="https://avatars.githubusercontent.com/u/84739867?v=4?s=120" width="120px;" alt="Vishwas Srivastava"/><br /><sub><b>Vishwas Srivastava</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=vishwassrivastava" title="Code">💻</a></td>
-      <td align="center" valign="top" width="16.66%"><a href="https://github.com/umangutkarsh"><img src="https://avatars.githubusercontent.com/u/95426993?v=4?s=120" width="120px;" alt="Umang Utkarsh"/><br /><sub><b>Umang Utkarsh</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=umangutkarsh" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/umangutkarsh"><img src="https://avatars.githubusercontent.com/u/95426993?v=4?s=120" width="120px;" alt="Umang Utkarsh"/><br /><sub><b>Umang Utkarsh</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=umangutkarsh" title="Documentation">📖</a> <a href="#translation-umangutkarsh" title="Translation">🌍</a></td>
     </tr>
   </tbody>
 </table>
