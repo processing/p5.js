@@ -387,7 +387,7 @@ p5.prototype.createFramebuffer = function(options) {
  * the canvas anyway.
  *
  * @method clearDepth
- * @parameter [depth] The value, between 0 and 1, to reset the depth to, where
+ * @param {Number} [depth] The value, between 0 and 1, to reset the depth to, where
  * 0 corresponds to a value as close as possible to the camera before getting
  * clipped, and 1 corresponds to a value as far away from the camera as possible.
  * The default value is 1.
