@@ -127,6 +127,7 @@ Once the fork is created, navigate to your fork's page and copy the git URL by c
 
 Next, go to the command line in your local environment and close this git repository. "Clone" simply means download a copy of the repo to your local machine. Run the following command in a folder where you want to store the p5.js source code folder.
 
+
 ```
 git clone [git_url]
 ```
