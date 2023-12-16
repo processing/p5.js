@@ -1511,8 +1511,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
    * Resets all depth information so that nothing previously drawn will
    * occlude anything subsequently drawn.
    */
-  clearDepth() {
-    this.GL.clearDepth(1);
+  clearDepth(depth = 1) {
+    this.GL.clearDepth(depth);
     this.GL.clear(this.GL.DEPTH_BUFFER_BIT);
   }
 
