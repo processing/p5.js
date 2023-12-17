@@ -15,7 +15,6 @@ import './core/p5.Graphics';
 // import './core/p5.Renderer';
 import './core/p5.Renderer2D';
 import './core/rendering';
-import './core/shim';
 import './core/structure';
 import './core/transform';
 import './core/shape/2d_primitives';
