@@ -612,7 +612,10 @@ class p5 {
   }
 
   static registerAddon(addon) {
-    addon(p5, p5.prototype);
+    const lifecycles = {};
+    addon(p5, p5.prototype, lifecycles);
+
+    // Handle lifecycle hooks
   }
 
   _initializeInstanceVariables() {
