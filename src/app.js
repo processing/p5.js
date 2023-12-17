@@ -63,11 +63,11 @@ import './io/p5.XML';
 
 // math
 // import './math/calculation';
-import './math/math';
-import './math/noise';
-import './math/p5.Vector';
-import './math/random';
-import './math/trigonometry';
+// import './math/math';
+// import './math/noise';
+// import './math/p5.Vector';
+// import './math/random';
+// import './math/trigonometry';
 
 // typography
 import './typography/attributes';

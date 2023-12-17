@@ -49,14 +49,14 @@ export default [{
   ],
   plugins
 }, {
-  input: 'src/math/calculation.js',
+  input: 'src/math/index.js',
   output: [
     {
-      file: './lib/p5.calculation.js',
+      file: './lib/p5.math.js',
       format: 'iife'
     },
     {
-      file: './lib/p5.calculation.min.js',
+      file: './lib/p5.math.min.js',
       format: 'iife',
       plugins: [terser({
         compress: {
@@ -70,7 +70,7 @@ export default [{
       })]
     },
     {
-      file: './lib/p5.calculation.esm.js',
+      file: './lib/p5.math.esm.js',
       format: 'esm'
     }
   ],
