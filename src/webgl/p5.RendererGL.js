@@ -850,9 +850,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   _update() {
     // reset model view and apply initial camera transform
     // (containing only look at info; no projection).
-    this.uMVMatrix.set(
-      ...this._curCamera.cameraMatrix.mat4.slice(0,16)
-    );
+    this.uMVMatrix.set(this._curCamera.cameraMatrix);
 
     // reset light data for new frame.
 
@@ -1634,9 +1632,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
   }
   resetMatrix() {
-    this.uMVMatrix.set(
-      ...this._curCamera.cameraMatrix.mat4.slice(0,16)
-    );
+    this.uMVMatrix.set(this._curCamera.cameraMatrix);
     return this;
   }
 

@@ -831,9 +831,7 @@ p5.Camera = class Camera {
     /* eslint-enable indent */
 
     if (this._isActive()) {
-      this._renderer.uPMatrix.set(
-        ...this.projMatrix.mat4.slice(0,16)
-      );
+      this._renderer.uPMatrix.set(this.projMatrix);
     }
   }
 
@@ -914,9 +912,7 @@ p5.Camera = class Camera {
     /* eslint-enable indent */
 
     if (this._isActive()) {
-      this._renderer.uPMatrix.set(
-        ...this.projMatrix.mat4.slice(0,16)
-      );
+      this._renderer.uPMatrix.set(this.projMatrix);
     }
 
     this.cameraType = 'custom';
@@ -997,9 +993,7 @@ p5.Camera = class Camera {
     /* eslint-enable indent */
 
     if (this._isActive()) {
-      this._renderer.uPMatrix.set(
-        ...this.projMatrix.mat4.slice(0,16)
-      );
+      this._renderer.uPMatrix.set(this.projMatrix);
     }
 
     this.cameraType = 'custom';
@@ -1379,9 +1373,7 @@ p5.Camera = class Camera {
     this.cameraMatrix.translate([tx, ty, tz]);
 
     if (this._isActive()) {
-      this._renderer.uMVMatrix.set(
-        ...this.cameraMatrix.mat4.slice(0,16)
-      );
+      this._renderer.uMVMatrix.set(this.cameraMatrix);
     }
     return this;
   }
@@ -2267,9 +2259,7 @@ p5.prototype.setCamera = function (cam) {
   this._renderer._curCamera = cam;
 
   // set the projection matrix (which is not normally updated each frame)
-  this._renderer.uPMatrix.set(
-    ...cam.projMatrix.mat4.slice(0,16)
-  );
+  this._renderer.uPMatrix.set(cam.projMatrix);
 };
 
 export default p5.Camera;

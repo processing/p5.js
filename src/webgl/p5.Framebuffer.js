@@ -843,7 +843,7 @@ class Framebuffer {
     // it only sets the camera.
     this.target.setCamera(this.defaultCamera);
     this.target._renderer.uMVMatrix.set(
-      ...this.target._renderer._curCamera.cameraMatrix.mat4.slice(0,16)
+      this.target._renderer._curCamera.cameraMatrix
     );
   }
 

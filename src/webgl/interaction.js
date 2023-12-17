@@ -678,9 +678,7 @@ p5.prototype._grid = function(size, numDivs, xOff, yOff, zOff) {
       this._renderer.curStrokeColor[1] * 255,
       this._renderer.curStrokeColor[2] * 255
     );
-    this._renderer.uMVMatrix.set(
-      ...this._renderer._curCamera.cameraMatrix.mat4.slice(0,16)
-    );
+    this._renderer.uMVMatrix.set(this._renderer._curCamera.cameraMatrix);
 
     // Lines along X axis
     for (let q = 0; q <= numDivs; q++) {
@@ -727,9 +725,7 @@ p5.prototype._axesIcon = function(size, xOff, yOff, zOff) {
 
   return function() {
     this.push();
-    this._renderer.uMVMatrix.set(
-      ...this._renderer._curCamera.cameraMatrix.mat4.slice(0,16)
-    );
+    this._renderer.uMVMatrix.set(this._renderer._curCamera.cameraMatrix);
 
     // X axis
     this.strokeWeight(2);
