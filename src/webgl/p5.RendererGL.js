@@ -30,27 +30,27 @@ defineStrokeJoinEnum('ROUND', 0);
 defineStrokeJoinEnum('MITER', 1);
 defineStrokeJoinEnum('BEVEL', 2);
 
-import lightingShader from './shaders/lighting.glsl?raw';
-import webgl2CompatibilityShader from './shaders/webgl2Compatibility.glsl?raw';
-import immediateVert from './shaders/immediate.vert?raw';
-import vertexColorVert from './shaders/vertexColor.vert?raw';
-import vertexColorFrag from './shaders/vertexColor.frag?raw';
-import normalVert from './shaders/normal.vert?raw';
-import normalFrag from './shaders/normal.frag?raw';
-import basicFrag from './shaders/basic.frag?raw';
-import lightVert from './shaders/light.vert?raw';
-import lightTextureFrag from './shaders/light_texture.frag?raw';
-import phongVert from './shaders/phong.vert?raw';
-import phongFrag from './shaders/phong.frag?raw';
-import fontVert from './shaders/font.vert?raw';
-import fontFrag from './shaders/font.frag?raw';
-import lineVert from './shaders/line.vert?raw';
-import lineFrag from './shaders/line.frag?raw';
-import pointVert from './shaders/point.vert?raw';
-import pointFrag from './shaders/point.frag?raw';
-import imageLightVert from './shaders/imageLight.vert?raw';
-import imageLightDiffusedFrag from './shaders/imageLightDiffused.frag?raw';
-import imageLightSpecularFrag from './shaders/imageLightSpecular.frag?raw';
+import lightingShader from './shaders/lighting.glsl';
+import webgl2CompatibilityShader from './shaders/webgl2Compatibility.glsl';
+import immediateVert from './shaders/immediate.vert';
+import vertexColorVert from './shaders/vertexColor.vert';
+import vertexColorFrag from './shaders/vertexColor.frag';
+import normalVert from './shaders/normal.vert';
+import normalFrag from './shaders/normal.frag';
+import basicFrag from './shaders/basic.frag';
+import lightVert from './shaders/light.vert';
+import lightTextureFrag from './shaders/light_texture.frag';
+import phongVert from './shaders/phong.vert';
+import phongFrag from './shaders/phong.frag';
+import fontVert from './shaders/font.vert';
+import fontFrag from './shaders/font.frag';
+import lineVert from './shaders/line.vert';
+import lineFrag from './shaders/line.frag';
+import pointVert from './shaders/point.vert';
+import pointFrag from './shaders/point.frag';
+import imageLightVert from './shaders/imageLight.vert';
+import imageLightDiffusedFrag from './shaders/imageLightDiffused.frag';
+import imageLightSpecularFrag from './shaders/imageLightSpecular.frag';
 
 const defaultShaders = {
   immediateVert,
@@ -83,15 +83,15 @@ for (const key in defaultShaders) {
   defaultShaders[key] = webgl2CompatibilityShader + defaultShaders[key];
 }
 
-import filterGrayFrag from './shaders/filters/gray.frag?raw';
-import filterErodeFrag from './shaders/filters/erode.frag?raw';
-import filterDilateFrag from './shaders/filters/dilate.frag?raw';
-import filterBlurFrag from './shaders/filters/blur.frag?raw';
-import filterPosterizeFrag from './shaders/filters/posterize.frag?raw';
-import filterOpaqueFrag from './shaders/filters/opaque.frag?raw';
-import filterInvertFrag from './shaders/filters/invert.frag?raw';
-import filterThresholdFrag from './shaders/filters/threshold.frag?raw';
-import filterShaderVert from './shaders/filters/default.vert?raw';
+import filterGrayFrag from './shaders/filters/gray.frag';
+import filterErodeFrag from './shaders/filters/erode.frag';
+import filterDilateFrag from './shaders/filters/dilate.frag';
+import filterBlurFrag from './shaders/filters/blur.frag';
+import filterPosterizeFrag from './shaders/filters/posterize.frag';
+import filterOpaqueFrag from './shaders/filters/opaque.frag';
+import filterInvertFrag from './shaders/filters/invert.frag';
+import filterThresholdFrag from './shaders/filters/threshold.frag';
+import filterShaderVert from './shaders/filters/default.vert';
 
 const filterShaderFrags = {
   [constants.GRAY]: filterGrayFrag,

@@ -16,10 +16,18 @@
 <body>
 <script type="module">
 import p5 from './src/app.js';
+import calculation from './src/math/calculation.js';
+
+p5.registerAddon(calculation);
 
 const sketch = function(p){
   p.setup = function(){
-    p.createCanvas(200, 200, p.WEBGL);
+    p.createCanvas(200, 200);
+    // console.log(p.ceil(2.1));
+
+    // const c1 = p.color(255);
+    // const c2 = p.color(0);
+    // console.log(p.lerpColor(c1, c2, 0.25).toString());
   };
 
   p.draw = function(){

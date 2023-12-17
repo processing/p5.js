@@ -10,8 +10,6 @@ import '../core/friendly_errors/validate_params';
 import '../core/friendly_errors/file_errors';
 import '../core/friendly_errors/fes_core';
 
-//return p5; //LM is this a mistake?
-
 /**
  * Combines an array of Strings into one String, each separated by the
  * character(s) used for the separator parameter. To join arrays of ints or

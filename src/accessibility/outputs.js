@@ -459,7 +459,9 @@ p5.prototype._accsOutput = function(f, args) {
     //make color stroke
     include.color = this.ingredients.colors.stroke;
     //get lenght
-    include.length = Math.round(this.dist(args[0], args[1], args[2], args[3]));
+    include.length = Math.round(
+      Math.hypot(args[2] - args[0], args[3] - args[1])
+    );
     //get position of end points
     let p1 = this._getPos(args[0], [1]);
     let p2 = this._getPos(args[2], [3]);

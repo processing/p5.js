@@ -611,6 +611,10 @@ class p5 {
     }
   }
 
+  static registerAddon(addon) {
+    addon(p5, p5.prototype);
+  }
+
   _initializeInstanceVariables() {
     this._accessibleOutputs = {
       text: false,

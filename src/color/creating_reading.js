@@ -437,15 +437,14 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
 
   // Define lerp here itself if user isn't using math module.
   // Maintains the definition as found in math/calculation.js
-  if (typeof this.lerp === 'undefined') {
-    this.lerp = (start, stop, amt) => amt * (stop - start) + start;
-  }
+  const lerp = this.lerp ||
+    ((start, stop, amt) => amt * (stop - start) + start);
 
   // Perform interpolation.
-  l0 = this.lerp(fromArray[0], toArray[0], amt);
-  l1 = this.lerp(fromArray[1], toArray[1], amt);
-  l2 = this.lerp(fromArray[2], toArray[2], amt);
-  l3 = this.lerp(fromArray[3], toArray[3], amt);
+  l0 = lerp(fromArray[0], toArray[0], amt);
+  l1 = lerp(fromArray[1], toArray[1], amt);
+  l2 = lerp(fromArray[2], toArray[2], amt);
+  l3 = lerp(fromArray[3], toArray[3], amt);
 
   // Scale components.
   l0 *= maxes[mode][0];

@@ -2,8 +2,8 @@
   "name": "p5",
   "repository": "processing/p5.js",
   "scripts": {
-    "build": "vite build",
-    "preview": "vite preview",
+    "build": "rollup -c",
+    "preview": "vite",
     "dev": "grunt yui browserify:dev connect:yui watch:quick",
     "docs": "documentation build ./src/app.js -o ./docs/data.json",
     "test": "vitest run",
@@ -67,8 +67,10 @@
     "puppeteer": "^18.2.1",
     "regenerator-runtime": "^0.13.3",
     "rollup": "^3.29.2",
+    "rollup-plugin-string": "^3.0.0",
     "unplugin-swc": "^1.4.2",
     "vite": "^5.0.2",
+    "vite-plugin-string": "^1.2.2",
     "vitest": "^0.34.6",
     "webdriverio": "^8.24.1"
   },
