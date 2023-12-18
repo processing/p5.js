@@ -2150,9 +2150,9 @@ p5.Camera = class Camera {
     // up vector. normalized camera's up vector.
     const up = new p5.Vector(this.upX, this.upY, this.upZ).normalize(); // y-axis
     // side vector. Right when viewed from the front
-    const side = new p5.Vector.cross(up, front).normalize(); // x-axis
+    const side = p5.Vector.cross(up, front).normalize(); // x-axis
     // vertical vector. normalized vector of projection of front vector.
-    const vertical = new p5.Vector.cross(side, up); // z-axis
+    const vertical = p5.Vector.cross(side, up); // z-axis
 
     // update camRadius
     camRadius *= Math.pow(10, dRadius);
@@ -2220,9 +2220,9 @@ p5.Camera = class Camera {
     // up vector. camera's up vector.
     const up = new p5.Vector(this.upX, this.upY, this.upZ);
     // side vector. Right when viewed from the front. (like x-axis)
-    const side = new p5.Vector.cross(up, front).normalize();
+    const side = p5.Vector.cross(up, front).normalize();
     // down vector. Bottom when viewed from the front. (like y-axis)
-    const down = new p5.Vector.cross(front, side);
+    const down = p5.Vector.cross(front, side);
 
     // side vector and down vector are no longer used as-is.
     // Create a vector representing the direction of rotation
@@ -2235,7 +2235,7 @@ p5.Camera = class Camera {
     const rotAngle = Math.sqrt(dx*dx + dy*dy);
     // The vector that is orthogonal to both the front vector and
     // the rotation direction vector is the rotation axis vector.
-    const axis = new p5.Vector.cross(front, side);
+    const axis = p5.Vector.cross(front, side);
 
     // update camRadius
     camRadius *= Math.pow(10, dRadius);
