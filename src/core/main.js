@@ -243,7 +243,7 @@ class p5 {
       }
     };
 
-    this._start = () => {
+    this._start = async () => {
       // Find node if id given
       if (this._userNode) {
         if (typeof this._userNode === 'string') {
@@ -285,7 +285,7 @@ class p5 {
         context.preload();
         this._runIfPreloadsAreDone();
       } else {
-        this._setup();
+        await this._setup();
         if (!this._recording) {
           this._draw();
         }
@@ -335,7 +335,7 @@ class p5 {
       context._setProperty('_preloadCount', context._preloadCount + 1);
     };
 
-    this._setup = () => {
+    this._setup = async () => {
       this.callRegisteredHooksFor('beforeSetup');
       // Always create a default canvas.
       // Later on if the user calls createCanvas, this default one
@@ -365,7 +365,7 @@ class p5 {
       // Short-circuit on this, in case someone used the library in "global"
       // mode earlier
       if (typeof context.setup === 'function') {
-        context.setup();
+        await context.setup();
       }
 
       // unhide any hidden canvases that were created

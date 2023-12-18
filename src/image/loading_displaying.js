@@ -89,7 +89,11 @@ import '../core/friendly_errors/fes_core';
  * </code>
  * </div>
  */
-p5.prototype.loadImage = function(path, successCallback, failureCallback) {
+p5.prototype.loadImage = async function(
+  path,
+  successCallback,
+  failureCallback
+) {
   p5._validateParameters('loadImage', arguments);
   const pImg = new p5.Image(1, 1, this);
   const self = this;
@@ -99,7 +103,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     mode: 'cors'
   });
 
-  fetch(path, req)
+  return fetch(path, req)
     .then(response => {
       // GIF section
       const contentType = response.headers.get('content-type');
@@ -182,6 +186,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
         img.src = path;
       }
       pImg.modified = true;
+      return pImg;
     })
     .catch(e => {
       p5._friendlyFileLoadError(0, path);
@@ -192,7 +197,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
         console.error(e);
       }
     });
-  return pImg;
+  // return pImg;
 };
 
 /**
