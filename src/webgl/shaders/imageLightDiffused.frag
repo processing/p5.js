@@ -56,19 +56,20 @@ void main()
   // will increase or decrease the accuracy respectively.
 	const float sampleDelta = 0.100;
 	float nrSamples = 0.0;
-  
-	for(float phi = 0.0; phi < 2.0 * PI; phi += sampleDelta)
+  float randomOffset = random(gl_FragCoord.xy) * sampleDelta;
+	for(float rawPhi = 0.0; rawPhi < 2.0 * PI; rawPhi += sampleDelta)
 	{
-    for(float theta = 0.0; theta < ( 0.5 ) * PI; theta += sampleDelta)
+    float phi = rawPhi + randomOffset;
+    for(float rawTheta = 0.0; rawTheta < ( 0.5 ) * PI; rawTheta += sampleDelta)
     {
+      float theta = rawTheta + randomOffset;
       // spherical to cartesian (in tangent space) // tangent space to world // add each sample result to irradiance
       float x = sin(theta) * cos(phi);
       float y = sin(theta) * sin(phi);
       float z = cos(theta);
       vec3 tangentSample = vec3( x, y, z);
       
-      float randomOffset = mix(-0.1, 0.1, random(gl_FragCoord.xy));
-      vec3 sampleVec = tangentSample.x * right + tangentSample.y * up + tangentSample.z * normal + randomOffset;
+      vec3 sampleVec = tangentSample.x * right + tangentSample.y * up + tangentSample.z * normal;
         irradiance += (texture2D(environmentMap, nTOE(sampleVec)).xyz) * cos(theta) * sin(theta);
       nrSamples++;
     }

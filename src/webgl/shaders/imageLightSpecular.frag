@@ -36,7 +36,7 @@ vec2 nTOE( vec3 v ){
 
 
 void main(){
-  const int SAMPLE_COUNT = 16; // 4096
+  const int SAMPLE_COUNT = 400; // 4096
   float totalWeight = 0.0;
   vec3 prefilteredColor = vec3(0.0);
   float phi = vTexCoord.x * 2.0 * PI;
@@ -48,6 +48,12 @@ void main(){
   vec3 V = N;
   for (int i = 0; i < SAMPLE_COUNT; ++i)
   {
+    float FLOAT_SAMPLE_COUNT = float(SAMPLE_COUNT) 
+    // break out at lower roughness levels 
+    if(FLOAT_SAMPLE_COUNT == pow(2.0,(roughness+0.1)*20.0))           
+    {                                               
+      break;
+    }
     vec2 Xi = HammersleyNoBitOps(i, SAMPLE_COUNT);
     vec3 H = ImportanceSampleGGX(Xi, N, roughness);
     vec3 L = normalize(2.0 * dot(V, H) * H - V);
