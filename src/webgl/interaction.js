@@ -45,6 +45,8 @@ import * as constants from '../core/constants';
  *   describe(
  *     'Camera orbits around a box when mouse is hold-clicked & then moved.'
  *   );
+ *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  * }
  * function draw() {
  *   background(200);
@@ -221,7 +223,7 @@ p5.prototype.orbitControl = function(
       if (pointersInCanvas) this._renderer.executeZoom = true;
     } else {
       // quit zoom when you stop wheeling.
-      this._renderer.zoomFlag = false;
+      this._renderer.executeZoom = false;
     }
     if (this.mouseIsPressed) {
       if (this.mouseButton === this.LEFT) {
@@ -396,6 +398,7 @@ p5.prototype.orbitControl = function(
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
+ *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   normalMaterial();
  *   debugMode();
  *   describe(
@@ -426,6 +429,7 @@ p5.prototype.orbitControl = function(
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
+ *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   normalMaterial();
  *   debugMode(GRID);
  *   describe('a 3D box is centered on a grid in a 3D sketch.');
@@ -447,6 +451,7 @@ p5.prototype.orbitControl = function(
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
+ *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   normalMaterial();
  *   debugMode(AXES);
  *   describe(
@@ -472,6 +477,7 @@ p5.prototype.orbitControl = function(
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
+ *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   normalMaterial();
  *   debugMode(GRID, 100, 10, 0, 0, 0);
  *   describe('a 3D box is centered on a grid in a 3D sketch');
@@ -493,6 +499,7 @@ p5.prototype.orbitControl = function(
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
+ *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   normalMaterial();
  *   debugMode(100, 10, 0, 0, 0, 20, 0, -40, 0);
  *   describe(
@@ -601,6 +608,7 @@ p5.prototype.debugMode = function(...args) {
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
+ *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   normalMaterial();
  *   debugMode();
  *   describe(
