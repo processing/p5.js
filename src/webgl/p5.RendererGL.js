@@ -2041,6 +2041,17 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   _setFillUniforms(fillShader) {
     fillShader.bindShader();
 
+    if (this._useMetalness > 0 && !this.curFillColor.every((value, index) =>
+      value === 1)) {
+      const metalnessFactor = Math.min(this._useMetalness / 100, 0.6);
+      const nonMetalnessFactor = Math.max(1 - metalnessFactor, 0.4);
+
+      this.curSpecularColor = this.curSpecularColor.map(
+        (specularColor, index) =>
+          this.curFillColor[index] * metalnessFactor +
+          specularColor * nonMetalnessFactor
+      );
+    }
     // TODO: optimize
     fillShader.setUniform('uUseVertexColor', this._useVertexColor);
     fillShader.setUniform('uMaterialColor', this.curFillColor);
