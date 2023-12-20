@@ -74,18 +74,14 @@ LightResult _light(vec3 viewDirection, vec3 normal, vec3 lightVector) {
 
   //compute our diffuse & specular terms
   LightResult lr;
-  float invertValue = (1.0 - (metallic / 100.0));
-  float specularIntensity = mix(0.5 , 1.0, invertValue);
-  float diffuseIntensity = mix(0.2, 1.0, invertValue);
-  if(metallic != 0.0){
-  if (uSpecular)
-     lr.specular = (_phongSpecular(lightDir, viewDirection, normal, uShininess)) * specularIntensity;
-     lr.diffuse = _lambertDiffuse(lightDir, normal) * diffuseIntensity;
-  }else{
-    if (uSpecular)
-     lr.specular = (_phongSpecular(lightDir, viewDirection, normal, uShininess))  ;
-     lr.diffuse = _lambertDiffuse(lightDir, normal) ;
-  }
+
+float invertValue = 1.0 - (metallic / 100.0);
+float specularIntensity = mix(0.4, 1.0, invertValue);
+float diffuseIntensity = mix(0.1, 1.0, invertValue);
+
+if (uSpecular)
+    lr.specular = (_phongSpecular(lightDir, viewDirection, normal, uShininess)) * specularIntensity;
+    lr.diffuse = _lambertDiffuse(lightDir, normal) * diffuseIntensity;
   return lr;
 }
 
@@ -125,7 +121,7 @@ vec3 calculateImageDiffuse( vec3 vNormal, vec3 vViewPosition ){
   // this is to make the darker sections more dark
   // png and jpg usually flatten the brightness so it is to reverse that
   float invertedMetallic = 1.0 - metallic / 100.0;
-  return mix(vec3(0.0), smoothstep(vec3(0.0), vec3(1.0), texture.xyz), invertedMetallic);
+   return mix(vec3(0.0), smoothstep(vec3(0.0), vec3(1.0), texture.xyz), invertedMetallic);
 }
 
 vec3 calculateImageSpecular( vec3 vNormal, vec3 vViewPosition ){
@@ -141,14 +137,9 @@ vec3 calculateImageSpecular( vec3 vNormal, vec3 vViewPosition ){
 #endif
   // this is to make the darker sections more dark
   // png and jpg usually flatten the brightness so it is to reverse that
-  if(metallic != 0.0){
-   float invertedMetallic = 1.0 - (metallic / 100.0);
-  float mappedValue = mix(1.35, 8.0, (invertedMetallic));
-  return pow(outColor.xyz, vec3(mappedValue));
-  }
-  else{
-    return pow(outColor.xyz, vec3(10.0));
-  }
+ float invertedMetallic = 1.0 - (metallic / 100.0);
+ float mappedValue = mix(1.2, 10.0, invertedMetallic);
+ return pow(outColor.xyz, vec3(mappedValue));
 }
 
 void totalLight(
