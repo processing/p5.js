@@ -840,24 +840,7 @@ p5.Camera = class Camera {
     /* eslint-enable indent */
 
     if (this._isActive()) {
-      this._renderer.uPMatrix.set(
-        this.projMatrix.mat4[0],
-        this.projMatrix.mat4[1],
-        this.projMatrix.mat4[2],
-        this.projMatrix.mat4[3],
-        this.projMatrix.mat4[4],
-        this.projMatrix.mat4[5],
-        this.projMatrix.mat4[6],
-        this.projMatrix.mat4[7],
-        this.projMatrix.mat4[8],
-        this.projMatrix.mat4[9],
-        this.projMatrix.mat4[10],
-        this.projMatrix.mat4[11],
-        this.projMatrix.mat4[12],
-        this.projMatrix.mat4[13],
-        this.projMatrix.mat4[14],
-        this.projMatrix.mat4[15]
-      );
+      this._renderer.uPMatrix.set(this.projMatrix);
     }
   }
 
@@ -939,24 +922,7 @@ p5.Camera = class Camera {
     /* eslint-enable indent */
 
     if (this._isActive()) {
-      this._renderer.uPMatrix.set(
-        this.projMatrix.mat4[0],
-        this.projMatrix.mat4[1],
-        this.projMatrix.mat4[2],
-        this.projMatrix.mat4[3],
-        this.projMatrix.mat4[4],
-        this.projMatrix.mat4[5],
-        this.projMatrix.mat4[6],
-        this.projMatrix.mat4[7],
-        this.projMatrix.mat4[8],
-        this.projMatrix.mat4[9],
-        this.projMatrix.mat4[10],
-        this.projMatrix.mat4[11],
-        this.projMatrix.mat4[12],
-        this.projMatrix.mat4[13],
-        this.projMatrix.mat4[14],
-        this.projMatrix.mat4[15]
-      );
+      this._renderer.uPMatrix.set(this.projMatrix);
     }
 
     this.cameraType = 'custom';
@@ -1038,24 +1004,7 @@ p5.Camera = class Camera {
     /* eslint-enable indent */
 
     if (this._isActive()) {
-      this._renderer.uPMatrix.set(
-        this.projMatrix.mat4[0],
-        this.projMatrix.mat4[1],
-        this.projMatrix.mat4[2],
-        this.projMatrix.mat4[3],
-        this.projMatrix.mat4[4],
-        this.projMatrix.mat4[5],
-        this.projMatrix.mat4[6],
-        this.projMatrix.mat4[7],
-        this.projMatrix.mat4[8],
-        this.projMatrix.mat4[9],
-        this.projMatrix.mat4[10],
-        this.projMatrix.mat4[11],
-        this.projMatrix.mat4[12],
-        this.projMatrix.mat4[13],
-        this.projMatrix.mat4[14],
-        this.projMatrix.mat4[15]
-      );
+      this._renderer.uPMatrix.set(this.projMatrix);
     }
 
     this.cameraType = 'custom';
@@ -1442,24 +1391,7 @@ p5.Camera = class Camera {
     this.cameraMatrix.translate([tx, ty, tz]);
 
     if (this._isActive()) {
-      this._renderer.uMVMatrix.set(
-        this.cameraMatrix.mat4[0],
-        this.cameraMatrix.mat4[1],
-        this.cameraMatrix.mat4[2],
-        this.cameraMatrix.mat4[3],
-        this.cameraMatrix.mat4[4],
-        this.cameraMatrix.mat4[5],
-        this.cameraMatrix.mat4[6],
-        this.cameraMatrix.mat4[7],
-        this.cameraMatrix.mat4[8],
-        this.cameraMatrix.mat4[9],
-        this.cameraMatrix.mat4[10],
-        this.cameraMatrix.mat4[11],
-        this.cameraMatrix.mat4[12],
-        this.cameraMatrix.mat4[13],
-        this.cameraMatrix.mat4[14],
-        this.cameraMatrix.mat4[15]
-      );
+      this._renderer.uMVMatrix.set(this.cameraMatrix);
     }
     return this;
   }
@@ -2369,24 +2301,7 @@ p5.prototype.setCamera = function (cam) {
   this._renderer._curCamera = cam;
 
   // set the projection matrix (which is not normally updated each frame)
-  this._renderer.uPMatrix.set(
-    cam.projMatrix.mat4[0],
-    cam.projMatrix.mat4[1],
-    cam.projMatrix.mat4[2],
-    cam.projMatrix.mat4[3],
-    cam.projMatrix.mat4[4],
-    cam.projMatrix.mat4[5],
-    cam.projMatrix.mat4[6],
-    cam.projMatrix.mat4[7],
-    cam.projMatrix.mat4[8],
-    cam.projMatrix.mat4[9],
-    cam.projMatrix.mat4[10],
-    cam.projMatrix.mat4[11],
-    cam.projMatrix.mat4[12],
-    cam.projMatrix.mat4[13],
-    cam.projMatrix.mat4[14],
-    cam.projMatrix.mat4[15]
-  );
+  this._renderer.uPMatrix.set(cam.projMatrix);
 };
 
 export default p5.Camera;
