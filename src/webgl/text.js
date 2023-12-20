@@ -5,12 +5,12 @@ import './p5.RendererGL.Retained';
 
 // Text/Typography
 // @TODO:
-p5.RendererGL.prototype._applyTextProperties = function() {
+p5.RendererGL.prototype._applyTextProperties = function () {
   //@TODO finish implementation
   //console.error('text commands not yet implemented in webgl');
 };
 
-p5.RendererGL.prototype.textWidth = function(s) {
+p5.RendererGL.prototype.textWidth = function (s) {
   if (this._isOpenType()) {
     return this._textFont._textWidth(s, this._textSize);
   }
@@ -639,7 +639,7 @@ class FontInfo {
   }
 }
 
-p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
+p5.RendererGL.prototype._renderText = function (p, line, x, y, maxY) {
   if (!this._textFont || typeof this._textFont === 'string') {
     console.log(
       'WEBGL: you must load and set a font before drawing text. See `loadFont` and `textFont` for more details.'
@@ -699,7 +699,7 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   let g = this.retainedMode.geometry['glyph'];
   if (!g) {
     // create the geometry for rendering a quad
-    const geom = (this._textGeom = new p5.Geometry(1, 1, function() {
+    const geom = (this._textGeom = new p5.Geometry(1, 1, function () {
       for (let i = 0; i <= 1; i++) {
         for (let j = 0; j <= 1; j++) {
           this.vertices.push(new p5.Vector(j, i, 0));
