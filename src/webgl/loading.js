@@ -478,8 +478,8 @@ function parseASCIISTL(model, lines) {
       case '': // First run
         if (parts[0] !== 'solid') {
           // Invalid state
-          console.error(line);
-          console.error(`Invalid state "${parts[0]}", should be "solid"`);
+          p5._friendlyError(line);
+          p5._friendlyError(`Invalid state "${parts[0]}", should be "solid"`);
           return;
         } else {
           state = 'solid';
@@ -489,8 +489,8 @@ function parseASCIISTL(model, lines) {
       case 'solid': // First face
         if (parts[0] !== 'facet' || parts[1] !== 'normal') {
           // Invalid state
-          console.error(line);
-          console.error(
+          p5._friendlyError(line);
+          p5._friendlyError(
             `Invalid state "${parts[0]}", should be "facet normal"`
           );
           return;
@@ -509,8 +509,8 @@ function parseASCIISTL(model, lines) {
       case 'facet normal': // After normal is defined
         if (parts[0] !== 'outer' || parts[1] !== 'loop') {
           // Invalid State
-          console.error(line);
-          console.error(`Invalid state "${parts[0]}", should be "outer loop"`);
+          p5._friendlyError(line);
+          p5._friendlyError(`Invalid state "${parts[0]}", should be "outer loop"`);
           return;
         } else {
           // Next should be vertices
@@ -536,8 +536,8 @@ function parseASCIISTL(model, lines) {
           state = 'endloop';
         } else {
           // Invalid State
-          console.error(line);
-          console.error(
+          p5._friendlyError(line);
+          p5._friendlyError(
             `Invalid state "${parts[0]}", should be "vertex" or "endloop"`
           );
           return;
@@ -547,8 +547,8 @@ function parseASCIISTL(model, lines) {
       case 'endloop':
         if (parts[0] !== 'endfacet') {
           // End of face
-          console.error(line);
-          console.error(`Invalid state "${parts[0]}", should be "endfacet"`);
+          p5._friendlyError(line);
+          p5._friendlyError(`Invalid state "${parts[0]}", should be "endfacet"`);
           return;
         } else {
           state = 'endfacet';
@@ -569,10 +569,9 @@ function parseASCIISTL(model, lines) {
           state = 'facet normal';
         } else {
           // Invalid State
-          console.error(line);
-          console.error(
-            `Invalid state "${
-              parts[0]
+          p5._friendlyError(line);
+          p5._friendlyError(
+            `Invalid state "${parts[0]
             }", should be "endsolid" or "facet normal"`
           );
           return;
@@ -580,7 +579,7 @@ function parseASCIISTL(model, lines) {
         break;
 
       default:
-        console.error(`Invalid state "${state}"`);
+        p5._friendlyError(`Invalid state "${state}"`);
         break;
     }
   }
