@@ -650,12 +650,12 @@ suite('p5.Camera', function() {
         assert.deepEqual(myCam.projMatrix.mat4, expectedMatrix);
       });
 
-      test('ortho() with no parameters specified (sets default)', function() {
+      test('ortho() with no parameters specified (sets default with added far)', function() {
         var expectedMatrix = new Float32Array([
           0.019999999552965164, 0, 0, 0,
-          0, -0.019999999552965164, 0,0,
-          0,0,-0.019999999552965164,0,
-          -0,-0,-1,1
+          0, -0.019999999552965164, 0, 0,
+          0, 0, -0.002222222276031971, 0,
+          -0, -0, -1, 1
         ]);
         myCam.ortho();
         assert.deepEqual(myCam.projMatrix.mat4, expectedMatrix);

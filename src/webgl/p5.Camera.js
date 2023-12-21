@@ -895,7 +895,7 @@ p5.Camera = class Camera {
     if (top === undefined) top = +this._renderer.height / 2;
     if (near === undefined) near = 0;
     if (far === undefined)
-      far = Math.max(this._renderer.width, this._renderer.height);
+      far = Math.max(this._renderer.width, this._renderer.height)+800;
 
     this.cameraNear = near;
     this.cameraFar = far;
