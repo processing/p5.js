@@ -1295,7 +1295,7 @@ p5.RendererGL.prototype._applyBlendMode = function () {
       }
       break;
     default:
-      console.error(
+      p5._friendlyError(
         'Oops! Somehow RendererGL set curBlendMode to an unsupported mode.'
       );
       break;
