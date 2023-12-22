@@ -138,8 +138,11 @@ vec3 calculateImageSpecular( vec3 vNormal, vec3 vViewPosition ){
   // this is to make the darker sections more dark
   // png and jpg usually flatten the brightness so it is to reverse that
  float invertedMetallic = 1.0 - (metallic / 100.0);
- float mappedValue = mix(1.2, 10.0, invertedMetallic);
- return pow(outColor.xyz, vec3(mappedValue));
+  return mix(
+  pow(outColor.xyz, vec3(1.2)),
+  pow(outColor.xyz, vec3(10)),
+  invertedMetallic
+);
 }
 
 void totalLight(
