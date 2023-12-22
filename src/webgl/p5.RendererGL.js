@@ -2041,17 +2041,20 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   _setFillUniforms(fillShader) {
     fillShader.bindShader();
 
+    let SpecularColor = [...this.curSpecularColor];
+
     if (this._useMetalness > 0 && !this.curFillColor.every((value, index) =>
       value === 1)) {
-      const metalnessFactor = Math.min(this._useMetalness / 100, 0.6);
-      const nonMetalnessFactor = Math.max(1 - metalnessFactor, 0.4);
+      const metalnessFactor = this._useMetalness / 100;
+      const nonMetalnessFactor = 1 - metalnessFactor;
 
-      this.curSpecularColor = this.curSpecularColor.map(
+      SpecularColor = SpecularColor.map(
         (specularColor, index) =>
           this.curFillColor[index] * metalnessFactor +
           specularColor * nonMetalnessFactor
       );
     }
+
     // TODO: optimize
     fillShader.setUniform('uUseVertexColor', this._useVertexColor);
     fillShader.setUniform('uMaterialColor', this.curFillColor);
@@ -2063,7 +2066,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     fillShader.setUniform('uHasSetAmbient', this._hasSetAmbient);
     fillShader.setUniform('uAmbientMatColor', this.curAmbientColor);
-    fillShader.setUniform('uSpecularMatColor', this.curSpecularColor);
+    fillShader.setUniform('uSpecularMatColor', SpecularColor);
     fillShader.setUniform('uEmissiveMatColor', this.curEmissiveColor);
     fillShader.setUniform('uSpecular', this._useSpecularMaterial);
     fillShader.setUniform('uEmissive', this._useEmissiveMaterial);
