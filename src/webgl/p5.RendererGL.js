@@ -2103,7 +2103,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     // TODO: sum these here...
     const ambientLightCount = this.ambientLightColors.length / 3;
-    const mixingArray = [];
+    const mixingArray = [...this.ambientLightColors];
     if (this._useMetalness > 0) {
       this.ambientLightColors.map((ambientColors, index) => {
         const mixing = this.ambientLightColors[index] -
