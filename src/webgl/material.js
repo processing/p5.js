@@ -1241,7 +1241,8 @@ p5.prototype.shininess = function (shine) {
 
 p5.prototype.metalness = function (metallic) {
   this._assert3d('metalness');
-  this._renderer._useMetalness = metallic;
+  const metalMix = 1 - Math.exp(-metallic * 0.01);
+  this._renderer._useMetalness = metalMix * 100;
   return this;
 };
 
