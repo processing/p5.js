@@ -21,7 +21,7 @@ import p5 from '../core/main';
  * ball is moving straight up, its velocity vector points straight up. Adding
  * the ball's velocity vector to its position vector moves it, as in
  * `pos.add(vel)`. Vector math relies on methods inside the
- * <a href="#/p5.Vector">p5.Vector</a>` class.
+ * <a href="#/p5.Vector">p5.Vector</a> class.
  *
  * @method createVector
  * @param {Number} [x] x component of the vector.

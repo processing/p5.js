@@ -1,4 +1,3 @@
-precision mediump float;
 precision mediump int;
 
 uniform vec4 uMaterialColor;
@@ -6,13 +5,13 @@ uniform int uStrokeCap;
 uniform int uStrokeJoin;
 uniform float uStrokeWeight;
 
-varying vec4 vColor;
-varying vec2 vTangent;
-varying vec2 vCenter;
-varying vec2 vPosition;
-varying float vMaxDist;
-varying float vCap;
-varying float vJoin;
+IN vec4 vColor;
+IN vec2 vTangent;
+IN vec2 vCenter;
+IN vec2 vPosition;
+IN float vMaxDist;
+IN float vCap;
+IN float vJoin;
 
 float distSquared(vec2 a, vec2 b) {
   vec2 aToB = b - a;
@@ -47,5 +46,5 @@ void main() {
     }
     // Use full area for MITER
   }
-  gl_FragColor = vec4(vColor.rgb, 1.) * vColor.a;
+  OUT_COLOR = vec4(vColor.rgb, 1.) * vColor.a;
 }

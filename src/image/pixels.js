@@ -8,7 +8,6 @@
 import p5 from '../core/main';
 import Filters from './filters';
 import '../color/p5.Color';
-import * as constants from '../core/constants';
 
 /**
  * An array containing the color of each pixel on the canvas. Colors are
@@ -298,7 +297,6 @@ p5.prototype._copyHelper = (
   dw,
   dh
 ) => {
-  srcImage.loadPixels();
   const s = srcImage.canvas.width / srcImage.width;
   // adjust coord system for 3D when renderer
   // ie top-left = -width/2, -height/2
@@ -309,6 +307,11 @@ p5.prototype._copyHelper = (
     syMod = srcImage.height / 2;
   }
   if (dstImage._renderer && dstImage._renderer.isP3D) {
+    dstImage.push();
+    dstImage.resetMatrix();
+    dstImage.noLights();
+    dstImage.blendMode(dstImage.BLEND);
+    dstImage.imageMode(dstImage.CORNER);
     p5.RendererGL.prototype.image.call(
       dstImage._renderer,
       srcImage,
@@ -321,6 +324,7 @@ p5.prototype._copyHelper = (
       dw,
       dh
     );
+    dstImage.pop();
   } else {
     dstImage.drawingContext.drawImage(
       srcImage.canvas,
@@ -545,6 +549,15 @@ p5.prototype._copyHelper = (
  */
 
 /**
+ * @method getFilterGraphicsLayer
+ * @private
+ * @returns {p5.Graphics}
+ */
+p5.prototype.getFilterGraphicsLayer = function() {
+  return this._renderer.getFilterGraphicsLayer();
+};
+
+/**
  * @method filter
  * @param  {Constant} filterType
  * @param  {Boolean} [useWebGL]
@@ -560,7 +573,7 @@ p5.prototype.filter = function(...args) {
   let { shader, operation, value, useWebGL } = parseFilterArgs(...args);
 
   // when passed a shader, use it directly
-  if (shader) {
+  if (this._renderer.isP3D && shader) {
     p5.RendererGL.prototype.filter.call(this._renderer, shader);
     return;
   }
@@ -586,27 +599,11 @@ p5.prototype.filter = function(...args) {
 
   // when this is P2D renderer, create/use hidden webgl renderer
   else {
-    // create hidden webgl renderer if it doesn't exist
-    if (!this.filterGraphicsLayer) {
-      // the real _pInst is buried when this is a secondary p5.Graphics
-      const pInst =
-        this._renderer._pInst instanceof p5.Graphics ?
-          this._renderer._pInst._pInst :
-          this._renderer._pInst;
-
-      // create secondary layer
-      this.filterGraphicsLayer =
-        new p5.Graphics(
-          this.width,
-          this.height,
-          constants.WEBGL,
-          pInst
-        );
-    }
+    const filterGraphicsLayer = this.getFilterGraphicsLayer();
 
     // copy p2d canvas contents to secondary webgl renderer
     // dest
-    this.filterGraphicsLayer.copy(
+    filterGraphicsLayer.copy(
       // src
       this._renderer,
       // src coods
@@ -614,13 +611,23 @@ p5.prototype.filter = function(...args) {
       // dest coords
       -this.width/2, -this.height/2, this.width, this.height
     );
+    //clearing the main canvas
+    this._renderer.clear();
 
+    this._renderer.resetMatrix();
     // filter it with shaders
-    this.filterGraphicsLayer.filter(operation, value);
+    filterGraphicsLayer.filter(...args);
 
     // copy secondary webgl renderer back to original p2d canvas
-    this._renderer._pInst.image(this.filterGraphicsLayer, 0, 0);
-    this.filterGraphicsLayer.clear(); // prevent feedback effects on p2d canvas
+    this.copy(
+      // src
+      filterGraphicsLayer._renderer,
+      // src coods
+      0, 0, this.width, this.height,
+      // dest coords
+      0, 0, this.width, this.height
+    );
+    filterGraphicsLayer.clear(); // prevent feedback effects on p2d canvas
   }
 };
 

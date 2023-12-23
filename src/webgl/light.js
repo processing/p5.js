@@ -495,6 +495,111 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
 };
 
 /**
+ * Creates an image light with the given image.
+ *
+ * The image light simulates light from all the directions.
+ * This is done by using the image as a texture for an infinitely
+ * large sphere light. This sphere contains
+ * or encapsulates the whole scene/drawing.
+ * It will have different effect for varying shininess of the
+ * object in the drawing.
+ * Under the hood it is mainly doing 2 types of calculations,
+ * the first one is creating an irradiance map the
+ * environment map of the input image.
+ * The second one is managing reflections based on the shininess
+ * or roughness of the material used in the scene.
+ *
+ * Note: The image's diffuse light will be affected by fill()
+ * and the specular reflections will be affected by specularMaterial()
+ * and shininess().
+ *
+ * @method imageLight
+ * @param  {p5.image}    img  image for the background
+ * @example
+ * <div class="notest">
+ * <code>
+ * let img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/outdoor_image.jpg');
+ * }
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0 ,1, 0);
+ *   perspective(PI/3, 1, 5, 500);
+ * }
+ * function draw() {
+ *   background(220);
+ *
+ *   push();
+ *   camera(0, 0, 1, 0, 0, 0, 0, 1, 0);
+ *   ortho(-1, 1, -1, 1, 0, 1);
+ *   noLights();
+ *   noStroke();
+ *   texture(img);
+ *   plane(2);
+ *   pop();
+ *
+ *   ambientLight(50);
+ *   imageLight(img);
+ *   specularMaterial(20);
+ *   noStroke();
+ *   rotateX(frameCount * 0.005);
+ *   rotateY(frameCount * 0.005);
+ *   box(50);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * image light example
+ * @example
+ * <div class="notest">
+ * <code>
+ * let img;
+ * let slider;
+ *
+ * function preload() {
+ *   img = loadImage('assets/outdoor_spheremap.jpg');
+ * }
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   slider = createSlider(0, 400, 100, 1);
+ *   slider.position(0, height);
+ *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0 ,1, 0);
+ *   perspective(PI/3, 1, 5, 500);
+ * }
+ * function draw() {
+ *   background(220);
+ *
+ *   push();
+ *   camera(0, 0, 1, 0, 0, 0, 0, 1, 0);
+ *   ortho(-1, 1, -1, 1, 0, 1);
+ *   noLights();
+ *   noStroke();
+ *   texture(img);
+ *   plane(2);
+ *   pop();
+ *
+ *   ambientLight(50);
+ *   imageLight(img);
+ *   specularMaterial(20);
+ *   shininess(slider.value());
+ *   noStroke();
+ *   sphere(30);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * light with slider having a slider for varying roughness
+ */
+p5.prototype.imageLight = function(img){
+  // activeImageLight property is checked by _setFillUniforms
+  // for sending uniforms to the fillshader
+  this._renderer.activeImageLight = img;
+  this._renderer._enableLighting = true;
+};
+
+/**
  * Places an ambient and directional light in the scene.
  * The lights are set to ambientLight(128, 128, 128) and
  * directionalLight(128, 128, 128, 0, 0, -1).
@@ -511,6 +616,8 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   describe('the light is partially ambient and partially directional');
  * }
  * function draw() {
@@ -1051,6 +1158,7 @@ p5.prototype.noLights = function(...args) {
   this._assert3d('noLights');
   p5._validateParameters('noLights', args);
 
+  this._renderer.activeImageLight = null;
   this._renderer._enableLighting = false;
 
   this._renderer.ambientLightColors.length = 0;

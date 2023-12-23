@@ -664,6 +664,7 @@ function mouseIsOnLeft() {
   }
 }
 
+// Good.
 function mouseIsOnLeft() {
   if (mouseX < width * 0.5) {
     return true;

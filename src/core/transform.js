@@ -275,6 +275,8 @@ p5.prototype.rotate = function(angle, axis) {
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  * }
  * function draw() {
  *   background(255);
@@ -311,6 +313,8 @@ p5.prototype.rotateX = function(angle) {
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  * }
  * function draw() {
  *   background(255);
@@ -349,6 +353,8 @@ p5.prototype.rotateY = function(angle) {
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  * }
  * function draw() {
  *   background(255);

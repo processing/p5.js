@@ -43,7 +43,9 @@ p5.Table = class {
   /**
    * An array containing the names of the columns in the table, if the "header" the table is
    * loaded with the "header" parameter.
-   * @property columns {String[]}
+   * @type {String[]}
+   * @property columns
+   * @name columns
    * @example
    * <div class="norender">
    * <code>
@@ -78,7 +80,9 @@ p5.Table = class {
     /**
    * An array containing the <a href="#/p5.Table">p5.TableRow</a> objects that make up the
    * rows of the table. The same result as calling <a href="#/p5/getRows">getRows()</a>
-   * @property rows {p5.TableRow[]}
+   * @type {p5.TableRow[]}
+   * @property rows
+   * @name rows
    */
     this.rows = [];
   }

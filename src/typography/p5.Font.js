@@ -47,6 +47,7 @@ p5.Font = class {
    * <a href="https://opentype.js.org/" target="_blank">opentype.js</a>
    * font object.
    * @property font
+   * @name font
    */
     this.font = undefined;
   }

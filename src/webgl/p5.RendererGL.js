@@ -9,6 +9,7 @@ import './p5.Matrix';
 import './p5.Framebuffer';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { MipmapTexture } from './p5.Texture';
 
 const STROKE_CAP_ENUM = {};
 const STROKE_JOIN_ENUM = {};
@@ -67,17 +68,21 @@ const defaultShaders = {
   phongFrag:
     lightingShader +
     readFileSync(join(__dirname, '/shaders/phong.frag'), 'utf-8'),
-  fontVert: webgl2CompatibilityShader +
-    readFileSync(join(__dirname, '/shaders/font.vert'), 'utf-8'),
-  fontFrag: webgl2CompatibilityShader +
-    readFileSync(join(__dirname, '/shaders/font.frag'), 'utf-8'),
+  fontVert: readFileSync(join(__dirname, '/shaders/font.vert'), 'utf-8'),
+  fontFrag: readFileSync(join(__dirname, '/shaders/font.frag'), 'utf-8'),
   lineVert:
     lineDefs + readFileSync(join(__dirname, '/shaders/line.vert'), 'utf-8'),
   lineFrag:
     lineDefs + readFileSync(join(__dirname, '/shaders/line.frag'), 'utf-8'),
   pointVert: readFileSync(join(__dirname, '/shaders/point.vert'), 'utf-8'),
-  pointFrag: readFileSync(join(__dirname, '/shaders/point.frag'), 'utf-8')
+  pointFrag: readFileSync(join(__dirname, '/shaders/point.frag'), 'utf-8'),
+  imageLightVert: readFileSync(join(__dirname, '/shaders/imageLight.vert'), 'utf-8'),
+  imageLightDiffusedFrag: readFileSync(join(__dirname, '/shaders/imageLightDiffused.frag'), 'utf-8'),
+  imageLightSpecularFrag: readFileSync(join(__dirname, '/shaders/imageLightSpecular.frag'), 'utf-8')
 };
+for (const key in defaultShaders) {
+  defaultShaders[key] = webgl2CompatibilityShader + defaultShaders[key];
+}
 
 const filterShaderFrags = {
   [constants.GRAY]:
@@ -468,6 +473,19 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.spotLightAngle = [];
     this.spotLightConc = [];
 
+    // This property contains the input image if imageLight function
+    // is called.
+    // activeImageLight is checked by _setFillUniforms
+    // for sending uniforms to the fillshader
+    this.activeImageLight = null;
+    // If activeImageLight property is Null, diffusedTextures,
+    // specularTextures are Empty.
+    // Else, it maps a p5.Image used by imageLight() to a p5.framebuffer.
+    // p5.framebuffer for this are calculated in getDiffusedTexture function
+    this.diffusedTextures = new Map();
+    // p5.framebuffer for this are calculated in getSpecularTexture function
+    this.specularTextures = new Map();
+
     this.drawMode = constants.FILL;
 
     this.curFillColor = this._cachedFillStyle = [1, 1, 1, 1];
@@ -520,6 +538,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this._curCamera._computeCameraDefaultSettings();
     this._curCamera._setDefaultCamera();
 
+    // FilterCamera
+    this.filterCamera = new p5.Camera(this);
+    this.filterCamera._computeCameraDefaultSettings();
+    this.filterCamera._setDefaultCamera();
     // Information about the previous frame's touch object
     // for executing orbitControl()
     this.prevTouches = [];
@@ -531,6 +553,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.executeZoom = false;
     this.executeRotateAndMove = false;
 
+    this.specularShader = undefined;
+    this.diffusedShader = undefined;
     this._defaultLightShader = undefined;
     this._defaultImmediateModeShader = undefined;
     this._defaultNormalShader = undefined;
@@ -611,8 +635,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     // for post processing step
     this.filterShader = undefined;
-    this.filterGraphicsLayer = undefined;
-    this.filterGraphicsLayerTemp = undefined;
+    this.filterLayer = undefined;
+    this.filterLayerTemp = undefined;
     this.defaultFilterShaders = {};
 
     this.textureMode = constants.IMAGE;
@@ -826,24 +850,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   _update() {
     // reset model view and apply initial camera transform
     // (containing only look at info; no projection).
-    this.uMVMatrix.set(
-      this._curCamera.cameraMatrix.mat4[0],
-      this._curCamera.cameraMatrix.mat4[1],
-      this._curCamera.cameraMatrix.mat4[2],
-      this._curCamera.cameraMatrix.mat4[3],
-      this._curCamera.cameraMatrix.mat4[4],
-      this._curCamera.cameraMatrix.mat4[5],
-      this._curCamera.cameraMatrix.mat4[6],
-      this._curCamera.cameraMatrix.mat4[7],
-      this._curCamera.cameraMatrix.mat4[8],
-      this._curCamera.cameraMatrix.mat4[9],
-      this._curCamera.cameraMatrix.mat4[10],
-      this._curCamera.cameraMatrix.mat4[11],
-      this._curCamera.cameraMatrix.mat4[12],
-      this._curCamera.cameraMatrix.mat4[13],
-      this._curCamera.cameraMatrix.mat4[14],
-      this._curCamera.cameraMatrix.mat4[15]
-    );
+    this.uMVMatrix.set(this._curCamera.cameraMatrix);
 
     // reset light data for new frame.
 
@@ -974,75 +981,33 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   strokeJoin(join) {
     this.curStrokeJoin = join;
   }
-
-  getFilterGraphicsLayer() {
-    // Lazily initialize the filter graphics layer. We only do this on demand
-    // because the graphics layer itself has a p5.RendererGL, which would then
-    // try to make its own filter layer, infinitely looping.
-    if (!this.filterGraphicsLayer) {
-      // the real _pInst is buried when this is a secondary p5.Graphics
-
-      const pInst =
-        this._pInst instanceof p5.Graphics ? this._pInst._pInst : this._pInst;
-
-      // create secondary layer
-      this.filterGraphicsLayer =
-        new p5.Graphics(
-          this.width,
-          this.height,
-          constants.WEBGL,
-          pInst
-        );
-      // geometries/borders on this layer should always be invisible
-      this.filterGraphicsLayer.noStroke();
+  getFilterLayer() {
+    if (!this.filterLayer) {
+      this.filterLayer = this._pInst.createFramebuffer();
     }
-    if (
-      this.filterGraphicsLayer.width !== this.width ||
-      this.filterGraphicsLayer.height !== this.height
-    ) {
-      // Resize the graphics layer
-      this.filterGraphicsLayer.resizeCanvas(this.width, this.height);
-    }
-    if (
-      this.filterGraphicsLayer.pixelDensity() !== this._pInst.pixelDensity()
-    ) {
-      this.filterGraphicsLayer.pixelDensity(this._pInst.pixelDensity());
-    }
-    return this.filterGraphicsLayer;
+    return this.filterLayer;
   }
-
-  getFilterGraphicsLayerTemp() {
-    // two-pass blur filter needs another graphics layer
-    if (!this.filterGraphicsLayerTemp) {
-      const pInst = this._pInst instanceof p5.Graphics ?
-        this._pInst._pInst : this._pInst;
-      // create secondary layer
-      this.filterGraphicsLayerTemp =
-        new p5.Graphics(
-          this.width,
-          this.height,
-          constants.WEBGL,
-          pInst
-        );
-      this.filterGraphicsLayerTemp.noStroke();
+  getFilterLayerTemp() {
+    if (!this.filterLayerTemp) {
+      this.filterLayerTemp = this._pInst.createFramebuffer();
     }
-    if (
-      this.filterGraphicsLayerTemp.width !== this.width ||
-      this.filterGraphicsLayerTemp.height !== this.height
-    ) {
-      // Resize the graphics layer
-      this.filterGraphicsLayerTemp.resizeCanvas(this.width, this.height);
-    }
-    if (
-      this.filterGraphicsLayerTemp.pixelDensity() !== this._pInst.pixelDensity()
-    ) {
-      this.filterGraphicsLayerTemp.pixelDensity(this._pInst.pixelDensity());
-    }
-    return this.filterGraphicsLayerTemp;
+    return this.filterLayerTemp;
   }
+  matchSize(fboToMatch, target) {
+    if (
+      fboToMatch.width !== target.width ||
+      fboToMatch.height !== target.height
+    ) {
+      fboToMatch.resize(target.width, target.height);
+    }
 
+    if (fboToMatch.pixelDensity() !== target.pixelDensity()) {
+      fboToMatch.pixelDensity(target.pixelDensity());
+    }
+  }
   filter(...args) {
-    let pg = this.getFilterGraphicsLayer();
+
+    let fbo = this.getFilterLayer();
 
     // use internal shader for filter constants BLUR, INVERT, etc
     let filterParameter = undefined;
@@ -1060,9 +1025,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       // Create and store shader for constants once on initial filter call.
       // Need to store multiple in case user calls different filters,
       // eg. filter(BLUR) then filter(GRAY)
-      if ( !(operation in this.defaultFilterShaders) ) {
+      if (!(operation in this.defaultFilterShaders)) {
         this.defaultFilterShaders[operation] = new p5.Shader(
-          pg._renderer,
+          fbo._renderer,
           filterShaderVert,
           filterShaderFrags[operation]
         );
@@ -1075,62 +1040,100 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this.filterShader = args[0];
     }
 
-    pg.clear(); // prevent undesirable feedback effects accumulating secretly
+    // Setting the target to the framebuffer when applying a filter to a framebuffer.
 
-    let pd = this._pInst.pixelDensity();
-    let texelSize = [1 / (this.width * pd), 1 / (this.height * pd)];
+    const target = this.activeFramebuffer() || this;
 
-    // apply blur shader with multiple passes
+    // Resize the framebuffer 'fbo' and adjust its pixel density if it doesn't match the target.
+    this.matchSize(fbo, target);
+
+    fbo.draw(() => this._pInst.clear()); // prevent undesirable feedback effects accumulating secretly.
+
+    let texelSize = [
+      1 / (target.width * target.pixelDensity()),
+      1 / (target.height * target.pixelDensity())
+    ];
+
+    // apply blur shader with multiple passes.
     if (operation === constants.BLUR) {
-
-      const tmp = this.getFilterGraphicsLayerTemp();
-      tmp.clear(); // prevent feedback effects here too
-
+      // Treating 'tmp' as a framebuffer.
+      const tmp = this.getFilterLayerTemp();
+      // Resize the framebuffer 'tmp' and adjust its pixel density if it doesn't match the target.
+      this.matchSize(tmp, target);
       // setup
       this._pInst.push();
       this._pInst.noStroke();
+      this._pInst.blendMode(constants.BLEND);
 
       // draw main to temp buffer
-      tmp.image(this, -this.width/2, -this.height/2);
-
-      pg.shader(this.filterShader);
+      this._pInst.shader(this.filterShader);
       this.filterShader.setUniform('texelSize', texelSize);
-      this.filterShader.setUniform('canvasSize', [this.width, this.height]);
+      this.filterShader.setUniform('canvasSize', [target.width, target.height]);
       this.filterShader.setUniform('radius', Math.max(1, filterParameter));
 
-      // horiz pass
-      this.filterShader.setUniform('direction', [1, 0]);
-      this.filterShader.setUniform('tex0', tmp);
-      pg.rect(-this.width/2, -this.height/2, this.width, this.height);
+      // Horiz pass: draw `target` to `tmp`
+      tmp.draw(() => {
+        this.filterShader.setUniform('direction', [1, 0]);
+        this.filterShader.setUniform('tex0', target);
+        this._pInst.clear();
+        this._pInst.shader(this.filterShader);
+        this._pInst.noLights();
+        this._pInst.plane(target.width, target.height);
+      });
 
-      // read back to temp buffer
-      tmp.image(pg, -this.width/2, -this.height/2);
-
-      // vert pass
-      this.filterShader.setUniform('direction', [0, 1]);
-      this.filterShader.setUniform('tex0', tmp);
-      pg.rect(-this.width/2, -this.height/2, this.width, this.height);
+      // Vert pass: draw `tmp` to `fbo`
+      fbo.draw(() => {
+        this.filterShader.setUniform('direction', [0, 1]);
+        this.filterShader.setUniform('tex0', tmp);
+        this._pInst.clear();
+        this._pInst.shader(this.filterShader);
+        this._pInst.noLights();
+        this._pInst.plane(target.width, target.height);
+      });
 
       this._pInst.pop();
     }
     // every other non-blur shader uses single pass
     else {
-      pg.shader(this.filterShader);
-      this.filterShader.setUniform('tex0', this);
-      this.filterShader.setUniform('texelSize', texelSize);
-      this.filterShader.setUniform('canvasSize', [this.width, this.height]);
-      // filterParameter uniform only used for POSTERIZE, and THRESHOLD
-      // but shouldn't hurt to always set
-      this.filterShader.setUniform('filterParameter', filterParameter);
-      pg.rect(-this.width/2, -this.height/2, this.width, this.height);
+      fbo.draw(() => {
+        this._pInst.noStroke();
+        this._pInst.blendMode(constants.BLEND);
+        this._pInst.shader(this.filterShader);
+        this.filterShader.setUniform('tex0', target);
+        this.filterShader.setUniform('texelSize', texelSize);
+        this.filterShader.setUniform('canvasSize', [target.width, target.height]);
+        // filterParameter uniform only used for POSTERIZE, and THRESHOLD
+        // but shouldn't hurt to always set
+        this.filterShader.setUniform('filterParameter', filterParameter);
+        this._pInst.noLights();
+        this._pInst.plane(target.width, target.height);
+      });
 
     }
-    // draw pg contents onto main renderer
+    // draw fbo contents onto main renderer.
     this._pInst.push();
     this._pInst.noStroke();
-    this._pInst.image(pg, -this.width/2, -this.height/2,
+    this.clear();
+    this._pInst.push();
+    this._pInst.imageMode(constants.CORNER);
+    this._pInst.blendMode(constants.BLEND);
+    target.filterCamera._resize();
+    this._pInst.setCamera(target.filterCamera);
+    this._pInst.resetMatrix();
+    this._pInst.image(fbo, -this.width / 2, -this.height / 2,
       this.width, this.height);
     this._pInst.pop();
+    this._pInst.pop();
+  }
+
+  // Pass this off to the host instance so that we can treat a renderer and a
+  // framebuffer the same in filter()
+
+  pixelDensity(newDensity) {
+    if (newDensity) {
+      return this._pInst.pixelDensity(newDensity);
+    }
+    return this._pInst.pixelDensity();
   }
 
   blendMode(mode) {
@@ -1162,12 +1165,11 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
   erase(opacityFill, opacityStroke) {
     if (!this._isErasing) {
-      this._applyBlendMode(constants.REMOVE);
+      this._cachedBlendMode = this.curBlendMode;
       this._isErasing = true;
-
+      this.blendMode(constants.REMOVE);
       this._cachedFillStyle = this.curFillColor.slice();
       this.curFillColor = [1, 1, 1, opacityFill / 255];
-
       this._cachedStrokeStyle = this.curStrokeColor.slice();
       this.curStrokeColor = [1, 1, 1, opacityStroke / 255];
     }
@@ -1175,10 +1177,14 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
   noErase() {
     if (this._isErasing) {
-      this._isErasing = false;
       this.curFillColor = this._cachedFillStyle.slice();
       this.curStrokeColor = this._cachedStrokeStyle.slice();
+      // It's necessary to restore post-erase state. Needs rework
+      let temp = this.curBlendMode;
       this.blendMode(this._cachedBlendMode);
+      this._cachedBlendMode = temp; // If we don't do this, applyBlendMode() returns null
+      this._isErasing = false;
+      this._applyBlendMode(); // This sets _cachedBlendMode back to the original blendmode
     }
   }
 
@@ -1428,11 +1434,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       // can also update their size
       framebuffer._canvasSizeChanged();
     }
-
-    // resize filter graphics layer
-    if (this.filterGraphicsLayer) {
-      p5.Renderer.prototype.resize.call(this.filterGraphicsLayer, w, h);
-    }
   }
 
   /**
@@ -1468,6 +1469,15 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.GL.clearColor(_r * _a, _g * _a, _b * _a, _a);
     this.GL.clearDepth(1);
     this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
+  }
+
+  /**
+   * Resets all depth information so that nothing previously drawn will
+   * occlude anything subsequently drawn.
+   */
+  clearDepth(depth = 1) {
+    this.GL.clearDepth(depth);
+    this.GL.clear(this.GL.DEPTH_BUFFER_BIT);
   }
 
   applyMatrix(a, b, c, d, e, f) {
@@ -1603,6 +1613,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     properties._currentNormal = this._currentNormal;
     properties.curBlendMode = this.curBlendMode;
 
+    // So that the activeImageLight gets reset in push/pop
+    properties.activeImageLight = this.activeImageLight;
+
     return style;
   }
   pop(...args) {
@@ -1628,24 +1641,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
   }
   resetMatrix() {
-    this.uMVMatrix.set(
-      this._curCamera.cameraMatrix.mat4[0],
-      this._curCamera.cameraMatrix.mat4[1],
-      this._curCamera.cameraMatrix.mat4[2],
-      this._curCamera.cameraMatrix.mat4[3],
-      this._curCamera.cameraMatrix.mat4[4],
-      this._curCamera.cameraMatrix.mat4[5],
-      this._curCamera.cameraMatrix.mat4[6],
-      this._curCamera.cameraMatrix.mat4[7],
-      this._curCamera.cameraMatrix.mat4[8],
-      this._curCamera.cameraMatrix.mat4[9],
-      this._curCamera.cameraMatrix.mat4[10],
-      this._curCamera.cameraMatrix.mat4[11],
-      this._curCamera.cameraMatrix.mat4[12],
-      this._curCamera.cameraMatrix.mat4[13],
-      this._curCamera.cameraMatrix.mat4[14],
-      this._curCamera.cameraMatrix.mat4[15]
-    );
+    this.uMVMatrix.set(this._curCamera.cameraMatrix);
     return this;
   }
 
@@ -1740,13 +1736,17 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       if (this._pInst._glAttributes.perPixelLighting) {
         this._defaultLightShader = new p5.Shader(
           this,
+          this._webGL2CompatibilityPrefix('vert', 'highp') +
           defaultShaders.phongVert,
+          this._webGL2CompatibilityPrefix('frag', 'highp') +
           defaultShaders.phongFrag
         );
       } else {
         this._defaultLightShader = new p5.Shader(
           this,
+          this._webGL2CompatibilityPrefix('vert', 'highp') +
           defaultShaders.lightVert,
+          this._webGL2CompatibilityPrefix('frag', 'highp') +
           defaultShaders.lightTextureFrag
         );
       }
@@ -1759,7 +1759,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (!this._defaultImmediateModeShader) {
       this._defaultImmediateModeShader = new p5.Shader(
         this,
+        this._webGL2CompatibilityPrefix('vert', 'mediump') +
         defaultShaders.immediateVert,
+        this._webGL2CompatibilityPrefix('frag', 'mediump') +
         defaultShaders.vertexColorFrag
       );
     }
@@ -1771,7 +1773,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (!this._defaultNormalShader) {
       this._defaultNormalShader = new p5.Shader(
         this,
+        this._webGL2CompatibilityPrefix('vert', 'mediump') +
         defaultShaders.normalVert,
+        this._webGL2CompatibilityPrefix('frag', 'mediump') +
         defaultShaders.normalFrag
       );
     }
@@ -1783,7 +1787,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (!this._defaultColorShader) {
       this._defaultColorShader = new p5.Shader(
         this,
+        this._webGL2CompatibilityPrefix('vert', 'mediump') +
         defaultShaders.normalVert,
+        this._webGL2CompatibilityPrefix('frag', 'mediump') +
         defaultShaders.basicFrag
       );
     }
@@ -1795,7 +1801,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (!this._defaultPointShader) {
       this._defaultPointShader = new p5.Shader(
         this,
+        this._webGL2CompatibilityPrefix('vert', 'mediump') +
         defaultShaders.pointVert,
+        this._webGL2CompatibilityPrefix('frag', 'mediump') +
         defaultShaders.pointFrag
       );
     }
@@ -1806,7 +1814,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (!this._defaultLineShader) {
       this._defaultLineShader = new p5.Shader(
         this,
+        this._webGL2CompatibilityPrefix('vert', 'mediump') +
         defaultShaders.lineVert,
+        this._webGL2CompatibilityPrefix('frag', 'mediump') +
         defaultShaders.lineFrag
       );
     }
@@ -1874,6 +1884,102 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.textures.set(src, tex);
     return tex;
   }
+  /*
+    *  used in imageLight,
+    *  To create a blurry image from the input non blurry img, if it doesn't already exist
+    *  Add it to the diffusedTexture map,
+    *  Returns the blurry image
+    *  maps a p5.Image used by imageLight() to a p5.Framebuffer
+   */
+  getDiffusedTexture(input) {
+    // if one already exists for a given input image
+    if (this.diffusedTextures.get(input) != null) {
+      return this.diffusedTextures.get(input);
+    }
+    // if not, only then create one
+    let newFramebuffer;
+    // hardcoded to 200px, because it's going to be blurry and smooth
+    let smallWidth = 200;
+    let width = smallWidth;
+    let height = Math.floor(smallWidth * (input.height / input.width));
+    newFramebuffer = this._pInst.createFramebuffer({
+      width, height, density: 1
+    });
+    // create framebuffer is like making a new sketch, all functions on main
+    // sketch it would be available on framebuffer
+    if (!this.diffusedShader) {
+      this.diffusedShader = this._pInst.createShader(
+        defaultShaders.imageLightVert,
+        defaultShaders.imageLightDiffusedFrag
+      );
+    }
+    newFramebuffer.draw(() => {
+      this._pInst.shader(this.diffusedShader);
+      this.diffusedShader.setUniform('environmentMap', input);
+      this._pInst.noStroke();
+      this._pInst.rectMode(constants.CENTER);
+      this._pInst.noLights();
+      this._pInst.rect(0, 0, width, height);
+    });
+    this.diffusedTextures.set(input, newFramebuffer);
+    return newFramebuffer;
+  }
+
+  /*
+   *  used in imageLight,
+   *  To create a texture from the input non blurry image, if it doesn't already exist
+   *  Creating 8 different levels of textures according to different
+   *  sizes and atoring them in `levels` array
+   *  Creating a new Mipmap texture with that `levels` array
+   *  Storing the texture for input image in map called `specularTextures`
+   *  maps the input p5.Image to a p5.MipmapTexture
+   */
+  getSpecularTexture(input) {
+    // check if already exits (there are tex of diff resolution so which one to check)
+    // currently doing the whole array
+    if (this.specularTextures.get(input) != null) {
+      return this.specularTextures.get(input);
+    }
+    // Hardcoded size
+    const size = 512;
+    let tex;
+    const levels = [];
+    const framebuffer = this._pInst.createFramebuffer({
+      width: size, height: size, density: 1
+    });
+    let count = Math.log(size) / Math.log(2);
+    if (!this.specularShader) {
+      this.specularShader = this._pInst.createShader(
+        defaultShaders.imageLightVert,
+        defaultShaders.imageLightSpecularFrag
+      );
+    }
+    // currently only 8 levels
+    // This loop calculates 8 framebuffers of varying size of canvas
+    // and corresponding different roughness levels.
+    // Roughness increases with the decrease in canvas size,
+    // because rougher surfaces have less detailed/more blurry reflections.
+    for (let w = size; w >= 1; w /= 2) {
+      framebuffer.resize(w, w);
+      let currCount = Math.log(w) / Math.log(2);
+      let roughness = 1 - currCount / count;
+      framebuffer.draw(() => {
+        this._pInst.shader(this.specularShader);
+        this._pInst.clear();
+        this.specularShader.setUniform('environmentMap', input);
+        this.specularShader.setUniform('roughness', roughness);
+        this._pInst.noStroke();
+        this._pInst.noLights();
+        this._pInst.plane(w, w);
+      });
+      levels.push(framebuffer.get().drawingContext.getImageData(0, 0, w, w));
+    }
+    // Free the Framebuffer
+    framebuffer.remove();
+    tex = new MipmapTexture(this, levels, {});
+    this.specularTextures.set(input, tex);
+    return tex;
+  }
 
   /**
    * @method activeFramebuffer
@@ -1919,6 +2025,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     fillShader.setUniform('uSpecular', this._useSpecularMaterial);
     fillShader.setUniform('uEmissive', this._useEmissiveMaterial);
     fillShader.setUniform('uShininess', this._useShininess);
+
+    this._setImageLightUniforms(fillShader);
 
     fillShader.setUniform('uUseLighting', this._enableLighting);
 
@@ -1968,6 +2076,29 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     fillShader.setUniform('uQuadraticAttenuation', this.quadraticAttenuation);
 
     fillShader.bindTextures();
+  }
+
+  // getting called from _setFillUniforms
+  _setImageLightUniforms(shader) {
+    //set uniform values
+    shader.setUniform('uUseImageLight', this.activeImageLight != null);
+    // true
+    if (this.activeImageLight) {
+      // this.activeImageLight has image as a key
+      // look up the texture from the diffusedTexture map
+      let diffusedLight = this.getDiffusedTexture(this.activeImageLight);
+      shader.setUniform('environmentMapDiffused', diffusedLight);
+      let specularLight = this.getSpecularTexture(this.activeImageLight);
+      // In p5js the range of shininess is >= 1,
+      // Therefore roughness range will be ([0,1]*8)*20 or [0, 160]
+      // The factor of 8 is because currently the getSpecularTexture
+      // only calculated 8 different levels of roughness
+      // The factor of 20 is just to spread up this range so that,
+      // [1, max] of shininess is converted to [0,160] of roughness
+      let roughness = 20 / this._useShininess;
+      shader.setUniform('levelOfDetail', roughness * 8);
+      shader.setUniform('environmentMapSpecular', specularLight);
+    }
   }
 
   _setPointUniforms(pointShader) {

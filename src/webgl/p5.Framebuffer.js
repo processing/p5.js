@@ -33,30 +33,8 @@ class FramebufferCamera extends p5.Camera {
   _computeCameraDefaultSettings() {
     super._computeCameraDefaultSettings();
     this.defaultAspectRatio = this.fbo.width / this.fbo.height;
-    this.defaultEyeZ =
-      this.fbo.height / 2.0 / Math.tan(this.defaultCameraFOV / 2.0);
-    this.defaultCameraNear = this.defaultEyeZ * 0.1;
-    this.defaultCameraFar = this.defaultEyeZ * 10;
-  }
-
-  /**
-   * Resets the camera to a default perspective camera sized to match
-   * the p5.Framebuffer it is attached to.
-   *
-   * @method resize
-   * @private
-   */
-  _resize() {
-    // If we're using the default camera, update the aspect ratio
-    if (this.cameraType === 'default') {
-      this._computeCameraDefaultSettings();
-      this._setDefaultCamera();
-    } else {
-      this.perspective(
-        this.cameraFOV,
-        this.fbo.width / this.fbo.height
-      );
-    }
+    this.defaultCameraFOV =
+      2 * Math.atan(this.fbo.height / 2 / this.defaultEyeZ);
   }
 }
 
@@ -197,6 +175,7 @@ class Framebuffer {
 
     const prevCam = this.target._renderer._curCamera;
     this.defaultCamera = this.createCamera();
+    this.filterCamera = this.createCamera();
     this.target._renderer._curCamera = prevCam;
 
     this.draw(() => this.target.clear());
@@ -864,22 +843,7 @@ class Framebuffer {
     // it only sets the camera.
     this.target.setCamera(this.defaultCamera);
     this.target._renderer.uMVMatrix.set(
-      this.target._renderer._curCamera.cameraMatrix.mat4[0],
-      this.target._renderer._curCamera.cameraMatrix.mat4[1],
-      this.target._renderer._curCamera.cameraMatrix.mat4[2],
-      this.target._renderer._curCamera.cameraMatrix.mat4[3],
-      this.target._renderer._curCamera.cameraMatrix.mat4[4],
-      this.target._renderer._curCamera.cameraMatrix.mat4[5],
-      this.target._renderer._curCamera.cameraMatrix.mat4[6],
-      this.target._renderer._curCamera.cameraMatrix.mat4[7],
-      this.target._renderer._curCamera.cameraMatrix.mat4[8],
-      this.target._renderer._curCamera.cameraMatrix.mat4[9],
-      this.target._renderer._curCamera.cameraMatrix.mat4[10],
-      this.target._renderer._curCamera.cameraMatrix.mat4[11],
-      this.target._renderer._curCamera.cameraMatrix.mat4[12],
-      this.target._renderer._curCamera.cameraMatrix.mat4[13],
-      this.target._renderer._curCamera.cameraMatrix.mat4[14],
-      this.target._renderer._curCamera.cameraMatrix.mat4[15]
+      this.target._renderer._curCamera.cameraMatrix
     );
   }
 

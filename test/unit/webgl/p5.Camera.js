@@ -650,12 +650,12 @@ suite('p5.Camera', function() {
         assert.deepEqual(myCam.projMatrix.mat4, expectedMatrix);
       });
 
-      test('ortho() with no parameters specified (sets default)', function() {
+      test('ortho() with no parameters specified (sets default with added far)', function() {
         var expectedMatrix = new Float32Array([
           0.019999999552965164, 0, 0, 0,
-          0, -0.019999999552965164, 0,0,
-          0,0,-0.019999999552965164,0,
-          -0,-0,-1,1
+          0, -0.019999999552965164, 0, 0,
+          0, 0, -0.002222222276031971, 0,
+          -0, -0, -1, 1
         ]);
         myCam.ortho();
         assert.deepEqual(myCam.projMatrix.mat4, expectedMatrix);
@@ -687,10 +687,10 @@ suite('p5.Camera', function() {
 
       test('perspective() with no parameters specified (sets default)', function() {
         var expectedMatrix = new Float32Array([
-          1.7320507764816284,0,0,0,
-          0,-1.7320507764816284,0,0,
+          16,0,0,0,
+          0,-16,0,0,
           0,0,-1.0202020406723022,-1,
-          0,0,-17.49546241760254,0
+          0,0,-161.6161651611328,0
         ]);
 
         myCam.perspective();
@@ -726,10 +726,10 @@ suite('p5.Camera', function() {
 
       test('frustum() with no parameters specified (sets default)', function() {
         var expectedMatrix = new Float32Array([
-          1.7320507764816284, 0, 0, 0,
-          0, 1.7320507764816284, 0, 0,
-          0, -0, -1.0202020406723022, -1,
-          0, 0, -17.49546241760254, 0
+          16,0,0,0,
+          0,16,0,0,
+          0,-0,-1.0202020406723022,-1,
+          0,0,-161.6161651611328,0
         ]);
 
         myCam.frustum();
@@ -923,6 +923,21 @@ suite('p5.Camera', function() {
       expect(myCam.projMatrix.mat4[5])
         .to.be.closeTo(p0_5 * Math.pow(p1_5 / p0_5, 0.3), 0.00001);
     });
+    test('Preventing bugs from occurring by changes in slerp spec', function() {
+      myCam = myp5.createCamera();
+      const cam0 = myp5.createCamera();
+      const cam1 = myp5.createCamera();
+      cam0.camera(100, 763, 1073, 100, 480, 380, 0, 1, 2);
+      cam1.camera(300, 400, 700, 0, 0, 0, 2, 3, 1);
+      myCam.slerp(cam0, cam1, 0.1);
+      const expectedSlerpedMatrix = new Float32Array([
+        0.9983342289924622, 0.04771510139107704, 0.03243450075387955, 0,
+        -0.056675542145967484, 0.9162729382514954, 0.39652466773986816, 0,
+        -0.010798640549182892, -0.3977023959159851, 0.9174509048461914, 0,
+        -66.60199737548828, -260.3179016113281, -1242.9371337890625, 1
+      ]);
+      assert.deepEqual(myCam.cameraMatrix.mat4, expectedSlerpedMatrix);
+    });
   });
 
   suite('Helper Functions', function() {
@@ -1011,6 +1026,65 @@ suite('p5.Camera', function() {
       assert.deepEqual(myCam2, myp5._renderer._curCamera);
       myp5.setAttributes('antialias', true);
       assert.deepEqual(myCam2._renderer, myp5._renderer);
+    });
+  });
+
+  suite('Camera attributes after resizing', function() {
+    test('Camera position is the same', function() {
+      myp5.createCanvas(1, 1, myp5.WEBGL);
+      myp5.noStroke();
+      myp5.pixelDensity(1);
+
+      let cam = myp5.createCamera();
+
+      myp5.fill(255, 0, 0);
+
+      const testShape = () => {
+        myp5.clear();
+        myp5.rect(-myp5.width, -myp5.height, myp5.width * 2, myp5.height * 2);
+      };
+
+      testShape();
+      assert.deepEqual(myp5.get(0, 0), [255, 0, 0, 255]);
+      assert.equal(cam.eyeX, 0);
+
+      cam.move(10, 0, 0);
+      testShape();
+      assert.deepEqual(myp5.get(0, 0), [0, 0, 0, 0]);
+      assert.equal(cam.eyeX, 10);
+
+      myp5.resizeCanvas(2, 1);
+      myp5.resizeCanvas(1, 1);
+      testShape();
+      assert.deepEqual(myp5.get(0, 0), [0, 0, 0, 0]);
+      assert.equal(cam.eyeX, 10);
+    });
+
+    test('Camera rotation is the same', function() {
+      myp5.createCanvas(1, 1, myp5.WEBGL);
+      myp5.noStroke();
+      myp5.pixelDensity(1);
+
+      let cam = myp5.createCamera();
+
+      myp5.fill(255, 0, 0);
+
+      const testShape = () => {
+        myp5.clear();
+        myp5.rect(-myp5.width, -myp5.height, myp5.width * 2, myp5.height * 2);
+      };
+
+      testShape();
+      assert.deepEqual(myp5.get(0, 0), [255, 0, 0, 255]);
+
+      cam.pan(10);
+      testShape();
+      assert.deepEqual(myp5.get(0, 0), [0, 0, 0, 0]);
+
+      myp5.resizeCanvas(2, 1);
+      myp5.resizeCanvas(1, 1);
+      testShape();
+      assert.deepEqual(myp5.get(0, 0), [0, 0, 0, 0]);
     });
   });
 });

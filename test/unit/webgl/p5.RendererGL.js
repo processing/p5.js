@@ -13,7 +13,7 @@ suite('p5.RendererGL', function() {
   });
 
   teardown(function() {
-    //myp5.remove();
+    myp5.remove();
   });
 
   suite('createCanvas(w, h, WEBGL)', function() {
@@ -120,18 +120,6 @@ suite('p5.RendererGL', function() {
 
   suite('filter shader', function() {
     setup(function() {
-      vert = `attribute vec3 aPosition;
-      attribute vec2 aTexCoord;
-
-      varying vec2 vTexCoord;
-
-      void main() {
-        vTexCoord = aTexCoord;
-        vec4 positionVec4 = vec4(aPosition, 1.0);
-        positionVec4.xy = positionVec4.xy * 2.0 - 1.0;
-        gl_Position = positionVec4;
-      }`;
-
       frag = `precision highp float;
       varying vec2 vTexCoord;
 
@@ -163,23 +151,61 @@ suite('p5.RendererGL', function() {
       };
     });
 
+    suite('custom shaders', function() {
+      function testFilterShader(target) {
+        const fragSrc = `precision highp float;
+        void main() {
+          gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+        }`;
+        const s = target.createFilterShader(fragSrc);
+        target.filter(s);
+        target.loadPixels();
+        assert.deepEqual(
+          target.get(target.width/2, target.height/2),
+          [255, 255, 0, 255]
+        );
+      }
+
+      test('work with a 2D main canvas', function() {
+        myp5.createCanvas(10, 10);
+        testFilterShader(myp5);
+      });
+
+      test('work with a WebGL main canvas', function() {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        testFilterShader(myp5);
+      });
+
+      test('work with a 2D graphic', function() {
+        myp5.createCanvas(10, 10);
+        const graphic = myp5.createGraphics(10, 10);
+        testFilterShader(graphic);
+      });
+
+      test('work with a WebGL graphic', function() {
+        myp5.createCanvas(10, 10);
+        const graphic = myp5.createGraphics(10, 10, myp5.WEBGL);
+        testFilterShader(graphic);
+      });
+    });
+
     test('filter accepts correct params', function() {
       myp5.createCanvas(5, 5, myp5.WEBGL);
-      let s = myp5.createShader(vert, frag);
+      let s = myp5.createFilterShader(frag);
       myp5.filter(s);
       myp5.filter(myp5.POSTERIZE, 64);
     });
 
     test('secondary graphics layer is instantiated', function() {
       let renderer = myp5.createCanvas(5, 5, myp5.WEBGL);
-      let s = myp5.createShader(vert, frag);
+      let s = myp5.createFilterShader(frag);
       myp5.filter(s);
-      assert.notStrictEqual(renderer.filterGraphicsLayer, undefined);
+      assert.notStrictEqual(renderer.filterLayer, undefined);
     });
 
     test('custom shader makes changes to main canvas', function() {
       myp5.createCanvas(5, 5, myp5.WEBGL);
-      let s = myp5.createShader(vert, frag);
+      let s = myp5.createFilterShader(frag);
       myp5.background('RED');
       myp5.loadPixels();
       let p1 = myp5.pixels.slice(); // copy before pixels is reassigned
@@ -191,12 +217,22 @@ suite('p5.RendererGL', function() {
 
     test('secondary graphics layer matches main canvas size', function() {
       let g1 = myp5.createCanvas(5, 5, myp5.WEBGL);
-      let s = myp5.createShader(vert, frag);
+      let s = myp5.createFilterShader(frag);
       myp5.filter(s);
-      let g2 = g1.filterGraphicsLayer;
+      let g2 = g1.filterLayer;
       assert.deepEqual([g1.width, g1.height], [g2.width, g2.height]);
       myp5.resizeCanvas(4, 4);
       assert.deepEqual([g1.width, g1.height], [g2.width, g2.height]);
+    });
+
+    test('Filter graphics layer get resized in 2D mode', function () {
+      let g1 = myp5.createCanvas(10, 10);
+      let s = myp5.createFilterShader(frag);
+      myp5.filter(s);
+      myp5.resizeCanvas(5, 15);
+      myp5.filter(s);
+      assert.equal(g1.width, 5);
+      assert.equal(g1.height, 15);
     });
 
     test('create graphics is unaffected after filter', function() {
@@ -205,10 +241,34 @@ suite('p5.RendererGL', function() {
       pg.circle(1, 1, 1);
       pg.loadPixels();
       let p1 = pg.pixels.slice();
-      let s = myp5.createShader(vert, frag);
+      let s = myp5.createFilterShader(frag);
       myp5.filter(s);
       pg.loadPixels();
       let p2 = pg.pixels;
+      assert.deepEqual(p1, p2);
+    });
+
+    test('Applying filter when a camera is applied', function () {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      let s1 = myp5.createFilterShader(frag);
+      myp5.push();
+      myp5.background('RED');
+      myp5.camera(0, 0, 800);
+      myp5.fill('blue');
+      myp5.square(-120, -120, -50);
+      myp5.filter(s1);
+      myp5.loadPixels();
+      let p1 = myp5.pixels.slice();
+      myp5.pop();
+      myp5.clear();
+      myp5.push();
+      myp5.background('RED');
+      myp5.fill('blue');
+      myp5.square(-120, -120, -50);
+      myp5.filter(s1);
+      myp5.loadPixels();
+      let p2 = myp5.pixels.slice();
+      myp5.pop();
       assert.deepEqual(p1, p2);
     });
 
@@ -224,7 +284,7 @@ suite('p5.RendererGL', function() {
         c.curStrokeColor
       ];
       let a1 = getShapeAttributes();
-      let s = myp5.createShader(vert, frag);
+      let s = myp5.createFilterShader(frag);
       myp5.filter(s);
       let a2 = getShapeAttributes();
       console.log(a1);
@@ -233,7 +293,7 @@ suite('p5.RendererGL', function() {
 
     test('geometries added after filter do not have shader applied', function() {
       myp5.createCanvas(4, 4, myp5.WEBGL);
-      let s = myp5.createShader(vert, frag);
+      let s = myp5.createFilterShader(frag);
       myp5.filter(s);
       myp5.fill('RED');
       myp5.noStroke();
@@ -249,22 +309,6 @@ suite('p5.RendererGL', function() {
         myp5.filter(s);
       };
       assert.doesNotThrow(testCreateFilterShader, 'this should not throw');
-    });
-
-    test('default vertex shader behaves the same as supplied vertex shader', function() {
-      myp5.createCanvas(4,4, myp5.WEBGL);
-      let s1 = myp5.createFilterShader(frag);
-      let s2 = myp5.createShader(vert, frag);
-      myp5.background('RED');
-      myp5.filter(s1);
-      myp5.loadPixels();
-      let p1 = myp5.pixels.slice();
-      myp5.clear();
-      myp5.background('RED');
-      myp5.filter(s2);
-      myp5.loadPixels();
-      let p2 = myp5.pixels;
-      assert.deepEqual(p1, p2);
     });
 
     test('filter shader works on a p5.Graphics', function() {
@@ -293,13 +337,13 @@ suite('p5.RendererGL', function() {
     test('filter() uses WEBGL implementation behind main P2D canvas', function() {
       let renderer = myp5.createCanvas(3,3);
       myp5.filter(myp5.BLUR);
-      assert.isDefined(renderer._pInst.filterGraphicsLayer);
+      assert.isDefined(renderer.filterGraphicsLayer);
     });
 
     test('filter() can opt out of WEBGL implementation', function() {
       let renderer = myp5.createCanvas(3,3);
       myp5.filter(myp5.BLUR, useWebGL=false);
-      assert.isUndefined(renderer._pInst.filterGraphicsLayer);
+      assert.isUndefined(renderer.filterGraphicsLayer);
     });
 
     test('filters make changes to canvas', function() {
@@ -428,6 +472,59 @@ suite('p5.RendererGL', function() {
       myp5.filter(myp5.THRESHOLD, 0.9);
       let p2 = getPixels();
       assert.notDeepEqual(p1,p2);
+    });
+
+    suite('external context', function() {
+      const cases = [
+        ['corner rectMode', () => myp5.rectMode(myp5.CORNER)],
+        ['corners rectMode', () => myp5.rectMode(myp5.CORNERS)],
+        ['center rectMode', () => myp5.rectMode(myp5.CENTER)],
+        ['corner imageMode', () => myp5.imageMode(myp5.CORNER)],
+        ['corners imageMode', () => myp5.imageMode(myp5.CORNERS)],
+        ['center imageMode', () => myp5.imageMode(myp5.CENTER)],
+        ['blend blendMode', () => myp5.blendMode(myp5.BLEND)],
+        ['add blendMode', () => myp5.blendMode(myp5.ADD)],
+        ['multiply blendMode', () => myp5.blendMode(myp5.MULTIPLY)]
+      ];
+
+      const getFilteredPixels = (mode, initialize, filterType) => {
+        myp5.createCanvas(10, 10, mode);
+        myp5.background(255);
+        if (mode === 'webgl') {
+          myp5.translate(-5, -5);
+        }
+        myp5.noStroke();
+        myp5.fill(255, 0, 0);
+        myp5.rect(3, 3, 4, 4);
+        initialize();
+        myp5.filter(filterType);
+        myp5.loadPixels();
+        console.log(myp5._renderer.elt.toDataURL());
+        const pixels = [...myp5.pixels];
+        myp5.remove();
+        return pixels;
+      };
+
+      for (const filterType of ['blur', 'invert']) {
+        suite(`${filterType} filter`, function() {
+          for (const mode of ['p2d', 'webgl']) {
+            suite(`${mode} mode`, function() {
+              let defaultPixels;
+              setup(() => {
+                defaultPixels = getFilteredPixels('p2d', () => {}, filterType);
+              });
+
+              for (const [name, initialize] of cases) {
+                test(name, function() {
+                  const pixels =
+                    getFilteredPixels(mode, initialize, filterType);
+                  assert.deepEqual(pixels, defaultPixels);
+                });
+              }
+            });
+          }
+        });
+      }
     });
   });
 

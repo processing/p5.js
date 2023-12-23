@@ -85,10 +85,10 @@ jobs:
           commitChange: false
           updateFile: true
       - name: Update version.json on website repo
-        uses: restackio/update-json-values-action@v1.0.0
+        uses: restackio/update-json-file-action@v2.0
         with:
           file: website/dist/download/version.json
-          values: '{"version": "${{ steps.version-number.outputs.version }}", "date": "${{ steps.date.outputs.date }}"}'
+          fields: '{"version": "${{ steps.version-number.outputs.version }}", "date": "${{ steps.date.outputs.date }}"}'
       - name: Update en.json on website repo
         run: |
           cd website

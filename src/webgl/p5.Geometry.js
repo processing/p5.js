@@ -9,6 +9,7 @@
 //some of the functions are adjusted from Three.js(http://threejs.org)
 
 import p5 from '../core/main';
+import * as constants from '../core/constants';
 /**
  * p5 Geometry class
  * @class p5.Geometry
@@ -18,9 +19,9 @@ import p5 from '../core/main';
  * @param {function} [callback] function to call upon object instantiation.
  */
 p5.Geometry = class Geometry {
-  constructor(detailX, detailY, callback){
-  //an array containing every vertex
-  //@type [p5.Vector]
+  constructor(detailX, detailY, callback) {
+    //an array containing every vertex
+    //@type [p5.Vector]
     this.vertices = [];
 
     //an array containing every vertex for stroke drawing
@@ -87,7 +88,60 @@ p5.Geometry = class Geometry {
 
     this.dirtyFlags = {};
   }
-
+  /**
+   * Removes the internal colors of p5.Geometry.
+   * Using `clearColors()`, you can use `fill()` to supply new colors before drawing each shape.
+   * If `clearColors()` is not used, the shapes will use their internal colors by ignoring `fill()`.
+   *
+   * @method clearColors
+   *
+   * @example
+   * <div>
+   * <code>
+   * let shape01;
+   * let shape02;
+   * let points = [];
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   points.push(new p5.Vector(-1, -1, 0), new p5.Vector(-1, 1, 0),
+   *     new p5.Vector(1, -1, 0), new p5.Vector(-1, -1, 0));
+   *   buildShape01();
+   *   buildShape02();
+   * }
+   * function draw() {
+   *   background(0);
+   *   fill('pink'); // shape01 retains its internal blue color, so it won't turn pink.
+   *   model(shape01);
+   *   fill('yellow'); // Now, shape02 is yellow.
+   *   model(shape02);
+   * }
+   *
+   * function buildShape01() {
+   *   beginGeometry();
+   *   fill('blue'); // shape01's color is blue because its internal colors remain.
+   *   beginShape();
+   *   for (let vec of points) vertex(vec.x * 100, vec.y * 100, vec.z * 100);
+   *   endShape(CLOSE);
+   *   shape01 = endGeometry();
+   * }
+   *
+   * function buildShape02() {
+   *   beginGeometry();
+   *   fill('red');  // shape02.clearColors() removes its internal colors. Now, shape02 is red.
+   *   beginShape();
+   *   for (let vec of points) vertex(vec.x * 200, vec.y * 200, vec.z * 200);
+   *   endShape(CLOSE);
+   *   shape02 = endGeometry();
+   *   shape02.clearColors(); // Resets shape02's colors.
+   * }
+   * </code>
+   * </div>
+   */
+  clearColors() {
+    this.vertexColors = [];
+    return this;
+  }
   /**
  * computes faces for geometry objects based on the vertices.
  * @method computeFaces
@@ -111,7 +165,7 @@ p5.Geometry = class Geometry {
   }
 
   _getFaceNormal(faceId) {
-  //This assumes that vA->vB->vC is a counter-clockwise ordering
+    //This assumes that vA->vB->vC is a counter-clockwise ordering
     const face = this.faces[faceId];
     const vA = this.vertices[face[0]];
     const vB = this.vertices[face[1]];
@@ -132,16 +186,149 @@ p5.Geometry = class Geometry {
     return n.mult(Math.asin(sinAlpha) / ln);
   }
   /**
- * computes smooth normals per vertex as an average of each
- * face.
- * @method computeNormals
- * @chainable
- */
-  computeNormals() {
+   * This function calculates normals for each face, where each vertex's normal is the average of the normals of all faces it's connected to.
+   * i.e computes smooth normals per vertex as an average of each face.
+   *
+   * When using `FLAT` shading, vertices are disconnected/duplicated i.e each face has its own copy of vertices.
+   * When using `SMOOTH` shading, vertices are connected/deduplicated i.e each face has its vertices shared with other faces.
+   *
+   * Options can include:
+   * - `roundToPrecision`: Precision value for rounding computations. Defaults to 3.
+   *
+   * @method computeNormals
+   * @param {String} [shadingType] shading type (`FLAT` for flat shading or `SMOOTH` for smooth shading) for buildGeometry() outputs. Defaults to `FLAT`.
+   * @param {Object} [options] An optional object with configuration.
+   * @chainable
+   *
+   * @example
+   * <div>
+   * <code>
+   * let helix;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   helix = buildGeometry(() => {
+   *     beginShape();
+   *
+   *     for (let i = 0; i < TWO_PI * 3; i += 0.6) {
+   *       let radius = 20;
+   *       let x = cos(i) * radius;
+   *       let y = sin(i) * radius;
+   *       let z = map(i, 0, TWO_PI * 3, -30, 30);
+   *       vertex(x, y, z);
+   *     }
+   *     endShape();
+   *   });
+   *   helix.computeNormals();
+   * }
+   * function draw() {
+   *   background(255);
+   *   stroke(0);
+   *   fill(150, 200, 250);
+   *   lights();
+   *   rotateX(PI*0.2);
+   *   orbitControl();
+   *   model(helix);
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt
+   * A 3D helix using the computeNormals() function by default uses `FLAT` to create a flat shading effect on the helix.
+   *
+   * @example
+   * <div>
+   * <code>
+   * let star;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   star = buildGeometry(() => {
+   *     beginShape();
+   *     for (let i = 0; i < TWO_PI; i += PI / 5) {
+   *       let outerRadius = 60;
+   *       let innerRadius = 30;
+   *       let xOuter = cos(i) * outerRadius;
+   *       let yOuter = sin(i) * outerRadius;
+   *       let zOuter = random(-20, 20);
+   *       vertex(xOuter, yOuter, zOuter);
+   *
+   *       let nextI = i + PI / 5 / 2;
+   *       let xInner = cos(nextI) * innerRadius;
+   *       let yInner = sin(nextI) * innerRadius;
+   *       let zInner = random(-20, 20);
+   *       vertex(xInner, yInner, zInner);
+   *     }
+   *     endShape(CLOSE);
+   *   });
+   *   star.computeNormals(SMOOTH);
+   * }
+   * function draw() {
+   *   background(255);
+   *   stroke(0);
+   *   fill(150, 200, 250);
+   *   lights();
+   *   rotateX(PI*0.2);
+   *   orbitControl();
+   *   model(star);
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt
+   * A star-like geometry, here the computeNormals(SMOOTH) is applied for a smooth shading effect.
+   * This helps to avoid the faceted appearance that can occur with flat shading.
+   */
+  computeNormals(shadingType = constants.FLAT, { roundToPrecision = 3 } = {}) {
     const vertexNormals = this.vertexNormals;
-    const vertices = this.vertices;
+    let vertices = this.vertices;
     const faces = this.faces;
     let iv;
+
+    if (shadingType === constants.SMOOTH) {
+      const vertexIndices = {};
+      const uniqueVertices = [];
+
+      const power = Math.pow(10, roundToPrecision);
+      const rounded = val => Math.round(val * power) / power;
+      const getKey = vert =>
+        `${rounded(vert.x)},${rounded(vert.y)},${rounded(vert.z)}`;
+
+      // loop through each vertex and add uniqueVertices
+      for (let i = 0; i < vertices.length; i++) {
+        const vertex = vertices[i];
+        const key = getKey(vertex);
+        if (vertexIndices[key] === undefined) {
+          vertexIndices[key] = uniqueVertices.length;
+          uniqueVertices.push(vertex);
+        }
+      }
+
+      // update face indices to use the deduplicated vertex indices
+      faces.forEach(face => {
+        for (let fv = 0; fv < 3; ++fv) {
+          const originalVertexIndex = face[fv];
+          const originalVertex = vertices[originalVertexIndex];
+          const key = getKey(originalVertex);
+          face[fv] = vertexIndices[key];
+        }
+      });
+
+      // update edge indices to use the deduplicated vertex indices
+      this.edges.forEach(edge => {
+        for (let ev = 0; ev < 2; ++ev) {
+          const originalVertexIndex = edge[ev];
+          const originalVertex = vertices[originalVertexIndex];
+          const key = getKey(originalVertex);
+          edge[ev] = vertexIndices[key];
+        }
+      });
+
+      // update the deduplicated vertices
+      this.vertices = vertices = uniqueVertices;
+    }
 
     // initialize the vertexNormals array with empty vectors
     vertexNormals.length = 0;
@@ -196,7 +383,7 @@ p5.Geometry = class Geometry {
  * @chainable
  */
   averagePoleNormals() {
-  //average the north pole
+    //average the north pole
     let sum = new p5.Vector(0, 0, 0);
     for (let i = 0; i < this.detailX; i++) {
       sum.add(this.vertexNormals[i]);
@@ -507,7 +694,7 @@ p5.Geometry = class Geometry {
  */
   normalize() {
     if (this.vertices.length > 0) {
-    // Find the corners of our bounding box
+      // Find the corners of our bounding box
       const maxPosition = this.vertices[0].copy();
       const minPosition = this.vertices[0].copy();
 

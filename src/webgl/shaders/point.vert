@@ -1,6 +1,6 @@
-attribute vec3 aPosition;
+IN vec3 aPosition;
 uniform float uPointSize;
-varying float vStrokeWeight;
+OUT float vStrokeWeight;
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 void main() {

@@ -23,7 +23,7 @@ vec3 quantize(vec3 color, float n) {
 void main() {
   vec4 color = texture2D(tex0, vTexCoord);
 
-  vec3 restrictedColor = quantize(color.rgb, filterParameter);
+  vec3 restrictedColor = quantize(color.rgb / color.a, filterParameter);
 
-  gl_FragColor = vec4(restrictedColor.rgb, color.a);
+  gl_FragColor = vec4(restrictedColor.rgb * color.a, color.a);
 }

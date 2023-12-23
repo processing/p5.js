@@ -133,7 +133,7 @@ suite('Rendering', function() {
     'camera', 'perspective', 'ortho', 'frustum', 'orbitControl',
     'ambientLight', 'directionalLight', 'pointLight', 'lights', 'specularColor', 'spotLight',
     'model',
-    'createShader', 'shader',
+    'shader',
     'normalMaterial', 'texture', 'ambientMaterial', 'emissiveMaterial', 'specularMaterial',
     'shininess', 'lightFalloff',
     'plane', 'box', 'sphere', 'cylinder', 'cone', 'ellipsoid', 'torus'
