@@ -2114,7 +2114,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       });
     }
     fillShader.setUniform('uAmbientLightCount', ambientLightCount);
-    fillShader.setUniform('uAmbientColor', this.ambientLightColors);
+    fillShader.setUniform('uAmbientColor', mixingArray);
 
     const spotLightCount = this.spotLightDiffuseColors.length / 3;
     fillShader.setUniform('uSpotLightCount', spotLightCount);
