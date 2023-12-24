@@ -98,27 +98,25 @@ import './p5.Geometry';
 /**
  * @method loadModel
  * @param  {String} path
- * @param  {function(p5.Geometry)} [successCallback]
- * @param  {function(Event)} [failureCallback]
- * @param  {String} [fileType]
+ * @param  {Object} [options]
+ * @param  {function(p5.Geometry)} [options.successCallback]
+ * @param  {function(Event)} [options.failureCallback]
+ * @param  {String} [options.fileType]
+ * @param  {boolean} [options.normalize]
  * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
  */
-p5.prototype.loadModel = function(path) {
+p5.prototype.loadModel = function(path,options) {
   p5._validateParameters('loadModel', arguments);
   let normalize;
   let successCallback;
   let failureCallback;
   let fileType = path.slice(-4);
-  if (typeof arguments[1] === 'boolean') {
-    normalize = arguments[1];
-    successCallback = arguments[2];
-    failureCallback = arguments[3];
-    if (typeof arguments[4] !== 'undefined') {
-      fileType = arguments[4];
-    }
+  if (options && typeof options === 'object') {
+    normalize = options.normalize || false;
+    successCallback = options.successCallback;
+    failureCallback = options.failureCallback;
   } else {
-    normalize = false;
-    successCallback = arguments[1];
+    successCallback = typeof arguments[1] === 'function' ? arguments[1] : undefined;
     failureCallback = arguments[2];
     if (typeof arguments[3] !== 'undefined') {
       fileType = arguments[3];
