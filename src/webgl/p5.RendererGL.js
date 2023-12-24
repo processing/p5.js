@@ -2107,10 +2107,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     if (this._useMetalness > 0) {
       mixingArray.forEach((ambientColors, index) => {
-        const mixing = ambientColors - this._useMetalness / 100;
-        if (mixing > 0) {
-          mixingArray[index] = mixing;
-        }
+        let mixing = ambientColors - this._useMetalness / 100;
+        mixing = Math.max(0, mixing);
+        mixingArray[index] = mixing;
       });
     }
     fillShader.setUniform('uAmbientLightCount', ambientLightCount);
