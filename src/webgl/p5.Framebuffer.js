@@ -131,9 +131,19 @@ class Framebuffer {
       console.warn('Antialiasing is unsupported in a WebGL 1 context');
       this.antialias = false;
     }
+    this.density = settings.density || target.pixelDensity();
+    const gl = target._renderer.GL;
+    this.gl = gl;
     if (settings.width && settings.height) {
-      this.width = settings.width;
-      this.height = settings.height;
+      const maxTextureSize = this.gl.getParameter(
+        this.gl.MAX_TEXTURE_SIZE);
+      const maxAllowedPixelDimensions = Math.floor(
+        maxTextureSize / this.density
+      );
+      const width = Math.min(settings.width, maxAllowedPixelDimensions);
+      const height = Math.min(settings.height, maxAllowedPixelDimensions);
+      this.width = width;
+      this.height = height;
       this.autoSized = false;
     } else {
       if ((settings.width === undefined) !== (settings.height === undefined)) {
@@ -147,11 +157,6 @@ class Framebuffer {
       this.height = target.height;
       this.autoSized = true;
     }
-    this.density = settings.density || target.pixelDensity();
-
-    const gl = target._renderer.GL;
-    this.gl = gl;
-
     this._checkIfFormatsAvailable();
 
     if (settings.stencil && !this.useDepth) {
