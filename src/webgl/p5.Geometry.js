@@ -142,6 +142,24 @@ p5.Geometry = class Geometry {
     this.vertexColors = [];
     return this;
   }
+  flipU() {
+    this.uvs = this.uvs.flat().map((val, index) => {
+      if (index % 2 === 0) {
+        return 1 - val;
+      } else {
+        return val;
+      }
+    });
+  }
+  flipV() {
+    this.uvs = this.uvs.flat().map((val, index) => {
+      if (index % 2 === 0) {
+        return val;
+      } else {
+        return 1 - val;
+      }
+    });
+  }
   /**
  * computes faces for geometry objects based on the vertices.
  * @method computeFaces
