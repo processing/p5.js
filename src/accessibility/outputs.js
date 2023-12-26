@@ -8,8 +8,8 @@
 import p5 from '../core/main';
 
 /**
- * Creates a screen reader-accessible description for shapes on the canvas.
- * `textOutput()` adds a general description, list of shapes, and
+* Creates a screen reader-accessible description for shapes on the canvas.
+ * `textOutput()` adds a general description, a list of shapes, and
  * table of shapes to the web page.
  *
  * The general description includes the canvas size, canvas color, and number
@@ -18,7 +18,7 @@ import p5 from '../core/main';
  *
  * A list of shapes follows the general description. The list describes the
  * color, location, and area of each shape. For example,
- * `a red circle at middle covering 3% of the canvas`. Each shape can be
+ * a red circle in the middle covering 3% of the canvas`. Each shape can be
  * selected to get more details.
  *
  * `textOutput()` uses its table of shapes as a list. The table describes the
@@ -35,7 +35,7 @@ import p5 from '../core/main';
  * mode.
  *
  * Read
- * <a href="/learn/labeling-canvases.html">How to label your p5.js code</a> to
+ * <a href="/learn/labeling-canvases.html">How to Label your p5.js code</a> to
  * learn more about making sketches accessible.
  *
  * @method textOutput
@@ -153,7 +153,7 @@ p5.prototype.textOutput = function(display) {
  *
  * `gridOutput()` uses its table of shapes as a grid. Each shape in the grid
  * is placed in a cell whose row and column correspond to the shape's location
- * on the canvas. The grid cells describe the color and type of shape at that
+ * on the canvas. The grid cells describe the color and type of shape of that
  * location. For example, `red circle`. These descriptions can be selected
  * individually to get more details. This is different from
  * <a href="#/p5/textOutput">textOutput()</a>, which uses its table as a list.
@@ -171,7 +171,7 @@ p5.prototype.textOutput = function(display) {
  * mode.
  *
  * Read
- * <a href="/learn/labeling-canvases.html">How to label your p5.js code</a> to
+ * <a href="/learn/labeling-canvases.html">How to Label your p5.js code</a> to
  * learn more about making sketches accessible.
  *
  * @method gridOutput

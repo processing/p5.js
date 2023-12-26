@@ -14,8 +14,8 @@ import '../friendly_errors/validate_params';
  * Draws a cubic Bezier curve on the screen. These curves are defined by a
  * series of anchor and control points. The first two parameters specify
  * the first anchor point and the last two parameters specify the other
- * anchor point, which become the first and last points on the curve. The
- * middle parameters specify the two control points which define the shape
+ * anchor point, which becomes the first and last point on the curve. The
+ * middle parameters specify the two control points that define the shape
  * of the curve. Approximately speaking, control points "pull" the curve
  * towards them.
  *
@@ -129,10 +129,10 @@ p5.prototype.bezierDetail = function(d) {
 };
 
 /**
- * Given the x or y co-ordinate values of control and anchor points of a bezier
+ * Given the x or y coordinate values of control and anchor points of a bezier
  * curve, it evaluates the x or y coordinate of the bezier at position t. The
- * parameters a and d are the x or y coordinates of first and last points on the
- * curve while b and c are of the control points.The final parameter t is the
+ * parameters a and d are the x or y coordinates of the first and last points on the
+ * curve while b and c are the control points. The final parameter t is the
  * position of the resultant point which is given between 0 and 1.
  * This can be done once with the x coordinates and a second time
  * with the y coordinates to get the location of a bezier curve at t.
@@ -264,7 +264,7 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
 
 /**
  * Draws a curved line on the screen between two points, given as the
- * middle four parameters. The first two parameters are a control point, as
+ * middle four parameters. The first two parameters are control point, as
  * if the curve came from this point even though it's not drawn. The last
  * two parameters similarly describe the other control point. <br /><br />
  * Longer curves can be created by putting a series of <a href="#/p5/curve">curve()</a> functions

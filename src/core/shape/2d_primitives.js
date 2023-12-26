@@ -21,8 +21,8 @@ import '../friendly_errors/validate_params';
  *          0 <= start < TWO_PI ;    start <= stop < start + TWO_PI
  *
  *      This means that the arc rendering functions don't have to be concerned
- *      with what happens if stop is smaller than start, or if the arc 'goes
- *      round more than once', etc.: they can just start at start and increase
+ *      with what happens if the stop is smaller than the start, or if the arc 'goes
+ *      round more than once, etc.: they can just start at the start and increase
  *      until stop and the correct arc will be drawn.
  *
  *   2. Optionally adjusts the angles within each quadrant to counter the naive
@@ -601,10 +601,10 @@ p5.prototype.quad = function(...args) {
 };
 
 /**
- * Draws a rectangle to the canvas. A rectangle is a four-sided polygon with
+ * Draw a rectangle on the canvas. A rectangle is a four-sided polygon with
  * every angle at ninety degrees. By default, the first two parameters set the
- * location of the rectangle's upper-left corner. The third and fourth set the
- * shape's the width and height, respectively. The way these parameters are
+ * location of the rectangle's upper-left corner. The third and fourth sets the
+ * shape the width and height, respectively. The way these parameters are
  * interpreted may be changed with the <a href="#/p5/rectMode">rectMode()</a>
  * function.
  *
@@ -669,7 +669,7 @@ p5.prototype.rect = function(...args) {
 };
 
 /**
- * Draws a square to the canvas. A square is a four-sided polygon with every
+ * Draws a square on the canvas. A square is a four-sided polygon with every
  * angle at ninety degrees and equal side lengths. By default, the first two
  * parameters set the location of the square's upper-left corner. The third
  * parameter sets its side size. The way these parameters are interpreted may

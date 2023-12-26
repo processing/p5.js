@@ -18,7 +18,7 @@ import '../core/friendly_errors/fes_core';
 /**
  * Loads an image to create a <a href="#/p5.Image">p5.Image</a> object.
  *
- * `loadImage()` interprets the first parameter one of three ways. If the path
+ * `loadImage()` interprets the first parameter in one of three ways. If the path
  * to an image file is provided, `loadImage()` will load it. Paths to local
  * files should be relative, such as `'assets/thundercat.jpg'`. URLs such as
  * `'https://example.com/thundercat.jpg'` may be blocked due to browser
@@ -830,7 +830,7 @@ function _sAssign(sVal, iVal) {
 }
 
 /**
- * Draws a source image to the canvas.
+ * Draws a source image on the canvas.
  *
  * The first parameter, `img`, is the source image to be drawn. The second and
  * third parameters, `dx` and `dy`, set the coordinates of the destination
@@ -855,13 +855,13 @@ function _sAssign(sVal, iVal) {
  * (`sx`, `sy`) and extends to the edges of the source image.
  *
  * The ninth parameter, `fit`, is also optional. It enables a subsection of
- * the source image to be drawn without affecting its aspect ratio. If
+ * the source image is to be drawn without affecting its aspect ratio. If
  * `CONTAIN` is passed, the full subsection will appear within the destination
  * rectangle. If `COVER` is passed, the subsection will completely cover the
  * destination rectangle. This may have the effect of zooming into the
  * subsection.
  *
- * The tenth and eleventh paremeters, `xAlign` and `yAlign`, are also
+ * The tenth and eleventh parameters, `xAlign` and `yAlign`, are also
  * optional. They determine how to align the fitted subsection. `xAlign` can
  * be set to either `LEFT`, `RIGHT`, or `CENTER`. `yAlign` can be set to
  * either `TOP`, `BOTTOM`, or `CENTER`. By default, both `xAlign` and `yAlign`

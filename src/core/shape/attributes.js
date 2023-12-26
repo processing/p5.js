@@ -11,12 +11,12 @@ import * as constants from '../constants';
 
 /**
  * Modifies the location from which ellipses, circles, and arcs are drawn. By default, the
- * first two parameters are the x- and y-coordinates of the shape's center. The next
+ * first two parameters are the x and y coordinates of the shape's center. The next
  * parameters are its width and height. This is equivalent to calling `ellipseMode(CENTER)`.
  *
  * `ellipseMode(RADIUS)` also uses the first two parameters to set the x- and y-coordinates
  * of the shape's center. The next parameters are half of the shapes's width and height.
- * Calling `ellipse(0, 0, 10, 15)` draws a shape with a width of 20 and height of 30.
+ * Calling `ellipse(0, 0, 10, 15)` draws a shape with a width of 20 and a height of 30.
  *
  * `ellipseMode(CORNER)` uses the first two parameters as the upper-left corner of the
  * shape. The next parameters are its width and height.
@@ -107,7 +107,7 @@ p5.prototype.noSmooth = function() {
 
 /**
  * Modifies the location from which rectangles and squares are drawn. By default,
- * the first two parameters are the x- and y-coordinates of the shape's upper-left
+ * the first two parameters are the x and y coordinates of the shape's upper-left
  * corner. The next parameters are its width and height. This is equivalent to
  * calling `rectMode(CORNER)`.
  *
@@ -115,10 +115,10 @@ p5.prototype.noSmooth = function() {
  * the corners. The third and fourth parameters are the location of the opposite
  * corner.
  *
- * `rectMode(CENTER)` uses the first two parameters as the x- and y-coordinates of
+ * `rectMode(CENTER)` uses the first two parameters as the x and y coordinates of
  * the shape's center. The next parameters are its width and height.
  *
- * `rectMode(RADIUS)` also uses the first two parameters as the x- and y-coordinates
+ * `rectMode(RADIUS)` also uses the first two parameters as the x and y coordinates
  * of the shape's center. The next parameters are half of the shape's width and
  * height.
  *

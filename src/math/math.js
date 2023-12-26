@@ -15,7 +15,7 @@ import p5 from '../core/main';
  *
  * <a href="#/p5.Vector">p5.Vector</a> objects are often used to program
  * motion because they simplify the math. For example, a moving ball has a
- * position and a velocity. Position describes where the ball is in space. The
+ * position and velocity. Position describes where the ball is in space. The
  * ball's position vector extends from the origin to the ball's center.
  * Velocity describes the ball's speed and the direction it's moving. If the
  * ball is moving straight up, its velocity vector points straight up. Adding

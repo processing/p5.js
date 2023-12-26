@@ -123,7 +123,7 @@ p5.prototype.brightness = function(c) {
  * return a bright yellow color. The way these parameters are interpreted may
  * be changed with the <a href="#/p5/colorMode">colorMode()</a> function.
  *
- * The version of `color()` with one parameter interprets the value one of two
+ * The version of `color()` with one parameter interprets the value as one of two
  * ways. If the parameter is a number, it's interpreted as a grayscale value.
  * If the parameter is a string, it's interpreted as a CSS color string.
  *
@@ -329,7 +329,7 @@ p5.prototype.green = function(c) {
 
 /**
  * Extracts the hue value from a
- * <a href="#/p5.Color">p5.Color</a> object, array of color components, or
+ * <a href="#/p5.Color">p5.Color</a> object, an array of color components, or
  * CSS color string.
  *
  * Hue exists in both HSB and HSL. It describes a color's position on the

@@ -328,7 +328,7 @@ const colorPatterns = {
  * are sent to the renderer.
  *
  * When different color representations are calculated, the results are cached
- * for performance. These values are normalized, floating-point numbers.
+ * for performance. These values are normalized floating-point numbers.
  *
  * <a href="#/p5/color">color()</a> is the recommended way to create an instance
  * of this class.

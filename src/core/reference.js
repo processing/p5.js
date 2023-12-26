@@ -410,19 +410,19 @@
  * section of code multiple times.
  *
  * A 'for loop' consists of three different expressions inside of a parenthesis,
- * all of which are optional.These expressions are used to control the number of
- * times the loop is run.The first expression is a statement that is used to set
- * the initial state for the loop.The second expression is a condition that you
+ * all of which are optional. These expressions are used to control the number of
+ * times the loop is run. The first expression is a statement that is used to set
+ * the initial state for the loop. The second expression is a condition that you
  * would like to check before each loop. If this expression returns false then
- * the loop will exit.The third expression is executed at the end of each loop.
- * These expression are separated by ; (semi-colon).In case of an empty expression,
+ * the loop will exit. The third expression is executed at the end of each loop.
+ * These expression are separated by ; (semi-colon).In the case of an empty expression,
  * only a semi-colon is written.
  *
  * The code inside of the loop body (in between the curly braces) is executed between the evaluation of the second
  * and third expression.
  *
  * As with any loop, it is important to ensure that the loop can 'exit', or that
- * the test condition will eventually evaluate to false. The test condition with a <a href="#/p5/for">for</a> loop
+ * The test condition will eventually evaluate as false. The test condition with a <a href="#/p5/for">for</a> loop
  * is the second expression detailed above. Ensuring that this expression can eventually
  * become false ensures that your loop doesn't attempt to run an infinite amount of times,
  * which can crash your browser.

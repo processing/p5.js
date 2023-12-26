@@ -257,16 +257,16 @@ p5.prototype.beginContour = function() {
  * </div>
  *
  * @alt
- * white square-shape with black outline in middle-right of canvas.
- * 4 black points in a square shape in middle-right of canvas.
- * 2 horizontal black lines. In the top-right and bottom-right of canvas.
- * 3 line shape with horizontal on top, vertical in middle and horizontal bottom.
- * square line shape in middle-right of canvas.
+ * white square shape with a black outline in the middle right of the canvas.
+ * 4 black points in a square shape in the middle right of the canvas.
+ * 2 horizontal black lines. In the top-right and bottom-right of the canvas.
+ * 3 line shape with horizontal on the top, vertical in the middle and horizontal bottom.
+ * square line shape in the middle-right of the canvas.
  * 2 white triangle shapes mid-right canvas. left one pointing up and right down.
  * 5 horizontal interlocking and alternating white triangles in mid-right canvas.
  * 4 interlocking white triangles in 45 degree rotated square-shape.
  * 2 white rectangle shapes in mid-right canvas. Both 20×55.
- * 3 side-by-side white rectangles center rect is smaller in mid-right canvas.
+ * 3 side-by-side white rectangles center rect is smaller in the mid-right canvas.
  * Thick white l-shape with black outline mid-top-left of canvas.
  */
 p5.prototype.beginShape = function(kind) {
@@ -425,10 +425,10 @@ p5.prototype.bezierVertex = function(...args) {
  *
  * The first and last points in a series of curveVertex() lines will be used to
  * guide the beginning and end of the curve. A minimum of four
- * points is required to draw a tiny curve between the second and
+ * points are required to draw a tiny curve between the second and
  * third points. Adding a fifth point with curveVertex() will draw
  * the curve between the second, third, and fourth points. The
- * curveVertex() function is an implementation of Catmull-Rom
+ * curveVertex() function is an implementation of the Catmull-Rom
  * splines.
  *
  * @method curveVertex

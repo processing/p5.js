@@ -22,21 +22,21 @@ export const VERSION =
  */
 export const P2D = 'p2d';
 /**
- * One of the two render modes in p5.js, used for computationally intensive tasks like 3D rendering and shaders.
+ * One of the two render modes in p5.js is used for computationally intensive tasks like 3D rendering and shaders.
  *
  * `WEBGL` differs from the default <a href="/reference/#/p5/P2D">`P2D`</a> renderer in the following ways:
  *
  * - **Coordinate System** - When drawing in `WEBGL` mode, the origin point (0,0,0) is located at the center of the screen, not the top-left corner. See <a href="https://p5js.org/learn/getting-started-in-webgl-coords-and-transform.html">the learn page about coordinates and transformations</a>.
  * - **3D Shapes** - `WEBGL` mode can be used to draw 3-dimensional shapes like <a href="/reference/#/p5/box">box()</a>, <a href="/reference/#/p5/sphere">sphere()</a>, <a href="/reference/#/p5/cone">cone()</a>, and <a href="/#Shape3D%20Primitives">more</a>. See <a href="https://p5js.org/learn/getting-started-in-webgl-custom-geometry.html">the learn page about custom geometry</a> to make more complex objects.
- * - **Shape Detail** - When drawing in `WEBGL` mode, you can specify how smooth curves should be drawn by using a `detail` parameter. See <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5#3d-primitives-shapes">the wiki section about shapes</a> for a more information and an example.
+ * - **Shape Detail** - When drawing in `WEBGL` mode, you can specify how smooth curves should be drawn by using a `detail` parameter. See <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5#3d-primitives-shapes">the wiki section about shapes</a> for more information and an example.
  * - **Textures** - A texture is like a skin that wraps onto a shape. See <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5#textures">the wiki section about textures</a> for examples of mapping images onto surfaces with textures.
  * - **Materials and Lighting** - `WEBGL` offers different types of lights like <a href="/reference/#/p5/ambientLight">ambientLight()</a> to place around a scene. Materials like <a href="/reference/#/p5/specularMaterial">specularMaterial()</a> reflect the lighting to convey shape and depth. See <a href="https://p5js.org/learn/getting-started-in-webgl-appearance.html">the learn page for styling and appearance</a> to experiment with different combinations.
  * - **Camera** - The viewport of a `WEBGL` sketch can be adjusted by changing camera attributes. See <a href="https://p5js.org/learn/getting-started-in-webgl-appearance.html#camera">the learn page section about cameras</a> for an explanation of camera controls.
  * - **Text** - `WEBGL` requires opentype/truetype font files to be preloaded using <a href="/reference/#/p5/loadFont">loadFont()</a>. See <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5#text">the wiki section about text</a> for details, along with a workaround.
- * - **Shaders** - Shaders are hardware accelerated programs that can be used for a variety of effects and graphics. See the <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">introduction to shaders</a> to get started with shaders in p5.js.
- * - **Graphics Acceleration** - `WEBGL` mode uses the graphics card instead of the CPU, so it may help boost the performance of your sketch (example: drawing more shapes on the screen at once).
+ * - **Shaders** - Shaders are hardware-accelerated programs that can be used for a variety of effects and graphics. See the <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">introduction to shaders</a> to get started with shaders in p5.js.
+ * - **Graphics Acceleration** - `WEBGL` mode uses the graphics card instead of the CPU, so it may help boost the performance of your sketch (for example: drawing more shapes on the screen at once).
  *
- * To learn more about WEBGL mode, check out <a href="https://p5js.org/learn/#:~:text=Getting%20Started%20in%20WebGL">all the interactive WEBGL tutorials</a> in the "Learn" section of this website, or read the wiki article <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5">"Getting started with WebGL in p5"</a>.
+ * To learn more about WebGL mode, check out <a href="https://p5js.org/learn/#:~:text=Getting%20Started%20in%20WebGL">all the interactive WebGL tutorials</a> in the "Learn" section of this website, or read the wiki article <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5">"Getting started with WebGL in p5"</a>.
  *
  * @property {String} WEBGL
  * @final

@@ -577,8 +577,8 @@ function makeObject(row, headers) {
  * If the name of the file is used as the parameter, as in the above example,
  * the file must be located in the sketch directory/folder.
  *
- * Alternatively, the file maybe be loaded from anywhere on the local
- * computer using an absolute path (something that starts with / on Unix and
+ * Alternatively, the file may be loaded from anywhere on the local
+ * computer using an absolute path (something that starts with/on Unix and
  * Linux, or a drive letter on Windows), or the filename parameter can be a
  * URL for a file found on a network.
  *

@@ -28,7 +28,7 @@ const labelTableElId = '_lte_'; //Label Table Element
  * visible to screen readers. This is the default mode.
  *
  * Read
- * <a href="/learn/labeling-canvases.html">How to label your p5.js code</a> to
+ * <a href="/learn/labeling-canvases.html">How to Label your p5.js code</a> to
  * learn more about making sketches accessible.
  *
  * @method describe
@@ -177,7 +177,7 @@ p5.prototype.describe = function(text, display) {
  * mode.
  *
  * Read
- * <a href="/learn/labeling-canvases.html">How to label your p5.js code</a> to
+ * <a href="/learn/labeling-canvases.html">How to Label your p5.js code</a> to
  * learn more about making sketches accessible.
  *
  * @method describeElement

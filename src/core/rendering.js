@@ -22,7 +22,7 @@ const defaultClass = 'p5Canvas';
  *
  * Important note: in 2D mode (i.e. when `p5.Renderer` is not set) the origin (0,0)
  * is positioned at the top left of the screen. In 3D mode (i.e. when `p5.Renderer`
- * is set to `WEBGL`), the origin is positioned at the center of the canvas.
+ * is set to `WEBGL`), and the origin is positioned at the center of the canvas.
  * See [this issue](https://github.com/processing/p5.js/issues/1545) for more information.
  *
  * A WebGL canvas will use a WebGL2 context if it is supported by the browser.
@@ -309,7 +309,7 @@ p5.prototype.createGraphics = function(w, h, ...args) {
  *
  * Options can include:
  * - `format`: The data format of the texture, either `UNSIGNED_BYTE`, `FLOAT`, or `HALF_FLOAT`. The default is `UNSIGNED_BYTE`.
- * - `channels`: What color channels to store, either `RGB` or `RGBA`. The default is to match the channels in the main canvas (with alpha unless disabled with `setAttributes`.)
+ * - `channels`: What color channels to store, either `RGB` or `RGBA`? The default is to match the channels in the main canvas (with alpha unless disabled with `setAttributes`.)
  * - `depth`: A boolean, whether or not to include a depth buffer. Defaults to true.
  * - `depthFormat`: The data format for depth information, either `UNSIGNED_INT` or `FLOAT`. The default is `FLOAT` if available, or `UNSIGNED_INT` otherwise.
  * - `stencil`: A boolean, whether or not to include a stencil buffer, which can be used for masking. This may only be used if also using a depth buffer. Defaults to the value of `depth`, which is true if not provided.
@@ -320,7 +320,7 @@ p5.prototype.createGraphics = function(w, h, ...args) {
  * - `textureFiltering`: Either `LINEAR` (nearby pixels will be interpolated when reading values from the color texture) or `NEAREST` (no interpolation.) Generally, use `LINEAR` when using the texture as an image, and use `NEAREST` if reading the texture as data. Defaults to `LINEAR`.
  *
  * If `width`, `height`, or `density` are specified, then the framebuffer will
- * keep that size until manually changed. Otherwise, it will be autosized, and
+ * keep that size until manually changed. Otherwise, it will be auto-sized, and
  * it will update to match the main canvas's size and density when the main
  * canvas changes.
  *

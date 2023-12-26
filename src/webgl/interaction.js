@@ -10,20 +10,20 @@ import * as constants from '../core/constants';
 
 /**
  * Allows movement around a 3D sketch using a mouse or trackpad or touch.
- * Left-clicking and dragging or swipe motion will rotate the camera position
+ * Left-clicking and dragging or swiping motion will rotate the camera position
  * about the center of the sketch, right-clicking and dragging or multi-swipe
  * will pan the camera position without rotation, and using the mouse wheel
  * (scrolling) or pinch in/out will move the camera further or closer
  * from the center of the sketch. This function can be called with parameters
  * dictating sensitivity to mouse/touch movement along the X and Y axes.
  * Calling this function without parameters is equivalent to calling
- * orbitControl(1,1). To reverse direction of movement in either axis,
+ * orbitControl(1,1). To reverse the direction of movement in either axis,
  * enter a negative number for sensitivity.
  * @method orbitControl
  * @for p5
  * @param  {Number} [sensitivityX] sensitivity to mouse movement along X axis
  * @param  {Number} [sensitivityY] sensitivity to mouse movement along Y axis
- * @param  {Number} [sensitivityZ] sensitivity to scroll movement along Z axis
+ * @param  {Number} [sensitivityZ] sensitivity to scroll movement along the Z axis
  * @param  {Object} [options] An optional object that can contain additional settings,
  * disableTouchActions - Boolean, default value is true.
  * Setting this to true makes mobile interactions smoother by preventing
@@ -33,7 +33,7 @@ import * as constants from '../core/constants';
  * By default, horizontal movement of the mouse or touch pointer rotates the camera
  * around the y-axis, and vertical movement rotates the camera around the x-axis.
  * But if setting this option to true, the camera always rotates in the direction
- * the pointer is moving. For zoom and move, the behavior is the same regardless of
+ * the pointer is moving. For Zoom and Move, the behavior is the same regardless of
  * true/false.
  * @chainable
  * @example

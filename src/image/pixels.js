@@ -23,7 +23,7 @@ import '../color/p5.Color';
  *
  * Some displays use several smaller pixels to set the color at a single
  * point. The <a href="#/p5/pixelDensity">pixelDensity()</a> function returns
- * the pixel density of the canvas. High density displays often have a
+ * the pixel density of the canvas. High-density displays often have a
  * <a href="#/p5/pixelDensity">pixelDensity()</a> of 2. On such a display, the
  * `pixels` array for a 100&times;100 canvas has 200 &times; 200 &times; 4 =
  * 160,000 elements.

@@ -8,7 +8,7 @@
  * It differs from p5.js' default, Retained Mode, which caches
  * geometries and buffers on the CPU to reduce the number of webgl
  * draw calls. Retained mode is more efficient & performative,
- * however, Immediate Mode is useful for sketching quick
+ * However, Immediate Mode is useful for sketching quick
  * geometric ideas.
  */
 import p5 from '../core/main';
