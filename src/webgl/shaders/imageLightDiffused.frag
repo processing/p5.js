@@ -28,6 +28,12 @@ vec2 nTOE( vec3 v ){
   return angles;
 }
 
+float random(vec2 p) {
+  vec3 p3  = fract(vec3(p.xyx) * .1031);
+  p3 += dot(p3, p3.yzx + 33.33);
+  return fract((p3.x + p3.y) * p3.z);
+}
+
 void main()
 {   	 
 	// the sample direction equals the hemisphere's orientation
@@ -48,13 +54,15 @@ void main()
 	//  We specify a fixed sampleDelta delta value to traverse
   // the hemisphere; decreasing or increasing the sample delta
   // will increase or decrease the accuracy respectively.
-	const float sampleDelta = 0.025;
+	const float sampleDelta = 0.100;
 	float nrSamples = 0.0;
-  
-	for(float phi = 0.0; phi < 2.0 * PI; phi += sampleDelta)
+  float randomOffset = random(gl_FragCoord.xy) * sampleDelta;
+	for(float rawPhi = 0.0; rawPhi < 2.0 * PI; rawPhi += sampleDelta)
 	{
-    for(float theta = 0.0; theta < ( 0.5 ) * PI; theta += sampleDelta)
+    float phi = rawPhi + randomOffset;
+    for(float rawTheta = 0.0; rawTheta < ( 0.5 ) * PI; rawTheta += sampleDelta)
     {
+      float theta = rawTheta + randomOffset;
       // spherical to cartesian (in tangent space) // tangent space to world // add each sample result to irradiance
       float x = sin(theta) * cos(phi);
       float y = sin(theta) * sin(phi);

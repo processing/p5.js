@@ -548,7 +548,8 @@ p5.prototype._getPos = function (x, y) {
     this.drawingContext.getTransform();
   const { x: transformedX, y: transformedY } = untransformedPosition
     .matrixTransform(currentTransform);
-  const { width: canvasWidth, height: canvasHeight } = this;
+  const canvasWidth = this.width * this._pixelDensity;
+  const canvasHeight = this.height * this._pixelDensity;
   if (transformedX < 0.4 * canvasWidth) {
     if (transformedY < 0.4 * canvasHeight) {
       return 'top left';
