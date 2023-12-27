@@ -933,6 +933,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/aditya123473892"><img src="https://avatars.githubusercontent.com/u/117269123?v=4?s=120" width="120px;" alt="aditya123473892"/><br /><sub><b>aditya123473892</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=aditya123473892" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3Aaditya123473892" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=aditya123473892" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/haarsh157"><img src="https://avatars.githubusercontent.com/u/115213858?v=4?s=120" width="120px;" alt="Harsh Range"/><br /><sub><b>Harsh Range</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=haarsh157" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3Ahaarsh157" title="Bug reports">🐛</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/sudhanshuv1"><img src="https://avatars.githubusercontent.com/u/148856416?v=4?s=120" width="120px;" alt="Sudhanshu Tiwari"/><br /><sub><b>Sudhanshu Tiwari</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sudhanshuv1" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
