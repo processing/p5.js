@@ -283,6 +283,8 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
  * // with width, height and depth of 50
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   describe('a white box rotating in 3D space');
  * }
  *
@@ -1026,6 +1028,8 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
  * // with ring radius 30 and tube radius 15
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   describe('a rotating white torus');
  * }
  *
@@ -1045,6 +1049,8 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
  * let detailX;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   detailX = createSlider(3, 24, 3);
  *   detailX.position(10, height + 5);
  *   detailX.style('width', '80px');
@@ -1068,6 +1074,8 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
  * let detailY;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
+ *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
  *   detailY = createSlider(3, 16, 3);
  *   detailY.position(10, height + 5);
  *   detailY.style('width', '80px');

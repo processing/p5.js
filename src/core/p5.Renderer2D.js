@@ -1329,7 +1329,7 @@ class Renderer2D extends p5.Renderer {
     }
 
     this.drawingContext.font = `${this._textStyle || 'normal'} ${this._textSize ||
-      12}px ${font || 'sans-serif'}`;
+      12}px "${font || 'sans-serif'}"`;
 
     this.drawingContext.textAlign = this._textAlign;
     if (this._textBaseline === constants.CENTER) {
