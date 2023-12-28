@@ -9,7 +9,7 @@ import './p5.Matrix';
 import './p5.Framebuffer';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { MipmapTexture } from './p5.Texture';
+import { CubemapTexture, MipmapTexture } from './p5.Texture';
 
 const STROKE_CAP_ENUM = {};
 const STROKE_JOIN_ENUM = {};
@@ -39,6 +39,14 @@ const lightingShader = readFileSync(
 const webgl2CompatibilityShader = readFileSync(
   join(__dirname, '/shaders/webgl2Compatibility.glsl'),
   'utf-8'
+);
+const cubemapFragmentShader=readFileSync(
+  join(__dirname,'/shaders/cubeFragment.glsl'),
+  'utf8'
+);
+const cubemapVertexShader=readFileSync(
+  join(__dirname,'/shaders/cubeVertex.glsl'),
+  'utf8'
 );
 
 const defaultShaders = {
@@ -1902,6 +1910,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     let smallWidth = 200;
     let width = smallWidth;
     let height = Math.floor(smallWidth * (input.height / input.width));
+    let cubemapTexture;
+    const faces = [];
     newFramebuffer = this._pInst.createFramebuffer({
       width, height, density: 1
     });
@@ -1913,23 +1923,49 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         defaultShaders.imageLightDiffusedFrag
       );
     }
+    // Create a shader for cubemap conversion
+    const cubemapShader = this._pInst.createShader(
+      cubemapVertexShader,
+      cubemapFragmentShader);
+
+    // Render each face of the cubemap
+    for (let i = 0; i < 6; ++i) {
+      newFramebuffer.draw(() => {
+        cubemapShader.use();
+        cubemapShader.setUniform('equirectangularMap', input);
+        cubemapShader.setUniform('projection', captureProjection);
+        cubemapShader.setUniform('view', captureViews[i]);
+
+        this._pInst.noStroke();
+        this._pInst.rectMode(constants.CENTER);
+        this._pInst.noLights();
+        this._pInst.rect(0, 0, width, height);
+
+        // Capture the rendered face and store it in the faces array
+        faces[i] = this._pInst.get(0, 0, width, height);
+      });
+    }
+    // Use the diffusedShader for rendering
     newFramebuffer.draw(() => {
       this._pInst.shader(this.diffusedShader);
       this.diffusedShader.setUniform('environmentMap', input);
-      this._pInst.noStroke();
-      this._pInst.rectMode(constants.CENTER);
-      this._pInst.noLights();
-      this._pInst.rect(0, 0, width, height);
+      // Render the cubemap using the stored faces
+      for (let i = 0; i < 6; ++i) {
+        this._pInst.image(faces[i], 0, 0, width, height);
+      }
     });
-    this.diffusedTextures.set(input, newFramebuffer);
-    return newFramebuffer;
+    // Initialize CubemapTexture class with faces
+    cubemapTexture=new CubemapTexture(this._pInst,faces, {});
+    cubemapTexture.init(faces);
+    this.diffusedTextures.set(input, cubemapTexture);
+    return cubemapTexture;
   }
 
   /*
    *  used in imageLight,
    *  To create a texture from the input non blurry image, if it doesn't already exist
    *  Creating 8 different levels of textures according to different
-   *  sizes and atoring them in `levels` array
+   *  sizes and storing them in `levels` array
    *  Creating a new Mipmap texture with that `levels` array
    *  Storing the texture for input image in map called `specularTextures`
    *  maps the input p5.Image to a p5.MipmapTexture
@@ -2087,7 +2123,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       // this.activeImageLight has image as a key
       // look up the texture from the diffusedTexture map
       let diffusedLight = this.getDiffusedTexture(this.activeImageLight);
-      shader.setUniform('environmentMapDiffused', diffusedLight);
+      shader.setUniform('environmentMapDiffusedCubemap', diffusedLight);
       let specularLight = this.getSpecularTexture(this.activeImageLight);
       // In p5js the range of shininess is >= 1,
       // Therefore roughness range will be ([0,1]*8)*20 or [0, 160]
