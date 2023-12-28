@@ -189,7 +189,7 @@ p5.prototype.loadModel = function(path) {
  */
 p5.prototype.loadModel = function(path,options) {
   p5._validateParameters('loadModel', arguments);
-  let normalize;
+  let normalize= false;
   let successCallback;
   let failureCallback;
   let fileType = path.slice(-4);
@@ -197,6 +197,14 @@ p5.prototype.loadModel = function(path,options) {
     normalize = options.normalize || false;
     successCallback = options.successCallback;
     failureCallback = options.failureCallback;
+    fileType = options.fileType || fileType;
+  } else if (typeof options === 'boolean') {
+    normalize = options;
+    successCallback = arguments[2];
+    failureCallback = arguments[3];
+    if (typeof arguments[4] !== 'undefined') {
+      fileType = arguments[4];
+    }
   } else {
     successCallback = typeof arguments[1] === 'function' ? arguments[1] : undefined;
     failureCallback = arguments[2];
