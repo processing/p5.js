@@ -113,6 +113,8 @@ import './p5.Geometry';
  * @param  {function(Event)} [options.failureCallback]
  * @param  {String} [options.fileType]
  * @param  {boolean} [options.normalize]
+ * @param  {boolean} [options.flipU]
+ * @param  {boolean} [options.flipV]
  * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
  */
 p5.prototype.loadModel = function(path,options) {
@@ -120,12 +122,16 @@ p5.prototype.loadModel = function(path,options) {
   let normalize= false;
   let successCallback;
   let failureCallback;
+  let flipU = false;
+  let flipV = false;
   let fileType = path.slice(-4);
   if (options && typeof options === 'object') {
     normalize = options.normalize || false;
     successCallback = options.successCallback;
     failureCallback = options.failureCallback;
     fileType = options.fileType || fileType;
+    flipU = options.flipU || false;
+    flipV = options.flipV || false;
   } else if (typeof options === 'boolean') {
     normalize = options;
     successCallback = arguments[2];
@@ -156,6 +162,15 @@ p5.prototype.loadModel = function(path,options) {
         if (normalize) {
           model.normalize();
         }
+
+        if (flipU) {
+          model.flipU();
+        }
+
+        if (flipV) {
+          model.flipV();
+        }
+        
         self._decrementPreload();
         if (typeof successCallback === 'function') {
           successCallback(model);
@@ -171,6 +186,14 @@ p5.prototype.loadModel = function(path,options) {
 
         if (normalize) {
           model.normalize();
+        }
+
+        if (flipU) {
+          model.flipU();
+        }
+
+        if (flipV) {
+          model.flipV();
         }
 
         self._decrementPreload();
