@@ -168,7 +168,7 @@ p5.prototype.loadModel = function(path,options) {
         if (flipV) {
           model.flipV();
         }
-        
+
         self._decrementPreload();
         if (typeof successCallback === 'function') {
           successCallback(model);
