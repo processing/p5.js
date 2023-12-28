@@ -142,6 +142,41 @@ p5.Geometry = class Geometry {
     this.vertexColors = [];
     return this;
   }
+  /**
+ * Flips the U texture coordinates of the model.
+ * @method flipU
+ * @for p5.Geometry
+ *
+ * @returns {p5.Geometry}
+ *
+ * @example
+ * <div>
+ * <code>
+ * let modelU;
+ *
+ * function preload() {
+ *   modelU = loadModel('path/to/your/model.obj');
+ *
+ *   modelU.flipU();
+ * }
+ *
+ * function setup() {
+ *   createCanvas(400, 400, WEBGL);
+ *   background(200);
+ *
+ *   // Original model (no texture coordinate flipping)
+ *   fill('orange');
+ *   translate(-100, 0, 0);
+ *   model(modelU);
+ *
+ *   // Flipped U texture coordinates model
+ *   fill('blue');
+ *   translate(200, 0, 0);
+ *   model(modelU);
+ * }
+ * </code>
+ * </div>
+ */
   flipU() {
     this.uvs = this.uvs.flat().map((val, index) => {
       if (index % 2 === 0) {
@@ -151,6 +186,41 @@ p5.Geometry = class Geometry {
       }
     });
   }
+  /**
+ * Flips the V texture coordinates of the model.
+ * @method flipV
+ * @for p5.Geometry
+ *
+ * @returns {p5.Geometry}
+ *
+ * @example
+ * <div>
+ * <code>
+ * let modelV;
+ *
+ * function preload() {
+ *   modelV = loadModel('path/to/your/model.obj');
+ *
+ *   modelV.flipV();
+ * }
+ *
+ * function setup() {
+ *   createCanvas(400, 400, WEBGL);
+ *   background(200);
+ *
+ *   // Original model (no texture coordinate flipping)
+ *   fill('orange');
+ *   translate(-100, 0, 0);
+ *   model(modelV);
+ *
+ *   // Flipped V texture coordinates model
+ *   fill('purple');
+ *   translate(200, 0, 0);
+ *   model(modelV);
+ * }
+ * </code>
+ * </div>
+ */
   flipV() {
     this.uvs = this.uvs.flat().map((val, index) => {
       if (index % 2 === 0) {
