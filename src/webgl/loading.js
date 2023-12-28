@@ -103,7 +103,6 @@ import './p5.Geometry';
  * @param  {String} [fileType]
  * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
  */
-  }
   return model;
 };
 /**
