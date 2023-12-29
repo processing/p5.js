@@ -510,7 +510,8 @@ export function checkWebGLCapabilities({ GL, webglVersion }) {
     : gl.getExtension('OES_texture_half_float');
   const supportsHalfFloatLinear = supportsHalfFloat &&
     gl.getExtension('OES_texture_half_float_linear');
-  const supportsCubemap = gl.getExtension('OES_texture_cube_map');
+  const supportsCubemap = (webglVersion === constants.WEBGL2)
+    || (gl.getExtension('OES_texture_cube_map'));
   return {
     float: supportsFloat,
     floatLinear: supportsFloatLinear,
