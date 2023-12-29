@@ -49,14 +49,6 @@ const webgl2CompatibilityShader = getCachedShader('webgl2CompatibilityShader',re
   join(__dirname, '/shaders/webgl2Compatibility.glsl'),
   'utf-8'
 ));
-const cubemapFragmentShader=getCachedShader('cubemapFragmentShader',readFileSync(
-  join(__dirname,'/shaders/cubeFragment.glsl'),
-  'utf8'
-));
-const cubemapVertexShader=getCachedShader('cubemapVertexShader',readFileSync(
-  join(__dirname,'/shaders/cubeVertex.glsl'),
-  'utf8'
-));
 
 const defaultShaders = {
   immediateVert: getCachedShader('immediateVert',readFileSync(
@@ -118,6 +110,12 @@ const defaultShaders = {
   )),
   imageLightSpecularFrag:getCachedShader('imageLightSpecularFrag', readFileSync(
     join(__dirname, '/shaders/imageLightSpecular.frag'), 'utf-8'
+  )),
+  cubemapVertexShader:getCachedShader('cubemapVertexShader',readFileSync(
+    join(__dirname,'/shaders/cubeVertex.vert'),'utf8'
+  )),
+  cubemapFragmentShader:getCachedShader('cubemapFragmentShader',readFileSync(
+    join(__dirname,'/shaders/cubeFragment.frag'),'utf8'
   ))
 };
 for (const key in defaultShaders) {
@@ -1881,6 +1879,19 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     return this._defaultFontShader;
   }
 
+  _getCubemapShader() {
+    if (!this._defaultCubemapShader) {
+      this._defaultCubemapShader = new p5.Shader(
+        this,
+        this._webGL2CompatibilityPrefix('vert', 'mediump') +
+        defaultShaders.cubemapVertexShader,
+        this._webGL2CompatibilityPrefix('frag', 'mediump') +
+        defaultShaders.cubemapFragmentShader
+      );
+    }
+    return this._defaultCubemapShader;
+  }
+
   _webGL2CompatibilityPrefix(
     shaderType,
     floatPrecision
@@ -1958,8 +1969,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
     // Create a shader for cubemap conversion
     const cubemapShader = this._pInst.createShader(
-      cubemapVertexShader,
-      cubemapFragmentShader);
+      defaultShaders.cubemapVertexShader,
+      defaultShaders.cubemapFragmentShader);
 
     // Render each face of the cubemap
     for (let i = 0; i < 6; ++i) {
