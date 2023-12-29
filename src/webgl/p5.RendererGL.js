@@ -41,23 +41,22 @@ const getCachedShader= (shaderKey, shaderSource)=>{
   return shaderCache[shaderKey];
 };
 
-const lightingShader = getCachedShader('',readFileSync(
+const lightingShader = getCachedShader('lightingShader',readFileSync(
   join(__dirname, '/shaders/lighting.glsl'),
   'utf-8'
 ));
-const webgl2CompatibilityShader = getCachedShader('',readFileSync(
+const webgl2CompatibilityShader = getCachedShader('webgl2CompatibilityShader',readFileSync(
   join(__dirname, '/shaders/webgl2Compatibility.glsl'),
   'utf-8'
 ));
-const cubemapFragmentShader=getCachedShader('',readFileSync(
+const cubemapFragmentShader=getCachedShader('cubemapFragmentShader',readFileSync(
   join(__dirname,'/shaders/cubeFragment.glsl'),
   'utf8'
 ));
-const cubemapVertexShader=getCachedShader('',readFileSync(
+const cubemapVertexShader=getCachedShader('cubemapVertexShader',readFileSync(
   join(__dirname,'/shaders/cubeVertex.glsl'),
   'utf8'
 ));
-
 
 const defaultShaders = {
   immediateVert: getCachedShader('immediateVert',readFileSync(
