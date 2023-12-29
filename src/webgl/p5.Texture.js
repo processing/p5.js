@@ -193,7 +193,7 @@ p5.Texture = class Texture {
   /**
    * Checks if the source data for this texture has changed (if it's
    * easy to do so) and reuploads the texture if necessary. If it's not
-   * possible or to expensive to do a calculation to determine wheter or
+   * possible or too expensive to do a calculation to determine whether or
    * not the data has occurred, this method simply re-uploads the texture.
    * @method update
    */
