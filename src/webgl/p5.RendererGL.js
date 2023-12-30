@@ -793,16 +793,16 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this._maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
     }
     let maxTextureSize = this._maxTextureSize;
-    let maxAllowedPixleDimensions = p5.prototype._maxAllowedPixelDimensions;
+    let maxAllowedPixelDimensions = p5.prototype._maxAllowedPixelDimensions;
 
-    maxAllowedPixleDimensions = Math.floor(
+    maxAllowedPixelDimensions = Math.floor(
       maxTextureSize / this.pixelDensity()
     );
     let adjustedWidth = Math.min(
-      width, maxAllowedPixleDimensions
+      width, maxAllowedPixelDimensions
     );
     let adjustedHeight = Math.min(
-      height, maxAllowedPixleDimensions
+      height, maxAllowedPixelDimensions
     );
 
     if (adjustedWidth !== width || adjustedHeight !== height) {
