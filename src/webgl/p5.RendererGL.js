@@ -787,6 +787,34 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
   }
 
+  _adjustDimensions(width, height) {
+    const gl = this.drawingContext;
+    if (!this._maxTextureSize) {
+      this._maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+    }
+    let maxTextureSize = this._maxTextureSize;
+    let maxAllowedPixleDimensions = p5.prototype._maxAllowedPixelDimensions;
+
+    maxAllowedPixleDimensions = Math.floor(
+      maxTextureSize / this.pixelDensity()
+    );
+    let adjustedWidth = Math.min(
+      width, maxAllowedPixleDimensions
+    );
+    let adjustedHeight = Math.min(
+      height, maxAllowedPixleDimensions
+    );
+
+    if (adjustedWidth !== width || adjustedHeight !== height) {
+      console.warn(
+        'Warning: The requested width/height exceeds hardware limits. ' +
+          `Adjusting dimensions to width: ${adjustedWidth}, height: ${adjustedHeight}.`
+      );
+    }
+
+    return { adjustedWidth, adjustedHeight };
+  }
+
   //This is helper function to reset the context anytime the attributes
   //are changed with setAttributes()
 

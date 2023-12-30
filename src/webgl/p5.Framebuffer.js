@@ -135,15 +135,10 @@ class Framebuffer {
     const gl = target._renderer.GL;
     this.gl = gl;
     if (settings.width && settings.height) {
-      const maxTextureSize = this.gl.getParameter(
-        this.gl.MAX_TEXTURE_SIZE);
-      const maxAllowedPixelDimensions = Math.floor(
-        maxTextureSize / this.density
-      );
-      const width = Math.min(settings.width, maxAllowedPixelDimensions);
-      const height = Math.min(settings.height, maxAllowedPixelDimensions);
-      this.width = width;
-      this.height = height;
+      const dimensions =
+        target._renderer._adjustDimensions(settings.width, settings.height);
+      this.width = dimensions.adjustedWidth;
+      this.height = dimensions.adjustedHeight;
       this.autoSized = false;
     } else {
       if ((settings.width === undefined) !== (settings.height === undefined)) {

@@ -143,9 +143,14 @@ p5.prototype.createCanvas = function(w, h, renderer, canvas) {
 
   // Init our graphics renderer
   //webgl mode
+  let adjustedWidth, adjustedHeight;
   if (r === constants.WEBGL) {
     this._setProperty('_renderer', new p5.RendererGL(c, this, true));
     this._elements.push(this._renderer);
+    const dimensions =
+      this._renderer._adjustDimensions(w, h);
+    adjustedWidth = dimensions.adjustedWidth;
+    adjustedHeight = dimensions.adjustedHeight;
   } else {
     //P2D mode
     if (!this._defaultGraphicsCreated) {
@@ -154,7 +159,7 @@ p5.prototype.createCanvas = function(w, h, renderer, canvas) {
       this._elements.push(this._renderer);
     }
   }
-  this._renderer.resize(w, h);
+  this._renderer.resize(adjustedWidth, adjustedHeight);
   this._renderer._applyDefaults();
   return this._renderer;
 };

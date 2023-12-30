@@ -60,13 +60,10 @@ p5.Graphics = class extends p5.Element {
 
     if (r === constants.WEBGL) {
       this._renderer = new p5.RendererGL(this.canvas, this, false);
-      const gl = this._renderer.GL;
-      const maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
-      const maxAllowedPixelDimensions = Math.floor(
-        maxTextureSize / this._pixelDensity
-      );
-      w = Math.min(w, maxAllowedPixelDimensions);
-      h = Math.min(h, maxAllowedPixelDimensions);
+      const { adjustedWidth, adjustedHeight } =
+        this._renderer._adjustDimensions(w, h);
+      w = adjustedWidth;
+      h = adjustedHeight;
     } else {
       this._renderer = new p5.Renderer2D(this.canvas, this, false);
     }
