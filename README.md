@@ -935,6 +935,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/sudhanshuv1"><img src="https://avatars.githubusercontent.com/u/148856416?v=4?s=120" width="120px;" alt="Sudhanshu Tiwari"/><br /><sub><b>Sudhanshu Tiwari</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sudhanshuv1" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/samrudh3125"><img src="https://avatars.githubusercontent.com/u/69446481?v=4?s=120" width="120px;" alt="Samrudh Shetty"/><br /><sub><b>Samrudh Shetty</b></sub></a><br /><a href="#a11y-samrudh3125" title="Accessibility">️️️️♿️</a></td>
     </tr>
   </tbody>
 </table>
