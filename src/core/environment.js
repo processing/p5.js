@@ -803,14 +803,18 @@ function getWindowHeight() {
  * // width.
  * function mousePressed() {
  *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+  // Reduce canvas size
   resizeCanvas(100, 50);
   
+  // Set background color
   background(100);
   
-  textSize(25);
+  // Display text "50" in the center
+  textSize(25); // Adjust text size as needed
   textAlign(CENTER, CENTER);
-  text('50', width / 2, height / 2);
+  text("50", width / 2, height / 2);
 }
+
 
  * }
  * </code>
