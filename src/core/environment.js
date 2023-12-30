@@ -6,8 +6,8 @@
  * @requires constants
  */
 
-import p5 from './main';
-import * as C from './constants';
+import p5 from "./main";
+import * as C from "./constants";
 
 const standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
 
@@ -49,13 +49,13 @@ let windowPrintDisabled = false;
  * </code>
  * </div>
  */
-p5.prototype.print = function(...args) {
+p5.prototype.print = function (...args) {
   if (!args.length) {
     if (!windowPrintDisabled) {
       _windowPrint();
       if (
         window.confirm(
-          'You just tried to print the webpage. Do you want to prevent this from running again?'
+          "You just tried to print the webpage. Do you want to prevent this from running again?"
         )
       ) {
         windowPrintDisabled = true;
@@ -269,22 +269,22 @@ p5.prototype.focused = document.hasFocus();
  * </code>
  * </div>
  */
-p5.prototype.cursor = function(type, x, y) {
-  let cursor = 'auto';
+p5.prototype.cursor = function (type, x, y) {
+  let cursor = "auto";
   const canvas = this._curElement.elt;
   if (standardCursors.includes(type)) {
     // Standard css cursor
     cursor = type;
-  } else if (typeof type === 'string') {
-    let coords = '';
-    if (x && y && (typeof x === 'number' && typeof y === 'number')) {
+  } else if (typeof type === "string") {
+    let coords = "";
+    if (x && y && typeof x === "number" && typeof y === "number") {
       // Note that x and y values must be unit-less positive integers < 32
       // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
       coords = `${x} ${y}`;
     }
     if (
-      type.substring(0, 7) === 'http://' ||
-      type.substring(0, 8) === 'https://'
+      type.substring(0, 7) === "http://" ||
+      type.substring(0, 8) === "https://"
     ) {
       // Image (absolute url)
       cursor = `url(${type}) ${coords}, auto`;
@@ -369,14 +369,14 @@ p5.prototype.cursor = function(type, x, y) {
  * @method frameRate
  * @return {Number}       current frame rate.
  */
-p5.prototype.frameRate = function(fps) {
-  p5._validateParameters('frameRate', arguments);
-  if (typeof fps !== 'number' || fps < 0) {
+p5.prototype.frameRate = function (fps) {
+  p5._validateParameters("frameRate", arguments);
+  if (typeof fps !== "number" || fps < 0) {
     return this._frameRate;
   } else {
-    this._setProperty('_targetFrameRate', fps);
+    this._setProperty("_targetFrameRate", fps);
     if (fps === 0) {
-      this._setProperty('_frameRate', fps);
+      this._setProperty("_frameRate", fps);
     }
     return this;
   }
@@ -388,7 +388,7 @@ p5.prototype.frameRate = function(fps) {
  * @private
  * @return {Number} current frameRate
  */
-p5.prototype.getFrameRate = function() {
+p5.prototype.getFrameRate = function () {
   return this.frameRate();
 };
 
@@ -404,7 +404,7 @@ p5.prototype.getFrameRate = function() {
  * @private
  * @param {Number} [fps] number of frames to be displayed every second
  */
-p5.prototype.setFrameRate = function(fps) {
+p5.prototype.setFrameRate = function (fps) {
   return this.frameRate(fps);
 };
 
@@ -433,7 +433,7 @@ p5.prototype.setFrameRate = function(fps) {
  * </code>
  * </div>
  */
-p5.prototype.getTargetFrameRate = function() {
+p5.prototype.getTargetFrameRate = function () {
   return this._targetFrameRate;
 };
 
@@ -459,8 +459,8 @@ p5.prototype.getTargetFrameRate = function() {
  * </code>
  * </div>
  */
-p5.prototype.noCursor = function() {
-  this._curElement.elt.style.cursor = 'none';
+p5.prototype.noCursor = function () {
+  this._curElement.elt.style.cursor = "none";
 };
 
 /**
@@ -716,12 +716,12 @@ p5.prototype.windowHeight = getWindowHeight();
  * @alt
  * This example does not render anything.
  */
-p5.prototype._onresize = function(e) {
-  this._setProperty('windowWidth', getWindowWidth());
-  this._setProperty('windowHeight', getWindowHeight());
+p5.prototype._onresize = function (e) {
+  this._setProperty("windowWidth", getWindowWidth());
+  this._setProperty("windowHeight", getWindowHeight());
   const context = this._isGlobal ? window : this;
   let executeDefault;
-  if (typeof context.windowResized === 'function') {
+  if (typeof context.windowResized === "function") {
     executeDefault = context.windowResized(e);
     if (executeDefault !== undefined && !executeDefault) {
       e.preventDefault();
@@ -803,10 +803,15 @@ function getWindowHeight() {
  * // width.
  * function mousePressed() {
  *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
- *     resizeCanvas(50, 100);
- *     background(200);
- *     text(width, 42, 27);
- *   }
+  resizeCanvas(100, 50);
+  
+  background(100);
+  
+  textSize(25);
+  textAlign(CENTER, CENTER);
+  text("50", width / 2, height / 2);
+}
+
  * }
  * </code>
  * </div>
@@ -920,10 +925,10 @@ p5.prototype.height = 0;
  * </code>
  * </div>
  */
-p5.prototype.fullscreen = function(val) {
-  p5._validateParameters('fullscreen', arguments);
+p5.prototype.fullscreen = function (val) {
+  p5._validateParameters("fullscreen", arguments);
   // no arguments, return fullscreen or not
-  if (typeof val === 'undefined') {
+  if (typeof val === "undefined") {
     return (
       document.fullscreenElement ||
       document.webkitFullscreenElement ||
@@ -992,10 +997,10 @@ p5.prototype.fullscreen = function(val) {
  * @method pixelDensity
  * @returns {Number} current pixel density of the sketch.
  */
-p5.prototype.pixelDensity = function(val) {
-  p5._validateParameters('pixelDensity', arguments);
+p5.prototype.pixelDensity = function (val) {
+  p5._validateParameters("pixelDensity", arguments);
   let returnValue;
-  if (typeof val === 'number') {
+  if (typeof val === "number") {
     if (val !== this._pixelDensity) {
       this._pixelDensity = val;
     }
@@ -1053,7 +1058,7 @@ function launchFullscreen(element) {
     document.mozFullScreenEnabled ||
     document.msFullscreenEnabled;
   if (!enabled) {
-    throw new Error('Fullscreen not enabled in this browser.');
+    throw new Error("Fullscreen not enabled in this browser.");
   }
   if (element.requestFullscreen) {
     element.requestFullscreen();
@@ -1135,7 +1140,7 @@ p5.prototype.getURL = () => location.href;
  * </div>
  */
 p5.prototype.getURLPath = () =>
-  location.pathname.split('/').filter(v => v !== '');
+  location.pathname.split("/").filter((v) => v !== "");
 
 /**
  * Returns the current
@@ -1173,7 +1178,7 @@ p5.prototype.getURLPath = () =>
  * @alt
  * This example does not render anything.
  */
-p5.prototype.getURLParams = function() {
+p5.prototype.getURLParams = function () {
   const re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;
   let m;
   const v = {};
