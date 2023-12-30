@@ -6,8 +6,8 @@
  * @requires constants
  */
 
-import p5 from './main';
-import * as C from './constants';
+import p5 from "./main";
+import * as C from "./constants";
 
 const standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
 
@@ -31,31 +31,31 @@ let windowPrintDisabled = false;
  * @param {Any} contents content to print to the console.
  * @example
  * <div>
- * <code class="norender">
+ * <code class='norender'>
  * function setup() {
- *   // Prints "hello, world" to the console.
+ *   // Prints 'hello, world' to the console.
  *   print('hello, world');
  * }
  * </code>
  * </div>
  *
  * <div>
- * <code class="norender">
+ * <code class='norender'>
  * function setup() {
  *   let name = 'ada';
- *   // Prints "hello, ada" to the console.
+ *   // Prints 'hello, ada' to the console.
  *   print(`hello, ${name}`);
  * }
  * </code>
  * </div>
  */
-p5.prototype.print = function(...args) {
+p5.prototype.print = function (...args) {
   if (!args.length) {
     if (!windowPrintDisabled) {
       _windowPrint();
       if (
         window.confirm(
-          'You just tried to print the webpage. Do you want to prevent this from running again?'
+          "You just tried to print the webpage. Do you want to prevent this from running again?"
         )
       ) {
         windowPrintDisabled = true;
@@ -69,8 +69,8 @@ p5.prototype.print = function(...args) {
 /**
  * Tracks the number of frames drawn since the sketch started.
  *
- * `frameCount`'s value is 0 inside <a href="#/p5/setup">setup()</a>. It
- * increments by 1 each time the code in <a href="#/p5/draw">draw()</a>
+ * `frameCount`'s value is 0 inside <a href='#/p5/setup'>setup()</a>. It
+ * increments by 1 each time the code in <a href='#/p5/draw'>draw()</a>
  * finishes executing.
  *
  * @property {Integer} frameCount
@@ -118,7 +118,7 @@ p5.prototype.frameCount = 0;
 
 /**
  * Tracks the amount of time, in milliseconds, it took for
- * <a href="#/p5/draw">draw</a> to draw the previous frame. `deltaTime` is
+ * <a href='#/p5/draw'>draw</a> to draw the previous frame. `deltaTime` is
  * useful for simulating physics.
  *
  * @property {Integer} deltaTime
@@ -269,22 +269,22 @@ p5.prototype.focused = document.hasFocus();
  * </code>
  * </div>
  */
-p5.prototype.cursor = function(type, x, y) {
-  let cursor = 'auto';
+p5.prototype.cursor = function (type, x, y) {
+  let cursor = "auto";
   const canvas = this._curElement.elt;
   if (standardCursors.includes(type)) {
     // Standard css cursor
     cursor = type;
-  } else if (typeof type === 'string') {
-    let coords = '';
-    if (x && y && (typeof x === 'number' && typeof y === 'number')) {
+  } else if (typeof type === "string") {
+    let coords = "";
+    if (x && y && typeof x === "number" && typeof y === "number") {
       // Note that x and y values must be unit-less positive integers < 32
       // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
       coords = `${x} ${y}`;
     }
     if (
-      type.substring(0, 7) === 'http://' ||
-      type.substring(0, 8) === 'https://'
+      type.substring(0, 7) === "http://" ||
+      type.substring(0, 8) === "https://"
     ) {
       // Image (absolute url)
       cursor = `url(${type}) ${coords}, auto`;
@@ -369,14 +369,14 @@ p5.prototype.cursor = function(type, x, y) {
  * @method frameRate
  * @return {Number}       current frame rate.
  */
-p5.prototype.frameRate = function(fps) {
-  p5._validateParameters('frameRate', arguments);
-  if (typeof fps !== 'number' || fps < 0) {
+p5.prototype.frameRate = function (fps) {
+  p5._validateParameters("frameRate", arguments);
+  if (typeof fps !== "number" || fps < 0) {
     return this._frameRate;
   } else {
-    this._setProperty('_targetFrameRate', fps);
+    this._setProperty("_targetFrameRate", fps);
     if (fps === 0) {
-      this._setProperty('_frameRate', fps);
+      this._setProperty("_frameRate", fps);
     }
     return this;
   }
@@ -388,7 +388,7 @@ p5.prototype.frameRate = function(fps) {
  * @private
  * @return {Number} current frameRate
  */
-p5.prototype.getFrameRate = function() {
+p5.prototype.getFrameRate = function () {
   return this.frameRate();
 };
 
@@ -396,7 +396,7 @@ p5.prototype.getFrameRate = function() {
  * Specifies the number of frames to be displayed every second. For example,
  * the function call frameRate(30) will attempt to refresh 30 times a second.
  * If the processor is not fast enough to maintain the specified rate, the
- * frame rate will not be achieved. Setting the frame rate within <a href="#/p5/setup">setup()</a> is
+ * frame rate will not be achieved. Setting the frame rate within <a href='#/p5/setup'>setup()</a> is
  * recommended. The default rate is 60 frames per second.
  *
  * Calling `frameRate()` with no arguments returns the current frame rate.
@@ -404,13 +404,13 @@ p5.prototype.getFrameRate = function() {
  * @private
  * @param {Number} [fps] number of frames to be displayed every second
  */
-p5.prototype.setFrameRate = function(fps) {
+p5.prototype.setFrameRate = function (fps) {
   return this.frameRate(fps);
 };
 
 /**
  * Returns the target frame rate. The value is either the system frame rate or
- * the last value passed to <a href="#/p5/frameRate">frameRate()</a>.
+ * the last value passed to <a href='#/p5/frameRate'>frameRate()</a>.
  *
  * @method getTargetFrameRate
  * @return {Number} _targetFrameRate
@@ -433,7 +433,7 @@ p5.prototype.setFrameRate = function(fps) {
  * </code>
  * </div>
  */
-p5.prototype.getTargetFrameRate = function() {
+p5.prototype.getTargetFrameRate = function () {
   return this._targetFrameRate;
 };
 
@@ -459,8 +459,8 @@ p5.prototype.getTargetFrameRate = function() {
  * </code>
  * </div>
  */
-p5.prototype.noCursor = function() {
-  this._curElement.elt.style.cursor = 'none';
+p5.prototype.noCursor = function () {
+  this._curElement.elt.style.cursor = "none";
 };
 
 /**
@@ -471,7 +471,7 @@ p5.prototype.noCursor = function() {
  * - `WEBGL` whose value is `'webgl'`, or
  * - `P2D` whose value is `'p2d'`. This is the default for 2D sketches.
  *
- * See <a href="#/p5/setAttributes">setAttributes()</a> for ways to set the
+ * See <a href='#/p5/setAttributes'>setAttributes()</a> for ways to set the
  * WebGL version.
  *
  * @property {String} webglVersion
@@ -485,7 +485,7 @@ p5.prototype.noCursor = function() {
  *   // Display the current WebGL version.
  *   text(webglVersion, 42, 54);
  *
- *   describe('The text "p2d" written in black on a gray background.');
+ *   describe('The text 'p2d' written in black on a gray background.');
  * }
  * </code>
  * </div>
@@ -509,7 +509,7 @@ p5.prototype.noCursor = function() {
  *   textFont(font);
  *   text(webglVersion, -15, 5);
  *
- *   describe('The text "webgl2" written in black on a gray background.');
+ *   describe('The text 'webgl2' written in black on a gray background.');
  * }
  * </code>
  * </div>
@@ -537,7 +537,7 @@ p5.prototype.noCursor = function() {
  *   textFont(font);
  *   text(webglVersion, -14, 5);
  *
- *   describe('The text "webgl" written in black on a gray background.');
+ *   describe('The text 'webgl' written in black on a gray background.');
  * }
  * </code>
  * </div>
@@ -546,7 +546,7 @@ p5.prototype.webglVersion = C.P2D;
 
 /**
  * A numeric variable that stores the width of the screen display. Its value
- * depends on the current <a href="#/p5/pixelDensity">pixelDensity()</a>.
+ * depends on the current <a href='#/p5/pixelDensity'>pixelDensity()</a>.
  * `displayWidth` is useful for running full-screen programs.
  *
  * Note: The actual screen width can be computed as
@@ -555,7 +555,7 @@ p5.prototype.webglVersion = C.P2D;
  * @property {Number} displayWidth
  * @readOnly
  * @example
- * <div class="norender">
+ * <div class='norender'>
  * <code>
  * function setup() {
  *   // Set the canvas' width and height
@@ -576,7 +576,7 @@ p5.prototype.displayWidth = screen.width;
 
 /**
  * A numeric variable that stores the height of the screen display. Its value
- * depends on the current <a href="#/p5/pixelDensity">pixelDensity()</a>.
+ * depends on the current <a href='#/p5/pixelDensity'>pixelDensity()</a>.
  * `displayHeight` is useful for running full-screen programs.
  *
  * Note: The actual screen height can be computed as
@@ -585,7 +585,7 @@ p5.prototype.displayWidth = screen.width;
  * @property {Number} displayHeight
  * @readOnly
  * @example
- * <div class="norender">
+ * <div class='norender'>
  * <code>
  * function setup() {
  *   // Set the canvas' width and height
@@ -606,13 +606,13 @@ p5.prototype.displayHeight = screen.height;
 
 /**
  * A numeric variable that stores the width of the browser's
- * <a href="https://developer.mozilla.org/en-US/docs/Glossary/Layout_viewport" target="_blank">layout viewport</a>.
+ * <a href='https://developer.mozilla.org/en-US/docs/Glossary/Layout_viewport' target='_blank'>layout viewport</a>.
  * This viewport is the area within the browser that's available for drawing.
  *
  * @property {Number} windowWidth
  * @readOnly
  * @example
- * <div class="norender">
+ * <div class='norender'>
  * <code>
  * function setup() {
  *   // Set the canvas' width and height
@@ -633,13 +633,13 @@ p5.prototype.windowWidth = getWindowWidth();
 
 /**
  * A numeric variable that stores the height of the browser's
- * <a href="https://developer.mozilla.org/en-US/docs/Glossary/Layout_viewport" target="_blank">layout viewport</a>.
+ * <a href='https://developer.mozilla.org/en-US/docs/Glossary/Layout_viewport' target='_blank'>layout viewport</a>.
  * This viewport is the area within the browser that's available for drawing.
  *
  * @property {Number} windowHeight
  * @readOnly
  * @example
- * <div class="norender">
+ * <div class='norender'>
  * <code>
  * function setup() {
  *   // Set the canvas' width and height
@@ -669,7 +669,7 @@ p5.prototype.windowHeight = getWindowHeight();
  * @method windowResized
  * @param {UIEvent} [event] optional resize Event.
  * @example
- * <div class="norender">
+ * <div class='norender'>
  * <code>
  * function setup() {
  *   createCanvas(windowWidth, windowHeight);
@@ -691,7 +691,7 @@ p5.prototype.windowHeight = getWindowHeight();
  * @alt
  * This example does not render anything.
  *
- * <div class="norender">
+ * <div class='norender'>
  * <code>
  * function setup() {
  *   createCanvas(windowWidth, windowHeight);
@@ -716,12 +716,12 @@ p5.prototype.windowHeight = getWindowHeight();
  * @alt
  * This example does not render anything.
  */
-p5.prototype._onresize = function(e) {
-  this._setProperty('windowWidth', getWindowWidth());
-  this._setProperty('windowHeight', getWindowHeight());
+p5.prototype._onresize = function (e) {
+  this._setProperty("windowWidth", getWindowWidth());
+  this._setProperty("windowHeight", getWindowHeight());
   const context = this._isGlobal ? window : this;
   let executeDefault;
-  if (typeof context.windowResized === 'function') {
+  if (typeof context.windowResized === "function") {
     executeDefault = context.windowResized(e);
     if (executeDefault !== undefined && !executeDefault) {
       e.preventDefault();
@@ -751,9 +751,9 @@ function getWindowHeight() {
  * A numeric variable that stores the width of the drawing canvas. Its
  * default value is 100.
  *
- * Calling <a href="#/p5/createCanvas">createCanvas()</a> or
- * <a href="#/p5/resizeCanvas">resizeCanvas()</a> changes the value of
- * `width`. Calling <a href="#/p5/noCanvas">noCanvas()</a> sets its value to
+ * Calling <a href='#/p5/createCanvas'>createCanvas()</a> or
+ * <a href='#/p5/resizeCanvas'>resizeCanvas()</a> changes the value of
+ * `width`. Calling <a href='#/p5/noCanvas'>noCanvas()</a> sets its value to
  * 0.
  *
  * @example
@@ -803,10 +803,19 @@ function getWindowHeight() {
  * // width.
  * function mousePressed() {
  *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
- *     resizeCanvas(50, 100);
- *     background(200);
- *     text(width, 42, 27);
- *   }
+  // Reduce canvas size
+  resizeCanvas(100, 50);
+  
+  // Set background color
+  background(100);
+  
+  // Display text "50" in the center
+  textSize(25); // Adjust text size as needed
+  textAlign(CENTER, CENTER);
+  text("50", width / 2, height / 2);
+}
+
+
  * }
  * </code>
  * </div>
@@ -820,9 +829,9 @@ p5.prototype.width = 0;
  * A numeric variable that stores the height of the drawing canvas. Its
  * default value is 100.
  *
- * Calling <a href="#/p5/createCanvas">createCanvas()</a> or
- * <a href="#/p5/resizeCanvas">resizeCanvas()</a> changes the value of
- * `height`. Calling <a href="#/p5/noCanvas">noCanvas()</a> sets its value to
+ * Calling <a href='#/p5/createCanvas'>createCanvas()</a> or
+ * <a href='#/p5/resizeCanvas'>resizeCanvas()</a> changes the value of
+ * `height`. Calling <a href='#/p5/noCanvas'>noCanvas()</a> sets its value to
  * 0.
  *
  * @example
@@ -920,10 +929,10 @@ p5.prototype.height = 0;
  * </code>
  * </div>
  */
-p5.prototype.fullscreen = function(val) {
-  p5._validateParameters('fullscreen', arguments);
+p5.prototype.fullscreen = function (val) {
+  p5._validateParameters("fullscreen", arguments);
   // no arguments, return fullscreen or not
-  if (typeof val === 'undefined') {
+  if (typeof val === "undefined") {
     return (
       document.fullscreenElement ||
       document.webkitFullscreenElement ||
@@ -992,10 +1001,10 @@ p5.prototype.fullscreen = function(val) {
  * @method pixelDensity
  * @returns {Number} current pixel density of the sketch.
  */
-p5.prototype.pixelDensity = function(val) {
-  p5._validateParameters('pixelDensity', arguments);
+p5.prototype.pixelDensity = function (val) {
+  p5._validateParameters("pixelDensity", arguments);
   let returnValue;
-  if (typeof val === 'number') {
+  if (typeof val === "number") {
     if (val !== this._pixelDensity) {
       this._pixelDensity = val;
     }
@@ -1053,7 +1062,7 @@ function launchFullscreen(element) {
     document.mozFullScreenEnabled ||
     document.msFullscreenEnabled;
   if (!enabled) {
-    throw new Error('Fullscreen not enabled in this browser.');
+    throw new Error("Fullscreen not enabled in this browser.");
   }
   if (element.requestFullscreen) {
     element.requestFullscreen();
@@ -1080,7 +1089,7 @@ function exitFullscreen() {
 
 /**
  * Returns the sketch's current
- * <a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL" target="_blank">URL</a>
+ * <a href='https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL' target='_blank'>URL</a>
  * as a string.
  *
  * @method getURL
@@ -1097,7 +1106,7 @@ function exitFullscreen() {
  *   textWrap(CHAR);
  *   text(url, 0, 40, 100);
  *
- *   describe('The URL "https://p5js.org/reference/#/p5/getURL" written in black on a gray background.');
+ *   describe('The URL 'https://p5js.org/reference/#/p5/getURL' written in black on a gray background.');
  * }
  * </code>
  * </div>
@@ -1106,7 +1115,7 @@ p5.prototype.getURL = () => location.href;
 
 /**
  * Returns the current
- * <a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL#path_to_resource" target="_blank">URL</a>
+ * <a href='https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL#path_to_resource' target='_blank'>URL</a>
  * path as an array of strings.
  *
  * For example, consider a sketch hosted at the URL
@@ -1129,17 +1138,17 @@ p5.prototype.getURL = () => location.href;
  *   let path = getURLPath();
  *   text(path[0], 25, 54);
  *
- *   describe('The word "reference" written in black on a gray background.');
+ *   describe('The word 'reference' written in black on a gray background.');
  * }
  * </code>
  * </div>
  */
 p5.prototype.getURLPath = () =>
-  location.pathname.split('/').filter(v => v !== '');
+  location.pathname.split("/").filter((v) => v !== "");
 
 /**
  * Returns the current
- * <a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL#parameters" target="_blank">URL parameters</a>
+ * <a href='https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL#parameters' target='_blank'>URL parameters</a>
  * in an Object.
  *
  * For example, calling `getURLParams()` in a sketch hosted at the URL
@@ -1165,7 +1174,7 @@ p5.prototype.getURLPath = () =>
  *   text(params.month, 10, 40);
  *   text(params.year, 10, 60);
  *
- *   describe('The text "15", "May", and "2014" written in black on separate lines.');
+ *   describe('The text '15', 'May', and '2014' written in black on separate lines.');
  * }
  * </code>
  * </div>
@@ -1173,7 +1182,7 @@ p5.prototype.getURLPath = () =>
  * @alt
  * This example does not render anything.
  */
-p5.prototype.getURLParams = function() {
+p5.prototype.getURLParams = function () {
   const re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;
   let m;
   const v = {};
