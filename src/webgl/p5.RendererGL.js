@@ -2041,17 +2041,17 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   _setFillUniforms(fillShader) {
     fillShader.bindShader();
 
-    let SpecularColor = [...this.curSpecularColor];
+    let mixedSpecularColor = [...this.curSpecularColor];
 
     if (this._useMetalness > 0 && !this.curFillColor.every((value, index) =>
       value === 1)) {
       const metalnessFactor = this._useMetalness / 100;
       const nonMetalnessFactor = 1 - metalnessFactor;
 
-      SpecularColor = SpecularColor.map(
-        (specularColor, index) =>
+      mixedSpecularColor = mixedSpecularColor.map(
+        (mixedSpecularColor, index) =>
           this.curFillColor[index] * metalnessFactor +
-          specularColor * nonMetalnessFactor
+          mixedSpecularColor * nonMetalnessFactor
       );
     }
 
@@ -2066,7 +2066,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     fillShader.setUniform('uHasSetAmbient', this._hasSetAmbient);
     fillShader.setUniform('uAmbientMatColor', this.curAmbientColor);
-    fillShader.setUniform('uSpecularMatColor', SpecularColor);
+    fillShader.setUniform('uSpecularMatColor', mixedSpecularColor);
     fillShader.setUniform('uEmissiveMatColor', this.curEmissiveColor);
     fillShader.setUniform('uSpecular', this._useSpecularMaterial);
     fillShader.setUniform('uEmissive', this._useEmissiveMaterial);
@@ -2103,17 +2103,16 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     // TODO: sum these here...
     const ambientLightCount = this.ambientLightColors.length / 3;
-    const mixingArray = [...this.ambientLightColors];
+    let mixedAmbientLight = [...this.ambientLightColors];
 
     if (this._useMetalness > 0) {
-      mixingArray.forEach((ambientColors, index) => {
+      mixedAmbientLight = mixedAmbientLight.map((ambientColors => {
         let mixing = ambientColors - this._useMetalness / 100;
-        mixing = Math.max(0, mixing);
-        mixingArray[index] = mixing;
-      });
+        return Math.max(0, mixing);
+      }));
     }
     fillShader.setUniform('uAmbientLightCount', ambientLightCount);
-    fillShader.setUniform('uAmbientColor', mixingArray);
+    fillShader.setUniform('uAmbientColor', mixedAmbientLight);
 
     const spotLightCount = this.spotLightDiffuseColors.length / 3;
     fillShader.setUniform('uSpotLightCount', spotLightCount);
