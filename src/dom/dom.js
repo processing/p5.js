@@ -3799,11 +3799,11 @@ class MediaElement extends p5.Element {
           if (typeof IS_MINIFIED === 'undefined') {
             p5._friendlyAutoplayError(this.src);
           } else {
-            console.error(e);
+            p5._friendlyError(e);
           }
         } else {
           // any other kind of error
-          console.error('Media play method encountered an unexpected error', e);
+          p5._friendlyError('Media play method encountered an unexpected error', e);
         }
       });
     }
@@ -4043,7 +4043,7 @@ class MediaElement extends p5.Element {
       if (typeof IS_MINIFIED === 'undefined') {
         p5._friendlyAutoplayError(this.src);
       } else {
-        console.error(e);
+        p5._friendlyError(e);
       }
     }, 500);
     this.elt.addEventListener('play', () => clearTimeout(timeout), {

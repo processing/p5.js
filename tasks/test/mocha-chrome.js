@@ -101,7 +101,7 @@ async function saveCoverage(cov) {
       await mkdir('./.nyc_output/', { recursive: true });
       await writeFile('./.nyc_output/out.json', JSON.stringify(cov));
     } catch (e) {
-      console.error(e);
+      p5._friendlyError(e);
     }
   }
 }

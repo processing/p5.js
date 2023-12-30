@@ -69,7 +69,7 @@ p5.prototype.loadShader = function (
 ) {
   p5._validateParameters('loadShader', arguments);
   if (!errorCallback) {
-    errorCallback = console.error;
+    errorCallback = p5._friendlyError;
   }
 
   const loadedShader = new p5.Shader();
@@ -1295,7 +1295,7 @@ p5.RendererGL.prototype._applyBlendMode = function () {
       }
       break;
     default:
-      console.error(
+      p5._friendlyError(
         'Oops! Somehow RendererGL set curBlendMode to an unsupported mode.'
       );
       break;

@@ -286,7 +286,7 @@ module.exports = (data, options) => {
       ci => !ci.itemtype && (ci.params || ci.return) && ci.access !== 'private'
     )
     .forEach(ci => {
-      console.error(ci.file + ':' + ci.line + ': unnamed public member');
+      p5._friendlyError(ci.file + ':' + ci.line + ': unnamed public member');
     });
 
   Object.keys(data.classes)

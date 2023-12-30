@@ -84,7 +84,7 @@ import '../core/friendly_errors/fes_core';
  * }
  *
  * function failure(event) {
- *   console.error('Oops!', event);
+ *   p5._friendlyError('Oops!', event);
  * }
  * </code>
  * </div>
@@ -129,7 +129,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
               failureCallback(e);
               self._decrementPreload();
             } else {
-              console.error(e);
+              p5._friendlyError(e);
             }
           }
         );
@@ -156,7 +156,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
             failureCallback(e);
             self._decrementPreload();
           } else {
-            console.error(e);
+            p5._friendlyError(e);
           }
         };
 
@@ -179,7 +179,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
         failureCallback(e);
         self._decrementPreload();
       } else {
-        console.error(e);
+        p5._friendlyError(e);
       }
     });
   return pImg;
@@ -604,7 +604,7 @@ function _createGif(
       if (typeof failureCallback === 'function') {
         failureCallback(e);
       } else {
-        console.error(e);
+        p5._friendlyError(e);
       }
     }
   };

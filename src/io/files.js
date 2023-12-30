@@ -550,7 +550,7 @@ p5.prototype.loadTable = function(path) {
       if (errorCallback) {
         errorCallback(err);
       } else {
-        console.error(err);
+        p5._friendlyError(err);
       }
     }
   );
@@ -1125,7 +1125,7 @@ p5.prototype.httpDo = function(...args) {
     }
   });
   promise.then(callback || (() => {}));
-  promise.catch(errorCallback || console.error);
+  promise.catch(errorCallback || p5._friendlyError);
   return promise;
 };
 

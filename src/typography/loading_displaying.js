@@ -103,7 +103,7 @@ import '../core/friendly_errors/fes_core';
  * }
  *
  * function failure(event) {
- *   console.error('Oops!', event);
+ *   p5._friendlyError('Oops!', event);
  * }
  * </code>
  * </div>
@@ -137,7 +137,7 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
       if (typeof onError !== 'undefined') {
         return onError(err);
       }
-      console.error(err, path);
+      p5._friendlyError(err, path);
       return;
     }
 
