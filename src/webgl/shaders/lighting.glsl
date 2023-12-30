@@ -74,12 +74,9 @@ LightResult _light(vec3 viewDirection, vec3 normal, vec3 lightVector) {
 
   //compute our diffuse & specular terms
   LightResult lr;
-
-float invertValue = 1.0 - (metallic / 100.0);
-float specularIntensity = mix(0.4, 1.0, invertValue);
-float diffuseIntensity = mix(0.1, 1.0, invertValue);
-
-if (uSpecular)
+  float specularIntensity = mix(1.0, 0.4, metallic / 100.0);
+  float diffuseIntensity = mix(1.0, 0.1, metallic / 100.0);
+  if (uSpecular)
     lr.specular = (_phongSpecular(lightDir, viewDirection, normal, uShininess)) * specularIntensity;
     lr.diffuse = _lambertDiffuse(lightDir, normal) * diffuseIntensity;
   return lr;
@@ -120,8 +117,7 @@ vec3 calculateImageDiffuse( vec3 vNormal, vec3 vViewPosition ){
   vec4 texture = TEXTURE( environmentMapDiffused, newTexCoor );
   // this is to make the darker sections more dark
   // png and jpg usually flatten the brightness so it is to reverse that
-  float invertedMetallic = 1.0 - metallic / 100.0;
-   return mix(vec3(0.0), smoothstep(vec3(0.0), vec3(1.0), texture.xyz), invertedMetallic);
+  return mix(smoothstep(vec3(0.0), vec3(1.0), texture.xyz), vec3(0.0), metallic / 100.0);
 }
 
 vec3 calculateImageSpecular( vec3 vNormal, vec3 vViewPosition ){
@@ -137,12 +133,11 @@ vec3 calculateImageSpecular( vec3 vNormal, vec3 vViewPosition ){
 #endif
   // this is to make the darker sections more dark
   // png and jpg usually flatten the brightness so it is to reverse that
- float invertedMetallic = 1.0 - (metallic / 100.0);
   return mix(
-  pow(outColor.xyz, vec3(1.2)),
   pow(outColor.xyz, vec3(10)),
-  invertedMetallic
-);
+  pow(outColor.xyz, vec3(1.2)),
+  metallic / 100.0
+  );
 }
 
 void totalLight(
@@ -153,6 +148,7 @@ void totalLight(
 ) {
 
   totalSpecular = vec3(0.0);
+  
   if (!uUseLighting) {
     totalDiffuse = vec3(1.0);
     return;
