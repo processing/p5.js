@@ -171,7 +171,6 @@ void totalLight(
     if (j < uPointLightCount) {
       vec3 lightPosition = (uViewMatrix * vec4(uPointLightLocation[j], 1.0)).xyz;
       vec3 lightVector = modelPosition - lightPosition;
-      
       //calculate attenuation
       float lightDistance = length(lightVector);
       float lightFalloff = 1.0 / (uConstantAttenuation + lightDistance * uLinearAttenuation + (lightDistance * lightDistance) * uQuadraticAttenuation);
