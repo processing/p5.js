@@ -322,6 +322,7 @@ p5.prototype.createGraphics = function(w, h, renderer, canvas) {
  *
  * @method createFramebuffer
  * @param {Object} [options] An optional object with configuration
+ * @return {p5.Framebuffer}
  *
  * @example
  * <div>
