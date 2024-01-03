@@ -742,7 +742,31 @@ suite('p5.RendererGL', function() {
       assert.equal(tex1, myp5._renderer._tex);
       done();
     });
+    
+    test('ambientLight() changes when metalness is applied', function (done) {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      myp5.ambientLight(255, 255, 255);
+      myp5.noStroke();
+      myp5.metalness(100000);
+      myp5.sphere(50);
+      expect(myp5._renderer.mixedAmbientLight).to.not.have.members(
+        myp5._renderer.ambientLightColors);
+      done();
+    });
 
+    test('specularColor transforms to fill color when metalness is applied',
+      function (done) {
+        myp5.createCanvas(100, 100, myp5.WEBGL);
+        myp5.fill(0, 0, 0, 0);
+        myp5.specularMaterial(255, 255, 255, 255);
+        myp5.noStroke();
+        myp5.metalness(100000);
+        myp5.sphere(50);
+        expect(myp5._renderer.mixedSpecularColor).to.have.same.members(
+          myp5._renderer.curFillColor);
+        done();
+      });
+  
     test('push/pop and shader() works with fill', function(done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       var fillShader1 = myp5._renderer._getLightShader();
