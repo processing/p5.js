@@ -742,7 +742,7 @@ suite('p5.RendererGL', function() {
       assert.equal(tex1, myp5._renderer._tex);
       done();
     });
-    
+
     test('ambientLight() changes when metalness is applied', function (done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.ambientLight(255, 255, 255);
@@ -766,7 +766,7 @@ suite('p5.RendererGL', function() {
           myp5._renderer.curFillColor);
         done();
       });
-  
+
     test('push/pop and shader() works with fill', function(done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       var fillShader1 = myp5._renderer._getLightShader();
