@@ -208,7 +208,7 @@ Once the push is complete, you may see a link in the terminal that lets you open
 ### Pull request information
 Before filing the pull request, you will need to fill out the pull request template. First of all the pull request title should briefly describe what the changes are, again avoid generic statements here.
 
-Next, in the template, there is this line `Resolves #[Add issue number here]` which you should replace `[Add issue number here]` with the issue number of the issue you are addressing/fixing [above](#all-about-issues) (eg. `Resolves #1234`). This will make sure the issue is automatically closed after this PR is merged. If you do not wish to automatically close the issue after this PR is merged (maybe because there are more changes coming in a separate PR), change `Resovles` to `Addresses`.
+Next, in the template, there is this line `Resolves #[Add issue number here]` which you should replace `[Add issue number here]` with the issue number of the issue you are addressing/fixing [above](#all-about-issues) (eg. `Resolves #1234`). This will make sure the issue is automatically closed after this PR is merged. If you do not wish to automatically close the issue after this PR is merged (maybe because there are more changes coming in a separate PR), change `Resolves` to `Addresses`.
 
 For "Changes", you should give a clear description of the changes you have made in this PR. Include any implementation details and decisions you made here that are relevant to whoever will review this PR.
 
