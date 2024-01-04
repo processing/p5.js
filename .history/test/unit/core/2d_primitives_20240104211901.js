@@ -490,4 +490,3 @@ suite('2D Primitives', function() {
     });
   });
 });
-npm

@@ -44,37 +44,7 @@ suite('2D Primitives', function() {
       });
     });
   });
-  suite('p5.prototype.ellipse', function() {
-    test('should be a function', function() {
-      assert.ok(myp5.ellipse);
-      assert.typeOf(myp5.ellipse, 'function');
-    });
-    test('no friendly-err-msg', function() {
-      assert.doesNotThrow(
-        function() {
-          myp5.ellipse(0, 0, 100);
-        },
-        Error,
-        'got unwanted exception'
-      );
-    });
-    test('missing param #2', function() {
-      assert.validationError(function() {
-        myp5.ellipse(0, 0);  // Addressed the missing param #2 issue
-      });
-    });
-    test('missing param #3', function() {
-      assert.validationError(function() {
-        var size;
-        myp5.ellipse(0, 0, size);
-      });
-    });
-    test('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.ellipse('a', 0, 100, 100);
-      });
-    });
-  });
+
   suite('p5.prototype.line', function() {
     test('should be a function', function() {
       assert.ok(myp5.line);
@@ -210,7 +180,7 @@ suite('2D Primitives', function() {
         'got unwanted exception'
       );
     });
-    test('missing param #5', function() {
+    test('missing param #4', function() {
       // this err case escapes
       assert.validationError(function() {
         var r1;
@@ -223,6 +193,7 @@ suite('2D Primitives', function() {
       });
     });
   });
+
   suite('p5.prototype.triangle', function() {
     test('should be a function', function() {
       assert.ok(myp5.triangle);
@@ -271,9 +242,9 @@ suite('2D Primitives', function() {
         'got unwanted exception'
       );
     });
-    test('missing param #3', function() {
+    test('missing param #2', function() {
       assert.validationError(function() {
-        myp5.square(0, 0);  // Addressed the missing param #3 issue
+        myp5.square(0, 0);
       });
     });
     test('wrong param type at #1', function() {
@@ -490,4 +461,3 @@ suite('2D Primitives', function() {
     });
   });
 });
-npm

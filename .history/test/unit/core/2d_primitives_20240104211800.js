@@ -271,9 +271,9 @@ suite('2D Primitives', function() {
         'got unwanted exception'
       );
     });
-    test('missing param #3', function() {
+    test('missing param #2', function() {
       assert.validationError(function() {
-        myp5.square(0, 0);  // Addressed the missing param #3 issue
+        myp5.square(0, 0);
       });
     });
     test('wrong param type at #1', function() {
@@ -490,4 +490,3 @@ suite('2D Primitives', function() {
     });
   });
 });
-npm
