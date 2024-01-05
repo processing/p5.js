@@ -2045,9 +2045,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     this.mixedSpecularColor = [...this.curSpecularColor];
 
-    if (this._useMetalness > 0 && !this.curFillColor.every((value, index) =>
-      value === 1)) {
-
+    if (this._useMetalness > 0) {
       this.mixedSpecularColor = this.mixedSpecularColor.map(
         (mixedSpecularColor, index) =>
           this.curFillColor[index] * this._useMetalness +
