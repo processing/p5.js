@@ -1226,7 +1226,7 @@ p5.RendererGL.prototype._applyColorBlend = function (colors) {
  * @return {Number[]]}  Normalized numbers array
  */
 p5.RendererGL.prototype._applyBlendMode = function () {
-  if (this._cachedBlendMode === this.curBlendMode) {
+  if (this._curBlendMode === this.preEraseBlend) {
     return;
   }
   const gl = this.GL;
@@ -1301,7 +1301,7 @@ p5.RendererGL.prototype._applyBlendMode = function () {
       break;
   }
   if (!this._isErasing) {
-    this._cachedBlendMode = this.curBlendMode;
+    this.preEraseBlend = this.curBlendMode;
   }
 };
 
