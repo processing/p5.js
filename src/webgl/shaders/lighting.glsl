@@ -134,9 +134,9 @@ vec3 calculateImageSpecular( vec3 vNormal, vec3 vViewPosition ){
   // this is to make the darker sections more dark
   // png and jpg usually flatten the brightness so it is to reverse that
   return mix(
-  pow(outColor.xyz, vec3(10)),
-  pow(outColor.xyz, vec3(1.2)),
-  metallic 
+    pow(outColor.xyz, vec3(10)),
+    pow(outColor.xyz, vec3(1.2)),
+    metallic 
   );
 }
 
@@ -148,7 +148,7 @@ void totalLight(
 ) {
 
   totalSpecular = vec3(0.0);
-  
+
   if (!uUseLighting) {
     totalDiffuse = vec3(1.0);
     return;
