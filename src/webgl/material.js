@@ -1179,14 +1179,20 @@ p5.prototype.shininess = function (shine) {
  * Sets the metalness property of a material used in 3D rendering.
  *
  * The metalness property controls the degree to which the material
- * appears metallic. A higher metalness value makes the material more
- * metallic, while a lower value makes it appear less metallic.
+ * appears metallic. A higher metalness value makes the material look
+ * more metallic, while a lower value makes it appear less metallic.
  *
- * The default and minimum value is 0, indicating a non-metallic appearance,
- * while a maximum value of 100 represents a fully metallic appearance.
+ * The default and minimum value is 0, indicating a non-metallic appearance.
+ *
+ * Unlike other materials, metals exclusively rely on reflections, particularly
+ * those produced by specular lights (mirrorLike lights). They don't incorporate
+ * diffuse or ambient lighting. Metals use a fill color to influence the overall
+ * color of their reflections. Pick a fill color, and you can easily change the
+ * appearance of the metal surfaces. When no fill color is provided, it defaults
+ * to using white color.
  *
  * @method metalness
- * @param {Number} metallic - The degree of metalness (ranging from 0 to 100).
+ * @param {Number} metallic - The degree of metalness.
  * @example
  * <div class="notest">
  * <code>
@@ -1209,6 +1215,7 @@ p5.prototype.shininess = function (shine) {
  *   image(img, 0, 0, width, height);
  *   pop();
  *   imageLight(img);
+ *   fill('green');
  *   specularMaterial('gray');
  *   shininess(slider.value());
  *   metalness(100);
@@ -1231,6 +1238,7 @@ p5.prototype.shininess = function (shine) {
  *   pointLight(255, 255, 255, 200, 150, 8000);
  *   pointLight(255, 255, 255, 5000, 5000, 75);
  *   specularMaterial('gray');
+ *   ambientLight(255);
  *   shininess(2);
  *   metalness(100);
  *   sphere(45);
@@ -1238,7 +1246,6 @@ p5.prototype.shininess = function (shine) {
  * </code>
  * </div>
  */
-
 p5.prototype.metalness = function (metallic) {
   this._assert3d('metalness');
   const metalMix = 1 - Math.exp(-metallic / 100);
