@@ -749,7 +749,7 @@ suite('p5.RendererGL', function() {
       myp5.noStroke();
       myp5.metalness(100000);
       myp5.sphere(50);
-      expect(myp5._renderer.mixedAmbientLight).to.not.have.members(
+      expect(myp5._renderer.mixedAmbientLight).to.not.deep.equal(
         myp5._renderer.ambientLightColors);
       done();
     });
@@ -762,7 +762,7 @@ suite('p5.RendererGL', function() {
         myp5.noStroke();
         myp5.metalness(100000);
         myp5.sphere(50);
-        expect(myp5._renderer.mixedSpecularColor).to.have.same.members(
+        expect(myp5._renderer.mixedSpecularColor).to.deep.equal(
           myp5._renderer.curFillColor);
         done();
       });
