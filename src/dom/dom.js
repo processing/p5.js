@@ -2212,7 +2212,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
 p5.prototype.createCapture = function(...args) {
   p5._validateParameters('createCapture', args);
 
-  // return if getUserMedia is not supported by browser
+  // return if getUserMedia is not supported by the browser
   if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
     throw new DOMException('getUserMedia not supported in this browser');
   }
@@ -2221,12 +2221,23 @@ p5.prototype.createCapture = function(...args) {
   let useAudio = true;
   let constraints;
   let callback;
+  let flipped = false;
+
   for (const arg of args) {
     if (arg === p5.prototype.VIDEO) useAudio = false;
     else if (arg === p5.prototype.AUDIO) useVideo = false;
-    else if (typeof arg === 'object') constraints = arg;
-    else if (typeof arg === 'function') callback = arg;
+    else if (typeof arg === 'object') {
+      constraints = arg;
+      flipped = constraints.flipped || false;
+    }
+    else if (typeof arg === 'boolean') {
+      flipped = arg;
+    }
+    else if (typeof arg === 'function') {
+      callback = arg;
+    }
   }
+
   if (!constraints) constraints = { video: useVideo, audio: useAudio };
 
   const domElement = document.createElement('video');
@@ -2253,6 +2264,9 @@ p5.prototype.createCapture = function(...args) {
     if (domElement.width) {
       videoEl.width = domElement.width;
       videoEl.height = domElement.height;
+      if (flipped) {
+        videoEl.elt.style.transform = 'scaleX(-1)';
+      }
     } else {
       videoEl.width = videoEl.elt.width = domElement.videoWidth;
       videoEl.height = videoEl.elt.height = domElement.videoHeight;
@@ -2261,8 +2275,10 @@ p5.prototype.createCapture = function(...args) {
 
     if (callback) callback(domElement.srcObject);
   });
+
   return videoEl;
 };
+
 
 /**
  * Creates a new <a href="#/p5.Element">p5.Element</a> object.
