@@ -42,7 +42,7 @@ p5.prototype._angleMode = constants.RADIANS;
  *
  * <div>
  * <code>
- * let a = PI;
+ * let a = PI + QUARTER_PI;
  * let c = cos(a);
  * let ac = acos(c);
  * text(`${round(a, 3)}`, 35, 25);
