@@ -42,14 +42,14 @@ p5.prototype._angleMode = constants.RADIANS;
  *
  * <div>
  * <code>
- * let a = PI-QUARTER_PI;
+ * let a = PI + QUARTER_PI;
  * let c = cos(a);
  * let ac = acos(c);
  * text(`${round(a, 3)}`, 35, 25);
  * text(`${round(c, 3)}`, 35, 50);
  * text(`${round(ac, 3)}`, 35, 75);
  *
- * describe('The numbers 2.356, -0.707, and 2.356 written on separate rows.');
+ * describe('The numbers 3.927, -0.707, and 2.356 written on separate rows.');
  * </code>
  * </div>
  */
