@@ -5485,6 +5485,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Bumblebee00",
+      "name": "Mattia Micheletta Merlin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/54026028?v=4",
+      "profile": "https://github.com/Bumblebee00",
+      "contributions": [
+        "example",
+        "code",
+        "test"
+      ]
     }
   ],
   "repoType": "github",
