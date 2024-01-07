@@ -455,7 +455,7 @@ p5.prototype._describeElementHTML = function(type, name, text) {
   } else if (type === 'label') {
     //If display is LABEL creates a div adjacent to the canvas element with
     //a table, a row header cell with the name of the elements,
-    //and adds the description of the element in adjecent cell.
+    //and adds the description of the element in adjacent cell.
     //if there is no label description container
     if (!this.dummyDOM.querySelector(`#${cnvId + labelContainer}`)) {
       //if there are no accessible outputs (see textOutput() and gridOutput())
