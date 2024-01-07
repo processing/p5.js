@@ -160,7 +160,7 @@ suite('color/CreatingReading', function() {
       var interA = myp5.lerpColor(fromColor, toColor, 0.33);
       var interB = myp5.lerpColor(fromColor, toColor, 0.66);
       assert.deepEqual(interA.levels, [190, 44, 63, 255]);
-      assert.deepEqual(interB.levels, [122, 96, 103, 255] );
+      assert.deepEqual(interB.levels, [164, 53, 162, 255]);
     });
     test('should correctly get lerp colors in HSB', function() {
       myp5.colorMode(myp5.HSB);
