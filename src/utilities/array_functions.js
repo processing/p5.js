@@ -340,5 +340,39 @@ p5.prototype.subset = function(list, start, count) {
     return list.slice(start, list.length);
   }
 };
+/*
+* @method range 
+* @param  {Integer} start    Starting index for the iterator 
+* @param  {Integer} end      limit for the iterator 
+* @param  {Integer} step     the interval to increase in every step 
+* @return  [Symbol.iterator]: {Integer} 
+* 
+* @example 
+* <div class = 'norender'><code> 
+* for(let x of range(width, 50)) { 
+*  circle(x, height / 2, 50); 
+* } 
+* </code></div> 
+*/ 
+p5.prototype.range = function(...args) { 
+  let end;
+  let start = 0;
+  let step = 1; 
+  if(args.length == 1) {
+    end = args[0]; 
+  } else if(args.length == 2) { 
+    start = args[0]; 
+    end = args[1]; 
+  } else if(args.length == 3) { 
+    start = args[0]; 
+    end = args[1]; 
+    step = args[2]; 
+  } else throw new Error("Invalid arguments"); 
+  return { 
+    *[Symbol.iterator] () { 
+      for(let i = start; i < end; i += step) yield i;
+    }
+  }
+};
 
 export default p5;
