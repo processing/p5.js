@@ -935,6 +935,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/sudhanshuv1"><img src="https://avatars.githubusercontent.com/u/148856416?v=4?s=120" width="120px;" alt="Sudhanshu Tiwari"/><br /><sub><b>Sudhanshu Tiwari</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sudhanshuv1" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Bumblebee00"><img src="https://avatars.githubusercontent.com/u/54026028?v=4?s=120" width="120px;" alt="Mattia Micheletta Merlin"/><br /><sub><b>Mattia Micheletta Merlin</b></sub></a><br /><a href="#example-Bumblebee00" title="Examples">💡</a> <a href="https://github.com/processing/p5.js/commits?author=Bumblebee00" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=Bumblebee00" title="Tests">⚠️</a></td>
     </tr>
   </tbody>
 </table>
