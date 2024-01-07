@@ -178,6 +178,55 @@ p5.prototype.loadModel = function(path) {
   return model;
 };
 
+function parseMtl(mtlPath){ //accepts mtlPath to load file
+  return new Promise((resolve,reject)=>{
+    // console.log('parser is called');
+    let currentMaterial = null;
+    p5.prototype.loadStrings(
+      mtlPath,
+      lines => {
+        for (let line = 0; line < lines.length; ++line){
+          const tokens = lines[line].trim().split(/\s+/);
+          if(tokens[0] === 'newmtl') {
+            const materialName = tokens[1];
+            currentMaterial = materialName;
+            materials[currentMaterial] = {};
+          }else if (tokens[0] === 'Kd'){
+            //Diffuse color
+            materials[currentMaterial].diffuseColor = [
+              parseFloat(tokens[1]),
+              parseFloat(tokens[2]),
+              parseFloat(tokens[3])
+            ];
+          } else if (tokens[0] === 'Ka'){
+            //Ambient Color
+            materials[currentMaterial].ambientColor = [
+              parseFloat(tokens[1]),
+              parseFloat(tokens[2]),
+              parseFloat(tokens[3])
+            ];
+          }else if (tokens[0] === 'Ks'){
+            //Specular color
+            materials[currentMaterial].specularColor = [
+              parseFloat(tokens[1]),
+              parseFloat(tokens[2]),
+              parseFloat(tokens[3])
+            ];
+
+          }else if (tokens[0] === 'map_Kd') {
+            //Texture path
+            materials[currentMaterial].texturePath = tokens[1];
+          }
+        }
+        // console.log(materials);
+        resolve(materials);
+      },
+      reject
+    );
+  });
+
+}
+
 /**
  * Parse OBJ lines into model. For reference, this is what a simple model of a
  * square might look like:

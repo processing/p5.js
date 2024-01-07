@@ -75,8 +75,7 @@ suite('loadModel', function() {
 
   testSketchWithPromise('success callback is called', function(
     sketch,
-    resolve,
-    reject
+    done
   ) {
     var hasBeenCalled = false;
     sketch.preload = function() {
@@ -84,18 +83,17 @@ suite('loadModel', function() {
         validFile,
         function() {
           hasBeenCalled = true;
+          done();
         },
         function(err) {
-          reject(new Error('Error callback was entered: ' + err));
+          done(new Error('Error callback was entered: ' + err));
         }
       );
     };
 
     sketch.setup = function() {
       if (!hasBeenCalled) {
-        reject(new Error('Setup called prior to success callback'));
-      } else {
-        setTimeout(resolve, 50);
+        done(new Error('Setup called prior to success callback'));
       }
     };
   });
