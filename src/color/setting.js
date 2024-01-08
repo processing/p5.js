@@ -441,10 +441,10 @@ p5.prototype.background = function(...args) {
  * </code>
  * </div>
  *
- * @param {Number} r normalized red value.
- * @param {Number} g normalized green value.
- * @param {Number} b normalized blue value.
- * @param {Number} a normalized alpha value.
+ * @param {Number} [r] normalized red value.
+ * @param {Number} [g] normalized green value.
+ * @param {Number} [b] normalized blue value.
+ * @param {Number} [a] normalized alpha value.
  */
 p5.prototype.clear = function(...args) {
   const _r = args[0] || 0;
