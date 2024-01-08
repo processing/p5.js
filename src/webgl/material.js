@@ -1188,7 +1188,7 @@ p5.prototype.shininess = function (shine) {
  * If alpha value is less than 1, or non-standard blendMode
  * we need to enable blending on our gl context.
  * @param  {Number[]} color [description]
- * @return {Number[]]}  Normalized numbers array
+ * @return {Number[]}  Normalized numbers array
  */
 p5.RendererGL.prototype._applyColorBlend = function (colors) {
   const gl = this.GL;
@@ -1223,7 +1223,7 @@ p5.RendererGL.prototype._applyColorBlend = function (colors) {
 /**
  * @private sets blending in gl context to curBlendMode
  * @param  {Number[]} color [description]
- * @return {Number[]]}  Normalized numbers array
+ * @return {Number[]}  Normalized numbers array
  */
 p5.RendererGL.prototype._applyBlendMode = function () {
   if (this.curBlendMode === this.preEraseBlend) {
