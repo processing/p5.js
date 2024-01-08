@@ -1226,7 +1226,7 @@ p5.RendererGL.prototype._applyColorBlend = function (colors) {
  * @return {Number[]]}  Normalized numbers array
  */
 p5.RendererGL.prototype._applyBlendMode = function () {
-  if (this._curBlendMode === this.preEraseBlend) {
+  if (this.curBlendMode === this.preEraseBlend) {
     return;
   }
   const gl = this.GL;
