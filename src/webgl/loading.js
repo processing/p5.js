@@ -241,7 +241,6 @@ function parseMtl(mtlPath){ //accepts mtlPath to load file
             materials[currentMaterial].texturePath = tokens[1];
           }
         }
-        console.log(materials);
         resolve(materials);
       },
       reject
@@ -350,9 +349,8 @@ function parseObj(model, lines, materials= {}) {
                   diffuseColor[2]
                 ]);
               } else {
-                model.vertexColors.push([255, 255, 255]);
+                model.vertexColors.push([1, 1, 1]);
               }
-              console.log(model.vertexColors);
             }
 
             face.push(vertIndex);
