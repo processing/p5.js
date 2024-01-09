@@ -167,13 +167,14 @@ p5.RendererGL.prototype.vertex = function(x, y) {
 
 /**
  * Sets the normal to use for subsequent vertices.
- * @method vertexNormal
+ * @private
+ * @method normal
  * @param  {Number} x
  * @param  {Number} y
  * @param  {Number} z
  * @chainable
  *
- * @method vertexNormal
+ * @method normal
  * @param  {Vector} v
  * @chainable
  */
