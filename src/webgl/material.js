@@ -1189,9 +1189,10 @@ p5.prototype.shininess = function (shine) {
  * diffuse or ambient lighting. Metals use a fill color to influence the overall
  * color of their reflections. Pick a fill color, and you can easily change the
  * appearance of the metal surfaces. When no fill color is provided, it defaults
- * to using white color.
+ * to using white.
  *
  * @method metalness
+
  * @param {Number} metallic - The degree of metalness.
  * @example
  * <div class="notest">
@@ -1204,24 +1205,26 @@ p5.prototype.shininess = function (shine) {
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   slider = createSlider(0, 400, 100, 1);
- *   slider.position(0, height);
+ *   slider2 = createSlider(0, 350, 100);
+ *   slider2.position(0, height + 18);
+ *   label = createDiv(slider2.value());
+ *   label.position(0, height - 100);
  * }
  * function draw() {
  *   background(220);
  *   imageMode(CENTER);
  *   push();
- *   translate(0, 0, -200);
- *   scale(2);
  *   image(img, 0, 0, width, height);
+ *   clearDepth();
  *   pop();
  *   imageLight(img);
  *   fill('green');
  *   specularMaterial('gray');
  *   shininess(slider.value());
  *   metalness(100);
+ *   label.html(slider2.value());
  *   noStroke();
- *   scale(2);
- *   sphere(15);
+ *   sphere(30);
  * }
  * </code>
  * </div>
@@ -1230,18 +1233,22 @@ p5.prototype.shininess = function (shine) {
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   slider = createSlider(0, 200, 100);
+ *   label = createDiv(slider.value());
+ *   label.position(0, height - 100);
  * }
  * function draw() {
  *   noStroke();
- *   background('black');
+ *   background(100);
  *   fill(255, 215, 0);
- *   pointLight(255, 255, 255, 200, 150, 8000);
  *   pointLight(255, 255, 255, 5000, 5000, 75);
  *   specularMaterial('gray');
- *   ambientLight(255);
+ *   ambientLight(100);
  *   shininess(2);
- *   metalness(100);
- *   sphere(45);
+ *   metalness(slider.value());
+ *   label.html(slider.value());
+ *   rotateY(frameCount * 0.01);
+ *   torus(20, 10);
  * }
  * </code>
  * </div>
