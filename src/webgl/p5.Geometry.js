@@ -152,27 +152,55 @@ p5.Geometry = class Geometry {
  * @example
  * <div>
  * <code>
- * let modelU;
+ * let img;
+ * let model1;
+ * let model2;
  *
  * function preload() {
- *   modelU = loadModel('path/to/your/model.obj');
- *
- *   modelU.flipU();
+ *   img = loadImage('assets/laDefense.jpg');
  * }
  *
  * function setup() {
- *   createCanvas(400, 400, WEBGL);
+ *   createCanvas(150, 150, WEBGL);
  *   background(200);
  *
- *   // Original model (no texture coordinate flipping)
- *   fill('orange');
- *   translate(-100, 0, 0);
- *   model(modelU);
+ *   model1 = createShape(50, 50);
+ *   model2 = createShape(50, 50);
+ *   model2.flipU();
+ * }
  *
- *   // Flipped U texture coordinates model
- *   fill('blue');
- *   translate(200, 0, 0);
- *   model(modelU);
+ * function draw() {
+ *   background(0);
+ *
+ *   // original
+ *   push();
+ *   translate(-40, 0, 0);
+ *   texture(img);
+ *   noStroke();
+ *   plane(50);
+ *   model(model1);
+ *   pop();
+ *
+ *   // flipped
+ *   push();
+ *   translate(40, 0, 0);
+ *   texture(img);
+ *   noStroke();
+ *   plane(50);
+ *   model(model2);
+ *   pop();
+ * }
+ *
+ * function createShape(w, h) {
+ *   return buildGeometry(() => {
+ *     textureMode(NORMAL);
+ *     beginShape();
+ *     vertex(-w / 2, -h / 2, 0, 0);
+ *     vertex(w / 2, -h / 2, 1, 0);
+ *     vertex(w / 2, h / 2, 1, 1);
+ *     vertex(-w / 2, h / 2, 0, 1);
+ *     endShape(CLOSE);
+ *   });
  * }
  * </code>
  * </div>
@@ -196,27 +224,55 @@ p5.Geometry = class Geometry {
  * @example
  * <div>
  * <code>
- * let modelV;
+ * let img;
+ * let model1;
+ * let model2;
  *
  * function preload() {
- *   modelV = loadModel('path/to/your/model.obj');
- *
- *   modelV.flipV();
+ *   img = loadImage('assets/laDefense.jpg');
  * }
  *
  * function setup() {
- *   createCanvas(400, 400, WEBGL);
+ *   createCanvas(150, 150, WEBGL);
  *   background(200);
  *
- *   // Original model (no texture coordinate flipping)
- *   fill('orange');
- *   translate(-100, 0, 0);
- *   model(modelV);
+ *   model1 = createShape(50, 50);
+ *   model2 = createShape(50, 50);
+ *   model2.flipV();
+ * }
  *
- *   // Flipped V texture coordinates model
- *   fill('purple');
- *   translate(200, 0, 0);
- *   model(modelV);
+ * function draw() {
+ *   background(0);
+ *
+ *   // original
+ *   push();
+ *   translate(-40, 0, 0);
+ *   texture(img);
+ *   noStroke();
+ *   plane(50);
+ *   model(model1);
+ *   pop();
+ *
+ *   // flipped
+ *   push();
+ *   translate(40, 0, 0);
+ *   texture(img);
+ *   noStroke();
+ *   plane(50);
+ *   model(model2);
+ *   pop();
+ * }
+ *
+ * function createShape(w, h) {
+ *   return buildGeometry(() => {
+ *     textureMode(NORMAL);
+ *     beginShape();
+ *     vertex(-w / 2, -h / 2, 0, 0);
+ *     vertex(w / 2, -h / 2, 1, 0);
+ *     vertex(w / 2, h / 2, 1, 1);
+ *     vertex(-w / 2, h / 2, 0, 1);
+ *     endShape(CLOSE);
+ *   });
  * }
  * </code>
  * </div>
