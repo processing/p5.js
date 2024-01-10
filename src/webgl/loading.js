@@ -154,11 +154,12 @@ p5.prototype.loadModel = function(path) {
       path,
       async lines => {
         const mtlLine = lines.find(line => line.startsWith('mtllib '));
-        const mtlPath = mtlLine ? mtlLine.split(' ')[1] : undefined;
+
         // console.log(mtlPath);
         try{
           let parsedMaterials=null;
-          if(mtlPath){
+          if(mtlLine){
+            const mtlPath = path.replace(/\.obj$/, '.mtl');
             parsedMaterials=await parseMtl(mtlPath);  // Pass parsed materials to OBJ parsing
           }
           if (parsedMaterials){
@@ -241,6 +242,7 @@ function parseMtl(mtlPath){ //accepts mtlPath to load file
             materials[currentMaterial].texturePath = tokens[1];
           }
         }
+        console.log(materials);
         resolve(materials);
       },
       reject
@@ -289,6 +291,16 @@ function parseObj(model, lines, materials= {}) {
       if (tokens[0] === 'usemtl') {
         // Switch to a new material
         currentMaterial = tokens[1];
+        if (currentMaterial && materials[currentMaterial]) {
+          const diffuseColor = materials[currentMaterial].diffuseColor;
+          model.vertexColors.push([
+            diffuseColor[0],
+            diffuseColor[1],
+            diffuseColor[2]
+          ]);
+        } else {
+          model.vertexColors.push([1, 1, 1]);
+        }
       }else if (tokens[0] === 'v' || tokens[0] === 'vn') {
         // Check if this line describes a vertex or vertex normal.
         // It will have three numeric parameters.
@@ -341,16 +353,6 @@ function parseObj(model, lines, materials= {}) {
               if (loadedVerts.vn[vertParts[2]]) {
                 model.vertexNormals.push(loadedVerts.vn[vertParts[2]].copy());
               }
-              if (currentMaterial && materials[currentMaterial]) {
-                const diffuseColor = materials[currentMaterial].diffuseColor;
-                model.vertexColors.push([
-                  diffuseColor[0],
-                  diffuseColor[1],
-                  diffuseColor[2]
-                ]);
-              } else {
-                model.vertexColors.push([1, 1, 1]);
-              }
             }
 
             face.push(vertIndex);
@@ -371,7 +373,7 @@ function parseObj(model, lines, materials= {}) {
   if (model.vertexNormals.length === 0) {
     model.computeNormals();
   }
-
+  console.log(model.vertexColors);
   return model;
 }
 
