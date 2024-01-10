@@ -3,6 +3,7 @@ suite('loadModel', function() {
   var validFile = 'unit/assets/teapot.obj';
   var validObjFileforMtl='unit/assets/octa-color.obj';
   var validSTLfile = 'unit/assets/ascii.stl';
+  const missingMtlFile= 'unit/assets/plant.obj';
   var validSTLfileWithoutExtension = 'unit/assets/ascii';
 
   test('_friendlyFileLoadError is called', async function() {
@@ -114,6 +115,19 @@ suite('loadModel', function() {
       [1, 0.77791, 0],
       [0.5, 0, 0]];
     assert.deepEqual(model.vertexColors,expectedColors);
+  });
+  test('handles missing mtl file', async function() {
+    try {
+      await promisedSketch(function (sketch,resolve, reject) {
+        sketch.preload = function () {
+          sketch.loadModel(missingMtlFile, resolve, reject);
+        };
+      });
+      // If loading succeeds, the test should fail
+      assert.fail('Loading succeeded, but it should have failed due to missing MTL file');
+    } catch (error) {
+      assert.include(error.message, 'MTL file not found','Expected error message for missing MTL file');
+    }
   });
 
   test('returns an object with correct data', async function() {
