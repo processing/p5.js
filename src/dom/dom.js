@@ -2275,7 +2275,7 @@ p5.prototype.createCapture = function(...args) {
 
     if (callback) callback(domElement.srcObject);
   });
-
+  videoEl.flipped=flipped;
   return videoEl;
 };
 
@@ -4393,7 +4393,6 @@ class MediaElement extends p5.Element {
   duration() {
     return this.elt.duration;
   }
-
   _ensureCanvas() {
     if (!this.canvas) {
       this.canvas = document.createElement('canvas');
@@ -4414,11 +4413,14 @@ class MediaElement extends p5.Element {
       }
 
       this.drawingContext.clearRect(
-        0,
-        0,
-        this.canvas.width,
-        this.canvas.height
-      );
+        0, 0, this.canvas.width, this.canvas.height);
+
+      if (this.flipped === true) {
+        this.drawingContext.save();
+        this.drawingContext.scale(-1, 1);
+        this.drawingContext.translate(-this.canvas.width, 0);
+      }
+
       this.drawingContext.drawImage(
         this.elt,
         0,
@@ -4426,6 +4428,11 @@ class MediaElement extends p5.Element {
         this.canvas.width,
         this.canvas.height
       );
+
+      if (this.flipped === true) {
+        this.drawingContext.restore();
+      }
+
       this.setModified(true);
       this._frameOnCanvas = this._pInst.frameCount;
     }
