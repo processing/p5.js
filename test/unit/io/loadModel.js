@@ -1,6 +1,7 @@
 suite('loadModel', function() {
   var invalidFile = '404file';
   var validFile = 'unit/assets/teapot.obj';
+  var validObjFileforMtl='unit/assets/octa-color.obj';
   var validSTLfile = 'unit/assets/ascii.stl';
   var validSTLfileWithoutExtension = 'unit/assets/ascii';
 
@@ -96,6 +97,23 @@ suite('loadModel', function() {
         done(new Error('Setup called prior to success callback'));
       }
     };
+  });
+
+  test('loads OBJ file with associated MTL file correctly', async function(){
+    const model = await promisedSketch(function (sketch,resolve,reject){
+      sketch.preload=function(){
+        sketch.loadModel(validObjFileforMtl,resolve,reject);
+      };
+    });
+    const expectedColors=[[0, 0, 0.5],
+      [0, 0, 0.942654],
+      [0, 0.815632, 1],
+      [0, 0.965177, 1],
+      [0.848654, 1, 0.151346],
+      [1, 0.888635, 0],
+      [1, 0.77791, 0],
+      [0.5, 0, 0]];
+    assert.deepEqual(model.vertexColors,expectedColors);
   });
 
   test('returns an object with correct data', async function() {
