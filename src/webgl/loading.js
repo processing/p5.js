@@ -25,6 +25,15 @@ import './p5.Geometry';
  * Also, the support for colored STL files is not present. STL files with color will be
  * rendered without color properties.
  *
+ * Options can include:
+ * - `path`
+ * - `normalize`
+ * - `successCallback`
+ * - `failureCallback`
+ * - `fileType`
+ * - `flipU`
+ * - `flipV`
+ *
  * @method loadModel
  * @param  {String} path              Path of the model to be loaded
  * @param  {Boolean} normalize        If true, scale the model to a
