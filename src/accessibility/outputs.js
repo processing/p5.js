@@ -300,7 +300,8 @@ p5.prototype._createOutput = function(type, display) {
     this.ingredients = {
       shapes: {},
       colors: { background: 'white', fill: 'white', stroke: 'black' },
-      pShapes: ''
+      pShapes: '',
+      pBackground: ''
     };
   }
   //if there is no dummyDOM create it
@@ -396,7 +397,10 @@ p5.prototype._createOutput = function(type, display) {
 p5.prototype._updateAccsOutput = function() {
   let cnvId = this.canvas.id;
   //if the shapes are not the same as before
-  if (JSON.stringify(this.ingredients.shapes) !== this.ingredients.pShapes) {
+  if (
+    JSON.stringify(this.ingredients.shapes) !== this.ingredients.pShapes ||
+    this.ingredients.colors.background !== this.ingredients.pBackground
+  ) {
     //save current shapes as string in pShapes
     this.ingredients.pShapes = JSON.stringify(this.ingredients.shapes);
     if (this._accessibleOutputs.text) {
@@ -419,6 +423,7 @@ p5.prototype._updateAccsOutput = function() {
 p5.prototype._accsBackground = function(args) {
   //save current shapes as string in pShapes
   this.ingredients.pShapes = JSON.stringify(this.ingredients.shapes);
+  this.ingredients.pBackground = this.ingredients.colors.background;
   //empty shapes JSON
   this.ingredients.shapes = {};
   //update background different
@@ -543,7 +548,8 @@ p5.prototype._getPos = function (x, y) {
     this.drawingContext.getTransform();
   const { x: transformedX, y: transformedY } = untransformedPosition
     .matrixTransform(currentTransform);
-  const { width: canvasWidth, height: canvasHeight } = this;
+  const canvasWidth = this.width * this._pixelDensity;
+  const canvasHeight = this.height * this._pixelDensity;
   if (transformedX < 0.4 * canvasWidth) {
     if (transformedY < 0.4 * canvasHeight) {
       return 'top left';

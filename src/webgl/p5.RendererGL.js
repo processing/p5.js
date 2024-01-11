@@ -853,24 +853,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   _update() {
     // reset model view and apply initial camera transform
     // (containing only look at info; no projection).
-    this.uMVMatrix.set(
-      this._curCamera.cameraMatrix.mat4[0],
-      this._curCamera.cameraMatrix.mat4[1],
-      this._curCamera.cameraMatrix.mat4[2],
-      this._curCamera.cameraMatrix.mat4[3],
-      this._curCamera.cameraMatrix.mat4[4],
-      this._curCamera.cameraMatrix.mat4[5],
-      this._curCamera.cameraMatrix.mat4[6],
-      this._curCamera.cameraMatrix.mat4[7],
-      this._curCamera.cameraMatrix.mat4[8],
-      this._curCamera.cameraMatrix.mat4[9],
-      this._curCamera.cameraMatrix.mat4[10],
-      this._curCamera.cameraMatrix.mat4[11],
-      this._curCamera.cameraMatrix.mat4[12],
-      this._curCamera.cameraMatrix.mat4[13],
-      this._curCamera.cameraMatrix.mat4[14],
-      this._curCamera.cameraMatrix.mat4[15]
-    );
+    this.uMVMatrix.set(this._curCamera.cameraMatrix);
 
     // reset light data for new frame.
 
@@ -1067,10 +1050,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // Resize the framebuffer 'fbo' and adjust its pixel density if it doesn't match the target.
     this.matchSize(fbo, target);
 
-    // Set filterCamera for framebuffers.
-    if (target !== this) {
-      this.filterCamera = this.getFilterLayer().createCamera();
-    }
     fbo.draw(() => this._pInst.clear()); // prevent undesirable feedback effects accumulating secretly.
 
     let texelSize = [
@@ -1087,6 +1066,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       // setup
       this._pInst.push();
       this._pInst.noStroke();
+      this._pInst.blendMode(constants.BLEND);
 
       // draw main to temp buffer
       this._pInst.shader(this.filterShader);
@@ -1101,8 +1081,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this._pInst.clear();
         this._pInst.shader(this.filterShader);
         this._pInst.noLights();
-        this._pInst.rect(-target.width / 2,
-          -target.height / 2, target.width, target.height);
+        this._pInst.plane(target.width, target.height);
       });
 
       // Vert pass: draw `tmp` to `fbo`
@@ -1112,8 +1091,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this._pInst.clear();
         this._pInst.shader(this.filterShader);
         this._pInst.noLights();
-        this._pInst.rect(-target.width / 2,
-          -target.height / 2, target.width, target.height);
+        this._pInst.plane(target.width, target.height);
       });
 
       this._pInst.pop();
@@ -1122,6 +1100,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     else {
       fbo.draw(() => {
         this._pInst.noStroke();
+        this._pInst.blendMode(constants.BLEND);
         this._pInst.shader(this.filterShader);
         this.filterShader.setUniform('tex0', target);
         this.filterShader.setUniform('texelSize', texelSize);
@@ -1130,8 +1109,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         // but shouldn't hurt to always set
         this.filterShader.setUniform('filterParameter', filterParameter);
         this._pInst.noLights();
-        this._pInst.rect(-target.width / 2, -target.height / 2,
-          target.width, target.height);
+        this._pInst.plane(target.width, target.height);
       });
 
     }
@@ -1142,8 +1120,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this._pInst.push();
     this._pInst.imageMode(constants.CORNER);
     this._pInst.blendMode(constants.BLEND);
-    this.filterCamera._resize();
-    this._pInst.setCamera(this.filterCamera);
+    target.filterCamera._resize();
+    this._pInst.setCamera(target.filterCamera);
     this._pInst.resetMatrix();
     this._pInst.image(fbo, -this.width / 2, -this.height / 2,
       this.width, this.height);
@@ -1496,6 +1474,15 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
   }
 
+  /**
+   * Resets all depth information so that nothing previously drawn will
+   * occlude anything subsequently drawn.
+   */
+  clearDepth(depth = 1) {
+    this.GL.clearDepth(depth);
+    this.GL.clear(this.GL.DEPTH_BUFFER_BIT);
+  }
+
   applyMatrix(a, b, c, d, e, f) {
     if (arguments.length === 16) {
       p5.Matrix.prototype.apply.apply(this.uMVMatrix, arguments);
@@ -1658,24 +1645,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
   }
   resetMatrix() {
-    this.uMVMatrix.set(
-      this._curCamera.cameraMatrix.mat4[0],
-      this._curCamera.cameraMatrix.mat4[1],
-      this._curCamera.cameraMatrix.mat4[2],
-      this._curCamera.cameraMatrix.mat4[3],
-      this._curCamera.cameraMatrix.mat4[4],
-      this._curCamera.cameraMatrix.mat4[5],
-      this._curCamera.cameraMatrix.mat4[6],
-      this._curCamera.cameraMatrix.mat4[7],
-      this._curCamera.cameraMatrix.mat4[8],
-      this._curCamera.cameraMatrix.mat4[9],
-      this._curCamera.cameraMatrix.mat4[10],
-      this._curCamera.cameraMatrix.mat4[11],
-      this._curCamera.cameraMatrix.mat4[12],
-      this._curCamera.cameraMatrix.mat4[13],
-      this._curCamera.cameraMatrix.mat4[14],
-      this._curCamera.cameraMatrix.mat4[15]
-    );
+    this.uMVMatrix.set(this._curCamera.cameraMatrix);
     return this;
   }
 
