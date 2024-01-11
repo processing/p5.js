@@ -1213,13 +1213,13 @@ p5.prototype.shininess = function (shine) {
  * }
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   slider = createSlider(0, 400, 100, 1);
+ *   slider = createSlider(0, 200, 100, 1);
  *   let sliderLabel = createP('Metalness');
- *   sliderLabel.position(135, height - 13);
+ *   sliderLabel.position(100, height - 25);
  *   slider2 = createSlider(0, 350, 100);
  *   slider2.position(0, height + 20);
  *   slider2Label = createP('Shininess');
- *   slider2Label.position(135, height + 4);
+ *   slider2Label.position(100, height);
  * }
  * function draw() {
  *   background(220);
@@ -1229,7 +1229,7 @@ p5.prototype.shininess = function (shine) {
  *   clearDepth();
  *   pop();
  *   imageLight(img);
- *   fill('green');
+ *   fill('gray');
  *   specularMaterial('gray');
  *   shininess(slider2.value());
  *   metalness(slider.value());
@@ -1247,11 +1247,11 @@ p5.prototype.shininess = function (shine) {
  *   createCanvas(100, 100, WEBGL);
  *   slider = createSlider(0, 200, 100);
  *   let sliderLabel = createP('Metalness');
- *   sliderLabel.position(135, height - 11);
+ *   sliderLabel.position(100, height - 25);
  *   slider2 = createSlider(0, 200, 2);
  *   slider2.position(0, height + 25);
  *   let slider2Label = createP('Shininess');
- *   slider2Label.position(135, height + 11);
+ *   slider2Label.position(100, height);
  * }
  * function draw() {
  *   noStroke();
