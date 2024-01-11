@@ -1213,7 +1213,7 @@ p5.prototype.shininess = function (shine) {
  * }
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   slider = createSlider(0, 200, 100, 1);
+ *   slider = createSlider(0, 300, 100, 1);
  *   let sliderLabel = createP('Metalness');
  *   sliderLabel.position(100, height - 25);
  *   slider2 = createSlider(0, 350, 100);
