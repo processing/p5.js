@@ -194,7 +194,7 @@ var renderCode = function(exampleName) {
 
       var s = function( p ) {
         var fxns = ['setup', 'draw', 'preload', 'mousePressed', 'mouseReleased',
-          'mouseMoved', 'mouseDragged', 'mouseClicked', 'mouseWheel',
+          'mouseMoved', 'mouseDragged', 'mouseClicked','doubleClicked','mouseWheel',
           'touchStarted', 'touchMoved', 'touchEnded',
           'keyPressed', 'keyReleased', 'keyTyped'];
         var _found = [];
