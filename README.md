@@ -941,6 +941,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/samrudh3125"><img src="https://avatars.githubusercontent.com/u/69446481?v=4?s=120" width="120px;" alt="Samrudh Shetty"/><br /><sub><b>Samrudh Shetty</b></sub></a><br /><a href="#a11y-samrudh3125" title="Accessibility">️️️️♿️</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Bumblebee00"><img src="https://avatars.githubusercontent.com/u/54026028?v=4?s=120" width="120px;" alt="Mattia Micheletta Merlin"/><br /><sub><b>Mattia Micheletta Merlin</b></sub></a><br /><a href="#example-Bumblebee00" title="Examples">💡</a> <a href="https://github.com/processing/p5.js/commits?author=Bumblebee00" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=Bumblebee00" title="Tests">⚠️</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="http://rmncafe.in"><img src="https://avatars.githubusercontent.com/u/119604454?v=4?s=120" width="120px;" alt="Armaan Gupta"/><br /><sub><b>Armaan Gupta</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ohayouarmaan" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
