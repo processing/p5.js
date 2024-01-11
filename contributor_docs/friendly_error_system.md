@@ -110,7 +110,7 @@ The [internationalization doc] has a step-by-step guide on adding and modifying 
 ## Understanding How FES Works
 In this section, we will give an overview of how FES generates and displays messages. For more detailed information on the FES functions, please see our [FES Reference + Dev Notes].
 
-[FES Reference + Dev Notes]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md
+[FES Reference + Dev Notes]: https://github.com/processing/p5.js/tree/main/src/core/friendly_errors#fes-reference-and-notes-from-developers
 
 
 #### Overview

@@ -5485,6 +5485,83 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "mohamedalisaifudeen",
+      "name": "mohamedalisaifudeen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/107266503?v=4",
+      "profile": "https://github.com/mohamedalisaifudeen",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "aryanas159",
+      "name": "Aryan Singh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/114330931?v=4",
+      "profile": "https://github.com/aryanas159",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "nikhilkalburgi",
+      "name": "nikhilkalburgi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/70331875?v=4",
+      "profile": "https://github.com/nikhilkalburgi",
+      "contributions": [
+        "bug",
+        "doc"
+      ]
+    },
+    {
+      "login": "samrudh3125",
+      "name": "Samrudh Shetty",
+      "avatar_url": "https://avatars.githubusercontent.com/u/69446481?v=4",
+      "profile": "https://github.com/samrudh3125",
+      "contributions": [
+        "a11y"
+      ]
+    },
+    {
+      "login": "Bumblebee00",
+      "name": "Mattia Micheletta Merlin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/54026028?v=4",
+      "profile": "https://github.com/Bumblebee00",
+      "contributions": [
+        "example",
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "ohayouarmaan",
+      "name": "Armaan Gupta",
+      "avatar_url": "https://avatars.githubusercontent.com/u/119604454?v=4",
+      "profile": "http://rmncafe.in",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "harmanbatheja15",
+      "name": "Harman Batheja",
+      "avatar_url": "https://avatars.githubusercontent.com/u/66913564?v=4",
+      "profile": "https://harmanbatheja15.github.io/harmanbatheja/",
+      "contributions": [
+        "translation",
+        "bug"
+      ]
+    },
+    {
+      "login": "PracDuckling",
+      "name": "PracDuckling",
+      "avatar_url": "https://avatars.githubusercontent.com/u/68885144?v=4",
+      "profile": "https://github.com/PracDuckling",
+      "contributions": [
+        "bug",
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
