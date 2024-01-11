@@ -5552,6 +5552,16 @@
         "translation",
         "bug"
       ]
+    },
+    {
+      "login": "PracDuckling",
+      "name": "PracDuckling",
+      "avatar_url": "https://avatars.githubusercontent.com/u/68885144?v=4",
+      "profile": "https://github.com/PracDuckling",
+      "contributions": [
+        "bug",
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
