@@ -5542,6 +5542,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "harmanbatheja15",
+      "name": "Harman Batheja",
+      "avatar_url": "https://avatars.githubusercontent.com/u/66913564?v=4",
+      "profile": "https://harmanbatheja15.github.io/harmanbatheja/",
+      "contributions": [
+        "translation",
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
