@@ -1207,16 +1207,19 @@ p5.prototype.shininess = function (shine) {
  * <code>
  * let img;
  * let slider;
+ * let slider2;
  * function preload() {
  *   img = loadImage('assets/outdoor_spheremap.jpg');
  * }
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   slider = createSlider(0, 400, 100, 1);
+ *   let sliderLabel = createP('Metalness');
+ *   sliderLabel.position(135, height - 13);
  *   slider2 = createSlider(0, 350, 100);
- *   slider2.position(0, height + 18);
- *   label = createDiv(slider2.value());
- *   label.position(0, height - 100);
+ *   slider2.position(0, height + 20);
+ *   slider2Label = createP('Shininess');
+ *   slider2Label.position(135, height + 4);
  * }
  * function draw() {
  *   background(220);
@@ -1228,9 +1231,8 @@ p5.prototype.shininess = function (shine) {
  *   imageLight(img);
  *   fill('green');
  *   specularMaterial('gray');
- *   shininess(slider.value());
- *   metalness(100);
- *   label.html(slider2.value());
+ *   shininess(slider2.value());
+ *   metalness(slider.value());
  *   noStroke();
  *   sphere(30);
  * }
@@ -1239,11 +1241,17 @@ p5.prototype.shininess = function (shine) {
  * @example
  * <div>
  * <code>
+ * let slider;
+ * let slider2;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   slider = createSlider(0, 200, 100);
- *   label = createDiv(slider.value());
- *   label.position(0, height - 100);
+ *   let sliderLabel = createP('Metalness');
+ *   sliderLabel.position(135, height - 11);
+ *   slider2 = createSlider(0, 200, 2);
+ *   slider2.position(0, height + 25);
+ *   let slider2Label = createP('Shininess');
+ *   slider2Label.position(135, height + 11);
  * }
  * function draw() {
  *   noStroke();
@@ -1252,9 +1260,8 @@ p5.prototype.shininess = function (shine) {
  *   pointLight(255, 255, 255, 5000, 5000, 75);
  *   specularMaterial('gray');
  *   ambientLight(100);
- *   shininess(2);
+ *   shininess(slider2.value());
  *   metalness(slider.value());
- *   label.html(slider.value());
  *   rotateY(frameCount * 0.01);
  *   torus(20, 10);
  * }
