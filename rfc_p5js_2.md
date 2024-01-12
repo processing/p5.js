@@ -3,6 +3,21 @@
 ## Introduction
 This is a RFC document for a proposal of p5.js 2.0.
 
+---
+
+- [Build and test system](#build-and-test-system)
+- [Refactors](#refactors)
+- [Modular](#modular)
+- [Libraries](#libraries)
+- [Renderers](#renderers)
+- [Async](#async)
+- [Algorithm Changes](#algorithm-changes)
+- [Reference](#reference)
+- [Typography](#typography)
+- [Misc](#misc)
+
+---
+
 ## Motivation
 p5.js 1.0.0 was released on February 29, 2020, while it may not seem to be that long ago (a bit less than four years ago at the time of writing) in the very fast moving landscape of JavaScript it is a great amount of time. In this time, the JS landscape has advanced a lot with new paradigms and expectations of what a JS library should be. In the time between the 1.0 release till now, p5.js has not been standing still either, with major progress and focuses on accessibility features, bug fixes, updates & enhancements to existing features, and more, contributed by a great number of contributors consistently over the past several years.
 
