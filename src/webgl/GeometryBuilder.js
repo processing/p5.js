@@ -9,6 +9,7 @@ import * as constants from '../core/constants';
 class GeometryBuilder {
   constructor(renderer) {
     this.renderer = renderer;
+    renderer._doStroke = true;
     renderer._pInst.push();
     this.identityMatrix = new p5.Matrix();
     renderer.uMVMatrix = new p5.Matrix();
