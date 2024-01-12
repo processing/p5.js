@@ -325,10 +325,15 @@ p5.Shader = class {
 
     if (this.isStrokeShader()) {
       if (this._renderer._curCamera.cameraType === 'default') {
-        // strokes scale up as they approach camera, default
-        this.setUniform('uPerspective', 1);
-      } else {
-        // strokes have uniform scale regardless of distance from camera
+        // Check if line perspective is enabled
+        if (this._renderer.drawingContext.linePerspective) {
+          // strokes scale up as they approach camera, default
+          this.setUniform('uPerspective', 1);
+        } else {
+          this.setUniform('uPerspective', 0);
+        }
+      }else{
+      // Strokes have a uniform scale regardless of the distance from the camera
         this.setUniform('uPerspective', 0);
       }
     }

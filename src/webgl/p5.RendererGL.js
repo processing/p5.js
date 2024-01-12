@@ -23,6 +23,15 @@ const defineStrokeJoinEnum = function (key, val) {
   STROKE_JOIN_ENUM[constants[key]] = val;
 };
 
+p5.prototype.linePerspective = function (enable) {
+  if (enable) {
+    this.drawingContext.linePerspective = true;
+  } else {
+    this.drawingContext.linePerspective = false;
+  }
+};
+
+
 // Define constants in line shaders for each type of cap/join, and also record
 // the values in JS objects
 defineStrokeCapEnum('ROUND', 0);
