@@ -47,8 +47,16 @@ var spec = {
     'p5.Shader',
     'p5.Texture',
     'light'
+  ],
+  'visual/cases': [
+    // Add the visual tests that you want run as part of CI here. Feel free
+    // to omit some for speed if they should only be run manually.
+    'webgl'
   ]
 };
+document.write(
+  '<script src="unit/visual/visualTest.js" type="text/javascript"></script>'
+);
 Object.keys(spec).map(function(folder) {
   spec[folder].map(function(file) {
     var string = [
