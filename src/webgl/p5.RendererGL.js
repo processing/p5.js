@@ -23,6 +23,21 @@ const defineStrokeJoinEnum = function (key, val) {
   STROKE_JOIN_ENUM[constants[key]] = val;
 };
 
+/**
+ *
+ * Enable or disable perspective for lines in the WebGL renderer.
+ * When linePerspective is enabled, lines will be affected by the current camera's perspective.
+ * When linePerspective is disabled, lines will have a uniform scale regardless of the camera's perspective.
+
+ *
+ * @method linePerspective
+ * @memberof p5.prototype
+ * @param {boolean} enable - Set to `true` to enable line perspective, `false` to disable.
+ *<br>
+ * @example
+ * @TODO
+ */
+
 p5.prototype.linePerspective = function (enable) {
   if (enable) {
     this.drawingContext.linePerspective = true;
