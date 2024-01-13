@@ -1,9 +1,9 @@
 suite('loadModel', function() {
   var invalidFile = '404file';
   var validFile = 'unit/assets/teapot.obj';
-  // var validObjFileforMtl='unit/assets/octa-color.obj';
+  var validObjFileforMtl='unit/assets/octa-color.obj';
   var validSTLfile = 'unit/assets/ascii.stl';
-  // const missingMtltoObjFile= 'unit/assets/plant.obj';
+  const missingMtltoObjFile= 'unit/assets/plant.obj';
   var validSTLfileWithoutExtension = 'unit/assets/ascii';
 
   test('_friendlyFileLoadError is called', async function() {
@@ -100,37 +100,37 @@ suite('loadModel', function() {
     };
   });
 
-  // test('loads OBJ file with associated MTL file correctly', async function(){
-  //   const model = await promisedSketch(function (sketch,resolve,reject){
-  //     sketch.preload=function(){
-  //       sketch.loadModel(validObjFileforMtl,resolve,reject);
-  //     };
-  //   });
-  //   const expectedColors=[[0, 0, 0.5],
-  //     [0, 0, 0.942654],
-  //     [0, 0.815632, 1],
-  //     [0, 0.965177, 1],
-  //     [0.848654, 1, 0.151346],
-  //     [1, 0.888635, 0],
-  //     [1, 0.77791, 0],
-  //     [0.5, 0, 0]];
-  //   assert.deepEqual(model.vertexColors,expectedColors);
-  // });
-  // test.only('throws an error for missing MTL file specified in OBJ file', async function() {
-  //   try {
-  //     await promisedSketch(function (sketch, resolve, reject) {
-  //       sketch.preload = function () {
-  //         sketch.loadModel(missingMtltoObjFile, resolve, reject);
-  //       };
-  //     });
-  //     // If the promise resolves without throwing an error, fail the test
-  //     assert.fail('Expected an error for missing MTL file, but the promise resolved successfully');
-  //   } catch (error) {
-  //     // Check if the error message indicates a missing MTL file
-  //     console.log(error);
-  //     assert.include(error.message, 'MTL file not found', 'Unexpected error message');
-  //   }
-  // });
+  test('loads OBJ file with associated MTL file correctly', async function(){
+    const model = await promisedSketch(function (sketch,resolve,reject){
+      sketch.preload=function(){
+        sketch.loadModel(validObjFileforMtl,resolve,reject);
+      };
+    });
+    const expectedColors=[[0, 0, 0.5],
+      [0, 0, 0.942654],
+      [0, 0.815632, 1],
+      [0, 0.965177, 1],
+      [0.848654, 1, 0.151346],
+      [1, 0.888635, 0],
+      [1, 0.77791, 0],
+      [0.5, 0, 0]];
+    assert.deepEqual(model.vertexColors,expectedColors);
+  });
+  test.only('throws an error for missing MTL file specified in OBJ file', async function() {
+    try {
+      await promisedSketch(function (sketch, resolve, reject) {
+        sketch.preload = function () {
+          sketch.loadModel(missingMtltoObjFile, resolve, reject);
+        };
+      });
+      // If the promise resolves without throwing an error, fail the test
+      assert.fail('Expected an error for missing MTL file, but the promise resolved successfully');
+    } catch (error) {
+      // Check if the error message indicates a missing MTL file
+      console.log(error);
+      assert.include(error.message, 'MTL file not found', 'Unexpected error message');
+    }
+  });
   test('returns an object with correct data', async function() {
     const model = await promisedSketch(function(sketch, resolve, reject) {
       var _model;
