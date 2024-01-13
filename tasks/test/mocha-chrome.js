@@ -4,6 +4,7 @@ const puppeteer = require('puppeteer');
 const util = require('util');
 const mapSeries = require('promise-map-series');
 const fs = require('fs');
+const path = require('path');
 const EventEmitter = require('events');
 
 const mkdir = util.promisify(fs.mkdir);
@@ -28,6 +29,28 @@ module.exports = function(grunt) {
         const page = await browser.newPage();
 
         try {
+          // Set up visual tests
+          await page.evaluateOnNewDocument(function(shouldGenerateScreenshots) {
+            window.shouldGenerateScreenshots = shouldGenerateScreenshots;
+          }, !process.env.CI);
+
+          await page.exposeFunction('writeImageFile', function(filename, base64Data) {
+            fs.mkdirSync('test/' + path.dirname(filename), { recursive: true });
+            const prefix = /^data:image\/\w+;base64,/;
+            fs.writeFileSync(
+              'test/' + filename,
+              base64Data.replace(prefix, ''),
+              'base64'
+            );
+          });
+          await page.exposeFunction('writeTextFile', function(filename, data) {
+            fs.mkdirSync('test/' + path.dirname(filename), { recursive: true });
+            fs.writeFileSync(
+              'test/' + filename,
+              data
+            );
+          });
+
           // Using eval to start the test in the browser
           // A 'mocha:end' event will be triggered with test runner end
           await page.evaluateOnNewDocument(`
