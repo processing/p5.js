@@ -104,7 +104,6 @@ import './p5.Geometry';
  * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
  */
 
-let materials = {}; //currently local
 p5.prototype.loadModel = function(path) {
   p5._validateParameters('loadModel', arguments);
   let normalize;
@@ -150,18 +149,37 @@ p5.prototype.loadModel = function(path) {
       failureCallback
     );
   } else if (fileType.match(/\.obj$/i)) {
+    const mtlFiles=[];
+    var mtlPath='';
+    var parsedMaterials={};
     this.loadStrings(
       path,
       async lines => {
-        const mtlLine = lines.find(line => line.startsWith('mtllib '));
+        const mtlPromises = lines
+          .map(line => line.trim().split(/\b\s+/))
+          .filter(tokens => tokens[0] === 'mtllib')
+          .map(async tokens => {
+            const objFileDir = path.substring(0, path.lastIndexOf('/'));
+            //because path.dirname does not exist error to get path of mtlfiles
 
-        // console.log(mtlPath);
+            // Replace the file name in the path with the MTL file name
+            //find a better way to resolve path
+            if(objFileDir){
+              mtlPath = objFileDir + '/' + tokens[1];
+            }
+            else{
+              mtlPath=tokens[1];
+            }
+            // Check if the MTL file has already been loaded
+            const existingMtl = mtlFiles.find(mtl => mtl.path === mtlPath);
+            if (!existingMtl) {
+              // If not loaded, load and parse the MTL file
+              parsedMaterials = await parseMtl(self, mtlPath);
+              mtlFiles.push({ path: mtlPath, materials: parsedMaterials });
+            }
+          });
+        await Promise.all(mtlPromises);
         try{
-          let parsedMaterials=null;
-          if(mtlLine){
-            const mtlPath = path.replace(/\.obj$/, '.mtl');
-            parsedMaterials=await parseMtl(mtlPath);  // Pass parsed materials to OBJ parsing
-          }
           if (parsedMaterials){
             await parseObj(model,lines, parsedMaterials);
           }else {
@@ -173,8 +191,7 @@ p5.prototype.loadModel = function(path) {
           } else {
             p5._friendlyError('Error during parsing: ' + error.message);
           }
-        }
-        finally{
+        }finally{
 
           if (normalize) {
             model.normalize();
@@ -202,52 +219,51 @@ p5.prototype.loadModel = function(path) {
   return model;
 };
 
-function parseMtl(mtlPath){ //accepts mtlPath to load file
-  return new Promise((resolve,reject)=>{
-    // console.log('parser is called');
-    let currentMaterial = null;
-    p5.prototype.loadStrings(
-      mtlPath,
-      lines => {
-        for (let line = 0; line < lines.length; ++line){
-          const tokens = lines[line].trim().split(/\s+/);
-          if(tokens[0] === 'newmtl') {
-            const materialName = tokens[1];
-            currentMaterial = materialName;
-            materials[currentMaterial] = {};
-          }else if (tokens[0] === 'Kd'){
-            //Diffuse color
-            materials[currentMaterial].diffuseColor = [
-              parseFloat(tokens[1]),
-              parseFloat(tokens[2]),
-              parseFloat(tokens[3])
-            ];
-          } else if (tokens[0] === 'Ka'){
-            //Ambient Color
-            materials[currentMaterial].ambientColor = [
-              parseFloat(tokens[1]),
-              parseFloat(tokens[2]),
-              parseFloat(tokens[3])
-            ];
-          }else if (tokens[0] === 'Ks'){
-            //Specular color
-            materials[currentMaterial].specularColor = [
-              parseFloat(tokens[1]),
-              parseFloat(tokens[2]),
-              parseFloat(tokens[3])
-            ];
+async function parseMtl(self,mtlPath){ //accepts mtlPath to load file
+  let materials= {};
+  let currentMaterial = null;
+  self.loadStrings(
+    mtlPath,
+    lines => {
+      for (let line = 0; line < lines.length; ++line){
+        const tokens = lines[line].trim().split(/\s+/);
+        if(tokens[0] === 'newmtl') {
+          const materialName = tokens[1];
+          currentMaterial = materialName;
+          materials[currentMaterial] = {};
+        }else if (tokens[0] === 'Kd'){
+          //Diffuse color
+          materials[currentMaterial].diffuseColor = [
+            parseFloat(tokens[1]),
+            parseFloat(tokens[2]),
+            parseFloat(tokens[3])
+          ];
+        } else if (tokens[0] === 'Ka'){
+          //Ambient Color
+          materials[currentMaterial].ambientColor = [
+            parseFloat(tokens[1]),
+            parseFloat(tokens[2]),
+            parseFloat(tokens[3])
+          ];
+        }else if (tokens[0] === 'Ks'){
+          //Specular color
+          materials[currentMaterial].specularColor = [
+            parseFloat(tokens[1]),
+            parseFloat(tokens[2]),
+            parseFloat(tokens[3])
+          ];
 
-          }else if (tokens[0] === 'map_Kd') {
-            //Texture path
-            materials[currentMaterial].texturePath = tokens[1];
-          }
+        }else if (tokens[0] === 'map_Kd') {
+          //Texture path
+          materials[currentMaterial].texturePath = tokens[1];
         }
-        resolve(materials);
-      },
-      reject
-    );
-  });
-
+      }
+    },
+    error => {
+      p5._friendlyError('Error during parsing: ' + error.message);
+    }
+  );
+  return materials;
 }
 
 /**
@@ -290,16 +306,6 @@ function parseObj(model, lines, materials= {}) {
       if (tokens[0] === 'usemtl') {
         // Switch to a new material
         currentMaterial = tokens[1];
-        if (currentMaterial && materials[currentMaterial]) {
-          const diffuseColor = materials[currentMaterial].diffuseColor;
-          model.vertexColors.push([
-            diffuseColor[0],
-            diffuseColor[1],
-            diffuseColor[2]
-          ]);
-        } else {
-          model.vertexColors.push([1, 1, 1]);
-        }
       }else if (tokens[0] === 'v' || tokens[0] === 'vn') {
         // Check if this line describes a vertex or vertex normal.
         // It will have three numeric parameters.
@@ -308,6 +314,11 @@ function parseObj(model, lines, materials= {}) {
           parseFloat(tokens[2]),
           parseFloat(tokens[3])
         );
+        const diffuseColor =
+         currentMaterial && materials[currentMaterial] ?
+           materials[currentMaterial].diffuseColor : [1, 1, 1];  // Default to white if no material
+        model.vertexColors.push(diffuseColor);
+
         loadedVerts[tokens[0]].push(vertex);
       } else if (tokens[0] === 'vt') {
         // Check if this line describes a texture coordinate.
@@ -399,6 +410,7 @@ function parseSTL(model, buffer) {
     const lineArray = lines.split('\n');
     parseASCIISTL(model, lineArray);
   }
+  console.lof(model.vertexcolors);
   return model;
 }
 
