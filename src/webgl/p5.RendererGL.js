@@ -33,7 +33,6 @@ defineStrokeJoinEnum('ROUND', 0);
 defineStrokeJoinEnum('MITER', 1);
 defineStrokeJoinEnum('BEVEL', 2);
 
-this._pInst.shaderCache={};
 p5.RendererGL.prototype.getCachedShader = function (
   shaderKey, vertexShaderSource, fragmentShaderSource) {
   if (!this._pInst.shaderCache) {
@@ -502,6 +501,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // interacting with WebGLRenderingContext, still worth considering future removal
     this.GL = this.drawingContext;
     this._pInst._setProperty('drawingContext', this.drawingContext);
+
+    this._pInst.shaderCache={};
 
     // erasing
     this._isErasing = false;
