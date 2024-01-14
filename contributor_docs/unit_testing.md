@@ -118,3 +118,24 @@ test('keyIsPressed is a boolean', function() {
 
 Similarly we can use `assert.strictEqual(myp5.keyIsPressed, true)` to assert if the value is true. You can read more about chai's assert [here](https://www.chaijs.com/api/assert/)
 Now that you have written the tests, run them and see if the method behaves as expected. If not, create an issue for the same and if you want, you can even work on fixing it!
+
+## Visual tests
+
+Visual tests are a way to make sure sketches do not unexpectedly change when we change the implementation of p5.js features. Each visual test file lives in the `test/unit/visual/cases` folder. Inside each file there are multiple visual test cases. Each case creates a sample sketch, and then calls `screenshot()` to check how the sketch looks.
+
+```js
+visualTest('2D objects maintain correct size', function(p5, screenshot) {
+  p5.createCanvas(50, 50, p5.WEBGL);
+  p5.noStroke();
+  p5.fill('red');
+  p5.rectMode(p5.CENTER);
+  p5.rect(0, 0, p5.width/2, p5.height/2);
+  screenshot();
+});
+```
+
+If you need to add a new test file, add it to that folder, then add the filename to the list in `test/visual/visualTestList.js`. Additionally, if you want that file to be run automatically as part of continuous integration on every pull request, add the filename to the `visual` list in `test/unit/spec.js`.
+
+When you add a new test, running `npm test` will generate new screenshots for any visual tests that do not yet have them. Those screenshots will then be used as a reference the next time tests run to make sure the sketch looks the same. If a test intentionally needs to look different, you can delete the folder matching the test name in the `test/unit/visual/screenshots` folder, and then re-run `npm test` to generate a new one.
+
+To manually inspect all visual tests, run `grunt yui:dev` to launch a local server, then go to http://127.0.0.1:9001/test/visual.html to see a list of all test cases.
