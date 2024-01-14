@@ -657,7 +657,7 @@ p5.prototype._onmousedown = function(e) {
   this._setMouseButton(e);
   this._updateNextMouseCoords(e);
 
-  // On _ontouchstart triggers first and sets this.touchstart
+  // _ontouchstart triggers first and sets this.touchstart
   if (this.touchstart) {
     return;
   }
