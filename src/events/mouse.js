@@ -731,11 +731,11 @@ p5.prototype._onmouseup = function(e) {
   const context = this._isGlobal ? window : this;
   let executeDefault;
   this._setProperty('mouseIsPressed', false);
-  
+
   if (this.touchend) {
     return;
   }
-  
+
   if (typeof context.mouseReleased === 'function') {
     executeDefault = context.mouseReleased(e);
     if (executeDefault === false) {
