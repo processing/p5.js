@@ -732,6 +732,7 @@ p5.prototype._onmouseup = function(e) {
   let executeDefault;
   this._setProperty('mouseIsPressed', false);
 
+  // _ontouchend triggers first and sets this.touchend
   if (this.touchend) {
     return;
   }
