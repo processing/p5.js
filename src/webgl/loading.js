@@ -26,13 +26,13 @@ import './p5.Geometry';
  * rendered without color properties.
  *
  * Options can include:
- * - `path`
- * - `normalize`
- * - `successCallback`
- * - `failureCallback`
- * - `fileType`
- * - `flipU`
- * - `flipV`
+ * - `path`: Specifies the location or path of the 3D model file for loading.
+ * - `normalize`: Enables standardized size scaling during loading if set to true.
+ * - `successCallback`: Callback for post-loading actions with the 3D model object.
+ * - `failureCallback`: Handles errors if model loading fails, receiving an event error.
+ * - `fileType`: Defines the file extension of the model.
+ * - `flipU`: Flips the U texture coordinates of the model.
+ * - `flipV`: Flips the V texture coordinates of the model.
  *
  * @method loadModel
  * @param  {String} path              Path of the model to be loaded
