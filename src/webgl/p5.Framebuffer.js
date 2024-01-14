@@ -227,6 +227,10 @@ class Framebuffer {
    */
   resize(width, height) {
     this.autoSized = false;
+    const dimensions =
+      this.target._renderer._adjustDimensions(width, height);
+    width = dimensions.adjustedWidth;
+    height = dimensions.adjustedHeight;
     this.width = width;
     this.height = height;
     this._handleResize();

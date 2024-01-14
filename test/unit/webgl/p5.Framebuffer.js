@@ -162,6 +162,36 @@ suite('p5.Framebuffer', function() {
         // The texture should not be recreated
         expect(fbo.color.rawTexture()).to.equal(oldTexture);
       });
+
+      test('resizes the framebuffer using its constructor based on max texture size', function() {
+        let glStub;
+        glStub = sinon.stub(p5.RendererGL.prototype, '_getParam');
+        const fakeMaxTextureSize = 100;
+        glStub.returns(fakeMaxTextureSize);
+
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        const fbo = myp5.createFramebuffer({ width: 200, height: 200 });
+        expect(fbo.width).to.equal(100);
+        expect(fbo.height).to.equal(100);
+
+        glStub.restore();
+      });
+
+      test('resizes the framebuffer using resize method based on max texture size', function() {
+        let glStub;
+        glStub = sinon.stub(p5.RendererGL.prototype, '_getParam');
+        const fakeMaxTextureSize = 100;
+        glStub.returns(fakeMaxTextureSize);
+
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        const fbo = myp5.createFramebuffer({ width: 10, height: 10 });
+        myp5.resize(200, 200);
+        expect(fbo.width).to.equal(100);
+        expect(fbo.height).to.equal(100);
+
+
+        glStub.restore();
+      });
     });
   });
 

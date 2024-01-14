@@ -164,5 +164,18 @@ suite('Graphics', function() {
       graph.resizeCanvas(19, 16);
       assertValidPixels(graph, 19, 16, 2);
     });
+
+    test('it resizes the canvas and the graphics based on max texture size', function() {
+      let glStub;
+      glStub = sinon.stub(p5.RendererGL.prototype, '_getParam');
+      const fakeMaxTextureSize = 100;
+      glStub.returns(fakeMaxTextureSize);
+
+      var graph = myp5.createGraphics(200, 200, myp5.WEBGL);
+      graph.pixelDensity(1);
+      assertValidGraphSizes(graph, 100, 100, 1);
+
+      glStub.restore();
+    });
   });
 });

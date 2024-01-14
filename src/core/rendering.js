@@ -202,6 +202,12 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
     }
     this.width = w;
     this.height = h;
+    if (!(this._renderer instanceof p5.Renderer2D)) {
+      const dimensions =
+        this._renderer._adjustDimensions(w, h);
+      w = dimensions.adjustedWidth;
+      h = dimensions.adjustedHeight;
+    }
     // Make sure width and height are updated before the renderer resizes so
     // that framebuffers updated from the resize read the correct size
     this._renderer.resize(w, h);

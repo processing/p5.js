@@ -89,6 +89,32 @@ suite('Rendering', function() {
       assert.equal(fbo.width, 5);
       assert.equal(fbo.height, 15);
     });
+
+    test('should resize the dimensions of canvas based on max texture size', function() {
+      let glStub;
+      glStub = sinon.stub(p5.RendererGL.prototype, '_getParam');
+      const fakeMaxTextureSize = 100;
+      glStub.returns(fakeMaxTextureSize);
+      myp5.createCanvas(200, 200, myp5.WEBGL);
+      assert.equal(myp5.canvas.width, 100);
+      assert.equal(myp5.canvas.height, 100);
+
+      glStub.restore();
+    });
+
+    test('should resize the dimensions of canvas by resizeCanvas based on max texture size', function() {
+
+      let glStub;
+      glStub = sinon.stub(p5.RendererGL.prototype, '_getParam');
+      const fakeMaxTextureSize = 100;
+      glStub.returns(fakeMaxTextureSize);
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      myp5.resizeCanvas(200, 200);
+      assert.equal(myp5.canvas.width, 100);
+      assert.equal(myp5.canvas.height, 100);
+
+      glStub.restore();
+    });
   });
 
   suite('p5.prototype.blendMode', function() {
