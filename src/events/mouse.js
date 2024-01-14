@@ -657,21 +657,23 @@ p5.prototype._onmousedown = function(e) {
   this._setMouseButton(e);
   this._updateNextMouseCoords(e);
 
+  if (this.touchstart) {
+    return;
+  }
+
   if (typeof context.mousePressed === 'function') {
     executeDefault = context.mousePressed(e);
     if (executeDefault === false) {
       e.preventDefault();
     }
-    // only safari needs this manual fallback for consistency
-  } else if (
-    navigator.userAgent.toLowerCase().includes('safari') &&
-    typeof context.touchStarted === 'function'
-  ) {
+  } else if (typeof context.touchStarted === 'function') {
     executeDefault = context.touchStarted(e);
     if (executeDefault === false) {
       e.preventDefault();
     }
   }
+
+  this.touchstart = false;
 };
 
 /**
