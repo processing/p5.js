@@ -529,6 +529,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.uMVMatrix = new p5.Matrix();
     this.uPMatrix = new p5.Matrix();
     this.uNMatrix = new p5.Matrix('mat3');
+    this.curMatrix = new p5.Matrix('mat3');
 
     // Current vertex normal
     this._currentNormal = new p5.Vector(0, 0, 1);
