@@ -2135,7 +2135,11 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * W3C documentation</a> for possible properties. Different browsers support different
  * properties.
  *
- * The second parameter, `callback`, is optional. It's a function to call once
+ * The 'flipped' property is an optional property which can be set to `{flipped:true}`
+ * to mirror the video output.If it is true then it means that video will be mirrored
+ * or flipped and if nothing is mentioned then by default it will be `false`.
+ *
+ * The second parameter,`callback`, is optional. It's a function to call once
  * the capture is ready for use. The callback function should have one
  * parameter, `stream`, that's a
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MediaStream" target="_blank">MediaStream</a> object.
@@ -2148,6 +2152,8 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * @param  {String|Constant|Object}  [type] type of capture, either AUDIO or VIDEO,
  *                                   or a constraints object. Both video and audio
  *                                   audio streams are captured by default.
+ * @param  {Object}                  [flipped] flip the capturing video and mirror the output with `{flipped:true}`. By
+ *                                   default it is false.
  * @param  {Function}                [callback] function to call once the stream
  *                                   has loaded.
  * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
@@ -2181,6 +2187,19 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  *   // Invert the colors in the stream.
  *   filter(INVERT);
  * }
+ * </code>
+ * </div>
+ * <div class='notest'>
+ * <code>
+ * let capture;
+ *
+ * function setup() {
+ *   // Create the video capture with mirrored output.
+ *   capture = createCapture(VIDEO,{ flipped:true });
+ *   capture.size(100,100);
+ *   describe('A video stream from the webcam with flipped or mirrored output.');
+ * }
+ *
  * </code>
  * </div>
  *
@@ -2227,11 +2246,12 @@ p5.prototype.createCapture = function(...args) {
     if (arg === p5.prototype.VIDEO) useAudio = false;
     else if (arg === p5.prototype.AUDIO) useVideo = false;
     else if (typeof arg === 'object') {
-      constraints = arg;
-      flipped = constraints.flipped || false;
-    }
-    else if (typeof arg === 'boolean') {
-      flipped = arg;
+      // Check if the argument is an object with a 'flipped' property
+      if (arg.flipped !== undefined) {
+        flipped = arg.flipped;
+      } else {
+        constraints = arg;
+      }
     }
     else if (typeof arg === 'function') {
       callback = arg;
