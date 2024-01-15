@@ -30,6 +30,7 @@ uniform vec3 uSpotLightDirection[5];
 
 uniform bool uSpecular;
 uniform float uShininess;
+uniform float metallic;
 
 uniform float uConstantAttenuation;
 uniform float uLinearAttenuation;
@@ -73,9 +74,11 @@ LightResult _light(vec3 viewDirection, vec3 normal, vec3 lightVector) {
 
   //compute our diffuse & specular terms
   LightResult lr;
+  float specularIntensity = mix(1.0, 0.4, metallic);
+  float diffuseIntensity = mix(1.0, 0.1, metallic);
   if (uSpecular)
-    lr.specular = _phongSpecular(lightDir, viewDirection, normal, uShininess);
-  lr.diffuse = _lambertDiffuse(lightDir, normal);
+    lr.specular = (_phongSpecular(lightDir, viewDirection, normal, uShininess)) * specularIntensity;
+    lr.diffuse = _lambertDiffuse(lightDir, normal) * diffuseIntensity;
   return lr;
 }
 
@@ -114,7 +117,7 @@ vec3 calculateImageDiffuse( vec3 vNormal, vec3 vViewPosition ){
   vec4 texture = TEXTURE_CUBE( environmentMapDiffusedCubemap, newTexCoor );
   // this is to make the darker sections more dark
   // png and jpg usually flatten the brightness so it is to reverse that
-  return smoothstep(vec3(0.0), vec3(0.8), texture.xyz);
+  return mix(smoothstep(vec3(0.0), vec3(1.0), texture.xyz), vec3(0.0), metallic);
 }
 
 vec3 calculateImageSpecular( vec3 vNormal, vec3 vViewPosition ){
@@ -130,7 +133,11 @@ vec3 calculateImageSpecular( vec3 vNormal, vec3 vViewPosition ){
 #endif
   // this is to make the darker sections more dark
   // png and jpg usually flatten the brightness so it is to reverse that
-  return pow(outColor.xyz, vec3(10.0));
+  return mix(
+    pow(outColor.xyz, vec3(10)),
+    pow(outColor.xyz, vec3(1.2)),
+    metallic 
+  );
 }
 
 void totalLight(
@@ -164,7 +171,6 @@ void totalLight(
     if (j < uPointLightCount) {
       vec3 lightPosition = (uViewMatrix * vec4(uPointLightLocation[j], 1.0)).xyz;
       vec3 lightVector = modelPosition - lightPosition;
-    
       //calculate attenuation
       float lightDistance = length(lightVector);
       float lightFalloff = 1.0 / (uConstantAttenuation + lightDistance * uLinearAttenuation + (lightDistance * lightDistance) * uQuadraticAttenuation);
