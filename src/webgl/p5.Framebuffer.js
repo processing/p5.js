@@ -923,6 +923,37 @@ class Framebuffer {
    * texture.
    *
    * @method end
+   * @example
+   *
+   * <div>
+   * <code>
+   *
+   * let framebuffer;
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   framebuffer = createFramebuffer();
+   *   noStroke();
+   * }
+   * function draw() {
+   *   framebuffer.begin();
+   *   background(255);
+   *   translate(0, 5 * sin(frameCount * 0.01), 0);
+   *   rotateX(frameCount * 0.01);
+   *   rotateY(frameCount * 0.01);
+   *   fill(255, 0, 0);
+   *   torus(30);
+   *   framebuffer.end();
+   *
+   *   background(100);
+   *   image(framebuffer, -50, -50, 25, 25);
+   *   image(framebuffer, 0, 0, 35, 35);
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt
+   * Rotating red torus displayed in different sizes on a dark gray background."
+   *
    */
   end() {
     const gl = this.gl;
