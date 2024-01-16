@@ -33,134 +33,7 @@ defineStrokeJoinEnum('ROUND', 0);
 defineStrokeJoinEnum('MITER', 1);
 defineStrokeJoinEnum('BEVEL', 2);
 
-p5.RendererGL.prototype.getCachedShader = function (
-  shaderKey, vertexShaderSource, fragmentShaderSource) {
-  if (!this._pInst.shaderCache) {
-    this._pInst.shaderCache = {};    //ensures a unique shaderCache for each instance of p5.RendererGL
-  }
-  if (!this._pInst.shaderCache[shaderKey]) {
-    const vertexShader = this._pInst.createShader(
-      this._pInst.VERTEX_SHADER, vertexShaderSource);
-    const fragmentShader = this._pInst.createShader(
-      this._pInst.FRAGMENT_SHADER, fragmentShaderSource);
-
-    this._pInst.shaderCache[shaderKey] = this._pInst.createShaderProgram(
-      vertexShader, fragmentShader);
-  }
-  return this._pInst.shaderCache[shaderKey];
-};
-
-const lightingShader = p5.RendererGL.prototype.getCachedShader('lightingShader',readFileSync(
-  join(__dirname, '/shaders/lighting.glsl'),
-  'utf-8'
-));
-const webgl2CompatibilityShader = readFileSync(
-  join(__dirname, '/shaders/webgl2Compatibility.glsl'),
-  'utf-8'
-);
-
-const defaultShaders = {
-  immediateVert: p5.RendererGL.prototype.getCachedShader('immediateVert',readFileSync(
-    join(__dirname, '/shaders/immediate.vert'),
-    'utf-8'
-  )),
-  vertexColorVert: p5.RendererGL.prototype.getCachedShader('vertexColorVert',readFileSync(
-    join(__dirname, '/shaders/vertexColor.vert'),
-    'utf-8'
-  )),
-  vertexColorFrag: p5.RendererGL.prototype.getCachedShader('vertexColorFrag',readFileSync(
-    join(__dirname, '/shaders/vertexColor.frag'),
-    'utf-8'
-  )),
-  normalVert: p5.RendererGL.prototype.getCachedShader('normalVert',readFileSync(
-    join(__dirname, '/shaders/normal.vert'), 'utf-8'
-  )),
-  normalFrag: p5.RendererGL.prototype.getCachedShader('normalFrag',readFileSync(
-    join(__dirname, '/shaders/normal.frag'), 'utf-8'
-  )),
-  basicFrag: p5.RendererGL.prototype.getCachedShader('basicFrag',readFileSync(
-    join(__dirname, '/shaders/basic.frag'), 'utf-8'
-  )),
-  lightVert: p5.RendererGL.prototype.getCachedShader('lightVert',lightingShader + readFileSync(
-    join(__dirname, '/shaders/light.vert'), 'utf-8'
-  )),
-  lightTextureFrag:p5.RendererGL.prototype.getCachedShader('lightTextureFrag', readFileSync(
-    join(__dirname, '/shaders/light_texture.frag'),'utf-8'
-  )),
-  phongVert: p5.RendererGL.prototype.getCachedShader('phongVert',readFileSync(
-    join(__dirname, '/shaders/phong.vert'), 'utf-8'
-  )),
-  phongFrag: p5.RendererGL.prototype.getCachedShader('phongFrag', lightingShader + readFileSync(
-    join(__dirname, '/shaders/phong.frag'), 'utf-8'
-  )),
-  fontVert: p5.RendererGL.prototype.getCachedShader('fontVert',readFileSync(
-    join(__dirname, '/shaders/font.vert'), 'utf-8'
-  )),
-  fontFrag: p5.RendererGL.prototype.getCachedShader('fontFrag',readFileSync(
-    join(__dirname, '/shaders/font.frag'), 'utf-8'
-  )),
-  lineVert: p5.RendererGL.prototype.getCachedShader('lineVert',lineDefs + readFileSync(
-    join(__dirname, '/shaders/line.vert'), 'utf-8'
-  )),
-  lineFrag : p5.RendererGL.prototype.getCachedShader('lineFrag',lineDefs + readFileSync(
-    join(__dirname, '/shaders/line.frag'), 'utf-8'
-  )),
-  pointVert:p5.RendererGL.prototype.getCachedShader('pointVert', readFileSync(
-    join(__dirname, '/shaders/point.vert'), 'utf-8'
-  )),
-  pointFrag:p5.RendererGL.prototype.getCachedShader('pointFrag', readFileSync(
-    join(__dirname, '/shaders/point.frag'), 'utf-8'
-  )),
-  imageLightVert:p5.RendererGL.prototype.getCachedShader('imageLightVert', readFileSync(
-    join(__dirname, '/shaders/imageLight.vert'), 'utf-8'
-  )),
-  imageLightDiffusedFrag:p5.RendererGL.prototype.getCachedShader('imageLightDiffusedFrag', readFileSync(
-    join(__dirname, '/shaders/imageLightDiffused.frag'), 'utf-8'
-  )),
-  imageLightSpecularFrag:p5.RendererGL.prototype.getCachedShader('imageLightSpecularFrag', readFileSync(
-    join(__dirname, '/shaders/imageLightSpecular.frag'), 'utf-8'
-  )),
-  cubemapVertexShader:p5.RendererGL.prototype.getCachedShader('cubemapVertexShader',readFileSync(
-    join(__dirname,'/shaders/cubeVertex.vert'),'utf8'
-  )),
-  cubemapFragmentShader:p5.RendererGL.prototype.getCachedShader('cubemapFragmentShader',readFileSync(
-    join(__dirname,'/shaders/cubeFragment.frag'),'utf8'
-  ))
-};
-for (const key in defaultShaders) {
-  defaultShaders[key] = webgl2CompatibilityShader + defaultShaders[key];
-}
-
-const filterShaderFrags = {
-  [constants.GRAY]:p5.RendererGL.prototype.getCachedShader(
-    constants.GRAY,readFileSync(join(
-      __dirname, '/shaders/filters/gray.frag'), 'utf-8')),
-  [constants.ERODE]:p5.RendererGL.prototype.getCachedShader(
-    constants.ERODE,readFileSync(join(
-      __dirname, '/shaders/filters/erode.frag'), 'utf-8')),
-  [constants.DILATE]:p5.RendererGL.prototype.getCachedShader(
-    constants.DILATE,readFileSync(join(
-      __dirname, '/shaders/filters/dilate.frag'), 'utf-8')),
-  [constants.BLUR]:p5.RendererGL.prototype.getCachedShader(
-    constants.BLUR,readFileSync(join(
-      __dirname, '/shaders/filters/blur.frag'), 'utf-8')),
-  [constants.POSTERIZE]:p5.RendererGL.prototype.getCachedShader(
-    constants.POSTERIZE,readFileSync(join(
-      __dirname, '/shaders/filters/posterize.frag'), 'utf-8')),
-  [constants.OPAQUE]:p5.RendererGL.prototype.getCachedShader(
-    constants.OPAQUE,readFileSync(join(
-      __dirname, '/shaders/filters/opaque.frag'), 'utf-8')),
-  [constants.INVERT]:p5.RendererGL.prototype.getCachedShader(
-    constants.INVERT,readFileSync(join(
-      __dirname, '/shaders/filters/invert.frag'), 'utf-8')),
-  [constants.THRESHOLD]:p5.RendererGL.prototype.getCachedShader(
-    constants.THRESHOLD,readFileSync(join(
-      __dirname, '/shaders/filters/threshold.frag'), 'utf-8'))
-};
-
-const filterShaderVert = p5.RendererGL.prototype.getCachedShader(
-  'filterShaderVert',readFileSync(join(
-    __dirname, '/shaders/filters/default.vert'), 'utf-8'));
+let defaultShaders={};
 
 /**
  * @module Rendering
@@ -503,6 +376,22 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this._pInst._setProperty('drawingContext', this.drawingContext);
 
     this._pInst.shaderCache={};
+    this.getCachedShader =
+    function (shaderKey, vertexShaderSource, fragmentShaderSource) {
+      if (!this._pInst.shaderCache) {
+        this._pInst.shaderCache = {}; // ensures a unique shaderCache for each instance of p5.RendererGL
+      }
+      if (!this._pInst.shaderCache[shaderKey]) {
+        const vertexShader = this._pInst.createShader(
+          this._pInst.VERTEX_SHADER, vertexShaderSource);
+        const fragmentShader = this._pInst.createShader(
+          this._pInst.FRAGMENT_SHADER, fragmentShaderSource);
+
+        this._pInst.shaderCache[shaderKey] = this._pInst.createShaderProgram(
+          vertexShader, fragmentShader);
+      }
+      return this._pInst.shaderCache[shaderKey];
+    };
 
     // erasing
     this._isErasing = false;
@@ -891,6 +780,122 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this._pInst,
       !isPGraphics
     );
+
+
+    const lightingShader = renderer.getCachedShader('lightingShader',readFileSync(
+      join(__dirname, '/shaders/lighting.glsl'),
+      'utf-8'
+    ));
+    const webgl2CompatibilityShader = readFileSync(
+      join(__dirname, '/shaders/webgl2Compatibility.glsl'),
+      'utf-8'
+    );
+
+    defaultShaders = {
+      immediateVert: renderer.getCachedShader('immediateVert',readFileSync(
+        join(__dirname, '/shaders/immediate.vert'),
+        'utf-8'
+      )),
+      vertexColorVert: renderer.getCachedShader('vertexColorVert',readFileSync(
+        join(__dirname, '/shaders/vertexColor.vert'),
+        'utf-8'
+      )),
+      vertexColorFrag: renderer.getCachedShader('vertexColorFrag',readFileSync(
+        join(__dirname, '/shaders/vertexColor.frag'),
+        'utf-8'
+      )),
+      normalVert: renderer.getCachedShader('normalVert',readFileSync(
+        join(__dirname, '/shaders/normal.vert'), 'utf-8'
+      )),
+      normalFrag: renderer.getCachedShader('normalFrag',readFileSync(
+        join(__dirname, '/shaders/normal.frag'), 'utf-8'
+      )),
+      basicFrag: renderer.getCachedShader('basicFrag',readFileSync(
+        join(__dirname, '/shaders/basic.frag'), 'utf-8'
+      )),
+      lightVert: renderer.getCachedShader('lightVert',lightingShader + readFileSync(
+        join(__dirname, '/shaders/light.vert'), 'utf-8'
+      )),
+      lightTextureFrag:renderer.getCachedShader('lightTextureFrag', readFileSync(
+        join(__dirname, '/shaders/light_texture.frag'),'utf-8'
+      )),
+      phongVert: renderer.getCachedShader('phongVert',readFileSync(
+        join(__dirname, '/shaders/phong.vert'), 'utf-8'
+      )),
+      phongFrag: renderer.getCachedShader('phongFrag', lightingShader + readFileSync(
+        join(__dirname, '/shaders/phong.frag'), 'utf-8'
+      )),
+      fontVert: renderer.getCachedShader('fontVert',readFileSync(
+        join(__dirname, '/shaders/font.vert'), 'utf-8'
+      )),
+      fontFrag: renderer.getCachedShader('fontFrag',readFileSync(
+        join(__dirname, '/shaders/font.frag'), 'utf-8'
+      )),
+      lineVert: renderer.getCachedShader('lineVert',lineDefs + readFileSync(
+        join(__dirname, '/shaders/line.vert'), 'utf-8'
+      )),
+      lineFrag : renderer.getCachedShader('lineFrag',lineDefs + readFileSync(
+        join(__dirname, '/shaders/line.frag'), 'utf-8'
+      )),
+      pointVert:renderer.getCachedShader('pointVert', readFileSync(
+        join(__dirname, '/shaders/point.vert'), 'utf-8'
+      )),
+      pointFrag:renderer.getCachedShader('pointFrag', readFileSync(
+        join(__dirname, '/shaders/point.frag'), 'utf-8'
+      )),
+      imageLightVert:renderer.getCachedShader('imageLightVert', readFileSync(
+        join(__dirname, '/shaders/imageLight.vert'), 'utf-8'
+      )),
+      imageLightDiffusedFrag:renderer.getCachedShader('imageLightDiffusedFrag', readFileSync(
+        join(__dirname, '/shaders/imageLightDiffused.frag'), 'utf-8'
+      )),
+      imageLightSpecularFrag:renderer.getCachedShader('imageLightSpecularFrag', readFileSync(
+        join(__dirname, '/shaders/imageLightSpecular.frag'), 'utf-8'
+      )),
+      cubemapVertexShader:renderer.getCachedShader('cubemapVertexShader',readFileSync(
+        join(__dirname,'/shaders/cubeVertex.vert'),'utf8'
+      )),
+      cubemapFragmentShader:renderer.getCachedShader('cubemapFragmentShader',readFileSync(
+        join(__dirname,'/shaders/cubeFragment.frag'),'utf8'
+      ))
+    };
+    for (const key in defaultShaders) {
+      defaultShaders[key] = webgl2CompatibilityShader + defaultShaders[key];
+    }
+
+    const filterShaderFrags = {
+      [constants.GRAY]:renderer.getCachedShader(
+        constants.GRAY,readFileSync(join(
+          __dirname, '/shaders/filters/gray.frag'), 'utf-8')),
+      [constants.ERODE]:renderer.getCachedShader(
+        constants.ERODE,readFileSync(join(
+          __dirname, '/shaders/filters/erode.frag'), 'utf-8')),
+      [constants.DILATE]:renderer.getCachedShader(
+        constants.DILATE,readFileSync(join(
+          __dirname, '/shaders/filters/dilate.frag'), 'utf-8')),
+      [constants.BLUR]:renderer.getCachedShader(
+        constants.BLUR,readFileSync(join(
+          __dirname, '/shaders/filters/blur.frag'), 'utf-8')),
+      [constants.POSTERIZE]:renderer.getCachedShader(
+        constants.POSTERIZE,readFileSync(join(
+          __dirname, '/shaders/filters/posterize.frag'), 'utf-8')),
+      [constants.OPAQUE]:renderer.getCachedShader(
+        constants.OPAQUE,readFileSync(join(
+          __dirname, '/shaders/filters/opaque.frag'), 'utf-8')),
+      [constants.INVERT]:renderer.getCachedShader(
+        constants.INVERT,readFileSync(join(
+          __dirname, '/shaders/filters/invert.frag'), 'utf-8')),
+      [constants.THRESHOLD]:renderer.getCachedShader(
+        constants.THRESHOLD,readFileSync(join(
+          __dirname, '/shaders/filters/threshold.frag'), 'utf-8'))
+    };
+
+    const filterShaderVert = renderer.getCachedShader(
+      'filterShaderVert',readFileSync(join(
+        __dirname, '/shaders/filters/default.vert'), 'utf-8'));
+
+
+
     this._pInst._setProperty('_renderer', renderer);
     renderer.resize(w, h);
     renderer._applyDefaults();
