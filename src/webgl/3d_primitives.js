@@ -93,6 +93,39 @@ p5.prototype.beginGeometry = function() {
  * draws shapes.
  *
  * @method endGeometry
+ * <div>
+ * <code>
+ *
+ * function setup() {
+ *   createCanvas(150, 150);
+ *   myStar();
+ * }
+ *
+ * function myStar() {
+ *   beginShape();
+ *
+ *   for (let i = 0; i < 10; i++) {
+ *     let angle = TWO_PI * i / 10;
+ *     let radius = i % 2 === 0 ? 35 : 17.5;
+ *     let x = 75 + cos(angle) * radius;
+ *     let y = 75 + sin(angle) * radius;
+ *     vertex(x, y);
+ *   }
+ *   endShape(CLOSE);
+ * }
+ *
+ * function draw() {
+ *   background(220);
+ *   noStroke();
+ *   fill(222, 49, 99);
+ *   myStar();
+ * }
+ *</code>
+ *</div>
+ *
+ * @alt
+ * A pink star with alternating short and long rays.
+ *
  * @returns {p5.Geometry} The model that was built.
  */
 p5.prototype.endGeometry = function() {
