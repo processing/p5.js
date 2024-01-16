@@ -894,6 +894,57 @@ p5.Geometry = class Geometry {
  * Modifies all vertices to be centered within the range -100 to 100.
  * @method normalize
  * @chainable
+ * @example
+ *
+ * <div>
+ * <code>
+ * let myObject;
+ *
+ * function setup() {
+ *   createCanvas(150, 150, WEBGL);
+ *   myObject = new object();
+ * }
+ * function draw() {
+ * background(220);
+ * rotateX(frameCount * 0.01);
+ * rotateY(frameCount * 0.01);
+ * myObject.display();
+ * }
+ *
+ * class object {
+ *   constructor() {
+ *     this.vertices = [
+ *       createVector(-15, -15, 0),
+ *       createVector(15, -15, 0),
+ *       createVector(15, 15, 0),
+ *       createVector(-15, 15, 0),
+ *     ];
+ *
+ *    this.normalize();
+ *   }
+ *
+ *   normalize() {
+ *     for (let v of this.vertices) {
+ *       v.normalize();
+ *     }
+ *   }
+ *
+ *   display() {
+ *     beginShape();
+ *       for (let i = 0; i < this.vertices.length; i++) {
+ *       vertex(this.vertices[i].x * 50, this.vertices[i].y * 50, this.vertices[i].z * 50);
+ *       }
+ *     endShape(CLOSE);
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * A continuously rotating square around the X and Y axes. 
+ * </code>
+ * </div>
+ * 
  */
   normalize() {
     if (this.vertices.length > 0) {
