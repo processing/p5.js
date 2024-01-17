@@ -456,6 +456,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this._enableLighting = false;
 
     this.ambientLightColors = [];
+    this.mixedAmbientLight = [];
+    this.mixedSpecularColor = [];
     this.specularColors = [1, 1, 1];
 
     this.directionalLightDirections = [];
@@ -495,6 +497,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.curStrokeColor = this._cachedStrokeStyle = [0, 0, 0, 1];
 
     this.curBlendMode = constants.BLEND;
+    this.preEraseBlend=undefined;
     this._cachedBlendMode = undefined;
     if (this.webglVersion === constants.WEBGL2) {
       this.blendExt = this.GL;
@@ -509,6 +512,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this._useEmissiveMaterial = false;
     this._useNormalMaterial = false;
     this._useShininess = 1;
+    this._useMetalness = 0;
 
     this._useLineColor = false;
     this._useVertexColor = false;
@@ -1166,7 +1170,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
   erase(opacityFill, opacityStroke) {
     if (!this._isErasing) {
-      this._cachedBlendMode = this.curBlendMode;
+      this.preEraseBlend = this.curBlendMode;
       this._isErasing = true;
       this.blendMode(constants.REMOVE);
       this._cachedFillStyle = this.curFillColor.slice();
@@ -1178,14 +1182,15 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
   noErase() {
     if (this._isErasing) {
+      // Restore colors
       this.curFillColor = this._cachedFillStyle.slice();
       this.curStrokeColor = this._cachedStrokeStyle.slice();
-      // It's necessary to restore post-erase state. Needs rework
-      let temp = this.curBlendMode;
-      this.blendMode(this._cachedBlendMode);
-      this._cachedBlendMode = temp; // If we don't do this, applyBlendMode() returns null
+      // Restore blend mode
+      this.curBlendMode=this.preEraseBlend;
+      this.blendMode(this.preEraseBlend);
+      // Ensure that _applyBlendMode() sets preEraseBlend back to the original blend mode
       this._isErasing = false;
-      this._applyBlendMode(); // This sets _cachedBlendMode back to the original blendmode
+      this._applyBlendMode();
     }
   }
 
@@ -1601,6 +1606,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     properties._useSpecularMaterial = this._useSpecularMaterial;
     properties._useEmissiveMaterial = this._useEmissiveMaterial;
     properties._useShininess = this._useShininess;
+    properties._useMetalness = this._useMetalness;
 
     properties.constantAttenuation = this.constantAttenuation;
     properties.linearAttenuation = this.linearAttenuation;
@@ -2010,6 +2016,16 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   _setFillUniforms(fillShader) {
     fillShader.bindShader();
 
+    this.mixedSpecularColor = [...this.curSpecularColor];
+
+    if (this._useMetalness > 0) {
+      this.mixedSpecularColor = this.mixedSpecularColor.map(
+        (mixedSpecularColor, index) =>
+          this.curFillColor[index] * this._useMetalness +
+          mixedSpecularColor * (1 - this._useMetalness)
+      );
+    }
+
     // TODO: optimize
     fillShader.setUniform('uUseVertexColor', this._useVertexColor);
     fillShader.setUniform('uMaterialColor', this.curFillColor);
@@ -2021,11 +2037,12 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     fillShader.setUniform('uHasSetAmbient', this._hasSetAmbient);
     fillShader.setUniform('uAmbientMatColor', this.curAmbientColor);
-    fillShader.setUniform('uSpecularMatColor', this.curSpecularColor);
+    fillShader.setUniform('uSpecularMatColor', this.mixedSpecularColor);
     fillShader.setUniform('uEmissiveMatColor', this.curEmissiveColor);
     fillShader.setUniform('uSpecular', this._useSpecularMaterial);
     fillShader.setUniform('uEmissive', this._useEmissiveMaterial);
     fillShader.setUniform('uShininess', this._useShininess);
+    fillShader.setUniform('metallic', this._useMetalness);
 
     this._setImageLightUniforms(fillShader);
 
@@ -2057,8 +2074,16 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     // TODO: sum these here...
     const ambientLightCount = this.ambientLightColors.length / 3;
+    this.mixedAmbientLight = [...this.ambientLightColors];
+
+    if (this._useMetalness > 0) {
+      this.mixedAmbientLight = this.mixedAmbientLight.map((ambientColors => {
+        let mixing = ambientColors - this._useMetalness;
+        return Math.max(0, mixing);
+      }));
+    }
     fillShader.setUniform('uAmbientLightCount', ambientLightCount);
-    fillShader.setUniform('uAmbientColor', this.ambientLightColors);
+    fillShader.setUniform('uAmbientColor', this.mixedAmbientLight);
 
     const spotLightCount = this.spotLightDiffuseColors.length / 3;
     fillShader.setUniform('uSpotLightCount', spotLightCount);

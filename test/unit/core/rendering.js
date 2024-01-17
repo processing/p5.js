@@ -135,7 +135,7 @@ suite('Rendering', function() {
     'model',
     'shader',
     'normalMaterial', 'texture', 'ambientMaterial', 'emissiveMaterial', 'specularMaterial',
-    'shininess', 'lightFalloff',
+    'shininess', 'lightFalloff', 'metalness',
     'plane', 'box', 'sphere', 'cylinder', 'cone', 'ellipsoid', 'torus'
   ];
 
