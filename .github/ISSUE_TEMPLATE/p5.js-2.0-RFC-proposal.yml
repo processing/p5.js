@@ -59,7 +59,7 @@ body:
   - type: textarea
     attributes:
       label: What's the solution?
-      description: Describe how you propose to solve the problem. (Use as much space as you need. For large proposals, a summary is fine; this proposal can link to sub-issues for details.)
+      description: Describe how you would solve the problem. (For large proposals, a summary is fine; this proposal can link to sub-issues for details.)
     validations:
       required: true
   - type: textarea
