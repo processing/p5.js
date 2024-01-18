@@ -35,14 +35,17 @@ const defineStrokeJoinEnum = function (key, val) {
  * @param {boolean} enable - Set to `true` to enable line perspective, `false` to disable.
  *<br>
  * @example
- * @TODO
+ * @todo
  */
 
-p5.prototype.linePerspective = function (enable) {
+p5.prototype.linePerspective = function (enable = true) {
   if (enable) {
+    // Enable line perspective
     this.drawingContext.linePerspective = true;
   } else {
+    // Disable line perspective
     this.drawingContext.linePerspective = false;
+    // this.perspective();
   }
 };
 
