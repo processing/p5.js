@@ -83,14 +83,14 @@ body:
         Example list:
         * **Consistency:** This proposal increases consistency by...
         * **Readability:** This proposal makes the source code more readable by...
-        * Other advantages... 
+        * Other advantages...
     validations:
       required: true
   - type: textarea
     attributes:
       label: Cons (updated based on community comments)
       description: Indicate the disadvantages of implementing this proposal, if you know of any. If the community identifies disadvantages in the comments, please add them.
-      placeholder: None so far&hellip;
+      placeholder: None so far...
     validations:
       required: true
   - type: dropdown
