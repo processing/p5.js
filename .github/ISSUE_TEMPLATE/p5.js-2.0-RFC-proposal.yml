@@ -31,7 +31,7 @@ body:
     id: sub-area
     attributes:
       label: Most appropriate sub-area of p5.js?
-      description: You may select more than one.
+      description: Please select at least one.
       options:
         - label: Accessibility
         - label: Color
