@@ -24,24 +24,7 @@ body:
         - label: Systemic change (Many features or contributor workflows will be affected.)
         - label: Overdue change (Modifications will be made that have been desirable for a long time.)
   - type: checkboxes
-    id: RFC-sub-area
-    attributes:
-      label: Most appropriate sub-area of the p5.js 2.0 RFC?
-      description: You may select more than one.
-      options:
-        - label: Build and test system
-        - label: Modules
-        - label: Renderers
-        - label: Refactoring and rewriting
-        - label: Async functions
-        - label: Algorithm changes
-        - label: API consistency
-        - label: Deprecation
-        - label: Reference
-        - label: Libraries
-        - label: Other
-  - type: checkboxes
-    id: p5-sub-area
+    id: sub-area
     attributes:
       label: Most appropriate sub-area of p5.js?
       description: You may select more than one.
