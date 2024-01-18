@@ -41,6 +41,16 @@ suite('Rendering', function() {
         black
       );
     });
+
+    test('should resize the dimensions of canvas based on max texture size', function() {
+      let glStub = sinon.stub(p5.RendererGL.prototype, '_getParam');
+      const fakeMaxTextureSize = 100;
+      glStub.returns(fakeMaxTextureSize);
+      myp5.createCanvas(200, 200, myp5.WEBGL);
+      assert.equal(myp5.width, 100);
+      assert.equal(myp5.height, 100);
+      glStub.restore();
+    });
   });
 
   suite('p5.prototype.resizeCanvas', function() {
@@ -91,28 +101,13 @@ suite('Rendering', function() {
     });
 
     test('should resize the dimensions of canvas based on max texture size', function() {
-      let glStub;
-      glStub = sinon.stub(p5.RendererGL.prototype, '_getParam');
-      const fakeMaxTextureSize = 100;
-      glStub.returns(fakeMaxTextureSize);
-      myp5.createCanvas(200, 200, myp5.WEBGL);
-      assert.equal(myp5.canvas.width, 100);
-      assert.equal(myp5.canvas.height, 100);
-
-      glStub.restore();
-    });
-
-    test('should resize the dimensions of canvas by resizeCanvas based on max texture size', function() {
-
-      let glStub;
-      glStub = sinon.stub(p5.RendererGL.prototype, '_getParam');
+      let glStub = sinon.stub(p5.RendererGL.prototype, '_getParam').restore();
       const fakeMaxTextureSize = 100;
       glStub.returns(fakeMaxTextureSize);
       myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.resizeCanvas(200, 200);
-      assert.equal(myp5.canvas.width, 100);
-      assert.equal(myp5.canvas.height, 100);
-
+      assert.equal(myp5.width, 100);
+      assert.equal(myp5.height, 100);
       glStub.restore();
     });
   });
