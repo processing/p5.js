@@ -1,5 +1,6 @@
 name: 📃 p5.js 2.0 RFC Proposal
 description: This template is for submitting a proposal to the p5.js 2.0 RFC.
+title: "[p5.js 2.0 RFC Proposal]: "
 labels: [p5.js 2.0]
 body:
   - type: textarea
