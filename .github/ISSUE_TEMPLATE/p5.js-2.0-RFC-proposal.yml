@@ -29,31 +29,17 @@ body:
     attributes:
       value: |
         ### Acceptance criteria
-        The [p5.js 2.0 RFC](https://github.com/processing/p5.js/blob/dev-2.0/rfc_p5js_2.md) is a compilation of proposals for the next major version of p5.js. 
-        This proposal will be accepted if the community determines it would improve an existing feature through one of the following types of changes:
-        
-        * **Breaking change:**
-            * _Description:_ Add-on libraries or sketches will work differently even if their code stays the same.
-            * _Example:_ Changing the API to make default behaviors more consistent.
-        * **Systemic change:**
-             * _Description:_ Many features or contributor workflows will be affected.
-             * _Example:_ Setting up a new build, test, or documentation system.
-        * **Overdue change:** 
-             * _Description:_ Modifications will be made that have been desirable for a long time.
-             * _Example:_ Updating old code with modern syntax.
-        
-        In order to focus the community's efforts, proposals for new features will typically not be incorporated into the RFC. 
-        A [New Feature Request](https://github.com/processing/p5.js/issues/new?assignees=&labels=Feature+Request&projects=&template=feature-request.yml) 
-        may still be submitted, but it will only be considered after the release of p5.js 2.0.
+        The [p5.js 2.0 RFC](https://github.com/processing/p5.js/blob/dev-2.0/rfc_p5js_2.md) is a compilation of proposals for the next major version of p5.js. In order to focus the community's efforts, proposals for new features will typically not be incorporated into the RFC. A [New Feature Request](https://github.com/processing/p5.js/issues/new?assignees=&labels=Feature+Request&projects=&template=feature-request.yml) 
+        may still be submitted, but it will only be considered after the release of p5.js 2.0. This proposal will be accepted if the community determines it would improve an existing feature through a breaking change, a systemic change, or an overdue change.
   - type: checkboxes
     id: type-of-change
     attributes:
       label: Which types of changes would be made? 
-      description: You may select more than one.
+      description: Please select at least one.
       options:
-        - label: Breaking change
-        - label: Systemic change
-        - label: Overdue change
+        - label: Breaking change (Add-on libraries or sketches will work differently even if their code stays the same.)
+        - label: Systemic change (Many features or contributor workflows will be affected.)
+        - label: Overdue change (Modifications will be made that have been desirable for a long time.)
   - type: checkboxes
     id: p5-sub-area
     attributes:
