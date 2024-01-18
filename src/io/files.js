@@ -810,8 +810,48 @@ p5.prototype.httpGet = function() {
   p5._validateParameters('httpGet', arguments);
 
   const args = Array.prototype.slice.call(arguments);
-  args.splice(1, 0, 'GET');
-  return p5.prototype.httpDo.apply(this, args);
+  const path = args[0];
+  let datatype;
+  let data;
+  let callback;
+  let errorCallback;
+
+  for (let i = 1; i < args.length; i++) {
+    const arg = args[i];
+    if (typeof arg === 'string') {
+      datatype = arg;
+    } else if (typeof arg === 'object') {
+      data = arg;
+    } else if (typeof arg === 'function') {
+      if (!callback) {
+        callback = arg;
+      } else {
+        errorCallback = arg;
+      }
+    }
+  }
+
+  return this.httpDo(
+    path,
+    'GET',
+    datatype,
+    data,
+    resp => {
+      if (callback) {
+        callback(resp);
+      } else {
+        return resp;
+      }
+    },
+    err => {
+      p5._friendlyFileLoadError(9, path);
+      if (errorCallback) {
+        errorCallback(err);
+      } else {
+        throw err;
+      }
+    }
+  );
 };
 
 /**

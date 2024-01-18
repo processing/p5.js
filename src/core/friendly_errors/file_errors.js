@@ -74,6 +74,13 @@ if (typeof IS_MINIFIED !== 'undefined') {
           message: translator('fes.fileLoadError.gif'),
           method: 'loadImage'
         };
+      case 9:
+        return {
+          message: translator('fes.fileLoadError.get', {
+            suggestion
+          }),
+          method: 'httpGet'
+        };
     }
   };
   /**
