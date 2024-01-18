@@ -5572,6 +5572,35 @@
         "bug",
         "doc"
       ]
+    },
+    {
+      "login": "keshav-0907",
+      "name": "Keshav Malik",
+      "avatar_url": "https://avatars.githubusercontent.com/u/91189139?v=4",
+      "profile": "https://keshav-malik99.netlify.app/",
+      "contributions": [
+        "code",
+        "doc",
+        "bug"
+      ]
+    },
+    {
+      "login": "deveshidwivedi",
+      "name": "Deveshi Dwivedi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/120312681?v=4",
+      "profile": "https://github.com/deveshidwivedi",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "mohitbalwani",
+      "name": "Mohit Balwani",
+      "avatar_url": "https://avatars.githubusercontent.com/u/73066030?v=4",
+      "profile": "https://github.com/mohitbalwani",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
