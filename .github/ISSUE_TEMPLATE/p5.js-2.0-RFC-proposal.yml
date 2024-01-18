@@ -13,7 +13,7 @@ body:
     attributes:
       value: |
         ### Acceptance criteria
-        The [p5.js 2.0 RFC](https://github.com/processing/p5.js/blob/dev-2.0/rfc_p5js_2.md) is a compilation of proposals for the next major version of p5.js. In order to focus the community's efforts, proposals for new features will typically not be incorporated into the RFC. A [New Feature Request](https://github.com/processing/p5.js/issues/new?assignees=&labels=Feature+Request&projects=&template=feature-request.yml) may still be submitted, but it will only be considered after the release of p5.js 2.0. This proposal will be accepted if the community determines it would improve an existing feature through a breaking change, a systemic change, or an overdue change.
+        The [p5.js 2.0 RFC](https://github.com/processing/p5.js/blob/dev-2.0/rfc_p5js_2.md) is a compilation of proposals for the next major version of p5.js. In order to focus the community's efforts, proposals for new features will typically not be accepted into the RFC. A [New Feature Request](https://github.com/processing/p5.js/issues/new?assignees=&labels=Feature+Request&projects=&template=feature-request.yml) may still be submitted, but it will only be considered after the release of p5.js 2.0. This proposal _will_ be accepted if the community determines it would improve an existing feature through a breaking change, a systemic change, or an overdue change.
   - type: checkboxes
     id: type-of-change
     attributes:
