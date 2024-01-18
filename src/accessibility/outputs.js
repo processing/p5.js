@@ -491,15 +491,16 @@ p5.prototype._accsOutput = function(f, args) {
     include.loc = _canvasLocator(middle, this.width, this.height);
   }
   //if it is the first time this shape is created
-  if (!this.ingredients.shapes[f]) {
-    this.ingredients.shapes[f] = [include];
+  let shapes = this.ingredients.shapes;
+  if (!shapes[f]) {
+    shapes[f] = [include];
     //if other shapes of this type have been created
-  } else if (this.ingredients.shapes[f] !== [include]) {
+  } else if (JSON.stringify(shapes[f]) !== JSON.stringify([include])) {
     //for every shape of this type
-    for (let y in this.ingredients.shapes[f]) {
+    for (let y in shapes[f]) {
       //compare it with current shape and if it already exists make add false
       if (
-        JSON.stringify(this.ingredients.shapes[f][y]) ===
+        JSON.stringify(shapes[f][y]) ===
         JSON.stringify(include)
       ) {
         add = false;
