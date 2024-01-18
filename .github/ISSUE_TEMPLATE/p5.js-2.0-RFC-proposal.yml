@@ -106,6 +106,6 @@ body:
   - type: markdown
     attributes:
       value: |
-        "#### Implementation process
+        #### Implementation process
         If this proposal is approved, a contributor who has participated in the discussion will be assigned to lead the implementation, 
-        which will happen on the [dev-2.0](https://github.com/processing/p5.js/tree/dev-2.0) branch."
+        which will happen on the [dev-2.0](https://github.com/processing/p5.js/tree/dev-2.0) branch.
