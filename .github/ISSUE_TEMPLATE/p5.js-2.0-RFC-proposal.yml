@@ -9,7 +9,7 @@ body:
     validations:
       required: true
   - type: checkboxes
-    id: sub-area
+    id: RFC-sub-area
     attributes:
       label: The [p5.js 2.0 RFC](https://github.com/processing/p5.js/blob/dev-2.0/rfc_p5js_2.md) is a compilation of proposals for the next major version of p5.js. Which are the most appropriate sub-areas for this proposal?
       description: You may select more than one.
@@ -54,7 +54,7 @@ body:
         - label: Systemic change
         - label: Overdue change
   - type: checkboxes
-    id: sub-area
+    id: p5-sub-area
     attributes:
       label: Most appropriate sub-area of p5.js?
       description: You may select more than one.
