@@ -1246,7 +1246,7 @@ p5.RendererGL.prototype.triangle = function(args) {
   // this matrix multiplication transforms those two unit vectors
   // onto the required vector prior to rendering, and moves the
   // origin appropriately.
-  const uMVMatrix = this.uMVMatrix.copy();
+  const uModelMatrix = this._renderer.uModelMatrix.copy();
   try {
     // triangle orientation.
     const orientation = Math.sign(x1*y2-x2*y1 + x2*y3-x3*y2 + x3*y1-x1*y3);
@@ -1255,13 +1255,13 @@ p5.RendererGL.prototype.triangle = function(args) {
       x3 - x1, y3 - y1, 0, 0, // the resulting unit Y-axis
       0, 0, orientation, 0,   // the resulting unit Z-axis (Reflect the specified order of vertices)
       x1, y1, 0, 1            // the resulting origin
-    ]).mult(this.uMVMatrix);
+    ]).mult(this._renderer.uModelMatrix);
 
-    this.uMVMatrix = mult;
+    this._renderer.uModelMatrix = mult;
 
     this.drawBuffers(gId);
   } finally {
-    this.uMVMatrix = uMVMatrix;
+    this._renderer.uModelMatrix = uModelMatrix;
   }
 
   return this;
@@ -1383,15 +1383,15 @@ p5.RendererGL.prototype.arc = function(args) {
     this.createBuffers(gId, arcGeom);
   }
 
-  const uMVMatrix = this.uMVMatrix.copy();
+  const uModelMatrix = this._renderer.uModelMatrix.copy();
 
   try {
-    this.uMVMatrix.translate([x, y, 0]);
-    this.uMVMatrix.scale(width, height, 1);
+    this._renderer.uModelMatrix.translate([x, y, 0]);
+    this._renderer.uModelMatrix.scale(width, height, 1);
 
     this.drawBuffers(gId);
   } finally {
-    this.uMVMatrix = uMVMatrix;
+    this._renderer.uModelMatrix = uModelMatrix;
   }
 
   return this;
@@ -1443,14 +1443,14 @@ p5.RendererGL.prototype.rect = function(args) {
     // opposite corners at (0,0) & (1,1).
     //
     // before rendering, this square is scaled & moved to the required location.
-    const uMVMatrix = this.uMVMatrix.copy();
+    const uModelMatrix = this._renderer.uModelMatrix.copy();
     try {
-      this.uMVMatrix.translate([x, y, 0]);
-      this.uMVMatrix.scale(width, height, 1);
+      this._renderer.uModelMatrix.translate([x, y, 0]);
+      this._renderer.uModelMatrix.scale(width, height, 1);
 
       this.drawBuffers(gId);
     } finally {
-      this.uMVMatrix = uMVMatrix;
+      this._renderer.uModelMatrix = uModelMatrix;
     }
   } else {
     // Use Immediate mode to round the rectangle corner,

@@ -11,7 +11,7 @@ class GeometryBuilder {
     this.renderer = renderer;
     renderer._pInst.push();
     this.identityMatrix = new p5.Matrix();
-    renderer.uMVMatrix = new p5.Matrix();
+    renderer.uModelMatrix = new p5.Matrix();
     this.geometry = new p5.Geometry();
     this.geometry.gid = `_p5_GeometryBuilder_${GeometryBuilder.nextGeometryId}`;
     GeometryBuilder.nextGeometryId++;
@@ -25,7 +25,7 @@ class GeometryBuilder {
   transformVertices(vertices) {
     if (!this.hasTransform) return vertices;
 
-    return vertices.map(v => this.renderer.uMVMatrix.multiplyPoint(v));
+    return vertices.map(v => this.renderer.uModelMatrix.multiplyPoint(v));
   }
 
   /**

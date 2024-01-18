@@ -1597,12 +1597,21 @@ p5.Camera = class Camera {
       this[keyName] = cam[keyName];
     }
 
-    this.cameraMatrix = cam.cameraMatrix.copy();
-    this.projMatrix = cam.projMatrix.copy();
+    this.modelMatrix = cam.modelMatrix.copy();
 
     // If the target camera is active, update uMVMatrix and uPMatrix.
     if (this._isActive()) {
-      this._renderer.uMVMatrix.mat4 = this.cameraMatrix.mat4.slice();
+      this._renderer.uModelMatrix.mat4 = this.modelMatrix.mat4.slice();
+    }
+
+    this.viewMatrix = cam.viewMatrix.copy();
+
+    if (this._isActive()) {
+      this._renderer.uViewMatrix.mat4 = this.viewMatrix.mat4.slice();
+    }
+
+    this.projMatrix = cam.projMatrix.copy();
+    if (this._isActive()) {
       this._renderer.uPMatrix.mat4 = this.projMatrix.mat4.slice();
     }
   }
