@@ -1,5 +1,5 @@
 name: 📃 p5.js 2.0 RFC Proposal
-description: This template is for submitting a proposal to the [p5.js 2.0 RFC](https://github.com/processing/p5.js/blob/dev-2.0/rfc_p5js_2.md).
+description: This template is for submitting a proposal to the p5.js 2.0 RFC.
 labels: [p5.js 2.0]
 body:
   - type: textarea
@@ -11,7 +11,7 @@ body:
   - type: checkboxes
     id: RFC-sub-area
     attributes:
-      label: The [p5.js 2.0 RFC](https://github.com/processing/p5.js/blob/dev-2.0/rfc_p5js_2.md) is a compilation of proposals for the next major version of p5.js. Which are the most appropriate sub-areas for this proposal?
+      label: Most appropriate sub-area of the p5.js 2.0 RFC?
       description: You may select more than one.
       options:
         - label: Build and test system
@@ -29,6 +29,7 @@ body:
     attributes:
       value: |
         "#### Acceptance criteria
+        The [p5.js 2.0 RFC](https://github.com/processing/p5.js/blob/dev-2.0/rfc_p5js_2.md) is a compilation of proposals for the next major version of p5.js. 
         This proposal will be accepted if the community determines it would improve an existing feature through one of the following types of changes:
         
         * **Breaking change:**
