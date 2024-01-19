@@ -5583,6 +5583,24 @@
         "doc",
         "bug"
       ]
+    },
+    {
+      "login": "deveshidwivedi",
+      "name": "Deveshi Dwivedi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/120312681?v=4",
+      "profile": "https://github.com/deveshidwivedi",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "mohitbalwani",
+      "name": "Mohit Balwani",
+      "avatar_url": "https://avatars.githubusercontent.com/u/73066030?v=4",
+      "profile": "https://github.com/mohitbalwani",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
