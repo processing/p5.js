@@ -455,6 +455,7 @@ function parseObj(model, lines, materials= {}) {
   if (model.vertexNormals.length === 0) {
     model.computeNormals();
   }
+  console.log(model.vertexColors);
   return model;
 }
 
