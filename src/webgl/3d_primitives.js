@@ -93,6 +93,7 @@ p5.prototype.beginGeometry = function() {
  * draws shapes.
  *
  * @method endGeometry
+ * @example
  * <div>
  * <code>
  *
