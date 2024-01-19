@@ -130,6 +130,42 @@ p5.prototype.loadModel = function(path) {
   model.gid = `${path}|${normalize}`;
   const self = this;
 
+  async function getMaterials(lines){
+    const parsedMaterialPromises=[];
+    const mtlPaths=[];
+    return new Promise(async (resolve,reject)=>{
+      for (let i = 0; i < lines.length; i++) {
+        const mtllibMatch = lines[i].match(/^mtllib (.+)/);
+        if (mtllibMatch) {
+          let mtlPath='';
+          const mtlFilename = mtllibMatch[1];
+          const objPathParts = path.split('/');
+          if(objPathParts.length > 1){
+            objPathParts.pop();
+            const objFolderPath = objPathParts.join('/');
+            mtlPath = objFolderPath + '/' + mtlFilename;
+          }else{
+            mtlPath = mtlFilename;
+          }
+          try {
+            const parsedMaterialsIndividual = await parseMtl(self, mtlPath);
+            mtlPaths.push(mtlPath);
+            parsedMaterialPromises.push(parsedMaterialsIndividual);
+          }catch (error) {
+            reject(error);
+            return;
+          }
+        }
+      }try {
+        const parsedMaterials = await Promise.all(parsedMaterialPromises);
+        const materials=await Object.assign({}, ...parsedMaterials);
+        resolve(materials);
+      } catch (error) {
+        reject(error);
+      }
+
+    });
+  }
   if (fileType.match(/\.stl$/i)) {
     this.httpDo(
       path,
@@ -149,50 +185,23 @@ p5.prototype.loadModel = function(path) {
       failureCallback
     );
   } else if (fileType.match(/\.obj$/i)) {
-    const mtlFiles=[];
-    var mtlPath='';
-    var parsedMaterials={};
     this.loadStrings(
       path,
       async lines => {
-        const mtlPromises = lines
-          .map(line => line.trim().split(/\b\s+/))
-          .filter(tokens => tokens[0] === 'mtllib')
-          .map(async tokens => {
-            const objFileDir = path.substring(0, path.lastIndexOf('/'));
-            //because path.dirname does not exist error to get path of mtlfiles
-
-            // Replace the file name in the path with the MTL file name
-            //find a better way to resolve path
-            if(objFileDir){
-              mtlPath = objFileDir + '/' + tokens[1];
-            }
-            else{
-              mtlPath=tokens[1];
-            }
-            // Check if the MTL file has already been loaded
-            const existingMtl = mtlFiles.find(mtl => mtl.path === mtlPath);
-            if (!existingMtl) {
-              // If not loaded, load and parse the MTL file
-              parsedMaterials = await parseMtl(self, mtlPath);
-              mtlFiles.push({ path: mtlPath, materials: parsedMaterials });
-            }
-          });
-        await Promise.all(mtlPromises);
         try{
-          if (parsedMaterials){
-            await parseObj(model,lines, parsedMaterials);
-          }else {
-            await parseObj(model,lines); // No MTL file, parse OBJ directly
+          const parsedMaterials=await getMaterials(lines);
+
+          if(parsedMaterials && typeof parsedMaterials==='object'){
+            parseObj(model, lines, parsedMaterials);
           }
-        } catch (error) {
+        }catch (error) {
           if (failureCallback) {
             failureCallback(error);
           } else {
             p5._friendlyError('Error during parsing: ' + error.message);
           }
-        }finally{
-
+        }
+        finally{
           if (normalize) {
             model.normalize();
           }
@@ -207,7 +216,6 @@ p5.prototype.loadModel = function(path) {
     );
   } else {
     p5._friendlyFileLoadError(3, path);
-
     if (failureCallback) {
       failureCallback();
     } else {
@@ -219,51 +227,50 @@ p5.prototype.loadModel = function(path) {
   return model;
 };
 
-async function parseMtl(self,mtlPath){ //accepts mtlPath to load file
-  let materials= {};
-  let currentMaterial = null;
-  self.loadStrings(
-    mtlPath,
-    lines => {
-      for (let line = 0; line < lines.length; ++line){
-        const tokens = lines[line].trim().split(/\s+/);
-        if(tokens[0] === 'newmtl') {
-          const materialName = tokens[1];
-          currentMaterial = materialName;
-          materials[currentMaterial] = {};
-        }else if (tokens[0] === 'Kd'){
+function parseMtl(p5,mtlPath){
+  return new Promise((resolve, reject)=>{
+    let currentMaterial = null;
+    let materials= {};
+    p5.loadStrings(
+      mtlPath,
+      lines => {
+        for (let line = 0; line < lines.length; ++line){
+          const tokens = lines[line].trim().split(/\s+/);
+          if(tokens[0] === 'newmtl') {
+            const materialName = tokens[1];
+            currentMaterial = materialName;
+            materials[currentMaterial] = {};
+          }else if (tokens[0] === 'Kd'){
           //Diffuse color
-          materials[currentMaterial].diffuseColor = [
-            parseFloat(tokens[1]),
-            parseFloat(tokens[2]),
-            parseFloat(tokens[3])
-          ];
-        } else if (tokens[0] === 'Ka'){
+            materials[currentMaterial].diffuseColor = [
+              parseFloat(tokens[1]),
+              parseFloat(tokens[2]),
+              parseFloat(tokens[3])
+            ];
+          } else if (tokens[0] === 'Ka'){
           //Ambient Color
-          materials[currentMaterial].ambientColor = [
-            parseFloat(tokens[1]),
-            parseFloat(tokens[2]),
-            parseFloat(tokens[3])
-          ];
-        }else if (tokens[0] === 'Ks'){
+            materials[currentMaterial].ambientColor = [
+              parseFloat(tokens[1]),
+              parseFloat(tokens[2]),
+              parseFloat(tokens[3])
+            ];
+          }else if (tokens[0] === 'Ks'){
           //Specular color
-          materials[currentMaterial].specularColor = [
-            parseFloat(tokens[1]),
-            parseFloat(tokens[2]),
-            parseFloat(tokens[3])
-          ];
+            materials[currentMaterial].specularColor = [
+              parseFloat(tokens[1]),
+              parseFloat(tokens[2]),
+              parseFloat(tokens[3])
+            ];
 
-        }else if (tokens[0] === 'map_Kd') {
+          }else if (tokens[0] === 'map_Kd') {
           //Texture path
-          materials[currentMaterial].texturePath = tokens[1];
+            materials[currentMaterial].texturePath = tokens[1];
+          }
         }
-      }
-    },
-    error => {
-      p5._friendlyError('Error during parsing: ' + error.message);
-    }
-  );
-  return materials;
+        resolve(materials);
+      },reject
+    );
+  });
 }
 
 /**
@@ -292,10 +299,10 @@ function parseObj(model, lines, materials= {}) {
     vt: [],
     vn: []
   };
+
   const indexedVerts = {};
+  const usedVerts = {}; // Track colored vertices
   let currentMaterial = null;
-
-
   for (let line = 0; line < lines.length; ++line) {
     // Each line is a separate object (vertex, face, vertex normal, etc)
     // For each line, split it into tokens on whitespace. The first token
@@ -314,11 +321,6 @@ function parseObj(model, lines, materials= {}) {
           parseFloat(tokens[2]),
           parseFloat(tokens[3])
         );
-        const diffuseColor =
-         currentMaterial && materials[currentMaterial] ?
-           materials[currentMaterial].diffuseColor : [1, 1, 1];  // Default to white if no material
-        model.vertexColors.push(diffuseColor);
-
         loadedVerts[tokens[0]].push(vertex);
       } else if (tokens[0] === 'vt') {
         // Check if this line describes a texture coordinate.
@@ -339,6 +341,7 @@ function parseObj(model, lines, materials= {}) {
             // Now, convert the given token into an index
             const vertString = tokens[vertexTokens[tokenInd]];
             let vertIndex = 0;
+            let vertParts;
 
             // TODO: Faces can technically use negative numbers to refer to the
             // previous nth vertex. I haven't seen this used in practice, but
@@ -347,7 +350,7 @@ function parseObj(model, lines, materials= {}) {
             if (indexedVerts[vertString] !== undefined) {
               vertIndex = indexedVerts[vertString];
             } else {
-              const vertParts = vertString.split('/');
+              vertParts = vertString.split('/');
               for (let i = 0; i < vertParts.length; i++) {
                 vertParts[i] = parseInt(vertParts[i]) - 1;
               }
@@ -364,8 +367,24 @@ function parseObj(model, lines, materials= {}) {
                 model.vertexNormals.push(loadedVerts.vn[vertParts[2]].copy());
               }
             }
+            if (usedVerts[vertIndex] && usedVerts[vertIndex]
+               !== currentMaterial) {
+              // Duplicate vertex, UV, and normal,faces to refer to new indices
+              vertParts = vertString.split('/');
+              for (let i = 0; i < vertParts.length; i++) {
+                vertParts[i] = parseInt(vertParts[i]) - 1;
+              }
+              const duplicatedVertIndex = model.vertices.length;
+              model.vertices.push(loadedVerts.v[vertParts[0]].copy());
+              model.uvs.push(loadedVerts.vt[vertParts[1]] ?
+                loadedVerts.vt[vertParts[1]].slice() : [0, 0]);
+              model.vertexNormals.push(loadedVerts.vn[vertParts[2]] ?
+                loadedVerts.vn[vertParts[2]].copy() : new p5.Vector());
+              vertIndex = duplicatedVertIndex;
+            }
 
             face.push(vertIndex);
+            usedVerts[vertIndex] = currentMaterial;
           }
 
           if (
@@ -374,6 +393,16 @@ function parseObj(model, lines, materials= {}) {
             face[1] !== face[2]
           ) {
             model.faces.push(face);
+            //same material for all vertices in a particular face
+            const materialDiffuseColor =
+             materials[currentMaterial].diffuseColor;
+            for (let i=0 ;i<face.length;i++) {
+              model.vertexColors.push([
+                materialDiffuseColor[0],
+                materialDiffuseColor[1],
+                materialDiffuseColor[2]
+              ]);
+            }
           }
         }
       }
@@ -410,7 +439,6 @@ function parseSTL(model, buffer) {
     const lineArray = lines.split('\n');
     parseASCIISTL(model, lineArray);
   }
-  console.lof(model.vertexcolors);
   return model;
 }
 
