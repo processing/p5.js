@@ -27,6 +27,7 @@ body:
         - label: Breaking change (Add-on libraries or sketches will work differently even if their code stays the same.)
         - label: Systemic change (Many features or contributor workflows will be affected.)
         - label: Overdue change (Modifications will be made that have been desirable for a long time.)
+        - label: Unsure (The community can help to determine the type of change.)
   - type: checkboxes
     id: sub-area
     attributes:
