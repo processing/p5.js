@@ -94,5 +94,5 @@ body:
   - type: markdown
     attributes:
       value: |
-        #### Implementation process
+        ### Implementation process
         If this proposal is accepted, it will be included in the p5.js 2.0 RFC. A contributor who has participated in the discussion will then be assigned to lead the implementation, which will happen on the [dev-2.0](https://github.com/processing/p5.js/tree/dev-2.0) branch.
