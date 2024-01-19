@@ -236,6 +236,49 @@ p5.Image = class {
  * @param {Number} [density] A scaling factor for the number of pixels per
  * side
  * @returns {Number} The current density if called without arguments, or the instance for chaining if setting density.
+ * @example
+ * <div>
+ * <code>
+ * let defaultDensity = 1;
+ * let highDensity = 4;
+ * let currentDensity = defaultDensity;
+ *
+ * function setup() {
+ *   createCanvas(150, 150);
+ *   pixelDensity(defaultDensity);
+ *   draw();
+ * }
+ *
+ * function keyPressed() {
+ *   // Toggle between default and high pixel densities on key press
+ *   if (currentDensity === defaultDensity) {
+ *     pixelDensity(highDensity);
+ *     currentDensity = highDensity;
+ *   }
+ *   else {
+ *     pixelDensity(defaultDensity);
+ *     currentDensity = defaultDensity;
+ *   }
+ *   draw();
+ * }
+ *
+ * function draw() {
+ *   background(230);
+ *   stroke(0);
+ *   strokeWeight(2);
+ *   fill(0);
+ *   textSize(32);
+ *   textAlign(CENTER, CENTER);
+ *   text('Hi.', width / 2, height / 2);
+ *   fill(0);
+ *   textSize(16);
+ *   textAlign(RIGHT, BOTTOM);
+ *   text(`Pixel Density: ${currentDensity}`, width - 10, height - 10);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * Text on canvas, on key press appears clearer.
  */
   pixelDensity(density) {
     if (typeof density !== 'undefined') {
