@@ -159,7 +159,7 @@ p5.prototype.loadModel = function(path) {
       }try {
         const parsedMaterials = await Promise.all(parsedMaterialPromises);
         const materials=await Object.assign({}, ...parsedMaterials);
-        resolve(materials);
+        resolve (materials);
       } catch (error) {
         reject(error);
       }
