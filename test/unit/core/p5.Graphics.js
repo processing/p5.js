@@ -48,15 +48,6 @@ suite('Graphics', function() {
       assert.isObject(graph);
     });
 
-    test('it resizes the graphics based on max texture size', function() {
-      let glStub = sinon.stub(p5.RendererGL.prototype, '_getParam');
-      const fakeMaxTextureSize = 100;
-      glStub.returns(fakeMaxTextureSize);
-      const graph = myp5.createGraphics(200, 200, myp5.WEBGL);
-      assert(graph.width, 100);
-      assert(graph.height, 100);
-      glStub.restore();
-    });
   });
 
   suite('p5.Graphics', function() {
@@ -125,6 +116,15 @@ suite('Graphics', function() {
   });
 
   suite('p5.Graphics.resizeCanvas', function() {
+    let glStub;
+
+    afterEach(() => {
+      if (glStub) {
+        glStub.restore();
+        glStub = null;
+      }
+    });
+
     test('it can call resizeCanvas', function() {
       var graph = myp5.createGraphics(10, 17);
       var resize = function() {
@@ -175,5 +175,13 @@ suite('Graphics', function() {
       assertValidPixels(graph, 19, 16, 2);
     });
 
+    test('it resizes the graphics based on max texture size', function() {
+      glStub = sinon.stub(p5.RendererGL.prototype, '_getParam');
+      const fakeMaxTextureSize = 100;
+      glStub.returns(fakeMaxTextureSize);
+      const graph = myp5.createGraphics(200, 200, myp5.WEBGL);
+      assert(graph.width, 100);
+      assert(graph.height, 100);
+    });
   });
 });
