@@ -307,8 +307,8 @@ p5.Geometry = class Geometry {
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
  *
- *   fill(255); 
- *   stroke(0); 
+ *   fill(255);
+ *   stroke(0);
  *   beginShape(TRIANGLES);
  *   for (let face of customGeometry.faces) {
  *     for (let vertexIndex of face) {
@@ -326,7 +326,7 @@ p5.Geometry = class Geometry {
  *       createVector(size / 2, size / 2, size / 2),
  *       createVector(-size / 2, size / 2, size / 2),
  *       createVector(-size / 2, size / 2, -size / 2),
- *       createVector(size / 2, size / 2, -size / 2) 
+ *       createVector(size / 2, size / 2, -size / 2)
  *	   ];
  *     this.faces = [];
  *     this.computeFaces();
@@ -941,10 +941,10 @@ p5.Geometry = class Geometry {
  * </div>
  *
  * @alt
- * A continuously rotating square around the X and Y axes. 
+ * A continuously rotating square around the X and Y axes.
  * </code>
  * </div>
- * 
+ *
  */
   normalize() {
     if (this.vertices.length > 0) {
