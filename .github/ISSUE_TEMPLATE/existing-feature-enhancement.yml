@@ -4,7 +4,7 @@ labels: [Enhancement]
 body:
   - type: textarea
     attributes:
-      label: Increasing Access
+      label: Increasing access
       description: How would this new feature help [increase access](https://github.com/processing/p5.js/blob/main/contributor_docs/access.md) to p5.js? (If you're not sure, you can type "Unsure" here and let others from the community offer their thoughts.)
     validations:
       required: true
