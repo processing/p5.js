@@ -1183,6 +1183,7 @@ p5.prototype.noLights = function(...args) {
   this._renderer.linearAttenuation = 0;
   this._renderer.quadraticAttenuation = 0;
   this._renderer._useShininess = 1;
+  this._renderer._useMetalness = 0;
 
   return this;
 };
