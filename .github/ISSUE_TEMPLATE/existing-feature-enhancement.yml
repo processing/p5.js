@@ -36,3 +36,8 @@ body:
       label: Feature enhancement details
     validations:
       required: true
+  - type: markdown
+      attributes:
+        value: |
+          #### Implementation process
+          We are currently prioritizing proposals for [p5.js 2.0](https://github.com/processing/p5.js/blob/dev-2.0/rfc_p5js_2.md). Work on this issue may begin after that version is released, provided there is community support.
