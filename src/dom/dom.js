@@ -4661,7 +4661,7 @@ class MediaElement extends p5.Element {
    * </div>
    *
    * @alt
-   * Purple canvas playing a sound on setup, disconnects on mouseClick.  
+   * Purple canvas playing a sound on setup, disconnects on mouseClick.
    */
   disconnect() {
     if (this.audioSourceNode) {
