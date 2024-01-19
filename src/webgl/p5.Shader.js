@@ -346,6 +346,11 @@ p5.Shader = class {
       this._renderer.uNMatrix.inverseTranspose(modelMatrix);
       this.setUniform('uNormalMatrix', this._renderer.uNMatrix.mat3);
     }
+    if (this.uniforms.uCameraRotation) {
+      this._renderer.curMatrix.inverseTranspose(this._renderer.
+        _curCamera.cameraMatrix);
+      this.setUniform('uCameraRotation', this._renderer.curMatrix.mat3);
+    }
   }
 
   /**
