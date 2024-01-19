@@ -4599,6 +4599,36 @@ class MediaElement extends p5.Element {
    * audio effects, for example.
    *
    * @method  disconnect
+   * @example
+   * <div>
+   * <code>
+   * let sound;
+   * function preload() {
+   *   sound = loadSound('assets/beat.mp3');
+   * }
+   * function setup() {
+   *   createCanvas(150, 150);
+   *   playSound();
+   * }
+   *
+   * function draw() {
+   *   background(159, 43, 104);
+   * }
+   * function mouseClicked() {
+   *   // Disconnect the sound on mouse click
+   *   disconnectSound();
+   * }
+   * function playSound() {
+   *   sound.play();
+   * }
+   * function disconnectSound() {
+   *   sound.disconnect();
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt
+   * Purple canvas playing a sound on setup, disconnects on mouseClick.  
    */
   disconnect() {
     if (this.audioSourceNode) {
