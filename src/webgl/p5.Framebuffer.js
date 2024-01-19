@@ -243,6 +243,32 @@ class Framebuffer {
    * @method pixelDensity
    * @param {Number} [density] A scaling factor for the number of pixels per
    * side of the framebuffer
+   * @example
+   * <div>
+   * <code>
+   * let pg;
+   *
+   * function setup() {
+   *   createCanvas(150, 150);
+   *   pixelDensity(4);
+   *   pg = createGraphics(75, 75);
+   *   pg.pixelDensity(1);
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   fill(255, 0, 0);
+   *   ellipse(25, 25, 40, 40);
+   *   pg.background(255);
+   *   pg.fill(0, 0, 255);
+   *   pg.ellipse(50, 50, 40, 40);
+   *   image(pg, 75, 75);
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt
+   * A red and a blue ellipse on a canvas.
    */
   pixelDensity(density) {
     if (density) {
