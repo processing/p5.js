@@ -949,6 +949,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://keshav-malik99.netlify.app/"><img src="https://avatars.githubusercontent.com/u/91189139?v=4?s=120" width="120px;" alt="Keshav Malik"/><br /><sub><b>Keshav Malik</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=keshav-0907" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=keshav-0907" title="Documentation">📖</a> <a href="https://github.com/processing/p5.js/issues?q=author%3Akeshav-0907" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/deveshidwivedi"><img src="https://avatars.githubusercontent.com/u/120312681?v=4?s=120" width="120px;" alt="Deveshi Dwivedi"/><br /><sub><b>Deveshi Dwivedi</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=deveshidwivedi" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/mohitbalwani"><img src="https://avatars.githubusercontent.com/u/73066030?v=4?s=120" width="120px;" alt="Mohit Balwani"/><br /><sub><b>Mohit Balwani</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=mohitbalwani" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 

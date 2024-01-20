@@ -9,7 +9,7 @@ uniform bool uUseLighting;
 
 uniform int uAmbientLightCount;
 uniform vec3 uAmbientColor[5];
-
+uniform mat3 uCameraRotation;
 uniform int uDirectionalLightCount;
 uniform vec3 uLightingDirection[5];
 uniform vec3 uDirectionalDiffuseColors[5];
@@ -112,7 +112,7 @@ vec2 mapTextureToNormal( vec3 v ){
 vec3 calculateImageDiffuse( vec3 vNormal, vec3 vViewPosition ){
   // make 2 seperate builds 
   vec3 worldCameraPosition =  vec3(0.0, 0.0, 0.0);  // hardcoded world camera position
-  vec3 worldNormal = normalize(vNormal);
+  vec3 worldNormal = normalize(vNormal * uCameraRotation);
   vec2 newTexCoor = mapTextureToNormal( worldNormal );
   vec4 texture = TEXTURE_CUBE( environmentMapDiffusedCubemap, newTexCoor );
   // this is to make the darker sections more dark
@@ -124,7 +124,7 @@ vec3 calculateImageSpecular( vec3 vNormal, vec3 vViewPosition ){
   vec3 worldCameraPosition =  vec3(0.0, 0.0, 0.0);
   vec3 worldNormal = normalize(vNormal);
   vec3 lightDirection = normalize( vViewPosition - worldCameraPosition );
-  vec3 R = reflect(lightDirection, worldNormal);
+  vec3 R = reflect(lightDirection, worldNormal) * uCameraRotation;
   vec2 newTexCoor = mapTextureToNormal( R );
 #ifdef WEBGL2
   vec4 outColor = textureLod(environmentMapSpecular, newTexCoor, levelOfDetail);
