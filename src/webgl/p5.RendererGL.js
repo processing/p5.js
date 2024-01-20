@@ -33,7 +33,80 @@ defineStrokeJoinEnum('ROUND', 0);
 defineStrokeJoinEnum('MITER', 1);
 defineStrokeJoinEnum('BEVEL', 2);
 
-let defaultShaders={};
+const lightingShader = readFileSync(
+  join(__dirname, '/shaders/lighting.glsl'),
+  'utf-8'
+);
+const webgl2CompatibilityShader = readFileSync(
+  join(__dirname, '/shaders/webgl2Compatibility.glsl'),
+  'utf-8'
+);
+
+const defaultShaders = {
+  immediateVert: readFileSync(
+    join(__dirname, '/shaders/immediate.vert'),
+    'utf-8'
+  ),
+  vertexColorVert: readFileSync(
+    join(__dirname, '/shaders/vertexColor.vert'),
+    'utf-8'
+  ),
+  vertexColorFrag: readFileSync(
+    join(__dirname, '/shaders/vertexColor.frag'),
+    'utf-8'
+  ),
+  normalVert: readFileSync(join(__dirname, '/shaders/normal.vert'), 'utf-8'),
+  normalFrag: readFileSync(join(__dirname, '/shaders/normal.frag'), 'utf-8'),
+  basicFrag: readFileSync(join(__dirname, '/shaders/basic.frag'), 'utf-8'),
+  lightVert:
+    lightingShader +
+    readFileSync(join(__dirname, '/shaders/light.vert'), 'utf-8'),
+  lightTextureFrag: readFileSync(
+    join(__dirname, '/shaders/light_texture.frag'),
+    'utf-8'
+  ),
+  phongVert: readFileSync(join(__dirname, '/shaders/phong.vert'), 'utf-8'),
+  phongFrag:
+    lightingShader +
+    readFileSync(join(__dirname, '/shaders/phong.frag'), 'utf-8'),
+  fontVert: readFileSync(join(__dirname, '/shaders/font.vert'), 'utf-8'),
+  fontFrag: readFileSync(join(__dirname, '/shaders/font.frag'), 'utf-8'),
+  lineVert:
+    lineDefs + readFileSync(join(__dirname, '/shaders/line.vert'), 'utf-8'),
+  lineFrag:
+    lineDefs + readFileSync(join(__dirname, '/shaders/line.frag'), 'utf-8'),
+  pointVert: readFileSync(join(__dirname, '/shaders/point.vert'), 'utf-8'),
+  pointFrag: readFileSync(join(__dirname, '/shaders/point.frag'), 'utf-8'),
+  imageLightVert: readFileSync(join(__dirname, '/shaders/imageLight.vert'), 'utf-8'),
+  imageLightDiffusedFrag: readFileSync(join(__dirname, '/shaders/imageLightDiffused.frag'), 'utf-8'),
+  imageLightSpecularFrag: readFileSync(join(__dirname, '/shaders/imageLightSpecular.frag'), 'utf-8'),
+  cubemapVertexShader: readFileSync(join(__dirname, '/shaders/cubeVertex.vert'), 'utf-8'),
+  cubemapFragmentShader: readFileSync(join(__dirname, '/shaders/cubeFragment.frag'), 'utf-8')
+};
+for (const key in defaultShaders) {
+  defaultShaders[key] = webgl2CompatibilityShader + defaultShaders[key];
+}
+
+const filterShaderFrags = {
+  [constants.GRAY]:
+    readFileSync(join(__dirname, '/shaders/filters/gray.frag'), 'utf-8'),
+  [constants.ERODE]:
+    readFileSync(join(__dirname, '/shaders/filters/erode.frag'), 'utf-8'),
+  [constants.DILATE]:
+    readFileSync(join(__dirname, '/shaders/filters/dilate.frag'), 'utf-8'),
+  [constants.BLUR]:
+    readFileSync(join(__dirname, '/shaders/filters/blur.frag'), 'utf-8'),
+  [constants.POSTERIZE]:
+    readFileSync(join(__dirname, '/shaders/filters/posterize.frag'), 'utf-8'),
+  [constants.OPAQUE]:
+    readFileSync(join(__dirname, '/shaders/filters/opaque.frag'), 'utf-8'),
+  [constants.INVERT]:
+    readFileSync(join(__dirname, '/shaders/filters/invert.frag'), 'utf-8'),
+  [constants.THRESHOLD]:
+    readFileSync(join(__dirname, '/shaders/filters/threshold.frag'), 'utf-8')
+};
+const filterShaderVert = readFileSync(join(__dirname, '/shaders/filters/default.vert'), 'utf-8');
+
 
 /**
  * @module Rendering
@@ -780,121 +853,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this._pInst,
       !isPGraphics
     );
-
-
-    const lightingShader = renderer.getCachedShader('lightingShader',readFileSync(
-      join(__dirname, '/shaders/lighting.glsl'),
-      'utf-8'
-    ));
-    const webgl2CompatibilityShader = readFileSync(
-      join(__dirname, '/shaders/webgl2Compatibility.glsl'),
-      'utf-8'
-    );
-
-    defaultShaders = {
-      immediateVert: renderer.getCachedShader('immediateVert',readFileSync(
-        join(__dirname, '/shaders/immediate.vert'),
-        'utf-8'
-      )),
-      vertexColorVert: renderer.getCachedShader('vertexColorVert',readFileSync(
-        join(__dirname, '/shaders/vertexColor.vert'),
-        'utf-8'
-      )),
-      vertexColorFrag: renderer.getCachedShader('vertexColorFrag',readFileSync(
-        join(__dirname, '/shaders/vertexColor.frag'),
-        'utf-8'
-      )),
-      normalVert: renderer.getCachedShader('normalVert',readFileSync(
-        join(__dirname, '/shaders/normal.vert'), 'utf-8'
-      )),
-      normalFrag: renderer.getCachedShader('normalFrag',readFileSync(
-        join(__dirname, '/shaders/normal.frag'), 'utf-8'
-      )),
-      basicFrag: renderer.getCachedShader('basicFrag',readFileSync(
-        join(__dirname, '/shaders/basic.frag'), 'utf-8'
-      )),
-      lightVert: renderer.getCachedShader('lightVert',lightingShader + readFileSync(
-        join(__dirname, '/shaders/light.vert'), 'utf-8'
-      )),
-      lightTextureFrag:renderer.getCachedShader('lightTextureFrag', readFileSync(
-        join(__dirname, '/shaders/light_texture.frag'),'utf-8'
-      )),
-      phongVert: renderer.getCachedShader('phongVert',readFileSync(
-        join(__dirname, '/shaders/phong.vert'), 'utf-8'
-      )),
-      phongFrag: renderer.getCachedShader('phongFrag', lightingShader + readFileSync(
-        join(__dirname, '/shaders/phong.frag'), 'utf-8'
-      )),
-      fontVert: renderer.getCachedShader('fontVert',readFileSync(
-        join(__dirname, '/shaders/font.vert'), 'utf-8'
-      )),
-      fontFrag: renderer.getCachedShader('fontFrag',readFileSync(
-        join(__dirname, '/shaders/font.frag'), 'utf-8'
-      )),
-      lineVert: renderer.getCachedShader('lineVert',lineDefs + readFileSync(
-        join(__dirname, '/shaders/line.vert'), 'utf-8'
-      )),
-      lineFrag : renderer.getCachedShader('lineFrag',lineDefs + readFileSync(
-        join(__dirname, '/shaders/line.frag'), 'utf-8'
-      )),
-      pointVert:renderer.getCachedShader('pointVert', readFileSync(
-        join(__dirname, '/shaders/point.vert'), 'utf-8'
-      )),
-      pointFrag:renderer.getCachedShader('pointFrag', readFileSync(
-        join(__dirname, '/shaders/point.frag'), 'utf-8'
-      )),
-      imageLightVert:renderer.getCachedShader('imageLightVert', readFileSync(
-        join(__dirname, '/shaders/imageLight.vert'), 'utf-8'
-      )),
-      imageLightDiffusedFrag:renderer.getCachedShader('imageLightDiffusedFrag', readFileSync(
-        join(__dirname, '/shaders/imageLightDiffused.frag'), 'utf-8'
-      )),
-      imageLightSpecularFrag:renderer.getCachedShader('imageLightSpecularFrag', readFileSync(
-        join(__dirname, '/shaders/imageLightSpecular.frag'), 'utf-8'
-      )),
-      cubemapVertexShader:renderer.getCachedShader('cubemapVertexShader',readFileSync(
-        join(__dirname,'/shaders/cubeVertex.vert'),'utf8'
-      )),
-      cubemapFragmentShader:renderer.getCachedShader('cubemapFragmentShader',readFileSync(
-        join(__dirname,'/shaders/cubeFragment.frag'),'utf8'
-      ))
-    };
-    for (const key in defaultShaders) {
-      defaultShaders[key] = webgl2CompatibilityShader + defaultShaders[key];
-    }
-
-    const filterShaderFrags = {
-      [constants.GRAY]:renderer.getCachedShader(
-        constants.GRAY,readFileSync(join(
-          __dirname, '/shaders/filters/gray.frag'), 'utf-8')),
-      [constants.ERODE]:renderer.getCachedShader(
-        constants.ERODE,readFileSync(join(
-          __dirname, '/shaders/filters/erode.frag'), 'utf-8')),
-      [constants.DILATE]:renderer.getCachedShader(
-        constants.DILATE,readFileSync(join(
-          __dirname, '/shaders/filters/dilate.frag'), 'utf-8')),
-      [constants.BLUR]:renderer.getCachedShader(
-        constants.BLUR,readFileSync(join(
-          __dirname, '/shaders/filters/blur.frag'), 'utf-8')),
-      [constants.POSTERIZE]:renderer.getCachedShader(
-        constants.POSTERIZE,readFileSync(join(
-          __dirname, '/shaders/filters/posterize.frag'), 'utf-8')),
-      [constants.OPAQUE]:renderer.getCachedShader(
-        constants.OPAQUE,readFileSync(join(
-          __dirname, '/shaders/filters/opaque.frag'), 'utf-8')),
-      [constants.INVERT]:renderer.getCachedShader(
-        constants.INVERT,readFileSync(join(
-          __dirname, '/shaders/filters/invert.frag'), 'utf-8')),
-      [constants.THRESHOLD]:renderer.getCachedShader(
-        constants.THRESHOLD,readFileSync(join(
-          __dirname, '/shaders/filters/threshold.frag'), 'utf-8'))
-    };
-
-    const filterShaderVert = renderer.getCachedShader(
-      'filterShaderVert',readFileSync(join(
-        __dirname, '/shaders/filters/default.vert'), 'utf-8'));
-
-
 
     this._pInst._setProperty('_renderer', renderer);
     renderer.resize(w, h);
@@ -1913,16 +1871,12 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   _getCubemapShader() {
-    if (!this._defaultCubemapShader) {
-      this._defaultCubemapShader = new p5.Shader(
-        this,
-        this._webGL2CompatibilityPrefix('vert', 'mediump') +
-        defaultShaders.cubemapVertexShader,
-        this._webGL2CompatibilityPrefix('frag', 'mediump') +
-        defaultShaders.cubemapFragmentShader
-      );
-    }
-    return this._defaultCubemapShader;
+    return this.getCachedShader('_defaultCubemapShader',
+      this._webGL2CompatibilityPrefix('vert', 'mediump') +
+    defaultShaders.cubemapVertexShader,
+      this._webGL2CompatibilityPrefix('frag', 'mediump') +
+    defaultShaders.cubemapFragmentShader
+    );
   }
 
   _webGL2CompatibilityPrefix(
