@@ -1,8 +1,6 @@
 <!-- docs/_sidebar.md -->
 
 - [__योगदानकर्ता परिचय__](README.md)
-- [__योगदानकर्ता दिशानिर्देश__](contributor_guidelines.md)
-- [__स्टीवर्ड दिशा-निर्देश__](steward_guidelines.md)
 - __CONTRIBUTING DOCS__
   - [योगदान के लिए दस्तावेज़ीकरण](contributing_documentation.md)
   - [मुद्दे लेबल](issue_labels.md)
