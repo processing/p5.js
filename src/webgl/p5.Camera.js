@@ -1597,25 +1597,15 @@ p5.Camera = class Camera {
       this[keyName] = cam[keyName];
     }
 
-    this.modelMatrix = cam.modelMatrix.copy();
+    this.cameraMatrix = cam.cameraMatrix.copy();
+    this.projMatrix = cam.projMatrix.copy();
 
-    // If the target camera is active, update uMVMatrix and uPMatrix.
     if (this._isActive()) {
       this._renderer.uModelMatrix.mat4 = this.modelMatrix.mat4.slice();
-    }
-
-    this.viewMatrix = cam.viewMatrix.copy();
-
-    if (this._isActive()) {
       this._renderer.uViewMatrix.mat4 = this.viewMatrix.mat4.slice();
-    }
-
-    this.projMatrix = cam.projMatrix.copy();
-    if (this._isActive()) {
       this._renderer.uPMatrix.mat4 = this.projMatrix.mat4.slice();
     }
   }
-
   /**
  * For the cameras cam0 and cam1 with the given arguments, their view are combined
  * with the parameter amt that represents the quantity, and the obtained view is applied.
