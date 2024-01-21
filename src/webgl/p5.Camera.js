@@ -222,7 +222,6 @@ p5.prototype.perspective = function (...args) {
  * //there's no vanishing point
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
  *   ortho();
  *   describe(
  *     'two 3D boxes move back and forth along same plane, rotating as mouse is dragged.'
