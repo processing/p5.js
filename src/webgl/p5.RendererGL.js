@@ -1652,7 +1652,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
   }
   resetMatrix() {
-    this.uModelMatrix.set();
+    this.uModelMatrix.reset();
     this.uViewMatrix.set(this._curCamera.cameraMatrix);
     return this;
   }
