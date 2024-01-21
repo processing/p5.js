@@ -342,7 +342,7 @@ p5.Shader = class {
       modelViewProjectionMatrix.mat4
     );
     if (this.uniforms.uNormalMatrix) {
-      this._renderer.uNMatrix.inverseTranspose(modelMatrix);
+      this._renderer.uNMatrix.inverseTranspose(this._renderer.uMVMatrix);
       this.setUniform('uNormalMatrix', this._renderer.uNMatrix.mat3);
     }
     if (this.uniforms.uCameraRotation) {
