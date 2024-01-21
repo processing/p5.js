@@ -1,62 +1,70 @@
-A p5.js library can be any JavaScript code that extends or adds to the p5.js core functionality. There are two categories of library. Core libraries (p5.Sound) are part of the p5.js distribution, while contributed libraries are developed, owned, and maintained by members of the p5.js community.
+p5.js लाइब्रेरी कोड हो सकती है जो p5.js कोर फ़ंक्शनैलिटी को बढ़ाने या जोड़ने के लिए जावास्क्रिप्ट को विस्तारित करती है। इसमें दो प्रकार की लाइब्रेरी होती हैं। कोर लाइब्रेरीज (p5.Sound) p5.js डिस्ट्रीब्यूशन का हिस्सा होती हैं, जबकि योगदानीय लाइब्रेरीज सदस्यों के द्वारा विकसित, स्वामित्व, और रखी जाती हैं जो p5.js समुदाय के सदस्य होते हैं।
 
-If you have created a library and would like to have it included on the [p5js.org/libraries](https://p5js.org/libraries) page, submit [this form](https://docs.google.com/forms/d/e/1FAIpQLSdWWb95cfvosaIFI7msA7XC5zOEVsNruaA5klN1jH95ESJVcw/viewform).
+यदि आपने एक लाइब्रेरी बनाई है और आप चाहते हैं कि इसे [p5js.org/libraries](https://p5js.org/libraries) पृष्ठ पर शामिल किया जाए, तो [इस फॉर्म](https://docs.google.com/forms/d/e/1FAIpQLSdWWb95cfvosaIFI7msA7XC5zOEVsNruaA5klN1jH95ESJVcw/viewform). को सबमिट करें।
 
-# Creating a new library
+# एक नई लाइब्रेरी बनाएं
 
-There are a lot of different ways to write and use JavaScript, so we leave this up to you. What follows are some notes about having your library work well with p5.js.
+यहां आपको जावास्क्रिप्ट लेखन और p5.js के साथ इस्तेमाल करने के कई तरीके मिलते हैं। यहां आपकी लाइब्रेरी को अच्छी तरह से काम करने के लिए कुछ नोट्स हैं।
 
-## Code
+## कोड
 
-### You can extend p5 core functionality by adding methods to p5.prototype.
-For example, the following code in dom.js extends p5 to add a `createImg()` method that adds an [HTMLImageElement](https://developer.Mozilla.org/en-US/docs/Web/API/HTMLImageElement) to the DOM. 
+### आप p5.prototype में विधियों को जोड़कर p5 कोर फ़ंक्शनैलिटी को बढ़ा सकते हैं।
+
+उदाहरण के लिए, नीचे दिए गए कोड में dom.js में `createImg()` जोड़ा गया है जो DOM में [HTMLImageElement](https://developer.Mozilla.org/en-US/docs/Web/API/HTMLImageElement) जोड़ता है।
+ 
 
   ```js
   p5.prototype.createImg = function (src) {
     const elt = document.createElement('img');
-    //const elt = new Image; // much shorter alt. to the 1 above.
+    //const elt = new Image; // इसमें से एक को वृद्धि के लिए बहुत संक्षेपित विकल्प।
 
     elt.src = src;
     return addElement(elt, this);
   };
   ```
-  When the DOM library is included in a project, `createImg()` can be called just like `createCanvas()` or `background()`.
+ जब DOM लाइब्रेरी परियोजना में शामिल की जाती है, तो `createImg()` को `createCanvas()` या `background()` की तरह कॉल किया जा सकता है।
 
-### Use private functions for internal helpers.
-Functions not intended to be called by users. In the example above `addElement()` is an internal function in [dom.js](https://GitHub.com/processing/p5.js/blob/main/src/dom/dom.js). It isn't publicly bound to `p5.prototype` though.
+### आंतरिक सहायकों के लिए आंतरिक फ़ंक्शन्स का उपयोग करें।
 
-### You can extend p5.js classes as well, by adding methods to their prototypes.
-In the example below, `p5.Element.prototype` is extended with the `html()` method, that sets the inner html of the element.
+उपयोगकर्ताओं द्वारा कॉल किए जाने की नहीं होने वाले फ़ंक्शन्स। उपरोक्त उदाहरण में `addElement()` [dom.js](https://GitHub.com/processing/p5.js/blob/main/src/dom/dom.js) में एक आंतरिक फ़ंक्शन है। इसे p5.prototype के साथ सार्वजनिक रूप से बांधा नहीं जाता है।
+
+### आप p5.js class को भी विस्तारित कर सकते हैं, उनके prototypes में विधियों को जोड़कर।
+
+नीचे दिए गए उदाहरण में, `p5.Element.prototype` को `html()` विधि के साथ विस्तारित किया गया है, जो तत्व के आंतरिक एचटीएमएल को सेट करता है।
+
+
   ```js
   p5.Element.prototype.html = function (html) {
     this.elt.innerHTML = html;
-    //this.elt.textContent = html; // much safer alt. to innerHTML.
+    //this.elt.textContent = html; // innerHTML के लिए बहुत सुरक्षित विकल्प।
   };
   ```
   
-### Use registerPreloadMethod() to register names of methods with p5 that may be called in preload().
+### registerPreloadMethod() का उपयोग करें ताकि प्रीलोड() में कहा जा सके कि कौन-कौन से विधियों को कॉल किया जा सकता हैं।
 
-Typically, with some asynchronous functions (like loading a sound, image, or other external file), there are both synchronous and asynchronous options offered. For example, `loadStrings(path, [callback])` accepts an optional second callback argument - a function that is called after the loadStrings function completes. However, a user may also call loadStrings in `preload()` without a callback, and the p5.js will wait until everything in `preload()` completes before moving on to `setup()`. If you would like to register a method of your own call `registerPreloadMethod()` with the name of the method to register, and pass the prototype object the method belongs to ~~(defaults to p5.prototype)~~. The example below shows a line in the "soundfile.js" (p5.sound library) that registers `loadSound()`.
+सामान्यत: कुछ एसिंक्रोनस फ़ंक्शन्स के साथ (जैसे कि ध्वनि, छवि, या अन्य बाह्य फ़ाइल लोड करना) में, एक विकल्पक स्थिति और एसिंक्रोनस विकल्प दोनों प्रदान किए जाते हैं। उदाहरण के लिए, `loadStrings(path, [callback])` एक वैकल्पिक दूसरे कॉलबैक आर्ग्यमेंट को स्वीकार करता है - एक फ़ंक्शन जो लोडStrings फ़ंक्शन पूर्ण होने के बाद कॉल होता है। हालांकि, एक उपयोगकर्ता इसे `preload()` में बिना कॉलबैक के भी कॉल कर सकता है, और p5.js `preload() `पूर्ण होने का इंतज़ार करेगा जब तक कि `setup()` में आगे नहीं बढ़ता है। यदि आप अपनी विधि को प्रीलोड() में बिना कॉलबैक के बुलाना चाहते हैं, तो आप `registerPreloadMethod()` के साथ अपनी विधि का नाम पंजीकृत कर सकते हैं, और इसे ~~(पूर्वनिर्धारित रूप से p5.prototype)~~ से गुजारने वाले प्रोटोटाइप ऑब्जेक्ट के साथ पास करें। नीचे के उदाहरण में "soundfile.js" (p5.sound लाइब्रेरी) में `loadSound()` को पंजीकृत करने की एक पंक्ति है।
+
 
   ```js
   p5.prototype.registerPreloadMethod('loadSound', p5.prototype);
   ```
 
-### Example of async function for _callback_ and **preload()**.
+### आंतरिक कॉलबैक और preload() के लिए एसिंक फ़ंक्शन का उदाहरण।
+
 ```js
-// Example of async function for use in preload() or with callback.
+// preload() या कॉलबैक के साथ एसिंक फ़ंक्शन का उदाहारण।
 p5.prototype.getData = function (callback) {
 
-  // Create an object which will clone data from async function and return it.
-  // We will need to update that object below, not overwrite/reassign it.
-  // It is crucial for the preload() to keep the original pointer/reference.
-  // Declaring variables with const assures they won't be reassigned by mistake.
+  /// एक ऑब्जेक्ट बनाएं जो एसिंक फ़ंक्शन से डेटा को क्लोन करेगा और इसे लौटाएगा।
+  // हमें उस ऑब्जेक्ट को नीचे अपडेट करने की आवश्यकता है, उसे पुनर-निर्धारित करने/पुनर-असाइन करने की नहीं।
+  // यह preload() के लिए महत्वपूर्ण है क्योंकि असली पॉइंटर/रेफरेंस को सहेजने के लिए।
+  // Const के साथ चर नाम घोषित करने से यह सुनिश्चित होता है कि उन्हें भूल से पुनर-निर्धारित नहीं किया जाएगा।
   const ret = {};
 
-  // Some async function you are working with.
+  // आपके साथ काम कर रहे कुछ एसिंक फ़ंक्शन।
   loadDataFromSpace(function (data) {
 
-    // Loop through the properties in data.
+    // डेटा में गुणों में फ़ॉरच करें।
     for (let prop in data) {
       // Set the ret's properties to be the data's properties (cloning).
       // That is, update empty ret object with properties from received data.
@@ -74,59 +82,62 @@ p5.prototype.getData = function (callback) {
 };
 ```
 
-### Use **registerMethod()** and **unregisterMethod()** to register and unregister functions with _**p5**_ that should be called at various times.
+### registerMethod() और unregisterMethod() का उपयोग करके फ़ंक्शनों को p5 के साथ रजिस्टर और अनरजिस्टर करने के लिए।
 
   ```js
   p5.prototype.doRemoveStuff = function () { 
-    // library cleanup stuff
+  // लाइब्रेरी सफाई साफ-सफाई
   };
   p5.prototype.registerMethod('remove', p5.prototype.doRemoveStuff);
 
-  // Unregister the method when it's no longer needed.
+  // जब यह और आवश्यक नहीं हो, तो फिर मैथड को अनरजिस्टर करें।
   p5.prototype.unregisterMethod('remove', p5.prototype.doRemoveStuff);
   ```
 
-Method names you can register and unregister include the following list. Note that you may need to define the function before you register it.
+रजिस्टर और अनरजिस्टर करने के लिए आपके पास निम्नलिखित सूची के साथ फ़ंक्शन नाम हैं। ध्यान दें कि आपको फ़ंक्शन को पहले परिभाषित करना हो सकता है:
 
-  * **pre** — Called at the beginning of `draw()`. It can affect drawing.
-  * **post** — Called at the end of `draw()`.
-  * **remove** — Called when `remove()` is called.
-  * **init** — Called when the sketch is first initialized, just before the sketch initialization function (the one that was passed into the `p5` constructor) is executed. This is also called before any global mode setup, so your library can add anything to the sketch and it will automatically be copied to `window` if global mode is active.
-  * **beforePreload** — Called before the `preload()` function is executed.
-  * **afterPreload** — Called after the `preload()` function is executed.
-  * **beforeSetup** — Called before the `setup()` function is executed.
-  * **afterSetup** — Called after the `setup()` function is executed.
+  * **pre** — `draw()` के शुरुआत में कॉल किया जाता है। यह  चित्रण पर प्रभाव डाल सकता है।
+  * **post** — `draw()` के अंत में कॉल किया जाता है।
+  * **remove** — `remove()` को कॉल करने पर कॉल किया जाता है।
+  * **init** — स्केच को पहली बार शुरू करते समय कॉल किया जाता है, स्केच प्रारंभीकरण फ़ंक्शन (जो `p5` कंस्ट्रक्टर में पारित किया गया था) के निष्पादन से पहले। यह भी किसी भी वैश्विक मोड सेटअप से पहले कॉल किया जाता है, ताकि आपकी लाइब्रेरी स्केच में कुछ भी जोड़ सके और यदि वैश्विक मोड सक्रिय है तो यह स्वचालित रूप से `विंडो` में कॉपी हो जाए।
+  * **beforePreload** — `preload()` फ़ंक्शन के पहले कॉल किया जाता है।
+  * **afterPreload** — `preload()` फ़ंक्शन के बाद कॉल किया जाता है।
+  * **beforeSetup** — `setup()` फ़ंक्शन के पहले कॉल किया जाता है।
+  * **afterSetup** — `setup()` फ़ंक्शन के बाद कॉल किया जाता है।
 
-More to come shortly, lining up roughly with this list:
-https://GitHub.com/processing/processing/wiki/Library-Basics#library-methods
+जल्द ही इस सूची के साथ और भी आएगा: https://GitHub.com/processing/processing/wiki/Library-Basics#library-methods
 
 
-### You can also create your own classes.
-Your library may not extend p5 or p5 classes at all, but instead just offer extra classes that can be instantiated and used in conjunction with the library. Or it may do some mix of both.
+### आप अपनी खुद की classes भी बना सकते हैं।
 
-## Naming
-* **Don't overwrite p5 functions or properties.** When you are extending p5.prototype, be careful not to use the names of existing properties or functions. You can use [hasOwnProperty](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty) to test names. For example, the following line placed at the top of your library file will print true because the `rect()` method exists:
+आपकी लाइब्रेरी संभाल सकती है कि वह पूरी तरह से p5 या p5 classes को नहीं बढ़ाती है, बल्कि केवल उपयोगकर्ताओं को उससे संबंधित classes प्रदान करती है। या यह दोनों का मिश्रण कर सकती है।
+
+## नामकरण
+
+* **p5 फ़ंक्शन या गुण अधिरोहित न करें।** जब आप p5.prototype को विस्तारित कर रहे होते हैं, ध्यान दें कि आप मौजूदा गुणों या फ़ंक्शनों के नामों का उपयोग नहीं कर रहे हैं। आप [hasOwnProperty](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty) का उपयोग नामों की जांच के लिए कर सकते हैं। उदाहारण के लिए, निम्नलिखित लाइन आपके लाइब्रेरी फ़ाइल के शीर्ष में रखने पर सत्य प्रिंट करेगी क्योंकि `rect()` विधि मौजूद है:
+
 
   ```js
   console.log(p5.prototype.hasOwnProperty('rect'));
   ```
 
-* **Similarly, don't overwrite p5 class functions or properties.** If you are extending p5.Image, p5.Vector, p5.Element, etc, follow the same protocol as above.
+* **उसी तरह, p5 कक्षा के फ़ंक्शन या गुणों को अधिरोपित न करें।** यदि आप p5.Image, p5.Vector, p5.Element आदि को विस्तारित कर रहे हैं, तो उपर दिए गए प्रोटोकॉल का पालन करें।
 
-* **p5.js has two modes, global mode and instance mode.** In global mode, all p5 properties and methods are bound to the window object, allowing users to call methods like `background()` without having to prefix it with anything. However, this means you need to be careful not to overwrite native JavaScript functionality. You can test existing JS names by typing them into console or with a quick google search.
+* **p5.js के दो मोड होते हैं, ग्लोबल मोड और इंस्टेंस मोड।** ग्लोबल मोड में, सभी p5 गुण और विधियां विंडो ऑब्जेक्ट से जुड़ी होती हैं, जिससे उपयोगकर्ता को `background()` जैसी विधियों को किसी भी चीज़ के साथ प्रिफ़िक्स किए बिना बुलाने का सुविधानुसार कार्य कर सकता है। हालांकि, इसका मतलब है कि आपको सावधान रहना चाहिए कि आप प्राकृतिक JavaScript कार्यक्षमता को अधिरोपित नहीं कर रहे हैं। आप इसे कन्सोल में लिखकर या एक तेज़ गूगल सर्च के साथ मौजूद JS नामों का परीक्षण कर सकते हैं।
 
-* **Classes are typically capitalized, and methods and properties begin with lowercase.** Classes in p5 are prefixed with p5. We would like to keep this namespace for p5 core classes only, so when you create your own, **do not include the p5. prefix for class names**. You are welcome to create your own prefix, or just give them non-prefixed names.
+* **कक्षाएँ सामान्यत: मेज़केस, और विधियाँ छोटे अक्षरों से शुरू होती हैं।** p5 में कक्षाएँ p5 के साथ प्रारंभ होती हैं। हम चाहेंगे कि इस नामकक्ष को केवल p5 कोर कक्षाओं के लिए ही बनाए रखें, इसलिए जब आप अपने खुद के बना रहे हैं, **कृपया कक्षा नामों के लिए p5. प्रीफ़िक्स शामिल न करें।** आप अपना खुद का प्रीफ़िक्स बना सकते हैं, या उन्हें बिना प्रीफ़िक्स के नाम दे सकते हैं।
 
-* **p5.js library filenames are also prefixed with p5, but the next word is lowercase**, to distinguish them from classes. For example, p5.sound.js. You are encouraged to follow this format for naming your file.
+* **p5.js लाइब्रेरी फ़ाइलों का नाम भी p5 के साथ प्रीफ़िक्स के साथ है**, कक्षाओं से उन्हें भिन्न करने के लिए। उदाहरण के लिए, p5.sound.js। आपको अपनी फ़ाइलों के नाम को इसी प्रारूप का पालन करने के लिए प्रेरित किया जाता है।
 
 
-## Packaging
-* **Create a single JS file that contains your library.** This makes it easy for users to link it into their projects. You might also think about having options for both the normal JS file and a [minified](http://jscompress.com/) version for faster loading.
+## पैकेजिंग
 
-* **Contributed libraries are hosted, documented, and maintained by their creators.** This could be on GitHub, on a separate website, or somewhere else.
+* **एकल JS फ़ाइल बनाएं जिसमें आपकी पुस्तकालय हो।** इससे उपयोगकर्ताओं को इसे अपने परियोजनाओं में लिंक करना आसान होता है। आप एक सामान्य JS फ़ाइल और तेज लोडिंग के लिए [ मिनीफाइड ](http://jscompress.com/)संस्करण के लिएविकल्पों की भी सोच सकते हैं।
+  
+* **योगदानित पुस्तकालयें उनके निर्माताओं द्वारा होस्ट की जाती हैं, उनके द्वारा दस्तावेजित की जाती हैं, और उनका रखरखाव किया जाता है।** यह GitHub पर, एक अलग वेबसाइट पर, या कहीं और हो सकता है।
 
-* **Documentation is key!** The documentation for your library should be in some place easy to find for users that download and use your library. The documentation for contributed libraries will not be included in the main p5.js reference, but you may want to follow a similar format. See these examples of a [library overview page](http://p5js.org/reference/#/libraries/p5.sound), [class overview page](http://p5js.org/reference/#/p5.Vector), and [method page](http://p5js.org/reference/#/p5/arc).
+* **दस्तावेज़ीकरण महत्वपूर्ण है!** आपकी पुस्तकालय के लिए दस्तावेज़ सुबिधाजनक स्थान पर होना चाहिए ताकि उपयोगकर्ता जो पुस्तकालय डाउनलोड और उपयोग करते हैं, उन्हें आसानी से मिल सके। योगदानित पुस्तकालयों के लिए मुख्य p5.js संदर्भ में उनका वर्णन शामिल नहीं होगा, लेकिन आपको एक ही स्वरूप का पालन करना चाहिए। [यहां](http://p5js.org/reference/#/libraries/p5.sound) library का अवलोकन पृष्ठ, [ वर्ग का अवलोकन पृष्ठ](http://p5js.org/reference/#/p5.Vector), और [ विधि पृष्ठ](http://p5js.org/reference/#/p5/arc) के उदाहरण देखें।
 
-* **Examples are great, too!** They show people what your library can do. Because this is all JavaScript, people can see them running online before they download anything. [jsfiddle](http://jsfiddle.net/) and [codepen](http://codepen.io) are two great easy options for hosting examples.
+* **उदाहरण भी बढ़िया होते हैं!** वे लोगों को दिखाते हैं कि आपकी पुस्तकालय क्या कर सकती है। क्योंकि यह सब जावास्क्रिप्ट है, लोग उन्हें ऑनलाइन डाउनलोड करने से पहले ऑनलाइन देख सकते हैं। [jsfiddle](http://jsfiddle.net/) और [codepen](http://codepen.io) उदाहरण होस्ट करने के लिए दो शानदार विकल्प हैं।
 
-* **Let us know!** Once your library is ready for distribution, send an email to [hello@p5js.org](mailto:hello@p5js.org) with a link and some info. We'll include it on the [libraries page](http://p5js.org/libraries/)!
+* **हमें बताएं!** जब आपकी libraries वितरण के लिए तैयार हो जाए, [hello@p5js.org](mailto:hello@p5js.org) पर एक लिंक और कुछ जानकारी भेजें। हम इसे [libraries पृष्ठ](http://p5js.org/libraries/) में शामिल करेंगे!

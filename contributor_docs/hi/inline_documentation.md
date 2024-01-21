@@ -1,20 +1,22 @@
-# Adding inline documentation to p5.js
+#  p5.js में  इन - लाइन दस्तावेज़ जोड़ना
 
-By adding inline documentation in the p5.js source code, a reference can be automatically generated. This document outlines the tags and information to include in your documentation so that it shows up in the reference, formatted properly. The reference is auto-generated from the source code periodically, so it may take a few days for your documentation to show up in the reference. If it's been longer than a few days or you're having other problems email [hello@p5js.org](mailto:hello@p5js.org).
+पी5.js स्रोत कोड में इनलाइन दस्तावेज़ीकरण जोड़कर, संदर्भ स्वचालित रूप से उत्पन्न किया जा सकता है। इस दस्तावेज़ीकरण में शामिल करने के लिए टैग और जानकारी को सही रूप से स्वरूपित करने के लिए नीचे दिए गए हैं। दस्तावेज़ीकरण स्रोत कोड से स्वचालित रूप से निर्मित होता है, इसलिए आपके दस्तावेज़ीकरण को संदर्भ में दिखने में कुछ दिनों तक का समय लग सकता है। यदि कुछ दिनों से अधिक समय हो गया है या आपको अन्य समस्याएँ हो रही हैं, तो [hello@p5js.org](mailto:hello@p5js.org)g पर ईमेल करें।
 
-See below for the basics, more specifics about yuidoc style [here](http://yui.github.io/yuidoc/syntax/index.html). __Please limit line length to 80 columns, starting new lines when it runs over.__
+यहां बुनियादी जानकारी है, yuidoc स्टाइल के अधिक विशेषताएँ [यहां देखें](http://yui.github.io/yuidoc/syntax/index.html)। 
+**कृपया 80 कॉलम तक रेखा लंबी न करें, नई लाइनें शुरू करें जब यह चला जाए।**
 
-__[List of examples needed](https://github.com/processing/p5.js/issues/2865) (you can also view the most up to date list by building the library with grunt and looking at the log messages)__
+[आवश्यक उदाहरणों की सूची](https://github.com/processing/p5.js/issues/2865) (आप इस सूची को बना कर देख सकते हैं या लॉग संदेशों को ग्रंट के साथ पुनर्निर्माण करके सबसे अद्यतित सूची देख सकते हैं)
 
-## Specify element type and description
+## तत्व प्रकार और विवरण निर्दिष्ट करें
 
-There are 4 kinds of elements: `@class`, `@method`, `@property`, `@event`.
-You must specify one of these for the element to appear in the docs, with the name of the element after it. The description should appear on top. A few formatting tips:
-* You can use markdown syntax to format the description text. 
-* Any function, variable, or constant name should be `monospaced` by using single quotes on either side.
-* Double line breaks are recognized as new paragraphs. You do not need to insert `<br><br>` tags.
-* When possible, link to other files when mentioning other function or variable names. For example, you can see the preload method linked in the description for [loadImage](https://github.com/processing/p5.js/blob/main/src/image/loading_displaying.js#L21).
-* Here is [yuidoc's reference](http://yui.github.io/yuidoc/syntax/index.html#basic-requirements) for more syntax information.
+तत्व 4 प्रकार के होते हैं: `@class`, `@method`, `@property`, `@event`।
+दस्तावेज़ में तत्व को प्रदर्शित करने के लिए आपको इनमें से किसी एक को उसके बाद तत्व के नाम के साथ निर्दिष्ट करना होगा। विवरण शीर्ष पर दिखना चाहिए. कुछ स्वरूपण युक्तियाँ:
+
+*  आप विवरण पाठ को प्रारूपित करने के लिए मार्कडाउन सिंटैक्स का उपयोग कर सकते हैं।
+*  किसी भी फ़ंक्शन, वेरिएबल, या स्थिर नाम को दोनों तरफ सिंगल कोट्स का उपयोग करके `monospaced` किया जाना चाहिए।
+* डबल लाइन ब्रेक को नए पैराग्राफ के रूप में पहचाना जाता है। आपको `<br><br>` टैग डालने की आवश्यकता नहीं है।
+* जब संभव हो, अन्य फ़ंक्शन या वेरिएबल नामों का उल्लेख करते समय अन्य फ़ाइलों से लिंक करें। उदाहरण के लिए, आप [loadImage](https://github.com/processing/p5.js/blob/main/src/image/loading_displaying.js#L21) के विवरण में लिंक की गई प्रीलोड विधि देख सकते हैं।
+* अधिक सिंटैक्स जानकारी के लिए यहां [yuidoc का संदर्भ](http://yui.github.io/yuidoc/syntax/index.html#basic-requirements) है।
 
 ```js
    /**
@@ -59,44 +61,43 @@ You must specify one of these for the element to appear in the docs, with the na
    };
 ```
 
-## Specify parameters
+## पैरामीटर निर्दिष्ट करें
 
-For methods, any `@params` should be specified. They should not be formatted with spaces, tabs, etc, and should follow the standard:
-
+विधियों के लिए, कोई भी `@params` निर्दिष्ट किया जाना चाहिए। उन्हें रिक्त स्थान, टैब आदि के साथ स्वरूपित नहीं किया जाना चाहिए और मानक का पालन करना चाहिए:
 ```
 @param {type} name Description here, no problem how long.
 ```
 
-If the parameter is optional, add square brackets around the name:
+यदि पैरामीटर वैकल्पिक है, तो नाम के चारों ओर वर्गाकार कोष्ठक जोड़ें:
 
 ```
 @param {type} [name] Description here.
 ```
 
-If the parameter takes one or more values defined in [`constants.js`](https://github.com/processing/p5.js/blob/main/src/core/constants.js) ,
-then the type should be specified as `{Constant}` and the valid values should be enumerated in the comment following the `either` keyword, eg:
+यदि पैरामीटर [`constents.js`](https://github.com/processing/p5.js/blob/main/src/core/constents.js) में परिभाषित एक या अधिक मान लेता है,
+तो प्रकार को `{स्थिर}` के रूप में निर्दिष्ट किया जाना चाहिए और मान्य मानों को `दोनों में से किसी एक' कीवर्ड के बाद टिप्पणी में गिना जाना चाहिए, उदाहरण के लिए:
 
 ```
 @param {Constant} horizAlign horizontal alignment, either LEFT, CENTER, or RIGHT
 ```
 
-## Specify return type
+## रिटर्न प्रकार निर्दिष्ट करें
 
-The `@return` is identical to `@params`, but without the name. It should be the last element in `@method`. The JS types are: String, Number, Boolean, Object, Array, Null, and Undefined. If there is no return type, do not include `@return`. 
+`@return` `@params` के समान है, लेकिन नाम के बिना। यह `@method` में अंतिम तत्व होना चाहिए। JS प्रकार हैं: स्ट्रिंग, संख्या, बूलियन, ऑब्जेक्ट, ऐरे, नल और अपरिभाषित। यदि कोई रिटर्न प्रकार नहीं है, तो `@return` शामिल न करें।
 
 ```
 @return {type} Description of the data returned.
 ```
 
-If the method returns the parent object, you can skip the `@return` and add this line instead:
+यदि विधि मूल ऑब्जेक्ट लौटाती है, तो आप `@return` को छोड़ सकते हैं और इसके बजाय इस पंक्ति को जोड़ सकते हैं:
 
 ```
 @chainable
 ```
 
-## Additional signatures
+## अतिरिक्त हस्ताक्षर
 
-If a method has multiple possible parameter options, you can specify each individually. For example, see the examples for [background](http://p5js.org/reference/#p5/background) under "syntax". To do this, choose one version to list as the first signature using the guidelines above. At the end of the documentation block, you can add additional signatures, each in its own block, following the example below.
+यदि किसी विधि में एकाधिक संभावित पैरामीटर विकल्प हैं, तो आप प्रत्येक को व्यक्तिगत रूप से निर्दिष्ट कर सकते हैं। उदाहरण के लिए, "सिंटैक्स" के अंतर्गत [पृष्ठभूमि](http://p5js.org/reference/#p5/background) के उदाहरण देखें। ऐसा करने के लिए, उपरोक्त दिशानिर्देशों का उपयोग करके पहले हस्ताक्षर के रूप में सूचीबद्ध करने के लिए एक संस्करण चुनें। दस्तावेज़ीकरण ब्लॉक के अंत में, आप नीचे दिए गए उदाहरण का अनुसरण करते हुए, प्रत्येक अपने स्वयं के ब्लॉक में अतिरिक्त हस्ताक्षर जोड़ सकते हैं।
 
 ```js
 /**
@@ -114,15 +115,14 @@ If a method has multiple possible parameter options, you can specify each indivi
  */
 ```
 
-Notes:
-* If a parameter was given description previously, like `a` in this case, you do not need to rewrite its description again. 
-* It is not necessary to create a separate signature if the only difference between two signatures is the addition of an optional parameter.
-* You can see two examples of this inline in the source code for [background](https://github.com/processing/p5.js/blob/f38f91308fdacc2f1982e0430b620778fff30a5a/src/color/setting.js#L106) and [color](https://github.com/processing/p5.js/blob/f38f91308fdacc2f1982e0430b620778fff30a5a/src/color/creating_reading.js#L241).
+टिप्पणियाँ:
+* यदि किसी पैरामीटर का विवरण पहले दिया गया था, जैसे इस मामले में `a`, तो आपको उसके विवरण को दोबारा लिखने की आवश्यकता नहीं है।
+* यदि दो हस्ताक्षरों के बीच एकमात्र अंतर वैकल्पिक पैरामीटर जोड़ने का है तो अलग हस्ताक्षर बनाना आवश्यक नहीं है।
+* आप इस इनलाइन के दो उदाहरण [बैकग्राउंड](https://github.com/processing/p5.js/blob/f38f91308fdacc2f1982e0430b620778fff30a5a/src/color/setting.js#L106) और [color](https://github.com/processing/p5.js/blob/f38f91308fdacc2f1982e0430b620778fff30a5a/src/color/creating_reading.js#L241) के सोर्स कोड में देख सकते हैं। 
 
-## Specify other tags
+## अन्य टैग निर्दिष्ट करें
 
-Use `@final` if a property or variable is a constant:
-
+यदि कोई गुण या चर एक स्थिरांक है तो `@final` का उपयोग करें:
 ```js
     /**
      * PI is a mathematical constant with the value 3.14159265358979323846.
@@ -133,7 +133,8 @@ Use `@final` if a property or variable is a constant:
     PI: PI
 ```
 
-Use `@private` if a property or variable is a private variable (default is `@public` so no need to specify).
+
+यदि कोई संपत्ति या वैरिएबल एक निजी वैरिएबल है तो `@private` का उपयोग करें (डिफ़ॉल्ट `@public` है इसलिए निर्दिष्ट करने की कोई आवश्यकता नहीं है)।
 
 ```js
     /**
@@ -145,9 +146,9 @@ Use `@private` if a property or variable is a private variable (default is `@pub
      p5.prototype._start = function () {
 ```
 
-## Specify module for files
+## फ़ाइलों के लिए मॉड्यूल निर्दिष्ट करें
 
-The top of each *file* should contain a `@module` tag. Modules should correspond to JavaScript files (or require.js modules). They can work as groups in the lists of items. See [here](https://p5js.org/reference/#collection-list-nav) (the modules are COLOR, IMAGE, IO, PVECTOR, etc.). 
+प्रत्येक *फ़ाइल* के शीर्ष पर एक `@मॉड्यूल` टैग होना चाहिए। मॉड्यूल को जावास्क्रिप्ट फ़ाइलों (या require.js मॉड्यूल) के अनुरूप होना चाहिए। वे वस्तुओं की सूची में समूह के रूप में काम कर सकते हैं। [यहां देखें](https://p5js.org/reference/#collection-list-nav) (मॉड्यूल रंग, छवि, IO, PVECTOR, आदि हैं)।
 
 ```js
 /**
@@ -161,7 +162,7 @@ define(function (require) {
 
 ## Constructors
 
-Constructors are defined with `@class`. Each constructor should have the tag `@class` followed by the name of the class, as well as the tag `@constructor`, and any `@param` tags required.
+Constructors को `@class` से परिभाषित किया गया है। प्रत्येक कंस्ट्रक्टर के पास टैग `@class` होना चाहिए जिसके बाद क्लास का नाम, साथ ही टैग `@constructor`, और कोई भी `@param` टैग होना चाहिए।
 
 ```js
   /**
@@ -176,11 +177,11 @@ Constructors are defined with `@class`. Each constructor should have the tag `@c
    }
 ```
 
-## Adding code samples
+## कोड नमूने जोड़ना
 
-You can add code samples with `@example`. Code samples should be placed between `<code></code>` tags with comments included. Please review the [documentation style guide](./documentation_style_guide.md) for more information on style.
+आप `@example` के साथ कोड नमूने जोड़ सकते हैं। कोड नमूने `<code></code>` टैग के बीच रखे जाने चाहिए जिनमें टिप्पणियाँ भी शामिल हों। शैली पर अधिक जानकारी के लिए कृपया [दस्तावेज़ीकरण शैली मार्गदर्शिका](./documentation_style_guide.md) की समीक्षा करें।
 
-Unless otherwise specified with a `setup()` function, each `<code>` block is automatically run on a canvas of 100x100 pixels with a gray background. If your code sample creates other HTML elements apart from the canvas, they will be rendered with a width of 100 pixels.
+जब तक अन्यथा `setup()` फ़ंक्शन के साथ निर्दिष्ट न किया जाए, प्रत्येक `<code>` ब्लॉक स्वचालित रूप से ग्रे पृष्ठभूमि के साथ 100x100 पिक्सेल के कैनवास पर चलता है। यदि आपका कोड नमूना कैनवास के अलावा अन्य HTML तत्व बनाता है, तो उन्हें 100 पिक्सेल की चौड़ाई के साथ प्रस्तुत किया जाएगा।
 
 ```
 @example
@@ -196,9 +197,9 @@ describe('A shattered outline of an ellipse created using four arcs.');
 </div>
 ```
 
-You can have multiple examples for one function, just make sure you have only
-one `@example` followed by each example having its own `<div>` wrapping separated
-by a line break. 
+आपके पास एक फ़ंक्शन के लिए कई उदाहरण हो सकते हैं, बस सुनिश्चित करें कि आपके पास केवल हैं
+एक `@example` जिसके बाद प्रत्येक उदाहरण की अपनी `<div>` रैपिंग अलग हो गई है
+एक लाइन ब्रेक से.
 
 ```
 @example
@@ -217,7 +218,7 @@ describe('The bottom half of an ellipse created using arc.');
 </div>
 ```
 
-If you do not want the example to execute your code (i.e. you just want the code to show up), include the class `"norender"` in the `<div>`:
+यदि आप नहीं चाहते कि उदाहरण आपके कोड को निष्पादित करे (यानी आप चाहते हैं कि कोड केवल दिखे), तो `"norender"` वर्ग को `<div>` में शामिल करें:
 ```
 @example
 <div class="norender">
@@ -228,7 +229,7 @@ describe('ellipse created using arc with its top right open');
 </div>
 ```
 
-If you do not want the example to be run as part of the build tests (for example, if the example requires user interaction, or uses functionality not supported by the headless-Chrome test framework), include the class `"notest"` in the `<div>`:
+यदि आप नहीं चाहते कि उदाहरण को बिल्ड परीक्षणों के भाग के रूप में चलाया जाए (उदाहरण के लिए, यदि उदाहरण के लिए उपयोगकर्ता इंटरैक्शन की आवश्यकता है, या हेडलेस-क्रोम परीक्षण ढांचे द्वारा समर्थित कार्यक्षमता का उपयोग नहीं करता है), तो वर्ग `"नोटेस्ट"` को शामिल करें `<div>` :
 
 ```
 @example
@@ -239,11 +240,11 @@ function setup() {
 }
 </code></div>
 ```
+यदि आपको बाहरी संपत्ति फ़ाइलों से लिंक करने की आवश्यकता है, तो उन्हें [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) में डालें और फिर उन्हें कोड में "assets/filename.ext" के साथ लिंक करें। [टिंट उदाहरण](http://p5js.org/reference/#/p5/tint) देखें।
 
-If you need to link to external asset files, put them in [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) and then link to them with "assets/filename.ext" in the code. See the [tint example](http://p5js.org/reference/#/p5/tint).
 
-### Add a canvas description using describe()
-Finally, for every example you add, you are required to use the p5.js function `describe()` in the example to create a screen-reader accessible description for the canvas. Include only one parameter: a string with a brief description of what is happening on the canvas. Do NOT add a second parameter.
+### वर्णन () का उपयोग करके एक कैनवास विवरण जोड़ें
+अंत में, आपके द्वारा जोड़े गए प्रत्येक उदाहरण के लिए, आपको कैनवास के लिए स्क्रीन-रीडर सुलभ विवरण बनाने के लिए उदाहरण में p5.js फ़ंक्शन `describe()` का उपयोग करना आवश्यक है। केवल एक पैरामीटर शामिल करें: कैनवास पर क्या हो रहा है इसका संक्षिप्त विवरण वाली एक स्ट्रिंग। दूसरा पैरामीटर न जोड़ें.
 ```
 @example
 <div>
@@ -275,9 +276,10 @@ function draw() {
 </div>
 
 ```
-For more on `describe()` visit the [web accessibility contributor docs](https://p5js.org/contributor-docs/#/web_accessibility?id=user-generated-accessible-canvas-descriptions).
+`वर्णन()` पर अधिक जानकारी के लिए [वेब एक्सेसिबिलिटी योगदानकर्ता दस्तावेज़](https://p5js.org/contributor-docs/#/web_accessibility?id=user-generated-accessible-canvas-descriptions) पर जाएं।
 
-Previous documentation guidelines required adding [alt-text](https://moz.com/learn/seo/alt-text) to create screen-reader accessible canvas description. THIS IS NO LONGER RECOMMENDED. ALWAYS USE `describe()`. Previously, alt-text was added with the tag `@alt` at the end of all of the examples for a given function (not an individual `@alt` tag under each), and an added a line break to separate the descriptions for multiple examples. 
+पिछले दस्तावेज़ दिशानिर्देशों में स्क्रीन-रीडर सुलभ कैनवास विवरण बनाने के लिए [alt-text](https://moz.com/learn/seo/alt-text) जोड़ने की आवश्यकता थी। अब इसकी अनुशंसा नहीं की जाती. हमेशा `वर्णन()` का प्रयोग करें। पहले, किसी दिए गए फ़ंक्शन के लिए सभी उदाहरणों के अंत में `@alt` टैग के साथ ऑल्ट-टेक्स्ट जोड़ा गया था (प्रत्येक के तहत एक व्यक्तिगत `@alt` टैग नहीं), और विवरण को अलग करने के लिए एक लाइन ब्रेक जोड़ा गया था एकाधिक उदाहरण.
+
 ```
 @example
 <div>
@@ -311,21 +313,24 @@ vertical line moves left to right with updating noise values.
 horizontal wave pattern effected by mouse x-position & updating noise values.
 ```
 
-## Template for methods
-Here is an example for a well-documented method. To create a new method, you can use [this template](https://github.com/processing/p5.js/tree/main/contributor_docs/method.example.js). Replace the text with your method's variables and remove the remaining ones.
+## तरीकों के लिए टेम्पलेट
+यहां एक अच्छी तरह से प्रलेखित विधि का एक उदाहरण दिया गया है। एक नई विधि बनाने के लिए, आप [इस टेम्पलेट](https://github.com/processing/p5.js/tree/main/contributor_docs/method.example.js) का उपयोग कर सकते हैं। टेक्स्ट को अपनी विधि के वेरिएबल से बदलें और शेष को हटा दें।
 
 ![Image showing inline documentation example for methods](https://raw.githubusercontent.com/processing/p5.js/main/contributor_docs/images/method-template-example.png)
 
 
-## Generating documentation
+## दस्तावेज़ तैयार करना
 
-* Run `npm run docs` once first to generate all local files needed, as well as a copy of the reference from the source code. Run it again anytime you make changes to the core JS files behind the yuidoc reference page. These are changes in files located in the yuidoc-p5-theme folder, NOT inline documentation changes to src.
-* If you only made changes to the source code, you can just run `npm run grunt yui`, though `npm run grunt yui:build` will also do the trick. 
-* You can run `npm run docs:dev` to launch a live preview of the site that will update each time you make changes. (You will need to refresh the page after making changes to see them appear.)
+* सभी आवश्यक स्थानीय फ़ाइलों के साथ-साथ स्रोत कोड से संदर्भ की एक प्रति उत्पन्न करने के लिए पहले एक बार `npm run docs` चलाएँ। जब भी आप yuidoc संदर्भ पृष्ठ के पीछे कोर JS फ़ाइलों में परिवर्तन करें तो इसे फिर से चलाएँ। ये yuidoc-p5-थीम फ़ोल्डर में स्थित फ़ाइलों में परिवर्तन हैं, src में इनलाइन दस्तावेज़ परिवर्तन नहीं हैं।
+  
+* यदि आपने केवल स्रोत कोड में परिवर्तन किया है, तो आप केवल `npm run grunt yui` चला सकते हैं, हालाँकि `npm run grunt yui:build` भी काम करेगा। 
+  
+* आप साइट का लाइव पूर्वावलोकन लॉन्च करने के लिए `npm run docs:dev` चला सकते हैं जो आपके द्वारा हर बार बदलाव करने पर अपडेट हो जाएगा। (परिवर्तन करने के बाद उन्हें प्रदर्शित करने के लिए आपको पृष्ठ को ताज़ा करना होगा।)
 
-The build reference can be found in docs/reference. To preview it locally, run `npm run grunt yui:dev` and view it as http://localhost:9001/docs/reference/.
+बिल्ड संदर्भ दस्तावेज़/संदर्भ में पाया जा सकता है। इसे स्थानीय रूप से पूर्वावलोकन करने के लिए, `npm run grunt yui:dev` चलाएँ और इसे http://localhost:9001/docs/reference/ के रूप में देखें।
 
 
-## Spanish language version
 
-The [Spanish version](http://p5js.org/es/reference) is created a little differently. Here are [instructions](https://github.com/processing/p5.js-website/blob/main/contributor_docs/i18n_contribution.md) to update this material.
+## स्पेनिश भाषा संस्करण
+
+[स्पेनिश संस्करण](http://p5js.org/es/reference) थोड़ा अलग तरीके से बनाया गया है। इस सामग्री को अद्यतन करने के लिए यहां [निर्देश](https://github.com/processing/p5.js-website/blob/main/contributor_docs/i18n_contribution.md) हैं।

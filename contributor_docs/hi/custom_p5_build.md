@@ -1,14 +1,14 @@
-# Creating a custom build of p5.js with select components
+# चुनिंदा घटकों के साथ p5.js का एक कस्टम बिल्ड बनाना
 
-## Overview
+## अवलोकन
 
-An excellent new [feature](https://github.com/processing/p5.js/pull/2051) of p5.js allows user to build p5.js as a custom combination of its modules. This greatly helps in reducing the production version size of the library, as well as improves overall performance.
+p5.js का एक उत्कृष्ट नया [फ़ीचर](https://github.com/processing/p5.js/pull/2051) उपयोगकर्ता को इसके मॉड्यूल के कस्टम संयोजन के रूप में p5.js बनाने की अनुमति देता है। यह लाइब्रेरी के उत्पादन संस्करण के आकार को कम करने में बहुत मदद करता है, साथ ही समग्र प्रदर्शन में सुधार करता है।
 
-This feature was suggested as a part of a proposal for Google Summer of Code 2017.
+यह सुविधा Google Summer of Code 2017 के प्रस्ताव के एक भाग के रूप में सुझाई गई थी।
 
-## Usage
+## उपयोग
 
-Currently, the usage is through invoking a Grunt task manually from the command line:
+वर्तमान में, उपयोग कमांड लाइन से मैन्युअल रूप से ग्रंट कार्य को लागू करने के माध्यम से होता है:
 
 ```sh
 git clone https://github.com/processing/p5.js.git
@@ -18,11 +18,11 @@ npm run grunt
 npm run grunt combineModules:module_x:module_y
 ```
 
-Here, `module_n` refers to the name of the modules which you want to select. Multiple modules must be passed as shown above. Also, these modules must have the same name as their folders in `/src` directory to work correctly. While `core` is included by default, `core/shape` needs to be included for shapes like line() and other core features to work.
+यहां, `module_n` उन मॉड्यूल के नाम को संदर्भित करता है जिन्हें आप चुनना चाहते हैं। जैसा कि ऊपर दिखाया गया है, एकाधिक मॉड्यूल पारित किए जाने चाहिए। साथ ही, सही ढंग से काम करने के लिए इन मॉड्यूल का नाम `/src` निर्देशिका में उनके फ़ोल्डरों के समान होना चाहिए। जबकि `कोर` को डिफ़ॉल्ट रूप से शामिल किया गया है, `कोर/शेप` को काम करने के लिए लाइन() और अन्य मुख्य विशेषताओं जैसे आकारों के लिए शामिल करने की आवश्यकता है।
 
-The above usage example will likely output a `p5Custom.js` larger than the complete `p5.min.js` as the output is not minified using the `uglify` task.
+उपरोक्त उपयोग उदाहरण संभवतः पूर्ण `p5.min.js` से बड़ा `p5Custom.js` आउटपुट देगा क्योंकि `uglify` कार्य का उपयोग करके आउटपुट को छोटा नहीं किया गया है।
 
-The recommended steps to reduce bundle size as much as possible are:
+बंडल आकार को यथासंभव कम करने के लिए अनुशंसित कदम हैं:
 
 ```sh
 git clone https://github.com/processing/p5.js.git
@@ -32,13 +32,13 @@ npm run grunt
 npm run grunt combineModules:min:module_x:module_y uglify
 ```
 
-## Examples
+## उदाहरण
 
-- `npm run grunt combineModules:min:core/shape:color:math:image uglify`  
-  Generates a `p5Custom.min.js` bundle in the `lib/modules` directory with the combineModules and uglify tasks. Note that modules should be listed after `combineModules:min` and the `uglify` task should have a space after the modules list.
+- `एनपीएम रन ग्रंट कंबाइनमॉड्यूल: न्यूनतम: कोर/आकार: रंग: गणित: छवि बदसूरत`
+  CombinModules और uglify कार्यों के साथ `lib/modules` निर्देशिका में एक `p5Custom.min.js` बंडल बनाता है। ध्यान दें कि मॉड्यूल को `combineModules:min` के बाद सूचीबद्ध किया जाना चाहिए और `uglify` कार्य में मॉड्यूल सूची के बाद एक स्थान होना चाहिए।
 
-- `npm run grunt combineModules:core/shape:color:math:image`  
-  Generates a non-minified `p5Custom.js` bundle in the `lib/modules` directory.
+- `एनपीएम रन ग्रंट कंबाइन मॉड्यूल्स: कोर/शेप: कलर: मैथ: इमेज`
+  `lib/modules` निर्देशिका में एक गैर-मिनिफाइड `p5Custom.js` बंडल उत्पन्न करता है।
 
-- `npm run grunt combineModules:min:core/shape:color:math:image`  
-  Generates a `p5Custom.pre-min.js` in the `lib/modules` directory with the `combineModules:min` task. Note that in this example `npm run grunt uglify` can be run separately after running the `combineModules:min` task.
+- `एनपीएम रन ग्रंट कंबाइनमॉड्यूल: न्यूनतम: कोर/आकार: रंग: गणित: छवि`
+  `CombineModules:min` कार्य के साथ `lib/modules` निर्देशिका में `p5Custom.pre-min.js` उत्पन्न करता है। ध्यान दें कि इस उदाहरण में `npm run grunt uglify` को `combineModules:min` कार्य चलाने के बाद अलग से चलाया जा सकता है।

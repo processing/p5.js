@@ -1,42 +1,53 @@
-# p5.js Web Accessibility
 
-This document describes the structure of the web accessibility features of p5.js for contributors and maintainers—and any other interested parties. If you're interested in making your sketches [screen reader](https://en.wikipedia.org/wiki/Screen_reader) accessible, visit the [tutorial](https://p5js.org/learn) or if you want to use p5.js with a screen reader visit the [Using p5.js with a Screen Reader tutorial](https://p5js.org/learn/p5-screen-reader.html).
+# p5.js वेब एक्सेसिबिलिटी
 
-## Overview
+यह दस्तावेज़ योगदानकर्ताओं और अनुरक्षकों और किसी भी अन्य इच्छुक पार्टियों के लिए p5.js की वेब एक्सेसिबिलिटी सुविधाओं की संरचना का वर्णन करता है। यदि आप अपने स्केच [स्क्रीन रीडर](https://en.wikipedia.org/wiki/Screen_reader) को सुलभ बनाने में रुचि रखते हैं, तो [ट्यूटोरियल](https://p5js.org/learn) पर जाएं या यदि आप चाहें तो स्क्रीन रीडर के साथ p5.js का उपयोग करने के लिए [स्क्रीन रीडर ट्यूटोरियल के साथ p5.js का उपयोग करना](https://p5js.org/learn/p5-screen-reader.html) पर जाएं।
 
-Because the canvas HTML element is a bitmap and does not provide any screen reader accessible information on the shapes drawn on it, p5.js has several functions that make the canvas more accessible to screen readers.
+## अवलोकन
 
-Currently, p5.js supports library generated screen reader accessible outputs for basic shapes on the canvas (with `textOutput()` and `gridOutput()`) and user-generated screen reader accessible descriptions of canvas content (with `describe()` and `describeElement()`).
+क्योंकि कैनवास HTML तत्व एक बिटमैप है और उस पर खींची गई आकृतियों पर किसी भी स्क्रीन रीडर तक पहुंच योग्य जानकारी प्रदान नहीं करता है, p5.js में कई फ़ंक्शन हैं जो कैनवास को स्क्रीन रीडर्स के लिए अधिक सुलभ बनाते हैं।
 
-## Library generated accessible outputs for basic shapes
+वर्तमान में, p5.js कैनवास पर मूल आकृतियों के लिए लाइब्रेरी द्वारा निर्मित स्क्रीन रीडर सुलभ आउटपुट का समर्थन करता है (`textOutput()` और `gridOutput()` के साथ) और उपयोगकर्ता-जनित स्क्रीन रीडर कैनवास सामग्री के सुलभ विवरण (`describe()` के साथ) का समर्थन करता है और `describeElement()`।
 
-Supported accessible outputs for basic shapes include text and grid outputs. 
+## लाइब्रेरी ने बुनियादी आकृतियों के लिए सुलभ आउटपुट तैयार किए
 
-`textOutput()` creates a screen reader accessible output that describes the shapes present on the canvas. The general description of the canvas includes canvas size, canvas color, and number of elements in the canvas (example: 'Your output is a, 400 by 400 pixels, lavender blue canvas containing the following 4 shapes:'). This description is followed by a list of shapes where the color, position, and area of each shape are described (example: "orange ellipse at top left covering 1% of the canvas"). Each element can be selected to get more details. A table of elements is also provided. In this table, shape, color, location, coordinates and area are described (example: "orange ellipse location=top left area=2"). 
+बुनियादी आकृतियों के लिए समर्थित सुलभ आउटपुट में टेक्स्ट और ग्रिड आउटपुट शामिल हैं।
 
-`gridOutput()` lays out the content of the canvas in the form of a grid (html table) based on the spatial location of each shape. A brief description of the canvas is available before the table output. This description includes: color of the background, size of the canvas, number of objects, and object types (example: "lavender blue canvas is 200 by 200 and contains 4 objects - 3 ellipses 1 rectangle"). The grid describes the content spatially, each element is placed on a cell of the table depending on its position. Within each cell an element the color and type of shape of that element are available (example: "orange ellipse"). These descriptions can be selected individually to get more details. A list of elements where shape, color, location, and area are described (example: "orange ellipse location=top left area=1%") is also available. 
+`textOutput()` एक स्क्रीन रीडर सुलभ आउटपुट बनाता है जो कैनवास पर मौजूद आकृतियों का वर्णन करता है। कैनवास के सामान्य विवरण में कैनवास का आकार, कैनवास का रंग और कैनवास में तत्वों की संख्या शामिल है (उदाहरण: 'आपका आउटपुट 400 x 400 पिक्सेल, लैवेंडर नीला कैनवास है जिसमें निम्नलिखित 4 आकृतियाँ हैं:')। इस विवरण के बाद आकृतियों की एक सूची दी गई है जहां प्रत्येक आकृति के रंग, स्थिति और क्षेत्र का वर्णन किया गया है (उदाहरण: "ऊपर बाईं ओर नारंगी दीर्घवृत्त कैनवास के 1% को कवर करता है")। अधिक विवरण प्राप्त करने के लिए प्रत्येक तत्व का चयन किया जा सकता है। तत्वों की एक तालिका भी प्रदान की गई है। इस तालिका में आकार, रंग, स्थान, निर्देशांक और क्षेत्र का वर्णन किया गया है (उदाहरण: "नारंगी दीर्घवृत्त स्थान = शीर्ष बाएँ क्षेत्र = 2")।
 
-If a user passes `LABEL` as a parameter in either of these functions, an additional div with the output adjacent to the canvas is created, this is useful for non-screen reader users that might want to display the output outside of the canvas' sub DOM as they code. However, using `LABEL` will create unnecessary redundancy for screen reader users. We recommend using `LABEL` only as part of the development process of a sketch and removing it before publishing or sharing your sketch with screen reader users.
+`ग्रिडआउटपुट()` प्रत्येक आकृति के स्थानिक स्थान के आधार पर कैनवास की सामग्री को ग्रिड (एचटीएमएल तालिका) के रूप में प्रस्तुत करता है। तालिका आउटपुट से पहले कैनवास का संक्षिप्त विवरण उपलब्ध है। इस विवरण में शामिल हैं: पृष्ठभूमि का रंग, कैनवास का आकार, वस्तुओं की संख्या और वस्तु प्रकार (उदाहरण: "लैवेंडर नीला कैनवास 200 गुणा 200 है और इसमें 4 वस्तुएं हैं - 3 दीर्घवृत्त 1 आयत")। ग्रिड स्थानिक रूप से सामग्री का वर्णन करता है, प्रत्येक तत्व को उसकी स्थिति के आधार पर तालिका के एक सेल पर रखा जाता है। प्रत्येक कोशिका में एक तत्व का रंग और उस तत्व के आकार का प्रकार उपलब्ध होता है (उदाहरण: "नारंगी दीर्घवृत्त")। अधिक विवरण प्राप्त करने के लिए इन विवरणों को व्यक्तिगत रूप से चुना जा सकता है। तत्वों की एक सूची जहां आकार, रंग, स्थान और क्षेत्र का वर्णन किया गया है (उदाहरण: "नारंगी दीर्घवृत्त स्थान = शीर्ष बायां क्षेत्र = 1%)" भी उपलब्ध है।
+
+यदि कोई उपयोगकर्ता इनमें से किसी भी फ़ंक्शन में `LABEL` को एक पैरामीटर के रूप में पास करता है, तो कैनवास के निकट आउटपुट के साथ एक अतिरिक्त div बनाया जाता है, यह गैर-स्क्रीन रीडर उपयोगकर्ताओं के लिए उपयोगी है जो कैनवास के बाहर आउटपुट प्रदर्शित करना चाहते हैं।' जैसे ही वे कोड करते हैं सब DOM। हालाँकि, `LABEL` का उपयोग करने से स्क्रीन रीडर उपयोगकर्ताओं के लिए अनावश्यक अतिरेक पैदा हो जाएगा। हम केवल स्केच की विकास प्रक्रिया के हिस्से के रूप में `LABEL` का उपयोग करने और स्क्रीन रीडर उपयोगकर्ताओं के साथ अपना स्केच प्रकाशित करने या साझा करने से पहले इसे हटाने की सलाह देते हैं।
  
-### Outputs structure
-Although `textOutput()` and `gridOutput()` are located in [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js), the outputs are created and updated using functions distributed across the library. This section details the different functions that support the accessible outputs.
+### आउटपुट संरचना
+हालाँकि `textOutput()` और `gridOutput()` [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js) में स्थित हैं ), आउटपुट लाइब्रेरी में वितरित फ़ंक्शंस का उपयोग करके बनाए और अपडेट किए जाते हैं। यह अनुभाग उन विभिन्न कार्यों का विवरण देता है जो सुलभ आउटपुट का समर्थन करते हैं।
 
 #### outputs.js
-[src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js) includes the core functions that create the accessible outputs:
-* `textOutput()`: This function activates the text output by setting `this._accessibleOutputs.text` to `true` and calling `_createOutput('textOutput', 'Fallback')`. If `LABEL` is passed as a parameter the function also activates the text output label by setting `this._accessibleOutputs.textLabel` as `true` and calls `_createOutput('textOutput', 'Label')` for the label.
-* `gridOutput()`: This function activates the grid output by setting `this._accessibleOutputs.grid` to `true` and calling `_createOutput('gridOutput', 'Fallback')`. If `LABEL` is passed as a parameter the function also activates the grid output label by setting `this._accessibleOutputs.textLabel` as `true` and calls `_createOutput('gridOutput', 'Label')` for the label.
-* `_createOutput()`: This function creates the HTML structure for all accessible outputs. Depending on the type and display of the outputs the HTML structure created varies. The function also initializes `this.ingredients` which stores all the data for the outputs including: shapes, colors, and pShapes (which stores a string of the previous shapes of the canvas). It also creates `this.dummyDOM` if it doesn't exist. `this.dummyDOM` stores the HTMLCollection of DOM elements inside of `<body>`.
-* `_updateAccsOutput()`: Is called at the end of `setup()` and `draw()` if using accessibleOutputs. if `this.ingredients` is different than the current outputs, this function calls the update functions of outputs(`_updateGridOutput` and `_updateTextOutput`). Calling this function only at the end of `setup()` and `draw()` as well as only calling `_updateGridOutput` and `_updateTextOutput` only when the ingredients are different helps avoid overwhelming the screen reader.
-* `_addAccsOutput()`: This function returns true when accessibleOutputs are true.
-* `_accsBackground()`: Is called at the end of `background()`. It resets  `this.ingredients.shapes` and if the color of the background is different than before it calls `_rgbColorName()` to get the name of the color and store it in `this.ingredients.colors.background`
-* `_accsCanvasColors()`: Is called at the end of fill() and stroke(). This function updates the fill and stroke colors by saving them in `this.ingredients.colors.fill` and `this.ingredients.colors.stroke`. It also calls `_rgbColorName()` to get the names of the colors.
-* `_accsOutput()`: Builds `this.ingredients.shapes` which includes all the shapes that are used for creating the outputs. This function is called at the end of the basic shape functions (see accessible output beyond src/accessibility). Depending on the shape that calls it, `_accsOutput()` may call helper functions to gather all the information about that shape that will be needed to create the outputs. These functions, which are not part of the prototype, include:
-  * `_getMiddle()`: Returns the middle point or centroid of rectangles, arcs, ellipses, triangles, and quadrilaterals.
-  * `_getPos()`: Returns the position of a shape on the canvas (e.g.: 'top left', 'mid right').
-  * `_canvasLocator()`: Returns location of the shape on a 10*10 grid mapped to the canvas.
-  * `_getArea()`: Returns the area of the shape as a percentage of the canvas' total area.
+[src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js) इसमें मुख्य कार्य शामिल हैं जो सुलभ आउटपुट बनाते हैं:
+
+* `textOutput()`: यह फ़ंक्शन `this._accessibleOutputs.text` को `true` पर सेट करके और `_createOutput('textOutput', 'Fallback')` को कॉल करके टेक्स्ट आउटपुट को सक्रिय करता है। यदि `LABEL` को एक पैरामीटर के रूप में पारित किया जाता है तो फ़ंक्शन `this._accessibleOutputs.textLabel` को `true` के रूप में सेट करके टेक्स्ट आउटपुट लेबल को भी सक्रिय करता है और लेबल के लिए `_createOutput('textOutput', 'Label')` को कॉल करता है।
+  
+* `gridOutput()`: यह फ़ंक्शन `this._accessibleOutputs.grid` को `true` पर सेट करके और `_createOutput('gridOutput', 'Fallback')` को कॉल करके ग्रिड आउटपुट को सक्रिय करता है। यदि `LABEL` को एक पैरामीटर के रूप में पारित किया जाता है, तो फ़ंक्शन `this._accessibleOutputs.textLabel` को `true` के रूप में सेट करके ग्रिड आउटपुट लेबल को भी सक्रिय करता है और लेबल के लिए `_createOutput('gridOutput', 'Label')` को कॉल करता है।
+  
+* `_createOutput()`: यह फ़ंक्शन सभी पहुंच योग्य आउटपुट के लिए HTML संरचना बनाता है। आउटपुट के प्रकार और प्रदर्शन के आधार पर बनाई गई HTML संरचना भिन्न होती है। फ़ंक्शन `this.ingredients` को भी आरंभ करता है जो आउटपुट के लिए सभी डेटा को संग्रहीत करता है जिसमें शामिल हैं: आकार, रंग और pShapes (जो कैनवास के पिछले आकार की एक स्ट्रिंग को संग्रहीत करता है)। यदि यह मौजूद नहीं है तो यह `this.dummyDOM` भी बनाता है। `this.dummyDOM` `<body>` के अंदर DOM तत्वों के HTMLCollection को संग्रहीत करता है।
+  
+* `_updateAccsOutput()`: accessibleOutputs का उपयोग करने पर इसे `setup()` और `draw()` के अंत में कॉल किया जाता है। यदि `this.ingredients` वर्तमान आउटपुट से भिन्न है, तो यह फ़ंक्शन आउटपुट (`_updateGridOutput` और `_updateTextOutput`) के अपडेट फ़ंक्शन को कॉल करता है। इस फ़ंक्शन को केवल `setup()` और `draw()` के अंत में कॉल करने के साथ-साथ केवल `_updateGridOutput` और `_updateTextOutput` को केवल तभी कॉल करने पर जब सामग्री अलग-अलग हो, स्क्रीन रीडर पर दबाव डालने से बचने में मदद मिलती है।
+  
+* `_addAccsOutput()`: जब accessableOutputs सत्य होते हैं तो यह फ़ंक्शन सत्य लौटाता है।
+  
+* `_accsBackground()`: इसे `background()` के अंत में कहा जाता है। यह `this.ingredients.shapes` को रीसेट करता है और यदि पृष्ठभूमि का रंग पहले से अलग है तो यह रंग का नाम प्राप्त करने और इसे `this.ingredients.colors.background` में संग्रहीत करने के लिए `_rgbColorName()` को कॉल करता है।
+  
+* `_accsCanvasColors()`: भरण() और स्ट्रोक() के अंत में कहा जाता है। यह फ़ंक्शन भरण और स्ट्रोक रंगों को `this.ingredients.colors.fill` और `this.ingredients.colors.stroke` में सहेजकर अद्यतन करता है। यह रंगों के नाम प्राप्त करने के लिए `_rgbColorName()` को भी कॉल करता है।
+  
+* `_accsOutput()`: `this.ingredients.shapes` बनाता है जिसमें आउटपुट बनाने के लिए उपयोग की जाने वाली सभी आकृतियाँ शामिल होती हैं। इस फ़ंक्शन को मूल आकार फ़ंक्शन के अंत में कॉल किया जाता है (src/accessibility से परे एक्सेसिबल आउटपुट देखें)। इसे कॉल करने वाले आकार के आधार पर, `_accsOutput()` उस आकार के बारे में सारी जानकारी इकट्ठा करने के लिए सहायक फ़ंक्शन को कॉल कर सकता है जो आउटपुट बनाने के लिए आवश्यक होगी। ये फ़ंक्शन, जो प्रोटोटाइप का हिस्सा नहीं हैं, में शामिल हैं:
+  
+  * `_getMiddle()`: आयतों, चापों, दीर्घवृत्तों, त्रिभुजों और चतुर्भुजों का मध्य बिंदु या केन्द्रक लौटाता है।
+  * `_getPos()`: कैनवास पर किसी आकृति की स्थिति लौटाता है (उदाहरण: 'ऊपरी बाएँ', 'मध्य दाएँ')।
+  * `_canvasLocator()`: कैनवास पर मैप किए गए 10*10 ग्रिड पर आकृति का स्थान लौटाता है।
+  * `_getArea()`: कैनवास के कुल क्षेत्रफल के प्रतिशत के रूप में आकृति का क्षेत्रफल लौटाता है।
   
 When `this._accessibleOutputs.text` or `this._accessibleOutputs.text` are `true` several functions across the p5.js library call functions in output.js:
+
 * `_accsOutput()` is called in:
   * `p5.prototype.triangle()`
   * `p5.prototype._renderRect()`
@@ -45,50 +56,53 @@ When `this._accessibleOutputs.text` or `this._accessibleOutputs.text` are `true`
   * `p5.prototype.line()`
   * `p5.prototype._renderEllipse()`
   * `p5.prototype.arc()`
+  
 * `_updateAccsOutput()` is called in:
   * `p5.prototype.redraw()`
   * `p5.prototype.resizeCanvas()`
   * `this._setup`
+  
 * `_accsCanvasColors()` is called in:
   * `p5.Renderer2D.prototype.stroke()`
   * `p5.Renderer2D.prototype.fill()`
+  
 * `_accsBackground()` is called in:
   * `p5.Renderer2D.prototype.background()`
 
 #### textOutput.js
-[src/accessibility/textOutput.js](https://github.com/processing/p5.js/blob/main/src/accessibility/textOutput.js) contains all functions that update the text output. The main function in this file is `_updateTextOutput()` which is called by `_updateAccsOutput()` in [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js) when `this._accessibleOutputs.text` or `this._accessibleOutputs.textLabel` are `true.`
+[src/accessibility/textOutput.js](https://github.com/processing/p5.js/blob/main/src/accessibility/textOutput.js) में टेक्स्ट आउटपुट को अपडेट करने वाले सभी फ़ंक्शन शामिल हैं। इस फ़ाइल में मुख्य फ़ंक्शन `_updateTextOutput()` है जिसे `_updateAccsOutput()` द्वारा [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/) में कॉल किया जाता है। src/accessibility/outputs.js) जब `this._accessibleOutputs.text` या `this._accessibleOutputs.textLabel` `true` हों।
 
-`_updateTextOutput()` uses `this.ingredients` to build the content of the text output and text output label which include a summary, a list of shapes, and a table of shapes details. If these are different from the current outputs it updates them. Building the output content is supported by several helper functions in the file that are not part of the prototype: 
-*  `_textSummary()`: Builds the content of the text output summary.
-*  `_shapeDetails()`: Builds the text output table that contains shape details.
-*  `_shapeList()`: Builds the list of shapes of the text output.
+`_updateTextOutput()` टेक्स्ट आउटपुट और टेक्स्ट आउटपुट लेबल की सामग्री बनाने के लिए `this.ingredients` का उपयोग करता है जिसमें सारांश, आकृतियों की एक सूची और आकृतियों के विवरण की एक तालिका शामिल होती है। यदि ये वर्तमान आउटपुट से भिन्न हैं तो यह उन्हें अपडेट करता है। आउटपुट सामग्री का निर्माण फ़ाइल में कई सहायक कार्यों द्वारा समर्थित है जो प्रोटोटाइप का हिस्सा नहीं हैं:
+* `_textSummary()`: टेक्स्ट आउटपुट सारांश की सामग्री बनाता है।
+* `_shapeDetails()`: टेक्स्ट आउटपुट तालिका बनाता है जिसमें आकार विवरण होता है।
+* `_shapeList()`: आकृतियों की सूची बनाता हैtext output.
 
 #### gridOutput.js
-[src/accessibility/gridOutput.js](https://github.com/processing/p5.js/blob/main/src/accessibility/gridOutput.js) contains all functions that update the grid output. The main function in this file is `_updateGridOutput()` which is called by `_updateAccsOutput()` in [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js) when `this._accessibleOutputs.grid` or `this._accessibleOutputs.gridLabel` are `true.`
+[src/accessibility/gridOutput.js](https://github.com/processing/p5.js/blob/main/src/accessibility/gridOutput.js) में ग्रिड आउटपुट को अपडेट करने वाले सभी फ़ंक्शन शामिल हैं। इस फ़ाइल में मुख्य फ़ंक्शन `_updateGridOutput()` है जिसे `_updateAccsOutput()` द्वारा [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/) में कॉल किया जाता है। src/accessibility/outputs.js) जब `this._accessibleOutputs.grid` या `this._accessibleOutputs.gridLabel` `सही` हों।
 
-`_updateGridOutput()` uses `this.ingredients` to build the content of the grid output and grid output label which include a summary, a grid that maps the location of shapes and a list of shapes. If these are different from the current outputs it updates them. Building the output content is supported by several helper functions in the file that are not part of the prototype: 
-*  `_gridSummary()`: Builds the content of the grid output summary.
-*  `_gridMap()`: Builds a grid that maps the location of shapes on the canvas.
-*  `_gridShapeDetails()`: Builds the list of shapes of the grid output, each line of the list includes details about the shape.
+`_updateGridOutput()` ग्रिड आउटपुट और ग्रिड आउटपुट लेबल की सामग्री बनाने के लिए `this.ingredients` का उपयोग करता है जिसमें एक सारांश, एक ग्रिड जो आकृतियों के स्थान और आकृतियों की सूची को मैप करता है। यदि ये वर्तमान आउटपुट से भिन्न हैं तो यह उन्हें अपडेट करता है। आउटपुट सामग्री का निर्माण फ़ाइल में कई सहायक कार्यों द्वारा समर्थित है जो प्रोटोटाइप का हिस्सा नहीं हैं:
+* `_gridSummary()`: ग्रिड आउटपुट सारांश की सामग्री बनाता है।
+* `_gridMap()`: एक ग्रिड बनाता है जो कैनवास पर आकृतियों के स्थान को मैप करता है।
+* `_gridShapeDetails()`: ग्रिड आउटपुट के आकृतियों की सूची बनाता है, सूची की प्रत्येक पंक्ति में आकृति के बारे में विवरण शामिल होता है।
 
 #### color_namer.js
-When creating screen reader accessible outputs, naming the colors used in the canvas is important. [src/accessibility/color_namer.js](https://github.com/processing/p5.js/blob/main/src/accessibility/color_namer.js) contains `_rgbColorName()` a function that receives rgba values and returns a color name. This function is called by `_accsBackground()` and `_accsCanvasColors` in [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js). 
+स्क्रीन रीडर सुलभ आउटपुट बनाते समय, कैनवास में उपयोग किए गए रंगों का नामकरण महत्वपूर्ण है। [src/accessibility/color_namer.js](https://github.com/processing/p5.js/blob/main/src/accessibility/color_namer.js) में `_rgbColorName()` एक फ़ंक्शन शामिल है जो आरजीबीए मान प्राप्त करता है और लौटाता है एक रंग का नाम. इस फ़ंक्शन को [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js) में `_accsBackground()` और `_accsCanvasColors` द्वारा कॉल किया जाता है ).
 
-`_rgbColorName()` uses `color_conversion._rgbaToHSBA()` to get the hsv values of the color and then uses `_calculateColor()` to get the color name. The function `_calculateColor()` in this file comes from [colorNamer.js](https://github.com/MathuraMG/color-namer) which was developed as part of a [2018 Processing Foundation fellowship](https://medium.com/processing-foundation/making-p5-js-accessible-e2ce366e05a0) and in consultation with blind screen reader expert users. This function returns color names by comparing hsv values to those stored in the `colorLookUp` array. The function should be updated as some shades of gray are not named correctly. When updating it, it is also important to ensure contributor readability by including comments that explain what each line of code does.
+`_rgbColorName()` रंग के एचएसवी मान प्राप्त करने के लिए `color_conversion._rgbaToHSBA()` का उपयोग करता है और फिर रंग का नाम प्राप्त करने के लिए `_calculatorColor()` का उपयोग करता है। इस फ़ाइल में फ़ंक्शन `_calculatorColor()` [colorNamer.js](https://github.com/MathuraMG/color-namer) से आता है जिसे [2018 प्रोसेसिंग फाउंडेशन फ़ेलोशिप](https://) के हिस्से के रूप में विकसित किया गया था। मीडियम.कॉम/प्रोसेसिंग-फाउंडेशन/मेकिंग-पी5-जेएस-एक्सेसिबल-ई2सीई366ई05ए0) और ब्लाइंड स्क्रीन रीडर विशेषज्ञ उपयोगकर्ताओं के परामर्श से। यह फ़ंक्शन `colorLookUp` सरणी में संग्रहीत एचएसवी मानों की तुलना करके रंग नाम लौटाता है। फ़ंक्शन को अद्यतन किया जाना चाहिए क्योंकि ग्रे के कुछ रंगों को सही ढंग से नामित नहीं किया गया है। इसे अद्यतन करते समय, उन टिप्पणियों को शामिल करके योगदानकर्ता की पठनीयता सुनिश्चित करना भी महत्वपूर्ण है जो बताती हैं कि कोड की प्रत्येक पंक्ति क्या करती है।
 
-## User-generated accessible canvas descriptions
+## उपयोगकर्ता-जनित सुलभ कैनवास विवरण
 
-### describe()
-The `describe()` function creates a screen reader accessible description for the canvas. The first parameter should be a string with a description of the canvas. The second parameter is optional. If specified, it determines how the description is displayed. All descriptions become part of the sub DOM of the canvas element. If a user passes `LABEL` as a second parameter, an additional div with the description adjacent to the canvas is created. 
+### वर्णन करना()
+'वर्णन()' फ़ंक्शन कैनवास के लिए एक स्क्रीन रीडर सुलभ विवरण बनाता है। पहला पैरामीटर कैनवास के विवरण के साथ एक स्ट्रिंग होना चाहिए। दूसरा पैरामीटर वैकल्पिक है. यदि निर्दिष्ट किया गया है, तो यह निर्धारित करता है कि विवरण कैसे प्रदर्शित किया जाएगा। सभी विवरण कैनवास तत्व के उप DOM का हिस्सा बन जाते हैं। यदि कोई उपयोगकर्ता `LABEL` को दूसरे पैरामीटर के रूप में पास करता है, तो कैनवास से सटे विवरण के साथ एक अतिरिक्त div बनाया जाता है।
 
-`describe()` is supported by several functions in [src/accessibility/describe.js](https://github.com/processing/p5.js/blob/main/src/accessibility/describe.js):
-* `_descriptionText()`: Checks that text is not `LABEL` or `FALLBACK` and ensures text ends with a punctuation mark. If the text does not end with '.', ',', ';', '?', '!', this function adds a '.' at the end of the string. Returns text.
-* `_describeHTML()`: Creates fallback HTML structure for the canvas. If the second parameter of `describe()` is `LABEL`, this function creates a div adjacent to the canvas element for the description text.
+`वर्णन()` [src/accessibility/describe.js](https://github.com/processing/p5.js/blob/main/src/accessibility/describe.js) में कई कार्यों द्वारा समर्थित है:
+* `_descriptionText()`: जांचता है कि टेक्स्ट `LABEL` या `FALLBACK` नहीं है और सुनिश्चित करता है कि टेक्स्ट विराम चिह्न के साथ समाप्त होता है। यदि पाठ '.', ',', ';', '?', '!' के साथ समाप्त नहीं होता है, तो यह फ़ंक्शन एक 'जोड़ता है।' स्ट्रिंग के अंत में. पाठ लौटाता है.
+* `_describeHTML()`: कैनवास के लिए फ़ॉलबैक HTML संरचना बनाता है। यदि `वर्णन()` का दूसरा पैरामीटर `LABEL` है, तो यह फ़ंक्शन विवरण पाठ के लिए कैनवास तत्व से सटे एक div बनाता है।
 
 ### describeElement()
-The `describeElement()` function creates a screen reader accessible description for sketch elements or groups of shapes that create meaning together. The first parameter should be a string with the name of the element, the second parameter should be a string with the description of the element. The third parameter is optional. If specified, it determines how the description is displayed. All element descriptions become part of the sub DOM of the canvas element. If a user passes `LABEL` as a third parameter, an additional div with the element description adjacent to the canvas is created. 
+`describeElement()` फ़ंक्शन स्केच तत्वों या आकृतियों के समूहों के लिए एक स्क्रीन रीडर सुलभ विवरण बनाता है जो एक साथ अर्थ बनाते हैं। पहला पैरामीटर तत्व के नाम के साथ एक स्ट्रिंग होना चाहिए, दूसरा पैरामीटर तत्व के विवरण के साथ एक स्ट्रिंग होना चाहिए। तीसरा पैरामीटर वैकल्पिक है. यदि निर्दिष्ट किया गया है, तो यह निर्धारित करता है कि विवरण कैसे प्रदर्शित किया जाएगा। सभी तत्व विवरण कैनवास तत्व के उप DOM का हिस्सा बन जाते हैं। यदि कोई उपयोगकर्ता `LABEL` को तीसरे पैरामीटर के रूप में पास करता है, तो कैनवास से सटे तत्व विवरण के साथ एक अतिरिक्त div बनाया जाता है। 
 
-`describeElement()` is supported by several functions in [src/accessibility/describe.js](https://github.com/processing/p5.js/blob/main/src/accessibility/describe.js):
-* `_elementName()`: Checks that element name is not `LABEL` or `FALLBACK` and ensures text ends with a colon. Returns element name.
-* `_descriptionText()`: Checks that text is not `LABEL` or `FALLBACK` and ensures text ends with a punctuation mark. If the text does not end with '.', ',', ';', '?', '!', this function adds a '.' at the end of the string. Returns text.
-* `_describeElementHTML()`: Creates fallback HTML structure for the canvas. When the second parameter of `describeElement()` is `LABEL`, this function creates a div adjacent to the canvas element for the descriptions.
+`describeElement()` को [src/accessibility/describe.js](https://github.com/processing/p5.js/blob/main/src/accessibility/describe.js) में कई फ़ंक्शन द्वारा समर्थित किया गया है:
+* `_elementName()`: जांचता है कि तत्व का नाम `LABEL` या `FALLBACK` नहीं है और यह सुनिश्चित करता है कि टेक्स्ट कोलन के साथ समाप्त होता है। तत्व का नाम लौटाता है.
+* `_descriptionText()`: जांचता है कि टेक्स्ट `LABEL` या `FALLBACK` नहीं है और सुनिश्चित करता है कि टेक्स्ट विराम चिह्न के साथ समाप्त होता है। यदि पाठ '.', ',', ';', '?', '!' के साथ समाप्त नहीं होता है, तो यह फ़ंक्शन एक 'जोड़ता है।' स्ट्रिंग के अंत में. पाठ लौटाता है.
+* `_describeElementHTML()`: कैनवास के लिए फ़ॉलबैक HTML संरचना बनाता है। जब `describeElement()` का दूसरा पैरामीटर `LABEL` होता है, तो यह फ़ंक्शन विवरण के लिए कैनवास तत्व से सटे एक div बनाता है।

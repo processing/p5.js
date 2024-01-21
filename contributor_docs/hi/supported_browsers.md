@@ -1,15 +1,16 @@
-# Supported browsers
 
-## Our stated goal
-p5.js uses [browserslist](https://browsersl.ist/) and [Babel](https://babeljs.io/) to provide support for older browsers. The browserslist configuration in use is [`last 2 versions, not dead`](https://browserslist.dev/?q=bGFzdCAyIHZlcnNpb25zLCBub3QgZGVhZA%3D%3D). `last 2 versions` means the last two releases of any browsers, `not dead` means browsers that had official support or updates in the past 24 months. Both of these conditions must be true for a browser to be supported.
+# समर्थित ब्राउज़र
 
-In practice, you can still use most of the latest features available in Javascript because Babel will likely be able to transpile or polyfill them to something matching the required compatibility list. Some features such as [Web API](https://developer.mozilla.org/en-US/docs/Web/API), [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API), or similar features not part of the core Javascript language cannot be handled by Babel and will need to be assessed on a case by case basis.
+## हमारा घोषित लक्ष्य
+p5.js पुराने ब्राउज़रों के लिए समर्थन प्रदान करने के लिए [ब्राउज़रलिस्ट](https://browsersl.ist/) और [Babel](https://babeljs.io/) का उपयोग करता है। उपयोग में आने वाली ब्राउज़र सूची कॉन्फ़िगरेशन [`last 2 versions, not dead`](https://browserslist.dev/?q=bGFzdCAyIHZlcnNpb25zLCBub3QgZGVhZA%3D%3D) है। `last 2 versions` का अर्थ है किसी भी ब्राउज़र की अंतिम दो रिलीज़, `not dead` का अर्थ है वे ब्राउज़र जिन्हें पिछले 24 महीनों में आधिकारिक समर्थन या अपडेट प्राप्त था। किसी ब्राउज़र के समर्थित होने के लिए ये दोनों स्थितियाँ सत्य होनी चाहिए।
 
-Good places to check if a feature is available are [caniuse.com](https://caniuse.com/) and [MDN](https://developer.mozilla.org/en-US/).
+व्यवहार में, आप अभी भी जावास्क्रिप्ट में उपलब्ध अधिकांश नवीनतम सुविधाओं का उपयोग कर सकते हैं क्योंकि बैबेल संभवतः उन्हें आवश्यक संगतता सूची से मेल खाने वाली किसी चीज़ में ट्रांसपाइल या पॉलीफ़िल करने में सक्षम होगा। कुछ सुविधाएँ जैसे [Web API](https://developer.mozilla.org/en-US/docs/Web/API), [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API), या इसी तरह की विशेषताएं जो मूल जावास्क्रिप्ट भाषा का हिस्सा नहीं हैं, उन्हें बैबेल द्वारा नियंत्रित नहीं किया जा सकता है और उन्हें मामले दर मामले के आधार पर मूल्यांकन करने की आवश्यकता होगी।
 
-## Where does this apply
-The supported browsers requirement will apply to the p5.js source code, all examples (both website examples page and documentation), and all official tutorials. Third party add-on libraries does not have to adhere to the same requirement but are encouraged to do so.
+यह जांचने के लिए अच्छी जगहें हैं कि कोई सुविधा उपलब्ध है या नहीं, ये हैं [caniuse.com](https://caniuse.com/) और [MDN](https://developer.mozilla.org/en-US/)।
 
-In many cases browsers not officially supported will likely still work with p5.js but we provide no guarantee for this case.
+## यह कहां लागू होता है
+समर्थित ब्राउज़र आवश्यकता p5.js स्रोत कोड, सभी उदाहरण (वेबसाइट उदाहरण पृष्ठ और दस्तावेज़ीकरण दोनों), और सभी आधिकारिक ट्यूटोरियल पर लागू होगी। तृतीय पक्ष ऐड-ऑन लाइब्रेरीज़ को समान आवश्यकता का पालन करने की आवश्यकता नहीं है लेकिन उन्हें ऐसा करने के लिए प्रोत्साहित किया जाता है।
 
-Stewards of each section will be responsible for ensuring PR involving code changes adhere to this requirement.
+कई मामलों में जो ब्राउज़र आधिकारिक रूप से समर्थित नहीं हैं वे संभवतः अभी भी p5.js के साथ काम करेंगे लेकिन हम इस मामले में कोई गारंटी नहीं देते हैं।
+
+कोड परिवर्तन से संबंधित पीआर इस आवश्यकता का पालन सुनिश्चित करने के लिए प्रत्येक अनुभाग के प्रबंधक जिम्मेदार होंगे।

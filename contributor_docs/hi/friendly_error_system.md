@@ -1,160 +1,172 @@
-# 🌸 p5.js Friendly Error System (FES)
 
-## Overview
+# 🌸 p5.js अनुकूल त्रुटि प्रणाली (FES)
+## अवलोकन
 
-The Friendly Error System (FES, 🌸) aims to help new programmers by providing error messages in simple, friendly language. It supplements your browser's console error messages by adding an alternative description of the error and links to helpful references.
+फ्रेंडली एरर सिस्टम (FES, 🌸) का उद्देश्य सरल, मैत्रीपूर्ण भाषा में त्रुटि संदेश प्रदान करके नए प्रोग्रामर की मदद करना है। यह त्रुटि का वैकल्पिक विवरण और सहायक संदर्भों के लिंक जोड़कर आपके ब्राउज़र के कंसोल त्रुटि संदेशों को पूरक करता है।
 
-The FES prints messages in the console window, as seen in the [p5.js Web Editor] and your browser JavaScript console. The single minified file of p5 (p5.min.js) omits the FES.
+FES कंसोल विंडो में संदेशों को प्रिंट करता है, जैसा कि [p5.js वेब एडिटर] और आपके ब्राउज़र JavaScript कंसोल में देखा जाता है। p5 (p5.min.js) की एकल लघु फ़ाइल FES को छोड़ देती है।
 
-[p5.js Web Editor]: https://editor.p5js.org/
+[p5.js वेब संपादक]: https://editor.p5js.org/
 
-## Lowering the Barriers to Debugging
-The design of a tool should match the need of the people who will use it. As a tool that aims to lower the barriers to debugging, the design of FES is no exception.
+## डिबगिंग में आने वाली बाधाओं को कम करना
+किसी उपकरण का डिज़ाइन उन लोगों की ज़रूरत से मेल खाना चाहिए जो इसका उपयोग करेंगे। एक उपकरण के रूप में जिसका लक्ष्य डिबगिंग में आने वाली बाधाओं को कम करना है, FES का डिज़ाइन कोई अपवाद नहीं है।
 
-The best way to evaluate our existing design is to hear directly from people using p5.js. We ran a community survey in 2021 to gather feedback and future wishes for Friendly Errors.
+हमारे मौजूदा डिज़ाइन का मूल्यांकन करने का सबसे अच्छा तरीका p5.js का उपयोग करने वाले लोगों से सीधे सुनना है। हमने फ्रेंडली एरर्स के लिए फीडबैक और भविष्य की शुभकामनाएं इकट्ठा करने के लिए 2021 में एक सामुदायिक सर्वेक्षण चलाया।
 
-We believe the insights from our community members will be helpful for our contributors. You can see the results through the summary comic or the full report:
-* [21-22 FES Survey Report Comic]
-* [21-22 FES Survey Full Report]
+हमारा मानना ​​है कि हमारे समुदाय के सदस्यों की अंतर्दृष्टि हमारे योगदानकर्ताओं के लिए उपयोगी होगी। आप सारांश कॉमिक या पूरी रिपोर्ट के माध्यम से परिणाम देख सकते हैं:
+* [21-22 एफईएस सर्वेक्षण रिपोर्ट कॉमिक]
+* [21-22 एफईएस सर्वेक्षण पूर्ण रिपोर्ट]
 
 
-[21-22 FES Survey Report Comic]: https://almchung.github.io/p5jsFESsurvey/
-[21-22 FES Survey Full Report]: https://observablehq.com/@almchung/p5-fes-21-survey
+[21-22 एफईएस सर्वेक्षण रिपोर्ट कॉमिक]: ​​https://almchung.github.io/p5jsFESsurvey/
+[21-22 एफईएस सर्वेक्षण पूर्ण रिपोर्ट]: https://observablehq.com/@almchung/p5-fes-21-survey
 
-## Writing Friendly Error Messages
+## मैत्रीपूर्ण त्रुटि संदेश लिखना
 
-How to contribute to the p5.js library by writing and translating error messages?
+त्रुटि संदेशों को लिखकर और अनुवाद करके p5.js लाइब्रेरी में योगदान कैसे करें?
 
-The FES is a part of the p5.js' [internationalization] effort. We generate all FES messages' content through [i18next]-based `translator()` function. This dynamic error message generation happens for all languages, including English - the default language of the p5.js.
+FES p5.js के [अंतर्राष्ट्रीयकरण] प्रयास का एक हिस्सा है। हम सभी FES संदेशों की सामग्री [i18next]-आधारित `translator()` फ़ंक्शन के माध्यम से उत्पन्न करते हैं। यह गतिशील त्रुटि संदेश पीढ़ी अंग्रेजी सहित सभी भाषाओं के लिए होती है - p5.js की डिफ़ॉल्ट भाषा।
 
-We welcome contributions from all around the world! 🌐
+हम दुनिया भर से योगदान का स्वागत करते हैं! 🌐
 
-[internationalization]: https://github.com/processing/p5.js/blob/main/contributor_docs/internationalization.md
+[अंतर्राष्ट्रीयकरण]: https://github.com/processing/p5.js/blob/main/contributor_docs/internationalization.md
 [i18next]: https://www.i18next.com/
 
+#### सर्वोत्तम अभ्यास लिखना
 
-#### Writing Best Practices
+एफईएस संदेश लेखकों को त्रुटि संदेशों को समझने की बाधा को कम करने और डिबगिंग प्रक्रिया की पहुंच बढ़ाने को प्राथमिकता देनी चाहिए।
 
-FES message writers should prioritize lowering the barrier of understanding error messages and increasing the accessibility of debugging process.
 
-[Friendly Errors i18n Book] discusses challenges and best practices for writing friendly error messages within the cross-cultural i18n context. Here are some points from the book:
+[फ्रेंडली एरर्स i18n बुक] अंतर-सांस्कृतिक i18n संदर्भ में अनुकूल त्रुटि संदेश लिखने के लिए चुनौतियों और सर्वोत्तम प्रथाओं पर चर्चा करता है। यहाँ पुस्तक से कुछ बिंदु दिए गए हैं:
 
-* Understand your audience: do not make assumptions about the audience of our error messages. Try to learn who is using our library and how they use it.
-* Keep language inclusive. We strive to make error messages "friendly," what does it mean for you? Look for possible bias and harm in your language. Adhere to [p5.js Code of Conduct].
-* Use simple sentences whenever possible. Consider breaking your sentence into smaller blocks for best utilizing i18next's [interpolation] feature.
-* Prioritize cross-cultural communication and provide a great experience across languages. Avoid using figures of speech.
-* Introduce one technical concept or technical term at a time. Keep consistency in technical writing. Try to link one external resource written in a beginner-friendly language with plenty of short, practical examples.
+* अपने दर्शकों को समझें: हमारे त्रुटि संदेशों के दर्शकों के बारे में धारणा न बनाएं। यह जानने का प्रयास करें कि हमारी लाइब्रेरी का उपयोग कौन कर रहा है और वे इसका उपयोग कैसे करते हैं।
+* भाषा को समावेशी रखें. हम त्रुटि संदेशों को "अनुकूल" बनाने का प्रयास करते हैं, आपके लिए इसका क्या अर्थ है? अपनी भाषा में संभावित पूर्वाग्रह और हानि की तलाश करें। [p5.js आचार संहिता] का पालन करें।
+* जब भी संभव हो सरल वाक्यों का प्रयोग करें। i18नेक्स्ट की [इंटरपोलेशन] सुविधा का सर्वोत्तम उपयोग करने के लिए अपने वाक्य को छोटे ब्लॉकों में तोड़ने पर विचार करें।
+* अंतर-सांस्कृतिक संचार को प्राथमिकता दें और विभिन्न भाषाओं में बेहतरीन अनुभव प्रदान करें। अलंकारों के प्रयोग से बचें.
+* एक समय में एक तकनीकी अवधारणा या तकनीकी शब्द का परिचय दें। तकनीकी लेखन में निरंतरता रखें. शुरुआती-अनुकूल भाषा में लिखे गए एक बाहरी संसाधन को बहुत सारे छोटे, व्यावहारिक उदाहरणों के साथ जोड़ने का प्रयास करें।
 
-[Friendly Errors i18n Book]: https://almchung.github.io/p5-fes-i18n-book/
-[interpolation]: https://www.i18next.com/translation-function/interpolation
-[p5.js Code of Conduct]: https://github.com/processing/p5.js/blob/main/CODE_OF_CONDUCT.md#p5js-code-of-conduct
-[expert blind spots]: https://tilt.colostate.edu/TipsAndGuides/Tip/181
+[फ्रेंडली एरर्स i18n बुक]: https://almchung.github.io/p5-fes-i18n-book/
+[इंटरपोलेशन]: https://www.i18next.com/translation-function/interpolation
+[p5.js आचार संहिता]: https://github.com/processing/p5.js/blob/main/CODE_OF_CONDUCT.md#p5js-code-of-conduct
+[विशेषज्ञ ब्लाइंड स्पॉट]: https://tilt.colostate.edu/TipsAndGuides/Tip/181
 
-[Friendly Errors i18n Book] is a public project, and you can contribute to the book through this separate [repo].
+[फ्रेंडली एरर्स आई18एन बुक] एक सार्वजनिक परियोजना है, और आप इस अलग [रेपो] के माध्यम से पुस्तक में योगदान कर सकते हैं।
+
+[रेपो]: https://github.com/almchung/p5-fes-i18n-book
 
 [repo]: https://github.com/almchung/p5-fes-i18n-book
-#### Location of Translation Files
 
-`translator()` is based on i18next and imported from `src/core/internationalization.js`. It generates messages by looking up text data from a JSON translation file:
+
+#### अनुवाद फ़ाइलों का स्थान
+`translator()` i18next पर आधारित है और `src/core/internationalization.js` से आयातित है। यह JSON अनुवाद फ़ाइल से टेक्स्ट डेटा को देखकर संदेश उत्पन्न करता है:
+
 ```
 translations/{{detected locale code, default=en}}/translation.json
 ```
 
-Example:
-If the detected browser locale is Korean (language designator: `ko`), the `translator()` will read in translated text blocks from `translations/ko/translation.json`. Then `translator()` will assemble the text blocks into the final message.
+उदाहरण:
+यदि पता लगाया गया ब्राउज़र स्थान कोरियाई है (भाषा निर्दिष्टकर्ता: `ko`), तो `translator()` `translations/ko/translation.json` से अनुवादित टेक्स्ट ब्लॉक में पढ़ा जाएगा। फिर `translator()` टेक्स्ट ब्लॉक को अंतिम संदेश में इकट्ठा करेगा।
 
-The language designator can also include regional information, such as `es-PE` (Spanish from Peru).
+भाषा डिज़ाइनर में क्षेत्रीय जानकारी भी शामिल हो सकती है, जैसे `es-PE` (पेरू से स्पेनिश)।
 
-#### Structure of Translation Files
-`translation.json` has a [format used by i18next](https://www.i18next.com/misc/json-format).
+#### अनुवाद फ़ाइलों की संरचना
+`translation.json` में एक [i18next द्वारा प्रयुक्त प्रारूप](https://www.i18next.com/misc/json-format) है।
 
-The basic format of a translation file's item has a key and a value (message) in double quotation marks `""`, closed by the curly brackets `{}`:
+अनुवाद फ़ाइल के आइटम के मूल प्रारूप में दोहरे उद्धरण चिह्नों `""` में एक कुंजी और एक मान (संदेश) होता है, जो घुंघराले कोष्ठक `{}` द्वारा बंद होता है:
 ```json
 { "key": "value" }
 ```
-For example, we have a ASCII logo saved in this format:
+
+उदाहरण के लिए, हमारे पास ASCII लोगो इस प्रारूप में सहेजा गया है:
 ```json
 "logo": "    _ \n /\\| |/\\ \n \\ ` ' /  \n / , . \\  \n \\/|_|\\/ \n\n"
 ```
-i18next supports interpolation, which allows us to pass a variable to generate a message dynamically. We use curly brackets twice `{{}}` to set a placeholder of the variable:
+i18next इंटरपोलेशन का समर्थन करता है, जो हमें गतिशील रूप से एक संदेश उत्पन्न करने के लिए एक वेरिएबल पास करने की अनुमति देता है। हम वेरिएबल का प्लेसहोल्डर सेट करने के लिए `{{}}` दो बार घुंघराले ब्रैकेट का उपयोग करते हैं:
 ```json
 "greeting": "Hello, {{who}}!"
 ```
-Here, the key is `greeting`, and the variable name is `who`.
 
-To dynamically generate this message, we will need to pass a value:
+यहां, कुंजी `greeting` है, और वेरिएबल नाम `who` है।
+
+इस संदेश को गतिशील रूप से उत्पन्न करने के लिए, हमें एक मान पारित करने की आवश्यकता होगी:
+
 ```JavaScript
 translator('greeting', { who: 'everyone' } );
 ```
-The result generated by `translator` will look like this:
+
+`translator` द्वारा उत्पन्न परिणाम इस तरह दिखेगा:
+
 ```
 Hello, everyone!
 ```
 
-Here is an item from `fes`'s `fileLoadError` that demonstrates interpolation:
+
+यहां `fes` के `fileLoadError` से एक आइटम है जो इंटरपोलेशन प्रदर्शित करता है:
 ```json
 "image": "It looks like there was a problem loading your image. {{suggestion}}"
 ```
-To dynamically generate the final message, the FES will call `translator()` with the key and a pre-generated `suggestion` value.
+
+अंतिम संदेश को गतिशील रूप से उत्पन्न करने के लिए, FES कुंजी और पूर्व-निर्मित `suggestion` मान के साथ `translator()` को कॉल करेगा।
+
 ```JavaScript
 translator('fes.fileLoadError.image', { suggestion });
 ```
 
 #### How to Add or Modify Translation
 
-The [internationalization doc] has a step-by-step guide on adding and modifying translation files.
+[अंतर्राष्ट्रीयकरण दस्तावेज़] में अनुवाद फ़ाइलों को जोड़ने और संशोधित करने के लिए चरण-दर-चरण मार्गदर्शिका है।
 
-[internationalization doc]: https://github.com/processing/p5.js/blob/main/contributor_docs/internationalization.md
+[अंतर्राष्ट्रीयकरण दस्तावेज़]: https://github.com/processing/p5.js/blob/main/contributor_docs/internationalization.md
+
+## यह समझना कि एफईएस कैसे काम करता है
+इस अनुभाग में, हम इस बात का अवलोकन देंगे कि FES संदेशों को कैसे उत्पन्न और प्रदर्शित करता है। एफईएस कार्यों पर अधिक विस्तृत जानकारी के लिए, कृपया हमारा [एफईएस संदर्भ + देव नोट्स] देखें।
+
+[एफईएस संदर्भ + देव नोट्स]: https://github.com/processing/p5.js/tree/main/src/core/friendly_errors#fes-reference-and-notes-from-developers
 
 
-## Understanding How FES Works
-In this section, we will give an overview of how FES generates and displays messages. For more detailed information on the FES functions, please see our [FES Reference + Dev Notes].
+#### अवलोकन
+p5.js विभिन्न स्थितियों के लिए कई स्थानों से FES को कॉल करता है, जब:
+* ब्राउज़र एक त्रुटि देता है.
+* उपयोगकर्ता कोड p5.js API से एक फ़ंक्शन को कॉल करता है।
+* अन्य कस्टम मामले जहां उपयोगकर्ता को सहायता संदेश से लाभ होगा।
 
-[FES Reference + Dev Notes]: https://github.com/processing/p5.js/tree/main/src/core/friendly_errors#fes-reference-and-notes-from-developers
-
-
-#### Overview
-p5.js calls the FES from multiple locations for different situations, when:
-* The browser throws an error.
-* The user code calls a function from the p5.js API.
-* Other custom cases where the user would benefit from a help message.
-
-#### FES Code Location
-You can find the core components of the FES inside:
-`src/core/friendly_errors`.
-You can find the translation files used by the `translator()` inside:
+#### एफईएस कोड स्थान
+आप एफईएस के मुख्य घटकों को अंदर पा सकते हैं:
+`src/core/friendly_errors`।
+आप `translator()`  द्वारा उपयोग की गई अनुवाद फ़ाइलें अंदर पा सकते हैं:
 `translations/`.
 
-#### FES Message Generators
-These functions are mainly responsible for catching errors and generating FES messages:
-* [`_friendlyFileLoadError()`] catches file loading errors.
-* [`_validateParameters()`] checks a p5.js function’s input parameters based on inline documents.
-* [`_fesErrorMonitor()`] handles global errors.
+#### एफईएस संदेश जेनरेटर
+ये फ़ंक्शन मुख्य रूप से त्रुटियों को पकड़ने और FES संदेश उत्पन्न करने के लिए जिम्मेदार हैं:
+* [`_friendlyFileLoadError()`] फ़ाइल लोडिंग त्रुटियों को पकड़ता है।
+* [`_validateParameters()`] इनलाइन दस्तावेज़ों के आधार पर p5.js फ़ंक्शन के इनपुट पैरामीटर की जाँच करता है।
+* [`_fesErrorMontitor()`] वैश्विक त्रुटियों को संभालता है।
 
-For full reference, please see our [Dev Notes].
+पूर्ण संदर्भ के लिए, कृपया हमारे [डेव नोट्स] देखें।
 
 [`_friendlyFileLoadError()`]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md#_friendlyfileloaderror
 [`_validateParameters()`]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md#validateparameters
 [`_fesErrorMontitor()`]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md#feserrormonitor
-[Dev Notes]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md
+[डेव नोट्स]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md
 
 
-#### FES Message Displayer
-`fes_core.js/_friendlyError()` prints generated friendly error messages in the console. For example:
+#### एफईएस संदेश प्रदर्शक
+`fes_core.js/_friendlyError()` कंसोल में उत्पन्न अनुकूल त्रुटि संदेशों को प्रिंट करता है। उदाहरण के लिए:
 
 ```JavaScript
 p5._friendlyError(
   translator('fes.globalErrors.type.notfunc', translationObj)
 );
 ```
-This function can be called anywhere in p5.
+इस फ़ंक्शन को p5 में कहीं भी कॉल किया जा सकता है।
 
-## Turning Off the FES
-There may be cases where you want to [disable the FES for performance].
+## एफईएस को बंद करना
+ऐसे मामले हो सकते हैं जहां आप [प्रदर्शन के लिए FES को अक्षम करना](https://github.com/processing/p5.js/wiki/Optimize-p5.js-Code-for-Performance#disable-the-friendly-error-system-fes) चाहते हों।
 
-`p5.disableFriendlyErrors` allows you to turn off the FES when set to `true`.
+`p5.disableFriendlyErrors` आपको `true` पर सेट होने पर FES को बंद करने की अनुमति देता है।
 
-Example:
+उदाहरण:
+
 ```JavaScript
 p5.disableFriendlyErrors = true;
 
@@ -163,6 +175,5 @@ function setup() {
 }
 ```
 
-The single minified file of p5 (i.e., p5.min.js) automatically omits the FES.
+p5 की एकल लघु फ़ाइल (यानी, p5.min.js) स्वचालित रूप से FES को छोड़ देती है।
 
-[disable the FES for performance]: https://github.com/processing/p5.js/wiki/Optimizing-p5.js-Code-for-Performance#disable-the-friendly-error-system-fes
