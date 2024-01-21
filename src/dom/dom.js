@@ -2246,24 +2246,22 @@ p5.prototype.createCapture = function(...args) {
     if (arg === p5.prototype.VIDEO) useAudio = false;
     else if (arg === p5.prototype.AUDIO) useVideo = false;
     else if (typeof arg === 'object') {
-      // Check if the argument is an object with a 'flipped' property
       if (arg.flipped !== undefined) {
         flipped = arg.flipped;
-      } else {
-        constraints = arg;
+        delete arg.flipped;
       }
+      constraints = Object.assign({}, constraints, arg);
     }
     else if (typeof arg === 'function') {
       callback = arg;
     }
   }
 
-  if (!constraints) constraints = { video: useVideo, audio: useAudio };
-
+  const videoConstraints = { video: useVideo, audio: useAudio };
+  constraints = Object.assign({}, videoConstraints, constraints);
   const domElement = document.createElement('video');
   // required to work in iOS 11 & up:
   domElement.setAttribute('playsinline', '');
-
   navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
     try {
       if ('srcObject' in domElement) {
@@ -2271,10 +2269,11 @@ p5.prototype.createCapture = function(...args) {
       } else {
         domElement.src = window.URL.createObjectURL(stream);
       }
-    } catch (err) {
+    }
+    catch(err) {
       domElement.src = stream;
     }
-  }, console.log);
+  }, console.err);
 
   const videoEl = addElement(domElement, this, true);
   videoEl.loadedmetadata = false;
