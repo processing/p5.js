@@ -1971,19 +1971,21 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this._pInst.noLights();
         this._pInst.rect(0, 0, width, height);
 
-        // Capture the rendered face and store it in the faces array
-        faces[i] = this._pInst.get(0, 0, width, height);
       });
+      // Capture the rendered face and store it in the faces array
+      faces[i] = newFramebuffer.get();
     }
     // Use the diffusedShader for rendering
-    newFramebuffer.draw(() => {
-      this._pInst.shader(this.diffusedShader);
-      this.diffusedShader.setUniform('environmentMap', input);
-      // Render the cubemap using the stored faces
-      for (let i = 0; i < 6; ++i) {
-        this._pInst.image(faces[i], 0, 0, width, height);
-      }
-    });
+    this._pInst.shader(this.diffusedShader);
+    this.diffusedShader.setUniform('environmentMap', input);
+
+    // Render the cubemap using the stored faces
+    for (let i = 0; i < 6; ++i) {
+      this._pInst.image(faces[i], 0, 0, width, height);
+    }
+    // Free the framebuffer resources
+    newFramebuffer.free();
+
     // Initialize CubemapTexture class with faces
     cubemapTexture=new CubemapTexture(this._pInst,faces, {});
     cubemapTexture.init(faces);
