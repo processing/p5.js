@@ -75,15 +75,15 @@ suite('Acceleration Events', function() {
   suite('rotation', function() {
     test('rotationX should be 45', function() {
       window.dispatchEvent(deviceOrientationEvent1);
-      assert.strictEqual(myp5.rotationX, 45);
+      assert.strictEqual(myp5.rotationX, 45 * (Math.PI / 180.0));
     });
     test('rotationY should be 90', function() {
       window.dispatchEvent(deviceOrientationEvent1);
-      assert.strictEqual(myp5.rotationY, 90);
+      assert.strictEqual(myp5.rotationY, 90 * (Math.PI / 180.0));
     });
     test('rotationZ should be 10', function() {
       window.dispatchEvent(deviceOrientationEvent1);
-      assert.strictEqual(myp5.rotationZ, 10);
+      assert.strictEqual(myp5.rotationZ, 10 * (Math.PI / 180.0));
     });
   });
 
@@ -91,17 +91,17 @@ suite('Acceleration Events', function() {
     test('pRotationX should be 45', function() {
       window.dispatchEvent(deviceOrientationEvent1);
       window.dispatchEvent(deviceOrientationEvent2);
-      assert.strictEqual(myp5.pRotationX, 45);
+      assert.strictEqual(myp5.pRotationX, 45 * (Math.PI / 180.0));
     });
     test('pRotationY should be 90', function() {
       window.dispatchEvent(deviceOrientationEvent1);
       window.dispatchEvent(deviceOrientationEvent2);
-      assert.strictEqual(myp5.pRotationY, 90);
+      assert.strictEqual(myp5.pRotationY, 90 * (Math.PI / 180.0));
     });
     test('pRotationZ should be 10', function() {
       window.dispatchEvent(deviceOrientationEvent1);
       window.dispatchEvent(deviceOrientationEvent2);
-      assert.strictEqual(myp5.pRotationZ, 10);
+      assert.strictEqual(myp5.pRotationZ, 10 * (Math.PI / 180.0));
     });
   });
 

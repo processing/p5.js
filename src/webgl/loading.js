@@ -25,6 +25,15 @@ import './p5.Geometry';
  * Also, the support for colored STL files is not present. STL files with color will be
  * rendered without color properties.
  *
+ * Options can include:
+ * - `path`: Specifies the location or path of the 3D model file for loading.
+ * - `normalize`: Enables standardized size scaling during loading if set to true.
+ * - `successCallback`: Callback for post-loading actions with the 3D model object.
+ * - `failureCallback`: Handles errors if model loading fails, receiving an event error.
+ * - `fileType`: Defines the file extension of the model.
+ * - `flipU`: Flips the U texture coordinates of the model.
+ * - `flipV`: Flips the V texture coordinates of the model.
+ *
  * @method loadModel
  * @param  {String} path              Path of the model to be loaded
  * @param  {Boolean} normalize        If true, scale the model to a
@@ -103,22 +112,42 @@ import './p5.Geometry';
  * @param  {String} [fileType]
  * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
  */
-p5.prototype.loadModel = function(path) {
+/**
+ * @method loadModel
+ * @param  {String} path
+ * @param  {Object} [options]
+ * @param  {function(p5.Geometry)} [options.successCallback]
+ * @param  {function(Event)} [options.failureCallback]
+ * @param  {String} [options.fileType]
+ * @param  {boolean} [options.normalize]
+ * @param  {boolean} [options.flipU]
+ * @param  {boolean} [options.flipV]
+ * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
+ */
+p5.prototype.loadModel = function(path,options) {
   p5._validateParameters('loadModel', arguments);
-  let normalize;
+  let normalize= false;
   let successCallback;
   let failureCallback;
+  let flipU = false;
+  let flipV = false;
   let fileType = path.slice(-4);
-  if (typeof arguments[1] === 'boolean') {
-    normalize = arguments[1];
+  if (options && typeof options === 'object') {
+    normalize = options.normalize || false;
+    successCallback = options.successCallback;
+    failureCallback = options.failureCallback;
+    fileType = options.fileType || fileType;
+    flipU = options.flipU || false;
+    flipV = options.flipV || false;
+  } else if (typeof options === 'boolean') {
+    normalize = options;
     successCallback = arguments[2];
     failureCallback = arguments[3];
     if (typeof arguments[4] !== 'undefined') {
       fileType = arguments[4];
     }
   } else {
-    normalize = false;
-    successCallback = arguments[1];
+    successCallback = typeof arguments[1] === 'function' ? arguments[1] : undefined;
     failureCallback = arguments[2];
     if (typeof arguments[3] !== 'undefined') {
       fileType = arguments[3];
@@ -140,6 +169,15 @@ p5.prototype.loadModel = function(path) {
         if (normalize) {
           model.normalize();
         }
+
+        if (flipU) {
+          model.flipU();
+        }
+
+        if (flipV) {
+          model.flipV();
+        }
+
         self._decrementPreload();
         if (typeof successCallback === 'function') {
           successCallback(model);
@@ -155,6 +193,14 @@ p5.prototype.loadModel = function(path) {
 
         if (normalize) {
           model.normalize();
+        }
+
+        if (flipU) {
+          model.flipU();
+        }
+
+        if (flipV) {
+          model.flipV();
         }
 
         self._decrementPreload();
