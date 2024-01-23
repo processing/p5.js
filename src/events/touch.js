@@ -282,11 +282,7 @@ p5.prototype._ontouchend = function(e) {
     if (executeDefault === false) {
       e.preventDefault();
     }
-  } else if (typeof context.mouseReleased === 'function') {
-    executeDefault = context.mouseReleased(e);
-    if (executeDefault === false) {
-      e.preventDefault();
-    }
+    this.touchend = true;
   }
 };
 

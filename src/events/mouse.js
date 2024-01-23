@@ -731,6 +731,12 @@ p5.prototype._onmouseup = function(e) {
   const context = this._isGlobal ? window : this;
   let executeDefault;
   this._setProperty('mouseIsPressed', false);
+
+  // _ontouchend triggers first and sets this.touchend
+  if (this.touchend) {
+    return;
+  }
+
   if (typeof context.mouseReleased === 'function') {
     executeDefault = context.mouseReleased(e);
     if (executeDefault === false) {
@@ -742,6 +748,7 @@ p5.prototype._onmouseup = function(e) {
       e.preventDefault();
     }
   }
+  this.touchend = false;
 };
 
 p5.prototype._ondragend = p5.prototype._onmouseup;
