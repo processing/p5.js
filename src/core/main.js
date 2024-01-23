@@ -205,6 +205,7 @@ class p5 {
     };
     this._millisStart = -1;
     this._recording = false;
+    this.touchstart = false;
     this.touchend = false;
 
     // States used in the custom random generators

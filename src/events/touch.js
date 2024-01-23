@@ -134,15 +134,7 @@ p5.prototype._ontouchstart = function(e) {
     if (executeDefault === false) {
       e.preventDefault();
     }
-    // only safari needs this manual fallback for consistency
-  } else if (
-    navigator.userAgent.toLowerCase().includes('safari') &&
-    typeof context.mousePressed === 'function'
-  ) {
-    executeDefault = context.mousePressed(e);
-    if (executeDefault === false) {
-      e.preventDefault();
-    }
+    this.touchstart = true;
   }
 };
 
