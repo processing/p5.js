@@ -1,5 +1,5 @@
 // Adapted from:  https://learnopengl.com/PBR/IBL/Diffuse-irradiance
-layout (location = 0) in vec3 aPos;
+layout (location = 0) IN vec3 aPos;
 
 OUT vec3 localPos;
 
