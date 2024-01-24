@@ -1601,9 +1601,9 @@ p5.Camera = class Camera {
     this.projMatrix = cam.projMatrix.copy();
 
     if (this._isActive()) {
-      this._renderer.uModelMatrix.mat4 = this.modelMatrix.mat4.slice();
-      this._renderer.uViewMatrix.mat4 = this.viewMatrix.mat4.slice();
-      this._renderer.uPMatrix.mat4 = this.projMatrix.mat4.slice();
+      this._renderer.uModelMatrix.set(this.modelMatrix);
+      this._renderer.uViewMatrix.set(this.viewMatrix);
+      this._renderer.uPMatrix.set(this.projMatrix);
     }
   }
   /**
