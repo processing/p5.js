@@ -448,20 +448,15 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.GL = this.drawingContext;
     this._pInst._setProperty('drawingContext', this.drawingContext);
 
-    this._pInst.shaderCache={};
+    if (!this._pInst.shaderCache) {
+      this._pInst.shaderCache = {}; // ensures a unique shaderCache for each instance of p5.RendererGL
+    }
     this.getCachedShader =
     function (shaderKey, vertexShaderSource, fragmentShaderSource) {
-      if (!this._pInst.shaderCache) {
-        this._pInst.shaderCache = {}; // ensures a unique shaderCache for each instance of p5.RendererGL
-      }
       if (!this._pInst.shaderCache[shaderKey]) {
-        const vertexShader = this._pInst.createShader(
-          this._pInst.VERTEX_SHADER, vertexShaderSource);
-        const fragmentShader = this._pInst.createShader(
-          this._pInst.FRAGMENT_SHADER, fragmentShaderSource);
 
-        this._pInst.shaderCache[shaderKey] = this._pInst.createShaderProgram(
-          vertexShader, fragmentShader);
+        this._pInst.shaderCache[shaderKey] = this._pInst.createShader(
+          vertexShaderSource, fragmentShaderSource);
       }
       return this._pInst.shaderCache[shaderKey];
     };
@@ -1955,16 +1950,30 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         defaultShaders.imageLightDiffusedFrag
       );
     }
+    // // Assuming this.uMVMatrix is your 3D rotation matrix
+    // let captureViews = [];
+
+    // // Create view matrices for each face based on the original view matrix (this.uMVMatrix)
+    // for (let i = 0; i < 6; ++i) {
+    // // Simply use the original view matrix for each face
+    //   const faceViewMatrix = this.uMVMatrix.copy();
+
+    //   // Add the resulting view matrix to the captureViews array
+    //   captureViews.push(faceViewMatrix);
+    // }
+
     // Create a shader for cubemap conversion
     const cubemapShader = this._getCubemapShader();
-
+    function useCubemapShader(){
+      shader(cubemapShader);
+    }
     // Render each face of the cubemap
     for (let i = 0; i < 6; ++i) {
       newFramebuffer.draw(() => {
-        cubemapShader.use();
+        useCubemapShader();
         cubemapShader.setUniform('equirectangularMap', input);
-        cubemapShader.setUniform('projection', captureProjection);
-        cubemapShader.setUniform('view', captureViews[i]);
+        // cubemapShader.setUniform('projection', this.uPMatrix);
+        // cubemapShader.setUniform('view', captureViews[i]);
 
         this._pInst.noStroke();
         this._pInst.rectMode(constants.CENTER);
@@ -1984,7 +1993,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this._pInst.image(faces[i], 0, 0, width, height);
     }
     // Free the framebuffer resources
-    newFramebuffer.free();
+    // newFramebuffer.free();
 
     // Initialize CubemapTexture class with faces
     cubemapTexture=new CubemapTexture(this._pInst,faces, {});
