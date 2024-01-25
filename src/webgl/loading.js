@@ -343,7 +343,8 @@ function parseObj(model, lines, materials= {}) {
     vn: []
   };
 
-  const indexedVerts = {};
+
+  // Map from source index → Map of material → destination index
   const usedVerts = {}; // Track colored vertices
   let currentMaterial = null;
   for (let line = 0; line < lines.length; ++line) {
@@ -377,57 +378,38 @@ function parseObj(model, lines, materials= {}) {
         // OBJ faces can have more than three points. Triangulate points.
         for (let tri = 3; tri < tokens.length; ++tri) {
           const face = [];
-
           const vertexTokens = [1, tri - 1, tri];
 
           for (let tokenInd = 0; tokenInd < vertexTokens.length; ++tokenInd) {
             // Now, convert the given token into an index
             const vertString = tokens[vertexTokens[tokenInd]];
-            let vertIndex = 0;
-            let vertParts;
+            let vertParts=vertString.split('/');
 
             // TODO: Faces can technically use negative numbers to refer to the
             // previous nth vertex. I haven't seen this used in practice, but
             // it might be good to implement this in the future.
 
-            if (indexedVerts[vertString] !== undefined) {
-              vertIndex = indexedVerts[vertString];
-            } else {
-              vertParts = vertString.split('/');
-              for (let i = 0; i < vertParts.length; i++) {
-                vertParts[i] = parseInt(vertParts[i]) - 1;
-              }
-
-              vertIndex = indexedVerts[vertString] = model.vertices.length;
-              model.vertices.push(loadedVerts.v[vertParts[0]].copy());
-              if (loadedVerts.vt[vertParts[1]]) {
-                model.uvs.push(loadedVerts.vt[vertParts[1]].slice());
-              } else {
-                model.uvs.push([0, 0]);
-              }
-
-              if (loadedVerts.vn[vertParts[2]]) {
-                model.vertexNormals.push(loadedVerts.vn[vertParts[2]].copy());
-              }
+            for (let i = 0; i < vertParts.length; i++) {
+              vertParts[i] = parseInt(vertParts[i]) - 1;
             }
-            if (usedVerts[vertIndex] && usedVerts[vertIndex]
-               !== currentMaterial) {
-              // Duplicate vertex, UV, and normal,faces to refer to new indices
-              vertParts = vertString.split('/');
-              for (let i = 0; i < vertParts.length; i++) {
-                vertParts[i] = parseInt(vertParts[i]) - 1;
-              }
-              const duplicatedVertIndex = model.vertices.length;
+
+            if (!usedVerts[vertParts[0]]) {
+              usedVerts[vertParts[0]] = {};
+            }
+
+            if (usedVerts[vertParts[0]][currentMaterial] === undefined) {
+              const vertIndex = model.vertices.length;
               model.vertices.push(loadedVerts.v[vertParts[0]].copy());
               model.uvs.push(loadedVerts.vt[vertParts[1]] ?
                 loadedVerts.vt[vertParts[1]].slice() : [0, 0]);
               model.vertexNormals.push(loadedVerts.vn[vertParts[2]] ?
                 loadedVerts.vn[vertParts[2]].copy() : new p5.Vector());
-              vertIndex = duplicatedVertIndex;
-            }
 
-            face.push(vertIndex);
-            usedVerts[vertIndex] = currentMaterial;
+              usedVerts[vertParts[0]][currentMaterial] = vertIndex;
+              face.push(vertIndex);
+            } else {
+              face.push(usedVerts[vertParts[0]][currentMaterial]);
+            }
           }
 
           if (
@@ -453,7 +435,6 @@ function parseObj(model, lines, materials= {}) {
   if (model.vertexNormals.length === 0) {
     model.computeNormals();
   }
-  console.log(model.vertexColors);
   return model;
 }
 
