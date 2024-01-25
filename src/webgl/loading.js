@@ -419,12 +419,14 @@ function parseObj(model, lines, materials= {}) {
           ) {
             model.faces.push(face);
             //same material for all vertices in a particular face
-            const materialDiffuseColor =
-             materials[currentMaterial].diffuseColor;
-            for (let i=0 ;i<face.length;i++) {
-              model.vertexColors.push(materialDiffuseColor[0]);
-              model.vertexColors.push(materialDiffuseColor[1]);
-              model.vertexColors.push(materialDiffuseColor[2]);
+            if (currentMaterial && materials[currentMaterial]) {
+              const materialDiffuseColor =
+              materials[currentMaterial].diffuseColor;
+              for (let i = 0; i < face.length; i++) {
+                model.vertexColors.push(materialDiffuseColor[0]);
+                model.vertexColors.push(materialDiffuseColor[1]);
+                model.vertexColors.push(materialDiffuseColor[2]);
+              }
             }
           }
         }
