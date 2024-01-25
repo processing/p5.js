@@ -440,11 +440,9 @@ function parseObj(model, lines, materials= {}) {
             const materialDiffuseColor =
              materials[currentMaterial].diffuseColor;
             for (let i=0 ;i<face.length;i++) {
-              model.vertexColors.push([
-                materialDiffuseColor[0],
-                materialDiffuseColor[1],
-                materialDiffuseColor[2]
-              ]);
+              model.vertexColors.push(materialDiffuseColor[0]);
+              model.vertexColors.push(materialDiffuseColor[1]);
+              model.vertexColors.push(materialDiffuseColor[2]);
             }
           }
         }
