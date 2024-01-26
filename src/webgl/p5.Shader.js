@@ -329,22 +329,9 @@ p5.Shader = class {
         this.setUniform('uPerspective', 1);
       } else {
         // strokes have uniform scale regardless of distance from camera
-        if (this._renderer.drawingContext.linePerspective ||
-           this._renderer.drawingContext.linePerspective === undefined) {
-          // strokes scale up as they approach camera, default
-          this.setUniform('uPerspective', 1);
-        } else {
-          // strokes have uniform scale regardless of distance from camera
-          this.setUniform('uPerspective', 0);
-        }
+        this.setUniform('uPerspective', this._renderer._curCamera.useLinePerspective ? 1 : 0);
       }
     }
-    // else {
-    //   // This part is for a different condition or fallback behavior
-    //   // Strokes have a uniform scale regardless of the distance from the camera
-    //   this.setUniform('uPerspective', 0);
-    // }
-
     this.setUniform('uViewMatrix', viewMatrix.mat4);
     this.setUniform('uProjectionMatrix', projectionMatrix.mat4);
     this.setUniform('uModelViewMatrix', modelViewMatrix.mat4);

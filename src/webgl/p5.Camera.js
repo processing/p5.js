@@ -194,6 +194,23 @@ p5.prototype.perspective = function (...args) {
 };
 
 /**
+ *
+ * Enable or disable perspective for lines in the WebGL renderer.
+ * When linePerspective is enabled, lines will be affected by the current camera's perspective.
+ * When linePerspective is disabled, lines will have a uniform scale regardless of the camera's perspective.
+ *
+ * @method linePerspective
+ * @memberof p5.prototype
+ * @param {boolean} enable - Set to `true` to enable line perspective, `false` to disable.
+ *<br>
+ * @example
+ * @todo
+ */
+p5.prototype.linePerspective = function (enable) {
+  this._renderer._curCamera.useLinePerspective = enable;
+};
+
+/**
  * Sets an orthographic projection for the current camera in a 3D sketch
  * and defines a box-shaped viewing frustum within which objects are seen.
  * In this projection, all objects with the same dimension appear the same
@@ -488,7 +505,7 @@ p5.Camera = class Camera {
     this._renderer = renderer;
 
     this.cameraType = 'default';
-
+    this.useLinePerspective = true;
     this.cameraMatrix = new p5.Matrix();
     this.projMatrix = new p5.Matrix();
     this.yScale = 1;
