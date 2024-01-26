@@ -1255,13 +1255,13 @@ p5.RendererGL.prototype.triangle = function(args) {
       x3 - x1, y3 - y1, 0, 0, // the resulting unit Y-axis
       0, 0, orientation, 0,   // the resulting unit Z-axis (Reflect the specified order of vertices)
       x1, y1, 0, 1            // the resulting origin
-    ]).mult(this._renderer.uModelMatrix);
+    ]).mult(this.uModelMatrix);
 
-    this._renderer.uModelMatrix = mult;
+    this.uModelMatrix = mult;
 
     this.drawBuffers(gId);
   } finally {
-    this._renderer.uModelMatrix = uModelMatrix;
+    this.uModelMatrix = uModelMatrix;
   }
 
   return this;
@@ -1383,15 +1383,15 @@ p5.RendererGL.prototype.arc = function(args) {
     this.createBuffers(gId, arcGeom);
   }
 
-  const uModelMatrix = this._renderer.uModelMatrix.copy();
+  const uModelMatrix = this.uModelMatrix.copy();
 
   try {
-    this._renderer.uModelMatrix.translate([x, y, 0]);
-    this._renderer.uModelMatrix.scale(width, height, 1);
+    this.uModelMatrix.translate([x, y, 0]);
+    this.uModelMatrix.scale(width, height, 1);
 
     this.drawBuffers(gId);
   } finally {
-    this._renderer.uModelMatrix = uModelMatrix;
+    this.uModelMatrix = uModelMatrix;
   }
 
   return this;
@@ -1443,14 +1443,14 @@ p5.RendererGL.prototype.rect = function(args) {
     // opposite corners at (0,0) & (1,1).
     //
     // before rendering, this square is scaled & moved to the required location.
-    const uModelMatrix = this._renderer.uModelMatrix.copy();
+    const uModelMatrix = this.uModelMatrix.copy();
     try {
-      this._renderer.uModelMatrix.translate([x, y, 0]);
-      this._renderer.uModelMatrix.scale(width, height, 1);
+      this.uModelMatrix.translate([x, y, 0]);
+      this.uModelMatrix.scale(width, height, 1);
 
       this.drawBuffers(gId);
     } finally {
-      this._renderer.uModelMatrix = uModelMatrix;
+      this.uModelMatrix = uModelMatrix;
     }
   } else {
     // Use Immediate mode to round the rectangle corner,
