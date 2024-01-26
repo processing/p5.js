@@ -29,7 +29,7 @@ function trigonometry(p5, fn){
    * @example
    * <div>
    * <code>
-   * let a = PI;
+   * let a = PI + QUARTER_PI;
    * let c = cos(a);
    * let ac = acos(c);
    * text(`${round(a, 3)}`, 35, 25);
@@ -471,6 +471,21 @@ function trigonometry(p5, fn){
   fn._fromRadians = function(angle) {
     if (this._angleMode === constants.DEGREES) {
       return angle * constants.RAD_TO_DEG;
+    }
+    return angle;
+  };
+
+  /**
+   * converts angles from DEGREES into the current angleMode
+   *
+   * @method _fromDegrees
+   * @private
+   * @param {Number} angle
+   * @returns {Number}
+   */
+  fn._fromDegrees = function(angle) {
+    if (this._angleMode === constants.RADIANS) {
+      return angle * constants.DEG_TO_RAD;
     }
     return angle;
   };
