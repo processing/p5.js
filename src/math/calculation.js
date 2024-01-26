@@ -474,7 +474,7 @@ function calculation(p5, fn){
     const findMax = arr => {
       let max = -Infinity;
       for (let x of arr) {
-        max = x > max ? x : max;
+        max = Math.max(max, x);
       }
       return max;
     };
@@ -552,7 +552,7 @@ function calculation(p5, fn){
     const findMin = arr => {
       let min = Infinity;
       for (let x of arr) {
-        min = x < min ? x : min;
+        min = Math.min(min, x);
       }
       return min;
     };

@@ -843,22 +843,7 @@ class Framebuffer {
     // it only sets the camera.
     this.target.setCamera(this.defaultCamera);
     this.target._renderer.uMVMatrix.set(
-      this.target._renderer._curCamera.cameraMatrix.mat4[0],
-      this.target._renderer._curCamera.cameraMatrix.mat4[1],
-      this.target._renderer._curCamera.cameraMatrix.mat4[2],
-      this.target._renderer._curCamera.cameraMatrix.mat4[3],
-      this.target._renderer._curCamera.cameraMatrix.mat4[4],
-      this.target._renderer._curCamera.cameraMatrix.mat4[5],
-      this.target._renderer._curCamera.cameraMatrix.mat4[6],
-      this.target._renderer._curCamera.cameraMatrix.mat4[7],
-      this.target._renderer._curCamera.cameraMatrix.mat4[8],
-      this.target._renderer._curCamera.cameraMatrix.mat4[9],
-      this.target._renderer._curCamera.cameraMatrix.mat4[10],
-      this.target._renderer._curCamera.cameraMatrix.mat4[11],
-      this.target._renderer._curCamera.cameraMatrix.mat4[12],
-      this.target._renderer._curCamera.cameraMatrix.mat4[13],
-      this.target._renderer._curCamera.cameraMatrix.mat4[14],
-      this.target._renderer._curCamera.cameraMatrix.mat4[15]
+      this.target._renderer._curCamera.cameraMatrix
     );
   }
 

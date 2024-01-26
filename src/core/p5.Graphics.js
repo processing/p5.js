@@ -199,6 +199,7 @@ p5.Graphics = class extends p5.Element {
    * createFramebuffer function.</a>
    *
    * @method createFramebuffer
+   * @return {p5.Framebuffer}
    */
   createFramebuffer(options) {
     return new p5.Framebuffer(this, options);
