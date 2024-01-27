@@ -139,3 +139,31 @@ If you need to add a new test file, add it to that folder, then add the filename
 When you add a new test, running `npm test` will generate new screenshots for any visual tests that do not yet have them. Those screenshots will then be used as a reference the next time tests run to make sure the sketch looks the same. If a test intentionally needs to look different, you can delete the folder matching the test name in the `test/unit/visual/screenshots` folder, and then re-run `npm test` to generate a new one.
 
 To manually inspect all visual tests, run `grunt yui:dev` to launch a local server, then go to http://127.0.0.1:9001/test/visual.html to see a list of all test cases.
+
+
+The visual test environment is set up to execute your commands sequentially rather than running a preload or draw function that you provide.
+In continuous integration (CI) environments, it's crucial to keep tests running as quickly as possible. Running a full `preload/draw` cycle as in a regular p5.js sketch can significantly slow down the testing process.
+When testing features like 3D model rendering, you might encounter scenarios where you need to load a model before performing assertions. Here's an example of how you can handle Sequential Command Execution and Asynchronous Operations in your visual tests:
+
+
+```js
+visualSuite('3D Model rendering', function() {
+  visualTest('OBJ model is displayed correctly', function(p5, screenshot) {
+    // Return a Promise to ensure the test runner waits for the asynchronous operation to complete
+    return new Promise(resolve => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      // Load the model asynchronously
+      p5.loadModel('unit/assets/teapot.obj', model => {
+        p5.background(200);
+        p5.rotateX(10 * 0.01);
+        p5.rotateY(10 * 0.01);
+        p5.model(model);
+        // Take a screenshot for visual comparison
+        screenshot();
+        // Resolve the Promise to indicate completion
+        resolve();
+      });
+    });
+  });
+});
+```
