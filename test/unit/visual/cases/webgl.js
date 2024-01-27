@@ -37,26 +37,17 @@ visualSuite('WebGL', function() {
 
   visualSuite('3D Model rendering', function() {
     visualTest('OBJ model with MTL file displays diffuse colors correctly', function(p5, screenshot) {
-      let model;
-
-      p5.preload = function() {
-        model = p5.loadModel('../../assets/octa-color.obj');
-      };
-
-      p5.setup = function() {
-        p5.createCanvas(400, 400, p5.WEBGL);
-      };
-
-      p5.draw = function() {
-        p5.background(200);
-        p5.rotateX(p5.frameCount * 0.01);
-        p5.rotateY(p5.frameCount * 0.01);
-        p5.model(model);
-        if(p5.frameCount === 10){
+      return new Promise(resolve => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        p5.loadModel('unit/assets/octa-color.obj', model => {
+          p5.background(200);
+          p5.rotateX(10 * 0.01);
+          p5.rotateY(10 * 0.01);
+          p5.model(model);
           screenshot();
-          p5.noLoop();
-        }
-      };
+          resolve();
+        });
+      });
     });
   });
 });
