@@ -222,7 +222,7 @@ p5.prototype.linePerspective = function (enable) {
  * maximum z values.
  *
  * If no parameters are given, the following default is used:
- * ortho(-width/2, width/2, -height/2, height/2, 0, max(width, height)).
+ * ortho(-width/2, width/2, -height/2, height/2, 0, max(width, height) + 800).
  * @method  ortho
  * @for p5
  * @param  {Number} [left]   camera frustum left plane
@@ -239,8 +239,7 @@ p5.prototype.linePerspective = function (enable) {
  * //there's no vanishing point
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   ortho(-width / 2, width / 2, height / 2, -height / 2, 0, 500);
+ *   ortho();
  *   describe(
  *     'two 3D boxes move back and forth along same plane, rotating as mouse is dragged.'
  *   );
