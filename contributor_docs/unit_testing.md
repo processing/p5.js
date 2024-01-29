@@ -112,7 +112,7 @@ Consider the following:
 
 ```js
 test('keyIsPressed is a boolean', function() {
-  assert.isBoolean(myp5.keyIsPressed); //Asserts that value is a boolean.
+  assert.isBoolean(myp5.keyIsPressed); // Asserts that the value is a boolean.
 });
 ```
 
