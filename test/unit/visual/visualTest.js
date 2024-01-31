@@ -153,10 +153,8 @@ window.visualTest = function(
 
 
       if (actual.length === 0) {
-        throw new Error('No screenshots were generated. Check if your test generates screenshots correctly.If the test includes asynchronous operations, ensure they complete before the test ends.');
+        throw new Error('No screenshots were generated. Check if your test generates screenshots correctly. If the test includes asynchronous operations, ensure they complete before the test ends.');
       }
-
-
       if (expectedScreenshots && actual.length !== expectedScreenshots) {
         throw new Error(
           `Expected ${expectedScreenshots} screenshot(s) but generated ${actual.length}`
