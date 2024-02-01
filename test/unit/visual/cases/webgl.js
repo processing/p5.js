@@ -35,9 +35,10 @@ visualSuite('WebGL', function() {
     });
   });
 
-  visualSuite('3D Model rendering', function() {
+  visualSuite('3DModel', function() {
     visualTest('OBJ model with MTL file displays diffuse colors correctly', function(p5, screenshot) {
       return new Promise(resolve => {
+        console.log('inside test');
         p5.createCanvas(50, 50, p5.WEBGL);
         p5.loadModel('unit/assets/octa-color.obj', model => {
           p5.background(200);
