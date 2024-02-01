@@ -391,8 +391,8 @@ class p5 {
       this.callRegisteredHooksFor('afterSetup');
     };
 
-    this._draw = () => {
-      const now = window.performance.now();
+    this._draw = requestAnimationFrameTimestamp => {
+      const now = requestAnimationFrameTimestamp || window.performance.now();
       const time_since_last = now - this._lastTargetFrameTime;
       const target_time_between_frames = 1000 / this._targetFrameRate;
 
