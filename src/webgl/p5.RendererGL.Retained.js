@@ -143,7 +143,10 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
       //vertex index buffer
       this._bindBuffer(geometry.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
     }
-    this._applyColorBlend(this.curFillColor);
+    this._applyColorBlend(
+      this.curFillColor,
+      geometry.model.hasFillTransparency()
+    );
     this._drawElements(gl.TRIANGLES, gId);
     fillShader.unbindShader();
   }
@@ -156,7 +159,10 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
       buff._prepareBuffer(geometry, strokeShader);
     }
     strokeShader.disableRemainingAttributes();
-    this._applyColorBlend(this.curStrokeColor);
+    this._applyColorBlend(
+      this.curStrokeColor,
+      geometry.model.hasStrokeTransparency()
+    );
     this._drawArrays(gl.TRIANGLES, gId);
     strokeShader.unbindShader();
   }

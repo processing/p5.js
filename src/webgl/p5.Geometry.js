@@ -66,6 +66,9 @@ p5.Geometry = class Geometry {
     this.detailY = detailY !== undefined ? detailY : 1;
     this.dirtyFlags = {};
 
+    this._hasFillTransparency = undefined;
+    this._hasStrokeTransparency = undefined;
+
     if (callback instanceof Function) {
       callback.call(this);
     }
@@ -73,6 +76,9 @@ p5.Geometry = class Geometry {
   }
 
   reset() {
+    this._hasFillTransparency = undefined;
+    this._hasStrokeTransparency = undefined;
+
     this.lineVertices.clear();
     this.lineTangentsIn.clear();
     this.lineTangentsOut.clear();
@@ -88,6 +94,32 @@ p5.Geometry = class Geometry {
 
     this.dirtyFlags = {};
   }
+
+  hasFillTransparency() {
+    if (this._hasFillTransparency === undefined) {
+      this._hasFillTransparency = false;
+      for (let i = 0; i < this.vertexColors.length; i += 4) {
+        if (this.vertexColors[i + 3] < 1) {
+          this._hasFillTransparency = true;
+          break;
+        }
+      }
+    }
+    return this._hasFillTransparency;
+  }
+  hasStrokeTransparency() {
+    if (this._hasStrokeTransparency === undefined) {
+      this._hasStrokeTransparency = false;
+      for (let i = 0; i < this.lineVertexColors.length; i += 4) {
+        if (this.lineVertexColors[i + 3] < 1) {
+          this._hasStrokeTransparency = true;
+          break;
+        }
+      }
+    }
+    return this._hasStrokeTransparency;
+  }
+
   /**
    * Removes the internal colors of p5.Geometry.
    * Using `clearColors()`, you can use `fill()` to supply new colors before drawing each shape.
