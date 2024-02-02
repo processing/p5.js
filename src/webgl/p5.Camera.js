@@ -1391,7 +1391,8 @@ p5.Camera = class Camera {
     this.cameraMatrix.translate([tx, ty, tz]);
 
     if (this._isActive()) {
-      this._renderer.uMVMatrix.set(this.cameraMatrix);
+      this._renderer.uModelMatrix.set(this.modelMatrix);
+      this._renderer.uViewMatrix.set(this.viewMatrix);
     }
     return this;
   }

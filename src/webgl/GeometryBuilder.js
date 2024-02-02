@@ -47,7 +47,7 @@ class GeometryBuilder {
    */
   addGeometry(input) {
     this.renderer.uMVMatrix =
-     this.renderer.uModelMatrix.multiply(this.renderer.uViewMatrix);
+     this.renderer.uModelMatrix.mult(this.renderer.uViewMatrix);
     this.hasTransform = !this.renderer.uMVMatrix.mat4
       .every((v, i) => v === this.identityMatrix.mat4[i]);
 

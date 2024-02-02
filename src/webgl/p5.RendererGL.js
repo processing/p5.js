@@ -532,6 +532,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
  */
     this.uModelMatrix = new p5.Matrix();
     this.uViewMatrix = new p5.Matrix();
+    this.uMVMatrix = new p5.Matrix();
     this.uPMatrix = new p5.Matrix();
     this.uNMatrix = new p5.Matrix('mat3');
     this.curMatrix = new p5.Matrix('mat3');
