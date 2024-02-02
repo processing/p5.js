@@ -40,9 +40,10 @@ visualSuite('WebGL', function() {
       return new Promise(resolve => {
         p5.createCanvas(50, 50, p5.WEBGL);
         p5.loadModel('unit/assets/octa-color.obj', model => {
-          p5.background(200);
+          p5.background(255);
           p5.rotateX(10 * 0.01);
           p5.rotateY(10 * 0.01);
+          model.normalize();
           p5.model(model);
           screenshot();
           resolve();
