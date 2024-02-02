@@ -805,7 +805,7 @@ function getWindowHeight() {
  *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
  *     resizeCanvas(50, 100);
  *     background(200);
- *     text(width, 42, 27);
+ *     text(width, 21, 54);
  *   }
  * }
  * </code>
@@ -847,7 +847,7 @@ p5.prototype.width = 0;
  *   background(200);
  *
  *   // Display the canvas' height.
- *   text(height, 21, 54);
+ *   text(height, 42, 27);
  *
  *   describe('The number 50 written in black on a gray rectangle.');
  * }

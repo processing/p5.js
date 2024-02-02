@@ -654,24 +654,14 @@ class Renderer2D extends p5.Renderer {
         return this;
       }
     }
-    const kappa = 0.5522847498,
-      // control point offset horizontal
-      ox = w / 2 * kappa,
-      // control point offset vertical
-      oy = h / 2 * kappa,
-      // x-end
-      xe = x + w,
-      // y-end
-      ye = y + h,
-      // x-middle
-      xm = x + w / 2,
-      ym = y + h / 2; // y-middle
+    const centerX = x + w / 2,
+      centerY = y + h / 2,
+      radiusX = w / 2,
+      radiusY = h / 2;
     if (!this._clipping) ctx.beginPath();
-    ctx.moveTo(x, ym);
-    ctx.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
-    ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
-    ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-    ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
+
+    ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
+
     if (!this._clipping && doFill) {
       ctx.fill();
     }
@@ -1329,7 +1319,7 @@ class Renderer2D extends p5.Renderer {
     }
 
     this.drawingContext.font = `${this._textStyle || 'normal'} ${this._textSize ||
-      12}px ${font || 'sans-serif'}`;
+      12}px "${font || 'sans-serif'}"`;
 
     this.drawingContext.textAlign = this._textAlign;
     if (this._textBaseline === constants.CENTER) {

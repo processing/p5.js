@@ -208,7 +208,7 @@ p5.prototype.createShader = function (vertSrc, fragSrc) {
  *
  * The fragment shader receives some uniforms:
  * - `sampler2D tex0`, which contains the canvas contents as a texture
-* - `vec2 canvasSize`, which is the p5 width and height of the canvas (not including pixel density)
+ * - `vec2 canvasSize`, which is the p5 width and height of the canvas (not including pixel density)
  * - `vec2 texelSize`, which is the size of a physical pixel including pixel density (`1.0/(width*density)`, `1.0/(height*density)`)
  *
  * For more info about filters and shaders, see Adam Ferriss' <a href="https://github.com/aferriss/p5jsShaderExamples">repo of shader examples</a>
@@ -341,6 +341,14 @@ p5.prototype.createFilterShader = function (fragSrc) {
  *
  * Use <a href="#/p5/resetShader">resetShader()</a> to
  * restore the default shaders.
+ *
+ * Additional Information:
+ * The shader will be used for:
+ * - Fills when a texture is enabled if it includes a uniform `sampler2D`.
+ * - Fills when lights are enabled if it includes the attribute `aNormal`, or if it has any of the following uniforms: `uUseLighting`, `uAmbientLightCount`, `uDirectionalLightCount`, `uPointLightCount`, `uAmbientColor`, `uDirectionalDiffuseColors`, `uDirectionalSpecularColors`, `uPointLightLocation`, `uPointLightDiffuseColors`, `uPointLightSpecularColors`, `uLightingDirection`, or `uSpecular`.
+ * - Fills whenever there are no lights or textures.
+ * - Strokes if it includes the uniform `uStrokeWeight`.
+ * Note: This behavior is considered experimental, and changes are planned in future releases.
  *
  * Note, shaders can only be used in WEBGL mode.
  *
@@ -1176,6 +1184,98 @@ p5.prototype.shininess = function (shine) {
 };
 
 /**
+ * Sets the metalness property of a material used in 3D rendering.
+ *
+ * The metalness property controls the degree to which the material
+ * appears metallic. A higher metalness value makes the material look
+ * more metallic, while a lower value makes it appear less metallic.
+ *
+ * The default and minimum value is 0, indicating a non-metallic appearance.
+ *
+ * Unlike other materials, metals exclusively rely on reflections, particularly
+ * those produced by specular lights (mirrorLike lights). They don't incorporate
+ * diffuse or ambient lighting. Metals use a fill color to influence the overall
+ * color of their reflections. Pick a fill color, and you can easily change the
+ * appearance of the metal surfaces. When no fill color is provided, it defaults
+ * to using white.
+ *
+ * @method metalness
+
+ * @param {Number} metallic - The degree of metalness.
+ * @example
+ * <div class="notest">
+ * <code>
+ * let img;
+ * let slider;
+ * let slider2;
+ * function preload() {
+ *   img = loadImage('assets/outdoor_spheremap.jpg');
+ * }
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   slider = createSlider(0, 300, 100, 1);
+ *   let sliderLabel = createP('Metalness');
+ *   sliderLabel.position(100, height - 25);
+ *   slider2 = createSlider(0, 350, 100);
+ *   slider2.position(0, height + 20);
+ *   slider2Label = createP('Shininess');
+ *   slider2Label.position(100, height);
+ * }
+ * function draw() {
+ *   background(220);
+ *   imageMode(CENTER);
+ *   push();
+ *   image(img, 0, 0, width, height);
+ *   clearDepth();
+ *   pop();
+ *   imageLight(img);
+ *   fill('gray');
+ *   specularMaterial('gray');
+ *   shininess(slider2.value());
+ *   metalness(slider.value());
+ *   noStroke();
+ *   sphere(30);
+ * }
+ * </code>
+ * </div>
+ * @example
+ * <div>
+ * <code>
+ * let slider;
+ * let slider2;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   slider = createSlider(0, 200, 100);
+ *   let sliderLabel = createP('Metalness');
+ *   sliderLabel.position(100, height - 25);
+ *   slider2 = createSlider(0, 200, 2);
+ *   slider2.position(0, height + 25);
+ *   let slider2Label = createP('Shininess');
+ *   slider2Label.position(100, height);
+ * }
+ * function draw() {
+ *   noStroke();
+ *   background(100);
+ *   fill(255, 215, 0);
+ *   pointLight(255, 255, 255, 5000, 5000, 75);
+ *   specularMaterial('gray');
+ *   ambientLight(100);
+ *   shininess(slider2.value());
+ *   metalness(slider.value());
+ *   rotateY(frameCount * 0.01);
+ *   torus(20, 10);
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.metalness = function (metallic) {
+  this._assert3d('metalness');
+  const metalMix = 1 - Math.exp(-metallic / 100);
+  this._renderer._useMetalness = metalMix;
+  return this;
+};
+
+/**
  * @private blends colors according to color components.
  * If alpha value is less than 1, or non-standard blendMode
  * we need to enable blending on our gl context.
@@ -1218,7 +1318,7 @@ p5.RendererGL.prototype._applyColorBlend = function(colors, hasTransparency) {
 /**
  * @private sets blending in gl context to curBlendMode
  * @param  {Number[]} color [description]
- * @return {Number[]]}  Normalized numbers array
+ * @return {Number[]}  Normalized numbers array
  */
 p5.RendererGL.prototype._applyBlendMode = function () {
   if (this._cachedBlendMode === this.curBlendMode) {

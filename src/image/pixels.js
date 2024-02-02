@@ -307,6 +307,11 @@ p5.prototype._copyHelper = (
     syMod = srcImage.height / 2;
   }
   if (dstImage._renderer && dstImage._renderer.isP3D) {
+    dstImage.push();
+    dstImage.resetMatrix();
+    dstImage.noLights();
+    dstImage.blendMode(dstImage.BLEND);
+    dstImage.imageMode(dstImage.CORNER);
     p5.RendererGL.prototype.image.call(
       dstImage._renderer,
       srcImage,
@@ -319,6 +324,7 @@ p5.prototype._copyHelper = (
       dw,
       dh
     );
+    dstImage.pop();
   } else {
     dstImage.drawingContext.drawImage(
       srcImage.canvas,
@@ -613,7 +619,14 @@ p5.prototype.filter = function(...args) {
     filterGraphicsLayer.filter(...args);
 
     // copy secondary webgl renderer back to original p2d canvas
-    this._renderer._pInst.image(filterGraphicsLayer, 0, 0);
+    this.copy(
+      // src
+      filterGraphicsLayer._renderer,
+      // src coods
+      0, 0, this.width, this.height,
+      // dest coords
+      0, 0, this.width, this.height
+    );
     filterGraphicsLayer.clear(); // prevent feedback effects on p2d canvas
   }
 };

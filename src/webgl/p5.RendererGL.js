@@ -456,6 +456,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this._enableLighting = false;
 
     this.ambientLightColors = [];
+    this.mixedAmbientLight = [];
+    this.mixedSpecularColor = [];
     this.specularColors = [1, 1, 1];
 
     this.directionalLightDirections = [];
@@ -495,6 +497,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.curStrokeColor = this._cachedStrokeStyle = [0, 0, 0, 1];
 
     this.curBlendMode = constants.BLEND;
+    this.preEraseBlend=undefined;
     this._cachedBlendMode = undefined;
     if (this.webglVersion === constants.WEBGL2) {
       this.blendExt = this.GL;
@@ -509,6 +512,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this._useEmissiveMaterial = false;
     this._useNormalMaterial = false;
     this._useShininess = 1;
+    this._useMetalness = 0;
 
     this._useLineColor = false;
     this._useVertexColor = false;
@@ -529,6 +533,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.uMVMatrix = new p5.Matrix();
     this.uPMatrix = new p5.Matrix();
     this.uNMatrix = new p5.Matrix('mat3');
+    this.curMatrix = new p5.Matrix('mat3');
 
     // Current vertex normal
     this._currentNormal = new p5.Vector(0, 0, 1);
@@ -850,24 +855,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   _update() {
     // reset model view and apply initial camera transform
     // (containing only look at info; no projection).
-    this.uMVMatrix.set(
-      this._curCamera.cameraMatrix.mat4[0],
-      this._curCamera.cameraMatrix.mat4[1],
-      this._curCamera.cameraMatrix.mat4[2],
-      this._curCamera.cameraMatrix.mat4[3],
-      this._curCamera.cameraMatrix.mat4[4],
-      this._curCamera.cameraMatrix.mat4[5],
-      this._curCamera.cameraMatrix.mat4[6],
-      this._curCamera.cameraMatrix.mat4[7],
-      this._curCamera.cameraMatrix.mat4[8],
-      this._curCamera.cameraMatrix.mat4[9],
-      this._curCamera.cameraMatrix.mat4[10],
-      this._curCamera.cameraMatrix.mat4[11],
-      this._curCamera.cameraMatrix.mat4[12],
-      this._curCamera.cameraMatrix.mat4[13],
-      this._curCamera.cameraMatrix.mat4[14],
-      this._curCamera.cameraMatrix.mat4[15]
-    );
+    this.uMVMatrix.set(this._curCamera.cameraMatrix);
 
     // reset light data for new frame.
 
@@ -1064,10 +1052,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // Resize the framebuffer 'fbo' and adjust its pixel density if it doesn't match the target.
     this.matchSize(fbo, target);
 
-    // Set filterCamera for framebuffers.
-    if (target !== this) {
-      this.filterCamera = this.getFilterLayer().createCamera();
-    }
     fbo.draw(() => this._pInst.clear()); // prevent undesirable feedback effects accumulating secretly.
 
     let texelSize = [
@@ -1084,6 +1068,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       // setup
       this._pInst.push();
       this._pInst.noStroke();
+      this._pInst.blendMode(constants.BLEND);
 
       // draw main to temp buffer
       this._pInst.shader(this.filterShader);
@@ -1098,8 +1083,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this._pInst.clear();
         this._pInst.shader(this.filterShader);
         this._pInst.noLights();
-        this._pInst.rect(-target.width / 2,
-          -target.height / 2, target.width, target.height);
+        this._pInst.plane(target.width, target.height);
       });
 
       // Vert pass: draw `tmp` to `fbo`
@@ -1109,8 +1093,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this._pInst.clear();
         this._pInst.shader(this.filterShader);
         this._pInst.noLights();
-        this._pInst.rect(-target.width / 2,
-          -target.height / 2, target.width, target.height);
+        this._pInst.plane(target.width, target.height);
       });
 
       this._pInst.pop();
@@ -1119,6 +1102,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     else {
       fbo.draw(() => {
         this._pInst.noStroke();
+        this._pInst.blendMode(constants.BLEND);
         this._pInst.shader(this.filterShader);
         this.filterShader.setUniform('tex0', target);
         this.filterShader.setUniform('texelSize', texelSize);
@@ -1127,8 +1111,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         // but shouldn't hurt to always set
         this.filterShader.setUniform('filterParameter', filterParameter);
         this._pInst.noLights();
-        this._pInst.rect(-target.width / 2, -target.height / 2,
-          target.width, target.height);
+        this._pInst.plane(target.width, target.height);
       });
 
     }
@@ -1139,11 +1122,11 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this._pInst.push();
     this._pInst.imageMode(constants.CORNER);
     this._pInst.blendMode(constants.BLEND);
-    this.filterCamera._resize();
-    this._pInst.setCamera(this.filterCamera);
+    target.filterCamera._resize();
+    this._pInst.setCamera(target.filterCamera);
     this._pInst.resetMatrix();
-    this._pInst.image(fbo, -this.width / 2, -this.height / 2,
-      this.width, this.height);
+    this._pInst.image(fbo, -target.width / 2, -target.height / 2,
+      target.width, target.height);
     this._pInst.pop();
     this._pInst.pop();
   }
@@ -1187,7 +1170,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
   erase(opacityFill, opacityStroke) {
     if (!this._isErasing) {
-      this._cachedBlendMode = this.curBlendMode;
+      this.preEraseBlend = this.curBlendMode;
       this._isErasing = true;
       this.blendMode(constants.REMOVE);
       this._cachedFillStyle = this.curFillColor.slice();
@@ -1199,14 +1182,15 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
   noErase() {
     if (this._isErasing) {
+      // Restore colors
       this.curFillColor = this._cachedFillStyle.slice();
       this.curStrokeColor = this._cachedStrokeStyle.slice();
-      // It's necessary to restore post-erase state. Needs rework
-      let temp = this.curBlendMode;
-      this.blendMode(this._cachedBlendMode);
-      this._cachedBlendMode = temp; // If we don't do this, applyBlendMode() returns null
+      // Restore blend mode
+      this.curBlendMode=this.preEraseBlend;
+      this.blendMode(this.preEraseBlend);
+      // Ensure that _applyBlendMode() sets preEraseBlend back to the original blend mode
       this._isErasing = false;
-      this._applyBlendMode(); // This sets _cachedBlendMode back to the original blendmode
+      this._applyBlendMode();
     }
   }
 
@@ -1493,6 +1477,15 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
   }
 
+  /**
+   * Resets all depth information so that nothing previously drawn will
+   * occlude anything subsequently drawn.
+   */
+  clearDepth(depth = 1) {
+    this.GL.clearDepth(depth);
+    this.GL.clear(this.GL.DEPTH_BUFFER_BIT);
+  }
+
   applyMatrix(a, b, c, d, e, f) {
     if (arguments.length === 16) {
       p5.Matrix.prototype.apply.apply(this.uMVMatrix, arguments);
@@ -1613,6 +1606,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     properties._useSpecularMaterial = this._useSpecularMaterial;
     properties._useEmissiveMaterial = this._useEmissiveMaterial;
     properties._useShininess = this._useShininess;
+    properties._useMetalness = this._useMetalness;
 
     properties.constantAttenuation = this.constantAttenuation;
     properties.linearAttenuation = this.linearAttenuation;
@@ -1654,24 +1648,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
   }
   resetMatrix() {
-    this.uMVMatrix.set(
-      this._curCamera.cameraMatrix.mat4[0],
-      this._curCamera.cameraMatrix.mat4[1],
-      this._curCamera.cameraMatrix.mat4[2],
-      this._curCamera.cameraMatrix.mat4[3],
-      this._curCamera.cameraMatrix.mat4[4],
-      this._curCamera.cameraMatrix.mat4[5],
-      this._curCamera.cameraMatrix.mat4[6],
-      this._curCamera.cameraMatrix.mat4[7],
-      this._curCamera.cameraMatrix.mat4[8],
-      this._curCamera.cameraMatrix.mat4[9],
-      this._curCamera.cameraMatrix.mat4[10],
-      this._curCamera.cameraMatrix.mat4[11],
-      this._curCamera.cameraMatrix.mat4[12],
-      this._curCamera.cameraMatrix.mat4[13],
-      this._curCamera.cameraMatrix.mat4[14],
-      this._curCamera.cameraMatrix.mat4[15]
-    );
+    this.uMVMatrix.set(this._curCamera.cameraMatrix);
     return this;
   }
 
@@ -2039,6 +2016,16 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   _setFillUniforms(fillShader) {
     fillShader.bindShader();
 
+    this.mixedSpecularColor = [...this.curSpecularColor];
+
+    if (this._useMetalness > 0) {
+      this.mixedSpecularColor = this.mixedSpecularColor.map(
+        (mixedSpecularColor, index) =>
+          this.curFillColor[index] * this._useMetalness +
+          mixedSpecularColor * (1 - this._useMetalness)
+      );
+    }
+
     // TODO: optimize
     fillShader.setUniform('uUseVertexColor', this._useVertexColor);
     fillShader.setUniform('uMaterialColor', this.curFillColor);
@@ -2050,11 +2037,12 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     fillShader.setUniform('uHasSetAmbient', this._hasSetAmbient);
     fillShader.setUniform('uAmbientMatColor', this.curAmbientColor);
-    fillShader.setUniform('uSpecularMatColor', this.curSpecularColor);
+    fillShader.setUniform('uSpecularMatColor', this.mixedSpecularColor);
     fillShader.setUniform('uEmissiveMatColor', this.curEmissiveColor);
     fillShader.setUniform('uSpecular', this._useSpecularMaterial);
     fillShader.setUniform('uEmissive', this._useEmissiveMaterial);
     fillShader.setUniform('uShininess', this._useShininess);
+    fillShader.setUniform('metallic', this._useMetalness);
 
     this._setImageLightUniforms(fillShader);
 
@@ -2086,8 +2074,16 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     // TODO: sum these here...
     const ambientLightCount = this.ambientLightColors.length / 3;
+    this.mixedAmbientLight = [...this.ambientLightColors];
+
+    if (this._useMetalness > 0) {
+      this.mixedAmbientLight = this.mixedAmbientLight.map((ambientColors => {
+        let mixing = ambientColors - this._useMetalness;
+        return Math.max(0, mixing);
+      }));
+    }
     fillShader.setUniform('uAmbientLightCount', ambientLightCount);
-    fillShader.setUniform('uAmbientColor', this.ambientLightColors);
+    fillShader.setUniform('uAmbientColor', this.mixedAmbientLight);
 
     const spotLightCount = this.spotLightDiffuseColors.length / 3;
     fillShader.setUniform('uSpotLightCount', spotLightCount);

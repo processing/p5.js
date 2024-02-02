@@ -1,0 +1,45 @@
+body {
+  font-family: sans-serif;
+}
+
+h4 {
+  font-weight: normal;
+  margin-bottom: 10px;
+  margin-top: 0;
+}
+
+#metrics {
+  color: #777;
+  text-decoration: italic;
+}
+
+.suite {
+  padding-left: 10px;
+  border-left: 2px solid rgba(0,0,0,0.2);
+  margin-bottom: 30px;
+}
+.skipped {
+  opacity: 0.5;
+}
+.suite.focused {
+  border-left-color: #2B2;
+}
+.suite.failed {
+  border-left-color: #F00;
+}
+
+.failed {
+  color: #F00;
+}
+
+.screenshot img {
+  border: 2px solid #000;
+  margin-right: 5px;
+}
+.screenshot.failed img {
+  border-color: #F00;
+}
+
+.diff {
+  background: #000;
+}
