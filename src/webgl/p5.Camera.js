@@ -193,22 +193,80 @@ p5.prototype.perspective = function (...args) {
   return this;
 };
 
+
 /**
  *
  * Enable or disable perspective for lines in the WebGL renderer.
- * When linePerspective is enabled, lines will be affected by the current camera's perspective.
- * When linePerspective is disabled, lines will have a uniform scale regardless of the camera's perspective.
+ *
+ * The behavior of `linePerspective()`  is associated with the type of camera projection being used.
+ *
+ *  When using `perspective()`, which simulates realistic perspective, linePerspective
+ *  is set to `true` by default. This means that lines will be affected by the current
+ *  camera's perspective, resulting in a more natural appearance.
+ *
+ *  When using `ortho()` or `frustum()`, which do not simulate realistic perspective,
+ *  linePerspective is set to `false` by default. In this case, lines will have a uniform
+ *  scale regardless of the camera's perspective, providing a more predictable and
+ *  consistent appearance.
+ *
+ *  You can override the default behavior by explicitly calling `linePerspective()` after
+ *  using perspective(), ortho(), or frustum(). This allows you to customize the line
+ *  perspective based on your specific requirements.
  *
  * @method linePerspective
  * @memberof p5.prototype
  * @param {boolean} enable - Set to `true` to enable line perspective, `false` to disable.
+ * @return {boolean} The boolean value representing the current state of linePerspective().
  *<br>
  * @example
- * @todo
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   linePerspective(true);
+ *   strokeWeight(3);
+ *   describe(
+ *     'rotated 3D boxes have their stroke weights affected after mouse is clicked.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(220);
+ *   rotateY(PI/8);
+ *   rotateZ(PI/8);
+ *   translate(0, 0, 100);
+ *   for (let i = 0; i < 12; i++) {
+ *     translate(0, 0, -200);
+ *     box(30);
+ *   }
+ * }
+ *
+ * function mousePressed() {
+ *   perspective(PI/12, width/height, 1, 10000);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Demonstrates the dynamic control of line perspective in a 3D environment with rotating boxes.
  */
+
 p5.prototype.linePerspective = function (enable) {
-  this._renderer._curCamera.useLinePerspective = enable;
+  p5._validateParameters('linePerspective', arguments);
+
+  if (!this._renderer._curCamera) {
+    this._renderer._curCamera = new p5.Camera(this._renderer);
+  }
+
+  if (enable !== undefined) {
+    // Set the line perspective if enable is provided
+    this._renderer._curCamera.useLinePerspective = enable;
+  } else {
+    // If no argument is provided, return the current value
+    return this._renderer._curCamera.useLinePerspective;
+  }
 };
+
 
 /**
  * Sets an orthographic projection for the current camera in a 3D sketch
