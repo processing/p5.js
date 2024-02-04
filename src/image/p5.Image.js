@@ -878,21 +878,22 @@ p5.Image = class {
     }
     const currBlend = this.drawingContext.globalCompositeOperation;
 
-    let scaleFactor = 1;
+    let imgScaleFactor = this._pixelDensity;
+    let maskScaleFactor = 1;
     if (p5Image instanceof p5.Renderer) {
-      scaleFactor = p5Image._pInst._pixelDensity;
+      maskScaleFactor = p5Image._pInst._pixelDensity;
     }
 
     const copyArgs = [
       p5Image,
       0,
       0,
-      scaleFactor * p5Image.width,
-      scaleFactor * p5Image.height,
+      maskScaleFactor * p5Image.width,
+      maskScaleFactor * p5Image.height,
       0,
       0,
-      this.width,
-      this.height
+      imgScaleFactor * this.width,
+      imgScaleFactor * this.height
     ];
 
     this.drawingContext.globalCompositeOperation = 'destination-in';
@@ -907,8 +908,8 @@ p5.Image = class {
         this.gifProperties.frames[i].image = this.drawingContext.getImageData(
           0,
           0,
-          this.width,
-          this.height
+          imgScaleFactor * this.width,
+          imgScaleFactor * this.height
         );
       }
       this.drawingContext.putImageData(
