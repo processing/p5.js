@@ -41,8 +41,57 @@ function typeObject(node) {
   }
 }
 
+// Modules
+const fileModuleInfo = {};
+const modules = {};
+const submodules = {};
+for (const entry of data) {
+  if (entry.tags.some(tag => tag.title === 'module')) {
+    const module = entry.tags.find(tag => tag.title === 'module').name;
+
+    const submoduleTag = entry.tags.find(tag => tag.title === 'submodule');
+    const submodule = submoduleTag ? submoduleTag.description : undefined;
+
+    const file = entry.context.file;
+
+    // Record what module/submodule each file is attached to so that we can
+    // look this info up for each method based on its file
+    fileModuleInfo[file] = fileModuleInfo[file] || {
+      module: undefined,
+      submodule: undefined
+    };
+    fileModuleInfo[file].module = module;
+    fileModuleInfo[file].submodule =
+      fileModuleInfo[file].submodule || submodule;
+
+    modules[module] = modules[module] || {
+      name: module,
+      submodules: {},
+      classes: {}
+    };
+    if (submodule) {
+      modules[module].submodules[submodule] = true;
+      submodules[submodule] = submodules[submodule] || {
+        name: submodule,
+        module,
+        is_submodule: true
+      };
+    }
+  }
+}
+for (const key in modules) {
+  converted.modules[key] = modules[key];
+}
+for (const key in submodules) {
+  converted.modules[key] = submodules[key];
+}
+
+// Class methods
 for (const entry of data) {
   if (entry.kind === 'function' && entry.properties.length === 0) {
+    const file = entry.context.file;
+    const { module, submodule } = fileModuleInfo[file] || {};
+
     const item = {
       name: entry.name,
       itemtype: 'method',
@@ -66,8 +115,8 @@ for (const entry of data) {
         ...typeObject(entry.returns[0].type).name
       },
       class: entry.memberof, // TODO
-      module: undefined, // TODO
-      submodule: undefined // TODO
+      module,
+      submodule
     };
 
     converted.classitems.push(item);
