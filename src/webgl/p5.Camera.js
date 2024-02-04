@@ -197,21 +197,18 @@ p5.prototype.perspective = function (...args) {
 /**
  *
  * Enable or disable perspective for lines in the WebGL renderer.
- *
  * The behavior of `linePerspective()`  is associated with the type of camera projection being used.
  *
- *  When using `perspective()`, which simulates realistic perspective, linePerspective
- *  is set to `true` by default. This means that lines will be affected by the current
- *  camera's perspective, resulting in a more natural appearance.
- *
- *  When using `ortho()` or `frustum()`, which do not simulate realistic perspective,
- *  linePerspective is set to `false` by default. In this case, lines will have a uniform
- *  scale regardless of the camera's perspective, providing a more predictable and
- *  consistent appearance.
- *
- *  You can override the default behavior by explicitly calling `linePerspective()` after
- *  using perspective(), ortho(), or frustum(). This allows you to customize the line
- *  perspective based on your specific requirements.
+ * - When using `perspective()`, which simulates realistic perspective, linePerspective
+ *    is set to `true` by default. This means that lines will be affected by the current
+ *    camera's perspective, resulting in a more natural appearance.
+ * - When using `ortho()` or `frustum()`, which do not simulate realistic perspective,
+ *    linePerspective is set to `false` by default. In this case, lines will have a uniform
+ *    scale regardless of the camera's perspective, providing a more predictable and
+ *    consistent appearance.
+ * - You can override the default behavior by explicitly calling `linePerspective()` after
+ *    using `perspective()`, `ortho()`, or `frustum()`. This allows you to customize the line
+ *    perspective based on your specific requirements.
  *
  * @method linePerspective
  * @memberof p5.prototype
@@ -223,7 +220,6 @@ p5.prototype.perspective = function (...args) {
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   linePerspective(true);
  *   strokeWeight(3);
  *   describe(
  *     'rotated 3D boxes have their stroke weights affected after mouse is clicked.'
@@ -234,15 +230,16 @@ p5.prototype.perspective = function (...args) {
  *   background(220);
  *   rotateY(PI/8);
  *   rotateZ(PI/8);
- *   translate(0, 0, 100);
+ *   translate(0, 0, 350);
  *   for (let i = 0; i < 12; i++) {
- *     translate(0, 0, -200);
+ *     translate(0, 0, -70);
  *     box(30);
  *   }
  * }
  *
  * function mousePressed() {
  *   perspective(PI/12, width/height, 1, 10000);
+ *   linePerspective(false);
  * }
  * </code>
  * </div>
