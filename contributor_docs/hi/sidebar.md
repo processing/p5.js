@@ -1,0 +1,21 @@
+<!-- docs/_sidebar.md -->
+
+- [__योगदानकर्ता परिचय__](README.md)
+- __CONTRIBUTING DOCS__
+  - [योगदान के लिए दस्तावेज़ीकरण](contributing_documentation.md)
+  - [मुद्दे लेबल](issue_labels.md)
+- __CONTRIBUTING THOUGHTS__
+  - [डिज़ाइन सिद्धांत](design_principles.md)
+  - [योगदान का आयोजन](organization.md)
+- __CONTRIBUTING CODE__
+  - [लाइब्रेरी बनाना](creating_libraries.md)
+  - [इनलाइन दस्तावेज़ीकरण](inline_documentation.md)
+  - [इकाई परीक्षण](unit_testing.md)
+  - [अनुकूल-त्रुटि प्रणाली](friendly_error_system.md)
+- __RELATED INFO__
+  - [रिपॉज़िटरी संरचना](repo_structure.md)
+  - [WebGL आर्किटेक्चर](webgl_mode_architecture.md)
+  - [समर्थित ब्राउज़र्स](supported_browsers.md)
+  - [वेब एक्सेसिबिलिटी](web_accessibility.md)
+  - [कस्टम बिल्ड्स](custom_p5_build.md)
+  - [रिलीज प्रक्रिया](release_process.md)
