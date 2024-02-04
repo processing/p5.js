@@ -229,7 +229,11 @@ p5.prototype.loadModel = function(path,options) {
           const parsedMaterials=await getMaterials(lines);
 
           if(parsedMaterials && typeof parsedMaterials==='object'){
-            parseObj(model, lines, parsedMaterials);
+            try {
+              parseObj(model, lines, parsedMaterials);
+            } catch (error) {
+              console.error(error.message);
+            }
           }
         }catch (error) {
           if (failureCallback) {
@@ -347,6 +351,9 @@ function parseObj(model, lines, materials= {}) {
   // Map from source index → Map of material → destination index
   const usedVerts = {}; // Track colored vertices
   let currentMaterial = null;
+  let uniqueVertices = 0; // all unique vertices count
+  const coloredVerts = new Set(); //unique vertices with color
+  let hasColoredVertices = false;
   for (let line = 0; line < lines.length; ++line) {
     // Each line is a separate object (vertex, face, vertex normal, etc)
     // For each line, split it into tokens on whitespace. The first token
@@ -365,6 +372,9 @@ function parseObj(model, lines, materials= {}) {
           parseFloat(tokens[2]),
           parseFloat(tokens[3])
         );
+        if (tokens[0]==='v'){
+          uniqueVertices++;
+        }
         loadedVerts[tokens[0]].push(vertex);
       } else if (tokens[0] === 'vt') {
         // Check if this line describes a texture coordinate.
@@ -407,6 +417,13 @@ function parseObj(model, lines, materials= {}) {
 
               usedVerts[vertParts[0]][currentMaterial] = vertIndex;
               face.push(vertIndex);
+
+              if (currentMaterial
+                && materials[currentMaterial]
+                && materials[currentMaterial].diffuseColor) {
+                // Mark this vertex as colored
+                coloredVerts.add(loadedVerts.v[vertParts[0]]); //since a set would only push unique values
+              }
             } else {
               face.push(usedVerts[vertParts[0]][currentMaterial]);
             }
@@ -419,9 +436,13 @@ function parseObj(model, lines, materials= {}) {
           ) {
             model.faces.push(face);
             //same material for all vertices in a particular face
-            if (currentMaterial && materials[currentMaterial]) {
+            if (currentMaterial
+              && materials[currentMaterial]
+              && materials[currentMaterial].diffuseColor) {
               const materialDiffuseColor =
               materials[currentMaterial].diffuseColor;
+              //flag to track color or no color model
+              hasColoredVertices = true;
               for (let i = 0; i < face.length; i++) {
                 model.vertexColors.push(materialDiffuseColor[0]);
                 model.vertexColors.push(materialDiffuseColor[1]);
@@ -437,6 +458,19 @@ function parseObj(model, lines, materials= {}) {
   if (model.vertexNormals.length === 0) {
     model.computeNormals();
   }
+  if (hasColoredVertices) {
+  // Ensure every vertex added has a color
+    if (coloredVerts.size !== uniqueVertices) {
+      throw new Error('Not all vertices have a color.');
+    }
+  } else {
+  // If no vertices are supposed to have color, ensure coloredVerts is empty
+    if (coloredVerts.size > 0) {
+      throw new Error('Unexpected colored vertices found.');
+    }
+  }
+
+
   return model;
 }
 
