@@ -886,7 +886,6 @@ p5.Image = class {
     if (p5Image instanceof p5.Image) {
       maskScaleFactor = p5Image._pixelDensity;
     }
-    console.log('mask density ' + maskScaleFactor + ' image density ' + imgScaleFactor);
     maskScaleFactor /= imgScaleFactor;
 
     const copyArgs = [
