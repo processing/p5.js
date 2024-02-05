@@ -42,6 +42,13 @@ function typeObject(node) {
   }
 }
 
+function locationInfo(node) {
+  return {
+    file: node.context.file.slice(node.context.file.indexOf('src/')),
+    line: node.context.loc.start.line
+  };
+}
+
 // Modules
 const fileModuleInfo = {};
 const modules = {};
@@ -117,6 +124,7 @@ for (const entry of data) {
 
     const item = {
       name: entry.name,
+      ...locationInfo(entry),
       itemtype: 'method',
       chainable: prevItem.chainable || entry.tags.some(tag => tag.title === 'chainable'),
       description: descriptionString(entry.description),
