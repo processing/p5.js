@@ -5610,6 +5610,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "sudhanshuv3",
+      "name": "Sudhanshu Tiwari",
+      "avatar_url": "https://avatars.githubusercontent.com/u/148856416?v=4",
+      "profile": "https://github.com/sudhanshuv3",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
