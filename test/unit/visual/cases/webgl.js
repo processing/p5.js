@@ -24,6 +24,52 @@ visualSuite('WebGL', function() {
     });
   });
 
+  visualSuite('filter', function() {
+    visualTest('On the main canvas', function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.noStroke();
+      p5.fill('red');
+      p5.circle(0, 0, 20);
+      p5.filter(p5.GRAY);
+      screenshot();
+    });
+
+    visualTest('On a framebuffer', function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const fbo = p5.createFramebuffer({ antialias: true });
+      fbo.begin();
+      p5.noStroke();
+      p5.fill('red');
+      p5.circle(0, 0, 20);
+      p5.filter(p5.GRAY);
+      fbo.end();
+      p5.imageMode(p5.CENTER);
+      p5.image(fbo, 0, 0);
+      screenshot();
+    });
+
+    visualTest(
+      'On a framebuffer sized differently from the main canvas',
+      function(p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const fbo = p5.createFramebuffer({
+          width: 26,
+          height: 26,
+          antialias: true
+        });
+        fbo.begin();
+        p5.noStroke();
+        p5.fill('red');
+        p5.circle(0, 0, 20);
+        p5.filter(p5.GRAY);
+        fbo.end();
+        p5.imageMode(p5.CENTER);
+        p5.image(fbo, 0, 0);
+        screenshot();
+      }
+    );
+  });
+
   visualSuite('Lights', function() {
     visualTest('Fill color and default ambient material', function(p5, screenshot) {
       p5.createCanvas(50, 50, p5.WEBGL);

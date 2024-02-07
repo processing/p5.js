@@ -672,8 +672,7 @@ p5.prototype.lights = function() {
  *   );
  * }
  * function draw() {
- *   ortho();
- *   background(0);
+ *   background(125);
  *
  *   let locX = mouseX - width / 2;
  *   let locY = mouseY - height / 2;
