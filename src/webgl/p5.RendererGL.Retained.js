@@ -189,12 +189,14 @@ p5.RendererGL.prototype.drawBuffersScaled = function(
   scaleY,
   scaleZ
 ) {
+  let originalModelMatrix = this.uModelMatrix.copy();
   try {
     this.uModelMatrix.scale(scaleX, scaleY, scaleZ);
-    this.uMVMatrix.scale(scaleX, scaleY, scaleZ);
+
     this.drawBuffers(gId);
   } finally {
-    this.uModelMatrix = uModelMatrix;
+
+    this.uModelMatrix = originalModelMatrix;
   }
 };
 

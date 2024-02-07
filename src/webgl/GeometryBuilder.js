@@ -46,13 +46,9 @@ class GeometryBuilder {
    * transformations.
    */
   addGeometry(input) {
-    this.renderer.uMVMatrix =
-     this.renderer.uModelMatrix.mult(this.renderer.uViewMatrix);
-    this.hasTransform = !this.renderer.uMVMatrix.mat4
-      .every((v, i) => v === this.identityMatrix.mat4[i]);
 
     if (this.hasTransform) {
-      this.renderer.uNMatrix.inverseTranspose(this.renderer.uMVMatrix);
+      this.renderer.uNMatrix.inverseTranspose(this.renderer.uModelMatrix);
     }
 
     let startIdx = this.geometry.vertices.length;
