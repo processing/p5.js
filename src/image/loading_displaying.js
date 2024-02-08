@@ -232,6 +232,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
 p5.prototype.saveGif = async function(
   fileName,
   duration,
+  returnBlobOnly,
   options = {
     delay: 0,
     units: 'seconds',
@@ -504,6 +505,8 @@ p5.prototype.saveGif = async function(
       setTimeout(() => p.remove(), notificationDuration * 1000);
   }
 
+  if(returnBlobOnly) return blob;
+  
   p5.prototype.downloadFile(blob, fileName, extension);
 };
 
