@@ -229,18 +229,16 @@ p5.prototype.loadModel = function(path,options) {
           const parsedMaterials=await getMaterials(lines);
 
           if(parsedMaterials && typeof parsedMaterials==='object'){
-            try {
-              parseObj(model, lines, parsedMaterials);
-            } catch (error) {
-              console.error(error.message);
-            }
+            parseObj(model, lines, parsedMaterials);
           }
         }catch (error) {
+          console.error(error.message);
           if (failureCallback) {
             failureCallback(error);
           } else {
             p5._friendlyError('Error during parsing: ' + error.message);
           }
+          return;
         }
         finally{
           if (normalize) {
@@ -351,9 +349,9 @@ function parseObj(model, lines, materials= {}) {
   // Map from source index → Map of material → destination index
   const usedVerts = {}; // Track colored vertices
   let currentMaterial = null;
-  let uniqueVertices = 0; // all unique vertices count
   const coloredVerts = new Set(); //unique vertices with color
   let hasColoredVertices = false;
+  let hasColorlessVertices = false;
   for (let line = 0; line < lines.length; ++line) {
     // Each line is a separate object (vertex, face, vertex normal, etc)
     // For each line, split it into tokens on whitespace. The first token
@@ -372,9 +370,6 @@ function parseObj(model, lines, materials= {}) {
           parseFloat(tokens[2]),
           parseFloat(tokens[3])
         );
-        if (tokens[0]==='v'){
-          uniqueVertices++;
-        }
         loadedVerts[tokens[0]].push(vertex);
       } else if (tokens[0] === 'vt') {
         // Check if this line describes a texture coordinate.
@@ -417,7 +412,6 @@ function parseObj(model, lines, materials= {}) {
 
               usedVerts[vertParts[0]][currentMaterial] = vertIndex;
               face.push(vertIndex);
-
               if (currentMaterial
                 && materials[currentMaterial]
                 && materials[currentMaterial].diffuseColor) {
@@ -439,15 +433,18 @@ function parseObj(model, lines, materials= {}) {
             if (currentMaterial
               && materials[currentMaterial]
               && materials[currentMaterial].diffuseColor) {
-              const materialDiffuseColor =
-              materials[currentMaterial].diffuseColor;
+              hasColoredVertices=true;
               //flag to track color or no color model
               hasColoredVertices = true;
+              const materialDiffuseColor =
+              materials[currentMaterial].diffuseColor;
               for (let i = 0; i < face.length; i++) {
                 model.vertexColors.push(materialDiffuseColor[0]);
                 model.vertexColors.push(materialDiffuseColor[1]);
                 model.vertexColors.push(materialDiffuseColor[2]);
               }
+            }else{
+              hasColorlessVertices=true;
             }
           }
         }
@@ -458,18 +455,10 @@ function parseObj(model, lines, materials= {}) {
   if (model.vertexNormals.length === 0) {
     model.computeNormals();
   }
-  if (hasColoredVertices) {
-  // Ensure every vertex added has a color
-    if (coloredVerts.size !== uniqueVertices) {
-      throw new Error('Not all vertices have a color.');
-    }
-  } else {
-  // If no vertices are supposed to have color, ensure coloredVerts is empty
-    if (coloredVerts.size > 0) {
-      throw new Error('Unexpected colored vertices found.');
-    }
+  if (hasColoredVertices === hasColorlessVertices) {
+    // If both are true or both are false, throw an error because the model is inconsistent
+    throw new Error('Model coloring is inconsistent. Either all vertices should have colors or none should.');
   }
-
 
   return model;
 }

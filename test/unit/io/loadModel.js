@@ -3,7 +3,7 @@ suite('loadModel', function() {
   var validFile = 'unit/assets/teapot.obj';
   var validObjFileforMtl='unit/assets/octa-color.obj';
   var validSTLfile = 'unit/assets/ascii.stl';
-  // const missingMtltoObjFile= 'unit/assets/plant.obj';
+  var inconsistentColorObjFile = 'unit/assets/eg1.obj';
   var validSTLfileWithoutExtension = 'unit/assets/ascii';
 
   test('_friendlyFileLoadError is called', async function() {
@@ -100,7 +100,7 @@ suite('loadModel', function() {
     };
   });
 
-  test.only('loads OBJ file with associated MTL file correctly', async function(){
+  test('loads OBJ file with associated MTL file correctly', async function(){
     const model = await promisedSketch(function (sketch,resolve,reject){
       sketch.preload=function(){
         sketch.loadModel(validObjFileforMtl,resolve,reject);
@@ -134,21 +134,24 @@ suite('loadModel', function() {
     ];
     assert.deepEqual(model.vertexColors,expectedColors);
   });
-  // test('throws an error for missing MTL file specified in OBJ file', async function() {
-  //   try {
-  //     await promisedSketch(function (sketch, resolve, reject) {
-  //       sketch.preload = function () {
-  //         sketch.loadModel(missingMtltoObjFile, resolve, reject);
-  //       };
-  //     });
-  //     // If the promise resolves without throwing an error, fail the test
-  //     assert.fail('Expected an error for missing MTL file, but the promise resolved successfully');
-  //   } catch (error) {
-  //     // Check if the error message indicates a missing MTL file
-  //     console.log(error);
-  //     assert.include(error.message, 'MTL file not found', 'Unexpected error message');
-  //   }
-  // });
+  test('inconsistent vertex coloring throws error', async function() {
+    // Attempt to load the model and catch the error
+    let errorCaught = null;
+    try {
+      await promisedSketch(function(sketch, resolve, reject) {
+        sketch.preload = function() {
+          sketch.loadModel(inconsistentColorObjFile, resolve, reject);
+        };
+      });
+    } catch (error) {
+      errorCaught = error;
+    }
+
+    // Assert that an error was caught and that it has the expected message
+    assert.instanceOf(errorCaught, Error, 'No error thrown for inconsistent vertex coloring');
+    assert.equal(errorCaught.message, 'Model coloring is inconsistent. Either all vertices should have colors or none should.', 'Unexpected error message for inconsistent vertex coloring');
+  });
+
   test('returns an object with correct data', async function() {
     const model = await promisedSketch(function(sketch, resolve, reject) {
       var _model;
