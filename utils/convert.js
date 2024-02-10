@@ -2,14 +2,24 @@ const fs = require('fs');
 const path = require('path');
 
 const data = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs/data.json')));
+const allData = data.flatMap(entry => {
+  return [
+    entry,
+    ...entry.members.global,
+    ...entry.members.inner,
+    ...entry.members.instance,
+    ...entry.members.events,
+    ...entry.members.static
+  ];
+});
 
 const converted = {
   project: {}, // TODO
   files: {}, // TODO
-  modules: {}, // TODO
-  classes: {}, // TODO
-  classitems: [], // TODO
-  warnings: [], // TODO
+  modules: {},
+  classes: {},
+  classitems: [],
+  warnings: [], // Intentionally unimplemented
   consts: {} // TODO
 };
 
@@ -49,11 +59,25 @@ function locationInfo(node) {
   };
 }
 
+function getExample(node) {
+  return node.description;
+}
+
+function getAlt(node) {
+  return node
+    .tags
+    .filter(tag => tag.title === 'alt')
+    .map(tag => tag.description)
+    .join('\n') || undefined;
+}
+
+// ============================================================================
 // Modules
+// ============================================================================
 const fileModuleInfo = {};
 const modules = {};
 const submodules = {};
-for (const entry of data) {
+for (const entry of allData) {
   if (entry.tags.some(tag => tag.title === 'module')) {
     const module = entry.tags.find(tag => tag.title === 'module').name;
 
@@ -101,22 +125,121 @@ for (const key in submodules) {
   converted.modules[key] = submodules[key];
 }
 
+function getModuleInfo(entry) {
+  const file = entry.context.file;
+  let { module, submodule, for: forEntry } = fileModuleInfo[file] || {};
+  forEntry = entry.memberof || forEntry;
+  return { module, submodule, forEntry };
+}
+
+// ============================================================================
 // Classes
-// TODO
-// const classDefs = {};
-// for (const entry of data) {
-// }
+// ============================================================================
+for (const entry of allData) {
+  if (entry.kind === 'class') {
+    const { module, submodule } = getModuleInfo(entry);
 
+    const item = {
+      name: entry.name,
+      ...locationInfo(entry),
+      extends: entry.augments && entry.augments[0] && entry.augments[0].name,
+      description: descriptionString(entry.description),
+      example: entry.examples.map(getExample),
+      alt: getAlt(entry),
+      params: entry.params.map(p => {
+        return {
+          name: p.name,
+          description: p.description && descriptionString(p.description),
+          ...typeObject(p.type)
+        };
+      }),
+      return: entry.returns[0] && {
+        description: descriptionString(entry.returns[0].description),
+        ...typeObject(entry.returns[0].type).name
+      },
+      module,
+      submodule
+    };
+
+    converted.classes[item.name] = item;
+  }
+}
+
+// ============================================================================
 // Class properties
-// TODO: look for tag with title "property"
+// ============================================================================
+const propDefs = {};
 
+// Grab properties out of the class nodes. These should have all the properties
+// but very little of their metadata.
+for (const entry of allData) {
+  if (entry.kind !== 'class') continue;
+  if (!entry.properties) continue;
+
+  const { module, submodule } = getModuleInfo(entry);
+  const location = locationInfo(entry);
+  propDefs[entry.name] = propDefs[entry.name] || {};
+
+  for (const property of entry.properties) {
+    const item = {
+      itemtype: 'property',
+      name: property.name,
+      ...location,
+      line: property.lineNumber || location.line,
+      ...typeObject(property.type),
+      module,
+      submodule,
+      class: entry.name
+    };
+    propDefs[entry.name][property.name] = item;
+  }
+}
+
+// Grab property metadata out of other loose nodes.
+for (const entry of allData) {
+  const { module, submodule, forEntry } = getModuleInfo(entry);
+  const propTag = entry.tags.find(tag => tag.title === 'property');
+  const forTag = entry.tags.find(tag => tag.title === 'for');
+  const memberof = entry.memberof;
+  if (!propTag || (!forEntry && !forTag && !memberof)) continue;
+
+  const forName = memberof || (forTag && forTag.description) || forEntry;
+  propDefs[forName] = propDefs[forName] || {};
+  const classEntry = propDefs[forName];
+
+  const prop = classEntry[propTag.name] || {
+    itemtype: 'property',
+    name: propTag.name,
+    ...locationInfo(entry),
+    ...typeObject(propTag.type),
+    module,
+    submodule,
+    class: forName
+  };
+
+  const updated = {
+    ...prop,
+    example: entry.examples.map(getExample),
+    alt: getAlt(entry),
+    description: descriptionString(entry.description)
+  };
+  classEntry[propTag.name] = updated;
+}
+
+// Add to the list
+for (const className in propDefs) {
+  for (const propName in propDefs[className]) {
+    converted.classitems.push(propDefs[className][propName]);
+  }
+}
+
+// ============================================================================
 // Class methods
+// ============================================================================
 const classMethods = {};
-for (const entry of data) {
+for (const entry of allData) {
   if (entry.kind === 'function' && entry.properties.length === 0) {
-    const file = entry.context.file;
-    let { module, submodule, for: forEntry } = fileModuleInfo[file] || {};
-    forEntry = entry.memberof || forEntry;
+    const { module, submodule, forEntry } = getModuleInfo(entry);
 
     // If a previous version of this same method exists, then this is probably
     // an overload on that method
@@ -127,12 +250,12 @@ for (const entry of data) {
       ...locationInfo(entry),
       itemtype: 'method',
       chainable: prevItem.chainable || entry.tags.some(tag => tag.title === 'chainable'),
-      description: descriptionString(entry.description),
+      description: prevItem.description || descriptionString(entry.description),
       example: [
         ...(prevItem.example || []),
-        // TODO: @alt
-        ...entry.examples.map(e => e.description)
+        ...entry.examples.map(getExample)
       ],
+      alt: getAlt(entry),
       overloads: [
         ...(prevItem.overloads || []),
         {
