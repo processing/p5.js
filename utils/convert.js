@@ -45,7 +45,7 @@ function typeObject(node) {
   if (!node) return {};
 
   if (node.type === 'OptionalType') {
-    return { optional: true, ...typeObject(node.expression) };
+    return { optional: 1, ...typeObject(node.expression) };
     // TODO handle type UndefinedLiteral here
   } else {
     return { type: node.name };
@@ -109,11 +109,11 @@ for (const entry of allData) {
       classes: {}
     };
     if (submodule) {
-      modules[module].submodules[submodule] = true;
+      modules[module].submodules[submodule] = 1;
       submodules[submodule] = submodules[submodule] || {
         name: submodule,
         module,
-        is_submodule: true
+        is_submodule: 1
       };
     }
   }
@@ -157,6 +157,7 @@ for (const entry of allData) {
         description: descriptionString(entry.returns[0].description),
         ...typeObject(entry.returns[0].type).name
       },
+      is_constructor: 1,
       module,
       submodule
     };
