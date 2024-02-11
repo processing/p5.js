@@ -396,7 +396,6 @@ p5.StringDict = class StringDict extends p5.TypedDict {
  * A simple Dictionary class for Numbers.
  *
  * @class p5.NumberDict
- * @constructor
  * @extends p5.TypedDict
  */
 
