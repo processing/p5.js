@@ -21,10 +21,9 @@ if (typeof Float32Array !== 'undefined') {
  * for model and view matrix manipulation in the p5js webgl renderer.
  * @class p5.Matrix
  * @private
- * @constructor
  * @param {Array} [mat4] column-major array literal of our 4×4 matrix
  */
-p5.Matrix = class {
+p5.Matrix = class Matrix {
   constructor(...args){
 
     // This is default behavior when object
@@ -51,13 +50,11 @@ p5.Matrix = class {
  * Sets the x, y, and z component of the vector using two or three separate
  * variables, the data from a p5.Matrix, or the values from a float array.
  *
- * @method set
  * @param {p5.Matrix|Float32Array|Number[]} [inMatrix] the input p5.Matrix or
  *                                     an Array of length 16
  * @chainable
  */
   /**
- * @method set
  * @param {Number[]} elements 16 numbers passed by value to avoid
  *                                     array copying.
  * @chainable
@@ -93,7 +90,6 @@ p5.Matrix = class {
   /**
  * Gets a copy of the vector, returns a p5.Matrix object.
  *
- * @method get
  * @return {p5.Matrix} the copy of the p5.Matrix object
  */
   get() {
@@ -105,7 +101,6 @@ p5.Matrix = class {
  * If this matrix is 4x4, a 4x4 matrix with exactly the same entries will be
  * generated. The same is true if this matrix is 3x3.
  *
- * @method copy
  * @return {p5.Matrix}   the result matrix
  */
   copy() {
@@ -144,7 +139,6 @@ p5.Matrix = class {
 
   /**
  * return an identity matrix
- * @method identity
  * @return {p5.Matrix}   the result matrix
  */
   static identity(pInst){
@@ -153,7 +147,6 @@ p5.Matrix = class {
 
   /**
  * transpose according to a given matrix
- * @method transpose
  * @param  {p5.Matrix|Float32Array|Number[]} a  the matrix to be
  *                                               based on to transpose
  * @chainable
@@ -214,7 +207,6 @@ p5.Matrix = class {
 
   /**
  * invert  matrix according to a give matrix
- * @method invert
  * @param  {p5.Matrix|Float32Array|Number[]} a   the matrix to be
  *                                                based on to invert
  * @chainable
@@ -301,7 +293,6 @@ p5.Matrix = class {
 
   /**
  * Inverts a 3×3 matrix
- * @method invert3x3
  * @chainable
  */
   invert3x3() {
@@ -343,7 +334,6 @@ p5.Matrix = class {
  * the 3x3 matrix generated based on that array is set.
  * If no arguments, it transposes itself and returns it.
  *
- * @method transpose3x3
  * @param  {Number[]} mat3 1-dimensional array
  * @chainable
  */
@@ -370,7 +360,6 @@ p5.Matrix = class {
   /**
  * converts a 4×4 matrix to its 3×3 inverse transform
  * commonly used in MVMatrix to NMatrix conversions.
- * @method invertTranspose
  * @param  {p5.Matrix} mat4 the matrix to be based on to invert
  * @chainable
  * @todo  finish implementation
@@ -406,7 +395,6 @@ p5.Matrix = class {
 
   /**
  * inspired by Toji's mat4 determinant
- * @method determinant
  * @return {Number} Determinant of our 4×4 matrix
  */
   determinant() {
@@ -430,7 +418,6 @@ p5.Matrix = class {
 
   /**
  * multiply two mat4s
- * @method mult
  * @param {p5.Matrix|Float32Array|Number[]} multMatrix The matrix
  *                                                we want to multiply by
  * @chainable
@@ -549,7 +536,6 @@ p5.Matrix = class {
 
   /**
  * scales a p5.Matrix by scalars or a vector
- * @method scale
  * @param  {p5.Vector|Float32Array|Number[]} s vector to scale by
  * @chainable
  */
@@ -584,7 +570,6 @@ p5.Matrix = class {
 
   /**
  * rotate our Matrix around an axis by the given angle.
- * @method rotate
  * @param  {Number} a The angle of rotation in radians
  * @param  {p5.Vector|Number[]} axis  the axis(es) to rotate around
  * @chainable
@@ -656,7 +641,6 @@ p5.Matrix = class {
   /**
  * @todo  finish implementing this method!
  * translates
- * @method translate
  * @param  {Number[]} v vector to translate by
  * @chainable
  */
@@ -682,7 +666,6 @@ p5.Matrix = class {
 
   /**
  * sets the perspective matrix
- * @method perspective
  * @param  {Number} fovy   [description]
  * @param  {Number} aspect [description]
  * @param  {Number} near   near clipping plane
@@ -715,7 +698,6 @@ p5.Matrix = class {
 
   /**
  * sets the ortho matrix
- * @method ortho
  * @param  {Number} left   [description]
  * @param  {Number} right  [description]
  * @param  {Number} bottom [description]
@@ -751,7 +733,6 @@ p5.Matrix = class {
   /**
  * apply a matrix to a vector with x,y,z,w components
  * get the results in the form of an array
- * @method multiplyVec4
  * @param {Number}
  * @return {Number[]}
  */
@@ -773,7 +754,6 @@ p5.Matrix = class {
  * Returns a vector consisting of the first
  * through third components of the result.
  *
- * @method multiplyPoint
  * @param {p5.Vector}
  * @return {p5.Vector}
  */
@@ -788,7 +768,6 @@ p5.Matrix = class {
  * Returns the result of dividing the 1st to 3rd components
  * of the result by the 4th component as a vector.
  *
- * @method multiplyAndNormalizePoint
  * @param {p5.Vector}
  * @return {p5.Vector}
  */
@@ -806,7 +785,6 @@ p5.Matrix = class {
  * Returns a vector consisting of the first
  * through third components of the result.
  *
- * @method multiplyDirection
  * @param {p5.Vector}
  * @return {p5.Vector}
  */
@@ -822,7 +800,6 @@ p5.Matrix = class {
  * a Float32Array of length 9, or a javascript array of length 9.
  * In addition, it can also be done by enumerating 9 numbers.
  *
- * @method mult3x3
  * @param {p5.Matrix|Float32Array|Number[]} multMatrix The matrix
  *                                                we want to multiply by
  * @chainable
@@ -871,7 +848,6 @@ p5.Matrix = class {
  * This function is only for 3x3 matrices.
  * A function that returns a column vector of a 3x3 matrix.
  *
- * @method column
  * @param {Number} columnIndex matrix column number
  * @return {p5.Vector}
  */
@@ -887,7 +863,6 @@ p5.Matrix = class {
  * This function is only for 3x3 matrices.
  * A function that returns a row vector of a 3x3 matrix.
  *
- * @method row
  * @param {Number} rowIndex matrix row number
  * @return {p5.Vector}
  */
@@ -904,7 +879,6 @@ p5.Matrix = class {
  * A 3x3 matrix will return an array of length 3.
  * A 4x4 matrix will return an array of length 4.
  *
- * @method diagonal
  * @return {Number[]} An array obtained by arranging the diagonal elements
  *                    of the matrix in ascending order of index
  */
@@ -920,7 +894,6 @@ p5.Matrix = class {
  * Takes a vector and returns the vector resulting from multiplying to
  * that vector by this matrix from left.
  *
- * @method multiplyVec3
  * @param {p5.Vector} multVector the vector to which this matrix applies
  * @param {p5.Vector} [target] The vector to receive the result
  * @return {p5.Vector}
@@ -939,7 +912,6 @@ p5.Matrix = class {
  * This function is only for 4x4 matrices.
  * Creates a 3x3 matrix whose entries are the top left 3x3 part and returns it.
  *
- * @method createSubMatrix3x3
  * @return {p5.Matrix}
  */
   createSubMatrix3x3() {
