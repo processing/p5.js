@@ -14,13 +14,13 @@ const allData = data.flatMap(entry => {
 });
 
 const converted = {
-  project: {}, // TODO
-  files: {}, // TODO
+  project: {}, // Unimplemented, probably not needed
+  files: {}, // Unimplemented, probably not needed
   modules: {},
   classes: {},
   classitems: [],
   warnings: [], // Intentionally unimplemented
-  consts: {} // TODO
+  consts: {}
 };
 
 function descriptionString(node) {
@@ -46,9 +46,44 @@ function typeObject(node) {
 
   if (node.type === 'OptionalType') {
     return { optional: 1, ...typeObject(node.expression) };
-    // TODO handle type UndefinedLiteral here
+  } else if (node.type === 'UnionType') {
+    const names = node.elements.map(n => typeObject(n).type);
+    return {
+      type: names.join('|')
+    };
+  } else if (node.type === 'TypeApplication') {
+    const { type: typeName } = typeObject(node.expression);
+    const args = node.applications.map(n => typeObject(n).type);
+    return {
+      type: `${typeName}<${args.join(', ')}>`
+    };
   } else {
+    // TODO
+    // - handle type UndefinedLiteral
+    // - handle record types
     return { type: node.name };
+  }
+}
+
+const constUsage = {};
+function registerConstantUsage(name, memberof, node) {
+  if (!node) return;
+  if (node.type === 'OptionalType') {
+    registerConstantUsage(name, memberof, node.expression);
+  } else if (node.type === 'UnionType') {
+    for (const element of node.elements) {
+      registerConstantUsage(name, memberof, element);
+    }
+  } else if (node.type === 'TypeApplication') {
+    registerConstantUsage(name, memberof, node.expression);
+    for (const element of node.applications) {
+      registerConstantUsage(name, memberof, element);
+    }
+  } else if (node.type === 'NameExpression') {
+    const constant = constUsage[node.name];
+    if (constant) {
+      constant.add(`${memberof}.${name}`);
+    }
   }
 }
 
@@ -100,8 +135,8 @@ for (const entry of allData) {
     fileModuleInfo[file].module = module;
     fileModuleInfo[file].submodule =
       fileModuleInfo[file].submodule || submodule;
-    fileModuleInfo[file].module =
-      fileModuleInfo[file].module || forEntry;
+    fileModuleInfo[file].for =
+      fileModuleInfo[file].for || forEntry;
 
     modules[module] = modules[module] || {
       name: module,
@@ -130,6 +165,15 @@ function getModuleInfo(entry) {
   let { module, submodule, for: forEntry } = fileModuleInfo[file] || {};
   forEntry = entry.memberof || forEntry;
   return { module, submodule, forEntry };
+}
+
+// ============================================================================
+// Constants
+// ============================================================================
+for (const entry of allData) {
+  if (entry.kind === 'constant') {
+    constUsage[entry.name] = new Set();
+  }
 }
 
 // ============================================================================
@@ -198,6 +242,9 @@ for (const entry of allData) {
 
 // Grab property metadata out of other loose nodes.
 for (const entry of allData) {
+  // These are in a different section
+  if (entry.kind === 'constant') continue;
+
   const { module, submodule, forEntry } = getModuleInfo(entry);
   const propTag = entry.tags.find(tag => tag.title === 'property');
   const forTag = entry.tags.find(tag => tag.title === 'for');
@@ -246,11 +293,17 @@ for (const entry of allData) {
     // an overload on that method
     const prevItem = (classMethods[entry.memberof] || {})[entry.name] || {};
 
+    for (const param of entry.params) {
+      registerConstantUsage(entry.name, prevItem.class || forEntry, param.type);
+    }
+
     const item = {
       name: entry.name,
       ...locationInfo(entry),
       itemtype: 'method',
-      chainable: prevItem.chainable || entry.tags.some(tag => tag.title === 'chainable'),
+      chainable: (prevItem.chainable || entry.tags.some(tag => tag.title === 'chainable'))
+        ? 1
+        : undefined,
       description: prevItem.description || descriptionString(entry.description),
       example: [
         ...(prevItem.example || []),
@@ -290,6 +343,11 @@ for (const className in classMethods) {
   for (const methodName in classMethods[className]) {
     converted.classitems.push(classMethods[className][methodName]);
   }
+}
+
+// Done registering const usage, make a finished version
+for (const key in constUsage) {
+  converted.consts[key] = [...constUsage[key]];
 }
 
 fs.writeFileSync(path.join(__dirname, '../docs/converted.json'), JSON.stringify(converted, null, 2));

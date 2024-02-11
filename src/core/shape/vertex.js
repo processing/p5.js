@@ -110,7 +110,7 @@ p5.prototype.beginContour = function() {
  * <a href="#/p5/ellipse">ellipse()</a> or <a href="#/p5/rect">rect()</a> within <a href="#/p5/beginShape">beginShape()</a>.
  *
  * @method beginShape
- * @param  {Constant} [kind] either POINTS, LINES, TRIANGLES, TRIANGLE_FAN
+ * @param  {POINTS|LINES|TRIANGLES|TRIANGLE_FAN|TRIANGLE_STRIP|QUADS|QUAD_STRIP|TESS} [kind] either POINTS, LINES, TRIANGLES, TRIANGLE_FAN
  *                                TRIANGLE_STRIP, QUADS, QUAD_STRIP or TESS
  * @chainable
  * @example
@@ -603,7 +603,7 @@ p5.prototype.endContour = function() {
  * page.
  *
  * @method endShape
- * @param  {Constant} [mode] use CLOSE to close the shape
+ * @param  {CLOSE} [mode] use CLOSE to close the shape
  * @param  {Integer} [count] number of times you want to draw/instance the shape (for WebGL mode).
  * @chainable
  * @example
