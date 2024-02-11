@@ -206,7 +206,14 @@ for (const entry of allData) {
       submodule
     };
 
-    converted.classes[item.name] = item;
+    // The @private tag doesn't seem to end up in the Documentation.js output.
+    // However, it also doesn't seem to grab the description in this case, so
+    // I'm using this as a proxy to let us know that a class should be private.
+    // This means any public class *must* have a description.
+    const isPrivate = !item.description;
+    if (!isPrivate) {
+      converted.classes[item.name] = item;
+    }
   }
 }
 
@@ -219,6 +226,10 @@ const propDefs = {};
 // but very little of their metadata.
 for (const entry of allData) {
   if (entry.kind !== 'class') continue;
+
+  // Ignore private classes
+  if (!converted.classes[entry.name]) continue;
+
   if (!entry.properties) continue;
 
   const { module, submodule } = getModuleInfo(entry);
@@ -254,6 +265,7 @@ for (const entry of allData) {
   const forName = memberof || (forTag && forTag.description) || forEntry;
   propDefs[forName] = propDefs[forName] || {};
   const classEntry = propDefs[forName];
+  if (!classEntry) continue;
 
   registerConstantUsage(entry.type);
 
@@ -294,6 +306,14 @@ for (const entry of allData) {
     // If a previous version of this same method exists, then this is probably
     // an overload on that method
     const prevItem = (classMethods[entry.memberof] || {})[entry.name] || {};
+
+    // Ignore methods of private classes
+    if (!converted.classes[prevItem.class || forEntry]) continue;
+
+    // Ignore private methods. @private-tagged ones don't show up in the JSON,
+    // but we also implicitly use this _-prefix convension.
+    const isPrivate = entry.name.startsWith('_');
+    if (isPrivate) continue;
 
     for (const param of entry.params) {
       registerConstantUsage(entry.name, prevItem.class || forEntry, param.type);
