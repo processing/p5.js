@@ -162,9 +162,11 @@ for (const key in submodules) {
 }
 
 function getModuleInfo(entry) {
+  const entryForTag = entry.tags.find(tag => tag.title === 'for');
+  const entryForTagValue = entryForTag && entryForTag.description;
   const file = entry.context.file;
   let { module, submodule, for: forEntry } = fileModuleInfo[file] || {};
-  forEntry = entry.memberof || forEntry;
+  forEntry = entry.memberof || entryForTagValue || forEntry;
   return { module, submodule, forEntry };
 }
 
