@@ -390,7 +390,7 @@ p5.prototype.saveGif = async function(
         pixels
       );
 
-      data = _flipPixels(pixels);
+      data = _flipPixels(pixels, this.width, this.height);
     } else {
       data = this.drawingContext.getImageData(0, 0, this.width, this.height)
         .data;
@@ -522,7 +522,7 @@ p5.prototype.saveGif = async function(
   p5.prototype.downloadFile(blob, fileName, extension);
 };
 
-function _flipPixels(pixels) {
+function _flipPixels(pixels, width, height) {
   // extracting the pixels using readPixels returns
   // an upside down image. we have to flip it back
   // first. this solution is proposed by gman on

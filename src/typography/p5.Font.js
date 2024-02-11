@@ -178,7 +178,7 @@ p5.Font = class Font {
         opts,
         (glyph, gX, gY, gFontSize) => {
           const gm = glyph.getMetrics();
-          if (glyph.index === 0 || glyph.index === 10) {
+          if (glyph.index === 0) {
             lineCount += 1;
             xCoords[lineCount] = [];
           } else {

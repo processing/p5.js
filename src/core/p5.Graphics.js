@@ -193,6 +193,7 @@ p5.Graphics = class Graphics extends p5.Element {
    *
    * This takes the same parameters as the <a href="#/p5/createFramebuffer">global
    * createFramebuffer function.</a>
+   * @return {p5.Framebuffer}
    */
   createFramebuffer(options) {
     return new p5.Framebuffer(this, options);

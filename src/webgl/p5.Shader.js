@@ -210,7 +210,7 @@ p5.Shader = class Shader {
       );
       uniform.size = uniformInfo.size;
       let uniformName = uniformInfo.name;
-      //uniforms thats are arrays have their name returned as
+      //uniforms that are arrays have their name returned as
       //someUniform[0] which is a bit silly so we trim it
       //off here. The size property tells us that its an array
       //so we dont lose any information by doing this
@@ -336,6 +336,11 @@ p5.Shader = class Shader {
       this._renderer.uNMatrix.inverseTranspose(this._renderer.uMVMatrix);
       this.setUniform('uNormalMatrix', this._renderer.uNMatrix.mat3);
     }
+    if (this.uniforms.uCameraRotation) {
+      this._renderer.curMatrix.inverseTranspose(this._renderer.
+        _curCamera.cameraMatrix);
+      this.setUniform('uCameraRotation', this._renderer.curMatrix.mat3);
+    }
   }
 
   /**
@@ -373,7 +378,7 @@ p5.Shader = class Shader {
    * @param {String} uniformName the name of the uniform.
    * Must correspond to the name used in the vertex and fragment shaders
    * @param {Boolean|Number|Number[]|p5.Image|p5.Graphics|p5.MediaElement|p5.Texture}
-   * data the data to associate with the uniform. The type can be
+   * data The value to assign to the uniform. This can be
    * a boolean (true/false), a number, an array of numbers, or
    * an image (p5.Image, p5.Graphics, p5.MediaElement, p5.Texture)
    *

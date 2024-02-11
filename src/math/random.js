@@ -107,7 +107,7 @@ function random(p5, fn){
    * strokeWeight(5);
    * point(x, y);
    *
-   * describe('A black dot appears in a random posiiton on a gray square.');
+   * describe('A black dot appears in a random position on a gray square.');
    * </code>
    * </div>
    *
