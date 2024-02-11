@@ -15,7 +15,6 @@ import * as constants from './constants';
  * extensive, but mirror the normal drawing API for p5.
  *
  * @class p5.Graphics
- * @constructor
  * @extends p5.Element
  * @param {Number} w            width
  * @param {Number} h            height
@@ -23,7 +22,7 @@ import * as constants from './constants';
  * @param {p5} [pInst]          pointer to p5 instance
  * @param {HTMLCanvasElement} [canvas]     existing html canvas element
  */
-p5.Graphics = class extends p5.Element {
+p5.Graphics = class Graphics extends p5.Element {
   constructor(w, h, renderer, pInst, canvas) {
     let canvasTemp;
     if (canvas) {
@@ -77,7 +76,6 @@ p5.Graphics = class extends p5.Element {
  * with graphics buffer objects. Calling this in <a href='#/p5/draw'>draw()</a> will copy the behavior
  * of the standard canvas.
  *
- * @method reset
  * @example
  *
  * <div><code>
@@ -126,8 +124,6 @@ p5.Graphics = class extends p5.Element {
   /**
  * Removes a Graphics object from the page and frees any resources
  * associated with it.
- *
- * @method remove
  *
  * @example
  * <div class='norender'><code>
@@ -197,8 +193,6 @@ p5.Graphics = class extends p5.Element {
    *
    * This takes the same parameters as the <a href="#/p5/createFramebuffer">global
    * createFramebuffer function.</a>
-   *
-   * @method createFramebuffer
    */
   createFramebuffer(options) {
     return new p5.Framebuffer(this, options);
