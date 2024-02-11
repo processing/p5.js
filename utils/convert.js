@@ -2,16 +2,23 @@ const fs = require('fs');
 const path = require('path');
 
 const data = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs/data.json')));
-const allData = data.flatMap(entry => {
+
+function getEntries(entry) {
   return [
     entry,
-    ...entry.members.global,
-    ...entry.members.inner,
-    ...entry.members.instance,
-    ...entry.members.events,
-    ...entry.members.static
+    ...getAllEntries(entry.members.global),
+    ...getAllEntries(entry.members.inner),
+    ...getAllEntries(entry.members.instance),
+    ...getAllEntries(entry.members.events),
+    ...getAllEntries(entry.members.static)
   ];
-});
+}
+
+function getAllEntries(arr) {
+  return arr.flatMap(getEntries);
+}
+
+const allData = getAllEntries(data);
 
 const converted = {
   project: {}, // Unimplemented, probably not needed

@@ -36,54 +36,11 @@ import p5 from '../core/main';
  *  scratch, dynamically, or using data from an existing file.
  *
  *  @class p5.Table
- *  @constructor
  *  @param  {p5.TableRow[]}     [rows] An array of p5.TableRow objects
  */
-p5.Table = class {
-  /**
-   * An array containing the names of the columns in the table, if the "header" the table is
-   * loaded with the "header" parameter.
-   * @type {String[]}
-   * @property columns
-   * @name columns
-   * @example
-   * <div class="norender">
-   * <code>
-   * // Given the CSV file "mammals.csv"
-   * // in the project's "assets" folder:
-   * //
-   * // id,species,name
-   * // 0,Capra hircus,Goat
-   * // 1,Panthera pardus,Leopard
-   * // 2,Equus zebra,Zebra
-   *
-   * let table;
-   *
-   * function preload() {
-   *   //my table is comma separated value "csv"
-   *   //and has a header specifying the columns labels
-   *   table = loadTable('assets/mammals.csv', 'csv', 'header');
-   * }
-   *
-   * function setup() {
-   *   //print the column names
-   *   for (let c = 0; c < table.getColumnCount(); c++) {
-   *     print('column ' + c + ' is named ' + table.columns[c]);
-   *   }
-   * }
-   * </code>
-   * </div>
-   */
+p5.Table = class Table {
   constructor(rows) {
     this.columns = [];
-
-    /**
-   * An array containing the <a href="#/p5.Table">p5.TableRow</a> objects that make up the
-   * rows of the table. The same result as calling <a href="#/p5/getRows">getRows()</a>
-   * @type {p5.TableRow[]}
-   * @property rows
-   * @name rows
-   */
     this.rows = [];
   }
 
@@ -96,7 +53,6 @@ p5.Table = class {
  *  If a <a href="#/p5.TableRow">p5.TableRow</a> object is included as a parameter, then that row is
  *  duplicated and added to the table.
  *
- *  @method  addRow
  *  @param   {p5.TableRow} [row] row to be added to the table
  *  @return  {p5.TableRow} the row that was added
  *
@@ -152,7 +108,6 @@ p5.Table = class {
   /**
  * Removes a row from the table object.
  *
- * @method  removeRow
  * @param   {Integer} id ID number of the row to remove
  *
  * @example
@@ -199,7 +154,6 @@ p5.Table = class {
  * Returns a reference to the specified <a href="#/p5.TableRow">p5.TableRow</a>. The reference
  * can then be used to get and set values of the selected row.
  *
- * @method  getRow
  * @param  {Integer}   rowID ID number of the row to get
  * @return {p5.TableRow} <a href="#/p5.TableRow">p5.TableRow</a> object
  *
@@ -242,7 +196,6 @@ p5.Table = class {
   /**
  *  Gets all rows from the table. Returns an array of <a href="#/p5.TableRow">p5.TableRow</a>s.
  *
- *  @method  getRows
  *  @return {p5.TableRow[]}   Array of <a href="#/p5.TableRow">p5.TableRow</a>s
  *
  * @example
@@ -293,7 +246,6 @@ p5.Table = class {
  *  row is returned. The column to search may be specified by
  *  either its ID or title.
  *
- *  @method  findRow
  *  @param  {String} value  The value to match
  *  @param  {Integer|String} column ID number or title of the
  *                                 column to search
@@ -355,7 +307,6 @@ p5.Table = class {
  *  as shown in the example above. The column to search may be
  *  specified by either its ID or title.
  *
- *  @method  findRows
  *  @param  {String} value  The value to match
  *  @param  {Integer|String} column ID number or title of the
  *                                 column to search
@@ -421,7 +372,6 @@ p5.Table = class {
  * matching row is returned. The column to search may be
  * specified by either its ID or title.
  *
- * @method  matchRow
  * @param  {String|RegExp} regexp The regular expression to match
  * @param  {String|Integer} column The column ID (number) or
  *                                  title (string)
@@ -478,7 +428,6 @@ p5.Table = class {
  * used to iterate through all the rows, as shown in the example. The
  * column to search may be specified by either its ID or title.
  *
- * @method  matchRows
  * @param  {String} regexp The regular expression to match
  * @param  {String|Integer} [column] The column ID (number) or
  *                                  title (string)
@@ -543,7 +492,6 @@ p5.Table = class {
  *  Retrieves all values in the specified column, and returns them
  *  as an array. The column may be specified by either its ID or title.
  *
- *  @method  getColumn
  *  @param  {String|Number} column String or Number of the column to return
  *  @return {Array}       Array of column values
  *
@@ -593,8 +541,6 @@ p5.Table = class {
  *  Removes all rows from a Table. While all rows are removed,
  *  columns and column titles are maintained.
  *
- *  @method  clearRows
- *
  * @example
  * <div class="norender">
  * <code>
@@ -634,7 +580,6 @@ p5.Table = class {
  *  may be easily referenced later by name. (If no title is
  *  specified, the new column's title will be null.)
  *
- *  @method  addColumn
  *  @param {String} [title] title of the given column
  *
  * @example
@@ -680,7 +625,6 @@ p5.Table = class {
   /**
  *  Returns the total number of columns in a Table.
  *
- *  @method  getColumnCount
  *  @return {Integer} Number of columns in this table
  * @example
  * <div>
@@ -716,7 +660,6 @@ p5.Table = class {
   /**
  *  Returns the total number of rows in a Table.
  *
- *  @method  getRowCount
  *  @return {Integer} Number of rows in this table
  * @example
  * <div>
@@ -756,7 +699,6 @@ p5.Table = class {
  *  rows are processed. A specific column may be referenced by
  *  either its ID or title.
  *
- *  @method  removeTokens
  *  @param  {String} chars  String listing characters to be removed
  *  @param  {String|Integer} [column] Column ID (number)
  *                                   or name (string)
@@ -827,7 +769,6 @@ p5.Table = class {
  *  values in all columns and rows are trimmed. A specific column
  *  may be referenced by either its ID or title.
  *
- *  @method  trim
  *  @param  {String|Integer} [column] Column ID (number)
  *                                   or name (string)
  * @example
@@ -892,7 +833,6 @@ p5.Table = class {
  *  removeColumn(0) would remove the first column, removeColumn(1)
  *  would remove the second column, and so on.
  *
- *  @method  removeColumn
  *  @param  {String|Integer} column columnName (string) or ID (number)
  *
  * @example
@@ -952,7 +892,6 @@ p5.Table = class {
  * The row is specified by its ID, while the column may be specified
  * by either its ID or title.
  *
- * @method  set
  * @param {Integer} row row ID
  * @param {String|Integer} column column ID (Number)
  *                               or title (String)
@@ -1000,7 +939,6 @@ p5.Table = class {
  * The row is specified by its ID, while the column may be specified
  * by either its ID or title.
  *
- * @method setNum
  * @param {Integer} row row ID
  * @param {String|Integer} column column ID (Number)
  *                               or title (String)
@@ -1045,7 +983,6 @@ p5.Table = class {
  * The row is specified by its ID, while the column may be specified
  * by either its ID or title.
  *
- * @method  setString
  * @param {Integer} row row ID
  * @param {String|Integer} column column ID (Number)
  *                               or title (String)
@@ -1089,7 +1026,6 @@ p5.Table = class {
  * The row is specified by its ID, while the column may be specified by
  * either its ID or title.
  *
- * @method  get
  * @param {Integer} row row ID
  * @param  {String|Integer} column columnName (string) or
  *                                   ID (number)
@@ -1133,7 +1069,6 @@ p5.Table = class {
  * The row is specified by its ID, while the column may be specified by
  * either its ID or title.
  *
- * @method  getNum
  * @param {Integer} row row ID
  * @param  {String|Integer} column columnName (string) or
  *                                   ID (number)
@@ -1175,7 +1110,6 @@ p5.Table = class {
  * The row is specified by its ID, while the column may be specified by
  * either its ID or title.
  *
- * @method  getString
  * @param {Integer} row row ID
  * @param  {String|Integer} column columnName (string) or
  *                                   ID (number)
@@ -1225,7 +1159,6 @@ p5.Table = class {
  * passed in, each row object will be stored with that attribute as its
  * title.
  *
- * @method  getObject
  * @param {String} [headerColumn] Name of the column which should be used to
  *                              title each row object (optional)
  * @return {Object}
@@ -1285,7 +1218,6 @@ p5.Table = class {
   /**
  * Retrieves all table data and returns it as a multidimensional array.
  *
- * @method  getArray
  * @return {Array}
  *
  * @example
@@ -1325,4 +1257,50 @@ p5.Table = class {
     return tableArray;
   }
 };
+
+/**
+ * An array containing the names of the columns in the table, if the "header" the table is
+ * loaded with the "header" parameter.
+ * @type {String[]}
+ * @for p5.Table
+ * @property columns
+ * @name columns
+ * @example
+ * <div class="norender">
+ * <code>
+ * // Given the CSV file "mammals.csv"
+ * // in the project's "assets" folder:
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leopard
+ * // 2,Equus zebra,Zebra
+ *
+ * let table;
+ *
+ * function preload() {
+ *   //my table is comma separated value "csv"
+ *   //and has a header specifying the columns labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ *
+ * function setup() {
+ *   //print the column names
+ *   for (let c = 0; c < table.getColumnCount(); c++) {
+ *     print('column ' + c + ' is named ' + table.columns[c]);
+ *   }
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * An array containing the <a href="#/p5.Table">p5.TableRow</a> objects that make up the
+ * rows of the table. The same result as calling <a href="#/p5/getRows">getRows()</a>
+ * @for p5.Table
+ * @type {p5.TableRow[]}
+ * @property rows
+ * @name rows
+ */
+
 export default p5;
