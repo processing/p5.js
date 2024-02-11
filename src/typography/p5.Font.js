@@ -13,7 +13,6 @@ import * as constants from '../core/constants';
 /**
  * A class to describe fonts.
  * @class p5.Font
- * @constructor
  * @param {p5} [pInst] pointer to p5 instance.
  * @example
  * <div>
@@ -36,19 +35,12 @@ import * as constants from '../core/constants';
  * </code>
  * </div>
  */
-p5.Font = class {
+p5.Font = class Font {
   constructor(p){
     this.parent = p;
 
     this.cache = {};
 
-    /**
-   * Underlying
-   * <a href="https://opentype.js.org/" target="_blank">opentype.js</a>
-   * font object.
-   * @property font
-   * @name font
-   */
     this.font = undefined;
   }
 
@@ -65,7 +57,6 @@ p5.Font = class {
  * determine the bounding box. By default, `font.textBounds()` will use the
  * current <a href="#/p5/textSize">textSize()</a>.
  *
- * @method textBounds
  * @param  {String} str        string of text.
  * @param  {Number} x          x-coordinate of the text.
  * @param  {Number} y          y-coordinate of the text.
@@ -270,7 +261,6 @@ p5.Font = class {
  * than 0. The value represents the threshold angle to use when determining
  * whether two edges are collinear.
  *
- * @method textToPoints
  * @param  {String} str        string of text.
  * @param  {Number} x          x-coordinate of the text.
  * @param  {Number} y          y-coordinate of the text.
@@ -572,6 +562,16 @@ p5.Font = class {
     return { x, y };
   }
 };
+
+/**
+ * Underlying
+ * <a href="https://opentype.js.org/" target="_blank">opentype.js</a>
+ * font object.
+ * @for p5.Font
+ * @property font
+ * @name font
+ */
+
 // path-utils
 
 function pathToPoints(cmds, options) {
