@@ -5,7 +5,7 @@
     "build": "rollup -c",
     "preview": "vite",
     "dev": "grunt yui browserify:dev connect:yui watch:quick",
-    "docs": "documentation build ./src/app.js -o ./docs/data.json && node ./utils/convert.js",
+    "docs": "documentation build ./src/**/*.js -o ./docs/data.json && node ./utils/convert.js",
     "test": "vitest run",
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."

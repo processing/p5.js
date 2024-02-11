@@ -388,6 +388,7 @@ for (const entry of allData) {
         ...typeObject(entry.returns[0].type).name
       },
       class: className,
+      static: entry.scope === 'static' && 1,
       module,
       submodule
     };
