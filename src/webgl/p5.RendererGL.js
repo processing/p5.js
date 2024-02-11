@@ -424,7 +424,6 @@ export function readPixelWebGL(
  * 3D graphics class
  * @private
  * @class p5.RendererGL
- * @constructor
  * @extends p5.Renderer
  * @todo extend class to include public method for offscreen
  * rendering (FBO).
@@ -675,8 +674,6 @@ p5.RendererGL = class RendererGL extends Renderer {
      * If you need to draw complex shapes every frame which don't change over time,
      * combining them upfront with `beginGeometry()` and `endGeometry()` and then
      * drawing that will run faster than repeatedly drawing the individual pieces.
-     *
-     * @method beginGeometry
    */
   beginGeometry() {
     if (this.geometryBuilder) {
@@ -691,7 +688,6 @@ p5.RendererGL = class RendererGL extends Renderer {
    * use <a href="#/p5/buildGeometry">buildGeometry()</a> to pass a function that
    * draws shapes.
    *
-   * @method endGeometry
    * @returns {p5.Geometry} The model that was built.
    */
   endGeometry() {
@@ -716,8 +712,6 @@ p5.RendererGL = class RendererGL extends Renderer {
    * <a href="#/p5/beginGeometry">beginGeometry()</a> and
    * <a href="#/p5/endGeometry">endGeometry()</a> instead of using a callback
    * function.
-   *
-   * @method buildGeometry
    * @param {Function} callback A function that draws shapes.
    * @returns {p5.Geometry} The model that was built from the callback function.
    */
@@ -917,7 +911,6 @@ p5.RendererGL = class RendererGL extends Renderer {
   //////////////////////////////////////////////
   /**
  * Basic fill material for geometry with a given color
- * @method  fill
  * @class p5.RendererGL
  * @param  {Number|Number[]|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
@@ -958,7 +951,6 @@ p5.RendererGL = class RendererGL extends Renderer {
 
   /**
  * Basic stroke material for geometry with a given color
- * @method  stroke
  * @param  {Number|Number[]|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
@@ -1271,7 +1263,6 @@ p5.RendererGL = class RendererGL extends Renderer {
 
   /**
  * Change weight of stroke
- * @method  strokeWeight
  * @param  {Number} stroke weight to be used for drawing
  * @example
  * <div>
@@ -1335,7 +1326,6 @@ p5.RendererGL = class RendererGL extends Renderer {
  * Any pixel manipulation must be done directly to the pixels[] array.
  *
  * @private
- * @method loadPixels
  */
 
   loadPixels() {
@@ -2007,7 +1997,6 @@ p5.RendererGL = class RendererGL extends Renderer {
   }
 
   /**
-   * @method activeFramebuffer
    * @private
    * @returns {p5.Framebuffer|null} The currently active framebuffer, or null if
    * the main canvas is the current draw target.
