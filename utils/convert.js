@@ -57,9 +57,10 @@ function typeObject(node) {
     return {
       type: `${typeName}<${args.join(', ')}>`
     };
+  } else if (node.type === 'UndefinedLiteral') {
+    return { type: 'undefined' };
   } else {
     // TODO
-    // - handle type UndefinedLiteral
     // - handle record types
     return { type: node.name };
   }
@@ -307,8 +308,10 @@ for (const entry of allData) {
     // an overload on that method
     const prevItem = (classMethods[entry.memberof] || {})[entry.name] || {};
 
+    const className = entry.memberof || prevItem.class || forEntry;
+
     // Ignore methods of private classes
-    if (!converted.classes[prevItem.class || forEntry]) continue;
+    if (!converted.classes[className]) continue;
 
     // Ignore private methods. @private-tagged ones don't show up in the JSON,
     // but we also implicitly use this _-prefix convension.
@@ -316,7 +319,7 @@ for (const entry of allData) {
     if (isPrivate) continue;
 
     for (const param of entry.params) {
-      registerConstantUsage(entry.name, prevItem.class || forEntry, param.type);
+      registerConstantUsage(entry.name, className, param.type);
     }
     if (entry.returns[0]) {
       registerConstantUsage(entry.returns[0].type);
@@ -355,7 +358,7 @@ for (const entry of allData) {
         description: descriptionString(entry.returns[0].description),
         ...typeObject(entry.returns[0].type).name
       },
-      class: prevItem.class || forEntry,
+      class: className,
       module,
       submodule
     };

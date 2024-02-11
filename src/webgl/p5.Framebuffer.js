@@ -67,8 +67,6 @@ p5.FramebufferTexture = class FramebufferTexture {
   }
 };
 
-p5.FramebufferTexture = FramebufferTexture;
-
 /**
  * An object that one can draw to and then read as a texture. While similar
  * to a p5.Graphics, using a p5.Framebuffer as a texture will generally run
