@@ -168,6 +168,35 @@ function getModuleInfo(entry) {
   return { module, submodule, forEntry };
 }
 
+function getParams(entry) {
+  // Documentation.js seems to try to grab params from the function itself in
+  // the code if we don't document all the parameters. This messes with our
+  // manually-documented overloads. Instead of using the provided entry.params
+  // array, we'll instead only rely on manually included @param tags.
+  //
+  // However, the tags don't include a tree-structured description field, and
+  // instead convert it to a string. We want a slightly different conversion to
+  // string, so we match these params to the Documentation.js-provided `params`
+  // array and grab the description from those.
+  return (entry.tags || []).filter(t => t.title === 'param').map(node => {
+    const param = entry.params.find(param => param.name === node.name);
+    if (param) {
+      return {
+        ...node,
+        description: param.description
+      };
+    } else {
+      return {
+        ...node,
+        description: {
+          type: 'html',
+          value: node.description
+        }
+      };
+    }
+  });
+}
+
 // ============================================================================
 // Constants
 // ============================================================================
@@ -191,7 +220,7 @@ for (const entry of allData) {
       description: descriptionString(entry.description),
       example: entry.examples.map(getExample),
       alt: getAlt(entry),
-      params: entry.params.map(p => {
+      params: getParams(entry).map(p => {
         return {
           name: p.name,
           description: p.description && descriptionString(p.description),
@@ -318,7 +347,7 @@ for (const entry of allData) {
     const isPrivate = entry.name.startsWith('_');
     if (isPrivate) continue;
 
-    for (const param of entry.params) {
+    for (const param of getParams(entry)) {
       registerConstantUsage(entry.name, className, param.type);
     }
     if (entry.returns[0]) {
@@ -341,7 +370,7 @@ for (const entry of allData) {
       overloads: [
         ...(prevItem.overloads || []),
         {
-          params: entry.params.map(p => {
+          params: getParams(entry).map(p => {
             return {
               name: p.name,
               description: p.description && descriptionString(p.description),
