@@ -342,6 +342,9 @@ for (const entry of allData) {
   if (entry.kind === 'function' && entry.properties.length === 0) {
     const { module, submodule, forEntry } = getModuleInfo(entry);
 
+    // Ignore functions that aren't methods
+    if (entry.tags.some(tag => tag.title === 'function')) continue;
+
     // If a previous version of this same method exists, then this is probably
     // an overload on that method
     const prevItem = (classMethods[entry.memberof] || {})[entry.name] || {};

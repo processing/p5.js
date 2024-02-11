@@ -13,13 +13,12 @@ import * as constants from '../core/constants';
  * Renderer2D and Renderer3D classes, respectively.
  *
  * @class p5.Renderer
- * @constructor
  * @extends p5.Element
  * @param {HTMLElement} elt DOM node that is wrapped
  * @param {p5} [pInst] pointer to p5 instance
  * @param {Boolean} [isMainCanvas] whether we're using it as main canvas
  */
-class Renderer extends p5.Element {
+p5.Renderer = class Renderer extends p5.Element {
   constructor(elt, pInst, isMainCanvas) {
     super(elt, pInst);
     this.canvas = elt;
@@ -516,7 +515,8 @@ class Renderer extends p5.Element {
 
     return this;
   }
-}
+};
+
 /**
  * Helper fxn to measure ascent and descent.
  * Adapted from http://stackoverflow.com/a/25355178
