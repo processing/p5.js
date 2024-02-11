@@ -255,6 +255,8 @@ for (const entry of allData) {
   propDefs[forName] = propDefs[forName] || {};
   const classEntry = propDefs[forName];
 
+  registerConstantUsage(entry.type);
+
   const prop = classEntry[propTag.name] || {
     itemtype: 'property',
     name: propTag.name,
@@ -295,6 +297,9 @@ for (const entry of allData) {
 
     for (const param of entry.params) {
       registerConstantUsage(entry.name, prevItem.class || forEntry, param.type);
+    }
+    if (entry.returns[0]) {
+      registerConstantUsage(entry.returns[0].type);
     }
 
     const item = {
