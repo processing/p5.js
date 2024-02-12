@@ -7,29 +7,6 @@
 import p5 from '../core/main';
 import * as constants from '../core/constants';
 
-/// HELPERS FOR REMAINDER METHOD
-const calculateRemainder2D = function(xComponent, yComponent) {
-  if (xComponent !== 0) {
-    this.x = this.x % xComponent;
-  }
-  if (yComponent !== 0) {
-    this.y = this.y % yComponent;
-  }
-  return this;
-};
-
-const calculateRemainder3D = function(xComponent, yComponent, zComponent) {
-  if (xComponent !== 0) {
-    this.x = this.x % xComponent;
-  }
-  if (yComponent !== 0) {
-    this.y = this.y % yComponent;
-  }
-  if (zComponent !== 0) {
-    this.z = this.z % zComponent;
-  }
-  return this;
-};
 
 /**
  * A class to describe a two or three-dimensional vector. A vector is like an
@@ -366,6 +343,35 @@ p5.Vector = class {
   }
 
   /**
+ * @method rem
+ * @param {p5.Vector | Number[]}  value  divisor vector.
+ * @chainable
+ */
+  calculateRemainder2D (xComponent, yComponent) {
+    if (xComponent !== 0) {
+      this.x = this.x % xComponent;
+    }
+    if (yComponent !== 0) {
+      this.y = this.y % yComponent;
+    }
+    return this;
+  }
+
+  /// HELPERS FOR REMAINDER METHOD
+  calculateRemainder3D (xComponent, yComponent, zComponent) {
+    if (xComponent !== 0) {
+      this.x = this.x % xComponent;
+    }
+    if (yComponent !== 0) {
+      this.y = this.y % yComponent;
+    }
+    if (zComponent !== 0) {
+      this.z = this.z % zComponent;
+    }
+    return this;
+  }
+
+  /**
  * Performs modulo (remainder) division with a vector's `x`, `y`, and `z`
  * components using separate numbers, another
  * <a href="#/p5.Vector">p5.Vector</a> object, or an array of numbers.
@@ -422,18 +428,13 @@ p5.Vector = class {
  * </code>
  * </div>
  */
-  /**
- * @method rem
- * @param {p5.Vector | Number[]}  value  divisor vector.
- * @chainable
- */
   rem (x, y, z) {
     if (x instanceof p5.Vector) {
       if ([x.x,x.y,x.z].every(Number.isFinite)) {
         const xComponent = parseFloat(x.x);
         const yComponent = parseFloat(x.y);
         const zComponent = parseFloat(x.z);
-        return calculateRemainder3D(
+        return this.calculateRemainder3D(
           xComponent,
           yComponent,
           zComponent
@@ -442,10 +443,10 @@ p5.Vector = class {
     } else if (Array.isArray(x)) {
       if (x.every(element => Number.isFinite(element))) {
         if (x.length === 2) {
-          return calculateRemainder2D(x[0], x[1]);
+          return this.calculateRemainder2D(x[0], x[1]);
         }
         if (x.length === 3) {
-          return calculateRemainder3D(x[0], x[1], x[2]);
+          return this.calculateRemainder3D(x[0], x[1], x[2]);
         }
       }
     } else if (arguments.length === 1) {
@@ -459,8 +460,9 @@ p5.Vector = class {
       const vectorComponents = [...arguments];
       if (vectorComponents.every(element => Number.isFinite(element))) {
         if (vectorComponents.length === 2) {
-          return calculateRemainder2D(
-            ...vectorComponents
+          return this.calculateRemainder2D(
+            vectorComponents[0],
+            vectorComponents[1]
           );
         }
       }
@@ -468,8 +470,10 @@ p5.Vector = class {
       const vectorComponents = [...arguments];
       if (vectorComponents.every(element => Number.isFinite(element))) {
         if (vectorComponents.length === 3) {
-          return calculateRemainder3D(
-            ...vectorComponents
+          return this.calculateRemainder3D(
+            vectorComponents[0],
+            vectorComponents[1],
+            vectorComponents[2]
           );
         }
       }
