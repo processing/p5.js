@@ -849,7 +849,7 @@ p5.Color = class Color {
 
       // Return if string is a named colour.
       if (namedColors[str]) {
-        return Color._parseInputs.call(this, namedColors[str]);
+        return Color._parseInputs(namedColors[str]);
       }
 
       // Try RGBA pattern matching.
