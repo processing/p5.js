@@ -176,11 +176,18 @@ p5.prototype.loadModel = function(path,options) {
             mtlPath = mtlFilename;
           }
           try {
-            const parsedMaterialsIndividual = await parseMtl(self, mtlPath);
-            mtlPaths.push(mtlPath);
-            parsedMaterialPromises.push(parsedMaterialsIndividual);
-          }catch (error) {
-            reject(error);
+            if(await fileExists(mtlPath)){
+              const parsedMaterialsIndividual = await parseMtl(self, mtlPath);
+              mtlPaths.push(mtlPath);
+              parsedMaterialPromises.push(parsedMaterialsIndividual);
+            }else{
+              console.warn('MTL file not found or error in parsing; proceeding without materials.');
+              resolve({});
+              return;
+            }
+          } catch (error){
+            console.warn('Error loading MTL file:', error);
+            resolve({});
             return;
           }
         }
@@ -189,10 +196,18 @@ p5.prototype.loadModel = function(path,options) {
         const materials=await Object.assign({}, ...parsedMaterials);
         resolve (materials);
       } catch (error) {
-        reject(error);
+        resolve({});
       }
 
     });
+  }
+  async function fileExists(url) {
+    try {
+      const response = await fetch(url, { method: 'HEAD' });
+      return response.ok;
+    } catch (error) {
+      return false;
+    }
   }
   if (fileType.match(/\.stl$/i)) {
     this.httpDo(
@@ -228,9 +243,8 @@ p5.prototype.loadModel = function(path,options) {
         try{
           const parsedMaterials=await getMaterials(lines);
 
-          if(parsedMaterials && typeof parsedMaterials==='object'){
-            parseObj(model, lines, parsedMaterials);
-          }
+          parseObj(model, lines, parsedMaterials);
+
         }catch (error) {
           console.error(error.message);
           if (failureCallback) {
@@ -459,7 +473,6 @@ function parseObj(model, lines, materials= {}) {
     // If both are true or both are false, throw an error because the model is inconsistent
     throw new Error('Model coloring is inconsistent. Either all vertices should have colors or none should.');
   }
-
   return model;
 }
 
