@@ -501,9 +501,20 @@ class Renderer2D extends p5.Renderer {
     }
   }
 
-  updatePixels(x=0, y=0, w=this.width, h=this.height) {
+  updatePixels(x, y, w, h) {
     const pixelsState = this._pixelsState;
     const pd = pixelsState._pixelDensity;
+    if (
+      x === undefined &&
+      y === undefined &&
+      w === undefined &&
+      h === undefined
+    ) {
+      x = 0;
+      y = 0;
+      w = this.width;
+      h = this.height;
+    }
     x *= pd;
     y *= pd;
     w *= pd;
