@@ -433,8 +433,7 @@ p5.Vector = class {
         const xComponent = parseFloat(x.x);
         const yComponent = parseFloat(x.y);
         const zComponent = parseFloat(x.z);
-        return calculateRemainder3D.call(
-          this,
+        return calculateRemainder3D(
           xComponent,
           yComponent,
           zComponent
@@ -443,10 +442,10 @@ p5.Vector = class {
     } else if (Array.isArray(x)) {
       if (x.every(element => Number.isFinite(element))) {
         if (x.length === 2) {
-          return calculateRemainder2D.call(this, x[0], x[1]);
+          return calculateRemainder2D(x[0], x[1]);
         }
         if (x.length === 3) {
-          return calculateRemainder3D.call(this, x[0], x[1], x[2]);
+          return calculateRemainder3D(x[0], x[1], x[2]);
         }
       }
     } else if (arguments.length === 1) {
@@ -460,10 +459,8 @@ p5.Vector = class {
       const vectorComponents = [...arguments];
       if (vectorComponents.every(element => Number.isFinite(element))) {
         if (vectorComponents.length === 2) {
-          return calculateRemainder2D.call(
-            this,
-            vectorComponents[0],
-            vectorComponents[1]
+          return calculateRemainder2D(
+            ...vectorComponents
           );
         }
       }
@@ -471,11 +468,8 @@ p5.Vector = class {
       const vectorComponents = [...arguments];
       if (vectorComponents.every(element => Number.isFinite(element))) {
         if (vectorComponents.length === 3) {
-          return calculateRemainder3D.call(
-            this,
-            vectorComponents[0],
-            vectorComponents[1],
-            vectorComponents[2]
+          return calculateRemainder3D(
+            ...vectorComponents
           );
         }
       }
