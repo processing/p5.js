@@ -4,6 +4,7 @@ suite('loadModel', function() {
   var validObjFileforMtl='unit/assets/octa-color.obj';
   var validSTLfile = 'unit/assets/ascii.stl';
   var inconsistentColorObjFile = 'unit/assets/eg1.obj';
+  var objMtlMissing = 'unit/assets/objMtlMissing.obj';
   var validSTLfileWithoutExtension = 'unit/assets/ascii';
 
   test('_friendlyFileLoadError is called', async function() {
@@ -150,6 +151,16 @@ suite('loadModel', function() {
     // Assert that an error was caught and that it has the expected message
     assert.instanceOf(errorCaught, Error, 'No error thrown for inconsistent vertex coloring');
     assert.equal(errorCaught.message, 'Model coloring is inconsistent. Either all vertices should have colors or none should.', 'Unexpected error message for inconsistent vertex coloring');
+  });
+
+  test('missing MTL file shows OBJ model without vertexColors', async function() {
+    const model = await promisedSketch(function(sketch, resolve, reject) {
+      sketch.preload = function() {
+        sketch.loadModel(objMtlMissing, resolve, reject);
+      };
+    });
+    assert.instanceOf(model, p5.Geometry);
+    assert.equal(model.vertexColors.length, 0, 'Model should not have vertex colors');
   });
 
   test('returns an object with correct data', async function() {
