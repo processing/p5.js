@@ -1157,7 +1157,7 @@ p5.RendererGL.prototype.point = function (x, y, z = 0) {
   return this;
 };
 
-p5.RendererGL.prototype.triangle = function (...args) {
+p5.RendererGL.prototype.triangle = function (args) {
   const x1 = args[0],
     y1 = args[1];
   const x2 = args[2],
@@ -1210,7 +1210,7 @@ p5.RendererGL.prototype.triangle = function (...args) {
   return this;
 };
 
-p5.RendererGL.prototype.ellipse = function (...args) {
+p5.RendererGL.prototype.ellipse = function (args) {
   this.arc(
     args[0],
     args[1],
@@ -1340,7 +1340,7 @@ p5.RendererGL.prototype.arc = function (...args) {
   return this;
 };
 
-p5.RendererGL.prototype.rect = function (...args) {
+p5.RendererGL.prototype.rect = function (args) {
   const x = args[0];
   const y = args[1];
   const width = args[2];
