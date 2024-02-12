@@ -471,14 +471,10 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
  */
 p5.prototype.max = function(...args) {
   const findMax = arr => {
-    let max = -Infinity;
-    for (let x of arr) {
-      max = Math.max(max, x);
-    }
-    return max;
+    return Math.max(...arr);
   };
 
-  if (args[0] instanceof Array) {
+  if (Array.isArray(args[0])) {
     return findMax(args[0]);
   } else {
     return findMax(args);
@@ -549,14 +545,10 @@ p5.prototype.max = function(...args) {
  */
 p5.prototype.min = function(...args) {
   const findMin = arr => {
-    let min = Infinity;
-    for (let x of arr) {
-      min = Math.min(min, x);
-    }
-    return min;
+    Math.min(...arr);
   };
 
-  if (args[0] instanceof Array) {
+  if (Array.isArray(args[0])) {
     return findMin(args[0]);
   } else {
     return findMin(args);

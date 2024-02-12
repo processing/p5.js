@@ -3060,7 +3060,7 @@ p5.Vector = class {
     let v;
     if (v1 instanceof p5.Vector) {
       v = v1;
-    } else if (v1 instanceof Array) {
+    } else if (Array.isArray(v1)) {
       v = new p5.Vector().set(v1);
     } else {
       p5._friendlyError(
