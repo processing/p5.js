@@ -342,11 +342,7 @@ p5.Vector = class {
     return this;
   }
 
-  /**
- * @method rem
- * @param {p5.Vector | Number[]}  value  divisor vector.
- * @chainable
- */
+
   calculateRemainder2D (xComponent, yComponent) {
     if (xComponent !== 0) {
       this.x = this.x % xComponent;
@@ -372,62 +368,67 @@ p5.Vector = class {
   }
 
   /**
- * Performs modulo (remainder) division with a vector's `x`, `y`, and `z`
- * components using separate numbers, another
- * <a href="#/p5.Vector">p5.Vector</a> object, or an array of numbers.
- *
- * The static version of `rem()` as in `p5.Vector.rem(v2, v1)`, returns a new
- * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
- * originals.
- *
- * @method rem
- * @param {Number} x x component of divisor vector.
- * @param {Number} y y component of divisor vector.
- * @param {Number} z z component of divisor vector.
- * @chainable
- * @example
- * <div class='norender'>
- * <code>
- * let v = createVector(3, 4, 5);
- * v.rem(2, 3, 4);
- * // Prints 'p5.Vector Object : [1, 1, 1]'.
- * print(v.toString());
- * </code>
- * </div>
- *
- * <div class='norender'>
- * <code>
- * let v1 = createVector(3, 4, 5);
- * let v2 = createVector(2, 3, 4);
- * v1.rem(v2);
- *
- * // Prints 'p5.Vector Object : [1, 1, 1]'.
- * print(v1.toString());
- * </code>
- * </div>
- *
- * <div class='norender'>
- * <code>
- * let v = createVector(3, 4, 5);
- * let arr = [2, 3, 4];
- * v.rem(arr);
- *
- * // Prints 'p5.Vector Object : [1, 1, 1]'.
- * print(v.toString());
- * </code>
- * </div>
- *
- * <div class="norender">
- * <code>
- * let v1 = createVector(3, 4, 5);
- * let v2 = createVector(2, 3, 4);
- * let v3 = p5.Vector.rem(v1, v2);
- *
- * // Prints 'p5.Vector Object : [1, 1, 1]'.
- * print(v3.toString());
- * </code>
- * </div>
- */
+   * Performs modulo (remainder) division with a vector's `x`, `y`, and `z`
+   * components using separate numbers, another
+   * <a href="#/p5.Vector">p5.Vector</a> object, or an array of numbers.
+   *
+   * The static version of `rem()` as in `p5.Vector.rem(v2, v1)`, returns a new
+   * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
+   * originals.
+   *
+   * @method rem
+   * @param {Number} x x component of divisor vector.
+   * @param {Number} y y component of divisor vector.
+   * @param {Number} z z component of divisor vector.
+   * @chainable
+   * @example
+   * <div class='norender'>
+   * <code>
+   * let v = createVector(3, 4, 5);
+   * v.rem(2, 3, 4);
+   * // Prints 'p5.Vector Object : [1, 1, 1]'.
+   * print(v.toString());
+   * </code>
+   * </div>
+   *
+   * <div class='norender'>
+   * <code>
+   * let v1 = createVector(3, 4, 5);
+   * let v2 = createVector(2, 3, 4);
+   * v1.rem(v2);
+   *
+   * // Prints 'p5.Vector Object : [1, 1, 1]'.
+   * print(v1.toString());
+   * </code>
+   * </div>
+   *
+   * <div class='norender'>
+   * <code>
+   * let v = createVector(3, 4, 5);
+   * let arr = [2, 3, 4];
+   * v.rem(arr);
+   *
+   * // Prints 'p5.Vector Object : [1, 1, 1]'.
+   * print(v.toString());
+   * </code>
+   * </div>
+   *
+   * <div class="norender">
+   * <code>
+   * let v1 = createVector(3, 4, 5);
+   * let v2 = createVector(2, 3, 4);
+   * let v3 = p5.Vector.rem(v1, v2);
+   *
+   * // Prints 'p5.Vector Object : [1, 1, 1]'.
+   * print(v3.toString());
+   * </code>
+   * </div>
+   */
+  /**
+   * @method rem
+   * @param {p5.Vector | Number[]}  value  divisor vector.
+   * @chainable
+   */
   rem (x, y, z) {
     if (x instanceof p5.Vector) {
       if ([x.x,x.y,x.z].every(Number.isFinite)) {
