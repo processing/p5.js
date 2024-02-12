@@ -198,8 +198,8 @@ let perlin; // will be initialized lazily by noise() or noiseSeed()
  */
 
 p5.prototype.noise = function(x, y = 0, z = 0) {
-  if (perlin == null) {
-    perlin = new Array(PERLIN_SIZE + 1);
+  if (perlin === null) {
+    perlin = new Float64Array(PERLIN_SIZE + 1);
     for (let i = 0; i < PERLIN_SIZE + 1; i++) {
       perlin[i] = Math.random();
     }
@@ -384,7 +384,7 @@ p5.prototype.noiseSeed = function(seed) {
       setSeed(val) {
         // pick a random seed if val is undefined or null
         // the >>> 0 casts the seed to an unsigned 32-bit integer
-        z = seed = (val == null ? Math.random() * m : val) >>> 0;
+        z = seed = (val === null ? Math.random() * m : val) >>> 0;
       },
       getSeed() {
         return seed;
@@ -400,7 +400,7 @@ p5.prototype.noiseSeed = function(seed) {
   })();
 
   lcg.setSeed(seed);
-  perlin = new Array(PERLIN_SIZE + 1);
+  perlin = new Float64Array(PERLIN_SIZE + 1);
   for (let i = 0; i < PERLIN_SIZE + 1; i++) {
     perlin[i] = lcg.rand();
   }
