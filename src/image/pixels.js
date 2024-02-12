@@ -568,7 +568,7 @@ p5.prototype.getFilterGraphicsLayer = function() {
  *                                   frag shader using a `tex0` uniform.
  */
 p5.prototype.filter = function(...args) {
-  p5._validateParameters('filter', arguments);
+  p5._validateParameters('filter', args);
 
   let { shader, operation, value, useWebGL } = parseFilterArgs(...args);
 
