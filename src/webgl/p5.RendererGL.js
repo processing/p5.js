@@ -2190,31 +2190,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
    * [[1, 2, 3],[4, 5, 6]] -> [1, 2, 3, 4, 5, 6]
    */
   _flatten(arr) {
-    //when empty, return empty
-    if (arr.length === 0) {
-      return [];
-    } else if (arr.length > 20000) {
-      //big models , load slower to avoid stack overflow
-      //faster non-recursive flatten via axelduch
-      //stackoverflow.com/questions/27266550/how-to-flatten-nested-array-in-javascript
-      const result = [];
-      const nodes = arr.slice();
-      let node;
-      node = nodes.pop();
-      do {
-        if (Array.isArray(node)) {
-          nodes.push(...node);
-        } else {
-          result.push(node);
-        }
-      } while (nodes.length && (node = nodes.pop()) !== undefined);
-      result.reverse(); // we reverse result to restore the original order
-      return result;
-    } else {
-      //otherwise if model within limits for browser
-      //use faster recursive loading
-      return [].concat(...arr);
-    }
+    return arr.flat();
   }
 
   /**
@@ -2226,13 +2202,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
    * [1, 2, 3, 4, 5, 6]
    */
   _vToNArray(arr) {
-    const ret = [];
-
-    for (const item of arr) {
-      ret.push(item.x, item.y, item.z);
-    }
-
-    return ret;
+    return arr.flatMap(item => [item.x, item.y, item.z]);
   }
 
   // function to calculate BezierVertex Coefficients
@@ -2265,8 +2235,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   _initTessy() {
     // function called for each vertex of tesselator output
     function vertexCallback(data, polyVertArray) {
-      for (let i = 0; i < data.length; i++) {
-        polyVertArray.push(data[i]);
+      for (const element of data) {
+        polyVertArray.push(element);
       }
     }
 
