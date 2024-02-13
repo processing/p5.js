@@ -24,6 +24,9 @@ p5.Geometry = class Geometry {
     //@type [p5.Vector]
     this.vertices = [];
 
+    this.boundingBoxCache = null;
+
+
     //an array containing every vertex for stroke drawing
     this.lineVertices = new p5.DataArray();
 
@@ -70,6 +73,43 @@ p5.Geometry = class Geometry {
       callback.call(this);
     }
     return this; // TODO: is this a constructor?
+  }
+  // Custom bounding box calculation based on the object's vertices
+  calculateBoundingBox() {
+    if (this.boundingBoxCache) {
+      return this.boundingBoxCache; // Return cached result if available
+    }
+
+    let minVertex = createVector(
+      Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
+    let maxVertex = createVector(
+      Number.MIN_VALUE, Number.MIN_VALUE, Number.MIN_VALUE);
+
+    for (let i = 0; i < this.vertices.length; i++) {
+      let vertex = this.vertices[i];
+      minVertex.x = min(minVertex.x, vertex.x);
+      minVertex.y = min(minVertex.y, vertex.y);
+      minVertex.z = min(minVertex.z, vertex.z);
+
+      maxVertex.x = max(maxVertex.x, vertex.x);
+      maxVertex.y = max(maxVertex.y, vertex.y);
+      maxVertex.z = max(maxVertex.z, vertex.z);
+    }
+    // Calculate size and offset properties
+    let size = createVector(maxVertex.x - minVertex.x,
+      maxVertex.y - minVertex.y, maxVertex.z - minVertex.z);
+    let offset = createVector((minVertex.x + maxVertex.x) / 2,
+      (minVertex.y + maxVertex.y) / 2, (minVertex.z + maxVertex.z) / 2);
+
+    // Cache the result for future access
+    this.boundingBoxCache = {
+      min: minVertex,
+      max: maxVertex,
+      size: size,
+      offset: offset
+    };
+
+    return this.boundingBoxCache;
   }
 
   reset() {
