@@ -286,7 +286,32 @@ p5.prototype.createFilterShader = function (fragSrc) {
     // texcoords only come from p5 to vertex shader
     // so pass texcoords on to the fragment shader in a varying variable
     attribute vec2 aTexCoord;
+    attribute vec3 aNormal;
+
     varying vec2 vTexCoord;
+    varying vec3 faNormal;
+    varying vec3 faPosition;
+
+    void main() {
+      // transferring vectors and texcoords for the frag shader
+      vTexCoord = aTexCoord;
+      faNormal = aNormal;
+      faPosition = aPosition;
+
+      // copy position with a fourth coordinate for projection (1.0 is normal)
+      vec4 positionVec4 = vec4(aPosition, 1.0);
+
+      // project to 3D space
+      gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+    }
+  `;
+  let defaultVertV2 = `#version 300 es
+    uniform mat4 uModelViewMatrix;
+    uniform mat4 uProjectionMatrix;
+
+    in vec3 aPosition;
+    in vec2 aTexCoord;
+    out vec2 vTexCoord;
 
     void main() {
       // transferring texcoords for the frag shader
@@ -298,34 +323,6 @@ p5.prototype.createFilterShader = function (fragSrc) {
       // project to 3D space
       gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
     }
-  `;
-  let defaultVertV2 = `#version 300 es
-  uniform mat4 uModelViewMatrix;
-  uniform mat4 uProjectionMatrix;
-
-  in vec3 aPosition;
-  in vec2 aTexCoord;
-  in vec3 aNormal;
-
-  out vec3 faNormal;
-  out vec3 vNormal;
-  out vec3 faPosition;
-  out vec2 vTexCoord;
-  out vec3 fvNormal;
-  
-  void main() {
-    // transferring vectors and texcoords for the frag shader
-    faNormal = aNormal;
-    fvNormal = vNormal;
-    faPosition = aPosition;
-    vTexCoord = aTexCoord;
-
-    // copy position with a fourth coordinate for projection (1.0 is normal)
-    vec4 positionVec4 = vec4(aPosition, 1.0);
-
-    // project to 3D space
-    gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
-  }
   `;
   let vertSrc = fragSrc.includes('#version 300 es') ? defaultVertV2 : defaultVertV1;
   const shader = new p5.Shader(this._renderer, vertSrc, fragSrc);
@@ -1293,7 +1290,7 @@ p5.prototype.metalness = function (metallic) {
  * transparency internally, e.g. via vertex colors
  * @return {Number[]]}  Normalized numbers array
  */
-p5.RendererGL.prototype._applyColorBlend = function(colors, hasTransparency) {
+p5.RendererGL.prototype._applyColorBlend = function (colors, hasTransparency) {
   const gl = this.GL;
 
   const isTexture = this.drawMode === constants.TEXTURE;
