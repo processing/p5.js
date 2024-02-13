@@ -300,23 +300,32 @@ p5.prototype.createFilterShader = function (fragSrc) {
     }
   `;
   let defaultVertV2 = `#version 300 es
-    uniform mat4 uModelViewMatrix;
-    uniform mat4 uProjectionMatrix;
+  uniform mat4 uModelViewMatrix;
+  uniform mat4 uProjectionMatrix;
 
-    in vec3 aPosition;
-    in vec2 aTexCoord;
-    out vec2 vTexCoord;
+  in vec3 aPosition;
+  in vec2 aTexCoord;
+  in vec3 aNormal;
 
-    void main() {
-      // transferring texcoords for the frag shader
-      vTexCoord = aTexCoord;
+  out vec3 faNormal;
+  out vec3 vNormal;
+  out vec3 faPosition;
+  out vec2 vTexCoord;
+  out vec3 fvNormal;
+  
+  void main() {
+    // transferring vectors and texcoords for the frag shader
+    faNormal = aNormal;
+    fvNormal = vNormal;
+    faPosition = aPosition;
+    vTexCoord = aTexCoord;
 
-      // copy position with a fourth coordinate for projection (1.0 is normal)
-      vec4 positionVec4 = vec4(aPosition, 1.0);
+    // copy position with a fourth coordinate for projection (1.0 is normal)
+    vec4 positionVec4 = vec4(aPosition, 1.0);
 
-      // project to 3D space
-      gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
-    }
+    // project to 3D space
+    gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+  }
   `;
   let vertSrc = fragSrc.includes('#version 300 es') ? defaultVertV2 : defaultVertV1;
   const shader = new p5.Shader(this._renderer, vertSrc, fragSrc);

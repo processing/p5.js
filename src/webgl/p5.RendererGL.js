@@ -42,6 +42,10 @@ const webgl2CompatibilityShader = readFileSync(
 );
 
 const defaultShaders = {
+  sphereMappingFrag: readFileSync(
+    join(__dirname, '/shaders/sphereMapping.frag'),
+    'utf-8'
+  ),
   immediateVert: readFileSync(
     join(__dirname, '/shaders/immediate.vert'),
     'utf-8'
@@ -80,6 +84,7 @@ const defaultShaders = {
   imageLightDiffusedFrag: readFileSync(join(__dirname, '/shaders/imageLightDiffused.frag'), 'utf-8'),
   imageLightSpecularFrag: readFileSync(join(__dirname, '/shaders/imageLightSpecular.frag'), 'utf-8')
 };
+let sphereMapping = defaultShaders.sphereMappingFrag;
 for (const key in defaultShaders) {
   defaultShaders[key] = webgl2CompatibilityShader + defaultShaders[key];
 }
@@ -559,6 +564,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.executeRotateAndMove = false;
 
     this.specularShader = undefined;
+    this.sphereMapping = undefined;
     this.diffusedShader = undefined;
     this._defaultLightShader = undefined;
     this._defaultImmediateModeShader = undefined;
@@ -1012,6 +1018,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
   filter(...args) {
 
+    this.uNMatrix.inverseTranspose(this.uMVMatrix);
     let fbo = this.getFilterLayer();
 
     // use internal shader for filter constants BLUR, INVERT, etc
@@ -1104,6 +1111,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this._pInst.noStroke();
         this._pInst.blendMode(constants.BLEND);
         this._pInst.shader(this.filterShader);
+        this.filterShader.setUniform('uNewNormalMatrix', this.uNMatrix.mat3);
         this.filterShader.setUniform('tex0', target);
         this.filterShader.setUniform('texelSize', texelSize);
         this.filterShader.setUniform('canvasSize', [target.width, target.height]);
@@ -1613,6 +1621,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     properties.quadraticAttenuation = this.quadraticAttenuation;
 
     properties._enableLighting = this._enableLighting;
+    properties.sphereMapping = this.sphereMapping;
     properties._useNormalMaterial = this._useNormalMaterial;
     properties._tex = this._tex;
     properties.drawMode = this.drawMode;
@@ -1674,6 +1683,14 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
   _getRetainedStrokeShader() {
     return this._getImmediateStrokeShader();
+  }
+
+  _getSphereMapping(img) {
+    this.sphereMapping = this._pInst.createFilterShader(
+      sphereMapping
+    );
+    this.sphereMapping.setUniform('uSampler', img);
+    return this.sphereMapping;
   }
 
   /*
@@ -2141,9 +2158,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   /* Binds a buffer to the drawing context
-   * when passed more than two arguments it also updates or initializes
-   * the data associated with the buffer
-   */
+  * when passed more than two arguments it also updates or initializes
+  * the data associated with the buffer
+  */
   _bindBuffer(
     buffer,
     target,

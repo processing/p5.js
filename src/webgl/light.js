@@ -115,7 +115,7 @@ import p5 from '../core/main';
  * @param  {p5.Color}      color   color as a <a href="#/p5.Color">p5.Color</a>
  * @chainable
  */
-p5.prototype.ambientLight = function(v1, v2, v3, a) {
+p5.prototype.ambientLight = function (v1, v2, v3, a) {
   this._assert3d('ambientLight');
   p5._validateParameters('ambientLight', arguments);
   const color = this.color(...arguments);
@@ -229,7 +229,7 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  * @param  {p5.Color}      color   color as a <a href="#/p5.Color">p5.Color</a>
  * @chainable
  */
-p5.prototype.specularColor = function(v1, v2, v3) {
+p5.prototype.specularColor = function (v1, v2, v3) {
   this._assert3d('specularColor');
   p5._validateParameters('specularColor', arguments);
   const color = this.color(...arguments);
@@ -327,7 +327,7 @@ p5.prototype.specularColor = function(v1, v2, v3) {
  * @param  {p5.Vector}                direction
  * @chainable
  */
-p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
+p5.prototype.directionalLight = function (v1, v2, v3, x, y, z) {
   this._assert3d('directionalLight');
   p5._validateParameters('directionalLight', arguments);
 
@@ -454,7 +454,7 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  * @param  {p5.Vector}                position
  * @chainable
  */
-p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
+p5.prototype.pointLight = function (v1, v2, v3, x, y, z) {
   this._assert3d('pointLight');
   p5._validateParameters('pointLight', arguments);
 
@@ -592,11 +592,61 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  * @alt
  * light with slider having a slider for varying roughness
  */
-p5.prototype.imageLight = function(img){
+p5.prototype.imageLight = function (img) {
   // activeImageLight property is checked by _setFillUniforms
   // for sending uniforms to the fillshader
   this._renderer.activeImageLight = img;
   this._renderer._enableLighting = true;
+};
+
+/**
+ * Creates a Panorama with given image.
+ *
+ *
+ * `panorama(img)` is a method designed to transform a standard
+ * image into a 360-degree view. It operates on the concept
+ * of sphere mapping, where the image is manipulated to
+ * resemble a sphere by adjusting camera angles. Utilizing
+ * this method, users can obtain a complete 360-degree view
+ * of a scene.
+ *
+ * Using Panorama is straightforward. Similar to calling a
+ * `background(color)`, users only need to call the `panorama(img)`, and
+ * beneath it, anything created will form a 360-degree scene.
+ * To enable 360-degree viewing, it is essential to invoke
+ * `orbitControl()`; otherwise, the method will not function as intended.
+ * @method panorama
+ * @param {p5.image} img
+ * @example
+ * <div class="notest">
+ * <code>
+ * let img;
+ * function preload() {
+ *   img = loadImage('assets/outdoor_spheremap.jpg');
+ * }
+ * function setup() {
+ *   createCanvas(100 ,100 ,WEBGL);
+ * }
+ * function draw() {
+ *   panorama(img);
+ *   imageMode(CENTER);
+ *   orbitControl();
+ *   noStroke();
+ *   push();
+ *   imageLight(img);
+ *   specularMaterial('green');
+ *   shininess(200);
+ *   metalness(100);
+ *   sphere(25);
+ *   pop();
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * The image transformed into a panoramic scene.
+ */
+p5.prototype.panorama = function (img) {
+  this.filter(this._renderer._getSphereMapping(img));
 };
 
 /**
@@ -634,7 +684,7 @@ p5.prototype.imageLight = function(img){
  * @alt
  * the light is partially ambient and partially directional
  */
-p5.prototype.lights = function() {
+p5.prototype.lights = function () {
   this._assert3d('lights');
   // Both specify gray by default.
   const grayColor = this.color('rgb(128,128,128)');
@@ -698,7 +748,7 @@ p5.prototype.lights = function() {
  * @alt
  * Two spheres with different falloff values show different intensity of light
  */
-p5.prototype.lightFalloff = function(
+p5.prototype.lightFalloff = function (
   constantAttenuation,
   linearAttenuation,
   quadraticAttenuation
@@ -892,7 +942,7 @@ p5.prototype.lightFalloff = function(
  * @param  {Number}                   [angle]
  * @param  {Number}                   [concentration]
  */
-p5.prototype.spotLight = function(
+p5.prototype.spotLight = function (
   v1,
   v2,
   v3,
@@ -1058,8 +1108,7 @@ p5.prototype.spotLight = function(
 
     default:
       console.warn(
-        `Sorry, input for spotlight() is not in prescribed format. Too ${
-          length < 3 ? 'few' : 'many'
+        `Sorry, input for spotlight() is not in prescribed format. Too ${length < 3 ? 'few' : 'many'
         } arguments were provided`
       );
       return this;
@@ -1153,7 +1202,7 @@ p5.prototype.spotLight = function(
  * Three white spheres. Each appears as a different
  * color due to lighting.
  */
-p5.prototype.noLights = function(...args) {
+p5.prototype.noLights = function (...args) {
   this._assert3d('noLights');
   p5._validateParameters('noLights', args);
 
