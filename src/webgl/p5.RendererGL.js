@@ -502,7 +502,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.curStrokeColor = this._cachedStrokeStyle = [0, 0, 0, 1];
 
     this.curBlendMode = constants.BLEND;
-    this.preEraseBlend=undefined;
+    this.preEraseBlend = undefined;
     this._cachedBlendMode = undefined;
     if (this.webglVersion === constants.WEBGL2) {
       this.blendExt = this.GL;
@@ -1018,7 +1018,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
   filter(...args) {
 
-    this.uNMatrix.inverseTranspose(this.uMVMatrix);
     let fbo = this.getFilterLayer();
 
     // use internal shader for filter constants BLUR, INVERT, etc
@@ -1111,7 +1110,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this._pInst.noStroke();
         this._pInst.blendMode(constants.BLEND);
         this._pInst.shader(this.filterShader);
-        this.filterShader.setUniform('uNewNormalMatrix', this.uNMatrix.mat3);
         this.filterShader.setUniform('tex0', target);
         this.filterShader.setUniform('texelSize', texelSize);
         this.filterShader.setUniform('canvasSize', [target.width, target.height]);
@@ -1194,7 +1192,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this.curFillColor = this._cachedFillStyle.slice();
       this.curStrokeColor = this._cachedStrokeStyle.slice();
       // Restore blend mode
-      this.curBlendMode=this.preEraseBlend;
+      this.curBlendMode = this.preEraseBlend;
       this.blendMode(this.preEraseBlend);
       // Ensure that _applyBlendMode() sets preEraseBlend back to the original blend mode
       this._isErasing = false;
@@ -1621,7 +1619,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     properties.quadraticAttenuation = this.quadraticAttenuation;
 
     properties._enableLighting = this._enableLighting;
-    properties.sphereMapping = this.sphereMapping;
     properties._useNormalMaterial = this._useNormalMaterial;
     properties._tex = this._tex;
     properties.drawMode = this.drawMode;
@@ -1686,9 +1683,13 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   _getSphereMapping(img) {
-    this.sphereMapping = this._pInst.createFilterShader(
-      sphereMapping
-    );
+    if (!this.sphereMapping) {
+      this.sphereMapping = this._pInst.createFilterShader(
+        sphereMapping
+      );
+    }
+    this.uNMatrix.inverseTranspose(this.uMVMatrix);
+    this.sphereMapping.setUniform('uNewNormalMatrix', this.uNMatrix.mat3);
     this.sphereMapping.setUniform('uSampler', img);
     return this.sphereMapping;
   }
