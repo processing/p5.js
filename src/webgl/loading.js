@@ -160,47 +160,46 @@ p5.prototype.loadModel = function(path,options) {
 
   async function getMaterials(lines){
     const parsedMaterialPromises=[];
-    const mtlPaths=[];
-    return new Promise(async (resolve,reject)=>{
-      for (let i = 0; i < lines.length; i++) {
-        const mtllibMatch = lines[i].match(/^mtllib (.+)/);
-        if (mtllibMatch) {
-          let mtlPath='';
-          const mtlFilename = mtllibMatch[1];
-          const objPathParts = path.split('/');
-          if(objPathParts.length > 1){
-            objPathParts.pop();
-            const objFolderPath = objPathParts.join('/');
-            mtlPath = objFolderPath + '/' + mtlFilename;
-          }else{
-            mtlPath = mtlFilename;
-          }
-          try {
-            if(await fileExists(mtlPath)){
-              const parsedMaterialsIndividual = await parseMtl(self, mtlPath);
-              mtlPaths.push(mtlPath);
-              parsedMaterialPromises.push(parsedMaterialsIndividual);
-            }else{
-              console.warn('MTL file not found or error in parsing; proceeding without materials.');
-              resolve({});
-              return;
-            }
-          } catch (error){
-            console.warn('Error loading MTL file:', error);
-            resolve({});
-            return;
-          }
-        }
-      }try {
-        const parsedMaterials = await Promise.all(parsedMaterialPromises);
-        const materials=await Object.assign({}, ...parsedMaterials);
-        resolve (materials);
-      } catch (error) {
-        resolve({});
-      }
 
-    });
+    for (let i = 0; i < lines.length; i++) {
+      const mtllibMatch = lines[i].match(/^mtllib (.+)/);
+      if (mtllibMatch) {
+        let mtlPath='';
+        const mtlFilename = mtllibMatch[1];
+        const objPathParts = path.split('/');
+        if(objPathParts.length > 1){
+          objPathParts.pop();
+          const objFolderPath = objPathParts.join('/');
+          mtlPath = objFolderPath + '/' + mtlFilename;
+        }else{
+          mtlPath = mtlFilename;
+        }
+        parsedMaterialPromises.push(
+          fileExists(mtlPath).then(exists => {
+            if (exists) {
+              return parseMtl(self, mtlPath);
+            } else {
+              console.warn(`MTL file not found or error in parsing; proceeding without materials: ${mtlPath}`);
+              return {};
+
+            }
+          }).catch(error => {
+            console.warn(`Error loading MTL file: ${mtlPath}`, error);
+            return {};
+          })
+        );
+      }
+    }
+    try {
+      const parsedMaterials = await Promise.all(parsedMaterialPromises);
+      const materials= Object.assign({}, ...parsedMaterials);
+      return materials ;
+    } catch (error) {
+      return {};
+    }
   }
+
+
   async function fileExists(url) {
     try {
       const response = await fetch(url, { method: 'HEAD' });
@@ -246,7 +245,6 @@ p5.prototype.loadModel = function(path,options) {
           parseObj(model, lines, parsedMaterials);
 
         }catch (error) {
-          console.error(error.message);
           if (failureCallback) {
             failureCallback(error);
           } else {
