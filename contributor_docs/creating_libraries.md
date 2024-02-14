@@ -81,7 +81,7 @@ Running the sketch should print a single message in the console saying “I will
 
 To load a CSV file with your `loadCSV()` function, the function needs to accept an argument. This can be defined in the same way as any other function parameter.
 
-```
+```js
 p5.prototype.loadCSV = function (filename) {
   console.log(`I will load the CSV file ${filename} soon!`);
 };
@@ -91,7 +91,7 @@ p5.prototype.loadCSV = function (filename) {
 
 In our test sketch, we can use it like so:
 
-```
+```js
 function setup() {
   createCanvas(400, 400);
 
