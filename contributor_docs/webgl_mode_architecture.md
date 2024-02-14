@@ -95,7 +95,7 @@ You can use `buildGeometry()` to make a `p5.Geometry` out of immediate mode comm
 
 ## Materials, Lights, and Shaders
 
-Every shape we draw uses a single shader for its fills, and a single shader for its strokes. There are a few default shaders that one can pick from in p5.js. You can also write and use your own shader instead of the default ones.
+Every shape we draw uses a single shader for its fills and a single shader for its strokes. There are a few default shaders that one can pick from in p5.js. You can also write and use your own shader instead of the default ones.
 
 The default shaders work with p5.js's lighting and materials system. The user can specify what lights are in the scene with a shape and how each object reacts to light, including color and shininess. This information is given to the shader for each object being drawn. Custom shaders can also access the same lighting and material information, allowing users and library makers to extend the default rendering behavior.
 
@@ -241,6 +241,33 @@ It also has the following per-vertex attributes:
 
 
 ## Classes
+
+```mermaid
+---
+title: p5.js WebGL Classes
+---
+classDiagram
+    class Base["p5.Renderer"] {
+    }
+    class P2D["p5.Renderer2D"] {
+    }
+    class WebGL["p5.RendererGL"] {
+    }
+    class Geometry["p5.Geometry"] {
+    }
+    class Shader["p5.Shader"] {
+    }
+    class Texture["p5.Texture"] {
+    }
+    class Framebuffer["p5.Framebuffer"] {
+    }
+    Base <|-- P2D
+    Base <|-- WebGL
+    WebGL "*" o-- "*" Geometry
+    WebGL "1" *-- "*" Shader
+    WebGL "1" *-- "*" Texture
+    WebGL "1" *-- "*" Framebuffer
+```
 
 The entry point to most WebGL code is through **p5.RendererGL**. Top-level p5.js functions are passed to the current renderer. Both 2D and WebGL modes have renderer classes that conform to a common `p5.Renderer` interface. Immediate mode and retained mode functions are split up into **p5.RendererGL.Immediate.js** and **p5.RendererGL.Retained.js**.
 
