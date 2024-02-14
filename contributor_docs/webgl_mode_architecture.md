@@ -20,7 +20,7 @@ When evaluating a new feature, we consider whether it aligns with the goals of p
 4. **Improve p5.js performance:** It should **run as fast as possible without interfering with the previous goals.** Good performance keeps sketches accessible to a wide variety of viewers and devices. When designing new APIs, we try to ensure the design has a performant implementation. However, we give preference to simplicity and parity with 2D mode.
 
 
-## Design Differences with 2D Mode
+## Design differences with 2D mode
 
 The browser's 2D and WebGL canvas context APIs offer very different levels of abstraction, with WebGL being generally lower-level and 2D being higher-level. This motivates some fundamental design differences between p5.js's WebGL and 2D modes.
 
@@ -29,9 +29,9 @@ The browser's 2D and WebGL canvas context APIs offer very different levels of ab
 - **WebGL mode must balance high- and low-level APIs.** Since finer-grained control is available with the browser WebGL API, p5.js's WebGL mode is able to offer users some of that control where 2D mode cannot. We then are faced with the task of picking the right level of abstraction for users. Too high, and they are unable to take advantage of some of what the browser has to offer; too low, and we pass too much of the work of managing complexity and performance onto the user.
 
 
-## Drawing Shapes
+## Drawing shapes
 
-### Creating Shapes: Fills, Strokes, and 3D Geometry
+### Creating shapes: fills, strokes, and 3D geometry
 
 Everything drawn by p5.js, both in 2D and WebGL, consists of fills and strokes. Sometimes, we only draw one or the other, but every shape must be ready to draw either component.
 
@@ -75,7 +75,7 @@ To draw the line, we combine that information with camera intrinsics in a shader
 <img alt="The information stored about lines, and the final shapes that they turn into." src="images/flags.svg" width="600" />
 
 
-### Rendering Shapes: Immediate and Retained Modes
+### Rendering shapes: immediate and retained modes
 
 There are two modes that p5.js uses to draw shapes onto the screen: **immediate mode** and **retained mode.**
 
@@ -93,7 +93,7 @@ Retained mode is optimized for shapes that you will need to keep redrawing and d
 You can use `buildGeometry()` to make a `p5.Geometry` out of immediate mode commands. You call it with a function that runs a series of any p5.js shape drawing functions. It runs the function, collects the shapes into a new p5.Geometry, and returns it. The p5.Geometry can then be drawn and redrawn efficiently in the future.
 
 
-## Materials, Lights, and Shaders
+## Materials, lights, and shaders
 
 Every shape we draw uses a single shader for its fills and a single shader for its strokes. There are a few default shaders that one can pick from in p5.js. You can also write and use your own shader instead of the default ones.
 
@@ -129,7 +129,7 @@ Each 3D object has a few material properties that can be set by the user:
 - **Emissive material**: Set with `emissiveMaterial()`, this adds a constant color to the lighting of the shape, as if it were producing its own light of that color.
 
 
-### Shader Implementation
+### Shader implementation
 
 The lighting and material parameters get turned into shader attributes and uniforms. If you reference them in a custom shader, p5.js will supply them automatically.
 
@@ -280,7 +280,7 @@ When setting a shader uniform, if the uniform type is an image, then the rendere
 Textures corresponding to **p5.Framebuffer** objects are unique. Framebuffers are like graphics: they represent surfaces that can be drawn to. Unlike `p5.Graphics`, `p5.Framebuffer`s live entirely on the GPU. If one uses a `p5.Graphics` as a texture in a shader, the data needs to be transferred to and from the CPU. This can often be a performance bottleneck. In contrast, when drawing to a `p5.Framebuffer`, you draw directly to its GPU texture. Because of this, no extra data transfer is necessary. WebGL mode tries to use `p5.Framebuffer`s over `p5.Graphics` where possible for this reason.
 
 
-## Future Goals
+## Future goals
 
 Currently, WebGL mode is functional for a variety of tasks, but many users and library makers want to extend it in new directions. We aim to create a set of building blocks from which users and library makers can craft extensions. A block can be considered "done" when it has an extensible API we can confidently commit to supporting. A major milestone for WebGL mode will be when we have a sufficient set of such blocks for an ecosystem of libraries. The main areas currently lacking in extension support are geometry and materials.
 
