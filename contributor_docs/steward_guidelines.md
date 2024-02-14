@@ -129,12 +129,12 @@ Simple fixes, such as a small typo fix, can be merged directly by anyone with me
 1. Bug fixes should be reviewed by the relevant area steward, ideally the same one that approved the referenced issue for fixing.
 2. The PR "Files Changed" tab can be used to initially review whether the fix is implemented as described in the issue discussion.
 3. The PR should be tested locally whenever possible and relevant. The GitHub CLI can help streamline some of the process. (See more below in [Tips & Tricks](steward_guidelines.md#tips-tricks)).
-   - The fix should address the original issue sufficiently.
-   - The fix should not change any existing behaviors unless agreed upon in the original issue.
-   - The fix should not have a significant performance impact on p5.js.
-   - The fix should not have any impact on p5.js' accessibility.
-   - The fix should use the modern standard of JavaScript coding.
-   - The fix should pass all automated tests and include new tests if relevant.
+   - [ ] The fix should address the original issue sufficiently.
+   - [ ] The fix should not change any existing behaviors unless agreed upon in the original issue.
+   - [ ] The fix should not have a significant performance impact on p5.js.
+   - [ ] The fix should not have any impact on p5.js' accessibility.
+   - [ ] The fix should use the modern standard of JavaScript coding.
+   - [ ] The fix should pass all automated tests and include new tests if relevant.
 4. If any additional changes are required, line comments should be added to the relevant lines as described [here](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/commenting-on-a-pull-request#adding-line-comments-to-a-pull-request).
    - A suggestion block can also be used to suggest specific changes:\
      ![The Suggest Change button while writing a comment on code in a GitHub pull request](images/suggest-change.png)\
