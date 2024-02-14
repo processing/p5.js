@@ -63,8 +63,8 @@ function setup() {
   <head>
     <!-- Other tags -->
 
-    <script src="./p5.js">
-    <script src="./p5.loadcsv.js">
+    <script src="./p5.js"></script>
+    <script src="./p5.loadcsv.js"></script>
 
     <!-- Other tags -->
   </head>
