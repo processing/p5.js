@@ -221,6 +221,7 @@ When you add a new test, running `npm test` will generate new screenshots for an
 
 To manually inspect all visual tests, run `grunt yui:dev` to launch a local server, then go to http://127.0.0.1:9001/test/visual.html to see a list of all test cases.
 
+
 In a continuous integration (CI) environment, optimizing test speed is essential. It is advantageous to keep the code concise, avoid unnecessary frames, minimize canvas size, and load assets only when essential for the specific functionality under test.
 To address scenarios involving operations like asynchronous 3D model rendering, consider returning a promise that resolves upon completing all the necessary tests, ensuring efficiency in your visual testing approach. Here's an example of how you can asynchronous 3D model rendering in your visual tests:
 

@@ -1125,8 +1125,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     target.filterCamera._resize();
     this._pInst.setCamera(target.filterCamera);
     this._pInst.resetMatrix();
-    this._pInst.image(fbo, -this.width / 2, -this.height / 2,
-      this.width, this.height);
+    this._pInst.image(fbo, -target.width / 2, -target.height / 2,
+      target.width, target.height);
     this._pInst.pop();
     this._pInst.pop();
   }

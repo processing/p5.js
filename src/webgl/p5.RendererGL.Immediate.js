@@ -519,7 +519,10 @@ p5.RendererGL.prototype._drawImmediateFill = function(count = 1) {
   }
   shader.disableRemainingAttributes();
 
-  this._applyColorBlend(this.curFillColor);
+  this._applyColorBlend(
+    this.curFillColor,
+    this.immediateMode.geometry.hasFillTransparency()
+  );
 
   if (count === 1) {
     gl.drawArrays(
@@ -561,7 +564,10 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
   }
   shader.disableRemainingAttributes();
-  this._applyColorBlend(this.curStrokeColor);
+  this._applyColorBlend(
+    this.curStrokeColor,
+    this.immediateMode.geometry.hasFillTransparency()
+  );
 
   gl.drawArrays(
     gl.TRIANGLES,
