@@ -286,17 +286,11 @@ p5.prototype.createFilterShader = function (fragSrc) {
     // texcoords only come from p5 to vertex shader
     // so pass texcoords on to the fragment shader in a varying variable
     attribute vec2 aTexCoord;
-    attribute vec3 aNormal;
-
     varying vec2 vTexCoord;
-    varying vec3 faNormal;
-    varying vec3 faPosition;
 
     void main() {
-      // transferring vectors and texcoords for the frag shader
+      // transferring texcoords for the frag shader
       vTexCoord = aTexCoord;
-      faNormal = aNormal;
-      faPosition = aPosition;
 
       // copy position with a fourth coordinate for projection (1.0 is normal)
       vec4 positionVec4 = vec4(aPosition, 1.0);
@@ -1290,7 +1284,7 @@ p5.prototype.metalness = function (metallic) {
  * transparency internally, e.g. via vertex colors
  * @return {Number[]]}  Normalized numbers array
  */
-p5.RendererGL.prototype._applyColorBlend = function (colors, hasTransparency) {
+p5.RendererGL.prototype._applyColorBlend = function(colors, hasTransparency) {
   const gl = this.GL;
 
   const isTexture = this.drawMode === constants.TEXTURE;
