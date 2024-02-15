@@ -174,6 +174,46 @@ p5.Geometry = class Geometry {
     this.vertexColors = [];
     return this;
   }
+
+
+  /**
+ *
+ * @method geometryToObj
+ * @for p5.Geometry
+ */
+
+  geometryToObj (fileName='model.obj'){
+    let objStr= '';
+
+
+    // Vertices
+    this.vertices.forEach(v => {
+      objStr += `v ${v.x} ${v.y} ${v.z}\n`;
+    });
+
+    // Texture Coordinates (UVs)
+    if (this.uvs && this.uvs.length > 0) {
+      for (let i = 0; i < this.uvs.length; i += 2) {
+        objStr += `vt ${this.uvs[i]} ${this.uvs[i + 1]}\n`;
+      }
+    }
+
+    // Vertex Normals
+    if (this.vertexNormals && this.vertexNormals.length > 0) {
+      this.vertexNormals.forEach(n => {
+        objStr += `vn ${n.x} ${n.y} ${n.z}\n`;
+      });
+
+    }
+    // Faces
+    this.faces.forEach(face => {
+      // OBJ format uses 1-based indices
+      const faceStr = face.map(index => index + 1).join(' ');
+      objStr += `f ${faceStr}\n`;
+    });
+
+    save(objStr, fileName);
+  }
   /**
  * Flips the U texture coordinates of the model.
  * @method flipU
