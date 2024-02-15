@@ -67,7 +67,8 @@ suite('p5.Shader', function() {
       var expectedAttributes = ['aPosition', 'aNormal', 'aTexCoord'];
 
       var expectedUniforms = [
-        'uModelViewMatrix',
+        'uModelMatrix',
+        'uViewMatrix',
         'uProjectionMatrix',
         'uNormalMatrix',
         'uAmbientLightCount',
@@ -108,7 +109,8 @@ suite('p5.Shader', function() {
       var expectedAttributes = ['aPosition'];
 
       var expectedUniforms = [
-        'uModelViewMatrix',
+        'uModelMatrix',
+        'uViewMatrix',
         'uProjectionMatrix',
         'uMaterialColor'
       ];
@@ -124,7 +126,8 @@ suite('p5.Shader', function() {
       var expectedAttributes = ['aPosition', 'aVertexColor'];
 
       var expectedUniforms = [
-        'uModelViewMatrix',
+        'uModelMatrix',
+        'uViewMatrix',
         'uProjectionMatrix',
         /*'uResolution',*/
         'uPointSize'
@@ -141,7 +144,8 @@ suite('p5.Shader', function() {
       var expectedAttributes = ['aPosition', 'aNormal'];
 
       var expectedUniforms = [
-        'uModelViewMatrix',
+        'uModelMatrix',
+        'uViewMatrix',
         'uProjectionMatrix',
         'uNormalMatrix'
       ];
