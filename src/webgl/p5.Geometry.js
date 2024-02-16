@@ -281,7 +281,7 @@ p5.Geometry = class Geometry {
       objStr += `f ${faceStr}\n`;
     });
 
-    const blob = new Blob([objStr], { type: 'text/obj' });
+    const blob = new Blob([objStr], { type: 'text/plain' });
     p5.prototype.downloadFile(blob, fileName , 'obj');
 
   }
