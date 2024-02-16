@@ -603,7 +603,7 @@ suite('p5.RendererGL', function() {
       assert.notDeepEqual(modelMatrixBefore.mat4,
         myp5._renderer.uModelMatrix.mat4);
       // Check if the view matrix has changed
-      assert.deepEqual(viewMatrixBefore.mat4,
+      assert.notDeepEqual(viewMatrixBefore.mat4,
         myp5._renderer.uViewMatrix.mat4);
       myp5.pop();
       // Check if both the model and view matrices are restored after popping

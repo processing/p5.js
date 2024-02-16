@@ -46,6 +46,8 @@ class GeometryBuilder {
    * transformations.
    */
   addGeometry(input) {
+    this.hasTransform = !this.renderer.uModelMatrix.mat4
+      .every((v, i) => v === this.identityMatrix.mat4[i]);
 
     if (this.hasTransform) {
       this.renderer.uNMatrix.inverseTranspose(this.renderer.uModelMatrix);

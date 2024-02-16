@@ -386,13 +386,13 @@ suite('p5.Camera', function() {
 
       // Confirmation that the argument camera and the matrix of the camera
       // that received set() match
-      assert.deepEqual(copyCam.modelMatrix.mat4, myCam.modelMatrix.mat4);
+      assert.deepEqual(copyCam.cameraMatrix.mat4, myCam.cameraMatrix.mat4);
       assert.deepEqual(copyCam.projMatrix.mat4, myCam.projMatrix.mat4);
       // If the set()ed camera is active,
       // the renderer's matrix will also change.
       assert.deepEqual(
-        copyCam.modelMatrix.mat4,
-        myp5._renderer.uModelMatrix.mat4
+        copyCam.cameraMatrix.mat4,
+        myp5._renderer.uViewMatrix.mat4
       );
       assert.deepEqual(
         copyCam.projMatrix.mat4,
