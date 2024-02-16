@@ -178,11 +178,11 @@ p5.Geometry = class Geometry {
 
   /**
  *
- * @method geometryToObj
+ * @method saveObj
  * @for p5.Geometry
  */
 
-  geometryToObj (fileName='model.obj'){
+  saveObj (fileName='model.obj'){
     let objStr= '';
 
 
