@@ -1506,9 +1506,6 @@ p5.prototype.save = function(object, _filename, _options) {
       case 'txt':
         p5.prototype.saveStrings(args[0], args[1], args[2]);
         return;
-      case 'obj' :
-        p5.prototype.saveStrings(args[0].split('\n') , args[1], 'obj');
-        return;
       // =================================================
       // OPTION 3: decide based on object...
       default:
