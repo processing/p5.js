@@ -37,7 +37,7 @@ function descriptionString(node) {
     return node.value;
   } else if (node.type === 'paragraph') {
     return '<p>' + node.children.map(n => descriptionString(n)).join('') + '</p>';
-  } else if (node.type === 'includeCode') {
+  } else if (node.type === 'inlineCode') {
     return '<code>' + node.value + '</code>';
   } else if (node.value) {
     return node.value;
