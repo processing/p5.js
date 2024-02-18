@@ -30,24 +30,26 @@ const converted = {
   consts: {}
 };
 
-function descriptionString(node) {
+function descriptionString(node, parent) {
   if (!node) {
     return '';
   } else if (node.type === 'text') {
     return node.value;
   } else if (node.type === 'paragraph') {
-    return '<p>' + node.children.map(n => descriptionString(n)).join('') + '</p>\n';
+    const content = node.children.map(n => descriptionString(n, node)).join('');
+    if (parent && parent.children.length === 1) return content;
+    return '<p>' + content + '</p>\n';
   } else if (node.type === 'inlineCode') {
     return '<code>' + node.value + '</code>';
   } else if (node.type === 'list') {
     const tag = node.type === 'ordered' ? 'ol' : 'ul';
-    return `<${tag}>` + node.children.map(n => descriptionString(n)).join('') + `</${tag}>`;
+    return `<${tag}>` + node.children.map(n => descriptionString(n, node)).join('') + `</${tag}>`;
   } else if (node.type === 'listItem') {
-    return '<li>' + node.children.map(n => descriptionString(n)).join('') + '</li>';
+    return '<li>' + node.children.map(n => descriptionString(n, node)).join('') + '</li>';
   } else if (node.value) {
     return node.value;
   } else if (node.children) {
-    return node.children.map(n => descriptionString(n)).join('');
+    return node.children.map(n => descriptionString(n, node)).join('');
   } else {
     return '';
   }
@@ -65,9 +67,18 @@ function typeObject(node) {
     };
   } else if (node.type === 'TypeApplication') {
     const { type: typeName } = typeObject(node.expression);
+    if (
+      typeName === 'Array' &&
+      node.applications.length === 1 &&
+      node.applications[0].type === 'NameExpression'
+    ) {
+      return {
+        type: `${typeObject(node.applications[0]).type}[]`
+      };
+    }
     const args = node.applications.map(n => typeObject(n).type);
     return {
-      type: `${typeName}<${args.join(', ')}>`
+      type: `${typeName}&lt;${args.join(', ')}&gt;`
     };
   } else if (node.type === 'UndefinedLiteral') {
     return { type: 'undefined' };
@@ -246,7 +257,7 @@ for (const entry of allData) {
       }),
       return: entry.returns[0] && {
         description: descriptionString(entry.returns[0].description),
-        ...typeObject(entry.returns[0].type).name
+        ...typeObject(entry.returns[0].type)
       },
       is_constructor: 1,
       module,
@@ -399,13 +410,13 @@ for (const entry of allData) {
           }),
           return: entry.returns[0] && {
             description: descriptionString(entry.returns[0].description),
-            ...typeObject(entry.returns[0].type).name
+            ...typeObject(entry.returns[0].type)
           }
         }
       ],
       return: prevItem.return || entry.returns[0] && {
         description: descriptionString(entry.returns[0].description),
-        ...typeObject(entry.returns[0].type).name
+        ...typeObject(entry.returns[0].type)
       },
       class: className,
       static: entry.scope === 'static' && 1,
