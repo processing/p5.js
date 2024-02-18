@@ -165,6 +165,9 @@ for (const key in modules) {
   converted.modules[key] = modules[key];
 }
 for (const key in submodules) {
+  // Some modules also list themselves as  submodules as a default category
+  // of sorts. Skip adding these submodules to not overwrite the module itself.
+  if (converted.modules[key]) continue;
   converted.modules[key] = submodules[key];
 }
 
