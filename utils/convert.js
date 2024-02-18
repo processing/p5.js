@@ -231,6 +231,21 @@ function getParams(entry) {
 for (const entry of allData) {
   if (entry.kind === 'constant') {
     constUsage[entry.name] = new Set();
+
+    const { module, submodule, forEntry } = getModuleInfo(entry);
+
+    const item = {
+      itemtype: 'property',
+      name: entry.name,
+      ...locationInfo(entry),
+      ...typeObject(entry.type),
+      description: descriptionString(entry.description),
+      module,
+      submodule,
+      class: forEntry || 'p5'
+    };
+
+    converted.classitems.push(item);
   }
 }
 
