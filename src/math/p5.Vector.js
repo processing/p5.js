@@ -1766,7 +1766,7 @@ p5.Vector = class {
  *
  *   drawArrow(v0, v1, 'black');
  *
- *   describe('A black arrow extends from the center of a gray square. The arrow rotates counterclockwise.');
+ *   describe('A black arrow extends from the center of a gray square. The arrow rotates clockwise.');
  * }
  *
  * function drawArrow(base, vec, myColor) {
