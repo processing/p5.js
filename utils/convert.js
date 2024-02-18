@@ -39,6 +39,11 @@ function descriptionString(node) {
     return '<p>' + node.children.map(n => descriptionString(n)).join('') + '</p>';
   } else if (node.type === 'inlineCode') {
     return '<code>' + node.value + '</code>';
+  } else if (node.type === 'list') {
+    const tag = node.type === 'ordered' ? 'ol' : 'ul';
+    return `<${tag}>` + node.children.map(n => descriptionString(n)).join('') + `</${tag}>`;
+  } else if (node.type === 'listItem') {
+    return '<li>' + node.children.map(n => descriptionString(n)).join('') + '</li>';
   } else if (node.value) {
     return node.value;
   } else if (node.children) {
