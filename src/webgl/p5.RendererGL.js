@@ -843,9 +843,6 @@ p5.RendererGL = class RendererGL extends Renderer {
   }
 
 
-  /**
- * @class p5.RendererGL
- */
   _update() {
     // reset model view and apply initial camera transform
     // (containing only look at info; no projection).
@@ -899,7 +896,6 @@ p5.RendererGL = class RendererGL extends Renderer {
   //////////////////////////////////////////////
   /**
  * Basic fill material for geometry with a given color
- * @class p5.RendererGL
  * @param  {Number|Number[]|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
