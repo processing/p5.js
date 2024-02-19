@@ -213,8 +213,7 @@ p5.prototype.perspective = function (...args) {
  * @method linePerspective
  * @memberof p5.prototype
  * @param {boolean} enable - Set to `true` to enable line perspective, `false` to disable.
- * @return {boolean} The boolean value representing the current state of linePerspective().
- *<br>
+ *
  * @example
  * <div>
  * <code>
@@ -244,8 +243,49 @@ p5.prototype.perspective = function (...args) {
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * function setup() {
+ * createCanvas(100, 100, WEBGL);
+ * strokeWeight(4);
+ * }
+ *
+ * function draw() {
+ * background(220);
+ *
+ *  // Using orthographic projection
+ * ortho();
+ *
+ * // Enable line perspective explicitly
+ * linePerspective(true);
+ *
+ * // Draw a rotating cube
+ * rotateX(frameCount * 0.01);
+ * rotateY(frameCount * 0.01);
+ * box(25);
+ *
+ * // Move to a new position
+ * translate(0, -60, 0);
+ *
+ * // Using perspective projection
+ * perspective();
+ *
+ * // Disable line perspective explicitly
+ * linePerspective(false);
+ *
+ * // Draw another rotating cube with perspective
+ * rotateX(frameCount * 0.01);
+ * rotateY(frameCount * 0.01);
+ * box(25);
+ * }
+ * </code>
+ * </div>
  * @alt
  * Demonstrates the dynamic control of line perspective in a 3D environment with rotating boxes.
+ */
+/**
+ * @method linePerspective
+ * @return {boolean} The boolean value representing the current state of linePerspective().
  */
 
 p5.prototype.linePerspective = function (enable) {
