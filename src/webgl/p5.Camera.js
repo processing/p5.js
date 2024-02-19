@@ -246,37 +246,37 @@ p5.prototype.perspective = function (...args) {
  * <div>
  * <code>
  * function setup() {
- * createCanvas(100, 100, WEBGL);
- * strokeWeight(4);
+ *   createCanvas(100, 100, WEBGL);
+ *   strokeWeight(4);
  * }
  *
  * function draw() {
- * background(220);
+ *   background(220);
  *
- *  // Using orthographic projection
- * ortho();
+ *   // Using orthographic projection
+ *   ortho();
  *
- * // Enable line perspective explicitly
- * linePerspective(true);
+ *   // Enable line perspective explicitly
+ *   linePerspective(true);
  *
- * // Draw a rotating cube
- * rotateX(frameCount * 0.01);
- * rotateY(frameCount * 0.01);
- * box(25);
+ *   // Draw a rotating cube
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   box(25);
  *
- * // Move to a new position
- * translate(0, -60, 0);
+ *   // Move to a new position
+ *   translate(0, -60, 0);
  *
- * // Using perspective projection
- * perspective();
+ *   // Using perspective projection
+ *   perspective();
  *
- * // Disable line perspective explicitly
- * linePerspective(false);
+ *   // Disable line perspective explicitly
+ *   linePerspective(false);
  *
- * // Draw another rotating cube with perspective
- * rotateX(frameCount * 0.01);
- * rotateY(frameCount * 0.01);
- * box(25);
+ *   // Draw another rotating cube with perspective
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   box(25);
  * }
  * </code>
  * </div>
