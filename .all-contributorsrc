@@ -5610,6 +5610,34 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "sudhanshuv3",
+      "name": "Sudhanshu Tiwari",
+      "avatar_url": "https://avatars.githubusercontent.com/u/148856416?v=4",
+      "profile": "https://github.com/sudhanshuv3",
+      "contributions": [
+        "bug",
+        "code"
+      ]
+    },
+    {
+      "login": "meezwhite",
+      "name": "meezwhite",
+      "avatar_url": "https://avatars.githubusercontent.com/u/112010422?v=4",
+      "profile": "https://meezwhite.xyz",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "pie999",
+      "name": "pie999",
+      "avatar_url": "https://avatars.githubusercontent.com/u/105122549?v=4",
+      "profile": "https://github.com/pie999",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
