@@ -600,21 +600,18 @@ p5.prototype.imageLight = function (img) {
 };
 
 /**
- * Creates a Panorama with given image.
+ * The `panorama(img)` method adeptly transforms images such as
+ * maps usually in rectangular format, HDRIs into immersive
+ * 360-degree views. This is similar to calling `background(color)`;
+ * call `panorama(img)` before drawing your scene to create a 360-degree
+ * background from your image. It operates on the concept of sphere mapping,
+ * where the image is manipulated to resemble a sphere by adjusting
+ * camera angles. Using this method, a comprehensive 360-degree view of
+ * a scene can be obtained.
  *
+ * To enable 360-degree viewing, either use orbitControl or try changing
+ * the orientation of the camera to see different parts of the background.
  *
- * `panorama(img)` is a method designed to transform a standard
- * image into a 360-degree view. It operates on the concept
- * of sphere mapping, where the image is manipulated to
- * resemble a sphere by adjusting camera angles. Utilizing
- * this method, users can obtain a complete 360-degree view
- * of a scene.
- *
- * Using Panorama is straightforward. Similar to calling a
- * `background(color)`, users only need to call the `panorama(img)`, and
- * beneath it, anything created will form a 360-degree scene.
- * To enable 360-degree viewing, it is essential to invoke
- * `orbitControl()`; otherwise, the method will not function as intended.
  * @method panorama
  * @param {p5.image} img
  * @example
