@@ -647,7 +647,6 @@ p5.prototype.imageLight = function (img) {
  */
 p5.prototype.panorama = function (img) {
   this.filter(this._renderer._getSphereMapping(img));
-  this.clearDepth();
 };
 
 /**
