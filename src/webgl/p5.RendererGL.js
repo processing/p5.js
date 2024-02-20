@@ -1133,6 +1133,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this._pInst.resetMatrix();
     this._pInst.image(fbo, -target.width / 2, -target.height / 2,
       target.width, target.height);
+    this._pInst.clearDepth();
     this._pInst.pop();
     this._pInst.pop();
   }
