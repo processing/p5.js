@@ -199,7 +199,7 @@ p5.prototype.focused = document.hasFocus();
  * strings: `'help'`, `'wait'`, `'crosshair'`, `'not-allowed'`, `'zoom-in'`,
  * and `'grab'`. If the path to an image is passed, as in
  * `cursor('assets/target.png')`, then the image will be used as the cursor.
- * Images must be in .cur, .gif, .jpg, .jpeg, or .png format.
+ * Images must be in .cur, .gif, .jpg, .jpeg, or .png format and should be <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#icon_size_limits">at most 32 by 32 pixels large.</a>
  *
  * The parameters `x` and `y` are optional. If an image is used for the
  * cursor, `x` and `y` set the location pointed to within the image. They are
