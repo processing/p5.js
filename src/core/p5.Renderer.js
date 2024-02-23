@@ -535,8 +535,7 @@ function calculateOffset(object) {
   }
   return [currentLeft, currentTop];
 }
-// This caused the test to failed.
-Renderer.prototype.textSize = function(s) {
+p5.Renderer.prototype.textSize = function(s) {
   if (typeof s === 'number') {
     this._setProperty('_textSize', s);
     if (!this._leadingSet) {
@@ -549,4 +548,4 @@ Renderer.prototype.textSize = function(s) {
   return this._textSize;
 };
 
-export default Renderer;
+export default p5.Renderer;
