@@ -77,15 +77,33 @@ p5.Geometry = class Geometry {
     }
     return this; // TODO: is this a constructor?
   }
-  // Custom bounding box calculation based on the object's vertices
+
+  /**
+ * Custom bounding box calculation based on the object's vertices.
+ * The bounding box is a rectangular prism that encompasses the entire object.
+ * It is defined by the minimum and maximum coordinates along each axis, as well
+ * as the size and offset of the box.
+ *
+ *
+ * @method calculateBoundingBox
+ * @memberof p5.Geometry.prototype
+ * @return {Object} An object containing the bounding box properties:
+ *
+ *   - `min`: The minimum coordinates of the bounding box as a p5.Vector.
+ *   - `max`: The maximum coordinates of the bounding box as a p5.Vector.
+ *   - `size`: The size of the bounding box as a p5.Vector.
+ *   - `offset`: The offset of the bounding box as a p5.Vector.
+ *
+ */
+
   calculateBoundingBox() {
     if (this.boundingBoxCache) {
       return this.boundingBoxCache; // Return cached result if available
     }
 
-    let minVertex = createVector(
+    let minVertex = new p5.Vector(
       Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
-    let maxVertex = createVector(
+    let maxVertex = new p5.Vector(
       Number.MIN_VALUE, Number.MIN_VALUE, Number.MIN_VALUE);
 
     for (let i = 0; i < this.vertices.length; i++) {
@@ -99,9 +117,9 @@ p5.Geometry = class Geometry {
       maxVertex.z = max(maxVertex.z, vertex.z);
     }
     // Calculate size and offset properties
-    let size = createVector(maxVertex.x - minVertex.x,
+    let size = new p5.Vector(maxVertex.x - minVertex.x,
       maxVertex.y - minVertex.y, maxVertex.z - minVertex.z);
-    let offset = createVector((minVertex.x + maxVertex.x) / 2,
+    let offset = new p5.Vector((minVertex.x + maxVertex.x) / 2,
       (minVertex.y + maxVertex.y) / 2, (minVertex.z + maxVertex.z) / 2);
 
     // Cache the result for future access
