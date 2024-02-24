@@ -609,7 +609,7 @@ p5.prototype.imageLight = function (img) {
  * camera angles. Using this method, a comprehensive 360-degree view of
  * a scene can be obtained.
  *
- * To enable 360-degree viewing, either use orbitControl or try changing
+ * To enable 360-degree viewing, either use `orbitControl()` or try changing
  * the orientation of the camera to see different parts of the background.
  *
  * @method panorama
