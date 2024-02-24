@@ -1,6 +1,9 @@
 import p5 from '../../../src/app.js';
+import setupMath from '../../../src/math';
 import { testUnMinified, createP5Iframe, P5_SCRIPT_TAG } from '../../js/p5_helpers.js';
 import '../../js/chai_helpers.js';
+
+setupMath(p5);
 
 const setup = beforeEach;
 const teardown = afterEach;
