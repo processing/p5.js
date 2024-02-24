@@ -454,5 +454,53 @@ for (const key in constUsage) {
   converted.consts[key] = [...constUsage[key]];
 }
 
+
+// ============================================================================
+// parameterData.json
+// ============================================================================
+
+function buildParamDocs(docs) {
+  let newClassItems = {};
+  // the fields we need for the FES, discard everything else
+  let allowed = new Set(['name', 'class', 'module', 'params', 'overloads']);
+  for (let classitem of docs.classitems) {
+    if (classitem.name && classitem.class) {
+      for (let key in classitem) {
+        if (!allowed.has(key)) {
+          delete classitem[key];
+        }
+      }
+      if (classitem.hasOwnProperty('overloads')) {
+        for (let overload of classitem.overloads) {
+          // remove line number and return type
+          if (overload.line) {
+            delete overload.line;
+          }
+
+          if (overload.return) {
+            delete overload.return;
+          }
+        }
+      }
+      if (!newClassItems[classitem.class]) {
+        newClassItems[classitem.class] = {};
+      }
+
+      newClassItems[classitem.class][classitem.name] = classitem;
+    }
+  }
+
+  let out = fs.createWriteStream(
+    path.join(__dirname, '../docs/parameterData.json'),
+    {
+      flags: 'w',
+      mode: '0644'
+    }
+  );
+  out.write(JSON.stringify(newClassItems, null, 2));
+  out.end();
+}
+
 fs.writeFileSync(path.join(__dirname, '../docs/reference/data.json'), JSON.stringify(converted, null, 2));
 fs.writeFileSync(path.join(__dirname, '../docs/reference/data.min.json'), JSON.stringify(converted));
+buildParamDocs(JSON.parse(JSON.stringify(converted)));
