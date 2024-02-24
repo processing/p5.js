@@ -364,6 +364,47 @@ suite('Error Helpers', function() {
     });
   });
 
+  suite('validateParameters: union types', function() {
+    testUnMinified('set() with Number', function() {
+      assert.doesNotThrow(function() {
+        p5._validateParameters('set', [0, 0, 0]);
+      });
+    });
+    testUnMinified('set() with Number[]', function() {
+      assert.doesNotThrow(function() {
+        p5._validateParameters('set', [0, 0, [0, 0, 0, 255]]);
+      });
+    });
+    testUnMinified('set() with Object', function() {
+      assert.doesNotThrow(function() {
+        p5._validateParameters('set', [0, 0, myp5.color(0)]);
+      });
+    });
+    testUnMinified('set() with Boolean', function() {
+      assert.validationError(function() {
+        p5._validateParameters('set', [0, 0, true]);
+      });
+    });
+  });
+
+  suite('validateParameters: specific constants', function() {
+    testUnMinified('endShape() with no args', function() {
+      assert.doesNotThrow(function() {
+        p5._validateParameters('endShape', []);
+      });
+    });
+    testUnMinified('endShape() with CLOSE', function() {
+      assert.doesNotThrow(function() {
+        p5._validateParameters('endShape', [myp5.CLOSE]);
+      });
+    });
+    testUnMinified('endShape() with unrelated constant', function() {
+      assert.validationError(function() {
+        p5._validateParameters('endShape', [myp5.RADIANS]);
+      });
+    });
+  });
+
   suite('helpForMisusedAtTopLevelCode', function() {
     var help = function(msg) {
       var log = [];
