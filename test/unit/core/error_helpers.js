@@ -8,7 +8,7 @@ const teardown = afterEach;
 suite('Error Helpers', function() {
   var myp5;
 
-  beforeAll(function() {
+  beforeEach(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
@@ -17,7 +17,7 @@ suite('Error Helpers', function() {
     });
   });
 
-  afterAll(function() {
+  afterEach(function() {
     myp5.remove();
   });
 
