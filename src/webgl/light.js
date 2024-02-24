@@ -613,7 +613,7 @@ p5.prototype.imageLight = function (img) {
  * the orientation of the camera to see different parts of the background.
  *
  * @method panorama
- * @param {p5.image} img
+ * @param {p5.Image} img A 360-degree image to use as a background panorama
  * @example
  * <div class="notest">
  * <code>
