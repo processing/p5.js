@@ -1,4 +1,9 @@
 import p5 from '../../../src/app.js';
+import { testUnMinified, createP5Iframe, P5_SCRIPT_TAG } from '../../js/p5_helpers.js';
+import '../../js/chai_helpers.js';
+
+const setup = beforeEach;
+const teardown = afterEach;
 
 suite('Error Helpers', function() {
   var myp5;
@@ -497,7 +502,7 @@ suite('Error Helpers', function() {
       'detects capitatilization mistake in global mode',
       function() {
         return new Promise(function(resolve) {
-          iframe = createP5Iframe(
+          const iframe = createP5Iframe(
             [
               P5_SCRIPT_TAG,
               '<script>',
@@ -556,7 +561,7 @@ suite('Global Error Handling', function() {
   });
 
   const prepSyntaxTest = (arr, resolve) => {
-    iframe = createP5Iframe(
+    const iframe = createP5Iframe(
       [P5_SCRIPT_TAG, WAIT_AND_RESOLVE, '<script>', ...arr, '</script>'].join(
         '\n'
       )
@@ -952,7 +957,7 @@ suite('Tests for p5.js sketch_reader', function() {
   };
 
   const prepSketchReaderTest = (arr, resolve) => {
-    iframe = createP5Iframe(
+    const iframe = createP5Iframe(
       [P5_SCRIPT_TAG, WAIT_AND_RESOLVE, '<script>', ...arr, '</script>'].join(
         '\n'
       )
