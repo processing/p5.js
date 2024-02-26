@@ -211,7 +211,7 @@ p5.prototype.perspective = function (...args) {
  *    perspective based on your specific requirements.
  *
  * @method linePerspective
- * @memberof p5.prototype
+ * @for p5
  * @param {boolean} enable - Set to `true` to enable line perspective, `false` to disable.
  *
  * @example
@@ -237,7 +237,6 @@ p5.prototype.perspective = function (...args) {
  * }
  *
  * function mousePressed() {
- *   perspective(PI/12, width/height, 1, 10000);
  *   linePerspective(false);
  * }
  * </code>
@@ -290,10 +289,6 @@ p5.prototype.perspective = function (...args) {
 
 p5.prototype.linePerspective = function (enable) {
   p5._validateParameters('linePerspective', arguments);
-
-  if (!this._renderer._curCamera) {
-    this._renderer._curCamera = new p5.Camera(this._renderer);
-  }
 
   if (enable !== undefined) {
     // Set the line perspective if enable is provided
