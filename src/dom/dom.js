@@ -2273,7 +2273,7 @@ p5.prototype.createCapture = function(...args) {
     catch(err) {
       domElement.src = stream;
     }
-  }, console.err);
+  }, console.error);
 
   const videoEl = addElement(domElement, this, true);
   videoEl.loadedmetadata = false;
