@@ -219,15 +219,16 @@ p5.prototype.perspective = function (...args) {
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   setAttributes({ antialias: true });
  *   strokeWeight(3);
  *   describe(
- *     'rotated 3D boxes have their stroke weights affected after mouse is clicked.'
+ *     'rotated 3D boxes have their stroke weights affected if toggled back and forth with mouse clicks.'
  *   );
  * }
  *
  * function draw() {
  *   background(220);
- *   rotateY(PI/8);
+ *   rotateY(PI/24);
  *   rotateZ(PI/8);
  *   translate(0, 0, 350);
  *   for (let i = 0; i < 12; i++) {
@@ -237,7 +238,7 @@ p5.prototype.perspective = function (...args) {
  * }
  *
  * function mousePressed() {
- *   linePerspective(false);
+ *   linePerspective(!linePerspective());
  * }
  * </code>
  * </div>
