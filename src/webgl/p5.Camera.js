@@ -289,7 +289,9 @@ p5.prototype.perspective = function (...args) {
 
 p5.prototype.linePerspective = function (enable) {
   p5._validateParameters('linePerspective', arguments);
-
+  if (!(this._renderer instanceof p5.RendererGL)) {
+    throw new Error('linePerspective() must be called in WebGL mode.');
+  }
   if (enable !== undefined) {
     // Set the line perspective if enable is provided
     this._renderer._curCamera.useLinePerspective = enable;
