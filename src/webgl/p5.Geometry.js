@@ -95,6 +95,55 @@ p5.Geometry = class Geometry {
  * @memberof p5.Geometry.prototype
  * @return {Object}
  *
+ * @example
+ *
+ * <div>
+ * <code>
+ * let particles;
+ * let button;
+ * let resultParagraph;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   button = createButton('New');
+ *   button.mousePressed(makeParticles);
+ *
+ *   resultParagraph = createP('');
+ *   resultParagraph.style('font-family', 'monospace');
+ *   makeParticles();
+ * }
+ *
+ * function makeParticles() {
+ *   if (particles) freeGeometry(particles);
+ *
+ *   particles = buildGeometry(() => {
+ *     for (let i = 0; i < 60; i++) {
+ *       push();
+ *       translate(
+ *         randomGaussian(0, 200),
+ *         randomGaussian(0, 100),
+ *         randomGaussian(0, 150)
+ *       );
+ *       sphere(10);
+ *       pop();
+ *     }
+ *   });
+ *
+ *   const boundingBox = particles.calculateBoundingBox();
+ *   resultParagraph.html('Bounding Box: ' + JSON.stringify(boundingBox));
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   noStroke();
+ *   lights();
+ *   orbitControl();
+ *   model(particles);
+ * }
+ *
+ * </code>
+ * </div>
+ *
  */
 
   calculateBoundingBox() {
