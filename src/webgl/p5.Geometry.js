@@ -84,15 +84,16 @@ p5.Geometry = class Geometry {
  * It is defined by the minimum and maximum coordinates along each axis, as well
  * as the size and offset of the box.
  *
- *
- * @method calculateBoundingBox
- * @memberof p5.Geometry.prototype
- * @return {Object} An object containing the bounding box properties:
+ * It returns an object containing the bounding box properties:
  *
  *   - `min`: The minimum coordinates of the bounding box as a p5.Vector.
  *   - `max`: The maximum coordinates of the bounding box as a p5.Vector.
  *   - `size`: The size of the bounding box as a p5.Vector.
  *   - `offset`: The offset of the bounding box as a p5.Vector.
+ *
+ * @method calculateBoundingBox
+ * @memberof p5.Geometry.prototype
+ * @return {Object}
  *
  */
 
@@ -108,13 +109,13 @@ p5.Geometry = class Geometry {
 
     for (let i = 0; i < this.vertices.length; i++) {
       let vertex = this.vertices[i];
-      minVertex.x = min(minVertex.x, vertex.x);
-      minVertex.y = min(minVertex.y, vertex.y);
-      minVertex.z = min(minVertex.z, vertex.z);
+      minVertex.x = Math.min(minVertex.x, vertex.x);
+      minVertex.y = Math.min(minVertex.y, vertex.y);
+      minVertex.z = Math.min(minVertex.z, vertex.z);
 
-      maxVertex.x = max(maxVertex.x, vertex.x);
-      maxVertex.y = max(maxVertex.y, vertex.y);
-      maxVertex.z = max(maxVertex.z, vertex.z);
+      maxVertex.x = Math.max(maxVertex.x, vertex.x);
+      maxVertex.y = Math.max(maxVertex.y, vertex.y);
+      maxVertex.z = Math.max(maxVertex.z, vertex.z);
     }
     // Calculate size and offset properties
     let size = new p5.Vector(maxVertex.x - minVertex.x,
