@@ -342,7 +342,10 @@ p5.Vector = class {
     return this;
   }
 
-
+  /**
+   * @private
+   * @chainable
+   */
   calculateRemainder2D (xComponent, yComponent) {
     if (xComponent !== 0) {
       this.x = this.x % xComponent;
@@ -353,7 +356,10 @@ p5.Vector = class {
     return this;
   }
 
-  /// HELPERS FOR REMAINDER METHOD
+  /**
+   * @private
+   * @chainable
+   */
   calculateRemainder3D (xComponent, yComponent, zComponent) {
     if (xComponent !== 0) {
       this.x = this.x % xComponent;
