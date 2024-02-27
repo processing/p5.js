@@ -216,7 +216,7 @@ p5.prototype.freeGeometry = function(geometry) {
  * 3d red and green gradient.
  * rotating view of a multi-colored cylinder with concave sides.
  */
-p5.prototype.plane = function (
+p5.prototype.plane = function(
   width = 50,
   height = width,
   detailX = 1,
@@ -289,7 +289,7 @@ p5.prototype.plane = function (
  * </code>
  * </div>
  */
-p5.prototype.box = function (width, height, depth, detailX, detailY) {
+p5.prototype.box = function(width, height, depth, detailX, detailY) {
   this._assert3d('box');
   p5._validateParameters('box', arguments);
   if (typeof width === 'undefined') {
@@ -453,7 +453,7 @@ p5.prototype.box = function (width, height, depth, detailX, detailY) {
  * </code>
  * </div>
  */
-p5.prototype.sphere = function (radius = 50, detailX = 24, detailY = 16) {
+p5.prototype.sphere = function(radius = 50, detailX = 24, detailY = 16) {
   this._assert3d('sphere');
   p5._validateParameters('sphere', arguments);
 
@@ -663,7 +663,7 @@ const _truncatedCone = function(
  * </code>
  * </div>
  */
-p5.prototype.cylinder = function (
+p5.prototype.cylinder = function(
   radius = 50,
   height = radius,
   detailX = 24,
@@ -787,7 +787,7 @@ p5.prototype.cylinder = function (
  * </code>
  * </div>
  */
-p5.prototype.cone = function (
+p5.prototype.cone = function(
   radius = 50,
   height = radius,
   detailX = 24,
@@ -899,7 +899,7 @@ p5.prototype.cone = function (
  * </code>
  * </div>
  */
-p5.prototype.ellipsoid = function (
+p5.prototype.ellipsoid = function(
   radiusX = 50,
   radiusY = radiusX,
   radiusZ = radiusX,
@@ -1148,7 +1148,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
  * </code>
  * </div>
  */
-p5.RendererGL.prototype.point = function (x, y, z = 0) {
+p5.RendererGL.prototype.point = function(x, y, z = 0) {
 
   const _vertex = [];
   _vertex.push(new p5.Vector(x, y, z));
@@ -1157,7 +1157,7 @@ p5.RendererGL.prototype.point = function (x, y, z = 0) {
   return this;
 };
 
-p5.RendererGL.prototype.triangle = function (args) {
+p5.RendererGL.prototype.triangle = function(args) {
   const x1 = args[0],
     y1 = args[1];
   const x2 = args[2],
@@ -1210,7 +1210,7 @@ p5.RendererGL.prototype.triangle = function (args) {
   return this;
 };
 
-p5.RendererGL.prototype.ellipse = function (args) {
+p5.RendererGL.prototype.ellipse = function(args) {
   this.arc(
     args[0],
     args[1],
@@ -1223,7 +1223,7 @@ p5.RendererGL.prototype.ellipse = function (args) {
   );
 };
 
-p5.RendererGL.prototype.arc = function (...args) {
+p5.RendererGL.prototype.arc = function(...args) {
   const x = args[0];
   const y = args[1];
   const width = args[2];
@@ -1340,7 +1340,7 @@ p5.RendererGL.prototype.arc = function (...args) {
   return this;
 };
 
-p5.RendererGL.prototype.rect = function (args) {
+p5.RendererGL.prototype.rect = function(args) {
   const x = args[0];
   const y = args[1];
   const width = args[2];
