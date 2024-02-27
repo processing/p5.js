@@ -99,10 +99,10 @@ suite('p5.Geometry', function() {
         myp5.createVector(-5, 15, 25)
       );
       const boundingBox = geom.calculateBoundingBox();
-      assert.deepEqual(boundingBox.min, [-5, 0, 0]);
-      assert.deepEqual(boundingBox.max, [10, 20, 30]);
-      assert.deepEqual(boundingBox.size, [15, 20, 30]);
-      assert.deepEqual(boundingBox.offset, [2.5, 10, 15]);
+      assert.deepEqual(boundingBox.min.array(), [-5, 0, 0]);
+      assert.deepEqual(boundingBox.max.array(), [10, 20, 30]);
+      assert.deepEqual(boundingBox.size.array(), [15, 20, 30]);
+      assert.deepEqual(boundingBox.offset.array(), [2.5, 10, 15]);
     });
 
 
