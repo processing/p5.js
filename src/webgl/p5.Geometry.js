@@ -108,8 +108,9 @@ p5.Geometry = class Geometry {
  *   button = createButton('New');
  *   button.mousePressed(makeParticles);
  *
- *   resultParagraph = createP('');
+ *   resultParagraph = createP('').style('width', '180px' );
  *   resultParagraph.style('font-family', 'monospace');
+ *   resultParagraph.style('font-size', '12px');
  *   makeParticles();
  * }
  *
@@ -130,7 +131,7 @@ p5.Geometry = class Geometry {
  *   });
  *
  *   const boundingBox = particles.calculateBoundingBox();
- *   resultParagraph.html('Bounding Box: ' + JSON.stringify(boundingBox));
+ *   resultParagraph.html('Bounding Box: \n' + JSON.stringify(boundingBox));
  * }
  *
  * function draw() {
