@@ -832,8 +832,8 @@ function pathToAbsolute(pathArray) {
   for (let r, pa, i = start, ii = pathArray.length; i < ii; i++) {
     res.push((r = []));
     pa = pathArray[i];
-    if (pa[0] !== String.prototype.toUpperCase.call(pa[0])) {
-      r[0] = String.prototype.toUpperCase.call(pa[0]);
+    if (pa[0] !== pa[0].toUpperCase()) {
+      r[0] = pa[0].toUpperCase();
       switch (r[0]) {
         case 'A':
           r[1] = pa[1];

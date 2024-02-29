@@ -216,22 +216,14 @@ p5.prototype.freeGeometry = function(geometry) {
  * 3d red and green gradient.
  * rotating view of a multi-colored cylinder with concave sides.
  */
-p5.prototype.plane = function(width, height, detailX, detailY) {
+p5.prototype.plane = function(
+  width = 50,
+  height = width,
+  detailX = 1,
+  detailY = 1
+) {
   this._assert3d('plane');
   p5._validateParameters('plane', arguments);
-  if (typeof width === 'undefined') {
-    width = 50;
-  }
-  if (typeof height === 'undefined') {
-    height = width;
-  }
-
-  if (typeof detailX === 'undefined') {
-    detailX = 1;
-  }
-  if (typeof detailY === 'undefined') {
-    detailY = 1;
-  }
 
   const gId = `plane|${detailX}|${detailY}`;
 
@@ -255,7 +247,7 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
     } else if (this._renderer._doStroke) {
       console.log(
         'Cannot draw stroke on plane objects with more' +
-          ' than 1 detailX or 1 detailY'
+        ' than 1 detailX or 1 detailY'
       );
     }
     this._renderer.createBuffers(gId, planeGeom);
@@ -373,7 +365,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
     } else if (this._renderer._doStroke) {
       console.log(
         'Cannot draw stroke on box objects with more' +
-          ' than 4 detailX or 4 detailY'
+        ' than 4 detailX or 4 detailY'
       );
     }
     //initialize our geometry buffer with
@@ -461,18 +453,9 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
  * </code>
  * </div>
  */
-p5.prototype.sphere = function(radius, detailX, detailY) {
+p5.prototype.sphere = function(radius = 50, detailX = 24, detailY = 16) {
   this._assert3d('sphere');
   p5._validateParameters('sphere', arguments);
-  if (typeof radius === 'undefined') {
-    radius = 50;
-  }
-  if (typeof detailX === 'undefined') {
-    detailX = 24;
-  }
-  if (typeof detailY === 'undefined') {
-    detailY = 16;
-  }
 
   this.ellipsoid(radius, radius, radius, detailX, detailY);
 
@@ -681,33 +664,15 @@ const _truncatedCone = function(
  * </div>
  */
 p5.prototype.cylinder = function(
-  radius,
-  height,
-  detailX,
-  detailY,
-  bottomCap,
-  topCap
+  radius = 50,
+  height = radius,
+  detailX = 24,
+  detailY = 1,
+  bottomCap = true,
+  topCap = true
 ) {
   this._assert3d('cylinder');
   p5._validateParameters('cylinder', arguments);
-  if (typeof radius === 'undefined') {
-    radius = 50;
-  }
-  if (typeof height === 'undefined') {
-    height = radius;
-  }
-  if (typeof detailX === 'undefined') {
-    detailX = 24;
-  }
-  if (typeof detailY === 'undefined') {
-    detailY = 1;
-  }
-  if (typeof topCap === 'undefined') {
-    topCap = true;
-  }
-  if (typeof bottomCap === 'undefined') {
-    bottomCap = true;
-  }
 
   const gId = `cylinder|${detailX}|${detailY}|${bottomCap}|${topCap}`;
   if (!this._renderer.geometryInHash(gId)) {
@@ -728,7 +693,7 @@ p5.prototype.cylinder = function(
     } else if (this._renderer._doStroke) {
       console.log(
         'Cannot draw stroke on cylinder objects with more' +
-          ' than 24 detailX or 16 detailY'
+        ' than 24 detailX or 16 detailY'
       );
     }
     this._renderer.createBuffers(gId, cylinderGeom);
@@ -822,24 +787,15 @@ p5.prototype.cylinder = function(
  * </code>
  * </div>
  */
-p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
+p5.prototype.cone = function(
+  radius = 50,
+  height = radius,
+  detailX = 24,
+  detailY = 1,
+  cap = true
+) {
   this._assert3d('cone');
   p5._validateParameters('cone', arguments);
-  if (typeof radius === 'undefined') {
-    radius = 50;
-  }
-  if (typeof height === 'undefined') {
-    height = radius;
-  }
-  if (typeof detailX === 'undefined') {
-    detailX = 24;
-  }
-  if (typeof detailY === 'undefined') {
-    detailY = 1;
-  }
-  if (typeof cap === 'undefined') {
-    cap = true;
-  }
 
   const gId = `cone|${detailX}|${detailY}|${cap}`;
   if (!this._renderer.geometryInHash(gId)) {
@@ -850,7 +806,7 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
     } else if (this._renderer._doStroke) {
       console.log(
         'Cannot draw stroke on cone objects with more' +
-          ' than 24 detailX or 16 detailY'
+        ' than 24 detailX or 16 detailY'
       );
     }
     this._renderer.createBuffers(gId, coneGeom);
@@ -943,25 +899,15 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
  * </code>
  * </div>
  */
-p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
+p5.prototype.ellipsoid = function(
+  radiusX = 50,
+  radiusY = radiusX,
+  radiusZ = radiusX,
+  detailX = 24,
+  detailY = 16
+) {
   this._assert3d('ellipsoid');
   p5._validateParameters('ellipsoid', arguments);
-  if (typeof radiusX === 'undefined') {
-    radiusX = 50;
-  }
-  if (typeof radiusY === 'undefined') {
-    radiusY = radiusX;
-  }
-  if (typeof radiusZ === 'undefined') {
-    radiusZ = radiusX;
-  }
-
-  if (typeof detailX === 'undefined') {
-    detailX = 24;
-  }
-  if (typeof detailY === 'undefined') {
-    detailY = 16;
-  }
 
   const gId = `ellipsoid|${detailX}|${detailY}`;
 
@@ -992,7 +938,7 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
     } else if (this._renderer._doStroke) {
       console.log(
         'Cannot draw stroke on ellipsoids with more' +
-          ' than 24 detailX or 24 detailY'
+        ' than 24 detailX or 24 detailY'
       );
     }
     this._renderer.createBuffers(gId, ellipsoidGeom);
@@ -1153,7 +1099,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
     } else if (this._renderer._doStroke) {
       console.log(
         'Cannot draw strokes on torus object with more' +
-          ' than 24 detailX or 16 detailY'
+        ' than 24 detailX or 16 detailY'
       );
     }
     this._renderer.createBuffers(gId, torusGeom);
@@ -1202,10 +1148,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
  * </code>
  * </div>
  */
-p5.RendererGL.prototype.point = function(x, y, z) {
-  if (typeof z === 'undefined') {
-    z = 0;
-  }
+p5.RendererGL.prototype.point = function(x, y, z = 0) {
 
   const _vertex = [];
   _vertex.push(new p5.Vector(x, y, z));
@@ -1280,15 +1223,15 @@ p5.RendererGL.prototype.ellipse = function(args) {
   );
 };
 
-p5.RendererGL.prototype.arc = function(args) {
-  const x = arguments[0];
-  const y = arguments[1];
-  const width = arguments[2];
-  const height = arguments[3];
-  const start = arguments[4];
-  const stop = arguments[5];
-  const mode = arguments[6];
-  const detail = arguments[7] || 25;
+p5.RendererGL.prototype.arc = function(...args) {
+  const x = args[0];
+  const y = args[1];
+  const width = args[2];
+  const height = args[3];
+  const start = args[4];
+  const stop = args[5];
+  const mode = args[6];
+  const detail = args[7] || 25;
 
   let shape;
   let gId;
@@ -1530,14 +1473,8 @@ p5.RendererGL.prototype.rect = function(args) {
 };
 
 /* eslint-disable max-len */
-p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, detailX, detailY) {
-/* eslint-enable max-len */
-  if (typeof detailX === 'undefined') {
-    detailX = 2;
-  }
-  if (typeof detailY === 'undefined') {
-    detailY = 2;
-  }
+p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, detailX=2, detailY=2) {
+  /* eslint-enable max-len */
 
   const gId =
     `quad|${x1}|${y1}|${z1}|${x2}|${y2}|${z2}|${x3}|${y3}|${z3}|${x4}|${y4}|${z4}|${detailX}|${detailY}`;

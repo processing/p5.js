@@ -3278,7 +3278,7 @@ p5.Element.prototype.hide = function () {
  */
 /**
  * @method size
- * @param  {Number|Constant} w   width of the element, either AUTO, or a number.
+ * @param  {Number|Constant} [w]   width of the element, either AUTO, or a number.
  * @param  {Number|Constant} [h] height of the element, either AUTO, or a number.
  * @chainable
  */

@@ -292,12 +292,11 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
  * </div>
  *
  */
-p5.prototype.circle = function() {
-  p5._validateParameters('circle', arguments);
-  const args = Array.prototype.slice.call(arguments, 0, 2);
-  args.push(arguments[2]);
-  args.push(arguments[2]);
-  return this._renderEllipse(...args);
+p5.prototype.circle = function(...args) {
+  p5._validateParameters('circle', args);
+  const argss = args.slice( 0, 2);
+  argss.push(args[2], args[2]);
+  return this._renderEllipse(...argss);
 };
 
 // internal method for drawing ellipses (without parameter validation)

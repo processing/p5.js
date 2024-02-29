@@ -174,7 +174,7 @@ p5.prototype.random = function(min, max) {
   if (typeof min === 'undefined') {
     return rand;
   } else if (typeof max === 'undefined') {
-    if (min instanceof Array) {
+    if (Array.isArray(min)) {
       return min[Math.floor(rand * min.length)];
     } else {
       return rand * min;
