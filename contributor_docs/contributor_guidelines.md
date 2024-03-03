@@ -327,7 +327,7 @@ Now, you are ready to make the changes you need to make; for more details about 
 npm test
 ```
 
-to build p5.js from scratch and run all unit tests (this should complete with no errors). After you've ran that once you'll be able to build p5.js without running the tests, by running:
+to build p5.js from scratch and run all unit tests (this should complete with no errors). After you've ran that once you'll be able to build p5.js without running the tests by running:
 
 ```
 npm run build
