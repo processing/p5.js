@@ -435,7 +435,8 @@ p5.Vector = class {
    * @param {p5.Vector | Number[]}  value  divisor vector.
    * @chainable
    */
-  rem (x, y, z) {
+  rem (...args) {
+    let [x, y, z] = args;
     if (x instanceof p5.Vector) {
       if ([x.x,x.y,x.z].every(Number.isFinite)) {
         const xComponent = parseFloat(x.x);
@@ -456,15 +457,15 @@ p5.Vector = class {
           return this.calculateRemainder3D(x[0], x[1], x[2]);
         }
       }
-    } else if (arguments.length === 1) {
-      if (Number.isFinite(arguments[0]) && arguments[0] !== 0) {
-        this.x = this.x % arguments[0];
-        this.y = this.y % arguments[0];
-        this.z = this.z % arguments[0];
+    } else if (args.length === 1) {
+      if (Number.isFinite(args[0]) && args[0] !== 0) {
+        this.x = this.x % args[0];
+        this.y = this.y % args[0];
+        this.z = this.z % args[0];
         return this;
       }
-    } else if (arguments.length === 2) {
-      const vectorComponents = [...arguments];
+    } else if (args.length === 2) {
+      const vectorComponents = args;
       if (vectorComponents.every(element => Number.isFinite(element))) {
         if (vectorComponents.length === 2) {
           return this.calculateRemainder2D(
@@ -473,8 +474,8 @@ p5.Vector = class {
           );
         }
       }
-    } else if (arguments.length === 3) {
-      const vectorComponents = [...arguments];
+    } else if (args.length === 3) {
+      const vectorComponents = args;
       if (vectorComponents.every(element => Number.isFinite(element))) {
         if (vectorComponents.length === 3) {
           return this.calculateRemainder3D(
@@ -745,7 +746,8 @@ p5.Vector = class {
  * @chainable
  */
 
-  mult(x, y, z) {
+  mult(...args) {
+    let [x, y, z] = args;
     if (x instanceof p5.Vector) {
     // new p5.Vector will check that values are valid upon construction but it's possible
     // that someone could change the value of a component after creation, which is why we still
@@ -795,21 +797,21 @@ p5.Vector = class {
       return this;
     }
 
-    const vectorComponents = [...arguments];
+    const vectorComponents = args;
     if (
       vectorComponents.every(element => Number.isFinite(element)) &&
     vectorComponents.every(element => typeof element === 'number')
     ) {
-      if (arguments.length === 1) {
+      if (args.length === 1) {
         this.x *= x;
         this.y *= x;
         this.z *= x;
       }
-      if (arguments.length === 2) {
+      if (args.length === 2) {
         this.x *= x;
         this.y *= y;
       }
-      if (arguments.length === 3) {
+      if (args.length === 3) {
         this.x *= x;
         this.y *= y;
         this.z *= z;
@@ -962,7 +964,8 @@ p5.Vector = class {
  * @param  {p5.Vector} v vector to divide the components of the original vector by.
  * @chainable
  */
-  div(x, y, z) {
+  div(...args) {
+    let [x, y, z] = args;
     if (x instanceof p5.Vector) {
     // new p5.Vector will check that values are valid upon construction but it's possible
     // that someone could change the value of a component after creation, which is why we still
@@ -1025,7 +1028,7 @@ p5.Vector = class {
       return this;
     }
 
-    const vectorComponents = [...arguments];
+    const vectorComponents = args;
     if (
       vectorComponents.every(element => Number.isFinite(element)) &&
     vectorComponents.every(element => typeof element === 'number')
@@ -1035,16 +1038,16 @@ p5.Vector = class {
         return this;
       }
 
-      if (arguments.length === 1) {
+      if (args.length === 1) {
         this.x /= x;
         this.y /= x;
         this.z /= x;
       }
-      if (arguments.length === 2) {
+      if (args.length === 2) {
         this.x /= x;
         this.y /= y;
       }
-      if (arguments.length === 3) {
+      if (args.length === 3) {
         this.x /= x;
         this.y /= y;
         this.z /= z;
@@ -2400,10 +2403,7 @@ p5.Vector = class {
  * </code>
  * </div>
  */
-  static fromAngle(angle, length) {
-    if (typeof length === 'undefined') {
-      length = 1;
-    }
+  static fromAngle(angle, length = 1) {
     return new p5.Vector(length * Math.cos(angle), length * Math.sin(angle), 0);
   }
 
@@ -2451,10 +2451,7 @@ p5.Vector = class {
  * </code>
  * </div>
  */
-  static fromAngles(theta, phi, length) {
-    if (typeof length === 'undefined') {
-      length = 1;
-    }
+  static fromAngles(theta, phi, length = 1) {
     const cosPhi = Math.cos(phi);
     const sinPhi = Math.sin(phi);
     const cosTheta = Math.cos(theta);
@@ -2565,10 +2562,11 @@ p5.Vector = class {
  * @return {p5.Vector} resulting <a href="#/p5.Vector">p5.Vector</a>.
  */
 
-  static add(v1, v2, target) {
+  static add(...args) {
+    let [v1, v2, target] = args;
     if (!target) {
       target = v1.copy();
-      if (arguments.length === 3) {
+      if (args.length === 3) {
         p5._friendlyError(
           'The target parameter is undefined, it should be of type p5.Vector',
           'p5.Vector.add'
@@ -2616,10 +2614,11 @@ p5.Vector = class {
  * @return {p5.Vector} The resulting <a href="#/p5.Vector">p5.Vector</a>
  */
 
-  static sub(v1, v2, target) {
+  static sub(...args) {
+    let [v1, v2, target] = args;
     if (!target) {
       target = v1.copy();
-      if (arguments.length === 3) {
+      if (args.length === 3) {
         p5._friendlyError(
           'The target parameter is undefined, it should be of type p5.Vector',
           'p5.Vector.sub'
@@ -2651,6 +2650,7 @@ p5.Vector = class {
  * @param  {p5.Vector} v
  * @param  {Number}  n
  * @param  {p5.Vector} [target] vector to receive the result.
+ * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
  */
 
   /**
@@ -2659,6 +2659,7 @@ p5.Vector = class {
  * @param  {p5.Vector} v0
  * @param  {p5.Vector} v1
  * @param  {p5.Vector} [target]
+ * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
  */
 
   /**
@@ -2667,11 +2668,13 @@ p5.Vector = class {
  * @param  {p5.Vector} v0
  * @param  {Number[]} arr
  * @param  {p5.Vector} [target]
+ * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
  */
-  static mult(v, n, target) {
+  static mult(...args) {
+    let [v, n, target] = args;
     if (!target) {
       target = v.copy();
-      if (arguments.length === 3) {
+      if (args.length === 3) {
         p5._friendlyError(
           'The target parameter is undefined, it should be of type p5.Vector',
           'p5.Vector.mult'
@@ -2694,9 +2697,11 @@ p5.Vector = class {
  * @param  {p5.Vector} v
  * @param  {Number} angle
  * @param  {p5.Vector} [target] The vector to receive the result
+ * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
  */
-  static rotate(v, a, target) {
-    if (arguments.length === 2) {
+  static rotate(...args) {
+    let [v, a, target] = args;
+    if (args.length === 2) {
       target = v.copy();
     } else {
       if (!(target instanceof p5.Vector)) {
@@ -2730,6 +2735,7 @@ p5.Vector = class {
  * @param  {p5.Vector} v
  * @param  {Number}  n
  * @param  {p5.Vector} [target] The vector to receive the result
+ * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
  */
 
   /**
@@ -2738,6 +2744,7 @@ p5.Vector = class {
  * @param  {p5.Vector} v0
  * @param  {p5.Vector} v1
  * @param  {p5.Vector} [target]
+ * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
  */
 
   /**
@@ -2746,12 +2753,14 @@ p5.Vector = class {
  * @param  {p5.Vector} v0
  * @param  {Number[]} arr
  * @param  {p5.Vector} [target]
+ * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
  */
-  static div(v, n, target) {
+  static div(...args) {
+    let [v, n, target] = args;
     if (!target) {
       target = v.copy();
 
-      if (arguments.length === 3) {
+      if (args.length === 3) {
         p5._friendlyError(
           'The target parameter is undefined, it should be of type p5.Vector',
           'p5.Vector.div'
@@ -2820,10 +2829,11 @@ p5.Vector = class {
  * @param {p5.Vector} [target] The vector to receive the result
  * @return {p5.Vector}      The lerped value
  */
-  static lerp(v1, v2, amt, target) {
+  static lerp(...args) {
+    let [v1, v2, amt, target] = args;
     if (!target) {
       target = v1.copy();
-      if (arguments.length === 4) {
+      if (args.length === 4) {
         p5._friendlyError(
           'The target parameter is undefined, it should be of type p5.Vector',
           'p5.Vector.lerp'
@@ -2851,10 +2861,11 @@ p5.Vector = class {
  * @param {p5.Vector} [target] vector to receive the result.
  * @return {p5.Vector} slerped vector between v1 and v2
  */
-  static slerp(v1, v2, amt, target) {
+  static slerp(...args) {
+    let [v1, v2, amt, target] = args;
     if (!target) {
       target = v1.copy();
-      if (arguments.length === 4) {
+      if (args.length === 4) {
         p5._friendlyError(
           'The target parameter is undefined, it should be of type p5.Vector',
           'p5.Vector.slerp'
@@ -2907,8 +2918,9 @@ p5.Vector = class {
  * @param {p5.Vector} [target] The vector to receive the result
  * @return {p5.Vector}   The vector v, normalized to a length of 1
  */
-  static normalize(v, target) {
-    if (arguments.length < 2) {
+  static normalize(...args) {
+    let [v, target] = args;
+    if (args.length < 2) {
       target = v.copy();
     } else {
       if (!(target instanceof p5.Vector)) {
@@ -2934,8 +2946,9 @@ p5.Vector = class {
  * @param {p5.Vector} [target] the vector to receive the result (Optional)
  * @return {p5.Vector} v with a magnitude limited to max
  */
-  static limit(v, max, target) {
-    if (arguments.length < 3) {
+  static limit(...args) {
+    let [v, max, target] = args;
+    if (args.length < 3) {
       target = v.copy();
     } else {
       if (!(target instanceof p5.Vector)) {
@@ -2961,8 +2974,9 @@ p5.Vector = class {
  * @param {p5.Vector} [target] the vector to receive the result (Optional)
  * @return {p5.Vector} v with a magnitude set to len
  */
-  static setMag(v, len, target) {
-    if (arguments.length < 3) {
+  static setMag(...args) {
+    let [v, len, target] = args;
+    if (args.length < 3) {
       target = v.copy();
     } else {
       if (!(target instanceof p5.Vector)) {
@@ -3020,8 +3034,9 @@ p5.Vector = class {
  * @param  {p5.Vector} [target] vector to receive the result.
  * @return {p5.Vector} the reflected vector
  */
-  static reflect(incidentVector, surfaceNormal, target) {
-    if (arguments.length < 3) {
+  static reflect(...args) {
+    let [incidentVector, surfaceNormal, target] = args;
+    if (args.length < 3) {
       target = incidentVector.copy();
     } else {
       if (!(target instanceof p5.Vector)) {
