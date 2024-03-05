@@ -458,10 +458,10 @@ p5.Vector = class {
         }
       }
     } else if (args.length === 1) {
-      if (Number.isFinite(args[0]) && args[0] !== 0) {
-        this.x = this.x % args[0];
-        this.y = this.y % args[0];
-        this.z = this.z % args[0];
+      if (Number.isFinite(x) && x !== 0) {
+        this.x = this.x % x;
+        this.y = this.y % x;
+        this.z = this.z % x;
         return this;
       }
     } else if (args.length === 2) {
@@ -469,8 +469,8 @@ p5.Vector = class {
       if (vectorComponents.every(element => Number.isFinite(element))) {
         if (vectorComponents.length === 2) {
           return this.calculateRemainder2D(
-            vectorComponents[0],
-            vectorComponents[1]
+            x,
+            y
           );
         }
       }
@@ -479,9 +479,9 @@ p5.Vector = class {
       if (vectorComponents.every(element => Number.isFinite(element))) {
         if (vectorComponents.length === 3) {
           return this.calculateRemainder3D(
-            vectorComponents[0],
-            vectorComponents[1],
-            vectorComponents[2]
+            x,
+            y,
+            z
           );
         }
       }
