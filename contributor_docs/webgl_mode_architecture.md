@@ -14,10 +14,10 @@ We keep track of the progress of WebGL issues in [a GitHub Project.](https://git
 
 When evaluating a new feature, we consider whether it aligns with the goals of p5.js and WebGL mode:
 
-1. **Features should be beginner-friendly:** It should provide a **beginner-friendly introduction to WebGL** and the features it offers. This means that we should offer simple APIs for 3D shapes, cameras, lighting, and shaders. We can still support advanced features, but only if they do not interfere with the simplicity of core features.
-2. **Improving feature parity with 2D mode:** It should be a **frictionless transition from 2D mode,** making 3D and WebGL "click" more easily for users. This means that we try to create features that work in 2D mode and also in WebGL mode. Since WebGL also has 3D and shader features, this means WebGL mode aims to have a superset of 2D mode's features.
-3. **Simplicity and extensibility are paramount:** It should **have a small core and be extensible for libraries.** Keeping WebGL mode small makes it easier to optimize core features and reduce bug surface area. Extension provides an avenue to include more advanced features via libraries.
-4. **Improve p5.js performance:** It should **run as fast as possible without interfering with the previous goals.** Good performance keeps sketches accessible to a wide variety of viewers and devices. When designing new APIs, we try to ensure the design has a performant implementation. However, we give preference to simplicity and parity with 2D mode.
+1. **Features should be beginner-friendly:** It should provide a beginner-friendly introduction to WebGL and the features it offers. This means that we should offer simple APIs for 3D shapes, cameras, lighting, and shaders. We can still support advanced features, but only if they do not interfere with the simplicity of core features.
+2. **Improving feature parity with 2D mode:** It should be a frictionless transition from 2D mode, making 3D and WebGL "click" more easily for users. This means that we try to create features that work in 2D mode and also in WebGL mode. Since WebGL also has 3D and shader features, this means WebGL mode aims to have a superset of 2D mode's features.
+3. **Simplicity and extensibility are paramount:** It should have a small core and be extensible for libraries. Keeping WebGL mode small makes it easier to optimize core features and reduce bug surface area. Extension provides an avenue to include more advanced features via libraries.
+4. **Improve p5.js performance:** It should run as fast as possible without interfering with the previous goals. Good performance keeps sketches accessible to a wide variety of viewers and devices. When designing new APIs, we try to ensure the design has a performant implementation. However, we give preference to simplicity and parity with 2D mode.
 
 
 ## Design differences with 2D mode
@@ -269,15 +269,15 @@ classDiagram
     WebGL "1" *-- "*" Framebuffer
 ```
 
-The entry point to most WebGL code is through **p5.RendererGL**. Top-level p5.js functions are passed to the current renderer. Both 2D and WebGL modes have renderer classes that conform to a common `p5.Renderer` interface. Immediate mode and retained mode functions are split up into **p5.RendererGL.Immediate.js** and **p5.RendererGL.Retained.js**.
+The entry point to most WebGL code is through **p5.RendererGL**. Top-level p5.js functions are passed to the current renderer. Both 2D and WebGL modes have renderer classes that conform to a common `p5.Renderer` interface. Immediate mode and retained mode functions are split up into `p5.RendererGL.Immediate.js` and `p5.RendererGL.Retained.js`.
 
-Within the renderer, references to models are stored in the **retainedMode.geometry** map. Each value is an object storing the buffers of a **p5.Geometry**. When calling `model(yourGeometry)` for the first time, the renderer adds an entry in the map. It then stores references to the geometry's GPU resources there. If you draw a `p5.Geometry` to the main canvas and also to a WebGL `p5.Graphics`, it will have entries in two renderers.
+Within the renderer, references to models are stored in the `retainedMode.geometry` map. Each value is an object storing the buffers of a `p5.Geometry` When calling `model(yourGeometry)` for the first time, the renderer adds an entry in the map. It then stores references to the geometry's GPU resources there. If you draw a `p5.Geometry` to the main canvas and also to a WebGL `p5.Graphics`, it will have entries in two renderers.
 
-Each material is represented by a **p5.Shader.** You set the current shader in the renderer via the `shader(yourShader)` function. This class handles compiling shader source code and setting shader uniforms.
+Each material is represented by a `p5.Shader` You set the current shader in the renderer via the `shader(yourShader)` function. This class handles compiling shader source code and setting shader uniforms.
 
 When setting a shader uniform, if the uniform type is an image, then the renderer creates a `p5.Texture` for it. Each `p5.Image`, `p5.Graphics`, `p5.MediaElement`, or `p5.Framebuffer` asset will get one. It is what keeps track of the image data's representation on the GPU. Before using the asset in a shader, p5.js will send new data to the GPU if necessary. For images, this happens when a user has manually updated the pixels of an image. This happens every frame for assets with data that may have changed each frame, such as a video or a `p5.Graphics`.
 
-Textures corresponding to **p5.Framebuffer** objects are unique. Framebuffers are like graphics: they represent surfaces that can be drawn to. Unlike `p5.Graphics`, `p5.Framebuffer`s live entirely on the GPU. If one uses a `p5.Graphics` as a texture in a shader, the data needs to be transferred to and from the CPU. This can often be a performance bottleneck. In contrast, when drawing to a `p5.Framebuffer`, you draw directly to its GPU texture. Because of this, no extra data transfer is necessary. WebGL mode tries to use `p5.Framebuffer`s over `p5.Graphics` where possible for this reason.
+Textures corresponding to `p5.Framebuffer` objects are unique. Framebuffers are like graphics: they represent surfaces that can be drawn to. Unlike `p5.Graphics`, `p5.Framebuffer`s live entirely on the GPU. If one uses a `p5.Graphics` as a texture in a shader, the data needs to be transferred to and from the CPU. This can often be a performance bottleneck. In contrast, when drawing to a `p5.Framebuffer`, you draw directly to its GPU texture. Because of this, no extra data transfer is necessary. WebGL mode tries to use `p5.Framebuffer`s over `p5.Graphics` where possible for this reason.
 
 
 ## Future goals
