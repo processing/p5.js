@@ -58,7 +58,7 @@ console.log('I couldnt find ' + file.name + '. Are you sure it's there?')
 console.log(translator('fileLoading.notFound', { fileName: file.name }))
 ```
 
-此类翻译期望使用特定名称的变量，请确保使用该名称。查看翻译文件（在 translations/{YOUR_LANGUAGE}/ 中查找）以查看变量名称。您将在翻译键的对象路径下找到翻译。
+此类翻译期望使用特定名称的变量，请确保使用该名称。查看翻译文件（在 `translations/{YOUR_LANGUAGE}/` 中查找）以查看变量名称。您将在翻译键的对象路径下找到翻译。
 
 "`fileLoading.notFound`" 可以在以下位置找到：
 
