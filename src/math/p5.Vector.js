@@ -449,7 +449,7 @@ p5.Vector = class {
         );
       }
     } else if (Array.isArray(x)) {
-      if (x.every(element => Number.isFinite(element))) {
+      if (x.every(Number.isFinite)) {
         if (x.length === 2) {
           return this.calculateRemainder2D(x[0], x[1]);
         }
@@ -465,25 +465,19 @@ p5.Vector = class {
         return this;
       }
     } else if (args.length === 2) {
-      const vectorComponents = args;
-      if (vectorComponents.every(element => Number.isFinite(element))) {
-        if (vectorComponents.length === 2) {
-          return this.calculateRemainder2D(
-            x,
-            y
-          );
-        }
+      if (args.every(Number.isFinite)) {
+        return this.calculateRemainder2D(
+          x,
+          y
+        );
       }
     } else if (args.length === 3) {
-      const vectorComponents = args;
-      if (vectorComponents.every(element => Number.isFinite(element))) {
-        if (vectorComponents.length === 3) {
-          return this.calculateRemainder3D(
-            x,
-            y,
-            z
-          );
-        }
+      if (args.every(Number.isFinite)) {
+        return this.calculateRemainder3D(
+          x,
+          y,
+          z
+        );
       }
     }
   }
@@ -998,7 +992,7 @@ p5.Vector = class {
     }
     if (Array.isArray(x)) {
       if (
-        x.every(element => Number.isFinite(element)) &&
+        x.every(Number.isFinite) &&
       x.every(element => typeof element === 'number')
       ) {
         if (x.some(element => element === 0)) {
@@ -1028,12 +1022,11 @@ p5.Vector = class {
       return this;
     }
 
-    const vectorComponents = args;
     if (
-      vectorComponents.every(element => Number.isFinite(element)) &&
-    vectorComponents.every(element => typeof element === 'number')
+      args.every(Number.isFinite) &&
+    args.every(element => typeof element === 'number')
     ) {
-      if (vectorComponents.some(element => element === 0)) {
+      if (args.some(element => element === 0)) {
         console.warn('p5.Vector.prototype.div:', 'divide by 0');
         return this;
       }
