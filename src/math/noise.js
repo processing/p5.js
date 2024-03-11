@@ -34,8 +34,7 @@ const scaled_cosine = i => 0.5 * (1.0 - Math.cos(i * Math.PI));
 let perlin; // will be initialized lazily by noise() or noiseSeed()
 
 /**
- * Returns random numbers that can be tuned to feel more organic. The values
- * returned will always be between 0 and 1.
+ * Returns random numbers that can be tuned to feel organic.
  *
  * Values returned by <a href="#/p5/random">random()</a> and
  * <a href="#/p5/randomGaussian">randomGaussian()</a> can change by large
@@ -45,8 +44,9 @@ let perlin; // will be initialized lazily by noise() or noiseSeed()
  * terrains, and so on. Ken Perlin invented `noise()` while animating the
  * original <em>Tron</em> film in the 1980s.
  *
- * `noise()` returns the same value for a given input while a sketch is
- * running. It produces different results each time a sketch runs. The
+ * `noise()` always returns values between 0 and 1. It returns the same value
+ * for a given input while a sketch is running. `noise()` produces different
+ * results each time a sketch runs. The
  * <a href="#/p5/noiseSeed">noiseSeed()</a> function can be used to generate
  * the same sequence of Perlin noise values each time a sketch runs.
  *
@@ -73,125 +73,179 @@ let perlin; // will be initialized lazily by noise() or noiseSeed()
  * @param  {Number} [y] y-coordinate in noise space.
  * @param  {Number} [z] z-coordinate in noise space.
  * @return {Number}     Perlin noise value at specified coordinates.
+ *
  * @example
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A black dot moves randomly on a gray square.');
+ * }
+ *
  * function draw() {
  *   background(200);
  *
+ *   // Calculate the coordinates.
  *   let x = 100 * noise(0.005 * frameCount);
  *   let y = 100 * noise(0.005 * frameCount + 10000);
  *
+ *   // Draw the point.
  *   strokeWeight(5);
  *   point(x, y);
- *
- *   describe('A black dot moves randomly on a gray square.');
  * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A black dot moves randomly on a gray square.');
+ * }
+ *
  * function draw() {
  *   background(200);
  *
+ *   // Set the noise level and scale.
  *   let noiseLevel = 100;
  *   let noiseScale = 0.005;
- *   // Scale input coordinate.
+ *
+ *   // Scale the input coordinate.
  *   let nt = noiseScale * frameCount;
- *   // Compute noise value.
+ *
+ *   // Compute the noise values.
  *   let x = noiseLevel * noise(nt);
  *   let y = noiseLevel * noise(nt + 10000);
- *   // Render.
+ *
+ *   // Draw the point.
  *   strokeWeight(5);
  *   point(x, y);
- *
- *   describe('A black dot moves randomly on a gray square.');
  * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * function draw() {
- *   let noiseLevel = 100;
- *   let noiseScale = 0.02;
- *   // Scale input coordinate.
- *   let x = frameCount;
- *   let nx = noiseScale * x;
- *   // Compute noise value.
- *   let y = noiseLevel * noise(nx);
- *   // Render.
- *   line(x, 0, x, y);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
  *   describe('A hilly terrain drawn in gray against a black sky.');
  * }
+ *
+ * function draw() {
+ *   // Set the noise level and scale.
+ *   let noiseLevel = 100;
+ *   let noiseScale = 0.02;
+ *
+ *   // Scale the input coordinate.
+ *   let x = frameCount;
+ *   let nx = noiseScale * x;
+ *
+ *   // Compute the noise value.
+ *   let y = noiseLevel * noise(nx);
+ *
+ *   // Draw the line.
+ *   line(x, 0, x, y);
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * function draw() {
- *   background(200);
- *
- *   let noiseLevel = 100;
- *   let noiseScale = 0.002;
- *   for (let x = 0; x < width; x += 1) {
- *     // Scale input coordinates.
- *     let nx = noiseScale * x;
- *     let nt = noiseScale * frameCount;
- *     // Compute noise value.
- *     let y = noiseLevel * noise(nx, nt);
- *     // Render.
- *     line(x, 0, x, y);
- *   }
+ * function setup() {
+ *   createCanvas(100, 100);
  *
  *   describe('A calm sea drawn in gray against a black sky.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
- * let noiseLevel = 255;
- * let noiseScale = 0.01;
- * for (let y = 0; y < height; y += 1) {
- *   for (let x = 0; x < width; x += 1) {
- *     // Scale input coordinates.
+ * function draw() {
+ *   background(200);
+ *
+ *   // Set the noise level and scale.
+ *   let noiseLevel = 100;
+ *   let noiseScale = 0.002;
+ *
+ *   // Iterate from left to right.
+ *   for (let x = 0; x < 100; x += 1) {
+ *     // Scale the input coordinates.
  *     let nx = noiseScale * x;
- *     let ny = noiseScale * y;
- *     // Compute noise value.
- *     let c = noiseLevel * noise(nx, ny);
- *     // Render.
- *     stroke(c);
- *     point(x, y);
+ *     let nt = noiseScale * frameCount;
+ *
+ *     // Compute the noise value.
+ *     let y = noiseLevel * noise(nx, nt);
+ *
+ *     // Draw the line.
+ *     line(x, 0, x, y);
  *   }
  * }
- *
- * describe('A gray cloudy pattern.');
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * function draw() {
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Set the noise level and scale.
  *   let noiseLevel = 255;
- *   let noiseScale = 0.009;
- *   for (let y = 0; y < height; y += 1) {
- *     for (let x = 0; x < width; x += 1) {
- *       // Scale input coordinates.
+ *   let noiseScale = 0.01;
+ *
+ *   // Iterate from top to bottom.
+ *   for (let y = 0; y < 100; y += 1) {
+ *     // Iterate from left to right.
+ *     for (let x = 0; x < 100; x += 1) {
+ *       // Scale the input coordinates.
  *       let nx = noiseScale * x;
  *       let ny = noiseScale * y;
- *       let nt = noiseScale * frameCount;
- *       // Compute noise value.
- *       let c = noiseLevel * noise(nx, ny, nt);
- *       // Render.
+ *
+ *       // Compute the noise value.
+ *       let c = noiseLevel * noise(nx, ny);
+ *
+ *       // Draw the point.
  *       stroke(c);
  *       point(x, y);
  *     }
  *   }
  *
+ *   describe('A gray cloudy pattern.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   describe('A gray cloudy pattern that changes.');
+ * }
+ *
+ * function draw() {
+ *   // Set the noise level and scale.
+ *   let noiseLevel = 255;
+ *   let noiseScale = 0.009;
+ *
+ *   // Iterate from top to bottom.
+ *   for (let y = 0; y < 100; y += 1) {
+ *     // Iterate from left to right.
+ *     for (let x = 0; x < width; x += 1) {
+ *       // Scale the input coordinates.
+ *       let nx = noiseScale * x;
+ *       let ny = noiseScale * y;
+ *       let nt = noiseScale * frameCount;
+ *
+ *       // Compute the noise value.
+ *       let c = noiseLevel * noise(nx, ny, nt);
+ *
+ *       // Draw the point.
+ *       stroke(c);
+ *       point(x, y);
+ *     }
+ *   }
  * }
  * </code>
  * </div>
@@ -295,34 +349,47 @@ p5.prototype.noise = function(x, y = 0, z = 0) {
  * @method noiseDetail
  * @param {Number} lod number of octaves to be used by the noise.
  * @param {Number} falloff falloff factor for each octave.
+ *
  * @example
  * <div>
  * <code>
- * let noiseLevel = 255;
- * let noiseScale = 0.02;
- * for (let y = 0; y < height; y += 1) {
- *   for (let x = 0; x < width / 2; x += 1) {
- *     // Scale input coordinates.
- *     let nx = noiseScale * x;
- *     let ny = noiseScale * y;
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- *     // Compute noise value.
- *     noiseDetail(6, 0.25);
- *     let c = noiseLevel * noise(nx, ny);
- *     // Render left side.
- *     stroke(c);
- *     point(x, y);
+ *   // Set the noise level and scale.
+ *   let noiseLevel = 255;
+ *   let noiseScale = 0.02;
  *
- *     // Compute noise value.
- *     noiseDetail(4, 0.5);
- *     c = noiseLevel * noise(nx, ny);
- *     // Render right side.
- *     stroke(c);
- *     point(x + width / 2, y);
+ *   // Iterate from top to bottom.
+ *   for (let y = 0; y < 100; y += 1) {
+ *     // Iterate from left to right.
+ *     for (let x = 0; x < 50; x += 1) {
+ *       // Scale the input coordinates.
+ *       let nx = noiseScale * x;
+ *       let ny = noiseScale * y;
+ *
+ *       // Compute the noise value with six octaves
+ *       // and a low falloff factor.
+ *       noiseDetail(6, 0.25);
+ *       let c = noiseLevel * noise(nx, ny);
+ *
+ *       // Draw the left side.
+ *       stroke(c);
+ *       point(x, y);
+ *
+ *       // Compute the noise value with four octaves
+ *       // and a high falloff factor.
+ *       noiseDetail(4, 0.5);
+ *       c = noiseLevel * noise(nx, ny);
+ *
+ *       // Draw the right side.
+ *       stroke(c);
+ *       point(x + 50, y);
+ *     }
  *   }
- * }
  *
- * describe('Two gray cloudy patterns. The pattern on the right is cloudier than the pattern on the left.');
+ *   describe('Two gray cloudy patterns. The pattern on the right is cloudier than the pattern on the left.');
+ * }
  * </code>
  * </div>
  */
@@ -336,33 +403,43 @@ p5.prototype.noiseDetail = function(lod, falloff) {
 };
 
 /**
- * Sets the seed value for <a href="#/p5/noise">noise()</a>. By default,
- * <a href="#/p5/noise">noise()</a> produces different results each time
- * a sketch is run. Calling `noiseSeed()` with a constant
- * argument, such as `noiseSeed(99)`, makes <a href="#/p5/noise">noise()</a>
- * produce the same results each time a sketch is run.
+ * Sets the seed value for the <a href="#/p5/noise">noise()</a> function.
+ *
+ * By default, <a href="#/p5/noise">noise()</a> produces different results
+ * each time a sketch is run. Calling `noiseSeed()` with a constant argument,
+ * such as `noiseSeed(99)`, makes <a href="#/p5/noise">noise()</a> produce the
+ * same results each time a sketch is run.
  *
  * @method noiseSeed
  * @param {Number} seed   seed value.
+ *
  * @example
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Set the noise seed for consistent results.
  *   noiseSeed(99);
- *   background(255);
+ *
+  *   describe('A black rectangle that grows randomly, first to the right and then to the left.');
  * }
  *
  * function draw() {
+ *   // Set the noise level and scale.
  *   let noiseLevel = 100;
  *   let noiseScale = 0.005;
- *   // Scale input coordinate.
- *   let nt = noiseScale * frameCount;
- *   // Compute noise value.
- *   let x = noiseLevel * noise(nt);
- *   // Render.
- *   line(x, 0, x, height);
  *
- *   describe('A black rectangle that grows randomly, first to the right and then to the left.');
+ *   // Scale the input coordinate.
+ *   let nt = noiseScale * frameCount;
+ *
+ *   // Compute the noise value.
+ *   let x = noiseLevel * noise(nt);
+ *
+ *   // Draw the line.
+ *   line(x, 0, x, height);
  * }
  * </code>
  * </div>
