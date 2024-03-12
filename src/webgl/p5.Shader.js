@@ -324,13 +324,7 @@ p5.Shader = class {
     modelViewProjectionMatrix.mult(projectionMatrix);
 
     if (this.isStrokeShader()) {
-      if (this._renderer._curCamera.cameraType === 'default') {
-        // strokes scale up as they approach camera, default
-        this.setUniform('uPerspective', 1);
-      } else {
-        // strokes have uniform scale regardless of distance from camera
-        this.setUniform('uPerspective', 0);
-      }
+      this.setUniform('uPerspective', this._renderer._curCamera.useLinePerspective ? 1 : 0);
     }
     this.setUniform('uViewMatrix', viewMatrix.mat4);
     this.setUniform('uProjectionMatrix', projectionMatrix.mat4);

@@ -23,6 +23,7 @@ const defineStrokeJoinEnum = function (key, val) {
   STROKE_JOIN_ENUM[constants[key]] = val;
 };
 
+
 // Define constants in line shaders for each type of cap/join, and also record
 // the values in JS objects
 defineStrokeCapEnum('ROUND', 0);
