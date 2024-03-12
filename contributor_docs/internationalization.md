@@ -58,7 +58,7 @@ would become something like
 console.log(translator('fileLoading.notFound', { fileName: file.name }))
 ```
 
-Translations like this expect the variables it uses to have a certain name, so make sure you use that. Check a translation file (look in translations/{YOUR_LANGUAGE}/) to see what the variable name is. You'll find the translation under the object path in the translation key.
+Translations like this expect the variables it uses to have a certain name, so make sure you use that. Check a translation file (look in `translations/{YOUR_LANGUAGE}/`) to see what the variable name is. You'll find the translation under the object path in the translation key.
 
 "`fileLoading.notFound`" would be found at
 

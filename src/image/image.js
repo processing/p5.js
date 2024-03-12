@@ -170,21 +170,20 @@ p5.prototype.createImage = function(width, height) {
  *  @param  {String} [filename]
  *  @param  {String} [extension]
  */
-p5.prototype.saveCanvas = function() {
-  p5._validateParameters('saveCanvas', arguments);
+p5.prototype.saveCanvas = function(...args) {
+  p5._validateParameters('saveCanvas', args);
 
   // copy arguments to array
-  const args = [].slice.call(arguments);
   let htmlCanvas, filename, extension, temporaryGraphics;
 
-  if (arguments[0] instanceof HTMLCanvasElement) {
-    htmlCanvas = arguments[0];
+  if (args[0] instanceof HTMLCanvasElement) {
+    htmlCanvas = args[0];
     args.shift();
-  } else if (arguments[0] instanceof p5.Element) {
-    htmlCanvas = arguments[0].elt;
+  } else if (args[0] instanceof p5.Element) {
+    htmlCanvas = args[0].elt;
     args.shift();
-  } else if (arguments[0] instanceof p5.Framebuffer) {
-    const framebuffer = arguments[0];
+  } else if (args[0] instanceof p5.Framebuffer) {
+    const framebuffer = args[0];
     temporaryGraphics = this.createGraphics(framebuffer.width,
       framebuffer.height);
     temporaryGraphics.pixelDensity(pixelDensity());

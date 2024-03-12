@@ -223,11 +223,13 @@ p5.RendererGL.prototype.endShape = function(
 
   // LINE_STRIP and LINES are not used for rendering, instead
   // they only indicate a way to modify vertices during the _processVertices() step
+  let is_line = false;
   if (
     this.immediateMode.shapeMode === constants.LINE_STRIP ||
     this.immediateMode.shapeMode === constants.LINES
   ) {
     this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
+    is_line = true;
   }
 
   // WebGL doesn't support the QUADS and QUAD_STRIP modes, so we
@@ -239,7 +241,7 @@ p5.RendererGL.prototype.endShape = function(
     this.immediateMode.shapeMode = constants.TRIANGLE_STRIP;
   }
 
-  if (this._doFill) {
+  if (this._doFill && !is_line) {
     if (
       !this.geometryBuilder &&
       this.immediateMode.geometry.vertices.length >= 3

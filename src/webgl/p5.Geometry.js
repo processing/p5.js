@@ -75,7 +75,6 @@ p5.Geometry = class Geometry {
     if (callback instanceof Function) {
       callback.call(this);
     }
-    return this; // TODO: is this a constructor?
   }
 
   /**

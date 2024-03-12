@@ -2135,7 +2135,11 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * W3C documentation</a> for possible properties. Different browsers support different
  * properties.
  *
- * The second parameter, `callback`, is optional. It's a function to call once
+ * The 'flipped' property is an optional property which can be set to `{flipped:true}`
+ * to mirror the video output.If it is true then it means that video will be mirrored
+ * or flipped and if nothing is mentioned then by default it will be `false`.
+ *
+ * The second parameter,`callback`, is optional. It's a function to call once
  * the capture is ready for use. The callback function should have one
  * parameter, `stream`, that's a
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MediaStream" target="_blank">MediaStream</a> object.
@@ -2148,6 +2152,8 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * @param  {String|Constant|Object}  [type] type of capture, either AUDIO or VIDEO,
  *                                   or a constraints object. Both video and audio
  *                                   audio streams are captured by default.
+ * @param  {Object}                  [flipped] flip the capturing video and mirror the output with `{flipped:true}`. By
+ *                                   default it is false.
  * @param  {Function}                [callback] function to call once the stream
  *                                   has loaded.
  * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
@@ -2183,6 +2189,19 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * }
  * </code>
  * </div>
+ * <div class='notest'>
+ * <code>
+ * let capture;
+ *
+ * function setup() {
+ *   // Create the video capture with mirrored output.
+ *   capture = createCapture(VIDEO,{ flipped:true });
+ *   capture.size(100,100);
+ *   describe('A video stream from the webcam with flipped or mirrored output.');
+ * }
+ *
+ * </code>
+ * </div>
  *
  * <div class='notest norender'>
  * <code>
@@ -2212,7 +2231,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
 p5.prototype.createCapture = function(...args) {
   p5._validateParameters('createCapture', args);
 
-  // return if getUserMedia is not supported by browser
+  // return if getUserMedia is not supported by the browser
   if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
     throw new DOMException('getUserMedia not supported in this browser');
   }
@@ -2221,18 +2240,28 @@ p5.prototype.createCapture = function(...args) {
   let useAudio = true;
   let constraints;
   let callback;
+  let flipped = false;
+
   for (const arg of args) {
     if (arg === p5.prototype.VIDEO) useAudio = false;
     else if (arg === p5.prototype.AUDIO) useVideo = false;
-    else if (typeof arg === 'object') constraints = arg;
-    else if (typeof arg === 'function') callback = arg;
+    else if (typeof arg === 'object') {
+      if (arg.flipped !== undefined) {
+        flipped = arg.flipped;
+        delete arg.flipped;
+      }
+      constraints = Object.assign({}, constraints, arg);
+    }
+    else if (typeof arg === 'function') {
+      callback = arg;
+    }
   }
-  if (!constraints) constraints = { video: useVideo, audio: useAudio };
 
+  const videoConstraints = { video: useVideo, audio: useAudio };
+  constraints = Object.assign({}, videoConstraints, constraints);
   const domElement = document.createElement('video');
   // required to work in iOS 11 & up:
   domElement.setAttribute('playsinline', '');
-
   navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
     try {
       if ('srcObject' in domElement) {
@@ -2240,10 +2269,11 @@ p5.prototype.createCapture = function(...args) {
       } else {
         domElement.src = window.URL.createObjectURL(stream);
       }
-    } catch (err) {
+    }
+    catch(err) {
       domElement.src = stream;
     }
-  }, console.log);
+  }, console.error);
 
   const videoEl = addElement(domElement, this, true);
   videoEl.loadedmetadata = false;
@@ -2253,6 +2283,9 @@ p5.prototype.createCapture = function(...args) {
     if (domElement.width) {
       videoEl.width = domElement.width;
       videoEl.height = domElement.height;
+      if (flipped) {
+        videoEl.elt.style.transform = 'scaleX(-1)';
+      }
     } else {
       videoEl.width = videoEl.elt.width = domElement.videoWidth;
       videoEl.height = videoEl.elt.height = domElement.videoHeight;
@@ -2261,8 +2294,10 @@ p5.prototype.createCapture = function(...args) {
 
     if (callback) callback(domElement.srcObject);
   });
+  videoEl.flipped=flipped;
   return videoEl;
 };
+
 
 /**
  * Creates a new <a href="#/p5.Element">p5.Element</a> object.
@@ -3243,7 +3278,7 @@ p5.Element.prototype.hide = function () {
  */
 /**
  * @method size
- * @param  {Number|Constant} w   width of the element, either AUTO, or a number.
+ * @param  {Number|Constant} [w]   width of the element, either AUTO, or a number.
  * @param  {Number|Constant} [h] height of the element, either AUTO, or a number.
  * @chainable
  */
@@ -4377,7 +4412,6 @@ class MediaElement extends p5.Element {
   duration() {
     return this.elt.duration;
   }
-
   _ensureCanvas() {
     if (!this.canvas) {
       this.canvas = document.createElement('canvas');
@@ -4398,11 +4432,14 @@ class MediaElement extends p5.Element {
       }
 
       this.drawingContext.clearRect(
-        0,
-        0,
-        this.canvas.width,
-        this.canvas.height
-      );
+        0, 0, this.canvas.width, this.canvas.height);
+
+      if (this.flipped === true) {
+        this.drawingContext.save();
+        this.drawingContext.scale(-1, 1);
+        this.drawingContext.translate(-this.canvas.width, 0);
+      }
+
       this.drawingContext.drawImage(
         this.elt,
         0,
@@ -4410,6 +4447,11 @@ class MediaElement extends p5.Element {
         this.canvas.width,
         this.canvas.height
       );
+
+      if (this.flipped === true) {
+        this.drawingContext.restore();
+      }
+
       this.setModified(true);
       this._frameOnCanvas = this._pInst.frameCount;
     }

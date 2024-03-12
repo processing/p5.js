@@ -67,7 +67,8 @@ p5.prototype.print = function(...args) {
 };
 
 /**
- * Tracks the number of frames drawn since the sketch started.
+ * A `Number` variable that tracks the number of frames drawn since the sketch
+ * started.
  *
  * `frameCount`'s value is 0 inside <a href="#/p5/setup">setup()</a>. It
  * increments by 1 each time the code in <a href="#/p5/draw">draw()</a>
@@ -79,6 +80,8 @@ p5.prototype.print = function(...args) {
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
  *   // Display the value of
@@ -95,11 +98,15 @@ p5.prototype.print = function(...args) {
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Set the frameRate to 30.
  *   frameRate(30);
  *
  *   textSize(30);
  *   textAlign(CENTER, CENTER);
+ *
+ *   describe('A number written in black in the middle of a gray square. Its value increases rapidly.');
  * }
  *
  * function draw() {
@@ -108,8 +115,6 @@ p5.prototype.print = function(...args) {
  *   // Display the value of
  *   // frameCount.
  *   text(frameCount, 50, 50);
- *
- *   describe('A number written in black in the middle of a gray square. Its value increases rapidly.');
  * }
  * </code>
  * </div>
@@ -117,8 +122,11 @@ p5.prototype.print = function(...args) {
 p5.prototype.frameCount = 0;
 
 /**
- * Tracks the amount of time, in milliseconds, it took for
- * <a href="#/p5/draw">draw</a> to draw the previous frame. `deltaTime` is
+ * A `Number` variable that tracks the number of milliseconds it took to draw
+ * the last frame.
+ *
+ * `deltaTime` contains the amount of time it took
+ * <a href="#/p5/draw">draw()</a> to execute during the previous frame. It's
  * useful for simulating physics.
  *
  * @property {Integer} deltaTime
@@ -130,8 +138,12 @@ p5.prototype.frameCount = 0;
  * let speed = 0.05;
  *
  * function setup()  {
+ *   createCanvas(100, 100);
+ *
  *   // Set the frameRate to 30.
  *   frameRate(30);
+ *
+ *   describe('A white circle moves from left to right on a gray background. It reappears on the left side when it reaches the right side.');
  * }
  *
  * function draw() {
@@ -153,8 +165,6 @@ p5.prototype.frameCount = 0;
  *   // Use x to set the circle's
  *   // position.
  *   circle(x, 50, 20);
- *
- *   describe('A white circle moves from left to right on a gray background. It reappears on the left side when it reaches the right side.');
  * }
  * </code>
  * </div>
@@ -162,8 +172,10 @@ p5.prototype.frameCount = 0;
 p5.prototype.deltaTime = 0;
 
 /**
- * Tracks whether the browser window is focused and can receive user input.
- * `focused` is `true` if the window if focused and `false` if not.
+ * A `Boolean` variable that's `true` if the browser is focused and `false` if
+ * not.
+ *
+ * Note: The browser window can only receive input if it's focused.
  *
  * @property {Boolean} focused
  * @readOnly
@@ -172,6 +184,12 @@ p5.prototype.deltaTime = 0;
  * <code>
  * // Open this example in two separate browser
  * // windows placed side-by-side to demonstrate.
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A square changes color from green to red when the browser window is out of focus.');
+ * }
  *
  * function draw() {
  *   // Change the background color
@@ -182,8 +200,6 @@ p5.prototype.deltaTime = 0;
  *   } else {
  *     background(255, 0, 0);
  *   }
- *
- *   describe('A square changes color from green to red when the browser window is out of focus.');
  * }
  * </code>
  * </div>
@@ -215,19 +231,29 @@ p5.prototype.focused = document.hasFocus();
  * @example
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A gray square. The cursor appears as crosshairs.');
+ * }
+ *
  * function draw() {
  *   background(200);
  *
  *   // Set the cursor to crosshairs: +
  *   cursor(CROSS);
- *
- *   describe('A gray square. The cursor appears as crosshairs.');
  * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A gray square divided into quadrants. The cursor image changes when the mouse moves to each quadrant.');
+ * }
+ *
  * function draw() {
  *   background(200);
  *
@@ -245,14 +271,18 @@ p5.prototype.focused = document.hasFocus();
  *   } else {
  *     cursor('grab');
  *   }
- *
- *   describe('A gray square divided into quadrants. The cursor image changes when the mouse moves to each quadrant.');
  * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('An image of three purple curves follows the mouse. The image shifts when the mouse is pressed.');
+ * }
+ *
  * function draw() {
  *   background(200);
  *
@@ -263,8 +293,6 @@ p5.prototype.focused = document.hasFocus();
  *   } else {
  *     cursor('https://avatars0.githubusercontent.com/u/1617169?s=16');
  *   }
- *
- *   describe('An image of three purple curves follows the mouse. The image shifts when the mouse is pressed.');
  * }
  * </code>
  * </div>
@@ -318,6 +346,12 @@ p5.prototype.cursor = function(type, x, y) {
  * @example
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A white circle on a gray background. The circle moves from left to right in a loop. It slows down when the mouse is pressed.');
+ * }
+ *
  * function draw() {
  *   background(200);
  *
@@ -336,14 +370,18 @@ p5.prototype.cursor = function(type, x, y) {
  *   // Use x to set the circle's
  *   // position.
  *   circle(x, 50, 20);
- *
- *   describe('A white circle on a gray background. The circle moves from left to right in a loop. It slows down when the mouse is pressed.');
  * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A number written in black written on a gray background. The number decreases when the mouse is pressed.');
+ * }
+ *
  * function draw() {
  *   background(200);
  *
@@ -359,8 +397,6 @@ p5.prototype.cursor = function(type, x, y) {
  *   // and display it.
  *   let fps = frameRate();
  *   text(fps, 50, 50);
- *
- *   describe('A number written in black written on a gray background. The number decreases when the mouse is pressed.');
  * }
  * </code>
  * </div>
@@ -409,14 +445,22 @@ p5.prototype.setFrameRate = function(fps) {
 };
 
 /**
- * Returns the target frame rate. The value is either the system frame rate or
- * the last value passed to <a href="#/p5/frameRate">frameRate()</a>.
+ * Returns the target frame rate.
+ *
+ * The value is either the system frame rate or the last value passed to
+ * <a href="#/p5/frameRate">frameRate()</a>.
  *
  * @method getTargetFrameRate
  * @return {Number} _targetFrameRate
  * @example
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('The number 20 written in black on a gray background.');
+ * }
+ *
  * function draw() {
  *   background(200);
  *
@@ -427,8 +471,6 @@ p5.prototype.setFrameRate = function(fps) {
  *   // display it.
  *   let fps = getTargetFrameRate();
  *   text(fps, 43, 54);
- *
- *   describe('The number 20 written in black on a gray background.');
  * }
  * </code>
  * </div>
@@ -464,8 +506,9 @@ p5.prototype.noCursor = function() {
 };
 
 /**
- * A string variable with the WebGL version in use. Its value equals one of
- * the followin string constants:
+ * A `String` variable with the WebGL version in use.
+ *
+ * `webglVersion`'s value equals one of the following string constants:
  *
  * - `WEBGL2` whose value is `'webgl2'`,
  * - `WEBGL` whose value is `'webgl'`, or
@@ -545,9 +588,10 @@ p5.prototype.noCursor = function() {
 p5.prototype.webglVersion = C.P2D;
 
 /**
- * A numeric variable that stores the width of the screen display. Its value
+ * A `Number` variable that stores the width of the screen display.
+ *
+ * `displayWidth` is useful for running full-screen programs. Its value
  * depends on the current <a href="#/p5/pixelDensity">pixelDensity()</a>.
- * `displayWidth` is useful for running full-screen programs.
  *
  * Note: The actual screen width can be computed as
  * `displayWidth * pixelDensity()`.
@@ -575,9 +619,10 @@ p5.prototype.webglVersion = C.P2D;
 p5.prototype.displayWidth = screen.width;
 
 /**
- * A numeric variable that stores the height of the screen display. Its value
+ * A `Number` variable that stores the height of the screen display.
+ *
+ * `displayHeight` is useful for running full-screen programs. Its value
  * depends on the current <a href="#/p5/pixelDensity">pixelDensity()</a>.
- * `displayHeight` is useful for running full-screen programs.
  *
  * Note: The actual screen height can be computed as
  * `displayHeight * pixelDensity()`.
@@ -605,9 +650,10 @@ p5.prototype.displayWidth = screen.width;
 p5.prototype.displayHeight = screen.height;
 
 /**
- * A numeric variable that stores the width of the browser's
- * <a href="https://developer.mozilla.org/en-US/docs/Glossary/Layout_viewport" target="_blank">layout viewport</a>.
- * This viewport is the area within the browser that's available for drawing.
+ * A `Number` variable that stores the width of the browser's viewport.
+ *
+ * The <a href="https://developer.mozilla.org/en-US/docs/Glossary/Layout_viewport" target="_blank">layout viewport</a>
+ * is the area within the browser that's available for drawing.
  *
  * @property {Number} windowWidth
  * @readOnly
@@ -632,9 +678,10 @@ p5.prototype.displayHeight = screen.height;
 p5.prototype.windowWidth = getWindowWidth();
 
 /**
- * A numeric variable that stores the height of the browser's
- * <a href="https://developer.mozilla.org/en-US/docs/Glossary/Layout_viewport" target="_blank">layout viewport</a>.
- * This viewport is the area within the browser that's available for drawing.
+ * A `Number` variable that stores the height of the browser's viewport.
+ *
+ * The <a href="https://developer.mozilla.org/en-US/docs/Glossary/Layout_viewport" target="_blank">layout viewport</a>
+ * is the area within the browser that's available for drawing.
  *
  * @property {Number} windowHeight
  * @readOnly
@@ -659,11 +706,14 @@ p5.prototype.windowWidth = getWindowWidth();
 p5.prototype.windowHeight = getWindowHeight();
 
 /**
- * The code in `windowResized()` is called once each time the browser window
- * is resized. It's a good place to resize the canvas or make other
+ * A function that's called when the browser window is resized.
+ *
+ * Code placed in the body of `windowResized()` will run when the
+ * browser window's size changes. It's a good place to call
+ * <a href="#/p5/resizeCanvas">resizeCanvas()</a> or make other
  * adjustments to accommodate the new window size.
  *
- * The `event` parameter is optional. If added to the function definition, it
+ * The `event` parameter is optional. If added to the function declaration, it
  * can be used for debugging or other purposes.
  *
  * @method windowResized
@@ -673,12 +723,15 @@ p5.prototype.windowHeight = getWindowHeight();
  * <code>
  * function setup() {
  *   createCanvas(windowWidth, windowHeight);
+ *
+ *   describe('A gray canvas with a white circle at its center. The canvas takes up the entire browser window. It changes size to match the browser window.');
  * }
  *
  * function draw() {
  *   background(200);
  *
- *   describe('A gray canvas that takes up the entire browser window. It changes size to match the browser window.');
+ *   // Draw a circle at the center.
+ *   circle(width / 2, height / 2, 50);
  * }
  *
  * // Resize the canvas when the
@@ -748,10 +801,10 @@ function getWindowHeight() {
 }
 
 /**
- * A numeric variable that stores the width of the drawing canvas. Its
- * default value is 100.
+ * A `Number` variable that stores the width of the canvas in pixels.
  *
- * Calling <a href="#/p5/createCanvas">createCanvas()</a> or
+ * `width`'s default value is 100. Calling
+ * <a href="#/p5/createCanvas">createCanvas()</a> or
  * <a href="#/p5/resizeCanvas">resizeCanvas()</a> changes the value of
  * `width`. Calling <a href="#/p5/noCanvas">noCanvas()</a> sets its value to
  * 0.
@@ -817,10 +870,10 @@ function getWindowHeight() {
 p5.prototype.width = 0;
 
 /**
- * A numeric variable that stores the height of the drawing canvas. Its
- * default value is 100.
+ * A `Number` variable that stores the height of the canvas in pixels.
  *
- * Calling <a href="#/p5/createCanvas">createCanvas()</a> or
+ * `height`'s default value is 100. Calling
+ * <a href="#/p5/createCanvas">createCanvas()</a> or
  * <a href="#/p5/resizeCanvas">resizeCanvas()</a> changes the value of
  * `height`. Calling <a href="#/p5/noCanvas">noCanvas()</a> sets its value to
  * 0.
@@ -941,10 +994,16 @@ p5.prototype.fullscreen = function(val) {
 };
 
 /**
- * Sets the pixel scaling for high pixel density displays.
+ * Sets the pixel density or returns the current density.
  *
- * By default, the pixel density is set to match display density. Calling
- * `pixelDensity(1)` turn this off.
+ * Computer displays are grids of little lights called <em>pixels</em>. A
+ * display's <em>pixel density</em> describes how many pixels it packs into an
+ * area. Displays with smaller pixels have a higher pixel density and create
+ * sharper images.
+ *
+ * `pixelDensity()` sets the pixel scaling for high pixel density displays.
+ * By default, the pixel density is set to match the display's density.
+ * Calling `pixelDensity(1)` turn this off.
  *
  * Calling `pixelDensity()` without an argument returns the current pixel
  * density.
@@ -1081,7 +1140,7 @@ function exitFullscreen() {
 /**
  * Returns the sketch's current
  * <a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL" target="_blank">URL</a>
- * as a string.
+ * as a `String`.
  *
  * @method getURL
  * @return {String} url
@@ -1107,7 +1166,7 @@ p5.prototype.getURL = () => location.href;
 /**
  * Returns the current
  * <a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL#path_to_resource" target="_blank">URL</a>
- * path as an array of strings.
+ * path as an `Array` of `String`s.
  *
  * For example, consider a sketch hosted at the URL
  * `https://example.com/sketchbook`. Calling `getURLPath()` returns
@@ -1140,7 +1199,7 @@ p5.prototype.getURLPath = () =>
 /**
  * Returns the current
  * <a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL#parameters" target="_blank">URL parameters</a>
- * in an Object.
+ * in an `Object`.
  *
  * For example, calling `getURLParams()` in a sketch hosted at the URL
  * `http://p5js.org?year=2014&month=May&day=15` returns

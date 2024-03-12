@@ -957,6 +957,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/pie999"><img src="https://avatars.githubusercontent.com/u/105122549?v=4?s=120" width="120px;" alt="pie999"/><br /><sub><b>pie999</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=pie999" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/haroon10725"><img src="https://avatars.githubusercontent.com/u/104259212?v=4?s=120" width="120px;" alt="Muhammad Haroon"/><br /><sub><b>Muhammad Haroon</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=haroon10725" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/natdecker"><img src="https://avatars.githubusercontent.com/u/76665013?v=4?s=120" width="120px;" alt="Nat Decker"/><br /><sub><b>Nat Decker</b></sub></a><br /><a href="#a11y-natdecker" title="Accessibility">️️️️♿️</a> <a href="https://github.com/processing/p5.js/commits?author=natdecker" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 

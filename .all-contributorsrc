@@ -5647,6 +5647,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "natdecker",
+      "name": "Nat Decker",
+      "avatar_url": "https://avatars.githubusercontent.com/u/76665013?v=4",
+      "profile": "https://github.com/natdecker",
+      "contributions": [
+        "a11y",
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
