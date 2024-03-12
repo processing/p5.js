@@ -2981,7 +2981,7 @@ p5.Vector = class {
   }
 
   /**
- * Calculates the vector's components as an array of numbers.
+ * Returns the vector's components as an array of numbers.
  *
  * @method array
  * @return {Number[]} array with the vector's components.
