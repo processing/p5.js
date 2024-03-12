@@ -93,7 +93,7 @@ p5.Geometry = class Geometry {
  *
  * @method calculateBoundingBox
  * @memberof p5.Geometry.prototype
- * @return {Object}
+ * @returns {Object}
  *
  * @example
  *
@@ -108,7 +108,7 @@ p5.Geometry = class Geometry {
  *   button = createButton('New');
  *   button.mousePressed(makeParticles);
  *
- *   resultParagraph = createP('').style('width', '180px' );
+ *   resultParagraph = createElement('pre').style('width', '200px' );
  *   resultParagraph.style('font-family', 'monospace');
  *   resultParagraph.style('font-size', '12px');
  *   makeParticles();
@@ -131,7 +131,7 @@ p5.Geometry = class Geometry {
  *   });
  *
  *   const boundingBox = particles.calculateBoundingBox();
- *   resultParagraph.html('Bounding Box: \n' + JSON.stringify(boundingBox));
+ *   resultParagraph.html('Bounding Box: \n' + JSON.stringify(boundingBox, null, 2));
  * }
  *
  * function draw() {
