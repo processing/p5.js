@@ -508,7 +508,7 @@ function addElement(elt, pInst, media) {
  *
  *   background(200);
  *
- *   // Create a <div> and set its position.
+ *   // Create a div element and set its position.
  *   let div = createDiv('p5*js');
  *   div.position(25, 35);
  *
@@ -559,7 +559,7 @@ p5.prototype.createDiv = function (html = '') {
  *
  *   background(200);
  *
- *   // Create a <p> and set its position.
+ *   // Create a paragraph element and set its position.
  *   let p = createP('Tell me a story.');
  *   p.position(5, 0);
  *
@@ -597,7 +597,7 @@ p5.prototype.createP = function (html = '') {
  *
  *   background(200);
  *
- *   // Create a <span> and set its position.
+ *   // Create a span element and set its position.
  *   let span = createSpan('p5*js');
  *   span.position(25, 35);
  *
@@ -611,24 +611,25 @@ p5.prototype.createP = function (html = '') {
  * function setup() {
  *   background(200);
  *
- *   // Create a <div> as a container.
+ *   // Create a div element as a container.
  *   let div = createDiv();
- *   // Place the <div> at the center.
+ *
+ *   // Place the div at the center.
  *   div.position(25, 35);
  *
- *   // Create a <span>.
+ *   // Create a span element.
  *   let s1 = createSpan('p5');
  *
- *   // Create a second <span>.
+ *   // Create a second span element.
  *   let s2 = createSpan('*');
  *
- *   // Set the <span>'s font color.
+ *   // Set the second span's font color.
  *   s2.style('color', 'deeppink');
  *
- *   // Create a third <span>.
+ *   // Create a third span element.
  *   let s3 = createSpan('js');
  *
- *   // Add all the <span>s to the container <div>.
+ *   // Add all the spans to the container div.
  *   s1.parent(div);
  *   s2.parent(div);
  *   s3.parent(div);
@@ -749,7 +750,7 @@ p5.prototype.createImg = function () {
  *
  *   background(200);
  *
- *   // Create an <a> that links to p5js.org.
+ *   // Create an anchor element that links to p5js.org.
  *   let a = createA('http://p5js.org/', 'p5*js');
  *   a.position(25, 35);
  *
@@ -763,7 +764,7 @@ p5.prototype.createImg = function () {
  * function setup() {
  *   background(200);
  *
- *   // Create an <a> that links to p5js.org.
+ *   // Create an anchor tag that links to p5js.org.
  *   // Open the link in a new tab.
  *   let a = createA('http://p5js.org/', 'p5*js', '_blank');
  *   a.position(25, 35);
@@ -2541,10 +2542,10 @@ p5.prototype.createElement = function (tag, content) {
  *
  *   background(200);
  *
- *   // Create a <div>.
+ *   // Create a div element.
  *   let div = createDiv('div');
  *
- *   // Add a class to the <div>.
+ *   // Add a class to the div.
  *   div.addClass('myClass');
  *
  *   describe('A gray square.');
@@ -2584,16 +2585,16 @@ p5.Element.prototype.addClass = function (c) {
  *
  *   background(200);
  *
- *   // Create a <div>.
+ *   // Create a div element.
  *   div = createDiv('div');
  *
- *   // Add a class to the <div>.
+ *   // Add a class to the div.
  *   div.addClass('myClass');
  *
  *   describe('A gray square.');
  * }
  *
- * // Remove 'myClass' from the <div> when the mouse is pressed.
+ * // Remove 'myClass' from the div when the user presses the mouse.
  * function mousePressed() {
  *   div.removeClass('myClass');
  * }
@@ -2623,10 +2624,10 @@ p5.Element.prototype.removeClass = function (c) {
  *
  *   background(200);
  *
- *   // Create a <div>.
+ *   // Create a div element.
  *   div = createDiv('div');
  *
- *   // Add the class 'show' to the <div>.
+ *   // Add the class 'show' to the div.
  *   div.addClass('show');
  *
  *   describe('A gray square.');
@@ -2664,10 +2665,10 @@ p5.Element.prototype.hasClass = function (c) {
  *
  *   background(200);
  *
- *   // Create a <div>.
+ *   // Create a div element.
  *   div = createDiv('div');
  *
- *   // Add the 'show' class to the <div>.
+ *   // Add the 'show' class to the div.
  *   div.addClass('show');
  *
  *   describe('A gray square.');
@@ -2693,7 +2694,7 @@ p5.Element.prototype.toggleClass = function (c) {
 };
 
 /**
- * Attaches the element as a child of another element..
+ * Attaches the element as a child of another element.
  *
  * `myElement.child()` accepts either a string ID, DOM node, or
  * <a href="#/p5.Element">p5.Element</a>. For example,
@@ -2711,7 +2712,7 @@ p5.Element.prototype.toggleClass = function (c) {
  *
  *   background(200);
  *
- *   // Create the <div> elements.
+ *   // Create the div elements.
  *   let div0 = createDiv('Parent');
  *   let div1 = createDiv('Child');
  *
@@ -2731,7 +2732,7 @@ p5.Element.prototype.toggleClass = function (c) {
  *
  *   background(200);
  *
- *   // Create the <div> elements.
+ *   // Create the div elements.
  *   let div0 = createDiv('Parent');
  *   let div1 = createDiv('Child');
  *
@@ -2757,7 +2758,7 @@ p5.Element.prototype.toggleClass = function (c) {
  *
  *   background(200);
  *
- *   // Create the <div> elements.
+ *   // Create the div elements.
  *   let div0 = createDiv('Parent');
  *
  *   // Select the child element by its ID.
@@ -2818,12 +2819,12 @@ p5.Element.prototype.child = function (childNode) {
  *
  *   background(200);
  *
- *   // Create the <div> and style it.
+ *   // Create the div element and style it.
  *   let div = createDiv('');
  *   div.size(10, 10);
  *   div.style('background-color', 'orange');
  *
- *   // Center the <div> relative to the page's body.
+ *   // Center the div relative to the page's body.
  *   div.center();
  *
  *   describe('A gray square and an orange rectangle. The rectangle is at the center of the page.');
@@ -2883,7 +2884,7 @@ p5.Element.prototype.center = function (align) {
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   // Create the <div> and set its size.
+ *   // Create the div element and set its size.
  *   let div = createDiv('');
  *   div.size(100, 100);
  *
@@ -2902,11 +2903,11 @@ p5.Element.prototype.center = function (align) {
  *
  *   background(200);
  *
- *   // Create the <div> and set its size.
+ *   // Create the div element and set its size.
  *   let div = createDiv('Hello ');
  *   div.size(100, 100);
  *
- *   // Append "World" to the <div>'s HTML.
+ *   // Append "World" to the div's HTML.
  *   div.html('World', true);
  *
  *   describe('A gray square with the text "Hello World" written beneath it.');
@@ -2921,7 +2922,7 @@ p5.Element.prototype.center = function (align) {
  *
  *   background(200);
  *
- *   // Create the <div>.
+ *   // Create the div element.
  *   let div = createDiv('Hello');
  *
  *   // Prints "Hello" to the console.
@@ -3117,7 +3118,7 @@ p5.Element.prototype._rotate = function(...args) {
  *
  *   background(200);
  *
- *   // Create a <p> and set its font color to "deeppink".
+ *   // Create a paragraph element and set its font color to "deeppink".
  *   let p = createP('p5*js');
  *   p.position(25, 20);
  *   p.style('color', 'deeppink');
@@ -3137,7 +3138,7 @@ p5.Element.prototype._rotate = function(...args) {
  *   // Create a p5.Color object.
  *   let c = color('deeppink');
  *
- *   // Create a <p> and set its font color using a p5.Color object.
+ *   // Create a paragraph element and set its font color using a p5.Color object.
  *   let p = createP('p5*js');
  *   p.position(25, 20);
  *   p.style('color', c);
@@ -3154,7 +3155,7 @@ p5.Element.prototype._rotate = function(...args) {
  *
  *   background(200);
  *
- *   // Create a <p> and set its font color to "deeppink"
+ *   // Create a paragraph element and set its font color to "deeppink"
  *   // using property:value syntax.
  *   let p = createP('p5*js');
  *   p.position(25, 20);
@@ -3172,17 +3173,15 @@ p5.Element.prototype._rotate = function(...args) {
  *
  *   background(200);
  *
- *   // Create an empty <p> and set its font color to "deeppink".
+ *   // Create an empty paragraph element and set its font color to "deeppink".
  *   let p = createP();
  *   p.position(5, 5);
  *   p.style('color', 'deeppink');
  *
- *   // Get the element's color as an
- *   // RGB color string.
+ *   // Get the element's color as an  RGB color string.
  *   let c = p.style('color');
  *
- *   // Set the element's inner HTML
- *   // using the RGB color string.
+ *   // Set the element's inner HTML using the RGB color string.
  *   p.html(c);
  *
  *   describe('The text "rgb(255, 20, 147)" written in pink on a gray background.');
@@ -3275,23 +3274,23 @@ p5.Element.prototype.style = function (prop, val) {
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   // Create a container <div> and place it at the top-left corner.
+ *   // Create a container div element and place it at the top-left corner.
  *   let container = createDiv();
  *   container.position(0, 0);
  *
- *   // Create a <p> and place it within the container.
+ *   // Create a paragraph element and place it within the container.
  *   // Set its horizontal alignment to "left".
  *   let p1 = createP('hi');
  *   p1.parent(container);
  *   p1.attribute('align', 'left');
  *
- *   // Create a <p> and place it within the container.
+ *   // Create a paragraph element and place it within the container.
  *   // Set its horizontal alignment to "center".
  *   let p2 = createP('hi');
  *   p2.parent(container);
  *   p2.attribute('align', 'center');
  *
- *   // Create a <p> and place it within the container.
+ *   // Create a paragraph element and place it within the container.
  *   // Set its horizontal alignment to "right".
  *   let p3 = createP('hi');
  *   p3.parent(container);
@@ -3352,7 +3351,7 @@ p5.Element.prototype.attribute = function (attr, value) {
  *
  *   background(200);
  *
- *   // Create a <p> and place it in the center of the canvas.
+ *   // Create a paragraph element and place it in the center of the canvas.
  *   // Set its "align" attribute to "center".
  *   p = createP('hi');
  *   p.position(0, 20);
@@ -3361,6 +3360,7 @@ p5.Element.prototype.attribute = function (attr, value) {
  *   describe('The text "hi" written in black at the center of a gray square. The text moves to the left edge when double-clicked.');
  * }
  *
+ * // Remove the 'align' attribute when the user double-clicks the paragraph.
  * function doubleClicked() {
  *   p.removeAttribute('align');
  * }
@@ -3400,9 +3400,8 @@ p5.Element.prototype.removeAttribute = function (attr) {
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   // Create a text <input> and place it
- *   // beneath the canvas. Set its default
- *   // value to "hello".
+ *   // Create a text input and place it beneath the canvas.
+ *   // Set its default value to "hello".
  *   input = createInput('hello');
  *   input.position(0, 100);
  *
@@ -3426,9 +3425,8 @@ p5.Element.prototype.removeAttribute = function (attr) {
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   // Create a text <input> and place it
- *   // beneath the canvas. Set its default
- *   // value to "hello".
+ *   // Create a text input and place it beneath the canvas.
+ *   // Set its default value to "hello".
  *   input = createInput('hello');
  *   input.position(0, 100);
  *
@@ -3482,7 +3480,7 @@ p5.Element.prototype.value = function(...args) {
  *
  *   background(200);
  *
- *   // Create a <p> and hide it.
+ *   // Create a paragraph element and hide it.
  *   p = createP('p5*js');
  *   p.position(10, 10);
  *   p.hide();
@@ -3490,7 +3488,7 @@ p5.Element.prototype.value = function(...args) {
  *   describe('A gray square. The text "p5*js" appears when the user double-clicks the square.');
  * }
  *
- * // Show the <p> when double-clicked.
+ * // Show the paragraph when the user double-clicks.
  * function doubleClicked() {
  *   p.show();
  * }
@@ -3516,14 +3514,14 @@ p5.Element.prototype.show = function () {
  *
  *   background(200);
  *
- *   // Create a <p>.
+ *   // Create a paragraph element.
  *   p = createP('p5*js');
  *   p.position(10, 10);
  *
  *   describe('The text "p5*js" at the center of a gray square. The text disappears when the user double-clicks the square.');
  * }
  *
- * // Hide the <p> when double-clicked.
+ * // Hide the paragraph when the user double-clicks.
  * function doubleClicked() {
  *   p.hide();
  * }
@@ -3570,12 +3568,12 @@ p5.Element.prototype.hide = function () {
  *
  *   background(200);
  *
- *   // Create a pink <div> and place it at the top-left corner.
+ *   // Create a pink div element and place it at the top-left corner.
  *   let div = createDiv();
  *   div.position(10, 10);
  *   div.style('background-color', 'deeppink');
  *
- *   // Set the <div>'s width to 80 pixels and height to 20 pixels.
+ *   // Set the div's width to 80 pixels and height to 20 pixels.
  *   div.size(80, 20);
  *
  *   describe('A gray square with a pink rectangle near its top.');
@@ -3590,18 +3588,18 @@ p5.Element.prototype.hide = function () {
  *
  *   background(200);
  *
- *   // Create a pink <div> and place it at the top-left corner.
+ *   // Create a pink div element and place it at the top-left corner.
  *   let div = createDiv();
  *   div.position(10, 10);
  *   div.style('background-color', 'deeppink');
  *
- *   // Set the <div>'s width to 80 pixels and height to 40 pixels.
+ *   // Set the div's width to 80 pixels and height to 40 pixels.
  *   div.size(80, 40);
  *
- *   // Get the <div>'s size as an object.
+ *   // Get the div's size as an object.
  *   let s = div.size();
  *
- *   // Display the <div>'s dimensions.
+ *   // Display the div's dimensions.
  *   div.html(`${s.width} x ${s.height}`);
  *
  *   describe('A gray square with a pink rectangle near its top. The text "80 x 40" is written within the rectangle.');
@@ -3611,6 +3609,9 @@ p5.Element.prototype.hide = function () {
  *
  * <div>
  * <code>
+ * let img1;
+ * let img2;
+ *
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -3618,7 +3619,7 @@ p5.Element.prototype.hide = function () {
  *
  *   // Load an image of an astronaut on the moon
  *   // and place it at the top-left of the canvas.
- *   let img1 = createImg(
+ *   img1 = createImg(
  *     'assets/moonwalk.jpg',
  *     'An astronaut walking on the moon',
  *     ''
@@ -3628,7 +3629,7 @@ p5.Element.prototype.hide = function () {
  *   // Load an image of an astronaut on the moon
  *   // and place it at the top-left of the canvas.
  *   // Resize the image once it's loaded.
- *   let img2 = createImg(
+ *   img2 = createImg(
  *     'assets/moonwalk.jpg',
  *     'An astronaut walking on the moon',
  *     '',
@@ -3717,14 +3718,14 @@ p5.Element.prototype.size = function (w, h) {
  *
  *   background(200);
  *
- *   // Create a <p>.
+ *   // Create a paragraph element.
  *   p = createP('p5*js');
  *   p.position(10, 10);
  *
  *   describe('The text "p5*js" written at the center of a gray square. ');
  * }
  *
- * // Remove the <p> when double-clicked.
+ * // Remove the paragraph when the user double-clicks.
  * function doubleClicked() {
  *   p.remove();
  * }
@@ -3826,22 +3827,21 @@ p5.Element.prototype.remove = function () {
  *
  *   background(200);
  *
- *   // Call functions when the user
- *   // drops a file on the canvas
+ *   // Call functions when the user drops a file on the canvas
  *   // and when the file loads.
  *   c.drop(handleFile, handleDrop);
  *
  *   describe('A gray square. When the user drops an image on the square, it is displayed. The id attribute of canvas element is also displayed.');
  * }
  *
+ * // Display the image when it loads.
  * function handleFile(file) {
  *   // Remove the current image, if any.
  *   if (img) {
  *     img.remove();
  *   }
  *
- *   // Create an <img> element with the
- *   // dropped file.
+ *   // Create an img element with the dropped file.
  *   img = createImg(file.data, '');
  *   img.hide();
  *
@@ -3849,23 +3849,21 @@ p5.Element.prototype.remove = function () {
  *   image(img, 0, 0, width, height);
  * }
  *
+ * // Display the file's name when it loads.
  * function handleDrop(event) {
  *   // Remove current paragraph, if any.
  *   if (msg) {
  *     msg.remove();
  *   }
  *
- *   // Use event to get the drop
- *   // target's id.
+ *   // Use event to get the drop target's id.
  *   let id = event.target.id;
  *
- *   // Write the canvas' id
- *   // beneath it.
+ *   // Write the canvas' id beneath it.
  *   msg = createP(id);
  *   msg.position(0, 100);
  *
- *   // Set the font color
- *   // randomly for each drop.
+ *   // Set the font color randomly for each drop.
  *   let c = random(['red', 'green', 'blue']);
  *   msg.style('color', c);
  *   msg.style('font-size', '12px');
@@ -3926,63 +3924,62 @@ p5.Element.prototype.drop = function (callback, fxn) {
  * `myElement.draggable(otherElement)`, the other element will become draggable.
  *
  * @method draggable
- * @param  {p5.Element} [elmnt]       pass another p5.Element
+ * @param  {p5.Element} [elmnt]  another <a href="#/p5.Element">p5.Element</a>.
  * @chainable
  *
  * @example
  * <div>
  * <code>
+ * let stickyNote;
+ * let textInput;
+ *
  * function setup() {
  *   createCanvas(100, 100);
  *
  *   background(200);
  *
- *   // Create a note <div> and style it.
- *   let note = createDiv('Note');
- *   note.position(5, 5);
- *   note.size(75, 20);
- *   note.style('font-size', '16px');
- *   note.style('background', 'yellow');
- *   note.style('color', '#000');
- *   note.style('border', '1px solid #aaaa00');
- *   note.style('padding', '5px');
+ *   // Create a div element and style it.
+ *   stickyNote = createDiv('Note');
+ *   stickyNote.position(5, 5);
+ *   stickyNote.size(80, 20);
+ *   stickyNote.style('font-size', '16px');
+ *   stickyNote.style('font-family', 'Comic Sans MS');
+ *   stickyNote.style('background', 'orchid');
+ *   stickyNote.style('padding', '5px');
  *
- *   // Make the post-it draggable.
- *   note.draggable();
+ *   // Make the note draggable.
+ *   stickyNote.draggable();
  *
- *   // Override the cursor (optional)
- *   // note.style('cursor', 'help');
- *
- *   // Create a GUI <div> and style it.
- *   let gui = createDiv('');
- *   gui.position(5, 40);
- *   gui.size(85, 50);
- *   gui.style('font-size', '16px');
- *   gui.style('background', 'yellow');
- *   gui.style('z-index', '100');
- *   gui.style('border', '1px solid #00aaaa');
- *
- *   // Create a panel <div> and style it.
- *   let panel = createDiv('= PANEL =');
- *   panel.style('background', 'cyan');
- *   panel.style('padding', '2px');
+ *   // Create a panel div and style it.
+ *   let panel = createDiv('');
+ *   panel.position(5, 40);
+ *   panel.size(80, 50);
+ *   panel.style('background', 'orchid');
+ *   panel.style('font-size', '16px');
+ *   panel.style('padding', '5px');
  *   panel.style('text-align', 'center');
  *
- *   // Attach the panel to the GUI.
- *   panel.parent(gui);
+ *   // Make the panel draggable.
+ *   panel.draggable();
  *
- *   // Make the GUI draggable.
- *   panel.draggable(gui);
+ *   // Create a text input and style it.
+ *   textInput = createInput('Note');
+ *   textInput.size(70);
  *
- *   // Create a slider <input> and style it.
- *   let slider = createSlider(0, 100, 50);
- *   slider.style('cursor', 'pointer');
- *   slider.size(80, 5);
+ *   // Add the input to the panel.
+ *   textInput.parent(panel);
  *
- *   // Add the slider to the GUI.
- *   slider.parent(gui);
+ *   // Call handleInput() when text is input.
+ *   textInput.input(handleInput);
  *
- *   describe('A gray square with two yellow rectangles that move when dragged. The top rectangle says "Note". The bottom rectangle says "Panel" and has a range slider.');
+ *   describe(
+ *     'A gray square with two yellow rectangles that move when dragged. The top rectangle says "Note". The bottom rectangle says "Panel" and has a range slider.'
+ *   );
+ * }
+ *
+ * // Update stickyNote's HTML when text is input.
+ * function handleInput() {
+ *   stickyNote.html(textInput.value());
  * }
  * </code>
  * </div>
@@ -5479,7 +5476,7 @@ p5.MediaElement = MediaElement;
  *
  *   background(200);
  *
- *   // Create a file <input> and place it beneath the canvas.
+ *   // Create a file input and place it beneath the canvas.
  *   // Call displayInfo() when the file loads.
  *   let input = createFileInput(displayInfo);
  *   input.position(0, 100);
@@ -5487,8 +5484,7 @@ p5.MediaElement = MediaElement;
  *   describe('A gray square with a file input beneath it. If the user loads a file, its info is written in black.');
  * }
  *
- * // Display the p5.File's info
- * // once it loads.
+ * // Display the p5.File's info once it loads.
  * function displayInfo(file) {
  *   background(200);
  *
@@ -5513,7 +5509,7 @@ p5.MediaElement = MediaElement;
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   // Create a file <input> and place it beneath the canvas.
+ *   // Create a file input and place it beneath the canvas.
  *   // Call handleImage() when the file image loads.
  *   let input = createFileInput(handleImage);
  *   input.position(0, 100);
@@ -5609,8 +5605,7 @@ class File {
      * @example
      * <div>
      * <code>
-     * // Use the file input to load a
-     * // file and display its info.
+     * // Use the file input to load a file and display its info.
      *
      * function setup() {
      *   createCanvas(100, 100);
@@ -5718,8 +5713,7 @@ class File {
      * @example
      * <div>
      * <code>
-     * // Use the file input to load a
-     * // file and display its info.
+     * // Use the file input to load a file and display its info.
      *
      * function setup() {
      *   createCanvas(100, 100);
@@ -5757,8 +5751,7 @@ class File {
      * @example
      * <div>
      * <code>
-     * // Use the file input to load a
-     * // file and display its info.
+     * // Use the file input to load a file and display its info.
      *
      * function setup() {
      *   createCanvas(100, 100);
