@@ -1318,8 +1318,13 @@ class Renderer2D extends p5.Renderer {
       this._setProperty('_textStyle', this._textFont.font.styleName);
     }
 
+    let fontNameString = font || 'sans-serif';
+    if (/\s/.exec(fontNameString)) {
+      // If the name includes spaces, surround in quotes
+      fontNameString = `"${fontNameString}"`;
+    }
     this.drawingContext.font = `${this._textStyle || 'normal'} ${this._textSize ||
-      12}px "${font || 'sans-serif'}"`;
+      12}px ${fontNameString}`;
 
     this.drawingContext.textAlign = this._textAlign;
     if (this._textBaseline === constants.CENTER) {
