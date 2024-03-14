@@ -225,7 +225,7 @@ p5.Shader = class {
       uniform.name = uniformName;
       uniform.type = uniformInfo.type;
       uniform._cachedData = undefined;
-      if (uniform.type === gl.SAMPLER_2D) {
+      if (uniform.type === gl.SAMPLER_2D || uniform.type === gl.SAMPLER_CUBE) {
         uniform.samplerIndex = samplerIndex;
         samplerIndex++;
         this.samplers.push(uniform);
@@ -539,6 +539,7 @@ p5.Shader = class {
         }
         break;
       case gl.SAMPLER_2D:
+      case gl.SAMPLER_CUBE:
         gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
         uniform.texture =
           data instanceof p5.Texture ? data : this._renderer.getTexture(data);
