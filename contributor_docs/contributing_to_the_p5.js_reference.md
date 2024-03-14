@@ -410,5 +410,5 @@ This will launch a live preview of the rendered reference that will update each 
 
 For additional details about the reference system, you can checkout the documentation for [JSDoc](https://jsdoc.app/) and [YUIDoc](https://yui.github.io/yuidoc/).
 
-For examples of issues related to the reference, have a look at [#6519](https://github.com/processing/p5.js/issues/6519) and [#6045](https://github.com/processing/p5.js/issues/6045). The [contributor guidelines](https://docs.google.com/document/d/1roBu-7s9xspuie3M6EhEokYWc82DZhDNYO2SQiY4k68/edit?tab=t.0#heading=h.627q50vo09fb) document is also a good place to start.
+For examples of issues related to the reference, have a look at [#6519](https://github.com/processing/p5.js/issues/6519) and [#6045](https://github.com/processing/p5.js/issues/6045). The [contributor guidelines](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md) document is also a good place to start.
 
