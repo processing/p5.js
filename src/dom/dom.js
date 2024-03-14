@@ -3973,7 +3973,7 @@ p5.Element.prototype.drop = function (callback, fxn) {
  *   textInput.input(handleInput);
  *
  *   describe(
- *     'A gray square with two yellow rectangles that move when dragged. The top rectangle says "Note". The bottom rectangle says "Panel" and has a range slider.'
+ *     'A gray square with two purple rectangles that move when dragged. The top rectangle displays the text that is typed into the bottom rectangle.'
  *   );
  * }
  *
