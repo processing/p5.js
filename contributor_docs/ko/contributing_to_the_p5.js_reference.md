@@ -1,13 +1,12 @@
-# Contributing to the p5.js Reference
+# p5.js 레퍼런스에 기여하기
 
-In p5.js, we author the code reference you see on the [reference](https://p5js.org/reference/) page on the p5.js website by including them alongside the library’s source code as specialized comments. These reference comments include the description, the function’s signature (its parameters and return value), and usage examples. In other words, the content on each p5.js function/variable’s reference page is built from the reference comments in the source code.
+p5.js에서는 소스 코드에 특별한 형태의 주석을 함께 작성하는 방법을 통해 공식 웹사이트 [레퍼런스](https://p5js.org/reference/) 페이지에서 확인할 수 있는 코드 레퍼런스를 생성합니다. 레퍼런스 주석(reference comments)에는 설명, 함수의 시그니처(매개변수와 반환 값), 그리고 사용 예제가 포함됩니다. 다시 말해, p5.js 함수 및 변수의 레퍼런스 페이지에서 보여지는 모든 내용은 소스코드와 함께 작성된 레퍼런스 주석을 통해 만들어집니다.
 
-This document will show you how to write and format the reference comments so that they can eventually be rendered onto the website correctly. You should follow this guide whenever you are editing or writing a reference for any p5.js function or variable.
+이 문서에서 우리는 웹사이트에서 레퍼런스가 올바르게 렌더링될 수 있도록 레퍼런스 주석을 작성하고 형식을 지정하는 법을 알아보겠습니다. p5.js 함수 및 변수의 레퍼런스를 수정하거나 작성할 때 반드시 다음 가이드를 준수해 주시기 바랍니다.
 
+## 레퍼런스 주석(reference comments) 작동 방식에 대한 간단한 소개
 
-## A quick introduction to how reference comments work
-
-When you look at the source code of p5.js, you will see many lines in the library being reference comments; they look like this:
+p5.js 소스 코드를 보면 많은 라인이 레퍼런스 주석으로 작성되어 있는 것을 확인할 수 있습니다. 일반적으로 다음과 같은 모습입니다.
 
 ```
 /**
@@ -64,14 +63,13 @@ When you look at the source code of p5.js, you will see many lines in the librar
  */
 ```
 
-They are usually followed by the actual JavaScript code that defines the function. Reference comments always start with `/**` and end with `*/`, with each line in between the two starting with `*`.
+레퍼런스 주석 뒤에는 일반적으로 함수를 정의하는 실제 자바스크립트 코드가 뒤따릅니다. 레퍼런스 주석은 항상 `/**`로 시작하고 `*/`로 끝나며, 시작과 끝 사이의 각 라인은 `*`로 시작합니다.
 
-Anything in a block in this manner will be interpreted as reference documentation. You may be familiar with this style of code comments through [JSDoc](https://jsdoc.app/). While p5.js does not use JSDoc, it uses a very similar tool called [YUIDoc](https://yui.github.io/yuidoc/), which has a very similar reference syntax. In this style of reference comments, each comment block is further divided into individual elements, which we will have a look at next. 
+이러한 방식으로 작성된 블록 안에 있는 모든 내용은 레퍼런스 문서로 해석될 것입니다. 만약 여러분이 [JSDoc](https://jsdoc.app/)을 접해본 적이 있다면, 이런 스타일의 코드 주석이 익숙하게 느껴질 수 있습니다. p5.js는 JSDoc을 사용하는 것은 아니지만, JSDoc과 매우 유사한 문법을 가진 [YUIDoc](https://yui.github.io/yuidoc/)을 사용하고 있습니다.이 스타일의 레퍼런스 주석에서는 각 주석 블록이 더 작은 개별 요소로 나뉘어 집니다. 이제부터 그 요소들을 더 자세히 알아보겠습니다.
 
+## 레퍼런스 주석 블록
 
-## Reference comments block
-
-Let’s break down the reference comments block above for the `sin()` function and see what each section does. You can compare what you see in the comments here and what you can see on the reference page for [`sin()`](https://p5js.org/reference/#/p5/sin).
+앞서 보았던 `sin()` 함수의 레퍼런스 주석 블록을 조금 더 자세히 살펴보고, 각 섹션이 어떤 역할을 하는지 알아봅시다. 주석으로 작성한 내용이 실제 [`sin()`](https://p5js.org/reference/#/p5/sin) 레퍼런스 페이지에서는 어떻게 보여지게 되는지 비교해보세요.
 
 ```
 /**
@@ -81,7 +79,7 @@ Let’s break down the reference comments block above for the `sin()` function a
  * <a href="#/p5/angleMode">angleMode</a>.
 ```
 
-At the very top of the comment is the text description of the function. This description can contain both markdown syntax and HTML. The description should be concise and describe what the function does and, if necessary, some details about its quirks or behaviors.
+주석의 맨 위에는 함수의 설명이 텍스트로 작성되어 있습니다. 이 설명에는 마크다운 구문과 HTML이 모두 포함될 수 있어요. 설명은 간결하게 작성되어야 하며, 필요하다면 함수의 특이사항이나 작동 방식에 관한 세부 내용을 추가하여 함수가 어떤 일을 하는지 최대한 잘 설명해야 합니다.
 
 ```
  * @method sin
@@ -89,59 +87,56 @@ At the very top of the comment is the text description of the function. This des
  * @return {Number} sine of the angle.
 ```
 
-A function will typically have the three sections above, each starting with an `@` symbol followed by one of the following keywords:
+함수에 대한 주석은 일반적으로 위 세 개의 섹션을 포함하는데, 각각 `@` 기호 뒤에 다음 중 하나의 키워드가 따라옵니다.
 
-- `@method` is used to define the name of the function, in this case `sin` (note that the function name does not include the brackets `()`).
-- `@param` is used to define the parameters or arguments that the function accepts.
-  - Following the keyword `@param`, stored in curly brackets `{}` is the type of the parameter.
-  - After the type, the next word (angle) is the name of the parameter.
-  - After the name, the rest of the line is the description of the parameter.
-- `@return` is used to define the return value of the function.
-  - Following the keyword `@return`, stored in curly brackets `{}` is the type of the return value.
-  - After the type, the rest of the line is the description of the return value.
+- `@method`는 함수의 이름을 정의할 때 사용합니다. 이 예시에서 함수의 이름은 `sin`입니다.(함수 이름에는 괄호 `()`가 포함되지 않는다는 점을 주의하세요)
+- `@param`은 함수가 받는 매개변수나 인자를 정의할 때 사용합니다.
+  - `@param` 키워드 다음에 중괄호 `{}`로 감싸져 있는 부분은 매개변수의 타입을 의미합니다.
+  - 타입 다음에 나오는 단어는(이 예시의 angle) 매개변수의 이름을 의미합니다.
+  - 이름 다음에 나오는 나머지 부분은 매개변수를 설명하는 부분입니다.
+- `@return`은 함수의 반환 값을 정의할 때 사용합니다.
+  - `@return` 키워드 다음에 중괄호 `{}`로 감싸져 있는 부분은 반환 값의 타입을 의미합니다.
+  - 타입 다음에 나오는 나머지 부분은 반환 값을 설명하는 부분입니다.
 
-More generically for parameters, you should follow this format:
+일반적으로 매개변수는 다음 형식을 따라야 합니다.
 
 ```
 @param {type} name Description here.
 ```
 
-If the parameter is optional, add square brackets around the name:
+매개변수가 선택 사항(optional parameter)인 경우에는 이름을 대괄호로 감싸주세요.
 
 ```
 @param {type} [name] Description here.
 ```
 
-
-### Additional info: Constants
-
-If the parameter takes one or more values defined in [`constants.js`](https://github.com/processing/p5.js/blob/main/src/core/constants.js) , then the type should be specified as `{Constant}` and the valid values should be enumerated in the comment following the `either` keyword, e.g.:
-
-```
-@param {Constant} horizAlign horizontal alignment, either LEFT, CENTER, or RIGHT
-```
-
-For return types you should follow this format:
+반환 값은 아래 형식을 따라야 합니다.
 
 ```
 @return {type} Description of the data returned.
 ```
 
-If the function does not return a value, the `@return` tag can be left out.
+만약 반환 값이 없는 함수라면, `@return` 태그를 생략해도 됩니다.
 
+### 더 알아보기: 상수(constants)
 
-### Additional info: Chaining
+만약 매개변수가 취하는 값이 [`constants.js`](https://github.com/processing/p5.js/blob/main/src/core/constants.js)에 정의된 값들 중 하나라면, 타입은 `{Constant}`로 지정되어야 하며, `either` 키워드와 함께 유효한 값들을 나열해야 합니다. 예를 들면, 다음과 같습니다.
 
-If the method returns the parent object, you can skip the `@return` tag and add this line instead:
+```
+@param {Constant} horizAlign horizontal alignment, either LEFT, CENTER, or RIGHT
+```
+
+### 더 알아보기: 체이닝(chaining)
+
+만약 함수가 부모 객체를 반환하는 경우라면, `@return` 태그를 생략하고 대신 다음 줄을 추가할 수 있습니다.
 
 ```
 @chainable
 ```
 
+## 추가 시그니처
 
-## Additional signatures
-
-If a function has multiple possible parameter options, you can specify each individually. For example, the [`background()`](http://p5js.org/reference/#p5/background) function takes a number of different parameter options (see "Syntax" section on the reference page). Choose one version to list as the first signature using the template above. At the end of the first reference comment block, you can add additional signatures, each in its own block, using only the `@method` and `@param` tags following the example below.
+만약 함수가 여러 개의 매개변수 옵션을 가진다면, 각각을 개별적으로 명시할 수 있습니다. 예를 들어, [`background()`](http://p5js.org/reference/#p5/background) 함수는 다양한 매개변수 옵션을 지원하고 있습니다(background() 레퍼런스 페이지에서 "문법" 섹션을 확인해 보세요). 먼저 여러 옵션 중 하나를 선택하여, 앞서 살펴본 형식에 따라 첫 번째 시그니처에 관한 주석을 작성합니다. 첫 번째 주석 블록이 끝나면, 뒤이어 다른 시그니처를 추가 작성할 수 있습니다. 각각의 추가 시그니처는 ’@method’와 ‘@param’ 태그만 사용하여 작성할 수 있으며, 각자의 블록 범위 내에 작성되어야 합니다. 아래 예시를 참고해 주세요.
 
 ```
 /**
@@ -159,15 +154,13 @@ If a function has multiple possible parameter options, you can specify each indi
  */
 ```
 
+### 더 알아보기: 다중 시그니처
 
-### Additional info: Multiple signatures
+만약 두 시그니처 간의 유일한 차이점이 선택적 매개변수의 추가뿐이라면, 별도의 시그니처를 만들 필요는 없습니다. 가능한 이 기능의 사용을 제한해주세요. 레퍼런스를 필요 이상으로 복잡하게 만들 수 있기 때문입니다.
 
-It is not necessary to create a separate signature if the only difference between two signatures is the addition of an optional parameter. Limit the use of this feature if possible because it can create unnecessary noise in the reference.
+## p5.js 변수 레퍼런스
 
-
-## Reference for p5.js variables
-
-So far, we have looked at how to write references for functions and constants. Variables follow the same structure but use different tags.
+지금까지 우리는 함수와 상수에 대한 레퍼런스를 작성하는 방법에 대해 알아보았습니다. 변수 레퍼런스도 비슷한 구조를 따르지만 사용되는 태그가 다릅니다.
 
 ```
 /**
@@ -194,16 +187,15 @@ So far, we have looked at how to write references for functions and constants. V
  */
 ```
 
-The start of the block contains the description of the variable (`mouseX` in this case). To define the name of the variable, we use `@property` instead of `@method`. `@property` follows the same syntax as `@param` for defining the type and its name. The `@readonly` tag is present on most p5.js variables and is used internally to indicate this value should not be overwritten directly by a library user.
+블록의 시작 부분에는 변수의 설명이 작성되어 있습니다(이 예시에서는 `mouseX`). 변수의 이름을 정의하기 위해, `@method` 대신 `@property`를 사용합니다. `@property`는 `@params`와 같은 방식으로 타입과 이름을 정의할 수 있습니다. `@readonly` 태그는 대부분의 p5.js 변수에 설정되어 있으며, 사용자에 의해 값이 덮어씌워지지 않아야 함을 내부적으로 나타내기 위해 사용됩니다.
 
+## 예제 추가하기
 
-## Adding examples
-
-One tag that is present in both `sin()` and `mouseX`’s reference comments that we have not talked about yet is the `@example` tag. This tag is where you define the code example(s) that is run when you visit the reference page.
+`sin()`과 `mouseX` 각각의 주석에서 모두 찾아볼 수 있지만, 아직 다루지 않은 태그가 하나 있습니다. 바로 `@example` 태그입니다. 이 태그는 레퍼런스 페이지를 방문할 때 실행될 예제 코드를 작성하는 곳입니다.
 
 ![Screenshot of the p5.js reference page of the "red()" function, showing only the example code section.](images/reference-screenshot.png)
 
-The relevant `@example` tag to create the above is as follows:
+위의 예제를 만들어내는 `@example` 태그는 다음과 같습니다.
 
 ```
  * @example
@@ -223,9 +215,9 @@ The relevant `@example` tag to create the above is as follows:
  * </div>
 ```
 
-After the `@example` tag, you should start an HTML `<div>` tag followed by a `<code>` tag. In between the opening and closing `<code>`  tag, you will insert the relevant example code. The basic principle of writing good example code for the reference is to keep things simple and minimal. The example should be meaningful and explain how the feature works without being too complicated. The example’s canvas should be 100x100 pixels and if the `setup()` function is not included, such as in the example above, the code will be automatically wrapped in a `setup()` function with a default 100x100 pixels gray background canvas created. We won’t go through the details about best practices and code style for the example code here; please see the reference style guide instead.
+`@example` 태그 다음에는 HTML `<div>` 태그를 시작하고, 그 다음에 `<code>` 태그를 이어야 합니다. 그리고 열린 `<code>` 태그와 닫힌 `</code>` 태그 사이에, 예제 코드를 작성하면 됩니다. 좋은 예제 코드를 작성하기 위한 기본 원칙은 가능한 단순하고 작게 작성하는 겁니다. 예제는 의미가 있어야 하고, 기능이 어떻게 작동하는지 너무 복잡하지 않게 설명할 수 있어야 합니다. 예제의 캔버스는 100x100 픽셀의 크기를 가져야 합니다. 만약 위의 예제와 같이 `setup()` 함수가 작성되지 않은 경우라면, 100x100 픽셀 크기의 회색 배경 캔버스를 만드는 `setup()` 함수가 자동으로 래핑됩니다. 예제 코드에 대한 모범 사례 및 코드 스타일에 대한 자세한 내용은 여기서 다루지 않습니다. 대신 레퍼런스 스타일 가이드를 참고해 주세요.
 
-You can have multiple examples for one feature.To do so, add an additional `<div>` and `<code>` HTML block right after the first closed, separated by a blank line.
+하나의 기능에 대해서 여러 개의 예제를 작성할 수 있습니다. 첫 번째 예제 코드 블록이 닫힌 후에 한 줄을 구분해서 비워두고, `<div>` 및 `<code>` 블록을 추가하여 작성하면 됩니다.
 
 ```
 * @example
@@ -244,7 +236,7 @@ You can have multiple examples for one feature.To do so, add an additional `<div
 * </div>
 ```
 
-If you do not want the reference page to execute your example code (i.e., you just want the code to show up), include the class “`norender`” in the `<div>`:
+만약, 레퍼런스 페이지에서 예제 코드가 실행되길 원하지 않는다면(단지 코드를 보여주고 싶을 뿐이라면), `<div>`에 "`norender`" 클래스를 추가해주세요.
 
 ```
 * @example
@@ -256,7 +248,7 @@ If you do not want the reference page to execute your example code (i.e., you ju
 * </div>
 ```
 
-If you do not want the example to be run as part of the automated tests (for example, if the example requires user interaction), include the class “`notest`” in the `<div>`:
+만약, 예제 코드가 자동화된 테스트 과정에서 실행되길 원하지 않는다면(예를 들어, 사용자 상호작용이 필요한 경우), `<div>`에 "`notest`" 클래스를 추가해주세요.
 
 ```
 * @example
@@ -268,12 +260,11 @@ If you do not want the example to be run as part of the automated tests (for exa
 * </code></div>
 ```
 
-If your example uses external asset files, put them in the [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) folder (or reuse one already in there) then link to them with "assets/filename.ext" in the code. See the [tint()](http://p5js.org/reference/#/p5/tint) reference for example.
+만약, 예제 코드가 외부 에셋 파일을 사용해야 한다면, 필요한 파일들을 [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) 폴더에 넣어두세요(이미 해당 폴더에 존재하는 파일을 재사용해도 됩니다). 그리고 코드에서 "assets/filename.ext" 경로로 파일을 불러와 사용하면 됩니다. [tint()](http://p5js.org/reference/#/p5/tint) 레퍼런스를 참고하세요.
 
+### `describe()`로 캔버스 설명 추가하기
 
-### Add a canvas description using `describe()`
-
-Finally, for every example you add, you are required to use the p5.js function `describe()` in the example to create a screen-reader accessible description for the canvas. Include only one parameter: a string with a brief description of what is happening on the canvas. 
+마지막으로, 여러분이 추가한 모든 예제에 대해, 스크린 리더가 읽어낼 수 있도록 캔버스 설명을 추가해야 합니다. p5.js 함수 `describe()`를 사용해서요. 매개 변수는 딱 하나입니다. 캔버스에서 어떤 일이 벌어지고 있는지 간략하게 설명하는 문자열 하나면 됩니다.
 
 ```
 * @example
@@ -306,16 +297,13 @@ Finally, for every example you add, you are required to use the p5.js function `
 * </div>
 ```
 
-For more on `describe()` visit the [web accessibility contributor documentation](https://p5js.org/contributor-docs/#/web_accessibility?id=user-generated-accessible-canvas-descriptions).
+`describe()`에 관한 더 자세한 설명은 [web accessibility contributor documentation](https://p5js.org/contributor-docs/#/web_accessibility?id=user-generated-accessible-canvas-descriptions)를 참고하세요.
 
-With all the above you should have most of the tools needed to write and edit p5.js reference comments. However, there are a few more specialized usage of JSDoc style reference comments that you may come across in p5.js. These are situationally useful and not something that you need often.
+지금까지의 설명으로 p5.js 레퍼런스 주석을 작성하고 편집하는 작업에 필요한 준비를 모두 마쳤습니다. 그러나, p5.js에는 아직 JSDoc 스타일의 레퍼런스 주석을 더 전문적으로 활용하는 방법이 몇 가지 더 남아있습니다. 이 방법들은 상황에 따라 유용할 수 있으나, 자주 필요한 것은 아닙니다.
 
+### `@private` 태그
 
-### `@private` tag
-
-You can use the `@private` if a property or variable is a private function or variable. If a feature is marked as `@private` it will not be included as part of the rendered reference on the website. The reason to use the `@private` tag to mark a reference comments block as private is when you document internal features for the library itself. For example, see the reference comments for `_start` below:
-
-   
+만약 속성이나 변수가 비공개(private) 함수 또는 비공개 변수라면 `@private` 태그를 쓸 수 있습니다. 만약 어떤 기능에 `@private` 태그가 있다면, 그 기능은 웹사이트의 레퍼런스로 렌더링되지 않습니다. `@private` 태그를 사용하여 레퍼런스 주석 블록을 비공개(private)로 만드는 이유는 라이브러리 자체에 대한 내부 기능을 문서화 하기 위해서입니다. 아래에 작성된 `_start`의 레퍼런스 주석이 바로 그런 사례입니다.
 
 ```
 /**
@@ -327,14 +315,13 @@ You can use the `@private` if a property or variable is a private function or va
 p5.prototype._start = function () {
 ```
 
+### `@module` 태그 및 관련 태그들
 
-### `@module` and related tags
+각 소스 코드 파일 최상단에는 `@module` 태그가 있습니다. 모듈은 p5.js에서 다루는 기능들을 그룹화한 것으로, 공식 웹사이트의 레퍼런스 페이지에서 각각의 섹션으로 나뉘어 보여집니다. 각 모듈 내부에는 `@submodule` 태그로 정의된 추가적인 하위 모듈이 있습니다.
 
-At the top of each source code file will be a `@module` tag. Modules correspond to a group of features in p5.js which on the rendered reference page on the website are split into the corresponding sections. Inside each module, there are additional submodules defined with the `@submodule` tag.
+`@for` 태그는 이 모듈과 `p5` 전체 클래스 사이의 관계를 정의하여, 이 모듈이 `p5` 클래스의 일부라는 것을 효과적으로 나타냅니다.
 
-The `@for` tag defines the relationship between this module and the overall `p5` class, effectively saying this module is a part of the `p5` class.
-
-The `@requires` tag defines the required imported modules that the current module depends on.
+`@requires` 태그는 현재 모듈이 의존하고 있어, 반드시 가져와야(import) 하는 필수 모듈들을 정의합니다.
 
 ```
 /**
@@ -346,12 +333,11 @@ The `@requires` tag defines the required imported modules that the current modul
  */
 ```
 
-The convention p5.js follows is that each subfolder in the `src/` folder will be one `@module` while each file inside the subfolder will be its own `@submodule` under the overall subfolder’s `@module`. Unless you are adding new subfolders/files to the p5.js source code, you shouldn’t need to edit this reference comments block.
+p5.js에서 따르는 규칙은 `src/` 폴더 내의 각 서브폴더가 하나의 `@module`이 되며, 서브폴더 내의 각 파일이 `@module`에 속한 `@submodule`이 된다는 것입니다. p5.js 소스 코드에 새로운 서브폴더나 파일을 추가하지 않는 한, 이 레퍼런스 주석 블록을 편집할 필요가 없습니다.
 
+### `@class` 태그
 
-### `@class` tag
-
-Class constructors are defined with the `@class` tag and the `@constructor` tag. The format for this block is similar to how a function is defined with the `@method` block, the class’s name will need to be defined with the `@class` tag and the `@constructor` tag will indicate the class has a constructor function. See the example below for the `p5.Color` class:
+클래스 생성자는 `@class` 태그와 `@constructor` 태그로 정의됩니다. 이 블록의 형식은 `@method` 블록으로 함수가 정의되는 방식과 유사하며, 클래스의 이름은 `@class` 태그로 정의되어야 하고, `@constructor` 태그는 클래스에 생성자 함수가 있음을 나타냅니다. `p5.Color` 클래스에 대한 아래 예시를 참고하세요.
 
 ```
 /**
@@ -382,32 +368,30 @@ Class constructors are defined with the `@class` tag and the `@constructor` tag.
  */
 ```
 
+## 레퍼런스 생성과 미리보기
 
-## Generating and previewing the reference
+p5.js 리포지터리는 p5.js 웹사이트를 빌드하고 실행하지 않아도 레퍼런스를 생성하고 미리 볼 수 있도록 설정되어 있습니다.
 
-The p5.js repository is set up so that you can generate and preview the reference without needing to build and run the p5.js website as well.
-
-- The main command to generate the reference from the reference comments in the source code is to run the following command. 
+- 소스 코드의 레퍼런스 주석으로부터 레퍼런스를 생성하기 위한 명령어는 다음과 같습니다.
 
 ```
 npm run docs
 ```
 
-This will generate the necessary preview files and the main `docs/reference/data.json` file, which is the same file (after minification) that will be used to render the reference page on the website.
+이 과정을 통해 필요한 미리보기 파일들과 주요 `docs/reference/data.json` 파일이 생성됩니다. 이 파일은 웹 사이트에서 레퍼런스 페이지를 렌더링하는데 사용되는 것과 동일한 파일(경량화 후)입니다.
 
-- For continuous work on the reference, you can run the following command.
+- 레퍼런스 작업을 연속적으로 수행하기 위해 다음 명령어를 실행할 수 있습니다.
 
 ```
 npm run docs:dev
 ```
 
-This will launch a live preview of the rendered reference that will update each time you make changes (you will need to refresh the page after making changes to see them appear). This is useful, especially for previewing example code running in the browser.
+이 명령어는 변경사항이 생길때마다 레퍼런스 렌더링을 업데이트하는 실시간 미리보기(live preview) 기능을 시작합니다(변경 후에는 페이지를 새로고침 해야 변경 사항이 나타납니다). 이는 특히 브라우저에서 실행 중인 예제 코드를 미리 보는데 유용합니다.
 
-- The main template files are stored in the `docs/` folder and, in most cases, you should not make changes directly to files in this folder, except to add new asset files in the `docs/yuidoc-p5-theme/assets` folder.
+- 주요 템플릿 파일들은 `docs/` 폴더에 저장되어 있으며, 대부분의 경우 이 폴더 내의 파일들을 직접 변경해서는 안 됩니다. 단, `docs/yuidoc-p5-theme/assets` 폴더에 새로운 에셋 파일을 추가하는 경우에는 예외입니다.
 
+## 다음 단계로
 
-## Next steps
+레퍼런스 시스템에 대한 추가 세부 사항을 알고 싶다면 [JSDoc](https://jsdoc.app/) 및 [YUIDoc](https://yui.github.io/yuidoc/) 문서를 확인해 보세요.
 
-For additional details about the reference system, you can checkout the documentation for [JSDoc](https://jsdoc.app/) and [YUIDoc](https://yui.github.io/yuidoc/).
-
-For examples of issues related to the reference, have a look at [#6519](https://github.com/processing/p5.js/issues/6519) and [#6045](https://github.com/processing/p5.js/issues/6045). The [contributor guidelines](https://docs.google.com/document/d/1roBu-7s9xspuie3M6EhEokYWc82DZhDNYO2SQiY4k68/edit?tab=t.0#heading=h.627q50vo09fb) document is also a good place to start.
+레퍼런스와 관련된 주요 이슈(issues)를 살펴보고 싶다면, [#6519](https://github.com/processing/p5.js/issues/6519)와 [#6045](https://github.com/processing/p5.js/issues/6045)를 확인해 보세요. [기여자 가이드라인](https://docs.google.com/document/d/1roBu-7s9xspuie3M6EhEokYWc82DZhDNYO2SQiY4k68/edit?tab=t.0#heading=h.627q50vo09fb) 문서도 시작하기에 좋은 자료입니다.
