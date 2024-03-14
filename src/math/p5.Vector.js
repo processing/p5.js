@@ -3101,7 +3101,7 @@ p5.Vector = class {
   // Static Methods
 
   /**
- * Create a new 2D vector from an angle.
+ * Creates a new 2D vector from an angle.
  *
  * @method fromAngle
  * @static
@@ -3179,7 +3179,7 @@ p5.Vector = class {
   }
 
   /**
- * Create a new 3D vector from a pair of ISO spherical angles.
+ * Creates a new 3D vector from a pair of ISO spherical angles.
  *
  * @method fromAngles
  * @static
@@ -3251,7 +3251,7 @@ p5.Vector = class {
   }
 
   /**
- * Create a new 2D unit vector with a random heading.
+ * Creates a new 2D unit vector with a random heading.
  *
  * @method random2D
  * @static
@@ -3319,7 +3319,7 @@ p5.Vector = class {
   }
 
   /**
- * Create a new 3D unit vector with a random heading.
+ * Creates a new 3D unit vector with a random heading.
  *
  * @method random3D
  * @static
