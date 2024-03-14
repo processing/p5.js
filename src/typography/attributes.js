@@ -34,42 +34,64 @@ import p5 from '../core/main';
  * @example
  * <div>
  * <code>
- * strokeWeight(0.5);
- * line(50, 0, 50, 100);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * textSize(16);
- * textAlign(RIGHT);
- * text('ABCD', 50, 30);
- * textAlign(CENTER);
- * text('EFGH', 50, 50);
- * textAlign(LEFT);
- * text('IJKL', 50, 70);
+ *   background(200);
  *
- * describe('The letters ABCD displayed at top-left, EFGH at center, and IJKL at bottom-right. A vertical line divides the canvas in half.');
+ *   // Draw a vertical line.
+ *   strokeWeight(0.5);
+ *   line(50, 0, 50, 100);
+ *
+ *   // Top line.
+ *   textSize(16);
+ *   textAlign(RIGHT);
+ *   text('ABCD', 50, 30);
+ *
+ *   // Middle line.
+ *   textAlign(CENTER);
+ *   text('EFGH', 50, 50);
+ *
+ *   // Bottom line.
+ *   textAlign(LEFT);
+ *   text('IJKL', 50, 70);
+ *
+ *   describe('The letters ABCD displayed at top-left, EFGH at center, and IJKL at bottom-right. A vertical line divides the canvas in half.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * strokeWeight(0.5);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * line(0, 12, width, 12);
- * textAlign(CENTER, TOP);
- * text('TOP', 50, 12);
+ *   background(200);
  *
- * line(0, 37, width, 37);
- * textAlign(CENTER, CENTER);
- * text('CENTER', 50, 37);
+ *   strokeWeight(0.5);
  *
- * line(0, 62, width, 62);
- * textAlign(CENTER, BASELINE);
- * text('BASELINE', 50, 62);
+ *   // First line.
+ *   line(0, 12, width, 12);
+ *   textAlign(CENTER, TOP);
+ *   text('TOP', 50, 12);
  *
- * line(0, 97, width, 97);
- * textAlign(CENTER, BOTTOM);
- * text('BOTTOM', 50, 97);
+ *   // Second line.
+ *   line(0, 37, width, 37);
+ *   textAlign(CENTER, CENTER);
+ *   text('CENTER', 50, 37);
  *
- * describe('The words "TOP", "CENTER", "BASELINE", and "BOTTOM" each drawn relative to a horizontal line. Their positions demonstrate different vertical alignments.');
+ *   // Third line.
+ *   line(0, 62, width, 62);
+ *   textAlign(CENTER, BASELINE);
+ *   text('BASELINE', 50, 62);
+ *
+ *   // Fourth line.
+ *   line(0, 97, width, 97);
+ *   textAlign(CENTER, BOTTOM);
+ *   text('BOTTOM', 50, 97);
+ *
+ *   describe('The words "TOP", "CENTER", "BASELINE", and "BOTTOM" each drawn relative to a horizontal line. Their positions demonstrate different vertical alignments.');
+ * }
  * </code>
  * </div>
  */
@@ -84,7 +106,9 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
 
 /**
  * Sets the spacing between lines of text when
- * <a href="#/p5/text">text()</a> is called. Spacing is measured in pixels.
+ * <a href="#/p5/text">text()</a> is called.
+ *
+ * Note: Spacing is measured in pixels.
  *
  * Calling `textLeading()` without an argument returns the current spacing.
  *
@@ -95,15 +119,23 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  * @example
  * <div>
  * <code>
- * // "\n" starts a new line of text.
- * let lines = 'one\ntwo';
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * text(lines, 10, 25);
+ *   background(200);
  *
- * textLeading(30);
- * text(lines, 70, 25);
+ *   // "\n" starts a new line of text.
+ *   let lines = 'one\ntwo';
  *
- * describe('The words "one" and "two" written on separate lines twice. The words on the left have less vertical spacing than the words on the right.');
+ *   // Left.
+ *   text(lines, 10, 25);
+ *
+ *   // Right.
+ *   textLeading(30);
+ *   text(lines, 70, 25);
+ *
+ *   describe('The words "one" and "two" written on separate lines twice. The words on the left have less vertical spacing than the words on the right.');
+ * }
  * </code>
  * </div>
  */
@@ -118,25 +150,38 @@ p5.prototype.textLeading = function(theLeading) {
 
 /**
  * Sets the font size when
- * <a href="#/p5/text">text()</a> is called. Font size is measured in pixels.
+ * <a href="#/p5/text">text()</a> is called.
+ *
+ * Note: Font size is measured in pixels.
  *
  * Calling `textSize()` without an arugment returns the current size.
  *
  * @method textSize
- * @param {Number} size size of the letters in units of pixels
+ * @param {Number} size size of the letters in units of pixels.
  * @chainable
  *
  * @example
  * <div>
  * <code>
- * textSize(12);
- * text('Font Size 12', 10, 30);
- * textSize(14);
- * text('Font Size 14', 10, 60);
- * textSize(16);
- * text('Font Size 16', 10, 90);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * describe('The text "Font Size 12" drawn small, "Font Size 14" drawn medium, and "Font Size 16" drawn large.');
+ *   background(200);
+ *
+ *   // Top.
+ *   textSize(12);
+ *   text('Font Size 12', 10, 30);
+ *
+ *   // Middle.
+ *   textSize(14);
+ *   text('Font Size 14', 10, 60);
+ *
+ *   // Bottom.
+ *   textSize(16);
+ *   text('Font Size 16', 10, 90);
+ *
+ *   describe('The text "Font Size 12" drawn small, "Font Size 14" drawn medium, and "Font Size 16" drawn large.');
+ * }
  * </code>
  * </div>
  */
@@ -151,32 +196,48 @@ p5.prototype.textSize = function(theSize) {
 
 /**
  * Sets the style for system fonts when
- * <a href="#/p5/text">text()</a> is called. `textStyle()` accepts the
- * following values: `NORMAL`, `ITALIC`, `BOLD` or `BOLDITALIC`.
+ * <a href="#/p5/text">text()</a> is called.
+ *
+ * The parameter, `style`, can be either `NORMAL`, `ITALIC`, `BOLD`, or
+ * `BOLDITALIC`.
  *
  * `textStyle()` may be overridden by CSS styling. This function doesn't
  * affect fonts loaded with <a href="#/p5/loadFont">loadFont()</a>.
  *
  * @method textStyle
  * @param {Constant} style styling for text, either NORMAL,
- *                            ITALIC, BOLD or BOLDITALIC
+ *                            ITALIC, BOLD or BOLDITALIC.
  * @chainable
  * @example
  * <div>
  * <code>
- * textSize(12);
- * textAlign(CENTER);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * textStyle(NORMAL);
- * text('Normal', 50, 15);
- * textStyle(ITALIC);
- * text('Italic', 50, 40);
- * textStyle(BOLD);
- * text('Bold', 50, 65);
- * textStyle(BOLDITALIC);
- * text('Bold Italic', 50, 90);
+ *   background(200);
  *
- * describe('The words "Normal" displayed normally, "Italic" in italic, "Bold" in bold, and "Bold Italic" in bold italics.');
+ *   // Style the text.
+ *   textSize(12);
+ *   textAlign(CENTER);
+ *
+ *   // First row.
+ *   textStyle(NORMAL);
+ *   text('Normal', 50, 15);
+ *
+ *   // Second row.
+ *   textStyle(ITALIC);
+ *   text('Italic', 50, 40);
+ *
+ *   // Third row.
+ *   textStyle(BOLD);
+ *   text('Bold', 50, 65);
+ *
+ *   // Fourth row.
+ *   textStyle(BOLDITALIC);
+ *   text('Bold Italic', 50, 90);
+ *
+ *   describe('The words "Normal" displayed normally, "Italic" in italic, "Bold" in bold, and "Bold Italic" in bold italics.');
+ * }
  * </code>
  * </div>
  */
@@ -190,7 +251,7 @@ p5.prototype.textStyle = function(theStyle) {
 };
 
 /**
- * Returns the maximum width of a string of text drawn when
+ * Calculates the maximum width of a string of text drawn when
  * <a href="#/p5/text">text()</a> is called.
  *
  * @method textWidth
@@ -200,13 +261,22 @@ p5.prototype.textStyle = function(theStyle) {
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
+ *   // Style the text.
  *   textSize(28);
  *   strokeWeight(0.5);
+ *
+ *   // Calculate the text width.
  *   let s = 'yoyo';
  *   let w = textWidth(s);
+ *
+ *   // Display the text.
  *   text(s, 22, 55);
+ *
+ *   // Underline the text.
  *   line(22, 55, 22 + w, 55);
  *
  *   describe('The word "yoyo" underlined.');
@@ -217,14 +287,23 @@ p5.prototype.textStyle = function(theStyle) {
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
+ *   // Style the text.
  *   textSize(28);
  *   strokeWeight(0.5);
+ *
+ *   // Calculate the text width.
  *   // "\n" starts a new line.
  *   let s = 'yo\nyo';
  *   let w = textWidth(s);
+ *
+ *   // Display the text.
  *   text(s, 22, 55);
+ *
+ *   // Underline the text.
  *   line(22, 55, 22 + w, 55);
  *
  *   describe('The word "yo" written twice, one copy beneath the other. The words are divided by a horizontal line.');
@@ -256,9 +335,10 @@ p5.prototype.textWidth = function (...args) {
 };
 
 /**
- * Returns the ascent of the current font at its current size. The ascent
- * represents the distance, in pixels, of the tallest character above
- * the baseline.
+ * Calculates the ascent of the current font at its current size.
+ *
+ * The ascent represents the distance, in pixels, of the tallest character
+ * above the baseline.
  *
  * @method textAscent
  * @return {Number} ascent measured in units of pixels.
@@ -272,7 +352,11 @@ p5.prototype.textWidth = function (...args) {
  * }
  *
  * function setup()  {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
+ *
+ *   // Style the text.
  *   textFont(font);
  *
  *   // Different for each font.
@@ -284,6 +368,7 @@ p5.prototype.textWidth = function (...args) {
  *   // Draw small text.
  *   textSize(24);
  *   text('dp', 0, baseY);
+ *
  *   // Draw baseline and ascent.
  *   let a = textAscent() * fontScale;
  *   line(0, baseY, 23, baseY);
@@ -292,6 +377,7 @@ p5.prototype.textWidth = function (...args) {
  *   // Draw large text.
  *   textSize(48);
  *   text('dp', 45, baseY);
+ *
  *   // Draw baseline and ascent.
  *   a = textAscent() * fontScale;
  *   line(45, baseY, 91, baseY);
@@ -308,9 +394,10 @@ p5.prototype.textAscent = function(...args) {
 };
 
 /**
- * Returns the descent of the current font at its current size. The descent
- * represents the distance, in pixels, of the character with the longest
- * descender below the baseline.
+ * Calculates the descent of the current font at its current size.
+ *
+ * The descent represents the distance, in pixels, of the character with the
+ * longest descender below the baseline.
  *
  * @method textDescent
  * @return {Number} descent measured in units of pixels.
@@ -324,7 +411,11 @@ p5.prototype.textAscent = function(...args) {
  * }
  *
  * function setup()  {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
+ *
+ *   // Style the font.
  *   textFont(font);
  *
  *   // Different for each font.
@@ -336,6 +427,7 @@ p5.prototype.textAscent = function(...args) {
  *   // Draw small text.
  *   textSize(24);
  *   text('dp', 0, baseY);
+ *
  *   // Draw baseline and descent.
  *   let d = textDescent() * fontScale;
  *   line(0, baseY, 23, baseY);
@@ -344,6 +436,7 @@ p5.prototype.textAscent = function(...args) {
  *   // Draw large text.
  *   textSize(48);
  *   text('dp', 45, baseY);
+ *
  *   // Draw baseline and descent.
  *   d = textDescent() * fontScale;
  *   line(45, baseY, 91, baseY);
@@ -368,8 +461,9 @@ p5.prototype._updateTextMetrics = function() {
 
 /**
  * Sets the style for wrapping text when
- * <a href="#/p5/text">text()</a> is called. `textWrap()` accepts the
- * following values:
+ * <a href="#/p5/text">text()</a> is called.
+ *
+ * The parameter, `style`, can be one of the following values:
  *
  * `WORD` starts new lines of text at spaces. If a string of text doesn't
  * have spaces, it may overflow the text box and the canvas. This is the
@@ -389,25 +483,58 @@ p5.prototype._updateTextMetrics = function() {
  * @example
  * <div>
  * <code>
- * textSize(20);
- * textWrap(WORD);
- * text('Have a wonderful day', 0, 10, 100);
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textSize(20);
+ *   textWrap(WORD);
+ *
+ *   // Display the text.
+ *   text('Have a wonderful day', 0, 10, 100);
+ *
+ *   describe('The text "Have a wonderful day" written across three lines.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * textSize(20);
- * textWrap(CHAR);
- * text('Have a wonderful day', 0, 10, 100);
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textSize(20);
+ *   textWrap(CHAR);
+ *
+ *   // Display the text.
+ *   text('Have a wonderful day', 0, 10, 100);
+ *
+ *   describe('The text "Have a wonderful day" written across two lines.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * textSize(20);
- * textWrap(CHAR);
- * text('祝你有美好的一天', 0, 10, 100);
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textSize(20);
+ *   textWrap(CHAR);
+ *
+ *   // Display the text.
+ *   text('祝你有美好的一天', 0, 10, 100);
+ *
+ *   describe('The text "祝你有美好的一天" written across two lines.');
+ * }
  * </code>
  * </div>
  */
