@@ -10,7 +10,7 @@ import p5 from '../main';
 import * as constants from '../constants';
 
 /**
- * Changes the way ellipses, circles, and arcs are drawn.
+ * Changes where ellipses, circles, and arcs are drawn.
  *
  * By default, the first two parameters of
  * <a href="#/p5/ellipse">ellipse()</a>, <a href="#/p5/circle">circle()</a>,
@@ -182,7 +182,7 @@ p5.prototype.noSmooth = function() {
 };
 
 /**
- * Changes the way rectangles and squares are drawn.
+ * Changes where rectangles and squares are drawn.
  *
  * By default, the first two parameters of
  * <a href="#/p5/rect">rect()</a> and <a href="#/p5/square">square()</a>,
@@ -538,7 +538,7 @@ p5.prototype.strokeJoin = function(join) {
 };
 
 /**
- * Sets the width of the stroke used for points, lines, and the border around
+ * Sets the width of the stroke used for points, lines, and the outlines of
  * shapes.
  *
  * Note: `strokeWeight()` is affected by transformations, especially calls to
