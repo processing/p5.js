@@ -1,11 +1,9 @@
-# Steward Guidelines
+# Directrices para Administradores
 
 
-#TESTING COMMENT MARCELA
-Whether you have just joined us as a steward, are a seasoned maintainer of p5.js, or are somewhere in between, this guide contains information as well as tips and tricks that will help you effectively contribute to p5.js. Most of what is written here are guidelines unless otherwise stated, which means you can adapt the practices shown here to suit your workflow.
+Ya sea que recién te hayas unido a nosotros como administrador, seas un mantenedor experimentado de p5.js, o estés en algún punto intermedio, esta guía contiene información, así como consejos y trucos que te ayudarán a contribuir de manera efectiva a p5.js. La mayor parte de lo que se escribe aquí son pautas, a menos que se indique lo contrario, lo que significa que puedes adaptar las prácticas mostradas aquí para que se ajusten a tu flujo de trabajo.
 
-
-## Table of Contents
+## Tabla de Contenidos
 
 - [Issues](steward_guidelines.md#issues)
   - [Bug report](steward_guidelines.md#bug-report)
