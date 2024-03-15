@@ -295,12 +295,12 @@ p5.prototype.blend = function(...args) {
  * the source region if it isn't the same size as the destination region.
  *
  * The next four parameters, `sx`, `sy`, `sw`, and `sh` determine the region
- * to blend from the source image. `(sx, sy)` is the top-left corner of the
- * region. `sw` and `sh` are the regions width and height.
+ * to copy from the source image. `(sx, sy)` is the top-left corner of the
+ * region. `sw` and `sh` are the region's width and height.
  *
  * The next four parameters, `dx`, `dy`, `dw`, and `dh` determine the region
- * of the canvas to blend into. `(dx, dy)` is the top-left corner of the
- * region. `dw` and `dh` are the regions width and height.
+ * of the canvas to copy into. `(dx, dy)` is the top-left corner of the
+ * region. `dw` and `dh` are the region's width and height.
  *
  * @method copy
  * @param  {p5.Image|p5.Element} srcImage source image.
