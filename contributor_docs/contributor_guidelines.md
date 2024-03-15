@@ -1,3 +1,5 @@
+<!-- Start here if you are looking to participate on GitHub! -->
+
 # Contributor Guidelines
 
 Welcome to the contributor guidelines! This document is for new contributors looking to contribute code to p5.js, contributors looking to refresh their memories on some technical steps, or just about anything else to do with code contributions to p5.js.

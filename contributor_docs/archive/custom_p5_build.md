@@ -1,3 +1,5 @@
+<!-- Instructions on how to combine just the p5.js modules you need into a single file. -->
+
 # Creating a custom build of p5.js with select components
 
 ## Overview

@@ -1,3 +1,5 @@
+<!-- The features p5.js provides to help keep sketches accessible to everyone. -->
+
 # p5.js Web Accessibility
 
 This document describes the structure of p5.js’ web accessibility features for contributors.

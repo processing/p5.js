@@ -1,3 +1,5 @@
+<!-- How we decide what to support. -->
+
 # Supported browsers
 
 ## Our stated goal

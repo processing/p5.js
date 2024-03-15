@@ -1,3 +1,5 @@
+<!-- An overview of the Friendly Error System codebase and a reference for developers. -->
+
 # Friendly Errors System Contribution Guide
 
 The `core/friendly_errors` folder contains the code for the p5js’ Friendly Error Systems (FES) responsible for generating Friendly Error messages or Friendly Errors. You may have seen Friendly Error messages starting with “`🌸 p5.js says:`” in your console, supplementing default, browser-generated error messages.
