@@ -118,6 +118,7 @@ p5.Image = class {
      * @property {Number} width
      * @name width
      * @readOnly
+     *
      * @example
      * <div>
      * <code>
@@ -154,6 +155,7 @@ p5.Image = class {
      * @property height
      * @name height
      * @readOnly
+     *
      * @example
      * <div>
      * <code>
@@ -197,7 +199,8 @@ p5.Image = class {
      * An array containing the color of each pixel in the image.
      *
      * Colors are stored as numbers representing red, green, blue, and alpha
-     * (RGBA) values. `img.pixels` is a one-dimensional array for performance reasons.
+     * (RGBA) values. `img.pixels` is a one-dimensional array for performance
+     * reasons.
      *
      * Each pixel occupies four elements in the pixels array, one for each
      * RGBA value. For example, the pixel at coordinates (0, 0) stores its
@@ -208,15 +211,16 @@ p5.Image = class {
      * for a 100×100 <a href="#/p5.Image">p5.Image</a> object has
      * 100 × 100 × 4 = 40,000 elements.
      *
-     * Accessing the RGBA values for a pixel in the
-     * <a href="#/p5.Image">p5.Image</a> object requires a little math as
-     * shown below. The <a href="#/p5.Image/loadPixels">img.loadPixels()</a>
+     * Accessing the RGBA values for a pixel in the image requires a little
+     * math as shown in the examples below. The
+     * <a href="#/p5.Image/loadPixels">img.loadPixels()</a>
      * method must be called before accessing the `img.pixels` array. The
      * <a href="#/p5.Image/updatePixels">img.updatePixels()</a> method must be
      * called after any changes are made.
      *
      * @property {Number[]} pixels
      * @name pixels
+     *
      * @example
      * <div>
      * <code>
@@ -382,6 +386,7 @@ p5.Image = class {
    * values.
    *
    * @method loadPixels
+   *
    * @example
    * <div>
    * <code>
@@ -465,12 +470,11 @@ p5.Image = class {
    * <a href="#/p5.Image/set">img.set()</a>.
    *
    * The optional parameters `x`, `y`, `width`, and `height` define a
-   * subsection of the <a href="#/p5.Image">p5.Image</a> object to update.
-   * Doing so can improve performance in some cases.
+   * subsection of the image to update. Doing so can improve performance in
+   * some cases.
    *
-   * If the <a href="#/p5.Image">p5.Image</a> object was loaded from a GIF,
-   * then calling `img.updatePixels()` will update the pixels in current
-   * frame.
+   * If the image was loaded from a GIF, then calling `img.updatePixels()`
+   * will update the pixels in current frame.
    *
    * @method updatePixels
    * @param {Integer} x x-coordinate of the upper-left corner
@@ -479,6 +483,7 @@ p5.Image = class {
    *                    of the subsection to update.
    * @param {Integer} w width of the subsection to update.
    * @param {Integer} h height of the subsection to update.
+   *
    * @example
    * <div>
    * <code>
@@ -556,8 +561,7 @@ p5.Image = class {
   }
 
   /**
-   * Gets a pixel or a region of pixels from a
-   * <a href="#/p5.Image">p5.Image</a> object.
+   * Gets a pixel or a region of pixels from the image.
    *
    * `img.get()` is easy to use but it's not as fast as
    * <a href="#/p5.Image/pixels">img.pixels</a>. Use
@@ -565,18 +569,19 @@ p5.Image = class {
    *
    * The version of `img.get()` with no parameters returns the entire image.
    *
-   * The version of `img.get()` with two parameters interprets them as
-   * coordinates. It returns an array with the `[R, G, B, A]` values of the
-   * pixel at the given point.
+   * The version of `img.get()` with two parameters, as in `img.get(10, 20)`,
+   * interprets them as coordinates. It returns an array with the
+   * `[R, G, B, A]` values of the pixel at the given point.
    *
-   * The version of `img.get()` with four parameters interprets them as
-   * coordinates and dimensions. It returns a subsection of the canvas as a
-   * <a href="#/p5.Image">p5.Image</a> object. The first two parameters are
-   * the coordinates for the upper-left corner of the subsection. The last two
-   * parameters are the width and height of the subsection.
+   * The version of `img.get()` with four parameters, as in
+   * `img,get(10, 20, 50, 90)`, interprets them as
+   * coordinates and dimensions. The first two parameters are the coordinates
+   * of the upper-left corner of the subsection. The last two parameters are
+   * the width and height of the subsection. It returns a subsection of the
+   * canvas in a new <a href="#/p5.Image">p5.Image</a> object.
    *
-   * Use <a href="#/p5.Image/get">img.get()</a> to work directly with
-   * <a href="#/p5.Image">p5.Image</a> objects.
+   * Use `img.get()` instead of <a href="#/p5/get">get()</a> to work directly
+   * with images.
    *
    * @method get
    * @param  {Number}               x x-coordinate of the pixel.
@@ -584,6 +589,7 @@ p5.Image = class {
    * @param  {Number}               w width of the subsection to be returned.
    * @param  {Number}               h height of the subsection to be returned.
    * @return {p5.Image}             subsection as a <a href="#/p5.Image">p5.Image</a> object.
+   *
    * @example
    * <div>
    * <code>
@@ -662,7 +668,7 @@ p5.Image = class {
    *   let img2 = img.get(0, 0, img.width / 2, img.height / 2);
    *
    *   // Display half of the image.
-   *   image(img2, width / 2, height / 2);
+   *   image(img2, 50, 50);
    *
    *   describe('A mountain landscape drawn on top of another mountain landscape.');
    * }
@@ -709,6 +715,7 @@ p5.Image = class {
    * @param {Number|Number[]|Object}   a grayscale value | pixel array |
    *                                   <a href="#/p5.Color">p5.Color</a> object |
    *                                   <a href="#/p5.Image">p5.Image</a> to copy.
+   *
    * @example
    * <div>
    * <code>
@@ -837,6 +844,7 @@ p5.Image = class {
    * @method resize
    * @param {Number} width resized image width.
    * @param {Number} height resized image height.
+   *
    * @example
    * <div>
    * <code>
@@ -996,8 +1004,7 @@ p5.Image = class {
   }
 
   /**
-   * Copies pixels from a source <a href="#/p5.Image">p5.Image</a>
-   * to this image.
+   * Copies pixels from a source image to this image.
    *
    * The first parameter, `srcImage`, is an optional
    * <a href="#/p5.Image">p5.Image</a> object to copy. If a source image isn't
@@ -1100,13 +1107,11 @@ p5.Image = class {
   }
 
   /**
-   * Masks part of an image with another.
+   * Masks part of the image with another.
    *
    * `img.mask()` uses another <a href="#/p5.Image">p5.Image</a> object's
-   * alpha channel as the alpha channel for this image.
-   *
-   * Masks are cumulative. Once a mask has been applied to a
-   * <a href="#/p5.Image">p5.Image</a> object, it can't be removed.
+   * alpha channel as the alpha channel for this image. Masks are cumulative
+   * and can't be removed once applied.
    *
    * @method mask
    * @param {p5.Image} srcImage source image.
@@ -1229,6 +1234,7 @@ p5.Image = class {
    * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
    *                                POSTERIZE, ERODE, DILATE or BLUR.
    * @param  {Number} [filterParam] parameter unique to each filter.
+   *
    * @example
    * <div>
    * <code>
@@ -1420,8 +1426,7 @@ p5.Image = class {
   }
 
   /**
-   * Copies a region of pixels from another
-   * <a href="#/p5.Image">p5.Image</a> object into this one.
+   * Copies a region of pixels from another image into this one.
    *
     * The first parameter, `srcImage`, is the
    * <a href="#/p5.Image">p5.Image</a> object to blend.
@@ -1460,6 +1465,7 @@ p5.Image = class {
    *            color | luminosity
    *
    * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
+   *
    * @example
    * <div>
    * <code>
@@ -1607,14 +1613,15 @@ p5.Image = class {
    * Note: The browser will either save the file immediately or prompt the user
    * with a dialogue window.
    *
-   * The image will only be downloaded as an animated GIF if the
-   * <a href="#/p5.Image">p5.Image</a> object was loaded from a GIF file.
-   * See <a href="#/p5/saveGif">saveGif()</a> to create new GIFs.
+   * The image will only be downloaded as an animated GIF if it was loaded
+   * from a GIF file. See <a href="#/p5/saveGif">saveGif()</a> to create new
+   * GIFs.
    *
    * @method save
    * @param {String} filename filename. Defaults to 'untitled'.
    * @param  {String} [extension] file extension, either 'png' or 'jpg'.
    *                            Defaults to 'png'.
+   *
    * @example
    * <div>
    * <code>
@@ -1660,6 +1667,7 @@ p5.Image = class {
    * Restarts an animated GIF at its first frame.
    *
    * @method reset
+   *
    * @example
    * <div>
    * <code>
@@ -1708,6 +1716,7 @@ p5.Image = class {
    *
    * @method getCurrentFrame
    * @return {Number}       index of the GIF's current frame.
+   *
    * @example
    * <div>
    * <code>
@@ -1749,6 +1758,7 @@ p5.Image = class {
    *
    * @method setFrame
    * @param {Number} index index of the frame to display.
+   *
    * @example
    * <div>
    * <code>
