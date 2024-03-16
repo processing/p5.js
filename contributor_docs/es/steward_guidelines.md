@@ -109,55 +109,54 @@ Este tipo de problema tiene una plantilla(template) mínima ("Discusión") y deb
 
 ## Pull Requests
 
-Almost all code contributions to the p5.js repositories happen through pull requests. Stewards and maintainers may have push access to the repositories but are still encouraged to follow the same issue > PR > review process when contributing code. Here are the steps to review a PR:
+Casi todas las contribuciones de código a los repositorios de p5.js se realizan a través de solicitudes de extracción(Pull Request). Los administradores y mantenedores pueden tener acceso de escritura(push access) a los repositorios, pero aún se les anima a seguir el mismo proceso de issue > PR > proceso de revisión al contribuir con código. Aquí están los pasos para revisar una PR:
 
-- Pull request template can be found [here](https://github.com/processing/p5.js/blob/main/.github/PULL_REQUEST_TEMPLATE.md).
-- Almost all pull requests must have associated issues opened and discussed first, meaning the relevant [issue workflow](steward_guidelines.md#issues) must have been followed first before a PR should be reviewed by any steward or maintainer.
-  - The only instances where this does not apply are very minor typo fixes, which do not require an open issue and can be merged by anyone with merge access to the repo, even if they are not stewards of a particular area.
-  - While this exception exists, we will apply it in practice only while contributors are still encouraged to open new issues first. In other words, if in doubt about whether this exception applies, just open an issue anyway.
-- If a pull request does not fully solve the referenced issue, you can edit the original post and change "Resolves #OOOO" to "Addresses #OOOO" so that it does not automatically close the original issue when the PR is merged.
+- La plantilla de solicitud de extracción(pull request template) se puede encontrar [here](https://github.com/processing/p5.js/blob/main/.github/PULL_REQUEST_TEMPLATE.md).
+- Casi todas las solicitudes de extracción(pull requests ) deben tener problemas asociados abiertos y discutidos primero, lo que significa que los relevantes [issue workflow](steward_guidelines.md#issues) deben haber sido seguidos primero antes de que una PR sea revisada por cualquier administrador o mantenedor.
+  - Las únicas instancias donde esto no se aplica son correcciones muy menores de errores tipográficos(minor typo fixes), las cuales no requieren un problema abierto y pueden ser fusionadas(merged) por cualquier persona con acceso para fusionar(merge access) al repositorio, incluso si no son administradores de una área en particular.
+  - Si bien esta excepción existe, la aplicaremos en la práctica solo mientras se siga alentando a los contribuyentes a abrir nuevos problemas primero. En otras palabras, si tienes dudas sobre si esta excepción se aplica, simplemente abre un issue de todos modos.
+- Si una solicitud de extracción (pull request) no resuelve completamente el issue referenciado, puedes editar la publicación original y cambiar "Resolves #OOOO" a "Addresses #OOOO" para que no cierre automáticamente el problema original cuando la PR se fusione(merge).
 
 
-### Simple fix
+### Solución sencilla (Simple fix)
 
-Simple fixes, such as a small typo fix, can be merged directly by anyone with merge access.  Check on the PR "Files Changed" tab to ensure  that the automated CI test passes.
+Las correcciones simples(simple fix), como la corrección de un pequeño error tipográfico, pueden fusionarse(merge) directamente por cualquier persona con acceso para fusionar(aplicar merge). Verifica en la pestaña "Files Changed" de la PR para asegurarte de que la prueba automatizada de integración continua (CI) pase.
 
 ![The "files changed" tab when viewing a pull request on GitHub](images/files-changed.png)
 
 ![The "All checks have passed" indicator on a GitHub pull request, highlighted above the merge button](images/all-checks-passed.png)
 
 
-### Bug fix
+### Corrección de error (Bug fix) Seguir desde aqui.
 
-1. Bug fixes should be reviewed by the relevant area steward, ideally the same one that approved the referenced issue for fixing.
-2. The PR "Files Changed" tab can be used to initially review whether the fix is implemented as described in the issue discussion.
-3. The PR should be tested locally whenever possible and relevant. The GitHub CLI can help streamline some of the process. (See more below in [Tips & Tricks](steward_guidelines.md#tips-tricks)).
-   - [ ] The fix should address the original issue sufficiently.
-   - [ ] The fix should not change any existing behaviors unless agreed upon in the original issue.
-   - [ ] The fix should not have a significant performance impact on p5.js.
-   - [ ] The fix should not have any impact on p5.js' accessibility.
-   - [ ] The fix should use the modern standard of JavaScript coding.
-   - [ ] The fix should pass all automated tests and include new tests if relevant.
-4. If any additional changes are required, line comments should be added to the relevant lines as described [here](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/commenting-on-a-pull-request#adding-line-comments-to-a-pull-request).
-   - A suggestion block can also be used to suggest specific changes:\
+1. Bug fixes deberían ser revisado por el administrador del área relevante, idealmente el mismo que aprobó el issue referenciado para su corrección.
+2. La pestaña "Files Changed" de la PR se puede utilizar para revisar inicialmente si la corrección (el fix)se implementa según lo descrito en la discusión del issue.
+3. El PR Debería ser probado localmente siempre que sea posible y relevante. El GitHub CLI puede ayudar a agilizar parte del proceso. (Ver más abajo en [Tips & Tricks](steward_guidelines.md#tips-tricks)).
+   - [ ] El fix debe abordar suficientemente el problema original.
+   - [ ] El fix no debe cambiar ningún comportamiento existente a menos que se acuerde en el problema original.
+   - [ ] El fix no debe tener un impacto significativo en el rendimiento de p5.js.
+   - [ ] El fix no debe tener ningún impacto en la accesibilidad de p5.js.
+   - [ ] El fix debe utilizar el estándar moderno de codificación en JavaScript.
+   - [ ] El fix debe pasar todas las pruebas automatizadas e incluir nuevas pruebas(tests) si son relevantes.
+4. Si se requieren cambios adicionales, se deben agregar comentarios en línea a las líneas relevantes según se describió anteriormente [here](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/commenting-on-a-pull-request#adding-line-comments-to-a-pull-request).
+   - Un bloque de sugerencias también puede ser usado para sugerir cambios específicos:\
      ![The Suggest Change button while writing a comment on code in a GitHub pull request](images/suggest-change.png)\
      ![A suggested change appearing within code fences with the "suggestion" tag](images/suggested-value-change.png)\
      ![A suggested change previewed as a diff](images/suggestion-preview.png)
-   - If multiple changes are required, don’t add single-line comments many times. Instead, follow the procedure documented [here](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/reviewing-proposed-changes-in-a-pull-request) to make multiple-line comments and a single request for changes.
-   - If line comments are just for clarification or discussion, choose “Comment” instead of "Request changes":\
+   - Si se requieren múltiples cambios, no agregues comentarios de una sola línea muchas veces. En su lugar, sigue el procedimiento documentado [here](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/reviewing-proposed-changes-in-a-pull-request) para hacer comentarios de varias líneas y una sola solicitud de cambios (change request).
+   - Si los comentarios en línea son solo para aclaraciones o discusión, elige "Comment" en lugar de "Request changes":\
      ![The "comment" option circled within the GitHub Finish Review menu](images/comment-review.png)
-5. Once the PR has been reviewed and no additional changes are required, a steward can mark the PR as "Approved" by choosing the "Approve" option in the previous step, with or without additional comments. The steward can then either request additional review by another steward or maintainer if desired, merge the PR if they have merge access, or request a merge from a maintainer.
-
-6. @[all-contributors](https://allcontributors.org/docs/en/emoji-key) bot should be called to add any new contributors to the list of contributors in the README.md file. Each type of contribution can be indicated in place of `[contribution` `type]` below, the full list of available types of contributions can be found in the link above.
+5. Una vez que la PR haya sido revisada y no se requieran cambios adicionales, un administrador puede marcar la PR como "Approved" eligiendo la opción "Approve" en el paso anterior, con o sin comentarios adicionales. El administrador puede luego solicitar una revisión adicional por otro administrador o mantenedor si lo desea, fusionar(merge) la PR si tiene acceso para fusionar(merge access), o solicitar una fusión (request/solicitar merge) de un mantenedor.
+6. @[all-contributors](https://allcontributors.org/docs/en/emoji-key)El bot debería ser llamado para agregar cualquier nuevo colaborador a la lista de colaboradores en el archivo README.md. Cada tipo de contribución puede ser indicado en lugar de `[contribution` `type]` a continuación, se puede encontrar la lista completa de tipos de contribuciones disponibles en el enlace anterior.
 
 `@all-contributors` `please` `add` `@[GitHub` `handle]` `for` `[contribution` `type]`
 
 
-### New feature/feature enhancement
+### Nueva función/mejora de función (New feature/feature enhancement()
 
-The process for new feature or feature enhancement PR is similar to bug fixes with just one notable difference:
+El proceso para una nueva función o mejora de función en una PR es similar a la de correcciones de errores(bug fixes) con una diferencia notable:
 
-- A new feature/feature enhancement PR must be reviewed and approved by at least two stewards or maintainers before it can be merged.
+- Una PR de nueva función(new feature) o mejora de función(feature enhancement) debe ser revisada y aprobada por al menos dos administradores o mantenedores antes de que pueda fusionarse (be merged).
 
 
 ### Dependabot
