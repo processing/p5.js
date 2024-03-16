@@ -63,9 +63,9 @@ Los informes de errores de issues (Bug report issues)  deberían utilizar la pla
    
 
 
-### Feature request
+### Solicitud de función (Feature request)
 
-Feature request issues should use the "New Feature Request" issue template. The following workflow is typical for addressing feature requests:
+Las solicitudes de función de issue (Feature request issues) deberían utilizar la plantilla de problema(issue) "Nueva Solicitud de Función" ("New Feature Request") . El siguiente flujo de trabajo es típico para abordar las solicitudes de función:"
 
 1. As part of p5.js' commitment to increase access, a feature request must make a case for how it increases access of p5.js to communities that are historically marginalized in the field. More details are available [here](access.md).
    - If a feature request does not have the "Increasing Access" field sufficiently filled out, you can ask the issue author how the feature increases access.
