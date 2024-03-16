@@ -29,12 +29,12 @@ Ya sea que recién te hayas unido a nosotros como administrador, seas un mantene
 
 ## Issues
 
-Alentamos a la mayoría de las contribuciones de código fuente a comenzar con un problema, y como tal, los issues son el lugar donde la mayoría de las discusiones tendrán lugar. Los pasos a seguir al revisar un problema dependerán del tipo de problema que sea. El repositorio utiliza [GitHub issue templates] (https://github.com/processing/p5.js/blob/main/.github/ISSUE_TEMPLATE) para organizar mejor los diferentes tipos de problemas y alentar a los autores de problemas a proporcionar toda la información relevante sobre sus problemas. El primer paso al revisar el issue a menudo será revisar la plantilla completada y determinar si necesita información adicional (por ejemplo, porque algunos campos no se completaron o se utilizó la plantilla incorrecta.
+Alentamos a la mayoría de las contribuciones de código fuente a comenzar con un problema, y como tal, los issues son el lugar donde la mayoría de las discusiones tendrán lugar. Los pasos a seguir al revisar un problema dependerán del tipo de problema que sea. El repositorio utiliza [GitHub issue templates] (https://github.com/processing/p5.js/blob/main/.github/ISSUE_TEMPLATE) para organizar mejor los diferentes tipos de problemas y alentar a los autores de problemas a proporcionar toda la información relevante sobre sus problemas. El primer paso al revisar el issue a menudo será revisar la plantilla completada y determinar si necesita información adicional por ejemplo, porque algunos campos no se completaron o se utilizó la plantilla incorrecta.
 
 
-### Bug report
+### Reporte/informe de errores (Bug report)
 
-Bug report issues should use the "Found a bug" issue template. The following workflow is typical for addressing bug reports:
+Los informes de errores de issues (Bug report issues)  deberían utilizar la plantilla de problema(issue template) "Found a bug". El siguiente flujo de trabajo es típico para abordar los informes de errores:
 
 1. Replicate the bug
    - The goal of the template is to provide enough information for a reviewer to attempt to replicate the bug in question.
