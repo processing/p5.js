@@ -6,17 +6,17 @@ In p5.js, we author the code reference you see on the [reference](https://p5js.o
 
 This document will show you how to write and format the reference comments so that they can eventually be rendered onto the website correctly. You should follow this guide whenever you are editing or writing a reference for any p5.js function or variable.
 
-En p5.js, creamos la referencia del código que ves en la [página de referencia](https://p5js.org/reference/) en el sitio web de p5.js incluyéndolos junto al código fuente de la biblioteca como comentarios especializados. Estos comentarios de referencia incluyen la descripción, la firma de la función (sus parámetros y valor de retorno) y ejemplos de uso. En otras palabras, el contenido en la página de referencia de cada función/variable de p5.js se construye a partir de los comentarios de referencia en el código fuente.
+En p5.js, creamos las referencias de código que ves en la página de [referencia](https://p5js.org/reference/) del sitio web de p5.js incluyéndolas junto al código fuente de la biblioteca como comentarios especializados. Estos comentarios de referencia incluyen la descripción, la firma de la función (sus parámetros y valor de retorno) y ejemplos de uso. En otras palabras, el contenido en la página de referencia de cada función/variable de p5.js se construye a partir de los comentarios de referencia en el código fuente.
 
 Este documento te mostrará cómo escribir y formatear los comentarios de referencia para que eventualmente puedan ser renderizados correctamente en el sitio web. Debes seguir esta guía siempre que estés editando o escribiendo una referencia para cualquier función o variable de p5.js.
 
 ## A quick introduction to how reference comments work
 
-## Una breve introducción sobre cómo funcionan los comentarios de referencia
+## Una introducción rápida al funcionamiento de los comentarios de referencia
 
 When you look at the source code of p5.js, you will see many lines in the library being reference comments; they look like this:
 
-Cuando miras el código fuente de p5.js, verás muchas líneas en la biblioteca siendo comentarios de referencia; se ven así:
+Cuando miras el código fuente de p5.js, verás que muchas líneas en la biblioteca son comentarios de referencia; se ven así:
 
 ```
 /**
@@ -77,9 +77,9 @@ They are usually followed by the actual JavaScript code that defines the functio
 
 Anything in a block in this manner will be interpreted as reference documentation. You may be familiar with this style of code comments through [JSDoc](https://jsdoc.app/). While p5.js does not use JSDoc, it uses a very similar tool called [YUIDoc](https://yui.github.io/yuidoc/), which has a very similar reference syntax. In this style of reference comments, each comment block is further divided into individual elements, which we will have a look at next. 
 
-Generalmente, están seguidos por el código JavaScript real que define la función. Los comentarios de referencia siempre comienzan con /** y terminan con */, con cada línea entre los dos que comienza con *.
+Por lo general, están seguidos del código JavaScript real que define a la función. Los comentarios de referencia siempre comienzan con `/**` y terminan con `*/`, con cada línea entre los dos con `*` al inicio.
 
-Cualquier cosa en un bloque de esta manera se interpretará como documentación de referencia. Es posible que estés familiarizado con este estilo de comentarios de código a través de JSDoc. Aunque p5.js no usa JSDoc, utiliza una herramienta muy similar llamada YUIDoc, que tiene una sintaxis de referencia muy similar. En este estilo de comentarios de referencia, cada bloque de comentarios se divide aún más en elementos individuales, que veremos a continuación.
+Cualquier cosa en un bloque así se interpretará como documentación de referencia. Es posible que estés familiarizado con este estilo de comentarios de código a través de [JSDoc](https://jsdoc.app/). Aunque p5.js no usa JSDoc, utiliza una herramienta llamada [YUIDoc](https://yui.github.io/yuidoc/) que tiene una sintaxis para referencias muy similar. En este estilo de comentarios de referencia cada bloque de comentarios se subdivide en elementos individuales, como veremos a continuación.
 
 ## Reference comments block
 
@@ -87,7 +87,7 @@ Cualquier cosa en un bloque de esta manera se interpretará como documentación 
 
 Let’s break down the reference comments block above for the `sin()` function and see what each section does. You can compare what you see in the comments here and what you can see on the reference page for [`sin()`](https://p5js.org/reference/#/p5/sin).
 
-Desglosemos el bloque de comentarios de referencia anterior para la función sin() y veamos qué hace cada sección. Puedes comparar lo que ves en los comentarios aquí y lo que puedes ver en la página de referencia para sin().
+Desglosemos el bloque de comentarios de referencia anterior para la función `sin()` y veamos qué hace cada sección. Puedes comparar lo que ves en los comentarios aquí con la página de referencia para [`sin()`](https://p5js.org/reference/#/p5/sin).
 
 ```
 /**
@@ -120,15 +120,15 @@ A function will typically have the three sections above, each starting with an `
 
 More generically for parameters, you should follow this format:
 
-Una función generalmente tendrá las tres secciones anteriores, cada una comenzando con un símbolo @ seguido de una de las siguientes palabras clave:
+Una función normalmente tendrá las tres secciones anteriores, cada una comenzando con el símbolo `@` seguido de una de las siguientes palabras clave:
 
-- @method se usa para definir el nombre de la función, en este caso sin (nota que el nombre de la función no incluye los corchetes ()).
-@param se usa para definir los parámetros o argumentos que acepta la función.
-  - Después de la palabra clave @param, almacenada entre llaves {}, está el tipo del parámetro.
-  - Después del tipo, la siguiente palabra (ángulo) es el nombre del parámetro.
+- `@method` se usa para definir el nombre de la función, en este caso `sin` (nota que el nombre de la función no incluye los paréntesis `()`).
+- `@param` se usa para definir los parámetros o argumentos que acepta la función.
+  - Después de la palabra clave `@param`, almacenado entre llaves `{}`, está el tipo del parámetro.
+  - Después del tipo, la siguiente palabra (angle) es el nombre del parámetro.
   - Después del nombre, el resto de la línea es la descripción del parámetro.
-- @return se usa para definir el valor de retorno de la función.
-  - Después de la palabra clave @return, almacenada entre llaves {}, está el tipo del valor de retorno.
+- `@return` se usa para definir el valor de retorno de la función.
+  - Después de la palabra clave `@return`, almacenado entre llaves `{}`, está el tipo de valor del retorno.
   - Después del tipo, el resto de la línea es la descripción del valor de retorno.
 
 Más genéricamente para los parámetros, debes seguir este formato:
@@ -152,7 +152,7 @@ Si el parámetro es opcional, agrega corchetes alrededor del nombre:
 
 If the parameter takes one or more values defined in [`constants.js`](https://github.com/processing/p5.js/blob/main/src/core/constants.js) , then the type should be specified as `{Constant}` and the valid values should be enumerated in the comment following the `either` keyword, e.g.:
 
-Si el parámetro toma uno o más valores definidos en constants.js, entonces el tipo debe especificarse como {Constant} y los valores válidos deben enumerarse en el comentario que sigue a la palabra clave either, por ejemplo:
+Si el parámetro toma uno o más valores definidos en [`constants.js`](https://github.com/processing/p5.js/blob/main/src/core/constants.js), entonces el tipo debe especificarse como `{Constant}` y los valores válidos deben enumerarse en el comentario que sigue a la palabra clave `either`, por ejemplo:
 
 ```
 @param {Constant} horizAlign horizontal alignment, either LEFT, CENTER, or RIGHT
@@ -168,15 +168,15 @@ Para los tipos de retorno, debes seguir este formato:
 
 If the function does not return a value, the `@return` tag can be left out.
 
-Si la función no devuelve un valor, puedes omitir la etiqueta @return.
+Si la función no tiene un valor de retorno, puedes omitir la etiqueta `@return`.
 
 ### Additional info: Chaining
 
 ### Información adicional: Encadenamiento
-
+TODO: From here to the end. Fix translation of "parent object".
 If the method returns the parent object, you can skip the `@return` tag and add this line instead:
 
-Si el método devuelve el objeto padre, puedes omitir la etiqueta @return y agregar esta línea en su lugar:
+Si el método devuelve su objeto primario, puedes omitir la etiqueta `@return` y agregar esta línea en su lugar:
 
 ```
 @chainable
