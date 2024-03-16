@@ -75,7 +75,7 @@ Cuando miras el código fuente de p5.js, verás que muchas líneas en la bibliot
 
 They are usually followed by the actual JavaScript code that defines the function. Reference comments always start with `/**` and end with `*/`, with each line in between the two starting with `*`.
 
-Anything in a block in this manner will be interpreted as reference documentation. You may be familiar with this style of code comments through [JSDoc](https://jsdoc.app/). While p5.js does not use JSDoc, it uses a very similar tool called [YUIDoc](https://yui.github.io/yuidoc/), which has a very similar reference syntax. In this style of reference comments, each comment block is further divided into individual elements, which we will have a look at next. 
+Anything in a block in this manner will be interpreted as reference documentation. You may be familiar with this style of code comments through [JSDoc](https://jsdoc.app/). While p5.js does not use JSDoc, it uses a very similar tool called [YUIDoc](https://yui.github.io/yuidoc/), which has a very similar reference syntax. In this style of reference comments, each comment block is further divided into individual elements, which we will have a look at next.
 
 Por lo general, están seguidos del código JavaScript real que define a la función. Los comentarios de referencia siempre comienzan con `/**` y terminan con `*/`, con cada línea entre los dos con `*` al inicio.
 
@@ -173,10 +173,10 @@ Si la función no tiene un valor de retorno, puedes omitir la etiqueta `@return`
 ### Additional info: Chaining
 
 ### Información adicional: Encadenamiento
-TODO: From here to the end. Fix translation of "parent object".
+
 If the method returns the parent object, you can skip the `@return` tag and add this line instead:
 
-Si el método devuelve su objeto primario, puedes omitir la etiqueta `@return` y agregar esta línea en su lugar:
+Si el método devuelve el objeto de la superclase, puedes omitir la etiqueta `@return` y agregar esta línea en su lugar:
 
 ```
 @chainable
@@ -304,7 +304,7 @@ Puedes tener múltiples ejemplos para una función. Para hacerlo agrega un `<div
 * describe('An ellipse created using an arc with its top right open.');
 * </code>
 * </div>
-* 
+*
 * <div>
 * <code>
 * arc(50, 50, 80, 80, 0, PI, OPEN);
@@ -349,7 +349,7 @@ Si tu ejemplo utiliza archivos externos como recursos, colócalos en la carpeta 
 
 ### Agregar descripción a un lienzo usando `describe()`
 
-Finally, for every example you add, you are required to use the p5.js function `describe()` in the example to create a screen-reader accessible description for the canvas. Include only one parameter: a string with a brief description of what is happening on the canvas. 
+Finally, for every example you add, you are required to use the p5.js function `describe()` in the example to create a screen-reader accessible description for the canvas. Include only one parameter: a string with a brief description of what is happening on the canvas.
 
 Por último, para cada ejemplo que añadas, se requiere que utilices la función de p5.js `describe()` en el ejemplo para crear una descripción accesible del lienzo para lectores de pantalla. Incluye solo un parámetro: una cadena con una breve descripción de lo que está sucediendo en el lienzo.
 
@@ -367,7 +367,7 @@ Por último, para cada ejemplo que añadas, se requiere que utilices la función
 * }
 * </code>
 * </div>
-* 
+*
 * <div>
 * <code>
 * let noiseScale = 0.02;
@@ -400,12 +400,11 @@ You can use the `@private` if a property or variable is a private function or va
 
 Puedes usar la etiqueta `@private` si una propiedad o variable es una función o variable privada. Si una característica está marcada como `@private`, no se incluirá como parte de la referencia renderizada en el sitio web. La razón para usar la etiqueta `@private` para marcar un bloque de comentarios de referencia como privado es documentar características internas de la propia biblioteca. Por ejemplo, consulta los comentarios de referencia para `_start` a continuación:
 
-   
 
 ```
 /**
  * _start calls preload() setup() and draw()
- * 
+ *
  * @method _start
  * @private
  */
@@ -487,7 +486,7 @@ Los constructores de clases se definen con la etiqueta `@class`y la etiqueta `@c
 
 The p5.js repository is set up so that you can generate and preview the reference without needing to build and run the p5.js website as well.
 
-- The main command to generate the reference from the reference comments in the source code is to run the following command. 
+- The main command to generate the reference from the reference comments in the source code is to run the following command.
 
 El repositorio de p5.js está configurado para que puedas generar y previsualizar la referencia sin necesidad de compilar y ejecutar también el sitio web de p5.js.
 
@@ -526,6 +525,5 @@ For additional details about the reference system, you can checkout the document
 For examples of issues related to the reference, have a look at [#6519](https://github.com/processing/p5.js/issues/6519) and [#6045](https://github.com/processing/p5.js/issues/6045). The [contributor guidelines](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md) document is also a good place to start.
 
 Para más detalles sobre el sistema de referencia puedes consultar la documentación de [JSDoc](https://jsdoc.app/) y [YUIDoc](https://yui.github.io/yuidoc/).
-NOTE: I updated the link to the location were the spanish translation of `contributur_guidelines.md` will be.
-Para ver ejemplos de problemas relacionados con la referencia, echa un vistazo a [#6519](https://github.com/processing/p5.js/issues/6519) y [#6045](https://github.com/processing/p5.js/issues/6045). El documento de [pautas para contribuyentes](https://github.com/processing/p5.js/blob/main/contributor_docs/es/contributor_guidelines.md) también es un buen lugar para comenzar.
 
+Para ver ejemplos de problemas relacionados con la referencia, echa un vistazo a [#6519](https://github.com/processing/p5.js/issues/6519) y [#6045](https://github.com/processing/p5.js/issues/6045). El documento de [pautas para contribuyentes](https://github.com/processing/p5.js/blob/main/contributor_docs/es/contributor_guidelines.md) también es un buen lugar para comenzar.
