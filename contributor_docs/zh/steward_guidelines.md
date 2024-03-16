@@ -137,16 +137,17 @@ Dependabot的PR通常只对存储库管理员可见，如果这与您无关，�
 
 ---
 
-# 构建过程
+## 构建过程
 本节不涵盖一般的构建设置和命令，而是关于幕后发生的详细信息。关于上述内容，请参阅[贡献者指南](./contributor_guidelines.md#working-on-p5js-codebase)。
 
 Gruntfile.js文件包含了p5.js及其他内容的主要构建定义。构建库和文档所使用的不同工具包括但不限于Grunt、Browserify、YUIDoc、ESLint、Babel、Uglify和Mocha。从`default`任务开始，逆向分析可能会有所帮助。
 
-## 主要构建任务
+### 主要构建任务
 
 ```js
 grunt.registerTask('default', ['lint', 'test']);
 ```
+
 当我们运行`grunt`或npm脚本`npm test`时，我们运行包含`lint`和`test`的默认任务。
 
 ```js
@@ -155,6 +156,8 @@ grunt.registerTask('lint', ['lint:source', 'lint:samples']);
 `lint`任务包括两个子任务：`lint:source`和`lint:samples`。`lint:source`又进一步分为三个子任务：`eslint:build`、`eslint:source`和`eslint:test`，它们使用ESLint检查构建脚本、源代码和测试脚本。
 
 `lint:samples`任务首先运行`yui`任务，该任务本身包括`yuidoc:prod`、`clean:reference`和`minjson`，它们从源代码中提取文档到一个JSON文件中，删除上一步骤中未使用的文件，并将生成的JSON文件压缩为`data.min.json`。接下来，在`lint:samples`中，我们有一个名为`eslint-samples:source`的自定义任务，其定义位于[./tasks/build/eslint-samples.js](./tasks/build/eslint-samples.js)中，它将使用ESLint检查文档示例代码，以确保其遵循与p5.js的其余部分相同的编码规范（这里首先运行`yui`，因为我们需要先构建JSON文件，然后才能对示例进行检查）。
+
+#### `test` Task
 
 ```js
 grunt.registerTask('test', [
@@ -165,7 +168,9 @@ grunt.registerTask('test', [
   'nyc:report'
 ]);
 ```
+
 首先，让我们看一下`test`中的`build`任务。
+
 ```js
 grunt.registerTask('build', [
   'browserify',
@@ -174,54 +179,66 @@ grunt.registerTask('build', [
   'browserify:test'
 ]);
 ```
-以`browserify`开头的任务在[./tasks/build/browserify.js](./tasks/build/browserify.js)中定义。它们基本上都执行相同的步骤，只有细微的差异。以下是从许多源代码文件构建完整的p5.js库的主要步骤，将其合并为一个文件。`browserify`构建p5.js，而`browserify:min`构建下一步要进行缩小的中间文件。`browserify`和`browserify:min`之间的区别在于，`browserify:min`不包含FES运行所需的数据。`uglify`接收`browserify:min`的输出文件，并将其缩小为最终的p5.min.js（此步骤的配置在主Gruntfile.js中）。`browserify:test`构建的版本与完整的p5.js版本相同，只是添加了用于测试代码覆盖率报告的代码（使用Istanbul）。
 
-在browserify步骤中，除了将各种文件合并为一个文件外，还执行了其他几个步骤。首先，使用`brfs-babel`将`fs.readFileSync()`节点.js特定代码的使用替换为文件的实际内容。这主要用于WebGL代码，以内联着色器代码，同时将它们保留为单独的文件。
+以`browserify`开头的任务在[./tasks/build/browserify.js](./tasks/build/browserify.js)中定义。它们执行相似的步骤，但有一些细微的差异。以下是将众多 p5.js 源代码文件整合为一个完整库的主要步骤：
 
-接下来，使用Babel将来自node_modules的所有依赖项的源代码进行转译，以匹配package.json中定义的Browserslist要求，并将ES6导入语句转换为browserify理解的CommonJS `require()`。这还使得可以使用ES6及更高版本中的较新语法，而不必过多考虑浏览器兼容性。
+- `browserify`负责构建p5.js，而`browserify:min`则构建下一步要进行压缩的中间文件。`browserify`和`browserify:min`之间的区别在于，`browserify:min`不包含FES运行所需的数据。
+- `uglify`将`browserify:min`的输出文件压缩，生成最终的p5.min.js 文件（此步骤的配置在主Gruntfile.js中）。
+- `browserify:test`构建的版本与完整的p5.js版本相同，只是添加了用于测试代码覆盖率报告的代码（使用[Istanbul](https://istanbul.js.org/)）。
+
+在browserify步骤中，除了将各种文件合并为一个文件外，还执行了其他几个步骤。首先，使用`brfs-babel`将`fs.readFileSync()`节点.js特定代码的使用替换为文件的实际内容。这主要用于WebGL代码，以将作为独立文件编写的着色器代码内联到源代码中。
+
+接下来，使用Babel将来自node_modules的所有依赖项的源代码进行转译，以匹配在package.json中定义的[Browserslist](https://browsersl.ist/)要求，并将ES6导入语句转换为browserify能理解的CommonJS `require()`。这也使我们能够使用 ES6 及更高版本中可用的较新语法，而不必担心浏览器兼容性问题。
 
 在捆绑之后但将捆绑代码写入文件之前，如果不打算缩小代码，则通过`pretty-fast`进行清理，以使最终格式更加一致（我们预计可以阅读和检查p5.js源代码，如果需要的话）。
 
-这里省略了一些小的详细步骤，您可以查看上面链接的browserify构建定义文件，以更详细地了解所有内容。
+这里省略了一些小的详细步骤；你可以查看上面链接的browserify构建定义文件，以更详细地了解所有内容。
 
 ```
 connect:server
 ```
+
 此步骤启动一个本地服务器，托管测试文件和构建的源代码文件，以便可以在Chrome中运行自动化测试。
 
 ```
 mochaChrome
 ```
-此步骤在[./tasks/test/mocha-chrome.js](./tasks/test/mocha-chrome.js)中定义。它使用Puppeteer来启动一个无头版本的Chrome，可以进行远程控制，并运行与`./test`文件夹中的HTML文件相关联的测试，包括对未缩小和缩小版本的库进行单元测试以及测试所有参考示例。
+
+此步骤在[./tasks/test/mocha-chrome.js](./tasks/test/mocha-chrome.js)中定义。它使用Puppeteer来启动一个无头版本的Chrome，可以进行远程控制，并运行与`./test`文件夹中的HTML文件相关联的测试，包括对未缩小和缩小版本的库进行单元测试，以及测试所有参考示例。
 
 ```
 mochaTest
 ```
+
 与`mochaChrome`不同，此步骤在node.js中运行，而不是在Chrome中运行，并且仅测试库中的一小部分功能。p5.js中的大多数功能都需要浏览器环境，因此只有在新的测试确实不需要浏览器环境时，才应扩展此测试集合。
 
 ```
 nyc:report
 ```
+
 最后，在完成所有构建和测试之后，此步骤将收集`mochaChrome`对库的完整版本进行的测试覆盖率报告，并将测试覆盖数据打印到控制台。p5.js的测试覆盖率主要用于监控和提供一些额外的数据点，我们的目标不是达到100%的测试覆盖率。
 
-以上涵盖了Gruntfile.js配置中的默认任务！
+以上内容涵盖了Gruntfile.js配置中的默认任务！
 
-## 杂项任务
+### 杂项任务
+
 如果需要，可以直接使用`npx grunt [step]`运行所有步骤、子步骤和子子步骤，尽管对于某些步骤而言，如果依赖于此链中的较早步骤，可能没有太大意义进行操作。还有一些未在上面提到但在某些情况下可能有用的任务。
 
 ```
 grunt yui:dev
 ```
+
 此任务将运行上述描述的文档和库构建，然后启动一个Web服务器，提供与网站上[http://localhost:9001/docs/reference/](http://localhost:9001/docs/reference/)上的参考页面功能相似的版本。然后，它将监视源代码的更改，并重新构建文档和库。
 
-当您在内联文档中工作时，这很有用，因为您无需每次更改时将构建文件从p5.js存储库移动到本地的p5.js-website存储库并重新构建网站，而是可以在浏览器中预览您的更改。这样，您也可以更加确信您所做的更改可能会正确显示在网站上。请注意，这仅适用于对内联文档的修改，对参考页面本身的更改，包括样式和布局，应在网站存储库上进行并进行测试。
+当你在内联文档中工作时，这很有用，因为您无需每次更改时将构建文件从p5.js存储库移动到本地的p5.js-website存储库并重新构建网站，而是可以在浏览器中预览你的更改，这个参考版本稍微简化了一些。这样，你可以更有信心地认为你所做的更改会在网站上正确显示。请注意，这仅适用于对内联文档的修改；对参考页面本身（包括样式和布局）的更改，应在网站存储库上进行修改和测试。
 
 ```
 grunt watch
 grunt watch:main
 grunt watch:quick
 ```
-watch任务将监视一系列文件的更改，并根据所更改的文件运行相关任务以构建参考文档或库。这些任务的作用是相同的，唯一的区别是范围。
+
+watch任务将监视一系列文件的更改，并根据所更改的文件运行相关任务以构建参考文档或库。这些任务的作用是相同的，唯一的区别在于范围。
 
 `watch`任务将在检测到源代码更改时运行所有构建和测试，类似于在源代码中运行完整的默认任务。
 
@@ -229,62 +246,79 @@ watch任务将监视一系列文件的更改，并根据所更改的文件运行
 
 `watch:quick`任务将仅在检测到源代码更改时运行库构建。
 
-根据您的工作内容，选择最简化的watch任务可以节省手动重新构建的时间。
+根据你的工作内容，选择最简化的watch任务可以节省手动重新构建的时间。
 
 ---
 
-# 发布过程
+## 发布过程
+
 请参阅[release_process.md](./release_process.md)。
 
 ---
 
-# 提示与技巧
-有时，需要审核的问题和PR的数量可能会变得有些压倒性，尽管我们尽力采取一些简化流程的措施，但以下是您可以利用的一些提示和技巧，以帮助审查问题和PR。
+## 提示与技巧
 
-## 回复模板
-您可以使用GitHub的[Saved Replies](https://docs.github.com/en/get-started/writing-on-github/working-with-saved-replies/about-saved-replies)功能，这是一个方便的功能，可在回复问题或PR时使用。上面描述的工作流程中的一些步骤可能需要使用相同或非常相似的回复（将问题重定向到论坛、接受问题以进行修复等），使用Saved Replies可以稍微提高效率。
+有时，需要审核的问题和PR的数量可能会变得有些压倒性，尽管我们尽力采取一些简化流程的措施，但以下是你可以利用的一些提示和技巧，以帮助你审核问题和PR。
 
-以下是p5.js维护者使用的一些Saved Replies，您可以自己使用或创建您自己的Saved Replies！
+### 回复模板
 
-#### 关闭：无法重现
-> 我们无法重现这个问题，但如果您能提供一个演示问题的代码示例，请随时重新打开。谢谢！
+你可以使用GitHub的[Saved Replies](https://docs.github.com/en/get-started/writing-on-github/working-with-saved-replies/about-saved-replies)功能，这是一个方便的功能，可在回复问题或PR时使用。上面描述的工作流程中的一些步骤可能需要使用相同或非常相似的回复（比如将问题重定向到论坛、接受问题以进行修复等），使用Saved Replies可以稍微提高效率。
 
-#### 关闭：需要代码片段
-> 为了组织的目的，我关闭了此问题。如果您能提供一个说明问题的代码片段，请重新打开。谢谢！
+以下是p5.js维护者使用的一些Saved Replies，你可以自己使用或创建你自己的Saved Replies！
 
-#### 关闭：使用论坛！
-> 这里的GitHub问题是报告p5.js库本身的错误和问题的好地方。如果您有关于编写自己的代码、测试或遵循教程的问题，请在[论坛](https://discourse.processing.org/)上发布。谢谢！
+##### 关闭：无法重现
 
-#### 关闭：GSOC
+> 我们无法重现这个问题，但如果你能提供一个演示问题的代码示例，请随时重新打开这个问题。谢谢！
+
+##### 关闭：需要代码片段
+
+> 为了组织的目的，我们关闭了此问题。如果您能提供一个说明问题的代码片段，请重新打开该问题。谢谢！
+
+##### 关闭：使用论坛
+
+> 这里的GitHub问题是报告p5.js库本身的错误和问题的好地方。如果你有关于编写自己的代码、测试或遵循教程的问题，请在[论坛](https://discourse.processing.org/)上发布。谢谢！
+
+##### 关闭：GSOC
+
 > 谢谢！讨论GSOC提案的最佳地方是我们的[论坛](https://discourse.processing.org/c/summer-of-code)。
 
-#### 关闭：访问权限
-> 我暂时关闭了此问题，因为我没有看到对此问题的较详细解释[扩大访问权限](https://github.com/processing/p5.js/blob/main/contributor_docs/access.md)。如果可以在问题请求中添加更详细的访问权限说明，请随时重新打开。
+##### 关闭：访问权限
 
-> 我暂时关闭了此问题，因为我们没有看到对此问题的更详细解释[扩大访问权限](https://github.com/processing/p5.js/blob/main/contributor_docs/access.md)。如果可以在功能请求中添加更详细的访问权限说明，请随时重新打开。谢谢！
+> 我们暂时关闭了此问题，因为没有看到对此问题的较详细解释[扩大访问权限](access.md)(https://github.com/processing/p5.js/blob/main/contributor_docs/access.md)。如果可以在问题请求中添加更详细的访问权限说明，请随时重新打开。谢谢！
 
-#### 关闭：插件
-> 我认为这个功能超出了p5.js API的范围（我们尽量保持最简化），但它可以成为一个很好的插件库的起点。请查看此处的文档，了解如何创建一个插件：https://github.com/processing/p5.js/blob/main/contributor_docs/creating_libraries.md
+##### 关闭：插件
 
-#### 关闭PR：先提出问题
+> 我们认为这个功能超出了p5.js API的范围（我们尽量保持最简化），但它可以成为一个很好的插件库的起点。请查看此处的文档，了解如何创建一个插件：
+[https://github.com/processing/p5.js/blob/main/contributor\_docs/creating\_libraries.md](creating_libraries.md)
+
+##### 关闭PR：先提出问题
+
 > 谢谢。作为提醒，必须在打开拉取请求之前打开问题并使用问题标记拉取请求。这对于跟踪开发并保持讨论清晰是必要的。谢谢！
 
-#### 批准问题修复。
+##### 批准问题修复。
+
 你可以继续进行修复。谢谢。
 
-#### 合并PR
+##### 合并PR
+
 看起来不错。谢谢！
 
-## GitHub CLI
-使用看似晦涩的 git 命令来获取 PR 版本的代码并在本地进行测试，可能会使复杂的 PR 审查变得困难。幸运的是，[GitHub CLI](https://cli.github.com/) 工具可以极大地帮助简化这个过程以及其他操作。
+### GitHub CLI
+
+使用看似复杂的 git 命令来获取 PR 版本的代码并在本地进行测试，可能会使复杂的 PR 审查变得更加困难。幸运的是，[GitHub CLI](https://cli.github.com/) 工具可以极大地帮助简化这个过程以及其他操作。
 
 安装完 CLI 并登录后，你只需要运行命令 `gh pr checkout [pull_request_id]` 就可以在本地审查 PR。这个命令会自动为你获取远程 fork，创建一个分支，并切换到该分支。如果要返回到主分支，只需像切换分支一样运行 `git checkout main` 即可。你甚至可以直接从 CLI 在 PR 中留下评论，而无需访问网页页面！
 
-GitHub CLI 还提供了许多其他命令，你可能会发现它们有用，无论如何，这是一个很好的工具。
+GitHub CLI 还提供了许多其他命令，你可能会发现它们有用。无论如何，这是一个很好的工具。
 
-## 管理通知
-不再需要手动监视存储库的“Issues”或“Pull Requests”选项卡以获取新的问题或 PR。你可以通过在存储库页面顶部与存储库名称相对的地方点击带有眼睛图标的“Watch”按钮来“关注”该存储库。通过关注存储库，诸如新问题、新的 pull requests、提及你的用户名以及其他你在存储库上订阅的活动都会作为通知发送到你的[通知页面](https://github.com/notifications)，你可以将其标记为已读或忽略，就像处理电子邮件收件箱一样。
+### 管理通知
+
+不再需要手动监视存储库的“Issues”或“Pull Requests”选项卡以获取新的问题或 PR。你可以通过在存储库页面顶部与存储库名称相对的地方点击带有眼睛图标的“Watch”按钮来“关注”该存储库。
+
+![Cropped screenshot of the top right corner of a GitHub repository page showing a series of buttons in the center from left to right: Sponsor, Watch, Fork, Starred.](images/github-repo-metrics.png)
+
+通过关注存储库，诸如新问题、新PRs、提及你的用户名以及其他你在存储库上订阅的活动都会作为通知发送到你的[通知页面](https://github.com/notifications)，你可以将其标记为已读或忽略，就像处理电子邮件收件箱一样。
 
 在某些情况下，你可能会收到 GitHub 发送的与你关注的存储库中的活动相关的电子邮件，你可以在[通知设置页面](https://github.com/settings/notifications)上进行自定义设置，包括完全取消订阅。
 
-根据你的工作方式设置这些通知，可以避免手动查找相关问题/PR并避免被 GitHub 的无休止通知淹没。在这里需要保持良好的平衡。作为起始建议，你可以关注该存储库的“Issues”和“Pull Requests”，并设置仅在“参与、提及和自定义”时接收电子邮件通知。
+根据你的工作方式设置这些通知，可以避免手动查找相关问题/PR并避免被 GitHub 的无休止的通知淹没。在这里需要保持良好的平衡。作为起始建议，你可以关注该存储库的“Issues”和“Pull Requests”，并设置仅在“参与、提及和自定义”时接收电子邮件通知。
