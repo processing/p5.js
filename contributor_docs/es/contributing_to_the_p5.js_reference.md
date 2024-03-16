@@ -189,7 +189,7 @@ Si el método devuelve su objeto primario, puedes omitir la etiqueta `@return` y
 
 If a function has multiple possible parameter options, you can specify each individually. For example, the [`background()`](http://p5js.org/reference/#p5/background) function takes a number of different parameter options (see "Syntax" section on the reference page). Choose one version to list as the first signature using the template above. At the end of the first reference comment block, you can add additional signatures, each in its own block, using only the `@method` and `@param` tags following the example below.
 
-Si una función tiene múltiples opciones de parámetros posibles, puedes especificar cada una individualmente. Por ejemplo, la función background() toma una serie de opciones de parámetros diferentes (ver la sección "Sintaxis" en la página de referencia). Elige una versión para listarla como la primera firma usando la plantilla anterior. Al final del primer bloque de comentarios de referencia, puedes agregar firmas adicionales, cada una en su propio bloque, siguiendo el siguiente ejemplo.
+Si una función tiene múltiples opciones de parámetros posibles, puedes especificar cada una individualmente. Por ejemplo, la función [`background()`](http://p5js.org/reference/#p5/background) toma una serie de opciones de parámetros diferentes (ver la sección "Sintaxis" en la página de referencia). Elige una versión para incluirla como la primera firma usando la plantilla anterior. Al final del primer bloque de comentarios de referencia puedes agregar firmas adicionales, cada una en su propio bloque, como en el siguiente ejemplo.
 
 ```
 /**
@@ -214,7 +214,7 @@ Si una función tiene múltiples opciones de parámetros posibles, puedes especi
 
 It is not necessary to create a separate signature if the only difference between two signatures is the addition of an optional parameter. Limit the use of this feature if possible because it can create unnecessary noise in the reference.
 
-No es necesario crear una firma separada si la única diferencia entre dos firmas es la adición de un parámetro opcional. Limita el uso de esta función si es posible porque puede crear ruido innecesario en la referencia.
+No es necesario crear una firma separada si la única diferencia entre dos firmas es la adición de un parámetro opcional. Limita el uso de esta función en la medida de lo posible porque puede crear ruido innecesario en la referencia.
 
 
 ## Reference for p5.js variables
@@ -223,7 +223,7 @@ No es necesario crear una firma separada si la única diferencia entre dos firma
 
 So far, we have looked at how to write references for functions and constants. Variables follow the same structure but use different tags.
 
-Hasta ahora, hemos visto cómo escribir referencias para funciones y constantes. Las variables siguen la misma estructura pero usan etiquetas diferentes.
+Hasta ahora hemos visto cómo escribir referencias para funciones y constantes. Las variables siguen la misma estructura pero usan etiquetas diferentes.
 
 ```
 /**
@@ -252,7 +252,7 @@ Hasta ahora, hemos visto cómo escribir referencias para funciones y constantes.
 
 The start of the block contains the description of the variable (`mouseX` in this case). To define the name of the variable, we use `@property` instead of `@method`. `@property` follows the same syntax as `@param` for defining the type and its name. The `@readonly` tag is present on most p5.js variables and is used internally to indicate this value should not be overwritten directly by a library user.
 
-El inicio del bloque contiene la descripción de la variable (mouseX en este caso). Para definir el nombre de la variable, usamos @property en lugar de @method. @property sigue la misma sintaxis que @param para definir el tipo y su nombre. La etiqueta @readonly está presente en la mayoría de las variables de p5.js y se utiliza internamente para indicar que este valor no debe ser sobrescrito directamente por un usuario de la biblioteca.
+El inicio del bloque contiene la descripción de la variable (`mouseX` en este caso). Para definir el nombre de la variable usamos `@property` en lugar de `@method`. `@property` sigue la misma sintaxis que `@param` para definir el tipo y su nombre. La etiqueta `@readonly` está presente en la mayoría de las variables de p5.js y se utiliza internamente para indicar que dicho valor no debe ser sobrescrito directamente por un usuario de la biblioteca.
 
 ## Adding examples
 
@@ -264,11 +264,11 @@ One tag that is present in both `sin()` and `mouseX`’s reference comments that
 
 The relevant `@example` tag to create the above is as follows:
 
-Una etiqueta que está presente tanto en los comentarios de referencia de sin() como de mouseX y que aún no hemos discutido es la etiqueta @example. Esta etiqueta es donde defines el código de ejemplo(s) que se ejecuta cuando visitas la página de referencia.
+Una etiqueta que está presente tanto en los comentarios de referencia de `sin()` como de `mouseX` y que aún no hemos discutido es la etiqueta `@example`. Con esta etiqueta defines el código de (los) ejemplo(s) que se ejecuta cuando visitas la página de referencia.
 
-NOTA: Texto alternativo de imagen no se traduce
+![Screenshot of the p5.js reference page of the "red()" function, showing only the example code section.](images/reference-screenshot.png)
 
-La etiqueta @example relevante para crear lo anterior es la siguiente:
+El código con la etiqueta `@example` relevante para crear lo anterior es el siguiente:
 
 ```
  * @example
@@ -292,9 +292,9 @@ After the `@example` tag, you should start an HTML `<div>` tag followed by a `<c
 
 You can have multiple examples for one feature.To do so, add an additional `<div>` and `<code>` HTML block right after the first closed, separated by a blank line.
 
-Después de la etiqueta @example, debes comenzar con una etiqueta HTML <div> seguida de una etiqueta <code>. Entre la etiqueta <code> de apertura y cierre, insertarás el código de ejemplo relevante. El principio básico de escribir un buen código de ejemplo para la referencia es mantener las cosas simples y mínimas. El ejemplo debe ser significativo y explicar cómo funciona la función sin ser demasiado complicado. El lienzo del ejemplo debe ser de 100x100 píxeles y si la función setup() no está incluida, como en el ejemplo anterior, el código se envolverá automáticamente en una función setup() con un lienzo de fondo gris predeterminado de 100x100 píxeles. No entraremos en detalles sobre las mejores prácticas y el estilo de código para el ejemplo aquí; consulta la guía de estilo de referencia en su lugar.
+Después de la etiqueta `@example`, debes comenzar con una etiqueta HTML `<div>` seguida de una etiqueta `<code>`. Entre la etiqueta `<code>` de apertura y cierre, insertarás el ejemplo de código en cuestión. El principio básico para escribir un buen ejemplo de código para la referencia es mantener las cosas simples y mínimas. El ejemplo debe ser significativo y explicar cómo funciona la función, valga la redundancia, sin ser demasiado complicado. El lienzo para el ejemplo debe ser de 100x100 pixeles y si la función `setup()` no está incluida, como en el ejemplo anterior, el código será envuelto automáticamente en una función `setup()` con un lienzo predeterminado de fondo gris y 100x100 píxeles. No entraremos aquí en detalles sobre buenas prácticas y estilo para los ejemplos de código; consulta la guía de estilo de referencia en su lugar.
 
-Puedes tener múltiples ejemplos para una función. Para hacerlo, agrega un <div> y un bloque HTML <code> adicionales justo después del primer bloque cerrado, separados por una línea en blanco.
+Puedes tener múltiples ejemplos para una función. Para hacerlo agrega un `<div>` y un bloque HTML `<code>` adicionales justo después del primer bloque cerrado, separados por una línea en blanco.
 
 ```
 * @example
@@ -315,7 +315,7 @@ Puedes tener múltiples ejemplos para una función. Para hacerlo, agrega un <div
 
 If you do not want the reference page to execute your example code (i.e., you just want the code to show up), include the class “`norender`” in the `<div>`:
 
-Si no deseas que la página de referencia ejecute tu código de ejemplo (es decir, solo quieres que se muestre el código), incluye la clase "norender" en el <div>:
+Si no deseas que la página de referencia ejecute tu código de ejemplo (es decir, solo quieres que se muestre el código), incluye la clase "`norender`" en el `<div>`:
 
 ```
 * @example
@@ -329,7 +329,7 @@ Si no deseas que la página de referencia ejecute tu código de ejemplo (es deci
 
 If you do not want the example to be run as part of the automated tests (for example, if the example requires user interaction), include the class “`notest`” in the `<div>`:
 
-Si no quieres que el ejemplo se ejecute como parte de las pruebas automatizadas (por ejemplo, si el ejemplo requiere interacción del usuario), incluye la clase "notest" en el <div>:
+Si no quieres que el ejemplo se ejecute como parte de las pruebas automatizadas (por ejemplo, si el ejemplo requiere interacción del usuario), incluye la clase "`notest`" en el `<div>`:
 
 ```
 * @example
@@ -343,15 +343,15 @@ Si no quieres que el ejemplo se ejecute como parte de las pruebas automatizadas 
 
 If your example uses external asset files, put them in the [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) folder (or reuse one already in there) then link to them with "assets/filename.ext" in the code. See the [tint()](http://p5js.org/reference/#/p5/tint) reference for example.
 
-Si tu ejemplo utiliza archivos de recursos externos, colócalos en la carpeta /docs/yuidoc-p5-theme/assets (o reutiliza uno que ya esté allí) y luego enlázalos con "assets/nombrearchivo.ext" en el código. Consulta la referencia de tint() para obtener un ejemplo.
+Si tu ejemplo utiliza archivos externos como recursos, colócalos en la carpeta [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) (o reutiliza uno que ya esté allí) y luego enlázalos con "assets/nombrearchivo.ext" en el código. Consulta la referencia de [tint()](http://p5js.org/reference/#/p5/tint) como ejemplo.
 
 ### Add a canvas description using `describe()`
 
-### Agregar una descripción de lienzo usando describe()
+### Agregar descripción a un lienzo usando `describe()`
 
 Finally, for every example you add, you are required to use the p5.js function `describe()` in the example to create a screen-reader accessible description for the canvas. Include only one parameter: a string with a brief description of what is happening on the canvas. 
 
-Por último, para cada ejemplo que añadas, se requiere que utilices la función de p5.js describe() en el ejemplo para crear una descripción accesible para lectores de pantalla para el lienzo. Incluye solo un parámetro: una cadena con una breve descripción de lo que está sucediendo en el lienzo.
+Por último, para cada ejemplo que añadas, se requiere que utilices la función de p5.js `describe()` en el ejemplo para crear una descripción accesible del lienzo para lectores de pantalla. Incluye solo un parámetro: una cadena con una breve descripción de lo que está sucediendo en el lienzo.
 
 ```
 * @example
@@ -388,17 +388,17 @@ For more on `describe()` visit the [web accessibility contributor documentation]
 
 With all the above you should have most of the tools needed to write and edit p5.js reference comments. However, there are a few more specialized usage of JSDoc style reference comments that you may come across in p5.js. These are situationally useful and not something that you need often.
 
-Para obtener más información sobre describe(), visita la documentación para contribuyentes de accesibilidad web.
+Para obtener más información sobre `describe()`, visita la [documentación de accesibilidad web para contribuyentes](https://p5js.org/contributor-docs/#/web_accessibility?id=user-generated-accessible-canvas-descriptions).
 
-Con todo lo anterior, deberías tener la mayoría de las herramientas necesarias para escribir y editar comentarios de referencia de p5.js. Sin embargo, hay algunos usos más especializados de comentarios de referencia de estilo JSDoc que puedes encontrar en p5.js. Estos son útiles en situaciones específicas y no son algo que necesites con frecuencia.
+Con todo lo anterior, deberías tener la mayoría de las herramientas necesarias para escribir y editar comentarios de referencia de p5.js. Sin embargo, hay algunos usos más especializados de comentarios de referencia estilo JSDoc que puedes encontrar en p5.js. Estos son útiles en situaciones específicas y no son algo que necesites con frecuencia.
 
 ### `@private` tag
 
-### Etiqueta @private
+### Etiqueta `@private`
 
 You can use the `@private` if a property or variable is a private function or variable. If a feature is marked as `@private` it will not be included as part of the rendered reference on the website. The reason to use the `@private` tag to mark a reference comments block as private is when you document internal features for the library itself. For example, see the reference comments for `_start` below:
 
-Puedes usar @private si una propiedad o variable es una función o variable privada. Si una característica está marcada como @private, no se incluirá como parte de la referencia renderizada en el sitio web. La razón para usar la etiqueta @private para marcar un bloque de comentarios de referencia como privado es cuando documentas características internas para la propia biblioteca. Por ejemplo, consulta los comentarios de referencia para _start a continuación:
+Puedes usar la etiqueta `@private` si una propiedad o variable es una función o variable privada. Si una característica está marcada como `@private`, no se incluirá como parte de la referencia renderizada en el sitio web. La razón para usar la etiqueta `@private` para marcar un bloque de comentarios de referencia como privado es documentar características internas de la propia biblioteca. Por ejemplo, consulta los comentarios de referencia para `_start` a continuación:
 
    
 
@@ -415,7 +415,7 @@ p5.prototype._start = function () {
 
 ### `@module` and related tags
 
-### Etiqueta @module y etiquetas relacionadas
+### `@module` y otras etiquetas relacionadas
 
 At the top of each source code file will be a `@module` tag. Modules correspond to a group of features in p5.js which on the rendered reference page on the website are split into the corresponding sections. Inside each module, there are additional submodules defined with the `@submodule` tag.
 
@@ -423,11 +423,11 @@ The `@for` tag defines the relationship between this module and the overall `p5`
 
 The `@requires` tag defines the required imported modules that the current module depends on.
 
-En la parte superior de cada archivo de código fuente habrá una etiqueta @module. Los módulos corresponden a un grupo de características en p5.js que, en la página de referencia renderizada en el sitio web, se dividen en las secciones correspondientes. Dentro de cada módulo, hay submódulos adicionales definidos con la etiqueta @submodule.
+En la parte superior de cada archivo de código fuente habrá una etiqueta `@module`. Los módulos corresponden a un grupo de características en p5.js que, en la página de referencia renderizada en el sitio web, se dividen en las secciones correspondientes. Dentro de cada módulo hay submódulos adicionales definidos con la etiqueta `@submodule`.
 
-La etiqueta @for define la relación entre este módulo y la clase p5 en general, indicando efectivamente que este módulo es una parte de la clase p5.
+La etiqueta `@for` define la relación entre este módulo y la clase general `p5`, indicando efectivamente que este módulo es una parte de la clase `p5`.
 
-La etiqueta @requires define los módulos importados necesarios en los que depende el módulo actual.
+La etiqueta `@requires` define los módulos de los que depende el módulo actual y es necesario importar.
 
 ```
 /**
@@ -441,15 +441,15 @@ La etiqueta @requires define los módulos importados necesarios en los que depen
 
 The convention p5.js follows is that each subfolder in the `src/` folder will be one `@module` while each file inside the subfolder will be its own `@submodule` under the overall subfolder’s `@module`. Unless you are adding new subfolders/files to the p5.js source code, you shouldn’t need to edit this reference comments block.
 
-La convención que sigue p5.js es que cada subcarpeta en la carpeta src/ será un @module, mientras que cada archivo dentro de la subcarpeta será su propio @submodule bajo el @module general de la subcarpeta. A menos que estés añadiendo nuevas subcarpetas/archivos al código fuente de p5.js, no deberías necesitar editar este bloque de comentarios de referencia.
+La convención que sigue p5.js es que cada subcarpeta en la carpeta `src/` será un `@module`, mientras que cada archivo dentro de la subcarpeta será su propio `@submodule` bajo el `@module` general de la subcarpeta. A menos que estés añadiendo nuevas subcarpetas/archivos al código fuente de p5.js, no deberías necesitar editar este bloque de comentarios de referencia.
 
 ### `@class` tag
 
-### Etiqueta @class
+### Etiqueta `@class`
 
 Class constructors are defined with the `@class` tag and the `@constructor` tag. The format for this block is similar to how a function is defined with the `@method` block, the class’s name will need to be defined with the `@class` tag and the `@constructor` tag will indicate the class has a constructor function. See the example below for the `p5.Color` class:
 
-Los constructores de clases se definen con la etiqueta @class y la etiqueta @constructor. El formato para este bloque es similar a cómo se define una función con el bloque @method; el nombre de la clase debe definirse con la etiqueta @class y la etiqueta @constructor indicará que la clase tiene una función constructora. Mira el ejemplo a continuación para la clase p5.Color:
+Los constructores de clases se definen con la etiqueta `@class`y la etiqueta `@constructor`. El formato para este bloque es similar a cómo se define una función con el bloque `@method`; el nombre de la clase debe definirse con la etiqueta `@class` y la etiqueta `@constructor` indicará que la clase tiene una función constructora. Mira el ejemplo de la clase `p5.Color` a continuación:
 
 ```
 /**
@@ -491,7 +491,7 @@ The p5.js repository is set up so that you can generate and preview the referenc
 
 El repositorio de p5.js está configurado para que puedas generar y previsualizar la referencia sin necesidad de compilar y ejecutar también el sitio web de p5.js.
 
-- El comando principal para generar la referencia a partir de los comentarios de referencia en el código fuente es ejecutar el siguiente comando.
+- El comando principal para generar la referencia a partir de los comentarios de referencia en el código fuente es el siguiente.
 
 ```
 npm run docs
@@ -501,7 +501,7 @@ This will generate the necessary preview files and the main `docs/reference/data
 
 - For continuous work on the reference, you can run the following command.
 
-Esto generará los archivos de vista previa necesarios y el archivo principal docs/reference/data.json, que es el mismo archivo (después de la minificación) que se utilizará para renderizar la página de referencia en el sitio web.
+Esto generará los archivos de vista previa necesarios y el archivo principal `docs/reference/data.json`, que es el mismo archivo (después de la minificación) que se utilizará para renderizar la página de referencia en el sitio web.
 
 - Para trabajar continuamente en la referencia, puedes ejecutar el siguiente comando.
 
@@ -513,19 +513,19 @@ This will launch a live preview of the rendered reference that will update each 
 
 - The main template files are stored in the `docs/` folder and, in most cases, you should not make changes directly to files in this folder, except to add new asset files in the `docs/yuidoc-p5-theme/assets` folder.
 
-Esto lanzará una vista previa en vivo de la referencia renderizada que se actualizará cada vez que realices cambios (necesitarás actualizar la página después de realizar cambios para verlos aparecer). Esto es útil, especialmente para previsualizar código de ejemplo que se ejecuta en el navegador.
+Esto lanzará una vista previa en vivo de la referencia renderizada que se actualizará cada vez que realices cambios (necesitarás actualizar la página después de realizar cambios para verlos aparecer). Esto es útil, especialmente para previsualizar el código de ejemplos que se ejecutan en el navegador.
 
-- Los archivos de plantilla principales se almacenan en la carpeta docs/ y, en la mayoría de los casos, no deberías realizar cambios directamente en los archivos de esta carpeta, excepto para añadir nuevos archivos de recursos en la carpeta docs/yuidoc-p5-theme/assets.
+- Los archivos de plantilla principales se almacenan en la carpeta `docs/` y, en la mayoría de los casos, no deberías realizar cambios directamente en los archivos de esta carpeta, excepto para añadir nuevos archivos de recursos en la carpeta `docs/yuidoc-p5-theme/assets`.
 
 ## Next steps
 
-## Próximos pasos
+## Siguientes pasos
 
 For additional details about the reference system, you can checkout the documentation for [JSDoc](https://jsdoc.app/) and [YUIDoc](https://yui.github.io/yuidoc/).
 
 For examples of issues related to the reference, have a look at [#6519](https://github.com/processing/p5.js/issues/6519) and [#6045](https://github.com/processing/p5.js/issues/6045). The [contributor guidelines](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md) document is also a good place to start.
 
-Para obtener detalles adicionales sobre el sistema de referencia, puedes consultar la documentación de JSDoc y YUIDoc.
-
-Para ver ejemplos de problemas relacionados con la referencia, echa un vistazo a #6519 y #6045. El documento de pautas para contribuyentes también es un buen lugar para comenzar.
+Para más detalles sobre el sistema de referencia puedes consultar la documentación de [JSDoc](https://jsdoc.app/) y [YUIDoc](https://yui.github.io/yuidoc/).
+NOTE: I updated the link to the location were the spanish translation of `contributur_guidelines.md` will be.
+Para ver ejemplos de problemas relacionados con la referencia, echa un vistazo a [#6519](https://github.com/processing/p5.js/issues/6519) y [#6045](https://github.com/processing/p5.js/issues/6045). El documento de [pautas para contribuyentes](https://github.com/processing/p5.js/blob/main/contributor_docs/es/contributor_guidelines.md) también es un buen lugar para comenzar.
 
