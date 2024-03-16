@@ -98,11 +98,11 @@ Las solicitudes(issues) de mejora de función deberían utilizar la plantilla de
 
 ### Discusión
 
-This type of issue has a minimal template ("Discussion") and should be used to gather feedback around a topic in general before coalescing it into something more specific, like a feature request. These sorts of discussion issues can be closed when the conversation finishes and the resulting more specific issues have been created: 
+Este tipo de problema tiene una plantilla(template) mínima ("Discusión") y debería ser utilizada para recopilar comentarios(retroalimentaciones/feedback) sobre un tema en general antes de consolidarlo en algo más específico, como una solicitud de función(feature request). Estos problemas(issues) de discusión pueden cerrarse cuando finaliza la conversación y se han creado los problemas más específicos resultantes:
 
-- If an issue is opened as a discussion but should be, for example, a bug report, the correct label should be applied and the "discussion" label removed. Additional info about the bug should also be requested from the author if not already included.
-- If an issue is opened as a discussion but isn't relevant to source code contribution or otherwise relevant to the GitHub repositories/contribution process/contribution community, they should be redirected to the forum or Discord and the issue closed.
-- If relevant, additional labels should be added to discussion issues to further signal what type of discussion it is at a glance.
+- Si se abre un issue como una discusión pero debería ser, por ejemplo, un informe de error(bug report), se debe aplicar la etiqueta correcta y quitar la etiqueta de "discusión". Además, se debe solicitar información adicional sobre el error al autor si aún no se ha incluido.
+- Si se abre un problema como una discusión pero no es relevante para la contribución de código fuente o de otra manera relevante para los repositorios de GitHub/el proceso de contribución/la comunidad de contribución, deberían ser redirigidos al foro o a Discord y el problema cerrado.
+- Si es relevante, se deben agregar etiquetas adicionales a los issues de discusión para señalar aún más qué tipo de discusión es con solo mirarla.
 
 ---
 
