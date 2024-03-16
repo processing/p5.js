@@ -36,29 +36,31 @@ Alentamos a la mayoría de las contribuciones de código fuente a comenzar con u
 
 Los informes de errores de issues (Bug report issues)  deberían utilizar la plantilla de problema(issue template) "Found a bug". El siguiente flujo de trabajo es típico para abordar los informes de errores:
 
-1. Replicate the bug
-   - The goal of the template is to provide enough information for a reviewer to attempt to replicate the bug in question.
-   - If the reported bug is not relevant to the repo it is opened in (p5.js, p5.js-website, or otherwise):
-     - Transfer the issue to the relevant repo if you have access to it.
-     - Otherwise, leave a comment about where the bug report should be filed (with a direct link provided) and close the issue.
-   - The first step in reviewing a bug report is to see if enough information is provided for a bug replication, and if so, attempt to replicate the bug as described.
-2. If the bug can be replicated:
-   - Some discussion may be required to determine the best way to fix a particular bug. Sometimes, it may be straightforward; sometimes, it may be tricky. Please refer to [p5.js' design principles](design_principles.md) when making this decision on a case-by-case basis.
-   - If the issue author indicated in the issue they are willing to contribute a fix:
-     - Approve the issue for fixing by the issue author by leaving a comment and assigning them to the issue. Use the cog button on the right side next to "Assignee".
-   - If the issue author does not wish to contribute a fix:
-     - Leave a comment recognizing the bug is replicable.
-     - Attempt to fix yourself or add the `help wanted` label to signal an issue needing a fix.
-3. If the bug cannot be replicated:
-   - Ask for additional info if not already provided in the template (p5.js version, browser version, OS version, etc.).
-   - If your testing environment differs from what is reported in the issue (e.g., a different browser or OS):
-     - Leave a comment saying you are not able to replicate in your specific environment.
-     - Add a `help wanted` label to the issue and ask for someone else with the setup specified in the issue to try to replicate the bug.
-   - Sometimes, bugs only occur when using the web editor and not when testing locally. In this case, the issue should be redirected to the [web editor repo](https://github.com/processing/p5.js-web-editor).
-   - If replication is possible later, go back to step 2.
-4. If the bug stems from the code the user provided in the bug report and not p5.js' behavior:
-   - Determine if p5.js' documentation, code implementation, or friendly error system can be improved to prevent the same mistake from being made.
-   - Kindly redirect any further questions to the [forum](https://discourse.processing.org/) or [Discord](https://discord.com/invite/SHQ8dH25r9) and close the issue if no further changes are to be made to p5.js.
+1. Replicar el error
+   - El objetivo de la plantilla es proporcionar suficiente información para que un revisor intente replicar el error en cuestión.
+   - Si el error reportado no es relevante para el repositorio en el que se abrió (p5.js, p5.js-website, u otro):
+     - Transfiera el problema al repositorio relevante si tiene acceso a él.
+     - De lo contrario, deje un comentario sobre dónde debería presentarse el informe de error (con un enlace directo proporcionado) y cierre el problema.
+   - El primer paso para revisar un informe de error es verificar si se proporciona suficiente información para replicar el error, y si es así, intentar replicar el error según lo descrito.
+2. Si el error se puede replicar:
+   - Puede ser necesario realizar alguna discusión para determinar la mejor manera de solucionar un error particular. Puede ser necesario realizar alguna discusión para determinar la mejor manera de solucionar un error particular. A veces, puede ser directo; otras veces, puede ser complicado. Por favor, consulte los principios de diseño de p5.js ( [p5.js' design principles](design_principles.md)al tomar esta decisión caso por caso.
+   - Si el autor del issue indicó en el issue que está dispuesto a contribuir con una solución:
+     - Apruebe el problema para su solución por parte del autor del problema dejando un comentario y asignándoles el problema. Utilice el botón de engranaje en el lado derecho junto a "Asignado a" "Assignee".
+   - Si el autor del problema no desea contribuir con una solución:
+     - Deje un comentario reconociendo que el error se puede replicar.
+     - Intente solucionarlo usted mismo o agregue la etiqueta `help wanted` para señalar que es un issue que  necesita solución.
+3. Si el error no se puede replicar:
+   - Solicite información adicional si aún no se ha proporcionado en la plantilla (versión de p5.js, versión del navegador, versión del sistema operativo, etc.)(p5.js version, browser version, OS version, etc.).
+   - Si su entorno de prueba difiere de lo que se informa en el problema(issue) (por ejemplo, un navegador o sistema operativo diferente)(e.g., a different browser or OS):
+     - Deje un comentario diciendo que no puede replicar en su entorno específico.
+     - Agregue una etiqueta `help wanted` al problema(issue) y pida a alguien más con la configuración especificada en el problema que intente replicar el error.
+   - Sometimes, bugs only occur when using the web editor and not when testing locally. In this case, the issue should be redirected to the 
+   - A veces, los errores solo ocurren al usar el editor web (web editor) y no al probar localmente. En este caso, el problema debería ser redirigido al repositorio del editor web [web editor repo](https://github.com/processing/p5.js-web-editor).
+   - Si la replicación es posible más tarde, regrese al paso 2.
+4. Si el error se origina en el código que el usuario proporcionó en el informe de error y no en el comportamiento de p5.js:
+   - Determine si la documentación de p5.js, la implementación de código o el sistema de errores amigable pueden mejorarse para evitar que se cometa el mismo error.
+   - Redirija amablemente cualquier pregunta adicional al foro [forum](https://discourse.processing.org/)  o al Discord [Discord](https://discord.com/invite/SHQ8dH25r9) y cierre el issue si no se van a realizar más cambios en p5.js.
+   
 
 
 ### Feature request
