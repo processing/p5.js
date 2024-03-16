@@ -43,7 +43,7 @@ Los informes de errores de issues (Bug report issues)  deberían utilizar la pla
      - De lo contrario, deje un comentario sobre dónde debería presentarse el informe de error (con un enlace directo proporcionado) y cierre el problema.
    - El primer paso para revisar un informe de error es verificar si se proporciona suficiente información para replicar el error, y si es así, intentar replicar el error según lo descrito.
 2. Si el error se puede replicar:
-   - Puede ser necesario realizar alguna discusión para determinar la mejor manera de solucionar un error particular. Puede ser necesario realizar alguna discusión para determinar la mejor manera de solucionar un error particular. A veces, puede ser directo; otras veces, puede ser complicado. Por favor, consulte los principios de diseño de p5.js ( [p5.js' design principles](design_principles.md)al tomar esta decisión caso por caso.
+   - Puede ser necesario realizar alguna discusión para determinar la mejor manera de solucionar un error particular. Puede ser necesario realizar alguna discusión para determinar la mejor manera de solucionar un error particular. A veces, puede ser directo; otras veces, puede ser complicado. Por favor, consulte los principios de diseño de p5.js [p5.js' design principles](design_principles.md) al tomar esta decisión caso por caso.
    - Si el autor del issue indicó en el issue que está dispuesto a contribuir con una solución:
      - Apruebe el problema para su solución por parte del autor del problema dejando un comentario y asignándoles el problema. Utilice el botón de engranaje en el lado derecho junto a "Asignado a" "Assignee".
    - Si el autor del problema no desea contribuir con una solución:
@@ -67,35 +67,36 @@ Los informes de errores de issues (Bug report issues)  deberían utilizar la pla
 
 Los issues/problemas de solicitudes de función (Feature request issues) deberían utilizar la plantilla de problema(issue) "Nueva Solicitud de Función" ("New Feature Request") . El siguiente flujo de trabajo es típico para abordar las solicitudes de función:"
 
-1. As part of p5.js' commitment to increase access, a feature request must make a case for how it increases access of p5.js to communities that are historically marginalized in the field. More details are available [here](access.md).
+1. Como parte del compromiso de p5.js de aumentar el acceso, una solicitud de función(feature request) debe justificar cómo aumenta el acceso de p5.js a comunidades que históricamente han sido marginadas en el campo. Más detalles están disponibles aquí[here](access.md).
    - If a feature request does not have the "Increasing Access" field sufficiently filled out, you can ask the issue author how the feature increases access.
-   - The access statement of a feature can be provided by a different member of the community, including the issue reviewers.
-2. The new feature request can be assessed for inclusion based on the following criteria.
-   - Does the feature fit into the project scope and [design principles](design_principles.md) of p5.js?
-     - For example, a request to add a new drawing primitive shape may be considered, but a request to adopt a browser-based IOT protocol will likely be out of scope.
-     - Overall, the scope of p5.js should be relatively narrow in order to avoid excessive bloat from rarely used features.
-     - If a feature does not fit into the scope of p5.js, suggest that the issue author implement the feature as as an addon library.
-     - If it is unclear whether or not it fits, it can be a good idea to suggest making an addon library as a proof-of-concept. This helps give users a way to use the feature, provides a much more concrete example of its usage and importance, and does not necessarily need to be as complete of a solution as a fully integrated feature. It can be integrated into the core of p5.js later if appropriate.
-   - Is the feature likely to cause a breaking change?
-     - Will it conflict with existing p5.js functions and variables?
-     - Will it conflict with typical sketches already written for p5.js?
-     - Features that are likely to cause conflicts such as  the ones above  are  considered breaking changes. Without a [major version release](https://docs.npmjs.com/about-semantic-versioning), we should not make breaking changes to p5.js.
-   - Can the proposed new feature be achieved using existing functionalities already in p5.js, relatively simple native JavaScript code, or existing easy-to-use libraries?
-     - For example, instead of providing a p5.js function to join an array of strings such as `join(["Hello", "world!"])`, the native JavaScript `["Hello", "world!"].join()` should be preferred instead.
-3. If the access requirement and other considerations have been fulfilled, at least two stewards or maintainers must approve the new feature request before work should begin toward a PR. The PR review process for new features is documented below.
+   - Si una solicitud de función(feature request) no tiene suficientemente completado el campo "Aumento de Acceso"("Increasing Access"), puedes preguntar al autor del problema(issue autor) cómo la función(feature) aumenta el acceso.
+   - La declaración de acceso de una función puede ser proporcionada por un miembro diferente de la comunidad, incluidos los revisores de problemas(issue reviewers).
+1. La nueva solicitud de función puede ser evaluada para su inclusión en base a los siguientes criterios:
+   - ¿La función(feature) encaja en el alcance del proyecto y los principios de diseño [design principles](design_principles.md) de p5.js?
+     - Por ejemplo, una solicitud para agregar una nueva forma primitiva de dibujo puede ser considerada, pero una solicitud para adoptar un protocolo de Internet de las cosas basado en el navegador (browser-based IOT protocol) probablemente estará fuera de alcance.
+     - En general, el alcance de p5.js debería ser relativamente estrecho para evitar un exceso de características poco utilizadas.
+     - Si una función no encaja en el alcance de p5.js, sugiere al autor del problema(issue) que implemente la función(feature) como una biblioteca complementaria(addon library).
+     - Si no está claro si encaja o no, puede ser una buena idea sugerir hacer una biblioteca complementaria(addon library)como una prueba de concepto(proof-of-concept).Esto ayuda a dar a los usuarios una forma de usar la función(feature), proporciona un ejemplo mucho más concreto de su uso e importancia, y no necesariamente necesita ser una solución tan completa como una función completamente integrada. Puede integrarse en el núcleo(the core) de p5.js más adelante si corresponde. 
+   - ¿Es probable que la función(feature) propuesta cause un cambio incompatible?
+     - ¿Entrará en conflicto con las funciones y variables existentes de p5.js?
+     - ¿Entrará en conflicto con los bocetos típicos(typical sketches) ya escritos para p5.js?
+     - Las funciones que probablemente causen conflictos, como las mencionadas anteriormente, se consideran cambios incompatibles(breaking changes). Sin un lanzamiento de versión mayor a [major version release](https://docs.npmjs.com/about-semantic-versioning), no deberíamos realizar cambios incompatibles en p5.js.
+   - ¿Se puede lograr la nueva función propuesta utilizando las funcionalidades existentes ya en p5.js, código JavaScript nativo relativamente simple, o bibliotecas existentes fáciles de usar(existing easy-to-use libraries)?
+     - Por ejemplo, en lugar de proporcionar una función de p5.js para unir una matriz de cadenas (array of strings) como `join(["Hello", "world!"])`, debería preferirse el JavaScript nativo  `["Hello", "world!"].join()`.
+2. Si el requisito de acceso y otras consideraciones han sido cumplidas, al menos dos administradores o mantenedores deben aprobar la nueva solicitud de función(feature request) antes de que comience el trabajo hacia una PR. El proceso de revisión de PR para nuevas funciones está documentado a continuación.
 
 
-### Feature enhancement
+### Mejora de función (Feature enhancement)
 
-Feature enhancement issues should use the "Existing Feature Enhancement" issue template. The process is very similar to new feature requests. The difference between a new feature request and feature enhancement can be blurry sometimes. Feature enhancement mainly deals with existing functions of p5.js while a new feature request could be requesting entirely new functions to be added.
+Las solicitudes(issues) de mejora de función deberían utilizar la plantilla de problema(issue template) "Mejora de Función Existente"("Existing Feature Enhancement"). El proceso es muy similar a las solicitudes de nuevas funciones. La diferencia entre una solicitud de nueva función(new feature request) y una mejora de función puede ser confusa a veces. La mejora de función principalmente trata sobre las funciones existentes de p5.js, mientras que una solicitud de nueva función podría estar solicitando la adición de funciones completamente nuevas.
 
-1. Similar to new feature requests, feature enhancement should only be accepted if they increase access to p5.js. Please see point 1 of [section above](steward_guidelines.md#feature-request).
-2. Inclusion criteria for feature enhancements are similar to those for feature requests, but particular attention should be paid to potential breaking changes.
-   - If modifying existing functions, all previous valid and documented function signatures must behave in the same way.
-3. Feature enhancements must be approved by at least one steward or maintainer before work should begin toward a PR. The PR review process for feature enhancement is documented below.
+1. Similar a las solicitudes de nuevas funciones(new feature), las mejoras de función(feature enhancement) solo deben ser aceptadas si aumentan el acceso a p5.js. Por favor, consulta el punto 1 de la sección anterior[section above](steward_guidelines.md#feature-request).
+2. Los criterios de inclusión para las mejoras de función son similares a los de las solicitudes de nuevas funciones, pero se debe prestar especial atención a los posibles cambios incompatibles.
+   - Si se están modificando funciones existentes, todas las firmas de funciones válidas y documentadas previamente deben comportarse de la misma manera.
+3. Las mejoras de funciones deben ser aprobadas por al menos un administrador o mantenedor antes de que comience el trabajo hacia una PR (solicitud de extracción). El proceso de revisión de PR para mejoras de funciones está documentado a continuación.
 
 
-### Discussion
+### Discusión
 
 This type of issue has a minimal template ("Discussion") and should be used to gather feedback around a topic in general before coalescing it into something more specific, like a feature request. These sorts of discussion issues can be closed when the conversation finishes and the resulting more specific issues have been created: 
 
