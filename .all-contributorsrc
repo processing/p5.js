@@ -5657,6 +5657,16 @@
         "a11y",
         "doc"
       ]
+    },
+    {
+      "login": "sproutleaf",
+      "name": "Miaoye Que",
+      "avatar_url": "https://avatars.githubusercontent.com/u/116130954?v=4",
+      "profile": "https://github.com/sproutleaf",
+      "contributions": [
+        "translation",
+        "maintenance"
+      ]
     }
   ],
   "repoType": "github",
