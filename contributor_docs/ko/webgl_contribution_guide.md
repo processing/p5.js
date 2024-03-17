@@ -1,136 +1,132 @@
-# WebGL Contribution Guide
+# WebGL 기여 안내
 
-If you're reading this page, you're probably interested in helping work on WebGL mode. Thank you, we're grateful for your help! This page exists to help explain how we structure WebGL contributions and to offer some tips for making changes.
+이 페이지를 읽고 있다면, 아마도 WebGL 모드에서의 작업을 돕고 싶어하는 것이겠죠? 당신의 기여에 다시 한 번 감사의 말씀을 드립니다. 이 페이지에서는 우리가 어떻게 WebGL 기여를 구성하는지를 설명하고, 변화를 주기 위한 몇 가지 팁을 제공합니다.
 
+## 참고 자료
 
-## Resources
+- WebGL 모드가 2D 모드와 어떻게 다른지 이해하려면 [p5.js WebGL architecture overview](webgl_mode_architecture.md)를 읽어보세요. 셰이더, 선 등에 대한 몇 가지 구현 세부 사항에 대한 가치 있는 자료가 됩니다.
+- 문제 생성, 코드베이스 설정, 변경 사항 테스트에 대한 정보가 필요하다면 [contributor guidelines](https://p5js.org/contributor-docs/#/./contributor_guidelines)을 읽어보세요.
+- 브라우저의 WebGL API에 대해 조금 알아두면 도움이 될 수 있는데, 
+  - [WebGL fundamentals](https://webglfundamentals.org/)에서 많은 핵심 렌더링 개념에 대해 검토할 수 있습니다.
+  - [The Book of Shaders](https://thebookofshaders.com/)에 WebGL 셰이더에서 사용되는 많은 기술들이 설명되어 있습니다.
 
-- Read our [p5.js WebGL architecture overview](webgl_mode_architecture.md) to understand how WebGL mode differs from 2D mode. This will be a valuable reference for some implementation specifics for shaders, strokes, and more.
-- Read our [contributor guidelines](https://p5js.org/contributor-docs/#/./contributor_guidelines) for information on how to create issues, set up the codebase, and test changes.
-- It can be helpful to know a bit about the browser's WebGL API, which is what p5.js's WebGL mode is built on top of:
-  - [WebGL fundamentals](https://webglfundamentals.org/) goes over many core rendering concepts
-  - [The Book of Shaders](https://thebookofshaders.com/) explains many techniques used in WebGL shaders
+## 계획
 
+[깃허브(GitHub) 프로젝트](https://github.com/orgs/processing/projects/5)에 게시된 이슈(issue)를 정리하고 다음과 같은 몇 가지 유형으로 나누었습니다.
 
-## Planning
+- **시스템 수준 변화**란 코드에 광범위한 영향을 미치는 장기적 목표입니다. 이것은 실행에 옮기기 전 수많은 논의와 계획을 필요로 합니다.
+- **아직 해결책이 없는 버그**란 원인을 줄이기 위한 약간의 디버깅이 필요한 버그 신고입니다. 아직 해결될 준비가 되어 있지 않으며, 원인이 발견되면 이를 고치기 위한 최고의 해결책을 논의할 수 있게 됩니다.
+- **솔루션이 있지만 PR이 없는 버그**는 어떻게 해결할 지 결정되었으며 누구나 자유롭게 코드를 작성할 수 있습니다.
+- **경미한 개선**이란 현재의 아키텍쳐 내에서 확실한 위치를 가지는 새로운 기능에 대한 이슈이며, 어떻게 맞출 것인지에 대한 논의를 하지 않아도 됩니다. 일단 이러한 기능이 가치가 있다고 동의하면, 이를 위한 코드를 자유롭게 작성할 수 있습니다.
+- **2D 기능**이란 p5.js에는 있지만 WebGL 모드에는 없는 기능입니다. 일단 구현되면, 이 기능은 2D 모드에서와 동일하게 작동될 것이라고 할 수 있습니다. 최적의 구현에 대해 논의할 필요가 있지만, 이에 대한 사용자 요구 사항은 명확합니다.
+- **모든 컨텍스트에서 작동하지 않는 기능**이란 WebGL 모드에 존재하지만 WebGL 모드를 사용할 수 있는 모든 방식으로 작동하지는 않는 기능입니다. 예를 들어, 일부 p5.js의 메소드는 2D 좌표계와 3D 좌표계에서 모두 작동하지만, 다른 메소드는 3D 좌표계에서 사용하면 중단될 수 있습니다. 보통은 자유롭게 이 기능에 대한 작업을 시작할 수 있습니다.
+- **기능 요청**이란 다른 모든 코드 변경 요청을 말합니다. 이 요청이 WebGL 모드의 지침에 맞는 것인지 확인하기 위해서는 약간의 논의가 필요합니다.
+- **문서** 이슈는 코드 변경이 필요하지 않지만, 대신 p5.js의 동작을 위해 더 나은 문서가 필요한 이슈입니다.
 
-We organize open issues [in a GitHub Project](https://github.com/orgs/processing/projects/5), where we divide them up into a few types:
+## 코드를 어디에 넣어야 하나요?
 
-- **System-level changes** are longer-term goals with far-reaching implications in the code. These require the most discussion and planning before jumping into implementation.
-- **Bugs with no solution yet** are bug reports that need some debugging to narrow down the cause. These are not yet ready to be fixed: once the cause is found, then we can discuss the best way to fix it.
-- **Bugs with solutions but no PR** are bugs where we have decided how to fix it and are free for someone to write code for.
-- **Minor enhancements** are issues for new features that have an obvious spot within the current architecture without needing to discuss how to fit them in. Once agreed that these are worth doing, they are free to write code for.
-- **2D features** are ones that already exist in p5.js but not within WebGL mode. The expected behavior of the feature, once implemented, is to match 2D mode. We may need to discuss the best implementation, but the user requirements for these are clear.
-- **Features that don't work in all contexts** are ones that exist in WebGL mode but do not work in all the ways one can use WebGL mode. For example, some p5.js methods work with both 2D coordinates and 3D coordinates, but others break if you use 3D coordinates. These are generally free to begin working on.
-- **Feature requests** are all other code change requests. These need a bit of discussion to make sure they are things that fit into WebGL mode's roadmap.
-- **Documentation** issues are ones that don't need a code change but instead need better documentation of p5.js's behavior.
+WebGL과 관련된 모든 것은 `src/webgl` 하위 디렉토리에 있습니다. 해당 디렉토리 내에서, 최상위 p5.js 기능은 조명을 설정하는 명령어는 `lighting.js`로, 재료를 설정하는 명령어는 `materials.js`로 주제 영역에 따라 여러 파일로 나뉘었습니다.
 
+사용자 지향 클래스를 구현할 때, 일반적으로 클래스당 한 파일로 만드려고 노력하고 있습니다. 이러한 파일들은 때때로 다른 몇 개의 내부 유틸리티 클래스를 가질 수 있습니다. 예를 들어, `p5.Framebuffer.js`는 `p5.Framebuffer` 클래스를 포함하고, 추가로 다른 메인 클래스의 몇 가지 프레임버퍼 관련 하위 클래스로 구성됩니다. 이 파일에는 추가적인 프레임버퍼 관련 하위 클래스도 들어갈 수 있습니다.
 
-## Where to Put Code
-
-Everything related to WebGL is in the `src/webgl` subdirectory. Within that directory, top-level p5.js functions are split into files based on subject area: commands to set light go in `lighting.js`; commands to set materials go in `materials.js`.
-
-When implementing user-facing classes, we generally try to have one file per class. These files may occasionally have a few other internal utility classes. For example, `p5.Framebuffer.js` includes the class `p5.Framebuffer`, and also additionally consists of a few framebuffer-specific subclasses of other main classes. Further framebuffer-specific subclasses can go in this file, too.
-
-`p5.RendererGL` is a large class that handles a lot of behavior. For this reason, rather than having one large class file, its functionality is split into many files based on what subject area it is. Here is a description of the files we split `p5.RendererGL` across, and what to put in each one:
+`p5.RendererGL`은 많은 동작을 처리하는 대형 클래스입니다. 이 때문에 하나의 대형 클래스 파일이 있는 것이 아닌, 어떤 주제 영역인지에 따라 여러 개의 파일로 나누었습니다. 다음은 `p5.RendererGL`을 분할한 파일과, 각 파링ㄹ에 무성을 넣을지에 대한 설명입니다.
 
 
 #### `p5.RendererGL.js`
 
-Initialization and core functionality.
+초기화 및 핵심 기능
 
 
 #### `p5.RendererGL.Immediate.js`
 
-Functionality related to **immediate mode** drawing (shapes that will not get stored and reused, such as `beginShape()` and `endShape()`)
+**즉시 모드** 드로잉(`beginShape()`나 `endShape()`와 같은, 보관 및 재사용되지 않을 모양)과 관련된 기능 
 
 
 #### `p5.RendererGL.Retained.js`
 
-Functionality related to **retained mode** drawing (shapes that have been stored for reuse, such as `sphere()`)
-
+**유지 모드** 드로잉(`sphere()`와 같은, 재사용을 위해 저장된 모양)과 관련된 기능
 
 #### `material.js`
 
-Management of blend modes
+혼합 모드 관리
 
 
 #### `3d_primitives.js`
 
-User-facing functions that draw shapes, such as `triangle()`. These define the geometry of the shapes. The rendering of those shapes then happens in `p5.RendererGL.Retained.js` or `p5.RendererGL.Immediate.js`, treating the geometry input as a generic shape.
-
+`triangle()`과 같이 도형을 그리는 사용자 지향 함수. 이 함수들은 도형의 기하학적 구조를 정의합니다. 그런 다음 도형의 렌더링은 `p5.RendererGL.Retained.js` 또는 `p5.RendererGL.Immediate.js`에서 발생하며, 형상 입력을 일반 모양으로 취급합니다.
 
 #### `Text.js`
 
-Functionality and utility classes for text rendering.
+글자 렌더링을 위한 기능 및 유틸리티 클래스
 
 
-## Testing WebGL Changes
+## WebGL 변경 테스트
 
-### Testing Consistency
+### 일관성 테스트
 
-There are a lot of ways one can use the functions in p5.js. It's hard to manually verify all of it, so we add unit tests where we can. That way, when we make new changes, we can be more confident that we didn't break anything if all the unit tests still pass.
+p5.js의 함수를 사용할 수 있는 방법은 여러 가지가 있습니다. 모든 것을 수동으로 확인하는 것은 어려우므로, 가능한 곳에 단위 테스트(unit test)를 추가합니다. 그래야 새로운 변경점이 생겨도 단위 테스트를 통과한다면 아무 것도 망가뜨리지 않았다는 자신감을 가질 수 있기 때문입니다.
 
-When adding a new test, if the feature is something that also works in 2D mode, one of the best ways to check for consistency is to check that the resulting pixels are the same in both modes. Here's one example of that in a unit test:
+새 테스트를 추가할 때, 기능이 2D 모드에서도 작동하는 경우 일관성을 확인하는 최고의 방법 중 하나 픽셀 결과물이 두 모드에서 동일한지를 확인하는 것입니다. 다음은 단위 테스트의 예시 중 하나입니다.
+
 
 ```js
 test('coplanar strokes match 2D', function() {
-  const getColors = function(mode) {
-    myp5.createCanvas(20, 20, mode);
-    myp5.pixelDensity(1);
-    myp5.background(255);
-    myp5.strokeCap(myp5.SQUARE);
-    myp5.strokeJoin(myp5.MITER);
-    if (mode === myp5.WEBGL) {
-      myp5.translate(-myp5.width/2, -myp5.height/2);
-    }
-    myp5.stroke('black');
-    myp5.strokeWeight(4);
-    myp5.fill('red');
-    myp5.rect(10, 10, 15, 15);
-    myp5.fill('blue');
-    myp5.rect(0, 0, 15, 15);
-    myp5.loadPixels();
-    return [...myp5.pixels];
-  };
-  assert.deepEqual(getColors(myp5.P2D), getColors(myp5.WEBGL));
+  const getColors = function(mode) {
+    myp5.createCanvas(20, 20, mode);
+    myp5.pixelDensity(1);
+    myp5.background(255);
+    myp5.strokeCap(myp5.SQUARE);
+    myp5.strokeJoin(myp5.MITER);
+    if (mode === myp5.WEBGL) {
+      myp5.translate(-myp5.width/2, -myp5.height/2);
+    }
+    myp5.stroke('black');
+    myp5.strokeWeight(4);
+    myp5.fill('red');
+    myp5.rect(10, 10, 15, 15);
+    myp5.fill('blue');
+    myp5.rect(0, 0, 15, 15);
+    myp5.loadPixels();
+    return [...myp5.pixels];
+  };
+  assert.deepEqual(getColors(myp5.P2D), getColors(myp5.WEBGL));
 });
 ```
 
-This doesn't always work because you can't turn off antialiasing in 2D mode, and antialiasing in WebGL mode will often be slightly different. It can work for straight lines in the x and y axes, though!
+2D 모드에서 안티앨리어싱을 끌 수 없고, WebGL 모드에서 안티앨리어싱은 종종 약간 다르기 때문에 항상 작동하지는 않습니다. 하지만 x 및 y축 상의 직선에 대해서는 작동합니다.
 
-If a feature is WebGL-only, rather than comparing pixels to 2D mode, we often check a few pixels to ensure their color is what we expect. One day, we might turn this into a more robust system that compares against full image snapshots of our expected results rather than a few pixels, but for now, here is an example of a pixel color check:
+만약 어떤 기능이 WebGL 전용이라면 2D 모드와 픽셀 결과물을 비교하기보다는 몇 가지 픽셀을 확인해서 그 색상이 예상한 색상인지 확인하는 경우가 많습니다. 언젠가는 이를 몇 가지 픽셀이 아닌 예상 결과물의 전체 이미지 스냅샷을 비교하는 보다 강력한 시스템으로 전환할 수도 있겠지만, 현재로서는 픽셀 색상을 확인하는 예시가 있습니다.
 
 ```js
 test('color interpolation', function() {
-  const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
-  // upper color: (200, 0, 0, 255);
-  // lower color: (0, 0, 200, 255);
-  // expected center color: (100, 0, 100, 255);
-  myp5.beginShape();
-  myp5.fill(200, 0, 0);
-  myp5.vertex(-128, -128);
-  myp5.fill(200, 0, 0);
-  myp5.vertex(128, -128);
-  myp5.fill(0, 0, 200);
-  myp5.vertex(128, 128);
-  myp5.fill(0, 0, 200);
-  myp5.vertex(-128, 128);
-  myp5.endShape(myp5.CLOSE);
-  assert.equal(renderer._useVertexColor, true);
-  assert.deepEqual(myp5.get(128, 128), [100, 0, 100, 255]);
+  const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
+  // upper color: (200, 0, 0, 255);
+  // lower color: (0, 0, 200, 255);
+  // expected center color: (100, 0, 100, 255);
+  myp5.beginShape();
+  myp5.fill(200, 0, 0);
+  myp5.vertex(-128, -128);
+  myp5.fill(200, 0, 0);
+  myp5.vertex(128, -128);
+  myp5.fill(0, 0, 200);
+  myp5.vertex(128, 128);
+  myp5.fill(0, 0, 200);
+  myp5.vertex(-128, 128);
+  myp5.endShape(myp5.CLOSE);
+  assert.equal(renderer._useVertexColor, true);
+  assert.deepEqual(myp5.get(128, 128), [100, 0, 100, 255]);
 });
 ```
 
 
-### Performance Testing
+### 성능 테스트
 
-While not the #1 concern of p5.js, we try to make sure changes don't cause a large hit to performance. Typically, this is done by creating two test sketches: one with your change and one without the change. We then compare the frame rates of both.
+p5.js가 가장 걱정하는 부분은 아니지만, 변경점이 성능을 크게 저하하지 않도록 노력하고 있습니다. 보통 하나는 변경이 이루어진 것이고 나머지 하나는 변경 없는 두 개의 테스트 스케치를 생성해서 이루어지고 있습니다. 그런 다음 두 프레임 속도를 비교합니다.
 
-Some advice on how to measure performance:
+성능 측정에 대한 몇 가지 조언을 드리자면,
 
-- Disable friendly errors with `p5.disableFriendlyErrors = true` at the top of your sketch (or just test `p5.min.js`, which does not include the friendly error system)
-- Display the average frame rate to get a clear sense of the steady state frame rate:
+- 스케치 상단에서 `p5.disableFriendlyErrors = true`로 익숙한 오류를 비활성화해 보세요. (또는 익숙한 오류 시스템이 들어 있지 않은 `p5.min.js`를 테스트해보세요)
+- 안정적인 프레임 속도를 명확하게 파악하기 위해 평균 프레임 속도를 표시해 보세요.
 
 ```js
 let frameRateP;
@@ -138,24 +134,24 @@ let avgFrameRates = [];
 let frameRateSum = 0;
 const numSamples = 30;
 function setup() {
-  // ...
-  frameRateP = createP();
-  frameRateP.position(0, 0);
+  // ...
+  frameRateP = createP();
+  frameRateP.position(0, 0);
 }
 function draw() {
-  // ...
-  const rate = frameRate() / numSamples;
-  avgFrameRates.push(rate);
-  frameRateSum += rate;
-  if (avgFrameRates.length > numSamples) {
-    frameRateSum -= avgFrameRates.shift();
-  }
+  // ...
+  const rate = frameRate() / numSamples;
+  avgFrameRates.push(rate);
+  frameRateSum += rate;
+  if (avgFrameRates.length > numSamples) {
+    frameRateSum -= avgFrameRates.shift();
+  }
  
-  frameRateP.html(round(frameRateSum) + ' avg fps');
+  frameRateP.html(round(frameRateSum) + ' avg fps');
 }
 ```
 
-Here are cases we try to test since they stress different parts of the rendering pipeline:
+렌더링 파이프라인의 여러 부분에 스트레스를 주기 때문에 테스트를 해야 하는 다음과 같은 경우가 있습니다.
 
-- A few very complicated shapes (e.g., a large 3D model or a long curve)
-- Many simple shapes (e.g., `line()` called many times in a for loop)
+- 몇 가지의 매우 복잡한 모양 (예: 대형 3D 모델이나 긴 곡선)
+- 많은 수의 단순한 모양 (예: for 반복문에서 여러 번 호출되는 `line()`)
