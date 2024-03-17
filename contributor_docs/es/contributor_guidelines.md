@@ -187,4 +187,86 @@ Al abrir una discusión, puedes utilizar el panel de “Etiquetas”, que encont
 
 ---
 
+# Trabajando en la base de código de p5.js
 
+## Pre-requisitos
+
+Para proceder, debes tener un conocimiento mínimo sobre cómo trabajar con la línea de comandos, git, node.js (al menos la versión 18 o superior), y haber configurado un entorno de desarrollo local.
+
+
+##  Introducción 
+
+Ahora que tu <em>Issue</em>ha sido discutido, se ha aprobado una implementación y estás dispuesto a hacer los cambios de código, estás listo para empezar a trabajar en la base de código.
+
+Del mismo modo, si te has encontrado con un <em>Issue</em> o has participado en discusiones sobre un <em>Issue</em> y se ha aprobado una implementación por parte de los supervisores, pero ni el autor original  ni otros miembros de la comunidad han indicado que están dispuestos a trabajar en la solución; puedes ofrecerte como voluntario para enviar una contribución y solicitar que los supervisores te asignen el problema.
+
+**No debes “saltarte la fila”** llenando un <em> Pull Request</em> para un <em>Issue</em> en el que alguien más ya haya indicado su interés de contribuir o que ya se haya asignado a alguien más. Siempre daremos prioridad al orden de asignación para aceptar contribuciones nuevas.
+
+Si abres un <em>Pull Request</em> mientras alguien más aún está trabajando en el mismo <em>Issue</em>, tu <em>Pull Request</em> será cerrado. Si notas que han pasado algunos meses desde la última actividad en un <em> Issue</em> que tiene a una persona asignada, puedes verificar con ellos dejando un comentario amable en el que preguntes por el progreso del <em>Issue</em> o inclusive ofrezcas ayuda con la implementación. Generalmente permitimos un largo período de tiempo para que las personas puedan trabajar en sus contribuciones, ya que entendemos que la gran mayoría trabaja como voluntarios y a menudo les lleva más tiempo desarrollar una funcionalidad.
+
+Del mismo modo, sugerimos que trabajes a tu propio ritmo y que estés seguro de que no hay una fecha límite estricta en la que debas entregar tu contribución. Dicho esto, si estás teniendo problemas en cualquier aspecto de tu contribución, no dudes en pedir ayuda dentro del <em>Issue</em>, a los supervisores y responsables de mantenimiento, o a los miembros de la comunidad. ¡Haremos lo posible para guiarte! 
+
+
+## Inicio Rápido para Desarrolladores
+
+Si quieres trabajar o contribuir al código base de p5.js 🌸 como desarrollador, ya sea directamente mejorando p5.js o mejorando sus subproyectos como lo es [Friendly Error Systems](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md), puedes seguir los siguiente pasos: 
+
+1. [Crea un fork (copia de repositorio) de p5.js.](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
+2. [Clona el fork y crea una copia local.](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
+3. [Configura git para que tu copia local del repositorio se sincronice con el repositorio original. Para ello utiliza el siguiente comando en tu terminal.](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-repository-for-a-fork):
+
+  ```
+  git remote add upstream https://github.com/processing/p5.js
+  ```
+
+4. Asegúrate de que [node.js](https://nodejs.org/en/download) está instalado en tu computador. Puedes revisar si node.js está instalado escribiendo en tu terminal el siguiente comando: 
+  ```
+  node -v
+  ```
+5. Instala las dependencias necesarias con el siguiente comando: 
+
+  ```
+  npm ci
+  ```
+6. Crea una nueva <em>branch</em> (rama) del `main` <em>branch </em>  (rama principal). Utiliza un nombre descriptivo al crear un nueva branch.
+
+  ```
+  git checkout -b [branch_name]
+  ```  
+
+7. A medida de que comiences a realizar cambios a la base de código, ejecuta pruebas frecuentemente (toma tiempo, pero garantiza que no se estén deteriorando comportamientos existentes). Para ello utiliza el siguiente comando:
+
+  ```
+  npm test
+  ``` 
+8. Añade pruebas unitarias si estás trabajando en nuevas funcionalidades, o estas mejorando una funcionalidad existente.
+
+9.	Una vez hayas terminado, puedes hacer un <em>commit</em> de los cambios y crear un [<em>Pull Request</em>]( https://p5js.org/contributor-docs/#/./contributor_guidelines?id=pull-requests).
+
+## Utilizando la funcionalidad de edición de Github
+
+Cuando estás viendo un archivo en la interfaz web de GitHub, en la parte superior del contenido que estas revisando, vas a poder ver un botón con el icono de un lápiz. Este botón proporciona una función de edición conveniente que provee GitHub, y que simplifica muchos de los procesos que vamos a estar cubriendo más adelante. Esta funcionalidad te permite realizar cambios simples a tus archivos de manera rápida.
+
+![Cropped screenshot of a file view in GitHub of the p5.js repository, "src/color/color\_conversion.js" file. A red arrow pointing to a pencil icon button on the right side of the image.](../images/edit-file.png)
+
+Sin embargo, no es recomendado utilizar esta funcionalidad a menos de que se trate de cambios muy simples. Una de las razones principales es que para adicionar cambios más complejos al código fuente, estos tuvieron que haber sido compilados y testeados localmente antes de ser registrados en un <em> Pull Request</em>. Usar un entorno de desarrollo local suele ser mucho más fluido en comparación con el entorno de edición básico que GitHub proporciona.
+
+## Haciendo un fork de p5.js y trabajando desde tu fork
+
+El primer paso para trabajar en el código fuente de p5.js es haciendo un fork (copia) de su repositorio. <em>’Forking’</em> tiene una definición especifica dentro de la comunidad Open Source (Código Abierto), pero para el propósito de esta documentación, significa la creación de una copia del repositorio dentro de tu cuenta de GitHub. Para hacer un <em> fork</em>, simplemente haz clic en el botón que dice ‘Fork’ en la parte superior de la página donde se encuentra el repositorio. GitHub creará  una copia del repositorio dentro de tu cuenta.
+
+![Screenshot of the main page of repository. A button, labeled with a fork icon and "Fork 59.3k," is outlined in dark orange.](../images/fork.png)
+
+Trabajar desde el <em>fork</em>  que has creado del repositorio de p5.js es necesario para poder realizar cambios. Es muy seguro que no tengas acceso directo para enviar cambios al repositorio oficial de p5.js, por lo que trabajar en un <em>fork</em> te permitirá hacer modificaciones y luego enviarlas de vuelta al repositorio oficial.
+
+### Utilizando Github Desktop
+
+GitHub Desktop es un programa que te permite trabajar mediante una interfaz gráfica visual en lugar de escribir comandos en la terminal. Es una buena opción si ere nuevo en git, y siempre puedes alternar entre Github Desktop y la terminal a tu conveniencia.
+
+Primero [descarga e instala GitHub Desktop]( https://desktop.github.com/). Una vez instalado, abre la aplicación. Esta te pedirá que inicies sesión con tu cuenta de GitHub. Una vez hayas iniciado sesión, GitHub Desktop va hacer una lista de tus proyectos, incluyendo tu <em>fork</em> de p5.js. Selecciona tu <em>fork</em>, el cual tendrá el nombre de `tuUsuario/p5.js`, y luego haz clic en el botón azul que dice ‘Clone’ (clonar). Luego, se te van a preguntar algunos detalles acerca de donde ubicar tu proyecto. Tienes la opción de cambiar la ubicación, o continuar con la configuración predefinida.
+
+![The GitHub Desktop user interface after signing in. On the right half of the screen, it lists your projects, and a Clone button in the bottom right.](../images/github-desktop-init.png)
+
+Una vez lo hayas clonado, se te va a preguntar como planeas usar el <em>fork</em> de este repositorio. Selecciona la opción que dice “To contribute to the parent project” (Contribuir al proyecto original) y haz clic en “Continuar”.
+
+![The view after cloning a fork. It asks if you are planning to contribute to the parent project, or use it for your own purposes.](../images/github-desktop-fork.png)
