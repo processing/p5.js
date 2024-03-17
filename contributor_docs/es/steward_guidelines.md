@@ -161,12 +161,12 @@ El proceso para una nueva función o mejora de función en una PR es similar a l
 
 ### Dependabot
 
-Dependabot PRs are usually only visible to repo admins so if this does not apply to you, please skip this section.
+Las PRs de Dependabot generalmente solo son visibles para los administradores del repositorio, así que si esto no aplica a ti, por favor omite esta sección.
 
-- Dependabot PRs can be merged directly if the version update is a [semver](https://semver.org/) patch version and the automated CI test has passed.
-- Dependabot PRs with semver minor version changes can usually be merged directly as long as automated CI test passes. A quick check on the changelog of the updated dependency is recommended.
-- Dependabot PRs with semver major version changes may likely affect either the build process or p5.js functionalities. The reviewer, in this case, is encouraged to review the changelog from the current version to the target version if possible and test the PR locally to ensure all processes are functioning and make any required changes due to potential breaking changes in the dependencies.
-  - Many dependencies bump major version numbers only because they drop official support for very old versions of Node.js. In many cases, major version changes don't necessarily mean breaking changes resulting from dependency API changes.
+- Las PRs de Dependabot pueden fusionarse(be merged) directamente si la actualización de la versión es una [semver](https://semver.org/) versión de parche( patch version) y la prueba automatizada de CI(CI test ) ha pasado.
+- Las PRs de Dependabot con cambios de versión semver menor generalmente se pueden fusionar directamente siempre y cuando la prueba automatizada de CI pase. Se recomienda hacer una rápida verificación en el registro de cambios(changelog ) de la dependencia actualizada.
+- Las PRs de Dependabot con cambios de versión semver mayor probablemente afectarán el proceso de compilación o las funcionalidades de p5.js. En este caso, se anima al revisor a revisar el registro de cambios desde la versión actual hasta la versión objetivo, si es posible, y probar la PR localmente para asegurarse de que todos los procesos estén funcionando y realizar los cambios necesarios debido a posibles cambios que puedan romper las dependencias.
+  - Muchas dependencias aumentan los números de versión principales solo porque dejan de admitir versiones muy antiguas de Node.js. En muchos casos, los cambios de versión principales no necesariamente significan cambios que rompan debido a cambios en la API de la dependencia.
 
 ---
 
