@@ -1,281 +1,238 @@
-# Contributor Guidelines
+# 기여자 가이드라인
 
-Welcome to the contributor guidelines! This document is for new contributors looking to contribute code to p5.js, contributors looking to refresh their memories on some technical steps, or just about anything else to do with code contributions to p5.js.
+기여자 가이드라인에 오신 것을 환영합니다! 이 문서는 p5.js에 코드를 기여하려는 새로운 기여자들, 기술적인 단계를 상기시키려는 기여자들, 또는 p5.js에 코드를 기여하는 데 관련된 모든 것을 포함합니다. 
 
-If you are looking to contribute outside of the p5.js repositories (writing tutorials, planning classes, organizing events), please have a look at the other relevant pages instead. Stewards or maintainers may find the [steward guidelines](https://github.com/processing/p5.js/blob/main/contributor_docs/steward_guidelines.md) more helpful regarding reviewing issues and pull requests.
+p5.js 저장소 외부에서 기여하려는 경우(튜토리얼 작성, 수업 계획, 이벤트 조직 등), 관련된 다른 페이지를 살펴보세요. 스튜어드 또는 유지 관리자는 이슈 및 풀 리퀘스트를 검토하는 데 더 유용한 스튜어드 가이드라인을 찾을 수 있습니다.
 
-This is a relatively long and comprehensive document but we will try to signpost all steps and points as clearly as possible. Do utilize the table of contents to find sections relevant to you. Feel free to skip sections if they are not relevant to your planned contributions.
+이 문서는 비교적 긴 종합적인 문서이지만, 가능한 모든 단계와 항목을 명확하게 지시하도록 할 것입니다. 목차를 활용하여 자신에게 관련된 섹션을 찾아보세요. 계획된 기여와 관련이 없는 경우 섹션을 건너 뛰어도 괜찮습니다.
 
-**If you are a new contributor, you may want to start with the first section, “All about issues.” If you just want a step-by-step setup of the development process, you can look at the “Quick Get Started For Developers” section.**
+**새로운 기여자인 경우 첫 번째 섹션 "이슈에 대해 모두 알아보기"로 시작하는 것이 좋습니다. 개발 프로세스의 단계별 설정만 필요한 경우 "개발자를 위한 빠른 시작" 섹션을 참조하세요.**
 
 
-# Table of Contents
+# 목차
 
-- [All about issues](#all-about-issues)
-  - [What are issues?](#what-are-issues)
-  - [Issue templates](#issue-templates)
-    - [Found a bug](#found-a-bug)
-    - [Existing Feature Enhancement](#existing-feature-enhancement)
-    - [New Feature Request](#new-feature-request)
-    - [Discussion](#discussion)
-- [Working on p5.js codebase](#working-on-the-p5js-codebase)
-  - [Quick Get Started For Developers](#quick-get-started-for-developers)
-  - [Using the Github edit functionality](#using-the-github-edit-functionality)
-  - [Forking p5.js and working from your fork](#forking-p5js-and-working-from-your-fork)
-    - [Using Github Desktop](#using-github-desktop)
-    - [Using the git command line interface](#using-the-git-command-line-interface)
-  - [Codebase breakdown](#codebase-breakdown)
-  - [Build setup](#build-setup)
-  - [Git workflow](#git-workflow)
-    - [Source code](#source-code)
-    - [Unit tests](#unit-tests)
-    - [Inline documentation](#inline-documentation)
-    - [Internationalization](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#internationalization)
-    - [Accessibility](#accessibility)
-  - [Code standard](#code-standard)
-  - [Software Design principles](#software-design-principles)
-- [Pull requests](#pull-requests)
-  - [Creating a pull request](#creating-a-pull-request)
-    - [Pull request information](#pull-request-information)
-    - [Title](#title)
-    - [Resolves](#resolves)
-    - [Changes](#changes)
-    - [Screenshots of the change](#screenshots-of-the-change)
-    - [PR Checklist](#pr-checklist)
-    - [Rebase and resolve conflicts](#rebase-and-resolve-conflicts)
-  - [Discuss and amend](#discuss-and-amend)
+- [이슈에 대해 모두 알아보기](#all-about-issues)
+  - [이슈란 무엇인가요?](#what-are-issues)
+  - [이슈 템플릿](#issue-templates)
+    - [버그 발견](#found-a-bug)
+    - [기존 기능 향상](#existing-feature-enhancement)
+    - [새로운 기능 요청](#new-feature-request)
+    - [토론](#discussion)
+- [p5.js 코드베이스 작업](#working-on-the-p5js-codebase)
+  - [개발자를 위한 빠른 시작](#quick-get-started-for-developers)
+  - [Github 편집 기능 사용하기](#using-the-github-edit-functionality)
+  - [p5.js를 포크하고 포크에서 작업하기](#forking-p5js-and-working-from-your-fork)
+    - [Github Desktop 사용하기](#using-github-desktop)
+    - [git 명령 줄 인터페이스 사용하기](#using-the-git-command-line-interface)
+  - [코드베이스 분석](#codebase-breakdown)
+  - [빌드 설정](#build-setup)
+  - [Git 워크플로우](#git-workflow)
+    - [소스 코드](#source-code)
+    - [단위 테스트](#unit-tests)
+    - [인라인 문서화](#inline-documentation)
+    - [국제화](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#internationalization)
+    - [접근성](#accessibility)
+  - [코드 표준](#code-standard)
+  - [소프트웨어 디자인 원칙](#software-design-principles)
+- [풀 리퀘스트](#pull-requests)
+  - [풀 리퀘스트 생성](#creating-a-pull-request)
+    - [풀 리퀘스트 정보](#pull-request-information)
+    - [제목](#title)
+    - [해결](#resolves)
+    - [변경 사항](#changes)
+    - [변경 사항의 스크린샷](#screenshots-of-the-change)
+    - [풀 리퀘스트 체크리스트](#pr-checklist)
+    - [리베이스 및 충돌 해결](#rebase-and-resolve-conflicts)
+  - [리베이스 및 충돌 해결](#discuss-and-amend)
 
 ---
 
 
-# All about issues
+# 이슈에 대해 모두 알아보기 
 
-The majority of the activity on p5.js' GitHub repositories (repo for short) happens in issues, which is a great place to start your contribution journey.
+p5.js의 GitHub 저장소(repo)에서 활동의 대부분이 이슈에서 발생하며, 이는 당신이 기여를 시작하는 여정을 하기 좋은 장소입니다.
 
 
-## What are issues?
+## 이슈란 무엇인가?
 
 ![A cropped screenshot of the p5.js library GitHub repository, only showing contents of the top right corner. A red box is drawn on top of the screenshot surrounding the Issues tab.](images/issues-tab.png)
 
-“Issue” is the generic name for a post on GitHub that aims to describe, well, an issue. This issue can be a bug report, a request to add a new feature, a discussion, or anything that works as a post related to p5.js library development. Comments can be added below each issue by anyone with a GitHub account, including bots! It is the place where contributors discuss topics related to the development of the project in the repo.
+"이슈"는  깃허브 포스트에 대한 보편적인 용어이며, 이슈에 대해 잘 설명하기 위한 것입니다. 이슈는 버그 리포트,  새로운 기능 추가요청, 의견, 등 p5.js 라이브러리 개발과 관련된 모든 것이 될 수 있습니다.  봇을 포함한 깃허브 계정을 가진 모든 사람이 각 이슈에 코멘트(주석)를 달 수 있습니다! 이슈는 기여자들은 리포지토리 내 프로젝트 주제에 대한 상의할 수 있는 공간입니다. 
 
-While an issue can be opened for a wide variety of reasons, we usually only use issues to discuss the development of p5.js source code. Topics such as debugging your own code, inviting collaborators to your project, or other unrelated topics should be discussed
+다양한 이유로 이슈가 오픈될 수 있지만 우리는 보통 p5.js 소스 코드에 대한 개발에 대한 논의를 위해 이슈를 사용합니다. 당신의 코드 디버그, 프로젝트 협업자 초대 그리고 관련없는 주제는 포럼 [forum](https://discourse.processing.com/) 이나 디스코드[Discord](https://discord.gg/SHQ8dH25r9) 같은 플랫폼에서 상의되어야합니다. 
 
-either on the [forum](https://discourse.processing.com) or on other platforms such as [Discord](https://discord.gg/SHQ8dH25r9).
-
-We have created easy-to-use issue templates to aid you in deciding whether a topic should be a GitHub issue or posted elsewhere!
+ 깃허브 이슈인지 다른 곳에 포스트 되어야 하는지 결정할 수 있도록, 우리는 쉽게 사용할 수 있는 이슈 템플릿을 만들었습니다!
 
 
-## Issue templates
+## 이슈 템플릿
 
-p5.js's issue templates make it easier for stewards and maintainers to understand and review issues. They also make it easier for you to file the relevant issue and receive a reply faster. 
+p5.js의 이슈 템플릿은 스튜어드와 유지 관리자가 이슈를 이해하고 검토하기 쉽게 만들어줍니다. 또한 해당 이슈를 쉽게 제출하고 더 빠르게 답변을 받을 수 있도록 도와줍니다.
 
 ![Screenshot of an example of what an issue looks like on GitHub. The title of the issue in the screenshot is "Warning being logged in Safari when using a filter shader in 2D mode #6597"](images/github-issue.png)
 
-To file a new issue, simply go to the "Issues" tab on the p5.js repo and click on the "New issue" button on the right side. You will be presented with several different options, each of which either corresponds to a relevant issue template or redirects you to the relevant place to file your question. We recommend choosing the most relevant option out of those presented to ensure your issue receives the right attention promptly.
+새로운 이슈를 제기하려면  p5.js 저장소의 "Issues" 탭으로 이동하고 오른쪽에 있는 "New issue" 버튼을 클릭하기만 하면 됩니다. 여러 가지 옵션이 제시되며 각각은 관련된 이슈 템플릿에 해당하거나 질문을 제출할 적절한 위치로 리디렉션됩니다.  이슈가 제대로 된 관심을 받을 수 있도록 가장 관련된 옵션을 선택하는 것을 권장합니다.
 
 ![Cropped screenshot of the GitHub repository's issue page with the green "New issue" button highlighted with a red box surrounding it.](images/new-issue.png)
 
 
-### ["Found a bug"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Bug\&projects=\&template=found-a-bug.yml)
+### ["버그 발견"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Bug\&projects=\&template=found-a-bug.yml)
 
-When you encounter possible incorrect behavior in p5.js or something not behaving as described in the documentation, use [this template](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Bug\&projects=\&template=found-a-bug.yml). Please note that if you are trying to debug your sketch and you think it may be a problem with your code, you should first ask on the [Discourse forum](https://discourse.processing.org) instead.
+p5.js에서 잠재적으로 잘못된 동작이나 설명된대로 동작하지 않는 것을 발견한 경우, [이 템플릿](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Bug\&projects=\&template=found-a-bug.yml)을 사용하세요. 코드 디버깅을 시도하고 코드에 문제가 있을 수 있다고 생각되면 먼저  [Discourse 포럼](https://discourse.processing.org) 에서 질문하세요.
 
-There are a few fields for you to fill in for this template:
+이 템플릿에 채워야 할 몇 가지 필드가 있습니다:
 
-1. *Most appropriate sub-area of p5.js?* - This helps us identify and respond to your issue by automatically tagging the issue with the relevant [labels](https://github.com/processing/p5.js/blob/main/contributor_docs/issue_labels.md).
-2. *p5.js version* - You can find the p5.js version number in either the `<script>` tag link or on the very first line of the p5.js/p5.min.js file. It will look something similar to `1.4.2` (three numbers separated by periods).
-3. *Web browser and version* - This helps us isolate different behaviors between browsers. To find the browser version number, follow the instructions in the table below for the browser you are using.
+1. *p5.js의 가장 적합한 하위 영역은 무엇인가요?* -  이는 문제를 식별하고 응답하기 위해 이슈에 자동으로  [라벨]태그를 지정하여 도와줍니다.(https://github.com/processing/p5.js/blob/main/contributor_docs/issue_labels.md).
+2. *p5.js 버전* - p5.js 버전 번호는`<script>` 태그 링크 또는 p5.js/p5.min.js 파일의 첫 번째 줄에서 찾을 수 있습니다. 이것은  `1.4.2` 와 같이 점으로 구분된 세 개의 숫자로 이루어져 있을 것입니다.
+3. *웹 브라우저 및 버전* - 이는 브라우저 간의 다른 동작을 분리하는 데 도움이 됩니다. 브라우저 버전 번호를 찾으려면 사용 중인 브라우저에 따라 아래 표의 지침을 따르세요.
 
 <table>
 
-<tr>
-
-<td>
-
-Chrome
-
-</td>
-
-<td>
-
-Firefox
-
-</td>
-
-<td>
-
-Safari
-
-</td>
-
-</tr>
-
-<tr>
-
-<td>
-
-In the address bar, navigate to `chrome://version`
-
-</td>
-
-<td>
-
-In the address bar, navigate to  `about:support`
-
-</td>
-
-<td>
-
-Under the top bar “Safari” menu item, choose “About Safari”
-
-</td>
-
-</tr>
+	@@ -135,147 +133,148 @@ Under the top bar “Safari” menu item, choose “About Safari”
 
 </table>
 
-4. *Operating System* - You should include the OS version number if possible, e.g., `macOS 12.5`. Some bugs can stem from OS behaviors.
-5. *Steps to reproduce this* - This is arguably the most important information to share. You should list out detailed steps for replicating the bug you are seeing. Sharing a basic sample code that demonstrates the issue can go a long way for anyone looking to replicate the bug you are facing and start formulating a solution.
+4. *운영 체제* - 가능하면 운영 체제 버전 번호를 포함해야 합니다. 예:  `macOS 12.5`. 일부 버그는 운영 체제의 동작에서 비롯될 수 있습니다.
+5. *이것을 재현하는 단계* - 이것은 공유해야 할 가장 중요한 정보입니다. 여러분이 보고 있는 버그를 복제하기 위한 세부 단계를 나열해야 합니다. 문제를 보여주는 기본적인 예제 코드를 공유하는 것은 어떤 사람이 당신이 겪고 있는 버그를 복제하고 해결책을 만들기 시작하는 데 큰 도움이 될 수 있습니다.
 
-**Replication is key!** Many of the fields in this template are aimed at replicating the bug. The more information you can provide us about your sketch's environment and how others can replicate what you are seeing, the easier it is for anyone to understand your issue and start looking into solutions. 
+**복제가 핵심입니다!** 이 템플릿의 많은 필드는 버그를 복제하는 것을 목표로 합니다.당신의 스케치 환경과 다른 사람이 당신이 보고하는 것을 복제할 수 있는 방법에 대한 많은 정보를 제공할수록 당신의 문제를 이해하고 해결책을 찾기 쉬워집니다.
 
-**Be as detailed as you can and avoid generic statements**, e.g., do not say "image() function does not work" but rather be more specific, such as "image() function does not display the loaded GIF image at the right size." A helpful way to describe the bug you are facing is to describe two things: 
+**가능한 한 자세히 설명하고 추상적인 문장을 피하세요.**, 예를 들어 "image() function이 작동하지 않습니다”이라고 하지 말고 "image() function이 로드된 GIF 이미지를 올바른 크기로 표시하지 않습니다” 과 같이 더 구체적으로 설명하세요. 당신이 마주치고 있는 버그를 설명하는 유용한 방법은 다음 두 가지를 설명하는 것입니다:
 
-1. What you expect the sample code you share to do (expected behavior).
-2. What the sample code is actually doing (actual behavior).
-
-If you wish to contribute a fix to the bug you just reported, you can indicate so in the description. You may provide a simple suggestion as to how you would fix the bug you just described, this will let us know how much support you may need to contribute to the fix.
-
-**You should not file a pull request (or start working on code changes) without a corresponding issue or before an issue has been approved for implementation**; that is because the proposed fix may not be accepted, need a different approach entirely, or the actual problem is somewhere else. Any pull requests filed before the issue has been approved for fixing will be closed until approval is given to the issue.
-
-For bug reports to be accepted for fixing, they must be approved by at least one [area steward or maintainer](https://github.com/processing/p5.js#stewards) before work can begin on a pull request.
+1. 당신이 공유한 샘플 코드가 무엇을 기대하는지 (예상되는 동작).
+2. 샘플 코드가 실제로 무엇을 하는지 (실제 동작).
 
 
-### ["Existing Feature Enhancement"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Enhancement\&projects=\&template=existing-feature-enhancement.yml)
+당신이 방금 보고한 버그를 수정하고 싶다면, 설명란에 그렇게 표시할 수 있습니다. 그 후 당신이 방금 설명한 버그를 어떻게 수정할 것인지 간단한 제안을 제공할 수 있습니다. 이렇게 하면 얼마나 많은 지원이 필요한지를 알 수 있습니다.
 
-This template should be used if you wish to propose changes or add functionality to existing features of p5.js (functions, constants, rendering, etc). For example, if you want to add a new way to define a color to the `color()` function and other functions that accept colors, this is the template to use.
+**이슈가 승인되지 않거나 이슈에 대한 승인이 이루어지기 전에 해당 이슈와 관련된 풀 리퀘스트를 제출하거나 코드 변경 작업을 시작해서는 안됩니다**; 제안된 수정이 수락되지 않을 수 있으며, 완전히 다른 접근 방식이 필요할 수 있거나 실제 문제가 다른 곳에 있을 수 있기 때문입니다. 이슈가 수정될 것으로 승인되기 전에 제출된 모든 풀 리퀘스트는 이슈에 대한 승인이 주어질 때까지 닫힙니다.
 
-There are a few fields for this template that you should fill in.
-
-1. *Increasing Access* - This required field is where you insert a statement about how adding the proposed feature enhancement will help p5.js [increase access](https://github.com/processing/p5.js/blob/main/contributor_docs/access.md) for people historically marginalized in the field of creative arts or technology. **No proposals will be accepted without this**, although you can fill in "Not sure" and offer other members of the community to provide this argument if they can think of how it addresses the accessibility of p5.js.
-2. *Most appropriate sub-area of p5.js?* - This helps us identify and respond to your issue. This will automatically tag the issue with the relevant [labels](https://github.com/processing/p5.js/blob/main/contributor_docs/issue_labels.md).
-3. *Feature enhancement details* - This is where you describe your proposal for the feature enhancement. A good feature enhancement proposal often includes a clear use case: what, when, how, and why this feature enhancement is needed.
-
-For feature enhancement proposals to be accepted they must be approved by at least 1 [area steward or maintainer](https://github.com/processing/p5.js#stewards) before work can begin on a pull request. 
-
-**You should not file a pull request (or start working on code changes) without a corresponding issue or before an issue has been approved for implementation**, because there is no guarantee that the proposal will be accepted. Any pull requests filed before a proposal has been approved will be closed until approval is given to the issue.
+수정을 위해 승인된 이슈에는 적어도 한 명의[영역 스튜어드 또는 유지 관리자](https://github.com/processing/p5.js#stewards)의 승인을 받아야 풀 리퀘스트를 위한 작업을 시작할 수 있습니다.
 
 
-### ["New Feature Request"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Feature+Request\&projects=\&template=feature-request.yml)
+### ["기존 기능 향상"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Enhancement\&projects=\&template=existing-feature-enhancement.yml)
 
-This template should be used if you wish to propose a new feature to be added to p5.js. For example to add support for drawing native HTML `<table>` elements with a new `createTable` function. Some proposals may overlap with existing feature enhancement proposals, in these cases you should just choose whichever template you feel is most appropriate.
+이 템플릿은 p5.js의 기존 기능(함수, 상수, 렌더링 등)에 변경 사항을 제안하거나 기능을 추가하고자 할 때 사용해야 합니다. 예를 들어, `color()` 함수 및 색상을 받아들이는 다른 함수에 새로운 색상 정의 방법을 추가하고자 하는 경우에는 이 템플릿을 사용해야 합니다.
 
-Accordingly, the template form fields are nearly identical to the field of the "Existing Feature Enhancement." As such please see the [previous section](#existing-feature-enchancement) for details about how to fill in each field.
+이 템플릿에는 몇 가지 필드를 입력해야 합니다.
 
-For new feature request proposals to be accepted, they must be approved by at least 2 [area stewards or maintainers](https://github.com/processing/p5.js#stewards) before work can begin on a pull request. 
+1. *접근성향상* -이 필수 필드는 제안된 기능 향상을 통해 p5.js가 창작 예술이나 기술 분야에서 역사적으로 소외된 사람들에게 [접근성 향상](https://github.com/processing/p5.js/blob/main/contributor_docs/access.md)시킬 방법에 대한 설명을 넣는 곳입니다. **이것 없이는 어떤 제안도 수락되지 않습니다.**,  "확실하지 않음"을 기입하고 다른 구성원들이 p5.js의 접근성을 어떻게 다루는지 생각할 수 있다면 이 주장을 제공하도록 제공할 수 있습니다.
+2. *p5.js의 가장 적합한 하위 영역은 무엇인가요?* - 이는 우리가 이슈를 식별하고 해결하는데 도움이 됩니다. 이는 이슈에 자동으로 관련된 [라벨](https://github.com/processing/p5.js/blob/main/contributor_docs/issue_labels.md)을 지정할 것입니다.
+3. *기능 향상 세부 사항* -  이 곳은 기능 향상 제안에 대한 설명을 작성하는 곳입니다.좋은 기능 향상 제안에는 종종 이러한 기능 향상이 무엇, 언제, 어떻게, 그리고 왜 필요한지에 대한 명확한 사용 사례가 포함됩니다.
 
-**You should not file a pull request (or start working on code changes) without a corresponding issue or before an issue has been approved for implementation**, that is because there is no guarantee that the proposal will be accepted. Any pull requests filed before a proposal has been approved will be closed until approval is given to the issue.
+기능 향상 제안이 승인되기 위해서는 적어도 1명의[영역 스튜어드 또는 유지 관리자](https://github.com/processing/p5.js#stewards)의 승인이 필요합니다. 
+
+**이슈에 대한 승인이 이루어지기 전에 제안과 관련된 풀 리퀘스트를 제출하거나 코드 변경 작업을 시작해서는 안됩니다.**, 왜냐하면 제안이 수락될 것임을 보장할 수 없기 때문입니다. 승인이 이루어지기 전에 제출된 모든 풀 리퀘스트는 이슈에 대한 승인이 주어질 때까지 닫힐 것입니다.
 
 
-### ["Discussion"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Discussion\&projects=\&template=discussion.yml)
+### ["새로운 기능 요청"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Feature+Request\&projects=\&template=feature-request.yml)
 
-This template is used when the issue you are filing does not fit into any of the above in any way. An issue not fitting into any of the above templates should be relatively rare in practice. For example, a discussion about whether to adopt a specific Web API feature in p5.js should be filed as a [new feature request](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#new-feature-request); a discussion about adding an additional color mode to the various color functions should be filed as a [feature enchancement](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#existing-feature-enchancement); an announcement about a local creative coding event that you are organizing should be posted on the forum and contacting the Processing Foundation if you are looking for support or publicity; etc.
+이 템플릿은 p5.js에 새로운 기능을 제안하려는 경우에 사용해야 합니다. 예를 들어, 새로운  `createTable`함수를 사용하여 HTML`<table>`  요소를 그리는 기능을 추가하는 것입니다. 일부 제안은 기존의 기능 향상 제안과 중복될 수 있으며, 이러한 경우에는 가장 적합하다고 생각되는 템플릿을 선택하면 됩니다.
 
-When opening a discussion issue, you can use the "Labels" panel on the side panels to add additional relevant labels so you can signpost your issue to the relevant area. The template itself is just the bare minimum text field. You can see [this link](https://github.com/processing/p5.js/issues/6517) for an example discussion issue.
+따라서 템플릿 양식 필드는 "기존 기능 향상"의 필드와 거의 동일합니다. 따라서 각 필드를 어떻게 채워 넣어야 하는지에 대한 자세한 내용은[이전 섹션](#existing-feature-enchancement)을 참조하십시오.
+
+새로운 기능 요청 제안이 승인되기 위해서는 최소 2명의 [영역 스튜어드 또는 유지 관리자](https://github.com/processing/p5.js#stewards) 의 승인이 필요합니다.
+
+**제안이 승인되기 전에 제안과 관련된 풀 리퀘스트를 제출하거나 (코드 변경 작업)을 시작해서는 안됩니다.**, 왜냐하면 제안이 수락될 것임을 보장할 수 없기 때문입니다. 승인이 이루어지기 전에 제출된 모든 풀 리퀘스트는 이슈에 대한 승인이 주어질 때까지 닫힐 것입니다.
+
+
+### ["토론"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Discussion\&projects=\&template=discussion.yml)
+
+이 템플릿은 제출 중인 이슈가 위의 어느 것에도 맞지 않을 때 사용됩니다. 실제로는 어느 템플릿에도 맞지 않는 이슈는 비교적 드물어야 합니다. 예를 들어, p5.js에서 특정 웹 API 기능을 채택할지에 대한 토론은 [새로운 기능 요청](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#new-feature-request); 으로 제출해야 합니다. 여러 가지 색상 함수에 추가적인 색상 모드를 추가하는 것에 대한 토론은[기존 기능 향상](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#existing-feature-enchancement); 으로 제출해야 합니다.당신이 주최하는 지역 창작 코딩 이벤트에 대한 발표는 포럼에 게시하고 지원이나 홍보를 원한다면 Processing Foundation에 연락해야 합니다; 등등
+
+토론 이슈를 오픈할 때, 측면 패널의 "라벨" 패널을 사용하여 추가적인 관련 라벨을 추가하여 해당 영역으로 이슈를 알리도록 할 수 있습니다. 템플릿 자체는 최소한의 텍스트 필드만 있는 것입니다. 예시 토론 이슈를 보려면 [링크](https://github.com/processing/p5.js/issues/6517)를 확인하세요.
 
 [**⬆ back to top**](#contributor-guidelines)
 
 ---
 
 
-# Working on the p5.js codebase
+# p5.js 코드베이스 작업
 
-## Prerequisites
+## 사전 요구 사항
 
-To proceed you should be minimally familiar with working with the command line, git, node.js (at least v18 and up), and have a local development environment setup.
-
-
-## Introduction
-
-Now that your issue has been discussed, an implementation approved, and you are willing to make the code changes, you are ready to start working on the codebase.
-
-Similarly, if you have come across an issue or joined in discussions of an issue and an implementation has been approved by stewards, but neither the original issue author nor other members of the community have indicated they are willing to work on the issue, you may volunteer for submit a contribution here and have the stewards assign the issue to you.
-
-**You should not "jump the queue"** by filing a PR for an issue that either someone else has indicated willingness to submit a contribution or has already been assigned to someone else. We will always prioritize the "first assigned, first serve" order for accepting code contributions for an issue. 
-
-If you file a PR for an issue while someone else is still working on the same issue, your PR will be closed. If you see that it has been a few months since the last activity on an issue with an assigned individual, you can check in with them by leaving a polite comment on the issue asking for progress and if they need help with the implementation. We generally allow for a reasonably long time frame for people to work on their contributions as we understand that most people will often be working on a volunteer basis, or it simply takes more time for them to work on the feature. 
-
-Similarly, you should work at your own pace and be confident that there is no hard time limit on how long you can spend working on something. That being said, if you are having trouble with any aspect of your code contribution, do not hesitate to ask for help in the issue, the stewards and maintainers, as well as members of our community, will do our best to guide you!
+계속 진행 하려면 명령줄 git, node.js(v18 이상) 작업을 최소한으로 숙지하고 로컬 개발 환경을 설정해야 합니다.
 
 
-## Quick Get Started For Developers
+## 소개
 
-If you want to work/contribute to p5.js'🌸 codebase as a developer, either directly for improving p5.js or for improving its sub-projects like [Friendly Error Systems](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md), you can follow the following steps:
+이제 당신의 이슈가 논의되었고, 구현이 승인되었으며 코드 변경을 하기 위해 준비가 되었습니다. 코드 기반 작업을 시작할 준비가 되었습니다.
 
-1. [Create a fork of p5.js.](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
-2. [Clone your created fork to your computer.](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
-3. [Add upstream using the following command](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-repository-for-a-fork):
+마찬가지로, 문제를 발견했거나 문제에 대한 토론에 참여했으며 구현이 스튜어드에 의해 승인되었지만 원래 문제 작성자나 커뮤니티의 다른 구성원 모두 문제에 대해 작업할 의사가 없음을 표시한 경우, 자발적으로 여기에 기여를 제출하고 스튜어드가 문제를 할당하도록 할 수 있습니다.
+
+**"대기열을 지켜주세요."**  다른 사람이 기여를 제출할 의향을 표시하거나 이미 다른 사람에게 할당되어 있는 이슈에 대해 풀 리퀘스트을 제출하여 대기열을 넘어서는 안됩니다. 우리는 항상 "첫 번째 할당, 첫 번째 서비스" 순서로 코드 기여를 받아들이는 것을 우선시할 것입니다.
+
+만약 누군가가 아직 동일한 이슈에 대해 작업 중인 동안 PR을 제출하면, 당신의 풀 리퀘스트는 닫힐 것입니다. 이슈에 할당된 개인의 마지막 활동이 몇 달 동안 없었다면, 공손한 코멘트를 남겨 진행 상황을 묻고 구현에 도움이 필요한지 물어볼 수 있습니다. 우리는 대부분의 사람들이 자원 봉사로서 작업하거나 단순히 기능을 작업하는 데 더 많은 시간이 걸리기 때문에 기여를 작업하는 데 상당히 긴 시간을 허용합니다.
+
+마찬가지로, 당신은 자신의 속도로 일하고 얼마나 오래 코드 작업에 시간을 할애할 수 있는지에 대한 엄격한 시간 제한이 없다는 것에 자신감을 가질 필요가 있습니다. 그렇지만, 코드 기여의 어떤 측면에서든 문제가 발생하면 이슈에서 도움을 요청하는 것을 주저하지 마십시오. 스튜어드 및 유지 관리자뿐만 아니라 커뮤니티 회원들도 최선을 다해 안내할 것입니다!
+
+
+## 개발자를 위한 빠른 시작 가이드
+
+p5.js의🌸 코드베이스에 대한 작업/기여를 원하는 경우, p5.js를 직접 개선하거나 [친숙한 오류 시스템](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md)과 같은 하위 프로젝트를 개선하기 위해 다음 단계를 수행할 수 있습니다.:
+
+1. [p5.js의 포크를 생성합니다.](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
+2. [생성한 포크를 컴퓨터에 복제합니다.](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
+3. [다음 명령을 사용하여 upstream을 추가합니다.](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-repository-for-a-fork):
 
   ```
   git remote add upstream https://github.com/processing/p5.js
   ```
 
-4. Make sure your machine has [NodeJs](https://nodejs.org/en/download) installed; check it with the following command:
+4. 당신의 컴퓨터에 [NodeJs](https://nodejs.org/en/download) 가 설치되어 있는지 확인하십시오. 다음 명령어를 사용하여 확인할 수 있습니다:
 
   ```
   node -v
   ```
 
-5. Install dependencies with:
+5. 아래 명령어를 입력하여 필요한 라이브러리를 설치하세요:
 
   ```
   npm ci
   ```
 
-6. Create a git branch of the `main` branch having a descriptive branch name using: 
+6. 다음과 같이 설명적인 브랜치 이름을 사용하여 `메인 ` 브랜치에서 git 브랜치를 만들어 주세요:
 
   ```
   git checkout -b [branch_name]
   ```
 
-7. As you start making changes to the codebase, frequently run the tests (it takes time, but it ensures that existing behaviors are not being broken).
+7. 코드베이스를 변경하기 시작하면 자주 테스트를 실행하십시오. (이 작업은 시간이 걸리지만 기존의 동작이 손상되지 않는지 확인합니다.)
 
   ```
   npm test
   ```
 
-8. Add any unit tests if you are working on adding new features or feature enhancement.
-9. Once done, you can commit the changes and create a [Pull Request](https://p5js.org/contributor-docs/#/./contributor_guidelines?id=pull-requests).
+8. 새로운 기능을 추가하거나 기능 향상을 위해 작업 중인 경우 모든 단위 테스트를 추가합니다.
+9. 작업이 완료되면 변경 사항을 커밋하고 [풀 리퀘스트](https://p5js.org/contributor-docs/#/./contributor_guidelines?id=pull-requests)를 생성할 수 있습니다.
 
 
-## Using the GitHub edit functionality
+## GitHub 편집 기능 사용
 
-When viewing a file on the GitHub web interface, near the top of the content of the file you are viewing will be a pencil icon button. This button is a convenient edit feature provided by GitHub that simplifies many of the processes we will be covering below and can be used to make quick and simple edits to the file you are viewing.
+GitHub 웹 인터페이스에서 파일을 보고 있을 때, 보고 있는 파일의 내용 상단 근처에 연필 아이콘 버튼이 있습니다. 이 버튼은 GitHub에서 제공하는 편집 기능으로, 여러분이 보고 있는 파일을 빠르고 간편하게 편집할 수 있도록 도와줍니다.
 
 ![Cropped screenshot of a file view in GitHub of the p5.js repository, "src/color/color\_conversion.js" file. A red arrow pointing to a pencil icon button on the right side of the image.](images/edit-file.png)
 
-However, it is not recommended to use this feature other than for very simple changes. One of the main reasons for this is that for more complex changes to the source code, it should be built and tested locally before being filed as a PR. Using a local development environment is also often much more fluent for most as compared to the basic editing environment provided by this edit functionality.
+그러나 매우 단순한 변경 외에는 이 기능을 사용하는 것이 권장되지 않습니다. 이에 대한 주요 이유 중 하나는 소스 코드의 보다 복잡한 변경을 위해 풀 리퀘스트로 제출되기 전에 로컬에서 구축하고 테스트해야 하기 때문입니다. 로컬 개발 환경을 사용하는 것이 이 편집 기능에서 제공하는 기본적인 편집 환경보다 훨씬 유연하게 할 수 있는 경우가 많기 때문입니다.
 
 
-## Forking p5.js and working from your fork
+## p5.js를 포크하고 자신의 포크에서 작업하기
 
-The first step to work on the p5.js source code is to fork the p5.js repository. Forking has a specific meaning in open source, but for our purpose, it means creating a copy of the repository and storing it in your own GitHub account. To fork a repo, simply click on the "Fork" button near the top of the page, and GitHub will make a copy of the repo in your account.
+p5.js 소스 코드를 작업하기 위한 첫 번째 단계는 p5.js 리포지토리를 포크하는 것입니다. 포크는 오픈 소스에서 특정한 의미를 가지고 있지만, 여기서는 리포지토리의 사본을 생성하여 자신의 GitHub 계정에 저장하는 것을 의미합니다. 리포지토리를 포크하려면 페이지 상단 근처에 있는 "포크" 버튼을 클릭하기만 하면 GitHub가 계정에 리포트의 복사본을 만듭니다.
 
 ![Screenshot of the main page of repository. A button, labeled with a fork icon and "Fork 59.3k," is outlined in dark orange.](fork.png)
 
-Working from your fork of the p5.js repository is necessary because you will likely not have direct write access to the official p5.js repository, and working on a fork allows you to make changes and later submit them back to the official repository.
+p5.js 리포지토리에 대한 직접 쓰기 액세스 권한이 없을 가능성이 높기 때문에 p5.js  리포지토리의 포크에서 작업해야 하며, 포크에서 작업하면 변경한 후 나중에 공식 리포지토리에 다시 제출할 수 있습니다.
 
 
-### Using GitHub Desktop
+### GitHub Desktop 사용
 
-GitHub Desktop is a program that lets you work with git via a graphical user interface rather than typing commands into a terminal. It is a good option if you are new to git, and you can always switch back and forth between Github Desktop and a terminal whenever you feel like it.
+GitHub Desktop은 명령어를 터미널에 입력하는 대신에 그래픽 사용자 인터페이스를 통해 git을 사용할 수 있는 프로그램입니다. git에 익숙하지 않은 경우 좋은 옵션이며, 필요할 때마다 GitHub Desktop과 terminal 사이를 자유롭게 전환할 수 있습니다.
 
-First, [download and install GitHub Desktop.](https://desktop.github.com/) Once installed, open the application. It will ask you to sign in to your GitHub account. After you have signed in, it will list your projects, including your fork of p5.js. Select your fork, which will be named `yourUsername/p5.js`, and click the blue "Clone" button. It will ask for some details about where to place your project; you can either change them or leave the default settings and continue.
+먼저, [GitHub Desktop을 다운로드하고 설치](https://desktop.github.com/)합니다. 설치가 완료되면 응용 프로그램을 엽니다. GitHub 계정으로 로그인하라는 메시지가 표시됩니다. 로그인한 후에는 포크한 p5.js 프로젝트를 포함하여 프로젝트 목록이 표시됩니다. 자신의 포크인 `yourUsername/p5.js`를 선택하고 파란색 "Clone" 버튼을 클릭합니다. 프로젝트를 저장할 위치에 대한 몇 가지 세부 정보를 요청할 것입니다; 이를 변경하거나 기본 설정을 유지한 채로 계속할 수 있습니다.
 
 ![The GitHub Desktop user interface after signing in. On the right half of the screen, it lists your projects, and a Clone button in the bottom right.](images/github-desktop-init.png)
 
-Once cloned, it will ask how you plan to use your fork. Select the option to contribute to the parent project and click "Continue."
+복제가 되면 포크를 어떻게 사용할지에 대해 물어볼 것입니다. 상위 프로젝트에 기여할 옵션을 선택하고 "계속"을 클릭합니다.
 
 ![The view after cloning a fork. It asks if you are planning to contribute to the parent project, or use it for your own purposes.](images/github-desktop-fork.png)
 
