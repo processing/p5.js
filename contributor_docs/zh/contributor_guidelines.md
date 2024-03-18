@@ -298,6 +298,8 @@ git push -u origin [分支名称]
 
 当你访问 p5.js 的 Github 仓库时，你可能也会看到一个创建拉取请求的按钮。点击它也可以创建一个新的拉取请求。
 
+![alt text](../images/recent-pushes.png)
+
 ### 拉取请求信息
 
 ![alt text](../images/new-pr.png)
