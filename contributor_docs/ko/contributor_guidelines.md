@@ -2,7 +2,7 @@
 
 기여자 가이드라인에 오신 것을 환영합니다! 이 문서는 p5.js에 코드를 기여하고자 하는 신규 기여자, 몇 가지 기술적 단계를 다시 기억하고자 하는 기여자 또는 p5.js 코드 기여와 관련된 모든 사람을 위한 문서입니다.
 
-p5.js 리포지토리 외부에서 기여하려는 경우(튜토리얼 작성, 수업 계획, 이벤트 조직 등), 관련된 다른 페이지를 살펴보세요. 스튜어드 또는 유지 관리자는 이슈 및 풀 리퀘스트를 검토하는 데 더 유용한 스튜어드 가이드라인을 찾을 수 있습니다.
+p5.js 리포지토리(repository) 외부에서 기여하려는 경우(튜토리얼 작성, 수업 계획, 이벤트 조직 등), 관련된 다른 페이지를 살펴보세요. 스튜어드 또는 유지 관리자(maintainers)는 이슈 및 풀 리퀘스트를 검토하는 데 더 유용한 [스튜어드 가이드라인](https://github.com/processing/p5.js/blob/main/contributor_docs/steward_guidelines.md)을 찾을 수 있습니다.
 
 이 문서는 비교적 긴 종합적인 문서이지만, 가능한 모든 단계와 항목을 명확하게 지시하도록 할 것입니다. 목차를 활용하여 자신에게 관련된 섹션을 찾아보세요. 계획된 기여와 관련이 없는 경우 섹션을 건너 뛰어도 괜찮습니다.
 
@@ -23,7 +23,7 @@ p5.js 리포지토리 외부에서 기여하려는 경우(튜토리얼 작성, �
   - [Github 편집 기능 사용하기](#using-the-github-edit-functionality)
   - [p5.js를 포크하고 포크에서 작업하기](#forking-p5js-and-working-from-your-fork)
     - [Github Desktop 사용하기](#using-github-desktop)
-    - [git 명령 줄 인터페이스 사용하기](#using-the-git-command-line-interface)
+    - [git 명령줄(command line) 인터페이스 사용하기](#using-the-git-command-line-interface)
   - [코드베이스 분석](#codebase-breakdown)
   - [빌드 설정](#build-setup)
   - [Git 워크플로우](#git-workflow)
@@ -50,14 +50,14 @@ p5.js 리포지토리 외부에서 기여하려는 경우(튜토리얼 작성, �
 
 # 이슈에 대해 모두 알아보기 
 
-p5.js의 GitHub 저장소(repo)에서 활동의 대부분이 이슈에서 발생하며, 이는 당신이 기여를 시작하는 여정을 하기 좋은 장소입니다.
+p5.js의 GitHub 리포지토리(줄여서, repo)에서 활동의 대부분이 이슈에서 발생하며, 이는 당신이 기여를 시작하는 여정을 하기 좋은 장소입니다.
 
 
 ## 이슈란 무엇인가?
 
 ![A cropped screenshot of the p5.js library GitHub repository, only showing contents of the top right corner. A red box is drawn on top of the screenshot surrounding the Issues tab.](images/issues-tab.png)
 
-"이슈"는  깃허브 포스트에 대한 보편적인 용어이며, 이슈에 대해 잘 설명하기 위한 것입니다. 이슈는 버그 리포트,  새로운 기능 추가요청, 의견, 등 p5.js 라이브러리 개발과 관련된 모든 것이 될 수 있습니다.  봇을 포함한 깃허브 계정을 가진 모든 사람이 각 이슈에 코멘트(주석)를 달 수 있습니다! 이슈는 기여자들은 리포지토리 내 프로젝트 주제에 대한 상의할 수 있는 공간입니다. 
+"이슈"는  깃허브 포스트(post)를 일컫는 보편적인 용어이며, 이슈에 대해 잘 설명하기 위한 것입니다. 이슈는 버그 리포트,  새로운 기능 추가요청, 의견, 등 p5.js 라이브러리 개발과 관련된 모든 것이 될 수 있습니다.  봇을 포함한 깃허브 계정을 가진 모든 사람이 각 이슈에 코멘트(주석)를 달 수 있습니다! 이슈는 기여자들은 리포지토리 내 프로젝트 주제에 대한 상의할 수 있는 공간입니다. 
 
 다양한 이유로 이슈가 오픈될 수 있지만 우리는 보통 p5.js 소스 코드에 대한 개발에 대한 논의를 위해 이슈를 사용합니다. 당신의 코드 디버그, 프로젝트 협업자 초대 그리고 관련없는 주제는 포럼 [forum](https://discourse.processing.com/) 이나 디스코드[Discord](https://discord.gg/SHQ8dH25r9) 같은 플랫폼에서 상의되어야합니다. 
 
@@ -208,16 +208,16 @@ p5.js의🌸 코드베이스에 대한 작업/기여를 원하는 경우, p5.js�
 
 ## GitHub 편집 기능 사용
 
-GitHub 웹 인터페이스에서 파일을 보고 있을 때, 보고 있는 파일의 내용 상단 근처에 연필 아이콘 버튼이 있습니다. 이 버튼은 GitHub에서 제공하는 편집 기능으로, 여러분이 보고 있는 파일을 빠르고 간편하게 편집할 수 있도록 도와줍니다.
+GitHub 웹 인터페이스상 파일 내용 상단에 연필 아이콘 버튼이 있습니다. 이 버튼은 GitHub에서 제공하는 편집 기능으로, 여러분이 보고 있는 파일을 빠르고 간편하게 편집할 수 있도록 도와줍니다.
 
 ![Cropped screenshot of a file view in GitHub of the p5.js repository, "src/color/color\_conversion.js" file. A red arrow pointing to a pencil icon button on the right side of the image.](images/edit-file.png)
 
 그러나 매우 단순한 변경 외에는 이 기능을 사용하는 것이 권장되지 않습니다. 이에 대한 주요 이유 중 하나는 소스 코드의 보다 복잡한 변경을 위해 풀 리퀘스트로 제출되기 전에 로컬에서 구축하고 테스트해야 하기 때문입니다. 로컬 개발 환경을 사용하는 것이 이 편집 기능에서 제공하는 기본적인 편집 환경보다 훨씬 유연하게 할 수 있는 경우가 많기 때문입니다.
 
 
-## p5.js를 포크하고 자신의 포크에서 작업하기
+## p5.js를 포크하고 자신의 포크(fork)에서 작업하기
 
-p5.js 소스 코드를 작업하기 위한 첫 번째 단계는 p5.js 리포지토리를 포크하는 것입니다. 포크는 오픈 소스에서 특정한 의미를 가지고 있지만, 여기서는 리포지토리의 사본을 생성하여 자신의 GitHub 계정에 저장하는 것을 의미합니다. 리포지토리를 포크하려면 페이지 상단 근처에 있는 "포크" 버튼을 클릭하기만 하면 GitHub가 계정에 리포트의 복사본을 만듭니다.
+p5.js 소스 코드를 작업하기 위한 첫 번째 단계는 p5.js 리포지토리(repository)를 포크하는 것입니다. 포크(fork)는 오픈 소스에서 특정한 의미를 가지고 있지만, 여기서는 리포지토리의 사본을 생성하여 자신의 GitHub 계정에 저장하는 것을 의미합니다. 리포지토리를 포크하려면 페이지 상단 근처에 있는 "포크(fork)" 버튼을 클릭하기만 하면 GitHub가 계정에 리포지토리의 복사본을 만듭니다.
 
 ![Screenshot of the main page of repository. A button, labeled with a fork icon and "Fork 59.3k," is outlined in dark orange.](fork.png)
 
@@ -228,11 +228,11 @@ p5.js 리포지토리에 대한 직접 쓰기 액세스 권한이 없을 가능�
 
 GitHub Desktop은 명령어를 터미널에 입력하는 대신에 그래픽 사용자 인터페이스를 통해 git을 사용할 수 있는 프로그램입니다. git에 익숙하지 않은 경우 좋은 옵션이며, 필요할 때마다 GitHub Desktop과 terminal 사이를 자유롭게 전환할 수 있습니다.
 
-먼저, [GitHub Desktop을 다운로드하고 설치](https://desktop.github.com/)합니다. 설치가 완료되면 응용 프로그램을 엽니다. GitHub 계정으로 로그인하라는 메시지가 표시됩니다. 로그인한 후에는 포크한 p5.js 프로젝트를 포함하여 프로젝트 목록이 표시됩니다. 자신의 포크인 `yourUsername/p5.js`를 선택하고 파란색 "Clone" 버튼을 클릭합니다. 프로젝트를 저장할 위치에 대한 몇 가지 세부 정보를 요청할 것입니다; 이를 변경하거나 기본 설정을 유지한 채로 계속할 수 있습니다.
+먼저, [GitHub Desktop을 다운로드하고 설치](https://desktop.github.com/)합니다. 설치가 완료되면 응용 프로그램을 엽니다. GitHub 계정으로 로그인하라는 메시지가 표시됩니다. 로그인한 후에는 포크한 p5.js 프로젝트를 포함하여 프로젝트 목록이 표시됩니다. 자신의 포크인 `yourUsername/p5.js`를 선택하고 파란색 "Clone" 버튼을 클릭합니다. 프로젝트를 저장할 위치에 대한 몇 가지 세부 정보를 요청할 것입니다. 이를 변경하거나 기본 설정을 유지한 채로 계속할 수 있습니다.
 
 ![The GitHub Desktop user interface after signing in. On the right half of the screen, it lists your projects, and a Clone button in the bottom right.](images/github-desktop-init.png)
 
-복제가 되면 포크를 어떻게 사용할지에 대해 물어볼 것입니다. 상위 프로젝트에 기여할 옵션을 선택하고 "계속"을 클릭합니다.
+복제가 되면 포크를 어떻게 사용할지에 대해 물어볼 것입니다. 상위 프로젝트에 기여할 옵션을 선택하고 "계속(Continue)"을 클릭합니다.
 
 ![The view after cloning a fork. It asks if you are planning to contribute to the parent project, or use it for your own purposes.](images/github-desktop-fork.png)
 
