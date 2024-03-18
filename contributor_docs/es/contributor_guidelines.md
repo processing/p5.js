@@ -228,7 +228,7 @@ Si quieres trabajar o contribuir al código base de p5.js 🌸 como desarrollado
   ```
   npm ci
   ```
-6. Crea una nueva <em>branch</em> (rama) del `main` <em>branch </em>  (rama principal). Utiliza un nombre descriptivo al crear un nueva branch.
+6. Crea una nueva rama de la rama `main`. Utiliza un nombre descriptivo al crear un nueva rama.
 
   ```
   git checkout -b [branch_name]
