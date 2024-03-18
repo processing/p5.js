@@ -4,7 +4,7 @@
 
 Si estás buscando contribuir más allá de los repositorios de p5.js (escribiendo tutoriales, planeando clases, organizando eventos), por favor dirígete a la documentación correspondiente para este tipo de colaboraciones. Aquellos que sean Supervisores o Responsables de mantenimiento, encontrarán más útil referirse a las [Instrucciones para Supervisores](https://github.com/processing/p5.js/blob/main/contributor_docs/steward_guidelines.md) cuando se trata de revisar 'Issues' (problemas) y 'Pull Requests'. 
 
-Este es un documento relativamente largo pero comprensible, y trataremos de indicar todos los pasos tan claro como sea posible. Sin embargo, utiliza la tabla de contenidos para encontrar las secciones que son relevantes para ti, y siéntete libre de omitir secciones que no son relevantes para las contribuciones que planeas hacer. 
+Este es un documento relativamente largo e integral, pero trataremos de indicar todos los pasos tan claro como sea posible. Utiliza la tabla de contenidos para encontrar las secciones que son relevantes para ti, y siéntete libre de omitir secciones que no son relevantes para las contribuciones que planeas hacer. 
 
 **Si eres un nuevo contribuidor te sugerimos comenzar con la primera sección: “ Todo acerca de los Issues (o problemas)”.  Por el contrario, si simplemente quieres un paso-a-paso del la configuración del  proceso de desarrollo, puedes dirigirte a la sección  de “Inicio Rápido para Desarrolladores”.**
 
