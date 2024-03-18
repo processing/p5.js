@@ -6,18 +6,18 @@ p5.js 리포지토리(repository) 외부에서 기여하려는 경우(튜토리�
 
 이 문서는 비교적 긴 종합적인 문서이지만, 가능한 모든 단계와 항목을 명확하게 지시하도록 할 것입니다. 목차를 활용하여 자신에게 관련된 섹션을 찾아보세요. 계획된 기여와 관련이 없는 경우 섹션을 건너 뛰어도 괜찮습니다.
 
-**새로운 기여자인 경우 첫 번째 섹션 "이슈에 대해 모두 알아보기"로 시작하는 것이 좋습니다. 개발 프로세스의 단계별 설정만 필요한 경우 "개발자를 위한 빠른 시작" 섹션을 참조하세요.**
+**새로운 기여자인 경우 첫 번째 섹션 "이슈(Issue)에 대해 모두 알아보기"로 시작하는 것이 좋습니다. 개발 프로세스의 단계별 설정만 필요한 경우 "개발자를 위한 빠른 시작" 섹션을 참조하세요.**
 
 
 # 목차
 
-- [이슈에 대해 모두 알아보기](#all-about-issues)
-  - [이슈란 무엇인가요?](#what-are-issues)
-  - [이슈 템플릿](#issue-templates)
+- [이슈(Issue)에 대해 모두 알아보기](#all-about-issues)
+  - [이슈(Issue)란 무엇인가요?](#what-are-issues)
+  - [이슈 템플릿(Issue Templates)](#issue-templates)
     - [버그 발견](#found-a-bug)
     - [기존 기능 향상](#existing-feature-enhancement)
     - [새로운 기능 요청](#new-feature-request)
-    - [토론](#discussion)
+    - [토론(Discussion)](#discussion)
 - [p5.js 코드베이스 작업](#working-on-the-p5js-codebase)
   - [개발자를 위한 빠른 시작](#quick-get-started-for-developers)
   - [Github 편집 기능 사용하기](#using-the-github-edit-functionality)
@@ -59,10 +59,9 @@ p5.js의 GitHub 리포지토리(줄여서, repo)에서 활동의 대부분이 �
 
 "이슈"는  깃허브 포스트(post)를 일컫는 보편적인 용어이며, 이슈에 대해 잘 설명하기 위한 것입니다. 이슈는 버그 리포트,  새로운 기능 추가요청, 의견, 등 p5.js 라이브러리 개발과 관련된 모든 것이 될 수 있습니다.  봇을 포함한 깃허브 계정을 가진 모든 사람이 각 이슈에 코멘트(주석)를 달 수 있습니다! 이슈는 기여자들은 리포지토리 내 프로젝트 주제에 대한 상의할 수 있는 공간입니다. 
 
-다양한 이유로 이슈가 오픈될 수 있지만 우리는 보통 p5.js 소스 코드에 대한 개발에 대한 논의를 위해 이슈를 사용합니다. 당신의 코드 디버그, 프로젝트 협업자 초대 그리고 관련없는 주제는 포럼 [forum](https://discourse.processing.com/) 이나 디스코드[Discord](https://discord.gg/SHQ8dH25r9) 같은 플랫폼에서 상의되어야합니다. 
+다양한 이유로 이슈가 오픈될 수 있지만 우리는 보통 p5.js 소스 코드에 대한 개발에 대한 논의를 위해 이슈를 사용합니다. 당신의 코드 디버그, 프로젝트 협업자 초대 그리고 관련없는 주제는 [포럼 (forum)](https://discourse.processing.com/) 이나 [디스코드 (Discord)](https://discord.gg/SHQ8dH25r9) 같은 플랫폼에서 상의되어야합니다. 
 
  깃허브 이슈인지 다른 곳에 포스트 되어야 하는지 결정할 수 있도록, 우리는 쉽게 사용할 수 있는 이슈 템플릿을 만들었습니다!
-
 
 ## 이슈 템플릿
 
@@ -70,33 +69,79 @@ p5.js의 이슈 템플릿은 스튜어드와 유지 관리자가 이슈를 이�
 
 ![Screenshot of an example of what an issue looks like on GitHub. The title of the issue in the screenshot is "Warning being logged in Safari when using a filter shader in 2D mode #6597"](images/github-issue.png)
 
-새로운 이슈를 제기하려면  p5.js 저장소의 "Issues" 탭으로 이동하고 오른쪽에 있는 "New issue" 버튼을 클릭하기만 하면 됩니다. 여러 가지 옵션이 제시되며 각각은 관련된 이슈 템플릿에 해당하거나 질문을 제출할 적절한 위치로 리디렉션됩니다.  이슈가 제대로 된 관심을 받을 수 있도록 가장 관련된 옵션을 선택하는 것을 권장합니다.
+새로운 이슈를 제기하려면  p5.js 저장소의 "Issues" 탭으로 이동하고 오른쪽에 있는 "New issue" 버튼을 클릭하기만 하면 됩니다. 여러 가지 옵션이 제시되며 각각은 관련된 이슈 템플릿에 해당하거나 질문을 제출할 적절한 위치로 리디렉션됩니다.  이슈가 제대로 된 관심을 받을 수 있도록 가장 연관성있는 옵션을 선택하는 것을 권장합니다.
 
 ![Cropped screenshot of the GitHub repository's issue page with the green "New issue" button highlighted with a red box surrounding it.](images/new-issue.png)
 
-
 ### ["버그 발견"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Bug\&projects=\&template=found-a-bug.yml)
 
-p5.js에서 잠재적으로 잘못된 동작이나 설명된대로 동작하지 않는 것을 발견한 경우, [이 템플릿](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Bug\&projects=\&template=found-a-bug.yml)을 사용하세요. 코드 디버깅을 시도하고 코드에 문제가 있을 수 있다고 생각되면 먼저  [Discourse 포럼](https://discourse.processing.org) 에서 질문하세요.
+p5.js에서 잘못된 동작이 발생하거나 문서에 설명된 대로 동작하지 않는 경우[이 템플릿](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Bug\&projects=\&template=found-a-bug.yml)을 사용하세요. 스케치(sketch) 디버깅 중 발생한 코드 문제는 먼저  [Discourse 포럼](https://discourse.processing.org) 에서 질문하세요.
 
 이 템플릿에 채워야 할 몇 가지 필드가 있습니다:
 
-1. *p5.js의 가장 적합한 하위 영역은 무엇인가요?* -  이는 문제를 식별하고 응답하기 위해 이슈에 자동으로  [라벨]태그를 지정하여 도와줍니다.(https://github.com/processing/p5.js/blob/main/contributor_docs/issue_labels.md).
+1. *가장 적합한 p5.js 하위 영역은 무엇인가요?* -  이는 문제를 식별하고 응답하기 위해 이슈에 자동으로  [라벨(label)]태그를 지정하여 도와줍니다.(https://github.com/processing/p5.js/blob/main/contributor_docs/issue_labels.md).
 2. *p5.js 버전* - p5.js 버전 번호는`<script>` 태그 링크 또는 p5.js/p5.min.js 파일의 첫 번째 줄에서 찾을 수 있습니다. 이것은  `1.4.2` 와 같이 점으로 구분된 세 개의 숫자로 이루어져 있을 것입니다.
 3. *웹 브라우저 및 버전* - 이는 브라우저 간의 다른 동작을 분리하는 데 도움이 됩니다. 브라우저 버전 번호를 찾으려면 사용 중인 브라우저에 따라 아래 표의 지침을 따르세요.
 
+
+
+
+
 <table>
 
-	@@ -135,147 +133,148 @@ Under the top bar “Safari” menu item, choose “About Safari”
+<tr>
+
+<td>
+
+Chrome
+
+</td>
+
+<td>
+
+Firefox
+
+</td>
+
+<td>
+
+Safari
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+In the address bar, navigate to `chrome://version`
+
+</td>
+
+<td>
+
+In the address bar, navigate to  `about:support`
+
+</td>
+
+<td>
+
+Under the top bar “Safari” menu item, choose “About Safari”
+
+</td>
+
+</tr>
 
 </table>
+
 
 4. *운영 체제* - 가능하면 운영 체제 버전 번호를 포함해야 합니다. 예:  `macOS 12.5`. 일부 버그는 운영 체제의 동작에서 비롯될 수 있습니다.
 5. *이것을 재현하는 단계* - 이것은 공유해야 할 가장 중요한 정보입니다. 여러분이 보고 있는 버그를 복제하기 위한 세부 단계를 나열해야 합니다. 문제를 보여주는 기본적인 예제 코드를 공유하는 것은 어떤 사람이 당신이 겪고 있는 버그를 복제하고 해결책을 만들기 시작하는 데 큰 도움이 될 수 있습니다.
 
 **복제가 핵심입니다!** 이 템플릿의 많은 필드는 버그를 복제하는 것을 목표로 합니다.당신의 스케치 환경과 다른 사람이 당신이 보고하는 것을 복제할 수 있는 방법에 대한 많은 정보를 제공할수록 당신의 문제를 이해하고 해결책을 찾기 쉬워집니다.
 
-**가능한 한 자세히 설명하고 추상적인 문장을 피하세요.**, 예를 들어 "image() function이 작동하지 않습니다”이라고 하지 말고 "image() function이 로드된 GIF 이미지를 올바른 크기로 표시하지 않습니다” 과 같이 더 구체적으로 설명하세요. 당신이 마주치고 있는 버그를 설명하는 유용한 방법은 다음 두 가지를 설명하는 것입니다:
+**가능한 한 자세히 설명하고 추상적인 문장을 피하세요.**, 예를 들어 "image() function이 작동하지 않습니다”이라고 하지 말고 "image() function이 로드된 GIF 이미지를 올바른 크기로 표시하지 않습니다” 과 같이 더 구체적으로 설명하세요. 당신이 마주치고 있는 버그를 설명하는 유용한 방법은 다음 두 가지를 설명하는 것입니다.
 
 1. 당신이 공유한 샘플 코드가 무엇을 기대하는지 (예상되는 동작).
 2. 샘플 코드가 실제로 무엇을 하는지 (실제 동작).
@@ -104,29 +149,29 @@ p5.js에서 잠재적으로 잘못된 동작이나 설명된대로 동작하지 
 
 당신이 방금 보고한 버그를 수정하고 싶다면, 설명란에 그렇게 표시할 수 있습니다. 그 후 당신이 방금 설명한 버그를 어떻게 수정할 것인지 간단한 제안을 제공할 수 있습니다. 이렇게 하면 얼마나 많은 지원이 필요한지를 알 수 있습니다.
 
-**이슈가 승인되지 않거나 이슈에 대한 승인이 이루어지기 전에 해당 이슈와 관련된 풀 리퀘스트를 제출하거나 코드 변경 작업을 시작해서는 안됩니다**; 제안된 수정이 수락되지 않을 수 있으며, 완전히 다른 접근 방식이 필요할 수 있거나 실제 문제가 다른 곳에 있을 수 있기 때문입니다. 이슈가 수정될 것으로 승인되기 전에 제출된 모든 풀 리퀘스트는 이슈에 대한 승인이 주어질 때까지 닫힙니다.
+**이슈가 승인되지 않거나 이슈에 대한 승인이 이루어지기 전에 해당 이슈와 관련된 풀 리퀘스트를 제출하거나 코드 변경 작업을 시작해서는 안됩니다**; 제안된 수정이 수락되지 않을 수 있습니다. 완전히 다른 접근 방식이 필요할 수 있거나 실제 문제가 다른 곳에 있을 수 있기 때문입니다. 이슈가 수정될 것으로 승인되기 전에 제출된 모든 풀 리퀘스트는 이슈에 대한 승인이 주어질 때까지 닫힙니다(closed).
 
-수정을 위해 승인된 이슈에는 적어도 한 명의[영역 스튜어드 또는 유지 관리자](https://github.com/processing/p5.js#stewards)의 승인을 받아야 풀 리퀘스트를 위한 작업을 시작할 수 있습니다.
+수정을 위해 승인된 이슈에는 적어도 한 명의 [영역 스튜어드 또는 유지 관리자](https://github.com/processing/p5.js#stewards)의 승인을 받아야 풀 리퀘스트를 위한 작업을 시작할 수 있습니다.
 
 
 ### ["기존 기능 향상"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Enhancement\&projects=\&template=existing-feature-enhancement.yml)
 
-이 템플릿은 p5.js의 기존 기능(함수, 상수, 렌더링 등)에 변경 사항을 제안하거나 기능을 추가하고자 할 때 사용해야 합니다. 예를 들어, `color()` 함수 및 색상을 받아들이는 다른 함수에 새로운 색상 정의 방법을 추가하고자 하는 경우에는 이 템플릿을 사용해야 합니다.
+이 템플릿은 p5.js의 기존 기능(함수, 상수, 렌더링 등)에 대한 변경 사항 제안, 또는 새로운 기능 추가를 위해 사용합니다. 예를 들어, `color()` 함수 및 색상을 받아들이는 다른 함수에 새로운 색상 정의 방법을 추가하는 경우에는 이 템플릿을 사용해야 합니다.
 
 이 템플릿에는 몇 가지 필드를 입력해야 합니다.
 
-1. *접근성향상* -이 필수 필드는 제안된 기능 향상을 통해 p5.js가 창작 예술이나 기술 분야에서 역사적으로 소외된 사람들에게 [접근성 향상](https://github.com/processing/p5.js/blob/main/contributor_docs/access.md)시킬 방법에 대한 설명을 넣는 곳입니다. **이것 없이는 어떤 제안도 수락되지 않습니다.**,  "확실하지 않음"을 기입하고 다른 구성원들이 p5.js의 접근성을 어떻게 다루는지 생각할 수 있다면 이 주장을 제공하도록 제공할 수 있습니다.
-2. *p5.js의 가장 적합한 하위 영역은 무엇인가요?* - 이는 우리가 이슈를 식별하고 해결하는데 도움이 됩니다. 이는 이슈에 자동으로 관련된 [라벨](https://github.com/processing/p5.js/blob/main/contributor_docs/issue_labels.md)을 지정할 것입니다.
-3. *기능 향상 세부 사항* -  이 곳은 기능 향상 제안에 대한 설명을 작성하는 곳입니다.좋은 기능 향상 제안에는 종종 이러한 기능 향상이 무엇, 언제, 어떻게, 그리고 왜 필요한지에 대한 명확한 사용 사례가 포함됩니다.
+1. *접근성향상* -이 필수 필드는 제안된 기능 향상을 통해 p5.js가 창작 예술이나 기술 분야에서 역사적으로 소외된 사람들에게 [접근성 향상] (https://github.com/processing/p5.js/blob/main/contributor_docs/access.md)시킬 방법에 대한 설명을 넣는 곳입니다. **이것없이는 어떤 제안도 수락되지 않습니다.**,  "확실하지 않음"을 기입하고 다른 구성원들이 p5.js의 접근성을 어떻게 다루는지 생각할 수 있다면 이 주장을 제공할 수 있도록 제안할 수 있지만, 이것이 없으면 제안은 수락되지 않습니다.
+2. *가장 적합한 p5.js 하위 영역은 무엇인가요?* - 이는 우리가 이슈를 식별하고 해결하는데 도움이 됩니다. 이는 이슈에 자동으로 관련된 [라벨](https://github.com/processing/p5.js/blob/main/contributor_docs/issue_labels.md)을 지정할 것입니다.
+3. *기능 향상 세부 사항* - 기능 향상 제안에 대한 설명을 작성하는 곳입니다. 좋은 기능 향상 제안에는 종종 이러한 기능 향상이 무엇, 언제, 어떻게, 그리고 왜 필요한지에 대한 명확한 사용 사례가 포함됩니다.
 
-기능 향상 제안이 승인되기 위해서는 적어도 1명의[영역 스튜어드 또는 유지 관리자](https://github.com/processing/p5.js#stewards)의 승인이 필요합니다. 
+기능 향상 제안이 승인되기 위해서는 적어도 1명의 [영역 스튜어드 또는 유지 관리자](https://github.com/processing/p5.js#stewards)의 승인이 필요합니다. 
 
 **이슈에 대한 승인이 이루어지기 전에 제안과 관련된 풀 리퀘스트를 제출하거나 코드 변경 작업을 시작해서는 안됩니다.**, 왜냐하면 제안이 수락될 것임을 보장할 수 없기 때문입니다. 승인이 이루어지기 전에 제출된 모든 풀 리퀘스트는 이슈에 대한 승인이 주어질 때까지 닫힐 것입니다.
 
 
 ### ["새로운 기능 요청"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Feature+Request\&projects=\&template=feature-request.yml)
 
-이 템플릿은 p5.js에 새로운 기능을 제안하려는 경우에 사용해야 합니다. 예를 들어, 새로운  `createTable`함수를 사용하여 HTML`<table>`  요소를 그리는 기능을 추가하는 것입니다. 일부 제안은 기존의 기능 향상 제안과 중복될 수 있으며, 이러한 경우에는 가장 적합하다고 생각되는 템플릿을 선택하면 됩니다.
+이 템플릿은 p5.js에 새로운 기능을 제안하려는 경우에 사용해야 합니다. 예를 들어, 새로운  `createTable`함수를 사용하여 HTML `<table>`  요소를 그리는 기능을 추가하는 것입니다. 일부 제안은 기존의 기능 향상 제안과 중복될 수 있으며, 이러한 경우에는 가장 적합하다고 생각되는 템플릿을 선택하면 됩니다.
 
 따라서 템플릿 양식 필드는 "기존 기능 향상"의 필드와 거의 동일합니다. 따라서 각 필드를 어떻게 채워 넣어야 하는지에 대한 자세한 내용은[이전 섹션](#existing-feature-enchancement)을 참조하십시오.
 
@@ -135,11 +180,11 @@ p5.js에서 잠재적으로 잘못된 동작이나 설명된대로 동작하지 
 **제안이 승인되기 전에 제안과 관련된 풀 리퀘스트를 제출하거나 (코드 변경 작업)을 시작해서는 안됩니다.**, 왜냐하면 제안이 수락될 것임을 보장할 수 없기 때문입니다. 승인이 이루어지기 전에 제출된 모든 풀 리퀘스트는 이슈에 대한 승인이 주어질 때까지 닫힐 것입니다.
 
 
-### ["토론"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Discussion\&projects=\&template=discussion.yml)
+### ["토론(Discussion)"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Discussion\&projects=\&template=discussion.yml)
 
-이 템플릿은 제출 중인 이슈가 위의 어느 것에도 맞지 않을 때 사용됩니다. 실제로는 어느 템플릿에도 맞지 않는 이슈는 비교적 드물어야 합니다. 예를 들어, p5.js에서 특정 웹 API 기능을 채택할지에 대한 토론은 [새로운 기능 요청](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#new-feature-request); 으로 제출해야 합니다. 여러 가지 색상 함수에 추가적인 색상 모드를 추가하는 것에 대한 토론은[기존 기능 향상](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#existing-feature-enchancement); 으로 제출해야 합니다.당신이 주최하는 지역 창작 코딩 이벤트에 대한 발표는 포럼에 게시하고 지원이나 홍보를 원한다면 Processing Foundation에 연락해야 합니다; 등등
+이 템플릿은 제출 중인 이슈가 위의 어느 것에도 맞지 않을 때 사용됩니다. 실제로는 어느 템플릿에도 맞지 않는 이슈는 비교적 드물어야 합니다. 예를 들어, p5.js에서 특정 웹 API 기능을 채택할지에 대한 토론은 [새로운 기능 요청](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#new-feature-request); 으로 제출해야 합니다. 여러 가지 색상 함수에 추가적인 색상 모드를 추가하는 것에 대한 토론은[기존 기능 향상](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#existing-feature-enchancement); 으로 제출해야 합니다.당신이 주최하는 지역 크리에이티브 코딩(creative coding) 이벤트에 대한 발표는 포럼에 게시하고 지원이나 홍보를 원한다면 Processing Foundation에 연락해야 합니다.
 
-토론 이슈를 오픈할 때, 측면 패널의 "라벨" 패널을 사용하여 추가적인 관련 라벨을 추가하여 해당 영역으로 이슈를 알리도록 할 수 있습니다. 템플릿 자체는 최소한의 텍스트 필드만 있는 것입니다. 예시 토론 이슈를 보려면 [링크](https://github.com/processing/p5.js/issues/6517)를 확인하세요.
+토론 이슈를 오픈할 때, 측면 패널의 "라벨" 패널을 사용하여 추가적인 관련 라벨을 추가하여 해당 영역으로 이슈를 알릴 수 있습니다. 템플릿 자체는 최소한의 텍스트 필드만 있는 것입니다. 예시 토론 이슈를 보려면 [이 링크](https://github.com/processing/p5.js/issues/6517)를 확인하세요.
 
 [**⬆ back to top**](#contributor-guidelines)
 
@@ -157,22 +202,22 @@ p5.js에서 잠재적으로 잘못된 동작이나 설명된대로 동작하지 
 
 이제 당신의 이슈가 논의되었고, 구현이 승인되었으며 코드 변경을 하기 위해 준비가 되었습니다. 코드 기반 작업을 시작할 준비가 되었습니다.
 
-마찬가지로, 문제를 발견했거나 문제에 대한 토론에 참여했으며 구현이 스튜어드에 의해 승인되었지만 원래 문제 작성자나 커뮤니티의 다른 구성원 모두 문제에 대해 작업할 의사가 없음을 표시한 경우, 자발적으로 여기에 기여를 제출하고 스튜어드가 문제를 할당하도록 할 수 있습니다.
+마찬가지로, 이슈를 발견했거나 이슈에 대한 토론에 참여했으며 구현이 스튜어드에 의해 승인되었지만 원래 문제 작성자나 커뮤니티의 다른 구성원 모두 이슈에 대해 작업할 의사가 없음을 표시한 경우, 자발적으로 여기에 기여를 제출하고 스튜어드가 이슈를 할당하도록 할 수 있습니다.
 
-**"대기열을 지켜주세요."**  다른 사람이 기여를 제출할 의향을 표시하거나 이미 다른 사람에게 할당되어 있는 이슈에 대해 풀 리퀘스트을 제출하여 대기열을 넘어서는 안됩니다. 우리는 항상 "첫 번째 할당, 첫 번째 서비스" 순서로 코드 기여를 받아들이는 것을 우선시할 것입니다.
+**"대기열을 지켜주세요."**  다른 사람이 기여를 제출할 의향을 표시하거나 이미 다른 사람에게 할당되어 있는 이슈에 대해 풀 리퀘스트을 제출하여 대기열을 넘어서는 안됩니다. 우리는 항상 "선착순" 으로 코드 기여를 받아들이는 것을 우선시할 것입니다.
 
-만약 누군가가 아직 동일한 이슈에 대해 작업 중인 동안 PR을 제출하면, 당신의 풀 리퀘스트는 닫힐 것입니다. 이슈에 할당된 개인의 마지막 활동이 몇 달 동안 없었다면, 공손한 코멘트를 남겨 진행 상황을 묻고 구현에 도움이 필요한지 물어볼 수 있습니다. 우리는 대부분의 사람들이 자원 봉사로서 작업하거나 단순히 기능을 작업하는 데 더 많은 시간이 걸리기 때문에 기여를 작업하는 데 상당히 긴 시간을 허용합니다.
+만약 누군가가 아직 동일한 이슈에 대해 작업 중인 동안 PR을 제출하면, 당신의 풀 리퀘스트는 닫힐 것입니다. 이슈에 할당된 개인의 마지막 활동이 몇 달 동안 없었다면, 공손한 코멘트를 남겨 진행 상황을 묻고 구현에 도움이 필요한지 물어볼 수 있습니다. 대부분 사람들이 작업하는 많은 시간이 소요되기에 이바지함에 긴 시간을 허용합니다.
 
 마찬가지로, 당신은 자신의 속도로 일하고 얼마나 오래 코드 작업에 시간을 할애할 수 있는지에 대한 엄격한 시간 제한이 없다는 것에 자신감을 가질 필요가 있습니다. 그렇지만, 코드 기여의 어떤 측면에서든 문제가 발생하면 이슈에서 도움을 요청하는 것을 주저하지 마십시오. 스튜어드 및 유지 관리자뿐만 아니라 커뮤니티 회원들도 최선을 다해 안내할 것입니다!
 
 
 ## 개발자를 위한 빠른 시작 가이드
 
-p5.js의🌸 코드베이스에 대한 작업/기여를 원하는 경우, p5.js를 직접 개선하거나 [친숙한 오류 시스템](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md)과 같은 하위 프로젝트를 개선하기 위해 다음 단계를 수행할 수 있습니다.:
+p5.js의🌸 코드베이스에 대한 작업/기여를 원하는 경우, p5.js를 직접 개선하거나 [친숙한 오류 메세지 시스템](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md)과 같은 하위 프로젝트를 개선하기 위해 다음 단계를 수행할 수 있습니다.
 
 1. [p5.js의 포크를 생성합니다.](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
-2. [생성한 포크를 컴퓨터에 복제합니다.](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
-3. [다음 명령을 사용하여 upstream을 추가합니다.](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-repository-for-a-fork):
+2. [생성한 포크를 로컬 컴퓨터에 복제합니다.](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
+3. [다음 명령을 사용하여 업스트림(upstream)을 추가합니다.](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-repository-for-a-fork):
 
   ```
   git remote add upstream https://github.com/processing/p5.js
@@ -190,7 +235,7 @@ p5.js의🌸 코드베이스에 대한 작업/기여를 원하는 경우, p5.js�
   npm ci
   ```
 
-6. 다음과 같이 설명적인 브랜치 이름을 사용하여 `메인 ` 브랜치에서 git 브랜치를 만들어 주세요:
+6. 다음과 같이 설명적인 브랜치 이름을 사용하여 ` main ` 브랜치에서 git 브랜치를 만들어 주세요:
 
   ```
   git checkout -b [branch_name]
