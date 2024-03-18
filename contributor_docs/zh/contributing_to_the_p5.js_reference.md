@@ -408,4 +408,4 @@ npm run docs:dev
 
 有关参考系统的详细信息，你可以查看[JSDoc](https://jsdoc.app/) 和 [YUIDoc](https://yui.github.io/yuidoc/) 的文档。
 
-有关参考资料相关 issue 的示例，请查看[#6519](https://github.com/processing/p5.js/issues/6519) 和 [#6045](https://github.com/processing/p5.js/issues/6045)。[贡献者指南](https://docs.google.com/document/d/1roBu-7s9xspuie3M6EhEokYWc82DZhDNYO2SQiY4k68/edit?tab=t.0#heading=h.627q50vo09fb) 文档也是一个很好的起点。
+有关参考资料相关 issue 的示例，请查看[#6519](https://github.com/processing/p5.js/issues/6519) 和 [#6045](https://github.com/processing/p5.js/issues/6045)。[贡献者指南](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md) 文档也是一个很好的起点。
