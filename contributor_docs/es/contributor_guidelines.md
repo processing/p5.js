@@ -6,7 +6,7 @@ Si estás buscando contribuir más allá de los repositorios de p5.js (escribien
 
 Este es un documento relativamente largo e integral, pero trataremos de indicar todos los pasos tan claro como sea posible. Utiliza la tabla de contenidos para encontrar las secciones que son relevantes para ti, y siéntete libre de omitir secciones que no son relevantes para las contribuciones que planeas hacer. 
 
-**Si eres un nuevo contribuidor te sugerimos comenzar con la primera sección: “ Todo acerca de los Issues (o problemas)”.  Por el contrario, si simplemente quieres un paso-a-paso del la configuración del  proceso de desarrollo, puedes dirigirte a la sección  de “Inicio Rápido para Desarrolladores”.**
+**Si eres un nuevo contribuidor te sugerimos comenzar con la primera sección: “Todo acerca de los Issues (o problemas)”. Si simplemente quieres una configuración paso-a-paso del  proceso de desarrollo, puedes dirigirte a la sección  de “Inicio Rápido para Desarrolladores”.**
 
 
 # Tabla de Contenidos
