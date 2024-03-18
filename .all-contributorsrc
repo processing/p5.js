@@ -5667,6 +5667,15 @@
         "translation",
         "maintenance"
       ]
+    },
+    {
+      "login": "sphantom-code",
+      "name": "sphantom-code",
+      "avatar_url": "https://avatars.githubusercontent.com/u/74479963?v=4",
+      "profile": "https://github.com/sphantom-code",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
