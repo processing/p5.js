@@ -35,6 +35,7 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
 - [Arrays](#arrays)
 - [Functions](#functions)
 - [Arrow Functions](#arrow-functions)
+- [Chaining](#chaining)
 - [Classes](#classes)
 - [Assets](#assets)
 
@@ -1041,6 +1042,30 @@ function processImage(img) {
 // Good.
 [1, 2, 3].map((number) => number * number);
 ```
+**[⬆ back to top](#table-of-contents)**
+
+## Chaining
+
+* Use individual function calls instead of chaining.
+
+> Why? It's easier to read and understand, especially for beginners who are unfamiliar with function chaining.
+
+```javascript
+// Bad.
+fill(0)
+  .strokeWeight(6)
+  .textSize(20);
+
+// Bad.
+fill(0).strokeWeight(6).textSize(20);
+
+// Good.
+fill(0);
+strokeWeight(6);
+textSize(20);
+```
+
+**[⬆ back to top](#table-of-contents)**
 
 ## Classes
 
