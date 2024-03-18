@@ -317,7 +317,7 @@ GitHub CLI 还提供了许多其他命令，你可能会发现它们有用。无
 
 不再需要手动监视存储库的“Issues”或“Pull Requests”选项卡以获取新的 issues 或 PRs 。你可以通过在存储库页面顶部与存储库名称相对的地方点击带有眼睛图标的“Watch”按钮来“关注”该存储库。
 
-![screenshot](/screenshot-of-github.png)
+![Cropped screenshot of the top right corner of a GitHub repository page showing a series of buttons in the center from left to right: Sponsor, Watch, Fork, Starred.](../images/github-repo-metrics.png)
 
 通过关注存储库，诸如新 issues 、新 PRs 、提及你的用户名以及其他你在存储库上订阅的活动都会作为通知发送到你的[通知页面](https://github.com/notifications)，你可以将其标记为已读或忽略，就像处理电子邮件收件箱一样。
 
