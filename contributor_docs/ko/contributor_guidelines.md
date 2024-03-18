@@ -24,7 +24,7 @@ p5.js 리포지토리(repository) 외부에서 기여하려는 경우(튜토리�
   - [p5.js를 포크하고 포크에서 작업하기](#forking-p5js-and-working-from-your-fork)
     - [Github Desktop 사용하기](#using-github-desktop)
     - [git 명령줄(command line) 인터페이스 사용하기](#using-the-git-command-line-interface)
-  - [코드베이스 분석](#codebase-breakdown)
+  - [코드베이스(code base) 분석](#codebase-breakdown)
   - [빌드 설정](#build-setup)
   - [Git 워크플로우](#git-workflow)
     - [소스 코드](#source-code)
@@ -213,7 +213,7 @@ Under the top bar “Safari” menu item, choose “About Safari”
 
 ## 개발자를 위한 빠른 시작 가이드
 
-p5.js의🌸 코드베이스에 대한 작업/기여를 원하는 경우, p5.js를 직접 개선하거나 [친숙한 오류 메세지 시스템](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md)과 같은 하위 프로젝트를 개선하기 위해 다음 단계를 수행할 수 있습니다.
+p5.js의🌸 코드베이스(code base)에 대한 작업/기여를 원하는 경우, p5.js를 직접 개선하거나 [친숙한 오류 메세지 시스템](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md)과 같은 하위 프로젝트를 개선하기 위해 다음 단계를 수행할 수 있습니다.
 
 1. [p5.js의 포크를 생성합니다.](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
 2. [생성한 포크를 로컬 컴퓨터에 복제합니다.](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
