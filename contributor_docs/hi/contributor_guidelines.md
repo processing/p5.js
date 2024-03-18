@@ -53,9 +53,9 @@
 p5.js के गिटहब रिपॉजिटरी (संक्षेप में रेपो) पर अधिकांश गतिविधि समस्याएँ में होती है, जो आपकी योगदान यात्रा शुरू करने के लिए एक शानदार जगह है।
 
 
-## What are issues?
+## समस्याएँ क्या हैं?
 
-![A cropped screenshot of the p5.js library GitHub repository, only showing contents of the top right corner. A red box is drawn on top of the screenshot surrounding the Issues tab.](images/issues-tab.png)
+![p5.js लाइब्रेरी GitHub रिपॉजिटरी का एक क्रॉप्ड स्क्रीनशॉट, केवल ऊपरी दाएं कोने की सामग्री दिखा रहा है। स्क्रीनशॉट के शीर्ष पर मुद्दे टैब के आसपास एक लाल बॉक्स बनाया गया है।](../images/issues-tab.png)
 
 "समस्या" GitHub पर एक पोस्ट के लिए एक सामान्य नाम है जो किसी समस्या को वर्णित करने का उद्देश्य रखता है। यह समस्या एक बग रिपोर्ट, नई फीचर जोड़ने का अनुरोध, एक चर्चा, या p5.js पुस्तकालय विकास से संबंधित किसी भी पोस्ट के रूप में काम कर सकती है। प्रत्येक समस्या के नीचे किसी भी GitHub खाते वाले व्यक्ति, सहित बॉट्स, द्वारा टिप्पणियाँ जोड़ी जा सकती हैं! यह वह स्थान है जहां योगदानकर्ताओं ने परियोजना के विकास से संबंधित विषयों पर चर्चा करते हैं।
 
@@ -68,11 +68,11 @@ p5.js के गिटहब रिपॉजिटरी (संक्षेप 
 
 p5.js's issue templates make it easier for stewards and maintainers to understand and review issues. They also make it easier for you to file the relevant issue and receive a reply faster. 
 
-![Screenshot of an example of what an issue looks like on GitHub. The title of the issue in the screenshot is "Warning being logged in Safari when using a filter shader in 2D mode #6597"](images/github-issue.png)
+![Screenshot of an example of what an issue looks like on GitHub. The title of the issue in the screenshot is "Warning being logged in Safari when using a filter shader in 2D mode #6597"](../images/github-issue.png)
 
 To file a new issue, simply go to the "Issues" tab on the p5.js repo and click on the "New issue" button on the right side. You will be presented with several different options, each of which either corresponds to a relevant issue template or redirects you to the relevant place to file your question. We recommend choosing the most relevant option out of those presented to ensure your issue receives the right attention promptly.
 
-![Cropped screenshot of the GitHub repository's issue page with the green "New issue" button highlighted with a red box surrounding it.](images/new-issue.png)
+![Cropped screenshot of the GitHub repository's issue page with the green "New issue" button highlighted with a red box surrounding it.](../images/new-issue.png)
 
 
 ### ["Found a bug"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Bug\&projects=\&template=found-a-bug.yml)
@@ -251,7 +251,7 @@ If you want to work/contribute to p5.js'🌸 codebase as a developer, either dir
 
 When viewing a file on the GitHub web interface, near the top of the content of the file you are viewing will be a pencil icon button. This button is a convenient edit feature provided by GitHub that simplifies many of the processes we will be covering below and can be used to make quick and simple edits to the file you are viewing.
 
-![Cropped screenshot of a file view in GitHub of the p5.js repository, "src/color/color\_conversion.js" file. A red arrow pointing to a pencil icon button on the right side of the image.](images/edit-file.png)
+![Cropped screenshot of a file view in GitHub of the p5.js repository, "src/color/color\_conversion.js" file. A red arrow pointing to a pencil icon button on the right side of the image.](../images/edit-file.png)
 
 However, it is not recommended to use this feature other than for very simple changes. One of the main reasons for this is that for more complex changes to the source code, it should be built and tested locally before being filed as a PR. Using a local development environment is also often much more fluent for most as compared to the basic editing environment provided by this edit functionality.
 
@@ -271,18 +271,18 @@ GitHub Desktop is a program that lets you work with git via a graphical user int
 
 First, [download and install GitHub Desktop.](https://desktop.github.com/) Once installed, open the application. It will ask you to sign in to your GitHub account. After you have signed in, it will list your projects, including your fork of p5.js. Select your fork, which will be named `yourUsername/p5.js`, and click the blue "Clone" button. It will ask for some details about where to place your project; you can either change them or leave the default settings and continue.
 
-![The GitHub Desktop user interface after signing in. On the right half of the screen, it lists your projects, and a Clone button in the bottom right.](images/github-desktop-init.png)
+![The GitHub Desktop user interface after signing in. On the right half of the screen, it lists your projects, and a Clone button in the bottom right.](../images/github-desktop-init.png)
 
 Once cloned, it will ask how you plan to use your fork. Select the option to contribute to the parent project and click "Continue."
 
-![The view after cloning a fork. It asks if you are planning to contribute to the parent project, or use it for your own purposes.](images/github-desktop-fork.png)
+![The view after cloning a fork. It asks if you are planning to contribute to the parent project, or use it for your own purposes.](../images/github-desktop-fork.png)
 
 
 ### Using the `git` command line interface
 
 Once the fork is created, navigate to your fork's page and copy the git URL by clicking the green "Code" button. It should look something like `https://github.com/limzykenneth/p5.js.git`.
 
-![Screenshot of the list of files on the landing page of a repository. The "Code" button is highlighted with a dark orange outline.](images/code-button.png)
+![Screenshot of the list of files on the landing page of a repository. The "Code" button is highlighted with a dark orange outline.](../images/code-button.png)
 
 Next go to the command line in your local environment and clone this git repository. "Clone" simply means download a copy of the repo to your local machine. Run the following command in a folder where you want to store the p5.js source code folder.
 
@@ -337,7 +337,7 @@ Next, we recommend that you make a branch off the `main` branch before starting 
 
 In GitHub Desktop, this can be done by clicking the Current Branch button in the header of the window. From here, you can change branches, or enter a branch name to make a new one. For our purposes, enter a new branch name describing the change you will make, and click Create New Branch.
 
-![A screenshot of the GitHub Desktop branch selection menu. After entering a new branch name that does not yet exist, a "Create New Branch" button appears.](images/github-desktop-create-branch.png)
+![A screenshot of the GitHub Desktop branch selection menu. After entering a new branch name that does not yet exist, a "Create New Branch" button appears.](../images/github-desktop-create-branch.png)
 
 From the terminal, run `git checkout -b branch_name` while you are on the `main` branch, replacing `branch_name` with something descriptive, and you will be on a separate branch now. 
 
@@ -349,7 +349,7 @@ A question that may arise is how often should you commit to git? In general it i
 
 To commit all current changes from GitHub Desktop, open the app after making your changes. It will show a list of the files you have changed in the left sidebar, and the specific changes within each file on the right. Type a brief, high-level description in the field next to your user icon in the bottom left corner of the window. This will be the title of the commit. You may elaborate further in the description field below or just leave it blank. Click the blue "Commit" button to finalize the change.
 
-![A screenshot of GitHub Desktop after having made a change. The area where you need to write a title for your change is circled in red in the lower left of the window.](images/github-desktop-commit.png)
+![A screenshot of GitHub Desktop after having made a change. The area where you need to write a title for your change is circled in red in the lower left of the window.](../images/github-desktop-commit.png)
 
 To commit all current changes from the terminal, run the following:
 
@@ -392,7 +392,7 @@ Repeat the above steps for all commits you will be making while making sure to r
 
 If you are going to work on the source code, a good place to start, if you know which of p5.js features you are going to work on, is to visit the documentation and at the bottom of each documented functionality of p5.js will be a link to its source code.
 
-![Cropped screenshot of a reference page on the p5.js website containing the sentence "Notice any errors or typos? Please let us know. Please feel free to edit src/core/shape/2d\_primitives.js and issue a pull request!". Part of the above sentence where it says "src/core/shape/2d\_primitives.js" is highlighted with a red underline and arrow pointing to it.](images/reference-code-link.png)
+![Cropped screenshot of a reference page on the p5.js website containing the sentence "Notice any errors or typos? Please let us know. Please feel free to edit src/core/shape/2d\_primitives.js and issue a pull request!". Part of the above sentence where it says "src/core/shape/2d\_primitives.js" is highlighted with a red underline and arrow pointing to it.](../images/reference-code-link.png)
 
 
 ### Unit tests
@@ -439,11 +439,11 @@ Now that you have made the changes you need to make, including unit tests if app
 
 The first step here is to push your new commits to your fork of p5.js; think of it as uploading the changes to your fork.
 
-From GitHub Desktop, just to the right of the button to change branches in the header is a button to push your changes to GitHub. Click this to push your changes.![A view of GitHub Desktop after committing changes. The button to push the changes online is circled in red.](images/publish-branch.png)
+From GitHub Desktop, just to the right of the button to change branches in the header is a button to push your changes to GitHub. Click this to push your changes.![A view of GitHub Desktop after committing changes. The button to push the changes online is circled in red.](../images/publish-branch.png)
 
 Once your code is uploaded, it will show a button prompting you to create a pull request. Clicking the button once will show a preview with another button to actually create the request. Press the "Create Pull Request" button to begin the process.
 
-![A screenshot of Github Desktop after pushing code. In the left sidebar, it says "0 changed items." In the right pane, below the "No local changes" header, a blue "Review Pull Request" button has been marked up with a red circle.](images/preview-pull-request.png)
+![A screenshot of Github Desktop after pushing code. In the left sidebar, it says "0 changed items." In the right pane, below the "No local changes" header, a blue "Review Pull Request" button has been marked up with a red circle.](../images/preview-pull-request.png)
 
 From the terminal, run the following command:
 
@@ -457,12 +457,12 @@ Once the push is complete, you may see a link in the terminal that lets you open
 
 You may also see a button to open a pull request when you visit the p5.js Github repo. Clicking it will also work to open a new pull request.
 
-![Cropped screenshot of the main page of the p5.js GitHub repository web page. A section near the top of the page is a yellow call to action box containing a green button with the text "Compare & pull request".](images/recent-pushes)
+![Cropped screenshot of the main page of the p5.js GitHub repository web page. A section near the top of the page is a yellow call to action box containing a green button with the text "Compare & pull request".](../images/recent-pushes)
 
 
 ### Pull request information
 
-![Screenshot of an "Open a pull request" page on GitHub that is prepopulated with p5.js's pull request template.](images/new-pr.png)
+![Screenshot of an "Open a pull request" page on GitHub that is prepopulated with p5.js's pull request template.](../images/new-pr.png)
 
 Before filing the pull request, you will need to fill out the pull request template. 
 
@@ -496,7 +496,7 @@ Once done, click on "Create pull request."
 
 ### Rebase and resolve conflicts
 
-![Screenshot of an open pull request on p5.js's GitHub repository. The title of the pull request says "Fix filter shaders when rectMode is applied; add tests #6603.](images/opened-pr.png)
+![Screenshot of an open pull request on p5.js's GitHub repository. The title of the pull request says "Fix filter shaders when rectMode is applied; add tests #6603.](../images/opened-pr.png)
 
 You should now inspect the opened pull request and pay attention to a few things:
 
@@ -506,19 +506,19 @@ You should now inspect the opened pull request and pay attention to a few things
 
 If any of the above is not true (there are more commits than you expected or there are conflicts), you may need to [rebase](https://git-scm.com/book/en/v2/Git-Branching-Rebasing) or help resolve conflicts. Conflicts here mean that you have made changes to a file that also recently had changes applied to it, and git is not sure which set of changes to keep or leave out. If you are not confident in resolving these issues, let us know and we'll guide you through the process. Basic instruction is as below.
 
-Sometimes, Github lets you resolve conflicts directly in the browser by showing you a Resolve Conflicts button:![A screenshot of a GitHub pull request with merge conflicts. The conflicting filenames are listed, and there is a "Resolve conflicts" button highlighted.](images/resolve-conflicts.png)
+Sometimes, Github lets you resolve conflicts directly in the browser by showing you a Resolve Conflicts button:![A screenshot of a GitHub pull request with merge conflicts. The conflicting filenames are listed, and there is a "Resolve conflicts" button highlighted.](../images/resolve-conflicts.png)
 
 Conflicts are shown between `<<<<<<<` and `>>>>>>>`, separated by `=======`. One section shows your code, and the other section shows what has changed in the main branch.
 
-![A screenshot of GitHub's conflict resolution interface. A sidebar lists the files with conflicts. The right pane contains the conflicting code, with merge conflict markers highlighted.](images/conflicts-interface.png)
+![A screenshot of GitHub's conflict resolution interface. A sidebar lists the files with conflicts. The right pane contains the conflicting code, with merge conflict markers highlighted.](../images/conflicts-interface.png)
 
 Remove the conflict markers and keep just the final code that you want in your PR. You can click "Mark as resolved" when all the conflicts have been addressed.
 
-![A screenshot of the GitHub conflict resolution interface after editing the code to remove the merge conflict markers. The "mark as resolved" button in the upper right is enabled.](images/mark-as-resolved.png)
+![A screenshot of the GitHub conflict resolution interface after editing the code to remove the merge conflict markers. The "mark as resolved" button in the upper right is enabled.](../images/mark-as-resolved.png)
 
 When all files with conflicts have been resolved, you can commit your changes.
 
-![The GitHub conflict resolution interface after all conflicts have been marked as resolved. A green "commit merge" button is enabled.](images/commit-merge.png)
+![The GitHub conflict resolution interface after all conflicts have been marked as resolved. A green "commit merge" button is enabled.](../images/commit-merge.png)
 
 Sometimes, the conflicts are too complicated for Github to show on the web. In this case, or if you just prefer the manual method, you can resolve your conflicts locally:
 
