@@ -166,7 +166,7 @@ Under the top bar “Safari” menu item, choose “About Safari”
 
 기능 향상 제안이 승인되기 위해서는 적어도 1명의 [영역 스튜어드 또는 유지 관리자](https://github.com/processing/p5.js#stewards)의 승인이 필요합니다. 
 
-**이슈에 대한 승인이 이루어지기 전에 제안과 관련된 풀 리퀘스트를 제출하거나 코드 변경 작업을 시작해서는 안됩니다.**, 왜냐하면 제안이 수락될 것임을 보장할 수 없기 때문입니다. 승인이 이루어지기 전에 제출된 모든 풀 리퀘스트는 이슈에 대한 승인이 주어질 때까지 닫힐 것입니다.
+**이슈에 대한 승인이 이루어지기 전에 제안과 관련된 풀 리퀘스트를 제출하거나 코드 변경 작업을 시작해서는 안됩니다.**, 왜냐하면 제안이 수락될 것임을 보장할 수 없기 때문입니다. 승인이 이루어지기 전에 제출된 모든 풀 리퀘스트는 이슈에 대한 승인이 주어질 때까지 닫힙니다(closed).
 
 
 ### ["새로운 기능 요청"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Feature+Request\&projects=\&template=feature-request.yml)
@@ -177,7 +177,7 @@ Under the top bar “Safari” menu item, choose “About Safari”
 
 새로운 기능 요청 제안이 승인되기 위해서는 최소 2명의 [영역 스튜어드 또는 유지 관리자](https://github.com/processing/p5.js#stewards) 의 승인이 필요합니다.
 
-**제안이 승인되기 전에 제안과 관련된 풀 리퀘스트를 제출하거나 (코드 변경 작업)을 시작해서는 안됩니다.**, 왜냐하면 제안이 수락될 것임을 보장할 수 없기 때문입니다. 승인이 이루어지기 전에 제출된 모든 풀 리퀘스트는 이슈에 대한 승인이 주어질 때까지 닫힐 것입니다.
+**제안이 승인되기 전에 제안과 관련된 풀 리퀘스트를 제출하거나 (코드 변경 작업)을 시작해서는 안됩니다.**, 왜냐하면 제안이 수락될 것임을 보장할 수 없기 때문입니다. 승인이 이루어지기 전에 제출된 모든풀 리퀘스트는 이슈에 대한 승인이 주어질 때까지 닫힙니다(closed).
 
 
 ### ["토론(Discussion)"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Discussion\&projects=\&template=discussion.yml)
