@@ -1046,9 +1046,9 @@ function processImage(img) {
 
 ## Chaining
 
-* Use individual function calls instead of chaining.
+* Use individual function calls instead of function chaining.
 
-> Why? It's easier to read and understand, especially for beginners who are unfamiliar with function chaining.
+> Why? To accommodate users who may not be familiar with the concept of function chaining.
 
 ```javascript
 // Bad.
