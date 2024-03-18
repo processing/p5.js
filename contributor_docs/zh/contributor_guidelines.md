@@ -120,17 +120,17 @@ GitHub 桌面版是通过图形用户界面来使用 git 的程序，它不需�
 
 首先，下载并安装 [GitHub 桌面版](https://desktop.github.com/)。安装成功后，打开应用程序。根据提示登录你的 GitHub 账户。登录成功后，你可以看到你的项目，包括你 fork 的 p5.js。选择名为：`你的用户名/p5.js` 的项目，然后点击蓝色 “Clone” 按钮。根据提示选择项目存储位置，你可以更改存储位置也可以保留默认选项并继续。
 
-![alt text](image.png)
+![alt text](../images/github-desktop-init.png)
 
 克隆成功后，你需要选择使用该 fork 的目的。请选择 “To contribute to the parent project”，然后点击 “Continue”。
 
-![alt text](image-1.png)
+![alt text](../images/github-desktop-fork.png)
 
 ### 使用 git 命令行界面
 
 创建好 fork 之后，去 fork 页面点击绿色 “Code” 按钮复制 git 链接。链接的格式是这样：`https://github.com/limzykenneth/p5.js.git`。
 
-![alt text](image-2.png)
+![alt text](../images/code-button.png)
 
 然后在本地环境中打开命令行，并克隆这个仓库。简单地说，"克隆" 就是将仓库副本下载到本地计算机上。在你想要存储 p5.js 源代码文件夹的文件夹中运行以下命令：
 
@@ -182,7 +182,7 @@ npm run build
 
 如果使用 GitHub 桌面版，可以点击窗口上方的 "Current Branch" 按钮来创建分支。你可以在这里切换分支，或输入分支名创建一个新分支。在这里，我们输入一个分支名描述一下即将做的更改，然后点击 "Create New Branch"。
 
-![alt text](image-4.png)
+![alt text](../images/github-desktop-create-branch.png)
 
 如果使用终端，在主分支上运行 `git checkout -b branch_name`，将 `branch_name` 替换为描述性的内容，然后你就在一个新的分支上了。
 
@@ -194,7 +194,7 @@ npm run build
 
 要从 GitHub 桌面版提交当前所有更改，请在更改完成后打开该应用程序。左侧边栏会显示你更改过的文件，右侧显示每个文件中的更改详情。在窗口左下角，用户图标旁边的区域中输入简要的描述，这就是本次提交的标题。你可以在下面的描述区域中做进一步阐述或留白，点击蓝色的 "Commit" 按钮以完成更改。
 
-![alt text](image-5.png)
+![alt text](../images/github-desktop-commit.png)
 
 要从终端提交当前所有更改，请运行以下命令：
 
@@ -236,7 +236,7 @@ git commit -m "给 circle() 函数添加文档示例"
 
 如果你要处理源代码，并且也清楚你要处理 p5.js 的哪些功能，好的开始是去看文档。因为 p5.js 文档中，每个已记录功能的底部，都有其源代码的链接。
 
-![alt text](image-3.png)
+![alt text](../images/reference-code-link.png)
 
 ### 单元测试
 
@@ -280,11 +280,11 @@ p5.js 的代码规范或者代码风格由 ESLint 执行。任何 git 提交和�
 
 如果使用 GitHub 桌面版，在窗口顶部用于切换分支的按钮的右侧，有一个按钮可以将你的更改推送到 GitHub，点击这个按钮推送你的更改。
 
-![alt text](image-6.png)
+![alt text](../images/publish-branch.png)
 
 一旦代码上传完毕，你将会看到一个按钮提示你创建拉取请求。点击一下这个按钮会显示预览，预览中包含另一个按钮，这个按钮才可以真正地创建请求。点击 "Create Pull Request" 按钮创建拉取请求。
 
-![alt text](image-7.png)
+![alt text](../images/preview-pull-request.png)
 
 如果使用终端，请运行以下代码：
 
@@ -294,13 +294,13 @@ git push -u origin [分支名称]
 
 推送完成后，你可能会在终端里看到一个链接，可以点击它创建拉取请求。如果没有，你可以在浏览器中导航到你的 fork，通过文件列表顶部的下拉按钮切换到你正在工作的分支，然后点击 “Contribute”，接着点击 "Open pull request"。
 
-![alt text](image-8.png)
+![alt text](../images/link-in-terminal.png)
 
 当你访问 p5.js 的 Github 仓库时，你可能也会看到一个创建拉取请求的按钮。点击它也可以创建一个新的拉取请求。
 
 ### 拉取请求信息
 
-![alt text](image-9.png)
+![alt text](../images/new-pr.png)
 
 在提交拉取请求之前，你需要填写拉取请求模板。
 
@@ -328,7 +328,7 @@ git push -u origin [分支名称]
 
 ### 变基和解决冲突
 
-![alt text](image-10.png)
+![alt text](../images/opened-pr.png)
 
 现在你应该检查已提交的拉取请求，并注意以下几点：
 
@@ -340,19 +340,19 @@ git push -u origin [分支名称]
 
 有时，GitHub 会显示 "Resolve Conflicts" 按钮，允许你直接在浏览器中解决冲突。
 
-![alt text](image-11.png)
+![alt text](../images/resolve-conflicts.png)
 
 冲突展示在 `<<<<<<<` 和 `>>>>>>>` 之间， 被 `=======` 隔开。前半部分是你自己写的代码，后半部分是主分支中已经变更过的代码。
 
-![alt text](image-12.png)
+![alt text](../images/conflicts-interface.png)
 
 删除冲突标记，在 PR 中保留最终需要保留的代码。所有冲突都解决好之后，点击 "Mark as resolved"。
 
-![alt text](image-13.png)
+![alt text](../images/mark-as-resolved.png)
 
 所有文件的冲突都解决好之后，就可以提交更改了。
 
-![alt text](image-14.png)
+![alt text](../images/commit-merge.png)
 
 有时候，冲突对于 Github 来说在网页上展示起来太过复杂。在这种情况下，或者如果你更喜欢手动操作，你也可以在本地解决冲突：
 
