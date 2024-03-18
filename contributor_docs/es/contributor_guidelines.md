@@ -55,7 +55,7 @@ La mayoría de la actividad en los repositorios de GitHub de p5.js (también con
 
 ![A cropped screenshot of the p5.js library GitHub repository, only showing contents of the top right corner. A red box is drawn on top of the screenshot surrounding the Issues tab.](../images/issues-tab.png)
 
-<em>'Issues'</em> es el nombre común que se le da a una publicación en GitHub que apunta a describir, como lo dice su nombre, un problema.  Los <em>Issues</em> pueden ser reportes de error, solicitudes para añadir un nueva funcionalidad, una discusión, o cualquier publicación que se relacione con el desarrollo de la biblioteca de p5.js. Cualquiera con una cuenta de GitHub puede añadir comentarios debajo de cada <em>Issue</em>, ¡incluyendo bots! Éste es el lugar donde los contribuidores discuten temas relacionados con el desarrollo del proyecto dentro del repositorio.
+<em>'Issues'</em> es el nombre común que se le da a una publicación en GitHub que apunta a describir, como lo dice su nombre, un problema.  Los <em>Issues</em> pueden ser reportes de error, solicitudes para añadir un nueva funcionalidad, una discusión, o cualquier publicación que se relacione con el desarrollo de la biblioteca de p5.js. Cualquiera con una cuenta de GitHub puede añadir comentarios debajo de cada <em>Issue</em>, ¡incluyendo bots! Este es el lugar donde los contribuidores discuten temas relacionados con el desarrollo del proyecto dentro del repositorio.
 
 Mientras un <em>Issue</em> puede ser creado por diferentes razones, usualmente utilizamos la creación de un <em>Issue</em> para discutir el desarrollo del  código fuente de p5.js. Temas como la corrección de errores de tu propio código, invitación de colaboradores a tu proyecto, u otros temas no relacionados, deben ser discutidos ya sea en el [fórum](https://discourse.processing.com) o en otras plataformas de comunicación como [Discord](https://discord.gg/SHQ8dH25r9).
 
@@ -78,7 +78,7 @@ Cuando encuentres un comportamiento incorrecto en p5.js, o algo que no se esté 
 Esta plantilla provee campos que debes llenar con la siguiente información relevante: 
 
 1.	**¿Cuál es la subárea más adecuada de p5.js?:** esto añadirá automáticamente las [etiquetas]( https://github.com/processing/p5.js/blob/main/contributor_docs/issue_labels.md) relevantes a tu <em>Issue</em>, lo que nos ayudará a identificar y responder adecuadamente.
-2.	**Versión de p5.js:** puedes verificar la versión de p5.js dentro de la etiqueta `<script>`  que se encuentra en la primera línea del archivo p5.js/p5.min.js. 
+2.	**Versión de p5.js:** Puedes verificar la versión de p5.js dentro de la etiqueta `<script>`  que se encuentra en la primera línea del archivo p5.js/p5.min.js. Opcionalmente, en el [editor de p5.js]( https://editor.p5js.org/), puedes dar clic al botón de ‘Ayuda’ que se encuentra en la parte superior. Luego da clic en ‘Acerca de’ y aquí podrás encontrar la versión de p5.js. Esta lucirá algo como v`1.9.1`(tres números separados por un punto).
 3.	**Navegadores web y versión de los mismos:** esta sección nos ayuda a identificar diversos comportamientos entre los diferentes navegadores web. Para encontrar la versión de tu navegador, sigue las instrucciones proporcionadas en la tabla siguiente según el navegador que estés utilizando.
 
 <table>
@@ -121,7 +121,7 @@ Abre una ventana del navegador, y en la barra de direcciones navega a   `about:
 
 <td>
 
-Abre una venta del navegador y, en el menú superior, haz clic sobre "Safari", te aparecerá un desplegable con diferentes opciones, deberás seleccionar "Sobre Safari".
+Abre una venta del navegador y, en el menú superior, haz clic sobre "Safari", te aparecerá un desplegable con diferentes opciones, deberás seleccionar "Acerca de Safari".
 
 </td>
 
@@ -151,13 +151,13 @@ Esta plantilla debe ser usada si deseas proponer cambios o sugerir mejoras a una
 
 Esta plantilla provee campos que debes llenar con la siguiente información relevante: 
 
-1.	**Incrementar Accesibilidad:**  Este es un campo requerido en el cual debes explicar cómo la adición de la mejora o cambio a la funcionalidad existente, ayudará a [incrementar accesibilidad]( https://github.com/processing/p5.js/blob/main/contributor_docs/access.md) para las personas que han sido históricamente marginadas en las disciplinas de las artes y las tecnologías. **Ninguna propuesta será aceptada sin esta declaración**. Sin embargo, puedes añadir "No estoy seguro" a este campo, y comenzar una conversación con la comunidad para entender como tu propuesta puede abordar el tema de accesibilidad en p5.js.
+1.	**Mejorar la accesibilidad:**  Este es un campo requerido en el cual debes explicar cómo la adición de la mejora o cambio a la funcionalidad existente, ayudará a [mejorar la accesibilidad]( https://github.com/processing/p5.js/blob/main/contributor_docs/access.md) para las personas que han sido históricamente marginadas en las disciplinas de las artes y las tecnologías. **Es importante destacar que ninguna propuesta será aceptada sin esta declaración**. No obstante, si tienes dudas al respecto, puedes incluir "No estoy seguro" en este campo y comenzar una conversación con la comunidad para comprender cómo tu propuesta puede abordar eficazmente el tema de mejorar la accesibilidad en p5.js.
 
 2.	**¿Cuál es la subárea más adecuada de p5.js?:** Esto añadirá automáticamente las [etiquetas]( https://github.com/processing/p5.js/blob/main/contributor_docs/issue_labels.md) relevantes a tu <em>Issue</em>, lo que nos ayudará a identificar y responder adecuadamente.
 
-3.	**Detalles de mejora de funcionalidades:** Aquí debes describir tu propuesta para la mejora de funcionalidad(es). Una buena propuesta generalmente incluye un caso de uso específico: qué, cuándo, cómo y por qué esta funcionalidad es necesaria.
+3.	**Detalles sobre la de mejora de una funcionalidad:** Aquí debes describir tu propuesta para la mejora de una funcionalidad. Una buena propuesta generalmente incluye un caso de uso específico: qué, cuándo, cómo y por qué esta funcionalidad es necesaria.
 
-Para que las propuestas de mejora de funcionalidad(es) sean aceptadas, estas deben ser aprobadas por al menos un [supervisor de área o responsable de mantenimiento]( https://github.com/processing/p5.js#stewards), antes de que se comience a trabajar en el <em>Pull Request</em>.
+Para que las propuestas de mejora a una funcionalidad sean aceptadas, estas deben ser aprobadas por al menos un [supervisor de área o responsable de mantenimiento]( https://github.com/processing/p5.js#stewards), antes de que se comience a trabajar en el <em>Pull Request</em>.
 
 **No debes registrar un <em>Pull Request</em> ni comenzar a trabajar en cambios de código sin antes haber registrado un <em>Issue</em> correspondiente, o antes de que dicho <em>Issue</em> haya sido aprobado para su implementación**. Esto se debe a que no hay garantía de que la propuesta será aceptada. Cualquier <em>Pull Request</em> que se registre antes de que se haya aprobado un <em>Issue</em> correspondiente será cerrado hasta que el <em>Issue</em> haya sido aprobado previamente.
 
@@ -166,7 +166,7 @@ Para que las propuestas de mejora de funcionalidad(es) sean aceptadas, estas deb
 Esta plantilla debe ser usada si deseas proponer la adición de una nueva funcionalidad a p5.js. Por ejemplo, imagina que quieres añadir soporte para dibujar elementos `<table>`, propios de HTML, con una nueva función que se llame `createTable`. Si tu propuesta se superpone con otras propuestas de mejora existentes, te sugerimos que evalúes y elijas la plantilla que consideres más apropiada para tu caso (ya sea funcionalidad existente o funcionalidad nueva)
 
 Esta plantilla provee campos que debes llenar con la siguiente información relevante: 
-1.	**Incrementar Accesibilidad:**  Este es un campo requerido en el cual debes explicar cómo la adición de la mejora o cambio a la funcionalidad existente, ayudará a [incrementar accesibilidad]( https://github.com/processing/p5.js/blob/main/contributor_docs/access.md) para las personas que han sido históricamente marginadas en las disciplinas de las artes y las tecnologías. **Ninguna propuesta será aceptada sin esta declaración**. Sin embargo, puedes añadir "No estoy seguro" a este campo, y comenzar una conversación con la comunidad para entender como tu propuesta puede abordar el tema de accesibilidad en p5.js.
+1.	**Mejorar la accesibilidad:**  Este es un campo requerido en el cual debes explicar cómo la adición de la mejora o cambio a la funcionalidad existente, ayudará a [mejorar la accesibilidad]( https://github.com/processing/p5.js/blob/main/contributor_docs/access.md) para las personas que han sido históricamente marginadas en las disciplinas de las artes y las tecnologías. **Es importante destacar que ninguna propuesta será aceptada sin esta declaración**. No obstante, si tienes dudas al respecto, puedes incluir "No estoy seguro" en este campo y comenzar una conversación con la comunidad para comprender cómo tu propuesta puede abordar eficazmente el tema de mejorar la accesibilidad en p5.js.
 
 2.	**¿Cuál es la subárea más adecuada de p5.js?:** Esto añadirá automáticamente las [etiquetas]( https://github.com/processing/p5.js/blob/main/contributor_docs/issue_labels.md) relevantes a tu <em>Issue</em>, lo que nos ayudará a identificar y responder adecuadamente.
 
@@ -213,7 +213,7 @@ Si quieres trabajar o contribuir al código base de p5.js 🌸 como desarrollado
 
 1. [Crea un fork (copia de repositorio) de p5.js.](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
 2. [Clona el fork y crea una copia local.](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
-3. [Configura git para que tu copia local del repositorio se sincronice con el repositorio original. Para ello utiliza el siguiente comando en tu terminal.](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-repository-for-a-fork):
+3. [Configura git para que tu copia local del repositorio se sincronice con el repositorio original (que suele nombrarse como <em>upstream</em>). Para ello utiliza el siguiente comando en tu terminal.](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-repository-for-a-fork):
 
   ```
   git remote add upstream https://github.com/processing/p5.js
@@ -249,7 +249,7 @@ Cuando estás viendo un archivo en la interfaz web de GitHub, en la parte superi
 
 ![Cropped screenshot of a file view in GitHub of the p5.js repository, "src/color/color\_conversion.js" file. A red arrow pointing to a pencil icon button on the right side of the image.](../images/edit-file.png)
 
-Sin embargo, no es recomendado utilizar esta funcionalidad a menos de que se trate de cambios muy simples. Una de las razones principales es que para adicionar cambios más complejos al código fuente, estos tuvieron que haber sido compilados y testeados localmente antes de ser registrados en un <em> Pull Request</em>. Usar un entorno de desarrollo local suele ser mucho más fluido en comparación con el entorno de edición básico que GitHub proporciona.
+Sin embargo, no es recomendado utilizar esta funcionalidad a menos de que se trate de cambios muy simples. Una de las razones principales es que para adicionar cambios más complejos al código fuente, estos tuvieron que haber sido compilados y validados localmente antes de ser registrados en un <em> Pull Request</em>. Usar un entorno de desarrollo local suele ser mucho más fluido en comparación con el entorno de edición básico que GitHub proporciona.
 
 ## Haciendo un fork de p5.js y trabajando desde tu fork
 
@@ -261,9 +261,9 @@ Trabajar desde el <em>fork</em>  que has creado del repositorio de p5.js es nece
 
 ### Utilizando Github Desktop
 
-GitHub Desktop es un programa que te permite trabajar mediante una interfaz gráfica visual en lugar de escribir comandos en la terminal. Es una buena opción si ere nuevo en git, y siempre puedes alternar entre Github Desktop y la terminal a tu conveniencia.
+GitHub Desktop es un programa que te permite trabajar mediante una interfaz de usuario gráfica en lugar de escribir comandos en la terminal. Es una buena opción si ere nuevo en git, y siempre puedes alternar entre Github Desktop y la terminal a tu conveniencia.
 
-Primero [descarga e instala GitHub Desktop]( https://desktop.github.com/). Una vez instalado, abre la aplicación. Esta te pedirá que inicies sesión con tu cuenta de GitHub. Una vez hayas iniciado sesión, GitHub Desktop va hacer una lista de tus proyectos, incluyendo tu <em>fork</em> de p5.js. Selecciona tu <em>fork</em>, el cual tendrá el nombre de `tuUsuario/p5.js`, y luego haz clic en el botón azul que dice ‘Clone’ (clonar). Luego, se te van a preguntar algunos detalles acerca de donde ubicar tu proyecto. Tienes la opción de cambiar la ubicación, o continuar con la configuración predefinida.
+Primero [descarga e instala GitHub Desktop]( https://desktop.github.com/). Una vez instalado, abre la aplicación. Esta te pedirá que inicies sesión con tu cuenta de GitHub. Una vez hayas iniciado sesión, GitHub Desktop hará una lista de tus proyectos, incluyendo tu <em>fork</em> de p5.js. Selecciona tu <em>fork</em>, el cual tendrá el nombre de `tuUsuario/p5.js`, y luego haz clic en el botón azul que dice ‘Clone’ (clonar). Luego, se te van a preguntar algunos detalles acerca de donde ubicar tu proyecto. Tienes la opción de cambiar la ubicación, o continuar con la configuración predefinida.
 
 ![The GitHub Desktop user interface after signing in. On the right half of the screen, it lists your projects, and a Clone button in the bottom right.](../images/github-desktop-init.png)
 
