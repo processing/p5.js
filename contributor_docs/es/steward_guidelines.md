@@ -77,7 +77,7 @@ Los _issues_ para solicitar funcionalidades deberían utilizar la plantilla "New
      - Si no está claro si encaja o no, puede ser una buena idea sugerir hacer una biblioteca complementaria como una prueba de concepto. Esto ayuda a dar a los usuarios una forma de usar la funcionalidad, proporciona un ejemplo mucho más concreto de su uso e importancia, y no necesariamente necesita ser una solución tan completa como una función completamente integrada. Puede integrarse en el núcleo de p5.js más adelante si corresponde. 
    - ¿Es probable que la funcionalidad propuesta cause un cambio incompatible?
      - ¿Entrará en conflicto con las funcionalidades y variables existentes de p5.js?
-     - ¿Entrará en conflicto con los bocetos típicos ya escritos para p5.js?
+     - ¿Entrará en conflicto con los _sketches_ (bocetos) típicos ya escritos para p5.js?
      - Las funcionalidades que probablemente causen conflictos, como las mencionadas anteriormente, se consideran cambios incompatibles. Sin un [Lanzamiento de versión mayor](https://docs.npmjs.com/about-semantic-versioning),no deberíamos realizar cambios incompatibles en p5.js.
    - ¿Se puede lograr la nueva función propuesta utilizando las funcionalidades existentes ya en p5.js,código JavaScript nativo relativamente simple, o bibliotecas existentes fáciles de usar?
      - Por ejemplo, en lugar de proporcionar una función de p5.js para unir una matriz de cadenas como `join(["Hello","world!"])`, debería preferirse el JavaScript nativo `["Hello","world!"].join()`.
