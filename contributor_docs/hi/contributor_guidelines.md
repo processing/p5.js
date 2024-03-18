@@ -64,26 +64,26 @@ p5.js के गिटहब रिपॉजिटरी (संक्षेप 
 हमने आपको GitHub समस्या होनी चाहिए या कहीं और पोस्ट करनी चाहिए को निर्धारित करने में मदद करने के लिए आसान-से-उपयोग निर्देशिका बनाई हैं!
 
 
-## Issue templates
+## समस्या खाका
 
-p5.js's issue templates make it easier for stewards and maintainers to understand and review issues. They also make it easier for you to file the relevant issue and receive a reply faster. 
+p5.js के समस्या टेम्पलेट उपाध्यक्षों और रखरखावकर्ताओं को समस्याओं को समझने और समीक्षा करने में सुविधा प्रदान करते हैं। ये आपको भी उचित समस्या को दर्ज करने और त्वरित उत्तर प्राप्त करने में सहायक होते हैं।
 
-![Screenshot of an example of what an issue looks like on GitHub. The title of the issue in the screenshot is "Warning being logged in Safari when using a filter shader in 2D mode #6597"](../images/github-issue.png)
+![GitHub पर एक मामले की जैसे दिखने वाली एक उदाहरण स्क्रीनशॉट। स्क्रीनशॉट में मुद्दे का शीर्षक "सफारी में चेतावनी लॉग हो रही है जब 2डी मोड में फ़िल्टर शेडर का उपयोग किया जाता है #6597" है।](../images/github-issue.png)
 
-To file a new issue, simply go to the "Issues" tab on the p5.js repo and click on the "New issue" button on the right side. You will be presented with several different options, each of which either corresponds to a relevant issue template or redirects you to the relevant place to file your question. We recommend choosing the most relevant option out of those presented to ensure your issue receives the right attention promptly.
+नई समस्या दर्ज करने के लिए, पहले "Issues" टैब पर जाएं पी5.js रेपो पर और फिर दाएं ओर "New issue" बटन पर क्लिक करें। आपको कई विभिन्न विकल्पों के साथ प्रस्तुत किया जाएगा, जिसमें से प्रत्येक किसी संबंधित समस्या टेम्पलेट का अनुसरण करता है या आपको आपके प्रश्न को दर्ज करने के लिए उचित स्थान पर पुनःनिर्देशित करता है। हम सुझाव देते हैं कि आप प्रस्तुत किए गए सभी विकल्पों में से सबसे संबंधित विकल्प का चयन करें ताकि आपकी समस्या को सही ध्यान और समय से संबोधित किया जा सके।
 
-![Cropped screenshot of the GitHub repository's issue page with the green "New issue" button highlighted with a red box surrounding it.](../images/new-issue.png)
+![हरे "नए अंक" बटन के साथ GitHub रिपॉजिटरी के अंक पृष्ठ का क्रॉप किया गया स्क्रीनशॉट, जिसके चारों ओर एक लाल बॉक्स हाइलाइट किया गया है।](../images/new-issue.png)
 
 
-### ["Found a bug"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Bug\&projects=\&template=found-a-bug.yml)
+### ["एक त्रुटि मिला"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Bug\&projects=\&template=found-a-bug.yml)
 
-When you encounter possible incorrect behavior in p5.js or something not behaving as described in the documentation, use [this template](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Bug\&projects=\&template=found-a-bug.yml). Please note that if you are trying to debug your sketch and you think it may be a problem with your code, you should first ask on the [Discourse forum](https://discourse.processing.org) instead.
+जब आप p5.js में संभावित गलत व्यवहार का सामना करते हैं या दस्तावेज़ में वर्णित अनुसार व्यवहार नहीं करते हैं, तो [इस टेम्पलेट](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Bug\&projects=\&template=found-a-bug.yml). कृपया ध्यान दें कि यदि आप अपने स्केच को डीबग करने का प्रयास कर रहे हैं और आपको लगता है कि यह आपके कोड में कोई समस्या हो सकती है, तो आपको पहले [डिस्कोर्स फोरम](https://discourse.processing.org) पर पूछना चाहिए।
 
-There are a few fields for you to fill in for this template:
+इस टेम्पलेट में आपको भरने के लिए कुछ फ़ील्ड हैं:
 
-1. *Most appropriate sub-area of p5.js?* - This helps us identify and respond to your issue by automatically tagging the issue with the relevant [labels](https://github.com/processing/p5.js/blob/main/contributor_docs/issue_labels.md).
-2. *p5.js version* - You can find the p5.js version number in either the `<script>` tag link or on the very first line of the p5.js/p5.min.js file. It will look something similar to `1.4.2` (three numbers separated by periods).
-3. *Web browser and version* - This helps us isolate different behaviors between browsers. To find the browser version number, follow the instructions in the table below for the browser you are using.
+1. *p5.js का सबसे उपयुक्त उप-क्षेत्र?* - यह हमें संबंधित [लेबल](https://github.com/processing/p5.js/blob/main/contributor_docs/issue_labels.md) के साथ समस्या को स्वचालित रूप से टैग करके आपकी समस्या को पहचानने और उसका जवाब देने में मदद करता है।
+2. *p5.js संस्करण* - आप p5.js संस्करण संख्या या तो `<script>` टैग लिंक में या p5.js/p5.min.js फ़ाइल की पहली पंक्ति में पा सकते हैं। यह कुछ हद तक `1.4.2` (अवधि द्वारा अलग की गई तीन संख्याएँ) जैसा दिखेगा।
+3. *वेब ब्राउज़र और संस्करण* - यह हमें ब्राउज़रों के बीच विभिन्न व्यवहारों को अलग करने में मदद करता है। ब्राउज़र संस्करण संख्या खोजने के लिए, आप जिस ब्राउज़र का उपयोग कर रहे हैं उसके लिए नीचे दी गई तालिका में दिए गए निर्देशों का पालन करें।
 
 <table>
 
@@ -91,19 +91,19 @@ There are a few fields for you to fill in for this template:
 
 <td>
 
-Chrome
+क्रोम
 
 </td>
 
 <td>
 
-Firefox
+फ़ायरफ़ॉक्स
 
 </td>
 
 <td>
 
-Safari
+सफारी
 
 </td>
 
@@ -113,19 +113,19 @@ Safari
 
 <td>
 
-In the address bar, navigate to `chrome://version`
+पता बार में, `chrome://version` पर नेविगेट करें
 
 </td>
 
 <td>
 
-In the address bar, navigate to  `about:support`
+पता बार में, `about:support` पर नेविगेट करें
 
 </td>
 
 <td>
 
-Under the top bar “Safari” menu item, choose “About Safari”
+शीर्ष पट्टी के नीचे “Safari” मेनू में से, “About Safari” का चयन करें
 
 </td>
 
@@ -133,299 +133,301 @@ Under the top bar “Safari” menu item, choose “About Safari”
 
 </table>
 
-4. *Operating System* - You should include the OS version number if possible, e.g., `macOS 12.5`. Some bugs can stem from OS behaviors.
-5. *Steps to reproduce this* - This is arguably the most important information to share. You should list out detailed steps for replicating the bug you are seeing. Sharing a basic sample code that demonstrates the issue can go a long way for anyone looking to replicate the bug you are facing and start formulating a solution.
 
-**Replication is key!** Many of the fields in this template are aimed at replicating the bug. The more information you can provide us about your sketch's environment and how others can replicate what you are seeing, the easier it is for anyone to understand your issue and start looking into solutions. 
+4. *ऑपरेटिंग सिस्टम* - यदि संभव हो तो आपको ओएस संस्करण संख्या शामिल करनी चाहिए, उदाहरण के लिए, `macOS 12.5`। कुछ बग OS व्यवहार से उत्पन्न हो सकते हैं।
+5. *इसे पुन: प्रस्तुत करने के चरण* - यह संभवतः साझा करने के लिए सबसे महत्वपूर्ण जानकारी है। आप जो बग देख रहे हैं उसकी प्रतिकृति बनाने के लिए आपको विस्तृत चरणों की सूची बनानी चाहिए। एक बुनियादी नमूना कोड साझा करना जो समस्या को प्रदर्शित करता है, उस व्यक्ति के लिए बहुत मददगार साबित हो सकता है जो उस बग को दोहराना चाहता है जिसका आप सामना कर रहे हैं और समाधान तैयार करना शुरू कर सकते हैं।
 
-**Be as detailed as you can and avoid generic statements**, e.g., do not say "image() function does not work" but rather be more specific, such as "image() function does not display the loaded GIF image at the right size." A helpful way to describe the bug you are facing is to describe two things: 
+**प्रतिकृति कुंजी है!** इस टेम्पलेट में कई फ़ील्ड का उद्देश्य बग की प्रतिलिपि बनाना है। जितनी अधिक जानकारी आप हमें अपने स्केच के परिवेश के बारे में प्रदान कर सकते हैं और जो आप देख रहे हैं उसे दूसरे कैसे दोहरा सकते हैं, किसी के लिए भी आपकी समस्या को समझना और समाधान खोजना शुरू करना उतना ही आसान होगा।
 
-1. What you expect the sample code you share to do (expected behavior).
-2. What the sample code is actually doing (actual behavior).
+**जितना संभव हो उतना विस्तृत रहें और सामान्य कथनों से बचें**, उदाहरण के लिए, यह न कहें कि "छवि() फ़ंक्शन काम नहीं करता है" बल्कि अधिक विशिष्ट रहें, जैसे कि "छवि() फ़ंक्शन लोड की गई GIF छवि को प्रदर्शित नहीं करता है सही आकार।" आप जिस बग का सामना कर रहे हैं उसका वर्णन करने का एक उपयोगी तरीका दो चीजों का वर्णन करना है:
 
-If you wish to contribute a fix to the bug you just reported, you can indicate so in the description. You may provide a simple suggestion as to how you would fix the bug you just described, this will let us know how much support you may need to contribute to the fix.
+1. आपके द्वारा साझा किए गए नमूना कोड से आप क्या अपेक्षा करते हैं (अपेक्षित व्यवहार)।
+2. नमूना कोड वास्तव में क्या कर रहा है (वास्तविक व्यवहार)।
 
-**You should not file a pull request (or start working on code changes) without a corresponding issue or before an issue has been approved for implementation**; that is because the proposed fix may not be accepted, need a different approach entirely, or the actual problem is somewhere else. Any pull requests filed before the issue has been approved for fixing will be closed until approval is given to the issue.
+यदि आप अभी रिपोर्ट की गई बग को ठीक करने में योगदान देना चाहते हैं, तो आप विवरण में इसका संकेत दे सकते हैं। आप एक सरल सुझाव दे सकते हैं कि आप अभी बताए गए बग को कैसे ठीक करेंगे, इससे हमें पता चलेगा कि समाधान में योगदान देने के लिए आपको कितने समर्थन की आवश्यकता हो सकती है।
 
-For bug reports to be accepted for fixing, they must be approved by at least one [area steward or maintainer](https://github.com/processing/p5.js#stewards) before work can begin on a pull request.
+**आपको संबंधित मुद्दे के बिना या कार्यान्वयन के लिए किसी मुद्दे को मंजूरी मिलने से पहले पुल अनुरोध दर्ज नहीं करना चाहिए (या कोड परिवर्तनों पर काम करना शुरू नहीं करना चाहिए)**; ऐसा इसलिए है क्योंकि प्रस्तावित सुधार को स्वीकार नहीं किया जा सकता है, पूरी तरह से एक अलग दृष्टिकोण की आवश्यकता है, या वास्तविक समस्या कहीं और है। समस्या को ठीक करने के लिए मंजूरी मिलने से पहले दायर किए गए किसी भी पुल अनुरोध को समस्या को मंजूरी मिलने तक बंद कर दिया जाएगा।
 
-
-### ["Existing Feature Enhancement"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Enhancement\&projects=\&template=existing-feature-enhancement.yml)
-
-This template should be used if you wish to propose changes or add functionality to existing features of p5.js (functions, constants, rendering, etc). For example, if you want to add a new way to define a color to the `color()` function and other functions that accept colors, this is the template to use.
-
-There are a few fields for this template that you should fill in.
-
-1. *Increasing Access* - This required field is where you insert a statement about how adding the proposed feature enhancement will help p5.js [increase access](https://github.com/processing/p5.js/blob/main/contributor_docs/access.md) for people historically marginalized in the field of creative arts or technology. **No proposals will be accepted without this**, although you can fill in "Not sure" and offer other members of the community to provide this argument if they can think of how it addresses the accessibility of p5.js.
-2. *Most appropriate sub-area of p5.js?* - This helps us identify and respond to your issue. This will automatically tag the issue with the relevant [labels](https://github.com/processing/p5.js/blob/main/contributor_docs/issue_labels.md).
-3. *Feature enhancement details* - This is where you describe your proposal for the feature enhancement. A good feature enhancement proposal often includes a clear use case: what, when, how, and why this feature enhancement is needed.
-
-For feature enhancement proposals to be accepted they must be approved by at least 1 [area steward or maintainer](https://github.com/processing/p5.js#stewards) before work can begin on a pull request. 
-
-**You should not file a pull request (or start working on code changes) without a corresponding issue or before an issue has been approved for implementation**, because there is no guarantee that the proposal will be accepted. Any pull requests filed before a proposal has been approved will be closed until approval is given to the issue.
+बग रिपोर्ट को ठीक करने के लिए स्वीकार करने के लिए, पुल अनुरोध पर काम शुरू करने से पहले उन्हें कम से कम एक [क्षेत्र प्रबंधक या रखरखाव] (https://github.com/processing/p5.js#stewards) द्वारा अनुमोदित किया जाना चाहिए।
 
 
-### ["New Feature Request"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Feature+Request\&projects=\&template=feature-request.yml)
+### ["मौजूदा फ़ीचर एन्हांसमेंट"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Enhancement\&projects=\&template=current-feature-enhancement.yml)
 
-This template should be used if you wish to propose a new feature to be added to p5.js. For example to add support for drawing native HTML `<table>` elements with a new `createTable` function. Some proposals may overlap with existing feature enhancement proposals, in these cases you should just choose whichever template you feel is most appropriate.
+यदि आप परिवर्तनों का प्रस्ताव करना चाहते हैं या p5.js की मौजूदा सुविधाओं (फ़ंक्शन, स्थिरांक, रेंडरिंग, आदि) में कार्यक्षमता जोड़ना चाहते हैं तो इस टेम्पलेट का उपयोग किया जाना चाहिए। उदाहरण के लिए, यदि आप `रंग()' फ़ंक्शन और रंगों को स्वीकार करने वाले अन्य फ़ंक्शन में रंग को परिभाषित करने का एक नया तरीका जोड़ना चाहते हैं, तो यह उपयोग करने के लिए टेम्पलेट है।
 
-Accordingly, the template form fields are nearly identical to the field of the "Existing Feature Enhancement." As such please see the [previous section](#existing-feature-enchancement) for details about how to fill in each field.
+इस टेम्पलेट के लिए कुछ फ़ील्ड हैं जिन्हें आपको भरना चाहिए।
 
-For new feature request proposals to be accepted, they must be approved by at least 2 [area stewards or maintainers](https://github.com/processing/p5.js#stewards) before work can begin on a pull request. 
+1. *एक्सेस बढ़ाना* - यह आवश्यक फ़ील्ड वह है जहां आप एक विवरण डालते हैं कि प्रस्तावित फीचर एन्हांसमेंट को जोड़ने से p5.js को कैसे मदद मिलेगी [एक्सेस बढ़ाएं](https://github.com/processing/p5.js/blob/main /contributor_docs/access.md) रचनात्मक कला या प्रौद्योगिकी के क्षेत्र में ऐतिहासिक रूप से हाशिए पर रहे लोगों के लिए। **इसके बिना कोई प्रस्ताव स्वीकार नहीं किया जाएगा**, हालांकि आप "सुनिश्चित नहीं" भर सकते हैं और समुदाय के अन्य सदस्यों को यह तर्क प्रदान करने की पेशकश कर सकते हैं यदि वे सोच सकते हैं कि यह पी5.जेएस की पहुंच को कैसे संबोधित करता है।
+2. *p5.js का सबसे उपयुक्त उप-क्षेत्र?* - इससे हमें आपकी समस्या को पहचानने और उसका जवाब देने में मदद मिलती है। यह स्वचालित रूप से समस्या को प्रासंगिक [लेबल](https://github.com/processing/p5.js/blob/main/contributor_docs/issue_labels.md) के साथ टैग कर देगा।
+3. *सुविधा वृद्धि विवरण* - यह वह जगह है जहां आप सुविधा वृद्धि के लिए अपने प्रस्ताव का वर्णन करते हैं। एक अच्छे फीचर एन्हांसमेंट प्रस्ताव में अक्सर एक स्पष्ट उपयोग का मामला शामिल होता है: क्या, कब, कैसे और क्यों इस फीचर एन्हांसमेंट की आवश्यकता है।
 
-**You should not file a pull request (or start working on code changes) without a corresponding issue or before an issue has been approved for implementation**, that is because there is no guarantee that the proposal will be accepted. Any pull requests filed before a proposal has been approved will be closed until approval is given to the issue.
+फीचर एन्हांसमेंट प्रस्तावों को स्वीकार करने के लिए पुल अनुरोध पर काम शुरू करने से पहले उन्हें कम से कम 1 [क्षेत्र प्रबंधक या रखरखाव] (https://github.com/processing/p5.js#stewards) द्वारा अनुमोदित किया जाना चाहिए।
+
+**आपको संबंधित मुद्दे के बिना या कार्यान्वयन के लिए किसी मुद्दे को मंजूरी मिलने से पहले पुल अनुरोध दर्ज नहीं करना चाहिए (या कोड परिवर्तनों पर काम करना शुरू नहीं करना चाहिए), क्योंकि इस बात की कोई गारंटी नहीं है कि प्रस्ताव स्वीकार कर लिया जाएगा। किसी प्रस्ताव को मंजूरी मिलने से पहले दायर किया गया कोई भी पुल अनुरोध मुद्दे को मंजूरी मिलने तक बंद कर दिया जाएगा।
 
 
-### ["Discussion"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Discussion\&projects=\&template=discussion.yml)
+### ["नई सुविधा का अनुरोध"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Feature+Request\&projects=\&template=feature-request.yml)
 
-This template is used when the issue you are filing does not fit into any of the above in any way. An issue not fitting into any of the above templates should be relatively rare in practice. For example, a discussion about whether to adopt a specific Web API feature in p5.js should be filed as a [new feature request](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#new-feature-request); a discussion about adding an additional color mode to the various color functions should be filed as a [feature enchancement](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#existing-feature-enchancement); an announcement about a local creative coding event that you are organizing should be posted on the forum and contacting the Processing Foundation if you are looking for support or publicity; etc.
+यदि आप p5.js में जोड़ने के लिए एक नई सुविधा का प्रस्ताव करना चाहते हैं तो इस टेम्पलेट का उपयोग किया जाना चाहिए। उदाहरण के लिए एक नए `createTable` फ़ंक्शन के साथ मूल HTML `<table>` तत्वों को चित्रित करने के लिए समर्थन जोड़ना। कुछ प्रस्ताव मौजूदा फीचर एन्हांसमेंट प्रस्तावों के साथ ओवरलैप हो सकते हैं, इन मामलों में आपको बस वही टेम्पलेट चुनना चाहिए जो आपको सबसे उपयुक्त लगे।
 
-When opening a discussion issue, you can use the "Labels" panel on the side panels to add additional relevant labels so you can signpost your issue to the relevant area. The template itself is just the bare minimum text field. You can see [this link](https://github.com/processing/p5.js/issues/6517) for an example discussion issue.
+तदनुसार, टेम्प्लेट फॉर्म फ़ील्ड "मौजूदा फ़ीचर एन्हांसमेंट" के फ़ील्ड के लगभग समान हैं। अतः कृपया प्रत्येक फ़ील्ड को भरने के तरीके के बारे में विवरण के लिए [पिछला अनुभाग] (#मौजूदा-सुविधा-संवर्द्धन) देखें।
 
-[**⬆ back to top**](#contributor-guidelines)
+नए फीचर अनुरोध प्रस्तावों को स्वीकार करने के लिए, पुल अनुरोध पर काम शुरू करने से पहले उन्हें कम से कम 2 [क्षेत्र प्रबंधकों या अनुरक्षकों](https://github.com/processing/p5.js#stewards) द्वारा अनुमोदित किया जाना चाहिए।
+
+**आपको संबंधित मुद्दे के बिना या किसी मुद्दे को कार्यान्वयन के लिए अनुमोदित किए जाने से पहले पुल अनुरोध दर्ज नहीं करना चाहिए (या कोड परिवर्तनों पर काम करना शुरू नहीं करना चाहिए), ऐसा इसलिए है क्योंकि इस बात की कोई गारंटी नहीं है कि प्रस्ताव स्वीकार कर लिया जाएगा। किसी प्रस्ताव को मंजूरी मिलने से पहले दायर किया गया कोई भी पुल अनुरोध मुद्दे को मंजूरी मिलने तक बंद कर दिया जाएगा।
+
+
+### ["चर्चा"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Discussion\&projects=\&template=discussion.yml)
+
+इस टेम्पलेट का उपयोग तब किया जाता है जब आप जो मुद्दा दाखिल कर रहे हैं वह किसी भी तरह से उपरोक्त में से किसी में फिट नहीं बैठता है। उपरोक्त किसी भी टेम्पलेट में फिट न होने वाला मुद्दा व्यवहार में अपेक्षाकृत दुर्लभ होना चाहिए। उदाहरण के लिए, p5.js में एक विशिष्ट वेब एपीआई सुविधा को अपनाने के बारे में चर्चा को [नई सुविधा अनुरोध](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#new-feature-request); विभिन्न रंग कार्यों में एक अतिरिक्त रंग मोड जोड़ने के बारे में चर्चा को [फीचर एन्हांसमेंट](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#existing-feature-enchancement); आपके द्वारा आयोजित किए जा रहे स्थानीय रचनात्मक कोडिंग कार्यक्रम के बारे में एक घोषणा मंच पर पोस्ट की जानी चाहिए और यदि आप समर्थन या प्रचार की तलाश में हैं तो प्रोसेसिंग फाउंडेशन से संपर्क करें; वगैरह।
+
+किसी चर्चा मुद्दे को खोलते समय, आप अतिरिक्त प्रासंगिक लेबल जोड़ने के लिए साइड पैनल पर "लेबल" पैनल का उपयोग कर सकते हैं ताकि आप अपने मुद्दे को संबंधित क्षेत्र में साइनपोस्ट कर सकें। टेम्प्लेट स्वयं न्यूनतम पाठ फ़ील्ड है। उदाहरण चर्चा मुद्दे के लिए आप [यह लिंक](https://github.com/processing/p5.js/issues/6517) देख सकते हैं।
+
+[**⬆ शीर्ष पर वापस**](#योगदानकर्ता-दिशानिर्देश)
 
 ---
 
 
-# Working on the p5.js codebase
+# p5.js कोडबेस पर कार्य करना
 
-## Prerequisites
+## पूर्वावश्यकताएँ
 
-To proceed you should be minimally familiar with working with the command line, git, node.js (at least v18 and up), and have a local development environment setup.
-
-
-## Introduction
-
-Now that your issue has been discussed, an implementation approved, and you are willing to make the code changes, you are ready to start working on the codebase.
-
-Similarly, if you have come across an issue or joined in discussions of an issue and an implementation has been approved by stewards, but neither the original issue author nor other members of the community have indicated they are willing to work on the issue, you may volunteer for submit a contribution here and have the stewards assign the issue to you.
-
-**You should not "jump the queue"** by filing a PR for an issue that either someone else has indicated willingness to submit a contribution or has already been assigned to someone else. We will always prioritize the "first assigned, first serve" order for accepting code contributions for an issue. 
-
-If you file a PR for an issue while someone else is still working on the same issue, your PR will be closed. If you see that it has been a few months since the last activity on an issue with an assigned individual, you can check in with them by leaving a polite comment on the issue asking for progress and if they need help with the implementation. We generally allow for a reasonably long time frame for people to work on their contributions as we understand that most people will often be working on a volunteer basis, or it simply takes more time for them to work on the feature. 
-
-Similarly, you should work at your own pace and be confident that there is no hard time limit on how long you can spend working on something. That being said, if you are having trouble with any aspect of your code contribution, do not hesitate to ask for help in the issue, the stewards and maintainers, as well as members of our community, will do our best to guide you!
+आगे बढ़ने के लिए आपको कमांड लाइन, गिट, नोड.जेएस (कम से कम v18 और ऊपर) के साथ काम करने से न्यूनतम परिचित होना चाहिए, और एक स्थानीय विकास पर्यावरण सेटअप होना चाहिए।
 
 
-## Quick Get Started For Developers
+## परिचय
 
-If you want to work/contribute to p5.js'🌸 codebase as a developer, either directly for improving p5.js or for improving its sub-projects like [Friendly Error Systems](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md), you can follow the following steps:
+अब जब आपके मुद्दे पर चर्चा हो चुकी है, कार्यान्वयन स्वीकृत हो गया है, और आप कोड में बदलाव करने के इच्छुक हैं, तो आप कोडबेस पर काम शुरू करने के लिए तैयार हैं।
 
-1. [Create a fork of p5.js.](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
-2. [Clone your created fork to your computer.](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
-3. [Add upstream using the following command](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-repository-for-a-fork):
+इसी तरह, यदि आपके सामने कोई मुद्दा आया है या आप किसी मुद्दे पर चर्चा में शामिल हुए हैं और कार्यान्वयन को प्रबंधकों द्वारा अनुमोदित किया गया है, लेकिन न तो मूल मुद्दे के लेखक और न ही समुदाय के अन्य सदस्यों ने संकेत दिया है कि वे इस मुद्दे पर काम करने के इच्छुक हैं, तो आप ऐसा कर सकते हैं। यहां योगदान देने के लिए स्वयंसेवा करें और प्रबंधकों से इस मुद्दे को आपको सौंपने के लिए कहें।
+
+**आपको किसी ऐसे मुद्दे के लिए पीआर दाखिल करके "कतार में नहीं कूदना चाहिए"** जिसमें या तो किसी और ने योगदान जमा करने की इच्छा का संकेत दिया है या पहले से ही किसी और को सौंपा गया है। किसी मुद्दे के लिए कोड योगदान स्वीकार करने के लिए हम हमेशा "पहले सौंपे, पहले पाएँ" आदेश को प्राथमिकता देंगे।
+
+यदि आप किसी मुद्दे के लिए पीआर दाखिल करते हैं जबकि कोई अन्य व्यक्ति अभी भी उसी मुद्दे पर काम कर रहा है, तो आपका पीआर बंद कर दिया जाएगा। यदि आप देखते हैं कि किसी निर्दिष्ट व्यक्ति के साथ किसी मुद्दे पर अंतिम गतिविधि को कुछ महीने हो गए हैं, तो आप प्रगति के बारे में पूछते हुए और यदि उन्हें कार्यान्वयन में सहायता की आवश्यकता है, तो उस मुद्दे पर एक विनम्र टिप्पणी छोड़ कर उनके साथ जांच कर सकते हैं। हम आम तौर पर लोगों को उनके योगदान पर काम करने के लिए उचित रूप से लंबी समय सीमा की अनुमति देते हैं क्योंकि हम समझते हैं कि ज्यादातर लोग अक्सर स्वैच्छिक आधार पर काम करेंगे, या उन्हें सुविधा पर काम करने में अधिक समय लगेगा।
+
+इसी तरह, आपको अपनी गति से काम करना चाहिए और आश्वस्त रहना चाहिए कि आप किसी चीज़ पर काम करने में कितना समय लगा सकते हैं, इसकी कोई कठिन समय सीमा नहीं है। कहा जा रहा है कि, यदि आपको अपने कोड योगदान के किसी भी पहलू से परेशानी हो रही है, तो इस मुद्दे पर मदद मांगने में संकोच न करें, प्रबंधक और अनुरक्षक, साथ ही हमारे समुदाय के सदस्य, आपका मार्गदर्शन करने की पूरी कोशिश करेंगे!
+
+
+## डेवलपर्स के लिए त्वरित शुरुआत करें
+
+यदि आप एक डेवलपर के रूप में p5.js'🌸 कोडबेस पर काम/योगदान करना चाहते हैं, या तो सीधे p5.js को बेहतर बनाने के लिए या इसके उप-प्रोजेक्ट्स जैसे [फ्रेंडली एरर सिस्टम्स](https://github.com/processing/p5) को बेहतर बनाने के लिए .js/blob/main/contributor_docs/friendly_error_system.md), आप निम्न चरणों का पालन कर सकते हैं:
+
+1. [p5.js का एक कांटा बनाएं](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
+2. [अपने बनाए गए फोर्क को अपने कंप्यूटर पर क्लोन करें।](https://docs.github.com/en/repositories/creating-and-maneasing-repositories/cloning-a-repository)
+3. [निम्न कमांड का उपयोग करके अपस्ट्रीम जोड़ें](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-repository-ffor-a-fork):
 
   ```
   git remote add upstream https://github.com/processing/p5.js
   ```
 
-4. Make sure your machine has [NodeJs](https://nodejs.org/en/download) installed; check it with the following command:
+4. सुनिश्चित करें कि आपकी मशीन में [NodeJs](https://nodejs.org/en/download) स्थापित है; इसे निम्न आदेश से जांचें:
 
   ```
   node -v
   ```
 
-5. Install dependencies with:
+5. इसके साथ निर्भरता स्थापित करें:
 
   ```
   npm ci
   ```
 
-6. Create a git branch of the `main` branch having a descriptive branch name using: 
+6. 'मुख्य' शाखा की एक गिट शाखा बनाएं जिसमें वर्णनात्मक शाखा नाम का उपयोग किया जाए:
 
   ```
   git checkout -b [branch_name]
   ```
 
-7. As you start making changes to the codebase, frequently run the tests (it takes time, but it ensures that existing behaviors are not being broken).
+7. जैसे ही आप कोडबेस में बदलाव करना शुरू करते हैं, बार-बार परीक्षण चलाएं (इसमें समय लगता है, लेकिन यह सुनिश्चित करता है कि मौजूदा व्यवहार को तोड़ा नहीं जा रहा है)।
 
   ```
   npm test
   ```
 
-8. Add any unit tests if you are working on adding new features or feature enhancement.
-9. Once done, you can commit the changes and create a [Pull Request](https://p5js.org/contributor-docs/#/./contributor_guidelines?id=pull-requests).
+8. यदि आप नई सुविधाएँ जोड़ने या सुविधा बढ़ाने पर काम कर रहे हैं तो कोई भी इकाई परीक्षण जोड़ें।
+
+9. एक बार हो जाने के बाद, आप परिवर्तन कर सकते हैं और एक [पुल अनुरोध](https://p5js.org/contributor-docs/#/./contributor_guidelines?id=pull-requests) बना सकते हैं।
 
 
-## Using the GitHub edit functionality
+## GitHub संपादन कार्यक्षमता का उपयोग करना
 
-When viewing a file on the GitHub web interface, near the top of the content of the file you are viewing will be a pencil icon button. This button is a convenient edit feature provided by GitHub that simplifies many of the processes we will be covering below and can be used to make quick and simple edits to the file you are viewing.
+GitHub वेब इंटरफ़ेस पर किसी फ़ाइल को देखते समय, आप जिस फ़ाइल को देख रहे हैं उसकी सामग्री के शीर्ष के पास एक पेंसिल आइकन बटन होगा। यह बटन GitHub द्वारा प्रदान की गई एक सुविधाजनक संपादन सुविधा है जो उन कई प्रक्रियाओं को सरल बनाती है जिन्हें हम नीचे कवर करेंगे और इसका उपयोग आपके द्वारा देखी जा रही फ़ाइल में त्वरित और सरल संपादन करने के लिए किया जा सकता है।
 
-![Cropped screenshot of a file view in GitHub of the p5.js repository, "src/color/color\_conversion.js" file. A red arrow pointing to a pencil icon button on the right side of the image.](../images/edit-file.png)
+![P5.js रिपॉजिटरी के GitHub में फ़ाइल दृश्य का क्रॉप्ड स्क्रीनशॉट, "src/color/color\_conversion.js" फ़ाइल। एक लाल तीर छवि के दाईं ओर एक पेंसिल आइकन बटन की ओर इशारा करता है।](../images/edit-file.png)
 
-However, it is not recommended to use this feature other than for very simple changes. One of the main reasons for this is that for more complex changes to the source code, it should be built and tested locally before being filed as a PR. Using a local development environment is also often much more fluent for most as compared to the basic editing environment provided by this edit functionality.
-
-
-## Forking p5.js and working from your fork
-
-The first step to work on the p5.js source code is to fork the p5.js repository. Forking has a specific meaning in open source, but for our purpose, it means creating a copy of the repository and storing it in your own GitHub account. To fork a repo, simply click on the "Fork" button near the top of the page, and GitHub will make a copy of the repo in your account.
-
-![Screenshot of the main page of repository. A button, labeled with a fork icon and "Fork 59.3k," is outlined in dark orange.](fork.png)
-
-Working from your fork of the p5.js repository is necessary because you will likely not have direct write access to the official p5.js repository, and working on a fork allows you to make changes and later submit them back to the official repository.
+हालाँकि, बहुत ही साधारण परिवर्तनों के अलावा इस सुविधा का उपयोग करने की अनुशंसा नहीं की जाती है। इसका एक मुख्य कारण यह है कि स्रोत कोड में अधिक जटिल परिवर्तनों के लिए, इसे पीआर के रूप में दायर करने से पहले स्थानीय रूप से बनाया और परीक्षण किया जाना चाहिए। इस संपादन कार्यक्षमता द्वारा प्रदान किए गए बुनियादी संपादन वातावरण की तुलना में अधिकांश लोगों के लिए स्थानीय विकास परिवेश का उपयोग करना अक्सर अधिक सहज होता है।
 
 
-### Using GitHub Desktop
+## p5.js को फोर्क करना और अपने फोर्क से काम करना
 
-GitHub Desktop is a program that lets you work with git via a graphical user interface rather than typing commands into a terminal. It is a good option if you are new to git, and you can always switch back and forth between Github Desktop and a terminal whenever you feel like it.
+P5.js स्रोत कोड पर काम करने का पहला चरण p5.js रिपॉजिटरी को फोर्क करना है। ओपन सोर्स में फोर्किंग का एक विशिष्ट अर्थ है, लेकिन हमारे उद्देश्य के लिए, इसका मतलब रिपॉजिटरी की एक प्रति बनाना और इसे अपने GitHub खाते में संग्रहीत करना है। रेपो को फोर्क करने के लिए, बस पृष्ठ के शीर्ष के पास "फोर्क" बटन पर क्लिक करें, और GitHub आपके खाते में रेपो की एक प्रति बना देगा।
 
-First, [download and install GitHub Desktop.](https://desktop.github.com/) Once installed, open the application. It will ask you to sign in to your GitHub account. After you have signed in, it will list your projects, including your fork of p5.js. Select your fork, which will be named `yourUsername/p5.js`, and click the blue "Clone" button. It will ask for some details about where to place your project; you can either change them or leave the default settings and continue.
+![भंडार के मुख्य पृष्ठ का स्क्रीनशॉट। एक बटन, जिस पर फोर्क आइकन और "फोर्क 59.3k" लेबल है, गहरे नारंगी रंग में रेखांकित है।](फोर्क.पीएनजी)
 
-![The GitHub Desktop user interface after signing in. On the right half of the screen, it lists your projects, and a Clone button in the bottom right.](../images/github-desktop-init.png)
-
-Once cloned, it will ask how you plan to use your fork. Select the option to contribute to the parent project and click "Continue."
-
-![The view after cloning a fork. It asks if you are planning to contribute to the parent project, or use it for your own purposes.](../images/github-desktop-fork.png)
+p5.js रिपॉजिटरी के अपने फोर्क से काम करना आवश्यक है क्योंकि आपके पास आधिकारिक p5.js रिपॉजिटरी तक सीधे लिखने की पहुंच नहीं होगी, और फोर्क पर काम करने से आप बदलाव कर सकते हैं और बाद में उन्हें आधिकारिक रिपॉजिटरी में वापस सबमिट कर सकते हैं।
 
 
-### Using the `git` command line interface
+### GitHub डेस्कटॉप का उपयोग करना
 
-Once the fork is created, navigate to your fork's page and copy the git URL by clicking the green "Code" button. It should look something like `https://github.com/limzykenneth/p5.js.git`.
+GitHub डेस्कटॉप एक प्रोग्राम है जो आपको टर्मिनल में कमांड टाइप करने के बजाय ग्राफिकल यूजर इंटरफेस के माध्यम से git के साथ काम करने देता है। यदि आप git में नए हैं तो यह एक अच्छा विकल्प है, और जब भी आपका मन करे आप Github डेस्कटॉप और टर्मिनल के बीच आगे और पीछे स्विच कर सकते हैं।
 
-![Screenshot of the list of files on the landing page of a repository. The "Code" button is highlighted with a dark orange outline.](../images/code-button.png)
+सबसे पहले, [GitHub डेस्कटॉप डाउनलोड करें और इंस्टॉल करें।](https://desktop.github.com/) इंस्टॉल होने के बाद, एप्लिकेशन खोलें। यह आपसे आपके GitHub खाते में साइन इन करने के लिए कहेगा। आपके साइन इन करने के बाद, यह आपकी परियोजनाओं को सूचीबद्ध करेगा, जिसमें आपका p5.js का कांटा भी शामिल होगा। अपना कांटा चुनें, जिसका नाम `yourUsername/p5.js` होगा, और नीले "क्लोन" बटन पर क्लिक करें। यह आपके प्रोजेक्ट को कहां रखा जाए, इसके बारे में कुछ विवरण मांगेगा; आप या तो उन्हें बदल सकते हैं या डिफ़ॉल्ट सेटिंग्स छोड़ कर जारी रख सकते हैं।
 
-Next go to the command line in your local environment and clone this git repository. "Clone" simply means download a copy of the repo to your local machine. Run the following command in a folder where you want to store the p5.js source code folder.
+![साइन इन करने के बाद GitHub डेस्कटॉप उपयोगकर्ता इंटरफ़ेस। स्क्रीन के दाहिने आधे भाग पर, यह आपके प्रोजेक्ट्स को सूचीबद्ध करता है, और नीचे दाईं ओर एक क्लोन बटन।](../images/github-desktop-init.png)
+
+एक बार क्लोन हो जाने पर, यह पूछेगा कि आप अपने फोर्क का उपयोग कैसे करने की योजना बना रहे हैं। मूल प्रोजेक्ट में योगदान करने का विकल्प चुनें और "जारी रखें" पर क्लिक करें।
+
+![कांटा क्लोन करने के बाद का दृश्य। यह पूछता है कि क्या आप मूल परियोजना में योगदान करने की योजना बना रहे हैं, या इसे अपने उद्देश्यों के लिए उपयोग करने की योजना बना रहे हैं।](../images/github-desktop-fork.png)
+
+
+### `गिट` कमांड लाइन इंटरफ़ेस का उपयोग करना
+
+एक बार फोर्क बन जाने के बाद, अपने फोर्क के पेज पर जाएं और हरे "कोड" बटन पर क्लिक करके गिट यूआरएल को कॉपी करें। इसे कुछ इस तरह दिखना चाहिए `https://github.com/limzykenneth/p5.js.git`.
+
+![रिपॉजिटरी के लैंडिंग पृष्ठ पर फ़ाइलों की सूची का स्क्रीनशॉट। "कोड" बटन को गहरे नारंगी रंग की रूपरेखा से हाइलाइट किया गया है।](../images/code-button.png)
+
+इसके बाद अपने स्थानीय वातावरण में कमांड लाइन पर जाएं और इस गिट रिपॉजिटरी को क्लोन करें। "क्लोन" का सीधा सा अर्थ है अपने स्थानीय मशीन पर रेपो की एक प्रति डाउनलोड करना। उस फ़ोल्डर में निम्न आदेश चलाएँ जहाँ आप p5.js स्रोत कोड फ़ोल्डर संग्रहीत करना चाहते हैं।
 
 ```
-git clone [git_url]
+गिट क्लोन [git_url]
 ```
 
-Replace `[git_url]` with the URL you just copied above. This can take several minutes, depending on the speed of your internet connection, a good time to make some coffee! Once the process is finished, you can open up the downloaded folder named `p5.js` in your preferred text editor and start looking around.
+`[git_url]` को उस यूआरएल से बदलें जिसे आपने अभी ऊपर कॉपी किया है। आपके इंटरनेट कनेक्शन की गति के आधार पर इसमें कई मिनट लग सकते हैं, कुछ कॉफ़ी बनाने का यह एक अच्छा समय है! एक बार प्रक्रिया समाप्त हो जाने पर, आप अपने पसंदीदा टेक्स्ट एडिटर में `p5.js` नामक डाउनलोड किए गए फ़ोल्डर को खोल सकते हैं और चारों ओर देखना शुरू कर सकते हैं।
 
 
-## Codebase breakdown
+## कोडबेस ब्रेकडाउन
 
-Some of the key files and folders you will be in the p5.js folder are as follows:
+आपके पास p5.js फ़ोल्डर में मौजूद कुछ प्रमुख फ़ाइलें और फ़ोल्डर इस प्रकार हैं:
 
-- `src` - Where all the code that eventually gets combined into the final p5.js and p5.min.js files lives
-- [`test`](https://github.com/processing/p5.js/blob/main/contributor_docs/unit_testing.md) - Where unit tests and code for testing all documentation examples lives
-- `tasks` - Where detailed and custom build code lives
-- `Gruntfile.js` - This is the main build configuration file
-- `contributor_docs` - Where the documentation and all other contributor documentation lives
+- `src` - जहां सभी कोड जो अंततः अंतिम p5.js और p5.min.js फ़ाइलों में संयुक्त हो जाते हैं, रहते हैं
+- [`test`](https://github.com/processing/p5.js/blob/main/contributor_docs/unit_testing.md) - जहां सभी दस्तावेज़ उदाहरणों के परीक्षण के लिए इकाई परीक्षण और कोड रहता है
+- `कार्य` - जहां विस्तृत और कस्टम बिल्ड कोड रहता है
+- `Gruntfile.js` - यह मुख्य बिल्ड कॉन्फ़िगरेशन फ़ाइल है
+- `contributor_docs` - जहां दस्तावेज़ और अन्य सभी योगदानकर्ता दस्तावेज़ रहते हैं
 
-The other files and folders are either configurations or other kinds of support files; in most cases, you shouldn't need to make any modifications.
+अन्य फ़ाइलें और फ़ोल्डर्स या तो कॉन्फ़िगरेशन हैं या अन्य प्रकार की समर्थन फ़ाइलें हैं; अधिकांश मामलों में, आपको कोई संशोधन करने की आवश्यकता नहीं होनी चाहिए।
 
 
-## Build setup
+## सेटअप बनाएं
 
-Before you do anything, you'll need to set up the local project folder so that you can build and run tests for p5.js. Assuming you have node.js installed, run:
+कुछ भी करने से पहले, आपको स्थानीय प्रोजेक्ट फ़ोल्डर सेट करना होगा ताकि आप p5.js के लिए परीक्षण बना और चला सकें। यह मानते हुए कि आपके पास नोड.जेएस स्थापित है, चलाएँ:
 
 ```
 npm ci
 ```
 
-This will likely take a while, as npm downloads all dependencies required. However, once done, that's it, you are all set up. Pretty simple, right?
+इसमें कुछ समय लगने की संभावना है, क्योंकि एनपीएम सभी आवश्यक निर्भरताएँ डाउनलोड करता है। हालाँकि, एक बार हो जाने के बाद, बस, आप पूरी तरह तैयार हैं। बहुत सरल, है ना?
 
 
-## Git workflow
+## गिट वर्कफ़्लो
 
-Now, you are ready to make the changes you need to make; for more details about the different parts of the repository and how you can make relevant changes, see the subsections below. To start, run:
+अब, आप आवश्यक परिवर्तन करने के लिए तैयार हैं; रिपॉजिटरी के विभिन्न हिस्सों के बारे में अधिक जानकारी के लिए और आप प्रासंगिक परिवर्तन कैसे कर सकते हैं, नीचे दिए गए उपखंड देखें। आरंभ करने के लिए, चलाएँ:
 
 ```
 npm test
 ```
 
-To try building p5.js from scratch and run all unit tests, this should complete with no errors. If you just want to build the library without running the tests, you can run:
+शुरुआत से p5.js बनाने का प्रयास करने और सभी यूनिट परीक्षण चलाने के लिए, इसे बिना किसी त्रुटि के पूरा करना चाहिए। यदि आप परीक्षण चलाए बिना केवल लाइब्रेरी बनाना चाहते हैं, तो आप चला सकते हैं:
 
 ```
 npm run build
 ```
 
-Either of the commands above will build the library into the `lib/` folder as `p5.js` and `p5.min.js`. You can use these built files for your own tests if necessary.
+उपरोक्त में से कोई भी आदेश लाइब्रेरी को `lib/` फ़ोल्डर में `p5.js` और `p5.min.js` के रूप में बनाएगा। यदि आवश्यक हो तो आप इन निर्मित फ़ाइलों का उपयोग अपने परीक्षणों के लिए कर सकते हैं।
 
-Next, we recommend that you make a branch off the `main` branch before starting your work. A branch in git is as the name implies, a branched version of the repo that you can add commits to without affecting the `main` or other branches. Branches enable you to work on multiple features at once (by using multiple isolated branches) and have confidence that if you mess up a branch it won't affect the `main` branch.
+इसके बाद, हम अनुशंसा करते हैं कि आप अपना काम शुरू करने से पहले `मुख्य' शाखा से एक शाखा बना लें। जैसा कि नाम से पता चलता है, गिट में एक शाखा रेपो का एक शाखित संस्करण है जिसे आप 'मुख्य' या अन्य शाखाओं को प्रभावित किए बिना कमिट जोड़ सकते हैं। शाखाएँ आपको एक साथ कई सुविधाओं पर काम करने में सक्षम बनाती हैं (कई अलग-अलग शाखाओं का उपयोग करके) और आपको विश्वास है कि यदि आप किसी शाखा में गड़बड़ी करते हैं तो यह 'मुख्य' शाखा को प्रभावित नहीं करेगी।
 
-In GitHub Desktop, this can be done by clicking the Current Branch button in the header of the window. From here, you can change branches, or enter a branch name to make a new one. For our purposes, enter a new branch name describing the change you will make, and click Create New Branch.
+GitHub डेस्कटॉप में, यह विंडो के हेडर में करंट ब्रांच बटन पर क्लिक करके किया जा सकता है। यहां से, आप शाखाएं बदल सकते हैं, या नई शाखा बनाने के लिए शाखा का नाम दर्ज कर सकते हैं। हमारे उद्देश्यों के लिए, आपके द्वारा किए जाने वाले परिवर्तन का वर्णन करते हुए एक नई शाखा का नाम दर्ज करें और नई शाखा बनाएं पर क्लिक करें।
 
-![A screenshot of the GitHub Desktop branch selection menu. After entering a new branch name that does not yet exist, a "Create New Branch" button appears.](../images/github-desktop-create-branch.png)
+![GitHub डेस्कटॉप शाखा चयन मेनू का एक स्क्रीनशॉट। एक नई शाखा का नाम दर्ज करने के बाद जो अभी तक मौजूद नहीं है, एक "नई शाखा बनाएं" बटन दिखाई देता है।](../images/github-desktop-create-branch.png)
 
-From the terminal, run `git checkout -b branch_name` while you are on the `main` branch, replacing `branch_name` with something descriptive, and you will be on a separate branch now. 
+टर्मिनल से, जब आप `मुख्य` शाखा पर हों तो `git checkout -b ब्रांच_नाम` चलाएँ, `branch_name` को किसी वर्णनात्मक चीज़ से बदलें, और अब आप एक अलग शाखा पर होंगे।
 
-As you make your changes, we recommend running `npm test` frequently, especially if you are working on the source code. Running this will take some time, but it ensures that the changes you make are not breaking existing behaviors. You should run `npm test` before moving on to committing the changes as described below.
+जैसे ही आप अपने परिवर्तन करते हैं, हम `npm test` को बार-बार चलाने की सलाह देते हैं, खासकर यदि आप स्रोत कोड पर काम कर रहे हैं। इसे चलाने में कुछ समय लगेगा, लेकिन यह सुनिश्चित करता है कि आपके द्वारा किए गए परिवर्तन मौजूदा व्यवहार को नहीं तोड़ रहे हैं। नीचे बताए अनुसार परिवर्तन करने से पहले आपको `npm test` चलाना चाहिए।
 
-Once you have made your changes to the codebase, you will need to commit it to git. A commit is a collection of changes saved in the git repository; it essentially records the current state of the files in the repo at the time of commit. 
+एक बार जब आप कोडबेस में अपने परिवर्तन कर लेते हैं, तो आपको इसे गिट में प्रतिबद्ध करना होगा। कमिट गिट रिपॉजिटरी में सहेजे गए परिवर्तनों का एक संग्रह है; यह अनिवार्य रूप से प्रतिबद्धता के समय रेपो में फ़ाइलों की वर्तमान स्थिति को रिकॉर्ड करता है।
 
-A question that may arise is how often should you commit to git? In general it is preferred that you aim to commit often rather than lump multiple big changes into one commit. A good guideline is to commit whenever you have completed a subtask that can be described in a sentence.
+एक प्रश्न उठ सकता है कि आपको कितनी बार गिट के लिए प्रतिबद्ध होना चाहिए? सामान्य तौर पर यह प्राथमिकता दी जाती है कि आप कई बड़े बदलावों को एक प्रतिबद्धता में डालने के बजाय बार-बार प्रतिबद्ध होने का लक्ष्य रखें। एक अच्छा दिशानिर्देश यह है कि जब भी आप कोई ऐसा उपकार्य पूरा कर लें जिसे एक वाक्य में वर्णित किया जा सके तो उसे प्रतिबद्ध कर दें।
 
-To commit all current changes from GitHub Desktop, open the app after making your changes. It will show a list of the files you have changed in the left sidebar, and the specific changes within each file on the right. Type a brief, high-level description in the field next to your user icon in the bottom left corner of the window. This will be the title of the commit. You may elaborate further in the description field below or just leave it blank. Click the blue "Commit" button to finalize the change.
+GitHub डेस्कटॉप से ​​सभी मौजूदा परिवर्तन करने के लिए, अपने परिवर्तन करने के बाद ऐप खोलें। यह बाएं साइडबार में आपके द्वारा बदली गई फ़ाइलों की एक सूची दिखाएगा, और दाईं ओर प्रत्येक फ़ाइल के भीतर विशिष्ट परिवर्तन दिखाएगा। विंडो के निचले बाएँ कोने में अपने उपयोगकर्ता आइकन के बगल वाले फ़ील्ड में एक संक्षिप्त, उच्च-स्तरीय विवरण टाइप करें। यह कमिट का शीर्षक होगा. आप नीचे विवरण फ़ील्ड में और विस्तार से बता सकते हैं या इसे खाली छोड़ सकते हैं। परिवर्तन को अंतिम रूप देने के लिए नीले "प्रतिबद्ध" बटन पर क्लिक करें।
 
-![A screenshot of GitHub Desktop after having made a change. The area where you need to write a title for your change is circled in red in the lower left of the window.](../images/github-desktop-commit.png)
+![परिवर्तन करने के बाद GitHub डेस्कटॉप का एक स्क्रीनशॉट। वह क्षेत्र जहां आपको अपने परिवर्तन के लिए शीर्षक लिखना है, विंडो के नीचे बाईं ओर लाल रंग में दर्शाया गया है।](../images/github-desktop-commit.png)
 
-To commit all current changes from the terminal, run the following:
+टर्मिनल से सभी मौजूदा परिवर्तन करने के लिए, निम्नलिखित चलाएँ:
 
-1. Check that it only lists files you have changed with the following command. 
+1. जांचें कि यह केवल उन फ़ाइलों को सूचीबद्ध करता है जिन्हें आपने निम्न आदेश के साथ बदला है।
 
 ```
 git status
 ```
 
-If there are files listed that you have not changed, you will need to either [restore](https://git-scm.com/docs/git-restore) them to the original or make sure they are intended changes. To show more detailed changes for each file use the following command. 
+यदि सूचीबद्ध फ़ाइलें हैं जिन्हें आपने नहीं बदला है, तो आपको या तो उन्हें मूल रूप में [पुनर्स्थापित](https://git-scm.com/docs/git-restore) करना होगा या सुनिश्चित करना होगा कि वे इच्छित परिवर्तन हैं। प्रत्येक फ़ाइल के लिए अधिक विस्तृत परिवर्तन दिखाने के लिए निम्न आदेश का उपयोग करें।
 
 ```
 git diff
 ```
 
-You should not commit any file changes that you don't intend to change for your PR.
+आपको कोई भी फ़ाइल परिवर्तन नहीं करना चाहिए जिसे आप अपने पीआर के लिए बदलने का इरादा नहीं रखते हैं।
 
-2. Stage all changes for committing into git with the following command.
+2. निम्नलिखित आदेश के साथ गिट में प्रतिबद्ध होने के लिए सभी परिवर्तनों को चरणबद्ध करें।
 
 ```
 git add .
 ```
 
-3. To commit the changes into git, run the following command.
+3. Git में परिवर्तन करने के लिए, निम्न कमांड चलाएँ।
 
 ```
 git commit -m "[your_commit_message]"
 ```
 
-`[your_commit_message]` should be replaced with a relevant commit message that is descriptive of the changes, avoiding generic statements. For example, instead of saying `Documentation fix 1`, say `Add documentation example to circle() function`.
+`[your_commit_message]` को एक प्रासंगिक प्रतिबद्ध संदेश के साथ प्रतिस्थापित किया जाना चाहिए जो सामान्य बयानों से बचते हुए परिवर्तनों का वर्णनात्मक हो। उदाहरण के लिए, 'डॉक्यूमेंटेशन फिक्स 1' कहने के बजाय, 'सर्कल() फ़ंक्शन में दस्तावेज़ उदाहरण जोड़ें' कहें।
 
 ```
 git commit -m "Add documentation example to circle() function"
 ```
 
-Repeat the above steps for all commits you will be making while making sure to run `npm test` periodically to make sure things are working.
+यह सुनिश्चित करने के लिए कि चीजें काम कर रही हैं, समय-समय पर `एनपीएम टेस्ट` चलाना सुनिश्चित करते हुए आपके द्वारा किए जा रहे सभी कमिट के लिए उपरोक्त चरणों को दोहराएं।
 
 
-### Source code
+### सोर्स कोड
 
-If you are going to work on the source code, a good place to start, if you know which of p5.js features you are going to work on, is to visit the documentation and at the bottom of each documented functionality of p5.js will be a link to its source code.
+यदि आप स्रोत कोड पर काम करने जा रहे हैं, तो शुरुआत करने के लिए एक अच्छी जगह है, यदि आप जानते हैं कि आप किस p5.js सुविधाओं पर काम करने जा रहे हैं, तो प्रलेखन पर जाएँ और p5.js की प्रत्येक प्रलेखित कार्यक्षमता के नीचे जाएँ। इसके सोर्स कोड का लिंक होगा।
 
-![Cropped screenshot of a reference page on the p5.js website containing the sentence "Notice any errors or typos? Please let us know. Please feel free to edit src/core/shape/2d\_primitives.js and issue a pull request!". Part of the above sentence where it says "src/core/shape/2d\_primitives.js" is highlighted with a red underline and arrow pointing to it.](../images/reference-code-link.png)
-
-
-### Unit tests
-
-If you are going to work on unit tests, please see [here](https://github.com/processing/p5.js/blob/main/contributor_docs/unit_testing.md). Note that for any feature enhancement, new features, and certain bug fix, unit tests covering the new implementations should be included in the PR.
+![p5.js वेबसाइट पर एक संदर्भ पृष्ठ का क्रॉप किया गया स्क्रीनशॉट जिसमें वाक्य है "किसी भी त्रुटि या टाइपो पर ध्यान दें? कृपया हमें बताएं। कृपया बेझिझक src/core/shape/2d\_primitives.js को संपादित करें और एक पुल अनुरोध जारी करें !". उपरोक्त वाक्य का वह भाग जहां यह कहता है "src/core/shape/2d\_primitives.js" को लाल रेखा और तीर की ओर इंगित करते हुए हाइलाइट किया गया है।](../images/reference-code-link.png)
 
 
-### Inline documentation
+### यूनिट परीक्षण
 
-If you are going to work on the inline documentation, please see [here](https://github.com/processing/p5.js/blob/main/contributor_docs/inline_documentation.md).
-
-
-### Accessibility
-
-If you are going to work on accessibility features, please see [here](https://github.com/processing/p5.js/blob/main/contributor_docs/web_accessibility.md). For a Friendly Error System, please see [here](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md).
+यदि आप यूनिट परीक्षणों पर काम करने जा रहे हैं, तो कृपया [यहां] (https://github.com/processing/p5.js/blob/main/contributor_docs/unit_testing.md) देखें। ध्यान दें कि किसी भी सुविधा वृद्धि, नई सुविधाओं और कुछ बग फिक्स के लिए, नए कार्यान्वयन को कवर करने वाले यूनिट परीक्षणों को पीआर में शामिल किया जाना चाहिए।
 
 
-## Code standard
+### इनलाइन दस्तावेज़ीकरण
 
-p5.js' code standard or code style is enforced by [ESLlint](https://eslint.org/). Any git commit and pull request must pass linting before it will be accepted. The easiest way for you to follow the right coding standard is to use the ESLint plugin available for your text editor with linting error highlighting (available for most popular text editors).
+यदि आप इनलाइन दस्तावेज़ीकरण पर काम करने जा रहे हैं, तो कृपया [यहां](https://github.com/processing/p5.js/blob/main/contributor_docs/inline_documentation.md) देखें।
 
 
-## Software Design principles
+### अभिगम्यता
 
-While working on any features of p5.js, it is important to keep in mind the design principles of p5.js. Our priorities may differ from the priorities of other projects, so if you are coming from a different project, we recommend that you familiarize yourself with p5.js' design principles.
+यदि आप एक्सेसिबिलिटी सुविधाओं पर काम करने जा रहे हैं, तो कृपया [यहां] (https://github.com/processing/p5.js/blob/main/contributor_docs/web_accessibility.md) देखें। एक अनुकूल त्रुटि प्रणाली के लिए, कृपया [यहां](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md) देखें।
 
-- **Access** We prioritize accessibility first and foremost, and decisions we make must take into account how it increases access to historically marginalized groups. Read more about this in our access statement.
-- **Beginner Friendly** The p5.js API aims to be friendly to beginner coders, offering a low barrier to creating interactive and visual web content with cutting-edge HTML5/Canvas/DOM APIs.
-- **Educational** p5.js is focused on an API and curriculum that supports educational use, including a complete reference to the API with supporting examples, as well as tutorials and sample class curricula that introduce core creative coding principles in a clear and engaging order.
-- **JavaScript and its community** p5.js aims to make web development practices more accessible to beginners by modeling proper JavaScript design patterns and usage while abstracting them where necessary. As an open-source library, p5.js also includes the wider JavaScript community in its creation, documentation, and dissemination.
-- **Processing and its community** p5.js is inspired by the Processing language and its community and aims to make the transition from Processing Java to JavaScript easy and clear.
 
-[**⬆ back to top**](#contributor-guidelines)
+## कोड मानक
+
+p5.js का कोड मानक या कोड शैली [ESLlint](https://eslint.org/) द्वारा लागू की जाती है। किसी भी गिट कमिट और पुल अनुरोध को स्वीकार करने से पहले उसे लिंटिंग से गुजरना होगा। आपके लिए सही कोडिंग मानक का पालन करने का सबसे आसान तरीका आपके टेक्स्ट एडिटर के लिए लिंटिंग एरर हाइलाइटिंग (अधिकांश लोकप्रिय टेक्स्ट संपादकों के लिए उपलब्ध) के साथ उपलब्ध ESLint प्लगइन का उपयोग करना है।
+
+
+## सॉफ़्टवेयर डिज़ाइन सिद्धांत
+
+P5.js की किसी भी सुविधा पर काम करते समय, p5.js के डिज़ाइन सिद्धांतों को ध्यान में रखना महत्वपूर्ण है। हमारी प्राथमिकताएँ अन्य परियोजनाओं की प्राथमिकताओं से भिन्न हो सकती हैं, इसलिए यदि आप किसी भिन्न परियोजना से आ रहे हैं, तो हम अनुशंसा करते हैं कि आप स्वयं को p5.js के डिज़ाइन सिद्धांतों से परिचित करा लें।
+
+- **पहुंच** हम सबसे पहले पहुंच को प्राथमिकता देते हैं, और हमारे द्वारा लिए गए निर्णयों में इस बात को ध्यान में रखना चाहिए कि यह ऐतिहासिक रूप से हाशिए पर रहने वाले समूहों तक पहुंच कैसे बढ़ाता है। हमारे एक्सेस स्टेटमेंट में इसके बारे में और पढ़ें।
+- **शुरुआती अनुकूल** p5.js एपीआई का लक्ष्य शुरुआती कोडर्स के लिए अनुकूल होना है, जो अत्याधुनिक HTML5/कैनवस/DOM एपीआई के साथ इंटरैक्टिव और विज़ुअल वेब सामग्री बनाने में कम बाधा प्रदान करता है।
+- **शैक्षिक** p5.js एक एपीआई और पाठ्यक्रम पर केंद्रित है जो शैक्षिक उपयोग का समर्थन करता है, जिसमें सहायक उदाहरणों के साथ एपीआई का पूरा संदर्भ, साथ ही ट्यूटोरियल और नमूना कक्षा पाठ्यक्रम शामिल हैं जो मुख्य रचनात्मक कोडिंग सिद्धांतों को स्पष्ट रूप से पेश करते हैं। आकर्षक आदेश.
+- **जावास्क्रिप्ट और उसका समुदाय** p5.js का उद्देश्य उचित जावास्क्रिप्ट डिज़ाइन पैटर्न और उपयोग को मॉडलिंग करके शुरुआती लोगों के लिए वेब विकास प्रथाओं को अधिक सुलभ बनाना है, जबकि आवश्यक होने पर उनका सार तैयार करना है। एक ओपन-सोर्स लाइब्रेरी के रूप में, p5.js में इसके निर्माण, दस्तावेज़ीकरण और प्रसार में व्यापक जावास्क्रिप्ट समुदाय भी शामिल है।
+- **प्रसंस्करण और उसका समुदाय** p5.js प्रसंस्करण भाषा और उसके समुदाय से प्रेरित है और इसका उद्देश्य प्रसंस्करण जावा से जावास्क्रिप्ट में परिवर्तन को आसान और स्पष्ट बनाना है।
+
+[**⬆ शीर्ष पर वापस**](#योगदानकर्ता-दिशानिर्देश)
 
 ---
 
