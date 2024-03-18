@@ -16,7 +16,7 @@ Este documento te mostrará cómo escribir y formatear los comentarios de refere
 
 When you look at the source code of p5.js, you will see many lines in the library being reference comments; they look like this:
 
-Cuando miras el código fuente de p5.js, verás que muchas líneas en la biblioteca son comentarios de referencia; se ven así:
+Cuando mires el código fuente de p5.js, verás que muchas líneas en la biblioteca son comentarios de referencia; se ven así:
 
 ```
 /**
@@ -77,9 +77,9 @@ They are usually followed by the actual JavaScript code that defines the functio
 
 Anything in a block in this manner will be interpreted as reference documentation. You may be familiar with this style of code comments through [JSDoc](https://jsdoc.app/). While p5.js does not use JSDoc, it uses a very similar tool called [YUIDoc](https://yui.github.io/yuidoc/), which has a very similar reference syntax. In this style of reference comments, each comment block is further divided into individual elements, which we will have a look at next.
 
-Por lo general, están seguidos del código JavaScript real que define a la función. Los comentarios de referencia siempre comienzan con `/**` y terminan con `*/`, con cada línea entre los dos con `*` al inicio.
+Por lo general, estos comentarios están seguidos del código JavaScript real que define a la función. Los comentarios de referencia siempre comienzan con `/**` y terminan con `*/`, con cada línea entre los dos con `*` al inicio.
 
-Cualquier cosa en un bloque así se interpretará como documentación de referencia. Es posible que estés familiarizado con este estilo de comentarios de código a través de [JSDoc](https://jsdoc.app/). Aunque p5.js no usa JSDoc, utiliza una herramienta llamada [YUIDoc](https://yui.github.io/yuidoc/) que tiene una sintaxis para referencias muy similar. En este estilo de comentarios de referencia cada bloque de comentarios se subdivide en elementos individuales, como veremos a continuación.
+Cualquier cosa en un bloque de estos se interpretará como documentación de referencia. Es posible que estés familiarizado con este estilo de comentarios de código a través de [JSDoc](https://jsdoc.app/). Aunque p5.js no usa JSDoc, utiliza una herramienta llamada [YUIDoc](https://yui.github.io/yuidoc/) que tiene una sintaxis para referencias muy similar. En este estilo de comentarios de referencia cada bloque de comentarios se subdivide en elementos individuales, como veremos a continuación.
 
 ## Reference comments block
 
@@ -87,7 +87,7 @@ Cualquier cosa en un bloque así se interpretará como documentación de referen
 
 Let’s break down the reference comments block above for the `sin()` function and see what each section does. You can compare what you see in the comments here and what you can see on the reference page for [`sin()`](https://p5js.org/reference/#/p5/sin).
 
-Desglosemos el bloque de comentarios de referencia anterior para la función `sin()` y veamos qué hace cada sección. Puedes comparar lo que ves en los comentarios aquí con la página de referencia para [`sin()`](https://p5js.org/reference/#/p5/sin).
+Desglosemos el bloque de comentarios de referencia anterior para la función `sin()` y veamos qué hace cada sección. Puedes comparar lo que vez en estos comentarios con el contenido de la página de referencia para [`sin()`](https://p5js.org/reference/#/p5/sin).
 
 ```
 /**
@@ -131,7 +131,7 @@ Una función normalmente tendrá las tres secciones anteriores, cada una comenza
   - Después de la palabra clave `@return`, almacenado entre llaves `{}`, está el tipo de valor del retorno.
   - Después del tipo, el resto de la línea es la descripción del valor de retorno.
 
-Más genéricamente para los parámetros, debes seguir este formato:
+Para los parámetros este es el formato genérico:
 
 ```
 @param {type} name Description here.
@@ -223,7 +223,7 @@ No es necesario crear una firma separada si la única diferencia entre dos firma
 
 So far, we have looked at how to write references for functions and constants. Variables follow the same structure but use different tags.
 
-Hasta ahora hemos visto cómo escribir referencias para funciones y constantes. Las variables siguen la misma estructura pero usan etiquetas diferentes.
+Hasta ahora hemos visto cómo escribir referencias para funciones y constantes. Las variables siguen la misma estructura, pero usan etiquetas diferentes.
 
 ```
 /**
@@ -268,7 +268,7 @@ Una etiqueta que está presente tanto en los comentarios de referencia de `sin()
 
 ![Screenshot of the p5.js reference page of the "red()" function, showing only the example code section.](images/reference-screenshot.png)
 
-El código con la etiqueta `@example` relevante para crear lo anterior es el siguiente:
+El código con la etiqueta `@example` que crea el ejemplo anterior es el siguiente:
 
 ```
  * @example
@@ -351,7 +351,7 @@ Si tu ejemplo utiliza archivos externos como recursos, colócalos en la carpeta 
 
 Finally, for every example you add, you are required to use the p5.js function `describe()` in the example to create a screen-reader accessible description for the canvas. Include only one parameter: a string with a brief description of what is happening on the canvas.
 
-Por último, para cada ejemplo que añadas, se requiere que utilices la función de p5.js `describe()` en el ejemplo para crear una descripción accesible del lienzo para lectores de pantalla. Incluye solo un parámetro: una cadena con una breve descripción de lo que está sucediendo en el lienzo.
+Por último, para cada ejemplo que añadas, se requiere que utilices la función de p5.js `describe()` en el ejemplo para crear una descripción accesible del lienzo para lectores de pantalla. Incluye sólo un parámetro: una cadena con una breve descripción de lo que está sucediendo en el lienzo.
 
 ```
 * @example
@@ -398,7 +398,7 @@ Con todo lo anterior, deberías tener la mayoría de las herramientas necesarias
 
 You can use the `@private` if a property or variable is a private function or variable. If a feature is marked as `@private` it will not be included as part of the rendered reference on the website. The reason to use the `@private` tag to mark a reference comments block as private is when you document internal features for the library itself. For example, see the reference comments for `_start` below:
 
-Puedes usar la etiqueta `@private` si una propiedad o variable es una función o variable privada. Si una característica está marcada como `@private`, no se incluirá como parte de la referencia renderizada en el sitio web. La razón para usar la etiqueta `@private` para marcar un bloque de comentarios de referencia como privado es documentar características internas de la propia biblioteca. Por ejemplo, consulta los comentarios de referencia para `_start` a continuación:
+Puedes usar la etiqueta `@private` si una propiedad o variable es una función o variable privada. Si una característica está marcada como `@private`, no se renderizará como parte de la referencia en el sitio web. La razón para usar la etiqueta `@private` para marcar un bloque de comentarios de referencia como privado es documentar características internas de la propia biblioteca. Por ejemplo, consulta los comentarios de referencia para `_start` a continuación:
 
 
 ```
@@ -422,7 +422,7 @@ The `@for` tag defines the relationship between this module and the overall `p5`
 
 The `@requires` tag defines the required imported modules that the current module depends on.
 
-En la parte superior de cada archivo de código fuente habrá una etiqueta `@module`. Los módulos corresponden a un grupo de características en p5.js que, en la página de referencia renderizada en el sitio web, se dividen en las secciones correspondientes. Dentro de cada módulo hay submódulos adicionales definidos con la etiqueta `@submodule`.
+En la parte superior de cada archivo de código fuente habrá una etiqueta `@module`. Los módulos corresponden a un grupo de características en p5.js que, al renderizar la página de referencia en el sitio web, se dividen en las secciones correspondientes. Dentro de cada módulo hay submódulos adicionales definidos con la etiqueta `@submodule`.
 
 La etiqueta `@for` define la relación entre este módulo y la clase general `p5`, indicando efectivamente que este módulo es una parte de la clase `p5`.
 
@@ -449,7 +449,7 @@ La convención que sigue p5.js es que cada subcarpeta en la carpeta `src/` será
 Class constructors are defined with the `@class` tag and the `@constructor` tag. The format for this block is similar to how a function is defined with the `@method` block, the class’s name will need to be defined with the `@class` tag and the `@constructor` tag will indicate the class has a constructor function. See the example below for the `p5.Color` class:
 
 Los constructores de clases se definen con la etiqueta `@class`y la etiqueta `@constructor`. El formato para este bloque es similar a cómo se define una función con el bloque `@method`; el nombre de la clase debe definirse con la etiqueta `@class` y la etiqueta `@constructor` indicará que la clase tiene una función constructora. Mira el ejemplo de la clase `p5.Color` a continuación:
-
+ 
 ```
 /**
  * A class to describe a color. Each `p5.Color` object stores the color mode
@@ -512,7 +512,7 @@ This will launch a live preview of the rendered reference that will update each 
 
 - The main template files are stored in the `docs/` folder and, in most cases, you should not make changes directly to files in this folder, except to add new asset files in the `docs/yuidoc-p5-theme/assets` folder.
 
-Esto lanzará una vista previa en vivo de la referencia renderizada que se actualizará cada vez que realices cambios (necesitarás actualizar la página después de realizar cambios para verlos aparecer). Esto es útil, especialmente para previsualizar el código de ejemplos que se ejecutan en el navegador.
+Esto lanzará una vista previa en vivo de la referencia cuyo renderizado se actualizará cada vez que realices cambios (necesitarás actualizar la página después de realizar cambios para verlos aparecer). Esto es útil, especialmente para previsualizar el código de ejemplos que se ejecutan en el navegador.
 
 - Los archivos de plantilla principales se almacenan en la carpeta `docs/` y, en la mayoría de los casos, no deberías realizar cambios directamente en los archivos de esta carpeta, excepto para añadir nuevos archivos de recursos en la carpeta `docs/yuidoc-p5-theme/assets`.
 
@@ -524,6 +524,6 @@ For additional details about the reference system, you can checkout the document
 
 For examples of issues related to the reference, have a look at [#6519](https://github.com/processing/p5.js/issues/6519) and [#6045](https://github.com/processing/p5.js/issues/6045). The [contributor guidelines](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md) document is also a good place to start.
 
-Para más detalles sobre el sistema de referencia puedes consultar la documentación de [JSDoc](https://jsdoc.app/) y [YUIDoc](https://yui.github.io/yuidoc/).
+Para más detalles sobre el sistema de referencias puedes consultar la documentación de [JSDoc](https://jsdoc.app/) y [YUIDoc](https://yui.github.io/yuidoc/).
 
-Para ver ejemplos de problemas relacionados con la referencia, echa un vistazo a [#6519](https://github.com/processing/p5.js/issues/6519) y [#6045](https://github.com/processing/p5.js/issues/6045). El documento de [pautas para contribuyentes](https://github.com/processing/p5.js/blob/main/contributor_docs/es/contributor_guidelines.md) también es un buen lugar para comenzar.
+Para ver ejemplos de problemas relacionados con las referencias, echa un vistazo a [#6519](https://github.com/processing/p5.js/issues/6519) y [#6045](https://github.com/processing/p5.js/issues/6045). El documento de [pautas para contribuyentes](https://github.com/processing/p5.js/blob/main/contributor_docs/es/contributor_guidelines.md) también es un buen lugar para comenzar.
