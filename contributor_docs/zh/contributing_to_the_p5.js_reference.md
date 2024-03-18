@@ -383,7 +383,7 @@ p5.js 遵循的约定是 `src/` 文件夹中的每个子文件夹将是一个 `@
 
 ## 生成和预览参考文献
 
-p5.js 代码库已经设置好，可以生成和预览参考文献，而不需要构建和运行 p5.js 网站。
+p5.js 存储库已经设置好，可以生成和预览参考文献，而不需要构建和运行 p5.js 网站。
 
 - 从源代码中的参考注释生成参考文献的主要命令是运行以下命令。
 
@@ -408,4 +408,4 @@ npm run docs:dev
 
 有关参考系统的详细信息，你可以查看[JSDoc](https://jsdoc.app/) 和 [YUIDoc](https://yui.github.io/yuidoc/) 的文档。
 
-有关参考资料相关问题的示例，请查看[#6519](https://github.com/processing/p5.js/issues/6519) 和 [#6045](https://github.com/processing/p5.js/issues/6045)。[贡献者指南](https://docs.google.com/document/d/1roBu-7s9xspuie3M6EhEokYWc82DZhDNYO2SQiY4k68/edit?tab=t.0#heading=h.627q50vo09fb) 文档也是一个很好的起点。
+有关参考资料相关 issue 的示例，请查看[#6519](https://github.com/processing/p5.js/issues/6519) 和 [#6045](https://github.com/processing/p5.js/issues/6045)。[贡献者指南](https://docs.google.com/document/d/1roBu-7s9xspuie3M6EhEokYWc82DZhDNYO2SQiY4k68/edit?tab=t.0#heading=h.627q50vo09fb) 文档也是一个很好的起点。
