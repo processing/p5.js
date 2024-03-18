@@ -430,102 +430,105 @@ While working on any features of p5.js, it is important to keep in mind the desi
 ---
 
 
-# Pull requests
+# पुल रिक्वेस्ट 
 
-Now that you have made the changes you need to make, including unit tests if applicable, `npm test` does not error, and you have committed the changes, you can start preparing pull requests to get your new commits merged into the official p5.js repository. A pull request, more formally, is a request to a repo (in this case, the official p5.js repo) to pull or merge changes from another repo (in this case, your forked p5.js repo) into its commit history.
+अब जब आपने आवश्यक परिवर्तन कर लिए हैं, यदि लागू हो तो इकाई परीक्षण भी शामिल है, `npm test` में गलती नहीं होती है, और आपने कमिट  कर दिए हैं, तो आप अपने नए कमिट को आधिकारिक p5.js में मर्ज करने के लिए पुल रिक्वेस्ट तैयार करना शुरू कर सकते हैं जो p5.js रिपॉजिटरी में मर्ज हो जाएगा। एक पुल रिक्वेस्ट, अधिक औपचारिक रूप से, एक रेपो (इस मामले में, आधिकारिक p5.js रेपो) के लिए एक अन्य रेपो (इस मामले में, आपके फोर्कड p5.js रेपो) से परिवर्तनों को उसके प्रतिबद्ध इतिहास में पुल या मर्ज करने का अनुरोध है।
 
 
-## Creating a pull request
+## पुल रिक्वेस्ट बनाना 
 
-The first step here is to push your new commits to your fork of p5.js; think of it as uploading the changes to your fork.
+यहां पहला कदम आपके नए कमिट को आपके p5.js के फोर्क पर धकेलना है; इसे अपने फोर्क में परिवर्तन अपलोड करने के रूप में सोचें।
 
-From GitHub Desktop, just to the right of the button to change branches in the header is a button to push your changes to GitHub. Click this to push your changes.![A view of GitHub Desktop after committing changes. The button to push the changes online is circled in red.](../images/publish-branch.png)
 
-Once your code is uploaded, it will show a button prompting you to create a pull request. Clicking the button once will show a preview with another button to actually create the request. Press the "Create Pull Request" button to begin the process.
+GitHub डेस्कटॉप से, हेडर में शाखाएँ बदलने के बटन के ठीक दाईं ओर आपके परिवर्तनों को GitHub पर भेजने के लिए एक बटन है। अपने परिवर्तनों को आगे बढ़ाने के लिए इस पर क्लिक करें।![परिवर्तन करने के बाद GitHub डेस्कटॉप का एक दृश्य। परिवर्तनों को ऑनलाइन पुश करने का बटन लाल रंग में दर्शाया गया है।](../images/publish-branch.png)
 
-![A screenshot of Github Desktop after pushing code. In the left sidebar, it says "0 changed items." In the right pane, below the "No local changes" header, a blue "Review Pull Request" button has been marked up with a red circle.](../images/preview-pull-request.png)
 
-From the terminal, run the following command:
+एक बार आपका कोड अपलोड हो जाने पर, यह एक बटन दिखाएगा जो आपको पुल रिक्वेस्ट बनाने के लिए प्रेरित करेगा। बटन पर एक बार क्लिक करने से वास्तव में रिक्वेस्ट बनाने के लिए दूसरे बटन के साथ पूर्वावलोकन दिखाई देगा। प्रक्रिया शुरू करने के लिए "क्रिएट पुल रिक्वेस्ट" बटन दबाएँ।
+
+![कोड पुश करने के बाद Github Desktop का स्क्रीनशॉट। बाएँ साइडबार में, यह लिखा है "0 changed items." दाएँ फलक में, "No local changes" शीर्षक के नीचे, एक नीला "Review Pull Request" बटन को लाल वृत्त के साथ चिह्नित किया गया है।](../images/preview-pull-request.png)
+
+टर्मिनल से, निम्नलिखित कमांड चलाएँ:
 
 ```
 git push -u origin [branch_name]
 ```
 
-Once the push is complete, you may see a link in the terminal that lets you open a pull request, if not you can navigate to your fork in your web browser, switch to the branch you are working on with the dropdown button on top of the file list, click on "Contribute" then "Open pull request."
+एक बार पुश पूरा हो जाने पर, आप टर्मिनल में एक लिंक देख सकते हैं जो आपको पुल रिक्वेस्ट खोलने की सुविधा देता है, यदि नहीं तो आप अपने वेब ब्राउज़र में अपने फोर्क पर नेविगेट कर सकते हैं, शीर्ष पर ड्रॉपडाउन बटन के साथ उस ब्रांच पर स्विच करें जिस पर आप काम कर रहे हैं फ़ाइल सूची में, "Contribute" पर क्लिक करें और फिर "Open pull request." पर क्लिक करें।
 
 ![](https://lh7-us.googleusercontent.com/xoqM9gLSFXyw7b3gzG8JlHqoO0zxHALbjSz93E3D0HNh4Jw2wDWdzHKUEchnB6hdjQC7hVn-o5prrXkLw2WiEOoVKJF6kpmyA65sirN0z-Vy3PBY3rCXC5Ifn5stQhcdUQxQS0rsVoW0_hlkfTcY8PQ)
 
-You may also see a button to open a pull request when you visit the p5.js Github repo. Clicking it will also work to open a new pull request.
+जब आप p5.js Github रेपो पर जाते हैं तो आपको पुल रिक्वेस्ट खोलने के लिए एक बटन भी दिखाई दे सकता है। इसे क्लिक करने से एक नया पुल रिक्वेस्ट खोलने का भी काम किया जा सकता है।
 
-![Cropped screenshot of the main page of the p5.js GitHub repository web page. A section near the top of the page is a yellow call to action box containing a green button with the text "Compare & pull request".](../images/recent-pushes)
-
-
-### Pull request information
-
-![Screenshot of an "Open a pull request" page on GitHub that is prepopulated with p5.js's pull request template.](../images/new-pr.png)
-
-Before filing the pull request, you will need to fill out the pull request template. 
+![p5.js GitHub रिपॉजिटरी वेब पेज के मुख्य पृष्ठ का क्रॉप किया हुआ स्क्रीनशॉट। पृष्ठ के शीर्ष के पास एक अनुभाग एक पीला कॉल टू एक्शन बॉक्स है जिसमें "Compare & pull request" टेक्स्ट वाला हरा बटन है।](../images/recent-pushes)
 
 
-### Title
+### पुल रिक्वेस्ट के बारे में जानकारी
 
-The pull request title should briefly describe what the changes are, again avoid generic statements here.
+![GitHub पर "Open a pull request" पेज का स्क्रीनशॉट, जो p5.js के पुल रिक्वेस्ट टेम्पलेट से पहले से भरा हुआ है।](../images/new-pr.png)
 
-
-### Resolves
-
-In the template, there is this line `Resolves #[Add issue number here]`, which you should replace `[Add issue number here]` with the issue number of the issue you are addressing/fixing [above](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#all-about-issues) (e.g., `Resolves #1234`). This will make sure the issue is automatically closed after this PR is merged. If you do not wish to automatically close the issue after this PR is merged (maybe because there are more changes coming in a separate PR), change `Resolves` to `Addresses`.
+पुल रिक्वेस्ट दाखिल करने से पहले, आपको पुल रिक्वेस्ट टेम्पलेट भरना होगा।
 
 
-### Changes
+### शीर्षक
 
-You should clearly describe the changes you have made in this PR. Include any implementation details and decisions you made here that are relevant to whoever will review it.
-
-
-### Screenshots of the change
-
-This is optional depending on circumstances and should be included when making changes related to how p5.js renders visuals on the canvas. Note that this is not a screenshot of the text editor but a screenshot of an example sketch's behavior after your changes.
+पुल रिक्वेस्ट शीर्षक में संक्षेप में वर्णन होना चाहिए कि परिवर्तन क्या हैं, फिर से यहां सामान्य बयानों से बचें।
 
 
-### PR Checklist
+### हल
 
-This contains some relevant checklist items that you should tick by replacing `[ ]` with `[x]` wherever relevant to your changes.
-
-Once done, click on "Create pull request."
+टेम्प्लेट में, यह पंक्ति है `Resolves #[यहां समस्या संख्या जोड़ें]`, जिसे आपको `[यहां समस्या संख्या जोड़ें]` को उस समस्या की समस्या संख्या से बदलना चाहिए जिसे आप संबोधित/ठीक कर रहे हैं [above](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#all-about-issues) (e.g., `Resolves #1234`). इससे यह सुनिश्चित हो जाएगा कि इस पीआर के विलय के बाद मुद्दा स्वचालित रूप से बंद हो जाएगा। यदि आप इस पीआर के विलय के बाद समस्या को स्वचालित रूप से बंद नहीं करना चाहते हैं (शायद इसलिए कि एक अलग पीआर में अधिक परिवर्तन आ रहे हैं), तो `Resolves` को `Addresses` में बदलें।
 
 
-### Rebase and resolve conflicts
 
-![Screenshot of an open pull request on p5.js's GitHub repository. The title of the pull request says "Fix filter shaders when rectMode is applied; add tests #6603.](../images/opened-pr.png)
+### परिवर्तन
 
-You should now inspect the opened pull request and pay attention to a few things:
+आपको इस पीआर में आपके द्वारा किए गए परिवर्तनों का स्पष्ट रूप से वर्णन करना चाहिए। यहां आपके द्वारा किए गए किसी भी कार्यान्वयन विवरण और निर्णयों को शामिल करें जो इसकी समीक्षा करने वाले के लिए प्रासंगिक हों।
 
-1. The number of commits should match the number of commits you have made, meaning if you have committed two times while working on this PR, it should only show two commits in the "Commits" tab.
-2. The "Files changed" tab should show the changes you have made as compared to the p5.js repo and nothing more.
-3. Near the bottom, it should say, "This branch has no conflicts with the base branch," and not "This branch has conflicts that must be resolved."
 
-If any of the above is not true (there are more commits than you expected or there are conflicts), you may need to [rebase](https://git-scm.com/book/en/v2/Git-Branching-Rebasing) or help resolve conflicts. Conflicts here mean that you have made changes to a file that also recently had changes applied to it, and git is not sure which set of changes to keep or leave out. If you are not confident in resolving these issues, let us know and we'll guide you through the process. Basic instruction is as below.
+### परिवर्तन के स्क्रीनशॉट
 
-Sometimes, Github lets you resolve conflicts directly in the browser by showing you a Resolve Conflicts button:![A screenshot of a GitHub pull request with merge conflicts. The conflicting filenames are listed, and there is a "Resolve conflicts" button highlighted.](../images/resolve-conflicts.png)
+परिस्थितियों के आधार पर यह वैकल्पिक है और p5.js कैनवास पर दृश्य कैसे प्रस्तुत करता है, उससे संबंधित परिवर्तन करते समय इसे शामिल किया जाना चाहिए। ध्यान दें कि यह टेक्स्ट एडिटर का स्क्रीनशॉट नहीं है बल्कि आपके परिवर्तनों के बाद एक उदाहरण स्केच के व्यवहार का स्क्रीनशॉट है।
 
-Conflicts are shown between `<<<<<<<` and `>>>>>>>`, separated by `=======`. One section shows your code, and the other section shows what has changed in the main branch.
 
-![A screenshot of GitHub's conflict resolution interface. A sidebar lists the files with conflicts. The right pane contains the conflicting code, with merge conflict markers highlighted.](../images/conflicts-interface.png)
+### पीआर चेकलिस्ट
 
-Remove the conflict markers and keep just the final code that you want in your PR. You can click "Mark as resolved" when all the conflicts have been addressed.
+इसमें कुछ प्रासंगिक चेकलिस्ट आइटम शामिल हैं जिन्हें आपको अपने परिवर्तनों के लिए प्रासंगिक होने पर `[ ]` को `[x]` से प्रतिस्थापित करके टिक करना चाहिए।
 
-![A screenshot of the GitHub conflict resolution interface after editing the code to remove the merge conflict markers. The "mark as resolved" button in the upper right is enabled.](../images/mark-as-resolved.png)
+एक बार हो जाने पर, "Create pull request." पर क्लिक करें।
 
-When all files with conflicts have been resolved, you can commit your changes.
 
-![The GitHub conflict resolution interface after all conflicts have been marked as resolved. A green "commit merge" button is enabled.](../images/commit-merge.png)
+### रिबेस और रेसोल्वे कनफ्लिक्ट 
 
-Sometimes, the conflicts are too complicated for Github to show on the web. In this case, or if you just prefer the manual method, you can resolve your conflicts locally:
+![p5.js के GitHub रिपॉजिटरी पर एक ओपन पुल रिक्वेस्ट का स्क्रीनशॉट। पुल रिक्वेस्ट का शीर्षक कहता है "Fix filter shaders when rectMode is applied; add tests #6603.](../images/opened-pr.png)
+
+अब आपको खुले हुए पुल रिक्वेस्ट का निरीक्षण करना चाहिए और कुछ बातों पर ध्यान देना चाहिए:
+
+1. कमिट की संख्या आपके द्वारा किए गए कमिट की संख्या से मेल खाना चाहिए, जिसका अर्थ है कि यदि आपने इस पीआर पर काम करते समय दो बार कमिट किया है, तो इसे "Commits" टैब में केवल दो कमिट दिखाना चाहिए।
+2. "Files changed" टैब को आपके द्वारा p5.js रेपो की तुलना में किए गए परिवर्तनों को दिखाना चाहिए और इससे अधिक कुछ नहीं।
+3. नीचे के पास, यह लिखा होना चाहिए, "This branch has no conflicts with the base branch," न कि "This branch has conflicts that must be resolved."
+
+यदि उपरोक्त में से कोई भी सत्य नहीं है (आपकी अपेक्षा से अधिक कमिट हैं या कनफ्लिक्ट हैं), तो आपको इसकी आवश्यकता हो सकती है[rebase](https://git-scm.com/book/en/v2/Git-Branching-Rebasing) या कनफ्लिक्ट को सुलझाने में मदद करें। यहां कनफ्लिक्ट का मतलब है कि आपने उस फ़ाइल में परिवर्तन किए हैं जिसमें हाल ही में परिवर्तन लागू किए गए थे, और गिट निश्चित नहीं है कि परिवर्तनों का कौन सा सेट रखा जाए या छोड़ दिया जाए। यदि आप इन मुद्दों को हल करने में आश्वस्त नहीं हैं, तो हमें बताएं और हम इस प्रक्रिया में आपका मार्गदर्शन करेंगे। बुनियादी निर्देश नीचे दिया गया है.
+
+कभी-कभी, Github आपको कनफ्लिक्ट को हल करें बटन दिखाकर सीधे ब्राउज़र में कनफ्लिक्ट को हल करने देता है:![मर्ज कनफ्लिक्ट के साथ GitHub पुल रिक्वेस्ट का स्क्रीनशॉट। परस्पर विरोधी फ़ाइल नाम सूचीबद्ध हैं, और एक "Resolve conflicts" बटन हाइलाइट किया गया है।](../images/resolve-conflicts.png)
+
+कनफ्लिक्ट को `<<<<<<<` और `>>>>>>>` के बीच दिखाया जाता है, जिसे `=======` से अलग किया जाता है। एक अनुभाग आपका कोड दिखाता है, और दूसरा अनुभाग दिखाता है कि मुख्य ब्रांच में क्या परिवर्तन हुआ है।
+
+![GitHub के कनफ्लिक्ट समाधान इंटरफ़ेस का स्क्रीनशॉट। एक साइडबार कनफ्लिक्ट वाली फ़ाइलों को सूचीबद्ध करता है। दाएँ फलक में परस्पर विरोधी कोड है, जिसमें मर्ज विरोध मार्कर हाइलाइट किए गए हैं।](../images/conflicts-interface.png)
+
+कनफ्लिक्ट चिह्न हटाएं और केवल अंतिम कोड रखें जो आप अपने पीआर में चाहते हैं। जब सभी विवादों का समाधान हो जाए तो आप "Mark as resolved" पर क्लिक कर सकते हैं।
+
+![कनफ्लिक्ट विरोध मार्करों को हटाने के लिए कोड को संपादित करने के बाद GitHub कनफ्लिक्ट समाधान इंटरफ़ेस का एक स्क्रीनशॉट। ऊपर दाईं ओर  "mark as resolved" बटन सक्षम है।](../images/mark-as-resolved.png)
+
+जब कनफ्लिक्ट वाली सभी फ़ाइलों का समाधान हो जाए, तो आप अपने परिवर्तन कर सकते हैं।
+
+![सभी विरोधों के बाद GitHub कनफ्लिक्ट समाधान इंटरफ़ेस को समाधान के रूप में चिह्नित किया गया है। एक हरा "commit merge" बटन सक्षम है।](../images/commit-merge.png)
+
+कभी-कभी, Github को वेब पर दिखाने के लिए कनफ्लिक्ट बहुत जटिल होते हैं। इस मामले में, या यदि आप केवल मैन्युअल विधि पसंद करते हैं, तो आप अपने विवादों को स्थानीय स्तर पर हल कर सकते हैं:
 
 1. Run `git remote add upstream https://github.com/processing/p5.js`
 2. Run `git fetch upstream`
 3. Run `git rebase upstream/main`
-4. You may have some conflicts! If it’s just lib/p5.js and lib/p5.min.js, it’s easy to fix; just build the project again. If you have conflicts in other files & you're not sure how to resolve them, ask for help!
+4. आपके कंप्यूटर पर कुछ विवाद हो सकते हैं! यदि यह सिर्फ lib/p5.js और lib/p5.min.js है, तो इसे ठीक करना आसान है; बस प्रोजेक्ट फिर से बनाएं। यदि आपकी अन्य फ़ाइलों में कनफ्लिक्ट है और आप निश्चित नहीं हैं कि उन्हें कैसे हल किया जाए, तो सहायता माँगें!
 
 ```
 npm test
@@ -535,16 +538,16 @@ git rebase --continue
 
 5. Run `git push`
 
-The checklist above may clear out after these steps but if not, we'll guide you through any fix necessary.
+इन चरणों के बाद उपरोक्त चेकलिस्ट साफ़ हो सकती है, लेकिन यदि नहीं, तो हम आपको किसी भी आवश्यक सुधार के माध्यम से मार्गदर्शन करेंगे।
 
 
-## Discuss and amend
+## चर्चा करें और संशोधन करें
 
-Now that your PR is opened, a steward or maintainer will review your PR. It may take several days before a steward is able to reply to your PR, so be patient. Why not use the time to check out some of the other open issues in the meantime?
+अब जब आपका पीआर खुल गया है, तो एक प्रबंधक या अनुरक्षक आपके पीआर की समीक्षा करेगा। किसी प्रबंधक को आपके पीआर का जवाब देने में कई दिन लग सकते हैं, इसलिए धैर्य रखें। इस बीच कुछ अन्य खुले मुद्दों की जांच करने के लिए समय का उपयोग क्यों न करें?
 
-Once a steward has reviewed your PR, one of two things may happen: 1. Your PR is approved and merged, hurray! 2. The steward may ask some questions regarding the PR or request some changes to the PR. If it's the latter, don't panic; it's perfectly normal, and the stewards are always here to help you complete your contribution!
+एक बार जब कोई प्रबंधक आपके पीआर की समीक्षा कर लेता है, तो दो चीजों में से एक हो सकती है: 1. आपका पीआर स्वीकृत और विलय हो गया है, 2. प्रबंधक पीआर के संबंध में कुछ प्रश्न पूछ सकता है या पीआर में कुछ बदलावों का अनुरोध कर सकता है। यदि यह बाद वाला है, तो घबराएं नहीं; यह बिल्कुल सामान्य है, और आपका योगदान पूरा करने में मदद के लिए प्रबंधक हमेशा यहाँ मौजूद हैं!
 
-If changes are requested of your PR and you are able to make those changes, follow the [same process as before](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#git-workflow) but just continue from your local copy of the repo and relevant branch, make those changes, commit them into git, and push them to your forked remote repo. Once you have pushed additional commits to your forked remote repo, you will see that the new commits automatically show up in the PR. Leave a comment in the PR to let the reviewer know you have made the requested changes, and if no additional changes are needed, your PR will be merged!
+यदि आपके पीआर में परिवर्तन का अनुरोध किया गया है और आप वे परिवर्तन करने में सक्षम हैं, तो इस का पालन करें [same process as before](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#git-workflow) लेकिन केवल रेपो और संबंधित ब्रांच की अपनी स्थानीय प्रतिलिपि से जारी रखें, उन परिवर्तनों को करें, उन्हें गिट में कमिट करें, और उन्हें अपने फोर्क किए गए रिमोट रेपो पर धकेलें। एक बार जब आप अपने फोर्कड रिमोट रेपो में अतिरिक्त कमिट्स डाल देते हैं, तो आप देखेंगे कि नए कमिट्स स्वचालित रूप से पीआर में दिखाई देंगे। समीक्षक को यह बताने के लिए पीआर में एक टिप्पणी छोड़ें कि आपने अनुरोधित परिवर्तन कर दिए हैं, और यदि कोई अतिरिक्त परिवर्तन की आवश्यकता नहीं है, तो आपका पीआर विलय कर दिया जाएगा!
 
 [**⬆ back to top**](#contributor-guidelines)
 
