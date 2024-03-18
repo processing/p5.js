@@ -66,7 +66,7 @@
 
 实际定义函数的 JavaScript 代码往往紧随其后。参考注释始终以 `/**` 开始并以 `*/` 结束，两者之间的每一行都以 `*` 开头。
 
-这种形式的代码块中的任何内容都将被解释为参考文献。您可能通过 [JSDoc](https://jsdoc.app/) 熟悉了这种样式的代码注释。虽然 p5.js 不使用 JSDoc，但它使用了一个非常相似的工具，叫做 [YUIDoc](https://yui.github.io/yuidoc/)，它具有非常相似的参考语法。在这种参考注释样式中，每个注释块进一步分成各个元素，我们将在下面看一下。
+这种形式的代码块中的任何内容都将被解释为参考文献。您可能通过 [JSDoc](https://jsdoc.app/) 已熟悉这种样式的代码注释。虽然 p5.js 不使用 JSDoc，但它使用了一个非常相似的工具，叫做 [YUIDoc](https://yui.github.io/yuidoc/)，它具有非常相似的参考语法。在这种参考注释样式中，每个注释块进一步分成各个元素，我们将在下面看一下。
 
 ## 参考注释块
 
@@ -80,7 +80,7 @@
  * <a href="#/p5/angleMode">angleMode</a>.
 ```
 
-在注释的顶部是函数的文本描述。此描述可以包含 markdown 语法和 HTML。描述应该简洁明了，描述函数的功能，并在必要时描述一些有关其怪癖或行为的细节。
+在注释的顶部是函数的文本描述。此描述可以包含 markdown 语法和 HTML。描述应该简洁明了，描述函数的功能，并在必要时描述一些有关其性能或反常行为的细节。
 
 ```
  * @method sin
@@ -161,7 +161,7 @@
 
 ### 额外信息：多个签名
 
-如果两个签名之间唯一的区别是添加了一个可选参数，则不必创建单独的签名。如果可能的话，请限制使用此功能，因为它可能会在参考文献中制造不必要的噪音。
+如果两个签名之间唯一的区别是添加了一个可选参数，则不必创建单独的签名。如果可能的话，请限制使用此功能，因为它可能会在参考文献中制造不必要的干扰信息或相似信息。
 
 
 ## p5.js 变量的参考文献
@@ -193,14 +193,14 @@
  */
 ```
 
-块的开始包含变量的描述（在这种情况下是 `mouseX`）。为了定义变量的名称，我们使用 `@property` 而不是 `@method`。`@property` 的语法与 `@param` 类似，用于定义类型及其名称。`@readonly` 标签在大多数 p5.js 变量上都存在，并且用于内部指示该值不应由库用户直接覆盖。
+块的开始包含变量的描述（在该例子中是 `mouseX`）。为了定义变量的名称，我们使用 `@property` 而不是 `@method`。`@property` 的语法与 `@param` 类似，用于定义类型及其名称。大多数 p5.js 变量都带有 `@readonly` 标签，用于内部指示该值不应由库用户直接覆盖。
 
 
 ## 添加示例
 
-`sin()` 和 `mouseX` 的参考注释中，都存在的一个标签是 `@example` 标签，我们还没有讨论过。这个标签是您定义访问参考页面时运行的代码示例的地方。
+`sin()` 和 `mouseX` 的参考注释中，都有一个我们还没有讨论过的 `@example` 标签。这个标签是您定义访问参考页面时运行的代码示例的地方。
 
-![Screenshot of the p5.js reference page of the "red()" function, showing only the example code section.](images/reference-screenshot.png)
+![Screenshot of the p5.js reference page of the "red()" function, showing only the example code section.](../images/reference-screenshot.png)
 
 创建以上示例的相关 `@example` 标签如下：
 
@@ -305,7 +305,7 @@
 * </div>
 ```
 
-有关 `describe()` 的更多信息，请访问 [Web 无障碍贡献者文档](https://p5js.org/contributor-docs/#/web_accessibility?id=user-generated-accessible-canvas-descriptions)。
+有关 `describe()` 的更多信息，请访问 [网络无障碍贡献者文档](https://p5js.org/contributor-docs/#/web_accessibility?id=user-generated-accessible-canvas-descriptions)。
 
 以上就是您编写和编辑 p5.js 参考注释的大多数方法。然而，还有一些 JSDoc 样式参考注释的更多专门用法，您可能会在 p5.js 中遇到。这些在某些情况下很有用，但通常不是您经常需要的东西。
 
