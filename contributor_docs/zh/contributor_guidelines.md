@@ -14,38 +14,16 @@
 - [贡献者指南](#贡献者指南)
 - [目录](#目录)
 - [关于 Issues](#关于-issues)
-  - [所谓“Issues”是指什么？](#所谓issues是指什么)
+  - [所谓 “Issues” 是指什么？](#所谓-issues-是指什么)
   - [Issue 模板](#issue-模板)
     - [抓到个 bug](#抓到个-bug)
     - [增强现有功能](#增强现有功能)
     - [新功能开发请求](#新功能开发请求)
     - [发起讨论](#发起讨论)
 - [修改 p5.js 代码库](#修改-p5js-代码库)
-  - [基础知识](#基础知识)
-  - [引言](#引言)
+  - [必备条件](#必备条件)
+  - [介绍](#介绍)
   - [开发者快速入门指南](#开发者快速入门指南)
-  - [使用 GitHub 的编辑功能](#使用-github-的编辑功能)
-  - [Fork p5.js 并在你的 Fork 中工作](#fork-p5js-并在你的-fork-中工作)
-    - [使用 GitHub 桌面版](#使用-github-桌面版)
-    - [使用 git 命令行界面](#使用-git-命令行界面)
-  - [代码库拆解](#代码库拆解)
-  - [构建设置](#构建设置)
-  - [Git 工作流程](#git-工作流程)
-    - [源代码](#源代码)
-    - [单元测试](#单元测试)
-    - [内联文档](#内联文档)
-    - [无障碍](#无障碍)
-  - [代码规范](#代码规范)
-  - [设计原则](#设计原则)
-- [拉取请求](#拉取请求)
-  - [创建拉取请求](#创建拉取请求)
-    - [拉取请求信息](#拉取请求信息)
-    - [标题](#标题)
-    - [解决](#解决)
-    - [更改](#更改)
-    - [更改的截图](#更改的截图)
-    - [PR 检查列表](#pr-检查列表)
-    - [变基和解决冲突](#变基和解决冲突)
   - [讨论和修改](#讨论和修改)
 
 ---
@@ -54,11 +32,11 @@
 
 p5.js 的 GitHub 存储库上的大部分活动都发生在 Issues 板块，Issues 很可能也是你开始贡献过程的地方。
 
-## 所谓“Issues”是指什么？
+## 所谓 “Issues” 是指什么？
 
 ![A cropped screenshot of the p5.js library GitHub repository, only showing contents of the top right corner. A red box is drawn on top of the screenshot surrounding the Issues tab.](../images/issues-tab.png)
 
-“Issues” 是 GitHub 上描述问题的帖子的通用名称。这个"Issue"可以是一份错误报告，一个添加新功能的请求、一个讨论、或任何与 p5.js 资料库开发有关的帖子。任意 GitHub 账号，乃至于机器人，都可以在每个问题下面评论！这里就是贡献者们讨论与本项目开发相关议题的地方。
+“Issues” 是 GitHub 上描述问题的帖子的通用名称。这个 Issue 可以是一份错误报告，一个添加新功能的请求、一个讨论、或任何与 p5.js 资料库开发有关的帖子。任意 GitHub 账号，乃至于机器人，都可以在每个问题下面评论！这里就是贡献者们讨论与本项目开发相关议题的地方。
 
 尽管提出问题可以有各种各样的理由，但我们通常只使用问题来讨论与 p5.js 源代码开发相关的主题。其他例如调试你个人的代码、邀请合作者加入你个人的项目或其他与上述主题无关的内容应该在[论坛](https://discourse.processing.com)或其他诸如[Discord](https://discord.gg/SHQ8dH25r9)之类平台上讨论。
 
@@ -70,7 +48,7 @@ p5.js 的 Issue 模板不仅能助力管理员和维护者更好地理解和审�
 
 ![Screenshot of an example of what an issue looks like on GitHub. The title of the issue in the screenshot is "Warning being logged in Safari when using a filter shader in 2D mode #6597"](../images/github-issue.png)
 
-若要提交新的 Issue，请点进 p5.js 存储库的”Issues”选项卡，然后点击右侧的“New issue”按钮。点击后，将显示几个不同的选项，每个选项对应一个相关的 Issue 模板，或者将你重新定向到其他适当的地方提交你的 Issue。建议你选择最贴近需求的选项，以确保你的问题能够迅速得到关注。
+若要提交新的 Issue，请点进 p5.js 存储库的 ”Issues“ 选项卡，然后点击右侧的  “New issue”按钮。点击后，将显示几个不同的选项，每个选项对应一个相关的 Issue 模板，或者将你重新定向到其他适当的地方提交你的 Issue。建议你选择最贴近需求的选项，以确保你的问题能够迅速得到关注。
 
 ![Cropped screenshot of the GitHub repository's issue page with the green "New issue" button highlighted with a red box surrounding it.](../images/new-issue.png)
 
@@ -133,11 +111,11 @@ Safari
 </table>
 
 4. _操作系统_ - 如可能，请提供操作系统的版本号，例如`macOS 12.5`。某些错误也可能源于操作系统。
-5. _重现步骤_ - 这可能是最重要的信息。请详细列出重现你所遇到的错误的步骤。贴出能够展示问题产生的简单示例代码可以让其他人更容易重现你的错误并制定解决方案。
+5. _重现错误所需步骤_ - 这可能是最重要的信息。请详细列出重现你所遇到的错误的步骤。贴出能够展示问题产生的简单示例代码可以让其他人更容易重现你的错误并制定解决方案。
 
 **重现错误是最关键的**该模板中的许多字段都旨在能够重现 Bug。你提供的关于草图环境的信息越多、重现问题的步骤越丰富，别人也就越容易理解你的问题并探索解决方案。
 
-**请尽可能提供详细的信息，避免使用泛泛的陈述**。例如，不要说"image()函数不好用了"，而要说得更具体，比如："image()函数无法以正确的尺寸显示加载的 GIF 图像"。描述以下两个方面可以使你的问题描述更加清晰：
+**请尽可能提供详细的信息，避免使用泛泛的陈述**。例如，不要说 ”image()函数不好用了“，而要说得更具体，比如：”image()函数无法以正确的尺寸显示加载的 GIF 图像“。描述以下两个方面可以使你的问题描述更加清晰：
 
 1. 你期望你分享的示例代码执行什么样的行为（预期行为）；
 2. 示例代码实际上做了什么（实际行为）。
@@ -154,7 +132,7 @@ Bug 报告只有在至少一名[领域管理员或维护者](https://github.com/
 
 该模板有以下字段需要填写：
 
-1. _提高可访问性_ - 这是一个非可选字段，你需要在此处说明你建议加强的功能将会如何使得 p5.js 对于那些在创意和科技领域长期被边缘化的人群具备[更高的可访问性](./access.md)。通常来讲，**如未填写此项，提案将被拒绝**。但你也可以填写"我不确定"，邀请社区的其他成员集思广益，帮你论证该增强功能可以怎样提高 p5.js 的可访问性。
+1. _提高无障碍性_ - 这是一个必填项目，你需要在此处说明你建议加强的功能将会如何使得 p5.js 对于那些在创意和科技领域长期被边缘化的人群具备[更高的无障碍性](./access.md)。通常来讲，**如未填写此项，提案将被拒绝**。但你也可以填写"我不确定"，邀请社区的其他成员集思广益，帮你论证该增强功能可以怎样提高 p5.js 的无障碍性。
 2. _p5.js 中最合适的子领域是什么？_ - 这可以帮助我们锁定并回应你的问题。你的答复还将触发自动标记功能，使用相关的[标签](./issue_labels.md)标记该问题。
 3. "功能增强详情" - 在这里描述你对功能增强的建议。一个好的功能增强建议通常包括清晰的用例：这个功能增强是什么、何时使用、如何使用以及为什么需要这个功能增强。
 
@@ -176,7 +154,7 @@ Bug 报告只有在至少一名[领域管理员或维护者](https://github.com/
 
 该模板适用于你要提交的问题不适用上述所有其他模版的情况。在现实中，这种情况应该比较少见。如，关于是否在 p5.js 中采用特定的 Web API 功能应该作为一个[新功能开发请求](#new-feature-request)来提交；而在各种颜色函数中添加额外的颜色模式则应作为[增强现有功能](#existing-feature-enchancement)来提交；若要发布一则你组织的本地创意编程活动的公告，应该去论坛上发帖，并通过 Processing Foundation 寻求支持或宣传。
 
-在发启讨论问题时，你可以使用侧面板上的 "Labels"（标签）选项来添加更多相关标签，以便将你的问题引导到相关领域。此模板本身仅包含一个基本的文本字段。通过[这个链接](https://github.com/processing/p5.js/issues/6517)可以查看讨论问题的范例。
+在发启讨论问题时，你可以使用侧面板上的 “Labels（标签）” 选项来添加更多相关标签，以便将你的问题引导到相关领域。此模板本身仅包含一个基本的文本字段。通过[这个链接](https://github.com/processing/p5.js/issues/6517)可以查看讨论问题的范例。
 
 [**⬆ 回到页首**](#贡献者指南)
 
@@ -184,17 +162,17 @@ Bug 报告只有在至少一名[领域管理员或维护者](https://github.com/
 
 # 修改 p5.js 代码库
 
-## 基础知识
+## 必备条件
 
 要继续进行，你至少应该对使用命令行、git、node.js（至少 v18 及以上版本）有初步了解，并且已经建立了本地开发环境。
 
-## 引言
+## 介绍
 
 当问题已讨论过，解决方案已经批准，并且你愿意进行代码更改，就可以着手修改代码库了。
 
 同样的，如果你遇到了一个问题、参与讨论了一个问题且管理员已经批准了解决方案，然而问题的原作者和其他社区成员却没有表态乐意处理该问题，你就可以自愿提交一份贡献申请，让管理员将该问题分配给你。
 
-**你不应该“插队”**提交拉取请求，以期插手一个他人已经有意提交贡献或已经分配给他人的问题。我们永远会根据"先来先得"的原则接受一个问题的代码贡献申请。
+**你不应该 “插队”** 提交拉取请求，以期插手一个他人已经有意提交贡献或已经分配给他人的问题。我们永远会根据"先来先得"的原则接受一个问题的代码贡献申请。
 
 如果你为一个问题提交了拉取请求，但同时还有其他人在处理同一个问题，你的拉取请求将会被关闭。如果你发现某个已分配给某人的问题已经几个月都没有动静，你可以就该问题礼貌地询问进展如何以及是否需要帮助。我们通常为大家编写贡献留出相当长的时间，因为我们理解大多数人是志愿工作，或者对一些人来说编写功能确实需要很长时间。
 
@@ -207,8 +185,9 @@ Bug 报告只有在至少一名[领域管理员或维护者](https://github.com/
 1. [创建一个 p5.js 的 fork。](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
 2. [将你创建的 fork 克隆到你的电脑。](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
 3. [使用以下命令添加 upstream ：](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-repository-for-a-fork)
-
+    ```
    git remote add upstream https://github.com/processing/p5.js
+   ```
 
 4. 确认你的电脑上已经安装了 [NodeJs](https://nodejs.org/en/download)。可以通过以下命令来确认：
 
@@ -262,17 +241,17 @@ GitHub 桌面版是通过图形用户界面来使用 git 的程序，它不需�
 
 ![The GitHub Desktop user interface after signing in. On the right half of the screen, it lists your projects, and a Clone button in the bottom right.](../images/github-desktop-init.png)
 
-克隆成功后，你需要选择使用该 fork 的目的。请选择 “To contribute to the parent project”，然后点击 “Continue”。
+克隆成功后，你需要选择使用该 fork 的目的。请选择 "To contribute to the parent project"，然后点击 "Continue"。
 
 ![The view after cloning a fork. It asks if you are planning to contribute to the parent project, or use it for your own purposes.](../images/github-desktop-fork.png)
 
 ### 使用 git 命令行界面
 
-创建好 fork 之后，去 fork 页面点击绿色 “Code” 按钮复制 git 链接。链接的格式是这样：`https://github.com/limzykenneth/p5.js.git`。
+创建好 fork 之后，去 fork 页面点击绿色 "Code" 按钮复制 git 链接。链接的格式是这样：`https://github.com/limzykenneth/p5.js.git`。
 
 ![Screenshot of the list of files on the landing page of a repository. The "Code" button is highlighted with a dark orange outline.](../images/code-button.png)
 
-然后在本地环境中打开命令行，并克隆这个存储库。简单地说，"克隆" 就是将仓库副本下载到本地计算机上。在你想要存储 p5.js 源代码文件夹的文件夹中运行以下命令：
+然后在本地环境中打开命令行，并克隆这个存储库。简单地说，”克隆“ 就是将仓库副本下载到本地计算机上。在你想要存储 p5.js 源代码文件夹的文件夹中运行以下命令：
 
 ```
 git clone [git_url]
@@ -367,7 +346,7 @@ git commit -m "[your_commit_message]"
 将 `[your_commit_message]` 替换为描述本次更改相关的信息，避免使用宽泛的陈述。例如：不用 “文档修复 1”，而用 “给 circle() 函数添加文档示例”
 
 ```
-git commit -m "给 circle() 函数添加文档示例"
+git commit -m "Add documentation example to circle() function"
 ```
 
 所有提交都重复以上步骤，同时定期运行 `npm test` 以确保一切正常运行。
@@ -392,15 +371,15 @@ git commit -m "给 circle() 函数添加文档示例"
 
 ## 代码规范
 
-p5.js 的代码规范或者代码风格由 ESLint 执行。任何 git 提交和拉取请求在被接受之前，都必须通过 ESLint 代码检查。要遵循正确的代码规范，最简单方法是在文本编辑器中使用可用的 ESLint 插件，它可以高亮显示 ESLint 检查到的错误（适用于大多数流行的文本编辑器）。
+p5.js 的代码规范或者代码风格由 [ESLlint](https://eslint.org/) 执行。任何 git 提交和拉取请求在被接受之前，都必须通过 ESLint 代码检查。要遵循正确的代码规范，最简单方法是在文本编辑器中使用可用的 ESLint 插件，它可以高亮显示 ESLint 检查到的错误（适用于大多数流行的文本编辑器）。
 
 ## 设计原则
 
 开发 p5.js 的功能时，牢记 p5.js 的设计原则是很重要的。我们的优先级可能与其他项目的优先级不同，所以如果你来自其他项目，建议你先熟悉 p5.js 的设计原则。
 
-- **可访问性**：我们将可访问性置于首位，在做决定时，必须考虑如何提升历史上被边缘化的群体的可访问性。在我们的访问声明中可以了解更多相关信息。
+- **无障碍性**：我们将无障碍性置于首位，在做决定时，必须考虑如何提升历史上被边缘化的群体的无障碍性性。在我们的无障碍报告中可以了解更多相关信息。
 
-- **初学者友好**：p5.js API 旨在对初学者友好，它使用前沿的 HTML5/Canvas/DOM API ，为创建交互性视觉内容提供了低门槛。
+- **适合初学者**：p5.js API 适合初学者，它使用前沿的 HTML5/Canvas/DOM API ，为创建交互性视觉内容提供了低门槛。
 
 - **教育性**：p5.js 专注于支持教育用途的 API 和课程，包括 API 的完整参考和支持示例，还有介绍核心创意编程原则的教程和示例课程，思路清晰，井然有序。
 
