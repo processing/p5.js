@@ -1,7 +1,7 @@
 
-### Usando la interfaz de línea de comandos de `git`
+### Utilizando la interfaz de línea de comandos de Git
 
-Cuando hayas realizado el <em>fork</em> (copia), navega a la página de tu <em>fork</em> y copia la URL de git haciendo clic en el botón verde que dice “Code”. Debería ser algo así como `https://github.com/limzykenneth/p5.js.git`
+Cuando hayas realizado el _fork_ (copia), navega a la página de tu _fork_ y copia la URL de git haciendo clic en el botón verde que dice “_Code_”. Debería ser algo así como `https://github.com/limzykenneth/p5.js.git`
 
 ![Screenshot of the list of files on the landing page of a repository. The "Code" button is highlighted with a dark orange outline.](/contributor_docs/images/code-button.png)
 
@@ -13,7 +13,7 @@ git clone [git_url]
 
 Sustituye `[git_url]` por la URL acabas de copiar. Esto puede llevar varios minutos, dependiendo de la velocidad de tu conexión a internet, ¡un buen momento para preparar un poco de café! Una vez que el proceso finalice, puedes abrir la carpeta que descargaste llamada `p5.js` en tu editor de código preferido y comenzar a explorar. 
 
-## Desglose del código base
+## Desglose de la base de código
 
 Algunos de los archivos y carpetas clave que encontrarás en la carpeta de p5.js son los siguientes:
 
@@ -38,7 +38,7 @@ Es probable que esto lleve un tiempo, ya que npm descarga todas las dependencias
 
 ## Flujo de trabajo de Git
 
-Ahora estás listx para hacer los cambios necesarios. Para más detalles sobre las diferentes partes del repositorio y cómo puedes hacer cambios relevantes, consulta las subsecciones a continuación. Para empezar, ejecuta:
+Ahora estás lista, listo o liste para hacer los cambios necesarios. Para más detalles sobre las diferentes partes del repositorio y cómo puedes hacer cambios relevantes, consulta las subsecciones a continuación. Para empezar, ejecuta:
 
 ```
 npm test
@@ -52,7 +52,7 @@ npm run build
 
 Cualquiera de los comandos anteriores construirá la biblioteca en la carpeta `lib/` como  `p5.js`  y `p5.min.js`. Puedes usar estos archivos creados para tus propias pruebas si es necesario.
 
-A continuación, te recomendamos que hagas una rama aparte de la rama `main` antes de comenzar a trabajar. Una rama o <em>branch</em> en git es, como su nombre lo indica, una versión ramificada del repositorio a la que puedes agregar <em>commits</em> sin afectar la rama <em>main</em> u otras ramas. Las ramas te permiten trabajar en múltiples funciones a la vez (utilizando múltiples ramas aisladas) y tener la confianza de que si cometes un error en una rama, no afectará a la rama <em>main</em> (principal).
+A continuación, te recomendamos que hagas una rama aparte de la rama `main` antes de comenzar a trabajar. Una rama o _branch_ en git es, como su nombre lo indica, una versión ramificada del repositorio a la que puedes agregar _commits_ sin afectar la rama _main_ u otras ramas. Las ramas te permiten trabajar en múltiples funciones a la vez (utilizando múltiples ramas aisladas) y tener la confianza de que si cometes un error en una rama, no afectará a la rama _main_ (principal).
 
 En GitHub Desktop, esto se puede hacer haciendo clic en el botón de Rama Actual en la parte superior de la ventana. Desde aquí, puedes cambiar de ramas o ingresar un nombre de rama para crear una nueva. Para nuestros propósitos, ingresa un nuevo nombre de rama que describa el cambio que realizarás y haz clic en Crear Nueva Rama.
 
@@ -60,14 +60,14 @@ En GitHub Desktop, esto se puede hacer haciendo clic en el botón de Rama Actual
 
 Desde la terminal, ejecuta`git checkout -b nombre_rama` mientras estés en la rama `main`, sustituyendo `nombre_rama` con algo descriptivo y estarás ahora en una rama separada.
 
-Mientras realizas tus cambios, te recomendamos que ejecutes `npm test` con frecuencia, especialmente si estás trabajando en el código fuente. Ejecutar esto te llevará algo de tiempo, pero asegura que los cambios que hagas no rompan comportamientos existentes. Debe ejecutar `npm test` antes de pasar el <em>commit</em>, o confirmación,  de los cambios como se describe a continuación.
+Mientras realizas tus cambios, te recomendamos que ejecutes `npm test` con frecuencia, especialmente si estás trabajando en el código fuente. Ejecutar esto te llevará algo de tiempo, pero asegura que los cambios que hagas no rompan comportamientos existentes. Debe ejecutar `npm test` antes de pasar el _commit_, o confirmación,  de los cambios como se describe a continuación.
 
-Una vez que hayas realizado tus cambios en el código base, deberás hacer un <em>commit</em> en git. Un <em>commit</em> es una colección de cambios guardados en el repositorio git; esencialmente registra el estado actual de los archivos en el repositorio en el momento del <em>commit</em>.
+Una vez que hayas realizado tus cambios en el código base, deberás hacer un _commit_ en git. Un _commit_ es una colección de cambios guardados en el repositorio git; esencialmente registra el estado actual de los archivos en el repositorio en el momento del _commit_.
 
 
-Una pregunta que puede surgir es ¿con qué frecuencia deberías hacer <em>commit</em> en git? En general, es preferible que te esfuerces por hacer <em>commit</em>  con frecuencia en lugar de agrupar múltiples cambios grandes en un solo <em>commit</em> . Una buena pauta es hacer <em>commit</em>  cada vez que hayas completado una subtarea que pueda describirse en una frase.
+Una pregunta que puede surgir es ¿con qué frecuencia deberías hacer _commit_ en git? En general, es preferible que te esfuerces por hacer _commit_  con frecuencia en lugar de agrupar múltiples cambios grandes en un solo _commit_ . Una buena pauta es hacer _commit_  cada vez que hayas completado una subtarea que pueda describirse en una frase.
 
-Para hacer <em>commit</em> de todos los cambios actuales desde GitHub Desktop, abre la aplicación después de realizar tus cambios. Mostrará una lista de los archivos que has modificado en la barra lateral izquierda y los cambios específicos dentro de cada archivo a la derecha. Escribe una breve descripción de alto nivel en el campo junto a tu icono de usuario en la esquina inferior izquierda de la ventana. Este será el título del <em>commit</em>. Puedes dar más detalles en el campo de descripción a continuación o simplemente dejarlo en blanco. Haz clic en el botón azul "Commit" para finalizar el cambio.
+Para hacer _commit_ de todos los cambios actuales desde GitHub Desktop, abre la aplicación después de realizar tus cambios. Mostrará una lista de los archivos que has modificado en la barra lateral izquierda y los cambios específicos dentro de cada archivo a la derecha. Escribe una breve descripción de alto nivel en el campo junto a tu icono de usuario en la esquina inferior izquierda de la ventana. Este será el título del _commit_. Puedes dar más detalles en el campo de descripción a continuación o simplemente dejarlo en blanco. Haz clic en el botón azul "Commit" para finalizar el cambio.
 
 
 ![A screenshot of GitHub Desktop after having made a change. The area where you need to write a title for your change is circled in red in the lower left of the window.](/contributor_docs/images/github-desktop-commit.png)
@@ -86,15 +86,15 @@ Si hay archivos enumerados que no has cambiado, necesitarás o bien [restaurar](
 git diff
 ```
 
-No debes hacer <em>commit</em> de ningún cambio de archivo que no tengas la intención de cambiar para tu Pull Request.
+No debes hacer _commit_ de ningún cambio de archivo que no tengas la intención de cambiar para tu Pull Request.
 
-2. Organiza todos los cambios para hacer <em>commit</em> en git con el siguiente comando.
+2. Organiza todos los cambios para hacer _commit_ en git con el siguiente comando.
 
 ```
 git add .
 ```
 
-3. Para hacer <em>commit</em> de los cambios en git, ejecuta el siguiente comando.
+3. Para hacer _commit_ de los cambios en git, ejecuta el siguiente comando.
 
 ``` 
 git commit -m "[tu_mensaje_commit]"   
@@ -124,27 +124,28 @@ Si vas a trabajar en pruebas unitarias, por favor consulta [aquí](https://githu
 
 Si vas a trabajar en la documentación en línea, por favor consulta [aquí](https://github.com/processing/p5.js/blob/main/contributor_docs/inline_documentation.md).
 
+## Internacionalización
 
 ### Accesibilidad
 
-Si vas a trabajar en características de accesibilidad, por favor revisa [aquí](https://github.com/processing/p5.js/blob/main/contributor_docs/web_accessibility.md). Para un sistema de errores amigable, consulta [aquí](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md).
+Si vas a trabajar en características de accesibilidad, por favor revisa [aquí](https://github.com/processing/p5.js/blob/main/contributor_docs/web_accessibility.md). Para un sistema de errores amigable, consulta [acá](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md).
 
 
-## Estándar de código
+## Estándares de código
 
-El estándar de código o estilo de código de p5.js aplica mediante [ESLint](https://eslint.org/). Cualquier <em>commit</em> y <em>pull request</em> de git debe pasar la verificación de estilo antes de que sea aceptada. La forma más fácil para que sigas el estándar de codificación correcto es usar la extensión ESLint disponible para tu editor de texto con resaltado de errores de estilo (disponible para la mayoría de los editores de texto más populares).
+El estándar de código o estilo de código de p5.js aplica mediante [ESLint](https://eslint.org/). Cualquier _commit_ y _pull request_ de git debe pasar la verificación de estilo antes de que sea aceptada. La forma más fácil para que sigas el estándar de codificación correcto es usar la extensión ESLint disponible para tu editor de texto con resaltado de errores de estilo (disponible para la mayoría de los editores de texto más populares).
 
 
-## Principios de diseño de software
+## Principios de Diseño de Software
 
 Mientras trabajas en cualquier característica de p5.js, es importante tener en cuenta los principios de diseño de p5.js. Nuestras prioridades pueden diferir de las prioridades de otros proyectos, por lo que si vienes de un proyecto diferente, te recomendamos que te familiarices con los principios de diseño de p5.js.
 
 - **Acceso:** Priorizamos la accesibilidad ante todo, las decisiones que tomamos deben tener en cuenta cómo aumenta el acceso a grupos históricamente marginados. Lee más al respecto en nuestra declaración de acceso.
-- **Amigable para principiantes:** La API de p5.js tiene como objetivo ser amigable para los programadores principiantes, brinda un acceso sencillo para crear contenido web interactivo y visual con las API de HTML5/Canvas/DOM más avanzadas.
+- **Amigable para principiantes:** La API de p5.js tiene como objetivo ser amigable para las, los y les programadores principiantes, brinda un acceso sencillo para crear contenido web interactivo y visual con las API de HTML5/Canvas/DOM más avanzadas.
 
 - **Educativo:** p5.js se centra en una API y un plan de estudios que respalda el uso educativo, incluyendo una referencia completa a la API con ejemplos de apoyo, así como tutoriales y planes de estudio de muestra que introducen principios básicos de codificación creativa en un orden claro y atractivo.
 
-- **JavaScript y su comunidad:** p5.js busca hacer que las prácticas de desarrollo web sean más accesibles para los principiantes modelando patrones de diseño y uso adecuados de JavaScript, mientras los abstrae cuando es necesario. Como una biblioteca de código abierto, p5.js también incluye a la comunidad JavaScript más amplia en su creación, documentación y difusión.
+- **JavaScript y su comunidad:** p5.js busca hacer que las prácticas de desarrollo web sean más accesibles para los principiantes modelando patrones de diseño y uso adecuados de JavaScript, mientras los abstrae cuando es necesario. Como una librería de código abierto, p5.js también incluye a la comunidad JavaScript más amplia en su creación, documentación y difusión.
 
 - **Processing y su comunidad:** p5.js se inspira en el lenguaje Processing y su comunidad, y tiene como objetivo hacer que la transición de Processing Java a JavaScript sea fácil y clara.
 
@@ -152,19 +153,19 @@ Mientras trabajas en cualquier característica de p5.js, es importante tener en 
 
 ---
 
-# Pull requests
+# Pull Requests
 
-Ahora que has realizado los cambios necesarios, incluidas las pruebas unitarias si corresponde, `npm test` no muestra errores y has hecho <em>commit</em> de los cambios, puedes comenzar a preparar <em>pull request</em> para que tus nuevos <em>commits</em> se fusionen en el repositorio oficial de p5.js. Un <em>pull request</em>, más formalmente, es una solicitud a un repositorio (en este caso, el repositorio oficial de p5.js) para extraer o fusionar cambios de otro repositorio (en este caso, tu repositorio bifurcado de p5.js) en su historial de <em>commits</em>.
+Ahora que has realizado los cambios necesarios, incluidas las pruebas unitarias si corresponde, `npm test` no muestra errores y has hecho _commit_ de los cambios, puedes comenzar a preparar _pull request_ para que tus nuevos _commits_ se fusionen en el repositorio oficial de p5.js. Un _pull request_, más formalmente, es una solicitud a un repositorio (en este caso, el repositorio oficial de p5.js) para extraer o fusionar cambios de otro repositorio (en este caso, tu repositorio bifurcado de p5.js) en su historial de _commits_.
 
-## Creando un pull request
+## Creación de un Pull Request
 
-El primer paso aquí es subir tus nuevos <em>commits</em> a tu <em>fork</em> de p5.js; piensa en ello como subir los cambios a tu copia remota.
+El primer paso aquí es subir tus nuevos _commits_ a tu _fork_ de p5.js; piensa en ello como subir los cambios a tu copia remota.
 
 Desde GitHub Desktop, justo a la derecha del botón para cambiar de ramas en la parte superior, hay un botón para enviar tus cambios a GitHub. Haz clic ahí para enviar tus cambios.
 
 ![A view of GitHub Desktop after committing changes. The button to push the changes online is circled in red.](/contributor_docs/images/publish-branch.png)
 
-Una vez subido el código, aparecerá un botón que te pedirá crear un <em> pull request</em>. Al hacer clic en el botón una vez se mostrará una vista previa con otro botón para crear realmente la solicitud. Presiona el botón "Crear Pull Request" para iniciar el proceso.
+Una vez subido el código, aparecerá un botón que te pedirá crear un _ pull request_. Al hacer clic en el botón una vez se mostrará una vista previa con otro botón para crear realmente la solicitud. Presiona el botón "Crear Pull Request" para iniciar el proceso.
 
 ![A screenshot of Github Desktop after pushing code. In the left sidebar, it says "0 changed items." In the right pane, below the "No local changes" header, a blue "Review Pull Request" button has been marked up with a red circle.](/contributor_docs/images/preview-pull-request.png)
 
@@ -174,28 +175,28 @@ Desde la terminal, ejecuta el siguiente comando:
 git push -u origin [nombre_rama]
 ```
 
-Una vez que la subida esté completa, es posible que veas un enlace en la terminal que te permite abrir un <em>pull request</em>. Si no, puedes navegar a tu <em>fork</em> en tu navegador web, cambiar a la rama en la que estás trabajando con el botón desplegable en la parte superior de la lista de archivos, haz clic en "Contribuir" y luego en "Abrir pull request".
+Una vez que la subida esté completa, es posible que veas un enlace en la terminal que te permite abrir un _pull request_. Si no, puedes navegar a tu _fork_ en tu navegador web, cambiar a la rama en la que estás trabajando con el botón desplegable en la parte superior de la lista de archivos, haz clic en "Contribuir" y luego en "Abrir pull request".
 
 ![](https://lh7-us.googleusercontent.com/xoqM9gLSFXyw7b3gzG8JlHqoO0zxHALbjSz93E3D0HNh4Jw2wDWdzHKUEchnB6hdjQC7hVn-o5prrXkLw2WiEOoVKJF6kpmyA65sirN0z-Vy3PBY3rCXC5Ifn5stQhcdUQxQS0rsVoW0_hlkfTcY8PQ)
 
-También puedes ver un botón para abrir un <em>pull request</em> cuando visites el repositorio de p5.js en Github. Al hacer clic en él también funcionará para abrir un nuevo  <em>pull request</em>.
+También puedes ver un botón para abrir un _pull request_ cuando visites el repositorio de p5.js en Github. Al hacer clic en él también funcionará para abrir un nuevo  _pull request_.
 
 ![Cropped screenshot of the main page of the p5.js GitHub repository web page. A section near the top of the page is a yellow call to action box containing a green button with the text "Compare & pull request".](/contributor_docs/images/recent-pushes.png)
 
-### Información de pull request
+### Información sobre el Pull Request
 
 ![Screenshot of an "Open a pull request" page on GitHub that is prepopulated with p5.js's pull request template.](/contributor_docs/images/new-pr.png)  
 
-Antes de enviar el <em>pull request</em>., deberás completar la plantilla de <em>pull request</em>.
+Antes de enviar el _pull request_., deberás completar la plantilla de _pull request_.
 
 ### Título
 
-El título del <em>pull request</em> debería describir brevemente cuáles son los cambios, evitando descripciones genéricas aquí también.
+El título del _pull request_ debería describir brevemente cuáles son los cambios, evitando descripciones genéricas aquí también.
 
 
 ### Resuelve
 
-En la plantilla, hay esta línea `Resuelve #[Agregar número de issue aquí]`, la cual debes reemplazar `[Agregar número de issue aquí]` con el número de issue del problema que estás abordando/solucionando [arriba](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#all-about-issues) (por ejemplo, `Resuelve #1234`). Esto asegurará que el <em>issue</em> se cierre automáticamente una vez fusionado el <em>pull request</em>. Si no deseas cerrar automáticamente el <em>issue</em> después de fusionar este PR (tal vez porque hay más cambios en un PR separado), cambia `Resuelve` a `Aborda`.
+En la plantilla, hay esta línea `Resuelve #[Agregar número de issue aquí]`, la cual debes reemplazar `[Agregar número de issue aquí]` con el número de _issue_ del problema que estás abordando/solucionando [arriba](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#all-about-issues) (por ejemplo, `Resuelve #1234`). Esto asegurará que el _issue_ se cierre automáticamente una vez fusionado el _pull request_. Si no deseas cerrar automáticamente el _issue_ después de fusionar este PR (tal vez porque hay más cambios en un PR separado), cambia `Resuelve` a `Aborda`.
 
 
 ### Cambios
@@ -203,29 +204,29 @@ En la plantilla, hay esta línea `Resuelve #[Agregar número de issue aquí]`, l
 Debes describir claramente los cambios que has realizado en esta solicitud de extracción. Incluye cualquier detalle de implementación y decisiones que hayas tomado aquí que sean relevantes para quien lo revisará.
 
 
-### Capturas de pantalla del cambio
+### Captura de pantalla de los cambios
 
-Esto es opcional dependiendo de las circunstancias y debería incluirse al realizar cambios relacionados con cómo p5.js renderiza visuales en el <em>canvas</em> o lienzo. Ten en cuenta que no se trata de una captura de pantalla del editor de texto, sino una captura de pantalla del comportamiento de un <em>sketch</em> de ejemplo después de tus cambios.
+Esto es opcional dependiendo de las circunstancias y debería incluirse al realizar cambios relacionados con cómo p5.js renderiza visuales en el _canvas_ o lienzo. Ten en cuenta que no se trata de una captura de pantalla del editor de texto, sino una captura de pantalla del comportamiento de un _sketch_ de ejemplo después de tus cambios.
 
 
-### Lista de verificación del pull request
+### Lista de verificación del Pull Request
 
 Contiene algunos elementos de lista de verificación relevantes que debes marcar reemplazando `[ ]` con `[x]` donde corresponda a tus cambios.
 
 Una vez hecho, haz clic en "Crear pull request".
 
 
-### Rebase y resolver conflictos
+### Rebase y resolución de conflictos
 
 ![Screenshot of an open pull request on p5.js's GitHub repository. The title of the pull request says "Fix filter shaders when rectMode is applied; add tests #6603.](/contributor_docs/images/opened-pr.png)
 
-Ahora debes inspeccionar <em>pull request</em> abierto y prestar atención a algunas cosas:
+Ahora debes inspeccionar _pull request_ abierto y prestar atención a algunas cosas:
 
 1. El número de commits debe coincidir con el número de commits que has realizado, lo que significa que si has hecho dos commits mientras trabajabas en esta solicitud de extracción, solo debería mostrar dos commits en la pestaña "Commits".
 2. La pestaña "Archivos cambiados" debe mostrar los cambios que has realizado en comparación con el repositorio de p5.js y nada más.
 3. Cerca de la parte inferior, debería decir "Esta rama no tiene conflictos con la rama base," y no "Esta rama tiene conflictos que deben resolverse."
 
-Si alguna de las afirmaciones anteriores no es cierta (hay más <em>commits</em> de los que esperabas o hay conflictos), es posible que necesites [rebase](https://git-scm.com/book/en/v2/Git-Branching-Rebasing) o ayuda para resolver conflictos. Los conflictos aquí significan que has hecho cambios a un archivo al que también se le han aplicado cambios recientemente, y git no está seguro de qué conjunto de cambios mantener o dejar fuera. Si no estás seguro de resolver estos problemas, avísanos y te guiaremos a través del proceso. Las instrucciones básicas son las siguientes.
+Si alguna de las afirmaciones anteriores no es cierta (hay más _commits_ de los que esperabas o hay conflictos), es posible que necesites [rebase](https://git-scm.com/book/en/v2/Git-Branching-Rebasing) o ayuda para resolver conflictos. Los conflictos aquí significan que has hecho cambios a un archivo al que también se le han aplicado cambios recientemente, y git no está seguro de qué conjunto de cambios mantener o dejar fuera. Si no estás seguro de resolver estos problemas, avísanos y te guiaremos a través del proceso. Las instrucciones básicas son las siguientes.
 
 A veces, Github te permite resolver conflictos directamente en el navegador mostrándote un botón de `Resolver conflictos`:
 
@@ -239,7 +240,7 @@ Elimina los marcadores de conflicto y conserva solo el código final que deseas 
 
 ![A screenshot of the GitHub conflict resolution interface after editing the code to remove the merge conflict markers. The "mark as resolved" button in the upper right is enabled.](/contributor_docs/images/mark-as-resolved.png)
 
-Cuando todos los archivos con conflictos hayan sido resueltos, puedes hacer <em>commit</em> de tus cambios.
+Cuando todos los archivos con conflictos hayan sido resueltos, puedes hacer _commit_ de tus cambios.
 
 ![The GitHub conflict resolution interface after all conflicts have been marked as resolved. A green "commit merge" button is enabled.](/contributor_docs/images/commit-merge.png)
 
@@ -260,12 +261,12 @@ git rebase --continue
 
 Es posible que la lista de comprobación anterior se borre después de estos pasos, pero si no es así, te guiaremos en cualquier corrección que sea necesaria.
 
-## Discutir y corregir
+## Discutir y Corregir
 
-Ahora que tu <em>pull request</em> está abierto, una persona que administra o mantiene el código revisará tu PR. Pueden pasar varios días antes de que un administrador pueda responder a tu PR, así que ten paciencia. ¿Por qué no aprovechar el tiempo para revisar algunos de los otros <em>issues</em> abiertos mientras tanto?
+Ahora que tu _pull request_ está abierto, una persona que administra o mantiene el código revisará tu PR. Pueden pasar varios días antes de que un administrador pueda responder a tu PR, así que ten paciencia. ¿Por qué no aprovechar el tiempo para revisar algunos de los otros _issues_ abiertos mientras tanto?
 
 Una vez que un administrador haya revisado tu PR, pueden suceder una de dos cosas: 1. Tu PR es aprobada y fusionada, ¡yuju! 2. Quien administra puede hacer algunas preguntas sobre el PR o solicitar algunos cambios en el PR. Si es lo segundo, no entres en pánico; es perfectamente normal, ¡y las, los y les administradores siempre están aquí para ayudarte a completar tu contribución!
 
-Si se solicitan cambios en tu PR y puedes hacer esos cambios, sigue el [mismo proceso que antes](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#git-workflow) pero simplemente continúa desde tu copia local del repositorio y la rama relevante, realiza esos cambios, haz <em>commit</em> de ellos en git, y súbelos a tu repositorio remoto. Una vez que hayas subido <em>commits</em> adicionales a tu repositorio remoto, verás que los nuevos <em>commits</em> aparecen automáticamente en el PR. Deja un comentario en la PR para informar al revisor que has realizado los cambios solicitados, y si no se necesitan cambios adicionales, ¡tu PR será fusionado!
+Si se solicitan cambios en tu PR y puedes hacer esos cambios, sigue el [mismo proceso que antes](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#git-workflow) pero simplemente continúa desde tu copia local del repositorio y la rama relevante, realiza esos cambios, haz _commit_ de ellos en git, y súbelos a tu repositorio remoto. Una vez que hayas subido _commits_ adicionales a tu repositorio remoto, verás que los nuevos _commits_ aparecen automáticamente en el PR. Deja un comentario en la PR para informar al revisor que has realizado los cambios solicitados, y si no se necesitan cambios adicionales, ¡tu PR será fusionado!
 
 [**⬆ volver arriba**](#contributor-guidelines)
