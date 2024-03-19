@@ -282,254 +282,255 @@ GitHub Desktop은 명령어를 터미널에 입력하는 대신에 그래픽 사
 ![The view after cloning a fork. It asks if you are planning to contribute to the parent project, or use it for your own purposes.](images/github-desktop-fork.png)
 
 
-### Using the `git` command line interface
+### git 명령줄(command line) 인터페이스 사용하기
 
-Once the fork is created, navigate to your fork's page and copy the git URL by clicking the green "Code" button. It should look something like `https://github.com/limzykenneth/p5.js.git`.
+포크가 생성되면 포크 페이지로 이동하여 초록색 "Code" 버튼을 클릭해서 git URL을 복사하세요. 이는 'https://github.com/limzykenneth/p5.js.git'와 같은 모양이어야 합니다.
 
 ![Screenshot of the list of files on the landing page of a repository. The "Code" button is highlighted with a dark orange outline.](images/code-button.png)
 
-Next go to the command line in your local environment and clone this git repository. "Clone" simply means download a copy of the repo to your local machine. Run the following command in a folder where you want to store the p5.js source code folder.
+다음으로 로컬 환경에서 명령 줄로 이동하여 git 저장소를 클론하세요. "클론(Clone)"은 단순히 저장소와 복사본을 로컬 기계로 다운로드하는 것을 의미합니다. p5.js 소스 코드 폴더를 저장하고 싶은 폴더에서 다음 명령어를 실행하세요.
 
 ```
 git clone [git_url]
 ```
 
-Replace `[git_url]` with the URL you just copied above. This can take several minutes, depending on the speed of your internet connection, a good time to make some coffee! Once the process is finished, you can open up the downloaded folder named `p5.js` in your preferred text editor and start looking around.
+위에서 복사한 URL을 [git_url]자리에 작성하세요. 이 과정은 인터넷 연결 속도에 따라 몇 분 정도 걸릴 수 있으니, 커피 한 잔을 만드는 것도 좋은 시간입니다! 과정이 완료되면, 선호하는 텍스트 에디터에서 다운로드한 p5.js 폴더를 열고 내용을 살펴볼 수 있습니다.
 
 
-## Codebase breakdown
+## 코드베이스(code base) 분석
 
-Some of the key files and folders you will be in the p5.js folder are as follows:
+p5.js 폴더 안에 있는 몇 가지 주요 파일과 폴더는 다음과 같습니다:
 
-- `src` - Where all the code that eventually gets combined into the final p5.js and p5.min.js files lives
-- [`test`](https://github.com/processing/p5.js/blob/main/contributor_docs/unit_testing.md) - Where unit tests and code for testing all documentation examples lives
-- `tasks` - Where detailed and custom build code lives
-- `Gruntfile.js` - This is the main build configuration file
-- `contributor_docs` - Where the documentation and all other contributor documentation lives
+- `src` - 최종적으로 p5.js와 p5.min.js 파일로 결합되는 모든 코드가 위치하는 곳입니다.
+- [`test`](https://github.com/processing/p5.js/blob/main/contributor_docs/unit_testing.md) - 단위 테스트와 모든 문서 예제를 테스트하기 위한 코드가 위치하는 곳입니다.
+- `tasks` - 상세하고 맞춤형 빌드 코드가 위치한 곳입니다.
+- `Gruntfile.js` - 주요 빌드 구성 파일입니다.
+- `contributor_docs` - 기여자들이 작성한 문서를 비롯한 모든 문서 파일이 있는 곳입니다.
 
-The other files and folders are either configurations or other kinds of support files; in most cases, you shouldn't need to make any modifications.
+다른 파일과 폴더들은 구성 파일이나 다른 종류의 지원 파일일 뿐입니다; 대부분의 경우, 수정할 필요가 없습니다.
 
 
-## Build setup
+## 빌드 설정=
 
-Before you do anything, you'll need to set up the local project folder so that you can build and run tests for p5.js. Assuming you have node.js installed, run:
+시작하기 전에, p5.js를 빌드하고 테스트할 수 있도록 로컬 프로젝트 폴더를 설정해야 합니다. node.js가 설치되어 있을 때, 다음을 실행하세요: 
 
 ```
 npm ci
 ```
+이 작업은 npm이 필요한 모든 의존성을 다운로드해야 하기 때문에 시간이 좀 걸릴 수 있습니다. 하지만, 완료되면 그게 다입니다. 모든 설정이 완료되었습니다. 꽤 간단하죠?
 
-This will likely take a while, as npm downloads all dependencies required. However, once done, that's it, you are all set up. Pretty simple, right?
+## Git 워크플로우
 
-
-## Git workflow
-
-Now, you are ready to make the changes you need to make; for more details about the different parts of the repository and how you can make relevant changes, see the subsections below. To start, run:
+이제 필요한 변경을 할 준비가 되었습니다; 리포지토리의 여러 부분과 관련 변경 방법에 대한 자세한 내용은 아래의 하위 섹션을 참조하십시오:
 
 ```
 npm test
 ```
-
-To try building p5.js from scratch and run all unit tests, this should complete with no errors. If you just want to build the library without running the tests, you can run:
+처음부터 p5.js를 빌드하고 모든 단위 테스트를 실행해 보세요, 이 작업은 에러 없이 완료되어야 합니다. 테스트 없이 라이브러리만 빌드하고 싶다면, 다음을 실행해 보세요:
 
 ```
 npm run build
 ```
 
-Either of the commands above will build the library into the `lib/` folder as `p5.js` and `p5.min.js`. You can use these built files for your own tests if necessary.
+위의 명령어 중 어느 것을 사용하더라도 `lib/`폴더 안에 `p5.js`와 `p5.min.js`로 라이브러리가 빌드됩니다. 필요한 경우 이 빌드된 파일들을 자신의 테스트에 사용할 수 있습니다. 
 
-Next, we recommend that you make a branch off the `main` branch before starting your work. A branch in git is as the name implies, a branched version of the repo that you can add commits to without affecting the `main` or other branches. Branches enable you to work on multiple features at once (by using multiple isolated branches) and have confidence that if you mess up a branch it won't affect the `main` branch.
+다음으로, 작업ㅇ르 시작하기 전에 `main` 브랜치에서 새로운 브랜치를 만드는 것이 좋습니다. git에서 브랜치는 이름에서 알 수 있듯이, `main`이나 다른 브랜치에 영향을 주지 않고 커밋을 추가할 수 있는 리포지토리의 분기된 버전입니다. 브랜치는 여러 기능을 동시에 작업할 수 있게 해줍니다(여러 개의 독립된 브랜치를 사용함으로써) 그리고 만약 브랜치를 망쳐도 `main` 브랜치에 영향을 주지 않습니다.
 
-In GitHub Desktop, this can be done by clicking the Current Branch button in the header of the window. From here, you can change branches, or enter a branch name to make a new one. For our purposes, enter a new branch name describing the change you will make, and click Create New Branch.
+GitHub Desktop에서는 창의 헤더에 있는 현재 브랜치 버튼을 클릭함으로써 이 작업을 할 수 있습니다. 여기서, 브랜치를 변경하거나 새로운 브랜치 이름을 입력해 새로운 브랜치를 만들 수 있습니다. 우리가 진행할 작업을 위해, 변경할 내용을 설명하는 새 브랜치 이름을 입력하고 새 브랜치 생성을 클릭하세요.
+
 
 ![A screenshot of the GitHub Desktop branch selection menu. After entering a new branch name that does not yet exist, a "Create New Branch" button appears.](images/github-desktop-create-branch.png)
 
-From the terminal, run `git checkout -b branch_name` while you are on the `main` branch, replacing `branch_name` with something descriptive, and you will be on a separate branch now. 
+터미널에서 `main` 브랜치에 있을 때 `git checkout -b branch_name`을 실행하고, `branch_name`을 서술하는 것으로 바꾸면 이제 별도의 브랜치에 있게 됩니다.
 
-As you make your changes, we recommend running `npm test` frequently, especially if you are working on the source code. Running this will take some time, but it ensures that the changes you make are not breaking existing behaviors. You should run `npm test` before moving on to committing the changes as described below.
+변경을 진행하면서, 특히 소스 코드를 작업하는 경우, 자주 `npm test`를 실행하는 것이 좋습니다. 이 명령을 실행하는 데는 시간이 조금 걸리지만, 변경 사항이 기존의 동작을 깨띌지 않는지 확인할 수 있습니다. 아래에 설명된 대로 변경 사항을 커밋하기 전에 `npm test`를 실행해야 합니다.
 
-Once you have made your changes to the codebase, you will need to commit it to git. A commit is a collection of changes saved in the git repository; it essentially records the current state of the files in the repo at the time of commit. 
+코드베이스(codebase)에 변경을 완료했다면, 이를 git에 커밋해야 합니다. 커밋은 git 리포지토리에 저장된 변경 사항의 모음으로, 커밋 시점의 리포지토리 내 파일의 현재 상태를 기록합니다. 
 
-A question that may arise is how often should you commit to git? In general it is preferred that you aim to commit often rather than lump multiple big changes into one commit. A good guideline is to commit whenever you have completed a subtask that can be described in a sentence.
+git에 얼마나 자주 커밋해야 하는지 궁금하시죠? 일반적으로 여러 큰 변경 사항을 한 커밋에 모으기보다는 자주 커밋하는 것이 좋습니다. 한 문장으로 설명할 수 있는 하위 작업을 완료할 때마다 커밋하는 것이 좋습니다.
 
-To commit all current changes from GitHub Desktop, open the app after making your changes. It will show a list of the files you have changed in the left sidebar, and the specific changes within each file on the right. Type a brief, high-level description in the field next to your user icon in the bottom left corner of the window. This will be the title of the commit. You may elaborate further in the description field below or just leave it blank. Click the blue "Commit" button to finalize the change.
+GitHub Desktop에서 현재 변경 사항을 모두 커밋하려면 변경 사항을 모두 완료한 후 앱을 엽니다. 왼쪽 사이드바에 변경한 파일 목록이 표시되고, 각 파일 내의 구체적인 변경 사항이 오른쪽에 표시됩니다. 창 하단 왼쪽 모서리에 있는 사용자 아이콘 옆의 입력란에 간단한 고급 설명을 입력합니다. 이것이 커밋의 제목이 됩니다. 아래 설명 입력란은 더 자세히 기술하거나 그냥 비워둘 수 있습니다. 파란색 "Commit" 버튼을 눌러 변경 사항을 확정하세요.
+
 
 ![A screenshot of GitHub Desktop after having made a change. The area where you need to write a title for your change is circled in red in the lower left of the window.](images/github-desktop-commit.png)
 
-To commit all current changes from the terminal, run the following:
+터미널에서 현재 변경 사항을 모두 커밋하려면 다음을 실행하세요:
 
-1. Check that it only lists files you have changed with the following command. 
+1. 변경한 파일들을 확인하려면 다음 명령어를 사용하세요. 
 
 ```
 git status
 ```
 
-If there are files listed that you have not changed, you will need to either [restore](https://git-scm.com/docs/git-restore) them to the original or make sure they are intended changes. To show more detailed changes for each file use the following command. 
+변경하지 않은 파일이 뜬다면, 원래 상태로 [복원](https://git-scm.com/docs/git-restore)해야 하거나 의도한 변경 사항인지 확인해야 합니다. 각 파일의 자세한 변경 사항을 보려면 다음 명령어를 입력하세요.
 
 ```
 git diff
 ```
 
-You should not commit any file changes that you don't intend to change for your PR.
+PR(Pull Request)에 포함시키지 않으려는 파일 변경 사항은 커밋해서는 안 됩니다.
 
-2. Stage all changes for committing into git with the following command.
+2. 다음 명령어로 모든 변경 사항에 git에 커밋하기 위해 스테이징하세요. 
 
 ```
 git add .
 ```
 
-3. To commit the changes into git, run the following command.
+3. 변경 사항을 git에 커밋하려면 다음 명령어를 실행하세요.
 
 ```
 git commit -m "[your_commit_message]"
 ```
 
-`[your_commit_message]` should be replaced with a relevant commit message that is descriptive of the changes, avoiding generic statements. For example, instead of saying `Documentation fix 1`, say `Add documentation example to circle() function`.
+`[your_commit_message]`는 변경 사항을 설명하는 관련 커밋 메세지로 대체해야 합니다. 일반적인 문구는 피해주세요. 예를 들어 `Documentation fix 1` 대신 `Add documentation example to circle() function`와 같이 적으세요.  
 
 ```
 git commit -m "Add documentation example to circle() function"
 ```
 
-Repeat the above steps for all commits you will be making while making sure to run `npm test` periodically to make sure things are working.
+위 단계를 모든 커밋에 대해 반복하면서, `npm test`를 주기적으로 실행하여 모든 것이 잘 작동하는지 확인하세요.
 
 
-### Source code
+### 소스 코드 (Source code)
 
-If you are going to work on the source code, a good place to start, if you know which of p5.js features you are going to work on, is to visit the documentation and at the bottom of each documented functionality of p5.js will be a link to its source code.
+만약 소스 코드 작업을 계획하고 있고 p5.js 기능 중 어떤 기능을 작업할 것인지 알고 있다면, 시작하기 좋은 곳은 문서(Documentation)를 방문하는 것이며 p5.js의 각 기능 하단에는 소스 코드에 대한 링크가 있습니다.
 
 ![Cropped screenshot of a reference page on the p5.js website containing the sentence "Notice any errors or typos? Please let us know. Please feel free to edit src/core/shape/2d\_primitives.js and issue a pull request!". Part of the above sentence where it says "src/core/shape/2d\_primitives.js" is highlighted with a red underline and arrow pointing to it.](images/reference-code-link.png)
 
 
-### Unit tests
+### 유닛 테스트 (Unit tests)
 
-If you are going to work on unit tests, please see [here](https://github.com/processing/p5.js/blob/main/contributor_docs/unit_testing.md). Note that for any feature enhancement, new features, and certain bug fix, unit tests covering the new implementations should be included in the PR.
-
-
-### Inline documentation
-
-If you are going to work on the inline documentation, please see [here](https://github.com/processing/p5.js/blob/main/contributor_docs/inline_documentation.md).
+유닛 테스트에 작업할 계획이라면 [여기](https://github.com/processing/p5.js/blob/main/contributor_docs/unit_testing.md)를 참조하세요. 기능 개선, 새로운 기능, 그리고 특정 버그 수정에 대해서는 새로운 구현(implementation)을 커버하는 유닛 테스트가 PR에 포함되어야 한다는 점을 유의하세요.
 
 
-### Accessibility
+### 인라인 문서 (Inline documentation)
 
-If you are going to work on accessibility features, please see [here](https://github.com/processing/p5.js/blob/main/contributor_docs/web_accessibility.md). For a Friendly Error System, please see [here](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md).
-
-
-## Code standard
-
-p5.js' code standard or code style is enforced by [ESLlint](https://eslint.org/). Any git commit and pull request must pass linting before it will be accepted. The easiest way for you to follow the right coding standard is to use the ESLint plugin available for your text editor with linting error highlighting (available for most popular text editors).
+인라인 문서 작업을 계획하고 있다면, [여기](https://github.com/processing/p5.js/blob/main/contributor_docs/inline_documentation.md)를 참조하세요.
 
 
-## Software Design principles
+### 접근성 (Accessibility)
 
-While working on any features of p5.js, it is important to keep in mind the design principles of p5.js. Our priorities may differ from the priorities of other projects, so if you are coming from a different project, we recommend that you familiarize yourself with p5.js' design principles.
+접근성 기능에 작업할 계획이라면, [여기](https://github.com/processing/p5.js/blob/main/contributor_docs/web_accessibility.md)를 참조하세요. 친절한 에러 시스템에 대해서는 [여기](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md)를 참조하세요.
 
-- **Access** We prioritize accessibility first and foremost, and decisions we make must take into account how it increases access to historically marginalized groups. Read more about this in our access statement.
-- **Beginner Friendly** The p5.js API aims to be friendly to beginner coders, offering a low barrier to creating interactive and visual web content with cutting-edge HTML5/Canvas/DOM APIs.
-- **Educational** p5.js is focused on an API and curriculum that supports educational use, including a complete reference to the API with supporting examples, as well as tutorials and sample class curricula that introduce core creative coding principles in a clear and engaging order.
-- **JavaScript and its community** p5.js aims to make web development practices more accessible to beginners by modeling proper JavaScript design patterns and usage while abstracting them where necessary. As an open-source library, p5.js also includes the wider JavaScript community in its creation, documentation, and dissemination.
-- **Processing and its community** p5.js is inspired by the Processing language and its community and aims to make the transition from Processing Java to JavaScript easy and clear.
 
-[**⬆ back to top**](#contributor-guidelines)
+## 코드 표준
+
+p5.js의 코드 표준 또는 코드 스타일은 [ESLint](https://eslint.org/)에 의해 시행됩니다. 모든 git 커밋(commit)과 풀 리퀘스트(pull request)는 linting(프로그래밍 오류를 찾아내는 과정)을 통과해야만 받아들여집니다. 올바른 코딩 표준을 따르는 가장 쉬운 방법은 텍스트 에디터용 ESLint 플러그인을 사용하고 리팅(linting) 오류 하이라이팅(대부분 에디터용으로 제공됨)을 활성화하는 것입니다.
+
+## 소프트웨어 디자인 원칙
+
+p5.js의 기능에 작업하는 동안, p5.js의 디자인 원칙을 염두에 두는 것이 중요합니다. 우리의 우선순위는 다른 프로젝트의 우선순위와 다를 수 잇으므로, 다른 프로젝트에서 오는 경우 p5.js의 디자인 원칙에 익숙해지는 것이 좋습니다.
+
+
+- **접근성** 우리는 무엇보다 접근성을 우선시하며, 우리가 내리는 결정은 역사적으로 소외된 그룹에 대한 접근성을 어떻게 늘릴지 고려해야 합니다. 이에 대한 자세한 내용은 우리의 접근성 선언문에서 읽을 수 있습니다.
+- **초보자 친화적** p5.js API는 코딩 초보자에게 친화적을 목표로 하며, 최신 HTML5/Canvas/DOM API를 사용하여 인터랙티브하고 시각적인 웹 콘텐츠를 만드는 데 낮은 장벽을 제공합니다.
+- **교육적** p5.js는 교육적 사용을 지원하는 API와 커리큘럼에 중점을 두고 있으며, API에 대한 완전한 참조와 함께 예제를 지원하고, 창의적 코딩 원칙을 명확하고 몰입도 있는 순서를 소개하는 튜토리얼과 샘플 수업 커리큘럼을 포함합니다.
+- **자바스크립트와 그 커뮤니티** p5.js는 적절한 자바스크립트 디자인 패턴과 사용법을 모델링하면서 필요한 곳에서는 이를 추상화함으로써 초보자에게 웹 개발 관행을 더 접근하기 쉽게 만드는 것을 목표로 합니다. 오픈 소스 라이브러리로서 p5.js는 창작, 문서화, 전파 과정의 넓은 자바스크립트 커뮤니티를 포함합니다.
+- **프로세싱과 그 커뮤니티** p5.js는 프로세싱 언어와 그 커뮤니티에 영감을 받았으며, 프로세싱 자바에서 자바스크립트로의 전환을 쉽고 명확하게 만드는 것을 목표로 합니다. 
+
+[**⬆ 위로 올라가기**](#contributor-guidelines)
 
 ---
 
 
-# Pull requests
+# 풀 리퀘스트 (Pull requests, PR)
 
-Now that you have made the changes you need to make, including unit tests if applicable, `npm test` does not error, and you have committed the changes, you can start preparing pull requests to get your new commits merged into the official p5.js repository. A pull request, more formally, is a request to a repo (in this case, the official p5.js repo) to pull or merge changes from another repo (in this case, your forked p5.js repo) into its commit history.
+필요한 변경사항을 포함하여, 해당하는 경우 단위 테스트까지 마친 후, `npm test` 에서 오류가 발생하지 않고 변경사항을 커밋했다면, 공식 p5.js 저장소로 당신의 새 커밋을 병합하기 위한 풀 리퀘스트를 준비할 수 있습니다. 조금 더 공식적으로 말하자면, 풀 리퀘스트는 한 저장소(예를 들어, p5.js 저장소)에 다른 저장소(예를 들어, 여러분이 포크한 p5.js 저장소)로부터의 변경사항을 그 커밋 히스토리로 병합하거나 당겨오도록 요청하는 것입니다.
 
 
-## Creating a pull request
+## 풀 리퀘스트 생성
 
-The first step here is to push your new commits to your fork of p5.js; think of it as uploading the changes to your fork.
+첫 번째 단계는 새로운 커밋을 p5.js의 당신이 포크한 저장소로 푸시하는 것입니다; 이를 변경사항을 당신의 포크로 업로드하는 것으로 생각하세요.
 
-From GitHub Desktop, just to the right of the button to change branches in the header is a button to push your changes to GitHub. Click this to push your changes.![A view of GitHub Desktop after committing changes. The button to push the changes online is circled in red.](images/publish-branch.png)
+갓허브 데스크탑(GitHub Desktop)애서는 브랜치를 변경하는 버튼 오른쪽에 변경사항을 깃허브에 푸시하는 버튼이 있습니다. 버튼을 클릭하여 변경 사항을 푸시하세요.![A view of GitHub Desktop after committing changes. The button to push the changes online is circled in red.](images/publish-branch.png)
 
-Once your code is uploaded, it will show a button prompting you to create a pull request. Clicking the button once will show a preview with another button to actually create the request. Press the "Create Pull Request" button to begin the process.
+코드가 업로드되면, 풀 리퀘스트를 생성하라는 버튼이 표시됩니다. 이 버튼을 한 번 클릭하면 미리보기와 실제로 요청을 생성하는 또 다른 버튼이 표시됩니다. "Create Pull Request" 버튼을 눌러 해당 과정을 시작합니다.
 
 ![A screenshot of Github Desktop after pushing code. In the left sidebar, it says "0 changed items." In the right pane, below the "No local changes" header, a blue "Review Pull Request" button has been marked up with a red circle.](images/preview-pull-request.png)
 
-From the terminal, run the following command:
+터미널에서 다음 명령어를 실행해보세요:
 
 ```
 git push -u origin [branch_name]
 ```
 
-Once the push is complete, you may see a link in the terminal that lets you open a pull request, if not you can navigate to your fork in your web browser, switch to the branch you are working on with the dropdown button on top of the file list, click on "Contribute" then "Open pull request."
+푸시가 완료되면, 터미널에 풀 리퀘스트를 열 수 있는 링크가 표시될 수 있습니다. 만약 웹 브라우저에서 여러분의 포크로 이동할 수 없다면, 파일 목록 상단의 드롭다운 버튼으로 작업 중인 브랜치로 전환한 후, "Contribute"를 클릭하고 "Open pull request"를 클릭하세요.
 
 ![](https://lh7-us.googleusercontent.com/xoqM9gLSFXyw7b3gzG8JlHqoO0zxHALbjSz93E3D0HNh4Jw2wDWdzHKUEchnB6hdjQC7hVn-o5prrXkLw2WiEOoVKJF6kpmyA65sirN0z-Vy3PBY3rCXC5Ifn5stQhcdUQxQS0rsVoW0_hlkfTcY8PQ)
 
-You may also see a button to open a pull request when you visit the p5.js Github repo. Clicking it will also work to open a new pull request.
+p5.js 깃허브 저장소를 방문할 때 풀 리퀘스트를 열 수 있는 버튼도 볼 수 있습니다. 이 버튼을 클릭하면 새 풀 리퀘스트를 열 수도 있습니다.
 
 ![Cropped screenshot of the main page of the p5.js GitHub repository web page. A section near the top of the page is a yellow call to action box containing a green button with the text "Compare & pull request".](images/recent-pushes)
 
 
-### Pull request information
+### 풀 리퀘스트 정보
 
 ![Screenshot of an "Open a pull request" page on GitHub that is prepopulated with p5.js's pull request template.](images/new-pr.png)
 
-Before filing the pull request, you will need to fill out the pull request template. 
+풀 리퀘스트를 제출하기 전에, 풀 리퀘스트 템플릿을 작성해야 합니다.
 
 
-### Title
+### 제목
 
-The pull request title should briefly describe what the changes are, again avoid generic statements here.
-
-
-### Resolves
-
-In the template, there is this line `Resolves #[Add issue number here]`, which you should replace `[Add issue number here]` with the issue number of the issue you are addressing/fixing [above](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#all-about-issues) (e.g., `Resolves #1234`). This will make sure the issue is automatically closed after this PR is merged. If you do not wish to automatically close the issue after this PR is merged (maybe because there are more changes coming in a separate PR), change `Resolves` to `Addresses`.
+풀 리퀘스트 제목은 변경사항을 간략하게 설명해야 합니다. 여기서 일반적인 문구는 지양해야 합니다.
 
 
-### Changes
+### 해결
 
-You should clearly describe the changes you have made in this PR. Include any implementation details and decisions you made here that are relevant to whoever will review it.
-
-
-### Screenshots of the change
-
-This is optional depending on circumstances and should be included when making changes related to how p5.js renders visuals on the canvas. Note that this is not a screenshot of the text editor but a screenshot of an example sketch's behavior after your changes.
+템블릿에는 `Resolves #[Add issue number here]`라는 문구가 있는데, 여기서 `[Add issue number here]` 부분을 여러분이 수정하려는 [above](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#all-about-issues) (e.g., `Resolves #1234`) 이슈 번호로 변경해야 합니다. 이렇게 하면 이 풀 리퀘스트가 병합된 후 자동으로 이슈가 닫히게 됩니다. 만약 이 풀 리퀘스트가 병합된 후 자동으로 이슈를 닫고 싶지 않다면(아마도 별도의 풀 리퀘스트에서 더 많은 변경사항으로 올 것이기 때문에), `Resolves` 를 `Addresses`로 변경하세요.
 
 
-### PR Checklist
 
-This contains some relevant checklist items that you should tick by replacing `[ ]` with `[x]` wherever relevant to your changes.
+### 변경 사항
 
-Once done, click on "Create pull request."
+이 풀 리퀘스트에서 진행한 변경사항을 명확하게 설명해야 합니다. 여기에 구현 세부 사항과 관련된 결정 사항을 검토할 사람에게 포함시키세요.
 
 
-### Rebase and resolve conflicts
+### 변경 사항에 대한 스크린샷
+
+이것은 상황에 따라 선택적이며, p5.js가 캔버스에 시각적 요소를 렌더링하는 방식과 관련된 변경을 할 때 포함해야 합니다. 이것은 텍스트 편집기의 스크린샷이 아니라 변경 후 예제 스케치의 동작을 보여주는 스크린샷임을 유의해주세요.
+
+
+### 풀 리퀘스트 체크리스트
+
+변경사항과 관련된 중요한 체크리스트 항목이 몇 가지 있으며, 해당하는 경우 [ ]를 [x]로 변경해주세요.
+
+
+완료되면, "Create pull request."을 클릭하세요.
+
+
+### 리베이스 및 충돌 해결
 
 ![Screenshot of an open pull request on p5.js's GitHub repository. The title of the pull request says "Fix filter shaders when rectMode is applied; add tests #6603.](images/opened-pr.png)
 
-You should now inspect the opened pull request and pay attention to a few things:
+이제 오픈된 풀 리퀘스트를 검토하고 다음 몇 가지 사항들을 주의해주세요:
 
-1. The number of commits should match the number of commits you have made, meaning if you have committed two times while working on this PR, it should only show two commits in the "Commits" tab.
-2. The "Files changed" tab should show the changes you have made as compared to the p5.js repo and nothing more.
-3. Near the bottom, it should say, "This branch has no conflicts with the base branch," and not "This branch has conflicts that must be resolved."
+1. 커밋 수는 작업한 커밋 수와 일치해야 합니다. 즉, 풀 리퀘스트에서 두 번 커밋했다면 "Commits" 탭에는 단 두 개의 커밋만 표시되어야 합니다.
+2. "Files changed" 탭은 p5.js 저장소와 비교하여 여러분이 진행한 변경사항만을 보여주어야 합니다.
+3. 하단 부근에 "This branch has no conflicts with the base branch,"라고 표시되어야 하며, "This branch has conflicts that must be resolved."라고 표시되어서는 안 됩니다.
 
-If any of the above is not true (there are more commits than you expected or there are conflicts), you may need to [rebase](https://git-scm.com/book/en/v2/Git-Branching-Rebasing) or help resolve conflicts. Conflicts here mean that you have made changes to a file that also recently had changes applied to it, and git is not sure which set of changes to keep or leave out. If you are not confident in resolving these issues, let us know and we'll guide you through the process. Basic instruction is as below.
+위의 어느 것도 사실이 아니라면(예상했던 것보다 많은 커밋이 있거나 충돌이 있는 경우), [rebase](https://git-scm.com/book/en/v2/Git-Branching-Rebasing)를 진행하거나 충돌을 해결해야 할 수도 있습니다. 여기서 충돌이란, 최근에 변경사항이 적용된 파일에 대해 변경을 진행하였으나, 깃(git)에서 어떤 변경사항 묶음을 유지할지, 제외할지 확정하지 못한 상태를 의미합니다. 이러한 문제를 해결하는 데 어려움이 있다면, 저희에게 알려주시면 과정을 안내해 드리겠습니다. 기본 지침은 다음과 같습니다.
 
-Sometimes, Github lets you resolve conflicts directly in the browser by showing you a Resolve Conflicts button:![A screenshot of a GitHub pull request with merge conflicts. The conflicting filenames are listed, and there is a "Resolve conflicts" button highlighted.](images/resolve-conflicts.png)
+가끔 깃허브는 'Resolve Conflicts' 버튼을 보여주면서 브라우저에서 직접 충돌을 해결할 수 있도록 합니다:![A screenshot of a GitHub pull request with merge conflicts. The conflicting filenames are listed, and there is a "Resolve conflicts" button highlighted.](images/resolve-conflicts.png)
 
-Conflicts are shown between `<<<<<<<` and `>>>>>>>`, separated by `=======`. One section shows your code, and the other section shows what has changed in the main branch.
+충돌 사항은 `<<<<<<<` 와 `>>>>>>>` 사이에 표시되며, `=======`으로 구분됩니다. 한 부분은 여러분의 코드를 보여주고, 다른 한 쪽 부분에는 메인 브랜치에서 변경된 사항을 보여줍니다.
 
 ![A screenshot of GitHub's conflict resolution interface. A sidebar lists the files with conflicts. The right pane contains the conflicting code, with merge conflict markers highlighted.](images/conflicts-interface.png)
 
-Remove the conflict markers and keep just the final code that you want in your PR. You can click "Mark as resolved" when all the conflicts have been addressed.
+충돌 표시를 제거하고 풀 리퀘스트에 포함시키고 싶은 최종 코드만 남겨둡니다. 모든 충돌이 해결되었을 때 "Mark as resolved"를 클릭할 수 있습니다.
 
 ![A screenshot of the GitHub conflict resolution interface after editing the code to remove the merge conflict markers. The "mark as resolved" button in the upper right is enabled.](images/mark-as-resolved.png)
 
-When all files with conflicts have been resolved, you can commit your changes.
+충돌 사항이 있는 모든 파일이 해결되면 변경 사항을 커밋할 수 있습니다.
 
 ![The GitHub conflict resolution interface after all conflicts have been marked as resolved. A green "commit merge" button is enabled.](images/commit-merge.png)
 
-Sometimes, the conflicts are too complicated for Github to show on the web. In this case, or if you just prefer the manual method, you can resolve your conflicts locally:
+가끔 깃허브의 웹 인터페이스에서 충돌을 표시하기에는 너무 복잡한 경우가 있습니다. 이런 경우, 만약 수동 방식을 선호한다면, 로컬에서 충돌을 해결할 수 있습니다:
 
-1. Run `git remote add upstream https://github.com/processing/p5.js`
-2. Run `git fetch upstream`
-3. Run `git rebase upstream/main`
-4. You may have some conflicts! If it’s just lib/p5.js and lib/p5.min.js, it’s easy to fix; just build the project again. If you have conflicts in other files & you're not sure how to resolve them, ask for help!
+1. 다음 명령어를 실행하세요. `git remote add upstream https://github.com/processing/p5.js`
+2. 다음 명령어를 실행하세요. `git fetch upstream`
+3. 다음 명령어를 실행하세요. `git rebase upstream/main`
+4. 충돌이 발생했을 수 있습니다! 만약 그 충돌이 lib/p5.js와 lib/p5.min.js 파일에서만 발생했다면, 해결하기 쉽습니다; 프로젝트를 다시 빌드하기만 하면 됩니다. 만약 다른 파일에서 충돌이 발생했고 해결 방법을 확실히 모르겠다면, 도움을 요청하세요!
 
 ```
 npm test
@@ -537,18 +538,18 @@ git add -u
 git rebase --continue
 ```
 
-5. Run `git push`
+5. 다음 명령어를 실행하세요. `git push`
 
-The checklist above may clear out after these steps but if not, we'll guide you through any fix necessary.
+위의 체크 리스트는 이러한 단계들을 거친 후에 해결될 수 있지만, 만약 그렇지 않다면 필요한 모든 수정을 안내해 드리겠습니다.
 
 
-## Discuss and amend
+## 논의 및 고치기(amend)
 
-Now that your PR is opened, a steward or maintainer will review your PR. It may take several days before a steward is able to reply to your PR, so be patient. Why not use the time to check out some of the other open issues in the meantime?
+풀 리퀘스트가 열리면 스튜어드나 관리자가 여러분의 풀 리퀘스트를 검토할 것 입니다. 스튜어드가 여러분의 풀 리퀘스트에 답변할 수 있기까지 며칠이 걸릴 수 있으니, 조금만 기다려주세요. 그 동안 오픈된 다른 이슈들을 확인해 보는 것은 어떨까요?
 
-Once a steward has reviewed your PR, one of two things may happen: 1. Your PR is approved and merged, hurray! 2. The steward may ask some questions regarding the PR or request some changes to the PR. If it's the latter, don't panic; it's perfectly normal, and the stewards are always here to help you complete your contribution!
+스튜어드가 풀 리퀘스트를 검토한 후에는 다음 두 가지 중 하나가 발생할 수 있습니다: 1. 풀 리퀘스트가 승인되어 병합됩니다, 축하합니다! 2. 스튜어드가 풀 리퀘스트에 대해 몇 가지 질문을 하거나 일부 변경 사항을 요청할 수 있습니다. 후자의 경우라도 당황하지 마세요; 이것은 완전히 정상적인 과정이며, 스튜어드는 항상 여러분이 기여를 완성할 수 있도록 돕기 위해 있습니다!
 
-If changes are requested of your PR and you are able to make those changes, follow the [same process as before](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#git-workflow) but just continue from your local copy of the repo and relevant branch, make those changes, commit them into git, and push them to your forked remote repo. Once you have pushed additional commits to your forked remote repo, you will see that the new commits automatically show up in the PR. Leave a comment in the PR to let the reviewer know you have made the requested changes, and if no additional changes are needed, your PR will be merged!
+여러분의 풀 리퀘스트의 변경사항이 요청되었고 해당 변경을 진행할 수 있는 경우, [이전과 같은 과정](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#git-workflow)를 따르되, 로컬 저장소의 복사본과 관련 브랜치에서 계속해서, 해당 변경을 진행하고, 그 변경사항을 깃허브에 커밋한 다음, 포크된 원격 저장소로 푸시하세요. 포크된 원격 저장소에 추가 커밋을 푸시하면, 새 커밋이 풀 리퀘스트에 자동으로 표시됩니다. 검토자에게 요청된 변경사항을 진행했다는 것을 알리기 위해 풀 리퀘스트에 댓글을 남기세요. 추가적인 수정이 필요하지 않다면, 여러분의 PR은 병합될 것입니다!
 
-[**⬆ back to top**](#contributor-guidelines)
+[**⬆ 위로 올라가기**](#contributor-guidelines)
 
