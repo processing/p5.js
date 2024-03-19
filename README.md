@@ -961,6 +961,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/natdecker"><img src="https://avatars.githubusercontent.com/u/76665013?v=4?s=120" width="120px;" alt="Nat Decker"/><br /><sub><b>Nat Decker</b></sub></a><br /><a href="#a11y-natdecker" title="Accessibility">️️️️♿️</a> <a href="https://github.com/processing/p5.js/commits?author=natdecker" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/sproutleaf"><img src="https://avatars.githubusercontent.com/u/116130954?v=4?s=120" width="120px;" alt="Miaoye Que"/><br /><sub><b>Miaoye Que</b></sub></a><br /><a href="#translation-sproutleaf" title="Translation">🌍</a> <a href="#maintenance-sproutleaf" title="Maintenance">🚧</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/sphantom-code"><img src="https://avatars.githubusercontent.com/u/74479963?v=4?s=120" width="120px;" alt="sphantom-code"/><br /><sub><b>sphantom-code</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sphantom-code" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://parkminwook.com"><img src="https://avatars.githubusercontent.com/u/23724801?v=4?s=120" width="120px;" alt="Minwook Park"/><br /><sub><b>Minwook Park</b></sub></a><br /><a href="#translation-wooknick" title="Translation">🌍</a></td>
     </tr>
   </tbody>
 </table>
