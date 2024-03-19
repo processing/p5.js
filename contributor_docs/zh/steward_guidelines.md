@@ -149,7 +149,7 @@
 
 Gruntfile.js 文件包含了 p5.js 及其他内容的主要构建定义。构建库和文档所使用的不同工具包括但不限于 Grunt、Browserify、YUIDoc、ESLint、Babel、Uglify 和 Mocha。从`default`任务开始，逆向分析可能会有所帮助。在阅读下面的说明时，参考 Gruntfile.js 文档可能会有所帮助。
 
- ### 主要构建任务
+### 主要构建任务
 
  ```js
  grunt.registerTask('default', ['lint', 'test']);
@@ -161,7 +161,7 @@ Gruntfile.js 文件包含了 p5.js 及其他内容的主要构建定义。构建
  ```js
  grunt.registerTask('lint', ['lint:source', 'lint:samples']);
  ```
- `lint`任务包括两个子任务：`lint:source`和`lint:samples`。`lint:source`又进一步分为三个子任务：`eslint:build`、`eslint:source`和`eslint:test`，它们使用ESLint检查构建脚本、源代码和测试脚本。
+ `lint`任务包括两个子任务：`lint:source`和`lint:samples`。`lint:source`又进一步分为三个子任务：`eslint:build`、`eslint:source`和`eslint:test`，它们使用 ESLint 检查构建脚本、源代码和测试脚本。
 
  `lint:samples`任务首先运行`yui`任务，该任务本身包括`yuidoc:prod`、`clean:reference`和`minjson`，它们从源代码中提取文档到一个 JSON 文件中，删除上一步骤中未使用的文件，并将生成的 JSON 文件压缩为`data.min.json`。
 
@@ -214,7 +214,7 @@ connect:server
 mochaChrome
 ```
 
-此步骤在[./tasks/test/mocha-chrome.js](./tasks/test/mocha-chrome.js)中定义。它使用 Puppeteer 来启动一个无头版本的 Chrome ，可以进行远程控制，并运行与`./test`文件夹中的 HTML 文件相关联的测试，包括对未缩小和缩小版本的库进行单元测试，以及测试所有参考示例。
+此步骤在[./tasks/test/mocha-chrome.js](./tasks/test/mocha-chrome.js)中定义。它使用 Puppeteer 来启动一个无头版本的 Chrome，可以进行远程控制，并运行与`./test`文件夹中的 HTML 文件相关联的测试，包括对未缩小和缩小版本的库进行单元测试，以及测试所有参考示例。
 
 ```
 mochaTest
@@ -268,21 +268,21 @@ watch 任务将观察一系列文件的更改，并根据所更改的文件运�
 
 ## 提示与技巧
 
-有时，需要审核的 issues 和 PRs 的数量太多，可能会令人手足无措，尽管我们尽力采取一些简化流程的措施，但以下是你可以利用的一些提示和技巧，以帮助你审核 issues 和 PR 。
+有时，需要审核的 issues 和 PRs 的数量太多，可能会令人手足无措，尽管我们尽力采取一些简化流程的措施，但以下是你可以利用的一些提示和技巧，以帮助你审核 issues 和 PR。
 
 ### 回复模板
 
 你可以使用 GitHub 的 [Saved Replies](https://docs.github.com/en/get-started/writing-on-github/working-with-saved-replies/about-saved-replies) 功能，这是一个方便的功能，可在回复 issues 或 PR 时使用。上面描述的工作流程中的一些步骤可能需要使用相同或非常相似的回复（比如将 issues 重定向到论坛、接受 issues 以进行修复等），使用 Saved Replies 可以稍微提高效率。
 
-以下是 p5.js 维护者使用的一些 Saved Replies ，你可以自己使用或创建你自己的 Saved Replies ！
+以下是 p5.js 维护者使用的一些 Saved Replies，你可以自己使用或创建你自己的 Saved Replies！
 
 ##### 关闭：无法重现
 
-> 我们无法重现这个 issue ，但如果你能提供一个演示问题的代码示例，请随时重新打开这个 issue 。谢谢！
+> 我们无法重现这个 issue，但如果你能提供一个演示问题的代码示例，请随时重新打开这个 issue。谢谢！
 
 ##### 关闭：需要代码片段
 
-> 为了组织的目的，我们关闭了此 issue 。如果您能提供一个说明问题的代码片段，请重新打开该 issue 。谢谢！
+> 为了组织的目的，我们关闭了此 issue。如果您能提供一个说明问题的代码片段，请重新打开该 issue。谢谢！
 
 ##### 关闭：使用论坛
 
@@ -294,16 +294,16 @@ watch 任务将观察一系列文件的更改，并根据所更改的文件运�
 
 ##### 关闭：访问权限
 
-> 目前看来，这个功能并没有引起太多关注，而且我们还没有一个清晰的解释来说明它是如何扩大[扩大访问权限](access.md)的，因此我们现在将关闭这个 issue 。如果能够在 issue 请求中添加一个关于访问权限的声明，请随时重新打开此 issue 。
+> 目前看来，这个功能并没有引起太多关注，而且我们还没有一个清晰的解释来说明它是如何扩大[扩大访问权限](access.md)的，因此我们现在将关闭这个 issue。如果能够在 issue 请求中添加一个关于访问权限的声明，请随时重新打开此 issue。
 
-> 我们暂时关闭了此 issue ，因为没有看到对此 issue 的较详细解释[扩大访问权限](access.md)。如果可以在 issue 请求中添加更详细的访问权限说明，请随时重新打开。谢谢！
+> 我们暂时关闭了此 issue，因为没有看到对此 issue 的较详细解释[扩大访问权限](access.md)。如果可以在 issue 请求中添加更详细的访问权限说明，请随时重新打开。谢谢！
 
 ##### 关闭：插件
 
 > 我们认为这个功能超出了 p5.js API 的范围（我们尽量保持最简化），但它可以成为一个很好的插件库的起点。请查看此处的文档，了解如何创建一个插件：
 [https://github.com/processing/p5.js/blob/main/contributor\_docs/creating\_libraries.md](creating_libraries.md)
 
-##### 关闭 PR ：先提出 issue
+##### 关闭 PR：先提出 issue
 
 > 谢谢。作为提醒，必须在打开拉取请求之前打开 issues 并使用 issues 标记拉取请求。这对于跟踪开发并保持讨论清晰是必要的。谢谢！
 
@@ -319,17 +319,17 @@ watch 任务将观察一系列文件的更改，并根据所更改的文件运�
 
 使用看似复杂的 git 命令来获取 PR 版本的代码并在本地进行测试，可能会使复杂的 PR 审查变得更加困难。幸运的是，[GitHub CLI](https://cli.github.com/) 工具可以极大地帮助简化这个过程以及其他操作。
 
-安装完 CLI 并登录后，你只需要运行命令 `gh pr checkout [pull_request_id]` 就可以在本地审查 PR 。这个命令会自动为你获取远程 fork ，创建一个分支，并切换到该分支。如果要返回到主分支，只需像切换分支一样运行 `git checkout main` 即可。你甚至可以直接从 CLI 在 PR 中留下评论，而无需访问网页页面！
+安装完 CLI 并登录后，你只需要运行命令 `gh pr checkout [pull_request_id]` 就可以在本地审查 PR。这个命令会自动为你获取远程 fork，创建一个分支，并切换到该分支。如果要返回到主分支，只需像切换分支一样运行 `git checkout main` 即可。你甚至可以直接从 CLI 在 PR 中留下评论，而无需访问网页页面！
 
 GitHub CLI 还提供了许多其他命令，你可能会发现它们有用。无论如何，这是一个很好的工具。
 
 ### 管理通知
 
-不再需要手动监视存储库的“Issues”或“Pull Requests”选项卡以获取新的 issues 或 PRs 。你可以通过在存储库页面顶部与存储库名称相对的地方点击带有眼睛图标的“Watch”按钮来“关注”该存储库。
+不再需要手动监视存储库的"Issues"或"Pull Requests"选项卡以获取新的 issues 或 PRs。你可以通过在存储库页面顶部与存储库名称相对的地方点击带有眼睛图标的"Watch"按钮来“关注”该存储库。
 
 ![Cropped screenshot of the top right corner of a GitHub repository page showing a series of buttons in the center from left to right: Sponsor, Watch, Fork, Starred.](../images/github-repo-metrics.png)
 
-通过关注存储库，诸如新 issues 、新 PRs 、提及你的用户名以及其他你在存储库上订阅的活动都会作为通知发送到你的[通知页面](https://github.com/notifications)，你可以将其标记为已读或忽略，就像处理电子邮件收件箱一样。
+通过关注存储库，诸如新 issues、新 PRs、提及你的用户名以及其他你在存储库上订阅的活动都会作为通知发送到你的[通知页面](https://github.com/notifications)，你可以将其标记为已读或忽略，就像处理电子邮件收件箱一样。
 
 在某些情况下，你可能会收到 GitHub 发送的与你关注的存储库中的活动相关的电子邮件，你可以在[通知设置页面](https://github.com/settings/notifications)上进行自定义设置，包括完全取消订阅。
 
