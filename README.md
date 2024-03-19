@@ -965,6 +965,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Harrycheng233"><img src="https://avatars.githubusercontent.com/u/129256087?v=4?s=120" width="120px;" alt="Harrycheng233"/><br /><sub><b>Harrycheng233</b></sub></a><br /><a href="#translation-Harrycheng233" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/DianaMGalindo"><img src="https://avatars.githubusercontent.com/u/95235340?v=4?s=120" width="120px;" alt="Diana Galindo"/><br /><sub><b>Diana Galindo</b></sub></a><br /><a href="#translation-DianaMGalindo" title="Translation">🌍</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/douMax"><img src="https://avatars.githubusercontent.com/u/28494194?v=4?s=120" width="120px;" alt="Lingxiao Wang"/><br /><sub><b>Lingxiao Wang</b></sub></a><br /><a href="#translation-douMax" title="Translation">🌍</a></td>
+    </tr>
   </tbody>
 </table>
 
