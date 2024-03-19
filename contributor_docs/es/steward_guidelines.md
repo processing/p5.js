@@ -168,110 +168,112 @@ Las _pull requests_ de Dependabot generalmente solo son visibles para los admini
 ---
 
 
-## Build process
+## Proceso de Construcción
 
-This section will not cover the general build setup nor commands but rather details about what's happening behind the scenes. Please see the [contributor’s guidelines](contributor_guidelines.md#working-on-p5js-codebase) for more detailed build info.
+Esta sección no cubrirá la configuración general de construcción ni los comandos, sino más bien detalles sobre lo que sucede detrás de escena. Consulta las [directrices para administradores](contributor_guidelines.md#working-on-p5js-codebase) para obtener información más detallada sobre la construcción.
 
-The Gruntfile.js file contains the main build definitions for p5.js. Among the different tools used to build the library and documentation includes but not limited to Grunt, Browserify, YUIDoc, ESLint, Babel, Uglify, and Mocha. It may be helpful for us to start with the `default` task and work backward from there. It may be helpful at this point to open up the Gruntfile.js document while going through the explainer below.
+El archivo Gruntfile.js contiene las definiciones principales de construcción para p5.js. Entre las diferentes herramientas utilizadas para construir la biblioteca y la documentación se incluyen, pero no se limitan a: Grunt, Browserify, YUIDoc, ESLint, Babel, Uglify y Mocha. Puede ser útil comenzar con la tarea `default` y retroceder desde allí. También puede ser útil abrir el documento Gruntfile.js mientras se sigue la explicación a continuación.
 
 
-### Main build task
+### Tarea Principal de Construcción
 
 ```
 grunt.registerTask('default', ['lint', 'test']);
 ```
 
-When we run `grunt` or the npm script `npm test`, we run the default task consisting of `lint` then `test`.
+Cuando ejecutamos `grunt` o el script npm `npm test`, ejecutamos la tarea predeterminada que consiste en `lint` y luego `test`.
 
 
-#### `lint` Task
+#### Tarea `lint`
 
 ```
 grunt.registerTask('lint', ['lint:source', 'lint:samples']);
 ```
 
-The `lint` task consists of two sub tasks: `lint:source` and `lint:samples`. `lint:source` is further subdivided into three more sub tasks `eslint:build`, `eslint:source`, and `eslint:test`, which uses ESLint to check the build scripts, the source code, and the test scripts.
+La tarea `lint` consiste en dos sub tareas: `lint:source` y `lint:samples`. `lint:source` está subdividida aún más en tres sub tareas adicionales: `eslint:build`, `eslint:source` y `eslint:test`, que utilizan ESLint para verificar los scripts de construcción, el código fuente y los scripts de prueba.
 
-The `lint:samples` task will first run the `yui` task which itself consists of `yuidoc:prod`, `clean:reference`, and `minjson`, which extract the documentation from the source code into a JSON document, remove unused files from the previous step, and minify the generated JSON file into `data.min.json` respectively.
+La tarea `lint:samples` primero ejecutará la tarea `yui`, que a su vez consiste en `yuidoc:prod`, `clean:reference` y `minjson`, que extraen la documentación del código fuente en un documento JSON, eliminan archivos no utilizados del paso anterior y minifican el archivo JSON generado en `data.min.json, respectivamente.
 
-Next in `lint:samples` is `eslint-samples:source`, which is a custom written task whose definition is in [./tasks/build/eslint-samples.js](tasks/build/eslint-samples.js); it will run ESLint to check the documentation example code to make sure they follow the same coding convention as the rest of p5.js (`yui` is run first here because we need the JSON file to be built first before we can lint the examples).
+A continuación en `lint:samples` está `eslint-samples:source`, que es una tarea escrita personalizada cuya definición está en [./tasks/build/eslint-samples.js](tasks/build/eslint-samples.js); ejecutará ESLint para verificar el código de ejemplo de la documentación y asegurarse de que siga la misma convención de codificación que el resto de p5.js (`yui` se ejecuta primero aquí porque necesitamos que el archivo JSON se construya primero antes de que podamos aplicar lint a los ejemplos).
 
 
-#### `test` Task
+#### Tarea `test`
 
 ```js
 grunt.registerTask('test', [
-  'build',
-  'connect:server',
-  'mochaChrome',
-  'mochaTest',
-  'nyc:report'
+  'build',
+  'connect:server',
+  'mochaChrome',
+  'mochaTest',
+  'nyc:report'
 ]);
 ```
 
-First let's look at the `build` task under `test`.
+Primero, veamos la tarea `build` dentro de `test`.
 
 ```js
 grunt.registerTask('build', [
-  'browserify',
-  'browserify:min',
-  'uglify',
-  'browserify:test'
+  'browserify',
+  'browserify:min',
+  'uglify',
+  'browserify:test'
 ]);
 ```
 
-Tasks that start with `browserify` are defined in [./tasks/build/browserify.js](tasks/build/browserify.js). They all  similar steps with minor differences. These are the main steps to build the full p5.js library from its many source code files into one:
+Las tareas que comienzan con `browserify` están definidas en [./tasks/build/browserify.js](tasks/build/browserify.js). Todas siguen pasos similares con diferencias menores. Estos son los pasos principales para construir la biblioteca completa de p5.js a partir de sus numerosos archivos fuente en uno solo:
 
-- `browserify` builds p5.js while `browserify:min` builds an intermediate file to be minified in the next step. The difference between `browserify` and `browserify:min` is that `browserify:min` does not contain data needed for FES to function.
-- `uglify` takes the output file of `browserify:min` and minify it into the final p5.min.js (configuration of this step is in the main Gruntfile.js).
-- `browserify:test` is building a version identical to the full p5.js except for added code that is used for test code coverage reporting (using [Istanbul](https://istanbul.js.org/)).
+- `browserify` construye p5.js, mientras que `browserify:min` construye un archivo intermedio para ser minificado en el siguiente paso. La diferencia entre `browserify` y `browserify:min` es que `browserify:min` no contiene datos necesarios para que funcione FES.
+- `uglify` toma el archivo de salida de `browserify:min` y lo minifica en el p5.min.js final (la configuración de este paso está en el archivo Gruntfile.js principal).
+- `browserify:test` está construyendo una versión idéntica y completa a la de p5.js, salvo por el código adicional que se utiliza para informar sobre la cobertura de código de prueba (usando [Istanbul](https://istanbul.js.org/)).
 
-First, use of the `fs.readFileSync()` node.js specific code is replaced with the file's actual content using `brfs-babel`. This is used mainly by WebGL code to inline shader code from source code written as separate files.
+Primero, el uso del código específico de node.js `fs.readFileSync()` es reemplazado por el contenido real del archivo utilizando `brfs-babel`. Esto se utiliza principalmente en el código WebGL para insertar código de <em>shader</em> desde archivos fuente escritos como archivos separados.
 
-Next, the source code, including all dependencies from node\_modules, is transpiled using Babel to match the [Browserslist](https://browsersl.ist/) requirement defined in package.json as well as to make the ES6 import statements into CommonJS `require()` that browserify understands. This also enables us to use newer syntax available in ES6 and beyond without worrying about browser compatibility.
+A continuación, el código fuente, incluidas todas las dependencias de node\_modules, se transpila usando Babel para cumplir con el requisito de [Browserslist](https://browsersl.ist/) definido en package.json, así como para convertir las declaraciones de importación ES6 en `require()` de CommonJS que browserify comprende. Esto también nos permite utilizar una sintaxis más nueva disponible en ES6 y más allá sin la preocupación por la compatibilidad del navegador.
 
-After bundling but before the bundled code is written to file, the code is passed through `pretty-fast`, if it is not meant to be minified, it should be cleaned up so the final formatting is a bit more consistent (we anticipate the p5.js source code can be read and inspected if desired).
+Después de empaquetar pero antes de que el código empaquetado se escriba en el archivo, el código se pasa por `pretty-fast`. Si no está destinado a ser minificado, debería ser limpiado para que el formato final sea un poco más consistente (anticipamos que el código fuente de p5.js se pueda leer e inspeccionar si se desea).
 
-A few small detailed steps are left out here; you can check out the browserify build definition file linked above to have a closer look at everything.
+Aquí se omiten algunos pasos detallados pequeños; puedes revisar el archivo de definición de construcción de browserify vinculado arriba para ver todo más de cerca. 
 
 ```
 connect:server
 ```
 
-This step spins up a local server hosting the test files and built source code files so that automated tests can be run in Chrome.
+Este paso inicia un servidor local que aloja los archivos de prueba y los archivos de código fuente construidos para que las pruebas automatizadas puedan ejecutarse en Chrome.
 
 ```
 mochaChrome
 ```
 
-This step is defined in [./tasks/test/mocha-chrome.js](tasks/test/mocha-chrome.js). It uses Puppeteer to spin up a headless version of Chrome that can be remote controlled and runs the tests associated with the HTML files in the `./test` folder, which includes testing the unminified and minified version of the library against the unit test suites as well as testing all reference examples.
+Este paso está definido en [./tasks/test/mocha-chrome.js](tasks/test/mocha-chrome.js). Utiliza Puppeteer para iniciar una versión sin interfaz de usuario de Chrome que puede ser controlada de forma remota y ejecuta las pruebas asociadas con los archivos HTML en la carpeta `./test`, que incluye la prueba de la versión sin minificar y minificada de la biblioteca contra los conjuntos de pruebas unitarias, así como la prueba de todos los ejemplos de referencia.
+
 
 ```
 mochaTest
 ```
 
-This step differs from `mochaChrome` in that it is run in node.js instead of in Chrome and only tests a small subset of features in the library. Most features in p5.js will require a browser environment, so this set of tests should only be expanded if the new tests really don't need a browser environment.
+Este paso difiere de `mochaChrome` en que se ejecuta en node.js en lugar de en Chrome y solo prueba un pequeño subconjunto de características en la biblioteca. La mayoría de las características en p5.js requerirán un entorno de navegador, por lo que este conjunto de pruebas solo debe ampliarse si las nuevas pruebas realmente no necesitan un entorno de navegador.
+
 
 ```
 nyc:report
 ```
 
-Finally, after all builds and tests are complete, this step will gather the test coverage report while `mochaChrome` was testing the full version of the library and print the test coverage data to the console. Test coverage for p5.js is mainly for monitoring and having some additional data points; having 100% test coverage is not a goal.
+Finalmente, después de que todas las construcciones y pruebas estén completas, este paso recopilará el informe de cobertura de pruebas mientras `mochaChrome` estaba probando la versión completa de la biblioteca y mostrará los datos de cobertura de pruebas en la consola. La cobertura de pruebas para p5.js es principalmente para monitorear y tener algunos puntos de datos adicionales; tener una cobertura de pruebas del 100% no es un objetivo.
 
-And that covers the default task in the Gruntfile.js configuration!
+¡Y eso cubre la tarea predeterminada en la configuración de Gruntfile.js!
 
 
-### Miscellaneous tasks
+### Tarea Variada
 
-All of the steps can be run directly with `npx grunt [step]`. There are also a few tasks that are not covered above but could be useful in certain cases.
+Todos los pasos pueden ejecutarse directamente con `npx grunt [step]`. También hay algunas tareas que no se mencionan arriba pero podrían ser útiles en ciertos casos.
 
 ```
 grunt yui:dev
 ```
 
-This task will run the documentation and library builds described above, followed by spinning up a web server that serves a functionally similar version of the reference page you will find on the website on [http://localhost:9001/docs/reference/](http://localhost:9001/docs/reference/). It will then monitor the source code for changes and rebuild the documentation and library.
+Esta tarea ejecutará las construcciones de documentación y biblioteca descritas arriba, seguidas de la puesta en marcha de un servidor web que sirve una versión funcionalmente similar de la página de referencia que encontrarás en el sitio web en [http://localhost:9001/docs/reference/](http://localhost:9001/docs/reference/). Luego, supervisará el código fuente en busca de cambios y reconstruirá la documentación y la biblioteca.
 
-`grunt` `yui:dev` is useful when you are working on the reference in the inline documentation because you don't have to move built files from the p5.js repository to a local p5.js-website repository and rebuild the website each time you make a change, and you can just preview your changes with this slightly simplified version of the reference in your browser. This way, you can also be more confident that the changes you made are likely to show up correctly on the website. Note that this is only meant for modifications to the inline documentation; changes to the reference page itself, including styling and layout, should be made and tested on the website repository.
+`grunt` `yui:dev` es útil cuando estás trabajando en la referencia en la documentación en línea porque no necesitas mover archivos construidos del repositorio de p5.js a un repositorio local de un sitio de p5.js y reconstruir el sitio web cada vez que hagas un cambio, y puedes previsualizar tus cambios con esta versión ligeramente simplificada de la referencia en tu navegador. De esta manera, también puedes tener más confianza en que los cambios que hiciste probablemente se mostrarán correctamente en el sitio web. Ten en cuenta que esto solo está destinado a modificaciones en la documentación en línea; los cambios en la página de referencia en sí, incluido el estilo y el diseño, deben hacerse y probarse en el repositorio del sitio web.
 
 ```
 grunt watch
@@ -279,103 +281,103 @@ grunt watch:main
 grunt watch:quick
 ```
 
-The watch tasks will watch a series of files for changes and run associated tasks to build the reference or the library according to what files have changed. These tasks all do the same thing, with the only difference being the scope.
+Las tareas de observación vigilarán una serie de archivos en busca de cambios y ejecutarán tareas asociadas para construir la referencia o la biblioteca según los archivos que hayan cambiado. Estas tareas hacen lo mismo, la única diferencia es el alcance.
 
-The `watch` task will run all builds and tests similar to running the full default task on detecting changes in the source code.
+La tarea `watch` ejecutará todas las construcciones y pruebas de manera similar a ejecutar la tarea predeterminada completa al detectar cambios en el código fuente.
 
-The `watch:main` task will run the library build and tests but not rebuild the reference on detecting changes in the source code.
+La tarea `watch:main` ejecutará la construcción y las pruebas de la biblioteca, pero no reconstruirá la referencia al detectar cambios en el código fuente.
 
-The `watch:quick` task will run the library build only on detecting changes in the source code.
+La tarea `watch:quick` ejecutará solo la construcción de la biblioteca al detectar cambios en el código fuente.
 
-Depending on what you are working on, choosing the most minimal watch task here can save you from having to manually run a rebuild whenever you want to make some changes.
-
----
-
-
-## Release process
-
-Please see [release\_process.md](release_process.md).
+Dependiendo de en qué estés trabajando, elegir la tarea de observación más mínima aquí puede ahorrarte tener que ejecutar manualmente una reconstrucción cada vez que desees hacer algunos cambios.
 
 ---
 
 
-## Tips & tricks
+## Proceso de Lanzamiento
 
-Sometimes, the number of issues and PR that require review can get a bit overwhelming.  While we try to put in place processes that make things easier, there are some tips and tricks that you can utilize to help with reviewing issues and PRs.
+Consulta [release\_process.md](release_process.md).
 
-
-### Reply templates
-
-A handy GitHub feature that you can use is the [Saved Replies](https://docs.github.com/en/get-started/writing-on-github/working-with-saved-replies/about-saved-replies) feature, which is available to use when authoring a reply to issues or pull requests. Some of the workflow described above may require responding to issues or PRs with identical or very similar replies (redirecting questions to the forum, accepting an issue for fixing, etc.), and using Saved Replies can just ever so slightly make this more efficient.
-
-Below are some of the Saved Replies that are being used by p5.js maintainers. You can use them yourself or create your own!
+---
 
 
-##### Closing: Can’t Reproduce
+## Consejos y Trucos
 
-> We're not able to reproduce this, but please feel free to reopen if you can provide a code sample that demonstrates the issue. Thanks!
-
-
-##### Closing: Need Snippet
-
-> I'm closing this for organizational purposes. Please reopen if you can provide a code snippet that illustrates the issue. Thanks!
+A veces, la cantidad de <em>issues</em> y PR que requieren revisión puede ser un poco abrumadora. Si bien intentamos implementar procesos que faciliten las cosas, hay algunos consejos y trucos que puedes utilizar para ayudar con la revisión de <em>issues</em> y PRs.
 
 
-##### Closing: Use the Forum
+### Plantillas de Respuesta
 
-> The GitHub issues here are a good place for bugs and issues with the p5.js library itself. For questions about writing your own code, tests, or following tutorials, the [forum](https://discourse.processing.org/) is the best place to post. Thanks!
+Una característica útil de GitHub que puedes utilizar es la funcionalidad [Respuestas Guardadas](https://docs.github.com/en/get-started/writing-on-github/working-with-saved-replies/about-saved-replies), que está disponible para usar al redactar una respuesta a <em>issues</em> o <em>pull requests</em>. Algunos de los flujos de trabajo descritos anteriormente pueden requerir responder a <em>issues</em> o PRs con respuestas idénticas o muy similares (redireccionar preguntas al foro, aceptar un problema para su corrección, etc.), y usar Respuestas Guardadas puede hacer que esto sea un poco más eficiente.
 
-
-##### Closing: GSOC
-
-> Thanks! The best place to discuss GSOC proposals is on our [forum](https://discourse.processing.org/c/summer-of-code).
+A continuación, se muestran algunas de las Respuestas Guardadas que están siendo utilizadas por los mantenedores de p5.js. ¡Puedes usarlas tú mismo o crear las tuyas!
 
 
-##### Closing: Access
+##### Cerrando: No se puede Reproducir
 
-> I'm not seeing a lot of interest in this feature, and we don't have a clear explanation of how it [expands access](access.md), so I will close this for now. If an access statement can be added to the issue request, please feel welcome to reopen.
-
-> We do not see a further explanation of how this issue [expands access](access.md), so I will close this issue for now. If a more detailed access statement can be added to the feature request, please feel welcome to reopen it. Thank you!
+> No podemos reproducir esto, pero no dudes en reabrir si puedes proporcionar un ejemplo de código que demuestre el problema. ¡Gracias!
 
 
-##### Closing: Addon
+##### Cerrando: Necesita Fragmento
 
-> I think this function is beyond the scope of the p5.js API (we try to keep it as minimal as possible), but it could be a great starting point for an addon library. See the docs here for how to create an addon: [https://github.com/processing/p5.js/blob/main/contributor\_docs/creating\_libraries.md](creating_libraries.md)
-
-
-##### Closing PR: Need Issue First
-
-> Thank you. As a reminder, issues need to be opened before pull requests are opened and tagged with the issue. This is necessary for tracking development and keeping discussion clear. Thanks!
+> Estoy cerrando esto por motivos organizativos. Por favor, reabre si puedes proporcionar un fragmento de código que ilustre el <em>issue</em>. ¡Gracias!
 
 
-##### Approve issue for fixing
+##### Cerrando: Usa el Foro
 
-> You can go ahead with a fix. Thanks.
+> Los <em>issues</em> de GitHub aquí son un buen lugar para los <em>issues</em> y problemas con la biblioteca p5.js en sí. Para preguntas sobre cómo escribir tu propio código, pruebas o seguir tutoriales, el [foro](https://discourse.processing.org/) es el mejor lugar para publicar. ¡Gracias!
 
 
-##### Merged PR
+##### Cerrando: GSOC
 
-> Looks good. Thanks!
+> ¡Gracias! El mejor lugar para discutir las propuestas de GSOC es en nuestro [foro](https://discourse.processing.org/c/summer-of-code).
+
+
+##### Cerrando: Acceso
+
+> No veo mucho interés en esta función, y no tenemos una explicación clara de cómo [amplía el acceso](access.md), así que cerraré esto por ahora. Si se puede agregar una declaración de acceso a la solicitud del <em>issue</em>, no dudes en volver a abrirlo.
+
+> No vemos una explicación más detallada de cómo esta cuestión [amplía el acceso](access.md), así que cerraré este <em>issue</em> por ahora. Si se puede agregar una declaración de acceso más detallada a la solicitud de función, no dudes en volver a abrirla. ¡Gracias!
+
+
+##### Cerrando: Complemento
+
+> Creo que esta función está fuera del alcance de la API de p5.js (intentamos mantenerla lo más minimalista posible), pero podría ser un gran punto de partida para una biblioteca complementaria. Consulta la documentación aquí sobre cómo crear un complemento: [https://github.com/processing/p5.js/blob/main/contributor\_docs/creating\_libraries.md](creating_libraries.md)
+
+
+##### Cerrando PR: Primero Necesita <em>Issue</em>
+
+> Gracias. Como recordatorio, primero deben abrirse <em>issues</em> antes de que se abran pull request y etiquetarse con el <em>issue</em>. Esto es necesario para realizar un seguimiento del desarrollo y mantener la discusión clara. ¡Gracias!
+
+
+##### Aprobar <em>issue</em> para corrección
+
+> Puedes seguir adelante con una solución. Gracias.
+
+
+##### PR Fusionado
+
+> Se ve bien. ¡Gracias!
 
 
 ### GitHub CLI
 
-Reviewing a complex PR can be difficult with complex git commands required to get the PR's version of code locally for you to test. Fortunately, the [GitHub CLI](https://cli.github.com/) tool can help greatly with this process and more.
+Revisar un PR complejo puede ser difícil con comandos de git complejos necesarios para obtener la versión del código del PR localmente para que puedas probarla. Afortunadamente, [GitHub CLI](https://cli.github.com/) puede ayudar enormemente con este proceso y más.
 
-After installing the CLI and logging in, reviewing a PR locally can be done by running the command `gh pr checkout [pull_request_id]`, and the process of fetching a remote fork, creating a branch, and checking out the branch are all done automatically for you. Going back to the main branch will be the same as switching a branch by running `git checkout main`. You can even leave a comment in the PR from the CLI without needing to visit the webpage at all!
+Después de instalar GitHub CLI e iniciar sesión, revisar una PR localmente se puede hacer ejecutando el comando `gh pr checkout [id_del_pull_request]`, y el proceso de obtener un <em>fork</em> remoto, crear una rama y cambiar a la rama se realizan automáticamente para ti. Volver a la rama principal será lo mismo que cambiar de rama ejecutando `git checkout main`. ¡Incluso puedes dejar un comentario en el PR desde la CLI sin necesidad de visitar la página web en absoluto!
 
-There are many other commands available in the GitHub CLI as well that you may or may not find useful, but it is a good tool to have around in any case.
+También hay muchos otros comandos disponibles en GitHub CLI que puedes encontrar útiles o no, pero es una buena herramienta para tener en cualquier caso.
 
 
-### Managing notifications
+### Gestión de Notificaciones
 
-Instead of manually monitoring the "Issues" or "Pull Requests" tabs of the repo for new issues or PRs, you can "watch" the repo by clicking on the "Watch" button with an eye icon on the top of the repo page opposite the repo name.
+En lugar de monitorear manualmente las pestañas <em>Issues</em> o <em>Pull Requests</em> del repositorio en busca de nuevos <em>issues</em> o PRs, puedes "ver" el repositorio haciendo clic en el botón <em>Watch</em> con un ícono de ojo en la parte superior de la página del repositorio, frente al nombre del repositorio.
 
 ![Cropped screenshot of the top right corner of a GitHub repository page showing a series of buttons in the center from left to right: Sponsor, Watch, Fork, Starred.](../images/github-repo-metrics.png)
 
-By watching a repo, events such as new issues, new pull requests, mentions of your user handle, and other activities you subscribed to on the repo will be sent as notifications to your [notification page](https://github.com/notifications), where they can be marked as read or dismissed much like an email inbox.
+Al observar un repositorio, eventos como nuevos <em>issues</em>, nuevos <em>pull requests</em>, menciones de tu nombre de usuario y otras actividades a las que te hayas suscrito en el repositorio se enviarán como notificaciones a tu [página de notificaciones](https://github.com/notifications), donde se pueden marcar como leídas o descartadas de la misma manera que un buzón de correo electrónico.
 
-In some cases, you may receive emails from GitHub about events in the repo you are watching as well, and you can customize these (including unsubscribing from them completely) from your [notifications settings page](https://github.com/settings/notifications).
+En algunos casos, también puedes recibir correos electrónicos de GitHub sobre eventos en el repositorio que estás observando, y puedes personalizarlos (incluida la desuscripción completa de ellos) desde tu [página de configuración de notificaciones](https://github.com/settings/notifications).
 
-Setting these up to fit the way you work can be the difference between having to find relevant issues/PRs to review manually and being overwhelmed by endless notifications from GitHub. A good balance is required here. As a starting suggestion, stewards should watch this repo for "Issues" and "Pull Requests" and set it to only receive emails on "Participating, @mentions and custom."
+Configurar estas opciones para que se adapten a la forma en que trabajas puede ser la diferencia entre tener que buscar <em>issues</em>/PRs relevantes para revisar manualmente y sentirse abrumado por notificaciones interminables de GitHub. Se requiere un buen equilibrio aquí. Como sugerencia inicial, los supervisores deberían observar este repositorio para <em>Issues</em> y <em>Pull Requests</em> y configurarlo para recibir correos electrónicos solo sobre "Participando, @menciones y personalizadas".
 
