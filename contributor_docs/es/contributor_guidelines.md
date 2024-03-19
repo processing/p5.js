@@ -165,7 +165,7 @@ Desde GitHub Desktop, justo a la derecha del botón para cambiar de ramas en la 
 
 ![A view of GitHub Desktop after committing changes. The button to push the changes online is circled in red.](/contributor_docs/images/publish-branch.png)
 
-Una vez subido el código, aparecerá un botón que te pedirá crear un _ pull request_. Al hacer clic en el botón una vez se mostrará una vista previa con otro botón para crear realmente la solicitud. Presiona el botón "Crear Pull Request" para iniciar el proceso.
+Una vez subido el código, aparecerá un botón que te pedirá crear un _pull request_. Al hacer clic en el botón una vez se mostrará una vista previa con otro botón para crear realmente la solicitud. Presiona el botón "Crear Pull Request" para iniciar el proceso.
 
 ![A screenshot of Github Desktop after pushing code. In the left sidebar, it says "0 changed items." In the right pane, below the "No local changes" header, a blue "Review Pull Request" button has been marked up with a red circle.](/contributor_docs/images/preview-pull-request.png)
 
