@@ -5676,6 +5676,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "wooknick",
+      "name": "Minwook Park",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23724801?v=4",
+      "profile": "http://parkminwook.com",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "repoType": "github",
