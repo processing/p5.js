@@ -52,12 +52,12 @@ Los _issues_ de informes de errores deberían utilizar la plantilla de _Issue_ "
      - Intente solucionarlo usted mismo o agregue la etiqueta `help wanted` para señalar que es un _issue_ que necesita solución.
 3. Si el error no se puede replicar:
    - Solicite información adicional si aún no se ha proporcionado en la plantilla (versión de p5.js, versión del navegador, versión del sistema operativo, etc).
-   - Si su entorno de prueba difiere de lo que se informa en el _issue_(por ejemplo,un navegador o sistema operativo diferente):
+   - Si su entorno de prueba difiere de lo que se informa en el _issue_ (por ejemplo,un navegador o sistema operativo diferente):
      - Deje un comentario diciendo que no puede replicar en su entorno específico.
      - Agregue una etiqueta `help wanted` al _issue_ incidente y pida a alguien más con la configuración especificada en el _issue_ que intente replicar el error.
-   - A veces, los "bugs"(errores) solo ocurren al usar el editor web y no al probar localmente. En este caso, el _issue_ debería ser redirigido al [repositorio del editor web](https://github.com/processing/p5.js-web-editor).
+   - A veces, los _bugs_ (errores) solo ocurren al usar el editor web y no al probar localmente. En este caso, el _issue_ debería ser redirigido al [repositorio del editor web](https://github.com/processing/p5.js-web-editor).
    - Si la replicación es posible más tarde, regrese al paso 2.
-4. Si el error se origina en el código que el usuario proporcionó en el informe de error y no en el comportamiento de p5.js:
+1. Si el error se origina en el código que el usuario proporcionó en el informe de error y no en el comportamiento de p5.js:
    - Determine si la documentación de p5.js, la implementación de código o el sistema de errores amigable pueden mejorarse para evitar que se cometa el mismo error.
    - Redirija amablemente cualquier pregunta adicional al [foro](https://discourse.processing.org/) o al [Discord](https://discord.com/invite/SHQ8dH25r9) y cierre el _issue_ si no se van a realizar más cambios en p5.js.
    
@@ -86,7 +86,7 @@ Los _issues_ para solicitar funcionalidades deberían utilizar la plantilla "New
 
 ### Mejora de funcionalidades
 
-Las solicitudes de _issues_ de mejora de función deberían utilizar la plantilla de incidentes de "Existing Feature Enhancement" (Mejora de Funcionalidades Existentes). El proceso es muy similar a las solicitudes de nuevas funcionalidades. La diferencia entre una "new feature request" (solicitud de nueva funcionalidad) y una "feature request" (Mejora de Funcionalidad) puede ser confusa a veces. La mejora de función principalmente trata sobre las funcionalidades existentes de p5.js, mientras que una solicitud de nueva función podría estar solicitando la adición de funcionalidades completamente nuevas.
+Las solicitudes de _issues_ de mejora de función deberían utilizar la plantilla de incidentes de "Existing Feature Enhancement" (Mejora de Funcionalidades Existentes). El proceso es muy similar a las solicitudes de nuevas funcionalidades. La diferencia entre una _new feature request_ (solicitud de nueva funcionalidad) y una _feature request_ (Mejora de Funcionalidad) puede ser confusa a veces. La mejora de función principalmente trata sobre las funcionalidades existentes de p5.js, mientras que una solicitud de nueva función podría estar solicitando la adición de funcionalidades completamente nuevas.
 
 1. Similar a las solicitudes de nuevas funcionalidades, las mejoras de función solo deben ser aceptadas si aumentan el acceso a p5.js. Por favor, consulta el punto 1 de la [sección anterior](steward_guidelines.md#feature-request).
 2. Los criterios de inclusión para las mejoras de función son similares a los de las solicitudes de nuevas funcionalidades, pero se debe prestar especial atención a los posibles cambios incompatibles.
@@ -98,7 +98,7 @@ Las solicitudes de _issues_ de mejora de función deberían utilizar la plantill
 
 Este tipo de _issue_ tiene una plantilla mínima de discusión y debería ser utilizada para recopilar comentarios y retroalimentaciones sobre un tema en general antes de consolidarlo en algo más específico, como una solicitud de función. Estos _issues_ de discusión pueden cerrarse cuando finaliza la conversación y se han creado los _issues_ más específicos resultantes:
 
-- Si se abre un _issue_ como una discusión pero debería ser, por ejemplo, un _bug report_(informe de error), se debe aplicar la etiqueta correcta y quitar la etiqueta de "discusión". Además, se debe solicitar información adicional sobre el error al autor si aún no se ha incluido.
+- Si se abre un _issue_ como una discusión pero debería ser, por ejemplo, un _bug report_ (informe de error), se debe aplicar la etiqueta correcta y quitar la etiqueta de "discussión". Además, se debe solicitar información adicional sobre el error al autor si aún no se ha incluido.
 - Si se abre un _issue_ como una discusión pero no es relevante para la contribución de código fuente o de otra manera relevante para los repositorios de GitHub, el proceso de contribución o la comunidad de contribución, deberían ser redirigidos al foro o a Discord y el _issue_ cerrado.
 - Si es relevante, se deben agregar etiquetas adicionales a los _issues_ de discusión para señalar aún más qué tipo de discusión es con solo mirarla.
 
@@ -111,7 +111,7 @@ Casi todas las contribuciones de código a los repositorios de p5.js se realizan
 
 - La plantilla de pull request se puede encontrar [Aquî](https://github.com/processing/p5.js/blob/main/.github/PULL_REQUEST_TEMPLATE.md).
 - Casi todas las solicitudes de pull requests deben tener _issues_ asociados abiertos y discutidos primero, lo que significa que los["flujos de trabajo de los _issues_ mås relevantes ](steward_guidelines.md#issues) deben haber sido seguidos primero antes de que una _pull request_ sea revisada por cualquier supervisor o responsable de mantenimiento.
-  - Las únicas instancias donde esto no se aplica son correcciones muy menores de errores tipográficos, las cuales no requieren un _issue_ abierto y pueden ser fusionadas por cualquier persona con acceso para aplicar "merge" (fusionar) al repositorio, incluso si no son supervisores de una área en particular.
+  - Las únicas instancias donde esto no se aplica son correcciones muy menores de errores tipográficos, las cuales no requieren un _issue_ abierto y pueden ser fusionadas por cualquier persona con acceso para aplicar _merge_ (fusionar) al repositorio, incluso si no son supervisores de una área en particular.
   - Si bien esta excepción existe, la aplicaremos en la práctica solo mientras se siga alentando a los contribuyentes a abrir nuevos _issues_ primero. En otras palabras, si tienes dudas sobre si esta excepción se aplica, simplemente abre un _issue_ de todos modos.
 - Si una "pull request"no resuelve completamente el _issue_ referenciado, puedes editar la publicación original y cambiar "Resolves #OOOO" a "Addresses #OOOO" para que no cierre automáticamente el _issue_ original cuando la _pull request_ aplique _merge_ (se fusione).
 
@@ -126,7 +126,7 @@ Correcciones simples, como la corrección de un pequeño error tipográfico, pue
 
 ### Corrección de Error
 
-1. "Bug fixes"(Corrección de errores) deberían ser revisado por el supervisor del área relevante, idealmente el mismo que aprobó el _issue_ referenciado para su corrección.
+1. _Bug fixes_ (Corrección de errores) deberían ser revisado por el supervisor del área relevante, idealmente el mismo que aprobó el _issue_ referenciado para su corrección.
 2. La pestaña "Files Changed" de la _pull request_ se puede utilizar para revisar inicialmente si el _fix_ (la ccorrección) se implementa según lo descrito en la discusión del _issue_.
 3. La _pull request_ Debería ser probada localmente siempre que sea posible y relevante. El GitHub CLI puede ayudar a agilizar parte del proceso. Ver más abajo en [Consejos y trucos](steward_guidelines.md#tips-tricks).
    - [ ] La Corrección debe abordar suficientemente el _issue_ original.
@@ -134,7 +134,7 @@ Correcciones simples, como la corrección de un pequeño error tipográfico, pue
    - [ ] La Corrección no debe tener un impacto significativo en el rendimiento de p5.js.
    - [ ] La Corrección no debe tener ningún impacto en la accesibilidad de p5.js.
    - [ ] La Corrección debe utilizar el estándar moderno de codificación en JavaScript.
-   - [ ] La Corrección debe pasar todas las pruebas automatizadas e incluir nuevas pruebas(tests) si son relevantes.
+   - [ ] La Corrección debe pasar todas las pruebas automatizadas e incluir nuevas pruebas (tests) si son relevantes.
 4. Si se requieren cambios adicionales, se deben agregar comentarios en línea a las líneas relevantes según se describió anteriormente [aquí](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/commenting-on-a-pull-request#adding-line-comments-to-a-pull-request).
    - Un bloque de sugerencias también puede ser usado para sugerir cambios específicos:\
      ![The Suggest Change button while writing a comment on code in a GitHub pull request](../images/suggest-change.png)\
@@ -143,7 +143,7 @@ Correcciones simples, como la corrección de un pequeño error tipográfico, pue
    - Si se requieren múltiples cambios, no agregues comentarios de una sola línea muchas veces. En su lugar, sigue el procedimiento documentado [aquí](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/reviewing-proposed-changes-in-a-pull-request) para hacer comentarios de varias líneas y una sola solicitud de cambios (change request).
    - Si los comentarios en línea son solo para aclaraciones o discusión, elige "Comment" en lugar de "Request changes":\
      ![The "comment" option circled within the GitHub Finish Review menu](../images/comment-review.png)
-5. Una vez que la _pull request_ haya sido revisada y no se requieran cambios adicionales, un supervisor puede marcar la _pull request_ como "Aprobada" eligiendo la opción "Approve" en el paso anterior, con o sin comentarios adicionales. El supervisor puede luego solicitar una revisión adicional por otro supervisor o responsable de mantenimiento si lo desea, fusionar(merge) la _pull request_ si tiene acceso para fusionar(merge access), o solicitar "merge" (fusión) de un responsable de mantenimiento.
+5. Una vez que la _pull request_ haya sido revisada y no se requieran cambios adicionales, un supervisor puede marcar la _pull request_ como "Aprobada" eligiendo la opción "Approve" en el paso anterior, con o sin comentarios adicionales. El supervisor puede luego solicitar una revisión adicional por otro supervisor o responsable de mantenimiento si lo desea, fusionar la _pull request_ si tiene acceso para fusionar (merge access), o solicitar _merge_ (fusión) de un responsable de mantenimiento.
 6. El bot @[all-contributors](https://allcontributors.org/docs/en/emoji-key) debería ser llamado para agregar cualquier nuevo colaborador a la lista de colaboradores en el archivo README.md. Cada tipo de contribución puede ser indicado en lugar de `[contribution` `type]` a continuación, se puede encontrar la lista completa de tipos de contribuciones disponibles en el enlace anterior.
 
 `@all-contributors` `please` `add` `@[GitHub` `handle]` `for` `[contribution` `type]`
@@ -151,7 +151,7 @@ Correcciones simples, como la corrección de un pequeño error tipográfico, pue
 
 ### Nuevas funcionalidades/Mejora de Funcionalidades
 
-El proceso para una _pull request_ de _new feature_ (nuevas funcionalidades),o _feature_enhacement_(mejora de funcionalidades) es similar a las correcciones de errores,pero solo con una diferencia notable:
+El proceso para una _pull request_ de _new feature_ (nuevas funcionalidades),o _feature_enhacement_ (mejora de funcionalidades) es similar a las correcciones de errores,pero solo con una diferencia notable:
 
 - Una _pull request_ de nueva funcionalidad o mejora de funcionalidad debe ser revisada y aprobada por al menos dos supervisores o responsables de mantenimiento antes de que pueda ser fusionada.
 
