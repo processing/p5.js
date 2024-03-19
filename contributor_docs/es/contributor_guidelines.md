@@ -2,7 +2,7 @@
 
 ¡Bienvenidos! Este documento está diseñado para ayudar a nuevos contribuidores que deseen aportar código a la biblioteca de p5.js, así como a aquellos que busquen refrescar sus conocimientos sobre procedimientos técnicos. También es útil para cualquier persona interesada en realizar cualquier tipo de contribución al código de p5.js.
 
-Si estás buscando contribuir más allá de los repositorios de p5.js (escribiendo tutoriales, planeando clases, organizando eventos), por favor consulta la documentación correspondiente para este tipo de colaboraciones. Aquellos que sean Supervisores o Responsables de mantenimiento, encontrarán más útil referirse a las [Instrucciones para Supervisores](https://github.com/processing/p5.js/blob/main/contributor_docs/steward_guidelines.md) cuando se trata de revisar 'Issues' (problemas) y 'Pull Requests'. 
+Si estás buscando contribuir más allá de los repositorios de p5.js (escribiendo tutoriales, planeando clases, organizando eventos), por favor consulta la documentación correspondiente para este tipo de colaboraciones. Aquellos que sean Supervisores o Responsables de mantenimiento, encontrarán más útil referirse a las [Instrucciones para Supervisores](https://github.com/processing/p5.js/blob/main/contributor_docs/es/steward_guidelines.md) cuando se trata de revisar 'Issues' (problemas) y 'Pull Requests'. 
 
 Este es un documento relativamente largo e integral, pero trataremos de indicar todos los pasos tan claro como sea posible. Utiliza la tabla de contenidos para encontrar las secciones que son relevantes para ti, y siéntete libre de omitir secciones que no son relevantes para las contribuciones que planeas hacer. 
 
@@ -241,7 +241,7 @@ Si quieres trabajar o contribuir al código base de p5.js 🌸 como desarrollado
   ``` 
 8. Añade pruebas unitarias si estás trabajando en nuevas funcionalidades, o estas mejorando una funcionalidad existente.
 
-9.	Una vez hayas terminado, puedes hacer un <em>commit</em> de los cambios y crear un [<em>Pull Request</em>]( https://p5js.org/contributor-docs/#/./contributor_guidelines?id=pull-requests).
+9.	Una vez hayas terminado, puedes hacer un <em>commit</em> de los cambios y crear un [<em>Pull Request</em>](#pull-requests).
 
 ## Utilizando la funcionalidad de edición de Github
 
