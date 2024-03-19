@@ -107,7 +107,7 @@ Este tipo de _issue_ tiene una plantilla mínima de discusión y debería ser ut
 
 ## _Pull Requests_
 
-Casi todas las contribuciones de código a los repositorios de p5.js se realizan a través de Pull Request. Los administradores y los responsables de mantenimiento pueden tener "push access" (acceso de escritura) a los repositorios, pero aún se les anima a seguir el mismo proceso de _issue_ > _pull request_ > proceso de revisión al contribuir con código. Aquí están los pasos para revisar una _pull request_:
+Casi todas las contribuciones de código a los repositorios de p5.js se realizan a través de Pull Request. Los administradores y los responsables de mantenimiento pueden tener _push access_ (acceso de escritura) a los repositorios, pero aún se les anima a seguir el mismo proceso de _issue_ > _pull request_ > proceso de revisión al contribuir con código. Aquí están los pasos para revisar una _pull request_:
 
 - La plantilla de pull request se puede encontrar [Aquî](https://github.com/processing/p5.js/blob/main/.github/PULL_REQUEST_TEMPLATE.md).
 - Casi todas las solicitudes de pull requests deben tener _issues_ asociados abiertos y discutidos primero, lo que significa que los["flujos de trabajo de los _issues_ mås relevantes ](steward_guidelines.md#issues) deben haber sido seguidos primero antes de que una _pull request_ sea revisada por cualquier administrador o responsable de mantenimiento.
@@ -118,7 +118,7 @@ Casi todas las contribuciones de código a los repositorios de p5.js se realizan
 
 ### Correción Sencilla
 
-Los "simple fix"(correción Sencilla), como la corrección de un pequeño error tipográfico, pueden "be merged"(fusionarse) directamente por cualquier persona con acceso para aplicar "merge"(fusionar). Verifica en la pestaña "Files Changed" de la _pull request_ para asegurarte de que la prueba automatizada de integración continua (CI) pase.
+_Simple fix_ (Correcciones simples),  como la corrección de un pequeño error tipográfico, pueden fusionarse directamente por cualquier persona con acceso para fusionar. Después, revisa la pestaña "Files Changed" de _pull request_ para asegurarte de que la prueba automatizada de integración continua (CI) haya pasado.
 
 ![The "files changed" tab when viewing a pull request on GitHub](images/files-changed.png)
 ![The "All checks have passed" indicator on a GitHub pull request, highlighted above the merge button](images/all-checks-passed.png)
