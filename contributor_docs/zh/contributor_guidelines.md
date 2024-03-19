@@ -7,24 +7,46 @@
 本文档尽管内容较多且覆盖面很广，但我们还是会尽量清晰地注明所有步骤和要点。你可以使用目录查找特定章节。如果文档中的某些章节与你要贡献的内容无关，可以选择跳过。
 
 
-**如果你是一个新贡献者，你可以从第一章节 “关于 Issues” 开始阅读。如果你想查看关于开发流程的详细指南，可以移步 “开发者快速入门指南“ 章节**
+**如果你是一个新贡献者，你可以从第一章节 “关于 Issues” 开始阅读。如果你想查看关于开发流程的详细指南，可以移步 “开发者快速入门指南” 章节**
 
 # 目录
 
 - [贡献者指南](#贡献者指南)
 - [目录](#目录)
 - [关于 Issues](#关于-issues)
-  - [所谓 “Issues” 是指什么？](#所谓-issues-是指什么)
-  - [Issue 模板](#issue-模板)
-    - [抓到个 bug](#抓到个-bug)
-    - [增强现有功能](#增强现有功能)
-    - [新功能开发请求](#新功能开发请求)
-    - [发起讨论](#发起讨论)
+   * [所谓 “Issues” 是指什么？](#所谓-issues-是指什么)
+   * [Issue 模板](#issue-模板)
+      + [抓到个 bug](#抓到个-bug)
+      + [增强现有功能](#增强现有功能)
+      + [新功能开发请求](#新功能开发请求)
+      + [发起讨论](#发起讨论)
 - [修改 p5.js 代码库](#修改-p5js-代码库)
-  - [必备条件](#必备条件)
-  - [介绍](#介绍)
-  - [开发者快速入门指南](#开发者快速入门指南)
-  - [讨论和修改](#讨论和修改)
+   * [必备条件](#必备条件)
+   * [介绍](#介绍)
+   * [开发者快速入门指南](#开发者快速入门指南)
+   * [使用 GitHub 的编辑功能](#使用-github-的编辑功能)
+   * [Fork p5.js 并在你的 Fork 中工作](#fork-p5js-并在你的-fork-中工作)
+      + [使用 GitHub 桌面版](#使用-github-桌面版)
+      + [使用 git 命令行界面](#使用-git-命令行界面)
+   * [代码库拆解](#代码库拆解)
+   * [构建设置](#构建设置)
+   * [Git 工作流程](#git-工作流程)
+      + [源代码](#源代码)
+      + [单元测试](#单元测试)
+      + [内联文档](#内联文档)
+      + [无障碍](#无障碍)
+   * [代码规范](#代码规范)
+   * [设计原则](#设计原则)
+- [拉取请求](#拉取请求)
+   * [创建拉取请求](#创建拉取请求)
+      + [拉取请求信息](#拉取请求信息)
+      + [标题](#标题)
+      + [解决](#解决)
+      + [更改](#更改)
+      + [更改的截图](#更改的截图)
+      + [PR 检查列表](#pr-检查列表)
+      + [变基和解决冲突](#变基和解决冲突)
+   * [讨论和修改](#讨论和修改)
 
 ---
 
@@ -115,7 +137,7 @@ Safari
 
 **重现错误是最关键的**该模板中的许多字段都旨在能够重现 Bug。你提供的关于草图环境的信息越多、重现问题的步骤越丰富，别人也就越容易理解你的问题并探索解决方案。
 
-**请尽可能提供详细的信息，避免使用泛泛的陈述**。例如，不要说 ”image()函数不好用了“，而要说得更具体，比如：”image()函数无法以正确的尺寸显示加载的 GIF 图像“。描述以下两个方面可以使你的问题描述更加清晰：
+**请尽可能提供详细的信息，避免使用泛泛的陈述**。例如，不要说 “image()函数不好用了”，而要说得更具体，比如：“image()函数无法以正确的尺寸显示加载的 GIF 图像”。描述以下两个方面可以使你的问题描述更加清晰：
 
 1. 你期望你分享的示例代码执行什么样的行为（预期行为）；
 2. 示例代码实际上做了什么（实际行为）。
@@ -132,9 +154,9 @@ Bug 报告只有在至少一名[领域管理员或维护者](https://github.com/
 
 该模板有以下字段需要填写：
 
-1. _提高无障碍性_ - 这是一个必填项目，你需要在此处说明你建议加强的功能将会如何使得 p5.js 对于那些在创意和科技领域长期被边缘化的人群具备[更高的无障碍性](./access.md)。通常来讲，**如未填写此项，提案将被拒绝**。但你也可以填写"我不确定"，邀请社区的其他成员集思广益，帮你论证该增强功能可以怎样提高 p5.js 的无障碍性。
+1. _提高无障碍性_ - 这是一个必填项目，你需要在此处说明你建议加强的功能将会如何使得 p5.js 对于那些在创意和科技领域长期被边缘化的人群具备[更高的无障碍性](./access.md)。通常来讲，**如未填写此项，提案将被拒绝**。但你也可以填写“我不确定”，邀请社区的其他成员集思广益，帮你论证该增强功能可以怎样提高 p5.js 的无障碍性。
 2. _p5.js 中最合适的子领域是什么？_ - 这可以帮助我们锁定并回应你的问题。你的答复还将触发自动标记功能，使用相关的[标签](./issue_labels.md)标记该问题。
-3. "功能增强详情" - 在这里描述你对功能增强的建议。一个好的功能增强建议通常包括清晰的用例：这个功能增强是什么、何时使用、如何使用以及为什么需要这个功能增强。
+3. _功能增强详情_ - 在这里描述你对功能增强的建议。一个好的功能增强建议通常包括清晰的用例：这个功能增强是什么、何时使用、如何使用以及为什么需要这个功能增强。
 
 要使功能增强建议被接受，必须经过至少一名[领域管理员或维护者](https://github.com/processing/p5.js#stewards)批准，而后才会开始处理拉取请求。
 
@@ -142,7 +164,7 @@ Bug 报告只有在至少一名[领域管理员或维护者](https://github.com/
 
 ### [新功能开发请求](https://github.com/processing/p5.js/issues/new?assignees=%5C&labels=Feature+Request%5C&projects=%5C&template=feature-request.yml)
 
-该模板适用于提出为 p5.js 加入新功能的建议。例如，创建一个新的`createTable`函数，用于绘制原生的 HTML `<table>` 页面元素。有些提议可能与现有的功能增强建议趋同，在这种情况下，就在两种模版中选择你认为更合适的。
+该模板适用于提出为 p5.js 加入新功能的建议。例如，创建一个新的 `createTable` 函数，用于绘制原生的 HTML `<table>` 页面元素。有些提议可能与现有的功能增强建议趋同，在这种情况下，就在两种模版中选择你认为更合适的。
 
 同样，本模板的表单字段与“增强现有功能”部分的字段也几乎一致。有关如何填写每个字段的详情，请参考[上一节](#existing-feature-enchancement)。
 
@@ -156,7 +178,7 @@ Bug 报告只有在至少一名[领域管理员或维护者](https://github.com/
 
 在发启讨论问题时，你可以使用侧面板上的 “Labels（标签）” 选项来添加更多相关标签，以便将你的问题引导到相关领域。此模板本身仅包含一个基本的文本字段。通过[这个链接](https://github.com/processing/p5.js/issues/6517)可以查看讨论问题的范例。
 
-[**⬆ 回到页首**](#贡献者指南)
+[**⬆ 回到顶部**](#贡献者指南)
 
 ---
 
@@ -172,7 +194,7 @@ Bug 报告只有在至少一名[领域管理员或维护者](https://github.com/
 
 同样的，如果你遇到了一个问题、参与讨论了一个问题且管理员已经批准了解决方案，然而问题的原作者和其他社区成员却没有表态乐意处理该问题，你就可以自愿提交一份贡献申请，让管理员将该问题分配给你。
 
-**你不应该 “插队”** 提交拉取请求，以期插手一个他人已经有意提交贡献或已经分配给他人的问题。我们永远会根据"先来先得"的原则接受一个问题的代码贡献申请。
+**你不应该“插队”** 提交拉取请求，以期插手一个他人已经有意提交贡献或已经分配给他人的问题。我们永远会根据"先来先得"的原则接受一个问题的代码贡献申请。
 
 如果你为一个问题提交了拉取请求，但同时还有其他人在处理同一个问题，你的拉取请求将会被关闭。如果你发现某个已分配给某人的问题已经几个月都没有动静，你可以就该问题礼貌地询问进展如何以及是否需要帮助。我们通常为大家编写贡献留出相当长的时间，因为我们理解大多数人是志愿工作，或者对一些人来说编写功能确实需要很长时间。
 
@@ -182,9 +204,9 @@ Bug 报告只有在至少一名[领域管理员或维护者](https://github.com/
 
 如果你想作为开发者参与 p5.js 代码库的开发工作或提交贡献，无论是直接改进 p5.js 还是改进其诸如 [Friendly Error Systems](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md) 之类的子项目，都可按以下步骤操作：
 
-1. [创建一个 p5.js 的 fork。](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
-2. [将你创建的 fork 克隆到你的电脑。](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
-3. [使用以下命令添加 upstream ：](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-repository-for-a-fork)
+1. [创建一个 p5.js 的 fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
+2. [将你创建的 fork 克隆到你的电脑](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
+3. [使用以下命令添加 upstream](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-repository-for-a-fork)
     ```
    git remote add upstream https://github.com/processing/p5.js
    ```
@@ -237,21 +259,21 @@ Bug 报告只有在至少一名[领域管理员或维护者](https://github.com/
 
 GitHub 桌面版是通过图形用户界面来使用 git 的程序，它不需要你在终端输入命令。如果你是 git 新手， GitHub 桌面版会是很好的选择，并且你可以在 GitHub 桌面版和终端之间随意切换。
 
-首先，下载并安装 [GitHub 桌面版](https://desktop.github.com/)。安装成功后，打开应用程序。根据提示登录你的 GitHub 账户。登录成功后，你可以看到你的项目，包括你 fork 的 p5.js。选择名为：`你的用户名/p5.js` 的项目，然后点击蓝色 “Clone” 按钮。根据提示选择项目存储位置，你可以更改存储位置也可以保留默认选项并继续。
+首先，下载并安装[GitHub 桌面版](https://desktop.github.com/)。安装成功后，打开应用程序。根据提示登录你的 GitHub 账户。登录成功后，你可以看到你的项目，包括你 fork 的 p5.js。选择名为：`你的用户名/p5.js` 的项目，然后点击蓝色 “Clone” 按钮。根据提示选择项目存储位置，你可以更改存储位置也可以保留默认选项并继续。
 
 ![The GitHub Desktop user interface after signing in. On the right half of the screen, it lists your projects, and a Clone button in the bottom right.](../images/github-desktop-init.png)
 
-克隆成功后，你需要选择使用该 fork 的目的。请选择 "To contribute to the parent project"，然后点击 "Continue"。
+克隆成功后，你需要选择使用该 fork 的目的。请选择 “To contribute to the parent project”，然后点击 “Continue”。
 
 ![The view after cloning a fork. It asks if you are planning to contribute to the parent project, or use it for your own purposes.](../images/github-desktop-fork.png)
 
 ### 使用 git 命令行界面
 
-创建好 fork 之后，去 fork 页面点击绿色 "Code" 按钮复制 git 链接。链接的格式是这样：`https://github.com/limzykenneth/p5.js.git`。
+创建好 fork 之后，去 fork 页面点击绿色 “Code” 按钮复制 git 链接。链接的格式是这样：`https://github.com/limzykenneth/p5.js.git`。
 
 ![Screenshot of the list of files on the landing page of a repository. The "Code" button is highlighted with a dark orange outline.](../images/code-button.png)
 
-然后在本地环境中打开命令行，并克隆这个存储库。简单地说，”克隆“ 就是将仓库副本下载到本地计算机上。在你想要存储 p5.js 源代码文件夹的文件夹中运行以下命令：
+然后在本地环境中打开命令行，并克隆这个存储库。简单地说，“克隆” 就是将仓库副本下载到本地计算机上。在你想要存储 p5.js 源代码文件夹的文件夹中运行以下命令：
 
 ```
 git clone [git_url]
@@ -299,7 +321,7 @@ npm run build
 
 接下来，我们建议你开始工作之前在主分支 `main` 上创建一个分支。在 git 中，分支顾名思义就是存储库的一个分支版本，你可以在分支上添加提交而不会影响主分支或其他分支。在分支上，你可以同时处理多个功能（通过使用多个不同的分支），而不用担心搞砸之后会影响到主分支。
 
-如果使用 GitHub 桌面版，可以点击窗口上方的 "Current Branch" 按钮来创建分支。你可以在这里切换分支，或输入分支名创建一个新分支。在这里，我们输入一个分支名描述一下即将做的更改，然后点击 "Create New Branch"。
+如果使用 GitHub 桌面版，可以点击窗口上方的 “Current Branch” 按钮来创建分支。你可以在这里切换分支，或输入分支名创建一个新分支。在这里，我们输入一个分支名描述一下即将做的更改，然后点击 “Create New Branch”。
 
 ![A screenshot of the GitHub Desktop branch selection menu. After entering a new branch name that does not yet exist, a "Create New Branch" button appears.](../images/github-desktop-create-branch.png)
 
@@ -497,6 +519,6 @@ git rebase --continue
 
 一旦管理员审核了你的 PR，可能会有两种结果：1. 你的 PR 被批准并合并，太棒了！2. 管理员可能会针对你的 PR 提出一些问题，或者要求你做一些修改。如果是后者，不要惊慌，这是完全正常的，并且管理员们总是愿意帮助你完成你的贡献！
 
-如果你的 PR 需要进一步更改，并且你能够完成这些更改，请按照之前的 [相同流程](#git-工作流程) 进行操作。但务必在本地仓库副本的相关分支进行修改、提交， 并将提交推送到你 fork 的远程仓库。一旦提交成功，新的提交会自动显示在你的 PR 中。然后在 PR 中留言，让审阅者知道你已经按要求做了更改。如果不需要额外的更改，你的 PR 将被合并！
+如果你的 PR 需要进一步更改，并且你能够完成这些更改，请按照之前的[相同流程](#git-工作流程) 进行操作。但务必在本地仓库副本的相关分支进行修改、提交， 并将提交推送到你 fork 的远程仓库。一旦提交成功，新的提交会自动显示在你的 PR 中。然后在 PR 中留言，让审阅者知道你已经按要求做了更改。如果不需要额外的更改，你的 PR 将被合并！
 
 [**⬆ 回到顶部**](#贡献者指南)
