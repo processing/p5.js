@@ -80,4 +80,36 @@ visualSuite('WebGL', function() {
       screenshot();
     });
   });
+
+  visualSuite('3DModel', function() {
+    visualTest('OBJ model with MTL file displays diffuse colors correctly', function(p5, screenshot) {
+      return new Promise(resolve => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        p5.loadModel('unit/assets/octa-color.obj', model => {
+          p5.background(255);
+          p5.rotateX(10 * 0.01);
+          p5.rotateY(10 * 0.01);
+          model.normalize();
+          p5.model(model);
+          screenshot();
+          resolve();
+        });
+      });
+    });
+    visualTest('Object with no colors takes on fill color', function(p5, screenshot) {
+      return new Promise(resolve => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        p5.loadModel('unit/assets/cube.obj', model => {
+          p5.background(255);
+          p5.fill('blue'); // Setting a fill color
+          p5.rotateX(p5.frameCount * 0.01);
+          p5.rotateY(p5.frameCount * 0.01);
+          model.normalize();
+          p5.model(model);
+          screenshot();
+          resolve();
+        });
+      });
+    });
+  });
 });
