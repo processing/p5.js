@@ -6,7 +6,7 @@ Si estás leyendo esta página, probablemente estés interesado en ayudar a trab
 ## Recursos
 
 - Lee nuestra [visión general de la arquitectura WebGL de p5.js](webgl_mode_architecture.md) para entender cómo difiere el modo WebGL del modo 2D. Esta será una referencia valiosa para algunos detalles de implementación para shaders, trazos y más.
-- Lee nuestras [instrucciones para contribuyentes](https://p5js.org/contributor-docs/#/./contributor_guidelines) para obtener información sobre cómo crear issues, configurar el código base y probar cambios.
+- Lee nuestras [instrucciones para contribuidores](https://p5js.org/contributor-docs/#/./contributor_guidelines) para obtener información sobre cómo crear issues, configurar el código base y probar cambios.
 - Puede ser útil conocer un poco sobre la API WebGL del navegador, en la que se basa el modo WebGL de p5.js:[WebGL Fundamentals](https://webglfundamentals.org/) repasa muchos conceptos básicos de renderización.
   - [The Book of Shaders](https://thebookofshaders.com/) explica muchas técnicas utilizadas en shaders de WebGL.
 
