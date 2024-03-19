@@ -99,7 +99,7 @@ Las solicitudes de _issues_ de mejora de función deberían utilizar la plantill
 Este tipo de _issue_ tiene una plantilla mínima de discusión y debería ser utilizada para recopilar comentarios y retroalimentaciones sobre un tema en general antes de consolidarlo en algo más específico, como una solicitud de función. Estos _issues_ de discusión pueden cerrarse cuando finaliza la conversación y se han creado los _issues_ más específicos resultantes:
 
 - Si se abre un _issue_ como una discusión pero debería ser, por ejemplo, un _bug report_(informe de error), se debe aplicar la etiqueta correcta y quitar la etiqueta de "discusión". Además, se debe solicitar información adicional sobre el error al autor si aún no se ha incluido.
-- Si se abre un _issue_ como una discusión pero no es relevante para la contribución de código fuente o de otra manera relevante para los repositorios de GitHub/el proceso de contribución/la comunidad de contribución, deberían ser redirigidos al foro o a Discord y el _issue_ cerrado.
+- Si se abre un _issue_ como una discusión pero no es relevante para la contribución de código fuente o de otra manera relevante para los repositorios de GitHub, el proceso de contribución o la comunidad de contribución, deberían ser redirigidos al foro o a Discord y el _issue_ cerrado.
 - Si es relevante, se deben agregar etiquetas adicionales a los _issues_ de discusión para señalar aún más qué tipo de discusión es con solo mirarla.
 
 ---
@@ -118,10 +118,10 @@ Casi todas las contribuciones de código a los repositorios de p5.js se realizan
 
 ### Correción Sencilla
 
-_Simple fix_ (Correcciones simples),  como la corrección de un pequeño error tipográfico, pueden fusionarse directamente por cualquier persona con acceso para fusionar. Después, revisa la pestaña "Files Changed" de _pull request_ para asegurarte de que la prueba automatizada de integración continua (CI) haya pasado.
+Correcciones simples, como la corrección de un pequeño error tipográfico, pueden fusionarse directamente por cualquier persona con acceso para fusionar. Después, revisa la pestaña "Files Changed" de _pull request_ para asegurarte de que la prueba automatizada de integración continua (CI) haya pasado.
 
-![The "files changed" tab when viewing a pull request on GitHub](images/files-changed.png)
-![The "All checks have passed" indicator on a GitHub pull request, highlighted above the merge button](images/all-checks-passed.png)
+![The "files changed" tab when viewing a pull request on GitHub](../images/files-changed.png)
+![The "All checks have passed" indicator on a GitHub pull request, highlighted above the merge button](../images/all-checks-passed.png)
 
 
 ### Corrección de Error
@@ -137,14 +137,14 @@ _Simple fix_ (Correcciones simples),  como la corrección de un pequeño error t
    - [ ] La Corrección debe pasar todas las pruebas automatizadas e incluir nuevas pruebas(tests) si son relevantes.
 4. Si se requieren cambios adicionales, se deben agregar comentarios en línea a las líneas relevantes según se describió anteriormente [aquí](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/commenting-on-a-pull-request#adding-line-comments-to-a-pull-request).
    - Un bloque de sugerencias también puede ser usado para sugerir cambios específicos:\
-     ![The Suggest Change button while writing a comment on code in a GitHub pull request](images/suggest-change.png)\
-     ![A suggested change appearing within code fences with the "suggestion" tag](images/suggested-value-change.png)\
-     ![A suggested change previewed as a diff](images/suggestion-preview.png)
+     ![The Suggest Change button while writing a comment on code in a GitHub pull request](../images/suggest-change.png)\
+     ![A suggested change appearing within code fences with the "suggestion" tag](../images/suggested-value-change.png)\
+     ![A suggested change previewed as a diff](../images/suggestion-preview.png)
    - Si se requieren múltiples cambios, no agregues comentarios de una sola línea muchas veces. En su lugar, sigue el procedimiento documentado [aquí](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/reviewing-proposed-changes-in-a-pull-request) para hacer comentarios de varias líneas y una sola solicitud de cambios (change request).
    - Si los comentarios en línea son solo para aclaraciones o discusión, elige "Comment" en lugar de "Request changes":\
-     ![The "comment" option circled within the GitHub Finish Review menu](images/comment-review.png)
+     ![The "comment" option circled within the GitHub Finish Review menu](../images/comment-review.png)
 5. Una vez que la _pull request_ haya sido revisada y no se requieran cambios adicionales, un supervisor puede marcar la _pull request_ como "Aprobada" eligiendo la opción "Approve" en el paso anterior, con o sin comentarios adicionales. El supervisor puede luego solicitar una revisión adicional por otro supervisor o responsable de mantenimiento si lo desea, fusionar(merge) la _pull request_ si tiene acceso para fusionar(merge access), o solicitar "merge" (fusión) de un responsable de mantenimiento.
-6. @[all-contributors](https://allcontributors.org/docs/en/emoji-key)El bot debería ser llamado para agregar cualquier nuevo colaborador a la lista de colaboradores en el archivo README.md. Cada tipo de contribución puede ser indicado en lugar de `[contribution` `type]` a continuación, se puede encontrar la lista completa de tipos de contribuciones disponibles en el enlace anterior.
+6. El bot @[all-contributors](https://allcontributors.org/docs/en/emoji-key) debería ser llamado para agregar cualquier nuevo colaborador a la lista de colaboradores en el archivo README.md. Cada tipo de contribución puede ser indicado en lugar de `[contribution` `type]` a continuación, se puede encontrar la lista completa de tipos de contribuciones disponibles en el enlace anterior.
 
 `@all-contributors` `please` `add` `@[GitHub` `handle]` `for` `[contribution` `type]`
 
@@ -371,7 +371,7 @@ There are many other commands available in the GitHub CLI as well that you may o
 
 Instead of manually monitoring the "Issues" or "Pull Requests" tabs of the repo for new issues or PRs, you can "watch" the repo by clicking on the "Watch" button with an eye icon on the top of the repo page opposite the repo name.
 
-![Cropped screenshot of the top right corner of a GitHub repository page showing a series of buttons in the center from left to right: Sponsor, Watch, Fork, Starred.](images/github-repo-metrics.png)
+![Cropped screenshot of the top right corner of a GitHub repository page showing a series of buttons in the center from left to right: Sponsor, Watch, Fork, Starred.](../images/github-repo-metrics.png)
 
 By watching a repo, events such as new issues, new pull requests, mentions of your user handle, and other activities you subscribed to on the repo will be sent as notifications to your [notification page](https://github.com/notifications), where they can be marked as read or dismissed much like an email inbox.
 
