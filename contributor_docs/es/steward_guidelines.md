@@ -168,7 +168,7 @@ Las _pull requests_ de Dependabot generalmente solo son visibles para los admini
 ---
 
 
-# Proceso de Construcción
+## Proceso de Construcción
 
 Esta sección no cubrirá la configuración general de construcción ni los comandos, sino más bien detalles sobre lo que sucede detrás de escena. Consulta las [directrices para administradores](contributor_guidelines.md#working-on-p5js-codebase) para obtener información más detallada sobre la construcción.
 
@@ -265,7 +265,7 @@ Finalmente, después de que todas las construcciones y pruebas estén completas,
 
 ### Tarea Variada
 
-Todos los pasos pueden ejecutarse directamente con `npx grunt [paso]`. También hay algunas tareas que no se mencionan arriba pero podrían ser útiles en ciertos casos.
+Todos los pasos pueden ejecutarse directamente con `npx grunt [step]`. También hay algunas tareas que no se mencionan arriba pero podrían ser útiles en ciertos casos.
 
 ```
 grunt yui:dev
