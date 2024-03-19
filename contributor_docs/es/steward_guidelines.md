@@ -1,11 +1,11 @@
-# Proceso de construcción
+# Proceso de Construcción
 
 Esta sección no cubrirá la configuración general de construcción ni los comandos, sino más bien detalles sobre lo que sucede detrás de escena. Consulta las [directrices para administradores](contributor_guidelines.md#working-on-p5js-codebase) para obtener información más detallada sobre la construcción.
 
 El archivo Gruntfile.js contiene las definiciones principales de construcción para p5.js. Entre las diferentes herramientas utilizadas para construir la biblioteca y la documentación se incluyen, pero no se limitan a: Grunt, Browserify, YUIDoc, ESLint, Babel, Uglify y Mocha. Puede ser útil comenzar con la tarea `default` y retroceder desde allí. También puede ser útil abrir el documento Gruntfile.js mientras se sigue la explicación a continuación.
 
 
-### Tarea principal de construcción
+### Tarea Principal de Construcción
 
 ```
 grunt.registerTask('default', ['lint', 'test']);
@@ -24,7 +24,7 @@ La tarea `lint` consiste en dos sub tareas: `lint:source` y `lint:samples`. `lin
 
 La tarea `lint:samples` primero ejecutará la tarea `yui`, que a su vez consiste en `yuidoc:prod`, `clean:reference` y `minjson`, que extraen la documentación del código fuente en un documento JSON, eliminan archivos no utilizados del paso anterior y minifican el archivo JSON generado en `data.min.json, respectivamente.
 
-A continuación en `lint:samples` está `eslint-samples:source`, que es una tarea escrita personalizada cuya definición está en [./tasks/build/eslint-samples.js](tasks/build/eslint-samples.js); ejecutará ESLint para verificar el código de ejemplo de la documentación y asegurarse de que siga la misma convención de codificación que el resto de p5.js (`yui se ejecuta primero aquí porque necesitamos que el archivo JSON se construya primero antes de que podamos aplicar lint a los ejemplos).
+A continuación en `lint:samples` está `eslint-samples:source`, que es una tarea escrita personalizada cuya definición está en [./tasks/build/eslint-samples.js](tasks/build/eslint-samples.js); ejecutará ESLint para verificar el código de ejemplo de la documentación y asegurarse de que siga la misma convención de codificación que el resto de p5.js (`yui` se ejecuta primero aquí porque necesitamos que el archivo JSON se construya primero antes de que podamos aplicar lint a los ejemplos).
 
 
 #### Tarea `test`
@@ -56,7 +56,7 @@ Las tareas que comienzan con `browserify` están definidas en [./tasks/build/bro
 - `uglify` toma el archivo de salida de `browserify:min` y lo minifica en el p5.min.js final (la configuración de este paso está en el archivo Gruntfile.js principal).
 - `browserify:test` está construyendo una versión idéntica y completa a la de p5.js, salvo por el código adicional que se utiliza para informar sobre la cobertura de código de prueba (usando [Istanbul](https://istanbul.js.org/)).
 
-Primero, el uso del código específico de node.js `fs.readFileSync()` es reemplazado por el contenido real del archivo utilizando `brfs-babel`. Esto se utiliza principalmente en el código WebGL para insertar código de shader desde archivos fuente escritos como archivos separados.
+Primero, el uso del código específico de node.js `fs.readFileSync()` es reemplazado por el contenido real del archivo utilizando `brfs-babel`. Esto se utiliza principalmente en el código WebGL para insertar código de <em>shader</em> desde archivos fuente escritos como archivos separados.
 
 A continuación, el código fuente, incluidas todas las dependencias de node\_modules, se transpila usando Babel para cumplir con el requisito de [Browserslist](https://browsersl.ist/) definido en package.json, así como para convertir las declaraciones de importación ES6 en `require()` de CommonJS que browserify comprende. Esto también nos permite utilizar una sintaxis más nueva disponible en ES6 y más allá sin la preocupación por la compatibilidad del navegador.
 
@@ -91,7 +91,7 @@ Finalmente, después de que todas las construcciones y pruebas estén completas,
 ¡Y eso cubre la tarea predeterminada en la configuración de Gruntfile.js!
 
 
-### Tareas variadas
+### Tarea Variada
 
 Todos los pasos pueden ejecutarse directamente con `npx grunt [paso]`. También hay algunas tareas que no se mencionan arriba pero podrían ser útiles en ciertos casos.
 
@@ -122,21 +122,21 @@ Dependiendo de en qué estés trabajando, elegir la tarea de observación más m
 ---
 
 
-## Proceso de lanzamiento
+## Proceso de Lanzamiento
 
 Consulta [release\_process.md](release_process.md).
 
 ---
 
 
-## Tips y trucos
+## Consejos y Trucos
 
-A veces, la cantidad de issues y PR que requieren revisión puede ser un poco abrumadora. Si bien intentamos implementar procesos que faciliten las cosas, hay algunos consejos y trucos que puedes utilizar para ayudar con la revisión de issues y PRs.
+A veces, la cantidad de <em>issues</em> y PR que requieren revisión puede ser un poco abrumadora. Si bien intentamos implementar procesos que faciliten las cosas, hay algunos consejos y trucos que puedes utilizar para ayudar con la revisión de <em>issues</em> y PRs.
 
 
-### Plantillas de respuesta
+### Plantillas de Respuesta
 
-Una característica útil de GitHub que puedes utilizar es la funcionalidad [Respuestas Hduardadas](https://docs.github.com/en/get-started/writing-on-github/working-with-saved-replies/about-saved-replies), que está disponible para usar al redactar una respuesta a issues o pull requests. Algunos de los flujos de trabajo descritos anteriormente pueden requerir responder a issues o PRs con respuestas idénticas o muy similares (redireccionar preguntas al foro, aceptar un problema para su corrección, etc.), y usar Respuestas Guardadas puede hacer que esto sea un poco más eficiente.
+Una característica útil de GitHub que puedes utilizar es la funcionalidad [Respuestas Guardadas](https://docs.github.com/en/get-started/writing-on-github/working-with-saved-replies/about-saved-replies), que está disponible para usar al redactar una respuesta a <em>issues</em> o <em>pull requests</em>. Algunos de los flujos de trabajo descritos anteriormente pueden requerir responder a <em>issues</em> o PRs con respuestas idénticas o muy similares (redireccionar preguntas al foro, aceptar un problema para su corrección, etc.), y usar Respuestas Guardadas puede hacer que esto sea un poco más eficiente.
 
 A continuación, se muestran algunas de las Respuestas Guardadas que están siendo utilizadas por los mantenedores de p5.js. ¡Puedes usarlas tú mismo o crear las tuyas!
 
@@ -148,12 +148,12 @@ A continuación, se muestran algunas de las Respuestas Guardadas que están sien
 
 ##### Cerrando: Necesita Fragmento
 
-> Estoy cerrando esto por motivos organizativos. Por favor, reabre si puedes proporcionar un fragmento de código que ilustre el issue. ¡Gracias!
+> Estoy cerrando esto por motivos organizativos. Por favor, reabre si puedes proporcionar un fragmento de código que ilustre el <em>issue</em>. ¡Gracias!
 
 
 ##### Cerrando: Usa el Foro
 
-> Los issues de GitHub aquí son un buen lugar para los issues y problemas con la biblioteca p5.js en sí. Para preguntas sobre cómo escribir tu propio código, pruebas o seguir tutoriales, el [foro](https://discourse.processing.org/) es el mejor lugar para publicar. ¡Gracias!
+> Los <em>issues</em> de GitHub aquí son un buen lugar para los <em>issues</em> y problemas con la biblioteca p5.js en sí. Para preguntas sobre cómo escribir tu propio código, pruebas o seguir tutoriales, el [foro](https://discourse.processing.org/) es el mejor lugar para publicar. ¡Gracias!
 
 
 ##### Cerrando: GSOC
@@ -163,9 +163,9 @@ A continuación, se muestran algunas de las Respuestas Guardadas que están sien
 
 ##### Cerrando: Acceso
 
-> No veo mucho interés en esta función, y no tenemos una explicación clara de cómo [amplía el acceso](access.md), así que cerraré esto por ahora. Si se puede agregar una declaración de acceso a la solicitud del issue, no dudes en volver a abrirlo.
+> No veo mucho interés en esta función, y no tenemos una explicación clara de cómo [amplía el acceso](access.md), así que cerraré esto por ahora. Si se puede agregar una declaración de acceso a la solicitud del <em>issue</em>, no dudes en volver a abrirlo.
 
-> No vemos una explicación más detallada de cómo esta cuestión [amplía el acceso](access.md), así que cerraré este issue por ahora. Si se puede agregar una declaración de acceso más detallada a la solicitud de función, no dudes en volver a abrirla. ¡Gracias!
+> No vemos una explicación más detallada de cómo esta cuestión [amplía el acceso](access.md), así que cerraré este <em>issue</em> por ahora. Si se puede agregar una declaración de acceso más detallada a la solicitud de función, no dudes en volver a abrirla. ¡Gracias!
 
 
 ##### Cerrando: Complemento
@@ -173,12 +173,12 @@ A continuación, se muestran algunas de las Respuestas Guardadas que están sien
 > Creo que esta función está fuera del alcance de la API de p5.js (intentamos mantenerla lo más minimalista posible), pero podría ser un gran punto de partida para una biblioteca complementaria. Consulta la documentación aquí sobre cómo crear un complemento: [https://github.com/processing/p5.js/blob/main/contributor\_docs/creating\_libraries.md](creating_libraries.md)
 
 
-##### Cerrando PR: Primero Necesita Issue
+##### Cerrando PR: Primero Necesita <em>Issue</em>
 
-> Gracias. Como recordatorio, primero deben abrirse issues antes de que se abran pull request y etiquetarse con el issue. Esto es necesario para realizar un seguimiento del desarrollo y mantener la discusión clara. ¡Gracias!
+> Gracias. Como recordatorio, primero deben abrirse <em>issues</em> antes de que se abran pull request y etiquetarse con el <em>issue</em>. Esto es necesario para realizar un seguimiento del desarrollo y mantener la discusión clara. ¡Gracias!
 
 
-##### Aprobar issue para corrección
+##### Aprobar <em>issue</em> para corrección
 
 > Puedes seguir adelante con una solución. Gracias.
 
@@ -197,15 +197,15 @@ Después de instalar GitHub CLI e iniciar sesión, revisar una PR localmente se 
 También hay muchos otros comandos disponibles en GitHub CLI que puedes encontrar útiles o no, pero es una buena herramienta para tener en cualquier caso.
 
 
-### Gestión de notificaciones
+### Gestión de Notificaciones
 
-En lugar de monitorear manualmente las pestañas "Issues" o "Pull Requests" del repositorio en busca de nuevos issues o PRs, puedes "ver" el repositorio haciendo clic en el botón "Watch" con un ícono de ojo en la parte superior de la página del repositorio, frente al nombre del repositorio.
+En lugar de monitorear manualmente las pestañas <em>Issues</em> o <em>Pull Requests</em> del repositorio en busca de nuevos <em>issues</em> o PRs, puedes "ver" el repositorio haciendo clic en el botón <em>Watch</em> con un ícono de ojo en la parte superior de la página del repositorio, frente al nombre del repositorio.
 
 ![Cropped screenshot of the top right corner of a GitHub repository page showing a series of buttons in the center from left to right: Sponsor, Watch, Fork, Starred.](images/github-repo-metrics.png)
 
-Al observar un repositorio, eventos como nuevos issues, nuevos pull requests, menciones de tu nombre de usuario y otras actividades a las que te hayas suscrito en el repositorio se enviarán como notificaciones a tu [página de notificaciones](https://github.com/notifications), donde se pueden marcar como leídas o descartadas de la misma manera que un buzón de correo electrónico.
+Al observar un repositorio, eventos como nuevos <em>issues</em>, nuevos <em>pull requests</em>, menciones de tu nombre de usuario y otras actividades a las que te hayas suscrito en el repositorio se enviarán como notificaciones a tu [página de notificaciones](https://github.com/notifications), donde se pueden marcar como leídas o descartadas de la misma manera que un buzón de correo electrónico.
 
 En algunos casos, también puedes recibir correos electrónicos de GitHub sobre eventos en el repositorio que estás observando, y puedes personalizarlos (incluida la desuscripción completa de ellos) desde tu [página de configuración de notificaciones](https://github.com/settings/notifications).
 
-Configurar estas opciones para que se adapten a la forma en que trabajas puede ser la diferencia entre tener que buscar issues/PRs relevantes para revisar manualmente y sentirse abrumado por notificaciones interminables de GitHub. Se requiere un buen equilibrio aquí. Como sugerencia inicial, los supervisores deberían observar este repositorio para "Issues" y "Pull Requests" y configurarlo para recibir correos electrónicos solo sobre "Participando, @menciones y personalizadas".
+Configurar estas opciones para que se adapten a la forma en que trabajas puede ser la diferencia entre tener que buscar <em>issues</em>/PRs relevantes para revisar manualmente y sentirse abrumado por notificaciones interminables de GitHub. Se requiere un buen equilibrio aquí. Como sugerencia inicial, los supervisores deberían observar este repositorio para <em>Issues</em> y <em>Pull Requests</em> y configurarlo para recibir correos electrónicos solo sobre "Participando, @menciones y personalizadas".
 

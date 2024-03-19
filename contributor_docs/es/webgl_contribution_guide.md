@@ -7,8 +7,7 @@ Si estás leyendo esta página, probablemente estés interesado en ayudar a trab
 
 - Lee nuestra [visión general de la arquitectura WebGL de p5.js](webgl_mode_architecture.md) para entender cómo difiere el modo WebGL del modo 2D. Esta será una referencia valiosa para algunos detalles de implementación para shaders, trazos y más.
 - Lee nuestras [instrucciones para contribuyentes](https://p5js.org/contributor-docs/#/./contributor_guidelines) para obtener información sobre cómo crear issues, configurar el código base y probar cambios.
-- Puede ser útil conocer un poco sobre la API WebGL del navegador, en la que se basa el modo WebGL de p5.js:
-  - [Fundamentos de WebGL](https://webglfundamentals.org/) repasa muchos conceptos básicos de renderización.
+- Puede ser útil conocer un poco sobre la API WebGL del navegador, en la que se basa el modo WebGL de p5.js:[WebGL Fundamentals](https://webglfundamentals.org/) repasa muchos conceptos básicos de renderización.
   - [The Book of Shaders](https://thebookofshaders.com/) explica muchas técnicas utilizadas en shaders de WebGL.
 
 
@@ -18,12 +17,12 @@ Organizamos <em>issues</em> abiertos [en un Proyecto de GitHub](https://github.c
 
 - **Cambios a nivel del sistema** son objetivos a largo plazo con implicaciones de gran alcance en el código. Estos requieren más discusión y planificación antes de comenzar con la implementación.
 - **Errores sin solución aún** son informes de errores que necesitan un poco de depuración para reducir la causa. Estos aún no están listos para ser corregidos: una vez que se encuentra la causa, entonces podemos discutir la mejor manera de corregirla.
-- **Errores con soluciones pero sin <em>PR</em>** son errores donde hemos decidido cómo solucionarlo y están libres para que alguien escriba el código.
-- **Mejoras menores** son issues para nuevas características que tienen un lugar obvio dentro de la arquitectura actual sin necesidad de discutir cómo encajarlas. Una vez acordado que vale la pena hacerlas, están disponibles para que alguien escriba el código.
+- **Errores con soluciones pero sin PR** son errores donde hemos decidido cómo solucionarlo y están libres para que alguien escriba el código.
+- **Mejoras menores** son <em>issues</em> para nuevas características que tienen un lugar obvio dentro de la arquitectura actual sin necesidad de discutir cómo encajarlas. Una vez acordado que vale la pena hacerlas, están disponibles para que alguien escriba el código.
 - **Funcionalidades 2D** son aquellas que ya existen en p5.js pero no dentro del modo WebGL. El comportamiento esperado de la funcionalidad, una vez implementada, es que coincida con el modo 2D. Es posible que necesitemos discutir la mejor implementación, pero los requisitos del usuario para estos son claros.
 - **Funcionalidades que no funcionan en todos los contextos** son aquellas que existen en el modo WebGL pero no funcionan en todas las formas en que se puede usar el modo WebGL. Por ejemplo, algunos métodos de p5.js funcionan tanto con coordenadas 2D como 3D, pero otros fallan si se usan coordenadas 3D. Estás están disponibles para comenzar a trabajar.
 - Las **solicitudes de funcionalidad** son todas las demás solicitudes de cambios de código. Estos necesitan un poco de discusión para asegurarnos de que sean cosas que encajen en la hoja de ruta del modo WebGL.
-- Issues de **documentación** son aquellos que no necesitan un cambio de código, sino una mejor documentación del comportamiento de p5.js.
+- <em>Issues</em> de **documentación** son aquellos que no necesitan un cambio de código, sino una mejor documentación del comportamiento de p5.js.
 
 
 ## Dónde Colocar el Código
@@ -97,7 +96,7 @@ test('coplanar strokes match 2D', function() {
 });
 ```
 
-Esto no siempre funciona porque no se puede desactivar el <em>antialiasing</em> en el modo 2D, y el antialiasing en el modo WebGL a menudo es ligeramente diferente. Sin embargo, puede funcionar para líneas rectas en los ejes x, y.
+Esto no siempre funciona porque no se puede desactivar el <em>antialiasing</em> en el modo 2D, y el <em>antialiasing</em> en el modo WebGL a menudo es ligeramente diferente. Sin embargo, puede funcionar para líneas rectas en los ejes x, y.
 
 Si una funcionalidad es exclusiva de WebGL, en lugar de comparar píxeles con el modo 2D, a menudo verificamos algunos píxeles para asegurarnos de que su color sea el esperado. Algún día, podríamos convertir esto en un sistema más robusto que compare con instantáneas de imagen completas de nuestros resultados esperados en lugar de algunos píxeles, pero por ahora, aquí tienes un ejemplo de verificación de color de píxeles:
 
