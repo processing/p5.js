@@ -11,39 +11,39 @@ Este es un documento relativamente largo e integral, pero trataremos de indicar 
 
 # Tabla de Contenidos
 
-- [Todo acerca de los 'Issues' o problemas](#all-about-issues)
-  - [¿Qué son los 'Issues' en GitHub?](#what-are-issues)
-  - [Plantillas para reportar 'Issues'](#issue-templates)
-    - [Reportar un error](#found-a-bug)
-    - [Sugerir una mejora a una funcionalidad existente](#existing-feature-enhancement)
-    - [Sugerir una funcionalidad nueva](#new-feature-request)
-    - [Abrir una discusión ](#discussion)
-- [Trabajando en la base de código de p5.js](#working-on-the-p5js-codebase)
-  - [Inicio Rápido para Desarrolladores](#quick-get-started-for-developers)
-  - [Utilizando la funcionalidad de edición de Github](#using-the-github-edit-functionality)
-  - [Haciendo un fork de p5.js y trabajando desde tu fork](#forking-p5js-and-working-from-your-fork)
-    - [Utilizando Github Desktop](#using-github-desktop)
-    - [Utilizando la interfaz de línea de comandos de Git](#using-the-git-command-line-interface)
-  - [Desglose de la base de código ](#codebase-breakdown)
-  - [Configuración de compilación](#build-setup)
-  - [Flujo de trabajo de Git](#git-workflow)
-    - [Código fuente](#source-code)
-    - [Pruebas unitarias](#unit-tests)
-    - [Documentación en línea](#inline-documentation)
-    - [Internacionalización](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#internationalization)
-    - [Accesibilidad](#accessibility)
-  - [Estándares de código](#code-standard)
-  - [Principios de Diseño de Software](#software-design-principles)
+- [Todo acerca de los 'Issues' o problemas](#todo-acerca-de-los-issues-o-problemas)
+  - [¿Qué son los 'Issues' en GitHub?](#qué-son-los-issues-en-github)
+  - [Plantillas para reportar 'Issues'](#plantillas-para-reportar-issues)
+    - [Reportar un error](#reportar-un-error)
+    - [Sugerir una mejora a una funcionalidad existente](#sugerir-una-mejora-a-una-funcionalidad-existente)
+    - [Sugerir una funcionalidad nueva](#sugerir-una-funcionalidad-nueva)
+    - [Abrir una discusión ](#abrir-una-discusión)
+- [Trabajando en la base de código de p5.js](#trabajando-en-la-base-de-código-de-p5js)
+  - [Inicio Rápido para Desarrolladores](#inicio-rápido-para-desarrolladores)
+  - [Utilizando la funcionalidad de edición de Github](#utilizando-la-funcionalidad-de-edición-de-github)
+  - [Haciendo un fork de p5.js y trabajando desde tu fork](#haciendo-un-fork-de-p5js-y-trabajando-desde-tu-fork)
+    - [Utilizando Github Desktop](#utilizando-github-desktop)
+    - [Utilizando la interfaz de línea de comandos de Git](#utilizando-la-interfaz-de-línea-de-comandos-de-git)
+  - [Desglose de la base de código ](#desglose-de-la-base-de-código)
+  - [Configuración de compilación](#configuración-de-compilación)
+  - [Flujo de trabajo de Git](#flujo-de-trabajo-de-git)
+    - [Código fuente](#código-fuente)
+    - [Pruebas unitarias](#pruebas-unitarias)
+    - [Documentación en línea](#documentación-en-línea)
+    - [Internacionalización](#internacionalización)
+    - [Accesibilidad](#accesibilidad)
+  - [Estándares de código](#estándares-de-código)
+  - [Principios de Diseño de Software](#principios-de-diseño-de-software)
 - [Pull Requests](#pull-requests)
-  - [Creación de un Pull Request](#creating-a-pull-request)
-    - [Información sobre el Pull Request](#pull-request-information)
-    - [Titulo](#title)
-    - [Resuelve ](#resolves)
-    - [Cambios](#changes)
-    - [Captura de pantalla de los cambios](#screenshots-of-the-change)
-    - [Lista de verificación del Pull Request](#pr-checklist)
-    - [Rebase y resolución de conflictos](#rebase-and-resolve-conflicts)
-  - [Discutir y Corregir](#discuss-and-amend)
+  - [Creación de un Pull Request](#creación-de-un-pull-request)
+    - [Información sobre el Pull Request](#información-sobre-el-pull-request)
+    - [Titulo](#titulo)
+    - [Resuelve](#resuelve)
+    - [Cambios](#cambios)
+    - [Captura de pantalla de los cambios](#captura-de-pantalla-de-los-cambios)
+    - [Lista de verificación del Pull Request](#lista-de-verificación-del-pull-request)
+    - [Rebase y resolución de conflictos](#rebase-y-resolución-de-conflictos)
+  - [Discutir y Corregir](#discutir-corregir)
 
 ---
 # Todo acerca de los “Issues” o problemas
@@ -51,7 +51,7 @@ Este es un documento relativamente largo e integral, pero trataremos de indicar 
 La mayoría de la actividad en los repositorios de GitHub de p5.js (también conocidos como "repo" de forma abreviada) ocurre en los 'Issues', o problemas, lo cual es un excelente lugar para comenzar tu viaje de contribución.
 
 
-## ¿Qué son los ‘Issues’ en GitHub?
+## ¿Qué son los "Issues" en GitHub?
 
 ![A cropped screenshot of the p5.js library GitHub repository, only showing contents of the top right corner. A red box is drawn on top of the screenshot surrounding the Issues tab.](../images/issues-tab.png)
 
@@ -62,7 +62,7 @@ Mientras un <em>Issue</em> puede ser creado por diferentes razones, usualmente u
 ¡Hemos creado plantillas fáciles de usar que puede ayudarte a determinar si un tema es adecuado para ser publicado como un <em>Issue</em> en GitHub, o si sería más apropiado publicarlo en otro lugar!
 
 
-## Plantillas para reportar <em>Issues </em>
+## Plantillas para reportar "Issues"
 Las plantillas  para reportar <em>Issues</em> en p5.js hacen que sea más sencillo para los Supervisores y los responsables de mantenimiento entender y revisar el contenido sugerido por el colaborador. Además, las plantillas le facilitan al colaborador el proceso de completar un <em>Issue</em>  y, así mismo, le permiten recibir una respuesta más rápida. 
 
 ![Screenshot of an example of what an issue looks like on GitHub. The title of the issue in the screenshot is "Warning being logged in Safari when using a filter shader in 2D mode #6597"](../images/github-issue.png)
@@ -78,7 +78,7 @@ Cuando encuentres un comportamiento incorrecto en p5.js, o algo que no se esté 
 Esta plantilla provee campos que debes llenar con la siguiente información relevante: 
 
 1.	**¿Cuál es la subárea más adecuada de p5.js?:** esto añadirá automáticamente las [etiquetas]( https://github.com/processing/p5.js/blob/main/contributor_docs/issue_labels.md) relevantes a tu <em>Issue</em>, lo que nos ayudará a identificar y responder adecuadamente.
-2.	**Versión de p5.js:** Puedes verificar la versión de p5.js dentro de la etiqueta `<script>`  que se encuentra en la primera línea del archivo p5.js/p5.min.js. Opcionalmente, en el [editor de p5.js]( https://editor.p5js.org/), puedes dar clic al botón de ‘Ayuda’ que se encuentra en la parte superior. Luego da clic en ‘Acerca de’ y aquí podrás encontrar la versión de p5.js. Esta lucirá algo como v`1.9.1`(tres números separados por un punto).
+2.	**Versión de p5.js:** Puedes verificar la versión de p5.js dentro de la etiqueta `<script>`  que se encuentra en la primera línea del archivo p5.js/p5.min.js. Opcionalmente, en el [editor de p5.js]( https://editor.p5js.org/), puedes dar clic al botón de ‘Ayuda’ que se encuentra en la parte superior. Luego da clic en ‘Acerca de’ y aquí podrás encontrar la versión de p5.js. Esta lucirá algo como `1.9.1`(tres números separados por un punto).
 3.	**Navegadores web y versión de los mismos:** esta sección nos ayuda a identificar diversos comportamientos entre los diferentes navegadores web. Para encontrar la versión de tu navegador, sigue las instrucciones proporcionadas en la siguiente tabla según el navegador que estés utilizando.
 
 <table>
