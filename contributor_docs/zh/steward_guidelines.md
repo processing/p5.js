@@ -38,7 +38,7 @@
  2. 如果可以复现 bug：
     - 有时需要进行讨论以确定修复特定 bug 的最佳方法。有时这可能很简单，有时可能会比较棘手。在需要根据具体情况做出决定时，请参考 [p5.js 的设计原则](./design_principles.md)。
     - 如果 issue 作者在 issue 中表示愿意提供修复方法：
-      - 留下评论，批准 issue 作者来提供修复方案。使用 “Assignee” 旁边的右侧的齿轮按钮，将 issue 分配给 issue 作者。
+      - 留下评论，批准 issue 作者来提供修复方案。使用 "Assignee" 旁边的右侧的齿轮按钮，将 issue 分配给 issue 作者。
     - 如果 issue 作者不愿意提供修复方法：
       - 留下评论确认 bug 是可以复现的。
       - 尝试自行修复或在 issue 上添加“需要帮助”的标签，以表明需要修复的 issue。
@@ -122,9 +122,9 @@
       ![A suggested change appearing within code fences with the "suggestion" tag](../images/suggested-value-change.png)\
       ![A suggested change previewed as a diff](../images/suggestion-preview.png)
     - 如果需要进行多个更改，而不是多次添加单行注释，请按照[此处](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/reviewing-proposed-changes-in-a-pull-request)所述进行多行注释并请求更改。
-    - 如果行级注释仅用于澄清或讨论，则在上一步中选择 “Comment” 而不是 “Request changes”:\
+    - 如果行级注释仅用于澄清或讨论，则在上一步中选择 "Comment" 而不是 "Request changes":\
     ![The "comment" option circled within the GitHub Finish Review menu](../images/comment-review.png)
- 5. 一旦 PR 已经被审查，并且不需要任何其他更改，负责人可以添加或不添加评论，在上一步中选择 “Approve” 选项，将 PR 标记为 “Approved”。然后，如果需要，他们可以要求另一个负责人或维护者进行进一步审查，或者如果他们具有合并访问权限，可以合并 PR，或者维护者将合并已批准的 PR。
+ 5. 一旦 PR 已经被审查，并且不需要任何其他更改，负责人可以添加或不添加评论，在上一步中选择 "Approve" 选项，将 PR 标记为 "Approved"。然后，如果需要，他们可以要求另一个负责人或维护者进行进一步审查，或者如果他们具有合并访问权限，可以合并 PR，或者维护者将合并已批准的 PR。
  6. 应该调用 @[all-contributors](https://allcontributors.org/docs/en/emoji-key) 机器人，将任何新贡献者添加到 README.md 文件的贡献者列表中。每种贡献类型都可以用下面的`[contribution` `type]`代替，可用贡献类型的完整列表可以在上面的链接中找到。
 
  `@all-contributors` `please` `add` `@[GitHub` `handle]` `for` `[contribution` `type]`
@@ -192,13 +192,13 @@ grunt.registerTask('build', [
 
 以`browserify`开头的任务在[./tasks/build/browserify.js](./tasks/build/browserify.js)中定义。它们执行相似的步骤，但有一些细微的差异。以下是将众多 p5.js 源代码文件整合为一个完整库的主要步骤：
 
-- `browserify`负责构建 p5.js ，而`browserify:min`则构建下一步要进行压缩的中间文件。`browserify`和`browserify:min`之间的区别在于，`browserify:min`不包含FES运行所需的数据。
+- `browserify`负责构建 p5.js，而`browserify:min`则构建下一步要进行压缩的中间文件。`browserify`和`browserify:min`之间的区别在于，`browserify:min`不包含 FES 运行所需的数据。
 - `uglify`将`browserify:min`的输出文件压缩，生成最终的 p5.min.js 文件（此步骤的配置在主 Gruntfile.js 中）。
-- `browserify:test`构建的版本与完整的 p5.js 版本相同，只是添加了用于测试代码覆盖率报告的代码（使用[Istanbul](https://istanbul.js.org/)）。
+- `browserify:test`构建的版本与完整的 p5.js 版本相同，只是添加了用于测试代码覆盖率报告的代码（使用 [Istanbul](https://istanbul.js.org/) ）。
 
-在 browserify 步骤中，除了将各种文件合并为一个文件外，还执行了其他几个步骤。首先，使用`brfs-babel`将`fs.readFileSync()` node.js特定代码的使用替换为文件的实际内容。这主要用于 WebGL 代码，以将作为独立文件编写的着色器代码内联到源代码中。
+在 browserify 步骤中，除了将各种文件合并为一个文件外，还执行了其他几个步骤。首先，使用`brfs-babel`将`fs.readFileSync()` node.js 特定代码的使用替换为文件的实际内容。这主要用于 WebGL 代码，以将作为独立文件编写的着色器代码内联到源代码中。
 
-接下来，使用 Babel 将来自 node_modules 的所有依赖项的源代码进行转译，以匹配在 package.json 中定义的[Browserslist](https://browsersl.ist/)要求，并将 ES6 导入语句转换为 browserify 能理解的CommonJS `require()`。这也使我们能够使用 ES6 及更高版本中可用的较新语法，而不必担心浏览器兼容性问题。
+接下来，使用 Babel 将来自 node_modules 的所有依赖项的源代码进行转译，以匹配在 package.json 中定义的 [Browserslist](https://browsersl.ist/) 要求，并将 ES6 导入语句转换为 browserify 能理解的 CommonJS `require()`。这也使我们能够使用 ES6 及更高版本中可用的较新语法，而不必担心浏览器兼容性问题。
 
 在捆绑之后但将捆绑代码写入文件之前，代码会在`pretty-fast`中运行。如果代码不应被缩小，我们则需清理代码，以使最终格式更加一致。 （如果有需要的话， p5.js 源代码应保持可读、可查阅）
 
