@@ -214,3 +214,58 @@ Contiene algunos elementos de lista de verificación relevantes que debes marcar
 
 Una vez hecho, haz clic en "Crear pull request".
 
+
+### Rebase y resolver conflictos
+
+![Screenshot of an open pull request on p5.js's GitHub repository. The title of the pull request says "Fix filter shaders when rectMode is applied; add tests #6603.](/contributor_docs/images/opened-pr.png)
+
+Ahora debes inspeccionar <em>pull request</em> abierto y prestar atención a algunas cosas:
+
+1. El número de commits debe coincidir con el número de commits que has realizado, lo que significa que si has hecho dos commits mientras trabajabas en esta solicitud de extracción, solo debería mostrar dos commits en la pestaña "Commits".
+2. La pestaña "Archivos cambiados" debe mostrar los cambios que has realizado en comparación con el repositorio de p5.js y nada más.
+3. Cerca de la parte inferior, debería decir "Esta rama no tiene conflictos con la rama base," y no "Esta rama tiene conflictos que deben resolverse."
+
+Si alguna de las afirmaciones anteriores no es cierta (hay más <em>commits</em> de los que esperabas o hay conflictos), es posible que necesites [rebase](https://git-scm.com/book/en/v2/Git-Branching-Rebasing) o ayuda para resolver conflictos. Los conflictos aquí significan que has hecho cambios a un archivo al que también se le han aplicado cambios recientemente, y git no está seguro de qué conjunto de cambios mantener o dejar fuera. Si no estás seguro de resolver estos problemas, avísanos y te guiaremos a través del proceso. Las instrucciones básicas son las siguientes.
+
+A veces, Github te permite resolver conflictos directamente en el navegador mostrándote un botón de `Resolver conflictos`:
+
+![A screenshot of a GitHub pull request with merge conflicts. The conflicting filenames are listed, and there is a "Resolve conflicts" button highlighted.](/contributor_docs/images/resolve-conflicts.png)
+
+Los conflictos se muestran entre `<<<<<<<` y `>>>>>>>`, separados por `=======`. Una sección muestra tu código, y la otra sección muestra lo que ha cambiado en la rama principal.
+
+![A screenshot of GitHub's conflict resolution interface. A sidebar lists the files with conflicts. The right pane contains the conflicting code, with merge conflict markers highlighted.](/contributor_docs/images/conflicts-interface.png)
+
+Elimina los marcadores de conflicto y conserva solo el código final que deseas en tu PR. Puedes hacer clic en "Marcar como resuelto"  cuando se hayan resuelto todos los conflictos.
+
+![A screenshot of the GitHub conflict resolution interface after editing the code to remove the merge conflict markers. The "mark as resolved" button in the upper right is enabled.](/contributor_docs/images/mark-as-resolved.png)
+
+Cuando todos los archivos con conflictos hayan sido resueltos, puedes hacer <em>commit</em> de tus cambios.
+
+![The GitHub conflict resolution interface after all conflicts have been marked as resolved. A green "commit merge" button is enabled.](/contributor_docs/images/commit-merge.png)
+
+A veces, los conflictos son demasiado complicados para que GitHub los muestre en la web. En este caso, o si simplemente prefieres el método manual, puedes resolver tus conflictos localmente:
+
+1. Ejecuta `git remote add upstream https://github.com/processing/p5.js`
+2. Ejecuta `git fetch upstream`
+3. Ejecuta `git rebase upstream/main`
+4. ¡Es posible que tengas algunos conflictos! Si solo se trata de lib/p5.js y lib/p5.min.js, es fácil de arreglar; simplemente construye el proyecto nuevamente. Si tienes conflictos en otros archivos y no estás seguro de cómo resolverlos, ¡pide ayuda!
+
+```
+npm test
+git add -u
+git rebase --continue
+```
+
+5. Ejecuta `git push`
+
+Es posible que la lista de comprobación anterior se borre después de estos pasos, pero si no es así, te guiaremos en cualquier corrección que sea necesaria.
+
+## Discutir y corregir
+
+Ahora que tu <em>pull request</em> está abierto, una persona que administra o mantiene el código revisará tu PR. Pueden pasar varios días antes de que un administrador pueda responder a tu PR, así que ten paciencia. ¿Por qué no aprovechar el tiempo para revisar algunos de los otros <em>issues</em> abiertos mientras tanto?
+
+Una vez que un administrador haya revisado tu PR, pueden suceder una de dos cosas: 1. Tu PR es aprobada y fusionada, ¡yuju! 2. Quien administra puede hacer algunas preguntas sobre el PR o solicitar algunos cambios en el PR. Si es lo segundo, no entres en pánico; es perfectamente normal, ¡y las, los y les administradores siempre están aquí para ayudarte a completar tu contribución!
+
+Si se solicitan cambios en tu PR y puedes hacer esos cambios, sigue el [mismo proceso que antes](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#git-workflow) pero simplemente continúa desde tu copia local del repositorio y la rama relevante, realiza esos cambios, haz <em>commit</em> de ellos en git, y súbelos a tu repositorio remoto. Una vez que hayas subido <em>commits</em> adicionales a tu repositorio remoto, verás que los nuevos <em>commits</em> aparecen automáticamente en el PR. Deja un comentario en la PR para informar al revisor que has realizado los cambios solicitados, y si no se necesitan cambios adicionales, ¡tu PR será fusionado!
+
+[**⬆ volver arriba**](#contributor-guidelines)
