@@ -234,12 +234,15 @@ for (const entry of allData) {
 
     const { module, submodule, forEntry } = getModuleInfo(entry);
 
+    const examples = entry.examples.map(getExample);
     const item = {
       itemtype: 'property',
       name: entry.name,
       ...locationInfo(entry),
       ...typeObject(entry.type),
       description: descriptionString(entry.description),
+      example: examples.length > 0 ? examples : undefined,
+      alt: getAlt(entry),
       module,
       submodule,
       class: forEntry || 'p5'
