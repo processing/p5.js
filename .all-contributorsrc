@@ -5676,6 +5676,78 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "wooknick",
+      "name": "Minwook Park",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23724801?v=4",
+      "profile": "http://parkminwook.com",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "Harrycheng233",
+      "name": "Harrycheng233",
+      "avatar_url": "https://avatars.githubusercontent.com/u/129256087?v=4",
+      "profile": "https://github.com/Harrycheng233",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "DianaMGalindo",
+      "name": "Diana Galindo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/95235340?v=4",
+      "profile": "https://github.com/DianaMGalindo",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "douMax",
+      "name": "Lingxiao Wang",
+      "avatar_url": "https://avatars.githubusercontent.com/u/28494194?v=4",
+      "profile": "https://github.com/douMax",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "ml008008",
+      "name": "ml.008",
+      "avatar_url": "https://avatars.githubusercontent.com/u/141788009?v=4",
+      "profile": "https://github.com/ml008008",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "EmilioOcelotl",
+      "name": "EmilioOcelotl",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8987515?v=4",
+      "profile": "http://ocelotl.cc",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "MarianneTeixido",
+      "name": "Teixido",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32370294?v=4",
+      "profile": "https://marianneteixido.github.io/",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "ienground",
+      "name": "IENGROUND",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32572338?v=4",
+      "profile": "https://www.ien.zone",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "repoType": "github",
