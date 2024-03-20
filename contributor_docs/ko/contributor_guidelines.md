@@ -288,22 +288,22 @@ GitHub Desktop은 명령어를 터미널에 입력하는 대신에 그래픽 사
 
 ![Screenshot of the list of files on the landing page of a repository. The "Code" button is highlighted with a dark orange outline.](images/code-button.png)
 
-다음으로 로컬 환경에서 명령 줄로 이동하여 git 저장소를 클론하세요. "클론(Clone)"은 단순히 저장소와 복사본을 로컬 기계로 다운로드하는 것을 의미합니다. p5.js 소스 코드 폴더를 저장하고 싶은 폴더에서 다음 명령어를 실행하세요.
+다음으로 로컬 환경에서 명령줄로 이동하여 git 저장소를 클론하세요. "클론(Clone)"은 단순히 저장소와 복사본을 로컬 장치로 다운로드하는 것을 의미합니다. p5.js 소스 코드 폴더를 저장하고 싶은 폴더에서 다음 명령어를 실행하세요.
 
 ```
 git clone [git_url]
 ```
 
-위에서 복사한 URL을 `[git_url]`자리에 작성하세요. 이 과정은 인터넷 연결 속도에 따라 몇 분 정도 걸릴 수 있으니, 커피 한 잔을 만드는 것도 좋은 시간입니다! 과정이 완료되면, 선호하는 텍스트 에디터에서 다운로드한 `p5.js` 폴더를 열고 내용을 살펴볼 수 있습니다.
+위에서 복사한 URL을 `[git_url]`자리에 작성하세요. 이 과정은 인터넷 연결 속도에 따라 몇 분 정도 걸릴 수 있으니, 커피 한 잔을 내리면서 기다리는 것도 좋을 것 같아요! 과정이 완료되면, 선호하는 텍스트 에디터에서 다운로드한 `p5.js` 폴더를 열고 내용을 살펴볼 수 있습니다.
 
 
 ## 코드베이스(code base) 분석
 
 p5.js 폴더 안에 있는 몇 가지 주요 파일과 폴더는 다음과 같습니다:
 
-- `src` - 최종적으로 p5.js와 p5.min.js 파일로 결합되는 모든 코드가 위치하는 곳입니다.
+- `src` - 모든 코드가 최종적으로 p5.js와 p5.min.js 파일로 결합되어 위치하는 곳입니다.
 - [`test`](https://github.com/processing/p5.js/blob/main/contributor_docs/unit_testing.md) - 단위 테스트와 모든 문서 예제를 테스트하기 위한 코드가 위치하는 곳입니다.
-- `tasks` - 상세하고 맞춤형 빌드 코드가 위치한 곳입니다.
+- `tasks` - 세밀하게 맞춤화된 빌드 코드가 위치한 곳입니다.
 - `Gruntfile.js` - 주요 빌드 구성 파일입니다.
 - `contributor_docs` - 기여자들이 작성한 문서를 비롯한 모든 문서 파일이 있는 곳입니다.
 
@@ -312,7 +312,7 @@ p5.js 폴더 안에 있는 몇 가지 주요 파일과 폴더는 다음과 같�
 
 ## 빌드 설정
 
-시작하기 전에, p5.js를 빌드하고 테스트할 수 있도록 로컬 프로젝트 폴더를 설정해야 합니다. node.js가 설치되어 있을 때, 다음을 실행하세요: 
+시작하기 전에, p5.js를 빌드하고 테스트할 수 있도록 로컬 프로젝트 폴더를 설정해야 합니다. ode.js가 여러분의 컴퓨터에 설치되어 있다는 가정하에, 다음을 실행하세요: 
 
 ```
 npm ci
@@ -321,7 +321,7 @@ npm ci
 
 ## Git 워크플로우
 
-이제 필요한 변경을 할 준비가 되었습니다; 리포지토리의 여러 부분과 관련 변경 방법에 대한 자세한 내용은 아래의 하위 섹션을 참조하십시오:
+이제 필요한 변경을 할 준비가 되었습니다; 리포지토리의 여러 부분과 관련 변경 방법에 대한 자세한 내용은 아래의 하위 섹션을 참고해 보세요:
 
 ```
 npm test
@@ -332,18 +332,18 @@ npm test
 npm run build
 ```
 
-위의 명령어 중 어느 것을 사용하더라도 `lib/`폴더 안에 `p5.js`와 `p5.min.js`로 라이브러리가 빌드됩니다. 필요한 경우 이 빌드된 파일들을 자신의 테스트에 사용할 수 있습니다. 
+위의 명령어 중 어느 것을 사용하더라도 `lib/`폴더 안에 `p5.js`와 `p5.min.js`로 라이브러리가 빌드됩니다. 필요한 경우 이 빌드된 파일들을 여러분의 테스트에 사용할 수 있습니다. 
 
 다음으로, 작업을 시작하기 전에 `main` 브랜치에서 새로운 브랜치를 만드는 것이 좋습니다. git에서 브랜치는 이름에서 알 수 있듯이, `main`이나 다른 브랜치에 영향을 주지 않고 커밋을 추가할 수 있는 리포지토리의 분기된 버전입니다. 브랜치는 여러 기능을 동시에 작업할 수 있게 해줍니다(여러 개의 독립된 브랜치를 사용함으로써) 그리고 만약 브랜치를 망쳐도 `main` 브랜치에 영향을 주지 않습니다.
 
-GitHub Desktop에서는 창의 헤더에 있는 현재 브랜치 버튼을 클릭함으로써 이 작업을 할 수 있습니다. 여기서, 브랜치를 변경하거나 새로운 브랜치 이름을 입력해 새로운 브랜치를 만들 수 있습니다. 우리가 진행할 작업을 위해, 변경할 내용을 설명하는 새 브랜치 이름을 입력하고 새 브랜치 생성을 클릭하세요.
+GitHub Desktop에서 현재 변경 사항을 모두 커밋하려면 변경 사항을 모두 완료한 후 앱을 열어야 합니다. 왼쪽 사이드바에 변경한 파일 목록이 표시되고, 각 파일 내의 구체적인 변경 사항이 오른쪽에 표시됩니다. 창 하단 왼쪽 모서리에 있는 사용자 아이콘 옆의 입력란에는 간략하고 개요적인 설명을 입력해야 합니다. 이것이 커밋의 제목이 됩니다. 아래 설명 입력란은 커밋에 대해 더 자세히 작성하거나 그냥 비워둘 수 있습니다. 그 후, 파란색 "Commit" 버튼을 눌러 변경 사항을 확정하세요.
 
 
 ![A screenshot of the GitHub Desktop branch selection menu. After entering a new branch name that does not yet exist, a "Create New Branch" button appears.](images/github-desktop-create-branch.png)
 
-터미널에서 `main` 브랜치에 있을 때 `git checkout -b branch_name`을 실행하고, `branch_name`을 서술하는 것으로 바꾸면 이제 별도의 브랜치에 있게 됩니다.
+터미널에서 `main` 브랜치에 있을 때 `git checkout -b branch_name`을 실행하고, `branch_name`을 설명할 수 있는 이름으로 바꾸면 이제 별도의 브랜치에 있게 됩니다.
 
-변경을 진행하면서, 특히 소스 코드를 작업하는 경우, 자주 `npm test`를 실행하는 것이 좋습니다. 이 명령을 실행하는 데는 시간이 조금 걸리지만, 변경 사항이 기존의 동작을 깨띌지 않는지 확인할 수 있습니다. 아래에 설명된 대로 변경 사항을 커밋하기 전에 `npm test`를 실행해야 합니다.
+변경을 진행하면서, 특히 소스 코드를 작업하는 경우, 자주 `npm test`를 실행하는 것이 좋습니다. 이 명령을 실행하는 데는 시간이 조금 걸리지만, 변경 사항이 기존의 동작을 해치지 않는지 확인할 수 있습니다. 아래에 설명된 대로 변경 사항을 커밋하기 전에 `npm test`를 실행해야 합니다.
 
 코드베이스(codebase)에 변경을 완료했다면, 이를 git에 커밋해야 합니다. 커밋은 git 리포지토리에 저장된 변경 사항의 모음으로, 커밋 시점의 리포지토리 내 파일의 현재 상태를 기록합니다. 
 
@@ -368,9 +368,9 @@ git status
 git diff
 ```
 
-PR(Pull Request)에 포함시키지 않으려는 파일 변경 사항은 커밋해서는 안 됩니다.
+풀 리퀘스트(PR, Pull request)에 포함시키지 않으려는 파일 변경 사항은 커밋해서는 안 됩니다.
 
-2. 다음 명령어로 모든 변경 사항에 git에 커밋하기 위해 스테이징하세요. 
+2. 다음 명령어로 모든 변경 사항에 git에 커밋하기 위해 스테이징(커밋으로 리포지토리에 저장하다)하세요. 
 
 ```
 git add .
@@ -382,7 +382,7 @@ git add .
 git commit -m "[your_commit_message]"
 ```
 
-`[your_commit_message]`는 변경 사항을 설명하는 관련 커밋 메세지로 대체해야 합니다. 일반적인 문구는 피해주세요. 예를 들어 `Documentation fix 1` 대신 `Add documentation example to circle() function`와 같이 적으세요.  
+`[your_commit_message]`는 변경 사항을 설명하는 관련 커밋 메세지로 대체해야 합니다. 일반적인 문구는 피해주세요. 예를 들어 `Documentation fix 1` 대신 `Add documentation example to circle() function`와 같이 적어주세요.
 
 ```
 git commit -m "Add documentation example to circle() function"
@@ -393,14 +393,14 @@ git commit -m "Add documentation example to circle() function"
 
 ### 소스 코드 (Source code)
 
-만약 소스 코드 작업을 계획하고 있고 p5.js 기능 중 어떤 기능을 작업할 것인지 알고 있다면, 시작하기 좋은 곳은 문서(Documentation)를 방문하는 것이며 p5.js의 각 기능 하단에는 소스 코드에 대한 링크가 있습니다.
+소스 코드 작업을 시작할 계획을 하고 있거나 여러분의 작업할 p5.js의 기능을 알고 있다면, 시작하기 좋은 방법 중 하나는 문서(Documentation)를 방문하는 것입니다. p5.js 문서의 각 기능 하단에는 해당 소스 코드에 대한 링크가 있습니다.
 
 ![Cropped screenshot of a reference page on the p5.js website containing the sentence "Notice any errors or typos? Please let us know. Please feel free to edit src/core/shape/2d\_primitives.js and issue a pull request!". Part of the above sentence where it says "src/core/shape/2d\_primitives.js" is highlighted with a red underline and arrow pointing to it.](images/reference-code-link.png)
 
 
-### 유닛 테스트 (Unit tests)
+### 단위 테스트 (Unit tests)
 
-유닛 테스트에 작업할 계획이라면 [여기](https://github.com/processing/p5.js/blob/main/contributor_docs/unit_testing.md)를 참조하세요. 기능 개선, 새로운 기능, 그리고 특정 버그 수정에 대해서는 새로운 구현(implementation)을 커버하는 유닛 테스트가 PR에 포함되어야 한다는 점을 유의하세요.
+단위 테스트에 작업할 계획이라면 [여기](https://github.com/processing/p5.js/blob/main/contributor_docs/unit_testing.md)를 참조하세요. 기능 개선, 새로운 기능, 그리고 특정 버그 수정에 대해서는 새로운 구현(implementation)을 커버하는 단위 테스트가 풀 리퀘스트에 포함되어야 한다는 점을 유의하세요.
 
 
 ### 인라인 문서 (Inline documentation)
@@ -435,7 +435,7 @@ p5.js의 기능에 작업하는 동안, p5.js의 디자인 원칙을 염두에 �
 
 # 풀 리퀘스트 (Pull requests, PR)
 
-필요한 변경사항을 포함하여, 해당하는 경우 단위 테스트까지 마친 후, `npm test` 에서 오류가 발생하지 않고 변경사항을 커밋했다면, 공식 p5.js 저장소로 당신의 새 커밋을 병합하기 위한 풀 리퀘스트를 준비할 수 있습니다. 조금 더 공식적으로 말하자면, 풀 리퀘스트는 한 저장소(예를 들어, p5.js 저장소)에 다른 저장소(예를 들어, 여러분이 포크한 p5.js 저장소)로부터의 변경사항을 그 커밋 히스토리로 병합하거나 당겨오도록 요청하는 것입니다.
+필요한 변경사항을 포함하여, 단위 테스트까지 마친 후(해당할 경우), `npm test` 에서 오류가 발생하지 않고 변경사항을 커밋했다면, 공식 p5.js 저장소로 당신의 새 커밋을 병합하기 위한 풀 리퀘스트를 준비할 수 있습니다. 조금 더 공식적으로 말하자면, 풀 리퀘스트는 한 저장소(예를 들어, p5.js 저장소)에 다른 저장소(예를 들어, 여러분이 포크한 p5.js 저장소)로부터의 변경사항을 그 커밋 히스토리로 병합하거나 당겨오도록 요청하는 것입니다.
 
 
 ## 풀 리퀘스트 생성
