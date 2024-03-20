@@ -43,7 +43,7 @@ Bug report issues should use the "Found a bug" issue template. The following wor
      - Otherwise, leave a comment about where the bug report should be filed (with a direct link provided) and close the issue.
    - The first step in reviewing a bug report is to see if enough information is provided for a bug replication, and if so, attempt to replicate the bug as described.
 2. If the bug can be replicated:
-   - Some discussion may be required to determine the best way to fix a particular bug. Sometimes, it may be straightforward; sometimes, it may be tricky. Please refer to [p5.js' design principles](design_principles.md) when making this decision on a case-by-case basis.
+   - Some discussion may be required to determine the best way to fix a particular bug. Sometimes, it may be straightforward; sometimes, it may be tricky. Please refer to [p5.js' design principles](./contributor_guidelines.md#software-design-principles) when making this decision on a case-by-case basis.
    - If the issue author indicated in the issue they are willing to contribute a fix:
      - Approve the issue for fixing by the issue author by leaving a comment and assigning them to the issue. Use the cog button on the right side next to "Assignee".
    - If the issue author does not wish to contribute a fix:
