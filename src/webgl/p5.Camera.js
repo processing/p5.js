@@ -28,7 +28,6 @@ import p5 from '../core/main';
  * If no parameters are given, the following default is used:
  * camera(0, 0, 800, 0, 0, 0, 0, 1, 0)
  * @method camera
- * @constructor
  * @for p5
  * @param  {Number} [x]        camera position value on x axis
  * @param  {Number} [y]        camera position value on y axis
@@ -746,7 +745,6 @@ p5.Camera = class Camera {
  * Accepts the same parameters as the global
  * <a href="#/p5/perspective">perspective()</a>.
  * More information on this function can be found there.
- * @method perspective
  * @for p5.Camera
  * @example
  * <div>
@@ -849,7 +847,6 @@ p5.Camera = class Camera {
  * Accepts the same parameters as the global
  * <a href="#/p5/ortho">ortho()</a>.
  * More information on this function can be found there.
- * @method ortho
  * @for p5.Camera
  * @example
  * <div>
@@ -933,7 +930,6 @@ p5.Camera = class Camera {
  * Accepts the same parameters as the global
  * <a href="#/p5/frustum">frustum()</a>.
  * More information on this function can be found there.
- * @method frustum
  * @for p5.Camera
  * @example
  * <div>
@@ -1017,7 +1013,6 @@ p5.Camera = class Camera {
   /**
  * Rotate camera view about arbitrary axis defined by x,y,z
  * based on http://learnwebgl.brown37.net/07_cameras/camera_rotating_motion.html
- * @method _rotateView
  * @private
  */
   _rotateView(a, x, y, z) {
@@ -1061,7 +1056,6 @@ p5.Camera = class Camera {
 
   /**
  * Panning rotates the camera view to the left and right.
- * @method pan
  * @param {Number} angle amount to rotate camera in current
  * <a href="#/p5/angleMode">angleMode</a> units.
  * Greater than 0 values rotate counterclockwise (to the left).
@@ -1121,7 +1115,6 @@ p5.Camera = class Camera {
 
   /**
  * Tilting rotates the camera view up and down.
- * @method tilt
  * @param {Number} angle amount to rotate camera in current
  * <a href="#/p5/angleMode">angleMode</a> units.
  * Greater than 0 values rotate counterclockwise (to the left).
@@ -1181,7 +1174,6 @@ p5.Camera = class Camera {
 
   /**
  * Reorients the camera to look at a position in world space.
- * @method lookAt
  * @for p5.Camera
  * @param {Number} x x position of a point in world space
  * @param {Number} y y position of a point in world space
@@ -1253,7 +1245,6 @@ p5.Camera = class Camera {
  * Accepts the same parameters as the global
  * <a href="#/p5/camera">camera()</a>.
  * More information on this function can be found there.
- * @method camera
  * @for p5.Camera
  * @example
  * <div>
@@ -1398,7 +1389,6 @@ p5.Camera = class Camera {
 
   /**
  * Move camera along its local axes while maintaining current camera orientation.
- * @method move
  * @param {Number} x amount to move along camera's left-right axis
  * @param {Number} y amount to move along camera's up-down axis
  * @param {Number} z amount to move along camera's forward-backward axis
@@ -1473,7 +1463,6 @@ p5.Camera = class Camera {
   /**
  * Set camera position in world-space while maintaining current camera
  * orientation.
- * @method setPosition
  * @param {Number} x x position of a point in world space
  * @param {Number} y y position of a point in world space
  * @param {Number} z z position of a point in world space
@@ -1539,7 +1528,6 @@ p5.Camera = class Camera {
  * the target camera. If the target camera is active, it will be reflected
  * on the screen.
  *
- * @method set
  * @param {p5.Camera} cam source camera
  *
  * @example
@@ -1620,7 +1608,6 @@ p5.Camera = class Camera {
  * interpolation is possible if the ratios of left, right, top and bottom are equal to each other.
  * For example, when it is changed by orbitControl().
  *
- * @method slerp
  * @param {p5.Camera} cam0 first p5.Camera
  * @param {p5.Camera} cam1 second p5.Camera
  * @param {Number} amt amount to use for interpolation during slerp
@@ -1977,7 +1964,6 @@ p5.Camera = class Camera {
 
   /**
  * Returns a copy of a camera.
- * @method copy
  * @private
  */
   copy() {
@@ -2008,7 +1994,6 @@ p5.Camera = class Camera {
   /**
  * Returns a camera's local axes: left-right, up-down, and forward-backward,
  * as defined by vectors in world-space.
- * @method _getLocalAxes
  * @private
  */
   _getLocalAxes() {
@@ -2065,7 +2050,6 @@ p5.Camera = class Camera {
 
   /**
  * Orbits the camera about center point. For use with orbitControl().
- * @method _orbit
  * @private
  * @param {Number} dTheta change in spherical coordinate theta
  * @param {Number} dPhi change in spherical coordinate phi
@@ -2135,7 +2119,6 @@ p5.Camera = class Camera {
   /**
  * Orbits the camera about center point. For use with orbitControl().
  * Unlike _orbit(), the direction of rotation always matches the direction of pointer movement.
- * @method _orbitFree
  * @private
  * @param {Number} dx the x component of the rotation vector.
  * @param {Number} dy the y component of the rotation vector.
@@ -2212,7 +2195,6 @@ p5.Camera = class Camera {
 
   /**
  * Returns true if camera is currently attached to renderer.
- * @method _isActive
  * @private
  */
   _isActive() {

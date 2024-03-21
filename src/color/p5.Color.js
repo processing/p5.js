@@ -334,7 +334,6 @@ const colorPatterns = {
  * of this class.
  *
  * @class p5.Color
- * @constructor
  * @param {p5} [pInst]                      pointer to p5 instance.
  *
  * @param {Number[]|String} vals            an array containing the color values
@@ -361,7 +360,6 @@ p5.Color = class Color {
    * Returns the color formatted as a string. Doing so can be useful for
    * debugging, or for using p5.js with other libraries.
    *
-   * @method toString
    * @param {String} [format] how the color string will be formatted.
    * Leaving this empty formats the string as rgba(r, g, b, a).
    * '#rgb' '#rgba' '#rrggbb' and '#rrggbbaa' format as hexadecimal color codes.
@@ -565,7 +563,6 @@ p5.Color = class Color {
    * <a href="#/colorMode">colorMode()</a>. In the default RGB mode it's
    * between 0 and 255.
    *
-   * @method setRed
    * @param {Number} red the new red value.
    *
    * @example
@@ -595,7 +592,6 @@ p5.Color = class Color {
    * <a href="#/colorMode">colorMode()</a>. In the default RGB mode it's
    * between 0 and 255.
    *
-   * @method setGreen
    * @param {Number} green the new green value.
    *
    * @example
@@ -625,7 +621,6 @@ p5.Color = class Color {
    * <a href="#/colorMode">colorMode()</a>. In the default RGB mode it's
    * between 0 and 255.
    *
-   * @method setBlue
    * @param {Number} blue the new blue value.
    *
    * @example
@@ -655,7 +650,6 @@ p5.Color = class Color {
    * <a href="#/colorMode">colorMode()</a>. In the default RGB mode it's
    * between 0 and 255.
    *
-   * @method setAlpha
    * @param {Number} alpha the new alpha value.
    *
    * @example

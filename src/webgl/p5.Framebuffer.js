@@ -8,17 +8,16 @@ import * as constants from '../core/constants';
 import { checkWebGLCapabilities } from './p5.Texture';
 import { readPixelsWebGL, readPixelWebGL } from './p5.RendererGL';
 
-class FramebufferCamera extends p5.Camera {
-  /**
-   * A <a href="#/p5.Camera">p5.Camera</a> attached to a
-   * <a href="#/p5.Framebuffer">p5.Framebuffer</a>.
-   *
-   * @class p5.FramebufferCamera
-   * @constructor
-   * @param {p5.Framebuffer} framebuffer The framebuffer this camera is
-   * attached to
-   * @private
-   */
+/**
+ * A <a href="#/p5.Camera">p5.Camera</a> attached to a
+ * <a href="#/p5.Framebuffer">p5.Framebuffer</a>.
+ *
+ * @class p5.FramebufferCamera
+ * @param {p5.Framebuffer} framebuffer The framebuffer this camera is
+ * attached to
+ * @private
+ */
+p5.FramebufferCamera = class FramebufferCamera extends p5.Camera {
   constructor(framebuffer) {
     super(framebuffer.target._renderer);
     this.fbo = framebuffer;
@@ -36,22 +35,20 @@ class FramebufferCamera extends p5.Camera {
     this.defaultCameraFOV =
       2 * Math.atan(this.fbo.height / 2 / this.defaultEyeZ);
   }
-}
+};
 
-p5.FramebufferCamera = FramebufferCamera;
-
-class FramebufferTexture {
-  /**
-   * A <a href="#/p5.Texture">p5.Texture</a> corresponding to a property of a
-   * <a href="#/p5.Framebuffer">p5.Framebuffer</a>.
-   *
-   * @class p5.FramebufferTexture
-   * @param {p5.Framebuffer} framebuffer The framebuffer represented by this
-   * texture
-   * @param {String} property The property of the framebuffer represented by
-   * this texture, either `color` or `depth`
-   * @private
-   */
+/**
+ * A <a href="#/p5.Texture">p5.Texture</a> corresponding to a property of a
+ * <a href="#/p5.Framebuffer">p5.Framebuffer</a>.
+ *
+ * @class p5.FramebufferTexture
+ * @param {p5.Framebuffer} framebuffer The framebuffer represented by this
+ * texture
+ * @param {String} property The property of the framebuffer represented by
+ * this texture, either `color` or `depth`
+ * @private
+ */
+p5.FramebufferTexture = class FramebufferTexture {
   constructor(framebuffer, property) {
     this.framebuffer = framebuffer;
     this.property = property;
@@ -68,44 +65,25 @@ class FramebufferTexture {
   rawTexture() {
     return this.framebuffer[this.property];
   }
-}
+};
 
-p5.FramebufferTexture = FramebufferTexture;
-
-class Framebuffer {
-  /**
-   * An object that one can draw to and then read as a texture. While similar
-   * to a p5.Graphics, using a p5.Framebuffer as a texture will generally run
-   * much faster, as it lives within the same WebGL context as the canvas it
-   * is created on. It only works in WebGL mode.
-   *
-   * @class p5.Framebuffer
-   * @constructor
-   * @param {p5.Graphics|p5} target A p5 global instance or p5.Graphics
-   * @param {Object} [settings] A settings object
-   */
+/**
+ * An object that one can draw to and then read as a texture. While similar
+ * to a p5.Graphics, using a p5.Framebuffer as a texture will generally run
+ * much faster, as it lives within the same WebGL context as the canvas it
+ * is created on. It only works in WebGL mode.
+ *
+ * @class p5.Framebuffer
+ * @param {p5.Graphics|p5} target A p5 global instance or p5.Graphics
+ * @param {Object} [settings] A settings object
+ */
+p5.Framebuffer = class Framebuffer {
   constructor(target, settings = {}) {
     this.target = target;
     this.target._renderer.framebuffers.add(this);
 
     this._isClipApplied = false;
 
-    /**
-     * A <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference
-     * /Global_Objects/Uint8ClampedArray' target='_blank'>Uint8ClampedArray</a>
-     * containing the values for all the pixels in the Framebuffer.
-     *
-     * Like the <a href="#/p5/pixels">main canvas pixels property</a>, call
-     * <a href="#/p5.Framebuffer/loadPixels">loadPixels()</a> before reading
-     * it, and call <a href="#/p5.Framebuffer.updatePixels">updatePixels()</a>
-     * afterwards to update its data.
-     *
-     * Note that updating pixels via this property will be slower than
-     * <a href="#/p5.Framebuffer/begin">drawing to the framebuffer directly.</a>
-     * Consider using a shader instead of looping over pixels.
-     *
-     * @property {Number[]} pixels
-     */
     this.pixels = [];
 
     this.format = settings.format || constants.UNSIGNED_BYTE;
@@ -184,7 +162,6 @@ class Framebuffer {
   /**
    * Resizes the framebuffer to the given width and height.
    *
-   * @method resize
    * @param {Number} width
    * @param {Number} height
    *
@@ -240,7 +217,6 @@ class Framebuffer {
    * Call this method with no arguments to get the current density, or pass
    * in a number to set the density.
    *
-   * @method pixelDensity
    * @param {Number} [density] A scaling factor for the number of pixels per
    * side of the framebuffer
    */
@@ -261,7 +237,6 @@ class Framebuffer {
    * Call this method with no arguments to see if it is currently auto-sized,
    * or pass in a boolean to set this property.
    *
-   * @method autoSized
    * @param {Boolean} [autoSized] Whether or not the framebuffer should resize
    * along with the canvas it's attached to
    */
@@ -701,7 +676,6 @@ class Framebuffer {
    * while drawing to this framebuffer. The camera will be set as the
    * currently active camera.
    *
-   * @method createCamera
    * @returns {p5.Camera} A new camera
    */
   createCamera() {
@@ -728,8 +702,6 @@ class Framebuffer {
 
   /**
    * Removes the framebuffer and frees its resources.
-   *
-   * @method remove
    *
    * @example
    * <div>
@@ -795,8 +767,6 @@ class Framebuffer {
    * functions go right to the canvas again and to be able to read the
    * contents of the framebuffer's texture.
    *
-   * @method begin
-   *
    * @example
    * <div>
    * <code>
@@ -854,7 +824,6 @@ class Framebuffer {
    * renderbuffer, while other framebuffers can write directly to their main
    * framebuffers.
    *
-   * @method _framebufferToBind
    * @private
    */
   _framebufferToBind() {
@@ -871,7 +840,6 @@ class Framebuffer {
   /**
    * Ensures that the framebuffer is ready to be drawn to
    *
-   * @method _beforeBegin
    * @private
    */
   _beforeBegin() {
@@ -886,7 +854,6 @@ class Framebuffer {
   /**
    * Ensures that the framebuffer is ready to be read by other framebuffers.
    *
-   * @method _beforeEnd
    * @private
    */
   _beforeEnd() {
@@ -921,8 +888,6 @@ class Framebuffer {
    * functions from going to the framebuffer's texture, allowing them to go
    * right to the canvas again. After this, one can read from the framebuffer's
    * texture.
-   *
-   * @method end
    */
   end() {
     const gl = this.gl;
@@ -950,7 +915,6 @@ class Framebuffer {
    * and then calling `framebuffer.end()`, but ensures that one never
    * accidentally forgets `begin` or `end`.
    *
-   * @method draw
    * @param {Function} callback A function to run that draws to the canvas. The
    * function will immediately be run, but it will draw to the framebuffer
    * instead of the canvas.
@@ -1037,7 +1001,6 @@ class Framebuffer {
    * getting an image, the x and y parameters define the coordinates for the
    * upper-left corner of the image, regardless of the current <a href="#/p5/imageMode">imageMode()</a>.
    *
-   * @method get
    * @param  {Number}         x x-coordinate of the pixel
    * @param  {Number}         y y-coordinate of the pixel
    * @param  {Number}         w width of the section to be returned
@@ -1045,11 +1008,9 @@ class Framebuffer {
    * @return {p5.Image}       the rectangle <a href="#/p5.Image">p5.Image</a>
    */
   /**
-   * @method get
    * @return {p5.Image}      the whole <a href="#/p5.Image">p5.Image</a>
    */
   /**
-   * @method get
    * @param  {Number}        x
    * @param  {Number}        y
    * @return {Number[]}      color of pixel at x,y in array format [R, G, B, A]
@@ -1274,7 +1235,7 @@ class Framebuffer {
       }
     }
   }
-}
+};
 
 /**
  * A texture with the color information of the framebuffer. Pass this (or the
@@ -1397,6 +1358,22 @@ class Framebuffer {
  * from the camera they go
  */
 
-p5.Framebuffer = Framebuffer;
+/**
+ * A <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference
+ * /Global_Objects/Uint8ClampedArray' target='_blank'>Uint8ClampedArray</a>
+ * containing the values for all the pixels in the Framebuffer.
+ *
+ * Like the <a href="#/p5/pixels">main canvas pixels property</a>, call
+ * <a href="#/p5.Framebuffer/loadPixels">loadPixels()</a> before reading
+ * it, and call <a href="#/p5.Framebuffer.updatePixels">updatePixels()</a>
+ * afterwards to update its data.
+ *
+ * Note that updating pixels via this property will be slower than
+ * <a href="#/p5.Framebuffer/begin">drawing to the framebuffer directly.</a>
+ * Consider using a shader instead of looping over pixels.
+ *
+ * @property {Number[]} pixels
+ * @for p5.Framebuffer
+ */
 
-export default Framebuffer;
+export default p5.Framebuffer;

@@ -11,7 +11,6 @@ import p5 from '../core/main';
  * <a href="#/p5/loadXML">loadXML()</a> to load external XML files and create XML objects.
  *
  * @class p5.XML
- * @constructor
  * @example
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed
@@ -63,7 +62,6 @@ p5.XML = class  {
  * Gets a copy of the element's parent. Returns the parent as another
  * <a href="#/p5.XML">p5.XML</a> object.
  *
- * @method getParent
  * @return {p5.XML}   element parent
  * @example
  * <div class='norender'><code>
@@ -100,7 +98,6 @@ p5.XML = class  {
   /**
  *  Gets the element's full name, which is returned as a String.
  *
- * @method getName
  * @return {String} the name of the node
  * @example&lt;animal
  * <div class='norender'><code>
@@ -135,7 +132,6 @@ p5.XML = class  {
   /**
  * Sets the element's name, which is specified as a String.
  *
- * @method setName
  * @param {String} the new name of the node
  * @example&lt;animal
  * <div class='norender'><code>
@@ -182,7 +178,6 @@ p5.XML = class  {
  * Checks whether or not the element has any children, and returns the result
  * as a boolean.
  *
- * @method hasChildren
  * @return {boolean}
  * @example&lt;animal
  * <div class='norender'><code>
@@ -219,7 +214,6 @@ p5.XML = class  {
  * array of Strings. This is the same as looping through and calling <a href="#/p5.XML/getName">getName()</a>
  * on each child element individually.
  *
- * @method listChildren
  * @return {String[]} names of the children of the element
  * @example&lt;animal
  * <div class='norender'><code>
@@ -260,7 +254,6 @@ p5.XML = class  {
  * the name parameter is specified, then it will return all children that match
  * that name.
  *
- * @method getChildren
  * @param {String} [name] element name
  * @return {p5.XML[]} children of the element
  * @example&lt;animal
@@ -310,7 +303,6 @@ p5.XML = class  {
  * or the child of the given index.It returns undefined if no matching
  * child is found.
  *
- * @method getChild
  * @param {String|Integer} name element name or index
  * @return {p5.XML}
  * @example&lt;animal
@@ -371,7 +363,6 @@ p5.XML = class  {
  * reference to an existing <a href="#/p5.XML">p5.XML</a> object.
  * A reference to the newly created child is returned as an <a href="#/p5.XML">p5.XML</a> object.
  *
- * @method addChild
  * @param {p5.XML} node a <a href="#/p5.XML">p5.XML</a> Object which will be the child to be added
  * @example
  * <div class='norender'><code>
@@ -420,7 +411,6 @@ p5.XML = class  {
   /**
  * Removes the element specified by name or index.
  *
- * @method removeChild
  * @param {String|Integer} name element name or index
  * @example
  * <div class='norender'><code>
@@ -492,7 +482,6 @@ p5.XML = class  {
   /**
  * Counts the specified element's number of attributes, returned as an Number.
  *
- * @method getAttributeCount
  * @return {Integer}
  * @example
  * <div class='norender'><code>
@@ -529,7 +518,6 @@ p5.XML = class  {
  * Gets all of the specified element's attributes, and returns them as an
  * array of Strings.
  *
- * @method listAttributes
  * @return {String[]} an array of strings containing the names of attributes
  * @example
  * <div class='norender'><code>
@@ -571,7 +559,6 @@ p5.XML = class  {
   /**
  *  Checks whether or not an element has the specified attribute.
  *
- * @method hasAttribute
  * @param {String} the attribute to be checked
  * @return {boolean} true if attribute found else false
  * @example
@@ -619,7 +606,6 @@ p5.XML = class  {
  * is returned. If no defaultValue is specified and the attribute doesn't
  * exist, the value 0 is returned.
  *
- * @method getNum
  * @param {String} name            the non-null full name of the attribute
  * @param {Number} [defaultValue]  the default value of the attribute
  * @return {Number}
@@ -666,7 +652,6 @@ p5.XML = class  {
  * is returned. If no defaultValue is specified and the attribute doesn't
  * exist, null is returned.
  *
- * @method getString
  * @param {String} name            the non-null full name of the attribute
  * @param {Number} [defaultValue]  the default value of the attribute
  * @return {String}
@@ -711,7 +696,6 @@ p5.XML = class  {
  * Sets the content of an element's attribute. The first parameter specifies
  * the attribute name, while the second specifies the new content.
  *
- * @method setAttribute
  * @param {String} name            the full name of the attribute
  * @param {Number|String|Boolean} value  the value of the attribute
  * @example
@@ -752,7 +736,6 @@ p5.XML = class  {
  * Returns the content of an element. If there is no such content,
  * defaultValue is returned if specified, otherwise null is returned.
  *
- * @method getContent
  * @param {String} [defaultValue] value returned if no content is found
  * @return {String}
  * @example
@@ -792,7 +775,6 @@ p5.XML = class  {
   /**
  * Sets the element's content.
  *
- * @method setContent
  * @param {String} text the new content
  * @example
  * <div class='norender'><code>
@@ -834,7 +816,6 @@ p5.XML = class  {
  * Serializes the element into a string. This function is useful for preparing
  * the content to be sent over a http request or saved to file.
  *
- * @method serialize
  * @return {String} Serialized string of the element
  * @example
  * <div class='norender'><code>

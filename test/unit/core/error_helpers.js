@@ -1,9 +1,17 @@
 import p5 from '../../../src/app.js';
+import setupMath from '../../../src/math';
+import { testUnMinified, createP5Iframe, P5_SCRIPT_TAG } from '../../js/p5_helpers.js';
+import '../../js/chai_helpers.js';
+
+setupMath(p5);
+
+const setup = beforeEach;
+const teardown = afterEach;
 
 suite('Error Helpers', function() {
   var myp5;
 
-  beforeAll(function() {
+  beforeEach(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
@@ -12,7 +20,7 @@ suite('Error Helpers', function() {
     });
   });
 
-  afterAll(function() {
+  afterEach(function() {
     myp5.remove();
   });
 
@@ -356,6 +364,47 @@ suite('Error Helpers', function() {
     });
   });
 
+  suite('validateParameters: union types', function() {
+    testUnMinified('set() with Number', function() {
+      assert.doesNotThrow(function() {
+        p5._validateParameters('set', [0, 0, 0]);
+      });
+    });
+    testUnMinified('set() with Number[]', function() {
+      assert.doesNotThrow(function() {
+        p5._validateParameters('set', [0, 0, [0, 0, 0, 255]]);
+      });
+    });
+    testUnMinified('set() with Object', function() {
+      assert.doesNotThrow(function() {
+        p5._validateParameters('set', [0, 0, myp5.color(0)]);
+      });
+    });
+    testUnMinified('set() with Boolean', function() {
+      assert.validationError(function() {
+        p5._validateParameters('set', [0, 0, true]);
+      });
+    });
+  });
+
+  suite('validateParameters: specific constants', function() {
+    testUnMinified('endShape() with no args', function() {
+      assert.doesNotThrow(function() {
+        p5._validateParameters('endShape', []);
+      });
+    });
+    testUnMinified('endShape() with CLOSE', function() {
+      assert.doesNotThrow(function() {
+        p5._validateParameters('endShape', [myp5.CLOSE]);
+      });
+    });
+    testUnMinified('endShape() with unrelated constant', function() {
+      assert.validationError(function() {
+        p5._validateParameters('endShape', [myp5.RADIANS]);
+      });
+    });
+  });
+
   suite('helpForMisusedAtTopLevelCode', function() {
     var help = function(msg) {
       var log = [];
@@ -497,7 +546,7 @@ suite('Error Helpers', function() {
       'detects capitatilization mistake in global mode',
       function() {
         return new Promise(function(resolve) {
-          iframe = createP5Iframe(
+          const iframe = createP5Iframe(
             [
               P5_SCRIPT_TAG,
               '<script>',
@@ -556,7 +605,7 @@ suite('Global Error Handling', function() {
   });
 
   const prepSyntaxTest = (arr, resolve) => {
-    iframe = createP5Iframe(
+    const iframe = createP5Iframe(
       [P5_SCRIPT_TAG, WAIT_AND_RESOLVE, '<script>', ...arr, '</script>'].join(
         '\n'
       )
@@ -952,7 +1001,7 @@ suite('Tests for p5.js sketch_reader', function() {
   };
 
   const prepSketchReaderTest = (arr, resolve) => {
-    iframe = createP5Iframe(
+    const iframe = createP5Iframe(
       [P5_SCRIPT_TAG, WAIT_AND_RESOLVE, '<script>', ...arr, '</script>'].join(
         '\n'
       )

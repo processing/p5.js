@@ -297,6 +297,19 @@ if (typeof IS_MINIFIED !== 'undefined') {
             };
           }
 
+          // Handle specific constants in types, e.g. in endShape:
+          //   @param {CLOSE} [close]
+          // Rather than trying to parse the types out of the description, we
+          // can use the constant directly from the type
+          if (type in constants) {
+            return {
+              name: type,
+              builtin: 'constant',
+              names: [type],
+              values: { [constants[type]]: true }
+            };
+          }
+
           // function
           if (lowerType.slice(0, 'function'.length) === 'function') {
             lowerType = 'function';

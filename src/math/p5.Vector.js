@@ -46,7 +46,6 @@ function vector(p5, fn){
    * methods inside the `p5.Vector` class.
    *
    * @class p5.Vector
-   * @constructor
    * @param {Number} [x] x component of the vector.
    * @param {Number} [y] y component of the vector.
    * @param {Number} [z] z component of the vector.
@@ -92,7 +91,7 @@ function vector(p5, fn){
    * </code>
    * </div>
    */
-  p5.Vector = class {
+  p5.Vector = class Vector {
     // This is how it comes in with createVector()
     // This check if the first argument is a function
     constructor(...args) {
@@ -110,33 +109,14 @@ function vector(p5, fn){
         y = args[1] || 0;
         z = args[2] || 0;
       }
-      /**
-       * The x component of the vector
-       * @type {Number}
-       * @property x
-       * @name x
-       */
       this.x = x;
-      /**
-       * The y component of the vector
-       * @type {Number}
-       * @property y
-       * @name y
-       */
       this.y = y;
-      /**
-       * The z component of the vector
-       * @type {Number}
-       * @property z
-       * @name z
-       */
       this.z = z;
     }
 
     /**
    * Returns a string representation of a vector. This method is useful for
    * printing vectors to the console while debugging.
-   * @method  toString
    * @return {String} string representation of the vector.
    * @example
    * <div class = "norender">
@@ -158,7 +138,6 @@ function vector(p5, fn){
    * a <a href="#/p5.Vector">p5.Vector</a> object, or an array of numbers.
    * Calling `set()` with no arguments sets the vector's components to 0.
    *
-   * @method set
    * @param {Number} [x] x component of the vector.
    * @param {Number} [y] y component of the vector.
    * @param {Number} [z] z component of the vector.
@@ -191,7 +170,6 @@ function vector(p5, fn){
    * </div>
    */
     /**
-   * @method set
    * @param {p5.Vector|Number[]} value vector to set.
    * @chainable
    */
@@ -217,7 +195,6 @@ function vector(p5, fn){
     /**
    * Returns a copy of the <a href="#/p5.Vector">p5.Vector</a> object.
    *
-   * @method copy
    * @return {p5.Vector} copy of the <a href="#/p5.Vector">p5.Vector</a> object.
    * @example
    * <div>
@@ -255,7 +232,6 @@ function vector(p5, fn){
    * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
    * originals.
    *
-   * @method add
    * @param  {Number} x   x component of the vector to be added.
    * @param  {Number} [y] y component of the vector to be added.
    * @param  {Number} [z] z component of the vector to be added.
@@ -342,7 +318,6 @@ function vector(p5, fn){
    * </div>
    */
     /**
-   * @method add
    * @param  {p5.Vector|Number[]} value The vector to add
    * @chainable
    */
@@ -374,7 +349,6 @@ function vector(p5, fn){
    * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
    * originals.
    *
-   * @method rem
    * @param {Number} x x component of divisor vector.
    * @param {Number} y y component of divisor vector.
    * @param {Number} z z component of divisor vector.
@@ -423,7 +397,6 @@ function vector(p5, fn){
    * </div>
    */
     /**
-   * @method rem
    * @param {p5.Vector | Number[]}  value  divisor vector.
    * @chainable
    */
@@ -491,7 +464,6 @@ function vector(p5, fn){
    * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
    * originals.
    *
-   * @method sub
    * @param  {Number} x   x component of the vector to subtract.
    * @param  {Number} [y] y component of the vector to subtract.
    * @param  {Number} [z] z component of the vector to subtract.
@@ -578,7 +550,6 @@ function vector(p5, fn){
    * </div>
    */
     /**
-   * @method sub
    * @param  {p5.Vector|Number[]} value the vector to subtract
    * @chainable
    */
@@ -611,7 +582,6 @@ function vector(p5, fn){
    * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
    * originals.
    *
-   * @method mult
    * @param  {Number} n The number to multiply with the vector
    * @chainable
    * @example
@@ -721,7 +691,6 @@ function vector(p5, fn){
    */
 
     /**
-   * @method mult
    * @param  {Number} x number to multiply with the x component of the vector.
    * @param  {Number} y number to multiply with the y component of the vector.
    * @param  {Number} [z] number to multiply with the z component of the vector.
@@ -729,13 +698,11 @@ function vector(p5, fn){
    */
 
     /**
-   * @method mult
    * @param  {Number[]} arr array to multiply with the components of the vector.
    * @chainable
    */
 
     /**
-   * @method mult
    * @param  {p5.Vector} v vector to multiply with the components of the original vector.
    * @chainable
    */
@@ -829,7 +796,6 @@ function vector(p5, fn){
    * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
    * originals.
    *
-   * @method div
    * @param  {number}    n The number to divide the vector by
    * @chainable
    * @example
@@ -939,7 +905,6 @@ function vector(p5, fn){
    */
 
     /**
-   * @method div
    * @param  {Number} x number to divide with the x component of the vector.
    * @param  {Number} y number to divide with the y component of the vector.
    * @param  {Number} [z] number to divide with the z component of the vector.
@@ -947,13 +912,11 @@ function vector(p5, fn){
    */
 
     /**
-   * @method div
    * @param  {Number[]} arr array to divide the components of the vector by.
    * @chainable
    */
 
     /**
-   * @method div
    * @param  {p5.Vector} v vector to divide the components of the original vector by.
    * @chainable
    */
@@ -1056,7 +1019,6 @@ function vector(p5, fn){
     /**
    * Returns the magnitude (length) of the vector.
    *
-   * @method mag
    * @return {Number} magnitude of the vector.
    * @example
    * <div>
@@ -1078,7 +1040,6 @@ function vector(p5, fn){
     /**
    * Returns the magnitude (length) of the vector squared.
    *
-   * @method magSq
    * @return {number} squared magnitude of the vector.
    * @example
    * <div>
@@ -1116,7 +1077,6 @@ function vector(p5, fn){
    * The static version of `dot()`, as in `p5.Vector.dot(v1, v2)`, is the same
    * as calling `v1.dot(v2)`.
    *
-   * @method dot
    * @param  {Number} x   x component of the vector.
    * @param  {Number} [y] y component of the vector.
    * @param  {Number} [z] z component of the vector.
@@ -1178,7 +1138,6 @@ function vector(p5, fn){
    * </div>
    */
     /**
-   * @method dot
    * @param  {p5.Vector} v <a href="#/p5.Vector">p5.Vector</a> to be dotted.
    * @return {Number}
    */
@@ -1198,7 +1157,6 @@ function vector(p5, fn){
    * The static version of `cross()`, as in `p5.Vector.cross(v1, v2)`, is the same
    * as calling `v1.cross(v2)`.
    *
-   * @method cross
    * @param  {p5.Vector} v <a href="#/p5.Vector">p5.Vector</a> to be crossed.
    * @return {p5.Vector}   cross product as a <a href="#/p5.Vector">p5.Vector</a>.
    * @example
@@ -1243,7 +1201,6 @@ function vector(p5, fn){
    * Use <a href="#/p5/dist">dist()</a> to calculate the distance between points
    * using coordinates as in `dist(x1, y1, x2, y2)`.
    *
-   * @method dist
    * @param  {p5.Vector} v x, y, and z coordinates of a <a href="#/p5.Vector">p5.Vector</a>.
    * @return {Number}      distance.
    * @example
@@ -1319,7 +1276,6 @@ function vector(p5, fn){
    * returns a new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change
    * the original.
    *
-   * @method normalize
    * @return {p5.Vector} normalized <a href="#/p5.Vector">p5.Vector</a>.
    * @example
    * <div class="norender">
@@ -1392,7 +1348,6 @@ function vector(p5, fn){
    * new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
    * original.
    *
-   * @method limit
    * @param  {Number}    max maximum magnitude for the vector.
    * @chainable
    * @example
@@ -1464,7 +1419,6 @@ function vector(p5, fn){
    * a new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
    * original.
    *
-   * @method setMag
    * @param  {number}    len new length for this vector.
    * @chainable
    * @example
@@ -1538,7 +1492,6 @@ function vector(p5, fn){
    * The static version of `heading()`, as in `p5.Vector.heading(v)`, works the
    * same way.
    *
-   * @method heading
    * @return {Number} angle of rotation.
    * @example
    * <div class = "norender">
@@ -1616,7 +1569,6 @@ function vector(p5, fn){
    * <a href="#/p5/createVector">createVector()</a>, `setHeading()` uses
    * the units of the current <a href="#/p5/angleMode">angleMode()</a>.
    *
-   * @method setHeading
    * @param  {number}    angle angle of rotation.
    * @chainable
    * @example
@@ -1699,7 +1651,6 @@ function vector(p5, fn){
    * returns a new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change
    * the original.
    *
-   * @method rotate
    * @param  {number}    angle angle of rotation.
    * @chainable
    * @example
@@ -1803,7 +1754,6 @@ function vector(p5, fn){
    * angles in the units of the current
    * <a href="#/p5/angleMode">angleMode()</a>.
    *
-   * @method angleBetween
    * @param  {p5.Vector}    value x, y, and z components of a <a href="#/p5.Vector">p5.Vector</a>.
    * @return {Number}       angle between the vectors.
    * @example
@@ -1919,7 +1869,6 @@ function vector(p5, fn){
    * returns a new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change
    * the original.
    *
-   * @method lerp
    * @param  {Number}    x   x component.
    * @param  {Number}    y   y component.
    * @param  {Number}    z   z component.
@@ -1991,7 +1940,6 @@ function vector(p5, fn){
    * </div>
    */
     /**
-   * @method lerp
    * @param  {p5.Vector} v  <a href="#/p5.Vector">p5.Vector</a> to lerp toward.
    * @param  {Number}    amt
    * @chainable
@@ -2022,7 +1970,6 @@ function vector(p5, fn){
    * returns a new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change
    * the original.
    *
-   * @method slerp
    * @param {p5.Vector} v <a href="#/p5.Vector">p5.Vector</a> to slerp toward.
    * @param {Number} amt  amount of interpolation between 0.0 (old vector)
    *                      and 1.0 (new vector). 0.5 is halfway between.
@@ -2181,7 +2128,6 @@ function vector(p5, fn){
    * returns a new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change
    * the original.
    *
-   * @method reflect
    * @param  {p5.Vector} surfaceNormal  <a href="#/p5.Vector">p5.Vector</a>
    *                                    to reflect about.
    * @chainable
@@ -2250,7 +2196,6 @@ function vector(p5, fn){
     /**
    * Returns the vector's components as an array of numbers.
    *
-   * @method array
    * @return {Number[]} array with the vector's components.
    * @example
    * <div class = "norender">
@@ -2279,7 +2224,6 @@ function vector(p5, fn){
    * The static version of `equals()`, as in `p5.Vector.equals(v0, v1)`,
    * interprets both parameters as <a href="#/p5.Vector">p5.Vector</a> objects.
    *
-   * @method equals
    * @param {Number} [x] x component of the vector.
    * @param {Number} [y] y component of the vector.
    * @param {Number} [z] z component of the vector.
@@ -2325,7 +2269,6 @@ function vector(p5, fn){
    * </div>
    */
     /**
-   * @method equals
    * @param {p5.Vector|Array} value vector to compare.
    * @return {Boolean}
    */
@@ -2352,7 +2295,6 @@ function vector(p5, fn){
     /**
    * Make a new 2D vector from an angle.
    *
-   * @method fromAngle
    * @static
    * @param {Number}     angle desired angle, in radians. Unaffected by <a href="#/p5/angleMode">angleMode()</a>.
    * @param {Number}     [length] length of the new vector (defaults to 1).
@@ -2409,7 +2351,6 @@ function vector(p5, fn){
     /**
    * Make a new 3D vector from a pair of ISO spherical angles.
    *
-   * @method fromAngles
    * @static
    * @param {Number}     theta    polar angle in radians (zero is up).
    * @param {Number}     phi      azimuthal angle in radians
@@ -2469,7 +2410,6 @@ function vector(p5, fn){
     /**
    * Make a new 2D unit vector with a random heading.
    *
-   * @method random2D
    * @static
    * @return {p5.Vector} new <a href="#/p5.Vector">p5.Vector</a> object.
    * @example
@@ -2520,7 +2460,6 @@ function vector(p5, fn){
     /**
    * Make a new 3D unit vector with a random heading.
    *
-   * @method random3D
    * @static
    * @return {p5.Vector} new <a href="#/p5.Vector">p5.Vector</a> object.
    * @example
@@ -2544,7 +2483,6 @@ function vector(p5, fn){
 
     // Returns a copy of a vector.
     /**
-   * @method copy
    * @static
    * @param  {p5.Vector} v the <a href="#/p5.Vector">p5.Vector</a> to create a copy of
    * @return {p5.Vector} the copy of the <a href="#/p5.Vector">p5.Vector</a> object
@@ -2556,7 +2494,6 @@ function vector(p5, fn){
 
     // Adds two vectors together and returns a new one.
     /**
-   * @method add
    * @static
    * @param  {p5.Vector} v1 A <a href="#/p5.Vector">p5.Vector</a> to add
    * @param  {p5.Vector} v2 A <a href="#/p5.Vector">p5.Vector</a> to add
@@ -2582,13 +2519,11 @@ function vector(p5, fn){
 
     // Returns a vector remainder when it is divided by another vector
     /**
-   * @method rem
    * @static
    * @param  {p5.Vector} v1 The dividend <a href="#/p5.Vector">p5.Vector</a>
    * @param  {p5.Vector} v2 The divisor <a href="#/p5.Vector">p5.Vector</a>
    */
     /**
-   * @method rem
    * @static
    * @param  {p5.Vector} v1
    * @param  {p5.Vector} v2
@@ -2607,7 +2542,6 @@ function vector(p5, fn){
    * vector (`v2`) is subtracted from the first (`v1`), resulting in `v1-v2`.
    */
     /**
-   * @method sub
    * @static
    * @param  {p5.Vector} v1 A <a href="#/p5.Vector">p5.Vector</a> to subtract from
    * @param  {p5.Vector} v2 A <a href="#/p5.Vector">p5.Vector</a> to subtract
@@ -2636,7 +2570,6 @@ function vector(p5, fn){
    */
 
     /**
-   * @method mult
    * @static
    * @param  {Number} x
    * @param  {Number} y
@@ -2645,7 +2578,6 @@ function vector(p5, fn){
    */
 
     /**
-   * @method mult
    * @static
    * @param  {p5.Vector} v
    * @param  {Number}  n
@@ -2653,7 +2585,6 @@ function vector(p5, fn){
    */
 
     /**
-   * @method mult
    * @static
    * @param  {p5.Vector} v0
    * @param  {p5.Vector} v1
@@ -2661,7 +2592,6 @@ function vector(p5, fn){
    */
 
     /**
-   * @method mult
    * @static
    * @param  {p5.Vector} v0
    * @param  {Number[]} arr
@@ -2688,7 +2618,6 @@ function vector(p5, fn){
    */
 
     /**
-   * @method rotate
    * @static
    * @param  {p5.Vector} v
    * @param  {Number} angle
@@ -2715,7 +2644,6 @@ function vector(p5, fn){
    */
 
     /**
-   * @method div
    * @static
    * @param  {Number} x
    * @param  {Number} y
@@ -2724,7 +2652,6 @@ function vector(p5, fn){
    */
 
     /**
-   * @method div
    * @static
    * @param  {p5.Vector} v
    * @param  {Number}  n
@@ -2732,7 +2659,6 @@ function vector(p5, fn){
    */
 
     /**
-   * @method div
    * @static
    * @param  {p5.Vector} v0
    * @param  {p5.Vector} v1
@@ -2740,7 +2666,6 @@ function vector(p5, fn){
    */
 
     /**
-   * @method div
    * @static
    * @param  {p5.Vector} v0
    * @param  {Number[]} arr
@@ -2767,7 +2692,6 @@ function vector(p5, fn){
    * Calculates the dot product of two vectors.
    */
     /**
-   * @method dot
    * @static
    * @param  {p5.Vector} v1 first <a href="#/p5.Vector">p5.Vector</a>.
    * @param  {p5.Vector} v2 second <a href="#/p5.Vector">p5.Vector</a>.
@@ -2781,7 +2705,6 @@ function vector(p5, fn){
    * Calculates the cross product of two vectors.
    */
     /**
-   * @method cross
    * @static
    * @param  {p5.Vector} v1 first <a href="#/p5.Vector">p5.Vector</a>.
    * @param  {p5.Vector} v2 second <a href="#/p5.Vector">p5.Vector</a>.
@@ -2796,7 +2719,6 @@ function vector(p5, fn){
    * point as a vector object).
    */
     /**
-   * @method dist
    * @static
    * @param  {p5.Vector} v1 The first <a href="#/p5.Vector">p5.Vector</a>
    * @param  {p5.Vector} v2 The second <a href="#/p5.Vector">p5.Vector</a>
@@ -2811,7 +2733,6 @@ function vector(p5, fn){
    * new vector.
    */
     /**
-   * @method lerp
    * @static
    * @param {p5.Vector} v1
    * @param {p5.Vector} v2
@@ -2842,7 +2763,6 @@ function vector(p5, fn){
    * between 2D vectors is always a 2D vector.
    */
     /**
-   * @method slerp
    * @static
    * @param {p5.Vector} v1 old vector.
    * @param {p5.Vector} v2 new vector.
@@ -2871,7 +2791,6 @@ function vector(p5, fn){
    * a float (this is simply the equation `sqrt(x*x + y*y + z*z)`.)
    */
     /**
-   * @method mag
    * @static
    * @param {p5.Vector} vecT The vector to return the magnitude of
    * @return {Number}        The magnitude of vecT
@@ -2887,7 +2806,6 @@ function vector(p5, fn){
    * case of comparing vectors, etc.
    */
     /**
-   * @method magSq
    * @static
    * @param {p5.Vector} vecT the vector to return the squared magnitude of
    * @return {Number}        the squared magnitude of vecT
@@ -2900,7 +2818,6 @@ function vector(p5, fn){
    * Normalize the vector to length 1 (make it a unit vector).
    */
     /**
-   * @method normalize
    * @static
    * @param {p5.Vector} v  The vector to normalize
    * @param {p5.Vector} [target] The vector to receive the result
@@ -2926,7 +2843,6 @@ function vector(p5, fn){
    * parameter.
    */
     /**
-   * @method limit
    * @static
    * @param {p5.Vector} v  the vector to limit
    * @param {Number}    max
@@ -2953,7 +2869,6 @@ function vector(p5, fn){
    * parameter.
    */
     /**
-   * @method setMag
    * @static
    * @param {p5.Vector} v  the vector to set the magnitude of
    * @param {number}    len
@@ -2982,7 +2897,6 @@ function vector(p5, fn){
    * consideration, and give the angle in radians or degrees accordingly.
    */
     /**
-   * @method heading
    * @static
    * @param {p5.Vector} v the vector to find the angle of
    * @return {Number} the angle of rotation
@@ -2997,7 +2911,6 @@ function vector(p5, fn){
    * give the angle in radians or degrees accordingly.
    */
     /**
-   * @method angleBetween
    * @static
    * @param  {p5.Vector}    v1 the first vector.
    * @param  {p5.Vector}    v2 the second vector.
@@ -3012,7 +2925,6 @@ function vector(p5, fn){
    * plane in 3D.
    */
     /**
-   * @method reflect
    * @static
    * @param  {p5.Vector} incidentVector vector to be reflected.
    * @param  {p5.Vector} surfaceNormal
@@ -3041,7 +2953,6 @@ function vector(p5, fn){
    * method to copy into your own vector.
    */
     /**
-   * @method array
    * @static
    * @param  {p5.Vector} v the vector to convert to an array
    * @return {Number[]} an Array with the 3 values
@@ -3054,7 +2965,6 @@ function vector(p5, fn){
    * Equality check against a <a href="#/p5.Vector">p5.Vector</a>
    */
     /**
-   * @method equals
    * @static
    * @param {p5.Vector|Array} v1 the first vector to compare
    * @param {p5.Vector|Array} v2 the second vector to compare
@@ -3075,6 +2985,30 @@ function vector(p5, fn){
       return v.equals(v2);
     }
   };
+
+  /**
+   * The x component of the vector
+   * @type {Number}
+   * @for p5.Vector
+   * @property x
+   * @name x
+   */
+
+  /**
+   * The y component of the vector
+   * @type {Number}
+   * @for p5.Vector
+   * @property y
+   * @name y
+   */
+
+  /**
+   * The z component of the vector
+   * @type {Number}
+   * @for p5.Vector
+   * @property z
+   * @name z
+   */
 }
 
 export default vector;

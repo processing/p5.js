@@ -17,7 +17,6 @@ import p5 from './main';
  * <a href="#/p5/createButton">createButton()</a>.
  *
  * @class p5.Element
- * @constructor
  * @param {HTMLElement} elt wrapped DOM element.
  * @param {p5} [pInst] pointer to p5 instance.
  *
@@ -52,53 +51,10 @@ import p5 from './main';
  */
 p5.Element = class {
   constructor(elt, pInst) {
-    /**
-     * Underlying
-     * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement" target="_blank">HTMLElement</a>
-     * object. Its properties and methods can be used directly.
-     *
-     * @example
-     * <div>
-     * <code>
-     * function setup() {
-     *   // Create a canvas element and
-     *   // assign it to cnv.
-     *   let cnv = createCanvas(100, 100);
-     *
-     *   background(200);
-     *
-     *   // Set the border style for the
-     *   // canvas.
-     *   cnv.elt.style.border = '5px dashed deeppink';
-     *
-     *   describe('A gray square with a pink border drawn with dashed lines.');
-     * }
-     * </code>
-     * </div>
-     *
-     * @property elt
-     * @name elt
-     * @readOnly
-     */
     this.elt = elt;
-    /**
-     * @private
-     * @type {p5.Element}
-     * @name _pInst
-     */
     this._pInst = this._pixelsState = pInst;
     this._events = {};
-    /**
-     * @type {Number}
-     * @property width
-     * @name width
-     */
     this.width = this.elt.offsetWidth;
-    /**
-     * @type {Number}
-     * @property height
-     * @name height
-     */
     this.height = this.elt.offsetHeight;
   }
 
@@ -120,7 +76,6 @@ p5.Element = class {
    * Calling `myElement.parent()` without an argument returns this element's
    * parent.
    *
-   * @method parent
    * @param  {String|p5.Element|Object} parent ID, <a href="#/p5.Element">p5.Element</a>,
    *                                           or HTMLElement of desired parent element.
    * @chainable
@@ -210,7 +165,6 @@ p5.Element = class {
    * </div>
    */
   /**
-   * @method parent
    * @return {p5.Element}
    */
   parent(p) {
@@ -235,7 +189,6 @@ p5.Element = class {
    *
    * Calling `myElement.id()` without an argument returns its ID as a string.
    *
-   * @method id
    * @param  {String} id ID of the element.
    * @chainable
    *
@@ -263,7 +216,6 @@ p5.Element = class {
    * </div>
    */
   /**
-   * @method id
    * @return {String} ID of the element.
    */
   id(id) {
@@ -284,7 +236,6 @@ p5.Element = class {
    *
    * Calling `myElement.class()` without an argument returns a string with its current classes.
    *
-   * @method class
    * @param  {String} class class to add.
    * @chainable
    *
@@ -314,7 +265,6 @@ p5.Element = class {
    * </div>
    */
   /**
-   * @method class
    * @return {String} element's classes, if any.
    */
   class(c) {
@@ -333,7 +283,6 @@ p5.Element = class {
    * Note: Some mobile browsers may also trigger this event when the element
    * receives a quick tap.
    *
-   * @method mousePressed
    * @param  {Function|Boolean} fxn function to call when the mouse is
    *                                pressed over the element.
    *                                `false` disables the function.
@@ -405,7 +354,6 @@ p5.Element = class {
    * Calls a function when the mouse is pressed twice over the element.
    * Calling `myElement.doubleClicked(false)` disables the function.
    *
-   * @method doubleClicked
    * @param  {Function|Boolean} fxn function to call when the mouse is
    *                                double clicked over the element.
    *                                `false` disables the function.
@@ -475,7 +423,6 @@ p5.Element = class {
    *
    * Calling `myElement.mouseWheel(false)` disables the function.
    *
-   * @method mouseWheel
    * @param  {Function|Boolean} fxn function to call when the mouse wheel is
    *                                scrolled over the element.
    *                                `false` disables the function.
@@ -577,7 +524,6 @@ p5.Element = class {
    * Note: Some mobile browsers may also trigger this event when the element
    * receives a quick tap.
    *
-   * @method mouseReleased
    * @param  {Function|Boolean} fxn function to call when the mouse is
    *                                pressed over the element.
    *                                `false` disables the function.
@@ -642,7 +588,6 @@ p5.Element = class {
    * Note: Some mobile browsers may also trigger this event when the element
    * receives a quick tap.
    *
-   * @method mouseClicked
    * @param  {Function|Boolean} fxn function to call when the mouse is
    *                                pressed and released over the element.
    *                                `false` disables the function.
@@ -704,7 +649,6 @@ p5.Element = class {
    * Calls a function when the mouse moves over the element. Calling
    * `myElement.mouseMoved(false)` disables the function.
    *
-   * @method mouseMoved
    * @param  {Function|Boolean} fxn function to call when the mouse
    *                                moves over the element.
    *                                `false` disables the function.
@@ -766,7 +710,6 @@ p5.Element = class {
    * Calls a function when the mouse moves onto the element. Calling
    * `myElement.mouseOver(false)` disables the function.
    *
-   * @method mouseOver
    * @param  {Function|Boolean} fxn function to call when the mouse
    *                                moves onto the element.
    *                                `false` disables the function.
@@ -829,7 +772,6 @@ p5.Element = class {
    * Calls a function when the mouse moves off the element. Calling
    * `myElement.mouseOut(false)` disables the function.
    *
-   * @method mouseOut
    * @param  {Function|Boolean} fxn function to call when the mouse
    *                                moves off the element.
    *                                `false` disables the function.
@@ -894,7 +836,6 @@ p5.Element = class {
    *
    * Note: Touch functions only work on mobile devices.
    *
-   * @method touchStarted
    * @param  {Function|Boolean} fxn function to call when the touch
    *                                starts.
    *                                `false` disables the function.
@@ -960,7 +901,6 @@ p5.Element = class {
    *
    * Note: Touch functions only work on mobile devices.
    *
-   * @method touchMoved
    * @param  {Function|Boolean} fxn function to call when the touch
    *                                moves over the element.
    *                                `false` disables the function.
@@ -1026,7 +966,6 @@ p5.Element = class {
    *
    * Note: Touch functions only work on mobile devices.
    *
-   * @method touchEnded
    * @param  {Function|Boolean} fxn function to call when the touch
    *                                ends.
    *                                `false` disables the function.
@@ -1091,7 +1030,6 @@ p5.Element = class {
    * Calls a function when a file is dragged over the element. Calling
    * `myElement.dragOver(false)` disables the function.
    *
-   * @method dragOver
    * @param  {Function|Boolean} fxn function to call when the file is
    *                                dragged over the element.
    *                                `false` disables the function.
@@ -1154,7 +1092,6 @@ p5.Element = class {
    * Calls a function when a file is dragged off the element. Calling
    * Calling `myElement.dragLeave(false)` disables the function.
    *
-   * @method dragLeave
    * @param  {Function|Boolean} fxn function to call when the file is
    *                                dragged off the element.
    *                                `false` disables the function.
@@ -1272,5 +1209,46 @@ p5.Element = class {
     this[prop] = value;
   }
 };
+
+/**
+ * Underlying
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement" target="_blank">HTMLElement</a>
+ * object. Its properties and methods can be used directly.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   // Create a canvas element and
+ *   // assign it to cnv.
+ *   let cnv = createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Set the border style for the
+ *   // canvas.
+ *   cnv.elt.style.border = '5px dashed deeppink';
+ *
+ *   describe('A gray square with a pink border drawn with dashed lines.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @property elt
+ * @for p5.Element
+ * @readOnly
+ */
+
+/**
+ * @type {Number}
+ * @property width
+ * @for p5.Element
+ */
+
+/**
+ * @type {Number}
+ * @property height
+ * @for p5.Element
+ */
 
 export default p5.Element;

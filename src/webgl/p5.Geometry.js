@@ -12,8 +12,8 @@ import p5 from '../core/main';
 import * as constants from '../core/constants';
 /**
  * p5 Geometry class
+ *
  * @class p5.Geometry
- * @constructor
  * @param  {Integer} [detailX] number of vertices along the x-axis.
  * @param  {Integer} [detailY] number of vertices along the y-axis.
  * @param {function} [callback] function to call upon object instantiation.
@@ -69,7 +69,6 @@ p5.Geometry = class Geometry {
     if (callback instanceof Function) {
       callback.call(this);
     }
-    return this; // TODO: is this a constructor?
   }
 
   reset() {
@@ -92,8 +91,6 @@ p5.Geometry = class Geometry {
    * Removes the internal colors of p5.Geometry.
    * Using `clearColors()`, you can use `fill()` to supply new colors before drawing each shape.
    * If `clearColors()` is not used, the shapes will use their internal colors by ignoring `fill()`.
-   *
-   * @method clearColors
    *
    * @example
    * <div>
@@ -288,7 +285,6 @@ p5.Geometry = class Geometry {
   }
   /**
  * computes faces for geometry objects based on the vertices.
- * @method computeFaces
  * @chainable
  */
   computeFaces() {
@@ -339,7 +335,6 @@ p5.Geometry = class Geometry {
    * Options can include:
    * - `roundToPrecision`: Precision value for rounding computations. Defaults to 3.
    *
-   * @method computeNormals
    * @param {String} [shadingType] shading type (`FLAT` for flat shading or `SMOOTH` for smooth shading) for buildGeometry() outputs. Defaults to `FLAT`.
    * @param {Object} [options] An optional object with configuration.
    * @chainable
@@ -503,7 +498,6 @@ p5.Geometry = class Geometry {
   /**
  * Averages the vertex normals. Used in curved
  * surfaces
- * @method averageNormals
  * @chainable
  */
   averageNormals() {
@@ -523,7 +517,6 @@ p5.Geometry = class Geometry {
 
   /**
  * Averages pole normals.  Used in spherical primitives
- * @method averagePoleNormals
  * @chainable
  */
   averagePoleNormals() {
@@ -833,7 +826,6 @@ p5.Geometry = class Geometry {
 
   /**
  * Modifies all vertices to be centered within the range -100 to 100.
- * @method normalize
  * @chainable
  */
   normalize() {

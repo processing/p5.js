@@ -161,7 +161,7 @@ define(function (require) {
 
 ## Constructors
 
-Constructors are defined with `@class`. Each constructor should have the tag `@class` followed by the name of the class, as well as the tag `@constructor`, and any `@param` tags required.
+Constructors are defined with `@class`. Each constructor should have the tag `@class` followed by the name of the class, and any `@param` tags required.
 
 ```js
   /**

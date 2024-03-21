@@ -1,6 +1,10 @@
 /* eslint no-unused-vars: 0 */
 
-function promisedSketch(sketch_fn) {
+import p5 from '../../src/app.js';
+
+p5._throwValidationErrors = true;
+
+export function promisedSketch(sketch_fn) {
   var myInstance;
   var promise = new Promise(function(resolve, reject) {
     myInstance = new p5(function(sketch) {
@@ -14,7 +18,7 @@ function promisedSketch(sketch_fn) {
   return promise;
 }
 
-function testSketchWithPromise(name, sketch_fn) {
+export function testSketchWithPromise(name, sketch_fn) {
   var test_fn = function() {
     return promisedSketch(sketch_fn);
   };
@@ -24,7 +28,7 @@ function testSketchWithPromise(name, sketch_fn) {
   return test(name, test_fn);
 }
 
-function testWithDownload(name, fn, asyncFn = false) {
+export function testWithDownload(name, fn, asyncFn = false) {
   var test_fn = function(done) {
     // description of this is also on
     // https://github.com/processing/p5.js/pull/4418/
@@ -72,11 +76,11 @@ function testWithDownload(name, fn, asyncFn = false) {
 }
 
 // Tests should run only for the unminified script
-function testUnMinified(name, test_fn) {
+export function testUnMinified(name, test_fn) {
   return !window.IS_TESTING_MINIFIED_VERSION ? test(name, test_fn) : null;
 }
 
-function parallelSketches(sketch_fns) {
+export function parallelSketches(sketch_fns) {
   var setupPromises = [];
   var resultPromises = [];
   var endCallbacks = [];
@@ -111,10 +115,10 @@ function parallelSketches(sketch_fns) {
   };
 }
 
-var P5_SCRIPT_URL = '../../lib/p5.js';
-var P5_SCRIPT_TAG = '<script src="' + P5_SCRIPT_URL + '"></script>';
+export const P5_SCRIPT_URL = '../../lib/p5.js';
+export const P5_SCRIPT_TAG = '<script src="' + P5_SCRIPT_URL + '"></script>';
 
-function createP5Iframe(html) {
+export function createP5Iframe(html) {
   html = html || P5_SCRIPT_TAG;
 
   var elt = document.createElement('iframe');

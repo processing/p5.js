@@ -85,9 +85,7 @@ p5.prototype.createNumberDict = function (key, value) {
  * typed Dictionary classes inherit from this class.
  *
  * @class p5.TypedDict
- * @constructor
  */
-
 p5.TypedDict = class TypedDict {
   constructor(key, value) {
     if (key instanceof Object) {
@@ -102,7 +100,6 @@ p5.TypedDict = class TypedDict {
   /**
    * Returns the number of key-value pairs currently stored in the Dictionary.
    *
-   * @method size
    * @return {Integer} the number of key-value pairs in the Dictionary
    *
    * @example
@@ -124,7 +121,6 @@ p5.TypedDict = class TypedDict {
    * Returns true if the given key exists in the Dictionary,
    * otherwise returns false.
    *
-   * @method hasKey
    * @param {Number|String} key that you want to look up
    * @return {Boolean} whether that key exists in Dictionary
    *
@@ -145,7 +141,6 @@ p5.TypedDict = class TypedDict {
   /**
    * Returns the value stored at the given key.
    *
-   * @method get
    * @param {Number|String} the key you want to access
    * @return {Number|String} the value stored at that key
    *
@@ -172,7 +167,6 @@ p5.TypedDict = class TypedDict {
    * Updates the value associated with the given key in case it already exists
    * in the Dictionary. Otherwise a new key-value pair is added.
    *
-   * @method set
    * @param {Number|String} key
    * @param {Number|String} value
    *
@@ -209,7 +203,6 @@ p5.TypedDict = class TypedDict {
   /**
    * Creates a new key-value pair in the Dictionary.
    *
-   * @method create
    * @param {Number|String} key
    * @param {Number|String} value
    *
@@ -225,10 +218,8 @@ p5.TypedDict = class TypedDict {
    * </code></div>
    */
   /**
-   * @method create
    * @param {Object} obj key/value pair
    */
-
   create(key, value) {
     if (key instanceof Object && typeof value === 'undefined') {
       this._addObj(key);
@@ -245,7 +236,6 @@ p5.TypedDict = class TypedDict {
   /**
    * Removes all previously stored key-value pairs from the Dictionary.
    *
-   * @method clear
    * @example
    * <div class="norender">
    * <code>
@@ -258,7 +248,6 @@ p5.TypedDict = class TypedDict {
    * </code>
    * </div>
    */
-
   clear() {
     this.data = {};
   }
@@ -266,7 +255,6 @@ p5.TypedDict = class TypedDict {
   /**
    * Removes the key-value pair stored at the given key from the Dictionary.
    *
-   * @method remove
    * @param {Number|String} key for the pair to remove
    *
    * @example
@@ -283,7 +271,6 @@ p5.TypedDict = class TypedDict {
    * }
    * </code></div>
    */
-
   remove(key) {
     if (this.data.hasOwnProperty(key)) {
       delete this.data[key];
@@ -294,8 +281,6 @@ p5.TypedDict = class TypedDict {
 
   /**
    * Logs the set of items currently stored in the Dictionary to the console.
-   *
-   * @method print
    *
    * @example
    * <div class="norender">
@@ -309,7 +294,6 @@ p5.TypedDict = class TypedDict {
    * </code>
    * </div>
    */
-
   print() {
     for (const item in this.data) {
       console.log(`key:${item} value:${this.data[item]}`);
@@ -319,7 +303,6 @@ p5.TypedDict = class TypedDict {
   /**
    * Converts the Dictionary into a CSV file for local download.
    *
-   * @method saveTable
    * @example
    * <div>
    * <code>
@@ -342,7 +325,6 @@ p5.TypedDict = class TypedDict {
    * </code>
    * </div>
    */
-
   saveTable(filename) {
     let output = '';
 
@@ -357,7 +339,6 @@ p5.TypedDict = class TypedDict {
   /**
    * Converts the Dictionary into a JSON file for local download.
    *
-   * @method saveJSON
    * @example
    * <div>
    * <code>
@@ -380,7 +361,6 @@ p5.TypedDict = class TypedDict {
    * </code>
    * </div>
    */
-
   saveJSON(filename, opt) {
     p5.prototype.saveJSON(this.data, filename, opt);
   }
@@ -401,7 +381,6 @@ p5.TypedDict = class TypedDict {
  * @class p5.StringDict
  * @extends p5.TypedDict
  */
-
 p5.StringDict = class StringDict extends p5.TypedDict {
   constructor(...args) {
     super(...args);
@@ -417,7 +396,6 @@ p5.StringDict = class StringDict extends p5.TypedDict {
  * A simple Dictionary class for Numbers.
  *
  * @class p5.NumberDict
- * @constructor
  * @extends p5.TypedDict
  */
 
@@ -426,12 +404,10 @@ p5.NumberDict = class NumberDict extends p5.TypedDict {
     super(...args);
   }
 
-
   /**
    * private helper function to ensure that the user passed in valid
    * values for the Dictionary type
    */
-
   _validate(value) {
     return typeof value === 'number';
   }
@@ -440,7 +416,6 @@ p5.NumberDict = class NumberDict extends p5.TypedDict {
    * Add the given number to the value currently stored at the given key.
    * The sum then replaces the value previously stored in the Dictionary.
    *
-   * @method add
    * @param {Number} Key for the value you wish to add to
    * @param {Number} Number to add to the value
    * @example
@@ -454,7 +429,6 @@ p5.NumberDict = class NumberDict extends p5.TypedDict {
    * </code></div>
    *
    */
-
   add(key, amount) {
     if (this.data.hasOwnProperty(key)) {
       this.data[key] += amount;
@@ -467,7 +441,6 @@ p5.NumberDict = class NumberDict extends p5.TypedDict {
    * Subtract the given number from the value currently stored at the given key.
    * The difference then replaces the value previously stored in the Dictionary.
    *
-   * @method sub
    * @param {Number} Key for the value you wish to subtract from
    * @param {Number} Number to subtract from the value
    * @example
@@ -481,7 +454,6 @@ p5.NumberDict = class NumberDict extends p5.TypedDict {
    * </code></div>
    *
    */
-
   sub(key, amount) {
     this.add(key, -amount);
   }
@@ -490,7 +462,6 @@ p5.NumberDict = class NumberDict extends p5.TypedDict {
    * Multiply the given number with the value currently stored at the given key.
    * The product then replaces the value previously stored in the Dictionary.
    *
-   * @method mult
    * @param {Number} Key for value you wish to multiply
    * @param {Number} Amount to multiply the value by
    * @example
@@ -504,7 +475,6 @@ p5.NumberDict = class NumberDict extends p5.TypedDict {
    * </code></div>
    *
    */
-
   mult(key, amount) {
     if (this.data.hasOwnProperty(key)) {
       this.data[key] *= amount;
@@ -517,7 +487,6 @@ p5.NumberDict = class NumberDict extends p5.TypedDict {
    * Divide the given number with the value currently stored at the given key.
    * The quotient then replaces the value previously stored in the Dictionary.
    *
-   * @method div
    * @param {Number} Key for value you wish to divide
    * @param {Number} Amount to divide the value by
    * @example
@@ -531,7 +500,6 @@ p5.NumberDict = class NumberDict extends p5.TypedDict {
    * </code></div>
    *
    */
-
   div(key, amount) {
     if (this.data.hasOwnProperty(key)) {
       this.data[key] /= amount;
@@ -545,7 +513,6 @@ p5.NumberDict = class NumberDict extends p5.TypedDict {
    * the argument 'flip' is used to flip the comparison arrow
    * from 'less than' to 'greater than'
    */
-
   _valueTest(flip) {
     if (Object.keys(this.data).length === 0) {
       throw new Error(
@@ -567,7 +534,6 @@ p5.NumberDict = class NumberDict extends p5.TypedDict {
   /**
    * Return the lowest number currently stored in the Dictionary.
    *
-   * @method minValue
    * @return {Number}
    * @example
    * <div class='norender'>
@@ -579,7 +545,6 @@ p5.NumberDict = class NumberDict extends p5.TypedDict {
    * }
    * </code></div>
    */
-
   minValue() {
     return this._valueTest(1);
   }
@@ -587,7 +552,6 @@ p5.NumberDict = class NumberDict extends p5.TypedDict {
   /**
    * Return the highest number currently stored in the Dictionary.
    *
-   * @method maxValue
    * @return {Number}
    * @example
    * <div class='norender'>
@@ -599,7 +563,6 @@ p5.NumberDict = class NumberDict extends p5.TypedDict {
    * }
    * </code></div>
    */
-
   maxValue() {
     return this._valueTest(-1);
   }
@@ -609,7 +572,6 @@ p5.NumberDict = class NumberDict extends p5.TypedDict {
    * the argument 'flip' is used to flip the comparison arrow
    * from 'less than' to 'greater than'
    */
-
   _keyTest(flip) {
     if (Object.keys(this.data).length === 0) {
       throw new Error('Unable to use minValue on an empty NumberDict');
@@ -629,7 +591,6 @@ p5.NumberDict = class NumberDict extends p5.TypedDict {
   /**
    * Return the lowest key currently used in the Dictionary.
    *
-   * @method minKey
    * @return {Number}
    * @example
    * <div class='norender'>
@@ -641,7 +602,6 @@ p5.NumberDict = class NumberDict extends p5.TypedDict {
    * }
    * </code></div>
    */
-
   minKey() {
     return this._keyTest(1);
   }
@@ -649,7 +609,6 @@ p5.NumberDict = class NumberDict extends p5.TypedDict {
   /**
    * Return the highest key currently used in the Dictionary.
    *
-   * @method maxKey
    * @return {Number}
    * @example
    * <div class='norender'>
@@ -661,7 +620,6 @@ p5.NumberDict = class NumberDict extends p5.TypedDict {
    * }
    * </code></div>
    */
-
   maxKey() {
     return this._keyTest(-1);
   }
