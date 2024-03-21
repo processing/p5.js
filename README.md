@@ -981,6 +981,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="http://sejinoh.live"><img src="https://avatars.githubusercontent.com/u/39869184?v=4?s=120" width="120px;" alt="SejinOH"/><br /><sub><b>SejinOH</b></sub></a><br /><a href="#translation-designerSejinOH" title="Translation">🌍</a> <a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3AdesignerSejinOH" title="Reviewed Pull Requests">👀</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Surbhi-Pittie"><img src="https://avatars.githubusercontent.com/u/101015196?v=4?s=120" width="120px;" alt="Surbhi Pittie"/><br /><sub><b>Surbhi Pittie</b></sub></a><br /><a href="#translation-Surbhi-Pittie" title="Translation">🌍</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Tmicrd"><img src="https://avatars.githubusercontent.com/u/53132820?v=4?s=120" width="120px;" alt="nancy"/><br /><sub><b>nancy</b></sub></a><br /><a href="#translation-Tmicrd" title="Translation">🌍</a></td>
+    </tr>
   </tbody>
 </table>
 
