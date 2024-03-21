@@ -48,17 +48,17 @@ In the example below, `suite()` and `test()` are both built-in functions provide
 
 ```js
 suite('p5.prototype.keyIsPressed', function() {
-  test('keyIsPressed is a boolean', function() {
-    //write test here
-  });
+  test('keyIsPressed is a boolean', function() {
+    //write test here
+  });
 
-  test('keyIsPressed is true on key press', function() {
-    //write test here
-  });
+  test('keyIsPressed is true on key press', function() {
+    //write test here
+  });
 
-  test('keyIsPressed is false when no keys are pressed', function() {
-    //write test here
-  });
+  test('keyIsPressed is false when no keys are pressed', function() {
+    //write test here
+  });
 });
 ```
 
@@ -68,12 +68,12 @@ We have structured our tests above but we haven't written the tests yet. We will
 let myp5;
 
 setup(function(done) {
-  new p5(function(p) {
-    p.setup = function() {
-      myp5 = p;
-      done();
-    };
-  });
+  new p5(function(p) {
+    p.setup = function() {
+      myp5 = p;
+      done();
+    };
+  });
 });
 ```
 
@@ -83,8 +83,8 @@ Remember that, as previously mentioned, Mocha is a test runner but by itself doe
 
 ```js
 test('keyIsPressed is a boolean', function() {
-  //Asserts that value is a boolean.
-  assert.isBoolean(myp5.keyIsPressed);
+  //Asserts that value is a boolean.
+  assert.isBoolean(myp5.keyIsPressed);
 });
 ```
 
@@ -101,23 +101,23 @@ If you have added a new source code file in the `src` folder and would like to a
 
 ```js
 suite('module_name', function() {
-  let myp5;
-  let myID = 'myCanvasID';
+  let myp5;
+  let myID = 'myCanvasID';
 
-  setup(function(done) {
-    new p5(function(p) {
-      p.setup = function() {
-        let cnv = p.createCanvas(100, 100);
-        cnv.id(myID);
-        myp5 = p;
-        done();
-      };
-    });
-  });
+  setup(function(done) {
+    new p5(function(p) {
+      p.setup = function() {
+        let cnv = p.createCanvas(100, 100);
+        cnv.id(myID);
+        myp5 = p;
+        done();
+      };
+    });
+  });
 
-  teardown(function() {
-    myp5.remove();
-  });
+  teardown(function() {
+    myp5.remove();
+  });
 });
 ```
 
@@ -126,9 +126,9 @@ After adding a test file for a module to `test/unit`, you'll also need to add th
 ```js
 // test/unit/spec.js
 var spec = {
-  // ...
-  typography: ['attributes', 'loadFont', 'p5.Font', 'yourModule'],
-  // ...
+  // ...
+  typography: ['attributes', 'loadFont', 'p5.Font', 'yourModule'],
+  // ...
 };
 ```
 
@@ -136,31 +136,31 @@ To add actual tests, which are grouped into what is called a “suite” (repres
 
 ```js
 suite('module_name', function() {
-  let myp5;
-  let myID = 'myCanvasID';
+  let myp5;
+  let myID = 'myCanvasID';
 
-  setup(function(done) {
-    new p5(function(p) {
-      p.setup = function() {
-        let cnv = p.createCanvas(100, 100);
-        cnv.id(myID);
-        myp5 = p;
-        done();
-      };
-    });
-  });
+  setup(function(done) {
+    new p5(function(p) {
+      p.setup = function() {
+        let cnv = p.createCanvas(100, 100);
+        cnv.id(myID);
+        myp5 = p;
+        done();
+      };
+    });
+  });
 
-  teardown(function() {
+  teardown(function() {
     myp5.remove();
-  });
+  });
 
-  suite('p5.prototype.yourFunction', function() {
-    test('should [test something]', function() {
-      // Your test code and Chai assertions
-    });
-  });
+  suite('p5.prototype.yourFunction', function() {
+    test('should [test something]', function() {
+      // Your test code and Chai assertions
+    });
+  });
 
-  // More test suites as needed
+  // More test suites as needed
 });
 ```
 

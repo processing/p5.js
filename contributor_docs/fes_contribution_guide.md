@@ -43,20 +43,20 @@ Individual files contain the following main FES functions:
 #### Syntax
 
 ```js
-_report(message)
+_report(message);
 
-_report(message, func)
+_report(message, func);
 
-_report(message, func, color)
+_report(message, func, color);
 ```
 
 
 #### Parameters
 
 ```
-@param  {String}        message   Message to be printed
-@param  {String}        [func]    Name of function
-@param  {Number|String} [color]   CSS color code
+@param  {String}        message   Message to be printed
+@param  {String}        [func]    Name of function
+@param  {Number|String} [color]   CSS color code
 ```
 
 The `[func]` input is used to append a reference link to the end of the error message.
@@ -88,22 +88,22 @@ The call sequence to `_friendlyFileLoadError` looks something like this:
 
 ```
 _friendlyFileLoadError
-  _report
+  _report
 ```
 
 
 #### Syntax
 
 ```js
-_friendlyFileLoadError(errorType, filePath)
+_friendlyFileLoadError(errorType, filePath);
 ```
 
 
 #### Parameters
 
 ```
-@param  {Number}  errorType   Number of file load error type
-@param  {String}  filePath    Path to file caused the error
+@param  {Number}  errorType   Number of file load error type
+@param  {String}  filePath    Path to file caused the error
 ```
 
 The `errorType` input refers to the specific type of file load error as enumerated in `core/friendly_errors/file_errors.js`. File load errors in p5.js are categorized into various distinct cases. This categorization is designed to facilitate the delivery of precise and informative error messages corresponding to different error scenarios. For example, when it can't read the data in a font file, it can show a different error than it would when it tries to load a file that is too large to read.
@@ -117,15 +117,15 @@ File Loading Error Example:
 /// missing font file
 let myFont;
 function preload() {
-  myFont = loadFont('assets/OpenSans-Regular.ttf');
-};
+  myFont = loadFont('assets/OpenSans-Regular.ttf');
+}
 function setup() {
-  fill('#ED225D');
-  textFont(myFont);
-  textSize(36);
-  text('p5*js', 10, 50);
-};
-function draw() {};
+  fill('#ED225D');
+  textFont(myFont);
+  textSize(36);
+  text('p5*js', 10, 50);
+}
+function draw() {}
 ```
 
 FES will generate the following message in the console in addition to browser’s “unsupported” error:
@@ -133,7 +133,7 @@ FES will generate the following message in the console in addition to browser’
 ```
 🌸 p5.js says: It looks like there was a problem loading your font. Try checking if the file path (assets/OpenSans-Regular.ttf) is correct, hosting the file online, or running a local server.
 
-+ More info: https://github.com/processing/p5.js/wiki/Local-server 
++ More info: https://github.com/processing/p5.js/wiki/Local-server
 ```
 
 
@@ -203,32 +203,32 @@ The call sequence from `_validateParameters` looks something like this:
 
 ```
 validateParameters
-   buildArgTypeCache
-      addType
-    lookupParamDoc
-    scoreOverload
-      testParamTypes
-      testParamType
-    getOverloadErrors
-    _friendlyParamError
-      ValidationError
-      report
-        friendlyWelcome
+   buildArgTypeCache
+      addType
+    lookupParamDoc
+    scoreOverload
+      testParamTypes
+      testParamType
+    getOverloadErrors
+    _friendlyParamError
+      ValidationError
+      report
+        friendlyWelcome
 ```
 
 
 #### Syntax
 
 ```js
-_validateParameters(func, args)
+_validateParameters(func, args);
 ```
 
 
 #### Parameters
 
 ```
-@param  {String}  func    Name of the function being called
-@param  {Array}   args    User input arguments
+@param  {String}  func    Name of the function being called
+@param  {Array}   args    User input arguments
 ```
 
 
@@ -243,7 +243,7 @@ arc(1, 1, 10.5, 10);
 FES will generate the following message in the console:
 
 ```
-🌸 p5.js says: [sketch.js, line 13] arc() was expecting at least 6 arguments, but received only 4. (http://p5js.org/reference/#/p5/arc) 
+🌸 p5.js says: [sketch.js, line 13] arc() was expecting at least 6 arguments, but received only 4. (http://p5js.org/reference/#/p5/arc)
 ```
 
 Example of a type mismatch
@@ -255,7 +255,7 @@ arc(1, ',1', 10.5, 10, 0, Math.PI);
 FES will generate the following message in the console:
 
 ```
-🌸 p5.js says: [sketch.js, line 14] arc() was expecting Number for the first parameter, received string instead. (http://p5js.org/reference/#/p5/arc) 
+🌸 p5.js says: [sketch.js, line 14] arc() was expecting Number for the first parameter, received string instead. (http://p5js.org/reference/#/p5/arc)
 ```
 
 
@@ -268,7 +268,7 @@ core/friendly\_errors/validate\_params.js
 
 #### Description
 
-`fesErrorMonitor()` monitors browser error messages to guess the source of the error and provide additional guidance to the users. This includes the stack trace,  which is a sequential list of the functions called in a program leading up to the point of the thrown error. Stack traces are useful for determining if an error is internal or caused by something the user called directly.
+`fesErrorMonitor()` monitors browser error messages to guess the source of the error and provide additional guidance to the users. This includes the stack trace,  which is a sequential list of the functions called in a program leading up to the point of the thrown error. Stack traces are useful for determining if an error is internal or caused by something the user called directly.
 
 It calls `translator()` to generate and print a Friendly Error message using key `fes.globalErrors.*`. You can see all the available keys at `translations/en/translation.json`.
 
@@ -291,31 +291,31 @@ The call sequence for `_fesErrorMonitor` roughly looks something like this:
 
 ```
  _fesErrorMonitor
-     processStack
-       printFriendlyError
-     (if type of error is ReferenceError)
-       _handleMisspelling
-         computeEditDistance
-         _report
-       _report
-       printFriendlyStack
-     (if type of error is SyntaxError, TypeError, etc)
-       _report
-       printFriendlyStack
+     processStack
+       printFriendlyError
+     (if type of error is ReferenceError)
+       _handleMisspelling
+         computeEditDistance
+         _report
+       _report
+       printFriendlyStack
+     (if type of error is SyntaxError, TypeError, etc)
+       _report
+       printFriendlyStack
 ```
 
 
 #### Syntax
 
 ```js
-fesErrorMonitor(event)
+fesErrorMonitor(event);
 ```
 
 
 #### Parameters
 
 ```
-@param {*}  e     Error event
+@param {*}  e     Error event
 ```
 
 
@@ -325,66 +325,66 @@ Internal Error Example 1:
 
 ```js
 function preload() {
-  // error in background() due to it being called in
-  // preload
-  background(200);
+  // error in background() due to it being called in
+  // preload
+  background(200);
 }
 ```
 
 FES will generate the following message in the console:
 
 ```
-🌸 p5.js says: [sketch.js, line 8] An error with message "Cannot read properties of undefined (reading 'background')" occurred inside the p5js library when "background" was called. If not stated otherwise, it might be due to "background" being called from preload. Nothing besides load calls (loadImage, loadJSON, loadFont, loadStrings, etc.) should be inside the preload function. (http://p5js.org/reference/#/p5/preload) 
+🌸 p5.js says: [sketch.js, line 8] An error with message "Cannot read properties of undefined (reading 'background')" occurred inside the p5js library when "background" was called. If not stated otherwise, it might be due to "background" being called from preload. Nothing besides load calls (loadImage, loadJSON, loadFont, loadStrings, etc.) should be inside the preload function. (http://p5js.org/reference/#/p5/preload)
 ```
 
 Internal Error Example 2:
 
 ```js
 function setup() {
-  cnv = createCanvas(200, 200);
-  cnv.mouseClicked();
+  cnv = createCanvas(200, 200);
+  cnv.mouseClicked();
 }
 ```
 
 FES will generate the following message in the console:
 
 ```js
-🌸 p5.js says: [sketch.js, line 12] An error with message "Cannot read properties of undefined (reading 'bind')" occurred inside the p5js library when mouseClicked was called. If not stated otherwise, it might be an issue with the arguments passed to mouseClicked. (http://p5js.org/reference/#/p5/mouseClicked) 
+🌸 p5.js says: [sketch.js, line 12] An error with message "Cannot read properties of undefined (reading 'bind')" occurred inside the p5js library when mouseClicked was called. If not stated otherwise, it might be an issue with the arguments passed to mouseClicked. (http://p5js.org/reference/#/p5/mouseClicked)
 ```
 
 Example of an Error (Scope):
 
 ```js
 function setup() {
-  let b = 1;
+  let b = 1;
 }
 function draw() {
-  b += 1;
+  b += 1;
 }
 ```
 
 FES will generate the following message in the console:
 
 ```
-🌸 p5.js says: 
+🌸 p5.js says:
 
 [sketch.js, line 5] "b" is not defined in the current scope. If you have defined it in your code, you should check its scope, spelling, and letter-casing (JavaScript is case-sensitive).
 
-+ More info: https://p5js.org/examples/data-variable-scope.html 
++ More info: https://p5js.org/examples/data-variable-scope.html
 ```
 
 Example of an Error (Spelling):
 
 ```js
 function setup() {
-  xolor(1, 2, 3);
+  xolor(1, 2, 3);
 }
 ```
 
 FES will generate the following message in the console:
 
 ```
-🌸 p5.js says: [sketch.js, line 2] It seems that you may have accidentally written "xolor" instead of "color". Please correct it to color if you wish to use the function from p5.js. (http://p5js.org/reference/#/p5/color) 
+🌸 p5.js says: [sketch.js, line 2] It seems that you may have accidentally written "xolor" instead of "color". Please correct it to color if you wish to use the function from p5.js. (http://p5js.org/reference/#/p5/color)
 ```
 
 
@@ -405,31 +405,31 @@ It calls `translator()` to generate and print a Friendly Error message using key
 #### Syntax
 
 ```js
-checkForUserDefinedFunctions(context)
+checkForUserDefinedFunctions(context);
 ```
 
 
 #### Parameters
 
 ```
-@param {*} context  Current default context.
-                    Set to window in "global mode" and
-                    to a p5 instance in "instance mode"
+@param {*} context  Current default context.
+                    Set to window in "global mode" and
+                    to a p5 instance in "instance mode"
 ```
 
 
 #### Examples
 
 ```js
-function preLoad() {
-  loadImage('myimage.png');
+function preload() {
+  loadImage('myimage.png');
 }
 ```
 
 FES will generate the following message in the console:
 
 ```
-🌸 p5.js says: It seems that you may have accidentally written preLoad instead of preload. Please correct it if it's not intentional. (http://p5js.org/reference/#/p5/preload) 
+🌸 p5.js says: It seems that you may have accidentally written preLoad instead of preload. Please correct it if it's not intentional. (http://p5js.org/reference/#/p5/preload)
 ```
 
 
@@ -450,8 +450,8 @@ It calls `translator()` to generate and print a Friendly Error message using the
 #### Parameters
 
 ```
-@param {*}        err    Error event
-@param {Boolean}  log    false
+@param {*}        err    Error event
+@param {Boolean}  log    false
 ```
 
 
@@ -489,10 +489,10 @@ You can disable the FES with one line of code at the top of your sketch:
 ```js
 p5.disableFriendlyErrors = true; // disables FES
 function setup() {
-  // Do setup stuff
+  // Do setup stuff
 }
 function draw() {
-  // Do drawing stuff
+  // Do drawing stuff
 }
 ```
 
@@ -511,7 +511,7 @@ Please note that this action will disable certain features of the FES that are k
 
 ## Conclusion
 
-In the README document, we have outlined the structure of the `core/friendly_errors` folder. This section explains the organization and purpose of this folder, making it easier to navigate and understand. Additionally, for each function within this folder, we have provided a reference guide. 
+In the README document, we have outlined the structure of the `core/friendly_errors` folder. This section explains the organization and purpose of this folder, making it easier to navigate and understand. Additionally, for each function within this folder, we have provided a reference guide.
 
 In the latter part of this documentation, we have included notes from previous contributors that discuss the current limitations of FES and potential areas for improvement in future development.
 

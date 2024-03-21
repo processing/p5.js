@@ -11,57 +11,57 @@
 
 ```
 /**
- * Calculates the sine of an angle. `sin()` is useful for many geometric tasks
- * in creative coding. The values returned oscillate between -1 and 1 as the
- * input angle increases. `sin()` takes into account the current
- * <a href="#/p5/angleMode">angleMode</a>.
- *
- * @method sin
- * @param  {Number} angle the angle.
- * @return {Number} sine of the angle.
- *
- * @example
- * <div>
- * <code>
- * function draw() {
- *   background(200);
- *
- *   let t = frameCount;
- *   let x = 50;
- *   let y = 30 * sin(t * 0.05) + 50;
- *   line(x, 50, x, y);
- *   circle(x, y, 20);
- *
- *   describe('A white ball on a string oscillates up and down.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function draw() {
- *   let x = frameCount;
- *   let y = 30 * sin(x * 0.1) + 50;
- *   point(x, y);
- *
- *   describe('A series of black dots form a wave pattern.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function draw() {
- *   let t = frameCount;
- *   let x = 30 * cos(t * 0.1) + 50;
- *   let y = 10 * sin(t * 0.2) + 50;
- *   point(x, y);
- *
- *   describe('A series of black dots form an infinity symbol.');
- * }
- * </code>
- * </div>
- */
+ * Calculates the sine of an angle. `sin()` is useful for many geometric tasks
+ * in creative coding. The values returned oscillate between -1 and 1 as the
+ * input angle increases. `sin()` takes into account the current
+ * <a href="#/p5/angleMode">angleMode</a>.
+ *
+ * @method sin
+ * @param  {Number} angle the angle.
+ * @return {Number} sine of the angle.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(200);
+ *
+ *   let t = frameCount;
+ *   let x = 50;
+ *   let y = 30 * sin(t * 0.05) + 50;
+ *   line(x, 50, x, y);
+ *   circle(x, y, 20);
+ *
+ *   describe('A white ball on a string oscillates up and down.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   let x = frameCount;
+ *   let y = 30 * sin(x * 0.1) + 50;
+ *   point(x, y);
+ *
+ *   describe('A series of black dots form a wave pattern.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   let t = frameCount;
+ *   let x = 30 * cos(t * 0.1) + 50;
+ *   let y = 10 * sin(t * 0.2) + 50;
+ *   point(x, y);
+ *
+ *   describe('A series of black dots form an infinity symbol.');
+ * }
+ * </code>
+ * </div>
+ */
 ```
 
 实际定义函数的 JavaScript 代码往往紧随其后。参考注释始终以 `/**` 开始并以 `*/` 结束，两者之间的每一行都以 `*` 开头。
@@ -74,18 +74,18 @@
 
 ```
 /**
- * Calculates the sine of an angle. `sin()` is useful for many geometric tasks
- * in creative coding. The values returned oscillate between -1 and 1 as the
- * input angle increases. `sin()` takes into account the current
- * <a href="#/p5/angleMode">angleMode</a>.
+ * Calculates the sine of an angle. `sin()` is useful for many geometric tasks
+ * in creative coding. The values returned oscillate between -1 and 1 as the
+ * input angle increases. `sin()` takes into account the current
+ * <a href="#/p5/angleMode">angleMode</a>.
 ```
 
 在注释的顶部是函数的文本描述。此描述可以包含 markdown 语法和 HTML。描述应该简洁明了，描述函数的功能，并在必要时描述一些有关其性能或反常行为的细节。
 
 ```
  * @method sin
- * @param  {Number} angle  the angle.
- * @return {Number} sine of the angle.
+ * @param  {Number} angle  the angle.
+ * @return {Number} sine of the angle.
 ```
 
 函数通常具有上述三个部分，每个部分以 `@` 符号开始，后跟以下关键字之一：
@@ -144,18 +144,18 @@
 
 ```
 /**
- * @method background
- * @param {String} colorstring color string, possible formats include: integer
- *                         rgb() or rgba(), percentage rgb() or rgba(),
- *                         3-digit hex, 6-digit hex
- * @param {Number} [a] alpha value
- */
+ * @method background
+ * @param {String} colorstring color string, possible formats include: integer
+ *                         rgb() or rgba(), percentage rgb() or rgba(),
+ *                         3-digit hex, 6-digit hex
+ * @param {Number} [a] alpha value
+ */
 
 /**
- * @method background
- * @param {Number} gray specifies a value between white and black
- * @param {Number} [a]
- */
+ * @method background
+ * @param {Number} gray specifies a value between white and black
+ * @param {Number} [a]
+ */
 ```
 
 
@@ -170,27 +170,27 @@
 
 ```
 /**
- * The system variable mouseX always contains the current horizontal
- * position of the mouse, relative to (0, 0) of the canvas. The value at
- * the top-left corner is (0, 0) for 2-D and (-width/2, -height/2) for WebGL.
- * If touch is used instead of mouse input, mouseX will hold the x value
- * of the most recent touch point.
- *
- * @property {Number} mouseX
- * @readOnly
- *
- * @example
- * <div>
- * <code>
- * // Move the mouse across the canvas
- * function draw() {
- *   background(244, 248, 252);
- *   line(mouseX, 0, mouseX, 100);
- *   describe('horizontal black line moves left and right with mouse x-position');
- * }
- * </code>
- * </div>
- */
+ * The system variable mouseX always contains the current horizontal
+ * position of the mouse, relative to (0, 0) of the canvas. The value at
+ * the top-left corner is (0, 0) for 2-D and (-width/2, -height/2) for WebGL.
+ * If touch is used instead of mouse input, mouseX will hold the x value
+ * of the most recent touch point.
+ *
+ * @property {Number} mouseX
+ * @readOnly
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Move the mouse across the canvas
+ * function draw() {
+ *   background(244, 248, 252);
+ *   line(mouseX, 0, mouseX, 100);
+ *   describe('horizontal black line moves left and right with mouse x-position');
+ * }
+ * </code>
+ * </div>
+ */
 ```
 
 块的开始包含变量的描述（在该例子中是 `mouseX`）。为了定义变量的名称，我们使用 `@property` 而不是 `@method`。`@property` 的语法与 `@param` 类似，用于定义类型及其名称。大多数 p5.js 变量都带有 `@readonly` 标签，用于内部指示该值不应由库用户直接覆盖。
@@ -206,20 +206,20 @@
 
 ```
  * @example
- * <div>
- * <code>
- * const c = color(255, 204, 0);
- * fill(c);
- * rect(15, 20, 35, 60);
- * // Sets 'redValue' to 255.
- * const redValue = red(c);
- * fill(redValue, 0, 0);
- * rect(50, 20, 35, 60);
- * describe(
- *   'Two rectangles with black edges. The rectangle on the left is yellow and the one on the right is red.'
- * );
- * </code>
- * </div>
+ * <div>
+ * <code>
+ * const c = color(255, 204, 0);
+ * fill(c);
+ * rect(15, 20, 35, 60);
+ * // Sets 'redValue' to 255.
+ * const redValue = red(c);
+ * fill(redValue, 0, 0);
+ * rect(50, 20, 35, 60);
+ * describe(
+ *   'Two rectangles with black edges. The rectangle on the left is yellow and the one on the right is red.'
+ * );
+ * </code>
+ * </div>
 ```
 
 在 `@example` 标签之后，你应该开始一个 HTML `<div>` 标签，后跟一个 `<code>` 标签。在开放和闭合的 `<code>` 标签之间，你将插入相关示例代码。编写参考示例代码的基本原则是保持简单和简洁。示例应该有意义，并解释功能的工作原理，而不会太复杂。示例的画布应该是 100x100 像素，如果没有包含 `setup()` 函数，例如上面的示例，则代码将自动包装在一个默认的 100x100 像素灰色背景画布中创建的 `setup()` 函数中。我们不会在这里详细讨论示例代码的最佳实践和代码风格；请参阅参考样式指南。
@@ -234,7 +234,7 @@
 * describe('An ellipse created using an arc with its top right open.');
 * </code>
 * </div>
-* 
+*
 * <div>
 * <code>
 * arc(50, 50, 80, 80, 0, PI, OPEN);
@@ -261,8 +261,8 @@
 * @example
 * <div class='norender notest'><code>
 * function setup() {
-*   let c = createCanvas(100, 100);
-*   saveCanvas(c, 'myCanvas', 'jpg');
+*   let c = createCanvas(100, 100);
+*   saveCanvas(c, 'myCanvas', 'jpg');
 * }
 * </code></div>
 ```
@@ -280,26 +280,26 @@
 * <code>
 * let xoff = 0.0;
 * function draw() {
-*   background(204);
-*   xoff = xoff + 0.01;
-*   let n = noise(xoff) * width;
-*   line(n, 0, n, height);
-*   describe('A vertical line moves randomly from left to right.');
+*   background(204);
+*   xoff = xoff + 0.01;
+*   let n = noise(xoff) * width;
+*   line(n, 0, n, height);
+*   describe('A vertical line moves randomly from left to right.');
 * }
 * </code>
 * </div>
-* 
+*
 * <div>
 * <code>
 * let noiseScale = 0.02;
 * function draw() {
-*   background(0);
-*   for (let x = 0; x < width; x += 1) {
-*     let noiseVal = noise((mouseX + x) * noiseScale, mouseY * noiseScale);
-*     stroke(noiseVal*255);
-*     line(x, mouseY + noiseVal * 80, x, height);
-*   }
-*   describe('A horizontal wave pattern moves in the opposite direction of the mouse.');
+*   background(0);
+*   for (let x = 0; x < width; x += 1) {
+*     let noiseVal = noise((mouseX + x) * noiseScale, mouseY * noiseScale);
+*     stroke(noiseVal*255);
+*     line(x, mouseY + noiseVal * 80, x, height);
+*   }
+*   describe('A horizontal wave pattern moves in the opposite direction of the mouse.');
 * }
 * </code>
 * </div>
@@ -318,11 +318,11 @@
 
 ```
 /**
- * _start calls preload() setup() and draw()
- * 
- * @method _start
- * @private
- */
+ * _start calls preload() setup() and draw()
+ *
+ * @method _start
+ * @private
+ */
 p5.prototype._start = function () {
 ```
 
@@ -354,31 +354,31 @@ p5.js 遵循的约定是 `src/` 文件夹中的每个子文件夹将是一个 `@
 
 ```
 /**
- * A class to describe a color. Each `p5.Color` object stores the color mode
- * and level maxes that were active during its construction. These values are
- * used to interpret the arguments passed to the object's constructor. They
- * also determine output formatting such as when
- * <a href="#/p5/saturation">saturation()</a> is called.
- *
- * Color is stored internally as an array of ideal RGBA values in floating
- * point form, normalized from 0 to 1. These values are used to calculate the
- * closest screen colors, which are RGBA levels from 0 to 255. Screen colors
- * are sent to the renderer.
- *
- * When different color representations are calculated, the results are cached
- * for performance. These values are normalized, floating-point numbers.
- *
- * <a href="#/p5/color">color()</a> is the recommended way to create an instance
- * of this class.
- *
- * @class p5.Color
- * @constructor
- * @param {p5} [pInst]                  pointer to p5 instance.
- *
- * @param {Number[]|String} vals        an array containing the color values
- *                                      for red, green, blue and alpha channel
- *                                      or CSS color.
- */
+ * A class to describe a color. Each `p5.Color` object stores the color mode
+ * and level maxes that were active during its construction. These values are
+ * used to interpret the arguments passed to the object's constructor. They
+ * also determine output formatting such as when
+ * <a href="#/p5/saturation">saturation()</a> is called.
+ *
+ * Color is stored internally as an array of ideal RGBA values in floating
+ * point form, normalized from 0 to 1. These values are used to calculate the
+ * closest screen colors, which are RGBA levels from 0 to 255. Screen colors
+ * are sent to the renderer.
+ *
+ * When different color representations are calculated, the results are cached
+ * for performance. These values are normalized, floating-point numbers.
+ *
+ * <a href="#/p5/color">color()</a> is the recommended way to create an instance
+ * of this class.
+ *
+ * @class p5.Color
+ * @constructor
+ * @param {p5} [pInst]                  pointer to p5 instance.
+ *
+ * @param {Number[]|String} vals        an array containing the color values
+ *                                      for red, green, blue and alpha channel
+ *                                      or CSS color.
+ */
 ```
 
 ## 生成和预览参考文献
