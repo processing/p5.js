@@ -5793,6 +5793,16 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "designerSejinOH",
+      "name": "SejinOH",
+      "avatar_url": "https://avatars.githubusercontent.com/u/39869184?v=4",
+      "profile": "http://sejinoh.live",
+      "contributions": [
+        "translation",
+        "review"
+      ]
     }
   ],
   "repoType": "github",
