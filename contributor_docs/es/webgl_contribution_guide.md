@@ -149,7 +149,7 @@ function draw() {
   if (avgFrameRates.length > numSamples) {
     frameRateSum -= avgFrameRates.shift();
   }
- 
+
   frameRateP.html(round(frameRateSum) + ' avg fps');
 }
 ```

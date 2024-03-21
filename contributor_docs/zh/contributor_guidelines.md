@@ -435,7 +435,7 @@ git push -u origin [分支名称]
 
 推送完成后，你可能会在终端里看到一个链接，可以点击它创建拉取请求。如果没有，你可以在浏览器中导航到你的 fork，通过文件列表顶部的下拉按钮切换到你正在工作的分支，然后点击 “Contribute”，接着点击 "Open pull request"。
 
-![](../images/link-in-terminal.png)
+![](https://lh7-us.googleusercontent.com/xoqM9gLSFXyw7b3gzG8JlHqoO0zxHALbjSz93E3D0HNh4Jw2wDWdzHKUEchnB6hdjQC7hVn-o5prrXkLw2WiEOoVKJF6kpmyA65sirN0z-Vy3PBY3rCXC5Ifn5stQhcdUQxQS0rsVoW0_hlkfTcY8PQ)
 
 当你访问 p5.js 的 Github 仓库时，你可能也会看到一个创建拉取请求的按钮。点击它也可以创建一个新的拉取请求。
 

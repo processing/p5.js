@@ -32,7 +32,7 @@ The main way to extend p5.js is by adding methods to the p5.prototype object. Fo
 
 ```js
 p5.prototype.loadCSV = function(){
-  console.log('I will load a CSV file soon!');
+  console.log('I will load a CSV file soon!');
 };
 ```
 
@@ -42,7 +42,7 @@ You can also extend p5.js classes such as` p5.Element` or` p5.Graphics` by addin
 
 ```js
 p5.Element.prototype.shout = function () {
-  this.elt.innerHTML += '<span>!</span>';
+  this.elt.innerHTML += '<span>!</span>';
 };
 ```
 
@@ -53,23 +53,23 @@ You now have a p5.loadcsv.js file with one method attached to the `p5.prototype`
 
 ```js
 function setup() {
-  createCanvas(400, 400);
-  loadCSV();
+  createCanvas(400, 400);
+  loadCSV();
 }
 ```
 
 ```html
 <html>
-  <head>
-    <!-- Other tags -->
+  <head>
+    <!-- Other tags -->
 
-    <script src="./p5.js"></script>
-    <script src="./p5.loadcsv.js"></script>
+    <script src="./p5.js"></script>
+    <script src="./p5.loadcsv.js"></script>
 
-    <!-- Other tags -->
-  </head>
-  
-  <!-- Other tags -->
+    <!-- Other tags -->
+  </head>
+
+  <!-- Other tags -->
 
 </html>
 ```
@@ -83,20 +83,20 @@ To load a CSV file with your `loadCSV()` function, the function needs to accept 
 
 ```js
 p5.prototype.loadCSV = function (filename) {
-  console.log(`I will load the CSV file ${filename} soon!`);
+  console.log(`I will load the CSV file ${filename} soon!`);
 };
 ```
 
- 
+
 
 In our test sketch, we can use it like so:
 
 ```js
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(400, 400);
 
-  // Prints "I will load the CSV file data.csv soon!" to the console.
-  loadCSV('data.csv');
+  // Prints "I will load the CSV file data.csv soon!" to the console.
+  loadCSV('data.csv');
 }
 ```
 
@@ -111,17 +111,17 @@ You can access p5.js functions and variables such as `circle()` and `PI` in your
 
 ```js
 p5.prototype.loadCSV = (filename) => {
-  // this === window is true because
-  // "this" refers to the window object.
-  // This is almost never what you want.
-  console.log(this === window);
+  // this === window is true because
+  // "this" refers to the window object.
+  // This is almost never what you want.
+  console.log(this === window);
 };
 
 
 p5.prototype.loadCSV = function (filename) {
-  // Prints 'I will load the CSV file data.csv at 10:30'
-  // to the console.
-  console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute()}!`);
+  // Prints 'I will load the CSV file data.csv at 10:30'
+  // to the console.
+  console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute()}!`);
 };
 ```
 
@@ -136,19 +136,19 @@ First make the following changes to your `loadCSV()` method:
 
 ```js
 p5.prototype.loadCSV = function(filename){
-  console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute}!`);
+  console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute}!`);
 
-  let result = [];
+  let result = [];
 
-  fetch(filename)
-    .then((res) => res.text())
-    .then((data) => {
-      data.split('\n').forEach((line) => {
-        result.push(line.split(','));
-      });
-    });
+  fetch(filename)
+    .then((res) => res.text())
+    .then((data) => {
+      data.split('\n').forEach((line) => {
+        result.push(line.split(','));
+      });
+    });
 
-  return result;
+  return result;
 };
 ```
 
@@ -158,9 +158,9 @@ Now, when you run the sketch, pass a file path to a simple CSV file to your `loa
 
 ```js
 function setup(){
-  createCanvas(400, 400);
-  let myCSV = loadCSV('data.csv');
-  print(myCSV);
+  createCanvas(400, 400);
+  let myCSV = loadCSV('data.csv');
+  print(myCSV);
 }
 ```
 
@@ -172,12 +172,12 @@ Simply moving where you call `loadCSV()` to `preload()` in this case is not enou
 let myCSV;
 
 function preload(){
-  myCSV = loadCSV('data.csv');
+  myCSV = loadCSV('data.csv');
 }
 
 function setup(){
-  createCanvas(400, 400);
-  print(myCSV); // Still prints [] 
+  createCanvas(400, 400);
+  print(myCSV); // Still prints []
 }
 ```
 
@@ -185,21 +185,21 @@ p5 will need to be told that the addon’s `loadCSV()` function is something it 
 
 ```js
 p5.prototype.loadCSV = function (filename){
-  console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute}!`);
+  console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute}!`);
 
-  let result = [];
+  let result = [];
 
-  fetch(filename)
-    .then((res) => res.text())
-    .then((data) => {
-      data.split('\n').forEach((line) => {
-        result.push(line.split(','));
-      });
+  fetch(filename)
+    .then((res) => res.text())
+    .then((data) => {
+      data.split('\n').forEach((line) => {
+        result.push(line.split(','));
+      });
 
-      this._decrementPreload();
-    });
+      this._decrementPreload();
+    });
 
-  return result;
+  return result;
 };
 
 p5.prototype.registerPreloadMethod('loadCSV', p5.prototype);
@@ -245,13 +245,13 @@ To create an action hook, you can use the snippet below.
 
 ```js
 p5.prototype.doRemoveStuff = function (){
-  // Addon library related cleanup
+  // Addon library related cleanup
 };
 p5.prototype.registerMethod("remove", p5.prototype.doRemoveStuff);
 
 p5.prototype.setDefaultBackground = function(){
-  // Set background to be p5 pink by default 
-  this.background("#ed225d");
+  // Set background to be p5 pink by default
+  this.background("#ed225d");
 };
 p5.prototype.registerMethod("pre", p5.prototype.setDefaultBackground);
 ```

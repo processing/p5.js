@@ -971,6 +971,18 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="http://ocelotl.cc"><img src="https://avatars.githubusercontent.com/u/8987515?v=4?s=120" width="120px;" alt="EmilioOcelotl"/><br /><sub><b>EmilioOcelotl</b></sub></a><br /><a href="#translation-EmilioOcelotl" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://marianneteixido.github.io/"><img src="https://avatars.githubusercontent.com/u/32370294?v=4?s=120" width="120px;" alt="Teixido"/><br /><sub><b>Teixido</b></sub></a><br /><a href="#translation-MarianneTeixido" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://www.ien.zone"><img src="https://avatars.githubusercontent.com/u/32572338?v=4?s=120" width="120px;" alt="IENGROUND"/><br /><sub><b>IENGROUND</b></sub></a><br /><a href="#translation-ienground" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://www.behance.net/orwiss"><img src="https://avatars.githubusercontent.com/u/7181108?v=4?s=120" width="120px;" alt="Orwiss"/><br /><sub><b>Orwiss</b></sub></a><br /><a href="#translation-Orwiss" title="Translation">🌍</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="http://ranaa.tech"><img src="https://avatars.githubusercontent.com/u/42575044?v=4?s=120" width="120px;" alt="Aditya Rana"/><br /><sub><b>Aditya Rana</b></sub></a><br /><a href="#translation-ranaaditya" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://eshaanagg.netlify.app/"><img src="https://avatars.githubusercontent.com/u/96648934?v=4?s=120" width="120px;" alt="Eshaan Aggarwal"/><br /><sub><b>Eshaan Aggarwal</b></sub></a><br /><a href="#translation-EshaanAgg" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/yunyoungJang"><img src="https://avatars.githubusercontent.com/u/39682540?v=4?s=120" width="120px;" alt="everything became blue"/><br /><sub><b>everything became blue</b></sub></a><br /><a href="#translation-yunyoungJang" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/YewonCALLI"><img src="https://avatars.githubusercontent.com/u/96384200?v=4?s=120" width="120px;" alt="YewonCALLI"/><br /><sub><b>YewonCALLI</b></sub></a><br /><a href="#translation-YewonCALLI" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://sejinoh.live"><img src="https://avatars.githubusercontent.com/u/39869184?v=4?s=120" width="120px;" alt="SejinOH"/><br /><sub><b>SejinOH</b></sub></a><br /><a href="#translation-designerSejinOH" title="Translation">🌍</a> <a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3AdesignerSejinOH" title="Reviewed Pull Requests">👀</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Surbhi-Pittie"><img src="https://avatars.githubusercontent.com/u/101015196?v=4?s=120" width="120px;" alt="Surbhi Pittie"/><br /><sub><b>Surbhi Pittie</b></sub></a><br /><a href="#translation-Surbhi-Pittie" title="Translation">🌍</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Tmicrd"><img src="https://avatars.githubusercontent.com/u/53132820?v=4?s=120" width="120px;" alt="nancy"/><br /><sub><b>nancy</b></sub></a><br /><a href="#translation-Tmicrd" title="Translation">🌍</a></td>
     </tr>
   </tbody>
 </table>
