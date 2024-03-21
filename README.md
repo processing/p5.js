@@ -973,6 +973,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://www.ien.zone"><img src="https://avatars.githubusercontent.com/u/32572338?v=4?s=120" width="120px;" alt="IENGROUND"/><br /><sub><b>IENGROUND</b></sub></a><br /><a href="#translation-ienground" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://www.behance.net/orwiss"><img src="https://avatars.githubusercontent.com/u/7181108?v=4?s=120" width="120px;" alt="Orwiss"/><br /><sub><b>Orwiss</b></sub></a><br /><a href="#translation-Orwiss" title="Translation">🌍</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="http://ranaa.tech"><img src="https://avatars.githubusercontent.com/u/42575044?v=4?s=120" width="120px;" alt="Aditya Rana"/><br /><sub><b>Aditya Rana</b></sub></a><br /><a href="#translation-ranaaditya" title="Translation">🌍</a></td>
+    </tr>
   </tbody>
 </table>
 
