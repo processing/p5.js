@@ -10,57 +10,57 @@ p5.js 소스 코드를 보면 많은 라인이 레퍼런스 주석으로 작성�
 
 ```
 /**
- * Calculates the sine of an angle. `sin()` is useful for many geometric tasks
- * in creative coding. The values returned oscillate between -1 and 1 as the
- * input angle increases. `sin()` takes into account the current
- * <a href="#/p5/angleMode">angleMode</a>.
- *
- * @method sin
- * @param  {Number} angle the angle.
- * @return {Number} sine of the angle.
- *
- * @example
- * <div>
- * <code>
- * function draw() {
- *   background(200);
- *
- *   let t = frameCount;
- *   let x = 50;
- *   let y = 30 * sin(t * 0.05) + 50;
- *   line(x, 50, x, y);
- *   circle(x, y, 20);
- *
- *   describe('A white ball on a string oscillates up and down.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function draw() {
- *   let x = frameCount;
- *   let y = 30 * sin(x * 0.1) + 50;
- *   point(x, y);
- *
- *   describe('A series of black dots form a wave pattern.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function draw() {
- *   let t = frameCount;
- *   let x = 30 * cos(t * 0.1) + 50;
- *   let y = 10 * sin(t * 0.2) + 50;
- *   point(x, y);
- *
- *   describe('A series of black dots form an infinity symbol.');
- * }
- * </code>
- * </div>
- */
+ * Calculates the sine of an angle. `sin()` is useful for many geometric tasks
+ * in creative coding. The values returned oscillate between -1 and 1 as the
+ * input angle increases. `sin()` takes into account the current
+ * <a href="#/p5/angleMode">angleMode</a>.
+ *
+ * @method sin
+ * @param  {Number} angle the angle.
+ * @return {Number} sine of the angle.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(200);
+ *
+ *   let t = frameCount;
+ *   let x = 50;
+ *   let y = 30 * sin(t * 0.05) + 50;
+ *   line(x, 50, x, y);
+ *   circle(x, y, 20);
+ *
+ *   describe('A white ball on a string oscillates up and down.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   let x = frameCount;
+ *   let y = 30 * sin(x * 0.1) + 50;
+ *   point(x, y);
+ *
+ *   describe('A series of black dots form a wave pattern.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   let t = frameCount;
+ *   let x = 30 * cos(t * 0.1) + 50;
+ *   let y = 10 * sin(t * 0.2) + 50;
+ *   point(x, y);
+ *
+ *   describe('A series of black dots form an infinity symbol.');
+ * }
+ * </code>
+ * </div>
+ */
 ```
 
 레퍼런스 주석 뒤에는 일반적으로 함수를 정의하는 실제 자바스크립트 코드가 뒤따릅니다. 레퍼런스 주석은 항상 `/**`로 시작하고 `*/`로 끝나며, 시작과 끝 사이의 각 라인은 `*`로 시작합니다.
@@ -73,18 +73,18 @@ p5.js 소스 코드를 보면 많은 라인이 레퍼런스 주석으로 작성�
 
 ```
 /**
- * Calculates the sine of an angle. `sin()` is useful for many geometric tasks
- * in creative coding. The values returned oscillate between -1 and 1 as the
- * input angle increases. `sin()` takes into account the current
- * <a href="#/p5/angleMode">angleMode</a>.
+ * Calculates the sine of an angle. `sin()` is useful for many geometric tasks
+ * in creative coding. The values returned oscillate between -1 and 1 as the
+ * input angle increases. `sin()` takes into account the current
+ * <a href="#/p5/angleMode">angleMode</a>.
 ```
 
 주석의 맨 위에는 함수의 설명이 텍스트로 작성되어 있습니다. 이 설명에는 마크다운 구문과 HTML이 모두 포함될 수 있어요. 설명은 간결하게 작성되어야 하며, 필요하다면 함수의 특이사항이나 작동 방식에 관한 세부 내용을 추가하여 함수가 어떤 일을 하는지 최대한 잘 설명해야 합니다.
 
 ```
  * @method sin
- * @param  {Number} angle  the angle.
- * @return {Number} sine of the angle.
+ * @param  {Number} angle  the angle.
+ * @return {Number} sine of the angle.
 ```
 
 함수에 대한 주석은 일반적으로 위 세 개의 섹션을 포함하는데, 각각 `@` 기호 뒤에 다음 중 하나의 키워드가 따라옵니다.
@@ -140,18 +140,18 @@ p5.js 소스 코드를 보면 많은 라인이 레퍼런스 주석으로 작성�
 
 ```
 /**
- * @method background
- * @param {String} colorstring color string, possible formats include: integer
- *                         rgb() or rgba(), percentage rgb() or rgba(),
- *                         3-digit hex, 6-digit hex
- * @param {Number} [a] alpha value
- */
+ * @method background
+ * @param {String} colorstring color string, possible formats include: integer
+ *                         rgb() or rgba(), percentage rgb() or rgba(),
+ *                         3-digit hex, 6-digit hex
+ * @param {Number} [a] alpha value
+ */
 
 /**
- * @method background
- * @param {Number} gray specifies a value between white and black
- * @param {Number} [a]
- */
+ * @method background
+ * @param {Number} gray specifies a value between white and black
+ * @param {Number} [a]
+ */
 ```
 
 ### 더 알아보기: 다중 시그니처
@@ -164,27 +164,27 @@ p5.js 소스 코드를 보면 많은 라인이 레퍼런스 주석으로 작성�
 
 ```
 /**
- * The system variable mouseX always contains the current horizontal
- * position of the mouse, relative to (0, 0) of the canvas. The value at
- * the top-left corner is (0, 0) for 2-D and (-width/2, -height/2) for WebGL.
- * If touch is used instead of mouse input, mouseX will hold the x value
- * of the most recent touch point.
- *
- * @property {Number} mouseX
- * @readOnly
- *
- * @example
- * <div>
- * <code>
- * // Move the mouse across the canvas
- * function draw() {
- *   background(244, 248, 252);
- *   line(mouseX, 0, mouseX, 100);
- *   describe('horizontal black line moves left and right with mouse x-position');
- * }
- * </code>
- * </div>
- */
+ * The system variable mouseX always contains the current horizontal
+ * position of the mouse, relative to (0, 0) of the canvas. The value at
+ * the top-left corner is (0, 0) for 2-D and (-width/2, -height/2) for WebGL.
+ * If touch is used instead of mouse input, mouseX will hold the x value
+ * of the most recent touch point.
+ *
+ * @property {Number} mouseX
+ * @readOnly
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Move the mouse across the canvas
+ * function draw() {
+ *   background(244, 248, 252);
+ *   line(mouseX, 0, mouseX, 100);
+ *   describe('horizontal black line moves left and right with mouse x-position');
+ * }
+ * </code>
+ * </div>
+ */
 ```
 
 블록의 시작 부분에는 변수의 설명이 작성되어 있습니다(이 예시에서는 `mouseX`). 변수의 이름을 정의하기 위해, `@method` 대신 `@property`를 사용합니다. `@property`는 `@params`와 같은 방식으로 타입과 이름을 정의할 수 있습니다. `@readonly` 태그는 대부분의 p5.js 변수에 설정되어 있으며, 사용자에 의해 값이 덮어씌워지지 않아야 함을 내부적으로 나타내기 위해 사용됩니다.
@@ -199,20 +199,20 @@ p5.js 소스 코드를 보면 많은 라인이 레퍼런스 주석으로 작성�
 
 ```
  * @example
- * <div>
- * <code>
- * const c = color(255, 204, 0);
- * fill(c);
- * rect(15, 20, 35, 60);
- * // Sets 'redValue' to 255.
- * const redValue = red(c);
- * fill(redValue, 0, 0);
- * rect(50, 20, 35, 60);
- * describe(
- *   'Two rectangles with black edges. The rectangle on the left is yellow and the one on the right is red.'
- * );
- * </code>
- * </div>
+ * <div>
+ * <code>
+ * const c = color(255, 204, 0);
+ * fill(c);
+ * rect(15, 20, 35, 60);
+ * // Sets 'redValue' to 255.
+ * const redValue = red(c);
+ * fill(redValue, 0, 0);
+ * rect(50, 20, 35, 60);
+ * describe(
+ *   'Two rectangles with black edges. The rectangle on the left is yellow and the one on the right is red.'
+ * );
+ * </code>
+ * </div>
 ```
 
 `@example` 태그 다음에는 HTML `<div>` 태그가 시작되고, 그 다음에 `<code>` 태그가 뒤따라옵니다. 그리고 열린 `<code>` 태그와 닫힌 `</code>` 태그 사이에, 예제 코드를 작성하면 됩니다. 좋은 예제 코드를 작성하기 위한 기본 원칙은 가능한 단순하고 작게 작성하는 겁니다. 예제는 의미가 있어야 하고, 기능이 어떻게 작동하는지 너무 복잡하지 않게 설명할 수 있어야 합니다. 예제의 캔버스는 100x100 픽셀의 크기를 가져야 합니다. 만약 위의 예제와 같이 `setup()` 함수가 작성되지 않은 경우라면, 100x100 픽셀 크기의 회색 배경 캔버스를 만드는 `setup()` 함수가 자동으로 래핑(wrapping)됩니다. 예제 코드에 대한 모범 사례 및 코드 스타일에 대한 자세한 내용은 여기서 다루지 않습니다. 대신 레퍼런스 스타일 가이드를 참고해 주세요.
@@ -227,7 +227,7 @@ p5.js 소스 코드를 보면 많은 라인이 레퍼런스 주석으로 작성�
 * describe('An ellipse created using an arc with its top right open.');
 * </code>
 * </div>
-* 
+*
 * <div>
 * <code>
 * arc(50, 50, 80, 80, 0, PI, OPEN);
@@ -254,8 +254,8 @@ p5.js 소스 코드를 보면 많은 라인이 레퍼런스 주석으로 작성�
 * @example
 * <div class='norender notest'><code>
 * function setup() {
-*   let c = createCanvas(100, 100);
-*   saveCanvas(c, 'myCanvas', 'jpg');
+*   let c = createCanvas(100, 100);
+*   saveCanvas(c, 'myCanvas', 'jpg');
 * }
 * </code></div>
 ```
@@ -272,26 +272,26 @@ p5.js 소스 코드를 보면 많은 라인이 레퍼런스 주석으로 작성�
 * <code>
 * let xoff = 0.0;
 * function draw() {
-*   background(204);
-*   xoff = xoff + 0.01;
-*   let n = noise(xoff) * width;
-*   line(n, 0, n, height);
-*   describe('A vertical line moves randomly from left to right.');
+*   background(204);
+*   xoff = xoff + 0.01;
+*   let n = noise(xoff) * width;
+*   line(n, 0, n, height);
+*   describe('A vertical line moves randomly from left to right.');
 * }
 * </code>
 * </div>
-* 
+*
 * <div>
 * <code>
 * let noiseScale = 0.02;
 * function draw() {
-*   background(0);
-*   for (let x = 0; x < width; x += 1) {
-*     let noiseVal = noise((mouseX + x) * noiseScale, mouseY * noiseScale);
-*     stroke(noiseVal*255);
-*     line(x, mouseY + noiseVal * 80, x, height);
-*   }
-*   describe('A horizontal wave pattern moves in the opposite direction of the mouse.');
+*   background(0);
+*   for (let x = 0; x < width; x += 1) {
+*     let noiseVal = noise((mouseX + x) * noiseScale, mouseY * noiseScale);
+*     stroke(noiseVal*255);
+*     line(x, mouseY + noiseVal * 80, x, height);
+*   }
+*   describe('A horizontal wave pattern moves in the opposite direction of the mouse.');
 * }
 * </code>
 * </div>
@@ -307,11 +307,11 @@ p5.js 소스 코드를 보면 많은 라인이 레퍼런스 주석으로 작성�
 
 ```
 /**
- * _start calls preload() setup() and draw()
- * 
- * @method _start
- * @private
- */
+ * _start calls preload() setup() and draw()
+ *
+ * @method _start
+ * @private
+ */
 p5.prototype._start = function () {
 ```
 
@@ -325,12 +325,12 @@ p5.prototype._start = function () {
 
 ```
 /**
- * @module Color
- * @submodule Creating & Reading
- * @for p5
- * @requires core
- * @requires constants
- */
+ * @module Color
+ * @submodule Creating & Reading
+ * @for p5
+ * @requires core
+ * @requires constants
+ */
 ```
 
 p5.js에서 따르는 규칙은 `src/` 폴더 내의 각 서브폴더가 하나의 `@module`이 되며, 서브폴더 내의 각 파일이 `@module`에 속한 `@submodule`이 된다는 것입니다. p5.js 소스 코드에 새로운 서브폴더나 파일을 추가하지 않는 한, 이 레퍼런스 주석 블록을 편집할 필요가 없습니다.
@@ -341,31 +341,31 @@ p5.js에서 따르는 규칙은 `src/` 폴더 내의 각 서브폴더가 하나�
 
 ```
 /**
- * A class to describe a color. Each `p5.Color` object stores the color mode
- * and level maxes that were active during its construction. These values are
- * used to interpret the arguments passed to the object's constructor. They
- * also determine output formatting such as when
- * <a href="#/p5/saturation">saturation()</a> is called.
- *
- * Color is stored internally as an array of ideal RGBA values in floating
- * point form, normalized from 0 to 1. These values are used to calculate the
- * closest screen colors, which are RGBA levels from 0 to 255. Screen colors
- * are sent to the renderer.
- *
- * When different color representations are calculated, the results are cached
- * for performance. These values are normalized, floating-point numbers.
- *
- * <a href="#/p5/color">color()</a> is the recommended way to create an instance
- * of this class.
- *
- * @class p5.Color
- * @constructor
- * @param {p5} [pInst]                  pointer to p5 instance.
- *
- * @param {Number[]|String} vals        an array containing the color values
- *                                      for red, green, blue and alpha channel
- *                                      or CSS color.
- */
+ * A class to describe a color. Each `p5.Color` object stores the color mode
+ * and level maxes that were active during its construction. These values are
+ * used to interpret the arguments passed to the object's constructor. They
+ * also determine output formatting such as when
+ * <a href="#/p5/saturation">saturation()</a> is called.
+ *
+ * Color is stored internally as an array of ideal RGBA values in floating
+ * point form, normalized from 0 to 1. These values are used to calculate the
+ * closest screen colors, which are RGBA levels from 0 to 255. Screen colors
+ * are sent to the renderer.
+ *
+ * When different color representations are calculated, the results are cached
+ * for performance. These values are normalized, floating-point numbers.
+ *
+ * <a href="#/p5/color">color()</a> is the recommended way to create an instance
+ * of this class.
+ *
+ * @class p5.Color
+ * @constructor
+ * @param {p5} [pInst]                  pointer to p5 instance.
+ *
+ * @param {Number[]|String} vals        an array containing the color values
+ *                                      for red, green, blue and alpha channel
+ *                                      or CSS color.
+ */
 ```
 
 ## 레퍼런스 생성과 미리보기

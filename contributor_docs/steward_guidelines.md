@@ -77,7 +77,7 @@ Feature request issues should use the "New Feature Request" issue template. The 
    - Is the feature likely to cause a breaking change?
      - Will it conflict with existing p5.js functions and variables?
      - Will it conflict with typical sketches already written for p5.js?
-     - Features that are likely to cause conflicts such as  the ones above  are  considered breaking changes. Without a [major version release](https://docs.npmjs.com/about-semantic-versioning), we should not make breaking changes to p5.js.
+     - Features that are likely to cause conflicts such as  the ones above  are  considered breaking changes. Without a [major version release](https://docs.npmjs.com/about-semantic-versioning), we should not make breaking changes to p5.js.
    - Can the proposed new feature be achieved using existing functionalities already in p5.js, relatively simple native JavaScript code, or existing easy-to-use libraries?
      - For example, instead of providing a p5.js function to join an array of strings such as `join(["Hello", "world!"])`, the native JavaScript `["Hello", "world!"].join()` should be preferred instead.
 3. If the access requirement and other considerations have been fulfilled, at least two stewards or maintainers must approve the new feature request before work should begin toward a PR. The PR review process for new features is documented below.
@@ -95,7 +95,7 @@ Feature enhancement issues should use the "Existing Feature Enhancement" issue t
 
 ### Discussion
 
-This type of issue has a minimal template ("Discussion") and should be used to gather feedback around a topic in general before coalescing it into something more specific, like a feature request. These sorts of discussion issues can be closed when the conversation finishes and the resulting more specific issues have been created: 
+This type of issue has a minimal template ("Discussion") and should be used to gather feedback around a topic in general before coalescing it into something more specific, like a feature request. These sorts of discussion issues can be closed when the conversation finishes and the resulting more specific issues have been created:
 
 - If an issue is opened as a discussion but should be, for example, a bug report, the correct label should be applied and the "discussion" label removed. Additional info about the bug should also be requested from the author if not already included.
 - If an issue is opened as a discussion but isn't relevant to source code contribution or otherwise relevant to the GitHub repositories/contribution process/contribution community, they should be redirected to the forum or Discord and the issue closed.
@@ -117,7 +117,7 @@ Almost all code contributions to the p5.js repositories happen through pull requ
 
 ### Simple fix
 
-Simple fixes, such as a small typo fix, can be merged directly by anyone with merge access.  Check on the PR "Files Changed" tab to ensure  that the automated CI test passes.
+Simple fixes, such as a small typo fix, can be merged directly by anyone with merge access.  Check on the PR "Files Changed" tab to ensure  that the automated CI test passes.
 
 ![The "files changed" tab when viewing a pull request on GitHub](images/files-changed.png)
 
@@ -202,11 +202,11 @@ Next in `lint:samples` is `eslint-samples:source`, which is a custom written tas
 
 ```js
 grunt.registerTask('test', [
-  'build',
-  'connect:server',
-  'mochaChrome',
-  'mochaTest',
-  'nyc:report'
+  'build',
+  'connect:server',
+  'mochaChrome',
+  'mochaTest',
+  'nyc:report'
 ]);
 ```
 
@@ -214,14 +214,14 @@ First let's look at the `build` task under `test`.
 
 ```js
 grunt.registerTask('build', [
-  'browserify',
-  'browserify:min',
-  'uglify',
-  'browserify:test'
+  'browserify',
+  'browserify:min',
+  'uglify',
+  'browserify:test'
 ]);
 ```
 
-Tasks that start with `browserify` are defined in [./tasks/build/browserify.js](tasks/build/browserify.js). They all  similar steps with minor differences. These are the main steps to build the full p5.js library from its many source code files into one:
+Tasks that start with `browserify` are defined in [./tasks/build/browserify.js](tasks/build/browserify.js). They all  similar steps with minor differences. These are the main steps to build the full p5.js library from its many source code files into one:
 
 - `browserify` builds p5.js while `browserify:min` builds an intermediate file to be minified in the next step. The difference between `browserify` and `browserify:min` is that `browserify:min` does not contain data needed for FES to function.
 - `uglify` takes the output file of `browserify:min` and minify it into the final p5.min.js (configuration of this step is in the main Gruntfile.js).
@@ -302,7 +302,7 @@ Please see [release\_process.md](release_process.md).
 
 ## Tips & tricks
 
-Sometimes, the number of issues and PR that require review can get a bit overwhelming.  While we try to put in place processes that make things easier, there are some tips and tricks that you can utilize to help with reviewing issues and PRs.
+Sometimes, the number of issues and PR that require review can get a bit overwhelming.  While we try to put in place processes that make things easier, there are some tips and tricks that you can utilize to help with reviewing issues and PRs.
 
 
 ### Reply templates
