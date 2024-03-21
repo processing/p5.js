@@ -978,6 +978,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://eshaanagg.netlify.app/"><img src="https://avatars.githubusercontent.com/u/96648934?v=4?s=120" width="120px;" alt="Eshaan Aggarwal"/><br /><sub><b>Eshaan Aggarwal</b></sub></a><br /><a href="#translation-EshaanAgg" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/yunyoungJang"><img src="https://avatars.githubusercontent.com/u/39682540?v=4?s=120" width="120px;" alt="everything became blue"/><br /><sub><b>everything became blue</b></sub></a><br /><a href="#translation-yunyoungJang" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/YewonCALLI"><img src="https://avatars.githubusercontent.com/u/96384200?v=4?s=120" width="120px;" alt="YewonCALLI"/><br /><sub><b>YewonCALLI</b></sub></a><br /><a href="#translation-YewonCALLI" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://sejinoh.live"><img src="https://avatars.githubusercontent.com/u/39869184?v=4?s=120" width="120px;" alt="SejinOH"/><br /><sub><b>SejinOH</b></sub></a><br /><a href="#translation-designerSejinOH" title="Translation">🌍</a> <a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3AdesignerSejinOH" title="Reviewed Pull Requests">👀</a></td>
     </tr>
   </tbody>
 </table>
