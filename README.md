@@ -975,6 +975,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="http://ranaa.tech"><img src="https://avatars.githubusercontent.com/u/42575044?v=4?s=120" width="120px;" alt="Aditya Rana"/><br /><sub><b>Aditya Rana</b></sub></a><br /><a href="#translation-ranaaditya" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://eshaanagg.netlify.app/"><img src="https://avatars.githubusercontent.com/u/96648934?v=4?s=120" width="120px;" alt="Eshaan Aggarwal"/><br /><sub><b>Eshaan Aggarwal</b></sub></a><br /><a href="#translation-EshaanAgg" title="Translation">🌍</a></td>
     </tr>
   </tbody>
 </table>
