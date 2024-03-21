@@ -5803,6 +5803,15 @@
         "translation",
         "review"
       ]
+    },
+    {
+      "login": "Surbhi-Pittie",
+      "name": "Surbhi Pittie",
+      "avatar_url": "https://avatars.githubusercontent.com/u/101015196?v=4",
+      "profile": "https://github.com/Surbhi-Pittie",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "repoType": "github",
