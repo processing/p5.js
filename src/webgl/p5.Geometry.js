@@ -282,6 +282,117 @@ p5.Geometry = class Geometry {
     this.vertexColors = [];
     return this;
   }
+
+
+  /**
+ * The `saveObj()` function allows the export of p5.Geometry objects as
+ * 3D models in the Wavefront .obj file format.
+ * This functionality enables users to generate
+ * custom 3D models within a p5.js sketch and then save them for use
+ * in other applications or for further development in 3D modeling software.
+ *
+ * This method should be called on a custom p5.Geometry 3D object, which typically contains
+ * vertices, faces, texture coordinates (UVs),
+ * and vertex normals. The exported .obj file will include all these components formatted according
+ * to the OBJ file specification.
+ *
+ * @method saveObj
+ * @for p5.Geometry
+ *
+ * @param {String} [fileName='model.obj'] - The name of the file to save the model as.
+ *                                          If not specified, the default file name will be 'model.obj'.
+ * @example
+ * <div>
+ * <code>
+ * //Creates a custom Octahedron
+ * let octa;
+ * let points = [];
+ * let angleX = 0;
+ * let angleY = 0;
+ * function setup() {
+ *   createCanvas(400, 400, WEBGL);
+ *   points = [
+ *     new p5.Vector(1, 0, 0),
+ *     new p5.Vector(0, 1, 0),
+ *     new p5.Vector(0, 0, 1),
+ *     new p5.Vector(-1, 0, 0),
+ *     new p5.Vector(0, -1, 0),
+ *     new p5.Vector(0, 0, -1)
+ *   ];
+ *   buildOcta();
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *   rotateX(angleX);
+ *   rotateY(angleY);
+ *   angleX += 0.01;
+ *   angleY += 0.01;
+ *   model(octa);
+ * }
+ * function buildOcta() {
+ *   beginGeometry();
+ *
+ *   let faces = [
+ *     [0, 4, 5],
+ *     [1, 0, 5],
+ *     [0, 1, 2],
+ *     [3, 1, 5],
+ *     [3, 4, 2],
+ *     [4, 3, 5],
+ *     [1, 3, 2],
+ *     [4, 0, 2]
+ *   ];
+ *   faces.forEach(face => {
+ *     beginShape();
+ *     face.forEach(idx => {
+ *       let v = points[idx];
+ *       vertex(v.x * 100, v.y * 100, v.z * 100);
+ *     });
+ *     endShape(CLOSE);
+ *   });
+ *
+ *   octa = endGeometry();
+ *   octa.saveObj();
+ * }
+ * </code>
+ * </div>
+ */
+
+  saveObj (fileName='model.obj'){
+    let objStr= '';
+
+
+    // Vertices
+    this.vertices.forEach(v => {
+      objStr += `v ${v.x} ${v.y} ${v.z}\n`;
+    });
+
+    // Texture Coordinates (UVs)
+    if (this.uvs && this.uvs.length > 0) {
+      for (let i = 0; i < this.uvs.length; i += 2) {
+        objStr += `vt ${this.uvs[i]} ${this.uvs[i + 1]}\n`;
+      }
+    }
+
+    // Vertex Normals
+    if (this.vertexNormals && this.vertexNormals.length > 0) {
+      this.vertexNormals.forEach(n => {
+        objStr += `vn ${n.x} ${n.y} ${n.z}\n`;
+      });
+
+    }
+    // Faces
+    this.faces.forEach(face => {
+      // OBJ format uses 1-based indices
+      const faceStr = face.map(index => index + 1).join(' ');
+      objStr += `f ${faceStr}\n`;
+    });
+
+    const blob = new Blob([objStr], { type: 'text/plain' });
+    p5.prototype.downloadFile(blob, fileName , 'obj');
+
+  }
   /**
  * Flips the U texture coordinates of the model.
  * @method flipU
