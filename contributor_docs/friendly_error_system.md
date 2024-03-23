@@ -1,3 +1,5 @@
+<!-- An overview of the system used by p5.js to provide errors in friendly language. -->
+
 # 🌸 p5.js Friendly Error System (FES)
 
 ## Overview

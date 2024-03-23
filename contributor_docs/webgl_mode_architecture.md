@@ -1,3 +1,5 @@
+<!-- An overview of the design decisions that make up WebGL mode and their motivation. -->
+
 # p5.js WebGL Mode Architecture
 
 This document is intended for contributors and library makers who want to extend the WebGL codebase. If you are looking for help using WebGL mode in your sketches, consider reading the WebGL tutorials [on the p5.js Learn page](https://p5js.org/learn/) instead.

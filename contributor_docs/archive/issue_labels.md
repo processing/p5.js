@@ -1,3 +1,5 @@
+<!-- A field guide to organizing p5.js GitHub issues. -->
+
 # p5.js issue labels
 
 p5.js uses a set of labels to help sort and organize issues.

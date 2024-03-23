@@ -1,3 +1,5 @@
+<!-- Learn how to write tests for p5.js, and help us keep the library bug-free.  -->
+
 # Unit Testing
 
 Unit testing is an essential part of how a large codebase can stay relatively bug-free. Unit tests are small pieces of code that aim to test individual components of a larger code base for correctness. For example, making sure a function is doing what it should be doing or a class is creating its object instances correctly.

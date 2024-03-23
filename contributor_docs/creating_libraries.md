@@ -1,3 +1,5 @@
+<!-- Step-by-step instructions on how to create an addon library. -->
+
 # Creating an Addon Library
 
 A p5.js addon library is JavaScript code that extends or adds to the p5.js core functionality. While p5.js itself already provides a wide range of functionality, it doesn’t aim to cover everything you can do with JavaScript and the Web API. Addon libraries let you extend p5.js without needing to incorporate the features into p5.js. This guide will take you through the steps of creating an addon library that loads a simple CSV file by implementing a `loadCSV()` function.

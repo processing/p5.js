@@ -1,3 +1,5 @@
+<!-- A reference to help give our documentation a consistent voice. -->
+
 # Documentation Style Guide
 
 Hello! Welcome to the guidelines for writing p5.js documentation. This document is a remix of the following resources:

@@ -1,3 +1,5 @@
+<!-- A tour of the source code powering the Reference section of the p5.js website, and a guide to help contribute to it. -->
+
 # Contributing to the p5.js Reference
 
 In p5.js, we author the code reference you see on the [reference](https://p5js.org/reference/) page on the p5.js website by including them alongside the library’s source code as specialized comments. These reference comments include the description, the function’s signature (its parameters and return value), and usage examples. In other words, the content on each p5.js function/variable’s reference page is built from the reference comments in the source code.

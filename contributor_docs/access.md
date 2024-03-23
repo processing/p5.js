@@ -1,3 +1,5 @@
+<!-- What our commitment to access means for contributors and users of the library. -->
+
 # Our Focus on Access
 
 At the [2019 Contributors Conference](https://p5js.org/community/contributors-conference-2019.html), p5.js made the commitment to only add new features that increase access (inclusion and accessibility). We will not accept feature requests that don't support these efforts. We commit to the work of acknowledging, dismantling, and preventing barriers. This means considering intersecting[^1] experiences of diversity that can impact access and participation. These include alignments of gender, race, ethnicity, sexuality, language, location, et cetera. We center the needs of marginalized groups over the continued comfort of those privileged within the p5.js community. We are collectively exploring the meaning of access. We are learning how to practice and teach access. We choose to think of access through expansive, intersectional, and coalitionary frameworks. This commitment is part of the core values of p5.js outlined in our [Community Statement](https://p5js.org/community/).

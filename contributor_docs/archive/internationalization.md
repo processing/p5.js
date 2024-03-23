@@ -1,3 +1,5 @@
+<!-- How we integrate translations into the p5.js codebase. -->
+
 # 🌐 Internationalization
 
 [Internationalization](https://developer.mozilla.org/docs/Glossary/Internationalization_and_localization) (sometimes abbreviated "i18n") refers to supporting multiple languages in a software project. This often means maintaining translations of text strings used in the project and letting users choose which translation they receive (or detecting it from their browser settings).
