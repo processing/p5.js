@@ -193,7 +193,7 @@ p5.js 소스 코드를 보면 많은 라인이 레퍼런스 주석으로 작성�
 
 `sin()`과 `mouseX` 각각의 주석에서 모두 찾아볼 수 있지만, 아직 다루지 않은 태그가 하나 있습니다. 바로 `@example` 태그입니다. 이 태그는 레퍼런스 페이지를 방문할 때 실행될 예제 코드를 작성하는 곳입니다.
 
-![Screenshot of the p5.js reference page of the "red()" function, showing only the example code section.](images/reference-screenshot.png)
+![Screenshot of the p5.js reference page of the "red()" function, showing only the example code section.](../images/reference-screenshot.png)
 
 위의 예제를 만들어내는 `@example` 태그는 다음과 같습니다.
 
