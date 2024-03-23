@@ -117,9 +117,9 @@ p5.js 리포지토리(repository)에 대한 대부분의 코드 기여는 풀 �
 
 약간의 오타 수정 같은 간단한 수정은 병합(merge) 권한이 있는 누구나 직접 병합할 수 있습니다. PR의 “변경된 파일(Files Changed)” 탭에서 자동 지속적 통합(Continuous Integration, CI) 테스트를 통과하는지 확인하세요.
 
-![The "files changed" tab when viewing a pull request on GitHub](images/files-changed.png)
+![The "files changed" tab when viewing a pull request on GitHub](../images/files-changed.png)
 
-![The "All checks have passed" indicator on a GitHub pull request, highlighted above the merge button](images/all-checks-passed.png)
+![The "All checks have passed" indicator on a GitHub pull request, highlighted above the merge button](../images/all-checks-passed.png)
 
 
 ### 버그 수정
@@ -135,21 +135,21 @@ p5.js 리포지토리(repository)에 대한 대부분의 코드 기여는 풀 �
    - [ ] 수정사항은 자동화된 테스트를 모두 통과해야 하고 관련 있는 경우에 새 테스트를 포함해야 합니다.
 4. 추가 변경 사항이 필요한 경우, [이 곳](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/commenting-on-a-pull-request#adding-line-comments-to-a-pull-request)에 설명된 대로 해당 행에 줄별 주석(line comments)을 추가해야 합니다.
    - 제안 블록(suggestion block)으로 특정 변경 사항을 제안할 수도 있습니다:\
-     ![The Suggest Change button while writing a comment on code in a GitHub pull request](images/suggest-change.png)\
-     ![A suggested change appearing within code fences with the "suggestion" tag](images/suggested-value-change.png)\
-     ![A suggested change previewed as a diff](images/suggestion-preview.png)
+     ![The Suggest Change button while writing a comment on code in a GitHub pull request](../images/suggest-change.png)\
+     ![A suggested change appearing within code fences with the "suggestion" tag](../images/suggested-value-change.png)\
+     ![A suggested change previewed as a diff](../images/suggestion-preview.png)
    - 여러 번 변경이 필요한 경우 한 줄 주석(single-line comments)을 여러 번 추가하지 마세요. 대신 문서화된 [이 곳](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/reviewing-proposed-changes-in-a-pull-request)에 절차에 따라 여러 줄 주석(multiple-line comments)과 한 번의 요청으로 변경하세요.
    - 줄별 주석(line comments)이 설명이나 토론을 위한 것이라면, “변경 요청(Request changes)” 대신 “답글(Comment)”을 선택해 주세요:\
-     ![The "comment" option circled within the GitHub Finish Review menu](images/comment-review.png)
+     ![The "comment" option circled within the GitHub Finish Review menu](../images/comment-review.png)
 5. 한 번 PR이 검토되고 더 이상 변경이 필요하지 않으면 스튜어드는 추가 댓글이 있든 없든 이전 단계에서 “승인(Approve)” 옵션을 선택하여 PR을 “승인(Approved)”으로 표시할 수 있습니다. 그런 다음 스튜어드는 원한다면 다른 스튜어드나 유지관리자에게 추가 검토를 요청할 수 있고, 병합(merge) 권한이 있다면 PR을 병합하거나 유지관리자에게 병합을 요청할 수 있습니다.
 
 6. 새로운 기여자를 [README.md](http://readme.md/) 파일의 기여자 목록에 추가하려면 @[all-contributors](https://allcontributors.org/docs/en/emoji-key) 봇을 호출해야 합니다. 각각의 기여 유형은 아래의 `[contribution` `type]`에 표시할 수 있고, 사용할 수 있는 기여 유형의 전체 목록은 위 링크에서 확인할 수 있습니다.
     
-    ![images/suggest-change.png](images/suggest-change.png)
+    ![images/suggest-change.png](../images/suggest-change.png)
     
-    ![images/suggested-value-change.png](images/suggested-value-change.png)
+    ![images/suggested-value-change.png](../images/suggested-value-change.png)
     
-    ![images/suggestion-preview.png](images/suggestion-preview.png)
+    ![images/suggestion-preview.png](../images/suggestion-preview.png)
 
 `@all-contributors` `please` `add` `@[GitHub` `handle]` `for` `[contribution` `type]`
 
@@ -388,7 +388,7 @@ CLI를 설치하고 로그인하고 `gh pr checkout [pull_request_id]` 명령어
 
 새로운 이슈나 PR에 대해 **이슈** 나 **풀 리퀘스트** 탭을 수동으로 확인하는 대신, 저장소 이름 반대편 저장소 페이지 상단에 눈 아이콘이 있는 **보기(Watch)** 버튼을 클릭하여 저장소를 확인할 수 있습니다.
 
-![Cropped screenshot of the top right corner of a GitHub repository page showing a series of buttons in the center from left to right: Sponsor, Watch, Fork, Starred.](images/github-repo-metrics.png)
+![Cropped screenshot of the top right corner of a GitHub repository page showing a series of buttons in the center from left to right: Sponsor, Watch, Fork, Starred.](../images/github-repo-metrics.png)
 
 저장소 보기를 활성화하면, 새 이슈, 풀 리퀘스트, 사용자 핸들에 대한 언급 및 저장소에서 구독한 다른 활동과 같은 이벤트가 [알림 페이지](https://github.com/notifications)에 알림으로 전송되며, 이메일의 받은 편지함과 비슷하게 _읽음_, _삭제됨_ 으로 표시될 수 있습니다.
 
