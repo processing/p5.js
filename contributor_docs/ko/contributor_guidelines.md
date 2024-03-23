@@ -55,7 +55,7 @@ p5.js의 GitHub 리포지토리(줄여서, repo)에서 활동의 대부분이 �
 
 ## 이슈란 무엇인가?
 
-![A cropped screenshot of the p5.js library GitHub repository, only showing contents of the top right corner. A red box is drawn on top of the screenshot surrounding the Issues tab.](images/issues-tab.png)
+![A cropped screenshot of the p5.js library GitHub repository, only showing contents of the top right corner. A red box is drawn on top of the screenshot surrounding the Issues tab.](../images/issues-tab.png)
 
 "이슈"는  깃허브 포스트(post)를 일컫는 보편적인 용어이며, 문제에 대해 잘 설명하기 위한 것입니다. 이슈는 버그 보고,  새로운 기능 추가 요청, 의견, 등 p5.js 라이브러리 개발과 관련된 모든 것이 될 수 있습니다.  봇을 포함한 깃허브 계정을 가진 모든 사람이 각 이슈에 코멘트(주석)를 달 수 있습니다! 이슈는 기여자들끼리 리포지토리 내에서 프로젝트 개발과 관련된 주제에 대해 논의하는 공간입니다.
 
@@ -67,11 +67,11 @@ p5.js의 GitHub 리포지토리(줄여서, repo)에서 활동의 대부분이 �
 
 p5.js의 이슈 템플릿은 스튜어드와 유지 관리자가 이슈를 이해하고 검토하기 쉽게 만들어줍니다. 또한 해당 이슈를 쉽게 제출하고 더 빠르게 답변을 받을 수 있도록 도와줍니다.
 
-![Screenshot of an example of what an issue looks like on GitHub. The title of the issue in the screenshot is "Warning being logged in Safari when using a filter shader in 2D mode #6597"](images/github-issue.png)
+![Screenshot of an example of what an issue looks like on GitHub. The title of the issue in the screenshot is "Warning being logged in Safari when using a filter shader in 2D mode #6597"](../images/github-issue.png)
 
 새로운 이슈를 제기하려면  p5.js 저장소의 "Issues" 탭으로 이동하고 오른쪽에 있는 "New issue" 버튼을 클릭하기만 하면 됩니다. 여러 가지 옵션이 제시되며 각각은 관련된 이슈 템플릿에 해당하거나 질문을 제출할 적절한 위치로 리디렉션됩니다.  이슈가 제대로 된 관심을 받을 수 있도록 가장 연관성있는 옵션을 선택하는 것을 권장합니다.
 
-![Cropped screenshot of the GitHub repository's issue page with the green "New issue" button highlighted with a red box surrounding it.](images/new-issue.png)
+![Cropped screenshot of the GitHub repository's issue page with the green "New issue" button highlighted with a red box surrounding it.](../images/new-issue.png)
 
 ### ["버그 발견"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Bug\&projects=\&template=found-a-bug.yml)
 
@@ -255,7 +255,7 @@ p5.js의🌸 코드베이스(code base)에 대한 작업/기여를 원하는 경
 
 GitHub 웹 인터페이스상 파일 내용 상단에 연필 아이콘 버튼이 있습니다. 이 버튼은 GitHub에서 제공하는 편집 기능으로, 여러분이 보고 있는 파일을 빠르고 간편하게 편집할 수 있도록 도와줍니다.
 
-![Cropped screenshot of a file view in GitHub of the p5.js repository, "src/color/color\_conversion.js" file. A red arrow pointing to a pencil icon button on the right side of the image.](images/edit-file.png)
+![Cropped screenshot of a file view in GitHub of the p5.js repository, "src/color/color\_conversion.js" file. A red arrow pointing to a pencil icon button on the right side of the image.](../images/edit-file.png)
 
 그러나 매우 단순한 변경 외에는 이 기능을 사용하는 것이 권장되지 않습니다. 이에 대한 주요 이유 중 하나는 소스 코드의 보다 복잡한 변경을 위해 풀 리퀘스트로 제출되기 전에 로컬에서 구축하고 테스트해야 하기 때문입니다. 로컬 개발 환경을 사용하는 것이 이 편집 기능에서 제공하는 기본적인 편집 환경보다 훨씬 유연하게 할 수 있는 경우가 많기 때문입니다.
 
@@ -264,7 +264,7 @@ GitHub 웹 인터페이스상 파일 내용 상단에 연필 아이콘 버튼이
 
 p5.js 소스 코드를 작업하기 위한 첫 번째 단계는 p5.js 리포지토리(repository)를 포크하는 것입니다. 포크(fork)는 오픈 소스에서 특정한 의미를 가지고 있지만, 여기서는 리포지토리의 사본을 생성하여 자신의 GitHub 계정에 저장하는 것을 의미합니다. 리포지토리를 포크하려면 페이지 상단 근처에 있는 "포크(fork)" 버튼을 클릭하기만 하면 GitHub가 계정에 리포지토리의 복사본을 만듭니다.
 
-![Screenshot of the main page of repository. A button, labeled with a fork icon and "Fork 59.3k," is outlined in dark orange.](fork.png)
+![Screenshot of the main page of repository. A button, labeled with a fork icon and "Fork 59.3k," is outlined in dark orange.](../images/fork.png)
 
 p5.js 리포지토리에 대한 직접 쓰기 액세스 권한이 없을 가능성이 높기 때문에 p5.js  리포지토리의 포크에서 작업해야 하며, 포크에서 작업하면 변경한 후 나중에 공식 리포지토리에 다시 제출할 수 있습니다.
 
@@ -275,18 +275,18 @@ GitHub Desktop은 명령어를 터미널에 입력하는 대신에 그래픽 사
 
 먼저, [GitHub Desktop을 다운로드하고 설치](https://desktop.github.com/)합니다. 설치가 완료되면 응용 프로그램을 엽니다. GitHub 계정으로 로그인하라는 메시지가 나타납니다. 로그인한 후에는 포크한 p5.js 프로젝트를 포함하여 프로젝트 목록이 표시됩니다. 자신의 포크인 `yourUsername/p5.js`를 선택하고 파란색 "Clone" 버튼을 클릭합니다. 프로젝트를 저장할 위치에 대한 몇 가지 세부 정보를 요청할 것입니다. 이를 변경하거나 기본 설정을 유지한 채로 계속할 수 있습니다.
 
-![The GitHub Desktop user interface after signing in. On the right half of the screen, it lists your projects, and a Clone button in the bottom right.](images/github-desktop-init.png)
+![The GitHub Desktop user interface after signing in. On the right half of the screen, it lists your projects, and a Clone button in the bottom right.](../images/github-desktop-init.png)
 
 복제가 되면 포크를 어떻게 사용할지에 대해 물어볼 것입니다. 상위 프로젝트에 기여할 옵션을 선택하고 "계속(Continue)"을 클릭합니다.
 
-![The view after cloning a fork. It asks if you are planning to contribute to the parent project, or use it for your own purposes.](images/github-desktop-fork.png)
+![The view after cloning a fork. It asks if you are planning to contribute to the parent project, or use it for your own purposes.](../images/github-desktop-fork.png)
 
 
 ### `git` 명령줄(command line) 인터페이스 사용하기
 
 포크가 생성되면 포크 페이지로 이동하여 초록색 "Code" 버튼을 클릭해서 git URL을 복사하세요. 이는 `https://github.com/limzykenneth/p5.js.git` 와 같은 모양이어야 합니다.
 
-![Screenshot of the list of files on the landing page of a repository. The "Code" button is highlighted with a dark orange outline.](images/code-button.png)
+![Screenshot of the list of files on the landing page of a repository. The "Code" button is highlighted with a dark orange outline.](../images/code-button.png)
 
 다음으로 로컬 환경에서 명령줄로 이동하여 git 저장소를 클론하세요. "클론(Clone)"은 단순히 저장소와 복사본을 로컬 장치로 다운로드하는 것을 의미합니다. p5.js 소스 코드 폴더를 저장하고 싶은 폴더에서 다음 명령어를 실행하세요.
 
@@ -339,7 +339,7 @@ npm run build
 GitHub Desktop에서 현재 변경 사항을 모두 커밋하려면 변경 사항을 모두 완료한 후 앱을 열어야 합니다. 왼쪽 사이드바에 변경한 파일 목록이 표시되고, 각 파일 내의 구체적인 변경 사항이 오른쪽에 표시됩니다. 창 하단 왼쪽 모서리에 있는 사용자 아이콘 옆의 입력란에는 간략하고 개괄적인 설명을 입력해야 합니다. 이것이 커밋의 제목이 됩니다. 아래 설명 입력란은 커밋에 대해 더 자세히 작성하거나 그냥 비워둘 수 있습니다. 그 후, 파란색 "Commit" 버튼을 눌러 변경 사항을 확정하세요.
 
 
-![A screenshot of the GitHub Desktop branch selection menu. After entering a new branch name that does not yet exist, a "Create New Branch" button appears.](images/github-desktop-create-branch.png)
+![A screenshot of the GitHub Desktop branch selection menu. After entering a new branch name that does not yet exist, a "Create New Branch" button appears.](../images/github-desktop-create-branch.png)
 
 터미널에서 `main` 브랜치에 있을 때 `git checkout -b branch_name`을 실행하고, `branch_name`을 설명할 수 있는 이름으로 바꾸면 이제 별도의 브랜치에 있게 됩니다.
 
@@ -352,7 +352,7 @@ git에 얼마나 자주 커밋해야 하는지 궁금하시죠? 일반적으로 
 GitHub Desktop에서 현재 변경 사항을 모두 커밋하려면 변경 사항을 모두 완료한 후 앱을 엽니다. 왼쪽 사이드바에 변경한 파일 목록이 표시되고, 각 파일 내의 구체적인 변경 사항이 오른쪽에 표시됩니다. 창 하단 왼쪽 모서리에 있는 사용자 아이콘 옆의 입력란에 간단한 고급 설명을 입력합니다. 이것이 커밋의 제목이 됩니다. 아래 설명 입력란은 더 자세히 기술하거나 그냥 비워둘 수 있습니다. 파란색 "Commit" 버튼을 눌러 변경 사항을 확정하세요.
 
 
-![A screenshot of GitHub Desktop after having made a change. The area where you need to write a title for your change is circled in red in the lower left of the window.](images/github-desktop-commit.png)
+![A screenshot of GitHub Desktop after having made a change. The area where you need to write a title for your change is circled in red in the lower left of the window.](../images/github-desktop-commit.png)
 
 터미널에서 현재 변경 사항을 모두 커밋하려면 다음을 실행하세요:
 
@@ -395,7 +395,7 @@ git commit -m "Add documentation example to circle() function"
 
 소스 코드 작업을 시작할 계획을 하고 있거나 여러분의 작업할 p5.js의 기능을 알고 있다면, 시작하기 좋은 방법 중 하나는 문서(Documentation)를 방문하는 것입니다. p5.js 문서의 각 기능 하단에는 해당 소스 코드에 대한 링크가 있습니다.
 
-![Cropped screenshot of a reference page on the p5.js website containing the sentence "Notice any errors or typos? Please let us know. Please feel free to edit src/core/shape/2d\_primitives.js and issue a pull request!". Part of the above sentence where it says "src/core/shape/2d\_primitives.js" is highlighted with a red underline and arrow pointing to it.](images/reference-code-link.png)
+![Cropped screenshot of a reference page on the p5.js website containing the sentence "Notice any errors or typos? Please let us know. Please feel free to edit src/core/shape/2d\_primitives.js and issue a pull request!". Part of the above sentence where it says "src/core/shape/2d\_primitives.js" is highlighted with a red underline and arrow pointing to it.](../images/reference-code-link.png)
 
 
 ### 단위 테스트 (Unit tests)
@@ -442,11 +442,11 @@ p5.js의 기능에 작업하는 동안, p5.js의 디자인 원칙을 염두에 �
 
 첫 번째 단계는 새로운 커밋을 p5.js의 당신이 포크한 저장소로 푸시하는 것입니다; 이를 변경사항을 당신의 포크로 업로드하는 것으로 생각하세요.
 
-갓허브 데스크탑(GitHub Desktop)애서는 브랜치를 변경하는 버튼 오른쪽에 변경사항을 깃허브에 푸시하는 버튼이 있습니다. 버튼을 클릭하여 변경 사항을 푸시하세요.![A view of GitHub Desktop after committing changes. The button to push the changes online is circled in red.](images/publish-branch.png)
+갓허브 데스크탑(GitHub Desktop)애서는 브랜치를 변경하는 버튼 오른쪽에 변경사항을 깃허브에 푸시하는 버튼이 있습니다. 버튼을 클릭하여 변경 사항을 푸시하세요.![A view of GitHub Desktop after committing changes. The button to push the changes online is circled in red.](../images/publish-branch.png)
 
 코드가 업로드되면, 풀 리퀘스트를 생성하라는 버튼이 표시됩니다. 이 버튼을 한 번 클릭하면 미리보기와 실제로 요청을 생성하는 또 다른 버튼이 표시됩니다. "Create Pull Request" 버튼을 눌러 해당 과정을 시작합니다.
 
-![A screenshot of Github Desktop after pushing code. In the left sidebar, it says "0 changed items." In the right pane, below the "No local changes" header, a blue "Review Pull Request" button has been marked up with a red circle.](images/preview-pull-request.png)
+![A screenshot of Github Desktop after pushing code. In the left sidebar, it says "0 changed items." In the right pane, below the "No local changes" header, a blue "Review Pull Request" button has been marked up with a red circle.](../images/preview-pull-request.png)
 
 터미널에서 다음 명령어를 실행해보세요:
 
@@ -460,12 +460,12 @@ git push -u origin [branch_name]
 
 p5.js 깃허브 저장소를 방문할 때 풀 리퀘스트를 열 수 있는 버튼도 볼 수 있습니다. 이 버튼을 클릭하면 새 풀 리퀘스트를 열 수도 있습니다.
 
-![Cropped screenshot of the main page of the p5.js GitHub repository web page. A section near the top of the page is a yellow call to action box containing a green button with the text "Compare & pull request".](images/recent-pushes)
+![Cropped screenshot of the main page of the p5.js GitHub repository web page. A section near the top of the page is a yellow call to action box containing a green button with the text "Compare & pull request".](../images/recent-pushes.png)
 
 
 ### 풀 리퀘스트 정보
 
-![Screenshot of an "Open a pull request" page on GitHub that is prepopulated with p5.js's pull request template.](images/new-pr.png)
+![Screenshot of an "Open a pull request" page on GitHub that is prepopulated with p5.js's pull request template.](../images/new-pr.png)
 
 풀 리퀘스트를 제출하기 전에, 풀 리퀘스트 템플릿을 작성해야 합니다.
 
@@ -501,7 +501,7 @@ p5.js 깃허브 저장소를 방문할 때 풀 리퀘스트를 열 수 있는 �
 
 ### 리베이스 및 충돌 해결
 
-![Screenshot of an open pull request on p5.js's GitHub repository. The title of the pull request says "Fix filter shaders when rectMode is applied; add tests #6603.](images/opened-pr.png)
+![Screenshot of an open pull request on p5.js's GitHub repository. The title of the pull request says "Fix filter shaders when rectMode is applied; add tests #6603.](../images/opened-pr.png)
 
 이제 오픈된 풀 리퀘스트를 검토하고 다음 몇 가지 사항들을 주의해주세요:
 
@@ -511,19 +511,19 @@ p5.js 깃허브 저장소를 방문할 때 풀 리퀘스트를 열 수 있는 �
 
 위의 어느 것도 사실이 아니라면(예상했던 것보다 많은 커밋이 있거나 충돌이 있는 경우), [rebase](https://git-scm.com/book/en/v2/Git-Branching-Rebasing)를 진행하거나 충돌을 해결해야 할 수도 있습니다. 여기서 충돌이란, 최근에 변경사항이 적용된 파일에 대해 변경을 진행하였으나, 깃(git)에서 어떤 변경사항 묶음을 유지할지, 제외할지 확정하지 못한 상태를 의미합니다. 이러한 문제를 해결하는 데 어려움이 있다면, 저희에게 알려주시면 과정을 안내해 드리겠습니다. 기본 지침은 다음과 같습니다.
 
-가끔 깃허브는 'Resolve Conflicts' 버튼을 보여주면서 브라우저에서 직접 충돌을 해결할 수 있도록 합니다:![A screenshot of a GitHub pull request with merge conflicts. The conflicting filenames are listed, and there is a "Resolve conflicts" button highlighted.](images/resolve-conflicts.png)
+가끔 깃허브는 'Resolve Conflicts' 버튼을 보여주면서 브라우저에서 직접 충돌을 해결할 수 있도록 합니다:![A screenshot of a GitHub pull request with merge conflicts. The conflicting filenames are listed, and there is a "Resolve conflicts" button highlighted.](../images/resolve-conflicts.png)
 
 충돌 사항은 `<<<<<<<` 와 `>>>>>>>` 사이에 표시되며, `=======`으로 구분됩니다. 한 부분은 여러분의 코드를 보여주고, 다른 한 쪽 부분에는 메인 브랜치에서 변경된 사항을 보여줍니다.
 
-![A screenshot of GitHub's conflict resolution interface. A sidebar lists the files with conflicts. The right pane contains the conflicting code, with merge conflict markers highlighted.](images/conflicts-interface.png)
+![A screenshot of GitHub's conflict resolution interface. A sidebar lists the files with conflicts. The right pane contains the conflicting code, with merge conflict markers highlighted.](../images/conflicts-interface.png)
 
 충돌 표시를 제거하고, 풀 리퀘스트에 포함될 최종 코드만 남겨둡니다. 모든 충돌이 해결되었을 때 "Mark as resolved"를 클릭할 수 있습니다.
 
-![A screenshot of the GitHub conflict resolution interface after editing the code to remove the merge conflict markers. The "mark as resolved" button in the upper right is enabled.](images/mark-as-resolved.png)
+![A screenshot of the GitHub conflict resolution interface after editing the code to remove the merge conflict markers. The "mark as resolved" button in the upper right is enabled.](../images/mark-as-resolved.png)
 
 충돌 사항이 있는 모든 파일이 해결되면 변경 사항을 커밋할 수 있습니다.
 
-![The GitHub conflict resolution interface after all conflicts have been marked as resolved. A green "commit merge" button is enabled.](images/commit-merge.png)
+![The GitHub conflict resolution interface after all conflicts have been marked as resolved. A green "commit merge" button is enabled.](../images/commit-merge.png)
 
 가끔 깃허브의 웹 인터페이스에서 충돌을 표시하기에는 너무 복잡한 경우가 있습니다. 이런 경우, 만약 수동 방식을 선호한다면, 로컬에서 충돌을 해결할 수 있습니다:
 
