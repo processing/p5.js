@@ -447,7 +447,7 @@ git push -u origin [branch_name]
 
 Una vez que la subida esté completa, es posible que veas un enlace en la terminal que te permite abrir un _pull request_. Si no, puedes navegar a tu _fork_ en tu navegador web, cambiar a la rama en la que estás trabajando con el botón desplegable en la parte superior de la lista de archivos, haz clic en "Contribuir" y luego en "Abrir pull request".
 
-![](https://lh7-us.googleusercontent.com/xoqM9gLSFXyw7b3gzG8JlHqoO0zxHALbjSz93E3D0HNh4Jw2wDWdzHKUEchnB6hdjQC7hVn-o5prrXkLw2WiEOoVKJF6kpmyA65sirN0z-Vy3PBY3rCXC5Ifn5stQhcdUQxQS0rsVoW0_hlkfTcY8PQ)
+![Screenshot of the git command line response after pushing a new branch. It includes a GitHub link to open a new pull request.](../images/new-branch.png)
 
 También puedes ver un botón para abrir un _pull request_ cuando visites el repositorio de p5.js en Github. Al hacer clic en él también funcionará para abrir un nuevo  _pull request_.
 

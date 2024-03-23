@@ -438,7 +438,7 @@ git push -u origin [branch_name]
 
 एक बार पुश पूरा हो जाने पर, आप टर्मिनल में एक लिंक देख सकते हैं जो आपको पुल रिक्वेस्ट खोलने की सुविधा देता है, यदि नहीं तो आप अपने वेब ब्राउज़र में अपने फोर्क पर नेविगेट कर सकते हैं, शीर्ष पर ड्रॉपडाउन बटन के साथ उस ब्रांच पर स्विच करें जिस पर आप काम कर रहे हैं फ़ाइल सूची में, "Contribute" पर क्लिक करें और फिर "Open pull request." पर क्लिक करें।
 
-![](https://lh7-us.googleusercontent.com/xoqM9gLSFXyw7b3gzG8JlHqoO0zxHALbjSz93E3D0HNh4Jw2wDWdzHKUEchnB6hdjQC7hVn-o5prrXkLw2WiEOoVKJF6kpmyA65sirN0z-Vy3PBY3rCXC5Ifn5stQhcdUQxQS0rsVoW0_hlkfTcY8PQ)
+![Screenshot of the git command line response after pushing a new branch. It includes a GitHub link to open a new pull request.](../images/new-branch.png)
 
 जब आप p5.js Github रेपो पर जाते हैं तो आपको पुल रिक्वेस्ट खोलने के लिए एक बटन भी दिखाई दे सकता है। इसे क्लिक करने से एक नया पुल रिक्वेस्ट खोलने का भी काम किया जा सकता है।
 

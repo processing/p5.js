@@ -456,7 +456,7 @@ git push -u origin [branch_name]
 
 푸시가 완료되면, 터미널에 풀 리퀘스트를 열 수 있는 링크가 표시될 수 있습니다. 만약 웹 브라우저에서 여러분의 포크로 이동할 수 없다면, 파일 목록 상단의 드롭다운 버튼으로 작업 중인 브랜치로 전환한 후, "Contribute"를 클릭하고 "Open pull request"를 클릭하세요.
 
-![](https://lh7-us.googleusercontent.com/xoqM9gLSFXyw7b3gzG8JlHqoO0zxHALbjSz93E3D0HNh4Jw2wDWdzHKUEchnB6hdjQC7hVn-o5prrXkLw2WiEOoVKJF6kpmyA65sirN0z-Vy3PBY3rCXC5Ifn5stQhcdUQxQS0rsVoW0_hlkfTcY8PQ)
+![Screenshot of the git command line response after pushing a new branch. It includes a GitHub link to open a new pull request.](../images/new-branch.png)
 
 p5.js 깃허브 저장소를 방문할 때 풀 리퀘스트를 열 수 있는 버튼도 볼 수 있습니다. 이 버튼을 클릭하면 새 풀 리퀘스트를 열 수도 있습니다.
 
