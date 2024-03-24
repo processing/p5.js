@@ -984,6 +984,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Tmicrd"><img src="https://avatars.githubusercontent.com/u/53132820?v=4?s=120" width="120px;" alt="nancy"/><br /><sub><b>nancy</b></sub></a><br /><a href="#translation-Tmicrd" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/jaiakash"><img src="https://avatars.githubusercontent.com/u/33419526?v=4?s=120" width="120px;" alt="Akash Jaiswal"/><br /><sub><b>Akash Jaiswal</b></sub></a><br /><a href="#translation-jaiakash" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://jackbdu.com/about"><img src="https://avatars.githubusercontent.com/u/8614803?v=4?s=120" width="120px;" alt="Jack B. Du"/><br /><sub><b>Jack B. Du</b></sub></a><br /><a href="#tutorial-jackbdu" title="Tutorials">✅</a> <a href="#example-jackbdu" title="Examples">💡</a></td>
     </tr>
   </tbody>
 </table>
