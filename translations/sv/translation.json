@@ -1,1 +1,72 @@
-
+{
+  "fes": {
+    "autoplay": "Media som försökte spela (with '{{src}}') tilläts inte detta av den här webbläsaren, sannolikt beroende på webbläsarens autoplay policy.\n\n+ Mer info: {{url}}",
+    "checkUserDefinedFns": "Det verkar som att du av misstag skrivit {{name}} istället för {{actualName}}. Ändra detta om det inte var meningen.",
+    "fileLoadError": {
+      "bytes": "Det ser ut som att det var ett problem med att ladda din fil. {{suggestion}}",
+      "font": "Det ser ut som att det var ett problem med att ladda din font. {{suggestion}}",
+      "gif": "Det blev något problem med att ladda din GIF. Se till att din GIF använder 87a eller 89a encoding.",
+      "image": "Det ser ut som att det var ett problem med att ladda din bild. {{suggestion}}",
+      "json": "Det ser ut som att det var ett problem med att ladda din JSON-fil. {{suggestion}}",
+      "large": "Om din stora fil inte hämtas rekommenderar vi att filen delas i mindre segment som sedan kan hämtas.",
+      "strings": "Det ser ut som att det var ett problem med att ladda din textfil. {{suggestion}}",
+      "suggestion": "Kontrollera att sökvägen till filen ({{filePath}}) är korrekt, hosta filen online, eller kör en lokal server.\n\n+ More info: {{url}}",
+      "table": "Det ser ut som att det var ett problem med att ladda din tabellfil. {{suggestion}}",
+      "xml": "Det ser ut som att det var ett problem med att ladda din XML-fil. {{suggestion}}"
+    },
+    "friendlyParamError": {
+      "type_EMPTY_VAR": "{{location}} {{func}}() förväntade {{formatType}} för parameter {{position}}, fick istället en tom variabel. Om detta inte var intentionen beror detta ofta på ett scope-problem.\n\n+ Mer info: {{url}}",
+      "type_TOO_FEW_ARGUMENTS": "{{location}} {{func}}() förväntade minst {{minParams}} argument, men tog endast emot {{argCount}}.",
+      "type_TOO_MANY_ARGUMENTS": "{{location}} {{func}}() förväntade inte fler än {{maxParams}} argument, men tog emot {{argCount}}.",
+      "type_WRONG_TYPE": "{{location}} {{func}}() förväntade typen {{formatType}} för parameter {{position}}, tog istället emot parameter av typ {{argType}}."
+    },
+    "globalErrors": {
+      "reference": {
+        "cannotAccess": "\n{{location}} \"{{symbol}}\" används innan deklarering. Se till att du har deklarerat variabeln innan den används.\n\n+ Mer info: {{url}}",
+        "notDefined": "\n{{location}} \"{{symbol}}\" är inte deklarerad inom aktuellt scope. Om du deklarerat den i din kod, kontrollera dess scope, stavning och användninga av gemener och versaler i variabelnamn. (JavaScript är case-sensitive).\n\n+ Moer info: {{url}}"
+      },
+      "stackSubseq": "└[{{location}}] \n\t Anropad från rad {{line}} i {{func}}()\n",
+      "stackTop": "┌[{{location}}] \n\t Error på rad {{line}} i {{func}}()\n",
+      "syntax": {
+        "badReturnOrYield": "\nSyntax Error - return ligger utanför en funktion. Se till att du inte missat några måsvingar/klammerparenteser så att return befinner sig inne i en funktion.\n\n+ Mer info: {{url}}",
+        "invalidToken": "\nSyntax Error - Hittade en symbol som JavaScript inte känner igen eller inte förväntade på denna plats.\n\n+ Mer info: {{url}}",
+        "missingInitializer": "\nSyntax Error - En const-variabel är deklarerad men inte initialiserad. I JavaScript behöver en const-variabel tilldelas ett initialt värde, samtidigt som variabeln deklarareras. Kontrollera radnumret i error-meddelandet och tilldela const-variabeln ett värde..\n\n+ Mer info: {{url}}",
+        "redeclaredVariable": "\nSyntax Error - \"{{symbol}}\" är omdeklarerad. JavaScript tillåter inte omdeklarering av variabler. Kontrollera radnumret i error-meddelandet.\n\n+ Mer info: {{url}}",
+        "unexpectedToken": "\nSyntax Error - Ett tecken finns på ett ställe där det inte förväntades.\nVanligtvis beror detta på ett korrfel. Kontrollera radnumret i error-meddelandet.\n\n+ Mer info: {{url}}"
+      },
+      "type": {
+        "constAssign": "\n{{location}} En const-variabel har tilldelats ett nytt värde. I JavaScript är det inte tillåtet att tilldela en const-variabel ett nytt värde. Om du vill tilldela ett nytt värde till en variabel ska denna deklareras som en var eller let.\n\n+ Mer info: {{url}}",
+        "notfunc": "\n{{location}} \"{{symbol}}\" kunde inte anropas som en funktion.\nKontrollera stavning, versaler och gemener och typ.\n\n+ Mer info: {{url}}",
+        "notfuncObj": "\n{{location}} \"{{symbol}}\" kunde inte anropas som en funktion.\nVerifiera om \"{{obj}}\" har \"{{symbol}}\" i sig och kontrollera stavning, versaler och gemener och typ.\n\n+ Mer info: {{url}}",
+        "readFromNull": "\n{{location}} Egenskapen av null kan inte läsas. I JavaScript indikerar värdet null att ett objekt inte har något värde.\n\n+ Mer info: {{url}}",
+        "readFromUndefined": "\n{{location}} Kan inte läsa värdet av undefined. Kontrollera radnumret i error-meddelandet och säkerställ att aktuell variabel inte är undefined.\n\n + Mer info: {{url}}"
+      }
+    },
+    "libraryError": "{{location}} Ett fel med meddelandet \"{{error}}\" uppstod i p5js-biblioteket när {{func}} anropades. Om ingen annan information finns kan det bero på argumenten som skickas till {{func}}.",
+    "location": "[{{file}}, rad {{line}}]",
+    "misspelling": "{{location}} Det verkar som du av misstag skrivit \"{{name}}\" istället för \"{{actualName}}\". Ändra till {{actualName}} om du vill använda {{type}} från p5.js.",
+    "misspelling_plural": "{{location}} Det verkar som du av misstag skrivit \"{{name}}\".\nDu kan ha menat något av följande: \n{{suggestions}}",
+    "misusedTopLevel": "Försökte du just använda p5.js's {{symbolName}} {{symbolType}}? Om så, prova att flytta detta till setup()-funktionen i din sketch.\n\n+ Mer info: {{url}}",
+    "positions": {
+      "p_1": "första",
+      "p_10": "tionde",
+      "p_11": "elfte",
+      "p_12": "tolfte",
+      "p_2": "andra",
+      "p_3": "tredje",
+      "p_4": "fjärde",
+      "p_5": "femte",
+      "p_6": "sjätte",
+      "p_7": "sjunde",
+      "p_8": "åttonde",
+      "p_9": "nionde"
+    },
+    "pre": "\n🌸 p5.js säger: {{message}}",
+    "sketchReaderErrors": {
+      "reservedConst": "du har använt en variabel som är reserverad för p5.js, \"{{symbol}}\" se till att ändra variabelnamnet till något annat.\n\n+ Mer info: {{url}}",
+      "reservedFunc": "du har använt ett funktionsnamn som är reserverat för p5.js,\"{{symbol}}\" se till att ändra funktionsnamnet till något annat.\n\n+ Mer info: {{url}}"
+    },
+    "welcome": "Välkommen! Det här är din vänliga debugger. För att stänga av mig, byt till p5.min.js",
+    "wrongPreload": "{{location}} Ett fel med meddelandet \"{{error}}\" uppstod i p5js-biblioteket när \"{{func}}\" anropades. Om inget annat anges kan detta bero på att \"{{func}}\" anropas från preload-funktionen. Endast laddningsanrop (loadImage, loadJSON, loadFont, loadStrings, etc.) ska finnas i preload-funktionen."
+  }
+}
