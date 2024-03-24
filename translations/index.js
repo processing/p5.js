@@ -26,5 +26,6 @@ export const languages = [
   'es',
   'ko',
   'zh',
-  'hi'
+  'hi',
+  'sv
 ];
