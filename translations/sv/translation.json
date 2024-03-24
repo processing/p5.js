@@ -10,7 +10,7 @@
       "json": "Det ser ut som att det var ett problem med att ladda din JSON-fil. {{suggestion}}",
       "large": "Om din stora fil inte hämtas rekommenderar vi att filen delas i mindre segment som sedan kan hämtas.",
       "strings": "Det ser ut som att det var ett problem med att ladda din textfil. {{suggestion}}",
-      "suggestion": "Kontrollera att sökvägen till filen ({{filePath}}) är korrekt, hosta filen online, eller kör en lokal server.\n\n+ More info: {{url}}",
+      "suggestion": "Kontrollera att sökvägen till filen ({{filePath}}) är korrekt, hosta filen online, eller kör en lokal server.\n\n+ Mer info: {{url}}",
       "table": "Det ser ut som att det var ett problem med att ladda din tabellfil. {{suggestion}}",
       "xml": "Det ser ut som att det var ett problem med att ladda din XML-fil. {{suggestion}}"
     },
@@ -23,7 +23,7 @@
     "globalErrors": {
       "reference": {
         "cannotAccess": "\n{{location}} \"{{symbol}}\" används innan deklarering. Se till att du har deklarerat variabeln innan den används.\n\n+ Mer info: {{url}}",
-        "notDefined": "\n{{location}} \"{{symbol}}\" är inte deklarerad inom aktuellt scope. Om du deklarerat den i din kod, kontrollera dess scope, stavning och användninga av gemener och versaler i variabelnamn. (JavaScript är case-sensitive).\n\n+ Moer info: {{url}}"
+        "notDefined": "\n{{location}} \"{{symbol}}\" är inte deklarerad inom aktuellt scope. Om du deklarerat den i din kod, kontrollera dess scope, stavning och användning av gemener och versaler i variabelnamn. (JavaScript är case-sensitive).\n\n+ Mer info: {{url}}"
       },
       "stackSubseq": "└[{{location}}] \n\t Anropad från rad {{line}} i {{func}}()\n",
       "stackTop": "┌[{{location}}] \n\t Error på rad {{line}} i {{func}}()\n",
@@ -63,8 +63,8 @@
     },
     "pre": "\n🌸 p5.js säger: {{message}}",
     "sketchReaderErrors": {
-      "reservedConst": "du har använt en variabel som är reserverad för p5.js, \"{{symbol}}\" se till att ändra variabelnamnet till något annat.\n\n+ Mer info: {{url}}",
-      "reservedFunc": "du har använt ett funktionsnamn som är reserverat för p5.js,\"{{symbol}}\" se till att ändra funktionsnamnet till något annat.\n\n+ Mer info: {{url}}"
+      "reservedConst": "du har använt en variabel som är reserverad för p5.js - \"{{symbol}}\" - se till att ändra variabelnamnet till något annat.\n\n+ Mer info: {{url}}",
+      "reservedFunc": "du har använt ett funktionsnamn som är reserverat för p5.js - \"{{symbol}}\" - se till att ändra funktionsnamnet till något annat.\n\n+ Mer info: {{url}}"
     },
     "welcome": "Välkommen! Det här är din vänliga debugger. För att stänga av mig, byt till p5.min.js",
     "wrongPreload": "{{location}} Ett fel med meddelandet \"{{error}}\" uppstod i p5js-biblioteket när \"{{func}}\" anropades. Om inget annat anges kan detta bero på att \"{{func}}\" anropas från preload-funktionen. Endast laddningsanrop (loadImage, loadJSON, loadFont, loadStrings, etc.) ska finnas i preload-funktionen."
