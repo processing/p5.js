@@ -3,6 +3,7 @@ export { default as es_translation } from './es/translation';
 export { default as ko_translation } from './ko/translation';
 export { default as zh_translation } from './zh/translation';
 export { default as hi_translation } from './hi/translation';
+export { default as sv_translation } from './sv/translation';
 
 /**
  * When adding a new language, add a new "export" statement above this.
