@@ -1,6 +1,6 @@
 {
   "fes": {
-    "autoplay": "Media som försökte spela (with '{{src}}') tilläts inte detta av den här webbläsaren, sannolikt beroende på webbläsarens autoplay policy.\n\n+ Mer info: {{url}}",
+    "autoplay": "Media som försökte spela (med '{{src}}') tilläts inte detta av den här webbläsaren, sannolikt beroende på webbläsarens autoplay policy.\n\n+ Mer info: {{url}}",
     "checkUserDefinedFns": "Det verkar som att du av misstag skrivit {{name}} istället för {{actualName}}. Ändra detta om det inte var meningen.",
     "fileLoadError": {
       "bytes": "Det ser ut som att det var ett problem med att ladda din fil. {{suggestion}}",
