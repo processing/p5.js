@@ -5830,6 +5830,16 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "jackbdu",
+      "name": "Jack B. Du",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8614803?v=4",
+      "profile": "https://jackbdu.com/about",
+      "contributions": [
+        "tutorial",
+        "example"
+      ]
     }
   ],
   "repoType": "github",
