@@ -111,5 +111,21 @@ visualSuite('WebGL', function() {
         });
       });
     });
+    visualTest(
+      'Object with different texture coordinates per use of vertex keeps the coordinates intact',
+      async function(p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const tex = await new Promise(resolve => p5.loadImage('unit/assets/cat.jpg', resolve));
+        const cube = await new Promise(resolve => p5.loadModel('unit/assets/cube-textures.obj', resolve));
+        cube.normalize();
+        p5.background(255);
+        p5.texture(tex);
+        p5.rotateX(p5.PI / 4);
+        p5.rotateY(p5.PI / 4);
+        p5.scale(80/400);
+        p5.model(cube);
+        screenshot();
+      }
+    );
   });
 });

@@ -410,11 +410,11 @@ function parseObj(model, lines, materials= {}) {
               vertParts[i] = parseInt(vertParts[i]) - 1;
             }
 
-            if (!usedVerts[vertParts[0]]) {
-              usedVerts[vertParts[0]] = {};
+            if (!usedVerts[vertString]) {
+              usedVerts[vertString] = {};
             }
 
-            if (usedVerts[vertParts[0]][currentMaterial] === undefined) {
+            if (usedVerts[vertString][currentMaterial] === undefined) {
               const vertIndex = model.vertices.length;
               model.vertices.push(loadedVerts.v[vertParts[0]].copy());
               model.uvs.push(loadedVerts.vt[vertParts[1]] ?
@@ -422,7 +422,7 @@ function parseObj(model, lines, materials= {}) {
               model.vertexNormals.push(loadedVerts.vn[vertParts[2]] ?
                 loadedVerts.vn[vertParts[2]].copy() : new p5.Vector());
 
-              usedVerts[vertParts[0]][currentMaterial] = vertIndex;
+              usedVerts[vertString][currentMaterial] = vertIndex;
               face.push(vertIndex);
               if (currentMaterial
                 && materials[currentMaterial]
@@ -431,7 +431,7 @@ function parseObj(model, lines, materials= {}) {
                 coloredVerts.add(loadedVerts.v[vertParts[0]]); //since a set would only push unique values
               }
             } else {
-              face.push(usedVerts[vertParts[0]][currentMaterial]);
+              face.push(usedVerts[vertString][currentMaterial]);
             }
           }
 
