@@ -209,6 +209,48 @@ p5.Graphics = class extends p5.Element {
    *
    * @method createFramebuffer
    * @return {p5.Framebuffer}
+   * @example
+   *
+   * <div>
+   * <code>
+   * let framebuffer;
+   * let hue = 0;
+   * let trail = [];
+   * //hover mouse to see effect.
+   *
+   * function setup() {
+   *   createCanvas(150, 150, WEBGL);
+   *   colorMode(HSB, 360, 100, 100, 100);
+   *   framebuffer = createFramebuffer({
+   *     format: p5.prototype.UNSIGNED_BYTE,
+   *     width: 150,
+   *     height: 150,
+   *     density: 1
+   *   });
+   *   frameRate(60);
+   * }
+   *
+   * function draw() {
+   *   framebuffer.begin();
+   *   blendMode(ADD);
+   *   background(0, 0, 0, 5);
+   *   noStroke();
+   *
+   *   for (let i = trail.length - 1; i >= 0; i--) {
+   *     let alpha = map(i, 0, trail.length - 1, 10, 0);
+   *     fill(hue, 80, 80, alpha);
+   *     ellipse(trail[i].x, trail[i].y, 25, 25);
+   *   }
+   *   framebuffer.end();
+   *   image(framebuffer, -width / 2, -height / 2, width, height);
+   *   hue = (hue + 1) % 360;
+   *   trail.push(createVector(mouseX - width / 2, mouseY - height / 2));
+   *   if (trail.length > 20) {
+   *     trail.splice(0, 1);
+   *   }
+   * }
+   * </code>
+   * </div>
    */
   createFramebuffer(options) {
     return new p5.Framebuffer(this, options);
