@@ -108,7 +108,7 @@ function setup() {
 You can access p5.js functions and variables such as `circle()` and `PI` in your addon code using the “`this`” object. We’ll use the `hour()` and `minute()` functions to further customize the `loadCSV()` function’s console message. This will give us some information about when the function is called.
 
 <details>
-<summary>You should always use the “`function()`” keyword to attach methods to the `p5.prototype` object.</summary> Don’t use the arrow function syntax “`() =>`” because the value of “`this`” when using the “`function()`” keyword is the created object (i.e., the p5 sketch), but with the arrow function syntax, the value of “`this`” is whatever the value of “`this`” is when the arrow function is defined. In the example below, “`this`” will refer to “`window`” instead of the p5 sketch, which is usually not what we want.
+<summary>You should always use the “<code>function()</code>” keyword to attach methods to the <code>p5.prototype</code> object.</summary> Don’t use the arrow function syntax “<code>() =></code>” because the value of “<code>this</code>” when using the “<code>function()</code>” keyword is the created object (i.e., the p5 sketch), but with the arrow function syntax, the value of “<code>this</code>” is whatever the value of “<code>this</code>” is when the arrow function is defined. In the example below, “<code>this</code>” will refer to “<code>window</code>” instead of the p5 sketch, which is usually not what we want.
 </details>
 
 ```js
@@ -215,13 +215,13 @@ Note two things from the code above:
 4. Note that due to inherent limitations of this technique, the returned “`result`” variable must be an object (array is also a type of object in Javascript) and must not be overwritten in the function body. You can set properties of the object (or push to the array), but you cannot reassign the variable (i.e., you cannot do “``result = data.split(`\n`)``”).
 
 <details>
-<summary>Quite a bit of magic is happening here: firstly, why does “`result`” now contain the additional data when `fetch()` should still have been asynchronous and thus running after “`result`” has returned?</summary>
+<summary>Quite a bit of magic is happening here: firstly, why does “<code>result</code>” now contain the additional data when <code>fetch()</code>code> should still have been asynchronous and thus running after “<code>result</code>” has returned?</summary>
 
 This is related to why the return type must be an object. In Javascript, objects are passed by reference while most other types such as strings and numbers are passed by value. What this means is that when an object is returned from a function, it points to the original object that was created (in this case, the empty array we create in the line “`let result = [];`”.) In contrast, pass by value types, when returning from a function, will be copied and lose their relation to the original reference. This behavior allows us to modify the properties of the returned objects after they have been returned from the function as long as we don’t reassign the variable, which will create a new reference separate from the original object.
 </details>
 
 <details>
-<summary>Secondly, what is `registerPreloadMethod()` doing and what about `this._decrementPreload()`?</summary>
+<summary>Secondly, what is <code>registerPreloadMethod()</code> doing and what about <code>this._decrementPreload()</code>?</summary>
 
 Without going into all the details, `registerPreloadMethod()` adds the function we specified into an internal list of functions that p5 keeps track of whenever it is called in `preload()`. When p5 detects such a function is called, it will add 1 to an internal counter. If this internal counter is larger than 0, it will keep waiting in `preload()` and defer running `setup()` and starting the `draw()` loop. Loading functions can decrement that internal counter by calling `this._decrementPreload()`, effectively signaling to p5 that a loading function in `preload()` is complete. If the internal counter reaches 0 after the decrement, it means all loadings are complete and the whole sketch can start.
 </details>
