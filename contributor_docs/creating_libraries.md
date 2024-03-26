@@ -138,7 +138,7 @@ First make the following changes to your `loadCSV()` method:
 
 ```js
 p5.prototype.loadCSV = function(filename){
-  console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute}!`);
+  console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute()}!`);
 
   let result = [];
 
@@ -187,7 +187,7 @@ p5 will need to be told that the addon’s `loadCSV()` function is something it 
 
 ```js
 p5.prototype.loadCSV = function (filename){
-  console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute}!`);
+  console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute()}!`);
 
   let result = [];
 
