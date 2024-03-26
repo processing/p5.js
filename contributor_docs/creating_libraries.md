@@ -212,7 +212,7 @@ Note two things from the code above:
 1. We call the `p5.prototype.registerPreloadMethod()` function passing in the name of the `loadCSV()` function as a string as the first parameter and `p5.prototype` as the second parameter.
 2. At the end of `fetch()`, after the CSV data has been parsed and pushed into the result array, `this._decrementPreload()` function is called.
 3) Now, if you test your sketch again, you should see that the “`myCSV`” variable is populated with the data from the CSV file!
-4. Note that due to inherent limitations of this technique, the returned “`result`” variable must be an object (array is also a type of object in Javascript) and must not be overwritten in the function body. You can set properties of the object (or push to the array), but you cannot reassign the variable (i.e., you cannot do “`result = data.split(‘\n’)`”).
+4. Note that due to inherent limitations of this technique, the returned “`result`” variable must be an object (array is also a type of object in Javascript) and must not be overwritten in the function body. You can set properties of the object (or push to the array), but you cannot reassign the variable (i.e., you cannot do “``result = data.split(`\n`)``”).
 
 <details>
 <summary>Quite a bit of magic is happening here: firstly, why does “`result`” now contain the additional data when `fetch()` should still have been asynchronous and thus running after “`result`” has returned?</summary>
