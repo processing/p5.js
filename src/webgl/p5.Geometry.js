@@ -765,6 +765,21 @@ p5.Geometry = class Geometry {
       if (dirOK) {
         this._addSegment(begin, end, fromColor, toColor, dir);
       }
+      // Check and add cap at the start of the stroke if not connected
+      if (i === 0 || !connected.has(currEdge[0])) {
+        const capInfo = potentialCaps.get(currEdge[0]) || {
+          point: begin,
+          dir: dir.copy().mult(-1),
+          color: fromColor
+        };
+        this._addCap(capInfo.point, capInfo.dir, capInfo.color);
+        potentialCaps.delete(currEdge[0]);
+        connected.add(currEdge[0]);
+      }else {
+        // If the vertex is already connected, remove its potential cap
+        potentialCaps.delete(currEdge[0]);
+      }
+
 
       if (i > 0 && prevEdge[1] === currEdge[0]) {
         if (!connected.has(currEdge[0])) {
