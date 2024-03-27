@@ -1169,6 +1169,64 @@ p5.Camera = class Camera {
   }
 
   /**
+ * Rolling rotates the camera view in forward direction.
+ * @method roll
+ * @param {Number} angle amount to rotate camera in current
+ * <a href="#/p5/angleMode">angleMode</a> units.
+ * Greater than 0 values rotate counterclockwise (to the left).
+ * @example
+ * <div>
+ * <code>
+ * let cam;
+ * let delta = 0.01;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   normalMaterial();
+ *   cam = createCamera();
+ *   // set initial pan angle
+ *   cam.roll(-0.8);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // pan camera according to angle 'delta'
+ *   cam.roll(delta);
+ *
+ *   // every 160 frames, switch direction
+ *   if (frameCount % 160 === 0) {
+ *     delta *= -1;
+ *   }
+ *
+ *   rotateX(frameCount * 0.01);
+ *   translate(0, 0, -100);
+ *   box(20);
+ *   translate(0, 0, 35);
+ *   box(20);
+ *   translate(0, 0, 35);
+ *   box(20);
+ *   translate(0, 0, 35);
+ *   box(20);
+ *   translate(0, 0, 35);
+ *   box(20);
+ *   translate(0, 0, 35);
+ *   box(20);
+ *   translate(0, 0, 35);
+ *   box(20);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * camera view pans in forward direction across a series boxes.
+ */
+  roll(amount) {
+    const local = this._getLocalAxes();
+    this._rotateView(amount, local.z[0], local.z[1], local.z[2]);
+  }
+
+  /**
  * Panning rotates the camera view to the left and right.
  * @method pan
  * @param {Number} angle amount to rotate camera in current
