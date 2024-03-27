@@ -195,15 +195,16 @@ p5.RendererGL.prototype.drawBuffersScaled = function(
   scaleY,
   scaleZ
 ) {
-  const uMVMatrix = this.uMVMatrix.copy();
+  let originalModelMatrix = this.uModelMatrix.copy();
   try {
-    this.uMVMatrix.scale(scaleX, scaleY, scaleZ);
+    this.uModelMatrix.scale(scaleX, scaleY, scaleZ);
+
     this.drawBuffers(gId);
   } finally {
-    this.uMVMatrix = uMVMatrix;
+
+    this.uModelMatrix = originalModelMatrix;
   }
 };
-
 p5.RendererGL.prototype._drawArrays = function(drawMode, gId) {
   this.GL.drawArrays(
     drawMode,

@@ -316,9 +316,10 @@ p5.Shader = class {
   }
 
   _setMatrixUniforms() {
+    const modelMatrix = this._renderer.uModelMatrix;
     const viewMatrix = this._renderer._curCamera.cameraMatrix;
     const projectionMatrix = this._renderer.uPMatrix;
-    const modelViewMatrix = this._renderer.uMVMatrix;
+    const modelViewMatrix = (modelMatrix.copy()).mult(viewMatrix);
 
     const modelViewProjectionMatrix = modelViewMatrix.copy();
     modelViewProjectionMatrix.mult(projectionMatrix);
@@ -328,6 +329,7 @@ p5.Shader = class {
     }
     this.setUniform('uViewMatrix', viewMatrix.mat4);
     this.setUniform('uProjectionMatrix', projectionMatrix.mat4);
+    this.setUniform('uModelMatrix', modelMatrix.mat4);
     this.setUniform('uModelViewMatrix', modelViewMatrix.mat4);
     this.setUniform(
       'uModelViewProjectionMatrix',

@@ -593,13 +593,23 @@ suite('p5.RendererGL', function() {
   suite('push() and pop() work in WEBGL Mode', function() {
     test('push/pop and translation works as expected in WEBGL Mode', function(done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
-      var modelView = myp5._renderer.uMVMatrix.copy();
+      var modelMatrixBefore = myp5._renderer.uModelMatrix.copy();
+      var viewMatrixBefore = myp5._renderer.uViewMatrix.copy();
+
       myp5.push();
       myp5.rotateX(Math.random(0, 100));
       myp5.translate(20, 100, 5);
-      assert.notEqual(modelView.mat4, myp5._renderer.uMVMatrix.mat4);
+      // Check if the model matrix has changed
+      assert.notDeepEqual(modelMatrixBefore.mat4,
+        myp5._renderer.uModelMatrix.mat4);
+      // Check if the view matrix has changed
+      assert.notDeepEqual(viewMatrixBefore.mat4,
+        myp5._renderer.uViewMatrix.mat4);
       myp5.pop();
-      assert.deepEqual(modelView.mat4, myp5._renderer.uMVMatrix.mat4);
+      // Check if both the model and view matrices are restored after popping
+      assert.deepEqual(modelMatrixBefore.mat4,
+        myp5._renderer.uModelMatrix.mat4);
+      assert.deepEqual(viewMatrixBefore.mat4, myp5._renderer.uViewMatrix.mat4);
       done();
     });
 

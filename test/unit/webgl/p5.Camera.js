@@ -392,7 +392,7 @@ suite('p5.Camera', function() {
       // the renderer's matrix will also change.
       assert.deepEqual(
         copyCam.cameraMatrix.mat4,
-        myp5._renderer.uMVMatrix.mat4
+        myp5._renderer.uViewMatrix.mat4
       );
       assert.deepEqual(
         copyCam.projMatrix.mat4,
