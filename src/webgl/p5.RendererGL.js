@@ -1996,7 +1996,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // newFramebuffer.free();
 
     // Initialize CubemapTexture class with faces
-    cubemapTexture=new CubemapTexture(this._pInst,faces, {});
+    cubemapTexture=new CubemapTexture(this,faces, {});
     cubemapTexture.init(faces);
     this.diffusedTextures.set(input, cubemapTexture);
     return cubemapTexture;

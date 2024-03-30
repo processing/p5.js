@@ -541,12 +541,17 @@ export class CubemapTexture extends p5.Texture {
     this.glTex = gl.createTexture();
 
     this.bindTexture();
+
+    // Looping through each face and loading the data
     for (let faceIndex = 0; faceIndex < faces.length; faceIndex++) {
-      // Set up each face of the cubemap
+      // Setting up each face of the cubemap
       gl.texImage2D(
         gl.TEXTURE_CUBE_MAP_POSITIVE_X + faceIndex,
         0,
         this.glFormat,
+        this.width,
+        this.height,
+        0,
         this.glFormat,
         this.glDataType,
         faces[faceIndex]
