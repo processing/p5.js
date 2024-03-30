@@ -23,6 +23,7 @@ const defineStrokeJoinEnum = function (key, val) {
   STROKE_JOIN_ENUM[constants[key]] = val;
 };
 
+
 // Define constants in line shaders for each type of cap/join, and also record
 // the values in JS objects
 defineStrokeCapEnum('ROUND', 0);
@@ -42,6 +43,10 @@ const webgl2CompatibilityShader = readFileSync(
 );
 
 const defaultShaders = {
+  sphereMappingFrag: readFileSync(
+    join(__dirname, '/shaders/sphereMapping.frag'),
+    'utf-8'
+  ),
   immediateVert: readFileSync(
     join(__dirname, '/shaders/immediate.vert'),
     'utf-8'
@@ -80,6 +85,7 @@ const defaultShaders = {
   imageLightDiffusedFrag: readFileSync(join(__dirname, '/shaders/imageLightDiffused.frag'), 'utf-8'),
   imageLightSpecularFrag: readFileSync(join(__dirname, '/shaders/imageLightSpecular.frag'), 'utf-8')
 };
+let sphereMapping = defaultShaders.sphereMappingFrag;
 for (const key in defaultShaders) {
   defaultShaders[key] = webgl2CompatibilityShader + defaultShaders[key];
 }
@@ -497,7 +503,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.curStrokeColor = this._cachedStrokeStyle = [0, 0, 0, 1];
 
     this.curBlendMode = constants.BLEND;
-    this.preEraseBlend=undefined;
+    this.preEraseBlend = undefined;
     this._cachedBlendMode = undefined;
     if (this.webglVersion === constants.WEBGL2) {
       this.blendExt = this.GL;
@@ -561,6 +567,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.executeRotateAndMove = false;
 
     this.specularShader = undefined;
+    this.sphereMapping = undefined;
     this.diffusedShader = undefined;
     this._defaultLightShader = undefined;
     this._defaultImmediateModeShader = undefined;
@@ -792,6 +799,38 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this.drawingContext.VIEWPORT
       );
     }
+  }
+
+  _getParam() {
+    const gl = this.drawingContext;
+    return gl.getParameter(gl.MAX_TEXTURE_SIZE);
+  }
+
+  _adjustDimensions(width, height) {
+    if (!this._maxTextureSize) {
+      this._maxTextureSize = this._getParam();
+    }
+    let maxTextureSize = this._maxTextureSize;
+    let maxAllowedPixelDimensions = p5.prototype._maxAllowedPixelDimensions;
+
+    maxAllowedPixelDimensions = Math.floor(
+      maxTextureSize / this.pixelDensity()
+    );
+    let adjustedWidth = Math.min(
+      width, maxAllowedPixelDimensions
+    );
+    let adjustedHeight = Math.min(
+      height, maxAllowedPixelDimensions
+    );
+
+    if (adjustedWidth !== width || adjustedHeight !== height) {
+      console.warn(
+        'Warning: The requested width/height exceeds hardware limits. ' +
+          `Adjusting dimensions to width: ${adjustedWidth}, height: ${adjustedHeight}.`
+      );
+    }
+
+    return { adjustedWidth, adjustedHeight };
   }
 
   //This is helper function to reset the context anytime the attributes
@@ -1130,6 +1169,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this._pInst.resetMatrix();
     this._pInst.image(fbo, -target.width / 2, -target.height / 2,
       target.width, target.height);
+    this._pInst.clearDepth();
     this._pInst.pop();
     this._pInst.pop();
   }
@@ -1189,7 +1229,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this.curFillColor = this._cachedFillStyle.slice();
       this.curStrokeColor = this._cachedStrokeStyle.slice();
       // Restore blend mode
-      this.curBlendMode=this.preEraseBlend;
+      this.curBlendMode = this.preEraseBlend;
       this.blendMode(this.preEraseBlend);
       // Ensure that _applyBlendMode() sets preEraseBlend back to the original blend mode
       this._isErasing = false;
@@ -1683,6 +1723,21 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     return this._getImmediateStrokeShader();
   }
 
+  _getSphereMapping(img) {
+    if (!this.sphereMapping) {
+      this.sphereMapping = this._pInst.createFilterShader(
+        sphereMapping
+      );
+    }
+    this.uNMatrix.inverseTranspose(this.uMVMatrix);
+    this.uNMatrix.invert3x3(this.uNMatrix);
+    this.sphereMapping.setUniform('uFovY', this._curCamera.cameraFOV);
+    this.sphereMapping.setUniform('uAspect', this._curCamera.aspectRatio);
+    this.sphereMapping.setUniform('uNewNormalMatrix', this.uNMatrix.mat3);
+    this.sphereMapping.setUniform('uSampler', img);
+    return this.sphereMapping;
+  }
+
   /*
    * selects which fill shader should be used based on renderer state,
    * for use with begin/endShape and immediate vertex mode.
@@ -2148,9 +2203,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   /* Binds a buffer to the drawing context
-   * when passed more than two arguments it also updates or initializes
-   * the data associated with the buffer
-   */
+  * when passed more than two arguments it also updates or initializes
+  * the data associated with the buffer
+  */
   _bindBuffer(
     buffer,
     target,
@@ -2197,31 +2252,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
    * [[1, 2, 3],[4, 5, 6]] -> [1, 2, 3, 4, 5, 6]
    */
   _flatten(arr) {
-    //when empty, return empty
-    if (arr.length === 0) {
-      return [];
-    } else if (arr.length > 20000) {
-      //big models , load slower to avoid stack overflow
-      //faster non-recursive flatten via axelduch
-      //stackoverflow.com/questions/27266550/how-to-flatten-nested-array-in-javascript
-      const result = [];
-      const nodes = arr.slice();
-      let node;
-      node = nodes.pop();
-      do {
-        if (Array.isArray(node)) {
-          nodes.push(...node);
-        } else {
-          result.push(node);
-        }
-      } while (nodes.length && (node = nodes.pop()) !== undefined);
-      result.reverse(); // we reverse result to restore the original order
-      return result;
-    } else {
-      //otherwise if model within limits for browser
-      //use faster recursive loading
-      return [].concat(...arr);
-    }
+    return arr.flat();
   }
 
   /**
@@ -2233,13 +2264,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
    * [1, 2, 3, 4, 5, 6]
    */
   _vToNArray(arr) {
-    const ret = [];
-
-    for (const item of arr) {
-      ret.push(item.x, item.y, item.z);
-    }
-
-    return ret;
+    return arr.flatMap(item => [item.x, item.y, item.z]);
   }
 
   // function to calculate BezierVertex Coefficients
@@ -2272,8 +2297,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   _initTessy() {
     // function called for each vertex of tesselator output
     function vertexCallback(data, polyVertArray) {
-      for (let i = 0; i < data.length; i++) {
-        polyVertArray.push(data[i]);
+      for (const element of data) {
+        polyVertArray.push(element);
       }
     }
 

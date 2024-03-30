@@ -21,12 +21,13 @@ import p5 from '../core/main';
 /**
  * Searches the page for the first element that matches the given
  * <a href="https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/CSS_basics#different_types_of_selectors" target="_blank">CSS selector string</a>.
- * The string can be an ID, class, tag name, or a combination. `select()`
- * returns a <a href="#/p5.Element">p5.Element</a> object if it finds a match
- * and `null` otherwise.
+ *
+ * The selector string can be an ID, class, tag name, or a combination.
+ * `select()` returns a <a href="#/p5.Element">p5.Element</a> object if it
+ * finds a match and `null` if not.
  *
  * The second parameter, `container`, is optional. It specifies a container to
- * search within. container can be CSS selector string, a
+ * search within. `container` can be CSS selector string, a
  * <a href="#/p5.Element">p5.Element</a> object, or an
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement" target="_blank">HTMLElement</a> object.
  *
@@ -35,6 +36,7 @@ import p5 from '../core/main';
  * @param  {String|p5.Element|HTMLElement} [container] CSS selector string, <a href="#/p5.Element">p5.Element</a>, or
  *                                             <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement" target="_blank">HTMLElement</a> to search within.
  * @return {p5.Element|null} <a href="#/p5.Element">p5.Element</a> containing the element.
+ *
  * @example
  * <div>
  * <code>
@@ -55,6 +57,7 @@ import p5 from '../core/main';
  * <code>
  * function setup() {
  *   let cnv = createCanvas(100, 100);
+ *
  *   // Add a class attribute to the canvas.
  *   cnv.class('pinkborder');
  *
@@ -62,6 +65,7 @@ import p5 from '../core/main';
  *
  *   // Select the canvas by its class.
  *   cnv = select('.pinkborder');
+ *
  *   // Style its border.
  *   cnv.style('border', '5px deeppink dashed');
  *
@@ -74,13 +78,15 @@ import p5 from '../core/main';
  * <code>
  * function setup() {
  *   let cnv = createCanvas(100, 100);
- *   // Set the canvas ID.
+ *
+ *   // Set the canvas' ID.
  *   cnv.id('mycanvas');
  *
  *   background(200);
  *
  *   // Select the canvas by its ID.
  *   cnv = select('#mycanvas');
+ *
  *   // Style its border.
  *   cnv.style('border', '5px deeppink dashed');
  *
@@ -103,12 +109,13 @@ p5.prototype.select = function (e, p) {
 /**
  * Searches the page for all elements that matches the given
  * <a href="https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/CSS_basics#different_types_of_selectors" target="_blank">CSS selector string</a>.
- * The string can be an ID, class, tag name, or a combination. `selectAll()`
- * returns an array of <a href="#/p5.Element">p5.Element</a> objects if it
- * finds any matches and an empty array otherwise.
+ *
+ * The selector string can be an ID, class, tag name, or a combination.
+ * `selectAll()` returns an array of <a href="#/p5.Element">p5.Element</a>
+ * objects if it finds any matches and an empty array if none are found.
  *
  * The second parameter, `container`, is optional. It specifies a container to
- * search within. container can be CSS selector string, a
+ * search within. `container` can be CSS selector string, a
  * <a href="#/p5.Element">p5.Element</a> object, or an
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement" target="_blank">HTMLElement</a> object.
  *
@@ -117,10 +124,13 @@ p5.prototype.select = function (e, p) {
  * @param  {String|p5.Element|HTMLElement} [container] CSS selector string, <a href="#/p5.Element">p5.Element</a>, or
  *                                             <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement" target="_blank">HTMLElement</a> to search within.
  * @return {p5.Element[]} array of <a href="#/p5.Element">p5.Element</a>s containing any elements found.
+ *
  * @example
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Create three buttons.
  *   createButton('1');
  *   createButton('2');
@@ -160,16 +170,21 @@ p5.prototype.select = function (e, p) {
  *   let pinkButtons = selectAll('.btn-pink');
  *
  *   // Style the selected buttons.
- *   buttons.forEach(btn => {
- *     btn.style('font-family', 'Comic Sans MS');
- *   });
- *
- *   pinkButtons.forEach(btn => {
- *     btn.style('background', 'deeppink');
- *     btn.style('color', 'white');
- *   });
+ *   buttons.forEach(setFont);
+ *   pinkButtons.forEach(setColor);
  *
  *   describe('Three buttons stacked vertically. The buttons are labeled, "1", "2", and "3". Buttons "1" and "3" are gray. Button "2" is pink.');
+ * }
+ *
+ * // Set a button's font to Comic Sans MS.
+ * function setFont(btn) {
+ *   btn.style('font-family', 'Comic Sans MS');
+ * }
+ *
+ * // Set a button's background and font color.
+ * function setColor(btn) {
+ *   btn.style('background', 'deeppink');
+ *   btn.style('color', 'white');
  * }
  * </code>
  * </div>
@@ -239,17 +254,20 @@ p5.prototype._wrapElement = function (elt) {
 
 /**
  * Removes all elements created by p5.js, including any event handlers.
+ *
  * There are two exceptions:
- * canvas elements created by <a href="#/p5/createCanvas">createCanvas</a>
+ * canvas elements created by <a href="#/p5/createCanvas">createCanvas()</a>
  * and <a href="#/p5.Renderer">p5.Render</a> objects created by
- * <a href="#/p5/createGraphics">createGraphics</a>.
+ * <a href="#/p5/createGraphics">createGraphics()</a>.
  *
  * @method removeElements
+ *
  * @example
  * <div>
  * <code>
  * function setup() {
  *   createCanvas(100, 100);
+ *
  *   background(200);
  *
  *   // Create a paragraph element and place
@@ -260,6 +278,7 @@ p5.prototype._wrapElement = function (elt) {
  *   describe('A gray square with the text "p5*js" written in its center. The text disappears when the mouse is pressed.');
  * }
  *
+ * // Remove all elements when the mouse is pressed.
  * function mousePressed() {
  *   removeElements();
  * }
@@ -292,6 +311,7 @@ p5.prototype._wrapElement = function (elt) {
  *   background(g);
  * }
  *
+ * // Remove all elements when the mouse is double-clicked.
  * function doubleClicked() {
  *   removeElements();
  * }
@@ -307,58 +327,71 @@ p5.prototype.removeElements = function (e) {
 };
 
 /**
- * `myElement.changed()` sets a function to call when the value of the
- * <a href="#/p5.Element">p5.Element</a> object changes. Calling
- * `myElement.changed(false)` disables the function.
+ * Calls a function when the element changes.
+ *
+ * Calling `myElement.changed(false)` disables the function.
  *
  * @method changed
  * @param  {Function|Boolean} fxn function to call when the element changes.
  *                                `false` disables the function.
  * @chainable
+ *
  * @example
  * <div>
  * <code>
+ * let dropdown;
+ *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
  *   // Create a dropdown menu and add a few color options.
- *   let drop = createSelect();
- *   drop.position(0, 0);
- *   drop.option('red');
- *   drop.option('green');
- *   drop.option('blue');
+ *   dropdown = createSelect();
+ *   dropdown.position(0, 0);
+ *   dropdown.option('red');
+ *   dropdown.option('green');
+ *   dropdown.option('blue');
  *
- *   // When the color option changes, paint the background with
- *   // that color.
- *   drop.changed(() => {
- *     let c = drop.value();
- *     background(c);
- *   });
+ *   // Call paintBackground() when the color option changes.
+ *   dropdown.changed(paintBackground);
  *
  *   describe('A gray square with a dropdown menu at the top. The square changes color when an option is selected.');
+ * }
+ *
+ * // Paint the background with the selected color.
+ * function paintBackground() {
+ *   let c = dropdown.value();
+ *   background(c);
  * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
+ * let checkbox;
+ *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
  *   // Create a checkbox and place it beneath the canvas.
- *   let checkbox = createCheckbox(' circle');
+ *   checkbox = createCheckbox(' circle');
  *   checkbox.position(0, 100);
  *
- *   // When the checkbox changes, paint the background gray
- *   // and determine whether to draw a circle.
- *   checkbox.changed(() => {
- *     background(200);
- *     if (checkbox.checked() === true) {
- *       circle(50, 50, 30);
- *     }
- *   });
+ *   // Call repaint() when the checkbox changes.
+ *   checkbox.changed(repaint);
  *
  *   describe('A gray square with a checkbox underneath it that says "circle". A white circle appears when the box is checked and disappears otherwise.');
+ * }
+ *
+ * // Paint the background gray and determine whether to draw a circle.
+ * function repaint() {
+ *   background(200);
+ *   if (checkbox.checked() === true) {
+ *     circle(50, 50, 30);
+ *   }
  * }
  * </code>
  * </div>
@@ -369,56 +402,69 @@ p5.Element.prototype.changed = function (fxn) {
 };
 
 /**
- * `myElement.input()` sets a function to call when input is detected within
- * the <a href="#/p5.Element">p5.Element</a> object. It's often used to with
- * text inputs and sliders. Calling `myElement.input(false)` disables the
- * function.
+ * Calls a function when the element receives input.
+ *
+ * `myElement.input()` is often used to with text inputs and sliders. Calling
+ * `myElement.input(false)` disables the function.
  *
  * @method input
  * @param  {Function|Boolean} fxn function to call when input is detected within
  *                                the element.
  *                                `false` disables the function.
  * @chainable
+ *
  * @example
  * <div>
  * <code>
+ * let slider;
+ *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
  *   // Create a slider and place it beneath the canvas.
- *   let slider = createSlider(0, 255, 200);
+ *   slider = createSlider(0, 255, 200);
  *   slider.position(0, 100);
  *
- *   // When the slider changes, use its value to paint
- *   // the background.
- *   slider.input(() => {
- *     let g = slider.value();
- *     background(g);
- *   });
+ *   // Call repaint() when the slider changes.
+ *   slider.input(repaint);
  *
  *   describe('A gray square with a range slider underneath it. The background changes shades of gray when the slider is moved.');
+ * }
+ *
+ * // Paint the background using slider's value.
+ * function repaint() {
+ *   let g = slider.value();
+ *   background(g);
  * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
+ * let input;
+ *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
  *   // Create an input and place it beneath the canvas.
- *   let inp = createInput('');
- *   inp.position(0, 100);
+ *   input = createInput('');
+ *   input.position(0, 100);
  *
- *   // When input is detected, paint the background gray
- *   // and display the text.
- *   inp.input(() => {
- *     background(200);
- *     let msg = inp.value();
- *     text(msg, 5, 50);
- *   });
+ *   // Call repaint() when input is detected.
+ *   input.input(repaint);
  *
  *   describe('A gray square with a text input bar beneath it. Any text written in the input appears in the middle of the square.');
+ * }
+ *
+ * // Paint the background gray and display the input's value.
+ * function repaint() {
+ *   background(200);
+ *   let msg = input.value();
+ *   text(msg, 5, 50);
  * }
  * </code>
  * </div>
@@ -442,8 +488,10 @@ function addElement(elt, pInst, media) {
 }
 
 /**
- * Creates a `&lt;div&gt;&lt;/div&gt;` element. It's commonly used as a
- * container for other elements.
+ * Creates a `&lt;div&gt;&lt;/div&gt;` element.
+ *
+ * `&lt;div&gt;&lt;/div&gt;` elements are commonly used as containers for
+ * other elements.
  *
  * The parameter `html` is optional. It accepts a string that sets the
  * inner HTML of the new `&lt;div&gt;&lt;/div&gt;`.
@@ -451,12 +499,16 @@ function addElement(elt, pInst, media) {
  * @method createDiv
  * @param  {String} [html] inner HTML for the new `&lt;div&gt;&lt;/div&gt;` element.
  * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
+ *
  * @example
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
+ *   // Create a div element and set its position.
  *   let div = createDiv('p5*js');
  *   div.position(25, 35);
  *
@@ -468,6 +520,8 @@ function addElement(elt, pInst, media) {
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
  *   // Create an h3 element within the div.
@@ -486,8 +540,9 @@ p5.prototype.createDiv = function (html = '') {
 };
 
 /**
- * Creates a `&lt;p&gt;&lt;/p&gt;` element. It's commonly used for
- * paragraph-length text.
+ * Creates a `&lt;p&gt;&lt;/p&gt;` element.
+ *
+ * `&lt;p&gt;&lt;/p&gt;` elements are commonly used for paragraph-length text.
  *
  * The parameter `html` is optional. It accepts a string that sets the
  * inner HTML of the new `&lt;p&gt;&lt;/p&gt;`.
@@ -495,12 +550,16 @@ p5.prototype.createDiv = function (html = '') {
  * @method createP
  * @param  {String} [html] inner HTML for the new `&lt;p&gt;&lt;/p&gt;` element.
  * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
+ *
  * @example
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
+ *   // Create a paragraph element and set its position.
  *   let p = createP('Tell me a story.');
  *   p.position(5, 0);
  *
@@ -516,8 +575,10 @@ p5.prototype.createP = function (html = '') {
 };
 
 /**
- * Creates a `&lt;span&gt;&lt;/span&gt;` element. It's commonly used as a
- * container for inline elements. For example, a `&lt;span&gt;&lt;/span&gt;`
+ * Creates a `&lt;span&gt;&lt;/span&gt;` element.
+ *
+ * `&lt;span&gt;&lt;/span&gt;` elements are commonly used as containers
+ * for inline elements. For example, a `&lt;span&gt;&lt;/span&gt;`
  * can hold part of a sentence that's a
  * <span style="color: deeppink;">different</span> style.
  *
@@ -527,13 +588,16 @@ p5.prototype.createP = function (html = '') {
  * @method createSpan
  * @param  {String} [html] inner HTML for the new `&lt;span&gt;&lt;/span&gt;` element.
  * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
+ *
  * @example
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
- *   // Create a span element.
+ *   // Create a span element and set its position.
  *   let span = createSpan('p5*js');
  *   span.position(25, 35);
  *
@@ -547,24 +611,25 @@ p5.prototype.createP = function (html = '') {
  * function setup() {
  *   background(200);
  *
- *   // Create a div element as
- *   // a container.
+ *   // Create a div element as a container.
  *   let div = createDiv();
- *   // Place the div at the
- *   // center.
+ *
+ *   // Place the div at the center.
  *   div.position(25, 35);
  *
  *   // Create a span element.
  *   let s1 = createSpan('p5');
+ *
  *   // Create a second span element.
  *   let s2 = createSpan('*');
- *   // Set the span's font color.
+ *
+ *   // Set the second span's font color.
  *   s2.style('color', 'deeppink');
+ *
  *   // Create a third span element.
  *   let s3 = createSpan('js');
  *
- *   // Add all the spans to the
- *   // container div.
+ *   // Add all the spans to the container div.
  *   s1.parent(div);
  *   s2.parent(div);
  *   s3.parent(div);
@@ -604,10 +669,13 @@ p5.prototype.createSpan = function (html = '') {
  * @param  {String} src relative path or URL for the image.
  * @param  {String} alt alternate text for the image.
  * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
+ *
  * @example
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
  *   let img = createImg(
@@ -673,10 +741,13 @@ p5.prototype.createImg = function () {
  * @param  {String} [target]   target where the new link should open,
  *                             either `'_blank'`, `'_self'`, `'_parent'`, or `'_top'`.
  * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
+ *
  * @example
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
  *   // Create an anchor element that links to p5js.org.
@@ -693,7 +764,7 @@ p5.prototype.createImg = function () {
  * function setup() {
  *   background(200);
  *
- *   // Create an anchor element that links to p5js.org.
+ *   // Create an anchor tag that links to p5js.org.
  *   // Open the link in a new tab.
  *   let a = createA('http://p5js.org/', 'p5*js', '_blank');
  *   a.position(25, 35);
@@ -715,8 +786,9 @@ p5.prototype.createA = function (href, html, target) {
 /** INPUT **/
 
 /**
- * Creates a slider `&lt;input&gt;&lt;/input&gt;` element. Range sliders are
- * useful for quickly selecting numbers from a given range.
+ * Creates a slider `&lt;input&gt;&lt;/input&gt;` element.
+ *
+ * Range sliders are useful for quickly selecting numbers from a given range.
  *
  * The first two parameters, `min` and `max`, are numbers that set the
  * slider's minimum and maximum.
@@ -734,12 +806,15 @@ p5.prototype.createA = function (href, html, target) {
  * @param  {Number} [value] default value of the slider.
  * @param  {Number} [step] size for each step in the slider's range.
  * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
+ *
  * @example
  * <div>
  * <code>
  * let slider;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Create a slider and place it at the top of the canvas.
  *   slider = createSlider(0, 255);
  *   slider.position(10, 10);
@@ -761,6 +836,8 @@ p5.prototype.createA = function (href, html, target) {
  * let slider;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Create a slider and place it at the top of the canvas.
  *   // Set its default value to 0.
  *   slider = createSlider(0, 255, 0);
@@ -783,6 +860,8 @@ p5.prototype.createA = function (href, html, target) {
  * let slider;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Create a slider and place it at the top of the canvas.
  *   // Set its default value to 0.
  *   // Set its step size to 50.
@@ -806,6 +885,8 @@ p5.prototype.createA = function (href, html, target) {
  * let slider;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Create a slider and place it at the top of the canvas.
  *   // Set its default value to 0.
  *   // Set its step size to 0 so that it moves smoothly.
@@ -854,23 +935,29 @@ p5.prototype.createSlider = function (min, max, value, step) {
  * @param  {String} label label displayed on the button.
  * @param  {String} [value] value of the button.
  * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
+ *
  * @example
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
  *   // Create a button and place it beneath the canvas.
  *   let button = createButton('click me');
  *   button.position(0, 100);
  *
- *   // Use the button to change the background color.
- *   button.mousePressed(() => {
- *     let g = random(255);
- *     background(g);
- *   });
+ *   // Call repaint() when the button is pressed.
+ *   button.mousePressed(repaint);
  *
  *   describe('A gray square with a button that says "click me" beneath it. The square changes color when the button is clicked.');
+ * }
+ *
+ * // Change the background color.
+ * function repaint() {
+ *   let g = random(255);
+ *   background(g);
  * }
  * </code>
  * </div>
@@ -880,17 +967,17 @@ p5.prototype.createSlider = function (min, max, value, step) {
  * let button;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
  *   // Create a button and set its value to 0.
  *   // Place the button beneath the canvas.
  *   button = createButton('click me', 'red');
  *   button.position(0, 100);
  *
- *   // Change the button's value when the mouse
- *   // is pressed.
- *   button.mousePressed(() => {
- *     let c = random(['red', 'green', 'blue', 'yellow']);
- *     button.value(c);
- *   });
+ *   // Call randomColor() when the button is pressed.
+ *   button.mousePressed(randomColor);
  *
  *   describe('A red square with a button that says "click me" beneath it. The square changes color when the button is clicked.');
  * }
@@ -899,6 +986,12 @@ p5.prototype.createSlider = function (min, max, value, step) {
  *   // Use the button's value to set the background color.
  *   let c = button.value();
  *   background(c);
+ * }
+ *
+ * // Set the button's value to a random color.
+ * function randomColor() {
+ *   let c = random(['red', 'green', 'blue', 'yellow']);
+ *   button.value(c);
  * }
  * </code>
  * </div>
@@ -912,10 +1005,11 @@ p5.prototype.createButton = function (label, value) {
 };
 
 /**
- * Creates a checkbox `&lt;input&gt;&lt;/input&gt;` element. Checkboxes extend
- * the <a href="#/p5.Element">p5.Element</a> class with a `checked()` method.
- * Calling `myBox.checked()` returns `true` if it the box is checked and
- * `false` otherwise.
+ * Creates a checkbox `&lt;input&gt;&lt;/input&gt;` element.
+ *
+ * Checkboxes extend the <a href="#/p5.Element">p5.Element</a> class with a
+ * `checked()` method. Calling `myBox.checked()` returns `true` if it the box
+ * is checked and `false` if not.
  *
  * The first parameter, `label`, is optional. It's a string that sets the label
  * to display next to the checkbox.
@@ -927,12 +1021,15 @@ p5.prototype.createButton = function (label, value) {
  * @param  {String} [label] label displayed after the checkbox.
  * @param  {boolean} [value] value of the checkbox. Checked is `true` and unchecked is `false`.
  * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
+ *
  * @example
  * <div>
  * <code>
  * let checkbox;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Create a checkbox and place it beneath the canvas.
  *   checkbox = createCheckbox();
  *   checkbox.position(0, 100);
@@ -956,6 +1053,8 @@ p5.prototype.createButton = function (label, value) {
  * let checkbox;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Create a checkbox and place it beneath the canvas.
  *   // Label the checkbox "white".
  *   checkbox = createCheckbox(' white');
@@ -980,6 +1079,8 @@ p5.prototype.createButton = function (label, value) {
  * let checkbox;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Create a checkbox and place it beneath the canvas.
  *   // Label the checkbox "white" and set its value to true.
  *   checkbox = createCheckbox(' white', true);
@@ -1078,12 +1179,15 @@ p5.prototype.createCheckbox = function(...args) {
  * @method createSelect
  * @param {boolean} [multiple] support multiple selections.
  * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
+ *
  * @example
  * <div>
  * <code>
  * let mySelect;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Create a dropdown and place it beneath the canvas.
  *   mySelect = createSelect();
  *   mySelect.position(0, 100);
@@ -1113,6 +1217,8 @@ p5.prototype.createCheckbox = function(...args) {
  * let mySelect;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Create a dropdown and place it beneath the canvas.
  *   mySelect = createSelect();
  *   mySelect.position(0, 100);
@@ -1145,6 +1251,8 @@ p5.prototype.createCheckbox = function(...args) {
  * let mySelect;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Create a dropdown and place it beneath the canvas.
  *   mySelect = createSelect();
  *   mySelect.position(0, 100);
@@ -1176,6 +1284,8 @@ p5.prototype.createCheckbox = function(...args) {
  * let mySelect;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Create a dropdown and allow multiple selections.
  *   // Place it beneath the canvas.
  *   mySelect = createSelect(true);
@@ -1195,11 +1305,17 @@ p5.prototype.createCheckbox = function(...args) {
  *
  *   // Use the selected value(s) to draw circles.
  *   let colors = mySelect.selected();
- *   colors.forEach((c, index) => {
- *     let x = 10 + index * 20;
+ *   for (let i = 0; i < colors.length; i += 1) {
+ *     // Calculate the x-coordinate.
+ *     let x = 10 + i * 20;
+ *
+ *     // Access the color.
+ *     let c = colors[i];
+ *
+ *     // Draw the circle.
  *     fill(c);
  *     circle(x, 50, 20);
- *   });
+ *   }
  * }
  * </code>
  * </div>
@@ -1342,12 +1458,15 @@ p5.prototype.createSelect = function(...args) {
  * @param  {Object} [containerElement] container HTML Element, either a `&lt;div&gt;&lt;/div&gt;`
  * or `&lt;span&gt;&lt;/span&gt;`.
  * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
+ *
  * @example
  * <div>
  * <code>
  * let myRadio;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Create a radio button element and place it
  *   // in the top-left corner.
  *   myRadio = createRadio();
@@ -1378,6 +1497,8 @@ p5.prototype.createSelect = function(...args) {
  * let myRadio;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Create a radio button element and place it
  *   // in the top-left corner.
  *   myRadio = createRadio();
@@ -1410,6 +1531,8 @@ p5.prototype.createSelect = function(...args) {
  * let myRadio;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Create a radio button element and place it
  *   // in the top-left corner.
  *   myRadio = createRadio();
@@ -1428,10 +1551,8 @@ p5.prototype.createSelect = function(...args) {
  *   let btn = createButton('disable');
  *   btn.position(0, 100);
  *
- *   // Use the button to disable the radio button.
- *   btn.mousePressed(() => {
- *     myRadio.disable(true);
- *   });
+ *   // Call disableRadio() when btn is pressed.
+ *   btn.mousePressed(disableRadio);
  *
  *   describe('A yellow square with three options listed, "red", "yellow", and "blue". The square changes color when the user selects a new option. A "disable" button beneath the canvas disables the color options when pressed.');
  * }
@@ -1440,6 +1561,11 @@ p5.prototype.createSelect = function(...args) {
  *   // Set the background color using the radio button.
  *   let c = myRadio.value();
  *   background(c);
+ * }
+ *
+ * // Disable myRadio.
+ * function disableRadio() {
+ *   myRadio.disable(true);
  * }
  * </code>
  * </div>
@@ -1623,16 +1749,19 @@ p5.prototype.createRadio = function(...args) {
  * - `myPicker.value()` returns the current color as a hex string in the format `'#rrggbb'`.
  * - `myPicker.color()` returns the current color as a <a href="#/p5.Color">p5.Color</a> object.
  *
- *
  * @method createColorPicker
  * @param {String|p5.Color} [value] default color as a <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/color" target="_blank">CSS color string</a>.
  * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
+ *
  * @example
  * <div>
  * <code>
  * let myPicker;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Create a color picker and set its position.
  *   myPicker = createColorPicker('deeppink');
  *   myPicker.position(0, 100);
  *
@@ -1652,6 +1781,9 @@ p5.prototype.createRadio = function(...args) {
  * let myPicker;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Create a color picker and set its position.
  *   myPicker = createColorPicker('deeppink');
  *   myPicker.position(0, 100);
  *
@@ -1706,8 +1838,9 @@ p5.prototype.createColorPicker = function (value) {
 };
 
 /**
- * Creates a text `&lt;input&gt;&lt;/input&gt;` element. Call `myInput.size()`
- * to set the length of the text box.
+ * Creates a text `&lt;input&gt;&lt;/input&gt;` element.
+ *
+ * Call `myInput.size()` to set the length of the text box.
  *
  * The first parameter, `value`, is optional. It's a string that sets the
  * input's default value. The input is blank by default.
@@ -1721,12 +1854,15 @@ p5.prototype.createColorPicker = function (value) {
  * @param {String} [value] default value of the input box. Defaults to an empty string `''`.
  * @param {String} [type] type of input. Defaults to `'text'`.
  * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
+ *
  * @example
  * <div>
  * <code>
  * let myInput;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Create an input element and place it
  *   // beneath the canvas.
  *   myInput = createInput();
@@ -1750,6 +1886,8 @@ p5.prototype.createColorPicker = function (value) {
  * let myInput;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Create an input element and place it
  *   // beneath the canvas. Set its default
  *   // text to "hello!".
@@ -1784,7 +1922,9 @@ p5.prototype.createInput = function (value = '', type = 'text') {
 
 /**
  * Creates an `&lt;input&gt;&lt;/input&gt;` element of type `'file'`.
- * This allows users to select local files for use in a sketch.
+ *
+ * `createFileInput()` allows users to select local files for use in a sketch.
+ * It returns a <a href="#/p5.File">p5.File</a> object.
  *
  * The first parameter, `callback`, is a function that's called when the file
  * loads. The callback function should have one parameter, `file`, that's a
@@ -1797,7 +1937,8 @@ p5.prototype.createInput = function (value = '', type = 'text') {
  * @method createFileInput
  * @param  {Function} callback function to call once the file loads.
  * @param  {Boolean} [multiple] allow multiple files to be selected.
- * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
+ * @return {p5.File} new <a href="#/p5.File">p5.File</a> object.
+ *
  * @example
  * <div>
  * <code>
@@ -1807,6 +1948,8 @@ p5.prototype.createInput = function (value = '', type = 'text') {
  * let img;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Create a file input and place it beneath
  *   // the canvas.
  *   input = createFileInput(handleImage);
@@ -1856,10 +1999,13 @@ p5.prototype.createInput = function (value = '', type = 'text') {
  *   // Draw the images if loaded. Each image
  *   // is drawn 20 pixels lower than the
  *   // previous image.
- *   images.forEach((img, index) => {
- *     let y = index * 20;
- *     image(img, 0, y, width, height);
- *   });
+ *   for (let i = 0; i < images.length; i += 1) {
+ *     // Calculate the y-coordinate.
+ *     let y = i * 20;
+ *
+ *     // Draw the image.
+ *     image(img, 0, y, 100, 100);
+ *   }
  *
  *   describe('A gray square with a file input beneath it. If the user selects multiple image files to load, they are displayed on the square.');
  * }
@@ -1949,10 +2095,11 @@ function createMedia(pInst, type, src, callback) {
 
 /**
  * Creates a `&lt;video&gt;` element for simple audio/video playback.
- * Returns a new <a href="#/p5.MediaElement">p5.MediaElement</a> object.
  *
- * Videos are shown by default. They can be hidden by calling `video.hide()`
- * and drawn to the canvas using <a href="#/p5/image">image()</a>.
+ * `createVideo()` returns a new
+ * <a href="#/p5.MediaElement">p5.MediaElement</a> object. Videos are shown by
+ * default. They can be hidden by calling `video.hide()` and drawn to the
+ * canvas using <a href="#/p5/image">image()</a>.
  *
  * The first parameter, `src`, is the path the video. If a single string is
  * passed, as in `'assets/topsecret.mp4'`, a single video is loaded. An array
@@ -1971,6 +2118,7 @@ function createMedia(pInst, type, src, callback) {
  *                               supporting different browsers.
  * @param  {Function} [callback] function to call once the video is ready to play.
  * @return {p5.MediaElement}   new <a href="#/p5.MediaElement">p5.MediaElement</a> object.
+ *
  * @example
  * <div class='notest'>
  * <code>
@@ -1980,6 +2128,7 @@ function createMedia(pInst, type, src, callback) {
  *   // Load a video and add it to the page.
  *   // Note: this may not work in some browsers.
  *   let video = createVideo('assets/small.mp4');
+ *
  *   // Show the default video controls.
  *   video.showControls();
  *
@@ -1998,6 +2147,7 @@ function createMedia(pInst, type, src, callback) {
  *   let video = createVideo(
  *     ['assets/small.mp4', 'assets/small.ogv', 'assets/small.webm']
  *   );
+ *
  *   // Show the default video controls.
  *   video.showControls();
  *
@@ -2020,6 +2170,7 @@ function createMedia(pInst, type, src, callback) {
  *     ['assets/small.mp4', 'assets/small.ogv', 'assets/small.webm'],
  *     muteVideo
  *   );
+ *
  *   // Show the default video controls.
  *   video.showControls();
  *
@@ -2042,7 +2193,9 @@ p5.prototype.createVideo = function (src, callback) {
 
 /**
  * Creates a hidden `&lt;audio&gt;` element for simple audio playback.
- * Returns a new <a href="#/p5.MediaElement">p5.MediaElement</a> object.
+ *
+ * `createAudio()` returns a new
+ * <a href="#/p5.MediaElement">p5.MediaElement</a> object.
  *
  * The first parameter, `src`, is the path the video. If a single string is
  * passed, as in `'assets/video.mp4'`, a single video is loaded. An array
@@ -2061,6 +2214,7 @@ p5.prototype.createVideo = function (src, callback) {
  *                                 for supporting different browsers.
  * @param  {Function} [callback]   function to call once the audio is ready to play.
  * @return {p5.MediaElement}       new <a href="#/p5.MediaElement">p5.MediaElement</a> object.
+ *
  * @example
  * <div class='notest'>
  * <code>
@@ -2069,10 +2223,11 @@ p5.prototype.createVideo = function (src, callback) {
  *
  *   // Load the audio.
  *   let beat = createAudio('assets/beat.mp3');
+ *
  *   // Show the default audio controls.
  *   beat.showControls();
  *
- *   describe('An audio  beat plays when the user double-clicks the square.');
+ *   describe('An audio beat plays when the user double-clicks the square.');
  * }
  * </code>
  * </div>
@@ -2120,11 +2275,12 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
 
 /**
  * Creates a `&lt;video&gt;` element that "captures" the audio/video stream from
- * the webcam and microphone. Returns a new
- * <a href="#/p5.Element">p5.Element</a> object.
+ * the webcam and microphone.
  *
- * Videos are shown by default. They can be hidden by calling `capture.hide()`
- * and drawn to the canvas using <a href="#/p5/image">image()</a>.
+ * `createCapture()` returns a new
+ * <a href="#/p5.MediaElement">p5.MediaElement</a> object. Videos are shown by
+ * default. They can be hidden by calling `capture.hide()` and drawn to the
+ * canvas using <a href="#/p5/image">image()</a>.
  *
  * The first parameter, `type`, is optional. It sets the type of capture to
  * use. By default, `createCapture()` captures both audio and video. If `VIDEO`
@@ -2135,7 +2291,11 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * W3C documentation</a> for possible properties. Different browsers support different
  * properties.
  *
- * The second parameter, `callback`, is optional. It's a function to call once
+ * The 'flipped' property is an optional property which can be set to `{flipped:true}`
+ * to mirror the video output.If it is true then it means that video will be mirrored
+ * or flipped and if nothing is mentioned then by default it will be `false`.
+ *
+ * The second parameter,`callback`, is optional. It's a function to call once
  * the capture is ready for use. The callback function should have one
  * parameter, `stream`, that's a
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MediaStream" target="_blank">MediaStream</a> object.
@@ -2148,14 +2308,19 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * @param  {String|Constant|Object}  [type] type of capture, either AUDIO or VIDEO,
  *                                   or a constraints object. Both video and audio
  *                                   audio streams are captured by default.
+ * @param  {Object}                  [flipped] flip the capturing video and mirror the output with `{flipped:true}`. By
+ *                                   default it is false.
  * @param  {Function}                [callback] function to call once the stream
  *                                   has loaded.
- * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
+ * @return {p5.MediaElement} new <a href="#/p5.MediaElement">p5.MediaElement</a> object.
+ *
  * @example
  * <div class='notest'>
  * <code>
  * function setup() {
  *   noCanvas();
+ *
+ *   // Create the video capture.
  *   createCapture(VIDEO);
  *
  *   describe('A video stream from the webcam.');
@@ -2168,6 +2333,8 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * let capture;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Create the video capture and hide the element.
  *   capture = createCapture(VIDEO);
  *   capture.hide();
@@ -2178,9 +2345,26 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * function draw() {
  *   // Draw the video capture within the canvas.
  *   image(capture, 0, 0, width, width * capture.height / capture.width);
+ *
  *   // Invert the colors in the stream.
  *   filter(INVERT);
  * }
+ * </code>
+ * </div>
+ * <div class='notest'>
+ * <code>
+ * let capture;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Create the video capture with mirrored output.
+ *   capture = createCapture(VIDEO,{ flipped:true });
+ *   capture.size(100,100);
+ *
+ *   describe('A video stream from the webcam with flipped or mirrored output.');
+ * }
+ *
  * </code>
  * </div>
  *
@@ -2212,7 +2396,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
 p5.prototype.createCapture = function(...args) {
   p5._validateParameters('createCapture', args);
 
-  // return if getUserMedia is not supported by browser
+  // return if getUserMedia is not supported by the browser
   if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
     throw new DOMException('getUserMedia not supported in this browser');
   }
@@ -2221,18 +2405,28 @@ p5.prototype.createCapture = function(...args) {
   let useAudio = true;
   let constraints;
   let callback;
+  let flipped = false;
+
   for (const arg of args) {
     if (arg === p5.prototype.VIDEO) useAudio = false;
     else if (arg === p5.prototype.AUDIO) useVideo = false;
-    else if (typeof arg === 'object') constraints = arg;
-    else if (typeof arg === 'function') callback = arg;
+    else if (typeof arg === 'object') {
+      if (arg.flipped !== undefined) {
+        flipped = arg.flipped;
+        delete arg.flipped;
+      }
+      constraints = Object.assign({}, constraints, arg);
+    }
+    else if (typeof arg === 'function') {
+      callback = arg;
+    }
   }
-  if (!constraints) constraints = { video: useVideo, audio: useAudio };
 
+  const videoConstraints = { video: useVideo, audio: useAudio };
+  constraints = Object.assign({}, videoConstraints, constraints);
   const domElement = document.createElement('video');
   // required to work in iOS 11 & up:
   domElement.setAttribute('playsinline', '');
-
   navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
     try {
       if ('srcObject' in domElement) {
@@ -2240,10 +2434,11 @@ p5.prototype.createCapture = function(...args) {
       } else {
         domElement.src = window.URL.createObjectURL(stream);
       }
-    } catch (err) {
+    }
+    catch(err) {
       domElement.src = stream;
     }
-  }, console.log);
+  }, console.error);
 
   const videoEl = addElement(domElement, this, true);
   videoEl.loadedmetadata = false;
@@ -2253,6 +2448,9 @@ p5.prototype.createCapture = function(...args) {
     if (domElement.width) {
       videoEl.width = domElement.width;
       videoEl.height = domElement.height;
+      if (flipped) {
+        videoEl.elt.style.transform = 'scaleX(-1)';
+      }
     } else {
       videoEl.width = videoEl.elt.width = domElement.videoWidth;
       videoEl.height = videoEl.elt.height = domElement.videoHeight;
@@ -2261,8 +2459,10 @@ p5.prototype.createCapture = function(...args) {
 
     if (callback) callback(domElement.srcObject);
   });
+  videoEl.flipped=flipped;
   return videoEl;
 };
+
 
 /**
  * Creates a new <a href="#/p5.Element">p5.Element</a> object.
@@ -2277,10 +2477,13 @@ p5.prototype.createCapture = function(...args) {
  * @param  {String} tag tag for the new element.
  * @param  {String} [content] HTML content to insert into the element.
  * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
+ *
  * @example
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
  *   // Create an h5 element with nothing in it.
@@ -2294,11 +2497,13 @@ p5.prototype.createCapture = function(...args) {
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
- *   // Create an h5 element with the content
- *   // "p5*js".
+ *   // Create an h5 element with the content "p5*js".
  *   let h5 = createElement('h5', 'p5*js');
+ *
  *   // Set the element's style and position.
  *   h5.style('color', 'deeppink');
  *   h5.position(30, 15);
@@ -2322,17 +2527,31 @@ p5.prototype.createElement = function (tag, content) {
 // =============================================================================
 /**
  *
- * Adds specified class to the element.
+ * Adds a class to the element.
  *
  * @for p5.Element
  * @method addClass
- * @param  {String} class name of class to add
+ * @param  {String} class name of class to add.
  * @chainable
+ *
  * @example
- * <div class='norender'><code>
- * let div = createDiv('div');
- * div.addClass('myClass');
- * </code></div>
+ * <div class='norender'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a div element.
+ *   let div = createDiv('div');
+ *
+ *   // Add a class to the div.
+ *   div.addClass('myClass');
+ *
+ *   describe('A gray square.');
+ * }
+ * </code>
+ * </div>
  */
 p5.Element.prototype.addClass = function (c) {
   if (this.elt.className) {
@@ -2346,14 +2565,15 @@ p5.Element.prototype.addClass = function (c) {
 };
 
 /**
- *
- * Removes specified class from the element.
+ * Removes a class from the element.
  *
  * @method removeClass
- * @param  {String} class name of class to remove
+ * @param  {String} class name of class to remove.
  * @chainable
+ *
  * @example
- * <div class='norender'><code>
+ * <div class='norender'>
+ * <code>
  * // In this example, a class is set when the div is created
  * // and removed when mouse is pressed. This could link up
  * // with a CSS style rule to toggle style properties.
@@ -2361,14 +2581,25 @@ p5.Element.prototype.addClass = function (c) {
  * let div;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a div element.
  *   div = createDiv('div');
+ *
+ *   // Add a class to the div.
  *   div.addClass('myClass');
+ *
+ *   describe('A gray square.');
  * }
  *
+ * // Remove 'myClass' from the div when the user presses the mouse.
  * function mousePressed() {
  *   div.removeClass('myClass');
  * }
- * </code></div>
+ * </code>
+ * </div>
  */
 p5.Element.prototype.removeClass = function (c) {
   // Note: Removing a class that does not exist does NOT throw an error in classList.remove method
@@ -2377,21 +2608,32 @@ p5.Element.prototype.removeClass = function (c) {
 };
 
 /**
- *
- * Checks if specified class is already applied to element.
+ * Checks if a class is already applied to element.
  *
  * @method hasClass
- * @returns {boolean} a boolean value if element has specified class
- * @param c {String} class name of class to check
+ * @returns {boolean} a boolean value if element has specified class.
+ * @param c {String} name of class to check.
+ *
  * @example
- * <div class='norender'><code>
+ * <div class='norender'>
+ * <code>
  * let div;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a div element.
  *   div = createDiv('div');
+ *
+ *   // Add the class 'show' to the div.
  *   div.addClass('show');
+ *
+ *   describe('A gray square.');
  * }
  *
+ * // Toggle the class 'show' when the mouse is pressed.
  * function mousePressed() {
  *   if (div.hasClass('show')) {
  *     div.addClass('show');
@@ -2399,32 +2641,45 @@ p5.Element.prototype.removeClass = function (c) {
  *     div.removeClass('show');
  *   }
  * }
- * </code></div>
+ * </code>
+ * </div>
  */
 p5.Element.prototype.hasClass = function (c) {
   return this.elt.classList.contains(c);
 };
 
 /**
- *
- * Toggles element class.
+ * Toggles whether a class is applied to the element.
  *
  * @method toggleClass
- * @param c {String} class name to toggle
+ * @param c {String} class name to toggle.
  * @chainable
+ *
  * @example
- * <div class='norender'><code>
+ * <div class='norender'>
+ * <code>
  * let div;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a div element.
  *   div = createDiv('div');
+ *
+ *   // Add the 'show' class to the div.
  *   div.addClass('show');
+ *
+ *   describe('A gray square.');
  * }
  *
+ * // Toggle the 'show' class when the mouse is pressed.
  * function mousePressed() {
  *   div.toggleClass('show');
  * }
- * </code></div>
+ * </code>
+ * </div>
  */
 p5.Element.prototype.toggleClass = function (c) {
   // classList also has a toggle() method, but we cannot use that yet as support is unclear.
@@ -2439,32 +2694,84 @@ p5.Element.prototype.toggleClass = function (c) {
 };
 
 /**
+ * Attaches the element as a child of another element.
  *
- * Attaches the element  as a child to the parent specified.
- * Accepts either a string ID, DOM node, or <a href="#/p5.Element">p5.Element</a>.
- * If no argument is specified, an array of children DOM nodes is returned.
+ * `myElement.child()` accepts either a string ID, DOM node, or
+ * <a href="#/p5.Element">p5.Element</a>. For example,
+ * `myElement.child(otherElement)`. If no argument is provided, an array of
+ * children DOM nodes is returned.
  *
  * @method child
- * @returns {Node[]} an array of child nodes
+ * @returns {Node[]} an array of child nodes.
+ *
  * @example
- * <div class='norender'><code>
- * let div0 = createDiv('this is the parent');
- * let div1 = createDiv('this is the child');
- * div0.child(div1); // use p5.Element
- * </code></div>
- * <div class='norender'><code>
- * let div0 = createDiv('this is the parent');
- * let div1 = createDiv('this is the child');
- * div1.id('apples');
- * div0.child('apples'); // use id
- * </code></div>
- * <div class='norender notest'><code>
- * // this example assumes there is a div already on the page
- * // with id "myChildDiv"
- * let div0 = createDiv('this is the parent');
- * let elt = document.getElementById('myChildDiv');
- * div0.child(elt); // use element from page
- * </code></div>
+ * <div class='norender'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create the div elements.
+ *   let div0 = createDiv('Parent');
+ *   let div1 = createDiv('Child');
+ *
+ *   // Make div1 the child of div0
+ *   // using the p5.Element.
+ *   div0.child(div1);
+ *
+ *   describe('A gray square with the words "Parent" and "Child" written beneath it.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class='norender'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create the div elements.
+ *   let div0 = createDiv('Parent');
+ *   let div1 = createDiv('Child');
+ *
+ *   // Give div1 an ID.
+ *   div1.id('apples');
+ *
+ *   // Make div1 the child of div0
+ *   // using its ID.
+ *   div0.child('apples');
+ *
+ *   describe('A gray square with the words "Parent" and "Child" written beneath it.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class='norender notest'>
+ * <code>
+ * // This example assumes there is a div already on the page
+ * // with id "myChildDiv".
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create the div elements.
+ *   let div0 = createDiv('Parent');
+ *
+ *   // Select the child element by its ID.
+ *   let elt = document.getElementById('myChildDiv');
+ *
+ *   // Make div1 the child of div0
+ *   // using its HTMLElement object.
+ *   div0.child(elt);
+ *
+ *   describe('A gray square with the words "Parent" and "Child" written beneath it.');
+ * }
+ * </code>
+ * </div>
  */
 /**
  * @method child
@@ -2492,23 +2799,38 @@ p5.Element.prototype.child = function (childNode) {
 };
 
 /**
- * Centers a p5.Element either vertically, horizontally,
- * or both, relative to its parent or according to
- * the body if the p5.Element has no parent. If no argument is passed
- * the p5.Element is aligned both vertically and horizontally.
+ * Centers the element either vertically, horizontally, or both.
+ *
+ * `center()` will center the element relative to its parent or according to
+ * the page's body if the element has no parent.
+ *
+ * If no argument is passed, as in `myElement.center()` the element is aligned
+ * both vertically and horizontally.
  *
  * @method center
- * @param  {String} [align]       passing 'vertical', 'horizontal' aligns element accordingly
+ * @param  {String} [align] passing 'vertical', 'horizontal' aligns element accordingly
  * @chainable
  *
  * @example
- * <div><code>
+ * <div>
+ * <code>
  * function setup() {
- *   let div = createDiv('').size(10, 10);
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create the div element and style it.
+ *   let div = createDiv('');
+ *   div.size(10, 10);
  *   div.style('background-color', 'orange');
+ *
+ *   // Center the div relative to the page's body.
  *   div.center();
+ *
+ *   describe('A gray square and an orange rectangle. The rectangle is at the center of the page.');
  * }
- * </code></div>
+ * </code>
+ * </div>
  */
 p5.Element.prototype.center = function (align) {
   const style = this.elt.style.display;
@@ -2543,25 +2865,73 @@ p5.Element.prototype.center = function (align) {
 };
 
 /**
+ * Sets the inner HTML of the element, replacing any existing HTML.
  *
- * If an argument is given, sets the inner HTML of the element,
- * replacing any existing HTML. If true is included as a second
- * argument, HTML is appended instead of replacing existing HTML.
- * If no arguments are given, returns
- * the inner HTML of the element.
+ * The second parameter, `append`, is optional. If `true` is passed, as in
+ * `myElement.html('hi', true)`, the HTML is appended instead of replacing
+ * existing HTML.
+ *
+ * If no arguments are passed, as in `myElement.html()`, the element's inner
+ * HTML is returned.
  *
  * @for p5.Element
  * @method html
  * @returns {String} the inner HTML of the element
+ *
  * @example
- * <div class='norender'><code>
- * let div = createDiv('').size(100, 100);
- * div.html('hi');
- * </code></div>
- * <div class='norender'><code>
- * let div = createDiv('Hello ').size(100, 100);
- * div.html('World', true);
- * </code></div>
+ * <div class='norender'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Create the div element and set its size.
+ *   let div = createDiv('');
+ *   div.size(100, 100);
+ *
+ *   // Set the inner HTML to "hi".
+ *   div.html('hi');
+ *
+ *   describe('A gray square with the word "hi" written beneath it.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class='norender'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create the div element and set its size.
+ *   let div = createDiv('Hello ');
+ *   div.size(100, 100);
+ *
+ *   // Append "World" to the div's HTML.
+ *   div.html('World', true);
+ *
+ *   describe('A gray square with the text "Hello World" written beneath it.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class='norender'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create the div element.
+ *   let div = createDiv('Hello');
+ *
+ *   // Prints "Hello" to the console.
+ *   print(div.html());
+ *
+ *   describe('A gray square with the word "Hello!" written beneath it.');
+ * }
+ * </code>
+ * </div>
  */
 /**
  * @method html
@@ -2582,42 +2952,60 @@ p5.Element.prototype.html = function(...args) {
 };
 
 /**
+ * Sets the element's position.
  *
- * Sets the position of the element. If no position type argument is given, the
- * position will be relative to (0, 0) of the window.
- * Essentially, this sets position:absolute and left and top
- * properties of style. If an optional third argument specifying position type is given,
- * the x and y-coordinates will be interpreted based on the <a target="_blank"
+ * The first two parameters, `x` and `y`, set the element's position relative
+ * to the top-left corner of the web page.
+ *
+ * The third parameter, `positionType`, is optional. It sets the element's
+ * <a target="_blank"
  * href="https://developer.mozilla.org/en-US/docs/Web/CSS/position">positioning scheme</a>.
- * If no arguments given, the function returns the x and y position of the element.
+ * `positionType` is a string that can be either `'static'`, `'fixed'`,
+ * `'relative'`, `'sticky'`, `'initial'`, or `'inherit'`.
  *
- * found documentation on how to be more specific with object type
- * https://stackoverflow.com/questions/14714314/how-do-i-comment-object-literals-in-yuidoc
+ * If no arguments passed, as in `myElement.position()`, the method returns
+ * the element's position in an object, as in `{ x: 0, y: 0 }`.
  *
  * @method position
- * @returns {Object} object of form { x: 0, y: 0 } containing the position of the element in an object
+ * @returns {Object} object of form `{ x: 0, y: 0 }` containing the element's position.
+ *
  * @example
- * <div><code class='norender'>
+ * <div>
+ * <code class='norender'>
  * function setup() {
  *   let cnv = createCanvas(100, 100);
- *   // positions canvas 50px to the right and 100px
- *   // below upper left corner of the window
+ *
+ *   background(200);
+ *
+ *   // Positions the canvas 50px to the right and 100px
+ *   // below the top-left corner of the window.
  *   cnv.position(50, 100);
+ *
+ *   describe('A gray square that is 50 pixels to the right and 100 pixels down from the top-left corner of the web page.');
  * }
- * </code></div>
- * <div><code class='norender'>
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code class='norender'>
  * function setup() {
  *   let cnv = createCanvas(100, 100);
- *   // positions canvas at upper left corner of the window
- *   // with a 'fixed' position type
+ *
+ *   background(200);
+ *
+ *   // Positions the canvas at the top-left corner
+ *   // of the window with a 'fixed' position type.
  *   cnv.position(0, 0, 'fixed');
+ *
+ *   describe('A gray square in the top-left corner of the web page.');
  * }
- * </code></div>
+ * </code>
+ * </div>
  */
 /**
  * @method position
- * @param  {Number} [x] x-position relative to upper left of window (optional)
- * @param  {Number} [y] y-position relative to upper left of window (optional)
+ * @param  {Number} [x] x-position relative to top-left of window (optional)
+ * @param  {Number} [y] y-position relative to top-left of window (optional)
  * @param  {String} [positionType] it can be static, fixed, relative, sticky, initial or inherit (optional)
  * @chainable
  */
@@ -2702,15 +3090,15 @@ p5.Element.prototype._rotate = function(...args) {
 };
 
 /**
- * Applies a style to an element by adding a
+ * Applies a style to the element by adding a
  * <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Syntax" target="_blank">CSS declaration</a>.
  *
  * The first parameter, `property`, is a string. If the name of a style
  * property is passed, as in `myElement.style('color')`, the method returns
  * the current value as a string or `null` if it hasn't been set. If a
  * `property:style` string is passed, as in
- * `myElement.style('color:deeppink')`, the method sets `property` to
- * `value`.
+ * `myElement.style('color:deeppink')`, the method sets the style `property`
+ * to `value`.
  *
  * The second parameter, `value`, is optional. It sets the property's value.
  * `value` can be a string, as in
@@ -2721,14 +3109,16 @@ p5.Element.prototype._rotate = function(...args) {
  * @method style
  * @param  {String} property style property to set.
  * @returns {String} value of the property.
+ *
  * @example
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
- *   // Create a paragraph element and
- *   // set its font color to "deeppink".
+ *   // Create a paragraph element and set its font color to "deeppink".
  *   let p = createP('p5*js');
  *   p.position(25, 20);
  *   p.style('color', 'deeppink');
@@ -2741,14 +3131,14 @@ p5.Element.prototype._rotate = function(...args) {
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
  *   // Create a p5.Color object.
  *   let c = color('deeppink');
  *
- *   // Create a paragraph element and
- *   // set its font color using a
- *   // p5.Color object.
+ *   // Create a paragraph element and set its font color using a p5.Color object.
  *   let p = createP('p5*js');
  *   p.position(25, 20);
  *   p.style('color', c);
@@ -2761,10 +3151,11 @@ p5.Element.prototype._rotate = function(...args) {
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
- *   // Create a paragraph element and
- *   // set its font color to "deeppink"
+ *   // Create a paragraph element and set its font color to "deeppink"
  *   // using property:value syntax.
  *   let p = createP('p5*js');
  *   p.position(25, 20);
@@ -2778,20 +3169,19 @@ p5.Element.prototype._rotate = function(...args) {
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
- *   // Create an empty paragraph element
- *   // and set its font color to "deeppink".
+ *   // Create an empty paragraph element and set its font color to "deeppink".
  *   let p = createP();
  *   p.position(5, 5);
  *   p.style('color', 'deeppink');
  *
- *   // Get the element's color as an
- *   // RGB color string.
+ *   // Get the element's color as an  RGB color string.
  *   let c = p.style('color');
  *
- *   // Set the element's inner HTML
- *   // using the RGB color string.
+ *   // Set the element's inner HTML using the RGB color string.
  *   p.html(c);
  *
  *   describe('The text "rgb(255, 20, 147)" written in pink on a gray background.');
@@ -2859,11 +3249,12 @@ p5.Element.prototype.style = function (prop, val) {
 /**
  * Adds an
  * <a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Getting_started#attributes" target="_blank">attribute</a>
- * to the element. This method is useful for advanced tasks.
+ * to the element.
  *
- * Most commonly-used attributes, such as `id`, can be set with their
- * dedicated methods. For example, `nextButton.id('next')` sets an element's
- * `id` attribute.
+ * This method is useful for advanced tasks. Most commonly-used attributes,
+ * such as `id`, can be set with their dedicated methods. For example,
+ * `nextButton.id('next')` sets an element's `id` attribute. Calling
+ * `nextButton.attribute('id', 'next')` has the same effect.
  *
  * The first parameter, `attr`, is the attribute's name as a string. Calling
  * `myElement.attribute('align')` returns the attribute's current value as a
@@ -2881,32 +3272,26 @@ p5.Element.prototype.style = function (prop, val) {
  * <div>
  * <code>
  * function setup() {
- *   // Create a container div and
- *   // place it at the top-left
- *   // corner.
+ *   createCanvas(100, 100);
+ *
+ *   // Create a container div element and place it at the top-left corner.
  *   let container = createDiv();
  *   container.position(0, 0);
  *
- *   // Create a paragraph element
- *   // and place it within the container.
- *   // Set its horizontal alignment to
- *   // "left".
+ *   // Create a paragraph element and place it within the container.
+ *   // Set its horizontal alignment to "left".
  *   let p1 = createP('hi');
  *   p1.parent(container);
  *   p1.attribute('align', 'left');
  *
- *   // Create a paragraph element
- *   // and place it within the container.
- *   // Set its horizontal alignment to
- *   // "center".
+ *   // Create a paragraph element and place it within the container.
+ *   // Set its horizontal alignment to "center".
  *   let p2 = createP('hi');
  *   p2.parent(container);
  *   p2.attribute('align', 'center');
  *
- *   // Create a paragraph element
- *   // and place it within the container.
- *   // Set its horizontal alignment to
- *   // "right".
+ *   // Create a paragraph element and place it within the container.
+ *   // Set its horizontal alignment to "right".
  *   let p3 = createP('hi');
  *   p3.parent(container);
  *   p3.attribute('align', 'right');
@@ -2962,10 +3347,11 @@ p5.Element.prototype.attribute = function (attr, value) {
  * let p;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
- *   // Create a paragraph element and place it
- *   // in the center of the canvas.
+ *   // Create a paragraph element and place it in the center of the canvas.
  *   // Set its "align" attribute to "center".
  *   p = createP('hi');
  *   p.position(0, 20);
@@ -2974,6 +3360,7 @@ p5.Element.prototype.attribute = function (attr, value) {
  *   describe('The text "hi" written in black at the center of a gray square. The text moves to the left edge when double-clicked.');
  * }
  *
+ * // Remove the 'align' attribute when the user double-clicks the paragraph.
  * function doubleClicked() {
  *   p.removeAttribute('align');
  * }
@@ -3004,17 +3391,19 @@ p5.Element.prototype.removeAttribute = function (attr) {
  *
  * @method value
  * @return {String|Number} value of the element.
+ *
  * @example
  * <div>
  * <code>
- * let inp;
+ * let input;
  *
  * function setup() {
- *   // Create a text input and place it
- *   // beneath the canvas. Set its default
- *   // value to "hello".
- *   inp = createInput('hello');
- *   inp.position(0, 100);
+ *   createCanvas(100, 100);
+ *
+ *   // Create a text input and place it beneath the canvas.
+ *   // Set its default value to "hello".
+ *   input = createInput('hello');
+ *   input.position(0, 100);
  *
  *   describe('The text from an input box is displayed on a gray square.');
  * }
@@ -3023,7 +3412,7 @@ p5.Element.prototype.removeAttribute = function (attr) {
  *   background(200);
  *
  *   // Use the input's value to display a message.
- *   let msg = inp.value();
+ *   let msg = input.value();
  *   text(msg, 0, 55);
  * }
  * </code>
@@ -3031,14 +3420,15 @@ p5.Element.prototype.removeAttribute = function (attr) {
  *
  * <div>
  * <code>
- * let inp;
+ * let input;
  *
  * function setup() {
- *   // Create a text input and place it
- *   // beneath the canvas. Set its default
- *   // value to "hello".
- *   inp = createInput('hello');
- *   inp.position(0, 100);
+ *   createCanvas(100, 100);
+ *
+ *   // Create a text input and place it beneath the canvas.
+ *   // Set its default value to "hello".
+ *   input = createInput('hello');
+ *   input.position(0, 100);
  *
  *   describe('The text from an input box is displayed on a gray square. The text resets to "hello" when the user double-clicks the square.');
  * }
@@ -3047,13 +3437,13 @@ p5.Element.prototype.removeAttribute = function (attr) {
  *   background(200);
  *
  *   // Use the input's value to display a message.
- *   let msg = inp.value();
+ *   let msg = input.value();
  *   text(msg, 0, 55);
  * }
  *
  * // Reset the input's value.
  * function doubleClicked() {
- *   inp.value('hello');
+ *   input.value('hello');
  * }
  * </code>
  * </div>
@@ -3079,12 +3469,15 @@ p5.Element.prototype.value = function(...args) {
  *
  * @method show
  * @chainable
+ *
  * @example
  * <div>
  * <code>
  * let p;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
  *   // Create a paragraph element and hide it.
@@ -3095,7 +3488,7 @@ p5.Element.prototype.value = function(...args) {
  *   describe('A gray square. The text "p5*js" appears when the user double-clicks the square.');
  * }
  *
- * // Show the paragraph when double-clicked.
+ * // Show the paragraph when the user double-clicks.
  * function doubleClicked() {
  *   p.show();
  * }
@@ -3112,10 +3505,13 @@ p5.Element.prototype.show = function () {
  *
  * @method hide
  * @chainable
+ *
  * @example
  * let p;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
  *   // Create a paragraph element.
@@ -3125,7 +3521,7 @@ p5.Element.prototype.show = function () {
  *   describe('The text "p5*js" at the center of a gray square. The text disappears when the user double-clicks the square.');
  * }
  *
- * // Hide the paragraph when double-clicked.
+ * // Hide the paragraph when the user double-clicks.
  * function doubleClicked() {
  *   p.hide();
  * }
@@ -3163,20 +3559,21 @@ p5.Element.prototype.hide = function () {
  *
  * @method size
  * @return {Object} width and height of the element in an object.
+ *
  * @example
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
- *   // Create a pink div element and place it at
- *   // the top-left corner.
+ *   // Create a pink div element and place it at the top-left corner.
  *   let div = createDiv();
  *   div.position(10, 10);
  *   div.style('background-color', 'deeppink');
  *
- *   // Set the div's width to 80 pixels and
- *   // height to 20 pixels.
+ *   // Set the div's width to 80 pixels and height to 20 pixels.
  *   div.size(80, 20);
  *
  *   describe('A gray square with a pink rectangle near its top.');
@@ -3187,21 +3584,22 @@ p5.Element.prototype.hide = function () {
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
- *   // Create a pink div element and place it at
- *   // the top-left corner.
+ *   // Create a pink div element and place it at the top-left corner.
  *   let div = createDiv();
  *   div.position(10, 10);
  *   div.style('background-color', 'deeppink');
  *
- *   // Set the div's width to 80 pixels and
- *   // height to 40 pixels.
+ *   // Set the div's width to 80 pixels and height to 40 pixels.
  *   div.size(80, 40);
  *
  *   // Get the div's size as an object.
  *   let s = div.size();
- *   // Write the div's dimensions.
+ *
+ *   // Display the div's dimensions.
  *   div.html(`${s.width} x ${s.height}`);
  *
  *   describe('A gray square with a pink rectangle near its top. The text "80 x 40" is written within the rectangle.');
@@ -3211,12 +3609,17 @@ p5.Element.prototype.hide = function () {
  *
  * <div>
  * <code>
+ * let img1;
+ * let img2;
+ *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
  *   // Load an image of an astronaut on the moon
  *   // and place it at the top-left of the canvas.
- *   let img1 = createImg(
+ *   img1 = createImg(
  *     'assets/moonwalk.jpg',
  *     'An astronaut walking on the moon',
  *     ''
@@ -3226,24 +3629,27 @@ p5.Element.prototype.hide = function () {
  *   // Load an image of an astronaut on the moon
  *   // and place it at the top-left of the canvas.
  *   // Resize the image once it's loaded.
- *   let img2 = createImg(
+ *   img2 = createImg(
  *     'assets/moonwalk.jpg',
  *     'An astronaut walking on the moon',
  *     '',
- *     () => {
- *       img2.size(50, AUTO);
- *     }
+ *     resizeImage
  *   );
  *   img2.position(0, 0);
  *
  *   describe('A gray square two copies of a space image at the top-left. The copy in front is smaller.');
+ * }
+ *
+ * // Resize img2 and keep its aspect ratio.
+ * function resizeImage() {
+ *   img2.size(50, AUTO);
  * }
  * </code>
  * </div>
  */
 /**
  * @method size
- * @param  {Number|Constant} w   width of the element, either AUTO, or a number.
+ * @param  {Number|Constant} [w]   width of the element, either AUTO, or a number.
  * @param  {Number|Constant} [h] height of the element, either AUTO, or a number.
  * @chainable
  */
@@ -3301,12 +3707,15 @@ p5.Element.prototype.size = function (w, h) {
  * callback functions.
  *
  * @method remove
+ *
  * @example
  * <div>
  * <code>
  * let p;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
  *   // Create a paragraph element.
@@ -3316,7 +3725,7 @@ p5.Element.prototype.size = function (w, h) {
  *   describe('The text "p5*js" written at the center of a gray square. ');
  * }
  *
- * // Remove the paragraph when double-clicked.
+ * // Remove the paragraph when the user double-clicks.
  * function doubleClicked() {
  *   p.remove();
  * }
@@ -3353,7 +3762,7 @@ p5.Element.prototype.remove = function () {
 };
 
 /**
- * Sets a function to call when the user drops a file on the element.
+ * Calls a function when the user drops a file on the element.
  *
  * The first parameter, `callback`, is a function to call once the file loads.
  * The callback function should have one parameter, `file`, that's a
@@ -3369,6 +3778,7 @@ p5.Element.prototype.remove = function () {
  * @param  {Function} callback  called when a file loads. Called once for each file dropped.
  * @param  {Function} [fxn]     called once when any files are dropped.
  * @chainable
+ *
  * @example
  * <div>
  * <code>
@@ -3381,25 +3791,26 @@ p5.Element.prototype.remove = function () {
  *
  *   background(200);
  *
- *   // Call a function when a file
- *   // dropped on the canvas has
- *   // loaded.
- *   c.drop(file => {
- *     // Remove the current image, if any.
- *     if (img) {
- *       img.remove();
- *     }
- *
- *     // Create an <img> element with the
- *     // dropped file.
- *     img = createImg(file.data, '');
- *     img.hide();
- *
- *     // Draw the image.
- *     image(img, 0, 0, width, height);
- *   });
+ *   // Call handleFile() when a file that's dropped on the canvas has loaded.
+ *   c.drop(handleFile);
  *
  *   describe('A gray square. When the user drops an image on the square, it is displayed.');
+ * }
+ *
+ * // Remove the existing image and display the new one.
+ * function handleFile(file) {
+ *   // Remove the current image, if any.
+ *   if (img) {
+ *     img.remove();
+ *   }
+ *
+ *   // Create an <img> element with the
+ *   // dropped file.
+ *   img = createImg(file.data, '');
+ *   img.hide();
+ *
+ *   // Draw the image.
+ *   image(img, 0, 0, width, height);
  * }
  * </code>
  * </div>
@@ -3416,22 +3827,21 @@ p5.Element.prototype.remove = function () {
  *
  *   background(200);
  *
- *   // Call functions when the user
- *   // drops a file on the canvas
+ *   // Call functions when the user drops a file on the canvas
  *   // and when the file loads.
  *   c.drop(handleFile, handleDrop);
  *
  *   describe('A gray square. When the user drops an image on the square, it is displayed. The id attribute of canvas element is also displayed.');
  * }
  *
+ * // Display the image when it loads.
  * function handleFile(file) {
  *   // Remove the current image, if any.
  *   if (img) {
  *     img.remove();
  *   }
  *
- *   // Create an <img> element with the
- *   // dropped file.
+ *   // Create an img element with the dropped file.
  *   img = createImg(file.data, '');
  *   img.hide();
  *
@@ -3439,23 +3849,21 @@ p5.Element.prototype.remove = function () {
  *   image(img, 0, 0, width, height);
  * }
  *
+ * // Display the file's name when it loads.
  * function handleDrop(event) {
  *   // Remove current paragraph, if any.
  *   if (msg) {
  *     msg.remove();
  *   }
  *
- *   // Use event to get the drop
- *   // target's id.
+ *   // Use event to get the drop target's id.
  *   let id = event.target.id;
  *
- *   // Write the canvas' id
- *   // beneath it.
+ *   // Write the canvas' id beneath it.
  *   msg = createP(id);
  *   msg.position(0, 100);
  *
- *   // Set the font color
- *   // randomly for each drop.
+ *   // Set the font color randomly for each drop.
  *   let c = random(['red', 'green', 'blue']);
  *   msg.style('color', c);
  *   msg.style('font-size', '12px');
@@ -3509,50 +3917,72 @@ p5.Element.prototype.drop = function (callback, fxn) {
 };
 
 /**
- * Turns p5.Element into a draggable item. If an argument is given, it will drag that p5.Element instead, ie. drag a entire GUI panel (parent container) with the panel's title bar.
+ * Makes the element draggable.
+ *
+ * The parameter, `elmnt`, is optional. If another
+ * <a href="#/p5.Element">p5.Element</a> object is passed, as in
+ * `myElement.draggable(otherElement)`, the other element will become draggable.
  *
  * @method draggable
- * @param  {p5.Element} [elmnt]       pass another p5.Element
+ * @param  {p5.Element} [elmnt]  another <a href="#/p5.Element">p5.Element</a>.
  * @chainable
  *
  * @example
- * <div><code>
+ * <div>
+ * <code>
+ * let stickyNote;
+ * let textInput;
+ *
  * function setup() {
  *   createCanvas(100, 100);
+ *
  *   background(200);
  *
- *   createDiv('Post-It')
- *     .position(5, 5)
- *     .size(75, 20)
- *     .style('font-size', '16px')
- *     .style('background', 'yellow')
- *     .style('color', '#000')
- *     .style('border', '1px solid #aaaa00')
- *     .style('padding', '5px')
- *     .draggable();
- *   // .style('cursor', 'help') // override cursor
+ *   // Create a div element and style it.
+ *   stickyNote = createDiv('Note');
+ *   stickyNote.position(5, 5);
+ *   stickyNote.size(80, 20);
+ *   stickyNote.style('font-size', '16px');
+ *   stickyNote.style('font-family', 'Comic Sans MS');
+ *   stickyNote.style('background', 'orchid');
+ *   stickyNote.style('padding', '5px');
  *
- *   let gui = createDiv('')
- *     .position(5, 40)
- *     .size(85, 50)
- *     .style('font-size', '16px')
- *     .style('background', 'yellow')
- *     .style('z-index', '100')
- *     .style('border', '1px solid #00aaaa');
+ *   // Make the note draggable.
+ *   stickyNote.draggable();
  *
- *   createDiv('= PANEL =')
- *     .parent(gui)
- *     .style('background', 'cyan')
- *     .style('padding', '2px')
- *     .style('text-align', 'center')
- *     .draggable(gui);
+ *   // Create a panel div and style it.
+ *   let panel = createDiv('');
+ *   panel.position(5, 40);
+ *   panel.size(80, 50);
+ *   panel.style('background', 'orchid');
+ *   panel.style('font-size', '16px');
+ *   panel.style('padding', '5px');
+ *   panel.style('text-align', 'center');
  *
- *   createSlider(0, 100, random(100))
- *     .style('cursor', 'pointer')
- *     .size(80, 5)
- *     .parent(gui);
+ *   // Make the panel draggable.
+ *   panel.draggable();
+ *
+ *   // Create a text input and style it.
+ *   textInput = createInput('Note');
+ *   textInput.size(70);
+ *
+ *   // Add the input to the panel.
+ *   textInput.parent(panel);
+ *
+ *   // Call handleInput() when text is input.
+ *   textInput.input(handleInput);
+ *
+ *   describe(
+ *     'A gray square with two purple rectangles that move when dragged. The top rectangle displays the text that is typed into the bottom rectangle.'
+ *   );
  * }
- * </code></div>
+ *
+ * // Update stickyNote's HTML when text is input.
+ * function handleInput() {
+ *   stickyNote.html(textInput.value());
+ * }
+ * </code>
+ * </div>
  */
 p5.Element.prototype.draggable = function (elmMove) {
   let isTouch = 'ontouchstart' in window;
@@ -3653,6 +4083,7 @@ class Cue {
  * @constructor
  * @param {String} elt DOM node that is wrapped
  * @extends p5.Element
+ *
  * @example
  * <div class='notest'>
  * <code>
@@ -3664,6 +4095,8 @@ class Cue {
  *   // Create a p5.MediaElement using createCapture().
  *   capture = createCapture(VIDEO);
  *   capture.hide();
+ *
+ *   describe('A webcam feed with inverted colors.');
  * }
  *
  * function draw() {
@@ -3701,12 +4134,15 @@ class MediaElement extends p5.Element {
      *
      * @property src
      * @return {String} src
+     *
      * @example
      * <div>
      * <code>
      * let beat;
      *
      * function setup() {
+     *   createCanvas(100, 100);
+     *
      *   // Create a p5.MediaElement using createAudio().
      *   beat = createAudio('assets/beat.mp3');
      *
@@ -3751,19 +4187,26 @@ class MediaElement extends p5.Element {
 
 
   /**
-   * Play audio or video from a media element.
+   * Plays audio or video from a media element.
    *
    * @method play
    * @chainable
+   *
    * @example
    * <div>
    * <code>
    * let beat;
    *
    * function setup() {
+   *   createCanvas(100, 100);
+   *
    *   background(200);
    *
+   *   // Style the text.
    *   textAlign(CENTER);
+   *   textSize(16);
+   *
+   *   // Display a message.
    *   text('Click to play', 50, 50);
    *
    *   // Create a p5.MediaElement using createAudio().
@@ -3772,8 +4215,7 @@ class MediaElement extends p5.Element {
    *   describe('The text "Click to play" written in black on a gray background. A beat plays when the user clicks the square.');
    * }
    *
-   * // Play the beat when the user
-   * // presses the mouse.
+   * // Play the beat when the user presses the mouse.
    * function mousePressed() {
    *   beat.play();
    * }
@@ -3811,11 +4253,13 @@ class MediaElement extends p5.Element {
   }
 
   /**
-   * Stops a media element and sets its current time to zero. Calling
-   * `media.play()` will restart playing audio/video from the beginning.
+   * Stops a media element and sets its current time to 0.
+   *
+   * Calling `media.play()` will restart playing audio/video from the beginning.
    *
    * @method stop
    * @chainable
+   *
    * @example
    * <div>
    * <code>
@@ -3823,6 +4267,8 @@ class MediaElement extends p5.Element {
    * let isStopped = true;
    *
    * function setup() {
+   *   createCanvas(100, 100);
+   *
    *   // Create a p5.MediaElement using createAudio().
    *   beat = createAudio('assets/beat.mp3');
    *
@@ -3832,7 +4278,11 @@ class MediaElement extends p5.Element {
    * function draw() {
    *   background(200);
    *
+   *   // Style the text.
    *   textAlign(CENTER);
+   *   textSize(16);
+   *
+   *   // Display different instructions based on playback.
    *   if (isStopped === true) {
    *     text('Click to start', 50, 50);
    *   } else {
@@ -3840,17 +4290,14 @@ class MediaElement extends p5.Element {
    *   }
    * }
    *
-   * // Adjust playback when the user
-   * // presses the mouse.
+   * // Adjust playback when the user presses the mouse.
    * function mousePressed() {
    *   if (isStopped === true) {
-   *     // If the beat is stopped,
-   *     // play it.
+   *     // If the beat is stopped, play it.
    *     beat.play();
    *     isStopped = false;
    *   } else {
-   *     // If the beat is playing,
-   *     // stop it.
+   *     // If the beat is playing, stop it.
    *     beat.stop();
    *     isStopped = true;
    *   }
@@ -3865,11 +4312,13 @@ class MediaElement extends p5.Element {
   }
 
   /**
-   * Pauses a media element. Calling `media.play()` will resume playing
-   * audio/video from the moment it paused.
+   * Pauses a media element.
+   *
+   * Calling `media.play()` will resume playing audio/video from the moment it paused.
    *
    * @method pause
    * @chainable
+   *
    * @example
    * <div>
    * <code>
@@ -3877,6 +4326,8 @@ class MediaElement extends p5.Element {
    * let isPaused = true;
    *
    * function setup() {
+   *   createCanvas(100, 100);
+   *
    *   // Create a p5.MediaElement using createAudio().
    *   beat = createAudio('assets/beat.mp3');
    *
@@ -3886,9 +4337,11 @@ class MediaElement extends p5.Element {
    * function draw() {
    *   background(200);
    *
-   *   // Display different instructions
-   *   // based on playback.
+   *   // Style the text.
    *   textAlign(CENTER);
+   *   textSize(16);
+   *
+   *   // Display different instructions based on playback.
    *   if (isPaused === true) {
    *     text('Click to play', 50, 50);
    *   } else {
@@ -3896,8 +4349,7 @@ class MediaElement extends p5.Element {
    *   }
    * }
    *
-   * // Adjust playback when the user
-   * // presses the mouse.
+   * // Adjust playback when the user presses the mouse.
    * function mousePressed() {
    *   if (isPaused === true) {
    *     // If the beat is paused,
@@ -3920,10 +4372,11 @@ class MediaElement extends p5.Element {
   }
 
   /**
-   * Play the audio/video repeatedly in a loop.
+   * Plays the audio/video repeatedly in a loop.
    *
    * @method loop
    * @chainable
+   *
    * @example
    * <div>
    * <code>
@@ -3931,6 +4384,8 @@ class MediaElement extends p5.Element {
    * let isLooping = false;
    *
    * function setup() {
+   *   createCanvas(100, 100);
+   *
    *   background(200);
    *
    *   // Create a p5.MediaElement using createAudio().
@@ -3942,9 +4397,11 @@ class MediaElement extends p5.Element {
    * function draw() {
    *   background(200);
    *
-   *   // Display different instructions
-   *   // based on playback.
+   *   // Style the text.
    *   textAlign(CENTER);
+   *   textSize(16);
+   *
+   *   // Display different instructions based on playback.
    *   if (isLooping === true) {
    *     text('Click to stop', 50, 50);
    *   } else {
@@ -3952,17 +4409,14 @@ class MediaElement extends p5.Element {
    *   }
    * }
    *
-   * // Adjust playback when the user
-   * // presses the mouse.
+   * // Adjust playback when the user presses the mouse.
    * function mousePressed() {
    *   if (isLooping === true) {
-   *     // If the beat is looping,
-   *     // stop it.
+   *     // If the beat is looping, stop it.
    *     beat.stop();
    *     isLooping = false;
    *   } else {
-   *     // If the beat is stopped,
-   *     // loop it.
+   *     // If the beat is stopped, loop it.
    *     beat.loop();
    *     isLooping = true;
    *   }
@@ -3976,11 +4430,13 @@ class MediaElement extends p5.Element {
     return this;
   }
   /**
-   * Stops the audio/video from playing in a loop. It will stop when it
-   * reaches the end.
+   * Stops the audio/video from playing in a loop.
+   *
+   * The media will stop when it finishes playing.
    *
    * @method noLoop
    * @chainable
+   *
    * @example
    * <div>
    * <code>
@@ -3988,6 +4444,8 @@ class MediaElement extends p5.Element {
    * let isPlaying = false;
    *
    * function setup() {
+   *   createCanvas(100, 100);
+   *
    *   background(200);
    *
    *   // Create a p5.MediaElement using createAudio().
@@ -3999,9 +4457,11 @@ class MediaElement extends p5.Element {
    * function draw() {
    *   background(200);
    *
-   *   // Display different instructions
-   *   // based on playback.
+   *   // Style the text.
    *   textAlign(CENTER);
+   *   textSize(16);
+   *
+   *   // Display different instructions based on playback.
    *   if (isPlaying === true) {
    *     text('Click to stop', 50, 50);
    *   } else {
@@ -4009,17 +4469,14 @@ class MediaElement extends p5.Element {
    *   }
    * }
    *
-   * // Adjust playback when the user
-   * // presses the mouse.
+   * // Adjust playback when the user presses the mouse.
    * function mousePressed() {
    *   if (isPlaying === true) {
-   *     // If the beat is playing,
-   *     // stop it.
+   *     // If the beat is playing, stop it.
    *     beat.stop();
    *     isPlaying = false;
    *   } else {
-   *     // If the beat is stopped,
-   *     // play it.
+   *     // If the beat is stopped, play it.
    *     beat.play();
    *     isPlaying = true;
    *   }
@@ -4064,19 +4521,25 @@ class MediaElement extends p5.Element {
    * @method autoplay
    * @param {Boolean} [shouldAutoplay] whether the element should autoplay.
    * @chainable
+   *
    * @example
    * <div class='notest'>
    * <code>
+   * let video;
+   *
    * function setup() {
    *   noCanvas();
    *
-   *   // Load a video and play it automatically.
-   *   let video = createVideo('assets/fingers.mov', () => {
-   *     video.autoplay();
-   *     video.size(100, 100);
-   *   });
+   *   // Call handleVideo() once the video loads.
+   *   video = createVideo('assets/fingers.mov', handleVideo);
    *
    *   describe('A video of fingers walking on a treadmill.');
+   * }
+   *
+   * // Set the video's size and play it.
+   * function handleVideo() {
+   *   video.size(100, 100);
+   *   video.autoplay();
    * }
    * </code>
    * </div>
@@ -4087,20 +4550,26 @@ class MediaElement extends p5.Element {
    *   noCanvas();
    *
    *   // Load a video, but don't play it automatically.
-   *   let video = createVideo('assets/fingers.mov', () => {
-   *     video.autoplay(false);
-   *     video.size(100, 100);
-   *   });
+   *   let video = createVideo('assets/fingers.mov', handleVideo);
    *
    *   // Play the video when the user clicks on it.
-   *   video.mousePressed(() => {
-   *     video.play();
-   *   });
+   *   video.mousePressed(handlePress);
    *
    *   describe('An image of fingers on a treadmill. They start walking when the user double-clicks on them.');
    * }
    * </code>
    * </div>
+   *
+   * // Set the video's size and playback mode.
+   * function handleVideo() {
+   *   video.size(100, 100);
+   *   video.autoplay(false);
+   * }
+   *
+   * // Play the video.
+   * function handleClick() {
+   *   video.play();
+   * }
    */
   autoplay(val) {
     const oldVal = this.elt.getAttribute('autoplay');
@@ -4126,7 +4595,7 @@ class MediaElement extends p5.Element {
   }
 
   /**
-   * Manages the audio/video volume.
+   * Sets the audio/video volume.
    *
    * Calling `media.volume()` without an argument returns the current volume
    * as a number in the range 0 (off) to 1 (maximum).
@@ -4144,8 +4613,11 @@ class MediaElement extends p5.Element {
    * let dragon;
    *
    * function setup() {
+   *   createCanvas(100, 100);
+   *
    *   // Create a p5.MediaElement using createAudio().
    *   dragon = createAudio('assets/lucky_dragons.mp3');
+   *
    *   // Show the default media controls.
    *   dragon.showControls();
    *
@@ -4157,16 +4629,21 @@ class MediaElement extends p5.Element {
    *
    *   // Produce a number between 0 and 1.
    *   let n = 0.5 * sin(frameCount * 0.01) + 0.5;
+   *
    *   // Use n to set the volume.
    *   dragon.volume(n);
    *
-   *   // Get the current volume
-   *   // and display it.
+   *   // Get the current volume and display it.
    *   let v = dragon.volume();
-   *   // Round v to 1 decimal place
-   *   // for display.
+   *
+   *   // Round v to 1 decimal place for display.
    *   v = round(v, 1);
+   *
+   *   // Style the text.
    *   textAlign(CENTER);
+   *   textSize(16);
+   *
+   *   // Display the volume.
    *   text(`Volume: ${v}`, 50, 50);
    * }
    * </code>
@@ -4186,13 +4663,14 @@ class MediaElement extends p5.Element {
   }
 
   /**
-   * Manages the audio/video playback speed. Calling `media.speed()` returns
-   * the current speed as a number.
+   * Sets the audio/video playback speed.
    *
    * The parameter, `val`, is optional. It's a number that sets the playback
    * speed. 1 plays the media at normal speed, 0.5 plays it at half speed, 2
    * plays it at double speed, and so on. -1 plays the media at normal speed
    * in reverse.
+   *
+   * Calling `media.speed()` returns the current speed as a number.
    *
    * Note: Not all browsers support backward playback. Even if they do,
    * playback might not be smooth.
@@ -4206,6 +4684,8 @@ class MediaElement extends p5.Element {
    * let dragon;
    *
    * function setup() {
+   *   createCanvas(100, 100);
+   *
    *   // Create a p5.MediaElement using createAudio().
    *   dragon = createAudio('assets/lucky_dragons.mp3');
    *
@@ -4220,16 +4700,21 @@ class MediaElement extends p5.Element {
    *
    *   // Produce a number between 0 and 2.
    *   let n = sin(frameCount * 0.01) + 1;
+   *
    *   // Use n to set the playback speed.
    *   dragon.speed(n);
    *
-   *   // Get the current speed
-   *   // and display it.
+   *   // Get the current speed and display it.
    *   let s = dragon.speed();
-   *   // Round s to 1 decimal place
-   *   // for display.
+   *
+   *   // Round s to 1 decimal place for display.
    *   s = round(s, 1);
+   *
+   *   // Style the text.
    *   textAlign(CENTER);
+   *   textSize(16);
+   *
+   *   // Display the speed.
    *   text(`Speed: ${s}`, 50, 50);
    * }
    * </code>
@@ -4253,12 +4738,15 @@ class MediaElement extends p5.Element {
   }
 
   /**
-   * Manages the media element's playback time. Calling `media.time()`
-   * returns the number of seconds the audio/video has played. Time resets to
-   * 0 when the looping media restarts.
+   * Sets the media element's playback time.
    *
    * The parameter, `time`, is optional. It's a number that specifies the
    * time, in seconds, to jump to when playback begins.
+   *
+   * Calling `media.time()` without an argument returns the number of seconds
+   * the audio/video has played.
+   *
+   * Note: Time resets to 0 when looping media restarts.
    *
    * @method time
    * @return {Number} current time (in seconds).
@@ -4269,8 +4757,11 @@ class MediaElement extends p5.Element {
    * let dragon;
    *
    * function setup() {
+   *   createCanvas(100, 100);
+   *
    *   // Create a p5.MediaElement using createAudio().
    *   dragon = createAudio('assets/lucky_dragons.mp3');
+   *
    *   // Show the default media controls.
    *   dragon.showControls();
    *
@@ -4280,12 +4771,17 @@ class MediaElement extends p5.Element {
    * function draw() {
    *   background(200);
    *
-   *   // Display the current time.
+   *   // Get the current playback time.
    *   let s = dragon.time();
-   *   // Round s to 1 decimal place
-   *   // for display.
+   *
+   *   // Round s to 1 decimal place for display.
    *   s = round(s, 1);
+   *
+   *   // Style the text.
    *   textAlign(CENTER);
+   *   textSize(16);
+   *
+   *   // Display the playback time.
    *   text(`${s} seconds`, 50, 50);
    * }
    * </code>
@@ -4296,13 +4792,15 @@ class MediaElement extends p5.Element {
    * let dragon;
    *
    * function setup() {
+   *   createCanvas(100, 100);
+   *
    *   // Create a p5.MediaElement using createAudio().
    *   dragon = createAudio('assets/lucky_dragons.mp3');
+   *
    *   // Show the default media controls.
    *   dragon.showControls();
    *
-   *   // Jump to 2 seconds
-   *   // to start.
+   *   // Jump to 2 seconds to start.
    *   dragon.time(2);
    *
    *   describe('The text "S seconds" on a gray square with media controls beneath it. The number "S" increases as the song plays.');
@@ -4311,12 +4809,17 @@ class MediaElement extends p5.Element {
    * function draw() {
    *   background(200);
    *
-   *   // Display the current time.
+   *   // Get the current playback time.
    *   let s = dragon.time();
-   *   // Round s to 1 decimal place
-   *   // for display.
+   *
+   *   // Round s to 1 decimal place for display.
    *   s = round(s, 1);
+   *
+   *   // Style the text.
    *   textAlign(CENTER);
+   *   textSize(16);
+   *
+   *   // Display the playback time.
    *   text(`${s} seconds`, 50, 50);
    * }
    * </code>
@@ -4348,10 +4851,13 @@ class MediaElement extends p5.Element {
    * let dragon;
    *
    * function setup() {
+   *   createCanvas(100, 100);
+   *
    *   background(200);
    *
    *   // Create a p5.MediaElement using createAudio().
    *   dragon = createAudio('assets/lucky_dragons.mp3');
+   *
    *   // Show the default media controls.
    *   dragon.showControls();
    *
@@ -4363,12 +4869,15 @@ class MediaElement extends p5.Element {
    *
    *   // Calculate the time remaining.
    *   let s = dragon.duration() - dragon.time();
-   *   // Round s to 1 decimal place
-   *   // for display.
+   *
+   *   // Round s to 1 decimal place for display.
    *   s = round(s, 1);
    *
-   *   // Display the time remaining.
+   *   // Style the text.
    *   textAlign(CENTER);
+   *   textSize(16);
+   *
+   *   // Display the time remaining.
    *   text(`${s} seconds left`, 50, 50);
    * }
    * </code>
@@ -4377,7 +4886,6 @@ class MediaElement extends p5.Element {
   duration() {
     return this.elt.duration;
   }
-
   _ensureCanvas() {
     if (!this.canvas) {
       this.canvas = document.createElement('canvas');
@@ -4398,11 +4906,14 @@ class MediaElement extends p5.Element {
       }
 
       this.drawingContext.clearRect(
-        0,
-        0,
-        this.canvas.width,
-        this.canvas.height
-      );
+        0, 0, this.canvas.width, this.canvas.height);
+
+      if (this.flipped === true) {
+        this.drawingContext.save();
+        this.drawingContext.scale(-1, 1);
+        this.drawingContext.translate(-this.canvas.width, 0);
+      }
+
       this.drawingContext.drawImage(
         this.elt,
         0,
@@ -4410,6 +4921,11 @@ class MediaElement extends p5.Element {
         this.canvas.width,
         this.canvas.height
       );
+
+      if (this.flipped === true) {
+        this.drawingContext.restore();
+      }
+
       this.setModified(true);
       this._frameOnCanvas = this._pInst.frameCount;
     }
@@ -4480,16 +4996,18 @@ class MediaElement extends p5.Element {
     this._modified = value;
   }
   /**
-   * Calls a function when the audio/video reaches the end of its playback
-   * The function won't be called if the media is looping.
+   * Calls a function when the audio/video reaches the end of its playback.
    *
-   * The `p5.MediaElement` is passed as an argument to the callback function.
+   * The element is passed as an argument to the callback function.
+   *
+   * Note: The function won't be called if the media is looping.
    *
    * @method  onended
    * @param  {Function} callback function to call when playback ends.
    *                             The `p5.MediaElement` is passed as
    *                             the argument.
    * @chainable
+   *
    * @example
    * <div>
    * <code>
@@ -4498,15 +5016,13 @@ class MediaElement extends p5.Element {
    * let isDone = false;
    *
    * function setup() {
+   *   createCanvas(100, 100);
    *
    *   // Create a p5.MediaElement using createAudio().
    *   beat = createAudio('assets/beat.mp3');
    *
-   *   // Set isDone to false when
-   *   // the beat finishes.
-   *   beat.onended(() => {
-   *     isDone = true;
-   *   });
+   *   // Call handleEnd() when the beat finishes.
+   *   beat.onended(handleEnd);
    *
    *   describe('The text "Click to play" written in black on a gray square. A beat plays when the user clicks. The text "Done!" appears when the beat finishes playing.');
    * }
@@ -4514,9 +5030,11 @@ class MediaElement extends p5.Element {
    * function draw() {
    *   background(200);
    *
-   *   // Display different messages
-   *   // based on playback.
+   *   // Style the text.
    *   textAlign(CENTER);
+   *   textSize(16);
+   *
+   *   // Display different messages based on playback.
    *   if (isDone === true) {
    *     text('Done!', 50, 50);
    *   } else if (isPlaying === false) {
@@ -4526,13 +5044,17 @@ class MediaElement extends p5.Element {
    *   }
    * }
    *
-   * // Play the beat when the
-   * // user presses the mouse.
+   * // Play the beat when the user presses the mouse.
    * function mousePressed() {
    *   if (isPlaying === false) {
    *     isPlaying = true;
    *     beat.play();
    *   }
+   * }
+   *
+   * // Set isDone when playback ends.
+   * function handleEnd() {
+   *   isDone = false;
    * }
    * </code>
    * </div>
@@ -4545,12 +5067,16 @@ class MediaElement extends p5.Element {
   /*** CONNECT TO WEB AUDIO API / p5.sound.js ***/
 
   /**
-   * Send the audio output of this element to a specified audioNode or
-   * p5.sound object. If no element is provided, connects to p5's main
-   * output. That connection is established when this method is first called.
-   * All connections are removed by the .disconnect() method.
+   * Sends the element's audio to an output.
    *
-   * This method is meant to be used with the p5.sound.js addon library.
+   * The parameter, `audioNode`, can be an `AudioNode` or an object from the
+   * `p5.sound` library.
+   *
+   * If no element is provided, as in `myElement.connect()`, the element
+   * connects to the main output. All connections are removed by the
+   * `.disconnect()` method.
+   *
+   * Note: This method is meant to be used with the p5.sound.js addon library.
    *
    * @method  connect
    * @param  {AudioNode|Object} audioNode AudioNode from the Web Audio API,
@@ -4594,9 +5120,10 @@ class MediaElement extends p5.Element {
   }
 
   /**
-   * Disconnect all Web Audio routing, including to main output.
-   * This is useful if you want to re-route the output through
-   * audio effects, for example.
+   * Disconnect all Web Audio routing, including to the main output.
+   *
+   * This is useful if you want to re-route the output through audio effects,
+   * for example.
    *
    * @method  disconnect
    */
@@ -4613,21 +5140,30 @@ class MediaElement extends p5.Element {
   /**
    * Show the default
    * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement" target="_blank">HTMLMediaElement</a>
-   * controls. These vary between web browser.
+   * controls.
+   *
+   * Note: The controls vary between web browsers.
    *
    * @method  showControls
+   *
    * @example
    * <div>
    * <code>
    * function setup() {
+   *   createCanvas(100, 100);
+   *
    *   background('cornflowerblue');
    *
+   *   // Style the text.
    *   textAlign(CENTER);
    *   textSize(50);
+   *
+   *   // Display a dragon.
    *   text('🐉', 50, 50);
    *
    *   // Create a p5.MediaElement using createAudio().
    *   let dragon = createAudio('assets/lucky_dragons.mp3');
+   *
    *   // Show the default media controls.
    *   dragon.showControls();
    *
@@ -4648,6 +5184,7 @@ class MediaElement extends p5.Element {
    * controls.
    *
    * @method hideControls
+   *
    * @example
    * <div>
    * <code>
@@ -4655,8 +5192,11 @@ class MediaElement extends p5.Element {
    * let isHidden = false;
    *
    * function setup() {
+   *   createCanvas(100, 100);
+   *
    *   // Create a p5.MediaElement using createAudio().
    *   dragon = createAudio('assets/lucky_dragons.mp3');
+   *
    *   // Show the default media controls.
    *   dragon.showControls();
    *
@@ -4666,9 +5206,10 @@ class MediaElement extends p5.Element {
    * function draw() {
    *   background(200);
    *
-   *   // Display a different message when
-   *   // controls are hidden or shown.
+   *   // Style the text.
    *   textAlign(CENTER);
+   *
+   *   // Display a different message when controls are hidden or shown.
    *   if (isHidden === true) {
    *     text('Double-click to show controls', 10, 20, 80, 80);
    *   } else {
@@ -4716,12 +5257,16 @@ class MediaElement extends p5.Element {
  *                            `callback`.
  * @return {Number} id ID of this cue,
  *                     useful for `media.removeCue(id)`.
+ *
  * @example
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Create a p5.MediaElement using createAudio().
  *   let beat = createAudio('assets/beat.mp3');
+ *
  *   // Play the beat in a loop.
  *   beat.loop();
  *
@@ -4734,6 +5279,7 @@ class MediaElement extends p5.Element {
  *   describe('A red square with a beat playing in the background. Its color changes every 2 seconds while the audio plays.');
  * }
  *
+ * // Change the background color.
  * function changeBackground(c) {
  *   background(c);
  * }
@@ -4754,10 +5300,11 @@ class MediaElement extends p5.Element {
   }
 
   /**
- * Remove a callback based on its ID.
+ * Removes a callback based on its ID.
  *
  * @method removeCue
  * @param  {Number} id ID of the cue, created by `media.addCue()`.
+ *
  * @example
  * <div>
  * <code>
@@ -4765,8 +5312,11 @@ class MediaElement extends p5.Element {
  * let isRemoved = false;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Create a p5.MediaElement using createAudio().
  *   let beat = createAudio('assets/beat.mp3');
+ *
  *   // Play the beat in a loop.
  *   beat.loop();
  *
@@ -4782,6 +5332,9 @@ class MediaElement extends p5.Element {
  * }
  *
  * function draw() {
+ *   background(200);
+ *
+ *   // Display different instructions based on the available callbacks.
  *   if (isRemoved === false) {
  *     text('Double-click to remove lavender.', 10, 10, 80, 80);
  *   } else {
@@ -4789,12 +5342,12 @@ class MediaElement extends p5.Element {
  *   }
  * }
  *
+ * // Change the background color.
  * function changeBackground(c) {
  *   background(c);
  * }
  *
- * // Remove the lavender color-change cue
- * // when the user double-clicks.
+ * // Remove the lavender color-change cue when the user double-clicks.
  * function doubleClicked() {
  *   if (isRemoved === false) {
  *     beat.removeCue(lavenderID);
@@ -4821,16 +5374,20 @@ class MediaElement extends p5.Element {
  * Removes all functions scheduled with `media.addCue()`.
  *
  * @method  clearCues
+ *
  * @example
  * <div>
  * <code>
  * let isChanging = true;
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
  *   // Create a p5.MediaElement using createAudio().
  *   let beat = createAudio('assets/beat.mp3');
+ *
  *   // Play the beat in a loop.
  *   beat.loop();
  *
@@ -4844,6 +5401,9 @@ class MediaElement extends p5.Element {
  * }
  *
  * function draw() {
+ *   background(200);
+ *
+ *   // Display different instructions based on the available callbacks.
  *   if (isChanging === true) {
  *     text('Double-click to stop changing.', 10, 10, 80, 80);
  *   } else {
@@ -4851,12 +5411,12 @@ class MediaElement extends p5.Element {
  *   }
  * }
  *
+ * // Change the background color.
  * function changeBackground(c) {
  *   background(c);
  * }
  *
- * // Remove cued functions and stop
- * // changing colors when the user
+ * // Remove cued functions and stop changing colors when the user
  * // double-clicks.
  * function doubleClicked() {
  *   if (isChanging === true) {
@@ -4904,6 +5464,7 @@ p5.MediaElement = MediaElement;
  * @class p5.File
  * @constructor
  * @param {File} file wrapped file.
+ *
  * @example
  * <div>
  * <code>
@@ -4911,26 +5472,28 @@ p5.MediaElement = MediaElement;
  * // file and display its info.
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
- *   // Create a file input and place it beneath
- *   // the canvas. Call displayInfo() when
- *   // the file loads.
+ *   // Create a file input and place it beneath the canvas.
+ *   // Call displayInfo() when the file loads.
  *   let input = createFileInput(displayInfo);
  *   input.position(0, 100);
  *
  *   describe('A gray square with a file input beneath it. If the user loads a file, its info is written in black.');
  * }
  *
- * // Display the p5.File's info
- * // once it loads.
+ * // Display the p5.File's info once it loads.
  * function displayInfo(file) {
  *   background(200);
  *
  *   // Display the p5.File's name.
  *   text(file.name, 10, 10, 80, 40);
+ *
  *   // Display the p5.File's type and subtype.
  *   text(`${file.type}/${file.subtype}`, 10, 70);
+ *
  *   // Display the p5.File's size in bytes.
  *   text(file.size, 10, 90);
  * }
@@ -4944,9 +5507,10 @@ p5.MediaElement = MediaElement;
  * let img;
  *
  * function setup() {
- *   // Create a file input and place it beneath
- *   // the canvas. Call handleImage() when
- *   // the file image loads.
+ *   createCanvas(100, 100);
+ *
+ *   // Create a file input and place it beneath the canvas.
+ *   // Call handleImage() when the file image loads.
  *   let input = createFileInput(handleImage);
  *   input.position(0, 100);
  *
@@ -4962,17 +5526,14 @@ p5.MediaElement = MediaElement;
  *   }
  * }
  *
- * // Use the p5.File's data once
- * // it loads.
+ * // Use the p5.File's data once it loads.
  * function handleImage(file) {
  *   // Check the p5.File's type.
  *   if (file.type === 'image') {
- *     // Create an image using using
- *     // the p5.File's data.
+ *     // Create an image using using the p5.File's data.
  *     img = createImg(file.data, '');
  *
- *     // Hide the image element so it
- *     // doesn't appear twice.
+ *     // Hide the image element so it doesn't appear twice.
  *     img.hide();
  *   } else {
  *     img = null;
@@ -4989,6 +5550,7 @@ class File {
      * object. All `File` properties and methods are accessible.
      *
      * @property file
+     *
      * @example
      * <div>
      * <code>
@@ -4996,26 +5558,28 @@ class File {
      * // file and display its info.
      *
      * function setup() {
+     *   createCanvas(100, 100);
+     *
      *   background(200);
      *
-     *   // Create a file input and place it beneath
-     *   // the canvas. Call displayInfo() when
-     *   // the file loads.
+     *   // Create a file input and place it beneath the canvas.
+     *   // Call displayInfo() when the file loads.
      *   let input = createFileInput(displayInfo);
      *   input.position(0, 100);
      *
      *   describe('A gray square with a file input beneath it. If the user loads a file, its info is written in black.');
      * }
      *
-     * // Use the p5.File once
-     * // it loads.
+     * // Use the p5.File once it loads.
      * function displayInfo(file) {
      *   background(200);
      *
      *   // Display the p5.File's name.
      *   text(file.name, 10, 10, 80, 40);
+     *
      *   // Display the p5.File's type and subtype.
      *   text(`${file.type}/${file.subtype}`, 10, 70);
+     *
      *   // Display the p5.File's size in bytes.
      *   text(file.size, 10, 90);
      * }
@@ -5032,29 +5596,31 @@ class File {
     /**
      * The file
      * <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types" target="_blank">MIME type</a>
-     * as a string. For example, `'image'`, `'text'`, and so on.
+     * as a string.
+     *
+     * For example, `'image'` and `'text'` are both MIME types.
      *
      * @property type
+     *
      * @example
      * <div>
      * <code>
-     * // Use the file input to load a
-     * // file and display its info.
+     * // Use the file input to load a file and display its info.
      *
      * function setup() {
+     *   createCanvas(100, 100);
+     *
      *   background(200);
      *
-     *   // Create a file input and place it beneath
-     *   // the canvas. Call displayType() when
-     *   // the file loads.
+     *   // Create a file input and place it beneath the canvas.
+     *   // Call displayType() when the file loads.
      *   let input = createFileInput(displayType);
      *   input.position(0, 100);
      *
      *   describe('A gray square with a file input beneath it. If the user loads a file, its type is written in black.');
      * }
      *
-     * // Display the p5.File's type
-     * // once it loads.
+     * // Display the p5.File's type once it loads.
      * function displayType(file) {
      *   background(200);
      *
@@ -5066,11 +5632,14 @@ class File {
      */
     this.type = typeList[0];
     /**
-     * The file subtype as a string. For example, a file with an `'image'`
+     * The file subtype as a string.
+     *
+     * For example, a file with an `'image'`
      * <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types" target="_blank">MIME type</a>
      * may have a subtype such as ``png`` or ``jpeg``.
      *
      * @property subtype
+     *
      * @example
      * <div>
      * <code>
@@ -5078,19 +5647,19 @@ class File {
      * // file and display its info.
      *
      * function setup() {
+     *   createCanvas(100, 100);
+     *
      *   background(200);
      *
-     *   // Create a file input and place it beneath
-     *   // the canvas. Call displaySubtype() when
-     *   // the file loads.
+     *   // Create a file input and place it beneath the canvas.
+     *   // Call displaySubtype() when the file loads.
      *   let input = createFileInput(displaySubtype);
      *   input.position(0, 100);
      *
      *   describe('A gray square with a file input beneath it. If the user loads a file, its subtype is written in black.');
      * }
      *
-     * // Display the p5.File's type
-     * // once it loads.
+     * // Display the p5.File's type once it loads.
      * function displaySubtype(file) {
      *   background(200);
      *
@@ -5105,6 +5674,7 @@ class File {
      * The file name as a string.
      *
      * @property name
+     *
      * @example
      * <div>
      * <code>
@@ -5112,19 +5682,19 @@ class File {
      * // file and display its info.
      *
      * function setup() {
+     *   createCanvas(100, 100);
+     *
      *   background(200);
      *
-     *   // Create a file input and place it beneath
-     *   // the canvas. Call displayName() when
-     *   // the file loads.
+     *   // Create a file input and place it beneath the canvas.
+     *   // Call displayName() when the file loads.
      *   let input = createFileInput(displayName);
      *   input.position(0, 100);
      *
      *   describe('A gray square with a file input beneath it. If the user loads a file, its name is written in black.');
      * }
      *
-     * // Display the p5.File's name
-     * // once it loads.
+     * // Display the p5.File's name once it loads.
      * function displayName(file) {
      *   background(200);
      *
@@ -5139,26 +5709,26 @@ class File {
      * The number of bytes in the file.
      *
      * @property size
+     *
      * @example
      * <div>
      * <code>
-     * // Use the file input to load a
-     * // file and display its info.
+     * // Use the file input to load a file and display its info.
      *
      * function setup() {
+     *   createCanvas(100, 100);
+     *
      *   background(200);
      *
-     *   // Create a file input and place it beneath
-     *   // the canvas. Call displaySize() when
-     *   // the file loads.
+     *   // Create a file input and place it beneath the canvas.
+     *   // Call displaySize() when the file loads.
      *   let input = createFileInput(displaySize);
      *   input.position(0, 100);
      *
      *   describe('A gray square with a file input beneath it. If the user loads a file, its size in bytes is written in black.');
      * }
      *
-     * // Display the p5.File's size
-     * // in bytes once it loads.
+     * // Display the p5.File's size in bytes once it loads.
      * function displaySize(file) {
      *   background(200);
      *
@@ -5171,37 +5741,36 @@ class File {
     this.size = file.size;
 
     /**
-     * A string containing either the file's image data, text contents, or
-     * a parsed object in the case of JSON and
-     * <a href="#/p5.XML">p5.XML</a> objects.
+     * A string containing the file's data.
+     *
+     * Data can be either image data, text contents, or a parsed object in the
+     * case of JSON and <a href="#/p5.XML">p5.XML</a> objects.
      *
      * @property data
+     *
      * @example
      * <div>
      * <code>
-     * // Use the file input to load a
-     * // file and display its info.
+     * // Use the file input to load a file and display its info.
      *
      * function setup() {
+     *   createCanvas(100, 100);
+     *
      *   background(200);
      *
-     *   // Create a file input and place it beneath
-     *   // the canvas. Call displayData() when
-     *   // the file loads.
+     *   // Create a file input and place it beneath the canvas.
+     *   // Call displayData() when the file loads.
      *   let input = createFileInput(displayData);
      *   input.position(0, 100);
      *
      *   describe('A gray square with a file input beneath it. If the user loads a file, its data is written in black.');
      * }
      *
-     * // Display the p5.File's data
-     * // once it loads.
+     * // Display the p5.File's data once it loads.
      * function displayData(file) {
      *   background(200);
      *
-     *   // Display the p5.File's data,
-     *   // which looks like a random
-     *   // string of characters.
+     *   // Display the p5.File's data, which looks like a random string of characters.
      *   text(file.data, 10, 10, 80, 80);
      * }
      * </code>

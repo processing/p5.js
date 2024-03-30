@@ -307,6 +307,7 @@ module.exports = grunt => {
 
   // Create the multitasks.
   grunt.registerTask('build', [
+    'yui',
     'browserify',
     'browserify:min',
     'uglify',

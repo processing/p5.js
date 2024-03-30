@@ -580,21 +580,21 @@ p5.prototype.debugMode = function(...args) {
   if (args[0] === constants.GRID) {
     this.registerMethod(
       'post',
-      this._grid.call(this, args[1], args[2], args[3], args[4], args[5])
+      this._grid(args[1], args[2], args[3], args[4], args[5])
     );
   } else if (args[0] === constants.AXES) {
     this.registerMethod(
       'post',
-      this._axesIcon.call(this, args[1], args[2], args[3], args[4])
+      this._axesIcon(args[1], args[2], args[3], args[4])
     );
   } else {
     this.registerMethod(
       'post',
-      this._grid.call(this, args[0], args[1], args[2], args[3], args[4])
+      this._grid(args[0], args[1], args[2], args[3], args[4])
     );
     this.registerMethod(
       'post',
-      this._axesIcon.call(this, args[5], args[6], args[7], args[8])
+      this._axesIcon(args[5], args[6], args[7], args[8])
     );
   }
 };

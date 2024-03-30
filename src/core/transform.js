@@ -431,7 +431,7 @@ p5.prototype.scale = function(x, y, z) {
     x = v.x;
     y = v.y;
     z = v.z;
-  } else if (x instanceof Array) {
+  } else if (Array.isArray(x)) {
     const rg = x;
     x = rg[0];
     y = rg[1];
@@ -443,7 +443,7 @@ p5.prototype.scale = function(x, y, z) {
     z = 1;
   }
 
-  this._renderer.scale.call(this._renderer, x, y, z);
+  this._renderer.scale(x, y, z);
 
   return this;
 };

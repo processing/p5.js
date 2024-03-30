@@ -325,13 +325,7 @@ p5.Shader = class {
     modelViewProjectionMatrix.mult(projectionMatrix);
 
     if (this.isStrokeShader()) {
-      if (this._renderer._curCamera.cameraType === 'default') {
-        // strokes scale up as they approach camera, default
-        this.setUniform('uPerspective', 1);
-      } else {
-        // strokes have uniform scale regardless of distance from camera
-        this.setUniform('uPerspective', 0);
-      }
+      this.setUniform('uPerspective', this._renderer._curCamera.useLinePerspective ? 1 : 0);
     }
     this.setUniform('uViewMatrix', viewMatrix.mat4);
     this.setUniform('uProjectionMatrix', projectionMatrix.mat4);
@@ -571,21 +565,21 @@ p5.Shader = class {
    **/
 
   isLightShader() {
-    return (
-      this.attributes.aNormal !== undefined ||
-      this.uniforms.uUseLighting !== undefined ||
-      this.uniforms.uAmbientLightCount !== undefined ||
-      this.uniforms.uDirectionalLightCount !== undefined ||
-      this.uniforms.uPointLightCount !== undefined ||
-      this.uniforms.uAmbientColor !== undefined ||
-      this.uniforms.uDirectionalDiffuseColors !== undefined ||
-      this.uniforms.uDirectionalSpecularColors !== undefined ||
-      this.uniforms.uPointLightLocation !== undefined ||
-      this.uniforms.uPointLightDiffuseColors !== undefined ||
-      this.uniforms.uPointLightSpecularColors !== undefined ||
-      this.uniforms.uLightingDirection !== undefined ||
-      this.uniforms.uSpecular !== undefined
-    );
+    return [
+      this.attributes.aNormal ,
+      this.uniforms.uUseLighting ,
+      this.uniforms.uAmbientLightCount ,
+      this.uniforms.uDirectionalLightCount ,
+      this.uniforms.uPointLightCount ,
+      this.uniforms.uAmbientColor ,
+      this.uniforms.uDirectionalDiffuseColors ,
+      this.uniforms.uDirectionalSpecularColors ,
+      this.uniforms.uPointLightLocation ,
+      this.uniforms.uPointLightDiffuseColors ,
+      this.uniforms.uPointLightSpecularColors ,
+      this.uniforms.uLightingDirection ,
+      this.uniforms.uSpecular
+    ].some(x => x !== undefined);
   }
 
   isNormalShader() {

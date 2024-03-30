@@ -4,20 +4,14 @@
 - [__CONTRIBUTOR GUIDELINES__](contributor_guidelines.md)
 - [__STEWARD GUIDELINES__](steward_guidelines.md)
 - __CONTRIBUTING DOCS__
-  - [Contributing Documentation](contributing_documentation.md)
-  - [Issue Labels](issue_labels.md)
-- __CONTRIBUTING THOUGHTS__
-  - [Design Principles](design_principles.md)
-  - [How Contributions are Organized](organization.md)
+  - [Contributing to the p5.js Reference](contributing_to_the_p5.js_reference.md)
 - __CONTRIBUTING CODE__
+  - [Contributing to the p5.js Reference](contributing_to_the_p5.js_reference.md)
   - [Creating Libraries](creating_libraries.md)
-  - [Inline Documentation](inline_documentation.md)
+  - [WebGL Contribution Guide](webgl_contribution_guide.md)
   - [Unit Testing](unit_testing.md)
   - [Friendly-Error System](friendly_error_system.md)
 - __RELATED INFO__
-  - [Repository Structure](repo_structure.md)
   - [WebGL Architecture](webgl_mode_architecture.md)
-  - [Supported Browsers](supported_browsers.md)
   - [Web Accessibility](web_accessibility.md)
-  - [Custom Builds](custom_p5_build.md)
   - [Release Process](release_process.md)

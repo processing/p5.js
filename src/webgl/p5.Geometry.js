@@ -24,6 +24,9 @@ p5.Geometry = class Geometry {
     //@type [p5.Vector]
     this.vertices = [];
 
+    this.boundingBoxCache = null;
+
+
     //an array containing every vertex for stroke drawing
     this.lineVertices = new p5.DataArray();
 
@@ -72,7 +75,112 @@ p5.Geometry = class Geometry {
     if (callback instanceof Function) {
       callback.call(this);
     }
-    return this; // TODO: is this a constructor?
+  }
+
+  /**
+ * Custom bounding box calculation based on the object's vertices.
+ * The bounding box is a rectangular prism that encompasses the entire object.
+ * It is defined by the minimum and maximum coordinates along each axis, as well
+ * as the size and offset of the box.
+ *
+ * It returns an object containing the bounding box properties:
+ *
+ *   - `min`: The minimum coordinates of the bounding box as a p5.Vector.
+ *   - `max`: The maximum coordinates of the bounding box as a p5.Vector.
+ *   - `size`: The size of the bounding box as a p5.Vector.
+ *   - `offset`: The offset of the bounding box as a p5.Vector.
+ *
+ * @method calculateBoundingBox
+ * @memberof p5.Geometry.prototype
+ * @returns {Object}
+ *
+ * @example
+ *
+ * <div>
+ * <code>
+ * let particles;
+ * let button;
+ * let resultParagraph;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   button = createButton('New');
+ *   button.mousePressed(makeParticles);
+ *
+ *   resultParagraph = createElement('pre').style('width', '200px' );
+ *   resultParagraph.style('font-family', 'monospace');
+ *   resultParagraph.style('font-size', '12px');
+ *   makeParticles();
+ * }
+ *
+ * function makeParticles() {
+ *   if (particles) freeGeometry(particles);
+ *
+ *   particles = buildGeometry(() => {
+ *     for (let i = 0; i < 60; i++) {
+ *       push();
+ *       translate(
+ *         randomGaussian(0, 200),
+ *         randomGaussian(0, 100),
+ *         randomGaussian(0, 150)
+ *       );
+ *       sphere(10);
+ *       pop();
+ *     }
+ *   });
+ *
+ *   const boundingBox = particles.calculateBoundingBox();
+ *   resultParagraph.html('Bounding Box: \n' + JSON.stringify(boundingBox, null, 2));
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   noStroke();
+ *   lights();
+ *   orbitControl();
+ *   model(particles);
+ * }
+ *
+ * </code>
+ * </div>
+ *
+ */
+
+  calculateBoundingBox() {
+    if (this.boundingBoxCache) {
+      return this.boundingBoxCache; // Return cached result if available
+    }
+
+    let minVertex = new p5.Vector(
+      Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
+    let maxVertex = new p5.Vector(
+      Number.MIN_VALUE, Number.MIN_VALUE, Number.MIN_VALUE);
+
+    for (let i = 0; i < this.vertices.length; i++) {
+      let vertex = this.vertices[i];
+      minVertex.x = Math.min(minVertex.x, vertex.x);
+      minVertex.y = Math.min(minVertex.y, vertex.y);
+      minVertex.z = Math.min(minVertex.z, vertex.z);
+
+      maxVertex.x = Math.max(maxVertex.x, vertex.x);
+      maxVertex.y = Math.max(maxVertex.y, vertex.y);
+      maxVertex.z = Math.max(maxVertex.z, vertex.z);
+    }
+    // Calculate size and offset properties
+    let size = new p5.Vector(maxVertex.x - minVertex.x,
+      maxVertex.y - minVertex.y, maxVertex.z - minVertex.z);
+    let offset = new p5.Vector((minVertex.x + maxVertex.x) / 2,
+      (minVertex.y + maxVertex.y) / 2, (minVertex.z + maxVertex.z) / 2);
+
+    // Cache the result for future access
+    this.boundingBoxCache = {
+      min: minVertex,
+      max: maxVertex,
+      size: size,
+      offset: offset
+    };
+
+    return this.boundingBoxCache;
   }
 
   reset() {

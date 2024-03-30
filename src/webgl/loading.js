@@ -158,6 +158,56 @@ p5.prototype.loadModel = function(path,options) {
   model.gid = `${path}|${normalize}`;
   const self = this;
 
+  async function getMaterials(lines){
+    const parsedMaterialPromises=[];
+
+    for (let i = 0; i < lines.length; i++) {
+      const mtllibMatch = lines[i].match(/^mtllib (.+)/);
+      if (mtllibMatch) {
+        let mtlPath='';
+        const mtlFilename = mtllibMatch[1];
+        const objPathParts = path.split('/');
+        if(objPathParts.length > 1){
+          objPathParts.pop();
+          const objFolderPath = objPathParts.join('/');
+          mtlPath = objFolderPath + '/' + mtlFilename;
+        }else{
+          mtlPath = mtlFilename;
+        }
+        parsedMaterialPromises.push(
+          fileExists(mtlPath).then(exists => {
+            if (exists) {
+              return parseMtl(self, mtlPath);
+            } else {
+              console.warn(`MTL file not found or error in parsing; proceeding without materials: ${mtlPath}`);
+              return {};
+
+            }
+          }).catch(error => {
+            console.warn(`Error loading MTL file: ${mtlPath}`, error);
+            return {};
+          })
+        );
+      }
+    }
+    try {
+      const parsedMaterials = await Promise.all(parsedMaterialPromises);
+      const materials= Object.assign({}, ...parsedMaterials);
+      return materials ;
+    } catch (error) {
+      return {};
+    }
+  }
+
+
+  async function fileExists(url) {
+    try {
+      const response = await fetch(url, { method: 'HEAD' });
+      return response.ok;
+    } catch (error) {
+      return false;
+    }
+  }
   if (fileType.match(/\.stl$/i)) {
     this.httpDo(
       path,
@@ -188,31 +238,41 @@ p5.prototype.loadModel = function(path,options) {
   } else if (fileType.match(/\.obj$/i)) {
     this.loadStrings(
       path,
-      strings => {
-        parseObj(model, strings);
+      async lines => {
+        try{
+          const parsedMaterials=await getMaterials(lines);
 
-        if (normalize) {
-          model.normalize();
+          parseObj(model, lines, parsedMaterials);
+
+        }catch (error) {
+          if (failureCallback) {
+            failureCallback(error);
+          } else {
+            p5._friendlyError('Error during parsing: ' + error.message);
+          }
+          return;
         }
+        finally{
+          if (normalize) {
+            model.normalize();
+          }
+          if (flipU) {
+            model.flipU();
+          }
+          if (flipV) {
+            model.flipV();
+          }
 
-        if (flipU) {
-          model.flipU();
-        }
-
-        if (flipV) {
-          model.flipV();
-        }
-
-        self._decrementPreload();
-        if (typeof successCallback === 'function') {
-          successCallback(model);
+          self._decrementPreload();
+          if (typeof successCallback === 'function') {
+            successCallback(model);
+          }
         }
       },
       failureCallback
     );
   } else {
     p5._friendlyFileLoadError(3, path);
-
     if (failureCallback) {
       failureCallback();
     } else {
@@ -223,6 +283,52 @@ p5.prototype.loadModel = function(path,options) {
   }
   return model;
 };
+
+function parseMtl(p5,mtlPath){
+  return new Promise((resolve, reject)=>{
+    let currentMaterial = null;
+    let materials= {};
+    p5.loadStrings(
+      mtlPath,
+      lines => {
+        for (let line = 0; line < lines.length; ++line){
+          const tokens = lines[line].trim().split(/\s+/);
+          if(tokens[0] === 'newmtl') {
+            const materialName = tokens[1];
+            currentMaterial = materialName;
+            materials[currentMaterial] = {};
+          }else if (tokens[0] === 'Kd'){
+          //Diffuse color
+            materials[currentMaterial].diffuseColor = [
+              parseFloat(tokens[1]),
+              parseFloat(tokens[2]),
+              parseFloat(tokens[3])
+            ];
+          } else if (tokens[0] === 'Ka'){
+          //Ambient Color
+            materials[currentMaterial].ambientColor = [
+              parseFloat(tokens[1]),
+              parseFloat(tokens[2]),
+              parseFloat(tokens[3])
+            ];
+          }else if (tokens[0] === 'Ks'){
+          //Specular color
+            materials[currentMaterial].specularColor = [
+              parseFloat(tokens[1]),
+              parseFloat(tokens[2]),
+              parseFloat(tokens[3])
+            ];
+
+          }else if (tokens[0] === 'map_Kd') {
+          //Texture path
+            materials[currentMaterial].texturePath = tokens[1];
+          }
+        }
+        resolve(materials);
+      },reject
+    );
+  });
+}
 
 /**
  * Parse OBJ lines into model. For reference, this is what a simple model of a
@@ -235,7 +341,7 @@ p5.prototype.loadModel = function(path,options) {
  *
  * f 4 3 2 1
  */
-function parseObj(model, lines) {
+function parseObj(model, lines, materials= {}) {
   // OBJ allows a face to specify an index for a vertex (in the above example),
   // but it also allows you to specify a custom combination of vertex, UV
   // coordinate, and vertex normal. So, "3/4/3" would mean, "use vertex 3 with
@@ -250,8 +356,14 @@ function parseObj(model, lines) {
     vt: [],
     vn: []
   };
-  const indexedVerts = {};
 
+
+  // Map from source index → Map of material → destination index
+  const usedVerts = {}; // Track colored vertices
+  let currentMaterial = null;
+  const coloredVerts = new Set(); //unique vertices with color
+  let hasColoredVertices = false;
+  let hasColorlessVertices = false;
   for (let line = 0; line < lines.length; ++line) {
     // Each line is a separate object (vertex, face, vertex normal, etc)
     // For each line, split it into tokens on whitespace. The first token
@@ -259,7 +371,10 @@ function parseObj(model, lines) {
     const tokens = lines[line].trim().split(/\b\s+/);
 
     if (tokens.length > 0) {
-      if (tokens[0] === 'v' || tokens[0] === 'vn') {
+      if (tokens[0] === 'usemtl') {
+        // Switch to a new material
+        currentMaterial = tokens[1];
+      }else if (tokens[0] === 'v' || tokens[0] === 'vn') {
         // Check if this line describes a vertex or vertex normal.
         // It will have three numeric parameters.
         const vertex = new p5.Vector(
@@ -280,40 +395,44 @@ function parseObj(model, lines) {
         // OBJ faces can have more than three points. Triangulate points.
         for (let tri = 3; tri < tokens.length; ++tri) {
           const face = [];
-
           const vertexTokens = [1, tri - 1, tri];
 
           for (let tokenInd = 0; tokenInd < vertexTokens.length; ++tokenInd) {
             // Now, convert the given token into an index
             const vertString = tokens[vertexTokens[tokenInd]];
-            let vertIndex = 0;
+            let vertParts=vertString.split('/');
 
             // TODO: Faces can technically use negative numbers to refer to the
             // previous nth vertex. I haven't seen this used in practice, but
             // it might be good to implement this in the future.
 
-            if (indexedVerts[vertString] !== undefined) {
-              vertIndex = indexedVerts[vertString];
-            } else {
-              const vertParts = vertString.split('/');
-              for (let i = 0; i < vertParts.length; i++) {
-                vertParts[i] = parseInt(vertParts[i]) - 1;
-              }
-
-              vertIndex = indexedVerts[vertString] = model.vertices.length;
-              model.vertices.push(loadedVerts.v[vertParts[0]].copy());
-              if (loadedVerts.vt[vertParts[1]]) {
-                model.uvs.push(loadedVerts.vt[vertParts[1]].slice());
-              } else {
-                model.uvs.push([0, 0]);
-              }
-
-              if (loadedVerts.vn[vertParts[2]]) {
-                model.vertexNormals.push(loadedVerts.vn[vertParts[2]].copy());
-              }
+            for (let i = 0; i < vertParts.length; i++) {
+              vertParts[i] = parseInt(vertParts[i]) - 1;
             }
 
-            face.push(vertIndex);
+            if (!usedVerts[vertString]) {
+              usedVerts[vertString] = {};
+            }
+
+            if (usedVerts[vertString][currentMaterial] === undefined) {
+              const vertIndex = model.vertices.length;
+              model.vertices.push(loadedVerts.v[vertParts[0]].copy());
+              model.uvs.push(loadedVerts.vt[vertParts[1]] ?
+                loadedVerts.vt[vertParts[1]].slice() : [0, 0]);
+              model.vertexNormals.push(loadedVerts.vn[vertParts[2]] ?
+                loadedVerts.vn[vertParts[2]].copy() : new p5.Vector());
+
+              usedVerts[vertString][currentMaterial] = vertIndex;
+              face.push(vertIndex);
+              if (currentMaterial
+                && materials[currentMaterial]
+                && materials[currentMaterial].diffuseColor) {
+                // Mark this vertex as colored
+                coloredVerts.add(loadedVerts.v[vertParts[0]]); //since a set would only push unique values
+              }
+            } else {
+              face.push(usedVerts[vertString][currentMaterial]);
+            }
           }
 
           if (
@@ -322,6 +441,23 @@ function parseObj(model, lines) {
             face[1] !== face[2]
           ) {
             model.faces.push(face);
+            //same material for all vertices in a particular face
+            if (currentMaterial
+              && materials[currentMaterial]
+              && materials[currentMaterial].diffuseColor) {
+              hasColoredVertices=true;
+              //flag to track color or no color model
+              hasColoredVertices = true;
+              const materialDiffuseColor =
+              materials[currentMaterial].diffuseColor;
+              for (let i = 0; i < face.length; i++) {
+                model.vertexColors.push(materialDiffuseColor[0]);
+                model.vertexColors.push(materialDiffuseColor[1]);
+                model.vertexColors.push(materialDiffuseColor[2]);
+              }
+            }else{
+              hasColorlessVertices=true;
+            }
           }
         }
       }
@@ -331,7 +467,10 @@ function parseObj(model, lines) {
   if (model.vertexNormals.length === 0) {
     model.computeNormals();
   }
-
+  if (hasColoredVertices === hasColorlessVertices) {
+    // If both are true or both are false, throw an error because the model is inconsistent
+    throw new Error('Model coloring is inconsistent. Either all vertices should have colors or none should.');
+  }
   return model;
 }
 

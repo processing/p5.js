@@ -8,10 +8,17 @@
 import p5 from '../core/main';
 
 /**
- * Creates a new <a href="#/p5.Vector">p5.Vector</a> object. A vector is like
- * an arrow pointing in space. Vectors have both magnitude (length)
- * and direction. Calling `createVector()` without arguments sets the new
- * vector's components to 0.
+ * Creates a new <a href="#/p5.Vector">p5.Vector</a> object.
+ *
+ * A vector can be thought of in different ways. In one view, a vector is like
+ * an arrow pointing in space. Vectors have both magnitude (length) and
+ * direction. This view is helpful for programming motion.
+ *
+ * A vector's components determine its magnitude and direction. For example,
+ * calling `createVector(3, 4)` creates a new
+ * <a href="#/p5.Vector">p5.Vector</a> object with an x-component of 3 and a
+ * y-component of 4. From the origin, this vector's tip is 3 units to the
+ * right and 4 units down.
  *
  * <a href="#/p5.Vector">p5.Vector</a> objects are often used to program
  * motion because they simplify the math. For example, a moving ball has a
@@ -28,19 +35,28 @@ import p5 from '../core/main';
  * @param {Number} [y] y component of the vector.
  * @param {Number} [z] z component of the vector.
  * @return {p5.Vector} new <a href="#/p5.Vector">p5.Vector</a> object.
+ *
  * @example
  * <div>
  * <code>
- * let p1 = createVector(25, 25);
- * let p2 = createVector(50, 50);
- * let p3 = createVector(75, 75);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * strokeWeight(5);
- * point(p1);
- * point(p2);
- * point(p3);
+ *   background(200);
  *
- * describe('Three black dots form a diagonal line from top left to bottom right.');
+ *   // Create p5.Vector objects.
+ *   let p1 = createVector(25, 25);
+ *   let p2 = createVector(50, 50);
+ *   let p3 = createVector(75, 75);
+ *
+ *   // Draw the dots.
+ *   strokeWeight(5);
+ *   point(p1);
+ *   point(p2);
+ *   point(p3);
+ *
+ *   describe('Three black dots form a diagonal line from top left to bottom right.');
+ * }
  * </code>
  * </div>
  *
@@ -51,23 +67,29 @@ import p5 from '../core/main';
  *
  * function setup() {
  *   createCanvas(100, 100);
- *   pos = createVector(width / 2, height);
+ *
+ *   // Create p5.Vector objects.
+ *   pos = createVector(50, 100);
  *   vel = createVector(0, -1);
+ *
+ *   describe('A black dot moves from bottom to top on a gray square. The dot reappears at the bottom when it reaches the top.');
  * }
  *
  * function draw() {
  *   background(200);
  *
+ *   // Add velocity to position.
  *   pos.add(vel);
  *
+ *   // If the dot reaches the top of the canvas,
+ *   // restart from the bottom.
  *   if (pos.y < 0) {
- *     pos.y = height;
+ *     pos.y = 100;
  *   }
  *
+ *   // Draw the dot.
  *   strokeWeight(5);
  *   point(pos);
- *
- *   describe('A black dot moves from bottom to top on a gray square. The dot reappears at the bottom when it reaches the top.');
  * }
  * </code>
  * </div>

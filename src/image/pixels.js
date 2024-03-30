@@ -10,9 +10,10 @@ import Filters from './filters';
 import '../color/p5.Color';
 
 /**
- * An array containing the color of each pixel on the canvas. Colors are
- * stored as numbers representing red, green, blue, and alpha (RGBA) values.
- * `pixels` is a one-dimensional array for performance reasons.
+ * An array containing the color of each pixel on the canvas.
+ *
+ * Colors are stored as numbers representing red, green, blue, and alpha
+ * (RGBA) values. `pixels` is a one-dimensional array for performance reasons.
  *
  * Each pixel occupies four elements in the `pixels` array, one for each RGBA
  * value. For example, the pixel at coordinates (0, 0) stores its RGBA values
@@ -39,73 +40,129 @@ import '../color/p5.Color';
  * @example
  * <div>
  * <code>
- * loadPixels();
- * let x = 50;
- * let y = 50;
- * let d = pixelDensity();
- * for (let i = 0; i < d; i += 1) {
- *   for (let j = 0; j < d; j += 1) {
- *     let index = 4 * ((y * d + j) * width * d + (x * d + i));
- *     // Red.
- *     pixels[index] = 0;
- *     // Green.
- *     pixels[index + 1] = 0;
- *     // Blue.
- *     pixels[index + 2] = 0;
- *     // Alpha.
- *     pixels[index + 3] = 255;
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Load the pixels array.
+ *   loadPixels();
+ *
+ *   // Set the dot's coordinates.
+ *   let x = 50;
+ *   let y = 50;
+ *
+ *   // Get the pixel density.
+ *   let d = pixelDensity();
+ *
+ *   // Set the pixel(s) at the center of the canvas black.
+ *   for (let i = 0; i < d; i += 1) {
+ *     for (let j = 0; j < d; j += 1) {
+ *       let index = 4 * ((y * d + j) * width * d + (x * d + i));
+ *       // Red.
+ *       pixels[index] = 0;
+ *       // Green.
+ *       pixels[index + 1] = 0;
+ *       // Blue.
+ *       pixels[index + 2] = 0;
+ *       // Alpha.
+ *       pixels[index + 3] = 255;
+ *     }
  *   }
- * }
- * updatePixels();
  *
- * describe('A black dot in the middle of a gray rectangle.');
+ *   // Update the canvas.
+ *   updatePixels();
+ *
+ *   describe('A black dot in the middle of a gray rectangle.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * loadPixels();
- * let d = pixelDensity();
- * let halfImage = 4 * (d * width) * (d * height / 2);
- * for (let i = 0; i < halfImage; i += 4) {
- *   // Red.
- *   pixels[i] = 255;
- *   // Green.
- *   pixels[i + 1] = 0;
- *   // Blue.
- *   pixels[i + 2] = 0;
- *   // Alpha.
- *   pixels[i + 3] = 255;
- * }
- * updatePixels();
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * describe('A red rectangle drawn above a gray rectangle.');
+ *   // Load the pixels array.
+ *   loadPixels();
+ *
+ *   // Get the pixel density.
+ *   let d = pixelDensity();
+ *
+ *   // Calculate the halfway index in the pixels array.
+ *   let halfImage = 4 * (d * width) * (d * height / 2);
+ *
+ *   // Make the top half of the canvas red.
+ *   for (let i = 0; i < halfImage; i += 4) {
+ *     // Red.
+ *     pixels[i] = 255;
+ *     // Green.
+ *     pixels[i + 1] = 0;
+ *     // Blue.
+ *     pixels[i + 2] = 0;
+ *     // Alpha.
+ *     pixels[i + 3] = 255;
+ *   }
+ *
+ *   // Update the canvas.
+ *   updatePixels();
+ *
+ *   describe('A red rectangle drawn above a gray rectangle.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * let pink = color(255, 102, 204);
- * loadPixels();
- * let d = pixelDensity();
- * let halfImage = 4 * (d * width) * (d * height / 2);
- * for (let i = 0; i < halfImage; i += 4) {
- *   pixels[i] = red(pink);
- *   pixels[i + 1] = green(pink);
- *   pixels[i + 2] = blue(pink);
- *   pixels[i + 3] = alpha(pink);
- * }
- * updatePixels();
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * describe('A pink rectangle drawn above a gray rectangle.');
+ *   // Create a p5.Color object.
+ *   let pink = color(255, 102, 204);
+ *
+ *   // Load the pixels array.
+ *   loadPixels();
+ *
+ *   // Get the pixel density.
+ *   let d = pixelDensity();
+ *
+ *   // Calculate the halfway index in the pixels array.
+ *   let halfImage = 4 * (d * width) * (d * height / 2);
+ *
+ *   // Make the top half of the canvas red.
+ *   for (let i = 0; i < halfImage; i += 4) {
+ *     pixels[i] = red(pink);
+ *     pixels[i + 1] = green(pink);
+ *     pixels[i + 2] = blue(pink);
+ *     pixels[i + 3] = alpha(pink);
+ *   }
+ *
+ *   // Update the canvas.
+ *   updatePixels();
+ *
+ *   describe('A pink rectangle drawn above a gray rectangle.');
+ * }
  * </code>
  * </div>
  */
 p5.prototype.pixels = [];
 
 /**
- * Copies a region of pixels from one image to another. The `blendMode`
- * parameter blends the images' colors to create different effects.
+ * Copies a region of pixels from one image to another.
+ *
+ * The first parameter, `srcImage`, is the
+ * <a href="#/p5.Image">p5.Image</a> object to blend.
+ *
+ * The next four parameters, `sx`, `sy`, `sw`, and `sh` determine the region
+ * to blend from the source image. `(sx, sy)` is the top-left corner of the
+ * region. `sw` and `sh` are the regions width and height.
+ *
+ * The next four parameters, `dx`, `dy`, `dw`, and `dh` determine the region
+ * of the canvas to blend into. `(dx, dy)` is the top-left corner of the
+ * region. `dw` and `dh` are the regions width and height.
+ *
+ * The tenth parameter, `blendMode`, sets the effect used to blend the images'
+ * colors. The options are `BLEND`, `DARKEST`, `LIGHTEST`, `DIFFERENCE`,
+ * `MULTIPLY`, `EXCLUSION`, `SCREEN`, `REPLACE`, `OVERLAY`, `HARD_LIGHT`,
+ * `SOFT_LIGHT`, `DODGE`, `BURN`, `ADD`, or `NORMAL`
  *
  * @method blend
  * @param  {p5.Image} srcImage source image.
@@ -128,14 +185,22 @@ p5.prototype.pixels = [];
  * let img0;
  * let img1;
  *
+ * // Load the images.
  * function preload() {
  *   img0 = loadImage('assets/rockies.jpg');
  *   img1 = loadImage('assets/bricks_third.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Use the mountains as the background.
  *   background(img0);
+ *
+ *   // Display the bricks.
  *   image(img1, 0, 0);
+ *
+ *   // Display the bricks faded into the landscape.
  *   blend(img1, 0, 0, 33, 100, 67, 0, 33, 100, LIGHTEST);
  *
  *   describe('A wall of bricks in front of a mountain landscape. The same wall of bricks appears faded on the right of the image.');
@@ -148,14 +213,22 @@ p5.prototype.pixels = [];
  * let img0;
  * let img1;
  *
+ * // Load the images.
  * function preload() {
  *   img0 = loadImage('assets/rockies.jpg');
  *   img1 = loadImage('assets/bricks_third.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Use the mountains as the background.
  *   background(img0);
+ *
+ *   // Display the bricks.
  *   image(img1, 0, 0);
+ *
+ *   // Display the bricks partially transparent.
  *   blend(img1, 0, 0, 33, 100, 67, 0, 33, 100, DARKEST);
  *
  *   describe('A wall of bricks in front of a mountain landscape. The same wall of bricks appears transparent on the right of the image.');
@@ -168,14 +241,22 @@ p5.prototype.pixels = [];
  * let img0;
  * let img1;
  *
+ * // Load the images.
  * function preload() {
  *   img0 = loadImage('assets/rockies.jpg');
  *   img1 = loadImage('assets/bricks_third.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Use the mountains as the background.
  *   background(img0);
+ *
+ *   // Display the bricks.
  *   image(img1, 0, 0);
+ *
+ *   // Display the bricks washed out into the landscape.
  *   blend(img1, 0, 0, 33, 100, 67, 0, 33, 100, ADD);
  *
  *   describe('A wall of bricks in front of a mountain landscape. The same wall of bricks appears washed out on the right of the image.');
@@ -205,10 +286,21 @@ p5.prototype.blend = function(...args) {
 };
 
 /**
- * Copies pixels from a source image to a region of the canvas. The source
- * image can be the canvas itself or a <a href="#/p5.Image">p5.Image</a>
- * object. `copy()` will scale pixels from the source region if it isn't the
- * same size as the destination region.
+ * Copies pixels from a source image to a region of the canvas.
+ *
+ * The first parameter, `srcImage`, is the
+ * <a href="#/p5.Image">p5.Image</a> object to blend. The source image can be
+ * the canvas itself or a
+ * <a href="#/p5.Image">p5.Image</a> object. `copy()` will scale pixels from
+ * the source region if it isn't the same size as the destination region.
+ *
+ * The next four parameters, `sx`, `sy`, `sw`, and `sh` determine the region
+ * to copy from the source image. `(sx, sy)` is the top-left corner of the
+ * region. `sw` and `sh` are the region's width and height.
+ *
+ * The next four parameters, `dx`, `dy`, `dw`, and `dh` determine the region
+ * of the canvas to copy into. `(dx, dy)` is the top-left corner of the
+ * region. `dw` and `dh` are the region's width and height.
  *
  * @method copy
  * @param  {p5.Image|p5.Element} srcImage source image.
@@ -226,14 +318,21 @@ p5.prototype.blend = function(...args) {
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/rockies.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Use the mountains as the background.
  *   background(img);
+ *
+ *   // Copy a region of pixels to another spot.
  *   copy(img, 7, 22, 10, 10, 35, 25, 50, 50);
- *   // Show copied region.
+ *
+ *   // Outline the copied region.
  *   stroke(255);
  *   noFill();
  *   square(7, 22, 10);
@@ -341,7 +440,9 @@ p5.prototype._copyHelper = (
 };
 
 /**
- * Applies an image filter to the canvas. The preset options are:
+ * Applies an image filter to the canvas.
+ *
+ * The preset options are:
  *
  * `INVERT`
  * Inverts the colors in the image. No parameter is used.
@@ -379,7 +480,7 @@ p5.prototype._copyHelper = (
  * `filter(BLUR, false)`. This may be useful to keep computation off the GPU
  * or to work around a lack of WebGL support.
  *
- * In `WEBGL` mode, `filter()` can also use custom shaders. See
+ * In WebgL mode, `filter()` can also use custom shaders. See
  * <a href="#/p5/createFilterShader">createFilterShader()</a> for more
  * information.
  *
@@ -397,12 +498,18 @@ p5.prototype._copyHelper = (
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Display the image.
  *   image(img, 0, 0);
+ *
+ *   // Apply the INVERT filter.
  *   filter(INVERT);
  *
  *   describe('A blue brick wall.');
@@ -414,12 +521,18 @@ p5.prototype._copyHelper = (
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Display the image.
  *   image(img, 0, 0);
+ *
+ *   // Apply the GRAY filter.
  *   filter(GRAY);
  *
  *   describe('A brick wall drawn in grayscale.');
@@ -431,12 +544,18 @@ p5.prototype._copyHelper = (
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Display the image.
  *   image(img, 0, 0);
+ *
+ *   // Apply the THRESHOLD filter.
  *   filter(THRESHOLD);
  *
  *   describe('A brick wall drawn in black and white.');
@@ -448,12 +567,18 @@ p5.prototype._copyHelper = (
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Display the image.
  *   image(img, 0, 0);
+ *
+ *   // Apply the OPAQUE filter.
  *   filter(OPAQUE);
  *
  *   describe('A red brick wall.');
@@ -465,12 +590,18 @@ p5.prototype._copyHelper = (
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Display the image.
  *   image(img, 0, 0);
+ *
+ *   // Apply the POSTERIZE filter.
  *   filter(POSTERIZE, 3);
  *
  *   describe('An image of a red brick wall drawn with limited color palette.');
@@ -482,12 +613,18 @@ p5.prototype._copyHelper = (
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Display the image.
  *   image(img, 0, 0);
+ *
+ *   // Apply the BLUR filter.
  *   filter(BLUR, 3);
  *
  *   describe('A blurry image of a red brick wall.');
@@ -499,12 +636,18 @@ p5.prototype._copyHelper = (
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Display the image.
  *   image(img, 0, 0);
+ *
+ *   // Apply the DILATE filter.
  *   filter(DILATE);
  *
  *   describe('A red brick wall with bright lines between each brick.');
@@ -516,12 +659,18 @@ p5.prototype._copyHelper = (
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Display the image.
  *   image(img, 0, 0);
+ *
+ *   // Apply the ERODE filter.
  *   filter(ERODE);
  *
  *   describe('A red brick wall with faint lines between each brick.');
@@ -533,12 +682,18 @@ p5.prototype._copyHelper = (
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Display the image.
  *   image(img, 0, 0);
+ *
+ *   // Apply the BLUR filter.
  *   // Don't use WebGL.
  *   filter(BLUR, 3, false);
  *
@@ -568,7 +723,7 @@ p5.prototype.getFilterGraphicsLayer = function() {
  *                                   frag shader using a `tex0` uniform.
  */
 p5.prototype.filter = function(...args) {
-  p5._validateParameters('filter', arguments);
+  p5._validateParameters('filter', args);
 
   let { shader, operation, value, useWebGL } = parseFilterArgs(...args);
 
@@ -695,14 +850,22 @@ function parseFilterArgs(...args) {
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/rockies.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Display the image.
  *   image(img, 0, 0);
+ *
+ *   // Get the entire canvas.
  *   let c = get();
- *   image(c, width / 2, 0);
+ *
+ *   // Display half the canvas.
+ *   image(c, 50, 0);
  *
  *   describe('Two identical mountain landscapes shown side-by-side.');
  * }
@@ -713,15 +876,25 @@ function parseFilterArgs(...args) {
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/rockies.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Display the image.
  *   image(img, 0, 0);
+ *
+ *   // Get the color of a pixel.
  *   let c = get(50, 90);
+ *
+ *   // Style the square with the pixel's color.
  *   fill(c);
  *   noStroke();
+ *
+ *   // Display the square.
  *   square(25, 25, 50);
  *
  *   describe('A mountain landscape with an olive green square in its center.');
@@ -733,14 +906,22 @@ function parseFilterArgs(...args) {
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/rockies.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Display the image.
  *   image(img, 0, 0);
- *   let c = get(0, 0, width / 2, height / 2);
- *   image(c, width / 2, height / 2);
+ *
+ *   // Get a region of the image.
+ *   let c = get(0, 0, 50, 50);
+ *
+ *   // Display the region.
+ *   image(c, 50, 50);
  *
  *   describe('A mountain landscape drawn on top of another mountain landscape.');
  * }
@@ -764,8 +945,9 @@ p5.prototype.get = function(x, y, w, h) {
 
 /**
  * Loads the current value of each pixel on the canvas into the
- * <a href="#/p5/pixels">pixels</a> array. This
- * function must be called before reading from or writing to
+ * <a href="#/p5/pixels">pixels</a> array.
+ *
+ * `loadPixels()` must be called before reading from or writing to
  * <a href="#/p5/pixels">pixels</a>.
  *
  * @method loadPixels
@@ -774,18 +956,32 @@ p5.prototype.get = function(x, y, w, h) {
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/rockies.jpg');
  * }
  *
  * function setup() {
- *   image(img, 0, 0, width, height);
+ *   createCanvas(100, 100);
+ *
+ *   // Display the image.
+ *   image(img, 0, 0, 100, 100);
+ *
+ *   // Get the pixel density.
  *   let d = pixelDensity();
+ *
+ *   // Calculate the halfway index in the pixels array.
  *   let halfImage = 4 * (d * width) * (d * height / 2);
+ *
+ *   // Load the pixels array.
  *   loadPixels();
+ *
+ *   // Copy the top half of the canvas to the bottom.
  *   for (let i = 0; i < halfImage; i += 1) {
  *     pixels[i + halfImage] = pixels[i];
  *   }
+ *
+ *   // Update the canvas.
  *   updatePixels();
  *
  *   describe('Two identical images of mountain landscapes, one on top of the other.');
@@ -823,40 +1019,72 @@ p5.prototype.loadPixels = function(...args) {
  * @example
  * <div>
  * <code>
- * set(30, 20, 0);
- * set(85, 20, 0);
- * set(85, 75, 0);
- * set(30, 75, 0);
- * updatePixels();
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * describe('Four black dots arranged in a square drawn on a gray background.');
- * </code>
- * </div>
+ *   background(200);
  *
- * <div>
- * <code>
- * let black = color(0);
- * set(30, 20, black);
- * set(85, 20, black);
- * set(85, 75, black);
- * set(30, 75, black);
- * updatePixels();
+ *   // Set four pixels to black.
+ *   set(30, 20, 0);
+ *   set(85, 20, 0);
+ *   set(85, 75, 0);
+ *   set(30, 75, 0);
  *
- * describe('Four black dots arranged in a square drawn on a gray background.');
- * </code>
- * </div>
+ *   // Update the canvas.
+ *   updatePixels();
  *
- * <div>
- * <code>
- * for (let x = 0; x < width; x += 1) {
- *   for (let y = 0; y < height; y += 1) {
- *     let c = map(x, 0, width, 0, 255);
- *     set(x, y, c);
- *   }
+ *   describe('Four black dots arranged in a square drawn on a gray background.');
  * }
- * updatePixels();
+ * </code>
+ * </div>
  *
- * describe('A horiztonal color gradient from black to white.');
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a p5.Color object.
+ *   let black = color(0);
+ *
+ *   // Set four pixels to black.
+ *   set(30, 20, black);
+ *   set(85, 20, black);
+ *   set(85, 75, black);
+ *   set(30, 75, black);
+ *
+ *   // Update the canvas.
+ *   updatePixels();
+ *
+ *   describe('Four black dots arranged in a square drawn on a gray background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(255);
+ *
+ *   // Draw a horizontal color gradient.
+ *   for (let x = 0; x < 100; x += 1) {
+ *     for (let y = 0; y < 100; y += 1) {
+ *       // Calculate the grayscale value.
+ *       let c = map(x, 0, 100, 0, 255);
+ *
+ *       // Set the pixel using the grayscale value.
+ *       set(x, y, c);
+ *     }
+ *   }
+ *
+ *   // Update the canvas.
+ *   updatePixels();
+ *
+ *   describe('A horiztonal color gradient from black to white.');
+ * }
  * </code>
  * </div>
  *
@@ -864,12 +1092,18 @@ p5.prototype.loadPixels = function(...args) {
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/rockies.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Use the image to set all pixels.
  *   set(0, 0, img);
+ *
+ *   // Update the canvas.
  *   updatePixels();
  *
  *   describe('An image of a mountain landscape.');
@@ -902,18 +1136,32 @@ p5.prototype.set = function(x, y, imgOrCol) {
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/rockies.jpg');
  * }
  *
  * function setup() {
- *   image(img, 0, 0, width, height);
+ *   createCanvas(100, 100);
+ *
+ *   // Display the image.
+ *   image(img, 0, 0, 100, 100);
+ *
+ *   // Get the pixel density.
  *   let d = pixelDensity();
+ *
+ *   // Calculate the halfway index in the pixels array.
  *   let halfImage = 4 * (d * width) * (d * height / 2);
+ *
+ *   // Load the pixels array.
  *   loadPixels();
+ *
+ *   // Copy the top half of the canvas to the bottom.
  *   for (let i = 0; i < halfImage; i += 1) {
  *     pixels[i + halfImage] = pixels[i];
  *   }
+ *
+ *   // Update the canvas.
  *   updatePixels();
  *
  *   describe('Two identical images of mountain landscapes, one on top of the other.');
