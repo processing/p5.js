@@ -1500,8 +1500,8 @@ p5.Camera = class Camera {
     this.cameraMatrix.translate([tx, ty, tz]);
 
     if (this._isActive()) {
-      this._renderer.uModelMatrix.set(this.modelMatrix);
-      this._renderer.uViewMatrix.set(this.viewMatrix);
+      this._renderer.uModelMatrix.reset();
+      this._renderer.uViewMatrix.set(this.cameraMatrix);
     }
     return this;
   }

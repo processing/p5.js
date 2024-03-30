@@ -849,7 +849,7 @@ class Framebuffer {
     this.target.resetMatrix();
     this.target._renderer.uViewMatrix
       .set(this.target._renderer._curCamera.cameraMatrix);
-    this.target._renderer.uModelMatrix.set(this.target.modelMatrix);
+    this.target._renderer.uModelMatrix.reset();
   }
 
   /**

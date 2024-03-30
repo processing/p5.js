@@ -317,9 +317,10 @@ p5.Shader = class {
 
   _setMatrixUniforms() {
     const modelMatrix = this._renderer.uModelMatrix;
-    const viewMatrix = this._renderer._curCamera.cameraMatrix;
+    const viewMatrix = this._renderer.uViewMatrix;
     const projectionMatrix = this._renderer.uPMatrix;
     const modelViewMatrix = (modelMatrix.copy()).mult(viewMatrix);
+    this._renderer.uMVMatrix = modelViewMatrix;
 
     const modelViewProjectionMatrix = modelViewMatrix.copy();
     modelViewProjectionMatrix.mult(projectionMatrix);
@@ -340,8 +341,7 @@ p5.Shader = class {
       this.setUniform('uNormalMatrix', this._renderer.uNMatrix.mat3);
     }
     if (this.uniforms.uCameraRotation) {
-      this._renderer.curMatrix.inverseTranspose(this._renderer.
-        _curCamera.cameraMatrix);
+      this._renderer.curMatrix.inverseTranspose(this._renderer.uViewMatrix);
       this.setUniform('uCameraRotation', this._renderer.curMatrix.mat3);
     }
   }

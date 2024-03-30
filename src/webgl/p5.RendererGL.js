@@ -1609,8 +1609,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     properties.uPMatrix = this.uPMatrix.copy();
     properties._curCamera = this._curCamera;
 
-    this.uViewMatrix.set(this._curCamera.cameraMatrix);
-
     // make a copy of the current camera for the push state
     // this preserves any references stored using 'createCamera'
     this._curCamera = this._curCamera.copy();
