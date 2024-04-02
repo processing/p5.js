@@ -1,4 +1,4 @@
-<!-- What to expect as a steward, and a playbook for common situations. -->
+<!-- Learn about how to manage and review contributions to p5.js. -->
 
 # Steward Guidelines
 

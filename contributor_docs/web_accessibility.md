@@ -1,4 +1,4 @@
-<!-- The features p5.js provides to help keep sketches accessible to everyone. -->
+<!-- Understand and use p5.js’ Web Accessibility features to make your sketch accessible. -->
 
 # p5.js Web Accessibility
 
