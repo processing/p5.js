@@ -1,4 +1,4 @@
-<!-- Learn how to write tests for p5.js, and help us keep the library bug-free.  -->
+<!-- Guide to writing tests for p5.js source code.  -->
 
 # Unit Testing
 
