@@ -1,4 +1,4 @@
-<!-- Start here if you are looking to participate on GitHub! -->
+<!-- Essential information about contributing to p5.js on GitHub. -->
 
 # Contributor Guidelines
 

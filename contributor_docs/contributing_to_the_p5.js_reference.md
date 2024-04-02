@@ -1,4 +1,4 @@
-<!-- A tour of the source code powering the Reference section of the p5.js website, and a guide to help contribute to it. -->
+<!-- Write and edit p5.js reference using the right format. -->
 
 # Contributing to the p5.js Reference
 

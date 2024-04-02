@@ -1,4 +1,4 @@
-<!-- Step-by-step instructions on how to create an addon library. -->
+<!-- Extend p5.js functionalities with your own addon library. -->
 
 # Creating an Addon Library
 
