@@ -163,7 +163,7 @@ function getTouchInfo(canvas, w, h, e, i = 0) {
  * On touchscreen devices, <a href="#/p5/mousePressed">mousePressed()</a> will
  * run when a user’s touch starts if `touchStarted()` isn’t declared. If
  * `touchStarted()` is declared, then `touchStarted()` will run when a user’s
- * touch ends and <a href="#/p5/mousePressed">mousePressed()</a> won’t.
+ * touch starts and <a href="#/p5/mousePressed">mousePressed()</a> won’t.
  *
  * Note: `touchStarted()`, <a href="#/p5/touchEnded">touchEnded()</a>, and
  * <a href="#/p5/touchMoved">touchMoved()</a> are all related.
