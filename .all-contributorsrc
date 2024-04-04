@@ -5840,6 +5840,15 @@
         "tutorial",
         "example"
       ]
+    },
+    {
+      "login": "togekisse",
+      "name": "togekisse",
+      "avatar_url": "https://avatars.githubusercontent.com/u/78539685?v=4",
+      "profile": "https://github.com/togekisse",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "repoType": "github",
