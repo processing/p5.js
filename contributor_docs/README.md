@@ -38,8 +38,18 @@ Most of the time we will stick with this workflow quite strictly and, especially
 
 **We see contributing to p5.js as a learning opportunity** and we don't measure sucess by only looking at the volume of contributions we received. There is no time limit on how long it takes you to complete a contribution, so take your time and work at your own pace (we may check in after a long period of inactivity). Ask for help from any of the stewards or maintainers if you need them and we'll try our best to support you.
 
-## Non-source code contribution
-There are many more ways to contribute to p5.js through non-source code contribution than can be exhaustively listed here, some of the ways may also involve working with some of the p5.js repositories (such as adding examples, writing tutorials for the website, etc.). Depending on what the planned contribution is, we may be able to support you in different ways so do reach out to us via any channel available to you (email, social media, [Discourse forum](https://discourse.processing.org/c/p5js/10), Discord, etc).
-
 ## [Stewards and maintainers](./steward_guidelines.md)
 For information related to area stewards or general maintenance of p5.js GitHub repository, please check out the [steward guidelines](./steward_guidelines.md).
+
+## Non-source code contribution
+There are many more ways to contribute to p5.js through non-source code contribution than can be exhaustively listed here. Some of the ways may also involve working with some of the p5.js repositories (such as adding examples, writing tutorials for the website, etc.). Depending on what the planned contribution is, we may be able to support you in different ways so do reach out to us via any channel available to you (email, social media, [Discourse forum](https://discourse.processing.org/c/p5js/10), Discord, etc). Here are just some ways you can contribute:
+
+**Create.** Inspire others with your sketches. p5.js is looking for designers, artists, coders, and programmers to showcase their creative, amazing work on the community sketch gallery. Don’t forget to tag @p5xjs on [Instagram](https://www.instagram.com/p5xjs/) and [X](https://twitter.com/p5xjs/), and we will do our best to share what you're doing.
+
+**Teach.** Teach a workshop, a class, a friend, or a collaborator! Share a syllabus, video tutorials, or other teaching materials with the community.
+
+**Organize.** Host p5.js events. Curate a p5.js exhibition. Activate your local p5.js community.
+
+**Donate.** p5.js is an open-source project made for and by artists, supported by a dedicated community of volunteers. It is and will always remain free to all, without restrictions. If p5.js has made an impact in your life, and you're in a position to give back, please consider making a donation to the Processing Foundation. Your donations directly fund the development of new features, better community support, improved documentation, and more. Thank you for your support.
+
+p5.js is designed to be inclusive and welcomes contributions from everyone, regardless of their background, resources, or level of experience. If you thought of another way you'd like to contribute that you don’t see here, [let us know](mailto:hello@p5js.org)! Your participation is important and contributes to the lively community that is p5.js.
