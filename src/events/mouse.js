@@ -189,7 +189,7 @@ p5.prototype._hasMouseInteracted = false;
  *
  * // Load a font for WebGL mode.
  * function preload() {
- *   font = loadFont('assets/Inconsolata.otf');
+ *   font = loadFont('assets/inconsolata.otf');
  * }
  *
  * function setup() {
@@ -300,7 +300,7 @@ p5.prototype.mouseX = 0;
  *
  * // Load a font for WebGL mode.
  * function preload() {
- *   font = loadFont('assets/Inconsolata.otf');
+ *   font = loadFont('assets/inconsolata.otf');
  * }
  *
  * function setup() {
