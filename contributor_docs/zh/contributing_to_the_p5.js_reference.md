@@ -1,3 +1,5 @@
+<!-- Write and edit p5.js reference using the right format. -->
+
 # 为 p5.js 参考文献做贡献
 
 在 p5.js 中，我们通过在库的源代码中包含专门的注释，来编写你在 p5.js 网站上看到的[参考文献](https://p5js.org/reference/)页面上的代码参考。这些参考注释包括描述、函数签名（其参数和返回值）和使用示例。换句话说，每个 p5.js 函数/变量的参考页面上的内容都是从源代码中的参考注释构建的。

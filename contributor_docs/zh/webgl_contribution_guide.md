@@ -1,3 +1,5 @@
+<!-- How to get started working on the p5.js WebGL mode source code. -->
+
 # WebGL 贡献指南
 
 如果你正在阅读该文档，那么你可能对帮助开发 WebGL 模式感兴趣。感谢你的帮助，我们对此非常感激！本页面旨在解释我们是如何组织 WebGL 贡献的，并提供一些建议从而帮助你进行修改。

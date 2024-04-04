@@ -1,3 +1,5 @@
+<!-- Essential information about contributing to p5.js on GitHub. -->
+
 # 贡献者指南
 
 欢迎来到 p5.js 贡献者指南！本文档适用于有意为 p5.js 贡献代码的新贡献者、希望复习一些技术步骤的贡献者、以及其他与为 p5.js 贡献代码相关的任何事情。

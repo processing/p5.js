@@ -1,3 +1,5 @@
+<!-- Essential information about contributing to p5.js on GitHub. -->
+
 # 기여자 가이드라인
 
 기여자 가이드라인에 오신 것을 환영합니다! 이 문서는 p5.js에 코드를 기여하고자 하는 신규 기여자, 몇 가지 기술적 단계를 다시 기억하고자 하는 기여자 또는 p5.js 코드 기여와 관련된 모든 사람을 위한 문서입니다.

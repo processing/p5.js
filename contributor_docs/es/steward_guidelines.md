@@ -1,3 +1,5 @@
+<!-- Learn about how to manage and review contributions to p5.js. -->
+
 # Directrices para Supervisores  
 
 

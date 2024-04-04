@@ -1,3 +1,5 @@
+<!-- How to get started working on the p5.js WebGL mode source code. -->
+
 # WebGL 기여 안내
 
 여러분이 이 페이지를 읽고 있다면, 아마도 WebGL 모드에서의 작업에 도움을 주고 싶으신 것이겠죠? 여러분의 기여에 다시 한 번 감사의 말씀을 드립니다. 이 페이지에서는 WebGL 기여가 어떻게 구성되었는지를 설명하고, 변경사항을 만들기 위한 몇 가지 팁을 제공합니다.
