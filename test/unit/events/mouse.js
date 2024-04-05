@@ -365,6 +365,14 @@ suite('Mouse Events', function() {
       assert.deepEqual(count, 1);
     });
 
+    test('mouseButton should be "left" on left mouse button release', async function() {
+      // both mouse buttons pressed
+      window.dispatchEvent(new MouseEvent('mousedown', { button: 0 }));
+      window.dispatchEvent(new MouseEvent('mousedown', { button: 2 }));
+      window.dispatchEvent(new MouseEvent('mouseup', { button: 0 }));
+      assert.strictEqual(myp5.mouseButton, 'left');
+    });
+
     test('mouseReleased functions on multiple instances must run once', async function() {
       let sketchFn = function(sketch, resolve, reject) {
         let count = 0;

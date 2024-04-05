@@ -341,7 +341,7 @@ p5.prototype.pwinMouseY = 0;
 /**
  * p5 automatically tracks if the mouse button is pressed and which
  * button is pressed. The value of the system variable mouseButton is either
- * LEFT, RIGHT, or CENTER depending on which button was pressed last.
+ * LEFT, RIGHT, or CENTER depending on which button was pressed/released last.
  * Warning: different browsers may track mouseButton differently.
  *
  * @property {Constant} mouseButton
@@ -734,6 +734,7 @@ p5.prototype._onmouseup = function(e) {
   const context = this._isGlobal ? window : this;
   let executeDefault;
   this._setProperty('mouseIsPressed', false);
+  this._setMouseButton(e);
 
   // _ontouchend triggers first and sets this.touchend
   if (this.touchend) {
