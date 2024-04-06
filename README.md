@@ -13,9 +13,9 @@ p5.js is a free and open-source JavaScript library for accessible creative codin
 ```js
 function setup() {
   createCanvas(400, 400);
-
   background(255);
 }
+
 function draw() {
   circle(mouseX, mouseY, 80);
 }
