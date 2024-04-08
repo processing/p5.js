@@ -1,3 +1,5 @@
+<!-- Essential information about contributing to p5.js on GitHub. -->
+
 # Contributor Guidelines
 
 Welcome to the contributor guidelines! This document is for new contributors looking to contribute code to p5.js, contributors looking to refresh their memories on some technical steps, or just about anything else to do with code contributions to p5.js.
@@ -455,11 +457,11 @@ git push -u origin [branch_name]
 
 Once the push is complete, you may see a link in the terminal that lets you open a pull request, if not you can navigate to your fork in your web browser, switch to the branch you are working on with the dropdown button on top of the file list, click on "Contribute" then "Open pull request."
 
-![](https://lh7-us.googleusercontent.com/xoqM9gLSFXyw7b3gzG8JlHqoO0zxHALbjSz93E3D0HNh4Jw2wDWdzHKUEchnB6hdjQC7hVn-o5prrXkLw2WiEOoVKJF6kpmyA65sirN0z-Vy3PBY3rCXC5Ifn5stQhcdUQxQS0rsVoW0_hlkfTcY8PQ)
+![Screenshot of the git command line response after pushing a new branch. It includes a GitHub link to open a new pull request.](images/new-branch.png)
 
 You may also see a button to open a pull request when you visit the p5.js Github repo. Clicking it will also work to open a new pull request.
 
-![Cropped screenshot of the main page of the p5.js GitHub repository web page. A section near the top of the page is a yellow call to action box containing a green button with the text "Compare & pull request".](images/recent-pushes)
+![Cropped screenshot of the main page of the p5.js GitHub repository web page. A section near the top of the page is a yellow call to action box containing a green button with the text "Compare & pull request".](images/recent-pushes.png)
 
 
 ### Pull request information

@@ -1,6 +1,8 @@
+<!-- Understand and use p5.js’ Web Accessibility features to make your sketch accessible. -->
+
 # p5.js Web Accessibility
 
-This document describes the structure of p5.js’ web accessibility features for contributors. 
+This document describes the structure of p5.js’ web accessibility features for contributors.
 
 If you want to make your sketches [screen reader](https://en.wikipedia.org/wiki/Screen_reader)-accessible, visit the How to label your p5.js code tutorial.
 
@@ -25,16 +27,16 @@ We’ll look at how the library-generated outputs work first. The following code
 
 ```js
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(400, 400);
 }
 
 function draw() {
-  background("#ccccff");
-  textOutput();
-  fill("orange");
-  ellipse(100, 100, 50);
-  fill("fuchsia");
-  rect(300, 300, 50, 50);
+  background("#ccccff");
+  textOutput();
+  fill("orange");
+  ellipse(100, 100, 50);
+  fill("fuchsia");
+  rect(300, 300, 50, 50);
 }
 ```
 
@@ -44,53 +46,53 @@ function draw() {
 
 > Your output is a, 400 by 400 pixels, lavender blue canvas containing the following 2 shapes:
 
-This description is followed by a list of shapes where the color, position, and area of each shape are described: 
+This description is followed by a list of shapes where the color, position, and area of each shape are described:
 
 > orange circle at top left covering 1% of the canvas.\
 > fuchsia square, at bottom right, covering 2% of the canvas.
 
-Each element can be selected to get more details. A table of elements is also provided. In this table, each element’s  shape, color, location, coordinates, and area are described:
+Each element can be selected to get more details. A table of elements is also provided. In this table, each element’s  shape, color, location, coordinates, and area are described:
 
 > orange circle location=top left area=1%\
-> fuchsia square    location = bottom right    area = 2%
+> fuchsia square    location = bottom right    area = 2%
 
 <details>
 <summary>This generates the following HTML:</summary>
 
 ```html
 <canvas id="defaultCanvas0" class="p5Canvas" style="width: 400px; height: 400px;" width="400" height="400">
-  <div id="defaultCanvas0accessibleOutput" role="region" aria-label="Canvas Outputs">
-    <div id="defaultCanvas0textOutput">
-      Text Output
-      <div id="defaultCanvas0textOutputSummary" aria-label="text output summary">
-        <p id="defaultCanvas0textOutput_summary">
-          Your output is a, 400 by 400 pixels, white canvas containing the following 2 shapes:
-        </p>
-        <ul id="defaultCanvas0textOutput_list">
-          <li>
-            <a href="#defaultCanvas0textOutputshape0">orange circle</a>, at top left, covering 1% of the canvas.
-          </li>
-          <li>
-            <a href="#defaultCanvas0textOutputshape1">fuchsia square</a>, at bottom right, covering 2% of the canvas.
-          </li>
-        </ul>
-      </div>
-      <table id="defaultCanvas0textOutput_shapeDetails" summary="text output shape details">
-        <tbody>
-          <tr id="defaultCanvas0textOutputshape0">
-            <th>orange circle</th>
-            <td>location = top left</td>
-            <td> area = 1%</td>
-          </tr>
-          <tr id="defaultCanvas0textOutputshape1">
-            <th>fuchsia square</th>
-            <td>location = bottom right</td>
-            <td> area = 2%</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  <div id="defaultCanvas0accessibleOutput" role="region" aria-label="Canvas Outputs">
+    <div id="defaultCanvas0textOutput">
+      Text Output
+      <div id="defaultCanvas0textOutputSummary" aria-label="text output summary">
+        <p id="defaultCanvas0textOutput_summary">
+          Your output is a, 400 by 400 pixels, white canvas containing the following 2 shapes:
+        </p>
+        <ul id="defaultCanvas0textOutput_list">
+          <li>
+            <a href="#defaultCanvas0textOutputshape0">orange circle</a>, at top left, covering 1% of the canvas.
+          </li>
+          <li>
+            <a href="#defaultCanvas0textOutputshape1">fuchsia square</a>, at bottom right, covering 2% of the canvas.
+          </li>
+        </ul>
+      </div>
+      <table id="defaultCanvas0textOutput_shapeDetails" summary="text output shape details">
+        <tbody>
+          <tr id="defaultCanvas0textOutputshape0">
+            <th>orange circle</th>
+            <td>location = top left</td>
+            <td> area = 1%</td>
+          </tr>
+          <tr id="defaultCanvas0textOutputshape1">
+            <th>fuchsia square</th>
+            <td>location = bottom right</td>
+            <td> area = 2%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </canvas>
 ```
 
@@ -98,7 +100,7 @@ Each element can be selected to get more details. A table of elements is also pr
 
 `gridOutput()` lays out the content of the canvas in the form of a grid using an HTML table element. Each shape’s location in the grid is based on its spatial location on the canvas. A brief description of the canvas is available before the table output. This description includes the color of the background, size of the canvas, number of objects, and object types:
 
-> lavender blue canvas, 400 by 400 pixels, contains 2 shapes:  1 circle 1 square
+> lavender blue canvas, 400 by 400 pixels, contains 2 shapes:  1 circle 1 square
 
 Each shape’s description is placed in a cell of the table depending on its location on the canvas. Each description includes the color and type of shape:
 
@@ -117,36 +119,36 @@ The generated HTML is as follows:
 
 ```html
 <canvas id="defaultCanvas0" class="p5Canvas" style="width: 400px; height: 400px;" width="400" height="400">
-  <div id="defaultCanvas0accessibleOutput" role="region" aria-label="Canvas Outputs">
-    <div id="defaultCanvas0gridOutput">
-      Grid Output
-      <p id="defaultCanvas0gridOutput_summary" aria-label="grid output summary">
-     white canvas, 400 by 400 pixels, contains 2 shapes:  1 circle 1 square
-   </p>
-      <table id="defaultCanvas0gridOutput_map" summary="grid output content">
-        <tbody>
-          <tr></tr>
-          <tr></tr>
-          <tr>
-            <td><a href="#defaultCanvas0gridOutputshape0">orange circle</a></td>
-          </tr>
-          <tr></tr>
-          <tr></tr>
-          <tr></tr>
-          <tr></tr>
-          <tr></tr>
-          <tr>
-            <td><a href="#defaultCanvas0gridOutputshape1">fuchsia square</a></td>
-          </tr>
-          <tr></tr>
-        </tbody>
-      </table>
-      <ul id="defaultCanvas0gridOutput_shapeDetails" aria-label="grid output shape details">
-        <li id="defaultCanvas0gridOutputshape0">orange circle, location = top left, area = 1 %</li>
-        <li id="defaultCanvas0gridOutputshape1">fuchsia square, location = bottom right, area = 2 %</li>
-      </ul>
-    </div>
-  </div>
+  <div id="defaultCanvas0accessibleOutput" role="region" aria-label="Canvas Outputs">
+    <div id="defaultCanvas0gridOutput">
+      Grid Output
+      <p id="defaultCanvas0gridOutput_summary" aria-label="grid output summary">
+     white canvas, 400 by 400 pixels, contains 2 shapes:  1 circle 1 square
+   </p>
+      <table id="defaultCanvas0gridOutput_map" summary="grid output content">
+        <tbody>
+          <tr></tr>
+          <tr></tr>
+          <tr>
+            <td><a href="#defaultCanvas0gridOutputshape0">orange circle</a></td>
+          </tr>
+          <tr></tr>
+          <tr></tr>
+          <tr></tr>
+          <tr></tr>
+          <tr></tr>
+          <tr>
+            <td><a href="#defaultCanvas0gridOutputshape1">fuchsia square</a></td>
+          </tr>
+          <tr></tr>
+        </tbody>
+      </table>
+      <ul id="defaultCanvas0gridOutput_shapeDetails" aria-label="grid output shape details">
+        <li id="defaultCanvas0gridOutputshape0">orange circle, location = top left, area = 1 %</li>
+        <li id="defaultCanvas0gridOutputshape1">fuchsia square, location = bottom right, area = 2 %</li>
+      </ul>
+    </div>
+  </div>
 </canvas>
 ```
 
@@ -169,7 +171,7 @@ Although `textOutput()` and `gridOutput()` are located in [src/accessibility/out
 - `textOutput()`
 - `gridOutput()`
 
-Both methods activate the accessible output by setting `this._accessibleOutputs.text` or `this._accessibleOutputs.grid `to `true` and calling `this._createOutput('textOutput', 'Fallback')` or `this._createOutput('gridOutput', 'Fallback')` respectively. 
+Both methods activate the accessible output by setting `this._accessibleOutputs.text` or `this._accessibleOutputs.grid `to `true` and calling `this._createOutput('textOutput', 'Fallback')` or `this._createOutput('gridOutput', 'Fallback')` respectively.
 
 If `LABEL` is passed as a parameter to the method, it also activates the visible text output label by setting `this._accessibleOutputs.textLabel` as `true` and calls `this._createOutput('textOutput', 'Label')` or `this._createOutput('gridOutput', 'Label')`.
 
@@ -251,15 +253,15 @@ With example code:
 
 ```js
 function setup() {
-  background('pink');
+  background('pink');
 
-  fill('red');
-  noStroke();
-  circle(67, 67, 20);
-  circle(83, 67, 20);
-  triangle(91, 73, 75, 95, 59, 73);
+  fill('red');
+  noStroke();
+  circle(67, 67, 20);
+  circle(83, 67, 20);
+  triangle(91, 73, 75, 95, 59, 73);
 
-  describe('A pink square with a red heart in the bottom-right corner.', LABEL);
+  describe('A pink square with a red heart in the bottom-right corner.', LABEL);
 }
 ```
 
@@ -270,7 +272,7 @@ The page will output:
 
 ### describeElement()
 
-The `describeElement()` function creates a screen reader-accessible description for groups of shapes that create meaning together. For example, a custom-drawn “heart” shape made out of multiple lines of code. The first parameter should be a string with the name of the element, for example, “Heart”. The second parameter should be a string with the description of the element, for example, “A red heart in the bottom-right corner.” The third parameter is optional. If a user passes `LABEL` as a third parameter, an additional `<div>` element is inserted next to the `<canvas>` element. The new \<div> will contain a visible version of the same  description embedded in the `<canvas>` element.
+The `describeElement()` function creates a screen reader-accessible description for groups of shapes that create meaning together. For example, a custom-drawn “heart” shape made out of multiple lines of code. The first parameter should be a string with the name of the element, for example, “Heart”. The second parameter should be a string with the description of the element, for example, “A red heart in the bottom-right corner.” The third parameter is optional. If a user passes `LABEL` as a third parameter, an additional `<div>` element is inserted next to the `<canvas>` element. The new \<div> will contain a visible version of the same  description embedded in the `<canvas>` element.
 
 `describeElement()` is supported by several functions in [src/accessibility/describe.js](https://github.com/processing/p5.js/blob/main/src/accessibility/describe.js):
 
@@ -282,16 +284,16 @@ With example code:
 
 ```js
 function setup() {
-  background('pink');
-  noStroke();
+  background('pink');
+  noStroke();
 
-  describeElement('Heart', 'A red heart in the bottom-right corner.', LABEL);
-  fill('red');
-  circle(66.6, 66.6, 20);
-  circle(83.2, 66.6, 20);
-  triangle(91.2, 72.6, 75, 95, 58.6, 72.6);
+  describeElement('Heart', 'A red heart in the bottom-right corner.', LABEL);
+  fill('red');
+  circle(66.6, 66.6, 20);
+  circle(83.2, 66.6, 20);
+  triangle(91.2, 72.6, 75, 95, 58.6, 72.6);
 
-  describe('A red heart and yellow circle over a pink background.', LABEL);
+  describe('A red heart and yellow circle over a pink background.', LABEL);
 }
 ```
 

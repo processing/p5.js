@@ -1,0 +1,23 @@
+mtllib octa.mtl
+v 1 0 0
+v 0 1 0
+v 0 0 1
+v -1 0 0
+v 0 -1 0
+v 0 0 -1
+usemtl m000001
+f 1 5 6
+usemtl m003627
+f 2 1 6
+usemtl m010778
+f 1 2 3
+usemtl m012003
+f 4 2 6
+usemtl m019240
+f 4 5 3
+usemtl m021392
+f 5 4 6
+usemtl m022299
+f 2 4 3
+usemtl m032767
+f 5 1 3

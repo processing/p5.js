@@ -12,6 +12,7 @@ import * as constants from '../core/constants';
 
 /**
  * A class to describe fonts.
+ *
  * @class p5.Font
  * @constructor
  * @param {p5} [pInst] pointer to p5 instance.
@@ -26,12 +27,17 @@ import * as constants from '../core/constants';
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Style the text.
  *   fill('deeppink');
  *   textFont(font);
  *   textSize(36);
+ *
+ *   // Display the text.
  *   text('p5*js', 10, 50);
  *
- *   describe('The text "p5*js" written in pink on a white background.');
+ *   describe('The text "p5*js" written in pink on a gray background.');
  * }
  * </code>
  * </div>
@@ -43,9 +49,10 @@ p5.Font = class {
     this.cache = {};
 
     /**
-   * Underlying
+   * The font's underlying
    * <a href="https://opentype.js.org/" target="_blank">opentype.js</a>
    * font object.
+   *
    * @property font
    * @name font
    */
@@ -53,8 +60,14 @@ p5.Font = class {
   }
 
   /**
- * Returns the bounding box for a string of text written using this
- * <a href="#/p5.Font">p5.Font</a>.
+ * Returns the bounding box for a string of text written using the font.
+ *
+ * The bounding box is the smallest rectangle that can contain a string of
+ * text. `font.textBounds()` returns an object with the bounding box's
+ * location and size. For example, calling `font.textBounds('p5*js', 5, 20)`
+ * returns an object in the format
+ * `{ x: 5.7, y: 12.1 , w: 9.9, h: 28.6 }`. The `x` and `y` properties are
+ * always the coordinates of the bounding box's top-left corner.
  *
  * The first parameter, `str`, is a string of text. The second and third
  * parameters, `x` and `y`, are the text's position. By default, they set the
@@ -84,12 +97,18 @@ p5.Font = class {
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
+ *   // Display the bounding box.
  *   let bbox = font.textBounds('p5*js', 35, 53);
  *   rect(bbox.x, bbox.y, bbox.w, bbox.h);
  *
+ *   // Style the text.
  *   textFont(font);
+ *
+ *   // Display the text.
  *   text('p5*js', 35, 53);
  *
  *   describe('The text "p5*js" written in black inside a white rectangle.');
@@ -106,15 +125,20 @@ p5.Font = class {
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
+ *   // Style the text.
  *   textFont(font);
  *   textSize(15);
  *   textAlign(CENTER, CENTER);
  *
+ *   // Display the bounding box.
  *   let bbox = font.textBounds('p5*js', 50, 50);
  *   rect(bbox.x, bbox.y, bbox.w, bbox.h);
  *
+ *   // Display the text.
  *   text('p5*js', 50, 50);
  *
  *   describe('The text "p5*js" written in black inside a white rectangle.');
@@ -131,13 +155,19 @@ p5.Font = class {
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
  *
+ *   // Display the bounding box.
  *   let bbox = font.textBounds('p5*js', 31, 53, 15);
  *   rect(bbox.x, bbox.y, bbox.w, bbox.h);
  *
+ *   // Style the text.
  *   textFont(font);
  *   textSize(15);
+ *
+ *   // Display the text.
  *   text('p5*js', 31, 53);
  *
  *   describe('The text "p5*js" written in black inside a white rectangle.');
@@ -247,8 +277,12 @@ p5.Font = class {
   }
 
   /**
- * Returns an array of points outlining a string of text written using this
- * <a href="#/p5.Font">p5.Font</a>.
+ * Returns an array of points outlining a string of text written using the
+ * font.
+ *
+ * Each point object in the array has three properties that describe the
+ * point's location and orientation, called its path angle. For example,
+ * `{ x: 10, y: 20, alpha: 450 }`.
  *
  * The first parameter, `str`, is a string of text. The second and third
  * parameters, `x` and `y`, are the text's position. By default, they set the
@@ -279,6 +313,7 @@ p5.Font = class {
  * @param  {Object} [options]  object with sampleFactor and simplifyThreshold
  *                             properties.
  * @return {Array} array of point objects, each with x, y, and alpha (path angle) properties.
+ *
  * @example
  * <div>
  * <code>
@@ -289,11 +324,17 @@ p5.Font = class {
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
+ *
+ *   // Get the point array.
  *   let points = font.textToPoints('p5*js', 6, 60, 35, { sampleFactor:  0.5 });
- *   points.forEach(p =>  {
+ *
+ *   // Draw a dot at each point.
+ *   for (let p of points) {
  *     point(p.x, p.y);
- *   });
+ *   }
  *
  *   describe('A set of black dots outlining the text "p5*js" on a gray background.');
  * }

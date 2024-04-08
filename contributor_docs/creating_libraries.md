@@ -1,3 +1,5 @@
+<!-- Extend p5.js functionalities with your own addon library. -->
+
 # Creating an Addon Library
 
 A p5.js addon library is JavaScript code that extends or adds to the p5.js core functionality. While p5.js itself already provides a wide range of functionality, it doesn’t aim to cover everything you can do with JavaScript and the Web API. Addon libraries let you extend p5.js without needing to incorporate the features into p5.js. This guide will take you through the steps of creating an addon library that loads a simple CSV file by implementing a `loadCSV()` function.
@@ -32,7 +34,7 @@ The main way to extend p5.js is by adding methods to the p5.prototype object. Fo
 
 ```js
 p5.prototype.loadCSV = function(){
-  console.log('I will load a CSV file soon!');
+  console.log('I will load a CSV file soon!');
 };
 ```
 
@@ -42,7 +44,7 @@ You can also extend p5.js classes such as` p5.Element` or` p5.Graphics` by addin
 
 ```js
 p5.Element.prototype.shout = function () {
-  this.elt.innerHTML += '<span>!</span>';
+  this.elt.innerHTML += '<span>!</span>';
 };
 ```
 
@@ -53,23 +55,23 @@ You now have a p5.loadcsv.js file with one method attached to the `p5.prototype`
 
 ```js
 function setup() {
-  createCanvas(400, 400);
-  loadCSV();
+  createCanvas(400, 400);
+  loadCSV();
 }
 ```
 
 ```html
 <html>
-  <head>
-    <!-- Other tags -->
+  <head>
+    <!-- Other tags -->
 
-    <script src="./p5.js"></script>
-    <script src="./p5.loadcsv.js"></script>
+    <script src="./p5.js"></script>
+    <script src="./p5.loadcsv.js"></script>
 
-    <!-- Other tags -->
-  </head>
-  
-  <!-- Other tags -->
+    <!-- Other tags -->
+  </head>
+
+  <!-- Other tags -->
 
 </html>
 ```
@@ -83,20 +85,20 @@ To load a CSV file with your `loadCSV()` function, the function needs to accept 
 
 ```js
 p5.prototype.loadCSV = function (filename) {
-  console.log(`I will load the CSV file ${filename} soon!`);
+  console.log(`I will load the CSV file ${filename} soon!`);
 };
 ```
 
- 
+
 
 In our test sketch, we can use it like so:
 
 ```js
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(400, 400);
 
-  // Prints "I will load the CSV file data.csv soon!" to the console.
-  loadCSV('data.csv');
+  // Prints "I will load the CSV file data.csv soon!" to the console.
+  loadCSV('data.csv');
 }
 ```
 
@@ -106,22 +108,22 @@ function setup() {
 You can access p5.js functions and variables such as `circle()` and `PI` in your addon code using the “`this`” object. We’ll use the `hour()` and `minute()` functions to further customize the `loadCSV()` function’s console message. This will give us some information about when the function is called.
 
 <details>
-<summary>You should always use the “`function()`” keyword to attach methods to the `p5.prototype` object.</summary> Don’t use the arrow function syntax “`() =>`” because the value of “`this`” when using the “`function()`” keyword is the created object (i.e., the p5 sketch), but with the arrow function syntax, the value of “`this`” is whatever the value of “`this`” is when the arrow function is defined. In the example below, “`this`” will refer to “`window`” instead of the p5 sketch, which is usually not what we want.
+<summary>You should always use the “<code>function()</code>” keyword to attach methods to the <code>p5.prototype</code> object.</summary> Don’t use the arrow function syntax “<code>() =></code>” because the value of “<code>this</code>” when using the “<code>function()</code>” keyword is the created object (i.e., the p5 sketch), but with the arrow function syntax, the value of “<code>this</code>” is whatever the value of “<code>this</code>” is when the arrow function is defined. In the example below, “<code>this</code>” will refer to “<code>window</code>” instead of the p5 sketch, which is usually not what we want.
 </details>
 
 ```js
 p5.prototype.loadCSV = (filename) => {
-  // this === window is true because
-  // "this" refers to the window object.
-  // This is almost never what you want.
-  console.log(this === window);
+  // this === window is true because
+  // "this" refers to the window object.
+  // This is almost never what you want.
+  console.log(this === window);
 };
 
 
 p5.prototype.loadCSV = function (filename) {
-  // Prints 'I will load the CSV file data.csv at 10:30'
-  // to the console.
-  console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute()}!`);
+  // Prints 'I will load the CSV file data.csv at 10:30'
+  // to the console.
+  console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute()}!`);
 };
 ```
 
@@ -136,19 +138,19 @@ First make the following changes to your `loadCSV()` method:
 
 ```js
 p5.prototype.loadCSV = function(filename){
-  console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute}!`);
+  console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute()}!`);
 
-  let result = [];
+  let result = [];
 
-  fetch(filename)
-    .then((res) => res.text())
-    .then((data) => {
-      data.split('\n').forEach((line) => {
-        result.push(line.split(','));
-      });
-    });
+  fetch(filename)
+    .then((res) => res.text())
+    .then((data) => {
+      data.split('\n').forEach((line) => {
+        result.push(line.split(','));
+      });
+    });
 
-  return result;
+  return result;
 };
 ```
 
@@ -158,9 +160,9 @@ Now, when you run the sketch, pass a file path to a simple CSV file to your `loa
 
 ```js
 function setup(){
-  createCanvas(400, 400);
-  let myCSV = loadCSV('data.csv');
-  print(myCSV);
+  createCanvas(400, 400);
+  let myCSV = loadCSV('data.csv');
+  print(myCSV);
 }
 ```
 
@@ -172,12 +174,12 @@ Simply moving where you call `loadCSV()` to `preload()` in this case is not enou
 let myCSV;
 
 function preload(){
-  myCSV = loadCSV('data.csv');
+  myCSV = loadCSV('data.csv');
 }
 
 function setup(){
-  createCanvas(400, 400);
-  print(myCSV); // Still prints [] 
+  createCanvas(400, 400);
+  print(myCSV); // Still prints []
 }
 ```
 
@@ -185,21 +187,21 @@ p5 will need to be told that the addon’s `loadCSV()` function is something it 
 
 ```js
 p5.prototype.loadCSV = function (filename){
-  console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute}!`);
+  console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute()}!`);
 
-  let result = [];
+  let result = [];
 
-  fetch(filename)
-    .then((res) => res.text())
-    .then((data) => {
-      data.split('\n').forEach((line) => {
-        result.push(line.split(','));
-      });
+  fetch(filename)
+    .then((res) => res.text())
+    .then((data) => {
+      data.split('\n').forEach((line) => {
+        result.push(line.split(','));
+      });
 
-      this._decrementPreload();
-    });
+      this._decrementPreload();
+    });
 
-  return result;
+  return result;
 };
 
 p5.prototype.registerPreloadMethod('loadCSV', p5.prototype);
@@ -210,16 +212,16 @@ Note two things from the code above:
 1. We call the `p5.prototype.registerPreloadMethod()` function passing in the name of the `loadCSV()` function as a string as the first parameter and `p5.prototype` as the second parameter.
 2. At the end of `fetch()`, after the CSV data has been parsed and pushed into the result array, `this._decrementPreload()` function is called.
 3) Now, if you test your sketch again, you should see that the “`myCSV`” variable is populated with the data from the CSV file!
-4. Note that due to inherent limitations of this technique, the returned “`result`” variable must be an object (array is also a type of object in Javascript) and must not be overwritten in the function body. You can set properties of the object (or push to the array), but you cannot reassign the variable (i.e., you cannot do “`result = data.split(‘\n’)`”).
+4. Note that due to inherent limitations of this technique, the returned “`result`” variable must be an object (array is also a type of object in Javascript) and must not be overwritten in the function body. You can set properties of the object (or push to the array), but you cannot reassign the variable (i.e., you cannot do “``result = data.split(`\n`)``”).
 
 <details>
-<summary>Quite a bit of magic is happening here: firstly, why does “`result`” now contain the additional data when `fetch()` should still have been asynchronous and thus running after “`result`” has returned?</summary>
+<summary>Quite a bit of magic is happening here: firstly, why does “<code>result</code>” now contain the additional data when <code>fetch()</code>code> should still have been asynchronous and thus running after “<code>result</code>” has returned?</summary>
 
 This is related to why the return type must be an object. In Javascript, objects are passed by reference while most other types such as strings and numbers are passed by value. What this means is that when an object is returned from a function, it points to the original object that was created (in this case, the empty array we create in the line “`let result = [];`”.) In contrast, pass by value types, when returning from a function, will be copied and lose their relation to the original reference. This behavior allows us to modify the properties of the returned objects after they have been returned from the function as long as we don’t reassign the variable, which will create a new reference separate from the original object.
 </details>
 
 <details>
-<summary>Secondly, what is `registerPreloadMethod()` doing and what about `this._decrementPreload()`?</summary>
+<summary>Secondly, what is <code>registerPreloadMethod()</code> doing and what about <code>this._decrementPreload()</code>?</summary>
 
 Without going into all the details, `registerPreloadMethod()` adds the function we specified into an internal list of functions that p5 keeps track of whenever it is called in `preload()`. When p5 detects such a function is called, it will add 1 to an internal counter. If this internal counter is larger than 0, it will keep waiting in `preload()` and defer running `setup()` and starting the `draw()` loop. Loading functions can decrement that internal counter by calling `this._decrementPreload()`, effectively signaling to p5 that a loading function in `preload()` is complete. If the internal counter reaches 0 after the decrement, it means all loadings are complete and the whole sketch can start.
 </details>
@@ -245,13 +247,13 @@ To create an action hook, you can use the snippet below.
 
 ```js
 p5.prototype.doRemoveStuff = function (){
-  // Addon library related cleanup
+  // Addon library related cleanup
 };
 p5.prototype.registerMethod("remove", p5.prototype.doRemoveStuff);
 
 p5.prototype.setDefaultBackground = function(){
-  // Set background to be p5 pink by default 
-  this.background("#ed225d");
+  // Set background to be p5 pink by default
+  this.background("#ed225d");
 };
 p5.prototype.registerMethod("pre", p5.prototype.setDefaultBackground);
 ```
@@ -303,7 +305,7 @@ p5.prototype.myMethod = function(){
 
 **Documentation is key!** The documentation for your library should be easy to find. The documentation for contributed libraries won’t be included in the main p5.js reference, but you may want to follow a similar format. See these examples of a [library overview page](http://p5js.org/reference/#/libraries/p5.sound), [class overview page](http://p5js.org/reference/#/p5.Vector), and [method page](http://p5js.org/reference/#/p5/arc).
 
-**Examples are great, too!** They show people what your library can do. Because this is all JavaScript, people can see them running online before they download anything.[ ](http://jsfiddle.net/)You can create 0a collection of examples on the p5.js web editor to showcase how your library works.
+**Examples are great, too!** They show people what your library can do. Because this is all JavaScript, people can see them running online before they download anything.[ ](http://jsfiddle.net/) You can create a collection of examples on the p5.js web editor to showcase how your library works.
 
 **Let us know!** Once your library is ready for distribution, send an email to hello\@p5js.org with a link and some info. We'll include it on the [libraries page](http://p5js.org/libraries/)! If you have created a library and would like to have it included on the [p5js.org/libraries](https://p5js.org/libraries) page, please fill in [this form](https://docs.google.com/forms/d/e/1FAIpQLSdWWb95cfvosaIFI7msA7XC5zOEVsNruaA5klN1jH95ESJVcw/viewform).
 

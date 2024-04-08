@@ -379,7 +379,7 @@ p5.prototype.cursor = function(type, x, y) {
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   describe('A number written in black written on a gray background. The number decreases when the mouse is pressed.');
+ *   describe('A number written in black on a gray background. The number decreases when the mouse is pressed.');
  * }
  *
  * function draw() {
@@ -1056,7 +1056,7 @@ p5.prototype.pixelDensity = function(val) {
   let returnValue;
   if (typeof val === 'number') {
     if (val !== this._pixelDensity) {
-      this._pixelDensity = val;
+      this._pixelDensity = this._maxAllowedPixelDimensions = val;
     }
     returnValue = this;
     this.resizeCanvas(this.width, this.height, true); // as a side effect, it will clear the canvas
