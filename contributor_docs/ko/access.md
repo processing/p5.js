@@ -30,7 +30,7 @@
 ### 예시
 다음은 우리가 접근성을 향상시킨다고 믿는 노력들입니다:
 
-- 문서 및 기타 자료를 더 많은 언어로 번역하여 언어 제국주의에서 벗어나는 것 (예: Rolando Vargas의 [Processing 쿠나어 번역](https://medium.com/@ProcessingOrg/culture-as-translation-processing-in-kuna-language-with-rolando-vargas-and-edinson-izquierdo-8079f14851f7), Felipe Santos Gomes, Julia Brasil, Katherine Finn Zander, Marcela Mancino의 [Pê Cinco: 포르투갈어 사용자를 위한 국제화 및 보급화](https://medium.com/processing-foundation/translating-p5-js-into-portuguese-for-the-brazilian-community-14b969e77ab1))
+- 문서 및 기타 자료를 더 많은 언어로 번역하여 언어 제국주의[^4]에서 벗어나는 것 (예: Rolando Vargas의 [Processing 쿠나어 번역](https://medium.com/@ProcessingOrg/culture-as-translation-processing-in-kuna-language-with-rolando-vargas-and-edinson-izquierdo-8079f14851f7), Felipe Santos Gomes, Julia Brasil, Katherine Finn Zander, Marcela Mancino의 [Pê Cinco: 포르투갈어 사용자를 위한 국제화 및 보급화](https://medium.com/processing-foundation/translating-p5-js-into-portuguese-for-the-brazilian-community-14b969e77ab1))
 - 스크린 리더 같은 보조 기술에 대한 지원 개선 (예: Katie Liu의 [p5.js에 대한 Alt 텍스트 추가](https://medium.com/processing-foundation/adding-alt-text-e2c7684e44f8), Claire Kearney-Volpe의 [P5 접근성 향상 프로젝트](https://medium.com/processing-foundation/p5-accessibility-115d84535fa8)) 
 - 도구가 Web 콘텐츠 접근성 지침을 준수하게 하고 사용자가 프로젝트에서 이를 쉽게 따를 수 있도록 노력하기
 - p5.js 오류 메시지를 사용하는 사람들에게 더 유용하고 도움이 되도록 만들기 (예: [p5.js 친절한 오류 메세지 시스템 (FES)](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md))
@@ -51,7 +51,7 @@ ___
 
 이 버전의 p5.js 접근성 성명서는 2023년 오픈 소스 아트 기여자 컨퍼런스에서 Evelyn Masso, Nat Decker, Bobby Joe Smith III, Sammie Veeler, Sonia (Suhyun) Choi, Xin Xin, Kate Hollenbach, Lauren Lee McCarthy, Caroline Sinders, Qianqian Ye, Tristan Jovani Magno Espinoza, Tanvi Sharma, Tsige Tafesse, Sarah Ciston의 협업을 통해 수정되었습니다. 이는 프로세싱 재단 펠로우십의 지원을 통해 Bobby Joe Smith III와 Nat Decker에 의해 최종 확정되고 발표되었습니다.
 
-[^1]: Crenshaw, Kimberlé (1989). "Demarginalizing the intersection of race and sex: a black feminist critique of antidiscrimination doctrine, feminist theory and antiracist politics". University of Chicago Legal Forum. 1989 (1): 139–167. ISSN 0892-5593. 전문은 [Archive.org]에서 확인 가능합니다.
+[^1]: Crenshaw, Kimberlé (1989). "Demarginalizing the intersection of race and sex: a black feminist critique of antidiscrimination doctrine, feminist theory and antiracist politics". University of Chicago Legal Forum. 1989 (1): 139–167. ISSN 0892-5593. 전문은 Archive.org에서 확인 가능합니다.
 [^2]: 농아인(Deaf)은 문화적으로 청각 장애인이거나 청각 장애인 공동체의 일원을 의미하는 반면, 청각 장애인(deaf)은 청각 장애 정체성과 관련이 없는 사람들을 설명하는 청각학적 용어입니다.
 [^3]: 청각 장애 커뮤니티 내에는 ‘사람 우선’ vs ‘정체성 우선’ 언어 사이의 다양한 선호가 있습니다.  [Unpacking the debate over person-first vs. identity-first language in the autism community](https://news.northeastern.edu/2018/07/12/unpacking-the-debate-over-person-first-vs-identity-first-language-in-the-autism-community/)와 [I am Disabled: On Identity-First Versus People-First Language](https://thebodyisnotanapology.com/magazine/i-am-disabled-on-identity-first-versus-people-first-language/)를 읽어보세요.
 [^4]: 언어 제국주의는 제국주의의 확장과 세계화로 인해 모국어를 희생해가며 영어와 같은 특정 언어를 지속적으로 지배, 우선, 강요하는 것을 말합니다.
