@@ -55,3 +55,4 @@ ___
 [^2]: 농아인(Deaf)은 문화적으로 청각 장애인이거나 청각 장애인 공동체의 일원을 의미하는 반면, 청각 장애인(deaf)은 청각 장애 정체성과 관련이 없는 사람들을 설명하는 청각학적 용어입니다.
 [^3]: 청각 장애 커뮤니티 내에는 ‘사람 우선’ vs ‘정체성 우선’ 언어 사이의 다양한 선호가 있습니다.  [Unpacking the debate over person-first vs. identity-first language in the autism community](https://news.northeastern.edu/2018/07/12/unpacking-the-debate-over-person-first-vs-identity-first-language-in-the-autism-community/)와 [I am Disabled: On Identity-First Versus People-First Language](https://thebodyisnotanapology.com/magazine/i-am-disabled-on-identity-first-versus-people-first-language/)를 읽어보세요.
 [^4]: 언어 제국주의는 제국주의의 확장과 세계화로 인해 모국어를 희생해가며 영어와 같은 특정 언어를 지속적으로 지배, 우선, 강요하는 것을 말합니다.
+
