@@ -2,13 +2,13 @@
 
 # 접근성에 대한 초점
 
-[2019 기여자 회의](https://p5js.org/community/contributors-conference-2019.html)에서, p5.js는 접근성(포용과 접근성)을 향상시키는 새로운 기능만 추가하기로 약속했습니다. 이러한 노력을 지지하지 않는 기능 요청은 수용되지 않을 것입니다. 우리는 장애물을 인식하고, 없애고, 예방하는 노력을 약속합니다. 이는 접근성과 참여에 영향을 미칠 수 있는 다양성의 교차[^1] 경험을 고려한다는 것을 의미합니다. 이에는 성별, 인종, 민족, 성적 지향, 언어, 위치 등이 포함됩니다. 우리는 p5.js 커뮤니티 내에서 특권을 가진 사람들의 지속적인 편안함보다 소외된 집단의 요구에 초점을 맞추고 있습니다. 우리는 모두가 접근성의 의미를 탐색하고 있습니다. 그리고 접근성을 실천하고 가르치는 방법을 배우고 있습니다. 우리는 접근성을 확장적, 교차적, 연대적 프레임워크를 통해 생각하기로 선택합니다. 이 약속은 p5.js의 핵심 가치 중 하나로, 우리의 [커뮤니티 성명서](https://p5js.org/community/)에 기재되어 있습니다.
+[2019 기여자 회의](https://p5js.org/community/contributors-conference-2019.html)에서, p5.js는 접근성(포용과 접근성)을 향상시키는 새로운 기능만 추가하기로 약속했습니다. 이러한 노력을 지지하지 않는 기능 요청은 수용되지 않을 것입니다. 우리는 장벽을 인식하고, 없애고, 예방하는 노력을 약속합니다. 이는 접근성과 참여에 영향을 미칠 수 있는 다양성의 교차[^1] 경험을 고려한다는 것을 의미합니다. 이에는 성별, 인종, 민족, 성적 지향, 언어, 위치 등이 포함됩니다. 우리는 p5.js 커뮤니티 내에서 특권을 가진 사람들의 지속적인 편안함보다 소외된 집단의 요구에 초점을 맞추고 있습니다. 우리는 모두가 접근성의 의미를 탐색하고 있습니다. 그리고 접근성을 실천하고 가르치는 방법을 배우고 있습니다. 우리는 접근성을 확장적, 교차적, 연대적 프레임워크를 통해 생각하기로 선택합니다. 이 약속은 p5.js의 핵심 가치 중 하나로, 우리의 [커뮤니티 성명서](https://p5js.org/community/)에 기재되어 있습니다.
 
 ## 접근성의 종류
 
 접근성 향상은 단순히 p5.js 커뮤니티의 인원을 늘리는 데 초점을 맞추지 않습니다. 구조적 차별으로 인해 p5.js 커뮤니티에서 소외된 사람들에게 p5.js를 접근하기 쉽게 만들려는 지속적인 약속입니다. 이 약속은 p5.js가 제공하는 도구와 플랫폼에도 적용되며, p5.js 리더십의 구성, 결정 및 행동을 포함합니다. 우리는 속도, 성장, 경쟁을 중시하는 기술 문화에 저항합니다. 우리는 집단적 관심의 행위로서 지향성, 느림, 수용성, 책임감을 우선시합니다.
 
-여기서의 접근성은 이런 사람들을 위해 p5.js를 공평하게 만드는 것을 의미합니다:
+여기서의 접근성은 아래의 사람들을 위해 p5.js를 공평하게 만드는 것을 의미합니다:
 
 - 영어 이외의 언어를 사용하는 사람들
 - 흑인, 원주민, 유색인종, 소외된 민족의 사람들
@@ -32,16 +32,16 @@
 
 - 문서 및 기타 자료를 더 많은 언어로 번역하여 언어 제국주의[^4]에서 벗어나는 것 (예: Rolando Vargas의 [Processing 쿠나어 번역](https://medium.com/@ProcessingOrg/culture-as-translation-processing-in-kuna-language-with-rolando-vargas-and-edinson-izquierdo-8079f14851f7), Felipe Santos Gomes, Julia Brasil, Katherine Finn Zander, Marcela Mancino의 [Pê Cinco: 포르투갈어 사용자를 위한 국제화 및 보급화](https://medium.com/processing-foundation/translating-p5-js-into-portuguese-for-the-brazilian-community-14b969e77ab1))
 - 스크린 리더 같은 보조 기술에 대한 지원 개선 (예: Katie Liu의 [p5.js에 대한 Alt 텍스트 추가](https://medium.com/processing-foundation/adding-alt-text-e2c7684e44f8), Claire Kearney-Volpe의 [P5 접근성 향상 프로젝트](https://medium.com/processing-foundation/p5-accessibility-115d84535fa8)) 
-- 도구가 Web 콘텐츠 접근성 지침을 준수하게 하고 사용자가 프로젝트에서 이를 쉽게 따를 수 있도록 노력하기
+- 도구가 [Web 콘텐츠 접근성 지침](https://www.w3.org/TR/WCAG21/)을 준수하게 하고 사용자가 프로젝트에서 이를 쉽게 따를 수 있도록 노력하기
 - p5.js 오류 메시지를 사용하는 사람들에게 더 유용하고 도움이 되도록 만들기 (예: [p5.js 친절한 오류 메세지 시스템 (FES)](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md))
 - 크리에이티브 코딩 및 디지털 아트에서 역사적으로 배제되고 차별을 받은 공동체 내에서 p5.js 학습자를 멘토링 및 지원하기
 - 접근성 중심의 조직 전략(예: ASL 통역, 실시간 자막, 접근하기 쉬운 장소)으로 커뮤니티 이벤트 개최 (예: [p5.js Access Day 2022](https://p5js.org/community/p5js-access-day-2022.html), [The Web We Want: p5.js x W3C TPAC 2020](https://medium.com/processing-foundation/p5-js-x-w3c-tpac-bee4c621a053))
 - 교육 자료 생성 지원 (예: Adekemi Sijuwade-Ukadike의 [A11y Syllabus](http://a11ysyllabus.site/))
-- WCAG 지침을 따르고, 평이한 언어를 사용하며, 다양한 경험을 가진 초보자에 초점을 맞춘 작업 문서 및보고서 게시 (예: [OSACC p5.js 접근성 보고서](https://github.com/processing/OSACC-p5.js-Access-Report))
+- WCAG 지침을 따르고, 평이한 언어를 사용하며, 다양한 경험을 가진 초보자에 초점을 맞춘 작업 문서 및 보고서 게시 (예: [OSACC p5.js 접근성 보고서](https://github.com/processing/OSACC-p5.js-Access-Report))
 
 
 ## 유지보수
-우리는 접근성 향상을 지지하지 않는 기능 요청을 받지 않을 것입니다. 이 기준은 우리의 이슈 및 풀 리퀘스트 템플릿에 반영될 것입니다. 또한, 기존 p5.js 기능 세트를 유지겠다는 의사를 단언합니다. 우리는 코드베이스의 어느 부분에 있든 상관없이 버그를 수정하고 싶습니다. 우리는 도구의 일관성이 초보자가 더 쉽게 접근하게 한다고 믿습니다. 접근성을 향상시키는 기능 요청의 예시는 다음과 같습니다:
+우리는 접근성 향상을 지지하지 않는 기능 요청을 받지 않을 것입니다. 이 기준은 우리의 이슈 및 풀 리퀘스트 템플릿에 반영될 것입니다. 또한, 기존 p5.js 기능 세트를 유지겠다는 의사를 단언합니다. 우리는 코드베이스의 어느 부분에 속하는 버그든지 상관없이 수정하고 싶습니다. 우리는 도구의 일관성이 초보자가 더 쉽게 접근하게 한다고 믿습니다. 접근성을 향상시키는 기능 요청의 예시는 다음과 같습니다:
 하드웨어 성능이 낮은 사람들을 위한 성능 향상 (예: 프레임 버퍼에 그리기/읽기 지원)
 API의 일관성 (예: beginShape()와 endShape()로 호를 만들기 위한 arcVertex() 추가)
 
