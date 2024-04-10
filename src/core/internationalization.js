@@ -23,7 +23,7 @@ if (typeof IS_MINIFIED === 'undefined') {
   }
 }
 
-/**
+/*
  * This is our i18next "backend" plugin. It tries to fetch languages
  * from a CDN.
  */
@@ -119,7 +119,7 @@ export let translator = (key, values) => {
 };
 // (We'll set this to a real value in the init function below!)
 
-/**
+/*
  * Set up our translation function, with loaded languages
  */
 export const initialize = () => {
@@ -164,21 +164,21 @@ export const initialize = () => {
   return i18init;
 };
 
-/**
+/*
  * Returns a list of languages we have translations loaded for
  */
 export const availableTranslatorLanguages = () => {
   return i18next.languages;
 };
 
-/**
+/*
  * Returns the current language selected for translation
  */
 export const currentTranslatorLanguage = language => {
   return i18next.language;
 };
 
-/**
+/*
  * Sets the current language for translation
  * Returns a promise that resolved when loading is finished,
  * or rejects if it fails.

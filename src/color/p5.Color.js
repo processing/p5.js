@@ -11,7 +11,7 @@ import p5 from '../core/main';
 import * as constants from '../core/constants';
 import color_conversion from './color_conversion';
 
-/**
+/*
  * CSS named colors.
  */
 const namedColors = {
@@ -165,7 +165,7 @@ const namedColors = {
   yellowgreen: '#9acd32'
 };
 
-/**
+/*
  * These regular expressions are used to build up the patterns for matching
  * viable CSS color strings: fragmenting the regexes in this way increases the
  * legibility and comprehensibility of the code.
@@ -178,7 +178,7 @@ const INTEGER = /(\d{1,3})/; // Match integers: 79, 255, etc.
 const DECIMAL = /((?:\d+(?:\.\d+)?)|(?:\.\d+))/; // Match 129.6, 79, .9, etc.
 const PERCENT = new RegExp(`${DECIMAL.source}%`); // Match 12.9%, 79%, .9%, etc.
 
-/**
+/*
  * Full color string patterns. The capture groups are necessary.
  */
 const colorPatterns = {

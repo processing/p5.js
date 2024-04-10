@@ -4,7 +4,7 @@ export { default as ko_translation } from './ko/translation';
 export { default as zh_translation } from './zh/translation';
 export { default as hi_translation } from './hi/translation';
 
-/**
+/*
  * When adding a new language, add a new "export" statement above this.
  * For example, if we were to add fr ( French ), we would write:
  * export { default as fr_translation } from './fr/translation';

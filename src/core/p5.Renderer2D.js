@@ -3,7 +3,7 @@ import * as constants from './constants';
 
 import Renderer from './p5.Renderer';
 
-/**
+/*
  * p5.Renderer2D
  * The 2D graphics canvas renderer class.
  * extends p5.Renderer

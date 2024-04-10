@@ -1,4 +1,4 @@
-/**
+/*
  * This module defines the filters for use with image buffers.
  *
  * This module is basically a collection of functions stored in an object
