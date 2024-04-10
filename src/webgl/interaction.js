@@ -77,6 +77,7 @@ import * as constants from '../core/constants';
  * <div>
  * <code>
  * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *
@@ -101,6 +102,7 @@ import * as constants from '../core/constants';
  * <div>
  * <code>
  * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *
@@ -126,6 +128,7 @@ import * as constants from '../core/constants';
  * <div>
  * <code>
  * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *
@@ -728,6 +731,7 @@ p5.prototype.debugMode = function(...args) {
  * <div>
  * <code>
  * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *
