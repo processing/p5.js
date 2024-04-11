@@ -5081,6 +5081,39 @@ class MediaElement extends p5.Element {
    * @method  connect
    * @param  {AudioNode|Object} audioNode AudioNode from the Web Audio API,
    * or an object from the p5.sound library
+   * @example
+   * <div>
+   * <code>
+   * let myAudio;
+   * let reverb;
+   *
+   * function preload() {
+   *   myAudio = loadSound('assets/beat.mp3');
+   * }
+   * function setup() {
+   *   createCanvas(150, 150);
+   *   textAlign(CENTER);
+   *
+   *   // Create a reverb effect
+   *   reverb = new p5.Reverb();
+   *
+   *   // Connect the audio element to the reverb effect
+   *   myAudio.connect(reverb);
+   *
+   *   // Connect the reverb effect to the main output
+   *   reverb.connect();
+   *
+   *   myAudio.play();
+   * }
+   *
+   * function draw() {
+   *   background(111, 143, 175);
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt
+   * Reverb-enhanced audio beat displayed on a blue canvas.
    */
   connect(obj) {
     let audioContext, mainOutput;
@@ -5126,6 +5159,36 @@ class MediaElement extends p5.Element {
    * for example.
    *
    * @method  disconnect
+   * @example
+   * <div>
+   * <code>
+   * let sound;
+   * function preload() {
+   *   sound = loadSound('assets/beat.mp3');
+   * }
+   * function setup() {
+   *   createCanvas(150, 150);
+   *   playSound();
+   * }
+   *
+   * function draw() {
+   *   background(159, 43, 104);
+   * }
+   * function mouseClicked() {
+   *   // Disconnect the sound on mouse click
+   *   disconnectSound();
+   * }
+   * function playSound() {
+   *   sound.play();
+   * }
+   * function disconnectSound() {
+   *   sound.disconnect();
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt
+   * Purple canvas playing a sound on setup, disconnects on mouseClick.
    */
   disconnect() {
     if (this.audioSourceNode) {

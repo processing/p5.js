@@ -247,6 +247,32 @@ class Framebuffer {
    * @method pixelDensity
    * @param {Number} [density] A scaling factor for the number of pixels per
    * side of the framebuffer
+   * @example
+   * <div>
+   * <code>
+   * let pg;
+   *
+   * function setup() {
+   *   createCanvas(150, 150);
+   *   pixelDensity(4);
+   *   pg = createGraphics(75, 75);
+   *   pg.pixelDensity(1);
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   fill(255, 0, 0);
+   *   ellipse(25, 25, 40, 40);
+   *   pg.background(255);
+   *   pg.fill(0, 0, 255);
+   *   pg.ellipse(50, 50, 40, 40);
+   *   image(pg, 75, 75);
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt
+   * A red and a blue ellipse on a canvas.
    */
   pixelDensity(density) {
     if (density) {
@@ -927,6 +953,37 @@ class Framebuffer {
    * texture.
    *
    * @method end
+   * @example
+   *
+   * <div>
+   * <code>
+   *
+   * let framebuffer;
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   framebuffer = createFramebuffer();
+   *   noStroke();
+   * }
+   * function draw() {
+   *   framebuffer.begin();
+   *   background(255);
+   *   translate(0, 5 * sin(frameCount * 0.01), 0);
+   *   rotateX(frameCount * 0.01);
+   *   rotateY(frameCount * 0.01);
+   *   fill(255, 0, 0);
+   *   torus(30);
+   *   framebuffer.end();
+   *
+   *   background(100);
+   *   image(framebuffer, -50, -50, 25, 25);
+   *   image(framebuffer, 0, 0, 35, 35);
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt
+   * Rotating red torus displayed in different sizes on a dark gray background."
+   *
    */
   end() {
     const gl = this.gl;

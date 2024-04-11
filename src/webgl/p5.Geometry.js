@@ -430,6 +430,62 @@ p5.Geometry = class Geometry {
  * computes faces for geometry objects based on the vertices.
  * @method computeFaces
  * @chainable
+ * @example
+ * <div>
+ * <code>
+ *
+ * let customGeometry;
+ * class CustomGeometry {
+ *   constructor(size) {
+ *     this.vertices = [
+ *       createVector(0, -size / 2, 0),
+ *       createVector(size / 2, size / 2, size / 2),
+ *       createVector(-size / 2, size / 2, size / 2),
+ *       createVector(-size / 2, size / 2, -size / 2),
+ *       createVector(size / 2, size / 2, -size / 2)
+ *     ];
+ *     this.faces = [];
+ *     this.computeFaces();
+ *   }
+ *
+ *   computeFaces() {
+ *     this.faces = [
+ *       [0, 1, 2], // Bottom face
+ *       [0, 2, 3], // Left face
+ *       [0, 3, 4], // Front face
+ *       [0, 4, 1], // Right face
+ *       [1, 4, 3], // Back face
+ *       [1, 3, 2]  // Base face
+ *     ];
+ *   }
+ * }
+ * function setup() {
+ *   createCanvas(150, 150, WEBGL);
+ *   customGeometry = new CustomGeometry(50);
+ *   customGeometry.computeFaces();
+ * }
+ *
+ * function draw() {
+ *   background(150);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *
+ *   fill(255);
+ *   stroke(0);
+ *   beginShape(TRIANGLES);
+ *   for (let face of customGeometry.faces) {
+ *     for (let vertexIndex of face) {
+ *       let vertexPosition = customGeometry.vertices[vertexIndex];
+ *       vertex(vertexPosition.x, vertexPosition.y, vertexPosition.z);
+ *     }
+ *   }
+ *   endShape();
+ * }
+ *
+ * </code>
+ * </div>
+ * @alt
+ * A dynamically rotating 3D pyramid, crafted with triangular faces through custom geometry computations.
  */
   computeFaces() {
     this.faces.length = 0;
@@ -975,6 +1031,57 @@ p5.Geometry = class Geometry {
  * Modifies all vertices to be centered within the range -100 to 100.
  * @method normalize
  * @chainable
+ * @example
+ *
+ * <div>
+ * <code>
+ * let myObject;
+ *
+ * class object {
+ *   constructor() {
+ *     this.vertices = [
+ *       createVector(-15, -15, 0),
+ *       createVector(15, -15, 0),
+ *       createVector(15, 15, 0),
+ *       createVector(-15, 15, 0)
+ *     ];
+ *
+ *     this.normalize();
+ *   }
+ *
+ *   normalize() {
+ *     for (let v of this.vertices) {
+ *       v.normalize();
+ *     }
+ *   }
+ *
+ *   display() {
+ *     beginShape();
+ *     for (let i = 0; i < this.vertices.length; i++) {
+ *       vertex(this.vertices[i].x * 50, this.vertices[i].y * 50,
+ *         this.vertices[i].z * 50);
+ *     }
+ *     endShape(CLOSE);
+ *   }
+ * }
+ *
+ * function setup() {
+ *   createCanvas(150, 150, WEBGL);
+ *   myObject = new object();
+ * }
+ * function draw() {
+ *   background(220);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   myObject.display();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * A continuously rotating square around the X and Y axes.
+ * </code>
+ * </div>
  */
   normalize() {
     if (this.vertices.length > 0) {
