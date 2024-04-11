@@ -1095,7 +1095,7 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
  *
  * function draw() {
  *   // This example goes from red to yellow and then to green
- *   const palette = [color("red"), color("yellow"), color("green")];
+ *   const palette = [color('red'), color('yellow'), color('green')];
  *   const lerp_color = paletteLerp(palette, (millis() / 2000) % 1);
  *   background(lerp_color);
  * }
@@ -1112,7 +1112,7 @@ p5.prototype.paletteLerp = function(colors, amt) {
 
   const from = colors[from_index];
   const to = colors[from_index + 1];
-  return lerpColor(from, to, amt * last_color_ind - from_index);
+  return this.lerpColor(from, to, amt * last_color_ind - from_index);
 };
 
 /**
