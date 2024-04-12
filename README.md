@@ -987,6 +987,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://jackbdu.com/about"><img src="https://avatars.githubusercontent.com/u/8614803?v=4?s=120" width="120px;" alt="Jack B. Du"/><br /><sub><b>Jack B. Du</b></sub></a><br /><a href="#tutorial-jackbdu" title="Tutorials">✅</a> <a href="#example-jackbdu" title="Examples">💡</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/togekisse"><img src="https://avatars.githubusercontent.com/u/78539685?v=4?s=120" width="120px;" alt="togekisse"/><br /><sub><b>togekisse</b></sub></a><br /><a href="#translation-togekisse" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://tuan-h.com"><img src="https://avatars.githubusercontent.com/u/90000947?v=4?s=120" width="120px;" alt="tuan"/><br /><sub><b>tuan</b></sub></a><br /><a href="#translation-tuantinghuang" title="Translation">🌍</a> <a href="#ideas-tuantinghuang" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/janisepulveda"><img src="https://avatars.githubusercontent.com/u/144460794?v=4?s=120" width="120px;" alt="Janis Sepúlveda"/><br /><sub><b>Janis Sepúlveda</b></sub></a><br /><a href="#translation-janisepulveda" title="Translation">🌍</a> <a href="#ideas-janisepulveda" title="Ideas, Planning, & Feedback">🤔</a></td>
+    </tr>
+    <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://yuyuy.cargo.site/"><img src="https://avatars.githubusercontent.com/u/43624848?v=4?s=120" width="120px;" alt="yu"/><br /><sub><b>yu</b></sub></a><br /><a href="#translation-leey611" title="Translation">🌍</a> <a href="#ideas-leey611" title="Ideas, Planning, & Feedback">🤔</a></td>
     </tr>
   </tbody>
