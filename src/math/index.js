@@ -1,6 +1,6 @@
 import calculation from './calculation.js';
 import noise from './noise.js';
-import random from './noise.js';
+import random from './random.js';
 import trigonometry from './trigonometry.js';
 import math from './math.js';
 import vector from './p5.Vector.js';

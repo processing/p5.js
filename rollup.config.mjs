@@ -16,64 +16,68 @@ const plugins = [
 ];
 const banner = `/*! p5.js v${pkg.version} ${dayjs().format('MMMM D, YYYY')} */`;
 
-export default [{
-  input: 'src/app.js',
-  output: [
-    {
-      file: './lib/p5.rollup.js',
-      format: 'iife',
-      name: 'p5',
-      banner
-    },
-    {
-      file: './lib/p5.rollup.esm.js',
-      format: 'esm',
-      banner
-    },
-    {
-      file: './lib/p5.rollup.min.js',
-      format: 'iife',
-      name: 'p5',
-      banner,
-      plugins: [terser({
-        compress: {
-          global_defs: {
-            IS_MINIFIED: true
+export default [
+  {
+    input: 'src/app.js',
+    output: [
+      {
+        file: './lib/p5.rollup.js',
+        format: 'iife',
+        name: 'p5',
+        banner
+      },
+      {
+        file: './lib/p5.rollup.esm.js',
+        format: 'esm',
+        banner
+      },
+      {
+        file: './lib/p5.rollup.min.js',
+        format: 'iife',
+        name: 'p5',
+        banner,
+        plugins: [terser({
+          compress: {
+            global_defs: {
+              IS_MINIFIED: true
+            }
+          },
+          format: {
+            comments: false
           }
-        },
-        format: {
-          comments: false
-        }
-      })]
-    }
-  ],
-  plugins
-}, {
-  input: 'src/math/index.js',
-  output: [
-    {
-      file: './lib/p5.math.js',
-      format: 'iife'
-    },
-    {
-      file: './lib/p5.math.min.js',
-      format: 'iife',
-      plugins: [terser({
-        compress: {
-          global_defs: {
-            IS_MINIFIED: true
+        })]
+      }
+    ],
+    plugins
+  },
+  // NOTE: comment to NOT build standalone math module
+  {
+    input: 'src/math/index.js',
+    output: [
+      {
+        file: './lib/p5.math.js',
+        format: 'iife'
+      },
+      {
+        file: './lib/p5.math.min.js',
+        format: 'iife',
+        plugins: [terser({
+          compress: {
+            global_defs: {
+              IS_MINIFIED: true
+            }
+          },
+          format: {
+            comments: false
           }
-        },
-        format: {
-          comments: false
-        }
-      })]
-    },
-    {
-      file: './lib/p5.math.esm.js',
-      format: 'esm'
-    }
-  ],
-  external: ['../core/main'],
-  plugins
-}];
+        })]
+      },
+      {
+        file: './lib/p5.math.esm.js',
+        format: 'esm'
+      }
+    ],
+    external: ['../core/main'],
+    plugins
+  }
+];
