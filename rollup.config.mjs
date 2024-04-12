@@ -48,6 +48,9 @@ export default [
         })]
       }
     ],
+    // treeshake: {
+    //   preset: 'smallest'
+    // },
     plugins
   },
   // NOTE: comment to NOT build standalone math module
