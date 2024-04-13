@@ -904,10 +904,87 @@ p5.prototype._onblur = function(e) {
  * </div>
  */
 p5.prototype.keyIsDown = function(code) {
+  if (code === 'a') {
+    code = 65;
+  }
+  if (code === 'b') {
+    code = 66;
+  }
+  if (code === 'c') {
+    code = 67;
+  }
+  if (code === 'd') {
+    code = 68;
+  }
+  if (code === 'e') {
+    code = 69;
+  }
+  if (code === 'f') {
+    code = 70;
+  }
+  if (code === 'g') {
+    code = 71;
+  }
+  if (code === 'h') {
+    code = 72;
+  }
+  if (code === 'i') {
+    code = 73;
+  }
+  if (code === 'j') {
+    code = 74;
+  }
+  if (code === 'k') {
+    code = 75;
+  }
+  if (code === 'l') {
+    code = 76;
+  }
+  if (code === 'm') {
+    code = 77;
+  }
+  if (code === 'n') {
+    code = 78;
+  }
+  if (code === 'o') {
+    code = 79;
+  }
+  if (code === 'p') {
+    code = 80;
+  }
+  if (code === 'q') {
+    code = 81;
+  }
+  if (code === 'r') {
+    code = 82;
+  }
+  if (code === 's') {
+    code = 83;
+  }
+  if (code === 't') {
+    code = 84;
+  }
+  if (code === 'u') {
+    code = 85;
+  }
+  if (code === 'v') {
+    code = 86;
+  }
+  if (code === 'w') {
+    code = 87;
+  }
+  if (code === 'x') {
+    code = 88;
+  }
+  if (code === 'y') {
+    code = 89;
+  }
+  if (code === 'z') {
+    code = 90;
+  }
   p5._validateParameters('keyIsDown', arguments);
   return this._downKeys[code] || false;
 };
-
 /**
  * The _areDownKeys function returns a boolean true if any keys pressed
  * and a false if no keys are currently pressed.
