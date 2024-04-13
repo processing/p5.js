@@ -992,6 +992,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://yuyuy.cargo.site/"><img src="https://avatars.githubusercontent.com/u/43624848?v=4?s=120" width="120px;" alt="yu"/><br /><sub><b>yu</b></sub></a><br /><a href="#translation-leey611" title="Translation">🌍</a> <a href="#ideas-leey611" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/LKL2017"><img src="https://avatars.githubusercontent.com/u/31305299?v=4?s=120" width="120px;" alt="李坤霖"/><br /><sub><b>李坤霖</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3ALKL2017" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/thanks"><img src="https://avatars.githubusercontent.com/u/1121545?v=4?s=120" width="120px;" alt="Thanks"/><br /><sub><b>Thanks</b></sub></a><br /><a href="#translation-Thanks" title="Translation">🌍</a></td>
     </tr>
   </tbody>
 </table>
