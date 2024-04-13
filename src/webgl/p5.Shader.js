@@ -6,7 +6,7 @@
  * @requires core
  */
 
-import p5 from '../core/main';
+import p5 from "../core/main";
 
 /**
  * Shader class for WEBGL Mode
@@ -16,9 +16,10 @@ import p5 from '../core/main';
  * will provide the GL context for this new p5.Shader
  * @param {String} vertSrc source code for the vertex shader (as a string)
  * @param {String} fragSrc source code for the fragment shader (as a string)
+ * @param {Object} [options] TODO
  */
 p5.Shader = class {
-  constructor(renderer, vertSrc, fragSrc) {
+  constructor(renderer, vertSrc, fragSrc, options = {}) {
     // TODO: adapt this to not take ids, but rather,
     // to take the source for a vertex and fragment shader
     // to enable custom shaders at some later date
@@ -34,6 +35,65 @@ p5.Shader = class {
     this.uniforms = {};
     this._bound = false;
     this.samplers = [];
+    this.hooks = {
+      declarations: options.declarations,
+      vertex: options.vertex || {},
+      fragment: options.fragment || {},
+    };
+  }
+
+  shaderSrc(src, shaderType) {
+    // return this._vertSrc;
+    const main = "void main";
+    const [preMain, postMain] = src.split(main);
+
+    let hooks = "";
+    if (this.hooks.declarations) {
+      hooks += this.hooks.declarations + "\n";
+    }
+    for (const hookDef in this.hooks[shaderType]) {
+      if (hookDef === "declarations") {
+        hooks += this.hooks[shaderType].declarations + "\n";
+      } else {
+        const [hookType, hookName] = hookDef.split(" ");
+
+        // Add a #define so that if the shader wants to use preprocessor directives to
+        // optimize away the extra function calls in main, it can do so
+        hooks += "#define DEFINED_HOOK_" + hookName + "\n";
+
+        hooks +=
+          hookType +
+          " HOOK_" +
+          hookName +
+          this.hooks[shaderType][hookDef] +
+          "\n";
+      }
+    }
+
+    return preMain + hooks + main + postMain;
+  }
+
+  vertSrc() {
+    return this.shaderSrc(this._vertSrc, "vertex");
+  }
+
+  fragSrc() {
+    return this.shaderSrc(this._fragSrc, "fragment");
+  }
+
+  augment(newHooks) {
+    return new p5.Shader(this._renderer, this._vertSrc, this._fragSrc, {
+      declarations:
+        (this.hooks.declarations || "") + "\n" + (newHooks.declarations || ""),
+      fragment: {
+        ...this.hooks.fragment,
+        ...(newHooks.fragment || {}),
+      },
+      vertex: {
+        ...this.hooks.vertex,
+        ...(newHooks.vertex || {}),
+      },
+    });
   }
 
   /**
@@ -59,29 +119,35 @@ p5.Shader = class {
       // 3. linking the vertex and fragment shaders
       this._vertShader = gl.createShader(gl.VERTEX_SHADER);
       //load in our default vertex shader
-      gl.shaderSource(this._vertShader, this._vertSrc);
+      gl.shaderSource(this._vertShader, this.vertSrc());
       gl.compileShader(this._vertShader);
       // if our vertex shader failed compilation?
       if (!gl.getShaderParameter(this._vertShader, gl.COMPILE_STATUS)) {
-        p5._friendlyError(
-          `Yikes! An error occurred compiling the vertex shader:${gl.getShaderInfoLog(
-            this._vertShader
-          )}`
-        );
+        const glError = gl.getShaderInfoLog(this._vertShader);
+        if (typeof IS_MINIFIED !== "undefined") {
+          console.error(glError);
+        } else {
+          p5._friendlyError(
+            `Yikes! An error occurred compiling the vertex shader:${glError}`,
+          );
+        }
         return null;
       }
 
       this._fragShader = gl.createShader(gl.FRAGMENT_SHADER);
       //load in our material frag shader
-      gl.shaderSource(this._fragShader, this._fragSrc);
+      gl.shaderSource(this._fragShader, this.fragSrc());
       gl.compileShader(this._fragShader);
       // if our frag shader failed compilation?
       if (!gl.getShaderParameter(this._fragShader, gl.COMPILE_STATUS)) {
-        p5._friendlyError(
-          `Darn! An error occurred compiling the fragment shader:${gl.getShaderInfoLog(
-            this._fragShader
-          )}`
-        );
+        const glError = gl.getShaderInfoLog(this._fragShader);
+        if (typeof IS_MINIFIED !== "undefined") {
+          console.error(glError);
+        } else {
+          p5._friendlyError(
+            `Darn! An error occurred compiling the fragment shader:${glError}`,
+          );
+        }
         return null;
       }
 
@@ -92,8 +158,8 @@ p5.Shader = class {
       if (!gl.getProgramParameter(this._glProgram, gl.LINK_STATUS)) {
         p5._friendlyError(
           `Snap! Error linking shader program: ${gl.getProgramInfoLog(
-            this._glProgram
-          )}`
+            this._glProgram,
+          )}`,
         );
       }
 
@@ -131,7 +197,7 @@ p5.Shader = class {
     const shader = new p5.Shader(
       context._renderer,
       this._vertSrc,
-      this._fragSrc
+      this._fragSrc,
     );
     shader.ensureCompiledOnContext(context);
     return shader;
@@ -143,7 +209,7 @@ p5.Shader = class {
   ensureCompiledOnContext(context) {
     if (this._glProgram !== 0 && this._renderer !== context._renderer) {
       throw new Error(
-        'The shader being run is attached to a different context. Do you need to copy it to this context first with .copyToContext()?'
+        "The shader being run is attached to a different context. Do you need to copy it to this context first with .copyToContext()?",
       );
     } else if (this._glProgram === 0) {
       this._renderer = context._renderer;
@@ -168,7 +234,7 @@ p5.Shader = class {
 
     const numAttributes = gl.getProgramParameter(
       this._glProgram,
-      gl.ACTIVE_ATTRIBUTES
+      gl.ACTIVE_ATTRIBUTES,
     );
     for (let i = 0; i < numAttributes; ++i) {
       const attributeInfo = gl.getActiveAttrib(this._glProgram, i);
@@ -202,7 +268,7 @@ p5.Shader = class {
     // Inspect shader and cache uniform info
     const numUniforms = gl.getProgramParameter(
       this._glProgram,
-      gl.ACTIVE_UNIFORMS
+      gl.ACTIVE_UNIFORMS,
     );
 
     let samplerIndex = 0;
@@ -211,7 +277,7 @@ p5.Shader = class {
       const uniform = {};
       uniform.location = gl.getUniformLocation(
         this._glProgram,
-        uniformInfo.name
+        uniformInfo.name,
       );
       uniform.size = uniformInfo.size;
       let uniformName = uniformInfo.name;
@@ -220,7 +286,7 @@ p5.Shader = class {
       //off here. The size property tells us that its an array
       //so we dont lose any information by doing this
       if (uniformInfo.size > 1) {
-        uniformName = uniformName.substring(0, uniformName.indexOf('[0]'));
+        uniformName = uniformName.substring(0, uniformName.indexOf("[0]"));
       }
       uniform.name = uniformName;
       uniform.type = uniformInfo.type;
@@ -264,7 +330,7 @@ p5.Shader = class {
 
       this._setMatrixUniforms();
 
-      this.setUniform('uViewport', this._renderer._viewport);
+      this.setUniform("uViewport", this._renderer._viewport);
     }
   }
 
@@ -324,23 +390,27 @@ p5.Shader = class {
     modelViewProjectionMatrix.mult(projectionMatrix);
 
     if (this.isStrokeShader()) {
-      this.setUniform('uPerspective', this._renderer._curCamera.useLinePerspective ? 1 : 0);
+      this.setUniform(
+        "uPerspective",
+        this._renderer._curCamera.useLinePerspective ? 1 : 0,
+      );
     }
-    this.setUniform('uViewMatrix', viewMatrix.mat4);
-    this.setUniform('uProjectionMatrix', projectionMatrix.mat4);
-    this.setUniform('uModelViewMatrix', modelViewMatrix.mat4);
+    this.setUniform("uViewMatrix", viewMatrix.mat4);
+    this.setUniform("uProjectionMatrix", projectionMatrix.mat4);
+    this.setUniform("uModelViewMatrix", modelViewMatrix.mat4);
     this.setUniform(
-      'uModelViewProjectionMatrix',
-      modelViewProjectionMatrix.mat4
+      "uModelViewProjectionMatrix",
+      modelViewProjectionMatrix.mat4,
     );
     if (this.uniforms.uNormalMatrix) {
       this._renderer.uNMatrix.inverseTranspose(this._renderer.uMVMatrix);
-      this.setUniform('uNormalMatrix', this._renderer.uNMatrix.mat3);
+      this.setUniform("uNormalMatrix", this._renderer.uNMatrix.mat3);
     }
     if (this.uniforms.uCameraRotation) {
-      this._renderer.curMatrix.inverseTranspose(this._renderer.
-        _curCamera.cameraMatrix);
-      this.setUniform('uCameraRotation', this._renderer.curMatrix.mat3);
+      this._renderer.curMatrix.inverseTranspose(
+        this._renderer._curCamera.cameraMatrix,
+      );
+      this.setUniform("uCameraRotation", this._renderer.curMatrix.mat3);
     }
   }
 
@@ -564,20 +634,20 @@ p5.Shader = class {
 
   isLightShader() {
     return [
-      this.attributes.aNormal ,
-      this.uniforms.uUseLighting ,
-      this.uniforms.uAmbientLightCount ,
-      this.uniforms.uDirectionalLightCount ,
-      this.uniforms.uPointLightCount ,
-      this.uniforms.uAmbientColor ,
-      this.uniforms.uDirectionalDiffuseColors ,
-      this.uniforms.uDirectionalSpecularColors ,
-      this.uniforms.uPointLightLocation ,
-      this.uniforms.uPointLightDiffuseColors ,
-      this.uniforms.uPointLightSpecularColors ,
-      this.uniforms.uLightingDirection ,
-      this.uniforms.uSpecular
-    ].some(x => x !== undefined);
+      this.attributes.aNormal,
+      this.uniforms.uUseLighting,
+      this.uniforms.uAmbientLightCount,
+      this.uniforms.uDirectionalLightCount,
+      this.uniforms.uPointLightCount,
+      this.uniforms.uAmbientColor,
+      this.uniforms.uDirectionalDiffuseColors,
+      this.uniforms.uDirectionalSpecularColors,
+      this.uniforms.uPointLightLocation,
+      this.uniforms.uPointLightDiffuseColors,
+      this.uniforms.uPointLightSpecularColors,
+      this.uniforms.uLightingDirection,
+      this.uniforms.uSpecular,
+    ].some((x) => x !== undefined);
   }
 
   isNormalShader() {
@@ -611,11 +681,11 @@ p5.Shader = class {
   enableAttrib(attr, size, type, normalized, stride, offset) {
     if (attr) {
       if (
-        typeof IS_MINIFIED === 'undefined' &&
+        typeof IS_MINIFIED === "undefined" &&
         this.attributes[attr.name] !== attr
       ) {
         console.warn(
-          `The attribute "${attr.name}"passed to enableAttrib does not belong to this shader.`
+          `The attribute "${attr.name}"passed to enableAttrib does not belong to this shader.`,
         );
       }
       const loc = attr.location;
@@ -633,7 +703,7 @@ p5.Shader = class {
           type || gl.FLOAT,
           normalized || false,
           stride || 0,
-          offset || 0
+          offset || 0,
         );
       }
     }
@@ -651,7 +721,7 @@ p5.Shader = class {
     for (const location of this._renderer.registerEnabled.values()) {
       if (
         !Object.keys(this.attributes).some(
-          key => this.attributes[key].location === location
+          (key) => this.attributes[key].location === location,
         )
       ) {
         this._renderer.GL.disableVertexAttribArray(location);

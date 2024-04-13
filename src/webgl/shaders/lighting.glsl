@@ -68,7 +68,7 @@ float _lambertDiffuse(vec3 lightDirection, vec3 surfaceNormal) {
   return max(0.0, dot(-lightDirection, surfaceNormal));
 }
 
-LightResult _light(vec3 viewDirection, vec3 normal, vec3 lightVector) {
+LightResult _light(vec3 viewDirection, vec3 normal, vec3 lightVector, float shininess) {
 
   vec3 lightDir = normalize(lightVector);
 
@@ -77,7 +77,7 @@ LightResult _light(vec3 viewDirection, vec3 normal, vec3 lightVector) {
   float specularIntensity = mix(1.0, 0.4, metallic);
   float diffuseIntensity = mix(1.0, 0.1, metallic);
   if (uSpecular)
-    lr.specular = (_phongSpecular(lightDir, viewDirection, normal, uShininess)) * specularIntensity;
+    lr.specular = (_phongSpecular(lightDir, viewDirection, normal, shininess)) * specularIntensity;
     lr.diffuse = _lambertDiffuse(lightDir, normal) * diffuseIntensity;
   return lr;
 }
@@ -143,6 +143,7 @@ vec3 calculateImageSpecular( vec3 vNormal, vec3 vViewPosition ){
 void totalLight(
   vec3 modelPosition,
   vec3 normal,
+  float shininess,
   out vec3 totalDiffuse,
   out vec3 totalSpecular
 ) {
@@ -163,7 +164,7 @@ void totalLight(
       vec3 lightVector = (uViewMatrix * vec4(uLightingDirection[j], 0.0)).xyz;
       vec3 lightColor = uDirectionalDiffuseColors[j];
       vec3 specularColor = uDirectionalSpecularColors[j];
-      LightResult result = _light(viewDirection, normal, lightVector);
+      LightResult result = _light(viewDirection, normal, lightVector, shininess);
       totalDiffuse += result.diffuse * lightColor;
       totalSpecular += result.specular * lightColor * specularColor;
     }
@@ -177,7 +178,7 @@ void totalLight(
       vec3 lightColor = lightFalloff * uPointLightDiffuseColors[j];
       vec3 specularColor = lightFalloff * uPointLightSpecularColors[j];
 
-      LightResult result = _light(viewDirection, normal, lightVector);
+      LightResult result = _light(viewDirection, normal, lightVector, shininess);
       totalDiffuse += result.diffuse * lightColor;
       totalSpecular += result.specular * lightColor * specularColor;
     }
@@ -203,7 +204,7 @@ void totalLight(
       vec3 lightColor = uSpotLightDiffuseColors[j];
       vec3 specularColor = uSpotLightSpecularColors[j];
      
-      LightResult result = _light(viewDirection, normal, lightVector);
+      LightResult result = _light(viewDirection, normal, lightVector, shininess);
       
       totalDiffuse += result.diffuse * lightColor * lightFalloff;
       totalSpecular += result.specular * lightColor * specularColor * lightFalloff;

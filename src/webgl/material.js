@@ -194,9 +194,9 @@ p5.prototype.loadShader = function (
  * @alt
  * zooming Mandelbrot set. a colorful, infinitely detailed fractal.
  */
-p5.prototype.createShader = function (vertSrc, fragSrc) {
+p5.prototype.createShader = function (vertSrc, fragSrc, options) {
   p5._validateParameters('createShader', arguments);
-  return new p5.Shader(this._renderer, vertSrc, fragSrc);
+  return new p5.Shader(this._renderer, vertSrc, fragSrc, options);
 };
 
 /**

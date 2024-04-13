@@ -1801,7 +1801,38 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
           this._webGL2CompatibilityPrefix('vert', 'highp') +
           defaultShaders.phongVert,
           this._webGL2CompatibilityPrefix('frag', 'highp') +
-          defaultShaders.phongFrag
+          defaultShaders.phongFrag,
+          {
+            vertex: {
+              'void beforeMain': '() {}',
+              'vec3 getLocalPosition': '(vec3 position) { return position; }',
+              'vec3 getWorldPosition': '(vec3 position) { return position; }',
+              'vec3 getLocalNormal': '(vec3 normal) { return normal; }',
+              'vec3 getWorldNormal': '(vec3 normal) { return normal; }',
+              'vec2 getUV': '(vec2 uv) { return uv; }',
+              'vec4 getVertexColor': '(vec4 color) { return color; }',
+              'void afterMain': '() {}'
+            },
+            fragment: {
+              'void beforeMain': '() {}',
+              'vec3 getWorldNormal': '(vec3 normal) { return normal; }',
+              'vec4 getBaseColor': '(vec4 color) { return color; }',
+              'vec3 getAmbientMaterial': '(vec3 color) { return color; }',
+              'vec3 getSpecularMaterial': '(vec3 color) { return color; }',
+              'float getShininess': '(float shininess) { return shininess; }',
+              'vec4 combineColors': `(ColorComponents components) {
+                vec4 color = vec4(0.);
+                color.rgb += components.diffuse * components.baseColor;
+                color.rgb += components.ambient * components.ambientColor;
+                color.rgb += components.specular * components.specularColor;
+                color.rgb += components.emissive;
+                color.a = components.opacity;
+                return color;
+              }`,
+              'vec4 getFinalColor': '(vec4 color) { return color; }',
+              'void afterMain': '() {}'
+            }
+          }
         );
       } else {
         this._defaultLightShader = new p5.Shader(
