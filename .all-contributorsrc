@@ -5879,6 +5879,15 @@
         "translation",
         "ideas"
       ]
+    },
+    {
+      "login": "LKL2017",
+      "name": "李坤霖",
+      "avatar_url": "https://avatars.githubusercontent.com/u/31305299?v=4",
+      "profile": "https://github.com/LKL2017",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
