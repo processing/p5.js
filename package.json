@@ -143,8 +143,5 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
-  },
-  "dependencies": {
-    "watch": "^1.0.2"
   }
 }
