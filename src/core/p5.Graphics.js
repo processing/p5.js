@@ -18,7 +18,7 @@ import * as constants from './constants';
  * @extends p5.Element
  * @param {Number} w            width
  * @param {Number} h            height
- * @param {Constant} renderer   the renderer to use, either P2D or WEBGL
+ * @param {(P2D|WEBGL)} renderer   the renderer to use, either P2D or WEBGL
  * @param {p5} [pInst]          pointer to p5 instance
  * @param {HTMLCanvasElement} [canvas]     existing html canvas element
  */

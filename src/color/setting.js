@@ -475,7 +475,7 @@ p5.prototype.clear = function(...args) {
  * created in. Changing modes doesn't affect their appearance.
  *
  * @method colorMode
- * @param {Constant} mode   either RGB, HSB or HSL, corresponding to
+ * @param {(RGB|HSB|HSL)} mode   either RGB, HSB or HSL, corresponding to
  *                          Red/Green/Blue and Hue/Saturation/Brightness
  *                          (or Lightness).
  * @param {Number}  [max]  range for all values.
@@ -545,7 +545,7 @@ p5.prototype.clear = function(...args) {
 
 /**
  * @method colorMode
- * @param {Constant} mode
+ * @param {(RGB|HSB|HSL)} mode
  * @param {Number} max1     range for the red or hue depending on the
  *                              current color mode.
  * @param {Number} max2     range for the green or saturation depending

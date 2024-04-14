@@ -229,8 +229,8 @@ function getParams(entry) {
 // Constants
 // ============================================================================
 for (const entry of allData) {
-  if (entry.kind === 'constant') {
-    constUsage[entry.name] = new Set();
+  if (entry.kind === 'constant' || entry.kind === 'typedef') {
+    constUsage[entry.name] = constUsage[entry.name] || new Set();
 
     const { module, submodule, forEntry } = getModuleInfo(entry);
 

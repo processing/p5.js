@@ -823,7 +823,7 @@ p5.Image = class Image {
    * `DILATE`
    * Increases the light areas. No parameter is used.
    *
-   * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
+   * @param  {(THRESHOLD|GRAY|OPAQUE|INVERT|POSTERIZE|ERODE|DILATE|BLUR)} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
    *                                POSTERIZE, ERODE, DILATE or BLUR.
    * @param  {Number} [filterParam] parameter unique to each filter.
    * @example
@@ -982,7 +982,7 @@ p5.Image = class Image {
    * @param  {Integer} dy y-coordinate of the destination's upper-left corner.
    * @param  {Integer} dw destination image width.
    * @param  {Integer} dh destination image height.
-   * @param  {Constant} blendMode the blend mode. either
+   * @param  {(BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|NORMAL)} blendMode the blend mode. either
    *     BLEND, DARKEST, LIGHTEST, DIFFERENCE,
    *     MULTIPLY, EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
    *     SOFT_LIGHT, DODGE, BURN, ADD or NORMAL.
@@ -1063,7 +1063,7 @@ p5.Image = class Image {
    * @param  {Integer} dy
    * @param  {Integer} dw
    * @param  {Integer} dh
-   * @param  {Constant} blendMode
+   * @param  {(BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|NORMAL)} blendMode
    */
   blend(...args) {
     p5._validateParameters('p5.Image.blend', arguments);

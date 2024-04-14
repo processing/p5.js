@@ -116,7 +116,7 @@ p5.prototype._normalizeArcAngles = (
  * @param  {Number} h      height of the arc's ellipse by default.
  * @param  {Number} start  angle to start the arc, specified in radians.
  * @param  {Number} stop   angle to stop the arc, specified in radians.
- * @param  {Constant} [mode] optional parameter to determine the way of drawing
+ * @param  {(CHORD|PIE|OPEN)} [mode] optional parameter to determine the way of drawing
  *                         the arc. either CHORD, PIE, or OPEN.
  * @param  {Integer} [detail] optional parameter for WebGL mode only. This is to
  *                         specify the number of vertices that makes up the

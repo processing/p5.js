@@ -2145,7 +2145,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * and <a href="https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia" target="_blank">here</a>.
  *
  * @method createCapture
- * @param  {String|Constant|Object}  [type] type of capture, either AUDIO or VIDEO,
+ * @param  {(AUDIO|VIDEO|Object)}  [type] type of capture, either AUDIO or VIDEO,
  *                                   or a constraints object. Both video and audio
  *                                   audio streams are captured by default.
  * @param  {Function}                [callback] function to call once the stream
@@ -3243,8 +3243,8 @@ p5.Element.prototype.hide = function () {
  */
 /**
  * @method size
- * @param  {Number|Constant} w   width of the element, either AUTO, or a number.
- * @param  {Number|Constant} [h] height of the element, either AUTO, or a number.
+ * @param  {(Number|AUTO)} w   width of the element, either AUTO, or a number.
+ * @param  {(Number|AUTO)} [h] height of the element, either AUTO, or a number.
  * @chainable
  */
 p5.Element.prototype.size = function (w, h) {

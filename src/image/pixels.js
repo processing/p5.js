@@ -117,7 +117,7 @@ p5.prototype.pixels = [];
  * @param  {Integer} dy y-coordinate of the destination's upper-left corner.
  * @param  {Integer} dw destination image width.
  * @param  {Integer} dh destination image height.
- * @param  {Constant} blendMode the blend mode. either
+ * @param  {(BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|NORMAL)} blendMode the blend mode. either
  *     BLEND, DARKEST, LIGHTEST, DIFFERENCE,
  *     MULTIPLY, EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
  *     SOFT_LIGHT, DODGE, BURN, ADD or NORMAL.
@@ -193,7 +193,7 @@ p5.prototype.pixels = [];
  * @param  {Integer} dy
  * @param  {Integer} dw
  * @param  {Integer} dh
- * @param  {Constant} blendMode
+ * @param  {(BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|NORMAL)} blendMode
  */
 p5.prototype.blend = function(...args) {
   p5._validateParameters('blend', args);
@@ -385,10 +385,10 @@ p5.prototype._copyHelper = (
  *
  *
  * @method filter
- * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
+ * @param  {(THRESHOLD|GRAY|OPAQUE|INVERT|POSTERIZE|BLUR|ERODE|DILATE|BLUR)} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
  *                                POSTERIZE, BLUR, ERODE, DILATE or BLUR.
  * @param  {Number} [filterParam] parameter unique to each filter.
- * @param  {Boolean} [useWebGL]   flag to control whether to use fast
+ * @param  {Boolean} [useWebGL=true]   flag to control whether to use fast
  *                                WebGL filters (GPU) or original image
  *                                filters (CPU); defaults to `true`.
  *
@@ -559,9 +559,9 @@ p5.prototype.getFilterGraphicsLayer = function() {
 
 /**
  * @method filter
- * @param  {Constant} filterType
+ * @param  {(THRESHOLD|GRAY|OPAQUE|INVERT|POSTERIZE|BLUR|ERODE|DILATE|BLUR)} filterType
  * @param  {Number} [filterParam]
- * @param  {Boolean} [useWebGL]
+ * @param  {Boolean} [useWebGL=true]
  */
 /**
  * @method filter

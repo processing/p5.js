@@ -26,9 +26,9 @@ import p5 from '../core/main';
  * or `BASELINE`.
  *
  * @method textAlign
- * @param {Constant} horizAlign horizontal alignment, either LEFT,
+ * @param {(LEFT|CENTER|RIGHT)} horizAlign horizontal alignment, either LEFT,
  *                            CENTER, or RIGHT.
- * @param {Constant} [vertAlign] vertical alignment, either TOP,
+ * @param {(TOP|BOTTOM|BASELINE|CENTER)} [vertAlign] vertical alignment, either TOP,
  *                            BOTTOM, CENTER, or BASELINE.
  * @chainable
  * @example
@@ -158,7 +158,7 @@ p5.prototype.textSize = function(theSize) {
  * affect fonts loaded with <a href="#/p5/loadFont">loadFont()</a>.
  *
  * @method textStyle
- * @param {Constant} style styling for text, either NORMAL,
+ * @param {(NORMAL|ITALIC|BOLD|BOLDITALIC)} style styling for text, either NORMAL,
  *                            ITALIC, BOLD or BOLDITALIC
  * @chainable
  * @example
@@ -384,7 +384,7 @@ p5.prototype._updateTextMetrics = function() {
  * Calling `textWrap()` without an argument returns the current style.
  *
  * @method textWrap
- * @param {Constant} style text wrapping style, either WORD or CHAR.
+ * @param {(WORD|CHAR)} style text wrapping style, either WORD or CHAR.
  * @return {String} style
  * @example
  * <div>

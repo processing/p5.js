@@ -50,7 +50,7 @@ const renderers = p5.renderers = {
  * @method createCanvas
  * @param  {Number} w width of the canvas
  * @param  {Number} h height of the canvas
- * @param  {Constant} [renderer] either P2D or WEBGL
+ * @param  {(P2D|WEBGL)} [renderer] either P2D or WEBGL
  * @param  {HTMLCanvasElement} [canvas] existing html canvas element
  * @return {p5.Renderer} pointer to p5.Renderer holding canvas
  * @example
@@ -266,7 +266,7 @@ p5.prototype.noCanvas = function() {
  * @method createGraphics
  * @param  {Number} w width of the offscreen graphics buffer
  * @param  {Number} h height of the offscreen graphics buffer
- * @param  {Constant} [renderer] either P2D or WEBGL
+ * @param  {(P2D|WEBGL)} [renderer] either P2D or WEBGL
  *                               undefined defaults to p2d
  * @param  {HTMLCanvasElement} [canvas] existing html canvas element
  * @return {p5.Graphics} offscreen graphics buffer
@@ -499,7 +499,7 @@ p5.prototype.clearDepth = function(depth) {
  * <em>(3D)</em> indicates that this blend mode <b>only</b> works in the WEBGL renderer.
  *
  * @method blendMode
- * @param  {Constant} mode blend mode to set for canvas.
+ * @param  {(BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|REMOVE|SUBTRACT)} mode blend mode to set for canvas.
  *                either BLEND, DARKEST, LIGHTEST, DIFFERENCE, MULTIPLY,
  *                EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
  *                SOFT_LIGHT, DODGE, BURN, ADD, REMOVE or SUBTRACT

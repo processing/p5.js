@@ -13,6 +13,7 @@ import color_conversion from './color_conversion';
 
 /*
  * CSS named colors.
+ * @private
  */
 const namedColors = {
   aliceblue: '#f0f8ff',
@@ -180,6 +181,7 @@ const PERCENT = new RegExp(`${DECIMAL.source}%`); // Match 12.9%, 79%, .9%, etc.
 
 /*
  * Full color string patterns. The capture groups are necessary.
+ * @private
  */
 const colorPatterns = {
   // Match colors in format #XXX, e.g. #416.

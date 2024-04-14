@@ -344,7 +344,7 @@ p5.prototype.pwinMouseY = 0;
  * LEFT, RIGHT, or CENTER depending on which button was pressed last.
  * Warning: different browsers may track mouseButton differently.
  *
- * @property {Constant} mouseButton
+ * @property {(LEFT|RIGHT|CENTER)} mouseButton
  * @readOnly
  *
  * @example

@@ -17,7 +17,8 @@ export const VERSION =
 // GRAPHICS RENDERER
 /**
  * The default, two-dimensional renderer.
- * @property {String} P2D
+ * @typedef {unique symbol} P2D
+ * @property {P2D} P2D
  * @final
  */
 export const P2D = Symbol('p2d');
@@ -38,7 +39,8 @@ export const P2D = Symbol('p2d');
  *
  * To learn more about WEBGL mode, check out <a href="https://p5js.org/learn/#:~:text=Getting%20Started%20in%20WebGL">all the interactive WEBGL tutorials</a> in the "Learn" section of this website, or read the wiki article <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5">"Getting started with WebGL in p5"</a>.
  *
- * @property {String} WEBGL
+ * @typedef {unique symbol} WEBGL
+ * @property {WEBGL} WEBGL
  * @final
  */
 export const WEBGL = Symbol('webgl');
@@ -46,39 +48,46 @@ export const WEBGL = Symbol('webgl');
  * One of the two possible values of a WebGL canvas (either WEBGL or WEBGL2),
  * which can be used to determine what capabilities the rendering environment
  * has.
- * @property {String} WEBGL2
+ * @typedef {unique symbol} WEBGL2
+ * @property {WEBGL2} WEBGL2
  * @final
  */
 export const WEBGL2 = Symbol('webgl2');
 
 // ENVIRONMENT
 /**
- * @property {String} ARROW
+ * @typedef {'default'} ARROW
+ * @property {ARROW} ARROW
  * @final
  */
 export const ARROW = 'default';
 /**
- * @property {String} CROSS
+ * @typedef {'crosshair'} CROSS
+ * @property {CROSS} CROSS
  * @final
  */
 export const CROSS = 'crosshair';
 /**
- * @property {String} HAND
+ * @typedef {'pointer'} HAND
+ * @property {HAND} HAND
  * @final
  */
 export const HAND = 'pointer';
 /**
- * @property {String} MOVE
+ * @typedef {'move'} MOVE
+ * @property {MOVE} MOVE
  * @final
  */
 export const MOVE = 'move';
 /**
- * @property {String} TEXT
+ * @typedef {'text'} TEXT
+ * @property {TEXT} TEXT
  * @final
  */
 export const TEXT = 'text';
 /**
- * @property {String} WAIT
+ * @typedef {'wait'} WAIT
+ * @property {WAIT} WAIT
  * @final
  */
 export const WAIT = 'wait';
@@ -178,7 +187,8 @@ export const TWO_PI = _PI * 2;
 /**
  * Constant to be used with the <a href="#/p5/angleMode">angleMode()</a> function, to set the mode in
  * which p5.js interprets and calculates angles (either DEGREES or RADIANS).
- * @property {String} DEGREES
+ * @typedef {unique symbol} DEGREES
+ * @property {DEGREES} DEGREES
  * @final
  *
  * @example
@@ -192,7 +202,8 @@ export const DEGREES = Symbol('degrees');
 /**
  * Constant to be used with the <a href="#/p5/angleMode">angleMode()</a> function, to set the mode
  * in which p5.js interprets and calculates angles (either RADIANS or DEGREES).
- * @property {String} RADIANS
+ * @typedef {unique symbol} RADIANS
+ * @property {RADIANS} RADIANS
  * @final
  *
  * @example
@@ -208,161 +219,178 @@ export const RAD_TO_DEG = 180.0 / _PI;
 
 // SHAPE
 /**
- * @property {String} CORNER
+ * @typedef {'corner'} CORNER
+ * @property {CORNER} CORNER
  * @final
  */
 export const CORNER = 'corner';
 /**
- * @property {String} CORNERS
+ * @typedef {'corners'} CORNERS
+ * @property {CORNERS} CORNERS
  * @final
  */
 export const CORNERS = 'corners';
 /**
- * @property {String} RADIUS
+ * @typedef {'radius'} RADIUS
+ * @property {RADIUS} RADIUS
  * @final
  */
 export const RADIUS = 'radius';
 /**
- * @property {String} RIGHT
+ * @typedef {'right'} RIGHT
+ * @property {RIGHT} RIGHT
  * @final
  */
 export const RIGHT = 'right';
 /**
- * @property {String} LEFT
+ * @typedef {'left'} LEFT
+ * @property {LEFT} LEFT
  * @final
  */
 export const LEFT = 'left';
 /**
- * @property {String} CENTER
+ * @typedef {'center'} CENTER
+ * @property {CENTER} CENTER
  * @final
  */
 export const CENTER = 'center';
 /**
- * @property {String} TOP
+ * @typedef {'top'} TOP
+ * @property {TOP} TOP
  * @final
  */
 export const TOP = 'top';
 /**
- * @property {String} BOTTOM
+ * @typedef {'bottom'} BOTTOM
+ * @property {BOTTOM} BOTTOM
  * @final
  */
 export const BOTTOM = 'bottom';
 /**
- * @property {String} BASELINE
+ * @typedef {'alphabetic'} BASELINE
+ * @property {BASELINE} BASELINE
  * @final
- * @default alphabetic
  */
 export const BASELINE = 'alphabetic';
 /**
- * @property {Number} POINTS
+ * @typedef {0x0000} POINTS
+ * @property {POINTS} POINTS
  * @final
- * @default 0x0000
  */
 export const POINTS = 0x0000;
 /**
- * @property {Number} LINES
+ * @typedef {0x0001} LINES
+ * @property {LINES} LINES
  * @final
- * @default 0x0001
  */
 export const LINES = 0x0001;
 /**
- * @property {Number} LINE_STRIP
+ * @property {0x0003} LINE_STRIP
+ * @property {LINE_STRIP} LINE_STRIP
  * @final
- * @default 0x0003
  */
 export const LINE_STRIP = 0x0003;
 /**
- * @property {Number} LINE_LOOP
+ * @typedef {0x0002} LINE_LOOP
+ * @property {LINE_LOOP} LINE_LOOP
  * @final
- * @default 0x0002
  */
 export const LINE_LOOP = 0x0002;
 /**
- * @property {Number} TRIANGLES
+ * @typedef {0x0004} TRIANGLES
+ * @property {TRIANGLES} TRIANGLES
  * @final
- * @default 0x0004
  */
 export const TRIANGLES = 0x0004;
 /**
- * @property {Number} TRIANGLE_FAN
+ * @typedef {0x0006} TRIANGLE_FAN
+ * @property {TRIANGLE_FAN} TRIANGLE_FAN
  * @final
- * @default 0x0006
  */
 export const TRIANGLE_FAN = 0x0006;
 /**
- * @property {Number} TRIANGLE_STRIP
+ * @typedef {0x0005} TRIANGLE_STRIP
+ * @property {TRIANGLE_STRIP} TRIANGLE_STRIP
  * @final
- * @default 0x0005
  */
 export const TRIANGLE_STRIP = 0x0005;
 /**
- * @property {String} QUADS
+ * @typedef {'quads'} QUADS
+ * @property {QUADS} QUADS
  * @final
  */
 export const QUADS = 'quads';
 /**
- * @property {String} QUAD_STRIP
+ * @typedef {'quad_strip'} QUAD_STRIP
+ * @property {QUAD_STRIP} QUAD_STRIP
  * @final
- * @default quad_strip
  */
 export const QUAD_STRIP = 'quad_strip';
 /**
- * @property {String} TESS
+ * @typedef {'tess'} TESS
+ * @property {TESS} TESS
  * @final
- * @default tess
  */
 export const TESS = 'tess';
 /**
- * @property {String} CLOSE
+ * @typedef {'close'} CLOSE
+ * @property {CLOSE} CLOSE
  * @final
  */
 export const CLOSE = 'close';
 /**
- * @property {String} OPEN
+ * @typedef {'open'} OPEN
+ * @property {OPEN} OPEN
  * @final
  */
 export const OPEN = 'open';
 /**
- * @property {String} CHORD
+ * @typedef {'chord'} CHORD
+ * @property {CHORD} CHORD
  * @final
  */
 export const CHORD = 'chord';
 /**
- * @property {String} PIE
+ * @typedef {'pie'} PIE
+ * @property {PIE} PIE
  * @final
  */
 export const PIE = 'pie';
 /**
- * @property {String} PROJECT
+ * @typedef {'square'} PROJECT
+ * @property {PROJECT} PROJECT
  * @final
- * @default square
  */
 export const PROJECT = 'square'; // PEND: careful this is counterintuitive
 /**
- * @property {String} SQUARE
+ * @typedef {'butt'} SQUARE
+ * @property {SQUERE} SQUARE
  * @final
- * @default butt
  */
 export const SQUARE = 'butt';
 /**
- * @property {String} ROUND
+ * @typedef {'round'} ROUND
+ * @property {ROUND} ROUND
  * @final
  */
 export const ROUND = 'round';
 /**
- * @property {String} BEVEL
+ * @typedef {'bevel'} BEVEL
+ * @property {BEVEL} BEVEL
  * @final
  */
 export const BEVEL = 'bevel';
 /**
- * @property {String} MITER
+ * @typedef {'miter'} MITER
+ * @property {MITER} MITER
  * @final
  */
 export const MITER = 'miter';
 
 // COLOR
 /**
- * @property {String} RGB
+ * @typedef {'rgb'} RGB
+ * @property {RGB} RGB
  * @final
  */
 export const RGB = 'rgb';
@@ -371,12 +399,14 @@ export const RGB = 'rgb';
  * You can learn more about it at
  * <a href="https://learnui.design/blog/the-hsb-color-system-practicioners-primer.html">HSB</a>.
  *
- * @property {String} HSB
+ * @typedef {'hsb'} HSB
+ * @property {HSB} HSB
  * @final
  */
 export const HSB = 'hsb';
 /**
- * @property {String} HSL
+ * @typedef {'hsl'} HSL
+ * @property {HSL} HSL
  * @final
  */
 export const HSL = 'hsl';
@@ -387,244 +417,280 @@ export const HSL = 'hsl';
  * based on the current height and width of the element. Only one parameter can
  * be passed to the <a href="/reference/#/p5.Element/size">size</a> function as AUTO, at a time.
  *
- * @property {String} AUTO
+ * @typedef {'auto'} AUTO
+ * @property {AUTO} AUTO
  * @final
  */
 export const AUTO = 'auto';
 
 /**
- * @property {Number} ALT
+ * @typedef {18} ALT
+ * @property {ALT} ALT
  * @final
  */
 // INPUT
 export const ALT = 18;
 /**
- * @property {Number} BACKSPACE
+ * @typedef {8} BACKSPACE
+ * @property {BACKSPACE} BACKSPACE
  * @final
  */
 export const BACKSPACE = 8;
 /**
- * @property {Number} CONTROL
+ * @typedef {17} CONTROL
+ * @property {CONTROL} CONTROL
  * @final
  */
 export const CONTROL = 17;
 /**
- * @property {Number} DELETE
+ * @typedef {46} DELETE
+ * @property {DELETE} DELETE
  * @final
  */
 export const DELETE = 46;
 /**
- * @property {Number} DOWN_ARROW
+ * @typedef {40} DOWN_ARROW
+ * @property {DOWN_ARROW} DOWN_ARROW
  * @final
  */
 export const DOWN_ARROW = 40;
 /**
- * @property {Number} ENTER
+ * @typedef {13} ENTER
+ * @property {ENTER} ENTER
  * @final
  */
 export const ENTER = 13;
 /**
- * @property {Number} ESCAPE
+ * @typedef {27} ESCAPE
+ * @property {ESCAPE} ESCAPE
  * @final
  */
 export const ESCAPE = 27;
 /**
- * @property {Number} LEFT_ARROW
+ * @typedef {37} LEFT_ARROW
+ * @property {LEFT_ARROW} LEFT_ARROW
  * @final
  */
 export const LEFT_ARROW = 37;
 /**
- * @property {Number} OPTION
+ * @typedef {18} OPTION
+ * @property {OPTION} OPTION
  * @final
  */
 export const OPTION = 18;
 /**
- * @property {Number} RETURN
+ * @typedef {13} RETURN
+ * @property {RETURN} RETURN
  * @final
  */
 export const RETURN = 13;
 /**
- * @property {Number} RIGHT_ARROW
+ * @typedef {39} RIGHT_ARROW
+ * @property {RIGHT_ARROW} RIGHT_ARROW
  * @final
  */
 export const RIGHT_ARROW = 39;
 /**
- * @property {Number} SHIFT
+ * @typedef {16} SHIFT
+ * @property {SHIFT} SHIFT
  * @final
  */
 export const SHIFT = 16;
 /**
- * @property {Number} TAB
+ * @typedef {9} TAB
+ * @property {TAB} TAB
  * @final
  */
 export const TAB = 9;
 /**
- * @property {Number} UP_ARROW
+ * @typedef {38} UP_ARROW
+ * @property {UP_ARROW} UP_ARROW
  * @final
  */
 export const UP_ARROW = 38;
 
 // RENDERING
 /**
- * @property {String} BLEND
+ * @typedef {'source-over'} BLEND
+ * @property {BLEND} BLEND
  * @final
- * @default source-over
  */
 export const BLEND = 'source-over';
 /**
- * @property {String} REMOVE
+ * @typedef {'destination-out'} REMOVE
+ * @property {REMOVE} REMOVE
  * @final
- * @default destination-out
  */
 export const REMOVE = 'destination-out';
 /**
- * @property {String} ADD
+ * @typedef {'lighter'} ADD
+ * @property {ADD} ADD
  * @final
- * @default lighter
  */
 export const ADD = 'lighter';
-//ADD: 'add', //
-//SUBTRACT: 'subtract', //
 /**
- * @property {String} DARKEST
+ * @typedef {'darken'} DARKEST
+ * @property {DARKEST} DARKEST
  * @final
  */
 export const DARKEST = 'darken';
 /**
- * @property {String} LIGHTEST
+ * @typedef {'lighten'} LIGHTEST
+ * @property {LIGHTEST} LIGHTEST
  * @final
- * @default lighten
  */
 export const LIGHTEST = 'lighten';
 /**
- * @property {String} DIFFERENCE
+ * @typedef {'difference'} DIFFERENCE
+ * @property {DIFFERENCE} DIFFERENCE
  * @final
  */
 export const DIFFERENCE = 'difference';
 /**
- * @property {String} SUBTRACT
+ * @typedef {'subtract'} SUBTRACT
+ * @property {SUBTRACT} SUBTRACT
  * @final
  */
 export const SUBTRACT = 'subtract';
 /**
- * @property {String} EXCLUSION
+ * @typedef {'exclusion'} EXCLUSION
+ * @property {EXCLUSION} EXCLUSION
  * @final
  */
 export const EXCLUSION = 'exclusion';
 /**
- * @property {String} MULTIPLY
+ * @typedef {'multiply'} MULTIPLY
+ * @property {MULTIPLY} MULTIPLY
  * @final
  */
 export const MULTIPLY = 'multiply';
 /**
- * @property {String} SCREEN
+ * @typedef {'screen'} SCREEN
+ * @property {SCREEN} SCREEN
  * @final
  */
 export const SCREEN = 'screen';
 /**
- * @property {String} REPLACE
+ * @typedef {'copy'} REPLACE
+ * @property {REPLACE} REPLACE
  * @final
- * @default copy
  */
 export const REPLACE = 'copy';
 /**
- * @property {String} OVERLAY
+ * @typedef {'overlay'} OVERLAY
+ * @property {OVERLAY} OVERLAY
  * @final
  */
 export const OVERLAY = 'overlay';
 /**
- * @property {String} HARD_LIGHT
+ * @typedef {'hard-light'} HARD_LIGHT
+ * @property {HARD_LIGHT} HARD_LIGHT
  * @final
  */
 export const HARD_LIGHT = 'hard-light';
 /**
- * @property {String} SOFT_LIGHT
+ * @typedef {'soft-light'} SOFT_LIGHT
+ * @property {SOFT_LIGHT} SOFT_LIGHT
  * @final
  */
 export const SOFT_LIGHT = 'soft-light';
 /**
- * @property {String} DODGE
+ * @typedef {'color-dodge'} DODGE
+ * @property {DODGE} DODGE
  * @final
- * @default color-dodge
  */
 export const DODGE = 'color-dodge';
 /**
- * @property {String} BURN
+ * @typedef {'color-burn'} BURN
+ * @property {BURN} BURN
  * @final
- * @default color-burn
  */
 export const BURN = 'color-burn';
 
 // FILTERS
 /**
- * @property {String} THRESHOLD
+ * @typedef {'threshold'} THRESHOLD
+ * @property {THRESHOLD} THRESHOLD
  * @final
  */
 export const THRESHOLD = 'threshold';
 /**
- * @property {String} GRAY
+ * @typedef {'gray'} GRAY
+ * @property {GRAY} GRAY
  * @final
  */
 export const GRAY = 'gray';
 /**
- * @property {String} OPAQUE
+ * @typedef {'opaque'} OPAQUE
+ * @property {OPAQUE} OPAQUE
  * @final
  */
 export const OPAQUE = 'opaque';
 /**
- * @property {String} INVERT
+ * @typedef {'invert'} INVERT
+ * @property {INVERT} INVERT
  * @final
  */
 export const INVERT = 'invert';
 /**
- * @property {String} POSTERIZE
+ * @typedef {'posterize'} POSTERIZE
+ * @property {POSTERIZE} POSTERIZE
  * @final
  */
 export const POSTERIZE = 'posterize';
 /**
- * @property {String} DILATE
+ * @typedef {'dilate'} DILATE
+ * @property {DILATE} DILATE
  * @final
  */
 export const DILATE = 'dilate';
 /**
- * @property {String} ERODE
+ * @typedef {'erode'} ERODE
+ * @property {ERODE} ERODE
  * @final
  */
 export const ERODE = 'erode';
 /**
- * @property {String} BLUR
+ * @typedef {'blur'} BLUR
+ * @property {BLUR} BLUR
  * @final
  */
 export const BLUR = 'blur';
 
 // TYPOGRAPHY
 /**
- * @property {String} NORMAL
+ * @typedef {'normal'} NORMAL
+ * @property {NORMAL} NORMAL
  * @final
  */
 export const NORMAL = 'normal';
 /**
- * @property {String} ITALIC
+ * @typedef {'italic'} ITALIC
+ * @property {ITALIC} ITALIC
  * @final
  */
 export const ITALIC = 'italic';
 /**
- * @property {String} BOLD
+ * @typedef {'bold'} BOLD
+ * @property {BOLD} BOLD
  * @final
  */
 export const BOLD = 'bold';
 /**
- * @property {String} BOLDITALIC
+ * @typedef {'bold italic'} BOLDITALIC
+ * @property {BOLDITALIC} BOLDITALIC
  * @final
  */
 export const BOLDITALIC = 'bold italic';
 /**
- * @property {String} CHAR
+ * @typedef {'CHAR'} CHAR
+ * @property {CHAR} CHAR
  * @final
  */
 export const CHAR = 'CHAR';
 /**
- * @property {String} WORD
+ * @typedef {'WORD'} WORD
+ * @property {WORD} WORD
  * @final
  */
 export const WORD = 'WORD';
@@ -636,44 +702,52 @@ export const _CTX_MIDDLE = 'middle';
 
 // VERTICES
 /**
- * @property {String} LINEAR
+ * @typedef {'linear'} LINEAR
+ * @property {LINEAR} LINEAR
  * @final
  */
 export const LINEAR = 'linear';
 /**
- * @property {String} QUADRATIC
+ * @typedef {'quadratic'} QUADRATIC
+ * @property {QUADRATIC} QUADRATIC
  * @final
  */
 export const QUADRATIC = 'quadratic';
 /**
- * @property {String} BEZIER
+ * @typedef {'bezier'} BEZIER
+ * @property {BEZIER} BEZIER
  * @final
  */
 export const BEZIER = 'bezier';
 /**
- * @property {String} CURVE
+ * @typedef {'curve'} CURVE
+ * @property {CURVE} CURVE
  * @final
  */
 export const CURVE = 'curve';
 
 // WEBGL DRAWMODES
 /**
- * @property {String} STROKE
+ * @typedef {'stroke'} STROKE
+ * @property {STROKE} STROKE
  * @final
  */
 export const STROKE = 'stroke';
 /**
- * @property {String} FILL
+ * @typedef {'fill'} FILL
+ * @property {FILL} FILL
  * @final
  */
 export const FILL = 'fill';
 /**
- * @property {String} TEXTURE
+ * @typedef {'texture'} TEXTURE
+ * @property {TEXTURE} TEXTURE
  * @final
  */
 export const TEXTURE = 'texture';
 /**
- * @property {String} IMMEDIATE
+ * @typedef {'immediate'} IMMEDIATE
+ * @property {IMMEDIATE} IMMEDIATE
  * @final
  */
 export const IMMEDIATE = 'immediate';
@@ -681,7 +755,8 @@ export const IMMEDIATE = 'immediate';
 // WEBGL TEXTURE MODE
 // NORMAL already exists for typography
 /**
- * @property {String} IMAGE
+ * @typedef {'image'} IMAGE
+ * @property {IMAGE} IMAGE
  * @final
  */
 export const IMAGE = 'image';
@@ -689,46 +764,54 @@ export const IMAGE = 'image';
 // WEBGL TEXTURE WRAP AND FILTERING
 // LINEAR already exists above
 /**
- * @property {String} NEAREST
+ * @typedef {'nearest'} NEAREST
+ * @property {NEAREST} NEAREST
  * @final
  */
 export const NEAREST = 'nearest';
 /**
- * @property {String} REPEAT
+ * @typedef {'repeat'} REPEAT
+ * @property {REPEAT} REPEAT
  * @final
  */
 export const REPEAT = 'repeat';
 /**
- * @property {String} CLAMP
+ * @typedef {'clamp'} CLAMP
+ * @property {CLAMP} CLAMP
  * @final
  */
 export const CLAMP = 'clamp';
 /**
- * @property {String} MIRROR
+ * @typedef {'mirror'} MIRROR
+ * @property {MIRROR} MIRROR
  * @final
  */
 export const MIRROR = 'mirror';
 
 // WEBGL GEOMETRY SHADING
 /**
- * @property {String} FLAT
+ * @typedef {'flat'} FLAT
+ * @property {FLAT} FLAT
  * @final
  */
 export const FLAT = 'flat';
 /**
- * @property {String} SMOOTH
+ * @typedef {'smooth'} SMOOTH
+ * @property {SMOOTH} SMOOTH
  * @final
  */
 export const SMOOTH = 'smooth';
 
 // DEVICE-ORIENTATION
 /**
- * @property {String} LANDSCAPE
+ * @typedef {'landscape'} LANDSCAPE
+ * @property {LANDSCAPE} LANDSCAPE
  * @final
  */
 export const LANDSCAPE = 'landscape';
 /**
- * @property {String} PORTRAIT
+ * @typedef {'portrait'} PORTRAIT
+ * @property {PORTRAIT} PORTRAIT
  * @final
  */
 export const PORTRAIT = 'portrait';
@@ -738,66 +821,77 @@ export const _DEFAULT_STROKE = '#000000';
 export const _DEFAULT_FILL = '#FFFFFF';
 
 /**
- * @property {String} GRID
+ * @typedef {'grid'} GRID
+ * @property {GRID} GRID
  * @final
  */
 export const GRID = 'grid';
 
 /**
- * @property {String} AXES
+ * @typedef {'axes'} AXES
+ * @property {AXES} AXES
  * @final
  */
 export const AXES = 'axes';
 
 /**
- * @property {String} LABEL
+ * @typedef {'label'} LABEL
+ * @property {LABEL} LABEL
  * @final
  */
 export const LABEL = 'label';
 /**
- * @property {String} FALLBACK
+ * @typedef {'fallback'} FALLBACK
+ * @property {FALLBACK} FALLBACK
  * @final
  */
 export const FALLBACK = 'fallback';
 
 /**
- * @property {String} CONTAIN
+ * @typedef {'contain'} CONTAIN
+ * @property {CONTAIN} CONTAIN
  * @final
  */
 export const CONTAIN = 'contain';
 
 /**
- * @property {String} COVER
+ * @typedef {'cover'} COVER
+ * @property {COVER} COVER
  * @final
  */
 export const COVER = 'cover';
 
 /**
- * @property {String} UNSIGNED_BYTE
+ * @typedef {'unsigned-byte'} UNSIGNED_BYTE
+ * @property {UNSIGNED_BYTE} UNSIGNED_BYTE
  * @final
  */
 export const UNSIGNED_BYTE = 'unsigned-byte';
 
 /**
- * @property {String} UNSIGNED_INT
+ * @typedef {'unsigned-int'} UNSIGNED_INT
+ * @property {UNSIGNED_INT} UNSIGNED_INT
  * @final
  */
 export const UNSIGNED_INT = 'unsigned-int';
 
 /**
- * @property {String} FLOAT
+ * @typedef {'float'} FLOAT
+ * @property {FLOAT} FLOAT
  * @final
  */
 export const FLOAT = 'float';
 
 /**
- * @property {String} HALF_FLOAT
+ * @typedef {'half-float'} HALF_FLOAT
+ * @property {HALF_FLOAT} HALF_FLOAT
  * @final
  */
 export const HALF_FLOAT = 'half-float';
 
 /**
- * @property {String} RGBA
+ * @typedef {'rgba'} RGBA
+ * @property {RGBA} RGBA
  * @final
  */
 export const RGBA = 'rgba';

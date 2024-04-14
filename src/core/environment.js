@@ -207,7 +207,7 @@ p5.prototype.focused = document.hasFocus();
  * and `y` must be less than the image's width and height, respectively.
  *
  * @method cursor
- * @param {String|Constant} type Built-in: either ARROW, CROSS, HAND, MOVE, TEXT, or WAIT.
+ * @param {(ARROW|CROSS|HAND|MOVE|TEXT|WAIT|String)} type Built-in: either ARROW, CROSS, HAND, MOVE, TEXT, or WAIT.
  *                               Native CSS properties: 'grab', 'progress', and so on.
  *                               Path to cursor image.
  * @param {Number}          [x]  horizontal active spot of the cursor.
@@ -474,7 +474,7 @@ p5.prototype.noCursor = function() {
  * See <a href="#/p5/setAttributes">setAttributes()</a> for ways to set the
  * WebGL version.
  *
- * @property {String} webglVersion
+ * @property {(WEBGL|WEBGL2)} webglVersion
  * @readOnly
  * @example
  * <div>

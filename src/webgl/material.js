@@ -680,7 +680,7 @@ p5.prototype.texture = function (tex) {
  * size of a quad would require the points (0,0) (100, 0) (100,200) (0,200).
  * The same mapping in NORMAL is (0,0) (1,0) (1,1) (0,1).
  * @method  textureMode
- * @param {Constant} mode either IMAGE or NORMAL
+ * @param {(IMAGE|NORMAL)} mode either IMAGE or NORMAL
  * @example
  * <div>
  * <code>
@@ -767,8 +767,8 @@ p5.prototype.textureMode = function (mode) {
  * If only one argument is provided, it will be applied to both the
  * horizontal and vertical axes.
  * @method textureWrap
- * @param {Constant} wrapX either CLAMP, REPEAT, or MIRROR
- * @param {Constant} [wrapY] either CLAMP, REPEAT, or MIRROR
+ * @param {(CLAMP|REPEAT|MIRROR)} wrapX either CLAMP, REPEAT, or MIRROR
+ * @param {(CLAMP|REPEAT|MIRROR)} [wrapY=wrapX] either CLAMP, REPEAT, or MIRROR
  * @example
  * <div>
  * <code>

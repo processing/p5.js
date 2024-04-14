@@ -39,7 +39,7 @@ import p5 from '../core/main';
  * learn more about making sketches accessible.
  *
  * @method textOutput
- * @param  {Constant} [display] either FALLBACK or LABEL.
+ * @param  {(FALLBACK|LABEL)} [display] either FALLBACK or LABEL.
  *
  * @example
  * <div>
@@ -175,7 +175,7 @@ p5.prototype.textOutput = function(display) {
  * learn more about making sketches accessible.
  *
  * @method gridOutput
- * @param  {Constant} [display] either FALLBACK or LABEL.
+ * @param  {(FALLBACK|LABEL)} [display] either FALLBACK or LABEL.
  *
  * @example
  * <div>

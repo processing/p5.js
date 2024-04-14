@@ -20,6 +20,7 @@ export default {
  * If you have just added a new language (yay!), add its key to the list below
  * (`en` is english, `es` es español). Also add its export to
  * dev.js, which is another file in this folder.
+ * @private
  */
 export const languages = [
   'en',

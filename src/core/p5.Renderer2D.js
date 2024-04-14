@@ -3,14 +3,15 @@ import * as constants from './constants';
 
 import Renderer from './p5.Renderer';
 
-/*
- * p5.Renderer2D
- * The 2D graphics canvas renderer class.
- * extends p5.Renderer
- */
 const styleEmpty = 'rgba(0,0,0,0)';
 // const alphaThreshold = 0.00125; // minimum visible
 
+/**
+ * p5.Renderer2D
+ * The 2D graphics canvas renderer class.
+ * extends p5.Renderer
+ * @private
+ */
 class Renderer2D extends Renderer {
   constructor(elt, pInst, isMainCanvas) {
     super(elt, pInst, isMainCanvas);

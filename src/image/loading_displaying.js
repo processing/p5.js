@@ -719,8 +719,8 @@ function _createGif(
 
 /**
  * @private
- * @param {Constant} xAlign either LEFT, RIGHT or CENTER
- * @param {Constant} yAlign either TOP, BOTTOM or CENTER
+ * @param {(LEFT|RIGHT|CENTER)} xAlign either LEFT, RIGHT or CENTER
+ * @param {(TOP|BOTTOM|CENTER)} yAlign either TOP, BOTTOM or CENTER
  * @param {Number} dx
  * @param {Number} dy
  * @param {Number} dw
@@ -752,8 +752,8 @@ function _imageContain(xAlign, yAlign, dx, dy, dw, dh, sw, sh) {
 
 /**
  * @private
- * @param {Constant} xAlign either LEFT, RIGHT or CENTER
- * @param {Constant} yAlign either TOP, BOTTOM or CENTER
+ * @param {(LEFT|RIGHT|CENTER)} xAlign either LEFT, RIGHT or CENTER
+ * @param {(TOP|BOTTOM|CENTER)} yAlign either TOP, BOTTOM or CENTER
  * @param {Number} dw
  * @param {Number} dh
  * @param {Number} sx
@@ -786,9 +786,9 @@ function _imageCover(xAlign, yAlign, dw, dh, sx, sy, sw, sh) {
 
 /**
  * @private
- * @param {Constant} [fit] either CONTAIN or COVER
- * @param {Constant} xAlign either LEFT, RIGHT or CENTER
- * @param {Constant} yAlign either TOP, BOTTOM or CENTER
+ * @param {(CONTAIN|COVER)} [fit] either CONTAIN or COVER
+ * @param {(LEFT|RIGHT|CENTER)} xAlign either LEFT, RIGHT or CENTER
+ * @param {(TOP|BOTTOM|CENTER)} yAlign either TOP, BOTTOM or CENTER
  * @param {Number} dx
  * @param {Number} dy
  * @param {Number} dw
@@ -1010,9 +1010,9 @@ function _sAssign(sVal, iVal) {
  *                           rectangle
  * @param {Number}    [sHeight] the height of the subsection of the
  *                            source image to draw into the destination rectangle
- * @param {Constant} [fit] either CONTAIN or COVER
- * @param {Constant} [xAlign] either LEFT, RIGHT or CENTER default is CENTER
- * @param {Constant} [yAlign] either TOP, BOTTOM or CENTER default is CENTER
+ * @param {(CONTAIN|COVER)} [fit] either CONTAIN or COVER
+ * @param {(LEFT|RIGHT|CENTER)} [xAlign=CENTER] either LEFT, RIGHT or CENTER default is CENTER
+ * @param {(TOP|BOTTOM|CENTER)} [yAlign=CENTER] either TOP, BOTTOM or CENTER default is CENTER
  */
 p5.prototype.image = function(
   img,
@@ -1293,7 +1293,7 @@ p5.prototype._getTintedImageCanvas =
  * center. The next parameters are its width and height.
  *
  * @method imageMode
- * @param {Constant} mode either CORNER, CORNERS, or CENTER.
+ * @param {(CORNER|CORNERS|CENTER)} mode either CORNER, CORNERS, or CENTER.
  * @example
  *
  * <div>
