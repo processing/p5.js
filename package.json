@@ -8,7 +8,8 @@
     "docs": "documentation build ./src/**/*.js ./src/**/**/*.js -o ./docs/data.json && node ./utils/convert.js",
     "test": "vitest run",
     "lint": "eslint .",
-    "lint:fix": "eslint --fix ."
+    "lint:fix": "eslint --fix .",
+    "types": "npx -p typescript tsc"
   },
   "lint-staged": {
     "Gruntfile.js": "eslint",
@@ -68,6 +69,7 @@
     "regenerator-runtime": "^0.13.3",
     "rollup": "^4.9.6",
     "rollup-plugin-string": "^3.0.0",
+    "typescript": "^5.4.5",
     "unplugin-swc": "^1.4.2",
     "vite": "^5.0.2",
     "vite-plugin-string": "^1.2.2",

@@ -5,6 +5,7 @@ experiments/*
 lib_old/*
 lib/p5.*
 lib/modules
+types/
 docs/reference/*
 !*.gitkeep
 examples/3d/

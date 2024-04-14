@@ -164,6 +164,7 @@ class p5 {
       }
     };
 
+    /** @type {() => void} */
     this._runIfPreloadsAreDone = function() {
       const context = this._isGlobal ? window : this;
       if (context._preloadCount === 0) {
