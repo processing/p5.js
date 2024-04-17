@@ -905,7 +905,11 @@ p5.prototype._onblur = function(e) {
  */
 p5.prototype.keyIsDown = function(code) {
   p5._validateParameters('keyIsDown', arguments);
-  return this._downKeys[code] || false;
+  let keyCode = -1;
+  if (typeof code === 'string' && code.length === 1) {
+    keyCode = code.charCodeAt(0);
+  }
+  return this._downKeys[code] || this._downKeys[keyCode] || false;
 };
 
 /**
