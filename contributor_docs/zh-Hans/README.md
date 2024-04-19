@@ -31,7 +31,7 @@ p5.js 项目除了这个代码库外还包括了以下几个其他的代码库�
 
 # 参考文献
 
-我们意识到参考文献是这个项目中最重要的部分。不好的参考文献是新用户与新贡献者的最大屏障，让项目不具有包容性。[contributing_to_the_p5.js_reference.md](https://github.com/processing/p5.js/blob/main/contributor_docs/zh-Hans/contributing_to_the_p5.js_reference.md) 页面为开始修改参考文献给出了一个深入的导览。p5.js 的参考文献可以在以下几个地方找到：
+我们意识到参考文献是这个项目中最重要的部分。不好的参考文献是新用户与新贡献者的最大屏障，让项目不具有包容性。[contributing_documentation.md](./contributing_documentation.md) 页面为开始修改参考文献给出了一个深入的导览。p5.js 的参考文献可以在以下几个地方找到：
 
 - [p5js.org/reference](https://p5js.org/reference/)：由 [inline documentation](./inline_documentation.md) 的源代码生成。它包括了文本描述和参数以及随附的代码片段示例。我们将所有这些内联文献和代码放在一起，以使代码和参考文献保持紧密的联系，并强化这样的思想，贡献参考文献与贡献代码至少同等重要。构建库后，它将检查内联参考文献和示例，以确保它们与代码的行为方式匹配。 要做出贡献，您可以先查看 [inline_documentation.md](./inline_documentation.md) 页面。
 - [p5js.org/examples](http://p5js.org/examples) 页面包含更长的示例，这些示例对于学习 p5.js 可能有用。要做出贡献，您可以先查看 [adding_examples.md](https://github.com/processing/p5.js-website/blob/main/contributor_docs/Adding_examples.md)。
