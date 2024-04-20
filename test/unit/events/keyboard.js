@@ -191,5 +191,9 @@ suite('Keyboard Events', function() {
     test('keyIsDown should return false if key is not down', function() {
       assert.strictEqual(myp5.keyIsDown(35), false);
     });
+
+    test('keyIsDown should return false if key has length more than 1', function() {
+      assert.strictEqual(myp5.keyIsDown('ab'), false);
+    });
   });
 });
