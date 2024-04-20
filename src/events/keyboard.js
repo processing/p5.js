@@ -811,7 +811,7 @@ p5.prototype._onblur = function(e) {
  * <a href="https://keycode.info" target="_blank">keycode.info</a>.
  *
  * @method keyIsDown
- * @param {Number}          code key to check.
+ * @param {Number|String}         code key to check.
  * @return {Boolean}        whether the key is down or not.
  *
  * @example
@@ -905,11 +905,10 @@ p5.prototype._onblur = function(e) {
  */
 p5.prototype.keyIsDown = function(code) {
   p5._validateParameters('keyIsDown', arguments);
-  let keyCode = -1;
   if (typeof code === 'string' && code.length === 1) {
-    keyCode = code.charCodeAt(0);
+    code = code.toUpperCase().charCodeAt(0);
   }
-  return this._downKeys[code] || this._downKeys[keyCode] || false;
+  return this._downKeys[code] || false;
 };
 
 /**
