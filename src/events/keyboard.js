@@ -807,7 +807,8 @@ p5.prototype._onblur = function(e) {
  *
  * `keyIsDown()` can check for key presses using
  * <a href="#/p5/keyCode">keyCode</a> values, as in `keyIsDown(37)` or
- * `keyIsDown(LEFT_ARROW)`. Key codes can be found on websites such as
+ * `keyIsDown(LEFT_ARROW)` or an alphanumeric string value `keyIsDown('A')` or `keyIsDown('a')`
+ * Key codes can be found on websites such as
  * <a href="https://keycode.info" target="_blank">keycode.info</a>.
  *
  * @method keyIsDown
@@ -847,6 +848,50 @@ p5.prototype._onblur = function(e) {
  *   }
  *
  *   if (keyIsDown(DOWN_ARROW) === true) {
+ *     y += 1;
+ *   }
+ *
+ *   // Style the circle.
+ *   fill(0);
+ *
+ *   // Draw the circle.
+ *   circle(x, y, 5);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click on the canvas to begin detecting key presses.
+ *
+ * let x = 50;
+ * let y = 50;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   describe(
+ *     'A gray square with a black circle at its center. The circle moves when the user presses "W", "A", "S", or "D". It leaves a trail as it moves.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   // Update x and y if "W", "A", "S", or "D" is pressed.
+ *   if (keyIsDown('A') === true) {
+ *     x -= 1;
+ *   }
+ *
+ *   if (keyIsDown('D') === true) {
+ *     x += 1;
+ *   }
+ *
+ *   if (keyIsDown('W') === true) {
+ *     y -= 1;
+ *   }
+ *
+ *   if (keyIsDown('S') === true) {
  *     y += 1;
  *   }
  *
