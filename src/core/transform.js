@@ -9,41 +9,74 @@
 import p5 from './main';
 
 /**
- * Multiplies the current matrix by the one specified through the parameters.
- * This is a powerful operation that can perform the equivalent of translate,
- * scale, shear and rotate all at once. You can learn more about transformation
- * matrices on <a href="https://en.wikipedia.org/wiki/Transformation_matrix">
- * Wikipedia</a>.
+ * Applies a transformation matrix to the coordinate system.
  *
- * The naming of the arguments here follows the naming of the <a href=
- * "https://html.spec.whatwg.org/multipage/canvas.html#dom-context-2d-transform">
- * WHATWG specification</a> and corresponds to a
- * transformation matrix of the
- * form:
+ * Transformations such as
+ * <a href="#/p5/translate">translate()</a>,
+ * <a href="#/p5/rotate">rotate()</a>, and
+ * <a href="#/p5/scale">scale()</a>
+ * use matrix-vector multiplication behind the scenes. A table of numbers,
+ * called a matrix, encodes each transformation. The values in the matrix
+ * then multiply each point on the canvas, which is represented by a vector.
+ *
+ * `applyMatrix()` allows for many transformations to be applied at once. See
+ * <a href="https://en.wikipedia.org/wiki/Transformation_matrix" target="_blank">Wikipedia</a>
+ * and <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Matrix_math_for_the_web" target="_blank">MDN</a>
+ * for more details about transformations.
+ *
+ * There are two ways to call `applyMatrix()` in two and three dimensions.
+ *
+ * In 2D mode, the parameters `a`, `b`, `c`, `d`, `e`, and `f`, correspond to
+ * elements in the following transformation matrix:
  *
  * > <img style="max-width: 150px" src="assets/transformation-matrix.png"
- * alt="The transformation matrix used when applyMatrix is called"/>
+ * alt="The transformation matrix used when applyMatrix is called in 2D mode."/>
+ *
+ * The numbers can be passed individually, as in
+ * `applyMatrix(2, 0, 0, 0, 2, 0)`. They can also be passed in an array, as in
+ * `applyMatrix([2, 0, 0, 0, 2, 0])`.
+ *
+ * In 3D mode, the parameters `a`, `b`, `c`, `d`, `e`, `f`, `g`, `h`, `i`,
+ * `j`, `k`, `l`, `m`, `n`, `o`, and `p` correspond to elements in the
+ * following transformation matrix:
  *
  * <img style="max-width: 300px" src="assets/transformation-matrix-4-4.png"
- * alt="The transformation matrix used when applyMatrix is called with 4x4 matrix"/>
+ * alt="The transformation matrix used when applyMatrix is called in 3D mode."/>
+ *
+ * The numbers can be passed individually, as in
+ * `applyMatrix(2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1)`. They can
+ * also be passed in an array, as in
+ * `applyMatrix([2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1])`.
+ *
+ * By default, transformations accumulate. The
+ * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a> functions
+ * can be used to isolate transformations within distinct drawing groups.
+ *
+ * Note: Transformations are reset at the beginning of the draw loop. Calling
+ * `applyMatrix()` inside the <a href="#/p5/draw">draw()</a> function won't
+ * cause shapes to transform continuously.
  *
  * @method applyMatrix
- * @param  {Array} arr an array of numbers - should be 6 or 16 length (2×3 or 4×4 matrix values)
+ * @param  {Array} arr an array containing the elements of the transformation matrix. Its length should be either 6 (2D) or 16 (3D).
  * @chainable
+ *
  * @example
  * <div>
  * <code>
  * function setup() {
- *   frameRate(10);
- *   rectMode(CENTER);
+ *   createCanvas(100, 100);
+ *
+ *   describe('A white circle on a gray background.');
  * }
  *
  * function draw() {
- *   let step = frameCount % 20;
  *   background(200);
- *   // Equivalent to translate(x, y);
- *   applyMatrix(1, 0, 0, 1, 40 + step, 50);
- *   rect(0, 0, 50, 50);
+ *
+ *   // Translate the origin to the center.
+ *   applyMatrix(1, 0, 0, 1, 50, 50);
+ *
+ *   // Draw the circle at coordinates (0, 0).
+ *   circle(0, 0, 40);
  * }
  * </code>
  * </div>
@@ -51,17 +84,20 @@ import p5 from './main';
  * <div>
  * <code>
  * function setup() {
- *   frameRate(10);
- *   rectMode(CENTER);
+ *   createCanvas(100, 100);
+ *
+ *   describe('A white circle on a gray background.');
  * }
  *
  * function draw() {
- *   let step = frameCount % 20;
  *   background(200);
- *   translate(50, 50);
- *   // Equivalent to scale(x, y);
- *   applyMatrix(1 / step, 0, 0, 1 / step, 0, 0);
- *   rect(0, 0, 50, 50);
+ *
+ *   // Translate the origin to the center.
+ *   let m = [1, 0, 0, 1, 50, 50];
+ *   applyMatrix(m);
+ *
+ *   // Draw the circle at coordinates (0, 0).
+ *   circle(0, 0, 40);
  * }
  * </code>
  * </div>
@@ -69,20 +105,22 @@ import p5 from './main';
  * <div>
  * <code>
  * function setup() {
- *   frameRate(10);
- *   rectMode(CENTER);
+ *   createCanvas(100, 100);
+ *
+ *   describe("A white rectangle on a gray background. The rectangle's long axis runs from top-left to bottom-right.");
  * }
  *
  * function draw() {
- *   let step = frameCount % 20;
- *   let angle = map(step, 0, 20, 0, TWO_PI);
- *   let cos_a = cos(angle);
- *   let sin_a = sin(angle);
  *   background(200);
- *   translate(50, 50);
- *   // Equivalent to rotate(angle);
- *   applyMatrix(cos_a, sin_a, -sin_a, cos_a, 0, 0);
- *   rect(0, 0, 50, 50);
+ *
+ *   // Rotate the coordinate system 1/8 turn.
+ *   let angle = QUARTER_PI;
+ *   let ca = cos(angle);
+ *   let sa = sin(angle);
+ *   applyMatrix(ca, sa, -sa, ca, 0, 0);
+ *
+ *   // Draw a rectangle at coordinates (50, 0).
+ *   rect(50, 0, 40, 20);
  * }
  * </code>
  * </div>
@@ -90,78 +128,89 @@ import p5 from './main';
  * <div>
  * <code>
  * function setup() {
- *   frameRate(10);
- *   rectMode(CENTER);
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'Two white squares on a gray background. The larger square appears at the top-center. The smaller square appears at the top-left.'
+ *   );
  * }
  *
  * function draw() {
- *   let step = frameCount % 20;
- *   let angle = map(step, 0, 20, -PI / 4, PI / 4);
  *   background(200);
- *   translate(50, 50);
- *   // equivalent to shearX(angle);
- *   let shear_factor = 1 / tan(PI / 2 - angle);
- *   applyMatrix(1, 0, shear_factor, 1, 0, 0);
- *   rect(0, 0, 50, 50);
+ *
+ *   // Draw a square at (30, 20).
+ *   square(30, 20, 40);
+ *
+ *   // Scale the coordinate system by a factor of 0.5.
+ *   applyMatrix(0.5, 0, 0, 0.5, 0, 0);
+ *
+ *   // Draw a square at (30, 20).
+ *   // It appears at (15, 10) after scaling.
+ *   square(30, 20, 40);
  * }
  * </code>
  * </div>
  *
- * <div modernizr='webgl'>
+ * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A white quadrilateral on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Calculate the shear factor.
+ *   let angle = QUARTER_PI;
+ *   let shearFactor = 1 / tan(HALF_PI - angle);
+ *
+ *   // Shear the coordinate system along the x-axis.
+ *   applyMatrix(1, 0, shearFactor, 1, 0, 0);
+ *
+ *   // Draw the square.
+ *   square(0, 0, 50);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   noFill();
+ *
+ *   describe('A white cube rotates slowly against a gray background.');
  * }
  *
  * function draw() {
  *   background(200);
- *   rotateY(PI / 6);
- *   stroke(153);
- *   box(35);
- *   let rad = millis() / 1000;
- *   // Set rotation angles
- *   let ct = cos(rad);
- *   let st = sin(rad);
- *   // Matrix for rotation around the Y axis
- *   applyMatrix(
- *     ct, 0.0,  st,  0.0,
- *     0.0, 1.0, 0.0,  0.0,
- *     -st, 0.0,  ct,  0.0,
- *     0.0, 0.0, 0.0,  1.0
- *   );
- *   stroke(255);
- *   box(50);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Rotate the coordinate system a little more each frame.
+ *   let angle = frameCount * 0.01;
+ *   let ca = cos(angle);
+ *   let sa = sin(angle);
+ *   applyMatrix(ca, 0, sa, 0, 0, 1, 0, 0, -sa, 0, ca, 0, 0, 0, 0, 1);
+ *
+ *   // Draw a box.
+ *   box();
  * }
  * </code>
  * </div>
- *
- * <div>
- * <code>
- * function draw() {
- *   background(200);
- *   let testMatrix = [1, 0, 0, 1, 0, 0];
- *   applyMatrix(testMatrix);
- *   rect(0, 0, 50, 50);
- * }
- * </code>
- * </div>
- *
- * @alt
- * A rectangle translating to the right
- * A rectangle shrinking to the center
- * A rectangle rotating clockwise about the center
- * A rectangle shearing
- * A rectangle in the upper left corner
  */
 /**
  * @method applyMatrix
- * @param  {Number} a numbers which define the 2×3 or 4×4 matrix to be multiplied
- * @param  {Number} b numbers which define the 2×3 or 4×4 matrix to be multiplied
- * @param  {Number} c numbers which define the 2×3 or 4×4 matrix to be multiplied
- * @param  {Number} d numbers which define the 2×3 or 4×4 matrix to be multiplied
- * @param  {Number} e numbers which define the 2×3 or 4×4 matrix to be multiplied
- * @param  {Number} f numbers which define the 2×3 or 4×4 matrix to be multiplied
+ * @param  {Number} a an element of the transformation matrix.
+ * @param  {Number} b an element of the transformation matrix.
+ * @param  {Number} c an element of the transformation matrix.
+ * @param  {Number} d an element of the transformation matrix.
+ * @param  {Number} e an element of the transformation matrix.
+ * @param  {Number} f an element of the transformation matrix.
  * @chainable
  */
 /**
@@ -172,16 +221,16 @@ import p5 from './main';
  * @param  {Number} d
  * @param  {Number} e
  * @param  {Number} f
- * @param  {Number} g numbers which define the 4×4 matrix to be multiplied
- * @param  {Number} h numbers which define the 4×4 matrix to be multiplied
- * @param  {Number} i numbers which define the 4×4 matrix to be multiplied
- * @param  {Number} j numbers which define the 4×4 matrix to be multiplied
- * @param  {Number} k numbers which define the 4×4 matrix to be multiplied
- * @param  {Number} l numbers which define the 4×4 matrix to be multiplied
- * @param  {Number} m numbers which define the 4×4 matrix to be multiplied
- * @param  {Number} n numbers which define the 4×4 matrix to be multiplied
- * @param  {Number} o numbers which define the 4×4 matrix to be multiplied
- * @param  {Number} p numbers which define the 4×4 matrix to be multiplied
+ * @param  {Number} g an element of the transformation matrix.
+ * @param  {Number} h an element of the transformation matrix.
+ * @param  {Number} i an element of the transformation matrix.
+ * @param  {Number} j an element of the transformation matrix.
+ * @param  {Number} k an element of the transformation matrix.
+ * @param  {Number} l an element of the transformation matrix.
+ * @param  {Number} m an element of the transformation matrix.
+ * @param  {Number} n an element of the transformation matrix.
+ * @param  {Number} o an element of the transformation matrix.
+ * @param  {Number} p an element of the transformation matrix.
  * @chainable
  */
 p5.prototype.applyMatrix = function(...args) {
@@ -195,24 +244,42 @@ p5.prototype.applyMatrix = function(...args) {
 };
 
 /**
- * Replaces the current matrix with the identity matrix.
+ * Clears all transformations applied to the coordinate system.
  *
  * @method resetMatrix
  * @chainable
+ *
  * @example
  * <div>
  * <code>
- * translate(50, 50);
- * applyMatrix(0.5, 0.5, -0.5, 0.5, 0, 0);
- * rect(0, 0, 20, 20);
- * // Note that the translate is also reset.
- * resetMatrix();
- * rect(0, 0, 20, 20);
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'Two circles drawn on a gray background. A blue circle is at the top-left and a red circle is at the bottom-right.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Translate the origin to the center.
+ *   translate(50, 50);
+ *
+ *   // Draw a red circle at the coordinates (25, 25).
+ *   fill('blue');
+ *   circle(25, 25, 20);
+ *
+ *   // Clear all transformations.
+ *   // The origin is now at the top-left corner.
+ *   resetMatrix();
+ *
+ *   // Draw a blue circle at the coordinates (25, 25).
+ *   fill('red');
+ *   circle(25, 25, 20);
+ * }
  * </code>
  * </div>
- *
- * @alt
- * A rotated rectangle in the center with another at the top left corner
  */
 p5.prototype.resetMatrix = function() {
   this._renderer.resetMatrix();
@@ -220,37 +287,180 @@ p5.prototype.resetMatrix = function() {
 };
 
 /**
- * Rotates a shape by the amount specified by the angle parameter. This
- * function accounts for <a href="#/p5/angleMode">angleMode</a>, so angles
- * can be entered in either RADIANS or DEGREES.
+ * Rotates the coordinate system.
  *
- * Objects are always rotated around their relative position to the
- * origin and positive numbers rotate objects in a clockwise direction.
- * Transformations apply to everything that happens after and subsequent
- * calls to the function accumulate the effect. For example, calling
- * rotate(HALF_PI) and then rotate(HALF_PI) is the same as rotate(PI).
- * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+ * By default, the positive x-axis points to the right and the positive y-axis
+ * points downward. The `rotate()` function changes this orientation by
+ * rotating the coordinate system about the origin. Everything drawn after
+ * `rotate()` is called will appear to be rotated.
  *
- * Technically, <a href="#/p5/rotate">rotate()</a> multiplies the current transformation matrix
- * by a rotation matrix. This function can be further controlled by
- * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
+ * The first parameter, `angle`, is the amount to rotate. For example, calling
+ * `rotate(1)` rotates the coordinate system clockwise 1 radian which is
+ * nearly 57˚. `rotate()` interprets angle values using the current
+ * <a href="#/p5/angleMode">angleMode()</a>.
+ *
+ * The second parameter, `axis`, is optional. It's used to orient 3D rotations
+ * in WebGL mode. If a <a href="#/p5.Vector">p5.Vector</a> is passed, as in
+ * `rotate(QUARTER_PI, myVector)`, then the coordinate system will rotate
+ * `QUARTER_PI` radians about `myVector`. If an array of vector components is
+ * passed, as in `rotate(QUARTER_PI, [1, 0, 0])`, then the coordinate system
+ * will rotate `QUARTER_PI` radians about a vector with the components
+ * `[1, 0, 0]`.
+ *
+ * By default, transformations accumulate. For example, calling `rotate(1)`
+ * twice has the same effect as calling `rotate(2)` once. The
+ * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a> functions
+ * can be used to isolate transformations within distinct drawing groups.
+ *
+ * Note: Transformations are reset at the beginning of the draw loop. Calling
+ * `rotate(1)` inside the <a href="#/p5/draw">draw()</a> function won't cause
+ * shapes to spin.
  *
  * @method rotate
  * @param  {Number} angle the angle of rotation, specified in radians
  *                        or degrees, depending on current angleMode
  * @param  {p5.Vector|Number[]} [axis] (in 3d) the axis to rotate around
  * @chainable
+ *
  * @example
  * <div>
  * <code>
- * translate(width / 2, height / 2);
- * rotate(PI / 3.0);
- * rect(-26, -26, 52, 52);
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     "A white rectangle on a gray background. The rectangle's long axis runs from top-left to bottom-right."
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Rotate the coordinate system 1/8 turn.
+ *   rotate(QUARTER_PI);
+ *
+ *   // Draw a rectangle at coordinates (50, 0).
+ *   rect(50, 0, 40, 20);
+ * }
  * </code>
  * </div>
  *
- * @alt
- * white 52×52 rect with black outline at center rotated counter 45 degrees
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     "A white rectangle on a gray background. The rectangle's long axis runs from top-left to bottom-right."
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Rotate the coordinate system 1/16 turn.
+ *   rotate(QUARTER_PI / 2);
+ *
+ *   // Rotate the coordinate system another 1/16 turn.
+ *   rotate(QUARTER_PI / 2);
+ *
+ *   // Draw a rectangle at coordinates (50, 0).
+ *   rect(50, 0, 40, 20);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Use degrees.
+ *   angleMode(DEGREES);
+ *
+ *   describe(
+ *     "A white rectangle on a gray background. The rectangle's long axis runs from top-left to bottom-right."
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Rotate the coordinate system 1/8 turn.
+ *   rotate(45);
+ *
+ *   // Draw a rectangle at coordinates (50, 0).
+ *   rect(50, 0, 40, 20);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A white rectangle on a gray background. The rectangle rotates slowly about the top-left corner. It disappears and reappears periodically.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Rotate the coordinate system a little more each frame.
+ *   let angle = frameCount * 0.01;
+ *   rotate(angle);
+ *
+ *   // Draw a rectangle at coordinates (50, 0).
+ *   rect(50, 0, 40, 20);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe("A cube on a gray background. The cube's front face points to the top-right.");
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Rotate the coordinate system 1/8 turn about
+ *   // the axis [1, 1, 0].
+ *   let axis = createVector(1, 1, 0);
+ *   rotate(QUARTER_PI, axis);
+ *
+ *   // Draw a box.
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe("A cube on a gray background. The cube's front face points to the top-right.");
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Rotate the coordinate system 1/8 turn about
+ *   // the axis [1, 1, 0].
+ *   let axis = [1, 1, 0];
+ *   rotate(QUARTER_PI, axis);
+ *
+ *   // Draw a box.
+ *   box();
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.rotate = function(angle, axis) {
   p5._validateParameters('rotate', arguments);
@@ -259,35 +469,133 @@ p5.prototype.rotate = function(angle, axis) {
 };
 
 /**
- * Rotates a shape around X axis by the amount specified in angle parameter.
- * The angles can be entered in either RADIANS or DEGREES.
+ * Rotates the coordinate system about the x-axis in WebGL mode.
  *
- * Objects are always rotated around their relative position to the
- * origin and positive numbers rotate objects in a clockwise direction.
- * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+ * The parameter, `angle`, is the amount to rotate. For example, calling
+ * `rotateX(1)` rotates the coordinate system about the x-axis by 1 radian.
+ * `rotateX()` interprets angle values using the current
+ * <a href="#/p5/angleMode">angleMode()</a>.
+ *
+ * By default, transformations accumulate. For example, calling `rotateX(1)`
+ * twice has the same effect as calling `rotateX(2)` once. The
+ * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a> functions
+ * can be used to isolate transformations within distinct drawing groups.
+ *
+ * Note: Transformations are reset at the beginning of the draw loop. Calling
+ * `rotateX(1)` inside the <a href="#/p5/draw">draw()</a> function won't cause
+ * shapes to spin.
  *
  * @method  rotateX
- * @param  {Number} angle the angle of rotation, specified in radians
- *                        or degrees, depending on current angleMode
+ * @param  {Number} angle angle of rotation in the current <a href="#/p5/angleMode">angleMode()</a>.
  * @chainable
+ *
  * @example
- * <div modernizr='webgl'>
+ * <div>
  * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
+ *
+ *   describe('A white cube on a gray background.');
  * }
+ *
  * function draw() {
- *   background(255);
- *   rotateX(millis() / 1000);
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Rotate the coordinate system 1/8 turn.
+ *   rotateX(QUARTER_PI);
+ *
+ *   // Draw a box.
  *   box();
  * }
  * </code>
  * </div>
  *
- * @alt
- * 3d box rotating around the x axis.
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white cube on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Rotate the coordinate system 1/16 turn.
+ *   rotateX(QUARTER_PI / 2);
+ *
+ *   // Rotate the coordinate system 1/16 turn.
+ *   rotateX(QUARTER_PI / 2);
+ *
+ *   // Draw a box.
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Use degrees.
+ *   angleMode(DEGREES);
+ *
+ *   describe('A white cube on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Rotate the coordinate system 1/8 turn.
+ *   rotateX(45);
+ *
+ *   // Draw a box.
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white cube rotates slowly against a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Rotate the coordinate system a little more each frame.
+ *   let angle = frameCount * 0.01;
+ *   rotateX(angle);
+ *
+ *   // Draw a box.
+ *   box();
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.rotateX = function(angle) {
   this._assert3d('rotateX');
@@ -297,35 +605,133 @@ p5.prototype.rotateX = function(angle) {
 };
 
 /**
- * Rotates a shape around Y axis by the amount specified in angle parameter.
- * The angles can be entered in either RADIANS or DEGREES.
+ * Rotates the coordinate system about the y-axis in WebGL mode.
  *
- * Objects are always rotated around their relative position to the
- * origin and positive numbers rotate objects in a clockwise direction.
- * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+ * The parameter, `angle`, is the amount to rotate. For example, calling
+ * `rotateY(1)` rotates the coordinate system about the y-axis by 1 radian.
+ * `rotateY()` interprets angle values using the current
+ * <a href="#/p5/angleMode">angleMode()</a>.
+ *
+ * By default, transformations accumulate. For example, calling `rotateY(1)`
+ * twice has the same effect as calling `rotateY(2)` once. The
+ * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a> functions
+ * can be used to isolate transformations within distinct drawing groups.
+ *
+ * Note: Transformations are reset at the beginning of the draw loop. Calling
+ * `rotateY(1)` inside the <a href="#/p5/draw">draw()</a> function won't cause
+ * shapes to spin.
  *
  * @method rotateY
- * @param  {Number} angle the angle of rotation, specified in radians
- *                        or degrees, depending on current angleMode
+ * @param  {Number} angle angle of rotation in the current <a href="#/p5/angleMode">angleMode()</a>.
  * @chainable
+ *
  * @example
- * <div modernizr='webgl'>
+ * <div>
  * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
+ *
+ *   describe('A white cube on a gray background.');
  * }
+ *
  * function draw() {
- *   background(255);
- *   rotateY(millis() / 1000);
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Rotate the coordinate system 1/8 turn.
+ *   rotateY(QUARTER_PI);
+ *
+ *   // Draw a box.
  *   box();
  * }
  * </code>
  * </div>
  *
- * @alt
- * 3d box rotating around the y axis.
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white cube on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Rotate the coordinate system 1/16 turn.
+ *   rotateY(QUARTER_PI / 2);
+ *
+ *   // Rotate the coordinate system 1/16 turn.
+ *   rotateY(QUARTER_PI / 2);
+ *
+ *   // Draw a box.
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Use degrees.
+ *   angleMode(DEGREES);
+ *
+ *   describe('A white cube on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Rotate the coordinate system 1/8 turn.
+ *   rotateY(45);
+ *
+ *   // Draw a box.
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white cube rotates slowly against a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Rotate the coordinate system a little more each frame.
+ *   let angle = frameCount * 0.01;
+ *   rotateY(angle);
+ *
+ *   // Draw a box.
+ *   box();
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.rotateY = function(angle) {
   this._assert3d('rotateY');
@@ -335,37 +741,133 @@ p5.prototype.rotateY = function(angle) {
 };
 
 /**
- * Rotates a shape around Z axis by the amount specified in angle parameter.
- * The angles can be entered in either RADIANS or DEGREES.
+ * Rotates the coordinate system about the z-axis in WebGL mode.
  *
- * This method works in WEBGL mode only.
+ * The parameter, `angle`, is the amount to rotate. For example, calling
+ * `rotateZ(1)` rotates the coordinate system about the z-axis by 1 radian.
+ * `rotateZ()` interprets angle values using the current
+ * <a href="#/p5/angleMode">angleMode()</a>.
  *
- * Objects are always rotated around their relative position to the
- * origin and positive numbers rotate objects in a clockwise direction.
- * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+ * By default, transformations accumulate. For example, calling `rotateZ(1)`
+ * twice has the same effect as calling `rotateZ(2)` once. The
+ * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a> functions
+ * can be used to isolate transformations within distinct drawing groups.
+ *
+ * Note: Transformations are reset at the beginning of the draw loop. Calling
+ * `rotateZ(1)` inside the <a href="#/p5/draw">draw()</a> function won't cause
+ * shapes to spin.
  *
  * @method rotateZ
- * @param  {Number} angle the angle of rotation, specified in radians
- *                        or degrees, depending on current angleMode
+ * @param  {Number} angle angle of rotation in the current <a href="#/p5/angleMode">angleMode()</a>.
  * @chainable
+ *
  * @example
- * <div modernizr='webgl'>
+ * <div>
  * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
+ *
+ *   describe('A white cube on a gray background.');
  * }
+ *
  * function draw() {
- *   background(255);
- *   rotateZ(millis() / 1000);
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Rotate the coordinate system 1/8 turn.
+ *   rotateZ(QUARTER_PI);
+ *
+ *   // Draw a box.
  *   box();
  * }
  * </code>
  * </div>
  *
- * @alt
- * 3d box rotating around the z axis.
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white cube on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Rotate the coordinate system 1/16 turn.
+ *   rotateZ(QUARTER_PI / 2);
+ *
+ *   // Rotate the coordinate system 1/16 turn.
+ *   rotateZ(QUARTER_PI / 2);
+ *
+ *   // Draw a box.
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Use degrees.
+ *   angleMode(DEGREES);
+ *
+ *   describe('A white cube on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Rotate the coordinate system 1/8 turn.
+ *   rotateZ(45);
+ *
+ *   // Draw a box.
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white cube rotates slowly against a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Rotate the coordinate system a little more each frame.
+ *   let angle = frameCount * 0.01;
+ *   rotateZ(angle);
+ *
+ *   // Draw a box.
+ *   box();
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.rotateZ = function(angle) {
   this._assert3d('rotateZ');
@@ -375,52 +877,169 @@ p5.prototype.rotateZ = function(angle) {
 };
 
 /**
- * Increases or decreases the size of a shape by expanding or contracting
- * vertices. Objects always scale from their relative origin to the
- * coordinate system. Scale values are specified as decimal percentages.
- * For example, the function call scale(2.0) increases the dimension of a
- * shape by 200%.
+ * Scales the coordinate system.
  *
- * Transformations apply to everything that happens after and subsequent
- * calls to the function multiply the effect. For example, calling scale(2.0)
- * and then scale(1.5) is the same as scale(3.0). If <a href="#/p5/scale">scale()</a> is called
- * within <a href="#/p5/draw">draw()</a>, the transformation is reset when the loop begins again.
+ * By default, shapes are drawn at their original scale. A rectangle that's 50
+ * pixels wide appears to take up half the width of a 100 pixel-wide canvas.
+ * The `scale()` function can shrink or stretch the coordinate system so that
+ * shapes appear at different sizes. There are two ways to call `scale()` with
+ * parameters that set the scale factor(s).
  *
- * Using this function with the z parameter is only available in WEBGL mode.
- * This function can be further controlled with <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
+ * The first way to call `scale()` uses numbers to set the amount of scaling.
+ * The first parameter, `s`, sets the amount to scale each axis. For example,
+ * calling `scale(2)` stretches the x-, y-, and z-axes by a factor of 2. The
+ * next two parameters, `y` and `z`, are optional. They set the amount to
+ * scale the y- and z-axes. For example, calling `scale(2, 0.5, 1)` stretches
+ * the x-axis by a factor of 2, shrinks the y-axis by a factor of 0.5, and
+ * leaves the z-axis unchanged.
+ *
+ * The second way to call `scale()` uses a <a href="#/p5.Vector">p5.Vector</a>
+ * object to set the scale factors. For example, calling `scale(myVector)`
+ * uses the x-, y-, and z-components of `myVector` to set the amount of
+ * scaling along the x-, y-, and z-axes. Doing so is the same as calling
+ * `scale(myVector.x, myVector.y, myVector.z)`.
+ *
+ * By default, transformations accumulate. For example, calling `scale(1)`
+ * twice has the same effect as calling `scale(2)` once. The
+ * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a> functions
+ * can be used to isolate transformations within distinct drawing groups.
+ *
+ * Note: Transformations are reset at the beginning of the draw loop. Calling
+ * `scale(2)` inside the <a href="#/p5/draw">draw()</a> function won't cause
+ * shapes to grow continuously.
  *
  * @method scale
- * @param  {Number|p5.Vector|Number[]} s
- *                      percent to scale the object, or percentage to
- *                      scale the object in the x-axis if multiple arguments
- *                      are given
- * @param  {Number} [y] percent to scale the object in the y-axis
- * @param  {Number} [z] percent to scale the object in the z-axis (webgl only)
+ * @param  {Number|p5.Vector|Number[]} s amount to scale along the positive x-axis.
+ * @param  {Number} [y] amount to scale along the positive y-axis. Defaults to `s`.
+ * @param  {Number} [z] amount to scale along the positive z-axis. Defaults to `y`.
  * @chainable
+ *
  * @example
  * <div>
  * <code>
- * rect(30, 20, 50, 50);
- * scale(0.5);
- * rect(30, 20, 50, 50);
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'Two white squares on a gray background. The larger square appears at the top-center. The smaller square appears at the top-left.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Draw a square at (30, 20).
+ *   square(30, 20, 40);
+ *
+ *   // Scale the coordinate system by a factor of 0.5.
+ *   scale(0.5);
+ *
+ *   // Draw a square at (30, 20).
+ *   // It appears at (15, 10) after scaling.
+ *   square(30, 20, 40);
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * rect(30, 20, 50, 50);
- * scale(0.5, 1.3);
- * rect(30, 20, 50, 50);
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A rectangle and a square drawn in white on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Draw a square at (30, 20).
+ *   square(30, 20, 40);
+ *
+ *   // Scale the coordinate system by factors of
+ *   // 0.5 along the x-axis and
+ *   // 1.3 along the y-axis.
+ *   scale(0.5, 1.3);
+ *
+ *   // Draw a square at (30, 20).
+ *   // It appears as a rectangle at (15, 26) after scaling.
+ *   square(30, 20, 40);
+ * }
  * </code>
  * </div>
  *
- * @alt
- * white 52×52 rect with black outline at center rotated counter 45 degrees
- * 2 white rects with black outline- 1 50×50 at center. other 25×65 bottom left
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A rectangle and a square drawn in white on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Draw a square at (30, 20).
+ *   square(30, 20, 40);
+ *
+ *   // Create a p5.Vector object.
+ *   let v = createVector(0.5, 1.3);
+ *
+ *   // Scale the coordinate system by factors of
+ *   // 0.5 along the x-axis and
+ *   // 1.3 along the y-axis.
+ *   scale(v);
+ *
+ *   // Draw a square at (30, 20).
+ *   // It appears as a rectangle at (15, 26) after scaling.
+ *   square(30, 20, 40);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe(
+ *     'A red box and a blue box drawn on a gray background. The red box appears embedded in the blue box.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Style the spheres.
+ *   noStroke();
+ *
+ *   // Draw the red sphere.
+ *   fill('red');
+ *   box();
+ *
+ *   // Scale the coordinate system by factors of
+ *   // 0.5 along the x-axis and
+ *   // 1.3 along the y-axis and
+ *   // 2 along the z-axis.
+ *   scale(0.5, 1.3, 2);
+ *
+ *   // Draw the blue sphere.
+ *   fill('blue');
+ *   box();
+ * }
+ * </code>
+ * </div>
  */
 /**
  * @method scale
- * @param  {p5.Vector|Number[]} scales per-axis percents to scale the object
+ * @param  {p5.Vector|Number[]} scales vector whose components should be used to scale.
  * @chainable
  */
 p5.prototype.scale = function(x, y, z) {
@@ -449,36 +1068,74 @@ p5.prototype.scale = function(x, y, z) {
 };
 
 /**
- * Shears a shape around the x-axis by the amount specified by the angle
- * parameter. Angles should be specified in the current angleMode.
- * Objects are always sheared around their relative position to the origin
- * and positive numbers shear objects in a clockwise direction.
+ * Shears the x-axis so that shapes appear skewed.
  *
- * Transformations apply to everything that happens after and subsequent
- * calls to the function accumulates the effect. For example, calling
- * shearX(PI/2) and then shearX(PI/2) is the same as shearX(PI).
- * If <a href="#/p5/shearX">shearX()</a> is called within the <a href="#/p5/draw">draw()</a>,
- * the transformation is reset when the loop begins again.
+ * By default, the x- and y-axes are perpendicular. The `shearX()` function
+ * transforms the coordinate system so that x-coordinates are translated while
+ * y-coordinates are fixed.
  *
- * Technically, <a href="#/p5/shearX">shearX()</a> multiplies the current
- * transformation matrix by a rotation matrix. This function can be further
- * controlled by the <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a> functions.
+ * The first parameter, `angle`, is the amount to shear. For example, calling
+ * `shearX(1)` transforms all x-coordinates using the formula
+ * `x = x + y * tan(angle)`. `shearX()` interprets angle values using the
+ * current <a href="#/p5/angleMode">angleMode()</a>.
+ *
+ * By default, transformations accumulate. For example, calling
+ * `shearX(1)` twice has the same effect as calling `shearX(2)` once. The
+ * <a href="#/p5/push">push()</a> and
+ * <a href="#/p5/pop">pop()</a> functions can be used to isolate
+ * transformations within distinct drawing groups.
+ *
+ * Note: Transformations are reset at the beginning of the draw loop. Calling
+ * `shearX(1)` inside the <a href="#/p5/draw">draw()</a> function won't
+ * cause shapes to shear continuously.
  *
  * @method shearX
- * @param  {Number} angle angle of shear specified in radians or degrees,
- *                        depending on current angleMode
+ * @param  {Number} angle angle to shear by in the current <a href="#/p5/angleMode">angleMode()</a>.
  * @chainable
+ *
  * @example
  * <div>
  * <code>
- * translate(width / 4, height / 4);
- * shearX(PI / 4.0);
- * rect(0, 0, 30, 30);
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A white quadrilateral on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Shear the coordinate system along the x-axis.
+ *   shearX(QUARTER_PI);
+ *
+ *   // Draw the square.
+ *   square(0, 0, 50);
+ * }
  * </code>
  * </div>
  *
- * @alt
- * white irregular quadrilateral with black outline at top middle.
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Use degrees.
+ *   angleMode(DEGREES);
+ *
+ *   describe('A white quadrilateral on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Shear the coordinate system along the x-axis.
+ *   shearX(45);
+ *
+ *   // Draw the square.
+ *   square(0, 0, 50);
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.shearX = function(angle) {
   p5._validateParameters('shearX', arguments);
@@ -488,36 +1145,74 @@ p5.prototype.shearX = function(angle) {
 };
 
 /**
- * Shears a shape around the y-axis the amount specified by the angle
- * parameter. Angles should be specified in the current angleMode. Objects
- * are always sheared around their relative position to the origin and
- * positive numbers shear objects in a clockwise direction.
+ * Shears the y-axis so that shapes appear skewed.
  *
- * Transformations apply to everything that happens after and subsequent
- * calls to the function accumulates the effect. For example, calling
- * shearY(PI/2) and then shearY(PI/2) is the same as shearY(PI). If
- * <a href="#/p5/shearY">shearY()</a> is called within the <a href="#/p5/draw">draw()</a>, the transformation is reset when
- * the loop begins again.
+ * By default, the x- and y-axes are perpendicular. The `shearY()` function
+ * transforms the coordinate system so that y-coordinates are translated while
+ * x-coordinates are fixed.
  *
- * Technically, <a href="#/p5/shearY">shearY()</a> multiplies the current transformation matrix by a
- * rotation matrix. This function can be further controlled by the
- * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a> functions.
+ * The first parameter, `angle`, is the amount to shear. For example, calling
+ * `shearY(1)` transforms all y-coordinates using the formula
+ * `y = y + x * tan(angle)`. `shearY()` interprets angle values using the
+ * current <a href="#/p5/angleMode">angleMode()</a>.
+ *
+ * By default, transformations accumulate. For example, calling
+ * `shearY(1)` twice has the same effect as calling `shearY(2)` once. The
+ * <a href="#/p5/push">push()</a> and
+ * <a href="#/p5/pop">pop()</a> functions can be used to isolate
+ * transformations within distinct drawing groups.
+ *
+ * Note: Transformations are reset at the beginning of the draw loop. Calling
+ * `shearY(1)` inside the <a href="#/p5/draw">draw()</a> function won't
+ * cause shapes to shear continuously.
  *
  * @method shearY
- * @param  {Number} angle angle of shear specified in radians or degrees,
- *                        depending on current angleMode
+ * @param  {Number} angle angle to shear by in the current <a href="#/p5/angleMode">angleMode()</a>.
  * @chainable
+ *
  * @example
  * <div>
  * <code>
- * translate(width / 4, height / 4);
- * shearY(PI / 4.0);
- * rect(0, 0, 30, 30);
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A white quadrilateral on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Shear the coordinate system along the x-axis.
+ *   shearY(QUARTER_PI);
+ *
+ *   // Draw the square.
+ *   square(0, 0, 50);
+ * }
  * </code>
  * </div>
  *
- * @alt
- * white irregular quadrilateral with black outline at middle bottom.
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Use degrees.
+ *   angleMode(DEGREES);
+ *
+ *   describe('A white quadrilateral on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Shear the coordinate system along the x-axis.
+ *   shearY(45);
+ *
+ *   // Draw the square.
+ *   square(0, 0, 50);
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.shearY = function(angle) {
   p5._validateParameters('shearY', arguments);
@@ -527,61 +1222,179 @@ p5.prototype.shearY = function(angle) {
 };
 
 /**
- * Specifies an amount to displace objects within the display window.
- * The x parameter specifies left/right translation, the y parameter
- * specifies up/down translation.
+ * Translates the coordinate system.
  *
- * Transformations are cumulative and apply to everything that happens after
- * and subsequent calls to the function accumulates the effect. For example,
- * calling translate(50, 0) and then translate(20, 0) is the same as
- * translate(70, 0). If <a href="#/p5/translate">translate()</a> is called within <a href="#/p5/draw">draw()</a>, the
- * transformation is reset when the loop begins again. This function can be
- * further controlled by using <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
+ * By default, the origin `(0, 0)` is at the sketch's top-left corner in 2D
+ * mode and center in WebGL mode. The `translate()` function shifts the origin
+ * to a different position. Everything drawn after `translate()` is called
+ * will appear to be shifted. There are two ways to call `translate()` with
+ * parameters that set the origin's position.
+ *
+ * The first way to call `translate()` uses numbers to set the amount of
+ * translation. The first two parameters, `x` and `y`, set the amount to
+ * translate along the positive x- and y-axes. For example, calling
+ * `translate(20, 30)` translates the origin 20 pixels along the x-axis and 30
+ * pixels along the y-axis. The third parameter, `z`, is optional. It sets the
+ * amount to translate along the positive z-axis. For example, calling
+ * `translate(20, 30, 40)` translates the origin 20 pixels along the x-axis,
+ * 30 pixels along the y-axis, and 40 pixels along the z-axis.
+ *
+ * The second way to call `translate()` uses a
+ * <a href="#/p5.Vector">p5.Vector</a> object to set the amount of
+ * translation. For example, calling `translate(myVector)` uses the x-, y-,
+ * and z-components of `myVector` to set the amount to translate along the x-,
+ * y-, and z-axes. Doing so is the same as calling
+ * `translate(myVector.x, myVector.y, myVector.z)`.
+ *
+ * By default, transformations accumulate. For example, calling
+ * `translate(10, 0)` twice has the same effect as calling
+ * `translate(20, 0)` once. The <a href="#/p5/push">push()</a> and
+ * <a href="#/p5/pop">pop()</a> functions can be used to isolate
+ * transformations within distinct drawing groups.
+ *
+ * Note: Transformations are reset at the beginning of the draw loop. Calling
+ * `translate(10, 0)` inside the <a href="#/p5/draw">draw()</a> function won't
+ * cause shapes to move continuously.
  *
  * @method translate
- * @param  {Number} x left/right translation
- * @param  {Number} y up/down translation
- * @param  {Number} [z] forward/backward translation (WEBGL only)
+ * @param  {Number} x amount to translate along the positive x-axis.
+ * @param  {Number} y amount to translate along the positive y-axis.
+ * @param  {Number} [z] amount to translate along the positive z-axis.
  * @chainable
+ *
  * @example
  * <div>
  * <code>
- * translate(30, 20);
- * rect(0, 0, 55, 55);
- * </code>
- * </div>
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * <div>
- * <code>
- * rect(0, 0, 55, 55); // Draw rect at original 0,0
- * translate(30, 20);
- * rect(0, 0, 55, 55); // Draw rect at new 0,0
- * translate(14, 14);
- * rect(0, 0, 55, 55); // Draw rect at new 0,0
- * </code>
- * </div>
+ *   describe('A white circle on a gray background.');
+ * }
  *
-
- * <div>
- * <code>
  * function draw() {
  *   background(200);
- *   rectMode(CENTER);
- *   translate(width / 2, height / 2);
- *   translate(p5.Vector.fromAngle(millis() / 1000, 40));
- *   rect(0, 0, 20, 20);
+ *
+ *   // Translate the origin to the center.
+ *   translate(50, 50);
+ *
+ *   // Draw a circle at coordinates (0, 0).
+ *   circle(0, 0, 40);
  * }
  * </code>
  * </div>
  *
- * @alt
- * white 55×55 rect with black outline at center right.
- * 3 white 55×55 rects with black outlines at top-l, center-r and bottom-r.
- * a 20×20 white rect moving in a circle around the canvas
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'Two circles drawn on a gray background. The blue circle on the right overlaps the red circle at the center.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Translate the origin to the center.
+ *   translate(50, 50);
+ *
+ *   // Draw the red circle.
+ *   fill('red');
+ *   circle(0, 0, 40);
+ *
+ *   // Translate the origin to the right.
+ *   translate(25, 0);
+ *
+ *   // Draw the blue circle.
+ *   fill('blue');
+ *   circle(0, 0, 40);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A white circle moves slowly from left to right on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Calculate the x-coordinate.
+ *   let x = frameCount * 0.2;
+ *
+ *   // Translate the origin.
+ *   translate(x, 50);
+ *
+ *   // Draw a circle at coordinates (0, 0).
+ *   circle(0, 0, 40);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A white circle on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Create a p5.Vector object.
+ *   let v = createVector(50, 50);
+ *
+ *   // Translate the origin by the vector.
+ *   translate(v);
+ *
+ *   // Draw a circle at coordinates (0, 0).
+ *   circle(0, 0, 40);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe(
+ *     'Two spheres sitting side-by-side on gray background. The sphere at the center is red. The sphere on the right is blue.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Style the spheres.
+ *   noStroke();
+ *
+ *   // Draw the red sphere.
+ *   fill('red');
+ *   sphere(10);
+ *
+ *   // Translate the origin to the right.
+ *   translate(30, 0, 0);
+ *
+ *   // Draw the blue sphere.
+ *   fill('blue');
+ *   sphere(10);
+ * }
+ * </code>
+ * </div>
  */
 /**
  * @method translate
- * @param  {p5.Vector} vector the vector to translate by
+ * @param  {p5.Vector} vector vector by which to translate.
  * @chainable
  */
 p5.prototype.translate = function(x, y, z) {
