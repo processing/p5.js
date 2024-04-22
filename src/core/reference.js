@@ -5,539 +5,2091 @@
  */
 
 /**
- * Creates and names a new variable. A variable is a container for a value.
+ * Declares a new variable.
  *
- * Variables that are declared with <a href="#/p5/let">let</a> will have block-scope.
- * This means that the variable only exists within the
- * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/block">
- * block</a> that it is created within.
+ * A variable is a container for a value. For example, a variable might
+ * contain a creature's x-coordinate as a `Number` or its name as a
+ * `String`. Variables can change value by reassigning them as follows:
  *
- * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let">the MDN entry</a>:
- * Declares a block scope local variable, optionally initializing it to a value.
+ * <code>
+ * // Declare the variable x and assign it the value 10.
+ * let x = 10;
+ *
+ * // Reassign x to 50.
+ * x = 50;
+ * </code>
+ *
+ * Variables have block scope. When a variable is declared between curly
+ * braces `{}`, it only exists within the block defined by those braces. For
+ * example, the following code would throw a `ReferenceError` because `x` is
+ * declared within the `setup()` function's block:
+ *
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   let x = 50;
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // x was declared in setup(), so it can't be referenced here.
+ *   circle(x, 50, 20);
+ * }
+ * </code>
+ *
+ * Variables declared outside of all curly braces `{}` are in the global
+ * scope. A variable that's in the global scope can be used and changed
+ * anywhere in a sketch:
+ *
+ * <code>
+ * let x = 50;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Change the value of x.
+ *   x += 10;
+ *
+ *   circle(x, 50, 20);
+ * }
+ * </code>
  *
  * @property let
  *
  * @example
- * <div class='norender'>
+ * <div>
  * <code>
- * let x = 2;
- * console.log(x); // prints 2 to the console
- * x = 1;
- * console.log(x); // prints 1 to the console
- * </code>
- * </div>
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * @alt
- * This example does not render anything
- */
-
-/**
- * Creates and names a new constant. Like a variable created with <a href="#/p5/let">let</a>,
- * a constant that is created with <a href="#/p5/const">const</a> is a container for a value,
- * however constants cannot be reassigned once they are declared. Although it is
- * noteworthy that for non-primitive data types like objects & arrays, their
- * elements can still be changeable. So if a variable is assigned an array, you
- * can still add or remove elements from the array but cannot reassign another
- * array to it. Also unlike `let`, you cannot declare variables without value
- * using const.
+ *   background(220);
  *
- * Constants have block-scope. This means that the constant only exists within
- * the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/block">
- * block</a> that it is created within. A constant cannot be redeclared within a scope in which it
- * already exists.
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
  *
- * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const">the MDN entry</a>:
- * Declares a read-only named constant.
- * Constants are block-scoped, much like variables defined using the 'let' statement.
- * The value of a constant can't be changed through reassignment, and it can't be redeclared.
- * @property const
+ *   // Create the message variable.
+ *   let message = 'hello, 🌍';
  *
- * @example
- * <div class='norender'>
- * <code>
- * // define myFavNumber as a constant and give it the value 7
- * const myFavNumber = 7;
- * console.log('my favorite number is: ' + myFavNumber);
- * </code>
- * </div>
+ *   // Display the message.
+ *   text(message, 50, 50);
  *
- * <div class='norender'>
- * <code>
- * const bigCats = ['lion', 'tiger', 'panther'];
- * bigCats.push('leopard');
- * console.log(bigCats);
- * // bigCats = ['cat']; // throws error as re-assigning not allowed for const
- * </code>
- * </div>
- *
- * <div class='norender'>
- * <code>
- * const wordFrequency = {};
- * wordFrequency['hello'] = 2;
- * wordFrequency['bye'] = 1;
- * console.log(wordFrequency);
- * // wordFrequency = { 'a': 2, 'b': 3}; // throws error here
- * </code>
- * </div>
- *
- * @alt
- * These examples do not render anything
- */
-
-/**
- * The strict equality operator <a href="#/p5/===">===</a>
- * checks to see if two values are equal and of the same type.
- *
- * A comparison expression always evaluates to a <a href="#/p5/boolean">boolean</a>.
- *
- * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators">the MDN entry</a>:
- * The non-identity operator returns true if the operands are not equal and/or not of the same type.
- *
- * Note: In some examples around the web you may see a double-equals-sign
- * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Equality">==</a>,
- * used for comparison instead. This is the non-strict equality operator in Javascript.
- * This will convert the two values being compared to the same type before comparing them.
- *
- * @property ===
- *
- * @example
- * <div class='norender'>
- * <code>
- * console.log(1 === 1); // prints true to the console
- * console.log(1 === '1'); // prints false to the console
- * </code>
- * </div>
- *
- * @alt
- * This example does not render anything
- */
-
-/**
- * The greater than operator <a href="#/p5/>">></a>
- * evaluates to true if the left value is greater than
- * the right value.
- *
- * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators">
- * There is more info on comparison operators on MDN.</a>
- *
- * @property >
- *
- * @example
- * <div class='norender'>
- * <code>
- * console.log(100 > 1); // prints true to the console
- * console.log(1 > 100); // prints false to the console
- * </code>
- * </div>
- *
- * @alt
- * This example does not render anything
- */
-
-/**
- * The greater than or equal to operator <a href="#/p5/>=">>=</a>
- * evaluates to true if the left value is greater than or equal to
- * the right value.
- *
- * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators">There is more info on comparison operators on MDN.</a>
- *
- * @property >=
- *
- * @example
- * <div class='norender'>
- * <code>
- * console.log(100 >= 100); // prints true to the console
- * console.log(101 >= 100); // prints true to the console
- * </code>
- * </div>
- *
- * @alt
- * This example does not render anything
- */
-
-/**
- * The less than operator <a href="#/p5/<"><</a>
- * evaluates to true if the left value is less than
- * the right value.
- *
- * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators">There is more info on comparison operators on MDN.</a>
- *
- * @property <
- *
- * @example
- * <div class='norender'>
- * <code>
- * console.log(1 < 100); // prints true to the console
- * console.log(100 < 99); // prints false to the console
- * </code>
- * </div>
- *
- * @alt
- * This example does not render anything
- */
-
-/**
- * The less than or equal to operator <a href="#/p5/<="><=</a>
- * evaluates to true if the left value is less than or equal to
- * the right value.
- *
- * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators">There is more info on comparison operators on MDN.</a>
- *
- * @property <=
- *
- * @example
- * <div class='norender'>
- * <code>
- * console.log(100 <= 100); // prints true to the console
- * console.log(99 <= 100); // prints true to the console
- * </code>
- * </div>
- *
- * @alt
- * This example does not render anything
- */
-
-/**
- * The <a href="#/p5/if-else">if-else</a> statement helps control the flow of your code.
- *
- * A condition is placed between the parenthesis following 'if',
- * when that condition evalues to <a href="https://developer.mozilla.org/en-US/docs/Glossary/truthy">truthy</a>,
- * the code between the following curly braces is run.
- * Alternatively, when the condition evaluates to <a href="https://developer.mozilla.org/en-US/docs/Glossary/Falsy">falsy</a>,
- * the code between the curly braces of 'else' block is run instead. Writing an
- * else block is optional.
- *
- * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/if...else">the MDN entry</a>:
- * The 'if' statement executes a statement if a specified condition is truthy.
- * If the condition is falsy, another statement can be executed
- * @property if-else
- *
- * @example
- * <div class='norender'>
- * <code>
- * let a = 4;
- * if (a > 0) {
- *   console.log('positive');
- * } else {
- *   console.log('negative');
+ *   describe('The text "hello, 🌍" written at the center of a gray square.');
  * }
  * </code>
  * </div>
  *
- * @alt
- * This example does not render anything
+ * <div>
+ * <code>
+ * let x = 0;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A white circle moves from left to right on a gray square.');
+ * }
+ *
+ * function draw() {
+ *   background(220);
+ *
+ *   // Change the value of x.
+ *   x += 1;
+ *
+ *   circle(x, 50, 20);
+ * }
+ * </code>
+ * </div>
  */
 
 /**
- * Creates and names a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions">function</a>.
- * A <a href="#/p5/function">function</a> is a set of statements that perform a task.
+ * A way to choose whether to run a block of code.
  *
- * Optionally, functions can have parameters. <a href="https://developer.mozilla.org/en-US/docs/Glossary/Parameter">Parameters</a>
- * are variables that are scoped to the function, that can be assigned a value
- * when calling the function.Multiple parameters can be given by seperating them
- * with commmas.
+ * `if` statements are helpful for running a block of code based on a
+ * condition. For example, an `if` statement makes it easy to express the
+ * idea "Draw a circle if the mouse is pressed.":
  *
- * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function">the MDN entry</a>:
- * Declares a function with the specified parameters.
+ * <code>
+ * if (mouseIsPressed === true) {
+ *   circle(mouseX, mouseY, 20);
+ * }
+ * </code>
+ *
+ * The statement header begins with the keyword `if`. The expression in
+ * parentheses `mouseIsPressed === true` is a `Boolean` expression that's
+ * either `true` or `false`. The code between the curly braces `{}` is the if
+ * statement's body. The body only runs if the `Boolean` expression is `true`.
+ *
+ * The <a href="#/p5/mouseIsPressed">mouseIsPressed</a> system variable is
+ * always `true` or `false`, so the code snippet above could also be written
+ * as follows:
+ *
+ * <code>
+ * if (mouseIsPressed) {
+ *   circle(mouseX, mouseY, 20);
+ * }
+ * </code>
+ *
+ * An `if`-`else` statement adds a block of code that runs if the `Boolean`
+ * expression is `false`. For example, here's an `if`-`else` statement that
+ * expresses the idea "Draw a circle if the mouse is pressed. Otherwise,
+ * display a message.":
+ *
+ * <code>
+ * if (mouseIsPressed === true) {
+ *   // When true.
+ *   circle(mouseX, mouseY, 20);
+ * } else {
+ *   // When false.
+ *   text('Click me!', 50, 50);
+ * }
+ * </code>
+ *
+ * There are two possible paths, or branches, in this code snippet. The
+ * program must follow one branch or the other.
+ *
+ * An `else`-`if` statement makes it possible to add more branches.
+ * `else`-`if` statements run different blocks of code under different
+ * conditions. For example, an `else`-`if` statement makes it easy to express
+ * the idea "If the mouse is on the left, paint the canvas white. If the mouse
+ * is in the middle, paint the canvas gray. Otherwise, paint the canvas
+ * black.":
+ *
+ * <code>
+ * if (mouseX < 33) {
+ *   background(255);
+ * } else if (mouseX < 67) {
+ *   background(200);
+ * } else {
+ *   background(0);
+ * }
+ * </code>
+ *
+ * `if` statements can add as many `else`-`if` statements as needed. However,
+ * there can only be one `else` statement and it must be last.
+ *
+ * `if` statements can also check for multiple conditions at once. For
+ * example, the `Boolean` operator `&&` (AND) checks whether two expressions
+ * are both `true`:
+ *
+ * <code>
+ * if (keyIsPressed === true && key === 'p') {
+ *   text('You pressed the "p" key!', 50, 50);
+ * }
+ * </code>
+ *
+ * If the user is pressing a key AND that key is `'p'`, then a message will
+ * display.
+ *
+ * The `Boolean` operator `||` (OR) checks whether at least one of two
+ * expressions is `true`:
+ *
+ * <code>
+ * if (keyIsPressed === true || mouseIsPressed === true) {
+ *   text('You did something!', 50, 50);
+ * }
+ * </code>
+ *
+ * If the user presses a key, or presses a mouse button, or both, then a
+ * message will display.
+ *
+ * The body of an `if` statement can contain another `if` statement. This is
+ * called a "nested `if` statement." For example, nested `if` statements make
+ * it easy to express the idea "If a key is pressed, then check if the key is
+ * 'r'. If it is, then set the fill to red.":
+ *
+ * <code>
+ * if (keyIsPressed === true) {
+ *   if (key === 'r') {
+ *     fill('red');
+ *   }
+ * }
+ * </code>
+ *
+ * See <a href="#/p5/Boolean">Boolean</a> and <a href="#/p5/Number">Number</a>
+ * to learn more about these data types and the operations they support.
+ *
+ * @property if
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Click the mouse to show the circle.
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square. A white circle follows the mouse user clicks on the canvas.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   if (mouseIsPressed === true) {
+ *     circle(mouseX, mouseY, 20);
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click the mouse to show different shapes.
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square with a white ellipse at its center. The ellipse becomes a circle when the user presses the mouse.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   if (mouseIsPressed === true) {
+ *     circle(50, 50, 20);
+ *   } else {
+ *     ellipse(50, 50, 20, 50);
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Move the mouse to change the background color.
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A square changes color from white to black as the user moves the mouse from left to right.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   if (mouseX < 33) {
+ *     background(255);
+ *   } else if (mouseX < 67) {
+ *     background(200);
+ *   } else {
+ *     background(0);
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click on the canvas to begin detecting key presses.
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A white circle drawn on a gray background. The circle changes color to red when the user presses the "r" key.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   if (keyIsPressed === true) {
+ *     if (key === 'r') {
+ *       fill('red');
+ *     }
+ *   }
+ *
+ *   circle(50, 50, 40);
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * A named group of statements.
+ *
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions" target="_blank">Functions</a>
+ * help with organizing and reusing code. For example, functions make it easy
+ * to express the idea "Draw a flower.":
+ *
+ * <code>
+ * function drawFlower() {
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textSize(20);
+ *
+ *   // Draw a flower emoji.
+ *   text('🌸', 50, 50);
+ * }
+ * </code>
+ *
+ * The function header begins with the keyword `function`. The function's
+ * name, `drawFlower`, is followed by parentheses `()` and curly braces `{}`.
+ * The code between the curly braces is called the function's body. The
+ * function's body runs when the function is called like so:
+ *
+ * <code>
+ * drawFlower();
+ * </code>
+ *
+ * Functions can accept inputs by adding parameters to their headers.
+ * Parameters are placeholders for values that will be provided when the
+ * function is called. For example, the `drawFlower()` function could include
+ * a parameter for the flower's size:
+ *
+ * <code>
+ * function drawFlower(size) {
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *
+ *   // Use the size parameter.
+ *   textSize(size);
+ *
+ *   // Draw a flower emoji.
+ *   text('🌸', 50, 50);
+ * }
+ * </code>
+ *
+ * Parameters are part of the function's declaration. Arguments are provided
+ * by the code that calls a function. When a function is called, arguments are
+ * assigned to parameters:
+ *
+ * <code>
+ * // The argument 20 is assigned to the parameter size.
+ * drawFlower(20);
+ * </code>
+ *
+ * Functions can have multiple parameters separated by commas. Parameters
+ * can have any type. For example, the `drawFlower()` function could accept
+ * `Number` parameters for the flower's x- and y-coordinates along with its
+ * size:
+ *
+ * <code>
+ * function drawFlower(x, y, size) {
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *
+ *   // Use the size parameter.
+ *   textSize(size);
+ *
+ *   // Draw a flower emoji.
+ *   // Use the x and y parameters.
+ *   text('🌸', x, y);
+ * }
+ * </code>
+ *
+ * Functions can also produce outputs by adding a `return` statement:
+ *
+ * <code>
+ * function double(x) {
+ *   let answer = 2 * x;
+ *   return answer;
+ * }
+ * </code>
+ *
+ * The expression following `return` can produce an output that's used
+ * elsewhere. For example, the output of the `double()` function can be
+ * assigned to a variable:
+ *
+ * <code>
+ * let six = double(3);
+ * text(`3 x 2 = ${six}`, 50, 50);
+ * </code>
  *
  * @property function
  *
  * @example
- * <div class='norender'>
+ * <div>
  * <code>
- * let myName = 'Hridi';
- * function sayHello(name) {
- *   console.log('Hello ' + name + '!');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A gray square with a flower at its center.');
  * }
- * sayHello(myName); // calling the function, prints "Hello Hridi!" to console.
- * </code>
- * </div>
  *
- * <div class='norender'>
- * <code>
- * let square = number => number * number;
- * console.log(square(5));
- * </code>
- * </div>
+ * function draw() {
+ *   background(200);
  *
- * @alt
- * This example does not render anything
- */
-
-/**
- * Specifies the value to be returned by a function.
- * For more info checkout <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/return">
- * the MDN entry for return</a>.
- * @property return
- *
- * @example
- * <div class='norender'>
- * <code>
- * function calculateSquare(x) {
- *   return x * x;
+ *   // Call the drawFlower() function.
+ *   drawFlower();
  * }
- * const result = calculateSquare(4); // returns 16
- * console.log(result); // prints '16' to the console
+ *
+ * // Declare a function that draws a flower at the
+ * // center of the canvas.
+ * function drawFlower() {
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textSize(20);
+ *
+ *   // Draw a flower emoji.
+ *   text('🌸', 50, 50);
+ * }
  * </code>
  * </div>
  *
- * @alt
- * This example does not render anything
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A gray square with a flower at its center.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Call the drawFlower() function and pass values for
+ *   // its position and size.
+ *   drawFlower(50, 50, 20);
+ * }
+ *
+ * // Declare a function that draws a flower at the
+ * // center of the canvas.
+ * function drawFlower(x, y, size) {
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *
+ *   // Use the size parameter.
+ *   textSize(size);
+ *
+ *   // Draw a flower emoji.
+ *   // Use the x and y parameters.
+ *   text('🌸', x, y);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A gray square with the message 'hello, 🌍' at its center.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Create a greeting.
+ *   let greeting = createGreeting('🌍');
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textSize(16);
+ *
+ *   // Display the greeting.
+ *   text(greeting, 50, 50);
+ * }
+ *
+ * // Return a string with a personalized greeting.
+ * function createGreeting(name) {
+ *   let message = `hello, ${name}`;
+ *   return message;
+ * }
+ * </code>
+ * </div>
  */
 
 /**
- * A <a href="#/p5/boolean">boolean</a> is one of the 7 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Primitive_values">primitive data types</a> in Javascript.
- * A boolean can only be `true` or `false`.
+ * A value that's either `true` or `false`.
  *
- * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type">the MDN entry</a>:
- * Boolean represents a logical entity and can have two values: true, and false.
+ * `Boolean` values help to make decisions in code. They appear any time a
+ * logical condition is checked. For example, the condition
+ * "Is a mouse button being pressed?" must be either `true` or
+ * `false`:
  *
- * @property boolean
+ * <code>
+ * // If the user presses the mouse, draw a circle at
+ * // the mouse's location.
+ * if (mouseIsPressed === true) {
+ *   circle(mouseX, mouseY, 20);
+ * }
+ * </code>
+ *
+ * The `if` statement checks whether
+ * <a href="#/p5/mouseIsPressed">mouseIsPressed</a> is `true` and draws a
+ * circle if it is. `Boolean` expressions such as `mouseIsPressed === true`
+ * evaluate to one of the two possible `Boolean` values: `true` or `false`.
+ *
+ * The `===` operator (EQUAL) checks whether two values are equal. If they
+ * are, the expression evaluates to `true`. Otherwise, it evaluates to
+ * `false`.
+ *
+ * Note: There's also a `==` operator with two `=` instead of three. Don't use
+ * it.
+ *
+ * The <a href="#/p5/mouseIsPressed">mouseIsPressed</a> system variable is
+ * always `true` or `false`, so the code snippet above could also be written
+ * as follows:
+ *
+ * <code>
+ * if (mouseIsPressed) {
+ *   circle(mouseX, mouseY, 20);
+ * }
+ * </code>
+ *
+ * The `!==` operator (NOT EQUAL) checks whether two values are not equal, as
+ * in the following example:
+ *
+ * <code>
+ * if (2 + 2 !== 4) {
+ *   text('War is peace.', 50, 50);
+ * }
+ * </code>
+ *
+ * Starting from the left, the arithmetic expression `2 + 2` produces the
+ * value `4`. The `Boolean` expression `4 !== 4` evaluates to `false` because
+ * `4` is equal to itself. As a result, the `if` statement's body is skipped.
+ *
+ * Note: There's also a `!=` operator with one `=` instead of two. Don't use
+ * it.
+ *
+ * The `Boolean` operator `&&` (AND) checks whether two expressions are both
+ * `true`:
+ *
+ * <code>
+ * if (keyIsPressed === true && key === 'p') {
+ *   text('You pressed the "p" key!', 50, 50);
+ * }
+ * </code>
+ *
+ * If the user is pressing a key AND that key is `'p'`, then a message will
+ * display.
+ *
+ * The `Boolean` operator `||` (OR) checks whether at least one of two
+ * expressions is `true`:
+ *
+ * <code>
+ * if (keyIsPressed === true || mouseIsPressed === true) {
+ *   text('You did something!', 50, 50);
+ * }
+ * </code>
+ *
+ * If the user presses a key, or presses a mouse button, or both, then a
+ * message will display.
+ *
+ * The following truth table summarizes a few common scenarios with `&&` and
+ * `||`:
+ *
+ * <code>
+ * true && true  // true
+ * true && false // false
+ * false && false // false
+ * true || true  // true
+ * true || false // true
+ * false || false // true
+ * </code>
+ *
+ * The relational operators `>`, `<`, `>=`, and `<=` also produce `Boolean`
+ * values:
+ *
+ * <code>
+ * 2 > 1 // true
+ * 2 < 1 // false
+ * 2 >= 2 // true
+ * 2 <= 2 // true
+ * </code>
+ *
+ * See <a href="#/p5/Number">Number</a> for more information about `Number`s.
+ *
+ * @property Boolean
  *
  * @example
- * <div class='norender'>
+ * <div>
  * <code>
- * let myBoolean = false;
- * console.log(typeof myBoolean); // prints 'boolean' to the console
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A gray square. When the user presses the mouse, a circle appears at that location.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // If the user presses the mouse, draw a circle at that location.
+ *   if (mouseIsPressed) {
+ *     circle(mouseX, mouseY, 20);
+ *   }
+ * }
  * </code>
  * </div>
  *
- * @alt
- * This example does not render anything
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A gray square. When the user presses the mouse, a circle appears at that location.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // If the user presses the mouse, draw a circle at that location.
+ *   if (mouseIsPressed === true) {
+ *     circle(mouseX, mouseY, 20);
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click on the canvas to begin detecting key presses.
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A gray square that turns pink when the user presses the mouse or a key.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // If the user presses the mouse, change the background color.
+ *   if (mouseIsPressed === true || keyIsPressed === true) {
+ *     background('deeppink');
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <code>
+ * <div>
+ * // Click the canvas to begin detecting key presses.
+ *
+ * // Create a Boolean variable.
+ * let isPlaying = false;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'The message "Begin?\nY or N" written in green on a black background. The message "Good luck!" appears when they press the "y" key.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(16);
+ *   fill(0, 255, 0);
+ *
+ *   // Display a different message when the user begins playing.
+ *   if (isPlaying === false) {
+ *     text('Begin?', 50, 40);
+ *     text('Y or N', 50, 60);
+ *   } else {
+ *     text('Good luck!', 50, 50);
+ *   }
+ * }
+ *
+ * // Start playing when the user presses the 'y' key.
+ * function keyPressed() {
+ *   if (key === 'y') {
+ *     isPlaying = true;
+ *   }
+ * }
+ * </div>
+ * </code>
  */
 
 /**
- * A <a href="#/p5/string">string</a> is one of the 7 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Primitive_values">primitive data types</a> in Javascript.
- * A string is a series of text characters. In Javascript, a string value must
- * be surrounded by either single-quotation marks(') or double-quotation marks(").
+ * A sequence of text characters.
  *
- * From <a href="https://developer.mozilla.org/en-US/docs/Glossary/string">the MDN entry</a>:
- * A string is a sequence of characters used to represent text.
+ * The `String` data type is helpful for working with text. For example, a
+ * string could contain a welcome message:
  *
- * @property string
+ * <code>
+ * // Use a string literal.
+ * text('hello!', 10, 10);
+ * </code>
+ *
+ * <code>
+ * // Create a string variable.
+ * let message = 'hello!';
+ *
+ * // Use the string variable.
+ * text(message, 10, 10);
+ * </code>
+ *
+ * The most common way to create strings is to use some form of quotations as
+ * follows:
+ *
+ * <code>
+ * text("hi", 50, 50);
+ * </code>
+ *
+ * <code>
+ * text('hi', 50, 50);
+ * </code>
+ *
+ * <code>
+ * text(`hi`, 50, 50);
+ * </code>
+ * 
+ * `"hi"`, `'hi'`, and ``hi`` are all string literals. A "literal" means a
+ * value was actually written, as in `text('hi', 50, 50)`. By contrast,
+ * `text(message, 50, 50)` uses the variable `message`, so it isn't a string
+ * literal.
+ *
+ * Single quotes `''` and double quotes `""` mean the same thing. It's nice to
+ * have the option for cases when a string contains one type of quote:
+ *
+ * <code>
+ * text("What's up?", 50, 50);
+ * </code>
+ *
+ * <code>
+ * text('Air quotes make you look "cool."', 50, 50);
+ * </code>
+ *
+ * Backticks ```` create template literals. Template literals have many uses.
+ * For example, they can contain both single and double quotes as needed:
+ *
+ * <code>
+ * text(`"Don't you forget about me"`,  10, 10); 
+ * </code>
+ *
+ * Template literals are helpful when strings are created from variables like
+ * so:
+ *
+ * <code>
+ * let size = random(10, 20);
+ * circle(50, 50, size);
+ *
+ * text(`The circle's diameter is ${size} pixels.`,  10, 10);
+ * </code>
+ *
+ * The `size` variable's value will replace `${size}` when the string is
+ * created. `${}` is a placeholder for any value. That means an expression can
+ * be used, as in `${round(PI, 3)}`. All of the following are valid template
+ * literals:
+ *
+ * <code>
+ * text(`π is about ${round(PI, 2)} pixels.`,  10, 10);
+ * text(`It's ${mouseX < width / 2} that I'm on the left half of the canvas.`,  10, 30);
+ * </code>
+ *
+ * Template literals can include several variables:
+ *
+ * <code>
+ * let x = random(0, 100);
+ * let y = random(0, 100);
+ * let size = random(10, 20);
+ * circle(x, y, size);
+ *
+ * text(`The circle at (${x}, ${y}) has a diameter of ${size} pixels.`,  10, 10);
+ * </code>
+ *
+ * Template literals are also helpful for creating multi-line text like so:
+ *
+ * <code>
+ * let poem = `My sketch doesn't run;
+ * it waits for me patiently
+ * while bugs point the way.`;
+ *
+ * text(poem, 10, 10);
+ * </code>
+ * 
+ * @property String
  *
  * @example
- * <div class='norender'>
+ * <div>
  * <code>
- * let mood = 'chill';
- * console.log(typeof mood); // prints 'string' to the console
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textSize(20);
+ *
+ *   // Display a welcome message.
+ *   text('hello!', 50, 50);
+ *
+ *   describe('A gray square with the text "hello!" written at the center.');
+ * }
  * </code>
  * </div>
  *
- * @alt
- * This example does not render anything
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textSize(20);
+ *
+ *   // Create a string variable.
+ *   let world = '🌍';
+ *
+ *   // Display a welcome message using a template string.
+ *   text(`hello! ${world}`, 50, 50);
+ *
+ *   describe('A gray square with the text "hello! 🌍" written at the center.');
+ * }
+ * </code>
+ * </div>
  */
 
 /**
- * A <a href="#/p5/number">number</a> is one of the 7 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Primitive_values">primitive data types</a> in Javascript.
- * A number can be a whole number or a decimal number.
+ * A number that can be positive, negative, or zero.
  *
- * <a href="https://developer.mozilla.org/en-US/docs/Glossary/number">The MDN entry for number</a>
+ * The `Number` data type is useful for describing values such as position,
+ * size, and color. A number can be an integer such as 20 or a decimal number
+ * such as 12.34. For example, a circle's position and size can be described
+ * by three numbers:
  *
- * @property number
+ * <code>
+ * circle(50, 50, 20);
+ * </code>
+ *
+ * <code>
+ * circle(50, 50, 12.34);
+ * </code>
+ *
+ * Numbers support basic arithmetic and follow the standard order of
+ * operations: Parentheses, Exponents, Multiplication, Division, Addition,
+ * and Subtraction (PEMDAS). For example, it's common to use arithmetic
+ * operators with p5.js' system variables that are numbers:
+ *
+ * <code>
+ * // Draw a circle at the center.
+ * circle(width / 2, height / 2, 20);
+ * </code>
+ *
+ * <code>
+ * // Draw a circle that moves from left to right.
+ * circle(frameCount * 0.01, 50, 20);
+ * </code>
+ *
+ * Here's a quick overview of the arithmetic operators:
+ *
+ * <code>
+ * 1 + 2 // Add
+ * 1 - 2 // Subtract
+ * 1 * 2 // Multiply
+ * 1 / 2 // Divide
+ * 1 % 2 // Remainder
+ * 1 ** 2 // Exponentiate
+ * </code>
+ *
+ * It's common to update a number variable using arithmetic. For example, an
+ * object's location can be updated like so:
+ *
+ * <code>
+ * x = x + 1;
+ * </code>
+ *
+ * The statement above adds 1 to a variable `x` using the `+` operator. The
+ * addition assignment operator `+=` expresses the same idea:
+ *
+ * <code>
+ * x += 1;
+ * </code>
+ *
+ * Here's a quick overview of the assignment operators:
+ *
+ * <code>
+ * x += 2 // Addition assignment
+ * x -= 2 // Subtraction assignment
+ * x *= 2 // Multiplication assignment
+ * x /= 2 // Division assignment
+ * x %= 2 // Remainder assignment
+ * </code>
+ *
+ * Numbers can be compared using the
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators#relational_operators" target="_blank">relational operators</a>
+ * `>`, `<`, `>=`, `<=`, `===`, and `!==`.  For example, a sketch's
+ * <a href="#/p5/frameCount">frameCount</a> can be used as a timer:
+ *
+ * <code>
+ * if (frameCount > 1000) {
+ *   text('Game over!', 50, 50);
+ * }
+ * </code>
+ *
+ * An expression such as `frameCount > 1000` evaluates to a `Boolean` value
+ * that's either `true` or `false`. The relational operators all produce
+ * `Boolean` values:
+ *
+ * <code>
+ * 2 > 1 // true
+ * 2 < 1 // false
+ * 2 >= 2 // true
+ * 2 <= 2 // true
+ * 2 === 2 // true
+ * 2 !== 2 // false
+ * </code>
+ *
+ * See <a href="#/p5/Boolean">Boolean</a> for more information about comparisons and conditions.
+ *
+ * Note: There are also `==` and `!=` operators with one fewer `=`. Don't use them.
+ *
+ * Expressions with numbers can also produce special values when something
+ * goes wrong:
+ *
+ * <code>
+ * sqrt(-1) // NaN
+ * 1 / 0 // Infinity
+ * </code>
+ *
+ * The value `NaN` stands for
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN" target="_blank">Not-A-Number</a>.
+ * `NaN` appears when calculations or conversions don't work. `Infinity` is a
+ * value that's larger than any number. It appears during certain
+ * calculations.
+ *
+ * @property Number
  *
  * @example
- * <div class='norender'>
+ * <div>
  * <code>
- * let num = 46.5;
- * console.log(typeof num); // prints 'number' to the console
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Draw a circle at the center.
+ *   circle(50, 50, 70);
+ *
+ *   // Draw a smaller circle at the center.
+ *   circle(width / 2, height / 2, 30);
+ *
+ *   describe('A gray square with two concentric white circles drawn at its center.');
+ * }
  * </code>
  * </div>
  *
- * @alt
- * This example does not render anything
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A white circle travels from left to right on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   circle(frameCount * 0.01, 50, 20);
+ * }
+ * </code>
+ * </div>
  */
 
 /**
+ * A container for data that's stored as key-value pairs.
  *
- * From <a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Basics">MDN's object basics</a>:
- * An <a href="#/p5/object">object</a> is a collection of related data and/or
- * functionality (which usually consists of several variables and functions —
- * which are called properties and methods when they are inside objects.)
+ * Objects help to organize related data of any type, including other objects.
+ * A value stored in an object can be accessed by name, called its key. Each
+ * key-value pair is called a "property." Objects are similar to dictionaries
+ * in Python and maps in Java and Ruby.
  *
- * @property object
+ * For example, an object could contain the location, size, and appearance of
+ * a dog:
+ *
+ * <code>
+ * // Declare the dog variable and assign it an object.
+ * let dog = { x: 50, y: 50, size: 20, emoji: '🐶' };
+ *
+ * // Style the text.
+ * textAlign(CENTER, CENTER);
+ * textSize(dog.size);
+ *
+ * // Draw the dog.
+ * text(dog.emoji, dog.x, dog.y);
+ * </code>
+ *
+ * The variable `dog` is assigned an object with four properties. Objects
+ * are declared with curly braces `{}`. Values can be accessed using the dot
+ * operator, as in `dog.size`. In the example above, the key `size`
+ * corresponds to the value `20`. Objects can also be empty to start:
+ *
+ * <code>
+ * // Declare a cat variable and assign it an empty object.
+ * let cat = {};
+ *
+ * // Add properties to the object.
+ * cat.x = 50;
+ * cat.y = 50;
+ * cat.size = 20;
+ * cat.emoji = '🐱';
+ *
+ * // Style the text.
+ * textAlign(CENTER, CENTER);
+ * textSize(cat.size);
+ *
+ * // Draw the cat.
+ * text(cat.emoji, cat.x, cat.y);
+ * </code>
+ *
+ * An object's data can be updated while a sketch runs. For example, the `cat`
+ * could run away from the `dog` by updating its location:
+ *
+ * <code>
+ * // Run to the right.
+ * cat.x += 5;
+ * </code>
+ *
+ * If needed, an object's values can be accessed using square brackets `[]`
+ * and strings instead of dot notation:
+ *
+ * <code>
+ * // Run to the right.
+ * cat["x"] += 5;
+ * </code>
+ *
+ * This syntax can be helpful when the key's name has spaces, as in
+ * `cat['height (m)']`.
+ *
+ * @property Object
  *
  * @example
- * <div class='norender'>
+ * <div>
  * <code>
- * let author = {
- *   name: 'Ursula K Le Guin',
- *   books: [
- *     'The Left Hand of Darkness',
- *     'The Dispossessed',
- *     'A Wizard of Earthsea'
- *   ]
- * };
- * console.log(author.name); // prints 'Ursula K Le Guin' to the console
+ * // Declare the variable data and assign it an object with three properties.
+ * let data = { x: 50, y: 50, d: 20 };
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A gray square with a white circle drawn at its center.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Access the object's values using the . operator.
+ *   circle(data.x, data.y, data.d);
+ * }
  * </code>
  * </div>
  *
- * @alt
- * This example does not render anything
+ * <code>
+ * // Declare the variable data and assign it an object with three properties.
+ * let data = { x: 50, y: 50, d: 20 };
+ *
+ * // Add another property for color.
+ * data.color = 'deeppink';
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A gray square with a pink circle drawn at its center.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Access the object's values using the . operator.
+ *   fill(data.color);
+ *   circle(data.x, data.y, data.d);
+ * }
+ * </code>
+ *
+ * <div>
+ * <code>
+ * // Declare the variable data and assign it an object with three properties.
+ * let data = { x: 50, y: 50, d: 20 };
+ *
+ * // Add another property for color.
+ * data.color = 'deeppink';
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A gray square with a white circle drawn at its center.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Access the object's values using the . operator.
+ *   fill(data.color);
+ *   circle(data.x, data.y, data.d);
+ *
+ *   // Update the object's x and y properties.
+ *   data.x += random(-1, 1);
+ *   data.y += random(-1, 1);
+ * }
+ * </code>
+ * </div>
  */
 
 /**
- * Creates and names a <a href="#/p5/class">class</a> which is a template for
- * the creation of <a href="#/p5/object">objects</a>.
+ * A list that keeps several pieces of data in order.
  *
- * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/class">the MDN entry</a>:
- * The class declaration creates a new Class with a given name using
- * prototype-based inheritance.
+ * Arrays are helpful for storing related data. They can contain data of any
+ * type. For example, an array could contain a list of someone's favorite
+ * colors as strings. Arrays are created as follows:
+ *
+ * <code>
+ * let colors = ['deeppink', 'darkorchid', 'magenta'];
+ * </code>
+ *
+ * Each piece of data in an array is called an element. Each element has an
+ * address, or index, within its array. The variable `colors` refers to an
+ * array with three <a href="#/p5/String">String> elements, `'deeppink'`,
+ * `'darkorchid'`, and `'magenta'`. Arrays are zero-indexed, which means
+ * that `'deeppink'` is at index 0, `'darkorchid'` is at index 1, and
+ * '`magenta'` is at index 2. Array elements can be accessed using their
+ * indices as follows:
+ *
+ * <code>
+ * let zeroth = colors[0]; // 'deeppink'
+ * let first = colors[1]; // 'darkorchid'
+ * let second = colors[2]; // 'magenta'
+ * </code>
+ *
+ * Elements can be added to the end of an array by calling the `push()`
+ * method as follows:
+ *
+ * <code>
+ * colors.push('lavender');
+ *
+ * let third = colors[3]; // 'lavender'
+ * </code>
+ *
+ * See <a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps/Arrays" target="_blank">MDN</a>
+ * for more information about arrays.
+ *
+ * @property Array
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Declare the variable xCoordinates and assign it an array
+ * // with three numeric elements.
+ * let xCoordinates = [25, 50, 75];
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'Three white circles drawn in a horizontal line on a gray background.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Access the element at index 0, which is 25.
+ *   circle(xCoordinates[0], 50, 20);
+ *
+ *   // Access the element at index 1, which is 50.
+ *   circle(xCoordinates[1], 50, 20);
+ *
+ *   // Access the element at index 2, which is 75.
+ *   circle(xCoordinates[2], 50, 20);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Declare the variable xCoordinates and assign it an array with three numeric elements.
+ * let xCoordinates = [20, 40, 60];
+ *
+ * // Add another element to the end of the array.
+ * xCoordinates.push(80);
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('Four white circles drawn in a horizontal line on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Access the element at index 0, which is 20.
+ *   circle(xCoordinates[0], 50, 20);
+ *
+ *   // Access the element at index 1, which is 40.
+ *   circle(xCoordinates[1], 50, 20);
+ *
+ *   // Access the element at index 2, which is 60.
+ *   circle(xCoordinates[2], 50, 20);
+ *
+ *   // Access the element at index 3, which is 80.
+ *   circle(xCoordinates[3], 50, 20);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Declare the variable xCoordinates and assign it an empty array.
+ * let xCoordinates = [];
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Add elements to the array using a loop.
+ *   for (let x = 20; x < 100; x += 20) {
+ *     xCoordinates.push(x);
+ *   }
+ *
+ *   describe('Four white circles drawn in a horizontal line on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Access the element at index i and use it to draw a circle.
+ *   for (let i = 0; i < xCoordinates.length; i += 1) {
+ *     circle(xCoordinates[i], 50, 20);
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Declare the variable xCoordinates and assign it an empty array.
+ * let xCoordinates = [];
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Add elements to the array using a loop.
+ *   for (let x = 20; x < 100; x += 20) {
+ *     xCoordinates.push(x);
+ *   }
+ *
+ *   describe('Four white circles drawn in a horizontal line on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Access each element of the array and use it to draw a circle.
+ *   for (let x of xCoordinates) {
+ *     circle(x, 50, 20);
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Declare the variable xCoordinates and assign it an empty array.
+ * let xCoordinates = [];
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Add elements to the array using a loop.
+ *   for (let x = 20; x < 100; x += 20) {
+ *     xCoordinates.push(x);
+ *   }
+ *
+ *   describe(
+ *     'A gray square with four white circles drawn in a horizontal line. The circles move randomly.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   for (let i = 0; i < xCoordinates.length; i += 1) {
+ *     // Update the element at index i.
+ *     xCoordinates[i] += random(-1, 1);
+ *
+ *     // Use the element at index i to draw a circle.
+ *     circle(xCoordinates[i], 50, 20);
+ *   }
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * A template for creating objects of a particular type.
+ *
+ * Classes can make it easier to program with objects. For example, a `Frog`
+ * class could create objects that behave like frogs. Each object created
+ * using a class is called an instance of that class. All instances of a class
+ * are the same type. Here's an example of creating an instance of a `Frog`
+ * class:
+ *
+ * <code>
+ * let fifi = new Frog(50, 50, 20);
+ * </code>
+ *
+ * The variable `fifi` refers to an instance of the `Frog` class. The keyword
+ * `new` is used to call the `Frog` class' constructor in the statement
+ * `new Frog()`. Altogether, a new `Frog` object was created and assigned to
+ * the variable `fifi`. Classes are templates, so they can be used to create
+ * more than one instance:
+ *
+ * <code>
+ * // First Frog instance.
+ * let frog1 = new Frog(25, 50, 10);
+ *
+ * // Second Frog instance.
+ * let frog2 = new Frog(75, 50, 10);
+ * </code>
+ *
+ * A simple `Frog` class could be declared as follows:
+ *
+ * <code>
+ * class Frog {
+ *   constructor(x, y, size) {
+ *     // This code runs once when an instance is created.
+ *     this.x = x;
+ *     this.y = y;
+ *     this.size = size;
+ *   }
+ *
+ *   show() {
+ *     // This code runs once when myFrog.show() is called.
+ *     textAlign(CENTER, CENTER);
+ *     textSize(this.size);
+ *     text('🐸', this.x, this.y);
+ *   }
+ *
+ *   hop() {
+ *     // This code runs once when myFrog.hop() is called.
+ *     this.x += random(-10, 10);
+ *     this.y += random(-10, 10);
+ *   }
+ * }
+ * </code>
+ *
+ * Class declarations begin with the keyword `class` followed by the class
+ * name, such as `Frog`, and curly braces `{}`. Class names should use
+ * `PascalCase` and can't have spaces in their names. For example, naming a
+ * class `Kermit The Frog` with spaces between each word would throw a
+ * `SyntaxError`. The code between the curly braces `{}` defines the class.
+ *
+ * Functions that belong to a class are called methods. `constructor()`,
+ * `show()`, and `hop()` are methods in the `Frog` class. Methods define an
+ * object's behavior. Methods can accept parameters and return values, just
+ * like functions. Note that methods don't use the `function` keyword.
+ *
+ * `constructor()` is a special method that's called once when an instance of
+ * the class is created. The statement `new Frog()` calls the `Frog` class'
+ * `constructor()` method.
+ *
+ * A class definition is a template for instances. The keyword `this` refers
+ * to an instance's data and methods. For example, each `Frog` instance has
+ * unique coordinates stored in `this.x` and `this.y`. The `show()` method
+ * uses those coordinates to draw the frog. The `hop()` method updates those
+ * coordinates when called. Once a `Frog` instance is created, its data and
+ * methods can be accessed using the dot operator `.` as follows:
+ *
+ * <code>
+ * // Draw a lily pad.
+ * fill('green');
+ * stroke('green');
+ * circle(fifi.x, fifi.y, 2 * fifi.size);
+ *
+ * // Show the Frog.
+ * fifi.show();
+ *
+ * // Hop.
+ * fifi.hop();
+ * </code>
  *
  * @property class
  *
  * @example
- * <div class='norender'>
+ * <div>
  * <code>
- * class Rectangle {
- *   constructor(name, height, width) {
- *     this.name = name;
- *     this.height = height;
- *     this.width = width;
+ * // Declare a frog variable.
+ * let fifi;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Assign the frog variable a new Frog object.
+ *   fifi = new Frog(50, 50, 20);
+ *
+ *   describe('A frog face drawn on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background('cornflowerblue');
+ *
+ *   // Show the frog.
+ *   fifi.show();
+ * }
+ *
+ * class Frog {
+ *   constructor(x, y, size) {
+ *     this.x = x;
+ *     this.y = y;
+ *     this.size = size;
+ *   }
+ *
+ *   show() {
+ *     textAlign(CENTER, CENTER);
+ *     textSize(this.size);
+ *     text('🐸', this.x, this.y);
  *   }
  * }
- * let square = new Rectangle('square', 1, 1); // creating new instance of Polygon Class.
- * console.log(square.width); // prints '1' to the console
  * </code>
  * </div>
  *
- * @alt
- * This example does not render anything
+ * <div>
+ * <code>
+ * // Declare two frog variables.
+ * let frog1;
+ * let frog2;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Assign the frog variables a new Frog object.
+ *   frog1 = new Frog(25, 50, 10);
+ *   frog2 = new Frog(75, 50, 20);
+ *
+ *   describe('Two frog faces drawn next to each other on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background('cornflowerblue');
+ *
+ *   // Show the frogs.
+ *   frog1.show();
+ *   frog2.show();
+ * }
+ *
+ * class Frog {
+ *   constructor(x, y, size) {
+ *     this.x = x;
+ *     this.y = y;
+ *     this.size = size;
+ *   }
+ *
+ *   show() {
+ *     textAlign(CENTER, CENTER);
+ *     textSize(this.size);
+ *     text('🐸', this.x, this.y);
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Declare two frog variables.
+ * let frog1;
+ * let frog2;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Assign the frog variables a new Frog object.
+ *   frog1 = new Frog(25, 50, 10);
+ *   frog2 = new Frog(75, 50, 20);
+ *
+ *   // Slow the frame rate.
+ *   frameRate(1);
+ *
+ *   describe('A gray square with two frog faces drawn next to each other. The frogs hop around the screen.');
+ * }
+ *
+ * function draw() {
+ *   background('cornflowerblue');
+ *
+ *   // Show the frogs.
+ *   frog1.show();
+ *   frog2.show();
+ *
+ *   // Move the frogs.
+ *   frog1.hop();
+ *   frog2.hop();
+ *
+ *   // Wrap around if they've hopped off the edge.
+ *   frog1.checkEdges();
+ *   frog2.checkEdges();
+ * }
+ *
+ * class Frog {
+ *   constructor(x, y, size) {
+ *     this.x = x;
+ *     this.y = y;
+ *     this.size = size;
+ *   }
+ *
+ *   show() {
+ *     textAlign(CENTER, CENTER);
+ *     textSize(this.size);
+ *     text('🐸', this.x, this.y);
+ *   }
+ *
+ *   hop() {
+ *     this.x += random(-10, 10);
+ *     this.y += random(-10, 10);
+ *   }
+ *
+ *   checkEdges() {
+ *     if (this.x > width) {
+ *       this.x = this.x - width;
+ *     } else if (this.x < 0) {
+ *       this.x = width - this.x;
+ *     }
+ *
+ *     if (this.y > height) {
+ *       this.y = this.y - height;
+ *     } else if (this.y < 0) {
+ *       this.y = height - this.y;
+ *     }
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Declare two frog variables.
+ * let frog1;
+ * let frog2;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Assign the frog variables a new Frog object.
+ *   frog1 = new Frog(25, 50, 10);
+ *   frog2 = new Frog(75, 50, 20);
+ *
+ *   describe('Two frog faces drawn next to each other on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background('cornflowerblue');
+ *
+ *   // Show the frogs.
+ *   frog1.show();
+ *   frog2.show();
+ * }
+ *
+ * class Frog {
+ *   constructor(x, y, size) {
+ *     this.x = x;
+ *     this.y = y;
+ *     this.size = size;
+ *   }
+ *
+ *   show() {
+ *     textAlign(CENTER, CENTER);
+ *     textSize(this.size);
+ *     text('🐸', this.x, this.y);
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Create an array that will hold frogs.
+ * let frogs = [];
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Add Frog objects to the array.
+ *   for (let i = 0; i < 5; i += 1) {
+ *     // Calculate random coordinates and size.
+ *     let x = random(0, 100);
+ *     let y = random(0, 100);
+ *     let s = random(2, 20);
+ *
+ *     // Create a new Frog object.
+ *     let frog = new Frog(x, y, s);
+ *
+ *     // Add the Frog to the array.
+ *     frogs.push(frog);
+ *   }
+ *
+ *   // Slow the frame rate.
+ *   frameRate(1);
+ *
+ *   describe(
+ *     'A gray square with five frog faces drawn next to each other. The frogs hop around the screen.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background('cornflowerblue');
+ *
+ *   for (let frog of frogs) {
+ *     // Show the frog.
+ *     frog.show();
+ *
+ *     // Move the frog.
+ *     frog.hop();
+ *
+ *     // Wrap around if they've hopped off the edge.
+ *     frog.checkEdges();
+ *   }
+ * }
+ *
+ * class Frog {
+ *   constructor(x, y, size) {
+ *     this.x = x;
+ *     this.y = y;
+ *     this.size = size;
+ *   }
+ *
+ *   show() {
+ *     textAlign(CENTER, CENTER);
+ *     textSize(this.size);
+ *     text('🐸', this.x, this.y);
+ *   }
+ *
+ *   hop() {
+ *     this.x += random(-10, 10);
+ *     this.y += random(-10, 10);
+ *   }
+ *
+ *   checkEdges() {
+ *     if (this.x > width) {
+ *       this.x = this.x - width;
+ *     } else if (this.x < 0) {
+ *       this.x = width - this.x;
+ *     }
+ *
+ *     if (this.y > height) {
+ *       this.y = this.y - height;
+ *     } else if (this.y < 0) {
+ *       this.y = height - this.y;
+ *     }
+ *   }
+ * }
+ * </code>
+ * </div>
  */
 
 /**
- * <a href="#/p5/for">for</a> creates a loop that is useful for executing one
- * section of code multiple times.
+ * A way to repeat a block of code when the number of iterations is known.
  *
- * A 'for loop' consists of three different expressions inside of a parenthesis,
- * all of which are optional.These expressions are used to control the number of
- * times the loop is run.The first expression is a statement that is used to set
- * the initial state for the loop.The second expression is a condition that you
- * would like to check before each loop. If this expression returns false then
- * the loop will exit.The third expression is executed at the end of each loop.
- * These expression are separated by ; (semi-colon).In case of an empty expression,
- * only a semi-colon is written.
+ * `for` loops are helpful for repeating statements a certain number of times.
+ * For example, a `for` loop makes it easy to express the idea
+ * "draw five lines" like so:
  *
- * The code inside of the loop body (in between the curly braces) is executed between the evaluation of the second
- * and third expression.
+ * <code>
+ * for (let x = 10; x < 100; x += 20) {
+ *   line(x, 25, x, 75);
+ * }
+ * </code>
  *
- * As with any loop, it is important to ensure that the loop can 'exit', or that
- * the test condition will eventually evaluate to false. The test condition with a <a href="#/p5/for">for</a> loop
- * is the second expression detailed above. Ensuring that this expression can eventually
- * become false ensures that your loop doesn't attempt to run an infinite amount of times,
- * which can crash your browser.
+ * The loop's header begins with the keyword `for`. Loops generally count up
+ * or count down as they repeat, or iterate. The statements in parentheses
+ * `let x = 10; x < 100; x += 20` tell the loop how it should repeat:
+ * - `let x = 10` tells the loop to start counting at `10` and keep track of iterations using the variable `x`.
+ * - `x < 100` tells the loop to count up to, but not including, `100`.
+ * - `x += 20`  tells the loop to count up by `20` at the end of each iteration.
  *
- * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for">the MDN entry</a>:
- * Creates a loop that executes a specified statement until the test condition evaluates to false.
- * The condition is evaluated after executing the statement, resulting in the specified statement executing at least once.
+ * The code between the curly braces `{}` is the loop's body. Statements in the
+ * loop body are repeated during each iteration of the loop.
+ *
+ * It's common to create infinite loops accidentally. When this happens,
+ * sketches may become unresponsive and the web browser may display a warning.
+ * For example, the following loop never stops iterating because it doesn't
+ * count up:
+ *
+ * <code>
+ * for (let x = 10; x < 100; x = 20) {
+ *   line(x, 25, x, 75);
+ * }
+ * </code>
+ *
+ * The statement `x = 20` keeps the variable `x` stuck at `20`, which is
+ * always less than `100`.
+ *
+ * `for` loops can also count down:
+ *
+ * <code>
+ * for (let d = 100; d > 0; d -= 10) {
+ *   circle(50, 50, d);
+ * }
+ * </code>
+ *
+ * `for` loops can also contain other loops. The following nested loop draws a
+ * grid of points:
+ *
+ * <code>
+ * // Loop from left to right.
+ * for (let x = 10; x < 100; x += 10) {
+ *
+ *   // Loop from top to bottom.
+ *   for (let y = 10; y < 100; y += 10) {
+ *     point(x, y);
+ *   }
+ *
+ * }
+ * </code>
+ *
+ * `for` loops are also helpful for iterating through the elements of an
+ * array. For example, it's common to iterate through an array that contains
+ * information about where or what to draw:
+ *
+ * <code>
+ * // Create an array of x-coordinates.
+ * let xCoordinates = [20, 40, 60];
+ *
+ * for (let i = 0; i < xCoordinates.length; i += 1) {
+ *   // Update the element.
+ *   xCoordinates[i] += random(-1, 1);
+ *
+ *   // Draw a circle.
+ *   circle(xCoordinates[i], 50, 20);
+ * }
+ * </code>
+ *
+ * If the array's values aren't modified, the `for...of` statement can
+ * simplify the code. They're similar to `for` loops in Python and `for-each`
+ * loops in C++ and Java. The following loops have the same effect:
+ *
+ * <code>
+ * // Draw circles with a for loop.
+ * let xCoordinates = [20, 40, 60];
+ *
+ * for (let i = 0; i < xCoordinates.length; i += 1) {
+ *   circle(xCoordinates[i], 50, 20);
+ * }
+ * </code>
+ *
+ * <code>
+ * // Draw circles with a for...of statement.
+ * let xCoordinates = [20, 40, 60];
+ *
+ * for (let x of xCoordinates) {
+ *   circle(x, 50, 20);
+ * }
+ * </code>
+ *
+ * In the code snippets above, the variables `i` and `x` have different roles.
+ *
+ * In the first snippet, `i` counts from `0` up to `2`, which is one less than
+ * `xCoordinates.length`. `i` is used to access the element in `xCoordinates`
+ * at index `i`.
+ *
+ * In the second code snippet, `x` isn't keeping track of the loop's progress
+ * or an index. During each iteration, `x` contains the next element of
+ * `xCoordinates`. `x` starts from the beginning of `xCoordinates` (`20`) and
+ * updates its value to `40` and then `60` during the next iterations.
+ *
  * @property for
  *
  * @example
- * <div class='norender'>
+ * <div>
  * <code>
- * for (let i = 0; i < 9; i++) {
- *   console.log(i);
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A gray square with five black vertical lines.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Draw vertical lines using a loop.
+ *   for (let x = 10; x < 100; x += 20) {
+ *     line(x, 25, x, 75);
+ *   }
  * }
  * </code>
  * </div>
  *
- * @alt
- * This example does not render anything
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('Five white concentric circles drawn on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Draw concentric circles using a loop.
+ *   for (let d = 100; d > 0; d -= 20) {
+ *     circle(50, 50, d);
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A grid of black dots on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Set the spacing for points on the grid.
+ *   let space = 10;
+ *
+ *   // Increase the stroke weight.
+ *   strokeWeight(3);
+ *
+ *   // Loop from the left to the right.
+ *   for (let x = space; x < 100; x += space) {
+ *     // Loop from the top to the bottom.
+ *     for (let y = space; y < 100; y += space) {
+ *       point(x, y);
+ *     }
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Declare the variable xCoordinates and assign it an array of numbers.
+ * let xCoordinates = [20, 40, 60, 80];
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('Four white circles drawn in a horizontal line on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Access the element at index i and use it to draw a circle.
+ *   for (let i = 0; i < xCoordinates.length; i += 1) {
+ *     circle(xCoordinates[i], 50, 20);
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Declare the variable xCoordinates and assign it an array of numbers.
+ * let xCoordinates = [20, 40, 60, 80];
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A gray square with four white circles drawn in a horizontal line.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Access each element of the array and use it to draw a circle.
+ *   for (let x of xCoordinates) {
+ *     circle(x, 50, 20);
+ *   }
+ * }
+ * </code>
+ * </div>
  */
 
 /**
- * <a href="#/p5/while">while</a> creates a loop that is useful for executing
- * one section of code multiple times.
+ * A way to repeat a block of code.
  *
- * With a 'while loop', the code inside of the loop body (between the curly
- * braces) is run repeatedly until the test condition (inside of the parenthesis)
- * evaluates to false. The condition is tested before executing the code body
- * with <a href="#/p5/while">while</a>, so if the condition is initially false
- * the loop body, or statement, will never execute.
+ * `while` loops are helpful for repeating statements while a condition is
+ * `true`. They're like `if` statements that repeat. For example, a `while`
+ * loop makes it easy to express the idea "draw several lines" like so:
  *
- * As with any loop, it is important to ensure that the loop can 'exit', or that
- * the test condition will eventually evaluate to false. This is to keep your loop
- * from trying to run an infinite amount of times, which can crash your browser.
+ * <code>
+ * // Declare a variable to keep track of iteration.
+ * let x = 10;
  *
- * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/while">the MDN entry</a>:
- * The while statement creates a loop that executes a specified statement as long
- * as the test condition evaluates to true.The condition is evaluated before
- * executing the statement.
+ * // Repeat as long as x < 100
+ * while (x < 100) {
+ *   line(x, 25, x, 75);
+ *
+ *   // Increment by 20.
+ *   x += 20;
+ * }
+ * </code>
+ *
+ * The loop's header begins with the keyword `while`. Loops generally count up
+ * or count down as they repeat, or iterate. The statement in parentheses
+ * `x < 100` is a condition the loop checks each time it iterates. If the
+ * condition is `true`, the loop runs the code between the curly braces `{}`,
+ * The code between the curly braces is called the loop's body. If the
+ * condition is `false`, the body is skipped and the loop is stopped.
+ *
+ * It's common to create infinite loops accidentally. For example, the
+ * following loop never stops iterating because it doesn't count up:
+ *
+ * <code>
+ * // Declare a variable to keep track of iteration.
+ * let x = 10;
+ *
+ * // Repeat as long as x < 100
+ * while (x < 100) {
+ *   line(x, 25, x, 75);
+ * }
+ *
+ * // This should be in the loop's body!
+ * x += 20;
+ * </code>
+ *
+ * The statement `x += 20` appears after the loop's body. That means the
+ * variable `x` is stuck at `10`,  which is always less than `100`.
+ *
+ * `while` loops are useful when the number of iterations isn't known in
+ * advance. For example, concentric circles could be drawn at random
+ * increments:
+ *
+ * <code>
+ * let d = 100;
+ * let minSize = 5;
+ *
+ * while (d > minSize) {
+ *   circle(50, 50, d);
+ *   d -= random(10);
+ * }
+ * </code>
  *
  * @property while
  *
  * @example
- * <div class='norender'>
+ * <div>
  * <code>
- * // This example logs the lines below to the console
- * // 4
- * // 3
- * // 2
- * // 1
- * // 0
- * let num = 5;
- * while (num > 0) {
- *   num = num - 1;
- *   console.log(num);
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A gray square with five black vertical lines.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Declare a variable to keep track of iteration.
+ *   let x = 10;
+ *
+ *   // Repeat as long as x < 100
+ *   while (x < 100) {
+ *     line(x, 25, x, 75);
+ *
+ *     // Increment by 20.
+ *     x += 20
+ *   }
  * }
  * </code>
  * </div>
  *
- * @alt
- * This example does not render anything
- */
-
-/**
- * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify">the MDN entry</a>:
- * The JSON.stringify() method converts a JavaScript object or value to a JSON <a href="#/p5/string">string</a>.
- * @method stringify
- * @static
- * @for JSON
- * @param {Object} object :Javascript object that you would like to convert to JSON
- *
- * @example
- * <div class='norender'>
+ * <div>
  * <code>
- * let myObject = { x: 5, y: 6 };
- * let myObjectAsString = JSON.stringify(myObject);
- * console.log(myObjectAsString); // prints "{"x":5,"y":6}" to the console
- * console.log(typeof myObjectAsString); // prints 'string' to the console
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Slow the frame rate.
+ *   frameRate(5);
+ *
+ *   describe('A gray square with several concentric circles at the center. The circles' sizes decrease at random increments.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   let d = 100;
+ *   let minSize = 5;
+ *
+ *   while (d > minSize) {
+ *     circle(50, 50, d);
+ *     d -= random(5, 15);
+ *   }
+ * }
  * </code>
  * </div>
- *
- * @alt
- * This example does not render anything
  */
 
 /**
- * Prints a message to your browser's web console. When using p5, you can use <a href="#/p5/print">print</a>
- * and <a href="#/p5/console/log">console.log</a> interchangeably.
+ * Prints a message to the web browser's console.
  *
- * The console is opened differently depending on which browser you are using.
- * Here are links on how to open the console in <a href="https://developer.mozilla.org/en-US/docs/Tools/Web_Console/Opening_the_Web_Console">Firefox</a>
- * , <a href="https://developers.google.com/web/tools/chrome-devtools/open">Chrome</a>, <a href="https://docs.microsoft.com/en-us/microsoft-edge/devtools-guide/console">Edge</a>,
- * and <a href="https://support.apple.com/en-ca/guide/safari/sfri20948/mac">Safari</a>.
- * With the <a href="https://editor.p5js.org/">online p5 editor</a> the console
- * is embedded directly in the page underneath the code editor.
+ * The <a href="https://developer.mozilla.org/en-US/docs/Web/API/console" target="_blank">console</a>
+ * object is helpful for printing messages while debugging. For example, it's
+ * common to add a `console.log()` statement while studying how a section of
+ * code works:
  *
- * From <a href="https://developer.mozilla.org/en-US/docs/Web/API/Console/log">the MDN entry</a>:
- * The Console method log() outputs a message to the web console. The message may
- * be a single <a href="#/p5/string">string</a> (with optional substitution values),
- * or it may be any one or more JavaScript <a href="#/p5/object">objects</a>.
- * @method log
- * @static
+ * <code>
+ * if (isPlaying === true) {
+ *   // Add a console.log() statement to make sure this block of code runs.
+ *   console.log('Got here!');
+ *
+ *   // Game logic.
+ * }
+ * </code>
+ *
+ * `console.error()` is helpful for tracking errors because it prints
+ * formatted messages. For example, it's common to encounter errors when
+ * loading media assets:
+ *
+ * <code>
+ * // Logs an error message with special formatting.
+ * function handleFailure(error) {
+ *   console.error('Oops!', error);
+ * }
+ *
+ * // Try to load an image and call handleError() if it fails.
+ * loadImage('https://example.com/cat.jpg', handleImage, handleError);
+ * </code>
+ *
  * @for console
- * @param {String|Expression|Object} message :Message that you would like to print to the console
+ * @param {String|Expression|Object} message message to print to the console.
  *
  * @example
- * <div class='norender'>
+ * <div>
  * <code>
- * let myNum = 5;
- * console.log(myNum); // prints 5 to the console
- * console.log(myNum + 12); // prints 17 to the console
+ * function setup() {
+ *   noCanvas();
+ *
+ *   // Prints "Hello!" to the console.
+ *   console.log('Hello!');
+ * }
  * </code>
  * </div>
  *
- * @alt
- * This example does not render anything
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Try to load an image from a fake URL.
+ *   // Call handleError() if the image fails to load.
+ *   loadImage('https://example.com/cat.jpg', handleImage, handleError);
+ * }
+ *
+ * // Displays the image.
+ * function handleImage(img) {
+ *   image(img, 0, 0);
+ *
+ *   describe('A cat on a gray background.');
+ * }
+ *
+ * // Prints the error.
+ * function handleError(error) {
+ *   console.error('Oops!', error);
+ *
+ *   describe('A gray square.');
+ * }
+ * </code>
+ * </div>
  */
