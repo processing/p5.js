@@ -2439,7 +2439,6 @@ p5.prototype.createCapture = function(...args) {
       domElement.src = stream;
     }
   }).catch(e => {
-    
     if (e.name === 'NotFoundError')
       p5._friendlyError('No webcam found on this device', 'createCapture');
     if (e.name === 'NotAllowedError')
