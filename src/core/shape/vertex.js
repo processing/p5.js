@@ -2117,7 +2117,7 @@ p5.prototype.vertex = function(x, y, moveTo, u, v) {
  * </code>
  *
  * @method normal
- * @param  {Vector} vector vertex normal as a <a href="#/p5.Vector">p5.Vector</a> object.
+ * @param  {p5.Vector} vector vertex normal as a <a href="#/p5.Vector">p5.Vector</a> object.
  * @chainable
  *
  * @example
