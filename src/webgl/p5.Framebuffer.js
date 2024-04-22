@@ -849,6 +849,7 @@ class Framebuffer {
     this.target._renderer.uMVMatrix.set(
       this.target._renderer._curCamera.cameraMatrix
     );
+    this.target._renderer._applyStencilTestIfClipping();
   }
 
   /**
