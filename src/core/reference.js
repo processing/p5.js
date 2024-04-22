@@ -75,12 +75,12 @@
  *   textSize(16);
  *
  *   // Create the message variable.
- *   let message = 'hello, 🌍';
+ *   let message = 'Hello, 🌍!';
  *
  *   // Display the message.
  *   text(message, 50, 50);
  *
- *   describe('The text "hello, 🌍" written at the center of a gray square.');
+ *   describe('The text "Hello, 🌍!" written on a gray background.');
  * }
  * </code>
  * </div>
@@ -92,7 +92,7 @@
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   describe('A white circle moves from left to right on a gray square.');
+ *   describe('A white circle moves from left to right against a gray background.');
  * }
  *
  * function draw() {
@@ -225,7 +225,7 @@
  *   createCanvas(100, 100);
  *
  *   describe(
- *     'A gray square. A white circle follows the mouse user clicks on the canvas.'
+ *     'A white circle on a gray background. The circle follows the mouse user clicks on the canvas.'
  *   );
  * }
  *
@@ -247,7 +247,7 @@
  *   createCanvas(100, 100);
  *
  *   describe(
- *     'A gray square with a white ellipse at its center. The ellipse becomes a circle when the user presses the mouse.'
+ *     'A white ellipse on a gray background. The ellipse becomes a circle when the user presses the mouse.'
  *   );
  * }
  *
@@ -413,7 +413,7 @@
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   describe('A gray square with a flower at its center.');
+ *   describe('A pink flower on a gray background.');
  * }
  *
  * function draw() {
@@ -441,7 +441,7 @@
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   describe('A gray square with a flower at its center.');
+ *   describe('A pink flower on a gray background.');
  * }
  *
  * function draw() {
@@ -473,7 +473,7 @@
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   describe('A gray square with the message 'hello, 🌍' at its center.');
+ *   describe('The message "Hello, 🌍!" written on a gray background.');
  * }
  *
  * function draw() {
@@ -492,7 +492,7 @@
  *
  * // Return a string with a personalized greeting.
  * function createGreeting(name) {
- *   let message = `hello, ${name}`;
+ *   let message = `Hello, ${name}!`;
  *   return message;
  * }
  * </code>
@@ -714,12 +714,12 @@
  *
  * <code>
  * // Use a string literal.
- * text('hello!', 10, 10);
+ * text('Hello!', 10, 10);
  * </code>
  *
  * <code>
  * // Create a string variable.
- * let message = 'hello!';
+ * let message = 'Hello!';
  *
  * // Use the string variable.
  * text(message, 10, 10);
@@ -803,7 +803,7 @@
  *
  * text(poem, 10, 10);
  * </code>
- * 
+ *
  * @property String
  *
  * @example
@@ -819,9 +819,9 @@
  *   textSize(20);
  *
  *   // Display a welcome message.
- *   text('hello!', 50, 50);
+ *   text('Hello!', 50, 50);
  *
- *   describe('A gray square with the text "hello!" written at the center.');
+ *   describe('The text "Hello!" written on a gray background.');
  * }
  * </code>
  * </div>
@@ -841,9 +841,9 @@
  *   let world = '🌍';
  *
  *   // Display a welcome message using a template string.
- *   text(`hello! ${world}`, 50, 50);
+ *   text(`Hello, ${world}!`, 50, 50);
  *
- *   describe('A gray square with the text "hello! 🌍" written at the center.');
+ *   describe('The text "Hello, 🌍!" written on a gray background.');
  * }
  * </code>
  * </div>
@@ -973,7 +973,7 @@
  *   // Draw a smaller circle at the center.
  *   circle(width / 2, height / 2, 30);
  *
- *   describe('A gray square with two concentric white circles drawn at its center.');
+ *   describe('Two concentric, white circles drawn on a gray background.');
  * }
  * </code>
  * </div>
@@ -1071,7 +1071,7 @@
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   describe('A gray square with a white circle drawn at its center.');
+ *   describe('A white circle on a gray background.');
  * }
  *
  * function draw() {
@@ -1093,7 +1093,7 @@
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   describe('A gray square with a pink circle drawn at its center.');
+ *   describe('A pink circle on a gray background.');
  * }
  *
  * function draw() {
@@ -1116,7 +1116,7 @@
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   describe('A gray square with a white circle drawn at its center.');
+ *   describe('A white circle on a gray background.');
  * }
  *
  * function draw() {
@@ -1303,7 +1303,7 @@
  *   }
  *
  *   describe(
- *     'A gray square with four white circles drawn in a horizontal line. The circles move randomly.'
+ *     'Four white circles in a horizontal line on a gray background. The circles move randomly.'
  *   );
  * }
  *
@@ -1506,7 +1506,7 @@
  *   // Slow the frame rate.
  *   frameRate(1);
  *
- *   describe('A gray square with two frog faces drawn next to each other. The frogs hop around the screen.');
+ *   describe('Two frog faces on a gray background. The frogs hop around randomly.');
  * }
  *
  * function draw() {
@@ -1626,7 +1626,7 @@
  *   frameRate(1);
  *
  *   describe(
- *     'A gray square with five frog faces drawn next to each other. The frogs hop around the screen.'
+ *     'Five frog faces on a gray background. The frogs hop around randomly.'
  *   );
  * }
  *
@@ -1799,7 +1799,7 @@
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   describe('A gray square with five black vertical lines.');
+ *   describe('Five black vertical lines on a gray background.');
  * }
  *
  * function draw() {
@@ -1890,7 +1890,7 @@
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   describe('A gray square with four white circles drawn in a horizontal line.');
+ *   describe('Four white circles drawn in a horizontal line on a gray background.');
  * }
  *
  * function draw() {
@@ -1973,7 +1973,7 @@
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   describe('A gray square with five black vertical lines.');
+ *   describe('Five black vertical lines on a gray background.');
  * }
  *
  * function draw() {
@@ -2001,7 +2001,9 @@
  *   // Slow the frame rate.
  *   frameRate(5);
  *
- *   describe('A gray square with several concentric circles at the center. The circles' sizes decrease at random increments.');
+ *   describe(
+ *     "A gray square with several concentric circles at the center. The circles' sizes decrease at random increments."
+ *   );
  * }
  *
  * function draw() {
