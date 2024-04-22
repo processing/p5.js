@@ -344,7 +344,7 @@ p5.Image = class {
    */
   _animateGif(pInst) {
     const props = this.gifProperties;
-    const curTime = pInst._lastRealFrameTime;
+    const curTime = pInst._lastRealFrameTime || window.performance.now();
     if (props.lastChangeTime === 0) {
       props.lastChangeTime = curTime;
     }
