@@ -1792,7 +1792,24 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this._webGL2CompatibilityPrefix('vert', 'mediump') +
         defaultShaders.normalVert,
         this._webGL2CompatibilityPrefix('frag', 'mediump') +
-        defaultShaders.normalFrag
+        defaultShaders.normalFrag,
+        {
+          vertex: {
+            'void beforeMain': '() {}',
+            'vec3 getLocalPosition': '(vec3 position) { return position; }',
+            'vec3 getWorldPosition': '(vec3 position) { return position; }',
+            'vec3 getLocalNormal': '(vec3 normal) { return normal; }',
+            'vec3 getWorldNormal': '(vec3 normal) { return normal; }',
+            'vec2 getUV': '(vec2 uv) { return uv; }',
+            'vec4 getVertexColor': '(vec4 color) { return color; }',
+            'void afterMain': '() {}'
+          },
+          fragment: {
+            'void beforeMain': '() {}',
+            'vec4 getFinalColor': '(vec4 color) { return color; }',
+            'void afterMain': '() {}'
+          }
+        }
       );
     }
 
@@ -1806,7 +1823,24 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this._webGL2CompatibilityPrefix('vert', 'mediump') +
         defaultShaders.normalVert,
         this._webGL2CompatibilityPrefix('frag', 'mediump') +
-        defaultShaders.basicFrag
+        defaultShaders.basicFrag,
+        {
+          vertex: {
+            'void beforeMain': '() {}',
+            'vec3 getLocalPosition': '(vec3 position) { return position; }',
+            'vec3 getWorldPosition': '(vec3 position) { return position; }',
+            'vec3 getLocalNormal': '(vec3 normal) { return normal; }',
+            'vec3 getWorldNormal': '(vec3 normal) { return normal; }',
+            'vec2 getUV': '(vec2 uv) { return uv; }',
+            'vec4 getVertexColor': '(vec4 color) { return color; }',
+            'void afterMain': '() {}'
+          },
+          fragment: {
+            'void beforeMain': '() {}',
+            'vec4 getFinalColor': '(vec4 color) { return color; }',
+            'void afterMain': '() {}'
+          }
+        }
       );
     }
 
@@ -1820,7 +1854,22 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this._webGL2CompatibilityPrefix('vert', 'mediump') +
         defaultShaders.pointVert,
         this._webGL2CompatibilityPrefix('frag', 'mediump') +
-        defaultShaders.pointFrag
+        defaultShaders.pointFrag,
+        {
+          vertex: {
+            'void beforeMain': '() {}',
+            'vec3 getLocalPosition': '(vec3 position) { return position; }',
+            'vec3 getWorldPosition': '(vec3 position) { return position; }',
+            'float getPointSize': '(float size) { return size; }',
+            'void afterMain': '() {}'
+          },
+          fragment: {
+            'void beforeMain': '() {}',
+            'vec4 getFinalColor': '(vec4 color) { return color; }',
+            'bool shouldDiscard': '(bool outside) { return outside; }',
+            'void afterMain': '() {}'
+          }
+        }
       );
     }
     return this._defaultPointShader;
@@ -1833,7 +1882,22 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this._webGL2CompatibilityPrefix('vert', 'mediump') +
         defaultShaders.lineVert,
         this._webGL2CompatibilityPrefix('frag', 'mediump') +
-        defaultShaders.lineFrag
+        defaultShaders.lineFrag,
+        {
+          vertex: {
+            'void beforeMain': '() {}',
+            'vec3 getLocalPosition': '(vec3 position) { return position; }',
+            'vec3 getWorldPosition': '(vec3 position) { return position; }',
+            'float getPointSize': '(float size) { return size; }',
+            'void afterMain': '() {}'
+          },
+          fragment: {
+            'void beforeMain': '() {}',
+            'vec4 getFinalColor': '(vec4 color) { return color; }',
+            'bool shouldDiscard': '(bool outside) { return outside; }',
+            'void afterMain': '() {}'
+          }
+        }
       );
     }
 
