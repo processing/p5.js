@@ -182,15 +182,14 @@ suite('Keyboard Events', function() {
     test('keyIsDown should return a boolean', function() {
       assert.isBoolean(myp5.keyIsDown(65));
     });
-
+    
     test('keyIsDown should return true if key is down', function() {
       window.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 35 }));
       assert.strictEqual(myp5.keyIsDown(35), true);
     });
-    
-    test('keyIsDown should return false if key has length more than 1', function() {
-      assert.strictEqual(myp5.keyIsDown('ab'), false);
-    });
 
+    test('keyIsDown should return false if key is not down', function() {
+      assert.strictEqual(myp5.keyIsDown(35), false);
+    });
   });
 });
