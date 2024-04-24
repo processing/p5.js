@@ -182,7 +182,7 @@ suite('Keyboard Events', function() {
     test('keyIsDown should return a boolean', function() {
       assert.isBoolean(myp5.keyIsDown(65));
     });
-    
+
     test('keyIsDown should return true if key is down', function() {
       window.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 35 }));
       assert.strictEqual(myp5.keyIsDown(35), true);
