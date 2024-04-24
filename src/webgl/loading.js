@@ -26,16 +26,18 @@ import './p5.Geometry';
  * rendered without color properties.
  *
  * Options can include:
- * - `path`: Specifies the plain text string of either an stl or obj file to be loaded.
+ * - `modelString`: Specifies the plain text string of either an stl or obj file to be loaded.
+ * - `fileType`: Defines the file extension of the model.
  * - `normalize`: Enables standardized size scaling during loading if set to true.
  * - `successCallback`: Callback for post-loading actions with the 3D model object.
  * - `failureCallback`: Handles errors if model loading fails, receiving an event error.
- * - `fileType`: Defines the file extension of the model.
  * - `flipU`: Flips the U texture coordinates of the model.
  * - `flipV`: Flips the V texture coordinates of the model.
  *
  * @method createModel
- * @param  {String} object              String of the object to be loaded
+ * @param  {String} modelString         String of the object to be loaded
+ * @param  {String} [fileType]          The file extension of the model
+ *                                      (<code>.stl</code>, <code>.obj</code>).
  * @param  {Boolean} normalize        If true, scale the model to a
  *                                      standardized size when loading
  * @param  {function(p5.Geometry)} [successCallback] Function to be called
@@ -43,8 +45,6 @@ import './p5.Geometry';
  *                                     the 3D model object.
  * @param  {function(Event)} [failureCallback] called with event error if
  *                                         the model fails to load.
- * @param  {String} [fileType]          The file extension of the model
- *                                      (<code>.stl</code>, <code>.obj</code>).
  * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
  *
  * @example
@@ -91,75 +91,53 @@ import './p5.Geometry';
 /**
  * @method createModel
  * @param  {String} modelString
+ * @param  {String} [fileType]
  * @param  {function(p5.Geometry)} [successCallback]
  * @param  {function(Event)} [failureCallback]
- * @param  {String} [fileType]
  * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
  */
 /**
  * @method createModel
  * @param  {String} modelString
+ * @param  {String} [fileType]
  * @param  {Object} [options]
  * @param  {function(p5.Geometry)} [options.successCallback]
  * @param  {function(Event)} [options.failureCallback]
- * @param  {String} [options.fileType]
  * @param  {boolean} [options.normalize]
  * @param  {boolean} [options.flipU]
  * @param  {boolean} [options.flipV]
  * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
  */
-p5.prototype.createModel = function(modelString, options) {
-  p5._validateParameters('loadModel', arguments);
+let modelCounter = 0;
+p5.prototype.createModel = function(modelString, fileType, options) {
+  p5._validateParameters('createModel', arguments);
   let normalize= false;
   let successCallback;
   let failureCallback;
   let flipU = false;
   let flipV = false;
-  let fileType = 'obj';
   if (options && typeof options === 'object') {
     normalize = options.normalize || false;
     successCallback = options.successCallback;
     failureCallback = options.failureCallback;
-    fileType = options.fileType || fileType;
     flipU = options.flipU || false;
     flipV = options.flipV || false;
   } else if (typeof options === 'boolean') {
     normalize = options;
-    successCallback = arguments[2];
-    failureCallback = arguments[3];
-    if (typeof arguments[4] !== 'undefined') {
-      fileType = arguments[4];
-    }
+    successCallback = arguments[3];
+    failureCallback = arguments[4];
   } else {
-    successCallback = typeof arguments[1] === 'function' ? arguments[1] : undefined;
-    failureCallback = arguments[2];
-    if (typeof arguments[3] !== 'undefined') {
-      fileType = arguments[3];
-    }
+    successCallback = typeof arguments[2] === 'function' ? arguments[2] : undefined;
+    failureCallback = arguments[3];
   }
   const model = new p5.Geometry();
-  model.gid = `octa.obj|${normalize}`;
+  model.gid = `${fileType}|${normalize}|${modelCounter++}`;
 
   if (fileType.match('stl')) {
     try {
       let uint8array = new TextEncoder().encode(modelString);
       let arrayBuffer = uint8array.buffer;
       parseSTL(model, arrayBuffer);
-      if (normalize) {
-        model.normalize();
-      }
-
-      if (flipU) {
-        model.flipU();
-      }
-
-      if (flipV) {
-        model.flipV();
-      }
-
-      if (typeof successCallback === 'function') {
-        successCallback(model);
-      }
     } catch (error) {
       if (failureCallback) {
         failureCallback(error);
@@ -172,21 +150,6 @@ p5.prototype.createModel = function(modelString, options) {
     try {
       const lines = modelString.split('\n');
       parseObj(model, lines);
-
-      if (normalize) {
-        model.normalize();
-      }
-
-      if (flipU) {
-        model.flipU();
-      }
-
-      if (flipV) {
-        model.flipV();
-      }
-      if (typeof successCallback === 'function') {
-        successCallback(model);
-      }
     } catch (error) {
       if (failureCallback) {
         failureCallback(error);
@@ -205,6 +168,22 @@ p5.prototype.createModel = function(modelString, options) {
       );
     }
   }
+  if (normalize) {
+    model.normalize();
+  }
+
+  if (flipU) {
+    model.flipU();
+  }
+
+  if (flipV) {
+    model.flipV();
+  }
+
+  if (typeof successCallback === 'function') {
+    successCallback(model);
+  }
+
   return model;
 };
 /**
