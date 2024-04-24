@@ -864,7 +864,7 @@ function parseFilterArgs(...args) {
  *   // Get the entire canvas.
  *   let c = get();
  *
- *   // Display half the .
+ *   // Display half the canvas.
  *   image(c, 50, 0);
  *
  *   describe('Two identical mountain landscapes shown side-by-side.');
