@@ -4,7 +4,7 @@
 
 At the [2019 Contributors Conference](https://p5js.org/community/contributors-conference-2019.html), p5.js made the commitment to only add new features that increase access (inclusion and accessibility). We will not accept feature requests that don't support these efforts. We commit to the work of acknowledging, dismantling, and preventing barriers. This means considering intersecting[^1] experiences of diversity that can impact access and participation. These include alignments of gender, race, ethnicity, sexuality, language, location, et cetera. We center the needs of marginalized groups over the continued comfort of those privileged within the p5.js community. We are collectively exploring the meaning of access. We are learning how to practice and teach access. We choose to think of access through expansive, intersectional, and coalitionary frameworks. This commitment is part of the core values of p5.js outlined in our [Community Statement](https://p5js.org/community/).
 
-# Kinds of access
+## Kinds of access
 
 Increasing access is not focused on expanding the raw number of people in the p5.js community. It is a continued commitment to making p5.js available to and approachable for people who have been excluded from the p5.js community as a consequence of structural oppression. This commitment extends to the tools and platforms p5.js offers. It also includes the makeup, decision-making, and actions of p5.js leadership. We resist a technological culture of speed, growth, and competition. We prioritize intentionality, slowness, accommodation, and accountability as acts of collective care.
 
@@ -27,8 +27,7 @@ Access here means making p5.js equitable for:
 We recognize the complexity of the terms used to describe our respective identities. Language is nuanced, evolving, and contested. This is not an exhaustive list. We provide an attempt to name and be accountable to our commitments and to the diverse needs of the p5.js community.
 
 
-
-# Examples
+### Examples
 These are examples of efforts we believe increase access:
 
 - Translating documentation and other materials into more languages, decentering linguistic imperialism[^4] (e.g., Rolando Vargas’ [Processing in Kuna Language](https://medium.com/@ProcessingOrg/culture-as-translation-processing-in-kuna-language-with-rolando-vargas-and-edinson-izquierdo-8079f14851f7), Felipe Santos Gomes, Julia Brasil, Katherine Finn Zander, and Marcela Mancino’s [Pê Cinco: Internationalization and Popularization for Portuguese Speakers](https://medium.com/processing-foundation/translating-p5-js-into-portuguese-for-the-brazilian-community-14b969e77ab1))
@@ -42,7 +41,7 @@ These are examples of efforts we believe increase access:
 
 
 
-# Maintenance
+## Maintenance
 We are not accepting feature requests that do not support our effort to increase access. You'll see this criteria reflected in our issue and pull request templates. We also affirm our intention to maintain the existing feature set of p5.js. We'd like to fix bugs regardless of which area of the codebase they're in. We believe consistency of the tool makes it more accessible for beginners. Examples of feature requests that improve accessibility include:
 Performance increases for people using less powerful hardware (e.g., Support for drawing to/reading from framebuffers)
 Consistency in the API (e.g, Add arcVertex() for creating arcs with beginShape()/endShape())

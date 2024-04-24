@@ -5840,6 +5840,73 @@
         "tutorial",
         "example"
       ]
+    },
+    {
+      "login": "togekisse",
+      "name": "togekisse",
+      "avatar_url": "https://avatars.githubusercontent.com/u/78539685?v=4",
+      "profile": "https://github.com/togekisse",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "tuantinghuang",
+      "name": "tuan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/90000947?v=4",
+      "profile": "https://tuan-h.com",
+      "contributions": [
+        "translation",
+        "ideas"
+      ]
+    },
+    {
+      "login": "janisepulveda",
+      "name": "Janis Sepúlveda",
+      "avatar_url": "https://avatars.githubusercontent.com/u/144460794?v=4",
+      "profile": "https://github.com/janisepulveda",
+      "contributions": [
+        "translation",
+        "ideas"
+      ]
+    },
+    {
+      "login": "sandpills",
+      "name": "viola ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/65051338?v=4",
+      "profile": "http://violand.xyz",
+      "contributions": [
+        "translation",
+        "ideas"
+      ]
+    },
+    {
+      "login": "leey611",
+      "name": "yu",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43624848?v=4",
+      "profile": "https://yuyuy.cargo.site/",
+      "contributions": [
+        "translation",
+        "ideas"
+      ]
+    },
+    {
+      "login": "LKL2017",
+      "name": "李坤霖",
+      "avatar_url": "https://avatars.githubusercontent.com/u/31305299?v=4",
+      "profile": "https://github.com/LKL2017",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "wwwld1",
+      "name": "Leo Wang",
+      "avatar_url": "https://avatars.githubusercontent.com/u/116049361?v=4",
+      "profile": "https://github.com/wwwld1",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "repoType": "github",
