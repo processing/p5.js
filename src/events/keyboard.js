@@ -307,7 +307,7 @@ p5.prototype._onblur = function(e) {
  * <a href="http://p5js.org/reference/#p5/keyCode">here</a>.
  *
  * @method keyIsDown
- * @param {Number}          code The key to check for.
+ * @param {Number|String}          code The key to check for.
  * @return {Boolean}        whether key is down or not
  * @example
  * <div><code>
@@ -371,6 +371,9 @@ p5.prototype._onblur = function(e) {
  */
 p5.prototype.keyIsDown = function(code) {
   p5._validateParameters('keyIsDown', arguments);
+  if (typeof code === 'string' && code.length === 1) {
+    code = code.toUpperCase().charCodeAt(0);
+  }
   return this._downKeys[code] || false;
 };
 
