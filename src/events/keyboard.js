@@ -307,7 +307,7 @@ p5.prototype._onblur = function(e) {
  * <a href="http://p5js.org/reference/#p5/keyCode">here</a>.
  *
  * @method keyIsDown
- * @param {Number}          code The key to check for.
+ * @param {Number|String}          code The key to check for.
  * @return {Boolean}        whether key is down or not
  * @example
  * <div><code>
@@ -344,6 +344,39 @@ p5.prototype._onblur = function(e) {
  * </code></div>
  *
  * <div><code>
+ * let x = 100;
+ * let y = 100;
+ *
+ * function setup() {
+ *   createCanvas(512, 512);
+ *   fill(255, 0, 0);
+ * }
+ *
+ * function draw() {
+ *   if (keyIsDown('A')) {
+ *     x -= 5;
+ *   }
+ *
+ *   if (keyIsDown('D')) {
+ *     x += 5;
+ *   }
+ *
+ *   if (keyIsDown('W')) {
+ *     y -= 5;
+ *   }
+ *
+ *   if (keyIsDown('S')) {
+ *     y += 5;
+ *   }
+ *
+ *   clear();
+ *   ellipse(x, y, 50, 50);
+ *   describe(`50-by-50 red ellipse moves left, right, up, and
+ *     down with 'W', 'A', 'S', and 'D' pressed.`);
+ * }
+ * </code></div>
+ *
+ * <div><code>
  * let diameter = 50;
  *
  * function setup() {
@@ -371,6 +404,9 @@ p5.prototype._onblur = function(e) {
  */
 p5.prototype.keyIsDown = function(code) {
   p5._validateParameters('keyIsDown', arguments);
+  if (typeof code === 'string' && code.length === 1) {
+    code = code.toUpperCase().charCodeAt(0);
+  }
   return this._downKeys[code] || false;
 };
 
