@@ -22,7 +22,7 @@ import './p5.Geometry';
  *
  * The first parameter, `path`, is always a `String` with the path to the
  * file. Paths to local files should be relative, as in
- * `loadModel('assets/model.obj'). URLs such as
+ * `loadModel('assets/model.obj')`. URLs such as
  * `'https://example.com/model.obj'` may be blocked due to browser security.
  *
  * The first way to call `loadModel()` has three optional parameters after the
