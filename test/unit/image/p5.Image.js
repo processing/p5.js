@@ -50,7 +50,7 @@ suite('p5.Image', function() {
     });
   });
 
-  suite.only('p5.Image.prototype.mask', function() {
+  suite('p5.Image.prototype.mask', function() {
     for (const density of [1, 2]) {
       test(`it should mask the image at pixel density ${density}`, function() {
         let img = myp5.createImage(10, 10);
