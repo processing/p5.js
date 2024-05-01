@@ -11,71 +11,125 @@ import * as constants from '../core/constants';
 import './p5.Color';
 
 /**
- * Start defining a shape that will mask subsequent things drawn to the canvas.
- * Only opaque regions of the mask shape will allow content to be drawn.
- * Any shapes drawn between this and <a href="#/p5/endClip">endClip()</a> will
- * contribute to the mask shape.
+ * Starts defining a shape that will mask any shapes drawn afterward.
  *
- * The mask will apply to anything drawn after this call. To draw without a mask, contain
- * the code to apply the mask and to draw the masked content between
- * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
+ * Any shapes drawn between `beginClip()` and
+ * <a href="#/p5/endClip">endClip()</a> will add to the mask shape. The mask
+ * will apply to anything drawn after <a href="#/p5/endClip">endClip()</a>.
  *
- * Alternatively, rather than drawing the mask between this and
- * <a href="#/p5/endClip">endClip()</a>, draw the mask in a callback function
- * passed to <a href="#/p5/clip">clip()</a>.
+ * The parameter, `options`, is optional. If an object with an `invert`
+ * property is passed, as in `beginClip({ invert: true })`, it will be used to
+ * set the masking mode. `{ invert: true }` inverts the mask, creating holes
+ * in shapes that are masked. `invert` is `false` by default.
  *
- * Options can include:
- * - `invert`: A boolean specifying whether or not to mask the areas *not* filled by the mask shape. Defaults to false.
+ * Masks can be contained between the
+ * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a> functions.
+ * Doing so allows unmasked shapes to be drawn after masked shapes.
+ *
+ * Masks can also be defined in a callback function that's passed to
+ * <a href="#/p5/clip">clip()</a>.
  *
  * @method beginClip
- * @param {Object} [options] An object containing clip settings.
+ * @param {Object} [options] an object containing clip settings.
  *
  * @example
  * <div>
  * <code>
- * noStroke();
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * // Mask in some shapes
- * push();
- * beginClip();
- * triangle(15, 37, 30, 13, 43, 37);
- * circle(45, 45, 7);
- * endClip();
+ *   background(200);
  *
- * fill('red');
- * rect(5, 5, 45, 45);
- * pop();
+ *   // Create a mask.
+ *   beginClip();
+ *   triangle(15, 37, 30, 13, 43, 37);
+ *   circle(45, 45, 7);
+ *   endClip();
  *
- * translate(50, 50);
+ *   // Draw a backing shape.
+ *   square(5, 5, 45);
  *
- * // Mask out the same shapes
- * push();
- * beginClip({ invert: true });
- * triangle(15, 37, 30, 13, 43, 37);
- * circle(45, 45, 7);
- * endClip();
- *
- * fill('red');
- * rect(5, 5, 45, 45);
- * pop();
+ *   describe('A white triangle and circle on a gray background.');
+ * }
  * </code>
  * </div>
  *
- * @alt
- * In the top left, a red triangle and circle. In the bottom right, a red
- * square with a triangle and circle cut out of it.
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create an inverted mask.
+ *   beginClip({ invert: true });
+ *   triangle(15, 37, 30, 13, 43, 37);
+ *   circle(45, 45, 7);
+ *   endClip();
+ *
+ *   // Draw a backing shape.
+ *   square(5, 5, 45);
+ *
+ *   describe('A white square at the top-left corner of a gray square. The white square has a triangle and a circle cut out of it.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   noStroke();
+ *
+ *   // Draw a masked shape.
+ *   push();
+ *   // Create a mask.
+ *   beginClip();
+ *   triangle(15, 37, 30, 13, 43, 37);
+ *   circle(45, 45, 7);
+ *   endClip();
+ *
+ *   // Draw a backing shape.
+ *   square(5, 5, 45);
+ *   pop();
+ *
+ *   // Translate the origin to the center.
+ *   translate(50, 50);
+ *
+ *   // Draw an inverted masked shape.
+ *   push();
+ *   // Create an inverted mask.
+ *   beginClip({ invert: true });
+ *   triangle(15, 37, 30, 13, 43, 37);
+ *   circle(45, 45, 7);
+ *   endClip();
+ *
+ *   // Draw a backing shape.
+ *   square(5, 5, 45);
+ *   pop();
+ *
+ *   describe('In the top left, a white triangle and circle. In the bottom right, a white square with a triangle and circle cut out of it.');
+ * }
+ * </code>
+ * </div>
  *
  * @example
  * <div>
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A silhouette of a rotating torus colored fuchsia.');
  * }
  *
  * function draw() {
- *   background(255);
- *   noStroke();
+ *   background(200);
  *
+ *   // Create a mask.
  *   beginClip();
  *   push();
  *   rotateX(frameCount * 0.01);
@@ -85,126 +139,271 @@ import './p5.Color';
  *   pop();
  *   endClip();
  *
- *   beginShape(QUAD_STRIP);
- *   fill(0, 255, 255);
- *   vertex(-width/2, -height/2);
- *   vertex(width/2, -height/2);
- *   fill(100, 0, 100);
- *   vertex(-width/2, height/2);
- *   vertex(width/2, height/2);
- *   endShape();
+ *   // Draw a backing shape.
+ *   noStroke();
+ *   fill('fuchsia');
+ *   plane(100);
  * }
  * </code>
  * </div>
- *
- * @alt
- * A silhouette of a rotating torus colored with a gradient from
- * cyan to purple
- */
-p5.prototype.beginClip = function(options = {}) {
-  this._renderer.beginClip(options);
-};
-
-/**
- * Finishes defining a shape that will mask subsequent things drawn to the canvas.
- * Only opaque regions of the mask shape will allow content to be drawn.
- * Any shapes drawn between <a href="#/p5/beginClip">beginClip()</a> and this
- * will contribute to the mask shape.
- *
- * @method endClip
- */
-p5.prototype.endClip = function() {
-  this._renderer.endClip();
-};
-
-/**
- * Use the shape drawn by a callback function to mask subsequent things drawn to the canvas.
- * Only opaque regions of the mask shape will allow content to be drawn.
- *
- * The mask will apply to anything drawn after this call. To draw without a mask, contain
- * the code to apply the mask and to draw the masked content between
- * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
- *
- * Alternatively, rather than drawing the mask shape in a function, draw the
- * shape between <a href="#/p5/beginClip">beginClip()</a> and <a href="#/p5/endClip">endClip()</a>.
- *
- * Options can include:
- * - `invert`: A boolean specifying whether or not to mask the areas *not* filled by the mask shape. Defaults to false.
- *
- * @method clip
- * @param {Function} callback A function that draws the mask shape.
- * @param {Object} [options] An object containing clip settings.
- *
- * @example
- * <div>
- * <code>
- * noStroke();
- *
- * // Mask in some shapes
- * push();
- * clip(() => {
- *   triangle(15, 37, 30, 13, 43, 37);
- *   circle(45, 45, 7);
- * });
- *
- * fill('red');
- * rect(5, 5, 45, 45);
- * pop();
- *
- * translate(50, 50);
- *
- * // Mask out the same shapes
- * push();
- * clip(() => {
- *   triangle(15, 37, 30, 13, 43, 37);
- *   circle(45, 45, 7);
- * }, { invert: true });
- *
- * fill('red');
- * rect(5, 5, 45, 45);
- * pop();
- * </code>
- * </div>
- *
- * @alt
- * In the top left, a red triangle and circle. In the bottom right, a red
- * square with a triangle and circle cut out of it.
  *
  * @example
  * <div>
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A silhouette of a rotating torus colored with a gradient from cyan to purple.');
  * }
  *
  * function draw() {
- *   background(255);
+ *   background(200);
+ *
+ *   // Create a mask.
+ *   beginClip();
+ *   push();
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   scale(0.5);
+ *   torus(30, 15);
+ *   pop();
+ *   endClip();
+ *
+ *   // Draw a backing shape.
  *   noStroke();
- *
- *   clip(() => {
- *     push();
- *     rotateX(frameCount * 0.01);
- *     rotateY(frameCount * 0.01);
- *     scale(0.5);
- *     torus(30, 15);
- *     pop();
- *   });
- *
  *   beginShape(QUAD_STRIP);
  *   fill(0, 255, 255);
- *   vertex(-width/2, -height/2);
- *   vertex(width/2, -height/2);
+ *   vertex(-width / 2, -height / 2);
+ *   vertex(width / 2, -height / 2);
  *   fill(100, 0, 100);
- *   vertex(-width/2, height/2);
- *   vertex(width/2, height/2);
+ *   vertex(-width / 2, height / 2);
+ *   vertex(width / 2, height / 2);
  *   endShape();
  * }
  * </code>
  * </div>
+ */
+p5.prototype.beginClip = function(options = {}) {
+  this._renderer.beginClip(options);
+};
+
+/**
+ * Ends defining a mask that was started with
+ * <a href="#/p5/beginClip">beginClip()</a>.
  *
- * @alt
- * A silhouette of a rotating torus colored with a gradient from
- * cyan to purple
+ * @method endClip
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a mask.
+ *   beginClip();
+ *   triangle(15, 37, 30, 13, 43, 37);
+ *   circle(45, 45, 7);
+ *   endClip();
+ *
+ *   // Draw a backing shape.
+ *   square(5, 5, 45);
+ *
+ *   describe('A white triangle and circle on a gray background.');
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.endClip = function() {
+  this._renderer.endClip();
+};
+
+/**
+ * Defines a shape that will mask any shapes drawn afterward.
+ *
+ * The first parameter, `callback`, is a function that defines the mask.
+ * Any shapes drawn in  `callback` will add to the mask shape. The mask
+ * will apply to anything drawn after `clip()` is called.
+ *
+ * The second parameter, `options`, is optional. If an object with an `invert`
+ * property is passed, as in `beginClip({ invert: true })`, it will be used to
+ * set the masking mode. `{ invert: true }` inverts the mask, creating holes
+ * in shapes that are masked. `invert` is `false` by default.
+ *
+ * Masks can be contained between the
+ * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a> functions.
+ * Doing so allows unmasked shapes to be drawn after masked shapes.
+ *
+ * Masks can also be defined with <a href="#/p5/beginClip">beginClip()</a>
+ * and <a href="#/p5/endClip">endClip()</a>.
+ *
+ * @method clip
+ * @param {Function} callback a function that draws the mask shape.
+ * @param {Object} [options] an object containing clip settings.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a mask.
+ *   clip(mask);
+ *
+ *   // Draw a backing shape.
+ *   square(5, 5, 45);
+ *
+ *   describe('A white triangle and circle on a gray background.');
+ * }
+ *
+ * // Declare a function that defines the mask.
+ * function mask() {
+ *   triangle(15, 37, 30, 13, 43, 37);
+ *   circle(45, 45, 7);
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create an inverted mask.
+ *   clip(mask, { invert: true });
+ *
+ *   // Draw a backing shape.
+ *   square(5, 5, 45);
+ *
+ *   describe('A white square at the top-left corner of a gray square. The white square has a triangle and a circle cut out of it.');
+ * }
+ *
+ * // Declare a function that defines the mask.
+ * function mask() {
+ *   triangle(15, 37, 30, 13, 43, 37);
+ *   circle(45, 45, 7);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   noStroke();
+ *
+ *   // Draw a masked shape.
+ *   push();
+ *   // Create a mask.
+ *   clip(mask);
+ *
+ *   // Draw a backing shape.
+ *   square(5, 5, 45);
+ *   pop();
+ *
+ *   // Translate the origin to the center.
+ *   translate(50, 50);
+ *
+ *   // Draw an inverted masked shape.
+ *   push();
+ *   // Create an inverted mask.
+ *   clip(mask, { invert: true });
+ *
+ *   // Draw a backing shape.
+ *   square(5, 5, 45);
+ *   pop();
+ *
+ *   describe('In the top left, a white triangle and circle. In the bottom right, a white square with a triangle and circle cut out of it.');
+ * }
+ *
+ * // Declare a function that defines the mask.
+ * function mask() {
+ *   triangle(15, 37, 30, 13, 43, 37);
+ *   circle(45, 45, 7);
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A silhouette of a rotating torus colored fuchsia.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Create a mask.
+ *   clip(mask);
+ *
+ *   // Draw a backing shape.
+ *   noStroke();
+ *   fill('fuchsia');
+ *   plane(100);
+ * }
+ *
+ * // Declare a function that defines the mask.
+ * function mask() {
+ *   push();
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   scale(0.5);
+ *   torus(30, 15);
+ *   pop();
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A silhouette of a rotating torus colored with a gradient from cyan to purple.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Create a mask.
+ *   clip(mask);
+ *
+ *   // Draw a backing shape.
+ *   noStroke();
+ *   beginShape(QUAD_STRIP);
+ *   fill(0, 255, 255);
+ *   vertex(-width / 2, -height / 2);
+ *   vertex(width / 2, -height / 2);
+ *   fill(100, 0, 100);
+ *   vertex(-width / 2, height / 2);
+ *   vertex(width / 2, height / 2);
+ *   endShape();
+ * }
+ *
+ * // Declare a function that defines the mask.
+ * function mask() {
+ *   push();
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   scale(0.5);
+ *   torus(30, 15);
+ *   pop();
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.clip = function(callback, options) {
   this._renderer.beginClip(options);
@@ -213,27 +412,32 @@ p5.prototype.clip = function(callback, options) {
 };
 
 /**
- * Sets the color used for the background of the canvas. By default, the
- * background is transparent. This function is typically used within
- * <a href="#/p5/draw">draw()</a> to clear the display window at the beginning
- * of each frame. It can also be used inside <a href="#/p5/setup">setup()</a> to
- * set the background on the first frame of animation.
+ * Sets the color used for the background of the canvas.
  *
- * The version of `background()` with one parameter interprets the value one of four
- * ways. If the parameter is a number, it's interpreted as a grayscale value.
- * If the parameter is a string, it's interpreted as a CSS color string.  RGB, RGBA,
- * HSL, HSLA, hex, and named color strings are supported. If the parameter is a
- * <a href="#/p5.Color">p5.Color</a> object, it will be used as the background color.
- * If the parameter is a <a href="#/p5.Image">p5.Image</a> object, it will be used as
- * the background image.
+ * By default, the background is transparent. `background()` is typically used
+ * within <a href="#/p5/draw">draw()</a> to clear the display window at the
+ * beginning of each frame. It can also be used inside
+ * <a href="#/p5/setup">setup()</a> to set the background on the first frame
+ * of animation.
  *
- * The version of `background()` with two parameters interprets the first one as a
- * grayscale value. The second parameter sets the alpha (transparency) value.
+ * The version of `background()` with one parameter interprets the value one
+ * of four ways. If the parameter is a `Number`, it's interpreted as a grayscale
+ * value. If the parameter is a `String`, it's interpreted as a CSS color string.
+ * RGB, RGBA, HSL, HSLA, hex, and named color strings are supported. If the
+ * parameter is a <a href="#/p5.Color">p5.Color</a> object, it will be used as
+ * the background color. If the parameter is a
+ * <a href="#/p5.Image">p5.Image</a> object, it will be used as the background
+ * image.
  *
- * The version of `background()` with three parameters interprets them as RGB, HSB,
- * or HSL colors, depending on the current <a href="#/p5/colorMode">colorMode()</a>.
- * By default, colors are specified in RGB values. Calling background(255, 204, 0)
- * sets the background a bright yellow color.
+ * The version of `background()` with two parameters interprets the first one
+ * as a grayscale value. The second parameter sets the alpha (transparency)
+ * value.
+ *
+ * The version of `background()` with three parameters interprets them as RGB,
+ * HSB, or HSL colors, depending on the current
+ * <a href="#/p5/colorMode">colorMode()</a>. By default, colors are specified
+ * in RGB values. Calling `background(255, 204, 0)` sets the background a bright
+ * yellow color.
  *
  * @method background
  * @param {p5.Color} color  any value created by the <a href="#/p5/color">color()</a> function
@@ -242,99 +446,160 @@ p5.prototype.clip = function(callback, options) {
  * @example
  * <div>
  * <code>
- * // A grayscale integer value.
- * background(51);
- * describe('A canvas with a dark charcoal gray background.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // A grayscale value.
+ *   background(51);
+ *
+ *   describe('A canvas with a dark charcoal gray background.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // A grayscale integer value and an alpha value.
- * background(51, 0.4);
- * describe('A canvas with a transparent gray background.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // A grayscale value and an alpha value.
+ *   background(51, 0.4);
+ *   describe('A canvas with a transparent gray background.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // R, G & B integer values.
- * background(255, 204, 0);
- * describe('A canvas with a yellow background.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // R, G & B values.
+ *   background(255, 204, 0);
+ *
+ *   describe('A canvas with a yellow background.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // H, S & B integer values.
- * colorMode(HSB);
- * background(255, 204, 100);
- * describe('A canvas with a royal blue background.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Use HSB color.
+ *   colorMode(HSB);
+ *
+ *   // H, S & B values.
+ *   background(255, 204, 100);
+ *
+ *   describe('A canvas with a royal blue background.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // A CSS named color.
- * background('red');
- * describe('A canvas with a red background.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // A CSS named color.
+ *   background('red');
+ *
+ *   describe('A canvas with a red background.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Three-digit hex RGB notation.
- * background('#fae');
- * describe('A canvas with a pink background.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Three-digit hex RGB notation.
+ *   background('#fae');
+ *
+ *   describe('A canvas with a pink background.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Six-digit hex RGB notation.
- * background('#222222');
- * describe('A canvas with a black background.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Six-digit hex RGB notation.
+ *   background('#222222');
+ *
+ *   describe('A canvas with a black background.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Integer RGB notation.
- * background('rgb(0,255,0)');
- * describe('A canvas with a bright green background.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Integer RGB notation.
+ *   background('rgb(0, 255, 0)');
+ *
+ *   describe('A canvas with a bright green background.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Integer RGBA notation.
- * background('rgba(0,255,0, 0.25)');
- * describe('A canvas with a transparent green background.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Integer RGBA notation.
+ *   background('rgba(0, 255, 0, 0.25)');
+ *
+ *   describe('A canvas with a transparent green background.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Percentage RGB notation.
- * background('rgb(100%,0%,10%)');
- * describe('A canvas with a red background.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Percentage RGB notation.
+ *   background('rgb(100%, 0%, 10%)');
+ *
+ *   describe('A canvas with a red background.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Percentage RGBA notation.
- * background('rgba(100%,0%,100%,0.5)');
- * describe('A canvas with a transparent purple background.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Percentage RGBA notation.
+ *   background('rgba(100%, 0%, 100%, 0.5)');
+ *
+ *   describe('A canvas with a transparent purple background.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // A p5.Color object.
- * let c = color(0, 0, 255);
- * background(c);
- * describe('A canvas with a blue background.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // A p5.Color object.
+ *   let c = color(0, 0, 255);
+ *   background(c);
+ *
+ *   describe('A canvas with a blue background.');
+ * }
  * </code>
  * </div>
  *
@@ -388,12 +653,14 @@ p5.prototype.background = function(...args) {
 };
 
 /**
- * Clears the pixels on the canvas. This function makes every pixel 100%
- * transparent. Calling `clear()` doesn't clear objects created by `createX()`
- * functions such as <a href="#/p5/createGraphics">createGraphics()</a>,
+ * Clears the pixels on the canvas.
+ *
+ * `clear()` makes every pixel 100% transparent. Calling `clear()` doesn't
+ * clear objects created by `createX()` functions such as
+ * <a href="#/p5/createGraphics">createGraphics()</a>,
  * <a href="#/p5/createVideo">createVideo()</a>, and
  * <a href="#/p5/createImg">createImg()</a>. These objects will remain
- * unchanged after calling clear() and can be redrawn.
+ * unchanged after calling `clear()` and can be redrawn.
  *
  * In WebGL mode, this function can clear the screen to a specific color. It
  * interprets four numeric parameters as normalized RGBA color values. It also
@@ -405,15 +672,21 @@ p5.prototype.background = function(...args) {
  * @example
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   describe('A gray square. White circles are drawn as the user moves the mouse. The circles disappear when the user presses the mouse.');
+ * }
+ *
  * function draw() {
  *   circle(mouseX, mouseY, 20);
- *   describe('A white circle is drawn at the mouse x- and y-coordinates.');
  * }
  *
  * function mousePressed() {
  *   clear();
- *   background(128);
- *   describe('The canvas is cleared when the mouse is clicked.');
+ *   background(200);
  * }
  * </code>
  * </div>
@@ -431,6 +704,7 @@ p5.prototype.background = function(...args) {
  *   pg.noStroke();
  *   pg.circle(pg.width / 2, pg.height / 2, 15);
  *   image(pg, 20, 20);
+ *
  *   describe('A white circle drawn on a gray square. The square gets smaller when the mouse is pressed.');
  * }
  *
@@ -457,19 +731,21 @@ p5.prototype.clear = function(...args) {
 };
 
 /**
- * Changes the way p5.js interprets color data. By default, the numeric
- * parameters for <a href="#/p5/fill">fill()</a>,
+ * Changes the way color values are interpreted.
+ *
+ * By default, the `Number` parameters for <a href="#/p5/fill">fill()</a>,
  * <a href="#/p5/stroke">stroke()</a>,
  * <a href="#/p5/background">background()</a>, and
  * <a href="#/p5/color">color()</a> are defined by values between 0 and 255
  * using the RGB color model. This is equivalent to calling
  * `colorMode(RGB, 255)`. Pure red is `color(255, 0, 0)` in this model.
  *
- * Calling `colorMode(RGB, 100)` sets colors to be interpreted as RGB color
- * values between 0 and 100.  Pure red is `color(100, 0, 0)` in this model.
+ * Calling `colorMode(RGB, 100)` sets colors to use RGB color values
+ * between 0 and 100. Pure red is `color(100, 0, 0)` in this model.
  *
  * Calling `colorMode(HSB)` or `colorMode(HSL)` changes to HSB or HSL system
- * instead of RGB.
+ * instead of RGB. Pure red is `color(0, 100, 100)` in HSB and
+ * `color(0, 100, 50)` in HSL.
  *
  * <a href="#/p5.Color">p5.Color</a> objects remember the mode that they were
  * created in. Changing modes doesn't affect their appearance.
@@ -484,63 +760,179 @@ p5.prototype.clear = function(...args) {
  * @example
  * <div>
  * <code>
- * noStroke();
- * colorMode(RGB, 100);
- * for (let i = 0; i < 100; i += 1) {
- *   for (let j = 0; j < 100; j += 1) {
- *     stroke(i, j, 0);
- *     point(i, j);
- *   }
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Fill with pure red.
+ *   fill(255, 0, 0);
+ *
+ *   circle(50, 50, 25);
+ *
+ *   describe('A gray square with a red circle at its center.');
  * }
- * describe(
- *   'A diagonal green to red gradient from bottom-left to top-right with shading transitioning to black at top-left corner.'
- * );
  * </code>
  * </div>
  *
+ * @example
  * <div>
  * <code>
- * noStroke();
- * colorMode(HSB, 100);
- * for (let i = 0; i < 100; i++) {
- *   for (let j = 0; j < 100; j++) {
- *     stroke(i, j, 100);
- *     point(i, j);
- *   }
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Use RGB color with values in the range 0-100.
+ *   colorMode(RGB, 100);
+ *
+ *   // Fill with pure red.
+ *   fill(100, 0, 0);
+ *
+ *   circle(50, 50, 25);
+ *
+ *   describe('A gray square with a red circle at its center.');
  * }
- * describe('A rainbow gradient from left-to-right. Brightness transitions to white at the top.');
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Use HSB color.
+ *   colorMode(HSB);
+ *
+ *   // Fill with pure red.
+ *   fill(0, 100, 100);
+ *
+ *   circle(50, 50, 25);
+ *
+ *   describe('A gray square with a red circle at its center.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Use HSL color.
+ *   colorMode(HSL);
+ *
+ *   // Fill with pure red.
+ *   fill(0, 100, 50);
+ *
+ *   circle(50, 50, 25);
+ *
+ *   describe('A gray square with a red circle at its center.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Use RGB color with values in the range 0-100.
+ *   colorMode(RGB, 100);
+ *
+ *   for (let x = 0; x < 100; x += 1) {
+ *     for (let y = 0; y < 100; y += 1) {
+ *       stroke(x, y, 0);
+ *       point(x, y);
+ *     }
+ *   }
+ *
+ *   describe(
+ *     'A diagonal green to red gradient from bottom-left to top-right with shading transitioning to black at top-left corner.'
+ *   );
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * colorMode(RGB, 255);
- * let myColor = color(180, 175, 230);
- * background(myColor);
- * colorMode(RGB, 1);
- * let redValue = red(myColor);
- * let greenValue = green(myColor);
- * let blueValue = blue(myColor);
- * text(`Red: ${redValue}`, 10, 10, 80, 80);
- * text(`Green: ${greenValue}`, 10, 40, 80, 80);
- * text(`Blue: ${blueValue}`, 10, 70, 80, 80);
- * describe('A purple canvas with the red, green, and blue decimal values of the color written on it.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Use HSB color with values in the range 0-100.
+ *   colorMode(HSB, 100);
+ *
+ *   for (let x = 0; x < 100; x += 1) {
+ *     for (let y = 0; y < 100; y += 1) {
+ *       stroke(x, y, 100);
+ *       point(x, y);
+ *     }
+ *   }
+ *
+ *   describe('A rainbow gradient from left-to-right. Brightness transitions to white at the top.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * noFill();
- * colorMode(RGB, 255, 255, 255, 1);
- * background(255);
- * strokeWeight(4);
- * stroke(255, 0, 10, 0.3);
- * circle(40, 40, 50);
- * circle(50, 60, 50);
- * describe('Two overlapping translucent pink circle outlines.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Create a p5.Color object.
+ *   let myColor = color(180, 175, 230);
+ *   background(myColor);
+ *
+ *   // Use RGB color with values in the range 0-1.
+ *   colorMode(RGB, 1);
+ *
+ *   // Get the red, green, and blue color components.
+ *   let redValue = red(myColor);
+ *   let greenValue = green(myColor);
+ *   let blueValue = blue(myColor);
+ *
+ *   // Round the color components for display.
+ *   redValue = round(redValue, 2);
+ *   greenValue = round(greenValue, 2);
+ *   blueValue = round(blueValue, 2);
+ *
+ *   // Display the color components.
+ *   text(`Red: ${redValue}`, 10, 10, 80, 80);
+ *   text(`Green: ${greenValue}`, 10, 40, 80, 80);
+ *   text(`Blue: ${blueValue}`, 10, 70, 80, 80);
+ *
+ *   describe('A purple canvas with the red, green, and blue decimal values of the color written on it.');
+ * }
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(255);
+ *
+ *   // Use RGB color with alpha values in the range 0-1.
+ *   colorMode(RGB, 255, 255, 255, 1);
+ *
+ *   noFill();
+ *   strokeWeight(4);
+ *   stroke(255, 0, 10, 0.3);
+ *   circle(40, 40, 50);
+ *   circle(50, 60, 50);
+ *
+ *   describe('Two overlapping translucent pink circle outlines.');
+ * }
+ * </code>
+ * </div>
  */
 
 /**
@@ -588,13 +980,14 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
 };
 
 /**
- * Sets the color used to fill shapes. Calling `fill(255, 165, 0)` or
- * `fill('orange')` means all shapes drawn after the fill command will be
- * filled with the color orange.
+ * Sets the color used to fill shapes.
+ *
+ * Calling `fill(255, 165, 0)` or `fill('orange')` means all shapes drawn
+ * after the fill command will be filled with the color orange.
  *
  * The version of `fill()` with one parameter interprets the value one of
- * three ways. If the parameter is a number, it's interpreted as a grayscale
- * value. If the parameter is a string, it's interpreted as a CSS color
+ * three ways. If the parameter is a `Number`, it's interpreted as a grayscale
+ * value. If the parameter is a `String`, it's interpreted as a CSS color
  * string. A <a href="#/p5.Color">p5.Color</a> object can also be provided to
  * set the fill color.
  *
@@ -612,102 +1005,181 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * @example
  * <div>
  * <code>
- * // Grayscale integer value.
- * fill(51);
- * square(20, 20, 60);
- * describe('A dark charcoal gray square with a black outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // A grayscale value.
+ *   fill(51);
+ *   square(20, 20, 60);
+ *
+ *   describe('A dark charcoal gray square with a black outline.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // R, G & B integer values.
- * fill(255, 204, 0);
- * square(20, 20, 60);
- * describe('A yellow square with a black outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // R, G & B values.
+ *   fill(255, 204, 0);
+ *   square(20, 20, 60);
+ *
+ *   describe('A yellow square with a black outline.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // H, S & B integer values.
- * colorMode(HSB);
- * fill(255, 204, 100);
- * square(20, 20, 60);
- * describe('A royal blue square with a black outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(100);
+ *
+ *   // Use HSB color.
+ *   colorMode(HSB);
+ *
+ *   // H, S & B values.
+ *   fill(255, 204, 100);
+ *   square(20, 20, 60);
+ *
+ *   describe('A royal blue square with a black outline.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // A CSS named color.
- * fill('red');
- * square(20, 20, 60);
- * describe('A red square with a black outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // A CSS named color.
+ *   fill('red');
+ *   square(20, 20, 60);
+ *
+ *   describe('A red square with a black outline.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Three-digit hex RGB notation.
- * fill('#fae');
- * square(20, 20, 60);
- * describe('A pink square with a black outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Three-digit hex RGB notation.
+ *   fill('#fae');
+ *   square(20, 20, 60);
+ *
+ *   describe('A pink square with a black outline.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Six-digit hex RGB notation.
- * fill('#A251FA');
- * square(20, 20, 60);
- * describe('A purple square with a black outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Six-digit hex RGB notation.
+ *   fill('#A251FA');
+ *   square(20, 20, 60);
+ *
+ *   describe('A purple square with a black outline.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Integer RGB notation.
- * fill('rgb(0,255,0)');
- * square(20, 20, 60);
- * describe('A bright green square with a black outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Integer RGB notation.
+ *   fill('rgb(0, 255, 0)');
+ *   square(20, 20, 60);
+ *
+ *   describe('A bright green square with a black outline.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Integer RGBA notation.
- * fill('rgba(0,255,0, 0.25)');
- * square(20, 20, 60);
- * describe('A soft green rectange with a black outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Integer RGBA notation.
+ *   fill('rgba(0, 255, 0, 0.25)');
+ *   square(20, 20, 60);
+ *
+ *   describe('A soft green rectange with a black outline.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Percentage RGB notation.
- * fill('rgb(100%,0%,10%)');
- * square(20, 20, 60);
- * describe('A red square with a black outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Percentage RGB notation.
+ *   fill('rgb(100%, 0%, 10%)');
+ *   square(20, 20, 60);
+ *
+ *   describe('A red square with a black outline.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Percentage RGBA notation.
- * fill('rgba(100%,0%,100%,0.5)');
- * square(20, 20, 60);
- * describe('A dark fuchsia square with a black outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Percentage RGBA notation.
+ *   fill('rgba(100%, 0%, 100%, 0.5)');
+ *   square(20, 20, 60);
+ *
+ *   describe('A dark fuchsia square with a black outline.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // p5.Color object.
- * let c = color(0, 0, 255);
- * fill(c);
- * square(20, 20, 60);
- * describe('A blue square with a black outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // A p5.Color object.
+ *   let c = color(0, 0, 255);
+ *   fill(c);
+ *   square(20, 20, 60);
+ *
+ *   describe('A blue square with a black outline.');
+ * }
  * </code>
  * </div>
  */
@@ -745,21 +1217,32 @@ p5.prototype.fill = function(...args) {
 };
 
 /**
- * Disables setting the interior color of shapes. This is the same as making
- * the fill completely transparent. If both
- * <a href="#/p5/noStroke">noStroke()</a> and
- * <a href="#/p5/noFill">noFill()</a> are called, nothing will be drawn to the
- * screen.
+ * Disables setting the fill color for shapes.
+ *
+ * Calling `noFill()` is the same as making the fill completely transparent,
+ * as in `fill(0, 0)`. If both <a href="#/p5/noStroke">noStroke()</a> and
+ * `noFill()` are called, nothing will be drawn to the screen.
  *
  * @method noFill
  * @chainable
+ *
  * @example
  * <div>
  * <code>
- * square(32, 10, 35);
- * noFill();
- * square(32, 55, 35);
- * describe('A white square on top of an empty square. Both squares have black outlines.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Draw the top square.
+ *   square(32, 10, 35);
+ *
+ *   // Draw the bottom square.
+ *   noFill();
+ *   square(32, 55, 35);
+ *
+ *   describe('A white square on above an empty square. Both squares have black outlines.');
+ * }
  * </code>
  * </div>
  *
@@ -767,16 +1250,23 @@ p5.prototype.fill = function(...args) {
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A purple cube wireframe spinning on a black canvas.');
  * }
  *
  * function draw() {
  *   background(0);
+ *
+ *   // Style the box.
  *   noFill();
  *   stroke(100, 100, 240);
+ *
+ *   // Rotate the coordinates.
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
- *   box(45, 45, 45);
- *   describe('A purple cube wireframe spinning on a black canvas.');
+ *
+ *   // Draw the box.
+ *   box(45);
  * }
  * </code>
  * </div>
@@ -787,8 +1277,10 @@ p5.prototype.noFill = function() {
 };
 
 /**
- * Disables drawing the stroke (outline). If both
- * <a href="#/p5/noStroke">noStroke()</a> and
+ * Disables drawing points, lines, and the outlines of shapes.
+ *
+ * Calling `noStroke()` is the same as making the stroke completely transparent,
+ * as in `stroke(0, 0)`. If both `noStroke()` and
  * <a href="#/p5/noFill">noFill()</a> are called, nothing will be drawn to the
  * screen.
  *
@@ -797,9 +1289,16 @@ p5.prototype.noFill = function() {
  * @example
  * <div>
  * <code>
- * noStroke();
- * square(20, 20, 60);
- * describe('A white square with no outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   noStroke();
+ *   square(20, 20, 60);
+ *
+ *   describe('A white square with no outline.');
+ * }
  * </code>
  * </div>
  *
@@ -807,16 +1306,23 @@ p5.prototype.noFill = function() {
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A pink cube with no edge outlines spinning on a black canvas.');
  * }
  *
  * function draw() {
  *   background(0);
+ *
+ *   // Style the box.
  *   noStroke();
  *   fill(240, 150, 150);
+ *
+ *   // Rotate the coordinates.
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
- *   box(45, 45, 45);
- *   describe('A pink cube with no edge outlines spinning on a black canvas.');
+ *
+ *   // Draw the box.
+ *   box(45);
  * }
  * </code>
  * </div>
@@ -827,15 +1333,16 @@ p5.prototype.noStroke = function() {
 };
 
 /**
- * Sets the color used to draw lines and borders around shapes. Calling
- * `stroke(255, 165, 0)` or `stroke('orange')` means all shapes drawn after
- * the `stroke()` command will be filled with the color orange. The way these
- * parameters are interpreted may be changed with the
+ * Sets the color used to draw points, lines, and the outlines of shapes.
+ *
+ * Calling `stroke(255, 165, 0)` or `stroke('orange')` means all shapes drawn
+ * after calling `stroke()` will be filled with the color orange. The way
+ * these parameters are interpreted may be changed with the
  * <a href="#/p5/colorMode">colorMode()</a> function.
  *
  * The version of `stroke()` with one parameter interprets the value one of
- * three ways. If the parameter is a number, it's interpreted as a grayscale
- * value. If the parameter is a string, it's interpreted as a CSS color
+ * three ways. If the parameter is a `Number`, it's interpreted as a grayscale
+ * value. If the parameter is a `String`, it's interpreted as a CSS color
  * string. A <a href="#/p5.Color">p5.Color</a> object can also be provided to
  * set the stroke color.
  *
@@ -859,112 +1366,191 @@ p5.prototype.noStroke = function() {
  * @example
  * <div>
  * <code>
- * // Grayscale integer value.
- * strokeWeight(4);
- * stroke(51);
- * rect(20, 20, 60, 60);
- * describe('A white rectangle with a dark charcoal gray outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // A grayscale value.
+ *   strokeWeight(4);
+ *   stroke(51);
+ *   square(20, 20, 60);
+ *
+ *   describe('A white square with a dark charcoal gray outline.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // R, G & B integer values.
- * stroke(255, 204, 0);
- * strokeWeight(4);
- * rect(20, 20, 60, 60);
- * describe('A white rectangle with a yellow outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // R, G & B values.
+ *   stroke(255, 204, 0);
+ *   strokeWeight(4);
+ *   square(20, 20, 60);
+ *
+ *   describe('A white square with a yellow outline.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // H, S & B integer values.
- * colorMode(HSB);
- * strokeWeight(4);
- * stroke(255, 204, 100);
- * rect(20, 20, 60, 60);
- * describe('A white rectangle with a royal blue outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Use HSB color.
+ *   colorMode(HSB);
+ *
+ *   // H, S & B values.
+ *   strokeWeight(4);
+ *   stroke(255, 204, 100);
+ *   square(20, 20, 60);
+ *
+ *   describe('A white square with a royal blue outline.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // A CSS named color.
- * stroke('red');
- * strokeWeight(4);
- * rect(20, 20, 60, 60);
- * describe('A white rectangle with a red outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // A CSS named color.
+ *   stroke('red');
+ *   strokeWeight(4);
+ *   square(20, 20, 60);
+ *
+ *   describe('A white square with a red outline.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Three-digit hex RGB notation.
- * stroke('#fae');
- * strokeWeight(4);
- * rect(20, 20, 60, 60);
- * describe('A white rectangle with a pink outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Three-digit hex RGB notation.
+ *   stroke('#fae');
+ *   strokeWeight(4);
+ *   square(20, 20, 60);
+ *
+ *   describe('A white square with a pink outline.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Six-digit hex RGB notation.
- * stroke('#222222');
- * strokeWeight(4);
- * rect(20, 20, 60, 60);
- * describe('A white rectangle with a black outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Six-digit hex RGB notation.
+ *   stroke('#222222');
+ *   strokeWeight(4);
+ *   square(20, 20, 60);
+ *
+ *   describe('A white square with a black outline.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Integer RGB notation.
- * stroke('rgb(0,255,0)');
- * strokeWeight(4);
- * rect(20, 20, 60, 60);
- * describe('A whiite rectangle with a bright green outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Integer RGB notation.
+ *   stroke('rgb(0, 255, 0)');
+ *   strokeWeight(4);
+ *   square(20, 20, 60);
+ *
+ *   describe('A whiite square with a bright green outline.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Integer RGBA notation.
- * stroke('rgba(0,255,0,0.25)');
- * strokeWeight(4);
- * rect(20, 20, 60, 60);
- * describe('A white rectangle with a soft green outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Integer RGBA notation.
+ *   stroke('rgba(0, 255, 0, 0.25)');
+ *   strokeWeight(4);
+ *   square(20, 20, 60);
+ *
+ *   describe('A white square with a soft green outline.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Percentage RGB notation.
- * stroke('rgb(100%,0%,10%)');
- * strokeWeight(4);
- * rect(20, 20, 60, 60);
- * describe('A white rectangle with a red outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Percentage RGB notation.
+ *   stroke('rgb(100%, 0%, 10%)');
+ *   strokeWeight(4);
+ *   square(20, 20, 60);
+ *
+ *   describe('A white square with a red outline.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // Percentage RGBA notation.
- * stroke('rgba(100%,0%,100%,0.5)');
- * strokeWeight(4);
- * rect(20, 20, 60, 60);
- * describe('A white rectangle with a dark fuchsia outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Percentage RGBA notation.
+ *   stroke('rgba(100%, 0%, 100%, 0.5)');
+ *   strokeWeight(4);
+ *   square(20, 20, 60);
+ *
+ *   describe('A white square with a dark fuchsia outline.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // p5.Color object.
- * stroke(color(0, 0, 255));
- * strokeWeight(4);
- * rect(20, 20, 60, 60);
- * describe('A white rectangle with a blue outline.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // A p5.Color object.
+ *   stroke(color(0, 0, 255));
+ *   strokeWeight(4);
+ *   square(20, 20, 60);
+ *
+ *   describe('A white square with a blue outline.');
+ * }
  * </code>
  * </div>
  */
@@ -1003,10 +1589,12 @@ p5.prototype.stroke = function(...args) {
 };
 
 /**
- * All drawing that follows <a href="#/p5/erase">erase()</a> will subtract
- * from the canvas, revealing the web page underneath. The erased areas will
- * become transparent, allowing the content behind the canvas to show through.
- * The <a href="#/p5/fill">fill()</a>, <a href="#/p5/stroke">stroke()</a>, and
+ * Starts using shapes to erase parts of the canvas.
+ *
+ * All drawing that follows `erase()` will subtract from the canvas, revealing
+ * the web page underneath. The erased areas will become transparent, allowing
+ * the content behind the canvas to show through. The
+ * <a href="#/p5/fill">fill()</a>, <a href="#/p5/stroke">stroke()</a>, and
  * <a href="#/p5/blendMode">blendMode()</a> have no effect once `erase()` is
  * called.
  *
@@ -1035,45 +1623,49 @@ p5.prototype.stroke = function(...args) {
  *                                        Defaults to 255, which is full strength.
  *
  * @chainable
+ *
  * @example
  * <div>
  * <code>
- * background(100, 100, 250);
- * fill(250, 100, 100);
- * square(20, 20, 60);
- * erase();
- * circle(25, 30, 30);
- * noErase();
- * describe('A purple canvas with a pink square in the middle. A circle is erased from the top-left, leaving a white hole.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(100, 100, 250);
+ *
+ *   // Draw a pink square.
+ *   fill(250, 100, 100);
+ *   square(20, 20, 60);
+ *
+ *   // Erase a circular area.
+ *   erase();
+ *   circle(25, 30, 30);
+ *   noErase();
+ *
+ *   describe('A purple canvas with a pink square in the middle. A circle is erased from the top-left, leaving a hole.');
+ * }
  * </code>
  * </div>
  *
+ * @example
  * <div>
  * <code>
- * let p = createP('I am a DOM element');
- * p.style('font-size', '12px');
- * p.style('width', '65px');
- * p.style('text-align', 'center');
- * p.position(18, 26);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * background(100, 170, 210);
- * erase(200, 100);
- * circle(50, 50, 77);
- * noErase();
- * describe('A blue canvas with a circular hole in the center that reveals the message "I am a DOM element".');
- * </code>
- * </div>
+ *   background(100, 100, 250);
  *
- * <div>
- * <code>
- * background(150, 250, 150);
- * fill(100, 100, 250);
- * square(20, 20, 60);
- * strokeWeight(5);
- * erase(150, 255);
- * triangle(50, 10, 70, 50, 90, 10);
- * noErase();
- * describe('A mint green canvas with a purple square in the center. A triangle in the top-right corner partially erases its interior and a fully erases its outline.');
+ *   // Draw a pink square.
+ *   fill(250, 100, 100);
+ *   square(20, 20, 60);
+ *
+ *   // Erase a circular area.
+ *   strokeWeight(5);
+ *   erase(150, 255);
+ *   circle(25, 30, 30);
+ *   noErase();
+ *
+ *   describe('A purple canvas with a pink square in the middle. A circle at the top-left partially erases its interior and a fully erases its outline.');
+ * }
  * </code>
  * </div>
  */
@@ -1085,6 +1677,7 @@ p5.prototype.erase = function(opacityFill = 255, opacityStroke = 255) {
 
 /**
  * Ends erasing that was started with <a href="#/p5/erase">erase()</a>.
+ *
  * The <a href="#/p5/fill">fill()</a>, <a href="#/p5/stroke">stroke()</a>, and
  * <a href="#/p5/blendMode">blendMode()</a> settings will return to what they
  * were prior to calling <a href="#/p5/erase">erase()</a>.
@@ -1094,15 +1687,26 @@ p5.prototype.erase = function(opacityFill = 255, opacityStroke = 255) {
  * @example
  * <div>
  * <code>
- * background(235, 145, 15);
- * noStroke();
- * fill(30, 45, 220);
- * rect(30, 10, 10, 80);
- * erase();
- * circle(50, 50, 60);
- * noErase();
- * rect(70, 10, 10, 80);
- * describe('An orange canvas with two tall blue rectangles. A circular hole in the center erases the rectangle on the left but not the one on the right.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(235, 145, 15);
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(30, 45, 220);
+ *   rect(30, 10, 10, 80);
+ *
+ *   // Erase a circle.
+ *   erase();
+ *   circle(50, 50, 60);
+ *   noErase();
+ *
+ *   // Draw the right rectangle.
+ *   rect(70, 10, 10, 80);
+ *
+ *   describe('An orange canvas with two tall blue rectangles. A circular hole in the center erases the rectangle on the left but not the one on the right.');
+ * }
  * </code>
  * </div>
  */

@@ -92,6 +92,20 @@ suite('p5.Geometry', function() {
       assert.equal(geom._addJoin.callCount, 4);
     });
 
+    test('calculateBoundingBox()', function() {
+      geom.vertices.push(
+        myp5.createVector(0, 0, 0),
+        myp5.createVector(10, 20, 30),
+        myp5.createVector(-5, 15, 25)
+      );
+      const boundingBox = geom.calculateBoundingBox();
+      assert.deepEqual(boundingBox.min.array(), [-5, 0, 0]);
+      assert.deepEqual(boundingBox.max.array(), [10, 20, 30]);
+      assert.deepEqual(boundingBox.size.array(), [15, 20, 30]);
+      assert.deepEqual(boundingBox.offset.array(), [2.5, 10, 15]);
+    });
+
+
     test('degenerate edge in the middle', function() {
       geom.vertices.push(
         myp5.createVector(0, 0),

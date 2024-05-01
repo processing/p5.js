@@ -2462,5 +2462,42 @@ suite('p5.RendererGL', function() {
         }
       }
     );
+
+    test(
+      'Main canvas masks do not apply to framebuffers',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const fbo = myp5.createFramebuffer({ antialias: false });
+        myp5.rectMode(myp5.CENTER);
+        myp5.background('red');
+        expect(myp5._renderer._stencilTestOn).to.equal(false);
+        myp5.push();
+        myp5.beginClip();
+        myp5.rect(-20, -20, 40, 40);
+        myp5.endClip();
+        expect(myp5._renderer._stencilTestOn).to.equal(true);
+
+        fbo.begin();
+        expect(myp5._renderer._stencilTestOn).to.equal(false);
+        myp5.noStroke();
+        myp5.fill('blue');
+        myp5.rect(0, 0, myp5.width, myp5.height);
+        fbo.end();
+
+        expect(myp5._renderer._stencilTestOn).to.equal(true);
+        myp5.pop();
+        expect(myp5._renderer._stencilTestOn).to.equal(false);
+
+        myp5.imageMode(myp5.CENTER);
+        myp5.image(fbo, 0, 0);
+
+        // In the middle of the canvas, the framebuffer's clip and the
+        // main canvas's clip intersect, so the blue should show through
+        assert.deepEqual(
+          myp5.get(myp5.width / 2, myp5.height / 2),
+          [0, 0, 255, 255]
+        );
+      }
+    );
   });
 });

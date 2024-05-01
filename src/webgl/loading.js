@@ -10,99 +10,310 @@ import p5 from '../core/main';
 import './p5.Geometry';
 
 /**
- * Load a 3d model from an OBJ or STL file.
+ * Loads a 3D model to create a
+ * <a href="#/p5.Geometry">p5.Geometry</a> object.
  *
- * <a href="#/p5/loadModel">loadModel()</a> should be placed inside of <a href="#/p5/preload">preload()</a>.
- * This allows the model to load fully before the rest of your code is run.
+ * `loadModel()` can load 3D models from OBJ and STL files. Once the model is
+ * loaded, it can be displayed with the
+ * <a href="#/p5/model">model()</a> function, as in `model(shape)`.
  *
- * One of the limitations of the OBJ and STL format is that it doesn't have a built-in
- * sense of scale. This means that models exported from different programs might
- * be very different sizes. If your model isn't displaying, try calling
- * <a href="#/p5/loadModel">loadModel()</a> with the normalized parameter set to true. This will resize the
- * model to a scale appropriate for p5. You can also make additional changes to
- * the final size of your model with the <a href="#/p5/scale">scale()</a> function.
+ * There are three ways to call `loadModel()` with optional parameters to help
+ * process the model.
  *
- * Also, the support for colored STL files is not present. STL files with color will be
- * rendered without color properties.
+ * The first parameter, `path`, is always a `String` with the path to the
+ * file. Paths to local files should be relative, as in
+ * `loadModel('assets/model.obj'). URLs such as
+ * `'https://example.com/model.obj'` may be blocked due to browser security.
  *
- * Options can include:
- * - `path`: Specifies the location or path of the 3D model file for loading.
- * - `normalize`: Enables standardized size scaling during loading if set to true.
- * - `successCallback`: Callback for post-loading actions with the 3D model object.
- * - `failureCallback`: Handles errors if model loading fails, receiving an event error.
- * - `fileType`: Defines the file extension of the model.
- * - `flipU`: Flips the U texture coordinates of the model.
- * - `flipV`: Flips the V texture coordinates of the model.
+ * The first way to call `loadModel()` has three optional parameters after the
+ * file path. The first optional parameter, `successCallback`, is a function
+ * to call once the model loads. For example,
+ * `loadModel('assets/model.obj', handleModel)` will call the `handleModel()`
+ * function once the model loads. The second optional parameter,
+ * `failureCallback`, is a function to call if the model fails to load. For
+ * example, `loadModel('assets/model.obj', handleModel, handleFailure)` will
+ * call the `handleFailure()` function if an error occurs while loading. The
+ * third optional parameter, `fileType`, is the model’s file extension as a
+ * string. For example,
+ * `loadModel('assets/model', handleModel, handleFailure, '.obj')` will try to
+ * load the file model as a `.obj` file.
+ *
+ * The second way to call `loadModel()` has four optional parameters after the
+ * file path. The first optional parameter is a `Boolean` value. If `true` is
+ * passed, as in `loadModel('assets/model.obj', true)`, then the model will be
+ * resized to ensure it fits the canvas. The next three parameters are
+ * `successCallback`, `failureCallback`, and `fileType` as described above.
+ *
+ * The third way to call `loadModel()` has one optional parameter after the
+ * file path. The optional parameter, `options`, is an `Object` with options,
+ * as in `loadModel('assets/model.obj', options)`. The `options` object can
+ * have the following properties:
+ *
+ * <code>
+ * let options = {
+ *   // Enables standardized size scaling during loading if set to true.
+ *   normalize: true,
+ *
+ *   // Function to call once the model loads.
+ *   successCallback: handleModel,
+ *
+ *   // Function to call if an error occurs while loading.
+ *   failureCallback: handleError,
+ *
+ *   // Model's file extension.
+ *   fileType: '.stl',
+ *
+ *   // Flips the U texture coordinates of the model.
+ *   flipU: false,
+ *
+ *   // Flips the V texture coordinates of the model.
+ *   flipV: false
+ * };
+ *
+ * // Pass the options object to loadModel().
+ * loadModel('assets/model.obj', options);
+ * </code>
+ *
+ * Models can take time to load. Calling `loadModel()` in
+ * <a href="#/p5/preload">preload()</a> ensures models load before they're
+ * used in <a href="#/p5/setup">setup()</a> or <a href="#/p5/draw">draw()</a>.
+ *
+ * Note: There’s no support for colored STL files. STL files with color will
+ * be rendered without color.
  *
  * @method loadModel
- * @param  {String} path              Path of the model to be loaded
- * @param  {Boolean} normalize        If true, scale the model to a
- *                                      standardized size when loading
- * @param  {function(p5.Geometry)} [successCallback] Function to be called
- *                                     once the model is loaded. Will be passed
- *                                     the 3D model object.
- * @param  {function(Event)} [failureCallback] called with event error if
- *                                         the model fails to load.
- * @param  {String} [fileType]          The file extension of the model
- *                                      (<code>.stl</code>, <code>.obj</code>).
+ * @param  {String} path              path of the model to be loaded.
+ * @param  {Boolean} normalize        if `true`, scale the model to fit the canvas.
+ * @param  {function(p5.Geometry)} [successCallback] function to call once the model is loaded. Will be passed
+ *                                                   the <a href="#/p5.Geometry">p5.Geometry</a> object.
+ * @param  {function(Event)} [failureCallback] function to call if the model fails to load. Will be passed an `Error` event object.
+ * @param  {String} [fileType]          model’s file extension. Either `'.obj'` or `'.stl'`.
  * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
  *
  * @example
  * <div>
  * <code>
- * //draw a spinning octahedron
- * let octahedron;
+ * // Click and drag the mouse to view the scene from different angles.
  *
+ * let shape;
+ *
+ * // Load the file and create a p5.Geometry object.
  * function preload() {
- *   octahedron = loadModel('assets/octahedron.obj');
+ *   shape = loadModel('assets/teapot.obj');
  * }
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe('Vertically rotating 3-d octahedron.');
+ *
+ *   describe('A white teapot drawn against a gray background.');
  * }
  *
  * function draw() {
  *   background(200);
- *   rotateX(frameCount * 0.01);
- *   rotateY(frameCount * 0.01);
- *   model(octahedron);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the shape.
+ *   model(shape);
  * }
  * </code>
  * </div>
  *
- * @alt
- * Vertically rotating 3-d octahedron.
- *
- * @example
  * <div>
  * <code>
- * //draw a spinning teapot
- * let teapot;
+ * // Click and drag the mouse to view the scene from different angles.
  *
+ * let shape;
+ *
+ * // Load the file and create a p5.Geometry object.
+ * // Normalize the geometry's size to fit the canvas.
  * function preload() {
- *   // Load model with normalise parameter set to true
- *   teapot = loadModel('assets/teapot.obj', true);
+ *   shape = loadModel('assets/teapot.obj', true);
  * }
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe('Vertically rotating 3-d teapot with red, green and blue gradient.');
+ *
+ *   describe('A white teapot drawn against a gray background.');
  * }
  *
  * function draw() {
  *   background(200);
- *   scale(0.4); // Scaled to make model fit into canvas
- *   rotateX(frameCount * 0.01);
- *   rotateY(frameCount * 0.01);
- *   normalMaterial(); // For effect
- *   model(teapot);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the shape.
+ *   model(shape);
  * }
  * </code>
  * </div>
  *
- * @alt
- * Vertically rotating 3-d teapot with red, green and blue gradient.
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let shape;
+ *
+ * // Load the file and create a p5.Geometry object.
+ * function preload() {
+ *   loadModel('assets/teapot.obj', true, handleModel);
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white teapot drawn against a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the shape.
+ *   model(shape);
+ * }
+ *
+ * // Set the shape variable and log the geometry's
+ * // ID to the console.
+ * function handleModel(data) {
+ *   shape = data;
+ *   console.log(shape.gid);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class='notest'>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let shape;
+ *
+ * // Load the file and create a p5.Geometry object.
+ * function preload() {
+ *   loadModel('assets/wrong.obj', true, handleModel, handleError);
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white teapot drawn against a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the shape.
+ *   model(shape);
+ * }
+ *
+ * // Set the shape variable and print the geometry's
+ * // ID to the console.
+ * function handleModel(data) {
+ *   shape = data;
+ *   console.log(shape.gid);
+ * }
+ *
+ * // Print an error message if the file doesn't load.
+ * function handleError(error) {
+ *   console.error('Oops!', error);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let shape;
+ *
+ * // Load the file and create a p5.Geometry object.
+ * function preload() {
+ *   loadModel('assets/teapot.obj', true, handleModel, handleError, '.obj');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white teapot drawn against a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the shape.
+ *   model(shape);
+ * }
+ *
+ * // Set the shape variable and print the geometry's
+ * // ID to the console.
+ * function handleModel(data) {
+ *   shape = data;
+ *   console.log(shape.gid);
+ * }
+ *
+ * // Print an error message if the file doesn't load.
+ * function handleError(error) {
+ *   console.error('Oops!', error);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let shape;
+ * let options = {
+ *   normalize: true,
+ *   successCallback: handleModel,
+ *   failureCallback: handleError,
+ *   fileType: '.obj'
+ * };
+ *
+ * // Load the file and create a p5.Geometry object.
+ * function preload() {
+ *   loadModel('assets/teapot.obj', options);
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white teapot drawn against a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the shape.
+ *   model(shape);
+ * }
+ *
+ * // Set the shape variable and print the geometry's
+ * // ID to the console.
+ * function handleModel(data) {
+ *   shape = data;
+ *   console.log(shape.gid);
+ * }
+ *
+ * // Print an error message if the file doesn't load.
+ * function handleError(error) {
+ *   console.error('Oops!', error);
+ * }
+ * </code>
+ * </div>
  */
 /**
  * @method loadModel
@@ -110,19 +321,19 @@ import './p5.Geometry';
  * @param  {function(p5.Geometry)} [successCallback]
  * @param  {function(Event)} [failureCallback]
  * @param  {String} [fileType]
- * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
+ * @return {p5.Geometry} new <a href="#/p5.Geometry">p5.Geometry</a> object.
  */
 /**
  * @method loadModel
  * @param  {String} path
- * @param  {Object} [options]
+ * @param  {Object} [options] loading options.
  * @param  {function(p5.Geometry)} [options.successCallback]
  * @param  {function(Event)} [options.failureCallback]
  * @param  {String} [options.fileType]
  * @param  {boolean} [options.normalize]
  * @param  {boolean} [options.flipU]
  * @param  {boolean} [options.flipV]
- * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
+ * @return {p5.Geometry} new <a href="#/p5.Geometry">p5.Geometry</a> object.
  */
 p5.prototype.loadModel = function(path,options) {
   p5._validateParameters('loadModel', arguments);
@@ -158,6 +369,56 @@ p5.prototype.loadModel = function(path,options) {
   model.gid = `${path}|${normalize}`;
   const self = this;
 
+  async function getMaterials(lines){
+    const parsedMaterialPromises=[];
+
+    for (let i = 0; i < lines.length; i++) {
+      const mtllibMatch = lines[i].match(/^mtllib (.+)/);
+      if (mtllibMatch) {
+        let mtlPath='';
+        const mtlFilename = mtllibMatch[1];
+        const objPathParts = path.split('/');
+        if(objPathParts.length > 1){
+          objPathParts.pop();
+          const objFolderPath = objPathParts.join('/');
+          mtlPath = objFolderPath + '/' + mtlFilename;
+        }else{
+          mtlPath = mtlFilename;
+        }
+        parsedMaterialPromises.push(
+          fileExists(mtlPath).then(exists => {
+            if (exists) {
+              return parseMtl(self, mtlPath);
+            } else {
+              console.warn(`MTL file not found or error in parsing; proceeding without materials: ${mtlPath}`);
+              return {};
+
+            }
+          }).catch(error => {
+            console.warn(`Error loading MTL file: ${mtlPath}`, error);
+            return {};
+          })
+        );
+      }
+    }
+    try {
+      const parsedMaterials = await Promise.all(parsedMaterialPromises);
+      const materials= Object.assign({}, ...parsedMaterials);
+      return materials ;
+    } catch (error) {
+      return {};
+    }
+  }
+
+
+  async function fileExists(url) {
+    try {
+      const response = await fetch(url, { method: 'HEAD' });
+      return response.ok;
+    } catch (error) {
+      return false;
+    }
+  }
   if (fileType.match(/\.stl$/i)) {
     this.httpDo(
       path,
@@ -188,31 +449,41 @@ p5.prototype.loadModel = function(path,options) {
   } else if (fileType.match(/\.obj$/i)) {
     this.loadStrings(
       path,
-      strings => {
-        parseObj(model, strings);
+      async lines => {
+        try{
+          const parsedMaterials=await getMaterials(lines);
 
-        if (normalize) {
-          model.normalize();
+          parseObj(model, lines, parsedMaterials);
+
+        }catch (error) {
+          if (failureCallback) {
+            failureCallback(error);
+          } else {
+            p5._friendlyError('Error during parsing: ' + error.message);
+          }
+          return;
         }
+        finally{
+          if (normalize) {
+            model.normalize();
+          }
+          if (flipU) {
+            model.flipU();
+          }
+          if (flipV) {
+            model.flipV();
+          }
 
-        if (flipU) {
-          model.flipU();
-        }
-
-        if (flipV) {
-          model.flipV();
-        }
-
-        self._decrementPreload();
-        if (typeof successCallback === 'function') {
-          successCallback(model);
+          self._decrementPreload();
+          if (typeof successCallback === 'function') {
+            successCallback(model);
+          }
         }
       },
       failureCallback
     );
   } else {
     p5._friendlyFileLoadError(3, path);
-
     if (failureCallback) {
       failureCallback();
     } else {
@@ -223,6 +494,52 @@ p5.prototype.loadModel = function(path,options) {
   }
   return model;
 };
+
+function parseMtl(p5,mtlPath){
+  return new Promise((resolve, reject)=>{
+    let currentMaterial = null;
+    let materials= {};
+    p5.loadStrings(
+      mtlPath,
+      lines => {
+        for (let line = 0; line < lines.length; ++line){
+          const tokens = lines[line].trim().split(/\s+/);
+          if(tokens[0] === 'newmtl') {
+            const materialName = tokens[1];
+            currentMaterial = materialName;
+            materials[currentMaterial] = {};
+          }else if (tokens[0] === 'Kd'){
+          //Diffuse color
+            materials[currentMaterial].diffuseColor = [
+              parseFloat(tokens[1]),
+              parseFloat(tokens[2]),
+              parseFloat(tokens[3])
+            ];
+          } else if (tokens[0] === 'Ka'){
+          //Ambient Color
+            materials[currentMaterial].ambientColor = [
+              parseFloat(tokens[1]),
+              parseFloat(tokens[2]),
+              parseFloat(tokens[3])
+            ];
+          }else if (tokens[0] === 'Ks'){
+          //Specular color
+            materials[currentMaterial].specularColor = [
+              parseFloat(tokens[1]),
+              parseFloat(tokens[2]),
+              parseFloat(tokens[3])
+            ];
+
+          }else if (tokens[0] === 'map_Kd') {
+          //Texture path
+            materials[currentMaterial].texturePath = tokens[1];
+          }
+        }
+        resolve(materials);
+      },reject
+    );
+  });
+}
 
 /**
  * Parse OBJ lines into model. For reference, this is what a simple model of a
@@ -235,7 +552,7 @@ p5.prototype.loadModel = function(path,options) {
  *
  * f 4 3 2 1
  */
-function parseObj(model, lines) {
+function parseObj(model, lines, materials= {}) {
   // OBJ allows a face to specify an index for a vertex (in the above example),
   // but it also allows you to specify a custom combination of vertex, UV
   // coordinate, and vertex normal. So, "3/4/3" would mean, "use vertex 3 with
@@ -250,8 +567,14 @@ function parseObj(model, lines) {
     vt: [],
     vn: []
   };
-  const indexedVerts = {};
 
+
+  // Map from source index → Map of material → destination index
+  const usedVerts = {}; // Track colored vertices
+  let currentMaterial = null;
+  const coloredVerts = new Set(); //unique vertices with color
+  let hasColoredVertices = false;
+  let hasColorlessVertices = false;
   for (let line = 0; line < lines.length; ++line) {
     // Each line is a separate object (vertex, face, vertex normal, etc)
     // For each line, split it into tokens on whitespace. The first token
@@ -259,7 +582,10 @@ function parseObj(model, lines) {
     const tokens = lines[line].trim().split(/\b\s+/);
 
     if (tokens.length > 0) {
-      if (tokens[0] === 'v' || tokens[0] === 'vn') {
+      if (tokens[0] === 'usemtl') {
+        // Switch to a new material
+        currentMaterial = tokens[1];
+      }else if (tokens[0] === 'v' || tokens[0] === 'vn') {
         // Check if this line describes a vertex or vertex normal.
         // It will have three numeric parameters.
         const vertex = new p5.Vector(
@@ -280,40 +606,44 @@ function parseObj(model, lines) {
         // OBJ faces can have more than three points. Triangulate points.
         for (let tri = 3; tri < tokens.length; ++tri) {
           const face = [];
-
           const vertexTokens = [1, tri - 1, tri];
 
           for (let tokenInd = 0; tokenInd < vertexTokens.length; ++tokenInd) {
             // Now, convert the given token into an index
             const vertString = tokens[vertexTokens[tokenInd]];
-            let vertIndex = 0;
+            let vertParts=vertString.split('/');
 
             // TODO: Faces can technically use negative numbers to refer to the
             // previous nth vertex. I haven't seen this used in practice, but
             // it might be good to implement this in the future.
 
-            if (indexedVerts[vertString] !== undefined) {
-              vertIndex = indexedVerts[vertString];
-            } else {
-              const vertParts = vertString.split('/');
-              for (let i = 0; i < vertParts.length; i++) {
-                vertParts[i] = parseInt(vertParts[i]) - 1;
-              }
-
-              vertIndex = indexedVerts[vertString] = model.vertices.length;
-              model.vertices.push(loadedVerts.v[vertParts[0]].copy());
-              if (loadedVerts.vt[vertParts[1]]) {
-                model.uvs.push(loadedVerts.vt[vertParts[1]].slice());
-              } else {
-                model.uvs.push([0, 0]);
-              }
-
-              if (loadedVerts.vn[vertParts[2]]) {
-                model.vertexNormals.push(loadedVerts.vn[vertParts[2]].copy());
-              }
+            for (let i = 0; i < vertParts.length; i++) {
+              vertParts[i] = parseInt(vertParts[i]) - 1;
             }
 
-            face.push(vertIndex);
+            if (!usedVerts[vertString]) {
+              usedVerts[vertString] = {};
+            }
+
+            if (usedVerts[vertString][currentMaterial] === undefined) {
+              const vertIndex = model.vertices.length;
+              model.vertices.push(loadedVerts.v[vertParts[0]].copy());
+              model.uvs.push(loadedVerts.vt[vertParts[1]] ?
+                loadedVerts.vt[vertParts[1]].slice() : [0, 0]);
+              model.vertexNormals.push(loadedVerts.vn[vertParts[2]] ?
+                loadedVerts.vn[vertParts[2]].copy() : new p5.Vector());
+
+              usedVerts[vertString][currentMaterial] = vertIndex;
+              face.push(vertIndex);
+              if (currentMaterial
+                && materials[currentMaterial]
+                && materials[currentMaterial].diffuseColor) {
+                // Mark this vertex as colored
+                coloredVerts.add(loadedVerts.v[vertParts[0]]); //since a set would only push unique values
+              }
+            } else {
+              face.push(usedVerts[vertString][currentMaterial]);
+            }
           }
 
           if (
@@ -322,6 +652,23 @@ function parseObj(model, lines) {
             face[1] !== face[2]
           ) {
             model.faces.push(face);
+            //same material for all vertices in a particular face
+            if (currentMaterial
+              && materials[currentMaterial]
+              && materials[currentMaterial].diffuseColor) {
+              hasColoredVertices=true;
+              //flag to track color or no color model
+              hasColoredVertices = true;
+              const materialDiffuseColor =
+              materials[currentMaterial].diffuseColor;
+              for (let i = 0; i < face.length; i++) {
+                model.vertexColors.push(materialDiffuseColor[0]);
+                model.vertexColors.push(materialDiffuseColor[1]);
+                model.vertexColors.push(materialDiffuseColor[2]);
+              }
+            }else{
+              hasColorlessVertices=true;
+            }
           }
         }
       }
@@ -331,7 +678,10 @@ function parseObj(model, lines) {
   if (model.vertexNormals.length === 0) {
     model.computeNormals();
   }
-
+  if (hasColoredVertices === hasColorlessVertices) {
+    // If both are true or both are false, throw an error because the model is inconsistent
+    throw new Error('Model coloring is inconsistent. Either all vertices should have colors or none should.');
+  }
   return model;
 }
 
@@ -634,36 +984,132 @@ function parseASCIISTL(model, lines) {
 }
 
 /**
- * Render a 3d model to the screen.
+ * Draws a <a href="#/p5.Geometry">p5.Geometry</a> object to the canvas.
+ *
+ * The parameter, `model`, is the
+ * <a href="#/p5.Geometry">p5.Geometry</a> object to draw.
+ * <a href="#/p5.Geometry">p5.Geometry</a> objects can be built with
+ * <a href="#/p5/buildGeometry">buildGeometry()</a>, or
+ * <a href="#/p5/beginGeometry">beginGeometry()</a> and
+ * <a href="#/p5/endGeometry">endGeometry()</a>. They can also be loaded from
+ * a file with <a href="#/p5/loadGeometry">loadGeometry()</a>.
+ *
+ * Note: `model()` can only be used in WebGL mode.
  *
  * @method model
- * @param  {p5.Geometry} model Loaded 3d model to be rendered
+ * @param  {p5.Geometry} model 3D shape to be drawn.
+ *
  * @example
  * <div>
  * <code>
- * //draw a spinning octahedron
- * let octahedron;
+ * // Click and drag the mouse to view the scene from different angles.
  *
- * function preload() {
- *   octahedron = loadModel('assets/octahedron.obj');
- * }
+ * let shape;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe('Vertically rotating 3-d octahedron.');
+ *
+ *   // Create the p5.Geometry object.
+ *   shape = buildGeometry(createShape);
+ *
+ *   describe('A white cone drawn on a gray background.');
  * }
  *
  * function draw() {
  *   background(200);
- *   rotateX(frameCount * 0.01);
- *   rotateY(frameCount * 0.01);
- *   model(octahedron);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the p5.Geometry object.
+ *   model(shape);
+ * }
+ *
+ * // Create p5.Geometry object from a single cone.
+ * function createShape() {
+ *   cone();
  * }
  * </code>
  * </div>
  *
- * @alt
- * Vertically rotating 3-d octahedron.
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let shape;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create the p5.Geometry object.
+ *   shape = buildGeometry(createArrow);
+ *
+ *   describe('Two white arrows drawn on a gray background. The arrow on the right rotates slowly.');
+ * }
+ *
+ * function draw() {
+ *   background(50);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Style the arrows.
+ *   noStroke();
+ *
+ *   // Draw the p5.Geometry object.
+ *   model(shape);
+ *
+ *   // Translate and rotate the coordinate system.
+ *   translate(30, 0, 0);
+ *   rotateZ(frameCount * 0.01);
+ *
+ *   // Draw the p5.Geometry object again.
+ *   model(shape);
+ * }
+ *
+ * function createArrow() {
+ *   // Add shapes to the p5.Geometry object.
+ *   push();
+ *   rotateX(PI);
+ *   cone(10);
+ *   translate(0, -10, 0);
+ *   cylinder(3, 20);
+ *   pop();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let shape;
+ *
+ * // Load the file and create a p5.Geometry object.
+ * function preload() {
+ *   shape = loadModel('assets/octahedron.obj');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white octahedron drawn against a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the shape.
+ *   model(shape);
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.model = function(model) {
   this._assert3d('model');
