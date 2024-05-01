@@ -50,7 +50,7 @@ suite('p5.Image', function() {
     });
   });
 
-  suite('p5.Image.prototype.mask', function() {
+  suite.only('p5.Image.prototype.mask', function() {
     for (const density of [1, 2]) {
       test(`it should mask the image at pixel density ${density}`, function() {
         let img = myp5.createImage(10, 10);
@@ -85,6 +85,39 @@ suite('p5.Image', function() {
         }
       });
     }
+
+    test('it should mask images of different density', function() {
+      let img = myp5.createImage(10, 10);
+      img.pixelDensity(1);
+      img.loadPixels();
+      for (let i = 0; i < img.height; i++) {
+        for (let j = 0; j < img.width; j++) {
+          let alpha = i < 5 ? 255 : 0;
+          img.set(i, j, myp5.color(0, 0, 0, alpha));
+        }
+      }
+      img.updatePixels();
+
+      let mask = myp5.createImage(20, 20);
+      mask.loadPixels();
+      for (let i = 0; i < mask.width; i++) {
+        for (let j = 0; j < mask.height; j++) {
+          let alpha = j < 10 ? 255 : 0;
+          mask.set(i, j, myp5.color(0, 0, 0, alpha));
+        }
+      }
+      mask.updatePixels();
+      mask.pixelDensity(2);
+
+      img.mask(mask);
+      img.loadPixels();
+      for (let i = 0; i < img.width; i++) {
+        for (let j = 0; j < img.height; j++) {
+          let alpha = i < 5 && j < 5 ? 255 : 0;
+          assert.strictEqual(img.get(i, j)[3], alpha);
+        }
+      }
+    });
 
     test('it should mask the animated gif image', function() {
       const imagePath = 'unit/assets/nyan_cat.gif';

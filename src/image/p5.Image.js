@@ -846,7 +846,8 @@ p5.Image = class {
    * Masks part of an image from displaying by loading another
    * image and using its alpha channel as an alpha channel for
    * this image. Masks are cumulative, once applied to an image
-   * object, they cannot be removed.
+   * object, they cannot be removed. If the mask has a different
+   * pixel density from this image, the mask will be scaled
    *
    * @method mask
    * @param {p5.Image} srcImage source image.
@@ -883,10 +884,6 @@ p5.Image = class {
     if (p5Image instanceof p5.Renderer) {
       maskScaleFactor = p5Image._pInst._pixelDensity;
     }
-    if (p5Image instanceof p5.Image) {
-      maskScaleFactor = p5Image._pixelDensity;
-    }
-    maskScaleFactor /= imgScaleFactor;
 
     const copyArgs = [
       p5Image,
