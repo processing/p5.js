@@ -1,3 +1,5 @@
+<!-- How all the updates on GitHub get turned into a new version of the library. -->
+
 # Release process
 
 ## Approach

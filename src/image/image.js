@@ -13,10 +13,9 @@ import p5 from '../core/main';
 import omggif from 'omggif';
 
 /**
- * Creates a new <a href="#/p5.Image">p5.Image</a> object. The new image is
- * transparent by default.
+ * Creates a new <a href="#/p5.Image">p5.Image</a> object.
  *
- * `createImage()` uses the `width` and `height` paremeters to set the new
+ * `createImage()` uses the `width` and `height` parameters to set the new
  * <a href="#/p5.Image">p5.Image</a> object's dimensions in pixels. The new
  * <a href="#/p5.Image">p5.Image</a> can be modified by updating its
  * <a href="#/p5.Image/pixels">pixels</a> array or by calling its
@@ -27,65 +26,122 @@ import omggif from 'omggif';
  * <a href="#/p5.Image/updatePixels">updatePixels()</a> method must be called
  * for updates to take effect.
  *
+ * Note: The new <a href="#/p5.Image">p5.Image</a> object is transparent by
+ * default.
+ *
  * @method createImage
  * @param  {Integer} width  width in pixels.
  * @param  {Integer} height height in pixels.
  * @return {p5.Image}       new <a href="#/p5.Image">p5.Image</a> object.
+ *
  * @example
  * <div>
  * <code>
- * let img = createImage(66, 66);
- * img.loadPixels();
- * for (let x = 0; x < img.width; x += 1) {
- *   for (let y = 0; y < img.height; y += 1) {
- *     img.set(x, y, 0);
- *   }
- * }
- * img.updatePixels();
- * image(img, 17, 17);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * describe('A black square drawn in the middle of a gray square.');
+ *   background(200);
+ *
+ *   // Create a p5.Image object.
+ *   let img = createImage(66, 66);
+ *
+ *   // Load the image's pixels into memory.
+ *   img.loadPixels();
+ *
+ *   // Set all the image's pixels to black.
+ *   for (let x = 0; x < img.width; x += 1) {
+ *     for (let y = 0; y < img.height; y += 1) {
+ *       img.set(x, y, 0);
+ *     }
+ *   }
+ *
+ *   // Update the image's pixel values.
+ *   img.updatePixels();
+ *
+ *   // Draw the image.
+ *   image(img, 17, 17);
+ *
+ *   describe('A black square drawn in the middle of a gray square.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * let img = createImage(66, 66);
- * img.loadPixels();
- * for (let x = 0; x < img.width; x += 1) {
- *   for (let y = 0; y < img.height; y += 1) {
- *     let a = map(x, 0, img.width, 0, 255);
- *     let c = color(0, a);
- *     img.set(x, y, c);
- *   }
- * }
- * img.updatePixels();
- * image(img, 17, 17);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * describe('A square with a horizontal color gradient that transitions from gray to black.');
+ *   background(200);
+ *
+ *   // Create a p5.Image object.
+ *   let img = createImage(66, 66);
+ *
+ *   // Load the image's pixels into memory.
+ *   img.loadPixels();
+ *
+ *   // Create a color gradient.
+ *   for (let x = 0; x < img.width; x += 1) {
+ *     for (let y = 0; y < img.height; y += 1) {
+ *       // Calculate the transparency.
+ *       let a = map(x, 0, img.width, 0, 255);
+ *
+ *       // Create a p5.Color object.
+ *       let c = color(0, a);
+ *
+ *       // Set the pixel's color.
+ *       img.set(x, y, c);
+ *     }
+ *   }
+ *
+ *   // Update the image's pixels.
+ *   img.updatePixels();
+ *
+ *   // Display the image.
+ *   image(img, 17, 17);
+ *
+ *   describe('A square with a horizontal color gradient that transitions from gray to black.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * let img = createImage(66, 66);
- * img.loadPixels();
- * let d = pixelDensity();
- * let halfImage = 4 * (d * img.width) * (d * img.height / 2);
- * for (let i = 0; i < halfImage; i += 4) {
- *   // Red.
- *   img.pixels[i] = 0;
- *   // Green.
- *   img.pixels[i + 1] = 0;
- *   // Blue.
- *   img.pixels[i + 2] = 0;
- *   // Alpha.
- *   img.pixels[i + 3] = 255;
- * }
- * img.updatePixels();
- * image(img, 17, 17);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * describe('A black square drawn in the middle of a gray square.');
+ *   background(200);
+ *
+ *   // Create a p5.Image object.
+ *   let img = createImage(66, 66);
+ *
+ *   // Load the pixels into memory.
+ *   img.loadPixels();
+ *   // Get the current pixel density.
+ *   let d = pixelDensity();
+ *
+ *   // Calculate the pixel that is halfway through the image's pixel array.
+ *   let halfImage = 4 * (d * img.width) * (d * img.height / 2);
+ *
+ *   // Set half of the image's pixels to black.
+ *   for (let i = 0; i < halfImage; i += 4) {
+ *     // Red.
+ *     img.pixels[i] = 0;
+ *     // Green.
+ *     img.pixels[i + 1] = 0;
+ *     // Blue.
+ *     img.pixels[i + 2] = 0;
+ *     // Alpha.
+ *     img.pixels[i + 3] = 255;
+ *   }
+ *
+ *   // Update the image's pixels.
+ *   img.updatePixels();
+ *
+ *   // Display the image.
+ *   image(img, 17, 17);
+ *
+ *   describe('A black square drawn in the middle of a gray square.');
+ * }
  * </code>
  * </div>
  */
@@ -95,8 +151,22 @@ p5.prototype.createImage = function(width, height) {
 };
 
 /**
- *  Saves the current canvas as an image. The browser will either save the
- *  file immediately or prompt the user with a dialogue window.
+ * Saves the current canvas as an image.
+ *
+ * By default, `saveCanvas()` saves the canvas as a PNG image called
+ * `untitled.png`.
+ *
+ * The first parameter, `filename`, is optional. It's a string that sets the
+ * file's name. If a file extension is included, as in
+ * `saveCanvas('drawing.png')`, then the image will be saved using that
+ * format.
+ *
+ * The second parameter, `extension`, is also optional. It sets the files format.
+ * Either `'png'` or `'jpg'` can be used. For example, `saveCanvas('drawing', 'jpg')`
+ * saves the canvas to a file called `drawing.jpg`.
+ *
+ * Note: The browser will either save the file immediately or prompt the user
+ * with a dialogue window.
  *
  *  @method saveCanvas
  *  @param  {p5.Framebuffer|p5.Element|HTMLCanvasElement} selectedCanvas   reference to a
@@ -110,7 +180,11 @@ p5.prototype.createImage = function(width, height) {
  * function setup() {
  *   createCanvas(100, 100);
  *   background(255);
+ *
+ *   // Save the canvas to 'untitled.png'.
  *   saveCanvas();
+ *
+ *   describe('A white square.');
  * }
  * </code>
  * </div>
@@ -119,8 +193,13 @@ p5.prototype.createImage = function(width, height) {
  * <code>
  * function setup() {
  *   createCanvas(100, 100);
+ *
  *   background(255);
+ *
+ *   // Save the canvas to 'myCanvas.jpg'.
  *   saveCanvas('myCanvas.jpg');
+ *
+ *   describe('A white square.');
  * }
  * </code>
  * </div>
@@ -129,8 +208,13 @@ p5.prototype.createImage = function(width, height) {
  * <code>
  * function setup() {
  *   createCanvas(100, 100);
+ *
  *   background(255);
+ *
+ *   // Save the canvas to 'myCanvas.jpg'.
  *   saveCanvas('myCanvas', 'jpg');
+ *
+ *   describe('A white square.');
  * }
  * </code>
  * </div>
@@ -139,8 +223,13 @@ p5.prototype.createImage = function(width, height) {
  * <code>
  * function setup() {
  *   let cnv = createCanvas(100, 100);
+ *
  *   background(255);
+ *
+ *   // Save the canvas to 'untitled.png'.
  *   saveCanvas(cnv);
+ *
+ *   describe('A white square.');
  * }
  * </code>
  * </div>
@@ -149,8 +238,13 @@ p5.prototype.createImage = function(width, height) {
  * <code>
  * function setup() {
  *   let cnv = createCanvas(100, 100);
+ *
  *   background(255);
+ *
+ *   // Save the canvas to 'myCanvas.jpg'.
  *   saveCanvas(cnv, 'myCanvas.jpg');
+ *
+ *   describe('A white square.');
  * }
  * </code>
  * </div>
@@ -159,8 +253,13 @@ p5.prototype.createImage = function(width, height) {
  * <code>
  * function setup() {
  *   let cnv = createCanvas(100, 100);
+ *
  *   background(255);
+ *
+ *   // Save the canvas to 'myCanvas.jpg'.
  *   saveCanvas(cnv, 'myCanvas', 'jpg');
+ *
+ *   describe('A white square.');
  * }
  * </code>
  * </div>
@@ -170,21 +269,20 @@ p5.prototype.createImage = function(width, height) {
  *  @param  {String} [filename]
  *  @param  {String} [extension]
  */
-p5.prototype.saveCanvas = function() {
-  p5._validateParameters('saveCanvas', arguments);
+p5.prototype.saveCanvas = function(...args) {
+  p5._validateParameters('saveCanvas', args);
 
   // copy arguments to array
-  const args = [].slice.call(arguments);
   let htmlCanvas, filename, extension, temporaryGraphics;
 
-  if (arguments[0] instanceof HTMLCanvasElement) {
-    htmlCanvas = arguments[0];
+  if (args[0] instanceof HTMLCanvasElement) {
+    htmlCanvas = args[0];
     args.shift();
-  } else if (arguments[0] instanceof p5.Element) {
-    htmlCanvas = arguments[0].elt;
+  } else if (args[0] instanceof p5.Element) {
+    htmlCanvas = args[0].elt;
     args.shift();
-  } else if (arguments[0] instanceof p5.Framebuffer) {
-    const framebuffer = arguments[0];
+  } else if (args[0] instanceof p5.Framebuffer) {
+    const framebuffer = args[0];
     temporaryGraphics = this.createGraphics(framebuffer.width,
       framebuffer.height);
     temporaryGraphics.pixelDensity(pixelDensity());
@@ -458,26 +556,36 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
 };
 
 /**
- * Captures a sequence of frames from the canvas that can be used to create a
- * movie. Frames are downloaded as individual image files by default.
+ * Captures a sequence of frames from the canvas that can be saved as images.
+ *
+ * `saveFrames()` creates an array of frame objects. Each frame is stored as
+ * an object with its file type, file name, and image data as a string. For
+ * example, the first saved frame might have the following properties:
+ *
+ * `{ ext: 'png', filenmame: 'frame0', imageData: 'data:image/octet-stream;base64, abc123' }`.
  *
  * The first parameter, `filename`, sets the prefix for the file names. For
  * example, setting the prefix to `'frame'` would generate the image files
- * `frame0.png`, `frame1.png`, and so on. The second parameter, `extension`,
- * sets the file type to either `'png'` or `'jpg'`.
+ * `frame0.png`, `frame1.png`, and so on.
+ *
+ * The second parameter, `extension`, sets the file type to either `'png'` or
+ * `'jpg'`.
  *
  * The third parameter, `duration`, sets the duration to record in seconds.
- * The maximum duration is 15 seconds. The fourth parameter, `framerate`, sets
- * the number of frames to record per second. The maximum frame rate value is
- * 22. Limits are placed on `duration` and `framerate` to avoid using too much
- * memory. Recording large canvases can easily crash sketches or even web
- * browsers.
+ * The maximum duration is 15 seconds.
+ *
+ * The fourth parameter, `framerate`, sets the number of frames to record per
+ * second. The maximum frame rate value is 22. Limits are placed on `duration`
+ * and `framerate` to avoid using too much memory. Recording large canvases
+ * can easily crash sketches or even web browsers.
  *
  * The fifth parameter, `callback`, is optional. If a function is passed,
  * image files won't be saved by default. The callback function can be used
  * to process an array containing the data for each captured frame. The array
  * of image data contains a sequence of objects with three properties for each
  * frame: `imageData`, `filename`, and `extension`.
+ *
+ * Note: Frames are downloaded as individual image files by default.
  *
  * @method saveFrames
  * @param  {String}   filename  prefix of file name.
@@ -493,15 +601,20 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
  * @example
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A square repeatedly changes color from blue to pink.');
+ * }
+ *
  * function draw() {
  *   let r = frameCount % 255;
  *   let g = 50;
  *   let b = 100;
  *   background(r, g, b);
- *
- *   describe('A square repeatedly changes color from blue to pink.');
  * }
  *
+ * // Save the frames when the user presses the 's' key.
  * function keyPressed() {
  *   if (key === 's') {
  *     saveFrames('frame', 'png', 1, 5);
@@ -512,21 +625,29 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
  *
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A square repeatedly changes color from blue to pink.');
+ * }
+ *
  * function draw() {
  *   let r = frameCount % 255;
  *   let g = 50;
  *   let b = 100;
  *   background(r, g, b);
- *
- *   describe('A square repeatedly changes color from blue to pink.');
  * }
  *
+ * // Print 5 frames when the user presses the mouse.
  * function mousePressed() {
- *   saveFrames('frame', 'png', 1, 5, data => {
- *     // Prints an array of objects containing raw image data,
- *     // filenames, and extensions.
- *     print(data);
- *   });
+ *   saveFrames('frame', 'png', 1, 5, printFrames);
+ * }
+ *
+ * // Prints an array of objects containing raw image data, filenames, and extensions.
+ * function printFrames(frames) {
+ *   for (let frame of frames) {
+ *     print(frame);
+ *   }
  * }
  * </code>
  * </div>

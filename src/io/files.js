@@ -806,10 +806,9 @@ p5.prototype.loadBytes = function(file, callback, errorCallback) {
  * @param  {function}      [errorCallback]
  * @return {Promise}
  */
-p5.prototype.httpGet = function() {
-  p5._validateParameters('httpGet', arguments);
+p5.prototype.httpGet = function(...args) {
+  p5._validateParameters('httpGet', args);
 
-  const args = Array.prototype.slice.call(arguments);
   args.splice(1, 0, 'GET');
   return p5.prototype.httpDo.apply(this, args);
 };
@@ -896,10 +895,9 @@ p5.prototype.httpGet = function() {
  * @param  {function}      [errorCallback]
  * @return {Promise}
  */
-p5.prototype.httpPost = function() {
-  p5._validateParameters('httpPost', arguments);
+p5.prototype.httpPost = function(...args) {
+  p5._validateParameters('httpPost', args);
 
-  const args = Array.prototype.slice.call(arguments);
   args.splice(1, 0, 'POST');
   return p5.prototype.httpDo.apply(this, args);
 };
@@ -1880,8 +1878,7 @@ p5.prototype._checkFileExtension = _checkFileExtension;
  *  @private
  */
 p5.prototype._isSafari = function() {
-  const x = Object.prototype.toString.call(window.HTMLElement);
-  return x.indexOf('Constructor') > 0;
+  return window.HTMLElement.toString().includes('Constructor');
 };
 
 /**

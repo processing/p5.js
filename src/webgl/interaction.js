@@ -9,61 +9,154 @@ import p5 from '../core/main';
 import * as constants from '../core/constants';
 
 /**
- * Allows movement around a 3D sketch using a mouse or trackpad or touch.
- * Left-clicking and dragging or swipe motion will rotate the camera position
- * about the center of the sketch, right-clicking and dragging or multi-swipe
- * will pan the camera position without rotation, and using the mouse wheel
- * (scrolling) or pinch in/out will move the camera further or closer
- * from the center of the sketch. This function can be called with parameters
- * dictating sensitivity to mouse/touch movement along the X and Y axes.
- * Calling this function without parameters is equivalent to calling
- * orbitControl(1,1). To reverse direction of movement in either axis,
- * enter a negative number for sensitivity.
- * @method orbitControl
- * @for p5
- * @param  {Number} [sensitivityX] sensitivity to mouse movement along X axis
- * @param  {Number} [sensitivityY] sensitivity to mouse movement along Y axis
- * @param  {Number} [sensitivityZ] sensitivity to scroll movement along Z axis
- * @param  {Object} [options] An optional object that can contain additional settings,
- * disableTouchActions - Boolean, default value is true.
- * Setting this to true makes mobile interactions smoother by preventing
- * accidental interactions with the page while orbiting. But if you're already
- * doing it via css or want the default touch actions, consider setting it to false.
- * freeRotation - Boolean, default value is false.
- * By default, horizontal movement of the mouse or touch pointer rotates the camera
- * around the y-axis, and vertical movement rotates the camera around the x-axis.
- * But if setting this option to true, the camera always rotates in the direction
- * the pointer is moving. For zoom and move, the behavior is the same regardless of
- * true/false.
- * @chainable
- * @example
- * <div>
+ * Allows the user to orbit around a 3D sketch using a mouse, trackpad, or
+ * touchscreen.
+ *
+ * 3D sketches are viewed through an imaginary camera. Calling
+ * `orbitControl()` within the <a href="#/p5/draw">draw()</a> function allows
+ * the user to change the camera’s position:
+ *
  * <code>
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *   normalMaterial();
- *   describe(
- *     'Camera orbits around a box when mouse is hold-clicked & then moved.'
- *   );
- *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- * }
  * function draw() {
  *   background(200);
  *
- *   // If you execute the line commented out instead of next line, the direction of rotation
- *   // will be the direction the mouse or touch pointer moves, not around the X or Y axis.
+ *   // Enable orbiting with the mouse.
  *   orbitControl();
- *   // orbitControl(1, 1, 1, {freeRotation: true});
  *
- *   rotateY(0.5);
+ *   // Rest of sketch.
+ * }
+ * </code>
+ *
+ * Left-clicking and dragging or swipe motion will rotate the camera position
+ * about the center of the sketch. Right-clicking and dragging or multi-swipe
+ * will pan the camera position without rotation. Using the mouse wheel
+ * (scrolling) or pinch in/out will move the camera further or closer from the
+ * center of the sketch.
+ *
+ * The first three parameters, `sensitivityX`, `sensitivityY`, and
+ * `sensitivityZ`, are optional. They’re numbers that set the sketch’s
+ * sensitivity to movement along each axis. For example, calling
+ * `orbitControl(1, 2, -1)` keeps movement along the x-axis at its default
+ * value, makes the sketch twice as sensitive to movement along the y-axis,
+ * and reverses motion along the z-axis. By default, all sensitivity values
+ * are 1.
+ *
+ * The fourth parameter, `options`, is also optional. It’s an object that
+ * changes the behavior of orbiting. For example, calling
+ * `orbitControl(1, 1, 1, options)` keeps the default sensitivity values while
+ * changing the behaviors set with `options`. The object can have the
+ * following properties:
+ *
+ * <code>
+ * let options = {
+ *   // Setting this to false makes mobile interactions smoother by
+ *   // preventing accidental interactions with the page while orbiting.
+ *   // By default, it's true.
+ *   disableTouchActions: true,
+ *
+ *   // Setting this to true makes the camera always rotate in the
+ *   // direction the mouse/touch is moving.
+ *   // By default, it's false.
+ *   freeRotation: false
+ * };
+ *
+ * orbitControl(1, 1, 1, options);
+ * </code>
+ *
+ * @method orbitControl
+ * @for p5
+ * @param  {Number} [sensitivityX] sensitivity to movement along the x-axis. Defaults to 1.
+ * @param  {Number} [sensitivityY] sensitivity to movement along the y-axis. Defaults to 1.
+ * @param  {Number} [sensitivityZ] sensitivity to movement along the z-axis. Defaults to 1.
+ * @param  {Object} [options] object with two optional properties, `disableTouchActions`
+ *                            and `freeRotation`. Both are `Boolean`s. `disableTouchActions`
+ *                            defaults to `true` and `freeRotation` defaults to `false`.
+ * @chainable
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A multicolor box on a gray background. The camera angle changes when the user interacts using a mouse, trackpad, or touchscreen.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Style the box.
+ *   normalMaterial();
+ *
+ *   // Draw the box.
  *   box(30, 50);
  * }
  * </code>
  * </div>
  *
- * @alt
- * Camera orbits around a box when mouse is hold-clicked & then moved.
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A multicolor box on a gray background. The camera angle changes when the user interacts using a mouse, trackpad, or touchscreen.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   // Make the interactions 3X sensitive.
+ *   orbitControl(3, 3, 3);
+ *
+ *   // Style the box.
+ *   normalMaterial();
+ *
+ *   // Draw the box.
+ *   box(30, 50);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A multicolor box on a gray background. The camera angle changes when the user interacts using a mouse, trackpad, or touchscreen.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Create an options object.
+ *   let options = {
+ *     disableTouchActions: false,
+ *     freeRotation: true
+ *   };
+ *
+ *   // Enable orbiting with the mouse.
+ *   // Prevent accidental touch actions on touchscreen devices
+ *   // and enable free rotation.
+ *   orbitControl(1, 1, 1, options);
+ *
+ *   // Style the box.
+ *   normalMaterial();
+ *
+ *   // Draw the box.
+ *   box(30, 50);
+ * }
+ * </code>
+ * </div>
  */
 
 // implementation based on three.js 'orbitControls':
@@ -376,152 +469,182 @@ p5.prototype.orbitControl = function(
 
 
 /**
- * debugMode() helps visualize 3D space by adding a grid to indicate where the
- * ‘ground’ is in a sketch and an axes icon which indicates the +X, +Y, and +Z
- * directions. This function can be called without parameters to create a
- * default grid and axes icon, or it can be called according to the examples
- * above to customize the size and position of the grid and/or axes icon.  The
- * grid is drawn using the most recently set stroke color and weight.  To
- * specify these parameters, add a call to stroke() and strokeWeight()
- * just before the end of the draw() loop.
+ * Adds a grid and an axes icon to clarify orientation in 3D sketches.
  *
- * By default, the grid will run through the origin (0,0,0) of the sketch
- * along the XZ plane
- * and the axes icon will be offset from the origin.  Both the grid and axes
- * icon will be sized according to the current canvas size.  Note that because the
- * grid runs parallel to the default camera view, it is often helpful to use
- * debugMode along with orbitControl to allow full view of the grid.
+ * `debugMode()` adds a grid that shows where the “ground” is in a sketch. By
+ * default, the grid will run through the origin `(0, 0, 0)` of the sketch
+ * along the XZ plane. `debugMode()` also adds an axes icon that points along
+ * the positive x-, y-, and z-axes. Calling `debugMode()` displays the grid
+ * and axes icon with their default size and position.
+ *
+ * There are four ways to call `debugMode()` with optional parameters to
+ * customize the debugging environment.
+ *
+ * The first way to call `debugMode()` has one parameter, `mode`. If the
+ * system constant `GRID` is passed, as in `debugMode(GRID)`, then the grid
+ * will be displayed and the axes icon will be hidden. If the constant `AXES`
+ * is passed, as in `debugMode(AXES)`, then the axes icon will be displayed
+ * and the grid will be hidden.
+ *
+ * The second way to call `debugMode()` has six parameters. The first
+ * parameter, `mode`, selects either `GRID` or `AXES` to be displayed. The
+ * next five parameters, `gridSize`, `gridDivisions`, `xOff`, `yOff`, and
+ * `zOff` are optional. They’re numbers that set the appearance of the grid
+ * (`gridSize` and `gridDivisions`) and the placement of the axes icon
+ * (`xOff`, `yOff`, and `zOff`). For example, calling
+ * `debugMode(20, 5, 10, 10, 10)` sets the `gridSize` to 20 pixels, the number
+ * of `gridDivisions` to 5, and offsets the axes icon by 10 pixels along the
+ * x-, y-, and z-axes.
+ *
+ * The third way to call `debugMode()` has five parameters. The first
+ * parameter, `mode`, selects either `GRID` or `AXES` to be displayed. The
+ * next four parameters, `axesSize`, `xOff`, `yOff`, and `zOff` are optional.
+ * They’re numbers that set the appearance of the size of the axes icon
+ * (`axesSize`) and its placement (`xOff`, `yOff`, and `zOff`).
+ *
+ * The fourth way to call `debugMode()` has nine optional parameters. The
+ * first five parameters, `gridSize`, `gridDivisions`, `gridXOff`, `gridYOff`,
+ * and `gridZOff` are numbers that set the appearance of the grid. For
+ * example, calling `debugMode(100, 5, 0, 0, 0)` sets the `gridSize` to 100,
+ * the number of `gridDivisions` to 5, and sets all the offsets to 0 so that
+ * the grid is centered at the origin. The next four parameters, `axesSize`,
+ * `xOff`, `yOff`, and `zOff` are numbers that set the appearance of the size
+ * of the axes icon (`axesSize`) and its placement (`axesXOff`, `axesYOff`,
+ * and `axesZOff`). For example, calling
+ * `debugMode(100, 5, 0, 0, 0, 50, 10, 10, 10)` sets the `gridSize` to 100,
+ * the number of `gridDivisions` to 5, and sets all the offsets to 0 so that
+ * the grid is centered at the origin. It then sets the `axesSize` to 50 and
+ * offsets the icon 10 pixels along each axis.
+ *
  * @method debugMode
+ *
  * @example
  * <div>
  * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
- *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   normalMaterial();
+ *
+ *   // Enable debug mode.
  *   debugMode();
- *   describe(
- *     'a 3D box is centered on a grid in a 3D sketch. an icon indicates the direction of each axis: a red line points +X, a green line +Y, and a blue line +Z. the grid and icon disappear when the spacebar is pressed.'
- *   );
+ *
+ *   describe('A multicolor box on a gray background. A grid and axes icon are displayed near the box.');
  * }
  *
  * function draw() {
  *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
  *   orbitControl();
- *   box(15, 30);
- *   // Press the spacebar to turn debugMode off!
- *   if (keyIsDown(32)) {
- *     noDebugMode();
- *   }
+ *
+ *   // Style the box.
+ *   normalMaterial();
+ *
+ *   // Draw the box.
+ *   box(20, 40);
  * }
  * </code>
  * </div>
- * @alt
- * a 3D box is centered on a grid in a 3D sketch. an icon
- * indicates the direction of each axis: a red line points +X,
- * a green line +Y, and a blue line +Z. the grid and icon disappear when the
- * spacebar is pressed.
  *
- * @example
  * <div>
  * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
- *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   normalMaterial();
- *   debugMode(GRID);
- *   describe('a 3D box is centered on a grid in a 3D sketch.');
- * }
  *
- * function draw() {
- *   background(200);
- *   orbitControl();
- *   box(15, 30);
- * }
- * </code>
- * </div>
- * @alt
- * a 3D box is centered on a grid in a 3D sketch.
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
- *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   normalMaterial();
+ *   // Enable debug mode.
+ *   // Only display the axes icon.
  *   debugMode(AXES);
- *   describe(
- *     'a 3D box is centered in a 3D sketch. an icon indicates the direction of each axis: a red line points +X, a green line +Y, and a blue line +Z.'
- *   );
+ *
+ *   describe('A multicolor box on a gray background. A grid and axes icon are displayed near the box.');
  * }
  *
  * function draw() {
  *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
  *   orbitControl();
- *   box(15, 30);
+ *
+ *   // Style the box.
+ *   normalMaterial();
+ *
+ *   // Draw the box.
+ *   box(20, 40);
  * }
  * </code>
  * </div>
- * @alt
- * a 3D box is centered in a 3D sketch. an icon
- * indicates the direction of each axis: a red line points +X,
- * a green line +Y, and a blue line +Z.
  *
- * @example
  * <div>
  * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
- *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   normalMaterial();
- *   debugMode(GRID, 100, 10, 0, 0, 0);
- *   describe('a 3D box is centered on a grid in a 3D sketch');
+ *
+ *   // Enable debug mode.
+ *   // Only display the grid and customize it:
+ *   // - size: 50
+ *   // - divisions: 10
+ *   // - offsets: 0, 20, 0
+ *   debugMode(GRID, 50, 10, 0, 20, 0);
+ *
+ *   describe('A multicolor box on a gray background. A grid is displayed below the box.');
  * }
  *
  * function draw() {
  *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
  *   orbitControl();
- *   box(15, 30);
+ *
+ *   // Style the box.
+ *   normalMaterial();
+ *
+ *   // Draw the box.
+ *   box(20, 40);
  * }
  * </code>
  * </div>
- * @alt
- * a 3D box is centered on a grid in a 3D sketch
  *
- * @example
  * <div>
  * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
- *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   normalMaterial();
- *   debugMode(100, 10, 0, 0, 0, 20, 0, -40, 0);
- *   describe(
- *     'a 3D box is centered on a grid in a 3D sketch. an icon indicates the direction of each axis: a red line points +X, a green line +Y, and a blue line +Z.'
- *   );
+ *
+ *   // Enable debug mode.
+ *   // Display the grid and axes icon and customize them:
+ *   // Grid
+ *   // ----
+ *   // - size: 50
+ *   // - divisions: 10
+ *   // - offsets: 0, 20, 0
+ *   // Axes
+ *   // ----
+ *   // - size: 50
+ *   // - offsets: 0, 0, 0
+ *   debugMode(50, 10, 0, 20, 0, 50, 0, 0, 0);
+ *
+ *   describe('A multicolor box on a gray background. A grid is displayed below the box. An axes icon is displayed at the center of the box.');
  * }
  *
  * function draw() {
- *   noStroke();
  *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
  *   orbitControl();
- *   box(15, 30);
- *   // set the stroke color and weight for the grid!
- *   stroke(255, 0, 150);
- *   strokeWeight(0.8);
+ *
+ *   // Style the box.
+ *   normalMaterial();
+ *
+ *   // Draw the box.
+ *   box(20, 40);
  * }
  * </code>
  * </div>
- * @alt
- * a 3D box is centered on a grid in a 3D sketch. an icon
- * indicates the direction of each axis: a red line points +X,
- * a green line +Y, and a blue line +Z.
  */
 
 /**
@@ -532,17 +655,17 @@ p5.prototype.orbitControl = function(
 /**
  * @method debugMode
  * @param {Constant} mode
- * @param {Number} [gridSize] size of one side of the grid
- * @param {Number} [gridDivisions] number of divisions in the grid
- * @param {Number} [xOff] X axis offset from origin (0,0,0)
- * @param {Number} [yOff] Y axis offset from origin (0,0,0)
- * @param {Number} [zOff] Z axis offset from origin (0,0,0)
+ * @param {Number} [gridSize] side length of the grid.
+ * @param {Number} [gridDivisions] number of divisions in the grid.
+ * @param {Number} [xOff] offset from origin along the x-axis.
+ * @param {Number} [yOff] offset from origin along the y-axis.
+ * @param {Number} [zOff] offset from origin along the z-axis.
  */
 
 /**
  * @method debugMode
  * @param {Constant} mode
- * @param {Number} [axesSize] size of axes icon
+ * @param {Number} [axesSize] length of axes icon markers.
  * @param {Number} [xOff]
  * @param {Number} [yOff]
  * @param {Number} [zOff]
@@ -552,13 +675,13 @@ p5.prototype.orbitControl = function(
  * @method debugMode
  * @param {Number} [gridSize]
  * @param {Number} [gridDivisions]
- * @param {Number} [gridXOff]
- * @param {Number} [gridYOff]
- * @param {Number} [gridZOff]
+ * @param {Number} [gridXOff] grid offset from the origin along the x-axis.
+ * @param {Number} [gridYOff] grid offset from the origin along the y-axis.
+ * @param {Number} [gridZOff] grid offset from the origin along the z-axis.
  * @param {Number} [axesSize]
- * @param {Number} [axesXOff]
- * @param {Number} [axesYOff]
- * @param {Number} [axesZOff]
+ * @param {Number} [axesXOff] axes icon offset from the origin along the x-axis.
+ * @param {Number} [axesYOff] axes icon offset from the origin along the y-axis.
+ * @param {Number} [axesZOff] axes icon offset from the origin along the z-axis.
  */
 
 p5.prototype.debugMode = function(...args) {
@@ -580,58 +703,62 @@ p5.prototype.debugMode = function(...args) {
   if (args[0] === constants.GRID) {
     this.registerMethod(
       'post',
-      this._grid.call(this, args[1], args[2], args[3], args[4], args[5])
+      this._grid(args[1], args[2], args[3], args[4], args[5])
     );
   } else if (args[0] === constants.AXES) {
     this.registerMethod(
       'post',
-      this._axesIcon.call(this, args[1], args[2], args[3], args[4])
+      this._axesIcon(args[1], args[2], args[3], args[4])
     );
   } else {
     this.registerMethod(
       'post',
-      this._grid.call(this, args[0], args[1], args[2], args[3], args[4])
+      this._grid(args[0], args[1], args[2], args[3], args[4])
     );
     this.registerMethod(
       'post',
-      this._axesIcon.call(this, args[5], args[6], args[7], args[8])
+      this._axesIcon(args[5], args[6], args[7], args[8])
     );
   }
 };
 
 /**
- * Turns off debugMode() in a 3D sketch.
+ * Turns off <a href="#/p5/debugMode">debugMode()</a> in a 3D sketch.
+ *
  * @method noDebugMode
+ *
  * @example
  * <div>
  * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
- *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   normalMaterial();
+ *
+ *   // Enable debug mode.
  *   debugMode();
- *   describe(
- *     'a 3D box is centered on a grid in a 3D sketch. an icon indicates the direction of each axis: a red line points +X, a green line +Y, and a blue line +Z. the grid and icon disappear when the spacebar is pressed.'
- *   );
+ *
+ *   describe('A multicolor box on a gray background. A grid and axes icon are displayed near the box. They disappear when the user double-clicks.');
  * }
  *
  * function draw() {
  *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
  *   orbitControl();
- *   box(15, 30);
- *   // Press the spacebar to turn debugMode off!
- *   if (keyIsDown(32)) {
- *     noDebugMode();
- *   }
+ *
+ *   // Style the box.
+ *   normalMaterial();
+ *
+ *   // Draw the box.  box(20, 40);
+ * }
+ *
+ * // Disable debug mode when the user double-clicks.
+ * function doubleClicked() {
+ *   noDebugMode();
  * }
  * </code>
  * </div>
- * @alt
- * a 3D box is centered on a grid in a 3D sketch. an icon
- * indicates the direction of each axis: a red line points +X,
- * a green line +Y, and a blue line +Z. the grid and icon disappear when the
- * spacebar is pressed.
  */
 p5.prototype.noDebugMode = function() {
   this._assert3d('noDebugMode');

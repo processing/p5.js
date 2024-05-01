@@ -9,13 +9,118 @@
 import p5 from '../core/main';
 
 /**
- * Shader class for WEBGL Mode
+ * A class to describe a shader program.
+ *
+ * Each `p5.Shader` object contains a shader program that runs on the graphics
+ * processing unit (GPU). Shaders can process many pixels or vertices at the
+ * same time, making them fast for many graphics tasks. They’re written in a
+ * language called
+ * <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>
+ * and run along with the rest of the code in a sketch.
+ *
+ * A shader program consists of two files, a vertex shader and a fragment
+ * shader. The vertex shader affects where 3D geometry is drawn on the screen
+ * and the fragment shader affects color. Once the `p5.Shader` object is
+ * created, it can be used with the <a href="#/p5/shader">shader()</a>
+ * function, as in `shader(myShader)`.
+ *
+ * Note: <a href="#/p5/createShader">createShader()</a>,
+ * <a href="#/p5/createFilterShader">createFilterShader()</a>, and
+ * <a href="#/p5/loadShader">loadShader()</a> are the recommended ways to
+ * create an instance of this class.
+ *
  * @class p5.Shader
  * @constructor
- * @param {p5.RendererGL} renderer an instance of p5.RendererGL that
- * will provide the GL context for this new p5.Shader
- * @param {String} vertSrc source code for the vertex shader (as a string)
- * @param {String} fragSrc source code for the fragment shader (as a string)
+ * @param {p5.RendererGL} renderer WebGL context for this shader.
+ * @param {String} vertSrc source code for the vertex shader program.
+ * @param {String} fragSrc source code for the fragment shader program.
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Note: A "uniform" is a global variable within a shader program.
+ *
+ * // Create a string with the vertex shader program.
+ * // The vertex shader is called for each vertex.
+ * let vertSrc = `
+ * precision highp float;
+ * uniform mat4 uModelViewMatrix;
+ * uniform mat4 uProjectionMatrix;
+ *
+ * attribute vec3 aPosition;
+ * attribute vec2 aTexCoord;
+ * varying vec2 vTexCoord;
+ *
+ * void main() {
+ *   vTexCoord = aTexCoord;
+ *   vec4 positionVec4 = vec4(aPosition, 1.0);
+ *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+ * }
+ * `;
+ *
+ * // Create a string with the fragment shader program.
+ * // The fragment shader is called for each pixel.
+ * let fragSrc = `
+ * precision highp float;
+ *
+ * void main() {
+ *   // Set each pixel's RGBA value to yellow.
+ *   gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+ * }
+ * `;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a p5.Shader object.
+ *   let myShader = createShader(vertSrc, fragSrc);
+ *
+ *   // Apply the p5.Shader object.
+ *   shader(myShader);
+ *
+ *   // Style the drawing surface.
+ *   noStroke();
+ *
+ *   // Add a plane as a drawing surface.
+ *   plane(100, 100);
+ *
+ *   describe('A yellow square.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Note: A "uniform" is a global variable within a shader program.
+ *
+ * let mandelbrot;
+ *
+ * // Load the shader and create a p5.Shader object.
+ * function preload() {
+ *   mandelbrot = loadShader('assets/shader.vert', 'assets/shader.frag');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Use the p5.Shader object.
+ *   shader(mandelbrot);
+ *
+ *   // Set the shader uniform p to an array.
+ *   mandelbrot.setUniform('p', [-0.74364388703, 0.13182590421]);
+ *
+ *   describe('A fractal image zooms in and out of focus.');
+ * }
+ *
+ * function draw() {
+ *   // Set the shader uniform r to a value that oscillates between 0 and 2.
+ *   mandelbrot.setUniform('r', sin(frameCount * 0.01) + 1);
+ *
+ *   // Add a quad as a display surface for the shader.
+ *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
+ * }
+ * </code>
+ * </div>
  */
 p5.Shader = class {
   constructor(renderer, vertSrc, fragSrc) {
@@ -104,26 +209,182 @@ p5.Shader = class {
   }
 
   /**
-   * Shaders belong to the main canvas or a p5.Graphics. Once they are compiled,
-   * they can only be used in the context they were compiled on.
+   * Copies the shader from one drawing context to another.
    *
-   * Use this method to make a new copy of a shader that gets compiled on a
-   * different context.
+   * Each `p5.Shader` object must be compiled by calling
+   * <a href="#/p5/shader">shader()</a> before it can run. Compilation happens
+   * in a drawing context which is usually the main canvas or an instance of
+   * <a href="#/p5.Graphics">p5.Graphics</a>. A shader can only be used in the
+   * context where it was compiled. The `copyToContext()` method compiles the
+   * shader again and copies it to another drawing context where it can be
+   * reused.
+   *
+   * The parameter, `context`, is the drawing context where the shader will be
+   * used. The shader can be copied to an instance of
+   * <a href="#/p5.Graphics">p5.Graphics</a>, as in
+   * `myShader.copyToContext(pg)`. The shader can also be copied from a
+   * <a href="#/p5.Graphics">p5.Graphics</a> object to the main canvas using
+   * the `window` variable, as in `myShader.copyToContext(window)`.
+   *
+   * Note: A <a href="#/p5.Shader">p5.Shader</a> object created with
+   * <a href="#/p5/createShader">createShader()</a>,
+   * <a href="#/p5/createFilterShader">createFilterShader()</a>, or
+   * <a href="#/p5/loadShader">loadShader()</a>
+   * can be used directly with a <a href="#/p5.Framebuffer">p5.Framebuffer</a>
+   * object created with
+   * <a href="#/p5/createFramebuffer">createFramebuffer()</a>. Both objects
+   * have the same context as the main canvas.
    *
    * @method copyToContext
-   * @param {p5|p5.Graphics} context The graphic or instance to copy this shader to.
-   * Pass `window` if you need to copy to the main canvas.
-   * @returns {p5.Shader} A new shader on the target context.
+   * @param {p5|p5.Graphics} context WebGL context for the copied shader.
+   * @returns {p5.Shader} new shader compiled for the target context.
    *
    * @example
-   * <div class='norender notest'>
+   * <div>
    * <code>
-   * let graphic = createGraphics(200, 200, WEBGL);
-   * let graphicShader = graphic.createShader(vert, frag);
-   * graphic.shader(graphicShader); // Use graphicShader on the graphic
+   * // Note: A "uniform" is a global variable within a shader program.
    *
-   * let mainShader = graphicShader.copyToContext(window);
-   * shader(mainShader); // Use `mainShader` on the main canvas
+   * // Create a string with the vertex shader program.
+   * // The vertex shader is called for each vertex.
+   * let vertSrc = `
+   * precision highp float;
+   * uniform mat4 uModelViewMatrix;
+   * uniform mat4 uProjectionMatrix;
+   *
+   * attribute vec3 aPosition;
+   * attribute vec2 aTexCoord;
+   * varying vec2 vTexCoord;
+   *
+   * void main() {
+   *   vTexCoord = aTexCoord;
+   *   vec4 positionVec4 = vec4(aPosition, 1.0);
+   *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+   * }
+   * `;
+   *
+   * // Create a string with the fragment shader program.
+   * // The fragment shader is called for each pixel.
+   * let fragSrc = `
+   * precision mediump float;
+   * varying vec2 vTexCoord;
+   *
+   * void main() {
+   *   vec2 uv = vTexCoord;
+   *   vec3 color = vec3(uv.x, uv.y, min(uv.x + uv.y, 1.0));
+   *   gl_FragColor = vec4(color, 1.0);\
+   * }
+   * `;
+   *
+   * let pg;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   background(200);
+   *
+   *   // Create a p5.Shader object.
+   *   let original = createShader(vertSrc, fragSrc);
+   *
+   *   // Compile the p5.Shader object.
+   *   shader(original);
+   *
+   *   // Create a p5.Graphics object.
+   *   pg = createGraphics(50, 50, WEBGL);
+   *
+   *   // Copy the original shader to the p5.Graphics object.
+   *   let copied = original.copyToContext(pg);
+   *
+   *   // Apply the copied shader to the p5.Graphics object.
+   *   pg.shader(copied);
+   *
+   *   // Style the display surface.
+   *   pg.noStroke();
+   *
+   *   // Add a display surface for the shader.
+   *   pg.plane(50, 50);
+   *
+   *   describe('A square with purple-blue gradient on its surface drawn against a gray background.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Draw the p5.Graphics object to the main canvas.
+   *   image(pg, -25, -25);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div class='notest'>
+   * <code>
+   * // Note: A "uniform" is a global variable within a shader program.
+   *
+   * // Create a string with the vertex shader program.
+   * // The vertex shader is called for each vertex.
+   * let vertSrc = `
+   * precision highp float;
+   * uniform mat4 uModelViewMatrix;
+   * uniform mat4 uProjectionMatrix;
+   *
+   * attribute vec3 aPosition;
+   * attribute vec2 aTexCoord;
+   * varying vec2 vTexCoord;
+   *
+   * void main() {
+   *   vTexCoord = aTexCoord;
+   *   vec4 positionVec4 = vec4(aPosition, 1.0);
+   *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+   * }
+   * `;
+   *
+   * // Create a string with the fragment shader program.
+   * // The fragment shader is called for each pixel.
+   * let fragSrc = `
+   * precision mediump float;
+   *
+   * varying vec2 vTexCoord;
+   *
+   * void main() {
+   *   vec2 uv = vTexCoord;
+   *   vec3 color = vec3(uv.x, uv.y, min(uv.x + uv.y, 1.0));
+   *   gl_FragColor = vec4(color, 1.0);
+   * }
+   * `;
+   *
+   * let copied;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Graphics object.
+   *   let pg = createGraphics(25, 25, WEBGL);
+   *
+   *   // Create a p5.Shader object.
+   *   let original = pg.createShader(vertSrc, fragSrc);
+   *
+   *   // Compile the p5.Shader object.
+   *   pg.shader(original);
+   *
+   *   // Copy the original shader to the main canvas.
+   *   copied = original.copyToContext(window);
+   *
+   *   // Apply the copied shader to the main canvas.
+   *   shader(copied);
+   *
+   *   describe('A rotating cube with a purple-blue gradient on its surface drawn against a gray background.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Rotate around the x-, y-, and z-axes.
+   *   rotateX(frameCount * 0.01);
+   *   rotateY(frameCount * 0.01);
+   *   rotateZ(frameCount * 0.01);
+   *
+   *   // Draw the box.
+   *   box(50);
+   * }
    * </code>
    * </div>
    */
@@ -324,13 +585,7 @@ p5.Shader = class {
     modelViewProjectionMatrix.mult(projectionMatrix);
 
     if (this.isStrokeShader()) {
-      if (this._renderer._curCamera.cameraType === 'default') {
-        // strokes scale up as they approach camera, default
-        this.setUniform('uPerspective', 1);
-      } else {
-        // strokes have uniform scale regardless of distance from camera
-        this.setUniform('uPerspective', 0);
-      }
+      this.setUniform('uPerspective', this._renderer._curCamera.useLinePerspective ? 1 : 0);
     }
     this.setUniform('uViewMatrix', viewMatrix.mat4);
     this.setUniform('uProjectionMatrix', projectionMatrix.mat4);
@@ -365,84 +620,239 @@ p5.Shader = class {
   }
 
   /**
-   * Used to set the uniforms of a
-   * <a href="#/p5.Shader">p5.Shader</a> object.
+   * Sets the shader’s uniform (global) variables.
    *
-   * Uniforms are used as a way to provide shader programs
-   * (which run on the GPU) with values from a sketch
-   * (which runs on the CPU).
+   * Shader programs run on the computer’s graphics processing unit (GPU).
+   * They live in part of the computer’s memory that’s completely separate
+   * from the sketch that runs them. Uniforms are global variables within a
+   * shader program. They provide a way to pass values from a sketch running
+   * on the CPU to a shader program running on the GPU.
    *
-   * Here are some examples of uniforms you can make:
-   * - booleans
-   *   - Example: `setUniform('x', true)` becomes `uniform float x` with the value `1.0`
-   * - numbers
-   *   - Example: `setUniform('x', -2)` becomes `uniform float x` with the value `-2.0`
-   * - arrays of numbers
-   *   - Example: `setUniform('x', [0, 0.5, 1])` becomes `uniform vec3 x` with the value `vec3(0.0, 0.5, 1.0)`
-   * - a p5.Image, p5.Graphics, p5.MediaElement, or p5.Texture
-   *   - Example: `setUniform('x', img)` becomes `uniform sampler2D x`
+   * The first parameter, `uniformName`, is a string with the uniform’s name.
+   * For the shader above, `uniformName` would be `'r'`.
+   *
+   * The second parameter, `data`, is the value that should be used to set the
+   * uniform. For example, calling `myShader.setUniform('r', 0.5)` would set
+   * the `r` uniform in the shader above to `0.5`. data should match the
+   * uniform’s type. Numbers, strings, booleans, arrays, and many types of
+   * images can all be passed to a shader with `setUniform()`.
    *
    * @method setUniform
    * @chainable
-   * @param {String} uniformName the name of the uniform.
-   * Must correspond to the name used in the vertex and fragment shaders
+   * @param {String} uniformName name of the uniform. Must match the name
+   *                             used in the vertex and fragment shaders.
    * @param {Boolean|Number|Number[]|p5.Image|p5.Graphics|p5.MediaElement|p5.Texture}
-   * data The value to assign to the uniform. This can be
-   * a boolean (true/false), a number, an array of numbers, or
-   * an image (p5.Image, p5.Graphics, p5.MediaElement, p5.Texture)
+   * data value to assign to the uniform. Must match the uniform’s data type.
    *
    * @example
-   * <div modernizr='webgl'>
+   * <div>
    * <code>
-   * // Click within the image to toggle the value of uniforms
-   * // Note: for an alternative approach to the same example,
-   * // involving toggling between shaders please refer to:
-   * // https://p5js.org/reference/#/p5/shader
+   * // Note: A "uniform" is a global variable within a shader program.
    *
-   * let grad;
-   * let showRedGreen = false;
+   * // Create a string with the vertex shader program.
+   * // The vertex shader is called for each vertex.
+   * let vertSrc = `
+   * precision highp float;
+   * uniform mat4 uModelViewMatrix;
+   * uniform mat4 uProjectionMatrix;
    *
-   * function preload() {
-   *   // note that we are using two instances
-   *   // of the same vertex and fragment shaders
-   *   grad = loadShader('assets/shader.vert', 'assets/shader-gradient.frag');
+   * attribute vec3 aPosition;
+   * attribute vec2 aTexCoord;
+   * varying vec2 vTexCoord;
+   *
+   * void main() {
+   *   vTexCoord = aTexCoord;
+   *   vec4 positionVec4 = vec4(aPosition, 1.0);
+   *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
    * }
+   * `;
+   *
+   * // Create a string with the fragment shader program.
+   * // The fragment shader is called for each pixel.
+   * let fragSrc = `
+   * precision mediump float;
+   *
+   * uniform float r;
+   *
+   * void main() {
+   *   gl_FragColor = vec4(r, 1.0, 1.0, 1.0);
+   * }
+   * `;
    *
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
-   *   shader(grad);
+   *
+   *   // Create a p5.Shader object.
+   *   let myShader = createShader(vertSrc, fragSrc);
+   *
+   *   // Apply the p5.Shader object.
+   *   shader(myShader);
+   *
+   *   // Set the r uniform to 0.5.
+   *   myShader.setUniform('r', 0.5);
+   *
+   *   // Style the drawing surface.
    *   noStroke();
    *
-   *   describe(
-   *     'canvas toggles between a circular gradient of orange and blue vertically. and a circular gradient of red and green moving horizontally when mouse is clicked/pressed.'
-   *   );
-   * }
+   *   // Add a plane as a drawing surface for the shader.
+   *   plane(100, 100);
    *
-   * function draw() {
-   *   // update the offset values for each scenario,
-   *   // moving the "grad" shader in either vertical or
-   *   // horizontal direction each with differing colors
-   *
-   *   if (showRedGreen === true) {
-   *     grad.setUniform('colorCenter', [1, 0, 0]);
-   *     grad.setUniform('colorBackground', [0, 1, 0]);
-   *     grad.setUniform('offset', [sin(millis() / 2000), 1]);
-   *   } else {
-   *     grad.setUniform('colorCenter', [1, 0.5, 0]);
-   *     grad.setUniform('colorBackground', [0.226, 0, 0.615]);
-   *     grad.setUniform('offset', [0, sin(millis() / 2000) + 1]);
-   *   }
-   *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
-   * }
-   *
-   * function mouseClicked() {
-   *   showRedGreen = !showRedGreen;
+   *   describe('A cyan square.');
    * }
    * </code>
    * </div>
    *
-   * @alt
-   * canvas toggles between a circular gradient of orange and blue vertically. and a circular gradient of red and green moving horizontally when mouse is clicked/pressed.
+   * <div>
+   * <code>
+   * // Note: A "uniform" is a global variable within a shader program.
+   *
+   * // Create a string with the vertex shader program.
+   * // The vertex shader is called for each vertex.
+   * let vertSrc = `
+   * precision highp float;
+   * uniform mat4 uModelViewMatrix;
+   * uniform mat4 uProjectionMatrix;
+   *
+   * attribute vec3 aPosition;
+   * attribute vec2 aTexCoord;
+   * varying vec2 vTexCoord;
+   *
+   * void main() {
+   *   vTexCoord = aTexCoord;
+   *   vec4 positionVec4 = vec4(aPosition, 1.0);
+   *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+   * }
+   * `;
+   *
+   * // Create a string with the fragment shader program.
+   * // The fragment shader is called for each pixel.
+   * let fragSrc = `
+   * precision mediump float;
+   *
+   * uniform float r;
+   *
+   * void main() {
+   *   gl_FragColor = vec4(r, 1.0, 1.0, 1.0);
+   * }
+   * `;
+   *
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Shader object.
+   *   myShader = createShader(vertSrc, fragSrc);
+   *
+   *   // Compile and apply the p5.Shader object.
+   *   shader(myShader);
+   *
+   *   describe('A square oscillates color between cyan and white.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Style the drawing surface.
+   *   noStroke();
+   *
+   *   // Update the r uniform.
+   *   let nextR = 0.5 * (sin(frameCount * 0.01) + 1);
+   *   myShader.setUniform('r', nextR);
+   *
+   *   // Add a plane as a drawing surface.
+   *   plane(100, 100);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // Note: A "uniform" is a global variable within a shader program.
+   *
+   * // Create a string with the vertex shader program.
+   * // The vertex shader is called for each vertex.
+   * let vertSrc = `
+   * precision highp float;
+   * uniform mat4 uModelViewMatrix;
+   * uniform mat4 uProjectionMatrix;
+   *
+   * attribute vec3 aPosition;
+   * attribute vec2 aTexCoord;
+   * varying vec2 vTexCoord;
+   *
+   * void main() {
+   *   vTexCoord = aTexCoord;
+   *   vec4 positionVec4 = vec4(aPosition, 1.0);
+   *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+   * }
+   * `;
+   *
+   * // Create a string with the fragment shader program.
+   * // The fragment shader is called for each pixel.
+   * let fragSrc = `
+   * precision highp float;
+   * uniform vec2 p;
+   * uniform float r;
+   * const int numIterations = 500;
+   * varying vec2 vTexCoord;
+   *
+   * void main() {
+   *   vec2 c = p + gl_FragCoord.xy * r;
+   *   vec2 z = c;
+   *   float n = 0.0;
+   *
+   *   for (int i = numIterations; i > 0; i--) {
+   *     if (z.x * z.x + z.y * z.y > 4.0) {
+   *       n = float(i) / float(numIterations);
+   *       break;
+   *     }
+   *
+   *     z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
+   *   }
+   *
+   *   gl_FragColor = vec4(
+   *     0.5 - cos(n * 17.0) / 2.0,
+   *     0.5 - cos(n * 13.0) / 2.0,
+   *     0.5 - cos(n * 23.0) / 2.0,
+   *     1.0
+   *   );
+   * }
+   * `;
+   *
+   * let mandelbrot;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Shader object.
+   *   mandelbrot = createShader(vertSrc, fragSrc);
+   *
+   *   // Compile and apply the p5.Shader object.
+   *   shader(mandelbrot);
+   *
+   *   // Set the shader uniform p to an array.
+   *   // p is the center point of the Mandelbrot image.
+   *   mandelbrot.setUniform('p', [-0.74364388703, 0.13182590421]);
+   *
+   *   describe('A fractal image zooms in and out of focus.');
+   * }
+   *
+   * function draw() {
+   *   // Set the shader uniform r to a value that oscillates
+   *   // between 0 and 0.005.
+   *   // r is the size of the image in Mandelbrot-space.
+   *   let radius = 0.005 * (sin(frameCount * 0.01) + 1);
+   *   mandelbrot.setUniform('r', radius);
+   *
+   *   // Style the drawing surface.
+   *   noStroke();
+   *
+   *   // Add a plane as a drawing surface.
+   *   plane(100, 100);
+   * }
+   * </code>
+   * </div>
    */
   setUniform(uniformName, data) {
     const uniform = this.uniforms[uniformName];
@@ -569,21 +979,21 @@ p5.Shader = class {
    **/
 
   isLightShader() {
-    return (
-      this.attributes.aNormal !== undefined ||
-      this.uniforms.uUseLighting !== undefined ||
-      this.uniforms.uAmbientLightCount !== undefined ||
-      this.uniforms.uDirectionalLightCount !== undefined ||
-      this.uniforms.uPointLightCount !== undefined ||
-      this.uniforms.uAmbientColor !== undefined ||
-      this.uniforms.uDirectionalDiffuseColors !== undefined ||
-      this.uniforms.uDirectionalSpecularColors !== undefined ||
-      this.uniforms.uPointLightLocation !== undefined ||
-      this.uniforms.uPointLightDiffuseColors !== undefined ||
-      this.uniforms.uPointLightSpecularColors !== undefined ||
-      this.uniforms.uLightingDirection !== undefined ||
-      this.uniforms.uSpecular !== undefined
-    );
+    return [
+      this.attributes.aNormal ,
+      this.uniforms.uUseLighting ,
+      this.uniforms.uAmbientLightCount ,
+      this.uniforms.uDirectionalLightCount ,
+      this.uniforms.uPointLightCount ,
+      this.uniforms.uAmbientColor ,
+      this.uniforms.uDirectionalDiffuseColors ,
+      this.uniforms.uDirectionalSpecularColors ,
+      this.uniforms.uPointLightLocation ,
+      this.uniforms.uPointLightDiffuseColors ,
+      this.uniforms.uPointLightSpecularColors ,
+      this.uniforms.uLightingDirection ,
+      this.uniforms.uSpecular
+    ].some(x => x !== undefined);
   }
 
   isNormalShader() {

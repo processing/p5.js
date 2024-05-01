@@ -452,7 +452,7 @@ class Renderer2D extends p5.Renderer {
           (this.width * pixelsState._pixelDensity) +
           x * pixelsState._pixelDensity);
       if (!pixelsState.imageData) {
-        pixelsState.loadPixels.call(pixelsState);
+        pixelsState.loadPixels();
       }
       if (typeof imgOrCol === 'number') {
         if (idx < pixelsState.pixels.length) {
@@ -462,7 +462,7 @@ class Renderer2D extends p5.Renderer {
           a = 255;
           //this.updatePixels.call(this);
         }
-      } else if (imgOrCol instanceof Array) {
+      } else if (Array.isArray(imgOrCol)) {
         if (imgOrCol.length < 4) {
           throw new Error('pixel array must be of the form [R, G, B, A]');
         }
@@ -1318,8 +1318,13 @@ class Renderer2D extends p5.Renderer {
       this._setProperty('_textStyle', this._textFont.font.styleName);
     }
 
+    let fontNameString = font || 'sans-serif';
+    if (/\s/.exec(fontNameString)) {
+      // If the name includes spaces, surround in quotes
+      fontNameString = `"${fontNameString}"`;
+    }
     this.drawingContext.font = `${this._textStyle || 'normal'} ${this._textSize ||
-      12}px "${font || 'sans-serif'}"`;
+      12}px ${fontNameString}`;
 
     this.drawingContext.textAlign = this._textAlign;
     if (this._textBaseline === constants.CENTER) {

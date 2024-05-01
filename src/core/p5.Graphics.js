@@ -60,6 +60,10 @@ p5.Graphics = class extends p5.Element {
 
     if (r === constants.WEBGL) {
       this._renderer = new p5.RendererGL(this.canvas, this, false);
+      const { adjustedWidth, adjustedHeight } =
+        this._renderer._adjustDimensions(w, h);
+      w = adjustedWidth;
+      h = adjustedHeight;
     } else {
       this._renderer = new p5.Renderer2D(this.canvas, this, false);
     }
