@@ -22,29 +22,34 @@ void main() {
   if (vCap > 0.) {
     if (
       uStrokeCap == STROKE_CAP_ROUND &&
-      distSquared(vPosition, vCenter) > uStrokeWeight * uStrokeWeight * 0.25
+      HOOK_shouldDiscard(distSquared(vPosition, vCenter) > uStrokeWeight * uStrokeWeight * 0.25)
     ) {
       discard;
     } else if (
       uStrokeCap == STROKE_CAP_SQUARE &&
-      dot(vPosition - vCenter, vTangent) > 0.
+      HOOK_shouldDiscard(dot(vPosition - vCenter, vTangent) > 0.)
     ) {
       discard;
-    }
     // Use full area for PROJECT
+    } else if (HOOK_shouldDiscard(false)) {
+      discard;
+    }
   } else if (vJoin > 0.) {
     if (
       uStrokeJoin == STROKE_JOIN_ROUND &&
-      distSquared(vPosition, vCenter) > uStrokeWeight * uStrokeWeight * 0.25
+      HOOK_shouldDiscard(distSquared(vPosition, vCenter) > uStrokeWeight * uStrokeWeight * 0.25)
     ) {
       discard;
     } else if (uStrokeJoin == STROKE_JOIN_BEVEL) {
       vec2 normal = vec2(-vTangent.y, vTangent.x);
-      if (abs(dot(vPosition - vCenter, normal)) > vMaxDist) {
+      if (HOOK_shouldDiscard(abs(dot(vPosition - vCenter, normal)) > vMaxDist)) {
         discard;
       }
-    }
     // Use full area for MITER
+    } else if (HOOK_shouldDiscard(false)) {
+      discard;
+    }
   }
-  OUT_COLOR = vec4(vColor.rgb, 1.) * vColor.a;
+  OUT_COLOR = HOOK_getFinalColor(vec4(vColor.rgb, 1.) * vColor.a);
+  HOOK_afterMain();
 }

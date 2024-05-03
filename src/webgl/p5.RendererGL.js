@@ -1888,7 +1888,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
             'void beforeMain': '() {}',
             'vec3 getLocalPosition': '(vec3 position) { return position; }',
             'vec3 getWorldPosition': '(vec3 position) { return position; }',
-            'float getPointSize': '(float size) { return size; }',
+            'float getStrokeWeight': '(float weight) { return weight; }',
             'void afterMain': '() {}'
           },
           fragment: {
