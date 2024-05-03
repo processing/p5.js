@@ -5907,6 +5907,16 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "Papershine",
+      "name": "Hilary Lau",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30367398?v=4",
+      "profile": "https://github.com/Papershine",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "repoType": "github",
