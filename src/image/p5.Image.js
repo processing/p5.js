@@ -1111,7 +1111,8 @@ p5.Image = class {
    *
    * `img.mask()` uses another <a href="#/p5.Image">p5.Image</a> object's
    * alpha channel as the alpha channel for this image. Masks are cumulative
-   * and can't be removed once applied.
+   * and can't be removed once applied. If the mask has a different
+   * pixel density from this image, the mask will be scaled.
    *
    * @method mask
    * @param {p5.Image} srcImage source image.
@@ -1149,21 +1150,22 @@ p5.Image = class {
     }
     const currBlend = this.drawingContext.globalCompositeOperation;
 
-    let scaleFactor = 1;
+    let imgScaleFactor = this._pixelDensity;
+    let maskScaleFactor = 1;
     if (p5Image instanceof p5.Renderer) {
-      scaleFactor = p5Image._pInst._pixelDensity;
+      maskScaleFactor = p5Image._pInst._pixelDensity;
     }
 
     const copyArgs = [
       p5Image,
       0,
       0,
-      scaleFactor * p5Image.width,
-      scaleFactor * p5Image.height,
+      maskScaleFactor * p5Image.width,
+      maskScaleFactor * p5Image.height,
       0,
       0,
-      this.width,
-      this.height
+      imgScaleFactor * this.width,
+      imgScaleFactor * this.height
     ];
 
     this.drawingContext.globalCompositeOperation = 'destination-in';
@@ -1178,8 +1180,8 @@ p5.Image = class {
         this.gifProperties.frames[i].image = this.drawingContext.getImageData(
           0,
           0,
-          this.width,
-          this.height
+          imgScaleFactor * this.width,
+          imgScaleFactor * this.height
         );
       }
       this.drawingContext.putImageData(
