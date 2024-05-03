@@ -62,6 +62,13 @@ const defaultShaders = {
   normalVert: readFileSync(join(__dirname, '/shaders/normal.vert'), 'utf-8'),
   normalFrag: readFileSync(join(__dirname, '/shaders/normal.frag'), 'utf-8'),
   basicFrag: readFileSync(join(__dirname, '/shaders/basic.frag'), 'utf-8'),
+  lightVert:
+    lightingShader +
+    readFileSync(join(__dirname, '/shaders/light.vert'), 'utf-8'),
+  lightTextureFrag: readFileSync(
+    join(__dirname, '/shaders/light_texture.frag'),
+    'utf-8'
+  ),
   phongVert: readFileSync(join(__dirname, '/shaders/phong.vert'), 'utf-8'),
   phongFrag:
     lightingShader +
@@ -142,6 +149,10 @@ const filterShaderVert = readFileSync(join(__dirname, '/shaders/filters/default.
  * (note that p5 clears automatically on draw loop)
  * default is true
  *
+ * perPixelLighting - if true, per-pixel lighting will be used in the
+ * lighting shader otherwise per-vertex lighting is used.
+ * default is true.
+ *
  * version - either 1 or 2, to specify which WebGL version to ask for. By
  * default, WebGL 2 will be requested. If WebGL2 is not available, it will
  * fall back to WebGL 1. You can check what version is used with by looking at
@@ -192,6 +203,61 @@ const filterShaderVert = readFileSync(join(__dirname, '/shaders/filters/default.
  * }
  * </code>
  * </div>
+ *
+ * <div>
+ * <code>
+ * // press the mouse button to disable perPixelLighting
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   noStroke();
+ *   fill(255);
+ * }
+ *
+ * let lights = [
+ *   { c: '#f00', t: 1.12, p: 1.91, r: 0.2 },
+ *   { c: '#0f0', t: 1.21, p: 1.31, r: 0.2 },
+ *   { c: '#00f', t: 1.37, p: 1.57, r: 0.2 },
+ *   { c: '#ff0', t: 1.12, p: 1.91, r: 0.7 },
+ *   { c: '#0ff', t: 1.21, p: 1.31, r: 0.7 },
+ *   { c: '#f0f', t: 1.37, p: 1.57, r: 0.7 }
+ * ];
+ *
+ * function draw() {
+ *   let t = millis() / 1000 + 1000;
+ *   background(0);
+ *   directionalLight(color('#222'), 1, 1, 1);
+ *
+ *   for (let i = 0; i < lights.length; i++) {
+ *     let light = lights[i];
+ *     pointLight(
+ *       color(light.c),
+ *       p5.Vector.fromAngles(t * light.t, t * light.p, width * light.r)
+ *     );
+ *   }
+ *
+ *   specularMaterial(255);
+ *   sphere(width * 0.1);
+ *
+ *   rotateX(t * 0.77);
+ *   rotateY(t * 0.83);
+ *   rotateZ(t * 0.91);
+ *   torus(width * 0.3, width * 0.07, 24, 10);
+ * }
+ *
+ * function mousePressed() {
+ *   setAttributes('perPixelLighting', false);
+ *   noStroke();
+ *   fill(255);
+ * }
+ * function mouseReleased() {
+ *   setAttributes('perPixelLighting', true);
+ *   noStroke();
+ *   fill(255);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt a rotating cube with smoother edges
  */
 /**
  * @method setAttributes
@@ -687,6 +753,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       antialias: applyAA,
       premultipliedAlpha: true,
       preserveDrawingBuffer: true,
+      perPixelLighting: true,
       version: 2
     };
     if (pInst._glAttributes === null) {
@@ -1728,44 +1795,54 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
   _getLightShader() {
     if (!this._defaultLightShader) {
-      this._defaultLightShader = new p5.Shader(
-        this,
-        this._webGL2CompatibilityPrefix('vert', 'highp') +
-        defaultShaders.phongVert,
-        this._webGL2CompatibilityPrefix('frag', 'highp') +
-        defaultShaders.phongFrag,
-        {
-          vertex: {
-            'void beforeMain': '() {}',
-            'vec3 getLocalPosition': '(vec3 position) { return position; }',
-            'vec3 getWorldPosition': '(vec3 position) { return position; }',
-            'vec3 getLocalNormal': '(vec3 normal) { return normal; }',
-            'vec3 getWorldNormal': '(vec3 normal) { return normal; }',
-            'vec2 getUV': '(vec2 uv) { return uv; }',
-            'vec4 getVertexColor': '(vec4 color) { return color; }',
-            'void afterMain': '() {}'
-          },
-          fragment: {
-            'void beforeMain': '() {}',
-            'vec3 getWorldNormal': '(vec3 normal) { return normal; }',
-            'vec4 getBaseColor': '(vec4 color) { return color; }',
-            'vec3 getAmbientMaterial': '(vec3 color) { return color; }',
-            'vec3 getSpecularMaterial': '(vec3 color) { return color; }',
-            'float getShininess': '(float shininess) { return shininess; }',
-            'vec4 combineColors': `(ColorComponents components) {
-              vec4 color = vec4(0.);
-              color.rgb += components.diffuse * components.baseColor;
-              color.rgb += components.ambient * components.ambientColor;
-              color.rgb += components.specular * components.specularColor;
-              color.rgb += components.emissive;
-              color.a = components.opacity;
-              return color;
-            }`,
-            'vec4 getFinalColor': '(vec4 color) { return color; }',
-            'void afterMain': '() {}'
+      if (this._pInst._glAttributes.perPixelLighting) {
+        this._defaultLightShader = new p5.Shader(
+          this,
+          this._webGL2CompatibilityPrefix('vert', 'highp') +
+          defaultShaders.phongVert,
+          this._webGL2CompatibilityPrefix('frag', 'highp') +
+          defaultShaders.phongFrag,
+          {
+            vertex: {
+              'void beforeMain': '() {}',
+              'vec3 getLocalPosition': '(vec3 position) { return position; }',
+              'vec3 getWorldPosition': '(vec3 position) { return position; }',
+              'vec3 getLocalNormal': '(vec3 normal) { return normal; }',
+              'vec3 getWorldNormal': '(vec3 normal) { return normal; }',
+              'vec2 getUV': '(vec2 uv) { return uv; }',
+              'vec4 getVertexColor': '(vec4 color) { return color; }',
+              'void afterMain': '() {}'
+            },
+            fragment: {
+              'void beforeMain': '() {}',
+              'vec3 getWorldNormal': '(vec3 normal) { return normal; }',
+              'vec4 getBaseColor': '(vec4 color) { return color; }',
+              'vec3 getAmbientMaterial': '(vec3 color) { return color; }',
+              'vec3 getSpecularMaterial': '(vec3 color) { return color; }',
+              'float getShininess': '(float shininess) { return shininess; }',
+              'vec4 combineColors': `(ColorComponents components) {
+                vec4 color = vec4(0.);
+                color.rgb += components.diffuse * components.baseColor;
+                color.rgb += components.ambient * components.ambientColor;
+                color.rgb += components.specular * components.specularColor;
+                color.rgb += components.emissive;
+                color.a = components.opacity;
+                return color;
+              }`,
+              'vec4 getFinalColor': '(vec4 color) { return color; }',
+              'void afterMain': '() {}'
+            }
           }
-        }
-      );
+        );
+      } else {
+        this._defaultLightShader = new p5.Shader(
+          this,
+          this._webGL2CompatibilityPrefix('vert', 'highp') +
+          defaultShaders.lightVert,
+          this._webGL2CompatibilityPrefix('frag', 'highp') +
+          defaultShaders.lightTextureFrag
+        );
+      }
     }
 
     return this._defaultLightShader;
