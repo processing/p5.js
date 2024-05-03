@@ -119,6 +119,25 @@ suite('p5.Image', function() {
       }
     });
 
+    test('it should mask images from createGraphics', function() {
+      myp5.createCanvas(10,10);
+      myp5.pixelDensity(2);
+      let img = myp5.createGraphics(10,10);
+      img.rect(0,0,10,10);
+      img.background(0);
+      let mask = createGraphics(10,10);
+      mask.rect(0,0,5,5);
+      let masked = img.get();
+      masked.mask( mask.get() );
+
+      for (let i = 0; i < masked.width; i++) {
+        for (let j = 0; j < masked.height; j++) {
+          let alpha = i < 5 && j < 5 ? 255 : 0;
+          assert.strictEqual(masked.get(i, j)[3], alpha);
+        }
+      }
+    });
+
     test('it should mask the animated gif image', function() {
       const imagePath = 'unit/assets/nyan_cat.gif';
       return new Promise(function(resolve, reject) {
