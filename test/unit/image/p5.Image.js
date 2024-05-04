@@ -123,12 +123,13 @@ suite('p5.Image', function() {
       myp5.createCanvas(10,10);
       myp5.pixelDensity(2);
       let img = myp5.createGraphics(10,10);
+      img.noStroke();
       img.rect(0,0,10,10);
-      img.background(0);
-      let mask = createGraphics(10,10);
+      let mask = myp5.createGraphics(10,10);
+      mask.noStroke();
       mask.rect(0,0,5,5);
       let masked = img.get();
-      masked.mask( mask.get() );
+      masked.mask(mask.get());
 
       for (let i = 0; i < masked.width; i++) {
         for (let j = 0; j < masked.height; j++) {
