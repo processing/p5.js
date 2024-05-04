@@ -1,4 +1,5 @@
 import p5 from '../../../src/app.js';
+import { testSketchWithPromise } from '../../js/p5_helpers';
 
 suite('DOM', function() {
   suite('p5.prototype.select', function() {
@@ -25,7 +26,7 @@ suite('DOM', function() {
       if (myp5Container && myp5Container.parentNode) {
         myp5Container.parentNode.removeChild(myp5Container);
       }
-      p5Container = null;
+      myp5Container = null;
     });
 
     test('should return only one p5.element if match is found', function() {
@@ -140,22 +141,24 @@ suite('DOM', function() {
     let myp5Container;
 
     beforeEach(function() {
-      myp5Container = document.createElement('div');
-      document.body.appendChild(myp5Container);
-      new p5(function(p) {
-        p.setup = function() {
-          myp5 = p;
-          let mydiv = document.createElement('div');
-          mydiv.setAttribute('id', 'main');
-          let childbutton = document.createElement('button');
-          childbutton.setAttribute('class', 'p5button');
-          mydiv.append(childbutton);
-          let otherbutton = document.createElement('button');
-          otherbutton.setAttribute('class', 'p5button');
-          myp5Container.append(mydiv, otherbutton);
-          done();
-        };
-      }, myp5Container);
+      return new Promise(resolve => {
+        myp5Container = document.createElement('div');
+        document.body.appendChild(myp5Container);
+        new p5(function(p) {
+          p.setup = function() {
+            myp5 = p;
+            let mydiv = document.createElement('div');
+            mydiv.setAttribute('id', 'main');
+            let childbutton = document.createElement('button');
+            childbutton.setAttribute('class', 'p5button');
+            mydiv.append(childbutton);
+            let otherbutton = document.createElement('button');
+            otherbutton.setAttribute('class', 'p5button');
+            myp5Container.append(mydiv, otherbutton);
+            resolve();
+          };
+        }, myp5Container);
+      });
     });
 
     afterEach(function() {
@@ -743,7 +746,7 @@ suite('DOM', function() {
     });
 
     test('should return p5.Element when select element is passed', function() {
-      selectElement = createHTMLSelect(['option1', 'option2']);
+      const selectElement = createHTMLSelect(['option1', 'option2']);
       testElement = myp5.createSelect(selectElement);
       assert.deepEqual(testElement.elt, selectElement);
     });
@@ -784,7 +787,7 @@ suite('DOM', function() {
 
     test('calling selected() should return all selected options', function() {
       testElement = myp5.createSelect(true);
-      options = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+      const options = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
       for (const optionName of options) testElement.option(optionName);
 
       // Select multiple options
@@ -809,7 +812,7 @@ suite('DOM', function() {
 
     test('calling selected(value) should updated selectedIndex', function() {
       testElement = myp5.createSelect(true);
-      options = ['Sunday', 'Monday', 'Tuesday', 'Friday'];
+      const options = ['Sunday', 'Monday', 'Tuesday', 'Friday'];
       for (const optionName of options) testElement.option(optionName);
 
       // Select multiple options and check if the values get updated
@@ -830,7 +833,7 @@ suite('DOM', function() {
 
     test('should disable an option when disable() method invoked with option name', function() {
       testElement = myp5.createSelect(true);
-      options = ['Sunday', 'Monday', 'Tuesday', 'Friday'];
+      const options = ['Sunday', 'Monday', 'Tuesday', 'Friday'];
       for (const optionName of options) testElement.option(optionName);
 
       const disabledIndex = 2;
