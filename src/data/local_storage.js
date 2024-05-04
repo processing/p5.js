@@ -194,8 +194,13 @@ p5.prototype.getItem = function(key) {
  * }
  * </code></div>
  */
-p5.prototype.clearStorage = function() {
-  localStorage.clear();
+p5.prototype.clearStorage = function () {
+  const keys = Object.keys(localStorage);
+  keys.forEach(key => {
+    if (key.endsWith('p5TypeID')) {
+      this.removeItem(key.replace('p5TypeID', ''));
+    }
+  });
 };
 
 /**
