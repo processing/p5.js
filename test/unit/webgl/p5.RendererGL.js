@@ -1261,6 +1261,30 @@ suite('p5.RendererGL', function() {
       assert.deepEqual(myp5.get(16, 16), [255, 0, 255, 255]);
       done();
     });
+
+    test('transparency works the same with per-vertex colors', function() {
+      myp5.createCanvas(20, 20, myp5.WEBGL);
+      myp5.noStroke();
+
+      function drawShapes() {
+        myp5.fill(255, 0, 0, 100);
+        myp5.rect(-10, -10, 15, 15);
+        myp5.fill(0, 0, 255, 100);
+        myp5.rect(-5, -5, 15, 15);
+      }
+
+      drawShapes();
+      myp5.loadPixels();
+      const eachShapeResult = [...myp5.pixels];
+
+      myp5.clear();
+      const shapes = myp5.buildGeometry(drawShapes);
+      myp5.model(shapes);
+      myp5.loadPixels();
+      const singleShapeResult = [...myp5.pixels];
+
+      assert.deepEqual(eachShapeResult, singleShapeResult);
+    });
   });
 
   suite('BufferDef', function() {
@@ -2439,6 +2463,43 @@ suite('p5.RendererGL', function() {
             [255, 0, 0, 255]
           );
         }
+      }
+    );
+
+    test(
+      'Main canvas masks do not apply to framebuffers',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const fbo = myp5.createFramebuffer({ antialias: false });
+        myp5.rectMode(myp5.CENTER);
+        myp5.background('red');
+        expect(myp5._renderer._stencilTestOn).to.equal(false);
+        myp5.push();
+        myp5.beginClip();
+        myp5.rect(-20, -20, 40, 40);
+        myp5.endClip();
+        expect(myp5._renderer._stencilTestOn).to.equal(true);
+
+        fbo.begin();
+        expect(myp5._renderer._stencilTestOn).to.equal(false);
+        myp5.noStroke();
+        myp5.fill('blue');
+        myp5.rect(0, 0, myp5.width, myp5.height);
+        fbo.end();
+
+        expect(myp5._renderer._stencilTestOn).to.equal(true);
+        myp5.pop();
+        expect(myp5._renderer._stencilTestOn).to.equal(false);
+
+        myp5.imageMode(myp5.CENTER);
+        myp5.image(fbo, 0, 0);
+
+        // In the middle of the canvas, the framebuffer's clip and the
+        // main canvas's clip intersect, so the blue should show through
+        assert.deepEqual(
+          myp5.get(myp5.width / 2, myp5.height / 2),
+          [0, 0, 255, 255]
+        );
       }
     );
   });

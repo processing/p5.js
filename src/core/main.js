@@ -167,6 +167,7 @@ class p5 {
     this._preloadDone = false;
     // for handling hidpi
     this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
+    this._maxAllowedPixelDimensions = 0;
     this._userNode = node;
     this._curElement = null;
     this._elements = [];
@@ -203,6 +204,8 @@ class p5 {
     };
     this._millisStart = -1;
     this._recording = false;
+    this.touchstart = false;
+    this.touchend = false;
 
     // States used in the custom random generators
     this._lcg_random_state = null;

@@ -8,12 +8,11 @@
 import p5 from '../core/main';
 
 /**
- * Creates a screen reader-accessible description for shapes on the canvas.
- * `textOutput()` adds a general description, list of shapes, and
- * table of shapes to the web page.
+ * Creates a screen reader-accessible description of shapes on the canvas.
  *
- * The general description includes the canvas size, canvas color, and number
- * of shapes. For example,
+ * `textOutput()` adds a general description, list of shapes, and
+ * table of shapes to the web page. The general description includes the
+ * canvas size, canvas color, and number of shapes. For example,
  * `Your output is a, 100 by 100 pixels, gray canvas containing the following 2 shapes:`.
  *
  * A list of shapes follows the general description. The list describes the
@@ -35,8 +34,8 @@ import p5 from '../core/main';
  * mode.
  *
  * Read
- * <a href="/learn/labeling-canvases.html">How to label your p5.js code</a> to
- * learn more about making sketches accessible.
+ * <a href="/learn/accessible-labels.html">Writing accessible canvas descriptions</a>
+ * to learn more about making sketches accessible.
  *
  * @method textOutput
  * @param  {Constant} [display] either FALLBACK or LABEL.
@@ -143,12 +142,11 @@ p5.prototype.textOutput = function(display) {
 };
 
 /**
- * Creates a screen reader-accessible description for shapes on the canvas.
- * `gridOutput()` adds a general description, table of shapes, and list of
- * shapes to the web page.
+ * Creates a screen reader-accessible description of shapes on the canvas.
  *
- * The general description includes the canvas size, canvas color, and number of
- * shapes. For example,
+ * `gridOutput()` adds a general description, table of shapes, and list of
+ * shapes to the web page. The general description includes the canvas size,
+ * canvas color, and number of shapes. For example,
  * `gray canvas, 100 by 100 pixels, contains 2 shapes:  1 circle 1 square`.
  *
  * `gridOutput()` uses its table of shapes as a grid. Each shape in the grid
@@ -171,8 +169,8 @@ p5.prototype.textOutput = function(display) {
  * mode.
  *
  * Read
- * <a href="/learn/labeling-canvases.html">How to label your p5.js code</a> to
- * learn more about making sketches accessible.
+ * <a href="/learn/accessible-labels.html">Writing accessible canvas descriptions</a>
+ * to learn more about making sketches accessible.
  *
  * @method gridOutput
  * @param  {Constant} [display] either FALLBACK or LABEL.

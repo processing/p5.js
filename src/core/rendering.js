@@ -153,6 +153,11 @@ p5.prototype.createCanvas = function(w, h, renderer, canvas) {
   // if (r === constants.WEBGL) {
   //   this._setProperty('_renderer', new p5.RendererGL(c, this, true));
   //   this._elements.push(this._renderer);
+  //   NOTE: these needs to be taken cared of below
+  //     const dimensions =
+  //       this._renderer._adjustDimensions(w, h);
+  //     w = dimensions.adjustedWidth;
+  //     h = dimensions.adjustedHeight;
   // } else {
   //   //P2D mode
   //   if (!this._defaultGraphicsCreated) {
@@ -205,6 +210,12 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
       if (typeof val !== 'object' && typeof val !== 'function') {
         props[key] = val;
       }
+    }
+    if (this._renderer instanceof p5.RendererGL) {
+      const dimensions =
+        this._renderer._adjustDimensions(w, h);
+      w = dimensions.adjustedWidth;
+      h = dimensions.adjustedHeight;
     }
     this.width = w;
     this.height = h;

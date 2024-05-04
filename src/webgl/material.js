@@ -10,66 +10,124 @@ import * as constants from '../core/constants';
 import './p5.Texture';
 
 /**
- * Creates a new <a href="#/p5.Shader">p5.Shader</a> object
- * from the provided vertex and fragment shader files.
+ * Loads vertex and fragment shaders to create a
+ * <a href="#/p5.Shader">p5.Shader</a> object.
  *
- * The shader files are loaded asynchronously in the
- * background, so this method should be used in <a href="#/p5/preload">preload()</a>.
+ * Shaders are programs that run on the graphics processing unit (GPU). They
+ * can process many pixels at the same time, making them fast for many
+ * graphics tasks. They’re written in a language called
+ * <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>
+ * and run along with the rest of the code in a sketch.
  *
- * Shaders can alter the positioning of shapes drawn with them.
- * To ensure consistency in rendering, it's recommended to use the vertex shader in the <a href="#/p5/createShader">createShader example</a>.
+ * Once the <a href="#/p5.Shader">p5.Shader</a> object is created, it can be
+ * used with the <a href="#/p5/shader">shader()</a> function, as in
+ * `shader(myShader)`. A shader program consists of two files, a vertex shader
+ * and a fragment shader. The vertex shader affects where 3D geometry is drawn
+ * on the screen and the fragment shader affects color.
  *
- * Note, shaders can only be used in WEBGL mode.
+ * `loadShader()` loads the vertex and fragment shaders from their `.vert` and
+ * `.frag` files. For example, calling
+ * `loadShader('assets/shader.vert', 'assets/shader.frag')` loads both
+ * required shaders and returns a <a href="#/p5.Shader">p5.Shader</a> object.
+ *
+ * The third parameter, `successCallback`, is optional. If a function is
+ * passed, it will be called once the shader has loaded. The callback function
+ * can use the new <a href="#/p5.Shader">p5.Shader</a> object as its
+ * parameter.
+ *
+ * The fourth parameter, `failureCallback`, is also optional. If a function is
+ * passed, it will be called if the shader fails to load. The callback
+ * function can use the event error as its parameter.
+ *
+ * Shaders can take time to load. Calling `loadShader()` in
+ * <a href="#/p5/preload">preload()</a> ensures shaders load before they're
+ * used in <a href="#/p5/setup">setup()</a> or <a href="#/p5/draw">draw()</a>.
+ *
+ * Note: Shaders can only be used in WebGL mode.
  *
  * @method loadShader
- * @param {String} vertFilename path to file containing vertex shader
- * source code
- * @param {String} fragFilename path to file containing fragment shader
- * source code
- * @param {function} [callback] callback to be executed after loadShader
- * completes. On success, the p5.Shader object is passed as the first argument.
- * @param {function} [errorCallback] callback to be executed when an error
- * occurs inside loadShader. On error, the error is passed as the first
- * argument.
- * @return {p5.Shader} a shader object created from the provided
- * vertex and fragment shader files.
+ * @param {String} vertFilename path of the vertex shader to be loaded.
+ * @param {String} fragFilename path of the fragment shader to be loaded.
+ * @param {function} [successCallback] function to call once the shader is loaded. Can be passed the
+ *                                     <a href="#/p5.Shader">p5.Shader</a> object.
+ * @param {function} [failureCallback] function to call if the shader fails to load. Can be passed an
+ *                                     `Error` event object.
+ * @return {p5.Shader} new shader created from the vertex and fragment shader files.
  *
  * @example
  * <div modernizr='webgl'>
  * <code>
- * let mandel;
+ * // Note: A "uniform" is a global variable within a shader program.
+ *
+ * let mandelbrot;
+ *
+ * // Load the shader and create a p5.Shader object.
  * function preload() {
- *   // load the shader definitions from files
- *   mandel = loadShader('assets/shader.vert', 'assets/shader.frag');
- * }
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *   // use the shader
- *   shader(mandel);
- *   noStroke();
- *   mandel.setUniform('p', [-0.74364388703, 0.13182590421]);
- *   describe('zooming Mandelbrot set. a colorful, infinitely detailed fractal.');
+ *   mandelbrot = loadShader('assets/shader.vert', 'assets/shader.frag');
  * }
  *
- * function draw() {
- *   mandel.setUniform('r', 1.5 * exp(-6.5 * (1 + sin(millis() / 2000))));
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Compile and apply the p5.Shader object.
+ *   shader(mandelbrot);
+ *
+ *   // Set the shader uniform p to an array.
+ *   mandelbrot.setUniform('p', [-0.74364388703, 0.13182590421]);
+ *
+ *   // Set the shader uniform r to the value 1.5.
+ *   mandelbrot.setUniform('r', 1.5);
+ *
+ *   // Add a quad as a display surface for the shader.
  *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
+ *
+ *   describe('A black fractal image on a magenta background.');
  * }
  * </code>
  * </div>
  *
- * @alt
- * zooming Mandelbrot set. a colorful, infinitely detailed fractal.
+ * <div>
+ * <code>
+ * // Note: A "uniform" is a global variable within a shader program.
+ *
+ * let mandelbrot;
+ *
+ * // Load the shader and create a p5.Shader object.
+ * function preload() {
+ *   mandelbrot = loadShader('assets/shader.vert', 'assets/shader.frag');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Use the p5.Shader object.
+ *   shader(mandelbrot);
+ *
+ *   // Set the shader uniform p to an array.
+ *   mandelbrot.setUniform('p', [-0.74364388703, 0.13182590421]);
+ *
+ *   describe('A fractal image zooms in and out of focus.');
+ * }
+ *
+ * function draw() {
+ *   // Set the shader uniform r to a value that oscillates between 0 and 2.
+ *   mandelbrot.setUniform('r', sin(frameCount * 0.01) + 1);
+ *
+ *   // Add a quad as a display surface for the shader.
+ *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.loadShader = function (
   vertFilename,
   fragFilename,
-  callback,
-  errorCallback
+  successCallback,
+  failureCallback
 ) {
   p5._validateParameters('loadShader', arguments);
-  if (!errorCallback) {
-    errorCallback = console.error;
+  if (!failureCallback) {
+    failureCallback = console.error;
   }
 
   const loadedShader = new p5.Shader();
@@ -80,8 +138,8 @@ p5.prototype.loadShader = function (
 
   const onLoad = () => {
     self._decrementPreload();
-    if (callback) {
-      callback(loadedShader);
+    if (successCallback) {
+      successCallback(loadedShader);
     }
   };
 
@@ -94,7 +152,7 @@ p5.prototype.loadShader = function (
         onLoad();
       }
     },
-    errorCallback
+    failureCallback
   );
 
   this.loadStrings(
@@ -106,33 +164,182 @@ p5.prototype.loadShader = function (
         onLoad();
       }
     },
-    errorCallback
+    failureCallback
   );
 
   return loadedShader;
 };
 
 /**
- * Creates a new <a href="#/p5.Shader">p5.Shader</a> object
- * from the provided vertex and fragment shader code.
+ * Creates a new <a href="#/p5.Shader">p5.Shader</a> object.
  *
- * Note, shaders can only be used in WEBGL mode.
+ * Shaders are programs that run on the graphics processing unit (GPU). They
+ * can process many pixels at the same time, making them fast for many
+ * graphics tasks. They’re written in a language called
+ * <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>
+ * and run along with the rest of the code in a sketch.
  *
- * Shaders can alter the positioning of shapes drawn with them.
- * To ensure consistency in rendering, it's recommended to use the vertex shader shown in the example below.
+ * Once the <a href="#/p5.Shader">p5.Shader</a> object is created, it can be
+ * used with the <a href="#/p5/shader">shader()</a> function, as in
+ * `shader(myShader)`. A shader program consists of two parts, a vertex shader
+ * and a fragment shader. The vertex shader affects where 3D geometry is drawn
+ * on the screen and the fragment shader affects color.
+ *
+ * The first parameter, `vertSrc`, sets the vertex shader. It’s a string that
+ * contains the vertex shader program written in GLSL.
+ *
+ * The second parameter, `fragSrc`, sets the fragment shader. It’s a string
+ * that contains the fragment shader program written in GLSL.
+ *
+ * Note: Only filter shaders can be used in 2D mode. All shaders can be used
+ * in WebGL mode.
  *
  * @method createShader
- * @param {String} vertSrc source code for the vertex shader
- * @param {String} fragSrc source code for the fragment shader
- * @returns {p5.Shader} a shader object created from the provided
+ * @param {String} vertSrc source code for the vertex shader.
+ * @param {String} fragSrc source code for the fragment shader.
+ * @returns {p5.Shader} new shader object created from the
  * vertex and fragment shaders.
  *
  * @example
  * <div modernizr='webgl'>
  * <code>
+ * // Note: A "uniform" is a global variable within a shader program.
  *
- * // the vertex shader is called for each vertex
- * let vs = `
+ * // Create a string with the vertex shader program.
+ * // The vertex shader is called for each vertex.
+ * let vertSrc = `
+ * precision highp float;
+ * uniform mat4 uModelViewMatrix;
+ * uniform mat4 uProjectionMatrix;
+ * attribute vec3 aPosition;
+ * attribute vec2 aTexCoord;
+ * varying vec2 vTexCoord;
+ *
+ * void main() {
+ *   vTexCoord = aTexCoord;
+ *   vec4 positionVec4 = vec4(aPosition, 1.0);
+ *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+ * }
+ * `;
+ *
+ * // Create a string with the fragment shader program.
+ * // The fragment shader is called for each pixel.
+ * let fragSrc = `
+ * precision highp float;
+ *
+ * void main() {
+ *   // Set each pixel's RGBA value to yellow.
+ *   gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+ * }
+ * `;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a p5.Shader object.
+ *   let shaderProgram = createShader(vertSrc, fragSrc);
+ *
+ *   // Compile and apply the p5.Shader object.
+ *   shader(shaderProgram);
+ *
+ *   // Style the drawing surface.
+ *   noStroke();
+ *
+ *   // Add a plane as a drawing surface.
+ *   plane(100, 100);
+ *
+ *   describe('A yellow square.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Note: A "uniform" is a global variable within a shader program.
+ *
+ * // Create a string with the vertex shader program.
+ * // The vertex shader is called for each vertex.
+ * let vertSrc = `
+ * precision highp float;
+ * uniform mat4 uModelViewMatrix;
+ * uniform mat4 uProjectionMatrix;
+ * attribute vec3 aPosition;
+ * attribute vec2 aTexCoord;
+ * varying vec2 vTexCoord;
+ *
+ * void main() {
+ *   vTexCoord = aTexCoord;
+ *   vec4 positionVec4 = vec4(aPosition, 1.0);
+ *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+ * }
+ * `;
+ *
+ * // Create a string with the fragment shader program.
+ * // The fragment shader is called for each pixel.
+ * let fragSrc = `
+ * precision highp float;
+ * uniform vec2 p;
+ * uniform float r;
+ * const int numIterations = 500;
+ * varying vec2 vTexCoord;
+ *
+ * void main() {
+ *   vec2 c = p + gl_FragCoord.xy * r;
+ *   vec2 z = c;
+ *   float n = 0.0;
+ *
+ *   for (int i = numIterations; i > 0; i--) {
+ *     if (z.x * z.x + z.y * z.y > 4.0) {
+ *       n = float(i) / float(numIterations);
+ *       break;
+ *     }
+ *     z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
+ *   }
+ *
+ *   gl_FragColor = vec4(
+ *     0.5 - cos(n * 17.0) / 2.0,
+ *     0.5 - cos(n * 13.0) / 2.0,
+ *     0.5 - cos(n * 23.0) / 2.0,
+ *     1.0
+ *   );
+ * }
+ * `;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a p5.Shader object.
+ *   let mandelbrot = createShader(vertSrc, fragSrc);
+ *
+ *   // Compile and apply the p5.Shader object.
+ *   shader(mandelbrot);
+ *
+ *   // Set the shader uniform p to an array.
+ *   // p is the center point of the Mandelbrot image.
+ *   mandelbrot.setUniform('p', [-0.74364388703, 0.13182590421]);
+ *
+ *   // Set the shader uniform r to 0.005.
+ *   // r is the size of the image in Mandelbrot-space.
+ *   mandelbrot.setUniform('r', 0.005);
+ *
+ *   // Style the drawing surface.
+ *   noStroke();
+ *
+ *   // Add a plane as a drawing surface.
+ *   plane(100, 100);
+ *
+ *   describe('A black fractal image on a magenta background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Note: A "uniform" is a global variable within a shader program.
+ *
+ * // Create a string with the vertex shader program.
+ * // The vertex shader is called for each vertex.
+ * let vertSrc = `
  * precision highp float;
  * uniform mat4 uModelViewMatrix;
  * uniform mat4 uProjectionMatrix;
@@ -145,54 +352,74 @@ p5.prototype.loadShader = function (
  *   vTexCoord = aTexCoord;
  *   vec4 positionVec4 = vec4(aPosition, 1.0);
  *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
- *  }
+ * }
  * `;
  *
+ * // Create a string with the fragment shader program.
+ * // The fragment shader is called for each pixel.
+ * let fragSrc = `
+ * precision highp float;
+ * uniform vec2 p;
+ * uniform float r;
+ * const int numIterations = 500;
+ * varying vec2 vTexCoord;
  *
- * // the fragment shader is called for each pixel
- * let fs = `
- *    precision highp float;
- *    uniform vec2 p;
- *    uniform float r;
- *    const int I = 500;
- *    varying vec2 vTexCoord;
- *    void main() {
- *      vec2 c = p + gl_FragCoord.xy * r, z = c;
- *      float n = 0.0;
- *      for (int i = I; i > 0; i --) {
- *        if(z.x*z.x+z.y*z.y > 4.0) {
- *          n = float(i)/float(I);
- *          break;
- *        }
- *        z = vec2(z.x*z.x-z.y*z.y, 2.0*z.x*z.y) + c;
- *      }
- *      gl_FragColor = vec4(0.5-cos(n*17.0)/2.0,0.5-cos(n*13.0)/2.0,0.5-cos(n*23.0)/2.0,1.0);
- *    }`;
+ * void main() {
+ *   vec2 c = p + gl_FragCoord.xy * r;
+ *   vec2 z = c;
+ *   float n = 0.0;
  *
- * let mandel;
+ *   for (int i = numIterations; i > 0; i--) {
+ *     if (z.x * z.x + z.y * z.y > 4.0) {
+ *       n = float(i) / float(numIterations);
+ *       break;
+ *     }
+ *
+ *     z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
+ *   }
+ *
+ *   gl_FragColor = vec4(
+ *     0.5 - cos(n * 17.0) / 2.0,
+ *     0.5 - cos(n * 13.0) / 2.0,
+ *     0.5 - cos(n * 23.0) / 2.0,
+ *     1.0
+ *   );
+ * }
+ * `;
+ *
+ * let mandelbrot;
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *
- *   // create and initialize the shader
- *   mandel = createShader(vs, fs);
- *   shader(mandel);
- *   noStroke();
+ *   // Create a p5.Shader object.
+ *   mandelbrot = createShader(vertSrc, fragSrc);
  *
- *   // 'p' is the center point of the Mandelbrot image
- *   mandel.setUniform('p', [-0.74364388703, 0.13182590421]);
- *   describe('zooming Mandelbrot set. a colorful, infinitely detailed fractal.');
+ *   // Apply the p5.Shader object.
+ *   shader(mandelbrot);
+ *
+ *   // Set the shader uniform p to an array.
+ *   // p is the center point of the Mandelbrot image.
+ *   mandelbrot.setUniform('p', [-0.74364388703, 0.13182590421]);
+ *
+ *   describe('A fractal image zooms in and out of focus.');
  * }
  *
  * function draw() {
- *   // 'r' is the size of the image in Mandelbrot-space
- *   mandel.setUniform('r', 1.5 * exp(-6.5 * (1 + sin(millis() / 2000))));
- *   plane(width, height);
+ *   // Set the shader uniform r to a value that oscillates
+ *   // between 0 and 0.005.
+ *   // r is the size of the image in Mandelbrot-space.
+ *   let radius = 0.005 * (sin(frameCount * 0.01) + 1);
+ *   mandelbrot.setUniform('r', radius);
+ *
+ *   // Style the drawing surface.
+ *   noStroke();
+ *
+ *   // Add a plane as a drawing surface.
+ *   plane(100, 100);
  * }
  * </code>
  * </div>
- *
- * @alt
- * zooming Mandelbrot set. a colorful, infinitely detailed fractal.
  */
 p5.prototype.createShader = function (vertSrc, fragSrc) {
   p5._validateParameters('createShader', arguments);
@@ -200,24 +427,37 @@ p5.prototype.createShader = function (vertSrc, fragSrc) {
 };
 
 /**
- * Creates a new <a href="#/p5.Shader">p5.Shader</a> using only a fragment shader, as a convenience method for creating image effects.
- * It's like <a href="#/createShader">createShader()</a> but with a default vertex shader included.
+ * Creates a <a href="#/p5.Shader">p5.Shader</a> object to be used with the
+ * <a href="#/p5/filter">filter()</a> function.
  *
- * <a href="#/createFilterShader">createFilterShader()</a> is intended to be used along with <a href="#/filter">filter()</a> for filtering the contents of a canvas.
- * A filter shader will not be applied to any geometries.
+ * `createFilterShader()` works like
+ * <a href="#/p5/createShader">createShader()</a> but has a default vertex
+ * shader included. `createFilterShader()` is intended to be used along with
+ * <a href="#/p5/filter">filter()</a> for filtering the contents of a canvas.
+ * A filter shader will be applied to the whole canvas instead of just
+ * <a href="#/p5.Geometry">p5.Geometry</a> objects.
  *
- * The fragment shader receives some uniforms:
- * - `sampler2D tex0`, which contains the canvas contents as a texture
- * - `vec2 canvasSize`, which is the p5 width and height of the canvas (not including pixel density)
- * - `vec2 texelSize`, which is the size of a physical pixel including pixel density (`1.0/(width*density)`, `1.0/(height*density)`)
+ * The parameter, `fragSrc`, sets the fragment shader. It’s a string that
+ * contains the fragment shader program written in
+ * <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>.
+ *
+ * The <a href="#/p5.Shader">p5.Shader</a> object that's created has some
+ * uniforms that can be set:
+ * - `sampler2D tex0`, which contains the canvas contents as a texture.
+ * - `vec2 canvasSize`, which is the width and height of the canvas, not including pixel density.
+ * - `vec2 texelSize`, which is the size of a physical pixel including pixel density. This is calculated as `1.0 / (width * density)` for the pixel width and `1.0 / (height * density)` for the pixel height.
+ *
+ * The <a href="#/p5.Shader">p5.Shader</a> that's created also provides
+ * `varying vec2 vTexCoord`, a coordinate with values between 0 and 1.
+ * `vTexCoord` describes where on the canvas the pixel will be drawn.
  *
  * For more info about filters and shaders, see Adam Ferriss' <a href="https://github.com/aferriss/p5jsShaderExamples">repo of shader examples</a>
- * or the <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">introduction to shaders</a> page.
+ * or the <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">Introduction to Shaders</a> tutorial.
  *
  * @method createFilterShader
- * @param {String} fragSrc source code for the fragment shader
- * @returns {p5.Shader} a shader object created from the provided
- *                      fragment shader.
+ * @param {String} fragSrc source code for the fragment shader.
+ * @returns {p5.Shader} new shader object created from the fragment shader.
+ *
  * @example
  * <div modernizr='webgl'>
  * <code>
@@ -329,50 +569,138 @@ p5.prototype.createFilterShader = function (fragSrc) {
 };
 
 /**
- * Sets the <a href="#/p5.Shader">p5.Shader</a> object to
- * be used to render subsequent shapes.
+ * Sets the <a href="#/p5.Shader">p5.Shader</a> object to apply while drawing.
  *
- * Shaders can alter the positioning of shapes drawn with them.
- * To ensure consistency in rendering, it's recommended to use the vertex shader in the <a href="#/p5/createShader">createShader example</a>.
- *
- * Custom shaders can be created using the
+ * Shaders are programs that run on the graphics processing unit (GPU). They
+ * can process many pixels or vertices at the same time, making them fast for
+ * many graphics tasks. They’re written in a language called
+ * <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>
+ * and run along with the rest of the code in a sketch.
+ * <a href="#/p5.Shader">p5.Shader</a> objects can be created using the
  * <a href="#/p5/createShader">createShader()</a> and
  * <a href="#/p5/loadShader">loadShader()</a> functions.
  *
- * Use <a href="#/p5/resetShader">resetShader()</a> to
- * restore the default shaders.
- *
- * Additional Information:
- * The shader will be used for:
+ * The parameter, `s`, is the <a href="#/p5.Shader">p5.Shader</a> object to
+ * apply. For example, calling `shader(myShader)` applies `myShader` to
+ * process each pixel on the canvas. The shader will be used for:
  * - Fills when a texture is enabled if it includes a uniform `sampler2D`.
  * - Fills when lights are enabled if it includes the attribute `aNormal`, or if it has any of the following uniforms: `uUseLighting`, `uAmbientLightCount`, `uDirectionalLightCount`, `uPointLightCount`, `uAmbientColor`, `uDirectionalDiffuseColors`, `uDirectionalSpecularColors`, `uPointLightLocation`, `uPointLightDiffuseColors`, `uPointLightSpecularColors`, `uLightingDirection`, or `uSpecular`.
  * - Fills whenever there are no lights or textures.
  * - Strokes if it includes the uniform `uStrokeWeight`.
- * Note: This behavior is considered experimental, and changes are planned in future releases.
  *
- * Note, shaders can only be used in WEBGL mode.
+ * The source code from a <a href="#/p5.Shader">p5.Shader</a> object's
+ * fragment and vertex shaders will be compiled the first time it's passed to
+ * `shader()`. See
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/compileShader" target="_blank">MDN</a>
+ * for more information about compiling shaders.
+ *
+ * Calling <a href="#/p5/resetShader">resetShader()</a> restores a sketch’s
+ * default shaders.
+ *
+ * Note: Shaders can only be used in WebGL mode.
  *
  * @method shader
  * @chainable
- * @param {p5.Shader} s the <a href="#/p5.Shader">p5.Shader</a> object
- * to use for rendering shapes.
+ * @param {p5.Shader} s <a href="#/p5.Shader">p5.Shader</a> object
+ *                      to apply.
  *
  * @example
  * <div modernizr='webgl'>
  * <code>
- * // Click within the image to toggle
- * // the shader used by the quad shape
- * // Note: for an alternative approach to the same example,
- * // involving changing uniforms please refer to:
- * // https://p5js.org/reference/#/p5.Shader/setUniform
+ * // Note: A "uniform" is a global variable within a shader program.
+ *
+ * // Create a string with the vertex shader program.
+ * // The vertex shader is called for each vertex.
+ * let vertSrc = `
+ * precision highp float;
+ * uniform mat4 uModelViewMatrix;
+ * uniform mat4 uProjectionMatrix;
+ *
+ * attribute vec3 aPosition;
+ * attribute vec2 aTexCoord;
+ * varying vec2 vTexCoord;
+ *
+ * void main() {
+ *   vTexCoord = aTexCoord;
+ *   vec4 positionVec4 = vec4(aPosition, 1.0);
+ *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+ * }
+ * `;
+ *
+ * // Create a string with the fragment shader program.
+ * // The fragment shader is called for each pixel.
+ * let fragSrc = `
+ * precision highp float;
+ *
+ * void main() {
+ *   // Set each pixel's RGBA value to yellow.
+ *   gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+ * }
+ * `;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a p5.Shader object.
+ *   let shaderProgram = createShader(vertSrc, fragSrc);
+ *
+ *   // Apply the p5.Shader object.
+ *   shader(shaderProgram);
+ *
+ *   // Style the drawing surface.
+ *   noStroke();
+ *
+ *   // Add a plane as a drawing surface.
+ *   plane(100, 100);
+ *
+ *   describe('A yellow square.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Note: A "uniform" is a global variable within a shader program.
+ *
+ * let mandelbrot;
+ *
+ * // Load the shader and create a p5.Shader object.
+ * function preload() {
+ *   mandelbrot = loadShader('assets/shader.vert', 'assets/shader.frag');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Use the p5.Shader object.
+ *   shader(mandelbrot);
+ *
+ *   // Set the shader uniform p to an array.
+ *   mandelbrot.setUniform('p', [-0.74364388703, 0.13182590421]);
+ *
+ *   describe('A fractal image zooms in and out of focus.');
+ * }
+ *
+ * function draw() {
+ *   // Set the shader uniform r to a value that oscillates between 0 and 2.
+ *   mandelbrot.setUniform('r', sin(frameCount * 0.01) + 1);
+ *
+ *   // Add a quad as a display surface for the shader.
+ *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Note: A "uniform" is a global variable within a shader program.
  *
  * let redGreen;
  * let orangeBlue;
  * let showRedGreen = false;
  *
+ * // Load the shader and create two separate p5.Shader objects.
  * function preload() {
- *   // note that we are using two instances
- *   // of the same vertex and fragment shaders
  *   redGreen = loadShader('assets/shader.vert', 'assets/shader-gradient.frag');
  *   orangeBlue = loadShader('assets/shader.vert', 'assets/shader-gradient.frag');
  * }
@@ -380,46 +708,51 @@ p5.prototype.createFilterShader = function (fragSrc) {
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *
- *   // initialize the colors for redGreen shader
+ *   // Initialize the redGreen shader.
  *   shader(redGreen);
+ *
+ *   // Set the redGreen shader's center and background color.
  *   redGreen.setUniform('colorCenter', [1.0, 0.0, 0.0]);
  *   redGreen.setUniform('colorBackground', [0.0, 1.0, 0.0]);
  *
- *   // initialize the colors for orangeBlue shader
+ *   // Initialize the orangeBlue shader.
  *   shader(orangeBlue);
+ *
+ *   // Set the orangeBlue shader's center and background color.
  *   orangeBlue.setUniform('colorCenter', [1.0, 0.5, 0.0]);
  *   orangeBlue.setUniform('colorBackground', [0.226, 0.0, 0.615]);
  *
- *   noStroke();
- *
  *   describe(
- *     'canvas toggles between a circular gradient of orange and blue vertically. and a circular gradient of red and green moving horizontally when mouse is clicked/pressed.'
+ *     'The scene toggles between two circular gradients when the user double-clicks. An orange and blue gradient vertically, and red and green gradient moves horizontally.'
  *   );
  * }
  *
  * function draw() {
- *   // update the offset values for each shader,
- *   // moving orangeBlue in vertical and redGreen
- *   // in horizontal direction
- *   orangeBlue.setUniform('offset', [0, sin(millis() / 2000) + 1]);
- *   redGreen.setUniform('offset', [sin(millis() / 2000), 1]);
+ *   // Update the offset values for each shader.
+ *   // Move orangeBlue vertically.
+ *   // Move redGreen horizontally.
+ *   orangeBlue.setUniform('offset', [0, sin(frameCount * 0.01) + 1]);
+ *   redGreen.setUniform('offset', [sin(frameCount * 0.01), 1]);
  *
  *   if (showRedGreen === true) {
  *     shader(redGreen);
  *   } else {
  *     shader(orangeBlue);
  *   }
+ *
+ *   // Style the drawing surface.
+ *   noStroke();
+ *
+ *   // Add a quad as a drawing surface.
  *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
  * }
  *
- * function mouseClicked() {
+ * // Toggle between shaders when the user double-clicks.
+ * function doubleClicked() {
  *   showRedGreen = !showRedGreen;
  * }
  * </code>
  * </div>
- *
- * @alt
- * canvas toggles between a circular gradient of orange and blue vertically. and a circular gradient of red and green moving horizontally when mouse is clicked/pressed.
  */
 p5.prototype.shader = function (s) {
   this._assert3d('shader');
@@ -438,88 +771,87 @@ p5.prototype.shader = function (s) {
 };
 
 /**
- * Restores the default shaders. Code that runs after resetShader()
- * will not be affected by the shader previously set by
- * <a href="#/p5/shader">shader()</a>
+ * Restores the default shaders.
+ *
+ * `resetShader()` deactivates any shaders previously applied by
+ * <a href="#/p5/shader">shader()</a>.
+ *
+ * Note: Shaders can only be used in WebGL mode.
  *
  * @method resetShader
  * @chainable
+ *
  * @example
  * <div>
  * <code>
- * // This variable will hold our shader object
- * let shaderProgram;
- *
- * // This variable will hold our vertex shader source code
+ * // Create a string with the vertex shader program.
+ * // The vertex shader is called for each vertex.
  * let vertSrc = `
- *    attribute vec3 aPosition;
- *    attribute vec2 aTexCoord;
- *    uniform mat4 uProjectionMatrix;
- *    uniform mat4 uModelViewMatrix;
- *    varying vec2 vTexCoord;
+ * attribute vec3 aPosition;
+ * attribute vec2 aTexCoord;
+ * uniform mat4 uProjectionMatrix;
+ * uniform mat4 uModelViewMatrix;
+ * varying vec2 vTexCoord;
  *
- *    void main() {
- *      vTexCoord = aTexCoord;
- *      vec4 position = vec4(aPosition, 1.0);
- *      gl_Position = uProjectionMatrix * uModelViewMatrix * position;
- *    }
+ * void main() {
+ *   vTexCoord = aTexCoord;
+ *   vec4 position = vec4(aPosition, 1.0);
+ *   gl_Position = uProjectionMatrix * uModelViewMatrix * position;
+ * }
  * `;
  *
- * // This variable will hold our fragment shader source code
+ * // Create a string with the fragment shader program.
+ * // The fragment shader is called for each pixel.
  * let fragSrc = `
- *    precision mediump float;
+ * precision mediump float;
+ * varying vec2 vTexCoord;
  *
- *    varying vec2 vTexCoord;
- *
- *    void main() {
- *      vec2 uv = vTexCoord;
- *      vec3 color = vec3(uv.x, uv.y, min(uv.x + uv.y, 1.0));
- *      gl_FragColor = vec4(color, 1.0);
- *    }
+ * void main() {
+ *   vec2 uv = vTexCoord;
+ *   vec3 color = vec3(uv.x, uv.y, min(uv.x + uv.y, 1.0));
+ *   gl_FragColor = vec4(color, 1.0);
+ * }
  * `;
+ *
+ * let myShader;
  *
  * function setup() {
- *   // Shaders require WEBGL mode to work
  *   createCanvas(100, 100, WEBGL);
  *
- *   // Create our shader
- *   shaderProgram = createShader(vertSrc, fragSrc);
+ *   // Create a p5.Shader object.
+ *   myShader = createShader(vertSrc, fragSrc);
  *
  *   describe(
- *     'Two rotating cubes. The left one is painted using a custom (user-defined) shader, while the right one is painted using the default fill shader.'
+ *     'Two rotating cubes on a gray background. The left one has a blue-purple gradient on each face. The right one is red.'
  *   );
  * }
  *
  * function draw() {
- *   // Clear the scene
  *   background(200);
  *
- *   // Draw a box using our shader
- *   // shader() sets the active shader with our shader
- *   shader(shaderProgram);
+ *   // Draw a box using the p5.Shader.
+ *   // shader() sets the active shader to myShader.
+ *   shader(myShader);
  *   push();
- *   translate(-width / 4, 0, 0);
- *   rotateX(millis() * 0.00025);
- *   rotateY(millis() * 0.0005);
+ *   translate(-25, 0, 0);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
  *   box(width / 4);
  *   pop();
  *
- *   // Draw a box using the default fill shader
- *   // resetShader() restores the default fill shader
+ *   // Draw a box using the default fill shader.
+ *   // resetShader() restores the default fill shader.
  *   resetShader();
  *   fill(255, 0, 0);
  *   push();
- *   translate(width / 4, 0, 0);
- *   rotateX(millis() * 0.00025);
- *   rotateY(millis() * 0.0005);
+ *   translate(25, 0, 0);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
  *   box(width / 4);
  *   pop();
  * }
  * </code>
  * </div>
- * @alt
- * Two rotating cubes. The left one is painted using a custom (user-defined) shader,
- * while the right one is painted using the default fill shader.
  */
 p5.prototype.resetShader = function () {
   this._renderer.userFillShader = this._renderer.userStrokeShader = null;
@@ -527,123 +859,167 @@ p5.prototype.resetShader = function () {
 };
 
 /**
- * Sets the texture that will be used to render subsequent shapes.
+ * Sets the texture that will be used on shapes.
  *
- * A texture is like a "skin" that wraps around a 3D geometry. Currently
- * supported textures are images, video, and offscreen renders.
+ * A texture is like a skin that wraps around a shape. `texture()` works with
+ * built-in shapes, such as <a href="#/p5/square">square()</a> and
+ * <a href="#/p5/sphere">sphere()</a>, and custom shapes created with
+ * functions such as <a href="#/p5/buildGeometry">buildGeometry()</a>. To
+ * texture a geometry created with <a href="#/p5/beginShape">beginShape()</a>,
+ * uv coordinates must be passed to each
+ * <a href="#/p5/vertex">vertex()</a> call.
+ *
+ * The parameter, `tex`, is the texture to apply. `texture()` can use a range
+ * of sources including images, videos, and offscreen renderers such as
+ * <a href="#/p5.Graphics">p5.Graphics</a> and
+ * <a href="#/p5.Framebuffer">p5.Framebuffer</a> objects.
  *
  * To texture a geometry created with <a href="#/p5/beginShape">beginShape()</a>,
  * you will need to specify uv coordinates in <a href="#/p5/vertex">vertex()</a>.
  *
- * Note, texture() can only be used in WEBGL mode.
- *
- * You can view more materials in this
- * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
+ * Note: `texture()` can only be used in WebGL mode.
  *
  * @method texture
- * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex  image to use as texture
+ * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex media to use as the texture.
  * @chainable
+ *
  * @example
  * <div>
  * <code>
  * let img;
+ *
+ * // Load an image and create a p5.Image object.
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe('spinning cube with a texture from an image');
+ *
+ *   describe('A spinning cube with an image of a ceiling on each face.');
  * }
  *
  * function draw() {
  *   background(0);
+ *
+ *   // Rotate around the x-, y-, and z-axes.
  *   rotateZ(frameCount * 0.01);
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
- *   //pass image as texture
+ *
+ *   // Apply the image as a texture.
  *   texture(img);
- *   box(width / 2);
+ *
+ *   // Draw the box.
+ *   box(50);
  * }
  * </code>
  * </div>
- * @alt
- * spinning cube with a texture from an image
  *
- * @example
  * <div>
  * <code>
  * let pg;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   pg = createGraphics(200, 200);
- *   pg.textSize(75);
- *   describe('plane with a texture from an image created by createGraphics()');
+ *
+ *   // Create a p5.Graphics object.
+ *   pg = createGraphics(100, 100);
+ *
+ *   // Draw a circle to the p5.Graphics object.
+ *   pg.background(200);
+ *   pg.circle(50, 50, 30);
+ *
+ *   describe('A spinning cube with circle at the center of each face.');
  * }
  *
  * function draw() {
  *   background(0);
- *   pg.background(255);
- *   pg.text('hello!', 0, 100);
- *   //pass image as texture
+ *
+ *   // Rotate around the x-, y-, and z-axes.
+ *   rotateZ(frameCount * 0.01);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *
+ *   // Apply the p5.Graphics object as a texture.
  *   texture(pg);
- *   rotateX(0.5);
- *   noStroke();
- *   plane(50);
+ *
+ *   // Draw the box.
+ *   box(50);
  * }
  * </code>
  * </div>
- * @alt
- * plane with a texture from an image created by createGraphics()
  *
- * @example
  * <div>
  * <code>
  * let vid;
+ *
+ * // Load a video and create a p5.MediaElement object.
  * function preload() {
  *   vid = createVideo('assets/fingers.mov');
- *   vid.hide();
  * }
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe('rectangle with video as texture');
+ *
+ *   // Hide the video.
+ *   vid.hide();
+ *
+ *   // Set the video to loop.
+ *   vid.loop();
+ *
+ *   describe('A rectangle with video as texture');
  * }
  *
  * function draw() {
  *   background(0);
- *   //pass video frame as texture
- *   texture(vid);
- *   rect(-40, -40, 80, 80);
- * }
  *
- * function mousePressed() {
- *   vid.loop();
+ *   // Rotate around the y-axis.
+ *   rotateY(frameCount * 0.01);
+ *
+ *   // Apply the video as a texture.
+ *   texture(vid);
+ *
+ *   // Draw the rectangle.
+ *   rect(-40, -40, 80, 80);
  * }
  * </code>
  * </div>
  *
- * @alt
- * rectangle with video as texture
- *
- * @example
  * <div>
  * <code>
- * let img;
+ * let vid;
  *
+ * // Load a video and create a p5.MediaElement object.
  * function preload() {
- *   img = loadImage('assets/laDefense.jpg');
+ *   vid = createVideo('assets/fingers.mov');
  * }
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe('quad with a texture, mapped using normalized coordinates');
+ *
+ *   // Hide the video.
+ *   vid.hide();
+ *
+ *   // Set the video to loop.
+ *   vid.loop();
+ *
+ *   describe('A rectangle with video as texture');
  * }
  *
  * function draw() {
  *   background(0);
- *   texture(img);
+ *
+ *   // Rotate around the y-axis.
+ *   rotateY(frameCount * 0.01);
+ *
+ *   // Set the texture mode.
  *   textureMode(NORMAL);
+ *
+ *   // Apply the video as a texture.
+ *   texture(vid);
+ *
+ *   // Draw a custom shape using uv coordinates.
  *   beginShape();
  *   vertex(-40, -40, 0, 0);
  *   vertex(40, -40, 1, 0);
@@ -653,8 +1029,6 @@ p5.prototype.resetShader = function () {
  * }
  * </code>
  * </div>
- * @alt
- * quad with a texture, mapped using normalized coordinates
  */
 p5.prototype.texture = function (tex) {
   this._assert3d('texture');
@@ -672,72 +1046,173 @@ p5.prototype.texture = function (tex) {
 };
 
 /**
- * Sets the coordinate space for texture mapping. The default mode is IMAGE
- * which refers to the actual coordinates of the image.
- * NORMAL refers to a normalized space of values ranging from 0 to 1.
+ * Changes the coordinate system used for textures when they’re applied to
+ * custom shapes.
  *
- * With IMAGE, if an image is 100×200 pixels, mapping the image onto the entire
- * size of a quad would require the points (0,0) (100, 0) (100,200) (0,200).
- * The same mapping in NORMAL is (0,0) (1,0) (1,1) (0,1).
+ * In order for <a href="#/p5/texture">texture()</a> to work, a shape needs a
+ * way to map the points on its surface to the pixels in an image. Built-in
+ * shapes such as <a href="#/p5/rect">rect()</a> and
+ * <a href="#/p5/box">box()</a> already have these texture mappings based on
+ * their vertices. Custom shapes created with
+ * <a href="#/p5/vertex">vertex()</a> require texture mappings to be passed as
+ * uv coordinates.
+ *
+ * Each call to <a href="#/p5/vertex">vertex()</a> must include 5 arguments,
+ * as in `vertex(x, y, z, u, v)`, to map the vertex at coordinates `(x, y, z)`
+ * to the pixel at coordinates `(u, v)` within an image. For example, the
+ * corners of a rectangular image are mapped to the corners of a rectangle by default:
+ *
+ * <code>
+ * // Apply the image as a texture.
+ * texture(img);
+ *
+ * // Draw the rectangle.
+ * rect(0, 0, 30, 50);
+ * </code>
+ *
+ * If the image in the code snippet above has dimensions of 300 x 500 pixels,
+ * the same result could be achieved as follows:
+ *
+ * <code>
+ * // Apply the image as a texture.
+ * texture(img);
+ *
+ * // Draw the rectangle.
+ * beginShape();
+ *
+ * // Top-left.
+ * // u: 0, v: 0
+ * vertex(0, 0, 0, 0, 0);
+ *
+ * // Top-right.
+ * // u: 300, v: 0
+ * vertex(30, 0, 0, 300, 0);
+ *
+ * // Bottom-right.
+ * // u: 300, v: 500
+ * vertex(30, 50, 0, 300, 500);
+ *
+ * // Bottom-left.
+ * // u: 0, v: 500
+ * vertex(0, 50, 0, 0, 500);
+ *
+ * endShape();
+ * </code>
+ *
+ * `textureMode()` changes the coordinate system for uv coordinates.
+ *
+ * The parameter, `mode`, accepts two possible constants. If `NORMAL` is
+ * passed, as in `textureMode(NORMAL)`, then the texture’s uv coordinates can
+ * be provided in the range 0 to 1 instead of the image’s dimensions. This can
+ * be helpful for using the same code for multiple images of different sizes.
+ * For example, the code snippet above could be rewritten as follows:
+ *
+ * <code>
+ * // Set the texture mode to use normalized coordinates.
+ * textureMode(NORMAL);
+ *
+ * // Apply the image as a texture.
+ * texture(img);
+ *
+ * // Draw the rectangle.
+ * beginShape();
+ *
+ * // Top-left.
+ * // u: 0, v: 0
+ * vertex(0, 0, 0, 0, 0);
+ *
+ * // Top-right.
+ * // u: 1, v: 0
+ * vertex(30, 0, 0, 1, 0);
+ *
+ * // Bottom-right.
+ * // u: 1, v: 1
+ * vertex(30, 50, 0, 1, 1);
+ *
+ * // Bottom-left.
+ * // u: 0, v: 1
+ * vertex(0, 50, 0, 0, 1);
+ *
+ * endShape();
+ * </code>
+ *
+ * By default, `mode` is `IMAGE`, which scales uv coordinates to the
+ * dimensions of the image. Calling `textureMode(IMAGE)` applies the default.
+ *
+ * Note: `textureMode()` can only be used in WebGL mode.
+ *
  * @method  textureMode
- * @param {Constant} mode either IMAGE or NORMAL
+ * @param {Constant} mode either IMAGE or NORMAL.
+ *
  * @example
  * <div>
  * <code>
  * let img;
  *
+ * // Load an image and create a p5.Image object.
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe('quad with a texture, mapped using normalized coordinates');
+ *
+ *   describe('An image of a ceiling against a black background.');
  * }
  *
  * function draw() {
+ *   background(0);
+ *
+ *   // Apply the image as a texture.
  *   texture(img);
+ *
+ *   // Draw the custom shape.
+ *   // Use the image's width and height as uv coordinates.
+ *   beginShape();
+ *   vertex(-30, -30, 0, 0);
+ *   vertex(30, -30, img.width, 0);
+ *   vertex(30, 30, img.width, img.height);
+ *   vertex(-30, 30, 0, img.height);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let img;
+ *
+ * // Load an image and create a p5.Image object.
+ * function preload() {
+ *   img = loadImage('assets/laDefense.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('An image of a ceiling against a black background.');
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *
+ *   // Set the texture mode.
  *   textureMode(NORMAL);
- *   beginShape();
- *   vertex(-50, -50, 0, 0);
- *   vertex(50, -50, 1, 0);
- *   vertex(50, 50, 1, 1);
- *   vertex(-50, 50, 0, 1);
- *   endShape();
- * }
- * </code>
- * </div>
- * @alt
- * quad with a texture, mapped using normalized coordinates
  *
- * @example
- * <div>
- * <code>
- * let img;
- *
- * function preload() {
- *   img = loadImage('assets/laDefense.jpg');
- * }
- *
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *   describe('quad with a texture, mapped using image coordinates');
- * }
- *
- * function draw() {
+ *   // Apply the image as a texture.
  *   texture(img);
- *   textureMode(IMAGE);
+ *
+ *   // Draw the custom shape.
+ *   // Use normalized uv coordinates.
  *   beginShape();
- *   vertex(-50, -50, 0, 0);
- *   vertex(50, -50, img.width, 0);
- *   vertex(50, 50, img.width, img.height);
- *   vertex(-50, 50, 0, img.height);
+ *   vertex(-30, -30, 0, 0);
+ *   vertex(30, -30, 1, 0);
+ *   vertex(30, 30, 1, 1);
+ *   vertex(-30, 30, 0, 1);
  *   endShape();
  * }
  * </code>
  * </div>
- * @alt
- * quad with a texture, mapped using image coordinates
  */
 p5.prototype.textureMode = function (mode) {
   if (mode !== constants.IMAGE && mode !== constants.NORMAL) {
@@ -750,67 +1225,278 @@ p5.prototype.textureMode = function (mode) {
 };
 
 /**
- * Sets the global texture wrapping mode. This controls how textures behave
- * when their uv's go outside of the 0 to 1 range. There are three options:
- * CLAMP, REPEAT, and MIRROR.
+ * Changes the way textures behave when a shape’s uv coordinates go beyond the
+ * texture.
  *
- * CLAMP causes the pixels at the edge of the texture to extend to the bounds.
- * REPEAT causes the texture to tile repeatedly until reaching the bounds.
- * MIRROR works similarly to REPEAT but it flips the texture with every new tile.
+ * In order for <a href="#/p5/texture">texture()</a> to work, a shape needs a
+ * way to map the points on its surface to the pixels in an image. Built-in
+ * shapes such as <a href="#/p5/rect">rect()</a> and
+ * <a href="#/p5/box">box()</a> already have these texture mappings based on
+ * their vertices. Custom shapes created with
+ * <a href="#/p5/vertex">vertex()</a> require texture mappings to be passed as
+ * uv coordinates.
  *
- * REPEAT & MIRROR are only available if the texture
- * is a power of two size (128, 256, 512, 1024, etc.).
+ * Each call to <a href="#/p5/vertex">vertex()</a> must include 5 arguments,
+ * as in `vertex(x, y, z, u, v)`, to map the vertex at coordinates `(x, y, z)`
+ * to the pixel at coordinates `(u, v)` within an image. For example, the
+ * corners of a rectangular image are mapped to the corners of a rectangle by default:
  *
- * This method will affect all textures in your sketch until a subsequent
- * textureWrap() call is made.
+ * <code>
+ * // Apply the image as a texture.
+ * texture(img);
  *
- * If only one argument is provided, it will be applied to both the
- * horizontal and vertical axes.
+ * // Draw the rectangle.
+ * rect(0, 0, 30, 50);
+ * </code>
+ *
+ * If the image in the code snippet above has dimensions of 300 x 500 pixels,
+ * the same result could be achieved as follows:
+ *
+ * <code>
+ * // Apply the image as a texture.
+ * texture(img);
+ *
+ * // Draw the rectangle.
+ * beginShape();
+ *
+ * // Top-left.
+ * // u: 0, v: 0
+ * vertex(0, 0, 0, 0, 0);
+ *
+ * // Top-right.
+ * // u: 300, v: 0
+ * vertex(30, 0, 0, 300, 0);
+ *
+ * // Bottom-right.
+ * // u: 300, v: 500
+ * vertex(30, 50, 0, 300, 500);
+ *
+ * // Bottom-left.
+ * // u: 0, v: 500
+ * vertex(0, 50, 0, 0, 500);
+ *
+ * endShape();
+ * </code>
+ *
+ * `textureWrap()` controls how textures behave when their uv's go beyond the
+ * texture. Doing so can produce interesting visual effects such as tiling.
+ * For example, the custom shape above could have u-coordinates are greater
+ * than the image’s width:
+ *
+ * <code>
+ * // Apply the image as a texture.
+ * texture(img);
+ *
+ * // Draw the rectangle.
+ * beginShape();
+ * vertex(0, 0, 0, 0, 0);
+ *
+ * // Top-right.
+ * // u: 600
+ * vertex(30, 0, 0, 600, 0);
+ *
+ * // Bottom-right.
+ * // u: 600
+ * vertex(30, 50, 0, 600, 500);
+ *
+ * vertex(0, 50, 0, 0, 500);
+ * endShape();
+ * </code>
+ *
+ * The u-coordinates of 600 are greater than the texture image’s width of 300.
+ * This creates interesting possibilities.
+ *
+ * The first parameter, `wrapX`, accepts three possible constants. If `CLAMP`
+ * is passed, as in `textureWrap(CLAMP)`, the pixels at the edge of the
+ * texture will extend to the shape’s edges. If `REPEAT` is passed, as in
+ * `textureWrap(REPEAT)`, the texture will tile repeatedly until reaching the
+ * shape’s edges. If `MIRROR` is passed, as in `textureWrap(MIRROR)`, the
+ * texture will tile repeatedly until reaching the shape’s edges, flipping
+ * its orientation between tiles. By default, textures `CLAMP`.
+ *
+ * The second parameter, `wrapY`, is optional. It accepts the same three
+ * constants, `CLAMP`, `REPEAT`, and `MIRROR`. If one of these constants is
+ * passed, as in `textureWRAP(MIRROR, REPEAT)`, then the texture will `MIRROR`
+ * horizontally and `REPEAT` vertically. By default, `wrapY` will be set to
+ * the same value as `wrapX`.
+ *
+ * Note: `textureWrap()` can only be used in WebGL mode.
+ *
  * @method textureWrap
  * @param {Constant} wrapX either CLAMP, REPEAT, or MIRROR
  * @param {Constant} [wrapY] either CLAMP, REPEAT, or MIRROR
+ *
  * @example
  * <div>
  * <code>
  * let img;
+ *
  * function preload() {
  *   img = loadImage('assets/rockies128.jpg');
  * }
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   textureWrap(MIRROR);
- *   describe('an image of the rocky mountains repeated in mirrored tiles');
+ *
+ *   describe(
+ *     'An image of a landscape occupies the top-left corner of a square. Its edge colors smear to cover the other thre quarters of the square.'
+ *   );
  * }
  *
  * function draw() {
  *   background(0);
  *
- *   let dX = mouseX;
- *   let dY = mouseY;
+ *   // Set the texture mode.
+ *   textureMode(NORMAL);
  *
- *   let u = lerp(1.0, 2.0, dX);
- *   let v = lerp(1.0, 2.0, dY);
+ *   // Set the texture wrapping.
+ *   // Note: CLAMP is the default mode.
+ *   textureWrap(CLAMP);
  *
- *   scale(width / 2);
- *
+ *   // Apply the image as a texture.
  *   texture(img);
  *
- *   beginShape(TRIANGLES);
- *   vertex(-1, -1, 0, 0, 0);
- *   vertex(1, -1, 0, u, 0);
- *   vertex(1, 1, 0, u, v);
+ *   // Style the shape.
+ *   noStroke();
  *
- *   vertex(1, 1, 0, u, v);
- *   vertex(-1, 1, 0, 0, v);
- *   vertex(-1, -1, 0, 0, 0);
+ *   // Draw the shape.
+ *   // Use uv coordinates > 1.
+ *   beginShape();
+ *   vertex(-30, -30, 0, 0, 0);
+ *   vertex(30, -30, 0, 2, 0);
+ *   vertex(30, 30, 0, 2, 2);
+ *   vertex(-30, 30, 0, 0, 2);
  *   endShape();
  * }
  * </code>
  * </div>
  *
- * @alt
- * an image of the rocky mountains repeated in mirrored tiles
+ * <div>
+ * <code>
+ * let img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/rockies128.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('Four identical images of a landscape arranged in a grid.');
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *
+ *   // Set the texture mode.
+ *   textureMode(NORMAL);
+ *
+ *   // Set the texture wrapping.
+ *   textureWrap(REPEAT);
+ *
+ *   // Apply the image as a texture.
+ *   texture(img);
+ *
+ *   // Style the shape.
+ *   noStroke();
+ *
+ *   // Draw the shape.
+ *   // Use uv coordinates > 1.
+ *   beginShape();
+ *   vertex(-30, -30, 0, 0, 0);
+ *   vertex(30, -30, 0, 2, 0);
+ *   vertex(30, 30, 0, 2, 2);
+ *   vertex(-30, 30, 0, 0, 2);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/rockies128.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe(
+ *     'Four identical images of a landscape arranged in a grid. The images are reflected horizontally and vertically, creating a kaleidoscope effect.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *
+ *   // Set the texture mode.
+ *   textureMode(NORMAL);
+ *
+ *   // Set the texture wrapping.
+ *   textureWrap(MIRROR);
+ *
+ *   // Apply the image as a texture.
+ *   texture(img);
+ *
+ *   // Style the shape.
+ *   noStroke();
+ *
+ *   // Draw the shape.
+ *   // Use uv coordinates > 1.
+ *   beginShape();
+ *   vertex(-30, -30, 0, 0, 0);
+ *   vertex(30, -30, 0, 2, 0);
+ *   vertex(30, 30, 0, 2, 2);
+ *   vertex(-30, 30, 0, 0, 2);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/rockies128.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe(
+ *     'Four identical images of a landscape arranged in a grid. The top row and bottom row are reflections of each other.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *
+ *   // Set the texture mode.
+ *   textureMode(NORMAL);
+ *
+ *   // Set the texture wrapping.
+ *   textureWrap(REPEAT, MIRROR);
+ *
+ *   // Apply the image as a texture.
+ *   texture(img);
+ *
+ *   // Style the shape.
+ *   noStroke();
+ *
+ *   // Draw the shape.
+ *   // Use uv coordinates > 1.
+ *   beginShape();
+ *   vertex(-30, -30, 0, 0, 0);
+ *   vertex(30, -30, 0, 2, 0);
+ *   vertex(30, 30, 0, 2, 2);
+ *   vertex(-30, 30, 0, 0, 2);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.textureWrap = function (wrapX, wrapY = wrapX) {
   this._renderer.textureWrapX = wrapX;
@@ -824,34 +1510,40 @@ p5.prototype.textureWrap = function (wrapX, wrapY = wrapX) {
 /**
  * Sets the current material as a normal material.
  *
- * A normal material is not affected by light. It is often used as
- * a placeholder material when debugging.
+ * A normal material sets surfaces facing the x-axis to red, those facing the
+ * y-axis to green, and those facing the z-axis to blue. Normal material isn't
+ * affected by light. It’s often used as a placeholder material when debugging.
  *
- * Surfaces facing the X-axis become red, those facing the Y-axis
- * become green, and those facing the Z-axis become blue.
- *
- * You can view more materials in this
- * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
+ * Note: `normalMaterial()` can only be used in WebGL mode.
  *
  * @method normalMaterial
  * @chainable
+ *
  * @example
  * <div>
  * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe('Sphere with normal material');
+ *
+ *   describe('A multicolor torus drawn on a gray background.');
  * }
  *
  * function draw() {
  *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Style the torus.
  *   normalMaterial();
- *   sphere(40);
+ *
+ *   // Draw the torus.
+ *   torus(30);
  * }
  * </code>
  * </div>
- * @alt
- * Sphere with normal material
  */
 p5.prototype.normalMaterial = function (...args) {
   this._assert3d('normalMaterial');
@@ -867,103 +1559,221 @@ p5.prototype.normalMaterial = function (...args) {
 };
 
 /**
- * Sets the ambient color of the material.
+ * Sets the ambient color of shapes’ surface material.
  *
- * The ambientMaterial() color represents the components
- * of the **ambientLight()** color that the object reflects.
+ * The `ambientMaterial()` color sets the components of the
+ * <a href="#/p5/ambientLight">ambientLight()</a> color that shapes will
+ * reflect. For example, calling `ambientMaterial(255, 255, 0)` would cause a
+ * shape to reflect red and green light, but not blue light.
  *
- * Consider an ambientMaterial() with the color yellow (255, 255, 0).
- * If the ambientLight() emits the color white (255, 255, 255), then the object
- * will appear yellow as it will reflect the red and green components
- * of the light. If the ambientLight() emits the color red (255, 0, 0), then
- * the object will appear red as it will reflect the red component
- * of the light. If the ambientLight() emits the color blue (0, 0, 255),
- * then the object will appear black, as there is no component of
- * the light that it can reflect.
+ * `ambientMaterial()` can be called three ways with different parameters to
+ * set the material’s color.
  *
- * You can view more materials in this
- * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
+ * The first way to call `ambientMaterial()` has one parameter, `gray`.
+ * Grayscale values between 0 and 255, as in `ambientMaterial(50)`, can be
+ * passed to set the material’s color. Higher grayscale values make shapes
+ * appear brighter.
+ *
+ * The second way to call `ambientMaterial()` has one parameter, `color`. A
+ * <a href="#/p5.Color">p5.Color</a> object, an array of color values, or a
+ * CSS color string, as in `ambientMaterial('magenta')`, can be passed to set
+ * the material’s color.
+ *
+ * The third way to call `ambientMaterial()` has three parameters, `v1`, `v2`,
+ * and `v3`. RGB, HSB, or HSL values, as in `ambientMaterial(255, 0, 0)`, can
+ * be passed to set the material’s colors. Color values will be interpreted
+ * using the current <a href="#/p5/colorMode">colorMode()</a>.
+ *
+ * Note: `ambientMaterial()` can only be used in WebGL mode.
  *
  * @method ambientMaterial
- * @param  {Number} v1  red or hue value relative to the current
- *                       color range
- * @param  {Number} v2  green or saturation value relative to the
- *                       current color range
- * @param  {Number} v3  blue or brightness value relative to the
- *                       current color range
+ * @param  {Number} v1  red or hue value in the current
+ *                       <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number} v2  green or saturation value in the
+ *                      current <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number} v3  blue, brightness, or lightness value in the
+ *                      current <a href="#/p5/colorMode">colorMode()</a>.
  * @chainable
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *   describe('sphere reflecting red, blue, and green light');
- * }
- * function draw() {
- *   background(0);
- *   noStroke();
- *   ambientLight(255);
- *   ambientMaterial(70, 130, 230);
- *   sphere(40);
- * }
- * </code>
- * </div>
- * @alt
- * sphere reflecting red, blue, and green light
  *
  * @example
  * <div>
  * <code>
- * // ambientLight is both red and blue (magenta),
- * // so object only reflects it's red and blue components
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe('box reflecting only red and blue light');
+ *
+ *   describe('A magenta cube drawn on a gray background.');
  * }
+ *
  * function draw() {
- *   background(70);
- *   ambientLight(255, 0, 255); // magenta light
- *   ambientMaterial(255); // white material
- *   box(30);
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on a magenta ambient light.
+ *   ambientLight(255, 0, 255);
+ *
+ *   // Draw the box.
+ *   box();
  * }
  * </code>
  * </div>
- * @alt
- * box reflecting only red and blue light
  *
- * @example
  * <div>
  * <code>
- * // ambientLight is green. Since object does not contain
- * // green, it does not reflect any light
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe('box reflecting no light');
+ *
+ *   describe('A purple cube drawn on a gray background.');
  * }
+ *
  * function draw() {
- *   background(70);
- *   ambientLight(0, 255, 0); // green light
- *   ambientMaterial(255, 0, 255); // magenta material
- *   box(30);
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on a magenta ambient light.
+ *   ambientLight(255, 0, 255);
+ *
+ *   // Add a dark gray ambient material.
+ *   ambientMaterial(150);
+ *
+ *   // Draw the box.
+ *   box();
  * }
  * </code>
  * </div>
- * @alt
- * box reflecting no light
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A red cube drawn on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on a magenta ambient light.
+ *   ambientLight(255, 0, 255);
+ *
+ *   // Add a yellow ambient material using RGB values.
+ *   ambientMaterial(255, 255, 0);
+ *
+ *   // Draw the box.
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A red cube drawn on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on a magenta ambient light.
+ *   ambientLight(255, 0, 255);
+ *
+ *   // Add a yellow ambient material using a p5.Color object.
+ *   let c = color(255, 255, 0);
+ *   ambientMaterial(c);
+ *
+ *   // Draw the box.
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A red cube drawn on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on a magenta ambient light.
+ *   ambientLight(255, 0, 255);
+ *
+ *   // Add a yellow ambient material using a color string.
+ *   ambientMaterial('yellow');
+ *
+ *   // Draw the box.
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A yellow cube drawn on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on a white ambient light.
+ *   ambientLight(255, 255, 255);
+ *
+ *   // Add a yellow ambient material using a color string.
+ *   ambientMaterial('yellow');
+ *
+ *   // Draw the box.
+ *   box();
+ * }
+ * </code>
+ * </div>
  */
 
 /**
  * @method ambientMaterial
- * @param  {Number} gray  number specifying value between
- *                         white and black
+ * @param  {Number} gray grayscale value between 0 (black) and 255 (white).
  * @chainable
  */
 
 /**
  * @method ambientMaterial
  * @param  {p5.Color|Number[]|String} color
- *           color as a <a href="#/p5.Color">p5.Color</a>,
- *            as an array, or as a CSS string
+ *           color as a <a href="#/p5.Color">p5.Color</a> object,
+ *            an array of color values, or a CSS string.
  * @chainable
  */
 p5.prototype.ambientMaterial = function (v1, v2, v3) {
@@ -980,61 +1790,86 @@ p5.prototype.ambientMaterial = function (v1, v2, v3) {
 };
 
 /**
- * Sets the emissive color of the material.
+ * Sets the emissive color of shapes’ surface material.
  *
- * An emissive material will display the emissive color at
- * full strength regardless of lighting. This can give the
- * appearance that the object is glowing.
+ * The `emissiveMaterial()` color sets a color shapes display at full
+ * strength, regardless of lighting. This can give the appearance that a shape
+ * is glowing. However, emissive materials don’t actually emit light that
+ * can affect surrounding objects.
  *
- * Note, "emissive" is a misnomer in the sense that the material
- * does not actually emit light that will affect surrounding objects.
+ * `emissiveMaterial()` can be called three ways with different parameters to
+ * set the material’s color.
  *
- * You can view more materials in this
- * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
+ * The first way to call `emissiveMaterial()` has one parameter, `gray`.
+ * Grayscale values between 0 and 255, as in `emissiveMaterial(50)`, can be
+ * passed to set the material’s color. Higher grayscale values make shapes
+ * appear brighter.
+ *
+ * The second way to call `emissiveMaterial()` has one parameter, `color`. A
+ * <a href="#/p5.Color">p5.Color</a> object, an array of color values, or a
+ * CSS color string, as in `emissiveMaterial('magenta')`, can be passed to set
+ * the material’s color.
+ *
+ * The third way to call `emissiveMaterial()` has four parameters, `v1`, `v2`,
+ * `v3`, and `alpha`. `alpha` is optional. RGBA, HSBA, or HSLA values can be
+ * passed to set the material’s colors, as in `emissiveMaterial(255, 0, 0)` or
+ * `emissiveMaterial(255, 0, 0, 30)`. Color values will be interpreted using
+ * the current <a href="#/p5/colorMode">colorMode()</a>.
+ *
+ * Note: `emissiveMaterial()` can only be used in WebGL mode.
  *
  * @method emissiveMaterial
- * @param  {Number} v1       red or hue value relative to the current
- *                            color range
- * @param  {Number} v2       green or saturation value relative to the
- *                            current color range
- * @param  {Number} v3       blue or brightness value relative to the
- *                            current color range
- * @param  {Number} [alpha]  alpha value relative to current color
- *                            range (default is 0-255)
+ * @param  {Number} v1       red or hue value in the current
+ *                           <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number} v2       green or saturation value in the
+ *                           current <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number} v3       blue, brightness, or lightness value in the
+ *                           current <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number} [alpha]  alpha value in the current
+ *                           <a href="#/p5/colorMode">colorMode()</a>.
  * @chainable
+ *
  * @example
  * <div>
  * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe('sphere with green emissive material');
+ *
+ *   describe('A red cube drawn on a gray background.');
  * }
+ *
  * function draw() {
- *   background(0);
- *   noStroke();
- *   ambientLight(0);
- *   emissiveMaterial(130, 230, 0);
- *   sphere(40);
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on a white ambient light.
+ *   ambientLight(255, 255, 255);
+ *
+ *   // Add a red emissive material using RGB values.
+ *   emissiveMaterial(255, 0, 0);
+ *
+ *   // Draw the box.
+ *   box();
  * }
  * </code>
  * </div>
- *
- * @alt
- * sphere with green emissive material
  */
 
 /**
  * @method emissiveMaterial
- * @param  {Number} gray  number specifying value between
- *                         white and black
+ * @param  {Number} gray grayscale value between 0 (black) and 255 (white).
  * @chainable
  */
 
 /**
  * @method emissiveMaterial
  * @param  {p5.Color|Number[]|String} color
- *           color as a <a href="#/p5.Color">p5.Color</a>,
- *            as an array, or as a CSS string
+ *           color as a <a href="#/p5.Color">p5.Color</a> object,
+ *            an array of color values, or a CSS string.
  * @chainable
  */
 p5.prototype.emissiveMaterial = function (v1, v2, v3, a) {
@@ -1051,67 +1886,236 @@ p5.prototype.emissiveMaterial = function (v1, v2, v3, a) {
 };
 
 /**
- * Sets the specular color of the material.
+ * Sets the specular color of shapes’ surface material.
  *
- * A specular material is reflective (shiny). The shininess can be
- * controlled by the <a href="#/p5/shininess">shininess()</a> function.
+ * The `specularMaterial()` color sets the components of light color that
+ * glossy coats on shapes will reflect. For example, calling
+ * `specularMaterial(255, 255, 0)` would cause a shape to reflect red and
+ * green light, but not blue light.
  *
- * Like <a href="#/p5/ambientMaterial">ambientMaterial()</a>,
- * the specularMaterial() color is the color the object will reflect
- * under <a href="#/p5/ambientLight">ambientLight()</a>.
- * However unlike ambientMaterial(), for all other types of lights
- * (<a href="#/p5/directionalLight">directionalLight()</a>,
+ * Unlike <a href="#/p5/ambientMaterial">ambientMaterial()</a>,
+ * `specularMaterial()` will reflect the full color of light sources including
+ * <a href="#/p5/directionalLight">directionalLight()</a>,
  * <a href="#/p5/pointLight">pointLight()</a>,
- * <a href="#/p5/spotLight">spotLight()</a>),
- * a specular material will reflect the **color of the light source**.
- * This is what gives it its "shiny" appearance.
+ * and <a href="#/p5/spotLight">spotLight()</a>. This is what gives it shapes
+ * their "shiny" appearance. The material’s shininess can be controlled by the
+ * <a href="#/p5/shininess">shininess()</a> function.
  *
- * You can view more materials in this
- * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
+ * `specularMaterial()` can be called three ways with different parameters to
+ * set the material’s color.
+ *
+ * The first way to call `specularMaterial()` has one parameter, `gray`.
+ * Grayscale values between 0 and 255, as in `specularMaterial(50)`, can be
+ * passed to set the material’s color. Higher grayscale values make shapes
+ * appear brighter.
+ *
+ * The second way to call `specularMaterial()` has one parameter, `color`. A
+ * <a href="#/p5.Color">p5.Color> object, an array of color values, or a CSS
+ * color string, as in `specularMaterial('magenta')`, can be passed to set the
+ * material’s color.
+ *
+ * The third way to call `specularMaterial()` has four parameters, `v1`, `v2`,
+ * `v3`, and `alpha`. `alpha` is optional. RGBA, HSBA, or HSLA values can be
+ * passed to set the material’s colors, as in `specularMaterial(255, 0, 0)` or
+ * `specularMaterial(255, 0, 0, 30)`. Color values will be interpreted using
+ * the current <a href="#/p5/colorMode">colorMode()</a>.
  *
  * @method specularMaterial
- * @param  {Number} gray number specifying value between white and black.
- * @param  {Number} [alpha] alpha value relative to current color range
- *                                 (default is 0-255)
+ * @param  {Number} gray grayscale value between 0 (black) and 255 (white).
+ * @param  {Number} [alpha] alpha value in the current current
+ *                          <a href="#/p5/colorMode">colorMode()</a>.
  * @chainable
  *
  * @example
  * <div>
  * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ * // Double-click the canvas to apply a specular material.
+ *
+ * let isGlossy = false;
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   noStroke();
- *   describe('torus with specular material');
+ *
+ *   describe('A red torus drawn on a gray background. It becomes glossy when the user double-clicks.');
  * }
  *
  * function draw() {
- *   background(0);
+ *   background(200);
  *
- *   ambientLight(60);
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
  *
- *   // add point light to showcase specular material
- *   let locX = mouseX - width / 2;
- *   let locY = mouseY - height / 2;
- *   pointLight(255, 255, 255, locX, locY, 50);
+ *   // Turn on a white point light at the top-right.
+ *   pointLight(255, 255, 255, 30, -40, 30);
  *
- *   specularMaterial(250);
- *   shininess(50);
- *   torus(30, 10, 64, 64);
+ *   // Add a glossy coat if the user has double-clicked.
+ *   if (isGlossy === true) {
+ *     specularMaterial(255);
+ *     shininess(50);
+ *   }
+ *
+ *   // Style the torus.
+ *   noStroke();
+ *   fill(255, 0, 0);
+ *
+ *   // Draw the torus.
+ *   torus(30);
+ * }
+ *
+ * // Make the torus glossy when the user double-clicks.
+ * function doubleClicked() {
+ *   isGlossy = true;
  * }
  * </code>
  * </div>
- * @alt
- * torus with specular material
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ * // Double-click the canvas to apply a specular material.
+ *
+ * let isGlossy = false;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe(
+ *     'A red torus drawn on a gray background. It becomes glossy and reflects green light when the user double-clicks.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on a white point light at the top-right.
+ *   pointLight(255, 255, 255, 30, -40, 30);
+ *
+ *   // Add a glossy green coat if the user has double-clicked.
+ *   if (isGlossy === true) {
+ *     specularMaterial(0, 255, 0);
+ *     shininess(50);
+ *   }
+ *
+ *   // Style the torus.
+ *   noStroke();
+ *   fill(255, 0, 0);
+ *
+ *   // Draw the torus.
+ *   torus(30);
+ * }
+ *
+ * // Make the torus glossy when the user double-clicks.
+ * function doubleClicked() {
+ *   isGlossy = true;
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ * // Double-click the canvas to apply a specular material.
+ *
+ * let isGlossy = false;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe(
+ *     'A red torus drawn on a gray background. It becomes glossy and reflects green light when the user double-clicks.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on a white point light at the top-right.
+ *   pointLight(255, 255, 255, 30, -40, 30);
+ *
+ *   // Add a glossy green coat if the user has double-clicked.
+ *   if (isGlossy === true) {
+ *     // Create a p5.Color object.
+ *     let c = color('green');
+ *     specularMaterial(c);
+ *     shininess(50);
+ *   }
+ *
+ *   // Style the torus.
+ *   noStroke();
+ *   fill(255, 0, 0);
+ *
+ *   // Draw the torus.
+ *   torus(30);
+ * }
+ *
+ * // Make the torus glossy when the user double-clicks.
+ * function doubleClicked() {
+ *   isGlossy = true;
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ * // Double-click the canvas to apply a specular material.
+ *
+ * let isGlossy = false;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe(
+ *     'A red torus drawn on a gray background. It becomes glossy and reflects green light when the user double-clicks.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on a white point light at the top-right.
+ *   pointLight(255, 255, 255, 30, -40, 30);
+ *
+ *   // Add a glossy green coat if the user has double-clicked.
+ *   if (isGlossy === true) {
+ *     specularMaterial('#00FF00');
+ *     shininess(50);
+ *   }
+ *
+ *   // Style the torus.
+ *   noStroke();
+ *   fill(255, 0, 0);
+ *
+ *   // Draw the torus.
+ *   torus(30);
+ * }
+ *
+ * // Make the torus glossy when the user double-clicks.
+ * function doubleClicked() {
+ *   isGlossy = true;
+ * }
+ * </code>
+ * </div>
  */
 
 /**
  * @method specularMaterial
- * @param  {Number}        v1      red or hue value relative to
- *                                 the current color range
+ * @param  {Number}        v1      red or hue value in
+ *                                 the current <a href="#/p5/colorMode">colorMode()</a>.
  * @param  {Number}        v2      green or saturation value
- *                                 relative to the current color range
- * @param  {Number}        v3      blue or brightness value
- *                                 relative to the current color range
+ *                                 in the current <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number}        v3      blue, brightness, or lightness value
+ *                                 in the current <a href="#/p5/colorMode">colorMode()</a>.
  * @param  {Number}        [alpha]
  * @chainable
  */
@@ -1119,8 +2123,8 @@ p5.prototype.emissiveMaterial = function (v1, v2, v3, a) {
 /**
  * @method specularMaterial
  * @param  {p5.Color|Number[]|String} color
- *           color as a <a href="#/p5.Color">p5.Color</a>,
- *            as an array, or as a CSS string
+ *           color as a <a href="#/p5.Color">p5.Color</a> object,
+ *            an array of color values, or a CSS string.
  * @chainable
  */
 p5.prototype.specularMaterial = function (v1, v2, v3, alpha) {
@@ -1140,37 +2144,61 @@ p5.prototype.specularMaterial = function (v1, v2, v3, alpha) {
  * Sets the amount of gloss ("shininess") of a
  * <a href="#/p5/specularMaterial">specularMaterial()</a>.
  *
- * The default and minimum value is 1.
+ * Shiny materials focus reflected light more than dull materials.
+ * `shininess()` affects the way materials reflect light sources including
+ * <a href="#/p5/directionalLight">directionalLight()</a>,
+ * <a href="#/p5/pointLight">pointLight()</a>,
+ * and <a href="#/p5/spotLight">spotLight()</a>.
+ *
+ * The parameter, `shine`, is a number that sets the amount of shininess.
+ * `shine` must be greater than 1, which is its default value.
  *
  * @method shininess
- * @param {Number} shine  degree of shininess
+ * @param {Number} shine amount of shine.
  * @chainable
+ *
  * @example
  * <div>
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe('two spheres, one more shiny than the other');
+ *
+ *   describe(
+ *     'Two red spheres drawn on a gray background. White light reflects from their surfaces as the mouse moves. The right sphere is shinier than the left sphere.'
+ *   );
  * }
+ *
  * function draw() {
- *   background(0);
+ *   background(200);
+ *
+ *   // Turn on a red ambient light.
+ *   ambientLight(255, 0, 0);
+ *
+ *   // Get the mouse's coordinates.
+ *   let mx = mouseX - 50;
+ *   let my = mouseY - 50;
+ *
+ *   // Turn on a white point light that follows the mouse.
+ *   pointLight(255, 255, 255, mx, my, 50);
+ *
+ *   // Style the sphere.
  *   noStroke();
- *   let locX = mouseX - width / 2;
- *   let locY = mouseY - height / 2;
- *   ambientLight(60, 60, 60);
- *   pointLight(255, 255, 255, locX, locY, 50);
- *   specularMaterial(250);
+ *
+ *   // Add a specular material with a grayscale value.
+ *   specularMaterial(255);
+ *
+ *   // Draw the left sphere with low shininess.
  *   translate(-25, 0, 0);
- *   shininess(1);
+ *   shininess(10);
  *   sphere(20);
+ *
+ *   // Draw the right sphere with high shininess.
  *   translate(50, 0, 0);
- *   shininess(20);
+ *   shininess(100);
  *   sphere(20);
  * }
  * </code>
  * </div>
- * @alt
- * two spheres, one more shiny than the other
  */
 p5.prototype.shininess = function (shine) {
   this._assert3d('shininess');
@@ -1184,86 +2212,110 @@ p5.prototype.shininess = function (shine) {
 };
 
 /**
- * Sets the metalness property of a material used in 3D rendering.
+ * Sets the amount of "metalness" of a
+ * <a href="#/p5/specularMaterial">specularMaterial()</a>.
  *
- * The metalness property controls the degree to which the material
- * appears metallic. A higher metalness value makes the material look
- * more metallic, while a lower value makes it appear less metallic.
+ * `metalness()` can make materials appear more metallic. It affects the way
+ * materials reflect light sources including
+ * affects the way materials reflect light sources including
+ * <a href="#/p5/directionalLight">directionalLight()</a>,
+ * <a href="#/p5/pointLight">pointLight()</a>,
+ * <a href="#/p5/spotLight">spotLight()</a>, and
+ * <a href="#/p5/imageLight">imageLight()</a>.
  *
- * The default and minimum value is 0, indicating a non-metallic appearance.
- *
- * Unlike other materials, metals exclusively rely on reflections, particularly
- * those produced by specular lights (mirrorLike lights). They don't incorporate
- * diffuse or ambient lighting. Metals use a fill color to influence the overall
- * color of their reflections. Pick a fill color, and you can easily change the
- * appearance of the metal surfaces. When no fill color is provided, it defaults
- * to using white.
+ * The parameter, `metallic`, is a number that sets the amount of metalness.
+ * `metallic` must be greater than 1, which is its default value. Higher
+ * values, such as `metalness(100)`, make specular materials appear more
+ * metallic.
  *
  * @method metalness
-
- * @param {Number} metallic - The degree of metalness.
- * @example
- * <div class="notest">
- * <code>
- * let img;
- * let slider;
- * let slider2;
- * function preload() {
- *   img = loadImage('assets/outdoor_spheremap.jpg');
- * }
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *   slider = createSlider(0, 300, 100, 1);
- *   let sliderLabel = createP('Metalness');
- *   sliderLabel.position(100, height - 25);
- *   slider2 = createSlider(0, 350, 100);
- *   slider2.position(0, height + 20);
- *   slider2Label = createP('Shininess');
- *   slider2Label.position(100, height);
- * }
- * function draw() {
- *   background(220);
- *   imageMode(CENTER);
- *   push();
- *   image(img, 0, 0, width, height);
- *   clearDepth();
- *   pop();
- *   imageLight(img);
- *   fill('gray');
- *   specularMaterial('gray');
- *   shininess(slider2.value());
- *   metalness(slider.value());
- *   noStroke();
- *   sphere(30);
- * }
- * </code>
- * </div>
+ * @param {Number} metallic amount of metalness.
+ *
  * @example
  * <div>
  * <code>
- * let slider;
- * let slider2;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   slider = createSlider(0, 200, 100);
- *   let sliderLabel = createP('Metalness');
- *   sliderLabel.position(100, height - 25);
- *   slider2 = createSlider(0, 200, 2);
- *   slider2.position(0, height + 25);
- *   let slider2Label = createP('Shininess');
- *   slider2Label.position(100, height);
+ *
+ *   describe(
+ *     'Two blue spheres drawn on a gray background. White light reflects from their surfaces as the mouse moves. The right sphere is more metallic than the left sphere.'
+ *   );
  * }
+ *
  * function draw() {
+ *   background(200);
+ *
+ *   // Turn on an ambient light.
+ *   ambientLight(200);
+ *
+ *   // Get the mouse's coordinates.
+ *   let mx = mouseX - 50;
+ *   let my = mouseY - 50;
+ *
+ *   // Turn on a white point light that follows the mouse.
+ *   pointLight(255, 255, 255, mx, my, 50);
+ *
+ *   // Style the spheres.
  *   noStroke();
- *   background(100);
- *   fill(255, 215, 0);
- *   pointLight(255, 255, 255, 5000, 5000, 75);
- *   specularMaterial('gray');
- *   ambientLight(100);
- *   shininess(slider2.value());
- *   metalness(slider.value());
- *   rotateY(frameCount * 0.01);
- *   torus(20, 10);
+ *   fill(30, 30, 255);
+ *   specularMaterial(255);
+ *   shininess(20);
+ *
+ *   // Draw the left sphere with low metalness.
+ *   translate(-25, 0, 0);
+ *   metalness(1);
+ *   sphere(20);
+ *
+ *   // Draw the right sphere with high metalness.
+ *   translate(50, 0, 0);
+ *   metalness(50);
+ *   sphere(20);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/outdoor_spheremap.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100 ,100 ,WEBGL);
+ *
+ *   describe(
+ *     'Two spheres floating above a landscape. The surface of the spheres reflect the landscape. The right sphere is more reflective than the left sphere.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   // Add the panorama.
+ *   panorama(img);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Use the image as a light source.
+ *   imageLight(img);
+ *
+ *   // Style the spheres.
+ *   noStroke();
+ *   specularMaterial(50);
+ *   shininess(200);
+ *
+ *   // Draw the left sphere with low metalness.
+ *   translate(-25, 0, 0);
+ *   metalness(1);
+ *   sphere(20);
+ *
+ *   // Draw the right sphere with high metalness.
+ *   translate(50, 0, 0);
+ *   metalness(50);
+ *   sphere(20);
  * }
  * </code>
  * </div>
@@ -1279,14 +2331,17 @@ p5.prototype.metalness = function (metallic) {
  * @private blends colors according to color components.
  * If alpha value is less than 1, or non-standard blendMode
  * we need to enable blending on our gl context.
- * @param  {Number[]} color [description]
- * @return {Number[]}  Normalized numbers array
+ * @param  {Number[]} color The currently set color, with values in 0-1 range
+ * @param  {Boolean} [hasTransparency] Whether the shape being drawn has other
+ * transparency internally, e.g. via vertex colors
+ * @return {Number[]]}  Normalized numbers array
  */
-p5.RendererGL.prototype._applyColorBlend = function (colors) {
+p5.RendererGL.prototype._applyColorBlend = function(colors, hasTransparency) {
   const gl = this.GL;
 
   const isTexture = this.drawMode === constants.TEXTURE;
   const doBlend =
+    hasTransparency ||
     this.userFillShader ||
     this.userStrokeShader ||
     this.userPointShader ||

@@ -1,3 +1,5 @@
+<!-- A reference to help give our documentation a consistent voice. -->
+
 # Documentation Style Guide
 
 Hello! Welcome to the guidelines for writing p5.js documentation. This document is a remix of the following resources:
@@ -35,6 +37,7 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
 - [Arrays](#arrays)
 - [Functions](#functions)
 - [Arrow Functions](#arrow-functions)
+- [Chaining](#chaining)
 - [Classes](#classes)
 - [Assets](#assets)
 
@@ -1041,6 +1044,30 @@ function processImage(img) {
 // Good.
 [1, 2, 3].map((number) => number * number);
 ```
+**[⬆ back to top](#table-of-contents)**
+
+## Chaining
+
+* Use individual function calls instead of function chaining.
+
+> Why? To accommodate users who may not be familiar with the concept of function chaining.
+
+```javascript
+// Bad.
+fill(0)
+  .strokeWeight(6)
+  .textSize(20);
+
+// Bad.
+fill(0).strokeWeight(6).textSize(20);
+
+// Good.
+fill(0);
+strokeWeight(6);
+textSize(20);
+```
+
+**[⬆ back to top](#table-of-contents)**
 
 ## Classes
 

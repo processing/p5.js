@@ -45,17 +45,23 @@ import '../core/friendly_errors/fes_core';
  * @param  {function(Event)}    [failureCallback] function called with event
  *                               error if the image fails to load.
  * @return {p5.Image}            the <a href="#/p5.Image">p5.Image</a> object.
+ *
  * @example
  * <div>
  * <code>
  * let img;
  *
+ * // Load the image and create a p5.Image object.
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Draw the image.
  *   image(img, 0, 0);
+ *
  *   describe('Image of the underside of a white umbrella and a gridded ceiling.');
  * }
  * </code>
@@ -64,10 +70,15 @@ import '../core/friendly_errors/fes_core';
  * <div>
  * <code>
  * function setup() {
- *   loadImage('assets/laDefense.jpg', img => {
- *     image(img, 0, 0);
- *   });
+ *   // Call handleImage() once the image loads.
+ *   loadImage('assets/laDefense.jpg', handleImage);
+ *
  *   describe('Image of the underside of a white umbrella and a gridded ceiling.');
+ * }
+ *
+ * // Display the image.
+ * function handleImage(img) {
+ *   image(img, 0, 0);
  * }
  * </code>
  * </div>
@@ -75,15 +86,20 @@ import '../core/friendly_errors/fes_core';
  * <div>
  * <code>
  * function setup() {
- *   loadImage('assets/laDefense.jpg', success, failure);
+ *   // Call handleImage() once the image loads or
+ *   // call handleError() if an error occurs.
+ *   loadImage('assets/laDefense.jpg', handleImage, handleError);
  * }
  *
- * function success(img) {
+ * // Display the image.
+ * function handleImage(img) {
  *   image(img, 0, 0);
+ *
  *   describe('Image of the underside of a white umbrella and a gridded ceiling.');
  * }
  *
- * function failure(event) {
+ * // Log the error.
+ * function handleError(event) {
  *   console.error('Oops!', event);
  * }
  * </code>
@@ -201,12 +217,14 @@ p5.prototype.loadImage = async function(
 };
 
 /**
- * Generates a gif from a sketch and saves it to a file. `saveGif()` may be
- * called in <a href="#/p5/setup">setup()</a> or at any point while a sketch
- * is running.
+ * Generates a gif from a sketch and saves it to a file.
  *
- * The first parameter, `fileName`, sets the gif's file name. The second
- * parameter, `duration`, sets the gif's duration in seconds.
+ * `saveGif()` may be called in <a href="#/p5/setup">setup()</a> or at any
+ * point while a sketch is running.
+ *
+ * The first parameter, `fileName`, sets the gif's file name.
+ *
+ * The second parameter, `duration`, sets the gif's duration in seconds.
  *
  * The third parameter, `options`, is optional. If an object is passed,
  * `saveGif()` will use its properties to customize the gif. `saveGif()`
@@ -227,18 +245,56 @@ p5.prototype.loadImage = async function(
  * @example
  * <div>
  * <code>
- * function draw() {
- *   background(200);
- *   let c = frameCount % 255;
- *   fill(c);
- *   circle(50, 50, 25);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
  *   describe('A circle drawn in the middle of a gray square. The circle changes color from black to white, then repeats.');
  * }
  *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the circle.
+ *   let c = frameCount % 255;
+ *   fill(c);
+ *
+ *   // Display the circle.
+ *   circle(50, 50, 25);
+ * }
+ *
+ * // Save a 5-second gif when the user presses the 's' key.
  * function keyPressed() {
  *   if (key === 's') {
  *     saveGif('mySketch', 5);
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A circle drawn in the middle of a gray square. The circle changes color from black to white, then repeats.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the circle.
+ *   let c = frameCount % 255;
+ *   fill(c);
+ *
+ *   // Display the circle.
+ *   circle(50, 50, 25);
+ * }
+ *
+ * // Save a 5-second gif when the user presses the 's' key.
+ * // Wait 1 second after the key press before recording.
+ * function keyPressed() {
+ *   if (key === 's') {
+ *     saveGif('mySketch', 5, { delay: 1 });
  *   }
  * }
  * </code>
@@ -845,12 +901,19 @@ function _sAssign(sVal, iVal) {
 }
 
 /**
- * Draws a source image to the canvas.
+ * Draws an image to the canvas.
  *
- * The first parameter, `img`, is the source image to be drawn. The second and
- * third parameters, `dx` and `dy`, set the coordinates of the destination
- * image's top left corner. See <a href="#/p5/imageMode">imageMode()</a> for
- * other ways to position images.
+ * The first parameter, `img`, is the source image to be drawn. `img` can be
+ * any of the following objects:
+ * - <a href="#/p5.Image">p5.Image</a>
+ * - <a href="#/p5.Element">p5.Element</a>
+ * - <a href="#/p5.Texture">p5.Texture</a>
+ * - <a href="#/p5.Framebuffer">p5.Framebuffer</a>
+ * - <a href="#/p5.FramebufferTexture">p5.FramebufferTexture</a>
+ *
+ * The second and third parameters, `dx` and `dy`, set the coordinates of the
+ * destination image's top left corner. See
+ * <a href="#/p5/imageMode">imageMode()</a> for other ways to position images.
  *
  * Here's a diagram that explains how optional parameters work in `image()`:
  *
@@ -867,7 +930,7 @@ function _sAssign(sVal, iVal) {
  * The eighth and ninth parameters, `sw` and `sh`, are also optional.
  * They define the width and height of a subsection to draw from the source
  * image. By default, `image()` draws the full subsection that begins at
- * (`sx`, `sy`) and extends to the edges of the source image.
+ * `(sx, sy)` and extends to the edges of the source image.
  *
  * The ninth parameter, `fit`, is also optional. It enables a subsection of
  * the source image to be drawn without affecting its aspect ratio. If
@@ -888,17 +951,23 @@ function _sAssign(sVal, iVal) {
  * @param  {Number}   y y-coordinate of the top-left corner of the image.
  * @param  {Number}   [width]  width to draw the image.
  * @param  {Number}   [height] height to draw the image.
+ *
  * @example
  * <div>
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(50);
+ *
+ *   // Draw the image.
  *   image(img, 0, 0);
  *
  *   describe('An image of the underside of a white umbrella with a gridded ceiling above.');
@@ -910,12 +979,17 @@ function _sAssign(sVal, iVal) {
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(50);
+ *
+ *   // Draw the image.
  *   image(img, 10, 10);
  *
  *   describe('An image of the underside of a white umbrella with a gridded ceiling above. The image has dark gray borders on its left and top.');
@@ -927,12 +1001,17 @@ function _sAssign(sVal, iVal) {
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(50);
+ *
+ *   // Draw the image 50x50.
  *   image(img, 0, 0, 50, 50);
  *
  *   describe('An image of the underside of a white umbrella with a gridded ceiling above. The image is drawn in the top left corner of a dark gray square.');
@@ -944,12 +1023,17 @@ function _sAssign(sVal, iVal) {
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(50);
+ *
+ *   // Draw the center of the image.
  *   image(img, 25, 25, 50, 50, 25, 25, 50, 50);
  *
  *   describe('An image of a gridded ceiling drawn in the center of a dark gray square.');
@@ -961,12 +1045,17 @@ function _sAssign(sVal, iVal) {
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/moonwalk.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(50);
+ *
+ *   // Draw the image and scale it to fit within the canvas.
  *   image(img, 0, 0, width, height, 0, 0, img.width, img.height, CONTAIN);
  *
  *   describe('An image of an astronaut on the moon. The top and bottom borders of the image are dark gray.');
@@ -978,13 +1067,18 @@ function _sAssign(sVal, iVal) {
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   // Image is 50 x 50 pixels.
  *   img = loadImage('assets/laDefense50.png');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(50);
+ *
+ *   // Draw the image and scale it to cover the canvas.
  *   image(img, 0, 0, width, height, 0, 0, img.width, img.height, COVER);
  *
  *   describe('A pixelated image of the underside of a white umbrella with a gridded ceiling above.');
@@ -1111,7 +1205,7 @@ p5.prototype.image = function(
 };
 
 /**
- * Tints images using a specified color.
+ * Tints images using a color.
  *
  * The version of `tint()` with one parameter interprets it one of four ways.
  * If the parameter is a number, it's interpreted as a grayscale value. If the
@@ -1140,12 +1234,19 @@ p5.prototype.image = function(
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Left image.
  *   image(img, 0, 0);
+ *
+ *   // Right image.
+ *   // Tint with a CSS color string.
  *   tint('red');
  *   image(img, 50, 0);
  *
@@ -1158,12 +1259,19 @@ p5.prototype.image = function(
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Left image.
  *   image(img, 0, 0);
+ *
+ *   // Right image.
+ *   // Tint with RGB values.
  *   tint(255, 0, 0);
  *   image(img, 50, 0);
  *
@@ -1176,12 +1284,19 @@ p5.prototype.image = function(
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Left.
  *   image(img, 0, 0);
+ *
+ *   // Right.
+ *   // Tint with RGBA values.
  *   tint(255, 0, 0, 100);
  *   image(img, 50, 0);
  *
@@ -1194,12 +1309,19 @@ p5.prototype.image = function(
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Left.
  *   image(img, 0, 0);
+ *
+ *   // Right.
+ *   // Tint with grayscale and alpha values.
  *   tint(255, 180);
  *   image(img, 50, 0);
  *
@@ -1236,21 +1358,32 @@ p5.prototype.tint = function(...args) {
 };
 
 /**
- * Removes the current tint set by <a href="#/p5/tint">tint()</a> and restores
- * images to their original colors.
+ * Removes the current tint set by <a href="#/p5/tint">tint()</a>.
+ *
+ * `noTint()` restores images to their original colors.
  *
  * @method noTint
+ *
  * @example
  * <div>
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
+ *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Left.
+ *   // Tint with a CSS color string.
  *   tint('red');
  *   image(img, 0, 0);
+ *
+ *   // Right.
+ *   // Remove the tint.
  *   noTint();
  *   image(img, 50, 0);
  *
@@ -1294,19 +1427,27 @@ p5.prototype._getTintedImageCanvas =
  *
  * @method imageMode
  * @param {Constant} mode either CORNER, CORNERS, or CENTER.
+ *
  * @example
  *
  * <div>
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
+ *
+ *   // Use CORNER mode.
  *   imageMode(CORNER);
+ *
+ *   // Display the image.
  *   image(img, 10, 10, 50, 50);
  *
  *   describe('A square image of a brick wall is drawn at the top left of a gray square.');
@@ -1318,13 +1459,20 @@ p5.prototype._getTintedImageCanvas =
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
+ *
+ *   // Use CORNERS mode.
  *   imageMode(CORNERS);
+ *
+ *   // Display the image.
  *   image(img, 10, 10, 90, 40);
  *
  *   describe('An image of a brick wall is drawn on a gray square. The image is squeezed into a small rectangular area.');
@@ -1336,13 +1484,20 @@ p5.prototype._getTintedImageCanvas =
  * <code>
  * let img;
  *
+ * // Load the image.
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
  *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
+ *
+ *   // Use CENTER mode.
  *   imageMode(CENTER);
+ *
+ *   // Display the image.
  *   image(img, 50, 50, 80, 80);
  *
  *   describe('A square image of a brick wall is drawn on a gray square.');

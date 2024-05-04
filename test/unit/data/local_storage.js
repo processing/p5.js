@@ -106,4 +106,18 @@ suite('local storage', function() {
       checkRemoval('myVector');
     });
   });
+
+  suite('should be able to clear all items at once', function () {
+    test('should remove all items set by storeItem()', function () {
+      localStorage.setItem('extra', 'stuff');
+      myp5.clearStorage();
+      assert.deepEqual(myp5.getItem('myBoolean'), null);
+      assert.deepEqual(myp5.getItem('myNumber'), null);
+      assert.deepEqual(myp5.getItem('myObject'), null);
+      assert.deepEqual(myp5.getItem('myString'), null);
+      assert.deepEqual(myp5.getItem('myColor'), null);
+      assert.deepEqual(myp5.getItem('myVector'), null);
+      assert.deepEqual(myp5.getItem('extra'), 'stuff');
+    });
+  });
 });

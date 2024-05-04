@@ -58,6 +58,17 @@ p5.Graphics = class extends p5.Element {
     this.height = h;
     this._pixelDensity = pInst._pixelDensity;
     this._renderer = new p5.renderers[r](this.canvas, this, false);
+
+    // if (r === constants.WEBGL) {
+    //   this._renderer = new p5.RendererGL(this.canvas, this, false);
+    //   const { adjustedWidth, adjustedHeight } =
+    //     this._renderer._adjustDimensions(w, h);
+    //   w = adjustedWidth;
+    //   h = adjustedHeight;
+    // } else {
+    //   this._renderer = new p5.Renderer2D(this.canvas, this, false);
+    // }
+
     pInst._elements.push(this);
 
     Object.defineProperty(this, 'deltaTime', {
