@@ -15,31 +15,6 @@ suite('Typography Attributes', function() {
     myp5.remove();
   });
 
-  // NOTE: FES testing don't quite work yet
-  // Maybe consolidate FES tests
-  suite.skip('p5.prototype.textAlign', function() {
-    test('wrong param at #0', function() {
-      assert.validationError(function() {
-        myp5.textAlign('a');
-      });
-    });
-    test('wrong param at #1', function() {
-      assert.validationError(function() {
-        myp5.textAlign(myp5.CENTER, 'a');
-      });
-    });
-    test('wrong param at #0. vertAlign as #0 param.', function() {
-      assert.validationError(function() {
-        myp5.textAlign(myp5.BOTTOM);
-      });
-    });
-    test('wrong param at #1. horizAlign as #1 param.', function() {
-      assert.validationError(function() {
-        myp5.textAlign(myp5.CENTER, myp5.LEFT);
-      });
-    });
-  });
-
   suite('p5.prototype.textLeading', function() {
     test('sets and gets the spacing value', function() {
       myp5.textLeading(20);
