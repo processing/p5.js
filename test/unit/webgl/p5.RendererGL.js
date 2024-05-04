@@ -1,18 +1,16 @@
+import p5 from '../../../src/app.js';
+
 suite('p5.RendererGL', function() {
   var myp5;
 
-  if (!window.Modernizr.webgl) {
-    return;
-  }
-
-  setup(function() {
+  beforeAll(function() {
     myp5 = new p5(function(p) {
       p.setup = function() {};
       p.draw = function() {};
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
@@ -45,7 +43,7 @@ suite('p5.RendererGL', function() {
 
     suite('when WebGL2 is unavailable', function() {
       let prevGetContext;
-      setup(function() {
+      beforeAll(function() {
         prevGetContext = HTMLCanvasElement.prototype.getContext;
         // Mock WebGL2 being unavailable
         HTMLCanvasElement.prototype.getContext = function(type, attrs) {
@@ -57,7 +55,7 @@ suite('p5.RendererGL', function() {
         };
       });
 
-      teardown(function() {
+      afterAll(function() {
         // Put back the actual implementation
         HTMLCanvasElement.prototype.getContext = prevGetContext;
       });
@@ -119,7 +117,7 @@ suite('p5.RendererGL', function() {
   });
 
   suite('filter shader', function() {
-    setup(function() {
+    beforeAll(function() {
       frag = `precision highp float;
       varying vec2 vTexCoord;
 
@@ -510,7 +508,7 @@ suite('p5.RendererGL', function() {
           for (const mode of [myp5.P2D, myp5.WEBGL]) {
             suite(`${mode.description} mode`, function() {
               let defaultPixels;
-              setup(() => {
+              beforeAll(() => {
                 defaultPixels = getFilteredPixels(
                   myp5.P2D,
                   () => {}, filterType
