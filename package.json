@@ -50,7 +50,7 @@
     "grunt-contrib-connect": "^3.0.0",
     "grunt-contrib-uglify": "^5.2.2",
     "grunt-contrib-watch": "^1.1.0",
-    "grunt-contrib-yuidoc": "1.0.0",
+    "grunt-contrib-yuidoc": "^1.0.0",
     "grunt-eslint": "^24.0.0",
     "grunt-minjson": "^0.4.0",
     "grunt-mocha-test": "^0.13.3",
