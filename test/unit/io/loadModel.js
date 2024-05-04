@@ -1,3 +1,6 @@
+import p5 from '../../../src/app.js';
+import { testSketchWithPromise, promisedSketch } from '../../js/p5_helpers';
+
 suite('loadModel', function() {
   var invalidFile = '404file';
   var validFile = 'unit/assets/teapot.obj';

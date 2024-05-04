@@ -1,3 +1,6 @@
+import p5 from '../../../src/app.js';
+import { testSketchWithPromise, promisedSketch } from '../../js/p5_helpers';
+
 suite('loadStrings', function() {
   const invalidFile = '404file';
   const validFile = 'unit/assets/sentences.txt';

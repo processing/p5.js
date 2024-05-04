@@ -1,6 +1,7 @@
 /* eslint no-unused-vars: 0 */
+import p5 from '../../src/app.js';
 
-function promisedSketch(sketch_fn) {
+export function promisedSketch(sketch_fn) {
   var myInstance;
   var promise = new Promise(function(resolve, reject) {
     myInstance = new p5(function(sketch) {
@@ -14,7 +15,7 @@ function promisedSketch(sketch_fn) {
   return promise;
 }
 
-function testSketchWithPromise(name, sketch_fn) {
+export function testSketchWithPromise(name, sketch_fn) {
   var test_fn = function() {
     return promisedSketch(sketch_fn);
   };
@@ -24,7 +25,7 @@ function testSketchWithPromise(name, sketch_fn) {
   return test(name, test_fn);
 }
 
-function testWithDownload(name, fn, asyncFn = false) {
+export function testWithDownload(name, fn, asyncFn = false) {
   var test_fn = function(done) {
     // description of this is also on
     // https://github.com/processing/p5.js/pull/4418/

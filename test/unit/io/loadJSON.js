@@ -1,3 +1,6 @@
+import p5 from '../../../src/app.js';
+import { testSketchWithPromise, promisedSketch } from '../../js/p5_helpers';
+
 suite('loadJSON', function() {
   var invalidFile = '404file';
   var jsonArrayFile = 'unit/assets/array.json';
