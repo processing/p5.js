@@ -139,7 +139,7 @@ class Framebuffer {
         target._renderer._adjustDimensions(settings.width, settings.height);
       this.width = dimensions.adjustedWidth;
       this.height = dimensions.adjustedHeight;
-      this.autoSized = false;
+      this._autoSized = false;
     } else {
       if ((settings.width === undefined) !== (settings.height === undefined)) {
         console.warn(
@@ -150,7 +150,7 @@ class Framebuffer {
       }
       this.width = target.width;
       this.height = target.height;
-      this.autoSized = true;
+      this._autoSized = true;
     }
     this._checkIfFormatsAvailable();
 
@@ -226,7 +226,7 @@ class Framebuffer {
    * the user's mouse
    */
   resize(width, height) {
-    this.autoSized = false;
+    this._autoSized = false;
     const dimensions =
       this.target._renderer._adjustDimensions(width, height);
     width = dimensions.adjustedWidth;
@@ -250,7 +250,7 @@ class Framebuffer {
    */
   pixelDensity(density) {
     if (density) {
-      this.autoSized = false;
+      this._autoSized = false;
       this.density = density;
       this._handleResize();
     } else {
@@ -271,9 +271,9 @@ class Framebuffer {
    */
   autoSized(autoSized) {
     if (autoSized === undefined) {
-      return this.autoSized;
+      return this._autoSized;
     } else {
-      this.autoSized = autoSized;
+      this._autoSized = autoSized;
       this._handleResize();
     }
   }
@@ -655,7 +655,7 @@ class Framebuffer {
    * @private
    */
   _updateSize() {
-    if (this.autoSized) {
+    if (this._autoSized) {
       this.width = this.target.width;
       this.height = this.target.height;
       this.density = this.target.pixelDensity();
@@ -670,7 +670,7 @@ class Framebuffer {
    * @private
    */
   _canvasSizeChanged() {
-    if (this.autoSized) {
+    if (this._autoSized) {
       this._handleResize();
     }
   }

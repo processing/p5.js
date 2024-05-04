@@ -103,6 +103,7 @@ suite('p5.Framebuffer', function() {
       myp5.pixelDensity(1);
       const fbo = myp5.createFramebuffer();
       const oldTexture = fbo.color.rawTexture();
+      expect(fbo.autoSized()).to.equal(true);
       expect(fbo.width).to.equal(10);
       expect(fbo.height).to.equal(10);
       expect(fbo.density).to.equal(1);
@@ -122,6 +123,7 @@ suite('p5.Framebuffer', function() {
       myp5.pixelDensity(3);
       const fbo = myp5.createFramebuffer({ width: 20, height: 20, density: 1 });
       const oldTexture = fbo.color.rawTexture();
+      expect(fbo.autoSized()).to.equal(false);
       expect(fbo.width).to.equal(20);
       expect(fbo.height).to.equal(20);
       expect(fbo.density).to.equal(1);
@@ -134,6 +136,30 @@ suite('p5.Framebuffer', function() {
 
       // The texture should not be recreated
       expect(fbo.color.rawTexture()).to.equal(oldTexture);
+    });
+
+    test('manually-sized framebuffers can be made auto-sized', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      myp5.pixelDensity(3);
+      const fbo = myp5.createFramebuffer({ width: 20, height: 20, density: 1 });
+      const oldTexture = fbo.color.rawTexture();
+      expect(fbo.autoSized()).to.equal(false);
+      expect(fbo.width).to.equal(20);
+      expect(fbo.height).to.equal(20);
+      expect(fbo.density).to.equal(1);
+
+      // Make it auto-sized
+      fbo.autoSized(true);
+      expect(fbo.autoSized()).to.equal(true);
+
+      myp5.resizeCanvas(5, 15);
+      myp5.pixelDensity(2);
+      expect(fbo.width).to.equal(5);
+      expect(fbo.height).to.equal(15);
+      expect(fbo.density).to.equal(2);
+
+      // The texture should be recreated
+      expect(fbo.color.rawTexture()).not.to.equal(oldTexture);
     });
 
     suite('resizing', function() {
