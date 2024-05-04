@@ -73,7 +73,7 @@ export function testWithDownload(name, fn, asyncFn = false) {
 }
 
 // Tests should run only for the unminified script
-function testUnMinified(name, test_fn) {
+export function testUnMinified(name, test_fn) {
   return !window.IS_TESTING_MINIFIED_VERSION ? test(name, test_fn) : null;
 }
 
@@ -112,10 +112,10 @@ export function parallelSketches(sketch_fns) {
   };
 }
 
-var P5_SCRIPT_URL = '../../lib/p5.js';
-var P5_SCRIPT_TAG = '<script src="' + P5_SCRIPT_URL + '"></script>';
+export const P5_SCRIPT_URL = '../../lib/p5.js';
+export const P5_SCRIPT_TAG = '<script src="' + P5_SCRIPT_URL + '"></script>';
 
-function createP5Iframe(html) {
+export function createP5Iframe(html) {
   html = html || P5_SCRIPT_TAG;
 
   var elt = document.createElement('iframe');

@@ -1,4 +1,5 @@
 import p5 from '../../../src/app.js';
+import { createP5Iframe, P5_SCRIPT_TAG, P5_SCRIPT_URL } from '../../js/p5_helpers';
 
 suite('Core', function () {
   suite('p5.prototype.registerMethod', function () {

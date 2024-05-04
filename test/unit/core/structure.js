@@ -1,4 +1,5 @@
 import p5 from '../../../src/app.js';
+import { testSketchWithPromise, createP5Iframe, P5_SCRIPT_TAG } from '../../js/p5_helpers';
 
 suite('Structure', function() {
   var myp5;

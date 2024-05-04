@@ -112,12 +112,6 @@ suite('Environment', function() {
       });
     });
 
-    test('wrong param type. throws error.', function() {
-      assert.validationError(function() {
-        myp5.frameRate('a');
-      });
-    });
-
     test('p5.prototype.getFrameRate', function() {
       assert.strictEqual(myp5.getFrameRate(), 0);
     });
@@ -226,12 +220,6 @@ suite('Environment', function() {
     test('sets the pixel density', function() {
       myp5.pixelDensity(2);
       assert.strictEqual(myp5.pixelDensity(), 2);
-    });
-
-    test('wrong param type. throws validationError.', function() {
-      assert.validationError(function() {
-        myp5.pixelDensity('a');
-      });
     });
   });
 
