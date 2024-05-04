@@ -77,7 +77,7 @@ function testUnMinified(name, test_fn) {
   return !window.IS_TESTING_MINIFIED_VERSION ? test(name, test_fn) : null;
 }
 
-function parallelSketches(sketch_fns) {
+export function parallelSketches(sketch_fns) {
   var setupPromises = [];
   var resultPromises = [];
   var endCallbacks = [];
