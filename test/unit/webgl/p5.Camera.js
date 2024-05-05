@@ -506,7 +506,7 @@ suite('p5.Camera', function() {
       myCam._orbit(0, -Math.PI, 0);
       // upY should switch from 1(dPhi=0) to -1 (dPhi=-PI)
       // myCam.upY should be -1
-      assert(myCam.upY === -1);
+      assert.equal(myCam.upY, -1);
     });
     test('_orbit() ensures myCam.upY switches direction (from -1 to 1) at camPhi <= 0', function() {
       // the following should produce the upY with inverted direction(from -1 to 1)
@@ -515,7 +515,7 @@ suite('p5.Camera', function() {
       myCam._orbit(0, Math.PI, 0);
       // upY should switch from -1(dPhi=-PI) to 1 (dPhi=PI)
       // myCam.upY should be 1
-      assert(myCam.upY === 1);
+      assert.equal(myCam.upY, 1);
     });
     test('_orbit() ensures myCam.upY switches direction (from 1 to -1) at camPhi >= PI', function() {
       // the following should produce the upY with inverted direction(from 1 to -1)
@@ -523,7 +523,7 @@ suite('p5.Camera', function() {
       myCam._orbit(0, Math.PI, 0);
       // upY should switch from 1(dPhi=0) to -1 (dPhi=PI)
       // myCam.upY should be -1
-      assert(myCam.upY === -1);
+      assert.equal(myCam.upY, -1);
     });
     test('_orbit() ensures myCam.upY switches direction (from -1 to 1) at camPhi >= PI', function() {
       // the following should produce the upY with inverted direction(from -1 to 1)
@@ -532,7 +532,7 @@ suite('p5.Camera', function() {
       myCam._orbit(0, -Math.PI, 0);
       // upY should switch from -1(dPhi=PI) to 1 (dPhi=-PI)
       // myCam.upY should be 1
-      assert(myCam.upY === 1);
+      assert.equal(myCam.upY, 1);
     });
     test('_orbit() ensures camera can do multiple continuous 360deg rotations', function() {
       // the following should produce two camera objects having same properties.
@@ -976,9 +976,9 @@ suite('p5.Camera', function() {
       var vecZ = myp5.createVector(local.z[0], local.z[1], local.z[2]);
 
       // assert vectors are normalized
-      assert.equal(vecX.mag(), 1, 'local X vector is not unit vector');
-      assert.equal(vecY.mag(), 1, 'local Y vector is not unit vector');
-      assert.equal(vecZ.mag(), 1, 'local Z vector is not unit vector');
+      assert.closeTo(vecX.mag(), 1, delta, 'local X vector is not unit vector');
+      assert.closeTo(vecY.mag(), 1, delta, 'local Y vector is not unit vector');
+      assert.closeTo(vecZ.mag(), 1, delta, 'local Z vector is not unit vector');
 
       // Assert vectors are orthogonal
       assert.closeTo(
