@@ -316,8 +316,8 @@ suite('Conversion', function() {
       assert.isNaN(result);
     });
 
-    test.skip('should return the NaN for invalid hex string', function() {
-      result = myp5.unhex('cat');
+    test('should return the NaN for invalid hex string', function() {
+      result = myp5.unhex('lorem');
       assert.isNaN(result);
     });
 

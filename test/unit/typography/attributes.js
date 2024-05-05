@@ -24,16 +24,6 @@ suite('Typography Attributes', function() {
       myp5.textLeading(-20);
       assert.strictEqual(myp5.textLeading(), -20);
     });
-    test.skip('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.textLeading('C');
-      });
-    });
-    test.skip('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.textLeading('25');
-      });
-    });
   });
 
   suite('p5.prototype.textSize', function() {
@@ -41,27 +31,12 @@ suite('Typography Attributes', function() {
       myp5.textSize(24);
       assert.strictEqual(myp5.textSize(), 24);
     });
-    test.skip('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.textSize('A');
-      });
-    });
-    test.skip('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.textSize('30');
-      });
-    });
   });
 
   suite('p5.prototype.textStyle', function() {
     test('sets and gets the font style', function() {
       myp5.textStyle(myp5.ITALIC);
       assert.strictEqual(myp5.textStyle(), myp5.ITALIC);
-    });
-    test.skip('wrong param at #0', function() {
-      assert.validationError(function() {
-        myp5.textStyle('a');
-      });
     });
   });
 
