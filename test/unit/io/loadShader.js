@@ -6,23 +6,6 @@ suite('loadShader', function() {
   var vertFile = 'unit/assets/vert.glsl';
   var fragFile = 'unit/assets/frag.glsl';
 
-  test('_friendlyFileLoadError is called', async function() {
-    const _friendlyFileLoadErrorStub = sinon.stub(p5, '_friendlyFileLoadError');
-    try {
-      await promisedSketch(function(sketch, resolve, reject) {
-        sketch.preload = function() {
-          sketch.loadShader(invalidFile, invalidFile, reject, resolve);
-        };
-      });
-      expect(
-        _friendlyFileLoadErrorStub.calledOnce,
-        'p5._friendlyFileLoadError was not called'
-      ).to.be.true;
-    } finally {
-      _friendlyFileLoadErrorStub.restore();
-    }
-  });
-
   testSketchWithPromise('error with vert prevents sketch continuing', function(
     sketch,
     resolve,

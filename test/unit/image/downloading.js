@@ -22,14 +22,6 @@ suite('downloading animated gifs', function() {
 
   let imagePath = 'unit/assets/nyan_cat.gif';
 
-  beforeEach(function disableFileLoadError() {
-    sinon.stub(p5, '_friendlyFileLoadError');
-  });
-
-  afterEach(function restoreFileLoadError() {
-    p5._friendlyFileLoadError.restore();
-  });
-
   beforeEach(function loadMyGif(done) {
     myp5.loadImage(imagePath, function(pImg) {
       myGif = pImg;

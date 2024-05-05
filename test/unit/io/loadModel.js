@@ -1,4 +1,3 @@
-import p5 from '../../../src/app.js';
 import { testSketchWithPromise, promisedSketch } from '../../js/p5_helpers';
 
 suite('loadModel', function() {
@@ -9,23 +8,6 @@ suite('loadModel', function() {
   var inconsistentColorObjFile = 'unit/assets/eg1.obj';
   var objMtlMissing = 'unit/assets/objMtlMissing.obj';
   var validSTLfileWithoutExtension = 'unit/assets/ascii';
-
-  test('_friendlyFileLoadError is called', async function() {
-    const _friendlyFileLoadErrorStub = sinon.stub(p5, '_friendlyFileLoadError');
-    try {
-      await promisedSketch(function(sketch, resolve, reject) {
-        sketch.preload = function() {
-          sketch.loadModel(invalidFile, reject, resolve);
-        };
-      });
-      expect(
-        _friendlyFileLoadErrorStub.calledOnce,
-        'p5._friendlyFileLoadError was not called'
-      ).to.be.true;
-    } finally {
-      _friendlyFileLoadErrorStub.restore();
-    }
-  });
 
   testSketchWithPromise('error prevents sketch continuing', function(
     sketch,

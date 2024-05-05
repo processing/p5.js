@@ -18,14 +18,6 @@ suite('saveTable', function() {
     myp5.remove();
   });
 
-  beforeEach(function disableFileLoadError() {
-    sinon.stub(p5, '_friendlyFileLoadError');
-  });
-
-  afterEach(function restoreFileLoadError() {
-    p5._friendlyFileLoadError.restore();
-  });
-
   beforeEach(async function loadMyTable() {
     await new Promise(resolve => {
       myp5.loadTable(validFile, 'csv', 'header', function(table) {

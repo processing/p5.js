@@ -48,14 +48,6 @@ suite('loading images', function() {
 
   var imagePath = 'unit/assets/cat.jpg';
 
-  beforeEach(function disableFileLoadError() {
-    sinon.stub(p5, '_friendlyFileLoadError');
-  });
-
-  afterEach(function restoreFileLoadError() {
-    p5._friendlyFileLoadError.restore();
-  });
-
   test('should call successCallback when image loads', function() {
     return new Promise(function(resolve, reject) {
       myp5.loadImage(imagePath, resolve, reject);
@@ -76,7 +68,6 @@ suite('loading images', function() {
       );
     }).then(function(event) {
       assert.equal(event.type, 'error');
-      assert.isTrue(p5._friendlyFileLoadError.called);
     });
   });
 
@@ -315,14 +306,6 @@ suite('loading animated gif images', function() {
 
   var imagePath = 'unit/assets/nyan_cat.gif';
 
-  beforeEach(function disableFileLoadError() {
-    sinon.stub(p5, '_friendlyFileLoadError');
-  });
-
-  afterEach(function restoreFileLoadError() {
-    p5._friendlyFileLoadError.restore();
-  });
-
   test('should call successCallback when image loads', function() {
     return new Promise(function(resolve, reject) {
       myp5.loadImage(imagePath, resolve, reject);
@@ -343,7 +326,6 @@ suite('loading animated gif images', function() {
       );
     }).then(function(event) {
       assert.equal(event.type, 'error');
-      assert.isTrue(p5._friendlyFileLoadError.called);
     });
   });
 

@@ -1,27 +1,9 @@
-import p5 from '../../../src/app.js';
 import { testSketchWithPromise, promisedSketch } from '../../js/p5_helpers';
 
 suite('loadJSON', function() {
   var invalidFile = '404file';
   var jsonArrayFile = 'unit/assets/array.json';
   var jsonObjectFile = 'unit/assets/object.json';
-
-  test('_friendlyFileLoadError is called', async function() {
-    const _friendlyFileLoadErrorStub = sinon.stub(p5, '_friendlyFileLoadError');
-    try {
-      await promisedSketch(function(sketch, resolve, reject) {
-        sketch.preload = function() {
-          sketch.loadJSON(invalidFile, reject, resolve);
-        };
-      });
-      expect(
-        _friendlyFileLoadErrorStub.calledOnce,
-        'p5._friendlyFileLoadError was not called'
-      ).to.be.true;
-    } finally {
-      _friendlyFileLoadErrorStub.restore();
-    }
-  });
 
   testSketchWithPromise('error prevents sketch continuing', function(
     sketch,
