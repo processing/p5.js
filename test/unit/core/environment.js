@@ -1,4 +1,5 @@
 import p5 from '../../../src/app.js';
+import { vi } from 'vitest';
 
 suite('Environment', function() {
   var myp5;
@@ -123,8 +124,8 @@ suite('Environment', function() {
       let controlledP5;
 
       beforeEach(function() {
-        clock = sinon.useFakeTimers(0);
-        sinon.stub(window.performance, 'now', Date.now);
+        clock = vi.useFakeTimers(0);
+        vi.spyOn(window.performance, 'now', Date.now);
 
         // Save the real requestAnimationFrame so we can restore it later
         prevRequestAnimationFrame = window.requestAnimationFrame;
@@ -149,7 +150,8 @@ suite('Environment', function() {
       });
 
       afterEach(function() {
-        clock.restore();
+        // clock.restore();
+        vi.restoreAllMocks();
         window.performance.now.restore();
         window.requestAnimationFrame = prevRequestAnimationFrame;
         nextFrameCallback = function() {};
@@ -157,7 +159,7 @@ suite('Environment', function() {
       });
 
       test('draw() is called at the correct frame rate given a faster display', function() {
-        sinon.spy(controlledP5, 'draw');
+        vi.spyOn(controlledP5, 'draw');
 
         clock.tick(1000 / 200); // Simulate a 200Hz refresh rate
         nextFrameCallback(); // trigger the next requestAnimationFrame

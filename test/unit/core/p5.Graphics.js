@@ -1,4 +1,5 @@
 import p5 from '../../../src/app.js';
+import { vi } from 'vitest';
 
 suite('Graphics', function() {
   var myp5;
@@ -121,7 +122,7 @@ suite('Graphics', function() {
 
     afterEach(() => {
       if (glStub) {
-        glStub.restore();
+        vi.restoreAllMocks();
         glStub = null;
       }
     });
@@ -176,10 +177,11 @@ suite('Graphics', function() {
       assertValidPixels(graph, 19, 16, 2);
     });
 
+    // NOTE: check this
     test('it resizes the graphics based on max texture size', function() {
-      glStub = sinon.stub(p5.RendererGL.prototype, '_getParam');
+      glStub = vi.spyOn(p5.RendererGL.prototype, '_getParam');
       const fakeMaxTextureSize = 100;
-      glStub.returns(fakeMaxTextureSize);
+      glStub.mockReturnValue(fakeMaxTextureSize);
       const graph = myp5.createGraphics(200, 200, myp5.WEBGL);
       assert(graph.width, 100);
       assert(graph.height, 100);

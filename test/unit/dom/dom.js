@@ -1488,6 +1488,7 @@ suite('DOM', function() {
       navigator.mediaDevices.getUserMedia = backup;
     });
 
+    // NOTE: play() failed because the user didn't interact with the document first.
     testSketchWithPromise(
       'triggers the callback after loading metadata',
       function(sketch, resolve, reject) {
@@ -1502,7 +1503,6 @@ suite('DOM', function() {
     // Required for ios 11 devices
     test('should have playsinline attribute to empty string on DOM element', function() {
       testElement = myp5.createCapture(myp5.VIDEO);
-      console.log(testElement.elt);
       // Weird check, setter accepts : playinline, getter accepts playInline
       assert.isTrue(testElement.elt.playsInline);
     });

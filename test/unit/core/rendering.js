@@ -1,4 +1,5 @@
 import p5 from '../../../src/app.js';
+import { vi } from 'vitest';
 
 suite('Rendering', function() {
   var myp5;
@@ -49,7 +50,7 @@ suite('Rendering', function() {
 
     afterEach(() => {
       if (glStub) {
-        glStub.restore();
+        vi.restoreAllMocks();
         glStub = null;
       }
     });
@@ -100,10 +101,11 @@ suite('Rendering', function() {
       assert.equal(fbo.height, 15);
     });
 
+    // NOTE: below two are nearly identical, should be checked
     test('should resize the dimensions of canvas based on max texture size', function() {
-      glStub = sinon.stub(p5.RendererGL.prototype, '_getParam').restore();
+      glStub = vi.spyOn(p5.RendererGL.prototype, '_getParam');
       const fakeMaxTextureSize = 100;
-      glStub.returns(fakeMaxTextureSize);
+      glStub.mockReturnValue(fakeMaxTextureSize);
       myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.resizeCanvas(200, 200);
       assert.equal(myp5.width, 100);
@@ -111,9 +113,9 @@ suite('Rendering', function() {
     });
 
     test('should resize the dimensions of canvas based on max texture size', function() {
-      glStub = sinon.stub(p5.RendererGL.prototype, '_getParam');
+      glStub = vi.spyOn(p5.RendererGL.prototype, '_getParam');
       const fakeMaxTextureSize = 100;
-      glStub.returns(fakeMaxTextureSize);
+      glStub.mockReturnValue(fakeMaxTextureSize);
       myp5.createCanvas(200, 200, myp5.WEBGL);
       assert.equal(myp5.width, 100);
       assert.equal(myp5.height, 100);

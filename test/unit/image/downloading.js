@@ -278,7 +278,6 @@ suite('p5.prototype.saveFrames', function() {
 
 suite('p5.prototype.saveGif', function() {
   let myp5;
-  let imagePath = 'unit/assets/nyan_cat.gif';
 
   let waitForBlob = async function(blc) {
     let sleep = function(ms) {
