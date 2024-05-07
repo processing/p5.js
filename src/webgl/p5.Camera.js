@@ -2721,7 +2721,7 @@ p5.Camera = class Camera {
  * @for p5.Camera
  * @param  {Number} [x]        x-coordinate of the camera. Defaults to 0.
  * @param  {Number} [y]        y-coordinate of the camera. Defaults to 0.
- * @param  {Number} [z]        z-coordinate of the camera. Defaults to 0.
+ * @param  {Number} [z]        z-coordinate of the camera. Defaults to 800.
  * @param  {Number} [centerX]  x-coordinate of the point the camera faces. Defaults to 0.
  * @param  {Number} [centerY]  y-coordinate of the point the camera faces. Defaults to 0.
  * @param  {Number} [centerZ]  z-coordinate of the point the camera faces. Defaults to 0.
