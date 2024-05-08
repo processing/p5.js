@@ -640,7 +640,7 @@ p5.Vector = class {
  * of numbers, as in `v.sub([1, 2, 3])`.
  *
  * If a value isn't provided for a component, it won't change. For
- * example, `v.sub(4, 5)` adds 4 to `v.x`, 5 to `v.y`, and 0 to `v.z`.
+ * example, `v.sub(4, 5)` subtracts 4 from `v.x`, 5 from `v.y`, and 0 from `v.z`.
  * Calling `sub()` with no arguments, as in `v.sub()`, has no effect.
  *
  * The static version of `sub()`, as in `p5.Vector.sub(v2, v1)`, returns a new
