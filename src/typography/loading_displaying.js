@@ -364,6 +364,24 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  *
  * <div>
  * <code>
+ * // WEBGL Example
+ * function preload() {
+ *  createCanvas(100, 100, WEBGL);
+ *  textFont('Courier New'); // In WebGL textFont has to be executed in preload
+ * }
+ *
+ * function setup() {
+ *   background(200);
+ *   textSize(24);
+ *   text('hi', 35, 55);
+ *
+ *   describe('The text "hi" written in a black, monospace font on a gray background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
  * function setup() {
  *   background('black');
  *   fill('palegreen');

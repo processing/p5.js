@@ -642,7 +642,8 @@ class FontInfo {
 p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   if (!this._textFont || typeof this._textFont === 'string') {
     console.log(
-      'WEBGL: you must load and set a font before drawing text. See `loadFont` and `textFont` for more details.'
+      'WEBGL: you must load and set a font before drawing text. See `loadFont` and `textFont`' +
+      '(both of which have to be executed in preload() for WebGL mode) for more details.'
     );
     return;
   }
