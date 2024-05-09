@@ -366,8 +366,8 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  * <code>
  * // WEBGL Example
  * function preload() {
- *  createCanvas(100, 100, WEBGL);
- *  textFont('Courier New'); // In WebGL textFont has to be executed in preload
+ *   createCanvas(100, 100, WEBGL);
+ *   textFont('Courier New'); // In WebGL textFont has to be executed in preload
  * }
  *
  * function setup() {
