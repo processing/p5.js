@@ -5917,6 +5917,15 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "bobbykaz",
+      "name": "Bobby Kazimiroff",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1424679?v=4",
+      "profile": "http://bobbykaz.com",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",

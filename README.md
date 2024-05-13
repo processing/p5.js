@@ -995,6 +995,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/LKL2017"><img src="https://avatars.githubusercontent.com/u/31305299?v=4?s=120" width="120px;" alt="李坤霖"/><br /><sub><b>李坤霖</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3ALKL2017" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/wwwld1"><img src="https://avatars.githubusercontent.com/u/116049361?v=4?s=120" width="120px;" alt="Leo Wang"/><br /><sub><b>Leo Wang</b></sub></a><br /><a href="#translation-wwwld1" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Papershine"><img src="https://avatars.githubusercontent.com/u/30367398?v=4?s=120" width="120px;" alt="Hilary Lau"/><br /><sub><b>Hilary Lau</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Papershine" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=Papershine" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://bobbykaz.com"><img src="https://avatars.githubusercontent.com/u/1424679?v=4?s=120" width="120px;" alt="Bobby Kazimiroff"/><br /><sub><b>Bobby Kazimiroff</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=bobbykaz" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
