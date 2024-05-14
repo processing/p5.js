@@ -13,23 +13,42 @@ import '../core/friendly_errors/fes_core';
 //return p5; //LM is this a mistake?
 
 /**
- * Combines an array of Strings into one String, each separated by the
- * character(s) used for the separator parameter. To join arrays of ints or
- * floats, it's necessary to first convert them to Strings using <a href="#/p5/nf">nf()</a> or
- * nfs().
+ * Combines an array of strings into one string.
+ *
+ * The first parameter, `list`, is the array of strings to join.
+ *
+ * The second parameter, `separator`, is the character(s) that should be used
+ * to separate the combined strings. For example, calling
+ * `join(myWords, ' : ')` would return a string of words each separated by a
+ * colon and spaces.
  *
  * @method join
- * @param  {Array}  list      array of Strings to be joined
- * @param  {String} separator String to be placed between each item
- * @return {String}           joined String
+ * @param  {Array}  list array of strings to combine.
+ * @param  {String} separator character(s) to place between strings when they're combined.
+ * @return {String} combined string.
+ *
  * @example
  * <div>
  * <code>
- * let array = ['Hello', 'world!'];
- * let separator = ' ';
- * let message = join(array, separator);
- * text(message, 5, 50);
- * describe('“Hello world!” displayed middle left of canvas.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create an array of strings.
+ *   let myWords = ['one', 'two', 'three'];
+ *
+ *   // Create a combined string
+ *   let combined = join(myWords, ' : ');
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *
+ *   // Display the combined string.
+ *   text(combined, 50, 50);
+ *
+ *   describe('The text "one : two : three" written in black on a gray canvas.');
+ * }
  * </code>
  * </div>
  */
@@ -39,35 +58,56 @@ p5.prototype.join = function(list, separator) {
 };
 
 /**
- * This function is used to apply a regular expression to a piece of text,
- * and return matching groups (elements found inside parentheses) as a
- * String array. If there are no matches, a null value will be returned.
- * If no groups are specified in the regular expression, but the sequence
- * matches, an array of length 1 (with the matched text as the first element
- * of the array) will be returned.
+ * Applies a regular expression to a string and returns an array with the
+ * first match.
  *
- * To use the function, first check to see if the result is null. If the
- * result is null, then the sequence did not match at all. If the sequence
- * did match, an array is returned.
+ * `match()` uses regular expressions (regex) to match patterns in text. For
+ * example, the regex `abc` can be used to search a string for the exact
+ * sequence of characters `abc`. See
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#tools" target="_blank">MDN</a>.
+ * for more information about regexes.
  *
- * If there are groups (specified by sets of parentheses) in the regular
- * expression, then the contents of each will be returned in the array.
- * Element [0] of a regular expression match returns the entire matching
- * string, and the match groups start at element [1] (the first group is [1],
- * the second [2], and so on).
+ * The first parameter, `str`, is the string to search.
+ *
+ * The second parameter, `regex`, is a string with the regular expression to
+ * apply. For example, calling `match('Hello, p5*js!', '[a-z][0-9]')` would
+ * return the array `['p5']`.
+ *
+ * Note: If no matches are found, `null` is returned.
  *
  * @method match
- * @param  {String} str    the String to be searched
- * @param  {String} regexp the regexp to be used for matching
- * @return {String[]}      Array of Strings found
+ * @param  {String} str string to search.
+ * @param  {String} regexp regular expression to match.
+ * @return {String[]} match if found.
+ *
  * @example
  * <div>
  * <code>
- * let string = 'Hello p5js*!';
- * let regexp = 'p5js\\*';
- * let m = match(string, regexp);
- * text(m, 5, 50);
- * describe('“p5js*” displayed middle left of canvas.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a string variable.
+ *   let string = 'Hello, p5*js!';
+ *
+ *   // Match the characters that are lowercase
+ *   // letters followed by digits.
+ *   let matches = match(string, '[a-z][0-9]');
+ *
+ *   // Print the matches array to the console:
+ *   // ['p5']
+ *   print(matches);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textSize(16);
+ *
+ *   // Display the matches.
+ *   text(matches, 50, 50);
+ *
+ *   describe('The text "p5" written in black on a gray canvas.');
+ * }
  * </code>
  * </div>
  */
@@ -77,34 +117,67 @@ p5.prototype.match = function(str, reg) {
 };
 
 /**
- * This function is used to apply a regular expression to a piece of text,
- * and return a list of matching groups (elements found inside parentheses)
- * as a two-dimensional String array. If there are no matches, a null value
- * will be returned. If no groups are specified in the regular expression,
- * but the sequence matches, a two dimensional array is still returned, but
- * the second dimension is only of length one.
+ * Applies a regular expression to a string and returns an array of matches.
  *
- * To use the function, first check to see if the result is null. If the
- * result is null, then the sequence did not match at all. If the sequence
- * did match, a 2D array is returned.
+ * `match()` uses regular expressions (regex) to match patterns in text. For
+ * example, the regex `abc` can be used to search a string for the exact
+ * sequence of characters `abc`. See
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#tools" target="_blank">MDN</a>.
+ * for more information about regexes. `matchAll()` is different from
+ * <a href="#/p5/match">match()</a> because it returns every match, not just
+ * the first.
  *
- * If there are groups (specified by sets of parentheses) in the regular
- * expression, then the contents of each will be returned in the array.
- * Assuming a loop with counter variable i, element [i][0] of a regular
- * expression match returns the entire matching string, and the match groups
- * start at element [i][1] (the first group is [i][1], the second [i][2],
- * and so on).
+ * The first parameter, `str`, is the string to search.
+ *
+ * The second parameter, `regex`, is a string with the regular expression to
+ * apply. For example, calling
+ * `matchAll('p5*js is easier than abc123', '[a-z][0-9]')` would return the
+ * 2D array `[['p5'], ['c1']]`.
+ *
+ * Note: If no matches are found, an empty array `[]` is returned.
  *
  * @method matchAll
- * @param  {String} str    the String to be searched
- * @param  {String} regexp the regexp to be used for matching
- * @return {String[]}         2d Array of Strings found
+ * @param  {String} str string to search.
+ * @param  {String} regexp regular expression to match.
+ * @return {String[]} matches found.
+ *
  * @example
- * <div class="norender">
+ * <div>
  * <code>
- * let string = 'Hello p5js*! Hello world!';
- * let regexp = 'Hello';
- * matchAll(string, regexp);
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a string variable.
+ *   let string = 'p5*js is easier than abc123';
+ *
+ *   // Match the character sequences that are
+ *   // lowercase letters followed by digits.
+ *   let matches = matchAll(string, '[a-z][0-9]');
+ *
+ *   // Print the matches array to the console:
+ *   // [['p5'], ['c1']]
+ *   print(matches);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textSize(16);
+ *
+ *   // Iterate over the matches array.
+ *   for (let i = 0; i < matches.length; i += 1) {
+ *
+ *     // Calculate the y-coordainate.
+ *     let y = (i + 1) * 33;
+ *
+ *     // Display the match.
+ *     text(matches[i], 50, y);
+ *   }
+ *
+ *   describe(
+ *     'The text "p5" and "c1" written on separate lines. The text is black on a gray background.'
+ *   );
+ * }
  * </code>
  * </div>
  */
@@ -124,56 +197,82 @@ p5.prototype.matchAll = function(str, reg) {
 };
 
 /**
- * Utility function for formatting numbers into strings. There are two
- * versions: one for formatting floats, and one for formatting ints.
+ * Converts a `Number` into a `String` with a given number of digits.
  *
- * The values for the digits, left, and right parameters should always
- * be positive integers.
+ * `nf()` converts numbers such as `123.45` into strings formatted with a set
+ * number of digits, as in `'123.4500'`.
  *
- * (NOTE): Be cautious when using left and right parameters as it prepends numbers of 0's if the parameter
- * if greater than the current length of the number.
+ * The first parameter, `num`, is the number to convert to a string. For
+ * example, calling `nf(123.45)` returns the string `'123.45'`. If an array of
+ * numbers is passed, as in `nf([123.45, 67.89])`, an array of formatted
+ * strings will be returned.
  *
- * For example if number is 123.2 and left parameter passed is 4 which is greater than length of 123
- * (integer part) i.e 3 than result will be 0123.2. Same case for right parameter i.e. if right is 3 than
- * the result will be 123.200.
+ * The second parameter, `left`, is optional. If a number is passed, as in
+ * `nf(123.45, 4)`, it sets the minimum number of digits to include to the
+ * left of the decimal place. If `left` is larger than the number of digits in
+ * `num`, then unused digits will be set to 0. For example, calling
+ * `nf(123.45, 4)` returns the string `'0123.45'`.
+ *
+ * The third parameter, `right`, is also optional. If a number is passed, as
+ * in `nf(123.45, 4, 1)`, it sets the minimum number of digits to include to
+ * the right of the decimal place. If `right` is smaller than the number of
+ * decimal places in `num`, then `num` will be rounded to the given number of
+ * decimal places. For example, calling `nf(123.45, 4, 1)` returns the string
+ * `'0123.5'`. If right is larger than the number of decimal places in `num`,
+ * then unused decimal places will be set to 0. For example, calling
+ * `nf(123.45, 4, 3)` returns the string `'0123.450'`.
  *
  * @method nf
- * @param {Number|String}       num      the Number to format
- * @param {Integer|String}      [left]   number of digits to the left of the
- *                                decimal point
- * @param {Integer|String}      [right]  number of digits to the right of the
- *                                decimal point
- * @return {String}               formatted String
+ * @param {Number|String} num number to format.
+ * @param {Integer|String} [left] number of digits to include to the left of
+ *                                the decimal point.
+ * @param {Integer|String} [right] number of digits to include to the right
+ *                                 of the decimal point.
+ * @return {String} formatted string.
  *
  * @example
  * <div>
  * <code>
  * function setup() {
- *   background(200);
- *   let num1 = 321;
- *   let num2 = -1321;
+ *   createCanvas(100, 100);
  *
- *   noStroke();
- *   fill(0);
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
  *   textSize(16);
  *
- *   text(nf(num1, 4, 2), 10, 30);
- *   text(nf(num2, 4, 2), 10, 80);
- *   // Draw dividing line
- *   stroke(120);
- *   line(0, 50, width, 50);
+ *   // Create a number variable.
+ *   let number = 123.45;
  *
- *   describe('“0321.00” middle top, “-1321.00” middle bottom canvas');
+ *   // Display the number as a string.
+ *   let formatted = nf(number);
+ *   text(formatted, 20, 25);
+ *
+ *   // Display the number with four digits
+ *   // to the left of the decimal.
+ *   let left = nf(number, 4);
+ *   text(left, 20, 50);
+ *
+ *   // Display the number with four digits
+ *   // to the left of the decimal and one
+ *   // to the right.
+ *   let right = nf(number, 4, 1);
+ *   text(right, 20, 75);
+ *
+ *   describe(
+ *     'The numbers "123.45", "0123.45", and "0123.5" written on three separate lines. The text is in black on a gray background.'
+ *   );
  * }
  * </code>
  * </div>
  */
 /**
  * @method nf
- * @param {Array}        nums     the Numbers to format
- * @param {Integer|String}      [left]
- * @param {Integer|String}      [right]
- * @return {String[]}                formatted Strings
+ * @param {Number[]} nums numbers to format.
+ * @param {Integer|String} [left]
+ * @param {Integer|String} [right]
+ * @return {String[]} formatted strings.
  */
 p5.prototype.nf = function(nums, left, right) {
   p5._validateParameters('nf', arguments);
@@ -214,47 +313,99 @@ function doNf(num, left, right) {
 }
 
 /**
- * Utility function for formatting numbers into strings and placing
- * appropriate commas to mark units of 1000. There are two versions: one
- * for formatting ints, and one for formatting an array of ints. The value
- * for the right parameter should always be a positive integer.
+ * Converts a `Number` into a `String` with commas to mark units of 1,000.
+ *
+ * `nfc()` converts numbers such as 12345 into strings formatted with commas
+ * to mark the thousands place, as in `'12,345'`.
+ *
+ * The first parameter, `num`, is the number to convert to a string. For
+ * example, calling `nfc(12345)` returns the string `'12,345'`.
+ *
+ * The second parameter, `right`, is optional. If a number is passed, as in
+ * `nfc(12345, 1)`, it sets the minimum number of digits to include to the
+ * right of the decimal place. If `right` is smaller than the number of
+ * decimal places in `num`, then `num` will be rounded to the given number of
+ * decimal places. For example, calling `nfc(12345.67, 1)` returns the string
+ * `'12,345.7'`. If `right` is larger than the number of decimal places in
+ * `num`, then unused decimal places will be set to 0. For example, calling
+ * `nfc(12345.67, 3)` returns the string `'12,345.670'`.
  *
  * @method nfc
- * @param  {Number|String}   num     the Number to format
- * @param  {Integer|String}  [right] number of digits to the right of the
- *                                  decimal point
- * @return {String}           formatted String
+ * @param  {Number|String} num number to format.
+ * @param  {Integer|String} [right] number of digits to include to the right
+ *                                  of the decimal point.
+ * @return {String} formatted string.
  *
  * @example
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
- *   let num = 11253106.115;
- *   let numArr = [1, 1, 2];
  *
- *   noStroke();
- *   fill(0);
- *   textSize(12);
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textSize(16);
  *
- *   // Draw formatted numbers
- *   text(nfc(num, 4), 10, 30);
- *   text(nfc(numArr, 2), 10, 80);
+ *   // Create a number variable.
+ *   let number = 12345;
  *
- *   // Draw dividing line
- *   stroke(120);
- *   line(0, 50, width, 50);
+ *   // Display the number as a string.
+ *   let commas = nfc(number);
+ *   text(commas, 15, 33);
  *
- *   describe('“11,253,106.115” top middle and “1.00,1.00,2.00” displayed bottom mid');
+ *   // Display the number with four digits
+ *   // to the left of the decimal.
+ *   let decimals = nfc(number, 2);
+ *   text(decimals, 15, 67);
+ *
+ *   describe(
+ *     'The numbers "12,345" and "12,345.00" written on separate lines. The text is in black on a gray background.'
+ *   );
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create an array of numbers.
+ *   let numbers = [12345, 6789];
+ *
+ *   // Convert the numbers to formatted strings.
+ *   let formatted = nfc(numbers);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textSize(14);
+ *
+ *   // Iterate over the array.
+ *   for (let i = 0; i < formatted.length; i += 1) {
+ *
+ *     // Calculate the y-coordinate.
+ *     let y = (i + 1) * 33;
+ *
+ *     // Display the original and formatted numbers.
+ *     text(`${numbers[i]} : ${formatted[i]}`, 50, y);
+ *   }
+ *
+ *   describe(
+ *     'The text "12345 : 12,345" and "6789 : 6,789" written on two separate lines. The text is in black on a gray background.'
+ *   );
  * }
  * </code>
  * </div>
  */
 /**
  * @method nfc
- * @param  {Array}    nums     the Numbers to format
- * @param  {Integer|String}  [right]
- * @return {String[]}           formatted Strings
+ * @param  {Number[]} nums numbers to format.
+ * @param  {Integer|String} [right]
+ * @return {String[]} formatted strings.
  */
 p5.prototype.nfc = function(num, right) {
   p5._validateParameters('nfc', arguments);
@@ -287,51 +438,116 @@ function doNfc(num, right) {
 }
 
 /**
- * Utility function for formatting numbers into strings. Similar to <a href="#/p5/nf">nf()</a> but
- * puts a "+" in front of positive numbers and a "-" in front of negative
- * numbers. There are two versions: one for formatting floats, and one for
- * formatting ints. The values for left, and right parameters
- * should always be positive integers.
+ * Converts a `Number` into a `String` with a plus or minus sign.
+ *
+ * `nfp()` converts numbers such as 123 into strings formatted with a `+` or
+ * `-` symbol to mark whether they're positive or negative, as in `'+123'`.
+ *
+ * The first parameter, `num`, is the number to convert to a string. For
+ * example, calling `nfp(123.45)` returns the string `'+123.45'`. If an array
+ * of numbers is passed, as in `nfp([123.45, -6.78])`, an array of formatted
+ * strings will be returned.
+ *
+ * The second parameter, `left`, is optional. If a number is passed, as in
+ * `nfp(123.45, 4)`, it sets the minimum number of digits to include to the
+ * left of the decimal place. If `left` is larger than the number of digits in
+ * `num`, then unused digits will be set to 0. For example, calling
+ * `nfp(123.45, 4)` returns the string `'+0123.45'`.
+ *
+ * The third parameter, `right`, is also optional. If a number is passed, as
+ * in `nfp(123.45, 4, 1)`, it sets the minimum number of digits to include to
+ * the right of the decimal place. If `right` is smaller than the number of
+ * decimal places in `num`, then `num` will be rounded to the given number of
+ * decimal places.  For example, calling `nfp(123.45, 4, 1)` returns the
+ * string `'+0123.5'`. If `right` is larger than the number of decimal places
+ * in `num`, then unused decimal places will be set to 0.  For example,
+ * calling `nfp(123.45, 4, 3)` returns the string `'+0123.450'`.
  *
  * @method nfp
- * @param {Number} num      the Number to format
- * @param {Integer}      [left]   number of digits to the left of the decimal
- *                                point
- * @param {Integer}      [right]  number of digits to the right of the
- *                                decimal point
- * @return {String}         formatted String
+ * @param {Number} num number to format.
+ * @param {Integer} [left] number of digits to include to the left of the
+ *                         decimal point.
+ * @param {Integer} [right] number of digits to include to the right of the
+ *                          decimal point.
+ * @return {String} formatted string.
  *
  * @example
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
- *   let num1 = 11253106.115;
- *   let num2 = -11253106.115;
  *
- *   noStroke();
- *   fill(0);
- *   textSize(12);
+ *   // Create number variables.
+ *   let positive = 123;
+ *   let negative = -123;
  *
- *   // Draw formatted numbers
- *   text(nfp(num1, 4, 2), 10, 30);
- *   text(nfp(num2, 4, 2), 10, 80);
+ *   // Convert the positive number to a formatted string.
+ *   let p = nfp(positive);
  *
- *   // Draw dividing line
- *   stroke(120);
- *   line(0, 50, width, 50);
+ *   // Convert the negative number to a formatted string
+ *   // with four digits to the left of the decimal
+ *   // and two digits to the right of the decimal.
+ *   let n = nfp(negative, 4, 2);
  *
- *   describe('“+11253106.11” top middle and “-11253106.11” displayed bottom middle');
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textSize(14);
+ *
+ *   // Display the original and formatted numbers.
+ *   text(`${positive} : ${p}`, 50, 33);
+ *   text(`${negative} : ${n}`, 50, 67);
+ *
+ *   describe(
+ *     'The text "123 : +123" and "-123 : -123.00" written on separate lines. The text is in black on a gray background.'
+ *   );
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create number variables.
+ *   let numbers = [123, -4.56];
+ *
+ *   // Convert the numbers to formatted strings
+ *   // with four digits to the left of the decimal
+ *   // and one digit to the right of the decimal.
+ *   let formatted = nfp(numbers, 4, 1);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textSize(14);
+ *
+ *   // Iterate over the array.
+ *   for (let i = 0; i < formatted.length; i += 1) {
+ *
+ *     // Calculate the y-coordinate.
+ *     let y = (i + 1) * 33;
+ *
+ *     // Display the original and formatted numbers.
+ *     text(`${numbers[i]} : ${formatted[i]}`, 50, y);
+ *   }
+ *
+ *   describe(
+ *     'The text "123 : +0123.0" and "-4.56 : 00-4.6" written on separate lines. The text is in black on a gray background.'
+ *   );
  * }
  * </code>
  * </div>
  */
 /**
  * @method nfp
- * @param {Number[]} nums      the Numbers to format
- * @param {Integer}      [left]
- * @param {Integer}      [right]
- * @return {String[]}         formatted Strings
+ * @param {Number[]} nums numbers to format.
+ * @param {Integer} [left]
+ * @param {Integer} [right]
+ * @return {String[]} formatted strings.
  */
 p5.prototype.nfp = function(...args) {
   p5._validateParameters('nfp', args);
@@ -348,67 +564,107 @@ function addNfp(num) {
 }
 
 /**
- * Utility function for formatting numbers into strings. Similar to <a href="#/p5/nf">nf()</a> but
- * puts an additional "_" (space) in front of positive numbers just in case to align it with negative
- * numbers which includes "-" (minus) sign.
+ * Converts a positive `Number` into a `String` with an extra space in front.
  *
- * The main usecase of nfs() can be seen when one wants to align the digits (place values) of a non-negative
- * number with some negative number (See the example to get a clear picture).
- * There are two versions: one for formatting float, and one for formatting int.
+ * `nfs()` converts positive numbers such as 123.45 into strings formatted
+ * with an extra space in front, as in ' 123.45'. Doing so can be helpful for
+ * aligning positive and negative numbers.
  *
- * The values for the digits, left, and right parameters should always be positive integers.
+ * The first parameter, `num`, is the number to convert to a string. For
+ * example, calling `nfs(123.45)` returns the string `' 123.45'`.
  *
- * (IMP): The result on the canvas basically the expected alignment can vary based on the typeface you are using.
+ * The second parameter, `left`, is optional. If a number is passed, as in
+ * `nfs(123.45, 4)`, it sets the minimum number of digits to include to the
+ * left of the decimal place. If `left` is larger than the number of digits in
+ * `num`, then unused digits will be set to 0. For example, calling
+ * `nfs(123.45, 4)` returns the string `' 0123.45'`.
  *
- * (NOTE): Be cautious when using left and right parameters as it prepends numbers of 0's if the parameter
- * if greater than the current length of the number.
- *
- * For example if number is 123.2 and left parameter passed is 4 which is greater than length of 123
- * (integer part) i.e 3 than result will be 0123.2. Same case for right parameter i.e. if right is 3 than
- * the result will be 123.200.
+ * The third parameter, `right`, is also optional. If a number is passed, as
+ * in `nfs(123.45, 4, 1)`, it sets the minimum number of digits to include to
+ * the right of the decimal place. If `right` is smaller than the number of
+ * decimal places in `num`, then `num` will be rounded to the given number of
+ * decimal places.  For example, calling `nfs(123.45, 4, 1)` returns the
+ * string `' 0123.5'`. If `right` is larger than the number of decimal places
+ * in `num`, then unused decimal places will be set to 0.  For example,
+ * calling `nfs(123.45, 4, 3)` returns the string `' 0123.450'`.
  *
  * @method nfs
- * @param {Number}       num      the Number to format
- * @param {Integer}      [left]   number of digits to the left of the decimal
- *                                point
- * @param {Integer}      [right]  number of digits to the right of the
- *                                decimal point
- * @return {String}         formatted String
+ * @param {Number} num number to format.
+ * @param {Integer} [left] number of digits to include to the left of the
+ *                         decimal point.
+ * @param {Integer} [right] number of digits to include to the right of the
+ *                          decimal point.
+ * @return {String} formatted string.
  *
  * @example
  * <div>
  * <code>
  * function setup() {
- *   background(200);
- *   let num1 = 321;
- *   let num2 = -1321;
+ *   createCanvas(100, 100);
  *
- *   noStroke();
- *   fill(0);
+ *   background(200);
+ *
+ *   // Create number variables.
+ *   let positive = 123;
+ *   let negative = -123;
+ *
+ *   // Convert the positive number to a formatted string.
+ *   let formatted = nfs(positive);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
  *   textSize(16);
  *
- *   // nfs() aligns num1 (positive number) with num2 (negative number) by
- *   // adding a blank space in front of the num1 (positive number)
- *   // [left = 4] in num1 add one 0 in front, to align the digits with num2
- *   // [right = 2] in num1 and num2 adds two 0's after both numbers
- *   // To see the differences check the example of nf() too.
- *   text(nfs(num1, 4, 2), 10, 30);
- *   text(nfs(num2, 4, 2), 10, 80);
- *   // Draw dividing line
- *   stroke(120);
- *   line(0, 50, width, 50);
+ *   // Display the negative number and the formatted positive number.
+ *   text(negative, 50, 33);
+ *   text(formatted, 50, 67);
  *
- *   describe('“0321.00” top middle and “-1321.00” displayed bottom middle');
+ *   describe(
+ *     'The numbers -123 and 123 written on separate lines. The numbers align vertically. The text is in black on a gray background.'
+ *   );
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a number variable.
+ *   let number = 123.45;
+ *
+ *   // Convert the positive number to a formatted string.
+ *   // Use four digits to the left of the decimal and
+ *   // one digit to the right.
+ *   let formatted = nfs(number, 4, 1);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(16);
+ *
+ *   // Display a negative version of the number and
+ *   // the formatted positive version.
+ *   text('-0123.5', 50, 33);
+ *   text(formatted, 50, 67);
+ *
+ *   describe(
+ *     'The numbers "-0123.5" and "0123.5" written on separate lines. The numbers align vertically. The text is in black on a gray background.'
+ *   );
  * }
  * </code>
  * </div>
  */
 /**
  * @method nfs
- * @param {Array}        nums     the Numbers to format
- * @param {Integer}      [left]
- * @param {Integer}      [right]
- * @return {String[]}         formatted Strings
+ * @param {Array} nums numbers to format.
+ * @param {Integer} [left]
+ * @param {Integer} [right]
+ * @return {String[]} formatted strings.
  */
 p5.prototype.nfs = function(...args) {
   p5._validateParameters('nfs', args);
@@ -425,28 +681,58 @@ function addNfs(num) {
 }
 
 /**
- * The <a href="#/p5/split">split()</a> function maps to String.split(), it breaks a String into
- * pieces using a character or string as the delimiter. The delim parameter
- * specifies the character or characters that mark the boundaries between
- * each piece. A String[] array is returned that contains each of the pieces.
+ * Splits a `String` into pieces and returns an array containing the pieces.
  *
- * The <a href="#/p5/splitTokens">splitTokens()</a> function works in a similar fashion, except that it
- * splits using a range of characters instead of a specific character or
- * sequence.
+ * The first parameter, `value`, is the string to split.
+ *
+ * The second parameter, `delim`, is the character(s) that should be used to
+ * split the string. For example, calling
+ * `split('rock...paper...scissors', '...')` would return the array
+ * `['rock', 'paper', 'scissors']` because there are three periods `...`
+ * between each word.
  *
  * @method split
  * @param  {String} value the String to be split
  * @param  {String} delim the String used to separate the data
  * @return {String[]}  Array of Strings
+ *
  * @example
  * <div>
  * <code>
- * let names = 'Pat,Xio,Alex';
- * let splitString = split(names, ',');
- * text(splitString[0], 5, 30);
- * text(splitString[1], 5, 50);
- * text(splitString[2], 5, 70);
- * describe('“Pat” top left, “Xio” mid left, and “Alex” displayed bottom left');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a string variable.
+ *   let string = 'rock...paper...scissors';
+ *
+ *   // Split the string at each ...
+ *   let words = split(string, '...');
+ *
+ *   // Print the array to the console:
+ *   // ["rock", "paper", "scissors"]
+ *   print(words);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(16);
+ *
+ *   // Iterate over the words array.
+ *   for (let i = 0; i < words.length; i += 1) {
+ *
+ *     // Calculate the y-coordinate.
+ *     let y = (i + 1) * 25;
+ *
+ *     // Display the word.
+ *     text(words[i], 50, y);
+ *   }
+ *
+ *   describe(
+ *     'The words "rock", "paper", and "scissors" written on separate lines. The text is black on a gray background.'
+ *   );
+ * }
  * </code>
  * </div>
  */
@@ -456,27 +742,139 @@ p5.prototype.split = function(str, delim) {
 };
 
 /**
- * The <a href="#/p5/splitTokens">splitTokens()</a> function splits a String at one or many character
- * delimiters or "tokens." The delim parameter specifies the character or
- * characters to be used as a boundary.
+ * Splits a `String` into pieces and returns an array containing the pieces.
  *
- * If no delim characters are specified, any whitespace character is used to
- * split. Whitespace characters include tab (\t), line feed (\n), carriage
- * return (\r), form feed (\f), and space.
+ * `splitTokens()` is an enhanced version of
+ * <a href="#/p5/split">split()</a>. It can split a string when any characters
+ * from a list are detected.
+ *
+ * The first parameter, `value`, is the string to split.
+ *
+ * The second parameter, `delim`, is optional. It sets the character(s) that
+ * should be used to split the string. `delim` can be a single string, as in
+ * `splitTokens('rock...paper...scissors...shoot', '...')`, or an array of
+ * strings, as in
+ * `splitTokens('rock;paper,scissors...shoot, [';', ',', '...'])`. By default,
+ * if no `delim` characters are specified, then any whitespace character is
+ * used to split. Whitespace characters include tab (`\t`), line feed (`\n`),
+ * carriage return (`\r`), form feed (`\f`), and space.
  *
  * @method splitTokens
- * @param  {String} value   the String to be split
- * @param  {String} [delim] list of individual Strings that will be used as
- *                          separators
- * @return {String[]}          Array of Strings
+ * @param  {String} value string to split.
+ * @param  {String} [delim] character(s) to use for splitting the string.
+ * @return {String[]} separated strings.
+ *
  * @example
- * <div class = "norender">
+ * <div>
  * <code>
  * function setup() {
- *   let myStr = 'Mango, Banana, Lime';
- *   let myStrArr = splitTokens(myStr, ',');
+ *   createCanvas(100, 100);
  *
- *   print(myStrArr); // prints : ["Mango"," Banana"," Lime"]
+ *   background(200);
+ *
+ *   // Create a string variable.
+ *   let string = 'rock paper scissors shoot';
+ *
+ *   // Split the string at each space.
+ *   let words = splitTokens(string);
+ *
+ *   // Print the array to the console.
+ *   print(words);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(12);
+ *
+ *   // Iterate over the words array.
+ *   for (let i = 0; i < words.length; i += 1) {
+ *
+ *     // Calculate the y-coordinate.
+ *     let y = (i + 1) * 20;
+ *
+ *     // Display the word.
+ *     text(words[i], 50, y);
+ *   }
+ *
+ *   describe(
+ *     'The words "rock", "paper", "scissors", and "shoot" written on separate lines. The text is black on a gray background.'
+ *   );
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a string variable.
+ *   let string = 'rock...paper...scissors...shoot';
+ *
+ *   // Split the string at each ...
+ *   let words = splitTokens(string, '...');
+ *
+ *   // Print the array to the console.
+ *   print(words);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(12);
+ *
+ *   // Iterate over the words array.
+ *   for (let i = 0; i < words.length; i += 1) {
+ *
+ *     // Calculate the y-coordinate.
+ *     let y = (i + 1) * 20;
+ *
+ *     // Display the word.
+ *     text(words[i], 50, y);
+ *   }
+ *
+ *   describe(
+ *     'The words "rock", "paper", "scissors", and "shoot" written on separate lines. The text is black on a gray background.'
+ *   );
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class='notest'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a string variable.
+ *   let string = 'rock;paper,scissors...shoot';
+ *
+ *   // Split the string at each semicolon, comma, or ...
+ *   let words = splitTokens(string, [';', ',', '...']);
+ *
+ *   // Print the array to the console.
+ *   print(words);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(12);
+ *
+ *   // Iterate over the words array.
+ *   for (let i = 0; i < words.length; i += 1) {
+ *
+ *     // Calculate the y-coordinate.
+ *     let y = (i + 1) * 20;
+ *
+ *     // Display the word.
+ *     text(words[i], 50, y);
+ *   }
+ *
+ *   describe(
+ *     'The words "rock", "paper", "scissors", and "shoot" written on separate lines. The text is black on a gray background.'
+ *   );
  * }
  * </code>
  * </div>
@@ -509,27 +907,77 @@ p5.prototype.splitTokens = function(value, delims) {
 };
 
 /**
- * Removes whitespace characters from the beginning and end of a String. In
- * addition to standard whitespace characters such as space, carriage return,
- * and tab, this function also removes the Unicode "nbsp" character.
+ * Removes whitespace from the start and end of a `String` without changing the middle.
+ *
+ * `trim()` trims
+ * <a href="https://developer.mozilla.org/en-US/docs/Glossary/whitespace" target="_blank">whitespace characters</a>
+ * such as spaces, carriage returns, tabs, Unicode "nbsp" character.
+ *
+ * The parameter, `str`, is the string to trim. If a single string is passed,
+ * as in `trim('   pad   ')`, a single string is returned. If an array of
+ * strings is passed, as in `trim(['    pad   ', '\n space \n'])`, an array of
+ * strings is returned.
  *
  * @method trim
- * @param  {String} str a String to be trimmed
- * @return {String}       a trimmed String
+ * @param  {String} str string to trim.
+ * @return {String} trimmed string.
  *
  * @example
  * <div>
  * <code>
- * let string = trim('  No new lines\n   ');
- * text(string + ' here', 2, 50);
- * describe('“No new lines here” displayed center canvas');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a string variable.
+ *   let string = '   p5*js   ';
+ *
+ *   // Trim the whitespace.
+ *   let trimmed = trim(string);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textSize(16);
+ *
+ *   // Display the text.
+ *   text(`Hello, ${trimmed}!`, 50, 50);
+ *
+ *   describe('The text "Hello, p5*js!" written in black on a gray background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create an array of strings.
+ *   let strings = ['   wide  ', '\n  open  ', '\n spaces  '];
+ *
+ *   // Trim the whitespace.
+ *   let trimmed = trim(strings);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(10);
+ *
+ *   // Display the text.
+ *   text(`${trimmed[0]} ${trimmed[1]} ${trimmed[2]}`, 50, 50);
+ *
+ *   describe('The text "wide open spaces" written in black on a gray background.');
+ * }
  * </code>
  * </div>
  */
 /**
  * @method trim
- * @param  {Array} strs an Array of Strings to be trimmed
- * @return {String[]}   an Array of trimmed Strings
+ * @param  {String[]} strs strings to trim.
+ * @return {String[]} trimmed strings.
  */
 p5.prototype.trim = function(str) {
   p5._validateParameters('trim', arguments);
