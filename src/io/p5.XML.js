@@ -234,7 +234,7 @@ p5.XML = class  {
     const newDOM = xmlDoc.createElement(name);
     newDOM.innerHTML = content;
     for (let i = 0; i < attributes.length; i++) {
-      newDOM.setAttribute(attributes[i].nodeName, attributes.nodeValue);
+      newDOM.setAttribute(attributes[i].nodeName, attributes[i].nodeValue);
     }
     this.DOM = newDOM;
   }
