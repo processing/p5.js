@@ -8,20 +8,90 @@ import p5 from './main';
 import * as constants from './constants';
 
 /**
- * Thin wrapper around a renderer, to be used for creating a
- * graphics buffer object. Use this class if you need
- * to draw into an off-screen graphics buffer. The two parameters define the
- * width and height in pixels. The fields and methods for this class are
- * extensive, but mirror the normal drawing API for p5.
+ * A class to describe a drawing surface that's separate from the main canvas.
+ *
+ * Each `p5.Graphics` object provides a dedicated drawing surface called a
+ * *graphics buffer*. Graphics buffers are helpful when drawing should happen
+ * offscreen. For example, separate scenes can be drawn offscreen and
+ * displayed only when needed.
+ *
+ * `p5.Graphics` objects have nearly all the drawing features of the main
+ * canvas. For example, calling the method `myGraphics.circle(50, 50, 20)`
+ * draws to the graphics buffer. The resulting image can be displayed on the
+ * main canvas by passing the `p5.Graphics` object to the
+ * <a href="#/p5/image">image()</a> function, as in `image(myGraphics, 0, 0)`.
+ *
+ * Note: <a href="#/p5/createGraphics">createGraphics()</a> is the recommended
+ * way to create an instance of this class.
  *
  * @class p5.Graphics
  * @constructor
  * @extends p5.Element
- * @param {Number} w            width
- * @param {Number} h            height
- * @param {Constant} renderer   the renderer to use, either P2D or WEBGL
- * @param {p5} [pInst]          pointer to p5 instance
- * @param {HTMLCanvasElement} [canvas]     existing html canvas element
+ * @param {Number} width width of the graphics buffer in pixels.
+ * @param {Number} height height of the graphics buffer in pixels.
+ * @param {Constant} renderer renderer to use, either P2D or WEBGL.
+ * @param {p5} [pInst] sketch instance.
+ * @param {HTMLCanvasElement} [canvas] existing `&lt;canvas&gt;` element to use.
+ *
+ * @example
+ * <div>
+ * <code>
+ * let pg;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Create a p5.Graphics object.
+ *   pg = createGraphics(50, 50);
+ *
+ *   // Draw to the p5.Graphics object.
+ *   pg.background(100);
+ *   pg.circle(25, 25, 20);
+ *
+ *   describe('A dark gray square with a white circle at its center drawn on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Display the p5.Graphics object.
+ *   image(pg, 25, 25);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click the canvas to display the graphics buffer.
+ *
+ * let pg;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Create a p5.Graphics object.
+ *   pg = createGraphics(50, 50);
+ *
+ *   describe('A square appears on a gray background when the user presses the mouse. The square cycles between white and black.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Calculate the background color.
+ *   let bg = frameCount % 255;
+ *
+ *   // Draw to the p5.Graphics object.
+ *   pg.background(bg);
+ *
+ *   // Display the p5.Graphics object while
+ *   // the user presses the mouse.
+ *   if (mouseIsPressed === true) {
+ *     image(pg, 25, 25);
+ *   }
+ * }
+ * </code>
+ * </div>
  */
 p5.Graphics = class extends p5.Element {
   constructor(w, h, renderer, pInst, canvas) {
@@ -81,49 +151,164 @@ p5.Graphics = class extends p5.Element {
   }
 
   /**
- * Resets certain values such as those modified by functions in the Transform category
- * and in the Lights category that are not automatically reset
- * with graphics buffer objects. Calling this in <a href='#/p5/draw'>draw()</a> will copy the behavior
- * of the standard canvas.
+ * Resets the graphics buffer's transformations and lighting.
+ *
+ * By default, the main canvas resets certain transformation and lighting
+ * values each time <a href="#/p5/draw">draw()</a> executes. `p5.Graphics`
+ * objects must reset these values manually by calling `myGraphics.reset()`.
  *
  * @method reset
- * @example
  *
- * <div><code>
+ * @example
+ * <div>
+ * <code>
  * let pg;
+ *
  * function setup() {
  *   createCanvas(100, 100);
- *   background(0);
- *   pg = createGraphics(50, 100);
- *   pg.fill(0);
- *   frameRate(5);
+ *
+ *   // Create a p5.Graphics object.
+ *   pg = createGraphics(60, 60);
+ *
+ *   describe('A white circle moves downward slowly within a dark square. The circle resets at the top of the dark square when the user presses the mouse.');
  * }
  *
  * function draw() {
- *   image(pg, width / 2, 0);
- *   pg.background(255);
- *   // p5.Graphics object behave a bit differently in some cases
- *   // The normal canvas on the left resets the translate
- *   // with every loop through draw()
- *   // the graphics object on the right doesn't automatically reset
- *   // so translate() is additive and it moves down the screen
- *   rect(0, 0, width / 2, 5);
- *   pg.rect(0, 0, width / 2, 5);
- *   translate(0, 5, 0);
- *   pg.translate(0, 5, 0);
+ *   background(200);
+ *
+ *   // Translate the p5.Graphics object's coordinate system.
+ *   // The translation accumulates; the white circle moves.
+ *   pg.translate(0, 0.1);
+ *
+ *   // Draw to the p5.Graphics object.
+ *   pg.background(100);
+ *   pg.circle(30, 0, 10);
+ *
+ *   // Display the p5.Graphics object.
+ *   image(pg, 20, 20);
+ *
+ *   // Translate the main canvas' coordinate system.
+ *   // The translation doesn't accumulate; the dark
+ *   // square is always in the same place.
+ *   translate(0, 0.1);
+ *
+ *   // Reset the p5.Graphics object when the
+ *   // user presses the mouse.
+ *   if (mouseIsPressed === true) {
+ *     pg.reset();
+ *   }
  * }
- * function mouseClicked() {
- *   // if you click you will see that
- *   // reset() resets the translate back to the initial state
- *   // of the Graphics object
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let pg;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Create a p5.Graphics object.
+ *   pg = createGraphics(60, 60);
+ *
+ *   describe('A white circle at the center of a dark gray square. The image is drawn on a light gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Translate the p5.Graphics object's coordinate system.
+ *   pg.translate(30, 30);
+ *
+ *   // Draw to the p5.Graphics object.
+ *   pg.background(100);
+ *   pg.circle(0, 0, 10);
+ *
+ *   // Display the p5.Graphics object.
+ *   image(pg, 20, 20);
+ *
+ *   // Reset the p5.Graphics object automatically.
  *   pg.reset();
  * }
- * </code></div>
+ * </code>
+ * </div>
  *
- * @alt
- * A white line on a black background stays still on the top-left half.
- * A black line animates from top to bottom on a white background on the right half.
- * When clicked, the black line starts back over at the top.
+ * <div>
+ * <code>
+ * let pg;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Create a p5.Graphics object using WebGL mode.
+ *   pg = createGraphics(100, 100, WEBGL);
+ *
+ *   describe("A sphere lit from above with a red light. The sphere's surface becomes glossy while the user clicks and holds the mouse.");
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Add a red point light from the top-right.
+ *   pg.pointLight(255, 0, 0, 50, -100, 50);
+ *
+ *   // Style the sphere.
+ *   // It should appear glossy when the
+ *   // lighting values are reset.
+ *   pg.noStroke();
+ *   pg.specularMaterial(255);
+ *   pg.shininess(100);
+ *
+ *   // Draw the sphere.
+ *   pg.sphere(30);
+ *
+ *   // Display the p5.Graphics object.
+ *   image(pg, -50, -50);
+ *
+ *   // Reset the p5.Graphics object when
+ *   // the user presses the mouse.
+ *   if (mouseIsPressed === true) {
+ *     pg.reset();
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let pg;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Create a p5.Graphics object using WebGL mode.
+ *   pg = createGraphics(100, 100, WEBGL);
+ *
+ *   describe('A sphere with a glossy surface is lit from the top-right by a red light.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Add a red point light from the top-right.
+ *   pg.pointLight(255, 0, 0, 50, -100, 50);
+ *
+ *   // Style the sphere.
+ *   pg.noStroke();
+ *   pg.specularMaterial(255);
+ *   pg.shininess(100);
+ *
+ *   // Draw the sphere.
+ *   pg.sphere(30);
+ *
+ *   // Display the p5.Graphics object.
+ *   image(pg, 0, 0);
+ *
+ *   // Reset the p5.Graphics object automatically.
+ *   pg.reset();
+ * }
+ * </code>
+ * </div>
  */
   reset() {
     this._renderer.resetMatrix();
@@ -133,58 +318,50 @@ p5.Graphics = class extends p5.Element {
   }
 
   /**
- * Removes a Graphics object from the page and frees any resources
- * associated with it.
+ * Removes the graphics buffer from the web page.
+ *
+ * Calling `myGraphics.remove()` removes the graphics buffer's canvas along
+ * with any HTML elements it created.
  *
  * @method remove
  *
  * @example
- * <div class='norender'><code>
- * let bg;
- * function setup() {
- *   bg = createCanvas(100, 100);
- *   bg.background(0);
- *   image(bg, 0, 0);
- *   bg.remove();
- * }
- * </code></div>
+ * <div>
+ * <code>
+ * // Double-click to remove the p5.Graphics object.
  *
- * <div><code>
- * let bg;
+ * let pg;
+ *
  * function setup() {
- *   pixelDensity(1);
  *   createCanvas(100, 100);
- *   stroke(255);
- *   fill(0);
  *
- *   // create and draw the background image
- *   bg = createGraphics(100, 100);
- *   bg.background(200);
- *   bg.ellipse(50, 50, 80, 80);
+ *   // Create a p5.Graphics object.
+ *   pg = createGraphics(60, 60);
+ *
+ *   // Draw to the p5.Graphics object.
+ *   pg.background(100);
+ *   pg.circle(30, 30, 20);
+ *
+ *   describe('A white circle at the center of a dark gray square disappears when the user double-clicks.');
  * }
+ *
  * function draw() {
- *   let t = millis() / 1000;
- *   // draw the background
- *   if (bg) {
- *     image(bg, frameCount % 100, 0);
- *     image(bg, frameCount % 100 - 100, 0);
- *   }
- *   // draw the foreground
- *   let p = p5.Vector.fromAngle(t, 35).add(50, 50);
- *   ellipse(p.x, p.y, 30);
- * }
- * function mouseClicked() {
- *   // remove the background
- *   if (bg) {
- *     bg.remove();
- *     bg = null;
- *   }
- * }
- * </code></div>
+ *   background(200);
  *
- * @alt
- * no image
- * a multi-colored circle moving back and forth over a scrolling background.
+ *   // Display the p5.Graphics object if
+ *   // it's available.
+ *   if (pg) {
+ *     image(pg, 20, 20);
+ *   }
+ * }
+ *
+ * // Remove the p5.Graphics object when the
+ * // the user double-clicks.
+ * function doubleClicked() {
+ *   pg.remove();
+ * }
+ * </code>
+ * </div>
  */
   remove() {
     if (this.elt.parentNode) {
@@ -201,14 +378,246 @@ p5.Graphics = class extends p5.Element {
 
 
   /**
-   * Creates and returns a new <a href="#/p5.Framebuffer">p5.Framebuffer</a>
-   * inside a p5.Graphics WebGL context.
+   * Creates a new <a href="#/p5.Framebuffer">p5.Framebuffer</a> object with
+   * the same WebGL context as the graphics buffer.
    *
-   * This takes the same parameters as the <a href="#/p5/createFramebuffer">global
-   * createFramebuffer function.</a>
+   * <a href="#/p5.Framebuffer">p5.Framebuffer</a> objects are separate drawing
+   * surfaces that can be used as textures in WebGL mode. They're similar to
+   * <a href="#/p5.Graphics">p5.Graphics</a> objects and generally run much
+   * faster when used as textures. Creating a
+   * <a href="#/p5.Framebuffer">p5.Framebuffer</a> object in the same context
+   * as the graphics buffer makes this speedup possible.
+   *
+   * The parameter, `options`, is optional. An object can be passed to configure
+   * the <a href="#/p5.Framebuffer">p5.Framebuffer</a> object. The available
+   * properties are:
+   *
+   * - `format`: data format of the texture, either `UNSIGNED_BYTE`, `FLOAT`, or `HALF_FLOAT`. Default is `UNSIGNED_BYTE`.
+   * - `channels`: whether to store `RGB` or `RGBA` color channels. Default is to match the graphics buffer which is `RGBA`.
+   * - `depth`: whether to include a depth buffer. Default is `true`.
+   * - `depthFormat`: data format of depth information, either `UNSIGNED_INT` or `FLOAT`. Default is `FLOAT`.
+   * - `stencil`: whether to include a stencil buffer for masking. `depth` must be `true` for this feature to work. Defaults to the value of `depth` which is `true`.
+   * - `antialias`: whether to perform anti-aliasing. If set to `true`, as in `{ antialias: true }`, 2 samples will be used by default. The number of samples can also be set, as in `{ antialias: 4 }`. Default is to match <a href="#/p5/setAttributes">setAttributes()</a> which is `false` (`true` in Safari).
+   * - `width`: width of the <a href="#/p5.Framebuffer">p5.Framebuffer</a> object. Default is to always match the graphics buffer width.
+   * - `height`: height of the <a href="#/p5.Framebuffer">p5.Framebuffer</a> object. Default is to always match the graphics buffer height.
+   * - `density`: pixel density of the <a href="#/p5.Framebuffer">p5.Framebuffer</a> object. Default is to always match the graphics buffer pixel density.
+   * - `textureFiltering`: how to read values from the <a href="#/p5.Framebuffer">p5.Framebuffer</a> object. Either `LINEAR` (nearby pixels will be interpolated) or `NEAREST` (no interpolation). Generally, use `LINEAR` when using the texture as an image and `NEAREST` if reading the texture as data. Default is `LINEAR`.
+   *
+   * If the `width`, `height`, or `density` attributes are set, they won't
+   * automatically match the graphics buffer and must be changed manually.
    *
    * @method createFramebuffer
-   * @return {p5.Framebuffer}
+   * @param {Object} [options] configuration options.
+   * @return {p5.Framebuffer} new framebuffer.
+   *
+   * @example
+   * <div>
+   * <code>
+   * // Click and hold a mouse button to change shapes.
+   *
+   * let pg;
+   * let torusLayer;
+   * let boxLayer;
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   // Create a p5.Graphics object using WebGL mode.
+   *   pg = createGraphics(100, 100, WEBGL);
+   *
+   *   // Create the p5.Framebuffer objects.
+   *   torusLayer = pg.createFramebuffer();
+   *   boxLayer = pg.createFramebuffer();
+   *
+   *   describe('A grid of white toruses rotating against a dark gray background. The shapes become boxes while the user holds a mouse button.');
+   * }
+   *
+   * function draw() {
+   *   // Update and draw the layers offscreen.
+   *   drawTorus();
+   *   drawBox();
+   *
+   *   // Choose the layer to display.
+   *   let layer;
+   *   if (mouseIsPressed === true) {
+   *     layer = boxLayer;
+   *   } else {
+   *     layer = torusLayer;
+   *   }
+   *
+   *   // Draw to the p5.Graphics object.
+   *   pg.background(50);
+   *
+   *   // Iterate from left to right.
+   *   for (let x = -50; x < 50; x += 25) {
+   *     // Iterate from top to bottom.
+   *     for (let y = -50; y < 50; y += 25) {
+   *       // Draw the layer to the p5.Graphics object
+   *       pg.image(layer, x, y, 25, 25);
+   *     }
+   *   }
+   *
+   *   // Display the p5.Graphics object.
+   *   image(pg, 0, 0);
+   * }
+   *
+   * // Update and draw the torus layer offscreen.
+   * function drawTorus() {
+   *   // Start drawing to the torus p5.Framebuffer.
+   *   torusLayer.begin();
+   *
+   *   // Clear the drawing surface.
+   *   pg.clear();
+   *
+   *   // Turn on the lights.
+   *   pg.lights();
+   *
+   *   // Rotate the coordinate system.
+   *   pg.rotateX(frameCount * 0.01);
+   *   pg.rotateY(frameCount * 0.01);
+   *
+   *   // Style the torus.
+   *   pg.noStroke();
+   *
+   *   // Draw the torus.
+   *   pg.torus(20);
+   *
+   *   // Start drawing to the torus p5.Framebuffer.
+   *   torusLayer.end();
+   * }
+   *
+   * // Update and draw the box layer offscreen.
+   * function drawBox() {
+   *   // Start drawing to the box p5.Framebuffer.
+   *   boxLayer.begin();
+   *
+   *   // Clear the drawing surface.
+   *   pg.clear();
+   *
+   *   // Turn on the lights.
+   *   pg.lights();
+   *
+   *   // Rotate the coordinate system.
+   *   pg.rotateX(frameCount * 0.01);
+   *   pg.rotateY(frameCount * 0.01);
+   *
+   *   // Style the box.
+   *   pg.noStroke();
+   *
+   *   // Draw the box.
+   *   pg.box(30);
+   *
+   *   // Start drawing to the box p5.Framebuffer.
+   *   boxLayer.end();
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // Click and hold a mouse button to change shapes.
+   *
+   * let pg;
+   * let torusLayer;
+   * let boxLayer;
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   // Create an options object.
+   *   let options = { width: 25, height: 25 };
+   *
+   *   // Create a p5.Graphics object using WebGL mode.
+   *   pg = createGraphics(100, 100, WEBGL);
+   *
+   *   // Create the p5.Framebuffer objects.
+   *   // Use options for configuration.
+   *   torusLayer = pg.createFramebuffer(options);
+   *   boxLayer = pg.createFramebuffer(options);
+   *
+   *   describe('A grid of white toruses rotating against a dark gray background. The shapes become boxes while the user holds a mouse button.');
+   * }
+   *
+   * function draw() {
+   *   // Update and draw the layers offscreen.
+   *   drawTorus();
+   *   drawBox();
+   *
+   *   // Choose the layer to display.
+   *   let layer;
+   *   if (mouseIsPressed === true) {
+   *     layer = boxLayer;
+   *   } else {
+   *     layer = torusLayer;
+   *   }
+   *
+   *   // Draw to the p5.Graphics object.
+   *   pg.background(50);
+   *
+   *   // Iterate from left to right.
+   *   for (let x = -50; x < 50; x += 25) {
+   *     // Iterate from top to bottom.
+   *     for (let y = -50; y < 50; y += 25) {
+   *       // Draw the layer to the p5.Graphics object
+   *       pg.image(layer, x, y);
+   *     }
+   *   }
+   *
+   *   // Display the p5.Graphics object.
+   *   image(pg, 0, 0);
+   * }
+   *
+   * // Update and draw the torus layer offscreen.
+   * function drawTorus() {
+   *   // Start drawing to the torus p5.Framebuffer.
+   *   torusLayer.begin();
+   *
+   *   // Clear the drawing surface.
+   *   pg.clear();
+   *
+   *   // Turn on the lights.
+   *   pg.lights();
+   *
+   *   // Rotate the coordinate system.
+   *   pg.rotateX(frameCount * 0.01);
+   *   pg.rotateY(frameCount * 0.01);
+   *
+   *   // Style the torus.
+   *   pg.noStroke();
+   *
+   *   // Draw the torus.
+   *   pg.torus(5, 2.5);
+   *
+   *   // Start drawing to the torus p5.Framebuffer.
+   *   torusLayer.end();
+   * }
+   *
+   * // Update and draw the box layer offscreen.
+   * function drawBox() {
+   *   // Start drawing to the box p5.Framebuffer.
+   *   boxLayer.begin();
+   *
+   *   // Clear the drawing surface.
+   *   pg.clear();
+   *
+   *   // Turn on the lights.
+   *   pg.lights();
+   *
+   *   // Rotate the coordinate system.
+   *   pg.rotateX(frameCount * 0.01);
+   *   pg.rotateY(frameCount * 0.01);
+   *
+   *   // Style the box.
+   *   pg.noStroke();
+   *
+   *   // Draw the box.
+   *   pg.box(7.5);
+   *
+   *   // Start drawing to the box p5.Framebuffer.
+   *   boxLayer.end();
+   * }
+   * </code>
+   * </div>
    */
   createFramebuffer(options) {
     return new p5.Framebuffer(this, options);
