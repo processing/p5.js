@@ -5926,6 +5926,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "PalumboN",
+      "name": "Nahuel Palumbo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4098184?v=4",
+      "profile": "https://github.com/PalumboN",
+      "contributions": [
+        "bug",
+        "doc"
+      ]
     }
   ],
   "repoType": "github",

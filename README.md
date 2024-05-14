@@ -997,6 +997,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Papershine"><img src="https://avatars.githubusercontent.com/u/30367398?v=4?s=120" width="120px;" alt="Hilary Lau"/><br /><sub><b>Hilary Lau</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Papershine" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=Papershine" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://bobbykaz.com"><img src="https://avatars.githubusercontent.com/u/1424679?v=4?s=120" width="120px;" alt="Bobby Kazimiroff"/><br /><sub><b>Bobby Kazimiroff</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=bobbykaz" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/PalumboN"><img src="https://avatars.githubusercontent.com/u/4098184?v=4?s=120" width="120px;" alt="Nahuel Palumbo"/><br /><sub><b>Nahuel Palumbo</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3APalumboN" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=PalumboN" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 
