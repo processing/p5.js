@@ -1669,7 +1669,7 @@ p5.Geometry = class Geometry {
   /**
  * Averages the vertex normals. Used in curved
  * surfaces
- * @method averageNormals
+ * @private
  * @chainable
  */
   averageNormals() {
@@ -1689,7 +1689,7 @@ p5.Geometry = class Geometry {
 
   /**
  * Averages pole normals.  Used in spherical primitives
- * @method averagePoleNormals
+ * @private
  * @chainable
  */
   averagePoleNormals() {
