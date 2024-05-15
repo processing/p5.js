@@ -111,13 +111,15 @@ class Framebuffer {
     /**
      * An array containing the color of each pixel in the framebuffer.
      *
-     * `myBuffer.loadPixels()` must be called before accessing the
-     * `myBuffer.pixels` array. `myBuffer.updatePixels()` must be called after
-     * any changes are made.
+     * <a href="#/p5.Framebuffer/loadPixels">myBuffer.loadPixels()</a> must be
+     * called before accessing the `myBuffer.pixels` array.
+     * <a href="#/p5.Framebuffer/updatePixels">myBuffer.updatePixels()</a>
+     * must be called after any changes are made.
      *
      * Note: Updating pixels via this property is slower than drawing to the
-     * framebuffer directly. Consider using a shader instead of looping over
-     * pixels.
+     * framebuffer directly. Consider using a
+     * <a href="#/p5.Shader">p5.Shader</a> object instead of looping over
+     * `myBuffer.pixels`.
      *
      * @property {Number[]} pixels
      *
