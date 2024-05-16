@@ -295,20 +295,21 @@ p5.prototype.nf = function(nums, left, right) {
 };
 
 function doNf(num, left, right) {
+  let isNegative = num < 0;
+  num = Math.abs(num);
   let [leftPart, rightPart] = num.toString().split('.');
+
 
   if (typeof right === 'undefined') {
     leftPart = leftPart.padStart(left, '0');
-    return rightPart ? leftPart + '.' + rightPart : leftPart;
+    let result = rightPart ? leftPart + '.' + rightPart : leftPart;
+    return isNegative ? '-' + result : result;
   } else {
     let roundedOff = num.toFixed(right);
     [leftPart, rightPart] = roundedOff.toString().split('.');
     leftPart = leftPart.padStart(left, '0');
-    if(typeof rightPart === 'undefined'){
-      return leftPart;
-    }else{
-      return leftPart + '.' + rightPart;
-    }
+    let result = typeof rightPart === 'undefined' ? leftPart : leftPart + '.' + rightPart;
+    return isNegative ? '-' + result : result;
   }
 }
 
