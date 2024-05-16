@@ -980,7 +980,7 @@ class Framebuffer {
   }
 
   /**
-   * Removes the framebuffer and from the web page.
+   * Removes the framebuffer from the web page.
    *
    * @method remove
    *
