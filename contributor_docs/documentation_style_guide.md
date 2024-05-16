@@ -80,7 +80,7 @@ function drawFractal(c, radius, maxIter) {
 }
 ```
 
-Communicate the current way of doing things, both explicitly and implicitly. Use the idioms recommended in this guide. Reorder sections to emphasize favored approaches if needed. The documentation should be a model for best practices and approachable for beginners.
+Communicate the current way of doing things, both explicitly and implicitly. Use the idioms recommended in [this guide.](https://github.com/processing/p5.js/blob/main/contributor_docs/contributing_to_the_p5.js_reference.md) Reorder sections to emphasize favored approaches if needed. The documentation should be a model for best practices and approachable for beginners.
 
 Documentation has to be brief but comprehensive. Explore and document edge cases. What happens for each combination of arguments? What bugs are most likely to appear in a beginner's code?
 
