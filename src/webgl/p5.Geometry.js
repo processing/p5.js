@@ -11,17 +11,345 @@
 import p5 from '../core/main';
 import * as constants from '../core/constants';
 /**
- * p5 Geometry class
+ * A class to describe a 3D shape.
+ *
+ * Each `p5.Geometry` object represents a 3D shape as a set of connected
+ * points called *vertices*. All 3D shapes are made by connecting vertices to
+ * form triangles that are stitched together. Each triangular patch on the
+ * geometry's surface is called a *face*. The geometry stores information
+ * about its vertices and faces for use with effects such as lighting and
+ * texture mapping.
+ *
+ * The first parameter, `detailX`, is optional. If a number is passed, as in
+ * `new p5.Geometry(24)`, it sets the number of triangle subdivisions to use
+ * along the geometry's x-axis. By default, `detailX` is 1.
+ *
+ * The second parameter, `detailY`, is also optional. If a number is passed,
+ * as in `new p5.Geometry(24, 16)`, it sets the number of triangle
+ * subdivisions to use along the geometry's y-axis. By default, `detailX` is
+ * 1.
+ *
+ * The third parameter, `callback`, is also optional. If a function is passed,
+ * as in `new p5.Geometry(24, 16, createShape)`, it will be called once to add
+ * vertices to the new 3D shape.
+ *
  * @class p5.Geometry
  * @constructor
  * @param  {Integer} [detailX] number of vertices along the x-axis.
  * @param  {Integer} [detailY] number of vertices along the y-axis.
- * @param {function} [callback] function to call upon object instantiation.
+ * @param {function} [callback] function to call once the geometry is created.
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let myGeometry;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a p5.Geometry object.
+ *   myGeometry = new p5.Geometry();
+ *
+ *   // Create p5.Vector objects to position the vertices.
+ *   let v0 = createVector(-40, 0, 0);
+ *   let v1 = createVector(0, -40, 0);
+ *   let v2 = createVector(40, 0, 0);
+ *
+ *   // Add the vertices to the p5.Geometry object's vertices array.
+ *   myGeometry.vertices.push(v0, v1, v2);
+ *
+ *   describe('A white triangle drawn on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the p5.Geometry object.
+ *   model(myGeometry);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let myGeometry;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a p5.Geometry object using a callback function.
+ *   myGeometry = new p5.Geometry(1, 1, createShape);
+ *
+ *   describe('A white triangle drawn on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the p5.Geometry object.
+ *   model(myGeometry);
+ * }
+ *
+ * function createShape() {
+ *   // Create p5.Vector objects to position the vertices.
+ *   let v0 = createVector(-40, 0, 0);
+ *   let v1 = createVector(0, -40, 0);
+ *   let v2 = createVector(40, 0, 0);
+ *
+ *   // "this" refers to the p5.Geometry object being created.
+ *
+ *   // Add the vertices to the p5.Geometry object's vertices array.
+ *   this.vertices.push(v0, v1, v2);
+ *
+ *   // Add an array to list which vertices belong to the face.
+ *   // Vertices are listed in clockwise "winding" order from
+ *   // left to top to right.
+ *   this.faces.push([0, 1, 2]);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let myGeometry;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a p5.Geometry object using a callback function.
+ *   myGeometry = new p5.Geometry(1, 1, createShape);
+ *
+ *   describe('A white triangle drawn on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the p5.Geometry object.
+ *   model(myGeometry);
+ * }
+ *
+ * function createShape() {
+ *   // Create p5.Vector objects to position the vertices.
+ *   let v0 = createVector(-40, 0, 0);
+ *   let v1 = createVector(0, -40, 0);
+ *   let v2 = createVector(40, 0, 0);
+ *
+ *   // "this" refers to the p5.Geometry object being created.
+ *
+ *   // Add the vertices to the p5.Geometry object's vertices array.
+ *   this.vertices.push(v0, v1, v2);
+ *
+ *   // Add an array to list which vertices belong to the face.
+ *   // Vertices are listed in clockwise "winding" order from
+ *   // left to top to right.
+ *   this.faces.push([0, 1, 2]);
+ *
+ *   // Compute the surface normals to help with lighting.
+ *   this.computeNormals();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * // Adapted from Paul Wheeler's wonderful p5.Geometry tutorial.
+ * // https://www.paulwheeler.us/articles/custom-3d-geometry-in-p5js/
+ * // CC-BY-SA 4.0
+ *
+ * let myGeometry;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create the p5.Geometry object.
+ *   // Set detailX to 48 and detailY to 2.
+ *   // >>> try changing them.
+ *   myGeometry = new p5.Geometry(48, 2, createShape);
+ * }
+ *
+ * function draw() {
+ *   background(50);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Style the p5.Geometry object.
+ *   strokeWeight(0.2);
+ *
+ *   // Draw the p5.Geometry object.
+ *   model(myGeometry);
+ * }
+ *
+ * function createShape() {
+ *   // "this" refers to the p5.Geometry object being created.
+ *
+ *   // Define the Möbius strip with a few parameters.
+ *   let spread = 0.1;
+ *   let radius = 30;
+ *   let stripWidth = 15;
+ *   let xInterval = 4 * PI / this.detailX;
+ *   let yOffset = -stripWidth / 2;
+ *   let yInterval = stripWidth / this.detailY;
+ *
+ *   for (let j = 0; j <= this.detailY; j += 1) {
+ *     // Calculate the "vertical" point along the strip.
+ *     let v = yOffset + yInterval * j;
+ *
+ *     for (let i = 0; i <= this.detailX; i += 1) {
+ *       // Calculate the angle of rotation around the strip.
+ *       let u = i * xInterval;
+ *
+ *       // Calculate the coordinates of the vertex.
+ *       let x = (radius + v * cos(u / 2)) * cos(u) - sin(u / 2) * 2 * spread;
+ *       let y = (radius + v * cos(u / 2)) * sin(u);
+ *       if (u < TWO_PI) {
+ *         y += sin(u) * spread;
+ *       } else {
+ *         y -= sin(u) * spread;
+ *       }
+ *       let z = v * sin(u / 2) + sin(u / 4) * 4 * spread;
+ *
+ *       // Create a p5.Vector object to position the vertex.
+ *       let vert = createVector(x, y, z);
+ *
+ *       // Add the vertex to the p5.Geometry object's vertices array.
+ *       this.vertices.push(vert);
+ *     }
+ *   }
+ *
+ *   // Compute the faces array.
+ *   this.computeFaces();
+ *
+ *   // Compute the surface normals to help with lighting.
+ *   this.computeNormals();
+ * }
+ * </code>
+ * </div>
  */
 p5.Geometry = class Geometry {
   constructor(detailX, detailY, callback) {
-    //an array containing every vertex
-    //@type [p5.Vector]
+    /**
+    * An array with the geometry's vertices.
+    *
+    * The geometry's vertices are stored as
+    * <a href="#/p5.Vector">p5.Vector</a> objects in the `myGeometry.vertices`
+    * array. The geometry's first vertex is the
+    * <a href="#/p5.Vector">p5.Vector</a> object at `myGeometry.vertices[0]`,
+    * its second vertex is `myGeometry.vertices[1]`, its third vertex is
+    * `myGeometry.vertices[2]`, and so on.
+    *
+    * @property vertices
+    * @name vertices
+    *
+    * @example
+    * <div>
+    * <code>
+    * // Click and drag the mouse to view the scene from different angles.
+    *
+    * let myGeometry;
+    *
+    * function setup() {
+    *   createCanvas(100, 100, WEBGL);
+    *
+    *   // Create a p5.Geometry object.
+    *   myGeometry = new p5.Geometry();
+    *
+    *   // Create p5.Vector objects to position the vertices.
+    *   let v0 = createVector(-40, 0, 0);
+    *   let v1 = createVector(0, -40, 0);
+    *   let v2 = createVector(40, 0, 0);
+    *
+    *   // Add the vertices to the p5.Geometry object's vertices array.
+    *   myGeometry.vertices.push(v0, v1, v2);
+    *
+    *   describe('A white triangle drawn on a gray background.');
+    * }
+    *
+    * function draw() {
+    *   background(200);
+    *
+    *   // Enable orbiting with the mouse.
+    *   orbitControl();
+    *
+    *   // Draw the p5.Geometry object.
+    *   model(myGeometry);
+    * }
+    * </code>
+    * </div>
+    *
+    * <div>
+    * <code>
+    * // Click and drag the mouse to view the scene from different angles.
+    *
+    * let myGeometry;
+    *
+    * function setup() {
+    *   createCanvas(100, 100, WEBGL);
+    *
+    *   // Create a p5.Geometry object.
+    *   beginGeometry();
+    *   torus(30, 15, 10, 8);
+    *   myGeometry = endGeometry();
+    *
+    *   describe('A white torus rotates slowly against a dark gray background. Red spheres mark its vertices.');
+    * }
+    *
+    * function draw() {
+    *   background(50);
+    *
+    *   // Enable orbiting with the mouse.
+    *   orbitControl();
+    *
+    *   // Turn on the lights.
+    *   lights();
+    *
+    *   // Rotate the coordinate system.
+    *   rotateY(frameCount * 0.01);
+    *
+    *   // Style the p5.Geometry object.
+    *   fill(255);
+    *   stroke(0);
+    *
+    *   // Display the p5.Geometry object.
+    *   model(myGeometry);
+    *
+    *   // Style the vertices.
+    *   fill(255, 0, 0);
+    *   noStroke();
+    *
+    *   // Iterate over the vertices array.
+    *   for (let v of myGeometry.vertices) {
+    *     // Draw a sphere to mark the vertex.
+    *     push();
+    *     translate(v);
+    *     sphere(2.5);
+    *     pop();
+    *   }
+    * }
+    * </code>
+    * </div>
+    */
     this.vertices = [];
 
     this.boundingBoxCache = null;
@@ -44,15 +372,289 @@ p5.Geometry = class Geometry {
     // represents. See the doc comments for _addCap and _addJoin for diagrams.
     this.lineSides = new p5.DataArray();
 
-    //an array containing 1 normal per vertex
-    //@type [p5.Vector]
-    //[p5.Vector, p5.Vector, p5.Vector,p5.Vector, p5.Vector, p5.Vector,...]
+    /**
+    * An array with the vectors that are normal to the geometry's vertices.
+    *
+    * A face's orientation is defined by its *normal vector* which points out
+    * of the face and is normal (perpendicular) to the surface. Calling
+    * `myGeometry.computeNormals()` first calculates each face's normal
+    * vector. Then it calculates the normal vector for each vertex by
+    * averaging the normal vectors of the faces surrounding the vertex. The
+    * vertex normals are stored as <a href="#/p5.Vector">p5.Vector</a>
+    * objects in the `myGeometry.vertexNormals` array.
+    *
+    * @property vertexNormals
+    * @name vertexNormals
+    *
+    * @example
+    * <div>
+    * <code>
+    * // Click and drag the mouse to view the scene from different angles.
+    *
+    * let myGeometry;
+    *
+    * function setup() {
+    *   createCanvas(100, 100, WEBGL);
+    *
+    *   // Create a p5.Geometry object.
+    *   beginGeometry();
+    *   torus(30, 15, 10, 8);
+    *   myGeometry = endGeometry();
+    *
+    *   // Compute the vertex normals.
+    *   myGeometry.computeNormals();
+    *
+    *   describe(
+    *     'A white torus rotates against a dark gray background. Red lines extend outward from its vertices.'
+    *   );
+    * }
+    *
+    * function draw() {
+    *   background(50);
+    *
+    *   // Enable orbiting with the mouse.
+    *   orbitControl();
+    *
+    *   // Turn on the lights.
+    *   lights();
+    *
+    *   // Rotate the coordinate system.
+    *   rotateY(frameCount * 0.01);
+    *
+    *   // Style the p5.Geometry object.
+    *   stroke(0);
+    *
+    *   // Display the p5.Geometry object.
+    *   model(myGeometry);
+    *
+    *   // Style the normal vectors.
+    *   stroke(255, 0, 0);
+    *
+    *   // Iterate over the vertices and vertexNormals arrays.
+    *   for (let i = 0; i < myGeometry.vertices.length; i += 1) {
+    *
+    *     // Get the vertex p5.Vector object.
+    *     let v = myGeometry.vertices[i];
+    *
+    *     // Get the vertex normal p5.Vector object.
+    *     let n = myGeometry.vertexNormals[i];
+    *
+    *     // Calculate a point along the vertex normal.
+    *     let p = p5.Vector.mult(n, 8);
+    *
+    *     // Draw the vertex normal as a red line.
+    *     push();
+    *     translate(v);
+    *     line(0, 0, 0, p.x, p.y, p.z);
+    *     pop();
+    *   }
+    * }
+    * </code>
+    * </div>
+    *
+    * <div>
+    * <code>
+    * // Click and drag the mouse to view the scene from different angles.
+    *
+    * let myGeometry;
+    *
+    * function setup() {
+    *   createCanvas(100, 100, WEBGL);
+    *
+    *   // Create a p5.Geometry object.
+    *   myGeometry = new p5.Geometry();
+    *
+    *   // Create p5.Vector objects to position the vertices.
+    *   let v0 = createVector(-40, 0, 0);
+    *   let v1 = createVector(0, -40, 0);
+    *   let v2 = createVector(0, 40, 0);
+    *   let v3 = createVector(40, 0, 0);
+    *
+    *   // Add the vertices to the p5.Geometry object's vertices array.
+    *   myGeometry.vertices.push(v0, v1, v2, v3);
+    *
+    *   // Compute the faces array.
+    *   myGeometry.computeFaces();
+    *
+    *   // Compute the surface normals.
+    *   myGeometry.computeNormals();
+    *
+    *   describe('A red square drawn on a gray background.');
+    * }
+    *
+    * function draw() {
+    *   background(200);
+    *
+    *   // Enable orbiting with the mouse.
+    *   orbitControl();
+    *
+    *   // Add a white point light.
+    *   pointLight(255, 255, 255, 0, 0, 10);
+    *
+    *   // Style the p5.Geometry object.
+    *   noStroke();
+    *   fill(255, 0, 0);
+    *
+    *   // Display the p5.Geometry object.
+    *   model(myGeometry);
+    * }
+    * </code>
+    * </div>
+    */
     this.vertexNormals = [];
-    //an array containing each three vertex indices that form a face
-    //[[0, 1, 2], [2, 1, 3], ...]
+    /**
+    * An array that lists which of the geometry's vertices form each of its
+    * faces.
+    *
+    * All 3D shapes are made by connecting sets of points called *vertices*. A
+    * geometry's surface is formed by connecting vertices to form triangles
+    * that are stitched together. Each triangular patch on the geometry's
+    * surface is called a *face*.
+    *
+    * The geometry's vertices are stored as
+    * <a href="#/p5.Vector">p5.Vector</a> objects in the
+    * <a href="#/p5.Geometry/vertices">myGeometry.vertices</a> array. The
+    * geometry's first vertex is the <a href="#/p5.Vector">p5.Vector</a>
+    * object at `myGeometry.vertices[0]`, its second vertex is
+    * `myGeometry.vertices[1]`, its third vertex is `myGeometry.vertices[2]`,
+    * and so on.
+    *
+    * For example, a geometry made from a rectangle has two faces because a
+    * rectangle is made by joining two triangles. `myGeometry.faces` for a
+    * rectangle would be the two-dimensional array `[[0, 1, 2], [2, 1, 3]]`.
+    * The first face, `myGeometry.faces[0]`, is the array `[0, 1, 2]` because
+    * it's formed by connecting `myGeometry.vertices[0]`,
+    * `myGeometry.vertices[1]`,and `myGeometry.vertices[2]`. The second face,
+    * `myGeometry.faces[1]`, is the array `[2, 1, 3]` because it's formed by
+    * connecting `myGeometry.vertices[2]`, `myGeometry.vertices[1]`,and
+    * `myGeometry.vertices[3]`.
+    *
+    * @property faces
+    * @name faces
+    *
+    * @example
+    * <div>
+    * <code>
+    * // Click and drag the mouse to view the scene from different angles.
+    *
+    * let myGeometry;
+    *
+    * function setup() {
+    *   createCanvas(100, 100, WEBGL);
+    *
+    *   // Create a p5.Geometry object.
+    *   beginGeometry();
+    *   sphere();
+    *   myGeometry = endGeometry();
+    *
+    *   describe("A sphere drawn on a gray background. The sphere's surface is a grayscale patchwork of triangles.");
+    * }
+    *
+    * function draw() {
+    *   background(200);
+    *
+    *   // Enable orbiting with the mouse.
+    *   orbitControl();
+    *
+    *   // Turn on the lights.
+    *   lights();
+    *
+    *   // Style the p5.Geometry object.
+    *   noStroke();
+    *
+    *   // Set a random seed.
+    *   randomSeed(1234);
+    *
+    *   // Iterate over the faces array.
+    *   for (let face of myGeometry.faces) {
+    *
+    *     // Style the face.
+    *     let g = random(0, 255);
+    *     fill(g);
+    *
+    *     // Draw the face.
+    *     beginShape();
+    *     // Iterate over the vertices that form the face.
+    *     for (let f of face) {
+    *       // Get the vertex's p5.Vector object.
+    *       let v = myGeometry.vertices[f];
+    *       vertex(v.x, v.y, v.z);
+    *     }
+    *     endShape();
+    *
+    *   }
+    * }
+    * </code>
+    * </div>
+    */
     this.faces = [];
-    //a 2D array containing uvs for every vertex
-    //[[0.0,0.0],[1.0,0.0], ...]
+    /**
+    * An array that lists the texture coordinates for each of the geometry's
+    * vertices.
+    *
+    * In order for <a href="#/p5/texture">texture()</a> to work, the geometry
+    * needs a way to map the points on its surface to the pixels in a
+    * rectangular image that's used as a texture. The geometry's vertex at
+    * coordinates `(x, y, z)` maps to the texture image's pixel at coordinates
+    * `(u, v)`.
+    *
+    * The `myGeometry.uvs` array stores the `(u, v)` coordinates for each
+    * vertex in the order it was added to the geometry. For example, the
+    * first vertex, `myGeometry.vertices[0]`, has its `(u, v)` coordinates
+    * stored at `myGeometry.uvs[0]` and `myGeometry.uvs[1]`.
+    *
+    * @property uvs
+    * @name uvs
+    *
+    * @example
+    * <div>
+    * <code>
+    * let img;
+    *
+    * // Load the image and create a p5.Image object.
+    * function preload() {
+    *   img = loadImage('assets/laDefense.jpg');
+    * }
+    *
+    * function setup() {
+    *   createCanvas(100, 100, WEBGL);
+    *
+    *   background(200);
+    *
+    *   // Create p5.Geometry objects.
+    *   let geom1 = buildGeometry(createShape);
+    *   let geom2 = buildGeometry(createShape);
+    *
+    *   // Left (original).
+    *   push();
+    *   translate(-25, 0, 0);
+    *   texture(img);
+    *   noStroke();
+    *   model(geom1);
+    *   pop();
+    *
+    *   // Set geom2's texture coordinates.
+    *   geom2.uvs = [0.25, 0.25, 0.75, 0.25, 0.25, 0.75, 0.75, 0.75];
+    *
+    *   // Right (zoomed in).
+    *   push();
+    *   translate(25, 0, 0);
+    *   texture(img);
+    *   noStroke();
+    *   model(geom2);
+    *   pop();
+    *
+    *   describe(
+    *     'Two photos of a ceiling on a gray background. The photo on the right zooms in to the center of the photo.'
+    *   );
+    * }
+    *
+    * function createShape() {
+    *   plane(40);
+    * }
+    * </code>
+    * </div>
+    */
     this.uvs = [];
     // a 2D array containing edge connectivity pattern for create line vertices
     //based on faces for most objects;
@@ -78,74 +680,104 @@ p5.Geometry = class Geometry {
   }
 
   /**
- * Custom bounding box calculation based on the object's vertices.
- * The bounding box is a rectangular prism that encompasses the entire object.
- * It is defined by the minimum and maximum coordinates along each axis, as well
- * as the size and offset of the box.
+ * Calculates the position and size of the smallest box that contains the geometry.
  *
- * It returns an object containing the bounding box properties:
+ * A bounding box is the smallest rectangular prism that contains the entire
+ * geometry. It's defined by the box's minimum and maximum coordinates along
+ * each axis, as well as the size (length) and offset (center).
  *
- *   - `min`: The minimum coordinates of the bounding box as a p5.Vector.
- *   - `max`: The maximum coordinates of the bounding box as a p5.Vector.
- *   - `size`: The size of the bounding box as a p5.Vector.
- *   - `offset`: The offset of the bounding box as a p5.Vector.
+ * Calling `myGeometry.calculateBoundingBox()` returns an object with four
+ * properties that describe the bounding box:
+ *
+ * ```js
+ * // Get myGeometry's bounding box.
+ * let bbox = myGeometry.calculateBoundingBox();
+ *
+ * // Print the bounding box to the console.
+ * console.log(bbox);
+ *
+ * // {
+ * //  // The minimum coordinate along each axis.
+ * //  min: { x: -1, y: -2, z: -3 },
+ * //
+ * //  // The maximum coordinate along each axis.
+ * //  max: { x: 1, y: 2, z: 3},
+ * //
+ * //  // The size (length) along each axis.
+ * //  size: { x: 2, y: 4, z: 6},
+ * //
+ * //  // The offset (center) along each axis.
+ * //  offset: { x: 0, y: 0, z: 0}
+ * // }
+ * ```
  *
  * @method calculateBoundingBox
- * @memberof p5.Geometry.prototype
- * @returns {Object}
+ * @returns {Object} bounding box of the geometry.
  *
  * @example
- *
  * <div>
  * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * let particles;
- * let button;
- * let resultParagraph;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   button = createButton('New');
- *   button.mousePressed(makeParticles);
  *
- *   resultParagraph = createElement('pre').style('width', '200px' );
- *   resultParagraph.style('font-family', 'monospace');
- *   resultParagraph.style('font-size', '12px');
- *   makeParticles();
- * }
+ *   // Create a new p5.Geometry object with random spheres.
+ *   particles = buildGeometry(createParticles);
  *
- * function makeParticles() {
- *   if (particles) freeGeometry(particles);
- *
- *   particles = buildGeometry(() => {
- *     for (let i = 0; i < 60; i++) {
- *       push();
- *       translate(
- *         randomGaussian(0, 200),
- *         randomGaussian(0, 100),
- *         randomGaussian(0, 150)
- *       );
- *       sphere(10);
- *       pop();
- *     }
- *   });
- *
- *   const boundingBox = particles.calculateBoundingBox();
- *   resultParagraph.html('Bounding Box: \n' + JSON.stringify(boundingBox, null, 2));
+ *   describe('Ten white spheres placed randomly against a gray background. A box encloses the spheres.');
  * }
  *
  * function draw() {
- *   background(255);
- *   noStroke();
- *   lights();
+ *   background(50);
+ *
+ *   // Enable orbiting with the mouse.
  *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Style the particles.
+ *   noStroke();
+ *   fill(255);
+ *
+ *   // Draw the particles.
  *   model(particles);
+ *
+ *   // Calculate the bounding box.
+ *   let bbox = particles.calculateBoundingBox();
+ *
+ *   // Translate to the bounding box's center.
+ *   translate(bbox.offset.x, bbox.offset.y, bbox.offset.z);
+ *
+ *   // Style the bounding box.
+ *   stroke(255);
+ *   noFill();
+ *
+ *   // Draw the bounding box.
+ *   box(bbox.size.x, bbox.size.y, bbox.size.z);
  * }
  *
+ * function createParticles() {
+ *   for (let i = 0; i < 10; i += 1) {
+ *     // Calculate random coordinates.
+ *     let x = randomGaussian(0, 15);
+ *     let y = randomGaussian(0, 15);
+ *     let z = randomGaussian(0, 15);
+ *
+ *     push();
+ *     // Translate to the particle's coordinates.
+ *     translate(x, y, z);
+ *     // Draw the particle.
+ *     sphere(3);
+ *     pop();
+ *   }
+ * }
  * </code>
  * </div>
- *
  */
-
   calculateBoundingBox() {
     if (this.boundingBoxCache) {
       return this.boundingBoxCache; // Return cached result if available
@@ -229,51 +861,61 @@ p5.Geometry = class Geometry {
   }
 
   /**
-   * Removes the internal colors of p5.Geometry.
-   * Using `clearColors()`, you can use `fill()` to supply new colors before drawing each shape.
-   * If `clearColors()` is not used, the shapes will use their internal colors by ignoring `fill()`.
+   * Removes the geometry’s internal colors.
+   *
+   * `p5.Geometry` objects can be created with "internal colors" assigned to
+   * vertices or the entire shape. When a geometry has internal colors,
+   * <a href="#/p5/fill">fill()</a> has no effect. Calling
+   * `myGeometry.clearColors()` allows the
+   * <a href="#/p5/fill">fill()</a> function to apply color to the geometry.
    *
    * @method clearColors
    *
    * @example
    * <div>
    * <code>
-   * let shape01;
-   * let shape02;
-   * let points = [];
-   *
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
-   *   points.push(new p5.Vector(-1, -1, 0), new p5.Vector(-1, 1, 0),
-   *     new p5.Vector(1, -1, 0), new p5.Vector(-1, -1, 0));
-   *   buildShape01();
-   *   buildShape02();
-   * }
-   * function draw() {
-   *   background(0);
-   *   fill('pink'); // shape01 retains its internal blue color, so it won't turn pink.
-   *   model(shape01);
-   *   fill('yellow'); // Now, shape02 is yellow.
-   *   model(shape02);
-   * }
    *
-   * function buildShape01() {
-   *   beginGeometry();
-   *   fill('blue'); // shape01's color is blue because its internal colors remain.
-   *   beginShape();
-   *   for (let vec of points) vertex(vec.x * 100, vec.y * 100, vec.z * 100);
-   *   endShape(CLOSE);
-   *   shape01 = endGeometry();
-   * }
+   *   background(200);
    *
-   * function buildShape02() {
+   *   // Create a p5.Geometry object.
+   *   // Set its internal color to red.
    *   beginGeometry();
-   *   fill('red');  // shape02.clearColors() removes its internal colors. Now, shape02 is red.
-   *   beginShape();
-   *   for (let vec of points) vertex(vec.x * 200, vec.y * 200, vec.z * 200);
-   *   endShape(CLOSE);
-   *   shape02 = endGeometry();
-   *   shape02.clearColors(); // Resets shape02's colors.
+   *   fill(255, 0, 0);
+   *   plane(20);
+   *   let myGeometry = endGeometry();
+   *
+   *   // Style the shape.
+   *   noStroke();
+   *
+   *   // Draw the p5.Geometry object (center).
+   *   model(myGeometry);
+   *
+   *   // Translate the origin to the bottom-right.
+   *   translate(25, 25, 0);
+   *
+   *   // Try to fill the geometry with green.
+   *   fill(0, 255, 0);
+   *
+   *   // Draw the geometry again (bottom-right).
+   *   model(myGeometry);
+   *
+   *   // Clear the geometry's colors.
+   *   myGeometry.clearColors();
+   *
+   *   // Fill the geometry with blue.
+   *   fill(0, 0, 255);
+   *
+   *   // Translate the origin up.
+   *   translate(0, -50, 0);
+   *
+   *   // Draw the geometry again (top-right).
+   *   model(myGeometry);
+   *
+   *   describe(
+   *     'Three squares drawn against a gray background. Red squares are at the center and the bottom-right. A blue square is at the top-right.'
+   *   );
    * }
    * </code>
    * </div>
@@ -282,65 +924,88 @@ p5.Geometry = class Geometry {
     this.vertexColors = [];
     return this;
   }
+
   /**
- * Flips the U texture coordinates of the model.
+ * Flips the geometry’s texture u-coordinates.
+ *
+ * In order for <a href="#/p5/texture">texture()</a> to work, the geometry
+ * needs a way to map the points on its surface to the pixels in a rectangular
+ * image that's used as a texture. The geometry's vertex at coordinates
+ * `(x, y, z)` maps to the texture image's pixel at coordinates `(u, v)`.
+ *
+ * The <a href="#/p5.Geometry/uvs">myGeometry.uvs</a> array stores the
+ * `(u, v)` coordinates for each vertex in the order it was added to the
+ * geometry. Calling `myGeometry.flipU()` flips a geometry's u-coordinates
+ * so that the texture appears mirrored horizontally.
+ *
+ * For example, a plane's four vertices are added clockwise starting from the
+ * top-left corner. Here's how calling `myGeometry.flipU()` would change a
+ * plane's texture coordinates:
+ *
+ * ```js
+ * // Print the original texture coordinates.
+ * // Output: [0, 0, 1, 0, 0, 1, 1, 1]
+ * console.log(myGeometry.uvs);
+ *
+ * // Flip the u-coordinates.
+ * myGeometry.flipU();
+ *
+ * // Print the flipped texture coordinates.
+ * // Output: [1, 0, 0, 0, 1, 1, 0, 1]
+ * console.log(myGeometry.uvs);
+ *
+ * // Notice the swaps:
+ * // Top vertices: [0, 0, 1, 0] --> [1, 0, 0, 0]
+ * // Bottom vertices: [0, 1, 1, 1] --> [1, 1, 0, 1]
+ * ```
+ *
  * @method flipU
  * @for p5.Geometry
- *
- * @returns {p5.Geometry}
  *
  * @example
  * <div>
  * <code>
  * let img;
- * let model1;
- * let model2;
  *
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
  *
  * function setup() {
- *   createCanvas(150, 150, WEBGL);
+ *   createCanvas(100, 100, WEBGL);
+ *
  *   background(200);
  *
- *   model1 = createShape(50, 50);
- *   model2 = createShape(50, 50);
- *   model2.flipU();
- * }
+ *   // Create p5.Geometry objects.
+ *   let geom1 = buildGeometry(createShape);
+ *   let geom2 = buildGeometry(createShape);
  *
- * function draw() {
- *   background(0);
+ *   // Flip geom2's U texture coordinates.
+ *   geom2.flipU();
  *
- *   // original
+ *   // Left (original).
  *   push();
- *   translate(-40, 0, 0);
+ *   translate(-25, 0, 0);
  *   texture(img);
  *   noStroke();
- *   plane(50);
- *   model(model1);
+ *   model(geom1);
  *   pop();
  *
- *   // flipped
+ *   // Right (flipped).
  *   push();
- *   translate(40, 0, 0);
+ *   translate(25, 0, 0);
  *   texture(img);
  *   noStroke();
- *   plane(50);
- *   model(model2);
+ *   model(geom2);
  *   pop();
+ *
+ *   describe(
+ *     'Two photos of a ceiling on a gray background. The photos are mirror images of each other.'
+ *   );
  * }
  *
- * function createShape(w, h) {
- *   return buildGeometry(() => {
- *     textureMode(NORMAL);
- *     beginShape();
- *     vertex(-w / 2, -h / 2, 0, 0);
- *     vertex(w / 2, -h / 2, 1, 0);
- *     vertex(w / 2, h / 2, 1, 1);
- *     vertex(-w / 2, h / 2, 0, 1);
- *     endShape(CLOSE);
- *   });
+ * function createShape() {
+ *   plane(40);
  * }
  * </code>
  * </div>
@@ -354,65 +1019,88 @@ p5.Geometry = class Geometry {
       }
     });
   }
+
   /**
- * Flips the V texture coordinates of the model.
+ * Flips the geometry’s texture v-coordinates.
+ *
+ * In order for <a href="#/p5/texture">texture()</a> to work, the geometry
+ * needs a way to map the points on its surface to the pixels in a rectangular
+ * image that's used as a texture. The geometry's vertex at coordinates
+ * `(x, y, z)` maps to the texture image's pixel at coordinates `(u, v)`.
+ *
+ * The <a href="#/p5.Geometry/uvs">myGeometry.uvs</a> array stores the
+ * `(u, v)` coordinates for each vertex in the order it was added to the
+ * geometry. Calling `myGeometry.flipV()` flips a geometry's v-coordinates
+ * so that the texture appears mirrored vertically.
+ *
+ * For example, a plane's four vertices are added clockwise starting from the
+ * top-left corner. Here's how calling `myGeometry.flipV()` would change a
+ * plane's texture coordinates:
+ *
+ * ```js
+ * // Print the original texture coordinates.
+ * // Output: [0, 0, 1, 0, 0, 1, 1, 1]
+ * console.log(myGeometry.uvs);
+ *
+ * // Flip the v-coordinates.
+ * myGeometry.flipV();
+ *
+ * // Print the flipped texture coordinates.
+ * // Output: [0, 1, 1, 1, 0, 0, 1, 0]
+ * console.log(myGeometry.uvs);
+ *
+ * // Notice the swaps:
+ * // Left vertices: [0, 0] <--> [1, 0]
+ * // Right vertices: [1, 0] <--> [1, 1]
+ * ```
+ *
  * @method flipV
  * @for p5.Geometry
- *
- * @returns {p5.Geometry}
  *
  * @example
  * <div>
  * <code>
  * let img;
- * let model1;
- * let model2;
  *
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
  *
  * function setup() {
- *   createCanvas(150, 150, WEBGL);
+ *   createCanvas(100, 100, WEBGL);
+ *
  *   background(200);
  *
- *   model1 = createShape(50, 50);
- *   model2 = createShape(50, 50);
- *   model2.flipV();
- * }
+ *   // Create p5.Geometry objects.
+ *   let geom1 = buildGeometry(createShape);
+ *   let geom2 = buildGeometry(createShape);
  *
- * function draw() {
- *   background(0);
+ *   // Flip geom2's V texture coordinates.
+ *   geom2.flipV();
  *
- *   // original
+ *   // Left (original).
  *   push();
- *   translate(-40, 0, 0);
+ *   translate(-25, 0, 0);
  *   texture(img);
  *   noStroke();
- *   plane(50);
- *   model(model1);
+ *   model(geom1);
  *   pop();
  *
- *   // flipped
+ *   // Right (flipped).
  *   push();
- *   translate(40, 0, 0);
+ *   translate(25, 0, 0);
  *   texture(img);
  *   noStroke();
- *   plane(50);
- *   model(model2);
+ *   model(geom2);
  *   pop();
+ *
+ *   describe(
+ *     'Two photos of a ceiling on a gray background. The photos are mirror images of each other.'
+ *   );
  * }
  *
- * function createShape(w, h) {
- *   return buildGeometry(() => {
- *     textureMode(NORMAL);
- *     beginShape();
- *     vertex(-w / 2, -h / 2, 0, 0);
- *     vertex(w / 2, -h / 2, 1, 0);
- *     vertex(w / 2, h / 2, 1, 1);
- *     vertex(-w / 2, h / 2, 0, 1);
- *     endShape(CLOSE);
- *   });
+ * function createShape() {
+ *   plane(40);
  * }
  * </code>
  * </div>
@@ -426,10 +1114,136 @@ p5.Geometry = class Geometry {
       }
     });
   }
+
   /**
- * computes faces for geometry objects based on the vertices.
+ * Computes the geometry's faces using its vertices.
+ *
+ * All 3D shapes are made by connecting sets of points called *vertices*. A
+ * geometry's surface is formed by connecting vertices to form triangles that
+ * are stitched together. Each triangular patch on the geometry's surface is
+ * called a *face*. `myGeometry.computeFaces()` performs the math needed to
+ * define each face based on the distances between vertices.
+ *
+ * The geometry's vertices are stored as <a href="#/p5.Vector">p5.Vector</a>
+ * objects in the <a href="#/p5.Geometry/vertices">myGeometry.vertices</a>
+ * array. The geometry's first vertex is the
+ * <a href="#/p5.Vector">p5.Vector</a> object at `myGeometry.vertices[0]`,
+ * its second vertex is `myGeometry.vertices[1]`, its third vertex is
+ * `myGeometry.vertices[2]`, and so on.
+ *
+ * Calling `myGeometry.computeFaces()` fills the
+ * <a href="#/p5.Geometry/faces">myGeometry.faces</a> array with three-element
+ * arrays that list the vertices that form each face. For example, a geometry
+ * made from a rectangle has two faces because a rectangle is made by joining
+ * two triangles. <a href="#/p5.Geometry/faces">myGeometry.faces</a> for a
+ * rectangle would be the two-dimensional array
+ * `[[0, 1, 2], [2, 1, 3]]`. The first face, `myGeometry.faces[0]`, is the
+ * array `[0, 1, 2]` because it's formed by connecting
+ * `myGeometry.vertices[0]`, `myGeometry.vertices[1]`,and
+ * `myGeometry.vertices[2]`. The second face, `myGeometry.faces[1]`, is the
+ * array `[2, 1, 3]` because it's formed by connecting
+ * `myGeometry.vertices[2]`, `myGeometry.vertices[1]`, and
+ * `myGeometry.vertices[3]`.
+ *
+ * Note: `myGeometry.computeFaces()` only works when geometries have four or more vertices.
+ *
  * @method computeFaces
  * @chainable
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let myGeometry;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a p5.Geometry object.
+ *   myGeometry = new p5.Geometry();
+ *
+ *   // Create p5.Vector objects to position the vertices.
+ *   let v0 = createVector(-40, 0, 0);
+ *   let v1 = createVector(0, -40, 0);
+ *   let v2 = createVector(0, 40, 0);
+ *   let v3 = createVector(40, 0, 0);
+ *
+ *   // Add the vertices to myGeometry's vertices array.
+ *   myGeometry.vertices.push(v0, v1, v2, v3);
+ *
+ *   // Compute myGeometry's faces array.
+ *   myGeometry.computeFaces();
+ *
+ *   describe('A red square drawn on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Style the shape.
+ *   noStroke();
+ *   fill(255, 0, 0);
+ *
+ *   // Draw the p5.Geometry object.
+ *   model(myGeometry);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let myGeometry;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a p5.Geometry object using a callback function.
+ *   myGeometry = new p5.Geometry(1, 1, createShape);
+ *
+ *   describe('A red square drawn on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Style the shape.
+ *   noStroke();
+ *   fill(255, 0, 0);
+ *
+ *   // Draw the p5.Geometry object.
+ *   model(myGeometry);
+ * }
+ *
+ * function createShape() {
+ *   // Create p5.Vector objects to position the vertices.
+ *   let v0 = createVector(-40, 0, 0);
+ *   let v1 = createVector(0, -40, 0);
+ *   let v2 = createVector(0, 40, 0);
+ *   let v3 = createVector(40, 0, 0);
+ *
+ *   // Add the vertices to the p5.Geometry object's vertices array.
+ *   this.vertices.push(v0, v1, v2, v3);
+ *
+ *   // Compute the faces array.
+ *   this.computeFaces();
+ * }
+ * </code>
+ * </div>
  */
   computeFaces() {
     this.faces.length = 0;
@@ -470,100 +1284,312 @@ p5.Geometry = class Geometry {
     return n.mult(Math.asin(sinAlpha) / ln);
   }
   /**
-   * This function calculates normals for each face, where each vertex's normal is the average of the normals of all faces it's connected to.
-   * i.e computes smooth normals per vertex as an average of each face.
+   * Calculates the normal vector for each vertex on the geometry.
    *
-   * When using `FLAT` shading, vertices are disconnected/duplicated i.e each face has its own copy of vertices.
-   * When using `SMOOTH` shading, vertices are connected/deduplicated i.e each face has its vertices shared with other faces.
+   * All 3D shapes are made by connecting sets of points called *vertices*. A
+   * geometry's surface is formed by connecting vertices to create triangles
+   * that are stitched together. Each triangular patch on the geometry's
+   * surface is called a *face*. `myGeometry.computeNormals()` performs the
+   * math needed to orient each face. Orientation is important for lighting
+   * and other effects.
    *
-   * Options can include:
-   * - `roundToPrecision`: Precision value for rounding computations. Defaults to 3.
+   * A face's orientation is defined by its *normal vector* which points out
+   * of the face and is normal (perpendicular) to the surface. Calling
+   * `myGeometry.computeNormals()` first calculates each face's normal vector.
+   * Then it calculates the normal vector for each vertex by averaging the
+   * normal vectors of the faces surrounding the vertex. The vertex normals
+   * are stored as <a href="#/p5.Vector">p5.Vector</a> objects in the
+   * <a href="#/p5.Geometry/vertexNormals">myGeometry.vertexNormals</a> array.
+   *
+   * The first parameter, `shadingType`, is optional. Passing the constant
+   * `FLAT`, as in `myGeometry.computeNormals(FLAT)`, provides neighboring
+   * faces with their own copies of the vertices they share. Surfaces appear
+   * tiled with flat shading. Passing the constant `SMOOTH`, as in
+   * `myGeometry.computeNormals(SMOOTH)`, makes neighboring faces reuse their
+   * shared vertices. Surfaces appear smoother with smooth shading. By
+   * default, `shadingType` is `FLAT`.
+   *
+   * The second parameter, `options`, is also optional. If an object with a
+   * `roundToPrecision` property is passed, as in
+   * `myGeometry.computeNormals(SMOOTH, { roundToPrecision: 5 })`, it sets the
+   * number of decimal places to use for calculations. By default,
+   * `roundToPrecision` uses 3 decimal places.
    *
    * @method computeNormals
-   * @param {String} [shadingType] shading type (`FLAT` for flat shading or `SMOOTH` for smooth shading) for buildGeometry() outputs. Defaults to `FLAT`.
-   * @param {Object} [options] An optional object with configuration.
+   * @param {String} [shadingType] shading type. either FLAT or SMOOTH. Defaults to `FLAT`.
+   * @param {Object} [options] shading options.
    * @chainable
    *
    * @example
    * <div>
    * <code>
-   * let helix;
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * let myGeometry;
    *
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
-   *   helix = buildGeometry(() => {
-   *     beginShape();
+   *   // Create a p5.Geometry object.
+   *   beginGeometry();
+   *   torus();
+   *   myGeometry = endGeometry();
    *
-   *     for (let i = 0; i < TWO_PI * 3; i += 0.6) {
-   *       let radius = 20;
-   *       let x = cos(i) * radius;
-   *       let y = sin(i) * radius;
-   *       let z = map(i, 0, TWO_PI * 3, -30, 30);
-   *       vertex(x, y, z);
-   *     }
-   *     endShape();
-   *   });
-   *   helix.computeNormals();
+   *   // Compute the vertex normals.
+   *   myGeometry.computeNormals();
+   *
+   *   describe(
+   *     "A white torus drawn on a dark gray background. Red lines extend outward from the torus' vertices."
+   *   );
    * }
+   *
    * function draw() {
-   *   background(255);
-   *   stroke(0);
-   *   fill(150, 200, 250);
-   *   lights();
-   *   rotateX(PI*0.2);
+   *   background(50);
+   *
+   *   // Enable orbiting with the mouse.
    *   orbitControl();
-   *   model(helix);
+   *
+   *   // Turn on the lights.
+   *   lights();
+   *
+   *   // Rotate the coordinate system.
+   *   rotateX(1);
+   *
+   *   // Style the helix.
+   *   stroke(0);
+   *
+   *   // Display the helix.
+   *   model(myGeometry);
+   *
+   *   // Style the normal vectors.
+   *   stroke(255, 0, 0);
+   *
+   *   // Iterate over the vertices and vertexNormals arrays.
+   *   for (let i = 0; i < myGeometry.vertices.length; i += 1) {
+   *
+   *     // Get the vertex p5.Vector object.
+   *     let v = myGeometry.vertices[i];
+   *
+   *     // Get the vertex normal p5.Vector object.
+   *     let n = myGeometry.vertexNormals[i];
+   *
+   *     // Calculate a point along the vertex normal.
+   *     let p = p5.Vector.mult(n, 5);
+   *
+   *     // Draw the vertex normal as a red line.
+   *     push();
+   *     translate(v);
+   *     line(0, 0, 0, p.x, p.y, p.z);
+   *     pop();
+   *   }
    * }
    * </code>
    * </div>
    *
-   * @alt
-   * A 3D helix using the computeNormals() function by default uses `FLAT` to create a flat shading effect on the helix.
-   *
-   * @example
    * <div>
    * <code>
-   * let star;
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * let myGeometry;
    *
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
-   *   star = buildGeometry(() => {
-   *     beginShape();
-   *     for (let i = 0; i < TWO_PI; i += PI / 5) {
-   *       let outerRadius = 60;
-   *       let innerRadius = 30;
-   *       let xOuter = cos(i) * outerRadius;
-   *       let yOuter = sin(i) * outerRadius;
-   *       let zOuter = random(-20, 20);
-   *       vertex(xOuter, yOuter, zOuter);
+   *   // Create a p5.Geometry object using a callback function.
+   *   myGeometry = new p5.Geometry();
    *
-   *       let nextI = i + PI / 5 / 2;
-   *       let xInner = cos(nextI) * innerRadius;
-   *       let yInner = sin(nextI) * innerRadius;
-   *       let zInner = random(-20, 20);
-   *       vertex(xInner, yInner, zInner);
-   *     }
-   *     endShape(CLOSE);
-   *   });
-   *   star.computeNormals(SMOOTH);
+   *   // Create p5.Vector objects to position the vertices.
+   *   let v0 = createVector(-40, 0, 0);
+   *   let v1 = createVector(0, -40, 0);
+   *   let v2 = createVector(0, 40, 0);
+   *   let v3 = createVector(40, 0, 0);
+   *
+   *   // Add the vertices to the p5.Geometry object's vertices array.
+   *   myGeometry.vertices.push(v0, v1, v2, v3);
+   *
+   *   // Compute the faces array.
+   *   myGeometry.computeFaces();
+   *
+   *   // Compute the surface normals.
+   *   myGeometry.computeNormals();
+   *
+   *   describe('A red square drawn on a gray background.');
    * }
+   *
    * function draw() {
-   *   background(255);
-   *   stroke(0);
-   *   fill(150, 200, 250);
-   *   lights();
-   *   rotateX(PI*0.2);
+   *   background(200);
+   *
+   *   // Enable orbiting with the mouse.
    *   orbitControl();
-   *   model(star);
+   *
+   *   // Add a white point light.
+   *   pointLight(255, 255, 255, 0, 0, 10);
+   *
+   *   // Style the p5.Geometry object.
+   *   noStroke();
+   *   fill(255, 0, 0);
+   *
+   *   // Draw the p5.Geometry object.
+   *   model(myGeometry);
    * }
    * </code>
    * </div>
    *
-   * @alt
-   * A star-like geometry, here the computeNormals(SMOOTH) is applied for a smooth shading effect.
-   * This helps to avoid the faceted appearance that can occur with flat shading.
+   * <div>
+   * <code>
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * let myGeometry;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Geometry object.
+   *   myGeometry = buildGeometry(createShape);
+   *
+   *   // Compute normals using default (FLAT) shading.
+   *   myGeometry.computeNormals(FLAT);
+   *
+   *   describe('A white, helical structure drawn on a dark gray background. Its faces appear faceted.');
+   * }
+   *
+   * function draw() {
+   *   background(50);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Turn on the lights.
+   *   lights();
+   *
+   *   // Rotate the coordinate system.
+   *   rotateX(1);
+   *
+   *   // Style the helix.
+   *   noStroke();
+   *
+   *   // Display the helix.
+   *   model(myGeometry);
+   * }
+   *
+   * function createShape() {
+   *   // Create a helical shape.
+   *   beginShape();
+   *   for (let i = 0; i < TWO_PI * 3; i += 0.5) {
+   *     let x = 30 * cos(i);
+   *     let y = 30 * sin(i);
+   *     let z = map(i, 0, TWO_PI * 3, -40, 40);
+   *     vertex(x, y, z);
+   *   }
+   *   endShape();
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * let myGeometry;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Geometry object.
+   *   myGeometry = buildGeometry(createShape);
+   *
+   *   // Compute normals using smooth shading.
+   *   myGeometry.computeNormals(SMOOTH);
+   *
+   *   describe('A white, helical structure drawn on a dark gray background.');
+   * }
+   *
+   * function draw() {
+   *   background(50);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Turn on the lights.
+   *   lights();
+   *
+   *   // Rotate the coordinate system.
+   *   rotateX(1);
+   *
+   *   // Style the helix.
+   *   noStroke();
+   *
+   *   // Display the helix.
+   *   model(myGeometry);
+   * }
+   *
+   * function createShape() {
+   *   // Create a helical shape.
+   *   beginShape();
+   *   for (let i = 0; i < TWO_PI * 3; i += 0.5) {
+   *     let x = 30 * cos(i);
+   *     let y = 30 * sin(i);
+   *     let z = map(i, 0, TWO_PI * 3, -40, 40);
+   *     vertex(x, y, z);
+   *   }
+   *   endShape();
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * let myGeometry;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Geometry object.
+   *   myGeometry = buildGeometry(createShape);
+   *
+   *   // Create an options object.
+   *   let options = { roundToPrecision: 5 };
+   *
+   *   // Compute normals using smooth shading.
+   *   myGeometry.computeNormals(SMOOTH, options);
+   *
+   *   describe('A white, helical structure drawn on a dark gray background.');
+   * }
+   *
+   * function draw() {
+   *   background(50);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Turn on the lights.
+   *   lights();
+   *
+   *   // Rotate the coordinate system.
+   *   rotateX(1);
+   *
+   *   // Style the helix.
+   *   noStroke();
+   *
+   *   // Display the helix.
+   *   model(myGeometry);
+   * }
+   *
+   * function createShape() {
+   *   // Create a helical shape.
+   *   beginShape();
+   *   for (let i = 0; i < TWO_PI * 3; i += 0.5) {
+   *     let x = 30 * cos(i);
+   *     let y = 30 * sin(i);
+   *     let z = map(i, 0, TWO_PI * 3, -40, 40);
+   *     vertex(x, y, z);
+   *   }
+   *   endShape();
+   * }
+   * </code>
+   * </div>
    */
   computeNormals(shadingType = constants.FLAT, { roundToPrecision = 3 } = {}) {
     const vertexNormals = this.vertexNormals;
@@ -643,7 +1669,7 @@ p5.Geometry = class Geometry {
   /**
  * Averages the vertex normals. Used in curved
  * surfaces
- * @method averageNormals
+ * @private
  * @chainable
  */
   averageNormals() {
@@ -663,7 +1689,7 @@ p5.Geometry = class Geometry {
 
   /**
  * Averages pole normals.  Used in spherical primitives
- * @method averagePoleNormals
+ * @private
  * @chainable
  */
   averagePoleNormals() {
@@ -972,9 +1998,57 @@ p5.Geometry = class Geometry {
   }
 
   /**
- * Modifies all vertices to be centered within the range -100 to 100.
+ * Transforms the geometry's vertices to fit snugly within a 100×100×100 box
+ * centered at the origin.
+ *
+ * Calling `myGeometry.normalize()` translates the geometry's vertices so that
+ * they're centered at the origin `(0, 0, 0)`. Then it scales the vertices so
+ * that they fill a 100×100×100 box. As a result, small geometries will grow
+ * and large geometries will shrink.
+ *
+ * Note: `myGeometry.normalize()` only works when called in the
+ * <a href="#/p5/setup">setup()</a> function.
+ *
  * @method normalize
  * @chainable
+ *
+ * @example
+ * <div>
+ * <code>
+ * let myGeometry;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a very small torus.
+ *   beginGeometry();
+ *   torus(1, 0.25);
+ *   myGeometry = endGeometry();
+ *
+ *   // Normalize the torus so its vertices fill
+ *   // the range [-100, 100].
+ *   myGeometry.normalize();
+ *
+ *   describe('A white torus rotates slowly against a dark gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(50);
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Rotate around the y-axis.
+ *   rotateY(frameCount * 0.01);
+ *
+ *   // Style the torus.
+ *   noStroke();
+ *
+ *   // Draw the torus.
+ *   model(myGeometry);
+ * }
+ * </code>
+ * </div>
  */
   normalize() {
     if (this.vertices.length > 0) {
