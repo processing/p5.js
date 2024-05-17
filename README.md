@@ -999,6 +999,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/PalumboN"><img src="https://avatars.githubusercontent.com/u/4098184?v=4?s=120" width="120px;" alt="Nahuel Palumbo"/><br /><sub><b>Nahuel Palumbo</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3APalumboN" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=PalumboN" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/lottihill"><img src="https://avatars.githubusercontent.com/u/76125564?v=4?s=120" width="120px;" alt="lottihill"/><br /><sub><b>lottihill</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=lottihill" title="Documentation">📖</a> <a href="https://github.com/processing/p5.js/issues?q=author%3Alottihill" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
 </table>
