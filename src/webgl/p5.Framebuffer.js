@@ -891,11 +891,45 @@ class Framebuffer {
 
   /**
    * Creates a new
-   * <a href="#/p5.Camera">p5.Camera</a> object to use with the framebuffer and sets it as the current (active) camera.
+   * <a href="#/p5.Camera">p5.Camera</a> object to use with the framebuffer.
    *
    * The new camera is initialized with a default position `(0, 0, 800)` and a
    * default perspective projection. Its properties can be controlled with
    * <a href="#/p5.Camera">p5.Camera</a> methods such as `myCamera.lookAt(0, 0, 0)`.
+   *
+   * Framebuffer cameras should be created between calls to
+   * <a href="#/p5.Framebuffer/begin">myBuffer.begin()</a> and
+   * <a href="#/p5.Framebuffer/end">myBuffer.end()</a> like so:
+   *
+   * ```js
+   * let myCamera;
+   *
+   * myBuffer.begin();
+   *
+   * // Create the camera for the framebuffer.
+   * myCamera = myBuffer.createCamera();
+   *
+   * myBuffer.end();
+   * ```
+   *
+   * Calling <a href="#/p5/setCamera">setCamera()</a> updates the
+   * framebuffer's projection using the camera.
+   * <a href="#/p5/resetMatrix">resetMatrix()</a> must also be called for the
+   * view to change properly:
+   *
+   * ```js
+   * myBuffer.begin();
+   *
+   * // Set the camera for the framebuffer.
+   * setCamera(myCamera);
+   *
+   * // Reset all transformations.
+   * resetMatrix();
+   *
+   * // Draw stuff...
+   *
+   * myBuffer.end();
+   * ```
    *
    * @method createCamera
    * @returns {p5.Camera} new camera.
@@ -916,6 +950,9 @@ class Framebuffer {
    *   // Create a p5.Framebuffer object.
    *   myBuffer = createFramebuffer();
    *
+   *   // Create the cameras between begin() and end().
+   *   myBuffer.begin();
+   *
    *   // Create the first camera.
    *   // Keep its default settings.
    *   cam1 = myBuffer.createCamera();
@@ -927,17 +964,31 @@ class Framebuffer {
    *   cam2.setPosition(400, -400, 800);
    *   cam2.lookAt(0, 0, 0);
    *
-   *   // Set the current camera to cam1.
-   *   setCamera(cam1);
+   *   myBuffer.end();
    *
-   *   describe('A white cube on a gray background. The camera toggles between frontal and aerial views when the user double-clicks.');
+   *   describe(
+   *     'A white cube on a gray background. The camera toggles between frontal and aerial views when the user double-clicks.'
+   *   );
    * }
    *
    * function draw() {
    *   // Draw to the p5.Framebuffer object.
    *   myBuffer.begin();
    *   background(200);
+   *
+   *   // Set the camera.
+   *   if (usingCam1 === true) {
+   *     setCamera(cam1);
+   *   } else {
+   *     setCamera(cam2);
+   *   }
+   *
+   *   // Reset all transformations.
+   *   resetMatrix();
+   *
+   *   // Draw the box.
    *   box();
+   *
    *   myBuffer.end();
    *
    *   // Display the p5.Framebuffer object.
@@ -947,10 +998,8 @@ class Framebuffer {
    * // Toggle the current camera when the user double-clicks.
    * function doubleClicked() {
    *   if (usingCam1 === true) {
-   *     setCamera(cam2);
    *     usingCam1 = false;
    *   } else {
-   *     setCamera(cam1);
    *     usingCam1 = true;
    *   }
    * }
@@ -980,7 +1029,24 @@ class Framebuffer {
   }
 
   /**
-   * Removes the framebuffer from the web page.
+   * Deletes the framebuffer from GPU memory.
+   *
+   * Calling `myBuffer.remove()` frees the GPU memory used by the framebuffer.
+   * The framebuffer also uses a bit of memory on the CPU which can be freed
+   * like so:
+   *
+   * ```js
+   * // Delete the framebuffer from GPU memory.
+   * myBuffer.remove();
+   *
+   * // Delete the framebuffer from CPU memory.
+   * myBuffer = undefined;
+   * ```
+   *
+   * Note: All variables that reference the framebuffer must be assigned
+   * the value `undefined` to delete the framebuffer from CPU memory. If any
+   * variable still refers to the framebuffer, then it won't be garbage
+   * collected.
    *
    * @method remove
    *
@@ -1023,7 +1089,11 @@ class Framebuffer {
    * // Remove the p5.Framebuffer object when the
    * // the user double-clicks.
    * function doubleClicked() {
+   *   // Delete the framebuffer from GPU memory.
    *   myBuffer.remove();
+   *
+   *   // Delete the framebuffer from CPU memory.
+   *   myBuffer = undefined;
    * }
    * </code>
    * </div>
