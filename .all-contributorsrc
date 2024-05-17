@@ -5936,6 +5936,16 @@
         "bug",
         "doc"
       ]
+    },
+    {
+      "login": "lottihill",
+      "name": "lottihill",
+      "avatar_url": "https://avatars.githubusercontent.com/u/76125564?v=4",
+      "profile": "https://github.com/lottihill",
+      "contributions": [
+        "doc",
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
