@@ -15,7 +15,7 @@ import * as constants from '../constants';
  * By default, the first two parameters of
  * <a href="#/p5/ellipse">ellipse()</a>, <a href="#/p5/circle">circle()</a>,
  * and <a href="#/p5/arc">arc()</a>
- * are the x- and y-coordinates of the shape's center. The next parameters set
+ * are the x- and y-coordinates of the shape's upper left corner. The next parameters set
  * the shape's width and height. This is the same as calling
  * `ellipseMode(CENTER)`.
  *
