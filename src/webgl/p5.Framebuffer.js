@@ -74,15 +74,33 @@ p5.FramebufferTexture = FramebufferTexture;
 
 class Framebuffer {
   /**
-   * An object that one can draw to and then read as a texture. While similar
-   * to a p5.Graphics, using a p5.Framebuffer as a texture will generally run
-   * much faster, as it lives within the same WebGL context as the canvas it
-   * is created on. It only works in WebGL mode.
+   * A class to describe a high-performance drawing surface for textures.
+   *
+   * Each `p5.Framebuffer` object provides a dedicated drawing surface called
+   * a *framebuffer*. They're similar to
+   * <a href="#/p5.Graphics">p5.Graphics</a> objects but can run much faster.
+   * Performance is improved because the framebuffer shares the same WebGL
+   * context as the canvas used to create it.
+   *
+   * `p5.Framebuffer` objects have all the drawing features of the main
+   * canvas. Drawing instructions meant for the framebuffer must be placed
+   * between calls to
+   * <a href="#/p5.Framebuffer/begin">myBuffer.begin()</a> and
+   * <a href="#/p5.Framebuffer/end">myBuffer.end()</a>. The resulting image
+   * can be applied as a texture by passing the `p5.Framebuffer` object to the
+   * <a href="#/p5/texture">texture()</a> function, as in `texture(myBuffer)`.
+   * It can also be displayed on the main canvas by passing it to the
+   * <a href="#/p5/image">image()</a> function, as in `image(myBuffer, 0, 0)`.
+   *
+   * Note: <a href="#/p5/createFramebuffer">createFramebuffer()</a> is the
+   * recommended way to create an instance of this class.
    *
    * @class p5.Framebuffer
    * @constructor
-   * @param {p5.Graphics|p5} target A p5 global instance or p5.Graphics
-   * @param {Object} [settings] A settings object
+   * @param {p5.Graphics|p5} target sketch instance or
+   *                                <a href="#/p5.Graphics">p5.Graphics</a>
+   *                                object.
+   * @param {Object} [settings] configuration options.
    */
   constructor(target, settings = {}) {
     this.target = target;
@@ -91,20 +109,56 @@ class Framebuffer {
     this._isClipApplied = false;
 
     /**
-     * A <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference
-     * /Global_Objects/Uint8ClampedArray' target='_blank'>Uint8ClampedArray</a>
-     * containing the values for all the pixels in the Framebuffer.
+     * An array containing the color of each pixel in the framebuffer.
      *
-     * Like the <a href="#/p5/pixels">main canvas pixels property</a>, call
-     * <a href="#/p5.Framebuffer/loadPixels">loadPixels()</a> before reading
-     * it, and call <a href="#/p5.Framebuffer.updatePixels">updatePixels()</a>
-     * afterwards to update its data.
+     * <a href="#/p5.Framebuffer/loadPixels">myBuffer.loadPixels()</a> must be
+     * called before accessing the `myBuffer.pixels` array.
+     * <a href="#/p5.Framebuffer/updatePixels">myBuffer.updatePixels()</a>
+     * must be called after any changes are made.
      *
-     * Note that updating pixels via this property will be slower than
-     * <a href="#/p5.Framebuffer/begin">drawing to the framebuffer directly.</a>
-     * Consider using a shader instead of looping over pixels.
+     * Note: Updating pixels via this property is slower than drawing to the
+     * framebuffer directly. Consider using a
+     * <a href="#/p5.Shader">p5.Shader</a> object instead of looping over
+     * `myBuffer.pixels`.
      *
      * @property {Number[]} pixels
+     *
+     * @example
+     * <div>
+     * <code>
+     * function setup() {
+     *   createCanvas(100, 100, WEBGL);
+     *
+     *   background(200);
+     *
+     *   // Create a p5.Framebuffer object.
+     *   let myBuffer = createFramebuffer();
+     *
+     *   // Load the pixels array.
+     *   myBuffer.loadPixels();
+     *
+     *   // Get the number of pixels in the
+     *   // top half of the framebuffer.
+     *   let numPixels = myBuffer.pixels.length / 2;
+     *
+     *   // Set the framebuffer's top half to pink.
+     *   for (let i = 0; i < numPixels; i += 4) {
+     *     myBuffer.pixels[i] = 255;
+     *     myBuffer.pixels[i + 1] = 102;
+     *     myBuffer.pixels[i + 2] = 204;
+     *     myBuffer.pixels[i + 3] = 255;
+     *   }
+     *
+     *   // Update the pixels array.
+     *   myBuffer.updatePixels();
+     *
+     *   // Draw the p5.Framebuffer object to the canvas.
+     *   image(myBuffer, -50, -50);
+     *
+     *   describe('A pink rectangle above a gray rectangle.');
+     * }
+     * </code>
+     * </div>
      */
     this.pixels = [];
 
@@ -182,48 +236,52 @@ class Framebuffer {
   }
 
   /**
-   * Resizes the framebuffer to the given width and height.
+   * Resizes the framebuffer to a given width and height.
+   *
+   * The parameters, `width` and `height`, set the dimensions of the
+   * framebuffer. For example, calling `myBuffer.resize(300, 500)` resizes
+   * the framebuffer to 300×500 pixels, then sets `myBuffer.width` to 300
+   * and `myBuffer.height` 500.
    *
    * @method resize
-   * @param {Number} width
-   * @param {Number} height
+   * @param {Number} width width of the framebuffer.
+   * @param {Number} height height of the framebuffer.
    *
    * @example
    * <div>
    * <code>
-   * let framebuffer;
+   * let myBuffer;
+   *
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
-   *   framebuffer = createFramebuffer();
-   *   noStroke();
-   * }
    *
-   * function mouseMoved() {
-   *   framebuffer.resize(
-   *     max(20, mouseX),
-   *     max(20, mouseY)
-   *   );
+   *   // Create a p5.Framebuffer object.
+   *   myBuffer = createFramebuffer();
+   *
+   *   describe('A multicolor sphere on a white surface. The image grows larger or smaller when the user moves the mouse, revealing a gray background.');
    * }
    *
    * function draw() {
-   *   // Draw to the framebuffer
-   *   framebuffer.begin();
+   *   background(200);
+   *
+   *   // Draw to the p5.Framebuffer object.
+   *   myBuffer.begin();
    *   background(255);
    *   normalMaterial();
    *   sphere(20);
-   *   framebuffer.end();
+   *   myBuffer.end();
    *
-   *   background(100);
-   *   // Draw the framebuffer to the main canvas
-   *   image(framebuffer, -width/2, -height/2);
+   *   // Display the p5.Framebuffer object.
+   *   image(myBuffer, -50, -50);
+   * }
+   *
+   * // Resize the p5.Framebuffer object when the
+   * // user moves the mouse.
+   * function mouseMoved() {
+   *   myBuffer.resize(mouseX, mouseY);
    * }
    * </code>
    * </div>
-   *
-   * @alt
-   * A red, green, and blue sphere is drawn in the middle of a white rectangle
-   * which starts in the top left of the canvas and whose bottom right is at
-   * the user's mouse
    */
   resize(width, height) {
     this._autoSized = false;
@@ -237,16 +295,99 @@ class Framebuffer {
   }
 
   /**
-   * Gets or sets the pixel scaling for high pixel density displays. By
-   * default, the density will match that of the canvas the framebuffer was
-   * created on, which will match the display density.
+   * Sets the framebuffer's pixel density or returns its current density.
    *
-   * Call this method with no arguments to get the current density, or pass
-   * in a number to set the density.
+   * Computer displays are grids of little lights called pixels. A display's
+   * pixel density describes how many pixels it packs into an area. Displays
+   * with smaller pixels have a higher pixel density and create sharper
+   * images.
+   *
+   * The parameter, `density`, is optional. If a number is passed, as in
+   * `myBuffer.pixelDensity(1)`, it sets the framebuffer's pixel density. By
+   * default, the framebuffer's pixel density will match that of the canvas
+   * where it was created. All canvases default to match the display's pixel
+   * density.
+   *
+   * Calling `myBuffer.pixelDensity()` without an argument returns its current
+   * pixel density.
    *
    * @method pixelDensity
-   * @param {Number} [density] A scaling factor for the number of pixels per
-   * side of the framebuffer
+   * @param {Number} [density] pixel density to set.
+   * @returns {Number} current pixel density.
+   *
+   * @example
+   * <div>
+   * <code>
+   * let myBuffer;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Framebuffer object.
+   *   myBuffer = createFramebuffer();
+   *
+   *   describe("A white circle on a gray canvas. The circle's edge become fuzzy while the user presses and holds the mouse.");
+   * }
+   *
+   * function draw() {
+   *   // Draw to the p5.Framebuffer object.
+   *   myBuffer.begin();
+   *   background(200);
+   *   circle(0, 0, 40);
+   *   myBuffer.end();
+   *
+   *   // Display the p5.Framebuffer object.
+   *   image(myBuffer, -50, -50);
+   * }
+   *
+   * // Decrease the pixel density when the user
+   * // presses the mouse.
+   * function mousePressed() {
+   *   myBuffer.pixelDensity(1);
+   * }
+   *
+   * // Increase the pixel density when the user
+   * // releases the mouse.
+   * function mouseReleased() {
+   *   myBuffer.pixelDensity(2);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let myBuffer;
+   * let myFont;
+   *
+   * // Load a font and create a p5.Font object.
+   * function preload() {
+   *   myFont = loadFont('assets/inconsolata.otf');
+   * }
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   background(200);
+   *
+   *   // Create a p5.Framebuffer object.
+   *   myBuffer = createFramebuffer();
+   *
+   *   // Get the p5.Framebuffer object's pixel density.
+   *   let d = myBuffer.pixelDensity();
+   *
+   *   // Style the text.
+   *   textAlign(CENTER, CENTER);
+   *   textFont(myFont);
+   *   textSize(16);
+   *   fill(0);
+   *
+   *   // Display the pixel density.
+   *   text(`Density: ${d}`, 0, 0);
+   *
+   *   describe(`The text "Density: ${d}" written in black on a gray background.`);
+   * }
+   * </code>
+   * </div>
    */
   pixelDensity(density) {
     if (density) {
@@ -259,15 +400,64 @@ class Framebuffer {
   }
 
   /**
-   * Gets or sets whether or not this framebuffer will automatically resize
-   * along with the canvas it's attached to in order to match its size.
+   * Toggles the framebuffer's autosizing mode or returns the current mode.
    *
-   * Call this method with no arguments to see if it is currently auto-sized,
-   * or pass in a boolean to set this property.
+   * By default, the framebuffer automatically resizes to match the canvas
+   * that created it. Calling `myBuffer.autoSized(false)` disables this
+   * behavior and calling `myBuffer.autoSized(true)` re-enables it.
+   *
+   * Calling `myBuffer.autoSized()` without an argument returns `true` if
+   * the framebuffer automatically resizes and `false` if not.
    *
    * @method autoSized
-   * @param {Boolean} [autoSized] Whether or not the framebuffer should resize
-   * along with the canvas it's attached to
+   * @param {Boolean} [autoSized] whether to automatically resize the framebuffer to match the canvas.
+   * @returns {Boolean} current autosize setting.
+   *
+   * @example
+   * <div>
+   * <code>
+   * // Double-click to toggle the autosizing mode.
+   *
+   * let myBuffer;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Framebuffer object.
+   *   myBuffer = createFramebuffer();
+   *
+   *   describe('A multicolor sphere on a gray background. The image resizes when the user moves the mouse.');
+   * }
+   *
+   * function draw() {
+   *   background(50);
+   *
+   *   // Draw to the p5.Framebuffer object.
+   *   myBuffer.begin();
+   *   background(200);
+   *   normalMaterial();
+   *   sphere(width / 4);
+   *   myBuffer.end();
+   *
+   *   // Display the p5.Framebuffer object.
+   *   image(myBuffer, -width / 2, -height / 2);
+   * }
+   *
+   * // Resize the canvas when the user moves the mouse.
+   * function mouseMoved() {
+   *   let w = constrain(mouseX, 0, 100);
+   *   let h = constrain(mouseY, 0, 100);
+   *   resizeCanvas(w, h);
+   * }
+   *
+   * // Toggle autoSizing when the user double-clicks.
+   * // Note: opened an issue to fix(?) this.
+   * function doubleClicked() {
+   *   let isAuto = myBuffer.autoSized();
+   *   myBuffer.autoSized(!isAuto);
+   * }
+   * </code>
+   * </div>
    */
   autoSized(autoSized) {
     if (autoSized === undefined) {
@@ -700,13 +890,121 @@ class Framebuffer {
   }
 
   /**
-   * Creates and returns a new
-   * <a href="#/p5.FramebufferCamera">p5.FramebufferCamera</a> to be used
-   * while drawing to this framebuffer. The camera will be set as the
-   * currently active camera.
+   * Creates a new
+   * <a href="#/p5.Camera">p5.Camera</a> object to use with the framebuffer.
+   *
+   * The new camera is initialized with a default position `(0, 0, 800)` and a
+   * default perspective projection. Its properties can be controlled with
+   * <a href="#/p5.Camera">p5.Camera</a> methods such as `myCamera.lookAt(0, 0, 0)`.
+   *
+   * Framebuffer cameras should be created between calls to
+   * <a href="#/p5.Framebuffer/begin">myBuffer.begin()</a> and
+   * <a href="#/p5.Framebuffer/end">myBuffer.end()</a> like so:
+   *
+   * ```js
+   * let myCamera;
+   *
+   * myBuffer.begin();
+   *
+   * // Create the camera for the framebuffer.
+   * myCamera = myBuffer.createCamera();
+   *
+   * myBuffer.end();
+   * ```
+   *
+   * Calling <a href="#/p5/setCamera">setCamera()</a> updates the
+   * framebuffer's projection using the camera.
+   * <a href="#/p5/resetMatrix">resetMatrix()</a> must also be called for the
+   * view to change properly:
+   *
+   * ```js
+   * myBuffer.begin();
+   *
+   * // Set the camera for the framebuffer.
+   * setCamera(myCamera);
+   *
+   * // Reset all transformations.
+   * resetMatrix();
+   *
+   * // Draw stuff...
+   *
+   * myBuffer.end();
+   * ```
    *
    * @method createCamera
-   * @returns {p5.Camera} A new camera
+   * @returns {p5.Camera} new camera.
+   *
+   * @example
+   * <div>
+   * <code>
+   * // Double-click to toggle between cameras.
+   *
+   * let myBuffer;
+   * let cam1;
+   * let cam2;
+   * let usingCam1 = true;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Framebuffer object.
+   *   myBuffer = createFramebuffer();
+   *
+   *   // Create the cameras between begin() and end().
+   *   myBuffer.begin();
+   *
+   *   // Create the first camera.
+   *   // Keep its default settings.
+   *   cam1 = myBuffer.createCamera();
+   *
+   *   // Create the second camera.
+   *   // Place it at the top-left.
+   *   // Point it at the origin.
+   *   cam2 = myBuffer.createCamera();
+   *   cam2.setPosition(400, -400, 800);
+   *   cam2.lookAt(0, 0, 0);
+   *
+   *   myBuffer.end();
+   *
+   *   describe(
+   *     'A white cube on a gray background. The camera toggles between frontal and aerial views when the user double-clicks.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   // Draw to the p5.Framebuffer object.
+   *   myBuffer.begin();
+   *   background(200);
+   *
+   *   // Set the camera.
+   *   if (usingCam1 === true) {
+   *     setCamera(cam1);
+   *   } else {
+   *     setCamera(cam2);
+   *   }
+   *
+   *   // Reset all transformations.
+   *   resetMatrix();
+   *
+   *   // Draw the box.
+   *   box();
+   *
+   *   myBuffer.end();
+   *
+   *   // Display the p5.Framebuffer object.
+   *   image(myBuffer, -50, -50);
+   * }
+   *
+   * // Toggle the current camera when the user double-clicks.
+   * function doubleClicked() {
+   *   if (usingCam1 === true) {
+   *     usingCam1 = false;
+   *   } else {
+   *     usingCam1 = true;
+   *   }
+   * }
+   * </code>
+   * </div>
    */
   createCamera() {
     const cam = new FramebufferCamera(this);
@@ -731,48 +1029,74 @@ class Framebuffer {
   }
 
   /**
-   * Removes the framebuffer and frees its resources.
+   * Deletes the framebuffer from GPU memory.
+   *
+   * Calling `myBuffer.remove()` frees the GPU memory used by the framebuffer.
+   * The framebuffer also uses a bit of memory on the CPU which can be freed
+   * like so:
+   *
+   * ```js
+   * // Delete the framebuffer from GPU memory.
+   * myBuffer.remove();
+   *
+   * // Delete the framebuffer from CPU memory.
+   * myBuffer = undefined;
+   * ```
+   *
+   * Note: All variables that reference the framebuffer must be assigned
+   * the value `undefined` to delete the framebuffer from CPU memory. If any
+   * variable still refers to the framebuffer, then it won't be garbage
+   * collected.
    *
    * @method remove
    *
    * @example
    * <div>
    * <code>
-   * let framebuffer;
+   * // Double-click to remove the p5.Framebuffer object.
+   *
+   * let myBuffer;
+   *
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create an options object.
+   *   let options = { width: 60, height: 60 };
+   *
+   *   // Create a p5.Framebuffer object and
+   *   // configure it using options.
+   *   myBuffer = createFramebuffer(options);
+   *
+   *   describe('A white circle at the center of a dark gray square disappears when the user double-clicks.');
    * }
    *
    * function draw() {
-   *   const useFramebuffer = (frameCount % 120) > 60;
-   *   if (useFramebuffer && !framebuffer) {
-   *     // Create a new framebuffer for us to use
-   *     framebuffer = createFramebuffer();
-   *   } else if (!useFramebuffer && framebuffer) {
-   *     // Free the old framebuffer's resources
-   *     framebuffer.remove();
-   *     framebuffer = undefined;
-   *   }
+   *   background(200);
    *
-   *   background(255);
-   *   if (useFramebuffer) {
-   *     // Draw to the framebuffer
-   *     framebuffer.begin();
-   *     background(255);
-   *     rotateX(frameCount * 0.01);
-   *     rotateY(frameCount * 0.01);
-   *     fill(255, 0, 0);
-   *     box(30);
-   *     framebuffer.end();
+   *   // Display the p5.Framebuffer object if
+   *   // it's available.
+   *   if (myBuffer) {
+   *     // Draw to the p5.Framebuffer object.
+   *     myBuffer.begin();
+   *     background(100);
+   *     circle(0, 0, 20);
+   *     myBuffer.end();
    *
-   *     image(framebuffer, -width/2, -height/2);
+   *     image(myBuffer, -30, -30);
    *   }
+   * }
+   *
+   * // Remove the p5.Framebuffer object when the
+   * // the user double-clicks.
+   * function doubleClicked() {
+   *   // Delete the framebuffer from GPU memory.
+   *   myBuffer.remove();
+   *
+   *   // Delete the framebuffer from CPU memory.
+   *   myBuffer = undefined;
    * }
    * </code>
    * </div>
-   *
-   * @alt
-   * A rotating red cube blinks on and off every second.
    */
   remove() {
     const gl = this.gl;
@@ -792,47 +1116,53 @@ class Framebuffer {
   }
 
   /**
-   * Begin drawing to this framebuffer. Subsequent drawing functions to the
-   * canvas the framebuffer is attached to will not be immediately visible, and
-   * will instead be drawn to the framebuffer's texture. Call
-   * <a href="#/p5.Framebuffer/end">end()</a> when finished to make draw
-   * functions go right to the canvas again and to be able to read the
-   * contents of the framebuffer's texture.
+   * Begins drawing shapes to the framebuffer.
+   *
+   * `myBuffer.begin()` and <a href="#/p5.Framebuffer/end">myBuffer.end()</a>
+   * allow shapes to be drawn to the framebuffer. `myBuffer.begin()` begins
+   * drawing to the framebuffer and
+   * <a href="#/p5.Framebuffer/end">myBuffer.end()</a> stops drawing to the
+   * framebuffer. Changes won't be visible until the framebuffer is displayed
+   * as an image or texture.
    *
    * @method begin
    *
    * @example
    * <div>
    * <code>
-   * let framebuffer;
+   * let myBuffer;
+   *
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
-   *   framebuffer = createFramebuffer();
-   *   noStroke();
+   *
+   *   // Create a p5.Framebuffer object.
+   *   myBuffer = createFramebuffer();
+   *
+   *   describe('An empty gray canvas. The canvas gets darker and a rotating, multicolor torus appears while the user presses and holds the mouse.');
    * }
    *
    * function draw() {
-   *   // Draw to the framebuffer
-   *   framebuffer.begin();
-   *   background(255);
-   *   translate(0, 10*sin(frameCount * 0.01), 0);
-   *   rotateX(frameCount * 0.01);
-   *   rotateY(frameCount * 0.01);
-   *   fill(255, 0, 0);
-   *   box(50);
-   *   framebuffer.end();
+   *   background(200);
    *
-   *   background(100);
-   *   // Draw the framebuffer to the main canvas
-   *   image(framebuffer, -50, -50, 25, 25);
-   *   image(framebuffer, 0, 0, 35, 35);
+   *   // Start drawing to the p5.Framebuffer object.
+   *   myBuffer.begin();
+   *
+   *   background(50);
+   *   rotateY(frameCount * 0.01);
+   *   normalMaterial();
+   *   torus(30);
+   *
+   *   // Stop drawing to the p5.Framebuffer object.
+   *   myBuffer.end();
+   *
+   *   // Display the p5.Framebuffer object while
+   *   // the user presses the mouse.
+   *   if (mouseIsPressed === true) {
+   *     image(myBuffer, -50, -50);
+   *   }
    * }
    * </code>
    * </div>
-   *
-   * @alt
-   * A video of a floating and rotating red cube is pasted twice on the
-   * canvas: once in the top left, and again, larger, in the bottom right.
    */
   begin() {
     this.prevFramebuffer = this.target._renderer.activeFramebuffer();
@@ -921,13 +1251,53 @@ class Framebuffer {
   }
 
   /**
-   * After having previously called
-   * <a href="#/p5.Framebuffer/begin">begin()</a>, this method stops drawing
-   * functions from going to the framebuffer's texture, allowing them to go
-   * right to the canvas again. After this, one can read from the framebuffer's
-   * texture.
+   * Stops drawing shapes to the framebuffer.
+   *
+   * <a href="#/p5.Framebuffer/begin">myBuffer.begin()</a> and `myBuffer.end()`
+   * allow shapes to be drawn to the framebuffer.
+   * <a href="#/p5.Framebuffer/begin">myBuffer.begin()</a> begins drawing to
+   * the framebuffer and `myBuffer.end()` stops drawing to the framebuffer.
+   * Changes won't be visible until the framebuffer is displayed as an image
+   * or texture.
    *
    * @method end
+   *
+   * @example
+   * <div>
+   * <code>
+   * let myBuffer;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Framebuffer object.
+   *   myBuffer = createFramebuffer();
+   *
+   *   describe('An empty gray canvas. The canvas gets darker and a rotating, multicolor torus appears while the user presses and holds the mouse.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Start drawing to the p5.Framebuffer object.
+   *   myBuffer.begin();
+   *
+   *   background(50);
+   *   rotateY(frameCount * 0.01);
+   *   normalMaterial();
+   *   torus(30);
+   *
+   *   // Stop drawing to the p5.Framebuffer object.
+   *   myBuffer.end();
+   *
+   *   // Display the p5.Framebuffer object while
+   *   // the user presses the mouse.
+   *   if (mouseIsPressed === true) {
+   *     image(myBuffer, -50, -50);
+   *   }
+   * }
+   * </code>
+   * </div>
    */
   end() {
     const gl = this.gl;
@@ -950,48 +1320,61 @@ class Framebuffer {
   }
 
   /**
-   * Run a function while drawing to the framebuffer rather than to its canvas.
-   * This is equivalent to calling `framebuffer.begin()`, running the function,
-   * and then calling `framebuffer.end()`, but ensures that one never
-   * accidentally forgets `begin` or `end`.
+   * Draws to the framebuffer by calling a function that contains drawing
+   * instructions.
+   *
+   * The parameter, `callback`, is a function with the drawing instructions
+   * for the framebuffer. For example, calling `myBuffer.draw(myFunction)`
+   * will call a function named `myFunction()` to draw to the framebuffer.
+   * Doing so has the same effect as the following:
+   *
+   * ```js
+   * myBuffer.begin();
+   * myFunction();
+   * myBuffer.end();
+   * ```
    *
    * @method draw
-   * @param {Function} callback A function to run that draws to the canvas. The
-   * function will immediately be run, but it will draw to the framebuffer
-   * instead of the canvas.
+   * @param {Function} callback function that draws to the framebuffer.
    *
    * @example
    * <div>
    * <code>
-   * let framebuffer;
+   * // Click the canvas to display the framebuffer.
+   *
+   * let myBuffer;
+   *
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
-   *   framebuffer = createFramebuffer();
-   *   noStroke();
+   *
+   *   // Create a p5.Framebuffer object.
+   *   myBuffer = createFramebuffer();
+   *
+   *   describe('An empty gray canvas. The canvas gets darker and a rotating, multicolor torus appears while the user presses and holds the mouse.');
    * }
    *
    * function draw() {
-   *   // Draw to the framebuffer
-   *   framebuffer.draw(function() {
-   *     background(255);
-   *     translate(0, 10*sin(frameCount * 0.01), 0);
-   *     rotateX(frameCount * 0.01);
-   *     rotateY(frameCount * 0.01);
-   *     fill(255, 0, 0);
-   *     box(50);
-   *   });
+   *   background(200);
    *
-   *   background(100);
-   *   // Draw the framebuffer to the main canvas
-   *   image(framebuffer, -50, -50, 25, 25);
-   *   image(framebuffer, 0, 0, 35, 35);
+   *   // Draw to the p5.Framebuffer object.
+   *   myBuffer.draw(bagel);
+   *
+   *   // Display the p5.Framebuffer object while
+   *   // the user presses the mouse.
+   *   if (mouseIsPressed === true) {
+   *     image(myBuffer, -50, -50);
+   *   }
+   * }
+   *
+   * // Draw a rotating, multicolor torus.
+   * function bagel() {
+   *   background(50);
+   *   rotateY(frameCount * 0.01);
+   *   normalMaterial();
+   *   torus(30);
    * }
    * </code>
    * </div>
-   *
-   * @alt
-   * A video of a floating and rotating red cube is pasted twice on the
-   * canvas: once in the top left, and again, larger, in the bottom right.
    */
   draw(callback) {
     this.begin();
@@ -1000,10 +1383,50 @@ class Framebuffer {
   }
 
   /**
-   * Call this befpre updating <a href="#/p5.Framebuffer/pixels">pixels</a>
-   * and calling <a href="#/p5.Framebuffer/updatePixels">updatePixels</a>
-   * to replace the content of the framebuffer with the data in the pixels
-   * array.
+   * Loads the current value of each pixel in the framebuffer into its
+   * <a href="#/p5.Framebuffer/pixels">pixels</a> array.
+   *
+   * `myBuffer.loadPixels()` must be called before reading from or writing to
+   * <a href="#/p5.Framebuffer/pixels">myBuffer.pixels</a>.
+   *
+   * @method loadPixels
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   background(200);
+   *
+   *   // Create a p5.Framebuffer object.
+   *   let myBuffer = createFramebuffer();
+   *
+   *   // Load the pixels array.
+   *   myBuffer.loadPixels();
+   *
+   *   // Get the number of pixels in the
+   *   // top half of the framebuffer.
+   *   let numPixels = myBuffer.pixels.length / 2;
+   *
+   *   // Set the framebuffer's top half to pink.
+   *   for (let i = 0; i < numPixels; i += 4) {
+   *     myBuffer.pixels[i] = 255;
+   *     myBuffer.pixels[i + 1] = 102;
+   *     myBuffer.pixels[i + 2] = 204;
+   *     myBuffer.pixels[i + 3] = 255;
+   *   }
+   *
+   *   // Update the pixels array.
+   *   myBuffer.updatePixels();
+   *
+   *   // Draw the p5.Framebuffer object to the canvas.
+   *   image(myBuffer, -50, -50);
+   *
+   *   describe('A pink rectangle above a gray rectangle.');
+   * }
+   * </code>
+   * </div>
    */
   loadPixels() {
     const gl = this.gl;
@@ -1029,35 +1452,42 @@ class Framebuffer {
   }
 
   /**
-   * Get a region of pixels from the canvas in the form of a
-   * <a href="#/p5.Image">p5.Image</a>, or a single pixel as an array of
-   * numbers.
+   * Gets a pixel or a region of pixels from the framebuffer.
    *
-   * Returns an array of [R,G,B,A] values for any pixel or grabs a section of
-   * an image. If the Framebuffer has been set up to not store alpha values, then
-   * only [R,G,B] will be returned. If no parameters are specified, the entire
-   * image is returned.
-   * Use the x and y parameters to get the value of one pixel. Get a section of
-   * the display window by specifying additional w and h parameters. When
-   * getting an image, the x and y parameters define the coordinates for the
-   * upper-left corner of the image, regardless of the current <a href="#/p5/imageMode">imageMode()</a>.
+   * `myBuffer.get()` is easy to use but it's not as fast as
+   * <a href="#/p5.Framebuffer/pixels">myBuffer.pixels</a>. Use
+   * <a href="#/p5.Framebuffer/pixels">myBuffer.pixels</a> to read many pixel
+   * values.
+   *
+   * The version of `myBuffer.get()` with no parameters returns the entire
+   * framebuffer as a a <a href="#/p5.Image">p5.Image</a> object.
+   *
+   * The version of `myBuffer.get()` with two parameters interprets them as
+   * coordinates. It returns an array with the `[R, G, B, A]` values of the
+   * pixel at the given point.
+   *
+   * The version of `myBuffer.get()` with four parameters interprets them as
+   * coordinates and dimensions. It returns a subsection of the framebuffer as
+   * a <a href="#/p5.Image">p5.Image</a> object. The first two parameters are
+   * the coordinates for the upper-left corner of the subsection. The last two
+   * parameters are the width and height of the subsection.
    *
    * @method get
-   * @param  {Number}         x x-coordinate of the pixel
-   * @param  {Number}         y y-coordinate of the pixel
-   * @param  {Number}         w width of the section to be returned
-   * @param  {Number}         h height of the section to be returned
-   * @return {p5.Image}       the rectangle <a href="#/p5.Image">p5.Image</a>
+   * @param  {Number} x x-coordinate of the pixel. Defaults to 0.
+   * @param  {Number} y y-coordinate of the pixel. Defaults to 0.
+   * @param  {Number} w width of the subsection to be returned.
+   * @param  {Number} h height of the subsection to be returned.
+   * @return {p5.Image} subsection as a <a href="#/p5.Image">p5.Image</a> object.
    */
   /**
    * @method get
-   * @return {p5.Image}      the whole <a href="#/p5.Image">p5.Image</a>
+   * @return {p5.Image} entire framebuffer as a <a href="#/p5.Image">p5.Image</a> object.
    */
   /**
    * @method get
-   * @param  {Number}        x
-   * @param  {Number}        y
-   * @return {Number[]}      color of pixel at x,y in array format [R, G, B, A]
+   * @param  {Number} x
+   * @param  {Number} y
+   * @return {Number[]}  color of the pixel at `(x, y)` as an array of color values `[R, G, B, A]`.
    */
   get(x, y, w, h) {
     p5._validateParameters('p5.Framebuffer.get', arguments);
@@ -1148,66 +1578,52 @@ class Framebuffer {
   }
 
   /**
-   * Call this after initially calling <a href="#/p5.Framebuffer/loadPixels">
-   * loadPixels()</a> and updating <a href="#/p5.Framebuffer/pixels">pixels</a>
-   * to replace the content of the framebuffer with the data in the pixels
-   * array.
+   * Updates the framebuffer with the RGBA values in the
+   * <a href="#/p5.Framebuffer/pixels">pixels</a> array.
    *
-   * This will also clear the depth buffer so that any future drawing done
-   * afterwards will go on top.
+   * `myBuffer.updatePixels()` only needs to be called after changing values
+   * in the <a href="#/p5.Framebuffer/pixels">myBuffer.pixels</a> array. Such
+   * changes can be made directly after calling
+   * <a href="#/p5.Framebuffer/loadPixels">myBuffer.loadPixels()</a>.
+   *
+   * @method updatePixels
    *
    * @example
    * <div>
    * <code>
-   * let framebuffer;
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
-   *   framebuffer = createFramebuffer();
-   * }
-
-   * function draw() {
-   *   noStroke();
-   *   lights();
    *
-   *   // Draw a sphere to the framebuffer
-   *   framebuffer.begin();
-   *   background(0);
-   *   sphere(25);
-   *   framebuffer.end();
+   *   background(200);
    *
-   *   // Load its pixels and draw a gradient over the lower half of the canvas
-   *   framebuffer.loadPixels();
-   *   for (let y = height/2; y < height; y++) {
-   *     for (let x = 0; x < width; x++) {
-   *       const idx = (y * width + x) * 4;
-   *       framebuffer.pixels[idx] = (x / width) * 255;
-   *       framebuffer.pixels[idx + 1] = (y / height) * 255;
-   *       framebuffer.pixels[idx + 2] = 255;
-   *       framebuffer.pixels[idx + 3] = 255;
-   *     }
+   *   // Create a p5.Framebuffer object.
+   *   let myBuffer = createFramebuffer();
+   *
+   *   // Load the pixels array.
+   *   myBuffer.loadPixels();
+   *
+   *   // Get the number of pixels in the
+   *   // top half of the framebuffer.
+   *   let numPixels = myBuffer.pixels.length / 2;
+   *
+   *   // Set the framebuffer's top half to pink.
+   *   for (let i = 0; i < numPixels; i += 4) {
+   *     myBuffer.pixels[i] = 255;
+   *     myBuffer.pixels[i + 1] = 102;
+   *     myBuffer.pixels[i + 2] = 204;
+   *     myBuffer.pixels[i + 3] = 255;
    *   }
-   *   framebuffer.updatePixels();
    *
-   *   // Draw a cube on top of the pixels we just wrote
-   *   framebuffer.begin();
-   *   push();
-   *   translate(20, 20);
-   *   rotateX(0.5);
-   *   rotateY(0.5);
-   *   box(20);
-   *   pop();
-   *   framebuffer.end();
+   *   // Update the pixels array.
+   *   myBuffer.updatePixels();
    *
-   *   image(framebuffer, -width/2, -height/2);
-   *   noLoop();
+   *   // Draw the p5.Framebuffer object to the canvas.
+   *   image(myBuffer, -50, -50);
+   *
+   *   describe('A pink rectangle above a gray rectangle.');
    * }
    * </code>
    * </div>
-   *
-   * @alt
-   * A sphere partly occluded by a gradient from cyan to white to magenta on
-   * the lower half of the canvas, with a 3D cube drawn on top of that in the
-   * lower right corner.
    */
   updatePixels() {
     const gl = this.gl;
@@ -1282,15 +1698,20 @@ class Framebuffer {
 }
 
 /**
- * A texture with the color information of the framebuffer. Pass this (or the
- * framebuffer itself) to <a href="#/p5/texture">texture()</a> to draw it to
- * the canvas, or pass it to a shader with
- * <a href="#/p5.Shader/setUniform">setUniform()</a> to read its data.
+ * An object that stores the framebuffer's color data.
  *
- * Since Framebuffers are controlled by WebGL, their y coordinates are stored
- * flipped compared to images and videos. When texturing with a framebuffer
- * texture, you may want to flip vertically, e.g. with
- * `plane(framebuffer.width, -framebuffer.height)`.
+ * Each framebuffer uses a
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebGLTexture" target="_blank">WebGLTexture</a>
+ * object internally to store its color data. The `myBuffer.color` property
+ * makes it possible to pass this data directly to other functions. For
+ * example, calling `texture(myBuffer.color)` or
+ * `myShader.setUniform('colorTexture', myBuffer.color)`  may be helpful for
+ * advanced use cases.
+ *
+ * Note: By default, a framebuffer's y-coordinates are flipped compared to
+ * images and videos. It's easy to flip a framebuffer's y-coordinates as
+ * needed when applying it as a texture. For example, calling
+ * `plane(myBuffer.width, -myBuffer.height)` will flip the framebuffer.
  *
  * @property {p5.FramebufferTexture} color
  * @for p5.Framebuffer
@@ -1298,59 +1719,71 @@ class Framebuffer {
  * @example
  * <div>
  * <code>
- * let framebuffer;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   framebuffer = createFramebuffer();
+ *
+ *   background(200);
+ *
+ *   // Create a p5.Framebuffer object.
+ *   let myBuffer = createFramebuffer();
+ *
+ *   // Start drawing to the p5.Framebuffer object.
+ *   myBuffer.begin();
+ *
+ *   triangle(-25, 25, 0, -25, 25, 25);
+ *
+ *   // Stop drawing to the p5.Framebuffer object.
+ *   myBuffer.end();
+ *
+ *   // Use the p5.Framebuffer object's WebGLTexture.
+ *   texture(myBuffer.color);
+ *
+ *   // Style the plane.
  *   noStroke();
- * }
  *
- * function draw() {
- *   // Draw to the framebuffer
- *   framebuffer.begin();
- *   background(255);
- *   normalMaterial();
- *   sphere(20);
- *   framebuffer.end();
+ *   // Draw the plane.
+ *   plane(myBuffer.width, myBuffer.height);
  *
- *   // Draw the framebuffer to the main canvas
- *   image(framebuffer.color, -width/2, -height/2);
+ *   describe('A white triangle on a gray background.');
  * }
  * </code>
  * </div>
- *
- * @alt
- * A red, green, and blue sphere in the middle of the canvas
  */
 
 /**
- * A texture with the depth information of the framebuffer. If the framebuffer
- * was created with `{ depth: false }` in its settings, then this property will
- * be undefined. Pass this to <a href="#/p5/texture">texture()</a> to draw it to
- * the canvas, or pass it to a shader with
- * <a href="#/p5.Shader/setUniform">setUniform()</a> to read its data.
+ * An object that stores the framebuffer's dpeth data.
  *
- * Since Framebuffers are controlled by WebGL, their y coordinates are stored
- * flipped compared to images and videos. When texturing with a framebuffer
- * texture, you may want to flip vertically, e.g. with
- * `plane(framebuffer.width, -framebuffer.height)`.
+ * Each framebuffer uses a
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebGLTexture" target="_blank">WebGLTexture</a>
+ * object internally to store its depth data. The `myBuffer.depth` property
+ * makes it possible to pass this data directly to other functions. For
+ * example, calling `texture(myBuffer.depth)` or
+ * `myShader.setUniform('depthTexture', myBuffer.depth)`  may be helpful for
+ * advanced use cases.
  *
- * @property {p5.FramebufferTexture|undefined} depth
+ * Note: By default, a framebuffer's y-coordinates are flipped compared to
+ * images and videos. It's easy to flip a framebuffer's y-coordinates as
+ * needed when applying it as a texture. For example, calling
+ * `plane(myBuffer.width, -myBuffer.height)` will flip the framebuffer.
+ *
+ * @property {p5.FramebufferTexture} depth
  * @for p5.Framebuffer
  *
  * @example
  * <div>
  * <code>
- * let framebuffer;
- * let depthShader;
+ * // Note: A "uniform" is a global variable within a shader program.
  *
- * const vert = `
+ * // Create a string with the vertex shader program.
+ * // The vertex shader is called for each vertex.
+ * let vertSrc = `
  * precision highp float;
  * attribute vec3 aPosition;
  * attribute vec2 aTexCoord;
  * uniform mat4 uModelViewMatrix;
  * uniform mat4 uProjectionMatrix;
  * varying vec2 vTexCoord;
+ *
  * void main() {
  *   vec4 viewModelPosition = uModelViewMatrix * vec4(aPosition, 1.0);
  *   gl_Position = uProjectionMatrix * viewModelPosition;
@@ -1358,48 +1791,63 @@ class Framebuffer {
  * }
  * `;
  *
- * const frag = `
+ * // Create a string with the fragment shader program.
+ * // The fragment shader is called for each pixel.
+ * let fragSrc = `
  * precision highp float;
  * varying vec2 vTexCoord;
  * uniform sampler2D depth;
+ *
  * void main() {
+ *   // Get the pixel's depth value.
  *   float depthVal = texture2D(depth, vTexCoord).r;
+ *
+ *   // Set the pixel's color based on its depth.
  *   gl_FragColor = mix(
- *     vec4(1., 1., 0., 1.), // yellow
- *     vec4(0., 0., 1., 1.), // blue
- *     pow(depthVal, 6.)
- *   );
+ *     vec4(0., 0., 0., 1.),
+ *     vec4(1., 0., 1., 1.),
+ *     depthVal);
  * }
  * `;
  *
+ * let myBuffer;
+ * let myShader;
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   framebuffer = createFramebuffer();
- *   depthShader = createShader(vert, frag);
- *   noStroke();
+ *
+ *   // Create a p5.Framebuffer object.
+ *   myBuffer = createFramebuffer();
+ *
+ *   // Create a p5.Shader object.
+ *   myShader = createShader(vertSrc, fragSrc);
+ *
+ *   // Compile and apply the shader.
+ *   shader(myShader);
+ *
+ *   describe('The shadow of a box rotates slowly against a magenta background.');
  * }
  *
  * function draw() {
- *   // Draw to the framebuffer
- *   framebuffer.begin();
+ *   // Draw to the p5.Framebuffer object.
+ *   myBuffer.begin();
  *   background(255);
  *   rotateX(frameCount * 0.01);
- *   box(20, 20, 100);
- *   framebuffer.end();
+ *   box(20, 20, 80);
+ *   myBuffer.end();
  *
- *   push();
- *   shader(depthShader);
- *   depthShader.setUniform('depth', framebuffer.depth);
- *   plane(framebuffer.width, framebuffer.height);
- *   pop();
+ *   // Set the shader's depth uniform using
+ *   // the framebuffer's depth texture.
+ *   myShader.setUniform('depth', myBuffer.depth);
+ *
+ *   // Style the plane.
+ *   noStroke();
+ *
+ *   // Draw the plane.
+ *   plane(myBuffer.width, myBuffer.height);
  * }
  * </code>
  * </div>
- *
- * @alt
- * A video of a rectangular prism rotating, with parts closest to the camera
- * appearing yellow and colors getting progressively more blue the farther
- * from the camera they go
  */
 
 p5.Framebuffer = Framebuffer;
