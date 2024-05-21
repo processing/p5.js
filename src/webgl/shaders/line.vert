@@ -88,19 +88,16 @@ void main() {
     0.25
   );
 
-  // using a scale <1 moves the lines towards the camera
-  // in order to prevent popping effects due to half of
-  // the line disappearing behind the geometry faces.
-  float scale = mix(1., 0.995, facingCamera);
-
   // Moving vertices slightly toward the camera
   // to avoid depth-fighting with the fill triangles.
-  // Discussed here:
-  // http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=252848  
-  posp.xyz = posp.xyz * scale;
-  posqIn.xyz = posqIn.xyz * scale;
-  posqOut.xyz = posqOut.xyz * scale;
-
+  // This prevents popping effects due to half of
+  // the line disappearing behind the geometry faces.
+  
+  float zOffset = mix(-0.00045, -1., facingCamera);
+  posp.z -= zOffset;
+  posqIn.z -= zOffset;
+  posqOut.z -= zOffset;
+  
   vec4 p = uProjectionMatrix * posp;
   vec4 qIn = uProjectionMatrix * posqIn;
   vec4 qOut = uProjectionMatrix * posqOut;
