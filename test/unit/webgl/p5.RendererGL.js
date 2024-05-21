@@ -597,6 +597,9 @@ suite('p5.RendererGL', function() {
       var viewMatrixBefore = myp5._renderer.uViewMatrix.copy();
 
       myp5.push();
+      // Change view
+      myp5.camera(0, 0, -500);
+      // Change model
       myp5.rotateX(Math.random(0, 100));
       myp5.translate(20, 100, 5);
       // Check if the model matrix has changed
