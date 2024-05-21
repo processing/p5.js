@@ -2438,7 +2438,14 @@ p5.prototype.createCapture = function(...args) {
     catch(err) {
       domElement.src = stream;
     }
-  }, console.error);
+  }).catch(e => {
+    if (e.name === 'NotFoundError')
+      p5._friendlyError('No webcam found on this device', 'createCapture');
+    if (e.name === 'NotAllowedError')
+      p5._friendlyError('Access to the camera was denied', 'createCapture');
+
+    console.error(e);
+  });
 
   const videoEl = addElement(domElement, this, true);
   videoEl.loadedmetadata = false;

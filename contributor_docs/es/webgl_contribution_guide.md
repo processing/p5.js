@@ -1,3 +1,5 @@
+<!-- How to get started working on the p5.js WebGL mode source code. -->
+
 # Guía de Contribución a WebGL
 
 Si estás leyendo esta página, probablemente estés interesado en ayudar a trabajar en el modo WebGL. ¡Gracias, agradecemos tu ayuda! Esta página existe para ayudar a explicar cómo estructuramos las contribuciones de WebGL y ofrecer algunos consejos para realizar cambios.

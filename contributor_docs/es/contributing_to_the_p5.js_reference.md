@@ -1,3 +1,5 @@
+<!-- Write and edit p5.js reference using the right format. -->
+
 # Contribuir a la referencia de p5.js
 
 En p5.js, creamos las referencias de código que ves en la página de [referencia](https://p5js.org/reference/) del sitio web de p5.js incluyéndolas junto al código fuente de la biblioteca como comentarios especializados. Estos comentarios de referencia incluyen la descripción, la firma de la función (sus parámetros y valor de retorno) y ejemplos de uso. En otras palabras, el contenido en la página de referencia de cada función/variable de p5.js se construye a partir de los comentarios de referencia en el código fuente.

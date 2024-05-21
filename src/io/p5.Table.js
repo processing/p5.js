@@ -74,7 +74,7 @@ p5.Table = class {
    * </code>
    * </div>
    */
-  constructor(rows) {
+  constructor(rows = []) {
     this.columns = [];
 
     /**
@@ -84,7 +84,7 @@ p5.Table = class {
    * @property rows
    * @name rows
    */
-    this.rows = [];
+    this.rows = rows;
   }
 
   /**

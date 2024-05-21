@@ -1,3 +1,5 @@
+<!-- Essential information about contributing to p5.js on GitHub. -->
+
 # Instrucciones para colaboradores
 
 ¡Bienvenidos! Este documento está diseñado para ayudar a nuevos contribuidores que deseen aportar código a la biblioteca de p5.js, así como a aquellos que busquen refrescar sus conocimientos sobre procedimientos técnicos. También es útil para cualquier persona interesada en realizar cualquier tipo de contribución al código de p5.js.
