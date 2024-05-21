@@ -571,7 +571,7 @@ p5.Color = class Color {
   /**
    * Sets the red component of a color.
    *
-   * The range depends on the <a href="#/colorMode">colorMode()</a>. In the
+   * The range depends on the <a href="#/p5/colorMode">colorMode()</a>. In the
    * default RGB mode it's between 0 and 255.
    *
    * @method setRed
@@ -613,7 +613,7 @@ p5.Color = class Color {
   /**
    * Sets the green component of a color.
    *
-   * The range depends on the <a href="#/colorMode">colorMode()</a>. In the
+   * The range depends on the <a href="#/p5/colorMode">colorMode()</a>. In the
    * default RGB mode it's between 0 and 255.
    *
    * @method setGreen
@@ -655,7 +655,7 @@ p5.Color = class Color {
   /**
    * Sets the blue component of a color.
    *
-   * The range depends on the <a href="#/colorMode">colorMode()</a>. In the
+   * The range depends on the <a href="#/p5/colorMode">colorMode()</a>. In the
    * default RGB mode it's between 0 and 255.
    *
    * @method setBlue
@@ -698,7 +698,7 @@ p5.Color = class Color {
    * Sets the alpha (transparency) value of a color.
    *
    * The range depends on the
-   * <a href="#/colorMode">colorMode()</a>. In the default RGB mode it's
+   * <a href="#/p5/colorMode">colorMode()</a>. In the default RGB mode it's
    * between 0 and 255.
    *
    * @method setAlpha
