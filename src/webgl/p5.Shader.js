@@ -36,14 +36,24 @@ p5.Shader = class {
     this._bound = false;
     this.samplers = [];
     this.hooks = {
+      // Stores uniform declarations
       declarations: options.declarations,
+
+      // Stores the hook implementations
       vertex: options.vertex || {},
       fragment: options.fragment || {},
+
+      // Stores whether or not the hook implementation has been modified
+      // from the default. This is supplied automatically by calling
+      // yourShader.modify(...).
+      modified: {
+        vertex: options.modified && options.modified.vertex || {},
+        fragment: options.modified && options.modified.vertex || {},
+      },
     };
   }
 
   shaderSrc(src, shaderType) {
-    // return this._vertSrc;
     const main = "void main";
     const [preMain, postMain] = src.split(main);
 
@@ -59,7 +69,7 @@ p5.Shader = class {
 
         // Add a #define so that if the shader wants to use preprocessor directives to
         // optimize away the extra function calls in main, it can do so
-        hooks += "#define DEFINED_HOOK_" + hookName + "\n";
+        hooks += "#define AUGMENTED_HOOK_" + hookName + "\n";
 
         hooks +=
           hookType +
@@ -81,10 +91,92 @@ p5.Shader = class {
     return this.shaderSrc(this._fragSrc, "fragment");
   }
 
-  augment(newHooks) {
+  /**
+   * Logs the hooks available in this shader, and their current implementation.
+   *
+   * Each shader may let you override bits of its behavior. Each bit is called
+   * a *hook.* A hook is either for the *vertex* shader, if it affects the
+   * position of vertices, or in the *fragment* shader, if it affects the pixel
+   * color. This method logs those values to the console, letting you know what
+   * you are able to use in a call to
+   * <a href="#/p5.Shader/modify">`modify()`</a>.
+   */
+  inspectHooks() {
+    console.log('==== Vertex shader hooks: ====');
+    for (const key in this.hooks.vertex) {
+      console.log(
+        (this.hooks.modified.vertex[key] ? '[MODIFIED] ' : '') +
+        key +
+        this.hooks.vertex[key]
+      );
+    }
+    console.log('');
+    console.log('==== Fragment shader hooks: ====');
+    for (const key in this.hooks.fragment) {
+      console.log(
+        (this.hooks.modified.fragment[key] ? '[MODIFIED] ' : '') +
+        key +
+        this.hooks.fragment[key]
+      );
+    }
+  }
+
+  /**
+   * Returns a new shader, based on the original, but with custom snippets
+   * of shader code replacing default behaviour.
+   *
+   * Each shader may let you override bits of its behavior. Each bit is called
+   * a *hook.* A hook is either for the *vertex* shader, if it affects the
+   * position of vertices, or in the *fragment* shader, if it affects the pixel
+   * color. You can inspect the different hooks available by calling
+   * <a href="#/p5.Shader/inspectHooks">`yourShader.inspectHooks()`</a>. You can
+   * also read the reference for the default material, normal material, color, line, and point shaders to
+   * see what hooks they have available.
+   *
+   * `modify()` takes one parameter, `hooks`, an object with the hooks you want
+   * to override. Each key of the `hooks` object is the name
+   * of a hook, and the value is a string with the GLSL code for your hook. You
+   * can also add a `declarations` key, where the value is a GLSL string declaring
+   * <a href="#/p5.Shader/setUniform">uniform variables</a> and globals shared
+   * between hooks.
+   *
+   * @param {Object} [hooks] The hooks in the shader to replace.
+   *
+   * @example
+   * <div modernizr='webgl'>
+   * <code>
+   * </code>
+   * </div>
+   */
+  modify(hooks) {
+    const newHooks = {
+      vertex: {},
+      fragment: {},
+    };
+    for (const key in hooks) {
+      if (key === 'declarations') continue;
+      if (this.hooks.vertex[key]) {
+        newHooks.vertex[key] = hooks[key];
+      } else if (this.hooks.fragment[key]) {
+        newHooks.fragment[key] = hooks[key];
+      } else {
+        console.error(
+          `We weren't able to find a hook matching the name ${key}. Try calling .inspect() on the shader you are trying to modify to make sure you're using the right name.`
+        );
+      }
+    }
+    const modifiedVertex = { ...this.hooks.modified.vertex };
+    const modifiedFragment = { ...this.hooks.modified.fragment };
+    for (const key in newHooks.vertex || {}) {
+      modifiedVertex[key] = true;
+    }
+    for (const key in newHooks.fragment || {}) {
+      modifiedFragment[key] = true;
+    }
+
     return new p5.Shader(this._renderer, this._vertSrc, this._fragSrc, {
       declarations:
-        (this.hooks.declarations || "") + "\n" + (newHooks.declarations || ""),
+        (this.hooks.declarations || "") + "\n" + (hooks.declarations || ""),
       fragment: {
         ...this.hooks.fragment,
         ...(newHooks.fragment || {}),
@@ -93,6 +185,10 @@ p5.Shader = class {
         ...this.hooks.vertex,
         ...(newHooks.vertex || {}),
       },
+      modified: {
+        vertex: modifiedVertex,
+        fragment: modifiedFragment
+      }
     });
   }
 

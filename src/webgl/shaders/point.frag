@@ -3,7 +3,7 @@ uniform vec4 uMaterialColor;
 IN float vStrokeWeight;
 
 void main(){
-  HOOK_beforeMain();
+  HOOK_beforeFragment();
   float mask = 0.0;
 
   // make a circular mask using the gl_PointCoord (goes from 0 - 1 on a point)
@@ -25,5 +25,5 @@ void main(){
   }
 
   OUT_COLOR = HOOK_getFinalColor(vec4(uMaterialColor.rgb, 1.) * uMaterialColor.a);
-  HOOK_afterMain();
+  HOOK_afterFragment();
 }

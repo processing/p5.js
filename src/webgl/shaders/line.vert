@@ -64,7 +64,7 @@ vec2 lineIntersection(vec2 aPoint, vec2 aDir, vec2 bPoint, vec2 bDir) {
 }
 
 void main() {
-  HOOK_beforeMain();
+  HOOK_beforeVertex();
   // Caps have one of either the in or out tangent set to 0
   vCap = (aTangentIn == vec3(0.)) != (aTangentOut == (vec3(0.)))
     ? 1. : 0.;
@@ -219,5 +219,5 @@ void main() {
   gl_Position.zw = p.zw;
   
   vColor = (uUseLineColor ? aVertexColor : uMaterialColor);
-  HOOK_afterMain();
+  HOOK_afterVertex();
 }

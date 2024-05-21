@@ -15,7 +15,7 @@ OUT highp vec2 vVertTexCoord;
 OUT vec4 vColor;
 
 void main(void) {
-  HOOK_beforeMain();
+  HOOK_beforeVertex();
   vec4 positionVec4 = vec4(HOOK_getWorldPosition(
     (uModelViewMatrix * vec4(HOOK_getLocalPosition(aPosition), 1.0)).xyz
   ), 1.);
@@ -25,5 +25,5 @@ void main(void) {
   vVertexNormal = HOOK_getWorldNormal(normalize(uNormalMatrix * HOOK_getLocalNormal(aNormal)));
   vVertTexCoord = HOOK_getUV(aTexCoord);
   vColor = HOOK_getVertexColor(uUseVertexColor ? aVertexColor : uMaterialColor);
-  HOOK_afterMain()
+  HOOK_afterVertex()
 }

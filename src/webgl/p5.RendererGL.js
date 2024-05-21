@@ -1793,6 +1793,43 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     return this._getImmediateLineShader();
   }
 
+  /**
+   * Get the default shader used with lights, materials,
+   * and textures.
+   *
+   * You can call <a href="#/p5.Shader/modify">`materialShader().modify()`</a>
+   * and change any of the following hooks:
+   * - `void beforeVertex`: Called at the start of the vertex shader.
+   * - `vec3 getLocalPosition`: Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
+   * - `vec3 getWorldPosition`: Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
+   * - `vec3 getLocalNormal`: Update the normal before transforms are applied. It takes in `vec3 normal` and must return a modified version.
+   * - `vec3 getWorldNormal`: Update the normal after transforms are applied. It takes in `vec3 normal` and must return a modified version.
+   * - `vec2 getUV`: Update the texture coordinates. It takes in `vec2 uv` and must return a modified version.
+   * - `vec4 getVertexColor`: Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
+   * - `void afterVertex`: Called at the end of the vertex shader.
+   * - `void beforeFragment`: Called at the start of the fragment shader.
+   * - `vec3 getPixelNormal`: Update the normal per pixel. It takes in `vec3 normal` and must return a modified version.
+   * - `vec4 getBaseColor`: Update the per-pixel color of the surface. It takes in `vec4 color` and must return a modified version.
+   * - `vec3 getAmbientMaterial`: Update the per-pixel ambient material. It takes in `vec3 color` and must return a modified version.
+   * - `vec3 getSpecularMaterial`: Update the per-pixel specular material. It takes in `vec3 color` and must return a modified version.
+   * - `float getShininess`: Update the per-pixel specular material. It takes in `float shininess` and must return a modified version.
+   * - `vec2 getPixelUV`: Update the texture coordinates per pixel. It takes in `vec2 uv` and must return a modified version.
+   * TODO
+   *
+   * Call `materialShader().inspectHooks()` to see all the possible hooks and
+   * their default implementations.
+   *
+   * @returns {p5.Shader} The material shader
+   */
+  materialShader() {
+    if (this._pInst._glAttributes.perPixelLighting) {
+      throw new Error(
+        'The material shader does not support hooks without perPixelLighting. Try turning it back on.'
+      );
+    }
+    return this._getLightShader();
+  }
+
   _getLightShader() {
     if (!this._defaultLightShader) {
       if (this._pInst._glAttributes.perPixelLighting) {
@@ -1804,22 +1841,23 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
           defaultShaders.phongFrag,
           {
             vertex: {
-              'void beforeMain': '() {}',
+              'void beforeVertex': '() {}',
               'vec3 getLocalPosition': '(vec3 position) { return position; }',
               'vec3 getWorldPosition': '(vec3 position) { return position; }',
               'vec3 getLocalNormal': '(vec3 normal) { return normal; }',
               'vec3 getWorldNormal': '(vec3 normal) { return normal; }',
               'vec2 getUV': '(vec2 uv) { return uv; }',
               'vec4 getVertexColor': '(vec4 color) { return color; }',
-              'void afterMain': '() {}'
+              'void afterVertex': '() {}'
             },
             fragment: {
-              'void beforeMain': '() {}',
-              'vec3 getWorldNormal': '(vec3 normal) { return normal; }',
+              'void beforeFragment': '() {}',
+              'vec3 getPixelNormal': '(vec3 normal) { return normal; }',
               'vec4 getBaseColor': '(vec4 color) { return color; }',
               'vec3 getAmbientMaterial': '(vec3 color) { return color; }',
               'vec3 getSpecularMaterial': '(vec3 color) { return color; }',
               'float getShininess': '(float shininess) { return shininess; }',
+              'vec2 getPixelUV': '(vec2 uv) { return uv; }',
               'vec4 combineColors': `(ColorComponents components) {
                 vec4 color = vec4(0.);
                 color.rgb += components.diffuse * components.baseColor;
@@ -1830,7 +1868,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
                 return color;
               }`,
               'vec4 getFinalColor': '(vec4 color) { return color; }',
-              'void afterMain': '() {}'
+              'void afterFragment': '() {}'
             }
           }
         );
@@ -1872,19 +1910,19 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         defaultShaders.normalFrag,
         {
           vertex: {
-            'void beforeMain': '() {}',
+            'void beforeVertex': '() {}',
             'vec3 getLocalPosition': '(vec3 position) { return position; }',
             'vec3 getWorldPosition': '(vec3 position) { return position; }',
             'vec3 getLocalNormal': '(vec3 normal) { return normal; }',
             'vec3 getWorldNormal': '(vec3 normal) { return normal; }',
             'vec2 getUV': '(vec2 uv) { return uv; }',
             'vec4 getVertexColor': '(vec4 color) { return color; }',
-            'void afterMain': '() {}'
+            'void afterVertex': '() {}'
           },
           fragment: {
-            'void beforeMain': '() {}',
+            'void beforeFragment': '() {}',
             'vec4 getFinalColor': '(vec4 color) { return color; }',
-            'void afterMain': '() {}'
+            'void afterFragment': '() {}'
           }
         }
       );
@@ -1903,19 +1941,19 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         defaultShaders.basicFrag,
         {
           vertex: {
-            'void beforeMain': '() {}',
+            'void beforeVertex': '() {}',
             'vec3 getLocalPosition': '(vec3 position) { return position; }',
             'vec3 getWorldPosition': '(vec3 position) { return position; }',
             'vec3 getLocalNormal': '(vec3 normal) { return normal; }',
             'vec3 getWorldNormal': '(vec3 normal) { return normal; }',
             'vec2 getUV': '(vec2 uv) { return uv; }',
             'vec4 getVertexColor': '(vec4 color) { return color; }',
-            'void afterMain': '() {}'
+            'void afterVertex': '() {}'
           },
           fragment: {
-            'void beforeMain': '() {}',
+            'void beforeFragment': '() {}',
             'vec4 getFinalColor': '(vec4 color) { return color; }',
-            'void afterMain': '() {}'
+            'void afterFragment': '() {}'
           }
         }
       );
@@ -1934,17 +1972,17 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         defaultShaders.pointFrag,
         {
           vertex: {
-            'void beforeMain': '() {}',
+            'void beforeVertex': '() {}',
             'vec3 getLocalPosition': '(vec3 position) { return position; }',
             'vec3 getWorldPosition': '(vec3 position) { return position; }',
             'float getPointSize': '(float size) { return size; }',
-            'void afterMain': '() {}'
+            'void afterVertex': '() {}'
           },
           fragment: {
-            'void beforeMain': '() {}',
+            'void beforeFragment': '() {}',
             'vec4 getFinalColor': '(vec4 color) { return color; }',
             'bool shouldDiscard': '(bool outside) { return outside; }',
-            'void afterMain': '() {}'
+            'void afterFragment': '() {}'
           }
         }
       );
@@ -1962,17 +2000,17 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         defaultShaders.lineFrag,
         {
           vertex: {
-            'void beforeMain': '() {}',
+            'void beforeVertex': '() {}',
             'vec3 getLocalPosition': '(vec3 position) { return position; }',
             'vec3 getWorldPosition': '(vec3 position) { return position; }',
             'float getStrokeWeight': '(float weight) { return weight; }',
-            'void afterMain': '() {}'
+            'void afterVertex': '() {}'
           },
           fragment: {
-            'void beforeMain': '() {}',
+            'void beforeVertex': '() {}',
             'vec4 getFinalColor': '(vec4 color) { return color; }',
             'bool shouldDiscard': '(bool outside) { return outside; }',
-            'void afterMain': '() {}'
+            'void afterVertex': '() {}'
           }
         }
       );

@@ -28,19 +28,20 @@ struct ColorComponents {
 };
 
 void main(void) {
-  HOOK_beforeMain();
+  HOOK_beforeFragment();
   vec3 diffuse;
   vec3 specular;
-  totalLight(vViewPosition, HOOK_getWorldNormal(normalize(vNormal)), HOOK_getShininess(uShininess), diffuse, specular);
+  totalLight(vViewPosition, HOOK_getPixelNormal(normalize(vNormal)), HOOK_getShininess(uShininess), diffuse, specular);
 
   // Calculating final color as result of all lights (plus emissive term).
 
+  vec2 texCoord = HOOK_getPixelUV(vTexCoord);
   vec4 baseColor = HOOK_getBaseColor(
     isTexture
       // Textures come in with premultiplied alpha. To apply tint and still have
       // premultiplied alpha output, we need to multiply the RGB channels by the
       // tint RGB, and all channels by the tint alpha.
-      ? TEXTURE(uSampler, vTexCoord) * vec4(uTint.rgb/255., 1.) * (uTint.a/255.)
+      ? TEXTURE(uSampler, texCoord) * vec4(uTint.rgb/255., 1.) * (uTint.a/255.)
       // Colors come in with unmultiplied alpha, so we need to multiply the RGB
       // channels by alpha to convert it to premultiplied alpha.
       : vec4(vColor.rgb * vColor.a, vColor.a)
@@ -56,5 +57,5 @@ void main(void) {
   c.specular = specular;
   c.emissive = uEmissiveMatColor.rgb;
   OUT_COLOR = HOOK_getFinalColor(HOOK_combineColors(c));
-  HOOK_afterMain();
+  HOOK_afterFragment();
 }

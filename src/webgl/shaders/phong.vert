@@ -22,7 +22,7 @@ OUT vec3 vAmbientColor;
 OUT vec4 vColor;
 
 void main(void) {
-  HOOK_beforeMain();
+  HOOK_beforeVertex();
   vec4 viewModelPosition = vec4(HOOK_getWorldPosition(
     (uModelViewMatrix * vec4(HOOK_getLocalPosition(aPosition), 1.0)).xyz
   ), 1.);
@@ -43,5 +43,5 @@ void main(void) {
   }
   
   vColor = HOOK_getVertexColor((uUseVertexColor ? aVertexColor : uMaterialColor));
-  HOOK_afterMain();
+  HOOK_afterVertex();
 }
