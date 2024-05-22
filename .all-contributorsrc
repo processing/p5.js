@@ -5946,6 +5946,25 @@
         "doc",
         "bug"
       ]
+    },
+    {
+      "login": "JulioGitLab",
+      "name": "Julio Lab",
+      "avatar_url": "https://avatars.githubusercontent.com/u/156870555?v=4",
+      "profile": "https://github.com/JulioGitLab",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "JordanSucher",
+      "name": "Jordan Sucher",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9809109?v=4",
+      "profile": "https://github.com/JordanSucher",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "repoType": "github",

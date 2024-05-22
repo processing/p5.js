@@ -320,8 +320,22 @@ p5.Graphics = class extends p5.Element {
   /**
  * Removes the graphics buffer from the web page.
  *
- * Calling `myGraphics.remove()` removes the graphics buffer's canvas along
- * with any HTML elements it created.
+ * Calling `myGraphics.remove()` removes the graphics buffer's
+ * `&lt;canvas&gt;` element from the web page. The graphics buffer also uses
+ * a bit of memory on the CPU that can be freed like so:
+ *
+ * ```js
+ * // Remove the graphics buffer from the web page.
+ * myGraphics.remove();
+ *
+ * // Delete the graphics buffer from CPU memory.
+ * myGraphics = undefined;
+ * ```
+ *
+ * Note: All variables that reference the graphics buffer must be assigned
+ * the value `undefined` to delete the graphics buffer from CPU memory. If any
+ * variable still refers to the graphics buffer, then it won't be garbage
+ * collected.
  *
  * @method remove
  *
@@ -358,6 +372,7 @@ p5.Graphics = class extends p5.Element {
  * // Remove the p5.Graphics object when the
  * // the user double-clicks.
  * function doubleClicked() {
+ *   // Remove the p5.Graphics object from the web page.
  *   pg.remove();
  *   pg = undefined;
  * }
