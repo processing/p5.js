@@ -374,8 +374,6 @@ p5.Graphics = class extends p5.Element {
  * function doubleClicked() {
  *   // Remove the p5.Graphics object from the web page.
  *   pg.remove();
- *
- *   // Delete the p5.Graphics object from CPU memory.
  *   pg = undefined;
  * }
  * </code>
@@ -392,6 +390,10 @@ p5.Graphics = class extends p5.Element {
     for (const elt_ev in this._events) {
       this.elt.removeEventListener(elt_ev, this._events[elt_ev]);
     }
+
+    this._renderer = undefined;
+    this.canvas = undefined;
+    this.elt = undefined;
   }
 
 

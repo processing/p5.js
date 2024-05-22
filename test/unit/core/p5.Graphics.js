@@ -184,4 +184,14 @@ suite('Graphics', function() {
       assert(graph.height, 100);
     });
   });
+
+  suite('p5.Graphics.remove()', function() {
+    test('it sets properties to undefined after removal', function() {
+      var graph = myp5.createGraphics(10, 17);
+      graph.remove();
+      assert.isUndefined(graph.canvas);
+      assert.isUndefined(graph._renderer);
+      assert.isUndefined(graph.elt);
+    });
+  });
 });
