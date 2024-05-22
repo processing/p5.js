@@ -845,6 +845,37 @@ suite('p5.RendererGL', function() {
     });
   });
 
+  suite('applying cameras', function() {
+    test('changing cameras keeps transforms', function() {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const origModelMatrix = myp5._renderer.uModelMatrix.copy();
+
+      const cam2 = myp5.createCamera();
+      cam2.setPosition(0, 0, -500);
+      const cam1 = myp5.createCamera();
+
+      // cam1 is applied right now so technically this is redundant
+      myp5.setCamera(cam1);
+      const cam1Matrix = cam1.cameraMatrix.copy();
+      assert.deepEqual(myp5._renderer.uViewMatrix.mat4, cam1Matrix.mat4);
+
+      // Translation only changes the model matrix
+      myp5.translate(100, 0, 0);
+      assert.notDeepEqual(
+        myp5._renderer.uModelMatrix.mat4,
+        origModelMatrix.mat4
+      );
+      assert.deepEqual(myp5._renderer.uViewMatrix.mat4, cam1Matrix.mat4);
+
+      // Switchnig cameras only changes the view matrix
+      const transformedModel = myp5._renderer.uModelMatrix.copy();
+      myp5.setCamera(cam2);
+      assert.deepEqual(myp5._renderer.uModelMatrix.mat4, transformedModel.mat4);
+      assert.notDeepEqual(myp5._renderer.uViewMatrix.mat4, cam1Matrix.mat4);
+    });
+  });
+
   suite('materials', function() {
     test('ambient color defaults to the fill color', function() {
       myp5.createCanvas(100, 100, myp5.WEBGL);
