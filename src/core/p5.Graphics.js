@@ -331,7 +331,6 @@ p5.Graphics = class extends p5.Element {
  * // Double-click to remove the p5.Graphics object.
  *
  * let pg;
- * let doubleClickedBool = false;
  *
  * function setup() {
  *   createCanvas(100, 100);
@@ -351,7 +350,7 @@ p5.Graphics = class extends p5.Element {
  *
  *   // Display the p5.Graphics object if
  *   // it's available.
- *   if (!doubleClickedBool) {
+ *   if (pg) {
  *     image(pg, 20, 20);
  *   }
  * }
@@ -360,7 +359,7 @@ p5.Graphics = class extends p5.Element {
  * // the user double-clicks.
  * function doubleClicked() {
  *   pg.remove();
- *   doubleClickedBool = true;
+ *   pg = undefined;
  * }
  * </code>
  * </div>
