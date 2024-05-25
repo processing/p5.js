@@ -2915,7 +2915,6 @@ p5.Camera = class Camera {
     this.cameraMatrix.translate([tx, ty, tz]);
 
     if (this._isActive()) {
-      this._renderer.uModelMatrix.reset();
       this._renderer.uViewMatrix.set(this.cameraMatrix);
     }
     return this;
@@ -3882,6 +3881,7 @@ p5.prototype.setCamera = function (cam) {
 
   // set the projection matrix (which is not normally updated each frame)
   this._renderer.uPMatrix.set(cam.projMatrix);
+  this._renderer.uViewMatrix.set(cam.cameraMatrix);
 };
 
 export default p5.Camera;
