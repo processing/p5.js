@@ -1176,9 +1176,10 @@ class Framebuffer {
     // RendererGL.reset() does, but this does not try to clear any buffers;
     // it only sets the camera.
     this.target.setCamera(this.defaultCamera);
-    this.target._renderer.uMVMatrix.set(
-      this.target._renderer._curCamera.cameraMatrix
-    );
+    this.target.resetMatrix();
+    this.target._renderer.uViewMatrix
+      .set(this.target._renderer._curCamera.cameraMatrix);
+    this.target._renderer.uModelMatrix.reset();
     this.target._renderer._applyStencilTestIfClipping();
   }
 

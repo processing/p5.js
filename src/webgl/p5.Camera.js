@@ -2915,7 +2915,8 @@ p5.Camera = class Camera {
     this.cameraMatrix.translate([tx, ty, tz]);
 
     if (this._isActive()) {
-      this._renderer.uMVMatrix.set(this.cameraMatrix);
+      this._renderer.uModelMatrix.reset();
+      this._renderer.uViewMatrix.set(this.cameraMatrix);
     }
     return this;
   }
@@ -3242,13 +3243,12 @@ p5.Camera = class Camera {
     this.cameraMatrix = cam.cameraMatrix.copy();
     this.projMatrix = cam.projMatrix.copy();
 
-    // If the target camera is active, update uMVMatrix and uPMatrix.
     if (this._isActive()) {
-      this._renderer.uMVMatrix.mat4 = this.cameraMatrix.mat4.slice();
-      this._renderer.uPMatrix.mat4 = this.projMatrix.mat4.slice();
+      this._renderer.uModelMatrix.reset();
+      this._renderer.uViewMatrix.set(this.cameraMatrix);
+      this._renderer.uPMatrix.set(this.projMatrix);
     }
   }
-
   /**
  * Sets the camera’s position and orientation to values that are in-between
  * those of two other cameras.
