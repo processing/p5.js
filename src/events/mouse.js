@@ -695,7 +695,7 @@ p5.prototype.pwinMouseY = 0;
  * pressed.
  *
  * The `mouseButton` variable is either `LEFT`, `RIGHT`, or `CENTER`,
- * depending on which button was pressed last.
+ * depending on which button was insteracted last.
  *
  * Note: Different browsers may track `mouseButton` differently. See
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/buttons" target="_blank">MDN</a>
@@ -757,6 +757,374 @@ p5.prototype.pwinMouseY = 0;
  * </div>
  */
 p5.prototype.mouseButton = 0;
+
+/**
+ * A String system variable that contains the value of the last mouse button
+ * pressed.
+ *
+ * The `lastButtonPressed` variable is either `LEFT`, `RIGHT`, or `CENTER`,
+ * depending on which button was pressed last.
+ *
+ * @property {Constant} lastButtonPressed
+ * @readOnly
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square with black text at its center. The text changes from 0 to either "left" or "right" when the user presses a mouse button.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *
+ *   // Display the mouse button.
+ *   text(lastButtonPressed, 50, 50);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     "A gray square. Different shapes appear at its center depending on the mouse button that's pressed."
+ *   );
+ *   canvas.addEventListener('contextmenu', event => event.preventDefault());
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   if (mouseIsPressed === true) {
+ *     if (lastButtonPressed === LEFT) {
+ *       circle(50, 50, 50);
+ *     }
+ *     if (lastButtonPressed === RIGHT) {
+ *       square(25, 25, 50);
+ *     }
+ *     if (lastButtonPressed === CENTER) {
+ *       triangle(23, 75, 50, 20, 78, 75);
+ *     }
+ *   }
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.lastButtonPressed = 0;
+
+/**
+ * A String system variable that contains the value of the last mouse button
+ * released.
+ *
+ * The `lastButtonReleased` variable is either `LEFT`, `RIGHT`, or `CENTER`,
+ * depending on which button was released last.
+ *
+ * @property {Constant} lastButtonReleased
+ * @readOnly
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square with black text at its center. The text changes from 0 to either "left" or "right" when the user releases a mouse button.'
+ *   );
+ *   canvas.addEventListener('contextmenu', event => event.preventDefault());
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *
+ *   // Display the mouse button.
+ *   text(lastButtonReleased, 50, 50);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square. Different shapes appear at its center depending on the mouse button that was released.'
+ *   );
+ *   canvas.addEventListener('contextmenu', event => event.preventDefault());
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   if (lastButtonReleased === LEFT) {
+ *     circle(50, 50, 50);
+ *   }
+ *   if (lastButtonReleased === RIGHT) {
+ *     square(25, 25, 50);
+ *   }
+ *   if (lastButtonReleased === CENTER) {
+ *     triangle(23, 75, 50, 20, 78, 75);
+ *   }
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.lastButtonReleased = 0;
+
+/**
+ * A String system variable that contains the value of the last mouse button
+ * clicked.
+ *
+ * The `lastButtonClicked` variable is either `LEFT`, `RIGHT`, or `CENTER`,
+ * depending on which button was clicked last.
+ *
+ * @property {Constant} lastButtonClicked
+ * @readOnly
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square with black text at its center. The text changes from 0 to either "left" or "right" when the user clicks a mouse button.'
+ *   );
+ *   canvas.addEventListener('contextmenu', event => event.preventDefault());
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *
+ *   // Display the mouse button.
+ *   text(lastButtonClicked, 50, 50);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square. Different shapes appear at its center depending on the mouse button that was clicked.'
+ *   );
+ *   canvas.addEventListener('contextmenu', event => event.preventDefault());
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   if (lastButtonClicked === LEFT) {
+ *     circle(50, 50, 50);
+ *   }
+ *   if (lastButtonClicked === RIGHT) {
+ *     square(25, 25, 50);
+ *   }
+ *   if (lastButtonClicked === CENTER) {
+ *     triangle(23, 75, 50, 20, 78, 75);
+ *   }
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.lastButtonClicked = 0;
+
+/**
+ * An object variable that indicates which buttons are currently pressed
+ *
+ * The `currentButton` key has its value set to either 'true' or 'false'
+ * depending on which buttons are being pressed.
+ *
+ * @property {Constant} currentButton
+ * @readOnly
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(300, 100);
+ *   describe(
+ *     "A gray square. Different shapes appear at its center depending on the mouse button that's clicked."
+ *   );
+ * }
+ * function draw() {
+ *   background(200);
+ *
+ *   if (mouseIsPressed === true) {
+ *     if (currentButton.LEFT) {
+ *       square(25, 25, 50); // Square in the left third
+ *     }
+ *     if (currentButton.RIGHT) {
+ *       square(225, 25, 50); // Square in the right third
+ *     }
+ *     if (currentButton.CENTER) {
+ *       square(125, 25, 50); // Square in the center third
+ *     }
+ *   }
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.currentButton = {
+  'LEFT': false,
+  'RIGHT': false,
+  'MIDDLE': false
+};
+
+/**
+ * A class used to store and describe the previous mouse interaction
+ *
+ * The instances will be saved in the mouseInteractions array variable and
+ * its values consist in an initial and final position (for when the mouse is
+ * pressed and released), 2 timestamps to determine how long the interaction
+ * was and mButton indicating the mouse Button this instance refers to.
+ *
+ * @property {Constant} mouseInteraction
+ * @readonly
+ */
+class mouseInteraction {
+  constructor(x_initial, y_initial, m_button) {
+    this.x_i = x_initial;
+    this.y_i = y_initial;
+    this.x_f = null;
+    this.y_f = null;
+    this.mButton = m_button;
+    this.beginTime = Date.now();
+    this.endTime = null;
+    this.isFinished = false;
+  }
+
+  async setFinalPos(x_final, y_final) {
+    this.x_f = x_final;
+    this.y_f = y_final;
+    this.endTime = Date.now();
+    this.isFinished = true;
+  }
+
+  getTotalTime() {
+    if (this.isFinished) {
+      return this.endTime - this.beginTime;
+    }
+    return null;
+  }
+
+  getDragDistance() {
+    if (this.isFinished) {
+      const dx = this.x_f - this.x_i;
+      const dy = this.y_f - this.y_i;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+    return null;
+  }
+
+  getMButton() {
+    return this.mButton;
+  }
+}
+
+/**
+ * The maximum size of the interactions list.
+ * @property {Constant} maxSizeInteractionsList
+ */
+p5.prototype.maxSizeInteractionsList = undefined;
+
+/**
+ * Sets the maximum size of the interactions list.
+ * @method setSizeInteractionsList
+ * @param {number} maxSize - The maximum size of the interactions list.
+ * *
+ * @example
+ * function setup() {
+   createCanvas(100, 100);
+   this.setSizeInteractionsList(3); // Set the maximum size of mouseInteractions to 3
+
+   describe(
+     'A gray square. Different shapes appear at its center depending on the mouse button that was clicked.'
+   );
+   canvas.addEventListener('contextmenu', event => event.preventDefault());
+ }
+
+ function draw() {
+   background(200);
+
+   if (lastButtonClicked === LEFT) {
+     circle(50, 50, 50);
+   }
+   if (lastButtonClicked === RIGHT) {
+     square(25, 25, 50);
+   }
+   if (lastButtonClicked === CENTER) {
+     triangle(23, 75, 50, 20, 78, 75);
+   }
+ }
+ */
+p5.prototype.setSizeInteractionsList = function(maxSize) {
+  this.maxSizeInteractionsList = maxSize;
+};
+
+/**
+ * An array variable that stores the previous mouse interactions
+ *
+ * Each object in this array are instances of mouseInteraction defined above
+ *
+ * @property {Constant} mouseInteractions
+ * @readonly
+ *
+ * @example
+ * <div>
+ * <code>
+ * let flag = false;
+ *
+ * function setup() {
+ *   createCanvas(1024, 1024);
+ *   describe(
+ *     'A gray circle appears as you press and release your mouse in different places on the canvas.'
+ *   );
+ *
+ *   canvas.addEventListener('mouseup', async event => {
+ *     flag = true;
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   if(flag) {
+ *     let lastInteraction = lastMouseInteraction;
+ *     circle(
+ *       lastInteraction.x_i,
+ *       lastInteraction.y_i,
+ *       lastInteraction.getDragDistance()*2
+ *     );
+ *   }
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.mouseInteractions = [];
+
+p5.prototype.lastMouseInteraction = null;
 
 /**
  * A `Boolean` system variable that's `true` if the mouse is pressed and
@@ -876,6 +1244,72 @@ p5.prototype._setMouseButton = function(e) {
     this._setProperty('mouseButton', constants.RIGHT);
   } else {
     this._setProperty('mouseButton', constants.LEFT);
+  }
+};
+
+p5.prototype._setLastButtonPressed = function(e) {
+  if (e.button === 1) {
+    this._setProperty('lastButtonPressed', constants.CENTER);
+  } else if (e.button === 2) {
+    this._setProperty('lastButtonPressed', constants.RIGHT);
+  } else {
+    this._setProperty('lastButtonPressed', constants.LEFT);
+  }
+};
+
+p5.prototype._setLastButtonReleased = function(e) {
+  if (e.button === 1) {
+    this._setProperty('lastButtonReleased', constants.CENTER);
+  } else if (e.button === 2) {
+    this._setProperty('lastButtonReleased', constants.RIGHT);
+  } else {
+    this._setProperty('lastButtonReleased', constants.LEFT);
+  }
+};
+
+p5.prototype._setLastButtonClicked = function(e) {
+  if (e.button === 1) {
+    this._setProperty('lastButtonClicked', constants.CENTER);
+  } else if (e.button === 2) {
+    this._setProperty('lastButtonClicked', constants.RIGHT);
+  } else {
+    this._setProperty('lastButtonClicked', constants.LEFT);
+  }
+};
+
+p5.prototype._setCurrentButton = function(e) {
+  if (e.button === 1) {
+    this.currentButton.CENTER = !this.currentButton.CENTER;
+  } else if (e.button === 2) {
+    this.currentButton.RIGHT = !this.currentButton.RIGHT;
+  } else {
+    this.currentButton.LEFT = !this.currentButton.LEFT;
+  }
+};
+
+p5.prototype._newMouseInteraction = function(e) {
+  if (this.maxSizeInteractionsList === undefined ||
+      this.mouseInteractions.length < this.maxSizeInteractionsList) {
+    this.mouseInteractions.unshift(new mouseInteraction(
+      this.mouseX, this.mouseY, e.button
+    ));
+  }
+
+  else {
+    this.mouseInteractions.pop();
+    this.mouseInteractions.unshift(new mouseInteraction(
+      this.mouseX, this.mouseY, e.button
+    ));
+  }
+};
+
+p5.prototype._endMouseInteraction = function(e) {
+  for(let mouseInt of this.mouseInteractions) {
+    if(!mouseInt.isFinished && mouseInt.getMButton() === e.button) {
+      mouseInt.setFinalPos(this.mouseX, this.mouseY);
+      this._setProperty('lastMouseInteraction', mouseInt);
+      break;
+    }
   }
 };
 
@@ -1231,7 +1665,10 @@ p5.prototype._onmousedown = function(e) {
   let executeDefault;
   this._setProperty('mouseIsPressed', true);
   this._setMouseButton(e);
+  this._setCurrentButton(e);
+  this._setLastButtonPressed(e);
   this._updateNextMouseCoords(e);
+  this._newMouseInteraction(e);
 
   // _ontouchstart triggers first and sets this.touchstart
   if (this.touchstart) {
@@ -1403,6 +1840,11 @@ p5.prototype._onmouseup = function(e) {
   const context = this._isGlobal ? window : this;
   let executeDefault;
   this._setProperty('mouseIsPressed', false);
+  this._setLastButtonReleased(e);
+  this._setLastButtonClicked(e);
+  this._setMouseButton(e);
+  this._setCurrentButton(e);
+  this._endMouseInteraction(e);
 
   // _ontouchend triggers first and sets this.touchend
   if (this.touchend) {

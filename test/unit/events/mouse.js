@@ -212,7 +212,7 @@ suite('Mouse Events', function() {
   });
 
   suite('p5.prototype.mouseButton', function() {
-    test('_hasMouseInteracted should be a number', function() {
+    test('mouseButton should be a number', function() {
       assert.isNumber(myp5.mouseButton);
     });
 
@@ -233,6 +233,158 @@ suite('Mouse Events', function() {
     test('mouseButton should be "right" on right mouse button click', function() {
       window.dispatchEvent(new MouseEvent('mousedown', { button: 2 }));
       assert.strictEqual(myp5.mouseButton, 'right');
+    });
+  });
+
+  suite('p5.prototype.lastButtonPressed', function() {
+    test('lastButtonPressed should be a number', function() {
+      assert.isNumber(myp5.lastButtonPressed);
+    });
+
+    test('lastButtonPressed should 0 for uninitialised', function() {
+      assert.strictEqual(myp5.lastButtonPressed, 0);
+    });
+
+    test('lastButtonPressed should be "left" on left mouse button click', function() {
+      window.dispatchEvent(new MouseEvent('mousedown', { button: 0 }));
+      assert.strictEqual(myp5.lastButtonPressed, 'left');
+    });
+
+    test('lastButtonPressed should be "center" on auxillary mouse button click', function() {
+      window.dispatchEvent(new MouseEvent('mousedown', { button: 1 }));
+      assert.strictEqual(myp5.lastButtonPressed, 'center');
+    });
+
+    test('lastButtonPressed should be "right" on right mouse button click', function() {
+      window.dispatchEvent(new MouseEvent('mousedown', { button: 2 }));
+      assert.strictEqual(myp5.lastButtonPressed, 'right');
+    });
+  });
+
+  suite('p5.prototype.lastButtonReleased', function() {
+    test('lastButtonReleased should be a number', function() {
+      assert.isNumber(myp5.lastButtonReleased);
+    });
+
+    test('lastButtonReleased should 0 for uninitialised', function() {
+      assert.strictEqual(myp5.lastButtonReleased, 0);
+    });
+
+    test('lastButtonReleased should be "left" on left mouse button release', function() {
+      window.dispatchEvent(new MouseEvent('mouseup', { button: 0 }));
+      assert.strictEqual(myp5.lastButtonReleased, 'left');
+    });
+
+    test('lastButtonReleased should be "center" on auxillary mouse button release', function() {
+      window.dispatchEvent(new MouseEvent('mouseup', { button: 1 }));
+      assert.strictEqual(myp5.lastButtonReleased, 'center');
+    });
+
+    test('lastButtonReleased should be "right" on right mouse button release', function() {
+      window.dispatchEvent(new MouseEvent('mouseup', { button: 2 }));
+      assert.strictEqual(myp5.lastButtonReleased, 'right');
+    });
+  });
+
+  suite('p5.prototype.lastButtonClicked', function() {
+    test('lastButtonClicked should be a number', function() {
+      assert.isNumber(myp5.lastButtonClicked);
+    });
+
+    test('lastButtonClicked should be 0 for uninitialised', function() {
+      assert.strictEqual(myp5.lastButtonClicked, 0);
+    });
+
+    test('lastButtonClicked should be "left" on left mouse button release', function() {
+      window.dispatchEvent(new MouseEvent('mouseup', { button: 0 }));
+      assert.strictEqual(myp5.lastButtonClicked, 'left');
+    });
+
+    test('lastButtonClicked should be "center" on auxillary mouse button release', function() {
+      window.dispatchEvent(new MouseEvent('mouseup', { button: 1 }));
+      assert.strictEqual(myp5.lastButtonClicked, 'center');
+    });
+
+    test('lastButtonClicked should be "right" on right mouse button release', function() {
+      window.dispatchEvent(new MouseEvent('mouseup', { button: 2 }));
+      assert.strictEqual(myp5.lastButtonClicked, 'right');
+    });
+  });
+
+  suite('p5.prototype.currentButton', function() {
+    test('currentButton should be an object', function() {
+      assert.isObject(myp5.currentButton);
+    });
+
+    test('currentButton key-values should be boolean', function() {
+      assert.isBoolean(myp5.currentButton.CENTER);
+      assert.isBoolean(myp5.currentButton.LEFT);
+      assert.isBoolean(myp5.currentButton.RIGHT);
+    });
+
+    test('currentButton key-values should be false if no mouse button is pressed', function() {
+      assert.strictEqual(myp5.currentButton.CENTER, false);
+      assert.strictEqual(myp5.currentButton.LEFT, false);
+      assert.strictEqual(myp5.currentButton.RIGHT, false);
+    });
+
+    test('currentButton key-values should be true if all mouse buttons are pressed', function() {
+      window.dispatchEvent(new MouseEvent('mousedown', { button: 0 }));
+      window.dispatchEvent(new MouseEvent('mousedown', { button: 1 }));
+      window.dispatchEvent(new MouseEvent('mousedown', { button: 2 }));
+      assert.strictEqual(myp5.currentButton.CENTER, true);
+      assert.strictEqual(myp5.currentButton.LEFT, true);
+      assert.strictEqual(myp5.currentButton.RIGHT, true);
+    });
+  });
+
+  suite('p5.prototype.mouseInteractions', function() {
+    test('mouseInteractions should be an array', function() {
+      assert.isArray(mouseInteractions);
+    });
+
+    test('mouseInteractions should be empty before any mouse interaction', function() {
+      assert.lengthOf(mouseInteractions, 0, 'array has length of zero');
+    });
+
+    test('mouseInteractions should have length 1 after a mouse Interaction', function() {
+      window.dispatchEvent(new MouseEvent('mousedown'));
+      assert.lengthOf(mouseInteractions, 1, 'array has length of one');
+    });
+
+    test('mouseInteractions should be an array containing instances of lastInteraction class', function() {
+      window.dispatchEvent(new MouseEvent('mousedown'));
+      assert.instanceOf(mouseInteractions[0], mouseInteraction, 'instance of mouseInteraction');
+    });
+  });
+
+  suite('p5.prototype.newMouseInteraction', function() {
+    test('mouseInteractions should add a new MouseInteraction when array is not full', function() {
+      myp5.maxSizeInteractionsList = 3;
+      window.dispatchEvent(new MouseEvent('mousedown', { button: 0 }));
+      assert.lengthOf(p5Instance.mouseInteractions, 1, 'array has length of one');
+      assert.instanceOf(mouseInteractions[0], MouseInteraction, 'instance of MouseInteraction');
+      assert.strictEqual(mouseInteractions[0].button, 0, 'button value set correctly');
+    });
+
+    test('mouseInteractions should replace oldest interaction when array is full', function() {
+      myp5.maxSizeInteractionsList = 1;
+      window.dispatchEvent(new MouseEvent('mousedown', { button: 0 }));
+      window.dispatchEvent(new MouseEvent('mousedown', { button: 1 }));
+      assert.lengthOf(p5Instance.mouseInteractions, 1, 'array has length of one');
+      assert.instanceOf(mouseInteractions[0], MouseInteraction, 'instance of MouseInteraction');
+      assert.strictEqual(mouseInteractions[0].button, 1, 'button value replaced correctly');
+    });
+  });
+
+  suite('p5.prototype.lastMouseInteraction', function() {
+    test('lastMouseInteractionShould be null before any mouse interaction', function() {
+      assert.isNull(lastMouseInteraction);
+    });
+
+    test('lastMouseInteraction should be an instance of mouseInteraction after a mouse interaction', function() {
+      window.dispatchEvent(new MouseEvent('mousedown'));
+      assert.instanceOf(lastMouseInteraction, mouseInteraction);
     });
   });
 
