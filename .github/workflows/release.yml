@@ -74,60 +74,7 @@ jobs:
         with:
           token: ${{ secrets.NPM_TOKEN }}
 
-      # 4. Update website files
-      - name: Checkout website repo
-        if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
-        uses: actions/checkout@v3
-        with:
-          repository: processing/p5.js-website
-          path: website
-          fetch-depth: 0
-          token: ${{ secrets.ACCESS_TOKEN }}
-      - name: Copy reference files to website repo
-        if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
-        run: cp docs/reference/data.* website/src/templates/pages/reference/
-      - name: Copy library files to website repo
-        if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
-        run: cp lib/p5.min.js lib/addons/p5.sound.min.js website/src/assets/js/
-      - name: Modify version number on website
-        if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
-        uses: fjogeleit/yaml-update-action@v0.10.0
-        with:
-          valueFile: website/src/data/data.yml
-          propertyPath: version
-          value: ${{ steps.version-number.outputs.version }}
-          commitChange: false
-          updateFile: true
-      - name: Update version.json on website repo
-        if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
-        uses: restackio/update-json-file-action@v2.0
-        with:
-          file: website/dist/download/version.json
-          fields: '{"version": "${{ steps.version-number.outputs.version }}", "date": "${{ steps.date.outputs.date }}"}'
-      - name: Update en.json on website repo
-        if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
-        run: |
-          cd website
-          npm ci
-          npx grunt generate_enJSON
-      - name: Commit updated website files
-        if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
-        run: |
-          cd website
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add .
-          git commit -m "Update p5.js to ${{ github.ref_name }}"
-      - name: Push updated website repo
-        if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
-        uses: ad-m/github-push-action@v0.6.0
-        with:
-          github_token: ${{ secrets.ACCESS_TOKEN }}
-          branch: main
-          directory: website/
-          repository: processing/p5.js-website
-
-      # 5. Update Bower files
+      # 4. Update Bower files
       - name: Checkout Bower repo
         if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
         uses: actions/checkout@v3
