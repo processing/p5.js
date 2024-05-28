@@ -64,6 +64,29 @@ p5.RendererGL.prototype._freeBuffers = function(gId) {
   freeBuffers(this.retainedMode.buffers.fill);
 };
 
+p5.RendererGL.prototype.updateIndexBuffer = function(gId, faces) {
+  const gl = this.GL;
+  const buffers = this.retainedMode.geometry[gId];
+  let indexBuffer = buffers.indexBuffer;
+
+  if (!indexBuffer) indexBuffer = buffers.indexBuffer = gl.createBuffer();
+  const vals = p5.RendererGL.prototype._flatten(faces);
+
+  // If any face references a vertex with an index greater than the maximum
+  // un-singed 16 bit integer, then we need to use a Uint32Array instead of a
+  // Uint16Array
+
+  const hasVertexIndicesOverMaxUInt16 = vals.some(v => v > 65535);
+  let type = hasVertexIndicesOverMaxUInt16 ? Uint32Array : Uint16Array;
+  this._bindBuffer(indexBuffer, gl.ELEMENT_ARRAY_BUFFER, vals, type);
+  buffers.indexBufferType = hasVertexIndicesOverMaxUInt16
+    ? gl.UNSIGNED_INT
+    : gl.UNSIGNED_SHORT;
+
+  // the vertex count is based on the number of faces
+  buffers.vertexCount = faces.length * 3;
+};
+
 /**
  * creates a buffers object that holds the WebGL render buffers
  * for a geometry.
@@ -80,26 +103,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, model) {
   let indexBuffer = buffers.indexBuffer;
 
   if (model.faces.length) {
-    // allocate space for faces
-    if (!indexBuffer) indexBuffer = buffers.indexBuffer = gl.createBuffer();
-    const vals = p5.RendererGL.prototype._flatten(model.faces);
-
-    // If any face references a vertex with an index greater than the maximum
-    // un-singed 16 bit integer, then we need to use a Uint32Array instead of a
-    // Uint16Array
-    const hasVertexIndicesOverMaxUInt16 = vals.some(v => v > 65535);
-    let type = hasVertexIndicesOverMaxUInt16 ? Uint32Array : Uint16Array;
-    this._bindBuffer(indexBuffer, gl.ELEMENT_ARRAY_BUFFER, vals, type);
-
-    // If we're using a Uint32Array for our indexBuffer we will need to pass a
-    // different enum value to WebGL draw triangles. This happens in
-    // the _drawElements function.
-    buffers.indexBufferType = hasVertexIndicesOverMaxUInt16
-      ? gl.UNSIGNED_INT
-      : gl.UNSIGNED_SHORT;
-
-    // the vertex count is based on the number of faces
-    buffers.vertexCount = model.faces.length * 3;
+    this.updateIndexBuffer(gId, model.faces);
   } else {
     // the index buffer is unused, remove it
     if (indexBuffer) {

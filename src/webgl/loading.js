@@ -531,8 +531,8 @@ function parseMtl(p5,mtlPath){
             ];
 
           }else if (tokens[0] === 'map_Kd') {
-          //Texture path
-            materials[currentMaterial].texturePath = tokens[1];
+          // Diffuse Texture path
+            materials[currentMaterial].diffuseTexturePath = tokens[1];
           }
         }
         resolve(materials);
@@ -585,6 +585,17 @@ function parseObj(model, lines, materials= {}) {
       if (tokens[0] === 'usemtl') {
         // Switch to a new material
         currentMaterial = tokens[1];
+        if( materials[currentMaterial]
+          && materials[currentMaterial].diffuseTexturePath
+        ) {
+          if (!model.textures[currentMaterial]) {
+            model.textures[currentMaterial] = {};
+          }
+          model.hasTextures = true;
+          model.textures[currentMaterial].diffuseTexture =
+            loadImage(materials[currentMaterial].diffuseTexturePath);
+          model.textures[currentMaterial].faces = [] ;
+        }
       }else if (tokens[0] === 'v' || tokens[0] === 'vn') {
         // Check if this line describes a vertex or vertex normal.
         // It will have three numeric parameters.
@@ -651,8 +662,15 @@ function parseObj(model, lines, materials= {}) {
             face[0] !== face[2] &&
             face[1] !== face[2]
           ) {
-            model.faces.push(face);
             //same material for all vertices in a particular face
+            if (currentMaterial
+              && model.textures[currentMaterial]
+              && model.textures[currentMaterial].diffuseTexture
+            ) {
+              model.textures[currentMaterial].faces.push(face);
+            } else {
+              model.faces.push(face);
+            }
             if (currentMaterial
               && materials[currentMaterial]
               && materials[currentMaterial].diffuseColor) {
@@ -1125,7 +1143,19 @@ p5.prototype.model = function(model) {
       this._renderer.createBuffers(model.gid, model);
     }
 
-    this._renderer.drawBuffers(model.gid);
+    // If model has textures for each texture update index buffer and invoke draw call.
+    if(model.hasTextures) {
+      this._renderer.updateIndexBuffer(model.gid, model.faces);
+      this._renderer.drawBuffers(model.gid);
+      for (let material of Object.keys(model.textures)) {
+        const texture = model.textures[material];
+        this._renderer.updateIndexBuffer(model.gid, texture.faces);
+        this._renderer._tex = texture.diffuseTexture;
+        this._renderer.drawBuffers(model.gid);
+      }
+    } else {
+      this._renderer.drawBuffers(model.gid);
+    }
   }
 };
 
