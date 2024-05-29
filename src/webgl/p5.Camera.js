@@ -889,45 +889,36 @@ p5.Camera = class Camera {
  * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
  */
   ortho(left, right, bottom, top, near, far) {
-    if (left === undefined) left = -this._renderer.width / 2;
-    if (right === undefined) right = +this._renderer.width / 2;
-    if (bottom === undefined) bottom = -this._renderer.height / 2;
-    if (top === undefined) top = +this._renderer.height / 2;
+    const source = this.fbo||this._renderer;
+    if (left === undefined) left = -source.width / 2;
+    if (right === undefined) right = +source.width / 2;
+    if (bottom === undefined) bottom = -source.height / 2;
+    if (top === undefined) top = +source.height / 2;
     if (near === undefined) near = 0;
-    if (far === undefined)
-      far = Math.max(this._renderer.width, this._renderer.height)+800;
-
+    if (far === undefined) far = Math.max(source.width, source.height)+800;
     this.cameraNear = near;
     this.cameraFar = far;
-
     const w = right - left;
     const h = top - bottom;
     const d = far - near;
-
     const x = +2.0 / w;
     const y = +2.0 / h * this.yScale;
     const z = -2.0 / d;
-
     const tx = -(right + left) / w;
     const ty = -(top + bottom) / h;
     const tz = -(far + near) / d;
-
     this.projMatrix = p5.Matrix.identity();
-
     /* eslint-disable indent */
     this.projMatrix.set(  x,  0,  0,  0,
                           0, -y,  0,  0,
                           0,  0,  z,  0,
                           tx, ty, tz,  1);
     /* eslint-enable indent */
-
     if (this._isActive()) {
       this._renderer.uPMatrix.set(this.projMatrix);
     }
-
     this.cameraType = 'custom';
   }
-
   /**
  * Sets the camera's frustum.
  * Accepts the same parameters as the global
