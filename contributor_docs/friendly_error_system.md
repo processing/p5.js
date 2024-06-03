@@ -110,9 +110,9 @@ The [internationalization doc] has a step-by-step guide on adding and modifying 
 
 
 ## Understanding How FES Works
-In this section, we will give an overview of how FES generates and displays messages. For more detailed information on the FES functions, please see our [FES Reference + Dev Notes].
+In this section, we will give anps://github.com/processing/p5.js/tree/main/src/core/friendly_errors#fes-reference-and-notes-from-deve overview of how FES generates and displays messages. For more detailed information on the FES functions, please see our [FES Reference + Dev Notes].
 
-[FES Reference + Dev Notes]: https://github.com/processing/p5.js/tree/main/src/core/friendly_errors#fes-reference-and-notes-from-developers
+[FES Reference + Dev Notes]: httlopers
 
 
 #### Overview
@@ -135,10 +135,10 @@ These functions are mainly responsible for catching errors and generating FES me
 
 For full reference, please see our [Dev Notes].
 
-[`_friendlyFileLoadError()`]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md#_friendlyfileloaderror
-[`_validateParameters()`]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md#validateparameters
-[`_fesErrorMontitor()`]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md#feserrormonitor
-[Dev Notes]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md
+[`_friendlyFileLoadError()`]: https://github.com/processing/p5.js/blob/daba49806a389e98cd63c62667928f61243c7fa1/contributor_docs/fes_contribution_guide.md#_friendlyerror
+[`_validateParameters()`]: https://github.com/processing/p5.js/blob/daba49806a389e98cd63c62667928f61243c7fa1/contributor_docs/fes_contribution_guide.md#_validateparameters
+[`_fesErrorMontitor()`]: https://github.com/processing/p5.js/blob/daba49806a389e98cd63c62667928f61243c7fa1/contributor_docs/fes_contribution_guide.md#feserrormonitor
+[Dev Notes]:[https://github.com/processing/p5.js/blob/daba49806a389e98cd63c62667928f61243c7fa1/contributor_docs/fes_contribution_guide.md#-development-notes]
 
 
 #### FES Message Displayer
