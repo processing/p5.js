@@ -1005,6 +1005,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/iambiancafonseca"><img src="https://avatars.githubusercontent.com/u/102000079?v=4?s=120" width="120px;" alt="iambiancafonseca"/><br /><sub><b>iambiancafonseca</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=iambiancafonseca" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Vishal2002"><img src="https://avatars.githubusercontent.com/u/35897449?v=4?s=120" width="120px;" alt="Vishal Sharma"/><br /><sub><b>Vishal Sharma</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Vishal2002" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://piyushs-folio-c8b8.onrender.com/"><img src="https://avatars.githubusercontent.com/u/47579287?v=4?s=120" width="120px;" alt="PiyushChandra17"/><br /><sub><b>PiyushChandra17</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=PiyushChandra17" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3APiyushChandra17" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3APiyushChandra17" title="Reviewed Pull Requests">👀</a></td>
+    </tr>
   </tbody>
 </table>
 
