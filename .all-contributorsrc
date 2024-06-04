@@ -5983,6 +5983,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "PiyushChandra17",
+      "name": "PiyushChandra17",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47579287?v=4",
+      "profile": "https://piyushs-folio-c8b8.onrender.com/",
+      "contributions": [
+        "code",
+        "bug",
+        "review"
+      ]
     }
   ],
   "repoType": "github",
