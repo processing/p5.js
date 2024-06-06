@@ -224,8 +224,8 @@ p5.prototype.matchAll = function(str, reg) {
  *
  * @method nf
  * @param {Number|String} num number to format.
- * @param {Integer|String} [left] number of digits to include to the left of
- *                                the decimal point.
+ * @param {Integer|String} [left=0] number of digits to include to the left of
+ *                                the decimal point. Defaults to 0 if undefined.
  * @param {Integer|String} [right] number of digits to include to the right
  *                                 of the decimal point.
  * @return {String} formatted string.
@@ -274,7 +274,7 @@ p5.prototype.matchAll = function(str, reg) {
  * @param {Integer|String} [right]
  * @return {String[]} formatted strings.
  */
-p5.prototype.nf = function(nums, left, right) {
+p5.prototype.nf = function(nums, left = 0, right) {
   p5._validateParameters('nf', arguments);
   if (nums instanceof Array) {
     return nums.map(x => doNf(x, left, right));
@@ -294,7 +294,10 @@ p5.prototype.nf = function(nums, left, right) {
   }
 };
 
-function doNf(num, left, right) {
+function doNf(num, left = 0, right) {
+  if(left === undefined){
+    left = 0;
+  }
   let [leftPart, rightPart] = num.toString().split('.');
 
   if (typeof right === 'undefined') {
