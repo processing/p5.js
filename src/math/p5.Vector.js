@@ -2972,8 +2972,8 @@ p5.Vector = class {
  * </div>
  */
   reflect(surfaceNormal) {
-    surfaceNormal.normalize();
-    return this.sub(surfaceNormal.mult(2 * this.dot(surfaceNormal)));
+    const surfaceNormalCopy = p5.Vector.normalize(surfaceNormal);
+    return this.sub(surfaceNormalCopy.mult(2 * this.dot(surfaceNormalCopy)));
   }
 
   /**
