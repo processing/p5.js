@@ -2240,45 +2240,36 @@ p5.Camera = class Camera {
  * </div>
  */
   ortho(left, right, bottom, top, near, far) {
-    if (left === undefined) left = -this._renderer.width / 2;
-    if (right === undefined) right = +this._renderer.width / 2;
-    if (bottom === undefined) bottom = -this._renderer.height / 2;
-    if (top === undefined) top = +this._renderer.height / 2;
+    const source = this.fbo||this._renderer;
+    if (left === undefined) left = -source.width / 2;
+    if (right === undefined) right = +source.width / 2;
+    if (bottom === undefined) bottom = -source.height / 2;
+    if (top === undefined) top = +source.height / 2;
     if (near === undefined) near = 0;
-    if (far === undefined)
-      far = Math.max(this._renderer.width, this._renderer.height)+800;
-
+    if (far === undefined) far = Math.max(source.width, source.height)+800;
     this.cameraNear = near;
     this.cameraFar = far;
-
     const w = right - left;
     const h = top - bottom;
     const d = far - near;
-
     const x = +2.0 / w;
     const y = +2.0 / h * this.yScale;
     const z = -2.0 / d;
-
     const tx = -(right + left) / w;
     const ty = -(top + bottom) / h;
     const tz = -(far + near) / d;
-
     this.projMatrix = p5.Matrix.identity();
-
     /* eslint-disable indent */
     this.projMatrix.set(  x,  0,  0,  0,
                           0, -y,  0,  0,
                           0,  0,  z,  0,
                           tx, ty, tz,  1);
     /* eslint-enable indent */
-
     if (this._isActive()) {
       this._renderer.uPMatrix.set(this.projMatrix);
     }
-
     this.cameraType = 'custom';
   }
-
   /**
  * Sets the camera's frustum.
  *
@@ -2721,7 +2712,7 @@ p5.Camera = class Camera {
  * @for p5.Camera
  * @param  {Number} [x]        x-coordinate of the camera. Defaults to 0.
  * @param  {Number} [y]        y-coordinate of the camera. Defaults to 0.
- * @param  {Number} [z]        z-coordinate of the camera. Defaults to 0.
+ * @param  {Number} [z]        z-coordinate of the camera. Defaults to 800.
  * @param  {Number} [centerX]  x-coordinate of the point the camera faces. Defaults to 0.
  * @param  {Number} [centerY]  y-coordinate of the point the camera faces. Defaults to 0.
  * @param  {Number} [centerZ]  z-coordinate of the point the camera faces. Defaults to 0.
@@ -2915,7 +2906,7 @@ p5.Camera = class Camera {
     this.cameraMatrix.translate([tx, ty, tz]);
 
     if (this._isActive()) {
-      this._renderer.uMVMatrix.set(this.cameraMatrix);
+      this._renderer.uViewMatrix.set(this.cameraMatrix);
     }
     return this;
   }
@@ -3242,13 +3233,12 @@ p5.Camera = class Camera {
     this.cameraMatrix = cam.cameraMatrix.copy();
     this.projMatrix = cam.projMatrix.copy();
 
-    // If the target camera is active, update uMVMatrix and uPMatrix.
     if (this._isActive()) {
-      this._renderer.uMVMatrix.mat4 = this.cameraMatrix.mat4.slice();
-      this._renderer.uPMatrix.mat4 = this.projMatrix.mat4.slice();
+      this._renderer.uModelMatrix.reset();
+      this._renderer.uViewMatrix.set(this.cameraMatrix);
+      this._renderer.uPMatrix.set(this.projMatrix);
     }
   }
-
   /**
  * Sets the camera’s position and orientation to values that are in-between
  * those of two other cameras.
@@ -3882,6 +3872,7 @@ p5.prototype.setCamera = function (cam) {
 
   // set the projection matrix (which is not normally updated each frame)
   this._renderer.uPMatrix.set(cam.projMatrix);
+  this._renderer.uViewMatrix.set(cam.cameraMatrix);
 };
 
 export default p5.Camera;

@@ -11,20 +11,20 @@
  * contain a creature's x-coordinate as a `Number` or its name as a
  * `String`. Variables can change value by reassigning them as follows:
  *
- * <code>
+ * ```js
  * // Declare the variable x and assign it the value 10.
  * let x = 10;
  *
  * // Reassign x to 50.
  * x = 50;
- * </code>
+ * ```
  *
  * Variables have block scope. When a variable is declared between curly
  * braces `{}`, it only exists within the block defined by those braces. For
  * example, the following code would throw a `ReferenceError` because `x` is
  * declared within the `setup()` function's block:
  *
- * <code>
+ * ```js
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -37,13 +37,13 @@
  *   // x was declared in setup(), so it can't be referenced here.
  *   circle(x, 50, 20);
  * }
- * </code>
+ * ```
  *
  * Variables declared outside of all curly braces `{}` are in the global
  * scope. A variable that's in the global scope can be used and changed
  * anywhere in a sketch:
  *
- * <code>
+ * ```js
  * let x = 50;
  *
  * function setup() {
@@ -58,7 +58,7 @@
  *
  *   circle(x, 50, 20);
  * }
- * </code>
+ * ```
  *
  * @property let
  *
@@ -114,11 +114,11 @@
  * condition. For example, an `if` statement makes it easy to express the
  * idea "Draw a circle if the mouse is pressed.":
  *
- * <code>
+ * ```js
  * if (mouseIsPressed === true) {
  *   circle(mouseX, mouseY, 20);
  * }
- * </code>
+ * ```
  *
  * The statement header begins with the keyword `if`. The expression in
  * parentheses `mouseIsPressed === true` is a `Boolean` expression that's
@@ -129,18 +129,18 @@
  * always `true` or `false`, so the code snippet above could also be written
  * as follows:
  *
- * <code>
+ * ```js
  * if (mouseIsPressed) {
  *   circle(mouseX, mouseY, 20);
  * }
- * </code>
+ * ```
  *
  * An `if`-`else` statement adds a block of code that runs if the `Boolean`
  * expression is `false`. For example, here's an `if`-`else` statement that
  * expresses the idea "Draw a circle if the mouse is pressed. Otherwise,
  * display a message.":
  *
- * <code>
+ * ```js
  * if (mouseIsPressed === true) {
  *   // When true.
  *   circle(mouseX, mouseY, 20);
@@ -148,7 +148,7 @@
  *   // When false.
  *   text('Click me!', 50, 50);
  * }
- * </code>
+ * ```
  *
  * There are two possible paths, or branches, in this code snippet. The
  * program must follow one branch or the other.
@@ -160,7 +160,7 @@
  * is in the middle, paint the canvas gray. Otherwise, paint the canvas
  * black.":
  *
- * <code>
+ * ```js
  * if (mouseX < 33) {
  *   background(255);
  * } else if (mouseX < 67) {
@@ -168,7 +168,7 @@
  * } else {
  *   background(0);
  * }
- * </code>
+ * ```
  *
  * `if` statements can add as many `else`-`if` statements as needed. However,
  * there can only be one `else` statement and it must be last.
@@ -177,11 +177,11 @@
  * example, the `Boolean` operator `&&` (AND) checks whether two expressions
  * are both `true`:
  *
- * <code>
+ * ```js
  * if (keyIsPressed === true && key === 'p') {
  *   text('You pressed the "p" key!', 50, 50);
  * }
- * </code>
+ * ```
  *
  * If the user is pressing a key AND that key is `'p'`, then a message will
  * display.
@@ -189,11 +189,11 @@
  * The `Boolean` operator `||` (OR) checks whether at least one of two
  * expressions is `true`:
  *
- * <code>
+ * ```js
  * if (keyIsPressed === true || mouseIsPressed === true) {
  *   text('You did something!', 50, 50);
  * }
- * </code>
+ * ```
  *
  * If the user presses a key, or presses a mouse button, or both, then a
  * message will display.
@@ -201,15 +201,15 @@
  * The body of an `if` statement can contain another `if` statement. This is
  * called a "nested `if` statement." For example, nested `if` statements make
  * it easy to express the idea "If a key is pressed, then check if the key is
- * 'r'. If it is, then set the fill to red.":
+ * `'r'`. If it is, then set the fill to red.":
  *
- * <code>
+ * ```js
  * if (keyIsPressed === true) {
  *   if (key === 'r') {
  *     fill('red');
  *   }
  * }
- * </code>
+ * ```
  *
  * See <a href="#/p5/Boolean">Boolean</a> and <a href="#/p5/Number">Number</a>
  * to learn more about these data types and the operations they support.
@@ -321,7 +321,7 @@
  * help with organizing and reusing code. For example, functions make it easy
  * to express the idea "Draw a flower.":
  *
- * <code>
+ * ```js
  * function drawFlower() {
  *   // Style the text.
  *   textAlign(CENTER, CENTER);
@@ -330,23 +330,23 @@
  *   // Draw a flower emoji.
  *   text('🌸', 50, 50);
  * }
- * </code>
+ * ```
  *
  * The function header begins with the keyword `function`. The function's
  * name, `drawFlower`, is followed by parentheses `()` and curly braces `{}`.
  * The code between the curly braces is called the function's body. The
  * function's body runs when the function is called like so:
  *
- * <code>
+ * ```js
  * drawFlower();
- * </code>
+ * ```
  *
  * Functions can accept inputs by adding parameters to their headers.
  * Parameters are placeholders for values that will be provided when the
  * function is called. For example, the `drawFlower()` function could include
  * a parameter for the flower's size:
  *
- * <code>
+ * ```js
  * function drawFlower(size) {
  *   // Style the text.
  *   textAlign(CENTER, CENTER);
@@ -357,23 +357,23 @@
  *   // Draw a flower emoji.
  *   text('🌸', 50, 50);
  * }
- * </code>
+ * ```
  *
  * Parameters are part of the function's declaration. Arguments are provided
  * by the code that calls a function. When a function is called, arguments are
  * assigned to parameters:
  *
- * <code>
+ * ```js
  * // The argument 20 is assigned to the parameter size.
  * drawFlower(20);
- * </code>
+ * ```
  *
  * Functions can have multiple parameters separated by commas. Parameters
  * can have any type. For example, the `drawFlower()` function could accept
  * `Number` parameters for the flower's x- and y-coordinates along with its
  * size:
  *
- * <code>
+ * ```js
  * function drawFlower(x, y, size) {
  *   // Style the text.
  *   textAlign(CENTER, CENTER);
@@ -385,25 +385,25 @@
  *   // Use the x and y parameters.
  *   text('🌸', x, y);
  * }
- * </code>
+ * ```
  *
  * Functions can also produce outputs by adding a `return` statement:
  *
- * <code>
+ * ```js
  * function double(x) {
  *   let answer = 2 * x;
  *   return answer;
  * }
- * </code>
+ * ```
  *
  * The expression following `return` can produce an output that's used
  * elsewhere. For example, the output of the `double()` function can be
  * assigned to a variable:
  *
- * <code>
+ * ```js
  * let six = double(3);
  * text(`3 x 2 = ${six}`, 50, 50);
- * </code>
+ * ```
  *
  * @property function
  *
@@ -507,13 +507,13 @@
  * "Is a mouse button being pressed?" must be either `true` or
  * `false`:
  *
- * <code>
+ * ```js
  * // If the user presses the mouse, draw a circle at
  * // the mouse's location.
  * if (mouseIsPressed === true) {
  *   circle(mouseX, mouseY, 20);
  * }
- * </code>
+ * ```
  *
  * The `if` statement checks whether
  * <a href="#/p5/mouseIsPressed">mouseIsPressed</a> is `true` and draws a
@@ -531,20 +531,20 @@
  * always `true` or `false`, so the code snippet above could also be written
  * as follows:
  *
- * <code>
+ * ```js
  * if (mouseIsPressed) {
  *   circle(mouseX, mouseY, 20);
  * }
- * </code>
+ * ```
  *
  * The `!==` operator (NOT EQUAL) checks whether two values are not equal, as
  * in the following example:
  *
- * <code>
+ * ```js
  * if (2 + 2 !== 4) {
  *   text('War is peace.', 50, 50);
  * }
- * </code>
+ * ```
  *
  * Starting from the left, the arithmetic expression `2 + 2` produces the
  * value `4`. The `Boolean` expression `4 !== 4` evaluates to `false` because
@@ -556,11 +556,11 @@
  * The `Boolean` operator `&&` (AND) checks whether two expressions are both
  * `true`:
  *
- * <code>
+ * ```js
  * if (keyIsPressed === true && key === 'p') {
  *   text('You pressed the "p" key!', 50, 50);
  * }
- * </code>
+ * ```
  *
  * If the user is pressing a key AND that key is `'p'`, then a message will
  * display.
@@ -568,11 +568,11 @@
  * The `Boolean` operator `||` (OR) checks whether at least one of two
  * expressions is `true`:
  *
- * <code>
+ * ```js
  * if (keyIsPressed === true || mouseIsPressed === true) {
  *   text('You did something!', 50, 50);
  * }
- * </code>
+ * ```
  *
  * If the user presses a key, or presses a mouse button, or both, then a
  * message will display.
@@ -580,26 +580,27 @@
  * The following truth table summarizes a few common scenarios with `&&` and
  * `||`:
  *
- * <code>
+ * ```js
  * true && true  // true
  * true && false // false
  * false && false // false
  * true || true  // true
  * true || false // true
- * false || false // true
- * </code>
+ * false || false // false
+ * ```
  *
  * The relational operators `>`, `<`, `>=`, and `<=` also produce `Boolean`
  * values:
  *
- * <code>
+ * ```js
  * 2 > 1 // true
  * 2 < 1 // false
  * 2 >= 2 // true
  * 2 <= 2 // true
- * </code>
+ * ```
  *
- * See <a href="#/p5/Number">Number</a> for more information about `Number`s.
+ * See <a href="#/p5/if">if</a> for more information about `if` statements and
+ * <a href="#/p5/Number">Number</a> for more information about `Number`s.
  *
  * @property Boolean
  *
@@ -663,8 +664,8 @@
  * </code>
  * </div>
  *
- * <code>
  * <div>
+ * <code>
  * // Click the canvas to begin detecting key presses.
  *
  * // Create a Boolean variable.
@@ -702,8 +703,8 @@
  *     isPlaying = true;
  *   }
  * }
- * </div>
  * </code>
+ * </div>
  */
 
 /**
@@ -712,34 +713,34 @@
  * The `String` data type is helpful for working with text. For example, a
  * string could contain a welcome message:
  *
- * <code>
+ * ```js
  * // Use a string literal.
  * text('Hello!', 10, 10);
- * </code>
+ * ```
  *
- * <code>
+ * ```js
  * // Create a string variable.
  * let message = 'Hello!';
  *
  * // Use the string variable.
  * text(message, 10, 10);
- * </code>
+ * ```
  *
  * The most common way to create strings is to use some form of quotations as
  * follows:
  *
- * <code>
+ * ```js
  * text("hi", 50, 50);
- * </code>
+ * ```
  *
- * <code>
+ * ```js
  * text('hi', 50, 50);
- * </code>
+ * ```
  *
- * <code>
+ * ```js
  * text(`hi`, 50, 50);
- * </code>
- * 
+ * ```
+ *
  * `"hi"`, `'hi'`, and ``hi`` are all string literals. A "literal" means a
  * value was actually written, as in `text('hi', 50, 50)`. By contrast,
  * `text(message, 50, 50)` uses the variable `message`, so it isn't a string
@@ -748,61 +749,61 @@
  * Single quotes `''` and double quotes `""` mean the same thing. It's nice to
  * have the option for cases when a string contains one type of quote:
  *
- * <code>
+ * ```js
  * text("What's up?", 50, 50);
- * </code>
+ * ```
  *
- * <code>
+ * ```js
  * text('Air quotes make you look "cool."', 50, 50);
- * </code>
+ * ```
  *
- * Backticks ```` create template literals. Template literals have many uses.
+ * Backticks ` `` ` create template literals. Template literals have many uses.
  * For example, they can contain both single and double quotes as needed:
  *
- * <code>
- * text(`"Don't you forget about me"`,  10, 10); 
- * </code>
+ * ```js
+ * text(`"Don't you forget about me"`,  10, 10);
+ * ```
  *
  * Template literals are helpful when strings are created from variables like
  * so:
  *
- * <code>
+ * ```js
  * let size = random(10, 20);
  * circle(50, 50, size);
  *
  * text(`The circle's diameter is ${size} pixels.`,  10, 10);
- * </code>
+ * ```
  *
  * The `size` variable's value will replace `${size}` when the string is
  * created. `${}` is a placeholder for any value. That means an expression can
  * be used, as in `${round(PI, 3)}`. All of the following are valid template
  * literals:
  *
- * <code>
+ * ```js
  * text(`π is about ${round(PI, 2)} pixels.`,  10, 10);
  * text(`It's ${mouseX < width / 2} that I'm on the left half of the canvas.`,  10, 30);
- * </code>
+ * ```
  *
  * Template literals can include several variables:
  *
- * <code>
+ * ```js
  * let x = random(0, 100);
  * let y = random(0, 100);
  * let size = random(10, 20);
  * circle(x, y, size);
  *
  * text(`The circle at (${x}, ${y}) has a diameter of ${size} pixels.`,  10, 10);
- * </code>
+ * ```
  *
  * Template literals are also helpful for creating multi-line text like so:
  *
- * <code>
+ * ```js
  * let poem = `My sketch doesn't run;
  * it waits for me patiently
  * while bugs point the way.`;
  *
  * text(poem, 10, 10);
- * </code>
+ * ```
  *
  * @property String
  *
@@ -857,87 +858,87 @@
  * such as 12.34. For example, a circle's position and size can be described
  * by three numbers:
  *
- * <code>
+ * ```js
  * circle(50, 50, 20);
- * </code>
+ * ```
  *
- * <code>
+ * ```js
  * circle(50, 50, 12.34);
- * </code>
+ * ```
  *
  * Numbers support basic arithmetic and follow the standard order of
  * operations: Parentheses, Exponents, Multiplication, Division, Addition,
  * and Subtraction (PEMDAS). For example, it's common to use arithmetic
  * operators with p5.js' system variables that are numbers:
  *
- * <code>
+ * ```js
  * // Draw a circle at the center.
  * circle(width / 2, height / 2, 20);
- * </code>
+ * ```
  *
- * <code>
+ * ```js
  * // Draw a circle that moves from left to right.
  * circle(frameCount * 0.01, 50, 20);
- * </code>
+ * ```
  *
  * Here's a quick overview of the arithmetic operators:
  *
- * <code>
+ * ```js
  * 1 + 2 // Add
  * 1 - 2 // Subtract
  * 1 * 2 // Multiply
  * 1 / 2 // Divide
  * 1 % 2 // Remainder
  * 1 ** 2 // Exponentiate
- * </code>
+ * ```
  *
  * It's common to update a number variable using arithmetic. For example, an
  * object's location can be updated like so:
  *
- * <code>
+ * ```js
  * x = x + 1;
- * </code>
+ * ```
  *
  * The statement above adds 1 to a variable `x` using the `+` operator. The
  * addition assignment operator `+=` expresses the same idea:
  *
- * <code>
+ * ```js
  * x += 1;
- * </code>
+ * ```
  *
  * Here's a quick overview of the assignment operators:
  *
- * <code>
+ * ```js
  * x += 2 // Addition assignment
  * x -= 2 // Subtraction assignment
  * x *= 2 // Multiplication assignment
  * x /= 2 // Division assignment
  * x %= 2 // Remainder assignment
- * </code>
+ * ```
  *
  * Numbers can be compared using the
  * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators#relational_operators" target="_blank">relational operators</a>
  * `>`, `<`, `>=`, `<=`, `===`, and `!==`.  For example, a sketch's
  * <a href="#/p5/frameCount">frameCount</a> can be used as a timer:
  *
- * <code>
+ * ```js
  * if (frameCount > 1000) {
  *   text('Game over!', 50, 50);
  * }
- * </code>
+ * ```
  *
  * An expression such as `frameCount > 1000` evaluates to a `Boolean` value
  * that's either `true` or `false`. The relational operators all produce
  * `Boolean` values:
  *
- * <code>
+ * ```js
  * 2 > 1 // true
  * 2 < 1 // false
  * 2 >= 2 // true
  * 2 <= 2 // true
  * 2 === 2 // true
  * 2 !== 2 // false
- * </code>
+ * ```
  *
  * See <a href="#/p5/Boolean">Boolean</a> for more information about comparisons and conditions.
  *
@@ -946,10 +947,10 @@
  * Expressions with numbers can also produce special values when something
  * goes wrong:
  *
- * <code>
+ * ```js
  * sqrt(-1) // NaN
  * 1 / 0 // Infinity
- * </code>
+ * ```
  *
  * The value `NaN` stands for
  * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN" target="_blank">Not-A-Number</a>.
@@ -989,7 +990,7 @@
  * function draw() {
  *   background(200);
  *
- *   circle(frameCount * 0.01, 50, 20);
+ *   circle(frameCount * 0.05, 50, 20);
  * }
  * </code>
  * </div>
@@ -1006,7 +1007,7 @@
  * For example, an object could contain the location, size, and appearance of
  * a dog:
  *
- * <code>
+ * ```js
  * // Declare the dog variable and assign it an object.
  * let dog = { x: 50, y: 50, size: 20, emoji: '🐶' };
  *
@@ -1016,14 +1017,14 @@
  *
  * // Draw the dog.
  * text(dog.emoji, dog.x, dog.y);
- * </code>
+ * ```
  *
  * The variable `dog` is assigned an object with four properties. Objects
  * are declared with curly braces `{}`. Values can be accessed using the dot
  * operator, as in `dog.size`. In the example above, the key `size`
  * corresponds to the value `20`. Objects can also be empty to start:
  *
- * <code>
+ * ```js
  * // Declare a cat variable and assign it an empty object.
  * let cat = {};
  *
@@ -1039,23 +1040,23 @@
  *
  * // Draw the cat.
  * text(cat.emoji, cat.x, cat.y);
- * </code>
+ * ```
  *
  * An object's data can be updated while a sketch runs. For example, the `cat`
  * could run away from the `dog` by updating its location:
  *
- * <code>
+ * ```js
  * // Run to the right.
  * cat.x += 5;
- * </code>
+ * ```
  *
  * If needed, an object's values can be accessed using square brackets `[]`
  * and strings instead of dot notation:
  *
- * <code>
+ * ```js
  * // Run to the right.
  * cat["x"] += 5;
- * </code>
+ * ```
  *
  * This syntax can be helpful when the key's name has spaces, as in
  * `cat['height (m)']`.
@@ -1083,6 +1084,7 @@
  * </code>
  * </div>
  *
+ * <div>
  * <code>
  * // Declare the variable data and assign it an object with three properties.
  * let data = { x: 50, y: 50, d: 20 };
@@ -1104,6 +1106,7 @@
  *   circle(data.x, data.y, data.d);
  * }
  * </code>
+ * </div>
  *
  * <div>
  * <code>
@@ -1141,32 +1144,33 @@
  * type. For example, an array could contain a list of someone's favorite
  * colors as strings. Arrays are created as follows:
  *
- * <code>
- * let colors = ['deeppink', 'darkorchid', 'magenta'];
- * </code>
+ * ```js
+ * let myArray = ['deeppink', 'darkorchid', 'magenta'];
+ * ```
  *
  * Each piece of data in an array is called an element. Each element has an
- * address, or index, within its array. The variable `colors` refers to an
- * array with three <a href="#/p5/String">String> elements, `'deeppink'`,
+ * address, or index, within its array. The variable `myArray` refers to an
+ * array with three <a href="#/p5/String">String</a> elements, `'deeppink'`,
  * `'darkorchid'`, and `'magenta'`. Arrays are zero-indexed, which means
  * that `'deeppink'` is at index 0, `'darkorchid'` is at index 1, and
  * '`magenta'` is at index 2. Array elements can be accessed using their
  * indices as follows:
  *
- * <code>
- * let zeroth = colors[0]; // 'deeppink'
- * let first = colors[1]; // 'darkorchid'
- * let second = colors[2]; // 'magenta'
- * </code>
+ * ```js
+ * let zeroth = myArray[0]; // 'deeppink'
+ * let first = myArray[1]; // 'darkorchid'
+ * let second = myArray[2]; // 'magenta'
+ * ```
  *
- * Elements can be added to the end of an array by calling the `push()`
+ * Elements can be added to the end of an array by calling the
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push" target="_blank">push()</a>
  * method as follows:
  *
- * <code>
- * colors.push('lavender');
+ * ```js
+ * myArray.push('lavender');
  *
- * let third = colors[3]; // 'lavender'
- * </code>
+ * let third = myArray[3]; // 'lavender'
+ * ```
  *
  * See <a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps/Arrays" target="_blank">MDN</a>
  * for more information about arrays.
@@ -1331,9 +1335,9 @@
  * are the same type. Here's an example of creating an instance of a `Frog`
  * class:
  *
- * <code>
+ * ```js
  * let fifi = new Frog(50, 50, 20);
- * </code>
+ * ```
  *
  * The variable `fifi` refers to an instance of the `Frog` class. The keyword
  * `new` is used to call the `Frog` class' constructor in the statement
@@ -1341,17 +1345,17 @@
  * the variable `fifi`. Classes are templates, so they can be used to create
  * more than one instance:
  *
- * <code>
+ * ```js
  * // First Frog instance.
  * let frog1 = new Frog(25, 50, 10);
  *
  * // Second Frog instance.
  * let frog2 = new Frog(75, 50, 10);
- * </code>
+ * ```
  *
  * A simple `Frog` class could be declared as follows:
  *
- * <code>
+ * ```js
  * class Frog {
  *   constructor(x, y, size) {
  *     // This code runs once when an instance is created.
@@ -1373,7 +1377,7 @@
  *     this.y += random(-10, 10);
  *   }
  * }
- * </code>
+ * ```
  *
  * Class declarations begin with the keyword `class` followed by the class
  * name, such as `Frog`, and curly braces `{}`. Class names should use
@@ -1397,7 +1401,7 @@
  * coordinates when called. Once a `Frog` instance is created, its data and
  * methods can be accessed using the dot operator `.` as follows:
  *
- * <code>
+ * ```js
  * // Draw a lily pad.
  * fill('green');
  * stroke('green');
@@ -1408,7 +1412,7 @@
  *
  * // Hop.
  * fifi.hop();
- * </code>
+ * ```
  *
  * @property class
  *
@@ -1688,11 +1692,11 @@
  * For example, a `for` loop makes it easy to express the idea
  * "draw five lines" like so:
  *
- * <code>
+ * ```js
  * for (let x = 10; x < 100; x += 20) {
  *   line(x, 25, x, 75);
  * }
- * </code>
+ * ```
  *
  * The loop's header begins with the keyword `for`. Loops generally count up
  * or count down as they repeat, or iterate. The statements in parentheses
@@ -1709,27 +1713,27 @@
  * For example, the following loop never stops iterating because it doesn't
  * count up:
  *
- * <code>
+ * ```js
  * for (let x = 10; x < 100; x = 20) {
  *   line(x, 25, x, 75);
  * }
- * </code>
+ * ```
  *
  * The statement `x = 20` keeps the variable `x` stuck at `20`, which is
  * always less than `100`.
  *
  * `for` loops can also count down:
  *
- * <code>
+ * ```js
  * for (let d = 100; d > 0; d -= 10) {
  *   circle(50, 50, d);
  * }
- * </code>
+ * ```
  *
  * `for` loops can also contain other loops. The following nested loop draws a
  * grid of points:
  *
- * <code>
+ * ```js
  * // Loop from left to right.
  * for (let x = 10; x < 100; x += 10) {
  *
@@ -1739,13 +1743,13 @@
  *   }
  *
  * }
- * </code>
+ * ```
  *
  * `for` loops are also helpful for iterating through the elements of an
  * array. For example, it's common to iterate through an array that contains
  * information about where or what to draw:
  *
- * <code>
+ * ```js
  * // Create an array of x-coordinates.
  * let xCoordinates = [20, 40, 60];
  *
@@ -1756,29 +1760,29 @@
  *   // Draw a circle.
  *   circle(xCoordinates[i], 50, 20);
  * }
- * </code>
+ * ```
  *
  * If the array's values aren't modified, the `for...of` statement can
  * simplify the code. They're similar to `for` loops in Python and `for-each`
  * loops in C++ and Java. The following loops have the same effect:
  *
- * <code>
+ * ```js
  * // Draw circles with a for loop.
  * let xCoordinates = [20, 40, 60];
  *
  * for (let i = 0; i < xCoordinates.length; i += 1) {
  *   circle(xCoordinates[i], 50, 20);
  * }
- * </code>
+ * ```
  *
- * <code>
+ * ```js
  * // Draw circles with a for...of statement.
  * let xCoordinates = [20, 40, 60];
  *
  * for (let x of xCoordinates) {
  *   circle(x, 50, 20);
  * }
- * </code>
+ * ```
  *
  * In the code snippets above, the variables `i` and `x` have different roles.
  *
@@ -1912,7 +1916,7 @@
  * `true`. They're like `if` statements that repeat. For example, a `while`
  * loop makes it easy to express the idea "draw several lines" like so:
  *
- * <code>
+ * ```js
  * // Declare a variable to keep track of iteration.
  * let x = 10;
  *
@@ -1923,7 +1927,7 @@
  *   // Increment by 20.
  *   x += 20;
  * }
- * </code>
+ * ```
  *
  * The loop's header begins with the keyword `while`. Loops generally count up
  * or count down as they repeat, or iterate. The statement in parentheses
@@ -1935,7 +1939,7 @@
  * It's common to create infinite loops accidentally. For example, the
  * following loop never stops iterating because it doesn't count up:
  *
- * <code>
+ * ```js
  * // Declare a variable to keep track of iteration.
  * let x = 10;
  *
@@ -1946,7 +1950,7 @@
  *
  * // This should be in the loop's body!
  * x += 20;
- * </code>
+ * ```
  *
  * The statement `x += 20` appears after the loop's body. That means the
  * variable `x` is stuck at `10`,  which is always less than `100`.
@@ -1955,7 +1959,7 @@
  * advance. For example, concentric circles could be drawn at random
  * increments:
  *
- * <code>
+ * ```js
  * let d = 100;
  * let minSize = 5;
  *
@@ -1963,7 +1967,7 @@
  *   circle(50, 50, d);
  *   d -= random(10);
  * }
- * </code>
+ * ```
  *
  * @property while
  *
@@ -1987,7 +1991,7 @@
  *     line(x, 25, x, 75);
  *
  *     // Increment by 20.
- *     x += 20
+ *     x += 20;
  *   }
  * }
  * </code>
@@ -2029,20 +2033,20 @@
  * common to add a `console.log()` statement while studying how a section of
  * code works:
  *
- * <code>
+ * ```js
  * if (isPlaying === true) {
  *   // Add a console.log() statement to make sure this block of code runs.
  *   console.log('Got here!');
  *
  *   // Game logic.
  * }
- * </code>
+ * ```
  *
  * `console.error()` is helpful for tracking errors because it prints
  * formatted messages. For example, it's common to encounter errors when
  * loading media assets:
  *
- * <code>
+ * ```js
  * // Logs an error message with special formatting.
  * function handleFailure(error) {
  *   console.error('Oops!', error);
@@ -2050,10 +2054,9 @@
  *
  * // Try to load an image and call handleError() if it fails.
  * loadImage('https://example.com/cat.jpg', handleImage, handleError);
- * </code>
+ * ```
  *
- * @for console
- * @param {String|Expression|Object} message message to print to the console.
+ * @property console
  *
  * @example
  * <div>

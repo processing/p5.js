@@ -266,7 +266,7 @@ p5.prototype.applyMatrix = function(...args) {
  *   // Translate the origin to the center.
  *   translate(50, 50);
  *
- *   // Draw a red circle at the coordinates (25, 25).
+ *   // Draw a blue circle at the coordinates (25, 25).
  *   fill('blue');
  *   circle(25, 25, 20);
  *
@@ -274,7 +274,7 @@ p5.prototype.applyMatrix = function(...args) {
  *   // The origin is now at the top-left corner.
  *   resetMatrix();
  *
- *   // Draw a blue circle at the coordinates (25, 25).
+ *   // Draw a red circle at the coordinates (25, 25).
  *   fill('red');
  *   circle(25, 25, 20);
  * }
@@ -317,9 +317,8 @@ p5.prototype.resetMatrix = function() {
  * shapes to spin.
  *
  * @method rotate
- * @param  {Number} angle the angle of rotation, specified in radians
- *                        or degrees, depending on current angleMode
- * @param  {p5.Vector|Number[]} [axis] (in 3d) the axis to rotate around
+ * @param  {Number} angle angle of rotation in the current <a href="#/p5/angleMode">angleMode()</a>.
+ * @param  {p5.Vector|Number[]} [axis] axis to rotate about in 3D.
  * @chainable
  *
  * @example

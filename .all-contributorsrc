@@ -5917,6 +5917,83 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "bobbykaz",
+      "name": "Bobby Kazimiroff",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1424679?v=4",
+      "profile": "http://bobbykaz.com",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "PalumboN",
+      "name": "Nahuel Palumbo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4098184?v=4",
+      "profile": "https://github.com/PalumboN",
+      "contributions": [
+        "bug",
+        "doc"
+      ]
+    },
+    {
+      "login": "lottihill",
+      "name": "lottihill",
+      "avatar_url": "https://avatars.githubusercontent.com/u/76125564?v=4",
+      "profile": "https://github.com/lottihill",
+      "contributions": [
+        "doc",
+        "bug"
+      ]
+    },
+    {
+      "login": "JulioGitLab",
+      "name": "Julio Lab",
+      "avatar_url": "https://avatars.githubusercontent.com/u/156870555?v=4",
+      "profile": "https://github.com/JulioGitLab",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "JordanSucher",
+      "name": "Jordan Sucher",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9809109?v=4",
+      "profile": "https://github.com/JordanSucher",
+      "contributions": [
+        "bug",
+        "code"
+      ]
+    },
+    {
+      "login": "iambiancafonseca",
+      "name": "iambiancafonseca",
+      "avatar_url": "https://avatars.githubusercontent.com/u/102000079?v=4",
+      "profile": "https://github.com/iambiancafonseca",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "Vishal2002",
+      "name": "Vishal Sharma",
+      "avatar_url": "https://avatars.githubusercontent.com/u/35897449?v=4",
+      "profile": "https://github.com/Vishal2002",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "PiyushChandra17",
+      "name": "PiyushChandra17",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47579287?v=4",
+      "profile": "https://piyushs-folio-c8b8.onrender.com/",
+      "contributions": [
+        "code",
+        "bug",
+        "review"
+      ]
     }
   ],
   "repoType": "github",
