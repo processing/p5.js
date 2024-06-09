@@ -1241,18 +1241,18 @@ p5.prototype.textureMode = function (mode) {
  * to the pixel at coordinates `(u, v)` within an image. For example, the
  * corners of a rectangular image are mapped to the corners of a rectangle by default:
  *
- * <code>
+ * ```js
  * // Apply the image as a texture.
  * texture(img);
  *
  * // Draw the rectangle.
  * rect(0, 0, 30, 50);
- * </code>
+ * ```
  *
  * If the image in the code snippet above has dimensions of 300 x 500 pixels,
  * the same result could be achieved as follows:
  *
- * <code>
+ * ```js
  * // Apply the image as a texture.
  * texture(img);
  *
@@ -1276,14 +1276,14 @@ p5.prototype.textureMode = function (mode) {
  * vertex(0, 50, 0, 0, 500);
  *
  * endShape();
- * </code>
+ * ```
  *
  * `textureWrap()` controls how textures behave when their uv's go beyond the
  * texture. Doing so can produce interesting visual effects such as tiling.
  * For example, the custom shape above could have u-coordinates are greater
  * than the image’s width:
  *
- * <code>
+ * ```js
  * // Apply the image as a texture.
  * texture(img);
  *
@@ -1301,7 +1301,7 @@ p5.prototype.textureMode = function (mode) {
  *
  * vertex(0, 50, 0, 0, 500);
  * endShape();
- * </code>
+ * ```
  *
  * The u-coordinates of 600 are greater than the texture image’s width of 300.
  * This creates interesting possibilities.

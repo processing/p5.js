@@ -886,17 +886,17 @@ p5.prototype._setMouseButton = function(e) {
  * automatically when the user moves the mouse without clicking any mouse
  * buttons:
  *
- * <code>
+ * ```js
  * function mouseMoved() {
  *   // Code to run.
  * }
- * </code>
+ * ```
  *
  * The mouse system variables, such as <a href="#/p5/mouseX">mouseX</a> and
  * <a href="#/p5/mouseY">mouseY</a>, will be updated with their most recent
  * value when `mouseMoved()` is called by p5.js:
  *
- * <code>
+ * ```js
  * function mouseMoved() {
  *   if (mouseX < 50) {
  *     // Code to run if the mouse is on the left.
@@ -906,18 +906,18 @@ p5.prototype._setMouseButton = function(e) {
  *     // Code to run if the mouse is near the bottom.
  *   }
  * }
- * </code>
+ * ```
  *
  * The parameter, `event`, is optional. `mouseMoved()` is always passed a
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent" target="_blank">MouseEvent</a>
  * object with properties that describe the mouse move event:
  *
- * <code>
+ * ```js
  * function mouseMoved(event) {
  *   // Code to run that uses the event.
  *   console.log(event);
  * }
- * </code>
+ * ```
  *
  * Browsers may have default behaviors attached to various mouse events. For
  * example, some browsers highlight text when the user moves the mouse while
@@ -971,17 +971,17 @@ p5.prototype._setMouseButton = function(e) {
  * Declaring the function `mouseDragged()` sets a code block to run
  * automatically when the user clicks and drags the mouse:
  *
- * <code>
+ * ```js
  * function mouseDragged() {
  *   // Code to run.
  * }
- * </code>
+ * ```
  *
  * The mouse system variables, such as <a href="#/p5/mouseX">mouseX</a> and
  * <a href="#/p5/mouseY">mouseY</a>, will be updated with their most recent
  * value when `mouseDragged()` is called by p5.js:
  *
- * <code>
+ * ```js
  * function mouseDragged() {
  *   if (mouseX < 50) {
  *     // Code to run if the mouse is on the left.
@@ -991,18 +991,18 @@ p5.prototype._setMouseButton = function(e) {
  *     // Code to run if the mouse is near the bottom.
  *   }
  * }
- * </code>
+ * ```
  *
  * The parameter, `event`, is optional. `mouseDragged()` is always passed a
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent" target="_blank">MouseEvent</a>
  * object with properties that describe the mouse drag event:
  *
- * <code>
+ * ```js
  * function mouseDragged(event) {
  *   // Code to run that uses the event.
  *   console.log(event);
  * }
- * </code>
+ * ```
  *
  * On touchscreen devices, `mouseDragged()` will run when a user moves a touch
  * point if <a href="#/p5/touchMoved">touchMoved()</a> isn’t declared. If
@@ -1087,17 +1087,17 @@ p5.prototype._onmousemove = function(e) {
  * Declaring the function `mousePressed()` sets a code block to run
  * automatically when the user presses a mouse button:
  *
- * <code>
+ * ```js
  * function mousePressed() {
  *   // Code to run.
  * }
- * </code>
+ * ```
  *
  * The mouse system variables, such as <a href="#/p5/mouseX">mouseX</a> and
  * <a href="#/p5/mouseY">mouseY</a>, will be updated with their most recent
  * value when `mousePressed()` is called by p5.js:
  *
- * <code>
+ * ```js
  * function mousePressed() {
  *   if (mouseX < 50) {
  *     // Code to run if the mouse is on the left.
@@ -1107,18 +1107,18 @@ p5.prototype._onmousemove = function(e) {
  *     // Code to run if the mouse is near the bottom.
  *   }
  * }
- * </code>
+ * ```
  *
  * The parameter, `event`, is optional. `mousePressed()` is always passed a
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent" target="_blank">MouseEvent</a>
  * object with properties that describe the mouse press event:
  *
- * <code>
+ * ```js
  * function mousePressed(event) {
  *   // Code to run that uses the event.
  *   console.log(event);
  * }
- * </code>
+ * ```
  *
  * On touchscreen devices, `mousePressed()` will run when a user’s touch
  * begins if <a href="#/p5/touchStarted">touchStarted()</a> isn’t declared. If
@@ -1260,17 +1260,17 @@ p5.prototype._onmousedown = function(e) {
  * automatically when the user releases a mouse button after having pressed
  * it:
  *
- * <code>
+ * ```js
  * function mouseReleased() {
  *   // Code to run.
  * }
- * </code>
+ * ```
  *
  * The mouse system variables, such as <a href="#/p5/mouseX">mouseX</a> and
  * <a href="#/p5/mouseY">mouseY</a>, will be updated with their most recent
  * value when `mouseReleased()` is called by p5.js:
  *
- * <code>
+ * ```js
  * function mouseReleased() {
  *   if (mouseX < 50) {
  *     // Code to run if the mouse is on the left.
@@ -1280,18 +1280,18 @@ p5.prototype._onmousedown = function(e) {
  *     // Code to run if the mouse is near the bottom.
  *   }
  * }
- * </code>
+ * ```
  *
  * The parameter, `event`, is optional. `mouseReleased()` is always passed a
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent" target="_blank">MouseEvent</a>
  * object with properties that describe the mouse release event:
  *
- * <code>
+ * ```js
  * function mouseReleased(event) {
  *   // Code to run that uses the event.
  *   console.log(event);
  * }
- * </code>
+ * ```
  *
  * On touchscreen devices, `mouseReleased()` will run when a user’s touch
  * ends if <a href="#/p5/touchEnded">touchEnded()</a> isn’t declared. If
@@ -1433,17 +1433,17 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * automatically when the user releases a mouse button after having pressed
  * it:
  *
- * <code>
+ * ```js
  * function mouseClicked() {
  *   // Code to run.
  * }
- * </code>
+ * ```
  *
  * The mouse system variables, such as <a href="#/p5/mouseX">mouseX</a> and
  * <a href="#/p5/mouseY">mouseY</a>, will be updated with their most recent
  * value when `mouseClicked()` is called by p5.js:
  *
- * <code>
+ * ```js
  * function mouseClicked() {
  *   if (mouseX < 50) {
  *     // Code to run if the mouse is on the left.
@@ -1453,18 +1453,18 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  *     // Code to run if the mouse is near the bottom.
  *   }
  * }
- * </code>
+ * ```
  *
  * The parameter, `event`, is optional. `mouseClicked()` is always passed a
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent" target="_blank">MouseEvent</a>
  * object with properties that describe the mouse click event:
  *
- * <code>
+ * ```js
  * function mouseClicked(event) {
  *   // Code to run that uses the event.
  *   console.log(event);
  * }
- * </code>
+ * ```
  *
  * On touchscreen devices, `mouseClicked()` will run when a user’s touch
  * ends if <a href="#/p5/touchEnded">touchEnded()</a> isn’t declared. If
@@ -1589,17 +1589,17 @@ p5.prototype._onclick = function(e) {
  * automatically when the user presses and releases the mouse button twice
  * quickly:
  *
- * <code>
+ * ```js
  * function doubleClicked() {
  *   // Code to run.
  * }
- * </code>
+ * ```
  *
  * The mouse system variables, such as <a href="#/p5/mouseX">mouseX</a> and
  * <a href="#/p5/mouseY">mouseY</a>, will be updated with their most recent
  * value when `doubleClicked()` is called by p5.js:
  *
- * <code>
+ * ```js
  * function doubleClicked() {
  *   if (mouseX < 50) {
  *     // Code to run if the mouse is on the left.
@@ -1609,18 +1609,18 @@ p5.prototype._onclick = function(e) {
  *     // Code to run if the mouse is near the bottom.
  *   }
  * }
- * </code>
+ * ```
  *
  * The parameter, `event`, is optional. `doubleClicked()` is always passed a
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent" target="_blank">MouseEvent</a>
  * object with properties that describe the double-click event:
  *
- * <code>
+ * ```js
  * function doubleClicked(event) {
  *   // Code to run that uses the event.
  *   console.log(event);
  * }
- * </code>
+ * ```
  *
  * On touchscreen devices, code placed in `doubleClicked()` will run after two
  * touches that occur within a short time.
@@ -1735,17 +1735,17 @@ p5.prototype._pmouseWheelDeltaY = 0;
  * Declaring the function `mouseWheel()` sets a code block to run
  * automatically when the user scrolls with the mouse wheel:
  *
- * <code>
+ * ```js
  * function mouseWheel() {
  *   // Code to run.
  * }
- * </code>
+ * ```
  *
  * The mouse system variables, such as <a href="#/p5/mouseX">mouseX</a> and
  * <a href="#/p5/mouseY">mouseY</a>, will be updated with their most recent
  * value when `mouseWheel()` is called by p5.js:
  *
- * <code>
+ * ```js
  * function mouseWheel() {
  *   if (mouseX < 50) {
  *     // Code to run if the mouse is on the left.
@@ -1755,18 +1755,18 @@ p5.prototype._pmouseWheelDeltaY = 0;
  *     // Code to run if the mouse is near the bottom.
  *   }
  * }
- * </code>
+ * ```
  *
  * The parameter, `event`, is optional. `mouseWheel()` is always passed a
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent" target="_blank">MouseEvent</a>
  * object with properties that describe the mouse scroll event:
  *
- * <code>
+ * ```js
  * function mouseWheel(event) {
  *   // Code to run that uses the event.
  *   console.log(event);
  * }
- * </code>
+ * ```
  *
  * The `event` object has many properties including `delta`, a `Number`
  * containing the distance that the user scrolled. For example, `event.delta`
