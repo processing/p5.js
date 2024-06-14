@@ -737,7 +737,7 @@ p5.prototype.line = function(...args) {
  * can't be filled, so the <a href="#/p5/fill">fill()</a> function won't
  * affect the point's color.
  *
- * The version of `point()` with one parameter allows the point's location to
+ * The version of `point()` with two parameters allows the point's location to
  * be set with its x- and y-coordinates, as in `point(10, 20)`.
  *
  * The version of `point()` with three parameters allows the point to be drawn
