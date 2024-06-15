@@ -664,7 +664,7 @@ p5.prototype.createFramebuffer = function(options) {
  *   createCanvas(100, 100, WEBGL);
  *
  *   // Create the p5.Framebuffer objects.
- *   prev = createFramebuffer({ format: FLOAT });
+ *   previous = createFramebuffer({ format: FLOAT });
  *   current = createFramebuffer({ format: FLOAT });
  *
  *   describe(
@@ -673,9 +673,9 @@ p5.prototype.createFramebuffer = function(options) {
  * }
  *
  * function draw() {
- *   // Set the previous p5.Framebuffer to the
+ *   // Swap the previous p5.Framebuffer and the
  *   // current one so it can be used as a texture.
- *   previous = current;
+ *   [previous, current] = [current, previous];
  *
  *   // Start drawing to the current p5.Framebuffer.
  *   current.begin();
