@@ -5,6 +5,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import terser from '@rollup/plugin-terser';
 import pkg from './package.json' assert { type: 'json' };
 import dayjs from 'dayjs';
+import { visualizer } from "rollup-plugin-visualizer";
 
 const plugins = [
   commonjs(),
@@ -51,7 +52,14 @@ export default [
     // treeshake: {
     //   preset: 'smallest'
     // },
-    plugins
+    plugins: [
+      ...plugins,
+      visualizer({
+        filename: "analyzer/stats.html",
+        gzipSize: true,
+        brotliSize: true
+      })
+    ]
   },
   // NOTE: comment to NOT build standalone math module
   {
@@ -81,6 +89,13 @@ export default [
       }
     ],
     external: ['../core/main'],
-    plugins
+    plugins: [
+      ...plugins,
+      visualizer({
+        filename: "analyzer/stats.math.html",
+        gzipSize: true,
+        brotliSize: true
+      })
+    ]
   }
 ];

@@ -21,3 +21,4 @@ release/
 parameterData.json
 yarn.lock
 docs/data.json
+analyzer/

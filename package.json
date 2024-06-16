@@ -67,6 +67,7 @@
     "regenerator-runtime": "^0.13.3",
     "rollup": "^4.9.6",
     "rollup-plugin-string": "^3.0.0",
+    "rollup-plugin-visualizer": "^5.12.0",
     "unplugin-swc": "^1.4.2",
     "vite": "^5.0.2",
     "vite-plugin-string": "^1.2.2",
