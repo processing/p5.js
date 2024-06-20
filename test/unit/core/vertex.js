@@ -1,8 +1,8 @@
 suite('Vertex', function() {
   var myp5;
-  let _friendlyErrorSpy;
+  let _friendlyLocalizedErrorSpy;
   setup(function(done) {
-    _friendlyErrorSpy = sinon.spy(p5, '_friendlyError');
+    _friendlyLocalizedErrorSpy = sinon.spy(p5, '_friendlyLocalizedError');
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
@@ -12,7 +12,7 @@ suite('Vertex', function() {
   });
 
   teardown(function() {
-    _friendlyErrorSpy.restore();
+    _friendlyLocalizedErrorSpy.restore();
     myp5.remove();
   });
 
@@ -59,7 +59,7 @@ suite('Vertex', function() {
     });
     test('_friendlyError is called. vertex() should be used once before quadraticVertex()', function() {
       myp5.quadraticVertex(80, 20, 50, 50, 10, 20);
-      assert(_friendlyErrorSpy.calledOnce, 'p5._friendlyError was not called');
+      assert(_friendlyLocalizedErrorSpy.calledOnce, 'p5._friendlyError was not called');
     });
   });
 
@@ -80,7 +80,7 @@ suite('Vertex', function() {
     });
     test('_friendlyError is called. vertex() should be used once before bezierVertex()', function() {
       myp5.bezierVertex(25, 30, 25, -30, -25, 30);
-      assert(_friendlyErrorSpy.calledOnce, 'p5._friendlyError was not called');
+      assert(_friendlyLocalizedErrorSpy.calledOnce, 'p5._friendlyError was not called');
     });
   });
 

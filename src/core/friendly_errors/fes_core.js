@@ -206,6 +206,31 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   /**
+   * This can be called from anywhere in the p5 library to show users
+   * a localized error message. Instead of passing the message itself, we
+   * pass a "key" that refers to a message contained in our bank of
+   * translations for all our supported languages (including English). (See
+   * `/translations/en/translation.json`).
+   *
+   * This works well for simple messages. If you want to do something more complex
+   * (like include a filename from an error), you'll need to use translator() and
+   * p5._friendlyError() together.
+   *
+   * @method _friendlyLocalizedError
+   * @private
+   * @param  {String}         messageKey    Key to localized message to be printed
+   * @param  {String}         [func]        Name of the function linked to error
+   * @param  {Number|String}  [color]       CSS color code
+   */
+  p5._friendlyLocalizedError = function(messageKey, func, color) {
+    // in the future we could support more direct calls to translator()
+    // to support extra arguments for complex messages
+    // by adding a typeof if statement on messageKey
+    const message = translator(messageKey);
+    p5._report(message, func, color);
+  };
+
+  /**
    * This is called internally if there is an error with autoplay. Generates
    * and prints a friendly error message [fes.autoplay].
    *
@@ -217,7 +242,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
       src,
       url: 'https://developer.mozilla.org/docs/Web/Media/Autoplay_guide'
     });
-    console.log(translator('fes.pre', { message }));
+    p5._friendlyLocalizedError(message);
   };
 
   /**
