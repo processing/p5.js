@@ -129,6 +129,8 @@ p5.Texture = class Texture {
       textureData = this.src.elt;
     } else if (this.isImageData) {
       textureData = this.src;
+    } else if (this.isCubemapTexture) {
+      textureData = this.src;
     }
     return textureData;
   }
@@ -524,6 +526,12 @@ export function checkWebGLCapabilities({ GL, webglVersion }) {
 export class CubemapTexture extends p5.Texture {
   constructor(renderer, faces, settings) {
     super(renderer, faces, settings);
+
+    this.isCubemapTexture = false; // Default value
+
+    if (faces instanceof CubemapTexture) {
+      this.isCubemapTexture = true;
+    }
   }
 
   glFilter(_filter) {
@@ -543,10 +551,19 @@ export class CubemapTexture extends p5.Texture {
     this.bindTexture();
 
     // Looping through each face and loading the data
-    for (let faceIndex = 0; faceIndex < faces.length; faceIndex++) {
+    const targets = [
+      gl.TEXTURE_CUBE_MAP_POSITIVE_X,
+      gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
+      gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
+      gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
+      gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
+      gl.TEXTURE_CUBE_MAP_NEGATIVE_Z
+    ];
+    // Looping through each face and loading the data
+    for (let faceIndex = 0; faceIndex < targets.length; faceIndex++) {
       // Setting up each face of the cubemap
       gl.texImage2D(
-        gl.TEXTURE_CUBE_MAP_POSITIVE_X + faceIndex,
+        targets[faceIndex],
         0,
         this.glFormat,
         this.width,

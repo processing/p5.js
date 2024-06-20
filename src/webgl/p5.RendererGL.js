@@ -107,6 +107,90 @@ const filterShaderFrags = {
 };
 const filterShaderVert = readFileSync(join(__dirname, '/shaders/filters/default.vert'), 'utf-8');
 
+function lookAt(eye, target, up) {
+  let zAxis = normalize(subtractVectors(eye, target));
+  let xAxis = normalize(cross(up, zAxis));
+  let yAxis = cross(zAxis, xAxis);
+
+  return [
+    xAxis[0], yAxis[0], zAxis[0], 0,
+    xAxis[1], yAxis[1], zAxis[1], 0,
+    xAxis[2], yAxis[2], zAxis[2], 0,
+    -dot(xAxis, eye), -dot(yAxis, eye), -dot(zAxis, eye), 1
+  ];
+}
+
+function normalize(v) {
+  let len = Math.hypot(v[0], v[1], v[2]);
+  return [v[0] / len, v[1] / len, v[2] / len];
+}
+
+function subtractVectors(a, b) {
+  return [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+}
+
+function cross(a, b) {
+  return [
+    a[1] * b[2] - a[2] * b[1],
+    a[2] * b[0] - a[0] * b[2],
+    a[0] * b[1] - a[1] * b[0]
+  ];
+}
+
+function dot(a, b) {
+  return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+}
+
+function renderCube() {
+  if (!this.cubeVAO) {
+    this.cubeVAO = this.GL.createVertexArray();
+    this.cubeVBO = this.GL.createBuffer();
+    this.GL.bindVertexArray(this.cubeVAO);
+
+    const vertices = new Float32Array([
+      // positions
+      -1.0, -1.0, -1.0,1.0, -1.0, -1.0,1.0,  1.0, -1.0,1.0,  1.0, -1.0,
+      -1.0,  1.0, -1.0,
+      -1.0, -1.0, -1.0,
+
+      -1.0, -1.0,  1.0,1.0, -1.0,  1.0,1.0,  1.0,  1.0,1.0,  1.0,  1.0,
+      -1.0,  1.0,  1.0,
+      -1.0, -1.0,  1.0,
+
+      -1.0,  1.0,  1.0,
+      -1.0,  1.0, -1.0,
+      -1.0, -1.0, -1.0,
+      -1.0, -1.0, -1.0,
+      -1.0, -1.0,  1.0,
+      -1.0,  1.0,  1.0,
+
+      1.0,  1.0,  1.0,
+      1.0,  1.0, -1.0,
+      1.0, -1.0, -1.0,
+      1.0, -1.0, -1.0,
+      1.0, -1.0,  1.0,
+      1.0,  1.0,  1.0,
+
+      -1.0, -1.0, -1.0,1.0, -1.0, -1.0,1.0, -1.0,  1.0,1.0, -1.0,  1.0,
+      -1.0, -1.0,  1.0,
+      -1.0, -1.0, -1.0,
+
+      -1.0,  1.0, -1.0,1.0,  1.0, -1.0,1.0,  1.0,  1.0,1.0,  1.0,  1.0,
+      -1.0,  1.0,  1.0,
+      -1.0,  1.0, -1.0
+    ]);
+
+    this.GL.bindBuffer(this.GL.ARRAY_BUFFER, this.cubeVBO);
+    this.GL.bufferData(this.GL.ARRAY_BUFFER, vertices, this.GL.STATIC_DRAW);
+    this.GL.enableVertexAttribArray(0);
+    this.GL.vertexAttribPointer(0, 3, this.GL.FLOAT, false, 3 * 4, 0);
+    this.GL.bindVertexArray(null);
+  }
+
+  this.GL.bindVertexArray(this.cubeVAO);
+  this.GL.drawArrays(this.GL.TRIANGLES, 0, 36);
+  this.GL.bindVertexArray(null);
+}
 
 /**
  * @module Rendering
@@ -1927,78 +2011,92 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     *  maps a p5.Image used by imageLight() to a p5.Framebuffer
    */
   getDiffusedTexture(input) {
-    // if one already exists for a given input image
+    // If one already exists for a given input image
     if (this.diffusedTextures.get(input) != null) {
       return this.diffusedTextures.get(input);
     }
-    // if not, only then create one
-    let newFramebuffer;
-    // hardcoded to 200px, because it's going to be blurry and smooth
-    let smallWidth = 200;
-    let width = smallWidth;
-    let height = Math.floor(smallWidth * (input.height / input.width));
-    let cubemapTexture;
-    const faces = [];
-    newFramebuffer = this._pInst.createFramebuffer({
-      width, height, density: 1
-    });
-    // create framebuffer is like making a new sketch, all functions on main
-    // sketch it would be available on framebuffer
-    if (!this.diffusedShader) {
-      this.diffusedShader = this._pInst.createShader(
-        defaultShaders.imageLightVert,
-        defaultShaders.imageLightDiffusedFrag
+
+    // Create a cubemap texture
+    const envCubemap = this.GL.createTexture();
+    this.GL.bindTexture(this.GL.TEXTURE_CUBE_MAP, envCubemap);
+
+    // Loop through each face and allocate storage
+    for (let i = 0; i < 6; ++i) {
+      this.GL.texImage2D(
+        this.GL.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0,
+        this.GL.RGB16F, 512, 512, 0,
+        this.GL.RGB, this.GL.FLOAT, null
       );
     }
-    // // Assuming this.uMVMatrix is your 3D rotation matrix
-    // let captureViews = [];
 
-    // // Create view matrices for each face based on the original view matrix (this.uMVMatrix)
-    // for (let i = 0; i < 6; ++i) {
-    // // Simply use the original view matrix for each face
-    //   const faceViewMatrix = this.uMVMatrix.copy();
+    // Set parameters for the cubemap
+    this.GL.texParameteri(this.GL.TEXTURE_CUBE_MAP
+      , this.GL.TEXTURE_WRAP_S, this.GL.CLAMP_TO_EDGE);
+    this.GL.texParameteri(this.GL.TEXTURE_CUBE_MAP
+      , this.GL.TEXTURE_WRAP_T, this.GL.CLAMP_TO_EDGE);
+    this.GL.texParameteri(this.GL.TEXTURE_CUBE_MAP
+      , this.GL.TEXTURE_WRAP_R, this.GL.CLAMP_TO_EDGE);
+    this.GL.texParameteri(this.GL.TEXTURE_CUBE_MAP
+      , this.GL.TEXTURE_MIN_FILTER, this.GL.LINEAR);
+    this.GL.texParameteri(this.GL.TEXTURE_CUBE_MAP
+      , this.GL.TEXTURE_MAG_FILTER, this.GL.LINEAR);
 
-    //   // Add the resulting view matrix to the captureViews array
-    //   captureViews.push(faceViewMatrix);
-    // }
+    // Set up view matrices for each face
+    const captureViews = [
+      lookAt([0, 0, 0], [1, 0, 0], [0, -1, 0]), // Positive X
+      lookAt([0, 0, 0], [-1, 0, 0], [0, -1, 0]), // Negative X
+      lookAt([0, 0, 0], [0, 1, 0], [0, 0, 1]), // Positive Y
+      lookAt([0, 0, 0], [0, -1, 0], [0, 0, -1]), // Negative Y
+      lookAt([0, 0, 0], [0, 0, 1], [0, -1, 0]), // Positive Z
+      lookAt([0, 0, 0], [0, 0, -1], [0, -1, 0]) // Negative Z
+    ];
 
-    // Create a shader for cubemap conversion
+    // Get the cubemap shader
     const cubemapShader = this._getCubemapShader();
-    function useCubemapShader(){
-      shader(cubemapShader);
-    }
+    this._pInst.shader(cubemapShader);
+    cubemapShader.setUniform('equirectangularMap', 0);
+
+    // Define captureProjection as a 4x4 projection matrix
+    let captureProjection = new p5.Matrix();
+    captureProjection.perspective(Math.PI / 2.0, 1.0, 0.1, 10.0);
+
+    cubemapShader.setUniform('projection', captureProjection.mat4);
+
+    this.GL.activeTexture(this.GL.TEXTURE0);
+    this.GL.bindTexture(this.GL.TEXTURE_2D, input);
+
+    // Create a new framebuffer
+    let newFramebuffer = this._pInst.createFramebuffer({
+      width: 512,
+      height: 512,
+      density: 1
+    });
+
+    this.GL.bindFramebuffer(this.GL.FRAMEBUFFER, newFramebuffer.handle);
+
     // Render each face of the cubemap
     for (let i = 0; i < 6; ++i) {
-      newFramebuffer.draw(() => {
-        useCubemapShader();
-        cubemapShader.setUniform('equirectangularMap', input);
-        // cubemapShader.setUniform('projection', this.uPMatrix);
-        // cubemapShader.setUniform('view', captureViews[i]);
+      this.GL.framebufferTexture2D(
+        this.GL.FRAMEBUFFER,
+        this.GL.COLOR_ATTACHMENT0,
+        this.GL.TEXTURE_CUBE_MAP_POSITIVE_X + i,
+        envCubemap,
+        0
+      );
 
-        this._pInst.noStroke();
-        this._pInst.rectMode(constants.CENTER);
-        this._pInst.noLights();
-        this._pInst.rect(0, 0, width, height);
+      this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 
-      });
-      // Capture the rendered face and store it in the faces array
-      faces[i] = newFramebuffer.get();
+      cubemapShader.setUniform('view', captureViews[i].mat4);
+
+      renderCube(); // Renders a 1x1 cube
     }
-    // Use the diffusedShader for rendering
-    this._pInst.shader(this.diffusedShader);
-    this.diffusedShader.setUniform('environmentMap', input);
 
-    // Render the cubemap using the stored faces
-    for (let i = 0; i < 6; ++i) {
-      this._pInst.image(faces[i], 0, 0, width, height);
-    }
-    // Free the framebuffer resources
-    // newFramebuffer.free();
+    this.GL.bindFramebuffer(this.GL.FRAMEBUFFER, null);
 
-    // Initialize CubemapTexture class with faces
-    cubemapTexture=new CubemapTexture(this,faces, {});
-    cubemapTexture.init(faces);
+    // Initialize CubemapTexture class with the cubemap texture
+    let cubemapTexture = new CubemapTexture(this, envCubemap, {});
     this.diffusedTextures.set(input, cubemapTexture);
+
     return cubemapTexture;
   }
 
