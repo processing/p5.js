@@ -243,14 +243,11 @@ p5.Geometry = class Geometry {
  *     });
  *     endShape(CLOSE);
  *   });
- *
  *   octa = endGeometry();
- *   octa.saveObj();
  * }
  * </code>
  * </div>
  */
-
   saveObj (fileName='model.obj'){
     let objStr= '';
 
@@ -274,17 +271,172 @@ p5.Geometry = class Geometry {
       });
 
     }
-    // Faces
+    // Faces, obj vertex indices begin with 1 and not 0
+    // texture coordinate (uvs) and vertexNormal indices
+    // are indicated with trailing ints vertex/normal/uv
+    // ex 1/1/1 or 2//2 for vertices without uvs
     this.faces.forEach(face => {
-      // OBJ format uses 1-based indices
-      const faceStr = face.map(index => index + 1).join(' ');
-      objStr += `f ${faceStr}\n`;
+      let faceStr = 'f';
+      face.forEach(index =>{
+        faceStr += ' ';
+        faceStr += index + 1;
+        if (this.vertexNormals.length > 0 || this.uvs.length > 0) {
+          faceStr += '/';
+          if (this.uvs.length > 0) {
+            faceStr += index + 1;
+          }
+          faceStr += '/';
+          if (this.vertexNormals.length > 0) {
+            faceStr += index + 1;
+          }
+        }
+      });
+      objStr += faceStr + '\n';
     });
 
     const blob = new Blob([objStr], { type: 'text/plain' });
     p5.prototype.downloadFile(blob, fileName , 'obj');
 
   }
+
+  /**
+   * The `saveSTL()` function allows the export of p5.Geometry objects as
+   * 3D models in the stl stereolithography file format.
+   * This functionality enables users to generate
+   * custom 3D models within a p5.js sketch and then save them for use
+   * in other applications or for further development in 3D modeling software.
+   *
+   * This method should be called on a custom p5.Geometry 3D object, which typically contains
+   * vertices, faces, texture coordinates (UVs),
+   * and vertex normals. The exported .stl file will include all these components formatted according
+   * to the STL file specification.
+   *
+   * @method saveStl
+   * @for p5.Geometry
+   *
+   * @param {String} [fileName='model.stl'] The name of the file to save the model as.
+   *                                        If not specified, the default file name will be 'model.stl'.
+   * @param {boolean} [binary=false] When true will save the stl in a binary format if false ASCII format. Defaults to false.
+   *
+   * @example
+   * <div>
+   * <code>
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * let myGeometry;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Geometry object using a callback function.
+   *   myGeometry = new p5.Geometry();
+   *
+   *   // Create p5.Vector objects to position the vertices.
+   *   let v0 = createVector(-40, 0, 0);
+   *   let v1 = createVector(0, -40, 0);
+   *   let v2 = createVector(0, 40, 0);
+   *   let v3 = createVector(40, 0, 0);
+   *
+   *   // Add the vertices to the p5.Geometry object's vertices array.
+   *   myGeometry.vertices.push(v0, v1, v2, v3);
+   *
+   *   // Compute the faces array.
+   *   myGeometry.computeFaces();
+   *
+   *   // Compute the surface normals.
+   *   myGeometry.computeNormals();
+   *
+   *   describe('A red square drawn on a gray background with a button to download the model as an obj');
+   *
+   *   // Create a button to download
+   *   const b = createButton('Download');
+   *   b.size(100, 20);
+   *   b.position(0, 80);
+   *   // on button press, download the model as "example.stl"
+   *   b.mousePressed(myGeometry.saveStl('example.stl'));
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Add a white point light.
+   *   pointLight(255, 255, 255, 0, 0, 10);
+   *
+   *   // Style the p5.Geometry object.
+   *   noStroke();
+   *   fill(255, 0, 0);
+   *
+   *   // Draw the p5.Geometry object.
+   *   model(myGeometry);
+   * }
+   * </code>
+   * </div>
+   */
+  saveStl (filename = 'model.stl', binary = false){
+    let modelOutput;
+    let name = filename.substring(0, filename.lastIndexOf('.'));
+    faceNormals = [];
+    for (let f of this.faces) {
+      const U = p5.Vector.sub(this.vertices[f[1]], this.vertices[f[0]]);
+      const V = p5.Vector.sub(this.vertices[f[2]], this.vertices[f[0]]);
+      const nx = U.y * V.z - U.z * V.y;
+      const ny = U.z * V.x - U.x * V.z;
+      const nz = U.x * V.y - U.y * V.x;
+      faceNormals.push(createVector(nx, ny, nz).normalize());
+    }
+    if (binary) {
+      let offset = 80;
+      const bufferLength =
+          this.faces.length * 2 + this.faces.length * 3 * 4 * 4 + 80 + 4;
+      const arrayBuffer = new ArrayBuffer(bufferLength);
+      modelOutput = new DataView(arrayBuffer);
+      modelOutput.setUint32(offset, this.faces.length, true);
+      offset += 4;
+      for (const [key, f] of Object.entries(this.faces)) {
+        const norm = faceNormals[key];
+        modelOutput.setFloat32(offset, norm.x, true);
+        offset += 4;
+        modelOutput.setFloat32(offset, norm.y, true);
+        offset += 4;
+        modelOutput.setFloat32(offset, norm.z, true);
+        offset += 4;
+        for (let vertexIndex of f) {
+          const vert = this.vertices[vertexIndex];
+          modelOutput.setFloat32(offset, vert.x, true);
+          offset += 4;
+          modelOutput.setFloat32(offset, vert.y, true);
+          offset += 4;
+          modelOutput.setFloat32(offset, vert.z, true);
+          offset += 4;
+        }
+        modelOutput.setUint16(offset, 0, true);
+        offset += 2;
+      }
+    } else {
+      modelOutput = 'solid ' + name + '\n';
+
+      for (const [key, f] of Object.entries(this.faces)) {
+        const norm = faceNormals[key];
+        modelOutput +=
+          ' facet norm ' + norm.x + ' ' + norm.y + ' ' + norm.z + '\n';
+        modelOutput += '  outer loop' + '\n';
+        for (let vertexIndex of f) {
+          const vert = this.vertices[vertexIndex];
+          modelOutput +=
+            '   vertex ' + vert.x + ' ' + vert.y + ' ' + vert.z + '\n';
+        }
+        modelOutput += '  endloop' + '\n';
+        modelOutput += ' endfacet' + '\n';
+      }
+      modelOutput += 'endsolid ' + name + '\n';
+    }
+    const blob = new Blob([modelOutput], { type: 'text/plain' });
+    p5.prototype.downloadFile(blob, filename, 'stl');
+  }
+
   /**
  * Flips the U texture coordinates of the model.
  * @method flipU
@@ -1008,3 +1160,4 @@ p5.Geometry = class Geometry {
   }
 };
 export default p5.Geometry;
+
