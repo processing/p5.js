@@ -709,14 +709,6 @@ p5.prototype.frustum = function (...args) {
 p5.prototype.createCamera = function () {
   this._assert3d('createCamera');
   const _cam = new p5.Camera(this._renderer);
-
-  // compute default camera settings, then set a default camera
-  _cam._computeCameraDefaultSettings();
-  _cam._setDefaultCamera();
-
-  // set renderer current camera to the new camera
-  this._renderer._curCamera = _cam;
-
   return _cam;
 };
 
