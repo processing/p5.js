@@ -13,60 +13,115 @@ let defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
 const defaultClass = 'p5Canvas';
 
 /**
- * Creates a canvas element in the document and sets its dimensions
- * in pixels. This method should be called only once at the start of <a href="#/p5/setup">setup()</a>.
- * Calling <a href="#/p5/createCanvas">createCanvas</a> more than once in a
- * sketch will result in very unpredictable behavior. If you want more than
- * one drawing canvas you could use <a href="#/p5/createGraphics">createGraphics()</a>
- * (hidden by default but it can be shown).
+ * Creates a canvas element on the web page.
  *
- * Important note: in 2D mode (i.e. when `p5.Renderer` is not set) the origin (0,0)
- * is positioned at the top left of the screen. In 3D mode (i.e. when `p5.Renderer`
- * is set to `WEBGL`), the origin is positioned at the center of the canvas.
- * See [this issue](https://github.com/processing/p5.js/issues/1545) for more information.
+ * `createCanvas()` creates the main drawing canvas for a sketch. It should
+ * only be called once at the beginning of <a href="#/p5/setup">setup()</a>.
+ * Calling `createCanvas()` more than once causes unpredictable behavior.
  *
- * A WebGL canvas will use a WebGL2 context if it is supported by the browser.
- * Check the <a href="#/p5/webglVersion">webglVersion</a> property to check what
- * version is being used, or call <a href="#/p5/setAttributes">setAttributes({ version: 1 })</a>
- * to create a WebGL1 context.
+ * The first two parameters, `width` and `height`, are optional. They set the
+ * dimensions of the canvas and the values of the
+ * <a href="#/p5/width">width</a> and <a href="#/p5/height">height</a> system
+ * variables. For example, calling `createCanvas(900, 500)` creates a canvas
+ * that's 900×500 pixels. By default, `width` and `height` are both 100.
  *
- * The system variables width and height are set by the parameters passed to this
- * function. If <a href="#/p5/createCanvas">createCanvas()</a> is not used, the
- * window will be given a default size of 100×100 pixels.
+ * The third parameter is also optional. If either of the constants `P2D` or
+ * `WEBGL` is passed, as in `createCanvas(900, 500, WEBGL)`, then it will set
+ * the sketch's rendering mode. If an existing
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement" target="_blank">HTMLCanvasElement</a>
+ * is passed, as in `createCanvas(900, 500, myCanvas)`, then it will be used
+ * by the sketch.
  *
- * Optionally, an existing canvas can be passed using a selector, ie. `document.getElementById('')`.
- * If specified, avoid using `setAttributes()` afterwards, as this will remove and recreate the existing canvas.
+ * The fourth parameter is also optional. If an existing
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement" target="_blank">HTMLCanvasElement</a>
+ * is passed, as in `createCanvas(900, 500, WEBGL, myCanvas)`, then it will be
+ * used by the sketch.
  *
- * For more ways to position the canvas, see the
- * <a href='https://github.com/processing/p5.js/wiki/Positioning-your-canvas'>
- * positioning the canvas</a> wiki page.
+ * Note: In WebGL mode, the canvas will use a WebGL2 context if it's supported
+ * by the browser. Check the <a href="#/p5/webglVersion">webglVersion</a>
+ * system variable to check what version is being used, or call
+ * `setAttributes({ version: 1 })` to create a WebGL1 context.
  *
  * @method createCanvas
- * @param  {Number} w width of the canvas
- * @param  {Number} h height of the canvas
- * @param  {Constant} [renderer] either P2D or WEBGL
- * @param  {HTMLCanvasElement} [canvas] existing html canvas element
- * @return {p5.Renderer} pointer to p5.Renderer holding canvas
+ * @param  {Number} [width] width of the canvas. Defaults to 100.
+ * @param  {Number} [height] width of the canvas. Defaults to 100.
+ * @param  {Constant} [renderer] either P2D or WEBGL. Defaults to `P2D`.
+ * @param  {HTMLCanvasElement} [canvas] existing canvas element that should be used for the sketch.
+ * @return {p5.Renderer} new `p5.Renderer` that holds the canvas.
+ *
  * @example
  * <div>
  * <code>
  * function setup() {
- *   createCanvas(100, 50);
- *   background(153);
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Draw a diagonal line.
  *   line(0, 0, width, height);
+ *
+ *   describe('A diagonal line drawn from top-left to bottom-right on a gray background.');
  * }
  * </code>
  * </div>
  *
- * @alt
- * Black line extending from top-left of canvas to bottom right.
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 50);
+ *
+ *   background(200);
+ *
+ *   // Draw a diagonal line.
+ *   line(0, 0, width, height);
+ *
+ *   describe('A diagonal line drawn from top-left to bottom-right on a gray background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Use WebGL mode.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   background(200);
+ *
+ *   // Draw a diagonal line.
+ *   line(-width / 2, -height / 2, width / 2, height / 2);
+ *
+ *   describe('A diagonal line drawn from top-left to bottom-right on a gray background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   // Create a p5.Render object.
+ *   let cnv = createCanvas(50, 50);
+ *
+ *   // Position the canvas.
+ *   cnv.position(10, 20);
+ *
+ *   background(200);
+ *
+ *   // Draw a diagonal line.
+ *   line(0, 0, width, height);
+ *
+ *   describe('A diagonal line drawn from top-left to bottom-right on a gray background.');
+ * }
+ * </code>
+ * </div>
  */
 /**
  * @method createCanvas
- * @param  {Number} w
- * @param  {Number} h
+ * @param  {Number} [width]
+ * @param  {Number} [height]
  * @param  {HTMLCanvasElement} [canvas]
- * @return {p5.Renderer} pointer to p5.Renderer holding canvas
+ * @return {p5.Renderer}
  */
 p5.prototype.createCanvas = function(w, h, renderer, canvas) {
   p5._validateParameters('createCanvas', arguments);
@@ -146,6 +201,10 @@ p5.prototype.createCanvas = function(w, h, renderer, canvas) {
   if (r === constants.WEBGL) {
     this._setProperty('_renderer', new p5.RendererGL(c, this, true));
     this._elements.push(this._renderer);
+    const dimensions =
+      this._renderer._adjustDimensions(w, h);
+    w = dimensions.adjustedWidth;
+    h = dimensions.adjustedHeight;
   } else {
     //P2D mode
     if (!this._defaultGraphicsCreated) {
@@ -160,30 +219,89 @@ p5.prototype.createCanvas = function(w, h, renderer, canvas) {
 };
 
 /**
- * Resizes the canvas to given width and height. The canvas will be cleared
- * and draw will be called immediately, allowing the sketch to re-render itself
- * in the resized canvas.
- * @method resizeCanvas
- * @param  {Number} w width of the canvas
- * @param  {Number} h height of the canvas
- * @param  {Boolean} [noRedraw] don't redraw the canvas immediately
- * @example
- * <div class="norender"><code>
- * function setup() {
- *   createCanvas(windowWidth, windowHeight);
- * }
+ * Resizes the canvas to a given width and height.
  *
- * function draw() {
- *   background(0, 100, 200);
- * }
+ * `resizeCanvas()` immediately clears the canvas and calls
+ * <a href="#/p5/redraw">redraw()</a>. It's common to call `resizeCanvas()`
+ * within the body of <a href="#/p5/windowResized">windowResized()</a> like
+ * so:
  *
+ * ```js
  * function windowResized() {
  *   resizeCanvas(windowWidth, windowHeight);
  * }
- * </code></div>
+ * ```
  *
- * @alt
- * No image displayed.
+ * The first two parameters, `width` and `height`, set the dimensions of the
+ * canvas. They also the values of the <a href="#/p5/width">width</a> and
+ * <a href="#/p5/height">height</a> system variables. For example, calling
+ * `resizeCanvas(300, 500)` resizes the canvas to 300×500 pixels, then sets
+ * <a href="#/p5/width">width</a> to 300 and
+ * <a href="#/p5/height">height</a> 500.
+ *
+ * The third parameter, `noRedraw`, is optional. If `true` is passed, as in
+ * `resizeCanvas(300, 500, true)`, then the canvas will be canvas to 300×500
+ * pixels but the <a href="#/p5/redraw">redraw()</a> function won't be called
+ * immediately. By default, <a href="#/p5/redraw">redraw()</a> is called
+ * immediately when `resizeCanvas()` finishes executing.
+ *
+ * @method resizeCanvas
+ * @param  {Number} width width of the canvas.
+ * @param  {Number} height height of the canvas.
+ * @param  {Boolean} [noRedraw] whether to delay calling
+ *                              <a href="#/p5/redraw">redraw()</a>. Defaults
+ *                              to `false`.
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Double-click to resize the canvas.
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A white circle drawn on a gray background. The canvas shrinks by half the first time the user double-clicks.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Draw a circle at the center of the canvas.
+ *   circle(width / 2, height / 2, 20);
+ * }
+ *
+ * // Resize the canvas when the user double-clicks.
+ * function doubleClicked() {
+ *   resizeCanvas(50, 50);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Resize the web browser to change the canvas size.
+ *
+ * function setup() {
+ *   createCanvas(windowWidth, windowHeight);
+ *
+ *   describe('A white circle drawn on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Draw a circle at the center of the canvas.
+ *   circle(width / 2, height / 2, 20);
+ * }
+ *
+ * // Always resize the canvas to fill the browser window.
+ * function windowResized() {
+ *   resizeCanvas(windowWidth, windowHeight);
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.resizeCanvas = function(w, h, noRedraw) {
   p5._validateParameters('resizeCanvas', arguments);
@@ -195,6 +313,12 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
       if (typeof val !== 'object' && typeof val !== 'function') {
         props[key] = val;
       }
+    }
+    if (this._renderer instanceof p5.RendererGL) {
+      const dimensions =
+        this._renderer._adjustDimensions(w, h);
+      w = dimensions.adjustedWidth;
+      h = dimensions.adjustedHeight;
     }
     this.width = w;
     this.height = h;
@@ -220,8 +344,14 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
 };
 
 /**
- * Removes the default canvas for a p5 sketch that doesn't require a canvas
+ * Removes the default canvas.
+ *
+ * By default, a 100×100 pixels canvas is created without needing to call
+ * <a href="#/p5/createCanvas">createCanvas()</a>. `noCanvas()` removes the
+ * default canvas for sketches that don't need it.
+ *
  * @method noCanvas
+ *
  * @example
  * <div>
  * <code>
@@ -230,9 +360,6 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
  * }
  * </code>
  * </div>
- *
- * @alt
- * no image displayed
  */
 p5.prototype.noCanvas = function() {
   if (this.canvas) {
@@ -241,54 +368,116 @@ p5.prototype.noCanvas = function() {
 };
 
 /**
- * Creates and returns a new p5.Graphics object. Use this class if you need
- * to draw into an off-screen graphics buffer. The two parameters define the
- * width and height in pixels.
+ * Creates a <a href="#/p5.Graphics">p5.Graphics</a> object.
  *
- * A WebGL p5.Graphics will use a WebGL2 context if it is supported by the browser.
- * Check the <a href="#/p5/webglVersion">pg.webglVersion</a> property of the renderer
- * to check what version is being used, or call <a href="#/p5/setAttributes">pg.setAttributes({ version: 1 })</a>
- * to create a WebGL1 context.
+ * `createGraphics()` creates an offscreen drawing canvas (graphics buffer)
+ * and returns it as a <a href="#/p5.Graphics">p5.Graphics</a> object. Drawing
+ * to a separate graphics buffer can be helpful for performance and for
+ * organizing code.
  *
- * Optionally, an existing canvas can be passed using a selector, ie. document.getElementById('').
- * By default this canvas will be hidden (offscreen buffer), to make visible, set element's style to display:block;
+ * The first two parameters, `width` and `height`, are optional. They set the
+ * dimensions of the <a href="#/p5.Graphics">p5.Graphics</a> object. For
+ * example, calling `createGraphics(900, 500)` creates a graphics buffer
+ * that's 900×500 pixels.
+ *
+ * The third parameter is also optional. If either of the constants `P2D` or
+ * `WEBGL` is passed, as in `createGraphics(900, 500, WEBGL)`, then it will set
+ * the <a href="#/p5.Graphics">p5.Graphics</a> object's rendering mode. If an
+ * existing
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement" target="_blank">HTMLCanvasElement</a>
+ * is passed, as in `createGraphics(900, 500, myCanvas)`, then it will be used
+ * by the graphics buffer.
+ *
+ * The fourth parameter is also optional. If an existing
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement" target="_blank">HTMLCanvasElement</a>
+ * is passed, as in `createGraphics(900, 500, WEBGL, myCanvas)`, then it will be
+ * used by the graphics buffer.
+ *
+ * Note: In WebGL mode, the <a href="#/p5.Graphics">p5.Graphics</a> object
+ * will use a WebGL2 context if it's supported by the browser. Check the
+ * <a href="#/p5/webglVersion">webglVersion</a> system variable to check what
+ * version is being used, or call `setAttributes({ version: 1 })` to create a
+ * WebGL1 context.
  *
  * @method createGraphics
- * @param  {Number} w width of the offscreen graphics buffer
- * @param  {Number} h height of the offscreen graphics buffer
- * @param  {Constant} [renderer] either P2D or WEBGL
- *                               undefined defaults to p2d
- * @param  {HTMLCanvasElement} [canvas] existing html canvas element
- * @return {p5.Graphics} offscreen graphics buffer
+ * @param  {Number} width width of the graphics buffer.
+ * @param  {Number} height height of the graphics buffer.
+ * @param  {Constant} [renderer] either P2D or WEBGL. Defaults to P2D.
+ * @param  {HTMLCanvasElement} [canvas] existing canvas element that should be
+ *                                      used for the graphics buffer..
+ * @return {p5.Graphics} new graphics buffer.
+ *
  * @example
  * <div>
  * <code>
+ * //  Double-click to draw the contents of the graphics buffer.
+ *
  * let pg;
+ *
  * function setup() {
  *   createCanvas(100, 100);
- *   pg = createGraphics(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create the p5.Graphics object.
+ *   pg = createGraphics(50, 50);
+ *
+ *   // Draw to the graphics buffer.
+ *   pg.background(100);
+ *   pg.circle(pg.width / 2, pg.height / 2, 20);
+ *
+ *   describe('A gray square. A smaller, darker square with a white circle at its center appears when the user double-clicks.');
  * }
  *
- * function draw() {
- *   background(200);
- *   pg.background(100);
- *   pg.noStroke();
- *   pg.ellipse(pg.width / 2, pg.height / 2, 50, 50);
- *   image(pg, 50, 50);
- *   image(pg, 0, 0, 50, 50);
+ * // Display the graphics buffer when the user double-clicks.
+ * function doubleClicked() {
+ *   if (mouseX > 0 && mouseX < 100 && mouseY > 0 && mouseY < 100) {
+ *     image(pg, 25, 25);
+ *   }
  * }
  * </code>
  * </div>
  *
- * @alt
- * 4 grey squares alternating light and dark grey. White quarter circle mid-left.
+ * <div>
+ * <code>
+ * //  Double-click to draw the contents of the graphics buffer.
+ *
+ * let pg;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create the p5.Graphics object in WebGL mode.
+ *   pg = createGraphics(50, 50, WEBGL);
+ *
+ *   // Draw to the graphics buffer.
+ *   pg.background(100);
+ *   pg.lights();
+ *   pg.noStroke();
+ *   pg.rotateX(QUARTER_PI);
+ *   pg.rotateY(QUARTER_PI);
+ *   pg.torus(15, 5);
+ *
+ *   describe('A gray square. A smaller, darker square with a white torus at its center appears when the user double-clicks.');
+ * }
+ *
+ * // Display the graphics buffer when the user double-clicks.
+ * function doubleClicked() {
+ *   if (mouseX > 0 && mouseX < 100 && mouseY > 0 && mouseY < 100) {
+ *     image(pg, 25, 25);
+ *   }
+ * }
+ * </code>
+ * </div>
  */
 /**
  * @method createGraphics
- * @param  {Number} w
- * @param  {Number} h
+ * @param  {Number} width
+ * @param  {Number} height
  * @param  {HTMLCanvasElement} [canvas]
- * @return {p5.Graphics} offscreen graphics buffer
+ * @return {p5.Graphics}
  */
 p5.prototype.createGraphics = function(w, h, ...args) {
 /**
@@ -304,144 +493,224 @@ p5.prototype.createGraphics = function(w, h, ...args) {
 };
 
 /**
- * Creates and returns a new <a href="#/p5.Framebuffer">p5.Framebuffer</a>, a
- * high-performance WebGL object that you can draw to and then use as a texture.
+ * Creates and a new <a href="#/p5.Framebuffer">p5.Framebuffer</a> object.
  *
- * Options can include:
- * - `format`: The data format of the texture, either `UNSIGNED_BYTE`, `FLOAT`, or `HALF_FLOAT`. The default is `UNSIGNED_BYTE`.
- * - `channels`: What color channels to store, either `RGB` or `RGBA`. The default is to match the channels in the main canvas (with alpha unless disabled with `setAttributes`.)
- * - `depth`: A boolean, whether or not to include a depth buffer. Defaults to true.
- * - `depthFormat`: The data format for depth information, either `UNSIGNED_INT` or `FLOAT`. The default is `FLOAT` if available, or `UNSIGNED_INT` otherwise.
- * - `stencil`: A boolean, whether or not to include a stencil buffer, which can be used for masking. This may only be used if also using a depth buffer. Defaults to the value of `depth`, which is true if not provided.
- * - `antialias`: Boolean or Number, whether or not to render with antialiased edges, and if so, optionally the number of samples to use. Defaults to whether or not the main canvas is antialiased, using a default of 2 samples if so. Antialiasing is only supported when WebGL 2 is available.
- * - `width`: The width of the texture. Defaults to matching the main canvas.
- * - `height`: The height of the texture. Defaults to matching the main canvas.
- * - `density`: The pixel density of the texture. Defaults to the pixel density of the main canvas.
- * - `textureFiltering`: Either `LINEAR` (nearby pixels will be interpolated when reading values from the color texture) or `NEAREST` (no interpolation.) Generally, use `LINEAR` when using the texture as an image, and use `NEAREST` if reading the texture as data. Defaults to `LINEAR`.
+ * <a href="#/p5.Framebuffer">p5.Framebuffer</a> objects are separate drawing
+ * surfaces that can be used as textures in WebGL mode. They're similar to
+ * <a href="#/p5.Graphics">p5.Graphics</a> objects and generally run much
+ * faster when used as textures.
  *
- * If `width`, `height`, or `density` are specified, then the framebuffer will
- * keep that size until manually changed. Otherwise, it will be autosized, and
- * it will update to match the main canvas's size and density when the main
- * canvas changes.
+ * The parameter, `options`, is optional. An object can be passed to configure
+ * the <a href="#/p5.Framebuffer">p5.Framebuffer</a> object. The available
+ * properties are:
+ *
+ * - `format`: data format of the texture, either `UNSIGNED_BYTE`, `FLOAT`, or `HALF_FLOAT`. Default is `UNSIGNED_BYTE`.
+ * - `channels`: whether to store `RGB` or `RGBA` color channels. Default is to match the main canvas which is `RGBA`.
+ * - `depth`: whether to include a depth buffer. Default is `true`.
+ * - `depthFormat`: data format of depth information, either `UNSIGNED_INT` or `FLOAT`. Default is `FLOAT`.
+ * - `stencil`: whether to include a stencil buffer for masking. `depth` must be `true` for this feature to work. Defaults to the value of `depth` which is `true`.
+ * - `antialias`: whether to perform anti-aliasing. If set to `true`, as in `{ antialias: true }`, 2 samples will be used by default. The number of samples can also be set, as in `{ antialias: 4 }`. Default is to match <a href="#/p5/setAttributes">setAttributes()</a> which is `false` (`true` in Safari).
+ * - `width`: width of the <a href="#/p5.Framebuffer">p5.Framebuffer</a> object. Default is to always match the main canvas width.
+ * - `height`: height of the <a href="#/p5.Framebuffer">p5.Framebuffer</a> object. Default is to always match the main canvas height.
+ * - `density`: pixel density of the <a href="#/p5.Framebuffer">p5.Framebuffer</a> object. Default is to always match the main canvas pixel density.
+ * - `textureFiltering`: how to read values from the <a href="#/p5.Framebuffer">p5.Framebuffer</a> object. Either `LINEAR` (nearby pixels will be interpolated) or `NEAREST` (no interpolation). Generally, use `LINEAR` when using the texture as an image and `NEAREST` if reading the texture as data. Default is `LINEAR`.
+ *
+ * If the `width`, `height`, or `density` attributes are set, they won't automatically match the main canvas and must be changed manually.
+ *
+ * Note: `createFramebuffer()` can only be used in WebGL mode.
  *
  * @method createFramebuffer
- * @param {Object} [options] An optional object with configuration
- * @return {p5.Framebuffer}
+ * @param {Object} [options] configuration options.
+ * @return {p5.Framebuffer} new framebuffer.
  *
  * @example
  * <div>
  * <code>
- * let prev, next;
+ * let myBuffer;
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   prev = createFramebuffer({ format: FLOAT });
- *   next = createFramebuffer({ format: FLOAT });
- *   noStroke();
+ *
+ *   // Create a p5.Framebuffer object.
+ *   myBuffer = createFramebuffer();
+ *
+ *   describe('A grid of white toruses rotating against a dark gray background.');
  * }
  *
  * function draw() {
- *   // Swap prev and next so that we can use the previous
- *   // frame as a texture when drawing the current frame
- *   [prev, next] = [next, prev];
+ *   background(50);
  *
- *   // Draw to the framebuffer
- *   next.begin();
- *   background(255);
+ *   // Start drawing to the p5.Framebuffer object.
+ *   myBuffer.begin();
  *
- *   push();
- *   tint(255, 253);
- *   image(prev, -width/2, -height/2);
- *   // Make sure the image plane doesn't block you from seeing any part
- *   // of the scene
- *   clearDepth();
- *   pop();
+ *   // Clear the drawing surface.
+ *   clear();
  *
- *   push();
- *   normalMaterial();
- *   translate(25*sin(frameCount * 0.014), 25*sin(frameCount * 0.02), 0);
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Rotate the coordinate system.
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
- *   box(12);
- *   pop();
- *   next.end();
  *
- *   image(next, -width/2, -height/2);
+ *   // Style the torus.
+ *   noStroke();
+ *
+ *   // Draw the torus.
+ *   torus(20);
+ *
+ *   // Stop drawing to the p5.Framebuffer object.
+ *   myBuffer.end();
+ *
+ *   // Iterate from left to right.
+ *   for (let x = -50; x < 50; x += 25) {
+ *     // Iterate from top to bottom.
+ *     for (let y = -50; y < 50; y += 25) {
+ *       // Draw the p5.Framebuffer object to the canvas.
+ *       image(myBuffer, x, y, 25, 25);
+ *     }
+ *   }
  * }
  * </code>
  * </div>
  *
- * @alt
- * A red, green, and blue box (using normalMaterial) moves and rotates around
- * the canvas, leaving a trail behind it that slowly grows and fades away.
+ * <div>
+ * <code>
+ * let myBuffer;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create an options object.
+ *   let options = { width: 25, height: 25 };
+ *
+ *   // Create a p5.Framebuffer object.
+ *   // Use options for configuration.
+ *   myBuffer = createFramebuffer(options);
+ *
+ *   describe('A grid of white toruses rotating against a dark gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(50);
+ *
+ *   // Start drawing to the p5.Framebuffer object.
+ *   myBuffer.begin();
+ *
+ *   // Clear the drawing surface.
+ *   clear();
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Rotate the coordinate system.
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *
+ *   // Style the torus.
+ *   noStroke();
+ *
+ *   // Draw the torus.
+ *   torus(5, 2.5);
+ *
+ *   // Stop drawing to the p5.Framebuffer object.
+ *   myBuffer.end();
+ *
+ *   // Iterate from left to right.
+ *   for (let x = -50; x < 50; x += 25) {
+ *     // Iterate from top to bottom.
+ *     for (let y = -50; y < 50; y += 25) {
+ *       // Draw the p5.Framebuffer object to the canvas.
+ *       image(myBuffer, x, y);
+ *     }
+ *   }
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.createFramebuffer = function(options) {
   return new p5.Framebuffer(this, options);
 };
 
 /**
- * This makes the canvas forget how far from the camera everything that has
- * been drawn was. Use this if you want to make sure the next thing you draw
- * will not draw behind anything that is already on the canvas.
+ * Clears the depth buffer in WebGL mode.
  *
- * This is useful for things like feedback effects, where you want the previous
- * frame to act like a background for the next frame, and not like a plane in
- * 3D space in the scene.
+ * `clearDepth()` clears information about how far objects are from the camera
+ * in 3D space. This information is stored in an object called the
+ * *depth buffer*. Clearing the depth buffer ensures new objects aren't drawn
+ * behind old ones. Doing so can be useful for feedback effects in which the
+ * previous frame serves as the background for the current frame.
  *
- * This method is only available in WebGL mode. Since 2D mode does not have
- * 3D depth, anything you draw will always go on top of the previous content on
- * the canvas anyway.
+ * The parameter, `depth`, is optional. If a number is passed, as in
+ * `clearDepth(0.5)`, it determines the range of objects to clear from the
+ * depth buffer. 0 doesn't clear any depth information, 0.5 clears depth
+ * information halfway between the near and far clipping planes, and 1 clears
+ * depth information all the way to the far clipping plane. By default,
+ * `depth` is 1.
+ *
+ * Note: `clearDepth()` can only be used in WebGL mode.
  *
  * @method clearDepth
- * @param {Number} [depth] The value, between 0 and 1, to reset the depth to, where
- * 0 corresponds to a value as close as possible to the camera before getting
- * clipped, and 1 corresponds to a value as far away from the camera as possible.
- * The default value is 1.
+ * @param {Number} [depth] amount of the depth buffer to clear between 0
+ *                         (none) and 1 (far clipping plane). Defaults to 1.
  *
  * @example
  * <div>
  * <code>
- * let prev, next;
+ * let previous;
+ * let current;
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   prev = createFramebuffer({ format: FLOAT });
- *   next = createFramebuffer({ format: FLOAT });
- *   noStroke();
+ *
+ *   // Create the p5.Framebuffer objects.
+ *   previous = createFramebuffer({ format: FLOAT });
+ *   current = createFramebuffer({ format: FLOAT });
+ *
+ *   describe(
+ *     'A multicolor box drifts from side to side on a white background. It leaves a trail that fades over time.'
+ *   );
  * }
  *
  * function draw() {
- *   // Swap prev and next so that we can use the previous
- *   // frame as a texture when drawing the current frame
- *   [prev, next] = [next, prev];
+ *   // Swap the previous p5.Framebuffer and the
+ *   // current one so it can be used as a texture.
+ *   [previous, current] = [current, previous];
  *
- *   // Draw to the framebuffer
- *   next.begin();
+ *   // Start drawing to the current p5.Framebuffer.
+ *   current.begin();
+ *
+ *   // Paint the background.
  *   background(255);
  *
+ *   // Draw the previous p5.Framebuffer.
+ *   // Clear the depth buffer so the previous
+ *   // frame doesn't block the current one.
  *   push();
- *   tint(255, 253);
- *   image(prev, -width/2, -height/2);
- *   // Make sure the image plane doesn't block you from seeing any part
- *   // of the scene
+ *   tint(255, 250);
+ *   image(previous, -50, -50);
  *   clearDepth();
  *   pop();
  *
+ *   // Draw the box on top of the previous frame.
  *   push();
- *   normalMaterial();
- *   translate(25*sin(frameCount * 0.014), 25*sin(frameCount * 0.02), 0);
+ *   let x = 25 * sin(frameCount * 0.01);
+ *   let y = 25 * sin(frameCount * 0.02);
+ *   translate(x, y, 0);
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
+ *   normalMaterial();
  *   box(12);
  *   pop();
- *   next.end();
  *
- *   image(next, -width/2, -height/2);
+ *   // Stop drawing to the current p5.Framebuffer.
+ *   current.end();
+ *
+ *   // Display the current p5.Framebuffer.
+ *   image(current, -50, -50);
  * }
  * </code>
  * </div>
- *
- * @alt
- * A red, green, and blue box (using normalMaterial) moves and rotates around
- * the canvas, leaving a trail behind it that slowly grows and fades away.
  */
 p5.prototype.clearDepth = function(depth) {
   this._assert3d('clearDepth');
@@ -449,76 +718,468 @@ p5.prototype.clearDepth = function(depth) {
 };
 
 /**
- * Blends the pixels in the display window according to the defined mode.
- * There is a choice of the following modes to blend the source pixels (A)
- * with the ones of pixels already in the display window (B):
- * <ul>
- * <li><code>BLEND</code> - linear interpolation of colours: C =
- * A*factor + B. <b>This is the default blending mode.</b></li>
- * <li><code>ADD</code> - sum of A and B</li>
- * <li><code>DARKEST</code> - only the darkest colour succeeds: C =
- * min(A*factor, B).</li>
- * <li><code>LIGHTEST</code> - only the lightest colour succeeds: C =
- * max(A*factor, B).</li>
- * <li><code>DIFFERENCE</code> - subtract colors from underlying image.
- * <em>(2D)</em></li>
- * <li><code>EXCLUSION</code> - similar to <code>DIFFERENCE</code>, but less
- * extreme.</li>
- * <li><code>MULTIPLY</code> - multiply the colors, result will always be
- * darker.</li>
- * <li><code>SCREEN</code> - opposite multiply, uses inverse values of the
- * colors.</li>
- * <li><code>REPLACE</code> - the pixels entirely replace the others and
- * don't utilize alpha (transparency) values.</li>
- * <li><code>REMOVE</code> - removes pixels from B with the alpha strength of A.</li>
- * <li><code>OVERLAY</code> - mix of <code>MULTIPLY</code> and <code>SCREEN
- * </code>. Multiplies dark values, and screens light values. <em>(2D)</em></li>
- * <li><code>HARD_LIGHT</code> - <code>SCREEN</code> when greater than 50%
- * gray, <code>MULTIPLY</code> when lower. <em>(2D)</em></li>
- * <li><code>SOFT_LIGHT</code> - mix of <code>DARKEST</code> and
- * <code>LIGHTEST</code>. Works like <code>OVERLAY</code>, but not as harsh. <em>(2D)</em>
- * </li>
- * <li><code>DODGE</code> - lightens light tones and increases contrast,
- * ignores darks. <em>(2D)</em></li>
- * <li><code>BURN</code> - darker areas are applied, increasing contrast,
- * ignores lights. <em>(2D)</em></li>
- * <li><code>SUBTRACT</code> - remainder of A and B <em>(3D)</em></li>
- * </ul>
+ * Sets the way colors blend when added to the canvas.
  *
- * <em>(2D)</em> indicates that this blend mode <b>only</b> works in the 2D renderer.<br>
- * <em>(3D)</em> indicates that this blend mode <b>only</b> works in the WEBGL renderer.
+ * By default, drawing with a solid color paints over the current pixel values
+ * on the canvas. `blendMode()` offers many options for blending colors.
+ *
+ * Shapes, images, and text can be used as sources for drawing to the canvas.
+ * A source pixel changes the color of the canvas pixel where it's drawn. The
+ * final color results from blending the source pixel's color with the canvas
+ * pixel's color. RGB color values from the source and canvas pixels are
+ * compared, added, subtracted, multiplied, and divided to create different
+ * effects. Red values with red values, greens with greens, and blues with
+ * blues.
+ *
+ * The parameter, `mode`, sets the blend mode. For example, calling
+ * `blendMode(ADD)` sets the blend mode to `ADD`. The following blend modes
+ * are available in both 2D and WebGL mode:
+ *
+ * - `BLEND`: color values from the source overwrite the canvas. This is the default mode.
+ * - `ADD`: color values from the source are added to values from the canvas.
+ * - `DARKEST`: keeps the darkest color value.
+ * - `LIGHTEST`: keeps the lightest color value.
+ * - `EXCLUSION`: similar to `DIFFERENCE` but with less contrast.
+ * - `MULTIPLY`: color values from the source are multiplied with values from the canvas. The result is always darker.
+ * - `SCREEN`: all color values are inverted, then multiplied, then inverted again. The result is always lighter. (Opposite of `MULTIPLY`)
+ * - `REPLACE`: the last source drawn completely replaces the rest of the canvas.
+ * - `REMOVE`: overlapping pixels are removed by making them completely transparent.
+ *
+ * The following blend modes are only available in 2D mode:
+ *
+ * - `DIFFERENCE`: color values from the source are subtracted from the values from the canvas. If the difference is a negative number, it's made positive.
+ * - `OVERLAY`: combines `MULTIPLY` and `SCREEN`. Dark values in the canvas get darker and light values get lighter.
+ * - `HARD_LIGHT`: combines `MULTIPLY` and `SCREEN`. Dark values in the source get darker and light values get lighter.
+ * - `SOFT_LIGHT`: a softer version of `HARD_LIGHT`.
+ * - `DODGE`: lightens light tones and increases contrast. Divides the canvas color values by the inverted color values from the source.
+ * - `BURN`: darkens dark tones and increases contrast. Divides the source color values by the inverted color values from the canvas, then inverts the result.
+ *
+ * The following blend modes are only available in WebGL mode:
+ *
+ * - `SUBTRACT`: RGB values from the source are subtracted from the values from the canvas. If the difference is a negative number, it's made positive. Alpha (transparency) values from the source and canvas are added.
  *
  * @method blendMode
- * @param  {Constant} mode blend mode to set for canvas.
+ * @param  {Constant} mode blend mode to set.
  *                either BLEND, DARKEST, LIGHTEST, DIFFERENCE, MULTIPLY,
  *                EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
  *                SOFT_LIGHT, DODGE, BURN, ADD, REMOVE or SUBTRACT
+ *
  * @example
  * <div>
  * <code>
- * blendMode(LIGHTEST);
- * strokeWeight(30);
- * stroke(80, 150, 255);
- * line(25, 25, 75, 75);
- * stroke(255, 50, 50);
- * line(75, 25, 25, 75);
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Use the default blend mode.
+ *   blendMode(BLEND);
+ *
+ *   // Style the lines.
+ *   strokeWeight(30);
+ *
+ *   // Draw the blue line.
+ *   stroke('blue');
+ *   line(25, 25, 75, 75);
+ *
+ *   // Draw the red line.
+ *   stroke('red');
+ *   line(75, 25, 25, 75);
+ *
+ *   describe('A blue line and a red line form an X on a gray background.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * blendMode(MULTIPLY);
- * strokeWeight(30);
- * stroke(80, 150, 255);
- * line(25, 25, 75, 75);
- * stroke(255, 50, 50);
- * line(75, 25, 25, 75);
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Set the blend mode.
+ *   blendMode(ADD);
+ *
+ *   // Style the lines.
+ *   strokeWeight(30);
+ *
+ *   // Draw the blue line.
+ *   stroke('blue');
+ *   line(25, 25, 75, 75);
+ *
+ *   // Draw the red line.
+ *   stroke('red');
+ *   line(75, 25, 25, 75);
+ *
+ *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is faint magenta.');
+ * }
  * </code>
  * </div>
  *
- * @alt
- * translucent image thick red & blue diagonal rounded lines intersecting center
- * Thick red & blue diagonal rounded lines intersecting center. dark at overlap
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Set the blend mode.
+ *   blendMode(DARKEST);
+ *
+ *   // Style the lines.
+ *   strokeWeight(30);
+ *
+ *   // Draw the blue line.
+ *   stroke('blue');
+ *   line(25, 25, 75, 75);
+ *
+ *   // Draw the red line.
+ *   stroke('red');
+ *   line(75, 25, 25, 75);
+ *
+ *   describe('A blue line and a red line form an X on a gray background. The area where they overlap is black.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Set the blend mode.
+ *   blendMode(LIGHTEST);
+ *
+ *   // Style the lines.
+ *   strokeWeight(30);
+ *
+ *   // Draw the blue line.
+ *   stroke('blue');
+ *   line(25, 25, 75, 75);
+ *
+ *   // Draw the red line.
+ *   stroke('red');
+ *   line(75, 25, 25, 75);
+ *
+ *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is faint magenta.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Set the blend mode.
+ *   blendMode(EXCLUSION);
+ *
+ *   // Style the lines.
+ *   strokeWeight(30);
+ *
+ *   // Draw the blue line.
+ *   stroke('blue');
+ *   line(25, 25, 75, 75);
+ *
+ *   // Draw the red line.
+ *   stroke('red');
+ *   line(75, 25, 25, 75);
+ *
+ *   describe('A yellow line and a cyan line form an X on a gray background. The area where they overlap is green.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Set the blend mode.
+ *   blendMode(MULTIPLY);
+ *
+ *   // Style the lines.
+ *   strokeWeight(30);
+ *
+ *   // Draw the blue line.
+ *   stroke('blue');
+ *   line(25, 25, 75, 75);
+ *
+ *   // Draw the red line.
+ *   stroke('red');
+ *   line(75, 25, 25, 75);
+ *
+ *   describe('A blue line and a red line form an X on a gray background. The area where they overlap is black.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Set the blend mode.
+ *   blendMode(SCREEN);
+ *
+ *   // Style the lines.
+ *   strokeWeight(30);
+ *
+ *   // Draw the blue line.
+ *   stroke('blue');
+ *   line(25, 25, 75, 75);
+ *
+ *   // Draw the red line.
+ *   stroke('red');
+ *   line(75, 25, 25, 75);
+ *
+ *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is faint magenta.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Set the blend mode.
+ *   blendMode(REPLACE);
+ *
+ *   // Style the lines.
+ *   strokeWeight(30);
+ *
+ *   // Draw the blue line.
+ *   stroke('blue');
+ *   line(25, 25, 75, 75);
+ *
+ *   // Draw the red line.
+ *   stroke('red');
+ *   line(75, 25, 25, 75);
+ *
+ *   describe('A diagonal red line.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Set the blend mode.
+ *   blendMode(REMOVE);
+ *
+ *   // Style the lines.
+ *   strokeWeight(30);
+ *
+ *   // Draw the blue line.
+ *   stroke('blue');
+ *   line(25, 25, 75, 75);
+ *
+ *   // Draw the red line.
+ *   stroke('red');
+ *   line(75, 25, 25, 75);
+ *
+ *   describe('The silhouette of an X is missing from a gray background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Set the blend mode.
+ *   blendMode(DIFFERENCE);
+ *
+ *   // Style the lines.
+ *   strokeWeight(30);
+ *
+ *   // Draw the blue line.
+ *   stroke('blue');
+ *   line(25, 25, 75, 75);
+ *
+ *   // Draw the red line.
+ *   stroke('red');
+ *   line(75, 25, 25, 75);
+ *
+ *   describe('A yellow line and a cyan line form an X on a gray background. The area where they overlap is green.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Set the blend mode.
+ *   blendMode(OVERLAY);
+ *
+ *   // Style the lines.
+ *   strokeWeight(30);
+ *
+ *   // Draw the blue line.
+ *   stroke('blue');
+ *   line(25, 25, 75, 75);
+ *
+ *   // Draw the red line.
+ *   stroke('red');
+ *   line(75, 25, 25, 75);
+ *
+ *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is bright magenta.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Set the blend mode.
+ *   blendMode(HARD_LIGHT);
+ *
+ *   // Style the lines.
+ *   strokeWeight(30);
+ *
+ *   // Draw the blue line.
+ *   stroke('blue');
+ *   line(25, 25, 75, 75);
+ *
+ *   // Draw the red line.
+ *   stroke('red');
+ *   line(75, 25, 25, 75);
+ *
+ *   describe('A blue line and a red line form an X on a gray background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Set the blend mode.
+ *   blendMode(SOFT_LIGHT);
+ *
+ *   // Style the lines.
+ *   strokeWeight(30);
+ *
+ *   // Draw the blue line.
+ *   stroke('blue');
+ *   line(25, 25, 75, 75);
+ *
+ *   // Draw the red line.
+ *   stroke('red');
+ *   line(75, 25, 25, 75);
+ *
+ *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is violet.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Set the blend mode.
+ *   blendMode(DODGE);
+ *
+ *   // Style the lines.
+ *   strokeWeight(30);
+ *
+ *   // Draw the blue line.
+ *   stroke('blue');
+ *   line(25, 25, 75, 75);
+ *
+ *   // Draw the red line.
+ *   stroke('red');
+ *   line(75, 25, 25, 75);
+ *
+ *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is faint violet.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Set the blend mode.
+ *   blendMode(BURN);
+ *
+ *   // Style the lines.
+ *   strokeWeight(30);
+ *
+ *   // Draw the blue line.
+ *   stroke('blue');
+ *   line(25, 25, 75, 75);
+ *
+ *   // Draw the red line.
+ *   stroke('red');
+ *   line(75, 25, 25, 75);
+ *
+ *   describe('A blue line and a red line form an X on a gray background. The area where they overlap is black.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Set the blend mode.
+ *   blendMode(SUBTRACT);
+ *
+ *   // Style the lines.
+ *   strokeWeight(30);
+ *
+ *   // Draw the blue line.
+ *   stroke('blue');
+ *   line(25, 25, 75, 75);
+ *
+ *   // Draw the red line.
+ *   stroke('red');
+ *   line(75, 25, 25, 75);
+ *
+ *   describe('A yellow line and a turquoise line form an X on a gray background. The area where they overlap is green.');
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.blendMode = function(mode) {
   p5._validateParameters('blendMode', arguments);
@@ -533,31 +1194,61 @@ p5.prototype.blendMode = function(mode) {
 };
 
 /**
- * The p5.js API provides a lot of functionality for creating graphics, but there is
- * some native HTML5 Canvas functionality that is not exposed by p5. You can still call
- * it directly using the variable `drawingContext`, as in the example shown. This is
- * the equivalent of calling `canvas.getContext('2d');` or `canvas.getContext('webgl');`.
- * See this
- * <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D">
- * reference for the native canvas API</a> for possible drawing functions you can call.
+ * A system variable that provides direct access to the sketch's
+ * `&lt;canvas&gt;` element.
+ *
+ * The `&lt;canvas&gt;` element provides many specialized features that aren't
+ * included in the p5.js library. The `drawingContext` system variable
+ * provides access to these features by exposing the sketch's
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D">CanvasRenderingContext2D</a>
+ * object.
  *
  * @property drawingContext
+ *
  * @example
  * <div>
  * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Style the circle using shadows.
  *   drawingContext.shadowOffsetX = 5;
  *   drawingContext.shadowOffsetY = -5;
  *   drawingContext.shadowBlur = 10;
  *   drawingContext.shadowColor = 'black';
- *   background(200);
- *   ellipse(width / 2, height / 2, 50, 50);
+ *
+ *   // Draw the circle.
+ *   circle(50, 50, 40);
+ *
+ *   describe("A white circle on a gray background. The circle's edges are shadowy.");
  * }
  * </code>
  * </div>
  *
- * @alt
- * white ellipse with shadow blur effect around edges
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background('skyblue');
+ *
+ *   // Style the circle using a color gradient.
+ *   let myGradient = drawingContext.createRadialGradient(50, 50, 3, 50, 50, 40);
+ *   myGradient.addColorStop(0, 'yellow');
+ *   myGradient.addColorStop(0.6, 'orangered');
+ *   myGradient.addColorStop(1, 'yellow');
+ *   drawingContext.fillStyle = myGradient;
+ *   drawingContext.strokeStyle = 'rgba(0, 0, 0, 0)';
+ *
+ *   // Draw the circle.
+ *   circle(50, 50, 40);
+ *
+ *   describe('A fiery sun drawn on a light blue background.');
+ * }
+ * </code>
+ * </div>
  */
 
 export default p5;

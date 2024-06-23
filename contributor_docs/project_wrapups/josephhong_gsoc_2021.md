@@ -26,13 +26,13 @@ Hey there. I’m Joseph, a junior who participated in Google Summer of Code 2021
 
 ## Part One: Reference Section Translations
 
-This part was rather straightforward. It involved translating the untranslated lines in the JSON file for the p5.js website’s Reference section. My work was split mainly into 3 parts: translating fully untranslated pages, translating half-translated pages, and standardizing/optimizing the translations and the code for both readability and so that the auto-update script wouldn’t add already-translated lines to pages. [Here is the link]() to the repository with the changed files and [here is the link]() to the pull request.
+This part was rather straightforward. It involved translating the untranslated lines in the JSON file for the p5.js website’s Reference section. My work was split mainly into 3 parts: translating fully untranslated pages, translating half-translated pages, and standardizing/optimizing the translations and the code for both readability and so that the auto-update script wouldn’t add already-translated lines to pages. [Here is the link](https://github.com/jhongover9000/p5.js-website) to the repository with the changed files and [here is the link](https://github.com/processing/p5.js-website/pull/1062) to the pull request.
 
 Translating most of the pages that were fully in English to Korean was somewhat difficult when considering that there have been multiple translators working on the file, which led to different terminology or sentence structure (as for the formal speech used in Korean). Deciding on which terms and structures to use was the main difficulty, but aside from that it wasn’t too difficult.
 
 Half-translated pages weren’t that hard to finish, but one issue was that often there would be a page that was almost fully translated except for a few bits (i.e., the return or the parameters). I ended up translating those as well.
 
-Optimizing the code was probably one of the more difficult parts of this project, as it involved having to go almost line by line in order to standardize the format of the pages. Often <br> would be used instead of creating a separate line/paragraph, which resulted in the auto-updating script getting confused and adding lines that were already translated because it registered the page as having only one paragraph translated. Finding these and changing them was part of the work. 
+Optimizing the code was probably one of the more difficult parts of this project, as it involved having to go almost line by line in order to standardize the format of the pages. Often `<br>` would be used instead of creating a separate line/paragraph, which resulted in the auto-updating script getting confused and adding lines that were already translated because it registered the page as having only one paragraph translated. Finding these and changing them was part of the work. 
 
 Another thing that I addressed was the differences in terminology used for parameters and the ‘(Optional)’ tag. Different sections had different terms for parameters and/or locations of the optional tag, so I went through the file and unified them. 
 
@@ -99,27 +99,29 @@ Support Us: clicking this will lead you to the Donate page
 The dropdown menu is made with an element that contains the links in li elements, as well as a div that contains the default description that appears when only hovering over the topic navigation link.
 
 
-    <li class="navItem">
-             <a href="/index" class="navLink">Topic Navigation Link Name</a>
-             <div class="dropdown">
-               <ul class="dropdownContent">
-                 <!-- Default Text -->
-                 <li><div class="dropdownTextDefault">
-                   <p class="pageName">Cool Subject Title Here!</p>
-                   <p class="pageDescription">Snarky description here.</p>
-                 </div></li>
-                 <!-- Inner Navigation Link(s) -->
-                 <li class="dropdownEntry">
-                   <a href="link/to/page" class="innerNav">PageName
-                     <div class="dropdownText">
-                       <p class="pageName">PageName</p>
-                       <p class="pageDescription">Fun/Detailed description here.</p>
-                     </div>
-                   </a>
-                 </li>
-               </ul>
-             </div>
-           </li>
+```html
+<li class="navItem">
+ <a href="/index" class="navLink">Topic Navigation Link Name</a>
+ <div class="dropdown">
+   <ul class="dropdownContent">
+     <!-- Default Text -->
+     <li><div class="dropdownTextDefault">
+       <p class="pageName">Cool Subject Title Here!</p>
+       <p class="pageDescription">Snarky description here.</p>
+     </div></li>
+     <!-- Inner Navigation Link(s) -->
+     <li class="dropdownEntry">
+       <a href="link/to/page" class="innerNav">PageName
+         <div class="dropdownText">
+           <p class="pageName">PageName</p>
+           <p class="pageDescription">Fun/Detailed description here.</p>
+         </div>
+       </a>
+     </li>
+   </ul>
+ </div>
+</li>
+```
 
 #### External Navigation & i18n
 

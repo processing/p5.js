@@ -8,28 +8,37 @@
 import p5 from '../core/main';
 
 /**
- * Calculates the absolute value of a number. A number's absolute value is its
- * distance from zero on the number line. -5 and 5 are both five units away
- * from zero, so calling `abs(-5)` and `abs(5)` both return 5. The absolute
- * value of a number is always positive.
+ * Calculates the absolute value of a number.
+ *
+ * A number's absolute value is its distance from zero on the number line.
+ * -5 and 5 are both five units away from zero, so calling `abs(-5)` and
+ * `abs(5)` both return 5. The absolute value of a number is always positive.
  *
  * @method abs
  * @param  {Number} n number to compute.
  * @return {Number}   absolute value of given number.
+ *
  * @example
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A gray square with a vertical black line that divides it in half. A white rectangle gets taller when the user moves the mouse away from the line.');
+ * }
+ *
  * function draw() {
- *   // Invert the y-axis.
- *   scale(1, -1);
- *   translate(0, -height);
+ *   background(200);
  *
- *   let centerX = width / 2;
- *   let x = frameCount;
- *   let y = abs(x - centerX);
- *   point(x, y);
+ *   // Divide the canvas.
+ *   line(50, 0, 50, 100);
  *
- *   describe('A series of black dots that form a "V" shape.');
+ *   // Calculate the mouse's distance from the middle.
+ *   let h = abs(mouseX - 50);
+ *
+ *   // Draw a rectangle based on the mouse's distance
+ *   // from the middle.
+ *   rect(0, 100 - h, 100, h);
  * }
  * </code>
  * </div>
@@ -37,30 +46,43 @@ import p5 from '../core/main';
 p5.prototype.abs = Math.abs;
 
 /**
- * Calculates the closest integer value that is greater than or equal to the
- * parameter's value. For example, calling `ceil(9.03)` returns the value
+ * Calculates the closest integer value that is greater than or equal to a
+ * number.
+ *
+ * For example, calling `ceil(9.03)` and `ceil(9.97)` both return the value
  * 10.
  *
  * @method ceil
  * @param  {Number} n number to round up.
  * @return {Integer}   rounded up number.
+ *
  * @example
  * <div>
  * <code>
- * // Set the range for RGB values from 0 to 1.
- * colorMode(RGB, 1);
- * noStroke();
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * let r = 0.3;
- * fill(r, 0, 0);
- * rect(0, 0, width / 2, height);
+ *   background(200);
  *
- * // Round r up to 1.
- * r = ceil(r);
- * fill(r, 0, 0);
- * rect(width / 2, 0, width / 2, height);
+ *   // Use RGB color with values from 0 to 1.
+ *   colorMode(RGB, 1);
  *
- * describe('Two rectangles. The one on the left is dark red and the one on the right is bright red.');
+ *   noStroke();
+ *
+ *   // Draw the left rectangle.
+ *   let r = 0.3;
+ *   fill(r, 0, 0);
+ *   rect(0, 0, 50, 100);
+ *
+ *   // Round r up to 1.
+ *   r = ceil(r);
+ *
+ *   // Draw the right rectangle.
+ *   fill(r, 0, 0);
+ *   rect(50, 0, 50, 100);
+ *
+ *   describe('Two rectangles. The one on the left is dark red and the one on the right is bright red.');
+ * }
  * </code>
  * </div>
  */
@@ -74,9 +96,16 @@ p5.prototype.ceil = Math.ceil;
  * @param  {Number} low  minimum limit.
  * @param  {Number} high maximum limit.
  * @return {Number}      constrained number.
+ *
  * @example
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('A black dot drawn on a gray square follows the mouse from left to right. Its movement is constrained to the middle third of the square.');
+ * }
+ *
  * function draw() {
  *   background(200);
  *
@@ -85,33 +114,35 @@ p5.prototype.ceil = Math.ceil;
  *
  *   strokeWeight(5);
  *   point(x, y);
- *
- *   describe('A black dot drawn on a gray square follows the mouse from left to right. Its movement is constrained to the middle third of the square.');
  * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe('Two vertical lines. Two circles move horizontally with the mouse. One circle stops at the vertical lines.');
+ * }
+ *
  * function draw() {
  *   background(200);
  *
  *   // Set boundaries and draw them.
- *   let leftWall = width * 0.25;
- *   let rightWall = width * 0.75;
- *   line(leftWall, 0, leftWall, height);
- *   line(rightWall, 0, rightWall, height);
+ *   let leftWall = 25;
+ *   let rightWall = 75;
+ *   line(leftWall, 0, leftWall, 100);
+ *   line(rightWall, 0, rightWall, 100);
  *
  *   // Draw a circle that follows the mouse freely.
  *   fill(255);
- *   circle(mouseX, height / 3, 9);
+ *   circle(mouseX, 33, 9);
  *
  *   // Draw a circle that's constrained.
  *   let xc = constrain(mouseX, leftWall, rightWall);
  *   fill(0);
- *   circle(xc, 2 * height / 3, 9);
- *
- *   describe('Two vertical lines. Two circles move horizontally with the mouse. One circle stops at the vertical lines.');
+ *   circle(xc, 67, 9);
  * }
  * </code>
  * </div>
@@ -143,20 +174,35 @@ p5.prototype.constrain = function(n, low, high) {
  * @example
  * <div>
  * <code>
- * let x1 = 10;
- * let y1 = 50;
- * let x2 = 90;
- * let y2 = 50;
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * line(x1, y1, x2, y2);
- * strokeWeight(5);
- * point(x1, y1);
- * point(x2, y2);
+ *   background(200);
  *
- * let d = dist(x1, y1, x2, y2);
- * text(d, 43, 40);
+ *   // Set the coordinates.
+ *   let x1 = 10;
+ *   let y1 = 50;
+ *   let x2 = 90;
+ *   let y2 = 50;
  *
- * describe('Two dots connected by a horizontal line. The number 80 is written above the center of the line.');
+ *   // Draw the points and a line connecting them.
+ *   line(x1, y1, x2, y2);
+ *   strokeWeight(5);
+ *   point(x1, y1);
+ *   point(x2, y2);
+ *
+ *   // Calculate the distance.
+ *   let d = dist(x1, y1, x2, y2);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *
+ *   // Display the distance.
+ *   text(d, 43, 40);
+ *
+ *   describe('Two dots connected by a horizontal line. The number 80 is written above the center of the line.');
+ * }
  * </code>
  * </div>
  */
@@ -182,25 +228,63 @@ p5.prototype.dist = function(...args) {
 };
 
 /**
- * Returns Euler's number e (2.71828...) raised to the power of the `n`
- * parameter.
+ * Calculates the value of Euler's number e (2.71828...) raised to the power
+ * of a number.
  *
  * @method exp
  * @param  {Number} n exponent to raise.
  * @return {Number}   e^n
+ *
  * @example
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Top-left.
+ *   let d = exp(1);
+ *   circle(10, 10, d);
+ *
+ *   // Left-center.
+ *   d = exp(2);
+ *   circle(20, 20, d);
+ *
+ *   // Right-center.
+ *   d = exp(3);
+ *   circle(40, 40, d);
+ *
+ *   // Bottom-right.
+ *   d = exp(4);
+ *   circle(80, 80, d);
+ *
+ *   describe('A series of circles that grow exponentially from top left to bottom right.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   describe('A series of black dots that grow exponentially from left to right.');
+ * }
+ *
  * function draw() {
  *   // Invert the y-axis.
  *   scale(1, -1);
- *   translate(0, -height);
+ *   translate(0, -100);
  *
+ *   // Calculate the coordinates.
  *   let x = frameCount;
  *   let y = 0.005 * exp(x * 0.1);
- *   point(x, y);
  *
- *   describe('A series of black dots that grow exponentially from left to right.');
+ *   // Draw a point.
+ *   point(x, y);
  * }
  * </code>
  * </div>
@@ -209,37 +293,47 @@ p5.prototype.exp = Math.exp;
 
 /**
  * Calculates the closest integer value that is less than or equal to the
- * value of the `n` parameter.
+ * value of a number.
  *
  * @method floor
  * @param  {Number} n number to round down.
  * @return {Integer}  rounded down number.
+ *
  * @example
  * <div>
  * <code>
- * // Set the range for RGB values from 0 to 1.
- * colorMode(RGB, 1);
- * noStroke();
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * let r = 0.8;
- * fill(r, 0, 0);
- * rect(0, 0, width / 2, height);
+ *   // Use RGB color with values from 0 to 1.
+ *   colorMode(RGB, 1);
  *
- * // Round r down to 0.
- * r = floor(r);
- * fill(r, 0, 0);
- * rect(width / 2, 0, width / 2, height);
+ *   noStroke();
  *
- * describe('Two rectangles. The one on the left is bright red and the one on the right is black.');
+ *   // Draw the left rectangle.
+ *   let r = 0.8;
+ *   fill(r, 0, 0);
+ *   rect(0, 0, 50, 100);
+ *
+ *   // Round r down to 0.
+ *   r = floor(r);
+ *
+ *   // Draw the right rectangle.
+ *   fill(r, 0, 0);
+ *   rect(50, 0, 50, 100);
+ *
+ *   describe('Two rectangles. The one on the left is bright red and the one on the right is black.');
+ * }
  * </code>
  * </div>
  */
 p5.prototype.floor = Math.floor;
 
 /**
- * Calculates a number between two numbers at a specific increment. The `amt`
- * parameter is the amount to interpolate between the two numbers. 0.0 is
- * equal to the first number, 0.1 is very near the first number, 0.5 is
+ * Calculates a number between two numbers at a specific increment.
+ *
+ * The `amt` parameter is the amount to interpolate between the two numbers.
+ * 0.0 is equal to the first number, 0.1 is very near the first number, 0.5 is
  * half-way in between, and 1.0 is equal to the second number. The `lerp()`
  * function is convenient for creating motion along a straight path and for
  * drawing dotted lines.
@@ -253,31 +347,71 @@ p5.prototype.floor = Math.floor;
  * @param  {Number} stop  second value.
  * @param  {Number} amt   number.
  * @return {Number}       lerped value.
+ *
  * @example
  * <div>
  * <code>
- * let a = 20;
- * let b = 80;
- * let c = lerp(a, b, 0.2);
- * let d = lerp(a, b, 0.5);
- * let e = lerp(a, b, 0.8);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
+ *   background(200);
+ *
+ *   // Declare variables for coordinates.
+ *   let a = 20;
+ *   let b = 80;
+ *   let c = lerp(a, b, 0.2);
+ *   let d = lerp(a, b, 0.5);
+ *   let e = lerp(a, b, 0.8);
+ *
+ *   strokeWeight(5);
+ *
+ *   // Draw the original points in black.
+ *   stroke(0);
+ *   point(a, 50);
+ *   point(b, 50);
+ *
+ *   // Draw the lerped points in gray.
+ *   stroke(100);
+ *   point(c, 50);
+ *   point(d, 50);
+ *   point(e, 50);
+ *
+ *   describe('Five points in a horizontal line. The outer points are black and the inner points are gray.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let x = 50;
  * let y = 50;
+ * let targetX = 50;
+ * let targetY = 50;
  *
- * strokeWeight(5);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * // Draw the original points in black.
- * stroke(0);
- * point(a, y);
- * point(b, y);
+ *   background(200);
  *
- * // Draw the lerped points in gray.
- * stroke(100);
- * point(c, y);
- * point(d, y);
- * point(e, y);
+ *   describe('A white circle at the center of a gray canvas. The circle moves to where the user clicks, then moves smoothly back to the center.');
+ * }
  *
- * describe('Five points in a horizontal line. The outer points are black and the inner points are gray.');
+ * function draw() {
+ *   background(220);
+ *
+ *   // Move x and y toward the target.
+ *   x = lerp(x, targetX, 0.05);
+ *   y = lerp(y, targetY, 0.05);
+ *
+ *   // Draw the circle.
+ *   circle(x, y, 20);
+ * }
+ *
+ * // Set x and y when the user clicks the mouse.
+ * function mouseClicked() {
+ *   x = mouseX;
+ *   y = mouseY;
+ * }
  * </code>
  * </div>
  */
@@ -287,25 +421,57 @@ p5.prototype.lerp = function(start, stop, amt) {
 };
 
 /**
- * Calculates the natural logarithm (the base-e logarithm) of a number. This
- * function expects the `n` parameter to be a value greater than 0.0.
+ * Calculates the natural logarithm (the base-e logarithm) of a number.
+ *
+ * `log()` expects the `n` parameter to be a value greater than 0 because
+ * the natural logarithm is defined that way.
  *
  * @method log
  * @param  {Number} n number greater than 0.
  * @return {Number}   natural logarithm of n.
+ *
  * @example
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Top-left.
+ *   let d = log(50);
+ *   circle(33, 33, d);
+ *
+ *   // Bottom-right.
+ *   d = log(500000000);
+ *   circle(67, 67, d);
+ *
+ *   describe('Two white circles. The circle at the top-left is small. The circle at the bottom-right is about five times larger.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   describe('A series of black dots that get higher slowly from left to right.');
+ * }
+ *
  * function draw() {
  *   // Invert the y-axis.
  *   scale(1, -1);
- *   translate(0, -height);
+ *   translate(0, -100);
  *
+ *   // Calculate coordinates.
  *   let x = frameCount;
  *   let y = 15 * log(x);
- *   point(x, y);
  *
- *   describe('A series of black dots that get higher slowly from left to right.');
+ *   // Draw a point.
+ *   point(x, y);
  * }
  * </code>
  * </div>
@@ -313,29 +479,50 @@ p5.prototype.lerp = function(start, stop, amt) {
 p5.prototype.log = Math.log;
 
 /**
- * Calculates the magnitude, or length, of a vector. A vector is like an arrow
- * pointing in space. Vectors are commonly used for programming motion.
+ * Calculates the magnitude, or length, of a vector.
  *
- * Vectors don't have a "start" position because the same arrow can be drawn
- * anywhere. A vector's magnitude can be thought of as the distance from the
- * origin (0, 0) to its tip at (x, y). `mag(x, y)` is a shortcut for calling
+ * A vector can be thought of in different ways. In one view, a vector is a
+ * point in space. The vector's components, `x` and `y`, are the point's
+ * coordinates `(x, y)`. A vector's magnitude is the distance from the origin
+ * `(0, 0)` to `(x, y)`. `mag(x, y)` is a shortcut for calling
  * `dist(0, 0, x, y)`.
+ *
+ * A vector can also be thought of as an arrow pointing in space. This view is
+ * helpful for programming motion. See <a href="#/p5.Vector">p5.Vector</a> for
+ * more details.
+ *
+ * Use <a href="#/p5.Vector/mag">p5.Vector.mag()</a> to calculate the
+ * magnitude of a <a href="#/p5.Vector">p5.Vector</a> object.
  *
  * @method mag
  * @param  {Number} x first component.
  * @param  {Number} y second component.
- * @return {Number}   magnitude of vector from (0,0) to (x,y).
+ * @return {Number}   magnitude of vector.
+ *
  * @example
  * <div>
  * <code>
- * let x = 30;
- * let y = 40;
- * let m = mag(x, y);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * line(0, 0, x, y);
- * text(m, x, y);
+ *   background(200);
  *
- * describe('A diagonal line is drawn from the top left of the canvas. The number 50 is written at the end of the line.');
+ *   // Set the vector's components.
+ *   let x = 30;
+ *   let y = 40;
+ *
+ *   // Calculate the magnitude.
+ *   let m = mag(x, y);
+ *
+ *   // Style the text.
+ *   textSize(16);
+ *
+ *   // Display the vector and its magnitude.
+ *   line(0, 0, x, y);
+ *   text(m, x, y);
+ *
+ *   describe('A diagonal line is drawn from the top left of the canvas. The number 50 is written at the end of the line.');
+ * }
  * </code>
  * </div>
  */
@@ -353,43 +540,64 @@ p5.prototype.mag = function(x, y) {
  * in the target range [0, 100] is proportional to 2's position in the
  * original range [0, 10].
  *
+ * The sixth parameter, `withinBounds`, is optional. By default, `map()` can
+ * return values outside of the target range. For example,
+ * `map(11, 0, 10, 0, 100)` returns 110. Passing `true` as the sixth parameter
+ * constrains the remapped value to the target range. For example,
+ * `map(11, 0, 10, 0, 100, true)` returns 100.
+ *
  * @method map
- * @param  {Number} value  the incoming value to be converted.
+ * @param  {Number} value  the value to be remapped.
  * @param  {Number} start1 lower bound of the value's current range.
  * @param  {Number} stop1  upper bound of the value's current range.
  * @param  {Number} start2 lower bound of the value's target range.
  * @param  {Number} stop2  upper bound of the value's target range.
  * @param  {Boolean} [withinBounds] constrain the value to the newly mapped range.
  * @return {Number}        remapped number.
+ *
  * @example
  * <div>
  * <code>
- * let n = map(7, 0, 10, 0, 100);
- * text(n, 50, 50);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * describe('The number 70 written in the middle of a gray square.');
- * </code>
- * </div>
+ *   describe('Two horizontal lines. The top line grows horizontally as the mouse moves to the right. The bottom line also grows horizontally but is scaled to stay on the left half of the canvas.');
+ * }
  *
- * <div>
- * <code>
- * let x = map(2, 0, 10, 0, width);
- * circle(x, 50, 10);
- *
- * describe('A white circle drawn on the left side of a gray square.');
- * </code>
- * </div>
- *
- * <div>
- * <code>
  * function draw() {
  *   background(200);
  *
- *   let c = map(mouseX, 0, width, 0, 255);
- *   fill(c);
- *   circle(50, 50, 20);
+ *   // Draw the top line.
+ *   line(0, 25, mouseX, 25);
+ *
+ *   // Remap mouseX from [0, 100] to [0, 50].
+ *   let x = map(mouseX, 0, 100, 0, 50);
+ *
+ *   // Draw the bottom line.
+ *   line(0, 75, x, 75);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
  *
  *   describe('A circle changes color from black to white as the mouse moves from left to right.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Remap mouseX from [0, 100] to [0, 255]
+ *   let c = map(mouseX, 0, 100, 0, 255);
+ *
+ *   // Style the circle.
+ *   fill(c);
+ *
+ *   // Draw the circle.
+ *   circle(50, 50, 20);
  * }
  * </code>
  * </div>
@@ -420,47 +628,52 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
  * @param  {Number} n0 first number to compare.
  * @param  {Number} n1 second number to compare.
  * @return {Number}             maximum number.
+ *
  * @example
  * <div>
  * <code>
- * let m = max(10, 20);
- * text(m, 50, 50);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * describe('The number 20 written in the middle of a gray square.');
+ *   background(200);
+ *
+ *   // Calculate the maximum of 10, 5, and 20.
+ *   let m = max(10, 5, 20);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *
+ *   // Display the max.
+ *   text(m, 50, 50);
+ *
+ *   describe('The number 20 written in the middle of a gray square.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * let m = max([10, 20]);
- * text(m, 50, 50);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * describe('The number 20 written in the middle of a gray square.');
- * </code>
- * </div>
+ *   background(200);
  *
- * <div>
- * <code>
- * let numbers = [2, 1, 5, 4, 8, 9];
+ *   // Create an array of numbers.
+ *   let numbers = [10, 5, 20];
  *
- * // Draw all of the numbers in the array.
- * noStroke();
- * let spacing = 15;
- * numbers.forEach((n, index) => {
- *   let x = index * spacing;
- *   let y = 25;
- *   text(n, x, y);
- * });
+ *   // Calculate the maximum of the array.
+ *   let m = max(numbers);
  *
- * // Draw the maximum value in the array.
- * let m = max(numbers);
- * let maxX = 33;
- * let maxY = 80;
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
  *
- * textSize(32);
- * text(m, maxX, maxY);
+ *   // Display the max.
+ *   text(m, 50, 50);
  *
- * describe('The numbers 2 1 5 4 8 9 are written in small text at the top of a gray square. The number 9 is written in large text at the center of the square.');
+ *   describe('The number 20 written in the middle of a gray square.');
+ * }
  * </code>
  * </div>
  */
@@ -470,15 +683,9 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
  * @return {Number}
  */
 p5.prototype.max = function(...args) {
-  const findMax = arr => {
-    let max = -Infinity;
-    for (let x of arr) {
-      max = Math.max(max, x);
-    }
-    return max;
-  };
+  const findMax = arr => Math.max(...arr);
 
-  if (args[0] instanceof Array) {
+  if (Array.isArray(args[0])) {
     return findMax(args[0]);
   } else {
     return findMax(args);
@@ -498,47 +705,52 @@ p5.prototype.max = function(...args) {
  * @param  {Number} n0 first number to compare.
  * @param  {Number} n1 second number to compare.
  * @return {Number}             minimum number.
+ *
  * @example
  * <div>
  * <code>
- * let m = min(10, 20);
- * text(m, 50, 50);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * describe('The number 10 written in the middle of a gray square.');
+ *   background(200);
+ *
+ *   // Calculate the minimum of 10, 5, and 20.
+ *   let m = min(10, 5, 20);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *
+ *   // Display the min.
+ *   text(m, 50, 50);
+ *
+ *   describe('The number 5 written in the middle of a gray square.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * let m = min([10, 20]);
- * text(m, 50, 50);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * describe('The number 10 written in the middle of a gray square.');
- * </code>
- * </div>
+ *   background(200);
  *
- * <div>
- * <code>
- * let numbers = [2, 1, 5, 4, 8, 9];
+ *   // Create an array of numbers.
+ *   let numbers = [10, 5, 20];
  *
- * // Draw all of the numbers in the array.
- * noStroke();
- * let spacing = 15;
- * numbers.forEach((n, index) => {
- *   let x = index * spacing;
- *   let y = 25;
- *   text(n, x, y);
- * });
+ *   // Calculate the minimum of the array.
+ *   let m = min(numbers);
  *
- * // Draw the minimum value in the array.
- * let m = min(numbers);
- * let minX = 33;
- * let minY = 80;
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
  *
- * textSize(32);
- * text(m, minX, minY);
+ *   // Display the min.
+ *   text(m, 50, 50);
  *
- * describe('The numbers 2 1 5 4 8 9 are written in small text at the top of a gray square. The number 1 is written in large text at the center of the square.');
+ *   describe('The number 5 written in the middle of a gray square.');
+ * }
  * </code>
  * </div>
  */
@@ -548,15 +760,9 @@ p5.prototype.max = function(...args) {
  * @return {Number}
  */
 p5.prototype.min = function(...args) {
-  const findMin = arr => {
-    let min = Infinity;
-    for (let x of arr) {
-      min = Math.min(min, x);
-    }
-    return min;
-  };
+  const findMin = arr => Math.min(...arr);
 
-  if (args[0] instanceof Array) {
+  if (Array.isArray(args[0])) {
     return findMin(args[0]);
   } else {
     return findMin(args);
@@ -568,7 +774,7 @@ p5.prototype.min = function(...args) {
  *
  * For example, `norm(2, 0, 10)` returns 0.2. 2's position in the original
  * range [0, 10] is proportional to 0.2's position in the range [0, 1]. This
- * is equivalent to calling `map(2, 0, 10, 0, 1)`.
+ * is the same as calling `map(2, 0, 10, 0, 1)`.
  *
  * Numbers outside of the original range are not constrained between 0 and 1.
  * Out-of-range values are often intentional and useful.
@@ -578,17 +784,25 @@ p5.prototype.min = function(...args) {
  * @param  {Number} start lower bound of the value's current range.
  * @param  {Number} stop  upper bound of the value's current range.
  * @return {Number}       normalized number.
+ *
  * @example
  * <div>
  * <code>
- * function draw() {
- *   // Set the range for RGB values from 0 to 1.
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Use RGB color with values from 0 to 1.
  *   colorMode(RGB, 1);
  *
- *   let r = norm(mouseX, 0, width);
- *   background(r, 0, 0);
- *
  *   describe('A square changes color from black to red as the mouse moves from left to right.');
+ * }
+ *
+ * function draw() {
+ *   // Calculate the redValue.
+ *   let redValue = norm(mouseX, 0, 100);
+ *
+ *   // Paint the background.
+ *   background(redValue, 0, 0);
  * }
  * </code>
  * </div>
@@ -599,63 +813,107 @@ p5.prototype.norm = function(n, start, stop) {
 };
 
 /**
- * Calculates exponential expressions such as 2^3.
+ * Calculates exponential expressions such as <var>2<sup>3</sup></var>.
  *
- * For example, `pow(2, 3)` is equivalent to the expression
- * 2 &times; 2 &times; 2. `pow(2, -3)` is equivalent to 1 &#247;
+ * For example, `pow(2, 3)` evaluates the expression
+ * 2 &times; 2 &times; 2. `pow(2, -3)` evaluates 1 &#247;
  * (2 &times; 2 &times; 2).
  *
  * @method pow
  * @param  {Number} n base of the exponential expression.
  * @param  {Number} e power by which to raise the base.
  * @return {Number}   n^e.
+ *
  * @example
  * <div>
  * <code>
- * let base = 3;
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * let d = pow(base, 1);
- * circle(10, 10, d);
+ *   background(200);
  *
- * d = pow(base, 2);
- * circle(20, 20, d);
+ *   // Set the base of the exponent.
+ *   let base = 3;
  *
- * d = pow(base, 3);
- * circle(40, 40, d);
+ *   // Top-left.
+ *   let d = pow(base, 1);
+ *   circle(10, 10, d);
  *
- * d = pow(base, 4);
- * circle(80, 80, d);
+ *   // Left-center.
+ *   d = pow(base, 2);
+ *   circle(20, 20, d);
  *
- * describe('A series of circles that grow exponentially from top left to bottom right.');
+ *   // Right-center.
+ *   d = pow(base, 3);
+ *   circle(40, 40, d);
+ *
+ *   // Bottom-right.
+ *   d = pow(base, 4);
+ *   circle(80, 80, d);
+ *
+ *   describe('A series of circles that grow exponentially from top left to bottom right.');
+ * }
  * </code>
  * </div>
  */
 p5.prototype.pow = Math.pow;
 
 /**
- * Calculates the integer closest to the `n` parameter. For example,
- * `round(133.8)` returns the value 134.
+ * Calculates the integer closest to a number.
+ *
+ * For example, `round(133.8)` returns the value 134.
+ *
+ * The second parameter, `decimals`, is optional. It sets the number of
+ * decimal places to use when rounding. For example, `round(12.34, 1)` returns
+ * 12.3. `decimals` is 0 by default.
  *
  * @method round
  * @param  {Number} n number to round.
  * @param  {Number} [decimals] number of decimal places to round to, default is 0.
  * @return {Integer}  rounded number.
+ *
  * @example
  * <div>
  * <code>
- * let x = round(3.7);
- * text(x, width / 2, height / 2);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * describe('The number 4 written in middle of canvas.');
+ *   background(200);
+ *
+ *   // Round a number.
+ *   let x = round(4.2);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *
+ *   // Display the rounded number.
+ *   text(x, 50, 50);
+ *
+ *   describe('The number 4 written in middle of the canvas.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * let x = round(12.782383, 2);
- * text(x, width / 2, height / 2);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * describe('The number 12.78 written in middle of canvas.');
+ *   background(200);
+ *
+ *   // Round a number to 2 decimal places.
+ *   let x = round(12.782383, 2);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *
+ *   // Display the rounded number.
+ *   text(x, 50, 50);
+ *
+ *   describe('The number 12.78 written in middle of canvas.');
+ * }
  * </code>
  * </div>
  */
@@ -668,29 +926,59 @@ p5.prototype.round = function(n, decimals) {
 };
 
 /**
- * Squares a number, which means multiplying the number by itself. The value
- * returned is always a positive number.
+ * Calculates the square of a number.
  *
- * For example, `sq(3)` evaluates 3 &times; 3  which is 9. `sq(-3)` evaluates
- * -3 &times; -3 which is also 9.  Multiplying two negative numbers produces
- * a positive number.
+ * Squaring a number means multiplying the number by itself. For example,
+ * `sq(3)` evaluates 3 &times; 3 which is 9. `sq(-3)` evaluates -3 &times; -3
+ * which is also 9. Multiplying two negative numbers produces a positive
+ * number. The value returned by `sq()` is always positive.
  *
  * @method sq
  * @param  {Number} n number to square.
  * @return {Number}   squared number.
+ *
  * @example
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Top-left.
+ *   let d = sq(3);
+ *   circle(33, 33, d);
+ *
+ *   // Bottom-right.
+ *   d = sq(6);
+ *   circle(67, 67, d);
+ *
+ *   describe('Two white circles. The circle at the top-left is small. The circle at the bottom-right is four times larger.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   describe('A series of black dots that get higher quickly from left to right.');
+ * }
+ *
  * function draw() {
  *   // Invert the y-axis.
  *   scale(1, -1);
- *   translate(0, -height);
+ *   translate(0, -100);
  *
+ *   // Calculate the coordinates.
  *   let x = frameCount;
  *   let y = 0.01 * sq(x);
- *   point(x, y);
  *
- *   describe('A series of black dots that get higher quickly from left to right.');
+ *   // Draw the point.
+ *   point(x, y);
  * }
  * </code>
  * </div>
@@ -698,29 +986,59 @@ p5.prototype.round = function(n, decimals) {
 p5.prototype.sq = n => n * n;
 
 /**
- * Calculates the square root of a number. A number's square root can be
- * multiplied by itself to produce the original number.
+ * Calculates the square root of a number.
  *
- * For example, `sqrt(9)` returns 3 because 3 &times; 3 = 9. `sqrt()` always
- * returns a positive value. `sqrt()` doesn't work with negative arguments
+ * A number's square root can be multiplied by itself to produce the original
+ * number. For example, `sqrt(9)` returns 3 because 3 &times; 3 = 9. `sqrt()`
+ * always returns a positive value. `sqrt()` doesn't work with negative arguments
  * such as `sqrt(-9)`.
  *
  * @method sqrt
  * @param  {Number} n non-negative number to square root.
  * @return {Number}   square root of number.
+ *
  * @example
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Top-left.
+ *   let d = sqrt(16);
+ *   circle(33, 33, d);
+ *
+ *   // Bottom-right.
+ *   d = sqrt(1600);
+ *   circle(67, 67, d);
+ *
+ *   describe('Two white circles. The circle at the top-left is small. The circle at the bottom-right is ten times larger.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   describe('A series of black dots that get higher slowly from left to right.');
+ * }
+ *
  * function draw() {
  *   // Invert the y-axis.
  *   scale(1, -1);
- *   translate(0, -height);
+ *   translate(0, -100);
  *
+ *   // Calculate the coordinates.
  *   let x = frameCount;
  *   let y = 5 * sqrt(x);
- *   point(x, y);
  *
- *   describe('A series of black dots that get higher slowly from left to right.');
+ *   // Draw the point.
+ *   point(x, y);
  * }
  * </code>
  * </div>
@@ -728,21 +1046,37 @@ p5.prototype.sq = n => n * n;
 p5.prototype.sqrt = Math.sqrt;
 
 /**
- * Calculates the fractional part of a number. For example,
+ * Calculates the fractional part of a number.
+ *
+ * A number's fractional part includes its decimal values. For example,
  * `fract(12.34)` returns 0.34.
  *
  * @method fract
  * @param {Number} n number whose fractional part will be found.
  * @returns {Number} fractional part of n.
+ *
  * @example
  * <div>
  * <code>
- * let n = 56.78;
- * text(n, 20, 33);
- * let f = fract(n);
- * text(f, 20, 66);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * describe('The number 56.78 written above the number 0.78.');
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *
+ *   // Original number.
+ *   let n = 56.78;
+ *   text(n, 50, 33);
+ *
+ *   // Fractional part.
+ *   let f = fract(n);
+ *   text(f, 50, 67);
+ *
+ *   describe('The number 56.78 written above the number 0.78.');
+ * }
  * </code>
  * </div>
  */

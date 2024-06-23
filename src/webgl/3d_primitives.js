@@ -11,227 +11,968 @@ import './p5.Geometry';
 import * as constants from '../core/constants';
 
 /**
- * Starts creating a new p5.Geometry. Subsequent shapes drawn will be added
- * to the geometry and then returned when
- * <a href="#/p5/endGeometry">endGeometry()</a> is called. One can also use
- * <a href="#/p5/buildGeometry">buildGeometry()</a> to pass a function that
- * draws shapes.
+ * Begins adding shapes to a new
+ * <a href="#/p5.Geometry">p5.Geometry</a> object.
  *
- * If you need to draw complex shapes every frame which don't change over time,
- * combining them upfront with `beginGeometry()` and `endGeometry()` and then
- * drawing that will run faster than repeatedly drawing the individual pieces.
+ * The `beginGeometry()` and <a href="#/p5/endGeometry">endGeometry()</a>
+ * functions help with creating complex 3D shapes from simpler ones such as
+ * <a href="#/p5/sphere">sphere()</a>. `beginGeometry()` begins adding shapes
+ * to a custom <a href="#/p5.Geometry">p5.Geometry</a> object and
+ * <a href="#/p5/endGeometry">endGeometry()</a> stops adding them.
+ *
+ * `beginGeometry()` and <a href="#/p5/endGeometry">endGeometry()</a> can help
+ * to make sketches more performant. For example, if a complex 3D shape
+ * doesn’t change while a sketch runs, then it can be created with
+ * `beginGeometry()` and <a href="#/p5/endGeometry">endGeometry()</a>.
+ * Creating a <a href="#/p5.Geometry">p5.Geometry</a> object once and then
+ * drawing it will run faster than repeatedly drawing the individual pieces.
+ *
+ * See <a href="#/p5/buildGeometry">buildGeometry()</a> for another way to
+ * build 3D shapes.
+ *
+ * Note: `beginGeometry()` can only be used in WebGL mode.
  *
  * @method beginGeometry
  *
  * @example
  * <div>
  * <code>
- * let shapes;
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let shape;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   makeShapes();
- * }
  *
- * function makeShapes() {
+ *   // Start building the p5.Geometry object.
  *   beginGeometry();
- *   scale(0.18);
  *
- *   push();
- *   translate(100, -50);
- *   scale(0.5);
- *   rotateX(PI/4);
- *   cone();
- *   pop();
+ *   // Add a cone.
  *   cone();
  *
- *   beginShape();
- *   vertex(-20, -50);
- *   quadraticVertex(
- *     -40, -70,
- *     0, -60
- *   );
- *   endShape();
+ *   // Stop building the p5.Geometry object.
+ *   shape = endGeometry();
  *
- *   beginShape(TRIANGLE_STRIP);
- *   for (let y = 20; y <= 60; y += 10) {
- *     for (let x of [20, 60]) {
- *       vertex(x, y);
- *     }
- *   }
- *   endShape();
- *
- *   beginShape();
- *   vertex(-100, -120);
- *   vertex(-120, -110);
- *   vertex(-105, -100);
- *   endShape();
- *
- *   shapes = endGeometry();
+ *   describe('A white cone drawn on a gray background.');
  * }
  *
  * function draw() {
- *   background(255);
- *   lights();
+ *   background(50);
+ *
+ *   // Enable orbiting with the mouse.
  *   orbitControl();
- *   model(shapes);
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Style the p5.Geometry object.
+ *   noStroke();
+ *
+ *   // Draw the p5.Geometry object.
+ *   model(shape);
  * }
  * </code>
  * </div>
  *
- * @alt
- * A series of different flat, curved, and 3D shapes floating in space.
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let shape;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create the p5.Geometry object.
+ *   createArrow();
+ *
+ *   describe('A white arrow drawn on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(50);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Style the p5.Geometry object.
+ *   noStroke();
+ *
+ *   // Draw the p5.Geometry object.
+ *   model(shape);
+ * }
+ *
+ * function createArrow() {
+ *   // Start building the p5.Geometry object.
+ *   beginGeometry();
+ *
+ *   // Add shapes.
+ *   push();
+ *   rotateX(PI);
+ *   cone(10);
+ *   translate(0, -10, 0);
+ *   cylinder(3, 20);
+ *   pop();
+ *
+ *   // Stop building the p5.Geometry object.
+ *   shape = endGeometry();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let blueArrow;
+ * let redArrow;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create the arrows.
+ *   redArrow = createArrow('red');
+ *   blueArrow = createArrow('blue');
+ *
+ *   describe('A red arrow and a blue arrow drawn on a gray background. The blue arrow rotates slowly.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Style the arrows.
+ *   noStroke();
+ *
+ *   // Draw the red arrow.
+ *   model(redArrow);
+ *
+ *   // Translate and rotate the coordinate system.
+ *   translate(30, 0, 0);
+ *   rotateZ(frameCount * 0.01);
+ *
+ *   // Draw the blue arrow.
+ *   model(blueArrow);
+ * }
+ *
+ * function createArrow(fillColor) {
+ *   // Start building the p5.Geometry object.
+ *   beginGeometry();
+ *
+ *   fill(fillColor);
+ *
+ *   // Add shapes to the p5.Geometry object.
+ *   push();
+ *   rotateX(PI);
+ *   cone(10);
+ *   translate(0, -10, 0);
+ *   cylinder(3, 20);
+ *   pop();
+ *
+ *   // Stop building the p5.Geometry object.
+ *   let shape = endGeometry();
+ *
+ *   return shape;
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let button;
+ * let particles;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a button to reset the particle system.
+ *   button = createButton('Reset');
+ *
+ *   // Call resetModel() when the user presses the button.
+ *   button.mousePressed(resetModel);
+ *
+ *   // Add the original set of particles.
+ *   resetModel();
+ * }
+ *
+ * function draw() {
+ *   background(50);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Style the particles.
+ *   noStroke();
+ *
+ *   // Draw the particles.
+ *   model(particles);
+ * }
+ *
+ * function resetModel() {
+ *   // If the p5.Geometry object has already been created,
+ *   // free those resources.
+ *   if (particles) {
+ *     freeGeometry(particles);
+ *   }
+ *
+ *   // Create a new p5.Geometry object with random spheres.
+ *   particles = createParticles();
+ * }
+ *
+ * function createParticles() {
+ *   // Start building the p5.Geometry object.
+ *   beginGeometry();
+ *
+ *   // Add shapes.
+ *   for (let i = 0; i < 60; i += 1) {
+ *     // Calculate random coordinates.
+ *     let x = randomGaussian(0, 20);
+ *     let y = randomGaussian(0, 20);
+ *     let z = randomGaussian(0, 20);
+ *
+ *     push();
+ *     // Translate to the particle's coordinates.
+ *     translate(x, y, z);
+ *     // Draw the particle.
+ *     sphere(5);
+ *     pop();
+ *   }
+ *
+ *   // Stop building the p5.Geometry object.
+ *   let shape = endGeometry();
+ *
+ *   return shape;
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.beginGeometry = function() {
   return this._renderer.beginGeometry();
 };
 
 /**
- * Finishes creating a new <a href="#/p5.Geometry">p5.Geometry</a> that was
- * started using <a href="#/p5/beginGeometry">beginGeometry()</a>. One can also
- * use <a href="#/p5/buildGeometry">buildGeometry()</a> to pass a function that
- * draws shapes.
+ * Stops adding shapes to a new
+ * <a href="#/p5.Geometry">p5.Geometry</a> object and returns the object.
+ *
+ * The `beginGeometry()` and <a href="#/p5/endGeometry">endGeometry()</a>
+ * functions help with creating complex 3D shapes from simpler ones such as
+ * <a href="#/p5/sphere">sphere()</a>. `beginGeometry()` begins adding shapes
+ * to a custom <a href="#/p5.Geometry">p5.Geometry</a> object and
+ * <a href="#/p5/endGeometry">endGeometry()</a> stops adding them.
+ *
+ * `beginGeometry()` and <a href="#/p5/endGeometry">endGeometry()</a> can help
+ * to make sketches more performant. For example, if a complex 3D shape
+ * doesn’t change while a sketch runs, then it can be created with
+ * `beginGeometry()` and <a href="#/p5/endGeometry">endGeometry()</a>.
+ * Creating a <a href="#/p5.Geometry">p5.Geometry</a> object once and then
+ * drawing it will run faster than repeatedly drawing the individual pieces.
+ *
+ * See <a href="#/p5/buildGeometry">buildGeometry()</a> for another way to
+ * build 3D shapes.
+ *
+ * Note: `endGeometry()` can only be used in WebGL mode.
  *
  * @method endGeometry
- * @returns {p5.Geometry} The model that was built.
+ * @returns {p5.Geometry} new 3D shape.
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let shape;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Start building the p5.Geometry object.
+ *   beginGeometry();
+ *
+ *   // Add a cone.
+ *   cone();
+ *
+ *   // Stop building the p5.Geometry object.
+ *   shape = endGeometry();
+ *
+ *   describe('A white cone drawn on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(50);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Style the p5.Geometry object.
+ *   noStroke();
+ *
+ *   // Draw the p5.Geometry object.
+ *   model(shape);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let shape;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create the p5.Geometry object.
+ *   createArrow();
+ *
+ *   describe('A white arrow drawn on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(50);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Style the p5.Geometry object.
+ *   noStroke();
+ *
+ *   // Draw the p5.Geometry object.
+ *   model(shape);
+ * }
+ *
+ * function createArrow() {
+ *   // Start building the p5.Geometry object.
+ *   beginGeometry();
+ *
+ *   // Add shapes.
+ *   push();
+ *   rotateX(PI);
+ *   cone(10);
+ *   translate(0, -10, 0);
+ *   cylinder(3, 20);
+ *   pop();
+ *
+ *   // Stop building the p5.Geometry object.
+ *   shape = endGeometry();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let blueArrow;
+ * let redArrow;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create the arrows.
+ *   redArrow = createArrow('red');
+ *   blueArrow = createArrow('blue');
+ *
+ *   describe('A red arrow and a blue arrow drawn on a gray background. The blue arrow rotates slowly.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Style the arrows.
+ *   noStroke();
+ *
+ *   // Draw the red arrow.
+ *   model(redArrow);
+ *
+ *   // Translate and rotate the coordinate system.
+ *   translate(30, 0, 0);
+ *   rotateZ(frameCount * 0.01);
+ *
+ *   // Draw the blue arrow.
+ *   model(blueArrow);
+ * }
+ *
+ * function createArrow(fillColor) {
+ *   // Start building the p5.Geometry object.
+ *   beginGeometry();
+ *
+ *   fill(fillColor);
+ *
+ *   // Add shapes to the p5.Geometry object.
+ *   push();
+ *   rotateX(PI);
+ *   cone(10);
+ *   translate(0, -10, 0);
+ *   cylinder(3, 20);
+ *   pop();
+ *
+ *   // Stop building the p5.Geometry object.
+ *   let shape = endGeometry();
+ *
+ *   return shape;
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let button;
+ * let particles;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a button to reset the particle system.
+ *   button = createButton('Reset');
+ *
+ *   // Call resetModel() when the user presses the button.
+ *   button.mousePressed(resetModel);
+ *
+ *   // Add the original set of particles.
+ *   resetModel();
+ * }
+ *
+ * function draw() {
+ *   background(50);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Style the particles.
+ *   noStroke();
+ *
+ *   // Draw the particles.
+ *   model(particles);
+ * }
+ *
+ * function resetModel() {
+ *   // If the p5.Geometry object has already been created,
+ *   // free those resources.
+ *   if (particles) {
+ *     freeGeometry(particles);
+ *   }
+ *
+ *   // Create a new p5.Geometry object with random spheres.
+ *   particles = createParticles();
+ * }
+ *
+ * function createParticles() {
+ *   // Start building the p5.Geometry object.
+ *   beginGeometry();
+ *
+ *   // Add shapes.
+ *   for (let i = 0; i < 60; i += 1) {
+ *     // Calculate random coordinates.
+ *     let x = randomGaussian(0, 20);
+ *     let y = randomGaussian(0, 20);
+ *     let z = randomGaussian(0, 20);
+ *
+ *     push();
+ *     // Translate to the particle's coordinates.
+ *     translate(x, y, z);
+ *     // Draw the particle.
+ *     sphere(5);
+ *     pop();
+ *   }
+ *
+ *   // Stop building the p5.Geometry object.
+ *   let shape = endGeometry();
+ *
+ *   return shape;
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.endGeometry = function() {
   return this._renderer.endGeometry();
 };
 
 /**
- * Creates a new <a href="#/p5.Geometry">p5.Geometry</a> that contains all
- * the shapes drawn in a provided callback function. The returned combined shape
- * can then be drawn all at once using <a href="#/p5/model">model()</a>.
+ * Creates a custom <a href="#/p5.Geometry">p5.Geometry</a> object from
+ * simpler 3D shapes.
  *
- * If you need to draw complex shapes every frame which don't change over time,
- * combining them with `buildGeometry()` once and then drawing that will run
- * faster than repeatedly drawing the individual pieces.
+ * `buildGeometry()` helps with creating complex 3D shapes from simpler ones
+ * such as <a href="#/p5/sphere">sphere()</a>. It can help to make sketches
+ * more performant. For example, if a complex 3D shape doesn’t change while a
+ * sketch runs, then it can be created with `buildGeometry()`. Creating a
+ * <a href="#/p5.Geometry">p5.Geometry</a> object once and then drawing it
+ * will run faster than repeatedly drawing the individual pieces.
  *
- * One can also draw shapes directly between
- * <a href="#/p5/beginGeometry">beginGeometry()</a> and
- * <a href="#/p5/endGeometry">endGeometry()</a> instead of using a callback
- * function.
+ * The parameter, `callback`, is a function with the drawing instructions for
+ * the new <a href="#/p5.Geometry">p5.Geometry</a> object. It will be called
+ * once to create the new 3D shape.
+ *
+ * See <a href="#/p5/beginGeometry">beginGeometry()</a> and
+ * <a href="#/p5/endGeometry">endGeometry()</a> for another way to build 3D
+ * shapes.
+ *
+ * Note: `buildGeometry()` can only be used in WebGL mode.
  *
  * @method buildGeometry
- * @param {Function} callback A function that draws shapes.
- * @returns {p5.Geometry} The model that was built from the callback function.
+ * @param {Function} callback function that draws the shape.
+ * @returns {p5.Geometry} new 3D shape.
  *
  * @example
  * <div>
  * <code>
- * let particles;
- * let button;
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let shape;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   button = createButton('New');
- *   button.mousePressed(makeParticles);
- *   makeParticles();
- * }
  *
- * function makeParticles() {
- *   if (particles) freeGeometry(particles);
+ *   // Create the p5.Geometry object.
+ *   shape = buildGeometry(createShape);
  *
- *   particles = buildGeometry(() => {
- *     for (let i = 0; i < 60; i++) {
- *       push();
- *       translate(
- *         randomGaussian(0, 20),
- *         randomGaussian(0, 20),
- *         randomGaussian(0, 20)
- *       );
- *       sphere(5);
- *       pop();
- *     }
- *   });
+ *   describe('A white cone drawn on a gray background.');
  * }
  *
  * function draw() {
- *   background(255);
- *   noStroke();
- *   lights();
+ *   background(50);
+ *
+ *   // Enable orbiting with the mouse.
  *   orbitControl();
- *   model(particles);
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Style the p5.Geometry object.
+ *   noStroke();
+ *
+ *   // Draw the p5.Geometry object.
+ *   model(shape);
+ * }
+ *
+ * // Create p5.Geometry object from a single cone.
+ * function createShape() {
+ *   cone();
  * }
  * </code>
  * </div>
  *
- * @alt
- * A cluster of spheres.
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let shape;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create the arrow.
+ *   shape = buildGeometry(createArrow);
+ *
+ *   describe('A white arrow drawn on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(50);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Style the arrow.
+ *   noStroke();
+ *
+ *   // Draw the arrow.
+ *   model(shape);
+ * }
+ *
+ * function createArrow() {
+ *   // Add shapes to the p5.Geometry object.
+ *   push();
+ *   rotateX(PI);
+ *   cone(10);
+ *   translate(0, -10, 0);
+ *   cylinder(3, 20);
+ *   pop();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let shape;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create the p5.Geometry object.
+ *   shape = buildGeometry(createArrow);
+ *
+ *   describe('Two white arrows drawn on a gray background. The arrow on the right rotates slowly.');
+ * }
+ *
+ * function draw() {
+ *   background(50);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Style the arrows.
+ *   noStroke();
+ *
+ *   // Draw the p5.Geometry object.
+ *   model(shape);
+ *
+ *   // Translate and rotate the coordinate system.
+ *   translate(30, 0, 0);
+ *   rotateZ(frameCount * 0.01);
+ *
+ *   // Draw the p5.Geometry object again.
+ *   model(shape);
+ * }
+ *
+ * function createArrow() {
+ *   // Add shapes to the p5.Geometry object.
+ *   push();
+ *   rotateX(PI);
+ *   cone(10);
+ *   translate(0, -10, 0);
+ *   cylinder(3, 20);
+ *   pop();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let button;
+ * let particles;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a button to reset the particle system.
+ *   button = createButton('Reset');
+ *
+ *   // Call resetModel() when the user presses the button.
+ *   button.mousePressed(resetModel);
+ *
+ *   // Add the original set of particles.
+ *   resetModel();
+ *
+ *   describe('A set of white spheres on a gray background. The spheres are positioned randomly. Their positions reset when the user presses the Reset button.');
+ * }
+ *
+ * function draw() {
+ *   background(50);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Style the particles.
+ *   noStroke();
+ *
+ *   // Draw the particles.
+ *   model(particles);
+ * }
+ *
+ * function resetModel() {
+ *   // If the p5.Geometry object has already been created,
+ *   // free those resources.
+ *   if (particles) {
+ *     freeGeometry(particles);
+ *   }
+ *
+ *   // Create a new p5.Geometry object with random spheres.
+ *   particles = buildGeometry(createParticles);
+ * }
+ *
+ * function createParticles() {
+ *   for (let i = 0; i < 60; i += 1) {
+ *     // Calculate random coordinates.
+ *     let x = randomGaussian(0, 20);
+ *     let y = randomGaussian(0, 20);
+ *     let z = randomGaussian(0, 20);
+ *
+ *     push();
+ *     // Translate to the particle's coordinates.
+ *     translate(x, y, z);
+ *     // Draw the particle.
+ *     sphere(5);
+ *     pop();
+ *   }
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.buildGeometry = function(callback) {
   return this._renderer.buildGeometry(callback);
 };
 
 /**
- * Clears the resources of a model to free up browser memory. A model whose
- * resources have been cleared can still be drawn, but the first time it is
- * drawn again, it might take longer.
+ * Clears a <a href="#/p5.Geometry">p5.Geometry</a> object from the graphics
+ * processing unit (GPU) memory.
  *
- * This method works on models generated with
- * <a href="#/p5/buildGeometry">buildGeometry()</a> as well as those loaded
- * from <a href="#/p5/loadModel">loadModel()</a>.
+ * <a href="#/p5.Geometry">p5.Geometry</a> objects can contain lots of data
+ * about their vertices, surface normals, colors, and so on. Complex 3D shapes
+ * can use lots of memory which is a limited resource in many GPUs. Calling
+ * `freeGeometry()` can improve performance by freeing a
+ * <a href="#/p5.Geometry">p5.Geometry</a> object’s resources from GPU memory.
+ * `freeGeometry()` works with <a href="#/p5.Geometry">p5.Geometry</a> objects
+ * created with <a href="#/p5/beginGeometry">beginGeometry()</a> and
+ * <a href="#/p5/endGeometry">endGeometry()</a>,
+ * <a href="#/p5/buildGeometry">buildGeometry()</a>, and
+ * <a href="#/p5/loadModel">loadModel()</a>.
+ *
+ * The parameter, `geometry`, is the <a href="#/p5.Geometry">p5.Geometry</a>
+ * object to be freed.
+ *
+ * Note: A <a href="#/p5.Geometry">p5.Geometry</a> object can still be drawn
+ * after its resources are cleared from GPU memory. It may take longer to draw
+ * the first time it’s redrawn.
+ *
+ * Note: `freeGeometry()` can only be used in WebGL mode.
  *
  * @method freeGeometry
- * @param {p5.Geometry} geometry The geometry whose resources should be freed
+ * @param {p5.Geometry} geometry 3D shape whose resources should be freed.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   background(200);
+ *
+ *   // Create a p5.Geometry object.
+ *   beginGeometry();
+ *   cone();
+ *   let shape = endGeometry();
+ *
+ *   // Draw the shape.
+ *   model(shape);
+ *
+ *   // Free the shape's resources.
+ *   freeGeometry(shape);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let button;
+ * let particles;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a button to reset the particle system.
+ *   button = createButton('Reset');
+ *
+ *   // Call resetModel() when the user presses the button.
+ *   button.mousePressed(resetModel);
+ *
+ *   // Add the original set of particles.
+ *   resetModel();
+ * }
+ *
+ * function draw() {
+ *   background(50);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Style the particles.
+ *   noStroke();
+ *
+ *   // Draw the particles.
+ *   model(particles);
+ * }
+ *
+ * function resetModel() {
+ *   // If the p5.Geometry object has already been created,
+ *   // free those resources.
+ *   if (particles) {
+ *     freeGeometry(particles);
+ *   }
+ *
+ *   // Create a new p5.Geometry object with random spheres.
+ *   particles = buildGeometry(createParticles);
+ * }
+ *
+ * function createParticles() {
+ *   for (let i = 0; i < 60; i += 1) {
+ *     // Calculate random coordinates.
+ *     let x = randomGaussian(0, 20);
+ *     let y = randomGaussian(0, 20);
+ *     let z = randomGaussian(0, 20);
+ *
+ *     push();
+ *     // Translate to the particle's coordinates.
+ *     translate(x, y, z);
+ *     // Draw the particle.
+ *     sphere(5);
+ *     pop();
+ *   }
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.freeGeometry = function(geometry) {
   this._renderer._freeBuffers(geometry.gid);
 };
 
 /**
- * Draw a plane with given a width and height
+ * Draws a plane.
+ *
+ * A plane is a four-sided, flat shape with every angle measuring 90˚. It’s
+ * similar to a rectangle and offers advanced drawing features in WebGL mode.
+ *
+ * The first parameter, `width`, is optional. If a `Number` is passed, as in
+ * `plane(20)`, it sets the plane’s width and height. By default, `width` is
+ * 50.
+ *
+ * The second parameter, `height`, is also optional. If a `Number` is passed,
+ * as in `plane(20, 30)`, it sets the plane’s height. By default, `height` is
+ * set to the plane’s `width`.
+ *
+ * The third parameter, `detailX`, is also optional. If a `Number` is passed,
+ * as in `plane(20, 30, 5)` it sets the number of triangle subdivisions to use
+ * along the x-axis. All 3D shapes are made by connecting triangles to form
+ * their surfaces. By default, `detailX` is 1.
+ *
+ * The fourth parameter, `detailY`, is also optional. If a `Number` is passed,
+ * as in `plane(20, 30, 5, 7)` it sets the number of triangle subdivisions to
+ * use along the y-axis. All 3D shapes are made by connecting triangles to
+ * form their surfaces. By default, `detailY` is 1.
+ *
+ * Note: `plane()` can only be used in WebGL mode.
+ *
  * @method plane
- * @param  {Number} [width]    width of the plane
- * @param  {Number} [height]   height of the plane
- * @param  {Integer} [detailX]  Optional number of triangle
- *                             subdivisions in x-dimension
- * @param {Integer} [detailY]   Optional number of triangle
- *                             subdivisions in y-dimension
+ * @param  {Number} [width]    width of the plane.
+ * @param  {Number} [height]   height of the plane.
+ * @param  {Integer} [detailX] number of triangle subdivisions along the x-axis.
+ * @param {Integer} [detailY]  number of triangle subdivisions along the y-axis.
  * @chainable
+ *
  * @example
  * <div>
  * <code>
- * // draw a plane
- * // with width 50 and height 50
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe('a white plane with black wireframe lines');
+ *
+ *   describe('A white plane on a gray background.');
  * }
  *
  * function draw() {
  *   background(200);
- *   plane(50, 50);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the plane.
+ *   plane();
  * }
  * </code>
  * </div>
  *
- * @alt
- * Nothing displayed on canvas
- * Rotating interior view of a box with sides that change color.
- * 3d red and green gradient.
- * Rotating interior view of a cylinder with sides that change color.
- * Rotating view of a cylinder with sides that change color.
- * 3d red and green gradient.
- * rotating view of a multi-colored cylinder with concave sides.
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white plane on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the plane.
+ *   // Set its width and height to 30.
+ *   plane(30);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white plane on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the plane.
+ *   // Set its width to 30 and height to 50.
+ *   plane(30, 50);
+ * }
+ * </code>
+ * </div>
  */
-p5.prototype.plane = function(width, height, detailX, detailY) {
+p5.prototype.plane = function(
+  width = 50,
+  height = width,
+  detailX = 1,
+  detailY = 1
+) {
   this._assert3d('plane');
   p5._validateParameters('plane', arguments);
-  if (typeof width === 'undefined') {
-    width = 50;
-  }
-  if (typeof height === 'undefined') {
-    height = width;
-  }
-
-  if (typeof detailX === 'undefined') {
-    detailX = 1;
-  }
-  if (typeof detailY === 'undefined') {
-    detailY = 1;
-  }
 
   const gId = `plane|${detailX}|${detailY}`;
 
@@ -255,7 +996,7 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
     } else if (this._renderer._doStroke) {
       console.log(
         'Cannot draw stroke on plane objects with more' +
-          ' than 1 detailX or 1 detailY'
+        ' than 1 detailX or 1 detailY'
       );
     }
     this._renderer.createBuffers(gId, planeGeom);
@@ -266,33 +1007,130 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
 };
 
 /**
- * Draw a box with given width, height and depth
+ * Draws a box (rectangular prism).
+ *
+ * A box is a 3D shape with six faces. Each face makes a 90˚ with four
+ * neighboring faces.
+ *
+ * The first parameter, `width`, is optional. If a `Number` is passed, as in
+ * `box(20)`, it sets the box’s width and height. By default, `width` is 50.
+ *
+ * The second parameter, `height`, is also optional. If a `Number` is passed,
+ * as in `box(20, 30)`, it sets the box’s height. By default, `height` is set
+ * to the box’s `width`.
+ *
+ * The third parameter, `depth`, is also optional. If a `Number` is passed, as
+ * in `box(20, 30, 40)`, it sets the box’s depth. By default, `depth` is set
+ * to the box’s `height`.
+ *
+ * The fourth parameter, `detailX`, is also optional. If a `Number` is passed,
+ * as in `box(20, 30, 40, 5)`, it sets the number of triangle subdivisions to
+ * use along the x-axis. All 3D shapes are made by connecting triangles to
+ * form their surfaces. By default, `detailX` is 1.
+ *
+ * The fifth parameter, `detailY`, is also optional. If a number is passed, as
+ * in `box(20, 30, 40, 5, 7)`, it sets the number of triangle subdivisions to
+ * use along the y-axis. All 3D shapes are made by connecting triangles to
+ * form their surfaces. By default, `detailY` is 1.
+ *
+ * Note: `box()` can only be used in WebGL mode.
+ *
  * @method  box
- * @param  {Number} [width]     width of the box
- * @param  {Number} [height]    height of the box
- * @param  {Number} [depth]     depth of the box
- * @param {Integer} [detailX]  Optional number of triangle
- *                            subdivisions in x-dimension
- * @param {Integer} [detailY]  Optional number of triangle
- *                            subdivisions in y-dimension
+ * @param  {Number} [width]     width of the box.
+ * @param  {Number} [height]    height of the box.
+ * @param  {Number} [depth]     depth of the box.
+ * @param {Integer} [detailX]   number of triangle subdivisions along the x-axis.
+ * @param {Integer} [detailY]   number of triangle subdivisions along the y-axis.
  * @chainable
+ *
  * @example
  * <div>
  * <code>
- * // draw a spinning box
- * // with width, height and depth of 50
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   describe('a white box rotating in 3D space');
+ *
+ *   describe('A white box on a gray background.');
  * }
  *
  * function draw() {
  *   background(200);
- *   rotateX(frameCount * 0.01);
- *   rotateY(frameCount * 0.01);
- *   box(50);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the box.
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white box on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the box.
+ *   // Set its width and height to 30.
+ *   box(30);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white box on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the box.
+ *   // Set its width to 30 and height to 50.
+ *   box(30, 50);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white box on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the box.
+ *   // Set its width to 30, height to 50, and depth to 10.
+ *   box(30, 50, 10);
  * }
  * </code>
  * </div>
@@ -373,7 +1211,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
     } else if (this._renderer._doStroke) {
       console.log(
         'Cannot draw stroke on box objects with more' +
-          ' than 4 detailX or 4 detailY'
+        ' than 4 detailX or 4 detailY'
       );
     }
     //initialize our geometry buffer with
@@ -387,92 +1225,131 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
 };
 
 /**
- * Draw a sphere with given radius.
+ * Draws a sphere.
  *
- * DetailX and detailY determines the number of subdivisions in the x-dimension
- * and the y-dimension of a sphere. More subdivisions make the sphere seem
- * smoother. The recommended maximum values are both 24. Using a value greater
- * than 24 may cause a warning or slow down the browser.
+ * A sphere is a 3D shape with triangular faces that connect to form a round
+ * surface. Spheres with few faces look like crystals. Spheres with many faces
+ * have smooth surfaces and look like balls.
+ *
+ * The first parameter, `radius`, is optional. If a `Number` is passed, as in
+ * `sphere(20)`, it sets the radius of the sphere. By default, `radius` is 50.
+ *
+ * The second parameter, `detailX`, is also optional. If a `Number` is passed,
+ * as in `sphere(20, 5)`, it sets the number of triangle subdivisions to use
+ * along the x-axis. All 3D shapes are made by connecting triangles to form
+ * their surfaces. By default, `detailX` is 24.
+ *
+ * The third parameter, `detailY`, is also optional. If a `Number` is passed,
+ * as in `sphere(20, 5, 2)`, it sets the number of triangle subdivisions to
+ * use along the y-axis. All 3D shapes are made by connecting triangles to
+ * form their surfaces. By default, `detailY` is 16.
+ *
+ * Note: `sphere()` can only be used in WebGL mode.
+ *
  * @method sphere
- * @param  {Number} [radius]          radius of circle
- * @param  {Integer} [detailX]        optional number of subdivisions in x-dimension
- * @param  {Integer} [detailY]        optional number of subdivisions in y-dimension
+ * @param  {Number} [radius]   radius of the sphere. Defaults to 50.
+ * @param  {Integer} [detailX] number of triangle subdivisions along the x-axis. Defaults to 24.
+ * @param  {Integer} [detailY] number of triangle subdivisions along the y-axis. Defaults to 16.
  *
  * @chainable
  * @example
  * <div>
  * <code>
- * // draw a sphere with radius 40
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe('a white sphere with black wireframe lines');
+ *
+ *   describe('A white sphere on a gray background.');
  * }
  *
  * function draw() {
- *   background(205, 102, 94);
- *   sphere(40);
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the sphere.
+ *   sphere();
  * }
  * </code>
  * </div>
  *
- * @example
  * <div>
  * <code>
- * let detailX;
- * // slide to see how detailX works
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   detailX = createSlider(3, 24, 3);
- *   detailX.position(10, height + 5);
- *   detailX.style('width', '80px');
- *   describe(
- *     'a white sphere with low detail on the x-axis, including a slider to adjust detailX'
- *   );
+ *
+ *   describe('A white sphere on a gray background.');
  * }
  *
  * function draw() {
- *   background(205, 105, 94);
- *   rotateY(millis() / 1000);
- *   sphere(40, detailX.value(), 16);
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the sphere.
+ *   // Set its radius to 30.
+ *   sphere(30);
  * }
  * </code>
  * </div>
  *
- * @example
  * <div>
  * <code>
- * let detailY;
- * // slide to see how detailY works
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   detailY = createSlider(3, 16, 3);
- *   detailY.position(10, height + 5);
- *   detailY.style('width', '80px');
- *   describe(
- *     'a white sphere with low detail on the y-axis, including a slider to adjust detailY'
- *   );
+ *
+ *   describe('A white sphere on a gray background.');
  * }
  *
  * function draw() {
- *   background(205, 105, 94);
- *   rotateY(millis() / 1000);
- *   sphere(40, 16, detailY.value());
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the sphere.
+ *   // Set its radius to 30.
+ *   // Set its detailX to 6.
+ *   sphere(30, 6);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white sphere on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the sphere.
+ *   // Set its radius to 30.
+ *   // Set its detailX to 24.
+ *   // Set its detailY to 4.
+ *   sphere(30, 24, 4);
  * }
  * </code>
  * </div>
  */
-p5.prototype.sphere = function(radius, detailX, detailY) {
+p5.prototype.sphere = function(radius = 50, detailX = 24, detailY = 16) {
   this._assert3d('sphere');
   p5._validateParameters('sphere', arguments);
-  if (typeof radius === 'undefined') {
-    radius = 50;
-  }
-  if (typeof detailX === 'undefined') {
-    detailX = 24;
-  }
-  if (typeof detailY === 'undefined') {
-    detailY = 16;
-  }
 
   this.ellipsoid(radius, radius, radius, detailX, detailY);
 
@@ -598,116 +1475,227 @@ const _truncatedCone = function(
 };
 
 /**
- * Draw a cylinder with given radius and height
+ * Draws a cylinder.
  *
- * DetailX and detailY determines the number of subdivisions in the x-dimension
- * and the y-dimension of a cylinder. More subdivisions make the cylinder seem smoother.
- * The recommended maximum value for detailX is 24. Using a value greater than 24
- * may cause a warning or slow down the browser.
+ * A cylinder is a 3D shape with triangular faces that connect a flat bottom
+ * to a flat top. Cylinders with few faces look like boxes. Cylinders with
+ * many faces have smooth surfaces.
+ *
+ * The first parameter, `radius`, is optional. If a `Number` is passed, as in
+ * `cylinder(20)`, it sets the radius of the cylinder’s base. By default,
+ * `radius` is 50.
+ *
+ * The second parameter, `height`, is also optional. If a `Number` is passed,
+ * as in `cylinder(20, 30)`, it sets the cylinder’s height. By default,
+ * `height` is set to the cylinder’s `radius`.
+ *
+ * The third parameter, `detailX`, is also optional. If a `Number` is passed,
+ * as in `cylinder(20, 30, 5)`, it sets the number of edges used to form the
+ * cylinder's top and bottom. Using more edges makes the top and bottom look
+ * more like circles. By default, `detailX` is 24.
+ *
+ * The fourth parameter, `detailY`, is also optional. If a `Number` is passed,
+ * as in `cylinder(20, 30, 5, 2)`, it sets the number of triangle subdivisions
+ * to use along the y-axis, between cylinder's the top and bottom. All 3D
+ * shapes are made by connecting triangles to form their surfaces. By default,
+ * `detailY` is 1.
+ *
+ * The fifth parameter, `bottomCap`, is also optional. If a `false` is passed,
+ * as in `cylinder(20, 30, 5, 2, false)` the cylinder’s bottom won’t be drawn.
+ * By default, `bottomCap` is `true`.
+ *
+ * The sixth parameter, `topCap`, is also optional. If a `false` is passed, as
+ * in `cylinder(20, 30, 5, 2, false, false)` the cylinder’s top won’t be
+ * drawn. By default, `topCap` is `true`.
+ *
+ * Note: `cylinder()` can only be used in WebGL mode.
  *
  * @method cylinder
- * @param  {Number}  [radius]    radius of the surface
- * @param  {Number}  [height]    height of the cylinder
- * @param  {Integer} [detailX]   number of subdivisions in x-dimension;
- *                               default is 24
- * @param  {Integer} [detailY]   number of subdivisions in y-dimension;
- *                               default is 1
- * @param  {Boolean} [bottomCap] whether to draw the bottom of the cylinder
- * @param  {Boolean} [topCap]    whether to draw the top of the cylinder
+ * @param  {Number}  [radius]    radius of the cylinder. Defaults to 50.
+ * @param  {Number}  [height]    height of the cylinder. Defaults to the value of `radius`.
+ * @param  {Integer} [detailX]   number of edges along the top and bottom. Defaults to 24.
+ * @param  {Integer} [detailY]   number of triangle subdivisions along the y-axis. Defaults to 1.
+ * @param  {Boolean} [bottomCap] whether to draw the cylinder's bottom. Defaults to `true`.
+ * @param  {Boolean} [topCap]    whether to draw the cylinder's top. Defaults to `true`.
  * @chainable
+ *
  * @example
  * <div>
  * <code>
- * // draw a spinning cylinder
- * // with radius 20 and height 50
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe('a rotating white cylinder');
+ *
+ *   describe('A white cylinder on a gray background.');
  * }
  *
  * function draw() {
- *   background(205, 105, 94);
- *   rotateX(frameCount * 0.01);
- *   rotateZ(frameCount * 0.01);
- *   cylinder(20, 50);
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the cylinder.
+ *   cylinder();
  * }
  * </code>
  * </div>
  *
- * @example
  * <div>
  * <code>
- * // slide to see how detailX works
- * let detailX;
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   detailX = createSlider(3, 24, 3);
- *   detailX.position(10, height + 5);
- *   detailX.style('width', '80px');
- *   describe(
- *     'a rotating white cylinder with limited X detail, with a slider that adjusts detailX'
- *   );
+ *
+ *   describe('A white cylinder on a gray background.');
  * }
  *
  * function draw() {
- *   background(205, 105, 94);
- *   rotateY(millis() / 1000);
- *   cylinder(20, 75, detailX.value(), 1);
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the cylinder.
+ *   // Set its radius and height to 30.
+ *   cylinder(30);
  * }
  * </code>
  * </div>
  *
- * @example
  * <div>
  * <code>
- * // slide to see how detailY works
- * let detailY;
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   detailY = createSlider(1, 16, 1);
- *   detailY.position(10, height + 5);
- *   detailY.style('width', '80px');
- *   describe(
- *     'a rotating white cylinder with limited Y detail, with a slider that adjusts detailY'
- *   );
+ *
+ *   describe('A white cylinder on a gray background.');
  * }
  *
  * function draw() {
- *   background(205, 105, 94);
- *   rotateY(millis() / 1000);
- *   cylinder(20, 75, 16, detailY.value());
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the cylinder.
+ *   // Set its radius to 30 and height to 50.
+ *   cylinder(30, 50);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white box on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the cylinder.
+ *   // Set its radius to 30 and height to 50.
+ *   // Set its detailX to 5.
+ *   cylinder(30, 50, 5);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white cylinder on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the cylinder.
+ *   // Set its radius to 30 and height to 50.
+ *   // Set its detailX to 24 and detailY to 2.
+ *   cylinder(30, 50, 24, 2);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white cylinder on a gray background. Its top is missing.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the cylinder.
+ *   // Set its radius to 30 and height to 50.
+ *   // Set its detailX to 24 and detailY to 1.
+ *   // Don't draw its bottom.
+ *   cylinder(30, 50, 24, 1, false);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white cylinder on a gray background. Its top and bottom are missing.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the cylinder.
+ *   // Set its radius to 30 and height to 50.
+ *   // Set its detailX to 24 and detailY to 1.
+ *   // Don't draw its bottom or top.
+ *   cylinder(30, 50, 24, 1, false, false);
  * }
  * </code>
  * </div>
  */
 p5.prototype.cylinder = function(
-  radius,
-  height,
-  detailX,
-  detailY,
-  bottomCap,
-  topCap
+  radius = 50,
+  height = radius,
+  detailX = 24,
+  detailY = 1,
+  bottomCap = true,
+  topCap = true
 ) {
   this._assert3d('cylinder');
   p5._validateParameters('cylinder', arguments);
-  if (typeof radius === 'undefined') {
-    radius = 50;
-  }
-  if (typeof height === 'undefined') {
-    height = radius;
-  }
-  if (typeof detailX === 'undefined') {
-    detailX = 24;
-  }
-  if (typeof detailY === 'undefined') {
-    detailY = 1;
-  }
-  if (typeof topCap === 'undefined') {
-    topCap = true;
-  }
-  if (typeof bottomCap === 'undefined') {
-    bottomCap = true;
-  }
 
   const gId = `cylinder|${detailX}|${detailY}|${bottomCap}|${topCap}`;
   if (!this._renderer.geometryInHash(gId)) {
@@ -728,7 +1716,7 @@ p5.prototype.cylinder = function(
     } else if (this._renderer._doStroke) {
       console.log(
         'Cannot draw stroke on cylinder objects with more' +
-          ' than 24 detailX or 16 detailY'
+        ' than 24 detailX or 16 detailY'
       );
     }
     this._renderer.createBuffers(gId, cylinderGeom);
@@ -740,106 +1728,219 @@ p5.prototype.cylinder = function(
 };
 
 /**
- * Draw a cone with given radius and height
+ * Draws a cone.
  *
- * DetailX and detailY determine the number of subdivisions in the x-dimension and
- * the y-dimension of a cone. More subdivisions make the cone seem smoother. The
- * recommended maximum value for detailX is 24. Using a value greater than 24
- * may cause a warning or slow down the browser.
+ * A cone is a 3D shape with triangular faces that connect a flat bottom to a
+ * single point. Cones with few faces look like pyramids. Cones with many
+ * faces have smooth surfaces.
+ *
+ * The first parameter, `radius`, is optional. If a `Number` is passed, as in
+ * `cone(20)`, it sets the radius of the cone’s base. By default, `radius` is
+ * 50.
+ *
+ * The second parameter, `height`, is also optional. If a `Number` is passed,
+ * as in `cone(20, 30)`, it sets the cone’s height. By default, `height` is
+ * set to the cone’s `radius`.
+ *
+ * The third parameter, `detailX`, is also optional. If a `Number` is passed,
+ * as in `cone(20, 30, 5)`, it sets the number of edges used to form the
+ * cone's base. Using more edges makes the base look more like a circle. By
+ * default, `detailX` is 24.
+ *
+ * The fourth parameter, `detailY`, is also optional. If a `Number` is passed,
+ * as in `cone(20, 30, 5, 7)`, it sets the number of triangle subdivisions to
+ * use along the y-axis connecting the base to the tip. All 3D shapes are made
+ * by connecting triangles to form their surfaces. By default, `detailY` is 1.
+ *
+ * The fifth parameter, `cap`, is also optional. If a `false` is passed, as
+ * in `cone(20, 30, 5, 7, false)` the cone’s base won’t be drawn. By default,
+ * `cap` is `true`.
+ *
+ * Note: `cone()` can only be used in WebGL mode.
+ *
  * @method cone
- * @param  {Number}  [radius]  radius of the bottom surface
- * @param  {Number}  [height]  height of the cone
- * @param  {Integer} [detailX] number of segments,
- *                             the more segments the smoother geometry
- *                             default is 24
- * @param  {Integer} [detailY] number of segments,
- *                             the more segments the smoother geometry
- *                             default is 1
- * @param  {Boolean} [cap]     whether to draw the base of the cone
+ * @param  {Number}  [radius]  radius of the cone's base. Defaults to 50.
+ * @param  {Number}  [height]  height of the cone. Defaults to the value of `radius`.
+ * @param  {Integer} [detailX] number of edges used to draw the base. Defaults to 24.
+ * @param  {Integer} [detailY] number of triangle subdivisions along the y-axis. Defaults to 1.
+ * @param  {Boolean} [cap]     whether to draw the cone's base.  Defaults to `true`.
  * @chainable
+ *
  * @example
  * <div>
  * <code>
- * // draw a spinning cone
- * // with radius 40 and height 70
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe('a rotating white cone');
+ *
+ *   describe('A white cone on a gray background.');
  * }
  *
  * function draw() {
  *   background(200);
- *   rotateX(frameCount * 0.01);
- *   rotateZ(frameCount * 0.01);
- *   cone(40, 70);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the cone.
+ *   cone();
  * }
  * </code>
  * </div>
  *
- * @example
  * <div>
  * <code>
- * // slide to see how detailx works
- * let detailX;
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   detailX = createSlider(3, 16, 3);
- *   detailX.position(10, height + 5);
- *   detailX.style('width', '80px');
- *   describe(
- *     'a rotating white cone with limited X detail, with a slider that adjusts detailX'
- *   );
+ *
+ *   describe('A white cone on a gray background.');
  * }
  *
  * function draw() {
- *   background(205, 102, 94);
- *   rotateY(millis() / 1000);
- *   cone(30, 65, detailX.value(), 16);
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the cone.
+ *   // Set its radius and height to 30.
+ *   cone(30);
  * }
  * </code>
  * </div>
  *
- * @example
  * <div>
  * <code>
- * // slide to see how detailY works
- * let detailY;
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   detailY = createSlider(3, 16, 3);
- *   detailY.position(10, height + 5);
- *   detailY.style('width', '80px');
- *   describe(
- *     'a rotating white cone with limited Y detail, with a slider that adjusts detailY'
- *   );
+ *
+ *   describe('A white cone on a gray background.');
  * }
  *
  * function draw() {
- *   background(205, 102, 94);
- *   rotateY(millis() / 1000);
- *   cone(30, 65, 16, detailY.value());
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the cone.
+ *   // Set its radius to 30 and height to 50.
+ *   cone(30, 50);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white cone on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the cone.
+ *   // Set its radius to 30 and height to 50.
+ *   // Set its detailX to 5.
+ *   cone(30, 50, 5);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white pyramid on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the cone.
+ *   // Set its radius to 30 and height to 50.
+ *   // Set its detailX to 5.
+ *   cone(30, 50, 5);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white cone on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the cone.
+ *   // Set its radius to 30 and height to 50.
+ *   // Set its detailX to 24 and detailY to 2.
+ *   cone(30, 50, 24, 2);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white cone on a gray background. Its base is missing.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the cone.
+ *   // Set its radius to 30 and height to 50.
+ *   // Set its detailX to 24 and detailY to 1.
+ *   // Don't draw its base.
+ *   cone(30, 50, 24, 1, false);
  * }
  * </code>
  * </div>
  */
-p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
+p5.prototype.cone = function(
+  radius = 50,
+  height = radius,
+  detailX = 24,
+  detailY = 1,
+  cap = true
+) {
   this._assert3d('cone');
   p5._validateParameters('cone', arguments);
-  if (typeof radius === 'undefined') {
-    radius = 50;
-  }
-  if (typeof height === 'undefined') {
-    height = radius;
-  }
-  if (typeof detailX === 'undefined') {
-    detailX = 24;
-  }
-  if (typeof detailY === 'undefined') {
-    detailY = 1;
-  }
-  if (typeof cap === 'undefined') {
-    cap = true;
-  }
 
   const gId = `cone|${detailX}|${detailY}|${cap}`;
   if (!this._renderer.geometryInHash(gId)) {
@@ -850,7 +1951,7 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
     } else if (this._renderer._doStroke) {
       console.log(
         'Cannot draw stroke on cone objects with more' +
-          ' than 24 detailX or 16 detailY'
+        ' than 24 detailX or 16 detailY'
       );
     }
     this._renderer.createBuffers(gId, coneGeom);
@@ -862,106 +1963,182 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
 };
 
 /**
- * Draw an ellipsoid with given radius
+ * Draws an ellipsoid.
  *
- * DetailX and detailY determine the number of subdivisions in the x-dimension and
- * the y-dimension of a cone. More subdivisions make the ellipsoid appear to be smoother.
- * Avoid detail number above 150, it may crash the browser.
+ * An ellipsoid is a 3D shape with triangular faces that connect to form a
+ * round surface. Ellipsoids with few faces look like crystals. Ellipsoids
+ * with many faces have smooth surfaces and look like eggs. `ellipsoid()`
+ * defines a shape by its radii. This is different from
+ * <a href="#/p5/ellipse">ellipse()</a> which uses diameters
+ * (width and height).
+ *
+ * The first parameter, `radiusX`, is optional. If a `Number` is passed, as in
+ * `ellipsoid(20)`, it sets the radius of the ellipsoid along the x-axis. By
+ * default, `radiusX` is 50.
+ *
+ * The second parameter, `radiusY`, is also optional. If a `Number` is passed,
+ * as in `ellipsoid(20, 30)`, it sets the ellipsoid’s radius along the y-axis.
+ * By default, `radiusY` is set to the ellipsoid’s `radiusX`.
+ *
+ * The third parameter, `radiusZ`, is also optional. If a `Number` is passed,
+ * as in `ellipsoid(20, 30, 40)`, it sets the ellipsoid’s radius along the
+ * z-axis. By default, `radiusZ` is set to the ellipsoid’s `radiusY`.
+ *
+ * The fourth parameter, `detailX`, is also optional. If a `Number` is passed,
+ * as in `ellipsoid(20, 30, 40, 5)`, it sets the number of triangle
+ * subdivisions to use along the x-axis. All 3D shapes are made by connecting
+ * triangles to form their surfaces. By default, `detailX` is 24.
+ *
+ * The fifth parameter, `detailY`, is also optional. If a `Number` is passed,
+ * as in `ellipsoid(20, 30, 40, 5, 7)`, it sets the number of triangle
+ * subdivisions to use along the y-axis. All 3D shapes are made by connecting
+ * triangles to form their surfaces. By default, `detailY` is 16.
+ *
+ * Note: `ellipsoid()` can only be used in WebGL mode.
+ *
  * @method ellipsoid
- * @param  {Number} [radiusx]         x-radius of ellipsoid
- * @param  {Number} [radiusy]         y-radius of ellipsoid
- * @param  {Number} [radiusz]         z-radius of ellipsoid
- * @param  {Integer} [detailX]        number of segments,
- *                                    the more segments the smoother geometry
- *                                    default is 24. Avoid detail number above
- *                                    150, it may crash the browser.
- * @param  {Integer} [detailY]        number of segments,
- *                                    the more segments the smoother geometry
- *                                    default is 16. Avoid detail number above
- *                                    150, it may crash the browser.
+ * @param  {Number} [radiusX]  radius of the ellipsoid along the x-axis. Defaults to 50.
+ * @param  {Number} [radiusY]  radius of the ellipsoid along the y-axis. Defaults to `radiusX`.
+ * @param  {Number} [radiusZ]  radius of the ellipsoid along the z-axis. Defaults to `radiusY`.
+ * @param  {Integer} [detailX] number of triangle subdivisions along the x-axis. Defaults to 24.
+ * @param  {Integer} [detailY] number of triangle subdivisions along the y-axis. Defaults to 16.
  * @chainable
+ *
  * @example
  * <div>
  * <code>
- * // draw an ellipsoid
- * // with radius 30, 40 and 40.
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe('a white 3d ellipsoid');
+ *
+ *   describe('A white sphere on a gray background.');
  * }
  *
  * function draw() {
- *   background(205, 105, 94);
- *   ellipsoid(30, 40, 40);
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the ellipsoid.
+ *   // Set its radiusX to 30.
+ *   ellipsoid(30);
  * }
  * </code>
  * </div>
  *
- * @example
  * <div>
  * <code>
- * // slide to see how detailX works
- * let detailX;
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   detailX = createSlider(2, 24, 12);
- *   detailX.position(10, height + 5);
- *   detailX.style('width', '80px');
- *   describe(
- *     'a rotating white ellipsoid with limited X detail, with a slider that adjusts detailX'
- *   );
+ *
+ *   describe('A white ellipsoid on a gray background.');
  * }
  *
  * function draw() {
- *   background(205, 105, 94);
- *   rotateY(millis() / 1000);
- *   ellipsoid(30, 40, 40, detailX.value(), 8);
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the ellipsoid.
+ *   // Set its radiusX to 30.
+ *   // Set its radiusY to 40.
+ *   ellipsoid(30, 40);
  * }
  * </code>
  * </div>
  *
- * @example
  * <div>
  * <code>
- * // slide to see how detailY works
- * let detailY;
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   detailY = createSlider(2, 24, 6);
- *   detailY.position(10, height + 5);
- *   detailY.style('width', '80px');
- *   describe(
- *     'a rotating white ellipsoid with limited Y detail, with a slider that adjusts detailY'
- *   );
+ *
+ *   describe('A white ellipsoid on a gray background.');
  * }
  *
  * function draw() {
- *   background(205, 105, 9);
- *   rotateY(millis() / 1000);
- *   ellipsoid(30, 40, 40, 12, detailY.value());
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the ellipsoid.
+ *   // Set its radiusX to 30.
+ *   // Set its radiusY to 40.
+ *   // Set its radiusZ to 50.
+ *   ellipsoid(30, 40, 50);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white ellipsoid on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the ellipsoid.
+ *   // Set its radiusX to 30.
+ *   // Set its radiusY to 40.
+ *   // Set its radiusZ to 50.
+ *   // Set its detailX to 4.
+ *   ellipsoid(30, 40, 50, 4);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white ellipsoid on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the ellipsoid.
+ *   // Set its radiusX to 30.
+ *   // Set its radiusY to 40.
+ *   // Set its radiusZ to 50.
+ *   // Set its detailX to 4.
+ *   // Set its detailY to 3.
+ *   ellipsoid(30, 40, 50, 4, 3);
  * }
  * </code>
  * </div>
  */
-p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
+p5.prototype.ellipsoid = function(
+  radiusX = 50,
+  radiusY = radiusX,
+  radiusZ = radiusX,
+  detailX = 24,
+  detailY = 16
+) {
   this._assert3d('ellipsoid');
   p5._validateParameters('ellipsoid', arguments);
-  if (typeof radiusX === 'undefined') {
-    radiusX = 50;
-  }
-  if (typeof radiusY === 'undefined') {
-    radiusY = radiusX;
-  }
-  if (typeof radiusZ === 'undefined') {
-    radiusZ = radiusX;
-  }
-
-  if (typeof detailX === 'undefined') {
-    detailX = 24;
-  }
-  if (typeof detailY === 'undefined') {
-    detailY = 16;
-  }
 
   const gId = `ellipsoid|${detailX}|${detailY}`;
 
@@ -992,7 +2169,7 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
     } else if (this._renderer._doStroke) {
       console.log(
         'Cannot draw stroke on ellipsoids with more' +
-          ' than 24 detailX or 24 detailY'
+        ' than 24 detailX or 24 detailY'
       );
     }
     this._renderer.createBuffers(gId, ellipsoidGeom);
@@ -1004,90 +2181,151 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
 };
 
 /**
- * Draw a torus with given radius and tube radius
+ * Draws a torus.
  *
- * DetailX and detailY determine the number of subdivisions in the x-dimension and
- * the y-dimension of a torus. More subdivisions make the torus appear to be smoother.
- * The default and maximum values for detailX and detailY are 24 and 16, respectively.
- * Setting them to relatively small values like 4 and 6 allows you to create new
- * shapes other than a torus.
+ * A torus is a 3D shape with triangular faces that connect to form a ring.
+ * Toruses with few faces look flattened. Toruses with many faces have smooth
+ * surfaces.
+ *
+ * The first parameter, `radius`, is optional. If a `Number` is passed, as in
+ * `torus(30)`, it sets the radius of the ring. By default, `radius` is 50.
+ *
+ * The second parameter, `tubeRadius`, is also optional. If a `Number` is
+ * passed, as in `torus(30, 15)`, it sets the radius of the tube. By default,
+ * `tubeRadius` is 10.
+ *
+ * The third parameter, `detailX`, is also optional. If a `Number` is passed,
+ * as in `torus(30, 15, 5)`, it sets the number of edges used to draw the hole
+ * of the torus. Using more edges makes the hole look more like a circle. By
+ * default, `detailX` is 24.
+ *
+ * The fourth parameter, `detailY`, is also optional. If a `Number` is passed,
+ * as in `torus(30, 15, 5, 7)`, it sets the number of triangle subdivisions to
+ * use while filling in the torus’ height. By default, `detailY` is 16.
+ *
+ * Note: `torus()` can only be used in WebGL mode.
+ *
  * @method torus
- * @param  {Number} [radius]      radius of the whole ring
- * @param  {Number} [tubeRadius]  radius of the tube
- * @param  {Integer} [detailX]    number of segments in x-dimension,
- *                                the more segments the smoother geometry
- *                                default is 24
- * @param  {Integer} [detailY]    number of segments in y-dimension,
- *                                the more segments the smoother geometry
- *                                default is 16
+ * @param  {Number} [radius]      radius of the torus. Defaults to 50.
+ * @param  {Number} [tubeRadius]  radius of the tube. Defaults to 10.
+ * @param  {Integer} [detailX]    number of edges that form the hole. Defaults to 24.
+ * @param  {Integer} [detailY]    number of triangle subdivisions along the y-axis. Defaults to 16.
  * @chainable
+ *
  * @example
  * <div>
  * <code>
- * // draw a spinning torus
- * // with ring radius 30 and tube radius 15
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   describe('a rotating white torus');
+ *
+ *   describe('A white torus on a gray background.');
  * }
  *
  * function draw() {
- *   background(205, 102, 94);
- *   rotateX(frameCount * 0.01);
- *   rotateY(frameCount * 0.01);
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the torus.
+ *   torus();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white torus on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the torus.
+ *   // Set its radius to 30.
+ *   torus(30);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white torus on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the torus.
+ *   // Set its radius to 30 and tubeRadius to 15.
  *   torus(30, 15);
  * }
  * </code>
  * </div>
  *
- * @example
  * <div>
  * <code>
- * // slide to see how detailX works
- * let detailX;
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   detailX = createSlider(3, 24, 3);
- *   detailX.position(10, height + 5);
- *   detailX.style('width', '80px');
- *   describe(
- *     'a rotating white torus with limited X detail, with a slider that adjusts detailX'
- *   );
+ *
+ *   describe('A white torus on a gray background.');
  * }
  *
  * function draw() {
- *   background(205, 102, 94);
- *   rotateY(millis() / 1000);
- *   torus(30, 15, detailX.value(), 12);
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the torus.
+ *   // Set its radius to 30 and tubeRadius to 15.
+ *   // Set its detailX to 5.
+ *   torus(30, 15, 5);
  * }
  * </code>
  * </div>
  *
- * @example
  * <div>
  * <code>
- * // slide to see how detailY works
- * let detailY;
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   detailY = createSlider(3, 16, 3);
- *   detailY.position(10, height + 5);
- *   detailY.style('width', '80px');
- *   describe(
- *     'a rotating white torus with limited Y detail, with a slider that adjusts detailY'
- *   );
+ *
+ *   describe('A white torus on a gray background.');
  * }
  *
  * function draw() {
- *   background(205, 102, 94);
- *   rotateY(millis() / 1000);
- *   torus(30, 15, 16, detailY.value());
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the torus.
+ *   // Set its radius to 30 and tubeRadius to 15.
+ *   // Set its detailX to 5.
+ *   // Set its detailY to 3.
+ *   torus(30, 15, 5, 3);
  * }
  * </code>
  * </div>
@@ -1153,7 +2391,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
     } else if (this._renderer._doStroke) {
       console.log(
         'Cannot draw strokes on torus object with more' +
-          ' than 24 detailX or 16 detailY'
+        ' than 24 detailX or 16 detailY'
       );
     }
     this._renderer.createBuffers(gId, torusGeom);
@@ -1202,10 +2440,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
  * </code>
  * </div>
  */
-p5.RendererGL.prototype.point = function(x, y, z) {
-  if (typeof z === 'undefined') {
-    z = 0;
-  }
+p5.RendererGL.prototype.point = function(x, y, z = 0) {
 
   const _vertex = [];
   _vertex.push(new p5.Vector(x, y, z));
@@ -1246,7 +2481,7 @@ p5.RendererGL.prototype.triangle = function(args) {
   // this matrix multiplication transforms those two unit vectors
   // onto the required vector prior to rendering, and moves the
   // origin appropriately.
-  const uMVMatrix = this.uMVMatrix.copy();
+  const uModelMatrix = this.uModelMatrix.copy();
   try {
     // triangle orientation.
     const orientation = Math.sign(x1*y2-x2*y1 + x2*y3-x3*y2 + x3*y1-x1*y3);
@@ -1255,13 +2490,13 @@ p5.RendererGL.prototype.triangle = function(args) {
       x3 - x1, y3 - y1, 0, 0, // the resulting unit Y-axis
       0, 0, orientation, 0,   // the resulting unit Z-axis (Reflect the specified order of vertices)
       x1, y1, 0, 1            // the resulting origin
-    ]).mult(this.uMVMatrix);
+    ]).mult(this.uModelMatrix);
 
-    this.uMVMatrix = mult;
+    this.uModelMatrix = mult;
 
     this.drawBuffers(gId);
   } finally {
-    this.uMVMatrix = uMVMatrix;
+    this.uModelMatrix = uModelMatrix;
   }
 
   return this;
@@ -1280,15 +2515,15 @@ p5.RendererGL.prototype.ellipse = function(args) {
   );
 };
 
-p5.RendererGL.prototype.arc = function(args) {
-  const x = arguments[0];
-  const y = arguments[1];
-  const width = arguments[2];
-  const height = arguments[3];
-  const start = arguments[4];
-  const stop = arguments[5];
-  const mode = arguments[6];
-  const detail = arguments[7] || 25;
+p5.RendererGL.prototype.arc = function(...args) {
+  const x = args[0];
+  const y = args[1];
+  const width = args[2];
+  const height = args[3];
+  const start = args[4];
+  const stop = args[5];
+  const mode = args[6];
+  const detail = args[7] || 25;
 
   let shape;
   let gId;
@@ -1383,15 +2618,15 @@ p5.RendererGL.prototype.arc = function(args) {
     this.createBuffers(gId, arcGeom);
   }
 
-  const uMVMatrix = this.uMVMatrix.copy();
+  const uModelMatrix = this.uModelMatrix.copy();
 
   try {
-    this.uMVMatrix.translate([x, y, 0]);
-    this.uMVMatrix.scale(width, height, 1);
+    this.uModelMatrix.translate([x, y, 0]);
+    this.uModelMatrix.scale(width, height, 1);
 
     this.drawBuffers(gId);
   } finally {
-    this.uMVMatrix = uMVMatrix;
+    this.uModelMatrix = uModelMatrix;
   }
 
   return this;
@@ -1443,14 +2678,14 @@ p5.RendererGL.prototype.rect = function(args) {
     // opposite corners at (0,0) & (1,1).
     //
     // before rendering, this square is scaled & moved to the required location.
-    const uMVMatrix = this.uMVMatrix.copy();
+    const uModelMatrix = this.uModelMatrix.copy();
     try {
-      this.uMVMatrix.translate([x, y, 0]);
-      this.uMVMatrix.scale(width, height, 1);
+      this.uModelMatrix.translate([x, y, 0]);
+      this.uModelMatrix.scale(width, height, 1);
 
       this.drawBuffers(gId);
     } finally {
-      this.uMVMatrix = uMVMatrix;
+      this.uModelMatrix = uModelMatrix;
     }
   } else {
     // Use Immediate mode to round the rectangle corner,
@@ -1530,14 +2765,8 @@ p5.RendererGL.prototype.rect = function(args) {
 };
 
 /* eslint-disable max-len */
-p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, detailX, detailY) {
-/* eslint-enable max-len */
-  if (typeof detailX === 'undefined') {
-    detailX = 2;
-  }
-  if (typeof detailY === 'undefined') {
-    detailY = 2;
-  }
+p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, detailX=2, detailY=2) {
+  /* eslint-enable max-len */
 
   const gId =
     `quad|${x1}|${y1}|${z1}|${x2}|${y2}|${z2}|${x3}|${y3}|${z3}|${x4}|${y4}|${z4}|${detailX}|${detailY}`;

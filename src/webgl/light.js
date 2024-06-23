@@ -8,114 +8,185 @@
 import p5 from '../core/main';
 
 /**
- * Creates an ambient light with the given color.
+ * Creates a light that shines from all directions.
  *
- * Ambient light does not come from a specific direction.
- * Objects are evenly lit from all sides. Ambient lights are
- * almost always used in combination with other types of lights.
+ * Ambient light does not come from one direction. Instead, 3D shapes are
+ * lit evenly from all sides. Ambient lights are almost always used in
+ * combination with other types of lights.
  *
- * Note: lights need to be called (whether directly or indirectly)
- * within draw() to remain persistent in a looping program.
- * Placing them in setup() will cause them to only have an effect
- * the first time through the loop.
+ * There are three ways to call `ambientLight()` with optional parameters to
+ * set the light’s color.
+ *
+ * The first way to call `ambientLight()` has two parameters, `gray` and
+ * `alpha`. `alpha` is optional. Grayscale and alpha values between 0 and 255
+ * can be passed to set the ambient light’s color, as in `ambientLight(50)` or
+ * `ambientLight(50, 30)`.
+ *
+ * The second way to call `ambientLight()` has one parameter, color. A
+ * <a href="#/p5.Color">p5.Color</a> object, an array of color values, or a
+ * CSS color string, as in `ambientLight('magenta')`, can be passed to set the
+ * ambient light’s color.
+ *
+ * The third way to call `ambientLight()` has four parameters, `v1`, `v2`,
+ * `v3`, and `alpha`. `alpha` is optional. RGBA, HSBA, or HSLA values can be
+ * passed to set the ambient light’s colors, as in `ambientLight(255, 0, 0)`
+ * or `ambientLight(255, 0, 0, 30)`. Color values will be interpreted using
+ * the current <a href="#/p5/colorMode">colorMode()</a>.
  *
  * @method ambientLight
- * @param  {Number}        v1       red or hue value relative to
- *                                   the current color range
- * @param  {Number}        v2       green or saturation value
- *                                   relative to the current color range
- * @param  {Number}        v3       blue or brightness value
- *                                   relative to the current color range
- * @param  {Number}        [alpha]  alpha value relative to current
- *                                   color range (default is 0-255)
+ * @param  {Number}        v1 red or hue value in the current
+ *                            <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number}        v2 green or saturation value in the current
+ *                            <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number}        v3 blue, brightness, or lightness value in the current
+ *                            <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number}        [alpha] alpha (transparency) value in the current
+ *                                 <a href="#/p5/colorMode">colorMode()</a>.
  * @chainable
  *
  * @example
  * <div>
  * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ * // Double-click the canvas to turn on the light.
+ *
+ * let isLit = false;
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   noStroke();
- *   describe('sphere with coral color under black light');
+ *
+ *   describe('A sphere drawn against a gray background. The sphere appears to change color when the user double-clicks.');
  * }
+ *
  * function draw() {
- *   background(100);
- *   ambientLight(0); // black light (no light)
- *   ambientMaterial(255, 127, 80); // coral material
- *   sphere(40);
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Control the light.
+ *   if (isLit === true) {
+ *     // Use a grayscale value of 80.
+ *     ambientLight(80);
+ *   }
+ *
+ *   // Draw the sphere.
+ *   sphere(30);
+ * }
+ *
+ * // Turn on the ambient light when the user double-clicks.
+ * function doubleClicked() {
+ *   isLit = true;
  * }
  * </code>
  * </div>
- * @alt
- * sphere with coral color under black light
  *
- * @example
  * <div>
  * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   noStroke();
- *   describe('sphere with coral color under white light');
+ *
+ *   describe('A faded magenta sphere drawn against a gray background.');
  * }
+ *
  * function draw() {
- *   background(100);
- *   ambientLight(255); // white light
- *   ambientMaterial(255, 127, 80); // coral material
- *   sphere(40);
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   // Use a p5.Color object.
+ *   let c = color('orchid');
+ *   ambientLight(c);
+ *
+ *   // Draw the sphere.
+ *   sphere();
  * }
  * </code>
  * </div>
- * @alt
- * sphere with coral color under white light
  *
- * @example
  * <div>
  * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
- *   createCanvas(100,100,WEBGL);
- *   camera(0,-100,300);
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A faded magenta sphere drawn against a gray background.');
  * }
+ *
  * function draw() {
- *   background(230);
- *   ambientMaterial(237,34,93); //Pink Material
- *   ambientLight(mouseY);
- *   //As you move the mouse up to down it changes from no ambient light to full ambient light.
- *   rotateY(millis()/2000);
- *   box(100);
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   // Use a CSS color string.
+ *   ambientLight('#DA70D6');
+ *
+ *   // Draw the sphere.
+ *   sphere(30);
  * }
  * </code>
  * </div>
- * @alt
- * pink ambient material cube under the ambient light
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A faded magenta sphere drawn against a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   // Use RGB values
+ *   ambientLight(218, 112, 214);
+ *
+ *   // Draw the sphere.
+ *   sphere(30);
+ * }
+ * </code>
+ * </div>
  */
 
 /**
  * @method ambientLight
- * @param  {Number}        gray    number specifying value between
- *                                  white and black
+ * @param  {Number}        gray  grayscale value between 0 and 255.
  * @param  {Number}        [alpha]
  * @chainable
  */
 
 /**
  * @method ambientLight
- * @param  {String}        value   a color string
+ * @param  {String}        value color as a CSS string.
  * @chainable
  */
 
 /**
  * @method ambientLight
- * @param  {Number[]}      values  an array containing the red,green,blue &
- *                                  and alpha components of the color
+ * @param  {Number[]}      values color as an array of RGBA, HSBA, or HSLA
+ *                                 values.
  * @chainable
  */
 
 /**
  * @method ambientLight
- * @param  {p5.Color}      color   color as a <a href="#/p5.Color">p5.Color</a>
+ * @param  {p5.Color}      color color as a <a href="#/p5.Color">p5.Color</a> object.
  * @chainable
  */
-p5.prototype.ambientLight = function(v1, v2, v3, a) {
+p5.prototype.ambientLight = function (v1, v2, v3, a) {
   this._assert3d('ambientLight');
   p5._validateParameters('ambientLight', arguments);
   const color = this.color(...arguments);
@@ -132,104 +203,248 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
 };
 
 /**
- * Sets the color of the specular highlight of a non-ambient light
- * (i.e. all lights except <a href="#/p5/ambientLight">ambientLight()</a>).
+ * Sets the specular color for lights.
  *
- * specularColor() affects only the lights which are created after
- * it in the code.
+ * `specularColor()` affects lights that bounce off a surface in a preferred
+ * direction. These lights include
+ * <a href="#/p5/directionalLight">directionalLight()</a>,
+ * <a href="#/p5/pointLight">pointLight()</a>, and
+ * <a href="#/p5/spotLight">spotLight()</a>. The function helps to create
+ * highlights on <a href="#/p5.Geometry">p5.Geometry</a> objects that are
+ * styled with <a href="#/p5/specularMaterial">specularMaterial()</a>. If a
+ * geometry does not use
+ * <a href="#/p5/specularMaterial">specularMaterial()</a>, then
+ * `specularColor()` will have no effect.
  *
- * This function is used in combination with
- * <a href="#/p5/specularMaterial">specularMaterial()</a>.
- * If a geometry does not use specularMaterial(), this function
- * will have no effect.
+ * Note: `specularColor()` doesn’t affect lights that bounce in all
+ * directions, including <a href="#/p5/ambientLight">ambientLight()</a> and
+ * <a href="#/p5/imageLight">imageLight()</a>.
  *
- * The default color is white (255, 255, 255), which is used if
- * specularColor() is not explicitly called.
+ * There are three ways to call `specularColor()` with optional parameters to
+ * set the specular highlight color.
  *
- * Note: specularColor is equivalent to the Processing function
- * <a href="https://processing.org/reference/lightSpecular_.html">lightSpecular</a>.
+ * The first way to call `specularColor()` has two optional parameters, `gray`
+ * and `alpha`. Grayscale and alpha values between 0 and 255, as in
+ * `specularColor(50)` or `specularColor(50, 80)`, can be passed to set the
+ * specular highlight color.
+ *
+ * The second way to call `specularColor()` has one optional parameter,
+ * `color`. A <a href="#/p5.Color">p5.Color</a> object, an array of color
+ * values, or a CSS color string can be passed to set the specular highlight
+ * color.
+ *
+ * The third way to call `specularColor()` has four optional parameters, `v1`,
+ * `v2`, `v3`, and `alpha`. RGBA, HSBA, or HSLA values, as in
+ * `specularColor(255, 0, 0, 80)`, can be passed to set the specular highlight
+ * color. Color values will be interpreted using the current
+ * <a href="#/p5/colorMode">colorMode()</a>.
  *
  * @method specularColor
- * @param  {Number}        v1      red or hue value relative to
- *                                  the current color range
- * @param  {Number}        v2      green or saturation value
- *                                  relative to the current color range
- * @param  {Number}        v3      blue or brightness value
- *                                  relative to the current color range
+ * @param  {Number}        v1 red or hue value in the current
+ *                            <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number}        v2 green or saturation value in the current
+ *                            <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number}        v3 blue, brightness, or lightness value in the current
+ *                            <a href="#/p5/colorMode">colorMode()</a>.
  * @chainable
+ *
  * @example
  * <div>
  * <code>
- * let setRedSpecularColor = true;
+ * // Click and drag the mouse to view the scene from different angles.
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   noStroke();
- *   describe(
- *     'Sphere with specular highlight. Clicking the mouse toggles the specular highlight color between red and the default white.'
- *   );
+ *
+ *   describe('A white sphere drawn on a gray background.');
  * }
  *
  * function draw() {
- *   background(0);
+ *   background(200);
  *
- *   ambientLight(60);
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
  *
- *   // add a point light to showcase specular color
- *   // -- use mouse location to position the light
- *   let lightPosX = mouseX - width / 2;
- *   let lightPosY = mouseY - height / 2;
- *   // -- set the light's specular color
- *   if (setRedSpecularColor) {
- *     specularColor(255, 0, 0); // red specular highlight
- *   }
- *   // -- create the light
- *   pointLight(200, 200, 200, lightPosX, lightPosY, 50); // white light
- *
- *   // use specular material with high shininess
- *   specularMaterial(150);
- *   shininess(50);
- *
- *   sphere(30, 64, 64);
- * }
- *
- * function mouseClicked() {
- *   setRedSpecularColor = !setRedSpecularColor;
+ *   // No specular color.
+ *   // Draw the sphere.
+ *   sphere(30);
  * }
  * </code>
  * </div>
  *
- * @alt
- * Sphere with specular highlight. Clicking the mouse toggles the
- * specular highlight color between red and the default white.
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ * // Double-click the canvas to add a point light.
+ *
+ * let isLit = false;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A sphere drawn on a gray background. A spotlight starts shining when the user double-clicks.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Style the sphere.
+ *   noStroke();
+ *   specularColor(100);
+ *   specularMaterial(255, 255, 255);
+ *
+ *   // Control the light.
+ *   if (isLit === true) {
+ *     // Add a white point light from the top-right.
+ *     pointLight(255, 255, 255, 30, -20, 40);
+ *   }
+ *
+ *   // Draw the sphere.
+ *   sphere(30);
+ * }
+ *
+ * // Turn on the point light when the user double-clicks.
+ * function doubleClicked() {
+ *   isLit = true;
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A black sphere drawn on a gray background. An area on the surface of the sphere is highlighted in blue.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Add a specular highlight.
+ *   // Use a p5.Color object.
+ *   let c = color('dodgerblue');
+ *   specularColor(c);
+ *
+ *   // Add a white point light from the top-right.
+ *   pointLight(255, 255, 255, 30, -20, 40);
+ *
+ *   // Style the sphere.
+ *   noStroke();
+ *
+ *   // Add a white specular material.
+ *   specularMaterial(255, 255, 255);
+ *
+ *   // Draw the sphere.
+ *   sphere(30);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A black sphere drawn on a gray background. An area on the surface of the sphere is highlighted in blue.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Add a specular highlight.
+ *   // Use a CSS color string.
+ *   specularColor('#1E90FF');
+ *
+ *   // Add a white point light from the top-right.
+ *   pointLight(255, 255, 255, 30, -20, 40);
+ *
+ *   // Style the sphere.
+ *   noStroke();
+ *
+ *   // Add a white specular material.
+ *   specularMaterial(255, 255, 255);
+ *
+ *   // Draw the sphere.
+ *   sphere(30);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A black sphere drawn on a gray background. An area on the surface of the sphere is highlighted in blue.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Add a specular highlight.
+ *   // Use RGB values.
+ *   specularColor(30, 144, 255);
+ *
+ *   // Add a white point light from the top-right.
+ *   pointLight(255, 255, 255, 30, -20, 40);
+ *
+ *   // Style the sphere.
+ *   noStroke();
+ *
+ *   // Add a white specular material.
+ *   specularMaterial(255, 255, 255);
+ *
+ *   // Draw the sphere.
+ *   sphere(30);
+ * }
+ * </code>
+ * </div>
  */
 
 /**
  * @method specularColor
- * @param  {Number}        gray    number specifying value between
- *                                  white and black
+ * @param  {Number}        gray grayscale value between 0 and 255.
  * @chainable
  */
 
 /**
  * @method specularColor
- * @param  {String}        value   color as a CSS string
+ * @param  {String}        value color as a CSS string.
  * @chainable
  */
 
 /**
  * @method specularColor
- * @param  {Number[]}      values  color as an array containing the
- *                                  red, green, and blue components
+ * @param  {Number[]}      values color as an array of RGBA, HSBA, or HSLA
+ *                                 values.
  * @chainable
  */
 
 /**
  * @method specularColor
- * @param  {p5.Color}      color   color as a <a href="#/p5.Color">p5.Color</a>
+ * @param  {p5.Color}      color color as a <a href="#/p5.Color">p5.Color</a> object.
  * @chainable
  */
-p5.prototype.specularColor = function(v1, v2, v3) {
+p5.prototype.specularColor = function (v1, v2, v3) {
   this._assert3d('specularColor');
   p5._validateParameters('specularColor', arguments);
   const color = this.color(...arguments);
@@ -244,61 +459,155 @@ p5.prototype.specularColor = function(v1, v2, v3) {
 };
 
 /**
- * Creates a directional light with the given color and direction.
+ * Creates a light that shines in one direction.
  *
- * Directional light comes from one direction.
- * The direction is specified as numbers inclusively between -1 and 1.
- * For example, setting the direction as (0, -1, 0) will cause the
- * geometry to be lit from below (since the light will be facing
- * directly upwards). Similarly, setting the direction as (1, 0, 0)
- * will cause the geometry to be lit from the left (since the light
- * will be facing directly rightwards).
+ * Directional lights don’t shine from a specific point. They’re like a sun
+ * that shines from somewhere offscreen. The light’s direction is set using
+ * three `(x, y, z)` values between -1 and 1. For example, setting a light’s
+ * direction as `(1, 0, 0)` will light <a href="#/p5.Geometry">p5.Geometry</a>
+ * objects from the left since the light faces directly to the right.
  *
- * Directional lights do not have a specific point of origin, and
- * therefore cannot be positioned closer or farther away from a geometry.
+ * There are four ways to call `directionalLight()` with parameters to set the
+ * light’s color and direction.
  *
- * A maximum of **5** directional lights can be active at once.
+ * The first way to call `directionalLight()` has six parameters. The first
+ * three parameters, `v1`, `v2`, and `v3`, set the light’s color using the
+ * current <a href="#/p5/colorMode">colorMode()</a>. The last three
+ * parameters, `x`, `y`, and `z`, set the light’s direction. For example,
+ * `directionalLight(255, 0, 0, 1, 0, 0)` creates a red `(255, 0, 0)` light
+ * that shines to the right `(1, 0, 0)`.
  *
- * Note: lights need to be called (whether directly or indirectly)
- * within draw() to remain persistent in a looping program.
- * Placing them in setup() will cause them to only have an effect
- * the first time through the loop.
+ * The second way to call `directionalLight()` has four parameters. The first
+ * three parameters, `v1`, `v2`, and `v3`, set the light’s color using the
+ * current <a href="#/p5/colorMode">colorMode()</a>. The last parameter,
+ * `direction` sets the light’s direction using a
+ * <a href="#/p5.Geometry">p5.Geometry</a> object. For example,
+ * `directionalLight(255, 0, 0, lightDir)` creates a red `(255, 0, 0)` light
+ * that shines in the direction the `lightDir` vector points.
+ *
+ * The third way to call `directionalLight()` has four parameters. The first
+ * parameter, `color`, sets the light’s color using a
+ * <a href="#/p5.Color">p5.Color</a> object or an array of color values. The
+ * last three parameters, `x`, `y`, and `z`, set the light’s direction. For
+ * example, `directionalLight(myColor, 1, 0, 0)` creates a light that shines
+ * to the right `(1, 0, 0)` with the color value of `myColor`.
+ *
+ * The fourth way to call `directionalLight()` has two parameters. The first
+ * parameter, `color`, sets the light’s color using a
+ * <a href="#/p5.Color">p5.Color</a> object or an array of color values. The
+ * second parameter, `direction`, sets the light’s direction using a
+ * <a href="#/p5.Color">p5.Color</a> object. For example,
+ * `directionalLight(myColor, lightDir)` creates a light that shines in the
+ * direction the `lightDir` vector points with the color value of `myColor`.
  *
  * @method directionalLight
- * @param  {Number}    v1         red or hue value relative to the current
- *                                 color range
- * @param  {Number}    v2         green or saturation value relative to the
- *                                 current color range
- * @param  {Number}    v3         blue or brightness value relative to the
- *                                 current color range
- * @param  {Number}    x          x component of direction (inclusive range of -1 to 1)
- * @param  {Number}    y          y component of direction (inclusive range of -1 to 1)
- * @param  {Number}    z          z component of direction (inclusive range of -1 to 1)
+ * @param  {Number}    v1 red or hue value in the current
+ *                        <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number}    v2 green or saturation value in the current
+ *                        <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number}    v3 blue, brightness, or lightness value in the current
+ *                        <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number}    x  x-component of the light's direction between -1 and 1.
+ * @param  {Number}    y  y-component of the light's direction between -1 and 1.
+ * @param  {Number}    z  z-component of the light's direction between -1 and 1.
  * @chainable
+ *
  * @example
  * <div>
  * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ * // Double-click to turn on the directional light.
+ *
+ * let isLit = false;
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe(
- *     'scene with sphere and directional light. The direction of the light is controlled with the mouse position.'
- *   );
+ *
+ *   describe('A sphere drawn on a gray background. A red light starts shining from above when the user double-clicks.');
  * }
+ *
  * function draw() {
- *   background(0);
- *   //move your mouse to change light direction
- *   let dirX = (mouseX / width - 0.5) * 2;
- *   let dirY = (mouseY / height - 0.5) * 2;
- *   directionalLight(250, 250, 250, -dirX, -dirY, -1);
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Control the light.
+ *   if (isLit === true) {
+ *     // Add a red directional light from above.
+ *     // Use RGB values and XYZ directions.
+ *     directionalLight(255, 0, 0, 0, 1, 0);
+ *   }
+ *
+ *   // Style the sphere.
  *   noStroke();
- *   sphere(40);
+ *
+ *   // Draw the sphere.
+ *   sphere(30);
  * }
  * </code>
  * </div>
  *
- * @alt
- * scene with sphere and directional light. The direction of
- * the light is controlled with the mouse position.
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A sphere drawn on a gray background. The top of the sphere appears bright red. The color gets darker toward the bottom.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Add a red directional light from above.
+ *   // Use a p5.Color object and XYZ directions.
+ *   let c = color(255, 0, 0);
+ *   directionalLight(c, 0, 1, 0);
+ *
+ *   // Style the sphere.
+ *   noStroke();
+ *
+ *   // Draw the sphere.
+ *   sphere(30);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A sphere drawn on a gray background. The top of the sphere appears bright red. The color gets darker toward the bottom.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Add a red directional light from above.
+ *   // Use a p5.Color object and a p5.Vector object.
+ *   let c = color(255, 0, 0);
+ *   let lightDir = createVector(0, 1, 0);
+ *   directionalLight(c, lightDir);
+ *
+ *   // Style the sphere.
+ *   noStroke();
+ *
+ *   // Draw the sphere.
+ *   sphere(30);
+ * }
+ * </code>
+ * </div>
  */
 
 /**
@@ -306,15 +615,15 @@ p5.prototype.specularColor = function(v1, v2, v3) {
  * @param  {Number}    v1
  * @param  {Number}    v2
  * @param  {Number}    v3
- * @param  {p5.Vector} direction  direction of light as a
- *                                 <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector} direction direction of the light as a
+ *                               <a href="#/p5.Vector">p5.Vector</a> object.
  * @chainable
  */
 
 /**
  * @method directionalLight
- * @param  {p5.Color|Number[]|String} color  color as a <a href="#/p5.Color">p5.Color</a>,
- *                                            as an array, or as a CSS string
+ * @param  {p5.Color|Number[]|String} color color as a <a href="#/p5.Color">p5.Color</a> object,
+ *                                           an array of color values, or as a CSS string.
  * @param  {Number}                   x
  * @param  {Number}                   y
  * @param  {Number}                   z
@@ -327,7 +636,7 @@ p5.prototype.specularColor = function(v1, v2, v3) {
  * @param  {p5.Vector}                direction
  * @chainable
  */
-p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
+p5.prototype.directionalLight = function (v1, v2, v3, x, y, z) {
   this._assert3d('directionalLight');
   p5._validateParameters('directionalLight', arguments);
 
@@ -371,62 +680,210 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
 };
 
 /**
- * Creates a point light with the given color and position.
+ * Creates a light that shines from a point in all directions.
  *
- * A point light emits light from a single point in all directions.
- * Because the light is emitted from a specific point (position),
- * it has a different effect when it is positioned farther vs. nearer
- * an object.
+ * Point lights are like light bulbs that shine in all directions. They can be
+ * placed at different positions to achieve different lighting effects. A
+ * maximum of 5 point lights can be active at once.
  *
- * A maximum of **5** point lights can be active at once.
+ * There are four ways to call `pointLight()` with parameters to set the
+ * light’s color and position.
  *
- * Note: lights need to be called (whether directly or indirectly)
- * within draw() to remain persistent in a looping program.
- * Placing them in setup() will cause them to only have an effect
- * the first time through the loop.
+ * The first way to call `pointLight()` has six parameters. The first three
+ * parameters, `v1`, `v2`, and `v3`, set the light’s color using the current
+ * <a href="#/p5/colorMode">colorMode()</a>. The last three parameters, `x`,
+ * `y`, and `z`, set the light’s position. For example,
+ * `pointLight(255, 0, 0, 50, 0, 0)` creates a red `(255, 0, 0)` light that
+ * shines from the coordinates `(50, 0, 0)`.
+ *
+ * The second way to call `pointLight()` has four parameters. The first three
+ * parameters, `v1`, `v2`, and `v3`, set the light’s color using the current
+ * <a href="#/p5/colorMode">colorMode()</a>. The last parameter, position sets
+ * the light’s position using a <a href="#/p5.Vector">p5.Vector</a> object.
+ * For example, `pointLight(255, 0, 0, lightPos)` creates a red `(255, 0, 0)`
+ * light that shines from the position set by the `lightPos` vector.
+ *
+ * The third way to call `pointLight()` has four parameters. The first
+ * parameter, `color`, sets the light’s color using a
+ * <a href="#/p5.Color">p5.Color</a> object or an array of color values. The
+ * last three parameters, `x`, `y`, and `z`, set the light’s position. For
+ * example, `directionalLight(myColor, 50, 0, 0)` creates a light that shines
+ * from the coordinates `(50, 0, 0)` with the color value of `myColor`.
+ *
+ * The fourth way to call `pointLight()` has two parameters. The first
+ * parameter, `color`, sets the light’s color using a
+ * <a href="#/p5.Color">p5.Color</a> object or an array of color values. The
+ * second parameter, `position`, sets the light’s position using a
+ * <a href="#/p5.Vector">p5.Vector</a> object. For example,
+ * `directionalLight(myColor, lightPos)` creates a light that shines from the
+ * position set by the `lightPos` vector with the color value of `myColor`.
  *
  * @method pointLight
- * @param  {Number}    v1  red or hue value relative to the current
- *                          color range
- * @param  {Number}    v2  green or saturation value relative to the
- *                          current color range
- * @param  {Number}    v3  blue or brightness value relative to the
- *                          current color range
- * @param  {Number}    x   x component of position
- * @param  {Number}    y   y component of position
- * @param  {Number}    z   z component of position
+ * @param  {Number}    v1 red or hue value in the current
+ *                        <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number}    v2 green or saturation value in the current
+ *                        <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number}    v3 blue, brightness, or lightness value in the current
+ *                        <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number}    x  x-coordinate of the light.
+ * @param  {Number}    y  y-coordinate of the light.
+ * @param  {Number}    z  z-coordinate of the light.
  * @chainable
+ *
  * @example
+ *
  * <div>
  * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ * // Double-click to turn on the point light.
+ *
+ * let isLit = false;
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe(
- *     'scene with sphere and point light. The position of the light is controlled with the mouse position.'
- *   );
+ *
+ *   describe('A sphere drawn on a gray background. A red light starts shining from above when the user double-clicks.');
  * }
+ *
  * function draw() {
- *   background(0);
- *   // move your mouse to change light position
- *   let locX = mouseX - width / 2;
- *   let locY = mouseY - height / 2;
- *   // to set the light position,
- *   // think of the world's coordinate as:
- *   // -width/2,-height/2 ----------- width/2,-height/2
- *   //                   |           |
- *   //                   |    0,0    |
- *   //                   |           |
- *   //  -width/2,height/2 ----------- width/2,height/2
- *   pointLight(250, 250, 250, locX, locY, 50);
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Control the light.
+ *   if (isLit === true) {
+ *     // Add a red point light from above.
+ *     // Use RGB values and XYZ coordinates.
+ *     pointLight(255, 0, 0, 0, -150, 0);
+ *   }
+ *
+ *   // Style the sphere.
  *   noStroke();
- *   sphere(40);
+ *
+ *   // Draw the sphere.
+ *   sphere(30);
+ * }
+ *
+ * // Turn on the point light when the user double-clicks.
+ * function doubleClicked() {
+ *   isLit = true;
  * }
  * </code>
  * </div>
  *
- * @alt
- * scene with sphere and point light. The position of
- * the light is controlled with the mouse position.
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A sphere drawn on a gray background. The top of the sphere appears bright red. The color gets darker toward the bottom.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Add a red point light from above.
+ *   // Use a p5.Color object and XYZ directions.
+ *   let c = color(255, 0, 0);
+ *   pointLight(c, 0, -150, 0);
+ *
+ *   // Style the sphere.
+ *   noStroke();
+ *
+ *   // Draw the sphere.
+ *   sphere(30);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A sphere drawn on a gray background. The top of the sphere appears bright red. The color gets darker toward the bottom.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Add a red point light from above.
+ *   // Use a p5.Color object and a p5.Vector object.
+ *   let c = color(255, 0, 0);
+ *   let lightPos = createVector(0, -150, 0);
+ *   pointLight(c, lightPos);
+ *
+ *   // Style the sphere.
+ *   noStroke();
+ *
+ *   // Draw the sphere.
+ *   sphere(30);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('Four spheres arranged in a square and drawn on a gray background. The spheres appear bright red toward the center of the square. The color gets darker toward the corners of the square.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Add a red point light that points to the center of the scene.
+ *   // Use a p5.Color object and a p5.Vector object.
+ *   let c = color(255, 0, 0);
+ *   let lightPos = createVector(0, 0, 65);
+ *   pointLight(c, lightPos);
+ *
+ *   // Style the spheres.
+ *   noStroke();
+ *
+ *   // Draw a sphere up and to the left.
+ *   push();
+ *   translate(-25, -25, 25);
+ *   sphere(10);
+ *   pop();
+ *
+ *   // Draw a box up and to the right.
+ *   push();
+ *   translate(25, -25, 25);
+ *   sphere(10);
+ *   pop();
+ *
+ *   // Draw a sphere down and to the left.
+ *   push();
+ *   translate(-25, 25, 25);
+ *   sphere(10);
+ *   pop();
+ *
+ *   // Draw a box down and to the right.
+ *   push();
+ *   translate(25, 25, 25);
+ *   sphere(10);
+ *   pop();
+ * }
+ * </code>
+ * </div>
  */
 
 /**
@@ -434,14 +891,15 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  * @param  {Number}     v1
  * @param  {Number}     v2
  * @param  {Number}     v3
- * @param  {p5.Vector}  position of light as a <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector}  position position of the light as a
+ *                               <a href="#/p5.Vector">p5.Vector</a> object.
  * @chainable
  */
 
 /**
  * @method pointLight
- * @param  {p5.Color|Number[]|String} color  color as a <a href="#/p5.Color">p5.Color</a>,
- *                                            as an array, or as a CSS string
+ * @param  {p5.Color|Number[]|String} color color as a <a href="#/p5.Color">p5.Color</a> object,
+ *                                          an array of color values, or a CSS string.
  * @param  {Number}                   x
  * @param  {Number}                   y
  * @param  {Number}                   z
@@ -454,7 +912,7 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  * @param  {p5.Vector}                position
  * @chainable
  */
-p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
+p5.prototype.pointLight = function (v1, v2, v3, x, y, z) {
   this._assert3d('pointLight');
   p5._validateParameters('pointLight', arguments);
 
@@ -495,108 +953,124 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
 };
 
 /**
- * Creates an image light with the given image.
+ * Creates an ambient light from an image.
  *
- * The image light simulates light from all the directions.
- * This is done by using the image as a texture for an infinitely
- * large sphere light. This sphere contains
- * or encapsulates the whole scene/drawing.
- * It will have different effect for varying shininess of the
- * object in the drawing.
- * Under the hood it is mainly doing 2 types of calculations,
- * the first one is creating an irradiance map the
- * environment map of the input image.
- * The second one is managing reflections based on the shininess
- * or roughness of the material used in the scene.
+ * `imageLight()` simulates a light shining from all directions. The effect is
+ * like placing the sketch at the center of a giant sphere that uses the image
+ * as its texture. The image's diffuse light will be affected by
+ * <a href="#/p5/fill">fill()</a> and the specular reflections will be
+ * affected by <a href="#/p5/specularMaterial">specularMaterial()</a> and
+ * <a href="#/p5/shininess">shininess()</a>.
  *
- * Note: The image's diffuse light will be affected by fill()
- * and the specular reflections will be affected by specularMaterial()
- * and shininess().
+ * The parameter, `img`, is the <a href="#/p5.Image">p5.Image</a> object to
+ * use as the light source.
  *
  * @method imageLight
- * @param  {p5.image}    img  image for the background
+ * @param  {p5.image}    img image to use as the light source.
+ *
  * @example
  * <div class="notest">
  * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * let img;
  *
- * function preload() {
- *   img = loadImage('assets/outdoor_image.jpg');
- * }
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0 ,1, 0);
- *   perspective(PI/3, 1, 5, 500);
- * }
- * function draw() {
- *   background(220);
- *
- *   push();
- *   camera(0, 0, 1, 0, 0, 0, 0, 1, 0);
- *   ortho(-1, 1, -1, 1, 0, 1);
- *   noLights();
- *   noStroke();
- *   texture(img);
- *   plane(2);
- *   pop();
- *
- *   ambientLight(50);
- *   imageLight(img);
- *   specularMaterial(20);
- *   noStroke();
- *   rotateX(frameCount * 0.005);
- *   rotateY(frameCount * 0.005);
- *   box(50);
- * }
- * </code>
- * </div>
- * @alt
- * image light example
- * @example
- * <div class="notest">
- * <code>
- * let img;
- * let slider;
- *
+ * // Load an image and create a p5.Image object.
  * function preload() {
  *   img = loadImage('assets/outdoor_spheremap.jpg');
  * }
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   slider = createSlider(0, 400, 100, 1);
- *   slider.position(0, height);
- *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0 ,1, 0);
- *   perspective(PI/3, 1, 5, 500);
+ *
+ *   describe('A sphere floating above a landscape. The surface of the sphere reflects the landscape.');
  * }
+ *
  * function draw() {
- *   background(220);
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
  *
- *   push();
- *   camera(0, 0, 1, 0, 0, 0, 0, 1, 0);
- *   ortho(-1, 1, -1, 1, 0, 1);
- *   noLights();
- *   noStroke();
- *   texture(img);
- *   plane(2);
- *   pop();
+ *   // Draw the image as a panorama (360˚ background).
+ *   panorama(img);
  *
+ *   // Add a soft ambient light.
  *   ambientLight(50);
+ *
+ *   // Add light from the image.
  *   imageLight(img);
+ *
+ *   // Style the sphere.
  *   specularMaterial(20);
- *   shininess(slider.value());
+ *   shininess(100);
  *   noStroke();
+ *
+ *   // Draw the sphere.
  *   sphere(30);
  * }
  * </code>
  * </div>
- * @alt
- * light with slider having a slider for varying roughness
  */
-p5.prototype.imageLight = function(img){
+p5.prototype.imageLight = function (img) {
   // activeImageLight property is checked by _setFillUniforms
   // for sending uniforms to the fillshader
   this._renderer.activeImageLight = img;
   this._renderer._enableLighting = true;
+};
+
+/**
+ * Creates an immersive 3D background.
+ *
+ * `panorama()` transforms images containing 360˚ content, such as maps or
+ * HDRIs, into immersive 3D backgrounds that surround a sketch. Exploring the
+ * space requires changing the camera's perspective with functions such as
+ * <a href="#/p5/orbitControl">orbitControl()</a> or
+ * <a href="#/p5/camera">camera()</a>.
+ *
+ * @method panorama
+ * @param {p5.Image} img 360˚ image to use as the background.
+ *
+ * @example
+ * <div class="notest">
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * let img;
+ *
+ * // Load an image and create a p5.Image object.
+ * function preload() {
+ *   img = loadImage('assets/outdoor_spheremap.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100 ,100 ,WEBGL);
+ *
+ *   describe('A sphere floating above a landscape. The surface of the sphere reflects the landscape. The full landscape is viewable in 3D as the user drags the mouse.');
+ * }
+ *
+ * function draw() {
+ *   // Add the panorama.
+ *   panorama(img);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Use the image as a light source.
+ *   imageLight(img);
+ *
+ *   // Style the sphere.
+ *   noStroke();
+ *   specularMaterial(50);
+ *   shininess(200);
+ *   metalness(100);
+ *
+ *   // Draw the sphere.
+ *   sphere(30);
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.panorama = function (img) {
+  this.filter(this._renderer._getSphereMapping(img));
 };
 
 /**
@@ -611,30 +1085,70 @@ p5.prototype.imageLight = function(img){
  *
  * @method lights
  * @chainable
+ *
  * @example
  * <div>
  * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ * // Double-click to turn on the lights.
+ *
+ * let isLit = false;
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   describe('the light is partially ambient and partially directional');
+ *
+ *   describe('A white box drawn against a gray background. The quality of the light changes when the user double-clicks.');
  * }
+ *
  * function draw() {
- *   background(0);
- *   lights();
- *   rotateX(millis() / 1000);
- *   rotateY(millis() / 1000);
- *   rotateZ(millis() / 1000);
+ *   background(50);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Control the lights.
+ *   if (isLit === true) {
+ *     lights();
+ *   }
+ *
+ *   // Draw the box.
  *   box();
+ * }
+ *
+ * // Turn on the lights when the user double-clicks.
+ * function doubleClicked() {
+ *   isLit = true;
  * }
  * </code>
  * </div>
  *
- * @alt
- * the light is partially ambient and partially directional
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white box drawn against a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(50);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   ambientLight(128, 128, 128);
+ *   directionalLight(128, 128, 128, 0, 0, -1);
+ *
+ *   // Draw the box.
+ *   box();
+ * }
+ * </code>
+ * </div>
  */
-p5.prototype.lights = function() {
+p5.prototype.lights = function () {
   this._assert3d('lights');
   // Both specify gray by default.
   const grayColor = this.color('rgb(128,128,128)');
@@ -647,58 +1161,68 @@ p5.prototype.lights = function() {
  * Sets the falloff rate for <a href="#/p5/pointLight">pointLight()</a>
  * and <a href="#/p5/spotLight">spotLight()</a>.
  *
- * lightFalloff() affects only the lights which are created after it
- * in the code.
+ * A light’s falloff describes the intensity of its beam at a distance. For
+ * example, a lantern has a slow falloff, a flashlight has a medium falloff,
+ * and a laser pointer has a sharp falloff.
  *
- * The `constant`, `linear`, an `quadratic` parameters are used to calculate falloff as follows:
+ * `lightFalloff()` has three parameters, `constant`, `linear`, and
+ * `quadratic`. They’re numbers used to calculate falloff at a distance, `d`,
+ * as follows:
  *
- * d = distance from light position to vertex position
+ * `falloff = 1 / (constant + d * linear + (d * d) * quadratic)`
  *
- * falloff = 1 / (CONSTANT + d \* LINEAR + (d \* d) \* QUADRATIC)
+ * Note: `constant`, `linear`, and `quadratic` should always be set to values
+ * greater than 0.
  *
  * @method lightFalloff
- * @param {Number} constant   CONSTANT value for determining falloff
- * @param {Number} linear     LINEAR value for determining falloff
- * @param {Number} quadratic  QUADRATIC value for determining falloff
+ * @param {Number} constant  constant value for calculating falloff.
+ * @param {Number} linear    linear value for calculating falloff.
+ * @param {Number} quadratic quadratic value for calculating falloff.
  * @chainable
+ *
  * @example
  * <div>
  * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ * // Double-click to change the falloff rate.
+ *
+ * let useFalloff = false;
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   noStroke();
- *   describe(
- *     'Two spheres with different falloff values show different intensity of light'
- *   );
+ *
+ *   describe('A sphere drawn against a gray background. The intensity of the light changes when the user double-clicks.');
  * }
+ *
  * function draw() {
- *   background(125);
+ *   background(50);
  *
- *   let locX = mouseX - width / 2;
- *   let locY = mouseY - height / 2;
- *   locX /= 2; // half scale
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
  *
- *   lightFalloff(1, 0, 0);
- *   push();
- *   translate(-25, 0, 0);
- *   pointLight(250, 250, 250, locX - 25, locY, 50);
- *   sphere(20);
- *   pop();
+ *   // Set the light falloff.
+ *   if (useFalloff === true) {
+ *     lightFalloff(2, 0, 0);
+ *   }
  *
- *   lightFalloff(0.97, 0.03, 0);
- *   push();
- *   translate(25, 0, 0);
- *   pointLight(250, 250, 250, locX + 25, locY, 50);
- *   sphere(20);
- *   pop();
+ *   // Add a white point light from the front.
+ *   pointLight(255, 255, 255, 0, 0, 100);
+ *
+ *   // Style the sphere.
+ *   noStroke();
+ *
+ *   // Draw the sphere.
+ *   sphere(30);
+ * }
+ *
+ * // Change the falloff value when the user double-clicks.
+ * function doubleClicked() {
+ *   useFalloff = true;
  * }
  * </code>
  * </div>
- *
- * @alt
- * Two spheres with different falloff values show different intensity of light
  */
-p5.prototype.lightFalloff = function(
+p5.prototype.lightFalloff = function (
   constantAttenuation,
   linearAttenuation,
   quadraticAttenuation
@@ -745,84 +1269,138 @@ p5.prototype.lightFalloff = function(
 };
 
 /**
- * Creates a spot light with the given color, position,
- * light direction, angle, and concentration.
+ * Creates a light that shines from a point in one direction.
  *
- * Like a <a href="#/p5/pointLight">pointLight()</a>, a spotLight()
- * emits light from a specific point (position). It has a different effect
- * when it is positioned farther vs. nearer an object.
+ * Spot lights are like flashlights that shine in one direction creating a
+ * cone of light. The shape of the cone can be controlled using the angle and
+ * concentration parameters. A maximum of 5 spot lights can be active at once.
  *
- * However, unlike a pointLight(), the light is emitted in **one direction**
- * along a conical shape. The shape of the cone can be controlled using
- * the `angle` and `concentration` parameters.
+ * There are eight ways to call `spotLight()` with parameters to set the
+ * light’s color, position, direction. For example,
+ * `spotLight(255, 0, 0, 0, 0, 0, 1, 0, 0)` creates a red `(255, 0, 0)` light
+ * at the origin `(0, 0, 0)` that points to the right `(1, 0, 0)`.
  *
- * The `angle` parameter is used to
- * determine the radius of the cone. And the `concentration`
- * parameter is used to focus the light towards the center of
- * the cone. Both parameters are optional, however if you want
- * to specify `concentration`, you must also specify `angle`.
- * The minimum concentration value is 1.
+ * The `angle` parameter is optional. It sets the radius of the light cone.
+ * For example, `spotLight(255, 0, 0, 0, 0, 0, 1, 0, 0, PI / 16)` creates a
+ * red `(255, 0, 0)` light at the origin `(0, 0, 0)` that points to the right
+ * `(1, 0, 0)` with an angle of `PI / 16` radians. By default, `angle` is
+ * `PI / 3` radians.
  *
- * A maximum of **5** spot lights can be active at once.
- *
- * Note: lights need to be called (whether directly or indirectly)
- * within draw() to remain persistent in a looping program.
- * Placing them in setup() will cause them to only have an effect
- * the first time through the loop.
+ * The `concentration` parameter is also optional. It focuses the light
+ * towards the center of the light cone. For example,
+ * `spotLight(255, 0, 0, 0, 0, 0, 1, 0, 0, PI / 16, 50)` creates a red
+ * `(255, 0, 0)` light at the origin `(0, 0, 0)` that points to the right
+ * `(1, 0, 0)` with an angle of `PI / 16` radians at concentration of 50. By
+ * default, `concentration` is 100.
  *
  * @method spotLight
- * @param  {Number}    v1               red or hue value relative to the current color range
- * @param  {Number}    v2               green or saturation value relative to the current color range
- * @param  {Number}    v3               blue or brightness value relative to the current color range
- * @param  {Number}    x                x component of position
- * @param  {Number}    y                y component of position
- * @param  {Number}    z                z component of position
- * @param  {Number}    rx               x component of light direction (inclusive range of -1 to 1)
- * @param  {Number}    ry               y component of light direction (inclusive range of -1 to 1)
- * @param  {Number}    rz               z component of light direction (inclusive range of -1 to 1)
- * @param  {Number}    [angle]          angle of cone. Defaults to PI/3
- * @param  {Number}    [concentration]  concentration of cone. Defaults to 100
+ * @param  {Number}    v1               red or hue value in the current
+ *                                      <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number}    v2               green or saturation value in the current
+ *                                      <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number}    v3               blue, brightness, or lightness value in the current
+ *                                      <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number}    x                x-coordinate of the light.
+ * @param  {Number}    y                y-coordinate of the light.
+ * @param  {Number}    z                z-coordinate of the light.
+ * @param  {Number}    rx               x-component of light direction between -1 and 1.
+ * @param  {Number}    ry               y-component of light direction between -1 and 1.
+ * @param  {Number}    rz               z-component of light direction between -1 and 1.
+ * @param  {Number}    [angle]          angle of the light cone. Defaults to `PI / 3`.
+ * @param  {Number}    [concentration]  concentration of the light. Defaults to 100.
  * @chainable
  *
  * @example
  * <div>
  * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ * // Double-click to adjust the spotlight.
+ *
+ * let isLit = false;
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe(
- *     'scene with sphere and spot light. The position of the light is controlled with the mouse position.'
- *   );
+ *
+ *   describe('A white sphere drawn on a gray background. A red spotlight starts shining when the user double-clicks.');
  * }
+ *
  * function draw() {
- *   background(0);
- *   // move your mouse to change light position
- *   let locX = mouseX - width / 2;
- *   let locY = mouseY - height / 2;
- *   // to set the light position,
- *   // think of the world's coordinate as:
- *   // -width/2,-height/2 ----------- width/2,-height/2
- *   //                   |           |
- *   //                   |    0,0    |
- *   //                   |           |
- *   //  -width/2,height/2 ----------- width/2,height/2
- *   ambientLight(50);
- *   spotLight(0, 250, 0, locX, locY, 100, 0, 0, -1, Math.PI / 16);
- *   noStroke();
- *   sphere(40);
+ *   background(50);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Control the spotlight.
+ *   if (isLit === true) {
+ *     // Add a red spot light that shines into the screen.
+ *     // Set its angle to PI / 32 radians.
+ *     spotLight(255, 0, 0, 0, 0, 100, 0, 0, -1, PI / 32);
+ *   }
+ *
+ *   // Draw the sphere.
+ *   sphere(30);
+ * }
+ *
+ * // Turn on the spotlight when the user double-clicks.
+ * function doubleClicked() {
+ *   isLit = true;
  * }
  * </code>
  * </div>
  *
- * @alt
- * scene with sphere and spot light. The position of
- * the light is controlled with the mouse position.
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ * // Double-click to adjust the spotlight.
+ *
+ * let isLit = false;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white sphere drawn on a gray background. A red spotlight starts shining when the user double-clicks.');
+ * }
+ *
+ * function draw() {
+ *   background(50);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Control the spotlight.
+ *   if (isLit === true) {
+ *     // Add a red spot light that shines into the screen.
+ *     // Set its angle to PI / 3 radians (default).
+ *     // Set its concentration to 1000.
+ *     let c = color(255, 0, 0);
+ *     let position = createVector(0, 0, 100);
+ *     let direction = createVector(0, 0, -1);
+ *     spotLight(c, position, direction, PI / 3, 1000);
+ *   }
+ *
+ *   // Draw the sphere.
+ *   sphere(30);
+ * }
+ *
+ * // Turn on the spotlight when the user double-clicks.
+ * function doubleClicked() {
+ *   isLit = true;
+ * }
+ * </code>
+ * </div>
  */
 /**
  * @method spotLight
- * @param  {p5.Color|Number[]|String} color           color as a <a href="#/p5.Color">p5.Color</a>,
- *                                                     as an array, or as a CSS string
- * @param  {p5.Vector}                position        position of light as a <a href="#/p5.Vector">p5.Vector</a>
- * @param  {p5.Vector}                direction       direction of light as a <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Color|Number[]|String} color     color as a <a href="#/p5.Color">p5.Color</a> object,
+ *                                              an array of color values, or a CSS string.
+ * @param  {p5.Vector}                position  position of the light as a <a href="#/p5.Vector">p5.Vector</a> object.
+ * @param  {p5.Vector}                direction direction of light as a <a href="#/p5.Vector">p5.Vector</a> object.
  * @param  {Number}                   [angle]
  * @param  {Number}                   [concentration]
  */
@@ -892,7 +1470,7 @@ p5.prototype.lightFalloff = function(
  * @param  {Number}                   [angle]
  * @param  {Number}                   [concentration]
  */
-p5.prototype.spotLight = function(
+p5.prototype.spotLight = function (
   v1,
   v2,
   v3,
@@ -1106,54 +1684,64 @@ p5.prototype.spotLight = function(
 };
 
 /**
- * Removes all lights present in a sketch.
+ * Removes all lights from the sketch.
  *
- * All subsequent geometry is rendered without lighting (until a new
- * light is created with a call to one of the lighting functions
- * (<a href="#/p5/lights">lights()</a>,
+ * Calling `noLights()` removes any lights created with
+ * <a href="#/p5/lights">lights()</a>,
  * <a href="#/p5/ambientLight">ambientLight()</a>,
  * <a href="#/p5/directionalLight">directionalLight()</a>,
- * <a href="#/p5/pointLight">pointLight()</a>,
- * <a href="#/p5/spotLight">spotLight()</a>).
+ * <a href="#/p5/pointLight">pointLight()</a>, or
+ * <a href="#/p5/spotLight">spotLight()</a>. These functions may be called
+ * after `noLights()` to create a new lighting scheme.
  *
  * @method noLights
  * @chainable
+ *
  * @example
  * <div>
  * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe(
- *     'Three white spheres. Each appears as a different color due to lighting.'
- *   );
+ *
+ *   describe('Two spheres drawn against a gray background. The top sphere is white and the bottom sphere is red.');
  * }
+ *
  * function draw() {
- *   background(200);
+ *   background(50);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Turn on the lights.
+ *   lights();
+ *
+ *   // Style the spheres.
  *   noStroke();
  *
- *   ambientLight(255, 0, 0);
- *   translate(-30, 0, 0);
- *   ambientMaterial(255);
- *   sphere(13);
+ *   // Draw the top sphere.
+ *   push();
+ *   translate(0, -25, 0);
+ *   sphere(20);
+ *   pop();
  *
+ *   // Turn off the lights.
  *   noLights();
- *   translate(30, 0, 0);
- *   ambientMaterial(255);
- *   sphere(13);
  *
- *   ambientLight(0, 255, 0);
- *   translate(30, 0, 0);
- *   ambientMaterial(255);
- *   sphere(13);
+ *   // Add a red directional light that points into the screen.
+ *   directionalLight(255, 0, 0, 0, 0, -1);
+ *
+ *   // Draw the bottom sphere.
+ *   push();
+ *   translate(0, 25, 0);
+ *   sphere(20);
+ *   pop();
  * }
  * </code>
  * </div>
- *
- * @alt
- * Three white spheres. Each appears as a different
- * color due to lighting.
  */
-p5.prototype.noLights = function(...args) {
+p5.prototype.noLights = function (...args) {
   this._assert3d('noLights');
   p5._validateParameters('noLights', args);
 
