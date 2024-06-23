@@ -5994,6 +5994,15 @@
         "bug",
         "review"
       ]
+    },
+    {
+      "login": "dgrantham01",
+      "name": "Daniel Grantham",
+      "avatar_url": "https://avatars.githubusercontent.com/u/71230430?v=4",
+      "profile": "https://github.com/dgrantham01",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
