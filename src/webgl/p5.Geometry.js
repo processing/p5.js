@@ -926,78 +926,53 @@ p5.Geometry = class Geometry {
   }
 
   /**
- * The `saveObj()` function allows the export of p5.Geometry objects as
- * 3D models in the Wavefront .obj file format.
- * This functionality enables users to generate
- * custom 3D models within a p5.js sketch and then save them for use
- * in other applications or for further development in 3D modeling software.
- *
- * This method should be called on a custom p5.Geometry 3D object, which typically contains
- * vertices, faces, texture coordinates (UVs),
- * and vertex normals. The exported .obj file will include all these components formatted according
- * to the OBJ file specification.
- *
- * @method saveObj
- * @for p5.Geometry
- *
- * @param {String} [fileName='model.obj'] - The name of the file to save the model as.
- *                                          If not specified, the default file name will be 'model.obj'.
- * @example
- * <div>
- * <code>
- * //Creates a custom Octahedron
- * let octa;
- * let points = [];
- * let angleX = 0;
- * let angleY = 0;
- * function setup() {
- *   createCanvas(400, 400, WEBGL);
- *   points = [
- *     new p5.Vector(1, 0, 0),
- *     new p5.Vector(0, 1, 0),
- *     new p5.Vector(0, 0, 1),
- *     new p5.Vector(-1, 0, 0),
- *     new p5.Vector(0, -1, 0),
- *     new p5.Vector(0, 0, -1)
- *   ];
- *   buildOcta();
- * }
- *
- * function draw() {
- *   background(0);
- *   rotateX(angleX);
- *   rotateY(angleY);
- *   angleX += 0.01;
- *   angleY += 0.01;
- *   model(octa);
- * }
- * function buildOcta() {
- *   beginGeometry();
- *
- *   let faces = [
- *     [0, 4, 5],
- *     [1, 0, 5],
- *     [0, 1, 2],
- *     [3, 1, 5],
- *     [3, 4, 2],
- *     [4, 3, 5],
- *     [1, 3, 2],
- *     [4, 0, 2]
- *   ];
- *   faces.forEach(face => {
- *     beginShape();
- *     face.forEach(idx => {
- *       let v = points[idx];
- *       vertex(v.x * 100, v.y * 100, v.z * 100);
- *     });
- *     endShape(CLOSE);
- *   });
- *   octa = endGeometry();
- * }
- * </code>
- * </div>
- */
-  saveObj (fileName='model.obj'){
+   * The `saveObj()` function exports `p5.Geometry` objects as
+   * 3D models in the Wavefront .obj file format.
+   * This way, you can use the 3D shapes you create in p5.js in other software
+   * for rendering, animation, 3D printing, or more.
+   *
+   * The exported .obj file will include the faces and vertices of the `p5.Geometry`,
+   * as well as its texture coordinates and normals, if it has them.
+   *
+   * @method saveObj
+   * @param {String} [fileName='model.obj'] The name of the file to save the model as.
+   *                                        If not specified, the default file name will be 'model.obj'.
+   * @example
+   * <div>
+   * <code>
+   * let myModel;
+   * let saveBtn;
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myModel = buildGeometry(() => {
+   *     for (let i = 0; i < 5; i++) {
+   *       push();
+   *       translate(
+   *         random(-75, 75),
+   *         random(-75, 75),
+   *         random(-75, 75)
+   *       );
+   *       sphere(random(5, 50));
+   *       pop();
+   *     }
+   *   });
+   *
+   *   saveBtn = createButton('Save .obj');
+   *   saveBtn.mousePressed(() => myModel.saveObj());
+   * }
+   *
+   * function draw() {
+   *   background(0);
+   *   noStroke();
+   *   lights();
+   *   rotateX(millis() * 0.001);
+   *   rotateY(millis() * 0.002);
+   *   model(myModel);
+   * }
+   * </code>
+   * </div>
+   */
+  saveObj(fileName = 'model.obj') {
     let objStr= '';
 
 
@@ -1049,92 +1024,74 @@ p5.Geometry = class Geometry {
   }
 
   /**
-   * The `saveSTL()` function allows the export of p5.Geometry objects as
-   * 3D models in the stl stereolithography file format.
-   * This functionality enables users to generate
-   * custom 3D models within a p5.js sketch and then save them for use
-   * in other applications or for further development in 3D modeling software.
+   * The `saveStl()` function exports `p5.Geometry` objects as
+   * 3D models in the STL stereolithography file format.
+   * This way, you can use the 3D shapes you create in p5.js in other software
+   * for rendering, animation, 3D printing, or more.
    *
-   * This method should be called on a custom p5.Geometry 3D object, which typically contains
-   * vertices, faces, texture coordinates (UVs),
-   * and vertex normals. The exported .stl file will include all these components formatted according
-   * to the STL file specification.
+   * The exported .stl file will include the faces, vertices, and normals of the `p5.Geometry`.
+   *
+   * By default, this method saves a text-based .stl file. Alternatively, you can save a more compact
+   * but less human-readable binary .stl file by passing `{ binary: true }` as a second parameter.
    *
    * @method saveStl
-   * @for p5.Geometry
-   *
    * @param {String} [fileName='model.stl'] The name of the file to save the model as.
    *                                        If not specified, the default file name will be 'model.stl'.
-   * @param {boolean} [binary=false] When true will save the stl in a binary format if false ASCII format. Defaults to false.
-   *
+   * @param {Object} [options] Optional settings. Options can include a boolean `binary` property, which
+   * controls whether or not a binary .stl file is saved. It defaults to false.
    * @example
    * <div>
    * <code>
-   * // Click and drag the mouse to view the scene from different angles.
-   *
-   * let myGeometry;
-   *
+   * let myModel;
+   * let saveBtn1;
+   * let saveBtn2;
    * function setup() {
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
+   *   myModel = buildGeometry(() => {
+   *     for (let i = 0; i < 5; i++) {
+   *       push();
+   *       translate(
+   *         random(-75, 75),
+   *         random(-75, 75),
+   *         random(-75, 75)
+   *       );
+   *       sphere(random(5, 50));
+   *       pop();
+   *     }
+   *   });
    *
-   *   // Create a p5.Geometry object using a callback function.
-   *   myGeometry = new p5.Geometry();
-   *
-   *   // Create p5.Vector objects to position the vertices.
-   *   let v0 = createVector(-40, 0, 0);
-   *   let v1 = createVector(0, -40, 0);
-   *   let v2 = createVector(0, 40, 0);
-   *   let v3 = createVector(40, 0, 0);
-   *
-   *   // Add the vertices to the p5.Geometry object's vertices array.
-   *   myGeometry.vertices.push(v0, v1, v2, v3);
-   *
-   *   // Compute the faces array.
-   *   myGeometry.computeFaces();
-   *
-   *   // Compute the surface normals.
-   *   myGeometry.computeNormals();
-   *
-   *   describe('A red square drawn on a gray background with a button to download the model as an obj');
-   *
-   *   // Create a button to download
-   *   const b = createButton('Download');
-   *   b.size(100, 20);
-   *   b.position(0, 80);
-   *   // on button press, download the model as "example.stl"
-   *   b.mousePressed(myGeometry.saveStl('example.stl'));
+   *   saveBtn1 = createButton('Save .stl');
+   *   saveBtn1.mousePressed(function() {
+   *     myModel.saveStl();
+   *   });
+   *   saveBtn2 = createButton('Save binary .stl');
+   *   saveBtn2.mousePressed(function() {
+   *     myModel.saveStl('model.stl', { binary: true });
+   *   });
    * }
    *
    * function draw() {
-   *   background(200);
-   *
-   *   // Enable orbiting with the mouse.
-   *   orbitControl();
-   *
-   *   // Add a white point light.
-   *   pointLight(255, 255, 255, 0, 0, 10);
-   *
-   *   // Style the p5.Geometry object.
+   *   background(0);
    *   noStroke();
-   *   fill(255, 0, 0);
-   *
-   *   // Draw the p5.Geometry object.
-   *   model(myGeometry);
+   *   lights();
+   *   rotateX(millis() * 0.001);
+   *   rotateY(millis() * 0.002);
+   *   model(myModel);
    * }
    * </code>
    * </div>
    */
-  saveStl (filename = 'model.stl', binary = false){
+  saveStl(fileName = 'model.stl', { binary = false } = {}){
     let modelOutput;
-    let name = filename.substring(0, filename.lastIndexOf('.'));
-    faceNormals = [];
+    let name = fileName.substring(0, fileName.lastIndexOf('.'));
+    let faceNormals = [];
     for (let f of this.faces) {
       const U = p5.Vector.sub(this.vertices[f[1]], this.vertices[f[0]]);
       const V = p5.Vector.sub(this.vertices[f[2]], this.vertices[f[0]]);
       const nx = U.y * V.z - U.z * V.y;
       const ny = U.z * V.x - U.x * V.z;
       const nz = U.x * V.y - U.y * V.x;
-      faceNormals.push(createVector(nx, ny, nz).normalize());
+      faceNormals.push(new p5.Vector(nx, ny, nz).normalize());
     }
     if (binary) {
       let offset = 80;
@@ -1183,7 +1140,7 @@ p5.Geometry = class Geometry {
       modelOutput += 'endsolid ' + name + '\n';
     }
     const blob = new Blob([modelOutput], { type: 'text/plain' });
-    p5.prototype.downloadFile(blob, filename, 'stl');
+    p5.prototype.downloadFile(blob, fileName, 'stl');
   }
 
   /**
