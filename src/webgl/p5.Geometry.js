@@ -959,6 +959,8 @@ p5.Geometry = class Geometry {
    *
    *   saveBtn = createButton('Save .obj');
    *   saveBtn.mousePressed(() => myModel.saveObj());
+   *
+   *   describe('A few spheres rotating in space');
    * }
    *
    * function draw() {
@@ -1068,6 +1070,8 @@ p5.Geometry = class Geometry {
    *   saveBtn2.mousePressed(function() {
    *     myModel.saveStl('model.stl', { binary: true });
    *   });
+   *
+   *   describe('A few spheres rotating in space');
    * }
    *
    * function draw() {
