@@ -107,7 +107,7 @@ void main() {
   vec4 p = uProjectionMatrix * posp;
   vec4 qIn = uProjectionMatrix * posqIn;
   vec4 qOut = uProjectionMatrix * posqOut;
-  vCenter = p.xy;
+  vCenter = HOOK_getLineCenter(p.xy);
 
   // formula to convert from clip space (range -1..1) to screen space (range 0..[width or height])
   // screen_p = (p.xy/p.w + <1,1>) * 0.5 * uViewport.zw
@@ -213,11 +213,11 @@ void main() {
       strokeWeight * 0.5;
     vMaxDist = strokeWeight / 2.;
   }
-  vPosition = vCenter + offset;
+  vPosition = HOOK_getLinePosition(vCenter + offset);
 
   gl_Position.xy = p.xy + offset.xy * curPerspScale;
   gl_Position.zw = p.zw;
   
-  vColor = (uUseLineColor ? aVertexColor : uMaterialColor);
+  vColor = HOOK_getVertexColor(uUseLineColor ? aVertexColor : uMaterialColor);
   HOOK_afterVertex();
 }

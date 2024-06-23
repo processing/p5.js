@@ -19,6 +19,7 @@ float distSquared(vec2 a, vec2 b) {
 }
 
 void main() {
+  HOOK_beforeFragment();
   if (vCap > 0.) {
     if (
       uStrokeCap == STROKE_CAP_ROUND &&
@@ -51,5 +52,5 @@ void main() {
     }
   }
   OUT_COLOR = HOOK_getFinalColor(vec4(vColor.rgb, 1.) * vColor.a);
-  HOOK_afterMain();
+  HOOK_afterFragment();
 }

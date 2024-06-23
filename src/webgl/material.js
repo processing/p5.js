@@ -438,6 +438,264 @@ p5.prototype.shader = function (s) {
 };
 
 /**
+ * Get the default shader used with lights, materials,
+ * and textures.
+ *
+ * You can call <a href="#/p5.Shader/modify">`materialShader().modify()`</a>
+ * and change any of the following hooks:
+ * - `void beforeVertex`: Called at the start of the vertex shader.
+ * - `vec3 getLocalPosition`: Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
+ * - `vec3 getWorldPosition`: Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
+ * - `vec3 getLocalNormal`: Update the normal before transforms are applied. It takes in `vec3 normal` and must return a modified version.
+ * - `vec3 getWorldNormal`: Update the normal after transforms are applied. It takes in `vec3 normal` and must return a modified version.
+ * - `vec2 getUV`: Update the texture coordinates. It takes in `vec2 uv` and must return a modified version.
+ * - `vec4 getVertexColor`: Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
+ * - `void afterVertex`: Called at the end of the vertex shader.
+ * - `void beforeFragment`: Called at the start of the fragment shader.
+ * - `vec3 getPixelNormal`: Update the normal per pixel. It takes in `vec3 normal` and must return a modified version.
+ * - `vec4 getBaseColor`: Update the per-pixel color of the surface. It takes in `vec4 color` and must return a modified version.
+ * - `vec3 getAmbientMaterial`: Update the per-pixel ambient material. It takes in `vec3 color` and must return a modified version.
+ * - `vec3 getSpecularMaterial`: Update the per-pixel specular material. It takes in `vec3 color` and must return a modified version.
+ * - `float getShininess`: Update the per-pixel specular material. It takes in `float shininess` and must return a modified version.
+ * - `vec2 getPixelUV`: Update the texture coordinates per pixel. It takes in `vec2 uv` and must return a modified version.
+ * - `vec4 combineColors`: Take in a `ColorComponents` struct containing all the different components of light, and combining them into
+ *   a single final color. The struct contains `vec3 baseColor`, `float opacity`, `vec3 ambientColor`, `vec3 specularColor`,
+ *   `vec3 diffuse`, `vec3 ambient`, `vec3 specular`, and `vec3 emissive`.
+ * - `vec4 getFinalColor`: Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
+ * - `void afterFragment`: Called at the end of the fragment shader.
+ *
+ * Call `materialShader().inspectHooks()` to see all the possible hooks and
+ * their default implementations.
+ *
+ * @method materialShader
+ * @returns {p5.Shader} The material shader
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = materialShader().modify({
+ *     declarations: 'uniform float time;',
+ *     'vec3 getWorldPosition': `(vec3 pos) {
+ *       pos.y += 20.0 * sin(time * 0.001 + pos.x * 0.05);
+ *       return pos;
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   myShader.setUniform('time', millis());
+ *   lights();
+ *   noStroke();
+ *   fill('red');
+ *   sphere(50);
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.materialShader = function() {
+  this._assert3d('materialShader');
+  return this._renderer.materialShader();
+};
+
+/**
+ * Get the shader used by <a href="#/p5/normalMaterial">`normalMaterial()`</a>.
+ *
+ * You can call <a href="#/p5.Shader/modify">`normalShader().modify()`</a>
+ * and change any of the following hooks:
+ * - `void beforeVertex`: Called at the start of the vertex shader.
+ * - `vec3 getLocalPosition`: Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
+ * - `vec3 getWorldPosition`: Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
+ * - `vec3 getLocalNormal`: Update the normal before transforms are applied. It takes in `vec3 normal` and must return a modified version.
+ * - `vec3 getWorldNormal`: Update the normal after transforms are applied. It takes in `vec3 normal` and must return a modified version.
+ * - `vec2 getUV`: Update the texture coordinates. It takes in `vec2 uv` and must return a modified version.
+ * - `vec4 getVertexColor`: Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
+ * - `void afterVertex`: Called at the end of the vertex shader.
+ * - `void beforeFragment`: Called at the start of the fragment shader.
+ * - `vec4 getFinalColor`: Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
+ * - `void afterFragment`: Called at the end of the fragment shader.
+ *
+ * Call `normalShader().inspectHooks()` to see all the possible hooks and
+ * their default implementations.
+ *
+ * @method normalShader
+ * @returns {p5.Shader} The `normalMaterial` shader
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = normalShader().modify({
+ *     declarations: 'uniform float time;',
+ *     'vec3 getWorldPosition': `(vec3 pos) {
+ *       pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
+ *       return pos;
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   myShader.setUniform('time', millis());
+ *   noStroke();
+ *   sphere(100);
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.normalShader = function() {
+  this._assert3d('materialShader');
+  return this._renderer.materialShader();
+};
+
+/**
+ * Get the shader used when no lights or materials are applied.
+ *
+ * You can call <a href="#/p5.Shader/modify">`colorShader().modify()`</a>
+ * and change any of the following hooks:
+ * - `void beforeVertex`: Called at the start of the vertex shader.
+ * - `vec3 getLocalPosition`: Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
+ * - `vec3 getWorldPosition`: Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
+ * - `vec3 getLocalNormal`: Update the normal before transforms are applied. It takes in `vec3 normal` and must return a modified version.
+ * - `vec3 getWorldNormal`: Update the normal after transforms are applied. It takes in `vec3 normal` and must return a modified version.
+ * - `vec2 getUV`: Update the texture coordinates. It takes in `vec2 uv` and must return a modified version.
+ * - `vec4 getVertexColor`: Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
+ * - `void afterVertex`: Called at the end of the vertex shader.
+ * - `void beforeFragment`: Called at the start of the fragment shader.
+ * - `vec4 getFinalColor`: Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
+ * - `void afterFragment`: Called at the end of the fragment shader.
+ *
+ * Call `colorShader().inspectHooks()` to see all the possible hooks and
+ * their default implementations.
+ *
+ * @method colorShader
+ * @returns {p5.Shader} The color shader
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = colorShader().modify({
+ *     declarations: 'uniform float time;',
+ *     'vec3 getWorldPosition': `(vec3 pos) {
+ *       pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
+ *       return pos;
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   myShader.setUniform('time', millis());
+ *   noStroke();
+ *   fill('red');
+ *   circle(0, 0, 50);
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.colorShader = function() {
+  this._assert3d('colorShader');
+  return this._renderer.colorShader();
+};
+
+/**
+ * Get the shader used when drawing the strokes of shapes.
+ *
+ * You can call <a href="#/p5.Shader/modify">`strokeShader().modify()`</a>
+ * and change any of the following hooks:
+ * - `void beforeVertex`: Called at the start of the vertex shader.
+ * - `vec3 getLocalPosition`: Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
+ * - `vec3 getWorldPosition`: Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
+ * - `float getStrokeWeight`: Update the stroke weight. It takes in `float weight` and pust return a modified version.
+ * - `vec2 getLineCenter`: Update the center of the line. It takes in `vec2 center` and must return a modified version.
+ * - `vec2 getLinePosition`: Update the position of each vertex on the edge of the line. It takes in `vec2 position` and must return a modified version.
+ * - `vec4 getVertexColor`: Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
+ * - `void afterVertex`: Called at the end of the vertex shader.
+ * - `void beforeFragment`: Called at the start of the fragment shader.
+ * - `bool shouldDiscard`: Caps and joins are made by discarded pixels in the fragment shader to carve away unwanted areas. Use this to change this logic. It takes in a `bool willDiscard` and must return a modified version.
+ * - `vec4 getFinalColor`: Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
+ * - `void afterFragment`: Called at the end of the fragment shader.
+ *
+ * Call `strokeShader().inspectHooks()` to see all the possible hooks and
+ * their default implementations.
+ *
+ * @method strokeShader
+ * @returns {p5.Shader} The stroke shader
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = strokeShader().modify({
+ *     vertexDeclarations: `
+ *       out vec2 myCenter;
+ *       out vec2 myPosition;
+ *     `,
+ *     fragmentDeclarations: `
+ *       in vec2 myCenter;
+ *       in vec2 myPosition;
+ *       float random(vec2 p) {
+ *         vec3 p3  = fract(vec3(p.xyx) * .1031);
+ *         p3 += dot(p3, p3.yzx + 33.33);
+ *         return fract((p3.x + p3.y) * p3.z);
+ *       }
+ *     `,
+ *     'vec2 getLineCenter': `(vec2 center) {
+ *       // Store a copy, then return unchanged
+ *       myCenter = center;
+ *       return center;
+ *     }`,
+ *     'vec2 getLinePosition': `(vec2 position) {
+ *       // Store a copy, then return unchanged
+ *       myPosition = position;
+ *       return position;
+ *     }`,
+ *     'vec4 getFinalColor': `(vec4 c) {
+ *       if (length(myPosition - myCenter) + random(gl_FragCoord.xy)*10. > 15.) {
+ *         return vec4(0.0, 0.0, 0.0, 0.0);
+ *       }
+ *       return c;
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   strokeWeight(30);
+ *   line(
+ *     -width/3,
+ *     sin(millis()*0.001) * height/4,
+ *     width/3,
+ *     sin(millis()*0.001 + 1) * height/4
+ *   );
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.strokeShader = function() {
+  this._assert3d('strokeShader');
+  return this._renderer.strokeShader();
+};
+
+/**
  * Restores the default shaders. Code that runs after resetShader()
  * will not be affected by the shader previously set by
  * <a href="#/p5/shader">shader()</a>

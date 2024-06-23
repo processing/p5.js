@@ -20,10 +20,10 @@ void main(void) {
     (uModelViewMatrix * vec4(HOOK_getLocalPosition(aPosition), 1.0)).xyz
   ), 1.);
 
-  gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+  gl_Position = uProjectionMatrix * positionVec4;
 
   vVertexNormal = HOOK_getWorldNormal(normalize(uNormalMatrix * HOOK_getLocalNormal(aNormal)));
   vVertTexCoord = HOOK_getUV(aTexCoord);
   vColor = HOOK_getVertexColor(uUseVertexColor ? aVertexColor : uMaterialColor);
-  HOOK_afterVertex()
+  HOOK_afterVertex();
 }

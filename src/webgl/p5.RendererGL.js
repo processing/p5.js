@@ -1793,36 +1793,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     return this._getImmediateLineShader();
   }
 
-  /**
-   * Get the default shader used with lights, materials,
-   * and textures.
-   *
-   * You can call <a href="#/p5.Shader/modify">`materialShader().modify()`</a>
-   * and change any of the following hooks:
-   * - `void beforeVertex`: Called at the start of the vertex shader.
-   * - `vec3 getLocalPosition`: Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
-   * - `vec3 getWorldPosition`: Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
-   * - `vec3 getLocalNormal`: Update the normal before transforms are applied. It takes in `vec3 normal` and must return a modified version.
-   * - `vec3 getWorldNormal`: Update the normal after transforms are applied. It takes in `vec3 normal` and must return a modified version.
-   * - `vec2 getUV`: Update the texture coordinates. It takes in `vec2 uv` and must return a modified version.
-   * - `vec4 getVertexColor`: Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
-   * - `void afterVertex`: Called at the end of the vertex shader.
-   * - `void beforeFragment`: Called at the start of the fragment shader.
-   * - `vec3 getPixelNormal`: Update the normal per pixel. It takes in `vec3 normal` and must return a modified version.
-   * - `vec4 getBaseColor`: Update the per-pixel color of the surface. It takes in `vec4 color` and must return a modified version.
-   * - `vec3 getAmbientMaterial`: Update the per-pixel ambient material. It takes in `vec3 color` and must return a modified version.
-   * - `vec3 getSpecularMaterial`: Update the per-pixel specular material. It takes in `vec3 color` and must return a modified version.
-   * - `float getShininess`: Update the per-pixel specular material. It takes in `float shininess` and must return a modified version.
-   * - `vec2 getPixelUV`: Update the texture coordinates per pixel. It takes in `vec2 uv` and must return a modified version.
-   * TODO
-   *
-   * Call `materialShader().inspectHooks()` to see all the possible hooks and
-   * their default implementations.
-   *
-   * @returns {p5.Shader} The material shader
-   */
   materialShader() {
-    if (this._pInst._glAttributes.perPixelLighting) {
+    if (!this._pInst._glAttributes.perPixelLighting) {
       throw new Error(
         'The material shader does not support hooks without perPixelLighting. Try turning it back on.'
       );
@@ -1900,6 +1872,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     return this._defaultImmediateModeShader;
   }
 
+  normalShader() {
+    return this._getNormalShader();
+  }
+
   _getNormalShader() {
     if (!this._defaultNormalShader) {
       this._defaultNormalShader = new p5.Shader(
@@ -1929,6 +1905,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
 
     return this._defaultNormalShader;
+  }
+
+  colorShader() {
+    return this._getColorShader();
   }
 
   _getColorShader() {
@@ -1962,6 +1942,34 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     return this._defaultColorShader;
   }
 
+  /**
+   * TODO(dave): un-private this when there is a way to actually override the
+   * shader used for points
+   *
+   * Get the shader used when drawing points with <a href="#/p5/point">`point()`</a>.
+   *
+   * You can call <a href="#/p5.Shader/modify">`pointShader().modify()`</a>
+   * and change any of the following hooks:
+   * - `void beforeVertex`: Called at the start of the vertex shader.
+   * - `vec3 getLocalPosition`: Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
+   * - `vec3 getWorldPosition`: Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
+   * - `float getPointSize`: Update the size of the point. It takes in `float size` and must return a modified version.
+   * - `void afterVertex`: Called at the end of the vertex shader.
+   * - `void beforeFragment`: Called at the start of the fragment shader.
+   * - `bool shouldDiscard`: Points are drawn inside a square, with the corners discarded in the fragment shader to create a circle. Use this to change this logic. It takes in a `bool willDiscard` and must return a modified version.
+   * - `vec4 getFinalColor`: Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
+   * - `void afterFragment`: Called at the end of the fragment shader.
+   *
+   * Call `pointShader().inspectHooks()` to see all the possible hooks and
+   * their default implementations.
+   *
+   * @returns {p5.Shader} The `point()` shader
+   * @private()
+   */
+  pointShader() {
+    return this._getPointShader();
+  }
+
   _getPointShader() {
     if (!this._defaultPointShader) {
       this._defaultPointShader = new p5.Shader(
@@ -1990,6 +1998,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     return this._defaultPointShader;
   }
 
+  strokeShader() {
+    return this._getLineShader();
+  }
+
   _getLineShader() {
     if (!this._defaultLineShader) {
       this._defaultLineShader = new p5.Shader(
@@ -2004,13 +2016,16 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
             'vec3 getLocalPosition': '(vec3 position) { return position; }',
             'vec3 getWorldPosition': '(vec3 position) { return position; }',
             'float getStrokeWeight': '(float weight) { return weight; }',
+            'vec2 getLineCenter': '(vec2 center) { return center; }',
+            'vec2 getLinePosition': '(vec2 position) { return position; }',
+            'vec4 getVertexColor': '(vec4 color) { return color; }',
             'void afterVertex': '() {}'
           },
           fragment: {
-            'void beforeVertex': '() {}',
+            'void beforeFragment': '() {}',
             'vec4 getFinalColor': '(vec4 color) { return color; }',
             'bool shouldDiscard': '(bool outside) { return outside; }',
-            'void afterVertex': '() {}'
+            'void afterFragment': '() {}'
           }
         }
       );
