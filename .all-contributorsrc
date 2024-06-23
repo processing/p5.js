@@ -6003,6 +6003,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "m0nica",
+      "name": "Monica Powell",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6998954?v=4",
+      "profile": "https://aboutmonica.com",
+      "contributions": [
+        "talk",
+        "example"
+      ]
     }
   ],
   "repoType": "github",
