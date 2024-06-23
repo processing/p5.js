@@ -1008,6 +1008,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://piyushs-folio-c8b8.onrender.com/"><img src="https://avatars.githubusercontent.com/u/47579287?v=4?s=120" width="120px;" alt="PiyushChandra17"/><br /><sub><b>PiyushChandra17</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=PiyushChandra17" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3APiyushChandra17" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3APiyushChandra17" title="Reviewed Pull Requests">👀</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/dgrantham01"><img src="https://avatars.githubusercontent.com/u/71230430?v=4?s=120" width="120px;" alt="Daniel Grantham"/><br /><sub><b>Daniel Grantham</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=dgrantham01" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://aboutmonica.com"><img src="https://avatars.githubusercontent.com/u/6998954?v=4?s=120" width="120px;" alt="Monica Powell"/><br /><sub><b>Monica Powell</b></sub></a><br /><a href="#talk-m0nica" title="Talks">📢</a> <a href="#example-m0nica" title="Examples">💡</a></td>
     </tr>
   </tbody>
 </table>
