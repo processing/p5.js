@@ -1646,6 +1646,21 @@ suite('p5.Vector', function() {
           0.01
         );
       });
+      test('should not update surface normal', function() {
+        const tolerance = 0.001;
+        assert.closeTo(x_normal.x, 3, tolerance);
+        assert.closeTo(x_normal.y, 0, tolerance);
+        assert.closeTo(x_normal.z, 0, tolerance);
+
+        assert.closeTo(y_normal.x, 0, tolerance);
+        assert.closeTo(y_normal.y, 3, tolerance);
+        assert.closeTo(y_normal.z, 0, tolerance);
+
+        assert.closeTo(z_normal.x, 0, tolerance);
+        assert.closeTo(z_normal.y, 0, tolerance);
+        assert.closeTo(z_normal.z, 3, tolerance);
+      });
+
     });
 
     suite('p5.Vector.reflect() [CLASS]', function() {
@@ -1695,6 +1710,22 @@ suite('p5.Vector', function() {
         expect(y_bounce_incoming).to.not.equal(y_bounce_outgoing);
         expect(z_bounce_incoming).to.not.equal(z_bounce_outgoing);
       });
+
+      test('should not update surface normal', function() {
+        const tolerance = 0.001;
+        assert.closeTo(x_normal.x, 3, tolerance);
+        assert.closeTo(x_normal.y, 0, tolerance);
+        assert.closeTo(x_normal.z, 0, tolerance);
+
+        assert.closeTo(y_normal.x, 0, tolerance);
+        assert.closeTo(y_normal.y, 3, tolerance);
+        assert.closeTo(y_normal.z, 0, tolerance);
+
+        assert.closeTo(z_normal.x, 0, tolerance);
+        assert.closeTo(z_normal.y, 0, tolerance);
+        assert.closeTo(z_normal.z, 3, tolerance);
+      });
+
 
       test('should update target', function() {
         assert.equal(x_target, x_bounce_outgoing);
