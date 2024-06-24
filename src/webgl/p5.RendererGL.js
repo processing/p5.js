@@ -107,89 +107,12 @@ const filterShaderFrags = {
 };
 const filterShaderVert = readFileSync(join(__dirname, '/shaders/filters/default.vert'), 'utf-8');
 
-function lookAt(eye, target, up) {
-  let zAxis = normalize(subtractVectors(eye, target));
-  let xAxis = normalize(cross(up, zAxis));
-  let yAxis = cross(zAxis, xAxis);
-
-  return [
-    xAxis[0], yAxis[0], zAxis[0], 0,
-    xAxis[1], yAxis[1], zAxis[1], 0,
-    xAxis[2], yAxis[2], zAxis[2], 0,
-    -dot(xAxis, eye), -dot(yAxis, eye), -dot(zAxis, eye), 1
-  ];
-}
-
-function normalize(v) {
-  let len = Math.hypot(v[0], v[1], v[2]);
-  return [v[0] / len, v[1] / len, v[2] / len];
-}
-
-function subtractVectors(a, b) {
-  return [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
-}
-
-function cross(a, b) {
-  return [
-    a[1] * b[2] - a[2] * b[1],
-    a[2] * b[0] - a[0] * b[2],
-    a[0] * b[1] - a[1] * b[0]
-  ];
-}
-
-function dot(a, b) {
-  return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-}
 
 function renderCube() {
-  if (!this.cubeVAO) {
-    this.cubeVAO = this.GL.createVertexArray();
-    this.cubeVBO = this.GL.createBuffer();
-    this.GL.bindVertexArray(this.cubeVAO);
-
-    const vertices = new Float32Array([
-      // positions
-      -1.0, -1.0, -1.0,1.0, -1.0, -1.0,1.0,  1.0, -1.0,1.0,  1.0, -1.0,
-      -1.0,  1.0, -1.0,
-      -1.0, -1.0, -1.0,
-
-      -1.0, -1.0,  1.0,1.0, -1.0,  1.0,1.0,  1.0,  1.0,1.0,  1.0,  1.0,
-      -1.0,  1.0,  1.0,
-      -1.0, -1.0,  1.0,
-
-      -1.0,  1.0,  1.0,
-      -1.0,  1.0, -1.0,
-      -1.0, -1.0, -1.0,
-      -1.0, -1.0, -1.0,
-      -1.0, -1.0,  1.0,
-      -1.0,  1.0,  1.0,
-
-      1.0,  1.0,  1.0,
-      1.0,  1.0, -1.0,
-      1.0, -1.0, -1.0,
-      1.0, -1.0, -1.0,
-      1.0, -1.0,  1.0,
-      1.0,  1.0,  1.0,
-
-      -1.0, -1.0, -1.0,1.0, -1.0, -1.0,1.0, -1.0,  1.0,1.0, -1.0,  1.0,
-      -1.0, -1.0,  1.0,
-      -1.0, -1.0, -1.0,
-
-      -1.0,  1.0, -1.0,1.0,  1.0, -1.0,1.0,  1.0,  1.0,1.0,  1.0,  1.0,
-      -1.0,  1.0,  1.0,
-      -1.0,  1.0, -1.0
-    ]);
-
-    this.GL.bindBuffer(this.GL.ARRAY_BUFFER, this.cubeVBO);
-    this.GL.bufferData(this.GL.ARRAY_BUFFER, vertices, this.GL.STATIC_DRAW);
-    this.GL.enableVertexAttribArray(0);
-    this.GL.vertexAttribPointer(0, 3, this.GL.FLOAT, false, 3 * 4, 0);
-    this.GL.bindVertexArray(null);
-  }
-
-  this.GL.bindVertexArray(this.cubeVAO);
-  this.GL.drawArrays(this.GL.TRIANGLES, 0, 36);
-  this.GL.bindVertexArray(null);
+  push(); // Save the current state of the drawing
+  translate(0, 0, 0); // Translate to the position where you want to draw the cube
+  box(2); // Draw a cube with a size of 2 units (you can adjust the size)
+  pop(); // Restore the previous state of the drawing
 }
 
 /**
@@ -2041,26 +1964,15 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.GL.texParameteri(this.GL.TEXTURE_CUBE_MAP
       , this.GL.TEXTURE_MAG_FILTER, this.GL.LINEAR);
 
-    // Set up view matrices for each face
-    const captureViews = [
-      lookAt([0, 0, 0], [1, 0, 0], [0, -1, 0]), // Positive X
-      lookAt([0, 0, 0], [-1, 0, 0], [0, -1, 0]), // Negative X
-      lookAt([0, 0, 0], [0, 1, 0], [0, 0, 1]), // Positive Y
-      lookAt([0, 0, 0], [0, -1, 0], [0, 0, -1]), // Negative Y
-      lookAt([0, 0, 0], [0, 0, 1], [0, -1, 0]), // Positive Z
-      lookAt([0, 0, 0], [0, 0, -1], [0, -1, 0]) // Negative Z
-    ];
-
     // Get the cubemap shader
     const cubemapShader = this._getCubemapShader();
     this._pInst.shader(cubemapShader);
-    cubemapShader.setUniform('equirectangularMap', 0);
 
-    // Define captureProjection as a 4x4 projection matrix
-    let captureProjection = new p5.Matrix();
-    captureProjection.perspective(Math.PI / 2.0, 1.0, 0.1, 10.0);
+    // Convert p5.Image to WebGLTexture
+    const texture = new p5.Texture(this, input);
+    const webglTexture = texture.glTex;
 
-    cubemapShader.setUniform('projection', captureProjection.mat4);
+    cubemapShader.setUniform('equirectangularMap', webglTexture);
 
     this.GL.activeTexture(this.GL.TEXTURE0);
     this.GL.bindTexture(this.GL.TEXTURE_2D, input);
@@ -2085,8 +1997,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       );
 
       this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
-
-      cubemapShader.setUniform('view', captureViews[i].mat4);
 
       renderCube(); // Renders a 1x1 cube
     }
