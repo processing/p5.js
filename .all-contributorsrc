@@ -6013,6 +6013,15 @@
         "talk",
         "example"
       ]
+    },
+    {
+      "login": "rohanjulka19",
+      "name": "Rohan Julka",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19673968?v=4",
+      "profile": "https://github.com/rohanjulka19",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
