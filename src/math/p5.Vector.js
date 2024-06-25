@@ -3887,5 +3887,33 @@ p5.Vector = class {
     }
     return v.equals(v2);
   }
-};
-export default p5.Vector;
+
+
+  /**
+ * Replaces the components of a <a href="#/p5.Vector">p5.Vector</a> that are very close to zero with zero.
+ *
+ * In computers, handling numbers with decimals can give slightly imprecise answers due to the way those numbers are represented.
+ * This can make it hard to check if a number is zero, as it may be close but not exactly zero.
+ * This method rounds very close numbers to zero to make those checks easier
+ *
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/EPSILON
+ *
+ * @method clampToZero
+ * @return {p5.Vector} with components very close to zero replaced with zero.
+ * @chainable
+ */
+  clampToZero() {
+    this.x = this._clampToZero(this.x);
+    this.y = this._clampToZero(this.y);
+    this.z = this._clampToZero(this.z);
+    return this;
+  }
+
+  /**
+     * Helper function for clampToZero
+   * @private
+   */
+  _clampToZero(val) {
+    return Math.abs((val||0) - 0) <= Number.EPSILON ? 0 : val;
+  }
+};export default p5.Vector;

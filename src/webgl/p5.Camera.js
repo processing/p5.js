@@ -2461,6 +2461,84 @@ p5.Camera = class Camera {
   }
 
   /**
+ * Rotates the camera in a clockwise/counter-clockwise direction.
+ *
+ * Rolling rotates the camera without changing its orientation. The rotation
+ * happens in the camera’s "local" space.
+ *
+ * The parameter, `angle`, is the angle the camera should rotate. Passing a
+ * positive angle, as in `myCamera.roll(0.001)`, rotates the camera in counter-clockwise direction.
+ * Passing a negative angle, as in `myCamera.roll(-0.001)`, rotates the
+ * camera in clockwise direction.
+ *
+ * Note: Angles are interpreted based on the current
+ * <a href="#/p5/angleMode">angleMode()</a>.
+ *
+ * @method roll
+ * @param {Number} angle amount to rotate camera in current
+ * <a href="#/p5/angleMode">angleMode</a> units.
+ * @example
+ * <div>
+ * <code>
+ * let cam;
+ * let delta = 0.01;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   normalMaterial();
+ *   // Create a p5.Camera object.
+ *   cam = createCamera();
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Roll camera according to angle 'delta'
+ *   cam.roll(delta);
+ *
+ *   translate(0, 0, 0);
+ *   box(20);
+ *   translate(0, 25, 0);
+ *   box(20);
+ *   translate(0, 26, 0);
+ *   box(20);
+ *   translate(0, 27, 0);
+ *   box(20);
+ *   translate(0, 28, 0);
+ *   box(20);
+ *   translate(0,29, 0);
+ *   box(20);
+ *   translate(0, 30, 0);
+ *   box(20);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * camera view rotates in counter clockwise direction with vertically stacked boxes in front of it.
+ */
+  roll(amount) {
+    const local = this._getLocalAxes();
+    const axisQuaternion = p5.Quat.fromAxisAngle(
+      this._renderer._pInst._toRadians(amount),
+      local.z[0], local.z[1], local.z[2]);
+    // const upQuat = new p5.Quat(0, this.upX, this.upY, this.upZ);
+    const newUpVector = axisQuaternion.rotateVector(
+      new p5.Vector(this.upX, this.upY, this.upZ));
+    this.camera(
+      this.eyeX,
+      this.eyeY,
+      this.eyeZ,
+      this.centerX,
+      this.centerY,
+      this.centerZ,
+      newUpVector.x,
+      newUpVector.y,
+      newUpVector.z
+    );
+  }
+
+  /**
  * Rotates the camera left and right.
  *
  * Panning rotates the camera without changing its position. The rotation
