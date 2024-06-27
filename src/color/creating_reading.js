@@ -1069,6 +1069,53 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
 };
 
 /**
+ * Blends multiple colors to find a color between them.
+ *
+ * The `amt` parameter specifies the amount to interpolate between the values
+ * values. 0 is equal to the first color, 0.5 is halfway in the list, 1 is the
+ * last color of the list, and so on. Negative numbers are set
+ * to 0. Numbers greater than 1 are set to 1. This differs from the behavior of
+ * <a href="#/lerp">lerp</a>. It's necessary because numbers outside of the
+ * interval [0, 1] it will attempt to access colors outside of the list.
+ *
+ * The way that colors are interpolated depends on the current
+ * <a href="#/colorMode">colorMode()</a>.
+ *
+ * @method paletteLerp
+ * @param  {p5.Color[]} colors  interpolate from this color.
+ * @param  {Number}   amt number between 0 and 1.
+ * @return {p5.Color}     interpolated color.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(400, 400);
+ * }
+ *
+ * function draw() {
+ *   // This example goes from red to yellow and then to green
+ *   const palette = [color('red'), color('yellow'), color('green')];
+ *   const lerp_color = paletteLerp(palette, (millis() / 2000) % 1);
+ *   background(lerp_color);
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.paletteLerp = function(colors, amt) {
+  amt = this.constrain(amt, 0, 1);
+  const last_color_ind = colors.length - 1;
+
+  const from_index = Math.floor(last_color_ind * amt);
+  if (from_index === last_color_ind)
+    return colors[last_color_ind];
+
+  const from = colors[from_index];
+  const to = colors[from_index + 1];
+  return this.lerpColor(from, to, amt * last_color_ind - from_index);
+};
+
+/**
  * Gets the lightness value of a color.
  *
  * `lightness()` extracts the HSL lightness value from a
