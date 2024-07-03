@@ -492,7 +492,8 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
  *
  * A circle is a round shape defined by the `x`, `y`, and `d` parameters.
  * `x` and `y` set the location of its center. `d` sets its width and height (diameter).
- * Every point on the circle's edge is half the distance, `d`, from its center (radius = diameter/2).
+ * Every point on the circle's edge is the same distance, `0.5 * d`, from its center.
+ * `0.5 * d` (half the diameter) is the circle's radius.
  * See <a href="#/p5/ellipseMode">ellipseMode()</a> for other ways to set its position.
  *
  * @method circle
