@@ -1096,7 +1096,7 @@ function exitFullscreen() {
  * </code>
  * </div>
  * @alt
- * A 3D scene with a rotating box and a red ellipse at the screen coordinates of the world origin.
+ *
  */
 p5.prototype.worldToScreen = function(worldPosition) {
   const renderer = this._renderer;
