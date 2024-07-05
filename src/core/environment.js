@@ -1154,7 +1154,6 @@ function exitFullscreen() {
  * <code>
  * </code>
  * </div>
- * 
  */
 p5.prototype.worldToScreen = function(worldPosition) {
   const renderer = this._renderer;
