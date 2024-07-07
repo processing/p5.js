@@ -2334,9 +2334,9 @@ p5.prototype.metalness = function (metallic) {
  * @param  {Number[]} color The currently set color, with values in 0-1 range
  * @param  {Boolean} [hasTransparency] Whether the shape being drawn has other
  * transparency internally, e.g. via vertex colors
- * @return {Number[]]}  Normalized numbers array
+ * @return {Number[]}  Normalized numbers array
  */
-p5.RendererGL.prototype._applyColorBlend = function(colors, hasTransparency) {
+p5.RendererGL.prototype._applyColorBlend = function (colors, hasTransparency) {
   const gl = this.GL;
 
   const isTexture = this.drawMode === constants.TEXTURE;

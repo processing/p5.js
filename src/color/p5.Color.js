@@ -705,7 +705,6 @@ p5.Color = class Color {
    * @param {Number} alpha the new alpha value.
    *
    * @example
-   * @example
    * <div>
    * <code>
    * function setup() {

@@ -36,8 +36,8 @@ p5.Quat = class {
      * @chainable
     */
   static fromAxisAngle(angle, x, y, z) {
-    const w = Math.cos(angle/2);
-    const vec = new p5.Vector(x, y, z).normalize().mult(Math.sin(angle/2));
+    const w = Math.cos(angle / 2);
+    const vec = new p5.Vector(x, y, z).normalize().mult(Math.sin(angle / 2));
     return new p5.Quat(w, vec.x, vec.y, vec.z);
   }
 
@@ -69,12 +69,11 @@ p5.Quat = class {
    * This was taken from the below stackexchange link
    * https://gamedev.stackexchange.com/questions/28395/rotating-vector3-by-a-quaternion/50545#50545
    * @param {p5.Vector} [p] vector to rotate on the axis quaternion
-   * @returns
    */
   rotateVector(p) {
-    return new p5.Vector.mult( p, this.w*this.w - this.vec.dot(this.vec) )
-      .add( p5.Vector.mult( this.vec, 2 * p.dot(this.vec) ) )
-      .add( p5.Vector.mult( this.vec, 2 * this.w ).cross( p ) )
+    return new p5.Vector.mult(p, this.w * this.w - this.vec.dot(this.vec))
+      .add(p5.Vector.mult(this.vec, 2 * p.dot(this.vec)))
+      .add(p5.Vector.mult(this.vec, 2 * this.w).cross(p))
       .clampToZero();
   }
 
