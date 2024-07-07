@@ -1,4 +1,5 @@
 import p5 from '../../../src/app.js';
+import { parallelSketches } from '../../js/p5_helpers';
 
 suite('Mouse Events', function() {
   let myp5;

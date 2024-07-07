@@ -1,12 +1,12 @@
 import p5 from '../../../src/app.js';
 
 suite('p5.Element', function() {
-  var myp5 = new p5(function(sketch) {
+  const myp5 = new p5(function(sketch) {
     sketch.setup = function() {};
     sketch.draw = function() {};
   });
 
-  var elt;
+  let elt;
 
   afterAll(function() {
     if (elt && elt.parentNode) {
@@ -17,25 +17,31 @@ suite('p5.Element', function() {
   });
 
   suite('p5.Element.prototype.parent', function() {
+    let div0, div1;
+
+    beforeEach(() => {
+      div0 = myp5.createDiv('this is the parent');
+      div1 = myp5.createDiv('this is the child');
+    });
+
+    afterEach(() => {
+      div0.remove();
+      div1.remove();
+    });
+
     test('attaches child to parent', function() {
-      let div0 = myp5.createDiv('this is the parent');
-      let div1 = myp5.createDiv('this is the child');
       div1.attribute('id', 'child');
       div1.parent(div0); //attaches div1 to div0
       assert.equal(document.getElementById('child').parentElement, div0.elt);
     });
 
     test('attaches child to parent using classname', function() {
-      let div0 = myp5.createDiv('this is the parent');
-      let div1 = myp5.createDiv('this is the child');
       div0.attribute('id', 'parent');
       div1.parent('parent'); //attaches div1 to div0 using classname
       assert.equal(div1.parent(), div0.elt); //returns parent of div1
     });
 
-    test('attaches child to parent using classname', function() {
-      let div0 = myp5.createDiv('this is the parent');
-      let div1 = myp5.createDiv('this is the child');
+    test('attaches child to parent using id', function() {
       div0.attribute('id', 'parent');
       div1.parent('#parent'); //attaches div1 to div0
       assert.equal(div1.parent(), div0.elt); //returns parent of div1 using id
@@ -700,8 +706,17 @@ suite('p5.Element', function() {
   });
 
   suite('operating with element classes', function() {
-    test('should add class to element', function() {
+    let elt;
+
+    beforeEach(() => {
       elt = document.createElement('div');
+    });
+
+    afterEach(() => {
+      elt.remove();
+    });
+
+    test('should add class to element', function() {
       elt.setAttribute('id', 'testdiv');
       document.body.appendChild(elt);
 
@@ -710,7 +725,6 @@ suite('p5.Element', function() {
     });
 
     test('should remove class from element with only one class', function() {
-      elt = document.createElement('div');
       elt.setAttribute('id', 'testdiv');
       elt.setAttribute('class', 'testclass');
       document.body.appendChild(elt);
@@ -720,7 +734,6 @@ suite('p5.Element', function() {
     });
 
     test('should remove class from element with several classes', function() {
-      elt = document.createElement('div');
       elt.setAttribute('id', 'testdiv');
       elt.setAttribute('class', 'testclass1 testclass2 testclass3');
       document.body.appendChild(elt);
@@ -730,7 +743,6 @@ suite('p5.Element', function() {
     });
 
     test('should return true if element has specified class', function() {
-      elt = document.createElement('div');
       elt.setAttribute('id', 'testdiv');
       elt.setAttribute('class', 'testclass1 testclass2 testclass3');
       document.body.appendChild(elt);
@@ -739,7 +751,6 @@ suite('p5.Element', function() {
     });
 
     test('should return false if element has not specified class', function() {
-      elt = document.createElement('div');
       elt.setAttribute('id', 'testdiv');
       elt.setAttribute('class', 'testclass1 testclass3');
       document.body.appendChild(elt);
@@ -748,7 +759,6 @@ suite('p5.Element', function() {
     });
 
     test('should return false if element has class that is partially similar as specified class', function() {
-      elt = document.createElement('div');
       elt.setAttribute('id', 'testdiv');
       elt.setAttribute('class', 'testclass slideshow newtestsclas');
       document.body.appendChild(elt);
@@ -760,7 +770,6 @@ suite('p5.Element', function() {
     });
 
     test('should toggle specified class on element', function() {
-      elt = document.createElement('div');
       elt.setAttribute('id', 'testdiv');
       elt.setAttribute('class', 'testclass1 testclass2');
       document.body.appendChild(elt);

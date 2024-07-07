@@ -34,9 +34,10 @@ function random(p5, fn){
   };
 
   /**
-   * Sets the seed value for <a href="#/p5/random">random()</a> and
-   * <a href="#/p5/randomGaussian">randomGaussian()</a>. By default,
-   * <a href="#/p5/random">random()</a> and
+   * Sets the seed value for the <a href="#/p5/random">random()</a> and
+   * <a href="#/p5/randomGaussian">randomGaussian()</a> functions.
+   *
+   * By default, <a href="#/p5/random">random()</a> and
    * <a href="#/p5/randomGaussian">randomGaussian()</a> produce different
    * results each time a sketch is run. Calling `randomSeed()` with a constant
    * argument, such as `randomSeed(99)`, makes these functions produce the same
@@ -44,20 +45,35 @@ function random(p5, fn){
    *
    * @method randomSeed
    * @param {Number} seed   seed value.
+   *
    * @example
    * <div>
    * <code>
-   * let x = random(width);
-   * let y = random(height);
-   * circle(x, y, 10);
+   * function setup() {
+   *   createCanvas(100, 100);
    *
-   * randomSeed(99);
-   * x = random(width);
-   * y = random(height);
-   * fill(0);
-   * circle(x, y, 10);
+   *   background(200);
    *
-   * describe('A white circle appears at a random position. A black circle appears at (27.4, 25.8).');
+   *   // Get random coordinates.
+   *   let x = random(0, 100);
+   *   let y = random(0, 100);
+   *
+   *   // Draw the white circle.
+   *   circle(x, y, 10);
+   *
+   *   // Set a random seed for consistency.
+   *   randomSeed(99);
+   *
+   *   // Get random coordinates.
+   *   x = random(0, 100);
+   *   y = random(0, 100);
+   *
+   *   // Draw the black circle.
+   *   fill(0);
+   *   circle(x, y, 10);
+   *
+   *   describe('A white circle appears at a random position. A black circle appears at (27.4, 25.8).');
+   * }
    * </code>
    * </div>
    */
@@ -98,59 +114,143 @@ function random(p5, fn){
    * @param  {Number} [min]   lower bound (inclusive).
    * @param  {Number} [max]   upper bound (exclusive).
    * @return {Number} random number.
+   *
    * @example
    * <div>
    * <code>
-   * let x = random(width);
-   * let y = random(height);
+   * function setup() {
+   *   createCanvas(100, 100);
    *
-   * strokeWeight(5);
-   * point(x, y);
-   *
-   * describe('A black dot appears in a random position on a gray square.');
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * let animals = ['🦁', '🐯', '🐻'];
-   * let animal = random(animals);
-   * text(animal, 50, 50);
-   *
-   * describe('An animal face is displayed at random. Either a lion, tiger, or bear.');
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * function draw() {
    *   background(200);
    *
-   *   frameRate(5);
-   *   let x = random(width);
-   *   let y = random(height);
+   *   // Get random coordinates between 0 and 100.
+   *   let x = random(0, 100);
+   *   let y = random(0, 100);
    *
+   *   // Draw a point.
    *   strokeWeight(5);
    *   point(x, y);
    *
-   *   describe('A black dot moves around randomly on a gray square.');
+   *   describe('A black dot appears in a random position on a gray square.');
    * }
    * </code>
    * </div>
    *
    * <div>
    * <code>
-   * function draw() {
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
    *   background(200);
    *
-   *   frameRate(5);
-   *   let x = random(45, 55);
-   *   let y = random(45, 55);
+   *   // Get random coordinates between 0 and 100.
+   *   let x = random(100);
+   *   let y = random(100);
    *
+   *   // Draw the point.
    *   strokeWeight(5);
    *   point(x, y);
    *
+   *   describe('A black dot appears in a random position on a gray square.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Create an array of emoji strings.
+   *   let animals = ['🦁', '🐯', '🐻'];
+   *
+   *   // Choose a random element from the array.
+   *   let choice = random(animals);
+   *
+   *   // Style the text.
+   *   textAlign(CENTER);
+   *   textSize(20);
+   *
+   *   // Display the emoji.
+   *   text(choice, 50, 50);
+   *
+   *   describe('An animal face is displayed at random. Either a lion, tiger, or bear.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   // Slow the frame rate.
+   *   frameRate(5);
+   *
+   *   describe('A black dot moves around randomly on a gray square.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Get random coordinates between 0 and 100.
+   *   let x = random(100);
+   *   let y = random(100);
+   *
+   *   // Draw the point.
+   *   strokeWeight(5);
+   *   point(x, y);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   // Slow the frame rate.
+   *   frameRate(5);
+   *
    *   describe('A black dot moves around randomly in the middle of a gray square.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Get random coordinates between 45 and 55.
+   *   let x = random(45, 55);
+   *   let y = random(45, 55);
+   *
+   *   // Draw the point.
+   *   strokeWeight(5);
+   *   point(x, y);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let x = 50;
+   * let y = 50;
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   describe('A black dot moves around randomly leaving a trail.');
+   * }
+   *
+   * function draw() {
+   *   // Update x and y randomly.
+   *   x += random(-1, 1);
+   *   y += random(-1, 1);
+   *
+   *   // Draw the point.
+   *   point(x, y);
    * }
    * </code>
    * </div>
@@ -190,10 +290,11 @@ function random(p5, fn){
   };
 
   /**
-   * Returns a random number fitting a Gaussian, or normal, distribution. Normal
-   * distributions look like bell curves when plotted. Values from a normal
-   * distribution cluster around a central value called the mean. The cluster's
-   * standard deviation describes its spread.
+   * Returns a random number fitting a Gaussian, or normal, distribution.
+   *
+   * Normal distributions look like bell curves when plotted. Values from a
+   * normal distribution cluster around a central value called the mean. The
+   * cluster's standard deviation describes its spread.
    *
    * By default, `randomGaussian()` produces different results each time a
    * sketch runs. The <a href="#/p5/randomSeed">randomSeed()</a> function can be
@@ -219,26 +320,33 @@ function random(p5, fn){
    * @example
    * <div>
    * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   describe('Three horizontal black lines are filled in randomly. The top line spans entire canvas. The middle line is very short. The bottom line spans two-thirds of the canvas.');
+   * }
+   *
    * function draw() {
+   *   // Style the circles.
    *   noStroke();
    *   fill(0, 10);
    *
-   *   // Uniform distribution.
-   *   let x = random(width);
+   *   // Uniform distribution between 0 and 100.
+   *   let x = random(100);
    *   let y = 25;
    *   circle(x, y, 5);
    *
-   *   // Gaussian distribution with sd = 1.
+   *   // Gaussian distribution with a mean of 50 and sd of 1.
    *   x = randomGaussian(50);
    *   y = 50;
    *   circle(x, y, 5);
    *
-   *   // Gaussian distribution with sd = 10.
+   *   // Gaussian distribution with a mean of 50 and sd of 10.
    *   x = randomGaussian(50, 10);
    *   y = 75;
    *   circle(x, y, 5);
-   *
-   *   describe('Three horizontal black lines are filled in randomly. The top line spans entire canvas. The middle line is very short. The bottom line spans two-thirds of the canvas.');
    * }
    * </code>
    * </div>

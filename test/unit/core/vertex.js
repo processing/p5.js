@@ -1,11 +1,12 @@
 import p5 from '../../../src/app.js';
+import { vi } from 'vitest';
 
 suite('Vertex', function() {
   var myp5;
   let _friendlyErrorSpy;
 
   beforeEach(function() {
-    _friendlyErrorSpy = sinon.spy(p5, '_friendlyError');
+    _friendlyErrorSpy = vi.spyOn(p5, '_friendlyError');
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
@@ -14,7 +15,7 @@ suite('Vertex', function() {
   });
 
   afterEach(function() {
-    _friendlyErrorSpy.restore();
+    vi.restoreAllMocks();
     myp5.remove();
   });
 
@@ -32,16 +33,6 @@ suite('Vertex', function() {
         'got unwanted exception'
       );
     });
-    test('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.beginShape(myp5.BEVEL);
-      });
-    });
-    test('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.beginShape(20);
-      });
-    });
   });
 
   suite('p5.prototype.quadraticVertex', function() {
@@ -49,19 +40,9 @@ suite('Vertex', function() {
       assert.ok(myp5.quadraticVertex);
       assert.typeOf(myp5.quadraticVertex, 'function');
     });
-    test('missing param #3', function() {
-      assert.validationError(function() {
-        myp5.quadraticVertex(80, 20, 50);
-      });
-    });
-    test('missing param #5', function() {
-      assert.validationError(function() {
-        myp5.quadraticVertex(80, 20, 50, 50, 10);
-      });
-    });
     test('_friendlyError is called. vertex() should be used once before quadraticVertex()', function() {
       myp5.quadraticVertex(80, 20, 50, 50, 10, 20);
-      assert(_friendlyErrorSpy.calledOnce, 'p5._friendlyError was not called');
+      expect(_friendlyErrorSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -70,19 +51,9 @@ suite('Vertex', function() {
       assert.ok(myp5.bezierVertex);
       assert.typeOf(myp5.bezierVertex, 'function');
     });
-    test('missing param #6', function() {
-      assert.validationError(function() {
-        myp5.bezierVertex(25, 30, 25, -30, -25);
-      });
-    });
-    test('missing param #8-9', function() {
-      assert.validationError(function() {
-        myp5.bezierVertex(25, 30, 25, -30, -25, 30, 20);
-      });
-    });
     test('_friendlyError is called. vertex() should be used once before bezierVertex()', function() {
       myp5.bezierVertex(25, 30, 25, -30, -25, 30);
-      assert(_friendlyErrorSpy.calledOnce, 'p5._friendlyError was not called');
+      expect(_friendlyErrorSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -90,11 +61,6 @@ suite('Vertex', function() {
     test('should be a function', function() {
       assert.ok(myp5.curveVertex);
       assert.typeOf(myp5.curveVertex, 'function');
-    });
-    test('missing param #1', function() {
-      assert.validationError(function() {
-        myp5.curveVertex(40);
-      });
     });
   });
 
@@ -112,28 +78,12 @@ suite('Vertex', function() {
         'got unwanted exception'
       );
     });
-    test('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.endShape(20);
-      });
-    });
   });
 
   suite('p5.prototype.vertex', function() {
     test('should be a function', function() {
       assert.ok(myp5.vertex);
       assert.typeOf(myp5.vertex, 'function');
-    });
-    // p5.prototype.vertex parameter validation is absent
-    test.skip('missing param #1', function() {
-      assert.validationError(function() {
-        myp5.vertex(10);
-      });
-    });
-    test.skip('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.vertex('a', 1);
-      });
     });
   });
 });

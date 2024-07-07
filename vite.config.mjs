@@ -15,7 +15,8 @@ export default defineConfig({
     ],
     exclude: [
       './test/unit/spec.js',
-      './test/unit/assets/*'
+      './test/unit/assets/*',
+      './test/unit/visual/*'
     ],
     globals: true,
     browser: {

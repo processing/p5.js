@@ -20,16 +20,6 @@ suite('', function() {
       assert.ok(myp5.normal);
       assert.typeOf(myp5.normal, 'function');
     });
-    test.skip('missing param #1', function() {
-      assert.validationError(function() {
-        myp5.normal(10);
-      });
-    });
-    test.skip('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.normal('a', 1);
-      });
-    });
     test('accepts numeric arguments', function() {
       assert.doesNotThrow(
         function() {

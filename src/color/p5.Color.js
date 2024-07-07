@@ -318,7 +318,9 @@ const colorPatterns = {
 };
 
 /**
- * A class to describe a color. Each `p5.Color` object stores the color mode
+ * A class to describe a color.
+ *
+ * Each `p5.Color` object stores the color mode
  * and level maxes that were active during its construction. These values are
  * used to interpret the arguments passed to the object's constructor. They
  * also determine output formatting such as when
@@ -332,8 +334,8 @@ const colorPatterns = {
  * When different color representations are calculated, the results are cached
  * for performance. These values are normalized, floating-point numbers.
  *
- * <a href="#/p5/color">color()</a> is the recommended way to create an instance
- * of this class.
+ * Note: <a href="#/p5/color">color()</a> is the recommended way to create an
+ * instance of this class.
  *
  * @class p5.Color
  * @param {p5} [pInst]                      pointer to p5 instance.
@@ -359,8 +361,15 @@ p5.Color = class Color {
   }
 
   /**
-   * Returns the color formatted as a string. Doing so can be useful for
-   * debugging, or for using p5.js with other libraries.
+   * Returns the color formatted as a `String`.
+   *
+   * Calling `myColor.toString()` can be useful for debugging, as in
+   * `print(myColor.toString())`. It's also helpful for using p5.js with other
+   * libraries.
+   *
+   * The parameter, `format`, is optional. If a format string is passed, as in
+   * `myColor.toString('#rrggbb')`, it will determine how the color string is
+   * formatted. By default, color strings are formatted as `'rgba(r, g, b, a)'`.
    *
    * @param {String} [format] how the color string will be formatted.
    * Leaving this empty formats the string as rgba(r, g, b, a).
@@ -370,26 +379,25 @@ p5.Color = class Color {
    * 'rgb%' 'hsb%' 'hsl%' 'rgba%' 'hsba%' and 'hsla%' format as percentages.
    * @return {String} the formatted string.
    *
-   * @example
    * <div>
    * <code>
-   * createCanvas(200, 100);
-   * stroke(255);
-   * const myColor = color(100, 100, 250);
-   * fill(myColor);
-   * rotate(HALF_PI);
-   * text(myColor.toString(), 0, -5);
-   * text(myColor.toString('#rrggbb'), 0, -30);
-   * text(myColor.toString('rgba%'), 0, -55);
-   * describe('Three text representation of a color written sideways.');
-   * </code>
-   * </div>
+   * function setup() {
+   *   createCanvas(100, 100);
    *
-   * <div>
-   * <code>
-   * const myColor = color(100, 130, 250);
-   * text(myColor.toString('#rrggbb'), 25, 25);
-   * describe('A hexadecimal representation of a color.');
+   *   background(200);
+   *
+   *   // Create a p5.Color object.
+   *   let myColor = color('darkorchid');
+   *
+   *   // Style the text.
+   *   textAlign(CENTER);
+   *   textSize(16);
+   *
+   *   // Display the text.
+   *   text(myColor.toString('#rrggbb'), 50, 50);
+   *
+   *   describe('The text "#9932cc" written in purple on a gray background.');
+   * }
    * </code>
    * </div>
    */
@@ -561,25 +569,37 @@ p5.Color = class Color {
   }
 
   /**
-   * Sets the red component of a color. The range depends on the
-   * <a href="#/colorMode">colorMode()</a>. In the default RGB mode it's
-   * between 0 and 255.
+   * Sets the red component of a color.
+   *
+   * The range depends on the <a href="#/p5/colorMode">colorMode()</a>. In the
+   * default RGB mode it's between 0 and 255.
    *
    * @param {Number} red the new red value.
    *
    * @example
    * <div>
    * <code>
-   * let backgroundColor;
-   *
    * function setup() {
-   *   backgroundColor = color(100, 50, 150);
-   * }
+   *   createCanvas(100, 100);
    *
-   * function draw() {
-   *   backgroundColor.setRed(128 + 128 * sin(millis() / 1000));
-   *   background(backgroundColor);
-   *   describe('A canvas with a gradually changing background color.');
+   *   background(200);
+   *
+   *   // Create a p5.Color object.
+   *   let c = color(255, 128, 128);
+   *
+   *   // Draw the left rectangle.
+   *   noStroke();
+   *   fill(c);
+   *   rect(15, 20, 35, 60);
+   *
+   *   // Change the red value.
+   *   c.setRed(64);
+   *
+   *   // Draw the right rectangle.
+   *   fill(c);
+   *   rect(50, 20, 35, 60);
+   *
+   *   describe('Two rectangles. The left one is salmon pink and the right one is teal.');
    * }
    * </code>
    * </div>
@@ -590,25 +610,37 @@ p5.Color = class Color {
   }
 
   /**
-   * Sets the green component of a color. The range depends on the
-   * <a href="#/colorMode">colorMode()</a>. In the default RGB mode it's
-   * between 0 and 255.
+   * Sets the green component of a color.
+   *
+   * The range depends on the <a href="#/p5/colorMode">colorMode()</a>. In the
+   * default RGB mode it's between 0 and 255.
    *
    * @param {Number} green the new green value.
    *
    * @example
    * <div>
    * <code>
-   * let backgroundColor;
-   *
    * function setup() {
-   *   backgroundColor = color(100, 50, 150);
-   * }
+   *   createCanvas(100, 100);
    *
-   * function draw() {
-   *   backgroundColor.setGreen(128 + 128 * sin(millis() / 1000));
-   *   background(backgroundColor);
-   *   describe('A canvas with a gradually changing background color.');
+   *   background(200);
+   *
+   *   // Create a p5.Color object.
+   *   let c = color(255, 128, 128);
+   *
+   *   // Draw the left rectangle.
+   *   noStroke();
+   *   fill(c);
+   *   rect(15, 20, 35, 60);
+   *
+   *   // Change the green value.
+   *   c.setGreen(255);
+   *
+   *   // Draw the right rectangle.
+   *   fill(c);
+   *   rect(50, 20, 35, 60);
+   *
+   *   describe('Two rectangles. The left one is salmon pink and the right one is yellow.');
    * }
    * </code>
    * </div>
@@ -619,25 +651,37 @@ p5.Color = class Color {
   }
 
   /**
-   * Sets the blue component of a color. The range depends on the
-   * <a href="#/colorMode">colorMode()</a>. In the default RGB mode it's
-   * between 0 and 255.
+   * Sets the blue component of a color.
+   *
+   * The range depends on the <a href="#/p5/colorMode">colorMode()</a>. In the
+   * default RGB mode it's between 0 and 255.
    *
    * @param {Number} blue the new blue value.
    *
    * @example
    * <div>
    * <code>
-   * let backgroundColor;
-   *
    * function setup() {
-   *   backgroundColor = color(100, 50, 150);
-   * }
+   *   createCanvas(100, 100);
    *
-   * function draw() {
-   *   backgroundColor.setBlue(128 + 128 * sin(millis() / 1000));
-   *   background(backgroundColor);
-   *   describe('A canvas with a gradually changing background color.');
+   *   background(200);
+   *
+   *   // Create a p5.Color object.
+   *   let c = color(255, 128, 128);
+   *
+   *   // Draw the left rectangle.
+   *   noStroke();
+   *   fill(c);
+   *   rect(15, 20, 35, 60);
+   *
+   *   // Change the blue value.
+   *   c.setBlue(255);
+   *
+   *   // Draw the right rectangle.
+   *   fill(c);
+   *   rect(50, 20, 35, 60);
+   *
+   *   describe('Two rectangles. The left one is salmon pink and the right one is pale fuchsia.');
    * }
    * </code>
    * </div>
@@ -648,25 +692,39 @@ p5.Color = class Color {
   }
 
   /**
-   * Sets the alpha (transparency) value of a color. The range depends on the
-   * <a href="#/colorMode">colorMode()</a>. In the default RGB mode it's
+   * Sets the alpha (transparency) value of a color.
+   *
+   * The range depends on the
+   * <a href="#/p5/colorMode">colorMode()</a>. In the default RGB mode it's
    * between 0 and 255.
    *
    * @param {Number} alpha the new alpha value.
    *
    * @example
+   * @example
    * <div>
    * <code>
-   * function draw() {
-   *   clear();
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
    *   background(200);
-   *   const squareColor = color(100, 50, 100);
-   *   squareColor.setAlpha(128 + 128 * sin(millis() / 1000));
-   *   fill(squareColor);
-   *   rect(13, 13, width - 26, height - 26);
-   *   describe(
-   *     'A purple square with gradually changing opacity drawn on a gray background.'
-   *   );
+   *
+   *   // Create a p5.Color object.
+   *   let c = color(255, 128, 128);
+   *
+   *   // Draw the left rectangle.
+   *   noStroke();
+   *   fill(c);
+   *   rect(15, 20, 35, 60);
+   *
+   *   // Change the alpha value.
+   *   c.setAlpha(128);
+   *
+   *   // Draw the right rectangle.
+   *   fill(c);
+   *   rect(50, 20, 35, 60);
+   *
+   *   describe('Two rectangles. The left one is salmon pink and the right one is faded pink.');
    * }
    * </code>
    * </div>

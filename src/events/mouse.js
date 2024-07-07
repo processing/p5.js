@@ -10,30 +10,44 @@ import p5 from '../core/main';
 import * as constants from '../core/constants';
 
 /**
+ * A `Number` system variable that tracks the mouse's horizontal movement.
  *
- * The variable movedX contains the horizontal movement of the mouse since the last frame
+ * `movedX` tracks how many pixels the mouse moves left or right between
+ * frames. `movedX` will have a negative value if the mouse moves left between
+ * frames and a positive value if it moves right. `movedX` can be calculated
+ * as `mouseX - pmouseX`.
+ *
+ * Note: `movedX` continues updating even when
+ * <a href="#/p5/requestPointerLock">requestPointerLock()</a> is active.
+ *
  * @property {Number} movedX
  * @readOnly
+ *
  * @example
- * <div class="notest">
+ * <div>
  * <code>
- * let x = 50;
  * function setup() {
- *   rectMode(CENTER);
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square. The text ">>" appears when the user moves the mouse to the right. The text "<<" appears when the user moves the mouse to the left.'
+ *   );
  * }
  *
  * function draw() {
- *   if (x > 48) {
- *     x -= 2;
- *   } else if (x < 48) {
- *     x += 2;
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *
+ *   // Display >> when movedX is positive and
+ *   // << when it's negative.
+ *   if (movedX > 0) {
+ *     text('>>', 50, 50);
+ *   } else if (movedX < 0) {
+ *     text('<<', 50, 50);
  *   }
- *   x += floor(movedX / 5);
- *   background(237, 34, 93);
- *   fill(0);
- *   rect(x, 50, 50, 50);
- *   describe(`box moves left and right according to mouse movement
- *     then slowly back towards the center`);
  * }
  * </code>
  * </div>
@@ -41,29 +55,44 @@ import * as constants from '../core/constants';
 p5.prototype.movedX = 0;
 
 /**
- * The variable movedY contains the vertical movement of the mouse since the last frame
+ * A `Number` system variable that tracks the mouse's vertical movement.
+ *
+ * `movedY` tracks how many pixels the mouse moves up or down between
+ * frames. `movedY` will have a negative value if the mouse moves up between
+ * frames and a positive value if it moves down. `movedY` can be calculated
+ * as `mouseY - pmouseY`.
+ *
+ * Note: `movedY` continues updating even when
+ * <a href="#/p5/requestPointerLock">requestPointerLock()</a> is active.
+ *
  * @property {Number} movedY
  * @readOnly
+ *
  * @example
- * <div class="notest">
+ * <div>
  * <code>
- * let y = 50;
  * function setup() {
- *   rectMode(CENTER);
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square. The text "▲" appears when the user moves the mouse upward. The text "▼" appears when the user moves the mouse downward.'
+ *   );
  * }
  *
  * function draw() {
- *   if (y > 48) {
- *     y -= 2;
- *   } else if (y < 48) {
- *     y += 2;
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *
+ *   // Display ▼ when movedY is positive and
+ *   // ▲ when it's negative.
+ *   if (movedY > 0) {
+ *     text('▼', 50, 50);
+ *   } else if (movedY < 0) {
+ *     text('▲', 50, 50);
  *   }
- *   y += floor(movedY / 5);
- *   background(237, 34, 93);
- *   fill(0);
- *   rect(50, y, 50, 50);
- *   describe(`box moves up and down according to mouse movement then
- *     slowly back towards the center`);
  * }
  * </code>
  * </div>
@@ -78,11 +107,18 @@ p5.prototype.movedY = 0;
 p5.prototype._hasMouseInteracted = false;
 
 /**
- * The system variable mouseX always contains the current horizontal
- * position of the mouse, relative to (0, 0) of the canvas. The value at
- * the top-left corner is (0, 0) for 2-D and (-width/2, -height/2) for WebGL.
- * If touch is used instead of mouse input, mouseX will hold the x value
- * of the most recent touch point.
+ * A `Number` system variable that tracks the mouse's horizontal position.
+ *
+ * In 2D mode, `mouseX` keeps track of the mouse's position relative to the
+ * top-left corner of the canvas. For example, if the mouse is 50 pixels from
+ * the left edge of the canvas, then `mouseX` will be 50.
+ *
+ * In WebGL mode, `mouseX` keeps track of the mouse's position relative to the
+ * center of the canvas. For example, if the mouse is 50 pixels to the right
+ * of the canvas' center, then `mouseX` will be 50.
+ *
+ * If touch is used instead of the mouse, then `mouseX` will hold the
+ * x-coordinate of the most recent touch point.
  *
  * @property {Number} mouseX
  * @readOnly
@@ -90,11 +126,91 @@ p5.prototype._hasMouseInteracted = false;
  * @example
  * <div>
  * <code>
- * // Move the mouse across the canvas
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe("A vertical black line moves left and right following the mouse's x-position.");
+ * }
+ *
  * function draw() {
- *   background(244, 248, 252);
+ *   background(200);
+ *
+ *   // Draw a vertical line that follows the mouse's x-coordinate.
  *   line(mouseX, 0, mouseX, 100);
- *   describe('horizontal black line moves left and right with mouse x-position');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe("A gray square. The mouse's x- and y-coordinates are displayed as the user moves the mouse.");
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *
+ *   // Display the mouse's coordinates.
+ *   text(`x: ${mouseX} y: ${mouseY}`, 50, 50);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe("A vertical black line moves left and right following the mouse's x-position.");
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Adjust coordinates for WebGL mode.
+ *   // The origin (0, 0) is at the center of the canvas.
+ *   let mx = mouseX - 50;
+ *
+ *   // Draw the line.
+ *   line(mx, -50, mx, 50);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let font;
+ *
+ * // Load a font for WebGL mode.
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe(
+ *     "A gray square. The mouse's x- and y-coordinates are displayed as the user moves the mouse."
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   textFont(font);
+ *   fill(0);
+ *
+ *   // Display the mouse's coordinates.
+ *   text(`x: ${mouseX} y: ${mouseY}`, 0, 0);
  * }
  * </code>
  * </div>
@@ -102,11 +218,18 @@ p5.prototype._hasMouseInteracted = false;
 p5.prototype.mouseX = 0;
 
 /**
- * The system variable mouseY always contains the current vertical
- * position of the mouse, relative to (0, 0) of the canvas. The value at
- * the top-left corner is (0, 0) for 2-D and (-width/2, -height/2) for WebGL.
- * If touch is used instead of mouse input, mouseY will hold the y value
- * of the most recent touch point.
+ * A `Number` system variable that tracks the mouse's vertical position.
+ *
+ * In 2D mode, `mouseY` keeps track of the mouse's position relative to the
+ * top-left corner of the canvas. For example, if the mouse is 50 pixels from
+ * the top edge of the canvas, then `mouseY` will be 50.
+ *
+ * In WebGL mode, `mouseY` keeps track of the mouse's position relative to the
+ * center of the canvas. For example, if the mouse is 50 pixels below the
+ * canvas' center, then `mouseY` will be 50.
+ *
+ * If touch is used instead of the mouse, then `mouseY` will hold the
+ * y-coordinate of the most recent touch point.
  *
  * @property {Number} mouseY
  * @readOnly
@@ -114,11 +237,91 @@ p5.prototype.mouseX = 0;
  * @example
  * <div>
  * <code>
- * // Move the mouse across the canvas
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe("A horizontal black line moves up and down following the mouse's y-position.");
+ * }
+ *
  * function draw() {
- *   background(244, 248, 252);
- *   line(0, mouseY, 100, mouseY);
- *   describe('vertical black line moves up and down with mouse y-position');
+ *   background(200);
+ *
+ *   // Draw a horizontal line that follows the mouse's y-coordinate.
+ *   line(0, mouseY, 0, mouseY);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe("A gray square. The mouse's x- and y-coordinates are displayed as the user moves the mouse.");
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *
+ *   // Display the mouse's coordinates.
+ *   text(`x: ${mouseX} y: ${mouseY}`, 50, 50);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe("A horizontal black line moves up and down following the mouse's y-position.");
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Adjust coordinates for WebGL mode.
+ *   // The origin (0, 0) is at the center of the canvas.
+ *   let my = mouseY - 50;
+ *
+ *   // Draw the line.
+ *   line(-50, my, 50, my);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let font;
+ *
+ * // Load a font for WebGL mode.
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe(
+ *     "A gray square. The mouse's x- and y-coordinates are displayed as the user moves the mouse."
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   textFont(font);
+ *   fill(0);
+ *
+ *   // Display the mouse's coordinates.
+ *   text(`x: ${mouseX} y: ${mouseY}`, 0, 0);
  * }
  * </code>
  * </div>
@@ -126,10 +329,23 @@ p5.prototype.mouseX = 0;
 p5.prototype.mouseY = 0;
 
 /**
- * The system variable pmouseX always contains the horizontal position of
- * the mouse or finger in the frame previous to the current frame, relative to
- * (0, 0) of the canvas. The value at the top-left corner is (0, 0) for 2-D and
- * (-width/2, -height/2) for WebGL. Note: pmouseX will be reset to the current mouseX
+ * A `Number` system variable that tracks the mouse's previous horizontal
+ * position.
+ *
+ * In 2D mode, `pmouseX` keeps track of the mouse's position relative to the
+ * top-left corner of the canvas. Its value is
+ * <a href="#/p5/mouseX">mouseX</a> from the previous frame. For example, if
+ * the mouse was 50 pixels from the left edge of the canvas during the last
+ * frame, then `pmouseX` will be 50.
+ *
+ * In WebGL mode, `pmouseX` keeps track of the mouse's position relative to the
+ * center of the canvas. For example, if the mouse was 50 pixels to the right
+ * of the canvas' center during the last frame, then `pmouseX` will be 50.
+ *
+ * If touch is used instead of the mouse, then `pmouseX` will hold the
+ * x-coordinate of the last touch point.
+ *
+ * Note: `pmouseX` is reset to the current <a href="#/p5/mouseX">mouseX</a>
  * value at the start of each touch event.
  *
  * @property {Number} pmouseX
@@ -138,18 +354,43 @@ p5.prototype.mouseY = 0;
  * @example
  * <div>
  * <code>
- * // Move the mouse across the canvas to leave a trail
  * function setup() {
- *   //slow down the frameRate to make it more visible
+ *   createCanvas(100, 100);
+ *
+ *   // Slow the frame rate.
  *   frameRate(10);
+ *
+ *   describe('A line follows the mouse as it moves. The line grows longer with faster movements.');
  * }
  *
  * function draw() {
- *   background(244, 248, 252);
- *   line(mouseX, mouseY, pmouseX, pmouseY);
- *   print(pmouseX + ' -> ' + mouseX);
- *   describe(`line trail is created from cursor movements.
- *     faster movement make longer line.`);
+ *   background(200);
+ *
+ *   line(pmouseX, pmouseY, mouseX, mouseY);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A line follows the mouse as it moves. The line grows longer with faster movements.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Adjust coordinates for WebGL mode.
+ *   // The origin (0, 0) is at the center of the canvas.
+ *   let pmx = pmouseX - 50;
+ *   let pmy = pmouseY - 50;
+ *   let mx = mouseX - 50;
+ *   let my = mouseY - 50;
+ *
+ *   // Draw the line.
+ *   line(pmx, pmy, mx, my);
  * }
  * </code>
  * </div>
@@ -157,10 +398,23 @@ p5.prototype.mouseY = 0;
 p5.prototype.pmouseX = 0;
 
 /**
- * The system variable pmouseY always contains the vertical position of
- * the mouse or finger in the frame previous to the current frame, relative to
- * (0, 0) of the canvas. The value at the top-left corner is (0, 0) for 2-D and
- * (-width/2, -height/2) for WebGL. Note: pmouseY will be reset to the current mouseY
+ * A `Number` system variable that tracks the mouse's previous vertical
+ * position.
+ *
+ * In 2D mode, `pmouseY` keeps track of the mouse's position relative to the
+ * top-left corner of the canvas. Its value is
+ * <a href="#/p5/mouseY">mouseY</a> from the previous frame. For example, if
+ * the mouse was 50 pixels from the top edge of the canvas during the last
+ * frame, then `pmouseY` will be 50.
+ *
+ * In WebGL mode, `pmouseY` keeps track of the mouse's position relative to the
+ * center of the canvas. For example, if the mouse was 50 pixels below the
+ * canvas' center during the last frame, then `pmouseY` will be 50.
+ *
+ * If touch is used instead of the mouse, then `pmouseY` will hold the
+ * y-coordinate of the last touch point.
+ *
+ * Note: `pmouseY` is reset to the current <a href="#/p5/mouseY">mouseY</a>
  * value at the start of each touch event.
  *
  * @property {Number} pmouseY
@@ -169,17 +423,43 @@ p5.prototype.pmouseX = 0;
  * @example
  * <div>
  * <code>
- * function draw() {
- *   background(237, 34, 93);
- *   fill(0);
- *   //draw a square only if the mouse is not moving
- *   if (mouseY === pmouseY && mouseX === pmouseX) {
- *     rect(20, 20, 60, 60);
- *   }
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- *   print(pmouseY + ' -> ' + mouseY);
- *   describe(`60-by-60 black rect center, fuchsia background.
- *     rect flickers on mouse movement`);
+ *   // Slow the frame rate.
+ *   frameRate(10);
+ *
+ *   describe('A line follows the mouse as it moves. The line grows longer with faster movements.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   line(pmouseX, pmouseY, mouseX, mouseY);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A line follows the mouse as it moves. The line grows longer with faster movements.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Adjust coordinates for WebGL mode.
+ *   // The origin (0, 0) is at the center of the canvas.
+ *   let pmx = pmouseX - 50;
+ *   let pmy = pmouseY - 50;
+ *   let mx = mouseX - 50;
+ *   let my = mouseY - 50;
+ *
+ *   // Draw the line.
+ *   line(pmx, pmy, mx, my);
  * }
  * </code>
  * </div>
@@ -187,8 +467,18 @@ p5.prototype.pmouseX = 0;
 p5.prototype.pmouseY = 0;
 
 /**
- * The system variable winMouseX always contains the current horizontal
- * position of the mouse, relative to (0, 0) of the window.
+ * A `Number` variable that tracks the mouse's horizontal position within the
+ * browser.
+ *
+ * `winMouseX` keeps track of the mouse's position relative to the top-left
+ * corner of the browser window. For example, if the mouse is 50 pixels from
+ * the left edge of the browser, then `winMouseX` will be 50.
+ *
+ * On a touchscreen device, `winMouseX` will hold the x-coordinate of the most
+ * recent touch point.
+ *
+ * Note: Use <a href="#/p5/mouseX">mouseX</a> to track the mouse’s
+ * x-coordinate within the canvas.
  *
  * @property {Number} winMouseX
  * @readOnly
@@ -196,27 +486,21 @@ p5.prototype.pmouseY = 0;
  * @example
  * <div>
  * <code>
- * let myCanvas;
- *
  * function setup() {
- *   //use a variable to store a pointer to the canvas
- *   myCanvas = createCanvas(100, 100);
- *   let body = document.getElementsByTagName('body')[0];
- *   myCanvas.parent(body);
+ *   createCanvas(100, 100);
+ *
+ *   describe("A gray square. The mouse's x- and y-coordinates are displayed as the user moves the mouse.");
  * }
  *
  * function draw() {
- *   background(237, 34, 93);
- *   fill(0);
+ *   background(200);
  *
- *   //move the canvas to the horizontal mouse position
- *   //relative to the window
- *   myCanvas.position(winMouseX + 1, windowHeight / 2);
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
  *
- *   //the y of the square is relative to the canvas
- *   rect(20, mouseY, 60, 60);
- *   describe(`60-by-60 black rect y moves with mouse y and fuchsia
- *     canvas moves with mouse x`);
+ *   // Display the mouse's coordinates within the browser window.
+ *   text(`x: ${winMouseX} y: ${winMouseY}`, 50, 50);
  * }
  * </code>
  * </div>
@@ -224,8 +508,18 @@ p5.prototype.pmouseY = 0;
 p5.prototype.winMouseX = 0;
 
 /**
- * The system variable winMouseY always contains the current vertical
- * position of the mouse, relative to (0, 0) of the window.
+ * A `Number` variable that tracks the mouse's vertical position within the
+ * browser.
+ *
+ * `winMouseY` keeps track of the mouse's position relative to the top-left
+ * corner of the browser window. For example, if the mouse is 50 pixels from
+ * the top edge of the browser, then `winMouseY` will be 50.
+ *
+ * On a touchscreen device, `winMouseY` will hold the y-coordinate of the most
+ * recent touch point.
+ *
+ * Note: Use <a href="#/p5/mouseY">mouseY</a> to track the mouse’s
+ * y-coordinate within the canvas.
  *
  * @property {Number} winMouseY
  * @readOnly
@@ -233,27 +527,21 @@ p5.prototype.winMouseX = 0;
  * @example
  * <div>
  * <code>
- * let myCanvas;
- *
  * function setup() {
- *   //use a variable to store a pointer to the canvas
- *   myCanvas = createCanvas(100, 100);
- *   let body = document.getElementsByTagName('body')[0];
- *   myCanvas.parent(body);
+ *   createCanvas(100, 100);
+ *
+ *   describe("A gray square. The mouse's x- and y-coordinates are displayed as the user moves the mouse.");
  * }
  *
  * function draw() {
- *   background(237, 34, 93);
- *   fill(0);
+ *   background(200);
  *
- *   //move the canvas to the vertical mouse position
- *   //relative to the window
- *   myCanvas.position(windowWidth / 2, winMouseY + 1);
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
  *
- *   //the x of the square is relative to the canvas
- *   rect(mouseX, 20, 60, 60);
- *   describe(`60-by-60 black rect x moves with mouse x and
- *     fuchsia canvas y moves with mouse y`);
+ *   // Display the mouse's coordinates within the browser window.
+ *   text(`x: ${winMouseX} y: ${winMouseY}`, 50, 50);
  * }
  * </code>
  * </div>
@@ -261,10 +549,23 @@ p5.prototype.winMouseX = 0;
 p5.prototype.winMouseY = 0;
 
 /**
- * The system variable pwinMouseX always contains the horizontal position
- * of the mouse in the frame previous to the current frame, relative to
- * (0, 0) of the window. Note: pwinMouseX will be reset to the current winMouseX
- * value at the start of each touch event.
+ * A `Number` variable that tracks the mouse's previous horizontal position
+ * within the browser.
+ *
+ * `pwinMouseX` keeps track of the mouse's position relative to the top-left
+ * corner of the browser window. Its value is
+ * <a href="#/p5/winMouseX">winMouseX</a> from the previous frame. For
+ * example, if the mouse was 50 pixels from
+ * the left edge of the browser during the last frame, then `pwinMouseX` will
+ * be 50.
+ *
+ * On a touchscreen device, `pwinMouseX` will hold the x-coordinate of the most
+ * recent touch point. `pwinMouseX` is reset to the current
+ * <a href="#/p5/winMouseX">winMouseX</a> value at the start of each touch
+ * event.
+ *
+ * Note: Use <a href="#/p5/pmouseX">pmouseX</a> to track the mouse’s previous
+ * x-coordinate within the canvas.
  *
  * @property {Number} pwinMouseX
  * @readOnly
@@ -272,27 +573,46 @@ p5.prototype.winMouseY = 0;
  * @example
  * <div>
  * <code>
- * let myCanvas;
- *
  * function setup() {
- *   //use a variable to store a pointer to the canvas
- *   myCanvas = createCanvas(100, 100);
- *   noStroke();
- *   fill(237, 34, 93);
+ *   createCanvas(100, 100);
+ *
+ *   // Slow the frame rate.
+ *   frameRate(10);
+ *
+ *   describe('A gray square. A white circle at its center grows larger when the mouse moves horizontally.');
  * }
  *
  * function draw() {
- *   clear();
- *   //the difference between previous and
- *   //current x position is the horizontal mouse speed
- *   let speed = abs(winMouseX - pwinMouseX);
- *   //change the size of the circle
- *   //according to the horizontal speed
- *   ellipse(50, 50, 10 + speed * 5, 10 + speed * 5);
- *   //move the canvas to the mouse position
- *   myCanvas.position(winMouseX + 1, winMouseY + 1);
- *   describe(`fuchsia ellipse moves with mouse x and y.
- *     Grows and shrinks with mouse speed`);
+ *   background(200);
+ *
+ *   // Calculate the circle's diameter.
+ *   let d = winMouseX - pwinMouseX;
+ *
+ *   // Draw the circle.
+ *   circle(50, 50, d);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   // Create the canvas and set its position.
+ *   let cnv = createCanvas(100, 100);
+ *   cnv.position(20, 20);
+ *
+ *   describe('A gray square with a number at its center. The number changes as the user moves the mouse vertically.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *
+ *   // Display pwinMouseX.
+ *   text(pwinMouseX, 50, 50);
  * }
  * </code>
  * </div>
@@ -300,10 +620,23 @@ p5.prototype.winMouseY = 0;
 p5.prototype.pwinMouseX = 0;
 
 /**
- * The system variable pwinMouseY always contains the vertical position of
- * the mouse in the frame previous to the current frame, relative to (0, 0)
- * of the window. Note: pwinMouseY will be reset to the current winMouseY
- * value at the start of each touch event.
+ * A `Number` variable that tracks the mouse's previous vertical position
+ * within the browser.
+ *
+ * `pwinMouseY` keeps track of the mouse's position relative to the top-left
+ * corner of the browser window. Its value is
+ * <a href="#/p5/winMouseY">winMouseY</a> from the previous frame. For
+ * example, if the mouse was 50 pixels from
+ * the top edge of the browser during the last frame, then `pwinMouseY` will
+ * be 50.
+ *
+ * On a touchscreen device, `pwinMouseY` will hold the y-coordinate of the most
+ * recent touch point. `pwinMouseY` is reset to the current
+ * <a href="#/p5/winMouseY">winMouseY</a> value at the start of each touch
+ * event.
+ *
+ * Note: Use <a href="#/p5/pmouseY">pmouseY</a> to track the mouse’s previous
+ * y-coordinate within the canvas.
  *
  * @property {Number} pwinMouseY
  * @readOnly
@@ -311,27 +644,46 @@ p5.prototype.pwinMouseX = 0;
  * @example
  * <div>
  * <code>
- * let myCanvas;
- *
  * function setup() {
- *   //use a variable to store a pointer to the canvas
- *   myCanvas = createCanvas(100, 100);
- *   noStroke();
- *   fill(237, 34, 93);
+ *   createCanvas(100, 100);
+ *
+ *   // Slow the frame rate.
+ *   frameRate(10);
+ *
+ *   describe('A gray square. A white circle at its center grows larger when the mouse moves vertically.');
  * }
  *
  * function draw() {
- *   clear();
- *   //the difference between previous and
- *   //current y position is the vertical mouse speed
- *   let speed = abs(winMouseY - pwinMouseY);
- *   //change the size of the circle
- *   //according to the vertical speed
- *   ellipse(50, 50, 10 + speed * 5, 10 + speed * 5);
- *   //move the canvas to the mouse position
- *   myCanvas.position(winMouseX + 1, winMouseY + 1);
- *   describe(`fuchsia ellipse moves with mouse x and y.
- *     Grows and shrinks with mouse speed`);
+ *   background(200);
+ *
+ *   // Calculate the circle's diameter.
+ *   let d = winMouseY - pwinMouseY;
+ *
+ *   // Draw the circle.
+ *   circle(50, 50, d);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   // Create the canvas and set its position.
+ *   let cnv = createCanvas(100, 100);
+ *   cnv.position(20, 20);
+ *
+ *   describe('A gray square with a number at its center. The number changes as the user moves the mouse vertically.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *
+ *   // Display pwinMouseY.
+ *   text(pwinMouseY, 50, 50);
  * }
  * </code>
  * </div>
@@ -339,10 +691,15 @@ p5.prototype.pwinMouseX = 0;
 p5.prototype.pwinMouseY = 0;
 
 /**
- * p5 automatically tracks if the mouse button is pressed and which
- * button is pressed. The value of the system variable mouseButton is either
- * LEFT, RIGHT, or CENTER depending on which button was pressed last.
- * Warning: different browsers may track mouseButton differently.
+ * A String system variable that contains the value of the last mouse button
+ * pressed.
+ *
+ * The `mouseButton` variable is either `LEFT`, `RIGHT`, or `CENTER`,
+ * depending on which button was pressed last.
+ *
+ * Note: Different browsers may track `mouseButton` differently. See
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/buttons" target="_blank">MDN</a>
+ * for more information.
  *
  * @property {(LEFT|RIGHT|CENTER)} mouseButton
  * @readOnly
@@ -350,25 +707,51 @@ p5.prototype.pwinMouseY = 0;
  * @example
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square with black text at its center. The text changes from 0 to either "left" or "right" when the user clicks a mouse button.'
+ *   );
+ * }
+ *
  * function draw() {
- *   background(237, 34, 93);
- *   fill(0);
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *
+ *   // Display the mouse button.
+ *   text(mouseButton, 50, 50);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     "A gray square. Different shapes appear at its center depending on the mouse button that's clicked."
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
  *
  *   if (mouseIsPressed === true) {
  *     if (mouseButton === LEFT) {
- *       ellipse(50, 50, 50, 50);
+ *       circle(50, 50, 50);
  *     }
  *     if (mouseButton === RIGHT) {
- *       rect(25, 25, 50, 50);
+ *       square(25, 25, 50);
  *     }
  *     if (mouseButton === CENTER) {
  *       triangle(23, 75, 50, 20, 78, 75);
  *     }
  *   }
- *
- *   print(mouseButton);
- *   describe(`50-by-50 black ellipse appears on center of fuchsia
- *     canvas on mouse click/press.`);
  * }
  * </code>
  * </div>
@@ -376,8 +759,8 @@ p5.prototype.pwinMouseY = 0;
 p5.prototype.mouseButton = 0;
 
 /**
- * The boolean system variable mouseIsPressed is true if the mouse is pressed
- * and false if not.
+ * A `Boolean` system variable that's `true` if the mouse is pressed and
+ * `false` if not.
  *
  * @property {Boolean} mouseIsPressed
  * @readOnly
@@ -385,19 +768,49 @@ p5.prototype.mouseButton = 0;
  * @example
  * <div>
  * <code>
- * function draw() {
- *   background(237, 34, 93);
- *   fill(0);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
+ *   describe(
+ *     'A gray square with the word "false" at its center. The word changes to "true" when the user presses a mouse button.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *
+ *   // Display the mouseIsPressed variable.
+ *   text(mouseIsPressed, 25, 50);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square with a white square at its center. The inner square turns black when the user presses the mouse.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the square.
  *   if (mouseIsPressed === true) {
- *     ellipse(50, 50, 50, 50);
+ *     fill(0);
  *   } else {
- *     rect(25, 25, 50, 50);
+ *     fill(255);
  *   }
  *
- *   print(mouseIsPressed);
- *   describe(`black 50-by-50 rect becomes ellipse with mouse click/press.
- *     fuchsia background.`);
+ *   // Draw the square.
+ *   square(25, 25, 50);
  * }
  * </code>
  * </div>
@@ -467,105 +880,177 @@ p5.prototype._setMouseButton = function(e) {
 };
 
 /**
- * The <a href="#/p5/mouseMoved">mouseMoved()</a> function is called every time the mouse moves and a mouse
- * button is not pressed.<br><br>
- * Browsers may have different default
- * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * A function that's called when the mouse moves.
  *
- * @method mouseMoved
- * @param  {MouseEvent} [event] optional MouseEvent callback argument.
- * @example
- * <div>
+ * Declaring the function `mouseMoved()` sets a code block to run
+ * automatically when the user moves the mouse without clicking any mouse
+ * buttons:
+ *
  * <code>
- * // Move the mouse across the page
- * // to change its value
- *
- * let value = 0;
- * function draw() {
- *   fill(value);
- *   rect(25, 25, 50, 50);
- *   describe(`black 50-by-50 rect becomes lighter with mouse movements until
- *   white then resets no image displayed`);
- * }
  * function mouseMoved() {
- *   value = value + 5;
- *   if (value > 255) {
- *     value = 0;
+ *   // Code to run.
+ * }
+ * </code>
+ *
+ * The mouse system variables, such as <a href="#/p5/mouseX">mouseX</a> and
+ * <a href="#/p5/mouseY">mouseY</a>, will be updated with their most recent
+ * value when `mouseMoved()` is called by p5.js:
+ *
+ * <code>
+ * function mouseMoved() {
+ *   if (mouseX < 50) {
+ *     // Code to run if the mouse is on the left.
+ *   }
+ *
+ *   if (mouseY > 50) {
+ *     // Code to run if the mouse is near the bottom.
  *   }
  * }
  * </code>
- * </div>
  *
- * <div class="norender">
+ * The parameter, `event`, is optional. `mouseMoved()` is always passed a
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent" target="_blank">MouseEvent</a>
+ * object with properties that describe the mouse move event:
+ *
  * <code>
- * function mouseMoved() {
- *   ellipse(mouseX, mouseY, 5, 5);
- *   // prevent default
- *   return false;
+ * function mouseMoved(event) {
+ *   // Code to run that uses the event.
+ *   console.log(event);
  * }
  * </code>
- * </div>
  *
- * <div class="norender">
+ * Browsers may have default behaviors attached to various mouse events. For
+ * example, some browsers highlight text when the user moves the mouse while
+ * pressing a mouse button. To prevent any default behavior for this event,
+ * add `return false;` to the end of the function.
+ *
+ * @method mouseMoved
+ * @param  {MouseEvent} [event] optional `MouseEvent` argument.
+ *
+ * @example
+ * <div>
  * <code>
- * // returns a MouseEvent object
- * // as a callback argument
- * function mouseMoved(event) {
- *   console.log(event);
+ * let value = 0;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square with a black square at its center. The inner square becomes lighter as the mouse moves.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the square.
+ *   fill(value);
+ *
+ *   // Draw the square.
+ *   square(25, 25, 50);
+ * }
+ *
+ * function mouseMoved() {
+ *   // Update the grayscale value.
+ *   value += 5;
+ *
+ *   // Reset the grayscale value.
+ *   if (value > 255) {
+ *     value = 0;
+ *   }
+ *   // Uncomment to prevent any default behavior.
+ *   // return false;
  * }
  * </code>
  * </div>
  */
 
 /**
- * The <a href="#/p5/mouseDragged">mouseDragged()</a> function is called once every time the mouse moves and
- * a mouse button is pressed. If no <a href="#/p5/mouseDragged">mouseDragged()</a> function is defined, the
- * <a href="#/p5/touchMoved">touchMoved()</a> function will be called instead if it is defined.<br><br>
- * Browsers may have different default
- * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add "return false" to the end of the function.
+ * A function that's called when the mouse moves while a button is pressed.
  *
- * @method mouseDragged
- * @param  {MouseEvent} [event] optional MouseEvent callback argument.
- * @example
- * <div>
+ * Declaring the function `mouseDragged()` sets a code block to run
+ * automatically when the user clicks and drags the mouse:
+ *
  * <code>
- * // Drag the mouse across the page
- * // to change its value
- *
- * let value = 0;
- * function draw() {
- *   fill(value);
- *   rect(25, 25, 50, 50);
- *   describe(`black 50-by-50 rect turns lighter with mouse click and
- *     drag until white, resets`);
- * }
  * function mouseDragged() {
- *   value = value + 5;
- *   if (value > 255) {
- *     value = 0;
+ *   // Code to run.
+ * }
+ * </code>
+ *
+ * The mouse system variables, such as <a href="#/p5/mouseX">mouseX</a> and
+ * <a href="#/p5/mouseY">mouseY</a>, will be updated with their most recent
+ * value when `mouseDragged()` is called by p5.js:
+ *
+ * <code>
+ * function mouseDragged() {
+ *   if (mouseX < 50) {
+ *     // Code to run if the mouse is on the left.
+ *   }
+ *
+ *   if (mouseY > 50) {
+ *     // Code to run if the mouse is near the bottom.
  *   }
  * }
  * </code>
- * </div>
  *
- * <div class="norender">
+ * The parameter, `event`, is optional. `mouseDragged()` is always passed a
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent" target="_blank">MouseEvent</a>
+ * object with properties that describe the mouse drag event:
+ *
  * <code>
- * function mouseDragged() {
- *   ellipse(mouseX, mouseY, 5, 5);
- *   // prevent default
- *   return false;
+ * function mouseDragged(event) {
+ *   // Code to run that uses the event.
+ *   console.log(event);
  * }
  * </code>
- * </div>
  *
- * <div class="norender">
+ * On touchscreen devices, `mouseDragged()` will run when a user moves a touch
+ * point if <a href="#/p5/touchMoved">touchMoved()</a> isn’t declared. If
+ * <a href="#/p5/touchMoved">touchMoved()</a> is declared, then
+ * <a href="#/p5/touchMoved">touchMoved()</a> will run when a user moves a
+ * touch point and `mouseDragged()` won’t.
+ *
+ * Browsers may have default behaviors attached to various mouse events. For
+ * example, some browsers highlight text when the user moves the mouse while
+ * pressing a mouse button. To prevent any default behavior for this event,
+ * add `return false;` to the end of the function.
+ *
+ * @method mouseDragged
+ * @param  {MouseEvent} [event] optional `MouseEvent` argument.
+ *
+ * @example
+ * <div>
  * <code>
- * // returns a MouseEvent object
- * // as a callback argument
- * function mouseDragged(event) {
- *   console.log(event);
+ * let value = 0;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square with a black square at its center. The inner square becomes lighter as the user drags the mouse.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the square.
+ *   fill(value);
+ *
+ *   // Draw the square.
+ *   square(25, 25, 50);
+ * }
+ *
+ * function mouseDragged() {
+ *   // Update the grayscale value.
+ *   value += 5;
+ *
+ *   // Reset the grayscale value.
+ *   if (value > 255) {
+ *     value = 0;
+ *   }
+ *   // Uncomment to prevent any default behavior.
+ *   // return false;
  * }
  * </code>
  * </div>
@@ -597,55 +1082,146 @@ p5.prototype._onmousemove = function(e) {
 };
 
 /**
- * The <a href="#/p5/mousePressed">mousePressed()</a> function is called once after every time a mouse button
- * is pressed. The mouseButton variable (see the related reference entry)
- * can be used to determine which button has been pressed. If no
- * <a href="#/p5/mousePressed">mousePressed()</a> function is defined, the <a href="#/p5/touchStarted">touchStarted()</a> function will be
- * called instead if it is defined.<br><br>
- * Browsers may have different default
- * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add "return false" to the end of the function.
+ * A function that's called once when a mouse button is pressed.
  *
- * @method mousePressed
- * @param  {MouseEvent} [event] optional MouseEvent callback argument.
- * @example
- * <div>
+ * Declaring the function `mousePressed()` sets a code block to run
+ * automatically when the user presses a mouse button:
+ *
  * <code>
- * // Click anywhere in the webpage to change
- * // the color value of the rectangle
- *
- * let colorValue = 0;
- * function draw() {
- *   fill(colorValue);
- *   rect(25, 25, 50, 50);
- *   describe('black 50-by-50 rect turns white with mouse click/press.');
- * }
  * function mousePressed() {
- *   if (colorValue === 0) {
- *     colorValue = 255;
- *   } else {
- *     colorValue = 0;
+ *   // Code to run.
+ * }
+ * </code>
+ *
+ * The mouse system variables, such as <a href="#/p5/mouseX">mouseX</a> and
+ * <a href="#/p5/mouseY">mouseY</a>, will be updated with their most recent
+ * value when `mousePressed()` is called by p5.js:
+ *
+ * <code>
+ * function mousePressed() {
+ *   if (mouseX < 50) {
+ *     // Code to run if the mouse is on the left.
+ *   }
+ *
+ *   if (mouseY > 50) {
+ *     // Code to run if the mouse is near the bottom.
  *   }
  * }
  * </code>
- * </div>
  *
- * <div class="norender">
+ * The parameter, `event`, is optional. `mousePressed()` is always passed a
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent" target="_blank">MouseEvent</a>
+ * object with properties that describe the mouse press event:
+ *
  * <code>
+ * function mousePressed(event) {
+ *   // Code to run that uses the event.
+ *   console.log(event);
+ * }
+ * </code>
+ *
+ * On touchscreen devices, `mousePressed()` will run when a user’s touch
+ * begins if <a href="#/p5/touchStarted">touchStarted()</a> isn’t declared. If
+ * <a href="#/p5/touchStarted">touchStarted()</a> is declared, then
+ * <a href="#/p5/touchStarted">touchStarted()</a> will run when a user’s touch
+ * begins and `mousePressed()` won’t.
+ *
+ * Browsers may have default behaviors attached to various mouse events. For
+ * example, some browsers highlight text when the user moves the mouse while
+ * pressing a mouse button. To prevent any default behavior for this event,
+ * add `return false;` to the end of the function.
+ *
+ * Note: `mousePressed()`, <a href="#/p5/mouseReleased">mouseReleased()</a>,
+ * and <a href="#/p5/mouseClicked">mouseClicked()</a> are all related.
+ * `mousePressed()` runs as soon as the user clicks the mouse.
+ * <a href="#/p5/mouseReleased">mouseReleased()</a> runs as soon as the user
+ * releases the mouse click. <a href="#/p5/mouseClicked">mouseClicked()</a>
+ * runs immediately after <a href="#/p5/mouseReleased">mouseReleased()</a>.
+ *
+ * @method mousePressed
+ * @param  {MouseEvent} [event] optional `MouseEvent` argument.
+ *
+ * @example
+ * <div>
+ * <code>
+ * let value = 0;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square with a black square at its center. The inner square becomes lighter when the user presses a mouse button.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the square.
+ *   fill(value);
+ *
+ *   // Draw the square.
+ *   square(25, 25, 50);
+ * }
+ *
  * function mousePressed() {
- *   ellipse(mouseX, mouseY, 5, 5);
- *   // prevent default
- *   return false;
+ *   // Update the grayscale value.
+ *   value += 5;
+ *
+ *   // Reset the grayscale value.
+ *   if (value > 255) {
+ *     value = 0;
+ *   }
+ *   // Uncomment to prevent any default behavior.
+ *   // return false;
  * }
  * </code>
  * </div>
  *
- * <div class="norender">
+ * <div>
  * <code>
- * // returns a MouseEvent object
- * // as a callback argument
- * function mousePressed(event) {
- *   console.log(event);
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Style the circle.
+ *   fill('orange');
+ *   stroke('royalblue');
+ *   strokeWeight(10);
+ *
+ *   describe(
+ *     'An orange circle with a thick, blue border drawn on a gray background. When the user presses and holds the mouse, the border becomes thin and pink. When the user releases the mouse, the border becomes thicker and changes color to blue.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(220);
+ *
+ *   // Draw the circle.
+ *   circle(50, 50, 20);
+ * }
+ *
+ * // Set the stroke color and weight as soon as the user clicks.
+ * function mousePressed() {
+ *   stroke('deeppink');
+ *   strokeWeight(3);
+ * }
+ *
+ * // Set the stroke and fill colors as soon as the user releases
+ * // the mouse.
+ * function mouseReleased() {
+ *   stroke('royalblue');
+ *
+ *   // This is never visible because fill() is called
+ *   // in mouseClicked() which runs immediately after
+ *   // mouseReleased();
+ *   fill('limegreen');
+ * }
+ *
+ * // Set the fill color and stroke weight after
+ * // mousePressed() and mouseReleased() are called.
+ * function mouseClicked() {
+ *   fill('orange');
+ *   strokeWeight(10);
  * }
  * </code>
  * </div>
@@ -657,72 +1233,168 @@ p5.prototype._onmousedown = function(e) {
   this._setMouseButton(e);
   this._updateNextMouseCoords(e);
 
+  // _ontouchstart triggers first and sets this.touchstart
+  if (this.touchstart) {
+    return;
+  }
+
   if (typeof context.mousePressed === 'function') {
     executeDefault = context.mousePressed(e);
     if (executeDefault === false) {
       e.preventDefault();
     }
-    // only safari needs this manual fallback for consistency
-  } else if (
-    navigator.userAgent.toLowerCase().includes('safari') &&
-    typeof context.touchStarted === 'function'
-  ) {
+  } else if (typeof context.touchStarted === 'function') {
     executeDefault = context.touchStarted(e);
     if (executeDefault === false) {
       e.preventDefault();
     }
   }
+
+  this.touchstart = false;
 };
 
 /**
- * The <a href="#/p5/mouseReleased">mouseReleased()</a> function is called every time a mouse button is
- * released. If no <a href="#/p5/mouseReleased">mouseReleased()</a> function is defined, the <a href="#/p5/touchEnded">touchEnded()</a>
- * function will be called instead if it is defined.<br><br>
- * Browsers may have different default
- * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add "return false" to the end of the function.
+ * A function that's called once when a mouse button is released.
  *
- * @method mouseReleased
- * @param  {MouseEvent} [event] optional MouseEvent callback argument.
- * @example
- * <div>
+ * Declaring the function `mouseReleased()` sets a code block to run
+ * automatically when the user releases a mouse button after having pressed
+ * it:
+ *
  * <code>
- * // Click within the image to change
- * // the value of the rectangle
- * // after the mouse has been clicked
- *
- * let value = 0;
- * function draw() {
- *   fill(value);
- *   rect(25, 25, 50, 50);
- *   describe('black 50-by-50 rect turns white with mouse click/press.');
- * }
  * function mouseReleased() {
- *   if (value === 0) {
- *     value = 255;
- *   } else {
- *     value = 0;
+ *   // Code to run.
+ * }
+ * </code>
+ *
+ * The mouse system variables, such as <a href="#/p5/mouseX">mouseX</a> and
+ * <a href="#/p5/mouseY">mouseY</a>, will be updated with their most recent
+ * value when `mouseReleased()` is called by p5.js:
+ *
+ * <code>
+ * function mouseReleased() {
+ *   if (mouseX < 50) {
+ *     // Code to run if the mouse is on the left.
+ *   }
+ *
+ *   if (mouseY > 50) {
+ *     // Code to run if the mouse is near the bottom.
  *   }
  * }
  * </code>
- * </div>
  *
- * <div class="norender">
+ * The parameter, `event`, is optional. `mouseReleased()` is always passed a
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent" target="_blank">MouseEvent</a>
+ * object with properties that describe the mouse release event:
+ *
  * <code>
+ * function mouseReleased(event) {
+ *   // Code to run that uses the event.
+ *   console.log(event);
+ * }
+ * </code>
+ *
+ * On touchscreen devices, `mouseReleased()` will run when a user’s touch
+ * ends if <a href="#/p5/touchEnded">touchEnded()</a> isn’t declared. If
+ * <a href="#/p5/touchEnded">touchEnded()</a> is declared, then
+ * <a href="#/p5/touchEnded">touchEnded()</a> will run when a user’s touch
+ * ends and `mouseReleased()` won’t.
+ *
+ * Browsers may have default behaviors attached to various mouse events. For
+ * example, some browsers highlight text when the user moves the mouse while
+ * pressing a mouse button. To prevent any default behavior for this event,
+ * add `return false;` to the end of the function.
+ *
+ * Note: <a href="#/p5/mousePressed">mousePressed()</a>, `mouseReleased()`,
+ * and <a href="#/p5/mouseClicked">mouseClicked()</a> are all related.
+ * <a href="#/p5/mousePressed">mousePressed()</a> runs as soon as the user
+ * clicks the mouse. `mouseReleased()` runs as soon as the user releases the
+ * mouse click. <a href="#/p5/mouseClicked">mouseClicked()</a> runs
+ * immediately after `mouseReleased()`.
+ *
+ * @method mouseReleased
+ * @param  {MouseEvent} [event] optional `MouseEvent` argument.
+ *
+ * @example
+ * <div>
+ * <code>
+ * let value = 0;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square with a black square at its center. The inner square becomes lighter when the user presses and releases a mouse button.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the square.
+ *   fill(value);
+ *
+ *   // Draw the square.
+ *   square(25, 25, 50);
+ * }
+ *
  * function mouseReleased() {
- *   ellipse(mouseX, mouseY, 5, 5);
- *   // prevent default
- *   return false;
+ *   // Update the grayscale value.
+ *   value += 5;
+ *
+ *   // Reset the grayscale value.
+ *   if (value > 255) {
+ *     value = 0;
+ *   }
+ *   // Uncomment to prevent any default behavior.
+ *   // return false;
  * }
  * </code>
  * </div>
  *
- * <div class="norender">
+ * <div>
  * <code>
- * // returns a MouseEvent object
- * // as a callback argument
- * function mouseReleased(event) {
- *   console.log(event);
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Style the circle.
+ *   fill('orange');
+ *   stroke('royalblue');
+ *   strokeWeight(10);
+ *
+ *   describe(
+ *     'An orange circle with a thick, blue border drawn on a gray background. When the user presses and holds the mouse, the border becomes thin and pink. When the user releases the mouse, the border becomes thicker and changes color to blue.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(220);
+ *
+ *   // Draw the circle.
+ *   circle(50, 50, 20);
+ * }
+ *
+ * // Set the stroke color and weight as soon as the user clicks.
+ * function mousePressed() {
+ *   stroke('deeppink');
+ *   strokeWeight(3);
+ * }
+ *
+ * // Set the stroke and fill colors as soon as the user releases
+ * // the mouse.
+ * function mouseReleased() {
+ *   stroke('royalblue');
+ *
+ *   // This is never visible because fill() is called
+ *   // in mouseClicked() which runs immediately after
+ *   // mouseReleased();
+ *   fill('limegreen');
+ * }
+ *
+ * // Set the fill color and stroke weight after
+ * // mousePressed() and mouseReleased() are called.
+ * function mouseClicked() {
+ *   fill('orange');
+ *   strokeWeight(10);
  * }
  * </code>
  * </div>
@@ -731,6 +1403,12 @@ p5.prototype._onmouseup = function(e) {
   const context = this._isGlobal ? window : this;
   let executeDefault;
   this._setProperty('mouseIsPressed', false);
+
+  // _ontouchend triggers first and sets this.touchend
+  if (this.touchend) {
+    return;
+  }
+
   if (typeof context.mouseReleased === 'function') {
     executeDefault = context.mouseReleased(e);
     if (executeDefault === false) {
@@ -742,63 +1420,154 @@ p5.prototype._onmouseup = function(e) {
       e.preventDefault();
     }
   }
+  this.touchend = false;
 };
 
 p5.prototype._ondragend = p5.prototype._onmouseup;
 p5.prototype._ondragover = p5.prototype._onmousemove;
 
 /**
- * The <a href="#/p5/mouseClicked">mouseClicked()</a> function is called once after a mouse button has been
- * pressed and then released.<br><br>
- * Browsers handle clicks differently, so this function is only guaranteed to be
- * run when the left mouse button is clicked. To handle other mouse buttons
- * being pressed or released, see <a href="#/p5/mousePressed">mousePressed()</a> or <a href="#/p5/mouseReleased">mouseReleased()</a>.<br><br>
- * Browsers may have different default
- * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add "return false" to the end of the function.
+ * A function that's called once after a mouse button is pressed and released.
+ *
+ * Declaring the function `mouseClicked()` sets a code block to run
+ * automatically when the user releases a mouse button after having pressed
+ * it:
+ *
+ * <code>
+ * function mouseClicked() {
+ *   // Code to run.
+ * }
+ * </code>
+ *
+ * The mouse system variables, such as <a href="#/p5/mouseX">mouseX</a> and
+ * <a href="#/p5/mouseY">mouseY</a>, will be updated with their most recent
+ * value when `mouseClicked()` is called by p5.js:
+ *
+ * <code>
+ * function mouseClicked() {
+ *   if (mouseX < 50) {
+ *     // Code to run if the mouse is on the left.
+ *   }
+ *
+ *   if (mouseY > 50) {
+ *     // Code to run if the mouse is near the bottom.
+ *   }
+ * }
+ * </code>
+ *
+ * The parameter, `event`, is optional. `mouseClicked()` is always passed a
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent" target="_blank">MouseEvent</a>
+ * object with properties that describe the mouse click event:
+ *
+ * <code>
+ * function mouseClicked(event) {
+ *   // Code to run that uses the event.
+ *   console.log(event);
+ * }
+ * </code>
+ *
+ * On touchscreen devices, `mouseClicked()` will run when a user’s touch
+ * ends if <a href="#/p5/touchEnded">touchEnded()</a> isn’t declared. If
+ * <a href="#/p5/touchEnded">touchEnded()</a> is declared, then
+ * <a href="#/p5/touchEnded">touchEnded()</a> will run when a user’s touch
+ * ends and `mouseClicked()` won’t.
+ *
+ * Browsers may have default behaviors attached to various mouse events. For
+ * example, some browsers highlight text when the user moves the mouse while
+ * pressing a mouse button. To prevent any default behavior for this event,
+ * add `return false;` to the end of the function.
+ *
+ * Note: <a href="#/p5/mousePressed">mousePressed()</a>,
+ * <a href="#/p5/mouseReleased">mouseReleased()</a>,
+ * and `mouseClicked()` are all related.
+ * <a href="#/p5/mousePressed">mousePressed()</a> runs as soon as the user
+ * clicks the mouse. <a href="#/p5/mouseReleased">mouseReleased()</a> runs as
+ * soon as the user releases the mouse click. `mouseClicked()` runs
+ * immediately after <a href="#/p5/mouseReleased">mouseReleased()</a>.
  *
  * @method mouseClicked
- * @param  {MouseEvent} [event] optional MouseEvent callback argument.
+ * @param  {MouseEvent} [event] optional `MouseEvent` argument.
+ *
  * @example
  * <div>
  * <code>
- * // Click within the image to change
- * // the value of the rectangle
- * // after the mouse has been clicked
- *
  * let value = 0;
- * function draw() {
- *   fill(value);
- *   rect(25, 25, 50, 50);
- *   describe('black 50-by-50 rect turns white with mouse click/press.');
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square with a black square at its center. The inner square changes color when the user presses and releases a mouse button.'
+ *   );
  * }
  *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the square.
+ *   fill(value);
+ *
+ *   // Draw the square.
+ *   square(25, 25, 50);
+ * }
+ *
+ * // Toggle the square's color when the user clicks.
  * function mouseClicked() {
  *   if (value === 0) {
  *     value = 255;
  *   } else {
  *     value = 0;
  *   }
+ *   // Uncomment to prevent any default behavior.
+ *   // return false;
  * }
  * </code>
  * </div>
  *
- * <div class="norender">
+ * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Style the circle.
+ *   fill('orange');
+ *   stroke('royalblue');
+ *   strokeWeight(10);
+ *
+ *   describe(
+ *     'An orange circle with a thick, blue border drawn on a gray background. When the user presses and holds the mouse, the border becomes thin and pink. When the user releases the mouse, the border becomes thicker and changes color to blue.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(220);
+ *
+ *   // Draw the circle.
+ *   circle(50, 50, 20);
+ * }
+ *
+ * // Set the stroke color and weight as soon as the user clicks.
+ * function mousePressed() {
+ *   stroke('deeppink');
+ *   strokeWeight(3);
+ * }
+ *
+ * // Set the stroke and fill colors as soon as the user releases
+ * // the mouse.
+ * function mouseReleased() {
+ *   stroke('royalblue');
+ *
+ *   // This is never visible because fill() is called
+ *   // in mouseClicked() which runs immediately after
+ *   // mouseReleased();
+ *   fill('limegreen');
+ * }
+ *
+ * // Set the fill color and stroke weight after
+ * // mousePressed() and mouseReleased() are called.
  * function mouseClicked() {
- *   ellipse(mouseX, mouseY, 5, 5);
- *   // prevent default
- *   return false;
- * }
- * </code>
- * </div>
- *
- * <div class="norender">
- * <code>
- * // returns a MouseEvent object
- * // as a callback argument
- * function mouseClicked(event) {
- *   console.log(event);
+ *   fill('orange');
+ *   strokeWeight(10);
  * }
  * </code>
  * </div>
@@ -814,56 +1583,121 @@ p5.prototype._onclick = function(e) {
 };
 
 /**
- * The <a href="#/p5/doubleClicked">doubleClicked()</a> function is executed every time a event
- * listener has detected a dblclick event which is a part of the
- * DOM L3 specification. The doubleClicked event is fired when a
- * pointing device button (usually a mouse's primary button)
- * is clicked twice on a single element. For more info on the
- * dblclick event refer to mozilla's documentation here:
- * https://developer.mozilla.org/en-US/docs/Web/Events/dblclick
+ * A function that's called once when a mouse button is clicked twice quickly.
+ *
+ * Declaring the function `doubleClicked()` sets a code block to run
+ * automatically when the user presses and releases the mouse button twice
+ * quickly:
+ *
+ * <code>
+ * function doubleClicked() {
+ *   // Code to run.
+ * }
+ * </code>
+ *
+ * The mouse system variables, such as <a href="#/p5/mouseX">mouseX</a> and
+ * <a href="#/p5/mouseY">mouseY</a>, will be updated with their most recent
+ * value when `doubleClicked()` is called by p5.js:
+ *
+ * <code>
+ * function doubleClicked() {
+ *   if (mouseX < 50) {
+ *     // Code to run if the mouse is on the left.
+ *   }
+ *
+ *   if (mouseY > 50) {
+ *     // Code to run if the mouse is near the bottom.
+ *   }
+ * }
+ * </code>
+ *
+ * The parameter, `event`, is optional. `doubleClicked()` is always passed a
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent" target="_blank">MouseEvent</a>
+ * object with properties that describe the double-click event:
+ *
+ * <code>
+ * function doubleClicked(event) {
+ *   // Code to run that uses the event.
+ *   console.log(event);
+ * }
+ * </code>
+ *
+ * On touchscreen devices, code placed in `doubleClicked()` will run after two
+ * touches that occur within a short time.
+ *
+ * Browsers may have default behaviors attached to various mouse events. For
+ * example, some browsers highlight text when the user moves the mouse while
+ * pressing a mouse button. To prevent any default behavior for this event,
+ * add `return false;` to the end of the function.
  *
  * @method doubleClicked
- * @param  {MouseEvent} [event] optional MouseEvent callback argument.
+ * @param  {MouseEvent} [event] optional `MouseEvent` argument.
+ *
  * @example
  * <div>
  * <code>
- * // Click within the image to change
- * // the value of the rectangle
- * // after the mouse has been double clicked
- *
  * let value = 0;
- * function draw() {
- *   fill(value);
- *   rect(25, 25, 50, 50);
- *   describe('black 50-by-50 rect turns white with mouse doubleClick/press.');
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square with a black square at its center. The inner square changes color when the user double-clicks.'
+ *   );
  * }
  *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the square.
+ *   fill(value);
+ *
+ *   // Draw the square.
+ *   square(25, 25, 50);
+ * }
+ *
+ * // Toggle the square's color when the user double-clicks.
  * function doubleClicked() {
  *   if (value === 0) {
  *     value = 255;
  *   } else {
  *     value = 0;
  *   }
+ *   // Uncomment to prevent any default behavior.
+ *   // return false;
  * }
  * </code>
  * </div>
  *
- * <div class="norender">
+ * <div>
  * <code>
+ * let value = 0;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square with a black circle at its center. When the user double-clicks on the circle, it changes color to white.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the circle.
+ *   fill(value);
+ *
+ *   // Draw the circle.
+ *   circle(50, 50, 80);
+ * }
+ *
+ * // Reassign value to 255 when the user double-clicks on the circle.
  * function doubleClicked() {
- *   ellipse(mouseX, mouseY, 5, 5);
- *   // prevent default
- *   return false;
- * }
- * </code>
- * </div>
- *
- * <div class="norender">
- * <code>
- * // returns a MouseEvent object
- * // as a callback argument
- * function doubleClicked(event) {
- *   console.log(event);
+ *   if (dist(50, 50, mouseX, mouseY) < 40) {
+ *     value = 255;
+ *   }
+ *   // Uncomment to prevent any default behavior.
+ *   // return false;
  * }
  * </code>
  * </div>
@@ -896,41 +1730,123 @@ p5.prototype._mouseWheelDeltaY = 0;
 p5.prototype._pmouseWheelDeltaY = 0;
 
 /**
- * The function <a href="#/p5/mouseWheel">mouseWheel()</a> is executed every time a vertical mouse wheel
- * event is detected either triggered by an actual mouse wheel or by a
- * touchpad.<br><br>
- * The event.delta property returns the amount the mouse wheel
- * have scrolled. The values can be positive or negative depending on the
- * scroll direction (on macOS with "natural" scrolling enabled, the signs
- * are inverted).<br><br>
- * Browsers may have different default behaviors attached to various
- * mouse events. To prevent any default behavior for this event, add
- * "return false" to the end of the method.<br><br>
- * Due to the current support of the "wheel" event on Safari, the function
- * may only work as expected if "return false" is included while using Safari.
+ * A function that's called once when the mouse wheel moves.
+ *
+ * Declaring the function `mouseWheel()` sets a code block to run
+ * automatically when the user scrolls with the mouse wheel:
+ *
+ * <code>
+ * function mouseWheel() {
+ *   // Code to run.
+ * }
+ * </code>
+ *
+ * The mouse system variables, such as <a href="#/p5/mouseX">mouseX</a> and
+ * <a href="#/p5/mouseY">mouseY</a>, will be updated with their most recent
+ * value when `mouseWheel()` is called by p5.js:
+ *
+ * <code>
+ * function mouseWheel() {
+ *   if (mouseX < 50) {
+ *     // Code to run if the mouse is on the left.
+ *   }
+ *
+ *   if (mouseY > 50) {
+ *     // Code to run if the mouse is near the bottom.
+ *   }
+ * }
+ * </code>
+ *
+ * The parameter, `event`, is optional. `mouseWheel()` is always passed a
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent" target="_blank">MouseEvent</a>
+ * object with properties that describe the mouse scroll event:
+ *
+ * <code>
+ * function mouseWheel(event) {
+ *   // Code to run that uses the event.
+ *   console.log(event);
+ * }
+ * </code>
+ *
+ * The `event` object has many properties including `delta`, a `Number`
+ * containing the distance that the user scrolled. For example, `event.delta`
+ * might have the value 5 when the user scrolls up. `event.delta` is positive
+ * if the user scrolls up and negative if they scroll down. The signs are
+ * opposite on macOS with "natural" scrolling enabled.
+ *
+ * Browsers may have default behaviors attached to various mouse events. For
+ * example, some browsers highlight text when the user moves the mouse while
+ * pressing a mouse button. To prevent any default behavior for this event,
+ * add `return false;` to the end of the function.
+ *
+ * Note: On Safari, `mouseWheel()` may only work as expected if
+ * `return false;` is added at the end of the function.
  *
  * @method mouseWheel
- * @param  {WheelEvent} [event] optional WheelEvent callback argument.
+ * @param  {WheelEvent} [event] optional `WheelEvent` argument.
  *
  * @example
  * <div>
  * <code>
- * let pos = 25;
+ * let circleSize = 0;
  *
- * function draw() {
- *   background(237, 34, 93);
- *   fill(0);
- *   rect(25, pos, 50, 50);
- *   describe(`black 50-by-50 rect moves up and down with vertical scroll.
- *     fuchsia background`);
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square. A white circle at its center grows up when the user scrolls the mouse wheel.'
+ *   );
  * }
  *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Draw the circle
+ *   circle(circleSize, 50, 50);
+ * }
+ *
+ * // Increment circleSize when the user scrolls the mouse wheel.
+ * function mouseWheel() {
+ *   circleSize += 1;
+ *   // Uncomment to prevent any default behavior.
+ *   // return false;
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let direction = '';
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square. An arrow at its center points up when the user scrolls up. The arrow points down when the user scrolls down.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *
+ *   // Draw an arrow that points where
+ *   // the mouse last scrolled.
+ *   text(direction, 50, 50);
+ * }
+ *
+ * // Change direction when the user scrolls the mouse wheel.
  * function mouseWheel(event) {
- *   print(event.delta);
- *   //move the square according to the vertical scroll amount
- *   pos += event.delta;
- *   //uncomment to block page scrolling
- *   //return false;
+ *   if (event.delta > 0) {
+ *     direction = '▲';
+ *   } else {
+ *     direction = '▼';
+ *   }
+ *   // Uncomment to prevent any default behavior.
+ *   // return false;
  * }
  * </code>
  * </div>
@@ -948,33 +1864,54 @@ p5.prototype._onwheel = function(e) {
 };
 
 /**
- * The function <a href="#/p5/requestPointerLock">requestPointerLock()</a>
- * locks the pointer to its current position and makes it invisible.
- * Use <a href="#/p5/movedX">movedX</a> and <a href="#/p5/movedY">movedY</a> to get the difference the mouse was moved since
- * the last call of draw.
- * Note that not all browsers support this feature.
- * This enables you to create experiences that aren't limited by the mouse moving out of the screen
- * even if it is repeatedly moved into one direction.
- * For example, a first person perspective experience.
+ * Locks the mouse pointer to its current position and makes it invisible.
+ *
+ * `requestPointerLock()` allows the mouse to move forever without leaving the
+ * screen. Calling `requestPointerLock()` locks the values of
+ * <a href="#/p5/mouseX">mouseX</a>, <a href="#/p5/mouseY">mouseY</a>,
+ * <a href="#/p5/pmouseX">pmouseX</a>, and <a href="#/p5/pmouseY">pmouseY</a>.
+ * <a href="#/p5/movedX">movedX</a> and <a href="#/p5/movedY">movedY</a>
+ * continue updating and can be used to get the distance the mouse moved since
+ * the last frame was drawn. Calling
+ * <a href="#/p5/exitPointerLock">exitPointerLock()</a> resumes updating the
+ * mouse system variables.
+ *
+ * Note: Most browsers require an input, such as a click, before calling
+ * `requestPointerLock()`. It’s recommended to call `requestPointerLock()` in
+ * an event function such as <a href="#/p5/doubleClicked">doubleClicked()</a>.
  *
  * @method requestPointerLock
+ *
  * @example
- * <div class="notest">
+ * <div>
  * <code>
- * let cam;
+ * let score = 0;
+ *
  * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *   requestPointerLock();
- *   cam = createCamera();
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square with the text "Score: X" at its center. The score increases when the user moves the mouse upward. It decreases when the user moves the mouse downward.'
+ *   );
  * }
  *
  * function draw() {
- *   background(255);
- *   cam.pan(-movedX * 0.001);
- *   cam.tilt(movedY * 0.001);
- *   sphere(25);
- *   describe(`3D scene moves according to mouse mouse movement in a
- *     first person perspective`);
+ *   background(200);
+ *
+ *   // Update the score.
+ *   score -= movedY;
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *
+ *   // Display the score.
+ *   text(`Score: ${score}`, 50, 50);
+ * }
+ *
+ * // Lock the pointer when the user double-clicks.
+ * function doubleClicked() {
+ *   requestPointerLock();
  * }
  * </code>
  * </div>
@@ -993,28 +1930,56 @@ p5.prototype.requestPointerLock = function() {
 };
 
 /**
- * The function <a href="#/p5/exitPointerLock">exitPointerLock()</a>
- * exits a previously triggered <a href="#/p5/requestPointerLock">pointer Lock</a>
- * for example to make ui elements usable etc
+ * Exits a pointer lock started with
+ * <a href="#/p5/requestPointerLock">requestPointerLock</a>.
+ *
+ * Calling `requestPointerLock()` locks the values of
+ * <a href="#/p5/mouseX">mouseX</a>, <a href="#/p5/mouseY">mouseY</a>,
+ * <a href="#/p5/pmouseX">pmouseX</a>, and <a href="#/p5/pmouseY">pmouseY</a>.
+ * Calling `exitPointerLock()` resumes updating the mouse system variables.
+ *
+ * Note: Most browsers require an input, such as a click, before calling
+ * `requestPointerLock()`. It’s recommended to call `requestPointerLock()` in
+ * an event function such as <a href="#/p5/doubleClicked">doubleClicked()</a>.
  *
  * @method exitPointerLock
+ *
  * @example
- * <div class="notest">
+ * <div>
  * <code>
- * //click the canvas to lock the pointer
- * //click again to exit (otherwise escape)
- * let locked = false;
- * function draw() {
- *   background(237, 34, 93);
- *   describe('cursor gets locked / unlocked on mouse-click');
+ * let isLocked = false;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square with a word at its center. The word changes between "Unlocked" and "Locked" when the user double-clicks.'
+ *   );
  * }
- * function mouseClicked() {
- *   if (!locked) {
- *     locked = true;
- *     requestPointerLock();
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *
+ *   // Tell the user whether the pointer is locked.
+ *   if (isLocked === true) {
+ *     text('Locked', 50, 50);
  *   } else {
+ *     text('Unlocked', 50, 50);
+ *   }
+ * }
+ *
+ * // Toggle the pointer lock when the user double-clicks.
+ * function doubleClicked() {
+ *   if (isLocked === true) {
  *     exitPointerLock();
- *     locked = false;
+ *     isLocked = false;
+ *   } else {
+ *     requestPointerLock();
+ *     isLocked = true;
  *   }
  * }
  * </code>

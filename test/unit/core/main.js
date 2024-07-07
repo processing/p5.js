@@ -1,4 +1,6 @@
 import p5 from '../../../src/app.js';
+import { createP5Iframe, P5_SCRIPT_TAG, P5_SCRIPT_URL } from '../../js/p5_helpers';
+import { vi } from 'vitest';
 
 suite('Core', function () {
   suite('p5.prototype.registerMethod', function () {
@@ -219,16 +221,15 @@ suite('Core', function () {
     });
     if (!window.IS_TESTING_MINIFIED_VERSION) {
       test('should warn when globals already exist', function () {
-        const _friendlyErrorStub = sinon.stub(p5, '_friendlyError');
+        const _friendlyErrorStub = vi.spyOn(p5, '_friendlyError');
         try {
           globalObject.text = 'hi';
           bind('text', noop);
           expect(
-            _friendlyErrorStub.calledOnce,
-            'p5._friendlyError was not called'
-          ).to.be.true;
+            _friendlyErrorStub
+          ).toHaveBeenCalledTimes(1);
         } finally {
-          _friendlyErrorStub.restore();
+          vi.restoreAllMocks();
         }
       });
 
@@ -242,7 +243,7 @@ suite('Core', function () {
       });
     } else {
       test('should NOT warn when globals already exist', function () {
-        const _friendlyErrorStub = sinon.stub(p5, '_friendlyError');
+        const _friendlyErrorStub = vi.spyOn(p5, '_friendlyError');
         try {
           globalObject.text = 'hi';
           bind('text', noop);
@@ -251,7 +252,7 @@ suite('Core', function () {
             'p5._friendlyError was called in minified p5.js'
           ).to.be.false;
         } finally {
-          _friendlyErrorStub.restore();
+          vi.restoreAllMocks();
         }
       });
 

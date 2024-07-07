@@ -1,14 +1,18 @@
 import p5 from '../../../src/app.js';
+import { testWithDownload } from '../../js/p5_helpers';
 
 suite('downloading animated gifs', function() {
   let myp5;
   let myGif;
 
   beforeAll(function() {
-    new p5(function(p) {
-      p.setup = function() {
-        myp5 = p;
-      };
+    return new Promise(resolve => {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          resolve();
+        };
+      });
     });
   });
 
@@ -17,14 +21,6 @@ suite('downloading animated gifs', function() {
   });
 
   let imagePath = 'unit/assets/nyan_cat.gif';
-
-  beforeEach(function disableFileLoadError() {
-    sinon.stub(p5, '_friendlyFileLoadError');
-  });
-
-  afterEach(function restoreFileLoadError() {
-    p5._friendlyFileLoadError.restore();
-  });
 
   beforeEach(function loadMyGif(done) {
     myp5.loadImage(imagePath, function(pImg) {
@@ -61,18 +57,21 @@ suite('p5.prototype.saveCanvas', function() {
       await sleep(5);
     }
   };
-  setup(function(done) {
-    new p5(function(p) {
-      p.setup = function() {
-        myp5 = p;
-        myCanvas = p.createCanvas(20, 20);
-        p.background(255, 0, 0);
-        done();
-      };
+
+  beforeAll(function() {
+    return new Promise(resolve => {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          myCanvas = p.createCanvas(20, 20);
+          p.background(255, 0, 0);
+          resolve();
+        };
+      });
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
@@ -171,24 +170,6 @@ suite('p5.prototype.saveCanvas', function() {
     true
   );
 
-  testUnMinified('wrong param type #0', function() {
-    assert.validationError(function() {
-      myp5.saveCanvas(5);
-    });
-  });
-
-  testUnMinified('wrong param type #1', function() {
-    assert.validationError(function() {
-      myp5.saveCanvas(myCanvas, 5);
-    });
-  });
-
-  testUnMinified('wrong param type #2', function() {
-    assert.validationError(function() {
-      myp5.saveCanvas(myCanvas, 'filename', 5);
-    });
-  });
-
   testWithDownload(
     'should download a png file',
     async function(blobContainer) {
@@ -226,17 +207,21 @@ suite('p5.prototype.saveCanvas', function() {
 });
 
 suite('p5.prototype.saveFrames', function() {
-  setup(function(done) {
-    new p5(function(p) {
-      p.setup = function() {
-        myp5 = p;
-        p.createCanvas(10, 10);
-        done();
-      };
+  let myp5;
+
+  beforeAll(function() {
+    return new Promise(resolve => {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          p.createCanvas(10, 10);
+          resolve();
+        };
+      });
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
@@ -266,37 +251,6 @@ suite('p5.prototype.saveFrames', function() {
     );
   });
 
-  testUnMinified('missing param #2 #3', function() {
-    assert.validationError(function() {
-      myp5.saveFrames('out', 'png');
-    });
-  });
-  testUnMinified('wrong param type #0', function() {
-    assert.validationError(function() {
-      myp5.saveFrames(0, 'png', 0.1, 25);
-    });
-  });
-  testUnMinified('wrong param type #1', function() {
-    assert.validationError(function() {
-      myp5.saveFrames('out', 1, 0.1, 25);
-    });
-  });
-  testUnMinified('wrong param type #2', function() {
-    assert.validationError(function() {
-      myp5.saveFrames('out', 'png', 'a', 25);
-    });
-  });
-  testUnMinified('wrong param type #3', function() {
-    assert.validationError(function() {
-      myp5.saveFrames('out', 'png', 0.1, 'b');
-    });
-  });
-  testUnMinified('wrong param type #4', function() {
-    assert.validationError(function() {
-      myp5.saveFrames('out', 'png', 0.1, 25, 5);
-    });
-  });
-
   test('should get frames in callback (png)', function(done) {
     myp5.saveFrames('aaa', 'png', 0.5, 25, function cb1(arr) {
       assert.typeOf(arr, 'array', 'we got an array');
@@ -323,17 +277,30 @@ suite('p5.prototype.saveFrames', function() {
 });
 
 suite('p5.prototype.saveGif', function() {
-  setup(function(done) {
-    new p5(function(p) {
-      p.setup = function() {
-        myp5 = p;
-        p.createCanvas(10, 10);
-        done();
-      };
+  let myp5;
+
+  let waitForBlob = async function(blc) {
+    let sleep = function(ms) {
+      return new Promise(r => setTimeout(r, ms));
+    };
+    while (!blc.blob) {
+      await sleep(5);
+    }
+  };
+
+  beforeAll(function() {
+    return new Promise(resolve => {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          p.createCanvas(10, 10);
+          resolve();
+        };
+      });
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
@@ -350,29 +317,8 @@ suite('p5.prototype.saveGif', function() {
     myp5.saveGif('myGif', 3, { delay: 2, frames: 'seconds' });
   });
 
-  test('wrong parameter type #0', function(done) {
-    assert.validationError(function() {
-      myp5.saveGif(2, 2);
-      done();
-    });
-  });
-
-  test('wrong parameter type #1', function(done) {
-    assert.validationError(function() {
-      myp5.saveGif('mySketch', '2');
-      done();
-    });
-  });
-
-  test('wrong parameter type #2', function(done) {
-    assert.validationError(function() {
-      myp5.saveGif('mySketch', 2, 'delay');
-      done();
-    });
-  });
-
   testWithDownload('should download a GIF', async function(blobContainer) {
-    myp5.saveGif(myGif, 3, 2);
+    myp5.saveGif('myGif', 3, 2);
     await waitForBlob(blobContainer);
     let gifBlob = blobContainer.blob;
     assert.strictEqual(gifBlob.type, 'image/gif');

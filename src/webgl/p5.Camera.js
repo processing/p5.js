@@ -11,104 +11,131 @@ import p5 from '../core/main';
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Sets the position of the current camera in a 3D sketch.
- * Parameters for this function define the camera's position,
- * the center of the sketch (where the camera is pointing),
- * and an up direction (the orientation of the camera).
+ * Sets the position and orientation of the current camera in a 3D sketch.
  *
- * This function simulates the movements of the camera, allowing objects to be
- * viewed from various angles. Remember, it does not move the objects themselves
- * but the camera instead. For example when the centerX value is positive,
- * and the camera is rotating to the right side of the sketch,
- * the object will seem like it's moving to the left.
+ * `camera()` allows objects to be viewed from different angles. It has nine
+ * parameters that are all optional.
  *
- * See this <a href = "https://www.openprocessing.org/sketch/740258">example</a>
- * to view the position of your camera.
+ * The first three parameters, `x`, `y`, and `z`, are the coordinates of the
+ * camera’s position. For example, calling `camera(0, 0, 0)` places the camera
+ * at the origin `(0, 0, 0)`. By default, the camera is placed at
+ * `(0, 0, 800)`.
  *
- * If no parameters are given, the following default is used:
- * camera(0, 0, 800, 0, 0, 0, 0, 1, 0)
+ * The next three parameters, `centerX`, `centerY`, and `centerZ` are the
+ * coordinates of the point where the camera faces. For example, calling
+ * `camera(0, 0, 0, 10, 20, 30)` places the camera at the origin `(0, 0, 0)`
+ * and points it at `(10, 20, 30)`. By default, the camera points at the
+ * origin `(0, 0, 0)`.
+ *
+ * The last three parameters, `upX`, `upY`, and `upZ` are the components of
+ * the "up" vector. The "up" vector orients the camera’s y-axis. For example,
+ * calling `camera(0, 0, 0, 10, 20, 30, 0, -1, 0)` places the camera at the
+ * origin `(0, 0, 0)`, points it at `(10, 20, 30)`, and sets the "up" vector
+ * to `(0, -1, 0)` which is like holding it upside-down. By default, the "up"
+ * vector is `(0, 1, 0)`.
+ *
+ * Note: `camera()` can only be used in WebGL mode.
+ *
  * @method camera
  * @for p5
- * @param  {Number} [x]        camera position value on x axis
- * @param  {Number} [y]        camera position value on y axis
- * @param  {Number} [z]        camera position value on z axis
- * @param  {Number} [centerX]  x coordinate representing center of the sketch
- * @param  {Number} [centerY]  y coordinate representing center of the sketch
- * @param  {Number} [centerZ]  z coordinate representing center of the sketch
- * @param  {Number} [upX]      x component of direction 'up' from camera
- * @param  {Number} [upY]      y component of direction 'up' from camera
- * @param  {Number} [upZ]      z component of direction 'up' from camera
+ * @param  {Number} [x]        x-coordinate of the camera. Defaults to 0.
+ * @param  {Number} [y]        y-coordinate of the camera. Defaults to 0.
+ * @param  {Number} [z]        z-coordinate of the camera. Defaults to 800.
+ * @param  {Number} [centerX]  x-coordinate of the point the camera faces. Defaults to 0.
+ * @param  {Number} [centerY]  y-coordinate of the point the camera faces. Defaults to 0.
+ * @param  {Number} [centerZ]  z-coordinate of the point the camera faces. Defaults to 0.
+ * @param  {Number} [upX]      x-component of the camera’s "up" vector. Defaults to 0.
+ * @param  {Number} [upY]      y-component of the camera’s "up" vector. Defaults to 1.
+ * @param  {Number} [upZ]      z-component of the camera’s "up" vector. Defaults to 0.
  * @chainable
+ *
  * @example
  * <div>
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   describe('a square moving closer and then away from the camera.');
+ *
+ *   describe('A white cube on a gray background.');
  * }
+ *
  * function draw() {
- *   background(204);
- *   //move the camera away from the plane by a sin wave
- *   camera(0, 0, 20 + sin(frameCount * 0.01) * 10, 0, 0, 0, 0, 1, 0);
- *   plane(10, 10);
+ *   background(200);
+ *
+ *   // Move the camera to the top-right.
+ *   camera(200, -400, 800);
+ *
+ *   // Draw the box.
+ *   box();
  * }
  * </code>
  * </div>
  *
- * @example
  * <div>
  * <code>
- * //move slider to see changes!
- * //sliders control the first 6 parameters of camera()
- * let sliderGroup = [];
- * let X;
- * let Y;
- * let Z;
- * let centerX;
- * let centerY;
- * let centerZ;
- * let h = 20;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white cube apperas to sway left and right on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Calculate the camera's x-coordinate.
+ *   let x = 400 * cos(frameCount * 0.01);
+ *
+ *   // Orbit the camera around the box.
+ *   camera(x, -400, 800);
+ *
+ *   // Draw the box.
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Adjust the range sliders to change the camera's position.
+ *
+ * let xSlider;
+ * let ySlider;
+ * let zSlider;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   //create sliders
- *   for (var i = 0; i < 6; i++) {
- *     if (i === 2) {
- *       sliderGroup[i] = createSlider(10, 400, 200);
- *     } else {
- *       sliderGroup[i] = createSlider(-400, 400, 0);
- *     }
- *     h = map(i, 0, 6, 5, 85);
- *     sliderGroup[i].position(10, height + h);
- *     sliderGroup[i].style('width', '80px');
- *   }
+ *
+ *   // Create slider objects to set the camera's coordinates.
+ *   xSlider = createSlider(-400, 400, 400);
+ *   xSlider.position(0, 100);
+ *   xSlider.size(100);
+ *   ySlider = createSlider(-400, 400, -200);
+ *   ySlider.position(0, 120);
+ *   ySlider.size(100);
+ *   zSlider = createSlider(0, 1600, 800);
+ *   zSlider.position(0, 140);
+ *   zSlider.size(100);
+ *
  *   describe(
- *     'White square repeatedly grows to fill canvas and then shrinks. An interactive example of a red cube with 3 sliders for moving it across x, y, z axis and 3 sliders for shifting its center.'
+ *     'A white cube drawn against a gray background. Three range sliders appear beneath the image. The camera position changes when the user moves the sliders.'
  *   );
  * }
  *
  * function draw() {
- *   background(60);
- *   // assigning sliders' value to each parameters
- *   X = sliderGroup[0].value();
- *   Y = sliderGroup[1].value();
- *   Z = sliderGroup[2].value();
- *   centerX = sliderGroup[3].value();
- *   centerY = sliderGroup[4].value();
- *   centerZ = sliderGroup[5].value();
- *   camera(X, Y, Z, centerX, centerY, centerZ, 0, 1, 0);
- *   stroke(255);
- *   fill(255, 102, 94);
- *   box(85);
+ *   background(200);
+ *
+ *   // Get the camera's coordinates from the sliders.
+ *   let x = xSlider.value();
+ *   let y = ySlider.value();
+ *   let z = zSlider.value();
+ *
+ *   // Move the camera.
+ *   camera(x, y, z);
+ *
+ *   // Draw the box.
+ *   box();
  * }
  * </code>
  * </div>
- * @alt
- * White square repeatedly grows to fill canvas and then shrinks.
- * An interactive example of a red cube with 3 sliders for moving it across x, y,
- * z axis and 3 sliders for shifting its center.
  */
 p5.prototype.camera = function (...args) {
   this._assert3d('camera');
@@ -119,71 +146,127 @@ p5.prototype.camera = function (...args) {
 
 /**
  * Sets a perspective projection for the current camera in a 3D sketch.
- * This projection represents depth through foreshortening: objects
- * that are close to the camera appear their actual size while those
- * that are further away from the camera appear smaller.
  *
- * The parameters to this function define the viewing frustum
- * (the truncated pyramid within which objects are seen by the camera) through
- * vertical field of view, aspect ratio (usually width/height), and near and far
- * clipping planes.
+ * In a perspective projection, shapes that are further from the camera appear
+ * smaller than shapes that are near the camera. This technique, called
+ * foreshortening, creates realistic 3D scenes. It’s applied by default in
+ * WebGL mode.
  *
- * If no parameters are given, the default values are used as:
+ * `perspective()` changes the camera’s perspective by changing its viewing
+ * frustum. The frustum is the volume of space that’s visible to the camera.
+ * Its shape is a pyramid with its top cut off. The camera is placed where
+ * the top of the pyramid should be and views everything between the frustum’s
+ * top (near) plane and its bottom (far) plane.
  *
- * - `fov` : The default field of view for the camera is such that the full height of renderer is visible when it is positioned at a default distance of 800 units from the camera.
- * - `aspect` : The default aspect ratio is the ratio of renderer's width to renderer's height.
- * - `near` : The default value for the near clipping plane is 80, which is 0.1 times the default distance from the camera to its subject.
- * - `far` : The default value for the far clipping plane is 8000, which is 10 times the default distance from the camera to its subject.
+ * The first parameter, `fovy`, is the camera’s vertical field of view. It’s
+ * an angle that describes how tall or narrow a view the camera has. For
+ * example, calling `perspective(0.5)` sets the camera’s vertical field of
+ * view to 0.5 radians. By default, `fovy` is calculated based on the sketch’s
+ * height and the camera’s default z-coordinate, which is 800. The formula for
+ * the default `fovy` is `2 * atan(height / 2 / 800)`.
  *
- * If you prefer a fixed field of view, follow these steps:
- * 1. Choose your desired field of view angle (`fovy`). This is how wide the camera can see.
- * 2. To ensure that you can see the entire width across horizontally and height across vertically, place the camera a distance of `(height / 2) / tan(fovy / 2)` back from its subject.
- * 3. Call perspective with the chosen field of view, canvas aspect ratio, and near/far values:
- *    `perspective(fovy, width / height, cameraDistance / 10, cameraDistance * 10);`
+ * The second parameter, `aspect`, is the camera’s aspect ratio. It’s a number
+ * that describes the ratio of the top plane’s width to its height. For
+ * example, calling `perspective(0.5, 1.5)` sets the camera’s field of view to
+ * 0.5 radians and aspect ratio to 1.5, which would make shapes appear thinner
+ * on a square canvas. By default, aspect is set to `width / height`.
+ *
+ * The third parameter, `near`, is the distance from the camera to the near
+ * plane. For example, calling `perspective(0.5, 1.5, 100)` sets the camera’s
+ * field of view to 0.5 radians, its aspect ratio to 1.5, and places the near
+ * plane 100 pixels from the camera. Any shapes drawn less than 100 pixels
+ * from the camera won’t be visible. By default, near is set to `0.1 * 800`,
+ * which is 1/10th the default distance between the camera and the origin.
+ *
+ * The fourth parameter, `far`, is the distance from the camera to the far
+ * plane. For example, calling `perspective(0.5, 1.5, 100, 10000)` sets the
+ * camera’s field of view to 0.5 radians, its aspect ratio to 1.5, places the
+ * near plane 100 pixels from the camera, and places the far plane 10,000
+ * pixels from the camera. Any shapes drawn more than 10,000 pixels from the
+ * camera won’t be visible. By default, far is set to `10 * 800`, which is 10
+ * times the default distance between the camera and the origin.
+ *
+ * Note: `perspective()` can only be used in WebGL mode.
  *
  * @method  perspective
  * @for p5
- * @param  {Number} [fovy]   camera frustum vertical field of view,
- *                           from bottom to top of view, in <a href="#/p5/angleMode">angleMode</a> units
- * @param  {Number} [aspect] camera frustum aspect ratio
- * @param  {Number} [near]   frustum near plane length
- * @param  {Number} [far]    frustum far plane length
+ * @param  {Number} [fovy]   camera frustum vertical field of view. Defaults to
+ *                           `2 * atan(height / 2 / 800)`.
+ * @param  {Number} [aspect] camera frustum aspect ratio. Defaults to
+ *                           `width / height`.
+ * @param  {Number} [near]   distance from the camera to the near clipping plane.
+ *                           Defaults to `0.1 * 800`.
+ * @param  {Number} [far]    distance from the camera to the far clipping plane.
+ *                           Defaults to `10 * 800`.
  * @chainable
+ *
  * @example
  * <div>
  * <code>
- * //drag the mouse to look around!
+ * // Double-click to squeeze the box.
+ *
+ * let isSqueezed = false;
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   perspective(PI / 3.0, width / height, 0.1, 500);
- *   describe(
- *     'two colored 3D boxes move back and forth, rotating as mouse is dragged.'
- *   );
+ *
+ *   describe('A white rectangular prism on a gray background. The box appears to become thinner when the user double-clicks.');
  * }
+ *
  * function draw() {
  *   background(200);
- *   orbitControl();
- *   normalMaterial();
  *
- *   rotateX(-0.3);
- *   rotateY(-0.2);
- *   translate(0, 0, -50);
+ *   // Place the camera at the top-right.
+ *   camera(400, -400, 800);
  *
- *   push();
- *   translate(-15, 0, sin(frameCount / 30) * 65);
- *   box(30);
- *   pop();
- *   push();
- *   translate(15, 0, sin(frameCount / 30 + PI) * 65);
- *   box(30);
- *   pop();
+ *   if (isSqueezed === true) {
+ *     // Set fovy to 0.2.
+ *     // Set aspect to 1.5.
+ *     perspective(0.2, 1.5);
+ *   }
+ *
+ *   // Draw the box.
+ *   box();
+ * }
+ *
+ * // Change the camera's perspective when the user double-clicks.
+ * function doubleClicked() {
+ *   isSqueezed = true;
  * }
  * </code>
  * </div>
  *
- * @alt
- * two colored 3D boxes move back and forth, rotating as mouse is dragged.
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white rectangular prism on a gray background. The prism moves away from the camera until it disappears.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Place the camera at the top-right.
+ *   camera(400, -400, 800);
+ *
+ *   // Set fovy to 0.2.
+ *   // Set aspect to 1.5.
+ *   // Set near to 600.
+ *   // Set far to 1200.
+ *   perspective(0.2, 1.5, 600, 1200);
+ *
+ *   // Move the origin away from the camera.
+ *   let x = -frameCount;
+ *   let y = frameCount;
+ *   let z = -2 * frameCount;
+ *   translate(x, y, z);
+ *
+ *   // Draw the box.
+ *   box();
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.perspective = function (...args) {
   this._assert3d('perspective');
@@ -192,62 +275,241 @@ p5.prototype.perspective = function (...args) {
   return this;
 };
 
+
 /**
- * Sets an orthographic projection for the current camera in a 3D sketch
- * and defines a box-shaped viewing frustum within which objects are seen.
- * In this projection, all objects with the same dimension appear the same
- * size, regardless of whether they are near or far from the camera.
+ * Enables or disables perspective for lines in 3D sketches.
  *
- * The parameters to this function specify the viewing frustum where
- * left and right are the minimum and maximum x values, top and bottom are
- * the minimum and maximum y values, and near and far are the minimum and
- * maximum z values.
+ * In WebGL mode, lines can be drawn with a thinner stroke when they’re
+ * further from the camera. Doing so gives them a more realistic appearance.
  *
- * If no parameters are given, the following default is used:
- * ortho(-width/2, width/2, -height/2, height/2, 0, max(width, height)).
- * @method  ortho
+ * By default, lines are drawn differently based on the type of perspective
+ * being used:
+ * - `perspective()` and `frustum()` simulate a realistic perspective. In
+ * these modes, stroke weight is affected by the line’s distance from the
+ * camera. Doing so results in a more natural appearance. `perspective()` is
+ * the default mode for 3D sketches.
+ * - `ortho()` doesn’t simulate a realistic perspective. In this mode, stroke
+ * weights are consistent regardless of the line’s distance from the camera.
+ * Doing so results in a more predictable and consistent appearance.
+ *
+ * `linePerspective()` can override the default line drawing mode.
+ *
+ * The parameter, `enable`, is optional. It’s a `Boolean` value that sets the
+ * way lines are drawn. If `true` is passed, as in `linePerspective(true)`,
+ * then lines will appear thinner when they are further from the camera. If
+ * `false` is passed, as in `linePerspective(false)`, then lines will have
+ * consistent stroke weights regardless of their distance from the camera. By
+ * default, `linePerspective()` is enabled.
+ *
+ * Calling `linePerspective()` without passing an argument returns `true` if
+ * it's enabled and `false` if not.
+ *
+ * Note: `linePerspective()` can only be used in WebGL mode.
+ *
+ * @method linePerspective
  * @for p5
- * @param  {Number} [left]   camera frustum left plane
- * @param  {Number} [right]  camera frustum right plane
- * @param  {Number} [bottom] camera frustum bottom plane
- * @param  {Number} [top]    camera frustum top plane
- * @param  {Number} [near]   camera frustum near plane
- * @param  {Number} [far]    camera frustum far plane
- * @chainable
+ * @param {boolean} enable whether to enable line perspective.
+ *
  * @example
  * <div>
  * <code>
- * //drag the mouse to look around!
- * //there's no vanishing point
+ * // Double-click the canvas to toggle the line perspective.
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   ortho(-width / 2, width / 2, height / 2, -height / 2, 0, 500);
+ *
  *   describe(
- *     'two 3D boxes move back and forth along same plane, rotating as mouse is dragged.'
+ *     'A white cube with black edges on a gray background. Its edges toggle between thick and thin when the user double-clicks.'
  *   );
  * }
+ *
  * function draw() {
  *   background(200);
- *   orbitControl();
- *   normalMaterial();
  *
- *   rotateX(0.2);
- *   rotateY(-0.2);
- *   push();
- *   translate(-15, 0, sin(frameCount / 30) * 65);
- *   box(30);
- *   pop();
- *   push();
- *   translate(15, 0, sin(frameCount / 30 + PI) * 65);
- *   box(30);
- *   pop();
+ *   // Translate the origin toward the camera.
+ *   translate(-10, 10, 600);
+ *
+ *   // Rotate the coordinate system.
+ *   rotateY(-0.1);
+ *   rotateX(-0.1);
+ *
+ *   // Draw the row of boxes.
+ *   for (let i = 0; i < 6; i += 1) {
+ *     translate(0, 0, -40);
+ *     box(10);
+ *   }
+ * }
+ *
+ * // Toggle the line perspective when the user double-clicks.
+ * function doubleClicked() {
+ *   let isEnabled = linePerspective();
+ *   linePerspective(!isEnabled);
  * }
  * </code>
  * </div>
  *
- * @alt
- * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
+ * <div>
+ * <code>
+ * // Double-click the canvas to toggle the line perspective.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe(
+ *     'A row of cubes with black edges on a gray background. Their edges toggle between thick and thin when the user double-clicks.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Use an orthographic projection.
+ *   ortho();
+ *
+ *   // Translate the origin toward the camera.
+ *   translate(-10, 10, 600);
+ *
+ *   // Rotate the coordinate system.
+ *   rotateY(-0.1);
+ *   rotateX(-0.1);
+ *
+ *   // Draw the row of boxes.
+ *   for (let i = 0; i < 6; i += 1) {
+ *     translate(0, 0, -40);
+ *     box(10);
+ *   }
+ * }
+ *
+ * // Toggle the line perspective when the user double-clicks.
+ * function doubleClicked() {
+ *   let isEnabled = linePerspective();
+ *   linePerspective(!isEnabled);
+ * }
+ * </code>
+ * </div>
+ */
+/**
+ * @method linePerspective
+ * @return {boolean} whether line perspective is enabled.
+ */
+
+p5.prototype.linePerspective = function (enable) {
+  p5._validateParameters('linePerspective', arguments);
+  if (!(this._renderer instanceof p5.RendererGL)) {
+    throw new Error('linePerspective() must be called in WebGL mode.');
+  }
+  if (enable !== undefined) {
+    // Set the line perspective if enable is provided
+    this._renderer._curCamera.useLinePerspective = enable;
+  } else {
+    // If no argument is provided, return the current value
+    return this._renderer._curCamera.useLinePerspective;
+  }
+};
+
+
+/**
+ * Sets an orthographic projection for the current camera in a 3D sketch.
+ *
+ * In an orthographic projection, shapes with the same size always appear the
+ * same size, regardless of whether they are near or far from the camera.
+ *
+ * `ortho()` changes the camera’s perspective by changing its viewing frustum
+ * from a truncated pyramid to a rectangular prism. The camera is placed in
+ * front of the frustum and views everything between the frustum’s near plane
+ * and its far plane. `ortho()` has six optional parameters to define the
+ * frustum.
+ *
+ * The first four parameters, `left`, `right`, `bottom`, and `top`, set the
+ * coordinates of the frustum’s sides, bottom, and top. For example, calling
+ * `ortho(-100, 100, 200, -200)` creates a frustum that’s 200 pixels wide and
+ * 400 pixels tall. By default, these coordinates are set based on the
+ * sketch’s width and height, as in
+ * `ortho(-width / 2, width / 2, -height / 2, height / 2)`.
+ *
+ * The last two parameters, `near` and `far`, set the distance of the
+ * frustum’s near and far plane from the camera. For example, calling
+ * `ortho(-100, 100, 200, 200, 50, 1000)` creates a frustum that’s 200 pixels
+ * wide, 400 pixels tall, starts 50 pixels from the camera, and ends 1,000
+ * pixels from the camera. By default, `near` and `far` are set to 0 and
+ * `max(width, height) + 800`, respectively.
+ *
+ * Note: `ortho()` can only be used in WebGL mode.
+ *
+ * @method  ortho
+ * @for p5
+ * @param  {Number} [left]   x-coordinate of the frustum’s left plane. Defaults to `-width / 2`.
+ * @param  {Number} [right]  x-coordinate of the frustum’s right plane. Defaults to `width / 2`.
+ * @param  {Number} [bottom] y-coordinate of the frustum’s bottom plane. Defaults to `height / 2`.
+ * @param  {Number} [top]    y-coordinate of the frustum’s top plane. Defaults to `-height / 2`.
+ * @param  {Number} [near]   z-coordinate of the frustum’s near plane. Defaults to 0.
+ * @param  {Number} [far]    z-coordinate of the frustum’s far plane. Defaults to `max(width, height) + 800`.
+ * @chainable
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A row of tiny, white cubes on a gray background. All the cubes appear the same size.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Apply an orthographic projection.
+ *   ortho();
+ *
+ *   // Translate the origin toward the camera.
+ *   translate(-10, 10, 600);
+ *
+ *   // Rotate the coordinate system.
+ *   rotateY(-0.1);
+ *   rotateX(-0.1);
+ *
+ *   // Draw the row of boxes.
+ *   for (let i = 0; i < 6; i += 1) {
+ *     translate(0, 0, -40);
+ *     box(10);
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white cube on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Apply an orthographic projection.
+ *   // Center the frustum.
+ *   // Set its width and height to 20.
+ *   // Place its near plane 300 pixels from the camera.
+ *   // Place its far plane 350 pixels from the camera.
+ *   ortho(-10, 10, -10, 10, 300, 350);
+ *
+ *   // Translate the origin toward the camera.
+ *   translate(-10, 10, 600);
+ *
+ *   // Rotate the coordinate system.
+ *   rotateY(-0.1);
+ *   rotateX(-0.1);
+ *
+ *   // Draw the row of boxes.
+ *   for (let i = 0; i < 6; i += 1) {
+ *     translate(0, 0, -40);
+ *     box(10);
+ *   }
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.ortho = function (...args) {
   this._assert3d('ortho');
@@ -257,65 +519,109 @@ p5.prototype.ortho = function (...args) {
 };
 
 /**
- * Sets the frustum of the current camera as defined by
- * the parameters.
+ * Sets the frustum of the current camera in a 3D sketch.
  *
- * A frustum is a geometric form: a pyramid with its top
- * cut off. With the viewer's eye at the imaginary top of
- * the pyramid, the six planes of the frustum act as clipping
- * planes when rendering a 3D view. Thus, any form inside the
- * clipping planes is visible; anything outside
- * those planes is not visible.
+ * In a frustum projection, shapes that are further from the camera appear
+ * smaller than shapes that are near the camera. This technique, called
+ * foreshortening, creates realistic 3D scenes.
  *
- * Setting the frustum changes the perspective of the scene being rendered.
- * This can be achieved more simply in many cases by using
- * <a href="https://p5js.org/reference/#/p5/perspective">perspective()</a>.
+ * `frustum()` changes the default camera’s perspective by changing its
+ * viewing frustum. The frustum is the volume of space that’s visible to the
+ * camera. The frustum’s shape is a pyramid with its top cut off. The camera
+ * is placed where the top of the pyramid should be and points towards the
+ * base of the pyramid. It views everything within the frustum.
  *
- * If no parameters are given, the following default is used:
- * frustum(-width/20, width/20, height/20, -height/20, eyeZ/10, eyeZ*10),
- * where eyeZ is equal to 800.
+ * The first four parameters, `left`, `right`, `bottom`, and `top`, set the
+ * coordinates of the frustum’s sides, bottom, and top. For example, calling
+ * `frustum(-100, 100, 200, -200)` creates a frustum that’s 200 pixels wide
+ * and 400 pixels tall. By default, these coordinates are set based on the
+ * sketch’s width and height, as in
+ * `ortho(-width / 20, width / 20, height / 20, -height / 20)`.
+ *
+ * The last two parameters, `near` and `far`, set the distance of the
+ * frustum’s near and far plane from the camera. For example, calling
+ * `ortho(-100, 100, 200, -200, 50, 1000)` creates a frustum that’s 200 pixels
+ * wide, 400 pixels tall, starts 50 pixels from the camera, and ends 1,000
+ * pixels from the camera. By default, near is set to `0.1 * 800`, which is
+ * 1/10th the default distance between the camera and the origin. `far` is set
+ * to `10 * 800`, which is 10 times the default distance between the camera
+ * and the origin.
+ *
+ * Note: `frustum()` can only be used in WebGL mode.
+ *
  * @method frustum
  * @for p5
- * @param  {Number} [left]   camera frustum left plane
- * @param  {Number} [right]  camera frustum right plane
- * @param  {Number} [bottom] camera frustum bottom plane
- * @param  {Number} [top]    camera frustum top plane
- * @param  {Number} [near]   camera frustum near plane
- * @param  {Number} [far]    camera frustum far plane
+ * @param  {Number} [left]   x-coordinate of the frustum’s left plane. Defaults to `-width / 20`.
+ * @param  {Number} [right]  x-coordinate of the frustum’s right plane. Defaults to `width / 20`.
+ * @param  {Number} [bottom] y-coordinate of the frustum’s bottom plane. Defaults to `height / 20`.
+ * @param  {Number} [top]    y-coordinate of the frustum’s top plane. Defaults to `-height / 20`.
+ * @param  {Number} [near]   z-coordinate of the frustum’s near plane. Defaults to `0.1 * 800`.
+ * @param  {Number} [far]    z-coordinate of the frustum’s far plane. Defaults to `10 * 800`.
  * @chainable
+ *
  * @example
  * <div>
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   setAttributes('antialias', true);
- *   camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   frustum(-0.1, 0.1, -0.1, 0.1, 0.1, 200);
- *   describe(
- *     'two 3D boxes move back and forth along same plane, rotating as mouse is dragged.'
- *   );
+ *
+ *   describe('A row of white cubes on a gray background.');
  * }
+ *
  * function draw() {
  *   background(200);
- *   orbitControl();
- *   normalMaterial();
  *
- *   rotateY(-0.2);
- *   rotateX(-0.3);
- *   push();
- *   translate(-15, 0, sin(frameCount / 30) * 25);
- *   box(30);
- *   pop();
- *   push();
- *   translate(15, 0, sin(frameCount / 30 + PI) * 25);
- *   box(30);
- *   pop();
+ *   // Apply the default frustum projection.
+ *   frustum();
+ *
+ *   // Translate the origin toward the camera.
+ *   translate(-10, 10, 600);
+ *
+ *   // Rotate the coordinate system.
+ *   rotateY(-0.1);
+ *   rotateX(-0.1);
+ *
+ *   // Draw the row of boxes.
+ *   for (let i = 0; i < 6; i += 1) {
+ *     translate(0, 0, -40);
+ *     box(10);
+ *   }
  * }
  * </code>
  * </div>
  *
- * @alt
- * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   describe('A white cube on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Adjust the frustum.
+ *   // Center it.
+ *   // Set its width and height to 20 pixels.
+ *   // Place its near plane 300 pixels from the camera.
+ *   // Place its far plane 350 pixels from the camera.
+ *   frustum(-10, 10, -10, 10, 300, 350);
+ *
+ *   // Translate the origin toward the camera.
+ *   translate(-10, 10, 600);
+ *
+ *   // Rotate the coordinate system.
+ *   rotateY(-0.1);
+ *   rotateX(-0.1);
+ *
+ *   // Draw the row of boxes.
+ *   for (let i = 0; i < 6; i += 1) {
+ *     translate(0, 0, -40);
+ *     box(10);
+ *   }
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.frustum = function (...args) {
   this._assert3d('frustum');
@@ -332,408 +638,1217 @@ p5.prototype.frustum = function (...args) {
  * Creates a new <a href="#/p5.Camera">p5.Camera</a> object and sets it
  * as the current (active) camera.
  *
- * The new camera is initialized with a default position
- * (see <a href="#/p5.Camera/camera">camera()</a>)
- * and a default perspective projection
- * (see <a href="#/p5.Camera/perspective">perspective()</a>).
- * Its properties can be controlled with the <a href="#/p5.Camera">p5.Camera</a>
- * methods.
+ * The new camera is initialized with a default position `(0, 0, 800)` and a
+ * default perspective projection. Its properties can be controlled with
+ * <a href="#/p5.Camera">p5.Camera</a> methods such as
+ * `myCamera.lookAt(0, 0, 0)`.
  *
  * Note: Every 3D sketch starts with a default camera initialized.
- * This camera can be controlled with the global methods
+ * This camera can be controlled with the functions
  * <a href="#/p5/camera">camera()</a>,
- * <a href="#/p5/perspective">perspective()</a>, <a href="#/p5/ortho">ortho()</a>,
- * and <a href="#/p5/frustum">frustum()</a> if it is the only camera
- * in the scene.
+ * <a href="#/p5/perspective">perspective()</a>,
+ * <a href="#/p5/ortho">ortho()</a>, and
+ * <a href="#/p5/frustum">frustum()</a> if it's the only camera in the scene.
+ *
+ * Note: `createCamera()` can only be used in WebGL mode.
+ *
  * @method createCamera
- * @return {p5.Camera} The newly created camera object.
+ * @return {p5.Camera} the new camera.
  * @for p5
+ *
  * @example
- * <div><code>
- * // Creates a camera object and animates it around a box.
- * let camera;
+ * <div>
+ * <code>
+ * // Double-click to toggle between cameras.
+ *
+ * let cam1;
+ * let cam2;
+ * let usingCam1 = true;
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   background(0);
- *   camera = createCamera();
- *   camera.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   camera.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   describe('An example that creates a camera and moves it around the box.');
+ *
+ *   // Create the first camera.
+ *   // Keep its default settings.
+ *   cam1 = createCamera();
+ *
+ *   // Create the second camera.
+ *   // Place it at the top-left.
+ *   // Point it at the origin.
+ *   cam2 = createCamera();
+ *   cam2.setPosition(400, -400, 800);
+ *   cam2.lookAt(0, 0, 0);
+ *
+ *   // Set the current camera to cam1.
+ *   setCamera(cam1);
+ *
+ *   describe('A white cube on a gray background. The camera toggles between frontal and aerial views when the user double-clicks.');
  * }
  *
  * function draw() {
- *   background(0);
- *   // The camera will automatically
- *   // rotate to look at [0, 0, 0].
- *   camera.lookAt(0, 0, 0);
+ *   background(200);
  *
- *   // The camera will move on the
- *   // x axis.
- *   camera.setPosition(sin(frameCount / 60) * 200, 0, 100);
- *   box(20);
- *
- *   // A 'ground' box to give the viewer
- *   // a better idea of where the camera
- *   // is looking.
- *   translate(0, 50, 0);
- *   rotateX(HALF_PI);
- *   box(150, 150, 20);
+ *   // Draw the box.
+ *   box();
  * }
- * </code></div>
  *
- * @alt
- * An example that creates a camera and moves it around the box.
+ * // Toggle the current camera when the user double-clicks.
+ * function doubleClicked() {
+ *   if (usingCam1 === true) {
+ *     setCamera(cam2);
+ *     usingCam1 = false;
+ *   } else {
+ *     setCamera(cam1);
+ *     usingCam1 = true;
+ *   }
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.createCamera = function () {
   this._assert3d('createCamera');
-  const _cam = new p5.Camera(this._renderer);
 
   // compute default camera settings, then set a default camera
+  const _cam = new p5.Camera(this._renderer);
   _cam._computeCameraDefaultSettings();
   _cam._setDefaultCamera();
-
-  // set renderer current camera to the new camera
-  this._renderer._curCamera = _cam;
 
   return _cam;
 };
 
 /**
- * This class describes a camera for use in p5's
- * <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5">
- * WebGL mode</a>. It contains camera position, orientation, and projection
- * information necessary for rendering a 3D scene.
+ * A class to describe a camera for viewing a 3D sketch.
  *
- * New p5.Camera objects can be made through the
- * <a href="#/p5/createCamera">createCamera()</a> function and controlled through
- * the methods described below. A camera created in this way will use a default
- * position in the scene and a default perspective projection until these
- * properties are changed through the various methods available. It is possible
- * to create multiple cameras, in which case the current camera
- * can be set through the <a href="#/p5/setCamera">setCamera()</a> method.
+ * Each `p5.Camera` object represents a camera that views a section of 3D
+ * space. It stores information about the camera’s position, orientation, and
+ * projection.
  *
- * Note:
- * The methods below operate in two coordinate systems: the 'world' coordinate
- * system describe positions in terms of their relationship to the origin along
- * the X, Y and Z axes whereas the camera's 'local' coordinate system
- * describes positions from the camera's point of view: left-right, up-down,
- * and forward-backward. The <a href="#/p5.Camera/move">move()</a> method,
- * for instance, moves the camera along its own axes, whereas the
- * <a href="#/p5.Camera/setPosition">setPosition()</a>
- * method sets the camera's position in world-space.
+ * In WebGL mode, the default camera is a `p5.Camera` object that can be
+ * controlled with the <a href="#/p5/camera">camera()</a>,
+ * <a href="#/p5/perspective">perspective()</a>,
+ * <a href="#/p5/ortho">ortho()</a>, and
+ * <a href="#/p5/frustum">frustum()</a> functions. Additional cameras can be
+ * created with <a href="#/p5/createCamera">createCamera()</a> and activated
+ * with <a href="#/p5/setCamera">setCamera()</a>.
  *
- * The camera object properties
- * <code>eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ</code>
- * which describes camera position, orientation, and projection
- * are also accessible via the camera object generated using
- * <a href="#/p5/createCamera">createCamera()</a>
+ * Note: `p5.Camera`’s methods operate in two coordinate systems:
+ * - The “world” coordinate system describes positions in terms of their
+ * relationship to the origin along the x-, y-, and z-axes. For example,
+ * calling `myCamera.setPosition()` places the camera in 3D space using
+ * "world" coordinates.
+ * - The "local" coordinate system describes positions from the camera's point
+ * of view: left-right, up-down, and forward-backward. For example, calling
+ * `myCamera.move()` moves the camera along its own axes.
  *
  * @class p5.Camera
  * @param {rendererGL} rendererGL instance of WebGL renderer
+ *
  * @example
  * <div>
  * <code>
  * let cam;
- * let delta = 0.01;
+ * let delta = 0.001;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   normalMaterial();
+ *
+ *   // Create a p5.Camera object.
  *   cam = createCamera();
- *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   cam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   // set initial pan angle
- *   cam.pan(-0.8);
+ *
+ *   // Place the camera at the top-center.
+ *   cam.setPosition(0, -400, 800);
+ *
+ *   // Point the camera at the origin.
+ *   cam.lookAt(0, 0, 0);
+ *
  *   describe(
- *     'camera view pans left and right across a series of rotating 3D boxes.'
+ *     'A white cube on a gray background. The cube goes in and out of view as the camera pans left and right.'
  *   );
  * }
  *
  * function draw() {
  *   background(200);
  *
- *   // pan camera according to angle 'delta'
+ *   // Turn the camera left and right, called "panning".
  *   cam.pan(delta);
  *
- *   // every 160 frames, switch direction
- *   if (frameCount % 160 === 0) {
+ *   // Switch directions every 120 frames.
+ *   if (frameCount % 120 === 0) {
  *     delta *= -1;
  *   }
  *
- *   rotateX(frameCount * 0.01);
- *   translate(-100, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
+ *   // Draw the box.
+ *   box();
  * }
  * </code>
  * </div>
  *
- * @alt
- * camera view pans left and right across a series of rotating 3D boxes.
+ * <div>
+ * <code>
+ * // Double-click to toggle between cameras.
+ *
+ * let cam1;
+ * let cam2;
+ * let isDefaultCamera = true;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create the first camera.
+ *   // Keep its default settings.
+ *   cam1 = createCamera();
+ *
+ *   // Create the second camera.
+ *   // Place it at the top-left.
+ *   // Point it at the origin.
+ *   cam2 = createCamera();
+ *   cam2.setPosition(400, -400, 800);
+ *   cam2.lookAt(0, 0, 0);
+ *
+ *   // Set the current camera to cam1.
+ *   setCamera(cam1);
+ *
+ *   describe(
+ *     'A white cube on a gray background. The camera toggles between frontal and aerial views when the user double-clicks.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Draw the box.
+ *   box();
+ * }
+ *
+ * // Toggle the current camera when the user double-clicks.
+ * function doubleClicked() {
+ *   if (isDefaultCamera === true) {
+ *     setCamera(cam2);
+ *     isDefaultCamera = false;
+ *   } else {
+ *     setCamera(cam1);
+ *     isDefaultCamera = true;
+ *   }
+ * }
+ * </code>
+ * </div>
  */
 p5.Camera = class Camera {
   constructor(renderer) {
     this._renderer = renderer;
 
     this.cameraType = 'default';
-
+    this.useLinePerspective = true;
     this.cameraMatrix = new p5.Matrix();
     this.projMatrix = new p5.Matrix();
     this.yScale = 1;
   }
   /**
- * camera position value on x axis. default value is 0
+ * The camera’s y-coordinate.
+ *
+ * By default, the camera’s y-coordinate is set to 0 in "world" space.
+ *
  * @property {Number} eyeX
  * @readonly
- * @example
  *
- * <div class='norender'><code>
- * let cam, div;
+ * @example
+ * <div>
+ * <code>
+ * let cam;
+ * let font;
+ *
+ * // Load a font and create a p5.Font object.
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   background(0);
+ *
+ *   // Create a p5.Camera object.
  *   cam = createCamera();
- *   div = createDiv();
- *   div.position(0, 0);
- *   describe('An example showing the use of camera object properties');
+ *
+ *   // Place the camera at the top-center.
+ *   cam.setPosition(0, -400, 800);
+ *
+ *   // Point the camera at the origin.
+ *   cam.lookAt(0, 0, 0);
+ *
+ *   describe(
+ *     'A white cube on a gray background. The text "eyeX: 0" is written in black beneath it.'
+ *   );
  * }
  *
  * function draw() {
- *   orbitControl();
- *   box(10);
- *   div.html('eyeX = ' + cam.eyeX);
+ *   background(200);
+ *
+ *   // Style the box.
+ *   fill(255);
+ *
+ *   // Draw the box.
+ *   box();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   textFont(font);
+ *   fill(0);
+ *
+ *   // Display the value of eyeX, rounded to the nearest integer.
+ *   text(`eyeX: ${round(cam.eyeX)}`, 0, 55);
  * }
- * </code></div>
+ * </code>
+ * </div>
  *
- * @alt
- * An example showing the use of camera object properties
+ * <div>
+ * <code>
+ * let cam;
+ * let font;
  *
+ * // Load a font and create a p5.Font object.
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a p5.Camera object.
+ *   cam = createCamera();
+ *
+ *   // Place the camera at the top-center.
+ *   cam.setPosition(0, -400, 800);
+ *
+ *   // Point the camera at the origin.
+ *   cam.lookAt(0, 0, 0);
+ *
+ *   describe(
+ *     'A white cube on a gray background. The cube appears to move left and right as the camera moves. The text "eyeX: X" is written in black beneath the cube. X oscillates between -25 and 25.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the box.
+ *   fill(255);
+ *
+ *   // Draw the box.
+ *   box();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   textFont(font);
+ *   fill(0);
+ *
+ *   // Calculate the new x-coordinate.
+ *   let x = 25 * sin(frameCount * 0.01);
+ *
+ *   // Set the camera's position.
+ *   cam.setPosition(x, -400, 800);
+ *
+ *   // Display the value of eyeX, rounded to the nearest integer.
+ *   text(`eyeX: ${round(cam.eyeX)}`, 0, 55);
+ * }
+ * </code>
+ * </div>
  */
 
   /**
- * camera position value on y axis. default value is 0
+ * The camera’s y-coordinate.
+ *
+ * By default, the camera’s y-coordinate is set to 0 in "world" space.
+ *
  * @property {Number} eyeY
  * @readonly
+ *
  * @example
- * <div class='norender'><code>
- * let cam, div;
+ * <div>
+ * <code>
+ * let cam;
+ * let font;
+ *
+ * // Load a font and create a p5.Font object.
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   background(0);
+ *
+ *   // Create a p5.Camera object.
  *   cam = createCamera();
- *   div = createDiv();
- *   div.position(0, 0);
- *   describe('An example showing the use of camera object properties');
+ *
+ *   // Place the camera at the top-center.
+ *   cam.setPosition(0, -400, 800);
+ *
+ *   // Point the camera at the origin.
+ *   cam.lookAt(0, 0, 0);
+ *
+ *   describe(
+ *     'A white cube on a gray background. The text "eyeY: -400" is written in black beneath it.'
+ *   );
  * }
  *
  * function draw() {
- *   orbitControl();
- *   box(10);
- *   div.html('eyeY = ' + cam.eyeY);
+ *   background(200);
+ *
+ *   // Style the box.
+ *   fill(255);
+ *
+ *   // Draw the box.
+ *   box();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   textFont(font);
+ *   fill(0);
+ *
+ *   // Display the value of eyeY, rounded to the nearest integer.
+ *   text(`eyeX: ${round(cam.eyeY)}`, 0, 55);
  * }
- * </code></div>
+ * </code>
+ * </div>
  *
- * @alt
- * An example showing the use of camera object properties
+ * <div>
+ * <code>
+ * let cam;
+ * let font;
  *
+ * // Load a font and create a p5.Font object.
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a p5.Camera object.
+ *   cam = createCamera();
+ *
+ *   // Place the camera at the top-center.
+ *   cam.setPosition(0, -400, 800);
+ *
+ *   // Point the camera at the origin.
+ *   cam.lookAt(0, 0, 0);
+ *
+ *   describe(
+ *     'A white cube on a gray background. The cube appears to move up and down as the camera moves. The text "eyeY: Y" is written in black beneath the cube. Y oscillates between -374 and -425.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the box.
+ *   fill(255);
+ *
+ *   // Draw the box.
+ *   box();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   textFont(font);
+ *   fill(0);
+ *
+ *   // Calculate the new y-coordinate.
+ *   let y = 25 * sin(frameCount * 0.01) - 400;
+ *
+ *   // Set the camera's position.
+ *   cam.setPosition(0, y, 800);
+ *
+ *   // Display the value of eyeY, rounded to the nearest integer.
+ *   text(`eyeY: ${round(cam.eyeY)}`, 0, 55);
+ * }
+ * </code>
+ * </div>
  */
 
   /**
- * camera position value on z axis. default value is 800
+ * The camera’s z-coordinate.
+ *
+ * By default, the camera’s z-coordinate is set to 800 in "world" space.
+ *
  * @property {Number} eyeZ
  * @readonly
+ *
  * @example
- * <div class='norender'><code>
- * let cam, div;
+ * <div>
+ * <code>
+ * let cam;
+ * let font;
+ *
+ * // Load a font and create a p5.Font object.
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   background(0);
+ *
+ *   // Create a p5.Camera object.
  *   cam = createCamera();
- *   div = createDiv();
- *   div.position(0, 0);
- *   describe('An example showing the use of camera object properties');
+ *
+ *   // Place the camera at the top-center.
+ *   cam.setPosition(0, -400, 800);
+ *
+ *   // Point the camera at the origin.
+ *   cam.lookAt(0, 0, 0);
+ *
+ *   describe(
+ *     'A white cube on a gray background. The text "eyeZ: 800" is written in black beneath it.'
+ *   );
  * }
  *
  * function draw() {
- *   orbitControl();
- *   box(10);
- *   div.html('eyeZ = ' + cam.eyeZ);
+ *   background(200);
+ *
+ *   // Style the box.
+ *   fill(255);
+ *
+ *   // Draw the box.
+ *   box();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   textFont(font);
+ *   fill(0);
+ *
+ *   // Display the value of eyeZ, rounded to the nearest integer.
+ *   text(`eyeZ: ${round(cam.eyeZ)}`, 0, 55);
  * }
- * </code></div>
+ * </code>
+ * </div>
  *
- * @alt
- * An example showing the use of camera object properties
+ * <div>
+ * <code>
+ * let cam;
+ * let font;
  *
+ * // Load a font and create a p5.Font object.
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a p5.Camera object.
+ *   cam = createCamera();
+ *
+ *   // Place the camera at the top-center.
+ *   cam.setPosition(0, -400, 800);
+ *
+ *   // Point the camera at the origin.
+ *   cam.lookAt(0, 0, 0);
+ *
+ *   describe(
+ *     'A white cube on a gray background. The cube appears to move forward and back as the camera moves. The text "eyeZ: Z" is written in black beneath the cube. Z oscillates between 700 and 900.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the box.
+ *   fill(255);
+ *
+ *   // Draw the box.
+ *   box();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   textFont(font);
+ *   fill(0);
+ *
+ *   // Calculate the new z-coordinate.
+ *   let z = 100 * sin(frameCount * 0.01) + 800;
+ *
+ *   // Set the camera's position.
+ *   cam.setPosition(0, -400, z);
+ *
+ *   // Display the value of eyeZ, rounded to the nearest integer.
+ *   text(`eyeZ: ${round(cam.eyeZ)}`, 0, 55);
+ * }
+ * </code>
+ * </div>
  */
 
   /**
- * x coordinate representing center of the sketch
+ * The x-coordinate of the place where the camera looks.
+ *
+ * By default, the camera looks at the origin `(0, 0, 0)` in "world" space, so
+ * `myCamera.centerX` is 0.
+ *
  * @property {Number} centerX
  * @readonly
+ *
  * @example
- * <div class='norender'><code>
- * let cam, div;
+ * <div>
+ * <code>
+ * let cam;
+ * let font;
+ *
+ * // Load a font and create a p5.Font object.
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   background(255);
+ *
+ *   // Create a p5.Camera object.
  *   cam = createCamera();
- *   cam.lookAt(1, 0, 0);
- *   div = createDiv('centerX = ' + cam.centerX);
- *   div.position(0, 0);
- *   div.style('color', 'white');
- *   describe('An example showing the use of camera object properties');
+ *
+ *   // Place the camera at the top-center.
+ *   cam.setPosition(0, -400, 800);
+ *
+ *   // Point the camera at (10, 20, -30).
+ *   cam.lookAt(10, 20, -30);
+ *
+ *   describe(
+ *     'A white cube on a gray background. The text "centerX: 10" is written in black beneath it.'
+ *   );
  * }
  *
  * function draw() {
- *   orbitControl();
- *   box(10);
+ *   background(200);
+ *
+ *   // Style the box.
+ *   fill(255);
+ *
+ *   // Draw the box.
+ *   box();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   textFont(font);
+ *   fill(0);
+ *
+ *   // Display the value of centerX, rounded to the nearest integer.
+ *   text(`centerX: ${round(cam.centerX)}`, 0, 55);
  * }
- * </code></div>
+ * </code>
+ * </div>
  *
- * @alt
- * An example showing the use of camera object properties
+ * <div>
+ * <code>
+ * let cam;
+ * let font;
  *
+ * // Load a font and create a p5.Font object.
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a p5.Camera object.
+ *   cam = createCamera();
+ *
+ *   // Place the camera at the top-right.
+ *   cam.setPosition(100, -400, 800);
+ *
+ *   // Point the camera at (10, 20, -30).
+ *   cam.lookAt(10, 20, -30);
+ *
+ *   describe(
+ *     'A white cube on a gray background. The cube appears to move left and right as the camera shifts its focus. The text "centerX: X" is written in black beneath the cube. X oscillates between -15 and 35.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the box.
+ *   fill(255);
+ *
+ *   // Draw the box.
+ *   box();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   textFont(font);
+ *   fill(0);
+ *
+ *   // Calculate the new x-coordinate.
+ *   let x = 25 * sin(frameCount * 0.01) + 10;
+ *
+ *   // Point the camera.
+ *   cam.lookAt(x, 20, -30);
+ *
+ *   // Display the value of centerX, rounded to the nearest integer.
+ *   text(`centerX: ${round(cam.centerX)}`, 0, 55);
+ * }
+ * </code>
+ * </div>
  */
 
   /**
- * y coordinate representing center of the sketch
+ * The y-coordinate of the place where the camera looks.
+ *
+ * By default, the camera looks at the origin `(0, 0, 0)` in "world" space, so
+ * `myCamera.centerY` is 0.
+ *
  * @property {Number} centerY
  * @readonly
+ *
  * @example
- * <div class='norender'><code>
- * let cam, div;
+ * <div>
+ * <code>
+ * let cam;
+ * let font;
+ *
+ * // Load a font and create a p5.Font object.
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   background(255);
+ *
+ *   // Create a p5.Camera object.
  *   cam = createCamera();
- *   cam.lookAt(0, 1, 0);
- *   div = createDiv('centerY = ' + cam.centerY);
- *   div.position(0, 0);
- *   div.style('color', 'white');
- *   describe('An example showing the use of camera object properties');
+ *
+ *   // Place the camera at the top-center.
+ *   cam.setPosition(0, -400, 800);
+ *
+ *   // Point the camera at (10, 20, -30).
+ *   cam.lookAt(10, 20, -30);
+ *
+ *   describe(
+ *     'A white cube on a gray background. The text "centerY: 20" is written in black beneath it.'
+ *   );
  * }
  *
  * function draw() {
- *   orbitControl();
- *   box(10);
+ *   background(200);
+ *
+ *   // Style the box.
+ *   fill(255);
+ *
+ *   // Draw the box.
+ *   box();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   textFont(font);
+ *   fill(0);
+ *
+ *   // Display the value of centerY, rounded to the nearest integer.
+ *   text(`centerY: ${round(cam.centerY)}`, 0, 55);
  * }
- * </code></div>
+ * </code>
+ * </div>
  *
- * @alt
- * An example showing the use of camera object properties
+ * <div>
+ * <code>
+ * let cam;
+ * let font;
  *
+ * // Load a font and create a p5.Font object.
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a p5.Camera object.
+ *   cam = createCamera();
+ *
+ *   // Place the camera at the top-right.
+ *   cam.setPosition(100, -400, 800);
+ *
+ *   // Point the camera at (10, 20, -30).
+ *   cam.lookAt(10, 20, -30);
+ *
+ *   describe(
+ *     'A white cube on a gray background. The cube appears to move up and down as the camera shifts its focus. The text "centerY: Y" is written in black beneath the cube. Y oscillates between -5 and 45.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the box.
+ *   fill(255);
+ *
+ *   // Draw the box.
+ *   box();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   textFont(font);
+ *   fill(0);
+ *
+ *   // Calculate the new y-coordinate.
+ *   let y = 25 * sin(frameCount * 0.01) + 20;
+ *
+ *   // Point the camera.
+ *   cam.lookAt(10, y, -30);
+ *
+ *   // Display the value of centerY, rounded to the nearest integer.
+ *   text(`centerY: ${round(cam.centerY)}`, 0, 55);
+ * }
+ * </code>
+ * </div>
  */
 
   /**
- * z coordinate representing center of the sketch
+ * The y-coordinate of the place where the camera looks.
+ *
+ * By default, the camera looks at the origin `(0, 0, 0)` in "world" space, so
+ * `myCamera.centerZ` is 0.
+ *
  * @property {Number} centerZ
  * @readonly
+ *
  * @example
- * <div class='norender'><code>
- * let cam, div;
+ * <div>
+ * <code>
+ * let cam;
+ * let font;
+ *
+ * // Load a font and create a p5.Font object.
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   background(255);
+ *
+ *   // Create a p5.Camera object.
  *   cam = createCamera();
- *   cam.lookAt(0, 0, 1);
- *   div = createDiv('centerZ = ' + cam.centerZ);
- *   div.position(0, 0);
- *   div.style('color', 'white');
- *   describe('An example showing the use of camera object properties');
+ *
+ *   // Place the camera at the top-center.
+ *   cam.setPosition(0, -400, 800);
+ *
+ *   // Point the camera at (10, 20, -30).
+ *   cam.lookAt(10, 20, -30);
+ *
+ *   describe(
+ *     'A white cube on a gray background. The text "centerZ: -30" is written in black beneath it.'
+ *   );
  * }
  *
  * function draw() {
- *   orbitControl();
- *   box(10);
+ *   background(200);
+ *
+ *   // Style the box.
+ *   fill(255);
+ *
+ *   // Draw the box.
+ *   box();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   textFont(font);
+ *   fill(0);
+ *
+ *   // Display the value of centerZ, rounded to the nearest integer.
+ *   text(`centerZ: ${round(cam.centerZ)}`, 0, 55);
  * }
- * </code></div>
+ * </code>
+ * </div>
  *
- * @alt
- * An example showing the use of camera object properties
+ * <div>
+ * <code>
+ * let cam;
+ * let font;
  *
+ * // Load a font and create a p5.Font object.
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a p5.Camera object.
+ *   cam = createCamera();
+ *
+ *   // Place the camera at the top-right.
+ *   cam.setPosition(100, -400, 800);
+ *
+ *   // Point the camera at (10, 20, -30).
+ *   cam.lookAt(10, 20, -30);
+ *
+ *   describe(
+ *     'A white cube on a gray background. The cube appears to move forward and back as the camera shifts its focus. The text "centerZ: Z" is written in black beneath the cube. Z oscillates between -55 and -25.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the box.
+ *   fill(255);
+ *
+ *   // Draw the box.
+ *   box();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   textFont(font);
+ *   fill(0);
+ *
+ *   // Calculate the new z-coordinate.
+ *   let z = 25 * sin(frameCount * 0.01) - 30;
+ *
+ *   // Point the camera.
+ *   cam.lookAt(10, 20, z);
+ *
+ *   // Display the value of centerZ, rounded to the nearest integer.
+ *   text(`centerZ: ${round(cam.centerZ)}`, 0, 55);
+ * }
+ * </code>
+ * </div>
  */
 
   /**
- * x component of direction 'up' from camera
+ * The x-component of the camera's "up" vector.
+ *
+ * The camera's "up" vector orients its y-axis. By default, the "up" vector is
+ * `(0, 1, 0)`, so its x-component is 0 in "local" space.
+ *
  * @property {Number} upX
  * @readonly
+ *
  * @example
- * <div class='norender'><code>
- * let cam, div;
+ * <div>
+ * <code>
+ * let cam;
+ * let font;
+ *
+ * // Load a font and create a p5.Font object.
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   background(255);
+ *
+ *   // Create a p5.Camera object.
  *   cam = createCamera();
- *   div = createDiv('upX = ' + cam.upX);
- *   div.position(0, 0);
- *   div.style('color', 'blue');
- *   div.style('font-size', '18px');
- *   describe('An example showing the use of camera object properties');
+ *
+ *   // Place the camera at the top-right: (100, -400, 800)
+ *   // Point it at the origin: (0, 0, 0)
+ *   // Set its "up" vector: (0, 1, 0).
+ *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, 0);
+ *
+ *   describe(
+ *     'A white cube on a gray background. The text "upX: 0" is written in black beneath it.'
+ *   );
  * }
- * </code></div>
  *
- * @alt
- * An example showing the use of camera object properties
+ * function draw() {
+ *   background(200);
  *
+ *   // Style the box.
+ *   fill(255);
+ *
+ *   // Draw the box.
+ *   box();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   textFont(font);
+ *   fill(0);
+ *
+ *   // Display the value of upX, rounded to the nearest tenth.
+ *   text(`upX: ${round(cam.upX, 1)}`, 0, 55);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let cam;
+ * let font;
+ *
+ * // Load a font and create a p5.Font object.
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a p5.Camera object.
+ *   cam = createCamera();
+ *
+ *   // Place the camera at the top-right: (100, -400, 800)
+ *   // Point it at the origin: (0, 0, 0)
+ *   // Set its "up" vector: (0, 1, 0).
+ *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, 0);
+ *
+ *   describe(
+ *     'A white cube on a gray background. The cube appears to rock back and forth. The text "upX: X" is written in black beneath it. X oscillates between -1 and 1.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the box.
+ *   fill(255);
+ *
+ *   // Draw the box.
+ *   box();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   textFont(font);
+ *   fill(0);
+ *
+ *   // Calculate the x-component.
+ *   let x = sin(frameCount * 0.01);
+ *
+ *   // Update the camera's "up" vector.
+ *   cam.camera(100, -400, 800, 0, 0, 0, x, 1, 0);
+ *
+ *   // Display the value of upX, rounded to the nearest tenth.
+ *   text(`upX: ${round(cam.upX, 1)}`, 0, 55);
+ * }
+ * </code>
+ * </div>
  */
 
   /**
- * y component of direction 'up' from camera
+ * The y-component of the camera's "up" vector.
+ *
+ * The camera's "up" vector orients its y-axis. By default, the "up" vector is
+ * `(0, 1, 0)`, so its y-component is 1 in "local" space.
+ *
  * @property {Number} upY
  * @readonly
+ *
  * @example
- * <div class='norender'><code>
- * let cam, div;
+ * <div>
+ * <code>
+ * let cam;
+ * let font;
+ *
+ * // Load a font and create a p5.Font object.
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   background(255);
+ *
+ *   // Create a p5.Camera object.
  *   cam = createCamera();
- *   div = createDiv('upY = ' + cam.upY);
- *   div.position(0, 0);
- *   div.style('color', 'blue');
- *   div.style('font-size', '18px');
- *   describe('An example showing the use of camera object properties');
+ *
+ *   // Place the camera at the top-right: (100, -400, 800)
+ *   // Point it at the origin: (0, 0, 0)
+ *   // Set its "up" vector: (0, 1, 0).
+ *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, 0);
+ *
+ *   describe(
+ *     'A white cube on a gray background. The text "upY: 1" is written in black beneath it.'
+ *   );
  * }
- * </code></div>
  *
- * @alt
- * An example showing the use of camera object properties
+ * function draw() {
+ *   background(200);
  *
+ *   // Style the box.
+ *   fill(255);
+ *
+ *   // Draw the box.
+ *   box();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   textFont(font);
+ *   fill(0);
+ *
+ *   // Display the value of upY, rounded to the nearest tenth.
+ *   text(`upY: ${round(cam.upY, 1)}`, 0, 55);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let cam;
+ * let font;
+ *
+ * // Load a font and create a p5.Font object.
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a p5.Camera object.
+ *   cam = createCamera();
+ *
+ *   // Place the camera at the top-right: (100, -400, 800)
+ *   // Point it at the origin: (0, 0, 0)
+ *   // Set its "up" vector: (0, 1, 0).
+ *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, 0);
+ *
+ *   describe(
+ *     'A white cube on a gray background. The cube flips upside-down periodically. The text "upY: Y" is written in black beneath it. Y oscillates between -1 and 1.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the box.
+ *   fill(255);
+ *
+ *   // Draw the box.
+ *   box();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   textFont(font);
+ *   fill(0);
+ *
+ *   // Calculate the y-component.
+ *   let y = sin(frameCount * 0.01);
+ *
+ *   // Update the camera's "up" vector.
+ *   cam.camera(100, -400, 800, 0, 0, 0, 0, y, 0);
+ *
+ *   // Display the value of upY, rounded to the nearest tenth.
+ *   text(`upY: ${round(cam.upY, 1)}`, 0, 55);
+ * }
+ * </code>
+ * </div>
  */
 
   /**
- * z component of direction 'up' from camera
+ * The z-component of the camera's "up" vector.
+ *
+ * The camera's "up" vector orients its y-axis. By default, the "up" vector is
+ * `(0, 1, 0)`, so its z-component is 0 in "local" space.
+ *
  * @property {Number} upZ
  * @readonly
+ *
  * @example
- * <div class='norender'><code>
- * let cam, div;
+ * <div>
+ * <code>
+ * let cam;
+ * let font;
+ *
+ * // Load a font and create a p5.Font object.
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   background(255);
+ *
+ *   // Create a p5.Camera object.
  *   cam = createCamera();
- *   div = createDiv('upZ = ' + cam.upZ);
- *   div.position(0, 0);
- *   div.style('color', 'blue');
- *   div.style('font-size', '18px');
- *   describe('An example showing the use of camera object properties');
+ *
+ *   // Place the camera at the top-right: (100, -400, 800)
+ *   // Point it at the origin: (0, 0, 0)
+ *   // Set its "up" vector: (0, 1, 0).
+ *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, 0);
+ *
+ *   describe(
+ *     'A white cube on a gray background. The text "upZ: 0" is written in black beneath it.'
+ *   );
  * }
- * </code></div>
  *
- * @alt
- * An example showing the use of camera object properties
+ * function draw() {
+ *   background(200);
  *
+ *   // Style the box.
+ *   fill(255);
+ *
+ *   // Draw the box.
+ *   box();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   textFont(font);
+ *   fill(0);
+ *
+ *   // Display the value of upZ, rounded to the nearest tenth.
+ *   text(`upZ: ${round(cam.upZ, 1)}`, 0, 55);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let cam;
+ * let font;
+ *
+ * // Load a font and create a p5.Font object.
+ * function preload() {
+ *   font = loadFont('assets/inconsolata.otf');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a p5.Camera object.
+ *   cam = createCamera();
+ *
+ *   // Place the camera at the top-right: (100, -400, 800)
+ *   // Point it at the origin: (0, 0, 0)
+ *   // Set its "up" vector: (0, 1, 0).
+ *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, 0);
+ *
+ *   describe(
+ *     'A white cube on a gray background. The cube appears to rock back and forth. The text "upZ: Z" is written in black beneath it. Z oscillates between -1 and 1.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the box.
+ *   fill(255);
+ *
+ *   // Draw the box.
+ *   box();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   textFont(font);
+ *   fill(0);
+ *
+ *   // Calculate the z-component.
+ *   let z = sin(frameCount * 0.01);
+ *
+ *   // Update the camera's "up" vector.
+ *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, z);
+ *
+ *   // Display the value of upZ, rounded to the nearest tenth.
+ *   text(`upZ: ${round(cam.upZ, 1)}`, 0, 55);
+ * }
+ * </code>
+ * </div>
  */
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -741,49 +1856,169 @@ p5.Camera = class Camera {
   ////////////////////////////////////////////////////////////////////////////////
 
   /**
- * Sets a perspective projection.
- * Accepts the same parameters as the global
- * <a href="#/p5/perspective">perspective()</a>.
- * More information on this function can be found there.
+ * Sets a perspective projection for the camera.
+ *
+ * In a perspective projection, shapes that are further from the camera appear
+ * smaller than shapes that are near the camera. This technique, called
+ * foreshortening, creates realistic 3D scenes. It’s applied by default in new
+ * `p5.Camera` objects.
+ *
+ * `myCamera.perspective()` changes the camera’s perspective by changing its
+ * viewing frustum. The frustum is the volume of space that’s visible to the
+ * camera. The frustum’s shape is a pyramid with its top cut off. The camera
+ * is placed where the top of the pyramid should be and points towards the
+ * base of the pyramid. It views everything within the frustum.
+ *
+ * The first parameter, `fovy`, is the camera’s vertical field of view. It’s
+ * an angle that describes how tall or narrow a view the camera has. For
+ * example, calling `myCamera.perspective(0.5)` sets the camera’s vertical
+ * field of view to 0.5 radians. By default, `fovy` is calculated based on the
+ * sketch’s height and the camera’s default z-coordinate, which is 800. The
+ * formula for the default `fovy` is `2 * atan(height / 2 / 800)`.
+ *
+ * The second parameter, `aspect`, is the camera’s aspect ratio. It’s a number
+ * that describes the ratio of the top plane’s width to its height. For
+ * example, calling `myCamera.perspective(0.5, 1.5)` sets the camera’s field
+ * of view to 0.5 radians and aspect ratio to 1.5, which would make shapes
+ * appear thinner on a square canvas. By default, `aspect` is set to
+ * `width / height`.
+ *
+ * The third parameter, `near`, is the distance from the camera to the near
+ * plane. For example, calling `myCamera.perspective(0.5, 1.5, 100)` sets the
+ * camera’s field of view to 0.5 radians, its aspect ratio to 1.5, and places
+ * the near plane 100 pixels from the camera. Any shapes drawn less than 100
+ * pixels from the camera won’t be visible. By default, `near` is set to
+ * `0.1 * 800`, which is 1/10th the default distance between the camera and
+ * the origin.
+ *
+ * The fourth parameter, `far`, is the distance from the camera to the far
+ * plane. For example, calling `myCamera.perspective(0.5, 1.5, 100, 10000)`
+ * sets the camera’s field of view to 0.5 radians, its aspect ratio to 1.5,
+ * places the near plane 100 pixels from the camera, and places the far plane
+ * 10,000 pixels from the camera. Any shapes drawn more than 10,000 pixels
+ * from the camera won’t be visible. By default, `far` is set to `10 * 800`,
+ * which is 10 times the default distance between the camera and the origin.
+ *
  * @for p5.Camera
+ * @param  {Number} [fovy]   camera frustum vertical field of view. Defaults to
+ *                           `2 * atan(height / 2 / 800)`.
+ * @param  {Number} [aspect] camera frustum aspect ratio. Defaults to
+ *                           `width / height`.
+ * @param  {Number} [near]   distance from the camera to the near clipping plane.
+ *                           Defaults to `0.1 * 800`.
+ * @param  {Number} [far]    distance from the camera to the far clipping plane.
+ *                           Defaults to `10 * 800`.
+ *
  * @example
  * <div>
  * <code>
- * // drag the mouse to look around!
+ * // Double-click to toggle between cameras.
  *
- * let cam;
+ * let cam1;
+ * let cam2;
+ * let isDefaultCamera = true;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   // create a camera
- *   cam = createCamera();
- *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   // give it a perspective projection
- *   cam.perspective(PI / 3.0, width / height, 0.1, 500);
+ *
+ *   // Create the first camera.
+ *   // Keep its default settings.
+ *   cam1 = createCamera();
+ *
+ *   // Create the second camera.
+ *   cam2 = createCamera();
+ *
+ *   // Place it at the top-right.
+ *   cam2.camera(400, -400, 800);
+ *
+ *   // Set its fovy to 0.2.
+ *   // Set its aspect to 1.5.
+ *   // Set its near to 600.
+ *   // Set its far to 1200.
+ *   cam2.perspective(0.2, 1.5, 600, 1200);
+ *
+ *   // Set the current camera to cam1.
+ *   setCamera(cam1);
+ *
+ *   describe('A white cube on a gray background. The camera toggles between a frontal view and a skewed aerial view when the user double-clicks.');
  * }
  *
  * function draw() {
  *   background(200);
- *   orbitControl();
- *   normalMaterial();
  *
- *   rotateX(-0.3);
- *   rotateY(-0.2);
- *   translate(0, 0, -50);
+ *   // Draw the box.
+ *   box();
+ * }
  *
- *   push();
- *   translate(-15, 0, sin(frameCount / 30) * 65);
- *   box(30);
- *   pop();
- *   push();
- *   translate(15, 0, sin(frameCount / 30 + PI) * 65);
- *   box(30);
- *   pop();
+ * // Toggle the current camera when the user double-clicks.
+ * function doubleClicked() {
+ *   if (isDefaultCamera === true) {
+ *     setCamera(cam2);
+ *     isDefaultCamera = false;
+ *   } else {
+ *     setCamera(cam1);
+ *     isDefaultCamera = true;
+ *   }
  * }
  * </code>
  * </div>
- * @alt
- * two colored 3D boxes move back and forth, rotating as mouse is dragged.
+ *
+ * <div>
+ * <code>
+ * // Double-click to toggle between cameras.
+ *
+ * let cam1;
+ * let cam2;
+ * let isDefaultCamera = true;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create the first camera.
+ *   // Keep its default settings.
+ *   cam1 = createCamera();
+ *
+ *   // Create the second camera.
+ *   cam2 = createCamera();
+ *
+ *   // Place it at the top-right.
+ *   cam2.camera(400, -400, 800);
+ *
+ *   // Set its fovy to 0.2.
+ *   // Set its aspect to 1.5.
+ *   // Set its near to 600.
+ *   // Set its far to 1200.
+ *   cam2.perspective(0.2, 1.5, 600, 1200);
+ *
+ *   // Set the current camera to cam1.
+ *   setCamera(cam1);
+ *
+ *   describe('A white cube moves left and right on a gray background. The camera toggles between a frontal and a skewed aerial view when the user double-clicks.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Translate the origin left and right.
+ *   let x = 100 * sin(frameCount * 0.01);
+ *   translate(x, 0, 0);
+ *
+ *   // Draw the box.
+ *   box();
+ * }
+ *
+ * // Toggle the current camera when the user double-clicks.
+ * function doubleClicked() {
+ *   if (isDefaultCamera === true) {
+ *     setCamera(cam2);
+ *     isDefaultCamera = false;
+ *   } else {
+ *     setCamera(cam1);
+ *     isDefaultCamera = true;
+ *   }
+ * }
+ * </code>
+ * </div>
  */
   perspective(fovy, aspect, near, far) {
     this.cameraType = arguments.length > 0 ? 'custom' : 'default';
@@ -843,129 +2078,292 @@ p5.Camera = class Camera {
   }
 
   /**
- * Sets an orthographic projection.
- * Accepts the same parameters as the global
- * <a href="#/p5/ortho">ortho()</a>.
- * More information on this function can be found there.
+ * Sets an orthographic projection for the camera.
+ *
+ * In an orthographic projection, shapes with the same size always appear the
+ * same size, regardless of whether they are near or far from the camera.
+ *
+ * `myCamera.ortho()` changes the camera’s perspective by changing its viewing
+ * frustum from a truncated pyramid to a rectangular prism. The frustum is the
+ * volume of space that’s visible to the camera. The camera is placed in front
+ * of the frustum and views everything within the frustum. `myCamera.ortho()`
+ * has six optional parameters to define the viewing frustum.
+ *
+ * The first four parameters, `left`, `right`, `bottom`, and `top`, set the
+ * coordinates of the frustum’s sides, bottom, and top. For example, calling
+ * `myCamera.ortho(-100, 100, 200, -200)` creates a frustum that’s 200 pixels
+ * wide and 400 pixels tall. By default, these dimensions are set based on
+ * the sketch’s width and height, as in
+ * `myCamera.ortho(-width / 2, width / 2, -height / 2, height / 2)`.
+ *
+ * The last two parameters, `near` and `far`, set the distance of the
+ * frustum’s near and far plane from the camera. For example, calling
+ * `myCamera.ortho(-100, 100, 200, -200, 50, 1000)` creates a frustum that’s
+ * 200 pixels wide, 400 pixels tall, starts 50 pixels from the camera, and
+ * ends 1,000 pixels from the camera. By default, `near` and `far` are set to
+ * 0 and `max(width, height) + 800`, respectively.
+ *
  * @for p5.Camera
+ * @param  {Number} [left]   x-coordinate of the frustum’s left plane. Defaults to `-width / 2`.
+ * @param  {Number} [right]  x-coordinate of the frustum’s right plane. Defaults to `width / 2`.
+ * @param  {Number} [bottom] y-coordinate of the frustum’s bottom plane. Defaults to `height / 2`.
+ * @param  {Number} [top]    y-coordinate of the frustum’s top plane. Defaults to `-height / 2`.
+ * @param  {Number} [near]   z-coordinate of the frustum’s near plane. Defaults to 0.
+ * @param  {Number} [far]    z-coordinate of the frustum’s far plane. Defaults to `max(width, height) + 800`.
+ *
  * @example
  * <div>
  * <code>
- * // drag the mouse to look around!
- * // there's no vanishing point
+ * // Double-click to toggle between cameras.
  *
- * let cam;
+ * let cam1;
+ * let cam2;
+ * let isDefaultCamera = true;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   // create a camera
- *   cam = createCamera();
- *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   // give it an orthographic projection
- *   cam.ortho(-width / 2, width / 2, height / 2, -height / 2, 0, 500);
+ *
+ *   // Create the first camera.
+ *   // Keep its default settings.
+ *   cam1 = createCamera();
+ *
+ *   // Create the second camera.
+ *   cam2 = createCamera();
+ *
+ *   // Apply an orthographic projection.
+ *   cam2.ortho();
+ *
+ *   // Set the current camera to cam1.
+ *   setCamera(cam1);
+ *
+ *   describe('A row of white cubes against a gray background. The camera toggles between a perspective and an orthographic projection when the user double-clicks.');
  * }
+ *
  * function draw() {
  *   background(200);
- *   orbitControl();
- *   normalMaterial();
  *
- *   rotateX(0.2);
- *   rotateY(-0.2);
- *   push();
- *   translate(-15, 0, sin(frameCount / 30) * 65);
- *   box(30);
- *   pop();
- *   push();
- *   translate(15, 0, sin(frameCount / 30 + PI) * 65);
- *   box(30);
- *   pop();
+ *   // Translate the origin toward the camera.
+ *   translate(-10, 10, 500);
+ *
+ *   // Rotate the coordinate system.
+ *   rotateY(-0.1);
+ *   rotateX(-0.1);
+ *
+ *   // Draw the row of boxes.
+ *   for (let i = 0; i < 6; i += 1) {
+ *     translate(0, 0, -40);
+ *     box(10);
+ *   }
+ * }
+ *
+ * // Toggle the current camera when the user double-clicks.
+ * function doubleClicked() {
+ *   if (isDefaultCamera === true) {
+ *     setCamera(cam2);
+ *     isDefaultCamera = false;
+ *   } else {
+ *     setCamera(cam1);
+ *     isDefaultCamera = true;
+ *   }
  * }
  * </code>
  * </div>
- * @alt
- * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
+ *
+ * <div>
+ * <code>
+ * // Double-click to toggle between cameras.
+ *
+ * let cam1;
+ * let cam2;
+ * let isDefaultCamera = true;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create the first camera.
+ *   // Keep its default settings.
+ *   cam1 = createCamera();
+ *
+ *   // Create the second camera.
+ *   cam2 = createCamera();
+ *
+ *   // Apply an orthographic projection.
+ *   cam2.ortho();
+ *
+ *   // Set the current camera to cam1.
+ *   setCamera(cam1);
+ *
+ *   describe('A row of white cubes slither like a snake against a gray background. The camera toggles between a perspective and an orthographic projection when the user double-clicks.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Translate the origin toward the camera.
+ *   translate(-10, 10, 500);
+ *
+ *   // Rotate the coordinate system.
+ *   rotateY(-0.1);
+ *   rotateX(-0.1);
+ *
+ *   // Draw the row of boxes.
+ *   for (let i = 0; i < 6; i += 1) {
+ *     push();
+ *     // Calculate the box's coordinates.
+ *     let x = 10 * sin(frameCount * 0.02 + i * 0.6);
+ *     let z = -40 * i;
+ *     // Translate the origin.
+ *     translate(x, 0, z);
+ *     // Draw the box.
+ *     box(10);
+ *     pop();
+ *   }
+ * }
+ *
+ * // Toggle the current camera when the user double-clicks.
+ * function doubleClicked() {
+ *   if (isDefaultCamera === true) {
+ *     setCamera(cam2);
+ *     isDefaultCamera = false;
+ *   } else {
+ *     setCamera(cam1);
+ *     isDefaultCamera = true;
+ *   }
+ * }
+ * </code>
+ * </div>
  */
   ortho(left, right, bottom, top, near, far) {
-    if (left === undefined) left = -this._renderer.width / 2;
-    if (right === undefined) right = +this._renderer.width / 2;
-    if (bottom === undefined) bottom = -this._renderer.height / 2;
-    if (top === undefined) top = +this._renderer.height / 2;
+    const source = this.fbo||this._renderer;
+    if (left === undefined) left = -source.width / 2;
+    if (right === undefined) right = +source.width / 2;
+    if (bottom === undefined) bottom = -source.height / 2;
+    if (top === undefined) top = +source.height / 2;
     if (near === undefined) near = 0;
-    if (far === undefined)
-      far = Math.max(this._renderer.width, this._renderer.height)+800;
-
+    if (far === undefined) far = Math.max(source.width, source.height)+800;
     this.cameraNear = near;
     this.cameraFar = far;
-
     const w = right - left;
     const h = top - bottom;
     const d = far - near;
-
     const x = +2.0 / w;
     const y = +2.0 / h * this.yScale;
     const z = -2.0 / d;
-
     const tx = -(right + left) / w;
     const ty = -(top + bottom) / h;
     const tz = -(far + near) / d;
-
     this.projMatrix = p5.Matrix.identity();
-
     /* eslint-disable indent */
     this.projMatrix.set(  x,  0,  0,  0,
                           0, -y,  0,  0,
                           0,  0,  z,  0,
                           tx, ty, tz,  1);
     /* eslint-enable indent */
-
     if (this._isActive()) {
       this._renderer.uPMatrix.set(this.projMatrix);
     }
-
     this.cameraType = 'custom';
   }
-
   /**
  * Sets the camera's frustum.
- * Accepts the same parameters as the global
- * <a href="#/p5/frustum">frustum()</a>.
- * More information on this function can be found there.
+ *
+ * In a frustum projection, shapes that are further from the camera appear
+ * smaller than shapes that are near the camera. This technique, called
+ * foreshortening, creates realistic 3D scenes.
+ *
+ * `myCamera.frustum()` changes the camera’s perspective by changing its
+ * viewing frustum. The frustum is the volume of space that’s visible to the
+ * camera. The frustum’s shape is a pyramid with its top cut off. The camera
+ * is placed where the top of the pyramid should be and points towards the
+ * base of the pyramid. It views everything within the frustum.
+ *
+ * The first four parameters, `left`, `right`, `bottom`, and `top`, set the
+ * coordinates of the frustum’s sides, bottom, and top. For example, calling
+ * `myCamera.frustum(-100, 100, 200, -200)` creates a frustum that’s 200
+ * pixels wide and 400 pixels tall. By default, these coordinates are set
+ * based on the sketch’s width and height, as in
+ * `myCamera.frustum(-width / 20, width / 20, height / 20, -height / 20)`.
+ *
+ * The last two parameters, `near` and `far`, set the distance of the
+ * frustum’s near and far plane from the camera. For example, calling
+ * `myCamera.frustum(-100, 100, 200, -200, 50, 1000)` creates a frustum that’s
+ * 200 pixels wide, 400 pixels tall, starts 50 pixels from the camera, and ends
+ * 1,000 pixels from the camera. By default, near is set to `0.1 * 800`, which
+ * is 1/10th the default distance between the camera and the origin. `far` is
+ * set to `10 * 800`, which is 10 times the default distance between the
+ * camera and the origin.
+ *
  * @for p5.Camera
+ * @param  {Number} [left]   x-coordinate of the frustum’s left plane. Defaults to `-width / 20`.
+ * @param  {Number} [right]  x-coordinate of the frustum’s right plane. Defaults to `width / 20`.
+ * @param  {Number} [bottom] y-coordinate of the frustum’s bottom plane. Defaults to `height / 20`.
+ * @param  {Number} [top]    y-coordinate of the frustum’s top plane. Defaults to `-height / 20`.
+ * @param  {Number} [near]   z-coordinate of the frustum’s near plane. Defaults to `0.1 * 800`.
+ * @param  {Number} [far]    z-coordinate of the frustum’s far plane. Defaults to `10 * 800`.
+ *
  * @example
  * <div>
  * <code>
- * let cam;
+ * // Double-click to toggle between cameras.
+ *
+ * let cam1;
+ * let cam2;
+ * let isDefaultCamera = true;
  *
  * function setup() {
- *   x = createCanvas(100, 100, WEBGL);
- *   setAttributes('antialias', true);
- *   // create a camera
- *   cam = createCamera();
- *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   // set its frustum
- *   cam.frustum(-0.1, 0.1, -0.1, 0.1, 0.1, 200);
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create the first camera.
+ *   // Keep its default settings.
+ *   cam1 = createCamera();
+ *
+ *   // Create the second camera.
+ *   cam2 = createCamera();
+ *
+ *   // Adjust the frustum.
+ *   // Center it.
+ *   // Set its width and height to 20 pixels.
+ *   // Place its near plane 300 pixels from the camera.
+ *   // Place its far plane 350 pixels from the camera.
+ *   cam2.frustum(-10, 10, -10, 10, 300, 350);
+ *
+ *   // Set the current camera to cam1.
+ *   setCamera(cam1);
+ *
+ *   describe(
+ *     'A row of white cubes against a gray background. The camera zooms in on one cube when the user double-clicks.'
+ *   );
  * }
  *
  * function draw() {
  *   background(200);
- *   orbitControl();
- *   normalMaterial();
  *
- *   rotateY(-0.2);
- *   rotateX(-0.3);
- *   push();
- *   translate(-15, 0, sin(frameCount / 30) * 25);
- *   box(30);
- *   pop();
- *   push();
- *   translate(15, 0, sin(frameCount / 30 + PI) * 25);
- *   box(30);
- *   pop();
+ *   // Translate the origin toward the camera.
+ *   translate(-10, 10, 600);
+ *
+ *   // Rotate the coordinate system.
+ *   rotateY(-0.1);
+ *   rotateX(-0.1);
+ *
+ *   // Draw the row of boxes.
+ *   for (let i = 0; i < 6; i += 1) {
+ *     translate(0, 0, -40);
+ *     box(10);
+ *   }
+ * }
+ *
+ * // Toggle the current camera when the user double-clicks.
+ * function doubleClicked() {
+ *   if (isDefaultCamera === true) {
+ *     setCamera(cam2);
+ *     isDefaultCamera = false;
+ *   } else {
+ *     setCamera(cam1);
+ *     isDefaultCamera = true;
+ *   }
  * }
  * </code>
  * </div>
- * @alt
- * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
  */
   frustum(left, right, bottom, top, near, far) {
     if (left === undefined) left = -this._renderer.width * 0.05;
@@ -1055,58 +2453,61 @@ p5.Camera = class Camera {
   }
 
   /**
- * Panning rotates the camera view to the left and right.
- * @param {Number} angle amount to rotate camera in current
- * <a href="#/p5/angleMode">angleMode</a> units.
- * Greater than 0 values rotate counterclockwise (to the left).
+ * Rotates the camera left and right.
+ *
+ * Panning rotates the camera without changing its position. The rotation
+ * happens in the camera’s "local" space.
+ *
+ * The parameter, `angle`, is the angle the camera should rotate. Passing a
+ * positive angle, as in `myCamera.pan(0.001)`, rotates the camera to the
+ * right. Passing a negative angle, as in `myCamera.pan(-0.001)`, rotates the
+ * camera to the left.
+ *
+ * Note: Angles are interpreted based on the current
+ * <a href="#/p5/angleMode">angleMode()</a>.
+ *
+ * @param {Number} angle amount to rotate in the current
+ *                       <a href="#/p5/angleMode">angleMode()</a>.
+ *
  * @example
  * <div>
  * <code>
  * let cam;
- * let delta = 0.01;
+ * let delta = 0.001;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   normalMaterial();
+ *
+ *   // Create a p5.Camera object.
  *   cam = createCamera();
- *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   cam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   // set initial pan angle
- *   cam.pan(-0.8);
+ *
+ *   // Place the camera at the top-center.
+ *   cam.setPosition(0, -400, 800);
+ *
+ *   // Point the camera at the origin.
+ *   cam.lookAt(0, 0, 0);
+ *
+ *   describe(
+ *     'A white cube on a gray background. The cube goes in and out of view as the camera pans left and right.'
+ *   );
  * }
  *
  * function draw() {
  *   background(200);
  *
- *   // pan camera according to angle 'delta'
+ *   // Pan with the camera.
  *   cam.pan(delta);
  *
- *   // every 160 frames, switch direction
- *   if (frameCount % 160 === 0) {
+ *   // Switch directions every 120 frames.
+ *   if (frameCount % 120 === 0) {
  *     delta *= -1;
  *   }
  *
- *   rotateX(frameCount * 0.01);
- *   translate(-100, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
+ *   // Draw the box.
+ *   box();
  * }
  * </code>
  * </div>
- *
- * @alt
- * camera view pans left and right across a series of rotating 3D boxes.
  */
   pan(amount) {
     const local = this._getLocalAxes();
@@ -1114,58 +2515,61 @@ p5.Camera = class Camera {
   }
 
   /**
- * Tilting rotates the camera view up and down.
- * @param {Number} angle amount to rotate camera in current
- * <a href="#/p5/angleMode">angleMode</a> units.
- * Greater than 0 values rotate counterclockwise (to the left).
+ * Rotates the camera up and down.
+ *
+ * Tilting rotates the camera without changing its position. The rotation
+ * happens in the camera’s "local" space.
+ *
+ * The parameter, `angle`, is the angle the camera should rotate. Passing a
+ * positive angle, as in `myCamera.tilt(0.001)`, rotates the camera down.
+ * Passing a negative angle, as in `myCamera.tilt(-0.001)`, rotates the camera
+ * up.
+ *
+ * Note: Angles are interpreted based on the current
+ * <a href="#/p5/angleMode">angleMode()</a>.
+ *
+ * @param {Number} angle amount to rotate in the current
+ *                       <a href="#/p5/angleMode">angleMode()</a>.
+ *
  * @example
  * <div>
  * <code>
  * let cam;
- * let delta = 0.01;
+ * let delta = 0.001;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   normalMaterial();
+ *
+ *   // Create a p5.Camera object.
  *   cam = createCamera();
- *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   cam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   // set initial tilt
- *   cam.tilt(-0.8);
+ *
+ *   // Place the camera at the top-center.
+ *   cam.setPosition(0, -400, 800);
+ *
+ *   // Point the camera at the origin.
+ *   cam.lookAt(0, 0, 0);
+ *
+ *   describe(
+ *     'A white cube on a gray background. The cube goes in and out of view as the camera tilts up and down.'
+ *   );
  * }
  *
  * function draw() {
  *   background(200);
  *
- *   // pan camera according to angle 'delta'
+ *   // Pan with the camera.
  *   cam.tilt(delta);
  *
- *   // every 160 frames, switch direction
- *   if (frameCount % 160 === 0) {
+ *   // Switch directions every 120 frames.
+ *   if (frameCount % 120 === 0) {
  *     delta *= -1;
  *   }
  *
- *   rotateY(frameCount * 0.01);
- *   translate(0, -100, 0);
- *   box(20);
- *   translate(0, 35, 0);
- *   box(20);
- *   translate(0, 35, 0);
- *   box(20);
- *   translate(0, 35, 0);
- *   box(20);
- *   translate(0, 35, 0);
- *   box(20);
- *   translate(0, 35, 0);
- *   box(20);
- *   translate(0, 35, 0);
- *   box(20);
+ *   // Draw the box.
+ *   box();
  * }
  * </code>
  * </div>
- *
- * @alt
- * camera view tilts up and down across a series of rotating 3D boxes.
  */
   tilt(amount) {
     const local = this._getLocalAxes();
@@ -1173,54 +2577,82 @@ p5.Camera = class Camera {
   }
 
   /**
- * Reorients the camera to look at a position in world space.
+ * Points the camera at a location.
+ *
+ * `myCamera.lookAt()` changes the camera’s orientation without changing its
+ * position.
+ *
+ * The parameters, `x`, `y`, and `z`, are the coordinates in "world" space
+ * where the camera should point. For example, calling
+ * `myCamera.lookAt(10, 20, 30)` points the camera at the coordinates
+ * `(10, 20, 30)`.
+ *
  * @for p5.Camera
- * @param {Number} x x position of a point in world space
- * @param {Number} y y position of a point in world space
- * @param {Number} z z position of a point in world space
+ * @param {Number} x x-coordinate of the position where the camera should look in "world" space.
+ * @param {Number} y y-coordinate of the position where the camera should look in "world" space.
+ * @param {Number} z z-coordinate of the position where the camera should look in "world" space.
+ *
  * @example
  * <div>
  * <code>
+ * // Double-click to look at a different cube.
+ *
  * let cam;
+ * let isLookingLeft = true;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   normalMaterial();
+ *
+ *   // Create a p5.Camera object.
  *   cam = createCamera();
- *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   cam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
+ *
+ *   // Place the camera at the top-center.
+ *   cam.setPosition(0, -400, 800);
+ *
+ *   // Point the camera at the origin.
+ *   cam.lookAt(-30, 0, 0);
+ *
+ *   describe(
+ *     'A red cube and a blue cube on a gray background. The camera switches focus between the cubes when the user double-clicks.'
+ *   );
  * }
  *
  * function draw() {
  *   background(200);
  *
- *   // look at a new random point every 60 frames
- *   if (frameCount % 60 === 0) {
- *     cam.lookAt(random(-100, 100), random(-50, 50), 0);
- *   }
+ *   // Draw the box on the left.
+ *   push();
+ *   // Translate the origin to the left.
+ *   translate(-30, 0, 0);
+ *   // Style the box.
+ *   fill(255, 0, 0);
+ *   // Draw the box.
+ *   box(20);
+ *   pop();
  *
- *   rotateX(frameCount * 0.01);
- *   translate(-100, 0, 0);
+ *   // Draw the box on the right.
+ *   push();
+ *   // Translate the origin to the right.
+ *   translate(30, 0, 0);
+ *   // Style the box.
+ *   fill(0, 0, 255);
+ *   // Draw the box.
  *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
+ *   pop();
+ * }
+ *
+ * // Change the camera's focus when the user double-clicks.
+ * function doubleClicked() {
+ *   if (isLookingLeft === true) {
+ *     cam.lookAt(30, 0, 0);
+ *     isLookingLeft = false;
+ *   } else {
+ *     cam.lookAt(-30, 0, 0);
+ *     isLookingLeft = true;
+ *   }
  * }
  * </code>
  * </div>
- *
- * @alt
- * camera view of rotating 3D cubes changes to look at a new random
- * point every second .
  */
   lookAt(x, y, z) {
     this.camera(
@@ -1241,88 +2673,168 @@ p5.Camera = class Camera {
   ////////////////////////////////////////////////////////////////////////////////
 
   /**
- * Sets the camera's position and orientation.
- * Accepts the same parameters as the global
- * <a href="#/p5/camera">camera()</a>.
- * More information on this function can be found there.
+ * Sets the position and orientation of the camera.
+ *
+ * `myCamera.camera()` allows objects to be viewed from different angles. It
+ * has nine parameters that are all optional.
+ *
+ * The first three parameters, `x`, `y`, and `z`, are the coordinates of the
+ * camera’s position in "world" space. For example, calling
+ * `myCamera.camera(0, 0, 0)` places the camera at the origin `(0, 0, 0)`. By
+ * default, the camera is placed at `(0, 0, 800)`.
+ *
+ * The next three parameters, `centerX`, `centerY`, and `centerZ` are the
+ * coordinates of the point where the camera faces in "world" space. For
+ * example, calling `myCamera.camera(0, 0, 0, 10, 20, 30)` places the camera
+ * at the origin `(0, 0, 0)` and points it at `(10, 20, 30)`. By default, the
+ * camera points at the origin `(0, 0, 0)`.
+ *
+ * The last three parameters, `upX`, `upY`, and `upZ` are the components of
+ * the "up" vector in "local" space. The "up" vector orients the camera’s
+ * y-axis. For example, calling
+ * `myCamera.camera(0, 0, 0, 10, 20, 30, 0, -1, 0)` places the camera at the
+ * origin `(0, 0, 0)`, points it at `(10, 20, 30)`, and sets the "up" vector
+ * to `(0, -1, 0)` which is like holding it upside-down. By default, the "up"
+ * vector is `(0, 1, 0)`.
+ *
  * @for p5.Camera
+ * @param  {Number} [x]        x-coordinate of the camera. Defaults to 0.
+ * @param  {Number} [y]        y-coordinate of the camera. Defaults to 0.
+ * @param  {Number} [z]        z-coordinate of the camera. Defaults to 800.
+ * @param  {Number} [centerX]  x-coordinate of the point the camera faces. Defaults to 0.
+ * @param  {Number} [centerY]  y-coordinate of the point the camera faces. Defaults to 0.
+ * @param  {Number} [centerZ]  z-coordinate of the point the camera faces. Defaults to 0.
+ * @param  {Number} [upX]      x-component of the camera’s "up" vector. Defaults to 0.
+ * @param  {Number} [upY]      x-component of the camera’s "up" vector. Defaults to 1.
+ * @param  {Number} [upZ]      z-component of the camera’s "up" vector. Defaults to 0.
+ *
  * @example
  * <div>
  * <code>
- * let cam;
+ * // Double-click to toggle between cameras.
+ *
+ * let cam1;
+ * let cam2;
+ * let isDefaultCamera = true;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   // Create a camera.
- *   // createCamera() sets the newly created camera as
- *   // the current (active) camera.
- *   cam = createCamera();
+ *
+ *   // Create the first camera.
+ *   // Keep its default settings.
+ *   cam1 = createCamera();
+ *
+ *   // Create the second camera.
+ *   cam2 = createCamera();
+ *
+ *   // Place it at the top-right: (1200, -600, 100)
+ *   // Point it at the row of boxes: (-10, -10, 400)
+ *   // Set its "up" vector to the default: (0, 1, 0)
+ *   cam2.camera(1200, -600, 100, -10, -10, 400, 0, 1, 0);
+ *
+ *   // Set the current camera to cam1.
+ *   setCamera(cam1);
+ *
+ *   describe(
+ *     'A row of white cubes against a gray background. The camera toggles between a frontal and an aerial view when the user double-clicks.'
+ *   );
  * }
  *
  * function draw() {
- *   background(204);
- *   // Move the camera away from the plane by a sin wave
- *   cam.camera(0, 0, 20 + sin(frameCount * 0.01) * 10, 0, 0, 0, 0, 1, 0);
- *   plane(10, 10);
- * }
- * </code>
- * </div>
- * @alt
- * White square repeatedly grows to fill canvas and then shrinks.
+ *   background(200);
  *
- * @example
- * <div>
- * <code>
- * // move slider to see changes!
- * // sliders control the first 6 parameters of camera()
+ *   // Translate the origin toward the camera.
+ *   translate(-10, 10, 500);
  *
- * let sliderGroup = [];
- * let X;
- * let Y;
- * let Z;
- * let centerX;
- * let centerY;
- * let centerZ;
- * let h = 20;
- * let cam;
+ *   // Rotate the coordinate system.
+ *   rotateY(-0.1);
+ *   rotateX(-0.1);
  *
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *   // create a camera
- *   cam = createCamera();
- *   cam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   // create sliders
- *   for (var i = 0; i < 6; i++) {
- *     if (i === 2) {
- *       sliderGroup[i] = createSlider(10, 400, 200);
- *     } else {
- *       sliderGroup[i] = createSlider(-400, 400, 0);
- *     }
- *     h = map(i, 0, 6, 5, 85);
- *     sliderGroup[i].position(10, height + h);
- *     sliderGroup[i].style('width', '80px');
+ *   // Draw the row of boxes.
+ *   for (let i = 0; i < 6; i += 1) {
+ *     translate(0, 0, -30);
+ *     box(10);
  *   }
  * }
  *
- * function draw() {
- *   background(60);
- *   // assigning sliders' value to each parameters
- *   X = sliderGroup[0].value();
- *   Y = sliderGroup[1].value();
- *   Z = sliderGroup[2].value();
- *   centerX = sliderGroup[3].value();
- *   centerY = sliderGroup[4].value();
- *   centerZ = sliderGroup[5].value();
- *   cam.camera(X, Y, Z, centerX, centerY, centerZ, 0, 1, 0);
- *   stroke(255);
- *   fill(255, 102, 94);
- *   box(85);
+ * // Toggle the current camera when the user double-clicks.
+ * function doubleClicked() {
+ *   if (isDefaultCamera === true) {
+ *     setCamera(cam2);
+ *     isDefaultCamera = false;
+ *   } else {
+ *     setCamera(cam1);
+ *     isDefaultCamera = true;
+ *   }
  * }
  * </code>
  * </div>
- * @alt
- * An interactive example of a red cube with 3 sliders for moving it across x, y,
- * z axis and 3 sliders for shifting its center.
+ *
+ * <div>
+ * <code>
+ * // Double-click to toggle between cameras.
+ *
+ * let cam1;
+ * let cam2;
+ * let isDefaultCamera = true;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create the first camera.
+ *   // Keep its default settings.
+ *   cam1 = createCamera();
+ *
+ *   // Create the second camera.
+ *   cam2 = createCamera();
+ *
+ *   // Place it at the right: (1200, 0, 100)
+ *   // Point it at the row of boxes: (-10, -10, 400)
+ *   // Set its "up" vector to the default: (0, 1, 0)
+ *   cam2.camera(1200, 0, 100, -10, -10, 400, 0, 1, 0);
+ *
+ *   // Set the current camera to cam1.
+ *   setCamera(cam1);
+ *
+ *   describe(
+ *     'A row of white cubes against a gray background. The camera toggles between a static frontal view and an orbiting view when the user double-clicks.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Update cam2's position.
+ *   let x = 1200 * cos(frameCount * 0.01);
+ *   let y = -600 * sin(frameCount * 0.01);
+ *   cam2.camera(x, y, 100, -10, -10, 400, 0, 1, 0);
+ *
+ *   // Translate the origin toward the camera.
+ *   translate(-10, 10, 500);
+ *
+ *   // Rotate the coordinate system.
+ *   rotateY(-0.1);
+ *   rotateX(-0.1);
+ *
+ *   // Draw the row of boxes.
+ *   for (let i = 0; i < 6; i += 1) {
+ *     translate(0, 0, -30);
+ *     box(10);
+ *   }
+ * }
+ *
+ * // Toggle the current camera when the user double-clicks.
+ * function doubleClicked() {
+ *   if (isDefaultCamera === true) {
+ *     setCamera(cam2);
+ *     isDefaultCamera = false;
+ *   } else {
+ *     setCamera(cam1);
+ *     isDefaultCamera = true;
+ *   }
+ * }
+ * </code>
+ * </div>
  */
   camera(
     eyeX,
@@ -1382,61 +2894,84 @@ p5.Camera = class Camera {
     this.cameraMatrix.translate([tx, ty, tz]);
 
     if (this._isActive()) {
-      this._renderer.uMVMatrix.set(this.cameraMatrix);
+      this._renderer.uViewMatrix.set(this.cameraMatrix);
     }
     return this;
   }
 
   /**
- * Move camera along its local axes while maintaining current camera orientation.
- * @param {Number} x amount to move along camera's left-right axis
- * @param {Number} y amount to move along camera's up-down axis
- * @param {Number} z amount to move along camera's forward-backward axis
+ * Moves the camera along its "local" axes without changing its orientation.
+ *
+ * The parameters, `x`, `y`, and `z`, are the distances the camera should
+ * move. For example, calling `myCamera.move(10, 20, 30)` moves the camera 10
+ * pixels to the right, 20 pixels down, and 30 pixels backward in its "local"
+ * space.
+ *
+ * @param {Number} x distance to move along the camera’s "local" x-axis.
+ * @param {Number} y distance to move along the camera’s "local" y-axis.
+ * @param {Number} z distance to move along the camera’s "local" z-axis.
  * @example
  * <div>
  * <code>
- * // see the camera move along its own axes while maintaining its orientation
+ * // Click the canvas to begin detecting key presses.
+ *
  * let cam;
- * let delta = 0.5;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   normalMaterial();
+ *
+ *   // Create the first camera.
+ *   // Keep its default settings.
  *   cam = createCamera();
- *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   cam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
+ *
+ *   // Place the camera at the top-right.
+ *   cam.setPosition(400, -400, 800);
+ *
+ *   // Point it at the origin.
+ *   cam.lookAt(0, 0, 0);
+ *
+ *   describe(
+ *     'A white cube drawn against a gray background. The cube appears to move when the user presses certain keys.'
+ *   );
  * }
  *
  * function draw() {
  *   background(200);
  *
- *   // move the camera along its local axes
- *   cam.move(delta, delta, 0);
+ *   // Move the camera along its "local" axes
+ *   // when the user presses certain keys.
+ *   if (keyIsPressed === true) {
  *
- *   // every 100 frames, switch direction
- *   if (frameCount % 150 === 0) {
- *     delta *= -1;
+ *     // Move horizontally.
+ *     if (keyCode === LEFT_ARROW) {
+ *       cam.move(-1, 0, 0);
+ *     }
+ *     if (keyCode === RIGHT_ARROW) {
+ *       cam.move(1, 0, 0);
+ *     }
+ *
+ *     // Move vertically.
+ *     if (keyCode === UP_ARROW) {
+ *       cam.move(0, -1, 0);
+ *     }
+ *     if (keyCode === DOWN_ARROW) {
+ *       cam.move(0, 1, 0);
+ *     }
+ *
+ *     // Move in/out of the screen.
+ *     if (key === 'i') {
+ *       cam.move(0, 0, -1);
+ *     }
+ *     if (key === 'o') {
+ *       cam.move(0, 0, 1);
+ *     }
  *   }
  *
- *   translate(-10, -10, 0);
- *   box(50, 8, 50);
- *   translate(15, 15, 0);
- *   box(50, 8, 50);
- *   translate(15, 15, 0);
- *   box(50, 8, 50);
- *   translate(15, 15, 0);
- *   box(50, 8, 50);
- *   translate(15, 15, 0);
- *   box(50, 8, 50);
- *   translate(15, 15, 0);
- *   box(50, 8, 50);
+ *   // Draw the box.
+ *   box();
  * }
  * </code>
  * </div>
- *
- * @alt
- * camera view moves along a series of 3D boxes, maintaining the same
- * orientation throughout the move
  */
   move(x, y, z) {
     const local = this._getLocalAxes();
@@ -1461,49 +2996,139 @@ p5.Camera = class Camera {
   }
 
   /**
- * Set camera position in world-space while maintaining current camera
+ * Sets the camera’s position in "world" space without changing its
  * orientation.
- * @param {Number} x x position of a point in world space
- * @param {Number} y y position of a point in world space
- * @param {Number} z z position of a point in world space
+ *
+ * The parameters, `x`, `y`, and `z`, are the coordinates where the camera
+ * should be placed. For example, calling `myCamera.setPosition(10, 20, 30)`
+ * places the camera at coordinates `(10, 20, 30)` in "world" space.
+ *
+ * @param {Number} x x-coordinate in "world" space.
+ * @param {Number} y y-coordinate in "world" space.
+ * @param {Number} z z-coordinate in "world" space.
+ *
  * @example
  * <div>
  * <code>
- * // press '1' '2' or '3' keys to set camera position
+ * // Double-click to toggle between cameras.
  *
- * let cam;
+ * let cam1;
+ * let cam2;
+ * let isDefaultCamera = true;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   normalMaterial();
- *   cam = createCamera();
- *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   cam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
+ *
+ *   // Create the first camera.
+ *   // Keep its default settings.
+ *   cam1 = createCamera();
+ *
+ *   // Create the second camera.
+ *   cam2 = createCamera();
+ *
+ *   // Place it closer to the origin.
+ *   cam2.setPosition(0, 0, 600);
+ *
+ *   // Set the current camera to cam1.
+ *   setCamera(cam1);
+ *
+ *   describe(
+ *     'A row of white cubes against a gray background. The camera toggles the amount of zoom when the user double-clicks.'
+ *   );
  * }
  *
  * function draw() {
  *   background(200);
  *
- *   // '1' key
- *   if (keyIsDown(49)) {
- *     cam.setPosition(30, 0, 80);
- *   }
- *   // '2' key
- *   if (keyIsDown(50)) {
- *     cam.setPosition(0, 0, 80);
- *   }
- *   // '3' key
- *   if (keyIsDown(51)) {
- *     cam.setPosition(-30, 0, 80);
- *   }
+ *   // Translate the origin toward the camera.
+ *   translate(-10, 10, 500);
  *
- *   box(20);
+ *   // Rotate the coordinate system.
+ *   rotateY(-0.1);
+ *   rotateX(-0.1);
+ *
+ *   // Draw the row of boxes.
+ *   for (let i = 0; i < 6; i += 1) {
+ *     translate(0, 0, -30);
+ *     box(10);
+ *   }
+ * }
+ *
+ * // Toggle the current camera when the user double-clicks.
+ * function doubleClicked() {
+ *   if (isDefaultCamera === true) {
+ *     setCamera(cam2);
+ *     isDefaultCamera = false;
+ *   } else {
+ *     setCamera(cam1);
+ *     isDefaultCamera = true;
+ *   }
  * }
  * </code>
  * </div>
  *
- * @alt
- * camera position changes as the user presses keys, altering view of a 3D box
+ * <div>
+ * <code>
+ * // Double-click to toggle between cameras.
+ *
+ * let cam1;
+ * let cam2;
+ * let isDefaultCamera = true;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create the first camera.
+ *   // Keep its default settings.
+ *   cam1 = createCamera();
+ *
+ *   // Create the second camera.
+ *   cam2 = createCamera();
+ *
+ *   // Place it closer to the origin.
+ *   cam2.setPosition(0, 0, 600);
+ *
+ *   // Set the current camera to cam1.
+ *   setCamera(cam1);
+ *
+ *   describe(
+ *     'A row of white cubes against a gray background. The camera toggles between a static view and a view that zooms in and out when the user double-clicks.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Update cam2's z-coordinate.
+ *   let z = 100 * sin(frameCount * 0.01) + 700;
+ *   cam2.setPosition(0, 0, z);
+ *
+ *   // Translate the origin toward the camera.
+ *   translate(-10, 10, 500);
+ *
+ *   // Rotate the coordinate system.
+ *   rotateY(-0.1);
+ *   rotateX(-0.1);
+ *
+ *   // Draw the row of boxes.
+ *   for (let i = 0; i < 6; i += 1) {
+ *     translate(0, 0, -30);
+ *     box(10);
+ *   }
+ * }
+ *
+ * // Toggle the current camera when the user double-clicks.
+ * function doubleClicked() {
+ *   if (isDefaultCamera === true) {
+ *     setCamera(cam2);
+ *     isDefaultCamera = false;
+ *   } else {
+ *     setCamera(cam1);
+ *     isDefaultCamera = true;
+ *   }
+ * }
+ * </code>
+ * </div>
  */
   setPosition(x, y, z) {
     const diffX = x - this.eyeX;
@@ -1524,54 +3149,59 @@ p5.Camera = class Camera {
   }
 
   /**
- * Copies information about the argument camera's view and projection to
- * the target camera. If the target camera is active, it will be reflected
- * on the screen.
+ * Sets the camera’s position, orientation, and projection by copying another
+ * camera.
  *
- * @param {p5.Camera} cam source camera
+ * The parameter, `cam`, is the `p5.Camera` object to copy. For example, calling
+ * `cam2.set(cam1)` will set `cam2` using `cam1`’s configuration.
+ *
+ * @param {p5.Camera} cam camera to copy.
  *
  * @example
  * <div>
  * <code>
- * let cam, initialCam;
+ * // Double-click to "reset" the camera zoom.
+ *
+ * let cam1;
+ * let cam2;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   strokeWeight(3);
  *
- *   // Set the initial state to initialCamera and set it to the camera
- *   // used for drawing. Then set cam to be the active camera.
- *   cam = createCamera();
- *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   cam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   initialCam = createCamera();
- *   initialCam.camera(100, 100, 100, 0, 0, 0, 0, 0, -1);
- *   initialCam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   cam.set(initialCam);
+ *   // Create the first camera.
+ *   cam1 = createCamera();
  *
- *   setCamera(cam);
+ *   // Place the camera at the top-right.
+ *   cam1.setPosition(400, -400, 800);
+ *
+ *   // Point it at the origin.
+ *   cam1.lookAt(0, 0, 0);
+ *
+ *   // Create the second camera.
+ *   cam2 = createCamera();
+ *
+ *   // Copy cam1's configuration.
+ *   cam2.set(cam1);
+ *
+ *   describe(
+ *     'A white cube drawn against a gray background. The camera slowly moves forward. The camera resets when the user double-clicks.'
+ *   );
  * }
  *
  * function draw() {
- *   orbitControl();
- *   background(255);
- *   box(50);
- *   translate(0, 0, -25);
- *   plane(100);
+ *   background(200);
+ *
+ *   // Update cam2's position.
+ *   cam2.move(0, 0, -1);
+ *
+ *   // Draw the box.
+ *   box();
  * }
  *
- * function doubleClicked(){
- *   // Double-click to return the camera to its initial position.
- *   cam.set(initialCam);
+ * // "Reset" the camera when the user double-clicks.
+ * function doubleClicked() {
+ *   cam2.set(cam1);
  * }
- * </code>
- * </div>
- * @alt
- * Prepare two cameras. One is the camera that sets the initial state,
- * and the other is the camera that moves with interaction.
- * Draw a plane and a box on top of it, operate the camera using orbitControl().
- * Double-click to set the camera in the initial state and return to
- * the initial state.
  */
   set(cam) {
     const keyNamesOfThePropToCopy = [
@@ -1588,132 +3218,85 @@ p5.Camera = class Camera {
     this.cameraMatrix = cam.cameraMatrix.copy();
     this.projMatrix = cam.projMatrix.copy();
 
-    // If the target camera is active, update uMVMatrix and uPMatrix.
     if (this._isActive()) {
-      this._renderer.uMVMatrix.mat4 = this.cameraMatrix.mat4.slice();
-      this._renderer.uPMatrix.mat4 = this.projMatrix.mat4.slice();
+      this._renderer.uModelMatrix.reset();
+      this._renderer.uViewMatrix.set(this.cameraMatrix);
+      this._renderer.uPMatrix.set(this.projMatrix);
     }
   }
-
   /**
- * For the cameras cam0 and cam1 with the given arguments, their view are combined
- * with the parameter amt that represents the quantity, and the obtained view is applied.
- * For example, if cam0 is looking straight ahead and cam1 is looking straight
- * to the right and amt is 0.5, the applied camera will look to the halfway
- * between front and right.
- * If the applied camera is active, the applied result will be reflected on the screen.
- * When applying this function, all cameras involved must have exactly the same projection
- * settings. For example, if one is perspective, ortho, frustum, the other two must also be
- * perspective, ortho, frustum respectively. However, if all cameras have ortho settings,
- * interpolation is possible if the ratios of left, right, top and bottom are equal to each other.
- * For example, when it is changed by orbitControl().
+ * Sets the camera’s position and orientation to values that are in-between
+ * those of two other cameras.
  *
- * @param {p5.Camera} cam0 first p5.Camera
- * @param {p5.Camera} cam1 second p5.Camera
- * @param {Number} amt amount to use for interpolation during slerp
+ * `myCamera.slerp()` uses spherical linear interpolation to calculate a
+ * position and orientation that’s in-between two other cameras. Doing so is
+ * helpful for transitioning smoothly between two perspectives.
+ *
+ * The first two parameters, `cam0` and `cam1`, are the `p5.Camera` objects
+ * that should be used to set the current camera.
+ *
+ * The third parameter, `amt`, is the amount to interpolate between `cam0` and
+ * `cam1`. 0.0 keeps the camera’s position and orientation equal to `cam0`’s,
+ * 0.5 sets them halfway between `cam0`’s and `cam1`’s , and 1.0 sets the
+ * position and orientation equal to `cam1`’s.
+ *
+ * For example, calling `myCamera.slerp(cam0, cam1, 0.1)` sets cam’s position
+ * and orientation very close to `cam0`’s. Calling
+ * `myCamera.slerp(cam0, cam1, 0.9)` sets cam’s position and orientation very
+ * close to `cam1`’s.
+ *
+ * Note: All of the cameras must use the same projection.
+ *
+ * @param {p5.Camera} cam0 first camera.
+ * @param {p5.Camera} cam1 second camera.
+ * @param {Number} amt amount of interpolation between 0.0 (`cam0`) and 1.0 (`cam1`).
  *
  * @example
  * <div>
  * <code>
- * let cam0, cam1, cam;
+ * let cam;
+ * let cam0;
+ * let cam1;
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   strokeWeight(3);
  *
- *   // camera for slerp.
+ *   // Create the main camera.
+ *   // Keep its default settings.
  *   cam = createCamera();
- *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   cam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   // cam0 is looking at the cube from the front.
- *   cam0 = createCamera();
- *   cam0.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   cam0.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   // cam1 is pointing straight to the right in the cube
- *   // at the same position as cam0 by doing a pan(-PI/2).
- *   cam1 = createCamera();
- *   cam1.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   cam1.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   cam1.pan(-PI/2);
  *
- *   // we only use cam.
+ *   // Create the first camera.
+ *   // Keep its default settings.
+ *   cam0 = createCamera();
+ *
+ *   // Create the second camera.
+ *   cam1 = createCamera();
+ *
+ *   // Place it at the top-right.
+ *   cam1.setPosition(400, -400, 800);
+ *
+ *   // Point it at the origin.
+ *   cam1.lookAt(0, 0, 0);
+ *
+ *   // Set the current camera to cam.
  *   setCamera(cam);
+ *
+ *   describe('A white cube drawn against a gray background. The camera slowly oscillates between a frontal view and an aerial view.');
  * }
  *
  * function draw() {
- *   // calculate amount.
- *   const amt = 0.5 - 0.5 * cos(frameCount * TAU / 120);
- *   // slerp cam0 and cam1 with amt, set to cam.
- *   // When amt moves from 0 to 1, cam moves from cam0 to cam1,
- *   // shaking the camera to the right.
+ *   background(200);
+ *
+ *   // Calculate the amount to interpolate between cam0 and cam1.
+ *   let amt = 0.5 * sin(frameCount * 0.01) + 0.5;
+ *
+ *   // Update the main camera's position and orientation.
  *   cam.slerp(cam0, cam1, amt);
  *
- *   background(255);
- *   // Every time the camera turns right, the cube drifts left.
- *   box(40);
+ *   box();
  * }
  * </code>
  * </div>
- * @alt
- * Prepare two cameras. One camera is facing straight ahead to the cube and the other
- * camera is in the same position and looking straight to the right.
- * If you use a camera which interpolates these with slerp(), the facing direction
- * of the camera will change smoothly between the front and the right.
- *
- * @example
- * <div>
- * <code>
- * let cam, lastCam, initialCam;
- * let countForReset = 30;
- * // This sample uses orbitControl() to move the camera.
- * // Double-clicking the canvas restores the camera to its initial state.
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *   strokeWeight(3);
- *
- *   // main camera
- *   cam = createCamera();
- *   cam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   cam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   // Camera for recording loc info before reset
- *   lastCam = createCamera();
- *   lastCam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   lastCam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *   // Camera for recording the initial state
- *   initialCam = createCamera();
- *   initialCam.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   initialCam.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
- *
- *   setCamera(cam); // set main camera
- * }
- *
- * function draw() {
- *   if (countForReset < 30) {
- *     // if the reset count is less than 30,
- *     // it will move closer to the original camera as it increases.
- *     countForReset++;
- *     cam.slerp(lastCam, initialCam, countForReset / 30);
- *   } else {
- *     // if the count is 30,
- *     // you can freely move the main camera with orbitControl().
- *     orbitControl();
- *   }
- *
- *   background(255);
- *   box(40);
- * }
- * // A double-click sets countForReset to 0 and initiates a reset.
- * function doubleClicked() {
- *   if (countForReset === 30) {
- *     countForReset = 0;
- *     lastCam.set(cam);
- *   }
- * }
- * </code>
- * </div>
- * @alt
- * There is a camera, drawing a cube. The camera can be moved freely with
- * orbitControl(). Double-click to smoothly return the camera to its initial state.
- * The camera cannot be moved during that time.
  */
   slerp(cam0, cam1, amt) {
     // If t is 0 or 1, do not interpolate and set the argument camera.
@@ -2204,86 +3787,71 @@ p5.Camera = class Camera {
 
 /**
  * Sets the current (active) camera of a 3D sketch.
- * Allows for switching between multiple cameras.
+ *
+ * `setCamera()` allows for switching between multiple cameras created with
+ * <a href="#/p5/createCamera">createCamera()</a>.
+ *
+ * Note: `setCamera()` can only be used in WebGL mode.
+ *
  * @method setCamera
- * @param  {p5.Camera} cam  p5.Camera object
+ * @param  {p5.Camera} cam camera that should be made active.
  * @for p5
+ *
  * @example
  * <div>
  * <code>
- * let cam1, cam2;
- * let currentCamera;
+ * // Double-click to toggle between cameras.
+ *
+ * let cam1;
+ * let cam2;
+ * let usingCam1 = true;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   normalMaterial();
  *
+ *   // Create the first camera.
+ *   // Keep its default settings.
  *   cam1 = createCamera();
- *   cam1.camera(0, 0, 50*sqrt(3), 0, 0, 0, 0, 1, 0);
- *   cam1.perspective(PI/3, 1, 5*sqrt(3), 500*sqrt(3));
+ *
+ *   // Create the second camera.
+ *   // Place it at the top-left.
+ *   // Point it at the origin.
  *   cam2 = createCamera();
- *   cam2.setPosition(30, 0, 50);
+ *   cam2.setPosition(400, -400, 800);
  *   cam2.lookAt(0, 0, 0);
- *   cam2.ortho(-50, 50, -50, 50, 0, 200);
  *
- *   // set variable for previously active camera:
- *   currentCamera = 1;
+ *   // Set the current camera to cam1.
+ *   setCamera(cam1);
  *
- *   describe(
- *     'Canvas switches between two camera views, each showing a series of spinning 3D boxes.'
- *   );
+ *   describe('A white cube on a gray background. The camera toggles between frontal and aerial views when the user double-clicks.');
  * }
  *
  * function draw() {
  *   background(200);
  *
- *   // every 100 frames, switch between the two cameras
- *   if (frameCount % 100 === 0) {
- *     if (currentCamera === 1) {
- *       setCamera(cam1);
- *       currentCamera = 0;
- *     } else {
- *       setCamera(cam2);
- *       currentCamera = 1;
- *     }
- *   }
- *
- *   // camera 1:
- *   cam1.lookAt(0, 0, 0);
- *   cam1.setPosition(sin(frameCount / 60) * 200, 0, 100);
- *
- *   drawBoxes();
+ *   // Draw the box.
+ *   box();
  * }
  *
- * function drawBoxes() {
- *   rotateX(frameCount * 0.01);
- *   translate(-100, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
- *   translate(35, 0, 0);
- *   box(20);
+ * // Toggle the current camera when the user double-clicks.
+ * function doubleClicked() {
+ *   if (usingCam1 === true) {
+ *     setCamera(cam2);
+ *     usingCam1 = false;
+ *   } else {
+ *     setCamera(cam1);
+ *     usingCam1 = true;
+ *   }
  * }
  * </code>
  * </div>
- *
- * @alt
- * Canvas switches between two camera views, each showing a series of spinning
- * 3D boxes.
  */
 p5.prototype.setCamera = function (cam) {
   this._renderer._curCamera = cam;
 
   // set the projection matrix (which is not normally updated each frame)
   this._renderer.uPMatrix.set(cam.projMatrix);
+  this._renderer.uViewMatrix.set(cam.cameraMatrix);
 };
 
 export default p5.Camera;

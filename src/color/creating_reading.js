@@ -14,9 +14,11 @@ import '../core/friendly_errors/file_errors';
 import '../core/friendly_errors/fes_core';
 
 /**
- * Extracts the alpha (transparency) value from a
- * <a href="#/p5.Color">p5.Color</a> object, array of color components, or
- * CSS color string.
+ * Gets the alpha (transparency) value of a color.
+ *
+ * `alpha()` extracts the alpha value from a
+ * <a href="#/p5.Color">p5.Color</a> object, an array of color components, or
+ * a CSS color string.
  *
  * @method alpha
  * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, array of
@@ -26,15 +28,84 @@ import '../core/friendly_errors/fes_core';
  * @example
  * <div>
  * <code>
- * noStroke();
- * const c = color(0, 126, 255, 102);
- * fill(c);
- * rect(15, 15, 35, 70);
- * // Sets 'alphaValue' to 102.
- * const alphaValue = alpha(c);
- * fill(alphaValue);
- * rect(50, 15, 35, 70);
- * describe('Two rectangles. The left one is light blue and the right one is charcoal gray.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a p5.Color object.
+ *   let c = color(0, 126, 255, 102);
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'alphaValue' to 102.
+ *   let alphaValue = alpha(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(alphaValue);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is light blue and the right one is charcoal gray.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a color array.
+ *   let c = [0, 126, 255, 102];
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'alphaValue' to 102.
+ *   let alphaValue = alpha(c);
+ *
+ *   // Draw the left rectangle.
+ *   fill(alphaValue);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is light blue and the right one is charcoal gray.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a CSS color string.
+ *   let c = 'rgba(0, 126, 255, 0.4)';
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'alphaValue' to 102.
+ *   let alphaValue = alpha(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(alphaValue);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is light blue and the right one is charcoal gray.');
+ * }
  * </code>
  * </div>
  */
@@ -44,27 +115,135 @@ p5.prototype.alpha = function(c) {
 };
 
 /**
- * Extracts the blue value from a <a href="#/p5.Color">p5.Color</a> object,
- * array of color components, or CSS color string.
+ * Gets the blue value of a color.
+ *
+ * `blue()` extracts the blue value from a
+ * <a href="#/p5.Color">p5.Color</a> object, an array of color components, or
+ * a CSS color string.
+ *
+ * By default, `blue()` returns a color's blue value in the range 0
+ * to 255. If the <a href="#/colorMode">colorMode()</a> is set to RGB, it
+ * returns the blue value in the given range.
  *
  * @method blue
  * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, array of
  *                                         color components, or CSS color string.
  * @return {Number} the blue value.
+ *
  * @example
  * <div>
  * <code>
- * const c = color(175, 100, 220);
- * fill(c);
- * rect(15, 20, 35, 60);
- * // Sets 'blueValue' to 220.
- * const blueValue = blue(c);
- * fill(0, 0, blueValue);
- * rect(50, 20, 35, 60);
- * describe('Two rectangles. The left one is light purple and the right one is royal blue.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a p5.Color object using RGB values.
+ *   let c = color(175, 100, 220);
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'blueValue' to 220.
+ *   let blueValue = blue(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(0, 0, blueValue);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is light purple and the right one is royal blue.');
+ * }
  * </code>
  * </div>
  *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a color array.
+ *   let c = [175, 100, 220];
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'blueValue' to 220.
+ *   let blueValue = blue(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(0, 0, blueValue);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is light purple and the right one is royal blue.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a CSS color string.
+ *   let c = 'rgb(175, 100, 220)';
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'blueValue' to 220.
+ *   let blueValue = blue(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(0, 0, blueValue);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is light purple and the right one is royal blue.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Use RGB color with values in the range 0-100.
+ *   colorMode(RGB, 100);
+ *
+ *   // Create a p5.Color object using RGB values.
+ *   let c = color(69, 39, 86);
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'blueValue' to 86.
+ *   let blueValue = blue(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(0, 0, blueValue);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is light purple and the right one is royal blue.');
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.blue = function(c) {
   p5._validateParameters('blue', arguments);
@@ -72,9 +251,15 @@ p5.prototype.blue = function(c) {
 };
 
 /**
- * Extracts the HSB brightness value from a
- * <a href="#/p5.Color">p5.Color</a> object, array of color components, or
- * CSS color string.
+ * Gets the brightness value of a color.
+ *
+ * `brightness()` extracts the HSB brightness value from a
+ * <a href="#/p5.Color">p5.Color</a> object, an array of color components, or
+ * a CSS color string.
+ *
+ * By default, `brightness()` returns a color's HSB brightness in the range 0
+ * to 100. If the <a href="#/colorMode">colorMode()</a> is set to HSB, it
+ * returns the brightness value in the given range.
  *
  * @method brightness
  * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, array of
@@ -84,31 +269,124 @@ p5.prototype.blue = function(c) {
  * @example
  * <div>
  * <code>
- * noStroke();
- * colorMode(HSB, 255);
- * const c = color(0, 126, 255);
- * fill(c);
- * rect(15, 20, 35, 60);
- * // Sets 'brightValue' to 255.
- * const brightValue = brightness(c);
- * fill(brightValue);
- * rect(50, 20, 35, 60);
- * describe('Two rectangles. The left one is salmon pink and the right one is white.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Use HSB color.
+ *   colorMode(HSB);
+ *
+ *   // Create a p5.Color object.
+ *   let c = color(0, 50, 100);
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'brightValue' to 100.
+ *   let brightValue = brightness(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(brightValue);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is salmon pink and the right one is white.');
+ * }
  * </code>
  * </div>
  *
+ * @example
  * <div>
  * <code>
- * noStroke();
- * colorMode(HSB, 255);
- * const c = color('hsb(60, 100%, 50%)');
- * fill(c);
- * rect(15, 20, 35, 60);
- * // Sets 'brightValue' to 127.5 (50% of 255)
- * const brightValue = brightness(c);
- * fill(brightValue);
- * rect(50, 20, 35, 60);
- * describe('Two rectangles. The left one is olive and the right one is gray.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Use HSB color.
+ *   colorMode(HSB);
+ *
+ *   // Create a color array.
+ *   let c = [0, 50, 100];
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'brightValue' to 100.
+ *   let brightValue = brightness(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(brightValue);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is salmon pink and the right one is white.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Use HSB color.
+ *   colorMode(HSB);
+ *
+ *   // Create a CSS color string.
+ *   let c = 'rgb(255, 128, 128)';
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'brightValue' to 100.
+ *   let brightValue = brightness(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(brightValue);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is salmon pink and the right one is white.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Use HSB color with values in the range 0-255.
+ *   colorMode(HSB, 255);
+ *
+ *   // Create a p5.Color object.
+ *   let c = color(0, 127, 255);
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'brightValue' to 255.
+ *   let brightValue = brightness(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(brightValue);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is salmon pink and the right one is white.');
+ * }
  * </code>
  * </div>
  */
@@ -118,10 +396,12 @@ p5.prototype.brightness = function(c) {
 };
 
 /**
- * Creates a <a href="#/p5/p5.Color">p5.Color</a> object. By default, the
- * parameters are interpreted as RGB values. Calling `color(255, 204, 0)` will
- * return a bright yellow color. The way these parameters are interpreted may
- * be changed with the <a href="#/p5/colorMode">colorMode()</a> function.
+ * Creates a <a href="#/p5/p5.Color">p5.Color</a> object.
+ *
+ * By default, the parameters are interpreted as RGB values. Calling
+ * `color(255, 204, 0)` will return a bright yellow color. The way these
+ * parameters are interpreted may be changed with the
+ * <a href="#/p5/colorMode">colorMode()</a> function.
  *
  * The version of `color()` with one parameter interprets the value one of two
  * ways. If the parameter is a number, it's interpreted as a grayscale value.
@@ -146,116 +426,225 @@ p5.prototype.brightness = function(c) {
  * @example
  * <div>
  * <code>
- * const c = color(255, 204, 0);
- * fill(c);
- * noStroke();
- * rect(30, 20, 55, 55);
- * describe('A yellow rectangle on a gray canvas.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a p5.Color object using RGB values.
+ *   let c = color(255, 204, 0);
+ *
+ *   // Draw the square.
+ *   fill(c);
+ *   noStroke();
+ *   square(30, 20, 55);
+ *
+ *   describe('A yellow square on a gray canvas.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a p5.Color object using RGB values.
+ *   let c1 = color(255, 204, 0);
+ *
+ *   // Draw the left circle.
+ *   fill(c1);
+ *   noStroke();
+ *   circle(25, 25, 80);
+ *
+ *   // Create a p5.Color object using a grayscale value.
+ *   let c2 = color(65);
+ *
+ *   // Draw the right circle.
+ *   fill(c2);
+ *   circle(75, 75, 80);
+ *
+ *   describe(
+ *     'Two circles on a gray canvas. The circle in the top-left corner is yellow and the one at the bottom-right is gray.'
+ *   );
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a p5.Color object using a named color.
+ *   let c = color('magenta');
+ *
+ *   // Draw the square.
+ *   fill(c);
+ *   noStroke();
+ *   square(20, 20, 60);
+ *
+ *   describe('A magenta square on a gray canvas.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a p5.Color object using a hex color code.
+ *   let c1 = color('#0f0');
+ *
+ *   // Draw the left rectangle.
+ *   fill(c1);
+ *   noStroke();
+ *   rect(0, 10, 45, 80);
+ *
+ *   // Create a p5.Color object using a hex color code.
+ *   let c2 = color('#00ff00');
+ *
+ *   // Draw the right rectangle.
+ *   fill(c2);
+ *   rect(55, 10, 45, 80);
+ *
+ *   describe('Two bright green rectangles on a gray canvas.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a p5.Color object using a RGB color string.
+ *   let c1 = color('rgb(0, 0, 255)');
+ *
+ *   // Draw the top-left square.
+ *   fill(c1);
+ *   square(10, 10, 35);
+ *
+ *   // Create a p5.Color object using a RGB color string.
+ *   let c2 = color('rgb(0%, 0%, 100%)');
+ *
+ *   // Draw the top-right square.
+ *   fill(c2);
+ *   square(55, 10, 35);
+ *
+ *   // Create a p5.Color object using a RGBA color string.
+ *   let c3 = color('rgba(0, 0, 255, 1)');
+ *
+ *   // Draw the bottom-left square.
+ *   fill(c3);
+ *   square(10, 55, 35);
+ *
+ *   // Create a p5.Color object using a RGBA color string.
+ *   let c4 = color('rgba(0%, 0%, 100%, 1)');
+ *
+ *   // Draw the bottom-right square.
+ *   fill(c4);
+ *   square(55, 55, 35);
+ *
+ *   describe('Four blue squares in the corners of a gray canvas.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a p5.Color object using a HSL color string.
+ *   let c1 = color('hsl(160, 100%, 50%)');
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c1);
+ *   rect(0, 10, 45, 80);
+ *
+ *   // Create a p5.Color object using a HSLA color string.
+ *   let c2 = color('hsla(160, 100%, 50%, 0.5)');
+ *
+ *   // Draw the right rectangle.
+ *   fill(c2);
+ *   rect(55, 10, 45, 80);
+ *
+ *   describe('Two sea green rectangles. A darker rectangle on the left and a brighter one on the right.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // RGB values.
- * let c = color(255, 204, 0);
- * fill(c);
- * noStroke();
- * circle(25, 25, 80);
- * // A grayscale value.
- * c = color(65);
- * fill(c);
- * circle(75, 75, 80);
- * describe(
- *   'Two ellipses. The circle in the top-left corner is yellow and the one at the bottom-right is gray.'
- * );
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a p5.Color object using a HSB color string.
+ *   let c1 = color('hsb(160, 100%, 50%)');
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c1);
+ *   rect(0, 10, 45, 80);
+ *
+ *   // Create a p5.Color object using a HSBA color string.
+ *   let c2 = color('hsba(160, 100%, 50%, 0.5)');
+ *
+ *   // Draw the right rectangle.
+ *   fill(c2);
+ *   rect(55, 10, 45, 80);
+ *
+ *   describe('Two green rectangles. A darker rectangle on the left and a brighter one on the right.');
+ * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // A CSS named color.
- * const c = color('magenta');
- * fill(c);
- * noStroke();
- * square(20, 20, 60);
- * describe('A magenta square on a gray canvas.');
- * </code>
- * </div>
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * <div>
- * <code>
- * // CSS hex color codes.
- * noStroke();
- * let c = color('#0f0');
- * fill(c);
- * rect(0, 10, 45, 80);
- * c = color('#00ff00');
- * fill(c);
- * rect(55, 10, 45, 80);
- * describe('Two bright green rectangles on a gray canvas.');
- * </code>
- * </div>
+ *   background(200);
  *
- * <div>
- * <code>
- * // RGB and RGBA color strings.
- * noStroke();
- * let c = color('rgb(0,0,255)');
- * fill(c);
- * square(10, 10, 35);
- * c = color('rgb(0%, 0%, 100%)');
- * fill(c);
- * square(55, 10, 35);
- * c = color('rgba(0, 0, 255, 1)');
- * fill(c);
- * square(10, 55, 35);
- * c = color('rgba(0%, 0%, 100%, 1)');
- * fill(c);
- * square(55, 55, 35);
- * describe('Four blue squares in corners of a gray canvas.');
- * </code>
- * </div>
+ *   // Create a p5.Color object using RGB values.
+ *   let c1 = color(50, 55, 100);
  *
- * <div>
- * <code>
- * // HSL and HSLA color strings.
- * let c = color('hsl(160, 100%, 50%)');
- * noStroke();
- * fill(c);
- * rect(0, 10, 45, 80);
- * c = color('hsla(160, 100%, 50%, 0.5)');
- * fill(c);
- * rect(55, 10, 45, 80);
- * describe('Two sea green rectangles. A darker rectangle on the left and a brighter one on the right.');
- * </code>
- * </div>
+ *   // Draw the left rectangle.
+ *   fill(c1);
+ *   rect(0, 10, 45, 80);
  *
- * <div>
- * <code>
- * // HSB and HSBA color strings.
- * let c = color('hsb(160, 100%, 50%)');
- * noStroke();
- * fill(c);
- * rect(0, 10, 45, 80);
- * c = color('hsba(160, 100%, 50%, 0.5)');
- * fill(c);
- * rect(55, 10, 45, 80);
- * describe('Two green rectangles. A darker rectangle on the left and a brighter one on the right.');
- * </code>
- * </div>
+ *   // Switch the color mode to HSB.
+ *   colorMode(HSB, 100);
  *
- * <div>
- * <code>
- * // Changing color modes.
- * noStroke();
- * let c = color(50, 55, 100);
- * fill(c);
- * rect(0, 10, 45, 80);
- * colorMode(HSB, 100);
- * c = color(50, 55, 100);
- * fill(c);
- * rect(55, 10, 45, 80);
- * describe('Two blue rectangles. A darker rectangle on the left and a brighter one on the right.');
+ *   // Create a p5.Color object using HSB values.
+ *   let c2 = color(50, 55, 100);
+ *
+ *   // Draw the right rectangle.
+ *   fill(c2);
+ *   rect(55, 10, 45, 80);
+ *
+ *   describe('Two blue rectangles. A darker rectangle on the left and a brighter one on the right.');
+ * }
  * </code>
  * </div>
  */
@@ -290,35 +679,144 @@ p5.prototype.brightness = function(c) {
  * @param  {p5.Color}     color
  * @return {p5.Color}
  */
-p5.prototype.color = function() {
-  p5._validateParameters('color', arguments);
-  if (arguments[0] instanceof p5.Color) {
-    return arguments[0]; // Do nothing if argument is already a color object.
+p5.prototype.color = function(...args) {
+  p5._validateParameters('color', args);
+  if (args[0] instanceof p5.Color) {
+    return args[0]; // Do nothing if argument is already a color object.
   }
 
-  const args = arguments[0] instanceof Array ? arguments[0] : arguments;
-  return new p5.Color(this, args);
+  const arg = Array.isArray(args[0]) ? args[0] : args;
+  return new p5.Color(this, arg);
 };
 
 /**
- * Extracts the green value from a <a href="#/p5.Color">p5.Color</a> object,
- * array of color components, or CSS color string.
+ * Gets the green value of a color.
+ *
+ * `green()` extracts the green value from a
+ * <a href="#/p5.Color">p5.Color</a> object, an array of color components, or
+ * a CSS color string.
+ *
+ * By default, `green()` returns a color's green value in the range 0
+ * to 255. If the <a href="#/colorMode">colorMode()</a> is set to RGB, it
+ * returns the green value in the given range.
  *
  * @method green
  * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, array of
  *                                         color components, or CSS color string.
  * @return {Number} the green value.
+ *
  * @example
  * <div>
  * <code>
- * const c = color(20, 75, 200);
- * fill(c);
- * rect(15, 20, 35, 60);
- * // Sets 'greenValue' to 75.
- * const greenValue = green(c);
- * fill(0, greenValue, 0);
- * rect(50, 20, 35, 60);
- * describe('Two rectangles. The rectangle on the left is blue and the one on the right is green.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a p5.Color object.
+ *   let c = color(175, 100, 220);
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'greenValue' to 100.
+ *   let greenValue = green(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(0, greenValue, 0);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is light purple and the right one is dark green.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a color array.
+ *   let c = [175, 100, 220];
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'greenValue' to 100.
+ *   let greenValue = green(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(0, greenValue, 0);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is light purple and the right one is dark green.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a CSS color string.
+ *   let c = 'rgb(175, 100, 220)';
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'greenValue' to 100.
+ *   let greenValue = green(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(0, greenValue, 0);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is light purple and the right one is dark green.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Use RGB color with values in the range 0-100.
+ *   colorMode(RGB, 100);
+ *
+ *   // Create a p5.Color object using RGB values.
+ *   let c = color(69, 39, 86);
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'greenValue' to 39.
+ *   let greenValue = green(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(0, greenValue, 0);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is light purple and the right one is dark green.');
+ * }
  * </code>
  * </div>
  */
@@ -328,37 +826,120 @@ p5.prototype.green = function(c) {
 };
 
 /**
- * Extracts the hue value from a
- * <a href="#/p5.Color">p5.Color</a> object, array of color components, or
- * CSS color string.
+ * Gets the hue value of a color.
  *
- * Hue exists in both HSB and HSL. It describes a color's position on the
- * color wheel. By default, this function returns the HSL-normalized hue. If
- * the <a href="#/colorMode">colorMode()</a> is set to HSB, it returns the
- * HSB-normalized hue.
+ * `hue()` extracts the hue value from a
+ * <a href="#/p5.Color">p5.Color</a> object, an array of color components, or
+ * a CSS color string.
+ *
+ * Hue describes a color's position on the color wheel. By default, `hue()`
+ * returns a color's HSL hue in the range 0 to 360. If the
+ * <a href="#/colorMode">colorMode()</a> is set to HSB or HSL, it returns the hue
+ * value in the given mode.
  *
  * @method hue
  * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, array of
  *                                         color components, or CSS color string.
- * @return {Number} the hue
+ * @return {Number} the hue value.
+ *
  * @example
  * <div>
  * <code>
- * noStroke();
- * colorMode(HSB, 255);
- * const c = color(0, 126, 255);
- * fill(c);
- * rect(15, 20, 35, 60);
- * // Sets 'hueValue' to 0.
- * const hueValue = hue(c);
- * fill(hueValue);
- * rect(50, 20, 35, 60);
- * describe(
- *   'Two rectangles. The rectangle on the left is salmon pink and the one on the right is black.'
- * );
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Use HSL color.
+ *   colorMode(HSL);
+ *
+ *   // Create a p5.Color object.
+ *   let c = color(0, 50, 100);
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 20, 35, 60);
+ *
+ *   // Set 'hueValue' to 0.
+ *   let hueValue = hue(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(hueValue);
+ *   rect(50, 20, 35, 60);
+ *
+ *   describe(
+ *     'Two rectangles. The rectangle on the left is salmon pink and the one on the right is black.'
+ *   );
+ * }
  * </code>
  * </div>
  *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Use HSL color.
+ *   colorMode(HSL);
+ *
+ *   // Create a color array.
+ *   let c = [0, 50, 100];
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 20, 35, 60);
+ *
+ *   // Set 'hueValue' to 0.
+ *   let hueValue = hue(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(hueValue);
+ *   rect(50, 20, 35, 60);
+ *
+ *   describe(
+ *     'Two rectangles. The rectangle on the left is salmon pink and the one on the right is black.'
+ *   );
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Use HSL color.
+ *   colorMode(HSL);
+ *
+ *   // Create a CSS color string.
+ *   let c = 'rgb(255, 128, 128)';
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 20, 35, 60);
+ *
+ *   // Set 'hueValue' to 0.
+ *   let hueValue = hue(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(hueValue);
+ *   rect(50, 20, 35, 60);
+ *
+ *   describe(
+ *     'Two rectangles. The rectangle on the left is salmon pink and the one on the right is black.'
+ *   );
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.hue = function(c) {
   p5._validateParameters('hue', arguments);
@@ -366,11 +947,12 @@ p5.prototype.hue = function(c) {
 };
 
 /**
- * Blends two colors to find a third color between them. The `amt` parameter
- * specifies the amount to interpolate between the two values. 0 is equal to
- * the first color, 0.1 is very near the first color, 0.5 is halfway between
- * the two colors, and so on. Negative numbers are set to 0. Numbers greater
- * than 1 are set to 1. This differs from the behavior of
+ * Blends two colors to find a third color between them.
+ *
+ * The `amt` parameter specifies the amount to interpolate between the two
+ * values. 0 is equal to the first color, 0.1 is very near the first color,
+ * 0.5 is halfway between the two colors, and so on. Negative numbers are set
+ * to 0. Numbers greater than 1 are set to 1. This differs from the behavior of
  * <a href="#/lerp">lerp</a>. It's necessary because numbers outside of the
  * interval [0, 1] will produce strange and unexpected colors.
  *
@@ -386,25 +968,40 @@ p5.prototype.hue = function(c) {
  * @example
  * <div>
  * <code>
- * colorMode(RGB);
- * stroke(255);
- * background(51);
- * const from = color(218, 165, 32);
- * const to = color(72, 61, 139);
- * colorMode(RGB);
- * const interA = lerpColor(from, to, 0.33);
- * const interB = lerpColor(from, to, 0.66);
- * fill(from);
- * rect(10, 20, 20, 60);
- * fill(interA);
- * rect(30, 20, 20, 60);
- * fill(interB);
- * rect(50, 20, 20, 60);
- * fill(to);
- * rect(70, 20, 20, 60);
- * describe(
- *   'Four rectangles with white edges. From left to right, the rectangles are tan, brown, brownish purple, and purple.'
- * );
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create p5.Color objects to interpolate between.
+ *   let from = color(218, 165, 32);
+ *   let to = color(72, 61, 139);
+ *
+ *   // Create intermediate colors.
+ *   let interA = lerpColor(from, to, 0.33);
+ *   let interB = lerpColor(from, to, 0.66);
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(from);
+ *   rect(10, 20, 20, 60);
+ *
+ *   // Draw the left-center rectangle.
+ *   fill(interA);
+ *   rect(30, 20, 20, 60);
+ *
+ *   // Draw the right-center rectangle.
+ *   fill(interB);
+ *   rect(50, 20, 20, 60);
+ *
+ *   // Draw the right rectangle.
+ *   fill(to);
+ *   rect(70, 20, 20, 60);
+ *
+ *   describe(
+ *     'Four rectangles. From left to right, the rectangles are tan, brown, brownish purple, and purple.'
+ *   );
+ * }
  * </code>
  * </div>
  */
@@ -466,28 +1063,142 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
 };
 
 /**
- * Extracts the HSL lightness value from a
- * <a href="#/p5.Color">p5.Color</a> object, array of color components, or
- * CSS color string.
+ * Gets the lightness value of a color.
+ *
+ * `lightness()` extracts the HSL lightness value from a
+ * <a href="#/p5.Color">p5.Color</a> object, an array of color components, or
+ * a CSS color string.
+ *
+ * By default, `lightness()` returns a color's HSL lightness in the range 0
+ * to 100. If the <a href="#/colorMode">colorMode()</a> is set to HSL, it
+ * returns the lightness value in the given range.
  *
  * @method lightness
  * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, array of
  *                                         color components, or CSS color string.
- * @return {Number} the lightness
+ * @return {Number} the lightness value.
  *
  * @example
  * <div>
  * <code>
- * noStroke();
- * colorMode(HSL);
- * const c = color(156, 100, 50, 1);
- * fill(c);
- * rect(15, 20, 35, 60);
- * // Sets 'lightValue' to 50.
- * const lightValue = lightness(c);
- * fill(lightValue);
- * rect(50, 20, 35, 60);
- * describe('Two rectangles. The rectangle on the left is light green and the one on the right is gray.');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(50);
+ *
+ *   // Use HSL color.
+ *   colorMode(HSL);
+ *
+ *   // Create a p5.Color object using HSL values.
+ *   let c = color(0, 100, 75);
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'lightValue' to 75.
+ *   let lightValue = lightness(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(lightValue);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is salmon pink and the right one is gray.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(50);
+ *
+ *   // Use HSL color.
+ *   colorMode(HSL);
+ *
+ *   // Create a color array.
+ *   let c = [0, 100, 75];
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'lightValue' to 75.
+ *   let lightValue = lightness(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(lightValue);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is salmon pink and the right one is gray.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(50);
+ *
+ *   // Use HSL color.
+ *   colorMode(HSL);
+ *
+ *   // Create a CSS color string.
+ *   let c = 'rgb(255, 128, 128)';
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'lightValue' to 75.
+ *   let lightValue = lightness(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(lightValue);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is salmon pink and the right one is gray.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(50);
+ *
+ *   // Use HSL color with values in the range 0-255.
+ *   colorMode(HSL, 255);
+ *
+ *   // Create a p5.Color object using HSL values.
+ *   let c = color(0, 255, 191.5);
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'lightValue' to 191.5.
+ *   let lightValue = lightness(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(lightValue);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is salmon pink and the right one is gray.');
+ * }
  * </code>
  * </div>
  */
@@ -497,27 +1208,133 @@ p5.prototype.lightness = function(c) {
 };
 
 /**
- * Extracts the red value from a
- * <a href="#/p5.Color">p5.Color</a> object, array of color components, or
- * CSS color string.
+ * Gets the red value of a color.
+ *
+ * `red()` extracts the red value from a
+ * <a href="#/p5.Color">p5.Color</a> object, an array of color components, or
+ * a CSS color string.
+ *
+ * By default, `red()` returns a color's red value in the range 0
+ * to 255. If the <a href="#/colorMode">colorMode()</a> is set to RGB, it
+ * returns the red value in the given range.
  *
  * @method red
  * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, array of
  *                                         color components, or CSS color string.
  * @return {Number} the red value.
+ *
  * @example
  * <div>
  * <code>
- * const c = color(255, 204, 0);
- * fill(c);
- * rect(15, 20, 35, 60);
- * // Sets 'redValue' to 255.
- * const redValue = red(c);
- * fill(redValue, 0, 0);
- * rect(50, 20, 35, 60);
- * describe(
- *   'Two rectangles with black edges. The rectangle on the left is yellow and the one on the right is red.'
- * );
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a p5.Color object.
+ *   let c = color(175, 100, 220);
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'redValue' to 175.
+ *   let redValue = red(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(redValue, 0, 0);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is light purple and the right one is red.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a color array.
+ *   let c = [175, 100, 220];
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'redValue' to 175.
+ *   let redValue = red(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(redValue, 0, 0);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is light purple and the right one is red.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a CSS color string.
+ *   let c = 'rgb(175, 100, 220)';
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'redValue' to 175.
+ *   let redValue = red(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(redValue, 0, 0);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is light purple and the right one is red.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Use RGB color with values in the range 0-100.
+ *   colorMode(RGB, 100);
+ *
+ *   // Create a p5.Color object.
+ *   let c = color(69, 39, 86);
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'redValue' to 69.
+ *   let redValue = red(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(redValue, 0, 0);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is light purple and the right one is red.');
+ * }
  * </code>
  * </div>
  */
@@ -527,33 +1344,174 @@ p5.prototype.red = function(c) {
 };
 
 /**
- * Extracts the saturation value from a
- * <a href="#/p5.Color">p5.Color</a> object, array of color components, or
- * CSS color string.
+ * Gets the saturation value of a color.
  *
- * Saturation is scaled differently in HSB and HSL. By default, this function
- * returns the HSL saturation. If the <a href="#/colorMode">colorMode()</a>
- * is set to HSB, it returns the HSB saturation.
+ * `saturation()` extracts the saturation value from a
+ * <a href="#/p5.Color">p5.Color</a> object, an array of color components, or
+ * a CSS color string.
+ *
+ * Saturation is scaled differently in HSB and HSL. By default, `saturation()`
+ * returns a color's HSL saturation in the range 0 to 100. If the
+ * <a href="#/colorMode">colorMode()</a> is set to HSB or HSL, it returns the
+ * saturation value in the given mode.
  *
  * @method saturation
  * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, array of
  *                                         color components, or CSS color string.
  * @return {Number} the saturation value
+ *
  * @example
  * <div>
  * <code>
- * noStroke();
- * colorMode(HSB, 255);
- * const c = color(0, 126, 255);
- * fill(c);
- * rect(15, 20, 35, 60);
- * // Sets 'satValue' to 126.
- * const satValue = saturation(c);
- * fill(satValue);
- * rect(50, 20, 35, 60);
- * describe(
- *   'Two rectangles. The rectangle on the left is deep pink and the one on the right is gray.'
- * );
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(50);
+ *
+ *   // Use HSB color.
+ *   colorMode(HSB);
+ *
+ *   // Create a p5.Color object.
+ *   let c = color(0, 50, 100);
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'satValue' to 50.
+ *   let satValue = saturation(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(satValue);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is salmon pink and the right one is dark gray.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(50);
+ *
+ *   // Use HSB color.
+ *   colorMode(HSB);
+ *
+ *   // Create a color array.
+ *   let c = [0, 50, 100];
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'satValue' to 100.
+ *   let satValue = saturation(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(satValue);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is salmon pink and the right one is gray.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(50);
+ *
+ *   // Use HSB color.
+ *   colorMode(HSB);
+ *
+ *   // Create a CSS color string.
+ *   let c = 'rgb(255, 128, 128)';
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'satValue' to 100.
+ *   let satValue = saturation(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(satValue);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is salmon pink and the right one is gray.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(50);
+ *
+ *   // Use HSL color.
+ *   colorMode(HSL);
+ *
+ *   // Create a p5.Color object.
+ *   let c = color(0, 100, 75);
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'satValue' to 100.
+ *   let satValue = saturation(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(satValue);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is salmon pink and the right one is white.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(50);
+ *
+ *   // Use HSL color with values in the range 0-255.
+ *   colorMode(HSL, 255);
+ *
+ *   // Create a p5.Color object.
+ *   let c = color(0, 255, 191.5);
+ *
+ *   // Draw the left rectangle.
+ *   noStroke();
+ *   fill(c);
+ *   rect(15, 15, 35, 70);
+ *
+ *   // Set 'satValue' to 255.
+ *   let satValue = saturation(c);
+ *
+ *   // Draw the right rectangle.
+ *   fill(satValue);
+ *   rect(50, 15, 35, 70);
+ *
+ *   describe('Two rectangles. The left one is salmon pink and the right one is white.');
+ * }
  * </code>
  * </div>
  */

@@ -1,12 +1,8 @@
 import p5 from '../../../src/app.js';
-import setupMath from '../../../src/math';
-import { testUnMinified, createP5Iframe, P5_SCRIPT_TAG } from '../../js/p5_helpers.js';
-import '../../js/chai_helpers.js';
 
 setupMath(p5);
 
-const setup = beforeEach;
-const teardown = afterEach;
+import { testUnMinified, createP5Iframe, P5_SCRIPT_TAG } from '../../js/p5_helpers';
 
 suite('Error Helpers', function() {
   var myp5;
@@ -450,12 +446,12 @@ suite('Error Helpers', function() {
       return log[0];
     };
 
-    setup(function() {
+    beforeAll(function() {
       log = [];
       p5._fesLogger = logger;
     });
 
-    teardown(function() {
+    afterAll(function() {
       p5._fesLogger = null;
     });
 
@@ -506,21 +502,23 @@ suite('Error Helpers', function() {
     const logger = function(err) {
       log.push(err);
     };
-    setup(function(done) {
+    beforeAll(function() {
       log = [];
       p5._fesLogger = logger;
-      new p5(function(p) {
-        // intentional capitalization mistake
-        p.preLoad = function() {};
-        p.setup = function() {
-          myp5 = p;
-          p._fesLogger = logger;
-          done();
-        };
+      return new Promise(resolve => {
+        new p5(function(p) {
+          // intentional capitalization mistake
+          p.preLoad = function() {};
+          p.setup = function() {
+            myp5 = p;
+            p._fesLogger = logger;
+            resolve();
+          };
+        });
       });
     });
 
-    teardown(function() {
+    afterAll(function() {
       p5._fesLogger = null;
       myp5.remove();
     });
@@ -595,12 +593,12 @@ suite('Global Error Handling', function() {
   const logger = function(err) {
     log.push(err);
   };
-  setup(function() {
+  beforeAll(function() {
     log = [];
     p5._fesLogger = logger;
   });
 
-  teardown(function() {
+  afterAll(function() {
     p5._fesLogger = null;
   });
 

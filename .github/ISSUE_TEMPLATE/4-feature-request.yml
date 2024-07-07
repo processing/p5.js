@@ -1,0 +1,43 @@
+name: 🌱 New Feature Request
+description: This template is for requesting a new feature be added.
+labels: [Feature Request]
+body:
+  - type: textarea
+    attributes:
+      label: Increasing access
+      description: How would this new feature help [increase access](https://github.com/processing/p5.js/blob/main/contributor_docs/access.md) to p5.js? (If you're not sure, you can type "Unsure" here and let others from the community offer their thoughts.)
+    validations:
+      required: true
+  - type: checkboxes
+    id: sub-area
+    attributes:
+      label: Most appropriate sub-area of p5.js?
+      description: You may select more than one.
+      options:
+        - label: Accessibility
+        - label: Color
+        - label: Core/Environment/Rendering
+        - label: Data
+        - label: DOM
+        - label: Events
+        - label: Image
+        - label: IO
+        - label: Math
+        - label: Typography
+        - label: Utilities
+        - label: WebGL
+        - label: Build process
+        - label: Unit testing
+        - label: Internationalization
+        - label: Friendly errors
+        - label: Other (specify if possible)
+  - type: textarea
+    attributes:
+      label: Feature request details
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        ### Implementation process
+        We are currently prioritizing proposals for [p5.js 2.0](https://github.com/processing/p5.js/blob/dev-2.0/rfc_p5js_2.md). Work on this issue may begin after that version is released, provided there is community support.

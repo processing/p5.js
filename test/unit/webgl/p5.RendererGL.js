@@ -1,18 +1,16 @@
+import p5 from '../../../src/app.js';
+
 suite('p5.RendererGL', function() {
   var myp5;
 
-  if (!window.Modernizr.webgl) {
-    return;
-  }
-
-  setup(function() {
+  beforeAll(function() {
     myp5 = new p5(function(p) {
       p.setup = function() {};
       p.draw = function() {};
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
@@ -45,7 +43,7 @@ suite('p5.RendererGL', function() {
 
     suite('when WebGL2 is unavailable', function() {
       let prevGetContext;
-      setup(function() {
+      beforeAll(function() {
         prevGetContext = HTMLCanvasElement.prototype.getContext;
         // Mock WebGL2 being unavailable
         HTMLCanvasElement.prototype.getContext = function(type, attrs) {
@@ -57,7 +55,7 @@ suite('p5.RendererGL', function() {
         };
       });
 
-      teardown(function() {
+      afterAll(function() {
         // Put back the actual implementation
         HTMLCanvasElement.prototype.getContext = prevGetContext;
       });
@@ -119,7 +117,7 @@ suite('p5.RendererGL', function() {
   });
 
   suite('filter shader', function() {
-    setup(function() {
+    beforeAll(function() {
       frag = `precision highp float;
       varying vec2 vTexCoord;
 
@@ -510,7 +508,7 @@ suite('p5.RendererGL', function() {
           for (const mode of [myp5.P2D, myp5.WEBGL]) {
             suite(`${mode.description} mode`, function() {
               let defaultPixels;
-              setup(() => {
+              beforeAll(() => {
                 defaultPixels = getFilteredPixels(
                   myp5.P2D,
                   () => {}, filterType
@@ -596,13 +594,26 @@ suite('p5.RendererGL', function() {
   suite('push() and pop() work in WEBGL Mode', function() {
     test('push/pop and translation works as expected in WEBGL Mode', function(done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
-      var modelView = myp5._renderer.uMVMatrix.copy();
+      var modelMatrixBefore = myp5._renderer.uModelMatrix.copy();
+      var viewMatrixBefore = myp5._renderer.uViewMatrix.copy();
+
       myp5.push();
+      // Change view
+      myp5.camera(0, 0, -500);
+      // Change model
       myp5.rotateX(Math.random(0, 100));
       myp5.translate(20, 100, 5);
-      assert.notEqual(modelView.mat4, myp5._renderer.uMVMatrix.mat4);
+      // Check if the model matrix has changed
+      assert.notDeepEqual(modelMatrixBefore.mat4,
+        myp5._renderer.uModelMatrix.mat4);
+      // Check if the view matrix has changed
+      assert.notDeepEqual(viewMatrixBefore.mat4,
+        myp5._renderer.uViewMatrix.mat4);
       myp5.pop();
-      assert.deepEqual(modelView.mat4, myp5._renderer.uMVMatrix.mat4);
+      // Check if both the model and view matrices are restored after popping
+      assert.deepEqual(modelMatrixBefore.mat4,
+        myp5._renderer.uModelMatrix.mat4);
+      assert.deepEqual(viewMatrixBefore.mat4, myp5._renderer.uViewMatrix.mat4);
       done();
     });
 
@@ -832,6 +843,37 @@ suite('p5.RendererGL', function() {
       }
       assert.isTrue(myp5._styles.length === 0);
       done();
+    });
+  });
+
+  suite('applying cameras', function() {
+    test('changing cameras keeps transforms', function() {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const origModelMatrix = myp5._renderer.uModelMatrix.copy();
+
+      const cam2 = myp5.createCamera();
+      cam2.setPosition(0, 0, -500);
+      const cam1 = myp5.createCamera();
+
+      // cam1 is applied right now so technically this is redundant
+      myp5.setCamera(cam1);
+      const cam1Matrix = cam1.cameraMatrix.copy();
+      assert.deepEqual(myp5._renderer.uViewMatrix.mat4, cam1Matrix.mat4);
+
+      // Translation only changes the model matrix
+      myp5.translate(100, 0, 0);
+      assert.notDeepEqual(
+        myp5._renderer.uModelMatrix.mat4,
+        origModelMatrix.mat4
+      );
+      assert.deepEqual(myp5._renderer.uViewMatrix.mat4, cam1Matrix.mat4);
+
+      // Switchnig cameras only changes the view matrix
+      const transformedModel = myp5._renderer.uModelMatrix.copy();
+      myp5.setCamera(cam2);
+      assert.deepEqual(myp5._renderer.uModelMatrix.mat4, transformedModel.mat4);
+      assert.notDeepEqual(myp5._renderer.uViewMatrix.mat4, cam1Matrix.mat4);
     });
   });
 
@@ -1260,6 +1302,30 @@ suite('p5.RendererGL', function() {
       myp5.point(0, 0, 0);
       assert.deepEqual(myp5.get(16, 16), [255, 0, 255, 255]);
       done();
+    });
+
+    test('transparency works the same with per-vertex colors', function() {
+      myp5.createCanvas(20, 20, myp5.WEBGL);
+      myp5.noStroke();
+
+      function drawShapes() {
+        myp5.fill(255, 0, 0, 100);
+        myp5.rect(-10, -10, 15, 15);
+        myp5.fill(0, 0, 255, 100);
+        myp5.rect(-5, -5, 15, 15);
+      }
+
+      drawShapes();
+      myp5.loadPixels();
+      const eachShapeResult = [...myp5.pixels];
+
+      myp5.clear();
+      const shapes = myp5.buildGeometry(drawShapes);
+      myp5.model(shapes);
+      myp5.loadPixels();
+      const singleShapeResult = [...myp5.pixels];
+
+      assert.deepEqual(eachShapeResult, singleShapeResult);
     });
   });
 
@@ -2439,6 +2505,43 @@ suite('p5.RendererGL', function() {
             [255, 0, 0, 255]
           );
         }
+      }
+    );
+
+    test(
+      'Main canvas masks do not apply to framebuffers',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const fbo = myp5.createFramebuffer({ antialias: false });
+        myp5.rectMode(myp5.CENTER);
+        myp5.background('red');
+        expect(myp5._renderer._stencilTestOn).to.equal(false);
+        myp5.push();
+        myp5.beginClip();
+        myp5.rect(-20, -20, 40, 40);
+        myp5.endClip();
+        expect(myp5._renderer._stencilTestOn).to.equal(true);
+
+        fbo.begin();
+        expect(myp5._renderer._stencilTestOn).to.equal(false);
+        myp5.noStroke();
+        myp5.fill('blue');
+        myp5.rect(0, 0, myp5.width, myp5.height);
+        fbo.end();
+
+        expect(myp5._renderer._stencilTestOn).to.equal(true);
+        myp5.pop();
+        expect(myp5._renderer._stencilTestOn).to.equal(false);
+
+        myp5.imageMode(myp5.CENTER);
+        myp5.image(fbo, 0, 0);
+
+        // In the middle of the canvas, the framebuffer's clip and the
+        // main canvas's clip intersect, so the blue should show through
+        assert.deepEqual(
+          myp5.get(myp5.width / 2, myp5.height / 2),
+          [0, 0, 255, 255]
+        );
       }
     );
   });

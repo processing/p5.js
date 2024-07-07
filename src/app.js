@@ -68,6 +68,8 @@ import './io/p5.XML';
 // import './math/p5.Vector';
 // import './math/random';
 // import './math/trigonometry';
+import math from './math';
+math(p5, p5.prototype);
 
 // typography
 import './typography/attributes';

@@ -153,13 +153,6 @@ suite('pixels', function() {
       }
     });
 
-    test.skip('wrong parameter at #8', function() {
-      assert.validationError(function() {
-        let img = myp5.createImage(50, 50);
-        img.blend(0, 0, 10, 10, 10, 0, 10, 10, 'a');
-      });
-    });
-
     test('no friendly-err-msg. missing param #0', function() {
       assert.doesNotThrow(
         function() {

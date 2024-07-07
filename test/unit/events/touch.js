@@ -79,7 +79,7 @@ suite('Touch Events', function() {
     });
 
     // NOTE: Required review of parallel sketches test method
-    test.skip('touchStarted functions on multiple instances must run once', async function() {
+    test('touchStarted functions on multiple instances must run once', async function() {
       let sketchFn = function(sketch, resolve, reject) {
         let count = 0;
         sketch.touchStarted = function() {
@@ -120,7 +120,7 @@ suite('Touch Events', function() {
       assert.strictEqual(count, 1);
     });
 
-    test.skip('touchMoved functions on multiple instances must run once', async function() {
+    test('touchMoved functions on multiple instances must run once', async function() {
       let sketchFn = function(sketch, resolve, reject) {
         let count = 0;
         sketch.touchMoved = function() {
@@ -161,7 +161,7 @@ suite('Touch Events', function() {
       assert.strictEqual(count, 1);
     });
 
-    test.skip('touchEnded functions on multiple instances must run once', async function() {
+    test('touchEnded functions on multiple instances must run once', async function() {
       let sketchFn = function(sketch, resolve, reject) {
         let count = 0;
         sketch.touchEnded = function() {
