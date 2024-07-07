@@ -36,7 +36,7 @@ import * as constants from '../constants';
  * way. JavaScript is a case-sensitive language.
  *
  * @method ellipseMode
- * @param  {Constant} mode either CENTER, RADIUS, CORNER, or CORNERS
+ * @param  {(CENTER|RADIUS|CORNER|CORNERS)} mode either CENTER, RADIUS, CORNER, or CORNERS
  * @chainable
  *
  * @example
@@ -207,7 +207,7 @@ p5.prototype.noSmooth = function() {
  * JavaScript is a case-sensitive language.
  *
  * @method rectMode
- * @param  {Constant} mode either CORNER, CORNERS, CENTER, or RADIUS
+ * @param  {(CENTER|RADIUS|CORNER|CORNERS)} mode either CORNER, CORNERS, CENTER, or RADIUS
  * @chainable
  *
  * @example
@@ -395,7 +395,7 @@ p5.prototype.smooth = function() {
  * JavaScript is a case-sensitive language.
  *
  * @method strokeCap
- * @param  {Constant} cap either ROUND, SQUARE, or PROJECT
+ * @param  {(ROUND|SQUARE|PROJECT)} cap either ROUND, SQUARE, or PROJECT
  * @chainable
  * @example
  * <div>
@@ -450,7 +450,7 @@ p5.prototype.strokeCap = function(cap) {
  * JavaScript is a case-sensitive language.
  *
  * @method strokeJoin
- * @param  {Constant} join either MITER, BEVEL, or ROUND
+ * @param  {(MITER|BEVEL|ROUND)} join either MITER, BEVEL, or ROUND
  * @chainable
  * @example
  * <div>

@@ -14,7 +14,7 @@ import p5 from '../core/main';
  * or 'portrait'. If no data is available it will be set to 'undefined'.
  * either LANDSCAPE or PORTRAIT.
  *
- * @property {Constant} deviceOrientation
+ * @property {(LANDSCAPE|PORTRAIT)} deviceOrientation
  * @readOnly
  */
 p5.prototype.deviceOrientation =

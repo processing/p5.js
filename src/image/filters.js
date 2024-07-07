@@ -1,4 +1,4 @@
-/**
+/*
  * This module defines the filters for use with image buffers.
  *
  * This module is basically a collection of functions stored in an object
@@ -11,6 +11,8 @@
  * A number of functions are borrowed/adapted from
  * http://www.html5rocks.com/en/tutorials/canvas/imagefilters/
  * or the java processing implementation.
+ *
+ * @private
  */
 
 const Filters = {

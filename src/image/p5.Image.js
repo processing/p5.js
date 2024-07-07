@@ -106,85 +106,12 @@ import Renderer from '../core/p5.Renderer';
  * </div>
  *
  * @class p5.Image
- * @constructor
  * @param {Number} width
  * @param {Number} height
  */
-p5.Image = class {
+p5.Image = class Image {
   constructor(width, height) {
-    /**
-     * The image's width in pixels.
-     *
-     * @type {Number}
-     * @property {Number} width
-     * @name width
-     * @readOnly
-     *
-     * @example
-     * <div>
-     * <code>
-     * let img;
-     *
-     * // Load the image.
-     * function preload() {
-     *   img = loadImage('assets/rockies.jpg');
-     * }
-     *
-     * function setup() {
-     *   createCanvas(100, 100);
-     *
-     *   // Display the image.
-     *   image(img, 0, 0);
-     *
-     *   // Calculate the center coordinates.
-     *   let x = img.width / 2;
-     *   let y = img.height / 2;
-     *
-     *   // Draw a circle at the image's center.
-     *   circle(x, y, 20);
-     *
-     *   describe('An image of a mountain landscape with a white circle drawn in the middle.');
-     * }
-     * </code>
-     * </div>
-     */
     this.width = width;
-    /**
-     * The image's height in pixels.
-     *
-     * @type {Number}
-     * @property height
-     * @name height
-     * @readOnly
-     *
-     * @example
-     * <div>
-     * <code>
-     * let img;
-     *
-     * // Load the image.
-     * function preload() {
-     *   img = loadImage('assets/rockies.jpg');
-     * }
-     *
-     * function setup() {
-     *   createCanvas(100, 100);
-     *
-     *   // Display the image.
-     *   image(img, 0, 0);
-     *
-     *   // Calculate the center coordinates.
-     *   let x = img.width / 2;
-     *   let y = img.height / 2;
-     *
-     *   // Draw a circle at the image's center.
-     *   circle(x, y, 20);
-     *
-     *   describe('An image of a mountain landscape with a white circle drawn in the middle.');
-     * }
-     * </code>
-     * </div>
-     */
     this.height = height;
     this.canvas = document.createElement('canvas');
     this.canvas.width = this.width;
@@ -196,104 +123,6 @@ p5.Image = class {
     this.gifProperties = null;
     //For WebGL Texturing only: used to determine whether to reupload texture to GPU
     this._modified = false;
-    /**
-     * An array containing the color of each pixel in the image.
-     *
-     * Colors are stored as numbers representing red, green, blue, and alpha
-     * (RGBA) values. `img.pixels` is a one-dimensional array for performance
-     * reasons.
-     *
-     * Each pixel occupies four elements in the pixels array, one for each
-     * RGBA value. For example, the pixel at coordinates (0, 0) stores its
-     * RGBA values at `img.pixels[0]`, `img.pixels[1]`, `img.pixels[2]`,
-     * and `img.pixels[3]`, respectively. The next pixel at coordinates (1, 0)
-     * stores its RGBA values at `img.pixels[4]`, `img.pixels[5]`,
-     * `img.pixels[6]`, and `img.pixels[7]`. And so on. The `img.pixels` array
-     * for a 100×100 <a href="#/p5.Image">p5.Image</a> object has
-     * 100 × 100 × 4 = 40,000 elements.
-     *
-     * Accessing the RGBA values for a pixel in the image requires a little
-     * math as shown in the examples below. The
-     * <a href="#/p5.Image/loadPixels">img.loadPixels()</a>
-     * method must be called before accessing the `img.pixels` array. The
-     * <a href="#/p5.Image/updatePixels">img.updatePixels()</a> method must be
-     * called after any changes are made.
-     *
-     * @property {Number[]} pixels
-     * @name pixels
-     *
-     * @example
-     * <div>
-     * <code>
-     * function setup() {
-     *   createCanvas(100, 100);
-     *
-     *   background(200);
-     *
-     *   // Create a p5.Image object.
-     *   let img = createImage(66, 66);
-     *
-     *   // Load the image's pixels.
-     *   img.loadPixels();
-     *
-     *   for (let i = 0; i < img.pixels.length; i += 4) {
-     *     // Red.
-     *     img.pixels[i] = 0;
-     *     // Green.
-     *     img.pixels[i + 1] = 0;
-     *     // Blue.
-     *     img.pixels[i + 2] = 0;
-     *     // Alpha.
-     *     img.pixels[i + 3] = 255;
-     *   }
-     *
-     *   // Update the image.
-     *   img.updatePixels();
-     *
-     *   // Display the image.
-     *   image(img, 17, 17);
-     *
-     *   describe('A black square drawn in the middle of a gray square.');
-     * }
-     * </code>
-     * </div>
-     *
-     * <div>
-     * <code>
-     * function setup() {
-     *   createCanvas(100, 100);
-     *
-     *   background(200);
-     *
-     *   // Create a p5.Image object.
-     *   let img = createImage(66, 66);
-     *
-     *   // Load the image's pixels.
-     *   img.loadPixels();
-     *
-     *   // Set the pixels to red.
-     *   for (let i = 0; i < img.pixels.length; i += 4) {
-     *     // Red.
-     *     img.pixels[i] = 255;
-     *     // Green.
-     *     img.pixels[i + 1] = 0;
-     *     // Blue.
-     *     img.pixels[i + 2] = 0;
-     *     // Alpha.
-     *     img.pixels[i + 3] = 255;
-     *   }
-     *
-     *   // Update the image.
-     *   img.updatePixels();
-     *
-     *   // Display the image.
-     *   image(img, 17, 17);
-     *
-     *   describe('A red square drawn in the middle of a gray square.');
-     * }
-     * </code>
-     * </div>
-     */
     this.pixels = [];
   }
 
@@ -306,7 +135,6 @@ p5.Image = class {
  * in a number to set the density. If a non-positive number is provided,
  * it defaults to 1.
  *
- * @method pixelDensity
  * @param {Number} [density] A scaling factor for the number of pixels per
  * side
  * @returns {Number} The current density if called without arguments, or the instance for chaining if setting density.
@@ -385,8 +213,6 @@ p5.Image = class {
    *
    * `img.loadPixels()` must be called before reading or modifying pixel
    * values.
-   *
-   * @method loadPixels
    *
    * @example
    * <div>
@@ -477,7 +303,6 @@ p5.Image = class {
    * If the image was loaded from a GIF, then calling `img.updatePixels()`
    * will update the pixels in current frame.
    *
-   * @method updatePixels
    * @param {Integer} x x-coordinate of the upper-left corner
    *                    of the subsection to update.
    * @param {Integer} y y-coordinate of the upper-left corner
@@ -554,7 +379,6 @@ p5.Image = class {
    * </div>
    */
   /**
-   * @method updatePixels
    */
   updatePixels(x, y, w, h) {
     p5.Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
@@ -584,7 +408,6 @@ p5.Image = class {
    * Use `img.get()` instead of <a href="#/p5/get">get()</a> to work directly
    * with images.
    *
-   * @method get
    * @param  {Number}               x x-coordinate of the pixel.
    * @param  {Number}               y y-coordinate of the pixel.
    * @param  {Number}               w width of the subsection to be returned.
@@ -677,11 +500,9 @@ p5.Image = class {
    * </div>
    */
   /**
-   * @method get
    * @return {p5.Image}      whole <a href="#/p5.Image">p5.Image</a>
    */
   /**
-   * @method get
    * @param  {Number}        x
    * @param  {Number}        y
    * @return {Number[]}      color of the pixel at (x, y) in array format `[R, G, B, A]`.
@@ -710,7 +531,6 @@ p5.Image = class {
    * <a href="#/p5.Image/updatePixels">img.updatePixels()</a> must be called
    * after using `img.set()` for changes to appear.
    *
-   * @method set
    * @param {Number}              x x-coordinate of the pixel.
    * @param {Number}              y y-coordinate of the pixel.
    * @param {Number|Number[]|Object}   a grayscale value | pixel array |
@@ -842,7 +662,6 @@ p5.Image = class {
    * `width` or `height`. For example, calling `img.resize(50, 0)` on an image
    * that was 500 &times; 300 pixels will resize it to 50 &times; 30 pixels.
    *
-   * @method resize
    * @param {Number} width resized image width.
    * @param {Number} height resized image height.
    *
@@ -1023,7 +842,6 @@ p5.Image = class {
    * Calling `img.copy()` will scale pixels from the source region if it isn't
    * the same size as the destination region.
    *
-   * @method copy
    * @param  {p5.Image|p5.Element} srcImage source image.
    * @param  {Integer} sx x-coordinate of the source's upper-left corner.
    * @param  {Integer} sy y-coordinate of the source's upper-left corner.
@@ -1093,7 +911,6 @@ p5.Image = class {
    * </div>
    */
   /**
-   * @method copy
    * @param  {Integer} sx
    * @param  {Integer} sy
    * @param  {Integer} sw
@@ -1115,7 +932,6 @@ p5.Image = class {
    * and can't be removed once applied. If the mask has a different
    * pixel density from this image, the mask will be scaled.
    *
-   * @method mask
    * @param {p5.Image} srcImage source image.
    *
    * @example
@@ -1233,8 +1049,7 @@ p5.Image = class {
    * `DILATE`
    * Increases the light areas. No parameter is used.
    *
-   * @method filter
-   * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
+   * @param  {(THRESHOLD|GRAY|OPAQUE|INVERT|POSTERIZE|ERODE|DILATE|BLUR)} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
    *                                POSTERIZE, ERODE, DILATE or BLUR.
    * @param  {Number} [filterParam] parameter unique to each filter.
    *
@@ -1447,7 +1262,6 @@ p5.Image = class {
    * `MULTIPLY`, `EXCLUSION`, `SCREEN`, `REPLACE`, `OVERLAY`, `HARD_LIGHT`,
    * `SOFT_LIGHT`, `DODGE`, `BURN`, `ADD`, or `NORMAL`.
    *
-   * @method blend
    * @param  {p5.Image} srcImage source image
    * @param  {Integer} sx x-coordinate of the source's upper-left corner.
    * @param  {Integer} sy y-coordinate of the source's upper-left corner.
@@ -1457,7 +1271,7 @@ p5.Image = class {
    * @param  {Integer} dy y-coordinate of the destination's upper-left corner.
    * @param  {Integer} dw destination image width.
    * @param  {Integer} dh destination image height.
-   * @param  {Constant} blendMode the blend mode. either
+   * @param  {(BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|NORMAL)} blendMode the blend mode. either
    *     BLEND, DARKEST, LIGHTEST, DIFFERENCE,
    *     MULTIPLY, EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
    *     SOFT_LIGHT, DODGE, BURN, ADD or NORMAL.
@@ -1555,7 +1369,6 @@ p5.Image = class {
    * </div>
    */
   /**
-   * @method blend
    * @param  {Integer} sx
    * @param  {Integer} sy
    * @param  {Integer} sw
@@ -1564,7 +1377,7 @@ p5.Image = class {
    * @param  {Integer} dy
    * @param  {Integer} dw
    * @param  {Integer} dh
-   * @param  {Constant} blendMode
+   * @param  {(BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|NORMAL)} blendMode
    */
   blend(...args) {
     p5._validateParameters('p5.Image.blend', arguments);
@@ -1576,7 +1389,6 @@ p5.Image = class {
    * helper method for web GL mode to indicate that an image has been
    * changed or unchanged since last upload. gl texture upload will
    * set this value to false after uploading the texture.
-   * @method setModified
    * @param {boolean} val sets whether or not the image has been
    * modified.
    * @private
@@ -1589,7 +1401,6 @@ p5.Image = class {
    * helper method for web GL mode to figure out if the image
    * has been modified and might need to be re-uploaded to texture
    * memory between frames.
-   * @method isModified
    * @private
    * @return {boolean} a boolean indicating whether or not the
    * image has been updated or modified since last texture upload.
@@ -1620,7 +1431,6 @@ p5.Image = class {
    * from a GIF file. See <a href="#/p5/saveGif">saveGif()</a> to create new
    * GIFs.
    *
-   * @method save
    * @param {String} filename filename. Defaults to 'untitled'.
    * @param  {String} [extension] file extension, either 'png' or 'jpg'.
    *                            Defaults to 'png'.
@@ -1669,8 +1479,6 @@ p5.Image = class {
   /**
    * Restarts an animated GIF at its first frame.
    *
-   * @method reset
-   *
    * @example
    * <div>
    * <code>
@@ -1717,7 +1525,6 @@ p5.Image = class {
   /**
    * Gets the index of the current frame in an animated GIF.
    *
-   * @method getCurrentFrame
    * @return {Number}       index of the GIF's current frame.
    *
    * @example
@@ -1759,7 +1566,6 @@ p5.Image = class {
   /**
    * Sets the current frame in an animated GIF.
    *
-   * @method setFrame
    * @param {Number} index index of the frame to display.
    *
    * @example
@@ -1819,7 +1625,6 @@ p5.Image = class {
   /**
    * Returns the number of frames in an animated GIF.
    *
-   * @method numFrames
    * @return {Number} number of frames in the GIF.
    *
    * @example
@@ -1859,8 +1664,6 @@ p5.Image = class {
   /**
    * Plays an animated GIF that was paused with
    * <a href="#/p5.Image/pause">img.pause()</a>.
-   *
-   * @method play
    *
    * @example
    * <div>
@@ -1906,8 +1709,6 @@ p5.Image = class {
    *
    * The GIF can be resumed by calling
    * <a href="#/p5.Image/play">img.play()</a>.
-   *
-   * @method pause
    *
    * @example
    * <div>
@@ -1959,7 +1760,6 @@ p5.Image = class {
    * at `index` will have its delay modified. All other frames will keep
    * their default delay.
    *
-   * @method delay
    * @param {Number} d delay in milliseconds between switching frames.
    * @param {Number} [index] index of the frame that will have its delay modified.
    *
@@ -2038,4 +1838,181 @@ p5.Image = class {
     }
   }
 };
+
+/**
+ * The image's width in pixels.
+ *
+ * @type {Number}
+ * @property {Number} width
+ * @for p5.Image
+ * @name width
+ * @readOnly
+ *
+ * @example
+ * <div>
+ * <code>
+ * let img;
+ *
+ * // Load the image.
+ * function preload() {
+ *   img = loadImage('assets/rockies.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Display the image.
+ *   image(img, 0, 0);
+ *
+ *   // Calculate the center coordinates.
+ *   let x = img.width / 2;
+ *   let y = img.height / 2;
+ *
+ *   // Draw a circle at the image's center.
+ *   circle(x, y, 20);
+ *
+ *   describe('An image of a mountain landscape with a white circle drawn in the middle.');
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * The image's height in pixels.
+ *
+ * @type {Number}
+ * @property height
+ * @for p5.Image
+ * @name height
+ * @readOnly
+ *
+ * @example
+ * <div>
+ * <code>
+ * let img;
+ *
+ * // Load the image.
+ * function preload() {
+ *   img = loadImage('assets/rockies.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Display the image.
+ *   image(img, 0, 0);
+ *
+ *   // Calculate the center coordinates.
+ *   let x = img.width / 2;
+ *   let y = img.height / 2;
+ *
+ *   // Draw a circle at the image's center.
+ *   circle(x, y, 20);
+ *
+ *   describe('An image of a mountain landscape with a white circle drawn in the middle.');
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * An array containing the color of each pixel in the image.
+ *
+ * Colors are stored as numbers representing red, green, blue, and alpha
+ * (RGBA) values. `img.pixels` is a one-dimensional array for performance
+ * reasons.
+ *
+ * Each pixel occupies four elements in the pixels array, one for each
+ * RGBA value. For example, the pixel at coordinates (0, 0) stores its
+ * RGBA values at `img.pixels[0]`, `img.pixels[1]`, `img.pixels[2]`,
+ * and `img.pixels[3]`, respectively. The next pixel at coordinates (1, 0)
+ * stores its RGBA values at `img.pixels[4]`, `img.pixels[5]`,
+ * `img.pixels[6]`, and `img.pixels[7]`. And so on. The `img.pixels` array
+ * for a 100×100 <a href="#/p5.Image">p5.Image</a> object has
+ * 100 × 100 × 4 = 40,000 elements.
+ *
+ * Accessing the RGBA values for a pixel in the image requires a little
+ * math as shown in the examples below. The
+ * <a href="#/p5.Image/loadPixels">img.loadPixels()</a>
+ * method must be called before accessing the `img.pixels` array. The
+ * <a href="#/p5.Image/updatePixels">img.updatePixels()</a> method must be
+ * called after any changes are made.
+ *
+ * @property {Number[]} pixels
+ * @for p5.Image
+ * @name pixels
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a p5.Image object.
+ *   let img = createImage(66, 66);
+ *
+ *   // Load the image's pixels.
+ *   img.loadPixels();
+ *
+ *   for (let i = 0; i < img.pixels.length; i += 4) {
+ *     // Red.
+ *     img.pixels[i] = 0;
+ *     // Green.
+ *     img.pixels[i + 1] = 0;
+ *     // Blue.
+ *     img.pixels[i + 2] = 0;
+ *     // Alpha.
+ *     img.pixels[i + 3] = 255;
+ *   }
+ *
+ *   // Update the image.
+ *   img.updatePixels();
+ *
+ *   // Display the image.
+ *   image(img, 17, 17);
+ *
+ *   describe('A black square drawn in the middle of a gray square.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a p5.Image object.
+ *   let img = createImage(66, 66);
+ *
+ *   // Load the image's pixels.
+ *   img.loadPixels();
+ *
+ *   // Set the pixels to red.
+ *   for (let i = 0; i < img.pixels.length; i += 4) {
+ *     // Red.
+ *     img.pixels[i] = 255;
+ *     // Green.
+ *     img.pixels[i + 1] = 0;
+ *     // Blue.
+ *     img.pixels[i + 2] = 0;
+ *     // Alpha.
+ *     img.pixels[i + 3] = 255;
+ *   }
+ *
+ *   // Update the image.
+ *   img.updatePixels();
+ *
+ *   // Display the image.
+ *   image(img, 17, 17);
+ *
+ *   describe('A red square drawn in the middle of a gray square.');
+ * }
+ * </code>
+ * </div>
+ */
+
 export default p5.Image;

@@ -8,17 +8,16 @@ import * as constants from '../core/constants';
 import { checkWebGLCapabilities } from './p5.Texture';
 import { readPixelsWebGL, readPixelWebGL } from './p5.RendererGL';
 
-class FramebufferCamera extends p5.Camera {
-  /**
-   * A <a href="#/p5.Camera">p5.Camera</a> attached to a
-   * <a href="#/p5.Framebuffer">p5.Framebuffer</a>.
-   *
-   * @class p5.FramebufferCamera
-   * @constructor
-   * @param {p5.Framebuffer} framebuffer The framebuffer this camera is
-   * attached to
-   * @private
-   */
+/**
+ * A <a href="#/p5.Camera">p5.Camera</a> attached to a
+ * <a href="#/p5.Framebuffer">p5.Framebuffer</a>.
+ *
+ * @class p5.FramebufferCamera
+ * @param {p5.Framebuffer} framebuffer The framebuffer this camera is
+ * attached to
+ * @private
+ */
+p5.FramebufferCamera = class FramebufferCamera extends p5.Camera {
   constructor(framebuffer) {
     super(framebuffer.target._renderer);
     this.fbo = framebuffer;
@@ -36,22 +35,20 @@ class FramebufferCamera extends p5.Camera {
     this.defaultCameraFOV =
       2 * Math.atan(this.fbo.height / 2 / this.defaultEyeZ);
   }
-}
+};
 
-p5.FramebufferCamera = FramebufferCamera;
-
-class FramebufferTexture {
-  /**
-   * A <a href="#/p5.Texture">p5.Texture</a> corresponding to a property of a
-   * <a href="#/p5.Framebuffer">p5.Framebuffer</a>.
-   *
-   * @class p5.FramebufferTexture
-   * @param {p5.Framebuffer} framebuffer The framebuffer represented by this
-   * texture
-   * @param {String} property The property of the framebuffer represented by
-   * this texture, either `color` or `depth`
-   * @private
-   */
+/**
+ * A <a href="#/p5.Texture">p5.Texture</a> corresponding to a property of a
+ * <a href="#/p5.Framebuffer">p5.Framebuffer</a>.
+ *
+ * @class p5.FramebufferTexture
+ * @param {p5.Framebuffer} framebuffer The framebuffer represented by this
+ * texture
+ * @param {String} property The property of the framebuffer represented by
+ * this texture, either `color` or `depth`
+ * @private
+ */
+p5.FramebufferTexture = class FramebufferTexture {
   constructor(framebuffer, property) {
     this.framebuffer = framebuffer;
     this.property = property;
@@ -68,98 +65,43 @@ class FramebufferTexture {
   rawTexture() {
     return this.framebuffer[this.property];
   }
-}
+};
 
-p5.FramebufferTexture = FramebufferTexture;
-
-class Framebuffer {
-  /**
-   * A class to describe a high-performance drawing surface for textures.
-   *
-   * Each `p5.Framebuffer` object provides a dedicated drawing surface called
-   * a *framebuffer*. They're similar to
-   * <a href="#/p5.Graphics">p5.Graphics</a> objects but can run much faster.
-   * Performance is improved because the framebuffer shares the same WebGL
-   * context as the canvas used to create it.
-   *
-   * `p5.Framebuffer` objects have all the drawing features of the main
-   * canvas. Drawing instructions meant for the framebuffer must be placed
-   * between calls to
-   * <a href="#/p5.Framebuffer/begin">myBuffer.begin()</a> and
-   * <a href="#/p5.Framebuffer/end">myBuffer.end()</a>. The resulting image
-   * can be applied as a texture by passing the `p5.Framebuffer` object to the
-   * <a href="#/p5/texture">texture()</a> function, as in `texture(myBuffer)`.
-   * It can also be displayed on the main canvas by passing it to the
-   * <a href="#/p5/image">image()</a> function, as in `image(myBuffer, 0, 0)`.
-   *
-   * Note: <a href="#/p5/createFramebuffer">createFramebuffer()</a> is the
-   * recommended way to create an instance of this class.
-   *
-   * @class p5.Framebuffer
-   * @constructor
-   * @param {p5.Graphics|p5} target sketch instance or
-   *                                <a href="#/p5.Graphics">p5.Graphics</a>
-   *                                object.
-   * @param {Object} [settings] configuration options.
-   */
+/**
+ * A class to describe a high-performance drawing surface for textures.
+ *
+ * Each `p5.Framebuffer` object provides a dedicated drawing surface called
+ * a *framebuffer*. They're similar to
+ * <a href="#/p5.Graphics">p5.Graphics</a> objects but can run much faster.
+ * Performance is improved because the framebuffer shares the same WebGL
+ * context as the canvas used to create it.
+ *
+ * `p5.Framebuffer` objects have all the drawing features of the main
+ * canvas. Drawing instructions meant for the framebuffer must be placed
+ * between calls to
+ * <a href="#/p5.Framebuffer/begin">myBuffer.begin()</a> and
+ * <a href="#/p5.Framebuffer/end">myBuffer.end()</a>. The resulting image
+ * can be applied as a texture by passing the `p5.Framebuffer` object to the
+ * <a href="#/p5/texture">texture()</a> function, as in `texture(myBuffer)`.
+ * It can also be displayed on the main canvas by passing it to the
+ * <a href="#/p5/image">image()</a> function, as in `image(myBuffer, 0, 0)`.
+ *
+ * Note: <a href="#/p5/createFramebuffer">createFramebuffer()</a> is the
+ * recommended way to create an instance of this class.
+ *
+ * @class p5.Framebuffer
+ * @param {p5.Graphics|p5} target sketch instance or
+ *                                <a href="#/p5.Graphics">p5.Graphics</a>
+ *                                object.
+ * @param {Object} [settings] configuration options.
+ */
+p5.Framebuffer = class Framebuffer {
   constructor(target, settings = {}) {
     this.target = target;
     this.target._renderer.framebuffers.add(this);
 
     this._isClipApplied = false;
 
-    /**
-     * An array containing the color of each pixel in the framebuffer.
-     *
-     * <a href="#/p5.Framebuffer/loadPixels">myBuffer.loadPixels()</a> must be
-     * called before accessing the `myBuffer.pixels` array.
-     * <a href="#/p5.Framebuffer/updatePixels">myBuffer.updatePixels()</a>
-     * must be called after any changes are made.
-     *
-     * Note: Updating pixels via this property is slower than drawing to the
-     * framebuffer directly. Consider using a
-     * <a href="#/p5.Shader">p5.Shader</a> object instead of looping over
-     * `myBuffer.pixels`.
-     *
-     * @property {Number[]} pixels
-     *
-     * @example
-     * <div>
-     * <code>
-     * function setup() {
-     *   createCanvas(100, 100, WEBGL);
-     *
-     *   background(200);
-     *
-     *   // Create a p5.Framebuffer object.
-     *   let myBuffer = createFramebuffer();
-     *
-     *   // Load the pixels array.
-     *   myBuffer.loadPixels();
-     *
-     *   // Get the number of pixels in the
-     *   // top half of the framebuffer.
-     *   let numPixels = myBuffer.pixels.length / 2;
-     *
-     *   // Set the framebuffer's top half to pink.
-     *   for (let i = 0; i < numPixels; i += 4) {
-     *     myBuffer.pixels[i] = 255;
-     *     myBuffer.pixels[i + 1] = 102;
-     *     myBuffer.pixels[i + 2] = 204;
-     *     myBuffer.pixels[i + 3] = 255;
-     *   }
-     *
-     *   // Update the pixels array.
-     *   myBuffer.updatePixels();
-     *
-     *   // Draw the p5.Framebuffer object to the canvas.
-     *   image(myBuffer, -50, -50);
-     *
-     *   describe('A pink rectangle above a gray rectangle.');
-     * }
-     * </code>
-     * </div>
-     */
     this.pixels = [];
 
     this.format = settings.format || constants.UNSIGNED_BYTE;
@@ -243,7 +185,6 @@ class Framebuffer {
    * the framebuffer to 300×500 pixels, then sets `myBuffer.width` to 300
    * and `myBuffer.height` 500.
    *
-   * @method resize
    * @param {Number} width width of the framebuffer.
    * @param {Number} height height of the framebuffer.
    *
@@ -311,7 +252,6 @@ class Framebuffer {
    * Calling `myBuffer.pixelDensity()` without an argument returns its current
    * pixel density.
    *
-   * @method pixelDensity
    * @param {Number} [density] pixel density to set.
    * @returns {Number} current pixel density.
    *
@@ -409,7 +349,6 @@ class Framebuffer {
    * Calling `myBuffer.autoSized()` without an argument returns `true` if
    * the framebuffer automatically resizes and `false` if not.
    *
-   * @method autoSized
    * @param {Boolean} [autoSized] whether to automatically resize the framebuffer to match the canvas.
    * @returns {Boolean} current autosize setting.
    *
@@ -931,7 +870,6 @@ class Framebuffer {
    * myBuffer.end();
    * ```
    *
-   * @method createCamera
    * @returns {p5.Camera} new camera.
    *
    * @example
@@ -1048,8 +986,6 @@ class Framebuffer {
    * variable still refers to the framebuffer, then it won't be garbage
    * collected.
    *
-   * @method remove
-   *
    * @example
    * <div>
    * <code>
@@ -1125,8 +1061,6 @@ class Framebuffer {
    * framebuffer. Changes won't be visible until the framebuffer is displayed
    * as an image or texture.
    *
-   * @method begin
-   *
    * @example
    * <div>
    * <code>
@@ -1190,7 +1124,6 @@ class Framebuffer {
    * renderbuffer, while other framebuffers can write directly to their main
    * framebuffers.
    *
-   * @method _framebufferToBind
    * @private
    */
   _framebufferToBind() {
@@ -1207,7 +1140,6 @@ class Framebuffer {
   /**
    * Ensures that the framebuffer is ready to be drawn to
    *
-   * @method _beforeBegin
    * @private
    */
   _beforeBegin() {
@@ -1222,7 +1154,6 @@ class Framebuffer {
   /**
    * Ensures that the framebuffer is ready to be read by other framebuffers.
    *
-   * @method _beforeEnd
    * @private
    */
   _beforeEnd() {
@@ -1260,8 +1191,6 @@ class Framebuffer {
    * the framebuffer and `myBuffer.end()` stops drawing to the framebuffer.
    * Changes won't be visible until the framebuffer is displayed as an image
    * or texture.
-   *
-   * @method end
    *
    * @example
    * <div>
@@ -1335,7 +1264,6 @@ class Framebuffer {
    * myBuffer.end();
    * ```
    *
-   * @method draw
    * @param {Function} callback function that draws to the framebuffer.
    *
    * @example
@@ -1473,7 +1401,6 @@ class Framebuffer {
    * the coordinates for the upper-left corner of the subsection. The last two
    * parameters are the width and height of the subsection.
    *
-   * @method get
    * @param  {Number} x x-coordinate of the pixel. Defaults to 0.
    * @param  {Number} y y-coordinate of the pixel. Defaults to 0.
    * @param  {Number} w width of the subsection to be returned.
@@ -1481,11 +1408,9 @@ class Framebuffer {
    * @return {p5.Image} subsection as a <a href="#/p5.Image">p5.Image</a> object.
    */
   /**
-   * @method get
    * @return {p5.Image} entire framebuffer as a <a href="#/p5.Image">p5.Image</a> object.
    */
   /**
-   * @method get
    * @param  {Number} x
    * @param  {Number} y
    * @return {Number[]}  color of the pixel at `(x, y)` as an array of color values `[R, G, B, A]`.
@@ -1696,7 +1621,7 @@ class Framebuffer {
       }
     }
   }
-}
+};
 
 /**
  * An object that stores the framebuffer's color data.
@@ -1851,6 +1776,58 @@ class Framebuffer {
  * </div>
  */
 
-p5.Framebuffer = Framebuffer;
+/**
+ * An array containing the color of each pixel in the framebuffer.
+ *
+ * <a href="#/p5.Framebuffer/loadPixels">myBuffer.loadPixels()</a> must be
+ * called before accessing the `myBuffer.pixels` array.
+ * <a href="#/p5.Framebuffer/updatePixels">myBuffer.updatePixels()</a>
+ * must be called after any changes are made.
+ *
+ * Note: Updating pixels via this property is slower than drawing to the
+ * framebuffer directly. Consider using a
+ * <a href="#/p5.Shader">p5.Shader</a> object instead of looping over
+ * `myBuffer.pixels`.
+ *
+ * @property {Number[]} pixels
+ * @for p5.Framebuffer
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   background(200);
+ *
+ *   // Create a p5.Framebuffer object.
+ *   let myBuffer = createFramebuffer();
+ *
+ *   // Load the pixels array.
+ *   myBuffer.loadPixels();
+ *
+ *   // Get the number of pixels in the
+ *   // top half of the framebuffer.
+ *   let numPixels = myBuffer.pixels.length / 2;
+ *
+ *   // Set the framebuffer's top half to pink.
+ *   for (let i = 0; i < numPixels; i += 4) {
+ *     myBuffer.pixels[i] = 255;
+ *     myBuffer.pixels[i + 1] = 102;
+ *     myBuffer.pixels[i + 2] = 204;
+ *     myBuffer.pixels[i + 3] = 255;
+ *   }
+ *
+ *   // Update the pixels array.
+ *   myBuffer.updatePixels();
+ *
+ *   // Draw the p5.Framebuffer object to the canvas.
+ *   image(myBuffer, -50, -50);
+ *
+ *   describe('A pink rectangle above a gray rectangle.');
+ * }
+ * </code>
+ * </div>
+ */
 
-export default Framebuffer;
+export default p5.Framebuffer;

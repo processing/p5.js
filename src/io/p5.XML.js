@@ -19,8 +19,6 @@ import p5 from '../core/main';
  * Note: Use <a href="#/p5/loadXML">loadXML()</a> to load external XML files.
  *
  * @class p5.XML
- * @constructor
- *
  * @example
  * <div>
  * <code>
@@ -78,7 +76,6 @@ p5.XML = class  {
  * Returns the element's parent element as a new <a href="#/p5.XML">p5.XML</a>
  * object.
  *
- * @method getParent
  * @return {p5.XML} parent element.
  *
  * @example
@@ -131,7 +128,6 @@ p5.XML = class  {
  * An XML element's name is given by its tag. For example, the element
  * `&lt;language&gt;JavaScript&lt;/language&gt;` has the name `language`.
  *
- * @method getName
  * @return {String} name of the element.
  *
  * @example
@@ -169,7 +165,7 @@ p5.XML = class  {
  *   describe('The word "mammal" written in black on a gray background.');
  * }
  * </code>
-</div>
+ * </div>
  */
   getName() {
     return this.DOM.tagName;
@@ -185,7 +181,6 @@ p5.XML = class  {
  * calling `myXML.setName('planet')` will make the element's new tag name
  * `&lt;planet&gt;&lt;/planet&gt;`.
  *
- * @method setName
  * @param {String} name new tag name of the element.
  *
  * @example
@@ -242,7 +237,6 @@ p5.XML = class  {
   /**
  * Returns `true` if the element has child elements and `false` if not.
  *
- * @method hasChildren
  * @return {boolean} whether the element has children.
  *
  * @example
@@ -288,7 +282,6 @@ p5.XML = class  {
  * Returns an array with the names of the element's child elements as
  * `String`s.
  *
- * @method listChildren
  * @return {String[]} names of the child elements.
  *
  * @example
@@ -347,7 +340,6 @@ p5.XML = class  {
  * `myXML.getChildren('cat')`, then the method will only return child elements
  * with the tag `&lt;cat&gt;`.
  *
- * @method getChildren
  * @param {String} [name] name of the elements to return.
  * @return {p5.XML[]} child elements.
  *
@@ -454,7 +446,6 @@ p5.XML = class  {
  * `&lt;cat&gt;` will be returned. If a number is passed, as in
  * `myXML.getChild(1)`, then the child element at that index will be returned.
  *
- * @method getChild
  * @param {String|Integer} name element name or index.
  * @return {p5.XML} child element.
  *
@@ -542,7 +533,6 @@ p5.XML = class  {
  * as a child element. For example, calling `myXML.addChild(otherXML)` inserts
  * `otherXML` as a child element of `myXML`.
  *
- * @method addChild
  * @param {p5.XML} child child element to add.
  * @return {p5.XML} added child element.
  *
@@ -609,7 +599,6 @@ p5.XML = class  {
  * `myXML.removeChild(1)`, then the child element at that index will be
  * removed.
  *
- * @method removeChild
  * @param {String|Integer} name name or index of the child element to remove.
  *
  * @example
@@ -723,7 +712,6 @@ p5.XML = class  {
   /**
  * Returns the number of attributes the element has.
  *
- * @method getAttributeCount
  * @return {Integer} number of attributes.
  *
  * @example
@@ -771,7 +759,6 @@ p5.XML = class  {
  * <a href="#/p5.XML/getString">myXML.getString()</a> or
  * <a href="#/p5.XML/getNum">myXML.getNum()</a> to return an attribute's value.
  *
- * @method listAttributes
  * @return {String[]} attribute names.
  *
  * @example
@@ -828,7 +815,6 @@ p5.XML = class  {
  * <a href="#/p5.XML/getString">myXML.getString()</a> or
  * <a href="#/p5.XML/getNum">myXML.getNum()</a> to return an attribute's value.
  *
- * @method hasAttribute
  * @param {String} name name of the attribute to be checked.
  * @return {boolean} whether the element has the attribute.
  *
@@ -896,7 +882,6 @@ p5.XML = class  {
  * <a href="#/p5.XML/getString">myXML.getString()</a> or
  * <a href="#/p5.XML/getNum">myXML.getNum()</a> to return an attribute's value.
  *
- * @method getNum
  * @param {String} name name of the attribute to be checked.
  * @param {Number} [defaultValue] value to return if the attribute doesn't exist.
  * @return {Number} attribute value as a number.
@@ -1001,7 +986,6 @@ p5.XML = class  {
  * <a href="#/p5.XML/getString">myXML.getString()</a> or
  * <a href="#/p5.XML/getNum">myXML.getNum()</a> to return an attribute's value.
  *
- * @method getString
  * @param {String} name name of the attribute to be checked.
  * @param {Number} [defaultValue] value to return if the attribute doesn't exist.
  * @return {String} attribute value as a string.
@@ -1100,7 +1084,6 @@ p5.XML = class  {
  * calling `myXML.setAttribute('id', 123)` sets the `id` attribute to the
  * value 123.
  *
- * @method setAttribute
  * @param {String} name name of the attribute to be set.
  * @param {Number|String|Boolean} value attribute's new value.
  *
@@ -1157,7 +1140,6 @@ p5.XML = class  {
  * `myXML.getContent('???')`, it will be returned if the element has no
  * content.
  *
- * @method getContent
  * @param {String} [defaultValue] value to return if the element has no
  *                                content.
  * @return {String} element's content as a string.
@@ -1294,7 +1276,6 @@ p5.XML = class  {
  * `myXML.serialize()` is useful for sending the element over the network or
  * saving it to a file.
  *
- * @method serialize
  * @return {String} element as a string.
  *
  * @example

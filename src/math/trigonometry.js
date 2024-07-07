@@ -563,8 +563,7 @@ function trigonometry(p5, fn){
    * is either `RADIANS` or `DEGREES`.
    *
    * @method angleMode
-   * @param {Constant} mode either RADIANS or DEGREES.
-   *
+   * @param {(RADIANS|DEGREES)} mode either RADIANS or DEGREES.
    * @example
    * <div>
    * <code>
@@ -736,7 +735,7 @@ function trigonometry(p5, fn){
    */
   /**
    * @method angleMode
-   * @return {Constant} mode either RADIANS or DEGREES
+   * @return {(RADIANS|DEGREES)} mode either RADIANS or DEGREES
    */
   fn.angleMode = function(mode) {
     p5._validateParameters('angleMode', arguments);

@@ -1,3 +1,5 @@
+import p5 from '../../src/app.js';
+
 // Setup chai
 var expect = chai.expect;
 var assert = chai.assert;

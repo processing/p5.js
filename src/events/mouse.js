@@ -701,7 +701,7 @@ p5.prototype.pwinMouseY = 0;
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/buttons" target="_blank">MDN</a>
  * for more information.
  *
- * @property {Constant} mouseButton
+ * @property {(LEFT|RIGHT|CENTER)} mouseButton
  * @readOnly
  *
  * @example

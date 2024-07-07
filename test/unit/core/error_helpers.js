@@ -1,10 +1,13 @@
 import p5 from '../../../src/app.js';
+
+setupMath(p5);
+
 import { testUnMinified, createP5Iframe, P5_SCRIPT_TAG } from '../../js/p5_helpers';
 
 suite('Error Helpers', function() {
   var myp5;
 
-  beforeAll(function() {
+  beforeEach(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
@@ -13,7 +16,7 @@ suite('Error Helpers', function() {
     });
   });
 
-  afterAll(function() {
+  afterEach(function() {
     myp5.remove();
   });
 
@@ -353,6 +356,47 @@ suite('Error Helpers', function() {
     test('color(): incorrect parameter count', function() {
       assert.validationError(function() {
         p5._validateParameters('color', ['A', 'A', 0, 0, 0, 0, 0, 0]);
+      });
+    });
+  });
+
+  suite('validateParameters: union types', function() {
+    testUnMinified('set() with Number', function() {
+      assert.doesNotThrow(function() {
+        p5._validateParameters('set', [0, 0, 0]);
+      });
+    });
+    testUnMinified('set() with Number[]', function() {
+      assert.doesNotThrow(function() {
+        p5._validateParameters('set', [0, 0, [0, 0, 0, 255]]);
+      });
+    });
+    testUnMinified('set() with Object', function() {
+      assert.doesNotThrow(function() {
+        p5._validateParameters('set', [0, 0, myp5.color(0)]);
+      });
+    });
+    testUnMinified('set() with Boolean', function() {
+      assert.validationError(function() {
+        p5._validateParameters('set', [0, 0, true]);
+      });
+    });
+  });
+
+  suite('validateParameters: specific constants', function() {
+    testUnMinified('endShape() with no args', function() {
+      assert.doesNotThrow(function() {
+        p5._validateParameters('endShape', []);
+      });
+    });
+    testUnMinified('endShape() with CLOSE', function() {
+      assert.doesNotThrow(function() {
+        p5._validateParameters('endShape', [myp5.CLOSE]);
+      });
+    });
+    testUnMinified('endShape() with unrelated constant', function() {
+      assert.validationError(function() {
+        p5._validateParameters('endShape', [myp5.RADIANS]);
       });
     });
   });

@@ -1142,7 +1142,7 @@ p5.prototype.texture = function (tex) {
  * Note: `textureMode()` can only be used in WebGL mode.
  *
  * @method  textureMode
- * @param {Constant} mode either IMAGE or NORMAL.
+ * @param {(IMAGE|NORMAL)} mode either IMAGE or NORMAL.
  *
  * @example
  * <div>
@@ -1323,8 +1323,8 @@ p5.prototype.textureMode = function (mode) {
  * Note: `textureWrap()` can only be used in WebGL mode.
  *
  * @method textureWrap
- * @param {Constant} wrapX either CLAMP, REPEAT, or MIRROR
- * @param {Constant} [wrapY] either CLAMP, REPEAT, or MIRROR
+ * @param {(CLAMP|REPEAT|MIRROR)} wrapX either CLAMP, REPEAT, or MIRROR
+ * @param {(CLAMP|REPEAT|MIRROR)} [wrapY=wrapX] either CLAMP, REPEAT, or MIRROR
  *
  * @example
  * <div>

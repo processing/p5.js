@@ -51,7 +51,7 @@ const renderers = p5.renderers = {
  * @method createCanvas
  * @param  {Number} [width] width of the canvas. Defaults to 100.
  * @param  {Number} [height] width of the canvas. Defaults to 100.
- * @param  {Constant} [renderer] either P2D or WEBGL. Defaults to `P2D`.
+ * @param  {(P2D|WEBGL)} [renderer] either P2D or WEBGL. Defaults to `P2D`.
  * @param  {HTMLCanvasElement} [canvas] existing canvas element that should be used for the sketch.
  * @return {p5.Renderer} new `p5.Renderer` that holds the canvas.
  *
@@ -413,7 +413,7 @@ p5.prototype.noCanvas = function() {
  * @method createGraphics
  * @param  {Number} width width of the graphics buffer.
  * @param  {Number} height height of the graphics buffer.
- * @param  {Constant} [renderer] either P2D or WEBGL. Defaults to P2D.
+ * @param  {(P2D|WEBGL)} [renderer] either P2D or WEBGL. Defaults to P2D.
  * @param  {HTMLCanvasElement} [canvas] existing canvas element that should be
  *                                      used for the graphics buffer..
  * @return {p5.Graphics} new graphics buffer.
@@ -770,7 +770,7 @@ p5.prototype.clearDepth = function(depth) {
  * - `SUBTRACT`: RGB values from the source are subtracted from the values from the canvas. If the difference is a negative number, it's made positive. Alpha (transparency) values from the source and canvas are added.
  *
  * @method blendMode
- * @param  {Constant} mode blend mode to set.
+ * @param  {(BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|REMOVE|SUBTRACT)} mode blend mode to set.
  *                either BLEND, DARKEST, LIGHTEST, DIFFERENCE, MULTIPLY,
  *                EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
  *                SOFT_LIGHT, DODGE, BURN, ADD, REMOVE or SUBTRACT

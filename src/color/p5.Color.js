@@ -11,8 +11,9 @@ import p5 from '../core/main';
 import * as constants from '../core/constants';
 import color_conversion from './color_conversion';
 
-/**
+/*
  * CSS named colors.
+ * @private
  */
 const namedColors = {
   aliceblue: '#f0f8ff',
@@ -165,7 +166,7 @@ const namedColors = {
   yellowgreen: '#9acd32'
 };
 
-/**
+/*
  * These regular expressions are used to build up the patterns for matching
  * viable CSS color strings: fragmenting the regexes in this way increases the
  * legibility and comprehensibility of the code.
@@ -178,8 +179,9 @@ const INTEGER = /(\d{1,3})/; // Match integers: 79, 255, etc.
 const DECIMAL = /((?:\d+(?:\.\d+)?)|(?:\.\d+))/; // Match 129.6, 79, .9, etc.
 const PERCENT = new RegExp(`${DECIMAL.source}%`); // Match 12.9%, 79%, .9%, etc.
 
-/**
+/*
  * Full color string patterns. The capture groups are necessary.
+ * @private
  */
 const colorPatterns = {
   // Match colors in format #XXX, e.g. #416.
@@ -336,7 +338,6 @@ const colorPatterns = {
  * instance of this class.
  *
  * @class p5.Color
- * @constructor
  * @param {p5} [pInst]                      pointer to p5 instance.
  *
  * @param {Number[]|String} vals            an array containing the color values
@@ -370,7 +371,6 @@ p5.Color = class Color {
    * `myColor.toString('#rrggbb')`, it will determine how the color string is
    * formatted. By default, color strings are formatted as `'rgba(r, g, b, a)'`.
    *
-   * @method toString
    * @param {String} [format] how the color string will be formatted.
    * Leaving this empty formats the string as rgba(r, g, b, a).
    * '#rgb' '#rgba' '#rrggbb' and '#rrggbbaa' format as hexadecimal color codes.
@@ -574,7 +574,6 @@ p5.Color = class Color {
    * The range depends on the <a href="#/p5/colorMode">colorMode()</a>. In the
    * default RGB mode it's between 0 and 255.
    *
-   * @method setRed
    * @param {Number} red the new red value.
    *
    * @example
@@ -616,7 +615,6 @@ p5.Color = class Color {
    * The range depends on the <a href="#/p5/colorMode">colorMode()</a>. In the
    * default RGB mode it's between 0 and 255.
    *
-   * @method setGreen
    * @param {Number} green the new green value.
    *
    * @example
@@ -658,7 +656,6 @@ p5.Color = class Color {
    * The range depends on the <a href="#/p5/colorMode">colorMode()</a>. In the
    * default RGB mode it's between 0 and 255.
    *
-   * @method setBlue
    * @param {Number} blue the new blue value.
    *
    * @example
@@ -701,7 +698,6 @@ p5.Color = class Color {
    * <a href="#/p5/colorMode">colorMode()</a>. In the default RGB mode it's
    * between 0 and 255.
    *
-   * @method setAlpha
    * @param {Number} alpha the new alpha value.
    *
    * @example
