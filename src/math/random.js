@@ -20,7 +20,7 @@ const c = 1013904223;
 let y2 = 0;
 
 // Linear Congruential Generator that stores its state at instance[stateProperty]
-p5.prototype._lcg = function (stateProperty) {
+p5.prototype._lcg = function(stateProperty) {
   // define the recurrence relationship
   this[stateProperty] = (a * this[stateProperty] + c) % m;
   // return a float in [0, 1)
@@ -28,7 +28,7 @@ p5.prototype._lcg = function (stateProperty) {
   return this[stateProperty] / m;
 };
 
-p5.prototype._lcgSetSeed = function (stateProperty, val) {
+p5.prototype._lcgSetSeed = function(stateProperty, val) {
   // pick a random seed if val is undefined or null
   // the >>> 0 casts the seed to an unsigned 32-bit integer
   this[stateProperty] = (val == null ? Math.random() * m : val) >>> 0;
@@ -78,7 +78,7 @@ p5.prototype._lcgSetSeed = function (stateProperty, val) {
  * </code>
  * </div>
  */
-p5.prototype.randomSeed = function (seed) {
+p5.prototype.randomSeed = function(seed) {
   this._lcgSetSeed(randomStateProp, seed);
   this._gaussian_previous = false;
 };
@@ -261,7 +261,7 @@ p5.prototype.randomSeed = function (seed) {
  * @param  {Array} choices   array to choose from.
  * @return {*} random element from the array.
  */
-p5.prototype.random = function (min, max) {
+p5.prototype.random = function(min, max) {
   p5._validateParameters('random', arguments);
   let rand;
 
@@ -351,7 +351,7 @@ p5.prototype.random = function (min, max) {
  * </code>
  * </div>
  */
-p5.prototype.randomGaussian = function (mean, sd = 1) {
+p5.prototype.randomGaussian = function(mean, sd = 1) {
   let y1, x1, x2, w;
   if (this._gaussian_previous) {
     y1 = y2;
