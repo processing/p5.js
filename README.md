@@ -1011,6 +1011,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://aboutmonica.com"><img src="https://avatars.githubusercontent.com/u/6998954?v=4?s=120" width="120px;" alt="Monica Powell"/><br /><sub><b>Monica Powell</b></sub></a><br /><a href="#talk-m0nica" title="Talks">📢</a> <a href="#example-m0nica" title="Examples">💡</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/rohanjulka19"><img src="https://avatars.githubusercontent.com/u/19673968?v=4?s=120" width="120px;" alt="Rohan Julka"/><br /><sub><b>Rohan Julka</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=rohanjulka19" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/ravixalgorithm"><img src="https://avatars.githubusercontent.com/u/148683640?v=4?s=120" width="120px;" alt="Mr. Algorithm"/><br /><sub><b>Mr. Algorithm</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ravixalgorithm" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/sambensim"><img src="https://avatars.githubusercontent.com/u/28797947?v=4?s=120" width="120px;" alt="sambensim"/><br /><sub><b>sambensim</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sambensim" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
