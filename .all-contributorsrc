@@ -6023,6 +6023,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "ravixalgorithm",
+      "name": "Mr. Algorithm",
+      "avatar_url": "https://avatars.githubusercontent.com/u/148683640?v=4",
+      "profile": "https://github.com/ravixalgorithm",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
