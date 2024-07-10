@@ -33,10 +33,10 @@ To get the complete p5.js library on your own computer, you can [download it her
 
 Check out [p5js.org](https://p5js.org) for lots more! Here are some quick-links to get started learning p5.js.
 
-* [Get Started](https://p5js.org/get-started): Create and run your first sketch!
+* [Get Started](https://p5js.org/tutorials/get-started): Create and run your first sketch!
 * [p5.js overview](https://github.com/processing/p5.js/wiki/p5.js-overview): An overview of the main features and functionality of p5.js
 * [Reference](https://p5js.org/reference): The functionality supported by p5.js
-* [Learn](https://p5js.org/learn): Tutorials and short, prototypical examples exploring the basics of p5.js
+* [Learn](https://p5js.org/tutorials): Tutorials and short, prototypical examples exploring the basics of p5.js
 * [Forum](https://discourse.processing.org/c/p5js): Ask and answer questions about how to make things with p5.js here
 * [Libraries](https://p5js.org/libraries): Extend p5 functionality to interact with HTML, manipulate sound, and more!
 * [The Coding Train p5.js Tutorials](https://thecodingtrain.com/beginners/p5js/): A huge trove of tutorials created by Dan Shiffman and friends
