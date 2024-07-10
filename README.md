@@ -18,7 +18,7 @@ The [p5js.org](https://p5js.org) website contains an extensive overview of the p
 
 We are a community of, and in solidarity with, people from every gender identity and expression, sexual orientation, race, ethnicity, language, neuro-type, size, ability, class, religion, culture, subculture, political opinion, age, skill level, occupation, and background. We acknowledge that not everyone has the time, financial means, or capacity to actively participate, but we recognize and encourage involvement of all kinds. We facilitate and foster access and empowerment. We are all learners.
 
-p5.js is a collaborative project created by many individuals, mostly volunteers, and you are invited to help. All types of involvement are welcome. See the [community section](https://p5js.org/community) to get started! You can also check out the [contributor docs](https://p5js.org/contributor-docs/#/) for more in-depth details about contributing to different areas of the project, including code, bug fixes, documentation, discussion, and more.
+p5.js is a collaborative project created by many individuals, mostly volunteers, and you are invited to help. All types of involvement are welcome. See the [community section](https://p5js.org/community) to get started! You can also check out the [contributor docs](https://p5js.org/contribute/#docs) for more in-depth details about contributing to different areas of the project, including code, bug fixes, documentation, discussion, and more.
 
 Learn more about [our community](https://p5js.org/community/) and read our community statement and [code of conduct](https://github.com/processing/p5.js/blob/main/CODE_OF_CONDUCT.md). You can directly support our work with p5.js by [donating to the Processing Foundation](https://processingfoundation.org/support).
 
@@ -26,7 +26,7 @@ Learn more about [our community](https://p5js.org/community/) and read our commu
 
 Make your first sketch in the [p5.js Editor](https://editor.p5js.org/)! Learn more about sketching with p5.js on the [Get Started](https://p5js.org/get-started/) and find everything you can do in the [Reference](https://p5js.org/reference/).
 
-To get the complete p5.js library on your own computer, you can [download it here](https://p5js.org/download). If you are interested in the most recent, less stable version, or even simply in (**new!**) certain components of p5.js, you can clone this repository and run `grunt` from the command line to generate the library from source. See the [contributor docs](https://p5js.org/contributor-docs/#/) for more information about our build process.
+To get the complete p5.js library on your own computer, you can [download it here](https://p5js.org/download). If you are interested in the most recent, less stable version, or even simply in (**new!**) certain components of p5.js, you can clone this repository and run `grunt` from the command line to generate the library from source. See the [contributor docs](https://p5js.org/contribute/#docs) for more information about our build process.
 
 
 ## Learning
@@ -1011,6 +1011,10 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://aboutmonica.com"><img src="https://avatars.githubusercontent.com/u/6998954?v=4?s=120" width="120px;" alt="Monica Powell"/><br /><sub><b>Monica Powell</b></sub></a><br /><a href="#talk-m0nica" title="Talks">📢</a> <a href="#example-m0nica" title="Examples">💡</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/rohanjulka19"><img src="https://avatars.githubusercontent.com/u/19673968?v=4?s=120" width="120px;" alt="Rohan Julka"/><br /><sub><b>Rohan Julka</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=rohanjulka19" title="Code">💻</a></td>
       <td align="center" valign="top" width ="16.66%"><a href = "https://github.com/shahmaz0/"><img src="https://avatars.githubusercontent.com/Shahmaz0" width="120px;" alt="Shahma"/><br /><sub><b>Shahma</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Shahmaz0" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/ravixalgorithm"><img src="https://avatars.githubusercontent.com/u/148683640?v=4?s=120" width="120px;" alt="Mr. Algorithm"/><br /><sub><b>Mr. Algorithm</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ravixalgorithm" title="Documentation">📖</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/sambensim"><img src="https://avatars.githubusercontent.com/u/28797947?v=4?s=120" width="120px;" alt="sambensim"/><br /><sub><b>sambensim</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sambensim" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

@@ -69,7 +69,6 @@ p5.Quat = class {
    * This was taken from the below stackexchange link
    * https://gamedev.stackexchange.com/questions/28395/rotating-vector3-by-a-quaternion/50545#50545
    * @param {p5.Vector} [p] vector to rotate on the axis quaternion
-   * @returns
    */
   rotateVector(p) {
     return new p5.Vector.mult( p, this.w*this.w - this.vec.dot(this.vec) )
