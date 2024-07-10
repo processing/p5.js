@@ -49,9 +49,11 @@ export default [
         })]
       }
     ],
-    // treeshake: {
-    //   preset: 'smallest'
-    // },
+    treeshake: {
+      preset: 'smallest',
+      // NOTE: remove after we stopped using side effects
+      moduleSideEffects: true
+    },
     plugins: [
       ...plugins,
       visualizer({
