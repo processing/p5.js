@@ -16,6 +16,14 @@ const plugins = [
   })
 ];
 const banner = `/*! p5.js v${pkg.version} ${dayjs().format('MMMM D, YYYY')} */`;
+const bundleSize = (name, sourcemap) => {
+  return visualizer({
+    filename: `analyzer/${name}.html`,
+    gzipSize: true,
+    brotliSize: true,
+    sourcemap
+  });
+};
 
 export default [
   {
@@ -25,28 +33,38 @@ export default [
         file: './lib/p5.rollup.js',
         format: 'iife',
         name: 'p5',
-        banner
+        banner,
+        plugins: [
+          bundleSize("p5.js")
+        ]
       },
       {
         file: './lib/p5.rollup.esm.js',
         format: 'esm',
-        banner
+        banner,
+        plugins: [
+          bundleSize("p5.esm.js")
+        ]
       },
       {
         file: './lib/p5.rollup.min.js',
         format: 'iife',
         name: 'p5',
         banner,
-        plugins: [terser({
-          compress: {
-            global_defs: {
-              IS_MINIFIED: true
+        sourcemap: 'hidden',
+        plugins: [
+          terser({
+            compress: {
+              global_defs: {
+                IS_MINIFIED: true
+              }
+            },
+            format: {
+              comments: false
             }
-          },
-          format: {
-            comments: false
-          }
-        })]
+          }),
+          bundleSize("p5.min.js", true)
+        ]
       }
     ],
     treeshake: {
@@ -55,12 +73,7 @@ export default [
       moduleSideEffects: true
     },
     plugins: [
-      ...plugins,
-      visualizer({
-        filename: "analyzer/stats.html",
-        gzipSize: true,
-        brotliSize: true
-      })
+      ...plugins
     ]
   },
   // NOTE: comment to NOT build standalone math module
@@ -69,35 +82,40 @@ export default [
     output: [
       {
         file: './lib/p5.math.js',
-        format: 'iife'
+        format: 'iife',
+        plugins: [
+          bundleSize("p5.math.js")
+        ]
       },
       {
         file: './lib/p5.math.min.js',
         format: 'iife',
-        plugins: [terser({
-          compress: {
-            global_defs: {
-              IS_MINIFIED: true
+        sourcemap: 'hidden',
+        plugins: [
+          terser({
+            compress: {
+              global_defs: {
+                IS_MINIFIED: true
+              }
+            },
+            format: {
+              comments: false
             }
-          },
-          format: {
-            comments: false
-          }
-        })]
+          }),
+          bundleSize("p5.math.min.js")
+        ]
       },
       {
         file: './lib/p5.math.esm.js',
-        format: 'esm'
+        format: 'esm',
+        plugins: [
+          bundleSize("p5.math.esm.js")
+        ]
       }
     ],
     external: ['../core/main'],
     plugins: [
-      ...plugins,
-      visualizer({
-        filename: "analyzer/stats.math.html",
-        gzipSize: true,
-        brotliSize: true
-      })
+      ...plugins
     ]
   }
 ];
