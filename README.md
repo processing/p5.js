@@ -1013,6 +1013,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/ravixalgorithm"><img src="https://avatars.githubusercontent.com/u/148683640?v=4?s=120" width="120px;" alt="Mr. Algorithm"/><br /><sub><b>Mr. Algorithm</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ravixalgorithm" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/sambensim"><img src="https://avatars.githubusercontent.com/u/28797947?v=4?s=120" width="120px;" alt="sambensim"/><br /><sub><b>sambensim</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sambensim" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/NicholasGillen"><img src="https://avatars.githubusercontent.com/u/80383027?v=4?s=120" width="120px;" alt="NicholasGillen"/><br /><sub><b>NicholasGillen</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=NicholasGillen" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 
