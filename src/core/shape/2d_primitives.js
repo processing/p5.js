@@ -934,7 +934,7 @@ p5.prototype.point = function(...args) {
  *
  * The thirteenth and fourteenth parameters are optional. In WebGL mode, they
  * set the number of segments used to draw the quadrilateral in the x- and
- * y-directions. They're both 25 by default.
+ * y-directions. They're both 2 by default.
  *
  * @method quad
  * @param {Number} x1 the x-coordinate of the first point.
