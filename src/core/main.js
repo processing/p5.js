@@ -344,6 +344,8 @@ class p5 {
       this._events.devicemotion = null;
     }
 
+    this.registerMethod('init', this._updateWindowSize);
+
     // Function to invoke registered hooks before or after events such as preload, setup, and pre/post draw.
     p5.prototype.callRegisteredHooksFor = function (hookName) {
       const target = this || p5.prototype;
