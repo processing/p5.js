@@ -44,7 +44,7 @@ const defaultClass = 'p5Canvas';
  *
  * @method createCanvas
  * @param  {Number} [width] width of the canvas. Defaults to 100.
- * @param  {Number} [height] width of the canvas. Defaults to 100.
+ * @param  {Number} [height] height of the canvas. Defaults to 100.
  * @param  {Constant} [renderer] either P2D or WEBGL. Defaults to `P2D`.
  * @param  {HTMLCanvasElement} [canvas] existing canvas element that should be used for the sketch.
  * @return {p5.Renderer} new `p5.Renderer` that holds the canvas.
