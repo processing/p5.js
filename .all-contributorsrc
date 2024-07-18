@@ -6060,6 +6060,17 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "chhaski",
+      "name": "chaski",
+      "avatar_url": "https://avatars.githubusercontent.com/u/71788879?v=4",
+      "profile": "https://github.com/chhaski",
+      "contributions": [
+        "research",
+        "code",
+        "example"
+      ]
     }
   ],
   "repoType": "github",
