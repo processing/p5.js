@@ -6071,6 +6071,16 @@
         "code",
         "example"
       ]
+    },
+    {
+      "login": "Evorage0",
+      "name": "Evorage",
+      "avatar_url": "https://avatars.githubusercontent.com/u/68397475?v=4",
+      "profile": "https://github.com/Evorage0",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "repoType": "github",
