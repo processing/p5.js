@@ -658,6 +658,9 @@ class p5 {
       }
     };
 
+    // ensure correct reporting of window dimensions
+    this._updateWindowSize();
+
     // call any registered init functions
     this._registeredMethods.init.forEach(function(f) {
       if (typeof f !== 'undefined') {
