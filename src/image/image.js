@@ -162,7 +162,7 @@ p5.prototype.createImage = function(width, height) {
  * format.
  *
  * The second parameter, `extension`, is also optional. It sets the files format.
- * Either `'png'` or `'jpg'` can be used. For example, `saveCanvas('drawing', 'jpg')`
+ * Either `'png'`, `'webp'`, or `'jpg'` can be used. For example, `saveCanvas('drawing', 'jpg')`
  * saves the canvas to a file called `drawing.jpg`.
  *
  * Note: The browser will either save the file immediately or prompt the user
