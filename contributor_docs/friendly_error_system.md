@@ -136,7 +136,7 @@ These functions are mainly responsible for catching errors and generating FES me
 For full reference, please see our [Dev Notes].
 
 [`_friendlyFileLoadError()`]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_contribution_guide.md#_friendlyerror
-[`_validateParameters()`]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_contribution_guide.md#validateparameters
+[`_validateParameters()`]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_contribution_guide.md#_validateparameters
 [`_fesErrorMontitor()`]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_contribution_guide.md#feserrormonitor
 [Dev Notes]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_contribution_guide.md#-development-notes
 
