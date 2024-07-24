@@ -1010,10 +1010,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/dgrantham01"><img src="https://avatars.githubusercontent.com/u/71230430?v=4?s=120" width="120px;" alt="Daniel Grantham"/><br /><sub><b>Daniel Grantham</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=dgrantham01" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://aboutmonica.com"><img src="https://avatars.githubusercontent.com/u/6998954?v=4?s=120" width="120px;" alt="Monica Powell"/><br /><sub><b>Monica Powell</b></sub></a><br /><a href="#talk-m0nica" title="Talks">📢</a> <a href="#example-m0nica" title="Examples">💡</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/rohanjulka19"><img src="https://avatars.githubusercontent.com/u/19673968?v=4?s=120" width="120px;" alt="Rohan Julka"/><br /><sub><b>Rohan Julka</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=rohanjulka19" title="Code">💻</a></td>
-      <td align="center" valign="top" width ="16.66%"><a href = "https://github.com/shahmaz0/"><img src="https://avatars.githubusercontent.com/Shahmaz0" width="120px;" alt="Shahma"/><br /><sub><b>Shahma</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Shahmaz0" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/ravixalgorithm"><img src="https://avatars.githubusercontent.com/u/148683640?v=4?s=120" width="120px;" alt="Mr. Algorithm"/><br /><sub><b>Mr. Algorithm</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ravixalgorithm" title="Documentation">📖</a></td>
-    </tr>
-    <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/sambensim"><img src="https://avatars.githubusercontent.com/u/28797947?v=4?s=120" width="120px;" alt="sambensim"/><br /><sub><b>sambensim</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sambensim" title="Documentation">📖</a></td>
     </tr>
     <tr>
@@ -1022,6 +1019,10 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/chhaski"><img src="https://avatars.githubusercontent.com/u/71788879?v=4?s=120" width="120px;" alt="chaski"/><br /><sub><b>chaski</b></sub></a><br /><a href="#research-chhaski" title="Research">🔬</a> <a href="https://github.com/processing/p5.js/commits?author=chhaski" title="Code">💻</a> <a href="#example-chhaski" title="Examples">💡</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Evorage0"><img src="https://avatars.githubusercontent.com/u/68397475?v=4?s=120" width="120px;" alt="Evorage"/><br /><sub><b>Evorage</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AEvorage0" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=Evorage0" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://iamdanielmarino.com"><img src="https://avatars.githubusercontent.com/u/171375?v=4?s=120" width="120px;" alt="Daniel Marino"/><br /><sub><b>Daniel Marino</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=starzonmyarmz" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/shahmaz0/"><img src="https://avatars.githubusercontent.com/Shahmaz0?s=120" width="120px;" alt="Shahma Ansari"/><br /><sub><b>Shahma Ansari</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AShahmaz0" title="Bug reports">🐛</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Manancode"><img src="https://avatars.githubusercontent.com/u/144525586?v=4?s=120" width="120px;" alt="Manan Arora"/><br /><sub><b>Manan Arora</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Manancode" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
