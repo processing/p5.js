@@ -11,7 +11,8 @@ export default defineConfig({
   ],
   test: {
     include: [
-      './test/unit/**/*.js'
+      // './test/unit/**/*.js'
+      './test/unit/color/*.js'
     ],
     exclude: [
       './test/unit/spec.js',

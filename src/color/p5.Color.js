@@ -413,9 +413,9 @@ p5.Color = class Color {
     }else{
       let alpha = 1;
       if(vals.length === 4){
-        alpha = vals.pop() / 100;
+        alpha = vals.pop() / 255;
       }else if (vals.length === 2){
-        alpha = vals[1] / 100;
+        alpha = vals[1] / 255;
         vals = [vals[0], vals[0], vals[0]];
       }else if(vals.length === 1){
         vals = [vals[0], vals[0], vals[0]];
@@ -473,6 +473,7 @@ p5.Color = class Color {
    */
   toString(format) {
     // NOTE: take format from color with sensible defaults
+    // NOTE: memoize
     return serialize(this.color, {
       format
     });
