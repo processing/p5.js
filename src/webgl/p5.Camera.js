@@ -2240,45 +2240,36 @@ p5.Camera = class Camera {
  * </div>
  */
   ortho(left, right, bottom, top, near, far) {
-    if (left === undefined) left = -this._renderer.width / 2;
-    if (right === undefined) right = +this._renderer.width / 2;
-    if (bottom === undefined) bottom = -this._renderer.height / 2;
-    if (top === undefined) top = +this._renderer.height / 2;
+    const source = this.fbo||this._renderer;
+    if (left === undefined) left = -source.width / 2;
+    if (right === undefined) right = +source.width / 2;
+    if (bottom === undefined) bottom = -source.height / 2;
+    if (top === undefined) top = +source.height / 2;
     if (near === undefined) near = 0;
-    if (far === undefined)
-      far = Math.max(this._renderer.width, this._renderer.height)+800;
-
+    if (far === undefined) far = Math.max(source.width, source.height)+800;
     this.cameraNear = near;
     this.cameraFar = far;
-
     const w = right - left;
     const h = top - bottom;
     const d = far - near;
-
     const x = +2.0 / w;
     const y = +2.0 / h * this.yScale;
     const z = -2.0 / d;
-
     const tx = -(right + left) / w;
     const ty = -(top + bottom) / h;
     const tz = -(far + near) / d;
-
     this.projMatrix = p5.Matrix.identity();
-
     /* eslint-disable indent */
     this.projMatrix.set(  x,  0,  0,  0,
                           0, -y,  0,  0,
                           0,  0,  z,  0,
                           tx, ty, tz,  1);
     /* eslint-enable indent */
-
     if (this._isActive()) {
       this._renderer.uPMatrix.set(this.projMatrix);
     }
-
     this.cameraType = 'custom';
   }
-
   /**
  * Sets the camera's frustum.
  *
@@ -2466,6 +2457,84 @@ p5.Camera = class Camera {
       this.upX,
       this.upY,
       this.upZ
+    );
+  }
+
+  /**
+ * Rotates the camera in a clockwise/counter-clockwise direction.
+ *
+ * Rolling rotates the camera without changing its orientation. The rotation
+ * happens in the camera’s "local" space.
+ *
+ * The parameter, `angle`, is the angle the camera should rotate. Passing a
+ * positive angle, as in `myCamera.roll(0.001)`, rotates the camera in counter-clockwise direction.
+ * Passing a negative angle, as in `myCamera.roll(-0.001)`, rotates the
+ * camera in clockwise direction.
+ *
+ * Note: Angles are interpreted based on the current
+ * <a href="#/p5/angleMode">angleMode()</a>.
+ *
+ * @method roll
+ * @param {Number} angle amount to rotate camera in current
+ * <a href="#/p5/angleMode">angleMode</a> units.
+ * @example
+ * <div>
+ * <code>
+ * let cam;
+ * let delta = 0.01;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   normalMaterial();
+ *   // Create a p5.Camera object.
+ *   cam = createCamera();
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Roll camera according to angle 'delta'
+ *   cam.roll(delta);
+ *
+ *   translate(0, 0, 0);
+ *   box(20);
+ *   translate(0, 25, 0);
+ *   box(20);
+ *   translate(0, 26, 0);
+ *   box(20);
+ *   translate(0, 27, 0);
+ *   box(20);
+ *   translate(0, 28, 0);
+ *   box(20);
+ *   translate(0,29, 0);
+ *   box(20);
+ *   translate(0, 30, 0);
+ *   box(20);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * camera view rotates in counter clockwise direction with vertically stacked boxes in front of it.
+ */
+  roll(amount) {
+    const local = this._getLocalAxes();
+    const axisQuaternion = p5.Quat.fromAxisAngle(
+      this._renderer._pInst._toRadians(amount),
+      local.z[0], local.z[1], local.z[2]);
+    // const upQuat = new p5.Quat(0, this.upX, this.upY, this.upZ);
+    const newUpVector = axisQuaternion.rotateVector(
+      new p5.Vector(this.upX, this.upY, this.upZ));
+    this.camera(
+      this.eyeX,
+      this.eyeY,
+      this.eyeZ,
+      this.centerX,
+      this.centerY,
+      this.centerZ,
+      newUpVector.x,
+      newUpVector.y,
+      newUpVector.z
     );
   }
 
@@ -2721,7 +2790,7 @@ p5.Camera = class Camera {
  * @for p5.Camera
  * @param  {Number} [x]        x-coordinate of the camera. Defaults to 0.
  * @param  {Number} [y]        y-coordinate of the camera. Defaults to 0.
- * @param  {Number} [z]        z-coordinate of the camera. Defaults to 0.
+ * @param  {Number} [z]        z-coordinate of the camera. Defaults to 800.
  * @param  {Number} [centerX]  x-coordinate of the point the camera faces. Defaults to 0.
  * @param  {Number} [centerY]  y-coordinate of the point the camera faces. Defaults to 0.
  * @param  {Number} [centerZ]  z-coordinate of the point the camera faces. Defaults to 0.
@@ -2915,7 +2984,7 @@ p5.Camera = class Camera {
     this.cameraMatrix.translate([tx, ty, tz]);
 
     if (this._isActive()) {
-      this._renderer.uMVMatrix.set(this.cameraMatrix);
+      this._renderer.uViewMatrix.set(this.cameraMatrix);
     }
     return this;
   }
@@ -3242,13 +3311,12 @@ p5.Camera = class Camera {
     this.cameraMatrix = cam.cameraMatrix.copy();
     this.projMatrix = cam.projMatrix.copy();
 
-    // If the target camera is active, update uMVMatrix and uPMatrix.
     if (this._isActive()) {
-      this._renderer.uMVMatrix.mat4 = this.cameraMatrix.mat4.slice();
-      this._renderer.uPMatrix.mat4 = this.projMatrix.mat4.slice();
+      this._renderer.uModelMatrix.reset();
+      this._renderer.uViewMatrix.set(this.cameraMatrix);
+      this._renderer.uPMatrix.set(this.projMatrix);
     }
   }
-
   /**
  * Sets the camera’s position and orientation to values that are in-between
  * those of two other cameras.
@@ -3882,6 +3950,7 @@ p5.prototype.setCamera = function (cam) {
 
   // set the projection matrix (which is not normally updated each frame)
   this._renderer.uPMatrix.set(cam.projMatrix);
+  this._renderer.uViewMatrix.set(cam.cameraMatrix);
 };
 
 export default p5.Camera;

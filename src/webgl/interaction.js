@@ -16,7 +16,7 @@ import * as constants from '../core/constants';
  * `orbitControl()` within the <a href="#/p5/draw">draw()</a> function allows
  * the user to change the camera’s position:
  *
- * <code>
+ * ```js
  * function draw() {
  *   background(200);
  *
@@ -25,7 +25,7 @@ import * as constants from '../core/constants';
  *
  *   // Rest of sketch.
  * }
- * </code>
+ * ```
  *
  * Left-clicking and dragging or swipe motion will rotate the camera position
  * about the center of the sketch. Right-clicking and dragging or multi-swipe
@@ -47,7 +47,7 @@ import * as constants from '../core/constants';
  * changing the behaviors set with `options`. The object can have the
  * following properties:
  *
- * <code>
+ * ```js
  * let options = {
  *   // Setting this to false makes mobile interactions smoother by
  *   // preventing accidental interactions with the page while orbiting.
@@ -61,7 +61,7 @@ import * as constants from '../core/constants';
  * };
  *
  * orbitControl(1, 1, 1, options);
- * </code>
+ * ```
  *
  * @method orbitControl
  * @for p5
@@ -813,7 +813,7 @@ p5.prototype._grid = function(size, numDivs, xOff, yOff, zOff) {
       this._renderer.curStrokeColor[1] * 255,
       this._renderer.curStrokeColor[2] * 255
     );
-    this._renderer.uMVMatrix.set(this._renderer._curCamera.cameraMatrix);
+    this._renderer.uModelMatrix.reset();
 
     // Lines along X axis
     for (let q = 0; q <= numDivs; q++) {
@@ -860,7 +860,7 @@ p5.prototype._axesIcon = function(size, xOff, yOff, zOff) {
 
   return function() {
     this.push();
-    this._renderer.uMVMatrix.set(this._renderer._curCamera.cameraMatrix);
+    this._renderer.uModelMatrix.reset();
 
     // X axis
     this.strokeWeight(2);

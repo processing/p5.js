@@ -49,7 +49,7 @@ import './p5.Geometry';
  * as in `loadModel('assets/model.obj', options)`. The `options` object can
  * have the following properties:
  *
- * <code>
+ * ```js
  * let options = {
  *   // Enables standardized size scaling during loading if set to true.
  *   normalize: true,
@@ -72,7 +72,7 @@ import './p5.Geometry';
  *
  * // Pass the options object to loadModel().
  * loadModel('assets/model.obj', options);
- * </code>
+ * ```
  *
  * Models can take time to load. Calling `loadModel()` in
  * <a href="#/p5/preload">preload()</a> ensures models load before they're

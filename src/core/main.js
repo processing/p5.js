@@ -39,126 +39,236 @@ class p5 {
     //////////////////////////////////////////////
 
     /**
-     * Called directly before <a href="#/p5/setup">setup()</a>, the <a href="#/p5/preload">preload()</a> function is used to handle
-     * asynchronous loading of external files in a blocking way. If a preload
-     * function is defined, <a href="#/p5/setup">setup()</a> will wait until any load calls within have
-     * finished. Nothing besides load calls (<a href="#/p5/loadImage">loadImage</a>, <a href="#/p5/loadJSON">loadJSON</a>, <a href="#/p5/loadFont">loadFont</a>,
-     * <a href="#/p5/loadStrings">loadStrings</a>, etc.) should be inside the preload function. If asynchronous
-     * loading is preferred, the load methods can instead be called in <a href="#/p5/setup">setup()</a>
-     * or anywhere else with the use of a callback parameter.
+     * A function that's called once to load assets before the sketch runs.
      *
-     * By default the text "loading..." will be displayed. To make your own
-     * loading page, include an HTML element with id "p5_loading" in your
-     * page. More information <a href="http://bit.ly/2kQ6Nio">here</a>.
+     * Declaring the function `preload()` sets a code block to run once
+     * automatically before <a href="#/p5/setup">setup()</a> or
+     * <a href="#/p5/draw">draw()</a>. It's used to load assets including
+     * multimedia files, fonts, data, and 3D models:
+     *
+     * ```js
+     * function preload() {
+     *   // Code to run before the rest of the sketch.
+     * }
+     * ```
+     *
+     * Functions such as <a href="#/p5/loadImage">loadImage()</a>,
+     * <a href="#/p5/loadFont">loadFont()</a>,
+     * <a href="#/p5/loadJSON">loadJSON()</a>, and
+     * <a href="#/p5/loadModel">loadModel()</a> are guaranteed to either
+     * finish loading or raise an error if they're called within `preload()`.
+     * Doing so ensures that assets are available when the sketch begins
+     * running.
      *
      * @method preload
+     *
      * @example
-     * <div><code>
+     * <div>
+     * <code>
      * let img;
-     * let c;
+     *
+     * // Load an image and create a p5.Image object.
      * function preload() {
-     *   // preload() runs once
-     *   img = loadImage('assets/laDefense.jpg');
+     *   img = loadImage('assets/bricks.jpg');
      * }
      *
      * function setup() {
-     *   // setup() waits until preload() is done
-     *   img.loadPixels();
-     *   // get color of middle pixel
-     *   c = img.get(img.width / 2, img.height / 2);
+     *   createCanvas(100, 100);
+     *
+     *   // Draw the image.
+     *   image(img, 0, 0);
+     *
+     *   describe('A red brick wall.');
      * }
-     *
-     * function draw() {
-     *   background(c);
-     *   image(img, 25, 25, 50, 50);
-     * }
-     * </code></div>
-     *
-     * @alt
-     * nothing displayed
-     *
+     * </code>
+     * </div>
      */
 
     /**
-     * The <a href="#/p5/setup">setup()</a> function is called once when the program starts. It's used to
-     * define initial environment properties such as screen size and background
-     * color and to load media such as images and fonts as the program starts.
-     * There can only be one <a href="#/p5/setup">setup()</a> function for each program and it shouldn't
-     * be called again after its initial execution.
+     * A function that's called once when the sketch begins running.
      *
-     * Note: Variables declared within <a href="#/p5/setup">setup()</a> are not accessible within other
-     * functions, including <a href="#/p5/draw">draw()</a>.
+     * Declaring the function `setup()` sets a code block to run once
+     * automatically when the sketch starts running. It's used to perform
+     * setup tasks such as creating the canvas and initializing variables:
+     *
+     * ```js
+     * function setup() {
+     *   // Code to run once at the start of the sketch.
+     * }
+     * ```
+     *
+     * Code placed in `setup()` will run once before code placed in
+     * <a href="#/p5/draw">draw()</a> begins looping. If the
+     * <a href="#/p5/preload">preload()</a> is declared, then `setup()` will
+     * run immediately after <a href="#/p5/preload">preload()</a> finishes
+     * loading assets.
+     *
+     * Note: `setup()` doesn’t have to be declared, but it’s common practice to do so.
      *
      * @method setup
-     * @example
-     * <div><code>
-     * let a = 0;
      *
+     * @example
+     * <div>
+     * <code>
      * function setup() {
-     *   background(0);
-     *   noStroke();
-     *   fill(102);
+     *   createCanvas(100, 100);
+     *
+     *   background(200);
+     *
+     *   // Draw the circle.
+     *   circle(50, 50, 40);
+     *
+     *   describe('A white circle on a gray background.');
+     * }
+     * </code>
+     * </div>
+     *
+     * <div>
+     * <code>
+     * function setup() {
+     *   createCanvas(100, 100);
+     *
+     *   // Paint the background once.
+     *   background(200);
+     *
+     *   describe(
+     *     'A white circle on a gray background. The circle follows the mouse as the user moves, leaving a trail.'
+     *   );
      * }
      *
      * function draw() {
-     *   rect(a++ % width, 10, 2, 80);
+     *   // Draw circles repeatedly.
+     *   circle(mouseX, mouseY, 40);
      * }
-     * </code></div>
+     * </code>
+     * </div>
      *
-     * @alt
-     * nothing displayed
+     * <div>
+     * <code>
+     * let img;
      *
+     * function preload() {
+     *   img = loadImage('assets/bricks.jpg');
+     * }
+     *
+     * function setup() {
+     *   createCanvas(100, 100);
+     *
+     *   // Draw the image.
+     *   image(img, 0, 0);
+     *
+     *   describe(
+     *     'A white circle on a brick wall. The circle follows the mouse as the user moves, leaving a trail.'
+     *   );
+     * }
+     *
+     * function draw() {
+     *   // Style the circle.
+     *   noStroke();
+     *
+     *   // Draw the circle.
+     *   circle(mouseX, mouseY, 10);
+     * }
+     * </code>
+     * </div>
      */
 
     /**
-     * Called directly after <a href="#/p5/setup">setup()</a>, the <a href="#/p5/draw">draw()</a> function continuously executes
-     * the lines of code contained inside its block until the program is stopped
-     * or <a href="#/p5/noLoop">noLoop()</a> is called. Note if <a href="#/p5/noLoop">noLoop()</a> is called in <a href="#/p5/setup">setup()</a>, <a href="#/p5/draw">draw()</a> will
-     * still be executed once before stopping. <a href="#/p5/draw">draw()</a> is called automatically and
-     * should never be called explicitly.
+     * A function that's called repeatedly while the sketch runs.
      *
-     * It should always be controlled with <a href="#/p5/noLoop">noLoop()</a>, <a href="#/p5/redraw">redraw()</a> and <a href="#/p5/loop">loop()</a>. After
-     * <a href="#/p5/noLoop">noLoop()</a> stops the code in <a href="#/p5/draw">draw()</a> from executing, <a href="#/p5/redraw">redraw()</a> causes the
-     * code inside <a href="#/p5/draw">draw()</a> to execute once, and <a href="#/p5/loop">loop()</a> will cause the code
-     * inside <a href="#/p5/draw">draw()</a> to resume executing continuously.
+     * Declaring the function `draw()` sets a code block to run repeatedly
+     * once the sketch starts. It’s used to create animations and respond to
+     * user inputs:
      *
-     * The number of times <a href="#/p5/draw">draw()</a> executes in each second may be controlled with
-     * the <a href="#/p5/frameRate">frameRate()</a> function.
+     * ```js
+     * function draw() {
+     *   // Code to run repeatedly.
+     * }
+     * ```
      *
-     * There can only be one <a href="#/p5/draw">draw()</a> function for each sketch, and <a href="#/p5/draw">draw()</a> must
-     * exist if you want the code to run continuously, or to process events such
-     * as <a href="#/p5/mousePressed">mousePressed()</a>. Sometimes, you might have an empty call to <a href="#/p5/draw">draw()</a> in
-     * your program, as shown in the above example.
+     * This is often called the "draw loop" because p5.js calls the code in
+     * `draw()` in a loop behind the scenes. By default, `draw()` tries to run
+     * 60 times per second. The actual rate depends on many factors. The
+     * drawing rate, called the "frame rate", can be controlled by calling
+     * <a href="#/p5/frameRate">frameRate()</a>. The number of times `draw()`
+     * has run is stored in the system variable
+     * <a href="#/p5/frameCount">frameCount()</a>.
      *
-     * It is important to note that the drawing coordinate system will be reset
-     * at the beginning of each <a href="#/p5/draw">draw()</a> call. If any transformations are performed
-     * within <a href="#/p5/draw">draw()</a> (ex: scale, rotate, translate), their effects will be
-     * undone at the beginning of <a href="#/p5/draw">draw()</a>, so transformations will not accumulate
-     * over time. On the other hand, styling applied (ex: fill, stroke, etc) will
-     * remain in effect.
+     * Code placed within `draw()` begins looping after
+     * <a href="#/p5/setup">setup()</a> runs. `draw()` will run until the user
+     * closes the sketch. `draw()` can be stopped by calling the
+     * <a href="#/p5/noLoop">noLoop()</a> function. `draw()` can be resumed by
+     * calling the <a href="#/p5/loop">loop()</a> function.
      *
      * @method draw
+     *
      * @example
-     * <div><code>
-     * let yPos = 0;
+     * <div>
+     * <code>
      * function setup() {
-     *   // setup() runs once
-     *   frameRate(30);
+     *   createCanvas(100, 100);
+     *
+     *   // Paint the background once.
+     *   background(200);
+     *
+     *   describe(
+     *     'A white circle on a gray background. The circle follows the mouse as the user moves, leaving a trail.'
+     *   );
      * }
+     *
      * function draw() {
-     *   // draw() loops forever, until stopped
-     *   background(204);
-     *   yPos = yPos - 1;
-     *   if (yPos < 0) {
-     *     yPos = height;
-     *   }
-     *   line(0, yPos, width, yPos);
+     *   // Draw circles repeatedly.
+     *   circle(mouseX, mouseY, 40);
      * }
-     * </code></div>
+     * </code>
+     * </div>
      *
-     * @alt
-     * nothing displayed
+     * <div>
+     * <code>
+     * function setup() {
+     *   createCanvas(100, 100);
      *
+     *   describe(
+     *     'A white circle on a gray background. The circle follows the mouse as the user moves.'
+     *   );
+     * }
+     *
+     * function draw() {
+     *   // Paint the background repeatedly.
+     *   background(200);
+     *
+     *   // Draw circles repeatedly.
+     *   circle(mouseX, mouseY, 40);
+     * }
+     * </code>
+     * </div>
+     *
+     * <div>
+     * <code>
+     * // Double-click the canvas to change the circle's color.
+     *
+     * function setup() {
+     *   createCanvas(100, 100);
+     *
+     *   describe(
+     *     'A white circle on a gray background. The circle follows the mouse as the user moves. The circle changes color to pink when the user double-clicks.'
+     *   );
+     * }
+     *
+     * function draw() {
+     *   // Paint the background repeatedly.
+     *   background(200);
+     *
+     *   // Draw circles repeatedly.
+     *   circle(mouseX, mouseY, 40);
+     * }
+     *
+     * // Change the fill color when the user double-clicks.
+     * function doubleClicked() {
+     *   fill('deeppink');
+     * }
+     * </code>
+     * </div>
      */
 
     //////////////////////////////////////////////
@@ -392,8 +502,8 @@ class p5 {
       this.callRegisteredHooksFor('afterSetup');
     };
 
-    this._draw = () => {
-      const now = window.performance.now();
+    this._draw = requestAnimationFrameTimestamp => {
+      const now = requestAnimationFrameTimestamp || window.performance.now();
       const time_since_last = now - this._lastTargetFrameTime;
       const target_time_between_frames = 1000 / this._targetFrameRate;
 
@@ -448,29 +558,42 @@ class p5 {
     };
 
     /**
-     * Removes the entire p5 sketch. This will remove the canvas and any
-     * elements created by p5.js. It will also stop the draw loop and unbind
-     * any properties or methods from the window global scope. It will
-     * leave a variable p5 in case you wanted to create a new p5 sketch.
-     * If you like, you can set p5 = null to erase it. While all functions and
-     * variables and objects created by the p5 library will be removed, any
-     * other global variables created by your code will remain.
+     * Removes the sketch from the web page.
+     *
+     * Calling `remove()` stops the draw loop and removes any HTML elements
+     * created by the sketch, including the canvas. A new sketch can be
+     * created by using the <a href="#/p5/p5">p5()</a> constructor, as in
+     * `new p5()`.
      *
      * @method remove
+     *
      * @example
-     * <div class='norender'><code>
+     * <div>
+     * <code>
+     * // Double-click to remove the canvas.
+     *
+     * function setup() {
+     *   createCanvas(100, 100);
+     *
+     *   describe(
+     *     'A white circle on a gray background. The circle follows the mouse as the user moves. The sketch disappears when the user double-clicks.'
+     *   );
+     * }
+     *
      * function draw() {
-     *   ellipse(50, 50, 10, 10);
+     *   // Paint the background repeatedly.
+     *   background(200);
+     *
+     *   // Draw circles repeatedly.
+     *   circle(mouseX, mouseY, 40);
      * }
      *
-     * function mousePressed() {
-     *   remove(); // remove whole sketch on mouse press
+     * // Remove the sketch when the user double-clicks.
+     * function doubleClicked() {
+     *   remove();
      * }
-     * </code></div>
-     *
-     * @alt
-     * nothing displayed
-     *
+     * </code>
+     * </div>
      */
     this.remove = () => {
       // Remove start listener to prevent orphan canvas being created
@@ -534,6 +657,9 @@ class p5 {
         p5.instance = null;
       }
     };
+
+    // ensure correct reporting of window dimensions
+    this._updateWindowSize();
 
     // call any registered init functions
     this._registeredMethods.init.forEach(function(f) {
@@ -749,27 +875,37 @@ class p5 {
 p5.instance = null;
 
 /**
- * Turn off some features of the friendly error system (FES), which can give
- * a significant boost to performance when needed.
+ * Turns off the parts of the Friendly Error System (FES) that impact performance.
  *
- * Note that this will disable the parts of the FES that cause performance
- * slowdown (like argument checking). Friendly errors that have no performance
- * cost (like giving a descriptive error if a file load fails, or warning you
- * if you try to override p5.js functions in the global space),
- * will remain in place.
- *
- * See <a href='https://github.com/processing/p5.js/wiki/Optimizing-p5.js-Code-for-Performance#disable-the-friendly-error-system-fes'>
- * disabling the friendly error system</a>.
+ * The <a href="https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md" target="_blank">FES</a>
+ * can cause sketches to draw slowly because it does extra work behind the
+ * scenes. For example, the FES checks the arguments passed to functions,
+ * which takes time to process. Disabling the FES can significantly improve
+ * performance by turning off these checks.
  *
  * @property {Boolean} disableFriendlyErrors
+ *
  * @example
- * <div class="norender notest"><code>
+ * <div>
+ * <code>
+ * // Disable the FES.
  * p5.disableFriendlyErrors = true;
  *
  * function setup() {
- *   createCanvas(100, 50);
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // The circle() function requires three arguments. The
+ *   // next line would normally display a friendly error that
+ *   // points this out. Instead, nothing happens and it fails
+ *   // silently.
+ *   circle(50, 50);
+ *
+ *   describe('A gray square.');
  * }
- * </code></div>
+ * </code>
+ * </div>
  */
 p5.disableFriendlyErrors = false;
 

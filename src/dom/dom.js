@@ -244,7 +244,8 @@ p5.prototype._wrapElement = function (elt) {
     children.length > 0 &&
     children.every(function (c) {
       return c.tagName === 'INPUT' || c.tagName === 'LABEL';
-    })
+    }) &&
+    (elt.tagName === 'DIV' || elt.tagName === 'SPAN')
   ) {
     return this.createRadio(new p5.Element(elt, this));
   } else {

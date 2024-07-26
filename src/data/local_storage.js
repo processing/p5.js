@@ -8,52 +8,117 @@
 
 import p5 from '../core/main';
 /**
+ * Stores a value in the web browser's local storage.
  *
- * Stores a value in local storage under the key name.
- * Local storage is saved in the browser and persists
- * between browsing sessions and page reloads.
- * The key can be the name of the variable but doesn't
- * have to be. To retrieve stored items
- * see <a href="#/p5/getItem">getItem</a>.
+ * Web browsers can save small amounts of data using the built-in
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage" target="_blank">localStorage object</a>.
+ * Data stored in `localStorage` can be retrieved at any point, even after
+ * refreshing a page or restarting the browser. Data are stored as key-value
+ * pairs.
  *
- * Sensitive data such as passwords or personal information
- * should not be stored in local storage.
+ * `storeItem()` makes it easy to store values in `localStorage` and
+ * <a href="#/p5/getItem">getItem()</a> makes it easy to retrieve them.
+ *
+ * The first parameter, `key`, is the name of the value to be stored as a
+ * string.
+ *
+ * The second parameter, `value`, is the value to be stored. Values can have
+ * any type.
+ *
+ * Note: Sensitive data such as passwords or personal information shouldn't be
+ * stored in `localStorage`.
  *
  * @method storeItem
  * @for p5
- * @param {String} key
- * @param {String|Number|Object|Boolean|p5.Color|p5.Vector} value
+ * @param {String} key name of the value.
+ * @param {String|Number|Boolean|Object|Array} value value to be stored.
  *
  * @example
- * <div><code>
- * // Type to change the letter in the
- * // center of the canvas.
- * // If you reload the page, it will
- * // still display the last key you entered
- *
- * let myText;
- *
+ * <div>
+ * <code>
  * function setup() {
  *   createCanvas(100, 100);
- *   myText = getItem('myText');
- *   if (myText === null) {
- *     myText = '';
- *   }
- *   describe(`When you type the key name is displayed as black text on white background.
- *   If you reload the page, the last letter typed is still displaying.`);
+ *
+ *   // Store the player's name.
+ *   storeItem('name', 'Feist');
+ *
+ *   // Store the player's score.
+ *   storeItem('score', 1234);
+ *
+ *   describe('The text "Feist: 1234" written in black on a gray background.');
  * }
  *
  * function draw() {
- *   textSize(40);
- *   background(255);
- *   text(myText, width / 2, height / 2);
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textSize(14);
+ *
+ *   // Retrieve the name.
+ *   let name = getItem('name');
+ *
+ *   // Retrieve the score.
+ *   let score = getItem('score');
+ *
+ *   // Display the score.
+ *   text(`${name}: ${score}`, 50, 50);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Create an object.
+ *   let p = { x: 50, y: 50 };
+ *
+ *   // Store the object.
+ *   storeItem('position', p);
+ *
+ *   describe('A white circle on a gray background.');
  * }
  *
- * function keyPressed() {
- *   myText = key;
- *   storeItem('myText', myText);
+ * function draw() {
+ *   background(200);
+ *
+ *   // Retrieve the object.
+ *   let p = getItem('position');
+ *
+ *   // Draw the circle.
+ *   circle(p.x, p.y, 30);
  * }
- * </code></div>
+ * </code>
+ * </div>
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Create a p5.Color object.
+ *   let c = color('deeppink');
+ *
+ *   // Store the object.
+ *   storeItem('color', c);
+ *
+ *   describe('A pink circle on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Retrieve the object.
+ *   let c = getItem('color');
+ *
+ *   // Style the circle.
+ *   fill(c);
+ *
+ *   // Draw the circle.
+ *   circle(50, 50, 30);
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.storeItem = function(key, value) {
   if (typeof key !== 'string') {
@@ -97,44 +162,119 @@ p5.prototype.storeItem = function(key, value) {
 };
 
 /**
+ * Returns a value in the web browser's local storage.
  *
- * Returns the value of an item that was stored in local storage
- * using storeItem()
+ * Web browsers can save small amounts of data using the built-in
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage" target="_blank">localStorage object</a>.
+ * Data stored in `localStorage` can be retrieved at any point, even after
+ * refreshing a page or restarting the browser. Data are stored as key-value
+ * pairs.
+ *
+ * <a href="#/p5/storeItem">storeItem()</a> makes it easy to store values in
+ * `localStorage` and `getItem()` makes it easy to retrieve them.
+ *
+ * The first parameter, `key`, is the name of the value to be stored as a
+ * string.
+ *
+ * The second parameter, `value`, is the value to be retrieved a string. For
+ * example, calling `getItem('size')` retrieves the value with the key `size`.
+ *
+ * Note: Sensitive data such as passwords or personal information shouldn't be
+ * stored in `localStorage`.
  *
  * @method getItem
  * @for p5
- * @param {String} key name that you wish to use to store in local storage
- * @return {Number|Object|String|Boolean|p5.Color|p5.Vector} Value of stored item
+ * @param {String} key name of the value.
+ * @return {String|Number|Boolean|Object|Array} stored item.
  *
  * @example
- * <div><code>
- * // Click the mouse to change
- * // the color of the background
- * // Once you have changed the color
- * // it will stay changed even when you
- * // reload the page.
- *
- * let myColor;
- *
+ * <div>
+ * <code>
  * function setup() {
  *   createCanvas(100, 100);
- *   myColor = getItem('myColor');
+ *
+ *   // Store the player's name.
+ *   storeItem('name', 'Feist');
+ *
+ *   // Store the player's score.
+ *   storeItem('score', 1234);
+ *
+ *   describe('The text "Feist: 1234" written in black on a gray background.');
  * }
  *
  * function draw() {
- *   if (myColor !== null) {
- *     background(myColor);
- *   }
- *   describe(`If you click, the canvas changes to a random color.·
- *     If you reload the page, the canvas is still the color it was when the
- *     page was previously loaded.`);
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textSize(14);
+ *
+ *   // Retrieve the name.
+ *   let name = getItem('name');
+ *
+ *   // Retrieve the score.
+ *   let score = getItem('score');
+ *
+ *   // Display the score.
+ *   text(`${name}: ${score}`, 50, 50);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Create an object.
+ *   let p = { x: 50, y: 50 };
+ *
+ *   // Store the object.
+ *   storeItem('position', p);
+ *
+ *   describe('A white circle on a gray background.');
  * }
  *
- * function mousePressed() {
- *   myColor = color(random(255), random(255), random(255));
- *   storeItem('myColor', myColor);
+ * function draw() {
+ *   background(200);
+ *
+ *   // Retrieve the object.
+ *   let p = getItem('position');
+ *
+ *   // Draw the circle.
+ *   circle(p.x, p.y, 30);
  * }
- * </code></div>
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Create a p5.Color object.
+ *   let c = color('deeppink');
+ *
+ *   // Store the object.
+ *   storeItem('color', c);
+ *
+ *   describe('A pink circle on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Retrieve the object.
+ *   let c = getItem('color');
+ *
+ *   // Style the circle.
+ *   fill(c);
+ *
+ *   // Draw the circle.
+ *   circle(50, 50, 30);
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.getItem = function(key) {
   let value = localStorage.getItem(key);
@@ -171,28 +311,62 @@ p5.prototype.getItem = function(key) {
 };
 
 /**
+ * Removes all items in the web browser's local storage.
  *
- * Clears all local storage items set with storeItem()
- * for the current domain.
+ * Web browsers can save small amounts of data using the built-in
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage" target="_blank">localStorage object</a>.
+ * Data stored in `localStorage` can be retrieved at any point, even after
+ * refreshing a page or restarting the browser. Data are stored as key-value
+ * pairs. Calling `clearStorage()` removes all data from `localStorage`.
+ *
+ * Note: Sensitive data such as passwords or personal information shouldn't be
+ * stored in `localStorage`.
  *
  * @method clearStorage
  * @for p5
  *
  * @example
- * <div class="norender">
+ * <div>
  * <code>
+ * // Double-click to clear localStorage.
+ *
  * function setup() {
- *   let myNum = 10;
- *   let myBool = false;
- *   storeItem('myNum', myNum);
- *   storeItem('myBool', myBool);
- *   print(getItem('myNum')); // logs 10 to the console
- *   print(getItem('myBool')); // logs false to the console
- *   clearStorage();
- *   print(getItem('myNum')); // logs null to the console
- *   print(getItem('myBool')); // logs null to the console
+ *   createCanvas(100, 100);
+ *
+ *   // Store the player's name.
+ *   storeItem('name', 'Feist');
+ *
+ *   // Store the player's score.
+ *   storeItem('score', 1234);
+ *
+ *   describe(
+ *     'The text "Feist: 1234" written in black on a gray background. The text "null: null" appears when the user double-clicks.'
+ *   );
  * }
- * </code></div>
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textSize(14);
+ *
+ *   // Retrieve the name.
+ *   let name = getItem('name');
+ *
+ *   // Retrieve the score.
+ *   let score = getItem('score');
+ *
+ *   // Display the score.
+ *   text(`${name}: ${score}`, 50, 50);
+ * }
+ *
+ * // Clear localStorage when the user double-clicks.
+ * function doubleClicked() {
+ *   clearStorage();
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.clearStorage = function () {
   const keys = Object.keys(localStorage);
@@ -204,24 +378,69 @@ p5.prototype.clearStorage = function () {
 };
 
 /**
+ * Removes an item from the web browser's local storage.
  *
- * Removes an item that was stored with storeItem()
+ * Web browsers can save small amounts of data using the built-in
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage" target="_blank">localStorage object</a>.
+ * Data stored in `localStorage` can be retrieved at any point, even after
+ * refreshing a page or restarting the browser. Data are stored as key-value
+ * pairs.
+ *
+ * <a href="#/p5/storeItem">storeItem()</a> makes it easy to store values in
+ * `localStorage` and `removeItem()` makes it easy to delete them.
+ *
+ * The parameter, `key`, is the name of the value to remove as a string. For
+ * example, calling `removeItem('size')` removes the item with the key `size`.
+ *
+ * Note: Sensitive data such as passwords or personal information shouldn't be
+ * stored in `localStorage`.
  *
  * @method removeItem
- * @param {String} key
+ * @param {String} key name of the value to remove.
  * @for p5
  *
  * @example
- * <div class="norender">
+ * <div>
  * <code>
+ * // Double-click to remove an item from localStorage.
+ *
  * function setup() {
- *   let myVar = 10;
- *   storeItem('myVar', myVar);
- *   print(getItem('myVar')); // logs 10 to the console
- *   removeItem('myVar');
- *   print(getItem('myVar')); // logs null to the console
+ *   createCanvas(100, 100);
+ *
+ *   // Store the player's name.
+ *   storeItem('name', 'Feist');
+ *
+ *   // Store the player's score.
+ *   storeItem('score', 1234);
+ *
+ *   describe(
+ *     'The text "Feist: 1234" written in black on a gray background. The text "Feist: null" appears when the user double-clicks.'
+ *   );
  * }
- * </code></div>
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textSize(14);
+ *
+ *   // Retrieve the name.
+ *   let name = getItem('name');
+ *
+ *   // Retrieve the score.
+ *   let score = getItem('score');
+ *
+ *   // Display the score.
+ *   text(`${name}: ${score}`, 50, 50);
+ * }
+ *
+ * // Remove the word from localStorage when the user double-clicks.
+ * function doubleClicked() {
+ *   removeItem('score');
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.removeItem = function(key) {
   if (typeof key !== 'string') {
