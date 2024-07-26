@@ -10,6 +10,54 @@
 import p5 from '../core/main';
 import * as constants from '../core/constants';
 import color_conversion from './color_conversion';
+import {
+  ColorSpace,
+  to,
+  // toGamut,
+  serialize,
+  parse,
+  // range,
+
+  XYZ_D65,
+  sRGB_Linear,
+  sRGB,
+  HSL,
+  HSV,
+  HWB,
+
+  XYZ_D50,
+  Lab,
+  LCH,
+
+  OKLab,
+  OKLCH,
+
+  P3_Linear,
+  P3,
+
+  A98RGB_Linear,
+  A98RGB
+} from 'colorjs.io/fn';
+
+ColorSpace.register(XYZ_D65);
+ColorSpace.register(sRGB_Linear);
+ColorSpace.register(sRGB);
+ColorSpace.register(HSL);
+ColorSpace.register(HSV);
+ColorSpace.register(HWB);
+
+ColorSpace.register(XYZ_D50);
+ColorSpace.register(Lab);
+ColorSpace.register(LCH);
+
+ColorSpace.register(OKLab);
+ColorSpace.register(OKLCH);
+
+ColorSpace.register(P3_Linear);
+ColorSpace.register(P3);
+
+ColorSpace.register(A98RGB_Linear);
+ColorSpace.register(A98RGB);
 
 /*
  * CSS named colors.
@@ -345,19 +393,41 @@ const colorPatterns = {
  *                                          or CSS color.
  */
 p5.Color = class Color {
+  color;
+
   constructor(pInst, vals) {
-    // Record color mode and maxes at time of construction.
-    this._storeModeAndMaxes(pInst._colorMode, pInst._colorMaxes);
+    // // Record color mode and maxes at time of construction.
+    // this._storeModeAndMaxes(pInst._colorMode, pInst._colorMaxes);
 
-    // Calculate normalized RGBA values.
-    if (![constants.RGB, constants.HSL, constants.HSB].includes(this.mode)) {
-      throw new Error(`${this.mode} is an invalid colorMode.`);
-    } else {
-      this._array = Color._parseInputs.apply(this, vals);
+    // // Calculate normalized RGBA values.
+    // if (![constants.RGB, constants.HSL, constants.HSB].includes(this.mode)) {
+    //   throw new Error(`${this.mode} is an invalid colorMode.`);
+    // } else {
+    //   this._array = Color._parseInputs.apply(this, vals);
+    // }
+
+    // // Expose closest screen color.
+    // this._calculateLevels();
+    if(typeof vals[0] === 'string'){
+      this.color = parse(vals[0]);
+    }else{
+      let alpha = 1;
+      if(vals.length === 4){
+        alpha = vals.pop() / 100;
+      }else if (vals.length === 2){
+        alpha = vals[1] / 100;
+        vals = [vals[0], vals[0], vals[0]];
+      }else if(vals.length === 1){
+        vals = [vals[0], vals[0], vals[0]];
+      }
+      const color = {
+        // space: pInst._colorMode
+        space: 'srgb',
+        coords: vals.map(c => c / 255),
+        alpha
+      };
+      this.color = to(color, 'srgb');
     }
-
-    // Expose closest screen color.
-    this._calculateLevels();
   }
 
   /**
@@ -402,170 +472,174 @@ p5.Color = class Color {
    * </div>
    */
   toString(format) {
-    const a = this.levels;
-    const f = this._array;
-    const alpha = f[3]; // String representation uses normalized alpha
+    // NOTE: take format from color with sensible defaults
+    return serialize(this.color, {
+      format
+    });
+    // const a = this.levels;
+    // const f = this._array;
+    // const alpha = f[3]; // String representation uses normalized alpha
 
-    switch (format) {
-      case '#rrggbb':
-        return '#'.concat(
-          a[0] < 16 ? '0'.concat(a[0].toString(16)) : a[0].toString(16),
-          a[1] < 16 ? '0'.concat(a[1].toString(16)) : a[1].toString(16),
-          a[2] < 16 ? '0'.concat(a[2].toString(16)) : a[2].toString(16)
-        );
+    // switch (format) {
+    //   case '#rrggbb':
+    //     return '#'.concat(
+    //       a[0] < 16 ? '0'.concat(a[0].toString(16)) : a[0].toString(16),
+    //       a[1] < 16 ? '0'.concat(a[1].toString(16)) : a[1].toString(16),
+    //       a[2] < 16 ? '0'.concat(a[2].toString(16)) : a[2].toString(16)
+    //     );
 
-      case '#rrggbbaa':
-        return '#'.concat(
-          a[0] < 16 ? '0'.concat(a[0].toString(16)) : a[0].toString(16),
-          a[1] < 16 ? '0'.concat(a[1].toString(16)) : a[1].toString(16),
-          a[2] < 16 ? '0'.concat(a[2].toString(16)) : a[2].toString(16),
-          a[3] < 16 ? '0'.concat(a[3].toString(16)) : a[3].toString(16)
-        );
+    //   case '#rrggbbaa':
+    //     return '#'.concat(
+    //       a[0] < 16 ? '0'.concat(a[0].toString(16)) : a[0].toString(16),
+    //       a[1] < 16 ? '0'.concat(a[1].toString(16)) : a[1].toString(16),
+    //       a[2] < 16 ? '0'.concat(a[2].toString(16)) : a[2].toString(16),
+    //       a[3] < 16 ? '0'.concat(a[3].toString(16)) : a[3].toString(16)
+    //     );
 
-      case '#rgb':
-        return '#'.concat(
-          Math.round(f[0] * 15).toString(16),
-          Math.round(f[1] * 15).toString(16),
-          Math.round(f[2] * 15).toString(16)
-        );
+    //   case '#rgb':
+    //     return '#'.concat(
+    //       Math.round(f[0] * 15).toString(16),
+    //       Math.round(f[1] * 15).toString(16),
+    //       Math.round(f[2] * 15).toString(16)
+    //     );
 
-      case '#rgba':
-        return '#'.concat(
-          Math.round(f[0] * 15).toString(16),
-          Math.round(f[1] * 15).toString(16),
-          Math.round(f[2] * 15).toString(16),
-          Math.round(f[3] * 15).toString(16)
-        );
+    //   case '#rgba':
+    //     return '#'.concat(
+    //       Math.round(f[0] * 15).toString(16),
+    //       Math.round(f[1] * 15).toString(16),
+    //       Math.round(f[2] * 15).toString(16),
+    //       Math.round(f[3] * 15).toString(16)
+    //     );
 
-      case 'rgb':
-        return 'rgb('.concat(a[0], ', ', a[1], ', ', a[2], ')');
+    //   case 'rgb':
+    //     return 'rgb('.concat(a[0], ', ', a[1], ', ', a[2], ')');
 
-      case 'rgb%':
-        return 'rgb('.concat(
-          (100 * f[0]).toPrecision(3),
-          '%, ',
-          (100 * f[1]).toPrecision(3),
-          '%, ',
-          (100 * f[2]).toPrecision(3),
-          '%)'
-        );
+    //   case 'rgb%':
+    //     return 'rgb('.concat(
+    //       (100 * f[0]).toPrecision(3),
+    //       '%, ',
+    //       (100 * f[1]).toPrecision(3),
+    //       '%, ',
+    //       (100 * f[2]).toPrecision(3),
+    //       '%)'
+    //     );
 
-      case 'rgba%':
-        return 'rgba('.concat(
-          (100 * f[0]).toPrecision(3),
-          '%, ',
-          (100 * f[1]).toPrecision(3),
-          '%, ',
-          (100 * f[2]).toPrecision(3),
-          '%, ',
-          (100 * f[3]).toPrecision(3),
-          '%)'
-        );
+    //   case 'rgba%':
+    //     return 'rgba('.concat(
+    //       (100 * f[0]).toPrecision(3),
+    //       '%, ',
+    //       (100 * f[1]).toPrecision(3),
+    //       '%, ',
+    //       (100 * f[2]).toPrecision(3),
+    //       '%, ',
+    //       (100 * f[3]).toPrecision(3),
+    //       '%)'
+    //     );
 
-      case 'hsb':
-      case 'hsv':
-        if (!this.hsba) this.hsba = color_conversion._rgbaToHSBA(this._array);
-        return 'hsb('.concat(
-          this.hsba[0] * this.maxes[constants.HSB][0],
-          ', ',
-          this.hsba[1] * this.maxes[constants.HSB][1],
-          ', ',
-          this.hsba[2] * this.maxes[constants.HSB][2],
-          ')'
-        );
+    //   case 'hsb':
+    //   case 'hsv':
+    //     if (!this.hsba) this.hsba = color_conversion._rgbaToHSBA(this._array);
+    //     return 'hsb('.concat(
+    //       this.hsba[0] * this.maxes[constants.HSB][0],
+    //       ', ',
+    //       this.hsba[1] * this.maxes[constants.HSB][1],
+    //       ', ',
+    //       this.hsba[2] * this.maxes[constants.HSB][2],
+    //       ')'
+    //     );
 
-      case 'hsb%':
-      case 'hsv%':
-        if (!this.hsba) this.hsba = color_conversion._rgbaToHSBA(this._array);
-        return 'hsb('.concat(
-          (100 * this.hsba[0]).toPrecision(3),
-          '%, ',
-          (100 * this.hsba[1]).toPrecision(3),
-          '%, ',
-          (100 * this.hsba[2]).toPrecision(3),
-          '%)'
-        );
+    //   case 'hsb%':
+    //   case 'hsv%':
+    //     if (!this.hsba) this.hsba = color_conversion._rgbaToHSBA(this._array);
+    //     return 'hsb('.concat(
+    //       (100 * this.hsba[0]).toPrecision(3),
+    //       '%, ',
+    //       (100 * this.hsba[1]).toPrecision(3),
+    //       '%, ',
+    //       (100 * this.hsba[2]).toPrecision(3),
+    //       '%)'
+    //     );
 
-      case 'hsba':
-      case 'hsva':
-        if (!this.hsba) this.hsba = color_conversion._rgbaToHSBA(this._array);
-        return 'hsba('.concat(
-          this.hsba[0] * this.maxes[constants.HSB][0],
-          ', ',
-          this.hsba[1] * this.maxes[constants.HSB][1],
-          ', ',
-          this.hsba[2] * this.maxes[constants.HSB][2],
-          ', ',
-          alpha,
-          ')'
-        );
+    //   case 'hsba':
+    //   case 'hsva':
+    //     if (!this.hsba) this.hsba = color_conversion._rgbaToHSBA(this._array);
+    //     return 'hsba('.concat(
+    //       this.hsba[0] * this.maxes[constants.HSB][0],
+    //       ', ',
+    //       this.hsba[1] * this.maxes[constants.HSB][1],
+    //       ', ',
+    //       this.hsba[2] * this.maxes[constants.HSB][2],
+    //       ', ',
+    //       alpha,
+    //       ')'
+    //     );
 
-      case 'hsba%':
-      case 'hsva%':
-        if (!this.hsba) this.hsba = color_conversion._rgbaToHSBA(this._array);
-        return 'hsba('.concat(
-          (100 * this.hsba[0]).toPrecision(3),
-          '%, ',
-          (100 * this.hsba[1]).toPrecision(3),
-          '%, ',
-          (100 * this.hsba[2]).toPrecision(3),
-          '%, ',
-          (100 * alpha).toPrecision(3),
-          '%)'
-        );
+    //   case 'hsba%':
+    //   case 'hsva%':
+    //     if (!this.hsba) this.hsba = color_conversion._rgbaToHSBA(this._array);
+    //     return 'hsba('.concat(
+    //       (100 * this.hsba[0]).toPrecision(3),
+    //       '%, ',
+    //       (100 * this.hsba[1]).toPrecision(3),
+    //       '%, ',
+    //       (100 * this.hsba[2]).toPrecision(3),
+    //       '%, ',
+    //       (100 * alpha).toPrecision(3),
+    //       '%)'
+    //     );
 
-      case 'hsl':
-        if (!this.hsla) this.hsla = color_conversion._rgbaToHSLA(this._array);
-        return 'hsl('.concat(
-          this.hsla[0] * this.maxes[constants.HSL][0],
-          ', ',
-          this.hsla[1] * this.maxes[constants.HSL][1],
-          ', ',
-          this.hsla[2] * this.maxes[constants.HSL][2],
-          ')'
-        );
+    //   case 'hsl':
+    //     if (!this.hsla) this.hsla = color_conversion._rgbaToHSLA(this._array);
+    //     return 'hsl('.concat(
+    //       this.hsla[0] * this.maxes[constants.HSL][0],
+    //       ', ',
+    //       this.hsla[1] * this.maxes[constants.HSL][1],
+    //       ', ',
+    //       this.hsla[2] * this.maxes[constants.HSL][2],
+    //       ')'
+    //     );
 
-      case 'hsl%':
-        if (!this.hsla) this.hsla = color_conversion._rgbaToHSLA(this._array);
-        return 'hsl('.concat(
-          (100 * this.hsla[0]).toPrecision(3),
-          '%, ',
-          (100 * this.hsla[1]).toPrecision(3),
-          '%, ',
-          (100 * this.hsla[2]).toPrecision(3),
-          '%)'
-        );
+    //   case 'hsl%':
+    //     if (!this.hsla) this.hsla = color_conversion._rgbaToHSLA(this._array);
+    //     return 'hsl('.concat(
+    //       (100 * this.hsla[0]).toPrecision(3),
+    //       '%, ',
+    //       (100 * this.hsla[1]).toPrecision(3),
+    //       '%, ',
+    //       (100 * this.hsla[2]).toPrecision(3),
+    //       '%)'
+    //     );
 
-      case 'hsla':
-        if (!this.hsla) this.hsla = color_conversion._rgbaToHSLA(this._array);
-        return 'hsla('.concat(
-          this.hsla[0] * this.maxes[constants.HSL][0],
-          ', ',
-          this.hsla[1] * this.maxes[constants.HSL][1],
-          ', ',
-          this.hsla[2] * this.maxes[constants.HSL][2],
-          ', ',
-          alpha,
-          ')'
-        );
+    //   case 'hsla':
+    //     if (!this.hsla) this.hsla = color_conversion._rgbaToHSLA(this._array);
+    //     return 'hsla('.concat(
+    //       this.hsla[0] * this.maxes[constants.HSL][0],
+    //       ', ',
+    //       this.hsla[1] * this.maxes[constants.HSL][1],
+    //       ', ',
+    //       this.hsla[2] * this.maxes[constants.HSL][2],
+    //       ', ',
+    //       alpha,
+    //       ')'
+    //     );
 
-      case 'hsla%':
-        if (!this.hsla) this.hsla = color_conversion._rgbaToHSLA(this._array);
-        return 'hsl('.concat(
-          (100 * this.hsla[0]).toPrecision(3),
-          '%, ',
-          (100 * this.hsla[1]).toPrecision(3),
-          '%, ',
-          (100 * this.hsla[2]).toPrecision(3),
-          '%, ',
-          (100 * alpha).toPrecision(3),
-          '%)'
-        );
+    //   case 'hsla%':
+    //     if (!this.hsla) this.hsla = color_conversion._rgbaToHSLA(this._array);
+    //     return 'hsl('.concat(
+    //       (100 * this.hsla[0]).toPrecision(3),
+    //       '%, ',
+    //       (100 * this.hsla[1]).toPrecision(3),
+    //       '%, ',
+    //       (100 * this.hsla[2]).toPrecision(3),
+    //       '%, ',
+    //       (100 * alpha).toPrecision(3),
+    //       '%)'
+    //     );
 
-      case 'rgba':
-      default:
-        return 'rgba('.concat(a[0], ',', a[1], ',', a[2], ',', alpha, ')');
-    }
+    //   case 'rgba':
+    //   default:
+    //     return 'rgba('.concat(a[0], ',', a[1], ',', a[2], ',', alpha, ')');
+    // }
   }
 
   /**
