@@ -6,7 +6,8 @@
     "preview": "vite",
     "dev": "grunt yui browserify:dev connect:yui watch:quick",
     "docs": "documentation build ./src/**/*.js ./src/**/**/*.js -o ./docs/data.json && node ./utils/convert.js",
-    "test": "vitest run",
+    "test": "vitest run --browser.headless true",
+    "test:dev": "vitest",
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."
   },
@@ -29,7 +30,7 @@
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
-    "@vitest/browser": "^1.6.0",
+    "@vitest/browser": "^2.0.4",
     "all-contributors-cli": "^6.19.0",
     "babel-plugin-i18next-extract": "^0.5.0",
     "babel-plugin-istanbul": "^5.2.0",
@@ -71,7 +72,7 @@
     "unplugin-swc": "^1.4.2",
     "vite": "^5.0.2",
     "vite-plugin-string": "^1.2.2",
-    "vitest": "^1.6.0",
+    "vitest": "^2.0.4",
     "webdriverio": "^8.38.2"
   },
   "license": "LGPL-2.1",

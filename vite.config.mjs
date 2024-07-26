@@ -18,11 +18,13 @@ export default defineConfig({
       './test/unit/assets/*',
       './test/unit/visual/*'
     ],
+    testTimeout: 5000,
     globals: true,
     browser: {
       enabled: true,
-      headless: true,
-      name: 'chrome'
+      // headless: true,
+      name: 'chrome',
+      provider: 'webdriverio'
     }
   }
 });
