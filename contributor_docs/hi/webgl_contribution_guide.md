@@ -1,4 +1,4 @@
-<!-- How to get started working on the p5.js WebGL mode source code. -->
+<!-- p5.js WebGL मोड सोर्स कोड पर काम कैसे शुरू करें। -->
 
 # वेबजीएल योगदान गाइड
 

@@ -1,4 +1,4 @@
-<!-- Learn about how to manage and review contributions to p5.js. -->
+<!-- p5.js에 대한 기여를 관리하고 검토하는 방법에 대해 알아보세요. -->
 
 # 스튜어드(Steward) 지침
 
