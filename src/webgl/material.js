@@ -452,15 +452,10 @@ p5.prototype.shader = function (s) {
  * - `vec4 getVertexColor`: Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
  * - `void afterVertex`: Called at the end of the vertex shader.
  * - `void beforeFragment`: Called at the start of the fragment shader.
- * - `vec3 getPixelNormal`: Update the normal per pixel. It takes in `vec3 normal` and must return a modified version.
- * - `vec4 getBaseColor`: Update the per-pixel color of the surface. It takes in `vec4 color` and must return a modified version.
- * - `vec3 getAmbientMaterial`: Update the per-pixel ambient material. It takes in `vec3 color` and must return a modified version.
- * - `vec3 getSpecularMaterial`: Update the per-pixel specular material. It takes in `vec3 color` and must return a modified version.
- * - `float getShininess`: Update the per-pixel specular material. It takes in `float shininess` and must return a modified version.
- * - `vec2 getPixelUV`: Update the texture coordinates per pixel. It takes in `vec2 uv` and must return a modified version.
+ * - `Inputs getPixelInputs`: Update the per-pixel inputs of the material. It takes in an `Inputs` struct, which includes `vec3 normal`, `vec2 texCoord`, `vec3 ambientColor`, `vec4 color`, `vec3 ambientMaterial`, `vec3 specularMaterial`, `vec3 emissiveMaterial`, `float shininess`, and `vec3 ambientLight`. The struct can be modified and returned.
  * - `vec4 combineColors`: Take in a `ColorComponents` struct containing all the different components of light, and combining them into
  *   a single final color. The struct contains `vec3 baseColor`, `float opacity`, `vec3 ambientColor`, `vec3 specularColor`,
- *   `vec3 diffuse`, `vec3 ambient`, `vec3 specular`, and `vec3 emissive`.
+ *   `vec3 diffuse`, `vec3 ambientLight`, `vec3 specular`, and `vec3 emissive`.
  * - `vec4 getFinalColor`: Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
  * - `void afterFragment`: Called at the end of the fragment shader.
  *
@@ -493,6 +488,49 @@ p5.prototype.shader = function (s) {
  *   lights();
  *   noStroke();
  *   fill('red');
+ *   sphere(50);
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = materialShader().modify({
+ *     vertexDeclarations: 'out vec2 myUV;',
+ *     fragmentDeclarations: 'in vec2 myUV;',
+ *     'vec2 getUV': `(vec2 uv) {
+ *       // Store and return
+ *       myUV = uv;
+ *       return myUV;
+ *     }`,
+ *     'Inputs getPixelInputs': `(Inputs inputs) {
+ *       vec3 newNormal = inputs.normal;
+ *       // Simple bump mapping: adjust the normal based on position
+ *       newNormal.x += 0.05 * sin(inputs.texCoord.y * ${TWO_PI} * 15.0);
+ *       newNormal.y += 0.05 * sin(inputs.texCoord.x * ${TWO_PI} * 15.0);
+ *       inputs.normal = normalize(newNormal);
+ *       return inputs;
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   ambientLight(50);
+ *   pointLight(
+ *     255, 255, 255,
+ *     100*cos(frameCount*0.04), -50, 100*sin(frameCount*0.04)
+ *   );
+ *   noStroke();
+ *   fill('red');
+ *   shininess(200);
+ *   specularMaterial(255);
  *   sphere(50);
  * }
  * </code>
@@ -547,14 +585,47 @@ p5.prototype.materialShader = function() {
  *   shader(myShader);
  *   myShader.setUniform('time', millis());
  *   noStroke();
- *   sphere(100);
+ *   sphere(50);
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = normalShader().modify({
+ *     'vec3 getWorldNormal': '(vec3 normal) { return abs(normal); }',
+ *     'vec4 getFinalColor': `(vec4 color) {
+ *       // Map the r, g, and b values of the old normal to new colors
+ *       // instead of just red, green, and blue:
+ *       vec3 newColor =
+ *         color.r * vec3(89.0, 240.0, 232.0) / 255.0 +
+ *         color.g * vec3(240.0, 237.0, 89.0) / 255.0 +
+ *         color.b * vec3(205.0, 55.0, 222.0) / 255.0;
+ *       newColor = newColor / (color.r + color.g + color.b);
+ *       return vec4(newColor, 1.0) * color.a;
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   noStroke();
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.015);
+ *   box(100);
  * }
  * </code>
  * </div>
  */
 p5.prototype.normalShader = function() {
   this._assert3d('materialShader');
-  return this._renderer.materialShader();
+  return this._renderer.normalShader();
 };
 
 /**
@@ -626,6 +697,7 @@ p5.prototype.colorShader = function() {
  * - `vec4 getVertexColor`: Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
  * - `void afterVertex`: Called at the end of the vertex shader.
  * - `void beforeFragment`: Called at the start of the fragment shader.
+ * - `Inputs getPixelInputs`: Update the inputs to the shader. It takes in a struct `Inputs inputs`, which includes `vec4 color`, `vec2 tangent`, `vec2 center`, `vec2 position`, and `float strokeWeight`.
  * - `bool shouldDiscard`: Caps and joins are made by discarded pixels in the fragment shader to carve away unwanted areas. Use this to change this logic. It takes in a `bool willDiscard` and must return a modified version.
  * - `vec4 getFinalColor`: Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
  * - `void afterFragment`: Called at the end of the fragment shader.
@@ -644,28 +716,20 @@ p5.prototype.colorShader = function() {
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = strokeShader().modify({
- *     vertexDeclarations: `
- *       out vec2 myCenter;
- *       out vec2 myPosition;
- *     `,
  *     fragmentDeclarations: `
- *       in vec2 myCenter;
- *       in vec2 myPosition;
+ *       vec2 myCenter;
+ *       vec2 myPosition;
  *       float random(vec2 p) {
  *         vec3 p3  = fract(vec3(p.xyx) * .1031);
  *         p3 += dot(p3, p3.yzx + 33.33);
  *         return fract((p3.x + p3.y) * p3.z);
  *       }
  *     `,
- *     'vec2 getLineCenter': `(vec2 center) {
+ *     'Inputs getPixelInputs': `(Inputs inputs) {
  *       // Store a copy, then return unchanged
- *       myCenter = center;
- *       return center;
- *     }`,
- *     'vec2 getLinePosition': `(vec2 position) {
- *       // Store a copy, then return unchanged
- *       myPosition = position;
- *       return position;
+ *       myCenter = inputs.center;
+ *       myPosition = inputs.position;
+ *       return inputs;
  *     }`,
  *     'vec4 getFinalColor': `(vec4 c) {
  *       if (length(myPosition - myCenter) + random(gl_FragCoord.xy)*10. > 15.) {

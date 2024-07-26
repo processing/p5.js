@@ -27,35 +27,55 @@ struct ColorComponents {
   vec3 emissive;
 };
 
+struct Inputs {
+  vec3 normal;
+  vec2 texCoord;
+  vec3 ambientLight;
+  vec3 ambientMaterial;
+  vec3 specularMaterial;
+  vec3 emissiveMaterial;
+  vec4 color;
+  float shininess;
+};
+
 void main(void) {
   HOOK_beforeFragment();
-  vec3 diffuse;
-  vec3 specular;
-  totalLight(vViewPosition, HOOK_getPixelNormal(normalize(vNormal)), HOOK_getShininess(uShininess), diffuse, specular);
 
-  // Calculating final color as result of all lights (plus emissive term).
-
-  vec2 texCoord = HOOK_getPixelUV(vTexCoord);
-  vec4 baseColor = HOOK_getBaseColor(
-    isTexture
+  Inputs inputs;
+  inputs.normal = normalize(vNormal);
+  inputs.texCoord = vTexCoord;
+  inputs.ambientLight = vAmbientColor;
+  inputs.color = isTexture
       // Textures come in with premultiplied alpha. To apply tint and still have
       // premultiplied alpha output, we need to multiply the RGB channels by the
       // tint RGB, and all channels by the tint alpha.
-      ? TEXTURE(uSampler, texCoord) * vec4(uTint.rgb/255., 1.) * (uTint.a/255.)
+      ? TEXTURE(uSampler, vTexCoord) * vec4(uTint.rgb/255., 1.) * (uTint.a/255.)
       // Colors come in with unmultiplied alpha, so we need to multiply the RGB
       // channels by alpha to convert it to premultiplied alpha.
-      : vec4(vColor.rgb * vColor.a, vColor.a)
-    );
+      : vec4(vColor.rgb * vColor.a, vColor.a);
+  inputs.shininess = uShininess;
+  inputs.ambientMaterial = uHasSetAmbient ? uAmbientMatColor.rgb : inputs.color.rgb;
+  inputs.specularMaterial = uSpecularMatColor.rgb;
+  inputs.emissiveMaterial = uEmissiveMatColor.rgb;
+  inputs = HOOK_getPixelInputs(inputs);
 
+  vec3 diffuse;
+  vec3 specular;
+  totalLight(vViewPosition, inputs.normal, inputs.shininess, diffuse, specular);
+
+  // Calculating final color as result of all lights (plus emissive term).
+
+  vec2 texCoord = inputs.texCoord;
+  vec4 baseColor = inputs.color;
   ColorComponents c;
   c.opacity = baseColor.a;
   c.baseColor = baseColor.rgb;
-  c.ambientColor = HOOK_getAmbientMaterial(uHasSetAmbient ? uAmbientMatColor.rgb : baseColor.rgb);
-  c.specularColor = HOOK_getSpecularMaterial(uSpecularMatColor.rgb);
+  c.ambientColor = inputs.ambientMaterial;
+  c.specularColor = inputs.specularMaterial;
   c.diffuse = diffuse;
-  c.ambient = vAmbientColor;
+  c.ambient = inputs.ambientLight;
   c.specular = specular;
-  c.emissive = uEmissiveMatColor.rgb;
+  c.emissive = inputs.emissiveMaterial;
   OUT_COLOR = HOOK_getFinalColor(HOOK_combineColors(c));
   HOOK_afterFragment();
 }

@@ -1824,12 +1824,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
             },
             fragment: {
               'void beforeFragment': '() {}',
-              'vec3 getPixelNormal': '(vec3 normal) { return normal; }',
-              'vec4 getBaseColor': '(vec4 color) { return color; }',
-              'vec3 getAmbientMaterial': '(vec3 color) { return color; }',
-              'vec3 getSpecularMaterial': '(vec3 color) { return color; }',
-              'float getShininess': '(float shininess) { return shininess; }',
-              'vec2 getPixelUV': '(vec2 uv) { return uv; }',
+              'Inputs getPixelInputs': '(Inputs inputs) { return inputs; }',
               'vec4 combineColors': `(ColorComponents components) {
                 vec4 color = vec4(0.);
                 color.rgb += components.diffuse * components.baseColor;
@@ -2023,6 +2018,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
           },
           fragment: {
             'void beforeFragment': '() {}',
+            'Inputs getPixelInputs': '(Inputs inputs) { return inputs }',
             'vec4 getFinalColor': '(vec4 color) { return color; }',
             'bool shouldDiscard': '(bool outside) { return outside; }',
             'void afterFragment': '() {}'

@@ -48,7 +48,7 @@ p5.Shader = class {
       // yourShader.modify(...).
       modified: {
         vertex: (options.modified && options.modified.vertex) || {},
-        fragment: (options.modified && options.modified.vertex) || {}
+        fragment: (options.modified && options.modified.fragment) || {}
       }
     };
   }
@@ -70,7 +70,9 @@ p5.Shader = class {
 
       // Add a #define so that if the shader wants to use preprocessor directives to
       // optimize away the extra function calls in main, it can do so
-      hooks += '#define AUGMENTED_HOOK_' + hookName + '\n';
+      if (this.hooks.modified[shaderType][hookDef]) {
+        hooks += '#define AUGMENTED_HOOK_' + hookName + '\n';
+      }
 
       hooks +=
         hookType + ' HOOK_' + hookName + this.hooks[shaderType][hookDef] + '\n';
@@ -136,7 +138,8 @@ p5.Shader = class {
    * of a hook, and the value is a string with the GLSL code for your hook. You
    * can also add a `declarations` key, where the value is a GLSL string declaring
    * <a href="#/p5.Shader/setUniform">uniform variables</a> and globals shared
-   * between hooks.
+   * between hooks. To add declarations jsut in a vertex or fragment shader, add
+   * `vertexDeclarations` and `fragmentDeclarations` keys.
    *
    * @method modify
    * @param {Object} [hooks] The hooks in the shader to replace.
@@ -165,7 +168,7 @@ p5.Shader = class {
    *   lights();
    *   noStroke();
    *   fill('red');
-   *   sphere(100);
+   *   sphere(50);
    * }
    * </code>
    * </div>
