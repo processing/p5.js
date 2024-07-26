@@ -2023,7 +2023,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
           },
           fragment: {
             'void beforeFragment': '() {}',
-            'Inputs getPixelInputs': '(Inputs inputs) { return inputs }',
+            'Inputs getPixelInputs': '(Inputs inputs) { return inputs; }',
             'vec4 getFinalColor': '(vec4 color) { return color; }',
             'bool shouldDiscard': '(bool outside) { return outside; }',
             'void afterFragment': '() {}'
