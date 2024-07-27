@@ -115,9 +115,13 @@ p5.Color = class Color {
       // _colorMode can be 'rgb', 'hsb', or 'hsl'
       // These should map to color.js color space
       let space = 'srgb';
+      let coords = vals;
       switch(pInst._colorMode){
         case 'rgb':
           space = 'srgb';
+          coords = vals.map(
+            (c, i) => c / pInst._colorMaxes[pInst._colorMode][i]
+          );
           break;
         case 'hsb':
           // TODO: need implementation
@@ -131,7 +135,7 @@ p5.Color = class Color {
 
       const color = {
         space,
-        coords: vals,
+        coords,
         alpha
       };
       this.color = to(color, space);
