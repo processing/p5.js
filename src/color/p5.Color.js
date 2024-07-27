@@ -101,7 +101,7 @@ p5.Color = class Color {
       }
 
     }else{
-      let alpha = 1;
+      let alpha;
 
       if(vals.length === 4){
         alpha = vals[vals.length-1];
@@ -111,7 +111,7 @@ p5.Color = class Color {
       }else if(vals.length === 1){
         vals = [vals[0], vals[0], vals[0]];
       }
-      alpha = alpha / pInst._colorMaxes[pInst._colorMode][3];
+      alpha = alpha ? alpha / pInst._colorMaxes[pInst._colorMode][3] : 1;
 
       // _colorMode can be 'rgb', 'hsb', or 'hsl'
       // These should map to color.js color space
@@ -120,9 +120,11 @@ p5.Color = class Color {
       switch(pInst._colorMode){
         case 'rgb':
           space = 'srgb';
-          coords = vals.map(
-            (c, i) => c / pInst._colorMaxes[pInst._colorMode][i]
-          );
+          coords = [
+            vals[0] / pInst._colorMaxes[pInst._colorMode][0],
+            vals[1] / pInst._colorMaxes[pInst._colorMode][1],
+            vals[2] / pInst._colorMaxes[pInst._colorMode][2]
+          ];
           break;
         case 'hsb':
           // TODO: need implementation
