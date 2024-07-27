@@ -95,6 +95,8 @@ p5.Color = class Color {
 
   constructor(pInst, vals) {
     // This changes with the sketch's setting
+    // NOTE: Maintaining separate maxes for different color space is awkward.
+    //       Consider just one universal maxes.
     this.maxes = pInst._colorMaxes;
     // This changes with the color object
     this.mode = pInst._colorMode;
@@ -242,8 +244,16 @@ p5.Color = class Color {
    * </div>
    */
   setRed(new_red) {
-    this._array[0] = new_red / this.maxes[constants.RGB][0];
-    this._calculateLevels();
+    const red_val = new_red / this.maxes[constants.RGB][0];
+    if(this.mode === constants.RGB){
+      this.color.coords[0] = red_val;
+    }else{
+      // Will do an imprecise conversion to 'srgb', not recommended
+      const space = this.color.space.id;
+      const representation = to(this.color, 'srgb');
+      representation.coords[0] = red_val;
+      this.color = to(representation, space);
+    }
   }
 
   /**
@@ -283,8 +293,16 @@ p5.Color = class Color {
    * </div>
    **/
   setGreen(new_green) {
-    this._array[1] = new_green / this.maxes[constants.RGB][1];
-    this._calculateLevels();
+    const green_val = new_green / this.maxes[constants.RGB][1];
+    if(this.mode === constants.RGB){
+      this.color.coords[0] = green_val;
+    }else{
+      // Will do an imprecise conversion to 'srgb', not recommended
+      const space = this.color.space.id;
+      const representation = to(this.color, 'srgb');
+      representation.coords[1] = green_val;
+      this.color = to(representation, space);
+    }
   }
 
   /**
@@ -324,8 +342,16 @@ p5.Color = class Color {
    * </div>
    **/
   setBlue(new_blue) {
-    this._array[2] = new_blue / this.maxes[constants.RGB][2];
-    this._calculateLevels();
+    const blue_val = new_blue / this.maxes[constants.RGB][2];
+    if(this.mode === constants.RGB){
+      this.color.coords[0] = blue_val;
+    }else{
+      // Will do an imprecise conversion to 'srgb', not recommended
+      const space = this.color.space.id;
+      const representation = to(this.color, 'srgb');
+      representation.coords[2] = blue_val;
+      this.color = to(representation, space);
+    }
   }
 
   /**
@@ -368,20 +394,6 @@ p5.Color = class Color {
    **/
   setAlpha(new_alpha) {
     this.color.alpha = new_alpha / this.maxes[this.mode][3];
-  }
-
-  // calculates and stores the closest screen levels
-  _calculateLevels() {
-    const array = this._array;
-    // (loop backwards for performance)
-    const levels = (this.levels = new Array(array.length));
-    for (let i = array.length - 1; i >= 0; --i) {
-      levels[i] = Math.round(array[i] * 255);
-    }
-
-    // Clear cached HSL/HSB values
-    this.hsla = null;
-    this.hsba = null;
   }
 
   _getAlpha() {
