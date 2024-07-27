@@ -128,6 +128,11 @@ p5.Color = class Color {
           break;
         case 'hsl':
           space = 'hsl';
+          coords = [
+            vals[0] / pInst._colorMaxes[pInst._colorMode][0] * 360,
+            vals[1] / pInst._colorMaxes[pInst._colorMode][1] * 100,
+            vals[2] / pInst._colorMaxes[pInst._colorMode][2] * 100
+          ];
           break;
         default:
           console.error('Invalid color mode');
