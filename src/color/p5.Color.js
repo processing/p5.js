@@ -396,8 +396,35 @@ p5.Color = class Color {
     this.color.alpha = new_alpha / this.maxes[this.mode][3];
   }
 
+  _getRed() {
+    if(this.mode === constants.RGB){
+      return this.color.coords[0] * this.maxes[constants.RGB][0];
+    }else{
+      // Will do an imprecise conversion to 'srgb', not recommended
+      return to(this.color, 'srgb').coords[0] * this.maxes[constants.RGB][0];
+    }
+  }
+
+  _getGreen() {
+    if(this.mode === constants.RGB){
+      return this.color.coords[1] * this.maxes[constants.RGB][1];
+    }else{
+      // Will do an imprecise conversion to 'srgb', not recommended
+      return to(this.color, 'srgb').coords[1]  * this.maxes[constants.RGB][1];
+    }
+  }
+
+  _getBlue() {
+    if(this.mode === constants.RGB){
+      return this.color.coords[2]  * this.maxes[constants.RGB][2];
+    }else{
+      // Will do an imprecise conversion to 'srgb', not recommended
+      return to(this.color, 'srgb').coords[2]  * this.maxes[constants.RGB][2];
+    }
+  }
+
   _getAlpha() {
-    return this._array[3] * this.maxes[this.mode][3];
+    return this.color.alpha * this.maxes[this.mode][3];
   }
 
   _getMode() {
@@ -408,19 +435,11 @@ p5.Color = class Color {
     return this.maxes;
   }
 
-  _getBlue() {
-    return this._array[2] * this.maxes[constants.RGB][2];
-  }
-
   _getBrightness() {
     if (!this.hsba) {
       this.hsba = color_conversion._rgbaToHSBA(this._array);
     }
     return this.hsba[2] * this.maxes[constants.HSB][2];
-  }
-
-  _getGreen() {
-    return this._array[1] * this.maxes[constants.RGB][1];
   }
 
   /**
@@ -448,10 +467,6 @@ p5.Color = class Color {
       this.hsla = color_conversion._rgbaToHSLA(this._array);
     }
     return this.hsla[2] * this.maxes[constants.HSL][2];
-  }
-
-  _getRed() {
-    return this._array[0] * this.maxes[constants.RGB][0];
   }
 
   /**
