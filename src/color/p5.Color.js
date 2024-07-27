@@ -104,13 +104,14 @@ p5.Color = class Color {
       let alpha = 1;
 
       if(vals.length === 4){
-        alpha = vals.pop() / 255;
+        alpha = vals[vals.length-1];
       }else if (vals.length === 2){
-        alpha = vals[1] / 255;
+        alpha = vals[1];
         vals = [vals[0], vals[0], vals[0]];
       }else if(vals.length === 1){
         vals = [vals[0], vals[0], vals[0]];
       }
+      alpha = alpha / pInst._colorMaxes[pInst._colorMode][3];
 
       // _colorMode can be 'rgb', 'hsb', or 'hsl'
       // These should map to color.js color space
