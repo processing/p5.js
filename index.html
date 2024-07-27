@@ -27,21 +27,31 @@ const sketch = function(p){
 
     const c1 = p.color(255, 0, 0);
     const c2 = p.color(0, 255, 0, 50);
-    const c3 = p.color(0);
-    const c4 = p.color(0, 50);
-    const c5 = p.color('green');
-    const c6 = p.color([0, 0, 255]);
-    const c7 = p.color([0, 0, 255, 50]);
-    const c8 = p.color(p.color('grey'));
+    // const c3 = p.color(0);
+    // const c4 = p.color(0, 50);
+    // const c5 = p.color('green');
+    // const c6 = p.color([0, 0, 255]);
+    // const c7 = p.color([0, 0, 255, 50]);
+    // const c8 = p.color(p.color('grey'));
     console.log(c1.toString(), c2.toString());
-    console.log(c3.toString(), c4.toString());
-    console.log(c5.toString(), c6.toString());
-    console.log(c7.toString(), c8.toString());
+    // console.log(c3.toString(), c4.toString());
+    // console.log(c5.toString(), c6.toString());
+    // console.log(c7.toString(), c8.toString());
+
+    // const h1 = p.color('hsl(336, 100%, 50%)');
+    // NOTE: If we were to support HSB, we need to write a custom color space
+    // const h2 = p.color('hsb(336, 100%, 100%)');
+    p.colorMode(p.HSL);
+    const h3 = p.color(0, 100, 100);
+    // console.log(h1.toString());
+    console.log(h3.toString());
+    // console.log(h2.toString());
+
     p.noLoop();
   };
 
   p.draw = function(){
-    p.background(200);
+    p.background(0, 50, 50);
     p.circle(100, 100, 50);
   };
 };

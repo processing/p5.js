@@ -59,6 +59,8 @@ ColorSpace.register(P3);
 ColorSpace.register(A98RGB_Linear);
 ColorSpace.register(A98RGB);
 
+// console.log(ColorSpace.registry);
+
 /**
  * A class to describe a color.
  *
@@ -95,9 +97,12 @@ p5.Color = class Color {
         this.color = parse(vals[0]);
       }catch(err){
         // TODO: Invalid color string
+        console.error('Invalid color string');
       }
+
     }else{
       let alpha = 1;
+
       if(vals.length === 4){
         alpha = vals.pop() / 255;
       }else if (vals.length === 2){
@@ -106,13 +111,30 @@ p5.Color = class Color {
       }else if(vals.length === 1){
         vals = [vals[0], vals[0], vals[0]];
       }
+
+      // _colorMode can be 'rgb', 'hsb', or 'hsl'
+      // These should map to color.js color space
+      let space = 'srgb';
+      switch(pInst._colorMode){
+        case 'rgb':
+          space = 'srgb';
+          break;
+        case 'hsb':
+          // TODO: need implementation
+          break;
+        case 'hsl':
+          space = 'hsl';
+          break;
+        default:
+          console.error('Invalid color mode');
+      }
+
       const color = {
-        // space: pInst._colorMode
-        space: 'srgb',
-        coords: vals.map(c => c / 255),
+        space,
+        coords: vals,
         alpha
       };
-      this.color = to(color, 'srgb');
+      this.color = to(color, space);
     }
   }
 
@@ -158,7 +180,6 @@ p5.Color = class Color {
    * </div>
    */
   toString(format) {
-    // NOTE: take format from color with sensible defaults
     // NOTE: memoize
     return serialize(this.color, {
       format
