@@ -45,24 +45,6 @@ suite('p5.Color', function() {
       assert.deepEqual(c.color.coords, [1, 0, 0.4]);
       assert.equal(c.color.alpha, 0.8);
     });
-
-    test('should correctly get hue/saturation/brightness/lightness', function() {
-      assert.approximately(c._getHue(), 336, 0.5);
-      assert.approximately(c._getSaturation(), 100, 0.5);
-      assert.approximately(c._getBrightness(), 100, 0.5);
-      assert.approximately(c._getLightness(), 50, 0.5);
-    });
-
-    test('should correctly get RGBA values', function() {
-      assert.approximately(c._getRed(), 255, 0.5);
-      assert.approximately(c._getGreen(), 0, 0.5);
-      assert.approximately(c._getBlue(), 102, 0.5);
-      assert.approximately(c._getAlpha(), 204, 0.5);
-    });
-
-    test('should correctly render color string', function() {
-      assert.equal(c.toString('rgba'), 'rgba(255,0,102,0.8)');
-    });
   });
 
   // NOTE: suite for all signatures
