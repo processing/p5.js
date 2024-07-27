@@ -90,8 +90,15 @@ ColorSpace.register(A98RGB);
  */
 p5.Color = class Color {
   color;
+  maxes;
+  mode;
 
   constructor(pInst, vals) {
+    // This changes with the sketch's setting
+    this.maxes = pInst._colorMaxes;
+    // This changes with the color object
+    this.mode = pInst._colorMode;
+
     if(typeof vals[0] === 'string'){
       try{
         this.color = parse(vals[0]);
@@ -360,8 +367,7 @@ p5.Color = class Color {
    * </div>
    **/
   setAlpha(new_alpha) {
-    this._array[3] = new_alpha / this.maxes[this.mode][3];
-    this._calculateLevels();
+    this.color.alpha = new_alpha / this.maxes[this.mode][3];
   }
 
   // calculates and stores the closest screen levels

@@ -41,11 +41,15 @@ const sketch = function(p){
     // const h1 = p.color('hsl(336, 100%, 50%)');
     // NOTE: If we were to support HSB, we need to write a custom color space
     // const h2 = p.color('hsb(336, 100%, 100%)');
-    p.colorMode(p.HSL);
+    p.colorMode(p.HSL, 1, 1, 1, 1);
     const h3 = p.color(0, 100, 100);
+    h3.setAlpha(0.5);
     // console.log(h1.toString());
     console.log(h3.toString());
     // console.log(h2.toString());
+    p.colorMode(p.HSL, 360, 100, 100, 100);
+    h3.setAlpha(30);
+    console.log(h3.toString());
 
     p.noLoop();
   };
