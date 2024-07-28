@@ -9,7 +9,6 @@
 
 import p5 from '../core/main';
 import * as constants from '../core/constants';
-import color_conversion from './color_conversion';
 import {
   ColorSpace,
   to,
@@ -103,6 +102,7 @@ p5.Color = class Color {
 
     if(typeof vals[0] === 'string'){
       try{
+        // NOTE: this will not necessarily have the right color mode
         this.color = parse(vals[0]);
       }catch(err){
         // TODO: Invalid color string
@@ -441,13 +441,6 @@ p5.Color = class Color {
     return this.maxes;
   }
 
-  _getBrightness() {
-    if (!this.hsba) {
-      this.hsba = color_conversion._rgbaToHSBA(this._array);
-    }
-    return this.hsba[2] * this.maxes[constants.HSB][2];
-  }
-
   /**
    * Hue is the same in HSB and HSL, but the maximum value may be different.
    * This function will return the HSB-normalized saturation when supplied with
@@ -455,24 +448,12 @@ p5.Color = class Color {
    * otherwise.
    */
   _getHue() {
-    if (this.mode === constants.HSB) {
-      if (!this.hsba) {
-        this.hsba = color_conversion._rgbaToHSBA(this._array);
-      }
-      return this.hsba[0] * this.maxes[constants.HSB][0];
-    } else {
-      if (!this.hsla) {
-        this.hsla = color_conversion._rgbaToHSLA(this._array);
-      }
-      return this.hsla[0] * this.maxes[constants.HSL][0];
+    if(this.mode === constants.HSB || this.mode === constants.HSL){
+      return this.color.coords[0] / 360 * this.maxes[this.mode][0];
+    }else{
+      // Will do an imprecise conversion to 'HSL', not recommended
+      return to(this.color, 'hsl').coords[0] / 360 * this.maxes[this.mode][0];
     }
-  }
-
-  _getLightness() {
-    if (!this.hsla) {
-      this.hsla = color_conversion._rgbaToHSLA(this._array);
-    }
-    return this.hsla[2] * this.maxes[constants.HSL][2];
   }
 
   /**
@@ -481,16 +462,29 @@ p5.Color = class Color {
    * to the HSL saturation otherwise.
    */
   _getSaturation() {
-    if (this.mode === constants.HSB) {
-      if (!this.hsba) {
-        this.hsba = color_conversion._rgbaToHSBA(this._array);
-      }
-      return this.hsba[1] * this.maxes[constants.HSB][1];
-    } else {
-      if (!this.hsla) {
-        this.hsla = color_conversion._rgbaToHSLA(this._array);
-      }
-      return this.hsla[1] * this.maxes[constants.HSL][1];
+    if(this.mode === constants.HSB || this.mode === constants.HSL){
+      return this.color.coords[1] / 100 * this.maxes[this.mode][1];
+    }else{
+      // Will do an imprecise conversion to 'HSL', not recommended
+      return to(this.color, 'hsl').coords[1] / 100 * this.maxes[this.mode][1];
+    }
+  }
+
+  _getBrightness() {
+    if(this.mode === constants.HSB){
+      return this.color.coords[2] / 100 * this.maxes[this.mode][2];
+    }else{
+      // Will do an imprecise conversion to 'HSB', not recommended
+      return to(this.color, 'hsb').coords[2] / 100 * this.maxes[this.mode][2];
+    }
+  }
+
+  _getLightness() {
+    if(this.mode === constants.HSL){
+      return this.color.coords[2] / 100 * this.maxes[this.mode][2];
+    }else{
+      // Will do an imprecise conversion to 'HSB', not recommended
+      return to(this.color, 'hsl').coords[2] / 100 * this.maxes[this.mode][2];
     }
   }
 };

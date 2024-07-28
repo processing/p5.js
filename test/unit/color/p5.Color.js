@@ -208,7 +208,11 @@ suite('p5.Color', function() {
         assert.instanceOf(c, p5.Color);
       });
       test('should correctly set RGBA property', function() {
-        assert.deepEqual(c.color.coords, [1, 0, 0.4]);
+        // NOTE: 0.5.2 of color.js uses `new Number` which is corrected in future version
+        // assert.deepEqual(c.color.coords, [336, 100, 100]);
+        assert.equal(+c.color.coords[0], 336);
+        assert.equal(c.color.coords[1], 100);
+        assert.equal(c.color.coords[2], 100);
         assert.equal(c.color.alpha, 1);
       });
     });
@@ -221,7 +225,11 @@ suite('p5.Color', function() {
         assert.instanceOf(c, p5.Color);
       });
       test('should correctly set RGBA property', function() {
-        assert.deepEqual(c.color.coords, [1, 0, 0.4]);
+        // NOTE: 0.5.2 of color.js uses `new Number` which is corrected in future version
+        // assert.deepEqual(c.color.coords, [336, 100, 50]);
+        assert.equal(+c.color.coords[0], 336);
+        assert.equal(c.color.coords[1], 100);
+        assert.equal(c.color.coords[2], 100);
         assert.equal(c.color.alpha, 0.8);
       });
     });
@@ -515,11 +523,16 @@ suite('p5.Color', function() {
     });
 
     test('should correctly convert to RGBA', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 204]);
+      // NOTE: 0.5.2 of color.js uses `new Number` which is corrected in future version
+      // assert.deepEqual(c.color.coords, [336, 100, 50]);
+      assert.equal(+c.color.coords[0], 336);
+      assert.equal(c.color.coords[1], 100);
+      assert.equal(c.color.coords[2], 100);
+      assert.equal(c.color.alpha, 0.8);
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'rgba(255,0,102,0.8)');
+      assert.equal(c.toString(), 'rgb(100% 0% 40% / 0.8)');
     });
   });
 
@@ -528,26 +541,45 @@ suite('p5.Color', function() {
       myp5.colorMode(myp5.HSB);
       c = myp5.color(336, 100, 100);
     });
+
     test('should create instance of p5.Color', function() {
       assert.instanceOf(c, p5.Color);
     });
+
     test('should correctly set RGBA property', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 255]);
+      assert.deepEqual(c.color.coords, [336, 100, 100]);
+      assert.equal(c.color.alpha, 1);
     });
+
     test('can be modified with alpha setter', function() {
       var cc = myp5.color(336, 100, 100);
       cc.setAlpha(0.73);
-      assert.deepEqual(cc.levels, [255, 0, 102, 186]);
+      assert.deepEqual(cc.color.coords, [336, 100, 100]);
+      assert.equal(cc.color.alpha, 0.73);
     });
+
     test('can be modified with rgb setters', function() {
       var cc = myp5.color(336, 100, 100);
-      assert.deepEqual(cc.levels, [255, 0, 102, 255]);
+      assert.deepEqual(cc.color.coords, [336, 100, 100]);
+      assert.equal(cc.color.alpha, 1);
+
       cc.setRed(98);
-      assert.deepEqual(cc.levels, [98, 0, 102, 255]);
+      assert.closeTo(cc.color.coords[0], 297, 1);
+      assert.closeTo(cc.color.coords[1], 100, 1);
+      assert.closeTo(cc.color.coords[2], 40, 1);
+      assert.equal(cc.color.alpha, 1);
+
       cc.setGreen(44);
-      assert.deepEqual(cc.levels, [98, 44, 102, 255]);
+      assert.closeTo(cc.color.coords[0], 295, 1);
+      assert.closeTo(cc.color.coords[1], 56, 1);
+      assert.closeTo(cc.color.coords[2], 40, 1);
+      assert.equal(cc.color.alpha, 1);
+
       cc.setBlue(244);
-      assert.deepEqual(cc.levels, [98, 44, 244, 255]);
+      assert.closeTo(cc.color.coords[0], 256, 1);
+      assert.closeTo(cc.color.coords[1], 81, 1);
+      assert.closeTo(cc.color.coords[2], 95, 1);
+      assert.equal(cc.color.alpha, 1);
     });
   });
 
@@ -560,7 +592,8 @@ suite('p5.Color', function() {
       assert.instanceOf(c, p5.Color);
     });
     test('should correctly set RGBA property', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 204]);
+      assert.deepEqual(c.color.coords, [336, 100, 100]);
+      assert.equal(c.color.alpha, 0.8);
     });
 
     test('should correctly get hue/saturation/brightness/alpha', function() {
@@ -585,11 +618,14 @@ suite('p5.Color', function() {
     });
 
     test('should correctly convert to RGBA', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 204]);
+      assert.closeTo(c.color.coords[0], 336, 1);
+      assert.equal(c.color.coords[1], 100);
+      assert.equal(c.color.coords[2], 100);
+      assert.equal(c.color.alpha, 0.8);
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'rgba(255,0,102,0.8)');
+      assert.equal(c.toString(), 'rgb(100% 0% 40.02% / 0.8)');
     });
   });
 
@@ -607,11 +643,12 @@ suite('p5.Color', function() {
     });
 
     test('should correctly convert to RGBA', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 204]);
+      assert.deepEqual(c.color.coords, [1, 0, 0.4]);
+      assert.equal(c.color.alpha, 0.8);
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'rgba(255,0,102,0.8)');
+      assert.equal(c.toString(), 'rgb(100% 0% 40% / 0.8)');
     });
   });
 
@@ -629,11 +666,14 @@ suite('p5.Color', function() {
     });
 
     test('should correctly convert to RGBA', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 204]);
+      assert.equal(+c.color.coords[0], 336);
+      assert.equal(c.color.coords[1], 100);
+      assert.equal(c.color.coords[2], 100);
+      assert.equal(c.color.alpha, 0.8);
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'rgba(255,0,102,0.8)');
+      assert.equal(c.toString(), 'rgb(100% 0% 40% / 0.8)');
     });
   });
 
@@ -651,11 +691,14 @@ suite('p5.Color', function() {
     });
 
     test('should correctly convert to RGBA', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 204]);
+      assert.equal(+c.color.coords[0], 336);
+      assert.equal(c.color.coords[1], 100);
+      assert.equal(c.color.coords[2], 50);
+      assert.equal(c.color.alpha, 0.8);
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'rgba(255,0,102,0.8)');
+      assert.equal(c.toString(), 'hsl(336 100% 50% / 0.8)');
     });
   });
 
@@ -702,7 +745,8 @@ suite('p5.Color', function() {
     });
 
     test('should correctly set RGB levels', function() {
-      assert.deepEqual(c.levels, [100, 100, 100, 255]);
+      assert.deepEqual(c.color.coords, [39.3, 39.3, 39.3]);
+      assert.equal(c.color.alpha, 1);
     });
   });
 
@@ -717,7 +761,8 @@ suite('p5.Color', function() {
     });
 
     test('should correctly set RGB levels', function() {
-      assert.deepEqual(c.levels, [100, 100, 100, 70]);
+      assert.deepEqual(c.color.coords, [39.3, 39.3, 39.3]);
+      assert.equal(c.color.alpha, 0.275);
     });
   });
 
