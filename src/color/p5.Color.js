@@ -295,7 +295,7 @@ p5.Color = class Color {
   setGreen(new_green) {
     const green_val = new_green / this.maxes[constants.RGB][1];
     if(this.mode === constants.RGB){
-      this.color.coords[0] = green_val;
+      this.color.coords[1] = green_val;
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
       const space = this.color.space.id;
@@ -344,7 +344,7 @@ p5.Color = class Color {
   setBlue(new_blue) {
     const blue_val = new_blue / this.maxes[constants.RGB][2];
     if(this.mode === constants.RGB){
-      this.color.coords[0] = blue_val;
+      this.color.coords[2] = blue_val;
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
       const space = this.color.space.id;

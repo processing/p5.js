@@ -23,6 +23,7 @@ suite('color/CreatingReading', function() {
   var c;
   var val;
 
+  // TODO: remove all FES tests and implement better regression test
   suite('p5.prototype.alpha', function() {
     beforeEach(function() {
       myp5.colorMode(myp5.RGB);
@@ -50,12 +51,6 @@ suite('color/CreatingReading', function() {
         'got unwanted exception'
       );
     });
-    // test('wrong param type at #0', function() {
-    //   assert.validationError(function() {
-    //     c = 20;
-    //     val = myp5.alpha(c);
-    //   });
-    // });
   });
 
   suite('p5.prototype.red, green, blue', function() {

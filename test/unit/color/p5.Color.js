@@ -174,7 +174,11 @@ suite('p5.Color', function() {
         assert.instanceOf(c, p5.Color);
       });
       test('should correctly set RGBA property', function() {
-        assert.deepEqual(c.color.coords, [1, 0, 0.4]);
+        // NOTE: 0.5.2 of color.js uses `new Number` which is corrected in future version
+        // assert.deepEqual(c.color.coords, [336, 100, 50]);
+        assert.equal(+c.color.coords[0], 336);
+        assert.equal(c.color.coords[1], 100);
+        assert.equal(c.color.coords[2], 50);
         assert.equal(c.color.alpha, 1);
       });
     });
@@ -187,7 +191,11 @@ suite('p5.Color', function() {
         assert.instanceOf(c, p5.Color);
       });
       test('should correctly set RGBA property', function() {
-        assert.deepEqual(c.color.coords, [1, 0, 0.4]);
+        // NOTE: 0.5.2 of color.js uses `new Number` which is corrected in future version
+        // assert.deepEqual(c.color.coords, [336, 100, 50]);
+        assert.equal(+c.color.coords[0], 336);
+        assert.equal(c.color.coords[1], 100);
+        assert.equal(c.color.coords[2], 50);
         assert.equal(c.color.alpha, 0.8);
       });
     });
@@ -241,9 +249,11 @@ suite('p5.Color', function() {
     beforeEach(function() {
       c = myp5.color([255, 0, 102]);
     });
+
     test('should create instance of p5.Color', function() {
       assert.instanceOf(c, p5.Color);
     });
+
     test('should correctly set RGBA property', function() {
       assert.deepEqual(c.color.coords, [1, 0, 0.4]);
       assert.equal(c.color.alpha, 1);
@@ -253,20 +263,27 @@ suite('p5.Color', function() {
   // color level setters
   suite('in default mode', function() {
     test('can be modified with alpha setter', function() {
-      var cc = myp5.color(255, 0, 102, 204);
-      assert.deepEqual(cc.levels, [255, 0, 102, 204]);
+      let cc = myp5.color(255, 0, 102, 204);
+      assert.deepEqual(cc.color.coords, [1, 0, 0.4]);
+      assert.equal(cc.color.alpha, 0.8);
       cc.setAlpha(98);
-      assert.deepEqual(cc.levels, [255, 0, 102, 98]);
+      assert.deepEqual(cc.color.coords, [1, 0, 0.4]);
+      assert.equal(cc.color.alpha, 98/255);
     });
+
     test('can be modified with rgb setters', function() {
       var cc = myp5.color(255, 0, 102, 204);
-      assert.deepEqual(cc.levels, [255, 0, 102, 204]);
+      assert.deepEqual(cc.color.coords, [1, 0, 0.4]);
+      assert.equal(cc.color.alpha, 0.8);
       cc.setRed(98);
-      assert.deepEqual(cc.levels, [98, 0, 102, 204]);
+      assert.deepEqual(cc.color.coords, [98/255, 0, 0.4]);
+      assert.equal(cc.color.alpha, 0.8);
       cc.setGreen(44);
-      assert.deepEqual(cc.levels, [98, 44, 102, 204]);
+      assert.deepEqual(cc.color.coords, [98/255, 44/255, 0.4]);
+      assert.equal(cc.color.alpha, 0.8);
       cc.setBlue(244);
-      assert.deepEqual(cc.levels, [98, 44, 244, 204]);
+      assert.deepEqual(cc.color.coords, [98/255, 44/255, 244/255]);
+      assert.equal(cc.color.alpha, 0.8);
     });
   });
 
@@ -278,7 +295,8 @@ suite('p5.Color', function() {
     });
 
     test('should correctly convert to RGBA', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 204]);
+      assert.deepEqual(c.color.coords, [1, 0, 0.4]);
+      assert.equal(c.color.alpha, 0.8);
     });
 
     test('should correctly get RGBA property', function() {
@@ -289,7 +307,7 @@ suite('p5.Color', function() {
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'rgba(255,0,102,0.8)');
+      assert.equal(c.toString(), 'rgb(100% 0% 40% / 0.8)');
     });
 
     test('should correctly get RGBA property after overwrite', function() {
@@ -306,26 +324,46 @@ suite('p5.Color', function() {
       myp5.colorMode(myp5.HSL);
       c = myp5.color(336, 100, 50);
     });
+
     test('should create instance of p5.Color', function() {
       assert.instanceOf(c, p5.Color);
     });
+
     test('should correctly set RGBA property', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 255]);
+      assert.deepEqual(c.color.coords, [336, 100, 50]);
+      assert.equal(c.color.alpha, 1);
     });
+
     test('can be modified with alpha setter', function() {
-      var cc = myp5.color(336, 100, 50);
+      let cc = myp5.color(336, 100, 50);
       cc.setAlpha(0.73);
-      assert.deepEqual(cc.levels, [255, 0, 102, 186]);
+      assert.deepEqual(cc.color.coords, [336, 100, 50]);
+      assert.equal(cc.color.alpha, 0.73);
     });
+
     test('can be modified with rgb setters', function() {
-      var cc = myp5.color(336, 100, 50);
-      assert.deepEqual(cc.levels, [255, 0, 102, 255]);
+      let cc = myp5.color(336, 100, 50);
+      assert.deepEqual(cc.color.coords, [336, 100, 50]);
+      assert.equal(cc.color.alpha, 1);
+
+      // TODO: separately check these values are correct (not in test here)
       cc.setRed(98);
-      assert.deepEqual(cc.levels, [98, 0, 102, 255]);
+      assert.closeTo(cc.color.coords[0], 297, 1);
+      assert.closeTo(cc.color.coords[1], 100, 1);
+      assert.closeTo(cc.color.coords[2], 20, 1);
+      assert.equal(cc.color.alpha, 1);
+
       cc.setGreen(44);
-      assert.deepEqual(cc.levels, [98, 44, 102, 255]);
+      assert.closeTo(cc.color.coords[0], 295, 1);
+      assert.closeTo(cc.color.coords[1], 39, 1);
+      assert.closeTo(cc.color.coords[2], 28, 1);
+      assert.equal(cc.color.alpha, 1);
+
       cc.setBlue(244);
-      assert.deepEqual(cc.levels, [98, 44, 244, 255]);
+      assert.closeTo(cc.color.coords[0], 256, 1);
+      assert.closeTo(cc.color.coords[1], 90, 1);
+      assert.closeTo(cc.color.coords[2], 56, 1);
+      assert.equal(cc.color.alpha, 1);
     });
   });
 
@@ -334,11 +372,14 @@ suite('p5.Color', function() {
       myp5.colorMode(myp5.HSL);
       c = myp5.color(336, 100, 50, 0.8);
     });
+
     test('should create instance of p5.Color', function() {
       assert.instanceOf(c, p5.Color);
     });
+
     test('should correctly set RGBA property', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 204]);
+      assert.deepEqual(c.color.coords, [336, 100, 50]);
+      assert.equal(c.color.alpha, 0.8);
     });
 
     test('should correctly get hue/saturation/lightness/alpha', function() {
@@ -363,31 +404,54 @@ suite('p5.Color', function() {
     });
 
     test('should correctly convert to RGBA', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 204]);
+      assert.closeTo(c.color.coords[0], 336, 1);
+      assert.equal(c.color.coords[1], 100);
+      assert.equal(c.color.coords[2], 50);
+      assert.equal(c.color.alpha, 0.8);
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'rgba(255,0,102,0.8)');
+      assert.equal(c.toString(), 'hsl(335.99 100% 50% / 0.8)');
     });
 
     test('can be modified with alpha setter', function() {
-      var cc = myp5.color(93.33, 200, 150, 8);
+      let cc = myp5.color(93.33, 200, 150, 8);
       cc.setAlpha(7.3);
-      assert.deepEqual(cc.levels, [255, 0, 102, 186]);
+      assert.closeTo(cc.color.coords[0], 336, 1);
+      assert.equal(cc.color.coords[1], 100);
+      assert.equal(cc.color.coords[2], 50);
+      assert.equal(cc.color.alpha, 0.73);
     });
+
     test('can be modified with rgb setters', function() {
-      var cc = myp5.color(93.33, 200, 150, 8);
-      assert.deepEqual(cc.levels, [255, 0, 102, 204]);
+      let cc = myp5.color(93.33, 200, 150, 8);
+      assert.closeTo(c.color.coords[0], 336, 1);
+      assert.equal(c.color.coords[1], 100);
+      assert.equal(c.color.coords[2], 50);
+      assert.equal(c.color.alpha, 0.8);
+
       cc.setRed(98);
-      assert.deepEqual(cc.levels, [98, 0, 102, 204]);
+      assert.closeTo(cc.color.coords[0], 297, 1);
+      assert.closeTo(cc.color.coords[1], 100, 1);
+      assert.closeTo(cc.color.coords[2], 20, 1);
+      assert.equal(cc.color.alpha, 0.8);
+
       cc.setGreen(44);
-      assert.deepEqual(cc.levels, [98, 44, 102, 204]);
+      assert.closeTo(cc.color.coords[0], 295, 1);
+      assert.closeTo(cc.color.coords[1], 39, 1);
+      assert.closeTo(cc.color.coords[2], 28, 1);
+      assert.equal(cc.color.alpha, 0.8);
+
       cc.setBlue(244);
-      assert.deepEqual(cc.levels, [98, 44, 244, 204]);
+      assert.closeTo(cc.color.coords[0], 256, 1);
+      assert.closeTo(cc.color.coords[1], 90, 1);
+      assert.closeTo(cc.color.coords[2], 56, 1);
+      assert.equal(cc.color.alpha, 0.8);
     });
   });
 
   suite('p5.Color in HSL mode with RGB string', function() {
+    // NOTE: will still create a sRGB color in this case
     beforeEach(function() {
       myp5.colorMode(myp5.HSL, 360, 100, 100, 1);
       c = myp5.color('rgba(255, 0, 102, 0.8)');
@@ -401,11 +465,12 @@ suite('p5.Color', function() {
     });
 
     test('should correctly convert to RGBA', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 204]);
+      assert.deepEqual(c.color.coords, [1, 0, 0.4]);
+      assert.equal(c.color.alpha, 0.8);
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'rgba(255,0,102,0.8)');
+      assert.equal(c.toString(), 'rgb(100% 0% 40% / 0.8)');
     });
   });
 
@@ -423,11 +488,16 @@ suite('p5.Color', function() {
     });
 
     test('should correctly convert to RGBA', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 204]);
+      // NOTE: 0.5.2 of color.js uses `new Number` which is corrected in future version
+      // assert.deepEqual(c.color.coords, [336, 100, 50]);
+      assert.equal(+c.color.coords[0], 336);
+      assert.equal(c.color.coords[1], 100);
+      assert.equal(c.color.coords[2], 50);
+      assert.equal(c.color.alpha, 0.8);
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'rgba(255,0,102,0.8)');
+      assert.equal(c.toString(), 'hsl(336 100% 50% / 0.8)');
     });
   });
 
@@ -600,7 +670,8 @@ suite('p5.Color', function() {
     });
 
     test('should correctly set RGB levels', function() {
-      assert.deepEqual(c.levels, [100, 100, 100, 255]);
+      assert.deepEqual(c.color.coords, [100/255, 100/255, 100/255]);
+      assert.equal(c.color.alpha, 1);
     });
   });
 
@@ -615,7 +686,8 @@ suite('p5.Color', function() {
     });
 
     test('should correctly set RGB levels', function() {
-      assert.deepEqual(c.levels, [100, 100, 100, 70]);
+      assert.deepEqual(c.color.coords, [100/255, 100/255, 100/255]);
+      assert.equal(c.color.alpha, 70/255);
     });
   });
 
@@ -660,7 +732,8 @@ suite('p5.Color', function() {
     });
 
     test('should correctly set RGB levels', function() {
-      assert.deepEqual(c.levels, [100, 100, 100, 255]);
+      assert.deepEqual(c.color.coords, [39.3, 39.3, 39.3]);
+      assert.equal(c.color.alpha, 1);
     });
   });
 
@@ -675,7 +748,8 @@ suite('p5.Color', function() {
     });
 
     test('should correctly set RGB levels', function() {
-      assert.deepEqual(c.levels, [100, 100, 100, 70]);
+      assert.deepEqual(c.color.coords, [39.3, 39.3, 39.3]);
+      assert.equal(c.color.alpha, 0.275);
     });
   });
 
