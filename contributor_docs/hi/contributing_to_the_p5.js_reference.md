@@ -1,4 +1,4 @@
-<!-- Write and edit p5.js reference using the right format. -->
+<!-- सही प्रारूप का उपयोग करके p5.js संदर्भ लिखें और संपादित करें। -->
 
 # p5.js संदर्भ में योगदान
 

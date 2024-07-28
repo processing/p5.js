@@ -186,7 +186,7 @@ p5.prototype.noSmooth = function() {
  *
  * By default, the first two parameters of
  * <a href="#/p5/rect">rect()</a> and <a href="#/p5/square">square()</a>,
- * are the x- and y-coordinates of the shape's center. The next parameters set
+ * are the x- and y-coordinates of the shape's upper left corner. The next parameters set
  * the shape's width and height. This is the same as calling
  * `rectMode(CORNER)`.
  *

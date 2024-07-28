@@ -162,7 +162,7 @@ p5.prototype.createImage = function(width, height) {
  * format.
  *
  * The second parameter, `extension`, is also optional. It sets the files format.
- * Either `'png'` or `'jpg'` can be used. For example, `saveCanvas('drawing', 'jpg')`
+ * Either `'png'`, `'webp'`, or `'jpg'` can be used. For example, `saveCanvas('drawing', 'jpg')`
  * saves the canvas to a file called `drawing.jpg`.
  *
  * Note: The browser will either save the file immediately or prompt the user
@@ -172,7 +172,7 @@ p5.prototype.createImage = function(width, height) {
  *  @param  {p5.Framebuffer|p5.Element|HTMLCanvasElement} selectedCanvas   reference to a
  *                                                          specific HTML5 canvas element.
  *  @param  {String} [filename]  file name. Defaults to 'untitled'.
- *  @param  {String} [extension] file extension, either 'jpg' or 'png'. Defaults to 'png'.
+ *  @param  {String} [extension] file extension, either 'png', 'webp', or 'jpg'. Defaults to 'png'.
  *
  *  @example
  * <div class='norender'>
@@ -314,6 +314,9 @@ p5.prototype.saveCanvas = function(...args) {
     default:
       //case 'png':
       mimeType = 'image/png';
+      break;
+    case 'webp':
+      mimeType = 'image/webp';
       break;
     case 'jpeg':
     case 'jpg':

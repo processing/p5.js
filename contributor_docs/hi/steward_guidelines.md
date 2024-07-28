@@ -1,4 +1,4 @@
-<!-- Learn about how to manage and review contributions to p5.js. -->
+<!-- p5.js में योगदान को प्रबंधित और समीक्षा करने के तरीके के बारे में जानें। -->
 
 # स्टीवर्ड दिशानिर्देश
 

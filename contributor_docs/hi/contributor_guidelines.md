@@ -1,4 +1,4 @@
-<!-- Essential information about contributing to p5.js on GitHub. -->
+<!-- GitHub पर p5.js में योगदान देने के बारे में आवश्यक जानकारी। -->
 
 # योगदानकर्ता दिशानिर्देश
 

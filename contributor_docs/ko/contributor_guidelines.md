@@ -1,4 +1,4 @@
-<!-- Essential information about contributing to p5.js on GitHub. -->
+<!-- GitHub에서 p5.js에 기여하는 데 필수적인 정보. -->
 
 # 기여자 가이드라인
 

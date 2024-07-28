@@ -17,4 +17,4 @@ visualSuite('Typography', function() {
       screenshot();
     });
   });
-}, { focus: true });
+});

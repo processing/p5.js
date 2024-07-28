@@ -536,6 +536,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
  * model view, projection, & normal
  * matrices
  */
+    this.uModelMatrix = new p5.Matrix();
+    this.uViewMatrix = new p5.Matrix();
     this.uMVMatrix = new p5.Matrix();
     this.uPMatrix = new p5.Matrix();
     this.uNMatrix = new p5.Matrix('mat3');
@@ -894,7 +896,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   _update() {
     // reset model view and apply initial camera transform
     // (containing only look at info; no projection).
-    this.uMVMatrix.set(this._curCamera.cameraMatrix);
+    this.uModelMatrix.reset();
+    this.uViewMatrix.set(this._curCamera.cameraMatrix);
 
     // reset light data for new frame.
 
@@ -1528,9 +1531,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
   applyMatrix(a, b, c, d, e, f) {
     if (arguments.length === 16) {
-      p5.Matrix.prototype.apply.apply(this.uMVMatrix, arguments);
+      p5.Matrix.prototype.apply.apply(this.uModelMatrix, arguments);
     } else {
-      this.uMVMatrix.apply([
+      this.uModelMatrix.apply([
         a, b, 0, 0,
         c, d, 0, 0,
         0, 0, 1, 0,
@@ -1554,7 +1557,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       y = x.y;
       x = x.x;
     }
-    this.uMVMatrix.translate([x, y, z]);
+    this.uModelMatrix.translate([x, y, z]);
     return this;
   }
 
@@ -1567,7 +1570,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
  * @chainable
  */
   scale(x, y, z) {
-    this.uMVMatrix.scale(x, y, z);
+    this.uModelMatrix.scale(x, y, z);
     return this;
   }
 
@@ -1575,7 +1578,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (typeof axis === 'undefined') {
       return this.rotateZ(rad);
     }
-    p5.Matrix.prototype.rotate.apply(this.uMVMatrix, arguments);
+    p5.Matrix.prototype.rotate.apply(this.uModelMatrix, arguments);
     return this;
   }
 
@@ -1601,7 +1604,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // add webgl-specific style properties
     const properties = style.properties;
 
-    properties.uMVMatrix = this.uMVMatrix.copy();
+    properties.uModelMatrix = this.uModelMatrix.copy();
+    properties.uViewMatrix = this.uViewMatrix.copy();
     properties.uPMatrix = this.uPMatrix.copy();
     properties._curCamera = this._curCamera;
 
@@ -1688,7 +1692,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
   }
   resetMatrix() {
-    this.uMVMatrix.set(this._curCamera.cameraMatrix);
+    this.uModelMatrix.reset();
+    this.uViewMatrix.set(this._curCamera.cameraMatrix);
     return this;
   }
 

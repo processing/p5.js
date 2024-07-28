@@ -1,4 +1,4 @@
-<!-- How to get started working on the p5.js WebGL mode source code. -->
+<!-- p5.js WebGL 모드에서 소스 코드 작업을 시작하는 방법. -->
 
 # WebGL 기여 안내
 

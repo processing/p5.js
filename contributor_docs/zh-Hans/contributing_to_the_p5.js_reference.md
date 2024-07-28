@@ -1,4 +1,4 @@
-<!-- Write and edit p5.js reference using the right format. -->
+<!-- 使用正确的格式编写和编辑 p5.js 参考资料。 -->
 
 # 为 p5.js 参考文献做贡献
 

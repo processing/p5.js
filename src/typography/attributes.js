@@ -539,9 +539,8 @@ p5.prototype._updateTextMetrics = function() {
  * </div>
  */
 p5.prototype.textWrap = function(wrapStyle) {
-  if (wrapStyle !== 'WORD' && wrapStyle !== 'CHAR') {
-    throw 'Error: textWrap accepts only WORD or CHAR';
-  }
+  p5._validateParameters('textWrap', [wrapStyle]);
+
   return this._renderer.textWrap(wrapStyle);
 };
 

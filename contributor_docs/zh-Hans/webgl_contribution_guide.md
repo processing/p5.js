@@ -1,4 +1,4 @@
-<!-- How to get started working on the p5.js WebGL mode source code. -->
+<!-- 如何开始着手处理 p5.js WebGL 模式的源代码。 -->
 
 # WebGL 贡献指南
 

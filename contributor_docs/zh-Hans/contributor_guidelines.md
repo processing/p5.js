@@ -1,4 +1,4 @@
-<!-- Essential information about contributing to p5.js on GitHub. -->
+<!-- 关于在 GitHub 上为 p5.js 做出贡献的重要信息。 -->
 
 # 贡献者指南
 

@@ -1,4 +1,4 @@
-<!-- Write and edit p5.js reference using the right format. -->
+<!-- 올바른 형식을 사용하여 p5.js 레퍼런스 문서를 작성하고 편집하세요. -->
 
 # p5.js 레퍼런스에 기여하기
 
