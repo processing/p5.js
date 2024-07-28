@@ -4,6 +4,8 @@
 
 # [p5.js](https://p5js.org)
 
+Welcome! 👋👋🏿👋🏽👋🏻👋🏾👋🏼
+
 p5.js is a free and open-source JavaScript library for [accessible](https://p5js.org/contribute/access) creative coding. It is a nurturing community, an approachable language, an exploratory tool, an accessible environment, an inclusive platform, welcoming and playful for artists, designers, educators, beginners, and anyone else!
 
 <table>
@@ -30,45 +32,50 @@ function draw() {
 </tr>
 </table>
 
-[Get Started](https://p5js.org/get-started) — [Reference](https://p5js.org/reference) — [Tutorials](https://p5js.org/learn) — [Examples](https://p5js.org/examples/) — [Libraries](https://p5js.org/libraries) — [Forum](https://discourse.processing.org/c/p5js) — [Discord](https://discord.gg/SHQ8dH25r9)
-
-
+[Get Started](https://p5js.org/get-started) — [Reference](https://p5js.org/reference) — [Tutorials](https://p5js.org/tutorials) — [Examples](https://p5js.org/examples/) — [Libraries](https://p5js.org/libraries) — [Forum](https://discourse.processing.org/c/p5js) — [Discord](https://discord.gg/SHQ8dH25r9)
 
 ## About
 
-p5.js is built and organized to prioritize accessibility, inclusivity, community, and joy. Similar to sketching, p5.js has a full set of tools to draw. It also supports creating audio-visual, interactive, experimental, and generative works for the web. p5.js enables thinking of a web page as your sketch. p5.js is accessible in multiple languages and has an expansive [reference](https://p5js.org/reference/) with visual examples. You can find [tutorials](https://p5js.org/learn/) on the p5.js website and start coding right now in the [p5.js web editor](https://editor.p5js.org/). You can extend p5.js with many community-created [libraries](https://p5js.org/libraries/) that bring different capabilities. Its community provides endless inspiration and support for creators.
+p5.js is built and organized to prioritize [accessibility, inclusivity, community, and joy](https://p5js.org/community). Similar to sketching, p5.js has a full set of tools to draw. It also supports creating audio-visual, interactive, experimental, and generative works for the web. p5.js enables thinking of a web page as your sketch. p5.js is accessible in multiple languages and has an expansive [documentation](https://p5js.org/reference/) with visual examples. You can find [tutorials](https://p5js.org/learn/) on the p5.js website and start coding right now in the [p5.js web editor](https://editor.p5js.org/). You can extend p5.js with many community-created [libraries](https://p5js.org/libraries/) that bring different capabilities. Its community provides endless inspiration and support for creators.
 
 p5.js encourages iterative and exploratory code for creative expression. Its friendly, diverse community shares art, code, and learning resources to help elevate all voices. We share our values in open source and access for all, to learn, create, imagine, design, share and code freely.
 
+## Community
+
+The p5.js community shares an interest in exploring the creation of art and design with technology. We are a community of, and in solidarity with, people from every gender identity and expression, sexual orientation, race, ethnicity, language, neuro-type, size, disability, class, caste, religion, culture, subculture, immigration status, age, skill level, occupation, and background. We stand in solidarity with justice and liberation movements. We work to acknowledge, dismantle, and prevent barriers to access p5.js code and the p5.js community.
+
+Learn more about [our community](https://p5js.org/community/) and read our community statement and [code of conduct](https://github.com/processing/p5.js/blob/main/CODE_OF_CONDUCT.md). You can directly support our work with p5.js by donating to [the Processing Foundation](https://processingfoundation.org/support).
 
 ## Issues
 
-If you have found a bug in the p5.js library or want to request new features, feel free to file an issue! See our [contributor guidelines](./contributor_docs/contributor_guidelines.md) for a full reference of our contribution process. A set of templates for reporting issues and requesting features are provided to assist you (and us!). Different parts of p5.js are in different repositories. You can open an issue on each of them through these links:
+If you have found a bug in the p5.js library or want to request new features, feel free to file an issue! See our [contributor guidelines](https://p5js.org/contribute/contributor_guidelines) for a full reference of our contribution process. A set of templates for reporting issues and requesting features are provided to assist you (and us!). Different parts of p5.js are in different repositories. You can open an issue on each of them through these links:
 
 [p5.js](https://github.com/processing/p5.js/issues) — [p5.js website](https://github.com/processing/p5.js-website/issues) —- [p5.js web editor](https://github.com/processing/p5.js-web-editor/issues)
 
 p5.js is maintained mostly by volunteers, so we thank you for your patience as we try to address your issues as soon as we can.
 
 
-## Get Started for Developers
+## Get Started for Contributors
 
 p5.js is a collaborative project with many contributors, mostly volunteers, and you are invited to help. All types of involvement are welcome. See the [contribute](https://p5js.org/contribute) for more in-depth details about contributing to different areas of the project, including code, bug fixes, documentation, discussion, and more.
 
-A quick Getting Started with the Build and setting up the repository could be found [here](https://p5js.org/contribute/contributor_guidelines/#quick-get-started-for-developers)
+A quick Getting Started with the Build and setting up the repository could be found [here](https://p5js.org/contribute/contributor_guidelines/#quick-get-started-for-developers).
 
 
 ## Stewards
 
-Stewards are contributors who are particularly involved, familiar, or responsive to certain areas of the project. Their role is to help provide context and guidance to others working on p5.js. If you have a question about contributing to a particular area, you can tag the listed steward in an issue or pull request. They may also weigh in on feature requests and guide the overall direction of their area, with the input of the community. You can read more about the organization of the project in our p5.js [Contributor Guidelines](./contributor_docs/contributor_guidelines.md) and p5.js [Steward Guidelines](./contributor_docs/steward_guidelines.md).
+Stewards are contributors who are particularly involved, familiar, or responsive to certain areas of the project. Their role is to help provide context and guidance to others working on p5.js. If you have a question about contributing to a particular area, you can tag the listed steward in an issue or pull request. They may also weigh in on feature requests and guide the overall direction of their area, with the input of the community. You can read more about the organization of the project in our p5.js [Contributor Guidelines](https://p5js.org/contribute/contributor_guidelines) and p5.js [Steward Guidelines](https://p5js.org/contribute/steward_guidelines).
 
 Anyone interested can volunteer to be a steward! There are no specific requirements for expertise, just an interest in actively learning and participating. If you’re familiar with or interested in actively learning and participating in some of the p5.js areas below, please reply to [this issue](https://github.com/processing/p5.js/issues/5719) mentioning which area(s) you are interested in volunteering as a steward! 👋👋👋
 
+p5.js was created by [Lauren Lee McCarthy](https://github.com/lmccart) in 2013 as a new interpretation of Processing for the context of the web. Since then we have allowed ourselves space to deviate and grow, while drawing inspiration from Processing and our shared community. p5.js is sustained by a community of contributors, with support from the Processing Foundation. p5.js follows a rotating leadership model started in 2020, and [Qianqian Ye](https://github.com/qianqianye) has been leading p5.js since 2021. Learn more about the [people](https://p5js.org/people/) behind p5.js.
+
 Current Lead/Mentor
-* [@qianqianye](https://github.com/qianqianye) - p5.js Project Lead
-* [@limzykenneth](https://github.com/limzykenneth) - p5.js Mentor
-* [@lmccart](https://github.com/lmccart)- p5.js Creator
+* [@qianqianye](https://github.com/qianqianye) - p5.js Lead，2021-present
+* [@limzykenneth](https://github.com/limzykenneth) - p5.js Mentor，2023-present
 
 Lead/Mentor Alumni
+* [@lmccart](https://github.com/lmccart)- p5.js Creator
 * [@outofambit](https://github.com/outofambit) - p5.js Co-Lead 2021-22, Mentor 2022-2023
 * [@mcturner1995](https://github.com/mcturner1995) - p5.js Lead 2020
   
