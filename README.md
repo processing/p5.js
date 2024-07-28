@@ -4,70 +4,78 @@
 
 # [p5.js](https://p5js.org)
 
- Welcome! 👋👋🏿👋🏽👋🏻👋🏾👋🏼
+Welcome! 👋👋🏿👋🏽👋🏻👋🏾👋🏼
 
-p5.js is a JavaScript library for creative coding, with a focus on making coding accessible and inclusive for artists, designers, educators, beginners, and anyone else! p5.js is free and open-source because we believe software, and the tools to learn it, should be accessible to everyone.
+p5.js is a free and open-source JavaScript library for [accessible](https://p5js.org/contribute/access) creative coding. It is a nurturing community, an approachable language, an exploratory tool, an accessible environment, an inclusive platform, welcoming and playful for artists, designers, educators, beginners, and anyone else!
 
-Using the metaphor of a sketch, p5.js has a full set of drawing functionality using the HTML5 canvas element. You’re not limited to the drawing canvas though. You can think of your whole browser page as your sketch, including HTML5 objects for text, input, video, webcam, and sound.
+<table>
+<tr>
+<td>
 
-p5.js draws inspiration, wisdom, and guidance from its precursor [Processing](https://processing.org). However, it is a new interpretation, not an emulation or port. We don't aim to match Processing's set of functionality exactly, allowing ourselves space to deviate and grow in the context of the web.
+```js
+function setup() {
+  createCanvas(400, 400);
+  background(255);
+}
 
-The [p5js.org](https://p5js.org) website contains an extensive overview of the project, community, documentation, and examples. If you already know the basics of JavaScript or Processing, the [p5.js overview](https://github.com/processing/p5.js/wiki/p5.js-overview) wiki page is a good place to start.
+function draw() {
+  circle(mouseX, mouseY, 80);
+}
+```
+
+</td>
+<td>
+
+<img src="./contributor_docs/images/p5-readme-sketch.png" width="200" height="200" />
+
+</td>
+</tr>
+</table>
+
+[Get Started](https://p5js.org/get-started) — [Reference](https://p5js.org/reference) — [Tutorials](https://p5js.org/tutorials) — [Examples](https://p5js.org/examples/) — [Libraries](https://p5js.org/libraries) — [Forum](https://discourse.processing.org/c/p5js) — [Discord](https://discord.gg/SHQ8dH25r9)
+
+## About
+
+p5.js is built and organized to prioritize [accessibility, inclusivity, community, and joy](https://p5js.org/community). Similar to sketching, p5.js has a full set of tools to draw. It also supports creating audio-visual, interactive, experimental, and generative works for the web. p5.js enables thinking of a web page as your sketch. p5.js is accessible in multiple languages and has an expansive [documentation](https://p5js.org/reference/) with visual examples. You can find [tutorials](https://p5js.org/learn/) on the p5.js website and start coding right now in the [p5.js web editor](https://editor.p5js.org/). You can extend p5.js with many community-created [libraries](https://p5js.org/libraries/) that bring different capabilities. Its community provides endless inspiration and support for creators.
+
+p5.js encourages iterative and exploratory code for creative expression. Its friendly, diverse community shares art, code, and learning resources to help elevate all voices. We share our values in open source and access for all, to learn, create, imagine, design, share and code freely.
 
 ## Community
 
-We are a community of, and in solidarity with, people from every gender identity and expression, sexual orientation, race, ethnicity, language, neuro-type, size, ability, class, religion, culture, subculture, political opinion, age, skill level, occupation, and background. We acknowledge that not everyone has the time, financial means, or capacity to actively participate, but we recognize and encourage involvement of all kinds. We facilitate and foster access and empowerment. We are all learners.
+The p5.js community shares an interest in exploring the creation of art and design with technology. We are a community of, and in solidarity with, people from every gender identity and expression, sexual orientation, race, ethnicity, language, neuro-type, size, disability, class, caste, religion, culture, subculture, immigration status, age, skill level, occupation, and background. We stand in solidarity with justice and liberation movements. We work to acknowledge, dismantle, and prevent barriers to access p5.js code and the p5.js community.
 
-p5.js is a collaborative project created by many individuals, mostly volunteers, and you are invited to help. All types of involvement are welcome. See the [community section](https://p5js.org/community) to get started! You can also check out the [contributor docs](https://p5js.org/contribute/#docs) for more in-depth details about contributing to different areas of the project, including code, bug fixes, documentation, discussion, and more.
-
-Learn more about [our community](https://p5js.org/community/) and read our community statement and [code of conduct](https://github.com/processing/p5.js/blob/main/CODE_OF_CONDUCT.md). You can directly support our work with p5.js by [donating to the Processing Foundation](https://processingfoundation.org/support).
-
-## Get Started
-
-Make your first sketch in the [p5.js Editor](https://editor.p5js.org/)! Learn more about sketching with p5.js on the [Get Started](https://p5js.org/tutorials/get-started/) and find everything you can do in the [Reference](https://p5js.org/reference/).
-
-To get the complete p5.js library on your own computer, you can [download it here](https://p5js.org/download). If you are interested in the most recent, less stable version, or even simply in (**new!**) certain components of p5.js, you can clone this repository and run `grunt` from the command line to generate the library from source. See the [contributor docs](https://p5js.org/contribute/#docs) for more information about our build process.
-
-
-## Learning
-
-Check out [p5js.org](https://p5js.org) for lots more! Here are some quick-links to get started learning p5.js.
-
-* [Get Started](https://p5js.org/tutorials/get-started): Create and run your first sketch!
-* [p5.js overview](https://github.com/processing/p5.js/wiki/p5.js-overview): An overview of the main features and functionality of p5.js
-* [Reference](https://p5js.org/reference): The functionality supported by p5.js
-* [Learn](https://p5js.org/tutorials): Tutorials and short, prototypical examples exploring the basics of p5.js
-* [Forum](https://discourse.processing.org/c/p5js): Ask and answer questions about how to make things with p5.js here
-* [Libraries](https://p5js.org/libraries): Extend p5 functionality to interact with HTML, manipulate sound, and more!
-* [The Coding Train p5.js Tutorials](https://thecodingtrain.com/beginners/p5js/): A huge trove of tutorials created by Dan Shiffman and friends
-
+Learn more about [our community](https://p5js.org/community/) and read our community statement and [code of conduct](https://github.com/processing/p5.js/blob/main/CODE_OF_CONDUCT.md). You can directly support our work with p5.js by donating to [the Processing Foundation](https://processingfoundation.org/support).
 
 ## Issues
 
-If you have found a bug in the p5.js library, you can file it here under the [“issues” tab](https://github.com/processing/p5.js/issues). You can also request new features here. A set of templates for reporting issues and requesting features are provided to assist you (and us!). p5.js is maintained mostly by volunteers, so we thank you for your patience as we try to address your issues as soon as we can. Please post in the correct repository if you can:
+If you have found a bug in the p5.js library or want to request new features, feel free to file an issue! See our [contributor guidelines](https://p5js.org/contribute/contributor_guidelines) for a full reference of our contribution process. A set of templates for reporting issues and requesting features are provided to assist you (and us!). Different parts of p5.js are in different repositories. You can open an issue on each of them through these links:
 
-* p5.js general: [https://github.com/processing/p5.js/issues](https://github.com/processing/p5.js/issues)
-* p5.sound: [https://github.com/processing/p5.js-sound/issues](https://github.com/processing/p5.js-sound/issues)
-* p5.js website: [https://github.com/processing/p5.js-website/issues](https://github.com/processing/p5.js-website/issues)
-* p5.js web editor: [https://github.com/processing/p5.js-web-editor/issues](https://github.com/processing/p5.js-web-editor/issues)
+[p5.js](https://github.com/processing/p5.js/issues) — [p5.js website](https://github.com/processing/p5.js-website/issues) —- [p5.js web editor](https://github.com/processing/p5.js-web-editor/issues)
+
+p5.js is maintained mostly by volunteers, so we thank you for your patience as we try to address your issues as soon as we can.
 
 
-## Get Started for Developers
-A quick Getting Started with the Build and setting up the repository could be found [here](https://p5js.org/contribute/contributor_guidelines/#quick-get-started-for-developers)
+## Get Started for Contributors
+
+p5.js is a collaborative project with many contributors, mostly volunteers, and you are invited to help. All types of involvement are welcome. See the [contribute](https://p5js.org/contribute) for more in-depth details about contributing to different areas of the project, including code, bug fixes, documentation, discussion, and more.
+
+A quick Getting Started with the Build and setting up the repository could be found [here](https://p5js.org/contribute/contributor_guidelines/#quick-get-started-for-developers).
 
 
 ## Stewards
 
-Stewards are contributors that are particularly involved, familiar, or responsive to certain areas of the project. Their role is to help provide context and guidance to others working on p5.js. If you have a question about contributing to a particular area, you can tag the listed steward in an issue or pull request. They may also weigh in on feature requests and guide the overall direction of their area, with the input of the community. You can read more about the organization of the project at the p5.js [Contributor Guidelines](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md) and p5.js [Steward Guidelines](https://github.com/processing/p5.js/blob/main/contributor_docs/steward_guidelines.md).
+Stewards are contributors who are particularly involved, familiar, or responsive to certain areas of the project. Their role is to help provide context and guidance to others working on p5.js. If you have a question about contributing to a particular area, you can tag the listed steward in an issue or pull request. They may also weigh in on feature requests and guide the overall direction of their area, with the input of the community. You can read more about the organization of the project in our p5.js [Contributor Guidelines](https://p5js.org/contribute/contributor_guidelines) and p5.js [Steward Guidelines](https://p5js.org/contribute/steward_guidelines).
 
-Anyone interested can volunteer to be a steward! There are no specific requirements for expertise, just an interest in actively learning and participating.  If you’re familiar with or interested in actively learning and participating in some of p5.js areas below, please reply to [this issue](https://github.com/processing/p5.js/issues/5719) mentioning which area(s) you are interested to volunteer as a steward! 👋👋👋
+Anyone interested can volunteer to be a steward! There are no specific requirements for expertise, just an interest in actively learning and participating. If you’re familiar with or interested in actively learning and participating in some of the p5.js areas below, please reply to [this issue](https://github.com/processing/p5.js/issues/5719) mentioning which area(s) you are interested in volunteering as a steward! 👋👋👋
+
+p5.js was created by [Lauren Lee McCarthy](https://github.com/lmccart) in 2013 as a new interpretation of Processing for the context of the web. Since then we have allowed ourselves space to deviate and grow, while drawing inspiration from Processing and our shared community. p5.js is sustained by a community of contributors, with support from the Processing Foundation. p5.js follows a rotating leadership model started in 2020, and [Qianqian Ye](https://github.com/qianqianye) has been leading p5.js since 2021. Learn more about the [people](https://p5js.org/people/) behind p5.js.
 
 Current Lead/Mentor
-* [@qianqianye](https://github.com/qianqianye) - p5.js Project Lead
-* [@limzykenneth](https://github.com/limzykenneth) - p5.js Mentor
-* [@lmccart](https://github.com/lmccart)- p5.js Creator
+* [@qianqianye](https://github.com/qianqianye) - p5.js Lead，2021-present
+* [@limzykenneth](https://github.com/limzykenneth) - p5.js Mentor，2023-present
 
 Lead/Mentor Alumni
+* [@lmccart](https://github.com/lmccart)- p5.js Creator
 * [@outofambit](https://github.com/outofambit) - p5.js Co-Lead 2021-22, Mentor 2022-2023
 * [@mcturner1995](https://github.com/mcturner1995) - p5.js Lead 2020
   
@@ -94,7 +102,7 @@ Lead/Mentor Alumni
 
 ## Contributors
 
-We recognize all types of contributions. This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification and the [Emoji Key](https://allcontributors.org/docs/en/emoji-key) ✨ for contribution types. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309). You can also post an issue or comment on a pull request with the text: `@all-contributors please add @YOUR-USERNAME for THING(S)` and our nice bot will add you.
+We recognize all types of contributions. This project follows the [all-contributors specification](https://github.com/all-contributors/all-contributors) and the [Emoji Key](https://allcontributors.org/docs/en/emoji-key) ✨ for contribution types. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309). You can also post an issue or comment on a pull request with the text: `@all-contributors please add @YOUR-USERNAME for THINGS` (where `THINGS` is a comma-separated list of entries from the [list of possible contribution types](https://allcontributors.org/docs/en/emoji-key)) and our nice bot will add you.
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
