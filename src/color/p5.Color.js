@@ -38,6 +38,7 @@ import {
   A98RGB_Linear,
   A98RGB
 } from 'colorjs.io/fn';
+import HSB from './color_spaces/hsb.js';
 
 ColorSpace.register(XYZ_D65);
 ColorSpace.register(sRGB_Linear);
@@ -45,6 +46,7 @@ ColorSpace.register(sRGB);
 ColorSpace.register(HSL);
 ColorSpace.register(HSV);
 ColorSpace.register(HWB);
+ColorSpace.register(HSB);
 
 ColorSpace.register(XYZ_D50);
 ColorSpace.register(Lab);
@@ -58,8 +60,6 @@ ColorSpace.register(P3);
 
 ColorSpace.register(A98RGB_Linear);
 ColorSpace.register(A98RGB);
-
-// console.log(ColorSpace.registry);
 
 /**
  * A class to describe a color.
@@ -137,6 +137,12 @@ p5.Color = class Color {
           break;
         case 'hsb':
           // TODO: need implementation
+          space = 'hsb';
+          coords = [
+            vals[0] / pInst._colorMaxes[pInst._colorMode][0] * 360,
+            vals[1] / pInst._colorMaxes[pInst._colorMode][1] * 100,
+            vals[2] / pInst._colorMaxes[pInst._colorMode][2] * 100
+          ];
           break;
         case 'hsl':
           space = 'hsl';
