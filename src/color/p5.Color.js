@@ -100,7 +100,9 @@ p5.Color = class Color {
     // This changes with the color object
     this.mode = pInst._colorMode;
 
-    if(typeof vals[0] === 'string'){
+    if (typeof vals === 'object' && !Array.isArray(vals) && vals !== null){
+      this.color = vals;
+    } else if(typeof vals[0] === 'string') {
       try{
         // NOTE: this will not necessarily have the right color mode
         this.color = parse(vals[0]);

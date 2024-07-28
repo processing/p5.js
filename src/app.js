@@ -27,7 +27,6 @@ import './accessibility/textOutput';
 import './accessibility/gridOutput';
 import './accessibility/color_namer';
 // color
-import './color/color_conversion';
 import './color/creating_reading';
 import './color/p5.Color';
 import './color/setting';
