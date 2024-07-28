@@ -53,7 +53,7 @@ If you have found a bug in the p5.js library, you can file it here under the [â€
 
 
 ## Get Started for Developers
-A quick Getting Started with the Build and setting up the repository could be found [here](https://p5js.org/contributor-docs/#/contributor_guidelines?id=quick-get-started-for-developers)
+A quick Getting Started with the Build and setting up the repository could be found [here](https://p5js.org/contribute/contributor_guidelines/#quick-get-started-for-developers)
 
 
 ## Stewards
