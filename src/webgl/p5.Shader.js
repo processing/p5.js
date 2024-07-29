@@ -24,6 +24,32 @@ import p5 from '../core/main';
  * created, it can be used with the <a href="#/p5/shader">shader()</a>
  * function, as in `shader(myShader)`.
  *
+ * A shader can optionally describe *hooks,* which are functions in GLSL that
+ * users may choose to provide to customize the behavior of the shader. For the
+ * vertex or the fragment shader, users can pass in an object where each key is
+ * the type and name of a hook function, and each value is a string with the
+ * parameter list and default implementation of the hook. For example, to let users
+ * optionally run code at the start of the vertex shader, the options object could
+ * include:
+ *
+ * ```js
+ * {
+ *   vertex: {
+ *     'void beforeVertex': '() {}'
+ *   }
+ * }
+ * ```
+ *
+ * Then, in your vertex shader source, you can run a hook by calling a function
+ * with the same name prefixed by `HOOK_`:
+ *
+ * ```glsl
+ * void main() {
+ *   HOOK_beforeVertex();
+ *   // Add the rest ofy our shader code here!
+ * }
+ * ```
+ *
  * Note: <a href="#/p5/createShader">createShader()</a>,
  * <a href="#/p5/createFilterShader">createFilterShader()</a>, and
  * <a href="#/p5/loadShader">loadShader()</a> are the recommended ways to
@@ -34,7 +60,10 @@ import p5 from '../core/main';
  * @param {p5.RendererGL} renderer WebGL context for this shader.
  * @param {String} vertSrc source code for the vertex shader program.
  * @param {String} fragSrc source code for the fragment shader program.
- * @param {Object} [options] TODO
+ * @param {Object} [options] An optional object describing how this shader can
+ * be augmented with hooks. It can include:
+ *  - `vertex`: An object describing the available vertex shader hooks.
+ *  - `fragment`: An object describing the available frament shader hooks.
  *
  * @example
  * <div>
@@ -141,7 +170,8 @@ p5.Shader = class {
     this._bound = false;
     this.samplers = [];
     this.hooks = {
-      // Stores uniform declarations
+      // Stores uniform declarations. This should be passed in by
+      // `.modify()` instead of being manualy passed in.
       declarations: options.declarations,
 
       // Stores the hook implementations

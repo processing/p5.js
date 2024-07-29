@@ -191,12 +191,45 @@ p5.prototype.loadShader = function (
  * The second parameter, `fragSrc`, sets the fragment shader. It’s a string
  * that contains the fragment shader program written in GLSL.
  *
+ * A shader can optionally describe *hooks,* which are functions in GLSL that
+ * users may choose to provide to customize the behavior of the shader using the
+ * <a href="#/p5.Shader/modify">`modify()`</a> method of `p5.Shader`. These are added by
+ * describing the hooks in a third parameter, `options`, and referencing the hooks in
+ * your `vertSrc` or `fragSrc`. Hooks for the vertex or fragment shader are described under
+ * the `vertex` and `fragment` keys of `options`. Each one is an object. where each key is
+ * the type and name of a hook function, and each value is a string with the
+ * parameter list and default implementation of the hook. For example, to let users
+ * optionally run code at the start of the vertex shader, the options object could
+ * include:
+ *
+ * ```js
+ * {
+ *   vertex: {
+ *     'void beforeVertex': '() {}'
+ *   }
+ * }
+ * ```
+ *
+ * Then, in your vertex shader source, you can run a hook by calling a function
+ * with the same name prefixed by `HOOK_`:
+ *
+ * ```glsl
+ * void main() {
+ *   HOOK_beforeVertex();
+ *   // Add the rest ofy our shader code here!
+ * }
+ * ```
+ *
  * Note: Only filter shaders can be used in 2D mode. All shaders can be used
  * in WebGL mode.
  *
  * @method createShader
  * @param {String} vertSrc source code for the vertex shader.
  * @param {String} fragSrc source code for the fragment shader.
+ * @param {Object} [options] An optional object describing how this shader can
+ * be augmented with hooks. It can include:
+ *  - `vertex`: An object describing the available vertex shader hooks.
+ *  - `fragment`: An object describing the available frament shader hooks.
  * @returns {p5.Shader} new shader object created from the
  * vertex and fragment shaders.
  *
@@ -785,10 +818,26 @@ p5.prototype.shader = function (s) {
  * - `vec4 getVertexColor`: Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
  * - `void afterVertex`: Called at the end of the vertex shader.
  * - `void beforeFragment`: Called at the start of the fragment shader.
- * - `Inputs getPixelInputs`: Update the per-pixel inputs of the material. It takes in an `Inputs` struct, which includes `vec3 normal`, `vec2 texCoord`, `vec3 ambientColor`, `vec4 color`, `vec3 ambientMaterial`, `vec3 specularMaterial`, `vec3 emissiveMaterial`, `float shininess`, and `vec3 ambientLight`. The struct can be modified and returned.
+ * - `Inputs getPixelInputs`: Update the per-pixel inputs of the material. It takes in an `Inputs` struct, which includes:
+ *   - `vec3 normal`, the direction pointing out of the surface
+ *   - `vec2 texCoord`, a vector where `x` and `y` are between 0 and 1 describing the spot on a texture the pixel is mapped to, as a fraction of the texture size
+ *   - `vec3 ambientLight`, the ambient light color on the vertex
+ *   - `vec4 color`, the base material color of the pixel
+ *   - `vec3 ambientMaterial`, the color of the pixel when affected by ambient light
+ *   - `vec3 specularMaterial`, the color of the pixel when reflecting specular highlights
+ *   - `vec3 emissiveMaterial`, the light color emitted by the pixel
+ *   - `float shininess`, a number representing how sharp specular reflections should be
+    The struct can be modified and returned.
  * - `vec4 combineColors`: Take in a `ColorComponents` struct containing all the different components of light, and combining them into
- *   a single final color. The struct contains `vec3 baseColor`, `float opacity`, `vec3 ambientColor`, `vec3 specularColor`,
- *   `vec3 diffuse`, `vec3 ambientLight`, `vec3 specular`, and `vec3 emissive`.
+ *   a single final color. The struct contains:
+ *   - `vec3 baseColor`, the base color of the pixel
+ *   - `float opacity`, the opacity between 0 and 1 that it should be drawn at
+ *   - `vec3 ambientColor`, the color of the pixel when affected by ambient light
+ *   - `vec3 specularColor`, the color of the pixel when affected by specular reflections
+ *   - `vec3 diffuse`, the amount of diffused light hitting the pixel
+ *   - `vec3 ambient`, the amount of ambient light hitting the pixel
+ *   - `vec3 specular`, the amount of specular reflection hitting the pixel
+ *   - `vec3 emissive`, the amount of light emitted by the pixel
  * - `vec4 getFinalColor`: Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
  * - `void afterFragment`: Called at the end of the fragment shader.
  *
@@ -834,18 +883,21 @@ p5.prototype.shader = function (s) {
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = materialShader().modify({
- *     vertexDeclarations: 'out vec2 myUV;',
- *     fragmentDeclarations: 'in vec2 myUV;',
- *     'vec2 getUV': `(vec2 uv) {
- *       // Store and return
- *       myUV = uv;
- *       return myUV;
- *     }`,
  *     'Inputs getPixelInputs': `(Inputs inputs) {
  *       vec3 newNormal = inputs.normal;
  *       // Simple bump mapping: adjust the normal based on position
- *       newNormal.x += 0.05 * sin(inputs.texCoord.y * ${TWO_PI} * 15.0);
- *       newNormal.y += 0.05 * sin(inputs.texCoord.x * ${TWO_PI} * 15.0);
+ *       newNormal.x += 0.2 * sin(
+ *           sin(
+ *             inputs.texCoord.y * ${TWO_PI} * 10.0 +
+ *             inputs.texCoord.x * ${TWO_PI} * 25.0
+ *           )
+ *         );
+ *       newNormal.y += 0.2 * sin(
+ *         sin(
+ *             inputs.texCoord.x * ${TWO_PI} * 10.0 +
+ *             inputs.texCoord.y * ${TWO_PI} * 25.0
+ *           )
+ *       );
  *       inputs.normal = normalize(newNormal);
  *       return inputs;
  *     }`
@@ -855,7 +907,7 @@ p5.prototype.shader = function (s) {
  * function draw() {
  *   background(255);
  *   shader(myShader);
- *   ambientLight(50);
+ *   ambientLight(150);
  *   pointLight(
  *     255, 255, 255,
  *     100*cos(frameCount*0.04), -50, 100*sin(frameCount*0.04)
@@ -1030,7 +1082,12 @@ p5.prototype.colorShader = function() {
  * - `vec4 getVertexColor`: Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
  * - `void afterVertex`: Called at the end of the vertex shader.
  * - `void beforeFragment`: Called at the start of the fragment shader.
- * - `Inputs getPixelInputs`: Update the inputs to the shader. It takes in a struct `Inputs inputs`, which includes `vec4 color`, `vec2 tangent`, `vec2 center`, `vec2 position`, and `float strokeWeight`.
+ * - `Inputs getPixelInputs`: Update the inputs to the shader. It takes in a struct `Inputs inputs`, which includes:
+ *   - `vec4 color`, the color of the stroke
+ *   - `vec2 tangent`, the direction of the stroke in screen space
+ *   - `vec2 center`, the coordinate of the center of the stroke in screen space p5.js pixels
+ *   - `vec2 position`, the coordinate of the current pixel in screen space p5.js pixels
+ *   - `float strokeWeight`, the thickness of the stroke in p5.js pixels
  * - `bool shouldDiscard`: Caps and joins are made by discarded pixels in the fragment shader to carve away unwanted areas. Use this to change this logic. It takes in a `bool willDiscard` and must return a modified version.
  * - `vec4 getFinalColor`: Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
  * - `void afterFragment`: Called at the end of the fragment shader.
@@ -1052,11 +1109,6 @@ p5.prototype.colorShader = function() {
  *     fragmentDeclarations: `
  *       vec2 myCenter;
  *       vec2 myPosition;
- *       float random(vec2 p) {
- *         vec3 p3  = fract(vec3(p.xyx) * .1031);
- *         p3 += dot(p3, p3.yzx + 33.33);
- *         return fract((p3.x + p3.y) * p3.z);
- *       }
  *     `,
  *     'Inputs getPixelInputs': `(Inputs inputs) {
  *       // Store a copy, then return unchanged
@@ -1065,10 +1117,12 @@ p5.prototype.colorShader = function() {
  *       return inputs;
  *     }`,
  *     'vec4 getFinalColor': `(vec4 c) {
- *       if (length(myPosition - myCenter) + random(gl_FragCoord.xy)*10. > 15.) {
- *         return vec4(0.0, 0.0, 0.0, 0.0);
- *       }
- *       return c;
+ *       float opacity = 1.0 - smoothstep(
+ *         0.0,
+ *         15.0,
+ *         length(myPosition - myCenter)
+ *       );
+ *       return c * opacity;
  *     }`
  *   });
  * }
