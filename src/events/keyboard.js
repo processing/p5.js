@@ -189,20 +189,20 @@ p5.prototype.key = '';
  * been typed. For example, the following conditional checks whether the enter
  * key has been typed:
  *
- * <code>
+ * ```js
  * if (keyCode === 13) {
  *   // Code to run if the enter key was pressed.
  * }
- * </code>
+ * ```
  *
  * The same code can be written more clearly using the system variable `ENTER`
  * which has a value of 13:
  *
- * <code>
+ * ```js
  * if (keyCode === ENTER) {
  *   // Code to run if the enter key was pressed.
  * }
- * </code>
+ * ```
  *
  * The system variables `BACKSPACE`, `DELETE`, `ENTER`, `RETURN`, `TAB`,
  * `ESCAPE`, `SHIFT`, `CONTROL`, `OPTION`, `ALT`, `UP_ARROW`, `DOWN_ARROW`,
@@ -287,17 +287,17 @@ p5.prototype.keyCode = 0;
  * Declaring the function `keyPressed()` sets a code block to run once
  * automatically when the user presses any key:
  *
- * <code>
+ * ```js
  * function keyPressed() {
  *   // Code to run.
  * }
- * </code>
+ * ```
  *
  * The <a href="#/p5/key">key</a> and <a href="#/p5/keyCode">keyCode</a>
  * variables will be updated with the most recently typed value when
  * `keyPressed()` is called by p5.js:
  *
- * <code>
+ * ```js
  * function keyPressed() {
  *   if (key === 'c') {
  *     // Code to run.
@@ -307,18 +307,18 @@ p5.prototype.keyCode = 0;
  *     // Code to run.
  *   }
  * }
- * </code>
+ * ```
  *
  * The parameter, `event`, is optional. `keyPressed()` is always passed a
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent" target="_blank">KeyboardEvent</a>
  * object with properties that describe the key press event:
  *
- * <code>
+ * ```js
  * function keyPressed(event) {
  *   // Code to run that uses the event.
  *   console.log(event);
  * }
- * </code>
+ * ```
  *
  * Browsers may have default behaviors attached to various key events. For
  * example, some browsers may jump to the bottom of a web page when the
@@ -464,17 +464,17 @@ p5.prototype._onkeydown = function(e) {
  * Declaring the function `keyReleased()` sets a code block to run once
  * automatically when the user releases any key:
  *
- * <code>
+ * ```js
  * function keyReleased() {
  *   // Code to run.
  * }
- * </code>
+ * ```
  *
  * The <a href="#/p5/key">key</a> and <a href="#/p5/keyCode">keyCode</a>
  * variables will be updated with the most recently released value when
  * `keyReleased()` is called by p5.js:
  *
- * <code>
+ * ```js
  * function keyReleased() {
  *   if (key === 'c') {
  *     // Code to run.
@@ -484,18 +484,18 @@ p5.prototype._onkeydown = function(e) {
  *     // Code to run.
  *   }
  * }
- * </code>
+ * ```
  *
  * The parameter, `event`, is optional. `keyReleased()` is always passed a
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent" target="_blank">KeyboardEvent</a>
  * object with properties that describe the key press event:
  *
- * <code>
+ * ```js
  * function keyReleased(event) {
  *   // Code to run that uses the event.
  *   console.log(event);
  * }
- * </code>
+ * ```
  *
  * Browsers may have default behaviors attached to various key events. To
  * prevent any default behavior for this event, add `return false;` to the end
@@ -644,17 +644,17 @@ p5.prototype._onkeyup = function(e) {
  * as `a` or 1. Modifier keys such as `SHIFT`, `CONTROL`, and the arrow keys
  * will be ignored:
  *
- * <code>
+ * ```js
  * function keyTyped() {
  *   // Code to run.
  * }
- * </code>
+ * ```
  *
  * The <a href="#/p5/key">key</a> and <a href="#/p5/keyCode">keyCode</a>
  * variables will be updated with the most recently released value when
  * `keyTyped()` is called by p5.js:
  *
- * <code>
+ * ```js
  * function keyTyped() {
  *   // Check for the "c" character using key.
  *   if (key === 'c') {
@@ -666,18 +666,18 @@ p5.prototype._onkeyup = function(e) {
  *     // Code to run.
  *   }
  * }
- * </code>
+ * ```
  *
  * The parameter, `event`, is optional. `keyTyped()` is always passed a
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent" target="_blank">KeyboardEvent</a>
  * object with properties that describe the key press event:
  *
- * <code>
+ * ```js
  * function keyReleased(event) {
  *   // Code to run that uses the event.
  *   console.log(event);
  * }
- * </code>
+ * ```
  *
  * Note: Use the <a href="#/p5/keyPressed">keyPressed()</a> function and
  * <a href="#/p5/keyCode">keyCode</a> system variable to respond to modifier
@@ -799,11 +799,11 @@ p5.prototype._onblur = function(e) {
  * For example, `keyIsDown()` can be used to check if both `LEFT_ARROW` and
  * `UP_ARROW` are pressed:
  *
- * <code>
+ * ```js
  * if (keyIsDown(LEFT_ARROW) && keyIsDown(UP_ARROW)) {
  *   // Move diagonally.
  * }
- * </code>
+ * ```
  *
  * `keyIsDown()` can check for key presses using
  * <a href="#/p5/keyCode">keyCode</a> values, as in `keyIsDown(37)` or

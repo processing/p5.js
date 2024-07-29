@@ -50,8 +50,8 @@ const renderers = p5.renderers = {
  *
  * @method createCanvas
  * @param  {Number} [width] width of the canvas. Defaults to 100.
- * @param  {Number} [height] width of the canvas. Defaults to 100.
- * @param  {(P2D|WEBGL)} [renderer] either P2D or WEBGL. Defaults to `P2D`.
+ * @param  {Number} [height] height of the canvas. Defaults to 100.
+ * @param  {Constant} [renderer] either P2D or WEBGL. Defaults to `P2D`.
  * @param  {HTMLCanvasElement} [canvas] existing canvas element that should be used for the sketch.
  * @return {p5.Renderer} new `p5.Renderer` that holds the canvas.
  *
@@ -675,7 +675,7 @@ p5.prototype.createFramebuffer = function(options) {
  *   createCanvas(100, 100, WEBGL);
  *
  *   // Create the p5.Framebuffer objects.
- *   prev = createFramebuffer({ format: FLOAT });
+ *   previous = createFramebuffer({ format: FLOAT });
  *   current = createFramebuffer({ format: FLOAT });
  *
  *   describe(
@@ -684,9 +684,9 @@ p5.prototype.createFramebuffer = function(options) {
  * }
  *
  * function draw() {
- *   // Set the previous p5.Framebuffer to the
+ *   // Swap the previous p5.Framebuffer and the
  *   // current one so it can be used as a texture.
- *   previous = current;
+ *   [previous, current] = [current, previous];
  *
  *   // Start drawing to the current p5.Framebuffer.
  *   current.begin();

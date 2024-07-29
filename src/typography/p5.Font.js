@@ -521,7 +521,7 @@ p5.Font = class Font {
       pdata = this._getPath(line, x, y, options).commands;
     }
 
-    ctx.beginPath();
+    if (!pg._clipping) ctx.beginPath();
 
     for (const cmd of pdata) {
       if (cmd.type === 'M') {

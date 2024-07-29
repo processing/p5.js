@@ -614,7 +614,7 @@ function vector(p5, fn){
      * of numbers, as in `v.sub([1, 2, 3])`.
      *
      * If a value isn't provided for a component, it won't change. For
-     * example, `v.sub(4, 5)` adds 4 to `v.x`, 5 to `v.y`, and 0 to `v.z`.
+     * example, `v.sub(4, 5)` subtracts 4 from `v.x`, 5 from `v.y`, and 0 from `v.z`.
      * Calling `sub()` with no arguments, as in `v.sub()`, has no effect.
      *
      * The static version of `sub()`, as in `p5.Vector.sub(v2, v1)`, returns a new
@@ -2911,8 +2911,8 @@ function vector(p5, fn){
      * </div>
      */
     reflect(surfaceNormal) {
-      surfaceNormal.normalize();
-      return this.sub(surfaceNormal.mult(2 * this.dot(surfaceNormal)));
+      const surfaceNormalCopy = p5.Vector.normalize(surfaceNormal);
+      return this.sub(surfaceNormalCopy.mult(2 * this.dot(surfaceNormalCopy)));
     }
 
     /**
@@ -3028,6 +3028,34 @@ function vector(p5, fn){
         c = z || 0;
       }
       return this.x === a && this.y === b && this.z === c;
+    }
+
+    /**
+     * Replaces the components of a <a href="#/p5.Vector">p5.Vector</a> that are very close to zero with zero.
+     *
+     * In computers, handling numbers with decimals can give slightly imprecise answers due to the way those numbers are represented.
+     * This can make it hard to check if a number is zero, as it may be close but not exactly zero.
+     * This method rounds very close numbers to zero to make those checks easier
+     *
+     * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/EPSILON
+     *
+     * @method clampToZero
+     * @return {p5.Vector} with components very close to zero replaced with zero.
+     * @chainable
+     */
+    clampToZero() {
+      this.x = this._clampToZero(this.x);
+      this.y = this._clampToZero(this.y);
+      this.z = this._clampToZero(this.z);
+      return this;
+    }
+
+    /**
+     * Helper function for clampToZero
+     * @private
+     */
+    _clampToZero(val) {
+      return Math.abs((val||0) - 0) <= Number.EPSILON ? 0 : val;
     }
 
     // Static Methods

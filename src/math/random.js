@@ -259,7 +259,6 @@ function random(p5, fn){
    * @method random
    * @param  {Array} choices   array to choose from.
    * @return {*} random element from the array.
-   * @example
    */
   fn.random = function(min, max) {
     p5._validateParameters('random', arguments);

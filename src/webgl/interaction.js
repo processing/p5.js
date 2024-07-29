@@ -16,7 +16,7 @@ import * as constants from '../core/constants';
  * `orbitControl()` within the <a href="#/p5/draw">draw()</a> function allows
  * the user to change the camera’s position:
  *
- * <code>
+ * ```js
  * function draw() {
  *   background(200);
  *
@@ -25,7 +25,7 @@ import * as constants from '../core/constants';
  *
  *   // Rest of sketch.
  * }
- * </code>
+ * ```
  *
  * Left-clicking and dragging or swipe motion will rotate the camera position
  * about the center of the sketch. Right-clicking and dragging or multi-swipe
@@ -47,7 +47,7 @@ import * as constants from '../core/constants';
  * changing the behaviors set with `options`. The object can have the
  * following properties:
  *
- * <code>
+ * ```js
  * let options = {
  *   // Setting this to false makes mobile interactions smoother by
  *   // preventing accidental interactions with the page while orbiting.
@@ -61,7 +61,7 @@ import * as constants from '../core/constants';
  * };
  *
  * orbitControl(1, 1, 1, options);
- * </code>
+ * ```
  *
  * @method orbitControl
  * @for p5

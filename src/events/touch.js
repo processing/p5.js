@@ -14,7 +14,7 @@ import p5 from '../core/main';
  * screen, a new touch point is tracked and added to the array. Touch points
  * are `Objects` with the following properties:
  *
- * <code>
+ * ```js
  * // Iterate over the touches array.
  * for (let touch of touches) {
  *   // x-coordinate relative to the top-left
@@ -36,7 +36,7 @@ import p5 from '../core/main';
  *   // ID number
  *   console.log(touch.id);
  * }
- * </code>
+ * ```
  *
  * @property {Object[]} touches
  * @readOnly
@@ -128,16 +128,16 @@ function getTouchInfo(canvas, w, h, e, i = 0) {
  * Declaring a function called `touchStarted()` sets a code block to run
  * automatically each time the user begins touching a touchscreen device:
  *
- * <code>
+ * ```js
  * function touchStarted() {
  *   // Code to run.
  * }
- * </code>
+ * ```
  *
  * The <a href="#/p5/touches">touches</a> array will be updated with the most
  * recent touch points when `touchStarted()` is called by p5.js:
  *
- * <code>
+ * ```js
  * function touchStarted() {
  *   // Paint over the background.
  *   background(200);
@@ -147,18 +147,18 @@ function getTouchInfo(canvas, w, h, e, i = 0) {
  *     circle(touch.x, touch.y, 40);
  *   }
  * }
- * </code>
+ * ```
  *
  * The parameter, event, is optional. `touchStarted()` will be passed a
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/TouchEvent" target="_blank">TouchEvent</a>
  * object with properties that describe the touch event:
  *
- * <code>
+ * ```js
  * function touchStarted(event) {
  *   // Code to run that uses the event.
  *   console.log(event);
  * }
- * </code>
+ * ```
  *
  * On touchscreen devices, <a href="#/p5/mousePressed">mousePressed()</a> will
  * run when a user’s touch starts if `touchStarted()` isn’t declared. If
@@ -298,16 +298,16 @@ p5.prototype._ontouchstart = function(e) {
  * Declaring the function `touchMoved()` sets a code block to run
  * automatically when the user touches a touchscreen device and moves:
  *
- * <code>
+ * ```js
  * function touchMoved() {
  *   // Code to run.
  * }
- * </code>
+ * ```
  *
  * The <a href="#/p5/touches">touches</a> array will be updated with the most
  * recent touch points when `touchMoved()` is called by p5.js:
  *
- * <code>
+ * ```js
  * function touchMoved() {
  *   // Paint over the background.
  *   background(200);
@@ -317,18 +317,18 @@ p5.prototype._ontouchstart = function(e) {
  *     circle(touch.x, touch.y, 40);
  *   }
  * }
- * </code>
+ * ```
  *
  * The parameter, event, is optional. `touchMoved()` will be passed a
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/TouchEvent" target="_blank">TouchEvent</a>
  * object with properties that describe the touch event:
  *
- * <code>
+ * ```js
  * function touchMoved(event) {
  *   // Code to run that uses the event.
  *   console.log(event);
  * }
- * </code>
+ * ```
  *
  * On touchscreen devices, <a href="#/p5/mouseDragged">mouseDragged()</a> will
  * run when the user’s touch points move if `touchMoved()` isn’t declared. If
@@ -471,16 +471,16 @@ p5.prototype._ontouchmove = function(e) {
  * Declaring the function `touchEnded()` sets a code block to run
  * automatically when the user stops touching a touchscreen device:
  *
- * <code>
+ * ```js
  * function touchEnded() {
  *   // Code to run.
  * }
- * </code>
+ * ```
  *
  * The <a href="#/p5/touches">touches</a> array will be updated with the most
  * recent touch points when `touchEnded()` is called by p5.js:
  *
- * <code>
+ * ```js
  * function touchEnded() {
  *   // Paint over the background.
  *   background(200);
@@ -491,18 +491,18 @@ p5.prototype._ontouchmove = function(e) {
  *     circle(touch.x, touch.y, 40);
  *   }
  * }
- * </code>
+ * ```
  *
  * The parameter, event, is optional. `touchEnded()` will be passed a
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/TouchEvent" target="_blank">TouchEvent</a>
  * object with properties that describe the touch event:
  *
- * <code>
+ * ```js
  * function touchEnded(event) {
  *   // Code to run that uses the event.
  *   console.log(event);
  * }
- * </code>
+ * ```
  *
  * On touchscreen devices, <a href="#/p5/mouseReleased">mouseReleased()</a> will
  * run when the user’s touch ends if `touchEnded()` isn’t declared. If
