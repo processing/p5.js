@@ -216,6 +216,24 @@ p5.Shader = class {
     return preMain + hooks + main + postMain;
   }
 
+  /**
+   * Shaders are written in <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders">GLSL</a>, but
+   * there are different versions of GLSL that it might be written in.
+   *
+   * Calling this method on a `p5.Shader` will return the GLSL version it uses, either `100 es` or `300 es`.
+   * WebGL 1 shaders will only use `100 es`, and WebGL 2 shaders may use either.
+   *
+   * @returns {String} The GLSL version used by the shader.
+   */
+  version() {
+    const match = /#version (.+)$/.exec(this.vertSrc());
+    if (match) {
+      return match[1];
+    } else {
+      return '100 es';
+    }
+  }
+
   vertSrc() {
     return this.shaderSrc(this._vertSrc, 'vertex');
   }

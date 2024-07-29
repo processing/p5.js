@@ -211,12 +211,21 @@ p5.prototype.loadShader = function (
  * ```
  *
  * Then, in your vertex shader source, you can run a hook by calling a function
- * with the same name prefixed by `HOOK_`:
+ * with the same name prefixed by `HOOK_`. If you want to check if the default
+ * hook has been replaced, maybe to avoid extra overhead, you can check if the
+ * same name prefixed by `AUGMENTED_HOOK_` has been defined:
  *
  * ```glsl
  * void main() {
+ *   // In most cases, just calling the hook is fine:
  *   HOOK_beforeVertex();
- *   // Add the rest ofy our shader code here!
+ *
+ *   // Alternatively, for more efficiency:
+ *   #ifdef AUGMENTED_HOOK_beforeVertex
+ *   HOOK_beforeVertex();
+ *   #endif
+ *
+ *   // Add the rest of your shader code here!
  * }
  * ```
  *
@@ -450,6 +459,75 @@ p5.prototype.loadShader = function (
  *
  *   // Add a plane as a drawing surface.
  *   plane(100, 100);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // A shader with hooks.
+ * let myShader;
+ *
+ * // A shader with modified hooks.
+ * let modifiedShader;
+ *
+ * // Create a string with the vertex shader program.
+ * // The vertex shader is called for each vertex.
+ * let vertSrc = `
+ * precision highp float;
+ * uniform mat4 uModelViewMatrix;
+ * uniform mat4 uProjectionMatrix;
+ *
+ * attribute vec3 aPosition;
+ * attribute vec2 aTexCoord;
+ *
+ * void main() {
+ *   vec4 positionVec4 = vec4(aPosition, 1.0);
+ *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+ * }
+ * `;
+ *
+ * // Create a fragment shader that uses a hook.
+ * let fragSrc = `
+ * precision highp float;
+ * void main() {
+ *   // Let users override the color
+ *   gl_FragColor = HOOK_getColor(vec4(1., 0., 0., 1.));
+ * }
+ * `;
+ *
+ * function setup() {
+ *   createCanvas(50, 50, WEBGL);
+ *
+ *   // Create a shader with hooks
+ *   myShader = createShader(vertSrc, fragSrc, {
+ *     fragment: {
+ *       'vec4 getColor': '(vec4 color) { return color; }'
+ *     }
+ *   });
+ *
+ *   // Make a version of the shader with a hook overridden
+ *   modifiedShader = myShader.modify({
+ *     'vec4 getColor': `(vec4 color) {
+ *       return vec4(0., 0., 1., 1.);
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   noStroke();
+ *
+ *   push();
+ *   shader(myShader);
+ *   translate(-width/3, 0);
+ *   sphere(10);
+ *   pop();
+ *
+ *   push();
+ *   shader(modifiedShader);
+ *   translate(width/3, 0);
+ *   sphere(10);
+ *   pop();
  * }
  * </code>
  * </div>
@@ -841,6 +919,9 @@ p5.prototype.shader = function (s) {
  * - `vec4 getFinalColor`: Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
  * - `void afterFragment`: Called at the end of the fragment shader.
  *
+ * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
+ * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
+ *
  * Call `materialShader().inspectHooks()` to see all the possible hooks and
  * their default implementations.
  *
@@ -871,6 +952,41 @@ p5.prototype.shader = function (s) {
  *   noStroke();
  *   fill('red');
  *   sphere(50);
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = materialShader().modify({
+ *     declarations: 'vec3 myNormal;',
+ *     'Inputs getPixelInputs': `(Inputs inputs) {
+ *       myNormal = inputs.normal;
+ *       return inputs;
+ *     }`,
+ *     'vec4 getFinalColor': `(vec4 color) {
+ *       return mix(
+ *         vec4(1.0, 1.0, 1.0, 1.0),
+ *         color,
+ *         abs(dot(myNormal, vec3(0.0, 0.0, 1.0)))
+ *       );
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   rotateY(millis() * 0.001);
+ *   shader(myShader);
+ *   lights();
+ *   noStroke();
+ *   fill('red');
+ *   torus(30);
  * }
  * </code>
  * </div>
@@ -942,6 +1058,9 @@ p5.prototype.materialShader = function() {
  * - `void beforeFragment`: Called at the start of the fragment shader.
  * - `vec4 getFinalColor`: Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
  * - `void afterFragment`: Called at the end of the fragment shader.
+ *
+ * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
+ * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
  *
  * Call `normalShader().inspectHooks()` to see all the possible hooks and
  * their default implementations.
@@ -1030,6 +1149,9 @@ p5.prototype.normalShader = function() {
  * - `vec4 getFinalColor`: Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
  * - `void afterFragment`: Called at the end of the fragment shader.
  *
+ * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
+ * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
+ *
  * Call `colorShader().inspectHooks()` to see all the possible hooks and
  * their default implementations.
  *
@@ -1091,6 +1213,9 @@ p5.prototype.colorShader = function() {
  * - `bool shouldDiscard`: Caps and joins are made by discarded pixels in the fragment shader to carve away unwanted areas. Use this to change this logic. It takes in a `bool willDiscard` and must return a modified version.
  * - `vec4 getFinalColor`: Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
  * - `void afterFragment`: Called at the end of the fragment shader.
+ *
+ * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
+ * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
  *
  * Call `strokeShader().inspectHooks()` to see all the possible hooks and
  * their default implementations.
