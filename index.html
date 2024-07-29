@@ -25,8 +25,7 @@ const sketch = function(p){
     p.createCanvas(200, 200);
     // console.log(p.ceil(2.1));
 
-    // const c1 = p.color(128, 65, 189);
-    // console.log(c1.toString());
+    const c1 = p.color(128, 65, 189);
     // const c2 = p.color(0, 255, 0, 50);
     // const c3 = p.color(0);
     // const c4 = p.color(0, 50);
@@ -55,15 +54,17 @@ const sketch = function(p){
     // const sr = p.color(100, 100, 100);
     // sr.setRed(255);
     // console.log(sr.toString());
-    // p.colorMode(p.HSL);
-    // const sr = p.color(180, 50, 50);
+    p.colorMode(p.HSL);
+    const sr = p.color(180, 50, 50);
+    const ss = p.color(0, 50, 50);
+    console.log(p.lerpColor(c1, sr, 0.5).color);
     // sr.setRed(255);
     // console.log(sr.toString());
     // console.log(p.red(sr));
 
-    p.colorMode(p.HSB);
-    const hb = p.color(336, 100, 50);
-    console.log(hb.toString());
+    // p.colorMode(p.HSB);
+    // const hb = p.color(336, 100, 50);
+    // console.log(hb.toString());
 
     p.noLoop();
   };

@@ -1008,10 +1008,28 @@ p5.prototype.hue = function(c) {
 p5.prototype.lerpColor = function(c1, c2, amt) {
   p5._validateParameters('lerpColor', arguments);
 
-  // TODO: should convert both to connection space where possible
+  // Find the closest common ancestor color space
+  let spaceIndex = -1;
+  while(
+    (
+      spaceIndex+1 < c1.color.space.path.length ||
+      spaceIndex+1 < c2.color.space.path.length
+    ) &&
+    c1.color.space.path[spaceIndex+1] === c2.color.space.path[spaceIndex+1]
+  ){
+    spaceIndex += 1;
+  }
+
+  if (spaceIndex === -1) {
+    // This probably will not occur in practice
+    throw new Error('Cannot lerp colors. No common color space found');
+  }
+
+  // Get lerp value as a color in the common ancestor color space
   const lerpColor = range(c1.color, c2.color, {
-    space: c1.color.space.id
+    space: c1.color.space.path[spaceIndex].id
   })(amt);
+
   return new p5.Color(this, lerpColor);
 };
 
