@@ -904,7 +904,8 @@ p5.prototype.shader = function (s) {
  *   - `vec3 ambientMaterial`, the color of the pixel when affected by ambient light
  *   - `vec3 specularMaterial`, the color of the pixel when reflecting specular highlights
  *   - `vec3 emissiveMaterial`, the light color emitted by the pixel
- *   - `float shininess`, a number representing how sharp specular reflections should be
+ *   - `float shininess`, a number representing how sharp specular reflections should be, from 1 to infinity
+ *   - `float metalness`, a number representing how mirrorlike the material should be, between 0 and 1
     The struct can be modified and returned.
  * - `vec4 combineColors`: Take in a `ColorComponents` struct containing all the different components of light, and combining them into
  *   a single final color. The struct contains:
@@ -987,6 +988,46 @@ p5.prototype.shader = function (s) {
  *   noStroke();
  *   fill('red');
  *   torus(30);
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ * let environment;
+ *
+ * function preload() {
+ *   environment = loadImage('assets/outdoor_spheremap.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = materialShader().modify({
+ *     'Inputs getPixelInputs': `(Inputs inputs) {
+ *       float factor =
+ *         sin(
+ *           inputs.texCoord.x * ${TWO_PI} +
+ *           inputs.texCoord.y * ${TWO_PI}
+ *         ) * 0.4 + 0.5;
+ *       inputs.shininess = mix(1., 100., factor);
+ *       inputs.metalness = factor;
+ *       return inputs;
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   panorama(environment);
+ *   ambientLight(100);
+ *   imageLight(environment);
+ *   rotateY(millis() * 0.001);
+ *   shader(myShader);
+ *   noStroke();
+ *   fill(255);
+ *   specularMaterial(150);
+ *   sphere(50);
  * }
  * </code>
  * </div>

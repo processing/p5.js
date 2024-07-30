@@ -1727,7 +1727,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         sphereMapping
       );
     }
-    this.uNMatrix.inverseTranspose(this.uMVMatrix);
+    this.uNMatrix.inverseTranspose(this.uViewMatrix);
     this.uNMatrix.invert3x3(this.uNMatrix);
     this.sphereMapping.setUniform('uFovY', this._curCamera.cameraFOV);
     this.sphereMapping.setUniform('uAspect', this._curCamera.aspectRatio);
@@ -2246,7 +2246,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     fillShader.setUniform('uSpecular', this._useSpecularMaterial);
     fillShader.setUniform('uEmissive', this._useEmissiveMaterial);
     fillShader.setUniform('uShininess', this._useShininess);
-    fillShader.setUniform('metallic', this._useMetalness);
+    fillShader.setUniform('uMetallic', this._useMetalness);
 
     this._setImageLightUniforms(fillShader);
 
@@ -2319,14 +2319,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       let diffusedLight = this.getDiffusedTexture(this.activeImageLight);
       shader.setUniform('environmentMapDiffused', diffusedLight);
       let specularLight = this.getSpecularTexture(this.activeImageLight);
-      // In p5js the range of shininess is >= 1,
-      // Therefore roughness range will be ([0,1]*8)*20 or [0, 160]
-      // The factor of 8 is because currently the getSpecularTexture
-      // only calculated 8 different levels of roughness
-      // The factor of 20 is just to spread up this range so that,
-      // [1, max] of shininess is converted to [0,160] of roughness
-      let roughness = 20 / this._useShininess;
-      shader.setUniform('levelOfDetail', roughness * 8);
+
       shader.setUniform('environmentMapSpecular', specularLight);
     }
   }

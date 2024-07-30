@@ -36,6 +36,7 @@ struct Inputs {
   vec3 emissiveMaterial;
   vec4 color;
   float shininess;
+  float metalness;
 };
 
 void main(void) {
@@ -54,6 +55,7 @@ void main(void) {
       // channels by alpha to convert it to premultiplied alpha.
       : vec4(vColor.rgb * vColor.a, vColor.a);
   inputs.shininess = uShininess;
+  inputs.metalness = uMetallic;
   inputs.ambientMaterial = uHasSetAmbient ? uAmbientMatColor.rgb : inputs.color.rgb;
   inputs.specularMaterial = uSpecularMatColor.rgb;
   inputs.emissiveMaterial = uEmissiveMatColor.rgb;
@@ -61,7 +63,7 @@ void main(void) {
 
   vec3 diffuse;
   vec3 specular;
-  totalLight(vViewPosition, inputs.normal, inputs.shininess, diffuse, specular);
+  totalLight(vViewPosition, inputs.normal, inputs.shininess, inputs.metalness, diffuse, specular);
 
   // Calculating final color as result of all lights (plus emissive term).
 
