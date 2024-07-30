@@ -1727,7 +1727,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         sphereMapping
       );
     }
-    this.uNMatrix.inverseTranspose(this.uMVMatrix);
+    this.uNMatrix.inverseTranspose(this.uViewMatrix);
     this.uNMatrix.invert3x3(this.uNMatrix);
     this.sphereMapping.setUniform('uFovY', this._curCamera.cameraFOV);
     this.sphereMapping.setUniform('uAspect', this._curCamera.aspectRatio);
