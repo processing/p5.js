@@ -1272,23 +1272,14 @@ p5.prototype.colorShader = function() {
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = strokeShader().modify({
- *     fragmentDeclarations: `
- *       vec2 myCenter;
- *       vec2 myPosition;
- *     `,
  *     'Inputs getPixelInputs': `(Inputs inputs) {
- *       // Store a copy, then return unchanged
- *       myCenter = inputs.center;
- *       myPosition = inputs.position;
- *       return inputs;
- *     }`,
- *     'vec4 getFinalColor': `(vec4 c) {
  *       float opacity = 1.0 - smoothstep(
  *         0.0,
  *         15.0,
- *         length(myPosition - myCenter)
+ *         length(inputs.position - inputs.center)
  *       );
- *       return c * opacity;
+ *       inputs.color *= opacity;
+ *       return inputs;
  *     }`
  *   });
  * }
@@ -1303,6 +1294,101 @@ p5.prototype.colorShader = function() {
  *     width/3,
  *     sin(millis()*0.001 + 1) * height/4
  *   );
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = strokeShader().modify({
+ *     declarations: `
+ *       uniform float time;
+ *       vec3 myPosition;
+ *     `,
+ *     'vec3 getWorldPosition': `(vec3 pos) {
+ *       myPosition = pos;
+ *       return pos;
+ *     }`,
+ *     'float getStrokeWeight': `(float w) {
+ *       // Add a somewhat random offset to the weight
+ *       // that varies based on position and time
+ *       float scale = 0.8 + 0.2*sin(10.0 * sin(
+ *         floor(time/250.) +
+ *         myPosition.x*0.01 +
+ *         myPosition.y*0.01
+ *       ));
+ *       return w * scale;
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   myShader.setUniform('time', millis());
+ *   strokeWeight(10);
+ *   beginShape();
+ *   for (let i = 0; i <= 50; i++) {
+ *     let r = map(i, 0, 50, 0, width/3);
+ *     let x = r*cos(i*0.2);
+ *     let y = r*sin(i*0.2);
+ *     vertex(x, y);
+ *   }
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = strokeShader().modify({
+ *     declarations: `
+ *       float random(vec2 p) {
+ *         vec3 p3  = fract(vec3(p.xyx) * .1031);
+ *         p3 += dot(p3, p3.yzx + 33.33);
+ *         return fract((p3.x + p3.y) * p3.z);
+ *       }
+ *     `,
+ *     'Inputs getPixelInputs': `(Inputs inputs) {
+ *       // Replace alpha in the color with dithering by
+ *       // randomly setting pixel colors to 0 based on opacity
+ *       float a = inputs.color.a;
+ *       inputs.color.a = 1.0;
+ *       inputs.color *= random(inputs.position.xy) > a ? 0.0 : 1.0;
+ *       return inputs;
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   myShader.setUniform('time', millis());
+ *   strokeWeight(10);
+ *   beginShape();
+ *   for (let i = 0; i <= 50; i++) {
+ *     stroke(
+ *       0,
+ *       255
+ *         * map(i, 0, 20, 0, 1, true)
+ *         * map(i, 30, 50, 1, 0, true)
+ *     );
+ *     vertex(
+ *       map(i, 0, 50, -1, 1) * width/3,
+ *       50 * sin(i/10 + frameCount/100)
+ *     );
+ *   }
+ *   endShape();
  * }
  * </code>
  * </div>

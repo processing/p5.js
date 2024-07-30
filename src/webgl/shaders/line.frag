@@ -3,12 +3,12 @@ precision mediump int;
 uniform vec4 uMaterialColor;
 uniform int uStrokeCap;
 uniform int uStrokeJoin;
-uniform float uStrokeWeight;
 
 IN vec4 vColor;
 IN vec2 vTangent;
 IN vec2 vCenter;
 IN vec2 vPosition;
+IN float vStrokeWeight;
 IN float vMaxDist;
 IN float vCap;
 IN float vJoin;
@@ -34,7 +34,7 @@ void main() {
   inputs.tangent = vTangent;
   inputs.center = vCenter;
   inputs.position = vPosition;
-  inputs.strokeWeight = uStrokeWeight;
+  inputs.strokeWeight = vStrokeWeight;
   inputs = HOOK_getPixelInputs(inputs);
 
   if (vCap > 0.) {
@@ -68,6 +68,6 @@ void main() {
       discard;
     }
   }
-  OUT_COLOR = HOOK_getFinalColor(vec4(vColor.rgb, 1.) * vColor.a);
+  OUT_COLOR = HOOK_getFinalColor(vec4(inputs.color.rgb, 1.) * inputs.color.a);
   HOOK_afterFragment();
 }

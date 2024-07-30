@@ -44,6 +44,7 @@ OUT vec2 vPosition;
 OUT float vMaxDist;
 OUT float vCap;
 OUT float vJoin;
+OUT float vStrokeWeight;
 
 vec2 lineIntersection(vec2 aPoint, vec2 aDir, vec2 bPoint, vec2 bDir) {
   // Rotate and translate so a starts at the origin and goes out to the right
@@ -81,6 +82,7 @@ void main() {
   vec4 posqIn = posp + uModelViewMatrix * vec4(aTangentIn, 0);
   vec4 posqOut = posp + uModelViewMatrix * vec4(aTangentOut, 0);
   float strokeWeight = HOOK_getStrokeWeight(uStrokeWeight);
+  vStrokeWeight = strokeWeight;
 
   float facingCamera = pow(
     // The word space tangent's z value is 0 if it's facing the camera
