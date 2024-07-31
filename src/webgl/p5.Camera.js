@@ -745,6 +745,7 @@ p5.prototype.createCamera = function () {
  * `myCamera.move()` moves the camera along its own axes.
  *
  * @class p5.Camera
+ * @constructor
  * @param {rendererGL} rendererGL instance of WebGL renderer
  *
  * @example
