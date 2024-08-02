@@ -1033,6 +1033,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Manancode"><img src="https://avatars.githubusercontent.com/u/144525586?v=4?s=120" width="120px;" alt="Manan Arora"/><br /><sub><b>Manan Arora</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Manancode" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Serena20003"><img src="https://avatars.githubusercontent.com/u/54823659?v=4?s=120" width="120px;" alt="Serena20003"/><br /><sub><b>Serena20003</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Serena20003" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Souvik-Cyclic"><img src="https://avatars.githubusercontent.com/u/145324128?v=4?s=120" width="120px;" alt="Souvik Kumar"/><br /><sub><b>Souvik Kumar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Souvik-Cyclic" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/PaperPrototype"><img src="https://avatars.githubusercontent.com/u/48071553?v=4?s=120" width="120px;" alt="Abdiel Lopez"/><br /><sub><b>Abdiel Lopez</b></sub></a><br /><a href="#mentoring-PaperPrototype" title="Mentoring">🧑‍🏫</a></td>
     </tr>
   </tbody>
 </table>
