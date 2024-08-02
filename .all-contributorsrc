@@ -6126,6 +6126,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "PaperPrototype",
+      "name": "Abdiel Lopez",
+      "avatar_url": "https://avatars.githubusercontent.com/u/48071553?v=4",
+      "profile": "https://github.com/PaperPrototype",
+      "contributions": [
+        "mentoring"
+      ]
     }
   ],
   "repoType": "github",
