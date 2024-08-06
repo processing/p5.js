@@ -1262,8 +1262,8 @@ p5.Table = class Table {
  * An array containing the names of the columns in the table, if the "header" the table is
  * loaded with the "header" parameter.
  * @type {String[]}
- * @for p5.Table
  * @property columns
+ * @for p5.Table
  * @name columns
  * @example
  * <div class="norender">
@@ -1297,10 +1297,10 @@ p5.Table = class Table {
 /**
  * An array containing the <a href="#/p5.Table">p5.TableRow</a> objects that make up the
  * rows of the table. The same result as calling <a href="#/p5/getRows">getRows()</a>
- * @for p5.Table
  * @type {p5.TableRow[]}
  * @property rows
+ * @for p5.Table
  * @name rows
- */
+*/
 
 export default p5;

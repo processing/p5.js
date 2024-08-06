@@ -114,7 +114,7 @@ In the above example, both `p5.js` and `p5.math.js` are built with the `iife` fo
 // src/math/index.js
 import calculation from './calculation.js';
 import noise from './noise.js';
-import random from './noise.js';
+import random from './random.js';
 import trigonometry from './trigonometry.js';
 import math from './math.js';
 import vector from './p5.Vector.js';

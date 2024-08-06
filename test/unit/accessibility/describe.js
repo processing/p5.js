@@ -23,16 +23,6 @@ suite('describe', function() {
       assert.ok(myp5.describe);
       assert.typeOf(myp5.describe, 'function');
     });
-    test.skip('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.describe(1, myp5.LABEL);
-      });
-    });
-    test.skip('no params', function() {
-      assert.validationError(function() {
-        myp5.describe();
-      });
-    });
     test('err when LABEL at param #0', function() {
       assert.throws(
         function() {
@@ -86,16 +76,6 @@ suite('describe', function() {
     test('should be a function', function() {
       assert.ok(myp5.describeElement);
       assert.typeOf(myp5.describeElement, 'function');
-    });
-    test.skip('wrong param type at #0 and #1', function() {
-      assert.validationError(function() {
-        myp5.describeElement(1, 2);
-      });
-    });
-    test.skip('no params', function() {
-      assert.validationError(function() {
-        myp5.describeElement();
-      });
     });
     test('err when LABEL at param #0', function() {
       assert.throws(

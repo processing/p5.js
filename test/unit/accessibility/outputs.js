@@ -23,11 +23,7 @@ suite('outputs', function() {
       assert.ok(myp5.textOutput);
       assert.typeOf(myp5.textOutput, 'function');
     });
-    test.skip('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.textOutput(1);
-      });
-    });
+
     let expected =
       'Your output is a, 100 by 100 pixels, white canvas containing the following shape:';
     test('should create output as fallback', function() {
@@ -84,8 +80,7 @@ suite('outputs', function() {
         });
       });
     });
-    // NOTE: More complex setup like this not working
-    test.skip('should create text output for arc()', function() {
+    test('should create text output for arc()', function() {
       return new Promise(function(resolve, reject) {
         expected =
           '<li><a href="#myCanvasIDtextOutputshape0">red arc</a>, at middle, covering 31% of the canvas.</li>';
@@ -99,7 +94,7 @@ suite('outputs', function() {
             p.fill(255, 0, 0);
             p.arc(50, 50, 80, 80, 0, p.PI + p.QUARTER_PI);
             if (p.frameCount === 2) {
-              actual = document.getElementById('myCanvasIDtextOutput_list')
+              let actual = document.getElementById('myCanvasIDtextOutput_list')
                 .innerHTML;
               if (actual === expected) {
                 resolve();
@@ -112,7 +107,7 @@ suite('outputs', function() {
         });
       });
     });
-    test.skip('should create text output for ellipse()', function() {
+    test('should create text output for ellipse()', function() {
       return new Promise(function(resolve, reject) {
         expected =
           '<li><a href="#myCanvasIDtextOutputshape0">green circle</a>, at middle, covering 24% of the canvas.</li>';
@@ -126,7 +121,7 @@ suite('outputs', function() {
           };
           p.draw = function() {
             if (p.frameCount === 1) {
-              actual = document.getElementById('myCanvasIDtextOutput_list')
+              let actual = document.getElementById('myCanvasIDtextOutput_list')
                 .innerHTML;
               if (actual === expected) {
                 resolve();
@@ -139,7 +134,7 @@ suite('outputs', function() {
         });
       });
     });
-    test.skip('should create text output for triangle()', function() {
+    test('should create text output for triangle()', function() {
       return new Promise(function(resolve, reject) {
         expected =
           '<li><a href="#myCanvasIDtextOutputshape0">green triangle</a>, at top left, covering 13% of the canvas.</li>';
@@ -153,7 +148,7 @@ suite('outputs', function() {
           };
           p.draw = function() {
             if (p.frameCount === 1) {
-              actual = document.getElementById('myCanvasIDtextOutput_list')
+              let actual = document.getElementById('myCanvasIDtextOutput_list')
                 .innerHTML;
               if (actual === expected) {
                 resolve();
@@ -173,11 +168,7 @@ suite('outputs', function() {
       assert.ok(myp5.gridOutput);
       assert.typeOf(myp5.gridOutput, 'function');
     });
-    test.skip('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.gridOutput(1);
-      });
-    });
+
     let expected =
       'white canvas, 100 by 100 pixels, contains 1 shape:  1 square';
     test('should create output as fallback', function() {
@@ -234,7 +225,7 @@ suite('outputs', function() {
         });
       });
     });
-    test.skip('should create text output for quad()', function() {
+    test('should create text output for quad()', function() {
       return new Promise(function(resolve, reject) {
         expected = 'red quadrilateral, location = top left, area = 45 %';
         new p5(function(p) {
@@ -247,7 +238,7 @@ suite('outputs', function() {
             p.fill(255, 0, 0);
             p.quad(0, 0, 80, 0, 50, 50, 0, 100);
             if (p.frameCount === 2) {
-              actual = document.getElementById('myCanvasIDgridOutputshape0')
+              let actual = document.getElementById('myCanvasIDgridOutputshape0')
                 .innerHTML;
               if (actual === expected) {
                 resolve();
@@ -260,7 +251,7 @@ suite('outputs', function() {
         });
       });
     });
-    test.skip('should create text output for point()', function() {
+    test('should create text output for point()', function() {
       return new Promise(function(resolve, reject) {
         expected = 'dark fuchsia point, location = bottom right';
         new p5(function(p) {
@@ -273,7 +264,7 @@ suite('outputs', function() {
           };
           p.draw = function() {
             if (p.frameCount === 1) {
-              actual = document.getElementById('myCanvasIDgridOutputshape0')
+              let actual = document.getElementById('myCanvasIDgridOutputshape0')
                 .innerHTML;
               if (actual === expected) {
                 resolve();
@@ -286,7 +277,7 @@ suite('outputs', function() {
         });
       });
     });
-    test.skip('should create text output for triangle()', function() {
+    test('should create text output for triangle()', function() {
       return new Promise(function(resolve, reject) {
         expected = 'green triangle, location = top left, area = 13 %';
         new p5(function(p) {
@@ -299,7 +290,7 @@ suite('outputs', function() {
           };
           p.draw = function() {
             if (p.frameCount === 1) {
-              actual = document.getElementById('myCanvasIDgridOutputshape0')
+              let actual = document.getElementById('myCanvasIDgridOutputshape0')
                 .innerHTML;
               if (actual === expected) {
                 resolve();

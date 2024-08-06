@@ -1,8 +1,5 @@
 /* eslint no-unused-vars: 0 */
-
 import p5 from '../../src/app.js';
-
-p5._throwValidationErrors = true;
 
 export function promisedSketch(sketch_fn) {
   var myInstance;
@@ -29,47 +26,46 @@ export function testSketchWithPromise(name, sketch_fn) {
 }
 
 export function testWithDownload(name, fn, asyncFn = false) {
-  var test_fn = function(done) {
-    // description of this is also on
-    // https://github.com/processing/p5.js/pull/4418/
+  const test_fn = function() {
+    return new Promise((resolve, reject) => {
+      let blobContainer = {};
 
-    let blobContainer = {};
+      // create a backup of createObjectURL
+      let couBackup = window.URL.createObjectURL;
 
-    // create a backup of createObjectURL
-    let couBackup = window.URL.createObjectURL;
+      // file-saver uses createObjectURL as an intermediate step. If we
+      // modify the definition a just a little bit we can capture whenever
+      // it is called and also peek in the data that was passed to it
+      window.URL.createObjectURL = blob => {
+        blobContainer.blob = blob;
+        return couBackup(blob);
+      };
 
-    // file-saver uses createObjectURL as an intermediate step. If we
-    // modify the definition a just a little bit we can capture whenever
-    // it is called and also peek in the data that was passed to it
-    window.URL.createObjectURL = blob => {
-      blobContainer.blob = blob;
-      return couBackup(blob);
-    };
-
-    let error;
-    if (asyncFn) {
-      fn(blobContainer)
-        .then(() => {
-          window.URL.createObjectURL = couBackup;
-        })
-        .catch(err => {
+      let error;
+      if (asyncFn) {
+        fn(blobContainer)
+          .then(() => {
+            window.URL.createObjectURL = couBackup;
+          })
+          .catch(err => {
+            error = err;
+          })
+          .finally(() => {
+            // restore createObjectURL to the original one
+            window.URL.createObjectURL = couBackup;
+            error ? reject(error) : resolve();
+          });
+      } else {
+        try {
+          fn(blobContainer);
+        } catch (err) {
           error = err;
-        })
-        .finally(() => {
-          // restore createObjectURL to the original one
-          window.URL.createObjectURL = couBackup;
-          error ? done(error) : done();
-        });
-    } else {
-      try {
-        fn(blobContainer);
-      } catch (err) {
-        error = err;
+        }
+        // restore createObjectURL to the original one
+        window.URL.createObjectURL = couBackup;
+        error ? reject(error) : resolve();
       }
-      // restore createObjectURL to the original one
-      window.URL.createObjectURL = couBackup;
-      error ? done(error) : done();
-    }
+    });
   };
 
   return test(name, test_fn);

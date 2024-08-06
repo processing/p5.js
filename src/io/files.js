@@ -13,103 +13,232 @@ import '../core/friendly_errors/fes_core';
 import Renderer from '../core/p5.Renderer';
 
 /**
- * Loads a JSON file from a file or a URL, and returns an Object.
- * Note that even if the JSON file contains an Array, an Object will be
- * returned with index numbers as keys.
+ * Loads a JSON file to create an `Object`.
  *
- * This method is asynchronous, meaning it may not finish before the next
- * line in your sketch is executed. JSONP is supported via a polyfill and you
- * can pass in as the second argument an object with definitions of the json
- * callback following the syntax specified <a href="https://github.com/camsong/
- * fetch-jsonp">here</a>.
+ * JavaScript Object Notation
+ * (<a href="https://developer.mozilla.org/en-US/docs/Glossary/JSON" target="_blank">JSON</a>)
+ * is a standard format for sending data between applications. The format is
+ * based on JavaScript objects which have keys and values. JSON files store
+ * data in an object with strings as keys. Values can be strings, numbers,
+ * Booleans, arrays, `null`, or other objects.
  *
- * This method is suitable for fetching files up to size of 64MB.
+ * The first parameter, `path`, is always a string with the path to the file.
+ * Paths to local files should be relative, as in
+ * `loadJSON('assets/data.json')`. URLs such as
+ * `'https://example.com/data.json'` may be blocked due to browser security.
+ *
+ * The second parameter, `successCallback`, is optional. If a function is
+ * passed, as in `loadJSON('assets/data.json', handleData)`, then the
+ * `handleData()` function will be called once the data loads. The object
+ * created from the JSON data will be passed to `handleData()` as its only argument.
+ *
+ * The third parameter, `failureCallback`, is also optional. If a function is
+ * passed, as in `loadJSON('assets/data.json', handleData, handleFailure)`,
+ * then the `handleFailure()` function will be called if an error occurs while
+ * loading. The `Error` object will be passed to `handleFailure()` as its only
+ * argument.
+ *
+ * Note: Data can take time to load. Calling `loadJSON()` within
+ * <a href="#/p5/preload">preload()</a> ensures data loads before it's used in
+ * <a href="#/p5/setup">setup()</a> or <a href="#/p5/draw">draw()</a>.
+ *
  * @method loadJSON
- * @param  {String}        path       name of the file or url to load
- * @param  {Object}        [jsonpOptions] options object for jsonp related settings
- * @param  {String}        [datatype] "json" or "jsonp"
- * @param  {function}      [callback] function to be executed after
- *                                    <a href="#/p5/loadJSON">loadJSON()</a> completes, data is passed
- *                                    in as first argument
- * @param  {function}      [errorCallback] function to be executed if
- *                                    there is an error, response is passed
- *                                    in as first argument
- * @return {Object|Array}             JSON data
+ * @param  {String} path path of the JSON file to be loaded.
+ * @param  {function} [successCallback] function to call once the data is loaded. Will be passed the object.
+ * @param  {function} [errorCallback] function to call if the data fails to load. Will be passed an `Error` event object.
+ * @return {Object} object containing the loaded data.
+ *
  * @example
  *
- * Calling <a href="#/p5/loadJSON">loadJSON()</a> inside <a href="#/p5/preload">preload()</a> guarantees to complete the
- * operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.
+ * <div>
+ * <code>
+ * let myData;
  *
- * <div><code>
- * // Examples use USGS Earthquake API:
- * //   https://earthquake.usgs.gov/fdsnws/event/1/#methods
- * let earthquakes;
+ * // Load the JSON and create an object.
  * function preload() {
- *   // Get the most recent earthquake in the database
- *   let url =
-    'https://earthquake.usgs.gov/earthquakes/feed/v1.0/' +
- *     'summary/all_day.geojson';
- *   earthquakes = loadJSON(url);
+ *   myData = loadJSON('assets/data.json');
  * }
  *
  * function setup() {
- *   noLoop();
- * }
+ *   createCanvas(100, 100);
  *
- * function draw() {
  *   background(200);
- *   // Get the magnitude and name of the earthquake out of the loaded JSON
- *   let earthquakeMag = earthquakes.features[0].properties.mag;
- *   let earthquakeName = earthquakes.features[0].properties.place;
- *   ellipse(width / 2, height / 2, earthquakeMag * 10, earthquakeMag * 10);
- *   textAlign(CENTER);
- *   text(earthquakeName, 0, height - 30, width, 30);
- *   describe(`50×50 ellipse that changes from black to white
- *     depending on the current humidity`);
- * }
- * </code></div>
  *
- * Outside of preload(), you may supply a callback function to handle the
- * object:
- * <div><code>
+ *   // Style the circle.
+ *   fill(myData.color);
+ *   noStroke();
+ *
+ *   // Draw the circle.
+ *   circle(myData.x, myData.y, myData.d);
+ *
+ *   describe('A pink circle on a gray background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let myData;
+ *
+ * // Load the JSON and create an object.
+ * function preload() {
+ *   myData = loadJSON('assets/data.json');
+ * }
+ *
  * function setup() {
- *   noLoop();
- *   let url =
-    'https://earthquake.usgs.gov/earthquakes/feed/v1.0/' +
- *     'summary/all_day.geojson';
- *   loadJSON(url, drawEarthquake);
- * }
+ *   createCanvas(100, 100);
  *
- * function draw() {
  *   background(200);
- *   describe(`50×50 ellipse that changes from black to white
- *     depending on the current humidity`);
+ *
+ *   // Create a p5.Color object and make it transparent.
+ *   let c = color(myData.color);
+ *   c.setAlpha(80);
+ *
+ *   // Style the circles.
+ *   fill(c);
+ *   noStroke();
+ *
+ *   // Iterate over the myData.bubbles array.
+ *   for (let b of myData.bubbles) {
+ *     // Draw a circle for each bubble.
+ *     circle(b.x, b.y, b.d);
+ *   }
+ *
+ *   describe('Several pink bubbles floating in a blue sky.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let myData;
+ *
+ * // Load the GeoJSON and create an object.
+ * function preload() {
+ *   myData = loadJSON('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson');
  * }
  *
- * function drawEarthquake(earthquakes) {
- *   // Get the magnitude and name of the earthquake out of the loaded JSON
- *   let earthquakeMag = earthquakes.features[0].properties.mag;
- *   let earthquakeName = earthquakes.features[0].properties.place;
- *   ellipse(width / 2, height / 2, earthquakeMag * 10, earthquakeMag * 10);
- *   textAlign(CENTER);
- *   text(earthquakeName, 0, height - 30, width, 30);
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Get data about the most recent earthquake.
+ *   let quake = myData.features[0].properties;
+ *
+ *   // Draw a circle based on the earthquake's magnitude.
+ *   circle(50, 50, quake.mag * 10);
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(11);
+ *
+ *   // Display the earthquake's location.
+ *   text(quake.place, 5, 80, 100);
+ *
+ *   describe(`A white circle on a gray background. The text "${quake.place}" is written beneath the circle.`);
  * }
- * </code></div>
- */
-/**
- * @method loadJSON
- * @param  {String}        path
- * @param  {String}        datatype
- * @param  {function}      [callback]
- * @param  {function}      [errorCallback]
- * @return {Object|Array}
- */
-/**
- * @method loadJSON
- * @param  {String}        path
- * @param  {function}      callback
- * @param  {function}      [errorCallback]
- * @return {Object|Array}
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let bigQuake;
+ *
+ * // Load the GeoJSON and preprocess it.
+ * function preload() {
+ *   loadJSON(
+ *     'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson',
+ *     handleData
+ *   );
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Draw a circle based on the earthquake's magnitude.
+ *   circle(50, 50, bigQuake.mag * 10);
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(11);
+ *
+ *   // Display the earthquake's location.
+ *   text(bigQuake.place, 5, 80, 100);
+ *
+ *   describe(`A white circle on a gray background. The text "${bigQuake.place}" is written beneath the circle.`);
+ * }
+ *
+ * // Find the biggest recent earthquake.
+ * function handleData(data) {
+ *   let maxMag = 0;
+ *   // Iterate over the earthquakes array.
+ *   for (let quake of data.features) {
+ *     // Reassign bigQuake if a larger
+ *     // magnitude quake is found.
+ *     if (quake.properties.mag > maxMag) {
+ *       bigQuake = quake.properties;
+ *     }
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let bigQuake;
+ *
+ * // Load the GeoJSON and preprocess it.
+ * function preload() {
+ *   loadJSON(
+ *     'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson',
+ *     handleData,
+ *     handleError
+ *   );
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Draw a circle based on the earthquake's magnitude.
+ *   circle(50, 50, bigQuake.mag * 10);
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(11);
+ *
+ *   // Display the earthquake's location.
+ *   text(bigQuake.place, 5, 80, 100);
+ *
+ *   describe(`A white circle on a gray background. The text "${bigQuake.place}" is written beneath the circle.`);
+ * }
+ *
+ * // Find the biggest recent earthquake.
+ * function handleData(data) {
+ *   let maxMag = 0;
+ *   // Iterate over the earthquakes array.
+ *   for (let quake of data.features) {
+ *     // Reassign bigQuake if a larger
+ *     // magnitude quake is found.
+ *     if (quake.properties.mag > maxMag) {
+ *       bigQuake = quake.properties;
+ *     }
+ *   }
+ * }
+ *
+ * // Log any errors to the console.
+ * function handleError(error) {
+ *   console.log('Oops!', error);
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.loadJSON = function(...args) {
   p5._validateParameters('loadJSON', args);
@@ -169,62 +298,138 @@ p5.prototype.loadJSON = function(...args) {
 };
 
 /**
- * Reads the contents of a file and creates a String array of its individual
- * lines. If the name of the file is used as the parameter, as in the above
- * example, the file must be located in the sketch directory/folder.
+ * Loads a text file to create an `Array`.
  *
- * Alternatively, the file may be loaded from anywhere on the local
- * computer using an absolute path (something that starts with / on Unix and
- * Linux, or a drive letter on Windows), or the filename parameter can be a
- * URL for a file found on a network.
+ * The first parameter, `path`, is always a string with the path to the file.
+ * Paths to local files should be relative, as in
+ * `loadStrings('assets/data.txt')`. URLs such as
+ * `'https://example.com/data.txt'` may be blocked due to browser security.
  *
- * This method is asynchronous, meaning it may not finish before the next
- * line in your sketch is executed.
+ * The second parameter, `successCallback`, is optional. If a function is
+ * passed, as in `loadStrings('assets/data.txt', handleData)`, then the
+ * `handleData()` function will be called once the data loads. The array
+ * created from the text data will be passed to `handleData()` as its only
+ * argument.
  *
- * This method is suitable for fetching files up to size of 64MB.
+ * The third parameter, `failureCallback`, is also optional. If a function is
+ * passed, as in `loadStrings('assets/data.txt', handleData, handleFailure)`,
+ * then the `handleFailure()` function will be called if an error occurs while
+ * loading. The `Error` object will be passed to `handleFailure()` as its only
+ * argument.
+ *
+ * Note: Data can take time to load. Calling `loadStrings()` within
+ * <a href="#/p5/preload">preload()</a> ensures data loads before it's used in
+ * <a href="#/p5/setup">setup()</a> or <a href="#/p5/draw">draw()</a>.
+ *
  * @method loadStrings
- * @param  {String}   filename   name of the file or url to load
- * @param  {function} [callback] function to be executed after <a href="#/p5/loadStrings">loadStrings()</a>
- *                               completes, Array is passed in as first
- *                               argument
- * @param  {function} [errorCallback] function to be executed if
- *                               there is an error, response is passed
- *                               in as first argument
- * @return {String[]}            Array of Strings
+ * @param  {String} path path of the text file to be loaded.
+ * @param  {function} [successCallback] function to call once the data is
+ *                                      loaded. Will be passed the array.
+ * @param  {function} [errorCallback] function to call if the data fails to
+ *                                    load. Will be passed an `Error` event
+ *                                    object.
+ * @return {String[]} new array containing the loaded text.
+ *
  * @example
  *
- * Calling loadStrings() inside <a href="#/p5/preload">preload()</a> guarantees to complete the
- * operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.
+ * <div>
+ * <code>
+ * let myData;
  *
- * <div><code>
- * let result;
+ * // Load the text and create an array.
  * function preload() {
- *   result = loadStrings('assets/test.txt');
+ *   myData = loadStrings('assets/test.txt');
  * }
-
+ *
  * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   background(200);
- *   text(random(result), 10, 10, 80, 80);
- *   describe(`randomly generated text from a file,
- *     for example "i smell like butter"`);
+ *
+ *   // Select a random line from the text.
+ *   let phrase = random(myData);
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(12);
+ *
+ *   // Display the text.
+ *   text(phrase, 10, 50, 90);
+ *
+ *   describe(`The text "${phrase}" written in black on a gray background.`);
  * }
- * </code></div>
+ * </code>
+ * </div>
  *
- * Outside of preload(), you may supply a callback function to handle the
- * object:
+ * <div>
+ * <code>
+ * let lastLine;
  *
- * <div><code>
+ * // Load the text and preprocess it.
+ * function preload() {
+ *   loadStrings('assets/test.txt', handleData);
+ * }
+ *
  * function setup() {
- *   loadStrings('assets/test.txt', pickString);
- *   describe(`randomly generated text from a file,
- *     for example "i have three feet"`);
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(12);
+ *
+ *   // Display the text.
+ *   text(lastLine, 10, 50, 90);
+ *
+ *   describe('The text "I talk like an orange" written in black on a gray background.');
  * }
  *
- * function pickString(result) {
- *   background(200);
- *   text(random(result), 10, 10, 80, 80);
+ * // Select the last line from the text.
+ * function handleData(data) {
+ *   lastLine = data[data.length - 1];
  * }
- * </code></div>
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let lastLine;
+ *
+ * // Load the text and preprocess it.
+ * function preload() {
+ *   loadStrings('assets/test.txt', handleData, handleError);
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(12);
+ *
+ *   // Display the text.
+ *   text(lastLine, 10, 50, 90);
+ *
+ *   describe('The text "I talk like an orange" written in black on a gray background.');
+ * }
+ *
+ * // Select the last line from the text.
+ * function handleData(data) {
+ *   lastLine = data[data.length - 1];
+ * }
+ *
+ * // Log any errors to the console.
+ * function handleError(error) {
+ *   console.error('Oops!', error);
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.loadStrings = function(...args) {
   p5._validateParameters('loadStrings', args);
@@ -564,67 +769,165 @@ function makeObject(row, headers) {
 }
 
 /**
- * Reads the contents of a file and creates an XML object with its values.
- * If the name of the file is used as the parameter, as in the above example,
- * the file must be located in the sketch directory/folder.
+ * Loads an XML file to create a <a href="#/p5.XML">p5.XML</a> object.
  *
- * Alternatively, the file maybe be loaded from anywhere on the local
- * computer using an absolute path (something that starts with / on Unix and
- * Linux, or a drive letter on Windows), or the filename parameter can be a
- * URL for a file found on a network.
+ * Extensible Markup Language
+ * (<a href="https://developer.mozilla.org/en-US/docs/Web/XML/XML_introduction" target="_blank">XML</a>)
+ * is a standard format for sending data between applications. Like HTML, the
+ * XML format is based on tags and attributes, as in
+ * `&lt;time units="s"&gt;1234&lt;/time&gt;`.
  *
- * This method is asynchronous, meaning it may not finish before the next
- * line in your sketch is executed. Calling <a href="#/p5/loadXML">loadXML()</a> inside <a href="#/p5/preload">preload()</a>
- * guarantees to complete the operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.
+ * The first parameter, `path`, is always a string with the path to the file.
+ * Paths to local files should be relative, as in
+ * `loadXML('assets/data.xml')`. URLs such as `'https://example.com/data.xml'`
+ * may be blocked due to browser security.
  *
- * Outside of <a href="#/p5/preload">preload()</a>, you may supply a callback function to handle the
- * object.
+ * The second parameter, `successCallback`, is optional. If a function is
+ * passed, as in `loadXML('assets/data.xml', handleData)`, then the
+ * `handleData()` function will be called once the data loads. The
+ * <a href="#/p5.XML">p5.XML</a> object created from the data will be passed
+ * to `handleData()` as its only argument.
  *
- * This method is suitable for fetching files up to size of 64MB.
+ * The third parameter, `failureCallback`, is also optional. If a function is
+ * passed, as in `loadXML('assets/data.xml', handleData, handleFailure)`, then
+ * the `handleFailure()` function will be called if an error occurs while
+ * loading. The `Error` object will be passed to `handleFailure()` as its only
+ * argument.
+ *
+ * Note: Data can take time to load. Calling `loadXML()` within
+ * <a href="#/p5/preload">preload()</a> ensures data loads before it's used in
+ * <a href="#/p5/setup">setup()</a> or <a href="#/p5/draw">draw()</a>.
+ *
  * @method loadXML
- * @param  {String}   filename   name of the file or URL to load
- * @param  {function} [callback] function to be executed after <a href="#/p5/loadXML">loadXML()</a>
- *                               completes, XML object is passed in as
- *                               first argument
- * @param  {function} [errorCallback] function to be executed if
- *                               there is an error, response is passed
- *                               in as first argument
- * @return {Object}              XML object containing data
+ * @param  {String} path path of the XML file to be loaded.
+ * @param  {function} [successCallback] function to call once the data is
+ *                                      loaded. Will be passed the
+ *                                      <a href="#/p5.XML">p5.XML</a> object.
+ * @param  {function} [errorCallback] function to call if the data fails to
+ *                                    load. Will be passed an `Error` event
+ *                                    object.
+ * @return {p5.XML} XML data loaded into a <a href="#/p5.XML">p5.XML</a>
+ *                  object.
+ *
  * @example
- * <div class='norender'><code>
- * // The following short XML file called "mammals.xml" is parsed
- * // in the code below.
- * //
- * // <?xml version="1.0"?>
- * // &lt;mammals&gt;
- * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
- * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
- * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
- * // &lt;/mammals&gt;
+ * <div>
+ * <code>
+ * let myXML;
  *
- * let xml;
- *
+ * // Load the XML and create a p5.XML object.
  * function preload() {
- *   xml = loadXML('assets/mammals.xml');
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
  * function setup() {
- *   let children = xml.getChildren('animal');
+ *   createCanvas(100, 100);
  *
- *   for (let i = 0; i < children.length; i++) {
- *     let id = children[i].getNum('id');
- *     let coloring = children[i].getString('species');
- *     let name = children[i].getContent();
- *     print(id + ', ' + coloring + ', ' + name);
+ *   background(200);
+ *
+ *   // Get an array with all mammal tags.
+ *   let mammals = myXML.getChildren('mammal');
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Iterate over the mammals array.
+ *   for (let i = 0; i < mammals.length; i += 1) {
+ *
+ *     // Calculate the y-coordinate.
+ *     let y = (i + 1) * 25;
+ *
+ *     // Get the mammal's common name.
+ *     let name = mammals[i].getContent();
+ *
+ *     // Display the mammal's name.
+ *     text(name, 20, y);
  *   }
- *   describe('no image displayed');
+ *
+ *   describe(
+ *     'The words "Goat", "Leopard", and "Zebra" written on three separate lines. The text is black on a gray background.'
+ *   );
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let lastMammal;
+ *
+ * // Load the XML and create a p5.XML object.
+ * function preload() {
+ *   loadXML('assets/animals.xml', handleData);
  * }
  *
- * // Sketch prints:
- * // 0, Capra hircus, Goat
- * // 1, Panthera pardus, Leopard
- * // 2, Equus zebra, Zebra
- * </code></div>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(16);
+ *
+ *   // Display the content of the last mammal element.
+ *   text(lastMammal, 50, 50);
+ *
+ *   describe('The word "Zebra" written in black on a gray background.');
+ * }
+ *
+ * // Get the content of the last mammal element.
+ * function handleData(data) {
+ *   // Get an array with all mammal elements.
+ *   let mammals = data.getChildren('mammal');
+ *
+ *   // Get the content of the last mammal.
+ *   lastMammal = mammals[mammals.length - 1].getContent();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let lastMammal;
+ *
+ * // Load the XML and preprocess it.
+ * function preload() {
+ *   loadXML('assets/animals.xml', handleData, handleError);
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(16);
+ *
+ *   // Display the content of the last mammal element.
+ *   text(lastMammal, 50, 50);
+ *
+ *   describe('The word "Zebra" written in black on a gray background.');
+ * }
+ *
+ * // Get the content of the last mammal element.
+ * function handleData(data) {
+ *   // Get an array with all mammal elements.
+ *   let mammals = data.getChildren('mammal');
+ *
+ *   // Get the content of the last mammal.
+ *   lastMammal = mammals[mammals.length - 1].getContent();
+ * }
+ *
+ * // Log any errors to the console.
+ * function handleError(error) {
+ *   console.error('Oops!', error);
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.loadXML = function(...args) {
   const ret = new p5.XML();
@@ -797,10 +1100,9 @@ p5.prototype.loadBytes = function(file, callback, errorCallback) {
  * @param  {function}      [errorCallback]
  * @return {Promise}
  */
-p5.prototype.httpGet = function() {
-  p5._validateParameters('httpGet', arguments);
+p5.prototype.httpGet = function(...args) {
+  p5._validateParameters('httpGet', args);
 
-  const args = Array.prototype.slice.call(arguments);
   args.splice(1, 0, 'GET');
   return p5.prototype.httpDo.apply(this, args);
 };
@@ -887,10 +1189,9 @@ p5.prototype.httpGet = function() {
  * @param  {function}      [errorCallback]
  * @return {Promise}
  */
-p5.prototype.httpPost = function() {
-  p5._validateParameters('httpPost', arguments);
+p5.prototype.httpPost = function(...args) {
+  p5._validateParameters('httpPost', args);
 
-  const args = Array.prototype.slice.call(arguments);
   args.splice(1, 0, 'POST');
   return p5.prototype.httpDo.apply(this, args);
 };
@@ -1111,27 +1412,103 @@ window.URL = window.URL || window.webkitURL;
 p5.prototype._pWriters = [];
 
 /**
+ * Creates a new <a href="#/p5.PrintWriter">p5.PrintWriter</a> object.
+ *
+ * <a href="#/p5.PrintWriter">p5.PrintWriter</a> objects provide a way to
+ * save a sequence of text data, called the *print stream*, to the user's
+ * computer. They're low-level objects that enable precise control of text
+ * output. Functions such as
+ * <a href="#/p5/saveStrings">saveStrings()</a> and
+ * <a href="#/p5/saveJSON">saveJSON()</a> are easier to use for simple file
+ * saving.
+ *
+ * The first parameter, `filename`, is the name of the file to be written. If
+ * a string is passed, as in `createWriter('words.txt')`, a new
+ * <a href="#/p5.PrintWriter">p5.PrintWriter</a> object will be created that
+ * writes to a file named `words.txt`.
+ *
+ * The second parameter, `extension`, is optional. If a string is passed, as
+ * in `createWriter('words', 'csv')`, the first parameter will be interpreted
+ * as the file name and the second parameter as the extension.
+ *
  * @method createWriter
- * @param {String} name name of the file to be created
- * @param {String} [extension]
- * @return {p5.PrintWriter}
+ * @param {String} name name of the file to create.
+ * @param {String} [extension] format to use for the file.
+ * @return {p5.PrintWriter} stream for writing data.
+ *
  * @example
  * <div>
  * <code>
  * function setup() {
  *   createCanvas(100, 100);
+ *
  *   background(200);
- *   text('click here to save', 10, 10, 70, 80);
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(12);
+ *
+ *   // Display instructions.
+ *   text('Double-click to save', 5, 50, 90);
+ *
+ *   describe('The text "Double-click to save" written in black on a gray background.');
  * }
  *
- * function mousePressed() {
- *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
- *     const writer = createWriter('squares.txt');
- *     for (let i = 0; i < 10; i++) {
- *       writer.print(i * i);
- *     }
- *     writer.close();
- *     writer.clear();
+ * // Save the file when the user double-clicks.
+ * function doubleClicked() {
+ *   if (mouseX > 0 && mouseX < 100 && mouseY > 0 && mouseY < 100) {
+ *     // Create a p5.PrintWriter object.
+ *     let myWriter = createWriter('xo.txt');
+ *
+ *     // Add some lines to the print stream.
+ *     myWriter.print('XOO');
+ *     myWriter.print('OXO');
+ *     myWriter.print('OOX');
+ *
+ *     // Save the file and close the print stream.
+ *     myWriter.close();
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(12);
+ *
+ *   // Display instructions.
+ *   text('Double-click to save', 5, 50, 90);
+ *
+ *   describe('The text "Double-click to save" written in black on a gray background.');
+ * }
+ *
+ * // Save the file when the user double-clicks.
+ * function doubleClicked() {
+ *   if (mouseX > 0 && mouseX < 100 && mouseY > 0 && mouseY < 100) {
+ *     // Create a p5.PrintWriter object.
+ *     // Use the file format .csv.
+ *     let myWriter = createWriter('mauna_loa_co2', 'csv');
+ *
+ *     // Add some lines to the print stream.
+ *     myWriter.print('date,ppm_co2');
+ *     myWriter.print('1960-01-01,316.43');
+ *     myWriter.print('1970-01-01,325.06');
+ *     myWriter.print('1980-01-01,337.9');
+ *     myWriter.print('1990-01-01,353.86');
+ *     myWriter.print('2000-01-01,369.45');
+ *     myWriter.print('2020-01-01,413.61');
+ *
+ *     // Save the file and close the print stream.
+ *     myWriter.close();
  *   }
  * }
  * </code>
@@ -1156,67 +1533,104 @@ p5.prototype.createWriter = function(name, extension) {
 };
 
 /**
- *  @class p5.PrintWriter
- *  @param  {String}     filename
- *  @param  {String}     [extension]
+ * A class to describe a print stream.
+ *
+ * Each `p5.PrintWriter` object provides a way to save a sequence of text
+ * data, called the *print stream*, to the user's computer. It's a low-level
+ * object that enables precise control of text output. Functions such as
+ * <a href="#/p5/saveStrings">saveStrings()</a> and
+ * <a href="#/p5/saveJSON">saveJSON()</a> are easier to use for simple file
+ * saving.
+ *
+ * Note: <a href="#/p5/createWriter">createWriter()</a> is the recommended way
+ * to make an instance of this class.
+ *
+ * @class p5.PrintWriter
+ * @param  {String} filename name of the file to create.
+ * @param  {String} [extension] format to use for the file.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(12);
+ *
+ *   // Display instructions.
+ *   text('Double-click to save', 5, 50, 90);
+ *
+ *   describe('The text "Double-click to save" written in black on a gray background.');
+ * }
+ *
+ * // Save the file when the user double-clicks.
+ * function doubleClicked() {
+ *   // Create a p5.PrintWriter object.
+ *   let myWriter = createWriter('xo.txt');
+ *
+ *   // Add some lines to the print stream.
+ *   myWriter.print('XOO');
+ *   myWriter.print('OXO');
+ *   myWriter.print('OOX');
+ *
+ *   // Save the file and close the print stream.
+ *   myWriter.close();
+ * }
+ * </code>
+ * </div>
  */
 p5.PrintWriter = function(filename, extension) {
   let self = this;
   this.name = filename;
   this.content = '';
-  //Changed to write because it was being overloaded by function below.
+
   /**
-   * Writes data to the PrintWriter stream
+   * Writes data to the print stream without adding new lines.
+   *
+   * The parameter, `data`, is the data to write. `data` can be a number or
+   * string, as in `myWriter.write('hi')`, or an array of numbers and strings,
+   * as in `myWriter.write([1, 2, 3])`. A comma will be inserted between array
+   * array elements when they're added to the print stream.
+   *
    * @method write
-   * @param {Array} data all data to be written by the PrintWriter
+   * @param {String|Number|Array} data data to be written as a string, number,
+   *                                   or array of strings and numbers.
+   *
    * @example
-   * <div class="norender notest">
-   * <code>
-   * // creates a file called 'newFile.txt'
-   * let writer = createWriter('newFile.txt');
-   * // write 'Hello world!'' to the file
-   * writer.write(['Hello world!']);
-   * // close the PrintWriter and save the file
-   * writer.close();
-   * </code>
-   * </div>
-   * <div class='norender notest'>
-   * <code>
-   * // creates a file called 'newFile2.txt'
-   * let writer = createWriter('newFile2.txt');
-   * // write 'apples,bananas,123' to the file
-   * writer.write(['apples', 'bananas', 123]);
-   * // close the PrintWriter and save the file
-   * writer.close();
-   * </code>
-   * </div>
-   * <div class='norender notest'>
-   * <code>
-   * // creates a file called 'newFile3.txt'
-   * let writer = createWriter('newFile3.txt');
-   * // write 'My name is: Teddy' to the file
-   * writer.write('My name is:');
-   * writer.write(' Teddy');
-   * // close the PrintWriter and save the file
-   * writer.close();
-   * </code>
-   * </div>
    * <div>
    * <code>
    * function setup() {
    *   createCanvas(100, 100);
-   *   button = createButton('SAVE FILE');
-   *   button.position(21, 40);
-   *   button.mousePressed(createFile);
+   *
+   *   background(200);
+   *
+   *   // Style the text.
+   *   textAlign(LEFT, CENTER);
+   *   textFont('Courier New');
+   *   textSize(12);
+   *
+   *   // Display instructions.
+   *   text('Double-click to save', 5, 50, 90);
+   *
+   *   describe('The text "Double-click to save" written in black on a gray background.');
    * }
    *
-   * function createFile() {
-   *   // creates a file called 'newFile.txt'
-   *   let writer = createWriter('newFile.txt');
-   *   // write 'Hello world!'' to the file
-   *   writer.write(['Hello world!']);
-   *   // close the PrintWriter and save the file
-   *   writer.close();
+   * // Save the file when the user double-clicks.
+   * function doubleClicked() {
+   *   // Create a p5.PrintWriter object.
+   *   let myWriter = createWriter('numbers.txt');
+   *
+   *   // Add some data to the print stream.
+   *   myWriter.write('1,2,3,');
+   *   myWriter.write(['4', '5', '6']);
+   *
+   *   // Save the file and close the print stream.
+   *   myWriter.close();
    * }
    * </code>
    * </div>
@@ -1224,40 +1638,49 @@ p5.PrintWriter = function(filename, extension) {
   this.write = function(data) {
     this.content += data;
   };
+
   /**
-   * Writes data to the PrintWriter stream, and adds a new line at the end
+   * Writes data to the print stream with new lines added.
+   *
+   * The parameter, `data`, is the data to write. `data` can be a number or
+   * string, as in `myWriter.print('hi')`, or an array of numbers and strings,
+   * as in `myWriter.print([1, 2, 3])`. A comma will be inserted between array
+   * array elements when they're added to the print stream.
+   *
    * @method print
-   * @param {Array} data all data to be printed by the PrintWriter
+   * @param {String|Number|Array} data data to be written as a string, number,
+   *                                   or array of strings and numbers.
+   *
    * @example
-   * <div class='norender notest'>
+   * <div>
    * <code>
-   * // creates a file called 'newFile.txt'
-   * let writer = createWriter('newFile.txt');
-   * // creates a file containing
-   * //  My name is:
-   * //  Teddy
-   * writer.print('My name is:');
-   * writer.print('Teddy');
-   * // close the PrintWriter and save the file
-   * writer.close();
-   * </code>
-   * </div>
-   * <div class='norender notest'>
-   * <code>
-   * let writer;
-   *
    * function setup() {
-   *   createCanvas(400, 400);
-   *   // create a PrintWriter
-   *   writer = createWriter('newFile.txt');
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Style the text.
+   *   textAlign(LEFT, CENTER);
+   *   textFont('Courier New');
+   *   textSize(12);
+   *
+   *   // Display instructions.
+   *   text('Double-click to save', 5, 50, 90);
+   *
+   *   describe('The text "Double-click to save" written in black on a gray background.');
    * }
    *
-   * function draw() {
-   *   writer.print([mouseX, mouseY]);
-   * }
+   * // Save the file when the user double-clicks.
+   * function doubleClicked() {
+   *   // Create a p5.PrintWriter object.
+   *   let myWriter = createWriter('numbers.txt');
    *
-   * function mouseClicked() {
-   *   writer.close();
+   *   // Add some data to the print stream.
+   *   myWriter.print('1,2,3,');
+   *   myWriter.print(['4', '5', '6']);
+   *
+   *   // Save the file and close the print stream.
+   *   myWriter.close();
    * }
    * </code>
    * </div>
@@ -1265,60 +1688,91 @@ p5.PrintWriter = function(filename, extension) {
   this.print = function(data) {
     this.content += `${data}\n`;
   };
+
   /**
-   * Clears the data already written to the PrintWriter object
+   * Clears all data from the print stream.
+   *
    * @method clear
+   *
    * @example
-   * <div class ="norender notest"><code>
-   * // create writer object
-   * let writer = createWriter('newFile.txt');
-   * writer.write(['clear me']);
-   * // clear writer object here
-   * writer.clear();
-   * // close writer
-   * writer.close();
-   * </code></div>
    * <div>
    * <code>
    * function setup() {
-   *   button = createButton('CLEAR ME');
-   *   button.position(21, 40);
-   *   button.mousePressed(createFile);
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Style the text.
+   *   textAlign(LEFT, CENTER);
+   *   textFont('Courier New');
+   *   textSize(12);
+   *
+   *   // Display instructions.
+   *   text('Double-click to save', 5, 50, 90);
+   *
+   *   describe('The text "Double-click to save" written in black on a gray background.');
    * }
    *
-   * function createFile() {
-   *   let writer = createWriter('newFile.txt');
-   *   writer.write(['clear me']);
-   *   writer.clear();
-   *   writer.close();
+   * // Save the file when the user double-clicks.
+   * function doubleClicked() {
+   *   // Create a p5.PrintWriter object.
+   *   let myWriter = createWriter('numbers.txt');
+   *
+   *   // Add some data to the print stream.
+   *   myWriter.print('Hello p5*js!');
+   *
+   *   // Clear the print stream.
+   *   myWriter.clear();
+   *
+   *   // Save the file and close the print stream.
+   *   myWriter.close();
    * }
    * </code>
    * </div>
-   *
    */
   this.clear = function() {
     this.content = '';
   };
+
   /**
-   * Closes the PrintWriter
+   * Saves the file and closes the print stream.
+   *
    * @method close
+   *
    * @example
-   * <div class="norender notest">
+   * <div>
    * <code>
-   * // create a file called 'newFile.txt'
-   * let writer = createWriter('newFile.txt');
-   * // close the PrintWriter and save the file
-   * writer.close();
-   * </code>
-   * </div>
-   * <div class='norender notest'>
-   * <code>
-   * // create a file called 'newFile2.txt'
-   * let writer = createWriter('newFile2.txt');
-   * // write some data to the file
-   * writer.write([100, 101, 102]);
-   * // close the PrintWriter and save the file
-   * writer.close();
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Style the text.
+   *   textAlign(LEFT, CENTER);
+   *   textFont('Courier New');
+   *   textSize(12);
+   *
+   *   // Display instructions.
+   *   text('Double-click to save', 5, 50, 90);
+   *
+   *   describe('The text "Double-click to save" written in black on a gray background.');
+   * }
+   *
+   * // Save the file when the user double-clicks.
+   * function doubleClicked() {
+   *   // Create a p5.PrintWriter object.
+   *   let myWriter = createWriter('cat.txt');
+   *
+   *   // Add some data to the print stream.
+   *   // ASCII art courtesy Wikipedia:
+   *   // https://en.wikipedia.org/wiki/ASCII_art
+   *   myWriter.print(' (\\_/) ');
+   *   myWriter.print("(='.'=)");
+   *   myWriter.print('(")_(")');
+   *
+   *   // Save the file and close the print stream.
+   *   myWriter.close();
+   * }
    * </code>
    * </div>
    */
@@ -1493,45 +1947,129 @@ p5.prototype.save = function(object, _filename, _options) {
 };
 
 /**
- *  Writes the contents of an Array or a JSON object to a .json file.
- *  The file saving process and location of the saved file will
- *  vary between web browsers.
+ * Saves an `Object` or `Array` to a JSON file.
  *
- *  @method saveJSON
- *  @param  {Array|Object} json
- *  @param  {String} filename
- *  @param  {Boolean} [optimize]   If true, removes line breaks
- *                                 and spaces from the output
- *                                 file to optimize filesize
- *                                 (but not readability).
- *  @example
- * <div><code>
- * let json = {}; // new  JSON Object
+ * JavaScript Object Notation
+ * (<a href="https://developer.mozilla.org/en-US/docs/Glossary/JSON" target="_blank">JSON</a>)
+ * is a standard format for sending data between applications. The format is
+ * based on JavaScript objects which have keys and values. JSON files store
+ * data in an object with strings as keys. Values can be strings, numbers,
+ * Booleans, arrays, `null`, or other objects.
  *
- * json.id = 0;
- * json.species = 'Panthera leo';
- * json.name = 'Lion';
+ * The first parameter, `json`, is the data to save. The data can be an array,
+ * as in `[1, 2, 3]`, or an object, as in
+ * `{ x: 50, y: 50, color: 'deeppink' }`.
  *
+ * The second parameter, `filename`, is a string that sets the file's name.
+ * For example, calling `saveJSON([1, 2, 3], 'data.json')` saves the array
+ * `[1, 2, 3]` to a file called `data.json` on the user's computer.
+ *
+ * The third parameter, `optimize`, is optional. If `true` is passed, as in
+ * `saveJSON([1, 2, 3], 'data.json', true)`, then all unneeded whitespace will
+ * be removed to reduce the file size.
+ *
+ * Note: The browser will either save the file immediately or prompt the user
+ * with a dialogue window.
+ *
+ * @method saveJSON
+ * @param  {Array|Object} json data to save.
+ * @param  {String} filename name of the file to be saved.
+ * @param  {Boolean} [optimize] whether to trim unneeded whitespace. Defaults
+ *                              to `true`.
+ *
+ * @example
+ * <div>
+ * <code>
  * function setup() {
  *   createCanvas(100, 100);
+ *
  *   background(200);
- *   text('click here to save', 10, 10, 70, 80);
- *   describe('no image displayed');
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(12);
+ *
+ *   // Display instructions.
+ *   text('Double-click to save', 5, 50, 90);
+ *
+ *   describe('The text "Double-click to save" written in black on a gray background.');
  * }
  *
- * function mousePressed() {
- *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
- *     saveJSON(json, 'lion.json');
+ * // Save the file when the user double-clicks.
+ * function doubleClicked() {
+ *   if (mouseX > 0 && mouseX < 100 && mouseY > 0 && mouseY < 100) {
+ *     // Create an array.
+ *     let data = [1, 2, 3];
+ *
+ *     // Save the JSON file.
+ *     saveJSON(data, 'numbers.json');
  *   }
  * }
+ * </code>
+ * </div>
  *
- * // saves the following to a file called "lion.json":
- * // {
- * //   "id": 0,
- * //   "species": "Panthera leo",
- * //   "name": "Lion"
- * // }
- * </code></div>
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(12);
+ *
+ *   // Display instructions.
+ *   text('Double-click to save', 5, 50, 90);
+ *
+ *   describe('The text "Double-click to save" written in black on a gray background.');
+ * }
+ *
+ * // Save the file when the user double-clicks.
+ * function doubleClicked() {
+ *   if (mouseX > 0 && mouseX < 100 && mouseY > 0 && mouseY < 100) {
+ *     // Create an object.
+ *     let data = { x: mouseX, y: mouseY };
+ *
+ *     // Save the JSON file.
+ *     saveJSON(data, 'state.json');
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(12);
+ *
+ *   // Display instructions.
+ *   text('Double-click to save', 5, 50, 90);
+ *
+ *   describe('The text "Double-click to save" written in black on a gray background.');
+ * }
+ *
+ * // Save the file when the user double-clicks.
+ * function doubleClicked() {
+ *   if (mouseX > 0 && mouseX < 100 && mouseY > 0 && mouseY < 100) {
+ *     // Create an object.
+ *     let data = { x: mouseX, y: mouseY };
+ *
+ *     // Save the JSON file and reduce its size.
+ *     saveJSON(data, 'state.json', true);
+ *   }
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.saveJSON = function(json, filename, opt) {
   p5._validateParameters('saveJSON', arguments);
@@ -1548,42 +2086,137 @@ p5.prototype.saveJSONObject = p5.prototype.saveJSON;
 p5.prototype.saveJSONArray = p5.prototype.saveJSON;
 
 /**
- *  Writes an array of Strings to a text file, one line per String.
- *  The file saving process and location of the saved file will
- *  vary between web browsers.
+ * Saves an `Array` of `String`s to a file, one per line.
+ *
+ * The first parameter, `list`, is an array with the strings to save.
+ *
+ * The second parameter, `filename`, is a string that sets the file's name.
+ * For example, calling `saveStrings(['0', '01', '011'], 'data.txt')` saves
+ * the array `['0', '01', '011']` to a file called `data.txt` on the user's
+ * computer.
+ *
+ * The third parameter, `extension`, is optional. If a string is passed, as in
+ * `saveStrings(['0', '01', '0`1'], 'data', 'txt')`, the second parameter will
+ * be interpreted as the file name and the third parameter as the extension.
+ *
+ * The fourth parameter, `isCRLF`, is also optional, If `true` is passed, as
+ * in `saveStrings(['0', '01', '011'], 'data', 'txt', true)`, then two
+ * characters, `\r\n` , will be added to the end of each string to create new
+ * lines in the saved file. `\r` is a carriage return (CR) and `\n` is a line
+ * feed (LF). By default, only `\n` (line feed) is added to each string in
+ * order to create new lines.
+ *
+ * Note: The browser will either save the file immediately or prompt the user
+ * with a dialogue window.
  *
  *  @method saveStrings
- *  @param  {String[]} list   string array to be written
- *  @param  {String} filename filename for output
- *  @param  {String} [extension] the filename's extension
- *  @param  {Boolean} [isCRLF] if true, change line-break to CRLF
- *  @example
- * <div><code>
- * let words = 'apple bear cat dog';
+ *  @param  {String[]} list data to save.
+ *  @param  {String} filename name of file to be saved.
+ *  @param  {String} [extension] format to use for the file.
+ *  @param  {Boolean} [isCRLF] whether to add `\r\n` to the end of each
+ *                             string. Defaults to `false`.
  *
- * // .split() outputs an Array
- * let list = split(words, ' ');
- *
+ * @example
+ * <div>
+ * <code>
  * function setup() {
  *   createCanvas(100, 100);
+ *
  *   background(200);
- *   text('click here to save', 10, 10, 70, 80);
- *   describe('no image displayed');
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(12);
+ *
+ *   // Display instructions.
+ *   text('Double-click to save', 5, 50, 90);
+ *
+ *   describe('The text "Double-click to save" written in black on a gray background.');
  * }
  *
- * function mousePressed() {
- *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
- *     saveStrings(list, 'nouns.txt');
+ * // Save the file when the user double-clicks.
+ * function doubleClicked() {
+ *   if (mouseX > 0 && mouseX < 100 && mouseY > 0 && mouseY < 100) {
+ *     // Create an array.
+ *     let data = ['0', '01', '011'];
+ *
+ *     // Save the text file.
+ *     saveStrings(data, 'data.txt');
  *   }
  * }
+ * </code>
+ * </div>
  *
- * // Saves the following to a file called 'nouns.txt':
- * //
- * // apple
- * // bear
- * // cat
- * // dog
- * </code></div>
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(12);
+ *
+ *   // Display instructions.
+ *   text('Double-click to save', 5, 50, 90);
+ *
+ *   describe('The text "Double-click to save" written in black on a gray background.');
+ * }
+ *
+ * // Save the file when the user double-clicks.
+ * function doubleClicked() {
+ *   if (mouseX > 0 && mouseX < 100 && mouseY > 0 && mouseY < 100) {
+ *     // Create an array.
+ *     // ASCII art courtesy Wikipedia:
+ *     // https://en.wikipedia.org/wiki/ASCII_art
+ *     let data = [' (\\_/) ', "(='.'=)", '(")_(")'];
+ *
+ *     // Save the text file.
+ *     saveStrings(data, 'cat', 'txt');
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(12);
+ *
+ *   // Display instructions.
+ *   text('Double-click to save', 5, 50, 90);
+ *
+ *   describe('The text "Double-click to save" written in black on a gray background.');
+ * }
+ *
+ * // Save the file when the user double-clicks.
+ * function doubleClicked() {
+ *   if (mouseX > 0 && mouseX < 100 && mouseY > 0 && mouseY < 100) {
+ *     // Create an array.
+ *     //   +--+
+ *     //  /  /|
+ *     // +--+ +
+ *     // |  |/
+ *     // +--+
+ *     let data = ['  +--+', ' /  /|', '+--+ +', '|  |/', '+--+'];
+ *
+ *     // Save the text file.
+ *     // Use CRLF for line endings.
+ *     saveStrings(data, 'box', 'txt', true);
+ *   }
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.saveStrings = function(list, filename, extension, isCRLF) {
   p5._validateParameters('saveStrings', arguments);
@@ -1850,8 +2483,7 @@ p5.prototype._checkFileExtension = _checkFileExtension;
  *  @private
  */
 p5.prototype._isSafari = function() {
-  const x = Object.prototype.toString.call(window.HTMLElement);
-  return x.indexOf('Constructor') > 0;
+  return window.HTMLElement.toString().includes('Constructor');
 };
 
 /**

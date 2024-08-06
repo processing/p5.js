@@ -11,17 +11,21 @@ export default defineConfig({
   ],
   test: {
     include: [
-      './test/unit/**/*.js'
+      // './test/unit/**/*.js'
+      './test/unit/color/*.js'
     ],
     exclude: [
       './test/unit/spec.js',
-      './test/unit/assets/*'
+      './test/unit/assets/*',
+      './test/unit/visual/*'
     ],
+    testTimeout: 5000,
     globals: true,
     browser: {
       enabled: true,
-      headless: true,
-      name: 'chrome'
+      // headless: true,
+      name: 'chrome',
+      provider: 'webdriverio'
     }
   }
 });

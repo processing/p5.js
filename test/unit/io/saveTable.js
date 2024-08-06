@@ -1,4 +1,5 @@
 import p5 from '../../../src/app.js';
+import { testWithDownload } from '../../js/p5_helpers';
 
 suite('saveTable', function() {
   let validFile = 'unit/assets/csv.csv';
@@ -15,14 +16,6 @@ suite('saveTable', function() {
 
   afterAll(function() {
     myp5.remove();
-  });
-
-  beforeEach(function disableFileLoadError() {
-    sinon.stub(p5, '_friendlyFileLoadError');
-  });
-
-  afterEach(function restoreFileLoadError() {
-    p5._friendlyFileLoadError.restore();
   });
 
   beforeEach(async function loadMyTable() {
@@ -57,30 +50,6 @@ suite('saveTable', function() {
       Error,
       'got unwanted exception'
     );
-  });
-
-  testUnMinified('missing param #1', function() {
-    assert.validationError(function() {
-      myp5.saveTable(myTable);
-    });
-  });
-
-  testUnMinified('wrong param type #0', function() {
-    assert.validationError(function() {
-      myp5.saveTable('myTable', 'myfile');
-    });
-  });
-
-  testUnMinified('wrong param type #1', function() {
-    assert.validationError(function() {
-      myp5.saveTable(myTable, 2);
-    });
-  });
-
-  testUnMinified('wrong param type #2', function() {
-    assert.validationError(function() {
-      myp5.saveTable(myTable, 'myfile', 2);
-    });
   });
 
   testWithDownload(

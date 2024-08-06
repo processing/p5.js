@@ -9,6 +9,7 @@ import p5 from './main';
 /**
  * A class to describe an
  * <a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Getting_started" target="_blank">HTML element</a>.
+ *
  * Sketches can use many elements. Common elements include the drawing canvas,
  * buttons, sliders, webcam feeds, and so on.
  *
@@ -59,7 +60,7 @@ p5.Element = class {
   }
 
   /**
-   * Attaches this element to a parent element.
+   * Attaches the element to a parent element.
    *
    * For example, a `&lt;div&gt;&lt;/div&gt;` element may be used as a box to
    * hold two pieces of text, a header and a paragraph. The
@@ -73,7 +74,7 @@ p5.Element = class {
    * `myElement.parent(myDiv)`. Finally, `parent` can be an `HTMLElement`
    * object, as in `myElement.parent(anotherElement)`.
    *
-   * Calling `myElement.parent()` without an argument returns this element's
+   * Calling `myElement.parent()` without an argument returns the element's
    * parent.
    *
    * @param  {String|p5.Element|Object} parent ID, <a href="#/p5.Element">p5.Element</a>,
@@ -88,19 +89,25 @@ p5.Element = class {
    *
    *   // Create a div element.
    *   let div = createDiv();
+   *
    *   // Place the div in the top-left corner.
    *   div.position(10, 20);
+   *
    *   // Set its width and height.
    *   div.size(80, 60);
+   *
    *   // Set its background color to white
    *   div.style('background-color', 'white');
+   *
    *   // Align any text to the center.
    *   div.style('text-align', 'center');
+   *
    *   // Set its ID to "container".
    *   div.id('container');
    *
    *   // Create a paragraph element.
    *   let p = createP('p5*js');
+   *
    *   // Make the div its parent
    *   // using its ID "container".
    *   p.parent('container');
@@ -117,10 +124,13 @@ p5.Element = class {
    *
    *   // Create rectangular div element.
    *   let div = createDiv();
+   *
    *   // Place the div in the top-left corner.
    *   div.position(10, 20);
+   *
    *   // Set its width and height.
    *   div.size(80, 60);
+   *
    *   // Set its background color and align
    *   // any text to the center.
    *   div.style('background-color', 'white');
@@ -128,6 +138,7 @@ p5.Element = class {
    *
    *   // Create a paragraph element.
    *   let p = createP('p5*js');
+   *
    *   // Make the div its parent.
    *   p.parent(div);
    *
@@ -143,10 +154,13 @@ p5.Element = class {
    *
    *   // Create rectangular div element.
    *   let div = createDiv();
+   *
    *   // Place the div in the top-left corner.
    *   div.position(10, 20);
+   *
    *   // Set its width and height.
    *   div.size(80, 60);
+   *
    *   // Set its background color and align
    *   // any text to the center.
    *   div.style('background-color', 'white');
@@ -154,6 +168,7 @@ p5.Element = class {
    *
    *   // Create a paragraph element.
    *   let p = createP('p5*js');
+   *
    *   // Make the div its parent
    *   // using the underlying
    *   // HTMLElement.
@@ -185,7 +200,7 @@ p5.Element = class {
   }
 
   /**
-   * Sets this element's ID using a given string.
+   * Sets the element's ID using a given string.
    *
    * Calling `myElement.id()` without an argument returns its ID as a string.
    *
@@ -232,7 +247,7 @@ p5.Element = class {
   /**
    * Adds a
    * <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/class" target="_blank">class attribute</a>
-   * to the element.
+   * to the element using a given string.
    *
    * Calling `myElement.class()` without an argument returns a string with its current classes.
    *
@@ -278,6 +293,7 @@ p5.Element = class {
 
   /**
    * Calls a function when the mouse is pressed over the element.
+   *
    * Calling `myElement.mousePressed(false)` disables the function.
    *
    * Note: Some mobile browsers may also trigger this event when the element
@@ -287,6 +303,7 @@ p5.Element = class {
    *                                pressed over the element.
    *                                `false` disables the function.
    * @chainable
+   *
    * @example
    * <div>
    * <code>
@@ -312,28 +329,6 @@ p5.Element = class {
    * }
    * </code>
    * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   // Create a canvas element and
-   *   // assign it to cnv.
-   *   let cnv = createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Paint the background either
-   *   // red, yellow, blue, or green
-   *   // when the canvas is pressed.
-   *   cnv.mousePressed(() => {
-   *     let c = random(['red', 'yellow', 'blue', 'green']);
-   *     background(c);
-   *   });
-   *
-   *   describe('A gray square changes color when the mouse is pressed.');
-   * }
-   * </code>
-   * </div>
    */
   mousePressed(fxn) {
     // Prepend the mouse property setters to the event-listener.
@@ -352,12 +347,14 @@ p5.Element = class {
 
   /**
    * Calls a function when the mouse is pressed twice over the element.
+   *
    * Calling `myElement.doubleClicked(false)` disables the function.
    *
    * @param  {Function|Boolean} fxn function to call when the mouse is
    *                                double clicked over the element.
    *                                `false` disables the function.
    * @chainable
+   *
    * @example
    * <div>
    * <code>
@@ -383,28 +380,6 @@ p5.Element = class {
    * }
    * </code>
    * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   // Create a canvas element and
-   *   // assign it to cnv.
-   *   let cnv = createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Paint the background either
-   *   // red, yellow, blue, or green
-   *   // when the canvas is double-clicked.
-   *   cnv.doubleClicked(() => {
-   *     let c = random(['red', 'yellow', 'blue', 'green']);
-   *     background(c);
-   *   });
-   *
-   *   describe('A gray square changes color when the user double-clicks the canvas.');
-   * }
-   * </code>
-   * </div>
    */
   doubleClicked(fxn) {
     p5.Element._adjustListener('dblclick', fxn, this);
@@ -412,7 +387,7 @@ p5.Element = class {
   }
 
   /**
-   * Calls a function when the mouse wheel scrolls over th element.
+   * Calls a function when the mouse wheel scrolls over the element.
    *
    * The callback function, `fxn`, is passed an `event` object. `event` has
    * two numeric properties, `deltaY` and `deltaX`. `event.deltaY` is
@@ -427,6 +402,7 @@ p5.Element = class {
    *                                scrolled over the element.
    *                                `false` disables the function.
    * @chainable
+   *
    * @example
    * <div>
    * <code>
@@ -449,28 +425,6 @@ p5.Element = class {
    * function randomColor() {
    *   let c = random(['red', 'yellow', 'blue', 'green']);
    *   background(c);
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   // Create a canvas element and
-   *   // assign it to cnv.
-   *   let cnv = createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Paint the background either
-   *   // red, yellow, blue, or green
-   *   // when the mouse wheel moves.
-   *   cnv.mouseWheel(() => {
-   *     let c = random(['red', 'yellow', 'blue', 'green']);
-   *     background(c);
-   *   });
-   *
-   *   describe('A gray square changes color when the user scrolls the mouse wheel over the canvas.');
    * }
    * </code>
    * </div>
@@ -518,8 +472,9 @@ p5.Element = class {
   }
 
   /**
-   * Calls a function when the mouse is released over the element. Calling
-   * `myElement.mouseReleased(false)` disables the function.
+   * Calls a function when the mouse is released over the element.
+   *
+   * Calling `myElement.mouseReleased(false)` disables the function.
    *
    * Note: Some mobile browsers may also trigger this event when the element
    * receives a quick tap.
@@ -528,6 +483,7 @@ p5.Element = class {
    *                                pressed over the element.
    *                                `false` disables the function.
    * @chainable
+   *
    * @example
    * <div>
    * <code>
@@ -553,28 +509,6 @@ p5.Element = class {
    * }
    * </code>
    * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   // Create a canvas element and
-   *   // assign it to cnv.
-   *   let cnv = createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Paint the background either
-   *   // red, yellow, blue, or green
-   *   // when a mouse press ends.
-   *   cnv.mouseReleased(() => {
-   *     let c = random(['red', 'yellow', 'blue', 'green']);
-   *     background(c);
-   *   });
-   *
-   *   describe('A gray square changes color when the user releases a mouse press.');
-   * }
-   * </code>
-   * </div>
    */
   mouseReleased(fxn) {
     p5.Element._adjustListener('mouseup', fxn, this);
@@ -583,6 +517,7 @@ p5.Element = class {
 
   /**
    * Calls a function when the mouse is pressed and released over the element.
+   *
    * Calling `myElement.mouseReleased(false)` disables the function.
    *
    * Note: Some mobile browsers may also trigger this event when the element
@@ -592,6 +527,7 @@ p5.Element = class {
    *                                pressed and released over the element.
    *                                `false` disables the function.
    * @chainable
+   *
    * @example
    * <div>
    * <code>
@@ -617,28 +553,6 @@ p5.Element = class {
    * }
    * </code>
    * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   // Create a canvas element and
-   *   // assign it to cnv.
-   *   let cnv = createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Paint the background either
-   *   // red, yellow, blue, or green
-   *   // when a mouse press ends.
-   *   cnv.mouseClicked(() => {
-   *     let c = random(['red', 'yellow', 'blue', 'green']);
-   *     background(c);
-   *   });
-   *
-   *   describe('A gray square changes color when the user releases a mouse press.');
-   * }
-   * </code>
-   * </div>
    */
   mouseClicked(fxn) {
     p5.Element._adjustListener('click', fxn, this);
@@ -646,13 +560,15 @@ p5.Element = class {
   }
 
   /**
-   * Calls a function when the mouse moves over the element. Calling
-   * `myElement.mouseMoved(false)` disables the function.
+   * Calls a function when the mouse moves over the element.
+   *
+   * Calling `myElement.mouseMoved(false)` disables the function.
    *
    * @param  {Function|Boolean} fxn function to call when the mouse
    *                                moves over the element.
    *                                `false` disables the function.
    * @chainable
+   *
    * @example
    * <div>
    * <code>
@@ -678,28 +594,6 @@ p5.Element = class {
    * }
    * </code>
    * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   // Create a canvas element and
-   *   // assign it to cnv.
-   *   let cnv = createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Paint the background either
-   *   // red, yellow, blue, or green
-   *   // when the mouse moves.
-   *   cnv.mouseMoved(() => {
-   *     let c = random(['red', 'yellow', 'blue', 'green']);
-   *     background(c);
-   *   });
-   *
-   *   describe('A gray square changes color when the mouse moves over the canvas.');
-   * }
-   * </code>
-   * </div>
    */
   mouseMoved(fxn) {
     p5.Element._adjustListener('mousemove', fxn, this);
@@ -707,13 +601,15 @@ p5.Element = class {
   }
 
   /**
-   * Calls a function when the mouse moves onto the element. Calling
-   * `myElement.mouseOver(false)` disables the function.
+   * Calls a function when the mouse moves onto the element.
+   *
+   * Calling `myElement.mouseOver(false)` disables the function.
    *
    * @param  {Function|Boolean} fxn function to call when the mouse
    *                                moves onto the element.
    *                                `false` disables the function.
    * @chainable
+   *
    * @example
    * <div>
    * <code>
@@ -739,29 +635,6 @@ p5.Element = class {
    * }
    * </code>
    * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   // Create a canvas element and
-   *   // assign it to cnv.
-   *   let cnv = createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Paint the background either
-   *   // red, yellow, blue, or green
-   *   // when the mouse moves onto
-   *   // the canvas.
-   *   cnv.mouseOver(() => {
-   *     let c = random(['red', 'yellow', 'blue', 'green']);
-   *     background(c);
-   *   });
-   *
-   *   describe('A gray square changes color when the mouse moves onto the canvas.');
-   * }
-   * </code>
-   * </div>
    */
   mouseOver(fxn) {
     p5.Element._adjustListener('mouseover', fxn, this);
@@ -769,13 +642,15 @@ p5.Element = class {
   }
 
   /**
-   * Calls a function when the mouse moves off the element. Calling
-   * `myElement.mouseOut(false)` disables the function.
+   * Calls a function when the mouse moves off the element.
+   *
+   * Calling `myElement.mouseOut(false)` disables the function.
    *
    * @param  {Function|Boolean} fxn function to call when the mouse
    *                                moves off the element.
    *                                `false` disables the function.
    * @chainable
+   *
    * @example
    * <div>
    * <code>
@@ -801,29 +676,6 @@ p5.Element = class {
    * }
    * </code>
    * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   // Create a canvas element and
-   *   // assign it to cnv.
-   *   let cnv = createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Paint the background either
-   *   // red, yellow, blue, or green
-   *   // when the mouse moves off
-   *   // the canvas.
-   *   cnv.mouseOut(() => {
-   *     let c = random(['red', 'yellow', 'blue', 'green']);
-   *     background(c);
-   *   });
-   *
-   *   describe('A gray square changes color when the mouse moves off the canvas.');
-   * }
-   * </code>
-   * </div>
    */
   mouseOut(fxn) {
     p5.Element._adjustListener('mouseout', fxn, this);
@@ -831,8 +683,9 @@ p5.Element = class {
   }
 
   /**
-   * Calls a function when the element is touched. Calling
-   * `myElement.touchStarted(false)` disables the function.
+   * Calls a function when the element is touched.
+   *
+   * Calling `myElement.touchStarted(false)` disables the function.
    *
    * Note: Touch functions only work on mobile devices.
    *
@@ -840,6 +693,7 @@ p5.Element = class {
    *                                starts.
    *                                `false` disables the function.
    * @chainable
+   *
    * @example
    * <div>
    * <code>
@@ -865,29 +719,6 @@ p5.Element = class {
    * }
    * </code>
    * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   // Create a canvas element and
-   *   // assign it to cnv.
-   *   let cnv = createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Paint the background either
-   *   // red, yellow, blue, or green
-   *   // when the user touches the
-   *   // canvas.
-   *   cnv.touchStarted(() => {
-   *     let c = random(['red', 'yellow', 'blue', 'green']);
-   *     background(c);
-   *   });
-   *
-   *   describe('A gray square changes color when the user touches the canvas.');
-   * }
-   * </code>
-   * </div>
    */
   touchStarted(fxn) {
     p5.Element._adjustListener('touchstart', fxn, this);
@@ -895,9 +726,9 @@ p5.Element = class {
   }
 
   /**
-   * Calls a function when the user touches the element and moves their
-   * finger. Calling `myElement.touchMoved(false)` disables the
-   * function.
+   * Calls a function when the user touches the element and moves.
+   *
+   * Calling `myElement.touchMoved(false)` disables the function.
    *
    * Note: Touch functions only work on mobile devices.
    *
@@ -931,29 +762,6 @@ p5.Element = class {
    * }
    * </code>
    * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   // Create a canvas element and
-   *   // assign it to cnv.
-   *   let cnv = createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Paint the background either
-   *   // red, yellow, blue, or green
-   *   // when the user touches the
-   *   // canvas and moves.
-   *   cnv.touchMoved(() => {
-   *     let c = random(['red', 'yellow', 'blue', 'green']);
-   *     background(c);
-   *   });
-   *
-   *   describe('A gray square changes color when the user touches the canvas and moves.');
-   * }
-   * </code>
-   * </div>
    */
   touchMoved(fxn) {
     p5.Element._adjustListener('touchmove', fxn, this);
@@ -961,8 +769,9 @@ p5.Element = class {
   }
 
   /**
-   * Calls a function when the user stops touching the element. Calling
-   * `myElement.touchMoved(false)` disables the function.
+   * Calls a function when the user stops touching the element.
+   *
+   * Calling `myElement.touchMoved(false)` disables the function.
    *
    * Note: Touch functions only work on mobile devices.
    *
@@ -996,30 +805,6 @@ p5.Element = class {
    * }
    * </code>
    * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   // Create a canvas element and
-   *   // assign it to cnv.
-   *   let cnv = createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Paint the background either
-   *   // red, yellow, blue, or green
-   *   // when the user touches the
-   *   // canvas, then lifts their
-   *   // finger.
-   *   cnv.touchEnded(() => {
-   *     let c = random(['red', 'yellow', 'blue', 'green']);
-   *     background(c);
-   *   });
-   *
-   *   describe('A gray square changes color when the user touches the canvas, then lifts their finger.');
-   * }
-   * </code>
-   * </div>
    */
   touchEnded(fxn) {
     p5.Element._adjustListener('touchend', fxn, this);
@@ -1027,13 +812,15 @@ p5.Element = class {
   }
 
   /**
-   * Calls a function when a file is dragged over the element. Calling
-   * `myElement.dragOver(false)` disables the function.
+   * Calls a function when a file is dragged over the element.
+   *
+   * Calling `myElement.dragOver(false)` disables the function.
    *
    * @param  {Function|Boolean} fxn function to call when the file is
    *                                dragged over the element.
    *                                `false` disables the function.
    * @chainable
+   *
    * @example
    * <div>
    * <code>
@@ -1059,29 +846,6 @@ p5.Element = class {
    * }
    * </code>
    * </div>
-   *
-   * <div>
-   * <code>
-   * // Drag a file over the canvas to test.
-   *
-   * function setup() {
-   *   // Create a canvas element and
-   *   // assign it to cnv.
-   *   let cnv = createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Say "hello, file" when a
-   *   // file is dragged over
-   *   // the canvas.
-   *   cnv.dragOver(() => {
-   *     text('hello, file', 50, 50);
-   *   });
-   *
-   *   describe('A gray square. The text "hello, file" appears when a file is dragged over the square.');
-   * }
-   * </code>
-   * </div>
    */
   dragOver(fxn) {
     p5.Element._adjustListener('dragover', fxn, this);
@@ -1089,7 +853,8 @@ p5.Element = class {
   }
 
   /**
-   * Calls a function when a file is dragged off the element. Calling
+   * Calls a function when a file is dragged off the element.
+   *
    * Calling `myElement.dragLeave(false)` disables the function.
    *
    * @param  {Function|Boolean} fxn function to call when the file is
@@ -1119,30 +884,6 @@ p5.Element = class {
    *
    * function byeFile() {
    *   text('bye, file', 50, 50);
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * // Drag a file over, then off
-   * // the canvas to test.
-   *
-   * function setup() {
-   *   // Create a canvas element and
-   *   // assign it to cnv.
-   *   let cnv = createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Say "bye, file" when a
-   *   // file is dragged over,
-   *   // then off the canvas.
-   *   cnv.dragLeave(() => {
-   *     text('bye, file', 50, 50);
-   *   });
-   *
-   *   describe('A gray square. The text "bye, file" appears when a file is dragged over, then off the square.');
    * }
    * </code>
    * </div>
@@ -1211,9 +952,11 @@ p5.Element = class {
 };
 
 /**
- * Underlying
+ * The element's underlying `HTMLElement` object.
+ *
+ * The
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement" target="_blank">HTMLElement</a>
- * object. Its properties and methods can be used directly.
+ * object's properties and methods can be used directly.
  *
  * @example
  * <div>
@@ -1236,16 +979,21 @@ p5.Element = class {
  *
  * @property elt
  * @for p5.Element
+ * @name elt
  * @readOnly
  */
 
 /**
+ * A `Number` property that stores the element's width.
+ *
  * @type {Number}
  * @property width
  * @for p5.Element
  */
 
 /**
+ * A `Number` property that stores the element's height.
+ *
  * @type {Number}
  * @property height
  * @for p5.Element

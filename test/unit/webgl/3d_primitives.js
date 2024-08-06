@@ -29,11 +29,6 @@ suite('3D Primitives', function() {
         'got unwanted exception'
       );
     });
-    test.skip('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.plane('a', 10);
-      });
-    });
     test('no friendly-err-msg. no parameters', function() {
       assert.doesNotThrow(
         function() {
@@ -49,11 +44,6 @@ suite('3D Primitives', function() {
     test('should be a function', function() {
       assert.ok(myp5.box);
       assert.typeOf(myp5.box, 'function');
-    });
-    test.skip('wrong param type at #0 and #2', function() {
-      assert.validationError(function() {
-        myp5.box('a', 10, 'c');
-      });
     });
     test('no friendly-err-msg. missing height, depth; param #1, #2.', function() {
       assert.doesNotThrow(
@@ -89,11 +79,6 @@ suite('3D Primitives', function() {
       assert.ok(myp5.sphere);
       assert.typeOf(myp5.sphere, 'function');
     });
-    test.skip('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.sphere('a');
-      });
-    });
     test('no friendly-err-msg. no parameters', function() {
       assert.doesNotThrow(
         function() {
@@ -110,11 +95,6 @@ suite('3D Primitives', function() {
       assert.ok(myp5.cylinder);
       assert.typeOf(myp5.cylinder, 'function');
     });
-    test.skip('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.cylinder('r', 10, 10);
-      });
-    });
     test('no friendly-err-msg. missing height; param #1', function() {
       assert.doesNotThrow(
         function() {
@@ -123,12 +103,6 @@ suite('3D Primitives', function() {
         Error,
         'got unwanted exception'
       );
-    });
-    //Parameter validation not done for bottomCap, topCap
-    test.skip('wrong param type at #4', function() {
-      assert.validationError(function() {
-        myp5.cylinder('r', 10, 10, 14, 'a');
-      });
     });
     test('no friendly-err-msg. no parameters', function() {
       assert.doesNotThrow(
@@ -146,11 +120,6 @@ suite('3D Primitives', function() {
       assert.ok(myp5.cone);
       assert.typeOf(myp5.cone, 'function');
     });
-    test.skip('wrong param type at #0 and #1', function() {
-      assert.validationError(function() {
-        myp5.cone('r', false, 10);
-      });
-    });
     test('no friendly-err-msg. missing height; param #1', function() {
       assert.doesNotThrow(
         function() {
@@ -159,12 +128,6 @@ suite('3D Primitives', function() {
         Error,
         'got unwanted exception'
       );
-    });
-    //Parameter validation not done for cap
-    test.skip('wrong param type at #4', function() {
-      assert.validationError(function() {
-        myp5.cone(10, 10, 10, 14, 'false');
-      });
     });
     test('no friendly-err-msg. no parameters', function() {
       assert.doesNotThrow(
@@ -181,11 +144,6 @@ suite('3D Primitives', function() {
     test('should be a function', function() {
       assert.ok(myp5.ellipsoid);
       assert.typeOf(myp5.ellipsoid, 'function');
-    });
-    test.skip('wrong param type at #0 and #1', function() {
-      assert.validationError(function() {
-        myp5.ellipsoid('x', 'y', 10);
-      });
     });
     test('no friendly-err-msg. missing param #1 #2', function() {
       assert.doesNotThrow(
@@ -211,11 +169,6 @@ suite('3D Primitives', function() {
     test('should be a function', function() {
       assert.ok(myp5.torus);
       assert.typeOf(myp5.torus, 'function');
-    });
-    test.skip('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.torus(false, 10);
-      });
     });
     test('no friendly-err-msg. missing param #1', function() {
       assert.doesNotThrow(
@@ -251,22 +204,6 @@ suite('3D Primitives', function() {
         'got unwanted exception'
       );
     });
-    test.skip('missing param #2', function() {
-      assert.validationError(function() {
-        myp5.ellipse(0, 0);
-      });
-    });
-    test.skip('missing param #2', function() {
-      assert.validationError(function() {
-        var size;
-        myp5.ellipse(0, 0, size);
-      });
-    });
-    test.skip('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.ellipse('a', 0, 100, 100);
-      });
-    });
     test('no friendly-err-msg. detail parameter > 50', function() {
       assert.doesNotThrow(
         function() {
@@ -291,16 +228,6 @@ suite('3D Primitives', function() {
         Error,
         'got unwanted exception'
       );
-    });
-    test.skip('missing param #4, #5', function() {
-      assert.validationError(function() {
-        myp5.arc(1, 1, 10.5, 10);
-      });
-    });
-    test.skip('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.arc('a', 1, 10.5, 10, 0, Math.PI, 'pie');
-      });
     });
     test('no friendly-err-msg. detail parameter > 50', function() {
       assert.doesNotThrow(

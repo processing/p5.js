@@ -1,0 +1,16 @@
+mtllib eg1.mtl
+
+v 0 0 0
+v 1 0 0
+v 1 1 0
+v 0 1 0
+v 0.5 0.5 1
+
+# Define faces without material
+f 1 2 5
+f 2 3 5
+
+# Apply material to subsequent faces
+usemtl coloredMaterial
+f 1 4 5
+f 4 1 5

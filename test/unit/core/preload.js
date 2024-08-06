@@ -1,4 +1,5 @@
 import p5 from '../../../src/app.js';
+import { promisedSketch } from '../../js/p5_helpers';
 
 suite('preloads', () => {
   let preloadCache = null;

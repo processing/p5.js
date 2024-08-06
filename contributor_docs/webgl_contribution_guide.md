@@ -1,3 +1,5 @@
+<!-- How to get started working on the p5.js WebGL mode source code. -->
+
 # WebGL Contribution Guide
 
 If you're reading this page, you're probably interested in helping work on WebGL mode. Thank you, we're grateful for your help! This page exists to help explain how we structure WebGL contributions and to offer some tips for making changes.
@@ -75,25 +77,25 @@ When adding a new test, if the feature is something that also works in 2D mode, 
 
 ```js
 test('coplanar strokes match 2D', function() {
-  const getColors = function(mode) {
-    myp5.createCanvas(20, 20, mode);
-    myp5.pixelDensity(1);
-    myp5.background(255);
-    myp5.strokeCap(myp5.SQUARE);
-    myp5.strokeJoin(myp5.MITER);
-    if (mode === myp5.WEBGL) {
-      myp5.translate(-myp5.width/2, -myp5.height/2);
-    }
-    myp5.stroke('black');
-    myp5.strokeWeight(4);
-    myp5.fill('red');
-    myp5.rect(10, 10, 15, 15);
-    myp5.fill('blue');
-    myp5.rect(0, 0, 15, 15);
-    myp5.loadPixels();
-    return [...myp5.pixels];
-  };
-  assert.deepEqual(getColors(myp5.P2D), getColors(myp5.WEBGL));
+  const getColors = function(mode) {
+    myp5.createCanvas(20, 20, mode);
+    myp5.pixelDensity(1);
+    myp5.background(255);
+    myp5.strokeCap(myp5.SQUARE);
+    myp5.strokeJoin(myp5.MITER);
+    if (mode === myp5.WEBGL) {
+      myp5.translate(-myp5.width/2, -myp5.height/2);
+    }
+    myp5.stroke('black');
+    myp5.strokeWeight(4);
+    myp5.fill('red');
+    myp5.rect(10, 10, 15, 15);
+    myp5.fill('blue');
+    myp5.rect(0, 0, 15, 15);
+    myp5.loadPixels();
+    return [...myp5.pixels];
+  };
+  assert.deepEqual(getColors(myp5.P2D), getColors(myp5.WEBGL));
 });
 ```
 
@@ -103,22 +105,22 @@ If a feature is WebGL-only, rather than comparing pixels to 2D mode, we often ch
 
 ```js
 test('color interpolation', function() {
-  const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
-  // upper color: (200, 0, 0, 255);
-  // lower color: (0, 0, 200, 255);
-  // expected center color: (100, 0, 100, 255);
-  myp5.beginShape();
-  myp5.fill(200, 0, 0);
-  myp5.vertex(-128, -128);
-  myp5.fill(200, 0, 0);
-  myp5.vertex(128, -128);
-  myp5.fill(0, 0, 200);
-  myp5.vertex(128, 128);
-  myp5.fill(0, 0, 200);
-  myp5.vertex(-128, 128);
-  myp5.endShape(myp5.CLOSE);
-  assert.equal(renderer._useVertexColor, true);
-  assert.deepEqual(myp5.get(128, 128), [100, 0, 100, 255]);
+  const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
+  // upper color: (200, 0, 0, 255);
+  // lower color: (0, 0, 200, 255);
+  // expected center color: (100, 0, 100, 255);
+  myp5.beginShape();
+  myp5.fill(200, 0, 0);
+  myp5.vertex(-128, -128);
+  myp5.fill(200, 0, 0);
+  myp5.vertex(128, -128);
+  myp5.fill(0, 0, 200);
+  myp5.vertex(128, 128);
+  myp5.fill(0, 0, 200);
+  myp5.vertex(-128, 128);
+  myp5.endShape(myp5.CLOSE);
+  assert.equal(renderer._useVertexColor, true);
+  assert.deepEqual(myp5.get(128, 128), [100, 0, 100, 255]);
 });
 ```
 
@@ -138,20 +140,20 @@ let avgFrameRates = [];
 let frameRateSum = 0;
 const numSamples = 30;
 function setup() {
-  // ...
-  frameRateP = createP();
-  frameRateP.position(0, 0);
+  // ...
+  frameRateP = createP();
+  frameRateP.position(0, 0);
 }
 function draw() {
-  // ...
-  const rate = frameRate() / numSamples;
-  avgFrameRates.push(rate);
-  frameRateSum += rate;
-  if (avgFrameRates.length > numSamples) {
-    frameRateSum -= avgFrameRates.shift();
-  }
- 
-  frameRateP.html(round(frameRateSum) + ' avg fps');
+  // ...
+  const rate = frameRate() / numSamples;
+  avgFrameRates.push(rate);
+  frameRateSum += rate;
+  if (avgFrameRates.length > numSamples) {
+    frameRateSum -= avgFrameRates.shift();
+  }
+
+  frameRateP.html(round(frameRateSum) + ' avg fps');
 }
 ```
 

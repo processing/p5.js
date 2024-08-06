@@ -29,11 +29,6 @@ suite('Interaction', function() {
         'got unwanted exception'
       );
     });
-    test.skip('wrong param type #0', function() {
-      assert.validationError(function() {
-        myp5.orbitControl('s');
-      });
-    });
   });
 
   suite('p5.prototype.debugMode', function() {
@@ -49,21 +44,6 @@ suite('Interaction', function() {
         Error,
         'got unwanted exception'
       );
-    });
-    test.skip('wrong param type #0', function() {
-      assert.validationError(function() {
-        myp5.debugMode(myp5.CORNER);
-      });
-    });
-    test.skip('wrong param type #2', function() {
-      assert.validationError(function() {
-        myp5.debugMode(myp5.AXES, 1, 1, 'a', 2);
-      });
-    });
-    test.skip('wrong param type #2', function() {
-      assert.validationError(function() {
-        myp5.debugMode(myp5.GRID, 1, 1, 'a');
-      });
     });
   });
 

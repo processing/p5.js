@@ -1,5 +1,5 @@
 // List all visual test files here that should be manually run
-const visualTestList = ['webgl'];
+const visualTestList = ['webgl', 'typography'];
 
 for (const file of visualTestList) {
   document.write(

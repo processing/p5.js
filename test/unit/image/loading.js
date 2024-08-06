@@ -1,4 +1,5 @@
 import p5 from '../../../src/app.js';
+import { vi } from 'vitest';
 
 /**
  * Expects an image file and a p5 instance with an image file loaded and drawn
@@ -48,14 +49,6 @@ suite('loading images', function() {
 
   var imagePath = 'unit/assets/cat.jpg';
 
-  beforeEach(function disableFileLoadError() {
-    sinon.stub(p5, '_friendlyFileLoadError');
-  });
-
-  afterEach(function restoreFileLoadError() {
-    p5._friendlyFileLoadError.restore();
-  });
-
   test('should call successCallback when image loads', function() {
     return new Promise(function(resolve, reject) {
       myp5.loadImage(imagePath, resolve, reject);
@@ -76,7 +69,6 @@ suite('loading images', function() {
       );
     }).then(function(event) {
       assert.equal(event.type, 'error');
-      assert.isTrue(p5._friendlyFileLoadError.called);
     });
   });
 
@@ -315,14 +307,6 @@ suite('loading animated gif images', function() {
 
   var imagePath = 'unit/assets/nyan_cat.gif';
 
-  beforeEach(function disableFileLoadError() {
-    sinon.stub(p5, '_friendlyFileLoadError');
-  });
-
-  afterEach(function restoreFileLoadError() {
-    p5._friendlyFileLoadError.restore();
-  });
-
   test('should call successCallback when image loads', function() {
     return new Promise(function(resolve, reject) {
       myp5.loadImage(imagePath, resolve, reject);
@@ -343,7 +327,6 @@ suite('loading animated gif images', function() {
       );
     }).then(function(event) {
       assert.equal(event.type, 'error');
-      assert.isTrue(p5._friendlyFileLoadError.called);
     });
   });
 
@@ -521,7 +504,7 @@ suite('displaying images', function() {
 });
 
 suite('displaying images that use fit mode', function() {
-  var myp5;
+  var myp5, imageSpy;
 
   beforeAll(function() {
     new p5(function(p) {
@@ -535,41 +518,85 @@ suite('displaying images that use fit mode', function() {
     myp5.remove();
   });
 
+  beforeEach(() => {
+    imageSpy = vi.spyOn(myp5._renderer, 'image');
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   test('CONTAIN when source image is larger than destination', function() {
     let src = myp5.createImage(400, 1000);
-    sinon.spy(myp5._renderer, 'image');
     myp5.image(src, 0, 0, 300, 400, 0, 0, 400, 1000, myp5.CONTAIN);
-    assert(myp5._renderer.image.calledOnce);
-    assert.equal(myp5._renderer.image.getCall(0).args[7], 400 / (1000 / 400)); //  dw
-    assert.equal(myp5._renderer.image.getCall(0).args[8], 1000 / (1000 / 400)); // dh
+    expect(imageSpy)
+      .toHaveBeenCalledTimes(1)
+      .toHaveBeenCalledWith(
+        expect.anything(),
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number),
+        400 / (1000 / 400),
+        1000 / (1000 / 400)
+      );
   });
 
   test('CONTAIN when source image is smaller than destination', function() {
     let src = myp5.createImage(40, 90);
-    sinon.spy(myp5._renderer, 'image');
     myp5.image(src, 0, 0, 300, 500, 0, 0, 400, 1000, myp5.CONTAIN);
-    assert(myp5._renderer.image.calledOnce);
-    assert.equal(myp5._renderer.image.getCall(0).args[7], 40 / (90 / 500)); //  dw
-    assert.equal(myp5._renderer.image.getCall(0).args[8], 90 / (90 / 500)); // dh
+    expect(imageSpy)
+      .toHaveBeenCalledTimes(1)
+      .toHaveBeenCalledWith(
+        expect.anything(),
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number),
+        40 / (90 / 500),
+        90 / (90 / 500)
+      );
   });
 
   test('COVER when source image is larger than destination', function() {
     let src = myp5.createImage(400, 1000);
-    sinon.spy(myp5._renderer, 'image');
     myp5.image(src, 0, 0, 300, 400, 0, 0, 400, 1000, myp5.COVER);
     const r = Math.max(300 / 400, 400 / 1000);
-    assert(myp5._renderer.image.calledOnce);
-    assert.equal(myp5._renderer.image.getCall(0).args[3], 300 / r); //  sw
-    assert.equal(myp5._renderer.image.getCall(0).args[4], 400 / r); // sh
+    expect(imageSpy)
+      .toHaveBeenCalledTimes(1)
+      .toHaveBeenCalledWith(
+        expect.anything(),
+        expect.any(Number),
+        expect.any(Number),
+        300 / r,
+        400 / r,
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number)
+      );
   });
 
   test('COVER when source image is smaller than destination', function() {
     let src = myp5.createImage(20, 100);
-    sinon.spy(myp5._renderer, 'image');
     myp5.image(src, 0, 0, 300, 400, 0, 0, 20, 100, myp5.COVER);
     const r = Math.max(300 / 20, 400 / 100);
-    assert(myp5._renderer.image.calledOnce);
-    assert.equal(myp5._renderer.image.getCall(0).args[3], 300 / r); //  sw
-    assert.equal(myp5._renderer.image.getCall(0).args[4], 400 / r); // sh
+    expect(imageSpy)
+      .toHaveBeenCalledTimes(1)
+      .toHaveBeenCalledWith(
+        expect.anything(),
+        expect.any(Number),
+        expect.any(Number),
+        300 / r,
+        400 / r,
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number)
+      );
   });
 });

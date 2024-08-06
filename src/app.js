@@ -27,7 +27,6 @@ import './accessibility/textOutput';
 import './accessibility/gridOutput';
 import './accessibility/color_namer';
 // color
-import './color/color_conversion';
 import './color/creating_reading';
 import './color/p5.Color';
 import './color/setting';
@@ -68,6 +67,8 @@ import './io/p5.XML';
 // import './math/p5.Vector';
 // import './math/random';
 // import './math/trigonometry';
+import math from './math';
+math(p5, p5.prototype);
 
 // typography
 import './typography/attributes';
@@ -90,6 +91,7 @@ import './webgl/p5.Camera';
 import './webgl/p5.DataArray';
 import './webgl/p5.Geometry';
 import './webgl/p5.Matrix';
+import './webgl/p5.Quat';
 import './webgl/p5.RendererGL.Immediate';
 import './webgl/p5.RendererGL';
 import './webgl/p5.RendererGL.Retained';

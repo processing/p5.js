@@ -4,70 +4,78 @@
 
 # [p5.js](https://p5js.org)
 
- Welcome! 👋👋🏿👋🏽👋🏻👋🏾👋🏼
+Welcome! 👋👋🏿👋🏽👋🏻👋🏾👋🏼
 
-p5.js is a JavaScript library for creative coding, with a focus on making coding accessible and inclusive for artists, designers, educators, beginners, and anyone else! p5.js is free and open-source because we believe software, and the tools to learn it, should be accessible to everyone.
+p5.js is a free and open-source JavaScript library for [accessible](https://p5js.org/contribute/access) creative coding. It is a nurturing community, an approachable language, an exploratory tool, an accessible environment, an inclusive platform, welcoming and playful for artists, designers, educators, beginners, and anyone else!
 
-Using the metaphor of a sketch, p5.js has a full set of drawing functionality using the HTML5 canvas element. You’re not limited to the drawing canvas though. You can think of your whole browser page as your sketch, including HTML5 objects for text, input, video, webcam, and sound.
+<table>
+<tr>
+<td>
 
-p5.js draws inspiration, wisdom, and guidance from its precursor [Processing](https://processing.org). However, it is a new interpretation, not an emulation or port. We don't aim to match Processing's set of functionality exactly, allowing ourselves space to deviate and grow in the context of the web.
+```js
+function setup() {
+  createCanvas(400, 400);
+  background(255);
+}
 
-The [p5js.org](https://p5js.org) website contains an extensive overview of the project, community, documentation, and examples. If you already know the basics of JavaScript or Processing, the [p5.js overview](https://github.com/processing/p5.js/wiki/p5.js-overview) wiki page is a good place to start.
+function draw() {
+  circle(mouseX, mouseY, 80);
+}
+```
+
+</td>
+<td>
+
+<img src="./contributor_docs/images/p5-readme-sketch.png" width="200" height="200" />
+
+</td>
+</tr>
+</table>
+
+[Get Started](https://p5js.org/get-started) — [Reference](https://p5js.org/reference) — [Tutorials](https://p5js.org/tutorials) — [Examples](https://p5js.org/examples/) — [Libraries](https://p5js.org/libraries) — [Forum](https://discourse.processing.org/c/p5js) — [Discord](https://discord.gg/SHQ8dH25r9)
+
+## About
+
+p5.js is built and organized to prioritize [accessibility, inclusivity, community, and joy](https://p5js.org/community). Similar to sketching, p5.js has a full set of tools to draw. It also supports creating audio-visual, interactive, experimental, and generative works for the web. p5.js enables thinking of a web page as your sketch. p5.js is accessible in multiple languages and has an expansive [documentation](https://p5js.org/reference/) with visual examples. You can find [tutorials](https://p5js.org/learn/) on the p5.js website and start coding right now in the [p5.js web editor](https://editor.p5js.org/). You can extend p5.js with many community-created [libraries](https://p5js.org/libraries/) that bring different capabilities. Its community provides endless inspiration and support for creators.
+
+p5.js encourages iterative and exploratory code for creative expression. Its friendly, diverse community shares art, code, and learning resources to help elevate all voices. We share our values in open source and access for all, to learn, create, imagine, design, share and code freely.
 
 ## Community
 
-We are a community of, and in solidarity with, people from every gender identity and expression, sexual orientation, race, ethnicity, language, neuro-type, size, ability, class, religion, culture, subculture, political opinion, age, skill level, occupation, and background. We acknowledge that not everyone has the time, financial means, or capacity to actively participate, but we recognize and encourage involvement of all kinds. We facilitate and foster access and empowerment. We are all learners.
+The p5.js community shares an interest in exploring the creation of art and design with technology. We are a community of, and in solidarity with, people from every gender identity and expression, sexual orientation, race, ethnicity, language, neuro-type, size, disability, class, caste, religion, culture, subculture, immigration status, age, skill level, occupation, and background. We stand in solidarity with justice and liberation movements. We work to acknowledge, dismantle, and prevent barriers to access p5.js code and the p5.js community.
 
-p5.js is a collaborative project created by many individuals, mostly volunteers, and you are invited to help. All types of involvement are welcome. See the [community section](https://p5js.org/community) to get started! You can also check out the [contributor docs](https://p5js.org/contributor-docs/#/) for more in-depth details about contributing to different areas of the project, including code, bug fixes, documentation, discussion, and more.
-
-Learn more about [our community](https://p5js.org/community/) and read our community statement and [code of conduct](https://github.com/processing/p5.js/blob/main/CODE_OF_CONDUCT.md). You can directly support our work with p5.js by [donating to the Processing Foundation](https://processingfoundation.org/support).
-
-## Get Started
-
-Make your first sketch in the [p5.js Editor](https://editor.p5js.org/)! Learn more about sketching with p5.js on the [Get Started](https://p5js.org/get-started/) and find everything you can do in the [Reference](https://p5js.org/reference/).
-
-To get the complete p5.js library on your own computer, you can [download it here](https://p5js.org/download). If you are interested in the most recent, less stable version, or even simply in (**new!**) certain components of p5.js, you can clone this repository and run `grunt` from the command line to generate the library from source. See the [contributor docs](https://p5js.org/contributor-docs/#/) for more information about our build process.
-
-
-## Learning
-
-Check out [p5js.org](https://p5js.org) for lots more! Here are some quick-links to get started learning p5.js.
-
-* [Get Started](https://p5js.org/get-started): Create and run your first sketch!
-* [p5.js overview](https://github.com/processing/p5.js/wiki/p5.js-overview): An overview of the main features and functionality of p5.js
-* [Reference](https://p5js.org/reference): The functionality supported by p5.js
-* [Learn](https://p5js.org/learn): Tutorials and short, prototypical examples exploring the basics of p5.js
-* [Forum](https://discourse.processing.org/c/p5js): Ask and answers questions about how to make things with p5.js here
-* [Libraries](https://p5js.org/libraries): Extend p5 functionality to interact with HTML, manipulate sound, and more!
-* [The Coding Train p5.js Tutorials](https://thecodingtrain.com/beginners/p5js/): A huge trove of tutorials created by Dan Shiffman and friends
-
+Learn more about [our community](https://p5js.org/community/) and read our community statement and [code of conduct](https://github.com/processing/p5.js/blob/main/CODE_OF_CONDUCT.md). You can directly support our work with p5.js by donating to [the Processing Foundation](https://processingfoundation.org/support).
 
 ## Issues
 
-If you have found a bug in the p5.js library, you can file it here under the [“issues” tab](https://github.com/processing/p5.js/issues). You can also request new features here. A set of templates for reporting issues and requesting features are provided to assist you (and us!). p5.js is maintained mostly by volunteers, so we thank you for your patience as we try to address your issues as soon as we can. Please post in the correct repository if you can:
+If you have found a bug in the p5.js library or want to request new features, feel free to file an issue! See our [contributor guidelines](https://p5js.org/contribute/contributor_guidelines) for a full reference of our contribution process. A set of templates for reporting issues and requesting features are provided to assist you (and us!). Different parts of p5.js are in different repositories. You can open an issue on each of them through these links:
 
-* p5.js general: [https://github.com/processing/p5.js/issues](https://github.com/processing/p5.js/issues)
-* p5.sound: [https://github.com/processing/p5.js-sound/issues](https://github.com/processing/p5.js-sound/issues)
-* p5.js website: [https://github.com/processing/p5.js-website/issues](https://github.com/processing/p5.js-website/issues)
-* p5.js web editor: [https://github.com/processing/p5.js-web-editor/issues](https://github.com/processing/p5.js-web-editor/issues)
+[p5.js](https://github.com/processing/p5.js/issues) — [p5.js website](https://github.com/processing/p5.js-website/issues) —- [p5.js web editor](https://github.com/processing/p5.js-web-editor/issues)
+
+p5.js is maintained mostly by volunteers, so we thank you for your patience as we try to address your issues as soon as we can.
 
 
-## Get Started for Developers
-A quick Getting Started with the Build and setting up the repository could be found [here](https://p5js.org/contributor-docs/#/contributor_guidelines?id=quick-get-started-for-developers)
+## Get Started for Contributors
+
+p5.js is a collaborative project with many contributors, mostly volunteers, and you are invited to help. All types of involvement are welcome. See the [contribute](https://p5js.org/contribute) for more in-depth details about contributing to different areas of the project, including code, bug fixes, documentation, discussion, and more.
+
+A quick Getting Started with the Build and setting up the repository could be found [here](https://p5js.org/contribute/contributor_guidelines/#quick-get-started-for-developers).
 
 
 ## Stewards
 
-Stewards are contributors that are particularly involved, familiar, or responsive to certain areas of the project. Their role is to help provide context and guidance to others working on p5.js. If you have a question about contributing to a particular area, you can tag the listed steward in an issue or pull request. They may also weigh in on feature requests and guide the overall direction of their area, with the input of the community. You can read more about the organization of the project at [contributor_docs/organization.md](https://github.com/processing/p5.js/blob/main/contributor_docs/organization.md), p5.js [Contributor Guidelines](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md), and p5.js [Steward Guidelines](https://github.com/processing/p5.js/blob/main/contributor_docs/steward_guidelines.md).
+Stewards are contributors who are particularly involved, familiar, or responsive to certain areas of the project. Their role is to help provide context and guidance to others working on p5.js. If you have a question about contributing to a particular area, you can tag the listed steward in an issue or pull request. They may also weigh in on feature requests and guide the overall direction of their area, with the input of the community. You can read more about the organization of the project in our p5.js [Contributor Guidelines](https://p5js.org/contribute/contributor_guidelines) and p5.js [Steward Guidelines](https://p5js.org/contribute/steward_guidelines).
 
-Anyone interested can volunteer to be a steward! There are no specific requirements for expertise, just an interest in actively learning and participating.  If you’re familiar with or interested in actively learning and participating in some of p5.js areas below, please reply to [this issue](https://github.com/processing/p5.js/issues/5719) mentioning which area(s) you are interested to volunteer as a steward! 👋👋👋
+Anyone interested can volunteer to be a steward! There are no specific requirements for expertise, just an interest in actively learning and participating. If you’re familiar with or interested in actively learning and participating in some of the p5.js areas below, please reply to [this issue](https://github.com/processing/p5.js/issues/5719) mentioning which area(s) you are interested in volunteering as a steward! 👋👋👋
+
+p5.js was created by [Lauren Lee McCarthy](https://github.com/lmccart) in 2013 as a new interpretation of Processing for the context of the web. Since then we have allowed ourselves space to deviate and grow, while drawing inspiration from Processing and our shared community. p5.js is sustained by a community of contributors, with support from the Processing Foundation. p5.js follows a rotating leadership model started in 2020, and [Qianqian Ye](https://github.com/qianqianye) has been leading p5.js since 2021. Learn more about the [people](https://p5js.org/people/) behind p5.js.
 
 Current Lead/Mentor
-* [@qianqianye](https://github.com/qianqianye) - p5.js Project Lead
-* [@limzykenneth](https://github.com/limzykenneth) - p5.js Mentor
-* [@lmccart](https://github.com/lmccart)- p5.js Creator
+* [@qianqianye](https://github.com/qianqianye) - p5.js Lead，2021-present
+* [@limzykenneth](https://github.com/limzykenneth) - p5.js Mentor，2023-present
 
 Lead/Mentor Alumni
+* [@lmccart](https://github.com/lmccart)- p5.js Creator
 * [@outofambit](https://github.com/outofambit) - p5.js Co-Lead 2021-22, Mentor 2022-2023
 * [@mcturner1995](https://github.com/mcturner1995) - p5.js Lead 2020
   
@@ -94,7 +102,7 @@ Lead/Mentor Alumni
 
 ## Contributors
 
-We recognize all types of contributions. This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification and the [Emoji Key](https://allcontributors.org/docs/en/emoji-key) ✨ for contribution types. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309). You can also post an issue or comment on a pull request with the text: `@all-contributors please add @YOUR-USERNAME for THING(S)` and our nice bot will add you.
+We recognize all types of contributions. This project follows the [all-contributors specification](https://github.com/all-contributors/all-contributors) and the [Emoji Key](https://allcontributors.org/docs/en/emoji-key) ✨ for contribution types. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309). You can also post an issue or comment on a pull request with the text: `@all-contributors please add @YOUR-USERNAME for THINGS` (where `THINGS` is a comma-separated list of entries from the [list of possible contribution types](https://allcontributors.org/docs/en/emoji-key)) and our nice bot will add you.
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
@@ -670,7 +678,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/agrshch"><img src="https://avatars.githubusercontent.com/u/98658900?v=4?s=120" width="120px;" alt="agrshch"/><br /><sub><b>agrshch</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=agrshch" title="Code">💻</a></td>
     </tr>
     <tr>
-      <td align="center" valign="top" width="16.66%"><a href="https://shibomb.xyz"><img src="https://avatars.githubusercontent.com/u/958471?v=4?s=120" width="120px;" alt="SHIBAHARA Hiroki"/><br /><sub><b>SHIBAHARA Hiroki</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=shibomb" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://shibomb.xyz"><img src="https://avatars.githubusercontent.com/u/958471?v=4?s=120" width="120px;" alt="SHIBAHARA Hiroki"/><br /><sub><b>SHIBAHARA Hiroki</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=shibomb" title="Code">💻</a> <a href="#translation-shibomb" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://twitter.com/CallMeSiddhant"><img src="https://avatars.githubusercontent.com/u/30566406?v=4?s=120" width="120px;" alt="siddhant"/><br /><sub><b>siddhant</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Asiddhant1" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=siddhant1" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://calebfoss.com"><img src="https://avatars.githubusercontent.com/u/16294664?v=4?s=120" width="120px;" alt="Caleb Foss"/><br /><sub><b>Caleb Foss</b></sub></a><br /><a href="#ideas-calebfoss" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3Acalebfoss" title="Reviewed Pull Requests">👀</a> <a href="#plugin-calebfoss" title="Plugin/utility libraries">🔌</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/chechenxu"><img src="https://avatars.githubusercontent.com/u/111816575?v=4?s=120" width="120px;" alt="chechenxu"/><br /><sub><b>chechenxu</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=chechenxu" title="Code">💻</a></td>
@@ -951,6 +959,80 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/mohitbalwani"><img src="https://avatars.githubusercontent.com/u/73066030?v=4?s=120" width="120px;" alt="Mohit Balwani"/><br /><sub><b>Mohit Balwani</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=mohitbalwani" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/rahulrangers"><img src="https://avatars.githubusercontent.com/u/127782777?v=4?s=120" width="120px;" alt="rahulrangers"/><br /><sub><b>rahulrangers</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=rahulrangers" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/sudhanshuv3"><img src="https://avatars.githubusercontent.com/u/148856416?v=4?s=120" width="120px;" alt="Sudhanshu Tiwari"/><br /><sub><b>Sudhanshu Tiwari</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Asudhanshuv3" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=sudhanshuv3" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://meezwhite.xyz"><img src="https://avatars.githubusercontent.com/u/112010422?v=4?s=120" width="120px;" alt="meezwhite"/><br /><sub><b>meezwhite</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=meezwhite" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/pie999"><img src="https://avatars.githubusercontent.com/u/105122549?v=4?s=120" width="120px;" alt="pie999"/><br /><sub><b>pie999</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=pie999" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/haroon10725"><img src="https://avatars.githubusercontent.com/u/104259212?v=4?s=120" width="120px;" alt="Muhammad Haroon"/><br /><sub><b>Muhammad Haroon</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=haroon10725" title="Documentation">📖</a> <a href="https://github.com/processing/p5.js/commits?author=haroon10725" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/natdecker"><img src="https://avatars.githubusercontent.com/u/76665013?v=4?s=120" width="120px;" alt="Nat Decker"/><br /><sub><b>Nat Decker</b></sub></a><br /><a href="#a11y-natdecker" title="Accessibility">️️️️♿️</a> <a href="https://github.com/processing/p5.js/commits?author=natdecker" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/sproutleaf"><img src="https://avatars.githubusercontent.com/u/116130954?v=4?s=120" width="120px;" alt="Miaoye Que"/><br /><sub><b>Miaoye Que</b></sub></a><br /><a href="#translation-sproutleaf" title="Translation">🌍</a> <a href="#maintenance-sproutleaf" title="Maintenance">🚧</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/sphantom-code"><img src="https://avatars.githubusercontent.com/u/74479963?v=4?s=120" width="120px;" alt="sphantom-code"/><br /><sub><b>sphantom-code</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sphantom-code" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://parkminwook.com"><img src="https://avatars.githubusercontent.com/u/23724801?v=4?s=120" width="120px;" alt="Minwook Park"/><br /><sub><b>Minwook Park</b></sub></a><br /><a href="#translation-wooknick" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Harrycheng233"><img src="https://avatars.githubusercontent.com/u/129256087?v=4?s=120" width="120px;" alt="Harrycheng233"/><br /><sub><b>Harrycheng233</b></sub></a><br /><a href="#translation-Harrycheng233" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/DianaMGalindo"><img src="https://avatars.githubusercontent.com/u/95235340?v=4?s=120" width="120px;" alt="Diana Galindo"/><br /><sub><b>Diana Galindo</b></sub></a><br /><a href="#translation-DianaMGalindo" title="Translation">🌍</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/douMax"><img src="https://avatars.githubusercontent.com/u/28494194?v=4?s=120" width="120px;" alt="Lingxiao Wang"/><br /><sub><b>Lingxiao Wang</b></sub></a><br /><a href="#translation-douMax" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/ml008008"><img src="https://avatars.githubusercontent.com/u/141788009?v=4?s=120" width="120px;" alt="ml.008"/><br /><sub><b>ml.008</b></sub></a><br /><a href="#translation-ml008008" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://ocelotl.cc"><img src="https://avatars.githubusercontent.com/u/8987515?v=4?s=120" width="120px;" alt="EmilioOcelotl"/><br /><sub><b>EmilioOcelotl</b></sub></a><br /><a href="#translation-EmilioOcelotl" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://marianneteixido.github.io/"><img src="https://avatars.githubusercontent.com/u/32370294?v=4?s=120" width="120px;" alt="Teixido"/><br /><sub><b>Teixido</b></sub></a><br /><a href="#translation-MarianneTeixido" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://www.ien.zone"><img src="https://avatars.githubusercontent.com/u/32572338?v=4?s=120" width="120px;" alt="IENGROUND"/><br /><sub><b>IENGROUND</b></sub></a><br /><a href="#translation-ienground" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://www.behance.net/orwiss"><img src="https://avatars.githubusercontent.com/u/7181108?v=4?s=120" width="120px;" alt="Orwiss"/><br /><sub><b>Orwiss</b></sub></a><br /><a href="#translation-Orwiss" title="Translation">🌍</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="http://ranaa.tech"><img src="https://avatars.githubusercontent.com/u/42575044?v=4?s=120" width="120px;" alt="Aditya Rana"/><br /><sub><b>Aditya Rana</b></sub></a><br /><a href="#translation-ranaaditya" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://eshaanagg.netlify.app/"><img src="https://avatars.githubusercontent.com/u/96648934?v=4?s=120" width="120px;" alt="Eshaan Aggarwal"/><br /><sub><b>Eshaan Aggarwal</b></sub></a><br /><a href="#translation-EshaanAgg" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/yunyoungJang"><img src="https://avatars.githubusercontent.com/u/39682540?v=4?s=120" width="120px;" alt="everything became blue"/><br /><sub><b>everything became blue</b></sub></a><br /><a href="#translation-yunyoungJang" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/YewonCALLI"><img src="https://avatars.githubusercontent.com/u/96384200?v=4?s=120" width="120px;" alt="YewonCALLI"/><br /><sub><b>YewonCALLI</b></sub></a><br /><a href="#translation-YewonCALLI" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://sejinoh.live"><img src="https://avatars.githubusercontent.com/u/39869184?v=4?s=120" width="120px;" alt="SejinOH"/><br /><sub><b>SejinOH</b></sub></a><br /><a href="#translation-designerSejinOH" title="Translation">🌍</a> <a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3AdesignerSejinOH" title="Reviewed Pull Requests">👀</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Surbhi-Pittie"><img src="https://avatars.githubusercontent.com/u/101015196?v=4?s=120" width="120px;" alt="Surbhi Pittie"/><br /><sub><b>Surbhi Pittie</b></sub></a><br /><a href="#translation-Surbhi-Pittie" title="Translation">🌍</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Tmicrd"><img src="https://avatars.githubusercontent.com/u/53132820?v=4?s=120" width="120px;" alt="nancy"/><br /><sub><b>nancy</b></sub></a><br /><a href="#translation-Tmicrd" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/jaiakash"><img src="https://avatars.githubusercontent.com/u/33419526?v=4?s=120" width="120px;" alt="Akash Jaiswal"/><br /><sub><b>Akash Jaiswal</b></sub></a><br /><a href="#translation-jaiakash" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://jackbdu.com/about"><img src="https://avatars.githubusercontent.com/u/8614803?v=4?s=120" width="120px;" alt="Jack B. Du"/><br /><sub><b>Jack B. Du</b></sub></a><br /><a href="#tutorial-jackbdu" title="Tutorials">✅</a> <a href="#example-jackbdu" title="Examples">💡</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/togekisse"><img src="https://avatars.githubusercontent.com/u/78539685?v=4?s=120" width="120px;" alt="togekisse"/><br /><sub><b>togekisse</b></sub></a><br /><a href="#translation-togekisse" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://tuan-h.com"><img src="https://avatars.githubusercontent.com/u/90000947?v=4?s=120" width="120px;" alt="tuan"/><br /><sub><b>tuan</b></sub></a><br /><a href="#translation-tuantinghuang" title="Translation">🌍</a> <a href="#ideas-tuantinghuang" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/janisepulveda"><img src="https://avatars.githubusercontent.com/u/144460794?v=4?s=120" width="120px;" alt="Janis Sepúlveda"/><br /><sub><b>Janis Sepúlveda</b></sub></a><br /><a href="#translation-janisepulveda" title="Translation">🌍</a> <a href="#ideas-janisepulveda" title="Ideas, Planning, & Feedback">🤔</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="http://violand.xyz"><img src="https://avatars.githubusercontent.com/u/65051338?v=4?s=120" width="120px;" alt="viola "/><br /><sub><b>viola </b></sub></a><br /><a href="#translation-sandpills" title="Translation">🌍</a> <a href="#ideas-sandpills" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://yuyuy.cargo.site/"><img src="https://avatars.githubusercontent.com/u/43624848?v=4?s=120" width="120px;" alt="yu"/><br /><sub><b>yu</b></sub></a><br /><a href="#translation-leey611" title="Translation">🌍</a> <a href="#ideas-leey611" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/LKL2017"><img src="https://avatars.githubusercontent.com/u/31305299?v=4?s=120" width="120px;" alt="李坤霖"/><br /><sub><b>李坤霖</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3ALKL2017" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/wwwld1"><img src="https://avatars.githubusercontent.com/u/116049361?v=4?s=120" width="120px;" alt="Leo Wang"/><br /><sub><b>Leo Wang</b></sub></a><br /><a href="#translation-wwwld1" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Papershine"><img src="https://avatars.githubusercontent.com/u/30367398?v=4?s=120" width="120px;" alt="Hilary Lau"/><br /><sub><b>Hilary Lau</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Papershine" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=Papershine" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://bobbykaz.com"><img src="https://avatars.githubusercontent.com/u/1424679?v=4?s=120" width="120px;" alt="Bobby Kazimiroff"/><br /><sub><b>Bobby Kazimiroff</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=bobbykaz" title="Documentation">📖</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/PalumboN"><img src="https://avatars.githubusercontent.com/u/4098184?v=4?s=120" width="120px;" alt="Nahuel Palumbo"/><br /><sub><b>Nahuel Palumbo</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3APalumboN" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=PalumboN" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/lottihill"><img src="https://avatars.githubusercontent.com/u/76125564?v=4?s=120" width="120px;" alt="lottihill"/><br /><sub><b>lottihill</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=lottihill" title="Documentation">📖</a> <a href="https://github.com/processing/p5.js/issues?q=author%3Alottihill" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/JulioGitLab"><img src="https://avatars.githubusercontent.com/u/156870555?v=4?s=120" width="120px;" alt="Julio Lab"/><br /><sub><b>Julio Lab</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=JulioGitLab" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/JordanSucher"><img src="https://avatars.githubusercontent.com/u/9809109?v=4?s=120" width="120px;" alt="Jordan Sucher"/><br /><sub><b>Jordan Sucher</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AJordanSucher" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=JordanSucher" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/iambiancafonseca"><img src="https://avatars.githubusercontent.com/u/102000079?v=4?s=120" width="120px;" alt="iambiancafonseca"/><br /><sub><b>iambiancafonseca</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=iambiancafonseca" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Vishal2002"><img src="https://avatars.githubusercontent.com/u/35897449?v=4?s=120" width="120px;" alt="Vishal Sharma"/><br /><sub><b>Vishal Sharma</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Vishal2002" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://piyushs-folio-c8b8.onrender.com/"><img src="https://avatars.githubusercontent.com/u/47579287?v=4?s=120" width="120px;" alt="PiyushChandra17"/><br /><sub><b>PiyushChandra17</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=PiyushChandra17" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3APiyushChandra17" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3APiyushChandra17" title="Reviewed Pull Requests">👀</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/dgrantham01"><img src="https://avatars.githubusercontent.com/u/71230430?v=4?s=120" width="120px;" alt="Daniel Grantham"/><br /><sub><b>Daniel Grantham</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=dgrantham01" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://aboutmonica.com"><img src="https://avatars.githubusercontent.com/u/6998954?v=4?s=120" width="120px;" alt="Monica Powell"/><br /><sub><b>Monica Powell</b></sub></a><br /><a href="#talk-m0nica" title="Talks">📢</a> <a href="#example-m0nica" title="Examples">💡</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/rohanjulka19"><img src="https://avatars.githubusercontent.com/u/19673968?v=4?s=120" width="120px;" alt="Rohan Julka"/><br /><sub><b>Rohan Julka</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=rohanjulka19" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/ravixalgorithm"><img src="https://avatars.githubusercontent.com/u/148683640?v=4?s=120" width="120px;" alt="Mr. Algorithm"/><br /><sub><b>Mr. Algorithm</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ravixalgorithm" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/sambensim"><img src="https://avatars.githubusercontent.com/u/28797947?v=4?s=120" width="120px;" alt="sambensim"/><br /><sub><b>sambensim</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sambensim" title="Documentation">📖</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/NicholasGillen"><img src="https://avatars.githubusercontent.com/u/80383027?v=4?s=120" width="120px;" alt="NicholasGillen"/><br /><sub><b>NicholasGillen</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=NicholasGillen" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://abhinavcode13.github.io"><img src="https://avatars.githubusercontent.com/u/126642111?v=4?s=120" width="120px;" alt="Abhinav kumar"/><br /><sub><b>Abhinav kumar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Abhinavcode13" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/chhaski"><img src="https://avatars.githubusercontent.com/u/71788879?v=4?s=120" width="120px;" alt="chaski"/><br /><sub><b>chaski</b></sub></a><br /><a href="#research-chhaski" title="Research">🔬</a> <a href="https://github.com/processing/p5.js/commits?author=chhaski" title="Code">💻</a> <a href="#example-chhaski" title="Examples">💡</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Evorage0"><img src="https://avatars.githubusercontent.com/u/68397475?v=4?s=120" width="120px;" alt="Evorage"/><br /><sub><b>Evorage</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AEvorage0" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=Evorage0" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://iamdanielmarino.com"><img src="https://avatars.githubusercontent.com/u/171375?v=4?s=120" width="120px;" alt="Daniel Marino"/><br /><sub><b>Daniel Marino</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=starzonmyarmz" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/shahmaz0/"><img src="https://avatars.githubusercontent.com/Shahmaz0?s=120" width="120px;" alt="Shahma Ansari"/><br /><sub><b>Shahma Ansari</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AShahmaz0" title="Bug reports">🐛</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Manancode"><img src="https://avatars.githubusercontent.com/u/144525586?v=4?s=120" width="120px;" alt="Manan Arora"/><br /><sub><b>Manan Arora</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Manancode" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Serena20003"><img src="https://avatars.githubusercontent.com/u/54823659?v=4?s=120" width="120px;" alt="Serena20003"/><br /><sub><b>Serena20003</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Serena20003" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Souvik-Cyclic"><img src="https://avatars.githubusercontent.com/u/145324128?v=4?s=120" width="120px;" alt="Souvik Kumar"/><br /><sub><b>Souvik Kumar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Souvik-Cyclic" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

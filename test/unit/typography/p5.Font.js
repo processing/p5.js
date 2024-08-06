@@ -1,8 +1,7 @@
 import p5 from '../../../src/app.js';
 import { promisedSketch } from '../../js/p5_helpers';
 
-// NOTE: test architecture and opentype causing issue
-suite.skip('p5.Font', function() {
+suite('p5.Font', function() {
   var myp5;
 
   beforeAll(function() {

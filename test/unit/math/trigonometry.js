@@ -55,14 +55,6 @@ suite('Trigonometry', function() {
       assert.equal(myp5.angleMode(), myp5.RADIANS);
     });
 
-    // NOTE: FES testing don't quite work yet
-    // Maybe consolidate FES tests
-    test.skip('wrong param type', function() {
-      assert.validationError(function() {
-        myp5.angleMode('wtflolzkk');
-      });
-    });
-
     test('should return radians', function() {
       myp5.angleMode(myp5.RADIANS);
       assert.equal(myp5.angleMode(), myp5.RADIANS);

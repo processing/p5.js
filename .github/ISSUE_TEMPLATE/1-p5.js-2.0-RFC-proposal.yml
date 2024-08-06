@@ -1,0 +1,98 @@
+name: 📃 p5.js 2.0 RFC Proposal
+description: This template is for submitting a proposal to the p5.js 2.0 RFC.
+title: "[p5.js 2.0 RFC Proposal]: "
+labels: [p5.js 2.0]
+body:
+  - type: textarea
+    attributes:
+      label: Increasing access
+      description: How would this proposal help [increase access](https://github.com/processing/p5.js/blob/main/contributor_docs/access.md) to p5.js? (If you're not sure, you can type "Unsure" here and let others from the community offer their thoughts.)
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        ### Acceptance criteria
+        The [p5.js 2.0 RFC](https://github.com/processing/p5.js/blob/dev-2.0/rfc_p5js_2.md) is a compilation of proposals for the next major version of p5.js. 
+        
+        **✖️ New features**: In order to focus the community's efforts, proposals for new features will typically not be accepted into the RFC. A [New Feature Request](https://github.com/processing/p5.js/issues/new?assignees=&labels=Feature+Request&projects=&template=feature-request.yml) may still be submitted, but it will only be considered after the release of p5.js 2.0. 
+        
+        **✔️Existing features**: This proposal will be accepted if the community determines it would improve an existing feature through a breaking change, a systemic change, or an overdue change.
+  - type: checkboxes
+    id: type-of-change
+    attributes:
+      label: Which types of changes would be made? 
+      description: Please select at least one.
+      options:
+        - label: Breaking change (Add-on libraries or sketches will work differently even if their code stays the same.)
+        - label: Systemic change (Many features or contributor workflows will be affected.)
+        - label: Overdue change (Modifications will be made that have been desirable for a long time.)
+        - label: Unsure (The community can help to determine the type of change.)
+  - type: checkboxes
+    id: sub-area
+    attributes:
+      label: Most appropriate sub-area of p5.js?
+      description: Please select at least one.
+      options:
+        - label: Accessibility
+        - label: Color
+        - label: Core/Environment/Rendering
+        - label: Data
+        - label: DOM
+        - label: Events
+        - label: Image
+        - label: IO
+        - label: Math
+        - label: Typography
+        - label: Utilities
+        - label: WebGL
+        - label: Build process
+        - label: Unit testing
+        - label: Internationalization
+        - label: Friendly errors
+        - label: Other (specify if possible)
+  - type: textarea
+    attributes:
+      label: What's the problem?
+      description: Describe the problem this proposal aims to solve. (Use as much space as you need.)
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: What's the solution?
+      description: Describe how you would solve the problem. (For large proposals, a summary is fine; this proposal can link to sub-issues for details.)
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Pros (updated based on community comments)
+      description: Indicate the advantages of implementing this proposal. If the community identifies more advantages in the comments, please add them.
+      value: |
+        Example list:
+        * **Consistency:** This proposal increases API consistency by...
+        * **Readability:** This proposal makes the source code more readable by...
+        * Other advantages...
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Cons (updated based on community comments)
+      description: Indicate the disadvantages of implementing this proposal, if you know of any. If the community identifies disadvantages in the comments, please add them.
+      placeholder: None so far...
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Proposal status
+      options:
+        - Under review
+        - Accepted
+        - Not accepted
+      default: 0
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        ### Implementation process
+        If this proposal is accepted, it will be included in the p5.js 2.0 RFC. A contributor who has participated in the discussion will then be assigned to lead the implementation, which will happen on the [dev-2.0](https://github.com/processing/p5.js/tree/dev-2.0) branch.

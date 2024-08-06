@@ -1,7 +1,7 @@
 import p5 from '../../../src/app.js';
 
 // NOTE: Require ESM compatible libtess
-suite.skip('color/Setting', function() {
+suite('color/Setting', function() {
   let myp5; // sketch without WEBGL Mode
   let my3D; // sketch with WEBGL mode
 
@@ -10,7 +10,6 @@ suite.skip('color/Setting', function() {
       new p5(function(p) {
         p.setup = function() {
           p.createCanvas(100, 100, p.WEBGL);
-          console.log('here', p);
           my3D = p;
           resolve();
         };
@@ -20,7 +19,6 @@ suite.skip('color/Setting', function() {
     await new Promise(resolve => {
       new p5(function(p) {
         p.setup = function() {
-          console.log('there', p);
           myp5 = p;
           resolve();
         };
