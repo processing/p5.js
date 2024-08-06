@@ -249,6 +249,34 @@ suite('Environment', function() {
       assert.closeTo(screenPos.y, 50, 0.1);
     });
 
+    test('worldToScreen with rotation in 2D', function() {
+      myp5.push();
+      myp5.translate(50, 50);
+      myp5.rotate(myp5.PI / 2);
+      let worldPos = myp5.createVector(10, 0);
+      let screenPos = myp5.worldToScreen(worldPos);
+      myp5.pop();
+      assert.closeTo(screenPos.x, 50, 0.1);
+      assert.closeTo(screenPos.y, 60, 0.1);
+    });
+
+    test('worldToScreen for a rotating square in 2D', function() {
+      myp5.push();
+      myp5.translate(50, 50);
+      myp5.rotate(myp5.PI / 4);
+      let vertices = [
+        myp5.createVector(-10, -10),
+        myp5.createVector(10, -10),
+        myp5.createVector(10, 10),
+        myp5.createVector(-10, 10)
+      ];
+      let screenPos = vertices.map(v => myp5.worldToScreen(v));
+      myp5.pop();
+      screenPos.forEach((pos, i) => {
+        myp5.text(`(${pos.x.toFixed(1)}, ${pos.y.toFixed(1)})`, pos.x, pos.y);
+      });
+    });
+
   });
 
   suite('3D context test', function() {
@@ -259,18 +287,40 @@ suite('Environment', function() {
     test('worldToScreen for 3D context', function() {
       let worldPos = myp5.createVector(0, 0, 0);
       let screenPos = myp5.worldToScreen(worldPos);
-      assert.isTrue(screenPos.x >= 0 && screenPos.x <= 100);
-      assert.isTrue(screenPos.y >= 0 && screenPos.y <= 100);
+      assert.closeTo(screenPos.x, 50, 0.1);
+      assert.closeTo(screenPos.y, 50, 0.1);
     });
 
-    test('worldToScreen with rotation', function() {
+    test('worldToScreen with rotation in 3D', function() {
       myp5.push();
       myp5.rotateY(myp5.PI / 2);
       let worldPos = myp5.createVector(50, 0, 0);
       let screenPos = myp5.worldToScreen(worldPos);
       myp5.pop();
-      assert.isTrue(screenPos.x >= 0 && screenPos.x <= 100);
-      assert.isTrue(screenPos.y >= 0 && screenPos.y <= 100);
+      assert.closeTo(screenPos.x, 50, 0.1);
+      assert.closeTo(screenPos.y, 50, 0.1);
+    });
+
+    test('worldToScreen for a rotating cube in 3D', function() {
+      myp5.push();
+      myp5.translate(0, 0, 0);
+      myp5.rotateX(myp5.PI / 4);
+      myp5.rotateY(myp5.PI / 4);
+      let vertices = [
+        myp5.createVector(-50, -50, -50),
+        myp5.createVector(50, -50, -50),
+        myp5.createVector(50, 50, -50),
+        myp5.createVector(-50, 50, -50),
+        myp5.createVector(-50, -50, 50),
+        myp5.createVector(50, -50, 50),
+        myp5.createVector(50, 50, 50),
+        myp5.createVector(-50, 50, 50)
+      ];
+      let screenPos = vertices.map(v => myp5.worldToScreen(v));
+      myp5.pop();
+      screenPos.forEach((pos, i) => {
+        myp5.text(`(${pos.x.toFixed(1)}, ${pos.y.toFixed(1)})`, pos.x, pos.y);
+      });
     });
   });
 });
