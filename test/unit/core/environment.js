@@ -236,4 +236,91 @@ suite('Environment', function() {
       assert.isNumber(myp5.displayDensity(), pd);
     });
   });
+
+  suite('2D context test', function() {
+    beforeEach(function() {
+      myp5.createCanvas(100, 100);
+    });
+
+    test('worldToScreen for 2D context', function() {
+      let worldPos = myp5.createVector(50, 50);
+      let screenPos = myp5.worldToScreen(worldPos);
+      assert.closeTo(screenPos.x, 50, 0.1);
+      assert.closeTo(screenPos.y, 50, 0.1);
+    });
+
+    test('worldToScreen with rotation in 2D', function() {
+      myp5.push();
+      myp5.translate(50, 50);
+      myp5.rotate(myp5.PI / 2);
+      let worldPos = myp5.createVector(10, 0);
+      let screenPos = myp5.worldToScreen(worldPos);
+      myp5.pop();
+      assert.closeTo(screenPos.x, 50, 0.1);
+      assert.closeTo(screenPos.y, 60, 0.1);
+    });
+
+    test('worldToScreen for a rotating square in 2D', function() {
+      myp5.push();
+      myp5.translate(50, 50);
+      myp5.rotate(myp5.PI / 4);
+      let vertices = [
+        myp5.createVector(-10, -10),
+        myp5.createVector(10, -10),
+        myp5.createVector(10, 10),
+        myp5.createVector(-10, 10)
+      ];
+      let screenPos = vertices.map(v => myp5.worldToScreen(v));
+      myp5.pop();
+      screenPos.forEach((pos, i) => {
+        myp5.text(`(${pos.x.toFixed(1)}, ${pos.y.toFixed(1)})`, pos.x, pos.y);
+      });
+    });
+
+  });
+
+  suite('3D context test', function() {
+    beforeEach(function() {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+    });
+
+    test('worldToScreen for 3D context', function() {
+      let worldPos = myp5.createVector(0, 0, 0);
+      let screenPos = myp5.worldToScreen(worldPos);
+      assert.closeTo(screenPos.x, 50, 0.1);
+      assert.closeTo(screenPos.y, 50, 0.1);
+    });
+
+    test('worldToScreen with rotation in 3D', function() {
+      myp5.push();
+      myp5.rotateY(myp5.PI / 2);
+      let worldPos = myp5.createVector(50, 0, 0);
+      let screenPos = myp5.worldToScreen(worldPos);
+      myp5.pop();
+      assert.closeTo(screenPos.x, 50, 0.1);
+      assert.closeTo(screenPos.y, 50, 0.1);
+    });
+
+    test('worldToScreen for a rotating cube in 3D', function() {
+      myp5.push();
+      myp5.translate(0, 0, 0);
+      myp5.rotateX(myp5.PI / 4);
+      myp5.rotateY(myp5.PI / 4);
+      let vertices = [
+        myp5.createVector(-50, -50, -50),
+        myp5.createVector(50, -50, -50),
+        myp5.createVector(50, 50, -50),
+        myp5.createVector(-50, 50, -50),
+        myp5.createVector(-50, -50, 50),
+        myp5.createVector(50, -50, 50),
+        myp5.createVector(50, 50, 50),
+        myp5.createVector(-50, 50, 50)
+      ];
+      let screenPos = vertices.map(v => myp5.worldToScreen(v));
+      myp5.pop();
+      screenPos.forEach((pos, i) => {
+        myp5.text(`(${pos.x.toFixed(1)}, ${pos.y.toFixed(1)})`, pos.x, pos.y);
+      });
+    });
+  });
 });
