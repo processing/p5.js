@@ -9,7 +9,8 @@
     "test": "vitest run --browser.headless true",
     "test:dev": "vitest",
     "lint": "eslint .",
-    "lint:fix": "eslint --fix ."
+    "lint:fix": "eslint --fix .",
+    "types": "npx -p typescript tsc"
   },
   "lint-staged": {
     "Gruntfile.js": "eslint",
@@ -69,6 +70,7 @@
     "rollup": "^4.9.6",
     "rollup-plugin-string": "^3.0.0",
     "rollup-plugin-visualizer": "^5.12.0",
+    "typescript": "^5.4.5",
     "unplugin-swc": "^1.4.2",
     "vite": "^5.0.2",
     "vite-plugin-string": "^1.2.2",
