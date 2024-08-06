@@ -10,6 +10,183 @@ import p5 from '../core/main';
 import './p5.Geometry';
 
 /**
+ * Load a 3d model from an OBJ or STL string.
+ *
+ * <a href="#/p5/loadModel">createModel()</a> should be placed inside of <a href="#/p5/preload">preload()</a>.
+ * This allows the model to load fully before the rest of your code is run.
+ *
+ * One of the limitations of the OBJ and STL format is that it doesn't have a built-in
+ * sense of scale. This means that models exported from different programs might
+ * be very different sizes. If your model isn't displaying, try calling
+ * <a href="#/p5/loadModel">loadModel()</a> with the normalized parameter set to true. This will resize the
+ * model to a scale appropriate for p5. You can also make additional changes to
+ * the final size of your model with the <a href="#/p5/scale">scale()</a> function.
+ *
+ * Also, the support for colored STL files is not present. STL files with color will be
+ * rendered without color properties.
+ *
+ * Options can include:
+ * - `modelString`: Specifies the plain text string of either an stl or obj file to be loaded.
+ * - `fileType`: Defines the file extension of the model.
+ * - `normalize`: Enables standardized size scaling during loading if set to true.
+ * - `successCallback`: Callback for post-loading actions with the 3D model object.
+ * - `failureCallback`: Handles errors if model loading fails, receiving an event error.
+ * - `flipU`: Flips the U texture coordinates of the model.
+ * - `flipV`: Flips the V texture coordinates of the model.
+ *
+ * @method createModel
+ * @param  {String} modelString         String of the object to be loaded
+ * @param  {String} [fileType]          The file extension of the model
+ *                                      (<code>.stl</code>, <code>.obj</code>).
+ * @param  {Boolean} normalize        If true, scale the model to a
+ *                                      standardized size when loading
+ * @param  {function(p5.Geometry)} [successCallback] Function to be called
+ *                                     once the model is loaded. Will be passed
+ *                                     the 3D model object.
+ * @param  {function(Event)} [failureCallback] called with event error if
+ *                                         the model fails to load.
+ * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
+ *
+ * @example
+ * <div>
+ * <code>
+ * const octahedron_model = `
+ * v 0.000000E+00 0.000000E+00 40.0000
+ * v 22.5000 22.5000 0.000000E+00
+ * v 22.5000 -22.5000 0.000000E+00
+ * v -22.5000 -22.5000 0.000000E+00
+ * v -22.5000 22.5000 0.000000E+00
+ * v 0.000000E+00 0.000000E+00 -40.0000
+ * f     1 2 3
+ * f     1 3 4
+ * f     1 4 5
+ * f     1 5 2
+ * f     6 5 4
+ * f     6 4 3
+ * f     6 3 2
+ * f     6 2 1
+ * f     6 1 5
+ * `;
+ * //draw a spinning octahedron
+ * let octahedron;
+ *
+ * function preload() {
+ *   octahedron = createModel(octahedron_model);
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   describe('Vertically rotating 3-d octahedron.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   model(octahedron);
+ *}
+ * </code>
+ * </div>
+ */
+/**
+ * @method createModel
+ * @param  {String} modelString
+ * @param  {String} [fileType]
+ * @param  {function(p5.Geometry)} [successCallback]
+ * @param  {function(Event)} [failureCallback]
+ * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
+ */
+/**
+ * @method createModel
+ * @param  {String} modelString
+ * @param  {String} [fileType]
+ * @param  {Object} [options]
+ * @param  {function(p5.Geometry)} [options.successCallback]
+ * @param  {function(Event)} [options.failureCallback]
+ * @param  {boolean} [options.normalize]
+ * @param  {boolean} [options.flipU]
+ * @param  {boolean} [options.flipV]
+ * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
+ */
+let modelCounter = 0;
+p5.prototype.createModel = function(modelString, fileType, options) {
+  p5._validateParameters('createModel', arguments);
+  let normalize= false;
+  let successCallback;
+  let failureCallback;
+  let flipU = false;
+  let flipV = false;
+  if (options && typeof options === 'object') {
+    normalize = options.normalize || false;
+    successCallback = options.successCallback;
+    failureCallback = options.failureCallback;
+    flipU = options.flipU || false;
+    flipV = options.flipV || false;
+  } else if (typeof options === 'boolean') {
+    normalize = options;
+    successCallback = arguments[3];
+    failureCallback = arguments[4];
+  } else {
+    successCallback = typeof arguments[2] === 'function' ? arguments[2] : undefined;
+    failureCallback = arguments[3];
+  }
+  const model = new p5.Geometry();
+  model.gid = `${fileType}|${normalize}|${modelCounter++}`;
+
+  if (fileType.match('stl')) {
+    try {
+      let uint8array = new TextEncoder().encode(modelString);
+      let arrayBuffer = uint8array.buffer;
+      parseSTL(model, arrayBuffer);
+    } catch (error) {
+      if (failureCallback) {
+        failureCallback(error);
+      } else {
+        p5._friendlyError('Error during parsing: ' + error.message);
+      }
+      return;
+    }
+  } else if (fileType.match('obj')) {
+    try {
+      const lines = modelString.split('\n');
+      parseObj(model, lines);
+    } catch (error) {
+      if (failureCallback) {
+        failureCallback(error);
+      } else {
+        p5._friendlyError('Error during parsing: ' + error.message);
+      }
+      return;
+    }
+  } else {
+    p5._friendlyFileLoadError(3, modelString);
+    if (failureCallback) {
+      failureCallback();
+    } else {
+      p5._friendlyError(
+        'Sorry, the file type is invalid. Only OBJ and STL files are supported.'
+      );
+    }
+  }
+  if (normalize) {
+    model.normalize();
+  }
+
+  if (flipU) {
+    model.flipU();
+  }
+
+  if (flipV) {
+    model.flipV();
+  }
+
+  if (typeof successCallback === 'function') {
+    successCallback(model);
+  }
+
+  return model;
+};
+/**
  * Loads a 3D model to create a
  * <a href="#/p5.Geometry">p5.Geometry</a> object.
  *
