@@ -15,9 +15,15 @@ OUT highp vec2 vVertTexCoord;
 OUT vec4 vColor;
 
 void main(void) {
-  vec4 positionVec4 = vec4(aPosition, 1.0);
-  gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
-  vVertexNormal = normalize(vec3( uNormalMatrix * aNormal ));
-  vVertTexCoord = aTexCoord;
-  vColor = (uUseVertexColor ? aVertexColor : uMaterialColor);
+  HOOK_beforeVertex();
+  vec4 positionVec4 = vec4(HOOK_getWorldPosition(
+    (uModelViewMatrix * vec4(HOOK_getLocalPosition(aPosition), 1.0)).xyz
+  ), 1.);
+
+  gl_Position = uProjectionMatrix * positionVec4;
+
+  vVertexNormal = HOOK_getWorldNormal(normalize(uNormalMatrix * HOOK_getLocalNormal(aNormal)));
+  vVertTexCoord = HOOK_getUV(aTexCoord);
+  vColor = HOOK_getVertexColor(uUseVertexColor ? aVertexColor : uMaterialColor);
+  HOOK_afterVertex();
 }

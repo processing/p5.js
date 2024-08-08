@@ -22,15 +22,17 @@ OUT vec3 vAmbientColor;
 OUT vec4 vColor;
 
 void main(void) {
-
-  vec4 viewModelPosition = uModelViewMatrix * vec4(aPosition, 1.0);
+  HOOK_beforeVertex();
+  vec4 viewModelPosition = vec4(HOOK_getWorldPosition(
+    (uModelViewMatrix * vec4(HOOK_getLocalPosition(aPosition), 1.0)).xyz
+  ), 1.);
 
   // Pass varyings to fragment shader
   vViewPosition = viewModelPosition.xyz;
   gl_Position = uProjectionMatrix * viewModelPosition;  
 
-  vNormal = uNormalMatrix * aNormal;
-  vTexCoord = aTexCoord;
+  vNormal = HOOK_getWorldNormal(uNormalMatrix * HOOK_getLocalNormal(aNormal));
+  vTexCoord = HOOK_getUV(aTexCoord);
 
   // TODO: this should be a uniform
   vAmbientColor = vec3(0.0);
@@ -40,5 +42,6 @@ void main(void) {
     }
   }
   
-  vColor = (uUseVertexColor ? aVertexColor : uMaterialColor);
+  vColor = HOOK_getVertexColor((uUseVertexColor ? aVertexColor : uMaterialColor));
+  HOOK_afterVertex();
 }

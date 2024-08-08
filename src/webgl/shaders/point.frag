@@ -3,6 +3,7 @@ uniform vec4 uMaterialColor;
 IN float vStrokeWeight;
 
 void main(){
+  HOOK_beforeFragment();
   float mask = 0.0;
 
   // make a circular mask using the gl_PointCoord (goes from 0 - 1 on a point)
@@ -19,9 +20,10 @@ void main(){
   // throw away the borders of the mask
   // otherwise we get weird alpha blending issues
 
-  if(mask > 0.98){
+  if(HOOK_shouldDiscard(mask > 0.98)){
     discard;
   }
 
-  OUT_COLOR = vec4(uMaterialColor.rgb, 1.) * uMaterialColor.a;
+  OUT_COLOR = HOOK_getFinalColor(vec4(uMaterialColor.rgb, 1.) * uMaterialColor.a);
+  HOOK_afterFragment();
 }
