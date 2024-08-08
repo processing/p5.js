@@ -344,7 +344,8 @@ p5.Font = class {
   textToPoints(txt, x, y, fontSize, options) {
     const xOriginal = x;
     const result = [];
-
+    const p = this.parent;
+    let pos;
     let lines = txt.split(/\r?\n|\r|\n/g);
     fontSize = fontSize || this.parent._renderer._textSize;
 
@@ -376,6 +377,14 @@ p5.Font = class {
 
             for (let l = 0; l < pts.length; l++) {
               pts[l].x += xoff;
+              pos = this._handleAlignment(
+                p._renderer,
+                line,
+                pts[l].x,
+                pts[l].y
+              );
+              pts[l].x = pos.x;
+              pts[l].y = pos.y;
               result.push(pts[l]);
             }
           }
@@ -386,7 +395,6 @@ p5.Font = class {
 
       y = y + this.parent._renderer._textLeading;
     }
-
     return result;
   }
 
