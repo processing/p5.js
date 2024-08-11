@@ -1071,20 +1071,18 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
 /**
  * Blends multiple colors to find a color between them.
  *
- * The `amt` parameter specifies the amount to interpolate between the values
- * values. 0 is equal to the first color, 0.5 is halfway in the list, 1 is the
- * last color of the list, and so on. Negative numbers are set
- * to 0. Numbers greater than 1 are set to 1. This differs from the behavior of
- * <a href="#/lerp">lerp</a>. It's necessary because numbers outside of the
- * interval [0, 1] it will attempt to access colors outside of the list.
+ * The `amt` parameter specifies the amount to interpolate between the color
+ * stops which are colors at each `amt` value "location" with `amt` values
+ * that are between 2 color stops interpolating between them based on its relative
+ * distance to both.
  *
  * The way that colors are interpolated depends on the current
  * <a href="#/colorMode">colorMode()</a>.
  *
  * @method paletteLerp
- * @param  {p5.Color[]} colors  interpolate from this color.
- * @param  {Number}   amt number between 0 and 1.
- * @return {p5.Color}     interpolated color.
+ * @param  {[p5.Color, Number][]} colors_stops color stops to interpolate from
+ * @param  {Number} amt number to use to interpolate relative to color stops
+ * @return {p5.Color} interpolated color.
  *
  * @example
  * <div>
@@ -1094,25 +1092,35 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
  * }
  *
  * function draw() {
- *   // This example goes from red to yellow and then to green
- *   const palette = [color('red'), color('yellow'), color('green')];
- *   const lerp_color = paletteLerp(palette, (millis() / 2000) % 1);
- *   background(lerp_color);
+ *   // The background goes from white to red to green to blue fill
+ *   background(lerpPalette(millis() / 10000 % 1, [
+ *     ["white", 0],
+ *     ["red", 0.05],
+ *     ["green", 0.25],
+ *     ["blue", 1]
+ *   ]));
  * }
  * </code>
  * </div>
  */
-p5.prototype.paletteLerp = function(colors, amt) {
-  amt = this.constrain(amt, 0, 1);
-  const last_color_ind = colors.length - 1;
+p5.prototype.paletteLerp = function(color_stops, amt) {
+  const first_color_stop = color_stops[0];
+  if (amt < first_color_stop[1])
+    return color(first_color_stop[0]);
 
-  const from_index = Math.floor(last_color_ind * amt);
-  if (from_index === last_color_ind)
-    return colors[last_color_ind];
+  for (let i = 1; i < color_stops.length; i++) {
+    const color_stop = color_stops[i];
+    if (amt < color_stop[1]) {
+      const prev_color_stop = color_stops[i - 1];
+      return lerpColor(
+        color(prev_color_stop[0]),
+        color(color_stop[0]),
+        (amt - prev_color_stop[1]) / (color_stop[1] - prev_color_stop[1])
+      );
+    }
+  }
 
-  const from = colors[from_index];
-  const to = colors[from_index + 1];
-  return this.lerpColor(from, to, amt * last_color_ind - from_index);
+  return color(color_stops[color_stops.length - 1][0]);
 };
 
 /**
