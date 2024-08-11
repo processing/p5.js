@@ -1093,12 +1093,12 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
  *
  * function draw() {
  *   // The background goes from white to red to green to blue fill
- *   background(paletteLerp(millis() / 10000 % 1, [
+ *   background(paletteLerp([
  *     ['white', 0],
  *     ['red', 0.05],
  *     ['green', 0.25],
  *     ['blue', 1]
- *   ]));
+ *   ], millis() / 10000 % 1));
  * }
  * </code>
  * </div>
@@ -1106,21 +1106,21 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
 p5.prototype.paletteLerp = function(color_stops, amt) {
   const first_color_stop = color_stops[0];
   if (amt < first_color_stop[1])
-    return color(first_color_stop[0]);
+    return this.color(first_color_stop[0]);
 
   for (let i = 1; i < color_stops.length; i++) {
     const color_stop = color_stops[i];
     if (amt < color_stop[1]) {
       const prev_color_stop = color_stops[i - 1];
-      return lerpColor(
-        color(prev_color_stop[0]),
-        color(color_stop[0]),
+      return this.lerpColor(
+        this.color(prev_color_stop[0]),
+        this.color(color_stop[0]),
         (amt - prev_color_stop[1]) / (color_stop[1] - prev_color_stop[1])
       );
     }
   }
 
-  return color(color_stops[color_stops.length - 1][0]);
+  return this.color(color_stops[color_stops.length - 1][0]);
 };
 
 /**
