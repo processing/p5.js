@@ -1479,6 +1479,37 @@ class Framebuffer {
    * @param  {Number} w width of the subsection to be returned.
    * @param  {Number} h height of the subsection to be returned.
    * @return {p5.Image} subsection as a <a href="#/p5.Image">p5.Image</a> object.
+   *
+   * @example
+   * <div>
+   * <code>
+   * // The `pixelColor` is logged to the console, returning red with full opacity.
+   *
+   * function setup() {
+   *   createCanvas(400, 400, WEBGL);
+   *
+   *   // Create an off-screen WebGL graphics buffer
+   *   let myBuffer = createGraphics(200, 200, WEBGL);
+   *
+   *   // Draw a red box on the off-screen buffer
+   *   myBuffer.background(0);  // Set the background to black
+   *   myBuffer.noStroke();
+   *   myBuffer.fill(255, 0, 0);  // Set the fill color to red
+   *   myBuffer.push();
+   *   myBuffer.translate(0, 0, 0);
+   *   myBuffer.box(100);  // Draw a red box at the center
+   *   myBuffer.pop();
+   *
+   *   // Get the color of a pixel at the center of the box (in 2D coordinates)
+   *   myBuffer.loadPixels(); // Load the pixel data for myBuffer
+   *   let pixelColor = myBuffer.get(100, 100);  // Get the color at (100, 100)
+   *   console.log('Pixel color at (100, 100):', pixelColor);
+   *
+   *   // Display the off-screen buffer on the main canvas
+   *   image(myBuffer, -width / 2, -height / 2);  // Draw the buffer on the main canvas
+   * }
+   * </code>
+   * </div>
    */
   /**
    * @method get
