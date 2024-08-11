@@ -186,7 +186,7 @@ p5.prototype.noSmooth = function() {
  *
  * By default, the first two parameters of
  * <a href="#/p5/rect">rect()</a> and <a href="#/p5/square">square()</a>,
- * are the x- and y-coordinates of the shape's center. The next parameters set
+ * are the x- and y-coordinates of the shape's upper left corner. The next parameters set
  * the shape's width and height. This is the same as calling
  * `rectMode(CORNER)`.
  *
@@ -375,11 +375,12 @@ p5.prototype.rectMode = function(m) {
  * </div>
  */
 p5.prototype.smooth = function() {
-  this.setAttributes('antialias', true);
   if (!this._renderer.isP3D) {
     if ('imageSmoothingEnabled' in this.drawingContext) {
       this.drawingContext.imageSmoothingEnabled = true;
     }
+  } else {
+    this.setAttributes('antialias', true);
   }
   return this;
 };

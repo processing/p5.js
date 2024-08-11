@@ -47,6 +47,15 @@ p5.Matrix = class {
     return this;
   }
 
+  reset() {
+    if (this.mat3) {
+      this.mat3.set([1, 0, 0, 0, 1, 0, 0, 0, 1]);
+    } else if (this.mat4) {
+      this.mat4.set([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+    }
+    return this;
+  }
+
   /**
  * Replace the entire contents of a 4x4 matrix.
  * If providing an array or a p5.Matrix, the values will be copied without

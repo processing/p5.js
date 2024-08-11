@@ -244,7 +244,8 @@ p5.prototype._wrapElement = function (elt) {
     children.length > 0 &&
     children.every(function (c) {
       return c.tagName === 'INPUT' || c.tagName === 'LABEL';
-    })
+    }) &&
+    (elt.tagName === 'DIV' || elt.tagName === 'SPAN')
   ) {
     return this.createRadio(new p5.Element(elt, this));
   } else {
@@ -2438,7 +2439,14 @@ p5.prototype.createCapture = function(...args) {
     catch(err) {
       domElement.src = stream;
     }
-  }, console.error);
+  }).catch(e => {
+    if (e.name === 'NotFoundError')
+      p5._friendlyError('No webcam found on this device', 'createCapture');
+    if (e.name === 'NotAllowedError')
+      p5._friendlyError('Access to the camera was denied', 'createCapture');
+
+    console.error(e);
+  });
 
   const videoEl = addElement(domElement, this, true);
   videoEl.loadedmetadata = false;

@@ -260,7 +260,6 @@ p5.prototype.randomSeed = function(seed) {
  * @method random
  * @param  {Array} choices   array to choose from.
  * @return {*} random element from the array.
- * @example
  */
 p5.prototype.random = function(min, max) {
   p5._validateParameters('random', arguments);

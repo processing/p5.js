@@ -675,7 +675,7 @@ p5.prototype.displayHeight = screen.height;
  * @alt
  * This example does not render anything.
  */
-p5.prototype.windowWidth = getWindowWidth();
+p5.prototype.windowWidth = 0;
 
 /**
  * A `Number` variable that stores the height of the browser's viewport.
@@ -703,7 +703,7 @@ p5.prototype.windowWidth = getWindowWidth();
  * @alt
  * This example does not render anything.
  */
-p5.prototype.windowHeight = getWindowHeight();
+p5.prototype.windowHeight = 0;
 
 /**
  * A function that's called when the browser window is resized.
@@ -799,6 +799,15 @@ function getWindowHeight() {
     0
   );
 }
+
+/**
+ * Called upon each p5 instantiation instead of module import due to the
+ * possibility of the window being resized when no sketch is active.
+ */
+p5.prototype._updateWindowSize = function() {
+  this._setProperty('windowWidth', getWindowWidth());
+  this._setProperty('windowHeight', getWindowHeight());
+};
 
 /**
  * A `Number` variable that stores the width of the canvas in pixels.

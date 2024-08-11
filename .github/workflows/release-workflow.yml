@@ -73,9 +73,9 @@ jobs:
         uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
-
-      # 4. Update website files
-      - name: Checkout website repo
+          
+      # 4. Update p5.js website
+      - name: Clone p5.js website
         if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
         uses: actions/checkout@v3
         with:
@@ -83,33 +83,16 @@ jobs:
           path: website
           fetch-depth: 0
           token: ${{ secrets.ACCESS_TOKEN }}
-      - name: Copy reference files to website repo
-        if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
-        run: cp docs/reference/data.* website/src/templates/pages/reference/
-      - name: Copy library files to website repo
-        if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
-        run: cp lib/p5.min.js lib/addons/p5.sound.min.js website/src/assets/js/
-      - name: Modify version number on website
-        if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
-        uses: fjogeleit/yaml-update-action@v0.10.0
-        with:
-          valueFile: website/src/data/data.yml
-          propertyPath: version
-          value: ${{ steps.version-number.outputs.version }}
-          commitChange: false
-          updateFile: true
-      - name: Update version.json on website repo
-        if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
-        uses: restackio/update-json-file-action@v2.0
-        with:
-          file: website/dist/download/version.json
-          fields: '{"version": "${{ steps.version-number.outputs.version }}", "date": "${{ steps.date.outputs.date }}"}'
-      - name: Update en.json on website repo
+      - name: Updated website files
         if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
         run: |
           cd website
-          npm ci
-          npx grunt generate_enJSON
+          npm install
+          npm run build:contributor-docs
+          npm run build:contributors
+          npm run build:reference
+          npm run build:search
+          npm run build:p5-version
       - name: Commit updated website files
         if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
         run: |
@@ -125,7 +108,7 @@ jobs:
           github_token: ${{ secrets.ACCESS_TOKEN }}
           branch: main
           directory: website/
-          repository: processing/p5.js-website
+          repository: processing/p5.js-website       
 
       # 5. Update Bower files
       - name: Checkout Bower repo
