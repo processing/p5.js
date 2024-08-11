@@ -1094,10 +1094,10 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
  * function draw() {
  *   // The background goes from white to red to green to blue fill
  *   background(lerpPalette(millis() / 10000 % 1, [
- *     ["white", 0],
- *     ["red", 0.05],
- *     ["green", 0.25],
- *     ["blue", 1]
+ *     ['white', 0],
+ *     ['red', 0.05],
+ *     ['green', 0.25],
+ *     ['blue', 1]
  *   ]));
  * }
  * </code>
