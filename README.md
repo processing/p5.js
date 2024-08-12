@@ -1035,6 +1035,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Souvik-Cyclic"><img src="https://avatars.githubusercontent.com/u/145324128?v=4?s=120" width="120px;" alt="Souvik Kumar"/><br /><sub><b>Souvik Kumar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Souvik-Cyclic" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/PaperPrototype"><img src="https://avatars.githubusercontent.com/u/48071553?v=4?s=120" width="120px;" alt="Abdiel Lopez"/><br /><sub><b>Abdiel Lopez</b></sub></a><br /><a href="#mentoring-PaperPrototype" title="Mentoring">🧑‍🏫</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/PimTournaye"><img src="https://avatars.githubusercontent.com/u/56040665?v=4?s=120" width="120px;" alt="Pim Tournaye"/><br /><sub><b>Pim Tournaye</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=PimTournaye" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Martin-Lorentzon"><img src="https://avatars.githubusercontent.com/u/106841201?v=4?s=120" width="120px;" alt="Martin Lorentzon"/><br /><sub><b>Martin Lorentzon</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AMartin-Lorentzon" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
 </table>
