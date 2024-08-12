@@ -6144,6 +6144,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Martin-Lorentzon",
+      "name": "Martin Lorentzon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/106841201?v=4",
+      "profile": "https://github.com/Martin-Lorentzon",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
