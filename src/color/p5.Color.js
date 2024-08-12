@@ -9,56 +9,71 @@
 
 import p5 from '../core/main';
 import * as constants from '../core/constants';
+// import {
+//   ColorSpace,
+//   to,
+//   // toGamut,
+//   serialize,
+//   parse,
+//   // range,
+
+//   XYZ_D65,
+//   sRGB_Linear,
+//   sRGB,
+//   HSL,
+//   HSV,
+//   HWB,
+
+//   XYZ_D50,
+//   Lab,
+//   LCH,
+
+//   OKLab,
+//   OKLCH,
+
+//   P3_Linear,
+//   P3,
+
+//   A98RGB_Linear,
+//   A98RGB
+// } from 'colorjs.io/fn';
+// import HSB from './color_spaces/hsb.js';
+
+// ColorSpace.register(XYZ_D65);
+// ColorSpace.register(sRGB_Linear);
+// ColorSpace.register(sRGB);
+// ColorSpace.register(HSL);
+// ColorSpace.register(HSV);
+// ColorSpace.register(HWB);
+// ColorSpace.register(HSB);
+
+// ColorSpace.register(XYZ_D50);
+// ColorSpace.register(Lab);
+// ColorSpace.register(LCH);
+
+// ColorSpace.register(OKLab);
+// ColorSpace.register(OKLCH);
+
+// ColorSpace.register(P3_Linear);
+// ColorSpace.register(P3);
+
+// ColorSpace.register(A98RGB_Linear);
+// ColorSpace.register(A98RGB);
+
 import {
-  ColorSpace,
-  to,
-  // toGamut,
-  serialize,
-  parse,
-  // range,
+  sRGB as texelSRGB,
+  OKHSL, // in sRGB gamut
+  OKHSV, // in sRGB gamut
 
-  XYZ_D65,
-  sRGB_Linear,
-  sRGB,
-  HSL,
-  HSV,
-  HWB,
+  convert,
+  serialize as texelSerialize,
+  deserialize
+} from '@texel/color';
 
-  XYZ_D50,
-  Lab,
-  LCH,
-
-  OKLab,
-  OKLCH,
-
-  P3_Linear,
-  P3,
-
-  A98RGB_Linear,
-  A98RGB
-} from 'colorjs.io/fn';
-import HSB from './color_spaces/hsb.js';
-
-ColorSpace.register(XYZ_D65);
-ColorSpace.register(sRGB_Linear);
-ColorSpace.register(sRGB);
-ColorSpace.register(HSL);
-ColorSpace.register(HSV);
-ColorSpace.register(HWB);
-ColorSpace.register(HSB);
-
-ColorSpace.register(XYZ_D50);
-ColorSpace.register(Lab);
-ColorSpace.register(LCH);
-
-ColorSpace.register(OKLab);
-ColorSpace.register(OKLCH);
-
-ColorSpace.register(P3_Linear);
-ColorSpace.register(P3);
-
-ColorSpace.register(A98RGB_Linear);
-ColorSpace.register(A98RGB);
+convert([0.5, 0.15, 30], OKHSL, texelSRGB);
+convert([0.5, 0.15, 30], OKHSV, texelSRGB);
+texelSerialize([0, 0.5, 1], texelSRGB);
+deserialize('color(display-p3 0 0.5 1 / 0.35)');
 
 /**
  * A class to describe a color.
@@ -130,7 +145,7 @@ p5.Color = class Color {
       let coords = vals;
       switch(pInst._colorMode){
         case 'rgb':
-          space = 'srgb';
+          space = texelSRGB;
           coords = [
             vals[0] / pInst._colorMaxes[pInst._colorMode][0],
             vals[1] / pInst._colorMaxes[pInst._colorMode][1],
@@ -139,7 +154,7 @@ p5.Color = class Color {
           break;
         case 'hsb':
           // TODO: need implementation
-          space = 'hsb';
+          space = OKHSV;
           coords = [
             vals[0] / pInst._colorMaxes[pInst._colorMode][0] * 360,
             vals[1] / pInst._colorMaxes[pInst._colorMode][1] * 100,
@@ -147,7 +162,7 @@ p5.Color = class Color {
           ];
           break;
         case 'hsl':
-          space = 'hsl';
+          space = OKHSL;
           coords = [
             vals[0] / pInst._colorMaxes[pInst._colorMode][0] * 360,
             vals[1] / pInst._colorMaxes[pInst._colorMode][1] * 100,
@@ -163,7 +178,7 @@ p5.Color = class Color {
         coords,
         alpha
       };
-      this.color = to(color, space);
+      this.color = color;
     }
   }
 
@@ -210,9 +225,13 @@ p5.Color = class Color {
    */
   toString(format) {
     // NOTE: memoize
-    return serialize(this.color, {
-      format
-    });
+    // return serialize(this.color, {
+    //   format
+    // });
+    return texelSerialize(
+      [...this.color.coords, this.color.alpha],
+      this.color.space
+    );
   }
 
   /**

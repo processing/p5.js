@@ -145,6 +145,7 @@
     }
   },
   "dependencies": {
+    "@texel/color": "^1.0.6",
     "colorjs.io": "^0.5.2"
   }
 }
