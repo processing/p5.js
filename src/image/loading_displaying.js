@@ -1097,6 +1097,7 @@ p5.prototype.image = function(
   img,
   dx,
   dy,
+  dz,
   dWidth,
   dHeight,
   sx,
@@ -1175,18 +1176,35 @@ p5.prototype.image = function(
     _sh
   );
 
-  // tint the image if there is a tint
-  this._renderer.image(
-    img,
-    vals.sx,
-    vals.sy,
-    vals.sw,
-    vals.sh,
-    vals.dx,
-    vals.dy,
-    vals.dw,
-    vals.dh
-  );
+  //if it is a WEGL instance default use 3D rendering
+  if (this._renderer instanceof p5.RendererGL) {
+    this._renderer.image3D(
+      img,
+      vals.sx,
+      vals.sy,
+      dz,
+      vals.sw,
+      vals.sh,
+      vals.dx,
+      vals.dy,
+      vals.dw,
+      vals.dh
+    );
+  }else {
+    // tint the image if there is a tint
+    // Default 2D rendering
+    this._renderer.image(
+      img,
+      vals.sx,
+      vals.sy,
+      vals.sw,
+      vals.sh,
+      vals.dx,
+      vals.dy,
+      vals.dw,
+      vals.dh
+    );
+  }
 };
 
 /**
