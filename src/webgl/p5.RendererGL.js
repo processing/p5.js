@@ -2391,6 +2391,24 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     return triangleVerts;
   }
+
+  image3D(img,sx,sy,sz,sWidth,sHeight,dx,dy,dWidth,dHeight) {
+    if (this._isErasing) {
+      this.blendMode(this._cachedBlendMode);
+    }
+
+    this._pInst.push();
+    this._pInst.translate(sx, sy, sz);
+    this._pInst.texture(img);
+    this._pInst.noStroke();
+    this._pInst.plane(sWidth, sHeight);
+    this._pInst.pop();
+
+    if (this._isErasing) {
+      this.blendMode(constants.REMOVE);
+    }
+  }
+
 };
 /**
  * ensures that p5 is using a 3d renderer. throws an error if not.
