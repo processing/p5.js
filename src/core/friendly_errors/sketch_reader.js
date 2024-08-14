@@ -403,6 +403,6 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   p5._fesCodeReader = fesCodeReader;
 
-  window.addEventListener('load', p5._fesCodeReader);
+  window.addEventListener('p5Ready', p5._fesCodeReader);
 }
 export default p5;
