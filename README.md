@@ -1037,6 +1037,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/PimTournaye"><img src="https://avatars.githubusercontent.com/u/56040665?v=4?s=120" width="120px;" alt="Pim Tournaye"/><br /><sub><b>Pim Tournaye</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=PimTournaye" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Martin-Lorentzon"><img src="https://avatars.githubusercontent.com/u/106841201?v=4?s=120" width="120px;" alt="Martin Lorentzon"/><br /><sub><b>Martin Lorentzon</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AMartin-Lorentzon" title="Bug reports">🐛</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://denisovichdev.github.io/link-tree"><img src="https://avatars.githubusercontent.com/u/66998096?v=4?s=120" width="120px;" alt="Rishi"/><br /><sub><b>Rishi</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=DenisovichDev" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3ADenisovichDev" title="Bug reports">🐛</a></td>
+    </tr>
   </tbody>
 </table>
 
