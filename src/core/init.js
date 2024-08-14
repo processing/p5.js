@@ -32,6 +32,8 @@ const _globalInit = () => {
         (window.draw && typeof window.draw === 'function')) &&
       !p5.instance
     ) {
+      const p5ReadyEvent = new Event('p5Ready');
+      window.dispatchEvent(p5ReadyEvent);
       new p5();
     }
   }
