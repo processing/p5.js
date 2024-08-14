@@ -845,7 +845,7 @@ p5.prototype.bezierVertex = function(...args) {
  * <a href="#/p5/beginShape">beginShape()</a> and
  * <a href="#/p5/endShape">endShape()</a> in order to draw a curve:
  *
- * <code>
+ * ```js
  * beginShape();
  *
  * // Add the first control point.
@@ -859,14 +859,14 @@ p5.prototype.bezierVertex = function(...args) {
  * curveVertex(32, 91);
  *
  * endShape();
- * </code>
+ * ```
  *
  * The code snippet above would only draw the curve between the anchor points,
  * similar to the <a href="#/p5/curve">curve()</a> function. The segments
  * between the control and anchor points can be drawn by calling
  * `curveVertex()` with the coordinates of the control points:
  *
- * <code>
+ * ```js
  * beginShape();
  *
  * // Add the first control point and draw a segment to it.
@@ -884,7 +884,7 @@ p5.prototype.bezierVertex = function(...args) {
  * // curveVertex(32, 91);
  *
  * endShape();
- * </code>
+ * ```
  *
  * The first two parameters, `x` and `y`, set the vertex’s location. For
  * example, calling `curveVertex(10, 10)` adds a point to the curve at
@@ -2091,7 +2091,7 @@ p5.prototype.vertex = function(x, y, moveTo, u, v) {
  * `normal()` will affect all following vertices until `normal()` is called
  * again:
  *
- * <code>
+ * ```js
  * beginShape();
  *
  * // Set the vertex normal.
@@ -2114,7 +2114,7 @@ p5.prototype.vertex = function(x, y, moveTo, u, v) {
  * vertex(-30, 30, 0);
  *
  * endShape();
- * </code>
+ * ```
  *
  * @method normal
  * @param  {p5.Vector} vector vertex normal as a <a href="#/p5.Vector">p5.Vector</a> object.
