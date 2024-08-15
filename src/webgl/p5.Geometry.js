@@ -664,6 +664,10 @@ p5.Geometry = class Geometry {
     // One color per vertex representing the stroke color at that vertex
     this.vertexStrokeColors = [];
 
+    // Map storing the textures and faces for each texture
+    this.textures = {};
+    this.hasTextures = false;
+
     // One color per line vertex, generated automatically based on
     // vertexStrokeColors in _edgesToVertices()
     this.lineVertexColors = new p5.DataArray();
@@ -922,6 +926,11 @@ p5.Geometry = class Geometry {
    */
   clearColors() {
     this.vertexColors = [];
+    return this;
+  }
+
+  clearTextures() {
+    this.textures = {};
     return this;
   }
 
@@ -1955,11 +1964,20 @@ p5.Geometry = class Geometry {
   _makeTriangleEdges() {
     this.edges.length = 0;
 
+    const _addEdge = face => {
+      this.edges.push([face[0], face[1]]);
+      this.edges.push([face[1], face[2]]);
+      this.edges.push([face[2], face[0]]);
+    };
+
     for (let j = 0; j < this.faces.length; j++) {
-      this.edges.push([this.faces[j][0], this.faces[j][1]]);
-      this.edges.push([this.faces[j][1], this.faces[j][2]]);
-      this.edges.push([this.faces[j][2], this.faces[j][0]]);
+      _addEdge(this.faces[j]);
     }
+
+    for (let material of Object.keys(this.textures)) {
+      this.textures[material].faces.map(face => _addEdge(face));
+    }
+
 
     return this;
   }
@@ -2299,6 +2317,7 @@ p5.Geometry = class Geometry {
     }
     return this;
   }
+
 };
 export default p5.Geometry;
 

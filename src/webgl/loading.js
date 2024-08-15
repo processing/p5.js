@@ -411,15 +411,6 @@ p5.prototype.loadModel = function(path,options) {
     }
   }
 
-
-  async function fileExists(url) {
-    try {
-      const response = await fetch(url, { method: 'HEAD' });
-      return response.ok;
-    } catch (error) {
-      return false;
-    }
-  }
   if (fileType.match(/\.stl$/i)) {
     this.httpDo(
       path,
@@ -496,6 +487,15 @@ p5.prototype.loadModel = function(path,options) {
   return model;
 };
 
+async function fileExists(url) {
+  try {
+    const response = await fetch(url, { method: 'HEAD' });
+    return response.ok;
+  } catch (error) {
+    return false;
+  }
+}
+
 function parseMtl(p5,mtlPath){
   return new Promise((resolve, reject)=>{
     let currentMaterial = null;
@@ -533,7 +533,7 @@ function parseMtl(p5,mtlPath){
 
           }else if (tokens[0] === 'map_Kd') {
           //Texture path
-            materials[currentMaterial].texturePath = tokens[1];
+            materials[currentMaterial].diffuseTexturePath = tokens[1];
           }
         }
         resolve(materials);
@@ -584,8 +584,28 @@ function parseObj(model, lines, materials= {}) {
 
     if (tokens.length > 0) {
       if (tokens[0] === 'usemtl') {
-        // Switch to a new material
         currentMaterial = tokens[1];
+        if (materials[currentMaterial] &&
+           materials[currentMaterial].diffuseTexturePath) {
+          if (!model.textures) {
+            model.textures = {};
+          }
+          if (!model.textures[currentMaterial]) {
+            model.textures[currentMaterial] = {};
+          }
+          model.hasTextures = true;
+          model.textures[currentMaterial].diffuseTexture =
+          model.textures[currentMaterial].diffuseTexture = loadImage(
+            materials[currentMaterial].diffuseTexturePath,
+            img => {
+              //skip
+            },
+            err => {
+              console.warn(`Error loading textures file: ${tokens[1]}, proceeding without textures:`);
+            }
+          );
+          model.textures[currentMaterial].faces = [];
+        }
       }else if (tokens[0] === 'v' || tokens[0] === 'vn') {
         // Check if this line describes a vertex or vertex normal.
         // It will have three numeric parameters.
@@ -652,7 +672,15 @@ function parseObj(model, lines, materials= {}) {
             face[0] !== face[2] &&
             face[1] !== face[2]
           ) {
-            model.faces.push(face);
+            // model.faces.push(face);
+            if (currentMaterial
+              && model.textures[currentMaterial]
+              && model.textures[currentMaterial].diffuseTexture
+            ) {
+              model.textures[currentMaterial].faces.push(face);
+            } else {
+              model.faces.push(face);
+            }
             //same material for all vertices in a particular face
             if (currentMaterial
               && materials[currentMaterial]
@@ -1125,8 +1153,18 @@ p5.prototype.model = function(model) {
       model._edgesToVertices();
       this._renderer.createBuffers(model.gid, model);
     }
-
-    this._renderer.drawBuffers(model.gid);
+    if(model.hasTextures) {
+      this._renderer.updateIndexBuffer(model.gid, model.faces);
+      this._renderer.drawBuffers(model.gid);
+      for (let material of Object.keys(model.textures)) {
+        const texture = model.textures[material];
+        this._renderer.updateIndexBuffer(model.gid, texture.faces);
+        this._renderer._tex = texture.diffuseTexture;
+        this._renderer.drawBuffers(model.gid);
+      }
+    } else{
+      this._renderer.drawBuffers(model.gid);
+    }
   }
 };
 
