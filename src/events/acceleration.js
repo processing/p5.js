@@ -122,7 +122,7 @@ p5.prototype.pAccelerationZ = 0;
  *
  * @private
  */
-p5.prototype._updatePAccelerations = function() {
+p5.prototype._updatePAccelerations = function () {
   this._setProperty('pAccelerationX', this.accelerationX);
   this._setProperty('pAccelerationY', this.accelerationY);
   this._setProperty('pAccelerationZ', this.accelerationZ);
@@ -369,7 +369,7 @@ p5.prototype.pRotateDirectionX = undefined;
 p5.prototype.pRotateDirectionY = undefined;
 p5.prototype.pRotateDirectionZ = undefined;
 
-p5.prototype._updatePRotations = function() {
+p5.prototype._updatePRotations = function () {
   this._setProperty('pRotationX', this.rotationX);
   this._setProperty('pRotationY', this.rotationY);
   this._setProperty('pRotationZ', this.rotationZ);
@@ -419,7 +419,7 @@ let shake_threshold = 30;
  * the <a href="#/p5/deviceMoved">deviceMoved()</a> function. The default threshold is set to 0.5.
  *
  * @method setMoveThreshold
- * @param {number} value The threshold value
+ * @param {Number} value The threshold value
  * @example
  * <div class="norender">
  * <code>
@@ -451,7 +451,7 @@ let shake_threshold = 30;
  * </div>
  */
 
-p5.prototype.setMoveThreshold = function(val) {
+p5.prototype.setMoveThreshold = function (val) {
   p5._validateParameters('setMoveThreshold', arguments);
   move_threshold = val;
 };
@@ -493,7 +493,7 @@ p5.prototype.setMoveThreshold = function(val) {
  * </div>
  */
 
-p5.prototype.setShakeThreshold = function(val) {
+p5.prototype.setShakeThreshold = function (val) {
   p5._validateParameters('setShakeThreshold', arguments);
   shake_threshold = val;
 };
@@ -616,7 +616,7 @@ p5.prototype.setShakeThreshold = function(val) {
  * </div>
  */
 
-p5.prototype._ondeviceorientation = function(e) {
+p5.prototype._ondeviceorientation = function (e) {
   this._updatePRotations();
 
   // Convert from degrees into current angle mode
@@ -625,14 +625,14 @@ p5.prototype._ondeviceorientation = function(e) {
   this._setProperty('rotationZ', this._fromDegrees(e.alpha));
   this._handleMotion();
 };
-p5.prototype._ondevicemotion = function(e) {
+p5.prototype._ondevicemotion = function (e) {
   this._updatePAccelerations();
   this._setProperty('accelerationX', e.acceleration.x * 2);
   this._setProperty('accelerationY', e.acceleration.y * 2);
   this._setProperty('accelerationZ', e.acceleration.z * 2);
   this._handleMotion();
 };
-p5.prototype._handleMotion = function() {
+p5.prototype._handleMotion = function () {
   if (window.orientation === 90 || window.orientation === -90) {
     this._setProperty('deviceOrientation', 'landscape');
   } else if (window.orientation === 0) {

@@ -6,9 +6,9 @@
 
 import * as constants from '../core/constants';
 
-function vector(p5, fn){
+function vector(p5, fn) {
   /// HELPERS FOR REMAINDER METHOD
-  const calculateRemainder2D = function(xComponent, yComponent) {
+  const calculateRemainder2D = function (xComponent, yComponent) {
     if (xComponent !== 0) {
       this.x = this.x % xComponent;
     }
@@ -18,7 +18,7 @@ function vector(p5, fn){
     return this;
   };
 
-  const calculateRemainder3D = function(xComponent, yComponent, zComponent) {
+  const calculateRemainder3D = function (xComponent, yComponent, zComponent) {
     if (xComponent !== 0) {
       this.x = this.x % xComponent;
     }
@@ -218,7 +218,7 @@ function vector(p5, fn){
      * @param {p5.Vector|Number[]} value vector to set.
      * @chainable
      */
-    set (x, y, z) {
+    set(x, y, z) {
       if (x instanceof p5.Vector) {
         this.x = x.x || 0;
         this.y = x.y || 0;
@@ -266,7 +266,7 @@ function vector(p5, fn){
      * </code>
      * </div>
      */
-    copy () {
+    copy() {
       if (this.isPInst) {
         return new p5.Vector(
           this._fromRadians,
@@ -412,7 +412,7 @@ function vector(p5, fn){
      * @param  {p5.Vector|Number[]} value The vector to add
      * @chainable
      */
-    add (x, y, z) {
+    add(x, y, z) {
       if (x instanceof p5.Vector) {
         this.x += x.x || 0;
         this.y += x.y || 0;
@@ -551,9 +551,9 @@ function vector(p5, fn){
      * @param {p5.Vector | Number[]}  value  divisor vector.
      * @chainable
      */
-    rem (x, y, z) {
+    rem(x, y, z) {
       if (x instanceof p5.Vector) {
-        if ([x.x,x.y,x.z].every(Number.isFinite)) {
+        if ([x.x, x.y, x.z].every(Number.isFinite)) {
           const xComponent = parseFloat(x.x);
           const yComponent = parseFloat(x.y);
           const zComponent = parseFloat(x.z);
@@ -948,16 +948,16 @@ function vector(p5, fn){
      */
     mult(x, y, z) {
       if (x instanceof p5.Vector) {
-      // new p5.Vector will check that values are valid upon construction but it's possible
-      // that someone could change the value of a component after creation, which is why we still
-      // perform this check
+        // new p5.Vector will check that values are valid upon construction but it's possible
+        // that someone could change the value of a component after creation, which is why we still
+        // perform this check
         if (
           Number.isFinite(x.x) &&
-        Number.isFinite(x.y) &&
-        Number.isFinite(x.z) &&
-        typeof x.x === 'number' &&
-        typeof x.y === 'number' &&
-        typeof x.z === 'number'
+          Number.isFinite(x.y) &&
+          Number.isFinite(x.z) &&
+          typeof x.x === 'number' &&
+          typeof x.y === 'number' &&
+          typeof x.z === 'number'
         ) {
           this.x *= x.x;
           this.y *= x.y;
@@ -973,7 +973,7 @@ function vector(p5, fn){
       if (Array.isArray(x)) {
         if (
           x.every(element => Number.isFinite(element)) &&
-        x.every(element => typeof element === 'number')
+          x.every(element => typeof element === 'number')
         ) {
           if (x.length === 1) {
             this.x *= x[0];
@@ -999,7 +999,7 @@ function vector(p5, fn){
       const vectorComponents = [...arguments];
       if (
         vectorComponents.every(element => Number.isFinite(element)) &&
-      vectorComponents.every(element => typeof element === 'number')
+        vectorComponents.every(element => typeof element === 'number')
       ) {
         if (arguments.length === 1) {
           this.x *= x;
@@ -1042,7 +1042,7 @@ function vector(p5, fn){
      * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
      * originals.
      *
-     * @param  {number}    n The number to divide the vector by
+     * @param  {Number}    n The number to divide the vector by
      * @chainable
      * @example
      * <div>
@@ -1221,16 +1221,16 @@ function vector(p5, fn){
      */
     div(x, y, z) {
       if (x instanceof p5.Vector) {
-      // new p5.Vector will check that values are valid upon construction but it's possible
-      // that someone could change the value of a component after creation, which is why we still
-      // perform this check
+        // new p5.Vector will check that values are valid upon construction but it's possible
+        // that someone could change the value of a component after creation, which is why we still
+        // perform this check
         if (
           Number.isFinite(x.x) &&
-        Number.isFinite(x.y) &&
-        Number.isFinite(x.z) &&
-        typeof x.x === 'number' &&
-        typeof x.y === 'number' &&
-        typeof x.z === 'number'
+          Number.isFinite(x.y) &&
+          Number.isFinite(x.z) &&
+          typeof x.x === 'number' &&
+          typeof x.y === 'number' &&
+          typeof x.z === 'number'
         ) {
           const isLikely2D = x.z === 0 && this.z === 0;
           if (x.x === 0 || x.y === 0 || (!isLikely2D && x.z === 0)) {
@@ -1253,7 +1253,7 @@ function vector(p5, fn){
       if (Array.isArray(x)) {
         if (
           x.every(element => Number.isFinite(element)) &&
-        x.every(element => typeof element === 'number')
+          x.every(element => typeof element === 'number')
         ) {
           if (x.some(element => element === 0)) {
             console.warn('p5.Vector.prototype.div:', 'divide by 0');
@@ -1285,7 +1285,7 @@ function vector(p5, fn){
       const vectorComponents = [...arguments];
       if (
         vectorComponents.every(element => Number.isFinite(element)) &&
-      vectorComponents.every(element => typeof element === 'number')
+        vectorComponents.every(element => typeof element === 'number')
       ) {
         if (vectorComponents.some(element => element === 0)) {
           console.warn('p5.Vector.prototype.div:', 'divide by 0');
@@ -1358,7 +1358,7 @@ function vector(p5, fn){
     /**
      * Calculates the magnitude (length) of the vector squared.
      *
-     * @return {number} squared magnitude of the vector.
+     * @return {Number} squared magnitude of the vector.
      * @example
      * <div>
      * <code>
@@ -1886,7 +1886,7 @@ function vector(p5, fn){
      * a new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
      * original.
      *
-     * @param  {number}    len new length for this vector.
+     * @param  {Number}    len new length for this vector.
      * @chainable
      *
      * @example
@@ -2088,7 +2088,7 @@ function vector(p5, fn){
      * <a href="#/p5/createVector">createVector()</a>, `setHeading()` uses
      * the units of the current <a href="#/p5/angleMode">angleMode()</a>.
      *
-     * @param  {number}    angle angle of rotation.
+     * @param  {Number}    angle angle of rotation.
      * @chainable
      * @example
      * <div class="norender">
@@ -2194,7 +2194,7 @@ function vector(p5, fn){
      * returns a new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change
      * the original.
      *
-     * @param  {number}    angle angle of rotation.
+     * @param  {Number}    angle angle of rotation.
      * @chainable
      * @example
      * <div class="norender">
@@ -3055,7 +3055,7 @@ function vector(p5, fn){
      * @private
      */
     _clampToZero(val) {
-      return Math.abs((val||0) - 0) <= Number.EPSILON ? 0 : val;
+      return Math.abs((val || 0) - 0) <= Number.EPSILON ? 0 : val;
     }
 
     // Static Methods
@@ -3685,7 +3685,7 @@ function vector(p5, fn){
     /**
      * @static
      * @param {p5.Vector} v  the vector to set the magnitude of
-     * @param {number}    len
+     * @param {Number}    len
      * @param {p5.Vector} [target] the vector to receive the result (Optional)
      * @return {p5.Vector} v with a magnitude set to len
      */
@@ -3827,6 +3827,6 @@ function vector(p5, fn){
 
 export default vector;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   vector(p5, p5.prototype);
 }

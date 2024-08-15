@@ -44,8 +44,8 @@ import Renderer from '../core/p5.Renderer';
  *
  * @method loadJSON
  * @param  {String} path path of the JSON file to be loaded.
- * @param  {function} [successCallback] function to call once the data is loaded. Will be passed the object.
- * @param  {function} [errorCallback] function to call if the data fails to load. Will be passed an `Error` event object.
+ * @param  {Function} [successCallback] function to call once the data is loaded. Will be passed the object.
+ * @param  {Function} [errorCallback] function to call if the data fails to load. Will be passed an `Error` event object.
  * @return {Object} object containing the loaded data.
  *
  * @example
@@ -240,7 +240,7 @@ import Renderer from '../core/p5.Renderer';
  * </code>
  * </div>
  */
-p5.prototype.loadJSON = function(...args) {
+p5.prototype.loadJSON = function (...args) {
   p5._validateParameters('loadJSON', args);
   const path = args[0];
   let callback;
@@ -323,9 +323,9 @@ p5.prototype.loadJSON = function(...args) {
  *
  * @method loadStrings
  * @param  {String} path path of the text file to be loaded.
- * @param  {function} [successCallback] function to call once the data is
+ * @param  {Function} [successCallback] function to call once the data is
  *                                      loaded. Will be passed the array.
- * @param  {function} [errorCallback] function to call if the data fails to
+ * @param  {Function} [errorCallback] function to call if the data fails to
  *                                    load. Will be passed an `Error` event
  *                                    object.
  * @return {String[]} new array containing the loaded text.
@@ -431,7 +431,7 @@ p5.prototype.loadJSON = function(...args) {
  * </code>
  * </div>
  */
-p5.prototype.loadStrings = function(...args) {
+p5.prototype.loadStrings = function (...args) {
   p5._validateParameters('loadStrings', args);
 
   const ret = [];
@@ -478,7 +478,7 @@ p5.prototype.loadStrings = function(...args) {
 
       self._decrementPreload();
     },
-    function(err) {
+    function (err) {
       // Error handling
       p5._friendlyFileLoadError(3, arguments[0]);
 
@@ -513,11 +513,11 @@ p5.prototype.loadStrings = function(...args) {
  * @param  {String}         [extension] parse the table by comma-separated values "csv", semicolon-separated
  *                                      values "ssv", or tab-separated values "tsv"
  * @param  {String}         [header]    "header" to indicate table has header row
- * @param  {function}       [callback]  function to be executed after
+ * @param  {Function}       [callback]  function to be executed after
  *                                      <a href="#/p5/loadTable">loadTable()</a> completes. On success, the
  *                                      <a href="#/p5.Table">Table</a> object is passed in as the
  *                                      first argument.
- * @param  {function}  [errorCallback]  function to be executed if
+ * @param  {Function}  [errorCallback]  function to be executed if
  *                                      there is an error, response is passed
  *                                      in as first argument
  * @return {Object}                     <a href="#/p5.Table">Table</a> object containing data
@@ -563,7 +563,7 @@ p5.prototype.loadStrings = function(...args) {
  * </code>
  * </div>
  */
-p5.prototype.loadTable = function(path) {
+p5.prototype.loadTable = function (path) {
   // p5._validateParameters('loadTable', arguments);
   let callback;
   let errorCallback;
@@ -649,7 +649,7 @@ p5.prototype.loadTable = function(path) {
         currentRecord = null;
       };
 
-      for (;;) {
+      for (; ;) {
         currentChar = resp[offset++];
 
         // EOF
@@ -764,7 +764,7 @@ function makeObject(row, headers) {
   }
   return Object.fromEntries(
     headers
-      .map((key,i) => [key, row[i]])
+      .map((key, i) => [key, row[i]])
   );
 }
 
@@ -800,10 +800,10 @@ function makeObject(row, headers) {
  *
  * @method loadXML
  * @param  {String} path path of the XML file to be loaded.
- * @param  {function} [successCallback] function to call once the data is
+ * @param  {Function} [successCallback] function to call once the data is
  *                                      loaded. Will be passed the
  *                                      <a href="#/p5.XML">p5.XML</a> object.
- * @param  {function} [errorCallback] function to call if the data fails to
+ * @param  {Function} [errorCallback] function to call if the data fails to
  *                                    load. Will be passed an `Error` event
  *                                    object.
  * @return {p5.XML} XML data loaded into a <a href="#/p5.XML">p5.XML</a>
@@ -929,7 +929,7 @@ function makeObject(row, headers) {
  * </code>
  * </div>
  */
-p5.prototype.loadXML = function(...args) {
+p5.prototype.loadXML = function (...args) {
   const ret = new p5.XML();
   let callback, errorCallback;
 
@@ -959,7 +959,7 @@ p5.prototype.loadXML = function(...args) {
 
       self._decrementPreload();
     },
-    function(err) {
+    function (err) {
       // Error handling
       p5._friendlyFileLoadError(1, arguments[0]);
 
@@ -977,10 +977,10 @@ p5.prototype.loadXML = function(...args) {
 /**
  * This method is suitable for fetching files up to size of 64MB.
  * @method loadBytes
- * @param {string}   file            name of the file or URL to load
- * @param {function} [callback]      function to be executed after <a href="#/p5/loadBytes">loadBytes()</a>
+ * @param {String}   file            name of the file or URL to load
+ * @param {Function} [callback]      function to be executed after <a href="#/p5/loadBytes">loadBytes()</a>
  *                                    completes
- * @param {function} [errorCallback] function to be executed if there
+ * @param {Function} [errorCallback] function to be executed if there
  *                                    is an error
  * @returns {Object} an object whose 'bytes' property will be the loaded buffer
  *
@@ -1000,7 +1000,7 @@ p5.prototype.loadXML = function(...args) {
  * }
  * </code></div>
  */
-p5.prototype.loadBytes = function(file, callback, errorCallback) {
+p5.prototype.loadBytes = function (file, callback, errorCallback) {
   const ret = {};
 
   const self = this;
@@ -1043,10 +1043,10 @@ p5.prototype.loadBytes = function(file, callback, errorCallback) {
  * @param  {String}        [datatype] "json", "jsonp", "binary", "arrayBuffer",
  *                                    "xml", or "text"
  * @param  {Object|Boolean} [data]    param data passed sent with request
- * @param  {function}      [callback] function to be executed after
+ * @param  {Function}      [callback] function to be executed after
  *                                    <a href="#/p5/httpGet">httpGet()</a> completes, data is passed in
  *                                    as first argument
- * @param  {function}      [errorCallback] function to be executed if
+ * @param  {Function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
  * @return {Promise} A promise that resolves with the data when the operation
@@ -1089,18 +1089,18 @@ p5.prototype.loadBytes = function(file, callback, errorCallback) {
  * @method httpGet
  * @param  {String}        path
  * @param  {Object|Boolean} data
- * @param  {function}      [callback]
- * @param  {function}      [errorCallback]
+ * @param  {Function}      [callback]
+ * @param  {Function}      [errorCallback]
  * @return {Promise}
  */
 /**
  * @method httpGet
  * @param  {String}        path
- * @param  {function}      callback
- * @param  {function}      [errorCallback]
+ * @param  {Function}      callback
+ * @param  {Function}      [errorCallback]
  * @return {Promise}
  */
-p5.prototype.httpGet = function(...args) {
+p5.prototype.httpGet = function (...args) {
   p5._validateParameters('httpGet', args);
 
   args.splice(1, 0, 'GET');
@@ -1117,10 +1117,10 @@ p5.prototype.httpGet = function(...args) {
  * @param  {String}        [datatype] "json", "jsonp", "xml", or "text".
  *                                    If omitted, <a href="#/p5/httpPost">httpPost()</a> will guess.
  * @param  {Object|Boolean} [data]    param data passed sent with request
- * @param  {function}      [callback] function to be executed after
+ * @param  {Function}      [callback] function to be executed after
  *                                    <a href="#/p5/httpPost">httpPost()</a> completes, data is passed in
  *                                    as first argument
- * @param  {function}      [errorCallback] function to be executed if
+ * @param  {Function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
  * @return {Promise} A promise that resolves with the data when the operation
@@ -1178,18 +1178,18 @@ p5.prototype.httpGet = function(...args) {
  * @method httpPost
  * @param  {String}        path
  * @param  {Object|Boolean} data
- * @param  {function}      [callback]
- * @param  {function}      [errorCallback]
+ * @param  {Function}      [callback]
+ * @param  {Function}      [errorCallback]
  * @return {Promise}
  */
 /**
  * @method httpPost
  * @param  {String}        path
- * @param  {function}      callback
- * @param  {function}      [errorCallback]
+ * @param  {Function}      callback
+ * @param  {Function}      [errorCallback]
  * @return {Promise}
  */
-p5.prototype.httpPost = function(...args) {
+p5.prototype.httpPost = function (...args) {
   p5._validateParameters('httpPost', args);
 
   args.splice(1, 0, 'POST');
@@ -1210,10 +1210,10 @@ p5.prototype.httpPost = function(...args) {
  *                                    defaults to "GET"
  * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
  * @param  {Object}        [data]     param data passed sent with request
- * @param  {function}      [callback] function to be executed after
+ * @param  {Function}      [callback] function to be executed after
  *                                    <a href="#/p5/httpGet">httpGet()</a> completes, data is passed in
  *                                    as first argument
- * @param  {function}      [errorCallback] function to be executed if
+ * @param  {Function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
  * @return {Promise} A promise that resolves with the data when the operation
@@ -1277,7 +1277,7 @@ p5.prototype.httpPost = function(...args) {
  * @param  {function}      [errorCallback]
  * @return {Promise}
  */
-p5.prototype.httpDo = function(...args) {
+p5.prototype.httpDo = function (...args) {
   let type;
   let callback;
   let errorCallback;
@@ -1395,7 +1395,7 @@ p5.prototype.httpDo = function(...args) {
       }
     }
   });
-  promise.then(callback || (() => {}));
+  promise.then(callback || (() => { }));
   promise.catch(errorCallback || console.error);
   return promise;
 };
@@ -1514,7 +1514,7 @@ p5.prototype._pWriters = [];
  * </code>
  * </div>
  */
-p5.prototype.createWriter = function(name, extension) {
+p5.prototype.createWriter = function (name, extension) {
   let newPW;
   // check that it doesn't already exist
   for (const i in p5.prototype._pWriters) {
@@ -1584,7 +1584,7 @@ p5.prototype.createWriter = function(name, extension) {
  * </code>
  * </div>
  */
-p5.PrintWriter = function(filename, extension) {
+p5.PrintWriter = function (filename, extension) {
   let self = this;
   this.name = filename;
   this.content = '';
@@ -1635,7 +1635,7 @@ p5.PrintWriter = function(filename, extension) {
    * </code>
    * </div>
    */
-  this.write = function(data) {
+  this.write = function (data) {
     this.content += data;
   };
 
@@ -1685,7 +1685,7 @@ p5.PrintWriter = function(filename, extension) {
    * </code>
    * </div>
    */
-  this.print = function(data) {
+  this.print = function (data) {
     this.content += `${data}\n`;
   };
 
@@ -1730,7 +1730,7 @@ p5.PrintWriter = function(filename, extension) {
    * </code>
    * </div>
    */
-  this.clear = function() {
+  this.clear = function () {
     this.content = '';
   };
 
@@ -1776,7 +1776,7 @@ p5.PrintWriter = function(filename, extension) {
    * </code>
    * </div>
    */
-  this.close = function() {
+  this.close = function () {
     // convert String to Array for the writeFile Blob
     const arr = [];
     arr.push(this.content);
@@ -1899,7 +1899,7 @@ p5.PrintWriter = function(filename, extension) {
  * </code></div>
  */
 
-p5.prototype.save = function(object, _filename, _options) {
+p5.prototype.save = function (object, _filename, _options) {
   // parse the arguments and figure out which things we are saving
   const args = arguments;
   // =================================================
@@ -2071,7 +2071,7 @@ p5.prototype.save = function(object, _filename, _options) {
  * </code>
  * </div>
  */
-p5.prototype.saveJSON = function(json, filename, opt) {
+p5.prototype.saveJSON = function (json, filename, opt) {
   p5._validateParameters('saveJSON', arguments);
   let stringify;
   if (opt) {
@@ -2218,7 +2218,7 @@ p5.prototype.saveJSONArray = p5.prototype.saveJSON;
  * </code>
  * </div>
  */
-p5.prototype.saveStrings = function(list, filename, extension, isCRLF) {
+p5.prototype.saveStrings = function (list, filename, extension, isCRLF) {
   p5._validateParameters('saveStrings', arguments);
   const ext = extension || 'txt';
   const pWriter = this.createWriter(filename, ext);
@@ -2280,7 +2280,7 @@ function escapeHelper(content) {
  * // 0,Panthera leo,Lion
  * </code></div>
  */
-p5.prototype.saveTable = function(table, filename, options) {
+p5.prototype.saveTable = function (table, filename, options) {
   p5._validateParameters('saveTable', arguments);
   let ext;
   if (options === undefined) {
@@ -2385,7 +2385,7 @@ p5.prototype.saveTable = function(table, filename, options) {
  *  @param  {String} [extension]
  *  @private
  */
-p5.prototype.writeFile = function(dataToDownload, filename, extension) {
+p5.prototype.writeFile = function (dataToDownload, filename, extension) {
   let type = 'application/octet-stream';
   if (p5.prototype._isSafari()) {
     type = 'text/plain';
@@ -2409,7 +2409,7 @@ p5.prototype.writeFile = function(dataToDownload, filename, extension) {
  *  @param  {String} [filename]
  *  @param  {String} [extension]
  */
-p5.prototype.downloadFile = function(data, fName, extension) {
+p5.prototype.downloadFile = function (data, fName, extension) {
   const fx = _checkFileExtension(fName, extension);
   const filename = fx[0];
 
@@ -2482,7 +2482,7 @@ p5.prototype._checkFileExtension = _checkFileExtension;
  *  @return  {Boolean} [description]
  *  @private
  */
-p5.prototype._isSafari = function() {
+p5.prototype._isSafari = function () {
   return window.HTMLElement.toString().includes('Constructor');
 };
 
