@@ -525,7 +525,7 @@ class Renderer2D extends p5.Renderer {
         pixelsState.imageData;
     }
 
-    this.drawingContext.putImageData(pixelsState.imageData, x, y, 0, 0, w, h);
+    this.drawingContext.putImageData(pixelsState.imageData, 0, 0, x, y, w, h);
   }
 
   //////////////////////////////////////////////
