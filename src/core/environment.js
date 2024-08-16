@@ -30,8 +30,8 @@ let windowPrintDisabled = false;
  * @method print
  * @param {Any} contents content to print to the console.
  * @example
- * <div>
- * <code class="norender">
+ * <div class="norender">
+ * <code>
  * function setup() {
  *   // Prints "hello, world" to the console.
  *   print('hello, world');
@@ -39,8 +39,8 @@ let windowPrintDisabled = false;
  * </code>
  * </div>
  *
- * <div>
- * <code class="norender">
+ * <div class="norender">
+ * <code>
  * function setup() {
  *   let name = 'ada';
  *   // Prints "hello, ada" to the console.
