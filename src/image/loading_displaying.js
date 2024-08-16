@@ -1112,6 +1112,19 @@ p5.prototype.image = function(
 
   p5._validateParameters('image', arguments);
 
+  if(this._renderer instanceof p5.RendererGL === false){
+    // From the 3rd arguement shift the assingment one position to the right
+    yAlign = xAlign;
+    xAlign = fit;
+    fit = sHeight;
+    sHeight = sWidth;
+    sWidth = sy;
+    sy = sx;
+    sx = dHeight;
+    dHeight = dWidth;
+    dWidth = dz;
+  }
+ 
   let defW = img.width;
   let defH = img.height;
   yAlign = yAlign || constants.CENTER;
