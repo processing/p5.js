@@ -51,7 +51,7 @@ const renderers = p5.renderers = {
  * @method createCanvas
  * @param  {Number} [width] width of the canvas. Defaults to 100.
  * @param  {Number} [height] height of the canvas. Defaults to 100.
- * @param  {Constant} [renderer] either P2D or WEBGL. Defaults to `P2D`.
+ * @param  {(P2D|WEBGL)} [renderer] either P2D or WEBGL. Defaults to `P2D`.
  * @param  {HTMLCanvasElement} [canvas] existing canvas element that should be used for the sketch.
  * @return {p5.Renderer} new `p5.Renderer` that holds the canvas.
  *
@@ -129,7 +129,7 @@ const renderers = p5.renderers = {
  * @param  {HTMLCanvasElement} [canvas]
  * @return {p5.Renderer}
  */
-p5.prototype.createCanvas = function(w, h, renderer, canvas) {
+p5.prototype.createCanvas = function (w, h, renderer, canvas) {
   p5._validateParameters('createCanvas', arguments);
   //optional: renderer, otherwise defaults to p2d
 
@@ -314,7 +314,7 @@ p5.prototype.createCanvas = function(w, h, renderer, canvas) {
  * </code>
  * </div>
  */
-p5.prototype.resizeCanvas = function(w, h, noRedraw) {
+p5.prototype.resizeCanvas = function (w, h, noRedraw) {
   p5._validateParameters('resizeCanvas', arguments);
   if (this._renderer) {
     // save canvas properties
@@ -372,7 +372,7 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
  * </code>
  * </div>
  */
-p5.prototype.noCanvas = function() {
+p5.prototype.noCanvas = function () {
   if (this.canvas) {
     this.canvas.parentNode.removeChild(this.canvas);
   }
@@ -490,11 +490,11 @@ p5.prototype.noCanvas = function() {
  * @param  {HTMLCanvasElement} [canvas]
  * @return {p5.Graphics}
  */
-p5.prototype.createGraphics = function(w, h, ...args) {
-/**
-  * args[0] is expected to be renderer
-  * args[1] is expected to be canvas
-  */
+p5.prototype.createGraphics = function (w, h, ...args) {
+  /**
+    * args[0] is expected to be renderer
+    * args[1] is expected to be canvas
+    */
   if (args[0] instanceof HTMLCanvasElement) {
     args[1] = args[0];
     args[0] = constants.P2D;
@@ -639,7 +639,7 @@ p5.prototype.createGraphics = function(w, h, ...args) {
  * </code>
  * </div>
  */
-p5.prototype.createFramebuffer = function(options) {
+p5.prototype.createFramebuffer = function (options) {
   return new p5.Framebuffer(this, options);
 };
 
@@ -723,7 +723,7 @@ p5.prototype.createFramebuffer = function(options) {
  * </code>
  * </div>
  */
-p5.prototype.clearDepth = function(depth) {
+p5.prototype.clearDepth = function (depth) {
   this._assert3d('clearDepth');
   this._renderer.clearDepth(depth);
 };
@@ -1192,7 +1192,7 @@ p5.prototype.clearDepth = function(depth) {
  * </code>
  * </div>
  */
-p5.prototype.blendMode = function(mode) {
+p5.prototype.blendMode = function (mode) {
   p5._validateParameters('blendMode', arguments);
   if (mode === constants.NORMAL) {
     // Warning added 3/26/19, can be deleted in future (1.0 release?)
