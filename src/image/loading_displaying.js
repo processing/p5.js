@@ -1124,7 +1124,7 @@ p5.prototype.image = function(
     dHeight = dWidth;
     dWidth = dz;
   }
- 
+
   let defW = img.width;
   let defH = img.height;
   yAlign = yAlign || constants.CENTER;
