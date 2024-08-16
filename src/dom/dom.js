@@ -2978,8 +2978,8 @@ p5.Element.prototype.html = function(...args) {
  * @returns {Object} object of form `{ x: 0, y: 0 }` containing the element's position.
  *
  * @example
- * <div>
- * <code class='norender'>
+ * <div class='norender'>
+ * <code>
  * function setup() {
  *   let cnv = createCanvas(100, 100);
  *
@@ -2994,8 +2994,8 @@ p5.Element.prototype.html = function(...args) {
  * </code>
  * </div>
  *
- * <div>
- * <code class='norender'>
+ * <div class='norender'>
+ * <code>
  * function setup() {
  *   let cnv = createCanvas(100, 100);
  *
