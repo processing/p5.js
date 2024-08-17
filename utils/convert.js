@@ -462,36 +462,81 @@ for (const key in constUsage) {
 // parameterData.json
 // ============================================================================
 
+function cleanUpClassItems(data) {
+  for (const classItem in data) {
+    if (typeof data[classItem] === 'object') {
+      if (data[classItem].overloads) {
+        delete data[classItem].name;
+        delete data[classItem].class;
+      }
+      cleanUpClassItems(data[classItem]);
+    }
+  }
+
+  const flattenOverloads = funcObj => {
+    const result = {};
+
+    for (const [key, value] of Object.entries(funcObj)) {
+      if (value && typeof value === 'object' && value.overloads) {
+        result[key] = {
+          overloads: Object.values(value.overloads).map(overload => {
+            if (overload.params) {
+              return Object.values(overload.params).map(param => {
+                let type = param.type;
+                if (param.optional) {
+                  type += '?';
+                }
+                return type;
+              });
+            }
+            return overload;
+          })
+        };
+      } else {
+        result[key] = value;
+      }
+    }
+
+    return result;
+  };
+
+  for (const classItem in data) {
+    if (typeof data[classItem] === 'object') {
+      data[classItem] = flattenOverloads(data[classItem]);
+    }
+  }
+
+  return data;
+}
+
 function buildParamDocs(docs) {
   let newClassItems = {};
-  // the fields we need for the FES, discard everything else
-  let allowed = new Set(['name', 'class', 'module', 'params', 'overloads']);
+  // the fields we need—note that `name` and `class` are needed at this step because it's used to group classitems together. They will be removed later in cleanUpClassItems.
+  let allowed = new Set(['name', 'class', 'params', 'overloads']);
+
   for (let classitem of docs.classitems) {
-    if (classitem.name && classitem.class) {
-      for (let key in classitem) {
-        if (!allowed.has(key)) {
-          delete classitem[key];
-        }
-      }
-      if (classitem.hasOwnProperty('overloads')) {
-        for (let overload of classitem.overloads) {
-          // remove line number and return type
-          if (overload.line) {
-            delete overload.line;
-          }
+    // If `classitem` doesn't have overloads, then it's not a function—skip processing in this case
+    if (classitem.name && classitem.class && classitem.hasOwnProperty('overloads')) {
+      // Clean up fields that will not be used in each classitem's overloads
+      classitem.overloads?.forEach(overload => {
+        delete overload.line;
+        delete overload.return;
+        overload.params.forEach(param => {
+          delete param.description;
+          delete param.name;
+        });
+      });
 
-          if (overload.return) {
-            delete overload.return;
-          }
-        }
-      }
-      if (!newClassItems[classitem.class]) {
-        newClassItems[classitem.class] = {};
-      }
+      Object.keys(classitem).forEach(key => {
+        if (!allowed.has(key)) delete classitem[key];
+      });
 
+      newClassItems[classitem.class] = newClassItems[classitem.class] || {};
       newClassItems[classitem.class][classitem.name] = classitem;
     }
   }
+
+  const cleanedClassItems = cleanUpClassItems(newClassItems);
 
   let out = fs.createWriteStream(
     path.join(__dirname, '../docs/parameterData.json'),
@@ -500,7 +545,7 @@ function buildParamDocs(docs) {
       mode: '0644'
     }
   );
-  out.write(JSON.stringify(newClassItems, null, 2));
+  out.write(JSON.stringify(cleanedClassItems, null, 2));
   out.end();
 }
 
