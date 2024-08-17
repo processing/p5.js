@@ -461,7 +461,7 @@ p5.prototype.setMoveThreshold = function (val) {
  * the <a href="#/p5/deviceShaken">deviceShaken()</a> function. The default threshold is set to 30.
  *
  * @method setShakeThreshold
- * @param {number} value The threshold value
+ * @param {Number} value The threshold value
  * @example
  * <div class="norender">
  * <code>

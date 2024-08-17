@@ -1273,8 +1273,8 @@ p5.prototype.httpPost = function (...args) {
  * @param  {Object}        options   Request object options as documented in the
  *                                    "fetch" API
  * <a href="https://developer.mozilla.org/en/docs/Web/API/Fetch_API">reference</a>
- * @param  {function}      [callback]
- * @param  {function}      [errorCallback]
+ * @param  {Function}      [callback]
+ * @param  {Function}      [errorCallback]
  * @return {Promise}
  */
 p5.prototype.httpDo = function (...args) {
