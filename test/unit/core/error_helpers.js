@@ -1,8 +1,7 @@
 import p5 from '../../../src/app.js';
 
-setupMath(p5);
-
 import { testUnMinified, createP5Iframe, P5_SCRIPT_TAG } from '../../js/p5_helpers';
+import '../../js/chai_helpers';
 
 suite('Error Helpers', function() {
   var myp5;
