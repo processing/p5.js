@@ -144,6 +144,7 @@ p5.prototype.storeItem = function(key, value) {
     case 'object':
       if (value instanceof p5.Color) {
         type = 'p5.Color';
+        value = value.toString();
       } else if (value instanceof p5.Vector) {
         type = 'p5.Vector';
         const coord = [value.x, value.y, value.z];
@@ -295,8 +296,7 @@ p5.prototype.getItem = function(key) {
         value = JSON.parse(value);
         break;
       case 'p5.Color':
-        value = JSON.parse(value);
-        value = this.color(...value.levels);
+        value = this.color(value);
         break;
       case 'p5.Vector':
         value = JSON.parse(value);
