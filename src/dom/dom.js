@@ -1656,7 +1656,7 @@ p5.prototype.createRadio = function(...args) {
       labelElement = optionEl.parentElement;
     }
 
-    // Check if span element exists, else create it    
+    // Check if span element exists, else create it
     let spanElement;
     if (!isSpanElement(labelElement.lastElementChild)) {
       spanElement = document.createElement('span');
@@ -1665,7 +1665,7 @@ p5.prototype.createRadio = function(...args) {
       spanElement = labelElement.lastElementChild;
     }
 
-    // Set the innerHTML of span element as the label text    
+    // Set the innerHTML of span element as the label text
     spanElement.innerHTML = label === undefined ? value : label;
 
     // Append the label element, which includes option element and
