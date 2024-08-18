@@ -1581,18 +1581,23 @@ p5.prototype.createSelect = function(...args) {
  * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
  */
 p5.prototype.createRadio = function(...args) {
+  // Creates a div, adds each option as an individual input inside it.
+  // If already given with a containerEl, will search for all input[radio]
+  // it, create a p5.Element out of it, add options to it and return the p5.Element.
+
   let self;
   let radioElement;
   let name;
   const arg0 = args[0];
-
   if (
     arg0 instanceof p5.Element &&
     (arg0.elt instanceof HTMLDivElement || arg0.elt instanceof HTMLSpanElement)
   ) {
+    // If given argument is p5.Element of div/span type
     self = arg0;
     this.elt = arg0.elt;
   } else if (
+    // If existing radio Element is provided as argument 0
     arg0 instanceof HTMLDivElement ||
     arg0 instanceof HTMLSpanElement
   ) {
@@ -1609,7 +1614,7 @@ p5.prototype.createRadio = function(...args) {
 
   // Generate a unique name for each radio group if not provided
   self._name = name || `radioOption_${p5.prototype.createRadio.counter++}`;
-
+  // setup member functions
   const isRadioInput = el =>
     el instanceof HTMLInputElement && el.type === 'radio';
   const isLabelElement = el => el instanceof HTMLLabelElement;
@@ -1634,6 +1639,7 @@ p5.prototype.createRadio = function(...args) {
       }
     }
 
+    // Create a new option, add it to radioElement and return it.
     if (optionEl === undefined) {
       optionEl = document.createElement('input');
       optionEl.setAttribute('type', 'radio');
@@ -1641,6 +1647,7 @@ p5.prototype.createRadio = function(...args) {
     }
     optionEl.setAttribute('name', self._name);
 
+    // Check if label element exists, else create it
     let labelElement;
     if (!isLabelElement(optionEl.parentElement)) {
       labelElement = document.createElement('label');
@@ -1649,6 +1656,7 @@ p5.prototype.createRadio = function(...args) {
       labelElement = optionEl.parentElement;
     }
 
+    // Check if span element exists, else create it    
     let spanElement;
     if (!isSpanElement(labelElement.lastElementChild)) {
       spanElement = document.createElement('span');
@@ -1657,8 +1665,11 @@ p5.prototype.createRadio = function(...args) {
       spanElement = labelElement.lastElementChild;
     }
 
+    // Set the innerHTML of span element as the label text    
     spanElement.innerHTML = label === undefined ? value : label;
 
+    // Append the label element, which includes option element and
+    // span element to the radio container element
     this.elt.appendChild(labelElement);
 
     return optionEl;
@@ -1668,8 +1679,10 @@ p5.prototype.createRadio = function(...args) {
     for (const optionEl of self._getOptionsArray()) {
       if (optionEl.value === value) {
         if (isLabelElement(optionEl.parentElement)) {
+          // Remove parent label which also removes children elements
           optionEl.parentElement.remove();
         } else {
+          // Remove the option input if parent label does not exist
           optionEl.remove();
         }
         return;
@@ -1698,6 +1711,8 @@ p5.prototype.createRadio = function(...args) {
         }
       }
     } else {
+      // forEach loop to uncheck all radio buttons before
+      // setting any one as checked.
       self._getOptionsArray().forEach(option => {
         option.checked = false;
         option.removeAttribute('checked');
