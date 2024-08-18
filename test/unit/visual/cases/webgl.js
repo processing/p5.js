@@ -1,3 +1,5 @@
+import { visualSuite, visualTest } from '../visualTest';
+
 visualSuite('WebGL', function() {
   visualSuite('Camera', function() {
     visualTest('2D objects maintain correct size', function(p5, screenshot) {

@@ -1,3 +1,5 @@
+import p5 from '../../../src/app.js';
+
 /**
  * A helper class to contain an error and also the screenshot data that
  * caused the error.
@@ -30,7 +32,7 @@ let namePrefix = '';
  * @param [options] An options object with optional additional settings. Set its
  * key `focus` to true to only run this test, or its `skip` key to skip it.
  */
-window.visualSuite = function(
+export function visualSuite(
   name,
   callback,
   { focus = false, skip = false } = {}
@@ -48,9 +50,9 @@ window.visualSuite = function(
   suiteFn(name, callback);
 
   namePrefix = lastPrefix;
-};
+}
 
-window.checkMatch = function(actual, expected, p5) {
+export function checkMatch(actual, expected, p5) {
   const maxSide = 50;
   const scale = Math.min(maxSide/expected.width, maxSide/expected.height);
   for (const img of [actual, expected]) {
@@ -75,7 +77,7 @@ window.checkMatch = function(actual, expected, p5) {
     }
   }
   return { ok, diff };
-};
+}
 
 /**
  * A helper to define a visual test, where we will assert that a sketch matches
@@ -96,7 +98,7 @@ window.checkMatch = function(actual, expected, p5) {
  * @param [options] An options object with optional additional settings. Set its
  * key `focus` to true to only run this test, or its `skip` key to skip it.
  */
-window.visualTest = function(
+export function visualTest(
   testName,
   callback,
   { focus = false, skip = false } = {}
@@ -113,7 +115,7 @@ window.visualTest = function(
   suiteFn(testName, function() {
     let myp5;
 
-    setup(function() {
+    beforeAll(function() {
       return new Promise(res => {
         myp5 = new p5(function(p) {
           p.setup = function() {
@@ -123,7 +125,7 @@ window.visualTest = function(
       });
     });
 
-    teardown(function() {
+    afterAll(function() {
       myp5.remove();
     });
 
@@ -197,4 +199,4 @@ window.visualTest = function(
       }
     });
   });
-};
+}
