@@ -849,9 +849,9 @@ p5.Camera = class Camera {
     this.yScale = 1;
   }
   /**
- * The camera’s y-coordinate.
+ * The camera’s x-coordinate.
  *
- * By default, the camera’s y-coordinate is set to 0 in "world" space.
+ * By default, the camera’s x-coordinate is set to 0 in "world" space.
  *
  * @property {Number} eyeX
  * @readonly
