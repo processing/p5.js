@@ -1631,6 +1631,7 @@ p5.prototype.createRadio = function(...args) {
   };
 
   self.option = function (value, label) {
+    // return an option with this value, create if not exists.
     let optionEl;
     for (const option of self._getOptionsArray()) {
       if (option.value === value) {
