@@ -1585,7 +1585,7 @@ p5.prototype.createRadio = function(...args) {
   let radioElement;
   let name;
   const arg0 = args[0];
-  
+
   if (
     arg0 instanceof p5.Element &&
     (arg0.elt instanceof HTMLDivElement || arg0.elt instanceof HTMLSpanElement)
