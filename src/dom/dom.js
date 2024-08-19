@@ -1580,6 +1580,9 @@ p5.prototype.createSelect = function(...args) {
  * @method createRadio
  * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
  */
+
+//counter for unique names on radio button
+let counter = 0;
 p5.prototype.createRadio = function(...args) {
   // Creates a div, adds each option as an individual input inside it.
   // If already given with a containerEl, will search for all input[radio]
@@ -1613,7 +1616,7 @@ p5.prototype.createRadio = function(...args) {
   }
 
   // Generate a unique name for each radio group if not provided
-  self._name = name || `radioOption_${p5.prototype.createRadio.counter++}`;
+  self._name = name || `radioOption_${counter++}`;
   // setup member functions
   const isRadioInput = el =>
     el instanceof HTMLInputElement && el.type === 'radio';
@@ -1738,10 +1741,6 @@ p5.prototype.createRadio = function(...args) {
 
   return self;
 };
-
-// Initialize counter for unique radio group names
-p5.prototype.createRadio.counter = 0;
-
 
 /**
  * Creates a color picker element.
