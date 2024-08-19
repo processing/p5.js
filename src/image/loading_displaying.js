@@ -1111,6 +1111,10 @@ p5.prototype.image = function(
   // set defaults per spec: https://goo.gl/3ykfOq
 
   p5._validateParameters('image', arguments);
+  // check for P5 Graphics instance
+  let isP5G = img instanceof p5.Graphics ? true : false;
+  // check for P5 Framebuffer instance
+  let isP5Fbo = img instanceof p5.Framebuffer ? true : false;
 
   if(this._renderer instanceof p5.RendererGL === false){
     // From the 3rd arguement shift the assingment one position to the right
@@ -1189,8 +1193,9 @@ p5.prototype.image = function(
     _sh
   );
 
-  //if it is a WEGL instance default use 3D rendering
-  if (this._renderer instanceof p5.RendererGL) {
+  //if it is not graphics nor framebuffer but WEGL instance
+  //default to use 3D rendering
+  if (this._renderer instanceof p5.RendererGL && !isP5G && !isP5Fbo) {
     this._renderer.image3D(
       img,
       vals.sx,
