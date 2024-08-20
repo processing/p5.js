@@ -1140,6 +1140,15 @@ p5.prototype.model = function(model) {
  * Also, the support for colored STL files is not present. STL files with color will be
  * rendered without color properties.
  *
+ * * Options can include:
+ * - `modelString`: Specifies the plain text string of either an stl or obj file to be loaded.
+ * - `fileType`: Defines the file extension of the model.
+ * - `normalize`: Enables standardized size scaling during loading if set to true.
+ * - `successCallback`: Callback for post-loading actions with the 3D model object.
+ * - `failureCallback`: Handles errors if model loading fails, receiving an event error.
+ * - `flipU`: Flips the U texture coordinates of the model.
+ * - `flipV`: Flips the V texture coordinates of the model.
+ *
  *
  * @method createModel
  * @param  {String} modelString         String of the object to be loaded
