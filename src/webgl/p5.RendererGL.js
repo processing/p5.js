@@ -2398,7 +2398,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
 
     this._pInst.push();
-    this._pInst.translate(sx, sy, sz);
+    this._pInst.translate(dx, dy, sz);
+    this._pInst.scale(dWidth / sWidth, dHeight / sHeight);
     this._pInst.texture(img);
     this._pInst.noStroke();
     this._pInst.plane(sWidth, sHeight);
