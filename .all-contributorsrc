@@ -6172,6 +6172,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "c-dacanay",
+      "name": "c-dacanay",
+      "avatar_url": "https://avatars.githubusercontent.com/u/54914834?v=4",
+      "profile": "https://github.com/c-dacanay",
+      "contributions": [
+        "design",
+        "eventOrganizing",
+        "example"
+      ]
     }
   ],
   "repoType": "github",
