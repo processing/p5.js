@@ -1040,6 +1040,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://denisovichdev.github.io/link-tree"><img src="https://avatars.githubusercontent.com/u/66998096?v=4?s=120" width="120px;" alt="Rishi"/><br /><sub><b>Rishi</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=DenisovichDev" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3ADenisovichDev" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://www.linkedin.com/in/forcha-pearl/"><img src="https://avatars.githubusercontent.com/u/24577149?v=4?s=120" width="120px;" alt="FORCHA PEARL"/><br /><sub><b>FORCHA PEARL</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Forchapeatl" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/c-dacanay"><img src="https://avatars.githubusercontent.com/u/54914834?v=4?s=120" width="120px;" alt="c-dacanay"/><br /><sub><b>c-dacanay</b></sub></a><br /><a href="#design-c-dacanay" title="Design">🎨</a> <a href="#eventOrganizing-c-dacanay" title="Event Organizing">📋</a> <a href="#example-c-dacanay" title="Examples">💡</a></td>
     </tr>
   </tbody>
 </table>
