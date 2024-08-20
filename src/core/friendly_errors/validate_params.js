@@ -5,8 +5,7 @@
 import p5 from '../main';
 import * as constants from '../constants';
 import { translator } from '../internationalization';
-// eslint-disable-next-line
-import dataDoc from '../../../docs/parameterData.json' assert { type: 'json' };
+import dataDoc from '../../../docs/parameterData.json';
 
 if (typeof IS_MINIFIED !== 'undefined') {
   p5._validateParameters = p5._clearValidateParamsCache = () => { };
