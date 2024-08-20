@@ -18,6 +18,22 @@ p5.RendererGL.prototype.textWidth = function(s) {
   return 0; // TODO: error
 };
 
+p5.RendererGL.prototype.textAscent = function(s) {
+  if (this._isOpenType()) {
+    return this._textFont._textAscent(this._textSize);
+  }
+
+  return 0; // TODO: error
+};
+
+p5.RendererGL.prototype.textDescent = function(s) {
+  if (this._isOpenType()) {
+    return this._textFont._textDescent(this._textSize);
+  }
+
+  return 0; // TODO: error
+};
+
 // rendering constants
 
 // the number of rows/columns dividing each glyph
