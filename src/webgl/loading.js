@@ -1133,27 +1133,13 @@ p5.prototype.model = function(model) {
 /**
  * Load a 3d model from an OBJ or STL string.
  *
- * <a href="#/p5/loadModel">createModel()</a> should be placed inside of <a href="#/p5/preload">preload()</a>.
- * This allows the model to load fully before the rest of your code is run.
- *
- * One of the limitations of the OBJ and STL format is that it doesn't have a built-in
- * sense of scale. This means that models exported from different programs might
- * be very different sizes. If your model isn't displaying, try calling
- * <a href="#/p5/loadModel">loadModel()</a> with the normalized parameter set to true. This will resize the
- * model to a scale appropriate for p5. You can also make additional changes to
- * the final size of your model with the <a href="#/p5/scale">scale()</a> function.
+ * OBJ and STL files lack a built-in sense of scale, causing models exported from different programs to vary in size.
+ * If your model doesn't display correctly, consider using `loadModel()` with `normalize` set to `true` to standardize its size.
+ * Further adjustments can be made using the `scale()` function.
  *
  * Also, the support for colored STL files is not present. STL files with color will be
  * rendered without color properties.
  *
- * Options can include:
- * - `modelString`: Specifies the plain text string of either an stl or obj file to be loaded.
- * - `fileType`: Defines the file extension of the model.
- * - `normalize`: Enables standardized size scaling during loading if set to true.
- * - `successCallback`: Callback for post-loading actions with the 3D model object.
- * - `failureCallback`: Handles errors if model loading fails, receiving an event error.
- * - `flipU`: Flips the U texture coordinates of the model.
- * - `flipV`: Flips the V texture coordinates of the model.
  *
  * @method createModel
  * @param  {String} modelString         String of the object to be loaded
@@ -1191,13 +1177,10 @@ p5.prototype.model = function(model) {
  * //draw a spinning octahedron
  * let octahedron;
  *
- * function preload() {
- *   octahedron = createModel(octahedron_model);
- * }
- *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe('Vertically rotating 3-d octahedron.');
+ *   octahedron = createModel(octahedron_model);
+ *   describe('Vertically rotating 3D octahedron.');
  * }
  *
  * function draw() {
