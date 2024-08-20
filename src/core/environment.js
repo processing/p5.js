@@ -1152,8 +1152,61 @@ function exitFullscreen() {
  * @example
  * <div>
  * <code>
+ * // Example 2: Convert 2D world coordinates of a rotating square to screen coordinates
+ * function setup() {
+ *   createCanvas(400, 400);
+ *   let vertices = [
+ *     createVector(-10, -10),
+ *     createVector(10, -10),
+ *     createVector(10, 10),
+ *     createVector(-10, 10)
+ *   ];
+ *
+ *   push();
+ *   translate(200, 200);
+ *   rotate(PI / 4);
+ *   let screenPos = vertices.map(v => worldToScreen(v));
+ *   pop();
+ *
+ *   background(200);
+ *   screenPos.forEach((pos, i) => {
+ *     text(`(${pos.x.toFixed(1)}, ${pos.y.toFixed(1)})`, pos.x, pos.y);
+ *   });
+ * }
  * </code>
  * </div>
+ * @example
+ * <div>
+ * <code>
+ * // Example 1: Convert 3D world coordinates of a rotating cube to 2D screen coordinates
+ * function setup() {
+ *   createCanvas(400, 400, WEBGL);
+ *   let vertices = [
+ *     createVector(-50, -50, -50),
+ *     createVector(50, -50, -50),
+ *     createVector(50, 50, -50),
+ *     createVector(-50, 50, -50),
+ *     createVector(-50, -50, 50),
+ *     createVector(50, -50, 50),
+ *     createVector(50, 50, 50),
+ *     createVector(-50, 50, 50)
+ *   ];
+ *
+ *   push();
+ *   translate(0, 0, 0);
+ *   rotateX(PI / 4);
+ *   rotateY(PI / 4);
+ *   let screenPos = vertices.map(v => worldToScreen(v));
+ *   pop();
+ *
+ *   background(200);
+ *   screenPos.forEach((pos, i) => {
+ *     text(`(${pos.x.toFixed(1)}, ${pos.y.toFixed(1)})`, pos.x, pos.y);
+ *   });
+ * }
+ * </code>
+ * </div>
+ *
  */
 p5.prototype.worldToScreen = function(worldPosition) {
   const renderer = this._renderer;
@@ -1163,19 +1216,21 @@ p5.prototype.worldToScreen = function(worldPosition) {
       .scale(1 / pixelDensity())
       .multiply(renderer.drawingContext.getTransform());
     const screenCoordinates = transformMatrix.transformPoint(
-      new DOMPoint(worldPosition.x, worldPosition.y));
+      new DOMPoint(worldPosition.x, worldPosition.y)
+    );
     return createVector(screenCoordinates.x, screenCoordinates.y);
-  } else{
+  } else {
     // Handle WebGL context
     const cameraCoordinates = renderer.uMVMatrix.multiplyPoint(worldPosition);
     const normalizedDeviceCoordinates =
-    renderer.uPMatrix.multiplyAndNormalizePoint(cameraCoordinates);
+      renderer.uPMatrix.multiplyAndNormalizePoint(cameraCoordinates);
     const screenX = (0.5 + 0.5 * normalizedDeviceCoordinates.x) * this.width;
     const screenY = (0.5 - 0.5 * normalizedDeviceCoordinates.y) * this.height;
-    const screenZ = (0.5 + 0.5 * normalizedDeviceCoordinates.z);
+    const screenZ = 0.5 + 0.5 * normalizedDeviceCoordinates.z;
     return createVector(screenX, screenY, screenZ);
   }
 };
+
 
 
 /**
