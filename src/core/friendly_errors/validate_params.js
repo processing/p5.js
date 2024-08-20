@@ -5,10 +5,11 @@
 import p5 from '../main';
 import * as constants from '../constants';
 import { translator } from '../internationalization';
-import dataDoc from '../../../docs/parameterData.json';
+// eslint-disable-next-line
+import dataDoc from '../../../docs/parameterData.json' assert { type: 'json' };
 
 if (typeof IS_MINIFIED !== 'undefined') {
-  p5._validateParameters = p5._clearValidateParamsCache = () => {};
+  p5._validateParameters = p5._clearValidateParamsCache = () => { };
 } else {
   // for parameter validation
   const arrDoc = JSON.parse(JSON.stringify(dataDoc));
@@ -548,7 +549,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @method _friendlyParamError
    * @private
    */
-  p5._friendlyParamError = function(errorObj, func) {
+  p5._friendlyParamError = function (errorObj, func) {
     let message;
     let translationObj;
 
@@ -641,9 +642,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
           parsed[3].lineNumber &&
           parsed[3].columnNumber
         ) {
-          let location = `${parsed[3].fileName}:${parsed[3].lineNumber}:${
-            parsed[3].columnNumber
-          }`;
+          let location = `${parsed[3].fileName}:${parsed[3].lineNumber}:${parsed[3].columnNumber
+            }`;
 
           translationObj.location = translator('fes.location', {
             location,
