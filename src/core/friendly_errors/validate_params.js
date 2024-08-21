@@ -8,7 +8,7 @@ import { translator } from '../internationalization';
 import dataDoc from '../../../docs/parameterData.json';
 
 if (typeof IS_MINIFIED !== 'undefined') {
-  p5._validateParameters = p5._clearValidateParamsCache = () => { };
+  p5._validateParameters = p5._clearValidateParamsCache = () => {};
 } else {
   // for parameter validation
   const arrDoc = JSON.parse(JSON.stringify(dataDoc));
@@ -641,8 +641,9 @@ if (typeof IS_MINIFIED !== 'undefined') {
           parsed[3].lineNumber &&
           parsed[3].columnNumber
         ) {
-          let location = `${parsed[3].fileName}:${parsed[3].lineNumber}:${parsed[3].columnNumber
-            }`;
+          let location = `${parsed[3].fileName}:${parsed[3].lineNumber}:${
+            parsed[3].columnNumber
+          }`;
 
           translationObj.location = translator('fes.location', {
             location,
