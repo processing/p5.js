@@ -1152,23 +1152,27 @@ function exitFullscreen() {
  * @example
  * <div>
  * <code>
- * // Example 2: Convert 2D world coordinates of a rotating square to screen coordinates
+ * // Example 1: Convert 2D world coordinates of a rotating square to screen coordinates
  * function setup() {
- *   createCanvas(400, 400);
+ *   createCanvas(100, 100);
+ *
  *   let vertices = [
- *     createVector(-10, -10),
- *     createVector(10, -10),
- *     createVector(10, 10),
- *     createVector(-10, 10)
+ *     createVector(-5, -5),
+ *     createVector(5, -5),
+ *     createVector(5, 5),
+ *     createVector(-5, 5)
  *   ];
  *
- *   push();
- *   translate(200, 200);
+ *   push(); // Start a new drawing state
+ *   translate(50, 50);
  *   rotate(PI / 4);
+ *
+ *   // Convert each vertex to screen coordinates
  *   let screenPos = vertices.map(v => worldToScreen(v));
- *   pop();
+ *   pop(); // Restore original drawing state
  *
  *   background(200);
+ *
  *   screenPos.forEach((pos, i) => {
  *     text(`(${pos.x.toFixed(1)}, ${pos.y.toFixed(1)})`, pos.x, pos.y);
  *   });
@@ -1178,29 +1182,42 @@ function exitFullscreen() {
  * @example
  * <div>
  * <code>
- * // Example 1: Convert 3D world coordinates of a rotating cube to 2D screen coordinates
+ * // Example 2: Convert 3D world coordinates of a rotating cube to 2D screen coordinates
+ * let vertices;
+ *
  * function setup() {
- *   createCanvas(400, 400, WEBGL);
- *   let vertices = [
- *     createVector(-50, -50, -50),
- *     createVector(50, -50, -50),
- *     createVector(50, 50, -50),
- *     createVector(-50, 50, -50),
- *     createVector(-50, -50, 50),
- *     createVector(50, -50, 50),
- *     createVector(50, 50, 50),
- *     createVector(-50, 50, 50)
+ *   createCanvas(100, 100, WEBGL);
+ *   vertices = [
+ *     createVector(-25, -25, -25),
+ *     createVector(25, -25, -25),
+ *     createVector(25, 25, -25),
+ *     createVector(-25, 25, -25),
+ *     createVector(-25, -25, 25),
+ *     createVector(25, -25, 25),
+ *     createVector(25, 25, 25),
+ *     createVector(-25, 25, 25)
  *   ];
+ * }
  *
- *   push();
- *   translate(0, 0, 0);
- *   rotateX(PI / 4);
- *   rotateY(PI / 4);
- *   let screenPos = vertices.map(v => worldToScreen(v));
- *   pop();
- *
+ * function draw() {
  *   background(200);
+ *
+ *   // Animate rotation
+ *   let rotationX = millis() / 1000;
+ *   let rotationY = millis() / 1200;
+ *
+ *   rotateX(rotationX);
+ *   rotateY(rotationY);
+ *
+ *   // Convert world coordinates to screen coordinates
+ *   let screenPos = vertices.map(v => worldToScreen(v));
+ *
+ *   // Display screen coordinates
  *   screenPos.forEach((pos, i) => {
+ *     fill(255);
+ *     noStroke();
+ *     ellipse(pos.x, pos.y, 3, 3); // Draw points as small ellipses
+ *     fill(0);
  *     text(`(${pos.x.toFixed(1)}, ${pos.y.toFixed(1)})`, pos.x, pos.y);
  *   });
  * }

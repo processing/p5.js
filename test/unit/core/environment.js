@@ -251,8 +251,8 @@ suite('Environment', function() {
 
     test('worldToScreen with rotation in 2D', function() {
       myp5.push();
-      myp5.rotate(myp5.PI / 2);
       myp5.translate(50, 50);
+      myp5.rotate(myp5.PI / 2);
       let worldPos = myp5.createVector(10, 0);
       let screenPos = myp5.worldToScreen(worldPos);
       myp5.pop();
@@ -273,15 +273,24 @@ suite('Environment', function() {
       assert.closeTo(screenPos.y, 50, 0.1);
     });
 
-    test('worldToScreen with rotation in 3D', function() {
+    test('worldToScreen with rotation in 3D around Y-axis', function() {
       myp5.push();
       myp5.rotateY(myp5.PI / 2);
-      myp5.translate(50, 0, 0);
       let worldPos = myp5.createVector(50, 0, 0);
       let screenPos = myp5.worldToScreen(worldPos);
       myp5.pop();
-      assert.closeTo(screenPos.x, 100, 0.1);
+      assert.closeTo(screenPos.x, 50, 0.1);
       assert.closeTo(screenPos.y, 50, 0.1);
+    });
+
+    test('worldToScreen with rotation in 3D around Z-axis', function() {
+      myp5.push();
+      myp5.rotateZ(myp5.PI / 2);
+      let worldPos = myp5.createVector(10, 0, 0);
+      let screenPos = myp5.worldToScreen(worldPos);
+      myp5.pop();
+      assert.closeTo(screenPos.x, 50, 0.1);
+      assert.closeTo(screenPos.y, 40, 0.1);
     });
   });
 });
