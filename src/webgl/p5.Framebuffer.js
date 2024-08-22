@@ -1489,16 +1489,17 @@ class Framebuffer {
    *   createCanvas(400, 400, WEBGL);
    *
    *   // Create an off-screen WebGL graphics buffer
-   *   let myBuffer = createGraphics(200, 200, WEBGL);
-   *
+   *   let myBuffer = createFramebuffer({ width: 200, height: 200 });
    *   // Draw a red box on the off-screen buffer
-   *   myBuffer.background(0);  // Set the background to black
-   *   myBuffer.noStroke();
-   *   myBuffer.fill(255, 0, 0);  // Set the fill color to red
-   *   myBuffer.push();
-   *   myBuffer.translate(0, 0, 0);
-   *   myBuffer.box(100);  // Draw a red box at the center
-   *   myBuffer.pop();
+   *   myBuffer.draw(() => {
+   *     background(0); // Set the background to black
+   *     noStroke();
+   *     fill(255, 0, 0); // Set the fill color to red
+   *     push();
+   *     translate(0, 0, 0);
+   *     box(100);  // Draw a red box at the center
+   *     pop();
+   *   })
    *
    *   // Get the color of a pixel at the center of the box (in 2D coordinates)
    *   myBuffer.loadPixels(); // Load the pixel data for myBuffer
