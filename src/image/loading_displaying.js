@@ -1196,6 +1196,7 @@ p5.prototype.image = function(
   //if it is not graphics nor framebuffer but WEGL instance
   //default to use 3D rendering
   if (this._renderer instanceof p5.RendererGL && !isP5G && !isP5Fbo) {
+    if (dz === undefined){dz = 0;}
     this._renderer.image3D(
       img,
       vals.sx,
