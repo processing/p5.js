@@ -1079,8 +1079,6 @@ function _sAssign(sVal, iVal) {
  *                           rectangle in which to draw the source image
  * @param  {Number}   dy     the y-coordinate of the destination
  *                           rectangle in which to draw the source image
- * @param  {Number}   dz     the z-coordinate (depth) of the destination
- *                           rectangle in which to draw the source image (WEBGL only)
  * @param  {Number}   dWidth  the width of the destination rectangle
  * @param  {Number}   dHeight the height of the destination rectangle
  * @param  {Number}   sx     the x-coordinate of the subsection of the source
