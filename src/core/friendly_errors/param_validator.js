@@ -52,7 +52,7 @@ const schemaMap = {
  * objects in `p5.Geometry.computeNormals()`
  * (see https://github.com/processing/p5.js/pull/7186#discussion_r1724983249)
  *
- * @param {String} func Name of the function
+ * @param {String} func - Name of the function.
  * @returns {z.ZodSchema} Zod schema
  */
 function generateZodSchemasForFunc(func) {
@@ -75,7 +75,15 @@ function generateZodSchemasForFunc(func) {
     if (param.includes('|')) {
       const types = param.split('|');
 
-      // Note that for parameter types that are constants, such as for `blendMode`, the paramters are always all caps, sometimes with underscores, separated by `|` (i.e. "BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|REMOVE|SUBTRACT"). Use a regex check here to filter them out and distinguish them from parameters that allow multiple types.
+      /*
+       * Note that for parameter types that are constants, such as for
+       * `blendMode`, the parameters are always all caps, sometimes with
+       * underscores, separated by `|`
+       * (i.e. "BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|
+       * REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|REMOVE|SUBTRACT").
+       * Use a regex check here to filter them out and distinguish them from
+       * parameters that allow multiple types.
+       */
       return types.every(t => /^[A-Z_]+$/.test(t))
         ? z.enum(types)
         : z.union(types
@@ -111,8 +119,8 @@ function generateZodSchemasForFunc(func) {
  * This is a helper function to print out the Zod schema in a readable format.
  * This is for debugging purposes only and will be removed in the future.
  *
- * @param {z.ZodSchema} schema Zod schema
- * @param {number} indent Indentation level
+ * @param {z.ZodSchema} schema - Zod schema.
+ * @param {number} indent - Indentation level.
  */
 function printZodSchema(schema, indent = 0) {
   const i = ' '.repeat(indent);
@@ -136,16 +144,74 @@ function printZodSchema(schema, indent = 0) {
 }
 
 /**
+ * Finds the closest schema to the input arguments.
+ *
+ * This is a helper function that identifies the closest schema to the input
+ * arguments, in the case of an initial validation error. We will then use the
+ * closest schema to generate a friendly error message.
+ *
+ * @param {z.ZodSchema} schema - Zod schema.
+ * @param {Array} args - User input arguments.
+ * @returns {z.ZodSchema} Closest schema matching the input arguments.
+ */
+function findClosestSchema(schema, args) {
+  if (!(schema instanceof z.ZodUnion)) {
+    return schema;
+  }
+
+  // Helper function that scores how close the input arguments are to a schema.
+  // Lower score means closer match.
+  const scoreSchema = schema => {
+    if (!(schema instanceof z.ZodTuple)) {
+      console.warn('Schema below is not a tuple: ');
+      printZodSchema(schema);
+      return Infinity;
+    }
+
+    const schemaItems = schema.items;
+    let score = Math.abs(schemaItems.length - args.length) * 2;
+
+    for (let i = 0; i < Math.min(schemaItems.length, args.length); i++) {
+      const paramSchema = schemaItems[i];
+      const arg = args[i];
+
+      if (!paramSchema.safeParse(arg).success) score++;
+    }
+
+    return score;
+  };
+
+  // Default to the first schema, so that we will always return something.
+  let closestSchema = schema._def.options[0];
+  // We want to return the schema with the lowest score.
+  let bestScore = Infinity;
+
+  const schemaUnion = schema._def.options;
+  schemaUnion.forEach(schema => {
+    const score = scoreSchema(schema);
+    if (score < bestScore) {
+      closestSchema = schema;
+      bestScore = score;
+    }
+  });
+
+  return closestSchema;
+}
+
+
+/**
  * Runs parameter validation by matching the input parameters to Zod schemas
  * generated from the parameter data from `docs/parameterData.json`.
  *
  * TODO:
  * - [ ] Turn it into a private method of `p5`.
- * - [ ] Add a function that returns the closest match for the input arguments in the case of a validation error.
  *
- * @param {String} func Name of the function
- * @param {Array} args User input arguments
- * @returns {any|import('zod-validation-error').ZodValidationError} The validated arguments or a validation error
+ * @param {String} func - Name of the function.
+ * @param {Array} args - User input arguments.
+ * @returns {Object} The validation result.
+ * @returns {Boolean} result.success - Whether the validation was successful.
+ * @returns {any} [result.data] - The parsed data if validation was successful.
+ * @returns {import('zod-validation-error').ZodValidationError} [result.error] - The validation error if validation failed.
  */
 export function validateParams(func, args) {
   // if (p5.disableFriendlyErrors) {
@@ -158,16 +224,25 @@ export function validateParams(func, args) {
     schemaRegistry.set(func, funcSchemas);
   }
 
-  printZodSchema(funcSchemas);
+  // printZodSchema(funcSchemas);
 
   try {
-    let result = funcSchemas.parse(args);
-    return result;
+    return {
+      success: true,
+      data: funcSchemas.parse(args)
+    };
   } catch (error) {
-    console.log('Caught error');
-    const validationError = fromError(error);
-    console.log(validationError);
-    return validationError;
+    const closestSchema = findClosestSchema(funcSchemas, args);
+    const validationError = fromError(closestSchema.safeParse(args).error);
+
+    return {
+      success: false,
+      error: validationError
+    };
   }
 }
 
+const result = validateParams('p5.fill', [1]);
+if (!result.success) {
+  console.log(result.error.toString());
+}
