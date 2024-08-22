@@ -2393,16 +2393,35 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   image3D(img,sx,sy,sz,sWidth,sHeight,dx,dy,dWidth,dHeight) {
-    if (this._isErasing) {
-      this.blendMode(this._cachedBlendMode);
-    }
-
+    const viewport = this.GL.getParameter(this.GL.VIEWPORT);
+    const width = viewport[2];
+    const height = viewport[3];
+    dx = (-width / 2) + dx;
+    dy = (-height / 2) + dy;
     this._pInst.push();
-    this._pInst.translate(dx, dy, sz);
-    this._pInst.scale(dWidth / sWidth, dHeight / sHeight);
-    this._pInst.texture(img);
+    this._pInst.noLights();
     this._pInst.noStroke();
-    this._pInst.plane(sWidth, sHeight);
+    this._pInst.texture(img);
+    this._pInst.textureMode(constants.NORMAL);
+
+    // Calculate texture coordinates for subsection
+    let u0 = sx / img.width;
+    let u1 = (sx + sWidth) / img.width;
+    let v0 = sy / img.height;
+    let v1 = (sy + sHeight) / img.height;
+
+    // Draw a textured rectangle (plane) with the texture coordinates
+    this.beginShape();
+    // Top-left corner
+    this.vertex(dx, dy, sz, u0, v0);
+    // Top-right corner
+    this.vertex(dx + dWidth, dy, sz, u1, v0);
+    // Bottom-right corner
+    this.vertex(dx + dWidth, dy + dHeight, sz, u1, u1);
+    // Bottom-left corner
+    this.vertex(dx, dy + dHeight, sz, u0, v1);
+    this.endShape(constants.CLOSE);
+
     this._pInst.pop();
 
     if (this._isErasing) {
