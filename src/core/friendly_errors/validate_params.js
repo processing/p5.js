@@ -548,7 +548,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @method _friendlyParamError
    * @private
    */
-  p5._friendlyParamError = function(errorObj, func) {
+  p5._friendlyParamError = function (errorObj, func) {
     let message;
     let translationObj;
 
