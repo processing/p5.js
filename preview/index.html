@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>P5 test</title>
+  <meta http-equiv="pragma" content="no-cache" />
+  <meta http-equiv="cache-control" content="no-cache" />
+  <meta charset="utf-8">
+
+  <style>
+  body{
+    margin:0;
+    overflow: hidden;
+  }
+  </style>
+</head>
+<body>
+<script type="module">
+import p5 from './src/app.js';
+// import calculation from './src/math/calculation.js';
+
+// p5.registerAddon(calculation);
+
+const sketch = function(p){
+  p.setup = function(){
+    p.createCanvas(200, 200);
+    // console.log(p.ceil(2.1));
+    // let v1 = p.createVector(1, 0);
+    // let v2 = p.createVector(1, 1);
+
+    // p.angleMode(p.DEGREES);
+    // console.log(v1.angleBetween(v2));
+
+    // ------------ COLOR --------------
+    // const c1 = p.color(128, 65, 189);
+    // const c2 = p.color(0, 255, 0, 50);
+    // const c3 = p.color(0);
+    // const c4 = p.color(0, 50);
+    // const c5 = p.color('green');
+    // const c6 = p.color([0, 0, 255]);
+    // const c7 = p.color([0, 0, 255, 50]);
+    // const c8 = p.color(p.color('grey'));
+    // console.log(c1.toString(), c2.toString());
+    // console.log(c3.toString(), c4.toString());
+    // console.log(c5.toString(), c6.toString());
+    // console.log(c7.toString(), c8.toString());
+
+    // const h1 = p.color('hsl(336, 100%, 50%)');
+    // NOTE: If we were to support HSB, we need to write a custom color space
+    // const h2 = p.color('hsb(336, 100%, 100%)');
+    // p.colorMode(p.HSL, 1, 1, 1, 1);
+    // const h3 = p.color(0, 100, 100);
+    // h3.setAlpha(0.5);
+    // console.log(h1.toString());
+    // console.log(h3.toString());
+    // console.log(h2.toString());
+    // p.colorMode(p.HSL, 360, 100, 100, 100);
+    // h3.setAlpha(30);
+    // console.log(h3.toString());
+
+    // const sr = p.color(100, 100, 100);
+    // sr.setRed(255);
+    // console.log(sr.toString());
+    // p.colorMode(p.HSL);
+    // const sr = p.color(180, 50, 50);
+    // const ss = p.color(0, 50, 50);
+    // console.log(p.lerpColor(c1, sr, 0.5).color);
+    // sr.setRed(255);
+    // console.log(sr.toString());
+    // console.log(p.red(sr));
+
+    // p.colorMode(p.HSB);
+    // const hb = p.color(336, 100, 50);
+    // console.log(hb.toString());
+
+    p.noLoop();
+  };
+
+  p.draw = function(){
+    p.background(0, 50, 50);
+    p.circle(100, 100, 50);
+
+    p.fill('white');
+    p.textSize(30);
+    p.text('hello', 10, 30);
+  };
+};
+
+new p5(sketch);
+</script>
+</body>
+</html>
