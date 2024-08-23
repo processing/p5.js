@@ -1070,6 +1070,107 @@ function _sAssign(sVal, iVal) {
  * }
  * </code>
  * </div>
+ * <div>
+ * <code>
+ * let img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/moonwalk.jpg');
+ * }
+ *
+ * function setup() {
+ *   // Create a 3D canvas
+ *   background(200);
+ *   createCanvas(400, 400, WEBGL);
+ * }
+ * function draw() {
+ *   image(img, 0, 0, -100);
+ *   describe('An image at the center 100 units away from the camera');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let img;
+ * function preload() {
+ *   img = loadImage('assets/moonwalk.jpg');
+ * }
+ *
+ * function setup() {
+ *   // Create a 3D canvas
+ *   createCanvas(400, 400, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   image(img, 0, 0, 400 , 300 , 300);
+ *   describe('Scale image 300 by 300 and zoomin 400 units');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let img;
+ * function preload() {
+ *   img = loadImage('assets/moonwalk.jpg');
+ * }
+ *
+ * function setup() {
+ *   // Create a 3D canvas
+ *   createCanvas(400, 400, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   image(img, 0, 0, -400 , 300 , 300);
+ *   describe('Scale image 300 by 300 and zoomout 400 units');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let img;
+ * function preload() {
+ *   img = loadImage('assets/moonwalk.jpg');
+ * }
+ *
+ * function setup() {
+ *   // Create a 3D canvas
+ *   createCanvas(400, 400, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   image(img, 0, 0, 0, 400, 400,500, 100, 200, 200);
+ *   describe('Draw a subsection of the image from 500 by 100 units position at the center with size 400x400');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let img;
+ * function preload() {
+ *   img = loadImage('assets/moonwalk.jpg');
+ * }
+ *
+ * function setup() {
+ *   // Create a 3D canvas
+ *   createCanvas(400, 400, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   image(img, 0, 0, -200, 400, 400,500, 100, 200, 200);
+ *   describe('Draw a subsection of the image from 500 by 100 units position at the center with size 400x400 and zoomedout by 200 units');
+ * }
+ *
+ * </code>
+ * </div>
+ *
  *
  */
 /**
@@ -1079,6 +1180,8 @@ function _sAssign(sVal, iVal) {
  *                           rectangle in which to draw the source image
  * @param  {Number}   dy     the y-coordinate of the destination
  *                           rectangle in which to draw the source image
+ * @param  {Number}   dz     the z-coordinate (depth) of the destination
+ *                           rectangle in which to draw the source image (WEBGL only)
  * @param  {Number}   dWidth  the width of the destination rectangle
  * @param  {Number}   dHeight the height of the destination rectangle
  * @param  {Number}   sx     the x-coordinate of the subsection of the source
