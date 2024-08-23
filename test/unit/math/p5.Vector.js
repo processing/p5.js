@@ -1,25 +1,25 @@
-import p5 from '../../../src/app.js';
+import vector from '../../../src/math/p5.Vector.js';
+import { vi } from 'vitest';
 
 suite('p5.Vector', function() {
-  var myp5;
   var v;
 
+  const mockP5 = {
+    _validateParameters: vi.fn()
+  };
+  const mockP5Prototype = {};
+
   beforeEach(async function() {
-    new p5(function(p) {
-      p.setup = function() {
-        myp5 = p;
-      };
-    });
+    vector(mockP5, mockP5Prototype);
   });
 
   afterEach(function() {
-    myp5.remove();
   });
 
   suite('p5.prototype.setHeading() RADIANS', function() {
     beforeEach(function() {
-      myp5.angleMode(myp5.RADIANS);
-      v = myp5.createVector(1, 1);
+      mockP5Prototype.angleMode(mockP5.RADIANS);
+      v = mockP5Prototype.createVector(1, 1);
       v.setHeading(1);
     });
     test('should have heading() value of 1 (RADIANS)', function() {
@@ -29,8 +29,8 @@ suite('p5.Vector', function() {
 
   suite('p5.prototype.setHeading() DEGREES', function() {
     beforeEach(function() {
-      myp5.angleMode(myp5.DEGREES);
-      v = myp5.createVector(1, 1);
+      mockP5Prototype.angleMode(mockP5.DEGREES);
+      v = mockP5Prototype.createVector(1, 1);
       v.setHeading(1);
     });
     test('should have heading() value of 1 (DEGREES)', function() {
@@ -38,12 +38,14 @@ suite('p5.Vector', function() {
     });
   });
 
+  // NOTE: test this in a separate file or move `createVector` to p5.Vector file
+  // Prefer latter
   suite('p5.prototype.createVector()', function() {
     beforeEach(function() {
-      v = myp5.createVector();
+      v = mockP5Prototype.createVector();
     });
     test('should create instance of p5.Vector', function() {
-      assert.instanceOf(v, p5.Vector);
+      assert.instanceOf(v, mockP5.Vector);
     });
 
     test('should have x, y, z be initialized to 0', function() {
@@ -55,7 +57,7 @@ suite('p5.Vector', function() {
 
   suite('p5.prototype.createVector(1, 2, 3)', function() {
     beforeEach(function() {
-      v = myp5.createVector(1, 2, 3);
+      v = mockP5Prototype.createVector(1, 2, 3);
     });
 
     test('should have x, y, z be initialized to 1,2,3', function() {
@@ -67,10 +69,10 @@ suite('p5.Vector', function() {
 
   suite('new p5.Vector()', function() {
     beforeEach(function() {
-      v = new p5.Vector();
+      v = new mockP5.Vector();
     });
     test('should set constant to DEGREES', function() {
-      assert.instanceOf(v, p5.Vector);
+      assert.instanceOf(v, mockP5.Vector);
     });
 
     test('should have x, y, z be initialized to 0', function() {
@@ -82,7 +84,7 @@ suite('p5.Vector', function() {
 
   suite('new p5.Vector(1, 2, 3)', function() {
     beforeEach(function() {
-      v = new p5.Vector(1, 2, 3);
+      v = new mockP5.Vector(1, 2, 3);
     });
 
     test('should have x, y, z be initialized to 1,2,3', function() {
@@ -94,7 +96,7 @@ suite('p5.Vector', function() {
 
   suite('new p5.Vector(1,2,undefined)', function() {
     beforeEach(function() {
-      v = new p5.Vector(1, 2, undefined);
+      v = new mockP5.Vector(1, 2, undefined);
     });
 
     test('should have x, y, z be initialized to 1,2,0', function() {
@@ -107,17 +109,17 @@ suite('p5.Vector', function() {
   suite('rotate', function() {
     suite('p5.Vector.prototype.rotate() [INSTANCE]', function() {
       test('should return the same object', function() {
-        v = myp5.createVector(0, 1);
+        v = new mockP5.Vector(0, 1);
         expect(v.rotate(Math.PI)).to.eql(v);
       });
 
       suite('radians', function() {
         beforeEach(function() {
-          myp5.angleMode(myp5.RADIANS);
+          mockP5Prototype.angleMode(mockP5.RADIANS);
         });
 
         test('should rotate the vector [0, 1, 0] by pi radians to [0, -1, 0]', function() {
-          v = myp5.createVector(0, 1, 0);
+          v = mockP5Prototype.createVector(0, 1, 0);
           v.rotate(Math.PI);
           expect(v.x).to.be.closeTo(0, 0.01);
           expect(v.y).to.be.closeTo(-1, 0.01);
@@ -125,7 +127,7 @@ suite('p5.Vector', function() {
         });
 
         test('should rotate the vector [1, 0, 0] by -pi/2 radians to [0, -1, 0]', function() {
-          v = myp5.createVector(1, 0, 0);
+          v = mockP5Prototype.createVector(1, 0, 0);
           v.rotate(-Math.PI / 2);
           expect(v.x).to.be.closeTo(0, 0.01);
           expect(v.y).to.be.closeTo(-1, 0.01);
@@ -133,7 +135,7 @@ suite('p5.Vector', function() {
         });
 
         test('should rotate the vector [1, 0, 0] by pi radians to [-1, 0, 0]', function() {
-          v = myp5.createVector(1, 0, 0);
+          v = mockP5Prototype.createVector(1, 0, 0);
           v.rotate(Math.PI);
           expect(v.x).to.be.closeTo(-1, 0.01);
           expect(v.y).to.be.closeTo(0, 0.01);
@@ -143,11 +145,11 @@ suite('p5.Vector', function() {
 
       suite('degrees', function() {
         beforeEach(function() {
-          myp5.angleMode(myp5.DEGREES);
+          mockP5Prototype.angleMode(mockP5.DEGREES);
         });
 
         test('should rotate the vector [0, 1, 0] by 180 degrees to [0, -1, 0]', function() {
-          v = myp5.createVector(0, 1, 0);
+          v = mockP5Prototype.createVector(0, 1, 0);
           v.rotate(180);
           expect(v.x).to.be.closeTo(0, 0.01);
           expect(v.y).to.be.closeTo(-1, 0.01);
@@ -155,7 +157,7 @@ suite('p5.Vector', function() {
         });
 
         test('should rotate the vector [1, 0, 0] by -90 degrees to [0, -1, 0]', function() {
-          v = myp5.createVector(1, 0, 0);
+          v = mockP5Prototype.createVector(1, 0, 0);
           v.rotate(-90);
           expect(v.x).to.be.closeTo(0, 0.01);
           expect(v.y).to.be.closeTo(-1, 0.01);
@@ -166,28 +168,28 @@ suite('p5.Vector', function() {
 
     suite('p5.Vector.rotate() [CLASS]', function() {
       beforeEach(function() {
-        myp5.angleMode(myp5.RADIANS);
+        mockP5Prototype.angleMode(mockP5.RADIANS);
       });
 
       test('should not change the original object', function() {
-        v = myp5.createVector(1, 0, 0);
-        p5.Vector.rotate(v, Math.PI / 2);
+        v = mockP5Prototype.createVector(1, 0, 0);
+        mockP5.Vector.rotate(v, Math.PI / 2);
         expect(v.x).to.equal(1);
         expect(v.y).to.equal(0);
         expect(v.z).to.equal(0);
       });
 
       test('should rotate the vector [0, 1, 0] by pi radians to [0, -1, 0]', function() {
-        v = myp5.createVector(0, 1, 0);
-        const v1 = p5.Vector.rotate(v, Math.PI);
+        v = mockP5Prototype.createVector(0, 1, 0);
+        const v1 = mockP5.Vector.rotate(v, Math.PI);
         expect(v1.x).to.be.closeTo(0, 0.01);
         expect(v1.y).to.be.closeTo(-1, 0.01);
         expect(v1.z).to.be.closeTo(0, 0.01);
       });
 
       test('should rotate the vector [1, 0, 0] by -pi/2 radians to [0, -1, 0]', function() {
-        v = myp5.createVector(1, 0, 0);
-        const v1 = p5.Vector.rotate(v, -Math.PI / 2);
+        v = mockP5Prototype.createVector(1, 0, 0);
+        const v1 = mockP5.Vector.rotate(v, -Math.PI / 2);
         expect(v1.x).to.be.closeTo(0, 0.01);
         expect(v1.y).to.be.closeTo(-1, 0.01);
         expect(v1.z).to.be.closeTo(0, 0.01);
@@ -198,8 +200,8 @@ suite('p5.Vector', function() {
   suite('angleBetween', function() {
     let v1, v2;
     beforeEach(function() {
-      v1 = new p5.Vector(1, 0, 0);
-      v2 = new p5.Vector(2, 2, 0);
+      v1 = new mockP5.Vector(1, 0, 0);
+      v2 = new mockP5.Vector(2, 2, 0);
     });
 
     suite('p5.Vector.prototype.angleBetween() [INSTANCE]', function() {
@@ -209,57 +211,57 @@ suite('p5.Vector', function() {
       });
 
       test('should not trip on rounding issues in 2D space', function() {
-        v1 = new p5.Vector(-11, -20);
-        v2 = new p5.Vector(-5.5, -10);
-        const v3 = new p5.Vector(5.5, 10);
+        v1 = new mockP5.Vector(-11, -20);
+        v2 = new mockP5.Vector(-5.5, -10);
+        const v3 = new mockP5.Vector(5.5, 10);
 
         expect(v1.angleBetween(v2)).to.be.closeTo(0, 0.00001);
         expect(v1.angleBetween(v3)).to.be.closeTo(Math.PI, 0.00001);
       });
 
       test('should not trip on rounding issues in 3D space', function() {
-        v1 = new p5.Vector(1, 1.1, 1.2);
-        v2 = new p5.Vector(2, 2.2, 2.4);
+        v1 = new mockP5.Vector(1, 1.1, 1.2);
+        v2 = new mockP5.Vector(2, 2.2, 2.4);
         expect(v1.angleBetween(v2)).to.be.closeTo(0, 0.00001);
       });
 
       test('should return NaN for zero vector', function() {
-        v1 = new p5.Vector(0, 0, 0);
-        v2 = new p5.Vector(2, 3, 4);
+        v1 = new mockP5.Vector(0, 0, 0);
+        v2 = new mockP5.Vector(2, 3, 4);
         expect(v1.angleBetween(v2)).to.be.NaN;
         expect(v2.angleBetween(v1)).to.be.NaN;
       });
 
       test('between [1,0,0] and [1,0,0] should be 0 degrees', function() {
-        myp5.angleMode(myp5.DEGREES);
-        v1 = myp5.createVector(1, 0, 0);
-        v2 = myp5.createVector(1, 0, 0);
+        mockP5Prototype.angleMode(mockP5.DEGREES);
+        v1 = new mockP5.Vector(1, 0, 0);
+        v2 = new mockP5.Vector(1, 0, 0);
         expect(v1.angleBetween(v2)).to.equal(0);
       });
 
       test('between [0,3,0] and [0,-3,0] should be 180 degrees', function() {
-        myp5.angleMode(myp5.DEGREES);
-        v1 = myp5.createVector(0, 3, 0);
-        v2 = myp5.createVector(0, -3, 0);
+        mockP5Prototype.angleMode(mockP5.DEGREES);
+        v1 = new mockP5.Vector(0, 3, 0);
+        v2 = new mockP5.Vector(0, -3, 0);
         expect(v1.angleBetween(v2)).to.be.closeTo(180, 0.01);
       });
 
       test('between [1,0,0] and [2,2,0] should be 1/4 PI radians', function() {
-        v1 = new p5.Vector(1, 0, 0);
-        v2 = new p5.Vector(2, 2, 0);
+        v1 = new mockP5.Vector(1, 0, 0);
+        v2 = new mockP5.Vector(2, 2, 0);
         expect(v1.angleBetween(v2)).to.be.closeTo(Math.PI / 4, 0.01);
         expect(v2.angleBetween(v1)).to.be.closeTo(-1 * Math.PI / 4, 0.01);
       });
 
       test('between [2,0,0] and [-2,0,0] should be PI radians', function() {
-        v1 = new p5.Vector(2, 0, 0);
-        v2 = new p5.Vector(-2, 0, 0);
+        v1 = new mockP5.Vector(2, 0, 0);
+        v2 = new mockP5.Vector(-2, 0, 0);
         expect(v1.angleBetween(v2)).to.be.closeTo(Math.PI, 0.01);
       });
 
       test('between [2,0,0] and [-2,-2,0] should be -3/4 PI radians  ', function() {
-        v1 = new p5.Vector(2, 0, 0);
-        v2 = new p5.Vector(-2, -2, 0);
+        v1 = new mockP5.Vector(2, 0, 0);
+        v2 = new mockP5.Vector(-2, -2, 0);
         expect(v1.angleBetween(v2)).to.be.closeTo(
           -1 * (Math.PI / 2 + Math.PI / 4),
           0.01
@@ -267,8 +269,8 @@ suite('p5.Vector', function() {
       });
 
       test('between [-2,-2,0] and [2,0,0] should be 3/4 PI radians', function() {
-        v1 = new p5.Vector(-2, -2, 0);
-        v2 = new p5.Vector(2, 0, 0);
+        v1 = new mockP5.Vector(-2, -2, 0);
+        v2 = new mockP5.Vector(2, 0, 0);
         expect(v1.angleBetween(v2)).to.be.closeTo(
           Math.PI / 2 + Math.PI / 4,
           0.01
@@ -276,37 +278,37 @@ suite('p5.Vector', function() {
       });
 
       test('For the same vectors, the angle between them should always be 0.', function() {
-        v1 = myp5.createVector(288, 814);
-        v2 = myp5.createVector(288, 814);
+        v1 = new mockP5.Vector(288, 814);
+        v2 = new mockP5.Vector(288, 814);
         expect(v1.angleBetween(v2)).to.equal(0);
       });
 
       test('The angle between vectors pointing in opposite is always PI.', function() {
-        v1 = myp5.createVector(219, 560);
-        v2 = myp5.createVector(-219, -560);
+        v1 = new mockP5.Vector(219, 560);
+        v2 = new mockP5.Vector(-219, -560);
         expect(v1.angleBetween(v2)).to.be.closeTo(Math.PI, 0.0000001);
       });
     });
 
     suite('p5.Vector.angleBetween() [CLASS]', function() {
       test('should return NaN for zero vector', function() {
-        v1 = new p5.Vector(0, 0, 0);
-        v2 = new p5.Vector(2, 3, 4);
-        expect(p5.Vector.angleBetween(v1, v2)).to.be.NaN;
-        expect(p5.Vector.angleBetween(v2, v1)).to.be.NaN;
+        v1 = new mockP5.Vector(0, 0, 0);
+        v2 = new mockP5.Vector(2, 3, 4);
+        expect(mockP5.Vector.angleBetween(v1, v2)).to.be.NaN;
+        expect(mockP5.Vector.angleBetween(v2, v1)).to.be.NaN;
       });
 
       test('between [1,0,0] and [0,-1,0] should be -90 degrees', function() {
-        myp5.angleMode(myp5.DEGREES);
-        v1 = myp5.createVector(1, 0, 0);
-        v2 = myp5.createVector(0, -1, 0);
-        expect(p5.Vector.angleBetween(v1, v2)).to.be.closeTo(-90, 0.01);
+        mockP5Prototype.angleMode(mockP5.DEGREES);
+        v1 = new mockP5.Vector(1, 0, 0);
+        v2 = new mockP5.Vector(0, -1, 0);
+        expect(mockP5.Vector.angleBetween(v1, v2)).to.be.closeTo(-90, 0.01);
       });
 
       test('between [0,3,0] and [0,-3,0] should be PI radians', function() {
-        v1 = new p5.Vector(0, 3, 0);
-        v2 = new p5.Vector(0, -3, 0);
-        expect(p5.Vector.angleBetween(v1, v2)).to.be.closeTo(Math.PI, 0.01);
+        v1 = new mockP5.Vector(0, 3, 0);
+        v2 = new mockP5.Vector(0, -3, 0);
+        expect(mockP5.Vector.angleBetween(v1, v2)).to.be.closeTo(Math.PI, 0.01);
       });
     });
   });
@@ -314,7 +316,7 @@ suite('p5.Vector', function() {
   suite('set()', function() {
     suite('with p5.Vector', function() {
       test("should have x, y, z be initialized to the vector's x, y, z", function() {
-        v.set(new p5.Vector(2, 5, 6));
+        v.set(new mockP5.Vector(2, 5, 6));
         expect(v.x).to.eql(2);
         expect(v.y).to.eql(5);
         expect(v.z).to.eql(6);
@@ -349,7 +351,7 @@ suite('p5.Vector', function() {
 
   suite('copy', function() {
     beforeEach(function() {
-      v = new p5.Vector(2, 3, 4);
+      v = new mockP5.Vector(2, 3, 4);
     });
 
     suite('p5.Vector.prototype.copy() [INSTANCE]', function() {
@@ -368,12 +370,12 @@ suite('p5.Vector', function() {
 
     suite('p5.Vector.copy() [CLASS]', function() {
       test('should not return the same instance', function() {
-        var newObject = p5.Vector.copy(v);
+        var newObject = mockP5.Vector.copy(v);
         expect(newObject).to.not.equal(v);
       });
 
       test("should return the passed object's x, y, z", function() {
-        var newObject = p5.Vector.copy(v);
+        var newObject = mockP5.Vector.copy(v);
         expect(newObject.x).to.eql(2);
         expect(newObject.y).to.eql(3);
         expect(newObject.z).to.eql(4);
@@ -383,12 +385,12 @@ suite('p5.Vector', function() {
 
   suite('add()', function() {
     beforeEach(function() {
-      v = new p5.Vector();
+      v = new mockP5.Vector();
     });
 
     suite('with p5.Vector', function() {
       test('should add x, y, z  from the vector argument', function() {
-        v.add(new p5.Vector(1, 5, 6));
+        v.add(new mockP5.Vector(1, 5, 6));
         expect(v.x).to.eql(1);
         expect(v.y).to.eql(5);
         expect(v.z).to.eql(6);
@@ -434,9 +436,9 @@ suite('p5.Vector', function() {
     suite('p5.Vector.add(v1, v2)', function() {
       var v1, v2, res;
       beforeEach(function() {
-        v1 = new p5.Vector(2, 0, 3);
-        v2 = new p5.Vector(0, 1, 3);
-        res = p5.Vector.add(v1, v2);
+        v1 = new mockP5.Vector(2, 0, 3);
+        v2 = new mockP5.Vector(0, 1, 3);
+        res = mockP5.Vector.add(v1, v2);
       });
 
       test('should return neither v1 nor v2', function() {
@@ -454,7 +456,7 @@ suite('p5.Vector', function() {
 
   suite('rem()', function() {
     beforeEach(function() {
-      v = myp5.createVector(3, 4, 5);
+      v = new mockP5.Vector(3, 4, 5);
     });
 
     test('should give same vector if nothing passed as parameter', function() {
@@ -487,28 +489,28 @@ suite('p5.Vector', function() {
 
     suite('with p5.Vector', function() {
       test('should return correct output if only one component is non-zero', function() {
-        v.rem(new p5.Vector(0, 0, 4));
+        v.rem(new mockP5.Vector(0, 0, 4));
         expect(v.x).to.eql(3);
         expect(v.y).to.eql(4);
         expect(v.z).to.eql(1);
       });
 
       test('should return correct output if x component is zero', () => {
-        v.rem(new p5.Vector(0, 3, 4));
+        v.rem(new mockP5.Vector(0, 3, 4));
         expect(v.x).to.eql(3);
         expect(v.y).to.eql(1);
         expect(v.z).to.eql(1);
       });
 
       test('should return correct output if all components are non-zero', () => {
-        v.rem(new p5.Vector(2, 3, 4));
+        v.rem(new mockP5.Vector(2, 3, 4));
         expect(v.x).to.eql(1);
         expect(v.y).to.eql(1);
         expect(v.z).to.eql(1);
       });
 
       test('should return same vector if all components are zero', () => {
-        v.rem(new p5.Vector(0, 0, 0));
+        v.rem(new mockP5.Vector(0, 0, 0));
         expect(v.x).to.eql(3);
         expect(v.y).to.eql(4);
         expect(v.z).to.eql(5);
@@ -518,10 +520,10 @@ suite('p5.Vector', function() {
     suite('with negative vectors', function() {
       let v;
       beforeEach(function() {
-        v = new p5.Vector(-15, -5, -2);
+        v = new mockP5.Vector(-15, -5, -2);
       });
       test('should return correct output', () => {
-        v.rem(new p5.Vector(2, 3, 3));
+        v.rem(new mockP5.Vector(2, 3, 3));
         expect(v.x).to.eql(-1);
         expect(v.y).to.eql(-2);
         expect(v.z).to.eql(-2);
@@ -560,9 +562,9 @@ suite('p5.Vector', function() {
     suite('p5.Vector.rem(v1,v2)', function() {
       let v1, v2, res;
       beforeEach(function() {
-        v1 = new p5.Vector(2, 3, 4);
-        v2 = new p5.Vector(1, 2, 3);
-        res = p5.Vector.rem(v1, v2);
+        v1 = new mockP5.Vector(2, 3, 4);
+        v2 = new mockP5.Vector(1, 2, 3);
+        res = mockP5.Vector.rem(v1, v2);
       });
 
       test('should return neither v1 nor v2', function() {
@@ -586,7 +588,7 @@ suite('p5.Vector', function() {
     });
     suite('with p5.Vector', function() {
       test('should sub x, y, z  from the vector argument', function() {
-        v.sub(new p5.Vector(2, 5, 6));
+        v.sub(new mockP5.Vector(2, 5, 6));
         expect(v.x).to.eql(-2);
         expect(v.y).to.eql(-5);
         expect(v.z).to.eql(-6);
@@ -632,9 +634,9 @@ suite('p5.Vector', function() {
     suite('p5.Vector.sub(v1, v2)', function() {
       var v1, v2, res;
       beforeEach(function() {
-        v1 = new p5.Vector(2, 0, 3);
-        v2 = new p5.Vector(0, 1, 3);
-        res = p5.Vector.sub(v1, v2);
+        v1 = new mockP5.Vector(2, 0, 3);
+        v2 = new mockP5.Vector(0, 1, 3);
+        res = mockP5.Vector.sub(v1, v2);
       });
 
       test('should return neither v1 nor v2', function() {
@@ -652,7 +654,7 @@ suite('p5.Vector', function() {
 
   suite('mult()', function() {
     beforeEach(function() {
-      v = new p5.Vector(1, 1, 1);
+      v = new mockP5.Vector(1, 1, 1);
     });
 
     test('should return the same object', function() {
@@ -685,8 +687,8 @@ suite('p5.Vector', function() {
     suite('v0.mult(v1)', function() {
       var v0, v1;
       beforeEach(function() {
-        v0 = new p5.Vector(1, 2, 3);
-        v1 = new p5.Vector(2, 3, 4);
+        v0 = new mockP5.Vector(1, 2, 3);
+        v1 = new mockP5.Vector(2, 3, 4);
         v0.mult(v1);
       });
 
@@ -700,7 +702,7 @@ suite('p5.Vector', function() {
     suite('v0.mult(arr)', function() {
       var v0, arr;
       beforeEach(function() {
-        v0 = new p5.Vector(1, 2, 3);
+        v0 = new mockP5.Vector(1, 2, 3);
         arr = [2, 3, 4];
         v0.mult(arr);
       });
@@ -715,8 +717,8 @@ suite('p5.Vector', function() {
     suite('p5.Vector.mult(v, n)', function() {
       var v, res;
       beforeEach(function() {
-        v = new p5.Vector(1, 2, 3);
-        res = p5.Vector.mult(v, 4);
+        v = new mockP5.Vector(1, 2, 3);
+        res = mockP5.Vector.mult(v, 4);
       });
 
       test('should return a new p5.Vector', function() {
@@ -733,9 +735,9 @@ suite('p5.Vector', function() {
     suite('p5.Vector.mult(v, v', function() {
       var v0, v1, res;
       beforeEach(function() {
-        v0 = new p5.Vector(1, 2, 3);
-        v1 = new p5.Vector(2, 3, 4);
-        res = p5.Vector.mult(v0, v1);
+        v0 = new mockP5.Vector(1, 2, 3);
+        v1 = new mockP5.Vector(2, 3, 4);
+        res = mockP5.Vector.mult(v0, v1);
       });
 
       test('should return new vector from component wise multiplication', function() {
@@ -748,9 +750,9 @@ suite('p5.Vector', function() {
     suite('p5.Vector.mult(v, arr', function() {
       var v0, arr, res;
       beforeEach(function() {
-        v0 = new p5.Vector(1, 2, 3);
+        v0 = new mockP5.Vector(1, 2, 3);
         arr = [2, 3, 4];
-        res = p5.Vector.mult(v0, arr);
+        res = mockP5.Vector.mult(v0, arr);
       });
 
       test('should return new vector from component wise multiplication with an array', function() {
@@ -763,7 +765,7 @@ suite('p5.Vector', function() {
 
   suite('div()', function() {
     beforeEach(function() {
-      v = new p5.Vector(1, 1, 1);
+      v = new mockP5.Vector(1, 1, 1);
     });
 
     test('should return the same object', function() {
@@ -803,8 +805,8 @@ suite('p5.Vector', function() {
     suite('p5.Vector.div(v, n)', function() {
       var v, res;
       beforeEach(function() {
-        v = new p5.Vector(1, 1, 1);
-        res = p5.Vector.div(v, 4);
+        v = new mockP5.Vector(1, 1, 1);
+        res = mockP5.Vector.div(v, 4);
       });
 
       test('should not be undefined', function() {
@@ -825,10 +827,10 @@ suite('p5.Vector', function() {
     suite('v0.div(v1)', function() {
       var v0, v1, v2, v3;
       beforeEach(function() {
-        v0 = new p5.Vector(2, 6, 9);
-        v1 = new p5.Vector(2, 2, 3);
-        v2 = new p5.Vector(1, 1, 1);
-        v3 = new p5.Vector(0, 0, 0);
+        v0 = new mockP5.Vector(2, 6, 9);
+        v1 = new mockP5.Vector(2, 2, 3);
+        v2 = new mockP5.Vector(1, 1, 1);
+        v3 = new mockP5.Vector(0, 0, 0);
 
         v0.div(v1);
       });
@@ -847,8 +849,8 @@ suite('p5.Vector', function() {
       });
 
       test('should work on 2D vectors', function() {
-        const v = new p5.Vector(1, 1);
-        const divisor = new p5.Vector(2, 2);
+        const v = new mockP5.Vector(1, 1);
+        const divisor = new mockP5.Vector(2, 2);
         v.div(divisor);
         expect(v.x).to.eql(0.5);
         expect(v.y).to.eql(0.5);
@@ -856,8 +858,8 @@ suite('p5.Vector', function() {
       });
 
       test('should work when the dividend has 0', function() {
-        const v = new p5.Vector(1, 0);
-        const divisor = new p5.Vector(2, 2);
+        const v = new mockP5.Vector(1, 0);
+        const divisor = new mockP5.Vector(2, 2);
         v.div(divisor);
         expect(v.x).to.eql(0.5);
         expect(v.y).to.eql(0);
@@ -865,8 +867,8 @@ suite('p5.Vector', function() {
       });
 
       test('should do nothing when the divisor has 0', function() {
-        const v = new p5.Vector(1, 1);
-        const divisor = new p5.Vector(0, 2);
+        const v = new mockP5.Vector(1, 1);
+        const divisor = new mockP5.Vector(0, 2);
         v.div(divisor);
         expect(v.x).to.eql(1);
         expect(v.y).to.eql(1);
@@ -877,8 +879,8 @@ suite('p5.Vector', function() {
     suite('v0.div(arr)', function() {
       var v0, v1, arr;
       beforeEach(function() {
-        v0 = new p5.Vector(2, 6, 9);
-        v1 = new p5.Vector(1, 1, 1);
+        v0 = new mockP5.Vector(2, 6, 9);
+        v1 = new mockP5.Vector(1, 1, 1);
         arr = [2, 2, 3];
         v0.div(arr);
       });
@@ -900,9 +902,9 @@ suite('p5.Vector', function() {
     suite('p5.Vector.div(v, v', function() {
       var v0, v1, res;
       beforeEach(function() {
-        v0 = new p5.Vector(2, 6, 9);
-        v1 = new p5.Vector(2, 2, 3);
-        res = p5.Vector.div(v0, v1);
+        v0 = new mockP5.Vector(2, 6, 9);
+        v1 = new mockP5.Vector(2, 2, 3);
+        res = mockP5.Vector.div(v0, v1);
       });
 
       test('should return new vector from component wise division', function() {
@@ -915,9 +917,9 @@ suite('p5.Vector', function() {
     suite('p5.Vector.div(v, arr', function() {
       var v0, arr, res;
       beforeEach(function() {
-        v0 = new p5.Vector(2, 6, 9);
+        v0 = new mockP5.Vector(2, 6, 9);
         arr = [2, 2, 3];
-        res = p5.Vector.div(v0, arr);
+        res = mockP5.Vector.div(v0, arr);
       });
 
       test('should return new vector from component wise division with an array', function() {
@@ -936,12 +938,12 @@ suite('p5.Vector', function() {
     });
 
     test('should return a number', function() {
-      expect(typeof v.dot(new p5.Vector()) === 'number').to.eql(true);
+      expect(typeof v.dot(new mockP5.Vector()) === 'number').to.eql(true);
     });
 
     suite('with p5.Vector', function() {
       test('should be the dot product of the vector', function() {
-        expect(v.dot(new p5.Vector(2, 2))).to.eql(4);
+        expect(v.dot(new mockP5.Vector(2, 2))).to.eql(4);
       });
     });
 
@@ -958,9 +960,9 @@ suite('p5.Vector', function() {
     suite('p5.Vector.dot(v, n)', function() {
       var v1, v2, res;
       beforeEach(function() {
-        v1 = new p5.Vector(1, 1, 1);
-        v2 = new p5.Vector(2, 3, 4);
-        res = p5.Vector.dot(v1, v2);
+        v1 = new mockP5.Vector(1, 1, 1);
+        v2 = new mockP5.Vector(2, 3, 4);
+        res = mockP5.Vector.dot(v1, v2);
       });
 
       test('should return a number', function() {
@@ -982,12 +984,12 @@ suite('p5.Vector', function() {
     });
 
     test('should return a new product', function() {
-      expect(v.cross(new p5.Vector())).to.not.eql(v);
+      expect(v.cross(new mockP5.Vector())).to.not.eql(v);
     });
 
     suite('with p5.Vector', function() {
       test('should cross x, y, z  from the vector argument', function() {
-        res = v.cross(new p5.Vector(2, 5, 6));
+        res = v.cross(new mockP5.Vector(2, 5, 6));
         expect(res.x).to.eql(1); //this.y * v.z - this.z * v.y
         expect(res.y).to.eql(-4); //this.z * v.x - this.x * v.z
         expect(res.z).to.eql(3); //this.x * v.y - this.y * v.x
@@ -997,9 +999,9 @@ suite('p5.Vector', function() {
     suite('p5.Vector.cross(v1, v2)', function() {
       var v1, v2, res;
       beforeEach(function() {
-        v1 = new p5.Vector(3, 6, 9);
-        v2 = new p5.Vector(1, 1, 1);
-        res = p5.Vector.cross(v1, v2);
+        v1 = new mockP5.Vector(3, 6, 9);
+        v2 = new mockP5.Vector(1, 1, 1);
+        res = mockP5.Vector.cross(v1, v2);
       });
 
       test('should not be undefined', function() {
@@ -1022,11 +1024,9 @@ suite('p5.Vector', function() {
   suite('dist', function() {
     var b, c;
     beforeEach(function() {
-      v.x = 0;
-      v.y = 0;
-      v.z = 1;
-      b = new p5.Vector(0, 0, 5);
-      c = new p5.Vector(3, 4, 1);
+      v = new mockP5.Vector(0, 0, 1);
+      b = new mockP5.Vector(0, 0, 5);
+      c = new mockP5.Vector(3, 4, 1);
     });
 
     test('should return a number', function() {
@@ -1049,23 +1049,23 @@ suite('p5.Vector', function() {
   suite('p5.Vector.dist(v1, v2)', function() {
     var v1, v2;
     beforeEach(function() {
-      v1 = new p5.Vector(0, 0, 0);
-      v2 = new p5.Vector(0, 3, 4);
+      v1 = new mockP5.Vector(0, 0, 0);
+      v2 = new mockP5.Vector(0, 3, 4);
     });
 
     test('should return a number', function() {
-      expect(typeof p5.Vector.dist(v1, v2) === 'number').to.eql(true);
+      expect(typeof mockP5.Vector.dist(v1, v2) === 'number').to.eql(true);
     });
 
     test('should be commutative', function() {
-      expect(p5.Vector.dist(v1, v2)).to.eql(p5.Vector.dist(v2, v1));
+      expect(mockP5.Vector.dist(v1, v2)).to.eql(mockP5.Vector.dist(v2, v1));
     });
   });
 
   suite('normalize', function() {
     suite('p5.Vector.prototype.normalize() [INSTANCE]', function() {
       beforeEach(function() {
-        v = myp5.createVector(1, 1, 1);
+        v = new mockP5.Vector(1, 1, 1);
       });
 
       test('should return the same object', function() {
@@ -1096,8 +1096,8 @@ suite('p5.Vector', function() {
     suite('p5.Vector.normalize(v) [CLASS]', function() {
       var res;
       beforeEach(function() {
-        v = myp5.createVector(1, 0, 0);
-        res = p5.Vector.normalize(v);
+        v = new mockP5.Vector(1, 0, 0);
+        res = mockP5.Vector.normalize(v);
       });
 
       test('should not be undefined', function() {
@@ -1118,7 +1118,7 @@ suite('p5.Vector', function() {
         v.x = 2;
         v.y = 2;
         v.z = 1;
-        res = p5.Vector.normalize(v);
+        res = mockP5.Vector.normalize(v);
         expect(res.x).to.be.closeTo(0.6666, 0.01);
         expect(res.y).to.be.closeTo(0.6666, 0.01);
         expect(res.z).to.be.closeTo(0.3333, 0.01);
@@ -1130,7 +1130,7 @@ suite('p5.Vector', function() {
     let v;
 
     beforeEach(function() {
-      v = new p5.Vector(5, 5, 5);
+      v = new mockP5.Vector(5, 5, 5);
     });
 
     suite('p5.Vector.prototype.limit() [INSTANCE]', function() {
@@ -1159,12 +1159,12 @@ suite('p5.Vector', function() {
 
     suite('p5.Vector.limit() [CLASS]', function() {
       test('should not return the same object', function() {
-        expect(p5.Vector.limit(v)).to.not.equal(v);
+        expect(mockP5.Vector.limit(v)).to.not.equal(v);
       });
 
       suite('with a vector larger than the limit', function() {
         test('should limit the vector', function() {
-          const res = p5.Vector.limit(v, 1);
+          const res = mockP5.Vector.limit(v, 1);
           expect(res.x).to.be.closeTo(0.5773, 0.01);
           expect(res.y).to.be.closeTo(0.5773, 0.01);
           expect(res.z).to.be.closeTo(0.5773, 0.01);
@@ -1173,7 +1173,7 @@ suite('p5.Vector', function() {
 
       suite('with a vector smaller than the limit', function() {
         test('should not limit the vector', function() {
-          const res = p5.Vector.limit(v, 8.67);
+          const res = mockP5.Vector.limit(v, 8.67);
           expect(res.x).to.eql(5);
           expect(res.y).to.eql(5);
           expect(res.z).to.eql(5);
@@ -1182,8 +1182,8 @@ suite('p5.Vector', function() {
 
       suite('when given a target vector', function() {
         test('should store limited vector in the target', function() {
-          const target = new p5.Vector(0, 0, 0);
-          p5.Vector.limit(v, 1, target);
+          const target = new mockP5.Vector(0, 0, 0);
+          mockP5.Vector.limit(v, 1, target);
           expect(target.x).to.be.closeTo(0.5773, 0.01);
           expect(target.y).to.be.closeTo(0.5773, 0.01);
           expect(target.z).to.be.closeTo(0.5773, 0.01);
@@ -1196,7 +1196,7 @@ suite('p5.Vector', function() {
     let v;
 
     beforeEach(function() {
-      v = new p5.Vector(1, 0, 0);
+      v = new mockP5.Vector(1, 0, 0);
     });
 
     suite('p5.Vector.setMag() [INSTANCE]', function() {
@@ -1224,11 +1224,11 @@ suite('p5.Vector', function() {
 
     suite('p5.Vector.prototype.setMag() [CLASS]', function() {
       test('should not return the same object', function() {
-        expect(p5.Vector.setMag(v, 2)).to.not.equal(v);
+        expect(mockP5.Vector.setMag(v, 2)).to.not.equal(v);
       });
 
       test('should set the magnitude of the vector', function() {
-        const res = p5.Vector.setMag(v, 4);
+        const res = mockP5.Vector.setMag(v, 4);
         expect(res.x).to.eql(4);
         expect(res.y).to.eql(0);
         expect(res.z).to.eql(0);
@@ -1238,7 +1238,7 @@ suite('p5.Vector', function() {
         v.x = 2;
         v.y = 3;
         v.z = -6;
-        const res = p5.Vector.setMag(v, 14);
+        const res = mockP5.Vector.setMag(v, 14);
         expect(res.x).to.eql(4);
         expect(res.y).to.eql(6);
         expect(res.z).to.eql(-12);
@@ -1246,8 +1246,8 @@ suite('p5.Vector', function() {
 
       suite('when given a target vector', function() {
         test('should set the magnitude on the target', function() {
-          const target = new p5.Vector(0, 1, 0);
-          const res = p5.Vector.setMag(v, 4, target);
+          const target = new mockP5.Vector(0, 1, 0);
+          const res = mockP5.Vector.setMag(v, 4, target);
           expect(target).to.equal(res);
           expect(target.x).to.eql(4);
           expect(target.y).to.eql(0);
@@ -1259,7 +1259,7 @@ suite('p5.Vector', function() {
 
   suite('heading', function() {
     beforeEach(function() {
-      v = myp5.createVector();
+      v = new mockP5.Vector();
     });
 
     suite('p5.Vector.prototype.heading() [INSTANCE]', function() {
@@ -1290,7 +1290,7 @@ suite('p5.Vector', function() {
 
       suite('with `angleMode(DEGREES)`', function() {
         beforeEach(function() {
-          myp5.angleMode(myp5.DEGREES);
+          mockP5Prototype.angleMode(mockP5.DEGREES);
         });
 
         test('heading for vector pointing right is 0', function() {
@@ -1318,28 +1318,28 @@ suite('p5.Vector', function() {
 
     suite('p5.Vector.heading() [CLASS]', function() {
       test('should return a number', function() {
-        expect(typeof p5.Vector.heading(v) === 'number').to.eql(true);
+        expect(typeof mockP5.Vector.heading(v) === 'number').to.eql(true);
       });
 
       test('heading for vector pointing right is 0', function() {
         v.x = 1;
         v.y = 0;
         v.z = 0;
-        expect(p5.Vector.heading(v)).to.be.closeTo(0, 0.01);
+        expect(mockP5.Vector.heading(v)).to.be.closeTo(0, 0.01);
       });
 
       test('heading for vector pointing down is PI/2', function() {
         v.x = 0;
         v.y = 1;
         v.z = 0;
-        expect(p5.Vector.heading(v)).to.be.closeTo(Math.PI / 2, 0.01);
+        expect(mockP5.Vector.heading(v)).to.be.closeTo(Math.PI / 2, 0.01);
       });
 
       test('heading for vector pointing left is PI', function() {
         v.x = -1;
         v.y = 0;
         v.z = 0;
-        expect(p5.Vector.heading(v)).to.be.closeTo(Math.PI, 0.01);
+        expect(mockP5.Vector.heading(v)).to.be.closeTo(Math.PI, 0.01);
       });
     });
   });
@@ -1395,9 +1395,9 @@ suite('p5.Vector', function() {
   suite('p5.Vector.lerp(v1, v2, amt)', function() {
     var res, v1, v2;
     beforeEach(function() {
-      v1 = new p5.Vector(0, 0, 0);
-      v2 = new p5.Vector(2, 2, 2);
-      res = p5.Vector.lerp(v1, v2, 0.5);
+      v1 = new mockP5.Vector(0, 0, 0);
+      v2 = new mockP5.Vector(2, 2, 2);
+      res = mockP5.Vector.lerp(v1, v2, 0.5);
     });
 
     test('should not be undefined', function() {
@@ -1405,7 +1405,7 @@ suite('p5.Vector', function() {
     });
 
     test('should be a p5.Vector', function() {
-      expect(res).to.be.an.instanceof(p5.Vector);
+      expect(res).to.be.an.instanceof(mockP5.Vector);
     });
 
     test('should return neither v1 nor v2', function() {
@@ -1424,7 +1424,7 @@ suite('p5.Vector', function() {
     var w;
     beforeEach(function() {
       v.set(1, 2, 3);
-      w = new p5.Vector(4, 6, 8);
+      w = new mockP5.Vector(4, 6, 8);
     });
 
     test('if amt is 0, returns original vector', function() {
@@ -1475,9 +1475,9 @@ suite('p5.Vector', function() {
   suite('p5.Vector.slerp(v1, v2, amt)', function() {
     var res, v1, v2;
     beforeEach(function() {
-      v1 = new p5.Vector(1, 0, 0);
-      v2 = new p5.Vector(0, 0, 1);
-      res = p5.Vector.slerp(v1, v2, 1/3);
+      v1 = new mockP5.Vector(1, 0, 0);
+      v2 = new mockP5.Vector(0, 0, 1);
+      res = mockP5.Vector.slerp(v1, v2, 1/3);
     });
 
     test('should not be undefined', function() {
@@ -1485,7 +1485,7 @@ suite('p5.Vector', function() {
     });
 
     test('should be a p5.Vector', function() {
-      expect(res).to.be.an.instanceof(p5.Vector);
+      expect(res).to.be.an.instanceof(mockP5.Vector);
     });
 
     test('should return neither v1 nor v2', function() {
@@ -1500,14 +1500,14 @@ suite('p5.Vector', function() {
     });
 
     test('Make sure the interpolation in -1/3 is correct', function() {
-      p5.Vector.slerp(v1, v2, -1/3, res);
+      mockP5.Vector.slerp(v1, v2, -1/3, res);
       expect(res.x).to.be.closeTo(Math.cos(-Math.PI/6), 0.00001);
       expect(res.y).to.be.closeTo(0, 0.00001);
       expect(res.z).to.be.closeTo(Math.sin(-Math.PI/6), 0.00001);
     });
 
     test('Make sure the interpolation in 5/3 is correct', function() {
-      p5.Vector.slerp(v1, v2, 5/3, res);
+      mockP5.Vector.slerp(v1, v2, 5/3, res);
       expect(res.x).to.be.closeTo(Math.cos(5*Math.PI/6), 0.00001);
       expect(res.y).to.be.closeTo(0, 0.00001);
       expect(res.z).to.be.closeTo(Math.sin(5*Math.PI/6), 0.00001);
@@ -1518,7 +1518,7 @@ suite('p5.Vector', function() {
     var res, angle;
     beforeEach(function() {
       angle = Math.PI / 2;
-      res = p5.Vector.fromAngle(angle);
+      res = mockP5.Vector.fromAngle(angle);
     });
 
     test('should be a p5.Vector with values (0,1)', function() {
@@ -1530,7 +1530,7 @@ suite('p5.Vector', function() {
   suite('p5.Vector.random2D()', function() {
     var res;
     beforeEach(function() {
-      res = p5.Vector.random2D();
+      res = mockP5.Vector.random2D();
     });
 
     test('should be a unit p5.Vector', function() {
@@ -1541,7 +1541,7 @@ suite('p5.Vector', function() {
   suite('p5.Vector.random3D()', function() {
     var res;
     beforeEach(function() {
-      res = p5.Vector.random3D();
+      res = mockP5.Vector.random3D();
     });
     test('should be a unit p5.Vector', function() {
       expect(res.mag()).to.be.closeTo(1, 0.01);
@@ -1550,7 +1550,7 @@ suite('p5.Vector', function() {
 
   suite('array', function() {
     beforeEach(function() {
-      v = new p5.Vector(1, 23, 4);
+      v = new mockP5.Vector(1, 23, 4);
     });
 
     suite('p5.Vector.prototype.array() [INSTANCE]', function() {
@@ -1565,11 +1565,11 @@ suite('p5.Vector', function() {
 
     suite('p5.Vector.array() [CLASS]', function() {
       test('should return an array', function() {
-        expect(p5.Vector.array(v)).to.be.instanceof(Array);
+        expect(mockP5.Vector.array(v)).to.be.instanceof(Array);
       });
 
       test('should return an with the x y and z components', function() {
-        expect(p5.Vector.array(v)).to.eql([1, 23, 4]);
+        expect(mockP5.Vector.array(v)).to.eql([1, 23, 4]);
       });
     });
   });
@@ -1585,26 +1585,34 @@ suite('p5.Vector', function() {
         incoming_x = 1;
         incoming_y = 1;
         incoming_z = 1;
-        original_incoming = new p5.Vector(incoming_x, incoming_y, incoming_z);
+        original_incoming = new mockP5.Vector(
+          incoming_x, incoming_y, incoming_z
+        );
 
-        x_normal = new p5.Vector(3, 0, 0);
-        y_normal = new p5.Vector(0, 3, 0);
-        z_normal = new p5.Vector(0, 0, 3);
+        x_normal = new mockP5.Vector(3, 0, 0);
+        y_normal = new mockP5.Vector(0, 3, 0);
+        z_normal = new mockP5.Vector(0, 0, 3);
 
-        x_bounce_incoming = new p5.Vector(incoming_x, incoming_y, incoming_z);
+        x_bounce_incoming = new mockP5.Vector(
+          incoming_x, incoming_y, incoming_z
+        );
         x_bounce_outgoing = x_bounce_incoming.reflect(x_normal);
 
-        y_bounce_incoming = new p5.Vector(incoming_x, incoming_y, incoming_z);
+        y_bounce_incoming = new mockP5.Vector(
+          incoming_x, incoming_y, incoming_z
+        );
         y_bounce_outgoing = y_bounce_incoming.reflect(y_normal);
 
-        z_bounce_incoming = new p5.Vector(incoming_x, incoming_y, incoming_z);
+        z_bounce_incoming = new mockP5.Vector(
+          incoming_x, incoming_y, incoming_z
+        );
         z_bounce_outgoing = z_bounce_incoming.reflect(z_normal);
       });
 
       test('should return a p5.Vector', function() {
-        expect(x_bounce_incoming).to.be.an.instanceof(p5.Vector);
-        expect(y_bounce_incoming).to.be.an.instanceof(p5.Vector);
-        expect(z_bounce_incoming).to.be.an.instanceof(p5.Vector);
+        expect(x_bounce_incoming).to.be.an.instanceof(mockP5.Vector);
+        expect(y_bounce_incoming).to.be.an.instanceof(mockP5.Vector);
+        expect(z_bounce_incoming).to.be.an.instanceof(mockP5.Vector);
       });
 
       test('should update this', function() {
@@ -1678,31 +1686,39 @@ suite('p5.Vector', function() {
         incoming_x = 1;
         incoming_y = 1;
         incoming_z = 1;
-        original_incoming = new p5.Vector(incoming_x, incoming_y, incoming_z);
-        x_target = new p5.Vector();
-        y_target = new p5.Vector();
-        z_target = new p5.Vector();
+        original_incoming = new mockP5.Vector(
+          incoming_x, incoming_y, incoming_z
+        );
+        x_target = new mockP5.Vector();
+        y_target = new mockP5.Vector();
+        z_target = new mockP5.Vector();
 
-        x_normal = new p5.Vector(3, 0, 0);
-        y_normal = new p5.Vector(0, 3, 0);
-        z_normal = new p5.Vector(0, 0, 3);
+        x_normal = new mockP5.Vector(3, 0, 0);
+        y_normal = new mockP5.Vector(0, 3, 0);
+        z_normal = new mockP5.Vector(0, 0, 3);
 
-        x_bounce_incoming = new p5.Vector(incoming_x, incoming_y, incoming_z);
-        x_bounce_outgoing = p5.Vector.reflect(
+        x_bounce_incoming = new mockP5.Vector(
+          incoming_x, incoming_y, incoming_z
+        );
+        x_bounce_outgoing = mockP5.Vector.reflect(
           x_bounce_incoming,
           x_normal,
           x_target
         );
 
-        y_bounce_incoming = new p5.Vector(incoming_x, incoming_y, incoming_z);
-        y_bounce_outgoing = p5.Vector.reflect(
+        y_bounce_incoming = new mockP5.Vector(
+          incoming_x, incoming_y, incoming_z
+        );
+        y_bounce_outgoing = mockP5.Vector.reflect(
           y_bounce_incoming,
           y_normal,
           y_target
         );
 
-        z_bounce_incoming = new p5.Vector(incoming_x, incoming_y, incoming_z);
-        z_bounce_outgoing = p5.Vector.reflect(
+        z_bounce_incoming = new mockP5.Vector(
+          incoming_x, incoming_y, incoming_z
+        );
+        z_bounce_outgoing = mockP5.Vector.reflect(
           z_bounce_incoming,
           z_normal,
           z_target
@@ -1710,9 +1726,9 @@ suite('p5.Vector', function() {
       });
 
       test('should return a p5.Vector', function() {
-        expect(x_bounce_incoming).to.be.an.instanceof(p5.Vector);
-        expect(y_bounce_incoming).to.be.an.instanceof(p5.Vector);
-        expect(z_bounce_incoming).to.be.an.instanceof(p5.Vector);
+        expect(x_bounce_incoming).to.be.an.instanceof(mockP5.Vector);
+        expect(y_bounce_incoming).to.be.an.instanceof(mockP5.Vector);
+        expect(z_bounce_incoming).to.be.an.instanceof(mockP5.Vector);
       });
 
       test('should not update this', function() {
@@ -1789,8 +1805,8 @@ suite('p5.Vector', function() {
     let v1;
 
     beforeEach(function() {
-      v0 = new p5.Vector(0, 0, 0);
-      v1 = new p5.Vector(1, 2, 3);
+      v0 = new mockP5.Vector(0, 0, 0);
+      v1 = new mockP5.Vector(1, 2, 3);
     });
 
     suite('p5.Vector.prototype.mag() [INSTANCE]', function() {
@@ -1802,8 +1818,8 @@ suite('p5.Vector', function() {
 
     suite('p5.Vector.mag() [CLASS]', function() {
       test('should return the magnitude of the vector', function() {
-        expect(p5.Vector.mag(v0)).to.eql(0);
-        expect(p5.Vector.mag(v1)).to.eql(MAG);
+        expect(mockP5.Vector.mag(v0)).to.eql(0);
+        expect(mockP5.Vector.mag(v1)).to.eql(MAG);
       });
     });
   });
@@ -1815,8 +1831,8 @@ suite('p5.Vector', function() {
     let v1;
 
     beforeEach(function() {
-      v0 = new p5.Vector(0, 0, 0);
-      v1 = new p5.Vector(1, 2, 3);
+      v0 = new mockP5.Vector(0, 0, 0);
+      v1 = new mockP5.Vector(1, 2, 3);
     });
 
     suite('p5.Vector.prototype.magSq() [INSTANCE]', function() {
@@ -1828,8 +1844,8 @@ suite('p5.Vector', function() {
 
     suite('p5.Vector.magSq() [CLASS]', function() {
       test('should return the magnitude of the vector', function() {
-        expect(p5.Vector.magSq(v0)).to.eql(0);
-        expect(p5.Vector.magSq(v1)).to.eql(MAG);
+        expect(mockP5.Vector.magSq(v0)).to.eql(0);
+        expect(mockP5.Vector.magSq(v1)).to.eql(MAG);
       });
     });
   });
@@ -1837,8 +1853,8 @@ suite('p5.Vector', function() {
   suite('equals', function() {
     suite('p5.Vector.prototype.equals() [INSTANCE]', function() {
       test('should return false for parameters inequal to the vector', function() {
-        const v1 = new p5.Vector(0, -1, 1);
-        const v2 = new p5.Vector(1, 2, 3);
+        const v1 = new mockP5.Vector(0, -1, 1);
+        const v2 = new mockP5.Vector(1, 2, 3);
         const a2 = [1, 2, 3];
         expect(v1.equals(v2)).to.be.false;
         expect(v1.equals(a2)).to.be.false;
@@ -1846,50 +1862,50 @@ suite('p5.Vector', function() {
       });
 
       test('should return true for equal vectors', function() {
-        const v1 = new p5.Vector(0, -1, 1);
-        const v2 = new p5.Vector(0, -1, 1);
+        const v1 = new mockP5.Vector(0, -1, 1);
+        const v2 = new mockP5.Vector(0, -1, 1);
         expect(v1.equals(v2)).to.be.true;
       });
 
       test('should return true for arrays equal to the vector', function() {
-        const v1 = new p5.Vector(0, -1, 1);
+        const v1 = new mockP5.Vector(0, -1, 1);
         const a1 = [0, -1, 1];
         expect(v1.equals(a1)).to.be.true;
       });
 
       test('should return true for arguments equal to the vector', function() {
-        const v1 = new p5.Vector(0, -1, 1);
+        const v1 = new mockP5.Vector(0, -1, 1);
         expect(v1.equals(0, -1, 1)).to.be.true;
       });
     });
 
     suite('p5.Vector.equals() [CLASS]', function() {
       test('should return false for inequal parameters', function() {
-        const v1 = new p5.Vector(0, -1, 1);
-        const v2 = new p5.Vector(1, 2, 3);
+        const v1 = new mockP5.Vector(0, -1, 1);
+        const v2 = new mockP5.Vector(1, 2, 3);
         const a2 = [1, 2, 3];
-        expect(p5.Vector.equals(v1, v2)).to.be.false;
-        expect(p5.Vector.equals(v1, a2)).to.be.false;
-        expect(p5.Vector.equals(a2, v1)).to.be.false;
+        expect(mockP5.Vector.equals(v1, v2)).to.be.false;
+        expect(mockP5.Vector.equals(v1, a2)).to.be.false;
+        expect(mockP5.Vector.equals(a2, v1)).to.be.false;
       });
 
       test('should return true for equal vectors', function() {
-        const v1 = new p5.Vector(0, -1, 1);
-        const v2 = new p5.Vector(0, -1, 1);
-        expect(p5.Vector.equals(v1, v2)).to.be.true;
+        const v1 = new mockP5.Vector(0, -1, 1);
+        const v2 = new mockP5.Vector(0, -1, 1);
+        expect(mockP5.Vector.equals(v1, v2)).to.be.true;
       });
 
       test('should return true for equal vectors and arrays', function() {
-        const v1 = new p5.Vector(0, -1, 1);
+        const v1 = new mockP5.Vector(0, -1, 1);
         const a1 = [0, -1, 1];
-        expect(p5.Vector.equals(v1, a1)).to.be.true;
-        expect(p5.Vector.equals(a1, v1)).to.be.true;
+        expect(mockP5.Vector.equals(v1, a1)).to.be.true;
+        expect(mockP5.Vector.equals(a1, v1)).to.be.true;
       });
 
       test('should return true for equal arrays', function() {
         const a1 = [0, -1, 1];
         const a2 = [0, -1, 1];
-        expect(p5.Vector.equals(a1, a2)).to.be.true;
+        expect(mockP5.Vector.equals(a1, a2)).to.be.true;
       });
     });
   });
