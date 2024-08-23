@@ -592,7 +592,7 @@ export const TWO_PI = _PI * 2;
  * </code>
  * </div>
  */
-export const DEGREES = Symbol('degrees');
+// export const DEGREES = Symbol('degrees');
 
 /**
  * A `String` constant that's used to set the
@@ -638,7 +638,7 @@ export const DEGREES = Symbol('degrees');
  * </code>
  * </div>
  */
-export const RADIANS = Symbol('radians');
+// export const RADIANS = Symbol('radians');
 export const DEG_TO_RAD = _PI / 180.0;
 export const RAD_TO_DEG = 180.0 / _PI;
 
