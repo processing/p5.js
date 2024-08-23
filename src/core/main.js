@@ -30,6 +30,11 @@ import * as constants from './constants';
  * @return {p5}                 a p5 instance
  */
 class p5 {
+  static VERSION = constants.VERSION;
+  // This is a pointer to our global mode p5 instance, if we're in
+  // global mode.
+  static instance = null;
+
   constructor(sketch, node) {
     //////////////////////////////////////////////
     // PRIVATE p5 PROPERTIES AND METHODS
@@ -68,6 +73,7 @@ class p5 {
       keydown: null,
       keyup: null,
       keypress: null,
+      wheel: null,
       touchstart: null,
       touchmove: null,
       touchend: null,
@@ -80,10 +86,9 @@ class p5 {
     this.touchend = false;
 
     // States used in the custom random generators
-    this._lcg_random_state = null;
-    this._gaussian_previous = false;
+    this._lcg_random_state = null; // NOTE: move to random.js
+    this._gaussian_previous = false; // NOTE: move to random.js
 
-    this._events.wheel = null;
     this._loadingScreenId = 'p5_loading';
 
     // Allows methods to be registered on an instance that
@@ -492,6 +497,7 @@ class p5 {
       window.removeEventListener('blur', blurHandler);
     });
 
+    // Initialization complete, start runtime
     if (document.readyState === 'complete') {
       this._start();
     } else {
@@ -633,6 +639,11 @@ class p5 {
       }
     };
   }
+}
+
+// attach constants to p5 prototype
+for (const k in constants) {
+  p5.prototype[k] = constants[k];
 }
 
 //////////////////////////////////////////////
@@ -875,10 +886,6 @@ class p5 {
  * </div>
  */
 
-// This is a pointer to our global mode p5 instance, if we're in
-// global mode.
-p5.instance = null;
-
 /**
  * Turns off the parts of the Friendly Error System (FES) that impact performance.
  *
@@ -913,15 +920,6 @@ p5.instance = null;
  * </div>
  */
 p5.disableFriendlyErrors = false;
-
-// attach constants to p5 prototype
-for (const k in constants) {
-  p5.prototype[k] = constants[k];
-}
-
-// makes the `VERSION` constant available on the p5 object
-// in instance mode, even if it hasn't been instantiated yet
-p5.VERSION = constants.VERSION;
 
 // functions that cause preload to wait
 // more can be added by using registerPreloadMethod(func)

@@ -2,9 +2,8 @@ import p5 from '../core/main';
 import { initialize as initTranslator } from './internationalization';
 
 /**
- * _globalInit
+ * This file setup global mode automatic instantiation
  *
- * TODO: ???
  * if sketch is on window
  * assume "global" mode
  * and instantiate p5 automatically

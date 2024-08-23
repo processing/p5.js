@@ -17,7 +17,7 @@
     "tasks/**/*.js": "eslint",
     "src/**/*.js": [
       "eslint",
-      "node --require @babel/register ./utils/sample-linter.js"
+      "node ./utils/sample-linter.mjs"
     ]
   },
   "version": "1.9.4",
