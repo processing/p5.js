@@ -1215,13 +1215,9 @@ p5.prototype.image = function(
   // set defaults per spec: https://goo.gl/3ykfOq
 
   p5._validateParameters('image', arguments);
-  // check for P5 Graphics instance
-  let isP5G = img instanceof p5.Graphics ? true : false;
-  // check for P5 Framebuffer instance
-  let isP5Fbo = img instanceof p5.Framebuffer ? true : false;
-
-  if(this._renderer instanceof p5.RendererGL === false){
-    // From the 3rd arguement shift the assingment one position to the right
+  // If dz is not specified.
+  if (arguments.length % 2 === 1 ||  typeof arguments[9]  === 'string'){
+    // From the 3rd arguement shift the assingment one position to the right.
     yAlign = xAlign;
     xAlign = fit;
     fit = sHeight;
@@ -1231,8 +1227,8 @@ p5.prototype.image = function(
     sx = dHeight;
     dHeight = dWidth;
     dWidth = dz;
+    dz = 0;
   }
-
   let defW = img.width;
   let defH = img.height;
   yAlign = yAlign || constants.CENTER;
@@ -1297,37 +1293,19 @@ p5.prototype.image = function(
     _sh
   );
 
-  //if it is not graphics nor framebuffer but WEGL instance
-  //default to use 3D rendering
-  if (this._renderer instanceof p5.RendererGL && !isP5G && !isP5Fbo) {
-    if (dz === undefined){dz = 0;}
-    this._renderer.image3D(
-      img,
-      vals.sx,
-      vals.sy,
-      dz,
-      vals.sw,
-      vals.sh,
-      vals.dx,
-      vals.dy,
-      vals.dw,
-      vals.dh
-    );
-  }else {
-    // tint the image if there is a tint
-    // Default 2D rendering
-    this._renderer.image(
-      img,
-      vals.sx,
-      vals.sy,
-      vals.sw,
-      vals.sh,
-      vals.dx,
-      vals.dy,
-      vals.dw,
-      vals.dh
-    );
-  }
+  // tint the image if there is a tint
+  this._renderer.image(
+    img,
+    vals.sx,
+    vals.sy,
+    dz,
+    vals.sw,
+    vals.sh,
+    vals.dx,
+    vals.dy,
+    vals.dw,
+    vals.dh
+  );
 };
 
 /**
