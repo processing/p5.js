@@ -1486,7 +1486,7 @@ class Framebuffer {
    * // The `pixelColor` is logged to the console, returning red with full opacity.
    *
    * function setup() {
-   *   createCanvas(400, 400, WEBGL);
+   *   createCanvas(100, 100, WEBGL);
    *
    *   // Create an off-screen WebGL graphics buffer
    *   let myBuffer = createFramebuffer({ width: 200, height: 200 });
