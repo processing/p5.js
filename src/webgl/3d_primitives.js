@@ -3448,7 +3448,6 @@ p5.RendererGL.prototype.image = function(
   if (this._isErasing) {
     this.blendMode(constants.REMOVE);
   }
-  }
 };
 
 export default p5;
