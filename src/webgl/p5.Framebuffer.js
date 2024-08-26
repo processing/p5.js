@@ -1495,10 +1495,7 @@ class Framebuffer {
    *     background(0); // Set the background to black
    *     noStroke();
    *     fill(255, 0, 0); // Set the fill color to red
-   *     push();
-   *     translate(0, 0, 0);
    *     box(100);  // Draw a red box at the center
-   *     pop();
    *   });
    *
    *   // Get the color of a pixel at the center of the box (in 2D coordinates)
