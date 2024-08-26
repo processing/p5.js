@@ -327,6 +327,7 @@ p5.Shader = class {
    * </div>
    */
   modify(hooks) {
+    p5._validateParameters('p5.Shader.modify', arguments);
     const newHooks = {
       vertex: {},
       fragment: {}
@@ -345,7 +346,7 @@ p5.Shader = class {
         newHooks.fragment[key] = hooks[key];
       } else {
         console.error(
-          `We weren't able to find a hook matching the name ${key}. Try calling .inspect() on the shader you are trying to modify to make sure you're using the right name.`
+          `We weren't able to find a hook matching the name ${key}. Try calling .inspectHooks() on the shader you are trying to modify to make sure you're using the right name.`
         );
       }
     }
