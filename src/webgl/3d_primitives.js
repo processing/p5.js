@@ -3415,7 +3415,7 @@ p5.RendererGL.prototype.image = function(
   const width = viewport[2];
   const height = viewport[3];
   
-  if (!isPG and !isP5Fbo){
+  if (!isPG && !isP5Fbo){
     dx = (-width / 2) + dx;
     dy = (-height / 2) + dy;    
   }
