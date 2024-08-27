@@ -69,11 +69,13 @@
     "rollup": "^4.9.6",
     "rollup-plugin-string": "^3.0.0",
     "rollup-plugin-visualizer": "^5.12.0",
+    "typescript": "^5.5.4",
     "unplugin-swc": "^1.4.2",
     "vite": "^5.0.2",
     "vite-plugin-string": "^1.2.2",
     "vitest": "^2.0.4",
-    "webdriverio": "^8.38.2"
+    "webdriverio": "^8.38.2",
+    "zod": "^3.23.8"
   },
   "license": "LGPL-2.1",
   "main": "./lib/p5.min.js",
@@ -145,6 +147,8 @@
     }
   },
   "dependencies": {
-    "colorjs.io": "^0.5.2"
-  }
+    "colorjs.io": "^0.5.2",
+    "zod-validation-error": "^3.3.1"
+  },
+  "type": "module"
 }
