@@ -1206,25 +1206,33 @@ function exitFullscreen() {
  *   let rotationX = millis() / 1000;
  *   let rotationY = millis() / 1200;
  *
+ *   push();
+ *
  *   rotateX(rotationX);
  *   rotateY(rotationY);
  *
  *   // Convert world coordinates to screen coordinates
  *   let screenPos = vertices.map(v => worldToScreen(v));
  *
+ *   pop();
+ *
  *   // Display screen coordinates
  *   screenPos.forEach((pos, i) => {
+ *
+ *     let screenX = pos.x - width / 2;
+ *     let screenY = pos.y - height / 2;
  *     fill(255);
  *     noStroke();
- *     ellipse(pos.x, pos.y, 3, 3); // Draw points as small ellipses
+ *     ellipse(screenX, screenY, 3, 3); // Draw points as small ellipses
  *     fill(0);
- *     text(`(${pos.x.toFixed(1)}, ${pos.y.toFixed(1)})`, pos.x, pos.y);
+ *     text(`(${screenX.toFixed(1)}, ${screenY.toFixed(1)})`, screenX, screenY);
  *   });
  * }
  * </code>
  * </div>
  *
  */
+
 p5.prototype.worldToScreen = function(worldPosition) {
   const renderer = this._renderer;
   if (renderer.drawingContext instanceof CanvasRenderingContext2D) {
