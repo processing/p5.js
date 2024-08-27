@@ -80,6 +80,5 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
-  },
-  "type": "module"
+  }
 }
