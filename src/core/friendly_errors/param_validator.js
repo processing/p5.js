@@ -132,52 +132,47 @@ function generateZodSchemasForFunc(func) {
     overloads = funcInfo.overloads;
   }
 
-  // Generate a schema for a single parameter that can be of multiple constants.
-  // Note that because we're ultimately interested in the value of the constant,
-  // mapping constants to their values via `constantsMap` is necessary.
-  //
-  // Also, z.num() can only be used for a fixed set of allowable string values.
-  // However, our constants sometimes have numeric or non-primitive values.
-  // Therefore, z.union() is used here instead.
-  const generateConstantSchema = constants => {
-    return z.union(constants.map(c => z.literal(constantsMap[c])));
-  }
+  // Returns a schema for a single type, i.e. z.boolean() for `boolean`.
+  const generateTypeSchema = type => {
+    // Type only contains uppercase letters and underscores -> type is a
+    // constant. Note that because we're ultimately interested in the value of
+    // the constant, mapping constants to their values via `constantsMap` is
+    // necessary.
+    if (/^[A-Z_]+$/.test(type)) {
+      return z.literal(constantsMap[type]);
+    } else if (schemaMap[type]) {
+      return schemaMap[type];
+    } else {
+      // TODO: Make this throw an error once more types are supported.
+      console.log(`Warning: Zod schema not found for type '${type}'. Skip mapping`);
+      return undefined;
+    }
+  };
 
-  // Generate a schema for a single parameter that can be of multiple
-  // non-constant types, i.e. `String|Number|Array`.
-  const generateUnionSchema = types => {
-    return z.union(types
-      .filter(t => {
-        if (!schemaMap[t]) {
-          console.log(`Warning: Zod schema not found for type '${t}'. Skip mapping`);
-          return false;
-        }
-        return true;
-      })
-      .map(t => schemaMap[t]));
-  }
-
-  // Generate a schema for a single parameter.
+  // Generate a schema for a single parameter. In the case where a parameter can
+  // be of multiple types, `generateTypeSchema` is called for each type.
   const generateParamSchema = param => {
     const optional = param.endsWith('?');
     param = param.replace(/\?$/, '');
 
     let schema;
 
-    // The parameter is can be of multiple types / constants
+    // Generate a schema for a single parameter that can be of multiple
+    // types / constants, i.e. `String|Number|Array`.
+    //
+    // Here, z.union() is used over z.enum() (which seems more intuitive) for
+    // constants for the following reasons:
+    // 1) z.enum() only allows a fixed set of allowable string values. However,
+    // our constants sometimes have numeric or non-primitive values.
+    // 2) In some cases, the type can be constants or strings, making z.enum()
+    // insufficient for the use case.
     if (param.includes('|')) {
       const types = param.split('|');
-
-      // Note that for parameter types that are constants, such as for
-      // `blendMode`, the parameters are always all caps, sometimes with
-      // underscores, separated by `|` (i.e. "BLEND|DARKEST|LIGHTEST").
-      // Use a regex check here to filter them out and distinguish them from
-      // parameters that allow multiple types.
-      schema = types.every(t => /^[A-Z_]+$/.test(t))
-        ? generateConstantSchema(types)
-        : generateUnionSchema(types);
+      schema = z.union(types
+        .map(t => generateTypeSchema(t))
+        .filter(s => s !== undefined));
     } else {
-      schema = schemaMap[param];
+      schema = generateTypeSchema(param);
     }
 
     return optional ? schema.optional() : schema;
