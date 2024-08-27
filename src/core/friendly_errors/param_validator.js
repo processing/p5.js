@@ -2,14 +2,56 @@
  * @for p5
  * @requires core
  */
-// import p5 from '../main';
-import dataDoc from '../../../docs/parameterData.json';
+import p5 from '../main.js';
+import * as constants from '../constants.js';
 import { z } from 'zod';
 import { fromError } from 'zod-validation-error';
+import dataDoc from '../../../docs/parameterData.json' assert { type: 'json' };
 
 // Cache for Zod schemas
 let schemaRegistry = new Map();
 const arrDoc = JSON.parse(JSON.stringify(dataDoc));
+
+// Mapping names of p5 types to their constructor functions.
+// p5Constructors:
+//   - Color: f()
+//   - Graphics: f()
+//   - Vector: f()
+// and so on.
+const p5Constructors = {};
+// For speedup over many runs. `funcSpecificConstructors[func]` only has the
+// constructors for types which were seen earlier as args of `func`.
+const funcSpecificConstructors = {};
+
+for (let [key, value] of Object.entries(p5)) {
+  p5Constructors[key] = value;
+}
+
+// window.addEventListener('load', () => {
+//   // Make a list of all p5 classes to be used for argument validation
+//   // This must be done only when everything has loaded otherwise we get
+//   // an empty array.
+//   for (let key of Object.keys(p5)) {
+//     // Get a list of all constructors in p5. They are functions whose names
+//     // start with a capital letter.
+//     if (typeof p5[key] === 'function' && key[0] !== key[0].toLowerCase()) {
+//       p5Constructors[key] = p5[key];
+//     }
+//   }
+// });
+
+// `constantsMap` maps constants to their values, e.g.
+// {
+//   ADD: 'lighter',
+//   ALT: 18,
+//   ARROW: 'default',
+//   AUTO: 'auto',
+//   ...
+// }
+const constantsMap = {};
+for (const [key, value] of Object.entries(constants)) {
+  constantsMap[key] = value;
+}
 
 const schemaMap = {
   'Any': z.any(),
@@ -25,6 +67,30 @@ const schemaMap = {
   'String': z.string(),
   'String[]': z.array(z.string())
 };
+
+const webAPIObjects = [
+  'AudioNode',
+  'HTMLCanvasElement',
+  'HTMLElement',
+  'KeyboardEvent',
+  'MouseEvent',
+  'TouchEvent',
+  'UIEvent',
+  'WheelEvent'
+];
+
+function generateWebAPISchemas(apiObjects) {
+  return apiObjects.map(obj => {
+    return {
+      name: obj,
+      schema: z.custom((data) => data instanceof globalThis[obj], {
+        message: `Expected a ${obj}`
+      })
+    };
+  });
+}
+
+const webAPISchemas = generateWebAPISchemas(webAPIObjects);
 
 /**
  * This is a helper function that generates Zod schemas for a function based on
@@ -46,8 +112,6 @@ const schemaMap = {
  *
  * TODO:
  * - [ ] Support for p5 constructors
- * - [ ] Support for p5 constants
- * - [ ] Support for generating multiple schemas for optional parameters
  * - [ ] Support for more obscure types, such as `lerpPalette` and optional
  * objects in `p5.Geometry.computeNormals()`
  * (see https://github.com/processing/p5.js/pull/7186#discussion_r1724983249)
@@ -68,45 +132,95 @@ function generateZodSchemasForFunc(func) {
     overloads = funcInfo.overloads;
   }
 
-  const createParamSchema = param => {
+  // Generate a schema for a single parameter that can be of multiple constants.
+  // Note that because we're ultimately interested in the value of the constant,
+  // mapping constants to their values via `constantsMap` is necessary.
+  //
+  // Also, z.num() can only be used for a fixed set of allowable string values.
+  // However, our constants sometimes have numeric or non-primitive values.
+  // Therefore, z.union() is used here instead.
+  const generateConstantSchema = constants => {
+    return z.union(constants.map(c => z.literal(constantsMap[c])));
+  }
+
+  // Generate a schema for a single parameter that can be of multiple
+  // non-constant types, i.e. `String|Number|Array`.
+  const generateUnionSchema = types => {
+    return z.union(types
+      .filter(t => {
+        if (!schemaMap[t]) {
+          console.log(`Warning: Zod schema not found for type '${t}'. Skip mapping`);
+          return false;
+        }
+        return true;
+      })
+      .map(t => schemaMap[t]));
+  }
+
+  // Generate a schema for a single parameter.
+  const generateParamSchema = param => {
     const optional = param.endsWith('?');
     param = param.replace(/\?$/, '');
 
+    let schema;
+
+    // The parameter is can be of multiple types / constants
     if (param.includes('|')) {
       const types = param.split('|');
 
-      /*
-       * Note that for parameter types that are constants, such as for
-       * `blendMode`, the parameters are always all caps, sometimes with
-       * underscores, separated by `|`
-       * (i.e. "BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|
-       * REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|REMOVE|SUBTRACT").
-       * Use a regex check here to filter them out and distinguish them from
-       * parameters that allow multiple types.
-       */
-      return types.every(t => /^[A-Z_]+$/.test(t))
-        ? z.enum(types)
-        : z.union(types
-          .filter(t => {
-            if (!schemaMap[t]) {
-              console.warn(`Warning: Zod schema not found for type '${t}'. Skip mapping`);
-              return false;
-            }
-            return true;
-          })
-          .map(t => schemaMap[t]));
+      // Note that for parameter types that are constants, such as for
+      // `blendMode`, the parameters are always all caps, sometimes with
+      // underscores, separated by `|` (i.e. "BLEND|DARKEST|LIGHTEST").
+      // Use a regex check here to filter them out and distinguish them from
+      // parameters that allow multiple types.
+      schema = types.every(t => /^[A-Z_]+$/.test(t))
+        ? generateConstantSchema(types)
+        : generateUnionSchema(types);
+    } else {
+      schema = schemaMap[param];
     }
 
-    let schema = schemaMap[param];
     return optional ? schema.optional() : schema;
   };
 
-  const overloadSchemas = overloads.map(overload => {
-    // For now, ignore schemas that cannot be mapped to a defined type
-    return z.tuple(
-      overload
-        .map(p => createParamSchema(p))
-        .filter(schema => schema !== undefined)
+  // Note that in Zod, `optional()` only checks for undefined, not the absence
+  // of value.
+  // 
+  // Let's say we have a function with 3 parameters, and the last one is
+  // optional, i.e. func(a, b, c?). If we only have a z.tuple() for the
+  // parameters, where the third schema is optional, then we will only be able
+  // to validate func(10, 10, undefined), but not func(10, 10), which is
+  // a completely valid call.
+  //
+  // Therefore, on top of using `optional()`, we also have to generate parameter
+  // combinations that are valid for all numbers of parameters.
+  const generateOverloadCombinations = params => {
+    // No optional parameters, return the original parameter list right away.
+    if (!params.some(p => p.endsWith('?'))) {
+      return [params];
+    }
+
+    const requiredParamsCount = params.filter(p => !p.endsWith('?')).length;
+    const result = [];
+
+    for (let i = requiredParamsCount; i <= params.length; i++) {
+      result.push(params.slice(0, i));
+    }
+
+    return result;
+  }
+
+  // Generate schemas for each function overload and merge them
+  const overloadSchemas = overloads.flatMap(overload => {
+    const combinations = generateOverloadCombinations(overload);
+
+    return combinations.map(combo =>
+      z.tuple(
+        combo
+          .map(p => generateParamSchema(p))
+          // For now, ignore schemas that cannot be mapped to a defined type
+          .filter(schema => schema !== undefined)
+      )
     );
   });
 
@@ -181,7 +295,7 @@ function findClosestSchema(schema, args) {
     return score;
   };
 
-  // Default to the first schema, so that we will always return something.
+  // Default to the first schema, so that we are guaranteed to return a result.
   let closestSchema = schema._def.options[0];
   // We want to return the schema with the lowest score.
   let bestScore = Infinity;
@@ -198,13 +312,9 @@ function findClosestSchema(schema, args) {
   return closestSchema;
 }
 
-
 /**
  * Runs parameter validation by matching the input parameters to Zod schemas
  * generated from the parameter data from `docs/parameterData.json`.
- *
- * TODO:
- * - [ ] Turn it into a private method of `p5`.
  *
  * @param {String} func - Name of the function.
  * @param {Array} args - User input arguments.
@@ -213,10 +323,10 @@ function findClosestSchema(schema, args) {
  * @returns {any} [result.data] - The parsed data if validation was successful.
  * @returns {import('zod-validation-error').ZodValidationError} [result.error] - The validation error if validation failed.
  */
-export function validateParams(func, args) {
-  // if (p5.disableFriendlyErrors) {
-  //   return; // skip FES
-  // }
+p5._validateParams = function validateParams(func, args) {
+  if (p5.disableFriendlyErrors) {
+    return; // skip FES
+  }
 
   let funcSchemas = schemaRegistry.get(func);
   if (!funcSchemas) {
@@ -242,7 +352,12 @@ export function validateParams(func, args) {
   }
 }
 
-const result = validateParams('p5.fill', [1]);
+p5.prototype._validateParams = p5._validateParams;
+export default p5;
+
+const result = p5._validateParams('arc', [200, 100, 100, 80, 0, Math.PI, 'pie']);
 if (!result.success) {
   console.log(result.error.toString());
+} else {
+  console.log('Validation successful');
 }
