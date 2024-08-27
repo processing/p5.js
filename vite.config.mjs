@@ -2,6 +2,7 @@ import { defineConfig } from 'vitest/config';
 import vitePluginString from 'vite-plugin-string';
 
 export default defineConfig({
+  root: './preview',
   plugins: [
     vitePluginString({
       include: [
@@ -10,9 +11,9 @@ export default defineConfig({
     })
   ],
   test: {
+    root: './',
     include: [
       './test/unit/**/*.js'
-      // './test/unit/color/*.js'
     ],
     exclude: [
       './test/unit/spec.js',
@@ -23,7 +24,6 @@ export default defineConfig({
     globals: true,
     browser: {
       enabled: true,
-      // headless: true,
       name: 'chrome',
       provider: 'webdriverio'
     }
