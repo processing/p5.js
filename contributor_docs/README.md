@@ -1,17 +1,17 @@
 # 🌸 Welcome! 🌺
 
-Thanks for your interest in contributing to p5.js! p5.js is a collaborative project with contributions from many volunteers. Our community is always looking for contributors and appreciates involvement in all forms. We acknowledge that not everyone has the capacity, time, or financial means to participate actively or in the same ways. We want to expand the meaning of the word “contributor.” Whether you're an experienced developer or just starting out, we value your involvement. Your unique perspectives, skills, and experiences enrich our community, and we encourage you to get involved in a way that works for you. It includes documentation, teaching, writing code, making art, writing, design, activism, organizing, curating, or anything else you might imagine. Our [contribute page](https://p5js.org/contributor-docs/#/) gives an overview of different ways to get involved and contribute.
+Thanks for your interest in contributing to p5.js! p5.js is a collaborative project with contributions from many volunteers. Our community is always looking for contributors and appreciates involvement in all forms. We acknowledge that not everyone has the capacity, time, or financial means to participate actively or in the same ways. We want to expand the meaning of the word “contributor.” Whether you're an experienced developer or just starting out, we value your involvement. Your unique perspectives, skills, and experiences enrich our community, and we encourage you to get involved in a way that works for you. It includes documentation, teaching, writing code, making art, writing, design, activism, organizing, curating, or anything else you might imagine. Our [contribute page](https://p5js.org/contribute/) gives an overview of different ways to get involved and contribute.
 
 p5.js project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. We use the @all-contributors bot to handle adding people to the README.md file. You can ask @all-contributors bot to add you in an issue or PR comment like so:
 ```
 @all-contributors please add @[your GitHub handle] for [your contribution type]
 ```
-You can find relevant contribution type [here](https://allcontributors.org/docs/en/emoji-key). Although we will usually automatically add you to the contributor list using the bot after merging your PR. The contributor docs are published on p5.js [website](https://p5js.org/contributor-docs/#/), and hosted on p5.js [GitHub repository](https://github.com/processing/p5.js/tree/main/contributor_docs).
+You can find relevant contribution type [here](https://allcontributors.org/docs/en/emoji-key). Although we will usually automatically add you to the contributor list using the bot after merging your PR. The contributor docs are published on p5.js [website](https://p5js.org/contribute/), and hosted on p5.js [GitHub repository](https://github.com/processing/p5.js/tree/main/contributor_docs).
 
 # Before Contributing
 Contributing to p5.js should be a stress free experience and we welcome contributions of all levels, whether you are just fixing a small typo in the documentation or refactoring complex 3D rendering functionalities. However there are just a few things you should be familiar with before starting your contribution.
 
-First, please have a read through our [community statement](https://p5js.org/community/).
+First, please have a read through our [community statement](https://p5js.org/about/#community-statement).
 
 Next, we are currently prioritizing work that expands access (inclusion and accessibility) to p5.js! See [our access statement](./access.md) for more details.
 
