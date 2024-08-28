@@ -31,7 +31,7 @@ The FES is a part of the p5.js' [internationalization] effort. We generate all F
 
 We welcome contributions from all around the world! 🌐
 
-[internationalization]: https://github.com/processing/p5.js/blob/main/contributor_docs/internationalization.md
+[internationalization]: https://github.com/processing/p5.js/blob/main/contributor_docs/archive/internationalization.md
 [i18next]: https://www.i18next.com/
 
 
@@ -106,7 +106,7 @@ translator('fes.fileLoadError.image', { suggestion });
 
 The [internationalization doc] has a step-by-step guide on adding and modifying translation files.
 
-[internationalization doc]: https://github.com/processing/p5.js/blob/main/contributor_docs/internationalization.md
+[internationalization doc]: https://github.com/processing/p5.js/blob/main/contributor_docs/archive/internationalization.md
 
 
 ## Understanding How FES Works
@@ -135,10 +135,10 @@ These functions are mainly responsible for catching errors and generating FES me
 
 For full reference, please see our [Dev Notes].
 
-[`_friendlyFileLoadError()`]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_contribution_guide.md#_friendlyerror
-[`_validateParameters()`]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_contribution_guide.md#_validateparameters
-[`_fesErrorMontitor()`]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_contribution_guide.md#feserrormonitor
-[Dev Notes]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_contribution_guide.md#-development-notes
+[`_friendlyFileLoadError()`]: ./fes_contribution_guide.md#_friendlyerror
+[`_validateParameters()`]: ./fes_contribution_guide.md#_validateparameters
+[`_fesErrorMontitor()`]: ./fes_contribution_guide.md#feserrormonitor
+[Dev Notes]: ./fes_contribution_guide.md#-development-notes
 
 
 #### FES Message Displayer

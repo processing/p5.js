@@ -32,7 +32,7 @@ This is a relatively long and comprehensive document but we will try to signpost
     - [Source code](#source-code)
     - [Unit tests](#unit-tests)
     - [Inline documentation](#inline-documentation)
-    - [Internationalization](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#internationalization)
+    - [Internationalization](./contributor_guidelines.md#internationalization)
     - [Accessibility](#accessibility)
   - [Code standard](#code-standard)
   - [Software Design principles](#software-design-principles)
@@ -173,7 +173,7 @@ For feature enhancement proposals to be accepted they must be approved by at lea
 
 This template should be used if you wish to propose a new feature to be added to p5.js. For example to add support for drawing native HTML `<table>` elements with a new `createTable` function. Some proposals may overlap with existing feature enhancement proposals, in these cases you should just choose whichever template you feel is most appropriate.
 
-Accordingly, the template form fields are nearly identical to the field of the "Existing Feature Enhancement." As such please see the [previous section](#existing-feature-enchancement) for details about how to fill in each field.
+Accordingly, the template form fields are nearly identical to the field of the "Existing Feature Enhancement." As such please see the [previous section](#existing-feature-enhancement) for details about how to fill in each field.
 
 For new feature request proposals to be accepted, they must be approved by at least 2 [area stewards or maintainers](https://github.com/processing/p5.js#stewards) before work can begin on a pull request. 
 
@@ -213,7 +213,7 @@ Similarly, you should work at your own pace and be confident that there is no ha
 
 ## Quick Get Started For Developers
 
-If you want to work/contribute to p5.js'🌸 codebase as a developer, either directly for improving p5.js or for improving its sub-projects like [Friendly Error Systems](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md), you can follow the following steps:
+If you want to work/contribute to p5.js'🌸 codebase as a developer, either directly for improving p5.js or for improving its sub-projects like [Friendly Error Systems](./friendly_error_system.md), you can follow the following steps:
 
 1. [Create a fork of p5.js.](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
 2. [Clone your created fork to your computer.](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
@@ -406,7 +406,7 @@ If you are going to work on unit tests, please see [here](./unit_testing.md). No
 
 ### Inline documentation
 
-If you are going to work on the inline documentation, as known as p5.js reference, please see [here](./contributing_to_the_p5.js_reference.md).
+If you are going to work on the inline documentation, as known as p5.js reference, please see [here](./contributing_to_the_p5js_reference.md).
 
 
 ### Accessibility
