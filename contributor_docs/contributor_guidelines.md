@@ -32,7 +32,6 @@ This is a relatively long and comprehensive document but we will try to signpost
     - [Source code](#source-code)
     - [Unit tests](#unit-tests)
     - [Inline documentation](#inline-documentation)
-    - [Internationalization](./contributor_guidelines.md#internationalization)
     - [Accessibility](#accessibility)
   - [Code standard](#code-standard)
   - [Software Design principles](#software-design-principles)
