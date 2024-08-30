@@ -27,7 +27,8 @@
     "gifenc": "^1.0.3",
     "libtess": "^1.2.2",
     "omggif": "^1.0.10",
-    "opentype.js": "^1.3.1"
+    "opentype.js": "^1.3.1",
+    "zod-validation-error": "^3.3.1"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
@@ -47,11 +48,13 @@
     "rollup": "^4.9.6",
     "rollup-plugin-string": "^3.0.0",
     "rollup-plugin-visualizer": "^5.12.0",
+    "typescript": "^5.5.4",
     "unplugin-swc": "^1.4.2",
     "vite": "^5.0.2",
     "vite-plugin-string": "^1.2.2",
     "vitest": "^2.0.4",
-    "webdriverio": "^8.38.2"
+    "webdriverio": "^8.38.2",
+    "zod": "^3.23.8"
   },
   "license": "LGPL-2.1",
   "main": "./lib/p5.min.js",
