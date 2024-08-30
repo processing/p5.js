@@ -1045,6 +1045,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/cog25"><img src="https://avatars.githubusercontent.com/u/74242561?v=4?s=120" width="120px;" alt="cog25"/><br /><sub><b>cog25</b></sub></a><br /><a href="#translation-cog25" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/AaratiAkkapeddi"><img src="https://avatars.githubusercontent.com/u/7389189?v=4?s=120" width="120px;" alt="Aarati Akkapeddi "/><br /><sub><b>Aarati Akkapeddi </b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=AaratiAkkapeddi" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://mayaarguelles.com/"><img src="https://avatars.githubusercontent.com/u/29130029?v=4?s=120" width="120px;" alt="Maya Arguelles"/><br /><sub><b>Maya Arguelles</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=mayaarguelles" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
