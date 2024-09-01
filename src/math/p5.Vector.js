@@ -3901,6 +3901,30 @@ p5.Vector = class {
  * @method clampToZero
  * @return {p5.Vector} with components very close to zero replaced with zero.
  * @chainable
+ * @example
+ * <div">
+ * <code>
+ * function setup() {
+ *   // Create a p5.Vector object.
+ *   let v = p5.Vector.random2D();
+ *
+ *   // Prints "p5.Vector Object : [x, y, 0]" to the console
+ *   // where x and y are small random numbers.
+ *   print(v.toString());
+ * }
+ * function setup() {
+ *   // Create a new vector
+ *   let v = createVector(0.0000000000000002220446049250313, 5 );
+ *
+ *   console.log('Before:', v.x , v.y);
+ *
+ *   // Clamp components close to zero to zero
+ *   v.clampToZero();
+ *   console.log('After:', v.x , v.y);
+ *   describe('Round down very small numbers to zero');
+ * }
+ * </code>
+ * </div>
  */
   clampToZero() {
     this.x = this._clampToZero(this.x);
