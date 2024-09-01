@@ -1915,7 +1915,8 @@ suite('p5.Vector', function() {
       });
 
       test('should clamp very small numbers in all components of a 3D vector to zero', function() {
-        v = new p5.Vector(0.0000000000000002220446049250313, -0.0000000000000002220446049250313, 0.0000000000000002220446049250313);
+        v = new p5.Vector(0.0000000000000002220446049250313,
+                          -0.0000000000000002220446049250313, 0.0000000000000002220446049250313);
         v.clampToZero();
         expect(v.x).to.equal(0);
         expect(v.y).to.equal(0);
