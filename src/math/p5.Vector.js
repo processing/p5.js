@@ -3905,14 +3905,6 @@ p5.Vector = class {
  * <div">
  * <code>
  * function setup() {
- *   // Create a p5.Vector object.
- *   let v = p5.Vector.random2D();
- *
- *   // Prints "p5.Vector Object : [x, y, 0]" to the console
- *   // where x and y are small random numbers.
- *   print(v.toString());
- * }
- * function setup() {
  *   // Create a new vector
  *   let v = createVector(0.0000000000000002220446049250313, 5 );
  *
