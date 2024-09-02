@@ -34,8 +34,7 @@ class p5 {
   // This is a pointer to our global mode p5 instance, if we're in
   // global mode.
   static instance = null;
-  #lifecycleHooks = {
-    init: [],
+  static lifecycleHooks = {
     presetup: [],
     postsetup: [],
     predraw: [],
@@ -97,17 +96,6 @@ class p5 {
 
     this._loadingScreenId = 'p5_loading';
 
-    // Allows methods to be registered on an instance that
-    // are instance-specific.
-    this._registeredMethods = {};
-    const methods = Object.getOwnPropertyNames(p5.prototype._registeredMethods);
-
-    for (const prop of methods) {
-      this._registeredMethods[prop] = p5.prototype._registeredMethods[
-        prop
-      ].slice();
-    }
-
     if (window.DeviceOrientationEvent) {
       this._events.deviceorientation = null;
     }
@@ -117,13 +105,6 @@ class p5 {
 
     // ensure correct reporting of window dimensions
     this._updateWindowSize();
-
-    // call any registered init functions
-    this._registeredMethods.init.forEach(function(f) {
-      if (typeof f !== 'undefined') {
-        f.call(this);
-      }
-    }, this);
 
     const friendlyBindGlobal = this._createFriendlyGlobalFunctionBinder();
     // If the user has created a global setup or draw function,
@@ -188,7 +169,7 @@ class p5 {
     };
     window.addEventListener('focus', focusHandler);
     window.addEventListener('blur', blurHandler);
-    this.registerMethod('remove', () => {
+    p5.lifecycleHooks.remove.push(function() {
       window.removeEventListener('focus', focusHandler);
       window.removeEventListener('blur', blurHandler);
     });
@@ -206,7 +187,12 @@ class p5 {
     const lifecycles = {};
     addon(p5, p5.prototype, lifecycles);
 
-    // NOTE: Handle lifecycle hooks
+    const validLifecycles = Object.keys(p5.lifecycleHooks);
+    for(const name of validLifecycles){
+      if(typeof lifecycles[name] === 'function'){
+        p5.lifecycleHooks[name].push(lifecycles[name]);
+      }
+    }
   }
 
   async #_start() {
@@ -225,9 +211,7 @@ class p5 {
 
   async #_setup() {
     // Run `presetup` hooks
-    for(const hook of this.#lifecycleHooks.presetup){
-      await hook.call(this);
-    }
+    await this._runLifecycleHook('presetup');
 
     // Always create a default canvas.
     // Later on if the user calls createCanvas, this default one
@@ -238,13 +222,10 @@ class p5 {
       constants.P2D
     );
 
-    const context = this._isGlobal ? window : this;
-
     // Record the time when sketch starts
     this._millisStart = window.performance.now();
 
-    // Short-circuit on this, in case someone used the library in "global"
-    // mode earlier
+    const context = this._isGlobal ? window : this;
     if (typeof context.setup === 'function') {
       await context.setup();
     }
@@ -267,12 +248,15 @@ class p5 {
     }
 
     // Run `postsetup` hooks
-    for(const hook of this.#lifecycleHooks.postsetup){
-      await hook.call(this);
-    }
+    await this._runLifecycleHook('postsetup');
   }
 
-  #_draw(requestAnimationFrameTimestamp) {
+  // While '#_draw' here is async, it is not awaited as 'requestAnimationFrame'
+  // does not await its callback. Thus it is not recommended for 'draw()` to be
+  // async and use await within as the next frame may start rendering before the
+  // current frame finish awaiting. The same goes for lifecycle hooks 'predraw'
+  // and 'postdraw'.
+  async #_draw(requestAnimationFrameTimestamp) {
     const now = requestAnimationFrameTimestamp || window.performance.now();
     const timeSinceLastFrame = now - this._lastTargetFrameTime;
     const targetTimeBetweenFrames = 1000 / this._targetFrameRate;
@@ -294,7 +278,7 @@ class p5 {
       this.deltaTime = now - this._lastRealFrameTime;
       this._setProperty('deltaTime', this.deltaTime);
       this._frameRate = 1000.0 / this.deltaTime;
-      this.redraw();
+      await this.redraw();
       this._lastTargetFrameTime = Math.max(this._lastTargetFrameTime
         + targetTimeBetweenFrames, now);
       this._lastRealFrameTime = now;
@@ -358,7 +342,7 @@ class p5 {
    * </code>
    * </div>
    */
-  remove() {
+  async remove() {
     // Remove start listener to prevent orphan canvas being created
     if(this._startListener){
       window.removeEventListener('load', this._startListener, false);
@@ -389,14 +373,10 @@ class p5 {
         }
       }
 
-      // call any registered remove functions
-      const self = this;
-      this._registeredMethods.remove.forEach(f => {
-        if (typeof f !== 'undefined') {
-          f.call(self);
-        }
-      });
+      // Run `remove` hooks
+      await this._runLifecycleHook('remove');
     }
+
     // remove window bound properties and methods
     if (this._isGlobal) {
       for (const p in p5.prototype) {
@@ -419,18 +399,9 @@ class p5 {
     }
   }
 
-  // Function to invoke registered hooks before or after events such as preload, setup, and pre/post draw.
-  callRegisteredHooksFor(hookName) {
-    const target = this || p5.prototype;
-    // NOTE: is this really necessary?
-    const context = this._isGlobal ? window : this;
-    if (target._registeredMethods.hasOwnProperty(hookName)) {
-      const methods = target._registeredMethods[hookName];
-      for (const method of methods) {
-        if (typeof method === 'function') {
-          method.call(context);
-        }
-      }
+  async _runLifecycleHook(hookName) {
+    for(const hook of p5.lifecycleHooks[hookName]){
+      await hook.call(this);
     }
   }
 
@@ -461,32 +432,6 @@ class p5 {
     this[prop] = value;
     if (this._isGlobal) {
       window[prop] = value;
-    }
-  }
-
-  registerMethod(name, m) {
-    const target = this || p5.prototype;
-    if (!target._registeredMethods.hasOwnProperty(name)) {
-      target._registeredMethods[name] = [];
-    }
-    target._registeredMethods[name].push(m);
-  }
-
-  unregisterMethod(name, m) {
-    const target = this || p5.prototype;
-    if (target._registeredMethods.hasOwnProperty(name)) {
-      const methods = target._registeredMethods[name];
-      const indexesToRemove = [];
-      // Find all indexes of the method `m` in the array of registered methods
-      for (let i = 0; i < methods.length; i++) {
-        if (methods[i] === m) {
-          indexesToRemove.push(i);
-        }
-      }
-      // Remove all instances of the method `m` from the array
-      for (let i = indexesToRemove.length - 1; i >= 0; i--) {
-        methods.splice(indexesToRemove[i], 1);
-      }
     }
   }
 
@@ -793,7 +738,5 @@ for (const k in constants) {
  * </div>
  */
 p5.disableFriendlyErrors = false;
-
-p5.prototype._registeredMethods = { init: [], pre: [], post: [], remove: [] };
 
 export default p5;

@@ -232,7 +232,7 @@ p5.prototype._runIfPreloadsAreDone = function() {
     if (loadingScreen) {
       loadingScreen.parentNode.removeChild(loadingScreen);
     }
-    this.callRegisteredHooksFor('afterPreload');
+    // this.callRegisteredHooksFor('afterPreload');
     if (!this._setupDone) {
       this._lastTargetFrameTime = window.performance.now();
       this._lastRealFrameTime = window.performance.now();
