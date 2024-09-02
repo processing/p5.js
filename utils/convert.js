@@ -549,6 +549,10 @@ function buildParamDocs(docs) {
   out.end();
 }
 
+if (!fs.existsSync(path.join(__dirname, '../docs/reference'))) {
+  fs.mkdirSync(path.join(__dirname, '../docs/reference'));
+}
+
 fs.writeFileSync(path.join(__dirname, '../docs/reference/data.json'), JSON.stringify(converted, null, 2));
 fs.writeFileSync(path.join(__dirname, '../docs/reference/data.min.json'), JSON.stringify(converted));
 buildParamDocs(JSON.parse(JSON.stringify(converted)));
