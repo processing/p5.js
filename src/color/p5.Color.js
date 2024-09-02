@@ -488,6 +488,10 @@ p5.Color = class Color {
       return to(this.color, 'hsl').coords[2] / 100 * this.maxes[this.mode][2];
     }
   }
+
+  get levels() {
+    return [...this.color.coords, this.color.alpha].map(v => v * 255);
+  }
 };
 
 export default p5.Color;
