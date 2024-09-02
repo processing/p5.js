@@ -41,7 +41,7 @@ class p5 {
     //////////////////////////////////////////////
 
     this._setupDone = false;
-    this._preloadDone = false;
+    // this._preloadDone = false;
     // for handling hidpi
     this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
     this._maxAllowedPixelDimensions = 0;
@@ -50,7 +50,7 @@ class p5 {
     this._elements = [];
     this._glAttributes = null;
     this._requestAnimId = 0;
-    this._preloadCount = 0;
+    // this._preloadCount = 0;
     this._isGlobal = false;
     this._loop = true;
     this._startListener = null;
@@ -109,317 +109,55 @@ class p5 {
       this._events.devicemotion = null;
     }
 
-    // Function to invoke registered hooks before or after events such as preload, setup, and pre/post draw.
-    p5.prototype.callRegisteredHooksFor = function (hookName) {
-      const target = this || p5.prototype;
-      const context = this._isGlobal ? window : this;
-      if (target._registeredMethods.hasOwnProperty(hookName)) {
-        const methods = target._registeredMethods[hookName];
-        for (const method of methods) {
-          if (typeof method === 'function') {
-            method.call(context);
-          }
-        }
-      }
-    };
+    // this._runIfPreloadsAreDone = function() {
+    //   const context = this._isGlobal ? window : this;
+    //   if (context._preloadCount === 0) {
+    //     const loadingScreen = document.getElementById(context._loadingScreenId);
+    //     if (loadingScreen) {
+    //       loadingScreen.parentNode.removeChild(loadingScreen);
+    //     }
+    //     this.callRegisteredHooksFor('afterPreload');
+    //     if (!this._setupDone) {
+    //       this._lastTargetFrameTime = window.performance.now();
+    //       this._lastRealFrameTime = window.performance.now();
+    //       context._setup();
+    //       if (!this._recording) {
+    //         context._draw();
+    //       }
+    //     }
+    //   }
+    // };
 
-    this._start = async () => {
-      // Find node if id given
-      if (this._userNode) {
-        if (typeof this._userNode === 'string') {
-          this._userNode = document.getElementById(this._userNode);
-        }
-      }
+    // this._decrementPreload = function() {
+    //   const context = this._isGlobal ? window : this;
+    //   if (!context._preloadDone && typeof context.preload === 'function') {
+    //     context._setProperty('_preloadCount', context._preloadCount - 1);
+    //     context._runIfPreloadsAreDone();
+    //   }
+    // };
 
-      const context = this._isGlobal ? window : this;
-      if (context.preload) {
-        this.callRegisteredHooksFor('beforePreload');
-        // Setup loading screen
-        // Set loading screen into dom if not present
-        // Otherwise displays and removes user provided loading screen
-        let loadingScreen = document.getElementById(this._loadingScreenId);
-        if (!loadingScreen) {
-          loadingScreen = document.createElement('div');
-          loadingScreen.innerHTML = 'Loading...';
-          loadingScreen.style.position = 'absolute';
-          loadingScreen.id = this._loadingScreenId;
-          const node = this._userNode || document.body;
-          node.appendChild(loadingScreen);
-        }
-        const methods = this._preloadMethods;
-        for (const method in methods) {
-          // default to p5 if no object defined
-          methods[method] = methods[method] || p5;
-          let obj = methods[method];
-          //it's p5, check if it's global or instance
-          if (obj === p5.prototype || obj === p5) {
-            if (this._isGlobal) {
-              window[method] = this._wrapPreload(this, method);
-            }
-            obj = this;
-          }
-          this._registeredPreloadMethods[method] = obj[method];
-          obj[method] = this._wrapPreload(obj, method);
-        }
+    // this._wrapPreload = function(obj, fnName) {
+    //   return (...args) => {
+    //     //increment counter
+    //     this._incrementPreload();
+    //     //call original function
+    //     return this._registeredPreloadMethods[fnName].apply(obj, args);
+    //   };
+    // };
 
-        context.preload();
-        this._runIfPreloadsAreDone();
-      } else {
-        await this._setup();
-        if (!this._recording) {
-          this._draw();
-        }
-      }
-    };
+    // this._incrementPreload = function() {
+    //   const context = this._isGlobal ? window : this;
+    //   // Do nothing if we tried to increment preloads outside of `preload`
+    //   if (context._preloadDone) return;
+    //   context._setProperty('_preloadCount', context._preloadCount + 1);
+    // };
 
-    this._runIfPreloadsAreDone = function() {
-      const context = this._isGlobal ? window : this;
-      if (context._preloadCount === 0) {
-        const loadingScreen = document.getElementById(context._loadingScreenId);
-        if (loadingScreen) {
-          loadingScreen.parentNode.removeChild(loadingScreen);
-        }
-        this.callRegisteredHooksFor('afterPreload');
-        if (!this._setupDone) {
-          this._lastTargetFrameTime = window.performance.now();
-          this._lastRealFrameTime = window.performance.now();
-          context._setup();
-          if (!this._recording) {
-            context._draw();
-          }
-        }
-      }
-    };
-
-    this._decrementPreload = function() {
-      const context = this._isGlobal ? window : this;
-      if (!context._preloadDone && typeof context.preload === 'function') {
-        context._setProperty('_preloadCount', context._preloadCount - 1);
-        context._runIfPreloadsAreDone();
-      }
-    };
-
-    this._wrapPreload = function(obj, fnName) {
-      return (...args) => {
-        //increment counter
-        this._incrementPreload();
-        //call original function
-        return this._registeredPreloadMethods[fnName].apply(obj, args);
-      };
-    };
-
-    this._incrementPreload = function() {
-      const context = this._isGlobal ? window : this;
-      // Do nothing if we tried to increment preloads outside of `preload`
-      if (context._preloadDone) return;
-      context._setProperty('_preloadCount', context._preloadCount + 1);
-    };
-
-    this._setup = async () => {
-      this.callRegisteredHooksFor('beforeSetup');
-      // Always create a default canvas.
-      // Later on if the user calls createCanvas, this default one
-      // will be replaced
-      this.createCanvas(
-        this._defaultCanvasSize.width,
-        this._defaultCanvasSize.height,
-        constants.P2D
-      );
-
-      // return preload functions to their normal vals if switched by preload
-      const context = this._isGlobal ? window : this;
-      if (typeof context.preload === 'function') {
-        for (const f in this._preloadMethods) {
-          context[f] = this._preloadMethods[f][f];
-          if (context[f] && this) {
-            context[f] = context[f].bind(this);
-          }
-        }
-      }
-
-      // Record the time when sketch starts
-      this._millisStart = window.performance.now();
-
-      context._preloadDone = true;
-
-      // Short-circuit on this, in case someone used the library in "global"
-      // mode earlier
-      if (typeof context.setup === 'function') {
-        await context.setup();
-      }
-
-      // unhide any hidden canvases that were created
-      const canvases = document.getElementsByTagName('canvas');
-
-      for (const k of canvases) {
-        if (k.dataset.hidden === 'true') {
-          k.style.visibility = '';
-          delete k.dataset.hidden;
-        }
-      }
-
-      this._lastTargetFrameTime = window.performance.now();
-      this._lastRealFrameTime = window.performance.now();
-      this._setupDone = true;
-      if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
-        this._updateAccsOutput();
-      }
-      this.callRegisteredHooksFor('afterSetup');
-    };
-
-    this._draw = requestAnimationFrameTimestamp => {
-      const now = requestAnimationFrameTimestamp || window.performance.now();
-      const time_since_last = now - this._lastTargetFrameTime;
-      const target_time_between_frames = 1000 / this._targetFrameRate;
-
-      // only draw if we really need to; don't overextend the browser.
-      // draw if we're within 5ms of when our next frame should paint
-      // (this will prevent us from giving up opportunities to draw
-      // again when it's really about time for us to do so). fixes an
-      // issue where the frameRate is too low if our refresh loop isn't
-      // in sync with the browser. note that we have to draw once even
-      // if looping is off, so we bypass the time delay if that
-      // is the case.
-      const epsilon = 5;
-      if (
-        !this._loop ||
-        time_since_last >= target_time_between_frames - epsilon
-      ) {
-        //mandatory update values(matrixes and stack)
-        this.deltaTime = now - this._lastRealFrameTime;
-        this._setProperty('deltaTime', this.deltaTime);
-        this._frameRate = 1000.0 / this.deltaTime;
-        this.redraw();
-        this._lastTargetFrameTime = Math.max(this._lastTargetFrameTime
-          + target_time_between_frames, now);
-        this._lastRealFrameTime = now;
-
-        // If the user is actually using mouse module, then update
-        // coordinates, otherwise skip. We can test this by simply
-        // checking if any of the mouse functions are available or not.
-        // NOTE : This reflects only in complete build or modular build.
-        if (typeof this._updateMouseCoords !== 'undefined') {
-          this._updateMouseCoords();
-
-          //reset delta values so they reset even if there is no mouse event to set them
-          // for example if the mouse is outside the screen
-          this._setProperty('movedX', 0);
-          this._setProperty('movedY', 0);
-        }
-      }
-
-      // get notified the next time the browser gives us
-      // an opportunity to draw.
-      if (this._loop) {
-        this._requestAnimId = window.requestAnimationFrame(this._draw);
-      }
-    };
-
-    this._setProperty = (prop, value) => {
-      this[prop] = value;
-      if (this._isGlobal) {
-        window[prop] = value;
-      }
-    };
-
-    /**
-     * Removes the sketch from the web page.
-     *
-     * Calling `remove()` stops the draw loop and removes any HTML elements
-     * created by the sketch, including the canvas. A new sketch can be
-     * created by using the <a href="#/p5/p5">p5()</a> constructor, as in
-     * `new p5()`.
-     *
-     * @example
-     * <div>
-     * <code>
-     * // Double-click to remove the canvas.
-     *
-     * function setup() {
-     *   createCanvas(100, 100);
-     *
-     *   describe(
-     *     'A white circle on a gray background. The circle follows the mouse as the user moves. The sketch disappears when the user double-clicks.'
-     *   );
-     * }
-     *
-     * function draw() {
-     *   // Paint the background repeatedly.
-     *   background(200);
-     *
-     *   // Draw circles repeatedly.
-     *   circle(mouseX, mouseY, 40);
-     * }
-     *
-     * // Remove the sketch when the user double-clicks.
-     * function doubleClicked() {
-     *   remove();
-     * }
-     * </code>
-     * </div>
-     */
-    this.remove = () => {
-      // Remove start listener to prevent orphan canvas being created
-      if(this._startListener){
-        window.removeEventListener('load', this._startListener, false);
-      }
-      const loadingScreen = document.getElementById(this._loadingScreenId);
-      if (loadingScreen) {
-        loadingScreen.parentNode.removeChild(loadingScreen);
-        // Add 1 to preload counter to prevent the sketch ever executing setup()
-        this._incrementPreload();
-      }
-      if (this._curElement) {
-        // stop draw
-        this._loop = false;
-        if (this._requestAnimId) {
-          window.cancelAnimationFrame(this._requestAnimId);
-        }
-
-        // unregister events sketch-wide
-        for (const ev in this._events) {
-          window.removeEventListener(ev, this._events[ev]);
-        }
-
-        // remove DOM elements created by p5, and listeners
-        for (const e of this._elements) {
-          if (e.elt && e.elt.parentNode) {
-            e.elt.parentNode.removeChild(e.elt);
-          }
-          for (const elt_ev in e._events) {
-            e.elt.removeEventListener(elt_ev, e._events[elt_ev]);
-          }
-        }
-
-        // call any registered remove functions
-        const self = this;
-        this._registeredMethods.remove.forEach(f => {
-          if (typeof f !== 'undefined') {
-            f.call(self);
-          }
-        });
-      }
-      // remove window bound properties and methods
-      if (this._isGlobal) {
-        for (const p in p5.prototype) {
-          try {
-            delete window[p];
-          } catch (x) {
-            window[p] = undefined;
-          }
-        }
-        for (const p2 in this) {
-          if (this.hasOwnProperty(p2)) {
-            try {
-              delete window[p2];
-            } catch (x) {
-              window[p2] = undefined;
-            }
-          }
-        }
-        p5.instance = null;
-      }
-    };
+    // this._setProperty = (prop, value) => {
+    //   this[prop] = value;
+    //   if (this._isGlobal) {
+    //     window[prop] = value;
+    //   }
+    // };
 
     // ensure correct reporting of window dimensions
     this._updateWindowSize();
@@ -431,7 +169,7 @@ class p5 {
       }
     }, this);
     // Set up promise preloads
-    this._setupPromisePreloads();
+    // this._setupPromisePreloads();
 
     const friendlyBindGlobal = this._createFriendlyGlobalFunctionBinder();
 
@@ -441,6 +179,7 @@ class p5 {
       this._isGlobal = true;
       p5.instance = this;
       // Loop through methods on the prototype and attach them to the window
+      // NOTE: need to skip some
       for (const p in p5.prototype) {
         if (typeof p5.prototype[p] === 'function') {
           const ev = p.substring(2);
@@ -499,9 +238,9 @@ class p5 {
 
     // Initialization complete, start runtime
     if (document.readyState === 'complete') {
-      this._start();
+      this.#_start();
     } else {
-      this._startListener = this._start.bind(this);
+      this._startListener = this.#_start.bind(this);
       window.addEventListener('load', this._startListener, false);
     }
   }
@@ -510,7 +249,269 @@ class p5 {
     const lifecycles = {};
     addon(p5, p5.prototype, lifecycles);
 
-    // Handle lifecycle hooks
+    // NOTE: Handle lifecycle hooks
+  }
+
+  async #_start() {
+    // Find node if id given
+    if (this._userNode) {
+      if (typeof this._userNode === 'string') {
+        this._userNode = document.getElementById(this._userNode);
+      }
+    }
+
+    // const context = this._isGlobal ? window : this;
+    // if (context.preload) {
+    //   this.callRegisteredHooksFor('beforePreload');
+    //   // Setup loading screen
+    //   // Set loading screen into dom if not present
+    //   // Otherwise displays and removes user provided loading screen
+    //   let loadingScreen = document.getElementById(this._loadingScreenId);
+    //   if (!loadingScreen) {
+    //     loadingScreen = document.createElement('div');
+    //     loadingScreen.innerHTML = 'Loading...';
+    //     loadingScreen.style.position = 'absolute';
+    //     loadingScreen.id = this._loadingScreenId;
+    //     const node = this._userNode || document.body;
+    //     node.appendChild(loadingScreen);
+    //   }
+    //   const methods = this._preloadMethods;
+    //   for (const method in methods) {
+    //     // default to p5 if no object defined
+    //     methods[method] = methods[method] || p5;
+    //     let obj = methods[method];
+    //     //it's p5, check if it's global or instance
+    //     if (obj === p5.prototype || obj === p5) {
+    //       if (this._isGlobal) {
+    //         window[method] = this._wrapPreload(this, method);
+    //       }
+    //       obj = this;
+    //     }
+    //     this._registeredPreloadMethods[method] = obj[method];
+    //     obj[method] = this._wrapPreload(obj, method);
+    //   }
+
+    //   context.preload();
+    //   this._runIfPreloadsAreDone();
+    // } else {
+    await this.#_setup();
+    if (!this._recording) {
+      this.#_draw();
+    }
+    // }
+  }
+
+  async #_setup() {
+    this.callRegisteredHooksFor('beforeSetup');
+    // Always create a default canvas.
+    // Later on if the user calls createCanvas, this default one
+    // will be replaced
+    this.createCanvas(
+      this._defaultCanvasSize.width,
+      this._defaultCanvasSize.height,
+      constants.P2D
+    );
+
+    // return preload functions to their normal vals if switched by preload
+    const context = this._isGlobal ? window : this;
+    // if (typeof context.preload === 'function') {
+    //   for (const f in this._preloadMethods) {
+    //     context[f] = this._preloadMethods[f][f];
+    //     if (context[f] && this) {
+    //       context[f] = context[f].bind(this);
+    //     }
+    //   }
+    // }
+
+    // Record the time when sketch starts
+    this._millisStart = window.performance.now();
+
+    // context._preloadDone = true;
+
+    // Short-circuit on this, in case someone used the library in "global"
+    // mode earlier
+    if (typeof context.setup === 'function') {
+      await context.setup();
+    }
+
+    // unhide any hidden canvases that were created
+    const canvases = document.getElementsByTagName('canvas');
+
+    for (const k of canvases) {
+      if (k.dataset.hidden === 'true') {
+        k.style.visibility = '';
+        delete k.dataset.hidden;
+      }
+    }
+
+    this._lastTargetFrameTime = window.performance.now();
+    this._lastRealFrameTime = window.performance.now();
+    this._setupDone = true;
+    if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+      this._updateAccsOutput();
+    }
+    this.callRegisteredHooksFor('afterSetup');
+  }
+
+  #_draw(requestAnimationFrameTimestamp) {
+    const now = requestAnimationFrameTimestamp || window.performance.now();
+    const time_since_last = now - this._lastTargetFrameTime;
+    const target_time_between_frames = 1000 / this._targetFrameRate;
+
+    // only draw if we really need to; don't overextend the browser.
+    // draw if we're within 5ms of when our next frame should paint
+    // (this will prevent us from giving up opportunities to draw
+    // again when it's really about time for us to do so). fixes an
+    // issue where the frameRate is too low if our refresh loop isn't
+    // in sync with the browser. note that we have to draw once even
+    // if looping is off, so we bypass the time delay if that
+    // is the case.
+    const epsilon = 5;
+    if (
+      !this._loop ||
+      time_since_last >= target_time_between_frames - epsilon
+    ) {
+      //mandatory update values(matrixes and stack)
+      this.deltaTime = now - this._lastRealFrameTime;
+      this._setProperty('deltaTime', this.deltaTime);
+      this._frameRate = 1000.0 / this.deltaTime;
+      this.redraw();
+      this._lastTargetFrameTime = Math.max(this._lastTargetFrameTime
+        + target_time_between_frames, now);
+      this._lastRealFrameTime = now;
+
+      // If the user is actually using mouse module, then update
+      // coordinates, otherwise skip. We can test this by simply
+      // checking if any of the mouse functions are available or not.
+      // NOTE : This reflects only in complete build or modular build.
+      if (typeof this._updateMouseCoords !== 'undefined') {
+        this._updateMouseCoords();
+
+        //reset delta values so they reset even if there is no mouse event to set them
+        // for example if the mouse is outside the screen
+        this._setProperty('movedX', 0);
+        this._setProperty('movedY', 0);
+      }
+    }
+
+    // get notified the next time the browser gives us
+    // an opportunity to draw.
+    if (this._loop) {
+      this._requestAnimId = window.requestAnimationFrame(this.#_draw);
+    }
+  }
+
+  /**
+   * Removes the sketch from the web page.
+   *
+   * Calling `remove()` stops the draw loop and removes any HTML elements
+   * created by the sketch, including the canvas. A new sketch can be
+   * created by using the <a href="#/p5/p5">p5()</a> constructor, as in
+   * `new p5()`.
+   *
+   * @example
+   * <div>
+   * <code>
+   * // Double-click to remove the canvas.
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   describe(
+   *     'A white circle on a gray background. The circle follows the mouse as the user moves. The sketch disappears when the user double-clicks.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   // Paint the background repeatedly.
+   *   background(200);
+   *
+   *   // Draw circles repeatedly.
+   *   circle(mouseX, mouseY, 40);
+   * }
+   *
+   * // Remove the sketch when the user double-clicks.
+   * function doubleClicked() {
+   *   remove();
+   * }
+   * </code>
+   * </div>
+   */
+  remove() {
+    // Remove start listener to prevent orphan canvas being created
+    if(this._startListener){
+      window.removeEventListener('load', this._startListener, false);
+    }
+    const loadingScreen = document.getElementById(this._loadingScreenId);
+    if (loadingScreen) {
+      loadingScreen.parentNode.removeChild(loadingScreen);
+      // Add 1 to preload counter to prevent the sketch ever executing setup()
+      // this._incrementPreload();
+    }
+    if (this._curElement) {
+      // stop draw
+      this._loop = false;
+      if (this._requestAnimId) {
+        window.cancelAnimationFrame(this._requestAnimId);
+      }
+
+      // unregister events sketch-wide
+      for (const ev in this._events) {
+        window.removeEventListener(ev, this._events[ev]);
+      }
+
+      // remove DOM elements created by p5, and listeners
+      for (const e of this._elements) {
+        if (e.elt && e.elt.parentNode) {
+          e.elt.parentNode.removeChild(e.elt);
+        }
+        for (const elt_ev in e._events) {
+          e.elt.removeEventListener(elt_ev, e._events[elt_ev]);
+        }
+      }
+
+      // call any registered remove functions
+      const self = this;
+      this._registeredMethods.remove.forEach(f => {
+        if (typeof f !== 'undefined') {
+          f.call(self);
+        }
+      });
+    }
+    // remove window bound properties and methods
+    if (this._isGlobal) {
+      for (const p in p5.prototype) {
+        try {
+          delete window[p];
+        } catch (x) {
+          window[p] = undefined;
+        }
+      }
+      for (const p2 in this) {
+        if (this.hasOwnProperty(p2)) {
+          try {
+            delete window[p2];
+          } catch (x) {
+            window[p2] = undefined;
+          }
+        }
+      }
+      p5.instance = null;
+    }
+  }
+
+  // Function to invoke registered hooks before or after events such as preload, setup, and pre/post draw.
+  callRegisteredHooksFor(hookName) {
+    const target = this || p5.prototype;
+    const context = this._isGlobal ? window : this;
+    if (target._registeredMethods.hasOwnProperty(hookName)) {
+      const methods = target._registeredMethods[hookName];
+      for (const method of methods) {
+        if (typeof method === 'function') {
+          method.call(context);
+        }
+      }
+    }
   }
 
   _initializeInstanceVariables() {
@@ -536,12 +537,19 @@ class p5 {
     this._downKeys = {}; //Holds the key codes of currently pressed keys
   }
 
-  registerPreloadMethod(fnString, obj) {
-    // obj = obj || p5.prototype;
-    if (!p5.prototype._preloadMethods.hasOwnProperty(fnString)) {
-      p5.prototype._preloadMethods[fnString] = obj;
+  _setProperty(prop, value) {
+    this[prop] = value;
+    if (this._isGlobal) {
+      window[prop] = value;
     }
   }
+
+  // registerPreloadMethod(fnString, obj) {
+  //   // obj = obj || p5.prototype;
+  //   if (!p5.prototype._preloadMethods.hasOwnProperty(fnString)) {
+  //     p5.prototype._preloadMethods[fnString] = obj;
+  //   }
+  // }
 
   registerMethod(name, m) {
     const target = this || p5.prototype;
@@ -589,8 +597,8 @@ class p5 {
       if (
         !p5.disableFriendlyErrors &&
         typeof IS_MINIFIED === 'undefined' &&
-        typeof value === 'function' &&
-        !(prop in p5.prototype._preloadMethods)
+        typeof value === 'function'
+        // !(prop in p5.prototype._preloadMethods)
       ) {
         try {
           // Because p5 has so many common function names, it's likely
@@ -921,22 +929,6 @@ for (const k in constants) {
  */
 p5.disableFriendlyErrors = false;
 
-// functions that cause preload to wait
-// more can be added by using registerPreloadMethod(func)
-p5.prototype._preloadMethods = {
-  loadJSON: p5.prototype,
-  loadImage: p5.prototype,
-  loadStrings: p5.prototype,
-  loadXML: p5.prototype,
-  loadBytes: p5.prototype,
-  loadTable: p5.prototype,
-  loadFont: p5.prototype,
-  loadModel: p5.prototype,
-  loadShader: p5.prototype
-};
-
 p5.prototype._registeredMethods = { init: [], pre: [], post: [], remove: [] };
-
-p5.prototype._registeredPreloadMethods = {};
 
 export default p5;
