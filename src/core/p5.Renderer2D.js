@@ -548,7 +548,7 @@ class Renderer2D extends p5.Renderer {
       radiusY = h / 2;
 
     // Determines whether to add a line to the center, which should be done
-    // when the mode is PIE or default, as well as when the start and end
+    // when the mode is PIE or default; as well as when the start and end
     // angles do not form a full circle.
     const createPieSlice = ! (
       mode === constants.CHORD ||
@@ -600,7 +600,7 @@ class Renderer2D extends p5.Renderer {
       radiusX = w / 2,
       radiusY = h / 2;
     if (!this._clipping) ctx.beginPath();
-    
+
     ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
 
     if (!this._clipping && doFill) {
@@ -745,14 +745,7 @@ class Renderer2D extends p5.Renderer {
         bl = hh;
       }
 
-      // Draw shape
-      if (!this._clipping) ctx.beginPath();
-      ctx.moveTo(x + tl, y);
-      ctx.arcTo(x + w, y, x + w, y + h, tr);
-      ctx.arcTo(x + w, y + h, x, y + h, br);
-      ctx.arcTo(x, y + h, x, y, bl);
-      ctx.arcTo(x, y, x + w, y, tl);
-      ctx.closePath();
+      ctx.roundRect(x, y, w, h, [tl, tr, br, bl]);
     }
     if (!this._clipping && this._doFill) {
       ctx.fill();
