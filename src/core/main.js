@@ -34,6 +34,14 @@ class p5 {
   // This is a pointer to our global mode p5 instance, if we're in
   // global mode.
   static instance = null;
+  #lifecycleHooks = {
+    init: [],
+    presetup: [],
+    postsetup: [],
+    predraw: [],
+    postdraw: [],
+    remove: []
+  };
 
   constructor(sketch, node) {
     //////////////////////////////////////////////
@@ -294,6 +302,7 @@ class p5 {
     //   context.preload();
     //   this._runIfPreloadsAreDone();
     // } else {
+
     await this.#_setup();
     if (!this._recording) {
       this.#_draw();
@@ -302,7 +311,11 @@ class p5 {
   }
 
   async #_setup() {
-    this.callRegisteredHooksFor('beforeSetup');
+    // Run `presetup` hooks
+    for(const hook of this.#lifecycleHooks.presetup){
+      await hook.call(this);
+    }
+
     // Always create a default canvas.
     // Later on if the user calls createCanvas, this default one
     // will be replaced
@@ -350,7 +363,11 @@ class p5 {
     if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
       this._updateAccsOutput();
     }
-    this.callRegisteredHooksFor('afterSetup');
+
+    // Run `postsetup` hooks
+    for(const hook of this.#lifecycleHooks.postsetup){
+      await hook.call(this);
+    }
   }
 
   #_draw(requestAnimationFrameTimestamp) {
