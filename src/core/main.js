@@ -49,7 +49,6 @@ class p5 {
     //////////////////////////////////////////////
 
     this._setupDone = false;
-    // this._preloadDone = false;
     // for handling hidpi
     this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
     this._maxAllowedPixelDimensions = 0;
@@ -58,7 +57,6 @@ class p5 {
     this._elements = [];
     this._glAttributes = null;
     this._requestAnimId = 0;
-    // this._preloadCount = 0;
     this._isGlobal = false;
     this._loop = true;
     this._startListener = null;
@@ -117,56 +115,6 @@ class p5 {
       this._events.devicemotion = null;
     }
 
-    // this._runIfPreloadsAreDone = function() {
-    //   const context = this._isGlobal ? window : this;
-    //   if (context._preloadCount === 0) {
-    //     const loadingScreen = document.getElementById(context._loadingScreenId);
-    //     if (loadingScreen) {
-    //       loadingScreen.parentNode.removeChild(loadingScreen);
-    //     }
-    //     this.callRegisteredHooksFor('afterPreload');
-    //     if (!this._setupDone) {
-    //       this._lastTargetFrameTime = window.performance.now();
-    //       this._lastRealFrameTime = window.performance.now();
-    //       context._setup();
-    //       if (!this._recording) {
-    //         context._draw();
-    //       }
-    //     }
-    //   }
-    // };
-
-    // this._decrementPreload = function() {
-    //   const context = this._isGlobal ? window : this;
-    //   if (!context._preloadDone && typeof context.preload === 'function') {
-    //     context._setProperty('_preloadCount', context._preloadCount - 1);
-    //     context._runIfPreloadsAreDone();
-    //   }
-    // };
-
-    // this._wrapPreload = function(obj, fnName) {
-    //   return (...args) => {
-    //     //increment counter
-    //     this._incrementPreload();
-    //     //call original function
-    //     return this._registeredPreloadMethods[fnName].apply(obj, args);
-    //   };
-    // };
-
-    // this._incrementPreload = function() {
-    //   const context = this._isGlobal ? window : this;
-    //   // Do nothing if we tried to increment preloads outside of `preload`
-    //   if (context._preloadDone) return;
-    //   context._setProperty('_preloadCount', context._preloadCount + 1);
-    // };
-
-    // this._setProperty = (prop, value) => {
-    //   this[prop] = value;
-    //   if (this._isGlobal) {
-    //     window[prop] = value;
-    //   }
-    // };
-
     // ensure correct reporting of window dimensions
     this._updateWindowSize();
 
@@ -176,8 +124,6 @@ class p5 {
         f.call(this);
       }
     }, this);
-    // Set up promise preloads
-    // this._setupPromisePreloads();
 
     const friendlyBindGlobal = this._createFriendlyGlobalFunctionBinder();
 
@@ -268,46 +214,10 @@ class p5 {
       }
     }
 
-    // const context = this._isGlobal ? window : this;
-    // if (context.preload) {
-    //   this.callRegisteredHooksFor('beforePreload');
-    //   // Setup loading screen
-    //   // Set loading screen into dom if not present
-    //   // Otherwise displays and removes user provided loading screen
-    //   let loadingScreen = document.getElementById(this._loadingScreenId);
-    //   if (!loadingScreen) {
-    //     loadingScreen = document.createElement('div');
-    //     loadingScreen.innerHTML = 'Loading...';
-    //     loadingScreen.style.position = 'absolute';
-    //     loadingScreen.id = this._loadingScreenId;
-    //     const node = this._userNode || document.body;
-    //     node.appendChild(loadingScreen);
-    //   }
-    //   const methods = this._preloadMethods;
-    //   for (const method in methods) {
-    //     // default to p5 if no object defined
-    //     methods[method] = methods[method] || p5;
-    //     let obj = methods[method];
-    //     //it's p5, check if it's global or instance
-    //     if (obj === p5.prototype || obj === p5) {
-    //       if (this._isGlobal) {
-    //         window[method] = this._wrapPreload(this, method);
-    //       }
-    //       obj = this;
-    //     }
-    //     this._registeredPreloadMethods[method] = obj[method];
-    //     obj[method] = this._wrapPreload(obj, method);
-    //   }
-
-    //   context.preload();
-    //   this._runIfPreloadsAreDone();
-    // } else {
-
     await this.#_setup();
     if (!this._recording) {
       this.#_draw();
     }
-    // }
   }
 
   async #_setup() {
@@ -325,21 +235,10 @@ class p5 {
       constants.P2D
     );
 
-    // return preload functions to their normal vals if switched by preload
     const context = this._isGlobal ? window : this;
-    // if (typeof context.preload === 'function') {
-    //   for (const f in this._preloadMethods) {
-    //     context[f] = this._preloadMethods[f][f];
-    //     if (context[f] && this) {
-    //       context[f] = context[f].bind(this);
-    //     }
-    //   }
-    // }
 
     // Record the time when sketch starts
     this._millisStart = window.performance.now();
-
-    // context._preloadDone = true;
 
     // Short-circuit on this, in case someone used the library in "global"
     // mode earlier
@@ -462,8 +361,6 @@ class p5 {
     const loadingScreen = document.getElementById(this._loadingScreenId);
     if (loadingScreen) {
       loadingScreen.parentNode.removeChild(loadingScreen);
-      // Add 1 to preload counter to prevent the sketch ever executing setup()
-      // this._incrementPreload();
     }
     if (this._curElement) {
       // stop draw
@@ -561,13 +458,6 @@ class p5 {
     }
   }
 
-  // registerPreloadMethod(fnString, obj) {
-  //   // obj = obj || p5.prototype;
-  //   if (!p5.prototype._preloadMethods.hasOwnProperty(fnString)) {
-  //     p5.prototype._preloadMethods[fnString] = obj;
-  //   }
-  // }
-
   registerMethod(name, m) {
     const target = this || p5.prototype;
     if (!target._registeredMethods.hasOwnProperty(name)) {
@@ -615,7 +505,6 @@ class p5 {
         !p5.disableFriendlyErrors &&
         typeof IS_MINIFIED === 'undefined' &&
         typeof value === 'function'
-        // !(prop in p5.prototype._preloadMethods)
       ) {
         try {
           // Because p5 has so many common function names, it's likely
@@ -674,53 +563,6 @@ for (const k in constants) {
 //////////////////////////////////////////////
 // PUBLIC p5 PROPERTIES AND METHODS
 //////////////////////////////////////////////
-
-/**
- * A function that's called once to load assets before the sketch runs.
- *
- * Declaring the function `preload()` sets a code block to run once
- * automatically before <a href="#/p5/setup">setup()</a> or
- * <a href="#/p5/draw">draw()</a>. It's used to load assets including
- * multimedia files, fonts, data, and 3D models:
- *
- * ```js
- * function preload() {
- *   // Code to run before the rest of the sketch.
- * }
- * ```
- *
- * Functions such as <a href="#/p5/loadImage">loadImage()</a>,
- * <a href="#/p5/loadFont">loadFont()</a>,
- * <a href="#/p5/loadJSON">loadJSON()</a>, and
- * <a href="#/p5/loadModel">loadModel()</a> are guaranteed to either
- * finish loading or raise an error if they're called within `preload()`.
- * Doing so ensures that assets are available when the sketch begins
- * running.
- *
- * @method preload
- * @for p5
- *
- * @example
- * <div>
- * <code>
- * let img;
- *
- * // Load an image and create a p5.Image object.
- * function preload() {
- *   img = loadImage('assets/bricks.jpg');
- * }
- *
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   // Draw the image.
- *   image(img, 0, 0);
- *
- *   describe('A red brick wall.');
- * }
- * </code>
- * </div>
- */
 
 /**
  * A function that's called once when the sketch begins running.

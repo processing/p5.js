@@ -1,5 +1,52 @@
 import p5 from './main';
 
+/**
+ * A function that's called once to load assets before the sketch runs.
+ *
+ * Declaring the function `preload()` sets a code block to run once
+ * automatically before <a href="#/p5/setup">setup()</a> or
+ * <a href="#/p5/draw">draw()</a>. It's used to load assets including
+ * multimedia files, fonts, data, and 3D models:
+ *
+ * ```js
+ * function preload() {
+ *   // Code to run before the rest of the sketch.
+ * }
+ * ```
+ *
+ * Functions such as <a href="#/p5/loadImage">loadImage()</a>,
+ * <a href="#/p5/loadFont">loadFont()</a>,
+ * <a href="#/p5/loadJSON">loadJSON()</a>, and
+ * <a href="#/p5/loadModel">loadModel()</a> are guaranteed to either
+ * finish loading or raise an error if they're called within `preload()`.
+ * Doing so ensures that assets are available when the sketch begins
+ * running.
+ *
+ * @method preload
+ * @for p5
+ *
+ * @example
+ * <div>
+ * <code>
+ * let img;
+ *
+ * // Load an image and create a p5.Image object.
+ * function preload() {
+ *   img = loadImage('assets/bricks.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Draw the image.
+ *   image(img, 0, 0);
+ *
+ *   describe('A red brick wall.');
+ * }
+ * </code>
+ * </div>
+ */
+
 // functions that cause preload to wait
 // more can be added by using registerPreloadMethod(func)
 p5.prototype._preloadMethods = {
