@@ -943,7 +943,7 @@ p5.prototype.redraw = function(n) {
       if (context._renderer.isP3D) {
         context._renderer._update();
       }
-      context._setProperty('frameCount', context.frameCount + 1);
+      this._setProperty('frameCount', context.frameCount + 1);
       this.callRegisteredHooksFor('pre');
       this._inUserDraw = true;
       try {

@@ -126,15 +126,17 @@ class p5 {
     }, this);
 
     const friendlyBindGlobal = this._createFriendlyGlobalFunctionBinder();
-
     // If the user has created a global setup or draw function,
     // assume "global" mode and make everything global (i.e. on the window)
     if (!sketch) {
       this._isGlobal = true;
       p5.instance = this;
+
       // Loop through methods on the prototype and attach them to the window
-      // NOTE: need to skip some
-      for (const p in p5.prototype) {
+      // All methods and properties with name starting with '_' will be skipped
+      for (const p of Object.getOwnPropertyNames(p5.prototype)) {
+        if(p[0] === '_') continue;
+
         if (typeof p5.prototype[p] === 'function') {
           const ev = p.substring(2);
           if (!this._events.hasOwnProperty(ev)) {
@@ -150,10 +152,12 @@ class p5 {
           friendlyBindGlobal(p, p5.prototype[p]);
         }
       }
+
       // Attach its properties to the window
-      for (const p2 in this) {
-        if (this.hasOwnProperty(p2)) {
-          friendlyBindGlobal(p2, this[p2]);
+      for (const p in this) {
+        if (this.hasOwnProperty(p)) {
+          if(p[0] === '_') continue;
+          friendlyBindGlobal(p, this[p]);
         }
       }
     } else {
@@ -167,7 +171,6 @@ class p5 {
     }
 
     // Bind events to window (not using container div bc key events don't work)
-
     for (const e in this._events) {
       const f = this[`_on${e}`];
       if (f) {
@@ -271,8 +274,8 @@ class p5 {
 
   #_draw(requestAnimationFrameTimestamp) {
     const now = requestAnimationFrameTimestamp || window.performance.now();
-    const time_since_last = now - this._lastTargetFrameTime;
-    const target_time_between_frames = 1000 / this._targetFrameRate;
+    const timeSinceLastFrame = now - this._lastTargetFrameTime;
+    const targetTimeBetweenFrames = 1000 / this._targetFrameRate;
 
     // only draw if we really need to; don't overextend the browser.
     // draw if we're within 5ms of when our next frame should paint
@@ -285,7 +288,7 @@ class p5 {
     const epsilon = 5;
     if (
       !this._loop ||
-      time_since_last >= target_time_between_frames - epsilon
+      timeSinceLastFrame >= targetTimeBetweenFrames - epsilon
     ) {
       //mandatory update values(matrixes and stack)
       this.deltaTime = now - this._lastRealFrameTime;
@@ -293,7 +296,7 @@ class p5 {
       this._frameRate = 1000.0 / this.deltaTime;
       this.redraw();
       this._lastTargetFrameTime = Math.max(this._lastTargetFrameTime
-        + target_time_between_frames, now);
+        + targetTimeBetweenFrames, now);
       this._lastRealFrameTime = now;
 
       // If the user is actually using mouse module, then update
@@ -313,7 +316,9 @@ class p5 {
     // get notified the next time the browser gives us
     // an opportunity to draw.
     if (this._loop) {
-      this._requestAnimId = window.requestAnimationFrame(this.#_draw);
+      this._requestAnimId = window.requestAnimationFrame(
+        this.#_draw.bind(this)
+      );
     }
   }
 
@@ -417,6 +422,7 @@ class p5 {
   // Function to invoke registered hooks before or after events such as preload, setup, and pre/post draw.
   callRegisteredHooksFor(hookName) {
     const target = this || p5.prototype;
+    // NOTE: is this really necessary?
     const context = this._isGlobal ? window : this;
     if (target._registeredMethods.hasOwnProperty(hookName)) {
       const methods = target._registeredMethods[hookName];
