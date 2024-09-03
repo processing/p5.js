@@ -692,6 +692,8 @@ p5.RendererGL = class RendererGL extends Renderer {
       throw new Error('It looks like `beginGeometry()` is being called while another p5.Geometry is already being build.');
     }
     this.geometryBuilder = new GeometryBuilder(this);
+    this.geometryBuilder.prevFillColor = [...this.curFillColor];
+    this.curFillColor = [-1, -1, -1, -1];
   }
 
   /**
@@ -707,6 +709,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       throw new Error('Make sure you call beginGeometry() before endGeometry()!');
     }
     const geometry = this.geometryBuilder.finish();
+    this.curFillColor = this.geometryBuilder.prevFillColor;
     this.geometryBuilder = undefined;
     return geometry;
   }
