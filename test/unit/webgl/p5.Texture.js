@@ -9,38 +9,41 @@ suite('p5.Texture', function() {
   var imgElementPowerOfTwo;
   var canvas;
 
-  beforeAll(function(done) {
-    myp5 = new p5(function(p) {
-      p.preload = function() {
-        // texImg2 must have powerOfTwo dimensions
-        texImg2 = p.loadImage('unit/assets/target.gif');
-        // texImg3 must NOT have powerOfTwo dimensions
-        texImg3 = p.loadImage('unit/assets/nyan_cat.gif');
-        // texture object isn't created until it's used for something:
-        //p.box(70, 70, 70);
-      };
-      p.setup = function() {
-        canvas = p.createCanvas(100, 100, p.WEBGL);
-        texImg1 = p.createGraphics(2, 2, p.WEBGL);
-        new Promise(resolve => {
-          p.createImg(texImg2.canvas.toDataURL(), '', 'anonymous', el => {
-            el.size(50, 50);
-            imgElementPowerOfTwo = el;
-            p.texture(imgElementPowerOfTwo);
-            resolve();
+  beforeAll(function() {
+    return new Promise((done) => {
+      myp5 = new p5(function(p) {
+        p.preload = function() {
+          // texImg2 must have powerOfTwo dimensions
+          texImg2 = p.loadImage('unit/assets/target.gif');
+          // texImg3 must NOT have powerOfTwo dimensions
+          texImg3 = p.loadImage('unit/assets/nyan_cat.gif');
+          // texture object isn't created until it's used for something:
+          //p.box(70, 70, 70);
+        };
+        p.setup = function() {
+          canvas = p.createCanvas(100, 100, p.WEBGL);
+          texImg1 = p.createGraphics(2, 2, p.WEBGL);
+          new Promise(resolve => {
+            p.createImg(texImg2.canvas.toDataURL(), '', 'anonymous', el => {
+              el.size(50, 50);
+              imgElementPowerOfTwo = el;
+              p.texture(imgElementPowerOfTwo);
+              resolve();
+            });
+          }).then(() => new Promise(resolve => {
+            p.createImg(texImg3.canvas.toDataURL(), '', 'anonymous', el => {
+              el.size(50, 50);
+              imgElementNotPowerOfTwo = el;
+              p.texture(imgElementNotPowerOfTwo);
+              resolve();
+            });
+          })).then(() => {
+            p.texture(texImg1);
+            console.log('set up')
+            done();
           });
-        }).then(() => new Promise(resolve => {
-          p.createImg(texImg3.canvas.toDataURL(), '', 'anonymous', el => {
-            el.size(50, 50);
-            imgElementNotPowerOfTwo = el;
-            p.texture(imgElementNotPowerOfTwo);
-            resolve();
-          });
-        })).then(() => {
-          p.texture(texImg1);
-          done();
-        });
-      };
+        };
+      });
     });
   });
 
@@ -49,15 +52,13 @@ suite('p5.Texture', function() {
   });
 
   var testTextureSet = function(src) {
-    test('Light shader set after texture()', function() {
-      var lightShader = myp5._renderer._getLightShader();
-      var selectedShader = myp5._renderer._getRetainedFillShader();
-      assert(
-        lightShader === selectedShader,
-        "_renderer's retain mode shader was not light shader " +
-          'after call to texture()'
-      );
-    });
+    var lightShader = myp5._renderer._getLightShader();
+    var selectedShader = myp5._renderer._getRetainedFillShader();
+    assert(
+      lightShader === selectedShader,
+      "_renderer's retain mode shader was not light shader " +
+        'after call to texture()'
+    );
 
     var tex = myp5._renderer.getTexture(src);
     assert(tex !== undefined, 'texture was undefined');

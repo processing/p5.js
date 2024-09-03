@@ -6,7 +6,6 @@ suite('light', function() {
   beforeAll(function() {
     myp5 = new p5(function(p) {
       p.setup = function() {
-        debugger
         p.createCanvas(100, 100, p.WEBGL);
       };
     });
@@ -109,7 +108,6 @@ suite('light', function() {
       let color = myp5.color(255, 0, 255);
       let positions = new p5.Vector(1, 2, 3);
       let directions = new p5.Vector(0, 1, 0);
-      // debugger;
       myp5.spotLight(color, positions, directions, angle, conc);
       assert.deepEqual(myp5._renderer.spotLightDiffuseColors, [1, 0, 1]);
       assert.deepEqual(myp5._renderer.spotLightSpecularColors, [1, 1, 1]);
@@ -326,7 +324,6 @@ suite('light', function() {
       assert.deepEqual(myp5._renderer.spotLightConc, [defaultConc]);
     });
     test('c1,c2,c3,p1,p2,p3,r1,r2,r3,angle,conc', function() {
-      // debugger;
       myp5.spotLight(255, 0, 255, 1, 2, 3, 0, 1, 0, angle, 7);
       assert.deepEqual(myp5._renderer.spotLightDiffuseColors, [1, 0, 1]);
       assert.deepEqual(myp5._renderer.spotLightSpecularColors, [1, 1, 1]);
