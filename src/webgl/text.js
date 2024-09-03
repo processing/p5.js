@@ -8,27 +8,13 @@ import './p5.RendererGL.Retained';
 p5.RendererGL.prototype._applyTextProperties = function() {
   //@TODO finish implementation
   //console.error('text commands not yet implemented in webgl');
+  this._setProperty('_textAscent', null);
+  this._setProperty('_textDescent', null);
 };
 
 p5.RendererGL.prototype.textWidth = function(s) {
   if (this._isOpenType()) {
     return this._textFont._textWidth(s, this._textSize);
-  }
-
-  return 0; // TODO: error
-};
-
-p5.RendererGL.prototype.textAscent = function(s) {
-  if (this._isOpenType()) {
-    return this._textFont._textAscent(this._textSize);
-  }
-
-  return 0; // TODO: error
-};
-
-p5.RendererGL.prototype.textDescent = function(s) {
-  if (this._isOpenType()) {
-    return this._textFont._textDescent(this._textSize);
   }
 
   return 0; // TODO: error
