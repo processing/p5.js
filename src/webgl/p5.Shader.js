@@ -574,12 +574,14 @@ p5.Shader = class {
   }
 
   unbindTextures() {
+    const gl = this._renderer.GL;
     for (const uniform of this.samplers) {
       const textureUnit = gl.TEXTURE0 + uniform.samplerIndex;
       if (!this.previousBindings.has(textureUnit)){
         this.setUniform(uniform.name, this._renderer._getEmptyTexture());
       }
     }
+    this.previousBindings.clear();
   }
 
   _setMatrixUniforms() {
