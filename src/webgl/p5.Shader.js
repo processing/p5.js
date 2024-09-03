@@ -557,7 +557,6 @@ p5.Shader = class {
       }
       const textureUnit = gl.TEXTURE0 + uniform.samplerIndex;
       gl.activeTexture(textureUnit);
-      const previousTexture = gl.getParameter(gl.TEXTURE_BINDING_2D);
       this.previousBindings.add(textureUnit);
       tex.bindTexture();
       tex.update();
@@ -578,7 +577,7 @@ p5.Shader = class {
     for (const uniform of this.samplers) {
       if (!this.previousBindings.has(textureUnit)){
         this.setUniform(uniform.name, this._renderer._getEmptyTexture());
-       }
+      }
     }
   }
 
