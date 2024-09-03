@@ -12,6 +12,13 @@ assert.arrayApproximately = function (arr1, arr2, delta) {
   }
 }
 
+assert.deepCloseTo = function(actual, expected, digits = 4) {
+  expect(actual.length).toBe(expected.length);
+  for (let i = 0; i < actual.length; i++) {
+    expect(actual[i]).withContext(`[${i}]`).toBeCloseTo(expected[i], digits);
+  }
+}
+
 // a custom assertion for validation errors that correctly handles
 // minified p5 libraries.
 assert.validationError = function (fn) {
