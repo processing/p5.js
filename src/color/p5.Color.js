@@ -488,6 +488,10 @@ p5.Color = class Color {
       return to(this.color, 'hsl').coords[2] / 100 * this.maxes[this.mode][2];
     }
   }
+
+  get _array() {
+    return [...this.color.coords, this.color.alpha];
+  }
 };
 
 export default p5.Color;

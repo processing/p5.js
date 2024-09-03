@@ -1642,24 +1642,23 @@ p5.prototype.spotLight = function (
       );
       return this;
   }
-  this._renderer.spotLightDiffuseColors.push(
+  this._renderer.spotLightDiffuseColors = [
     color._array[0],
     color._array[1],
     color._array[2]
-  );
+  ];
 
-  Array.prototype.push.apply(
-    this._renderer.spotLightSpecularColors,
-    this._renderer.specularColors
-  );
+  this._renderer.spotLightSpecularColors = [
+    ...this._renderer.specularColors
+  ];
 
-  this._renderer.spotLightPositions.push(position.x, position.y, position.z);
+  this._renderer.spotLightPositions = [position.x, position.y, position.z];
   direction.normalize();
-  this._renderer.spotLightDirections.push(
+  this._renderer.spotLightDirections = [
     direction.x,
     direction.y,
     direction.z
-  );
+  ];
 
   if (angle === undefined) {
     angle = Math.PI / 3;
@@ -1675,8 +1674,8 @@ p5.prototype.spotLight = function (
   }
 
   angle = this._renderer._pInst._toRadians(angle);
-  this._renderer.spotLightAngle.push(Math.cos(angle));
-  this._renderer.spotLightConc.push(concentration);
+  this._renderer.spotLightAngle = [Math.cos(angle)];
+  this._renderer.spotLightConc = [concentration];
 
   this._renderer._enableLighting = true;
 

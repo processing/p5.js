@@ -215,7 +215,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
     if (queryResult.hasOwnProperty('overloads')) {
       // add all the overloads
       for (let i = 0; i < queryResult.overloads.length; i++) {
-        overloads.push({ formats: queryResult.overloads[i].params });
+        overloads.push({ formats: queryResult.overloads[i].params || [] });
       }
     } else {
       // no overloads, just add the main method definition

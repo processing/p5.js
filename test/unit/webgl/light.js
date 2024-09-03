@@ -6,6 +6,7 @@ suite('light', function() {
   beforeAll(function() {
     myp5 = new p5(function(p) {
       p.setup = function() {
+        debugger
         p.createCanvas(100, 100, p.WEBGL);
       };
     });
