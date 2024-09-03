@@ -24,8 +24,8 @@ export default defineConfig({
     globals: true,
     browser: {
       enabled: true,
-      name: 'chrome',
-      provider: 'webdriverio'
+      name: 'chromium',
+      provider: 'playwright'
     }
   }
 });
