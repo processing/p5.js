@@ -569,8 +569,18 @@ class Renderer2D extends p5.Renderer {
     if (this._doStroke) {
       if (!this._clipping) ctx.beginPath();
       ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, start, stop);
-      if (createPieSlice) ctx.lineTo(centerX, centerY);
-      if (mode !== constants.OPEN) ctx.closePath();
+
+      if (mode === constants.PIE && createPieSlice) {
+        // In PIE mode, stroke is added to the center and back to path,
+        // unless the pie forms a complete ellipse (see: createPieSlice)
+        ctx.lineTo(centerX, centerY);
+      }
+
+      if (mode === constants.PIE || mode === constants.CHORD) {
+        // Stroke connects back to path begin for both PIE and CHORD
+        ctx.closePath();
+      }
+
       if (!this._clipping) ctx.stroke();
     }
 
