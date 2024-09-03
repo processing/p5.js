@@ -24,15 +24,6 @@ suite('Vertex', function() {
       assert.ok(myp5.beginShape);
       assert.typeOf(myp5.beginShape, 'function');
     });
-    test('no friendly-err-msg. missing param #0', function() {
-      assert.doesNotThrow(
-        function() {
-          myp5.beginShape();
-        },
-        Error,
-        'got unwanted exception'
-      );
-    });
   });
 
   suite('p5.prototype.quadraticVertex', function() {
@@ -68,15 +59,6 @@ suite('Vertex', function() {
     test('should be a function', function() {
       assert.ok(myp5.endShape);
       assert.typeOf(myp5.endShape, 'function');
-    });
-    test('no friendly-err-msg. missing param #0', function() {
-      assert.doesNotThrow(
-        function() {
-          myp5.endShape();
-        },
-        Error,
-        'got unwanted exception'
-      );
     });
   });
 

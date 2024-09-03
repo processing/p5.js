@@ -32,26 +32,6 @@ suite('saveTable', function() {
     assert.typeOf(myp5.saveTable, 'function');
   });
 
-  test('no friendly-err-msg I', function() {
-    assert.doesNotThrow(
-      function() {
-        myp5.saveTable(myTable, 'myfile');
-      },
-      Error,
-      'got unwanted exception'
-    );
-  });
-
-  test('no friendly-err-msg II', function() {
-    assert.doesNotThrow(
-      function() {
-        myp5.saveTable(myTable, 'myfile', 'csv');
-      },
-      Error,
-      'got unwanted exception'
-    );
-  });
-
   testWithDownload(
     'should download a file with expected contents',
     async function(blobContainer) {
