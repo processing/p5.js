@@ -2984,7 +2984,7 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
       this._lookUpTableBezier = [];
       this._lutBezierDetail = this._pInst._curveDetail;
       const step = 1 / this._lutBezierDetail;
-      let start = 0;
+      let start = step;
       let end = 1;
       let j = 0;
       while (start < 1) {
@@ -3144,7 +3144,7 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
       this._lookUpTableQuadratic = [];
       this._lutQuadraticDetail = this._pInst._curveDetail;
       const step = 1 / this._lutQuadraticDetail;
-      let start = 0;
+      let start = step;
       let end = 1;
       let j = 0;
       while (start < 1) {
@@ -3288,7 +3288,7 @@ p5.RendererGL.prototype.curveVertex = function(...args) {
     this._lookUpTableBezier = [];
     this._lutBezierDetail = this._pInst._curveDetail;
     const step = 1 / this._lutBezierDetail;
-    let start = 0;
+    let start = step;
     let end = 1;
     let j = 0;
     while (start < 1) {
