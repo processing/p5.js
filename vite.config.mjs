@@ -14,6 +14,7 @@ export default defineConfig({
     root: './',
     include: [
       // './test/unit/**/*.js'
+      './test/unit/math/**/*.js',
       './test/unit/utilities/**/*.js'
     ],
     exclude: [
