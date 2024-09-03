@@ -198,96 +198,96 @@ suite('loading images', function() {
   */
 
   // Test loading image in preload() with success callback
-  test('Test in preload() with success callback');
-  test('Test in setup() after preload()');
+  // test('Test in preload() with success callback');
+  // test('Test in setup() after preload()');
   // These tests don't work correctly (You can't use suite and test like that)
   // they simply get added at the root level.
-  var mySketch = function(this_p5) {
-    var myImage;
-    this_p5.preload = function() {
-      suite('Test in preload() with success callback', function() {
-        test('Load asynchronously and use success callback', function(done) {
-          myImage = this_p5.loadImage('unit/assets/cat.jpg', function() {
-            assert.ok(myImage);
-            done();
-          });
-        });
-      });
-    };
+  // var mySketch = function(this_p5) {
+  //   var myImage;
+  //   this_p5.preload = function() {
+  //     suite('Test in preload() with success callback', function() {
+  //       test('Load asynchronously and use success callback', function(done) {
+  //         myImage = this_p5.loadImage('unit/assets/cat.jpg', function() {
+  //           assert.ok(myImage);
+  //           done();
+  //         });
+  //       });
+  //     });
+  //   };
 
-    this_p5.setup = function() {
-      suite('setup() after preload() with success callback', function() {
-        test('should be loaded if preload() finished', function(done) {
-          assert.isTrue(myImage instanceof p5.Image);
-          assert.isTrue(myImage.width > 0 && myImage.height > 0);
-          done();
-        });
-      });
-    };
-  };
-  new p5(mySketch, null, false);
+  //   this_p5.setup = function() {
+  //     suite('setup() after preload() with success callback', function() {
+  //       test('should be loaded if preload() finished', function(done) {
+  //         assert.isTrue(myImage instanceof p5.Image);
+  //         assert.isTrue(myImage.width > 0 && myImage.height > 0);
+  //         done();
+  //       });
+  //     });
+  //   };
+  // };
+  // new p5(mySketch, null, false);
 
-  // Test loading image in preload() without success callback
-  mySketch = function(this_p5) {
-    var myImage;
-    this_p5.preload = function() {
-      myImage = this_p5.loadImage('unit/assets/cat.jpg');
-    };
+  // // Test loading image in preload() without success callback
+  // mySketch = function(this_p5) {
+  //   var myImage;
+  //   this_p5.preload = function() {
+  //     myImage = this_p5.loadImage('unit/assets/cat.jpg');
+  //   };
 
-    this_p5.setup = function() {
-      suite('setup() after preload() without success callback', function() {
-        test('should be loaded now preload() finished', function(done) {
-          assert.isTrue(myImage instanceof p5.Image);
-          assert.isTrue(myImage.width > 0 && myImage.height > 0);
-          done();
-        });
-      });
-    };
-  };
-  new p5(mySketch, null, false);
+  //   this_p5.setup = function() {
+  //     suite('setup() after preload() without success callback', function() {
+  //       test('should be loaded now preload() finished', function(done) {
+  //         assert.isTrue(myImage instanceof p5.Image);
+  //         assert.isTrue(myImage.width > 0 && myImage.height > 0);
+  //         done();
+  //       });
+  //     });
+  //   };
+  // };
+  // new p5(mySketch, null, false);
 
-  // Test loading image failure in preload() without failure callback
-  mySketch = function(this_p5) {
-    this_p5.preload = function() {
-      this_p5.loadImage('', function() {
-        throw new Error('Should not be called');
-      });
-    };
+  // // Test loading image failure in preload() without failure callback
+  // mySketch = function(this_p5) {
+  //   this_p5.preload = function() {
+  //     this_p5.loadImage('', function() {
+  //       throw new Error('Should not be called');
+  //     });
+  //   };
 
-    this_p5.setup = function() {
-      throw new Error('Should not be called');
-    };
-  };
-  new p5(mySketch, null, false);
+  //   this_p5.setup = function() {
+  //     throw new Error('Should not be called');
+  //   };
+  // };
+  // new p5(mySketch, null, false);
 
-  // Test loading image failure in preload() with failure callback
-  mySketch = function(this_p5) {
-    var myImage;
-    this_p5.preload = function() {
-      suite('Test loading image failure in preload() with failure callback', function() {
-        test('Load fail and use failure callback', function(done) {
-          myImage = this_p5.loadImage('', function() {
-            assert.fail();
-            done();
-          }, function() {
-            assert.ok(myImage);
-            done();
-          });
-        });
-      });
-    };
+  // // Test loading image failure in preload() with failure callback
+  // mySketch = function(this_p5) {
+  //   var myImage;
+  //   this_p5.preload = function() {
+  //     suite('Test loading image failure in preload() with failure callback', function() {
+  //       test('Load fail and use failure callback', function(done) {
+  //         myImage = this_p5.loadImage('', function() {
+  //           assert.fail();
+  //           done();
+  //         }, function() {
+  //           assert.ok(myImage);
+  //           done();
+  //         });
+  //       });
+  //     });
+  //   };
 
-    this_p5.setup = function() {
-      suite('setup() after preload() failure with failure callback', function() {
-        test('should be loaded now preload() finished', function(done) {
-          assert.isTrue(myImage instanceof p5.Image);
-          assert.isTrue(myImage.width === 1 && myImage.height === 1);
-          done();
-        });
-      });
-    };
-  };
-  new p5(mySketch, null, false);
+  //   this_p5.setup = function() {
+  //     suite('setup() after preload() failure with failure callback', function() {
+  //       test('should be loaded now preload() finished', function(done) {
+  //         assert.isTrue(myImage instanceof p5.Image);
+  //         assert.isTrue(myImage.width === 1 && myImage.height === 1);
+  //         done();
+  //       });
+  //     });
+  //   };
+  // };
+  // new p5(mySketch, null, false);
 });
 
 suite('loading animated gif images', function() {
@@ -330,72 +330,72 @@ suite('loading animated gif images', function() {
     });
   });
 
-  test('should construct gifProperties correctly after preload', function() {
-    var mySketch = function(this_p5) {
-      var gifImage;
-      this_p5.preload = function() {
-        suite('Test in preload() with success callback', function() {
-          test('Load asynchronously and use success callback', function(done) {
-            gifImage = this_p5.loadImage(imagePath, function() {
-              assert.ok(gifImage);
-              done();
-            });
-          });
-        });
-      };
+  // test('should construct gifProperties correctly after preload', function() {
+  //   var mySketch = function(this_p5) {
+  //     var gifImage;
+  //     this_p5.preload = function() {
+  //       suite('Test in preload() with success callback', function() {
+  //         test('Load asynchronously and use success callback', function(done) {
+  //           gifImage = this_p5.loadImage(imagePath, function() {
+  //             assert.ok(gifImage);
+  //             done();
+  //           });
+  //         });
+  //       });
+  //     };
 
-      this_p5.setup = function() {
-        suite('setup() after preload() with success callback', function() {
-          test('should be loaded if preload() finished', function(done) {
-            assert.isTrue(gifImage instanceof p5.Image);
-            assert.isTrue(gifImage.width > 0 && gifImage.height > 0);
-            done();
-          });
-          test('gifProperties should be correct after preload', function done() {
-            assert.isTrue(gifImage instanceof p5.Image);
-            var nyanCatGifProperties = {
-              displayIndex: 0,
-              loopCount: 0,
-              loopLimit: null,
-              numFrames: 6,
-              playing: true,
-              timeDisplayed: 0
-            };
-            assert.isTrue(gifImage.gifProperties !== null);
-            for (var prop in nyanCatGifProperties) {
-              assert.deepEqual(
-                gifImage.gifProperties[prop],
-                nyanCatGifProperties[prop]
-              );
-            }
-            assert.deepEqual(
-              gifImage.gifProperties.numFrames,
-              gifImage.gifProperties.frames.length
-            );
-            for (var i = 0; i < gifImage.gifProperties.numFrames; i++) {
-              assert.isTrue(
-                gifImage.gifProperties.frames[i].image instanceof ImageData
-              );
-              assert.isTrue(gifImage.gifProperties.frames[i].delay === 100);
-            }
-          });
-          test('should be able to modify gifProperties state', function() {
-            assert.isTrue(gifImage.gifProperties.timeDisplayed === 0);
-            gifImage.pause();
-            assert.isTrue(gifImage.gifProperties.playing === false);
-            gifImage.play();
-            assert.isTrue(gifImage.gifProperties.playing === true);
-            gifImage.setFrame(2);
-            assert.isTrue(gifImage.gifProperties.displayIndex === 2);
-            gifImage.reset();
-            assert.isTrue(gifImage.gifProperties.displayIndex === 0);
-            assert.isTrue(gifImage.gifProperties.timeDisplayed === 0);
-          });
-        });
-      };
-    };
-    new p5(mySketch, null, false);
-  });
+  //     this_p5.setup = function() {
+  //       suite('setup() after preload() with success callback', function() {
+  //         test('should be loaded if preload() finished', function(done) {
+  //           assert.isTrue(gifImage instanceof p5.Image);
+  //           assert.isTrue(gifImage.width > 0 && gifImage.height > 0);
+  //           done();
+  //         });
+  //         test('gifProperties should be correct after preload', function done() {
+  //           assert.isTrue(gifImage instanceof p5.Image);
+  //           var nyanCatGifProperties = {
+  //             displayIndex: 0,
+  //             loopCount: 0,
+  //             loopLimit: null,
+  //             numFrames: 6,
+  //             playing: true,
+  //             timeDisplayed: 0
+  //           };
+  //           assert.isTrue(gifImage.gifProperties !== null);
+  //           for (var prop in nyanCatGifProperties) {
+  //             assert.deepEqual(
+  //               gifImage.gifProperties[prop],
+  //               nyanCatGifProperties[prop]
+  //             );
+  //           }
+  //           assert.deepEqual(
+  //             gifImage.gifProperties.numFrames,
+  //             gifImage.gifProperties.frames.length
+  //           );
+  //           for (var i = 0; i < gifImage.gifProperties.numFrames; i++) {
+  //             assert.isTrue(
+  //               gifImage.gifProperties.frames[i].image instanceof ImageData
+  //             );
+  //             assert.isTrue(gifImage.gifProperties.frames[i].delay === 100);
+  //           }
+  //         });
+  //         test('should be able to modify gifProperties state', function() {
+  //           assert.isTrue(gifImage.gifProperties.timeDisplayed === 0);
+  //           gifImage.pause();
+  //           assert.isTrue(gifImage.gifProperties.playing === false);
+  //           gifImage.play();
+  //           assert.isTrue(gifImage.gifProperties.playing === true);
+  //           gifImage.setFrame(2);
+  //           assert.isTrue(gifImage.gifProperties.displayIndex === 2);
+  //           gifImage.reset();
+  //           assert.isTrue(gifImage.gifProperties.displayIndex === 0);
+  //           assert.isTrue(gifImage.gifProperties.timeDisplayed === 0);
+  //         });
+  //       });
+  //     };
+  //   };
+  //   new p5(mySketch, null, false);
+  // });
 });
 
 suite('displaying images', function() {
