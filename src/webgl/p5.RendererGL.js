@@ -793,14 +793,14 @@ p5.RendererGL = class RendererGL extends Renderer {
     }
   }
 
-  _getParam() {
+  _getMaxTextureSize() {
     const gl = this.drawingContext;
     return gl.getParameter(gl.MAX_TEXTURE_SIZE);
   }
 
   _adjustDimensions(width, height) {
     if (!this._maxTextureSize) {
-      this._maxTextureSize = this._getParam();
+      this._maxTextureSize = this._getMaxTextureSize();
     }
     let maxTextureSize = this._maxTextureSize;
     let maxAllowedPixelDimensions = p5.prototype._maxAllowedPixelDimensions;
