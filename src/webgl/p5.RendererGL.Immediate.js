@@ -137,7 +137,8 @@ p5.RendererGL.prototype.vertex = function(x, y) {
     } else if (
       this.userFillShader !== undefined ||
       this.userStrokeShader !== undefined ||
-      this.userPointShader !== undefined
+      this.userPointShader !== undefined ||
+      this.userImageShader !== undefined
     ) {
     // Do nothing if user-defined shaders are present
     } else if (

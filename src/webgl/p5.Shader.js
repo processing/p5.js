@@ -1012,6 +1012,10 @@ p5.Shader = class Shader {
     return this.uniforms.uStrokeWeight !== undefined;
   }
 
+  isImageShader() {
+    return this.samplers.length > 0 && this.uniforms.uImageSampler !== undefined;
+  }
+
   /**
    * @chainable
    * @private

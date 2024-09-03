@@ -582,11 +582,7 @@ p5.prototype.createFilterShader = function (fragSrc) {
  *
  * The parameter, `s`, is the <a href="#/p5.Shader">p5.Shader</a> object to
  * apply. For example, calling `shader(myShader)` applies `myShader` to
- * process each pixel on the canvas. The shader will be used for:
- * - Fills when a texture is enabled if it includes a uniform `sampler2D`.
- * - Fills when lights are enabled if it includes the attribute `aNormal`, or if it has any of the following uniforms: `uUseLighting`, `uAmbientLightCount`, `uDirectionalLightCount`, `uPointLightCount`, `uAmbientColor`, `uDirectionalDiffuseColors`, `uDirectionalSpecularColors`, `uPointLightLocation`, `uPointLightDiffuseColors`, `uPointLightSpecularColors`, `uLightingDirection`, or `uSpecular`.
- * - Fills whenever there are no lights or textures.
- * - Strokes if it includes the uniform `uStrokeWeight`.
+ * process each pixel on the canvas. The shader will be used for fills only.
  *
  * The source code from a <a href="#/p5.Shader">p5.Shader</a> object's
  * fragment and vertex shaders will be compiled the first time it's passed to
@@ -760,21 +756,185 @@ p5.prototype.shader = function (s) {
 
   s.ensureCompiledOnContext(this);
 
-  if (s.isStrokeShader()) {
-    this._renderer.userStrokeShader = s;
-  } else {
-    this._renderer.userFillShader = s;
-    this._renderer._useNormalMaterial = false;
-  }
+  // Always set the shader as a fill shader
+  this._renderer.userFillShader = s;
+  this._renderer._useNormalMaterial = false;
 
   return this;
 };
 
 /**
+ * Sets the <a href="#/p5.Shader">p5.Shader</a> object to apply for strokes.
+ *
+ * This method applies the given shader to strokes, making it easier to
+ * customize how lines and outlines are drawn in 3D space. The shader
+ * provided will be used for strokes until <a href="#/p5/resetShader">resetShader()</a>
+ * is called or another strokeShader is applied.
+ *
+ * The shader will be used for:
+ * - Strokes only, regardless of whether the uniform `uStrokeWeight` is present.
+ *
+ * @method strokeShader
+ * @chainable
+ * @param {p5.Shader} s <a href="#/p5.Shader">p5.Shader</a> object
+ *                      to apply for strokes.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let vertSrc = `
+ * attribute vec3 aPosition;
+ * attribute vec2 aTexCoord;
+ * uniform mat4 uProjectionMatrix;
+ * uniform mat4 uModelViewMatrix;
+ * varying vec2 vTexCoord;
+ *
+ * void main() {
+ *   vTexCoord = aTexCoord;
+ *   vec4 position = vec4(aPosition, 1.0);
+ *   gl_Position = uProjectionMatrix * uModelViewMatrix * position;
+ * }
+ * `;
+ *
+ * let fragSrc = `
+ * precision mediump float;
+ * varying vec2 vTexCoord;
+ *
+ * void main() {
+ *   vec2 uv = vTexCoord;
+ *   vec3 color = vec3(uv.x, uv.y, min(uv.x + uv.y, 1.0));
+ *   gl_FragColor = vec4(color, 1.0);
+ * }
+ * `;
+ *
+ * let myStrokeShader;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   myStrokeShader = createShader(vertSrc, fragSrc);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   
+ *   // Apply the stroke shader
+ *   strokeShader(myStrokeShader);
+ *   
+ *   // Draw a stroked shape
+ *   strokeWeight(5);
+ *   stroke(255, 0, 0);
+ *   noFill();
+ *   box(50);
+ *
+ *   // Reset to default shaders for the next frame
+ *   resetShader();
+ * }
+ * </code>
+ * </div>
+ * 
+ * <div modernizr='webgl'>
+ * <code>
+ * let vertSrc = `
+ * precision highp float;
+ * uniform mat4 uModelViewMatrix;
+ * uniform mat4 uProjectionMatrix;
+ *
+ * attribute vec3 aPosition;
+ * attribute vec2 aTexCoord;
+ * varying vec2 vTexCoord;
+ *
+ * void main() {
+ *   vTexCoord = aTexCoord;
+ *   vec4 positionVec4 = vec4(aPosition, 1.0);
+ *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+ * }
+ * `;
+ *
+ * let fragSrc = `
+ * precision highp float;
+ *
+ * void main() {
+ *   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+ * }
+ * `;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   let shaderProgram = createShader(vertSrc, fragSrc);
+ *   strokeShader(shaderProgram);
+ *   strokeWeight(10);
+ *   line(-50, -50, 50, 50);
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.strokeShader = function (s) {
+  this._assert3d('strokeShader');
+  p5._validateParameters('strokeShader', arguments);
+
+  s.ensureCompiledOnContext(this);
+
+  this._renderer.userStrokeShader = s;
+
+  return this;
+};
+
+
+/**
+ * Sets the <a href="#/p5.Shader">p5.Shader</a> object to apply while rendering images.
+ *
+ * The shader will be used for image rendering only.
+ *
+ * The parameter, `s`, is the <a href="#/p5.Shader">p5.Shader</a> object to apply.
+ *
+ * Note: Shaders can only be used in WebGL mode.
+ *
+ * @method imageShader
+ * @chainable
+ * @param {p5.Shader} s <a href="#/p5.Shader">p5.Shader</a> object to apply.
+ *
+ * @example
+ * <div>
+ * <code>
+ * let img;
+ * let imgShader;
+ *
+ * function preload() {
+ *   img = loadImage('assets/sample.jpg');
+ *   imgShader = loadShader('assets/vertex.vert', 'assets/image.frag');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(800, 600, WEBGL);
+ *   imageShader(imgShader);
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *   image(img, -width / 2, -height / 2, width, height);
+ * }
+ * </code>
+ * </div>
+ */
+
+p5.prototype.imageShader = function (s) {
+  this._assert3d('imageShader');
+  p5._validateParameters('imageShader', arguments);
+
+  s.ensureCompiledOnContext(this);
+
+  this._renderer.userImageShader = s;
+
+  return this;
+};
+
+
+/**
  * Restores the default shaders.
  *
  * `resetShader()` deactivates any shaders previously applied by
- * <a href="#/p5/shader">shader()</a>.
+ * <a href="#/p5/shader">shader()</a>, <a href="#/p5/strokeShader">strokeShader()</a>,
+ * or <a href="#/p5/imageShader">imageShader()</a>.
  *
  * Note: Shaders can only be used in WebGL mode.
  *
@@ -854,7 +1014,11 @@ p5.prototype.shader = function (s) {
  * </div>
  */
 p5.prototype.resetShader = function () {
-  this._renderer.userFillShader = this._renderer.userStrokeShader = null;
+
+  this._renderer.userFillShader = null;
+  this._renderer.userStrokeShader = null;
+  this._renderer.userImageShader = null;
+
   return this;
 };
 

@@ -575,6 +575,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.userFillShader = undefined;
     this.userStrokeShader = undefined;
     this.userPointShader = undefined;
+    this.userImageShader = undefined;
 
     // Default drawing is done in Retained Mode
     // Geometry and Material hashes stored here
@@ -1620,6 +1621,7 @@ p5.RendererGL = class RendererGL extends Renderer {
 
     properties.userFillShader = this.userFillShader;
     properties.userStrokeShader = this.userStrokeShader;
+    properties.userImageShader = this.userImageShader;
     properties.userPointShader = this.userPointShader;
 
     properties.pointSize = this.pointSize;
@@ -1890,6 +1892,18 @@ p5.RendererGL = class RendererGL extends Renderer {
     }
     return this._defaultFontShader;
   }
+
+  // _getImmediateImageShader() {
+  //   const image = this.userImageShader;
+  //   if (!image || !image.isImageShader()) {
+  //     return this._getTextureShader();
+  //   }
+  //   return image;
+  // }
+  
+  // _getRetainedImageShader() {
+  //   return this._getImmediateImageShader();
+  // }
 
   _webGL2CompatibilityPrefix(
     shaderType,
