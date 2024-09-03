@@ -576,7 +576,7 @@ p5.Shader = class {
 
   unbindTextures() {
     for (const uniform of this.samplers) {
-      if (this.previousBindings.has(textureUnit) === false){
+      if (!this.previousBindings.has(textureUnit)){
         this.setUniform(uniform.name, this._renderer._getEmptyTexture());
        }
     }
