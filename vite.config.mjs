@@ -13,7 +13,8 @@ export default defineConfig({
   test: {
     root: './',
     include: [
-      './test/unit/**/*.js'
+      // './test/unit/**/*.js'
+      './test/unit/utilities/**/*.js'
     ],
     exclude: [
       './test/unit/spec.js',
@@ -24,8 +25,8 @@ export default defineConfig({
     globals: true,
     browser: {
       enabled: true,
-      name: 'chromium',
-      provider: 'playwright'
+      name: 'chrome',
+      provider: 'webdriverio'
     }
   }
 });

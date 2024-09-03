@@ -22,8 +22,8 @@ jobs:
         run: npm ci
         env:
           CI: true
-      - name: Install Playwright browsers
-        run: npx playwright install
+      # - name: Install Playwright browsers
+      #   run: npx playwright install
       - name: Build parameter data
         run: npm run docs
       - name: build and test
