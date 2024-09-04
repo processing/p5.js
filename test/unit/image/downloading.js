@@ -47,7 +47,6 @@ suite('downloading animated gifs', function() {
 
 suite('p5.prototype.saveCanvas', function() {
   let myp5;
-  let myCanvas;
 
   let waitForBlob = async function(blc) {
     let sleep = function(ms) {

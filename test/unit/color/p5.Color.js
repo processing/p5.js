@@ -798,14 +798,14 @@ suite('p5.Color', function() {
     });
   });
 
-  suite('p5.Color.prototype.toString', function() {
-    var colorStr;
+  suite.todo('p5.Color.prototype.toString', function() {
+    // var colorStr;
 
-    beforeEach(function() {
-      myp5.colorMode(myp5.RGB, 255, 255, 255, 255);
-      c = myp5.color(128, 0, 128, 128);
-      colorStr = c.toString();
-    });
+    // beforeEach(function() {
+    //   myp5.colorMode(myp5.RGB, 255, 255, 255, 255);
+    //   c = myp5.color(128, 0, 128, 128);
+    //   colorStr = c.toString();
+    // });
 
     // NOTE: need some tests here
   });

@@ -20,10 +20,7 @@ suite('color/CreatingReading', function() {
 
   var fromColor;
   var toColor;
-  var c;
-  var val;
 
-  // TODO: remove all FES tests and implement better regression test
   suite('p5.prototype.alpha', function() {
     beforeEach(function() {
       myp5.colorMode(myp5.RGB);
