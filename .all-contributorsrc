@@ -6228,6 +6228,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "valkyriedimension",
+      "name": "Melody Sharp",
+      "avatar_url": "https://avatars.githubusercontent.com/u/139258864?v=4",
+      "profile": "https://github.com/valkyriedimension",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
