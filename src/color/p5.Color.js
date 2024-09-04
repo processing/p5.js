@@ -492,6 +492,10 @@ p5.Color = class Color {
   get levels() {
     return [...this.color.coords, this.color.alpha].map(v => v * 255);
   }
+
+  get _array(){
+    return [...this.color.coords, this.color.alpha];
+  }
 };
 
 export default p5.Color;
