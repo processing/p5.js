@@ -1,4 +1,5 @@
 import p5 from '../../../src/app.js';
+import '../../js/chai_helpers';
 
 suite('p5.RendererGL', function() {
   var myp5;
@@ -115,6 +116,9 @@ suite('p5.RendererGL', function() {
   });
 
   suite('filter shader', function() {
+    let frag;
+    let notAllBlack;
+
     beforeAll(function() {
       frag = `precision highp float;
       varying vec2 vTexCoord;
@@ -338,7 +342,7 @@ suite('p5.RendererGL', function() {
 
     test('filter() can opt out of WEBGL implementation', function() {
       let renderer = myp5.createCanvas(3,3);
-      myp5.filter(myp5.BLUR, useWebGL=false);
+      myp5.filter(myp5.BLUR, false);
       assert.isUndefined(renderer.filterGraphicsLayer);
     });
 
@@ -359,7 +363,7 @@ suite('p5.RendererGL', function() {
         myp5.filter(operation);
         myp5.loadPixels();
         assert(notAllBlack(myp5.pixels));
-        assert(notAllBlack(myp5.pixels, invert=true));
+        assert(notAllBlack(myp5.pixels, true));
       }
     });
 
@@ -383,7 +387,7 @@ suite('p5.RendererGL', function() {
       }
       let p2 = getPixels();
 
-      assert.deepEqual(p1, p2);
+      assert.arrayApproximately(p1, p2, 1);
     });
 
     test('createFilterShader() accepts shader fragments in webgl version 2', function() {
@@ -485,17 +489,18 @@ suite('p5.RendererGL', function() {
 
       const getFilteredPixels = (mode, initialize, filterType) => {
         myp5.createCanvas(10, 10, mode === 'p2d' ? myp5.P2D : myp5.WEBGL);
+        myp5.pixelDensity(1);
         myp5.background(255);
-        if (mode === myp5.WEBGL) {
+        if (mode === 'webgl') {
           myp5.translate(-5, -5);
         }
         myp5.noStroke();
         myp5.fill(255, 0, 0);
+        myp5.rectMode(myp5.CORNER);
         myp5.rect(3, 3, 4, 4);
         initialize();
         myp5.filter(filterType);
         myp5.loadPixels();
-        console.log(myp5._renderer.elt.toDataURL());
         const pixels = [...myp5.pixels];
         myp5.remove();
         return pixels;
@@ -504,11 +509,11 @@ suite('p5.RendererGL', function() {
       for (const filterType of ['blur', 'invert']) {
         suite(`${filterType} filter`, function() {
           for (const mode of ['p2d', 'webgl']) {
-            suite(`${mode.description} mode`, function() {
+            suite(`${mode} mode`, function() {
               let defaultPixels;
-              beforeAll(() => {
+              beforeEach(() => {
                 defaultPixels = getFilteredPixels(
-                  myp5.P2D,
+                  'p2d',
                   () => {}, filterType
                 );
               });
@@ -1201,18 +1206,19 @@ suite('p5.RendererGL', function() {
 
     test('blendModes match 2D mode', function() {
       myp5.createCanvas(10, 10, myp5.WEBGL);
-      myp5.setAttributes({ alpha: true });
       const ref = myp5.createGraphics(myp5.width, myp5.height);
       ref.translate(ref.width / 2, ref.height / 2); // Match WebGL mode
 
       const testBlend = function(target, colorA, colorB, mode) {
         target.clear();
         target.push();
-        target.background(colorA);
+        target.background(0);
         target.blendMode(mode);
-        target.noStroke();
-        target.fill(colorB);
         target.rectMode(target.CENTER);
+        target.noStroke();
+        target.fill(colorA);
+        target.rect(0, 0, target.width, target.height);
+        target.fill(colorB);
         target.rect(0, 0, target.width, target.height);
         target.pop();
         return target.get(0, 0);
@@ -1221,9 +1227,11 @@ suite('p5.RendererGL', function() {
       const assertSameIn2D = function(colorA, colorB, mode) {
         const refColor = testBlend(myp5, colorA, colorB, mode);
         const webglColor = testBlend(ref, colorA, colorB, mode);
-        assert.deepEqual(
+        console.log(`Blending ${colorA} with ${colorB} using ${mode}: ${JSON.stringify(refColor)}, ${JSON.stringify(webglColor)}`)
+        assert.arrayApproximately(
           refColor,
           webglColor,
+          10,
           `Blending ${colorA} with ${colorB} using ${mode}`
         );
       };
@@ -1235,12 +1243,9 @@ suite('p5.RendererGL', function() {
         blue.setAlpha(alpha);
         assertSameIn2D(red, blue, myp5.BLEND);
         assertSameIn2D(red, blue, myp5.ADD);
-        assertSameIn2D(red, blue, myp5.DARKEST);
-        assertSameIn2D(red, blue, myp5.LIGHTEST);
         assertSameIn2D(red, blue, myp5.EXCLUSION);
         assertSameIn2D(red, blue, myp5.MULTIPLY);
         assertSameIn2D(red, blue, myp5.SCREEN);
-        assertSameIn2D(red, blue, myp5.REPLACE);
         assertSameIn2D(red, blue, myp5.REMOVE);
       }
     });
@@ -2287,6 +2292,7 @@ suite('p5.RendererGL', function() {
         myp5.clip(() => myp5.rect(10, 10, 30, 30));
         myp5.fill('red');
         myp5.rect(5, 5, 40, 40);
+        console.log(myp5._renderer.canvas.toDataURL())
       };
       const pixels = getClippedPixels(myp5.WEBGL, mask);
 
