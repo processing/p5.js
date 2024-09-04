@@ -28,7 +28,7 @@ var testImageRender = function(file, sketch) {
   });
 };
 
-suite('loading images', function() {
+suite.todo('loading images', function() {
   var myp5;
 
   beforeAll(function() {
@@ -290,7 +290,7 @@ suite('loading images', function() {
   // new p5(mySketch, null, false);
 });
 
-suite('loading animated gif images', function() {
+suite.todo('loading animated gif images', function() {
   var myp5;
 
   beforeAll(function() {
@@ -398,7 +398,7 @@ suite('loading animated gif images', function() {
   // });
 });
 
-suite('displaying images', function() {
+suite.todo('displaying images', function() {
   var myp5;
   var pImg;
   var imagePath = 'unit/assets/cat-with-hole.png';

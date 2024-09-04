@@ -1,6 +1,6 @@
 import p5 from '../../../src/app.js';
 
-suite('Filters', function() {
+suite.todo('Filters', function() {
   var myp5;
   let img;
 

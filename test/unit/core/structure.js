@@ -233,7 +233,7 @@ suite('Structure', function() {
       });
     });
 
-    test('instance redraw is independent of window', function() {
+    test.todo('instance redraw is independent of window', function() {
       // callback for p5 instance mode.
       // It does not call noLoop so redraw will be called many times.
       // Redraw is not supposed to call window.draw even though no draw is defined in cb

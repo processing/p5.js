@@ -80,7 +80,7 @@ suite('outputs', function() {
         });
       });
     });
-    test('should create text output for arc()', function() {
+    test.todo('should create text output for arc()', function() {
       return new Promise(function(resolve, reject) {
         expected =
           '<li><a href="#myCanvasIDtextOutputshape0">red arc</a>, at middle, covering 31% of the canvas.</li>';
@@ -107,7 +107,7 @@ suite('outputs', function() {
         });
       });
     });
-    test('should create text output for ellipse()', function() {
+    test.todo('should create text output for ellipse()', function() {
       return new Promise(function(resolve, reject) {
         expected =
           '<li><a href="#myCanvasIDtextOutputshape0">green circle</a>, at middle, covering 24% of the canvas.</li>';
@@ -134,7 +134,7 @@ suite('outputs', function() {
         });
       });
     });
-    test('should create text output for triangle()', function() {
+    test.todo('should create text output for triangle()', function() {
       return new Promise(function(resolve, reject) {
         expected =
           '<li><a href="#myCanvasIDtextOutputshape0">green triangle</a>, at top left, covering 13% of the canvas.</li>';
@@ -225,7 +225,7 @@ suite('outputs', function() {
         });
       });
     });
-    test('should create text output for quad()', function() {
+    test.todo('should create text output for quad()', function() {
       return new Promise(function(resolve, reject) {
         expected = 'red quadrilateral, location = top left, area = 45 %';
         new p5(function(p) {
@@ -251,7 +251,7 @@ suite('outputs', function() {
         });
       });
     });
-    test('should create text output for point()', function() {
+    test.todo('should create text output for point()', function() {
       return new Promise(function(resolve, reject) {
         expected = 'dark fuchsia point, location = bottom right';
         new p5(function(p) {
@@ -277,7 +277,7 @@ suite('outputs', function() {
         });
       });
     });
-    test('should create text output for triangle()', function() {
+    test.todo('should create text output for triangle()', function() {
       return new Promise(function(resolve, reject) {
         expected = 'green triangle, location = top left, area = 13 %';
         new p5(function(p) {

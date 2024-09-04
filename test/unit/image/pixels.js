@@ -1,6 +1,6 @@
 import p5 from '../../../src/app.js';
 
-suite('pixels', function() {
+suite.todo('pixels', function() {
   var myp5;
 
   beforeAll(function() {

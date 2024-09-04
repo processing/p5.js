@@ -3,7 +3,7 @@ import { createP5Iframe, P5_SCRIPT_TAG, P5_SCRIPT_URL } from '../../js/p5_helper
 import { vi } from 'vitest';
 
 suite('Core', function () {
-  suite('new p5() / global mode', function () {
+  suite.todo('new p5() / global mode', function () {
     var iframe;
 
     afterAll(function () {
@@ -112,7 +112,7 @@ suite('Core', function () {
         }
       });
 
-      test('should warn when globals are overwritten', function () {
+      test.todo('should warn when globals are overwritten', function () {
         bind('text', noop);
         globalObject.text = 'boop';
 

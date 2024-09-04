@@ -205,7 +205,7 @@ class p5 {
 
     await this.#_setup();
     if (!this._recording) {
-      this.#_draw();
+      this._draw();
     }
   }
 
@@ -256,7 +256,7 @@ class p5 {
   // async and use await within as the next frame may start rendering before the
   // current frame finish awaiting. The same goes for lifecycle hooks 'predraw'
   // and 'postdraw'.
-  async #_draw(requestAnimationFrameTimestamp) {
+  async _draw(requestAnimationFrameTimestamp) {
     const now = requestAnimationFrameTimestamp || window.performance.now();
     const timeSinceLastFrame = now - this._lastTargetFrameTime;
     const targetTimeBetweenFrames = 1000 / this._targetFrameRate;
@@ -301,7 +301,7 @@ class p5 {
     // an opportunity to draw.
     if (this._loop) {
       this._requestAnimId = window.requestAnimationFrame(
-        this.#_draw.bind(this)
+        this._draw.bind(this)
       );
     }
   }

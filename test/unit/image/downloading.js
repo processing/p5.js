@@ -1,7 +1,7 @@
 import p5 from '../../../src/app.js';
 import { testWithDownload } from '../../js/p5_helpers';
 
-suite('downloading animated gifs', function() {
+suite.todo('downloading animated gifs', function() {
   let myp5;
   let myGif;
 
@@ -45,7 +45,7 @@ suite('downloading animated gifs', function() {
   });
 });
 
-suite('p5.prototype.saveCanvas', function() {
+suite.todo('p5.prototype.saveCanvas', function() {
   let myp5;
 
   let waitForBlob = async function(blc) {

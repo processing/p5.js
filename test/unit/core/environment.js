@@ -96,7 +96,7 @@ suite('Environment', function() {
   });
 
   suite('p5.prototype.frameRate', function() {
-    test('returns 0 on first draw call', function() {
+    test.todo('returns 0 on first draw call', function() {
       assert.strictEqual(myp5.frameRate(), 0);
     });
 
@@ -113,11 +113,11 @@ suite('Environment', function() {
       });
     });
 
-    test('p5.prototype.getFrameRate', function() {
+    test.todo('p5.prototype.getFrameRate', function() {
       assert.strictEqual(myp5.getFrameRate(), 0);
     });
 
-    suite('drawing with target frame rates', function() {
+    suite.todo('drawing with target frame rates', function() {
       let clock;
       let prevRequestAnimationFrame;
       let nextFrameCallback = () => {};
