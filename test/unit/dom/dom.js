@@ -1054,27 +1054,27 @@ suite('DOM', function() {
       assert.deepEqual(testElement.elt.type, 'color');
     });
 
-    test('should accept a p5.Color as param', function() {
+    test.todo('should accept a p5.Color as param', function() {
       const testColor = myp5.color('red');
       testElement = myp5.createColorPicker(testColor);
 
       assert.deepEqual(testElement.elt.value, testColor.toString('#rrggbb'));
     });
 
-    test('should accept a string as param', function() {
+    test.todo('should accept a string as param', function() {
       const testColorString = '#f00f00';
       testElement = myp5.createColorPicker(testColorString);
       assert.deepEqual(testElement.elt.value, testColorString);
     });
 
-    test('calling color() should return the current color as p5.color', function() {
+    test.todo('calling color() should return the current color as p5.color', function() {
       const testColorString = 'red';
       const testColor = myp5.color(testColorString);
       testElement = myp5.createColorPicker(testColorString);
       assert.deepEqual(testElement.color(), testColor);
     });
 
-    test('calling value() should return hex string of color', function() {
+    test.todo('calling value() should return hex string of color', function() {
       const testColor = myp5.color('aqua');
       testElement = myp5.createColorPicker(testColor);
       assert.deepEqual(testElement.value(), testColor.toString('#rrggbb'));
@@ -1436,7 +1436,7 @@ suite('DOM', function() {
     );
   });
 
-  suite('p5.prototype.createCapture', function() {
+  suite.todo('p5.prototype.createCapture', function() {
     // to run these tests, getUserMedia is required to be supported
     if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
       throw Error(

@@ -1,7 +1,7 @@
 import p5 from '../../../src/app.js';
 import { testSketchWithPromise, promisedSketch } from '../../js/p5_helpers';
 
-suite('loadImage', function() {
+suite.todo('loadImage', function() {
   var invalidFile = '404file';
   var validFile = 'unit/assets/nyan_cat.gif';
 

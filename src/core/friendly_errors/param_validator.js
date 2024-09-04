@@ -6,7 +6,7 @@ import p5 from '../main.js';
 import * as constants from '../constants.js';
 import { z } from 'zod';
 import { fromError } from 'zod-validation-error';
-import dataDoc from '../../../docs/parameterData.json' assert { type: 'json' };
+import dataDoc from '../../../docs/parameterData.json';
 
 // Cache for Zod schemas
 let schemaRegistry = new Map();
@@ -21,7 +21,7 @@ const arrDoc = JSON.parse(JSON.stringify(dataDoc));
 const p5Constructors = {};
 // For speedup over many runs. `funcSpecificConstructors[func]` only has the
 // constructors for types which were seen earlier as args of `func`.
-const funcSpecificConstructors = {};
+// const funcSpecificConstructors = {};
 
 for (let [key, value] of Object.entries(p5)) {
   p5Constructors[key] = value;
@@ -68,29 +68,29 @@ const schemaMap = {
   'String[]': z.array(z.string())
 };
 
-const webAPIObjects = [
-  'AudioNode',
-  'HTMLCanvasElement',
-  'HTMLElement',
-  'KeyboardEvent',
-  'MouseEvent',
-  'TouchEvent',
-  'UIEvent',
-  'WheelEvent'
-];
+// const webAPIObjects = [
+//   'AudioNode',
+//   'HTMLCanvasElement',
+//   'HTMLElement',
+//   'KeyboardEvent',
+//   'MouseEvent',
+//   'TouchEvent',
+//   'UIEvent',
+//   'WheelEvent'
+// ];
 
-function generateWebAPISchemas(apiObjects) {
-  return apiObjects.map(obj => {
-    return {
-      name: obj,
-      schema: z.custom((data) => data instanceof globalThis[obj], {
-        message: `Expected a ${obj}`
-      })
-    };
-  });
-}
+// function generateWebAPISchemas(apiObjects) {
+//   return apiObjects.map(obj => {
+//     return {
+//       name: obj,
+//       schema: z.custom((data) => data instanceof globalThis[obj], {
+//         message: `Expected a ${obj}`
+//       })
+//     };
+//   });
+// }
 
-const webAPISchemas = generateWebAPISchemas(webAPIObjects);
+// const webAPISchemas = generateWebAPISchemas(webAPIObjects);
 
 /**
  * This is a helper function that generates Zod schemas for a function based on
@@ -180,7 +180,7 @@ function generateZodSchemasForFunc(func) {
 
   // Note that in Zod, `optional()` only checks for undefined, not the absence
   // of value.
-  // 
+  //
   // Let's say we have a function with 3 parameters, and the last one is
   // optional, i.e. func(a, b, c?). If we only have a z.tuple() for the
   // parameters, where the third schema is optional, then we will only be able
@@ -203,7 +203,7 @@ function generateZodSchemasForFunc(func) {
     }
 
     return result;
-  }
+  };
 
   // Generate schemas for each function overload and merge them
   const overloadSchemas = overloads.flatMap(overload => {
@@ -345,7 +345,7 @@ p5._validateParams = function validateParams(func, args) {
       error: validationError
     };
   }
-}
+};
 
 p5.prototype._validateParams = p5._validateParams;
 export default p5;

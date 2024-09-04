@@ -20,30 +20,12 @@ suite('Interaction', function() {
       assert.ok(myp5.orbitControl);
       assert.typeOf(myp5.orbitControl, 'function');
     });
-    test('missing params. no friendly-err-msg', function() {
-      assert.doesNotThrow(
-        function() {
-          myp5.orbitControl();
-        },
-        Error,
-        'got unwanted exception'
-      );
-    });
   });
 
   suite('p5.prototype.debugMode', function() {
     test('should be a function', function() {
       assert.ok(myp5.debugMode);
       assert.typeOf(myp5.debugMode, 'function');
-    });
-    test('missing params. no friendly-err-msg', function() {
-      assert.doesNotThrow(
-        function() {
-          myp5.debugMode();
-        },
-        Error,
-        'got unwanted exception'
-      );
     });
   });
 

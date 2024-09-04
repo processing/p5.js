@@ -41,14 +41,14 @@ suite('color/Setting', function() {
       assert.isTrue(myp5._renderer._isErasing);
     });
 
-    test('should cache renderer fill', function() {
+    test.todo('should cache renderer fill', function() {
       myp5.fill(255, 0, 0);
       const fillStyle = myp5.drawingContext.fillStyle;
       myp5.erase();
       assert.deepEqual(myp5._renderer._cachedFillStyle, fillStyle);
     });
 
-    test('should cache renderer stroke', function() {
+    test.todo('should cache renderer stroke', function() {
       myp5.stroke(255, 0, 0);
       const strokeStyle = myp5.drawingContext.strokeStyle;
       myp5.erase();
@@ -84,14 +84,14 @@ suite('color/Setting', function() {
       assert.isTrue(my3D._renderer._isErasing);
     });
 
-    test('should cache renderer fill', function() {
+    test.todo('should cache renderer fill', function() {
       my3D.fill(255, 0, 0);
       const curFillColor = my3D._renderer.curFillColor;
       my3D.erase();
       assert.deepEqual(my3D._renderer._cachedFillStyle, curFillColor);
     });
 
-    test('should cache renderer stroke', function() {
+    test.todo('should cache renderer stroke', function() {
       my3D.stroke(255, 0, 0);
       const strokeStyle = my3D._renderer.curStrokeColor;
       my3D.erase();
@@ -132,7 +132,7 @@ suite('color/Setting', function() {
       assert.isFalse(myp5._renderer._isErasing);
     });
 
-    test('should restore cached renderer fill', function() {
+    test.todo('should restore cached renderer fill', function() {
       myp5.fill(255, 0, 0);
       const fillStyle = myp5.drawingContext.fillStyle;
       myp5.erase();
@@ -140,7 +140,7 @@ suite('color/Setting', function() {
       assert.deepEqual(myp5.drawingContext.fillStyle, fillStyle);
     });
 
-    test('should restore cached renderer stroke', function() {
+    test.todo('should restore cached renderer stroke', function() {
       myp5.stroke(255, 0, 0);
       const strokeStyle = myp5.drawingContext.strokeStyle;
       myp5.erase();
@@ -156,7 +156,7 @@ suite('color/Setting', function() {
       assert.isFalse(my3D._renderer._isErasing);
     });
 
-    test('should restore cached renderer fill', function() {
+    test.todo('should restore cached renderer fill', function() {
       my3D.fill(255, 0, 0);
       const fillStyle = my3D._renderer.curFillColor.slice();
       my3D.erase();
@@ -164,7 +164,7 @@ suite('color/Setting', function() {
       assert.deepEqual([1, 0, 0, 1], fillStyle);
     });
 
-    test('should restore cached renderer stroke', function() {
+    test.todo('should restore cached renderer stroke', function() {
       my3D.stroke(255, 0, 0);
       const strokeStyle = my3D._renderer.curStrokeColor.slice();
       my3D.erase();

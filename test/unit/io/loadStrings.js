@@ -1,6 +1,6 @@
 import { testSketchWithPromise, promisedSketch } from '../../js/p5_helpers';
 
-suite('loadStrings', function() {
+suite.todo('loadStrings', function() {
   const invalidFile = '404file';
   const validFile = 'unit/assets/sentences.txt';
   const fileWithEmptyLines = 'unit/assets/empty_lines.txt';

@@ -237,6 +237,7 @@ p5.prototype.createCanvas = function (w, h, renderer, canvas) {
   this._setProperty('_renderer', new renderers[r](c, this, true));
   this._defaultGraphicsCreated = true;
   this._elements.push(this._renderer);
+  // Instead of resize, just create with the right size in the first place
   this._renderer.resize(w, h);
   this._renderer._applyDefaults();
   return this._renderer;

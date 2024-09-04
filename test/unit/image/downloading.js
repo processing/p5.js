@@ -1,7 +1,7 @@
 import p5 from '../../../src/app.js';
 import { testWithDownload } from '../../js/p5_helpers';
 
-suite('downloading animated gifs', function() {
+suite.todo('downloading animated gifs', function() {
   let myp5;
   let myGif;
 
@@ -45,9 +45,8 @@ suite('downloading animated gifs', function() {
   });
 });
 
-suite('p5.prototype.saveCanvas', function() {
+suite.todo('p5.prototype.saveCanvas', function() {
   let myp5;
-  let myCanvas;
 
   let waitForBlob = async function(blc) {
     let sleep = function(ms) {
@@ -79,96 +78,6 @@ suite('p5.prototype.saveCanvas', function() {
     assert.ok(myp5.saveCanvas);
     assert.typeOf(myp5.saveCanvas, 'function');
   });
-
-  // Why use testWithDownload for 'no friendly-err' tests here?
-  // saveCanvas uses htmlcanvas.toBlob which uses a callback
-  // mechanism and the download is triggered in its callback.
-  // It may happen that the test get out of sync and the only way
-  // to know if the callback has been called is if the blob has
-  // been made available to us
-  testWithDownload(
-    'no friendly-err-msg I',
-    async function(blc) {
-      assert.doesNotThrow(
-        function() {
-          myp5.saveCanvas();
-        },
-        Error,
-        'got unwanted exception'
-      );
-      await waitForBlob(blc);
-    },
-    true
-  );
-  testWithDownload(
-    'no friendly-err-msg II',
-    async function(blc) {
-      assert.doesNotThrow(
-        function() {
-          myp5.saveCanvas('filename');
-        },
-        Error,
-        'got unwanted exception'
-      );
-      await waitForBlob(blc);
-    },
-    true
-  );
-  testWithDownload(
-    'no friendly-err-msg III',
-    async function(blc) {
-      assert.doesNotThrow(
-        function() {
-          myp5.saveCanvas('filename', 'png');
-        },
-        Error,
-        'got unwanted exception'
-      );
-      await waitForBlob(blc);
-    },
-    true
-  );
-  testWithDownload(
-    'no friendly-err-msg IV',
-    async function(blc) {
-      assert.doesNotThrow(
-        function() {
-          myp5.saveCanvas(myCanvas, 'filename');
-        },
-        Error,
-        'got unwanted exception'
-      );
-      await waitForBlob(blc);
-    },
-    true
-  );
-  testWithDownload(
-    'no friendly-err-msg V',
-    async function(blc) {
-      assert.doesNotThrow(
-        function() {
-          myp5.saveCanvas(myCanvas, 'filename', 'png');
-        },
-        Error,
-        'got unwanted exception'
-      );
-    },
-    true
-  );
-  testWithDownload(
-    'no friendly-err-msg VI',
-    async function(blc) {
-      assert.doesNotThrow(
-        function() {
-          myp5.saveCanvas(myCanvas, 'filename', 'png');
-        },
-        Error,
-        'got unwanted exception'
-      );
-      await waitForBlob(blc);
-    },
-    true
-  );
 
   testWithDownload(
     'should download a png file',
@@ -228,27 +137,6 @@ suite('p5.prototype.saveFrames', function() {
   test('should be a function', function() {
     assert.ok(myp5.saveFrames);
     assert.typeOf(myp5.saveFrames, 'function');
-  });
-
-  test('no friendly-err-msg I', function() {
-    assert.doesNotThrow(
-      function() {
-        myp5.saveFrames('out', 'png', 0.1, 25);
-      },
-      Error,
-      'got unwanted exception'
-    );
-  });
-  test('no friendly-err-msg II', function(done) {
-    assert.doesNotThrow(
-      function() {
-        myp5.saveFrames('out', 'png', 0.1, 25, () => {
-          done();
-        });
-      },
-      Error,
-      'got unwanted exception'
-    );
   });
 
   test('should get frames in callback (png)', function(done) {

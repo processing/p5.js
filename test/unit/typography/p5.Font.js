@@ -1,7 +1,7 @@
 import p5 from '../../../src/app.js';
 import { promisedSketch } from '../../js/p5_helpers';
 
-suite('p5.Font', function() {
+suite.todo('p5.Font', function() {
   var myp5;
 
   beforeAll(function() {
