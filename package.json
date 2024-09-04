@@ -5,8 +5,7 @@
     "build": "rollup -c",
     "dev": "vite",
     "docs": "documentation build ./src/**/*.js ./src/**/**/*.js -o ./docs/data.json && node ./utils/convert.js",
-    "test": "vitest run --browser.headless true",
-    "test:dev": "vitest",
+    "test": "vitest",
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."
   },
