@@ -3,7 +3,7 @@
   "repository": "processing/p5.js",
   "scripts": {
     "build": "rollup -c",
-    "dev": "vite",
+    "dev": "vite preview/",
     "docs": "documentation build ./src/**/*.js ./src/**/**/*.js -o ./docs/data.json && node ./utils/convert.js",
     "test": "vitest",
     "lint": "eslint .",
