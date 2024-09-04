@@ -920,7 +920,7 @@ p5.prototype.pop = function() {
  * </code>
  * </div>
  */
-p5.prototype.redraw = function(n) {
+p5.prototype.redraw = async function(n) {
   if (this._inUserDraw || !this._setupDone) {
     return;
   }
@@ -943,15 +943,15 @@ p5.prototype.redraw = function(n) {
       if (context._renderer.isP3D) {
         context._renderer._update();
       }
-      context._setProperty('frameCount', context.frameCount + 1);
-      this.callRegisteredHooksFor('pre');
+      this._setProperty('frameCount', context.frameCount + 1);
+      await this._runLifecycleHook('predraw');
       this._inUserDraw = true;
       try {
-        context.draw();
+        await context.draw();
       } finally {
         this._inUserDraw = false;
       }
-      this.callRegisteredHooksFor('post');
+      await this._runLifecycleHook('postdraw');
     }
   }
 };

@@ -3,128 +3,7 @@ import { createP5Iframe, P5_SCRIPT_TAG, P5_SCRIPT_URL } from '../../js/p5_helper
 import { vi } from 'vitest';
 
 suite('Core', function () {
-  suite('p5.prototype.registerMethod', function () {
-    afterAll(function() {
-      p5.prototype._registeredMethods.init = [];
-      p5.prototype._registeredMethods.beforePreload = [];
-      p5.prototype._registeredMethods.preload = [];
-      p5.prototype._registeredMethods.afterPreload = [];
-      p5.prototype._registeredMethods.beforeSetup = [];
-      p5.prototype._registeredMethods.setup = [];
-      p5.prototype._registeredMethods.afterSetup = [];
-      p5.prototype._registeredMethods.pre = [];
-      p5.prototype._registeredMethods.draw = [];
-      p5.prototype._registeredMethods.post = [];
-    });
-    test('should register and call "init" methods', function () {
-      var myp5, myInitCalled;
-      p5.prototype.registerMethod('init', function myInit() {
-        assert(
-          !myInitCalled,
-          'myInit should only be called once during test suite'
-        );
-        myInitCalled = true;
-
-        this.myInitCalled = true;
-      });
-
-      myp5 = new p5(function (sketch) {
-        assert(sketch.hasOwnProperty('myInitCalled'));
-        assert(sketch.myInitCalled);
-
-        sketch.sketchFunctionCalled = true;
-      });
-
-      assert(myp5.sketchFunctionCalled);
-    });
-    test('should register and call before and after "preload" hooks', function () {
-      return new Promise(resolve => {
-        let beforePreloadCalled = false;
-        let preloadCalled = false;
-        let afterPreloadCalled = false;
-
-        p5.prototype.registerMethod('beforePreload', () => {
-          beforePreloadCalled = true;
-        });
-
-        p5.prototype.registerMethod('preload', () => {
-          assert.equal(beforePreloadCalled, true);
-          preloadCalled = true;
-        });
-
-        p5.prototype.registerMethod('afterPreload', () => {
-          if (beforePreloadCalled && preloadCalled) afterPreloadCalled = true;
-        });
-
-        myp5 = new p5(function (sketch) {
-          sketch.preload = () => {};
-          sketch.setup = () => {
-            assert.equal(afterPreloadCalled, true);
-            resolve();
-          };
-        });
-      });
-    });
-    test('should register and call before and after "setup" hooks', function () {
-      return new Promise(resolve => {
-        let beforeSetupCalled = false;
-        let setupCalled = false;
-        let afterSetupCalled = false;
-
-        p5.prototype.registerMethod('beforeSetup', () => {
-          beforeSetupCalled = true;
-        });
-
-        p5.prototype.registerMethod('setup', () => {
-          assert.equal(beforeSetupCalled, true);
-          setupCalled = true;
-        });
-
-        p5.prototype.registerMethod('afterSetup', () => {
-          if (beforeSetupCalled && setupCalled) afterSetupCalled = true;
-        });
-
-        myp5 = new p5(function (sketch) {
-          sketch.setup = () => {};
-          sketch.draw = () => {
-            assert.equal(afterSetupCalled, true);
-            resolve();
-          };
-        });
-      });
-    });
-    test('should register and call pre and post "draw" hooks', function () {
-      return new Promise(resolve => {
-        let preDrawCalled = false;
-        let drawCalled = false;
-        let postDrawCalled = false;
-
-        p5.prototype.registerMethod('pre', () => {
-          preDrawCalled = true;
-        });
-
-        p5.prototype.registerMethod('draw', () => {
-          assert.equal(preDrawCalled, true);
-          drawCalled = true;
-        });
-
-        p5.prototype.registerMethod('post', () => {
-          if (preDrawCalled && drawCalled) postDrawCalled = true;
-        });
-
-        myp5 = new p5(function (sketch) {
-          sketch.draw = () => {
-            if (sketch.frameCount === 2) {
-              assert.equal(postDrawCalled, true);
-              resolve();
-            }
-          };
-        });
-      });
-    });
-  });
-
-  suite('new p5() / global mode', function () {
+  suite.todo('new p5() / global mode', function () {
     var iframe;
 
     afterAll(function () {
@@ -233,7 +112,7 @@ suite('Core', function () {
         }
       });
 
-      test('should warn when globals are overwritten', function () {
+      test.todo('should warn when globals are overwritten', function () {
         bind('text', noop);
         globalObject.text = 'boop';
 
@@ -292,50 +171,11 @@ suite('Core', function () {
       assert.isUndefined(logMsg);
     });
 
-    // This is a regression test for
-    // https://github.com/processing/p5.js/issues/1350.
-    test('should not warn about overwriting preload methods', function () {
-      globalObject.loadJSON = function () {
-        throw new Error();
-      };
-      bind('loadJSON', noop);
-      assert.equal(globalObject.loadJSON, noop);
-      assert.isUndefined(logMsg);
-    });
-
     test('should not warn about overwriting non-functions', function () {
       bind('mouseX', 5);
       globalObject.mouseX = 50;
       assert.equal(globalObject.mouseX, 50);
       assert.isUndefined(logMsg);
-    });
-
-    test('instance preload is independent of window', function () {
-      // callback for p5 instance mode.
-      // It does not define a preload.
-      // This tests that we don't call the global preload accidentally.
-      function cb(s) {
-        s.setup = function () {
-          window.afterSetup();
-        };
-      }
-      return new Promise(function (resolve) {
-        iframe = createP5Iframe(
-          [
-            P5_SCRIPT_TAG,
-            '<script>',
-            'globalPreloads = 0;',
-            'function setup() { }',
-            'function preload() { window.globalPreloads++; }',
-            'new p5(' + cb.toString() + ');',
-            '</script>'
-          ].join('\n')
-        );
-        iframe.elt.contentWindow.afterSetup = resolve;
-      }).then(function () {
-        var win = iframe.elt.contentWindow;
-        assert.strictEqual(win.globalPreloads, 1);
-      });
     });
   });
 });

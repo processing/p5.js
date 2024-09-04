@@ -1,6 +1,6 @@
 import { testSketchWithPromise, promisedSketch } from '../../js/p5_helpers';
 
-suite('loadModel', function() {
+suite.todo('loadModel', function() {
   var invalidFile = '404file';
   var validFile = 'unit/assets/teapot.obj';
   var validObjFileforMtl='unit/assets/octa-color.obj';

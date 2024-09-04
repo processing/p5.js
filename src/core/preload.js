@@ -1,5 +1,68 @@
 import p5 from './main';
 
+/**
+ * A function that's called once to load assets before the sketch runs.
+ *
+ * Declaring the function `preload()` sets a code block to run once
+ * automatically before <a href="#/p5/setup">setup()</a> or
+ * <a href="#/p5/draw">draw()</a>. It's used to load assets including
+ * multimedia files, fonts, data, and 3D models:
+ *
+ * ```js
+ * function preload() {
+ *   // Code to run before the rest of the sketch.
+ * }
+ * ```
+ *
+ * Functions such as <a href="#/p5/loadImage">loadImage()</a>,
+ * <a href="#/p5/loadFont">loadFont()</a>,
+ * <a href="#/p5/loadJSON">loadJSON()</a>, and
+ * <a href="#/p5/loadModel">loadModel()</a> are guaranteed to either
+ * finish loading or raise an error if they're called within `preload()`.
+ * Doing so ensures that assets are available when the sketch begins
+ * running.
+ *
+ * @method preload
+ * @for p5
+ *
+ * @example
+ * <div>
+ * <code>
+ * let img;
+ *
+ * // Load an image and create a p5.Image object.
+ * function preload() {
+ *   img = loadImage('assets/bricks.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Draw the image.
+ *   image(img, 0, 0);
+ *
+ *   describe('A red brick wall.');
+ * }
+ * </code>
+ * </div>
+ */
+
+// functions that cause preload to wait
+// more can be added by using registerPreloadMethod(func)
+p5.prototype._preloadMethods = {
+  loadJSON: p5.prototype,
+  loadImage: p5.prototype,
+  loadStrings: p5.prototype,
+  loadXML: p5.prototype,
+  loadBytes: p5.prototype,
+  loadTable: p5.prototype,
+  loadFont: p5.prototype,
+  loadModel: p5.prototype,
+  loadShader: p5.prototype
+};
+
+p5.prototype._registeredPreloadMethods = {};
+
 p5.prototype._promisePreloads = [
   /* Example object
   {
@@ -15,6 +78,9 @@ p5.prototype._promisePreloads = [
   }
   */
 ];
+
+p5.prototype._preloadDone = false;
+p5.prototype._preloadCount = 0;
 
 p5.prototype.registerPromisePreload = function(setup) {
   p5.prototype._promisePreloads.push(setup);
@@ -133,4 +199,54 @@ p5.prototype._legacyPreloadGenerator = function(
     returnedFunction = returnedFunction.bind(thisValue);
   }
   return returnedFunction;
+};
+
+p5.prototype._decrementPreload = function() {
+  const context = this._isGlobal ? window : this;
+  if (!context._preloadDone && typeof context.preload === 'function') {
+    context._setProperty('_preloadCount', context._preloadCount - 1);
+    context._runIfPreloadsAreDone();
+  }
+};
+
+p5.prototype._wrapPreload = function(obj, fnName) {
+  return (...args) => {
+    //increment counter
+    this._incrementPreload();
+    //call original function
+    return this._registeredPreloadMethods[fnName].apply(obj, args);
+  };
+};
+
+p5.prototype._incrementPreload = function() {
+  const context = this._isGlobal ? window : this;
+  // Do nothing if we tried to increment preloads outside of `preload`
+  if (context._preloadDone) return;
+  context._setProperty('_preloadCount', context._preloadCount + 1);
+};
+
+p5.prototype._runIfPreloadsAreDone = function() {
+  const context = this._isGlobal ? window : this;
+  if (context._preloadCount === 0) {
+    const loadingScreen = document.getElementById(context._loadingScreenId);
+    if (loadingScreen) {
+      loadingScreen.parentNode.removeChild(loadingScreen);
+    }
+    // this.callRegisteredHooksFor('afterPreload');
+    if (!this._setupDone) {
+      this._lastTargetFrameTime = window.performance.now();
+      this._lastRealFrameTime = window.performance.now();
+      context._setup();
+      if (!this._recording) {
+        context._draw();
+      }
+    }
+  }
+};
+
+p5.prototype.registerPreloadMethod = function(fnString, obj) {
+  // obj = obj || p5.prototype;
+  if (!p5.prototype._preloadMethods.hasOwnProperty(fnString)) {
+    p5.prototype._preloadMethods[fnString] = obj;
+  }
 };

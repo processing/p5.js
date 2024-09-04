@@ -22,7 +22,6 @@ p5.Renderer = class Renderer extends p5.Element {
   constructor(elt, pInst, isMainCanvas) {
     super(elt, pInst);
     this.canvas = elt;
-    this._pixelsState = pInst;
     if (isMainCanvas) {
       this._isMainCanvas = true;
       // for pixel method sharing with pimage
@@ -133,8 +132,7 @@ p5.Renderer = class Renderer extends p5.Element {
   }
 
   get (x, y, w, h) {
-    const pixelsState = this._pixelsState;
-    const pd = pixelsState._pixelDensity;
+    const pd = this._pInst._pixelDensity;
     const canvas = this.canvas;
 
     if (typeof x === 'undefined' && typeof y === 'undefined') {

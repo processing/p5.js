@@ -5,7 +5,8 @@ import commonjs from '@rollup/plugin-commonjs';
 import terser from '@rollup/plugin-terser';
 import pkg from './package.json' assert { type: 'json' };
 import dayjs from 'dayjs';
-import { visualizer } from "rollup-plugin-visualizer";
+import { visualizer } from 'rollup-plugin-visualizer';
+import replace from '@rollup/plugin-replace';
 
 const plugins = [
   commonjs(),
@@ -35,7 +36,10 @@ export default [
         name: 'p5',
         banner,
         plugins: [
-          bundleSize("p5.js")
+          bundleSize("p5.js"),
+          replace({
+            'VERSION_WILL_BE_REPLACED_BY_BUILD': pkg.version
+          })
         ]
       },
       {
@@ -43,7 +47,10 @@ export default [
         format: 'esm',
         banner,
         plugins: [
-          bundleSize("p5.esm.js")
+          bundleSize("p5.esm.js"),
+          replace({
+            'VERSION_WILL_BE_REPLACED_BY_BUILD': pkg.version
+          })
         ]
       },
       {
@@ -63,7 +70,10 @@ export default [
               comments: false
             }
           }),
-          bundleSize("p5.min.js", true)
+          bundleSize("p5.min.js", true),
+          replace({
+            'VERSION_WILL_BE_REPLACED_BY_BUILD': pkg.version
+          })
         ]
       }
     ],

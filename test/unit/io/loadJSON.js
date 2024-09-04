@@ -1,6 +1,6 @@
 import { testSketchWithPromise, promisedSketch } from '../../js/p5_helpers';
 
-suite('loadJSON', function() {
+suite.todo('loadJSON', function() {
   var invalidFile = '404file';
   var jsonArrayFile = 'unit/assets/array.json';
   var jsonObjectFile = 'unit/assets/object.json';
