@@ -55,7 +55,7 @@
     "vite": "^5.0.2",
     "vite-plugin-string": "^1.2.2",
     "vitest": "^2.0.4",
-    "webdriverio": "^8.38.2",
+    "webdriverio": "^9.0.7",
     "zod": "^3.23.8"
   },
   "license": "LGPL-2.1",

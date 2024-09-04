@@ -22,12 +22,13 @@ export default defineConfig({
       './test/unit/assets/*',
       './test/unit/visual/*'
     ],
-    testTimeout: 5000,
+    testTimeout: 1000,
     globals: true,
     browser: {
       enabled: true,
       name: 'chrome',
-      provider: 'webdriverio'
+      provider: 'webdriverio',
+      screenshotFailures: false
     }
   }
 });
