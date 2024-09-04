@@ -1358,7 +1358,7 @@ p5.RendererGL = class RendererGL extends Renderer {
  */
 
   loadPixels() {
-    const pixelsState = this._pInst;
+    const pixelsState = this._pixelsState;
 
     //@todo_FES
     if (this._pInst._glAttributes.preserveDrawingBuffer !== true) {
@@ -1390,7 +1390,7 @@ p5.RendererGL = class RendererGL extends Renderer {
 
   updatePixels() {
     const fbo = this._getTempFramebuffer();
-    fbo.pixels = this._pInst.pixels;
+    fbo.pixels = this._pixelsState.pixels;
     fbo.updatePixels();
     this._pInst.push();
     this._pInst.resetMatrix();
@@ -1455,7 +1455,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     this._curCamera._resize();
 
     //resize pixels buffer
-    const pixelsState = this._pInst;
+    const pixelsState = this._pixelsState;
     if (typeof pixelsState.pixels !== 'undefined') {
       pixelsState._setProperty(
         'pixels',
