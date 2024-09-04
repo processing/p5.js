@@ -3,6 +3,7 @@ import vitePluginString from 'vite-plugin-string';
 
 export default defineConfig({
   root: './preview',
+  publicDir: '../test',
   plugins: [
     vitePluginString({
       include: [

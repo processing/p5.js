@@ -120,7 +120,7 @@ p5.prototype.loadImage = async function(
   });
 
   return fetch(path, req)
-    .then(response => {
+    .then(async response => {
       // GIF section
       const contentType = response.headers.get('content-type');
       if (contentType === null) {
@@ -129,8 +129,8 @@ p5.prototype.loadImage = async function(
         );
       }
       if (contentType && contentType.includes('image/gif')) {
-        response.arrayBuffer().then(
-          arrayBuffer => {
+        await response.arrayBuffer().then(
+          arrayBuffer => new Promise((resolve, reject) => {
             if (arrayBuffer) {
               const byteArray = new Uint8Array(arrayBuffer);
               try{
@@ -141,6 +141,7 @@ p5.prototype.loadImage = async function(
                   failureCallback,
                   (pImg => {
                     self._decrementPreload();
+                    resolve(pImg);
                   }).bind(self)
                 );
               }catch(e){
@@ -151,9 +152,11 @@ p5.prototype.loadImage = async function(
                 } else {
                   console.error(e);
                 }
+                reject(e);
               }
             }
-          },
+          })
+        ).catch(
           e => {
             if (typeof failureCallback === 'function') {
               failureCallback(e);
@@ -167,39 +170,43 @@ p5.prototype.loadImage = async function(
         // Non-GIF Section
         const img = new Image();
 
-        img.onload = () => {
-          pImg.width = pImg.canvas.width = img.width;
-          pImg.height = pImg.canvas.height = img.height;
+        await new Promise((resolve, reject) => {
+          img.onload = () => {
+            pImg.width = pImg.canvas.width = img.width;
+            pImg.height = pImg.canvas.height = img.height;
 
-          // Draw the image into the backing canvas of the p5.Image
-          pImg.drawingContext.drawImage(img, 0, 0);
-          pImg.modified = true;
-          if (typeof successCallback === 'function') {
-            successCallback(pImg);
-          }
-          self._decrementPreload();
-        };
-
-        img.onerror = e => {
-          p5._friendlyFileLoadError(0, img.src);
-          if (typeof failureCallback === 'function') {
-            failureCallback(e);
+            // Draw the image into the backing canvas of the p5.Image
+            pImg.drawingContext.drawImage(img, 0, 0);
+            pImg.modified = true;
+            if (typeof successCallback === 'function') {
+              successCallback(pImg);
+            }
+            resolve();
             self._decrementPreload();
-          } else {
-            console.error(e);
-          }
-        };
+          };
 
-        // Set crossOrigin in case image is served with CORS headers.
-        // This will let us draw to the canvas without tainting it.
-        // See https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
-        // When using data-uris the file will be loaded locally
-        // so we don't need to worry about crossOrigin with base64 file types.
-        if (path.indexOf('data:image/') !== 0) {
-          img.crossOrigin = 'Anonymous';
-        }
-        // start loading the image
-        img.src = path;
+          img.onerror = e => {
+            p5._friendlyFileLoadError(0, img.src);
+            if (typeof failureCallback === 'function') {
+              failureCallback(e);
+              self._decrementPreload();
+            } else {
+              console.error(e);
+            }
+            reject();
+          };
+
+          // Set crossOrigin in case image is served with CORS headers.
+          // This will let us draw to the canvas without tainting it.
+          // See https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
+          // When using data-uris the file will be loaded locally
+          // so we don't need to worry about crossOrigin with base64 file types.
+          if (path.indexOf('data:image/') !== 0) {
+            img.crossOrigin = 'Anonymous';
+          }
+          // start loading the image
+          img.src = path;
+        });
       }
       pImg.modified = true;
       return pImg;
