@@ -31,8 +31,8 @@ export default defineWorkspace([
       ],
       exclude: [
         './test/unit/spec.js',
-        './test/unit/assets/*',
-        './test/unit/visual/*'
+        './test/unit/assets/**/*',
+        './test/unit/visual/**/*'
       ],
       testTimeout: 1000,
       globals: true,
