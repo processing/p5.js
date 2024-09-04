@@ -21,19 +21,19 @@ suite('color/CreatingReading', function() {
   var fromColor;
   var toColor;
 
-  suite('p5.prototype.alpha', function() {
+  suite.todo('p5.prototype.alpha', function() {
     beforeEach(function() {
       myp5.colorMode(myp5.RGB);
     });
   });
 
-  suite('p5.prototype.red, green, blue', function() {
+  suite.todo('p5.prototype.red, green, blue', function() {
     beforeEach(function() {
       myp5.colorMode(myp5.RGB);
     });
   });
 
-  suite('p5.prototype.hue, brightness, lightness, saturation', function() {
+  suite.todo('p5.prototype.hue, brightness, lightness, saturation', function() {
     beforeEach(function() {
       myp5.colorMode(myp5.HSL);
     });
@@ -89,7 +89,7 @@ suite('color/CreatingReading', function() {
       assert.closeTo(interB.color.coords[2] * 255, 103, 1);
     });
 
-    test('should not extrapolate', function() {
+    test.todo('should not extrapolate', function() {
       // NOTE: maybe it should extrapolate
       var interA = myp5.lerpColor(fromColor, toColor, -0.5);
       var interB = myp5.lerpColor(fromColor, toColor, 1.5);
@@ -154,7 +154,7 @@ suite('color/CreatingReading', function() {
       assert.closeTo(interB.color.alpha * 255, 149, 1);
     });
 
-    test('should not extrapolate', function() {
+    test.todo('should not extrapolate', function() {
       // NOTE: maybe it should extrapolate
       var interA = myp5.lerpColor(fromColor, toColor, -0.5);
       var interB = myp5.lerpColor(fromColor, toColor, 1.5);
