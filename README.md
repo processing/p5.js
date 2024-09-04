@@ -1047,6 +1047,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://mayaarguelles.com/"><img src="https://avatars.githubusercontent.com/u/29130029?v=4?s=120" width="120px;" alt="Maya Arguelles"/><br /><sub><b>Maya Arguelles</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=mayaarguelles" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/shourysingh07"><img src="https://avatars.githubusercontent.com/u/105987613?v=4?s=120" width="120px;" alt="Shoury Singh"/><br /><sub><b>Shoury Singh</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=shourysingh07" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
