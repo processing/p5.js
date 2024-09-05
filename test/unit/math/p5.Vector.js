@@ -1886,28 +1886,28 @@ suite('p5.Vector', function() {
     suite('p5.Vector.clampToZero()', function() {
       let v;
 
-      test('should clamp very small positive number to zero', function() {
-        v = new p5.Vector(0.0000000000000002220446049250313, 5);
+      test('should clamp very small positive number of vector components to zero', function() {
+        v = new p5.Vector(0.0000000000000002, 5);
         v.clampToZero();
         expect(v.x).to.equal(0);
         expect(v.y).to.equal(5);
       });
 
-      test('should clamp very small negative number to zero', function() {
-        v = new p5.Vector(-0.0000000000000002220446049250313, 5);
+      test('should clamp very small negative number of vector components to zero', function() {
+        v = new p5.Vector(-0.0000000000000002, 5);
         v.clampToZero();
         expect(v.x).to.equal(0);
         expect(v.y).to.equal(5);
       });
 
-      test('should not clamp regular numbers', function() {
+      test('should not clamp regular numbers of vector components', function() {
         v = new p5.Vector(0.01, 5);
         v.clampToZero();
         expect(v.x).to.equal(0.01);
         expect(v.y).to.equal(5);
       });
 
-      test('should leave zero components unchanged', function() {
+      test('should leave zero components of a 2D vector unchanged', function() {
         v = new p5.Vector(0, 0);
         v.clampToZero();
         expect(v.x).to.equal(0);
@@ -1916,7 +1916,7 @@ suite('p5.Vector', function() {
 
       test('should clamp very small numbers in all components of a 3D vector to zero', function() {
         v = new p5.Vector(
-          0.0000000000000002220446049250313,
+          0.00000000000000005,
           -0.0000000000000002220446049250313,
           0.0000000000000002220446049250313);
         v.clampToZero();
