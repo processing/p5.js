@@ -1158,26 +1158,28 @@ p5.prototype.clearDepth = function(depth) {
  * <div>
  * <code>
  * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Set the blend mode.
- *   blendMode(SUBTRACT);
- *
- *   // Style the lines.
- *   strokeWeight(30);
- *
- *   // Draw the blue line.
- *   stroke('blue');
- *   line(25, 25, 75, 75);
- *
- *   // Draw the red line.
- *   stroke('red');
- *   line(75, 25, 25, 75);
- *
- *   describe('A yellow line and a turquoise line form an X on a gray background. The area where they overlap is green.');
- * }
+ *  // Create a canvas with WEBGL mode.
+ *  createCanvas(100, 100, WEBGL);
+ * 
+ *  // Set the background color.
+ *  background(200);
+ * 
+ *  // Set the blend mode to SUBTRACT.
+ *  blendMode(SUBTRACT);
+ * 
+ *  // Style the lines.
+ *  strokeWeight(30);
+ * 
+ *  // Draw the blue line.
+ *  stroke('blue');
+ *  line(-25, -25, 25, 25);  // Adjusted coordinates for WEBGL
+ * 
+ *  // Draw the red line.
+ *  stroke('red');
+ *  line(25, -25, -25, 25);  // Adjusted coordinates for WEBGL
+ * 
+ *  describe('A yellow line and a turquoise line form an X on a gray background. The area where they overlap is green.');
+ *  }
  * </code>
  * </div>
  */
