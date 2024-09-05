@@ -1172,11 +1172,11 @@ p5.prototype.clearDepth = function(depth) {
  *
  *   // Draw the blue line.
  *   stroke('blue');
- *   line(-25, -25, 25, 25); 
+ *   line(-25, -25, 25, 25);
  *
  *   // Draw the red line.
  *   stroke('red');
- *   line(25, -25, -25, 25);  
+ *   line(25, -25, -25, 25);
  *
  *   describe('A yellow line and a turquoise line form an X on a gray background. The area where they overlap is green.');
  * }
