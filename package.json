@@ -3,10 +3,9 @@
   "repository": "processing/p5.js",
   "scripts": {
     "build": "rollup -c",
-    "dev": "vite",
+    "dev": "vite preview/",
     "docs": "documentation build ./src/**/*.js ./src/**/**/*.js -o ./docs/data.json && node ./utils/convert.js",
-    "test": "vitest run --browser.headless true",
-    "test:dev": "vitest",
+    "test": "vitest",
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."
   },
@@ -17,7 +16,7 @@
     "tasks/**/*.js": "eslint",
     "src/**/*.js": [
       "eslint",
-      "node --require @babel/register ./utils/sample-linter.js"
+      "node ./utils/sample-linter.mjs"
     ]
   },
   "version": "1.9.4",
@@ -34,6 +33,7 @@
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-replace": "^5.0.7",
     "@rollup/plugin-terser": "^0.4.4",
     "@vitest/browser": "^2.0.4",
     "all-contributors-cli": "^6.19.0",
@@ -53,7 +53,7 @@
     "vite": "^5.0.2",
     "vite-plugin-string": "^1.2.2",
     "vitest": "^2.0.4",
-    "webdriverio": "^8.38.2",
+    "webdriverio": "^9.0.7",
     "zod": "^3.23.8"
   },
   "license": "LGPL-2.1",

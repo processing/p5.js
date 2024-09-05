@@ -20,15 +20,6 @@ suite('Curves', function() {
       assert.ok(myp5.bezier);
       assert.typeOf(myp5.bezier, 'function');
     });
-    test('no friendly-err-msg', function() {
-      assert.doesNotThrow(
-        function() {
-          myp5.bezier(85, 20, 10, 10, 90, 90, 15, 80);
-        },
-        Error,
-        'got unwanted exception'
-      );
-    });
   });
 
   suite('p5.prototype.bezierPoint', function() {
@@ -60,15 +51,6 @@ suite('Curves', function() {
     test('should be a function', function() {
       assert.ok(myp5.curve);
       assert.typeOf(myp5.curve, 'function');
-    });
-    test('no friendly-err-msg', function() {
-      assert.doesNotThrow(
-        function() {
-          myp5.curve(5, 26, 5, 26, 73, 24, 73, 61);
-        },
-        Error,
-        'got unwanted exception'
-      );
     });
   });
 

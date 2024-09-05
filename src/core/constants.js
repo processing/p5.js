@@ -11,8 +11,7 @@ const _PI = Math.PI;
  * @property {String} VERSION
  * @final
  */
-export const VERSION =
-  'VERSION_CONST_WILL_BE_REPLACED_BY_BROWSERIFY_BUILD_PROCESS';
+export const VERSION = 'VERSION_WILL_BE_REPLACED_BY_BUILD';
 
 // GRAPHICS RENDERER
 /**

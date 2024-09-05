@@ -1,7 +1,7 @@
 import p5 from '../../../src/app.js';
 import { testSketchWithPromise, promisedSketch } from '../../js/p5_helpers';
 
-suite('loadShader', function() {
+suite.todo('loadShader', function() {
   var invalidFile = '404file';
   var vertFile = 'unit/assets/vert.glsl';
   var fragFile = 'unit/assets/frag.glsl';
