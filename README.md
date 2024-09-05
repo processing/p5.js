@@ -1050,6 +1050,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/shourysingh07"><img src="https://avatars.githubusercontent.com/u/105987613?v=4?s=120" width="120px;" alt="Shoury Singh"/><br /><sub><b>Shoury Singh</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=shourysingh07" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/valkyriedimension"><img src="https://avatars.githubusercontent.com/u/139258864?v=4?s=120" width="120px;" alt="Melody Sharp"/><br /><sub><b>Melody Sharp</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Avalkyriedimension" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://tiborudvari.com"><img src="https://avatars.githubusercontent.com/u/1434442?v=4?s=120" width="120px;" alt="Tibor Udvari"/><br /><sub><b>Tibor Udvari</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=TiborUdvari" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://willallstetter.com"><img src="https://avatars.githubusercontent.com/u/67874779?v=4?s=120" width="120px;" alt="willallstet"/><br /><sub><b>willallstet</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=willallstet" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
