@@ -3910,7 +3910,7 @@ p5.Vector = class {
  *
  *   console.log('Before:', v.x , v.y);
  *
- *   // Clamp negigabe value of x-component to zero
+ *   // Clamp negligible value of x-component to zero
  *   v.clampToZero();
  *   console.log('After:', v.x , v.y);
  *   describe('Round down very small numbers of vector components to zero');
