@@ -14,6 +14,12 @@ const plugins = [
   json(),
   string({
     include: 'src/webgl/shaders/**/*'
+  }),
+  replace({
+    values: {
+      'VERSION_WILL_BE_REPLACED_BY_BUILD': pkg.version
+    },
+    preventAssignment: true
   })
 ];
 const banner = `/*! p5.js v${pkg.version} ${dayjs().format('MMMM D, YYYY')} */`;
@@ -26,35 +32,76 @@ const bundleSize = (name, sourcemap) => {
   });
 };
 
+const modules = ['math'];
+const generateModuleBuild = () => {
+  return modules.map((module) => {
+    return {
+      input: `src/${module}/index.js`,
+      output: [
+        {
+          file: `./lib/p5.${module}.js`,
+          format: 'iife',
+          plugins: [
+            bundleSize(`p5.${module}.js`)
+          ]
+        },
+        {
+          file: `./lib/p5.${module}.min.js`,
+          format: 'iife',
+          sourcemap: 'hidden',
+          plugins: [
+            terser({
+              compress: {
+                global_defs: {
+                  IS_MINIFIED: true
+                }
+              },
+              format: {
+                comments: false
+              }
+            }),
+            bundleSize(`p5.${module}.min.js`)
+          ]
+        },
+        {
+          file: `./lib/p5.${module}.esm.js`,
+          format: 'esm',
+          plugins: [
+            bundleSize(`p5.${module}.esm.js`)
+          ]
+        }
+      ],
+      external: ['../core/main'],
+      plugins: [
+        ...plugins
+      ]
+    }
+  });
+};
+
 export default [
   {
     input: 'src/app.js',
     output: [
       {
-        file: './lib/p5.rollup.js',
+        file: './lib/p5.js',
         format: 'iife',
         name: 'p5',
         banner,
         plugins: [
-          bundleSize("p5.js"),
-          replace({
-            'VERSION_WILL_BE_REPLACED_BY_BUILD': pkg.version
-          })
+          bundleSize('p5.js')
         ]
       },
       {
-        file: './lib/p5.rollup.esm.js',
+        file: './lib/p5.esm.js',
         format: 'esm',
         banner,
         plugins: [
-          bundleSize("p5.esm.js"),
-          replace({
-            'VERSION_WILL_BE_REPLACED_BY_BUILD': pkg.version
-          })
+          bundleSize('p5.esm.js')
         ]
       },
       {
-        file: './lib/p5.rollup.min.js',
+        file: './lib/p5.min.js',
         format: 'iife',
         name: 'p5',
         banner,
@@ -70,10 +117,7 @@ export default [
               comments: false
             }
           }),
-          bundleSize("p5.min.js", true),
-          replace({
-            'VERSION_WILL_BE_REPLACED_BY_BUILD': pkg.version
-          })
+          bundleSize('p5.min.js', true)
         ]
       }
     ],
@@ -87,45 +131,5 @@ export default [
     ]
   },
   // NOTE: comment to NOT build standalone math module
-  {
-    input: 'src/math/index.js',
-    output: [
-      {
-        file: './lib/p5.math.js',
-        format: 'iife',
-        plugins: [
-          bundleSize("p5.math.js")
-        ]
-      },
-      {
-        file: './lib/p5.math.min.js',
-        format: 'iife',
-        sourcemap: 'hidden',
-        plugins: [
-          terser({
-            compress: {
-              global_defs: {
-                IS_MINIFIED: true
-              }
-            },
-            format: {
-              comments: false
-            }
-          }),
-          bundleSize("p5.math.min.js")
-        ]
-      },
-      {
-        file: './lib/p5.math.esm.js',
-        format: 'esm',
-        plugins: [
-          bundleSize("p5.math.esm.js")
-        ]
-      }
-    ],
-    external: ['../core/main'],
-    plugins: [
-      ...plugins
-    ]
-  }
+  // ...generateModuleBuild()
 ];
