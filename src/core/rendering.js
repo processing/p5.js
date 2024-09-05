@@ -1179,7 +1179,7 @@ p5.prototype.clearDepth = function(depth) {
  *   line(25, -25, -25, 25);  // Adjusted coordinates for WEBGL
  *
  *   describe('A yellow line and a turquoise line form an X on a gray background. The area where they overlap is green.');
- *  }
+ * }
  * </code>
  * </div>
  */
