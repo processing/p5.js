@@ -665,6 +665,7 @@ function parseObj(model, lines, materials = {}) {
                 model.vertexColors.push(materialDiffuseColor[0]);
                 model.vertexColors.push(materialDiffuseColor[1]);
                 model.vertexColors.push(materialDiffuseColor[2]);
+                model.vertexColors.push(1);
               }
             } else {
               hasColorlessVertices = true;

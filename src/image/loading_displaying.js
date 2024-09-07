@@ -140,7 +140,6 @@ p5.prototype.loadImage = async function(
                   successCallback,
                   failureCallback,
                   (pImg => {
-                    self._decrementPreload();
                     resolve(pImg);
                   }).bind(self)
                 );
@@ -148,7 +147,6 @@ p5.prototype.loadImage = async function(
                 console.error(e.toString(), e.stack);
                 if (typeof failureCallback === 'function') {
                   failureCallback(e);
-                  self._decrementPreload();
                 } else {
                   console.error(e);
                 }
@@ -160,7 +158,6 @@ p5.prototype.loadImage = async function(
           e => {
             if (typeof failureCallback === 'function') {
               failureCallback(e);
-              self._decrementPreload();
             } else {
               console.error(e);
             }
@@ -182,14 +179,12 @@ p5.prototype.loadImage = async function(
               successCallback(pImg);
             }
             resolve();
-            self._decrementPreload();
           };
 
           img.onerror = e => {
             p5._friendlyFileLoadError(0, img.src);
             if (typeof failureCallback === 'function') {
               failureCallback(e);
-              self._decrementPreload();
             } else {
               console.error(e);
             }
@@ -215,7 +210,6 @@ p5.prototype.loadImage = async function(
       p5._friendlyFileLoadError(0, path);
       if (typeof failureCallback === 'function') {
         failureCallback(e);
-        self._decrementPreload();
       } else {
         console.error(e);
       }
