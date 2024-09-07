@@ -661,6 +661,7 @@ class Renderer2D extends p5.Renderer {
     if (!this._clipping) ctx.beginPath();
 
     ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
+    ctx.closePath();
 
     if (!this._clipping && doFill) {
       ctx.fill();
