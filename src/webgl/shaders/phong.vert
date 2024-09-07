@@ -40,5 +40,5 @@ void main(void) {
     }
   }
   
-  vColor = (uUseVertexColor ? aVertexColor : uMaterialColor);
+  vColor = ((uUseVertexColor && aVertexColor.x >= 0.0) ? aVertexColor : uMaterialColor);
 }

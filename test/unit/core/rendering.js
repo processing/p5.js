@@ -103,7 +103,7 @@ suite('Rendering', function() {
 
     // NOTE: below two are nearly identical, should be checked
     test('should resize the dimensions of canvas based on max texture size', function() {
-      glStub = vi.spyOn(p5.RendererGL.prototype, '_getParam');
+      glStub = vi.spyOn(p5.RendererGL.prototype, '_getMaxTextureSize');
       const fakeMaxTextureSize = 100;
       glStub.mockReturnValue(fakeMaxTextureSize);
       myp5.createCanvas(10, 10, myp5.WEBGL);
@@ -113,7 +113,7 @@ suite('Rendering', function() {
     });
 
     test.todo('should resize the dimensions of canvas based on max texture size', function() {
-      glStub = vi.spyOn(p5.RendererGL.prototype, '_getParam');
+      glStub = vi.spyOn(p5.RendererGL.prototype, '_getMaxTextureSize');
       const fakeMaxTextureSize = 100;
       glStub.mockReturnValue(fakeMaxTextureSize);
       myp5.createCanvas(200, 200, myp5.WEBGL);

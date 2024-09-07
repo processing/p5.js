@@ -198,22 +198,22 @@ suite('p5.Framebuffer', function() {
       });
 
       test('resizes the framebuffer by createFramebuffer based on max texture size', function() {
-        glStub = vi.spyOn(p5.RendererGL.prototype, '_getParam');
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        glStub = vi.spyOn(myp5._renderer, '_getMaxTextureSize');
         const fakeMaxTextureSize = 100;
         glStub.mockReturnValue(fakeMaxTextureSize);
-        myp5.createCanvas(10, 10, myp5.WEBGL);
         const fbo = myp5.createFramebuffer({ width: 200, height: 200 });
         expect(fbo.width).to.equal(100);
         expect(fbo.height).to.equal(100);
       });
 
       test('resizes the framebuffer by resize method based on max texture size', function() {
-        glStub = vi.spyOn(p5.RendererGL.prototype, '_getParam');
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        glStub = vi.spyOn(myp5._renderer, '_getMaxTextureSize');
         const fakeMaxTextureSize = 100;
         glStub.mockReturnValue(fakeMaxTextureSize);
-        myp5.createCanvas(10, 10, myp5.WEBGL);
         const fbo = myp5.createFramebuffer({ width: 10, height: 10 });
-        myp5.resize(200, 200);
+        fbo.resize(200, 200);
         expect(fbo.width).to.equal(100);
         expect(fbo.height).to.equal(100);
       });
@@ -281,7 +281,6 @@ suite('p5.Framebuffer', function() {
   });
 
   test('Framebuffers work on p5.Graphics', function() {
-    myp5.createCanvas(10, 10);
     const graphic = myp5.createGraphics(10, 10, myp5.WEBGL);
 
     // Draw a box to the framebuffer

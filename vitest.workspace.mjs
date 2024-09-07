@@ -12,6 +12,7 @@ const plugins = [
 export default defineWorkspace([
   {
     plugins,
+    publicDir: './test',
     test: {
       name: 'visual',
       root: './',
@@ -23,6 +24,7 @@ export default defineWorkspace([
   },
   {
     plugins,
+    publicDir: './test',
     test: {
       name: 'unit',
       root: './',

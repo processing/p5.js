@@ -122,7 +122,9 @@ p5.Color = class Color {
       }else if(vals.length === 1){
         vals = [vals[0], vals[0], vals[0]];
       }
-      alpha = alpha ? alpha / pInst._colorMaxes[pInst._colorMode][3] : 1;
+      alpha = alpha !== undefined
+        ? alpha / pInst._colorMaxes[pInst._colorMode][3]
+        : 1;
 
       // _colorMode can be 'rgb', 'hsb', or 'hsl'
       // These should map to color.js color space
@@ -487,6 +489,14 @@ p5.Color = class Color {
       // Will do an imprecise conversion to 'HSB', not recommended
       return to(this.color, 'hsl').coords[2] / 100 * this.maxes[this.mode][2];
     }
+  }
+
+  get _array() {
+    return [...this.color.coords, this.color.alpha];
+  }
+
+  get levels() {
+    return this._array.map(v => v * 255);
   }
 };
 
