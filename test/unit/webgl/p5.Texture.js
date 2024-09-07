@@ -10,7 +10,7 @@ suite('p5.Texture', function() {
   var canvas;
 
   beforeEach(function() {
-    return new Promise((done) => {
+    return new Promise(done => {
       myp5 = new p5(function(p) {
         p.setup = async function() {
           canvas = p.createCanvas(100, 100, p.WEBGL);

@@ -58,7 +58,7 @@ suite('p5.Camera', function() {
       myCam.eyeZ * 10.0
     );
     myp5.setCamera(myCam);
-  })
+  });
 
   suite('createCamera()', function() {
     test('creates a p5.Camera object', function() {

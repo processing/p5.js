@@ -1227,7 +1227,7 @@ suite('p5.RendererGL', function() {
       const assertSameIn2D = function(colorA, colorB, mode) {
         const refColor = testBlend(myp5, colorA, colorB, mode);
         const webglColor = testBlend(ref, colorA, colorB, mode);
-        console.log(`Blending ${colorA} with ${colorB} using ${mode}: ${JSON.stringify(refColor)}, ${JSON.stringify(webglColor)}`)
+        // console.log(`Blending ${colorA} with ${colorB} using ${mode}: ${JSON.stringify(refColor)}, ${JSON.stringify(webglColor)}`)
         assert.arrayApproximately(
           refColor,
           webglColor,
@@ -2292,7 +2292,7 @@ suite('p5.RendererGL', function() {
         myp5.clip(() => myp5.rect(10, 10, 30, 30));
         myp5.fill('red');
         myp5.rect(5, 5, 40, 40);
-        console.log(myp5._renderer.canvas.toDataURL())
+        // console.log(myp5._renderer.canvas.toDataURL());
       };
       const pixels = getClippedPixels(myp5.WEBGL, mask);
 
