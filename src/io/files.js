@@ -240,7 +240,7 @@ import Renderer from '../core/p5.Renderer';
  * </code>
  * </div>
  */
-p5.prototype.loadJSON = function (...args) {
+p5.prototype.loadJSON = async function (...args) {
   p5._validateParameters('loadJSON', args);
   const path = args[0];
   let callback;
@@ -266,8 +266,7 @@ p5.prototype.loadJSON = function (...args) {
     }
   }
 
-  const self = this;
-  this.httpDo(
+  await new Promise(resolve => this.httpDo(
     path,
     'GET',
     options,
@@ -280,7 +279,7 @@ p5.prototype.loadJSON = function (...args) {
         callback(resp);
       }
 
-      self._decrementPreload();
+      resolve()
     },
     err => {
       // Error handling
@@ -292,7 +291,7 @@ p5.prototype.loadJSON = function (...args) {
         throw err;
       }
     }
-  );
+  ));
 
   return ret;
 };
@@ -431,7 +430,7 @@ p5.prototype.loadJSON = function (...args) {
  * </code>
  * </div>
  */
-p5.prototype.loadStrings = function (...args) {
+p5.prototype.loadStrings = async function (...args) {
   p5._validateParameters('loadStrings', args);
 
   const ret = [];
@@ -448,8 +447,7 @@ p5.prototype.loadStrings = function (...args) {
     }
   }
 
-  const self = this;
-  p5.prototype.httpDo.call(
+  await new Promise(resolve => p5.prototype.httpDo.call(
     this,
     args[0],
     'GET',
@@ -476,7 +474,7 @@ p5.prototype.loadStrings = function (...args) {
         callback(ret);
       }
 
-      self._decrementPreload();
+      resolve()
     },
     function (err) {
       // Error handling
@@ -488,7 +486,7 @@ p5.prototype.loadStrings = function (...args) {
         throw err;
       }
     }
-  );
+  ));
 
   return ret;
 };
@@ -563,7 +561,7 @@ p5.prototype.loadStrings = function (...args) {
  * </code>
  * </div>
  */
-p5.prototype.loadTable = function (path) {
+p5.prototype.loadTable = async function (path) {
   // p5._validateParameters('loadTable', arguments);
   let callback;
   let errorCallback;
@@ -604,8 +602,7 @@ p5.prototype.loadTable = function (path) {
 
   const t = new p5.Table();
 
-  const self = this;
-  this.httpDo(
+  await new Promise(resolve => this.httpDo(
     path,
     'GET',
     'table',
@@ -737,7 +734,7 @@ p5.prototype.loadTable = function (path) {
         callback(t);
       }
 
-      self._decrementPreload();
+      resolve()
     },
     err => {
       // Error handling
@@ -749,7 +746,7 @@ p5.prototype.loadTable = function (path) {
         console.error(err);
       }
     }
-  );
+  ));
 
   return t;
 };
@@ -929,7 +926,7 @@ function makeObject(row, headers) {
  * </code>
  * </div>
  */
-p5.prototype.loadXML = function (...args) {
+p5.prototype.loadXML = async function (...args) {
   const ret = new p5.XML();
   let callback, errorCallback;
 
@@ -944,8 +941,7 @@ p5.prototype.loadXML = function (...args) {
     }
   }
 
-  const self = this;
-  this.httpDo(
+  await new Promise(resolve => this.httpDo(
     args[0],
     'GET',
     'xml',
@@ -957,7 +953,7 @@ p5.prototype.loadXML = function (...args) {
         callback(ret);
       }
 
-      self._decrementPreload();
+      resolve()
     },
     function (err) {
       // Error handling
@@ -969,7 +965,7 @@ p5.prototype.loadXML = function (...args) {
         throw err;
       }
     }
-  );
+  ));
 
   return ret;
 };
@@ -1000,11 +996,10 @@ p5.prototype.loadXML = function (...args) {
  * }
  * </code></div>
  */
-p5.prototype.loadBytes = function (file, callback, errorCallback) {
+p5.prototype.loadBytes = async function (file, callback, errorCallback) {
   const ret = {};
 
-  const self = this;
-  this.httpDo(
+  await new Promise(resolve => this.httpDo(
     file,
     'GET',
     'arrayBuffer',
@@ -1015,7 +1010,7 @@ p5.prototype.loadBytes = function (file, callback, errorCallback) {
         callback(ret);
       }
 
-      self._decrementPreload();
+      resolve();
     },
     err => {
       // Error handling
@@ -1027,7 +1022,7 @@ p5.prototype.loadBytes = function (file, callback, errorCallback) {
         throw err;
       }
     }
-  );
+  ));
   return ret;
 };
 
