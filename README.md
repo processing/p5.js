@@ -1055,6 +1055,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/ibrand"><img src="https://avatars.githubusercontent.com/u/3953117?v=4?s=120" width="120px;" alt="Ilona Brand"/><br /><sub><b>Ilona Brand</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aibrand" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://www.antoinettecreates.com"><img src="https://avatars.githubusercontent.com/u/342223?v=4?s=120" width="120px;" alt="Antoinette Bumatay-Chan"/><br /><sub><b>Antoinette Bumatay-Chan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=aleannab" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
