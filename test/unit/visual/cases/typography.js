@@ -6,7 +6,7 @@ visualSuite('Typography', function() {
       p5.createCanvas(50, 50);
       p5.textSize(20);
       p5.textAlign(p5.LEFT, p5.TOP);
-      p5.text('broken', 0, 0);
+      p5.text('test', 0, 0);
       screenshot();
     });
 
