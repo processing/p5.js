@@ -1179,28 +1179,19 @@ p5.prototype.normalShader = function() {
  * You can call <a href="#/p5.Shader/modify">`colorShader().modify()`</a>
  * and change any of the following hooks:
  *
- * - `void beforeVertex`
- *   - Called at the start of the vertex shader.
- * - `vec3 getLocalPosition`
- *   - Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
- * - `vec3 getWorldPosition`
- *   - Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
- * - `vec3 getLocalNormal`
- *   - Update the normal before transforms are applied. It takes in `vec3 normal` and must return a modified version.
- * - `vec3 getWorldNormal`
- *   - Update the normal after transforms are applied. It takes in `vec3 normal` and must return a modified version.
- * - `vec2 getUV`
- *   - Update the texture coordinates. It takes in `vec2 uv` and must return a modified version.
- * - `vec4 getVertexColor`
- *   - Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
- * - `void afterVertex`
- *   - Called at the end of the vertex shader.
- * - `void beforeFragment`
- *   - Called at the start of the fragment shader.
- * - `vec4 getFinalColor`
- *   - Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
- * - `void afterFragment`
- *   - Called at the end of the fragment shader.
+ * Hook | Description
+ * -------|-------------
+ * `void beforeVertex` | Called at the start of the vertex shader.
+ * `vec3 getLocalPosition` | Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
+ * `vec3 getWorldPosition` | Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
+ * `vec3 getLocalNormal` | Update the normal before transforms are applied. It takes in `vec3 normal` and must return a modified version.
+ * `vec3 getWorldNormal` | Update the normal after transforms are applied. It takes in `vec3 normal` and must return a modified version.
+ * `vec2 getUV` | Update the texture coordinates. It takes in `vec2 uv` and must return a modified version.
+ * `vec4 getVertexColor` | Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
+ * `void afterVertex` | Called at the end of the vertex shader.
+ * `void beforeFragment` | Called at the start of the fragment shader.
+ * `vec4 getFinalColor` | Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
+ * `void afterFragment` | Called at the end of the fragment shader.
  *
  * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
  * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
