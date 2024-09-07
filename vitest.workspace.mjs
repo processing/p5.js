@@ -10,18 +10,6 @@ const plugins = [
 ];
 
 export default defineWorkspace([
-  /*{
-    plugins,
-    publicDir: './test',
-    test: {
-      name: 'visual',
-      root: './',
-      include: [
-        './test/unit/visual/*'
-      ],
-      environment: 'node'
-    }
-  },*/
   {
     plugins,
     publicDir: './test',
