@@ -6282,6 +6282,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "benpalevsky",
+      "name": "benpalevsky",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25121735?v=4",
+      "profile": "https://github.com/benpalevsky",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
