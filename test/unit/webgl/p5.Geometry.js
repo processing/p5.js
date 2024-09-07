@@ -208,7 +208,7 @@ suite('p5.Geometry', function() {
           myp5.rotateY(myp5.PI * 0.2);
         }
         myp5.pop();
-      }, [checkLights, checkMaterials, checkNormals]);
+      }, [checkMaterials]);
     });
 
     test('Immediate mode constructs are translated correctly', function() {

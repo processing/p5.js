@@ -179,7 +179,7 @@ suite('Graphics', function() {
 
     // NOTE: check this
     test('it resizes the graphics based on max texture size', function() {
-      glStub = vi.spyOn(p5.RendererGL.prototype, '_getParam');
+      glStub = vi.spyOn(p5.RendererGL.prototype, '_getMaxTextureSize');
       const fakeMaxTextureSize = 100;
       glStub.mockReturnValue(fakeMaxTextureSize);
       const graph = myp5.createGraphics(200, 200, myp5.WEBGL);

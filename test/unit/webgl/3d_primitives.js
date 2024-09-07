@@ -63,18 +63,4 @@ suite('3D Primitives', function() {
       assert.typeOf(myp5.torus, 'function');
     });
   });
-
-  suite('p5.RendererGL.prototype.ellipse', function() {
-    test('should be a function', function() {
-      assert.ok(myp5._renderer.ellipse);
-      assert.typeOf(myp5._renderer.ellipse, 'function');
-    });
-  });
-
-  suite('p5.RendererGL.prototype.arc', function() {
-    test('should be a function', function() {
-      assert.ok(myp5._renderer.arc);
-      assert.typeOf(myp5._renderer.arc, 'function');
-    });
-  });
 });

@@ -414,7 +414,7 @@ class Renderer2D extends Renderer {
   }
 
   loadPixels() {
-    const pixelsState = this._pInst; // if called by p5.Image
+    const pixelsState = this._pixelsState; // if called by p5.Image
 
     const pd = pixelsState._pixelDensity;
     const w = this.width * pd;
@@ -430,7 +430,7 @@ class Renderer2D extends Renderer {
     // round down to get integer numbers
     x = Math.floor(x);
     y = Math.floor(y);
-    const pixelsState = this._pInst;
+    const pixelsState = this._pixelsState;
     if (imgOrCol instanceof p5.Image) {
       this.drawingContext.save();
       this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
@@ -503,7 +503,7 @@ class Renderer2D extends Renderer {
   }
 
   updatePixels(x, y, w, h) {
-    const pixelsState = this._pInst;
+    const pixelsState = this._pixelsState;
     const pd = pixelsState._pixelDensity;
     if (
       x === undefined &&

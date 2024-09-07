@@ -692,6 +692,8 @@ p5.RendererGL = class RendererGL extends Renderer {
       throw new Error('It looks like `beginGeometry()` is being called while another p5.Geometry is already being build.');
     }
     this.geometryBuilder = new GeometryBuilder(this);
+    this.geometryBuilder.prevFillColor = [...this.curFillColor];
+    this.curFillColor = [-1, -1, -1, -1];
   }
 
   /**
@@ -707,6 +709,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       throw new Error('Make sure you call beginGeometry() before endGeometry()!');
     }
     const geometry = this.geometryBuilder.finish();
+    this.curFillColor = this.geometryBuilder.prevFillColor;
     this.geometryBuilder = undefined;
     return geometry;
   }
@@ -793,14 +796,14 @@ p5.RendererGL = class RendererGL extends Renderer {
     }
   }
 
-  _getParam() {
+  _getMaxTextureSize() {
     const gl = this.drawingContext;
     return gl.getParameter(gl.MAX_TEXTURE_SIZE);
   }
 
   _adjustDimensions(width, height) {
     if (!this._maxTextureSize) {
-      this._maxTextureSize = this._getParam();
+      this._maxTextureSize = this._getMaxTextureSize();
     }
     let maxTextureSize = this._maxTextureSize;
     let maxAllowedPixelDimensions = p5.prototype._maxAllowedPixelDimensions;
@@ -1355,7 +1358,7 @@ p5.RendererGL = class RendererGL extends Renderer {
  */
 
   loadPixels() {
-    const pixelsState = this._pInst;
+    const pixelsState = this._pixelsState;
 
     //@todo_FES
     if (this._pInst._glAttributes.preserveDrawingBuffer !== true) {
@@ -1387,7 +1390,7 @@ p5.RendererGL = class RendererGL extends Renderer {
 
   updatePixels() {
     const fbo = this._getTempFramebuffer();
-    fbo.pixels = this._pInst.pixels;
+    fbo.pixels = this._pixelsState.pixels;
     fbo.updatePixels();
     this._pInst.push();
     this._pInst.resetMatrix();
@@ -1452,7 +1455,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     this._curCamera._resize();
 
     //resize pixels buffer
-    const pixelsState = this._pInst;
+    const pixelsState = this._pixelsState;
     if (typeof pixelsState.pixels !== 'undefined') {
       pixelsState._setProperty(
         'pixels',
