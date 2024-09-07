@@ -6300,6 +6300,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "williamthazard",
+      "name": "William Hazard",
+      "avatar_url": "https://avatars.githubusercontent.com/u/105560469?v=4",
+      "profile": "https://github.com/williamthazard",
+      "contributions": [
+        "example"
+      ]
     }
   ],
   "repoType": "github",
