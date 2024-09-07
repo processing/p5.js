@@ -6219,6 +6219,51 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "shourysingh07",
+      "name": "Shoury Singh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/105987613?v=4",
+      "profile": "https://github.com/shourysingh07",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "valkyriedimension",
+      "name": "Melody Sharp",
+      "avatar_url": "https://avatars.githubusercontent.com/u/139258864?v=4",
+      "profile": "https://github.com/valkyriedimension",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "TiborUdvari",
+      "name": "Tibor Udvari",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1434442?v=4",
+      "profile": "http://tiborudvari.com",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "willallstet",
+      "name": "willallstet",
+      "avatar_url": "https://avatars.githubusercontent.com/u/67874779?v=4",
+      "profile": "http://willallstetter.com",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "ashwanidey",
+      "name": "Ashwani Dey",
+      "avatar_url": "https://avatars.githubusercontent.com/u/110251931?v=4",
+      "profile": "https://github.com/ashwanidey",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
