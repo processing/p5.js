@@ -71,7 +71,7 @@ Feature request issues should use the "New Feature Request" issue template. The 
    - If a feature request does not have the "Increasing Access" field sufficiently filled out, you can ask the issue author how the feature increases access.
    - The access statement of a feature can be provided by a different member of the community, including the issue reviewers.
 2. The new feature request can be assessed for inclusion based on the following criteria.
-   - Does the feature fit into the project scope and [design principles](design_principles.md) of p5.js?
+   - Does the feature fit into the project scope and [design principles](./contributor_guidelines.md#software-design-principles) of p5.js?
      - For example, a request to add a new drawing primitive shape may be considered, but a request to adopt a browser-based IOT protocol will likely be out of scope.
      - Overall, the scope of p5.js should be relatively narrow in order to avoid excessive bloat from rarely used features.
      - If a feature does not fit into the scope of p5.js, suggest that the issue author implement the feature as as an addon library.
@@ -197,7 +197,7 @@ The `lint` task consists of two sub tasks: `lint:source` and `lint:samples`. `li
 
 The `lint:samples` task will first run the `yui` task which itself consists of `yuidoc:prod`, `clean:reference`, and `minjson`, which extract the documentation from the source code into a JSON document, remove unused files from the previous step, and minify the generated JSON file into `data.min.json` respectively.
 
-Next in `lint:samples` is `eslint-samples:source`, which is a custom written task whose definition is in [./tasks/build/eslint-samples.js](tasks/build/eslint-samples.js); it will run ESLint to check the documentation example code to make sure they follow the same coding convention as the rest of p5.js (`yui` is run first here because we need the JSON file to be built first before we can lint the examples).
+Next in `lint:samples` is `eslint-samples:source`, which is a custom written task whose definition is in [../tasks/build/eslint-samples.js](../tasks/build/eslint-samples.js); it will run ESLint to check the documentation example code to make sure they follow the same coding convention as the rest of p5.js (`yui` is run first here because we need the JSON file to be built first before we can lint the examples).
 
 
 #### `test` Task
@@ -223,7 +223,7 @@ grunt.registerTask('build', [
 ]);
 ```
 
-Tasks that start with `browserify` are defined in [./tasks/build/browserify.js](tasks/build/browserify.js). They all  similar steps with minor differences. These are the main steps to build the full p5.js library from its many source code files into one:
+Tasks that start with `browserify` are defined in [../tasks/build/browserify.js](../tasks/build/browserify.js). They all  similar steps with minor differences. These are the main steps to build the full p5.js library from its many source code files into one:
 
 - `browserify` builds p5.js while `browserify:min` builds an intermediate file to be minified in the next step. The difference between `browserify` and `browserify:min` is that `browserify:min` does not contain data needed for FES to function.
 - `uglify` takes the output file of `browserify:min` and minify it into the final p5.min.js (configuration of this step is in the main Gruntfile.js).
@@ -247,7 +247,7 @@ This step spins up a local server hosting the test files and built source code f
 mochaChrome
 ```
 
-This step is defined in [./tasks/test/mocha-chrome.js](tasks/test/mocha-chrome.js). It uses Puppeteer to spin up a headless version of Chrome that can be remote controlled and runs the tests associated with the HTML files in the `./test` folder, which includes testing the unminified and minified version of the library against the unit test suites as well as testing all reference examples.
+This step is defined in [../tasks/test/mocha-chrome.js](../tasks/test/mocha-chrome.js). It uses Puppeteer to spin up a headless version of Chrome that can be remote controlled and runs the tests associated with the HTML files in the `./test` folder, which includes testing the unminified and minified version of the library against the unit test suites as well as testing all reference examples.
 
 ```
 mochaTest
