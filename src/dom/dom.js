@@ -1,3 +1,4 @@
+
 /**
  * The web is much more than just canvas and the DOM functionality makes it easy to interact
  * with other HTML5 objects, including text, hyperlink, image, input, video,
@@ -3475,6 +3476,62 @@ p5.Element.prototype.value = function(...args) {
     } else return this.elt.value;
   }
 };
+
+/**
+ * Returns the logarithmic value of a range input element.
+ *
+ * This method is particularly useful for creating logarithmic sliders,
+ * where the perceived change in value is proportional to the relative
+ * change rather than the absolute change.
+ *
+ * If the element is not a range input, it returns the regular value.
+ *
+ * @method logValue
+ * @return {Number} The logarithmic value of the range input, or the regular value for non-range inputs.
+ *
+ * @example
+ * <div>
+ * <code>
+ * let slider;
+ * let logValue;
+ *
+ * function setup() {
+ *   createCanvas(200, 100);
+ *   slider = createSlider(0, 1, 0.5, 0.01);
+ *   slider.position(10, 10);
+ *   slider.style('width', '180px');
+ *
+ *   describe('A slider that shows both its linear and logarithmic values.');
+ * }
+ *
+ * function draw() {
+ *   background(220);
+ *
+ *   let linearValue = slider.value();
+ *   logValue = slider.logValue();
+ *
+ *   text('Linear: ' + linearValue, 10, 50);
+ *   text('Log: ' + logValue.toFixed(2), 10, 70);
+ * }
+ * </code>
+ * </div>
+ */
+
+p5.Element.prototype.logValue = function () {
+  if (this.elt.type === 'range') {
+    const min = parseFloat(this.elt.min);
+    const max = parseFloat(this.elt.max);
+
+    let linearValue = parseFloat(this.elt.value);
+    let normalizedValue = (linearValue - min) / (max - min);
+    let logarithmicValue = (Math.pow(10, normalizedValue * 2) - 1) / 99;
+
+    return min + logarithmicValue * (max - min);
+  } else {
+    return this.elt.value;
+  }
+};
+
 
 /**
  * Shows the current element.
