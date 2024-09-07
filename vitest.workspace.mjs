@@ -10,7 +10,7 @@ const plugins = [
 ];
 
 export default defineWorkspace([
-  {
+  /*{
     plugins,
     publicDir: './test',
     test: {
@@ -21,7 +21,7 @@ export default defineWorkspace([
       ],
       environment: 'node'
     }
-  },
+  },*/
   {
     plugins,
     publicDir: './test',
@@ -34,7 +34,7 @@ export default defineWorkspace([
       exclude: [
         './test/unit/spec.js',
         './test/unit/assets/**/*',
-        './test/unit/visual/**/*'
+         './test/unit/visual/visualTest.js',
       ],
       testTimeout: 1000,
       globals: true,

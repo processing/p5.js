@@ -87,7 +87,7 @@ visualSuite('WebGL', function() {
     visualTest('OBJ model with MTL file displays diffuse colors correctly', function(p5, screenshot) {
       return new Promise(resolve => {
         p5.createCanvas(50, 50, p5.WEBGL);
-        p5.loadModel('unit/assets/octa-color.obj', model => {
+        p5.loadModel('/unit/assets/octa-color.obj', model => {
           p5.background(255);
           p5.rotateX(10 * 0.01);
           p5.rotateY(10 * 0.01);
@@ -101,7 +101,7 @@ visualSuite('WebGL', function() {
     visualTest('Object with no colors takes on fill color', function(p5, screenshot) {
       return new Promise(resolve => {
         p5.createCanvas(50, 50, p5.WEBGL);
-        p5.loadModel('unit/assets/cube.obj', model => {
+        p5.loadModel('/unit/assets/cube.obj', model => {
           p5.background(255);
           p5.fill('blue'); // Setting a fill color
           p5.rotateX(p5.frameCount * 0.01);
@@ -117,8 +117,8 @@ visualSuite('WebGL', function() {
       'Object with different texture coordinates per use of vertex keeps the coordinates intact',
       async function(p5, screenshot) {
         p5.createCanvas(50, 50, p5.WEBGL);
-        const tex = await new Promise(resolve => p5.loadImage('unit/assets/cat.jpg', resolve));
-        const cube = await new Promise(resolve => p5.loadModel('unit/assets/cube-textures.obj', resolve));
+        const tex = await new Promise(resolve => p5.loadImage('/unit/assets/cat.jpg', resolve));
+        const cube = await new Promise(resolve => p5.loadModel('/unit/assets/cube-textures.obj', resolve));
         cube.normalize();
         p5.background(255);
         p5.texture(tex);

@@ -335,7 +335,7 @@ import './p5.Geometry';
  * @param  {Boolean} [options.flipV]
  * @return {p5.Geometry} new <a href="#/p5.Geometry">p5.Geometry</a> object.
  */
-p5.prototype.loadModel = function (path, options) {
+p5.prototype.loadModel = async function (path, options) {
   p5._validateParameters('loadModel', arguments);
   let normalize = false;
   let successCallback;
@@ -420,7 +420,7 @@ p5.prototype.loadModel = function (path, options) {
     }
   }
   if (fileType.match(/\.stl$/i)) {
-    this.httpDo(
+    await new Promise(resolve => this.httpDo(
       path,
       'GET',
       'arrayBuffer',
@@ -439,15 +439,15 @@ p5.prototype.loadModel = function (path, options) {
           model.flipV();
         }
 
-        self._decrementPreload();
+        resolve();
         if (typeof successCallback === 'function') {
           successCallback(model);
         }
       },
       failureCallback
-    );
+    ));
   } else if (fileType.match(/\.obj$/i)) {
-    this.loadStrings(
+    await new Promise(resolve => this.loadStrings(
       path,
       async lines => {
         try {
@@ -474,14 +474,14 @@ p5.prototype.loadModel = function (path, options) {
             model.flipV();
           }
 
-          self._decrementPreload();
+          resolve();
           if (typeof successCallback === 'function') {
             successCallback(model);
           }
         }
       },
       failureCallback
-    );
+    ));
   } else {
     p5._friendlyFileLoadError(3, path);
     if (failureCallback) {
