@@ -887,38 +887,145 @@ p5.prototype.shader = function (s) {
  *
  * You can call <a href="#/p5.Shader/modify">`materialShader().modify()`</a>
  * and change any of the following hooks:
- * - `void beforeVertex`: Called at the start of the vertex shader.
- * - `vec3 getLocalPosition`: Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
- * - `vec3 getWorldPosition`: Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
- * - `vec3 getLocalNormal`: Update the normal before transforms are applied. It takes in `vec3 normal` and must return a modified version.
- * - `vec3 getWorldNormal`: Update the normal after transforms are applied. It takes in `vec3 normal` and must return a modified version.
- * - `vec2 getUV`: Update the texture coordinates. It takes in `vec2 uv` and must return a modified version.
- * - `vec4 getVertexColor`: Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
- * - `void afterVertex`: Called at the end of the vertex shader.
- * - `void beforeFragment`: Called at the start of the fragment shader.
- * - `Inputs getPixelInputs`: Update the per-pixel inputs of the material. It takes in an `Inputs` struct, which includes:
- *   - `vec3 normal`, the direction pointing out of the surface
- *   - `vec2 texCoord`, a vector where `x` and `y` are between 0 and 1 describing the spot on a texture the pixel is mapped to, as a fraction of the texture size
- *   - `vec3 ambientLight`, the ambient light color on the vertex
- *   - `vec4 color`, the base material color of the pixel
- *   - `vec3 ambientMaterial`, the color of the pixel when affected by ambient light
- *   - `vec3 specularMaterial`, the color of the pixel when reflecting specular highlights
- *   - `vec3 emissiveMaterial`, the light color emitted by the pixel
- *   - `float shininess`, a number representing how sharp specular reflections should be, from 1 to infinity
- *   - `float metalness`, a number representing how mirrorlike the material should be, between 0 and 1
-    The struct can be modified and returned.
- * - `vec4 combineColors`: Take in a `ColorComponents` struct containing all the different components of light, and combining them into
- *   a single final color. The struct contains:
- *   - `vec3 baseColor`, the base color of the pixel
- *   - `float opacity`, the opacity between 0 and 1 that it should be drawn at
- *   - `vec3 ambientColor`, the color of the pixel when affected by ambient light
- *   - `vec3 specularColor`, the color of the pixel when affected by specular reflections
- *   - `vec3 diffuse`, the amount of diffused light hitting the pixel
- *   - `vec3 ambient`, the amount of ambient light hitting the pixel
- *   - `vec3 specular`, the amount of specular reflection hitting the pixel
- *   - `vec3 emissive`, the amount of light emitted by the pixel
- * - `vec4 getFinalColor`: Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
- * - `void afterFragment`: Called at the end of the fragment shader.
+ *
+ * <table>
+ * <tr><th>Hook</th><th>Description</th></tr>
+ * <tr><td>
+ *
+ * `void beforeVertex`
+ *
+ * </td><td>
+ *
+ * Called at the start of the vertex shader.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec3 getLocalPosition`
+ *
+ * </td><td>
+ *
+ * Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec3 getWorldPosition`
+ *
+ * </td><td>
+ *
+ * Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec3 getLocalNormal`
+ *
+ * </td><td>
+ *
+ * Update the normal before transforms are applied. It takes in `vec3 normal` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec3 getWorldNormal`
+ *
+ * </td><td>
+ *
+ * Update the normal after transforms are applied. It takes in `vec3 normal` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec2 getUV`
+ *
+ * </td><td>
+ *
+ * Update the texture coordinates. It takes in `vec2 uv` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec4 getVertexColor`
+ *
+ * </td><td>
+ *
+ * Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `void afterVertex`
+ *
+ * </td><td>
+ *
+ * Called at the end of the vertex shader.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `void beforeFragment`
+ *
+ * </td><td>
+ *
+ * Called at the start of the fragment shader.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `Inputs getPixelInputs`
+ *
+ * </td><td>
+ *
+ * Update the per-pixel inputs of the material. It takes in an `Inputs` struct, which includes:
+ * - `vec3 normal`, the direction pointing out of the surface
+ * - `vec2 texCoord`, a vector where `x` and `y` are between 0 and 1 describing the spot on a texture the pixel is mapped to, as a fraction of the texture size
+ * - `vec3 ambientLight`, the ambient light color on the vertex
+ * - `vec4 color`, the base material color of the pixel
+ * - `vec3 ambientMaterial`, the color of the pixel when affected by ambient light
+ * - `vec3 specularMaterial`, the color of the pixel when reflecting specular highlights
+ * - `vec3 emissiveMaterial`, the light color emitted by the pixel
+ * - `float shininess`, a number representing how sharp specular reflections should be, from 1 to infinity
+ * - `float metalness`, a number representing how mirrorlike the material should be, between 0 and 1
+ * The struct can be modified and returned.
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec4 combineColors`
+ *
+ * </td><td>
+ *
+ * Take in a `ColorComponents` struct containing all the different components of light, and combining them into
+ * a single final color. The struct contains:
+ * - `vec3 baseColor`, the base color of the pixel
+ * - `float opacity`, the opacity between 0 and 1 that it should be drawn at
+ * - `vec3 ambientColor`, the color of the pixel when affected by ambient light
+ * - `vec3 specularColor`, the color of the pixel when affected by specular reflections
+ * - `vec3 diffuse`, the amount of diffused light hitting the pixel
+ * - `vec3 ambient`, the amount of ambient light hitting the pixel
+ * - `vec3 specular`, the amount of specular reflection hitting the pixel
+ * - `vec3 emissive`, the amount of light emitted by the pixel
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec4 getFinalColor`
+ *
+ * </td><td>
+ *
+ * Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `void afterFragment`
+ *
+ * </td><td>
+ *
+ * Called at the end of the fragment shader.
+ *
+ * </td></tr>
+ * </table>
  *
  * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
  * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
@@ -1088,17 +1195,20 @@ p5.prototype.materialShader = function() {
  *
  * You can call <a href="#/p5.Shader/modify">`normalShader().modify()`</a>
  * and change any of the following hooks:
- * - `void beforeVertex`: Called at the start of the vertex shader.
- * - `vec3 getLocalPosition`: Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
- * - `vec3 getWorldPosition`: Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
- * - `vec3 getLocalNormal`: Update the normal before transforms are applied. It takes in `vec3 normal` and must return a modified version.
- * - `vec3 getWorldNormal`: Update the normal after transforms are applied. It takes in `vec3 normal` and must return a modified version.
- * - `vec2 getUV`: Update the texture coordinates. It takes in `vec2 uv` and must return a modified version.
- * - `vec4 getVertexColor`: Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
- * - `void afterVertex`: Called at the end of the vertex shader.
- * - `void beforeFragment`: Called at the start of the fragment shader.
- * - `vec4 getFinalColor`: Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
- * - `void afterFragment`: Called at the end of the fragment shader.
+ *
+ * Hook | Description
+ * -----|------------
+ * `void beforeVertex` | Called at the start of the vertex shader.
+ * `vec3 getLocalPosition` | Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
+ * `vec3 getWorldPosition` | Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
+ * `vec3 getLocalNormal` | Update the normal before transforms are applied. It takes in `vec3 normal` and must return a modified version.
+ * `vec3 getWorldNormal` | Update the normal after transforms are applied. It takes in `vec3 normal` and must return a modified version.
+ * `vec2 getUV` | Update the texture coordinates. It takes in `vec2 uv` and must return a modified version.
+ * `vec4 getVertexColor` | Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
+ * `void afterVertex` | Called at the end of the vertex shader.
+ * `void beforeFragment` | Called at the start of the fragment shader.
+ * `vec4 getFinalColor` | Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
+ * `void afterFragment` | Called at the end of the fragment shader.
  *
  * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
  * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
@@ -1239,24 +1349,132 @@ p5.prototype.colorShader = function() {
  *
  * You can call <a href="#/p5.Shader/modify">`strokeShader().modify()`</a>
  * and change any of the following hooks:
- * - `void beforeVertex`: Called at the start of the vertex shader.
- * - `vec3 getLocalPosition`: Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
- * - `vec3 getWorldPosition`: Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
- * - `float getStrokeWeight`: Update the stroke weight. It takes in `float weight` and pust return a modified version.
- * - `vec2 getLineCenter`: Update the center of the line. It takes in `vec2 center` and must return a modified version.
- * - `vec2 getLinePosition`: Update the position of each vertex on the edge of the line. It takes in `vec2 position` and must return a modified version.
- * - `vec4 getVertexColor`: Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
- * - `void afterVertex`: Called at the end of the vertex shader.
- * - `void beforeFragment`: Called at the start of the fragment shader.
- * - `Inputs getPixelInputs`: Update the inputs to the shader. It takes in a struct `Inputs inputs`, which includes:
- *   - `vec4 color`, the color of the stroke
- *   - `vec2 tangent`, the direction of the stroke in screen space
- *   - `vec2 center`, the coordinate of the center of the stroke in screen space p5.js pixels
- *   - `vec2 position`, the coordinate of the current pixel in screen space p5.js pixels
- *   - `float strokeWeight`, the thickness of the stroke in p5.js pixels
- * - `bool shouldDiscard`: Caps and joins are made by discarded pixels in the fragment shader to carve away unwanted areas. Use this to change this logic. It takes in a `bool willDiscard` and must return a modified version.
- * - `vec4 getFinalColor`: Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
- * - `void afterFragment`: Called at the end of the fragment shader.
+ *
+ * <table>
+ * <tr><th>Hook</th><th>Description</th></tr>
+ * <tr><td>
+ *
+ * `void beforeVertex`
+ *
+ * </td><td>
+ *
+ * Called at the start of the vertex shader.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec3 getLocalPosition`
+ *
+ * </td><td>
+ *
+ * Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec3 getWorldPosition`
+ *
+ * </td><td>
+ *
+ * Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `float getStrokeWeight`
+ *
+ * </td><td>
+ *
+ * Update the stroke weight. It takes in `float weight` and pust return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec2 getLineCenter`
+ *
+ * </td><td>
+ *
+ * Update the center of the line. It takes in `vec2 center` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec2 getLinePosition`
+ *
+ * </td><td>
+ *
+ * Update the position of each vertex on the edge of the line. It takes in `vec2 position` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec4 getVertexColor`
+ *
+ * </td><td>
+ *
+ * Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `void afterVertex`
+ *
+ * </td><td>
+ *
+ * Called at the end of the vertex shader.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `void beforeFragment`
+ *
+ * </td><td>
+ *
+ * Called at the start of the fragment shader.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `Inputs getPixelInputs`
+ *
+ * </td><td>
+ *
+ * Update the inputs to the shader. It takes in a struct `Inputs inputs`, which includes:
+ * - `vec4 color`, the color of the stroke
+ * - `vec2 tangent`, the direction of the stroke in screen space
+ * - `vec2 center`, the coordinate of the center of the stroke in screen space p5.js pixels
+ * - `vec2 position`, the coordinate of the current pixel in screen space p5.js pixels
+ * - `float strokeWeight`, the thickness of the stroke in p5.js pixels
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `bool shouldDiscard`
+ *
+ * </td><td>
+ *
+ * Caps and joins are made by discarded pixels in the fragment shader to carve away unwanted areas. Use this to change this logic. It takes in a `bool willDiscard` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec4 getFinalColor`
+ *
+ * </td><td>
+ *
+ * Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `void afterFragment`
+ *
+ * </td><td>
+ *
+ * Called at the end of the fragment shader.
+ *
+ * </td></tr>
+ * </table>
  *
  * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
  * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
