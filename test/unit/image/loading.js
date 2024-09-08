@@ -537,7 +537,7 @@ suite('displaying images that use fit mode', function() {
   test('CONTAIN when source image is larger than destination', function() {
     let src = myp5.createImage(400, 1000);
     sinon.spy(myp5._renderer, 'image');
-    myp5.image(src, 0, 0, 0, 300, 400, 0, 0, 400, 1000, myp5.CONTAIN);
+    myp5.image(src, 0, 0, 300, 400, 0, 0, 400, 1000, myp5.CONTAIN);
     assert(myp5._renderer.image.calledOnce);
     assert.equal(myp5._renderer.image.getCall(0).args[7], 400 / (1000 / 400)); //  dw
     assert.equal(myp5._renderer.image.getCall(0).args[8], 1000 / (1000 / 400)); // dh
@@ -546,7 +546,7 @@ suite('displaying images that use fit mode', function() {
   test('CONTAIN when source image is smaller than destination', function() {
     let src = myp5.createImage(40, 90);
     sinon.spy(myp5._renderer, 'image');
-    myp5.image(src, 0, 0, 0, 300, 500, 0, 0, 400, 1000, myp5.CONTAIN);
+    myp5.image(src, 0, 0, 300, 500, 0, 0, 400, 1000, myp5.CONTAIN);
     assert(myp5._renderer.image.calledOnce);
     assert.equal(myp5._renderer.image.getCall(0).args[7], 40 / (90 / 500)); //  dw
     assert.equal(myp5._renderer.image.getCall(0).args[8], 90 / (90 / 500)); // dh
