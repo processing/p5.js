@@ -145,8 +145,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
       //Whenever func having p5.[Class] is encountered, we need to have the error link as mentioned below else different link
       funcName.startsWith('p5.')  ?
-        msgWithReference = `${message} (http://p5js.org/reference/#/${referenceSection}.${funcName})` :
-        msgWithReference = `${message} (http://p5js.org/reference/#/${referenceSection}/${funcName})`;
+        msgWithReference = `${message} (http://p5js.org/reference/${referenceSection}.${funcName})` :
+        msgWithReference = `${message} (http://p5js.org/reference/${referenceSection}/${funcName})`;
     }
     return msgWithReference;
   };
@@ -777,7 +777,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
             // if the flow gets this far, this is likely not a misspelling
             // of a p5 property/function
-            let url = 'https://p5js.org/examples/data-variable-scope.html';
+            let url = 'https://p5js.org/tutorials/variables-and-change/';
             p5._friendlyError(
               translator('fes.globalErrors.reference.notDefined', {
                 url,
