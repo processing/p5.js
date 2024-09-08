@@ -3395,31 +3395,32 @@ p5.RendererGL.prototype.image = function(
   img,
   sx,
   sy,
-  dz,
   sWidth,
   sHeight,
   dx,
   dy,
   dWidth,
-  dHeight
+  dHeight,
+  dz
 ) {
   if (this._isErasing) {
     this.blendMode(this._cachedBlendMode);
   }
+  /*
   // check for P5 Graphics instance
   let isP5G = img instanceof p5.Graphics ? true : false;
   // check for P5 Framebuffer instance
   let isP5Fbo = img instanceof p5.Framebuffer ? true : false;
-  
+
   const viewport = this.GL.getParameter(this.GL.VIEWPORT);
   const width = viewport[2];
   const height = viewport[3];
-  
+
   if (!isP5G && !isP5Fbo){
     dx = (-width / 2) + dx;
     dy = (-height / 2) + dy;
   }
-
+  */
   this._pInst.push();
   this._pInst.noLights();
   this._pInst.noStroke();
