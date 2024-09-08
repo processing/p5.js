@@ -35,7 +35,7 @@ These are examples of efforts we believe increase access:
 - Following [Web Content Accessibility Guidelines](https://www.w3.org/TR/WCAG21/) in our tools and working towards making it easier for users to follow them in their projects
 - Making p5.js error messages more helpful and supportive to people using the tool (e.g., the [p5.js Friendly Error System (FES)](./friendly_error_system.md))
 - Mentoring and supporting learners of p5.js within communities that are historically excluded from and marginalized in creative coding and the digital arts
-- Hosting community events (e.g., [p5.js Access Day 2022](https://p5js.org/community/p5js-access-day-2022.html), [The Web We Want: p5.js x W3C TPAC 2020)](https://medium.com/processing-foundation/p5-js-x-w3c-tpac-bee4c621a053) with access-centered organizing tactics (e.g., ASL interpretation, live captioning, accessible venues)
+- Hosting community events (e.g., [p5.js Access Day 2022](https://p5js.org/events/p5js-access-day-2022/), [The Web We Want: p5.js x W3C TPAC 2020)](https://medium.com/processing-foundation/p5-js-x-w3c-tpac-bee4c621a053) with access-centered organizing tactics (e.g., ASL interpretation, live captioning, accessible venues)
 - Supporting the creation of educational resources (e.g., Adekemi Sijuwade-Ukadike’s [A11y Syllabus](http://a11ysyllabus.site/))
 - Publishing documentation and reports of our work that follow WCAG guidelines, use plain language, and focus on beginners from diverse experiences (e.g., [OSACC p5.js Access Report](https://github.com/processing/OSACC-p5.js-Access-Report))
 

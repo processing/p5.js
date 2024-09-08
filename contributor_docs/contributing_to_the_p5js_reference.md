@@ -73,7 +73,7 @@ Anything in a block in this manner will be interpreted as reference documentatio
 
 ## Reference comments block
 
-Let’s break down the reference comments block above for the `sin()` function and see what each section does. You can compare what you see in the comments here and what you can see on the reference page for [`sin()`](https://p5js.org/reference/#/p5/sin).
+Let’s break down the reference comments block above for the `sin()` function and see what each section does. You can compare what you see in the comments here and what you can see on the reference page for [`sin()`](https://p5js.org/reference/p5/sin/).
 
 ```
 /**
@@ -143,7 +143,7 @@ If the method returns the parent object, you can skip the `@return` tag and add 
 
 ## Additional signatures
 
-If a function has multiple possible parameter options, you can specify each individually. For example, the [`background()`](http://p5js.org/reference/#p5/background) function takes a number of different parameter options (see "Syntax" section on the reference page). Choose one version to list as the first signature using the template above. At the end of the first reference comment block, you can add additional signatures, each in its own block, using only the `@method` and `@param` tags following the example below.
+If a function has multiple possible parameter options, you can specify each individually. For example, the [`background()`](https://p5js.org/reference/p5/background/) function takes a number of different parameter options (see "Syntax" section on the reference page). Choose one version to list as the first signature using the template above. At the end of the first reference comment block, you can add additional signatures, each in its own block, using only the `@method` and `@param` tags following the example below.
 
 ```
 /**
@@ -270,7 +270,7 @@ If you do not want the example to be run as part of the automated tests (for exa
 * </code></div>
 ```
 
-If your example uses external asset files, put them in the [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) folder (or reuse one already in there) then link to them with "assets/filename.ext" in the code. See the [tint()](http://p5js.org/reference/#/p5/tint) reference for example.
+If your example uses external asset files, put them in the [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) folder (or reuse one already in there) then link to them with "assets/filename.ext" in the code. See the [tint()](https://p5js.org/reference/p5/tint/) reference for example.
 
 
 ### Add a canvas description using `describe()`
