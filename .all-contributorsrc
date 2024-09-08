@@ -6309,6 +6309,15 @@
       "contributions": [
         "example"
       ]
+    },
+    {
+      "login": "visheshrwl",
+      "name": "Vishesh Rawal",
+      "avatar_url": "https://avatars.githubusercontent.com/u/92795514?v=4",
+      "profile": "https://github.com/visheshrwl",
+      "contributions": [
+        "bug", "doc", "code"
+      ]
     }
   ],
   "repoType": "github",
