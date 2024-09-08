@@ -1180,7 +1180,7 @@ function _sAssign(sVal, iVal) {
  *                           rectangle in which to draw the source image
  * @param  {Number}   dy     the y-coordinate of the destination
  *                           rectangle in which to draw the source image
- * @param  {Number}   dz     the z-coordinate (depth) of the destination
+ * @param  {Number}  [dz]     the z-coordinate (depth) of the destination
  *                           rectangle in which to draw the source image (WEBGL only)
  * @param  {Number}   dWidth  the width of the destination rectangle
  * @param  {Number}   dHeight the height of the destination rectangle
@@ -1298,13 +1298,13 @@ p5.prototype.image = function(
     img,
     vals.sx,
     vals.sy,
-    dz,
     vals.sw,
     vals.sh,
     vals.dx,
     vals.dy,
     vals.dw,
-    vals.dh
+    vals.dh,
+    dz
   );
 };
 
