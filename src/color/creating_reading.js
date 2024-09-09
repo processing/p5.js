@@ -960,8 +960,8 @@ p5.prototype.hue = function(c) {
  * <a href="#/colorMode">colorMode()</a>.
  *
  * @method lerpColor
- * @param  {p5.Color|Number[]} c1  interpolate from this color.
- * @param  {p5.Color|Number[]} c2  interpolate to this color.
+ * @param  {p5.Color} c1  interpolate from this color (any value created by the color() function).
+ * @param  {p5.Color} c2  interpolate to this color (any value created by the color() function).
  * @param  {Number}   amt number between 0 and 1.
  * @return {p5.Color}     interpolated color.
  *
