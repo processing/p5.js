@@ -415,3 +415,7 @@ function arrayFunctions(p5, fn){
 }
 
 export default arrayFunctions;
+
+if(typeof p5 !== 'undefined'){
+  arrayFunctions(p5, p5.prototype);
+}

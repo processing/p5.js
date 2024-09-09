@@ -42,10 +42,8 @@ import './dom/dom';
 import './accessibility/describe';
 
 // events
-import './events/acceleration';
-import './events/keyboard';
-import './events/mouse';
-import './events/touch';
+import events from './events';
+events(p5, p5.prototype);
 
 // image
 import './image/filters';

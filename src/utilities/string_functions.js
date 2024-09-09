@@ -984,3 +984,7 @@ function stringFunctions(p5, fn){
 }
 
 export default stringFunctions;
+
+if(typeof p5 !== 'undefined'){
+  stringFunctions(p5, p5.prototype);
+}
