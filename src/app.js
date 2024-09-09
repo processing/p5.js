@@ -43,7 +43,7 @@ import './accessibility/describe';
 
 // events
 import events from './events';
-events(p5, p5.prototype);
+events(p5);
 
 // image
 import './image/filters';
@@ -60,7 +60,7 @@ import './io/p5.XML';
 
 // math
 import math from './math';
-math(p5, p5.prototype);
+math(p5);
 
 // typography
 import './typography/attributes';
@@ -69,7 +69,7 @@ import './typography/p5.Font';
 
 // utilities
 import utilities from './utilities';
-utilities(p5, p5.prototype);
+utilities(p5);
 
 // webgl
 import './webgl/3d_primitives';
