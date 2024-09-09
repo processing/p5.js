@@ -53,10 +53,8 @@ import './image/p5.Image';
 import './image/pixels';
 
 // io
-import './io/files';
-import './io/p5.Table';
-import './io/p5.TableRow';
-import './io/p5.XML';
+import io from './io';
+io(p5);
 
 // math
 import math from './math';
