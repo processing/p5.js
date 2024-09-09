@@ -1303,3 +1303,7 @@ function table(p5, fn){
 }
 
 export default table;
+
+if(typeof p5 !== 'undefined'){
+  table(p5, p5.prototype);
+}

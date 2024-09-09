@@ -1337,3 +1337,7 @@ function xml(p5, fn){
 }
 
 export default xml;
+
+if(typeof p5 !== 'undefined'){
+  xml(p5, p5.prototype);
+}

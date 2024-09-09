@@ -46,11 +46,13 @@ import events from './events';
 events(p5);
 
 // image
-import './image/filters';
-import './image/image';
-import './image/loading_displaying';
-import './image/p5.Image';
-import './image/pixels';
+// import './image/filters';
+// import './image/image';
+// import './image/loading_displaying';
+// import './image/p5.Image';
+// import './image/pixels';
+import image from './image';
+image(p5);
 
 // io
 import io from './io';
