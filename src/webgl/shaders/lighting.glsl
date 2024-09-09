@@ -40,7 +40,7 @@ uniform float uQuadraticAttenuation;
 // boolean to initiate the calculateImageDiffuse and calculateImageSpecular
 uniform bool uUseImageLight;
 // texture for use in calculateImageDiffuse
-uniform sampler2D environmentMapDiffused;
+uniform samplerCube environmentMapDiffusedCubemap;
 // texture for use in calculateImageSpecular
 uniform sampler2D environmentMapSpecular;
 // roughness for use in calculateImageSpecular
@@ -114,7 +114,11 @@ vec3 calculateImageDiffuse( vec3 vNormal, vec3 vViewPosition ){
   vec3 worldCameraPosition =  vec3(0.0, 0.0, 0.0);  // hardcoded world camera position
   vec3 worldNormal = normalize(vNormal * uCameraRotation);
   vec2 newTexCoor = mapTextureToNormal( worldNormal );
-  vec4 texture = TEXTURE( environmentMapDiffused, newTexCoor );
+
+  // Sample the diffuse color from the environment map (cube map) using the transformed
+  // world-normal vector as the direction in the cube map space.
+  vec4 texture = TEXTURE_CUBE( environmentMapDiffusedCubemap, worldNormal );
+  
   // this is to make the darker sections more dark
   // png and jpg usually flatten the brightness so it is to reverse that
   return mix(smoothstep(vec3(0.0), vec3(1.0), texture.xyz), vec3(0.0), metallic);
