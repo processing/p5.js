@@ -21,36 +21,31 @@ import './core/shape/2d_primitives';
 import './core/shape/attributes';
 import './core/shape/curves';
 import './core/shape/vertex';
+
 //accessibility
 import './accessibility/outputs';
 import './accessibility/textOutput';
 import './accessibility/gridOutput';
 import './accessibility/color_namer';
+import './accessibility/describe';
+
 // color
 import './color/creating_reading';
 import './color/p5.Color';
 import './color/setting';
 
 // data
-import './data/p5.TypedDict';
-import './data/local_storage.js';
+import data from './data';
+data(p5);
 
 // DOM
 import './dom/dom';
-
-// accessibility
-import './accessibility/describe';
 
 // events
 import events from './events';
 events(p5);
 
 // image
-// import './image/filters';
-// import './image/image';
-// import './image/loading_displaying';
-// import './image/p5.Image';
-// import './image/pixels';
 import image from './image';
 image(p5);
 
