@@ -30,9 +30,11 @@ import './accessibility/color_namer';
 import './accessibility/describe';
 
 // color
-import './color/creating_reading';
-import './color/p5.Color';
-import './color/setting';
+// import './color/creating_reading';
+// import './color/p5.Color';
+// import './color/setting';
+import color from './color';
+color(p5);
 
 // data
 import data from './data';
