@@ -61,12 +61,6 @@ import './io/p5.TableRow';
 import './io/p5.XML';
 
 // math
-// import './math/calculation';
-// import './math/math';
-// import './math/noise';
-// import './math/p5.Vector';
-// import './math/random';
-// import './math/trigonometry';
 import math from './math';
 math(p5, p5.prototype);
 
@@ -76,10 +70,8 @@ import './typography/loading_displaying';
 import './typography/p5.Font';
 
 // utilities
-import './utilities/array_functions';
-import './utilities/conversion';
-import './utilities/string_functions';
-import './utilities/time_date';
+import utilities from './utilities';
+utilities(p5, p5.prototype);
 
 // webgl
 import './webgl/3d_primitives';
