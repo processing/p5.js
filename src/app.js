@@ -23,16 +23,10 @@ import './core/shape/curves';
 import './core/shape/vertex';
 
 //accessibility
-import './accessibility/outputs';
-import './accessibility/textOutput';
-import './accessibility/gridOutput';
-import './accessibility/color_namer';
-import './accessibility/describe';
+import accessibility from './accessibility';
+accessibility(p5);
 
 // color
-// import './color/creating_reading';
-// import './color/p5.Color';
-// import './color/setting';
 import color from './color';
 color(p5);
 
