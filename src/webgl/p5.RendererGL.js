@@ -1757,18 +1757,16 @@ p5.RendererGL = class RendererGL extends Renderer {
     }
 
     const fill = this.userFillShader;
-    if (this._enableLighting) {
-      if (!fill || !fill.isLightShader()) {
-        return this._getLightShader();
-      }
-    } else if (this._tex) {
-      if (!fill || !fill.isTextureShader()) {
-        return this._getLightShader();
-      }
-    } else if (!fill /* || !fill.isColorShader()*/) {
-      return this._getColorShader();
+    if(fill){
+      return fill;
     }
-    return fill;
+    if (this._enableLighting) {
+      return this._getLightShader();
+    }
+    if (this._tex) {
+      return this._getLightShader();
+    }
+    return this._getColorShader();
   }
 
   _getImmediatePointShader() {
@@ -1893,17 +1891,6 @@ p5.RendererGL = class RendererGL extends Renderer {
     return this._defaultFontShader;
   }
 
-  // _getImmediateImageShader() {
-  //   const image = this.userImageShader;
-  //   if (!image || !image.isImageShader()) {
-  //     return this._getTextureShader();
-  //   }
-  //   return image;
-  // }
-  
-  // _getRetainedImageShader() {
-  //   return this._getImmediateImageShader();
-  // }
 
   _webGL2CompatibilityPrefix(
     shaderType,
