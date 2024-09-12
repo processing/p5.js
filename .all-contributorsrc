@@ -6264,6 +6264,60 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "ibrand",
+      "name": "Ilona Brand",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3953117?v=4",
+      "profile": "https://github.com/ibrand",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "aleannab",
+      "name": "Antoinette Bumatay-Chan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/342223?v=4",
+      "profile": "http://www.antoinettecreates.com",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "benpalevsky",
+      "name": "benpalevsky",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25121735?v=4",
+      "profile": "https://github.com/benpalevsky",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "jeanetteandrews",
+      "name": "jeanette",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12685889?v=4",
+      "profile": "http://jeanetteandre.ws",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "williamthazard",
+      "name": "William Hazard",
+      "avatar_url": "https://avatars.githubusercontent.com/u/105560469?v=4",
+      "profile": "https://github.com/williamthazard",
+      "contributions": [
+        "example"
+      ]
+    },
+    {
+      "login": "visheshrwl",
+      "name": "Vishesh Rawal",
+      "avatar_url": "https://avatars.githubusercontent.com/u/92795514?v=4",
+      "profile": "https://github.com/visheshrwl",
+      "contributions": [
+        "bug", "doc", "code"
+      ]
     }
   ],
   "repoType": "github",

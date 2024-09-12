@@ -1053,6 +1053,14 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="http://willallstetter.com"><img src="https://avatars.githubusercontent.com/u/67874779?v=4?s=120" width="120px;" alt="willallstet"/><br /><sub><b>willallstet</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=willallstet" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/ashwanidey"><img src="https://avatars.githubusercontent.com/u/110251931?v=4?s=120" width="120px;" alt="Ashwani Dey"/><br /><sub><b>Ashwani Dey</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ashwanidey" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/ibrand"><img src="https://avatars.githubusercontent.com/u/3953117?v=4?s=120" width="120px;" alt="Ilona Brand"/><br /><sub><b>Ilona Brand</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aibrand" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://www.antoinettecreates.com"><img src="https://avatars.githubusercontent.com/u/342223?v=4?s=120" width="120px;" alt="Antoinette Bumatay-Chan"/><br /><sub><b>Antoinette Bumatay-Chan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=aleannab" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/benpalevsky"><img src="https://avatars.githubusercontent.com/u/25121735?v=4?s=120" width="120px;" alt="benpalevsky"/><br /><sub><b>benpalevsky</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=benpalevsky" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://jeanetteandre.ws"><img src="https://avatars.githubusercontent.com/u/12685889?v=4?s=120" width="120px;" alt="jeanette"/><br /><sub><b>jeanette</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=jeanetteandrews" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/williamthazard"><img src="https://avatars.githubusercontent.com/u/105560469?v=4?s=120" width="120px;" alt="William Hazard"/><br /><sub><b>William Hazard</b></sub></a><br /><a href="#example-williamthazard" title="Examples">💡</a></td>
+       <td align="center" valign="top" width="16.66%"><a href="https://github.com/visheshrwl"><img src="https://avatars.githubusercontent.com/u/92795514?v=4" width="120px;" alt="Vishesh Rawal"/><br /><sub><b>Vishesh Rawal</b></sub></a><br /><a href="https://visheshrwl.vercel.app" title="Vishesh Rawal">💡</a></td>
+    </tr>
   </tbody>
 </table>
 
