@@ -16,7 +16,7 @@ If you're reading this page, you're probably interested in helping work on WebGL
 
 ## Planning
 
-We organize open issues [in a GitHub Project](https://github.com/orgs/processing/projects/5), where we divide them up into a few types:
+We organize open issues [in a GitHub Project](https://github.com/orgs/processing/projects/20), where we divide them up into a few types:
 
 - **System-level changes** are longer-term goals with far-reaching implications in the code. These require the most discussion and planning before jumping into implementation.
 - **Bugs with no solution yet** are bug reports that need some debugging to narrow down the cause. These are not yet ready to be fixed: once the cause is found, then we can discuss the best way to fix it.
