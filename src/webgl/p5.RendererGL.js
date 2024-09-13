@@ -1696,10 +1696,10 @@ p5.RendererGL = class RendererGL extends Renderer {
   _getImmediateStrokeShader() {
     // select the stroke shader to use
     const stroke = this.userStrokeShader;
-    if (!stroke || !stroke.isStrokeShader()) {
-      return this._getLineShader();
+    if (stroke) {
+      return stroke;
     }
-    return stroke;
+    return this._getLineShader();
   }
 
 

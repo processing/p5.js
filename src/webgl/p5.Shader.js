@@ -579,9 +579,6 @@ p5.Shader = class Shader {
     const modelViewProjectionMatrix = modelViewMatrix.copy();
     modelViewProjectionMatrix.mult(projectionMatrix);
 
-    if (this.isStrokeShader()) {
-      this.setUniform('uPerspective', this._renderer._curCamera.useLinePerspective ? 1 : 0);
-    }
     this.setUniform('uViewMatrix', viewMatrix.mat4);
     this.setUniform('uProjectionMatrix', projectionMatrix.mat4);
     this.setUniform('uModelMatrix', modelMatrix.mat4);
