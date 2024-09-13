@@ -291,7 +291,7 @@ p5.Shader = class {
    * of a hook, and the value is a string with the GLSL code for your hook. You
    * can also add a `declarations` key, where the value is a GLSL string declaring
    * <a href="#/p5.Shader/setUniform">uniform variables</a> and globals shared
-   * between hooks. To add declarations jsut in a vertex or fragment shader, add
+   * between hooks. To add declarations just in a vertex or fragment shader, add
    * `vertexDeclarations` and `fragmentDeclarations` keys.
    *
    * @method modify
