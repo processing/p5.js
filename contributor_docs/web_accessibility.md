@@ -4,7 +4,7 @@
 
 This document describes the structure of p5.js’ web accessibility features for contributors.
 
-If you want to make your sketches [screen reader](https://en.wikipedia.org/wiki/Screen_reader)-accessible, visit the How to label your p5.js code tutorial.
+If you want to make your sketches [screen reader](https://en.wikipedia.org/wiki/Screen_reader)-accessible, visit the [Writing Accessible Canvas Descriptions](https://p5js.org/tutorials/writing-accessible-canvas-descriptions/) tutorial.
 
 If you want to use p5.js with a screen reader, visit the [Using p5.js with a Screen Reader tutorial](https://p5js.org/tutorials/p5js-with-screen-reader).
 
