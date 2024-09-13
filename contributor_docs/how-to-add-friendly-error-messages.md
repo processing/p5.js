@@ -282,7 +282,7 @@ The above parameter validation message will be shown in Korean if the browser is
 
 Please consider adding unit tests for your new FE messages to detect bugs early and to ensure your code is delivering intended messages to our users. Also, unit tests are a good way to make sure other contributor’s new code does not accidentally break or interfere with the functionality of your code. Here are a few good guides on unit testing:
 
-- [Unit Testing and Test Driven Development](https://docs.google.com/document/d/1iw60L1abRJZDn1zUViO9A0j6Fco4yFoQ9LXIlEEroN8/edit?usp=sharing) by Andy Timmons
+- [Unit Testing and Test Driven Development](https://archive.p5js.org/learn/tdd.html) by Andy Timmons
 - [Contributors Doc: Unit Testing](./unit_testing.md)
 
 
