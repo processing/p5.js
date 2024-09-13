@@ -1760,10 +1760,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     if(fill){
       return fill;
     }
-    if (this._enableLighting) {
-      return this._getLightShader();
-    }
-    if (this._tex) {
+    if (this._enableLighting || this._tex) {
       return this._getLightShader();
     }
     return this._getColorShader();

@@ -582,7 +582,11 @@ p5.prototype.createFilterShader = function (fragSrc) {
  *
  * The parameter, `s`, is the <a href="#/p5.Shader">p5.Shader</a> object to
  * apply. For example, calling `shader(myShader)` applies `myShader` to
- * process each pixel on the canvas. The shader will be used for fills only.
+ * process each pixel on the canvas. This only affects the fill (the inside part of shapes),
+ * not the strokes (outlines).
+ * If you want to apply shaders to strokes or images, use the following methods:
+ * - **[strokeShader()](#/p5/strokeShader)**: Applies a shader to the stroke (outline) of shapes, allowing independent control over the stroke rendering using shaders.
+ * - **[imageShader()](#/p5/imageShader)**: Applies a shader to images or textures, controlling how the shader modifies their appearance during rendering.
  *
  * The source code from a <a href="#/p5.Shader">p5.Shader</a> object's
  * fragment and vertex shaders will be compiled the first time it's passed to
@@ -603,149 +607,137 @@ p5.prototype.createFilterShader = function (fragSrc) {
  * @example
  * <div modernizr='webgl'>
  * <code>
- * // Note: A "uniform" is a global variable within a shader program.
+ * // Example 1: Basic Fill Shader without Lights
+ * // Applies a custom shader to the fill of objects
+ * let fillShader;
  *
- * // Create a string with the vertex shader program.
- * // The vertex shader is called for each vertex.
  * let vertSrc = `
  * precision highp float;
- * uniform mat4 uModelViewMatrix;
- * uniform mat4 uProjectionMatrix;
- *
  * attribute vec3 aPosition;
- * attribute vec2 aTexCoord;
- * varying vec2 vTexCoord;
- *
  * void main() {
- *   vTexCoord = aTexCoord;
- *   vec4 positionVec4 = vec4(aPosition, 1.0);
- *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+ *   gl_Position = vec4(aPosition, 1.0);
  * }
  * `;
  *
- * // Create a string with the fragment shader program.
- * // The fragment shader is called for each pixel.
  * let fragSrc = `
  * precision highp float;
- *
+ * uniform float uMouseX;
  * void main() {
- *   // Set each pixel's RGBA value to yellow.
- *   gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+ *   vec3 color = vec3(uMouseX, 0.0, 1.0); // Color based on mouse X
+ *   gl_FragColor = vec4(color, 1.0);
  * }
  * `;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *
- *   // Create a p5.Shader object.
- *   let shaderProgram = createShader(vertSrc, fragSrc);
- *
- *   // Apply the p5.Shader object.
- *   shader(shaderProgram);
- *
- *   // Style the drawing surface.
+ *   fillShader = createShader(vertSrc, fragSrc);
+ *   shader(fillShader);
  *   noStroke();
+ *   describe('A square with color changing based on mouse X without lighting.');
+ * }
  *
- *   // Add a plane as a drawing surface.
+ * function draw() {
+ *   fillShader.setUniform('uMouseX', map(mouseX, 0, width, 0, 1));
  *   plane(100, 100);
- *
- *   describe('A yellow square.');
  * }
  * </code>
  * </div>
  *
- * <div>
+ * @example
+ * <div modernizr='webgl'>
  * <code>
- * // Note: A "uniform" is a global variable within a shader program.
+ * // Example 2: Fill Shader with Lights Affected by Mouse
+ * // Demonstrating interaction between light and shader, with the light position controlled by the mouse
  *
- * let mandelbrot;
+ * let vertSrc = `
+ * precision highp float;
+ * attribute vec3 aPosition;
+ * uniform mat4 uModelViewMatrix;
+ * uniform mat4 uProjectionMatrix;
+ * varying vec3 vPosition;
  *
- * // Load the shader and create a p5.Shader object.
- * function preload() {
- *   mandelbrot = loadShader('assets/shader.vert', 'assets/shader.frag');
+ * void main() {
+ *   vPosition = aPosition;
+ *   gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
  * }
+ * `;
+ *
+ * let fragSrc = `
+ * precision highp float;
+ * uniform vec3 uLightPos;
+ * varying vec3 vPosition;
+ * void main() {
+ *   float brightness = dot(normalize(uLightPos), normalize(vPosition));
+ *   brightness = clamp(brightness, 0.0, 1.0);
+ *   vec3 color = vec3(brightness, brightness * 0.7, 1.0); // Blue-based color affected by light
+ *   gl_FragColor = vec4(color, 1.0);
+ * }
+ * `;
+ *
+ * let fillShader;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *
- *   // Use the p5.Shader object.
- *   shader(mandelbrot);
- *
- *   // Set the shader uniform p to an array.
- *   mandelbrot.setUniform('p', [-0.74364388703, 0.13182590421]);
- *
- *   describe('A fractal image zooms in and out of focus.');
- * }
- *
- * function draw() {
- *   // Set the shader uniform r to a value that oscillates between 0 and 2.
- *   mandelbrot.setUniform('r', sin(frameCount * 0.01) + 1);
- *
- *   // Add a quad as a display surface for the shader.
- *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * // Note: A "uniform" is a global variable within a shader program.
- *
- * let redGreen;
- * let orangeBlue;
- * let showRedGreen = false;
- *
- * // Load the shader and create two separate p5.Shader objects.
- * function preload() {
- *   redGreen = loadShader('assets/shader.vert', 'assets/shader-gradient.frag');
- *   orangeBlue = loadShader('assets/shader.vert', 'assets/shader-gradient.frag');
- * }
- *
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *
- *   // Initialize the redGreen shader.
- *   shader(redGreen);
- *
- *   // Set the redGreen shader's center and background color.
- *   redGreen.setUniform('colorCenter', [1.0, 0.0, 0.0]);
- *   redGreen.setUniform('colorBackground', [0.0, 1.0, 0.0]);
- *
- *   // Initialize the orangeBlue shader.
- *   shader(orangeBlue);
- *
- *   // Set the orangeBlue shader's center and background color.
- *   orangeBlue.setUniform('colorCenter', [1.0, 0.5, 0.0]);
- *   orangeBlue.setUniform('colorBackground', [0.226, 0.0, 0.615]);
- *
- *   describe(
- *     'The scene toggles between two circular gradients when the user double-clicks. An orange and blue gradient vertically, and red and green gradient moves horizontally.'
- *   );
- * }
- *
- * function draw() {
- *   // Update the offset values for each shader.
- *   // Move orangeBlue vertically.
- *   // Move redGreen horizontally.
- *   orangeBlue.setUniform('offset', [0, sin(frameCount * 0.01) + 1]);
- *   redGreen.setUniform('offset', [sin(frameCount * 0.01), 1]);
- *
- *   if (showRedGreen === true) {
- *     shader(redGreen);
- *   } else {
- *     shader(orangeBlue);
- *   }
- *
- *   // Style the drawing surface.
+ *   fillShader = createShader(vertSrc, fragSrc);
+ *   shader(fillShader);
  *   noStroke();
- *
- *   // Add a quad as a drawing surface.
- *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
+ *   describe('A square with fill color affected by light, light position changes with mouse.');
  * }
  *
- * // Toggle between shaders when the user double-clicks.
- * function doubleClicked() {
- *   showRedGreen = !showRedGreen;
+ * function draw() {
+ *   let lightPos = [(mouseX - width / 2) / width, (mouseY - height / 2) / height, 1.0];
+ *   fillShader.setUniform('uLightPos', lightPos); // Mouse changes light position
+ *   plane(100, 100);
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * // Example 3: Mixed Fill Shader with Lights and No Lights
+ * // Light interaction with fill shader
+ * let fillShader;
+ *
+ * let vertSrc = `
+ * precision highp float;
+ * attribute vec3 aPosition;
+ * uniform mat4 uProjectionMatrix;
+ * uniform mat4 uModelViewMatrix;
+ * varying vec3 vPosition;
+ * void main() {
+ *   vPosition = aPosition;
+ *   gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+ * }
+ * `;
+ *
+ * let fragSrc = `
+ * precision highp float;
+ * uniform vec3 uLightPos;
+ * uniform vec3 uFillColor;
+ * varying vec3 vPosition;
+ * void main() {
+ *   float brightness = dot(normalize(uLightPos), normalize(vPosition));
+ *   brightness = clamp(brightness, 0.0, 1.0);
+ *   vec3 color = uFillColor * brightness;
+ *   gl_FragColor = vec4(color, 1.0);
+ * }
+ * `;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   fillShader = createShader(vertSrc, fragSrc);
+ *   shader(fillShader);
+ *   noStroke();
+ *   describe('A square affected by both fill color and lighting, with lights controlled by mouse.');
+ * }
+ *
+ * function draw() {
+ *   let lightPos = [(mouseX - width / 2) / width, (mouseY - height / 2) / height, 1.0];
+ *   fillShader.setUniform('uLightPos', lightPos);
+ *   let fillColor = [map(mouseX, 0, width, 0, 1), map(mouseY, 0, height, 0, 1), 0.5];
+ *   fillShader.setUniform('uFillColor', fillColor);
+ *   plane(100, 100);
  * }
  * </code>
  * </div>
@@ -816,10 +808,10 @@ p5.prototype.shader = function (s) {
  *
  * function draw() {
  *   background(200);
- *   
+ *
  *   // Apply the stroke shader
  *   strokeShader(myStrokeShader);
- *   
+ *
  *   // Draw a stroked shape
  *   strokeWeight(5);
  *   stroke(255, 0, 0);
@@ -831,7 +823,7 @@ p5.prototype.shader = function (s) {
  * }
  * </code>
  * </div>
- * 
+ *
  * <div modernizr='webgl'>
  * <code>
  * let vertSrc = `
