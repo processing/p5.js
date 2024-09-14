@@ -47,7 +47,6 @@
     "i18next": "^19.0.2",
     "i18next-browser-languagedetector": "^4.0.1",
     "lint-staged": "^15.1.0",
-    "resemblejs": "^5.0.0",
     "rollup": "^4.9.6",
     "rollup-plugin-string": "^3.0.0",
     "rollup-plugin-visualizer": "^5.12.0",

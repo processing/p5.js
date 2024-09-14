@@ -101,22 +101,23 @@ suite('Rendering', function() {
       assert.equal(fbo.height, 15);
     });
 
-    // NOTE: below two are nearly identical, should be checked
-    test('should resize the dimensions of canvas based on max texture size', function() {
+    test('should limit dimensions of canvas based on max texture size on create', function() {
       glStub = vi.spyOn(p5.RendererGL.prototype, '_getMaxTextureSize');
       const fakeMaxTextureSize = 100;
       glStub.mockReturnValue(fakeMaxTextureSize);
       myp5.createCanvas(10, 10, myp5.WEBGL);
+      myp5.pixelDensity(1);
       myp5.resizeCanvas(200, 200);
       assert.equal(myp5.width, 100);
       assert.equal(myp5.height, 100);
     });
 
-    test.todo('should resize the dimensions of canvas based on max texture size', function() {
+    test('should limit dimensions of canvas based on max texture size on resize', function() {
       glStub = vi.spyOn(p5.RendererGL.prototype, '_getMaxTextureSize');
       const fakeMaxTextureSize = 100;
       glStub.mockReturnValue(fakeMaxTextureSize);
       myp5.createCanvas(200, 200, myp5.WEBGL);
+      myp5.pixelDensity(1);
       assert.equal(myp5.width, 100);
       assert.equal(myp5.height, 100);
     });

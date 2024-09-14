@@ -14,6 +14,7 @@ suite('p5.Texture', function() {
       myp5 = new p5(function(p) {
         p.setup = async function() {
           canvas = p.createCanvas(100, 100, p.WEBGL);
+          p.pixelDensity(1);
           texImg1 = p.createGraphics(2, 2, p.WEBGL);
           texImg2 = await p.loadImage('/unit/assets/target.gif');
           texImg3 = await p.loadImage('/unit/assets/nyan_cat.gif');

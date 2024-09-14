@@ -1,7 +1,27 @@
 import p5 from '../../../src/app.js';
 import { server } from '@vitest/browser/context'
-import resemble from 'resemblejs'
+import { THRESHOLD } from '../../../src/core/constants.js';
 const { readFile, writeFile } = server.commands
+
+// By how much can each color channel value (0-255) differ before
+// we call it a mismatch? This should be large enough to not trigger
+// based on antialiasing.
+const COLOR_THRESHOLD = 15;
+
+// By how many pixels can the snapshot shift? This is
+// often useful to accommodate different text rendering
+// across environments.
+const SHIFT_THRESHOLD = 1;
+
+// The max side length to shrink test images down to before
+// comparing, for performance.
+const MAX_SIDE = 50;
+
+// The background color to composite test cases onto before
+// diffing. This is used because canvas DIFFERENCE blend mode
+// does not handle alpha well. This should be a color that is
+// unlikely to be in the images originally.
+const BG = '#F0F';
 
 function writeImageFile(filename, base64Data) {
   const prefix = /^data:image\/\w+;base64,/;
@@ -56,8 +76,7 @@ export function visualSuite(
 }
 
 export async function checkMatch(actual, expected, p5) {
-  const maxSide = 50;
-  const scale = Math.min(maxSide/expected.width, maxSide/expected.height);
+  const scale = Math.min(MAX_SIDE/expected.width, MAX_SIDE/expected.height);
 
   for (const img of [actual, expected]) {
     img.resize(
@@ -66,15 +85,36 @@ export async function checkMatch(actual, expected, p5) {
     );
   }
 
-  resemble.outputSettings({ useCrossOrigin: false });
-  const diff = await new Promise(resolve => resemble(toBase64(actual))
-    .compareTo(toBase64(expected))
-    .ignoreAntialiasing()
-    .onComplete((data) => {
-      resolve(data)
-    })
-  )
-  const ok = diff.rawMisMatchPercentage === 0;
+  const expectedWithBg = p5.createGraphics(expected.width, expected.height);
+  expectedWithBg.pixelDensity(1);
+  expectedWithBg.background(BG);
+  expectedWithBg.image(expected, 0, 0);
+
+  const cnv = p5.createGraphics(actual.width, actual.height);
+  cnv.pixelDensity(1);
+  cnv.background(BG);
+  cnv.image(actual, 0, 0);
+  cnv.blendMode(cnv.DIFFERENCE);
+  cnv.image(expectedWithBg, 0, 0);
+  for (let i = 0; i < SHIFT_THRESHOLD; i++) {
+    cnv.filter(cnv.ERODE, false);
+    cnv.filter(cnv.ERODE, false);
+  }
+  const diff = cnv.get();
+  cnv.remove();
+  diff.loadPixels();
+  expectedWithBg.remove();
+
+  let ok = true;
+  for (let i = 0; i < diff.pixels.length; i += 4) {
+    for (let off = 0; off < 3; off++) {
+      if (diff.pixels[i+off] > COLOR_THRESHOLD) {
+        ok = false;
+        break;
+      }
+    }
+    if (!ok) break;
+  }
 
   return { ok, diff };
 }
@@ -181,7 +221,7 @@ export function visualTest(
           const result = await checkMatch(actual[i], expected[i], myp5);
           if (!result.ok) {
             throw new Error(
-              `Screenshots do not match! Expected:\n${toBase64(expected[i])}\n\nReceived:\n${toBase64(actual[i])}\n\nDiff:\n${result.diff.getImageDataUrl()}\n\n` +
+              `Screenshots do not match! Expected:\n${toBase64(expected[i])}\n\nReceived:\n${toBase64(actual[i])}\n\nDiff:\n${toBase64(result.diff)}\n\n` +
               'If this is unexpected, paste these URLs into your browser to inspect them.\n\n' +
               `If this change is expected, please delete the screenshots/${name} folder and run tests again to generate a new screenshot.`,
             );
