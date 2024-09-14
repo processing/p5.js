@@ -309,7 +309,7 @@ suite('p5.Shader', function() {
     suite('Hooks', function() {
       let myShader;
 
-      setup(function() {
+      beforeEach(function() {
         myShader = myp5.createShader(
           `
             precision highp float;
