@@ -170,9 +170,17 @@ p5.Shader = class {
     this._bound = false;
     this.samplers = [];
     this.hooks = {
-      // Stores uniform declarations. This should be passed in by
-      // `.modify()` instead of being manualy passed in.
+      // These should be passed in by `.modify()` instead of being manually
+      // passed in.
+
+      // Stores uniforms + default values.
+      uniforms: options.uniforms || {},
+
+      // Stores custom uniform + helper declarations as a string.
       declarations: options.declarations,
+
+      // Stores helper functions to prepend to shaders.
+      helpers: options.helpers || {},
 
       // Stores the hook implementations
       vertex: options.vertex || {},
@@ -193,11 +201,17 @@ p5.Shader = class {
     const [preMain, postMain] = src.split(main);
 
     let hooks = '';
+    for (const key in this.hooks.uniforms) {
+      hooks += `uniform ${key};\n`;
+    }
     if (this.hooks.declarations) {
       hooks += this.hooks.declarations + '\n';
     }
     if (this.hooks[shaderType].declarations) {
       hooks += this.hooks[shaderType].declarations + '\n';
+    }
+    for (const hookDef in this.hooks.helpers) {
+      hooks += `${hookDef}${this.hooks.helpers[hookDef]}\n`;
     }
     for (const hookDef in this.hooks[shaderType]) {
       if (hookDef === 'declarations') continue;
@@ -252,6 +266,49 @@ p5.Shader = class {
    * you are able to use in a call to
    * <a href="#/p5.Shader/modify">`modify()`</a>.
    *
+   * For example, this shader will produce the following output:
+   *
+   * ```js
+   * myShader = materialShader().modify({
+   *   declarations: 'uniform float time;',
+   *   'vec3 getWorldPosition': `(vec3 pos) {
+   *     pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
+   *     return pos;
+   *   }`
+   * });
+   * myShader.inspectHooks();
+   * ```
+   *
+   * ```
+   * ==== Vertex shader hooks: ====
+   * void beforeVertex() {}
+   * vec3 getLocalPosition(vec3 position) { return position; }
+   * [MODIFIED] vec3 getWorldPosition(vec3 pos) {
+   *       pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
+   *       return pos;
+   *     }
+   * vec3 getLocalNormal(vec3 normal) { return normal; }
+   * vec3 getWorldNormal(vec3 normal) { return normal; }
+   * vec2 getUV(vec2 uv) { return uv; }
+   * vec4 getVertexColor(vec4 color) { return color; }
+   * void afterVertex() {}
+   *
+   * ==== Fragment shader hooks: ====
+   * void beforeFragment() {}
+   * Inputs getPixelInputs(Inputs inputs) { return inputs; }
+   * vec4 combineColors(ColorComponents components) {
+   *                 vec4 color = vec4(0.);
+   *                 color.rgb += components.diffuse * components.baseColor;
+   *                 color.rgb += components.ambient * components.ambientColor;
+   *                 color.rgb += components.specular * components.specularColor;
+   *                 color.rgb += components.emissive;
+   *                 color.a = components.opacity;
+   *                 return color;
+   *               }
+   * vec4 getFinalColor(vec4 color) { return color; }
+   * void afterFragment() {}
+   * ```
+   *
    * @method inspectHooks
    */
   inspectHooks() {
@@ -272,6 +329,14 @@ p5.Shader = class {
           this.hooks.fragment[key]
       );
     }
+    console.log('');
+    console.log('==== Helper functions: ====');
+    for (const key in this.hooks.helpers) {
+      console.log(
+        key +
+        this.hooks.helpers[key]
+      );
+    }
   }
 
   /**
@@ -288,9 +353,18 @@ p5.Shader = class {
    *
    * `modify()` takes one parameter, `hooks`, an object with the hooks you want
    * to override. Each key of the `hooks` object is the name
-   * of a hook, and the value is a string with the GLSL code for your hook. You
-   * can also add a `declarations` key, where the value is a GLSL string declaring
-   * <a href="#/p5.Shader/setUniform">uniform variables</a> and globals shared
+   * of a hook, and the value is a string with the GLSL code for your hook.
+   *
+   * If you supply functions that aren't existing hooks, they will get added at the start of
+   * the shader as helper functions so that you can use them in your hooks.
+   *
+   * To add new <a href="#/p5.Shader/setUniform">uniforms</a> to your shader, you can pass in a `uniforms` object containing
+   * the type and name of the uniform as the key, and a default value or function returning
+   * a default value as its value. These will be automatically set when the shader is set
+   * with `shader(yourShader)`.
+   *
+   * You can also add a `declarations` key, where the value is a GLSL string declaring
+   * custom uniform variables, globals, and functions shared
    * between hooks. To add declarations just in a vertex or fragment shader, add
    * `vertexDeclarations` and `fragmentDeclarations` keys.
    *
@@ -306,6 +380,36 @@ p5.Shader = class {
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
    *   myShader = materialShader().modify({
+   *     uniforms: {
+   *       'float time': () => millis()
+   *     },
+   *     'vec3 getWorldPosition': `(vec3 pos) {
+   *       pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
+   *       return pos;
+   *     }`
+   *   });
+   * }
+   *
+   * function draw() {
+   *   background(255);
+   *   shader(myShader);
+   *   lights();
+   *   noStroke();
+   *   fill('red');
+   *   sphere(50);
+   * }
+   * </code>
+   * </div>
+   *
+   * @example
+   * <div modernizr='webgl'>
+   * <code>
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = materialShader().modify({
+   *     // Manually specifying a uniform
    *     declarations: 'uniform float time;',
    *     'vec3 getWorldPosition': `(vec3 pos) {
    *       pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
@@ -330,10 +434,12 @@ p5.Shader = class {
     p5._validateParameters('p5.Shader.modify', arguments);
     const newHooks = {
       vertex: {},
-      fragment: {}
+      fragment: {},
+      helpers: {}
     };
     for (const key in hooks) {
       if (key === 'declarations') continue;
+      if (key === 'uniforms') continue;
       if (key === 'vertexDeclarations') {
         newHooks.vertex.declarations =
           (newHooks.vertex.declarations || '') + '\n' + hooks[key];
@@ -345,9 +451,7 @@ p5.Shader = class {
       } else if (this.hooks.fragment[key]) {
         newHooks.fragment[key] = hooks[key];
       } else {
-        console.error(
-          `We weren't able to find a hook matching the name ${key}. Try calling .inspectHooks() on the shader you are trying to modify to make sure you're using the right name.`
-        );
+        newHooks.helpers[key] = hooks[key];
       }
     }
     const modifiedVertex = Object.assign({}, this.hooks.modified.vertex);
@@ -364,8 +468,10 @@ p5.Shader = class {
     return new p5.Shader(this._renderer, this._vertSrc, this._fragSrc, {
       declarations:
         (this.hooks.declarations || '') + '\n' + (hooks.declarations || ''),
+      uniforms: Object.assign({}, this.hooks.uniforms, hooks.uniforms || {}),
       fragment: Object.assign({}, this.hooks.fragment, newHooks.fragment || {}),
       vertex: Object.assign({}, this.hooks.vertex, newHooks.vertex || {}),
+      helpers: Object.assign({}, this.hooks.helpers, newHooks.helpers || {}),
       modified: {
         vertex: modifiedVertex,
         fragment: modifiedFragment
@@ -444,6 +550,26 @@ p5.Shader = class {
       this._loadUniforms();
     }
     return this;
+  }
+
+  /**
+   * @private
+   */
+  setDefaultUniforms() {
+    for (const key in this.hooks.uniforms) {
+      const [, name] = key.split(' ');
+      const initializer = this.hooks.uniforms[key];
+      let value;
+      if (initializer instanceof Function) {
+        value = initializer();
+      } else {
+        value = initializer;
+      }
+
+      if (value !== undefined && value !== null) {
+        this.setUniform(name, value);
+      }
+    }
   }
 
   /**

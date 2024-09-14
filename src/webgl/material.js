@@ -878,6 +878,8 @@ p5.prototype.shader = function (s) {
     this._renderer._useNormalMaterial = false;
   }
 
+  s.setDefaultUniforms();
+
   return this;
 };
 
@@ -1044,7 +1046,9 @@ p5.prototype.shader = function (s) {
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = materialShader().modify({
- *     declarations: 'uniform float time;',
+ *     uniforms: {
+ *       'float time': () => millis()
+ *     },
  *     'vec3 getWorldPosition': `(vec3 pos) {
  *       pos.y += 20.0 * sin(time * 0.001 + pos.x * 0.05);
  *       return pos;
@@ -1055,7 +1059,6 @@ p5.prototype.shader = function (s) {
  * function draw() {
  *   background(255);
  *   shader(myShader);
- *   myShader.setUniform('time', millis());
  *   lights();
  *   noStroke();
  *   fill('red');
@@ -1227,7 +1230,9 @@ p5.prototype.materialShader = function() {
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = normalShader().modify({
- *     declarations: 'uniform float time;',
+ *     uniforms: {
+ *       'float time': () => millis()
+ *     },
  *     'vec3 getWorldPosition': `(vec3 pos) {
  *       pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
  *       return pos;
@@ -1238,7 +1243,6 @@ p5.prototype.materialShader = function() {
  * function draw() {
  *   background(255);
  *   shader(myShader);
- *   myShader.setUniform('time', millis());
  *   noStroke();
  *   sphere(50);
  * }
@@ -1320,7 +1324,9 @@ p5.prototype.normalShader = function() {
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = colorShader().modify({
- *     declarations: 'uniform float time;',
+ *     uniforms: {
+ *       'float time': () => millis()
+ *     },
  *     'vec3 getWorldPosition': `(vec3 pos) {
  *       pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
  *       return pos;
@@ -1331,7 +1337,6 @@ p5.prototype.normalShader = function() {
  * function draw() {
  *   background(255);
  *   shader(myShader);
- *   myShader.setUniform('time', millis());
  *   noStroke();
  *   fill('red');
  *   circle(0, 0, 50);
@@ -1527,10 +1532,10 @@ p5.prototype.colorShader = function() {
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = strokeShader().modify({
- *     declarations: `
- *       uniform float time;
- *       vec3 myPosition;
- *     `,
+ *     uniforms: {
+ *       'float time': () => millis()
+ *     },
+ *     declarations: 'vec3 myPosition;',
  *     'vec3 getWorldPosition': `(vec3 pos) {
  *       myPosition = pos;
  *       return pos;
@@ -1573,13 +1578,11 @@ p5.prototype.colorShader = function() {
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = strokeShader().modify({
- *     declarations: `
- *       float random(vec2 p) {
- *         vec3 p3  = fract(vec3(p.xyx) * .1031);
- *         p3 += dot(p3, p3.yzx + 33.33);
- *         return fract((p3.x + p3.y) * p3.z);
- *       }
- *     `,
+ *     'float random': `(vec2 p) {
+ *       vec3 p3  = fract(vec3(p.xyx) * .1031);
+ *       p3 += dot(p3, p3.yzx + 33.33);
+ *       return fract((p3.x + p3.y) * p3.z);
+ *     }`,
  *     'Inputs getPixelInputs': `(Inputs inputs) {
  *       // Replace alpha in the color with dithering by
  *       // randomly setting pixel colors to 0 based on opacity
@@ -1594,7 +1597,6 @@ p5.prototype.colorShader = function() {
  * function draw() {
  *   background(255);
  *   shader(myShader);
- *   myShader.setUniform('time', millis());
  *   strokeWeight(10);
  *   beginShape();
  *   for (let i = 0; i <= 50; i++) {
