@@ -310,6 +310,7 @@ p5.Shader = class {
    * ```
    *
    * @method inspectHooks
+   * @beta
    */
   inspectHooks() {
     console.log('==== Vertex shader hooks: ====');
@@ -369,6 +370,7 @@ p5.Shader = class {
    * `vertexDeclarations` and `fragmentDeclarations` keys.
    *
    * @method modify
+   * @beta
    * @param {Object} [hooks] The hooks in the shader to replace.
    * @returns {p5.Shader}
    *

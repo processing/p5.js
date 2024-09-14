@@ -1036,6 +1036,7 @@ p5.prototype.shader = function (s) {
  * their default implementations.
  *
  * @method materialShader
+ * @beta
  * @returns {p5.Shader} The material shader
  *
  * @example
@@ -1220,6 +1221,7 @@ p5.prototype.materialShader = function() {
  * their default implementations.
  *
  * @method normalShader
+ * @beta
  * @returns {p5.Shader} The `normalMaterial` shader
  *
  * @example
@@ -1314,6 +1316,7 @@ p5.prototype.normalShader = function() {
  * their default implementations.
  *
  * @method colorShader
+ * @beta
  * @returns {p5.Shader} The color shader
  *
  * @example
@@ -1488,6 +1491,7 @@ p5.prototype.colorShader = function() {
  * their default implementations.
  *
  * @method strokeShader
+ * @beta
  * @returns {p5.Shader} The stroke shader
  *
  * @example
