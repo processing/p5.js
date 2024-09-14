@@ -1247,12 +1247,12 @@ p5.prototype.worldToScreen = function(worldPosition) {
   if (renderer.drawingContext instanceof CanvasRenderingContext2D) {
     // Handle 2D context
     const transformMatrix = new DOMMatrix()
-      .scale(1 / pixelDensity())
+      .scale(1 / renderer._pInst.pixelDensity())
       .multiply(renderer.drawingContext.getTransform());
     const screenCoordinates = transformMatrix.transformPoint(
       new DOMPoint(worldPosition.x, worldPosition.y)
     );
-    return createVector(screenCoordinates.x, screenCoordinates.y);
+    return new p5.Vector(screenCoordinates.x, screenCoordinates.y);
   } else {
     // Handle WebGL context
     const cameraCoordinates = renderer.uMVMatrix.multiplyPoint(worldPosition);
@@ -1261,7 +1261,7 @@ p5.prototype.worldToScreen = function(worldPosition) {
     const screenX = (0.5 + 0.5 * normalizedDeviceCoordinates.x) * this.width;
     const screenY = (0.5 - 0.5 * normalizedDeviceCoordinates.y) * this.height;
     const screenZ = 0.5 + 0.5 * normalizedDeviceCoordinates.z;
-    return createVector(screenX, screenY, screenZ);
+    return new p5.Vector(screenX, screenY, screenZ);
   }
 };
 
