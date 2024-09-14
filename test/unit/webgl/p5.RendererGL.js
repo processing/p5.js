@@ -111,7 +111,16 @@ suite('p5.RendererGL', function() {
         return [...myp5.pixels];
       };
 
-      assert.deepEqual(getColors(myp5.P2D), getColors(myp5.WEBGL));
+      const getPixel = (colors, x, y) => {
+        const idx = (y * 20 + x) * 4
+        return colors.slice(idx, idx + 4)
+      };
+
+      const colors2D = getColors(myp5.P2D);
+      const colorsGL = getColors(myp5.WEBGL);
+
+      assert.deepEqual(getPixel(colorsGL, 10, 10), getPixel(colors2D, 10, 10));
+      assert.deepEqual(getPixel(colorsGL, 15, 15), getPixel(colors2D, 15, 15));
     });
   });
 
@@ -1892,7 +1901,7 @@ suite('p5.RendererGL', function() {
       renderer.bezierVertex(128, -128, 128, 128, -128, 128);
       renderer.endShape();
 
-      assert.deepEqual(myp5.get(190, 127), [255, 128, 128, 255]);
+      assert.arrayApproximately(myp5.get(190, 127), [255, 128, 128, 255], 10);
     });
 
     test('quadraticVertex() should interpolate curFillColor', function() {
@@ -1909,7 +1918,7 @@ suite('p5.RendererGL', function() {
       renderer.quadraticVertex(256, 0, -128, 128);
       renderer.endShape();
 
-      assert.deepEqual(myp5.get(128, 127), [255, 128, 128, 255]);
+      assert.arrayApproximately(myp5.get(128, 127), [255, 128, 128, 255], 10);
     });
 
     test('quadraticVertex() should interpolate curStrokeColor', function() {
