@@ -1254,23 +1254,31 @@ p5.prototype.worldToScreen = function(worldPosition) {
     );
     return new p5.Vector(screenCoordinates.x, screenCoordinates.y);
   } else {
-    // Handle WebGL context
+    // Handle WebGL context (3D)
     const cameraCoordinates = renderer.uMVMatrix.multiplyPoint(worldPosition);
-    const normalizedDeviceCoordinates =
-      renderer.uPMatrix.multiplyAndNormalizePoint(cameraCoordinates);
-    // Avoid division by zero or improper transformations
-    if(isFinite(normalizedDeviceCoordinates.x)
-      && isFinite(normalizedDeviceCoordinates.y)
-    && isFinite(normalizedDeviceCoordinates.z)){
-      const screenX = (0.5 + 0.5 * normalizedDeviceCoordinates.x) * this.width;
-      const screenY = (0.5 - 0.5 * normalizedDeviceCoordinates.y) * this.height;
-      const screenZ = 0.5 + 0.5 * normalizedDeviceCoordinates.z;
-      return new p5.Vector(screenX, screenY, screenZ);
-    }
-    else {
-      // Handle invalid transformations
+
+    // Ensure that we avoid undefined or bad transformations
+    if (!isFinite(cameraCoordinates.x) ||
+     !isFinite(cameraCoordinates.y) ||
+      !isFinite(cameraCoordinates.z)) {
+      // Return invalid coordinates if transformation is not valid
       return new p5.Vector(NaN, NaN, NaN);
     }
+
+    const normalizedDeviceCoordinates =
+      renderer.uPMatrix.multiplyAndNormalizePoint(cameraCoordinates);
+
+    // If the z-coordinate of the normalized device coordinates is 0 or very close to it,
+    // we are too close to or behind the camera, leading to invalid screen coordinates.
+    if (Math.abs(normalizedDeviceCoordinates.z) < 1e-6) {
+      return new p5.Vector(NaN, NaN, NaN);
+    }
+
+    // Mapping normalizedDeviceCoordinates to screen space
+    const screenX = (0.5 + 0.5 * normalizedDeviceCoordinates.x) * this.width;
+    const screenY = (0.5 - 0.5 * normalizedDeviceCoordinates.y) * this.height;
+    const screenZ = 0.5 + 0.5 * normalizedDeviceCoordinates.z;
+    return new p5.Vector(screenX, screenY, screenZ);
   }
 };
 
