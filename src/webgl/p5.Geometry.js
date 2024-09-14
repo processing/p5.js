@@ -450,6 +450,11 @@ p5.Geometry = class Geometry {
     this.vertexNormals.length = 0;
     this.uvs.length = 0;
 
+    for (const attr of this.userAttributes){
+      delete this[attr.name];
+    }
+    this.userAttributes.length = 0;
+
     this.dirtyFlags = {};
   }
 
