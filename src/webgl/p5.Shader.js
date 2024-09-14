@@ -139,6 +139,7 @@ p5.Shader = class {
     this.uniforms = {};
     this._bound = false;
     this.samplers = [];
+    this.previousBindings = new Set();// Set to store previous bindings
   }
 
   /**
@@ -554,7 +555,9 @@ p5.Shader = class {
         // so we supply a default texture instead.
         tex = this._renderer._getEmptyTexture();
       }
-      gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
+      const textureUnit = gl.TEXTURE0 + uniform.samplerIndex;
+      gl.activeTexture(textureUnit);
+      this.previousBindings.add(textureUnit);
       tex.bindTexture();
       tex.update();
       gl.uniform1i(uniform.location, uniform.samplerIndex);
@@ -571,9 +574,14 @@ p5.Shader = class {
   }
 
   unbindTextures() {
+    const gl = this._renderer.GL;
     for (const uniform of this.samplers) {
-      this.setUniform(uniform.name, this._renderer._getEmptyTexture());
+      const textureUnit = gl.TEXTURE0 + uniform.samplerIndex;
+      if (!this.previousBindings.has(textureUnit)){
+        this.setUniform(uniform.name, this._renderer._getEmptyTexture());
+      }
     }
+    this.previousBindings.clear();
   }
 
   _setMatrixUniforms() {
