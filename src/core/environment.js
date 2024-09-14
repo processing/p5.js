@@ -1258,10 +1258,19 @@ p5.prototype.worldToScreen = function(worldPosition) {
     const cameraCoordinates = renderer.uMVMatrix.multiplyPoint(worldPosition);
     const normalizedDeviceCoordinates =
       renderer.uPMatrix.multiplyAndNormalizePoint(cameraCoordinates);
-    const screenX = (0.5 + 0.5 * normalizedDeviceCoordinates.x) * this.width;
-    const screenY = (0.5 - 0.5 * normalizedDeviceCoordinates.y) * this.height;
-    const screenZ = 0.5 + 0.5 * normalizedDeviceCoordinates.z;
-    return new p5.Vector(screenX, screenY, screenZ);
+    // Avoid division by zero or improper transformations
+    if(isFinite(normalizedDeviceCoordinates.x)
+      && isFinite(normalizedDeviceCoordinates.y)
+    && isFinite(normalizedDeviceCoordinates.z)){
+      const screenX = (0.5 + 0.5 * normalizedDeviceCoordinates.x) * this.width;
+      const screenY = (0.5 - 0.5 * normalizedDeviceCoordinates.y) * this.height;
+      const screenZ = 0.5 + 0.5 * normalizedDeviceCoordinates.z;
+      return new p5.Vector(screenX, screenY, screenZ);
+    }
+    else {
+      // Handle invalid transformations
+      return new p5.Vector(NaN, NaN, NaN);
+    }
   }
 };
 
