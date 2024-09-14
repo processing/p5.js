@@ -24,6 +24,8 @@
  */
 import p5 from '../main';
 import { translator } from '../internationalization';
+import errorTable from './browser_errors';
+import * as contants from '../constants';
 
 // p5.js blue, p5.js orange, auto dark green; fallback p5.js darkened magenta
 // See testColors below for all the color codes and names
@@ -46,7 +48,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 } else {
   let doFriendlyWelcome = false; // TEMP until we get it all working LM
 
-  const errorTable = require('./browser_errors').default;
+  // const errorTable = require('./browser_errors').default;
 
   // -- Borrowed from jQuery 1.11.3 --
   const class2type = {};
@@ -1006,7 +1008,7 @@ defineMisusedAtTopLevelCode = () => {
     // At present, p5 only adds its constants to p5.prototype during
     // construction, which may not have happened at the time a
     // ReferenceError is thrown, so we'll manually add them to our list.
-    getSymbols(require('../constants'))
+    getSymbols(contants)
   );
 
   // This will ultimately ensure that we report the most specific error

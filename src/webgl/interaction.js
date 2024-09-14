@@ -649,12 +649,12 @@ p5.prototype.orbitControl = function(
 
 /**
  * @method debugMode
- * @param {Constant} mode either GRID or AXES
+ * @param {(GRID|AXES)} mode either GRID or AXES
  */
 
 /**
  * @method debugMode
- * @param {Constant} mode
+ * @param {(GRID|AXES)} mode
  * @param {Number} [gridSize] side length of the grid.
  * @param {Number} [gridDivisions] number of divisions in the grid.
  * @param {Number} [xOff] offset from origin along the x-axis.
@@ -664,7 +664,7 @@ p5.prototype.orbitControl = function(
 
 /**
  * @method debugMode
- * @param {Constant} mode
+ * @param {(GRID|AXES)} mode
  * @param {Number} [axesSize] length of axes icon markers.
  * @param {Number} [xOff]
  * @param {Number} [yOff]

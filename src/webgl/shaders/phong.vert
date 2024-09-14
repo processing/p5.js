@@ -42,6 +42,6 @@ void main(void) {
     }
   }
   
-  vColor = HOOK_getVertexColor((uUseVertexColor ? aVertexColor : uMaterialColor));
+  vColor = HOOK_getVertexColor(((uUseVertexColor && aVertexColor.x >= 0.0) ? aVertexColor : uMaterialColor));
   HOOK_afterVertex();
 }

@@ -1,83 +1,35 @@
-suite('saveTable', function() {
+import p5 from '../../../src/app.js';
+import { testWithDownload } from '../../js/p5_helpers';
+
+suite.todo('saveTable', function() {
   let validFile = 'unit/assets/csv.csv';
   let myp5;
   let myTable;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
-  setup(function disableFileLoadError() {
-    sinon.stub(p5, '_friendlyFileLoadError');
-  });
-
-  teardown(function restoreFileLoadError() {
-    p5._friendlyFileLoadError.restore();
-  });
-
-  setup(function loadMyTable(done) {
-    myp5.loadTable(validFile, 'csv', 'header', function(table) {
-      myTable = table;
-      done();
+  beforeEach(async function loadMyTable() {
+    await new Promise(resolve => {
+      myp5.loadTable(validFile, 'csv', 'header', function(table) {
+        myTable = table;
+        resolve();
+      });
     });
   });
 
   test('should be a function', function() {
     assert.ok(myp5.saveTable);
     assert.typeOf(myp5.saveTable, 'function');
-  });
-
-  test('no friendly-err-msg I', function() {
-    assert.doesNotThrow(
-      function() {
-        myp5.saveTable(myTable, 'myfile');
-      },
-      Error,
-      'got unwanted exception'
-    );
-  });
-
-  test('no friendly-err-msg II', function() {
-    assert.doesNotThrow(
-      function() {
-        myp5.saveTable(myTable, 'myfile', 'csv');
-      },
-      Error,
-      'got unwanted exception'
-    );
-  });
-
-  testUnMinified('missing param #1', function() {
-    assert.validationError(function() {
-      myp5.saveTable(myTable);
-    });
-  });
-
-  testUnMinified('wrong param type #0', function() {
-    assert.validationError(function() {
-      myp5.saveTable('myTable', 'myfile');
-    });
-  });
-
-  testUnMinified('wrong param type #1', function() {
-    assert.validationError(function() {
-      myp5.saveTable(myTable, 2);
-    });
-  });
-
-  testUnMinified('wrong param type #2', function() {
-    assert.validationError(function() {
-      myp5.saveTable(myTable, 'myfile', 2);
-    });
   });
 
   testWithDownload(

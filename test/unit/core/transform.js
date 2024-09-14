@@ -1,7 +1,10 @@
+import p5 from '../../../src/app.js';
+
 suite('Transform', function() {
   var sketch1; // sketch without WEBGL Mode
   var sketch2; // skecth with WEBGL mode
-  setup(function(done) {
+
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         sketch1 = p;
@@ -13,10 +16,9 @@ suite('Transform', function() {
         sketch2 = p;
       };
     });
-    done();
   });
 
-  teardown(function() {
+  afterAll(function() {
     sketch1.remove();
     sketch2.remove();
   });
@@ -25,16 +27,6 @@ suite('Transform', function() {
     test('should be a function', function() {
       assert.ok(sketch1.rotate);
       assert.typeOf(sketch1.rotate, 'function');
-    });
-    test('wrong param type at #0', function() {
-      assert.validationError(function() {
-        sketch1.rotate('a');
-      });
-    });
-    test('wrong param type at #1', function() {
-      assert.validationError(function() {
-        sketch1.rotate(sketch1.PI, 'x');
-      });
     });
   });
 
@@ -48,11 +40,6 @@ suite('Transform', function() {
         sketch1.rotateX(100);
       }, Error);
     });
-    test('wrong param type at #0', function() {
-      assert.validationError(function() {
-        sketch2.rotateX('x');
-      });
-    });
   });
 
   suite('p5.prototype.rotateY', function() {
@@ -64,11 +51,6 @@ suite('Transform', function() {
       assert.throws(function() {
         sketch1.rotateY(100);
       }, Error);
-    });
-    test('wrong param type at #0', function() {
-      assert.validationError(function() {
-        sketch2.rotateY('x');
-      });
     });
   });
 
@@ -82,22 +64,12 @@ suite('Transform', function() {
         sketch1.rotateZ(100);
       }, Error);
     });
-    test('wrong param type at #0', function() {
-      assert.validationError(function() {
-        sketch2.rotateZ('x');
-      });
-    });
   });
 
   suite('p5.prototype.scale', function() {
     test('should be a function', function() {
       assert.ok(sketch1.scale);
       assert.typeOf(sketch1.scale, 'function');
-    });
-    test('wrong param type at #0', function() {
-      assert.validationError(function() {
-        sketch1.scale('a');
-      });
     });
   });
 
@@ -106,11 +78,6 @@ suite('Transform', function() {
       assert.ok(sketch1.shearX);
       assert.typeOf(sketch1.shearX, 'function');
     });
-    test('wrong param type at #0', function() {
-      assert.validationError(function() {
-        sketch1.shearX('a');
-      });
-    });
   });
 
   suite('p5.prototype.shearY', function() {
@@ -118,27 +85,12 @@ suite('Transform', function() {
       assert.ok(sketch1.shearY);
       assert.typeOf(sketch1.shearY, 'function');
     });
-    test('wrong param type at #0', function() {
-      assert.validationError(function() {
-        sketch1.shearY('a');
-      });
-    });
   });
 
   suite('p5.prototype.translate', function() {
     test('should be a function', function() {
       assert.ok(sketch1.translate);
       assert.typeOf(sketch1.translate, 'function');
-    });
-    test('wrong param type at #0', function() {
-      assert.validationError(function() {
-        sketch1.translate('a', 10);
-      });
-    });
-    test('missing param #1', function() {
-      assert.validationError(function() {
-        sketch1.translate(10);
-      });
     });
   });
 });

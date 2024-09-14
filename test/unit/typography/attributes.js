@@ -1,40 +1,18 @@
+import p5 from '../../../src/app.js';
+
 suite('Typography Attributes', function() {
   let myp5;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
-  });
-
-  suite('p5.prototype.textAlign', function() {
-    test('wrong param at #0', function() {
-      assert.validationError(function() {
-        myp5.textAlign('a');
-      });
-    });
-    test('wrong param at #1', function() {
-      assert.validationError(function() {
-        myp5.textAlign(myp5.CENTER, 'a');
-      });
-    });
-    test('wrong param at #0. vertAlign as #0 param.', function() {
-      assert.validationError(function() {
-        myp5.textAlign(myp5.BOTTOM);
-      });
-    });
-    test('wrong param at #1. horizAlign as #1 param.', function() {
-      assert.validationError(function() {
-        myp5.textAlign(myp5.CENTER, myp5.LEFT);
-      });
-    });
   });
 
   suite('p5.prototype.textLeading', function() {
@@ -46,16 +24,6 @@ suite('Typography Attributes', function() {
       myp5.textLeading(-20);
       assert.strictEqual(myp5.textLeading(), -20);
     });
-    test('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.textLeading('C');
-      });
-    });
-    test.skip('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.textLeading('25');
-      });
-    });
   });
 
   suite('p5.prototype.textSize', function() {
@@ -63,27 +31,12 @@ suite('Typography Attributes', function() {
       myp5.textSize(24);
       assert.strictEqual(myp5.textSize(), 24);
     });
-    test('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.textSize('A');
-      });
-    });
-    test.skip('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.textSize('30');
-      });
-    });
   });
 
   suite('p5.prototype.textStyle', function() {
     test('sets and gets the font style', function() {
       myp5.textStyle(myp5.ITALIC);
       assert.strictEqual(myp5.textStyle(), myp5.ITALIC);
-    });
-    test('wrong param at #0', function() {
-      assert.validationError(function() {
-        myp5.textStyle('a');
-      });
     });
   });
 

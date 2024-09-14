@@ -1,14 +1,12 @@
 import p5 from '../core/main';
 import * as constants from '../core/constants';
 import GeometryBuilder from './GeometryBuilder';
-import libtess from 'libtess';
+import libtess from 'libtess'; // Fixed with exporting module from libtess
 import './p5.Shader';
 import './p5.Camera';
-import '../core/p5.Renderer';
+import Renderer from '../core/p5.Renderer';
 import './p5.Matrix';
 import './p5.Framebuffer';
-import { readFileSync } from 'fs';
-import { join } from 'path';
 import { MipmapTexture } from './p5.Texture';
 
 const STROKE_CAP_ENUM = {};
@@ -33,82 +31,82 @@ defineStrokeJoinEnum('ROUND', 0);
 defineStrokeJoinEnum('MITER', 1);
 defineStrokeJoinEnum('BEVEL', 2);
 
-const lightingShader = readFileSync(
-  join(__dirname, '/shaders/lighting.glsl'),
-  'utf-8'
-);
-const webgl2CompatibilityShader = readFileSync(
-  join(__dirname, '/shaders/webgl2Compatibility.glsl'),
-  'utf-8'
-);
+import lightingShader from './shaders/lighting.glsl';
+import webgl2CompatibilityShader from './shaders/webgl2Compatibility.glsl';
+import immediateVert from './shaders/immediate.vert';
+import vertexColorVert from './shaders/vertexColor.vert';
+import vertexColorFrag from './shaders/vertexColor.frag';
+import normalVert from './shaders/normal.vert';
+import normalFrag from './shaders/normal.frag';
+import basicFrag from './shaders/basic.frag';
+import sphereMappingFrag from './shaders/sphereMapping.frag';
+import lightVert from './shaders/light.vert';
+import lightTextureFrag from './shaders/light_texture.frag';
+import phongVert from './shaders/phong.vert';
+import phongFrag from './shaders/phong.frag';
+import fontVert from './shaders/font.vert';
+import fontFrag from './shaders/font.frag';
+import lineVert from './shaders/line.vert';
+import lineFrag from './shaders/line.frag';
+import pointVert from './shaders/point.vert';
+import pointFrag from './shaders/point.frag';
+import imageLightVert from './shaders/imageLight.vert';
+import imageLightDiffusedFrag from './shaders/imageLightDiffused.frag';
+import imageLightSpecularFrag from './shaders/imageLightSpecular.frag';
 
 const defaultShaders = {
-  sphereMappingFrag: readFileSync(
-    join(__dirname, '/shaders/sphereMapping.frag'),
-    'utf-8'
-  ),
-  immediateVert: readFileSync(
-    join(__dirname, '/shaders/immediate.vert'),
-    'utf-8'
-  ),
-  vertexColorVert: readFileSync(
-    join(__dirname, '/shaders/vertexColor.vert'),
-    'utf-8'
-  ),
-  vertexColorFrag: readFileSync(
-    join(__dirname, '/shaders/vertexColor.frag'),
-    'utf-8'
-  ),
-  normalVert: readFileSync(join(__dirname, '/shaders/normal.vert'), 'utf-8'),
-  normalFrag: readFileSync(join(__dirname, '/shaders/normal.frag'), 'utf-8'),
-  basicFrag: readFileSync(join(__dirname, '/shaders/basic.frag'), 'utf-8'),
+  immediateVert,
+  vertexColorVert,
+  vertexColorFrag,
+  normalVert,
+  normalFrag,
+  basicFrag,
+  sphereMappingFrag,
   lightVert:
     lightingShader +
-    readFileSync(join(__dirname, '/shaders/light.vert'), 'utf-8'),
-  lightTextureFrag: readFileSync(
-    join(__dirname, '/shaders/light_texture.frag'),
-    'utf-8'
-  ),
-  phongVert: readFileSync(join(__dirname, '/shaders/phong.vert'), 'utf-8'),
+    lightVert,
+  lightTextureFrag,
+  phongVert,
   phongFrag:
     lightingShader +
-    readFileSync(join(__dirname, '/shaders/phong.frag'), 'utf-8'),
-  fontVert: readFileSync(join(__dirname, '/shaders/font.vert'), 'utf-8'),
-  fontFrag: readFileSync(join(__dirname, '/shaders/font.frag'), 'utf-8'),
+    phongFrag,
+  fontVert,
+  fontFrag,
   lineVert:
-    lineDefs + readFileSync(join(__dirname, '/shaders/line.vert'), 'utf-8'),
+    lineDefs + lineVert,
   lineFrag:
-    lineDefs + readFileSync(join(__dirname, '/shaders/line.frag'), 'utf-8'),
-  pointVert: readFileSync(join(__dirname, '/shaders/point.vert'), 'utf-8'),
-  pointFrag: readFileSync(join(__dirname, '/shaders/point.frag'), 'utf-8'),
-  imageLightVert: readFileSync(join(__dirname, '/shaders/imageLight.vert'), 'utf-8'),
-  imageLightDiffusedFrag: readFileSync(join(__dirname, '/shaders/imageLightDiffused.frag'), 'utf-8'),
-  imageLightSpecularFrag: readFileSync(join(__dirname, '/shaders/imageLightSpecular.frag'), 'utf-8')
+    lineDefs + lineFrag,
+  pointVert,
+  pointFrag,
+  imageLightVert,
+  imageLightDiffusedFrag,
+  imageLightSpecularFrag
 };
 let sphereMapping = defaultShaders.sphereMappingFrag;
 for (const key in defaultShaders) {
   defaultShaders[key] = webgl2CompatibilityShader + defaultShaders[key];
 }
 
+import filterGrayFrag from './shaders/filters/gray.frag';
+import filterErodeFrag from './shaders/filters/erode.frag';
+import filterDilateFrag from './shaders/filters/dilate.frag';
+import filterBlurFrag from './shaders/filters/blur.frag';
+import filterPosterizeFrag from './shaders/filters/posterize.frag';
+import filterOpaqueFrag from './shaders/filters/opaque.frag';
+import filterInvertFrag from './shaders/filters/invert.frag';
+import filterThresholdFrag from './shaders/filters/threshold.frag';
+import filterShaderVert from './shaders/filters/default.vert';
+
 const filterShaderFrags = {
-  [constants.GRAY]:
-    readFileSync(join(__dirname, '/shaders/filters/gray.frag'), 'utf-8'),
-  [constants.ERODE]:
-    readFileSync(join(__dirname, '/shaders/filters/erode.frag'), 'utf-8'),
-  [constants.DILATE]:
-    readFileSync(join(__dirname, '/shaders/filters/dilate.frag'), 'utf-8'),
-  [constants.BLUR]:
-    readFileSync(join(__dirname, '/shaders/filters/blur.frag'), 'utf-8'),
-  [constants.POSTERIZE]:
-    readFileSync(join(__dirname, '/shaders/filters/posterize.frag'), 'utf-8'),
-  [constants.OPAQUE]:
-    readFileSync(join(__dirname, '/shaders/filters/opaque.frag'), 'utf-8'),
-  [constants.INVERT]:
-    readFileSync(join(__dirname, '/shaders/filters/invert.frag'), 'utf-8'),
-  [constants.THRESHOLD]:
-    readFileSync(join(__dirname, '/shaders/filters/threshold.frag'), 'utf-8')
+  [constants.GRAY]: filterGrayFrag,
+  [constants.ERODE]: filterErodeFrag,
+  [constants.DILATE]: filterDilateFrag,
+  [constants.BLUR]: filterBlurFrag,
+  [constants.POSTERIZE]: filterPosterizeFrag,
+  [constants.OPAQUE]: filterOpaqueFrag,
+  [constants.INVERT]: filterInvertFrag,
+  [constants.THRESHOLD]: filterThresholdFrag
 };
-const filterShaderVert = readFileSync(join(__dirname, '/shaders/filters/default.vert'), 'utf-8');
 
 /**
  * @module Rendering
@@ -430,12 +428,11 @@ export function readPixelWebGL(
  * 3D graphics class
  * @private
  * @class p5.RendererGL
- * @constructor
  * @extends p5.Renderer
  * @todo extend class to include public method for offscreen
  * rendering (FBO).
  */
-p5.RendererGL = class RendererGL extends p5.Renderer {
+p5.RendererGL = class RendererGL extends Renderer {
   constructor(elt, pInst, isMainCanvas, attr) {
     super(elt, pInst, isMainCanvas);
     this._setAttributeDefaults(pInst);
@@ -689,14 +686,14 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
      * If you need to draw complex shapes every frame which don't change over time,
      * combining them upfront with `beginGeometry()` and `endGeometry()` and then
      * drawing that will run faster than repeatedly drawing the individual pieces.
-     *
-     * @method beginGeometry
    */
   beginGeometry() {
     if (this.geometryBuilder) {
       throw new Error('It looks like `beginGeometry()` is being called while another p5.Geometry is already being build.');
     }
     this.geometryBuilder = new GeometryBuilder(this);
+    this.geometryBuilder.prevFillColor = [...this.curFillColor];
+    this.curFillColor = [-1, -1, -1, -1];
   }
 
   /**
@@ -705,7 +702,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
    * use <a href="#/p5/buildGeometry">buildGeometry()</a> to pass a function that
    * draws shapes.
    *
-   * @method endGeometry
    * @returns {p5.Geometry} The model that was built.
    */
   endGeometry() {
@@ -713,6 +709,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       throw new Error('Make sure you call beginGeometry() before endGeometry()!');
     }
     const geometry = this.geometryBuilder.finish();
+    this.curFillColor = this.geometryBuilder.prevFillColor;
     this.geometryBuilder = undefined;
     return geometry;
   }
@@ -730,8 +727,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
    * <a href="#/p5/beginGeometry">beginGeometry()</a> and
    * <a href="#/p5/endGeometry">endGeometry()</a> instead of using a callback
    * function.
-   *
-   * @method buildGeometry
    * @param {Function} callback A function that draws shapes.
    * @returns {p5.Geometry} The model that was built from the callback function.
    */
@@ -801,14 +796,14 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
   }
 
-  _getParam() {
+  _getMaxTextureSize() {
     const gl = this.drawingContext;
     return gl.getParameter(gl.MAX_TEXTURE_SIZE);
   }
 
   _adjustDimensions(width, height) {
     if (!this._maxTextureSize) {
-      this._maxTextureSize = this._getParam();
+      this._maxTextureSize = this._getMaxTextureSize();
     }
     let maxTextureSize = this._maxTextureSize;
     let maxAllowedPixelDimensions = p5.prototype._maxAllowedPixelDimensions;
@@ -890,9 +885,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
 
-  /**
- * @class p5.RendererGL
- */
   _update() {
     // reset model view and apply initial camera transform
     // (containing only look at info; no projection).
@@ -947,8 +939,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   //////////////////////////////////////////////
   /**
  * Basic fill material for geometry with a given color
- * @method  fill
- * @class p5.RendererGL
  * @param  {Number|Number[]|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
@@ -988,7 +978,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
   /**
  * Basic stroke material for geometry with a given color
- * @method  stroke
  * @param  {Number|Number[]|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
@@ -1303,7 +1292,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
   /**
  * Change weight of stroke
- * @method  strokeWeight
  * @param  {Number} stroke weight to be used for drawing
  * @example
  * <div>
@@ -1367,7 +1355,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
  * Any pixel manipulation must be done directly to the pixels[] array.
  *
  * @private
- * @method loadPixels
  */
 
   loadPixels() {
@@ -1455,7 +1442,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
  * @param  {Number} h [description]
  */
   resize(w, h) {
-    p5.Renderer.prototype.resize.call(this, w, h);
+    Renderer.prototype.resize.call(this, w, h);
     this._origViewport = {
       width: this.GL.drawingBufferWidth,
       height: this.GL.drawingBufferHeight
@@ -1599,7 +1586,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
   push() {
     // get the base renderer style
-    const style = p5.Renderer.prototype.push.apply(this);
+    const style = Renderer.prototype.push.apply(this);
 
     // add webgl-specific style properties
     const properties = style.properties;
@@ -2193,7 +2180,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   /**
-   * @method activeFramebuffer
    * @private
    * @returns {p5.Framebuffer|null} The currently active framebuffer, or null if
    * the main canvas is the current draw target.

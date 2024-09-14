@@ -56,7 +56,6 @@ import p5 from '../core/main';
  * create an instance of this class.
  *
  * @class p5.Shader
- * @constructor
  * @param {p5.RendererGL} renderer WebGL context for this shader.
  * @param {String} vertSrc source code for the vertex shader program.
  * @param {String} fragSrc source code for the fragment shader program.
@@ -152,7 +151,7 @@ import p5 from '../core/main';
  * </code>
  * </div>
  */
-p5.Shader = class {
+p5.Shader = class Shader {
   constructor(renderer, vertSrc, fragSrc, options = {}) {
     // TODO: adapt this to not take ids, but rather,
     // to take the source for a vertex and fragment shader
@@ -309,7 +308,6 @@ p5.Shader = class {
    * void afterFragment() {}
    * ```
    *
-   * @method inspectHooks
    * @beta
    */
   inspectHooks() {
@@ -369,7 +367,6 @@ p5.Shader = class {
    * between hooks. To add declarations just in a vertex or fragment shader, add
    * `vertexDeclarations` and `fragmentDeclarations` keys.
    *
-   * @method modify
    * @beta
    * @param {Object} [hooks] The hooks in the shader to replace.
    * @returns {p5.Shader}
@@ -486,7 +483,6 @@ p5.Shader = class {
    * sources for the vertex and fragment shaders (provided
    * to the constructor). Populates known attributes and
    * uniforms from the shader.
-   * @method init
    * @chainable
    * @private
    */
@@ -601,7 +597,6 @@ p5.Shader = class {
    * <a href="#/p5/createFramebuffer">createFramebuffer()</a>. Both objects
    * have the same context as the main canvas.
    *
-   * @method copyToContext
    * @param {p5|p5.Graphics} context WebGL context for the copied shader.
    * @returns {p5.Shader} new shader compiled for the target context.
    *
@@ -781,7 +776,6 @@ p5.Shader = class {
   /**
    * Queries the active attributes for this shader and loads
    * their names and locations into the attributes array.
-   * @method _loadAttributes
    * @private
    */
   _loadAttributes() {
@@ -816,7 +810,6 @@ p5.Shader = class {
   /**
    * Queries the active uniforms for this shader and loads
    * their names and locations into the uniforms array.
-   * @method _loadUniforms
    * @private
    */
   _loadUniforms() {
@@ -880,7 +873,6 @@ p5.Shader = class {
 
   /**
    * initializes (if needed) and binds the shader program.
-   * @method bindShader
    * @private
    */
   bindShader() {
@@ -896,7 +888,6 @@ p5.Shader = class {
   }
 
   /**
-   * @method unbindShader
    * @chainable
    * @private
    */
@@ -977,7 +968,6 @@ p5.Shader = class {
   }
 
   /**
-   * @method useProgram
    * @chainable
    * @private
    */
@@ -1008,7 +998,6 @@ p5.Shader = class {
    * uniform’s type. Numbers, strings, booleans, arrays, and many types of
    * images can all be passed to a shader with `setUniform()`.
    *
-   * @method setUniform
    * @chainable
    * @param {String} uniformName name of the uniform. Must match the name
    *                             used in the vertex and fragment shaders.
@@ -1391,7 +1380,6 @@ p5.Shader = class {
   }
 
   /**
-   * @method enableAttrib
    * @chainable
    * @private
    */
@@ -1431,7 +1419,6 @@ p5.Shader = class {
    * Once all buffers have been bound, this checks to see if there are any
    * remaining active attributes, likely left over from previous renders,
    * and disables them so that they don't affect rendering.
-   * @method disableRemainingAttributes
    * @private
    */
   disableRemainingAttributes() {

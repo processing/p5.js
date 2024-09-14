@@ -24,6 +24,6 @@ void main(void) {
 
   vVertexNormal = HOOK_getWorldNormal(normalize(uNormalMatrix * HOOK_getLocalNormal(aNormal)));
   vVertTexCoord = HOOK_getUV(aTexCoord);
-  vColor = HOOK_getVertexColor(uUseVertexColor ? aVertexColor : uMaterialColor);
+  vColor = HOOK_getVertexColor((uUseVertexColor && aVertexColor.x >= 0.0) ? aVertexColor : uMaterialColor);
   HOOK_afterVertex();
 }

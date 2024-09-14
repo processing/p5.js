@@ -1,17 +1,18 @@
 import p5 from './main';
 import * as constants from './constants';
 
-import './p5.Renderer';
+import Renderer from './p5.Renderer';
+
+const styleEmpty = 'rgba(0,0,0,0)';
+// const alphaThreshold = 0.00125; // minimum visible
 
 /**
  * p5.Renderer2D
  * The 2D graphics canvas renderer class.
  * extends p5.Renderer
+ * @private
  */
-const styleEmpty = 'rgba(0,0,0,0)';
-// const alphaThreshold = 0.00125; // minimum visible
-
-class Renderer2D extends p5.Renderer {
+class Renderer2D extends Renderer {
   constructor(elt, pInst, isMainCanvas) {
     super(elt, pInst, isMainCanvas);
     this.drawingContext = this.canvas.getContext('2d');
@@ -1382,7 +1383,7 @@ Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
     }
   }
 
-  const p = p5.Renderer.prototype.text.apply(this, arguments);
+  const p = Renderer.prototype.text.apply(this, arguments);
 
   if (baselineHacked) {
     this.drawingContext.textBaseline = constants.BASELINE;

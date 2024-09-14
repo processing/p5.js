@@ -3,7 +3,7 @@
     "node": true,
     "browser": true,
     "amd": true,
-    "es6": true
+    "es2022": true
   },
   "globals": {
     "p5": true
@@ -11,9 +11,9 @@
   "root": true,
   "extends": ["eslint:recommended"],
   "parserOptions": {
-    "ecmaVersion": 2017,
     "sourceType": "module"
   },
+  "ignorePatterns": ["node_modules/**/*", "test/js/*", "lib/**/*", "contributor_docs/**/*"],
   "rules": {
     "no-cond-assign": [2, "except-parens"],
     "eqeqeq": ["error", "smart"],

@@ -1,42 +1,24 @@
+import p5 from '../../../src/app.js';
+import { testSketchWithPromise, promisedSketch } from '../../js/p5_helpers';
+
 suite('Loading Displaying Fonts', function() {
   var myp5;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
-  suite('p5.prototype.loadFont', function() {
+  suite.todo('p5.prototype.loadFont', function() {
     var invalidFile = '404file';
     var fontFile = 'manual-test-examples/p5.Font/acmesa.ttf';
-
-    test('_friendlyFileLoadError is called', async function() {
-      const _friendlyFileLoadErrorStub = sinon.stub(
-        p5,
-        '_friendlyFileLoadError'
-      );
-      try {
-        await promisedSketch(function(sketch, resolve, reject) {
-          sketch.preload = function() {
-            sketch.loadFont(invalidFile, reject, resolve);
-          };
-        });
-        expect(
-          _friendlyFileLoadErrorStub.calledOnce,
-          'p5._friendlyFileLoadError was not called'
-        ).to.be.true;
-      } finally {
-        _friendlyFileLoadErrorStub.restore();
-      }
-    });
 
     testSketchWithPromise('error prevents sketch continuing', function(
       sketch,

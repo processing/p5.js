@@ -1,18 +1,17 @@
+import p5 from '../../../src/app.js';
+import { vi } from 'vitest';
+
 suite('p5.Framebuffer', function() {
   let myp5;
 
-  if (!window.Modernizr.webgl) {
-    return;
-  }
-
-  setup(function() {
+  beforeAll(function() {
     myp5 = new p5(function(p) {
       p.setup = function() {};
       p.draw = function() {};
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
@@ -93,7 +92,7 @@ suite('p5.Framebuffer', function() {
 
     afterEach(() => {
       if (glStub) {
-        glStub.restore();
+        vi.restoreAllMocks();
         glStub = null;
       }
     });
@@ -165,7 +164,7 @@ suite('p5.Framebuffer', function() {
     suite('resizing', function() {
       let fbo;
       let oldTexture;
-      setup(function() {
+      beforeEach(function() {
         myp5.createCanvas(10, 10, myp5.WEBGL);
         myp5.pixelDensity(1);
         fbo = myp5.createFramebuffer();
@@ -199,22 +198,22 @@ suite('p5.Framebuffer', function() {
       });
 
       test('resizes the framebuffer by createFramebuffer based on max texture size', function() {
-        glStub = sinon.stub(p5.RendererGL.prototype, '_getParam');
-        const fakeMaxTextureSize = 100;
-        glStub.returns(fakeMaxTextureSize);
         myp5.createCanvas(10, 10, myp5.WEBGL);
+        glStub = vi.spyOn(myp5._renderer, '_getMaxTextureSize');
+        const fakeMaxTextureSize = 100;
+        glStub.mockReturnValue(fakeMaxTextureSize);
         const fbo = myp5.createFramebuffer({ width: 200, height: 200 });
         expect(fbo.width).to.equal(100);
         expect(fbo.height).to.equal(100);
       });
 
       test('resizes the framebuffer by resize method based on max texture size', function() {
-        glStub = sinon.stub(p5.RendererGL.prototype, '_getParam');
-        const fakeMaxTextureSize = 100;
-        glStub.returns(fakeMaxTextureSize);
         myp5.createCanvas(10, 10, myp5.WEBGL);
+        glStub = vi.spyOn(myp5._renderer, '_getMaxTextureSize');
+        const fakeMaxTextureSize = 100;
+        glStub.mockReturnValue(fakeMaxTextureSize);
         const fbo = myp5.createFramebuffer({ width: 10, height: 10 });
-        myp5.resize(200, 200);
+        fbo.resize(200, 200);
         expect(fbo.width).to.equal(100);
         expect(fbo.height).to.equal(100);
       });
@@ -282,7 +281,6 @@ suite('p5.Framebuffer', function() {
   });
 
   test('Framebuffers work on p5.Graphics', function() {
-    myp5.createCanvas(10, 10);
     const graphic = myp5.createGraphics(10, 10, myp5.WEBGL);
 
     // Draw a box to the framebuffer
@@ -334,7 +332,7 @@ suite('p5.Framebuffer', function() {
 
   suite('defaultCamera', function() {
     let fbo;
-    setup(function() {
+    beforeEach(function() {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.pixelDensity(1);
       fbo = myp5.createFramebuffer({ width: 5, height: 15 });
@@ -553,7 +551,7 @@ suite('p5.Framebuffer', function() {
       suite(`with antialiasing ${antialias ? 'on' : 'off'}`, function() {
         let fbo1;
         let fbo2;
-        setup(function() {
+        beforeEach(function() {
           myp5.createCanvas(10, 10, myp5.WEBGL);
           myp5.pixelDensity(1);
           fbo1 = myp5.createFramebuffer({ antialias });

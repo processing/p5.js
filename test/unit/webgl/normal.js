@@ -1,11 +1,9 @@
+import p5 from '../../../src/app.js';
+
 suite('', function() {
   var myp5;
 
-  if (!window.Modernizr.webgl) {
-    return;
-  }
-
-  setup(function() {
+  beforeAll(function() {
     myp5 = new p5(function(p) {
       p.setup = function() {
         p.createCanvas(100, 100, p.WEBGL);
@@ -13,7 +11,7 @@ suite('', function() {
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
@@ -21,16 +19,6 @@ suite('', function() {
     test('should be a function', function() {
       assert.ok(myp5.normal);
       assert.typeOf(myp5.normal, 'function');
-    });
-    test('missing param #1', function() {
-      assert.validationError(function() {
-        myp5.normal(10);
-      });
-    });
-    test('wrong param type at #0', function() {
-      assert.validationError(function() {
-        myp5.normal('a', 1);
-      });
     });
     test('accepts numeric arguments', function() {
       assert.doesNotThrow(

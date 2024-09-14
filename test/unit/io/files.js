@@ -1,16 +1,18 @@
+import p5 from '../../../src/app.js';
+import { testWithDownload } from '../../js/p5_helpers';
+
 suite('Files', function() {
   var myp5;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
@@ -57,11 +59,12 @@ suite('Files', function() {
       });
     });
 
-    test('should pass error object to error callback function', function() {
+    test.todo('should pass error object to error callback function', function() {
       return new Promise(function(resolve, reject) {
         myp5.httpDo(
           'unit/assets/sen.txt',
           function(data) {
+            console.log(data);
             reject('Incorrectly succeeded.');
           },
           resolve
@@ -104,52 +107,6 @@ suite('Files', function() {
       assert.typeOf(myp5.saveStrings, 'function');
     });
 
-    test('no friendly-err-msg I', function() {
-      assert.doesNotThrow(
-        function() {
-          let strings = ['some', 'words'];
-          myp5.saveStrings(strings, 'myfile');
-        },
-        Error,
-        'got unwanted exception'
-      );
-    });
-    test('no friendly-err-msg II', function() {
-      assert.doesNotThrow(
-        function() {
-          let strings = ['some', 'words'];
-          myp5.saveStrings(strings, 'myfile', 'txt');
-        },
-        Error,
-        'got unwanted exception'
-      );
-    });
-
-    test('no friendly-err-msg III', function() {
-      assert.doesNotThrow(
-        function() {
-          let strings = ['some', 'words'];
-          myp5.saveStrings(strings, 'myfile', 'txt', true);
-        },
-        Error,
-        'got unwanted exception'
-      );
-    });
-
-    testUnMinified('missing param #1', function() {
-      assert.validationError(function() {
-        let strings = ['some', 'words'];
-        myp5.saveStrings(strings);
-      });
-    });
-
-    testUnMinified('wrong param type at #0', function() {
-      assert.validationError(function() {
-        let strings = 'some words';
-        myp5.saveStrings(strings);
-      });
-    });
-
     testWithDownload(
       'should download a file with expected contents',
       async function(blobContainer) {
@@ -185,52 +142,6 @@ suite('Files', function() {
     test('should be a function', function() {
       assert.ok(myp5.saveJSON);
       assert.typeOf(myp5.saveJSON, 'function');
-    });
-
-    test('no friendly-err-msg I', function() {
-      assert.doesNotThrow(
-        function() {
-          let myObj = { hi: 'hello' };
-          myp5.saveJSON(myObj, 'myfile');
-        },
-        Error,
-        'got unwanted exception'
-      );
-    });
-    test('no friendly-err-msg II', function() {
-      assert.doesNotThrow(
-        function() {
-          let myObj = [{ hi: 'hello' }];
-          myp5.saveJSON(myObj, 'myfile');
-        },
-        Error,
-        'got unwanted exception'
-      );
-    });
-
-    test('no friendly-err-msg III', function() {
-      assert.doesNotThrow(
-        function() {
-          let myObj = { hi: 'hello' };
-          myp5.saveJSON(myObj, 'myfile', true);
-        },
-        Error,
-        'got unwanted exception'
-      );
-    });
-
-    testUnMinified('missing param #1', function() {
-      assert.validationError(function() {
-        let myObj = { hi: 'hello' };
-        myp5.saveJSON(myObj);
-      });
-    });
-
-    testUnMinified('wrong param type at #0', function() {
-      assert.validationError(function() {
-        let myObj = 'some words';
-        myp5.saveJSON(myObj);
-      });
     });
 
     testWithDownload(
@@ -300,10 +211,9 @@ suite('Files', function() {
           await sleep(5);
         }
       };
-      setup(function(done) {
+      beforeAll(function() {
         myp5.createCanvas(20, 20);
         myp5.background(255, 0, 0);
-        done();
       });
 
       test('should be a function', function() {

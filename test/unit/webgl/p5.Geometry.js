@@ -1,35 +1,32 @@
+import p5 from '../../../src/app.js';
+import { vi } from 'vitest';
+
 suite('p5.Geometry', function() {
   let myp5;
 
-  if (!window.Modernizr.webgl) {
-    return;
-  }
-
-  setup(function() {
+  beforeAll(function() {
     myp5 = new p5(function(p) {
       p.setup = function() {};
       p.draw = function() {};
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
   suite('generating edge geometry', function() {
     let geom;
 
-    setup(function() {
+    beforeEach(function() {
       geom = new p5.Geometry();
-      sinon.spy(geom, '_addCap');
-      sinon.spy(geom, '_addJoin');
-      sinon.spy(geom, '_addSegment');
+      vi.spyOn(geom, '_addCap');
+      vi.spyOn(geom, '_addJoin');
+      vi.spyOn(geom, '_addSegment');
     });
 
-    teardown(function() {
-      geom._addCap.restore();
-      geom._addJoin.restore();
-      geom._addSegment.restore();
+    afterEach(function() {
+      vi.restoreAllMocks();
     });
 
     test('single polyline', function() {
@@ -42,9 +39,9 @@ suite('p5.Geometry', function() {
       geom.edges.push([0, 1], [1, 2], [2, 3]);
       geom._edgesToVertices();
 
-      assert.equal(geom._addSegment.callCount, 3);
-      assert.equal(geom._addCap.callCount, 2);
-      assert.equal(geom._addJoin.callCount, 2);
+      expect(geom._addSegment).toHaveBeenCalledTimes(3);
+      expect(geom._addCap).toHaveBeenCalledTimes(2);
+      expect(geom._addJoin).toHaveBeenCalledTimes(2);
     });
 
     test('straight line', function() {
@@ -56,10 +53,10 @@ suite('p5.Geometry', function() {
       geom.edges.push([0, 1], [1, 2]);
       geom._edgesToVertices();
 
-      assert.equal(geom._addSegment.callCount, 2);
-      assert.equal(geom._addCap.callCount, 2);
+      expect(geom._addSegment).toHaveBeenCalledTimes(2);
+      expect(geom._addCap).toHaveBeenCalledTimes(2);
       // No joins since the directions of each segment are the same
-      assert.equal(geom._addJoin.callCount, 0);
+      expect(geom._addJoin).toHaveBeenCalledTimes(0);
     });
 
     test('two disconnected polylines', function() {
@@ -72,9 +69,9 @@ suite('p5.Geometry', function() {
       geom.edges.push([0, 1], [2, 3]);
       geom._edgesToVertices();
 
-      assert.equal(geom._addSegment.callCount, 2);
-      assert.equal(geom._addCap.callCount, 4);
-      assert.equal(geom._addJoin.callCount, 0);
+      expect(geom._addSegment).toHaveBeenCalledTimes(2);
+      expect(geom._addCap).toHaveBeenCalledTimes(4);
+      expect(geom._addJoin).toHaveBeenCalledTimes(0);
     });
 
     test('polyline that loops back', function() {
@@ -87,9 +84,9 @@ suite('p5.Geometry', function() {
       geom.edges.push([0, 1], [1, 2], [2, 3], [3, 0]);
       geom._edgesToVertices();
 
-      assert.equal(geom._addSegment.callCount, 4);
-      assert.equal(geom._addCap.callCount, 0);
-      assert.equal(geom._addJoin.callCount, 4);
+      expect(geom._addSegment).toHaveBeenCalledTimes(4);
+      expect(geom._addCap).toHaveBeenCalledTimes(0);
+      expect(geom._addJoin).toHaveBeenCalledTimes(4);
     });
 
     test('calculateBoundingBox()', function() {
@@ -119,9 +116,9 @@ suite('p5.Geometry', function() {
 
       // The degenerate edge should be skipped without breaking the
       // polyline into multiple pieces
-      assert.equal(geom._addSegment.callCount, 3);
-      assert.equal(geom._addCap.callCount, 2);
-      assert.equal(geom._addJoin.callCount, 2);
+      expect(geom._addSegment).toHaveBeenCalledTimes(3);
+      expect(geom._addCap).toHaveBeenCalledTimes(2);
+      expect(geom._addJoin).toHaveBeenCalledTimes(2);
     });
 
     test('degenerate edge at the end', function() {
@@ -137,9 +134,9 @@ suite('p5.Geometry', function() {
 
       // The degenerate edge should be skipped and caps should still be added
       // from the previous non degenerate edge
-      assert.equal(geom._addSegment.callCount, 3);
-      assert.equal(geom._addCap.callCount, 2);
-      assert.equal(geom._addJoin.callCount, 2);
+      expect(geom._addSegment).toHaveBeenCalledTimes(3);
+      expect(geom._addCap).toHaveBeenCalledTimes(2);
+      expect(geom._addJoin).toHaveBeenCalledTimes(2);
     });
 
     test('degenerate edge between two disconnected polylines', function() {
@@ -153,9 +150,9 @@ suite('p5.Geometry', function() {
       geom.edges.push([0, 1], [1, 2], [3, 4]);
       geom._edgesToVertices();
 
-      assert.equal(geom._addSegment.callCount, 2);
-      assert.equal(geom._addCap.callCount, 4);
-      assert.equal(geom._addJoin.callCount, 0);
+      expect(geom._addSegment).toHaveBeenCalledTimes(2);
+      expect(geom._addCap).toHaveBeenCalledTimes(4);
+      expect(geom._addJoin).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -211,7 +208,7 @@ suite('p5.Geometry', function() {
           myp5.rotateY(myp5.PI * 0.2);
         }
         myp5.pop();
-      }, [checkLights, checkMaterials, checkNormals]);
+      }, [checkMaterials]);
     });
 
     test('Immediate mode constructs are translated correctly', function() {

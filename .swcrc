@@ -1,0 +1,11 @@
+{
+  "env": {
+    "targets": [
+      "last 2 versions",
+      "not dead"
+    ],
+    "mode": "usage",
+    "coreJs": "3",
+    "forceAllTransforms": true
+  }
+}

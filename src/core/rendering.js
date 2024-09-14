@@ -7,10 +7,16 @@
 import p5 from './main';
 import * as constants from './constants';
 import './p5.Graphics';
-import './p5.Renderer2D';
-import '../webgl/p5.RendererGL';
+import Renderer2D from './p5.Renderer2D';
+import RendererGL from '../webgl/p5.RendererGL';
 let defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
 const defaultClass = 'p5Canvas';
+// Attach renderers object to p5 class, new renderer can be similarly attached
+const renderers = p5.renderers = {
+  [constants.P2D]: Renderer2D,
+  [constants.WEBGL]: RendererGL,
+  [constants.WEBGL2]: RendererGL
+};
 
 /**
  * Creates a canvas element on the web page.
@@ -45,7 +51,7 @@ const defaultClass = 'p5Canvas';
  * @method createCanvas
  * @param  {Number} [width] width of the canvas. Defaults to 100.
  * @param  {Number} [height] height of the canvas. Defaults to 100.
- * @param  {Constant} [renderer] either P2D or WEBGL. Defaults to `P2D`.
+ * @param  {(P2D|WEBGL)} [renderer] either P2D or WEBGL. Defaults to `P2D`.
  * @param  {HTMLCanvasElement} [canvas] existing canvas element that should be used for the sketch.
  * @return {p5.Renderer} new `p5.Renderer` that holds the canvas.
  *
@@ -123,7 +129,7 @@ const defaultClass = 'p5Canvas';
  * @param  {HTMLCanvasElement} [canvas]
  * @return {p5.Renderer}
  */
-p5.prototype.createCanvas = function(w, h, renderer, canvas) {
+p5.prototype.createCanvas = function (w, h, renderer, canvas) {
   p5._validateParameters('createCanvas', arguments);
   //optional: renderer, otherwise defaults to p2d
 
@@ -138,6 +144,7 @@ p5.prototype.createCanvas = function(w, h, renderer, canvas) {
   let c;
 
   if (canvas) {
+    // NOTE: this is to guard against multiple default canvas being created
     c = document.getElementById(defaultId);
     if (c) {
       c.parentNode.removeChild(c); //replace the existing defaultCanvas
@@ -170,6 +177,19 @@ p5.prototype.createCanvas = function(w, h, renderer, canvas) {
         defaultId = `defaultCanvas${i}`;
         c.id = defaultId;
         c.classList.add(defaultClass);
+      } else if (
+        this._renderer &&
+        Object.getPrototypeOf(this._renderer) !== renderers[r].prototype
+      ) {
+        // Handle createCanvas() called with 2D mode after a 3D canvas is made
+        if (this.canvas.parentNode) {
+          this.canvas.parentNode.removeChild(this.canvas); //replace the existing defaultCanvas
+        }
+        const thisRenderer = this._renderer;
+        this._elements = this._elements.filter(e => e !== thisRenderer);
+        c = document.createElement('canvas');
+        c.id = defaultId;
+        c.classList.add(defaultClass);
       } else {
         // resize the default canvas if new one is created
         c = this.canvas;
@@ -198,21 +218,26 @@ p5.prototype.createCanvas = function(w, h, renderer, canvas) {
 
   // Init our graphics renderer
   //webgl mode
-  if (r === constants.WEBGL) {
-    this._setProperty('_renderer', new p5.RendererGL(c, this, true));
-    this._elements.push(this._renderer);
-    const dimensions =
-      this._renderer._adjustDimensions(w, h);
-    w = dimensions.adjustedWidth;
-    h = dimensions.adjustedHeight;
-  } else {
-    //P2D mode
-    if (!this._defaultGraphicsCreated) {
-      this._setProperty('_renderer', new p5.Renderer2D(c, this, true));
-      this._defaultGraphicsCreated = true;
-      this._elements.push(this._renderer);
-    }
-  }
+  // if (r === constants.WEBGL) {
+  //   this._setProperty('_renderer', new p5.RendererGL(c, this, true));
+  //   this._elements.push(this._renderer);
+  //   NOTE: these needs to be taken cared of below
+  //     const dimensions =
+  //       this._renderer._adjustDimensions(w, h);
+  //     w = dimensions.adjustedWidth;
+  //     h = dimensions.adjustedHeight;
+  // } else {
+  //   //P2D mode
+  //   if (!this._defaultGraphicsCreated) {
+  //     this._setProperty('_renderer', new p5.Renderer2D(c, this, true));
+  //     this._defaultGraphicsCreated = true;
+  //     this._elements.push(this._renderer);
+  //   }
+  // }
+  this._setProperty('_renderer', new renderers[r](c, this, true));
+  this._defaultGraphicsCreated = true;
+  this._elements.push(this._renderer);
+  // Instead of resize, just create with the right size in the first place
   this._renderer.resize(w, h);
   this._renderer._applyDefaults();
   return this._renderer;
@@ -303,7 +328,7 @@ p5.prototype.createCanvas = function(w, h, renderer, canvas) {
  * </code>
  * </div>
  */
-p5.prototype.resizeCanvas = function(w, h, noRedraw) {
+p5.prototype.resizeCanvas = function (w, h, noRedraw) {
   p5._validateParameters('resizeCanvas', arguments);
   if (this._renderer) {
     // save canvas properties
@@ -361,7 +386,7 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
  * </code>
  * </div>
  */
-p5.prototype.noCanvas = function() {
+p5.prototype.noCanvas = function () {
   if (this.canvas) {
     this.canvas.parentNode.removeChild(this.canvas);
   }
@@ -402,7 +427,7 @@ p5.prototype.noCanvas = function() {
  * @method createGraphics
  * @param  {Number} width width of the graphics buffer.
  * @param  {Number} height height of the graphics buffer.
- * @param  {Constant} [renderer] either P2D or WEBGL. Defaults to P2D.
+ * @param  {(P2D|WEBGL)} [renderer] either P2D or WEBGL. Defaults to P2D.
  * @param  {HTMLCanvasElement} [canvas] existing canvas element that should be
  *                                      used for the graphics buffer..
  * @return {p5.Graphics} new graphics buffer.
@@ -479,11 +504,11 @@ p5.prototype.noCanvas = function() {
  * @param  {HTMLCanvasElement} [canvas]
  * @return {p5.Graphics}
  */
-p5.prototype.createGraphics = function(w, h, ...args) {
-/**
-  * args[0] is expected to be renderer
-  * args[1] is expected to be canvas
-  */
+p5.prototype.createGraphics = function (w, h, ...args) {
+  /**
+    * args[0] is expected to be renderer
+    * args[1] is expected to be canvas
+    */
   if (args[0] instanceof HTMLCanvasElement) {
     args[1] = args[0];
     args[0] = constants.P2D;
@@ -628,7 +653,7 @@ p5.prototype.createGraphics = function(w, h, ...args) {
  * </code>
  * </div>
  */
-p5.prototype.createFramebuffer = function(options) {
+p5.prototype.createFramebuffer = function (options) {
   return new p5.Framebuffer(this, options);
 };
 
@@ -712,7 +737,7 @@ p5.prototype.createFramebuffer = function(options) {
  * </code>
  * </div>
  */
-p5.prototype.clearDepth = function(depth) {
+p5.prototype.clearDepth = function (depth) {
   this._assert3d('clearDepth');
   this._renderer.clearDepth(depth);
 };
@@ -759,7 +784,7 @@ p5.prototype.clearDepth = function(depth) {
  * - `SUBTRACT`: RGB values from the source are subtracted from the values from the canvas. If the difference is a negative number, it's made positive. Alpha (transparency) values from the source and canvas are added.
  *
  * @method blendMode
- * @param  {Constant} mode blend mode to set.
+ * @param  {(BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|REMOVE|SUBTRACT)} mode blend mode to set.
  *                either BLEND, DARKEST, LIGHTEST, DIFFERENCE, MULTIPLY,
  *                EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
  *                SOFT_LIGHT, DODGE, BURN, ADD, REMOVE or SUBTRACT
@@ -1181,7 +1206,7 @@ p5.prototype.clearDepth = function(depth) {
  * </code>
  * </div>
  */
-p5.prototype.blendMode = function(mode) {
+p5.prototype.blendMode = function (mode) {
   p5._validateParameters('blendMode', arguments);
   if (mode === constants.NORMAL) {
     // Warning added 3/26/19, can be deleted in future (1.0 release?)

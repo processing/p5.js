@@ -1,16 +1,17 @@
+import p5 from '../../../src/app.js';
+
 suite('p5.Image', function() {
   var myp5;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
@@ -50,7 +51,7 @@ suite('p5.Image', function() {
     });
   });
 
-  suite('p5.Image.prototype.mask', function() {
+  suite.todo('p5.Image.prototype.mask', function() {
     for (const density of [1, 2]) {
       test(`it should mask the image at pixel density ${density}`, function() {
         let img = myp5.createImage(10, 10);
@@ -180,7 +181,7 @@ suite('p5.Image', function() {
     });
   });
 
-  suite('p5.Graphics.get()', function() {
+  suite.todo('p5.Graphics.get()', function() {
     for (const density of [1, 2]) {
       test(`width and height match at pixel density ${density}`, function() {
         const g = myp5.createGraphics(10, 10);

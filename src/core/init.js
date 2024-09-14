@@ -2,9 +2,8 @@ import p5 from '../core/main';
 import { initialize as initTranslator } from './internationalization';
 
 /**
- * _globalInit
+ * This file setup global mode automatic instantiation
  *
- * TODO: ???
  * if sketch is on window
  * assume "global" mode
  * and instantiate p5 automatically
@@ -52,6 +51,7 @@ const waitForDocumentReady = () =>
 
 // only load translations if we're using the full, un-minified library
 const waitingForTranslator =
-  typeof IS_MINIFIED === 'undefined' ? initTranslator() : Promise.resolve();
+  typeof IS_MINIFIED === 'undefined' ? initTranslator() :
+    Promise.resolve();
 
 Promise.all([waitForDocumentReady(), waitingForTranslator]).then(_globalInit);

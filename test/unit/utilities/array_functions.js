@@ -1,16 +1,17 @@
+import p5 from '../../../src/app.js';
+
 suite('Array', function() {
   var myp5;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
@@ -30,7 +31,7 @@ suite('Array', function() {
 
   suite('p5.prototype.arrayCopy', function() {
     var src, dest;
-    setup(function() {
+    beforeEach(function() {
       src = [1, 2, 3, 4, 5];
       dest = [6, 7, 8];
     });

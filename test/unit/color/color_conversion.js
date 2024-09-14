@@ -1,3 +1,12 @@
+import p5 from '../../../src/app.js';
+
+assert.arrayApproximately = function(arr1, arr2, delta) {
+  assert.equal(arr1.length, arr2.length);
+  for(var i = 0; i < arr1.length; i++) {
+    assert.approximately(arr1[i], arr2[i], delta);
+  }
+};
+
 suite('color/p5.ColorConversion', function() {
   var rgba = [1, 0, 0.4, 0.8];
   var rgbaWithMaxHue = [1, 0, 0, 0.6];

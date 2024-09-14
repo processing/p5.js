@@ -25,13 +25,12 @@ import * as constants from './constants';
  * way to create an instance of this class.
  *
  * @class p5.Graphics
- * @constructor
  * @extends p5.Element
- * @param {Number} width width of the graphics buffer in pixels.
- * @param {Number} height height of the graphics buffer in pixels.
- * @param {Constant} renderer renderer to use, either P2D or WEBGL.
- * @param {p5} [pInst] sketch instance.
- * @param {HTMLCanvasElement} [canvas] existing `&lt;canvas&gt;` element to use.
+ * @param {Number} w            width width of the graphics buffer in pixels.
+ * @param {Number} h            height height of the graphics buffer in pixels.
+ * @param {(P2D|WEBGL)} renderer   the renderer to use, either P2D or WEBGL.
+ * @param {p5} [pInst]          sketch instance.
+ * @param {HTMLCanvasElement} [canvas]     existing `&lt;canvas&gt;` element to use.
  *
  * @example
  * <div>
@@ -93,7 +92,7 @@ import * as constants from './constants';
  * </code>
  * </div>
  */
-p5.Graphics = class extends p5.Element {
+p5.Graphics = class Graphics extends p5.Element {
   constructor(w, h, renderer, pInst, canvas) {
     let canvasTemp;
     if (canvas) {
@@ -127,16 +126,18 @@ p5.Graphics = class extends p5.Element {
     this.width = w;
     this.height = h;
     this._pixelDensity = pInst._pixelDensity;
+    this._renderer = new p5.renderers[r](this.canvas, this, false);
 
-    if (r === constants.WEBGL) {
-      this._renderer = new p5.RendererGL(this.canvas, this, false);
-      const { adjustedWidth, adjustedHeight } =
-        this._renderer._adjustDimensions(w, h);
-      w = adjustedWidth;
-      h = adjustedHeight;
-    } else {
-      this._renderer = new p5.Renderer2D(this.canvas, this, false);
-    }
+    // if (r === constants.WEBGL) {
+    //   this._renderer = new p5.RendererGL(this.canvas, this, false);
+    //   const { adjustedWidth, adjustedHeight } =
+    //     this._renderer._adjustDimensions(w, h);
+    //   w = adjustedWidth;
+    //   h = adjustedHeight;
+    // } else {
+    //   this._renderer = new p5.Renderer2D(this.canvas, this, false);
+    // }
+
     pInst._elements.push(this);
 
     Object.defineProperty(this, 'deltaTime', {
@@ -157,7 +158,6 @@ p5.Graphics = class extends p5.Element {
  * values each time <a href="#/p5/draw">draw()</a> executes. `p5.Graphics`
  * objects must reset these values manually by calling `myGraphics.reset()`.
  *
- * @method reset
  *
  * @example
  * <div>
@@ -337,8 +337,6 @@ p5.Graphics = class extends p5.Element {
  * variable still refers to the graphics buffer, then it won't be garbage
  * collected.
  *
- * @method remove
- *
  * @example
  * <div>
  * <code>
@@ -426,7 +424,6 @@ p5.Graphics = class extends p5.Element {
    * If the `width`, `height`, or `density` attributes are set, they won't
    * automatically match the graphics buffer and must be changed manually.
    *
-   * @method createFramebuffer
    * @param {Object} [options] configuration options.
    * @return {p5.Framebuffer} new framebuffer.
    *

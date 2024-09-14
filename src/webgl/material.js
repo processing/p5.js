@@ -48,9 +48,9 @@ import './p5.Texture';
  * @method loadShader
  * @param {String} vertFilename path of the vertex shader to be loaded.
  * @param {String} fragFilename path of the fragment shader to be loaded.
- * @param {function} [successCallback] function to call once the shader is loaded. Can be passed the
+ * @param {Function} [successCallback] function to call once the shader is loaded. Can be passed the
  *                                     <a href="#/p5.Shader">p5.Shader</a> object.
- * @param {function} [failureCallback] function to call if the shader fails to load. Can be passed an
+ * @param {Function} [failureCallback] function to call if the shader fails to load. Can be passed an
  *                                     `Error` event object.
  * @return {p5.Shader} new shader created from the vertex and fragment shader files.
  *
@@ -1997,7 +1997,7 @@ p5.prototype.texture = function (tex) {
  * Note: `textureMode()` can only be used in WebGL mode.
  *
  * @method  textureMode
- * @param {Constant} mode either IMAGE or NORMAL.
+ * @param {(IMAGE|NORMAL)} mode either IMAGE or NORMAL.
  *
  * @example
  * <div>
@@ -2178,8 +2178,8 @@ p5.prototype.textureMode = function (mode) {
  * Note: `textureWrap()` can only be used in WebGL mode.
  *
  * @method textureWrap
- * @param {Constant} wrapX either CLAMP, REPEAT, or MIRROR
- * @param {Constant} [wrapY] either CLAMP, REPEAT, or MIRROR
+ * @param {(CLAMP|REPEAT|MIRROR)} wrapX either CLAMP, REPEAT, or MIRROR
+ * @param {(CLAMP|REPEAT|MIRROR)} [wrapY=wrapX] either CLAMP, REPEAT, or MIRROR
  *
  * @example
  * <div>
@@ -3191,7 +3191,7 @@ p5.prototype.metalness = function (metallic) {
  * transparency internally, e.g. via vertex colors
  * @return {Number[]}  Normalized numbers array
  */
-p5.RendererGL.prototype._applyColorBlend = function(colors, hasTransparency) {
+p5.RendererGL.prototype._applyColorBlend = function (colors, hasTransparency) {
   const gl = this.GL;
 
   const isTexture = this.drawMode === constants.TEXTURE;
