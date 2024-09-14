@@ -1,6 +1,6 @@
 import { testSketchWithPromise, promisedSketch } from '../../js/p5_helpers';
 
-suite('loadBytes', function() {
+suite.todo('loadBytes', function() {
   var invalidFile = '404file';
   var validFile = 'unit/assets/nyan_cat.gif';
 

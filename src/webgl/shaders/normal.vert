@@ -19,5 +19,5 @@ void main(void) {
   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
   vVertexNormal = normalize(vec3( uNormalMatrix * aNormal ));
   vVertTexCoord = aTexCoord;
-  vColor = (uUseVertexColor ? aVertexColor : uMaterialColor);
+  vColor = ((uUseVertexColor && aVertexColor.x >= 0.0) ? aVertexColor : uMaterialColor);
 }

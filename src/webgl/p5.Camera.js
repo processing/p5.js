@@ -37,7 +37,6 @@ import p5 from '../core/main';
  * Note: `camera()` can only be used in WebGL mode.
  *
  * @method camera
- * @constructor
  * @for p5
  * @param  {Number} [x]        x-coordinate of the camera. Defaults to 0.
  * @param  {Number} [y]        y-coordinate of the camera. Defaults to 0.
@@ -309,7 +308,7 @@ p5.prototype.perspective = function (...args) {
  *
  * @method linePerspective
  * @for p5
- * @param {boolean} enable whether to enable line perspective.
+ * @param {Boolean} enable whether to enable line perspective.
  *
  * @example
  * <div>
@@ -391,7 +390,7 @@ p5.prototype.perspective = function (...args) {
  */
 /**
  * @method linePerspective
- * @return {boolean} whether line perspective is enabled.
+ * @return {Boolean} whether line perspective is enabled.
  */
 
 p5.prototype.linePerspective = function (enable) {
@@ -1900,7 +1899,6 @@ p5.Camera = class Camera {
  * from the camera won’t be visible. By default, `far` is set to `10 * 800`,
  * which is 10 times the default distance between the camera and the origin.
  *
- * @method perspective
  * @for p5.Camera
  * @param  {Number} [fovy]   camera frustum vertical field of view. Defaults to
  *                           `2 * atan(height / 2 / 800)`.
@@ -2068,10 +2066,10 @@ p5.Camera = class Camera {
     const nf = 1.0 / (this.cameraNear - this.cameraFar);
 
     /* eslint-disable indent */
-    this.projMatrix.set(f / aspect,  0,                     0,  0,
-                        0,          -f * this.yScale,       0,  0,
-                        0,           0,     (far + near) * nf, -1,
-                        0,           0, (2 * far * near) * nf,  0);
+    this.projMatrix.set(f / aspect, 0, 0, 0,
+      0, -f * this.yScale, 0, 0,
+      0, 0, (far + near) * nf, -1,
+      0, 0, (2 * far * near) * nf, 0);
     /* eslint-enable indent */
 
     if (this._isActive()) {
@@ -2105,7 +2103,6 @@ p5.Camera = class Camera {
  * ends 1,000 pixels from the camera. By default, `near` and `far` are set to
  * 0 and `max(width, height) + 800`, respectively.
  *
- * @method ortho
  * @for p5.Camera
  * @param  {Number} [left]   x-coordinate of the frustum’s left plane. Defaults to `-width / 2`.
  * @param  {Number} [right]  x-coordinate of the frustum’s right plane. Defaults to `width / 2`.
@@ -2237,13 +2234,13 @@ p5.Camera = class Camera {
  * </div>
  */
   ortho(left, right, bottom, top, near, far) {
-    const source = this.fbo||this._renderer;
+    const source = this.fbo || this._renderer;
     if (left === undefined) left = -source.width / 2;
     if (right === undefined) right = +source.width / 2;
     if (bottom === undefined) bottom = -source.height / 2;
     if (top === undefined) top = +source.height / 2;
     if (near === undefined) near = 0;
-    if (far === undefined) far = Math.max(source.width, source.height)+800;
+    if (far === undefined) far = Math.max(source.width, source.height) + 800;
     this.cameraNear = near;
     this.cameraFar = far;
     const w = right - left;
@@ -2257,10 +2254,10 @@ p5.Camera = class Camera {
     const tz = -(far + near) / d;
     this.projMatrix = p5.Matrix.identity();
     /* eslint-disable indent */
-    this.projMatrix.set(  x,  0,  0,  0,
-                          0, -y,  0,  0,
-                          0,  0,  z,  0,
-                          tx, ty, tz,  1);
+    this.projMatrix.set(x, 0, 0, 0,
+      0, -y, 0, 0,
+      0, 0, z, 0,
+      tx, ty, tz, 1);
     /* eslint-enable indent */
     if (this._isActive()) {
       this._renderer.uPMatrix.set(this.projMatrix);
@@ -2296,7 +2293,6 @@ p5.Camera = class Camera {
  * set to `10 * 800`, which is 10 times the default distance between the
  * camera and the origin.
  *
- * @method frustum
  * @for p5.Camera
  * @param  {Number} [left]   x-coordinate of the frustum’s left plane. Defaults to `-width / 20`.
  * @param  {Number} [right]  x-coordinate of the frustum’s right plane. Defaults to `width / 20`.
@@ -2395,10 +2391,10 @@ p5.Camera = class Camera {
     this.projMatrix = p5.Matrix.identity();
 
     /* eslint-disable indent */
-    this.projMatrix.set(  x,  0,  0,  0,
-                          0,  -y,  0,  0,
-                        tx, ty, tz, -1,
-                          0,  0,  z,  0);
+    this.projMatrix.set(x, 0, 0, 0,
+      0, -y, 0, 0,
+      tx, ty, tz, -1,
+      0, 0, z, 0);
     /* eslint-enable indent */
 
     if (this._isActive()) {
@@ -2415,7 +2411,6 @@ p5.Camera = class Camera {
   /**
  * Rotate camera view about arbitrary axis defined by x,y,z
  * based on http://learnwebgl.brown37.net/07_cameras/camera_rotating_motion.html
- * @method _rotateView
  * @private
  */
   _rotateView(a, x, y, z) {
@@ -2458,6 +2453,84 @@ p5.Camera = class Camera {
   }
 
   /**
+ * Rotates the camera in a clockwise/counter-clockwise direction.
+ *
+ * Rolling rotates the camera without changing its orientation. The rotation
+ * happens in the camera’s "local" space.
+ *
+ * The parameter, `angle`, is the angle the camera should rotate. Passing a
+ * positive angle, as in `myCamera.roll(0.001)`, rotates the camera in counter-clockwise direction.
+ * Passing a negative angle, as in `myCamera.roll(-0.001)`, rotates the
+ * camera in clockwise direction.
+ *
+ * Note: Angles are interpreted based on the current
+ * <a href="#/p5/angleMode">angleMode()</a>.
+ *
+ * @method roll
+ * @param {Number} angle amount to rotate camera in current
+ * <a href="#/p5/angleMode">angleMode</a> units.
+ * @example
+ * <div>
+ * <code>
+ * let cam;
+ * let delta = 0.01;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   normalMaterial();
+ *   // Create a p5.Camera object.
+ *   cam = createCamera();
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Roll camera according to angle 'delta'
+ *   cam.roll(delta);
+ *
+ *   translate(0, 0, 0);
+ *   box(20);
+ *   translate(0, 25, 0);
+ *   box(20);
+ *   translate(0, 26, 0);
+ *   box(20);
+ *   translate(0, 27, 0);
+ *   box(20);
+ *   translate(0, 28, 0);
+ *   box(20);
+ *   translate(0,29, 0);
+ *   box(20);
+ *   translate(0, 30, 0);
+ *   box(20);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * camera view rotates in counter clockwise direction with vertically stacked boxes in front of it.
+ */
+  roll(amount) {
+    const local = this._getLocalAxes();
+    const axisQuaternion = p5.Quat.fromAxisAngle(
+      this._renderer._pInst._toRadians(amount),
+      local.z[0], local.z[1], local.z[2]);
+    // const upQuat = new p5.Quat(0, this.upX, this.upY, this.upZ);
+    const newUpVector = axisQuaternion.rotateVector(
+      new p5.Vector(this.upX, this.upY, this.upZ));
+    this.camera(
+      this.eyeX,
+      this.eyeY,
+      this.eyeZ,
+      this.centerX,
+      this.centerY,
+      this.centerZ,
+      newUpVector.x,
+      newUpVector.y,
+      newUpVector.z
+    );
+  }
+
+  /**
  * Rotates the camera left and right.
  *
  * Panning rotates the camera without changing its position. The rotation
@@ -2471,7 +2544,6 @@ p5.Camera = class Camera {
  * Note: Angles are interpreted based on the current
  * <a href="#/p5/angleMode">angleMode()</a>.
  *
- * @method pan
  * @param {Number} angle amount to rotate in the current
  *                       <a href="#/p5/angleMode">angleMode()</a>.
  *
@@ -2534,7 +2606,6 @@ p5.Camera = class Camera {
  * Note: Angles are interpreted based on the current
  * <a href="#/p5/angleMode">angleMode()</a>.
  *
- * @method tilt
  * @param {Number} angle amount to rotate in the current
  *                       <a href="#/p5/angleMode">angleMode()</a>.
  *
@@ -2594,7 +2665,6 @@ p5.Camera = class Camera {
  * `myCamera.lookAt(10, 20, 30)` points the camera at the coordinates
  * `(10, 20, 30)`.
  *
- * @method lookAt
  * @for p5.Camera
  * @param {Number} x x-coordinate of the position where the camera should look in "world" space.
  * @param {Number} y y-coordinate of the position where the camera should look in "world" space.
@@ -2705,7 +2775,6 @@ p5.Camera = class Camera {
  * to `(0, -1, 0)` which is like holding it upside-down. By default, the "up"
  * vector is `(0, 1, 0)`.
  *
- * @method camera
  * @for p5.Camera
  * @param  {Number} [x]        x-coordinate of the camera. Defaults to 0.
  * @param  {Number} [y]        y-coordinate of the camera. Defaults to 0.
@@ -2891,9 +2960,9 @@ p5.Camera = class Camera {
     // and rotates it.
     /* eslint-disable indent */
     this.cameraMatrix.set(local.x[0], local.y[0], local.z[0], 0,
-                          local.x[1], local.y[1], local.z[1], 0,
-                          local.x[2], local.y[2], local.z[2], 0,
-                                  0,          0,          0, 1);
+      local.x[1], local.y[1], local.z[1], 0,
+      local.x[2], local.y[2], local.z[2], 0,
+      0, 0, 0, 1);
     /* eslint-enable indent */
 
     const tx = -eyeX;
@@ -2916,7 +2985,6 @@ p5.Camera = class Camera {
  * pixels to the right, 20 pixels down, and 30 pixels backward in its "local"
  * space.
  *
- * @method move
  * @param {Number} x distance to move along the camera’s "local" x-axis.
  * @param {Number} y distance to move along the camera’s "local" y-axis.
  * @param {Number} z distance to move along the camera’s "local" z-axis.
@@ -3013,7 +3081,6 @@ p5.Camera = class Camera {
  * should be placed. For example, calling `myCamera.setPosition(10, 20, 30)`
  * places the camera at coordinates `(10, 20, 30)` in "world" space.
  *
- * @method setPosition
  * @param {Number} x x-coordinate in "world" space.
  * @param {Number} y y-coordinate in "world" space.
  * @param {Number} z z-coordinate in "world" space.
@@ -3166,7 +3233,6 @@ p5.Camera = class Camera {
  * The parameter, `cam`, is the `p5.Camera` object to copy. For example, calling
  * `cam2.set(cam1)` will set `cam2` using `cam1`’s configuration.
  *
- * @method set
  * @param {p5.Camera} cam camera to copy.
  *
  * @example
@@ -3259,7 +3325,6 @@ p5.Camera = class Camera {
  *
  * Note: All of the cameras must use the same projection.
  *
- * @method slerp
  * @param {p5.Camera} cam0 first camera.
  * @param {p5.Camera} cam1 second camera.
  * @param {Number} amt amount of interpolation between 0.0 (`cam0`) and 1.0 (`cam1`).
@@ -3366,7 +3431,7 @@ p5.Camera = class Camera {
     // for each camera.
     const divider = diffDiff.magSq();
     let ratio = 1; // default.
-    if (divider > 0.000001){
+    if (divider > 0.000001) {
       ratio = p5.Vector.dot(eyeDiff, diffDiff) / divider;
       ratio = Math.max(0, Math.min(ratio, 1));
     }
@@ -3418,7 +3483,7 @@ p5.Camera = class Camera {
       newFront.set(p5.Vector.lerp(front0, front1, amt)).normalize();
 
       newEye.set(newFront).mult(ratio * lerpedDist).add(lerpedMedium);
-      newCenter.set(newFront).mult((ratio-1) * lerpedDist).add(lerpedMedium);
+      newCenter.set(newFront).mult((ratio - 1) * lerpedDist).add(lerpedMedium);
 
       newUp.set(p5.Vector.lerp(up0, up1, amt)).normalize();
 
@@ -3492,7 +3557,7 @@ p5.Camera = class Camera {
     lerpedRotMat.multiplyVec3(front0, newFront);
 
     newEye.set(newFront).mult(ratio * lerpedDist).add(lerpedMedium);
-    newCenter.set(newFront).mult((ratio-1) * lerpedDist).add(lerpedMedium);
+    newCenter.set(newFront).mult((ratio - 1) * lerpedDist).add(lerpedMedium);
 
     lerpedRotMat.multiplyVec3(up0, newUp);
 
@@ -3560,7 +3625,6 @@ p5.Camera = class Camera {
 
   /**
  * Returns a copy of a camera.
- * @method copy
  * @private
  */
   copy() {
@@ -3591,7 +3655,6 @@ p5.Camera = class Camera {
   /**
  * Returns a camera's local axes: left-right, up-down, and forward-backward,
  * as defined by vectors in world-space.
- * @method _getLocalAxes
  * @private
  */
   _getLocalAxes() {
@@ -3648,7 +3711,6 @@ p5.Camera = class Camera {
 
   /**
  * Orbits the camera about center point. For use with orbitControl().
- * @method _orbit
  * @private
  * @param {Number} dTheta change in spherical coordinate theta
  * @param {Number} dPhi change in spherical coordinate phi
@@ -3718,7 +3780,6 @@ p5.Camera = class Camera {
   /**
  * Orbits the camera about center point. For use with orbitControl().
  * Unlike _orbit(), the direction of rotation always matches the direction of pointer movement.
- * @method _orbitFree
  * @private
  * @param {Number} dx the x component of the rotation vector.
  * @param {Number} dy the y component of the rotation vector.
@@ -3747,7 +3808,7 @@ p5.Camera = class Camera {
     down.mult(Math.sin(directionAngle));
     side.mult(Math.cos(directionAngle)).add(down);
     // The amount of rotation is the size of the vector (dx, dy).
-    const rotAngle = Math.sqrt(dx*dx + dy*dy);
+    const rotAngle = Math.sqrt(dx * dx + dy * dy);
     // The vector that is orthogonal to both the front vector and
     // the rotation direction vector is the rotation axis vector.
     const axis = p5.Vector.cross(front, side);
@@ -3795,7 +3856,6 @@ p5.Camera = class Camera {
 
   /**
  * Returns true if camera is currently attached to renderer.
- * @method _isActive
  * @private
  */
   _isActive() {

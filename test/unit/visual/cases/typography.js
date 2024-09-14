@@ -1,3 +1,5 @@
+import { visualSuite, visualTest } from '../visualTest';
+
 visualSuite('Typography', function() {
   visualSuite('textFont() with default fonts', function() {
     visualTest('With the default font', function (p5, screenshot) {

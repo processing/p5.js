@@ -9,11 +9,14 @@
 import * as constants from '../core/constants';
 
 function trigonometry(p5, fn){
+  const DEGREES = fn.DEGREES = Symbol('degrees');
+  const RADIANS = fn.RADIANS = Symbol('radians');
+
   /*
    * all DEGREES/RADIANS conversion should be done in the p5 instance
    * if possible, using the p5._toRadians(), p5._fromRadians() methods.
    */
-  fn._angleMode = constants.RADIANS;
+  fn._angleMode = RADIANS;
 
   /**
    * Calculates the arc cosine of a number.
@@ -563,8 +566,7 @@ function trigonometry(p5, fn){
    * is either `RADIANS` or `DEGREES`.
    *
    * @method angleMode
-   * @param {Constant} mode either RADIANS or DEGREES.
-   *
+   * @param {(RADIANS|DEGREES)} mode either RADIANS or DEGREES.
    * @example
    * <div>
    * <code>
@@ -736,13 +738,13 @@ function trigonometry(p5, fn){
    */
   /**
    * @method angleMode
-   * @return {Constant} mode either RADIANS or DEGREES
+   * @return {(RADIANS|DEGREES)} mode either RADIANS or DEGREES
    */
   fn.angleMode = function(mode) {
     p5._validateParameters('angleMode', arguments);
     if (typeof mode === 'undefined') {
       return this._angleMode;
-    } else if (mode === constants.DEGREES || mode === constants.RADIANS) {
+    } else if (mode === DEGREES || mode === RADIANS) {
       const prevMode = this._angleMode;
 
       // No change
@@ -750,7 +752,7 @@ function trigonometry(p5, fn){
 
       // Otherwise adjust pRotation according to new mode
       // This is necessary for acceleration events to work properly
-      if(mode === constants.RADIANS) {
+      if(mode === RADIANS) {
         // Change pRotation to radians
         this._setProperty('pRotationX', this.pRotationX * constants.DEG_TO_RAD);
         this._setProperty('pRotationY', this.pRotationY * constants.DEG_TO_RAD);
@@ -775,7 +777,7 @@ function trigonometry(p5, fn){
    * @returns {Number}
    */
   fn._toRadians = function(angle) {
-    if (this._angleMode === constants.DEGREES) {
+    if (this._angleMode === DEGREES) {
       return angle * constants.DEG_TO_RAD;
     }
     return angle;
@@ -790,7 +792,7 @@ function trigonometry(p5, fn){
    * @returns {Number}
    */
   fn._toDegrees = function(angle) {
-    if (this._angleMode === constants.RADIANS) {
+    if (this._angleMode === RADIANS) {
       return angle * constants.RAD_TO_DEG;
     }
     return angle;
@@ -805,7 +807,7 @@ function trigonometry(p5, fn){
    * @returns {Number}
    */
   fn._fromRadians = function(angle) {
-    if (this._angleMode === constants.DEGREES) {
+    if (this._angleMode === DEGREES) {
       return angle * constants.RAD_TO_DEG;
     }
     return angle;
@@ -820,7 +822,7 @@ function trigonometry(p5, fn){
    * @returns {Number}
    */
   fn._fromDegrees = function(angle) {
-    if (this._angleMode === constants.RADIANS) {
+    if (this._angleMode === RADIANS) {
       return angle * constants.DEG_TO_RAD;
     }
     return angle;

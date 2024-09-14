@@ -52,7 +52,6 @@ class ImageInfos {
   }
   /**
      *
-     * @method findImage
      * @param {Integer} space
      * @return {Object} contains the ImageData, and pixel index into that
      *                  ImageData where the free space was allocated.
@@ -158,7 +157,6 @@ class FontInfo {
     this.glyphInfos = {};
   }
   /**
-     * @method getGlyphInfo
      * @param {Glyph} glyph the x positions of points in the curve
      * @returns {Object} the glyphInfo for that glyph
      *
@@ -292,7 +290,6 @@ class FontInfo {
         this.p1 = p1;
       }
       /**
-           * @method toQuadratic
            * @return {Object} the quadratic approximation
            *
            * converts the cubic to a quadtratic approximation by
@@ -310,7 +307,6 @@ class FontInfo {
       }
 
       /**
-           * @method quadError
            * @return {Number} the error
            *
            * calculates the magnitude of error of this curve's
@@ -326,7 +322,6 @@ class FontInfo {
       }
 
       /**
-           * @method split
            * @param {Number} t the value (0-1) at which to split
            * @return {Cubic} the second part of the curve
            *
@@ -348,7 +343,6 @@ class FontInfo {
       }
 
       /**
-           * @method splitInflections
            * @return {Cubic[]} the non-inflecting pieces of this cubic
            *
            * returns an array containing 0, 1 or 2 cubics split resulting

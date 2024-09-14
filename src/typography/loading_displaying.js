@@ -126,12 +126,11 @@ import '../core/friendly_errors/fes_core';
  * </code>
  * </div>
  */
-p5.prototype.loadFont = function(path, onSuccess, onError) {
+p5.prototype.loadFont = async function(path, onSuccess, onError) {
   p5._validateParameters('loadFont', arguments);
   const p5Font = new p5.Font(this);
 
-  const self = this;
-  opentype.load(path, (err, font) => {
+  await new Promise(resolve => opentype.load(path, (err, font) => {
     if (err) {
       p5._friendlyFileLoadError(4, path);
       if (typeof onError !== 'undefined') {
@@ -146,8 +145,7 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
     if (typeof onSuccess !== 'undefined') {
       onSuccess(p5Font);
     }
-
-    self._decrementPreload();
+    resolve();
 
     // check that we have an acceptable font type
     const validFontTypes = ['ttf', 'otf', 'woff', 'woff2'];
@@ -174,7 +172,7 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
       );
       document.head.appendChild(newStyle);
     }
-  });
+  }));
 
   return p5Font;
 };

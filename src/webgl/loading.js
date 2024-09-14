@@ -49,7 +49,7 @@ import './p5.Geometry';
  * as in `loadModel('assets/model.obj', options)`. The `options` object can
  * have the following properties:
  *
- * <code>
+ * ```js
  * let options = {
  *   // Enables standardized size scaling during loading if set to true.
  *   normalize: true,
@@ -72,7 +72,7 @@ import './p5.Geometry';
  *
  * // Pass the options object to loadModel().
  * loadModel('assets/model.obj', options);
- * </code>
+ * ```
  *
  * Models can take time to load. Calling `loadModel()` in
  * <a href="#/p5/preload">preload()</a> ensures models load before they're
@@ -330,14 +330,14 @@ import './p5.Geometry';
  * @param  {function(p5.Geometry)} [options.successCallback]
  * @param  {function(Event)} [options.failureCallback]
  * @param  {String} [options.fileType]
- * @param  {boolean} [options.normalize]
- * @param  {boolean} [options.flipU]
- * @param  {boolean} [options.flipV]
+ * @param  {Boolean} [options.normalize]
+ * @param  {Boolean} [options.flipU]
+ * @param  {Boolean} [options.flipV]
  * @return {p5.Geometry} new <a href="#/p5.Geometry">p5.Geometry</a> object.
  */
-p5.prototype.loadModel = function(path,options) {
+p5.prototype.loadModel = async function (path, options) {
   p5._validateParameters('loadModel', arguments);
-  let normalize= false;
+  let normalize = false;
   let successCallback;
   let failureCallback;
   let flipU = false;
@@ -369,20 +369,20 @@ p5.prototype.loadModel = function(path,options) {
   model.gid = `${path}|${normalize}`;
   const self = this;
 
-  async function getMaterials(lines){
-    const parsedMaterialPromises=[];
+  async function getMaterials(lines) {
+    const parsedMaterialPromises = [];
 
     for (let i = 0; i < lines.length; i++) {
       const mtllibMatch = lines[i].match(/^mtllib (.+)/);
       if (mtllibMatch) {
-        let mtlPath='';
+        let mtlPath = '';
         const mtlFilename = mtllibMatch[1];
         const objPathParts = path.split('/');
-        if(objPathParts.length > 1){
+        if (objPathParts.length > 1) {
           objPathParts.pop();
           const objFolderPath = objPathParts.join('/');
           mtlPath = objFolderPath + '/' + mtlFilename;
-        }else{
+        } else {
           mtlPath = mtlFilename;
         }
         parsedMaterialPromises.push(
@@ -403,8 +403,8 @@ p5.prototype.loadModel = function(path,options) {
     }
     try {
       const parsedMaterials = await Promise.all(parsedMaterialPromises);
-      const materials= Object.assign({}, ...parsedMaterials);
-      return materials ;
+      const materials = Object.assign({}, ...parsedMaterials);
+      return materials;
     } catch (error) {
       return {};
     }
@@ -420,7 +420,7 @@ p5.prototype.loadModel = function(path,options) {
     }
   }
   if (fileType.match(/\.stl$/i)) {
-    this.httpDo(
+    await new Promise(resolve => this.httpDo(
       path,
       'GET',
       'arrayBuffer',
@@ -439,23 +439,23 @@ p5.prototype.loadModel = function(path,options) {
           model.flipV();
         }
 
-        self._decrementPreload();
+        resolve();
         if (typeof successCallback === 'function') {
           successCallback(model);
         }
       },
       failureCallback
-    );
+    ));
   } else if (fileType.match(/\.obj$/i)) {
-    this.loadStrings(
+    await new Promise(resolve => this.loadStrings(
       path,
       async lines => {
-        try{
-          const parsedMaterials=await getMaterials(lines);
+        try {
+          const parsedMaterials = await getMaterials(lines);
 
           parseObj(model, lines, parsedMaterials);
 
-        }catch (error) {
+        } catch (error) {
           if (failureCallback) {
             failureCallback(error);
           } else {
@@ -463,7 +463,7 @@ p5.prototype.loadModel = function(path,options) {
           }
           return;
         }
-        finally{
+        finally {
           if (normalize) {
             model.normalize();
           }
@@ -474,14 +474,14 @@ p5.prototype.loadModel = function(path,options) {
             model.flipV();
           }
 
-          self._decrementPreload();
+          resolve();
           if (typeof successCallback === 'function') {
             successCallback(model);
           }
         }
       },
       failureCallback
-    );
+    ));
   } else {
     p5._friendlyFileLoadError(3, path);
     if (failureCallback) {
@@ -495,48 +495,48 @@ p5.prototype.loadModel = function(path,options) {
   return model;
 };
 
-function parseMtl(p5,mtlPath){
-  return new Promise((resolve, reject)=>{
+function parseMtl(p5, mtlPath) {
+  return new Promise((resolve, reject) => {
     let currentMaterial = null;
-    let materials= {};
+    let materials = {};
     p5.loadStrings(
       mtlPath,
       lines => {
-        for (let line = 0; line < lines.length; ++line){
+        for (let line = 0; line < lines.length; ++line) {
           const tokens = lines[line].trim().split(/\s+/);
-          if(tokens[0] === 'newmtl') {
+          if (tokens[0] === 'newmtl') {
             const materialName = tokens[1];
             currentMaterial = materialName;
             materials[currentMaterial] = {};
-          }else if (tokens[0] === 'Kd'){
-          //Diffuse color
+          } else if (tokens[0] === 'Kd') {
+            //Diffuse color
             materials[currentMaterial].diffuseColor = [
               parseFloat(tokens[1]),
               parseFloat(tokens[2]),
               parseFloat(tokens[3])
             ];
-          } else if (tokens[0] === 'Ka'){
-          //Ambient Color
+          } else if (tokens[0] === 'Ka') {
+            //Ambient Color
             materials[currentMaterial].ambientColor = [
               parseFloat(tokens[1]),
               parseFloat(tokens[2]),
               parseFloat(tokens[3])
             ];
-          }else if (tokens[0] === 'Ks'){
-          //Specular color
+          } else if (tokens[0] === 'Ks') {
+            //Specular color
             materials[currentMaterial].specularColor = [
               parseFloat(tokens[1]),
               parseFloat(tokens[2]),
               parseFloat(tokens[3])
             ];
 
-          }else if (tokens[0] === 'map_Kd') {
-          //Texture path
+          } else if (tokens[0] === 'map_Kd') {
+            //Texture path
             materials[currentMaterial].texturePath = tokens[1];
           }
         }
         resolve(materials);
-      },reject
+      }, reject
     );
   });
 }
@@ -552,7 +552,7 @@ function parseMtl(p5,mtlPath){
  *
  * f 4 3 2 1
  */
-function parseObj(model, lines, materials= {}) {
+function parseObj(model, lines, materials = {}) {
   // OBJ allows a face to specify an index for a vertex (in the above example),
   // but it also allows you to specify a custom combination of vertex, UV
   // coordinate, and vertex normal. So, "3/4/3" would mean, "use vertex 3 with
@@ -585,7 +585,7 @@ function parseObj(model, lines, materials= {}) {
       if (tokens[0] === 'usemtl') {
         // Switch to a new material
         currentMaterial = tokens[1];
-      }else if (tokens[0] === 'v' || tokens[0] === 'vn') {
+      } else if (tokens[0] === 'v' || tokens[0] === 'vn') {
         // Check if this line describes a vertex or vertex normal.
         // It will have three numeric parameters.
         const vertex = new p5.Vector(
@@ -611,7 +611,7 @@ function parseObj(model, lines, materials= {}) {
           for (let tokenInd = 0; tokenInd < vertexTokens.length; ++tokenInd) {
             // Now, convert the given token into an index
             const vertString = tokens[vertexTokens[tokenInd]];
-            let vertParts=vertString.split('/');
+            let vertParts = vertString.split('/');
 
             // TODO: Faces can technically use negative numbers to refer to the
             // previous nth vertex. I haven't seen this used in practice, but
@@ -656,18 +656,19 @@ function parseObj(model, lines, materials= {}) {
             if (currentMaterial
               && materials[currentMaterial]
               && materials[currentMaterial].diffuseColor) {
-              hasColoredVertices=true;
+              hasColoredVertices = true;
               //flag to track color or no color model
               hasColoredVertices = true;
               const materialDiffuseColor =
-              materials[currentMaterial].diffuseColor;
+                materials[currentMaterial].diffuseColor;
               for (let i = 0; i < face.length; i++) {
                 model.vertexColors.push(materialDiffuseColor[0]);
                 model.vertexColors.push(materialDiffuseColor[1]);
                 model.vertexColors.push(materialDiffuseColor[2]);
+                model.vertexColors.push(1);
               }
-            }else{
-              hasColorlessVertices=true;
+            } else {
+              hasColorlessVertices = true;
             }
           }
         }
@@ -967,8 +968,7 @@ function parseASCIISTL(model, lines) {
           // Invalid State
           console.error(line);
           console.error(
-            `Invalid state "${
-              parts[0]
+            `Invalid state "${parts[0]
             }", should be "endsolid" or "facet normal"`
           );
           return;
@@ -1111,7 +1111,7 @@ function parseASCIISTL(model, lines) {
  * </code>
  * </div>
  */
-p5.prototype.model = function(model) {
+p5.prototype.model = function (model) {
   this._assert3d('model');
   p5._validateParameters('model', arguments);
   if (model.vertices.length > 0) {

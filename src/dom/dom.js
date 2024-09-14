@@ -225,7 +225,7 @@ p5.prototype._wrapElement = function (elt) {
   const children = Array.prototype.slice.call(elt.children);
   if (elt.tagName === 'INPUT' && elt.type === 'checkbox') {
     let converted = new p5.Element(elt, this);
-    converted.checked = function(...args) {
+    converted.checked = function (...args) {
       if (args.length === 0) {
         return this.elt.checked;
       } else if (args[0]) {
@@ -1020,7 +1020,7 @@ p5.prototype.createButton = function (label, value) {
  *
  * @method createCheckbox
  * @param  {String} [label] label displayed after the checkbox.
- * @param  {boolean} [value] value of the checkbox. Checked is `true` and unchecked is `false`.
+ * @param  {Boolean} [value] value of the checkbox. Checked is `true` and unchecked is `false`.
  * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
  *
  * @example
@@ -1101,7 +1101,7 @@ p5.prototype.createButton = function (label, value) {
  * </code>
  * </div>
  */
-p5.prototype.createCheckbox = function(...args) {
+p5.prototype.createCheckbox = function (...args) {
   p5._validateParameters('createCheckbox', args);
 
   // Create a container element
@@ -1121,7 +1121,7 @@ p5.prototype.createCheckbox = function(...args) {
   //checkbox must be wrapped in p5.Element before label so that label appears after
   const self = addElement(elt, this);
 
-  self.checked = function(...args) {
+  self.checked = function (...args) {
     const cb = self.elt.firstElementChild.getElementsByTagName('input')[0];
     if (cb) {
       if (args.length === 0) {
@@ -1178,7 +1178,7 @@ p5.prototype.createCheckbox = function(...args) {
  * - `mySelect.enable(option)` marks a given option as enabled.
  *
  * @method createSelect
- * @param {boolean} [multiple] support multiple selections.
+ * @param {Boolean} [multiple] support multiple selections.
  * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
  *
  * @example
@@ -1328,7 +1328,7 @@ p5.prototype.createCheckbox = function(...args) {
  * @return {p5.Element}
  */
 
-p5.prototype.createSelect = function(...args) {
+p5.prototype.createSelect = function (...args) {
   p5._validateParameters('createSelect', args);
   let self;
   let arg = args[0];
@@ -1580,7 +1580,7 @@ p5.prototype.createSelect = function(...args) {
  * @method createRadio
  * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
  */
-p5.prototype.createRadio = function(...args) {
+p5.prototype.createRadio = function (...args) {
   // Creates a div, adds each option as an individual input inside it.
   // If already given with a containerEl, will search for all input[radio]
   // it, create a p5.Element out of it, add options to it and return the p5.Element.
@@ -2306,7 +2306,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * and <a href="https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia" target="_blank">here</a>.
  *
  * @method createCapture
- * @param  {String|Constant|Object}  [type] type of capture, either AUDIO or VIDEO,
+ * @param  {(AUDIO|VIDEO|Object)}  [type] type of capture, either AUDIO or VIDEO,
  *                                   or a constraints object. Both video and audio
  *                                   audio streams are captured by default.
  * @param  {Object}                  [flipped] flip the capturing video and mirror the output with `{flipped:true}`. By
@@ -2394,7 +2394,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * </code>
  * </div>
  */
-p5.prototype.createCapture = function(...args) {
+p5.prototype.createCapture = function (...args) {
   p5._validateParameters('createCapture', args);
 
   // return if getUserMedia is not supported by the browser
@@ -2436,7 +2436,7 @@ p5.prototype.createCapture = function(...args) {
         domElement.src = window.URL.createObjectURL(stream);
       }
     }
-    catch(err) {
+    catch (err) {
       domElement.src = stream;
     }
   }).catch(e => {
@@ -2467,7 +2467,7 @@ p5.prototype.createCapture = function(...args) {
 
     if (callback) callback(domElement.srcObject);
   });
-  videoEl.flipped=flipped;
+  videoEl.flipped = flipped;
   return videoEl;
 };
 
@@ -2944,10 +2944,10 @@ p5.Element.prototype.center = function (align) {
 /**
  * @method html
  * @param  {String} [html] the HTML to be placed inside the element
- * @param  {boolean} [append] whether to append HTML to existing
+ * @param  {Boolean} [append] whether to append HTML to existing
  * @chainable
  */
-p5.Element.prototype.html = function(...args) {
+p5.Element.prototype.html = function (...args) {
   if (args.length === 0) {
     return this.elt.innerHTML;
   } else if (args[1]) {
@@ -3017,7 +3017,7 @@ p5.Element.prototype.html = function(...args) {
  * @param  {String} [positionType] it can be static, fixed, relative, sticky, initial or inherit (optional)
  * @chainable
  */
-p5.Element.prototype.position = function(...args) {
+p5.Element.prototype.position = function (...args) {
   if (args.length === 0) {
     return { x: this.elt.offsetLeft, y: this.elt.offsetTop };
   } else {
@@ -3042,7 +3042,7 @@ p5.Element.prototype.position = function(...args) {
 };
 
 /* Helper method called by p5.Element.style() */
-p5.Element.prototype._translate = function(...args) {
+p5.Element.prototype._translate = function (...args) {
   this.elt.style.position = 'absolute';
   // save out initial non-translate transform styling
   let transform = '';
@@ -3074,7 +3074,7 @@ p5.Element.prototype._translate = function(...args) {
 };
 
 /* Helper method called by p5.Element.style() */
-p5.Element.prototype._rotate = function(...args) {
+p5.Element.prototype._rotate = function (...args) {
   // save out initial non-rotate transform styling
   let transform = '';
   if (this.elt.style.transform) {
@@ -3461,7 +3461,7 @@ p5.Element.prototype.removeAttribute = function (attr) {
  * @param  {String|Number}     value
  * @chainable
  */
-p5.Element.prototype.value = function(...args) {
+p5.Element.prototype.value = function (...args) {
   if (args.length > 0) {
     this.elt.value = args[0];
     return this;
@@ -3657,8 +3657,8 @@ p5.Element.prototype.hide = function () {
  */
 /**
  * @method size
- * @param  {Number|Constant} [w]   width of the element, either AUTO, or a number.
- * @param  {Number|Constant} [h] height of the element, either AUTO, or a number.
+ * @param  {(Number|AUTO)} [w]   width of the element, either AUTO, or a number.
+ * @param  {(Number|AUTO)} [h] height of the element, either AUTO, or a number.
  * @chainable
  */
 p5.Element.prototype.size = function (w, h) {
@@ -4004,10 +4004,10 @@ p5.Element.prototype.draggable = function (elmMove) {
     closeDragElementEvt = isTouch ? 'touchend' : 'mouseup',
     elementDragEvt = isTouch ? 'touchmove' : 'mousemove';
 
-  if(elmMove === undefined){
+  if (elmMove === undefined) {
     elmMove = this.elt;
     elmDrag = elmMove;
-  }else if(elmMove !== this.elt && elmMove.elt !== this.elt){
+  } else if (elmMove !== this.elt && elmMove.elt !== this.elt) {
     elmMove = elmMove.elt;
     elmDrag = this.elt;
   }
@@ -4018,11 +4018,11 @@ p5.Element.prototype.draggable = function (elmMove) {
   function dragMouseDown(e) {
     e = e || window.event;
 
-    if(isTouch){
+    if (isTouch) {
       const touches = e.changedTouches;
       px = parseInt(touches[0].clientX);
       py = parseInt(touches[0].clientY);
-    }else{
+    } else {
       px = parseInt(e.clientX);
       py = parseInt(e.clientY);
     }
@@ -4035,13 +4035,13 @@ p5.Element.prototype.draggable = function (elmMove) {
   function elementDrag(e) {
     e = e || window.event;
 
-    if(isTouch){
+    if (isTouch) {
       const touches = e.changedTouches;
       x = px - parseInt(touches[0].clientX);
       y = py - parseInt(touches[0].clientY);
       px = parseInt(touches[0].clientX);
       py = parseInt(touches[0].clientY);
-    }else{
+    } else {
       x = px - parseInt(e.clientX);
       y = py - parseInt(e.clientY);
       px = parseInt(e.clientX);
@@ -4088,7 +4088,6 @@ class Cue {
  * <a href="#/p5/createCapture">createCapture</a>.
  *
  * @class p5.MediaElement
- * @constructor
  * @param {String} elt DOM node that is wrapped
  * @extends p5.Element
  *
@@ -4115,7 +4114,7 @@ class Cue {
  * </code>
  * </div>
  */
-class MediaElement extends p5.Element {
+p5.MediaElement = class MediaElement extends p5.Element {
   constructor(elt, pInst) {
     super(elt, pInst);
 
@@ -4137,35 +4136,6 @@ class MediaElement extends p5.Element {
     // the internal canvas so we only update it if the frame has changed.
     this._frameOnCanvas = -1;
 
-    /**
-     * Path to the media element's source as a string.
-     *
-     * @property src
-     * @return {String} src
-     *
-     * @example
-     * <div>
-     * <code>
-     * let beat;
-     *
-     * function setup() {
-     *   createCanvas(100, 100);
-     *
-     *   // Create a p5.MediaElement using createAudio().
-     *   beat = createAudio('assets/beat.mp3');
-     *
-     *   describe('The text "https://p5js.org/reference/assets/beat.mp3" written in black on a gray background.');
-     * }
-     *
-     * function draw() {
-     *   background(200);
-     *
-     *   textWrap(CHAR);
-     *   text(beat.src, 10, 10, 80, 80);
-     * }
-     * </code>
-     * </div>
-     */
     Object.defineProperty(self, 'src', {
       get() {
         const firstChildSrc = self.elt.children[0].src;
@@ -4197,7 +4167,6 @@ class MediaElement extends p5.Element {
   /**
    * Plays audio or video from a media element.
    *
-   * @method play
    * @chainable
    *
    * @example
@@ -4265,7 +4234,6 @@ class MediaElement extends p5.Element {
    *
    * Calling `media.play()` will restart playing audio/video from the beginning.
    *
-   * @method stop
    * @chainable
    *
    * @example
@@ -4324,7 +4292,6 @@ class MediaElement extends p5.Element {
    *
    * Calling `media.play()` will resume playing audio/video from the moment it paused.
    *
-   * @method pause
    * @chainable
    *
    * @example
@@ -4382,7 +4349,6 @@ class MediaElement extends p5.Element {
   /**
    * Plays the audio/video repeatedly in a loop.
    *
-   * @method loop
    * @chainable
    *
    * @example
@@ -4442,7 +4408,6 @@ class MediaElement extends p5.Element {
    *
    * The media will stop when it finishes playing.
    *
-   * @method noLoop
    * @chainable
    *
    * @example
@@ -4500,7 +4465,6 @@ class MediaElement extends p5.Element {
   /**
    * Sets up logic to check that autoplay succeeded.
    *
-   * @method setupAutoplayFailDetection
    * @private
    */
   _setupAutoplayFailDetection() {
@@ -4526,7 +4490,6 @@ class MediaElement extends p5.Element {
    * media will automatically play. If `false` is passed, as in
    * `media.autoPlay(false)`, it won't play automatically.
    *
-   * @method autoplay
    * @param {Boolean} [shouldAutoplay] whether the element should autoplay.
    * @chainable
    *
@@ -4612,7 +4575,6 @@ class MediaElement extends p5.Element {
    * from 0 (off) to 1 (maximum). For example, calling `media.volume(0.5)`
    * sets the volume to half of its maximum.
    *
-   * @method volume
    * @return {Number} current volume.
    *
    * @example
@@ -4683,7 +4645,6 @@ class MediaElement extends p5.Element {
    * Note: Not all browsers support backward playback. Even if they do,
    * playback might not be smooth.
    *
-   * @method speed
    * @return {Number} current playback speed.
    *
    * @example
@@ -4727,9 +4688,7 @@ class MediaElement extends p5.Element {
    * }
    * </code>
    */
-
   /**
-   * @method speed
    * @param {Number} speed  speed multiplier for playback.
    * @chainable
    */
@@ -4756,7 +4715,6 @@ class MediaElement extends p5.Element {
    *
    * Note: Time resets to 0 when looping media restarts.
    *
-   * @method time
    * @return {Number} current time (in seconds).
    *
    * @example
@@ -4834,7 +4792,6 @@ class MediaElement extends p5.Element {
    * </div>
    */
   /**
-   * @method time
    * @param {Number} time time to jump to (in seconds).
    * @chainable
    */
@@ -4850,7 +4807,6 @@ class MediaElement extends p5.Element {
   /**
    * Returns the audio/video's duration in seconds.
    *
-   * @method duration
    * @return {Number} duration (in seconds).
    *
    * @example
@@ -4981,7 +4937,6 @@ class MediaElement extends p5.Element {
    * helper method for web GL mode to figure out if the element
    * has been modified and might need to be re-uploaded to texture
    * memory between frames.
-   * @method isModified
    * @private
    * @return {boolean} a boolean indicating whether or not the
    * image has been updated or modified since last texture upload.
@@ -4995,8 +4950,7 @@ class MediaElement extends p5.Element {
    * set this value to false after uploading the texture; or might set
    * it to true if metadata has become available but there is no actual
    * texture data available yet..
-   * @method setModified
-   * @param {boolean} val sets whether or not the element has been
+   * @param {Boolean} val sets whether or not the element has been
    * modified.
    * @private
    */
@@ -5010,7 +4964,6 @@ class MediaElement extends p5.Element {
    *
    * Note: The function won't be called if the media is looping.
    *
-   * @method  onended
    * @param  {Function} callback function to call when playback ends.
    *                             The `p5.MediaElement` is passed as
    *                             the argument.
@@ -5086,7 +5039,6 @@ class MediaElement extends p5.Element {
    *
    * Note: This method is meant to be used with the p5.sound.js addon library.
    *
-   * @method  connect
    * @param  {AudioNode|Object} audioNode AudioNode from the Web Audio API,
    * or an object from the p5.sound library
    */
@@ -5133,7 +5085,6 @@ class MediaElement extends p5.Element {
    * This is useful if you want to re-route the output through audio effects,
    * for example.
    *
-   * @method  disconnect
    */
   disconnect() {
     if (this.audioSourceNode) {
@@ -5151,8 +5102,6 @@ class MediaElement extends p5.Element {
    * controls.
    *
    * Note: The controls vary between web browsers.
-   *
-   * @method  showControls
    *
    * @example
    * <div>
@@ -5190,8 +5139,6 @@ class MediaElement extends p5.Element {
    * Hide the default
    * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement" target="_blank">HTMLMediaElement</a>
    * controls.
-   *
-   * @method hideControls
    *
    * @example
    * <div>
@@ -5258,7 +5205,6 @@ class MediaElement extends p5.Element {
  * Calling `media.addCue()` returns an ID as a string. This is useful for
  * removing the cue later.
  *
- * @method  addCue
  * @param {Number}   time     cue time to run the callback function.
  * @param {Function} callback function to call at the cue time.
  * @param {Object} [value]    object to pass as the argument to
@@ -5310,7 +5256,6 @@ class MediaElement extends p5.Element {
   /**
  * Removes a callback based on its ID.
  *
- * @method removeCue
  * @param  {Number} id ID of the cue, created by `media.addCue()`.
  *
  * @example
@@ -5380,8 +5325,6 @@ class MediaElement extends p5.Element {
 
   /**
  * Removes all functions scheduled with `media.addCue()`.
- *
- * @method  clearCues
  *
  * @example
  * <div>
@@ -5457,9 +5400,38 @@ class MediaElement extends p5.Element {
 
     this._prevTime = playbackTime;
   }
-}
+};
 
-p5.MediaElement = MediaElement;
+/**
+ * Path to the media element's source as a string.
+ *
+ * @for p5.MediaElement
+ * @property src
+ * @return {String} src
+ * @example
+ * <div>
+ * <code>
+ * let beat;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Create a p5.MediaElement using createAudio().
+ *   beat = createAudio('assets/beat.mp3');
+ *
+ *   describe('The text "https://p5js.org/reference/assets/beat.mp3" written in black on a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   textWrap(CHAR);
+ *   text(beat.src, 10, 10, 80, 80);
+ * }
+ * </code>
+ * </div>
+ */
+
 
 /**
  * A class to describe a file.
@@ -5470,7 +5442,6 @@ p5.MediaElement = MediaElement;
  * <a href="#/p5/createFileInput">createFileInput</a>.
  *
  * @class p5.File
- * @constructor
  * @param {File} file wrapped file.
  *
  * @example
@@ -5550,50 +5521,8 @@ p5.MediaElement = MediaElement;
  * </code>
  * </div>
  */
-class File {
+p5.File = class File {
   constructor(file, pInst) {
-    /**
-     * Underlying
-     * <a href="https://developer.mozilla.org/en-US/docs/Web/API/File" target="_blank">File</a>
-     * object. All `File` properties and methods are accessible.
-     *
-     * @property file
-     *
-     * @example
-     * <div>
-     * <code>
-     * // Use the file input to load a
-     * // file and display its info.
-     *
-     * function setup() {
-     *   createCanvas(100, 100);
-     *
-     *   background(200);
-     *
-     *   // Create a file input and place it beneath the canvas.
-     *   // Call displayInfo() when the file loads.
-     *   let input = createFileInput(displayInfo);
-     *   input.position(0, 100);
-     *
-     *   describe('A gray square with a file input beneath it. If the user loads a file, its info is written in black.');
-     * }
-     *
-     * // Use the p5.File once it loads.
-     * function displayInfo(file) {
-     *   background(200);
-     *
-     *   // Display the p5.File's name.
-     *   text(file.name, 10, 10, 80, 40);
-     *
-     *   // Display the p5.File's type and subtype.
-     *   text(`${file.type}/${file.subtype}`, 10, 70);
-     *
-     *   // Display the p5.File's size in bytes.
-     *   text(file.size, 10, 90);
-     * }
-     * </code>
-     * </div>
-     */
     this.file = file;
 
     this._pInst = pInst;
@@ -5601,189 +5530,10 @@ class File {
     // Splitting out the file type into two components
     // This makes determining if image or text etc simpler
     const typeList = file.type.split('/');
-    /**
-     * The file
-     * <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types" target="_blank">MIME type</a>
-     * as a string.
-     *
-     * For example, `'image'` and `'text'` are both MIME types.
-     *
-     * @property type
-     *
-     * @example
-     * <div>
-     * <code>
-     * // Use the file input to load a file and display its info.
-     *
-     * function setup() {
-     *   createCanvas(100, 100);
-     *
-     *   background(200);
-     *
-     *   // Create a file input and place it beneath the canvas.
-     *   // Call displayType() when the file loads.
-     *   let input = createFileInput(displayType);
-     *   input.position(0, 100);
-     *
-     *   describe('A gray square with a file input beneath it. If the user loads a file, its type is written in black.');
-     * }
-     *
-     * // Display the p5.File's type once it loads.
-     * function displayType(file) {
-     *   background(200);
-     *
-     *   // Display the p5.File's type.
-     *   text(`This is file's type is: ${file.type}`, 10, 10, 80, 80);
-     * }
-     * </code>
-     * </div>
-     */
     this.type = typeList[0];
-    /**
-     * The file subtype as a string.
-     *
-     * For example, a file with an `'image'`
-     * <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types" target="_blank">MIME type</a>
-     * may have a subtype such as ``png`` or ``jpeg``.
-     *
-     * @property subtype
-     *
-     * @example
-     * <div>
-     * <code>
-     * // Use the file input to load a
-     * // file and display its info.
-     *
-     * function setup() {
-     *   createCanvas(100, 100);
-     *
-     *   background(200);
-     *
-     *   // Create a file input and place it beneath the canvas.
-     *   // Call displaySubtype() when the file loads.
-     *   let input = createFileInput(displaySubtype);
-     *   input.position(0, 100);
-     *
-     *   describe('A gray square with a file input beneath it. If the user loads a file, its subtype is written in black.');
-     * }
-     *
-     * // Display the p5.File's type once it loads.
-     * function displaySubtype(file) {
-     *   background(200);
-     *
-     *   // Display the p5.File's subtype.
-     *   text(`This is file's subtype is: ${file.subtype}`, 10, 10, 80, 80);
-     * }
-     * </code>
-     * </div>
-     */
     this.subtype = typeList[1];
-    /**
-     * The file name as a string.
-     *
-     * @property name
-     *
-     * @example
-     * <div>
-     * <code>
-     * // Use the file input to load a
-     * // file and display its info.
-     *
-     * function setup() {
-     *   createCanvas(100, 100);
-     *
-     *   background(200);
-     *
-     *   // Create a file input and place it beneath the canvas.
-     *   // Call displayName() when the file loads.
-     *   let input = createFileInput(displayName);
-     *   input.position(0, 100);
-     *
-     *   describe('A gray square with a file input beneath it. If the user loads a file, its name is written in black.');
-     * }
-     *
-     * // Display the p5.File's name once it loads.
-     * function displayName(file) {
-     *   background(200);
-     *
-     *   // Display the p5.File's name.
-     *   text(`This is file's name is: ${file.name}`, 10, 10, 80, 80);
-     * }
-     * </code>
-     * </div>
-     */
     this.name = file.name;
-    /**
-     * The number of bytes in the file.
-     *
-     * @property size
-     *
-     * @example
-     * <div>
-     * <code>
-     * // Use the file input to load a file and display its info.
-     *
-     * function setup() {
-     *   createCanvas(100, 100);
-     *
-     *   background(200);
-     *
-     *   // Create a file input and place it beneath the canvas.
-     *   // Call displaySize() when the file loads.
-     *   let input = createFileInput(displaySize);
-     *   input.position(0, 100);
-     *
-     *   describe('A gray square with a file input beneath it. If the user loads a file, its size in bytes is written in black.');
-     * }
-     *
-     * // Display the p5.File's size in bytes once it loads.
-     * function displaySize(file) {
-     *   background(200);
-     *
-     *   // Display the p5.File's size.
-     *   text(`This is file has ${file.size} bytes.`, 10, 10, 80, 80);
-     * }
-     * </code>
-     * </div>
-     */
     this.size = file.size;
-
-    /**
-     * A string containing the file's data.
-     *
-     * Data can be either image data, text contents, or a parsed object in the
-     * case of JSON and <a href="#/p5.XML">p5.XML</a> objects.
-     *
-     * @property data
-     *
-     * @example
-     * <div>
-     * <code>
-     * // Use the file input to load a file and display its info.
-     *
-     * function setup() {
-     *   createCanvas(100, 100);
-     *
-     *   background(200);
-     *
-     *   // Create a file input and place it beneath the canvas.
-     *   // Call displayData() when the file loads.
-     *   let input = createFileInput(displayData);
-     *   input.position(0, 100);
-     *
-     *   describe('A gray square with a file input beneath it. If the user loads a file, its data is written in black.');
-     * }
-     *
-     * // Display the p5.File's data once it loads.
-     * function displayData(file) {
-     *   background(200);
-     *
-     *   // Display the p5.File's data, which looks like a random string of characters.
-     *   text(file.data, 10, 10, 80, 80);
-     * }
-     * </code>
-     * </div>
-     */
     this.data = undefined;
   }
 
@@ -5821,9 +5571,236 @@ class File {
       callback(file);
     }
   }
-}
+};
 
+/**
+ * Underlying
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/File" target="_blank">File</a>
+ * object. All `File` properties and methods are accessible.
+ *
+ * @for p5.File
+ * @property file
+ * @example
+ * <div>
+ * <code>
+ * // Use the file input to load a
+ * // file and display its info.
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a file input and place it beneath the canvas.
+ *   // Call displayInfo() when the file loads.
+ *   let input = createFileInput(displayInfo);
+ *   input.position(0, 100);
+ *
+ *   describe('A gray square with a file input beneath it. If the user loads a file, its info is written in black.');
+ * }
+ *
+ * // Use the p5.File once it loads.
+ * function displayInfo(file) {
+ *   background(200);
+ *
+ *   // Display the p5.File's name.
+ *   text(file.name, 10, 10, 80, 40);
+ *
+ *   // Display the p5.File's type and subtype.
+ *   text(`${file.type}/${file.subtype}`, 10, 70);
+ *
+ *   // Display the p5.File's size in bytes.
+ *   text(file.size, 10, 90);
+ * }
+ * </code>
+ * </div>
+ */
 
-p5.File = File;
+/**
+ * The file
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types" target="_blank">MIME type</a>
+ * as a string.
+ *
+ * For example, `'image'` and `'text'` are both MIME types.
+ *
+ * @for p5.File
+ * @property type
+ * @example
+ * <div>
+ * <code>
+ * // Use the file input to load a file and display its info.
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a file input and place it beneath the canvas.
+ *   // Call displayType() when the file loads.
+ *   let input = createFileInput(displayType);
+ *   input.position(0, 100);
+ *
+ *   describe('A gray square with a file input beneath it. If the user loads a file, its type is written in black.');
+ * }
+ *
+ * // Display the p5.File's type once it loads.
+ * function displayType(file) {
+ *   background(200);
+ *
+ *   // Display the p5.File's type.
+ *   text(`This is file's type is: ${file.type}`, 10, 10, 80, 80);
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * The file subtype as a string.
+ *
+ * For example, a file with an `'image'`
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types" target="_blank">MIME type</a>
+ * may have a subtype such as ``png`` or ``jpeg``.
+ *
+ * @property subtype
+ * @for p5.File
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Use the file input to load a
+ * // file and display its info.
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a file input and place it beneath the canvas.
+ *   // Call displaySubtype() when the file loads.
+ *   let input = createFileInput(displaySubtype);
+ *   input.position(0, 100);
+ *
+ *   describe('A gray square with a file input beneath it. If the user loads a file, its subtype is written in black.');
+ * }
+ *
+ * // Display the p5.File's type once it loads.
+ * function displaySubtype(file) {
+ *   background(200);
+ *
+ *   // Display the p5.File's subtype.
+ *   text(`This is file's subtype is: ${file.subtype}`, 10, 10, 80, 80);
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * The file name as a string.
+ *
+ * @property name
+ * @for p5.File
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Use the file input to load a
+ * // file and display its info.
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a file input and place it beneath the canvas.
+ *   // Call displayName() when the file loads.
+ *   let input = createFileInput(displayName);
+ *   input.position(0, 100);
+ *
+ *   describe('A gray square with a file input beneath it. If the user loads a file, its name is written in black.');
+ * }
+ *
+ * // Display the p5.File's name once it loads.
+ * function displayName(file) {
+ *   background(200);
+ *
+ *   // Display the p5.File's name.
+ *   text(`This is file's name is: ${file.name}`, 10, 10, 80, 80);
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * The number of bytes in the file.
+ *
+ * @property size
+ * @for p5.File
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Use the file input to load a file and display its info.
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a file input and place it beneath the canvas.
+ *   // Call displaySize() when the file loads.
+ *   let input = createFileInput(displaySize);
+ *   input.position(0, 100);
+ *
+ *   describe('A gray square with a file input beneath it. If the user loads a file, its size in bytes is written in black.');
+ * }
+ *
+ * // Display the p5.File's size in bytes once it loads.
+ * function displaySize(file) {
+ *   background(200);
+ *
+ *   // Display the p5.File's size.
+ *   text(`This is file has ${file.size} bytes.`, 10, 10, 80, 80);
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * A string containing the file's data.
+ *
+ * Data can be either image data, text contents, or a parsed object in the
+ * case of JSON and <a href="#/p5.XML">p5.XML</a> objects.
+ *
+ * @property data
+ * @for p5.File
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Use the file input to load a file and display its info.
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a file input and place it beneath the canvas.
+ *   // Call displayData() when the file loads.
+ *   let input = createFileInput(displayData);
+ *   input.position(0, 100);
+ *
+ *   describe('A gray square with a file input beneath it. If the user loads a file, its data is written in black.');
+ * }
+ *
+ * // Display the p5.File's data once it loads.
+ * function displayData(file) {
+ *   background(200);
+ *
+ *   // Display the p5.File's data, which looks like a random string of characters.
+ *   text(file.data, 10, 10, 80, 80);
+ * }
+ * </code>
+ * </div>
+ */
 
 export default p5;

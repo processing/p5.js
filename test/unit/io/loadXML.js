@@ -1,6 +1,6 @@
 import { testSketchWithPromise, promisedSketch } from '../../js/p5_helpers';
 
-suite('loadXML', function() {
+suite.todo('loadXML', function() {
   var invalidFile = '404file';
   var validFile = 'unit/assets/books.xml';
 

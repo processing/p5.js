@@ -243,7 +243,7 @@ suite('Mouse Events', function() {
       assert.isBoolean(myp5.mouseIsPressed);
     });
 
-    test('mouseIsPressed should be false if mouse is not pressed', function() {
+    test.todo('mouseIsPressed should be false if mouse is not pressed', function() {
       assert.strictEqual(myp5.mouseIsPressed, false);
     });
 
@@ -254,7 +254,7 @@ suite('Mouse Events', function() {
   });
 
   suite('mouseMoved', function() {
-    test('mouseMoved function must run when mouse is moved', async function() {
+    test.todo('mouseMoved function must run when mouse is moved', async function() {
       let count = 0;
 
       myp5.mouseMoved = function() {

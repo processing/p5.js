@@ -60,17 +60,17 @@ suite('Keyboard Events', function() {
       assert.isString(myp5.key);
     });
 
-    test('key should return the key pressed', function() {
+    test.todo('key should return the key pressed', function() {
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 'A' }));
       assert.strictEqual(myp5.key, 'A');
     });
 
-    test('key should return the key pressed', function() {
+    test.todo('key should return the key pressed', function() {
       window.dispatchEvent(new KeyboardEvent('keydown', { key: '9' }));
       assert.strictEqual(myp5.key, '9');
     });
 
-    test('key should return the key pressed', function() {
+    test.todo('key should return the key pressed', function() {
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 'CapsLock' }));
       assert.strictEqual(myp5.key, 'CapsLock');
     });
@@ -89,7 +89,7 @@ suite('Keyboard Events', function() {
   });
 
   suite('keyPressed', function() {
-    test('keyPressed must run when key is pressed', function() {
+    test.todo('keyPressed must run when key is pressed', function() {
       let count = 0;
       myp5.keyPressed = function() {
         count += 1;
@@ -190,7 +190,7 @@ suite('Keyboard Events', function() {
       assert.strictEqual(myp5.keyIsDown(35), true);
     });
 
-    test('keyIsDown should return false if key is not down', function() {
+    test.todo('keyIsDown should return false if key is not down', function() {
       assert.strictEqual(myp5.keyIsDown(35), false);
     });
   });

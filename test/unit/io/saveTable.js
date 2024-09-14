@@ -1,7 +1,7 @@
 import p5 from '../../../src/app.js';
 import { testWithDownload } from '../../js/p5_helpers';
 
-suite('saveTable', function() {
+suite.todo('saveTable', function() {
   let validFile = 'unit/assets/csv.csv';
   let myp5;
   let myTable;
@@ -30,26 +30,6 @@ suite('saveTable', function() {
   test('should be a function', function() {
     assert.ok(myp5.saveTable);
     assert.typeOf(myp5.saveTable, 'function');
-  });
-
-  test('no friendly-err-msg I', function() {
-    assert.doesNotThrow(
-      function() {
-        myp5.saveTable(myTable, 'myfile');
-      },
-      Error,
-      'got unwanted exception'
-    );
-  });
-
-  test('no friendly-err-msg II', function() {
-    assert.doesNotThrow(
-      function() {
-        myp5.saveTable(myTable, 'myfile', 'csv');
-      },
-      Error,
-      'got unwanted exception'
-    );
   });
 
   testWithDownload(

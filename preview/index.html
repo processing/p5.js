@@ -15,24 +15,23 @@
 </head>
 <body>
 <script type="module">
-import p5 from './src/app.js';
-import calculation from './src/math/calculation.js';
+import p5 from '../src/app.js';
+// import calculation from './src/math/calculation.js';
 
-p5.registerAddon(calculation);
+// p5.registerAddon(calculation);
 
 const sketch = function(p){
   p.setup = function(){
     p.createCanvas(200, 200);
-    // console.log(p.ceil(2.1));
-
-    // const c1 = p.color(255);
-    // const c2 = p.color(0);
-    // console.log(p.lerpColor(c1, c2, 0.25).toString());
   };
 
   p.draw = function(){
-    p.background(200);
+    p.background(0, 50, 50);
     p.circle(100, 100, 50);
+
+    p.fill('white');
+    p.textSize(30);
+    p.text('hello', 10, 30);
   };
 };
 

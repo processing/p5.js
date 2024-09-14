@@ -48,9 +48,9 @@ import './p5.Texture';
  * @method loadShader
  * @param {String} vertFilename path of the vertex shader to be loaded.
  * @param {String} fragFilename path of the fragment shader to be loaded.
- * @param {function} [successCallback] function to call once the shader is loaded. Can be passed the
+ * @param {Function} [successCallback] function to call once the shader is loaded. Can be passed the
  *                                     <a href="#/p5.Shader">p5.Shader</a> object.
- * @param {function} [failureCallback] function to call if the shader fails to load. Can be passed an
+ * @param {Function} [failureCallback] function to call if the shader fails to load. Can be passed an
  *                                     `Error` event object.
  * @return {p5.Shader} new shader created from the vertex and fragment shader files.
  *
@@ -1142,7 +1142,7 @@ p5.prototype.texture = function (tex) {
  * Note: `textureMode()` can only be used in WebGL mode.
  *
  * @method  textureMode
- * @param {Constant} mode either IMAGE or NORMAL.
+ * @param {(IMAGE|NORMAL)} mode either IMAGE or NORMAL.
  *
  * @example
  * <div>
@@ -1241,18 +1241,18 @@ p5.prototype.textureMode = function (mode) {
  * to the pixel at coordinates `(u, v)` within an image. For example, the
  * corners of a rectangular image are mapped to the corners of a rectangle by default:
  *
- * <code>
+ * ```js
  * // Apply the image as a texture.
  * texture(img);
  *
  * // Draw the rectangle.
  * rect(0, 0, 30, 50);
- * </code>
+ * ```
  *
  * If the image in the code snippet above has dimensions of 300 x 500 pixels,
  * the same result could be achieved as follows:
  *
- * <code>
+ * ```js
  * // Apply the image as a texture.
  * texture(img);
  *
@@ -1276,14 +1276,14 @@ p5.prototype.textureMode = function (mode) {
  * vertex(0, 50, 0, 0, 500);
  *
  * endShape();
- * </code>
+ * ```
  *
  * `textureWrap()` controls how textures behave when their uv's go beyond the
  * texture. Doing so can produce interesting visual effects such as tiling.
  * For example, the custom shape above could have u-coordinates are greater
  * than the image’s width:
  *
- * <code>
+ * ```js
  * // Apply the image as a texture.
  * texture(img);
  *
@@ -1301,7 +1301,7 @@ p5.prototype.textureMode = function (mode) {
  *
  * vertex(0, 50, 0, 0, 500);
  * endShape();
- * </code>
+ * ```
  *
  * The u-coordinates of 600 are greater than the texture image’s width of 300.
  * This creates interesting possibilities.
@@ -1323,8 +1323,8 @@ p5.prototype.textureMode = function (mode) {
  * Note: `textureWrap()` can only be used in WebGL mode.
  *
  * @method textureWrap
- * @param {Constant} wrapX either CLAMP, REPEAT, or MIRROR
- * @param {Constant} [wrapY] either CLAMP, REPEAT, or MIRROR
+ * @param {(CLAMP|REPEAT|MIRROR)} wrapX either CLAMP, REPEAT, or MIRROR
+ * @param {(CLAMP|REPEAT|MIRROR)} [wrapY=wrapX] either CLAMP, REPEAT, or MIRROR
  *
  * @example
  * <div>
@@ -2334,9 +2334,9 @@ p5.prototype.metalness = function (metallic) {
  * @param  {Number[]} color The currently set color, with values in 0-1 range
  * @param  {Boolean} [hasTransparency] Whether the shape being drawn has other
  * transparency internally, e.g. via vertex colors
- * @return {Number[]]}  Normalized numbers array
+ * @return {Number[]}  Normalized numbers array
  */
-p5.RendererGL.prototype._applyColorBlend = function(colors, hasTransparency) {
+p5.RendererGL.prototype._applyColorBlend = function (colors, hasTransparency) {
   const gl = this.GL;
 
   const isTexture = this.drawMode === constants.TEXTURE;

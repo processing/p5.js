@@ -126,7 +126,7 @@ p5.prototype._normalizeArcAngles = (
  * @param  {Number} h      height of the arc's ellipse by default.
  * @param  {Number} start  angle to start the arc, specified in radians.
  * @param  {Number} stop   angle to stop the arc, specified in radians.
- * @param  {Constant} [mode] optional parameter to determine the way of drawing
+ * @param  {(CHORD|PIE|OPEN)} [mode] optional parameter to determine the way of drawing
  *                         the arc. either CHORD, PIE, or OPEN.
  * @param  {Integer} [detail] optional parameter for WebGL mode only. This is to
  *                         specify the number of vertices that makes up the
@@ -490,12 +490,11 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
 /**
  * Draws a circle.
  *
- * A circle is a round shape defined by the `x`, `y`, and `d`
- * parameters. `x` and `y` set the location of its center. `d` sets its
- * width and height (diameter). Every point on the circle's edge is the
- * same distance, `d`, from its center. See
- * <a href="#/p5/ellipseMode">ellipseMode()</a> for other ways to set
- * its position.
+ * A circle is a round shape defined by the `x`, `y`, and `d` parameters.
+ * `x` and `y` set the location of its center. `d` sets its width and height (diameter).
+ * Every point on the circle's edge is the same distance, `0.5 * d`, from its center.
+ * `0.5 * d` (half the diameter) is the circle's radius.
+ * See <a href="#/p5/ellipseMode">ellipseMode()</a> for other ways to set its position.
  *
  * @method circle
  * @param  {Number} x  x-coordinate of the center of the circle.
@@ -737,7 +736,7 @@ p5.prototype.line = function(...args) {
  * can't be filled, so the <a href="#/p5/fill">fill()</a> function won't
  * affect the point's color.
  *
- * The version of `point()` with one parameter allows the point's location to
+ * The version of `point()` with two parameters allows the point's location to
  * be set with its x- and y-coordinates, as in `point(10, 20)`.
  *
  * The version of `point()` with three parameters allows the point to be drawn
@@ -935,7 +934,7 @@ p5.prototype.point = function(...args) {
  *
  * The thirteenth and fourteenth parameters are optional. In WebGL mode, they
  * set the number of segments used to draw the quadrilateral in the x- and
- * y-directions. They're both 25 by default.
+ * y-directions. They're both 2 by default.
  *
  * @method quad
  * @param {Number} x1 the x-coordinate of the first point.

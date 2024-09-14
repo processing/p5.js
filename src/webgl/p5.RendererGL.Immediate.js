@@ -321,7 +321,7 @@ p5.RendererGL.prototype._processVertices = function(mode) {
  * Called from _processVertices(). This function calculates the stroke vertices for custom shapes and
  * tesselates shapes when applicable.
  * @private
- * @returns  {Array[Number]} indices for custom shape vertices indicating edges.
+ * @returns  {Number[]} indices for custom shape vertices indicating edges.
  */
 p5.RendererGL.prototype._calculateEdges = function(
   shapeMode,
