@@ -2475,7 +2475,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       for (
         let j = 0;
         j < contour.length;
-        j += p5.RendererGL.prototype.tessyVertexSize
+        j += this.tessyVertexSize
       ) {
         if (contour[j + 2] !== z) {
           allSameZ = false;
@@ -2498,11 +2498,11 @@ p5.RendererGL = class RendererGL extends Renderer {
       for (
         let j = 0;
         j < contour.length;
-        j += p5.RendererGL.prototype.tessyVertexSize
+        j += this.tessyVertexSize
       ) {
         const coords = contour.slice(
           j,
-          j + p5.RendererGL.prototype.tessyVertexSize
+          j + this.tessyVertexSize
         );
         this._tessy.gluTessVertex(coords, coords);
       }
