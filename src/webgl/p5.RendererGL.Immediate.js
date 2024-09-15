@@ -312,6 +312,7 @@ p5.RendererGL.prototype.endShape = function(
   this.immediateMode._bezierVertex.length = 0;
   this.immediateMode._quadraticVertex.length = 0;
   this.immediateMode._curveVertex.length = 0;
+
   return this;
 };
 
@@ -326,7 +327,6 @@ p5.RendererGL.prototype.endShape = function(
  */
 p5.RendererGL.prototype._processVertices = function(mode) {
   if (this.immediateMode.geometry.vertices.length === 0) return;
-
   const calculateStroke = this._doStroke;
   const shouldClose = mode === constants.CLOSE;
   if (calculateStroke) {
@@ -479,20 +479,47 @@ p5.RendererGL.prototype._tesselateShape = function() {
       this.immediateMode.geometry.vertexNormals[i].y,
       this.immediateMode.geometry.vertexNormals[i].z
     );
+    if (this._useUserAttributes){
+      const userAttributesArray = Object.entries(this.userAttributes);
+      for (let [name, data] of userAttributesArray){
+        const size = data.length ? data.length : 1;
+        for (let j = 0; j < size; j++){
+          contours[contours.length-1].push(
+            this.immediateMode.geometry[name][i * size + j]
+        );}
+      }
+    }
   }
   const polyTriangles = this._triangulate(contours);
   const originalVertices = this.immediateMode.geometry.vertices;
   this.immediateMode.geometry.vertices = [];
   this.immediateMode.geometry.vertexNormals = [];
   this.immediateMode.geometry.uvs = [];
+  if (this._useUserAttributes){
+    const userAttributeNames = Object.keys(this.userAttributes);
+    for (let name of userAttributeNames){
+      delete this.immediateMode.geometry[name];
+    }
+  }
   const colors = [];
   for (
     let j = 0, polyTriLength = polyTriangles.length;
     j < polyTriLength;
-    j = j + p5.RendererGL.prototype.tessyVertexSize
+    j = j + this.tessyVertexSize
   ) {
     colors.push(...polyTriangles.slice(j + 5, j + 9));
     this.normal(...polyTriangles.slice(j + 9, j + 12));
+    if(this._useUserAttributes){
+      let offset = 12;
+      const userAttributesArray = Object.entries(this.userAttributes);
+      for (let [name, data] of userAttributesArray){
+        const size = data.length ? data.length : 1;
+        const start = j + offset;
+        const end = start + size;
+        this.setAttribute(name, polyTriangles.slice(start, end));
+        offset = end;
+      }
+    }
     this.vertex(...polyTriangles.slice(j, j + 5));
   }
   if (this.geometryBuilder) {
