@@ -121,6 +121,19 @@ p5.RendererGL.prototype.vertex = function(x, y) {
   const vert = new p5.Vector(x, y, z);
   this.immediateMode.geometry.vertices.push(vert);
   this.immediateMode.geometry.vertexNormals.push(this._currentNormal);
+  if (this._useUserAttributes){ 
+    const geom = this.immediateMode.geometry;
+    const verts = geom.vertices;
+    Object.entries(this.userAttributes).forEach(([name, data]) => {
+      const size = data.length ? data.length : 1;
+      if (verts.length > 0 && !geom.hasOwnProperty(name)) {
+        for (let i = 0; i < verts.length - 1; i++) {
+          this.immediateMode.geometry.setAttribute(name, Array(size).fill(0));
+        }
+      }
+      this.immediateMode.geometry.setAttribute(name, data);
+    });
+  }
   const vertexColor = this.curFillColor || [0.5, 0.5, 0.5, 1.0];
   this.immediateMode.geometry.vertexColors.push(
     vertexColor[0],
