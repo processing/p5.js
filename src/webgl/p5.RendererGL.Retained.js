@@ -62,6 +62,7 @@ p5.RendererGL.prototype._freeBuffers = function(gId) {
   // free all the buffers
   freeBuffers(this.retainedMode.buffers.stroke);
   freeBuffers(this.retainedMode.buffers.fill);
+  freeBuffers(this.retainedMode.buffers.user);
 };
 
 /**
