@@ -59,6 +59,17 @@ class GeometryBuilder {
       ...this.transformNormals(input.vertexNormals)
     );
     this.geometry.uvs.push(...input.uvs);
+    const userAttributes = input.userAttributes;
+    if (userAttributes.length > 0){
+      for (const attr of userAttributes){
+        const name = attr.name;
+        const size = attr.size;
+        const data = input[name];
+        for (let i = 0; i < data.length; i+=size){
+          this.geometry.setAttribute(name, data.slice(i, i + size));
+        }
+      }
+    }
 
     if (this.renderer._doFill) {
       this.geometry.faces.push(
