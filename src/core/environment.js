@@ -1255,7 +1255,7 @@ p5.prototype.worldToScreen = function(worldPosition) {
     return new p5.Vector(screenCoordinates.x, screenCoordinates.y);
   } else {
     // Handle WebGL context (3D)
-    const cameraCoordinates = renderer.uMVMatrix.multiplyPoint(worldPosition);
+    const cameraCoordinates = renderer.calculateCombinedMatrix().multiplyPoint(worldPosition);
 
     // Ensure that we avoid undefined or bad transformations
     if (!isFinite(cameraCoordinates.x) ||
