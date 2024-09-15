@@ -186,6 +186,29 @@ p5.RendererGL.prototype.vertex = function(x, y) {
   return this;
 };
 
+p5.RendererGL.prototype.setAttribute = function(attributeName, data){
+  // if attributeName is in one of default, throw some warning
+  if(!this._useUserAttributes){
+    this._useUserAttributes = true;
+    this.userAttributes = {};
+  }
+  const size = data.length ? data.length : 1;
+  if (!this.userAttributes.hasOwnProperty(attributeName)){
+    this.tessyVertexSize += size;
+  }
+  this.userAttributes[attributeName] = data;
+  const buff = attributeName.concat('Buffer');
+  const bufferExists = this.immediateMode
+    .buffers
+    .user
+    .some(buffer => buffer.dst === buff);
+  if(!bufferExists){
+    this.immediateMode.buffers.user.push(
+      new p5.RenderBuffer(size, attributeName, buff, attributeName, this)
+    );
+  }
+};
+
 /**
  * Sets the normal to use for subsequent vertices.
  * @private
