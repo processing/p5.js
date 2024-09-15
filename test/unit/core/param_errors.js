@@ -45,7 +45,7 @@ suite('Validate Params', function () {
       ];
 
       invalidInputs.forEach(({ input }) => {
-        const result = mockP5Prototype._validateParams('saturation', input);
+        const result = mockP5Prototype._validateParams('p5.saturation', input);
         assert.instanceOf(result.error, ValidationError);
       });
     });
@@ -62,7 +62,7 @@ suite('Validate Params', function () {
 
     testCases.forEach(({ name, input, expectSuccess }) => {
       test(`blendMode(): ${name}`, () => {
-        const result = mockP5Prototype._validateParams('blendMode', [input]);
+        const result = mockP5Prototype._validateParams('p5.blendMode', [input]);
         assert.validationResult(result, expectSuccess);
       });
     });
@@ -81,7 +81,7 @@ suite('Validate Params', function () {
 
     testCases.forEach(({ name, input, expectSuccess }) => {
       test(`arc(): ${name}`, () => {
-        const result = mockP5Prototype._validateParams('arc', input);
+        const result = mockP5Prototype._validateParams('p5.arc', input);
         assert.validationResult(result, expectSuccess);
       });
     });
@@ -95,7 +95,7 @@ suite('Validate Params', function () {
 
     testCases.forEach(({ name, input, expectSuccess }) => {
       test(`rect(): ${name}`, () => {
-        const result = mockP5Prototype._validateParams('rect', input);
+        const result = mockP5Prototype._validateParams('p5.rect', input);
         assert.validationResult(result, expectSuccess);
       });
     });
@@ -103,7 +103,7 @@ suite('Validate Params', function () {
 
   suite('validateParams: class, multi-types + optional numbers', function () {
     test('ambientLight(): no firendly-err-msg', function () {
-      const result = mockP5Prototype._validateParams('ambientLight', [new mockP5.Color()]);
+      const result = mockP5Prototype._validateParams('p5.ambientLight', [new mockP5.Color()]);
       assert.isTrue(result.success);
     })
   })
@@ -121,7 +121,7 @@ suite('Validate Params', function () {
 
     testCases.forEach(({ name, input, fn }) => {
       test(`${fn}(): ${name}`, () => {
-        const result = mockP5Prototype._validateParams(fn, input);
+        const result = mockP5Prototype._validateParams(`p5.${fn}`, input);
         console.log(result);
         assert.validationResult(result, false);
       });
@@ -140,7 +140,7 @@ suite('Validate Params', function () {
 
     testCases.forEach(({ fn, name, input }) => {
       test(`${fn}(): ${name}`, () => {
-        const result = mockP5Prototype._validateParams(fn, input);
+        const result = mockP5Prototype._validateParams(`p5.${fn}`, input);
         assert.validationResult(result, false);
       });
     });
@@ -159,7 +159,7 @@ suite('Validate Params', function () {
 
     testCases.forEach(({ name, input, expectSuccess }) => {
       test(`color(): ${name}`, () => {
-        const result = mockP5Prototype._validateParams('color', input);
+        const result = mockP5Prototype._validateParams('p5.color', input);
         assert.validationResult(result, expectSuccess);
       });
     });
@@ -175,8 +175,25 @@ suite('Validate Params', function () {
 
     testCases.forEach(({ name, input, expectSuccess }) => {
       test(`set(): ${name}`, function () {
-        const result = mockP5Prototype._validateParams('set', input);
+        const result = mockP5Prototype._validateParams('p5.set', input);
         assert.validationResult(result, expectSuccess);
+      });
+    });
+  });
+
+  suite('validateParams: web API objects', function () {
+    const audioContext = new AudioContext();
+    const gainNode = audioContext.createGain();
+
+    const testCases = [
+      { fn: 'mouseMoved', name: 'no friendly-err-msg', input: [new MouseEvent('click')] },
+      { fn: 'p5.MediaElement.connect', name: 'no friendly-err-msg', input: [gainNode] }
+    ];
+
+    testCases.forEach(({ fn, name, input }) => {
+      test(`${fn}(): ${name}`, function () {
+        const result = mockP5Prototype._validateParams(fn, input);
+        assert.validationResult(result, true);
       });
     });
   });

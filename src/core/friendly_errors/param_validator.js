@@ -56,12 +56,10 @@ function validateParams(p5, fn) {
     'Function': z.function(),
     'Integer': z.number().int(),
     'Number': z.number(),
-    'Number[]': z.array(z.number()),
     'Object': z.object({}),
     // Allows string for any regex
     'RegExp': z.string(),
     'String': z.string(),
-    'String[]': z.array(z.string())
   };
 
   const webAPIObjects = [
@@ -130,34 +128,39 @@ function validateParams(p5, fn) {
 
     // Returns a schema for a single type, i.e. z.boolean() for `boolean`.
     const generateTypeSchema = type => {
+      const isArray = type.endsWith('[]');
+      const baseType = isArray ? type.slice(0, -2) : type;
+
+      let typeSchema;
+
       // Type only contains uppercase letters and underscores -> type is a
       // constant. Note that because we're ultimately interested in the value of
       // the constant, mapping constants to their values via `constantsMap` is
       // necessary.
-      if (/^[A-Z_]+$/.test(type)) {
-        return z.literal(constantsMap[type]);
+      if (/^[A-Z_]+$/.test(baseType)) {
+        typeSchema = z.literal(constantsMap[baseType]);
       }
       // All p5 objects start with `p5` in the documentation, i.e. `p5.Camera`.
-      else if (type.startsWith('p5')) {
-        console.log('type', type);
-        const className = type.substring(type.indexOf('.') + 1);
+      else if (baseType.startsWith('p5')) {
+        console.log('type', baseType);
+        const className = baseType.substring(baseType.indexOf('.') + 1);
         console.log('className', p5Constructors[className]);
-        return z.instanceof(p5Constructors[className]);
+        typeSchema = z.instanceof(p5Constructors[className]);
       }
       // For primitive types and web API objects.
-      else if (schemaMap[type]) {
-        return schemaMap[type];
+      else if (schemaMap[baseType]) {
+        typeSchema = schemaMap[baseType];
       } else {
-        // TODO: Make this throw an error once more types are supported.
-        console.log(`Warning: Zod schema not found for type '${type}'. Skip mapping`);
-        return undefined;
+        throw new Error(`Unsupported type '${type}' in parameter validation. Please report this issue.`);
       }
+
+      return isArray ? z.array(typeSchema) : typeSchema;
     };
 
     // Generate a schema for a single parameter. In the case where a parameter can
     // be of multiple types, `generateTypeSchema` is called for each type.
     const generateParamSchema = param => {
-      const optional = param.endsWith('?');
+      const isOptional = param.endsWith('?');
       param = param.replace(/\?$/, '');
 
       let schema;
@@ -180,7 +183,7 @@ function validateParams(p5, fn) {
         schema = generateTypeSchema(param);
       }
 
-      return optional ? schema.optional() : schema;
+      return isOptional ? schema.optional() : schema;
     };
 
     // Note that in Zod, `optional()` only checks for undefined, not the absence
