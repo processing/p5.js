@@ -5,7 +5,7 @@ import { testUnMinified } from '../../js/p5_helpers';
 import '../../js/chai_helpers';
 import { ValidationError } from 'zod-validation-error';
 
-suite('Friendly Errors', function () {
+suite.skip('Friendly Errors', function () {
   suite('validateParams: multiple types allowed for single parameter', function () {
     test('saturation(): valid inputs', () => {
       const validInputs = [

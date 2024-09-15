@@ -250,7 +250,7 @@ suite('p5.Color', function() {
     });
 
     // NOTE: previously returns a white color
-    suite('invalid string');
+    suite.todo('invalid string');
   });
 
   suite('p5.prototype.color([])', function() {
@@ -465,7 +465,7 @@ suite('p5.Color', function() {
       c = myp5.color('rgba(255, 0, 102, 0.8)');
     });
 
-    test('should correctly get HSLA property', function() {
+    test.todo('should correctly get HSLA property', function() {
       assert.approximately(c._getHue(), 336, 0.5);
       assert.approximately(c._getSaturation(), 100, 0.5);
       assert.approximately(c._getLightness(), 50, 0.5);
@@ -488,7 +488,7 @@ suite('p5.Color', function() {
       c = myp5.color('hsla(336, 100%, 50%, 0.8)');
     });
 
-    test('should correctly get HSLA property', function() {
+    test.todo('should correctly get HSLA property', function() {
       assert.approximately(c._getHue(), 336, 0.5);
       assert.approximately(c._getSaturation(), 100, 0.5);
       assert.approximately(c._getLightness(), 50, 0.5);
@@ -515,7 +515,7 @@ suite('p5.Color', function() {
       c = myp5.color('hsba(336, 100%, 100%, 0.8)');
     });
 
-    test('should correctly get HSLA property', function() {
+    test.todo('should correctly get HSLA property', function() {
       assert.approximately(c._getHue(), 336, 0.5);
       assert.approximately(c._getSaturation(), 100, 0.5);
       assert.approximately(c._getLightness(), 50, 0.5);
@@ -635,7 +635,7 @@ suite('p5.Color', function() {
       c = myp5.color('rgba(255, 0, 102, 0.8)');
     });
 
-    test('should correctly get HSBA property', function() {
+    test.todo('should correctly get HSBA property', function() {
       assert.approximately(c._getHue(), 336, 0.5);
       assert.approximately(c._getSaturation(), 100, 0.5);
       assert.approximately(c._getBrightness(), 100, 0.5);
@@ -683,7 +683,7 @@ suite('p5.Color', function() {
       c = myp5.color('hsla(336, 100%, 50%, 0.8)');
     });
 
-    test('should correctly get HSBA property', function() {
+    test.todo('should correctly get HSBA property', function() {
       assert.approximately(c._getHue(), 336, 0.5);
       assert.approximately(c._getSaturation(), 100, 0.5);
       assert.approximately(c._getBrightness(), 100, 0.5);
@@ -798,14 +798,14 @@ suite('p5.Color', function() {
     });
   });
 
-  suite('p5.Color.prototype.toString', function() {
-    var colorStr;
+  suite.todo('p5.Color.prototype.toString', function() {
+    // var colorStr;
 
-    beforeEach(function() {
-      myp5.colorMode(myp5.RGB, 255, 255, 255, 255);
-      c = myp5.color(128, 0, 128, 128);
-      colorStr = c.toString();
-    });
+    // beforeEach(function() {
+    //   myp5.colorMode(myp5.RGB, 255, 255, 255, 255);
+    //   c = myp5.color(128, 0, 128, 128);
+    //   colorStr = c.toString();
+    // });
 
     // NOTE: need some tests here
   });

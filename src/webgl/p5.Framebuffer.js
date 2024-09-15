@@ -624,7 +624,7 @@ p5.Framebuffer = class Framebuffer {
     }
 
     if (this.useDepth) {
-      this.depth = new FramebufferTexture(this, 'depthTexture');
+      this.depth = new p5.FramebufferTexture(this, 'depthTexture');
       const depthFilter = gl.NEAREST;
       this.depthP5Texture = new p5.Texture(
         this.target._renderer,
@@ -637,7 +637,7 @@ p5.Framebuffer = class Framebuffer {
       this.target._renderer.textures.set(this.depth, this.depthP5Texture);
     }
 
-    this.color = new FramebufferTexture(this, 'colorTexture');
+    this.color = new p5.FramebufferTexture(this, 'colorTexture');
     const filter = this.textureFiltering === constants.LINEAR
       ? gl.LINEAR
       : gl.NEAREST;
@@ -945,7 +945,7 @@ p5.Framebuffer = class Framebuffer {
    * </div>
    */
   createCamera() {
-    const cam = new FramebufferCamera(this);
+    const cam = new p5.FramebufferCamera(this);
     cam._computeCameraDefaultSettings();
     cam._setDefaultCamera();
     this.target._renderer._curCamera = cam;

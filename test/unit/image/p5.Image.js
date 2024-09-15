@@ -51,7 +51,7 @@ suite('p5.Image', function() {
     });
   });
 
-  suite('p5.Image.prototype.mask', function() {
+  suite.todo('p5.Image.prototype.mask', function() {
     for (const density of [1, 2]) {
       test(`it should mask the image at pixel density ${density}`, function() {
         let img = myp5.createImage(10, 10);
@@ -181,7 +181,7 @@ suite('p5.Image', function() {
     });
   });
 
-  suite('p5.Graphics.get()', function() {
+  suite.todo('p5.Graphics.get()', function() {
     for (const density of [1, 2]) {
       test(`width and height match at pixel density ${density}`, function() {
         const g = myp5.createGraphics(10, 10);

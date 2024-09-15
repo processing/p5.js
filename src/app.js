@@ -9,7 +9,7 @@ import './core/friendly_errors/fes_core';
 import './core/friendly_errors/sketch_reader';
 import './core/helpers';
 import './core/legacy';
-import './core/preload';
+// import './core/preload';
 import './core/p5.Element';
 import './core/p5.Graphics';
 // import './core/p5.Renderer';
@@ -21,54 +21,37 @@ import './core/shape/2d_primitives';
 import './core/shape/attributes';
 import './core/shape/curves';
 import './core/shape/vertex';
+
 //accessibility
-import './accessibility/outputs';
-import './accessibility/textOutput';
-import './accessibility/gridOutput';
-import './accessibility/color_namer';
+import accessibility from './accessibility';
+accessibility(p5);
+
 // color
-import './color/creating_reading';
-import './color/p5.Color';
-import './color/setting';
+import color from './color';
+color(p5);
 
 // data
-import './data/p5.TypedDict';
-import './data/local_storage.js';
+import data from './data';
+data(p5);
 
 // DOM
 import './dom/dom';
 
-// accessibility
-import './accessibility/describe';
-
 // events
-import './events/acceleration';
-import './events/keyboard';
-import './events/mouse';
-import './events/touch';
+import events from './events';
+events(p5);
 
 // image
-import './image/filters';
-import './image/image';
-import './image/loading_displaying';
-import './image/p5.Image';
-import './image/pixels';
+import image from './image';
+image(p5);
 
 // io
-import './io/files';
-import './io/p5.Table';
-import './io/p5.TableRow';
-import './io/p5.XML';
+import io from './io';
+io(p5);
 
 // math
-// import './math/calculation';
-// import './math/math';
-// import './math/noise';
-// import './math/p5.Vector';
-// import './math/random';
-// import './math/trigonometry';
 import math from './math';
-math(p5, p5.prototype);
+math(p5);
 
 // typography
 import './typography/attributes';
@@ -76,10 +59,8 @@ import './typography/loading_displaying';
 import './typography/p5.Font';
 
 // utilities
-import './utilities/array_functions';
-import './utilities/conversion';
-import './utilities/string_functions';
-import './utilities/time_date';
+import utilities from './utilities';
+utilities(p5);
 
 // webgl
 import './webgl/3d_primitives';

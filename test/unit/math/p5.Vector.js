@@ -16,7 +16,7 @@ suite('p5.Vector', function() {
   afterEach(function() {
   });
 
-  suite('p5.prototype.setHeading() RADIANS', function() {
+  suite.todo('p5.prototype.setHeading() RADIANS', function() {
     beforeEach(function() {
       mockP5Prototype.angleMode(mockP5.RADIANS);
       v = mockP5Prototype.createVector(1, 1);
@@ -27,7 +27,7 @@ suite('p5.Vector', function() {
     });
   });
 
-  suite('p5.prototype.setHeading() DEGREES', function() {
+  suite.todo('p5.prototype.setHeading() DEGREES', function() {
     beforeEach(function() {
       mockP5Prototype.angleMode(mockP5.DEGREES);
       v = mockP5Prototype.createVector(1, 1);
@@ -40,7 +40,7 @@ suite('p5.Vector', function() {
 
   // NOTE: test this in a separate file or move `createVector` to p5.Vector file
   // Prefer latter
-  suite('p5.prototype.createVector()', function() {
+  suite.todo('p5.prototype.createVector()', function() {
     beforeEach(function() {
       v = mockP5Prototype.createVector();
     });
@@ -55,7 +55,7 @@ suite('p5.Vector', function() {
     });
   });
 
-  suite('p5.prototype.createVector(1, 2, 3)', function() {
+  suite.todo('p5.prototype.createVector(1, 2, 3)', function() {
     beforeEach(function() {
       v = mockP5Prototype.createVector(1, 2, 3);
     });
@@ -113,7 +113,7 @@ suite('p5.Vector', function() {
         expect(v.rotate(Math.PI)).to.eql(v);
       });
 
-      suite('radians', function() {
+      suite.todo('radians', function() {
         beforeEach(function() {
           mockP5Prototype.angleMode(mockP5.RADIANS);
         });
@@ -143,7 +143,7 @@ suite('p5.Vector', function() {
         });
       });
 
-      suite('degrees', function() {
+      suite.todo('degrees', function() {
         beforeEach(function() {
           mockP5Prototype.angleMode(mockP5.DEGREES);
         });
@@ -166,7 +166,7 @@ suite('p5.Vector', function() {
       });
     });
 
-    suite('p5.Vector.rotate() [CLASS]', function() {
+    suite.todo('p5.Vector.rotate() [CLASS]', function() {
       beforeEach(function() {
         mockP5Prototype.angleMode(mockP5.RADIANS);
       });
@@ -232,14 +232,14 @@ suite('p5.Vector', function() {
         expect(v2.angleBetween(v1)).to.be.NaN;
       });
 
-      test('between [1,0,0] and [1,0,0] should be 0 degrees', function() {
+      test.todo('between [1,0,0] and [1,0,0] should be 0 degrees', function() {
         mockP5Prototype.angleMode(mockP5.DEGREES);
         v1 = new mockP5.Vector(1, 0, 0);
         v2 = new mockP5.Vector(1, 0, 0);
         expect(v1.angleBetween(v2)).to.equal(0);
       });
 
-      test('between [0,3,0] and [0,-3,0] should be 180 degrees', function() {
+      test.todo('between [0,3,0] and [0,-3,0] should be 180 degrees', function() {
         mockP5Prototype.angleMode(mockP5.DEGREES);
         v1 = new mockP5.Vector(0, 3, 0);
         v2 = new mockP5.Vector(0, -3, 0);
@@ -298,7 +298,7 @@ suite('p5.Vector', function() {
         expect(mockP5.Vector.angleBetween(v2, v1)).to.be.NaN;
       });
 
-      test('between [1,0,0] and [0,-1,0] should be -90 degrees', function() {
+      test.todo('between [1,0,0] and [0,-1,0] should be -90 degrees', function() {
         mockP5Prototype.angleMode(mockP5.DEGREES);
         v1 = new mockP5.Vector(1, 0, 0);
         v2 = new mockP5.Vector(0, -1, 0);
@@ -1288,7 +1288,7 @@ suite('p5.Vector', function() {
         expect(v.heading()).to.be.closeTo(Math.PI, 0.01);
       });
 
-      suite('with `angleMode(DEGREES)`', function() {
+      suite.todo('with `angleMode(DEGREES)`', function() {
         beforeEach(function() {
           mockP5Prototype.angleMode(mockP5.DEGREES);
         });

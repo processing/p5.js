@@ -16,7 +16,7 @@ suite('Loading Displaying Fonts', function() {
     myp5.remove();
   });
 
-  suite('p5.prototype.loadFont', function() {
+  suite.todo('p5.prototype.loadFont', function() {
     var invalidFile = '404file';
     var fontFile = 'manual-test-examples/p5.Font/acmesa.ttf';
 

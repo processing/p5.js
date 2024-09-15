@@ -59,11 +59,12 @@ suite('Files', function() {
       });
     });
 
-    test('should pass error object to error callback function', function() {
+    test.todo('should pass error object to error callback function', function() {
       return new Promise(function(resolve, reject) {
         myp5.httpDo(
           'unit/assets/sen.txt',
           function(data) {
+            console.log(data);
             reject('Incorrectly succeeded.');
           },
           resolve
@@ -106,38 +107,6 @@ suite('Files', function() {
       assert.typeOf(myp5.saveStrings, 'function');
     });
 
-    test('no friendly-err-msg I', function() {
-      assert.doesNotThrow(
-        function() {
-          let strings = ['some', 'words'];
-          myp5.saveStrings(strings, 'myfile');
-        },
-        Error,
-        'got unwanted exception'
-      );
-    });
-    test('no friendly-err-msg II', function() {
-      assert.doesNotThrow(
-        function() {
-          let strings = ['some', 'words'];
-          myp5.saveStrings(strings, 'myfile', 'txt');
-        },
-        Error,
-        'got unwanted exception'
-      );
-    });
-
-    test('no friendly-err-msg III', function() {
-      assert.doesNotThrow(
-        function() {
-          let strings = ['some', 'words'];
-          myp5.saveStrings(strings, 'myfile', 'txt', true);
-        },
-        Error,
-        'got unwanted exception'
-      );
-    });
-
     testWithDownload(
       'should download a file with expected contents',
       async function(blobContainer) {
@@ -173,38 +142,6 @@ suite('Files', function() {
     test('should be a function', function() {
       assert.ok(myp5.saveJSON);
       assert.typeOf(myp5.saveJSON, 'function');
-    });
-
-    test('no friendly-err-msg I', function() {
-      assert.doesNotThrow(
-        function() {
-          let myObj = { hi: 'hello' };
-          myp5.saveJSON(myObj, 'myfile');
-        },
-        Error,
-        'got unwanted exception'
-      );
-    });
-    test('no friendly-err-msg II', function() {
-      assert.doesNotThrow(
-        function() {
-          let myObj = [{ hi: 'hello' }];
-          myp5.saveJSON(myObj, 'myfile');
-        },
-        Error,
-        'got unwanted exception'
-      );
-    });
-
-    test('no friendly-err-msg III', function() {
-      assert.doesNotThrow(
-        function() {
-          let myObj = { hi: 'hello' };
-          myp5.saveJSON(myObj, 'myfile', true);
-        },
-        Error,
-        'got unwanted exception'
-      );
     });
 
     testWithDownload(

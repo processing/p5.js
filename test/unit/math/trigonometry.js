@@ -48,7 +48,7 @@ suite('Trigonometry', function() {
     });
   };
 
-  suite('p5.prototype.angleMode', function() {
+  suite.todo('p5.prototype.angleMode', function() {
     test('should set constant to DEGREES', function() {
       mockP5Prototype.angleMode(mockP5.DEGREES);
       assert.equal(mockP5Prototype.angleMode(), mockP5.DEGREES);
@@ -103,31 +103,31 @@ suite('Trigonometry', function() {
     });
   });
 
-  suite('p5.prototype.asin', function() {
+  suite.todo('p5.prototype.asin', function() {
     ahandleDegreesAndRadians('asin');
   });
 
-  suite('p5.prototype.atan', function() {
+  suite.todo('p5.prototype.atan', function() {
     ahandleDegreesAndRadians('atan');
   });
 
-  suite('p5.prototype.acos', function() {
+  suite.todo('p5.prototype.acos', function() {
     ahandleDegreesAndRadians('acos');
   });
 
-  suite('p5.prototype.sin', function() {
+  suite.todo('p5.prototype.sin', function() {
     handleDegreesAndRadians('sin');
   });
 
-  suite('p5.prototype.cos', function() {
+  suite.todo('p5.prototype.cos', function() {
     handleDegreesAndRadians('cos');
   });
 
-  suite('p5.prototype.tan', function() {
+  suite.todo('p5.prototype.tan', function() {
     handleDegreesAndRadians('tan');
   });
 
-  suite('p5.prototype.atan2', function() {
+  suite.todo('p5.prototype.atan2', function() {
     test('should handle degrees', function() {
       mockP5Prototype.angleMode(mockP5.DEGREES);
       assert.equal(

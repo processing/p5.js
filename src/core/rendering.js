@@ -177,6 +177,19 @@ p5.prototype.createCanvas = function (w, h, renderer, canvas) {
         defaultId = `defaultCanvas${i}`;
         c.id = defaultId;
         c.classList.add(defaultClass);
+      } else if (
+        this._renderer &&
+        Object.getPrototypeOf(this._renderer) !== renderers[r].prototype
+      ) {
+        // Handle createCanvas() called with 2D mode after a 3D canvas is made
+        if (this.canvas.parentNode) {
+          this.canvas.parentNode.removeChild(this.canvas); //replace the existing defaultCanvas
+        }
+        const thisRenderer = this._renderer;
+        this._elements = this._elements.filter(e => e !== thisRenderer);
+        c = document.createElement('canvas');
+        c.id = defaultId;
+        c.classList.add(defaultClass);
       } else {
         // resize the default canvas if new one is created
         c = this.canvas;
@@ -224,6 +237,7 @@ p5.prototype.createCanvas = function (w, h, renderer, canvas) {
   this._setProperty('_renderer', new renderers[r](c, this, true));
   this._defaultGraphicsCreated = true;
   this._elements.push(this._renderer);
+  // Instead of resize, just create with the right size in the first place
   this._renderer.resize(w, h);
   this._renderer._applyDefaults();
   return this._renderer;

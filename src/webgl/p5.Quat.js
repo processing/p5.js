@@ -71,7 +71,7 @@ p5.Quat = class {
    * @param {p5.Vector} [p] vector to rotate on the axis quaternion
    */
   rotateVector(p) {
-    return new p5.Vector.mult( p, this.w*this.w - this.vec.dot(this.vec) )
+    return p5.Vector.mult( p, this.w*this.w - this.vec.dot(this.vec) )
       .add( p5.Vector.mult( this.vec, 2 * p.dot(this.vec) ) )
       .add( p5.Vector.mult( this.vec, 2 * this.w ).cross( p ) )
       .clampToZero();

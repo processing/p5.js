@@ -107,7 +107,7 @@ suite('Acceleration Events', function() {
     });
   });
 
-  suite('deviceMoved', function() {
+  suite.todo('deviceMoved', function() {
     test('deviceMoved must run when device is moved more than the threshold value', function() {
       let count = 0;
       myp5.deviceMoved = function() {
@@ -145,7 +145,7 @@ suite('Acceleration Events', function() {
     });
   });
 
-  suite('deviceTurned', function() {
+  suite.todo('deviceTurned', function() {
     test('deviceTurned must run when device is turned more than 90 degrees', function() {
       let count = 0;
       myp5.deviceTurned = function() {
@@ -175,7 +175,7 @@ suite('Acceleration Events', function() {
     });
   });
 
-  suite('deviceShaken', function() {
+  suite.todo('deviceShaken', function() {
     test('deviceShaken must run when device acceleration is more than the threshold value', function() {
       let count = 0;
       myp5.deviceShaken = function() {

@@ -22,7 +22,6 @@ p5.Renderer = class Renderer extends p5.Element {
   constructor(elt, pInst, isMainCanvas) {
     super(elt, pInst);
     this.canvas = elt;
-    this._pixelsState = pInst;
     if (isMainCanvas) {
       this._isMainCanvas = true;
       // for pixel method sharing with pimage

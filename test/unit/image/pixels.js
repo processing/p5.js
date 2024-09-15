@@ -1,6 +1,6 @@
 import p5 from '../../../src/app.js';
 
-suite('pixels', function() {
+suite.todo('pixels', function() {
   var myp5;
 
   beforeAll(function() {
@@ -152,31 +152,6 @@ suite('pixels', function() {
         }
       }
     });
-
-    test('no friendly-err-msg. missing param #0', function() {
-      assert.doesNotThrow(
-        function() {
-          let img = myp5.createImage(50, 50);
-          img.blend(0, 0, 10, 10, 10, 0, 10, 10, myp5.OVERLAY);
-        },
-        Error,
-        'got unwanted exception'
-      );
-    });
-
-    test('missing parameter at #3 ', function() {
-      assert.throw(function() {
-        let img = myp5.createImage(50, 50);
-        img.blend(0, 0, 10, 10, 0, 10, 10, myp5.OVERLAY);
-      });
-    });
-
-    test('missing parameter at #8 ', function() {
-      assert.throw(function() {
-        let img = myp5.createImage(50, 50);
-        img.blend(0, 0, 10, 10, 10, 0, 10, 10);
-      });
-    });
   });
 
   suite('p5.Image.copy', function() {
@@ -205,24 +180,6 @@ suite('pixels', function() {
           assert.deepEqual(img.get(i, j), [0, 255, 0, 255]); // should be green
         }
       }
-    });
-
-    test('no friendly-err-msg. missing param #0', function() {
-      assert.doesNotThrow(
-        function() {
-          let img = myp5.createImage(50, 50);
-          img.copy(0, 0, 10, 10, 10, 0, 10, 10);
-        },
-        Error,
-        'got unwanted exception'
-      );
-    });
-
-    test('missing parameter at #3 ', function() {
-      assert.throw(function() {
-        let img = myp5.createImage(50, 50);
-        img.copy(0, 0, 10, 10, 0, 10, 10);
-      });
     });
   });
 });

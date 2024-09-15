@@ -1,7 +1,7 @@
 'use strict';
 const EOL = '\n';
 import { ESLint } from 'eslint';
-import dataDoc from '../docs/reference/data.min.json';
+import dataDoc from '../docs/reference/data.min.json' assert {type: 'json'};
 // envs: ['eslint-samples/p5'],
 
 const itemtypes = ['method', 'property'];
@@ -217,8 +217,6 @@ async function eslintFiles(opts, filesSrc) {
   };
 }
 
-module.exports.eslintFiles = eslintFiles;
-
 function splitLines(text) {
   const lines = [];
 
@@ -248,10 +246,8 @@ function splitLines(text) {
   return lines;
 }
 
-if (!module.parent) {
-  eslintFiles(null, process.argv.slice(2))
-    .then(result => {
-      console.log(result.output);
-      process.exit(result.report.errorCount === 0 ? 0 : 1);
-    });
-}
+eslintFiles(null, process.argv.slice(2))
+  .then(result => {
+    console.log(result.output);
+    process.exit(result.report.errorCount === 0 ? 0 : 1);
+  });

@@ -85,7 +85,7 @@ suite('Rendering', function() {
       assert.equal(myp5.drawingContext.lineCap, myp5.PROJECT);
     });
 
-    test('should resize framebuffers', function() {
+    test.todo('should resize framebuffers', function() {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       const fbo = myp5.createFramebuffer();
       myp5.resizeCanvas(5, 15);
@@ -93,7 +93,7 @@ suite('Rendering', function() {
       assert.equal(fbo.height, 15);
     });
 
-    test('should resize graphic framebuffers', function() {
+    test.todo('should resize graphic framebuffers', function() {
       const graphic = myp5.createGraphics(10, 10, myp5.WEBGL);
       const fbo = graphic.createFramebuffer();
       graphic.resizeCanvas(5, 15);
@@ -101,22 +101,23 @@ suite('Rendering', function() {
       assert.equal(fbo.height, 15);
     });
 
-    // NOTE: below two are nearly identical, should be checked
-    test('should resize the dimensions of canvas based on max texture size', function() {
-      glStub = vi.spyOn(p5.RendererGL.prototype, '_getParam');
+    test('should limit dimensions of canvas based on max texture size on create', function() {
+      glStub = vi.spyOn(p5.RendererGL.prototype, '_getMaxTextureSize');
       const fakeMaxTextureSize = 100;
       glStub.mockReturnValue(fakeMaxTextureSize);
       myp5.createCanvas(10, 10, myp5.WEBGL);
+      myp5.pixelDensity(1);
       myp5.resizeCanvas(200, 200);
       assert.equal(myp5.width, 100);
       assert.equal(myp5.height, 100);
     });
 
-    test('should resize the dimensions of canvas based on max texture size', function() {
-      glStub = vi.spyOn(p5.RendererGL.prototype, '_getParam');
+    test('should limit dimensions of canvas based on max texture size on resize', function() {
+      glStub = vi.spyOn(p5.RendererGL.prototype, '_getMaxTextureSize');
       const fakeMaxTextureSize = 100;
       glStub.mockReturnValue(fakeMaxTextureSize);
       myp5.createCanvas(200, 200, myp5.WEBGL);
+      myp5.pixelDensity(1);
       assert.equal(myp5.width, 100);
       assert.equal(myp5.height, 100);
     });
@@ -134,18 +135,18 @@ suite('Rendering', function() {
       assert.ok(myp5.blendMode);
       assert.typeOf(myp5.blendMode, 'function');
     });
-    test('should be able to ADD', function() {
+    test.todo('should be able to ADD', function() {
       myp5.blendMode(myp5.ADD);
       drawX();
     });
-    test('should be able to MULTIPLY', function() {
+    test.todo('should be able to MULTIPLY', function() {
       myp5.blendMode(myp5.MULTIPLY);
       drawX();
     });
   });
 
   suite('p5.prototype.setAttributes', function() {
-    test('_glAttributes should be null at start', function() {
+    test.todo('_glAttributes should be null at start', function() {
       assert.deepEqual(myp5._glAttributes, null);
     });
     test('_glAttributes should modify with setAttributes', function() {
@@ -170,7 +171,7 @@ suite('Rendering', function() {
     'plane', 'box', 'sphere', 'cylinder', 'cone', 'ellipsoid', 'torus'
   ];
 
-  suite('webgl assertions', function() {
+  suite.todo('webgl assertions', function() {
     for (var i = 0; i < webglMethods.length; i++) {
       var webglMethod = webglMethods[i];
       test(

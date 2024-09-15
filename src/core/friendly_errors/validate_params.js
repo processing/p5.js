@@ -5,33 +5,33 @@
 import p5 from '../main';
 import * as constants from '../constants';
 import { translator } from '../internationalization';
-import dataDoc from '../../../docs/parameterData.json';
+// import dataDoc from '../../../docs/parameterData.json';
 
 if (typeof IS_MINIFIED !== 'undefined') {
   p5._validateParameters = p5._clearValidateParamsCache = () => {};
 } else {
   // for parameter validation
-  const arrDoc = JSON.parse(JSON.stringify(dataDoc));
+  // const arrDoc = JSON.parse(JSON.stringify(dataDoc));
 
-  const docCache = {};
-  const builtinTypes = new Set([
-    'null',
-    'number',
-    'string',
-    'boolean',
-    'constant',
-    'function',
-    'any',
-    'integer'
-  ]);
+  // const docCache = {};
+  // const builtinTypes = new Set([
+  //   'null',
+  //   'number',
+  //   'string',
+  //   'boolean',
+  //   'constant',
+  //   'function',
+  //   'any',
+  //   'integer'
+  // ]);
 
-  const basicTypes = {
-    number: true,
-    boolean: true,
-    string: true,
-    function: true,
-    undefined: true
-  };
+  // const basicTypes = {
+  //   number: true,
+  //   boolean: true,
+  //   string: true,
+  //   function: true,
+  //   undefined: true
+  // };
 
   // reverse map of all constants
   const constantsReverseMap = {};
@@ -49,7 +49,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   // For speedup over many runs. funcSpecificConstructors[func] only has the
   // constructors for types which were seen earlier as args of "func"
-  const funcSpecificConstructors = {};
+  // const funcSpecificConstructors = {};
   window.addEventListener('load', () => {
     // Make a list of all p5 classes to be used for argument validation
     // This must be done only when everything has loaded otherwise we get
@@ -98,67 +98,67 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @method addType
    * @private
    */
-  const addType = (value, obj, func) => {
-    let type = typeof value;
-    if (basicTypes[type]) {
-      if (constantsReverseMap[value]) {
-        // check if the value is a p5 constant and if it is, we would want the
-        // value itself to be stored in the tree instead of the type
-        obj = obj[value] || (obj[value] = {});
-      } else {
-        obj = obj[type] || (obj[type] = {});
-      }
-    } else if (value === null) {
-      // typeof null -> "object". don't want that
-      obj = obj['null'] || (obj['null'] = {});
-    } else {
-      // objects which are instances of p5 classes have nameless constructors.
-      // native objects have a constructor named "Object". This check
-      // differentiates between the two so that we dont waste time finding the
-      // p5 class if we just have a native object
-      if (value.constructor && value.constructor.name) {
-        obj = obj[value.constructor.name] || (obj[value.constructor.name] = {});
-        return obj;
-      }
+  // const addType = (value, obj, func) => {
+  //   let type = typeof value;
+  //   if (basicTypes[type]) {
+  //     if (constantsReverseMap[value]) {
+  //       // check if the value is a p5 constant and if it is, we would want the
+  //       // value itself to be stored in the tree instead of the type
+  //       obj = obj[value] || (obj[value] = {});
+  //     } else {
+  //       obj = obj[type] || (obj[type] = {});
+  //     }
+  //   } else if (value === null) {
+  //     // typeof null -> "object". don't want that
+  //     obj = obj['null'] || (obj['null'] = {});
+  //   } else {
+  //     // objects which are instances of p5 classes have nameless constructors.
+  //     // native objects have a constructor named "Object". This check
+  //     // differentiates between the two so that we dont waste time finding the
+  //     // p5 class if we just have a native object
+  //     if (value.constructor && value.constructor.name) {
+  //       obj = obj[value.constructor.name] || (obj[value.constructor.name] = {});
+  //       return obj;
+  //     }
 
-      // constructors for types defined in p5 do not have a name property.
-      // e.constructor.name gives "". Code in this segment is a workaround for it
+  //     // constructors for types defined in p5 do not have a name property.
+  //     // e.constructor.name gives "". Code in this segment is a workaround for it
 
-      // p5C will only have the name: constructor mapping for types
-      // which were already seen as args of "func"
-      let p5C = funcSpecificConstructors[func];
-      // p5C would contain much fewer items than p5Constructors. if we find our
-      // answer in p5C, we don't have to scan through p5Constructors
+  //     // p5C will only have the name: constructor mapping for types
+  //     // which were already seen as args of "func"
+  //     let p5C = funcSpecificConstructors[func];
+  //     // p5C would contain much fewer items than p5Constructors. if we find our
+  //     // answer in p5C, we don't have to scan through p5Constructors
 
-      if (p5C === undefined) {
-        // if there isn't an entry yet for func
-        // make an entry of empty object
-        p5C = funcSpecificConstructors[func] = {};
-      }
+  //     if (p5C === undefined) {
+  //       // if there isn't an entry yet for func
+  //       // make an entry of empty object
+  //       p5C = funcSpecificConstructors[func] = {};
+  //     }
 
-      for (let key in p5C) {
-        // search on the constructors we have already seen (smaller search space)
-        if (value instanceof p5C[key]) {
-          obj = obj[key] || (obj[key] = {});
-          return obj;
-        }
-      }
+  //     for (let key in p5C) {
+  //       // search on the constructors we have already seen (smaller search space)
+  //       if (value instanceof p5C[key]) {
+  //         obj = obj[key] || (obj[key] = {});
+  //         return obj;
+  //       }
+  //     }
 
-      for (let key in p5Constructors) {
-        // if the above search didn't work, search on all p5 constructors
-        if (value instanceof p5Constructors[key]) {
-          obj = obj[key] || (obj[key] = {});
-          // if found, add to known constructors for this function
-          p5C[key] = p5Constructors[key];
-          return obj;
-        }
-      }
-      // nothing worked, put the type as it is
-      obj = obj[type] || (obj[type] = {});
-    }
+  //     for (let key in p5Constructors) {
+  //       // if the above search didn't work, search on all p5 constructors
+  //       if (value instanceof p5Constructors[key]) {
+  //         obj = obj[key] || (obj[key] = {});
+  //         // if found, add to known constructors for this function
+  //         p5C[key] = p5Constructors[key];
+  //         return obj;
+  //       }
+  //     }
+  //     // nothing worked, put the type as it is
+  //     obj = obj[type] || (obj[type] = {});
+  //   }
 
-    return obj;
-  };
+  //   return obj;
+  // };
 
   /**
    * Build the argument type tree, argumentTree
@@ -168,31 +168,31 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @method buildArgTypeCache
    * @private
    */
-  const buildArgTypeCache = (func, arr) => {
-    // get the if an argument tree for current function already exists
-    let obj = argumentTree[func];
-    if (obj === undefined) {
-      // if it doesn't, create an empty tree
-      obj = argumentTree[func] = {};
-    }
+  // const buildArgTypeCache = (func, arr) => {
+  //   // get the if an argument tree for current function already exists
+  //   let obj = argumentTree[func];
+  //   if (obj === undefined) {
+  //     // if it doesn't, create an empty tree
+  //     obj = argumentTree[func] = {};
+  //   }
 
-    for (let i = 0, len = arr.length; i < len; ++i) {
-      let value = arr[i];
-      if (value instanceof Array) {
-        // an array is passed as an argument, expand it and get the type of
-        // each of its element. We distinguish the start of an array with 'as'
-        // or arraystart. This would help distinguish between the arguments
-        // (number, number, number) and (number, [number, number])
-        obj = obj['as'] || (obj['as'] = {});
-        for (let j = 0, lenA = value.length; j < lenA; ++j) {
-          obj = addType(value[j], obj, func);
-        }
-      } else {
-        obj = addType(value, obj, func);
-      }
-    }
-    return obj;
-  };
+  //   for (let i = 0, len = arr.length; i < len; ++i) {
+  //     let value = arr[i];
+  //     if (value instanceof Array) {
+  //       // an array is passed as an argument, expand it and get the type of
+  //       // each of its element. We distinguish the start of an array with 'as'
+  //       // or arraystart. This would help distinguish between the arguments
+  //       // (number, number, number) and (number, [number, number])
+  //       obj = obj['as'] || (obj['as'] = {});
+  //       for (let j = 0, lenA = value.length; j < lenA; ++j) {
+  //         obj = addType(value[j], obj, func);
+  //       }
+  //     } else {
+  //       obj = addType(value, obj, func);
+  //     }
+  //   }
+  //   return obj;
+  // };
 
   /**
    * Query data.json
@@ -200,151 +200,151 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @method lookupParamDoc
    * @private
    */
-  const lookupParamDoc = func => {
-    // look for the docs in the `data.json` datastructure
+  // const lookupParamDoc = func => {
+  //   // look for the docs in the `data.json` datastructure
 
-    const ichDot = func.lastIndexOf('.');
-    const funcName = func.slice(ichDot + 1);
-    const funcClass = func.slice(0, ichDot !== -1 ? ichDot : 0) || 'p5';
+  //   const ichDot = func.lastIndexOf('.');
+  //   const funcName = func.slice(ichDot + 1);
+  //   const funcClass = func.slice(0, ichDot !== -1 ? ichDot : 0) || 'p5';
 
-    const classitems = arrDoc;
-    let queryResult = classitems[funcClass][funcName];
+  //   const classitems = arrDoc;
+  //   let queryResult = classitems[funcClass][funcName];
 
-    // different JSON structure for funct with multi-format
-    const overloads = [];
-    if (queryResult.hasOwnProperty('overloads')) {
-      // add all the overloads
-      for (let i = 0; i < queryResult.overloads.length; i++) {
-        overloads.push({ formats: queryResult.overloads[i].params });
-      }
-    } else {
-      // no overloads, just add the main method definition
-      overloads.push({ formats: queryResult.params || [] });
-    }
+  //   // different JSON structure for funct with multi-format
+  //   const overloads = [];
+  //   if (queryResult.hasOwnProperty('overloads')) {
+  //     // add all the overloads
+  //     for (let i = 0; i < queryResult.overloads.length; i++) {
+  //       overloads.push({ formats: queryResult.overloads[i].params || [] });
+  //     }
+  //   } else {
+  //     // no overloads, just add the main method definition
+  //     overloads.push({ formats: queryResult.params || [] });
+  //   }
 
-    // parse the parameter types for each overload
-    const mapConstants = {};
-    let maxParams = 0;
-    overloads.forEach(overload => {
-      const formats = overload.formats;
+  //   // parse the parameter types for each overload
+  //   const mapConstants = {};
+  //   let maxParams = 0;
+  //   overloads.forEach(overload => {
+  //     const formats = overload.formats;
 
-      // keep a record of the maximum number of arguments
-      // this method requires.
-      if (maxParams < formats.length) {
-        maxParams = formats.length;
-      }
+  //     // keep a record of the maximum number of arguments
+  //     // this method requires.
+  //     if (maxParams < formats.length) {
+  //       maxParams = formats.length;
+  //     }
 
-      // calculate the minimum number of arguments
-      // this overload requires.
-      let minParams = formats.length;
-      while (minParams > 0 && formats[minParams - 1].optional) {
-        minParams--;
-      }
-      overload.minParams = minParams;
+  //     // calculate the minimum number of arguments
+  //     // this overload requires.
+  //     let minParams = formats.length;
+  //     while (minParams > 0 && formats[minParams - 1].optional) {
+  //       minParams--;
+  //     }
+  //     overload.minParams = minParams;
 
-      // loop through each parameter position, and parse its types
-      formats.forEach(format => {
-        // split this parameter's types
-        format.types = format.type.split('|').map(function ct(type) {
-          // array
-          if (type.slice(-2) === '[]') {
-            return {
-              name: type,
-              array: ct(type.slice(0, -2))
-            };
-          }
+  //     // loop through each parameter position, and parse its types
+  //     formats.forEach(format => {
+  //       // split this parameter's types
+  //       format.types = format.type.split('|').map(function ct(type) {
+  //         // array
+  //         if (type.slice(-2) === '[]') {
+  //           return {
+  //             name: type,
+  //             array: ct(type.slice(0, -2))
+  //           };
+  //         }
 
-          let lowerType = type.toLowerCase();
+  //         let lowerType = type.toLowerCase();
 
-          // constant
-          if (lowerType === 'constant') {
-            let constant;
-            if (mapConstants.hasOwnProperty(format.name)) {
-              constant = mapConstants[format.name];
-            } else {
-              // parse possible constant values from description
-              const myRe = /either\s+(?:[A-Z0-9_]+\s*,?\s*(?:or)?\s*)+/g;
-              const values = {};
-              const names = [];
+  //         // constant
+  //         if (lowerType === 'constant') {
+  //           let constant;
+  //           if (mapConstants.hasOwnProperty(format.name)) {
+  //             constant = mapConstants[format.name];
+  //           } else {
+  //             // parse possible constant values from description
+  //             const myRe = /either\s+(?:[A-Z0-9_]+\s*,?\s*(?:or)?\s*)+/g;
+  //             const values = {};
+  //             const names = [];
 
-              constant = mapConstants[format.name] = {
-                values,
-                names
-              };
+  //             constant = mapConstants[format.name] = {
+  //               values,
+  //               names
+  //             };
 
-              const myArray = myRe.exec(format.description);
-              if (func === 'endShape' && format.name === 'mode') {
-                values[constants.CLOSE] = true;
-                names.push('CLOSE');
-              } else {
-                const match = myArray[0];
-                const reConst = /[A-Z0-9_]+/g;
-                let matchConst;
-                while ((matchConst = reConst.exec(match)) !== null) {
-                  const name = matchConst[0];
-                  if (name in constants) {
-                    values[constants[name]] = true;
-                    names.push(name);
-                  }
-                }
-              }
-            }
-            return {
-              name: type,
-              builtin: lowerType,
-              names: constant.names,
-              values: constant.values
-            };
-          }
+  //             const myArray = myRe.exec(format.description);
+  //             if (func === 'endShape' && format.name === 'mode') {
+  //               values[constants.CLOSE] = true;
+  //               names.push('CLOSE');
+  //             } else {
+  //               const match = myArray[0];
+  //               const reConst = /[A-Z0-9_]+/g;
+  //               let matchConst;
+  //               while ((matchConst = reConst.exec(match)) !== null) {
+  //                 const name = matchConst[0];
+  //                 if (name in constants) {
+  //                   values[constants[name]] = true;
+  //                   names.push(name);
+  //                 }
+  //               }
+  //             }
+  //           }
+  //           return {
+  //             name: type,
+  //             builtin: lowerType,
+  //             names: constant.names,
+  //             values: constant.values
+  //           };
+  //         }
 
-          // Handle specific constants in types, e.g. in endShape:
-          //   @param {CLOSE} [close]
-          // Rather than trying to parse the types out of the description, we
-          // can use the constant directly from the type
-          if (type in constants) {
-            return {
-              name: type,
-              builtin: 'constant',
-              names: [type],
-              values: { [constants[type]]: true }
-            };
-          }
+  //         // Handle specific constants in types, e.g. in endShape:
+  //         //   @param {CLOSE} [close]
+  //         // Rather than trying to parse the types out of the description, we
+  //         // can use the constant directly from the type
+  //         if (type in constants) {
+  //           return {
+  //             name: type,
+  //             builtin: 'constant',
+  //             names: [type],
+  //             values: { [constants[type]]: true }
+  //           };
+  //         }
 
-          // function
-          if (lowerType.slice(0, 'function'.length) === 'function') {
-            lowerType = 'function';
-          }
-          // builtin
-          if (builtinTypes.has(lowerType)) {
-            return { name: type, builtin: lowerType };
-          }
+  //         // function
+  //         if (lowerType.slice(0, 'function'.length) === 'function') {
+  //           lowerType = 'function';
+  //         }
+  //         // builtin
+  //         if (builtinTypes.has(lowerType)) {
+  //           return { name: type, builtin: lowerType };
+  //         }
 
-          // find type's prototype
-          let t = window;
-          const typeParts = type.split('.');
+  //         // find type's prototype
+  //         let t = window;
+  //         const typeParts = type.split('.');
 
-          // special-case 'p5' since it may be non-global
-          if (typeParts[0] === 'p5') {
-            t = p5;
-            typeParts.shift();
-          }
+  //         // special-case 'p5' since it may be non-global
+  //         if (typeParts[0] === 'p5') {
+  //           t = p5;
+  //           typeParts.shift();
+  //         }
 
-          typeParts.forEach(p => {
-            t = t && t[p];
-          });
-          if (t) {
-            return { name: type, prototype: t };
-          }
+  //         typeParts.forEach(p => {
+  //           t = t && t[p];
+  //         });
+  //         if (t) {
+  //           return { name: type, prototype: t };
+  //         }
 
-          return { name: type, type: lowerType };
-        });
-      });
-    });
-    return {
-      overloads,
-      maxParams
-    };
-  };
+  //         return { name: type, type: lowerType };
+  //       });
+  //     });
+  //   });
+  //   return {
+  //     overloads,
+  //     maxParams
+  //   };
+  // };
 
   /**
    * Checks whether input type is Number
@@ -354,80 +354,80 @@ if (typeof IS_MINIFIED !== 'undefined') {
    *
    * @returns {Boolean} a boolean indicating whether input type is Number
    */
-  const isNumber = param => {
-    if (isNaN(parseFloat(param))) return false;
-    switch (typeof param) {
-      case 'number':
-        return true;
-      case 'string':
-        return !isNaN(param);
-      default:
-        return false;
-    }
-  };
+  // const isNumber = param => {
+  //   if (isNaN(parseFloat(param))) return false;
+  //   switch (typeof param) {
+  //     case 'number':
+  //       return true;
+  //     case 'string':
+  //       return !isNaN(param);
+  //     default:
+  //       return false;
+  //   }
+  // };
 
   /**
    * Test type for non-object type parameter validation
    * @method testParamType
    * @private
    */
-  const testParamType = (param, type) => {
-    const isArray = param instanceof Array;
-    let matches = true;
-    if (type.array && isArray) {
-      for (let i = 0; i < param.length; i++) {
-        const error = testParamType(param[i], type.array);
-        if (error) return error / 2; // half error for elements
-      }
-    } else if (type.prototype) {
-      matches = param instanceof type.prototype;
-    } else if (type.builtin) {
-      switch (type.builtin) {
-        case 'number':
-          matches = isNumber(param);
-          break;
-        case 'integer':
-          matches = isNumber(param) && Number(param) === Math.floor(param);
-          break;
-        case 'boolean':
-        case 'any':
-          matches = true;
-          break;
-        case 'array':
-          matches = isArray;
-          break;
-        case 'string':
-          matches = /*typeof param === 'number' ||*/ typeof param === 'string';
-          break;
-        case 'constant':
-          matches = type.values.hasOwnProperty(param);
-          break;
-        case 'function':
-          matches = param instanceof Function;
-          break;
-        case 'null':
-          matches = param === null;
-          break;
-      }
-    } else {
-      matches = typeof param === type.t;
-    }
-    return matches ? 0 : 1;
-  };
+  // const testParamType = (param, type) => {
+  //   const isArray = param instanceof Array;
+  //   let matches = true;
+  //   if (type.array && isArray) {
+  //     for (let i = 0; i < param.length; i++) {
+  //       const error = testParamType(param[i], type.array);
+  //       if (error) return error / 2; // half error for elements
+  //     }
+  //   } else if (type.prototype) {
+  //     matches = param instanceof type.prototype;
+  //   } else if (type.builtin) {
+  //     switch (type.builtin) {
+  //       case 'number':
+  //         matches = isNumber(param);
+  //         break;
+  //       case 'integer':
+  //         matches = isNumber(param) && Number(param) === Math.floor(param);
+  //         break;
+  //       case 'boolean':
+  //       case 'any':
+  //         matches = true;
+  //         break;
+  //       case 'array':
+  //         matches = isArray;
+  //         break;
+  //       case 'string':
+  //         matches = /*typeof param === 'number' ||*/ typeof param === 'string';
+  //         break;
+  //       case 'constant':
+  //         matches = type.values.hasOwnProperty(param);
+  //         break;
+  //       case 'function':
+  //         matches = param instanceof Function;
+  //         break;
+  //       case 'null':
+  //         matches = param === null;
+  //         break;
+  //     }
+  //   } else {
+  //     matches = typeof param === type.t;
+  //   }
+  //   return matches ? 0 : 1;
+  // };
 
   /**
    * Test type for multiple parameters
    * @method testParamTypes
    * @private
    */
-  const testParamTypes = (param, types) => {
-    let minScore = 9999;
-    for (let i = 0; minScore > 0 && i < types.length; i++) {
-      const score = testParamType(param, types[i]);
-      if (minScore > score) minScore = score;
-    }
-    return minScore;
-  };
+  // const testParamTypes = (param, types) => {
+  //   let minScore = 9999;
+  //   for (let i = 0; minScore > 0 && i < types.length; i++) {
+  //     const score = testParamType(param, types[i]);
+  //     if (minScore > score) minScore = score;
+  //   }
+  //   return minScore;
+  // };
 
   /**
    * generate a score (higher is worse) for applying these args to
@@ -435,91 +435,91 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @method scoreOverload
    * @private
    */
-  const scoreOverload = (args, argCount, overload, minScore) => {
-    let score = 0;
-    const formats = overload.formats;
-    const minParams = overload.minParams;
+  // const scoreOverload = (args, argCount, overload, minScore) => {
+  //   let score = 0;
+  //   const formats = overload.formats;
+  //   const minParams = overload.minParams;
 
-    // check for too few/many args
-    // the score is double number of extra/missing args
-    if (argCount < minParams) {
-      score = (minParams - argCount) * 2;
-    } else if (argCount > formats.length) {
-      score = (argCount - formats.length) * 2;
-    }
+  //   // check for too few/many args
+  //   // the score is double number of extra/missing args
+  //   if (argCount < minParams) {
+  //     score = (minParams - argCount) * 2;
+  //   } else if (argCount > formats.length) {
+  //     score = (argCount - formats.length) * 2;
+  //   }
 
-    // loop through the formats, adding up the error score for each arg.
-    // quit early if the score gets higher than the previous best overload.
-    for (let p = 0; score <= minScore && p < formats.length; p++) {
-      const arg = args[p];
-      const format = formats[p];
-      // '== null' checks for 'null' and typeof 'undefined'
-      if (arg == null) {
-        // handle undefined args
-        if (!format.optional || p < minParams || p < argCount) {
-          score += 1;
-        }
-      } else {
-        score += testParamTypes(arg, format.types);
-      }
-    }
-    return score;
-  };
+  //   // loop through the formats, adding up the error score for each arg.
+  //   // quit early if the score gets higher than the previous best overload.
+  //   for (let p = 0; score <= minScore && p < formats.length; p++) {
+  //     const arg = args[p];
+  //     const format = formats[p];
+  //     // '== null' checks for 'null' and typeof 'undefined'
+  //     if (arg == null) {
+  //       // handle undefined args
+  //       if (!format.optional || p < minParams || p < argCount) {
+  //         score += 1;
+  //       }
+  //     } else {
+  //       score += testParamTypes(arg, format.types);
+  //     }
+  //   }
+  //   return score;
+  // };
 
   /**
    * Gets a list of errors for this overload
    * @method getOverloadErrors
    * @private
    */
-  const getOverloadErrors = (args, argCount, overload) => {
-    const formats = overload.formats;
-    const minParams = overload.minParams;
+  // const getOverloadErrors = (args, argCount, overload) => {
+  //   const formats = overload.formats;
+  //   const minParams = overload.minParams;
 
-    // check for too few/many args
-    if (argCount < minParams) {
-      return [
-        {
-          type: 'TOO_FEW_ARGUMENTS',
-          argCount,
-          minParams
-        }
-      ];
-    } else if (argCount > formats.length) {
-      return [
-        {
-          type: 'TOO_MANY_ARGUMENTS',
-          argCount,
-          maxParams: formats.length
-        }
-      ];
-    }
+  //   // check for too few/many args
+  //   if (argCount < minParams) {
+  //     return [
+  //       {
+  //         type: 'TOO_FEW_ARGUMENTS',
+  //         argCount,
+  //         minParams
+  //       }
+  //     ];
+  //   } else if (argCount > formats.length) {
+  //     return [
+  //       {
+  //         type: 'TOO_MANY_ARGUMENTS',
+  //         argCount,
+  //         maxParams: formats.length
+  //       }
+  //     ];
+  //   }
 
-    const errorArray = [];
-    for (let p = 0; p < formats.length; p++) {
-      const arg = args[p];
-      const format = formats[p];
-      // '== null' checks for 'null' and typeof 'undefined'
-      if (arg == null) {
-        // handle undefined args
-        if (!format.optional || p < minParams || p < argCount) {
-          errorArray.push({
-            type: 'EMPTY_VAR',
-            position: p,
-            format
-          });
-        }
-      } else if (testParamTypes(arg, format.types) > 0) {
-        errorArray.push({
-          type: 'WRONG_TYPE',
-          position: p,
-          format,
-          arg
-        });
-      }
-    }
+  //   const errorArray = [];
+  //   for (let p = 0; p < formats.length; p++) {
+  //     const arg = args[p];
+  //     const format = formats[p];
+  //     // '== null' checks for 'null' and typeof 'undefined'
+  //     if (arg == null) {
+  //       // handle undefined args
+  //       if (!format.optional || p < minParams || p < argCount) {
+  //         errorArray.push({
+  //           type: 'EMPTY_VAR',
+  //           position: p,
+  //           format
+  //         });
+  //       }
+  //     } else if (testParamTypes(arg, format.types) > 0) {
+  //       errorArray.push({
+  //         type: 'WRONG_TYPE',
+  //         position: p,
+  //         format,
+  //         arg
+  //       });
+  //     }
+  //   }
 
-    return errorArray;
-  };
+  //   return errorArray;
+  // };
 
   /**
    * a custom error type, used by the mocha
@@ -717,57 +717,59 @@ if (typeof IS_MINIFIED !== 'undefined') {
    *           received "foo" instead."
    */
   p5._validateParameters = function validateParameters(func, args) {
-    if (p5.disableFriendlyErrors) {
-      return; // skip FES
-    }
+    // NOTE: no-op for later removal
+    return;
+    // if (p5.disableFriendlyErrors) {
+    //   return; // skip FES
+    // }
 
-    // query / build the argument type tree and check if this sequence
-    // has already been seen before.
-    let obj = buildArgTypeCache(func, args);
-    if (obj.seen) {
-      return;
-    }
-    // mark this sequence as seen
-    obj.seen = true;
-    // lookup the docs in the 'data.json' file
-    const docs = docCache[func] || (docCache[func] = lookupParamDoc(func));
-    const overloads = docs.overloads;
+    // // query / build the argument type tree and check if this sequence
+    // // has already been seen before.
+    // let obj = buildArgTypeCache(func, args);
+    // if (obj.seen) {
+    //   return;
+    // }
+    // // mark this sequence as seen
+    // obj.seen = true;
+    // // lookup the docs in the 'data.json' file
+    // const docs = docCache[func] || (docCache[func] = lookupParamDoc(func));
+    // const overloads = docs.overloads;
 
-    let argCount = args.length;
+    // let argCount = args.length;
 
-    // the following line ignores trailing undefined arguments, commenting
-    // it to resolve https://github.com/processing/p5.js/issues/4571
-    // '== null' checks for 'null' and typeof 'undefined'
-    // while (argCount > 0 && args[argCount - 1] == null) argCount--;
+    // // the following line ignores trailing undefined arguments, commenting
+    // // it to resolve https://github.com/processing/p5.js/issues/4571
+    // // '== null' checks for 'null' and typeof 'undefined'
+    // // while (argCount > 0 && args[argCount - 1] == null) argCount--;
 
-    // find the overload with the best score
-    let minScore = 99999;
-    let minOverload;
-    for (let i = 0; i < overloads.length; i++) {
-      const score = scoreOverload(args, argCount, overloads[i], minScore);
-      if (score === 0) {
-        return; // done!
-      } else if (minScore > score) {
-        // this score is better that what we have so far...
-        minScore = score;
-        minOverload = i;
-      }
-    }
+    // // find the overload with the best score
+    // let minScore = 99999;
+    // let minOverload;
+    // for (let i = 0; i < overloads.length; i++) {
+    //   const score = scoreOverload(args, argCount, overloads[i], minScore);
+    //   if (score === 0) {
+    //     return; // done!
+    //   } else if (minScore > score) {
+    //     // this score is better that what we have so far...
+    //     minScore = score;
+    //     minOverload = i;
+    //   }
+    // }
 
-    // this should _always_ be true here...
-    if (minScore > 0) {
-      // get the errors for the best overload
-      const errorArray = getOverloadErrors(
-        args,
-        argCount,
-        overloads[minOverload]
-      );
+    // // this should _always_ be true here...
+    // if (minScore > 0) {
+    //   // get the errors for the best overload
+    //   const errorArray = getOverloadErrors(
+    //     args,
+    //     argCount,
+    //     overloads[minOverload]
+    //   );
 
-      // generate err msg
-      for (let n = 0; n < errorArray.length; n++) {
-        p5._friendlyParamError(errorArray[n], func);
-      }
-    }
+    //   // generate err msg
+    //   for (let n = 0; n < errorArray.length; n++) {
+    //     p5._friendlyParamError(errorArray[n], func);
+    //   }
+    // }
   };
   p5.prototype._validateParameters = p5.validateParameters;
 }
