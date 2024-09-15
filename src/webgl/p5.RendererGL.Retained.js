@@ -129,7 +129,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
 
   if (
     !this.geometryBuilder &&
-    this._doFill &&
+    this.states.doFill &&
     this.retainedMode.geometry[gId].vertexCount > 0
   ) {
     this._useVertexColor = (geometry.model.vertexColors.length > 0);
@@ -151,7 +151,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     fillShader.unbindShader();
   }
 
-  if (!this.geometryBuilder && this._doStroke && geometry.lineVertexCount > 0) {
+  if (!this.geometryBuilder && this.states.doStroke && geometry.lineVertexCount > 0) {
     this._useLineColor = (geometry.model.vertexStrokeColors.length > 0);
     const strokeShader = this._getRetainedStrokeShader();
     this._setStrokeUniforms(strokeShader);

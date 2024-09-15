@@ -1040,7 +1040,7 @@ p5.prototype.texture = function (tex) {
   this._renderer.drawMode = constants.TEXTURE;
   this._renderer._useNormalMaterial = false;
   this._renderer._tex = tex;
-  this._renderer._setProperty('_doFill', true);
+  this._renderer.states.doFill = true;
 
   return this;
 };
@@ -1553,7 +1553,7 @@ p5.prototype.normalMaterial = function (...args) {
   this._renderer._useEmissiveMaterial = false;
   this._renderer._useNormalMaterial = true;
   this._renderer.curFillColor = [1, 1, 1, 1];
-  this._renderer._setProperty('_doFill', true);
+  this._renderer.states.doFill = true;
   this.noStroke();
   return this;
 };
@@ -1785,7 +1785,7 @@ p5.prototype.ambientMaterial = function (v1, v2, v3) {
   this._renderer.curAmbientColor = color._array;
   this._renderer._useNormalMaterial = false;
   this._renderer._enableLighting = true;
-  this._renderer._setProperty('_doFill', true);
+  this._renderer.states.doFill = true;
   return this;
 };
 

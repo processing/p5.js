@@ -522,7 +522,7 @@ p5.RendererGL = class RendererGL extends Renderer {
 
     this.registerEnabled = new Set();
 
-    this._tint = [255, 255, 255, 255];
+    this.states.tint = [255, 255, 255, 255];
 
     // lightFalloff variables
     this.constantAttenuation = 1;
@@ -914,7 +914,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     this._enableLighting = false;
 
     //reset tint value for new frame
-    this._tint = [255, 255, 255, 255];
+    this.states.tint = [255, 255, 255, 255];
 
     //Clear depth every frame
     this.GL.clearStencil(0);
@@ -1586,10 +1586,10 @@ p5.RendererGL = class RendererGL extends Renderer {
 
   push() {
     // get the base renderer style
-    const style = Renderer.prototype.push.apply(this);
+    const style = super.push();
 
     // add webgl-specific style properties
-    const properties = style.properties;
+    const properties = style;
 
     properties.uModelMatrix = this.uModelMatrix.copy();
     properties.uViewMatrix = this.uViewMatrix.copy();
@@ -2079,7 +2079,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     if (this._tex) {
       fillShader.setUniform('uSampler', this._tex);
     }
-    fillShader.setUniform('uTint', this._tint);
+    fillShader.setUniform('uTint', this.states.tint);
 
     fillShader.setUniform('uHasSetAmbient', this._hasSetAmbient);
     fillShader.setUniform('uAmbientMatColor', this.curAmbientColor);

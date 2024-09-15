@@ -640,7 +640,7 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
     );
     return;
   }
-  if (y >= maxY || !this._doFill) {
+  if (y >= maxY || !this.states.doFill) {
     return; // don't render lines beyond our maxY position
   }
 
@@ -654,10 +654,10 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   p.push(); // fix to #803
 
   // remember this state, so it can be restored later
-  const doStroke = this._doStroke;
+  const doStroke = this.states.doStroke;
   const drawMode = this.drawMode;
 
-  this._doStroke = false;
+  this.states.doStroke = false;
   this.drawMode = constants.TEXTURE;
 
   // get the cached FontInfo object
@@ -750,7 +750,7 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
     // clean up
     sh.unbindShader();
 
-    this._doStroke = doStroke;
+    this.states.doStroke = doStroke;
     this.drawMode = drawMode;
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 

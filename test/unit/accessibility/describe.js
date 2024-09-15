@@ -10,6 +10,7 @@ suite('describe', function() {
         let cnv = p.createCanvas(100, 100);
         cnv.id(myID);
         myp5 = p;
+        console.log("here", p.describe);
       };
     });
   });

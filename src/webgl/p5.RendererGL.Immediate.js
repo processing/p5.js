@@ -241,7 +241,7 @@ p5.RendererGL.prototype.endShape = function(
     this.immediateMode.shapeMode = constants.TRIANGLE_STRIP;
   }
 
-  if (this._doFill && !is_line) {
+  if (this.states.doFill && !is_line) {
     if (
       !this.geometryBuilder &&
       this.immediateMode.geometry.vertices.length >= 3
@@ -249,7 +249,7 @@ p5.RendererGL.prototype.endShape = function(
       this._drawImmediateFill(count);
     }
   }
-  if (this._doStroke) {
+  if (this.states.doStroke) {
     if (
       !this.geometryBuilder &&
       this.immediateMode.geometry.lineVertices.length >= 1
@@ -283,7 +283,7 @@ p5.RendererGL.prototype.endShape = function(
 p5.RendererGL.prototype._processVertices = function(mode) {
   if (this.immediateMode.geometry.vertices.length === 0) return;
 
-  const calculateStroke = this._doStroke;
+  const calculateStroke = this.states.doStroke;
   const shouldClose = mode === constants.CLOSE;
   if (calculateStroke) {
     this.immediateMode.geometry.edges = this._calculateEdges(
@@ -302,7 +302,7 @@ p5.RendererGL.prototype._processVertices = function(mode) {
   const hasContour = this.immediateMode.contourIndices.length > 0;
   // We tesselate when drawing curves or convex shapes
   const shouldTess =
-    this._doFill &&
+    this.states.doFill &&
     (
       this.isBezier ||
       this.isQuadratic ||

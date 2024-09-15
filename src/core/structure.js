@@ -542,6 +542,7 @@ p5.prototype.isLooping = function() {
  * </div>
  */
 p5.prototype.push = function() {
+  // NOTE: change how state machine is handled from here
   this._styles.push({
     props: {
       _colorMode: this._colorMode

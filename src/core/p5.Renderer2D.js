@@ -253,7 +253,7 @@ class Renderer2D extends Renderer {
       if (p5.MediaElement && img instanceof p5.MediaElement) {
         img._ensureCanvas();
       }
-      if (this._tint && img.canvas) {
+      if (this.states.tint && img.canvas) {
         cnv = this._getTintedImageCanvas(img);
       }
       if (!cnv) {
@@ -314,7 +314,7 @@ class Renderer2D extends Renderer {
     ctx.save();
     ctx.clearRect(0, 0, img.canvas.width, img.canvas.height);
 
-    if (this._tint[0] < 255 || this._tint[1] < 255 || this._tint[2] < 255) {
+    if (this.states.tint[0] < 255 || this.states.tint[1] < 255 || this.states.tint[2] < 255) {
       // Color tint: we need to use the multiply blend mode to change the colors.
       // However, the canvas implementation of this destroys the alpha channel of
       // the image. To accommodate, we first get a version of the image with full
@@ -336,16 +336,16 @@ class Renderer2D extends Renderer {
 
       // Apply color tint
       ctx.globalCompositeOperation = 'multiply';
-      ctx.fillStyle = `rgb(${this._tint.slice(0, 3).join(', ')})`;
+      ctx.fillStyle = `rgb(${this.states.tint.slice(0, 3).join(', ')})`;
       ctx.fillRect(0, 0, img.canvas.width, img.canvas.height);
 
       // Replace the alpha channel with the original alpha * the alpha tint
       ctx.globalCompositeOperation = 'destination-in';
-      ctx.globalAlpha = this._tint[3] / 255;
+      ctx.globalAlpha = this.states.tint[3] / 255;
       ctx.drawImage(img.canvas, 0, 0);
     } else {
       // If we only need to change the alpha, we can skip all the extra work!
-      ctx.globalAlpha = this._tint[3] / 255;
+      ctx.globalAlpha = this.states.tint[3] / 255;
       ctx.drawImage(img.canvas, 0, 0);
     }
 
@@ -595,7 +595,7 @@ class Renderer2D extends Renderer {
     }
 
     // Fill curves
-    if (this._doFill) {
+    if (this.states.doFill) {
       if (!this._clipping) ctx.beginPath();
       curves.forEach((curve, index) => {
         if (index === 0) {
@@ -615,7 +615,7 @@ class Renderer2D extends Renderer {
     }
 
     // Stroke curves
-    if (this._doStroke) {
+    if (this.states.doStroke) {
       if (!this._clipping) ctx.beginPath();
       curves.forEach((curve, index) => {
         if (index === 0) {
@@ -640,8 +640,8 @@ class Renderer2D extends Renderer {
 
   ellipse(args) {
     const ctx = this.drawingContext;
-    const doFill = this._doFill,
-      doStroke = this._doStroke;
+    const doFill = this.states.doFill,
+      doStroke = this.states.doStroke;
     const x = parseFloat(args[0]),
       y = parseFloat(args[1]),
       w = parseFloat(args[2]),
@@ -673,7 +673,7 @@ class Renderer2D extends Renderer {
 
   line(x1, y1, x2, y2) {
     const ctx = this.drawingContext;
-    if (!this._doStroke) {
+    if (!this.states.doStroke) {
       return this;
     } else if (this._getStroke() === styleEmpty) {
       return this;
@@ -687,7 +687,7 @@ class Renderer2D extends Renderer {
 
   point(x, y) {
     const ctx = this.drawingContext;
-    if (!this._doStroke) {
+    if (!this.states.doStroke) {
       return this;
     } else if (this._getStroke() === styleEmpty) {
       return this;
@@ -708,8 +708,8 @@ class Renderer2D extends Renderer {
 
   quad(x1, y1, x2, y2, x3, y3, x4, y4) {
     const ctx = this.drawingContext;
-    const doFill = this._doFill,
-      doStroke = this._doStroke;
+    const doFill = this.states.doFill,
+      doStroke = this.states.doStroke;
     if (doFill && !doStroke) {
       if (this._getFill() === styleEmpty) {
         return this;
@@ -744,8 +744,8 @@ class Renderer2D extends Renderer {
     let br = args[6];
     let bl = args[7];
     const ctx = this.drawingContext;
-    const doFill = this._doFill,
-      doStroke = this._doStroke;
+    const doFill = this.states.doFill,
+      doStroke = this.states.doStroke;
     if (doFill && !doStroke) {
       if (this._getFill() === styleEmpty) {
         return this;
@@ -814,10 +814,10 @@ class Renderer2D extends Renderer {
       ctx.arcTo(x, y, x + w, y, tl);
       ctx.closePath();
     }
-    if (!this._clipping && this._doFill) {
+    if (!this._clipping && this.states.doFill) {
       ctx.fill();
     }
-    if (!this._clipping && this._doStroke) {
+    if (!this._clipping && this.states.doStroke) {
       ctx.stroke();
     }
     return this;
@@ -826,8 +826,8 @@ class Renderer2D extends Renderer {
 
   triangle(args) {
     const ctx = this.drawingContext;
-    const doFill = this._doFill,
-      doStroke = this._doStroke;
+    const doFill = this.states.doFill,
+      doStroke = this.states.doStroke;
     const x1 = args[0],
       y1 = args[1];
     const x2 = args[2],
@@ -868,7 +868,7 @@ class Renderer2D extends Renderer {
     if (vertices.length === 0) {
       return this;
     }
-    if (!this._doStroke && !this._doFill) {
+    if (!this.states.doStroke && !this.states.doFill) {
       return this;
     }
     const closeShape = mode === constants.CLOSE;
@@ -962,7 +962,7 @@ class Renderer2D extends Renderer {
       if (shapeKind === constants.POINTS) {
         for (i = 0; i < numVerts; i++) {
           v = vertices[i];
-          if (this._doStroke) {
+          if (this.states.doStroke) {
             this._pInst.stroke(v[6]);
           }
           this._pInst.point(v[0], v[1]);
@@ -970,7 +970,7 @@ class Renderer2D extends Renderer {
       } else if (shapeKind === constants.LINES) {
         for (i = 0; i + 1 < numVerts; i += 2) {
           v = vertices[i];
-          if (this._doStroke) {
+          if (this.states.doStroke) {
             this._pInst.stroke(vertices[i + 1][6]);
           }
           this._pInst.line(v[0], v[1], vertices[i + 1][0], vertices[i + 1][1]);
@@ -983,11 +983,11 @@ class Renderer2D extends Renderer {
           this.drawingContext.lineTo(vertices[i + 1][0], vertices[i + 1][1]);
           this.drawingContext.lineTo(vertices[i + 2][0], vertices[i + 2][1]);
           this.drawingContext.closePath();
-          if (!this._clipping && this._doFill) {
+          if (!this._clipping && this.states.doFill) {
             this._pInst.fill(vertices[i + 2][5]);
             this.drawingContext.fill();
           }
-          if (!this._clipping && this._doStroke) {
+          if (!this._clipping && this.states.doStroke) {
             this._pInst.stroke(vertices[i + 2][6]);
             this.drawingContext.stroke();
           }
@@ -998,18 +998,18 @@ class Renderer2D extends Renderer {
           if (!this._clipping) this.drawingContext.beginPath();
           this.drawingContext.moveTo(vertices[i + 1][0], vertices[i + 1][1]);
           this.drawingContext.lineTo(v[0], v[1]);
-          if (!this._clipping && this._doStroke) {
+          if (!this._clipping && this.states.doStroke) {
             this._pInst.stroke(vertices[i + 1][6]);
           }
-          if (!this._clipping && this._doFill) {
+          if (!this._clipping && this.states.doFill) {
             this._pInst.fill(vertices[i + 1][5]);
           }
           if (i + 2 < numVerts) {
             this.drawingContext.lineTo(vertices[i + 2][0], vertices[i + 2][1]);
-            if (!this._clipping && this._doStroke) {
+            if (!this._clipping && this.states.doStroke) {
               this._pInst.stroke(vertices[i + 2][6]);
             }
-            if (!this._clipping && this._doFill) {
+            if (!this._clipping && this.states.doFill) {
               this._pInst.fill(vertices[i + 2][5]);
             }
           }
@@ -1029,15 +1029,15 @@ class Renderer2D extends Renderer {
             // If the next colour is going to be different, stroke / fill now
             if (i < numVerts - 1) {
               if (
-                (this._doFill && v[5] !== vertices[i + 1][5]) ||
-                (this._doStroke && v[6] !== vertices[i + 1][6])
+                (this.states.doFill && v[5] !== vertices[i + 1][5]) ||
+                (this.states.doStroke && v[6] !== vertices[i + 1][6])
               ) {
-                if (!this._clipping && this._doFill) {
+                if (!this._clipping && this.states.doFill) {
                   this._pInst.fill(v[5]);
                   this.drawingContext.fill();
                   this._pInst.fill(vertices[i + 1][5]);
                 }
-                if (!this._clipping && this._doStroke) {
+                if (!this._clipping && this.states.doStroke) {
                   this._pInst.stroke(v[6]);
                   this.drawingContext.stroke();
                   this._pInst.stroke(vertices[i + 1][6]);
@@ -1058,10 +1058,10 @@ class Renderer2D extends Renderer {
             this.drawingContext.lineTo(vertices[i + j][0], vertices[i + j][1]);
           }
           this.drawingContext.lineTo(v[0], v[1]);
-          if (!this._clipping && this._doFill) {
+          if (!this._clipping && this.states.doFill) {
             this._pInst.fill(vertices[i + 3][5]);
           }
-          if (!this._clipping && this._doStroke) {
+          if (!this._clipping && this.states.doStroke) {
             this._pInst.stroke(vertices[i + 3][6]);
           }
           this._doFillStrokeClose(closeShape);
@@ -1079,10 +1079,10 @@ class Renderer2D extends Renderer {
                 vertices[i + 1][0], vertices[i + 1][1]);
               this.drawingContext.lineTo(
                 vertices[i + 3][0], vertices[i + 3][1]);
-              if (!this._clipping && this._doFill) {
+              if (!this._clipping && this.states.doFill) {
                 this._pInst.fill(vertices[i + 3][5]);
               }
-              if (!this._clipping && this._doStroke) {
+              if (!this._clipping && this.states.doStroke) {
                 this._pInst.stroke(vertices[i + 3][6]);
               }
             } else {
@@ -1213,10 +1213,10 @@ class Renderer2D extends Renderer {
     if (closeShape) {
       this.drawingContext.closePath();
     }
-    if (!this._clipping && this._doFill) {
+    if (!this._clipping && this.states.doFill) {
       this.drawingContext.fill();
     }
-    if (!this._clipping && this._doStroke) {
+    if (!this._clipping && this.states.doStroke) {
       this.drawingContext.stroke();
     }
   }
@@ -1275,13 +1275,13 @@ class Renderer2D extends Renderer {
       // a system/browser font
 
       // no stroke unless specified by user
-      if (this._doStroke && this._strokeSet) {
+      if (this.states.doStroke && this.states.strokeSet) {
         this.drawingContext.strokeText(line, x, y);
       }
 
-      if (!this._clipping && this._doFill) {
+      if (!this._clipping && this.states.doFill) {
         // if fill hasn't been set by user, use default text fill
-        if (!this._fillSet) {
+        if (!this.states.fillSet) {
           this._setFill(constants._DEFAULT_TEXT_FILL);
         }
 
@@ -1290,7 +1290,7 @@ class Renderer2D extends Renderer {
     } else {
       // an opentype font, let it handle the rendering
 
-      this._textFont._renderPath(line, x, y, { renderer: this });
+      this.states.textFont._renderPath(line, x, y, { renderer: this });
     }
 
     p.pop();
@@ -1299,7 +1299,7 @@ class Renderer2D extends Renderer {
 
   textWidth(s) {
     if (this._isOpenType()) {
-      return this._textFont._textWidth(s, this._textSize);
+      return this.states.textFont._textWidth(s, this.states.textSize);
     }
 
     return this.drawingContext.measureText(s).width;
@@ -1309,14 +1309,14 @@ class Renderer2D extends Renderer {
     let font;
     const p = this._pInst;
 
-    this._setProperty('_textAscent', null);
-    this._setProperty('_textDescent', null);
+    this.states.textAscent = null;
+    this.states.textDescent = null;
 
-    font = this._textFont;
+    font = this.states.textFont;
 
     if (this._isOpenType()) {
-      font = this._textFont.font.familyName;
-      this._setProperty('_textStyle', this._textFont.font.styleName);
+      font = this.states.textFont.font.familyName;
+      this.states.textStyle = this._textFont.font.styleName;
     }
 
     let fontNameString = font || 'sans-serif';
@@ -1324,14 +1324,14 @@ class Renderer2D extends Renderer {
       // If the name includes spaces, surround in quotes
       fontNameString = `"${fontNameString}"`;
     }
-    this.drawingContext.font = `${this._textStyle || 'normal'} ${this._textSize ||
+    this.drawingContext.font = `${this.states.textStyle || 'normal'} ${this.states.textSize ||
       12}px ${fontNameString}`;
 
-    this.drawingContext.textAlign = this._textAlign;
-    if (this._textBaseline === constants.CENTER) {
+    this.drawingContext.textAlign = this.states.textAlign;
+    if (this.states.textBaseline === constants.CENTER) {
       this.drawingContext.textBaseline = constants._CTX_MIDDLE;
     } else {
-      this.drawingContext.textBaseline = this._textBaseline;
+      this.drawingContext.textBaseline = this.states.textBaseline;
     }
 
     return p;

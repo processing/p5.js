@@ -72,21 +72,21 @@ suite('p5.RendererGL', function() {
     test('check activate and deactivating fill and stroke', function() {
       myp5.noStroke();
       assert(
-        !myp5._renderer._doStroke,
+        !myp5._renderer.states.doStroke,
         'stroke shader still active after noStroke()'
       );
       assert.isTrue(
-        myp5._renderer._doFill,
+        myp5._renderer.states.doFill,
         'fill shader deactivated by noStroke()'
       );
       myp5.stroke(0);
       myp5.noFill();
       assert(
-        myp5._renderer._doStroke,
+        myp5._renderer.states.doStroke,
         'stroke shader not active after stroke()'
       );
       assert.isTrue(
-        !myp5._renderer._doFill,
+        !myp5._renderer.states.doFill,
         'fill shader still active after noFill()'
       );
     });
@@ -284,9 +284,9 @@ suite('p5.RendererGL', function() {
     test('stroke and other settings are unaffected after filter', function() {
       let c = myp5.createCanvas(5, 5, myp5.WEBGL);
       let getShapeAttributes = () => [
-        c._ellipseMode,
+        c.states.ellipseMode,
         c.drawingContext.imageSmoothingEnabled,
-        c._rectMode,
+        c.states.rectMode,
         c.curStrokeWeight,
         c.curStrokeCap,
         c.curStrokeJoin,
@@ -1344,31 +1344,31 @@ suite('p5.RendererGL', function() {
   suite('tint() in WEBGL mode', function() {
     test('default tint value is set and not null', function() {
       myp5.createCanvas(100, 100, myp5.WEBGL);
-      assert.deepEqual(myp5._renderer._tint, [255, 255, 255, 255]);
+      assert.deepEqual(myp5._renderer.states.tint, [255, 255, 255, 255]);
     });
 
     test('tint value is modified correctly when tint() is called', function() {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.tint(0, 153, 204, 126);
-      assert.deepEqual(myp5._renderer._tint, [0, 153, 204, 126]);
+      assert.deepEqual(myp5._renderer.states.tint, [0, 153, 204, 126]);
       myp5.tint(100, 120, 140);
-      assert.deepEqual(myp5._renderer._tint, [100, 120, 140, 255]);
+      assert.deepEqual(myp5._renderer.states.tint, [100, 120, 140, 255]);
       myp5.tint('violet');
-      assert.deepEqual(myp5._renderer._tint, [238, 130, 238, 255]);
+      assert.deepEqual(myp5._renderer.states.tint, [238, 130, 238, 255]);
       myp5.tint(100);
-      assert.deepEqual(myp5._renderer._tint, [100, 100, 100, 255]);
+      assert.deepEqual(myp5._renderer.states.tint, [100, 100, 100, 255]);
       myp5.tint(100, 126);
-      assert.deepEqual(myp5._renderer._tint, [100, 100, 100, 126]);
+      assert.deepEqual(myp5._renderer.states.tint, [100, 100, 100, 126]);
       myp5.tint([100, 126, 0, 200]);
-      assert.deepEqual(myp5._renderer._tint, [100, 126, 0, 200]);
+      assert.deepEqual(myp5._renderer.states.tint, [100, 126, 0, 200]);
       myp5.tint([100, 126, 0]);
-      assert.deepEqual(myp5._renderer._tint, [100, 126, 0, 255]);
+      assert.deepEqual(myp5._renderer.states.tint, [100, 126, 0, 255]);
       myp5.tint([100]);
-      assert.deepEqual(myp5._renderer._tint, [100, 100, 100, 255]);
+      assert.deepEqual(myp5._renderer.states.tint, [100, 100, 100, 255]);
       myp5.tint([100, 126]);
-      assert.deepEqual(myp5._renderer._tint, [100, 100, 100, 126]);
+      assert.deepEqual(myp5._renderer.states.tint, [100, 100, 100, 126]);
       myp5.tint(myp5.color(255, 204, 0));
-      assert.deepEqual(myp5._renderer._tint, [255, 204, 0, 255]);
+      assert.deepEqual(myp5._renderer.states.tint, [255, 204, 0, 255]);
     });
 
     test('tint should be reset after draw loop', function() {
@@ -1379,7 +1379,7 @@ suite('p5.RendererGL', function() {
           };
           p.draw = function() {
             if (p.frameCount === 2) {
-              resolve(p._renderer._tint);
+              resolve(p._renderer.states.tint);
             }
             p.tint(0, 153, 204, 126);
           };

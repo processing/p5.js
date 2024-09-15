@@ -60,12 +60,12 @@ class GeometryBuilder {
     );
     this.geometry.uvs.push(...input.uvs);
 
-    if (this.renderer._doFill) {
+    if (this.renderer.states.doFill) {
       this.geometry.faces.push(
         ...input.faces.map(f => f.map(idx => idx + startIdx))
       );
     }
-    if (this.renderer._doStroke) {
+    if (this.renderer.states.doStroke) {
       this.geometry.edges.push(
         ...input.edges.map(edge => edge.map(idx => idx + startIdx))
       );
@@ -86,7 +86,7 @@ class GeometryBuilder {
     const shapeMode = this.renderer.immediateMode.shapeMode;
     const faces = [];
 
-    if (this.renderer._doFill) {
+    if (this.renderer.states.doFill) {
       if (
         shapeMode === constants.TRIANGLE_STRIP ||
         shapeMode === constants.QUAD_STRIP
