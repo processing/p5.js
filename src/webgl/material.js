@@ -584,10 +584,6 @@ p5.prototype.createFilterShader = function (fragSrc) {
  * apply. For example, calling `shader(myShader)` applies `myShader` to
  * process each pixel on the canvas. This only affects the fill (the inside part of shapes),
  * not the strokes (outlines).
- * If you want to apply shaders to strokes or images, use the following methods:
- * - **[strokeShader()](#/p5/strokeShader)**: Applies a shader to the stroke (outline) of shapes, allowing independent control over the stroke rendering using shaders.
- * - **[imageShader()](#/p5/imageShader)**: Applies a shader to images or textures, controlling how the shader modifies their appearance during rendering.
- *
  * The source code from a <a href="#/p5.Shader">p5.Shader</a> object's
  * fragment and vertex shaders will be compiled the first time it's passed to
  * `shader()`. See
@@ -598,6 +594,17 @@ p5.prototype.createFilterShader = function (fragSrc) {
  * default shaders.
  *
  * Note: Shaders can only be used in WebGL mode.
+ *
+ * <div>
+ * <p>
+ *
+ * If you want to apply shaders to strokes or images, use the following methods:
+ * - **[strokeShader()](#/p5/strokeShader)**: Applies a shader to the stroke (outline) of shapes, allowing independent control over the stroke rendering using shaders.
+ * - **[imageShader()](#/p5/imageShader)**: Applies a shader to images or textures, controlling how the shader modifies their appearance during rendering.
+ *
+ * </p>
+ * </div>
+ *
  *
  * @method shader
  * @chainable
@@ -758,10 +765,10 @@ p5.prototype.shader = function (s) {
 /**
  * Sets the <a href="#/p5.Shader">p5.Shader</a> object to apply for strokes.
  *
- * This method applies the given shader to strokes, making it easier to
- * customize how lines and outlines are drawn in 3D space. The shader
- * provided will be used for strokes until <a href="#/p5/resetShader">resetShader()</a>
- * is called or another strokeShader is applied.
+ * This method applies the given shader to strokes, allowing customization of
+ * how lines and outlines are drawn in 3D space. The shader will be used for
+ * strokes until <a href="#/p5/resetShader">resetShader()</a> is called or another
+ * strokeShader is applied.
  *
  * The shader will be used for:
  * - Strokes only, regardless of whether the uniform `uStrokeWeight` is present.
@@ -774,88 +781,287 @@ p5.prototype.shader = function (s) {
  * @example
  * <div modernizr='webgl'>
  * <code>
+ * // Example: Custom stroke with 3D perspective and dynamic scaling
+ * let myStrokeShader;
  * let vertSrc = `
- * attribute vec3 aPosition;
- * attribute vec2 aTexCoord;
- * uniform mat4 uProjectionMatrix;
+ *
+ * precision mediump int;
+ *
  * uniform mat4 uModelViewMatrix;
- * varying vec2 vTexCoord;
+ * uniform mat4 uProjectionMatrix;
+ * uniform float uStrokeWeight;
+ *
+ * uniform bool uUseLineColor;
+ * uniform vec4 uMaterialColor;
+ *
+ * uniform vec4 uViewport;
+ * uniform int uPerspective;
+ * uniform int uStrokeJoin;
+ *
+ * attribute vec4 aPosition;
+ * attribute vec3 aTangentIn;
+ * attribute vec3 aTangentOut;
+ * attribute float aSide;
+ * attribute vec4 aVertexColor;
  *
  * void main() {
- *   vTexCoord = aTexCoord;
- *   vec4 position = vec4(aPosition, 1.0);
- *   gl_Position = uProjectionMatrix * uModelViewMatrix * position;
+ *   vec4 posp = uModelViewMatrix * aPosition;
+ *   vec4 posqIn = uModelViewMatrix * (aPosition + vec4(aTangentIn, 0));
+ *   vec4 posqOut = uModelViewMatrix * (aPosition + vec4(aTangentOut, 0));
+ *
+ *   float facingCamera = pow(
+ *     abs(normalize(posqIn-posp).z),
+ *     0.25
+ *   );
+ *
+ *   float scale = mix(1., 0.995, facingCamera);
+ *
+ *   posp.xyz = posp.xyz * scale;
+ *   posqIn.xyz = posqIn.xyz * scale;
+ *   posqOut.xyz = posqOut.xyz * scale;
+ *
+ *   vec4 p = uProjectionMatrix * posp;
+ *   vec4 qIn = uProjectionMatrix * posqIn;
+ *   vec4 qOut = uProjectionMatrix * posqOut;
+ *
+ *   vec2 tangentIn = normalize((qIn.xy*p.w - p.xy*qIn.w) * uViewport.zw);
+ *   vec2 tangentOut = normalize((qOut.xy*p.w - p.xy*qOut.w) * uViewport.zw);
+ *
+ *   vec2 curPerspScale;
+ *   if(uPerspective == 1) {
+ *     curPerspScale = (uProjectionMatrix * vec4(1, sign(uProjectionMatrix[1][1]), 0, 0)).xy;
+ *   } else {
+ *     curPerspScale = p.w / (0.5 * uViewport.zw);
+ *   }
+ *
+ *   vec2 offset;
+ *   vec2 tangent = aTangentIn == vec3(0.) ? tangentOut : tangentIn;
+ *   vec2 normal = vec2(-tangent.y, tangent.x);
+ *   float normalOffset = sign(aSide);
+ *   float tangentOffset = abs(aSide) - 1.;
+ *   offset = (normal * normalOffset + tangent * tangentOffset) *
+ *     uStrokeWeight * 0.5;
+ *
+ *   gl_Position.xy = p.xy + offset.xy * curPerspScale;
+ *   gl_Position.zw = p.zw;
+ * }
+ * `;
+
+ * let fragSrc = `
+ * precision mediump float;
+ *
+ * void main() {
+ *   gl_FragColor = vec4(0.0, 0.5, 1.0, 1.0);  // Force blue color for stroke
+ * }
+ * `;
+
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   myStrokeShader = createShader(vertSrc, fragSrc);
+ *   strokeShader(myStrokeShader);
+ *   strokeWeight(5);
+ * }
+
+ * function draw() {
+ *   background(255);  // White background
+ *   rotateY(frameCount * 0.01);  // Rotate box
+ *   noFill();  // Only stroke for the box
+ *   box(50);  // Draw 3D box
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * // Example 2: Dynamic stroke color based on 3D position
+ * let dynamicStrokeShader;
+ *
+ * let vertSrc = `
+ * precision mediump int;
+ *
+ * uniform mat4 uModelViewMatrix;
+ * uniform mat4 uProjectionMatrix;
+ * uniform float uStrokeWeight;
+ *
+ * uniform bool uUseLineColor;
+ * uniform vec4 uMaterialColor;
+ *
+ * uniform vec4 uViewport;
+ * uniform int uPerspective;
+ * uniform int uStrokeJoin;
+ *
+ * attribute vec4 aPosition;
+ * attribute vec3 aTangentIn;
+ * attribute vec3 aTangentOut;
+ * attribute float aSide;
+ * attribute vec4 aVertexColor;
+ *
+ * varying vec3 vPosition;  // Pass position to fragment shader
+ *
+ * void main() {
+ *   vec4 posp = uModelViewMatrix * aPosition;
+ *   vec4 posqIn = uModelViewMatrix * (aPosition + vec4(aTangentIn, 0));
+ *   vec4 posqOut = uModelViewMatrix * (aPosition + vec4(aTangentOut, 0));
+ *
+ *   float facingCamera = pow(
+ *     abs(normalize(posqIn-posp).z),
+ *     0.25
+ *   );
+ *
+ *   float scale = mix(1., 0.995, facingCamera);
+ *
+ *   posp.xyz = posp.xyz * scale;
+ *   posqIn.xyz = posqIn.xyz * scale;
+ *   posqOut.xyz = posqOut.xyz * scale;
+ *
+ *   vec4 p = uProjectionMatrix * posp;
+ *   vec4 qIn = uProjectionMatrix * posqIn;
+ *   vec4 qOut = uProjectionMatrix * posqOut;
+ *
+ *   vec2 tangentIn = normalize((qIn.xy*p.w - p.xy*qIn.w) * uViewport.zw);
+ *   vec2 tangentOut = normalize((qOut.xy*p.w - p.xy*qOut.w) * uViewport.zw);
+ *
+ *   vec2 curPerspScale;
+ *   if(uPerspective == 1) {
+ *     curPerspScale = (uProjectionMatrix * vec4(1, sign(uProjectionMatrix[1][1]), 0, 0)).xy;
+ *   } else {
+ *     curPerspScale = p.w / (0.5 * uViewport.zw);
+ *   }
+ *
+ *   vec2 offset;
+ *   vec2 tangent = aTangentIn == vec3(0.) ? tangentOut : tangentIn;
+ *   vec2 normal = vec2(-tangent.y, tangent.x);
+ *   float normalOffset = sign(aSide);
+ *   float tangentOffset = abs(aSide) - 1.;
+ *   offset = (normal * normalOffset + tangent * tangentOffset) *
+ *     uStrokeWeight * 0.5;
+ *
+ *   gl_Position.xy = p.xy + offset.xy * curPerspScale;
+ *   gl_Position.zw = p.zw;
+ *
+ *   vPosition = posp.xyz;  // Pass the vertex position to fragment shader
  * }
  * `;
  *
  * let fragSrc = `
  * precision mediump float;
- * varying vec2 vTexCoord;
+ * varying vec3 vPosition;  // Receive the vertex position
  *
  * void main() {
- *   vec2 uv = vTexCoord;
- *   vec3 color = vec3(uv.x, uv.y, min(uv.x + uv.y, 1.0));
- *   gl_FragColor = vec4(color, 1.0);
+ *   // Dynamic color based on position in 3D space
+ *   gl_FragColor = vec4(abs(vPosition.x), abs(vPosition.y), abs(vPosition.z), 1.0);
  * }
  * `;
  *
- * let myStrokeShader;
- *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   myStrokeShader = createShader(vertSrc, fragSrc);
+ *   dynamicStrokeShader = createShader(vertSrc, fragSrc);
+ *   strokeShader(dynamicStrokeShader);
+ *   strokeWeight(3);
  * }
  *
  * function draw() {
- *   background(200);
- *
- *   // Apply the stroke shader
- *   strokeShader(myStrokeShader);
- *
- *   // Draw a stroked shape
- *   strokeWeight(5);
- *   stroke(255, 0, 0);
- *   noFill();
- *   box(50);
- *
- *   // Reset to default shaders for the next frame
- *   resetShader();
+ *   background(0);  // Black background
+ *   rotateY(frameCount * 0.01);  // Rotate box
+ *   noFill();  // Only stroke for the box
+ *   box(50);  // Draw 3D box
  * }
  * </code>
  * </div>
  *
+ * @example
  * <div modernizr='webgl'>
  * <code>
+ * // Example 3: Animated stroke shader with time-based color change
+ * let animatedStrokeShader;
+ *
  * let vertSrc = `
- * precision highp float;
+ * precision mediump int;
+ *
  * uniform mat4 uModelViewMatrix;
  * uniform mat4 uProjectionMatrix;
+ * uniform float uStrokeWeight;
  *
- * attribute vec3 aPosition;
- * attribute vec2 aTexCoord;
- * varying vec2 vTexCoord;
+ * uniform bool uUseLineColor;
+ * uniform vec4 uMaterialColor;
+ *
+ * uniform vec4 uViewport;
+ * uniform int uPerspective;
+ * uniform int uStrokeJoin;
+ *
+ * attribute vec4 aPosition;
+ * attribute vec3 aTangentIn;
+ * attribute vec3 aTangentOut;
+ * attribute float aSide;
+ * attribute vec4 aVertexColor;
  *
  * void main() {
- *   vTexCoord = aTexCoord;
- *   vec4 positionVec4 = vec4(aPosition, 1.0);
- *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+ *   vec4 posp = uModelViewMatrix * aPosition;
+ *   vec4 posqIn = uModelViewMatrix * (aPosition + vec4(aTangentIn, 0));
+ *   vec4 posqOut = uModelViewMatrix * (aPosition + vec4(aTangentOut, 0));
+ *
+ *   float facingCamera = pow(
+ *     abs(normalize(posqIn-posp).z),
+ *     0.25
+ *   );
+ *
+ *   float scale = mix(1., 0.995, facingCamera);
+ *
+ *   posp.xyz = posp.xyz * scale;
+ *   posqIn.xyz = posqIn.xyz * scale;
+ *   posqOut.xyz = posqOut.xyz * scale;
+ *
+ *   vec4 p = uProjectionMatrix * posp;
+ *   vec4 qIn = uProjectionMatrix * posqIn;
+ *   vec4 qOut = uProjectionMatrix * posqOut;
+ *
+ *   vec2 tangentIn = normalize((qIn.xy*p.w - p.xy*qIn.w) * uViewport.zw);
+ *   vec2 tangentOut = normalize((qOut.xy*p.w - p.xy*qOut.w) * uViewport.zw);
+ *
+ *   vec2 curPerspScale;
+ *   if(uPerspective == 1) {
+ *     curPerspScale = (uProjectionMatrix * vec4(1, sign(uProjectionMatrix[1][1]), 0, 0)).xy;
+ *   } else {
+ *     curPerspScale = p.w / (0.5 * uViewport.zw);
+ *   }
+ *
+ *   vec2 offset;
+ *   vec2 tangent = aTangentIn == vec3(0.) ? tangentOut : tangentIn;
+ *   vec2 normal = vec2(-tangent.y, tangent.x);
+ *   float normalOffset = sign(aSide);
+ *   float tangentOffset = abs(aSide) - 1.;
+ *   offset = (normal * normalOffset + tangent * tangentOffset) *
+ *     uStrokeWeight * 0.5;
+ *
+ *   gl_Position.xy = p.xy + offset.xy * curPerspScale;
+ *   gl_Position.zw = p.zw;
  * }
  * `;
  *
  * let fragSrc = `
- * precision highp float;
+ * precision mediump float;
+ * uniform float uTime;
  *
  * void main() {
- *   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+ *   float wave = sin(gl_FragCoord.x * 0.1 + uTime) * 0.5 + 0.5;
+ *   gl_FragColor = vec4(wave, 0.5, 1.0, 1.0);  // Animated color based on time
  * }
  * `;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   let shaderProgram = createShader(vertSrc, fragSrc);
- *   strokeShader(shaderProgram);
- *   strokeWeight(10);
- *   line(-50, -50, 50, 50);
+ *   animatedStrokeShader = createShader(vertSrc, fragSrc);
+ *   strokeShader(animatedStrokeShader);
+ *   strokeWeight(4);
+ * }
+ *
+ * function draw() {
+ *   animatedStrokeShader.setUniform('uTime', millis() / 1000.0);  // Pass time to shader
+ *   background(50);  // Grey background
+ *   rotateY(frameCount * 0.02);  // Rotate box
+ *   noFill();  // Only stroke for the box
+ *   box(50);  // Draw 3D box
  * }
  * </code>
  * </div>
