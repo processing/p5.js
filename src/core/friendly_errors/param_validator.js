@@ -11,7 +11,6 @@ import dataDoc from '../../../docs/parameterData.json';
 function validateParams(p5, fn) {
   // Cache for Zod schemas
   let schemaRegistry = new Map();
-  const arrDoc = JSON.parse(JSON.stringify(dataDoc));
 
   // Mapping names of p5 types to their constructor functions.
   // p5Constructors:
@@ -57,8 +56,6 @@ function validateParams(p5, fn) {
     'Integer': z.number().int(),
     'Number': z.number(),
     'Object': z.object({}),
-    // Allows string for any regex
-    'RegExp': z.string(),
     'String': z.string(),
   };
 
@@ -68,6 +65,7 @@ function validateParams(p5, fn) {
     'HTMLElement',
     'KeyboardEvent',
     'MouseEvent',
+    'RegExp',
     'TouchEvent',
     'UIEvent',
     'WheelEvent'
@@ -119,7 +117,7 @@ function validateParams(p5, fn) {
     const funcName = func.slice(ichDot + 1);
     const funcClass = func.slice(0, ichDot !== -1 ? ichDot : 0) || 'p5';
 
-    let funcInfo = arrDoc[funcClass][funcName];
+    let funcInfo = dataDoc[funcClass][funcName];
 
     let overloads = [];
     if (funcInfo.hasOwnProperty('overloads')) {
