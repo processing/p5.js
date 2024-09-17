@@ -960,8 +960,8 @@ p5.prototype.hue = function(c) {
  * <a href="#/p5/colorMode">colorMode()</a>.
  *
  * @method lerpColor
- * @param  {p5.Color} c1  interpolate from this color.
- * @param  {p5.Color} c2  interpolate to this color.
+ * @param  {p5.Color} c1  interpolate from this color (any value created by the color() function).
+ * @param  {p5.Color} c2  interpolate to this color (any value created by the color() function).
  * @param  {Number}   amt number between 0 and 1.
  * @return {p5.Color}     interpolated color.
  *
@@ -1007,6 +1007,14 @@ p5.prototype.hue = function(c) {
  */
 p5.prototype.lerpColor = function(c1, c2, amt) {
   p5._validateParameters('lerpColor', arguments);
+
+  if (!(c1 instanceof p5.Color)) {
+    c1 = color(c1);
+  }
+  if (!(c2 instanceof p5.Color)) {
+    c2 = color(c2);
+  }
+
   const mode = this._colorMode;
   const maxes = this._colorMaxes;
   let l0, l1, l2, l3;
