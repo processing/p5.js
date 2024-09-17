@@ -10,6 +10,7 @@ var spec = {
     'main',
     'p5.Element',
     'p5.Graphics',
+    'param_errors',
     'preload',
     'rendering',
     'structure',
@@ -58,8 +59,8 @@ var spec = {
 document.write(
   '<script src="unit/visual/visualTest.js" type="text/javascript"></script>'
 );
-Object.keys(spec).map(function(folder) {
-  spec[folder].map(function(file) {
+Object.keys(spec).map(function (folder) {
+  spec[folder].map(function (file) {
     var string = [
       '<script src="unit/',
       folder,
