@@ -1008,10 +1008,10 @@ p5.prototype.hue = function(c) {
 p5.prototype.lerpColor = function(c1, c2, amt) {
   p5._validateParameters('lerpColor', arguments);
 
-  if (Array.isArray(c1)) {
+  if (!(c1 instanceof p5.Color)) {
     c1 = color(c1);
   }
-  if (Array.isArray(c2)) {
+  if (!(c2 instanceof p5.Color)) {
     c2 = color(c2);
   }
 
