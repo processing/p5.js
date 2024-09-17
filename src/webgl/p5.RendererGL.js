@@ -447,6 +447,60 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.GL = this.drawingContext;
     this._pInst._setProperty('drawingContext', this.drawingContext);
 
+    // Push/pop state
+    this.states.uModelMatrix = new p5.Matrix();
+    this.states.uViewMatrix = new p5.Matrix();
+    this.states.uMVMatrix = new p5.Matrix();
+    this.states.uPMatrix = new p5.Matrix();
+    this.states.uNMatrix = new p5.Matrix('mat3');
+    this.states.curMatrix = new p5.Matrix('mat3');
+
+    this.states.curCamera = new p5.Camera(this);
+
+    this.states.enableLighting = false;
+    this.states.ambientLightColors = [];
+    this.states.specularColors = [1, 1, 1];
+    this.states.directionalLightDirections = [];
+    this.states.directionalLightDiffuseColors = [];
+    this.states.directionalLightSpecularColors = [];
+    this.states.pointLightPositions = [];
+    this.states.pointLightDiffuseColors = [];
+    this.states.pointLightSpecularColors = [];
+    this.states.spotLightPositions = [];
+    this.states.spotLightDirections = [];
+    this.states.spotLightDiffuseColors = [];
+    this.states.spotLightSpecularColors = [];
+    this.states.spotLightAngle = [];
+    this.states.spotLightConc = [];
+    this.states.activeImageLight = null;
+
+    this.states.curFillColor = [1, 1, 1, 1];
+    this.states.curAmbientColor = [1, 1, 1, 1];
+    this.states.curSpecularColor = [0, 0, 0, 0];
+    this.states.curEmissiveColor = [0, 0, 0, 0];
+    this.states.curStrokeColor = [0, 0, 0, 1];
+
+    this.states.curBlendMode = constants.BLEND;
+
+    this.states._hasSetAmbient = false;
+    this.states._useSpecularMaterial = false;
+    this.states._useEmissiveMaterial = false;
+    this.states._useNormalMaterial = false;
+    this.states._useShininess = 1;
+    this.states._useMetalness = 0;
+
+    this.states.tint = [255, 255, 255, 255];
+
+    this.states.constantAttenuation = 1;
+    this.states.linearAttenuation = 0;
+    this.states.quadraticAttenuation = 0;
+
+    this.states._currentNormal = new p5.Vector(0, 0, 1);
+
+    this.states.drawMode = constants.FILL;
+
+    this.states._tex = null;
+
     // erasing
     this._isErasing = false;
 
@@ -455,53 +509,20 @@ p5.RendererGL = class RendererGL extends Renderer {
     this._isClipApplied = false;
     this._stencilTestOn = false;
 
-    // lights
-    this._enableLighting = false;
-
-    this.ambientLightColors = [];
     this.mixedAmbientLight = [];
     this.mixedSpecularColor = [];
-    this.specularColors = [1, 1, 1];
 
-    this.directionalLightDirections = [];
-    this.directionalLightDiffuseColors = [];
-    this.directionalLightSpecularColors = [];
-
-    this.pointLightPositions = [];
-    this.pointLightDiffuseColors = [];
-    this.pointLightSpecularColors = [];
-
-    this.spotLightPositions = [];
-    this.spotLightDirections = [];
-    this.spotLightDiffuseColors = [];
-    this.spotLightSpecularColors = [];
-    this.spotLightAngle = [];
-    this.spotLightConc = [];
-
-    // This property contains the input image if imageLight function
-    // is called.
-    // activeImageLight is checked by _setFillUniforms
-    // for sending uniforms to the fillshader
-    this.activeImageLight = null;
-    // If activeImageLight property is Null, diffusedTextures,
-    // specularTextures are Empty.
-    // Else, it maps a p5.Image used by imageLight() to a p5.framebuffer.
     // p5.framebuffer for this are calculated in getDiffusedTexture function
     this.diffusedTextures = new Map();
     // p5.framebuffer for this are calculated in getSpecularTexture function
     this.specularTextures = new Map();
 
-    this.drawMode = constants.FILL;
 
-    this.curFillColor = this._cachedFillStyle = [1, 1, 1, 1];
-    this.curAmbientColor = this._cachedFillStyle = [1, 1, 1, 1];
-    this.curSpecularColor = this._cachedFillStyle = [0, 0, 0, 0];
-    this.curEmissiveColor = this._cachedFillStyle = [0, 0, 0, 0];
-    this.curStrokeColor = this._cachedStrokeStyle = [0, 0, 0, 1];
 
-    this.curBlendMode = constants.BLEND;
     this.preEraseBlend = undefined;
     this._cachedBlendMode = undefined;
+    this._cachedFillStyle = [1, 1, 1, 1];
+    this._cachedStrokeStyle = [0, 0, 0, 1];
     if (this.webglVersion === constants.WEBGL2) {
       this.blendExt = this.GL;
     } else {
@@ -509,42 +530,12 @@ p5.RendererGL = class RendererGL extends Renderer {
     }
     this._isBlending = false;
 
-
-    this._hasSetAmbient = false;
-    this._useSpecularMaterial = false;
-    this._useEmissiveMaterial = false;
-    this._useNormalMaterial = false;
-    this._useShininess = 1;
-    this._useMetalness = 0;
-
     this._useLineColor = false;
     this._useVertexColor = false;
 
     this.registerEnabled = new Set();
 
-    this.states.tint = [255, 255, 255, 255];
-
-    // lightFalloff variables
-    this.constantAttenuation = 1;
-    this.linearAttenuation = 0;
-    this.quadraticAttenuation = 0;
-
-    /**
- * model view, projection, & normal
- * matrices
- */
-    this.uModelMatrix = new p5.Matrix();
-    this.uViewMatrix = new p5.Matrix();
-    this.uMVMatrix = new p5.Matrix();
-    this.uPMatrix = new p5.Matrix();
-    this.uNMatrix = new p5.Matrix('mat3');
-    this.curMatrix = new p5.Matrix('mat3');
-
-    // Current vertex normal
-    this._currentNormal = new p5.Vector(0, 0, 1);
-
     // Camera
-    this._curCamera = new p5.Camera(this);
     this._curCamera._computeCameraDefaultSettings();
     this._curCamera._setDefaultCamera();
 
