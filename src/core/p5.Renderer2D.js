@@ -17,6 +17,19 @@ class Renderer2D extends Renderer {
     super(elt, pInst, isMainCanvas);
     this.drawingContext = this.canvas.getContext('2d');
     this._pInst._setProperty('drawingContext', this.drawingContext);
+    this.elt = elt;
+
+    // Extend renderer with methods of p5.Element with getters
+    this.wrappedElt = new p5.Element(elt, pInst);
+    for (const p of Object.getOwnPropertyNames(p5.Element.prototype)) {
+      if (p !== 'constructor' && p[0] !== '_') {
+        Object.defineProperty(this, p, {
+          get() {
+            return this.wrappedElt[p];
+          }
+        })
+      }
+    }
   }
 
   getFilterGraphicsLayer() {

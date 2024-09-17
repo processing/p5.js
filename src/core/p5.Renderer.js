@@ -19,8 +19,6 @@ import * as constants from '../core/constants';
  */
 p5.Renderer = class Renderer {
   constructor(elt, pInst, isMainCanvas) {
-    // this.elt = new p5.Element(elt, pInst);
-    this.elt = elt;
     this._pInst = this._pixelsState = pInst;
     this._events = {};
     this.canvas = elt;
@@ -60,46 +58,11 @@ p5.Renderer = class Renderer {
       textWrap: constants.WORD
     };
     this.pushPopStack = [];
-
-
+    this._pushPopDepth = 0;
 
     this._clipping = false;
     this._clipInvert = false;
-
-    // this._textSize = 12;
-    // this._textLeading = 15;
-    // this._textFont = 'sans-serif';
-    // this._textStyle = constants.NORMAL;
-    // this._textAscent = null;
-    // this._textDescent = null;
-    // this._textAlign = constants.LEFT;
-    // this._textBaseline = constants.BASELINE;
-    // this._textWrap = constants.WORD;
-
-    // this._rectMode = constants.CORNER;
-    // this._ellipseMode = constants.CENTER;
     this._curveTightness = 0;
-    // this._imageMode = constants.CORNER;
-
-    // this._tint = null;
-    // this._doStroke = true;
-    // this._doFill = true;
-    // this._strokeSet = false;
-    // this._fillSet = false;
-    // this._leadingSet = false;
-
-    this._pushPopDepth = 0;
-  }
-
-  id(id) {
-    if (typeof id === 'undefined') {
-      return this.elt.id;
-    }
-
-    this.elt.id = id;
-    this.width = this.elt.offsetWidth;
-    this.height = this.elt.offsetHeight;
-    return this;
   }
 
   // the renderer should return a 'style' object that it wishes to
@@ -109,26 +72,6 @@ p5.Renderer = class Renderer {
     const currentStates = Object.assign({}, this.states);
     this.pushPopStack.push(currentStates);
     return currentStates;
-    // return {
-    //   properties: {
-    //     _doStroke: this._doStroke,
-    //     _strokeSet: this._strokeSet,
-    //     _doFill: this._doFill,
-    //     _fillSet: this._fillSet,
-    //     _tint: this._tint,
-    //     _imageMode: this._imageMode,
-    //     _rectMode: this._rectMode,
-    //     _ellipseMode: this._ellipseMode,
-    //     _textFont: this._textFont,
-    //     _textLeading: this._textLeading,
-    //     _leadingSet: this._leadingSet,
-    //     _textSize: this._textSize,
-    //     _textAlign: this._textAlign,
-    //     _textBaseline: this._textBaseline,
-    //     _textStyle: this._textStyle,
-    //     _textWrap: this._textWrap
-    //   }
-    // };
   }
 
   // a pop() operation is in progress
@@ -137,10 +80,6 @@ p5.Renderer = class Renderer {
   pop (style) {
     this._pushPopDepth--;
     Object.assign(this.states, this.pushPopStack.pop());
-    // if (style.properties) {
-    // // copy the style properties back into the renderer
-    //   Object.assign(this, style.properties);
-    // }
   }
 
   beginClip(options = {}) {
