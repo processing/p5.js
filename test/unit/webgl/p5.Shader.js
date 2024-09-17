@@ -243,9 +243,9 @@ suite('p5.Shader', function() {
     });
 
     test('Able to set shininess', function() {
-      assert.deepEqual(myp5._renderer._useShininess, 1);
+      assert.deepEqual(myp5._renderer.states._useShininess, 1);
       myp5.shininess(50);
-      assert.deepEqual(myp5._renderer._useShininess, 50);
+      assert.deepEqual(myp5._renderer.states._useShininess, 50);
     });
 
     test('Shader is reset after resetShader is called', function() {

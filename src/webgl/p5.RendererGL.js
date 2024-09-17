@@ -309,8 +309,8 @@ p5.prototype.setAttributes = function (key, value) {
   this._renderer._resetContext();
   this.pop();
 
-  if (this._renderer._curCamera) {
-    this._renderer._curCamera._renderer = this._renderer;
+  if (this._renderer.states.curCamera) {
+    this._renderer.states.curCamera._renderer = this._renderer;
   }
 };
 /**
@@ -536,8 +536,8 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.registerEnabled = new Set();
 
     // Camera
-    this._curCamera._computeCameraDefaultSettings();
-    this._curCamera._setDefaultCamera();
+    this.states.curCamera._computeCameraDefaultSettings();
+    this.states.curCamera._setDefaultCamera();
 
     // FilterCamera
     this.filterCamera = new p5.Camera(this);
@@ -645,7 +645,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     // default wrap settings
     this.textureWrapX = constants.CLAMP;
     this.textureWrapY = constants.CLAMP;
-    this._tex = null;
+    this.states._tex = null;
     this._curveTightness = 6;
 
     // lookUpTable for coefficients needed to be calculated for bezierVertex, same are used for curveVertex
@@ -683,8 +683,8 @@ p5.RendererGL = class RendererGL extends Renderer {
       throw new Error('It looks like `beginGeometry()` is being called while another p5.Geometry is already being build.');
     }
     this.geometryBuilder = new GeometryBuilder(this);
-    this.geometryBuilder.prevFillColor = [...this.curFillColor];
-    this.curFillColor = [-1, -1, -1, -1];
+    this.geometryBuilder.prevFillColor = [...this.states.curFillColor];
+    this.states.curFillColor = [-1, -1, -1, -1];
   }
 
   /**
@@ -700,7 +700,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       throw new Error('Make sure you call beginGeometry() before endGeometry()!');
     }
     const geometry = this.geometryBuilder.finish();
-    this.curFillColor = this.geometryBuilder.prevFillColor;
+    this.states.curFillColor = this.geometryBuilder.prevFillColor;
     this.geometryBuilder = undefined;
     return geometry;
   }
@@ -879,28 +879,28 @@ p5.RendererGL = class RendererGL extends Renderer {
   _update() {
     // reset model view and apply initial camera transform
     // (containing only look at info; no projection).
-    this.uModelMatrix.reset();
-    this.uViewMatrix.set(this._curCamera.cameraMatrix);
+    this.states.uModelMatrix.reset();
+    this.states.uViewMatrix.set(this.states.curCamera.cameraMatrix);
 
     // reset light data for new frame.
 
-    this.ambientLightColors.length = 0;
-    this.specularColors = [1, 1, 1];
+    this.states.ambientLightColors.length = 0;
+    this.states.specularColors = [1, 1, 1];
 
-    this.directionalLightDirections.length = 0;
-    this.directionalLightDiffuseColors.length = 0;
-    this.directionalLightSpecularColors.length = 0;
+    this.states.directionalLightDirections.length = 0;
+    this.states.directionalLightDiffuseColors.length = 0;
+    this.states.directionalLightSpecularColors.length = 0;
 
-    this.pointLightPositions.length = 0;
-    this.pointLightDiffuseColors.length = 0;
-    this.pointLightSpecularColors.length = 0;
+    this.states.pointLightPositions.length = 0;
+    this.states.pointLightDiffuseColors.length = 0;
+    this.states.pointLightSpecularColors.length = 0;
 
-    this.spotLightPositions.length = 0;
-    this.spotLightDirections.length = 0;
-    this.spotLightDiffuseColors.length = 0;
-    this.spotLightSpecularColors.length = 0;
-    this.spotLightAngle.length = 0;
-    this.spotLightConc.length = 0;
+    this.states.spotLightPositions.length = 0;
+    this.states.spotLightDirections.length = 0;
+    this.states.spotLightDiffuseColors.length = 0;
+    this.states.spotLightSpecularColors.length = 0;
+    this.states.spotLightAngle.length = 0;
+    this.states.spotLightConc.length = 0;
 
     this._enableLighting = false;
 
@@ -961,10 +961,10 @@ p5.RendererGL = class RendererGL extends Renderer {
   fill(v1, v2, v3, a) {
     //see material.js for more info on color blending in webgl
     const color = p5.prototype.color.apply(this._pInst, arguments);
-    this.curFillColor = color._array;
-    this.drawMode = constants.FILL;
-    this._useNormalMaterial = false;
-    this._tex = null;
+    this.states.curFillColor = color._array;
+    this.states.drawMode = constants.FILL;
+    this.states._useNormalMaterial = false;
+    this.states._tex = null;
   }
 
   /**
@@ -998,7 +998,7 @@ p5.RendererGL = class RendererGL extends Renderer {
  */
   stroke(r, g, b, a) {
     const color = p5.prototype.color.apply(this._pInst, arguments);
-    this.curStrokeColor = color._array;
+    this.states.curStrokeColor = color._array;
   }
 
   strokeCap(cap) {
@@ -1177,7 +1177,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       mode === constants.MULTIPLY ||
       mode === constants.REMOVE
     )
-      this.curBlendMode = mode;
+      this.states.curBlendMode = mode;
     else if (
       mode === constants.BURN ||
       mode === constants.OVERLAY ||
@@ -1193,23 +1193,23 @@ p5.RendererGL = class RendererGL extends Renderer {
 
   erase(opacityFill, opacityStroke) {
     if (!this._isErasing) {
-      this.preEraseBlend = this.curBlendMode;
+      this.preEraseBlend = this.states.curBlendMode;
       this._isErasing = true;
       this.blendMode(constants.REMOVE);
-      this._cachedFillStyle = this.curFillColor.slice();
-      this.curFillColor = [1, 1, 1, opacityFill / 255];
-      this._cachedStrokeStyle = this.curStrokeColor.slice();
-      this.curStrokeColor = [1, 1, 1, opacityStroke / 255];
+      this._cachedFillStyle = this.states.curFillColor.slice();
+      this.states.curFillColor = [1, 1, 1, opacityFill / 255];
+      this._cachedStrokeStyle = this.states.curStrokeColor.slice();
+      this.states.curStrokeColor = [1, 1, 1, opacityStroke / 255];
     }
   }
 
   noErase() {
     if (this._isErasing) {
       // Restore colors
-      this.curFillColor = this._cachedFillStyle.slice();
-      this.curStrokeColor = this._cachedStrokeStyle.slice();
+      this.states.curFillColor = this._cachedFillStyle.slice();
+      this.states.curStrokeColor = this._cachedStrokeStyle.slice();
       // Restore blend mode
-      this.curBlendMode = this.preEraseBlend;
+      this.states.curBlendMode = this.preEraseBlend;
       this.blendMode(this.preEraseBlend);
       // Ensure that _applyBlendMode() sets preEraseBlend back to the original blend mode
       this._isErasing = false;
@@ -1443,7 +1443,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       this._origViewport.height
     );
 
-    this._curCamera._resize();
+    this.states.curCamera._resize();
 
     //resize pixels buffer
     const pixelsState = this._pixelsState;
@@ -1509,9 +1509,9 @@ p5.RendererGL = class RendererGL extends Renderer {
 
   applyMatrix(a, b, c, d, e, f) {
     if (arguments.length === 16) {
-      p5.Matrix.prototype.apply.apply(this.uModelMatrix, arguments);
+      p5.Matrix.prototype.apply.apply(this.states.uModelMatrix, arguments);
     } else {
-      this.uModelMatrix.apply([
+      this.states.uModelMatrix.apply([
         a, b, 0, 0,
         c, d, 0, 0,
         0, 0, 1, 0,
@@ -1535,7 +1535,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       y = x.y;
       x = x.x;
     }
-    this.uModelMatrix.translate([x, y, z]);
+    this.states.uModelMatrix.translate([x, y, z]);
     return this;
   }
 
@@ -1548,7 +1548,7 @@ p5.RendererGL = class RendererGL extends Renderer {
  * @chainable
  */
   scale(x, y, z) {
-    this.uModelMatrix.scale(x, y, z);
+    this.states.uModelMatrix.scale(x, y, z);
     return this;
   }
 
@@ -1556,7 +1556,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     if (typeof axis === 'undefined') {
       return this.rotateZ(rad);
     }
-    p5.Matrix.prototype.rotate.apply(this.uModelMatrix, arguments);
+    p5.Matrix.prototype.rotate.apply(this.states.uModelMatrix, arguments);
     return this;
   }
 
@@ -1575,78 +1575,6 @@ p5.RendererGL = class RendererGL extends Renderer {
     return this;
   }
 
-  push() {
-    // get the base renderer style
-    const style = super.push();
-
-    // add webgl-specific style properties
-    const properties = style;
-
-    properties.uModelMatrix = this.uModelMatrix.copy();
-    properties.uViewMatrix = this.uViewMatrix.copy();
-    properties.uPMatrix = this.uPMatrix.copy();
-    properties._curCamera = this._curCamera;
-
-    // make a copy of the current camera for the push state
-    // this preserves any references stored using 'createCamera'
-    this._curCamera = this._curCamera.copy();
-
-    properties.ambientLightColors = this.ambientLightColors.slice();
-    properties.specularColors = this.specularColors.slice();
-
-    properties.directionalLightDirections =
-      this.directionalLightDirections.slice();
-    properties.directionalLightDiffuseColors =
-      this.directionalLightDiffuseColors.slice();
-    properties.directionalLightSpecularColors =
-      this.directionalLightSpecularColors.slice();
-
-    properties.pointLightPositions = this.pointLightPositions.slice();
-    properties.pointLightDiffuseColors = this.pointLightDiffuseColors.slice();
-    properties.pointLightSpecularColors = this.pointLightSpecularColors.slice();
-
-    properties.spotLightPositions = this.spotLightPositions.slice();
-    properties.spotLightDirections = this.spotLightDirections.slice();
-    properties.spotLightDiffuseColors = this.spotLightDiffuseColors.slice();
-    properties.spotLightSpecularColors = this.spotLightSpecularColors.slice();
-    properties.spotLightAngle = this.spotLightAngle.slice();
-    properties.spotLightConc = this.spotLightConc.slice();
-
-    properties.userFillShader = this.userFillShader;
-    properties.userStrokeShader = this.userStrokeShader;
-    properties.userPointShader = this.userPointShader;
-
-    properties.pointSize = this.pointSize;
-    properties.curStrokeWeight = this.curStrokeWeight;
-    properties.curStrokeColor = this.curStrokeColor;
-    properties.curFillColor = this.curFillColor;
-    properties.curAmbientColor = this.curAmbientColor;
-    properties.curSpecularColor = this.curSpecularColor;
-    properties.curEmissiveColor = this.curEmissiveColor;
-
-    properties._hasSetAmbient = this._hasSetAmbient;
-    properties._useSpecularMaterial = this._useSpecularMaterial;
-    properties._useEmissiveMaterial = this._useEmissiveMaterial;
-    properties._useShininess = this._useShininess;
-    properties._useMetalness = this._useMetalness;
-
-    properties.constantAttenuation = this.constantAttenuation;
-    properties.linearAttenuation = this.linearAttenuation;
-    properties.quadraticAttenuation = this.quadraticAttenuation;
-
-    properties._enableLighting = this._enableLighting;
-    properties._useNormalMaterial = this._useNormalMaterial;
-    properties._tex = this._tex;
-    properties.drawMode = this.drawMode;
-
-    properties._currentNormal = this._currentNormal;
-    properties.curBlendMode = this.curBlendMode;
-
-    // So that the activeImageLight gets reset in push/pop
-    properties.activeImageLight = this.activeImageLight;
-
-    return style;
-  }
   pop(...args) {
     if (
       this._clipDepths.length > 0 &&
@@ -1670,8 +1598,8 @@ p5.RendererGL = class RendererGL extends Renderer {
     }
   }
   resetMatrix() {
-    this.uModelMatrix.reset();
-    this.uViewMatrix.set(this._curCamera.cameraMatrix);
+    this.states.uModelMatrix.reset();
+    this.states.uViewMatrix.set(this.states.curCamera.cameraMatrix);
     return this;
   }
 
@@ -1705,11 +1633,11 @@ p5.RendererGL = class RendererGL extends Renderer {
         sphereMapping
       );
     }
-    this.uNMatrix.inverseTranspose(this.uMVMatrix);
-    this.uNMatrix.invert3x3(this.uNMatrix);
-    this.sphereMapping.setUniform('uFovY', this._curCamera.cameraFOV);
-    this.sphereMapping.setUniform('uAspect', this._curCamera.aspectRatio);
-    this.sphereMapping.setUniform('uNewNormalMatrix', this.uNMatrix.mat3);
+    this.states.uNMatrix.inverseTranspose(this.states.uMVMatrix);
+    this.states.uNMatrix.invert3x3(this.states.uNMatrix);
+    this.sphereMapping.setUniform('uFovY', this.states.curCamera.cameraFOV);
+    this.sphereMapping.setUniform('uAspect', this.states.curCamera.aspectRatio);
+    this.sphereMapping.setUniform('uNewNormalMatrix', this.states.uNMatrix.mat3);
     this.sphereMapping.setUniform('uSampler', img);
     return this.sphereMapping;
   }
@@ -1720,7 +1648,7 @@ p5.RendererGL = class RendererGL extends Renderer {
    */
   _getImmediateFillShader() {
     const fill = this.userFillShader;
-    if (this._useNormalMaterial) {
+    if (this.states._useNormalMaterial) {
       if (!fill || !fill.isNormalShader()) {
         return this._getNormalShader();
       }
@@ -1729,7 +1657,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       if (!fill || !fill.isLightShader()) {
         return this._getLightShader();
       }
-    } else if (this._tex) {
+    } else if (this.states._tex) {
       if (!fill || !fill.isTextureShader()) {
         return this._getLightShader();
       }
@@ -1744,7 +1672,7 @@ p5.RendererGL = class RendererGL extends Renderer {
    * for retained mode.
    */
   _getRetainedFillShader() {
-    if (this._useNormalMaterial) {
+    if (this.states._useNormalMaterial) {
       return this._getNormalShader();
     }
 
@@ -1753,7 +1681,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       if (!fill || !fill.isLightShader()) {
         return this._getLightShader();
       }
-    } else if (this._tex) {
+    } else if (this.states._tex) {
       if (!fill || !fill.isTextureShader()) {
         return this._getLightShader();
       }
@@ -2044,7 +1972,7 @@ p5.RendererGL = class RendererGL extends Renderer {
 
     // set the uniform values
     strokeShader.setUniform('uUseLineColor', this._useLineColor);
-    strokeShader.setUniform('uMaterialColor', this.curStrokeColor);
+    strokeShader.setUniform('uMaterialColor', this.states.curStrokeColor);
     strokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
     strokeShader.setUniform('uStrokeCap', STROKE_CAP_ENUM[this.curStrokeCap]);
     strokeShader.setUniform('uStrokeJoin', STROKE_JOIN_ENUM[this.curStrokeJoin]);
@@ -2053,90 +1981,90 @@ p5.RendererGL = class RendererGL extends Renderer {
   _setFillUniforms(fillShader) {
     fillShader.bindShader();
 
-    this.mixedSpecularColor = [...this.curSpecularColor];
+    this.mixedSpecularColor = [...this.states.curSpecularColor];
 
-    if (this._useMetalness > 0) {
+    if (this.states._useMetalness > 0) {
       this.mixedSpecularColor = this.mixedSpecularColor.map(
         (mixedSpecularColor, index) =>
-          this.curFillColor[index] * this._useMetalness +
-          mixedSpecularColor * (1 - this._useMetalness)
+          this.states.curFillColor[index] * this.states._useMetalness +
+          mixedSpecularColor * (1 - this.states._useMetalness)
       );
     }
 
     // TODO: optimize
     fillShader.setUniform('uUseVertexColor', this._useVertexColor);
-    fillShader.setUniform('uMaterialColor', this.curFillColor);
-    fillShader.setUniform('isTexture', !!this._tex);
-    if (this._tex) {
-      fillShader.setUniform('uSampler', this._tex);
+    fillShader.setUniform('uMaterialColor', this.states.curFillColor);
+    fillShader.setUniform('isTexture', !!this.states._tex);
+    if (this.states._tex) {
+      fillShader.setUniform('uSampler', this.states._tex);
     }
     fillShader.setUniform('uTint', this.states.tint);
 
-    fillShader.setUniform('uHasSetAmbient', this._hasSetAmbient);
-    fillShader.setUniform('uAmbientMatColor', this.curAmbientColor);
+    fillShader.setUniform('uHasSetAmbient', this.states._hasSetAmbient);
+    fillShader.setUniform('uAmbientMatColor', this.states.curAmbientColor);
     fillShader.setUniform('uSpecularMatColor', this.mixedSpecularColor);
-    fillShader.setUniform('uEmissiveMatColor', this.curEmissiveColor);
-    fillShader.setUniform('uSpecular', this._useSpecularMaterial);
-    fillShader.setUniform('uEmissive', this._useEmissiveMaterial);
-    fillShader.setUniform('uShininess', this._useShininess);
-    fillShader.setUniform('metallic', this._useMetalness);
+    fillShader.setUniform('uEmissiveMatColor', this.states.curEmissiveColor);
+    fillShader.setUniform('uSpecular', this.states._useSpecularMaterial);
+    fillShader.setUniform('uEmissive', this.states._useEmissiveMaterial);
+    fillShader.setUniform('uShininess', this.states._useShininess);
+    fillShader.setUniform('metallic', this.states._useMetalness);
 
     this._setImageLightUniforms(fillShader);
 
     fillShader.setUniform('uUseLighting', this._enableLighting);
 
-    const pointLightCount = this.pointLightDiffuseColors.length / 3;
+    const pointLightCount = this.states.pointLightDiffuseColors.length / 3;
     fillShader.setUniform('uPointLightCount', pointLightCount);
-    fillShader.setUniform('uPointLightLocation', this.pointLightPositions);
+    fillShader.setUniform('uPointLightLocation', this.states.pointLightPositions);
     fillShader.setUniform(
       'uPointLightDiffuseColors',
-      this.pointLightDiffuseColors
+      this.states.pointLightDiffuseColors
     );
     fillShader.setUniform(
       'uPointLightSpecularColors',
-      this.pointLightSpecularColors
+      this.states.pointLightSpecularColors
     );
 
-    const directionalLightCount = this.directionalLightDiffuseColors.length / 3;
+    const directionalLightCount = this.states.directionalLightDiffuseColors.length / 3;
     fillShader.setUniform('uDirectionalLightCount', directionalLightCount);
-    fillShader.setUniform('uLightingDirection', this.directionalLightDirections);
+    fillShader.setUniform('uLightingDirection', this.states.directionalLightDirections);
     fillShader.setUniform(
       'uDirectionalDiffuseColors',
-      this.directionalLightDiffuseColors
+      this.states.directionalLightDiffuseColors
     );
     fillShader.setUniform(
       'uDirectionalSpecularColors',
-      this.directionalLightSpecularColors
+      this.states.directionalLightSpecularColors
     );
 
     // TODO: sum these here...
-    const ambientLightCount = this.ambientLightColors.length / 3;
-    this.mixedAmbientLight = [...this.ambientLightColors];
+    const ambientLightCount = this.states.ambientLightColors.length / 3;
+    this.mixedAmbientLight = [...this.states.ambientLightColors];
 
-    if (this._useMetalness > 0) {
+    if (this.states._useMetalness > 0) {
       this.mixedAmbientLight = this.mixedAmbientLight.map((ambientColors => {
-        let mixing = ambientColors - this._useMetalness;
+        let mixing = ambientColors - this.states._useMetalness;
         return Math.max(0, mixing);
       }));
     }
     fillShader.setUniform('uAmbientLightCount', ambientLightCount);
     fillShader.setUniform('uAmbientColor', this.mixedAmbientLight);
 
-    const spotLightCount = this.spotLightDiffuseColors.length / 3;
+    const spotLightCount = this.states.spotLightDiffuseColors.length / 3;
     fillShader.setUniform('uSpotLightCount', spotLightCount);
-    fillShader.setUniform('uSpotLightAngle', this.spotLightAngle);
-    fillShader.setUniform('uSpotLightConc', this.spotLightConc);
-    fillShader.setUniform('uSpotLightDiffuseColors', this.spotLightDiffuseColors);
+    fillShader.setUniform('uSpotLightAngle', this.states.spotLightAngle);
+    fillShader.setUniform('uSpotLightConc', this.states.spotLightConc);
+    fillShader.setUniform('uSpotLightDiffuseColors', this.states.spotLightDiffuseColors);
     fillShader.setUniform(
       'uSpotLightSpecularColors',
-      this.spotLightSpecularColors
+      this.states.spotLightSpecularColors
     );
-    fillShader.setUniform('uSpotLightLocation', this.spotLightPositions);
-    fillShader.setUniform('uSpotLightDirection', this.spotLightDirections);
+    fillShader.setUniform('uSpotLightLocation', this.states.spotLightPositions);
+    fillShader.setUniform('uSpotLightDirection', this.states.spotLightDirections);
 
-    fillShader.setUniform('uConstantAttenuation', this.constantAttenuation);
-    fillShader.setUniform('uLinearAttenuation', this.linearAttenuation);
-    fillShader.setUniform('uQuadraticAttenuation', this.quadraticAttenuation);
+    fillShader.setUniform('uConstantAttenuation', this.states.constantAttenuation);
+    fillShader.setUniform('uLinearAttenuation', this.states.linearAttenuation);
+    fillShader.setUniform('uQuadraticAttenuation', this.states.quadraticAttenuation);
 
     fillShader.bindTextures();
   }
@@ -2144,21 +2072,21 @@ p5.RendererGL = class RendererGL extends Renderer {
   // getting called from _setFillUniforms
   _setImageLightUniforms(shader) {
     //set uniform values
-    shader.setUniform('uUseImageLight', this.activeImageLight != null);
+    shader.setUniform('uUseImageLight', this.states.activeImageLight != null);
     // true
-    if (this.activeImageLight) {
-      // this.activeImageLight has image as a key
+    if (this.states.activeImageLight) {
+      // this.states.activeImageLight has image as a key
       // look up the texture from the diffusedTexture map
-      let diffusedLight = this.getDiffusedTexture(this.activeImageLight);
+      let diffusedLight = this.getDiffusedTexture(this.states.activeImageLight);
       shader.setUniform('environmentMapDiffused', diffusedLight);
-      let specularLight = this.getSpecularTexture(this.activeImageLight);
+      let specularLight = this.getSpecularTexture(this.states.activeImageLight);
       // In p5js the range of shininess is >= 1,
       // Therefore roughness range will be ([0,1]*8)*20 or [0, 160]
       // The factor of 8 is because currently the getSpecularTexture
       // only calculated 8 different levels of roughness
       // The factor of 20 is just to spread up this range so that,
       // [1, max] of shininess is converted to [0,160] of roughness
-      let roughness = 20 / this._useShininess;
+      let roughness = 20 / this.states._useShininess;
       shader.setUniform('levelOfDetail', roughness * 8);
       shader.setUniform('environmentMapSpecular', specularLight);
     }
@@ -2168,7 +2096,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     pointShader.bindShader();
 
     // set the uniform values
-    pointShader.setUniform('uMaterialColor', this.curStrokeColor);
+    pointShader.setUniform('uMaterialColor', this.states.curStrokeColor);
     // @todo is there an instance where this isn't stroke weight?
     // should be they be same var?
     pointShader.setUniform(

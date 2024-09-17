@@ -570,17 +570,17 @@ p5.Shader = class Shader {
   }
 
   _setMatrixUniforms() {
-    const modelMatrix = this._renderer.uModelMatrix;
-    const viewMatrix = this._renderer.uViewMatrix;
-    const projectionMatrix = this._renderer.uPMatrix;
+    const modelMatrix = this._renderer.states.uModelMatrix;
+    const viewMatrix = this._renderer.states.uViewMatrix;
+    const projectionMatrix = this._renderer.states.uPMatrix;
     const modelViewMatrix = (modelMatrix.copy()).mult(viewMatrix);
-    this._renderer.uMVMatrix = modelViewMatrix;
+    this._renderer.states.uMVMatrix = modelViewMatrix;
 
     const modelViewProjectionMatrix = modelViewMatrix.copy();
     modelViewProjectionMatrix.mult(projectionMatrix);
 
     if (this.isStrokeShader()) {
-      this.setUniform('uPerspective', this._renderer._curCamera.useLinePerspective ? 1 : 0);
+      this.setUniform('uPerspective', this._renderer.states.curCamera.useLinePerspective ? 1 : 0);
     }
     this.setUniform('uViewMatrix', viewMatrix.mat4);
     this.setUniform('uProjectionMatrix', projectionMatrix.mat4);
@@ -591,12 +591,12 @@ p5.Shader = class Shader {
       modelViewProjectionMatrix.mat4
     );
     if (this.uniforms.uNormalMatrix) {
-      this._renderer.uNMatrix.inverseTranspose(this._renderer.uMVMatrix);
-      this.setUniform('uNormalMatrix', this._renderer.uNMatrix.mat3);
+      this._renderer.states.uNMatrix.inverseTranspose(this._renderer.states.uMVMatrix);
+      this.setUniform('uNormalMatrix', this._renderer.states.uNMatrix.mat3);
     }
     if (this.uniforms.uCameraRotation) {
-      this._renderer.curMatrix.inverseTranspose(this._renderer.uViewMatrix);
-      this.setUniform('uCameraRotation', this._renderer.curMatrix.mat3);
+      this._renderer.states.curMatrix.inverseTranspose(this._renderer.states.uViewMatrix);
+      this.setUniform('uCameraRotation', this._renderer.states.curMatrix.mat3);
     }
   }
 

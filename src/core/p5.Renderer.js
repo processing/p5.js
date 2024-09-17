@@ -70,6 +70,12 @@ p5.Renderer = class Renderer {
   push () {
     this._pushPopDepth++;
     const currentStates = Object.assign({}, this.states);
+    // Clone properties that support it
+    for (const key in currentStates) {
+      if (currentStates[key] && currentStates[key].copy instanceof Function) {
+        currentStates[key] = currentStates[key].copy();
+      }
+    }
     this.pushPopStack.push(currentStates);
     return currentStates;
   }

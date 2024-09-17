@@ -169,10 +169,10 @@ p5.Framebuffer = class Framebuffer {
 
     this._recreateTextures();
 
-    const prevCam = this.target._renderer._curCamera;
+    const prevCam = this.target._renderer.states.curCamera;
     this.defaultCamera = this.createCamera();
     this.filterCamera = this.createCamera();
-    this.target._renderer._curCamera = prevCam;
+    this.target._renderer.states.curCamera = prevCam;
 
     this.draw(() => this.target.clear());
   }
@@ -948,7 +948,7 @@ p5.Framebuffer = class Framebuffer {
     const cam = new p5.FramebufferCamera(this);
     cam._computeCameraDefaultSettings();
     cam._setDefaultCamera();
-    this.target._renderer._curCamera = cam;
+    this.target._renderer.states.curCamera = cam;
     return cam;
   }
 
@@ -1111,9 +1111,9 @@ p5.Framebuffer = class Framebuffer {
     // it only sets the camera.
     this.target.setCamera(this.defaultCamera);
     this.target.resetMatrix();
-    this.target._renderer.uViewMatrix
-      .set(this.target._renderer._curCamera.cameraMatrix);
-    this.target._renderer.uModelMatrix.reset();
+    this.target._renderer.states.uViewMatrix
+      .set(this.target._renderer.states.curCamera.cameraMatrix);
+    this.target._renderer.states.uModelMatrix.reset();
     this.target._renderer._applyStencilTestIfClipping();
   }
 

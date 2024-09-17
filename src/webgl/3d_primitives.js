@@ -2481,7 +2481,7 @@ p5.RendererGL.prototype.triangle = function(args) {
   // this matrix multiplication transforms those two unit vectors
   // onto the required vector prior to rendering, and moves the
   // origin appropriately.
-  const uModelMatrix = this.uModelMatrix.copy();
+  const uModelMatrix = this.states.uModelMatrix.copy();
   try {
     // triangle orientation.
     const orientation = Math.sign(x1*y2-x2*y1 + x2*y3-x3*y2 + x3*y1-x1*y3);
@@ -2490,13 +2490,13 @@ p5.RendererGL.prototype.triangle = function(args) {
       x3 - x1, y3 - y1, 0, 0, // the resulting unit Y-axis
       0, 0, orientation, 0,   // the resulting unit Z-axis (Reflect the specified order of vertices)
       x1, y1, 0, 1            // the resulting origin
-    ]).mult(this.uModelMatrix);
+    ]).mult(this.states.uModelMatrix);
 
-    this.uModelMatrix = mult;
+    this.states.uModelMatrix = mult;
 
     this.drawBuffers(gId);
   } finally {
-    this.uModelMatrix = uModelMatrix;
+    this.states.uModelMatrix = uModelMatrix;
   }
 
   return this;
@@ -2618,15 +2618,15 @@ p5.RendererGL.prototype.arc = function(...args) {
     this.createBuffers(gId, arcGeom);
   }
 
-  const uModelMatrix = this.uModelMatrix.copy();
+  const uModelMatrix = this.states.uModelMatrix.copy();
 
   try {
-    this.uModelMatrix.translate([x, y, 0]);
-    this.uModelMatrix.scale(width, height, 1);
+    this.states.uModelMatrix.translate([x, y, 0]);
+    this.states.uModelMatrix.scale(width, height, 1);
 
     this.drawBuffers(gId);
   } finally {
-    this.uModelMatrix = uModelMatrix;
+    this.states.uModelMatrix = uModelMatrix;
   }
 
   return this;
@@ -2678,14 +2678,14 @@ p5.RendererGL.prototype.rect = function(args) {
     // opposite corners at (0,0) & (1,1).
     //
     // before rendering, this square is scaled & moved to the required location.
-    const uModelMatrix = this.uModelMatrix.copy();
+    const uModelMatrix = this.states.uModelMatrix.copy();
     try {
-      this.uModelMatrix.translate([x, y, 0]);
-      this.uModelMatrix.scale(width, height, 1);
+      this.states.uModelMatrix.translate([x, y, 0]);
+      this.states.uModelMatrix.scale(width, height, 1);
 
       this.drawBuffers(gId);
     } finally {
-      this.uModelMatrix = uModelMatrix;
+      this.states.uModelMatrix = uModelMatrix;
     }
   } else {
     // Use Immediate mode to round the rectangle corner,
@@ -3010,13 +3010,13 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
     const fillColors = [];
     for (m = 0; m < 4; m++) fillColors.push([]);
     fillColors[0] = this.immediateMode.geometry.vertexColors.slice(-4);
-    fillColors[3] = this.curFillColor.slice();
+    fillColors[3] = this.states.curFillColor.slice();
 
     // Do the same for strokeColor.
     const strokeColors = [];
     for (m = 0; m < 4; m++) strokeColors.push([]);
     strokeColors[0] = this.immediateMode.geometry.vertexStrokeColors.slice(-4);
-    strokeColors[3] = this.curStrokeColor.slice();
+    strokeColors[3] = this.states.curStrokeColor.slice();
 
     if (argLength === 6) {
       this.isBezier = true;
@@ -3048,14 +3048,14 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
 
       for (i = 0; i < LUTLength; i++) {
         // Interpolate colors using control points
-        this.curFillColor = [0, 0, 0, 0];
-        this.curStrokeColor = [0, 0, 0, 0];
+        this.states.curFillColor = [0, 0, 0, 0];
+        this.states.curStrokeColor = [0, 0, 0, 0];
         _x = _y = 0;
         for (m = 0; m < 4; m++) {
           for (k = 0; k < 4; k++) {
-            this.curFillColor[k] +=
+            this.states.curFillColor[k] +=
               this._lookUpTableBezier[i][m] * fillColors[m][k];
-            this.curStrokeColor[k] +=
+            this.states.curStrokeColor[k] +=
               this._lookUpTableBezier[i][m] * strokeColors[m][k];
           }
           _x += w_x[m] * this._lookUpTableBezier[i][m];
@@ -3064,8 +3064,8 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
         this.vertex(_x, _y);
       }
       // so that we leave currentColor with the last value the user set it to
-      this.curFillColor = fillColors[3];
-      this.curStrokeColor = strokeColors[3];
+      this.states.curFillColor = fillColors[3];
+      this.states.curStrokeColor = strokeColors[3];
       this.immediateMode._bezierVertex[0] = args[4];
       this.immediateMode._bezierVertex[1] = args[5];
     } else if (argLength === 9) {
@@ -3098,14 +3098,14 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
       }
       for (i = 0; i < LUTLength; i++) {
         // Interpolate colors using control points
-        this.curFillColor = [0, 0, 0, 0];
-        this.curStrokeColor = [0, 0, 0, 0];
+        this.states.curFillColor = [0, 0, 0, 0];
+        this.states.curStrokeColor = [0, 0, 0, 0];
         _x = _y = _z = 0;
         for (m = 0; m < 4; m++) {
           for (k = 0; k < 4; k++) {
-            this.curFillColor[k] +=
+            this.states.curFillColor[k] +=
               this._lookUpTableBezier[i][m] * fillColors[m][k];
-            this.curStrokeColor[k] +=
+            this.states.curStrokeColor[k] +=
               this._lookUpTableBezier[i][m] * strokeColors[m][k];
           }
           _x += w_x[m] * this._lookUpTableBezier[i][m];
@@ -3115,8 +3115,8 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
         this.vertex(_x, _y, _z);
       }
       // so that we leave currentColor with the last value the user set it to
-      this.curFillColor = fillColors[3];
-      this.curStrokeColor = strokeColors[3];
+      this.states.curFillColor = fillColors[3];
+      this.states.curStrokeColor = strokeColors[3];
       this.immediateMode._bezierVertex[0] = args[6];
       this.immediateMode._bezierVertex[1] = args[7];
       this.immediateMode._bezierVertex[2] = args[8];
@@ -3170,13 +3170,13 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
     const fillColors = [];
     for (m = 0; m < 3; m++) fillColors.push([]);
     fillColors[0] = this.immediateMode.geometry.vertexColors.slice(-4);
-    fillColors[2] = this.curFillColor.slice();
+    fillColors[2] = this.states.curFillColor.slice();
 
     // Do the same for strokeColor.
     const strokeColors = [];
     for (m = 0; m < 3; m++) strokeColors.push([]);
     strokeColors[0] = this.immediateMode.geometry.vertexStrokeColors.slice(-4);
-    strokeColors[2] = this.curStrokeColor.slice();
+    strokeColors[2] = this.states.curStrokeColor.slice();
 
     if (argLength === 4) {
       this.isQuadratic = true;
@@ -3201,14 +3201,14 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
 
       for (i = 0; i < LUTLength; i++) {
         // Interpolate colors using control points
-        this.curFillColor = [0, 0, 0, 0];
-        this.curStrokeColor = [0, 0, 0, 0];
+        this.states.curFillColor = [0, 0, 0, 0];
+        this.states.curStrokeColor = [0, 0, 0, 0];
         _x = _y = 0;
         for (m = 0; m < 3; m++) {
           for (k = 0; k < 4; k++) {
-            this.curFillColor[k] +=
+            this.states.curFillColor[k] +=
               this._lookUpTableQuadratic[i][m] * fillColors[m][k];
-            this.curStrokeColor[k] +=
+            this.states.curStrokeColor[k] +=
               this._lookUpTableQuadratic[i][m] * strokeColors[m][k];
           }
           _x += w_x[m] * this._lookUpTableQuadratic[i][m];
@@ -3218,8 +3218,8 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
       }
 
       // so that we leave currentColor with the last value the user set it to
-      this.curFillColor = fillColors[2];
-      this.curStrokeColor = strokeColors[2];
+      this.states.curFillColor = fillColors[2];
+      this.states.curStrokeColor = strokeColors[2];
       this.immediateMode._quadraticVertex[0] = args[2];
       this.immediateMode._quadraticVertex[1] = args[3];
     } else if (argLength === 6) {
@@ -3246,14 +3246,14 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
 
       for (i = 0; i < LUTLength; i++) {
         // Interpolate colors using control points
-        this.curFillColor = [0, 0, 0, 0];
-        this.curStrokeColor = [0, 0, 0, 0];
+        this.states.curFillColor = [0, 0, 0, 0];
+        this.states.curStrokeColor = [0, 0, 0, 0];
         _x = _y = _z = 0;
         for (m = 0; m < 3; m++) {
           for (k = 0; k < 4; k++) {
-            this.curFillColor[k] +=
+            this.states.curFillColor[k] +=
               this._lookUpTableQuadratic[i][m] * fillColors[m][k];
-            this.curStrokeColor[k] +=
+            this.states.curStrokeColor[k] +=
               this._lookUpTableQuadratic[i][m] * strokeColors[m][k];
           }
           _x += w_x[m] * this._lookUpTableQuadratic[i][m];
@@ -3264,8 +3264,8 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
       }
 
       // so that we leave currentColor with the last value the user set it to
-      this.curFillColor = fillColors[2];
-      this.curStrokeColor = strokeColors[2];
+      this.states.curFillColor = fillColors[2];
+      this.states.curStrokeColor = strokeColors[2];
       this.immediateMode._quadraticVertex[0] = args[3];
       this.immediateMode._quadraticVertex[1] = args[4];
       this.immediateMode._quadraticVertex[2] = args[5];

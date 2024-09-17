@@ -191,7 +191,7 @@ p5.prototype.ambientLight = function (v1, v2, v3, a) {
   p5._validateParameters('ambientLight', arguments);
   const color = this.color(...arguments);
 
-  this._renderer.ambientLightColors.push(
+  this._renderer.states.ambientLightColors.push(
     color._array[0],
     color._array[1],
     color._array[2]
@@ -449,7 +449,7 @@ p5.prototype.specularColor = function (v1, v2, v3) {
   p5._validateParameters('specularColor', arguments);
   const color = this.color(...arguments);
 
-  this._renderer.specularColors = [
+  this._renderer.states.specularColors = [
     color._array[0],
     color._array[1],
     color._array[2]
@@ -662,16 +662,16 @@ p5.prototype.directionalLight = function (v1, v2, v3, x, y, z) {
 
   // normalize direction
   const l = Math.sqrt(_x * _x + _y * _y + _z * _z);
-  this._renderer.directionalLightDirections.push(_x / l, _y / l, _z / l);
+  this._renderer.states.directionalLightDirections.push(_x / l, _y / l, _z / l);
 
-  this._renderer.directionalLightDiffuseColors.push(
+  this._renderer.states.directionalLightDiffuseColors.push(
     color._array[0],
     color._array[1],
     color._array[2]
   );
   Array.prototype.push.apply(
-    this._renderer.directionalLightSpecularColors,
-    this._renderer.specularColors
+    this._renderer.states.directionalLightSpecularColors,
+    this._renderer.states.specularColors
   );
 
   this._renderer._enableLighting = true;
@@ -936,15 +936,15 @@ p5.prototype.pointLight = function (v1, v2, v3, x, y, z) {
     _z = v.z;
   }
 
-  this._renderer.pointLightPositions.push(_x, _y, _z);
-  this._renderer.pointLightDiffuseColors.push(
+  this._renderer.states.pointLightPositions.push(_x, _y, _z);
+  this._renderer.states.pointLightDiffuseColors.push(
     color._array[0],
     color._array[1],
     color._array[2]
   );
   Array.prototype.push.apply(
-    this._renderer.pointLightSpecularColors,
-    this._renderer.specularColors
+    this._renderer.states.pointLightSpecularColors,
+    this._renderer.states.specularColors
   );
 
   this._renderer._enableLighting = true;
@@ -1013,7 +1013,7 @@ p5.prototype.pointLight = function (v1, v2, v3, x, y, z) {
 p5.prototype.imageLight = function (img) {
   // activeImageLight property is checked by _setFillUniforms
   // for sending uniforms to the fillshader
-  this._renderer.activeImageLight = img;
+  this._renderer.states.activeImageLight = img;
   this._renderer._enableLighting = true;
 };
 
@@ -1261,9 +1261,9 @@ p5.prototype.lightFalloff = function (
     );
   }
 
-  this._renderer.constantAttenuation = constantAttenuation;
-  this._renderer.linearAttenuation = linearAttenuation;
-  this._renderer.quadraticAttenuation = quadraticAttenuation;
+  this._renderer.states.constantAttenuation = constantAttenuation;
+  this._renderer.states.linearAttenuation = linearAttenuation;
+  this._renderer.states.quadraticAttenuation = quadraticAttenuation;
 
   return this;
 };
@@ -1642,19 +1642,19 @@ p5.prototype.spotLight = function (
       );
       return this;
   }
-  this._renderer.spotLightDiffuseColors = [
+  this._renderer.states.spotLightDiffuseColors = [
     color._array[0],
     color._array[1],
     color._array[2]
   ];
 
-  this._renderer.spotLightSpecularColors = [
-    ...this._renderer.specularColors
+  this._renderer.states.spotLightSpecularColors = [
+    ...this._renderer.states.specularColors
   ];
 
-  this._renderer.spotLightPositions = [position.x, position.y, position.z];
+  this._renderer.states.spotLightPositions = [position.x, position.y, position.z];
   direction.normalize();
-  this._renderer.spotLightDirections = [
+  this._renderer.states.spotLightDirections = [
     direction.x,
     direction.y,
     direction.z
@@ -1674,8 +1674,8 @@ p5.prototype.spotLight = function (
   }
 
   angle = this._renderer._pInst._toRadians(angle);
-  this._renderer.spotLightAngle = [Math.cos(angle)];
-  this._renderer.spotLightConc = [concentration];
+  this._renderer.states.spotLightAngle = [Math.cos(angle)];
+  this._renderer.states.spotLightConc = [concentration];
 
   this._renderer._enableLighting = true;
 
@@ -1744,32 +1744,32 @@ p5.prototype.noLights = function (...args) {
   this._assert3d('noLights');
   p5._validateParameters('noLights', args);
 
-  this._renderer.activeImageLight = null;
+  this._renderer.states.activeImageLight = null;
   this._renderer._enableLighting = false;
 
-  this._renderer.ambientLightColors.length = 0;
-  this._renderer.specularColors = [1, 1, 1];
+  this._renderer.states.ambientLightColors.length = 0;
+  this._renderer.states.specularColors = [1, 1, 1];
 
-  this._renderer.directionalLightDirections.length = 0;
-  this._renderer.directionalLightDiffuseColors.length = 0;
-  this._renderer.directionalLightSpecularColors.length = 0;
+  this._renderer.states.directionalLightDirections.length = 0;
+  this._renderer.states.directionalLightDiffuseColors.length = 0;
+  this._renderer.states.directionalLightSpecularColors.length = 0;
 
-  this._renderer.pointLightPositions.length = 0;
-  this._renderer.pointLightDiffuseColors.length = 0;
-  this._renderer.pointLightSpecularColors.length = 0;
+  this._renderer.states.pointLightPositions.length = 0;
+  this._renderer.states.pointLightDiffuseColors.length = 0;
+  this._renderer.states.pointLightSpecularColors.length = 0;
 
-  this._renderer.spotLightPositions.length = 0;
-  this._renderer.spotLightDirections.length = 0;
-  this._renderer.spotLightDiffuseColors.length = 0;
-  this._renderer.spotLightSpecularColors.length = 0;
-  this._renderer.spotLightAngle.length = 0;
-  this._renderer.spotLightConc.length = 0;
+  this._renderer.states.spotLightPositions.length = 0;
+  this._renderer.states.spotLightDirections.length = 0;
+  this._renderer.states.spotLightDiffuseColors.length = 0;
+  this._renderer.states.spotLightSpecularColors.length = 0;
+  this._renderer.states.spotLightAngle.length = 0;
+  this._renderer.states.spotLightConc.length = 0;
 
-  this._renderer.constantAttenuation = 1;
-  this._renderer.linearAttenuation = 0;
-  this._renderer.quadraticAttenuation = 0;
-  this._renderer._useShininess = 1;
-  this._renderer._useMetalness = 0;
+  this._renderer.states.constantAttenuation = 1;
+  this._renderer.states.linearAttenuation = 0;
+  this._renderer.states.quadraticAttenuation = 0;
+  this._renderer.states._useShininess = 1;
+  this._renderer.states._useMetalness = 0;
 
   return this;
 };

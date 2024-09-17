@@ -170,7 +170,7 @@ p5.prototype.orbitControl = function(
   this._assert3d('orbitControl');
   p5._validateParameters('orbitControl', arguments);
 
-  const cam = this._renderer._curCamera;
+  const cam = this._renderer.states.curCamera;
 
   if (typeof sensitivityX === 'undefined') {
     sensitivityX = 1;
@@ -363,8 +363,8 @@ p5.prototype.orbitControl = function(
         10, -this._renderer.zoomVelocity
       );
       // modify uPMatrix
-      this._renderer.uPMatrix.mat4[0] = cam.projMatrix.mat4[0];
-      this._renderer.uPMatrix.mat4[5] = cam.projMatrix.mat4[5];
+      this._renderer.states.uPMatrix.mat4[0] = cam.projMatrix.mat4[0];
+      this._renderer.states.uPMatrix.mat4[5] = cam.projMatrix.mat4[5];
     }
     // damping
     this._renderer.zoomVelocity *= damping;
@@ -432,7 +432,7 @@ p5.prototype.orbitControl = function(
 
     // Calculate the normalized device coordinates of the center.
     cv = cam.cameraMatrix.multiplyPoint(cv);
-    cv = this._renderer.uPMatrix.multiplyAndNormalizePoint(cv);
+    cv = this._renderer.states.uPMatrix.multiplyAndNormalizePoint(cv);
 
     // Move the center by this distance
     // in the normalized device coordinate system.
@@ -442,7 +442,7 @@ p5.prototype.orbitControl = function(
     // Calculate the translation vector
     // in the direction perpendicular to the line of sight of center.
     let dx, dy;
-    const uP = this._renderer.uPMatrix.mat4;
+    const uP = this._renderer.states.uPMatrix.mat4;
 
     if (uP[15] === 0) {
       dx = ((uP[8] + cv.x)/uP[0]) * viewZ;
@@ -809,11 +809,11 @@ p5.prototype._grid = function(size, numDivs, xOff, yOff, zOff) {
   return function() {
     this.push();
     this.stroke(
-      this._renderer.curStrokeColor[0] * 255,
-      this._renderer.curStrokeColor[1] * 255,
-      this._renderer.curStrokeColor[2] * 255
+      this._renderer.states.curStrokeColor[0] * 255,
+      this._renderer.states.curStrokeColor[1] * 255,
+      this._renderer.states.curStrokeColor[2] * 255
     );
-    this._renderer.uModelMatrix.reset();
+    this._renderer.states.uModelMatrix.reset();
 
     // Lines along X axis
     for (let q = 0; q <= numDivs; q++) {
@@ -860,7 +860,7 @@ p5.prototype._axesIcon = function(size, xOff, yOff, zOff) {
 
   return function() {
     this.push();
-    this._renderer.uModelMatrix.reset();
+    this._renderer.states.uModelMatrix.reset();
 
     // X axis
     this.strokeWeight(2);

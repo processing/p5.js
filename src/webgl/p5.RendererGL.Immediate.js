@@ -112,15 +112,15 @@ p5.RendererGL.prototype.vertex = function(x, y) {
   }
   const vert = new p5.Vector(x, y, z);
   this.immediateMode.geometry.vertices.push(vert);
-  this.immediateMode.geometry.vertexNormals.push(this._currentNormal);
-  const vertexColor = this.curFillColor || [0.5, 0.5, 0.5, 1.0];
+  this.immediateMode.geometry.vertexNormals.push(this.states._currentNormal);
+  const vertexColor = this.states.curFillColor || [0.5, 0.5, 0.5, 1.0];
   this.immediateMode.geometry.vertexColors.push(
     vertexColor[0],
     vertexColor[1],
     vertexColor[2],
     vertexColor[3]
   );
-  const lineVertexColor = this.curStrokeColor || [0.5, 0.5, 0.5, 1];
+  const lineVertexColor = this.states.curStrokeColor || [0.5, 0.5, 0.5, 1];
   this.immediateMode.geometry.vertexStrokeColors.push(
     lineVertexColor[0],
     lineVertexColor[1],
@@ -129,10 +129,10 @@ p5.RendererGL.prototype.vertex = function(x, y) {
   );
 
   if (this.textureMode === constants.IMAGE && !this.isProcessingVertices) {
-    if (this._tex !== null) {
-      if (this._tex.width > 0 && this._tex.height > 0) {
-        u /= this._tex.width;
-        v /= this._tex.height;
+    if (this.states._tex !== null) {
+      if (this.states._tex.width > 0 && this.states._tex.height > 0) {
+        u /= this.states._tex.width;
+        v /= this.states._tex.height;
       }
     } else if (
       this.userFillShader !== undefined ||
@@ -141,7 +141,7 @@ p5.RendererGL.prototype.vertex = function(x, y) {
     ) {
     // Do nothing if user-defined shaders are present
     } else if (
-      this._tex === null &&
+      this.states._tex === null &&
       arguments.length >= 4
     ) {
       // Only throw this warning if custom uv's have  been provided
@@ -180,9 +180,9 @@ p5.RendererGL.prototype.vertex = function(x, y) {
  */
 p5.RendererGL.prototype.normal = function(xorv, y, z) {
   if (xorv instanceof p5.Vector) {
-    this._currentNormal = xorv;
+    this.states._currentNormal = xorv;
   } else {
-    this._currentNormal = new p5.Vector(xorv, y, z);
+    this.states._currentNormal = new p5.Vector(xorv, y, z);
   }
 
   return this;
@@ -522,7 +522,7 @@ p5.RendererGL.prototype._drawImmediateFill = function(count = 1) {
   shader.disableRemainingAttributes();
 
   this._applyColorBlend(
-    this.curFillColor,
+    this.states.curFillColor,
     this.immediateMode.geometry.hasFillTransparency()
   );
 
@@ -567,7 +567,7 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
   }
   shader.disableRemainingAttributes();
   this._applyColorBlend(
-    this.curStrokeColor,
+    this.states.curStrokeColor,
     this.immediateMode.geometry.hasFillTransparency()
   );
 

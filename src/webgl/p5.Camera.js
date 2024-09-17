@@ -140,7 +140,7 @@ import p5 from '../core/main';
 p5.prototype.camera = function (...args) {
   this._assert3d('camera');
   p5._validateParameters('camera', args);
-  this._renderer._curCamera.camera(...args);
+  this._renderer.states.curCamera.camera(...args);
   return this;
 };
 
@@ -271,7 +271,7 @@ p5.prototype.camera = function (...args) {
 p5.prototype.perspective = function (...args) {
   this._assert3d('perspective');
   p5._validateParameters('perspective', args);
-  this._renderer._curCamera.perspective(...args);
+  this._renderer.states.curCamera.perspective(...args);
   return this;
 };
 
@@ -400,10 +400,10 @@ p5.prototype.linePerspective = function (enable) {
   }
   if (enable !== undefined) {
     // Set the line perspective if enable is provided
-    this._renderer._curCamera.useLinePerspective = enable;
+    this._renderer.states.curCamera.useLinePerspective = enable;
   } else {
     // If no argument is provided, return the current value
-    return this._renderer._curCamera.useLinePerspective;
+    return this._renderer.states.curCamera.useLinePerspective;
   }
 };
 
@@ -514,7 +514,7 @@ p5.prototype.linePerspective = function (enable) {
 p5.prototype.ortho = function (...args) {
   this._assert3d('ortho');
   p5._validateParameters('ortho', args);
-  this._renderer._curCamera.ortho(...args);
+  this._renderer.states.curCamera.ortho(...args);
   return this;
 };
 
@@ -626,7 +626,7 @@ p5.prototype.ortho = function (...args) {
 p5.prototype.frustum = function (...args) {
   this._assert3d('frustum');
   p5._validateParameters('frustum', args);
-  this._renderer._curCamera.frustum(...args);
+  this._renderer.states.curCamera.frustum(...args);
   return this;
 };
 
@@ -2073,7 +2073,7 @@ p5.Camera = class Camera {
     /* eslint-enable indent */
 
     if (this._isActive()) {
-      this._renderer.uPMatrix.set(this.projMatrix);
+      this._renderer.states.uPMatrix.set(this.projMatrix);
     }
   }
 
@@ -2260,7 +2260,7 @@ p5.Camera = class Camera {
       tx, ty, tz, 1);
     /* eslint-enable indent */
     if (this._isActive()) {
-      this._renderer.uPMatrix.set(this.projMatrix);
+      this._renderer.states.uPMatrix.set(this.projMatrix);
     }
     this.cameraType = 'custom';
   }
@@ -2398,7 +2398,7 @@ p5.Camera = class Camera {
     /* eslint-enable indent */
 
     if (this._isActive()) {
-      this._renderer.uPMatrix.set(this.projMatrix);
+      this._renderer.states.uPMatrix.set(this.projMatrix);
     }
 
     this.cameraType = 'custom';
@@ -2972,7 +2972,7 @@ p5.Camera = class Camera {
     this.cameraMatrix.translate([tx, ty, tz]);
 
     if (this._isActive()) {
-      this._renderer.uViewMatrix.set(this.cameraMatrix);
+      this._renderer.states.uViewMatrix.set(this.cameraMatrix);
     }
     return this;
   }
@@ -3297,9 +3297,9 @@ p5.Camera = class Camera {
     this.projMatrix = cam.projMatrix.copy();
 
     if (this._isActive()) {
-      this._renderer.uModelMatrix.reset();
-      this._renderer.uViewMatrix.set(this.cameraMatrix);
-      this._renderer.uPMatrix.set(this.projMatrix);
+      this._renderer.states.uModelMatrix.reset();
+      this._renderer.states.uViewMatrix.set(this.cameraMatrix);
+      this._renderer.states.uPMatrix.set(this.projMatrix);
     }
   }
   /**
@@ -3398,7 +3398,7 @@ p5.Camera = class Camera {
         Math.pow(cam1.projMatrix.mat4[5] / cam0.projMatrix.mat4[5], amt);
       // If the camera is active, make uPMatrix reflect changes in projMatrix.
       if (this._isActive()) {
-        this._renderer.uPMatrix.mat4 = this.projMatrix.mat4.slice();
+        this._renderer.states.uPMatrix.mat4 = this.projMatrix.mat4.slice();
       }
     }
 
@@ -3859,7 +3859,7 @@ p5.Camera = class Camera {
  * @private
  */
   _isActive() {
-    return this === this._renderer._curCamera;
+    return this === this._renderer.states.curCamera;
   }
 };
 
@@ -3925,11 +3925,11 @@ p5.Camera = class Camera {
  * </div>
  */
 p5.prototype.setCamera = function (cam) {
-  this._renderer._curCamera = cam;
+  this._renderer.states.curCamera = cam;
 
   // set the projection matrix (which is not normally updated each frame)
-  this._renderer.uPMatrix.set(cam.projMatrix);
-  this._renderer.uViewMatrix.set(cam.cameraMatrix);
+  this._renderer.states.uPMatrix.set(cam.projMatrix);
+  this._renderer.states.uViewMatrix.set(cam.cameraMatrix);
 };
 
 export default p5.Camera;
