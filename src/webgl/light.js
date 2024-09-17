@@ -197,7 +197,7 @@ p5.prototype.ambientLight = function (v1, v2, v3, a) {
     color._array[2]
   );
 
-  this._renderer._enableLighting = true;
+  this._renderer.states._enableLighting = true;
 
   return this;
 };
@@ -674,7 +674,7 @@ p5.prototype.directionalLight = function (v1, v2, v3, x, y, z) {
     this._renderer.states.specularColors
   );
 
-  this._renderer._enableLighting = true;
+  this._renderer.states._enableLighting = true;
 
   return this;
 };
@@ -947,7 +947,7 @@ p5.prototype.pointLight = function (v1, v2, v3, x, y, z) {
     this._renderer.states.specularColors
   );
 
-  this._renderer._enableLighting = true;
+  this._renderer.states._enableLighting = true;
 
   return this;
 };
@@ -1014,7 +1014,7 @@ p5.prototype.imageLight = function (img) {
   // activeImageLight property is checked by _setFillUniforms
   // for sending uniforms to the fillshader
   this._renderer.states.activeImageLight = img;
-  this._renderer._enableLighting = true;
+  this._renderer.states._enableLighting = true;
 };
 
 /**
@@ -1677,7 +1677,7 @@ p5.prototype.spotLight = function (
   this._renderer.states.spotLightAngle = [Math.cos(angle)];
   this._renderer.states.spotLightConc = [concentration];
 
-  this._renderer._enableLighting = true;
+  this._renderer.states._enableLighting = true;
 
   return this;
 };
@@ -1745,7 +1745,7 @@ p5.prototype.noLights = function (...args) {
   p5._validateParameters('noLights', args);
 
   this._renderer.states.activeImageLight = null;
-  this._renderer._enableLighting = false;
+  this._renderer.states._enableLighting = false;
 
   this._renderer.states.ambientLightColors.length = 0;
   this._renderer.states.specularColors = [1, 1, 1];

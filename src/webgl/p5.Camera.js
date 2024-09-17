@@ -3652,6 +3652,10 @@ p5.Camera = class Camera {
     return _cam;
   }
 
+  clone() {
+    return this.copy();
+  }
+
   /**
  * Returns a camera's local axes: left-right, up-down, and forward-backward,
  * as defined by vectors in world-space.

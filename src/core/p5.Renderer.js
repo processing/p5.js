@@ -72,8 +72,10 @@ p5.Renderer = class Renderer {
     const currentStates = Object.assign({}, this.states);
     // Clone properties that support it
     for (const key in currentStates) {
-      if (currentStates[key] && currentStates[key].copy instanceof Function) {
-        currentStates[key] = currentStates[key].copy();
+      if (currentStates[key] instanceof Array) {
+        currentStates[key] = currentStates[key].slice();
+      } else if (currentStates[key] && currentStates[key].clone instanceof Function) {
+        currentStates[key] = currentStates[key].clone();
       }
     }
     this.pushPopStack.push(currentStates);

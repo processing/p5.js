@@ -761,9 +761,9 @@ p5.prototype.shader = function (s) {
   s.ensureCompiledOnContext(this);
 
   if (s.isStrokeShader()) {
-    this._renderer.userStrokeShader = s;
+    this._renderer.states.userStrokeShader = s;
   } else {
-    this._renderer.userFillShader = s;
+    this._renderer.states.userFillShader = s;
     this._renderer.states._useNormalMaterial = false;
   }
 
@@ -854,7 +854,7 @@ p5.prototype.shader = function (s) {
  * </div>
  */
 p5.prototype.resetShader = function () {
-  this._renderer.userFillShader = this._renderer.userStrokeShader = null;
+  this._renderer.states.userFillShader = this._renderer.states.userStrokeShader = null;
   return this;
 };
 
@@ -1784,7 +1784,7 @@ p5.prototype.ambientMaterial = function (v1, v2, v3) {
   this._renderer.states._hasSetAmbient = true;
   this._renderer.states.curAmbientColor = color._array;
   this._renderer.states._useNormalMaterial = false;
-  this._renderer._enableLighting = true;
+  this._renderer.states._enableLighting = true;
   this._renderer.states.doFill = true;
   return this;
 };
@@ -1880,7 +1880,7 @@ p5.prototype.emissiveMaterial = function (v1, v2, v3, a) {
   this._renderer.states.curEmissiveColor = color._array;
   this._renderer.states._useEmissiveMaterial = true;
   this._renderer.states._useNormalMaterial = false;
-  this._renderer._enableLighting = true;
+  this._renderer.states._enableLighting = true;
 
   return this;
 };
@@ -2135,7 +2135,7 @@ p5.prototype.specularMaterial = function (v1, v2, v3, alpha) {
   this._renderer.states.curSpecularColor = color._array;
   this._renderer.states._useSpecularMaterial = true;
   this._renderer.states._useNormalMaterial = false;
-  this._renderer._enableLighting = true;
+  this._renderer.states._enableLighting = true;
 
   return this;
 };
@@ -2342,9 +2342,9 @@ p5.RendererGL.prototype._applyColorBlend = function (colors, hasTransparency) {
   const isTexture = this.states.drawMode === constants.TEXTURE;
   const doBlend =
     hasTransparency ||
-    this.userFillShader ||
-    this.userStrokeShader ||
-    this.userPointShader ||
+    this.states.userFillShader ||
+    this.states.userStrokeShader ||
+    this.states.userPointShader ||
     isTexture ||
     this.states.curBlendMode !== constants.BLEND ||
     colors[colors.length - 1] < 1.0 ||

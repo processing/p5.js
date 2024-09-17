@@ -554,18 +554,18 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.executeZoom = false;
     this.executeRotateAndMove = false;
 
-    this.specularShader = undefined;
+    this.states.specularShader = undefined;
     this.sphereMapping = undefined;
-    this.diffusedShader = undefined;
+    this.states.diffusedShader = undefined;
     this._defaultLightShader = undefined;
     this._defaultImmediateModeShader = undefined;
     this._defaultNormalShader = undefined;
     this._defaultColorShader = undefined;
     this._defaultPointShader = undefined;
 
-    this.userFillShader = undefined;
-    this.userStrokeShader = undefined;
-    this.userPointShader = undefined;
+    this.states.userFillShader = undefined;
+    this.states.userStrokeShader = undefined;
+    this.states.userPointShader = undefined;
 
     // Default drawing is done in Retained Mode
     // Geometry and Material hashes stored here
@@ -636,7 +636,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.activeFramebuffers = [];
 
     // for post processing step
-    this.filterShader = undefined;
+    this.states.filterShader = undefined;
     this.filterLayer = undefined;
     this.filterLayerTemp = undefined;
     this.defaultFilterShaders = {};
@@ -902,7 +902,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.states.spotLightAngle.length = 0;
     this.states.spotLightConc.length = 0;
 
-    this._enableLighting = false;
+    this.states._enableLighting = false;
 
     //reset tint value for new frame
     this.states.tint = [255, 255, 255, 255];
@@ -1059,12 +1059,12 @@ p5.RendererGL = class RendererGL extends Renderer {
           filterShaderFrags[operation]
         );
       }
-      this.filterShader = this.defaultFilterShaders[operation];
+      this.states.filterShader = this.defaultFilterShaders[operation];
 
     }
     // use custom user-supplied shader
     else {
-      this.filterShader = args[0];
+      this.states.filterShader = args[0];
     }
 
     // Setting the target to the framebuffer when applying a filter to a framebuffer.
@@ -1093,27 +1093,27 @@ p5.RendererGL = class RendererGL extends Renderer {
       this._pInst.blendMode(constants.BLEND);
 
       // draw main to temp buffer
-      this._pInst.shader(this.filterShader);
-      this.filterShader.setUniform('texelSize', texelSize);
-      this.filterShader.setUniform('canvasSize', [target.width, target.height]);
-      this.filterShader.setUniform('radius', Math.max(1, filterParameter));
+      this._pInst.shader(this.states.filterShader);
+      this.states.filterShader.setUniform('texelSize', texelSize);
+      this.states.filterShader.setUniform('canvasSize', [target.width, target.height]);
+      this.states.filterShader.setUniform('radius', Math.max(1, filterParameter));
 
       // Horiz pass: draw `target` to `tmp`
       tmp.draw(() => {
-        this.filterShader.setUniform('direction', [1, 0]);
-        this.filterShader.setUniform('tex0', target);
+        this.states.filterShader.setUniform('direction', [1, 0]);
+        this.states.filterShader.setUniform('tex0', target);
         this._pInst.clear();
-        this._pInst.shader(this.filterShader);
+        this._pInst.shader(this.states.filterShader);
         this._pInst.noLights();
         this._pInst.plane(target.width, target.height);
       });
 
       // Vert pass: draw `tmp` to `fbo`
       fbo.draw(() => {
-        this.filterShader.setUniform('direction', [0, 1]);
-        this.filterShader.setUniform('tex0', tmp);
+        this.states.filterShader.setUniform('direction', [0, 1]);
+        this.states.filterShader.setUniform('tex0', tmp);
         this._pInst.clear();
-        this._pInst.shader(this.filterShader);
+        this._pInst.shader(this.states.filterShader);
         this._pInst.noLights();
         this._pInst.plane(target.width, target.height);
       });
@@ -1125,13 +1125,13 @@ p5.RendererGL = class RendererGL extends Renderer {
       fbo.draw(() => {
         this._pInst.noStroke();
         this._pInst.blendMode(constants.BLEND);
-        this._pInst.shader(this.filterShader);
-        this.filterShader.setUniform('tex0', target);
-        this.filterShader.setUniform('texelSize', texelSize);
-        this.filterShader.setUniform('canvasSize', [target.width, target.height]);
+        this._pInst.shader(this.states.filterShader);
+        this.states.filterShader.setUniform('tex0', target);
+        this.states.filterShader.setUniform('texelSize', texelSize);
+        this.states.filterShader.setUniform('canvasSize', [target.width, target.height]);
         // filterParameter uniform only used for POSTERIZE, and THRESHOLD
         // but shouldn't hurt to always set
-        this.filterShader.setUniform('filterParameter', filterParameter);
+        this.states.filterShader.setUniform('filterParameter', filterParameter);
         this._pInst.noLights();
         this._pInst.plane(target.width, target.height);
       });
@@ -1245,8 +1245,8 @@ p5.RendererGL = class RendererGL extends Renderer {
 
     this._pInst.push();
     this._pInst.resetShader();
-    if (this._doFill) this._pInst.fill(0, 0);
-    if (this._doStroke) this._pInst.stroke(0, 0);
+    if (this.states.doFill) this._pInst.fill(0, 0);
+    if (this.states.doStroke) this._pInst.stroke(0, 0);
   }
 
   endClip() {
@@ -1615,7 +1615,7 @@ p5.RendererGL = class RendererGL extends Renderer {
 
   _getImmediateStrokeShader() {
     // select the stroke shader to use
-    const stroke = this.userStrokeShader;
+    const stroke = this.states.userStrokeShader;
     if (!stroke || !stroke.isStrokeShader()) {
       return this._getLineShader();
     }
@@ -1647,13 +1647,13 @@ p5.RendererGL = class RendererGL extends Renderer {
    * for use with begin/endShape and immediate vertex mode.
    */
   _getImmediateFillShader() {
-    const fill = this.userFillShader;
+    const fill = this.states.userFillShader;
     if (this.states._useNormalMaterial) {
       if (!fill || !fill.isNormalShader()) {
         return this._getNormalShader();
       }
     }
-    if (this._enableLighting) {
+    if (this.states._enableLighting) {
       if (!fill || !fill.isLightShader()) {
         return this._getLightShader();
       }
@@ -1676,8 +1676,8 @@ p5.RendererGL = class RendererGL extends Renderer {
       return this._getNormalShader();
     }
 
-    const fill = this.userFillShader;
-    if (this._enableLighting) {
+    const fill = this.states.userFillShader;
+    if (this.states._enableLighting) {
       if (!fill || !fill.isLightShader()) {
         return this._getLightShader();
       }
@@ -1693,7 +1693,7 @@ p5.RendererGL = class RendererGL extends Renderer {
 
   _getImmediatePointShader() {
     // select the point shader to use
-    const point = this.userPointShader;
+    const point = this.states.userPointShader;
     if (!point || !point.isPointShader()) {
       return this._getPointShader();
     }
@@ -1880,15 +1880,15 @@ p5.RendererGL = class RendererGL extends Renderer {
     });
     // create framebuffer is like making a new sketch, all functions on main
     // sketch it would be available on framebuffer
-    if (!this.diffusedShader) {
-      this.diffusedShader = this._pInst.createShader(
+    if (!this.states.diffusedShader) {
+      this.states.diffusedShader = this._pInst.createShader(
         defaultShaders.imageLightVert,
         defaultShaders.imageLightDiffusedFrag
       );
     }
     newFramebuffer.draw(() => {
-      this._pInst.shader(this.diffusedShader);
-      this.diffusedShader.setUniform('environmentMap', input);
+      this._pInst.shader(this.states.diffusedShader);
+      this.states.diffusedShader.setUniform('environmentMap', input);
       this._pInst.noStroke();
       this._pInst.rectMode(constants.CENTER);
       this._pInst.noLights();
@@ -1921,8 +1921,8 @@ p5.RendererGL = class RendererGL extends Renderer {
       width: size, height: size, density: 1
     });
     let count = Math.log(size) / Math.log(2);
-    if (!this.specularShader) {
-      this.specularShader = this._pInst.createShader(
+    if (!this.states.specularShader) {
+      this.states.specularShader = this._pInst.createShader(
         defaultShaders.imageLightVert,
         defaultShaders.imageLightSpecularFrag
       );
@@ -1937,10 +1937,10 @@ p5.RendererGL = class RendererGL extends Renderer {
       let currCount = Math.log(w) / Math.log(2);
       let roughness = 1 - currCount / count;
       framebuffer.draw(() => {
-        this._pInst.shader(this.specularShader);
+        this._pInst.shader(this.states.specularShader);
         this._pInst.clear();
-        this.specularShader.setUniform('environmentMap', input);
-        this.specularShader.setUniform('roughness', roughness);
+        this.states.specularShader.setUniform('environmentMap', input);
+        this.states.specularShader.setUniform('roughness', roughness);
         this._pInst.noStroke();
         this._pInst.noLights();
         this._pInst.plane(w, w);
@@ -2011,7 +2011,7 @@ p5.RendererGL = class RendererGL extends Renderer {
 
     this._setImageLightUniforms(fillShader);
 
-    fillShader.setUniform('uUseLighting', this._enableLighting);
+    fillShader.setUniform('uUseLighting', this.states._enableLighting);
 
     const pointLightCount = this.states.pointLightDiffuseColors.length / 3;
     fillShader.setUniform('uPointLightCount', pointLightCount);

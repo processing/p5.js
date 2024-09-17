@@ -812,13 +812,13 @@ suite('p5.RendererGL', function() {
       var fillShader1 = myp5._renderer._getLightShader();
       var fillShader2 = myp5._renderer._getColorShader();
       myp5.shader(fillShader1);
-      assert.equal(fillShader1, myp5._renderer.userFillShader);
+      assert.equal(fillShader1, myp5._renderer.states.userFillShader);
       myp5.push();
       myp5.shader(fillShader2);
-      assert.equal(fillShader2, myp5._renderer.userFillShader);
-      assert.notEqual(fillShader1, myp5._renderer.userFillShader);
+      assert.equal(fillShader2, myp5._renderer.states.userFillShader);
+      assert.notEqual(fillShader1, myp5._renderer.states.userFillShader);
       myp5.pop();
-      assert.equal(fillShader1, myp5._renderer.userFillShader);
+      assert.equal(fillShader1, myp5._renderer.states.userFillShader);
     });
 
     test('push/pop builds/unbuilds stack properly', function() {
