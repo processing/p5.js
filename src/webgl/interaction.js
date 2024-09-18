@@ -193,14 +193,14 @@ p5.prototype.orbitControl = function(
   // flag to p5 instance
   if (this.contextMenuDisabled !== true) {
     this.canvas.oncontextmenu = () => false;
-    this._setProperty('contextMenuDisabled', true);
+    this.contextMenuDisabled = true;
   }
 
   // disable default scrolling behavior on the canvas element and add
   // 'wheelDefaultDisabled' flag to p5 instance
   if (this.wheelDefaultDisabled !== true) {
     this.canvas.onwheel = () => false;
-    this._setProperty('wheelDefaultDisabled', true);
+    this.wheelDefaultDisabled = true;
   }
 
   // disable default touch behavior on the canvas element and add
@@ -208,7 +208,7 @@ p5.prototype.orbitControl = function(
   const { disableTouchActions = true } = options;
   if (this.touchActionsDisabled !== true && disableTouchActions) {
     this.canvas.style['touch-action'] = 'none';
-    this._setProperty('touchActionsDisabled', true);
+    this.touchActionsDisabled = true;
   }
 
   // If option.freeRotation is true, the camera always rotates freely in the direction

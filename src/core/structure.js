@@ -929,10 +929,10 @@ p5.prototype.redraw = async function(n) {
       if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
         this._updateAccsOutput();
       }
-      if (context._renderer.isP3D) {
-        context._renderer._update();
+      if (this._renderer.isP3D) {
+        this._renderer._update();
       }
-      this._setProperty('frameCount', context.frameCount + 1);
+      this.frameCount = context.frameCount + 1;
       await this._runLifecycleHook('predraw');
       this._inUserDraw = true;
       try {

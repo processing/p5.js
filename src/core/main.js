@@ -83,8 +83,8 @@ class p5 {
     };
     this._millisStart = -1;
     this._recording = false;
-    this.touchstart = false;
-    this.touchend = false;
+    this._touchstart = false;
+    this._touchend = false;
 
     // States used in the custom random generators
     this._lcg_random_state = null; // NOTE: move to random.js
@@ -103,6 +103,26 @@ class p5 {
     this._updateWindowSize();
 
     const friendlyBindGlobal = this._createFriendlyGlobalFunctionBinder();
+    const bindGlobal = (property) => {
+      Object.defineProperty(window, property, {
+        configurable: true,
+        enumerable: true,
+        get: () => {
+          return this[property]
+        },
+        set: (newValue) => {
+          Object.defineProperty(window, property, {
+            configurable: true,
+            enumerable: true,
+            value: newValue,
+            writable: true
+          });
+          if (!p5.disableFriendlyErrors) {
+            console.log(`You just changed the value of "${property}", which was a p5 global value. This could cause problems later if you're not careful.`);
+          }
+        }
+      })
+    };
     // If the user has created a global setup or draw function,
     // assume "global" mode and make everything global (i.e. on the window)
     if (!sketch) {
@@ -126,7 +146,8 @@ class p5 {
             }
           }
         } else {
-          friendlyBindGlobal(p, p5.prototype[p]);
+          console.log(p);
+          bindGlobal(p, p5.prototype[p]);
         }
       }
 
@@ -134,7 +155,7 @@ class p5 {
       for (const p in this) {
         if (this.hasOwnProperty(p)) {
           if(p[0] === '_') continue;
-          friendlyBindGlobal(p, this[p]);
+          bindGlobal(p);
         }
       }
     } else {
@@ -158,10 +179,10 @@ class p5 {
     }
 
     const focusHandler = () => {
-      this._setProperty('focused', true);
+      this.focused = true;
     };
     const blurHandler = () => {
-      this._setProperty('focused', false);
+      this.focused = false;
     };
     window.addEventListener('focus', focusHandler);
     window.addEventListener('blur', blurHandler);
@@ -272,7 +293,6 @@ class p5 {
     ) {
       //mandatory update values(matrixes and stack)
       this.deltaTime = now - this._lastRealFrameTime;
-      this._setProperty('deltaTime', this.deltaTime);
       this._frameRate = 1000.0 / this.deltaTime;
       await this.redraw();
       this._lastTargetFrameTime = Math.max(this._lastTargetFrameTime
@@ -288,8 +308,8 @@ class p5 {
 
         //reset delta values so they reset even if there is no mouse event to set them
         // for example if the mouse is outside the screen
-        this._setProperty('movedX', 0);
-        this._setProperty('movedY', 0);
+        this.movedX = 0;
+        this.movedY = 0;
       }
     }
 
@@ -422,13 +442,6 @@ class p5 {
     };
 
     this._downKeys = {}; //Holds the key codes of currently pressed keys
-  }
-
-  _setProperty(prop, value) {
-    this[prop] = value;
-    if (this._isGlobal) {
-      window[prop] = value;
-    }
   }
 
   // create a function which provides a standardized process for binding

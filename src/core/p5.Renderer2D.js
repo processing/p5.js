@@ -16,7 +16,7 @@ class Renderer2D extends Renderer {
   constructor(elt, pInst, isMainCanvas) {
     super(elt, pInst, isMainCanvas);
     this.drawingContext = this.canvas.getContext('2d');
-    this._pInst._setProperty('drawingContext', this.drawingContext);
+    this._pInst.drawingContext = this.drawingContext;
     this.elt = elt;
 
     // Extend renderer with methods of p5.Element with getters
@@ -435,8 +435,8 @@ class Renderer2D extends Renderer {
     const imageData = this.drawingContext.getImageData(0, 0, w, h);
     // @todo this should actually set pixels per object, so diff buffers can
     // have diff pixel arrays.
-    pixelsState._setProperty('imageData', imageData);
-    pixelsState._setProperty('pixels', imageData.data);
+    pixelsState.imageData = imageData;
+    pixelsState.pixels = imageData.data;
   }
 
   set(x, y, imgOrCol) {

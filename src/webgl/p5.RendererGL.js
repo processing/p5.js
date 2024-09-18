@@ -445,7 +445,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     // This redundant property is useful in reminding you that you are
     // interacting with WebGLRenderingContext, still worth considering future removal
     this.GL = this.drawingContext;
-    this._pInst._setProperty('drawingContext', this.drawingContext);
+    this._pInst.drawingContext = this.drawingContext;
 
     // Push/pop state
     this.states.uModelMatrix = new p5.Matrix();
@@ -761,7 +761,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.webglVersion =
       this.drawingContext ? constants.WEBGL2 : constants.WEBGL;
     // If this is the main canvas, make sure the global `webglVersion` is set
-    this._pInst._setProperty('webglVersion', this.webglVersion);
+    this._pInst.webglVersion = this.webglVersion;
     if (!this.drawingContext) {
       // If we were unable to create a WebGL2 context (either because it was
       // disabled via `setAttributes({ version: 1 })` or because the device
@@ -858,7 +858,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       this._pInst,
       !isPGraphics
     );
-    this._pInst._setProperty('_renderer', renderer);
+    this._pInst._renderer = renderer;
     renderer.resize(w, h);
     renderer._applyDefaults();
 
@@ -1362,8 +1362,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     const pd = this._pInst._pixelDensity;
     const gl = this.GL;
 
-    pixelsState._setProperty(
-      'pixels',
+    pixelsState.pixels =
       readPixelsWebGL(
         pixelsState.pixels,
         gl,
@@ -1375,8 +1374,7 @@ p5.RendererGL = class RendererGL extends Renderer {
         gl.RGBA,
         gl.UNSIGNED_BYTE,
         this.height * pd
-      )
-    );
+      );
   }
 
   updatePixels() {
@@ -1448,12 +1446,10 @@ p5.RendererGL = class RendererGL extends Renderer {
     //resize pixels buffer
     const pixelsState = this._pixelsState;
     if (typeof pixelsState.pixels !== 'undefined') {
-      pixelsState._setProperty(
-        'pixels',
+      pixelsState.pixels =
         new Uint8Array(
           this.GL.drawingBufferWidth * this.GL.drawingBufferHeight * 4
-        )
-      );
+        );
     }
 
     for (const framebuffer of this.framebuffers) {

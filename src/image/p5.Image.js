@@ -194,14 +194,6 @@ function image(p5, fn){
     }
 
     /**
-     * Helper fxn for sharing pixel methods
-     */
-    _setProperty(prop, value) {
-      this[prop] = value;
-      this.setModified(true);
-    }
-
-    /**
      * Loads the current value of each pixel in the image into the `img.pixels`
      * array.
      *

@@ -28,10 +28,10 @@ p5.Renderer = class Renderer {
     if (isMainCanvas) {
       this._isMainCanvas = true;
       // for pixel method sharing with pimage
-      this._pInst._setProperty('_curElement', this);
-      this._pInst._setProperty('canvas', this.canvas);
-      this._pInst._setProperty('width', this.width);
-      this._pInst._setProperty('height', this.height);
+      this._pInst._curElement = this;
+      this._pInst.canvas = this.canvas;
+      this._pInst.width = this.width;
+      this._pInst.height = this.height;
     } else {
       // hide if offscreen buffer by default
       this.canvas.style.display = 'none';
@@ -116,8 +116,8 @@ p5.Renderer = class Renderer {
     this.canvas.style.width = `${w}px`;
     this.canvas.style.height = `${h}px`;
     if (this._isMainCanvas) {
-      this._pInst._setProperty('width', this.width);
-      this._pInst._setProperty('height', this.height);
+      this._pInst.width = this.width;
+      this._pInst.height = this.height;
     }
   }
 
