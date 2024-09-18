@@ -60,10 +60,6 @@ class p5 {
     this._loop = true;
     this._startListener = null;
     this._initializeInstanceVariables();
-    this._defaultCanvasSize = {
-      width: 100,
-      height: 100
-    };
     this._events = {
       // keep track of user-events for unregistering later
       mousemove: null,
@@ -217,8 +213,8 @@ class p5 {
     // Later on if the user calls createCanvas, this default one
     // will be replaced
     this.createCanvas(
-      this._defaultCanvasSize.width,
-      this._defaultCanvasSize.height,
+      100,
+      100,
       constants.P2D
     );
 

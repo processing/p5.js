@@ -57,7 +57,8 @@ p5.Renderer = class Renderer {
       textStyle: constants.NORMAL,
       textWrap: constants.WORD
     };
-    this.pushPopStack = [];
+    this._pushPopStack = [];
+    // NOTE: can use the length of the push pop stack instead
     this._pushPopDepth = 0;
 
     this._clipping = false;
@@ -65,9 +66,9 @@ p5.Renderer = class Renderer {
     this._curveTightness = 0;
   }
 
-  // the renderer should return a 'style' object that it wishes to
-  // store on the push stack.
-  push () {
+  // Makes a shallow copy of the current states
+  // and push it into the push pop stack
+  push() {
     this._pushPopDepth++;
     const currentStates = Object.assign({}, this.states);
     // Clone properties that support it
@@ -78,16 +79,15 @@ p5.Renderer = class Renderer {
         currentStates[key] = currentStates[key].clone();
       }
     }
-    this.pushPopStack.push(currentStates);
+    this._pushPopStack.push(currentStates);
     return currentStates;
   }
 
-  // a pop() operation is in progress
-  // the renderer is passed the 'style' object that it returned
-  // from its push() method.
-  pop (style) {
+  // Pop the previous states out of the push pop stack and
+  // assign it back to the current state
+  pop() {
     this._pushPopDepth--;
-    Object.assign(this.states, this.pushPopStack.pop());
+    Object.assign(this.states, this._pushPopStack.pop());
   }
 
   beginClip(options = {}) {

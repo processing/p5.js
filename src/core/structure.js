@@ -542,13 +542,7 @@ p5.prototype.isLooping = function() {
  * </div>
  */
 p5.prototype.push = function() {
-  // NOTE: change how state machine is handled from here
-  this._styles.push({
-    props: {
-      _colorMode: this._colorMode
-    },
-    renderer: this._renderer.push()
-  });
+  this._renderer.push();
 };
 
 /**
@@ -827,13 +821,7 @@ p5.prototype.push = function() {
  * </div>
  */
 p5.prototype.pop = function() {
-  const style = this._styles.pop();
-  if (style) {
-    this._renderer.pop(style.renderer);
-    Object.assign(this, style.props);
-  } else {
-    console.warn('pop() was called without matching push()');
-  }
+  this._renderer.pop();
 };
 
 /**
