@@ -24,6 +24,32 @@ import p5 from '../core/main';
  * created, it can be used with the <a href="#/p5/shader">shader()</a>
  * function, as in `shader(myShader)`.
  *
+ * A shader can optionally describe *hooks,* which are functions in GLSL that
+ * users may choose to provide to customize the behavior of the shader. For the
+ * vertex or the fragment shader, users can pass in an object where each key is
+ * the type and name of a hook function, and each value is a string with the
+ * parameter list and default implementation of the hook. For example, to let users
+ * optionally run code at the start of the vertex shader, the options object could
+ * include:
+ *
+ * ```js
+ * {
+ *   vertex: {
+ *     'void beforeVertex': '() {}'
+ *   }
+ * }
+ * ```
+ *
+ * Then, in your vertex shader source, you can run a hook by calling a function
+ * with the same name prefixed by `HOOK_`:
+ *
+ * ```glsl
+ * void main() {
+ *   HOOK_beforeVertex();
+ *   // Add the rest ofy our shader code here!
+ * }
+ * ```
+ *
  * Note: <a href="#/p5/createShader">createShader()</a>,
  * <a href="#/p5/createFilterShader">createFilterShader()</a>, and
  * <a href="#/p5/loadShader">loadShader()</a> are the recommended ways to
@@ -33,6 +59,10 @@ import p5 from '../core/main';
  * @param {p5.RendererGL} renderer WebGL context for this shader.
  * @param {String} vertSrc source code for the vertex shader program.
  * @param {String} fragSrc source code for the fragment shader program.
+ * @param {Object} [options] An optional object describing how this shader can
+ * be augmented with hooks. It can include:
+ *  - `vertex`: An object describing the available vertex shader hooks.
+ *  - `fragment`: An object describing the available frament shader hooks.
  *
  * @example
  * <div>
@@ -122,7 +152,7 @@ import p5 from '../core/main';
  * </div>
  */
 p5.Shader = class Shader {
-  constructor(renderer, vertSrc, fragSrc) {
+  constructor(renderer, vertSrc, fragSrc, options = {}) {
     // TODO: adapt this to not take ids, but rather,
     // to take the source for a vertex and fragment shader
     // to enable custom shaders at some later date
@@ -138,6 +168,314 @@ p5.Shader = class Shader {
     this.uniforms = {};
     this._bound = false;
     this.samplers = [];
+    this.hooks = {
+      // These should be passed in by `.modify()` instead of being manually
+      // passed in.
+
+      // Stores uniforms + default values.
+      uniforms: options.uniforms || {},
+
+      // Stores custom uniform + helper declarations as a string.
+      declarations: options.declarations,
+
+      // Stores helper functions to prepend to shaders.
+      helpers: options.helpers || {},
+
+      // Stores the hook implementations
+      vertex: options.vertex || {},
+      fragment: options.fragment || {},
+
+      // Stores whether or not the hook implementation has been modified
+      // from the default. This is supplied automatically by calling
+      // yourShader.modify(...).
+      modified: {
+        vertex: (options.modified && options.modified.vertex) || {},
+        fragment: (options.modified && options.modified.fragment) || {}
+      }
+    };
+  }
+
+  shaderSrc(src, shaderType) {
+    const main = 'void main';
+    const [preMain, postMain] = src.split(main);
+
+    let hooks = '';
+    for (const key in this.hooks.uniforms) {
+      hooks += `uniform ${key};\n`;
+    }
+    if (this.hooks.declarations) {
+      hooks += this.hooks.declarations + '\n';
+    }
+    if (this.hooks[shaderType].declarations) {
+      hooks += this.hooks[shaderType].declarations + '\n';
+    }
+    for (const hookDef in this.hooks.helpers) {
+      hooks += `${hookDef}${this.hooks.helpers[hookDef]}\n`;
+    }
+    for (const hookDef in this.hooks[shaderType]) {
+      if (hookDef === 'declarations') continue;
+      const [hookType, hookName] = hookDef.split(' ');
+
+      // Add a #define so that if the shader wants to use preprocessor directives to
+      // optimize away the extra function calls in main, it can do so
+      if (this.hooks.modified[shaderType][hookDef]) {
+        hooks += '#define AUGMENTED_HOOK_' + hookName + '\n';
+      }
+
+      hooks +=
+        hookType + ' HOOK_' + hookName + this.hooks[shaderType][hookDef] + '\n';
+    }
+
+    return preMain + hooks + main + postMain;
+  }
+
+  /**
+   * Shaders are written in <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders">GLSL</a>, but
+   * there are different versions of GLSL that it might be written in.
+   *
+   * Calling this method on a `p5.Shader` will return the GLSL version it uses, either `100 es` or `300 es`.
+   * WebGL 1 shaders will only use `100 es`, and WebGL 2 shaders may use either.
+   *
+   * @returns {String} The GLSL version used by the shader.
+   */
+  version() {
+    const match = /#version (.+)$/.exec(this.vertSrc());
+    if (match) {
+      return match[1];
+    } else {
+      return '100 es';
+    }
+  }
+
+  vertSrc() {
+    return this.shaderSrc(this._vertSrc, 'vertex');
+  }
+
+  fragSrc() {
+    return this.shaderSrc(this._fragSrc, 'fragment');
+  }
+
+  /**
+   * Logs the hooks available in this shader, and their current implementation.
+   *
+   * Each shader may let you override bits of its behavior. Each bit is called
+   * a *hook.* A hook is either for the *vertex* shader, if it affects the
+   * position of vertices, or in the *fragment* shader, if it affects the pixel
+   * color. This method logs those values to the console, letting you know what
+   * you are able to use in a call to
+   * <a href="#/p5.Shader/modify">`modify()`</a>.
+   *
+   * For example, this shader will produce the following output:
+   *
+   * ```js
+   * myShader = materialShader().modify({
+   *   declarations: 'uniform float time;',
+   *   'vec3 getWorldPosition': `(vec3 pos) {
+   *     pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
+   *     return pos;
+   *   }`
+   * });
+   * myShader.inspectHooks();
+   * ```
+   *
+   * ```
+   * ==== Vertex shader hooks: ====
+   * void beforeVertex() {}
+   * vec3 getLocalPosition(vec3 position) { return position; }
+   * [MODIFIED] vec3 getWorldPosition(vec3 pos) {
+   *       pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
+   *       return pos;
+   *     }
+   * vec3 getLocalNormal(vec3 normal) { return normal; }
+   * vec3 getWorldNormal(vec3 normal) { return normal; }
+   * vec2 getUV(vec2 uv) { return uv; }
+   * vec4 getVertexColor(vec4 color) { return color; }
+   * void afterVertex() {}
+   *
+   * ==== Fragment shader hooks: ====
+   * void beforeFragment() {}
+   * Inputs getPixelInputs(Inputs inputs) { return inputs; }
+   * vec4 combineColors(ColorComponents components) {
+   *                 vec4 color = vec4(0.);
+   *                 color.rgb += components.diffuse * components.baseColor;
+   *                 color.rgb += components.ambient * components.ambientColor;
+   *                 color.rgb += components.specular * components.specularColor;
+   *                 color.rgb += components.emissive;
+   *                 color.a = components.opacity;
+   *                 return color;
+   *               }
+   * vec4 getFinalColor(vec4 color) { return color; }
+   * void afterFragment() {}
+   * ```
+   *
+   * @beta
+   */
+  inspectHooks() {
+    console.log('==== Vertex shader hooks: ====');
+    for (const key in this.hooks.vertex) {
+      console.log(
+        (this.hooks.modified.vertex[key] ? '[MODIFIED] ' : '') +
+          key +
+          this.hooks.vertex[key]
+      );
+    }
+    console.log('');
+    console.log('==== Fragment shader hooks: ====');
+    for (const key in this.hooks.fragment) {
+      console.log(
+        (this.hooks.modified.fragment[key] ? '[MODIFIED] ' : '') +
+          key +
+          this.hooks.fragment[key]
+      );
+    }
+    console.log('');
+    console.log('==== Helper functions: ====');
+    for (const key in this.hooks.helpers) {
+      console.log(
+        key +
+        this.hooks.helpers[key]
+      );
+    }
+  }
+
+  /**
+   * Returns a new shader, based on the original, but with custom snippets
+   * of shader code replacing default behaviour.
+   *
+   * Each shader may let you override bits of its behavior. Each bit is called
+   * a *hook.* A hook is either for the *vertex* shader, if it affects the
+   * position of vertices, or in the *fragment* shader, if it affects the pixel
+   * color. You can inspect the different hooks available by calling
+   * <a href="#/p5.Shader/inspectHooks">`yourShader.inspectHooks()`</a>. You can
+   * also read the reference for the default material, normal material, color, line, and point shaders to
+   * see what hooks they have available.
+   *
+   * `modify()` takes one parameter, `hooks`, an object with the hooks you want
+   * to override. Each key of the `hooks` object is the name
+   * of a hook, and the value is a string with the GLSL code for your hook.
+   *
+   * If you supply functions that aren't existing hooks, they will get added at the start of
+   * the shader as helper functions so that you can use them in your hooks.
+   *
+   * To add new <a href="#/p5.Shader/setUniform">uniforms</a> to your shader, you can pass in a `uniforms` object containing
+   * the type and name of the uniform as the key, and a default value or function returning
+   * a default value as its value. These will be automatically set when the shader is set
+   * with `shader(yourShader)`.
+   *
+   * You can also add a `declarations` key, where the value is a GLSL string declaring
+   * custom uniform variables, globals, and functions shared
+   * between hooks. To add declarations just in a vertex or fragment shader, add
+   * `vertexDeclarations` and `fragmentDeclarations` keys.
+   *
+   * @beta
+   * @param {Object} [hooks] The hooks in the shader to replace.
+   * @returns {p5.Shader}
+   *
+   * @example
+   * <div modernizr='webgl'>
+   * <code>
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = materialShader().modify({
+   *     uniforms: {
+   *       'float time': () => millis()
+   *     },
+   *     'vec3 getWorldPosition': `(vec3 pos) {
+   *       pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
+   *       return pos;
+   *     }`
+   *   });
+   * }
+   *
+   * function draw() {
+   *   background(255);
+   *   shader(myShader);
+   *   lights();
+   *   noStroke();
+   *   fill('red');
+   *   sphere(50);
+   * }
+   * </code>
+   * </div>
+   *
+   * @example
+   * <div modernizr='webgl'>
+   * <code>
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = materialShader().modify({
+   *     // Manually specifying a uniform
+   *     declarations: 'uniform float time;',
+   *     'vec3 getWorldPosition': `(vec3 pos) {
+   *       pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
+   *       return pos;
+   *     }`
+   *   });
+   * }
+   *
+   * function draw() {
+   *   background(255);
+   *   shader(myShader);
+   *   myShader.setUniform('time', millis());
+   *   lights();
+   *   noStroke();
+   *   fill('red');
+   *   sphere(50);
+   * }
+   * </code>
+   * </div>
+   */
+  modify(hooks) {
+    p5._validateParameters('p5.Shader.modify', arguments);
+    const newHooks = {
+      vertex: {},
+      fragment: {},
+      helpers: {}
+    };
+    for (const key in hooks) {
+      if (key === 'declarations') continue;
+      if (key === 'uniforms') continue;
+      if (key === 'vertexDeclarations') {
+        newHooks.vertex.declarations =
+          (newHooks.vertex.declarations || '') + '\n' + hooks[key];
+      } else if (key === 'fragmentDeclarations') {
+        newHooks.fragment.declarations =
+          (newHooks.fragment.declarations || '') + '\n' + hooks[key];
+      } else if (this.hooks.vertex[key]) {
+        newHooks.vertex[key] = hooks[key];
+      } else if (this.hooks.fragment[key]) {
+        newHooks.fragment[key] = hooks[key];
+      } else {
+        newHooks.helpers[key] = hooks[key];
+      }
+    }
+    const modifiedVertex = Object.assign({}, this.hooks.modified.vertex);
+    const modifiedFragment = Object.assign({}, this.hooks.modified.fragment);
+    for (const key in newHooks.vertex || {}) {
+      if (key === 'declarations') continue;
+      modifiedVertex[key] = true;
+    }
+    for (const key in newHooks.fragment || {}) {
+      if (key === 'declarations') continue;
+      modifiedFragment[key] = true;
+    }
+
+    return new p5.Shader(this._renderer, this._vertSrc, this._fragSrc, {
+      declarations:
+        (this.hooks.declarations || '') + '\n' + (hooks.declarations || ''),
+      uniforms: Object.assign({}, this.hooks.uniforms, hooks.uniforms || {}),
+      fragment: Object.assign({}, this.hooks.fragment, newHooks.fragment || {}),
+      vertex: Object.assign({}, this.hooks.vertex, newHooks.vertex || {}),
+      helpers: Object.assign({}, this.hooks.helpers, newHooks.helpers || {}),
+      modified: {
+        vertex: modifiedVertex,
+        fragment: modifiedFragment
+      }
+    });
   }
 
   /**
@@ -162,29 +500,35 @@ p5.Shader = class Shader {
       // 3. linking the vertex and fragment shaders
       this._vertShader = gl.createShader(gl.VERTEX_SHADER);
       //load in our default vertex shader
-      gl.shaderSource(this._vertShader, this._vertSrc);
+      gl.shaderSource(this._vertShader, this.vertSrc());
       gl.compileShader(this._vertShader);
       // if our vertex shader failed compilation?
       if (!gl.getShaderParameter(this._vertShader, gl.COMPILE_STATUS)) {
-        p5._friendlyError(
-          `Yikes! An error occurred compiling the vertex shader:${gl.getShaderInfoLog(
-            this._vertShader
-          )}`
-        );
+        const glError = gl.getShaderInfoLog(this._vertShader);
+        if (typeof IS_MINIFIED !== 'undefined') {
+          console.error(glError);
+        } else {
+          p5._friendlyError(
+            `Yikes! An error occurred compiling the vertex shader:${glError}`
+          );
+        }
         return null;
       }
 
       this._fragShader = gl.createShader(gl.FRAGMENT_SHADER);
       //load in our material frag shader
-      gl.shaderSource(this._fragShader, this._fragSrc);
+      gl.shaderSource(this._fragShader, this.fragSrc());
       gl.compileShader(this._fragShader);
       // if our frag shader failed compilation?
       if (!gl.getShaderParameter(this._fragShader, gl.COMPILE_STATUS)) {
-        p5._friendlyError(
-          `Darn! An error occurred compiling the fragment shader:${gl.getShaderInfoLog(
-            this._fragShader
-          )}`
-        );
+        const glError = gl.getShaderInfoLog(this._fragShader);
+        if (typeof IS_MINIFIED !== 'undefined') {
+          console.error(glError);
+        } else {
+          p5._friendlyError(
+            `Darn! An error occurred compiling the fragment shader:${glError}`
+          );
+        }
         return null;
       }
 
@@ -204,6 +548,26 @@ p5.Shader = class Shader {
       this._loadUniforms();
     }
     return this;
+  }
+
+  /**
+   * @private
+   */
+  setDefaultUniforms() {
+    for (const key in this.hooks.uniforms) {
+      const [, name] = key.split(' ');
+      const initializer = this.hooks.uniforms[key];
+      let value;
+      if (initializer instanceof Function) {
+        value = initializer();
+      } else {
+        value = initializer;
+      }
+
+      if (value !== undefined && value !== null) {
+        this.setUniform(name, value);
+      }
+    }
   }
 
   /**
@@ -580,7 +944,10 @@ p5.Shader = class Shader {
     modelViewProjectionMatrix.mult(projectionMatrix);
 
     if (this.isStrokeShader()) {
-      this.setUniform('uPerspective', this._renderer.states.curCamera.useLinePerspective ? 1 : 0);
+      this.setUniform(
+        'uPerspective',
+        this._renderer.states.curCamera.useLinePerspective ? 1 : 0
+      );
     }
     this.setUniform('uViewMatrix', viewMatrix.mat4);
     this.setUniform('uProjectionMatrix', projectionMatrix.mat4);
@@ -973,18 +1340,18 @@ p5.Shader = class Shader {
 
   isLightShader() {
     return [
-      this.attributes.aNormal ,
-      this.uniforms.uUseLighting ,
-      this.uniforms.uAmbientLightCount ,
-      this.uniforms.uDirectionalLightCount ,
-      this.uniforms.uPointLightCount ,
-      this.uniforms.uAmbientColor ,
-      this.uniforms.uDirectionalDiffuseColors ,
-      this.uniforms.uDirectionalSpecularColors ,
-      this.uniforms.uPointLightLocation ,
-      this.uniforms.uPointLightDiffuseColors ,
-      this.uniforms.uPointLightSpecularColors ,
-      this.uniforms.uLightingDirection ,
+      this.attributes.aNormal,
+      this.uniforms.uUseLighting,
+      this.uniforms.uAmbientLightCount,
+      this.uniforms.uDirectionalLightCount,
+      this.uniforms.uPointLightCount,
+      this.uniforms.uAmbientColor,
+      this.uniforms.uDirectionalDiffuseColors,
+      this.uniforms.uDirectionalSpecularColors,
+      this.uniforms.uPointLightLocation,
+      this.uniforms.uPointLightDiffuseColors,
+      this.uniforms.uPointLightSpecularColors,
+      this.uniforms.uLightingDirection,
       this.uniforms.uSpecular
     ].some(x => x !== undefined);
   }

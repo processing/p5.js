@@ -30,6 +30,11 @@ accessibility(p5);
 import color from './color';
 color(p5);
 
+// core
+// currently, it only contains the test for parameter validation
+import friendlyErrors from './core/friendly_errors';
+friendlyErrors(p5);
+
 // data
 import data from './data';
 data(p5);

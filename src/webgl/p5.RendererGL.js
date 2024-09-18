@@ -1633,7 +1633,7 @@ p5.RendererGL = class RendererGL extends Renderer {
         sphereMapping
       );
     }
-    this.states.uNMatrix.inverseTranspose(this.states.uMVMatrix);
+    this.states.uNMatrix.inverseTranspose(this.states.uViewMatrix);
     this.states.uNMatrix.invert3x3(this.states.uNMatrix);
     this.sphereMapping.setUniform('uFovY', this.states.curCamera.cameraFOV);
     this.sphereMapping.setUniform('uAspect', this.states.curCamera.aspectRatio);
@@ -1704,6 +1704,15 @@ p5.RendererGL = class RendererGL extends Renderer {
     return this._getImmediateLineShader();
   }
 
+  materialShader() {
+    if (!this._pInst._glAttributes.perPixelLighting) {
+      throw new Error(
+        'The material shader does not support hooks without perPixelLighting. Try turning it back on.'
+      );
+    }
+    return this._getLightShader();
+  }
+
   _getLightShader() {
     if (!this._defaultLightShader) {
       if (this._pInst._glAttributes.perPixelLighting) {
@@ -1712,7 +1721,34 @@ p5.RendererGL = class RendererGL extends Renderer {
           this._webGL2CompatibilityPrefix('vert', 'highp') +
           defaultShaders.phongVert,
           this._webGL2CompatibilityPrefix('frag', 'highp') +
-          defaultShaders.phongFrag
+          defaultShaders.phongFrag,
+          {
+            vertex: {
+              'void beforeVertex': '() {}',
+              'vec3 getLocalPosition': '(vec3 position) { return position; }',
+              'vec3 getWorldPosition': '(vec3 position) { return position; }',
+              'vec3 getLocalNormal': '(vec3 normal) { return normal; }',
+              'vec3 getWorldNormal': '(vec3 normal) { return normal; }',
+              'vec2 getUV': '(vec2 uv) { return uv; }',
+              'vec4 getVertexColor': '(vec4 color) { return color; }',
+              'void afterVertex': '() {}'
+            },
+            fragment: {
+              'void beforeFragment': '() {}',
+              'Inputs getPixelInputs': '(Inputs inputs) { return inputs; }',
+              'vec4 combineColors': `(ColorComponents components) {
+                vec4 color = vec4(0.);
+                color.rgb += components.diffuse * components.baseColor;
+                color.rgb += components.ambient * components.ambientColor;
+                color.rgb += components.specular * components.specularColor;
+                color.rgb += components.emissive;
+                color.a = components.opacity;
+                return color;
+              }`,
+              'vec4 getFinalColor': '(vec4 color) { return color; }',
+              'void afterFragment': '() {}'
+            }
+          }
         );
       } else {
         this._defaultLightShader = new p5.Shader(
@@ -1742,6 +1778,10 @@ p5.RendererGL = class RendererGL extends Renderer {
     return this._defaultImmediateModeShader;
   }
 
+  normalShader() {
+    return this._getNormalShader();
+  }
+
   _getNormalShader() {
     if (!this._defaultNormalShader) {
       this._defaultNormalShader = new p5.Shader(
@@ -1749,11 +1789,32 @@ p5.RendererGL = class RendererGL extends Renderer {
         this._webGL2CompatibilityPrefix('vert', 'mediump') +
         defaultShaders.normalVert,
         this._webGL2CompatibilityPrefix('frag', 'mediump') +
-        defaultShaders.normalFrag
+        defaultShaders.normalFrag,
+        {
+          vertex: {
+            'void beforeVertex': '() {}',
+            'vec3 getLocalPosition': '(vec3 position) { return position; }',
+            'vec3 getWorldPosition': '(vec3 position) { return position; }',
+            'vec3 getLocalNormal': '(vec3 normal) { return normal; }',
+            'vec3 getWorldNormal': '(vec3 normal) { return normal; }',
+            'vec2 getUV': '(vec2 uv) { return uv; }',
+            'vec4 getVertexColor': '(vec4 color) { return color; }',
+            'void afterVertex': '() {}'
+          },
+          fragment: {
+            'void beforeFragment': '() {}',
+            'vec4 getFinalColor': '(vec4 color) { return color; }',
+            'void afterFragment': '() {}'
+          }
+        }
       );
     }
 
     return this._defaultNormalShader;
+  }
+
+  colorShader() {
+    return this._getColorShader();
   }
 
   _getColorShader() {
@@ -1763,11 +1824,56 @@ p5.RendererGL = class RendererGL extends Renderer {
         this._webGL2CompatibilityPrefix('vert', 'mediump') +
         defaultShaders.normalVert,
         this._webGL2CompatibilityPrefix('frag', 'mediump') +
-        defaultShaders.basicFrag
+        defaultShaders.basicFrag,
+        {
+          vertex: {
+            'void beforeVertex': '() {}',
+            'vec3 getLocalPosition': '(vec3 position) { return position; }',
+            'vec3 getWorldPosition': '(vec3 position) { return position; }',
+            'vec3 getLocalNormal': '(vec3 normal) { return normal; }',
+            'vec3 getWorldNormal': '(vec3 normal) { return normal; }',
+            'vec2 getUV': '(vec2 uv) { return uv; }',
+            'vec4 getVertexColor': '(vec4 color) { return color; }',
+            'void afterVertex': '() {}'
+          },
+          fragment: {
+            'void beforeFragment': '() {}',
+            'vec4 getFinalColor': '(vec4 color) { return color; }',
+            'void afterFragment': '() {}'
+          }
+        }
       );
     }
 
     return this._defaultColorShader;
+  }
+
+  /**
+   * TODO(dave): un-private this when there is a way to actually override the
+   * shader used for points
+   *
+   * Get the shader used when drawing points with <a href="#/p5/point">`point()`</a>.
+   *
+   * You can call <a href="#/p5.Shader/modify">`pointShader().modify()`</a>
+   * and change any of the following hooks:
+   * - `void beforeVertex`: Called at the start of the vertex shader.
+   * - `vec3 getLocalPosition`: Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
+   * - `vec3 getWorldPosition`: Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
+   * - `float getPointSize`: Update the size of the point. It takes in `float size` and must return a modified version.
+   * - `void afterVertex`: Called at the end of the vertex shader.
+   * - `void beforeFragment`: Called at the start of the fragment shader.
+   * - `bool shouldDiscard`: Points are drawn inside a square, with the corners discarded in the fragment shader to create a circle. Use this to change this logic. It takes in a `bool willDiscard` and must return a modified version.
+   * - `vec4 getFinalColor`: Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
+   * - `void afterFragment`: Called at the end of the fragment shader.
+   *
+   * Call `pointShader().inspectHooks()` to see all the possible hooks and
+   * their default implementations.
+   *
+   * @returns {p5.Shader} The `point()` shader
+   * @private()
+   */
+  pointShader() {
+    return this._getPointShader();
   }
 
   _getPointShader() {
@@ -1777,10 +1883,29 @@ p5.RendererGL = class RendererGL extends Renderer {
         this._webGL2CompatibilityPrefix('vert', 'mediump') +
         defaultShaders.pointVert,
         this._webGL2CompatibilityPrefix('frag', 'mediump') +
-        defaultShaders.pointFrag
+        defaultShaders.pointFrag,
+        {
+          vertex: {
+            'void beforeVertex': '() {}',
+            'vec3 getLocalPosition': '(vec3 position) { return position; }',
+            'vec3 getWorldPosition': '(vec3 position) { return position; }',
+            'float getPointSize': '(float size) { return size; }',
+            'void afterVertex': '() {}'
+          },
+          fragment: {
+            'void beforeFragment': '() {}',
+            'vec4 getFinalColor': '(vec4 color) { return color; }',
+            'bool shouldDiscard': '(bool outside) { return outside; }',
+            'void afterFragment': '() {}'
+          }
+        }
       );
     }
     return this._defaultPointShader;
+  }
+
+  strokeShader() {
+    return this._getLineShader();
   }
 
   _getLineShader() {
@@ -1790,7 +1915,26 @@ p5.RendererGL = class RendererGL extends Renderer {
         this._webGL2CompatibilityPrefix('vert', 'mediump') +
         defaultShaders.lineVert,
         this._webGL2CompatibilityPrefix('frag', 'mediump') +
-        defaultShaders.lineFrag
+        defaultShaders.lineFrag,
+        {
+          vertex: {
+            'void beforeVertex': '() {}',
+            'vec3 getLocalPosition': '(vec3 position) { return position; }',
+            'vec3 getWorldPosition': '(vec3 position) { return position; }',
+            'float getStrokeWeight': '(float weight) { return weight; }',
+            'vec2 getLineCenter': '(vec2 center) { return center; }',
+            'vec2 getLinePosition': '(vec2 position) { return position; }',
+            'vec4 getVertexColor': '(vec4 color) { return color; }',
+            'void afterVertex': '() {}'
+          },
+          fragment: {
+            'void beforeFragment': '() {}',
+            'Inputs getPixelInputs': '(Inputs inputs) { return inputs; }',
+            'vec4 getFinalColor': '(vec4 color) { return color; }',
+            'bool shouldDiscard': '(bool outside) { return outside; }',
+            'void afterFragment': '() {}'
+          }
+        }
       );
     }
 
@@ -2007,7 +2151,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     fillShader.setUniform('uSpecular', this.states._useSpecularMaterial);
     fillShader.setUniform('uEmissive', this.states._useEmissiveMaterial);
     fillShader.setUniform('uShininess', this.states._useShininess);
-    fillShader.setUniform('metallic', this.states._useMetalness);
+    fillShader.setUniform('uMetallic', this.states._useMetalness);
 
     this._setImageLightUniforms(fillShader);
 
@@ -2080,14 +2224,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       let diffusedLight = this.getDiffusedTexture(this.states.activeImageLight);
       shader.setUniform('environmentMapDiffused', diffusedLight);
       let specularLight = this.getSpecularTexture(this.states.activeImageLight);
-      // In p5js the range of shininess is >= 1,
-      // Therefore roughness range will be ([0,1]*8)*20 or [0, 160]
-      // The factor of 8 is because currently the getSpecularTexture
-      // only calculated 8 different levels of roughness
-      // The factor of 20 is just to spread up this range so that,
-      // [1, max] of shininess is converted to [0,160] of roughness
-      let roughness = 20 / this.states._useShininess;
-      shader.setUniform('levelOfDetail', roughness * 8);
+
       shader.setUniform('environmentMapSpecular', specularLight);
     }
   }
