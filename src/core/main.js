@@ -102,13 +102,16 @@ class p5 {
     // ensure correct reporting of window dimensions
     this._updateWindowSize();
 
-    const friendlyBindGlobal = this._createFriendlyGlobalFunctionBinder();
     const bindGlobal = (property) => {
       Object.defineProperty(window, property, {
         configurable: true,
         enumerable: true,
         get: () => {
-          return this[property]
+          if(typeof this[property] === 'function'){
+            return this[property].bind(this);
+          }else{
+            return this[property];
+          }
         },
         set: (newValue) => {
           Object.defineProperty(window, property, {
@@ -133,22 +136,7 @@ class p5 {
       // All methods and properties with name starting with '_' will be skipped
       for (const p of Object.getOwnPropertyNames(p5.prototype)) {
         if(p[0] === '_') continue;
-
-        if (typeof p5.prototype[p] === 'function') {
-          const ev = p.substring(2);
-          if (!this._events.hasOwnProperty(ev)) {
-            if (Math.hasOwnProperty(p) && Math[p] === p5.prototype[p]) {
-              // Multiple p5 methods are just native Math functions. These can be
-              // called without any binding.
-              friendlyBindGlobal(p, p5.prototype[p]);
-            } else {
-              friendlyBindGlobal(p, p5.prototype[p].bind(this));
-            }
-          }
-        } else {
-          console.log(p);
-          bindGlobal(p, p5.prototype[p]);
-        }
+        bindGlobal(p);
       }
 
       // Attach its properties to the window
@@ -442,76 +430,6 @@ class p5 {
     };
 
     this._downKeys = {}; //Holds the key codes of currently pressed keys
-  }
-
-  // create a function which provides a standardized process for binding
-  // globals; this is implemented as a factory primarily so that there's a
-  // way to redefine what "global" means for the binding function so it
-  // can be used in scenarios like unit testing where the window object
-  // might not exist
-  _createFriendlyGlobalFunctionBinder(options = {}) {
-    const globalObject = options.globalObject || window;
-    const log = options.log || console.log.bind(console);
-    const propsToForciblyOverwrite = {
-      // p5.print actually always overwrites an existing global function,
-      // albeit one that is very unlikely to be used:
-      //
-      //   https://developer.mozilla.org/en-US/docs/Web/API/Window/print
-      print: true
-    };
-
-    return (prop, value) => {
-      if (
-        !p5.disableFriendlyErrors &&
-        typeof IS_MINIFIED === 'undefined' &&
-        typeof value === 'function'
-      ) {
-        try {
-          // Because p5 has so many common function names, it's likely
-          // that users may accidentally overwrite global p5 functions with
-          // their own variables. Let's allow this but log a warning to
-          // help users who may be doing this unintentionally.
-          //
-          // For more information, see:
-          //
-          //   https://github.com/processing/p5.js/issues/1317
-
-          if (prop in globalObject && !(prop in propsToForciblyOverwrite)) {
-            throw new Error(`global "${prop}" already exists`);
-          }
-
-          // It's possible that this might throw an error because there
-          // are a lot of edge-cases in which `Object.defineProperty` might
-          // not succeed; since this functionality is only intended to
-          // help beginners anyways, we'll just catch such an exception
-          // if it occurs, and fall back to legacy behavior.
-          Object.defineProperty(globalObject, prop, {
-            configurable: true,
-            enumerable: true,
-            get() {
-              return value;
-            },
-            set(newValue) {
-              Object.defineProperty(globalObject, prop, {
-                configurable: true,
-                enumerable: true,
-                value: newValue,
-                writable: true
-              });
-              log(
-                `You just changed the value of "${prop}", which was a p5 function. This could cause problems later if you're not careful.`
-              );
-            }
-          });
-        } catch (e) {
-          let message = `p5 had problems creating the global function "${prop}", possibly because your code is already using that name as a variable. You may want to rename your variable to something else.`;
-          p5._friendlyError(message, prop);
-          globalObject[prop] = value;
-        }
-      } else {
-        globalObject[prop] = value;
-      }
-    };
   }
 }
 
