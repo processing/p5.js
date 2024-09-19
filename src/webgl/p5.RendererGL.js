@@ -435,6 +435,8 @@ export function readPixelWebGL(
 p5.RendererGL = class RendererGL extends Renderer {
   constructor(elt, pInst, isMainCanvas, attr) {
     super(elt, pInst, isMainCanvas);
+    this.elt = elt;
+    this.canvas = elt;
     this._setAttributeDefaults(pInst);
     this._initContext();
     this.isP3D = true; //lets us know we're in 3d mode
@@ -446,6 +448,15 @@ p5.RendererGL = class RendererGL extends Renderer {
     // interacting with WebGLRenderingContext, still worth considering future removal
     this.GL = this.drawingContext;
     this._pInst.drawingContext = this.drawingContext;
+
+    if (isMainCanvas) {
+      // for pixel method sharing with pimage
+      this._pInst._curElement = this;
+      this._pInst.canvas = this.canvas;
+    } else {
+      // hide if offscreen buffer by default
+      this.canvas.style.display = 'none';
+    }
 
     // Push/pop state
     this.states.uModelMatrix = new p5.Matrix();
@@ -1432,6 +1443,10 @@ p5.RendererGL = class RendererGL extends Renderer {
  */
   resize(w, h) {
     Renderer.prototype.resize.call(this, w, h);
+    this.canvas.width = w * this._pInst._pixelDensity;
+    this.canvas.height = h * this._pInst._pixelDensity;
+    this.canvas.style.width = `${w}px`;
+    this.canvas.style.height = `${h}px`;
     this._origViewport = {
       width: this.GL.drawingBufferWidth,
       height: this.GL.drawingBufferHeight

@@ -21,21 +21,9 @@ p5.Renderer = class Renderer {
   constructor(elt, pInst, isMainCanvas) {
     this._pInst = this._pixelsState = pInst;
     this._events = {};
-    this.canvas = elt;
-    this.width = this.canvas.offsetWidth;
-    this.height = this.canvas.offsetHeight;
 
     if (isMainCanvas) {
       this._isMainCanvas = true;
-      // for pixel method sharing with pimage
-      this._pInst._curElement = this;
-      this._pInst.canvas = this.canvas;
-      this._pInst.width = this.width;
-      this._pInst.height = this.height;
-    } else {
-      // hide if offscreen buffer by default
-      this.canvas.style.display = 'none';
-      this._styles = []; // non-main elt styles stored in p5.Renderer
     }
 
     // Renderer state machine
@@ -64,6 +52,13 @@ p5.Renderer = class Renderer {
     this._clipping = false;
     this._clipInvert = false;
     this._curveTightness = 0;
+  }
+
+  createCanvas(w, h) {
+    this.width = w;
+    this.height = h;
+    this._pInst.width = this.width;
+    this._pInst.height = this.height;
   }
 
   // Makes a shallow copy of the current states
@@ -108,20 +103,16 @@ p5.Renderer = class Renderer {
   /**
  * Resize our canvas element.
  */
-  resize (w, h) {
+  resize(w, h) {
     this.width = w;
     this.height = h;
-    this.canvas.width = w * this._pInst._pixelDensity;
-    this.canvas.height = h * this._pInst._pixelDensity;
-    this.canvas.style.width = `${w}px`;
-    this.canvas.style.height = `${h}px`;
     if (this._isMainCanvas) {
       this._pInst.width = this.width;
       this._pInst.height = this.height;
     }
   }
 
-  get (x, y, w, h) {
+  get(x, y, w, h) {
     const pixelsState = this._pixelsState;
     const pd = pixelsState._pixelDensity;
     const canvas = this.canvas;

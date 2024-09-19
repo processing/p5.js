@@ -15,9 +15,19 @@ const styleEmpty = 'rgba(0,0,0,0)';
 class Renderer2D extends Renderer {
   constructor(elt, pInst, isMainCanvas) {
     super(elt, pInst, isMainCanvas);
+    this.elt = elt;
+    this.canvas = elt;
     this.drawingContext = this.canvas.getContext('2d');
     this._pInst.drawingContext = this.drawingContext;
-    this.elt = elt;
+
+    if (isMainCanvas) {
+      // for pixel method sharing with pimage
+      this._pInst._curElement = this;
+      this._pInst.canvas = this.canvas;
+    } else {
+      // hide if offscreen buffer by default
+      this.canvas.style.display = 'none';
+    }
 
     // Extend renderer with methods of p5.Element with getters
     this.wrappedElt = new p5.Element(elt, pInst);
@@ -30,6 +40,18 @@ class Renderer2D extends Renderer {
         })
       }
     }
+  }
+
+  // NOTE: renderer won't be created until instance createCanvas was called
+  // This createCanvas should handle the HTML stuff while other createCanvas
+  // be generic
+  createCanvas(w, h, canvas) {
+    super.createCanvas(w, h);
+    // this.canvas = this.elt = canvas || document.createElement('canvas');
+    // this.drawingContext = this.canvas.getContext('2d');
+    // this._pInst.drawingContext = this.drawingContext;
+
+    return this.wrappedElt;
   }
 
   getFilterGraphicsLayer() {
@@ -76,6 +98,10 @@ class Renderer2D extends Renderer {
 
   resize(w, h) {
     super.resize(w, h);
+    this.canvas.width = w * this._pInst._pixelDensity;
+    this.canvas.height = h * this._pInst._pixelDensity;
+    this.canvas.style.width = `${w}px`;
+    this.canvas.style.height = `${h}px`;
     this.drawingContext.scale(
       this._pInst._pixelDensity,
       this._pInst._pixelDensity
