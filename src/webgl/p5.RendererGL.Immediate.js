@@ -517,7 +517,7 @@ p5.RendererGL.prototype._tesselateShape = function() {
         const start = j + offset;
         const end = start + size;
         this.setAttribute(name, polyTriangles.slice(start, end));
-        offset = end;
+        offset += size;
       }
     }
     this.vertex(...polyTriangles.slice(j, j + 5));
