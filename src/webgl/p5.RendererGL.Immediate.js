@@ -580,4 +580,46 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
   shader.unbindShader();
 };
 
+/**
+ * Called from image rendering functions. Responsible for setting shader uniforms,
+ * enabling all appropriate buffers, binding textures, applying color blend,
+ * and drawing the image geometry.
+ * @private
+ */
+p5.RendererGL.prototype._drawImmediateImage = function(count = 1) {
+  const gl = this.GL;
+  let shader = this._getImmediateImageShader();
+  this._setImageUniforms(shader);
+
+  for (const buff of this.immediateMode.buffers.image) {
+    buff._prepareBuffer(this.immediateMode.geometry, shader);
+  }
+  shader.disableRemainingAttributes();
+  this._setTexUniforms(shader);
+  this._applyColorBlend(
+    this.curImageColor,
+    this.immediateMode.geometry.hasImageTransparency()
+  );
+  if (count === 1) {
+    gl.drawArrays(
+      this.immediateMode.shapeMode,
+      0,
+      this.immediateMode.geometry.vertices.length
+    );
+  } else {
+    try {
+      gl.drawArraysInstanced(
+        this.immediateMode.shapeMode,
+        0,
+        this.immediateMode.geometry.vertices.length,
+        count
+      );
+    } catch (e) {
+      console.log('🌸 p5.js says: Instancing is only supported in WebGL2 mode');
+    }
+  }
+  shader.unbindShader();
+};
+
+
 export default p5.RendererGL;

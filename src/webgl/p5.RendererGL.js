@@ -1780,12 +1780,14 @@ p5.RendererGL = class RendererGL extends Renderer {
     return point;
   }
 
-  _getRetainedImageShader() {
+  _getImmediateImageShader() {
     const imageShader = this.userImageShader;
-    if (imageShader && imageShader.isTextureShader()) {
-      return this._getLightShader(); // Return light shader if the shader is a texture shader
+    if (this._tex) {
+      if (!imageShader || !imageShader.isTextureShader()) {
+        return this._getLightShader(); 
+      }
     }
-    return imageShader || this._getColorShader(); // Default to color shader if no image shader is defined
+    return imageShader ; 
   }
   
 
