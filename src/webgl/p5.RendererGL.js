@@ -1758,14 +1758,16 @@ p5.RendererGL = class RendererGL extends Renderer {
     if (this._useNormalMaterial) {
       return this._getNormalShader();
     }
-
+    // Check if the fill shader is a texture shader
     const fill = this.userFillShader;
-    if(fill){
+    if(fill && !fill.isTextureShader()){
       return fill;
     }
+    // Return the appropriate light shader if lighting is enabled or it's a texture shader
     if (this._enableLighting || this._tex) {
       return this._getLightShader();
     }
+    // Default to the color shader
     return this._getColorShader();
   }
 
@@ -1777,6 +1779,15 @@ p5.RendererGL = class RendererGL extends Renderer {
     }
     return point;
   }
+
+  _getRetainedImageShader() {
+    const imageShader = this.userImageShader;
+    if (imageShader && imageShader.isTextureShader()) {
+      return this._getLightShader(); // Return light shader if the shader is a texture shader
+    }
+    return imageShader || this._getColorShader(); // Default to color shader if no image shader is defined
+  }
+  
 
   _getRetainedLineShader() {
     return this._getImmediateLineShader();
