@@ -90,8 +90,6 @@ class p5 {
     this._lcg_random_state = null; // NOTE: move to random.js
     this._gaussian_previous = false; // NOTE: move to random.js
 
-    this._loadingScreenId = 'p5_loading';
-
     if (window.DeviceOrientationEvent) {
       this._events.deviceorientation = null;
     }
@@ -351,10 +349,7 @@ class p5 {
     if(this._startListener){
       window.removeEventListener('load', this._startListener, false);
     }
-    const loadingScreen = document.getElementById(this._loadingScreenId);
-    if (loadingScreen) {
-      loadingScreen.parentNode.removeChild(loadingScreen);
-    }
+
     if (this._curElement) {
       // stop draw
       this._loop = false;

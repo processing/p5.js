@@ -437,6 +437,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     super(elt, pInst, isMainCanvas);
     this.elt = elt;
     this.canvas = elt;
+    this.wrappedElt = new p5.Element(elt, pInst);
     this._setAttributeDefaults(pInst);
     this._initContext();
     this.isP3D = true; //lets us know we're in 3d mode
@@ -676,6 +677,11 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.fontInfos = {};
 
     this._curShader = undefined;
+  }
+
+  createCanvas(w, h, canvas){
+    super.createCanvas(w, h);
+    return this.wrappedElt;
   }
 
   /**

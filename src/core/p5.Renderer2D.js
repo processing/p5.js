@@ -15,22 +15,20 @@ const styleEmpty = 'rgba(0,0,0,0)';
 class Renderer2D extends Renderer {
   constructor(elt, pInst, isMainCanvas) {
     super(elt, pInst, isMainCanvas);
-    this.elt = elt;
-    this.canvas = elt;
-    this.drawingContext = this.canvas.getContext('2d');
-    this._pInst.drawingContext = this.drawingContext;
 
-    if (isMainCanvas) {
-      // for pixel method sharing with pimage
-      this._pInst._curElement = this;
-      this._pInst.canvas = this.canvas;
-    } else {
-      // hide if offscreen buffer by default
-      this.canvas.style.display = 'none';
-    }
+    this._isMainCanvas = isMainCanvas;
+
+    // if (isMainCanvas) {
+    //   // for pixel method sharing with pimage
+    //   this._pInst._curElement = this;
+    //   this._pInst.canvas = this.canvas;
+    // } else {
+    //   // hide if offscreen buffer by default
+    //   this.canvas.style.display = 'none';
+    // }
 
     // Extend renderer with methods of p5.Element with getters
-    this.wrappedElt = new p5.Element(elt, pInst);
+    // this.wrappedElt = new p5.Element(elt, pInst);
     for (const p of Object.getOwnPropertyNames(p5.Element.prototype)) {
       if (p !== 'constructor' && p[0] !== '_') {
         Object.defineProperty(this, p, {
@@ -42,16 +40,56 @@ class Renderer2D extends Renderer {
     }
   }
 
-  // NOTE: renderer won't be created until instance createCanvas was called
-  // This createCanvas should handle the HTML stuff while other createCanvas
-  // be generic
   createCanvas(w, h, canvas) {
     super.createCanvas(w, h);
-    // this.canvas = this.elt = canvas || document.createElement('canvas');
-    // this.drawingContext = this.canvas.getContext('2d');
-    // this._pInst.drawingContext = this.drawingContext;
+
+    // Create new canvas
+    this.canvas = this.elt = canvas || document.createElement('canvas');
+    ////////
+    if (this._isMainCanvas) {
+      // for pixel method sharing with pimage
+      this._pInst._curElement = this;
+      this._pInst.canvas = this.canvas;
+    } else {
+      // hide if offscreen buffer by default
+      this.canvas.style.display = 'none';
+    }
+    ////////
+    this.elt.id = 'defaultCanvas0';
+    this.elt.classList.add('p5Canvas');
+
+    // Set canvas size
+    this.elt.width = w * this._pInst._pixelDensity;
+    this.elt.height = h * this._pInst._pixelDensity;
+    this.elt.style.width = `${w}px`;
+    this.elt.style.height = `${h}px`;
+
+    // Attach canvas element to DOM
+    if (this._pInst._userNode) {
+      // user input node case
+      this._pInst._userNode.appendChild(this.elt);
+    } else {
+      //create main element
+      if (document.getElementsByTagName('main').length === 0) {
+        let m = document.createElement('main');
+        document.body.appendChild(m);
+      }
+      //append canvas to main
+      document.getElementsByTagName('main')[0].appendChild(this.elt);
+    }
+
+    // Get and store drawing context
+    this.drawingContext = this.canvas.getContext('2d');
+    this._pInst.drawingContext = this.drawingContext;
+
+    // Set and return p5.Element
+    this.wrappedElt = new p5.Element(this.elt, this._pInst);
 
     return this.wrappedElt;
+  }
+
+  remove(){
+    this.wrappedElt.remove();
   }
 
   getFilterGraphicsLayer() {
@@ -142,6 +180,8 @@ class Renderer2D extends Renderer {
         this.blendMode(this._cachedBlendMode);
       }
 
+      console.log('background', this.drawingContext.fillStyle, this.drawingContext.canvas);
+      console.trace();
       this.drawingContext.fillRect(0, 0, this.width, this.height);
       // reset fill
       this._setFill(curFill);
@@ -1205,6 +1245,8 @@ class Renderer2D extends Renderer {
   _setFill(fillStyle) {
     if (fillStyle !== this._cachedFillStyle) {
       this.drawingContext.fillStyle = fillStyle;
+      // console.log('here', this.drawingContext.fillStyle);
+      // console.trace();
       this._cachedFillStyle = fillStyle;
     }
   }

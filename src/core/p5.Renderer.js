@@ -61,6 +61,10 @@ p5.Renderer = class Renderer {
     this._pInst.height = this.height;
   }
 
+  remove() {
+
+  }
+
   // Makes a shallow copy of the current states
   // and push it into the push pop stack
   push() {

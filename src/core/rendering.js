@@ -140,7 +140,7 @@ p5.prototype.createCanvas = function (w, h, renderer, canvas) {
   }
 
 
-
+  /////////////////////////////////
   let r;
   if (arguments[2] instanceof HTMLCanvasElement) {
     renderer = constants.P2D;
@@ -149,90 +149,103 @@ p5.prototype.createCanvas = function (w, h, renderer, canvas) {
     r = renderer || constants.P2D;
   }
 
-  let c;
+  // let c;
 
-  if (canvas) {
-    // NOTE: this is to guard against multiple default canvas being created
-    c = document.getElementById(defaultId);
-    if (c) {
-      c.parentNode.removeChild(c); //replace the existing defaultCanvas
-    }
-    c = canvas;
-    this._defaultGraphicsCreated = false;
-  } else {
-    if (r === constants.WEBGL) {
-      c = document.getElementById(defaultId);
-      if (c) {
-        //if defaultCanvas already exists
-        c.parentNode.removeChild(c); //replace the existing defaultCanvas
-        const thisRenderer = this._renderer;
-        this._elements = this._elements.filter(e => e !== thisRenderer);
-      }
-      c = document.createElement('canvas');
-      c.id = defaultId;
-      c.classList.add(defaultClass);
-    } else {
-      if (!this._defaultGraphicsCreated) {
-        if (canvas) {
-          c = canvas;
-        } else {
-          c = document.createElement('canvas');
-        }
-        let i = 0;
-        while (document.getElementById(`defaultCanvas${i}`)) {
-          i++;
-        }
-        defaultId = `defaultCanvas${i}`;
-        c.id = defaultId;
-        c.classList.add(defaultClass);
-      } else if (
-        this._renderer &&
-        Object.getPrototypeOf(this._renderer) !== renderers[r].prototype
-      ) {
-        // Handle createCanvas() called with 2D mode after a 3D canvas is made
-        if (this.canvas.parentNode) {
-          this.canvas.parentNode.removeChild(this.canvas); //replace the existing defaultCanvas
-        }
-        const thisRenderer = this._renderer;
-        this._elements = this._elements.filter(e => e !== thisRenderer);
-        c = document.createElement('canvas');
-        c.id = defaultId;
-        c.classList.add(defaultClass);
-      } else {
-        // resize the default canvas if new one is created
-        c = this.canvas;
-      }
-    }
+  // if (canvas) {
+  //   // NOTE: this is to guard against multiple default canvas being created
+  //   c = document.getElementById(defaultId);
+  //   if (c) {
+  //     c.parentNode.removeChild(c); //replace the existing defaultCanvas
+  //   }
+  //   c = canvas;
+  //   this._defaultGraphicsCreated = false;
+  // } else {
+  //   if (r === constants.WEBGL) {
+  //     c = document.getElementById(defaultId);
+  //     if (c) {
+  //       //if defaultCanvas already exists
+  //       c.parentNode.removeChild(c); //replace the existing defaultCanvas
+  //       const thisRenderer = this._renderer;
+  //       this._elements = this._elements.filter(e => e !== thisRenderer);
+  //     }
+  //     c = document.createElement('canvas');
+  //     c.id = defaultId;
+  //     c.classList.add(defaultClass);
+  //   } else {
+  //     if (!this._defaultGraphicsCreated) {
+  //       if (canvas) {
+  //         c = canvas;
+  //       } else {
+  //         c = document.createElement('canvas');
+  //       }
+  //       let i = 0;
+  //       while (document.getElementById(`defaultCanvas${i}`)) {
+  //         i++;
+  //       }
+  //       defaultId = `defaultCanvas${i}`;
+  //       c.id = defaultId;
+  //       c.classList.add(defaultClass);
+  //     } else if (
+  //       this._renderer &&
+  //       Object.getPrototypeOf(this._renderer) !== renderers[r].prototype
+  //     ) {
+  //       // Handle createCanvas() called with 2D mode after a 3D canvas is made
+  //       if (this.canvas.parentNode) {
+  //         this.canvas.parentNode.removeChild(this.canvas); //replace the existing defaultCanvas
+  //       }
+  //       const thisRenderer = this._renderer;
+  //       this._elements = this._elements.filter(e => e !== thisRenderer);
+  //       c = document.createElement('canvas');
+  //       c.id = defaultId;
+  //       c.classList.add(defaultClass);
+  //     } else {
+  //       // resize the default canvas if new one is created
+  //       c = this.canvas;
+  //     }
+  //   }
 
-    // set to invisible if still in setup (to prevent flashing with manipulate)
-    if (!this._setupDone) {
-      c.dataset.hidden = true; // tag to show later
-      c.style.visibility = 'hidden';
-    }
+  //   // set to invisible if still in setup (to prevent flashing with manipulate)
+  //   // if (!this._setupDone) {
+  //   //   c.dataset.hidden = true; // tag to show later
+  //   //   c.style.visibility = 'hidden';
+  //   // }
 
-    if (this._userNode) {
-      // user input node case
-      this._userNode.appendChild(c);
-    } else {
-      //create main element
-      if (document.getElementsByTagName('main').length === 0) {
-        let m = document.createElement('main');
-        document.body.appendChild(m);
-      }
-      //append canvas to main
-      document.getElementsByTagName('main')[0].appendChild(c);
-    }
-  }
+  //   if (this._userNode) {
+  //     // user input node case
+  //     this._userNode.appendChild(c);
+  //   } else {
+  //     //create main element
+  //     if (document.getElementsByTagName('main').length === 0) {
+  //       let m = document.createElement('main');
+  //       document.body.appendChild(m);
+  //     }
+  //     //append canvas to main
+  //     document.getElementsByTagName('main')[0].appendChild(c);
+  //   }
+  // }
+
+  // if (this._userNode) {
+  //   // user input node case
+  //   this._userNode.appendChild(canvas);
+  // } else {
+  //   //create main element
+  //   if (document.getElementsByTagName('main').length === 0) {
+  //     let m = document.createElement('main');
+  //     document.body.appendChild(m);
+  //   }
+  //   //append canvas to main
+  //   document.getElementsByTagName('main')[0].appendChild(canvas);
+  // }
 
   // Init our graphics renderer
-  this._renderer = new renderers[r](c, this, true);
+  if(this._renderer) this._renderer.remove();
+  this._renderer = new renderers[r](canvas, this, true);
+  const element = this._renderer.createCanvas(w, h, canvas);
   this._defaultGraphicsCreated = true;
   this._elements.push(this._renderer);
-  this._renderer.resize(w, h);
   this._renderer._applyDefaults();
-  this._renderer.createCanvas(w, h, canvas);
-  // return this._renderer.createCanvas(w, h, canvas);
-  return this._renderer;
+  // return this._renderer;
+  return element;
 };
 
 /**
