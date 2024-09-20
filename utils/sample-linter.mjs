@@ -21,7 +21,7 @@ Object.keys(dataDoc.consts).forEach(c => {
 });
 
 dataDoc.classitems
-  .find(ci => ci.name === 'keyCode' && ci.class === 'p5')
+  .find(ci => ci.name === 'keyCode')
   .description.match(/[A-Z\r\n, _]{10,}/m)[0]
   .match(/[A-Z_]+/gm)
   .forEach(c => {
@@ -248,6 +248,7 @@ function splitLines(text) {
 
 eslintFiles(null, process.argv.slice(2))
   .then(result => {
+    if(result === true) process.exit(0);
     console.log(result.output);
     process.exit(result.report.errorCount === 0 ? 0 : 1);
   });
