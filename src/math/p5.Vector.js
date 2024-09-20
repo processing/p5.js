@@ -31,6 +31,15 @@ function vector(p5, fn) {
     return this;
   };
 
+  const calculateRemainderND = function (...components) {
+    for (let i = 0; i < components.length; i++) {
+      if (components[i] !== 0) {
+        this[i] = this[i] % components[i];
+      }
+    }
+    return this;
+  };
+
   /**
    * A class to describe a two or three-dimensional vector.
    *
@@ -118,23 +127,63 @@ function vector(p5, fn) {
     // This is how it comes in with createVector()
     // This check if the first argument is a function
     constructor(...args) {
-      let x, y, z;
+      let dimensions = args.length; // TODO: make default 3 if no arguments
+      let values = args.map(arg => arg || 0);
       if (typeof args[0] === 'function') {
         this.isPInst = true;
         this._fromRadians = args[0];
         this._toRadians = args[1];
-        x = args[2] || 0;
-        y = args[3] || 0;
-        z = args[4] || 0;
-        // This is what we'll get with new p5.Vector()
-      } else {
-        x = args[0] || 0;
-        y = args[1] || 0;
-        z = args[2] || 0;
+        values = args.slice(2).map(arg => arg || 0);
       }
-      this.x = x;
-      this.y = y;
-      this.z = z;
+      if (dimensions === 0) {
+        this.dimensions = 2;
+        this._values = [0, 0, 0];
+
+      } else {
+        this.dimensions = dimensions;
+        this._values = values;
+      }
+    }
+
+    get values() {
+      return this._values
+    }
+
+    set values(newValues) {
+      this._values = newValues.slice()
+    }
+
+    get x() {
+      return this._values[0] || 0
+    }
+
+    setValue(index, value) {
+      if (index < this._values.length) {
+        this._values[index] = value
+      } else {
+        p5._friendlyError(
+          'The index parameter is trying to set a value outside the bounds of the vector',
+          'p5.Vector.setValue'
+        );
+      }
+    }
+    get y() {
+      return this._values[1] || 0
+    }
+    get z() {
+      return this._values[2] || 0
+    }
+
+    set x(xVal) {
+      this._values[0] = xVal
+    }
+
+    set y(yVal) {
+      this._values[1] = yVal
+    }
+
+    set z(zVal) {
+      this._values[2] = zVal
     }
 
     /**
@@ -158,7 +207,7 @@ function vector(p5, fn) {
      * </div>
      */
     toString() {
-      return `p5.Vector Object : [${this.x}, ${this.y}, ${this.z}]`;
+      return `p5.Vector Object : [${this.values.join(', ')}]`;
     }
 
     /**
@@ -218,26 +267,17 @@ function vector(p5, fn) {
      * @param {p5.Vector|Number[]} value vector to set.
      * @chainable
      */
-    set(x, y, z) {
-      if (x instanceof p5.Vector) {
-        this.x = x.x || 0;
-        this.y = x.y || 0;
-        this.z = x.z || 0;
-        return this;
+    set(...args) {
+      if (args[0] instanceof p5.Vector) {
+        this.values = args[0].values.slice();
+      } else if (Array.isArray(args[0])) {
+        this.values = args[0].map(arg => arg || 0);
+      } else {
+        this.values = args.map(arg => arg || 0);
       }
-      if (Array.isArray(x)) {
-        this.x = x[0] || 0;
-        this.y = x[1] || 0;
-        this.z = x[2] || 0;
-        return this;
-      }
-      this.x = x || 0;
-      this.y = y || 0;
-      this.z = z || 0;
-
+      this.dimensions = this.values.length;
       return this;
     }
-
     /**
      * Returns a copy of the <a href="#/p5.Vector">p5.Vector</a> object.
      *
@@ -271,12 +311,10 @@ function vector(p5, fn) {
         return new p5.Vector(
           this._fromRadians,
           this._toRadians,
-          this.x,
-          this.y,
-          this.z
+          ...this.values
         );
       } else {
-        return new p5.Vector(this.x, this.y, this.z);
+        return new p5.Vector(...this.values);
       }
     }
 
@@ -412,25 +450,17 @@ function vector(p5, fn) {
      * @param  {p5.Vector|Number[]} value The vector to add
      * @chainable
      */
-    add(x, y, z) {
-      if (x instanceof p5.Vector) {
-        this.x += x.x || 0;
-        this.y += x.y || 0;
-        this.z += x.z || 0;
-        return this;
+    add(...args) {
+      if (args[0] instanceof p5.Vector) {
+        args = args[0].values;
+      } else if (Array.isArray(args[0])) {
+        args = args[0];
       }
-      if (Array.isArray(x)) {
-        this.x += x[0] || 0;
-        this.y += x[1] || 0;
-        this.z += x[2] || 0;
-        return this;
-      }
-      this.x += x || 0;
-      this.y += y || 0;
-      this.z += z || 0;
+      args.forEach((value, index) => {
+        this.values[index] = (this.values[index] || 0) + (value || 0);
+      });
       return this;
     }
-
     /**
      * Performs modulo (remainder) division with a vector's `x`, `y`, and `z`
      * components.
@@ -735,22 +765,20 @@ function vector(p5, fn) {
      * @param  {p5.Vector|Number[]} value the vector to subtract
      * @chainable
      */
-    sub(x, y, z) {
-      if (x instanceof p5.Vector) {
-        this.x -= x.x || 0;
-        this.y -= x.y || 0;
-        this.z -= x.z || 0;
-        return this;
+    sub(...args) {
+      if (args[0] instanceof p5.Vector) {
+        args[0].values.forEach((value, index) => {
+          this.values[index] -= value || 0;
+        });
+      } else if (Array.isArray(args[0])) {
+        args[0].forEach((value, index) => {
+          this.values[index] -= value || 0;
+        });
+      } else {
+        args.forEach((value, index) => {
+          this.values[index] -= value || 0;
+        });
       }
-      if (Array.isArray(x)) {
-        this.x -= x[0] || 0;
-        this.y -= x[1] || 0;
-        this.z -= x[2] || 0;
-        return this;
-      }
-      this.x -= x || 0;
-      this.y -= y || 0;
-      this.z -= z || 0;
       return this;
     }
 
@@ -946,85 +974,42 @@ function vector(p5, fn) {
      * @param  {p5.Vector} v vector to multiply with the components of the original vector.
      * @chainable
      */
-    mult(x, y, z) {
-      if (x instanceof p5.Vector) {
-        // new p5.Vector will check that values are valid upon construction but it's possible
-        // that someone could change the value of a component after creation, which is why we still
-        // perform this check
-        if (
-          Number.isFinite(x.x) &&
-          Number.isFinite(x.y) &&
-          Number.isFinite(x.z) &&
-          typeof x.x === 'number' &&
-          typeof x.y === 'number' &&
-          typeof x.z === 'number'
-        ) {
-          this.x *= x.x;
-          this.y *= x.y;
-          this.z *= x.z;
-        } else {
-          console.warn(
-            'p5.Vector.prototype.mult:',
-            'x contains components that are either undefined or not finite numbers'
-          );
-        }
-        return this;
-      }
-      if (Array.isArray(x)) {
-        if (
-          x.every(element => Number.isFinite(element)) &&
-          x.every(element => typeof element === 'number')
-        ) {
-          if (x.length === 1) {
-            this.x *= x[0];
-            this.y *= x[0];
-            this.z *= x[0];
-          } else if (x.length === 2) {
-            this.x *= x[0];
-            this.y *= x[1];
-          } else if (x.length === 3) {
-            this.x *= x[0];
-            this.y *= x[1];
-            this.z *= x[2];
+    mult(...args) {
+      if (args.length === 1 && args[0] instanceof p5.Vector) {
+        const v = args[0];
+        const maxLen = Math.min(this.values.length, v.values.length);
+        for (let i = 0; i < maxLen; i++) {
+          if (Number.isFinite(v.values[i]) && typeof v.values[i] === 'number') {
+            this._values[i] *= v.values[i];
+          } else {
+            console.warn(
+              'p5.Vector.prototype.mult:',
+              'v contains components that are either undefined or not finite numbers'
+            );
+            return this;
           }
-        } else {
-          console.warn(
-            'p5.Vector.prototype.mult:',
-            'x contains elements that are either undefined or not finite numbers'
-          );
         }
-        return this;
+      } else if (args.length === 1 && Array.isArray(args[0])) {
+        const arr = args[0];
+        const maxLen = Math.min(this.values.length, arr.length);
+        for (let i = 0; i < maxLen; i++) {
+          if (Number.isFinite(arr[i]) && typeof arr[i] === 'number') {
+            this._values[i] *= arr[i];
+          } else {
+            console.warn(
+              'p5.Vector.prototype.mult:',
+              'arr contains elements that are either undefined or not finite numbers'
+            );
+            return this;
+          }
+        }
+      } else if (args.length === 1 && typeof args[0] === 'number' && Number.isFinite(args[0])) {
+        for (let i = 0; i < this._values.length; i++) {
+          this._values[i] *= args[0];
+        }
       }
-
-      const vectorComponents = [...arguments];
-      if (
-        vectorComponents.every(element => Number.isFinite(element)) &&
-        vectorComponents.every(element => typeof element === 'number')
-      ) {
-        if (arguments.length === 1) {
-          this.x *= x;
-          this.y *= x;
-          this.z *= x;
-        }
-        if (arguments.length === 2) {
-          this.x *= x;
-          this.y *= y;
-        }
-        if (arguments.length === 3) {
-          this.x *= x;
-          this.y *= y;
-          this.z *= z;
-        }
-      } else {
-        console.warn(
-          'p5.Vector.prototype.mult:',
-          'x, y, or z arguments are either undefined or not a finite number'
-        );
-      }
-
       return this;
     }
-
     /**
      * Divides a vector's `x`, `y`, and `z` components.
      *
@@ -1387,10 +1372,7 @@ function vector(p5, fn) {
      * </div>
      */
     magSq() {
-      const x = this.x;
-      const y = this.y;
-      const z = this.z;
-      return x * x + y * y + z * z;
+      return this._values.reduce((sum, component) => sum + component * component, 0);
     }
 
     /**
@@ -1497,11 +1479,13 @@ function vector(p5, fn) {
      * @param  {p5.Vector} v <a href="#/p5.Vector">p5.Vector</a> to be dotted.
      * @return {Number}
      */
-    dot(x, y, z) {
-      if (x instanceof p5.Vector) {
-        return this.dot(x.x, x.y, x.z);
+    dot(...args) {
+      if (args[0] instanceof p5.Vector) {
+        return this.dot(...args[0]._values);
       }
-      return this.x * (x || 0) + this.y * (y || 0) + this.z * (z || 0);
+      return this._values.reduce((sum, component, index) => {
+        return sum + component * (args[index] || 0);
+      }, 0);
     }
 
     /**
