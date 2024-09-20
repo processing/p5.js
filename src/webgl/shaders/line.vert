@@ -95,13 +95,33 @@ void main() {
 
   // Moving vertices slightly toward the camera
   // to avoid depth-fighting with the fill triangles.
-  // This prevents popping effects due to half of
+  // A mix of scaling and offsetting is used based on distance
+  // Discussion here:
+  // https://github.com/processing/p5.js/issues/7200 
+
+  // using a scale <1 moves the lines towards nearby camera
+  // in order to prevent popping effects due to half of
   // the line disappearing behind the geometry faces.
+  float zDistance = -posp.z; 
+  float distanceFactor = smoothstep(0.0, 800.0, zDistance); 
   
+  // Discussed here:
+  // http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=252848  
+  float scale = mix(1., 0.995, facingCamera);
+  float dynamicScale = mix(scale, 1.0, distanceFactor); // Closer = more scale, farther = less
+
+  posp.xyz = posp.xyz * dynamicScale;
+  posqIn.xyz = posqIn.xyz * dynamicScale;
+  posqOut.xyz = posqOut.xyz * dynamicScale;
+
+  // Moving vertices slightly toward camera when far away 
+  // https://github.com/processing/p5.js/issues/6956 
   float zOffset = mix(-0.00045, -1., facingCamera);
-  posp.z -= zOffset;
-  posqIn.z -= zOffset;
-  posqOut.z -= zOffset;
+  float dynamicZAdjustment = mix(0.0, zOffset, distanceFactor); // Closer = less zAdjustment, farther = more
+
+  posp.z -= dynamicZAdjustment;
+  posqIn.z -= dynamicZAdjustment;
+  posqOut.z -= dynamicZAdjustment;
   
   vec4 p = uProjectionMatrix * posp;
   vec4 qIn = uProjectionMatrix * posqIn;
