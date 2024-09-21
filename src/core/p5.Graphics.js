@@ -92,7 +92,7 @@ import * as constants from './constants';
  * </code>
  * </div>
  */
-p5.Graphics = class Graphics extends p5.Element {
+p5.Graphics = class Graphics {
   constructor(w, h, renderer, pInst, canvas) {
     let canvasTemp;
     if (canvas) {
@@ -101,7 +101,6 @@ p5.Graphics = class Graphics extends p5.Element {
       canvasTemp = document.createElement('canvas');
     }
 
-    super(canvasTemp, pInst);
     this.canvas = canvasTemp;
 
     const r = renderer || constants.P2D;
@@ -127,16 +126,7 @@ p5.Graphics = class Graphics extends p5.Element {
     this.height = h;
     this._pixelDensity = pInst._pixelDensity;
     this._renderer = new p5.renderers[r](this.canvas, this, false);
-
-    // if (r === constants.WEBGL) {
-    //   this._renderer = new p5.RendererGL(this.canvas, this, false);
-    //   const { adjustedWidth, adjustedHeight } =
-    //     this._renderer._adjustDimensions(w, h);
-    //   w = adjustedWidth;
-    //   h = adjustedHeight;
-    // } else {
-    //   this._renderer = new p5.Renderer2D(this.canvas, this, false);
-    // }
+    this._renderer.createCanvas(w, h, this.canvas);
 
     pInst._elements.push(this);
 
@@ -146,7 +136,6 @@ p5.Graphics = class Graphics extends p5.Element {
       }
     });
 
-    this._renderer.resize(w, h);
     this._renderer._applyDefaults();
     return this;
   }
