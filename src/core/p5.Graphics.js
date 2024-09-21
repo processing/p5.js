@@ -94,50 +94,48 @@ import * as constants from './constants';
  */
 p5.Graphics = class Graphics {
   constructor(w, h, renderer, pInst, canvas) {
-    let canvasTemp;
-    if (canvas) {
-      canvasTemp = canvas;
-    } else {
-      canvasTemp = document.createElement('canvas');
-    }
-
-    this.canvas = canvasTemp;
-
     const r = renderer || constants.P2D;
 
-    const node = pInst._userNode || document.body;
-    if (!canvas) {
-      node.appendChild(this.canvas);
-    }
-
     // bind methods and props of p5 to the new object
-    for (const p in p5.prototype) {
-      if (!this[p]) {
-        if (typeof p5.prototype[p] === 'function') {
-          this[p] = p5.prototype[p].bind(this);
-        } else {
-          this[p] = p5.prototype[p];
-        }
+    // for (const p in p5.prototype) {
+    //   if (!this[p]) {
+    //     if (typeof p5.prototype[p] === 'function') {
+    //       this[p] = p5.prototype[p].bind(this);
+    //     } else if(p !== 'deltaTime') {
+    //       this[p] = p5.prototype[p];
+    //     }
+    //   }
+    // }
+    // p5.prototype._initializeInstanceVariables.apply(this);
+
+    this._pInst = pInst;
+    this._pixelDensity = this._pInst._pixelDensity;
+    this._renderer = new p5.renderers[r](canvas, this._pInst, false);
+    this._renderer.createCanvas(w, h, canvas);
+
+    // Attach renderer methods
+    for(const p of Object.getOwnPropertyNames(p5.renderers[r].prototype)) {
+      if(p !== 'constructor' && p[0] !== '_'){
+        this[p] = this._renderer[p].bind(this._renderer);
       }
     }
 
-    p5.prototype._initializeInstanceVariables.apply(this);
-    this.width = w;
-    this.height = h;
-    this._pixelDensity = pInst._pixelDensity;
-    this._renderer = new p5.renderers[r](this.canvas, this, false);
-    this._renderer.createCanvas(w, h, this.canvas);
-
-    pInst._elements.push(this);
-
-    Object.defineProperty(this, 'deltaTime', {
-      get() {
-        return this._pInst.deltaTime;
-      }
-    });
+    // Attach renderer properties
+    for (const p in this._renderer) {
+      if(p[0] === '_') continue;
+      Object.defineProperty(this, p, {
+        get(){
+          return this._renderer[p];
+        }
+      })
+    }
 
     this._renderer._applyDefaults();
     return this;
+  }
+
+  get deltaTime(){
+    return this._pInst.deltaTime;
   }
 
   /**

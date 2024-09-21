@@ -17,6 +17,7 @@ class Renderer2D extends Renderer {
     super(elt, pInst, isMainCanvas);
 
     this._isMainCanvas = isMainCanvas;
+    this.pixels = [];
 
     // if (isMainCanvas) {
     //   // for pixel method sharing with pimage
@@ -180,8 +181,6 @@ class Renderer2D extends Renderer {
         this.blendMode(this._cachedBlendMode);
       }
 
-      console.log('background', this.drawingContext.fillStyle, this.drawingContext.canvas);
-      console.trace();
       this.drawingContext.fillRect(0, 0, this.width, this.height);
       // reset fill
       this._setFill(curFill);
@@ -502,7 +501,7 @@ class Renderer2D extends Renderer {
     // @todo this should actually set pixels per object, so diff buffers can
     // have diff pixel arrays.
     pixelsState.imageData = imageData;
-    pixelsState.pixels = imageData.data;
+    this.pixels = pixelsState.pixels = imageData.data;
   }
 
   set(x, y, imgOrCol) {
@@ -1386,6 +1385,29 @@ class Renderer2D extends Renderer {
     return this.drawingContext.measureText(s).width;
   }
 
+  text(str, x, y, maxWidth, maxHeight) {
+    let baselineHacked;
+
+    // baselineHacked: (HACK)
+    // A temporary fix to conform to Processing's implementation
+    // of BASELINE vertical alignment in a bounding box
+
+    if (typeof maxWidth !== 'undefined') {
+      if (this.drawingContext.textBaseline === constants.BASELINE) {
+        baselineHacked = true;
+        this.drawingContext.textBaseline = constants.TOP;
+      }
+    }
+
+    const p = Renderer.prototype.text.apply(this, arguments);
+
+    if (baselineHacked) {
+      this.drawingContext.textBaseline = constants.BASELINE;
+    }
+
+    return p;
+  }
+
   _applyTextProperties() {
     let font;
     const p = this._pInst;
@@ -1448,30 +1470,6 @@ class Renderer2D extends Renderer {
     super.pop(style);
   }
 }
-
-// Fix test
-Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
-  let baselineHacked;
-
-  // baselineHacked: (HACK)
-  // A temporary fix to conform to Processing's implementation
-  // of BASELINE vertical alignment in a bounding box
-
-  if (typeof maxWidth !== 'undefined') {
-    if (this.drawingContext.textBaseline === constants.BASELINE) {
-      baselineHacked = true;
-      this.drawingContext.textBaseline = constants.TOP;
-    }
-  }
-
-  const p = Renderer.prototype.text.apply(this, arguments);
-
-  if (baselineHacked) {
-    this.drawingContext.textBaseline = constants.BASELINE;
-  }
-
-  return p;
-};
 
 p5.Renderer2D = Renderer2D;
 
