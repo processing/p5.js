@@ -115,7 +115,7 @@ p5.Graphics = class Graphics {
 
     // Attach renderer methods
     for(const p of Object.getOwnPropertyNames(p5.renderers[r].prototype)) {
-      if(p !== 'constructor' && p[0] !== '_'){
+      if(p !== 'constructor' && p[0] !== '_' && !(p in this)){
         this[p] = this._renderer[p].bind(this._renderer);
       }
     }
@@ -125,7 +125,7 @@ p5.Graphics = class Graphics {
       if(p[0] === '_') continue;
       Object.defineProperty(this, p, {
         get(){
-          return this._renderer[p];
+          return this._renderer?.[p];
         }
       })
     }

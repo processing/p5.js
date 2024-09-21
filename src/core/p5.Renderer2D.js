@@ -91,6 +91,9 @@ class Renderer2D extends Renderer {
 
   remove(){
     this.wrappedElt.remove();
+    this.wrappedElt = null;
+    this.canvas = null;
+    this.elt = null;
   }
 
   getFilterGraphicsLayer() {
