@@ -365,20 +365,8 @@ p5.Graphics = class Graphics {
    * </div>
    */
   remove() {
-    if (this.elt.parentNode) {
-      this.elt.parentNode.removeChild(this.elt);
-    }
-    const idx = this._pInst._elements.indexOf(this);
-    if (idx !== -1) {
-      this._pInst._elements.splice(idx, 1);
-    }
-    for (const elt_ev in this._events) {
-      this.elt.removeEventListener(elt_ev, this._events[elt_ev]);
-    }
-
-    this._renderer = undefined;
-    this.canvas = undefined;
-    this.elt = undefined;
+    this._renderer.remove();
+    this._renderer = null;
   }
 
 
