@@ -59,12 +59,32 @@ class GeometryBuilder {
       ...this.transformNormals(input.vertexNormals)
     );
     this.geometry.uvs.push(...input.uvs);
-    const userAttributes = input.userAttributes;
-    if (userAttributes.length > 0){
-      for (const attr of userAttributes){
-        const name = attr.name;
-        const size = attr.size;
+
+    const inputUserAttributes = Object.entries(input.userAttributes);
+    const currentUserAttributes = Object.entries(this.geometry.userAttributes);
+
+    if (currentUserAttributes.length > 0){
+      for (const [name, size] of currentUserAttributes){
+        if (name in input.userAttributes){
+          continue;
+        }
+        const numMissingValues = size * input.vertices.length;
+        // this.geometry[name].concat(Array(numMissingValues).fill(0));
+        this.geometry[name] = (this.geometry[name] || []).concat(Array(numMissingValues).fill(0));
+      }
+    }
+    if (inputUserAttributes.length > 0){
+      for (const [name, size] of inputUserAttributes){
         const data = input[name];
+        if (!(name in this.geometry.userAttributes) && this.geometry.vertices.length - input.vertices.length > 0){
+          const numMissingValues = size * (this.geometry.vertices.length - input.vertices.length) - size;
+          this.geometry.setAttribute(name, Array(size).fill(0));
+          // this.geometry[name].concat(Array(numMissingValues).fill(0));
+          this.geometry[name] = this.geometry[name].concat(Array(numMissingValues).fill(0));
+        }
+        if (this.geometry.userAttributes[name] != size){
+          console.log("This user attribute has different sizes");
+        }
         for (let i = 0; i < data.length; i+=size){
           this.geometry.setAttribute(name, data.slice(i, i + size));
         }
