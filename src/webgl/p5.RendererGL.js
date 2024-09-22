@@ -575,7 +575,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.userFillShader = undefined;
     this.userStrokeShader = undefined;
     this.userPointShader = undefined;
-
+    this._useUserAttributes = undefined;
     // Default drawing is done in Retained Mode
     // Geometry and Material hashes stored here
     this.retainedMode = {
@@ -599,7 +599,8 @@ p5.RendererGL = class RendererGL extends Renderer {
         text: [
           new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
           new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
-        ]
+        ],
+        user:[]
       }
     };
 
@@ -627,7 +628,8 @@ p5.RendererGL = class RendererGL extends Renderer {
           new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this),
           new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
         ],
-        point: this.GL.createBuffer()
+        point: this.GL.createBuffer(),
+        user:[]
       }
     };
 
