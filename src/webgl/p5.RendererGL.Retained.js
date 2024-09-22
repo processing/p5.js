@@ -115,16 +115,16 @@ p5.RendererGL.prototype.createBuffers = function(gId, model) {
     ? model.lineVertices.length / 3
     : 0;
 
-  if (model.userAttributes.length > 0){
-    for (const attr of model.userAttributes){
-      const buff = attr.name.concat('Buffer');
+  if (Object.keys(model.userAttributes).length > 0){
+    for (const [name, size] of Object.entries(model.userAttributes)){
+      const buff = name.concat('Buffer');
       const bufferExists = this.retainedMode
       .buffers
       .user
       .some(buffer => buffer.dst === buff);
       if(!bufferExists){
         this.retainedMode.buffers.user.push(
-          new p5.RenderBuffer(attr.size, attr.name, buff, attr.name, this)
+          new p5.RenderBuffer(size, name, buff, name, this)
         );
       }
     }
@@ -153,7 +153,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     for (const buff of this.retainedMode.buffers.fill) {
       buff._prepareBuffer(geometry, fillShader);
     }
-    if (geometry.model.userAttributes.length > 0){
+    if (Object.keys(geometry.model.userAttributes).length > 0){
       for (const buff of this.retainedMode.buffers.user){
         buff._prepareBuffer(geometry, fillShader);
       }
@@ -178,7 +178,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     for (const buff of this.retainedMode.buffers.stroke) {
       buff._prepareBuffer(geometry, strokeShader);
     }
-    if (geometry.model.userAttributes.length > 0){
+    if (Object.keys(geometry.model.userAttributes).length > 0){
       for (const buff of this.retainedMode.buffers.user){
         buff._prepareBuffer(geometry, strokeShader);
       }
