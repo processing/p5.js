@@ -336,33 +336,12 @@ p5.prototype.createCanvas = function (w, h, renderer, canvas) {
 p5.prototype.resizeCanvas = function (w, h, noRedraw) {
   p5._validateParameters('resizeCanvas', arguments);
   if (this._renderer) {
-    // save canvas properties
-    const props = {};
-    for (const key in this.drawingContext) {
-      const val = this.drawingContext[key];
-      if (typeof val !== 'object' && typeof val !== 'function') {
-        props[key] = val;
-      }
-    }
-    if (this._renderer instanceof p5.RendererGL) {
-      const dimensions =
-        this._renderer._adjustDimensions(w, h);
-      w = dimensions.adjustedWidth;
-      h = dimensions.adjustedHeight;
-    }
     this.width = w;
     this.height = h;
     // Make sure width and height are updated before the renderer resizes so
     // that framebuffers updated from the resize read the correct size
     this._renderer.resize(w, h);
-    // reset canvas properties
-    for (const savedKey in props) {
-      try {
-        this.drawingContext[savedKey] = props[savedKey];
-      } catch (err) {
-        // ignore read-only property errors
-      }
-    }
+
     if (!noRedraw) {
       this.redraw();
     }

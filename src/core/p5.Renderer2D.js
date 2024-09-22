@@ -140,6 +140,16 @@ class Renderer2D extends Renderer {
 
   resize(w, h) {
     super.resize(w, h);
+
+    // save canvas properties
+    const props = {};
+    for (const key in this.drawingContext) {
+      const val = this.drawingContext[key];
+      if (typeof val !== 'object' && typeof val !== 'function') {
+        props[key] = val;
+      }
+    }
+
     this.canvas.width = w * this._pInst._pixelDensity;
     this.canvas.height = h * this._pInst._pixelDensity;
     this.canvas.style.width = `${w}px`;
@@ -148,6 +158,15 @@ class Renderer2D extends Renderer {
       this._pInst._pixelDensity,
       this._pInst._pixelDensity
     );
+
+    // reset canvas properties
+    for (const savedKey in props) {
+      try {
+        this.drawingContext[savedKey] = props[savedKey];
+      } catch (err) {
+        // ignore read-only property errors
+      }
+    }
   }
 
   //////////////////////////////////////////////

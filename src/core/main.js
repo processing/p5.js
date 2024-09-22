@@ -50,7 +50,6 @@ class p5 {
     this._setupDone = false;
     // for handling hidpi
     this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
-    this._maxAllowedPixelDimensions = 0;
     this._userNode = node;
     this._curElement = null;
     this._elements = [];

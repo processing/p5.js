@@ -889,9 +889,8 @@ p5.RendererGL = class RendererGL extends Renderer {
       this._maxTextureSize = this._getMaxTextureSize();
     }
     let maxTextureSize = this._maxTextureSize;
-    let maxAllowedPixelDimensions = p5.prototype._maxAllowedPixelDimensions;
 
-    maxAllowedPixelDimensions = Math.floor(
+    let maxAllowedPixelDimensions = Math.floor(
       maxTextureSize / this.pixelDensity()
     );
     let adjustedWidth = Math.min(
@@ -1524,6 +1523,22 @@ p5.RendererGL = class RendererGL extends Renderer {
  */
   resize(w, h) {
     super.resize(w, h);
+
+    // save canvas properties
+    const props = {};
+    for (const key in this.drawingContext) {
+      const val = this.drawingContext[key];
+      if (typeof val !== 'object' && typeof val !== 'function') {
+        props[key] = val;
+      }
+    }
+
+    const dimensions = this._adjustDimensions(w, h);
+    w = dimensions.adjustedWidth;
+    h = dimensions.adjustedHeight;
+    this._pInst.width = w;
+    this._pInst.height = h;
+
     this.canvas.width = w * this._pInst._pixelDensity;
     this.canvas.height = h * this._pInst._pixelDensity;
     this.canvas.style.width = `${w}px`;
@@ -1552,6 +1567,15 @@ p5.RendererGL = class RendererGL extends Renderer {
       // Notify framebuffers of the resize so that any auto-sized framebuffers
       // can also update their size
       framebuffer._canvasSizeChanged();
+    }
+
+    // reset canvas properties
+    for (const savedKey in props) {
+      try {
+        this.drawingContext[savedKey] = props[savedKey];
+      } catch (err) {
+        // ignore read-only property errors
+      }
     }
   }
 
