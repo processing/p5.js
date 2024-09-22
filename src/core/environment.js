@@ -876,7 +876,11 @@ p5.prototype._updateWindowSize = function() {
  * @property {Number} width
  * @readOnly
  */
-p5.prototype.width = 0;
+Object.defineProperty(p5.prototype, 'width', {
+  get(){
+    return this._renderer.width;
+  }
+});
 
 /**
  * A `Number` variable that stores the height of the canvas in pixels.
@@ -945,7 +949,11 @@ p5.prototype.width = 0;
  * @property {Number} height
  * @readOnly
  */
-p5.prototype.height = 0;
+Object.defineProperty(p5.prototype, 'height', {
+  get(){
+    return this._renderer.height;
+  }
+});
 
 /**
  * Toggles full-screen mode or returns the current mode.

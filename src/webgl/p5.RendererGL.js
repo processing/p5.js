@@ -1478,11 +1478,6 @@ p5.RendererGL = class RendererGL extends Renderer {
     w = dimensions.adjustedWidth;
     h = dimensions.adjustedHeight;
 
-    if (this._isMainCanvas) {
-      this._pInst.width = w;
-      this._pInst.height = h;
-    }
-
     this.canvas.width = w * this._pInst._pixelDensity;
     this.canvas.height = h * this._pInst._pixelDensity;
     this.canvas.style.width = `${w}px`;

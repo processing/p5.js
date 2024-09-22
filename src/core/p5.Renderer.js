@@ -25,8 +25,6 @@ p5.Renderer = class Renderer {
 
     this.width = w;
     this.height = h;
-    this._pInst.width = this.width;
-    this._pInst.height = this.height;
 
     this._events = {};
 
@@ -106,15 +104,11 @@ p5.Renderer = class Renderer {
   }
 
   /**
- * Resize our canvas element.
- */
+   * Resize our canvas element.
+   */
   resize(w, h) {
     this.width = w;
     this.height = h;
-    if (this._isMainCanvas) {
-      this._pInst.width = this.width;
-      this._pInst.height = this.height;
-    }
   }
 
   get(x, y, w, h) {
