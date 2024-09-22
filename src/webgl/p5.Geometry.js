@@ -283,6 +283,8 @@ p5.Geometry = class Geometry {
     // One color per vertex representing the stroke color at that vertex
     this.vertexStrokeColors = [];
 
+    this.userAttributes = [];
+
     // One color per line vertex, generated automatically based on
     // vertexStrokeColors in _edgesToVertices()
     this.lineVertexColors = new p5.DataArray();
