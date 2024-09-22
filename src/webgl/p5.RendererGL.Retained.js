@@ -153,6 +153,11 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     for (const buff of this.retainedMode.buffers.fill) {
       buff._prepareBuffer(geometry, fillShader);
     }
+    if (geometry.model.userAttributes.length > 0){
+      for (const buff of this.retainedMode.buffers.user){
+        buff._prepareBuffer(geometry, fillShader);
+      }
+    }
     fillShader.disableRemainingAttributes();
     if (geometry.indexBuffer) {
       //vertex index buffer
@@ -172,6 +177,11 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     this._setStrokeUniforms(strokeShader);
     for (const buff of this.retainedMode.buffers.stroke) {
       buff._prepareBuffer(geometry, strokeShader);
+    }
+    if (geometry.model.userAttributes.length > 0){
+      for (const buff of this.retainedMode.buffers.user){
+        buff._prepareBuffer(geometry, strokeShader);
+      }
     }
     strokeShader.disableRemainingAttributes();
     this._applyColorBlend(
