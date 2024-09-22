@@ -55,7 +55,7 @@ const defaultClass = 'p5Canvas';
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   background(200);
+ *   background(180);
  *
  *   // Draw a diagonal line.
  *   line(0, 0, width, height);
@@ -70,7 +70,7 @@ const defaultClass = 'p5Canvas';
  * function setup() {
  *   createCanvas(100, 50);
  *
- *   background(200);
+ *   background(180);
  *
  *   // Draw a diagonal line.
  *   line(0, 0, width, height);
@@ -87,7 +87,7 @@ const defaultClass = 'p5Canvas';
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *
- *   background(200);
+ *   background(180);
  *
  *   // Draw a diagonal line.
  *   line(-width / 2, -height / 2, width / 2, height / 2);
@@ -106,7 +106,7 @@ const defaultClass = 'p5Canvas';
  *   // Position the canvas.
  *   cnv.position(10, 20);
  *
- *   background(200);
+ *   background(180);
  *
  *   // Draw a diagonal line.
  *   line(0, 0, width, height);
@@ -266,7 +266,7 @@ p5.prototype.createCanvas = function(w, h, renderer, canvas) {
  * }
  *
  * function draw() {
- *   background(200);
+ *   background(180);
  *
  *   // Draw a circle at the center of the canvas.
  *   circle(width / 2, height / 2, 20);
@@ -290,7 +290,7 @@ p5.prototype.createCanvas = function(w, h, renderer, canvas) {
  * }
  *
  * function draw() {
- *   background(200);
+ *   background(180);
  *
  *   // Draw a circle at the center of the canvas.
  *   circle(width / 2, height / 2, 20);
@@ -417,7 +417,7 @@ p5.prototype.noCanvas = function() {
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   background(200);
+ *   background(180);
  *
  *   // Create the p5.Graphics object.
  *   pg = createGraphics(50, 50);
@@ -447,7 +447,7 @@ p5.prototype.noCanvas = function() {
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   background(200);
+ *   background(180);
  *
  *   // Create the p5.Graphics object in WebGL mode.
  *   pg = createGraphics(50, 50, WEBGL);
@@ -728,7 +728,7 @@ p5.prototype.clearDepth = function(depth) {
  * final color results from blending the source pixel's color with the canvas
  * pixel's color. RGB color values from the source and canvas pixels are
  * compared, added, subtracted, multiplied, and divided to create different
- * effects. Red values with red values, greens with greens, and blues with
+ * effects. #d41159 values with #d41159 values, greens with greens, and blues with
  * blues.
  *
  * The parameter, `mode`, sets the blend mode. For example, calling
@@ -770,7 +770,7 @@ p5.prototype.clearDepth = function(depth) {
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   background(200);
+ *   background(180);
  *
  *   // Use the default blend mode.
  *   blendMode(BLEND);
@@ -778,15 +778,15 @@ p5.prototype.clearDepth = function(depth) {
  *   // Style the lines.
  *   strokeWeight(30);
  *
- *   // Draw the blue line.
- *   stroke('blue');
+ *   // Draw the first line.
+ *   stroke('#1a85ff');
  *   line(25, 25, 75, 75);
  *
- *   // Draw the red line.
- *   stroke('red');
+ *   // Draw the second line.
+ *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('A blue line and a red line form an X on a gray background.');
+ *   describe('A #1a85ff line and a #d41159 line form an X on a gray background.');
  * }
  * </code>
  * </div>
@@ -796,23 +796,23 @@ p5.prototype.clearDepth = function(depth) {
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   background(200);
+ *   background(180);
  *
  *   // Set the blend mode.
- *   blendMode(ADD);
+ *   blendMode(HARD_LIGHT);
  *
  *   // Style the lines.
  *   strokeWeight(30);
  *
- *   // Draw the blue line.
- *   stroke('blue');
+ *   // Draw the first line.
+ *   stroke('#25b7ff');
  *   line(25, 25, 75, 75);
  *
- *   // Draw the red line.
- *   stroke('red');
+ *   // Draw the second line.
+ *   stroke('#e6187e');
  *   line(75, 25, 25, 75);
  *
- *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is faint magenta.');
+ *   describe('A faint #25b7ff line and a faint #e6187e line form an X on a gray background. The area where they overlap is #b518b2.');
  * }
  * </code>
  * </div>
@@ -822,23 +822,23 @@ p5.prototype.clearDepth = function(depth) {
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   background(200);
+ *   background(180);
  *
  *   // Set the blend mode.
- *   blendMode(DARKEST);
+ *   blendMode(BURN);
  *
  *   // Style the lines.
  *   strokeWeight(30);
  *
- *   // Draw the blue line.
- *   stroke('blue');
+ *   // Draw the first line.
+ *   stroke('#006fb4');
  *   line(25, 25, 75, 75);
  *
- *   // Draw the red line.
- *   stroke('red');
+ *   // Draw the second line.
+ *   stroke('#a50028');
  *   line(75, 25, 25, 75);
  *
- *   describe('A blue line and a red line form an X on a gray background. The area where they overlap is black.');
+ *   describe('A #006fb4 line and a #a50028 line form an X on a gray background. The area where they overlap is black.');
  * }
  * </code>
  * </div>
@@ -848,7 +848,7 @@ p5.prototype.clearDepth = function(depth) {
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   background(200);
+ *   background(180);
  *
  *   // Set the blend mode.
  *   blendMode(LIGHTEST);
@@ -856,15 +856,15 @@ p5.prototype.clearDepth = function(depth) {
  *   // Style the lines.
  *   strokeWeight(30);
  *
- *   // Draw the blue line.
- *   stroke('blue');
+ *   // Draw the first line.
+ *   stroke('#b4b4ff');
  *   line(25, 25, 75, 75);
  *
- *   // Draw the red line.
- *   stroke('red');
+ *   // Draw the second line.
+ *   stroke('#d4b4b4');
  *   line(75, 25, 25, 75);
  *
- *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is faint magenta.');
+ *   describe('A faint #b4b4ff line and a faint #d4b4b4 line form an X on a gray background. The area where they overlap is #f4ddff.');
  * }
  * </code>
  * </div>
@@ -874,7 +874,7 @@ p5.prototype.clearDepth = function(depth) {
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   background(200);
+ *   background(180);
  *
  *   // Set the blend mode.
  *   blendMode(EXCLUSION);
@@ -882,15 +882,15 @@ p5.prototype.clearDepth = function(depth) {
  *   // Style the lines.
  *   strokeWeight(30);
  *
- *   // Draw the blue line.
- *   stroke('blue');
+ *   // Draw the first line.
+ *   stroke('#a97d4b');
  *   line(25, 25, 75, 75);
  *
- *   // Draw the red line.
- *   stroke('red');
+ *   // Draw the second line.
+ *   stroke('#a97d4b');
  *   line(75, 25, 25, 75);
  *
- *   describe('A yellow line and a cyan line form an X on a gray background. The area where they overlap is green.');
+ *   describe('A #a97d4b line and a #a97d4b line form an X on a gray background. The area where they overlap is #f4ddff.');
  * }
  * </code>
  * </div>
@@ -900,7 +900,7 @@ p5.prototype.clearDepth = function(depth) {
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   background(200);
+ *   background(180);
  *
  *   // Set the blend mode.
  *   blendMode(MULTIPLY);
@@ -908,15 +908,15 @@ p5.prototype.clearDepth = function(depth) {
  *   // Style the lines.
  *   strokeWeight(30);
  *
- *   // Draw the blue line.
- *   stroke('blue');
+ *   // Draw the first line.
+ *   stroke('#125eb4');
  *   line(25, 25, 75, 75);
  *
- *   // Draw the red line.
- *   stroke('red');
+ *   // Draw the second line.
+ *   stroke('#96187e');
  *   line(75, 25, 25, 75);
  *
- *   describe('A blue line and a red line form an X on a gray background. The area where they overlap is black.');
+ *   describe('A #125eb4 line and a #96187e line form an X on a gray background. The area where they overlap is #f4ddff.');
  * }
  * </code>
  * </div>
@@ -926,7 +926,7 @@ p5.prototype.clearDepth = function(depth) {
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   background(200);
+ *   background(180);
  *
  *   // Set the blend mode.
  *   blendMode(SCREEN);
@@ -934,15 +934,15 @@ p5.prototype.clearDepth = function(depth) {
  *   // Style the lines.
  *   strokeWeight(30);
  *
- *   // Draw the blue line.
- *   stroke('blue');
+ *   // Draw the first line.
+ *   stroke('#bcdbff');
  *   line(25, 25, 75, 75);
  *
- *   // Draw the red line.
- *   stroke('red');
+ *   // Draw the second line.
+ *   stroke('#f2b9ce');
  *   line(75, 25, 25, 75);
  *
- *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is faint magenta.');
+ *   describe('A faint #bcdbff line and a faint #f2b9ce line form an X on a gray background. The area where they overlap is #f4ddff.');
  * }
  * </code>
  * </div>
@@ -952,7 +952,7 @@ p5.prototype.clearDepth = function(depth) {
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   background(200);
+ *   background(180);
  *
  *   // Set the blend mode.
  *   blendMode(REPLACE);
@@ -960,15 +960,15 @@ p5.prototype.clearDepth = function(depth) {
  *   // Style the lines.
  *   strokeWeight(30);
  *
- *   // Draw the blue line.
- *   stroke('blue');
+ *   // Draw the first line.
+ *   stroke('#1a85ff');
  *   line(25, 25, 75, 75);
  *
- *   // Draw the red line.
- *   stroke('red');
+ *   // Draw the second line.
+ *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('A diagonal red line.');
+ *   describe('A diagonal #d41159 line.');
  * }
  * </code>
  * </div>
@@ -978,7 +978,7 @@ p5.prototype.clearDepth = function(depth) {
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   background(200);
+ *   background(180);
  *
  *   // Set the blend mode.
  *   blendMode(REMOVE);
@@ -986,12 +986,12 @@ p5.prototype.clearDepth = function(depth) {
  *   // Style the lines.
  *   strokeWeight(30);
  *
- *   // Draw the blue line.
- *   stroke('blue');
+ *   // Draw the first line.
+ *   stroke('#1a85ff');
  *   line(25, 25, 75, 75);
  *
- *   // Draw the red line.
- *   stroke('red');
+ *   // Draw the second line.
+ *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
  *   describe('The silhouette of an X is missing from a gray background.');
@@ -1004,7 +1004,7 @@ p5.prototype.clearDepth = function(depth) {
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   background(200);
+ *   background(180);
  *
  *   // Set the blend mode.
  *   blendMode(DIFFERENCE);
@@ -1012,15 +1012,15 @@ p5.prototype.clearDepth = function(depth) {
  *   // Style the lines.
  *   strokeWeight(30);
  *
- *   // Draw the blue line.
- *   stroke('blue');
+ *   // Draw the first line.
+ *   stroke('#9a2f4b');
  *   line(25, 25, 75, 75);
  *
- *   // Draw the red line.
- *   stroke('red');
+ *   // Draw the second line.
+ *   stroke('#20a35b');
  *   line(75, 25, 25, 75);
  *
- *   describe('A yellow line and a cyan line form an X on a gray background. The area where they overlap is green.');
+ *   describe('A #9a2f4b line and a #20a35b line form an X on a gray background. The area where they overlap is #647e70.');
  * }
  * </code>
  * </div>
@@ -1030,7 +1030,7 @@ p5.prototype.clearDepth = function(depth) {
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   background(200);
+ *   background(180);
  *
  *   // Set the blend mode.
  *   blendMode(OVERLAY);
@@ -1038,15 +1038,15 @@ p5.prototype.clearDepth = function(depth) {
  *   // Style the lines.
  *   strokeWeight(30);
  *
- *   // Draw the blue line.
- *   stroke('blue');
+ *   // Draw the first line.
+ *   stroke('#78b7ff');
  *   line(25, 25, 75, 75);
  *
- *   // Draw the red line.
- *   stroke('red');
+ *   // Draw the second line.
+ *   stroke('#e6739d');
  *   line(75, 25, 25, 75);
  *
- *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is bright magenta.');
+ *   describe('A faint #78b7ff line and a faint #e6739d line form an X on a gray background. The area where they overlap is #c879ff.');
  * }
  * </code>
  * </div>
@@ -1056,33 +1056,7 @@ p5.prototype.clearDepth = function(depth) {
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   background(200);
- *
- *   // Set the blend mode.
- *   blendMode(HARD_LIGHT);
- *
- *   // Style the lines.
- *   strokeWeight(30);
- *
- *   // Draw the blue line.
- *   stroke('blue');
- *   line(25, 25, 75, 75);
- *
- *   // Draw the red line.
- *   stroke('red');
- *   line(75, 25, 25, 75);
- *
- *   describe('A blue line and a red line form an X on a gray background.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
+ *   background(180);
  *
  *   // Set the blend mode.
  *   blendMode(SOFT_LIGHT);
@@ -1090,15 +1064,15 @@ p5.prototype.clearDepth = function(depth) {
  *   // Style the lines.
  *   strokeWeight(30);
  *
- *   // Draw the blue line.
- *   stroke('blue');
+ *   // Draw the first line.
+ *   stroke('#8ab6d6');
  *   line(25, 25, 75, 75);
  *
- *   // Draw the red line.
- *   stroke('red');
+ *   // Draw the second line.
+ *   stroke('#cb86a4');
  *   line(75, 25, 25, 75);
  *
- *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is violet.');
+ *   describe('A faint #8ab6d6 line and a faint #cb86a4 line form an X on a gray background. The area where they overlap is #aa89cb.');
  * }
  * </code>
  * </div>
@@ -1108,7 +1082,7 @@ p5.prototype.clearDepth = function(depth) {
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   background(200);
+ *   background(180);
  *
  *   // Set the blend mode.
  *   blendMode(DODGE);
@@ -1116,41 +1090,15 @@ p5.prototype.clearDepth = function(depth) {
  *   // Style the lines.
  *   strokeWeight(30);
  *
- *   // Draw the blue line.
- *   stroke('blue');
+ *   // Draw the first line.
+ *   stroke('#c8ffff');
  *   line(25, 25, 75, 75);
  *
- *   // Draw the red line.
- *   stroke('red');
+ *   // Draw the second line.
+ *   stroke('#ffc1ff');
  *   line(75, 25, 25, 75);
  *
- *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is faint violet.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Set the blend mode.
- *   blendMode(BURN);
- *
- *   // Style the lines.
- *   strokeWeight(30);
- *
- *   // Draw the blue line.
- *   stroke('blue');
- *   line(25, 25, 75, 75);
- *
- *   // Draw the red line.
- *   stroke('red');
- *   line(75, 25, 25, 75);
- *
- *   describe('A blue line and a red line form an X on a gray background. The area where they overlap is black.');
+ *   describe('A faint #c8ffff line and a faint #ffc1ff line form an X on a gray background. The area where they overlap is white.');
  * }
  * </code>
  * </div>
@@ -1162,7 +1110,7 @@ p5.prototype.clearDepth = function(depth) {
  *   createCanvas(100, 100, WEBGL);
  *
  *   // Set the background color.
- *   background(200);
+ *   background(180);
  *
  *   // Set the blend mode to SUBTRACT.
  *   blendMode(SUBTRACT);
@@ -1170,11 +1118,11 @@ p5.prototype.clearDepth = function(depth) {
  *   // Style the lines.
  *   strokeWeight(30);
  *
- *   // Draw the blue line.
+ *   // Draw the #1a85ff line.
  *   stroke('blue');
  *   line(-25, -25, 25, 25);
  *
- *   // Draw the red line.
+ *   // Draw the #d41159 line.
  *   stroke('red');
  *   line(25, -25, -25, 25);
  *
@@ -1213,7 +1161,7 @@ p5.prototype.blendMode = function(mode) {
  * function setup() {
  *   createCanvas(100, 100);
  *
- *   background(200);
+ *   background(180);
  *
  *   // Style the circle using shadows.
  *   drawingContext.shadowOffsetX = 5;
@@ -1247,7 +1195,7 @@ p5.prototype.blendMode = function(mode) {
  *   // Draw the circle.
  *   circle(50, 50, 40);
  *
- *   describe('A fiery sun drawn on a light blue background.');
+ *   describe('A fiery sun drawn on a light #1a85ff background.');
  * }
  * </code>
  * </div>
