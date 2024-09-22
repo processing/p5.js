@@ -606,7 +606,7 @@ p5.RendererGL.prototype._drawImmediateImage = function(count = 1) {
   shader.disableRemainingAttributes();
   this._setTexUniforms(shader);
   this._applyColorBlend(
-    this.curImageColor,
+    this.curFillColor,
     this.immediateMode.geometry.hasFillTransparency()
   );
   if (count === 1) {
