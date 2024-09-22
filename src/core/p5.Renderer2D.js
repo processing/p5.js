@@ -506,7 +506,7 @@ class Renderer2D extends Renderer {
   loadPixels() {
     const pixelsState = this._pixelsState; // if called by p5.Image
 
-    const pd = pixelsState._pixelDensity;
+    const pd = this._pixelDensity;
     const w = this.width * pd;
     const h = this.height * pd;
     const imageData = this.drawingContext.getImageData(0, 0, w, h);
@@ -525,8 +525,8 @@ class Renderer2D extends Renderer {
       this.drawingContext.save();
       this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
       this.drawingContext.scale(
-        pixelsState._pixelDensity,
-        pixelsState._pixelDensity
+        this._pixelDensity,
+        this._pixelDensity
       );
       this.drawingContext.clearRect(x, y, imgOrCol.width, imgOrCol.height);
       this.drawingContext.drawImage(imgOrCol.canvas, x, y);
@@ -539,9 +539,9 @@ class Renderer2D extends Renderer {
       let idx =
         4 *
         (y *
-          pixelsState._pixelDensity *
-          (this.width * pixelsState._pixelDensity) +
-          x * pixelsState._pixelDensity);
+          this._pixelDensity *
+          (this.width * this._pixelDensity) +
+          x * this._pixelDensity);
       if (!pixelsState.imageData) {
         pixelsState.loadPixels();
       }
@@ -574,15 +574,15 @@ class Renderer2D extends Renderer {
         }
       }
       // loop over pixelDensity * pixelDensity
-      for (let i = 0; i < pixelsState._pixelDensity; i++) {
-        for (let j = 0; j < pixelsState._pixelDensity; j++) {
+      for (let i = 0; i < this._pixelDensity; i++) {
+        for (let j = 0; j < this._pixelDensity; j++) {
           // loop over
           idx =
             4 *
-            ((y * pixelsState._pixelDensity + j) *
+            ((y * this._pixelDensity + j) *
               this.width *
-              pixelsState._pixelDensity +
-              (x * pixelsState._pixelDensity + i));
+              this._pixelDensity +
+              (x * this._pixelDensity + i));
           pixelsState.pixels[idx] = r;
           pixelsState.pixels[idx + 1] = g;
           pixelsState.pixels[idx + 2] = b;
@@ -594,7 +594,7 @@ class Renderer2D extends Renderer {
 
   updatePixels(x, y, w, h) {
     const pixelsState = this._pixelsState;
-    const pd = pixelsState._pixelDensity;
+    const pd = this._pixelDensity;
     if (
       x === undefined &&
       y === undefined &&

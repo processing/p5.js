@@ -128,7 +128,7 @@ p5.Renderer = class Renderer {
 
   get(x, y, w, h) {
     const pixelsState = this._pixelsState;
-    const pd = pixelsState._pixelDensity;
+    const pd = this._pixelDensity;
     const canvas = this.canvas;
 
     if (typeof x === 'undefined' && typeof y === 'undefined') {

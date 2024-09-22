@@ -382,7 +382,7 @@ p5.Graphics = class Graphics {
    */
   remove() {
     this._renderer.remove();
-    this._renderer = null;
+    this._renderer = undefined;
   }
 
 
