@@ -18,8 +18,16 @@ import * as constants from '../core/constants';
  * @param {Boolean} [isMainCanvas] whether we're using it as main canvas
  */
 p5.Renderer = class Renderer {
-  constructor(elt, pInst, isMainCanvas) {
+  constructor(pInst, w, h, isMainCanvas) {
     this._pInst = this._pixelsState = pInst;
+    this._isMainCanvas = isMainCanvas;
+    this.pixels = [];
+
+    this.width = w;
+    this.height = h;
+    this._pInst.width = this.width;
+    this._pInst.height = this.height;
+
     this._events = {};
 
     if (isMainCanvas) {
@@ -52,13 +60,6 @@ p5.Renderer = class Renderer {
     this._clipping = false;
     this._clipInvert = false;
     this._curveTightness = 0;
-  }
-
-  createCanvas(w, h) {
-    this.width = w;
-    this.height = h;
-    this._pInst.width = this.width;
-    this._pInst.height = this.height;
   }
 
   remove() {

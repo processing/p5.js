@@ -129,7 +129,7 @@ const renderers = p5.renderers = {
  * @param  {HTMLCanvasElement} [canvas]
  * @return {p5.Renderer}
  */
-p5.prototype.createCanvas = function (w, h, renderer, canvas) {
+p5.prototype.createCanvas = function (w, h, renderer, ...args) {
   p5._validateParameters('createCanvas', arguments);
   //optional: renderer, otherwise defaults to p2d
 
@@ -137,17 +137,19 @@ p5.prototype.createCanvas = function (w, h, renderer, canvas) {
   // Check third argument whether it is renderer constants
   if(Reflect.ownKeys(renderers).includes(renderer)){
     selectedRenderer = renderer;
+  }else{
+    args.unshift(renderer);
   }
 
 
   /////////////////////////////////
-  let r;
-  if (arguments[2] instanceof HTMLCanvasElement) {
-    renderer = constants.P2D;
-    canvas = arguments[2];
-  } else {
-    r = renderer || constants.P2D;
-  }
+  // let r;
+  // if (arguments[2] instanceof HTMLCanvasElement) {
+  //   renderer = constants.P2D;
+  //   canvas = arguments[2];
+  // } else {
+  //   r = renderer || constants.P2D;
+  // }
 
   // let c;
 
@@ -239,13 +241,11 @@ p5.prototype.createCanvas = function (w, h, renderer, canvas) {
 
   // Init our graphics renderer
   if(this._renderer) this._renderer.remove();
-  this._renderer = new renderers[r](canvas, this, true);
-  const element = this._renderer.createCanvas(w, h, canvas);
+  this._renderer = new renderers[selectedRenderer](this, w, h, true, ...args);
   this._defaultGraphicsCreated = true;
   this._elements.push(this._renderer);
   this._renderer._applyDefaults();
-  // return this._renderer;
-  return element;
+  return this._renderer;
 };
 
 /**

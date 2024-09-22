@@ -433,12 +433,45 @@ export function readPixelWebGL(
  * rendering (FBO).
  */
 p5.RendererGL = class RendererGL extends Renderer {
-  constructor(elt, pInst, isMainCanvas, attr) {
-    super(elt, pInst, isMainCanvas);
-    // this.elt = elt;
-    // this.canvas = elt;
+  constructor(pInst, w, h, isMainCanvas, elt, attr) {
+    super(pInst, w, h, isMainCanvas);
+
+    // Create new canvas
+    this.canvas = this.elt = elt || document.createElement('canvas');
+
+    if (this._isMainCanvas) {
+      // for pixel method sharing with pimage
+      this._pInst._curElement = this;
+      this._pInst.canvas = this.canvas;
+    } else {
+      // hide if offscreen buffer by default
+      this.canvas.style.display = 'none';
+    }
+    this.elt.id = 'defaultCanvas0';
+    this.elt.classList.add('p5Canvas');
+
+    // Set canvas size
+    this.elt.width = w * this._pInst._pixelDensity;
+    this.elt.height = h * this._pInst._pixelDensity;
+    this.elt.style.width = `${w}px`;
+    this.elt.style.height = `${h}px`;
+
+    // Attach canvas element to DOM
+    if (this._pInst._userNode) {
+      // user input node case
+      this._pInst._userNode.appendChild(this.elt);
+    } else {
+      //create main element
+      if (document.getElementsByTagName('main').length === 0) {
+        let m = document.createElement('main');
+        document.body.appendChild(m);
+      }
+      //append canvas to main
+      document.getElementsByTagName('main')[0].appendChild(this.elt);
+    }
+
     this._setAttributeDefaults(pInst);
-    // this._initContext();
+    this._initContext();
     this.isP3D = true; //lets us know we're in 3d mode
 
     // When constructing a new p5.Geometry, this will represent the builder
@@ -446,17 +479,8 @@ p5.RendererGL = class RendererGL extends Renderer {
 
     // This redundant property is useful in reminding you that you are
     // interacting with WebGLRenderingContext, still worth considering future removal
-    // this.GL = this.drawingContext;
-    // this._pInst.drawingContext = this.drawingContext;
-
-    // if (isMainCanvas) {
-    //   // for pixel method sharing with pimage
-    //   this._pInst._curElement = this;
-    //   this._pInst.canvas = this.canvas;
-    // } else {
-    //   // hide if offscreen buffer by default
-    //   this.canvas.style.display = 'none';
-    // }
+    this.GL = this.drawingContext;
+    this._pInst.drawingContext = this.drawingContext;
 
     // Push/pop state
     this.states.uModelMatrix = new p5.Matrix();
@@ -528,17 +552,15 @@ p5.RendererGL = class RendererGL extends Renderer {
     // p5.framebuffer for this are calculated in getSpecularTexture function
     this.specularTextures = new Map();
 
-
-
     this.preEraseBlend = undefined;
     this._cachedBlendMode = undefined;
     this._cachedFillStyle = [1, 1, 1, 1];
     this._cachedStrokeStyle = [0, 0, 0, 1];
-    // if (this.webglVersion === constants.WEBGL2) {
-    //   this.blendExt = this.GL;
-    // } else {
-    //   this.blendExt = this.GL.getExtension('EXT_blend_minmax');
-    // }
+    if (this.webglVersion === constants.WEBGL2) {
+      this.blendExt = this.GL;
+    } else {
+      this.blendExt = this.GL.getExtension('EXT_blend_minmax');
+    }
     this._isBlending = false;
 
     this._useLineColor = false;
@@ -607,31 +629,31 @@ p5.RendererGL = class RendererGL extends Renderer {
 
     // Immediate Mode
     // Geometry and Material hashes stored here
-    // this.immediateMode = {
-    //   geometry: new p5.Geometry(),
-    //   shapeMode: constants.TRIANGLE_FAN,
-    //   contourIndices: [],
-    //   _bezierVertex: [],
-    //   _quadraticVertex: [],
-    //   _curveVertex: [],
-    //   buffers: {
-    //     fill: [
-    //       new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
-    //       new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
-    //       new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
-    //       new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
-    //       new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
-    //     ],
-    //     stroke: [
-    //       new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this),
-    //       new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this),
-    //       new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this),
-    //       new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this),
-    //       new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
-    //     ],
-    //     point: this.GL.createBuffer()
-    //   }
-    // };
+    this.immediateMode = {
+      geometry: new p5.Geometry(),
+      shapeMode: constants.TRIANGLE_FAN,
+      contourIndices: [],
+      _bezierVertex: [],
+      _quadraticVertex: [],
+      _curveVertex: [],
+      buffers: {
+        fill: [
+          new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
+          new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
+          new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
+          new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
+          new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+        ],
+        stroke: [
+          new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this),
+          new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this),
+          new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this),
+          new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this),
+          new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
+        ],
+        point: this.GL.createBuffer()
+      }
+    };
 
     this.pointSize = 5.0; //default point size
     this.curStrokeWeight = 1;
@@ -676,87 +698,6 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.fontInfos = {};
 
     this._curShader = undefined;
-  }
-
-  createCanvas(w, h, canvas){
-    super.createCanvas(w, h);
-
-    // Create new canvas
-    this.canvas = this.elt = canvas || document.createElement('canvas');
-
-    if (this._isMainCanvas) {
-      // for pixel method sharing with pimage
-      this._pInst._curElement = this;
-      this._pInst.canvas = this.canvas;
-    } else {
-      // hide if offscreen buffer by default
-      this.canvas.style.display = 'none';
-    }
-    this.elt.id = 'defaultCanvas0';
-    this.elt.classList.add('p5Canvas');
-
-    // Set canvas size
-    this.elt.width = w * this._pInst._pixelDensity;
-    this.elt.height = h * this._pInst._pixelDensity;
-    this.elt.style.width = `${w}px`;
-    this.elt.style.height = `${h}px`;
-
-    // Attach canvas element to DOM
-    if (this._pInst._userNode) {
-      // user input node case
-      this._pInst._userNode.appendChild(this.elt);
-    } else {
-      //create main element
-      if (document.getElementsByTagName('main').length === 0) {
-        let m = document.createElement('main');
-        document.body.appendChild(m);
-      }
-      //append canvas to main
-      document.getElementsByTagName('main')[0].appendChild(this.elt);
-    }
-
-    // Get and store drawing context
-    this._initContext();
-    this.GL = this.drawingContext;
-    this._pInst.drawingContext = this.drawingContext;
-
-    if (this.webglVersion === constants.WEBGL2) {
-      this.blendExt = this.GL;
-    } else {
-      this.blendExt = this.GL.getExtension('EXT_blend_minmax');
-    }
-
-    this.immediateMode = {
-      geometry: new p5.Geometry(),
-      shapeMode: constants.TRIANGLE_FAN,
-      contourIndices: [],
-      _bezierVertex: [],
-      _quadraticVertex: [],
-      _curveVertex: [],
-      buffers: {
-        fill: [
-          new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
-          new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
-          new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
-          new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
-          new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
-        ],
-        stroke: [
-          new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this),
-          new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this),
-          new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this),
-          new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this),
-          new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
-        ],
-        point: this.GL.createBuffer()
-      }
-    };
-
-    this.wrappedElt = new p5.Element(this.canvas, this._pInst);
-
-
-
-    return this.wrappedElt;
   }
 
   /**
@@ -1536,8 +1477,11 @@ p5.RendererGL = class RendererGL extends Renderer {
     const dimensions = this._adjustDimensions(w, h);
     w = dimensions.adjustedWidth;
     h = dimensions.adjustedHeight;
-    this._pInst.width = w;
-    this._pInst.height = h;
+
+    if (this._isMainCanvas) {
+      this._pInst.width = w;
+      this._pInst.height = h;
+    }
 
     this.canvas.width = w * this._pInst._pixelDensity;
     this.canvas.height = h * this._pInst._pixelDensity;

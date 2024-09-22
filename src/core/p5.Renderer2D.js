@@ -13,20 +13,22 @@ const styleEmpty = 'rgba(0,0,0,0)';
  * @private
  */
 class Renderer2D extends Renderer {
-  constructor(elt, pInst, isMainCanvas) {
-    super(elt, pInst, isMainCanvas);
+  constructor(pInst, w, h, isMainCanvas, elt) {
+    super(pInst, w, h, isMainCanvas);
 
-    this._isMainCanvas = isMainCanvas;
-    this.pixels = [];
+    this.canvas = this.elt = elt || document.createElement('canvas');
 
-    // if (isMainCanvas) {
-    //   // for pixel method sharing with pimage
-    //   this._pInst._curElement = this;
-    //   this._pInst.canvas = this.canvas;
-    // } else {
-    //   // hide if offscreen buffer by default
-    //   this.canvas.style.display = 'none';
-    // }
+    if (isMainCanvas) {
+      // for pixel method sharing with pimage
+      this._pInst._curElement = this;
+      this._pInst.canvas = this.canvas;
+    } else {
+      // hide if offscreen buffer by default
+      this.canvas.style.display = 'none';
+    }
+
+    this.elt.id = 'defaultCanvas0';
+    this.elt.classList.add('p5Canvas');
 
     // Extend renderer with methods of p5.Element with getters
     // this.wrappedElt = new p5.Element(elt, pInst);
@@ -39,25 +41,6 @@ class Renderer2D extends Renderer {
         })
       }
     }
-  }
-
-  createCanvas(w, h, canvas) {
-    super.createCanvas(w, h);
-
-    // Create new canvas
-    this.canvas = this.elt = canvas || document.createElement('canvas');
-    ////////
-    if (this._isMainCanvas) {
-      // for pixel method sharing with pimage
-      this._pInst._curElement = this;
-      this._pInst.canvas = this.canvas;
-    } else {
-      // hide if offscreen buffer by default
-      this.canvas.style.display = 'none';
-    }
-    ////////
-    this.elt.id = 'defaultCanvas0';
-    this.elt.classList.add('p5Canvas');
 
     // Set canvas size
     this.elt.width = w * this._pInst._pixelDensity;
@@ -85,8 +68,6 @@ class Renderer2D extends Renderer {
 
     // Set and return p5.Element
     this.wrappedElt = new p5.Element(this.elt, this._pInst);
-
-    return this.wrappedElt;
   }
 
   remove(){
@@ -138,7 +119,7 @@ class Renderer2D extends Renderer {
     this.drawingContext.font = 'normal 12px sans-serif';
   }
 
-  resize(w, h) {
+  resize(w, h, pixelDensity = this._pInst._pixelDensity) {
     super.resize(w, h);
 
     // save canvas properties
@@ -150,13 +131,13 @@ class Renderer2D extends Renderer {
       }
     }
 
-    this.canvas.width = w * this._pInst._pixelDensity;
-    this.canvas.height = h * this._pInst._pixelDensity;
+    this.canvas.width = w * pixelDensity;
+    this.canvas.height = h * pixelDensity;
     this.canvas.style.width = `${w}px`;
     this.canvas.style.height = `${h}px`;
     this.drawingContext.scale(
-      this._pInst._pixelDensity,
-      this._pInst._pixelDensity
+      pixelDensity,
+      pixelDensity
     );
 
     // reset canvas properties
@@ -167,6 +148,8 @@ class Renderer2D extends Renderer {
         // ignore read-only property errors
       }
     }
+
+    console.log(this.elt.style.width);
   }
 
   //////////////////////////////////////////////
@@ -366,6 +349,15 @@ class Renderer2D extends Renderer {
       if (this._isErasing) {
         this.blendMode(this._cachedBlendMode);
       }
+      // console.log(this.elt, cnv,
+      //   s * sx,
+      //   s * sy,
+      //   s * sWidth,
+      //   s * sHeight,
+      //   dx,
+      //   dy,
+      //   dWidth,
+      //   dHeight);
       this.drawingContext.drawImage(
         cnv,
         s * sx,

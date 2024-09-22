@@ -110,8 +110,7 @@ p5.Graphics = class Graphics {
 
     this._pInst = pInst;
     this._pixelDensity = this._pInst._pixelDensity;
-    this._renderer = new p5.renderers[r](canvas, this._pInst, false);
-    this._renderer.createCanvas(w, h, canvas);
+    this._renderer = new p5.renderers[r](this._pInst, w, h, false, canvas);
 
     // Attach renderer methods
     for(const p of Object.getOwnPropertyNames(p5.renderers[r].prototype)) {
@@ -150,6 +149,10 @@ p5.Graphics = class Graphics {
       returnValue = this._pixelDensity;
     }
     return returnValue;
+  }
+
+  resizeCanvas(w, h){
+    this._renderer.resize(w, h, this._pixelDensity);
   }
 
   /**
