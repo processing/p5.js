@@ -283,7 +283,7 @@ p5.Geometry = class Geometry {
     // One color per vertex representing the stroke color at that vertex
     this.vertexStrokeColors = [];
 
-    this.userAttributes = [];
+    this.userAttributes = {};
 
     // One color per line vertex, generated automatically based on
     // vertexStrokeColors in _edgesToVertices()
@@ -452,10 +452,10 @@ p5.Geometry = class Geometry {
     this.vertexNormals.length = 0;
     this.uvs.length = 0;
 
-    for (const attr of this.userAttributes){
+    for (const attr of Object.keys(this.userAttributes)){
       delete this[attr.name];
     }
-    this.userAttributes.length = 0;
+    this.userAttributes = {};
 
     this.dirtyFlags = {};
   }
@@ -1922,10 +1922,7 @@ p5.Geometry = class Geometry {
     const size = data.length ? data.length : 1;
     if (!this.hasOwnProperty(attributeName)){
       this[attributeName] = [];
-      this.userAttributes.push({
-        name: attributeName,
-        size: size
-      });
+      this.userAttributes[attributeName] = size;
     }
     if (size > 1){
     this[attributeName].push(...data);
