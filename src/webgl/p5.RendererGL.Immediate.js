@@ -590,6 +590,11 @@ p5.RendererGL.prototype._drawImmediateFill = function(count = 1) {
   for (const buff of this.immediateMode.buffers.fill) {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
   }
+  if (this._useUserAttributes){
+    for (const buff of this.immediateMode.buffers.user){
+      buff._prepareBuffer(this.immediateMode.geometry, shader);
+    }
+  }
   shader.disableRemainingAttributes();
 
   this._applyColorBlend(
@@ -635,6 +640,11 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
   this._setStrokeUniforms(shader);
   for (const buff of this.immediateMode.buffers.stroke) {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
+  }
+  if (this._useUserAttributes){
+    for (const buff of this.immediateMode.buffers.user){
+      buff._prepareBuffer(this.immediateMode.geometry, shader);
+    }
   }
   shader.disableRemainingAttributes();
   this._applyColorBlend(
