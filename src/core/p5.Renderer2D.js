@@ -43,8 +43,8 @@ class Renderer2D extends Renderer {
     }
 
     // Set canvas size
-    this.elt.width = w * this._pInst._pixelDensity;
-    this.elt.height = h * this._pInst._pixelDensity;
+    this.elt.width = w * this._pixelDensity;
+    this.elt.height = h * this._pixelDensity;
     this.elt.style.width = `${w}px`;
     this.elt.style.height = `${h}px`;
 
@@ -119,7 +119,7 @@ class Renderer2D extends Renderer {
     this.drawingContext.font = 'normal 12px sans-serif';
   }
 
-  resize(w, h, pixelDensity = this._pInst._pixelDensity) {
+  resize(w, h) {
     super.resize(w, h);
 
     // save canvas properties
@@ -131,13 +131,13 @@ class Renderer2D extends Renderer {
       }
     }
 
-    this.canvas.width = w * pixelDensity;
-    this.canvas.height = h * pixelDensity;
+    this.canvas.width = w * this._pixelDensity;
+    this.canvas.height = h * this._pixelDensity;
     this.canvas.style.width = `${w}px`;
     this.canvas.style.height = `${h}px`;
     this.drawingContext.scale(
-      pixelDensity,
-      pixelDensity
+      this._pixelDensity,
+      this._pixelDensity
     );
 
     // reset canvas properties
@@ -148,8 +148,6 @@ class Renderer2D extends Renderer {
         // ignore read-only property errors
       }
     }
-
-    console.log(this.elt.style.width);
   }
 
   //////////////////////////////////////////////
@@ -1326,8 +1324,8 @@ class Renderer2D extends Renderer {
   resetMatrix() {
     this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
     this.drawingContext.scale(
-      this._pInst._pixelDensity,
-      this._pInst._pixelDensity
+      this._pixelDensity,
+      this._pixelDensity
     );
     return this;
   }

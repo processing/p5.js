@@ -1072,13 +1072,13 @@ p5.prototype.pixelDensity = function(val) {
   p5._validateParameters('pixelDensity', arguments);
   let returnValue;
   if (typeof val === 'number') {
-    if (val !== this._pixelDensity) {
-      this._pixelDensity = val;
+    if (val !== this._renderer._pixelDensity) {
+      this._renderer._pixelDensity = val;
     }
     returnValue = this;
     this.resizeCanvas(this.width, this.height, true); // as a side effect, it will clear the canvas
   } else {
-    returnValue = this._pixelDensity;
+    returnValue = this._renderer._pixelDensity;
   }
   return returnValue;
 };

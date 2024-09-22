@@ -109,7 +109,6 @@ p5.Graphics = class Graphics {
     // p5.prototype._initializeInstanceVariables.apply(this);
 
     this._pInst = pInst;
-    this._pixelDensity = this._pInst._pixelDensity;
     this._renderer = new p5.renderers[r](this._pInst, w, h, false, canvas);
 
     // Attach renderer methods
@@ -140,19 +139,19 @@ p5.Graphics = class Graphics {
   pixelDensity(val){
     let returnValue;
     if (typeof val === 'number') {
-      if (val !== this._pixelDensity) {
-        this._pixelDensity = val;
+      if (val !== this._renderer._pixelDensity) {
+        this._renderer._pixelDensity = val;
       }
       returnValue = this;
       this.resizeCanvas(this.width, this.height, true); // as a side effect, it will clear the canvas
     } else {
-      returnValue = this._pixelDensity;
+      returnValue = this._renderer._pixelDensity;
     }
     return returnValue;
   }
 
   resizeCanvas(w, h){
-    this._renderer.resize(w, h, this._pixelDensity);
+    this._renderer.resize(w, h);
   }
 
   /**

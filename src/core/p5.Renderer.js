@@ -22,6 +22,7 @@ p5.Renderer = class Renderer {
     this._pInst = this._pixelsState = pInst;
     this._isMainCanvas = isMainCanvas;
     this.pixels = [];
+    this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
 
     this.width = w;
     this.height = h;
@@ -62,6 +63,20 @@ p5.Renderer = class Renderer {
 
   remove() {
 
+  }
+
+  pixelDensity(val){
+    let returnValue;
+    if (typeof val === 'number') {
+      if (val !== this._pixelDensity) {
+        this._pixelDensity = val;
+      }
+      returnValue = this;
+      this.resize(this.width, this.height);
+    } else {
+      returnValue = this._pixelDensity;
+    }
+    return returnValue;
   }
 
   // Makes a shallow copy of the current states

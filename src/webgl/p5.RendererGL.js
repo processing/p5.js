@@ -451,8 +451,8 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.elt.classList.add('p5Canvas');
 
     // Set canvas size
-    this.elt.width = w * this._pInst._pixelDensity;
-    this.elt.height = h * this._pInst._pixelDensity;
+    this.elt.width = w * this._pixelDensity;
+    this.elt.height = h * this._pixelDensity;
     this.elt.style.width = `${w}px`;
     this.elt.style.height = `${h}px`;
 
@@ -832,7 +832,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     let maxTextureSize = this._maxTextureSize;
 
     let maxAllowedPixelDimensions = Math.floor(
-      maxTextureSize / this.pixelDensity()
+      maxTextureSize / this._pixelDensity
     );
     let adjustedWidth = Math.min(
       width, maxAllowedPixelDimensions
@@ -1391,7 +1391,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       return;
     }
 
-    const pd = this._pInst._pixelDensity;
+    const pd = this._pixelDensity;
     const gl = this.GL;
 
     pixelsState.pixels =
@@ -1478,8 +1478,8 @@ p5.RendererGL = class RendererGL extends Renderer {
     w = dimensions.adjustedWidth;
     h = dimensions.adjustedHeight;
 
-    this.canvas.width = w * this._pInst._pixelDensity;
-    this.canvas.height = h * this._pInst._pixelDensity;
+    this.canvas.width = w * this._pixelDensity;
+    this.canvas.height = h * this._pixelDensity;
     this.canvas.style.width = `${w}px`;
     this.canvas.style.height = `${h}px`;
     this._origViewport = {
@@ -2293,7 +2293,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     // should be they be same var?
     pointShader.setUniform(
       'uPointSize',
-      this.pointSize * this._pInst._pixelDensity
+      this.pointSize * this._pixelDensity
     );
   }
 

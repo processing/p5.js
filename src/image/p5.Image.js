@@ -956,7 +956,7 @@ function image(p5, fn){
       let imgScaleFactor = this._pixelDensity;
       let maskScaleFactor = 1;
       if (p5Image instanceof p5.Renderer) {
-        maskScaleFactor = p5Image._pInst._pixelDensity;
+        maskScaleFactor = p5Image._pInst._renderer._pixelDensity;
       }
 
       const copyArgs = [
