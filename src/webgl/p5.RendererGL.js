@@ -894,9 +894,9 @@ p5.RendererGL = class RendererGL extends Renderer {
     renderer.resize(w, h);
     renderer._applyDefaults();
 
-    if (!isPGraphics) {
-      this._pInst._elements.push(renderer);
-    }
+    // if (!isPGraphics) {
+    //   this._pInst._elements.push(renderer);
+    // }
 
     if (typeof callback === 'function') {
       //setTimeout with 0 forces the task to the back of the queue, this ensures that
@@ -1477,6 +1477,9 @@ p5.RendererGL = class RendererGL extends Renderer {
     const dimensions = this._adjustDimensions(w, h);
     w = dimensions.adjustedWidth;
     h = dimensions.adjustedHeight;
+
+    this.width = w;
+    this.height = h;
 
     this.canvas.width = w * this._pixelDensity;
     this.canvas.height = h * this._pixelDensity;

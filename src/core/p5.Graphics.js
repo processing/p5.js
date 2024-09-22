@@ -113,7 +113,12 @@ p5.Graphics = class Graphics {
 
     // Attach renderer methods
     for(const p of Object.getOwnPropertyNames(p5.renderers[r].prototype)) {
-      if(p !== 'constructor' && p[0] !== '_' && !(p in this)){
+      if(
+        p !== 'constructor' &&
+        p[0] !== '_' &&
+        !(p in this) &&
+        typeof this._renderer[p] === 'function'
+      ){
         this[p] = this._renderer[p].bind(this._renderer);
       }
     }
@@ -152,6 +157,10 @@ p5.Graphics = class Graphics {
 
   resizeCanvas(w, h){
     this._renderer.resize(w, h);
+  }
+
+  get(...args){
+    return this._pInst.get.apply(this, args);
   }
 
   /**
