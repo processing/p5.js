@@ -129,6 +129,9 @@ p5.RendererGL.prototype.vertex = function(x, y) {
   );
 
   if (this.textureMode === constants.IMAGE && !this.isProcessingVertices) {
+    const imageShader = this._getImmediateImageShader();
+    if(imageShader){
+      // We have an image shader, normalize UV coordinates based on texture dimensions
     if (this._tex !== null) {
       if (this._tex.width > 0 && this._tex.height > 0) {
         u /= this._tex.width;
@@ -152,6 +155,7 @@ p5.RendererGL.prototype.vertex = function(x, y) {
       );
     }
   }
+}
 
   this.immediateMode.geometry.uvs.push(u, v);
 
@@ -247,6 +251,11 @@ p5.RendererGL.prototype.endShape = function(
       !this.geometryBuilder &&
       this.immediateMode.geometry.vertices.length >= 3
     ) {
+      const imageShader = this._getImmediateImageShader();
+      const activeShader = (this.textureMode === constants.IMAGE && imageShader) ? imageShader : this._getImmediateFillShader();
+      if (activeShader) {
+        this.shader(activeShader);
+      }
       this._drawImmediateFill(count);
     }
   }
@@ -589,7 +598,7 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
 p5.RendererGL.prototype._drawImmediateImage = function(count = 1) {
   const gl = this.GL;
   let shader = this._getImmediateImageShader();
-  this._setImageUniforms(shader);
+  this._setFillUniforms(shader);
 
   for (const buff of this.immediateMode.buffers.image) {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
@@ -598,7 +607,7 @@ p5.RendererGL.prototype._drawImmediateImage = function(count = 1) {
   this._setTexUniforms(shader);
   this._applyColorBlend(
     this.curImageColor,
-    this.immediateMode.geometry.hasImageTransparency()
+    this.immediateMode.geometry.hasFillTransparency()
   );
   if (count === 1) {
     gl.drawArrays(

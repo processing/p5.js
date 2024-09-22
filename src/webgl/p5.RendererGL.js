@@ -628,7 +628,11 @@ p5.RendererGL = class RendererGL extends Renderer {
           new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this),
           new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
         ],
-        point: this.GL.createBuffer()
+        point: this.GL.createBuffer(),
+        image: [
+          new p5.RenderBuffer(3, 'imageVertices', 'imageVertexBuffer', 'aPosition', this, this._vToNArray),
+          new p5.RenderBuffer(2, 'imageUVs', 'imageUVBuffer', 'aTexCoord', this, this._flatten)
+        ]
       }
     };
 
