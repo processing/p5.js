@@ -35,6 +35,9 @@ p5.RenderBuffer = class {
     // check if the model has the appropriate source array
     let buffer = geometry[this.dst];
     const src = model[this.src];
+    if (!src){
+      return;
+    }
     if (src.length > 0) {
     // check if we need to create the GL buffer
       const createBuffer = !buffer;
