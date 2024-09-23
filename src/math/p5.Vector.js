@@ -701,7 +701,7 @@ p5.Vector = class {
  *   let p1 = createVector(75, 75);
  *   let p2 = createVector(50, 50);
  *
- *   // Subtract with modifying the original vectors.
+ *   // Subtract without modifying the original vectors.
  *   let p3 = p5.Vector.sub(p1, p2);
  *
  *   // Draw the points.
