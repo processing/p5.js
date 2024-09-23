@@ -121,19 +121,20 @@ p5.RendererGL.prototype.vertex = function(x, y) {
   const vert = new p5.Vector(x, y, z);
   this.immediateMode.geometry.vertices.push(vert);
   this.immediateMode.geometry.vertexNormals.push(this._currentNormal);
-  if (this._useUserAttributes){ 
+
+  for (const attr in this.userAttributes){
     const geom = this.immediateMode.geometry;
     const verts = geom.vertices;
-    Object.entries(this.userAttributes).forEach(([name, data]) => {
-      const size = data.length ? data.length : 1;
-      if (verts.length > 0 && !geom.hasOwnProperty(name)) {
-        for (let i = 0; i < verts.length - 1; i++) {
-          this.immediateMode.geometry.setAttribute(name, Array(size).fill(0));
-        }
-      }
-      this.immediateMode.geometry.setAttribute(name, data);
-    });
+    const data = this.userAttributes[attr];
+    const size = data.length ? data.length : 1;
+    if (!geom.hasOwnProperty(attr) && verts.length > 1) {
+      const numMissingValues = size * (verts.length - 1);
+      const missingValues = Array(numMissingValues).fill(0);
+      geom.setAttribute(attr, missingValues, size);
+    }
+    geom.setAttribute(attr, data);
   }
+
   const vertexColor = this.curFillColor || [0.5, 0.5, 0.5, 1.0];
   this.immediateMode.geometry.vertexColors.push(
     vertexColor[0],
@@ -479,15 +480,12 @@ p5.RendererGL.prototype._tesselateShape = function() {
       this.immediateMode.geometry.vertexNormals[i].y,
       this.immediateMode.geometry.vertexNormals[i].z
     );
-    if (this._useUserAttributes){
-      const userAttributesArray = Object.entries(this.userAttributes);
-      for (let [name, data] of userAttributesArray){
-        const size = data.length ? data.length : 1;
-        for (let j = 0; j < size; j++){
-          contours[contours.length-1].push(
-            this.immediateMode.geometry[name][i * size + j]
-        );}
-      }
+    for (const attr in this.userAttributes){
+      const size = this.userAttributes[attr].length ? this.userAttributes[attr].length : 1;
+      const start = i * size;
+      const end = start + size;
+      const vals = this.immediateMode.geometry[attr].slice(start, end);
+      contours[contours.length-1].push(...vals);
     }
   }
   const polyTriangles = this._triangulate(contours);
@@ -495,11 +493,8 @@ p5.RendererGL.prototype._tesselateShape = function() {
   this.immediateMode.geometry.vertices = [];
   this.immediateMode.geometry.vertexNormals = [];
   this.immediateMode.geometry.uvs = [];
-  if (this._useUserAttributes){
-    const userAttributeNames = Object.keys(this.userAttributes);
-    for (let name of userAttributeNames){
-      delete this.immediateMode.geometry[name];
-    }
+  for (const attr in this.userAttributes){
+    delete this.immediateMode.geometry[attr]
   }
   const colors = [];
   for (
@@ -509,14 +504,13 @@ p5.RendererGL.prototype._tesselateShape = function() {
   ) {
     colors.push(...polyTriangles.slice(j + 5, j + 9));
     this.normal(...polyTriangles.slice(j + 9, j + 12));
-    if(this._useUserAttributes){
+    {
       let offset = 12;
-      const userAttributesArray = Object.entries(this.userAttributes);
-      for (let [name, data] of userAttributesArray){
-        const size = data.length ? data.length : 1;
+      for (const attr in this.userAttributes){
+        const size = this.userAttributes[attr].length ? this.userAttributes[attr].length : 1;
         const start = j + offset;
         const end = start + size;
-        this.setAttribute(name, polyTriangles.slice(start, end));
+        this.setAttribute(attr, polyTriangles.slice(start, end), size);
         offset += size;
       }
     }
