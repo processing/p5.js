@@ -34,7 +34,7 @@ p5.RendererGL.prototype.beginShape = function(mode) {
   this.immediateMode.shapeMode =
     mode !== undefined ? mode : constants.TESS;
   if (this._useUserAttributes === true){
-    for (const name of Object.keys(this.userAttributes)){
+    for (const name in this.userAttributes){
       delete this.immediateMode.geometry[name];
     }
     delete this.userAttributes;
