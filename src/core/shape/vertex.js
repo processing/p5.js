@@ -2253,6 +2253,77 @@ p5.prototype.normal = function(x, y, z) {
   return this;
 };
 
+/** Sets the shader's vertex attribute variables.
+ * 
+ * Shader programs run on the computer's graphics processing unit (GPU)
+ * They live in a part of the computer's memory that's completely separate from
+ * the sketch that runs them. Attributes are variables attached to vertices
+ * within a shader program. They provide a way to attach data to vertices
+ * and pass values from a sketch running on the CPU to a shader program.
+ * 
+ * The first parameter, `attributeName`, is a string with the attribute's name.
+ * 
+ * The second parameter, `data`, is the value that should be assigned to the 
+ * attribute. This value will be applied to subsequent vertices created with
+ * <a href="#/p5/vertex">vertex()</a>. It can be a Number or an array of numbers,
+ * and in the shader program the type can be interpreted according to the WebGL
+ * specification. Common types include `float`, `vec2`, `vec3`, `vec4` or matrices.
+ * 
+ * @example
+ * <div>
+ * <code>
+ * let vertSrc = `
+ *  precision highp float;
+ *  uniform mat4 uModelViewMatrix;
+ *  uniform mat4 uProjectionMatrix;
+ *  
+ *  attribute vec3 aPosition;
+ *  attribute vec2 aOffset;
+ * 
+ *  void main(){
+ *    vec4 positionVec4 = vec4(aPosition.xyz, 1.0);
+ *    positionVec4.xy += aOffset;   
+ *    gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+ *  }
+ * `;
+ * 
+ * let fragSrc = `
+ *  precision highp float;
+ * 
+ *  void main(){
+ *    gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);    
+ *  }
+ * `;
+ * 
+ * function setup(){
+ *   createCanvas(100, 100, WEBGL);
+ *   let myShader = createShader(vertSrc, fragSrc);
+ *   shader(myShader);
+ *   noStroke();
+ *   describe('A wobbly, cyan circle on a grey background.');
+ * }
+ * 
+ * function draw(){
+ *   background(125);
+ *   beginShape();
+ *   for (let i = 0; i < 30; i++){
+ *     let x = 40 * cos(i/30 * TWO_PI);
+ *     let y = 40 * sin(i/30 * TWO_PI);
+ *     let xOff = 10 * noise(x + millis()/1000) - 5;
+ *     let yOff = 10 * noise(y + millis()/1000) - 5;
+ *     setAttribute('aOffset', [xOff, yOff]);
+ *     vertex(x, y);
+ *   }
+ *   endShape(CLOSE);
+ * }
+ * </code>
+ * </div>
+/
+/**
+ * @method setAttribute
+ * @param {String} attributeName the name of the vertex attribute.
+ * @param {Number|Number[]} data the data tied to the vertex attribute.
+ */
 p5.prototype.setAttribute = function(attributeName, data){
   // this._assert3d('setAttribute');
   // p5._validateParameters('setAttribute', arguments);
