@@ -1,6 +1,6 @@
 import p5 from '../../../src/app.js';
 import { server } from '@vitest/browser/context'
-import { THRESHOLD } from '../../../src/core/constants.js';
+import { THRESHOLD, DIFFERENCE, ERODE } from '../../../src/core/constants.js';
 const { readFile, writeFile } = server.commands
 
 // By how much can each color channel value (0-255) differ before
@@ -94,11 +94,11 @@ export async function checkMatch(actual, expected, p5) {
   cnv.pixelDensity(1);
   cnv.background(BG);
   cnv.image(actual, 0, 0);
-  cnv.blendMode(cnv.DIFFERENCE);
+  cnv.blendMode(DIFFERENCE);
   cnv.image(expectedWithBg, 0, 0);
   for (let i = 0; i < SHIFT_THRESHOLD; i++) {
-    cnv.filter(cnv.ERODE, false);
-    cnv.filter(cnv.ERODE, false);
+    cnv.filter(ERODE, false);
+    cnv.filter(ERODE, false);
   }
   const diff = cnv.get();
   cnv.remove();
