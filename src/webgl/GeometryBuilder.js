@@ -60,36 +60,64 @@ class GeometryBuilder {
     );
     this.geometry.uvs.push(...input.uvs);
 
-    const inputUserAttributes = Object.entries(input.userAttributes);
-    const currentUserAttributes = Object.entries(this.geometry.userAttributes);
+    const inputAttrs = input.userAttributes;
+    const builtAttrs = this.geometry.userAttributes;
+    const numPreviousVertices = this.geometry.vertices.length - input.vertices.length;
 
-    if (currentUserAttributes.length > 0){
-      for (const [name, size] of currentUserAttributes){
-        if (name in input.userAttributes){
-          continue;
-        }
-        const numMissingValues = size * input.vertices.length;
-        // this.geometry[name].concat(Array(numMissingValues).fill(0));
-        this.geometry[name] = (this.geometry[name] || []).concat(Array(numMissingValues).fill(0));
+    for (const attr in builtAttrs){
+      if (attr in inputAttrs){
+        continue;
       }
+      const size = builtAttrs[attr];
+      const numMissingValues = size * input.vertices.length;
+      const missingValues = Array(numMissingValues).fill(0);
+      this.geometry.setAttribute(attr, missingValues, size);
     }
-    if (inputUserAttributes.length > 0){
-      for (const [name, size] of inputUserAttributes){
-        const data = input[name];
-        if (!(name in this.geometry.userAttributes) && this.geometry.vertices.length - input.vertices.length > 0){
-          const numMissingValues = size * (this.geometry.vertices.length - input.vertices.length) - size;
-          this.geometry.setAttribute(name, Array(size).fill(0));
-          // this.geometry[name].concat(Array(numMissingValues).fill(0));
-          this.geometry[name] = this.geometry[name].concat(Array(numMissingValues).fill(0));
-        }
-        if (this.geometry.userAttributes[name] != size){
-          console.log("This user attribute has different sizes");
-        }
-        for (let i = 0; i < data.length; i+=size){
-          this.geometry.setAttribute(name, data.slice(i, i + size));
-        }
+    for (const attr in inputAttrs){
+      const data = input[attr];
+      const size = inputAttrs[attr];
+      if (numPreviousVertices > 0 && !(attr in this.geometry.userAttributes)){
+        const numMissingValues = size * numPreviousVertices;
+        const missingValues = Array(numMissingValues).fill(0);
+          console.log(`ATTR: ${attr}, SIZE@ ${size}, NUMMISSINVALS: ${numMissingValues}`);
+        this.geometry.setAttribute(attr, missingValues, size);
       }
+      if (this.geometry.userAttributes[attr] != size){
+        console.log("This user attribute has different sizes");
+      }
+      this.geometry.setAttribute(attr, data, size);
     }
+
+    // const inputUserAttributes = Object.entries(input.userAttributes);
+    // const currentUserAttributes = Object.entries(this.geometry.userAttributes);
+
+    // if (currentUserAttributes.length > 0){
+    //   for (const [name, size] of currentUserAttributes){
+    //     if (name in input.userAttributes){
+    //       continue;
+    //     }
+    //     const numMissingValues = size * input.vertices.length;
+    //     // this.geometry[name].concat(Array(numMissingValues).fill(0));
+    //     this.geometry[name] = (this.geometry[name] || []).concat(Array(numMissingValues).fill(0));
+    //   }
+    // }
+    // if (inputUserAttributes.length > 0){
+    //   for (const [name, size] of inputUserAttributes){
+    //     const data = input[name];
+    //     if (!(name in this.geometry.userAttributes) && this.geometry.vertices.length - input.vertices.length > 0){
+    //       const numMissingValues = size * (this.geometry.vertices.length - input.vertices.length) - size;
+    //       this.geometry.setAttribute(name, Array(size).fill(0));
+    //       console.log(`ATTR: ${name}, SIZE@ ${size}, NUMMISSINVALS: ${numMissingValues}`);
+    //       this.geometry[name] = this.geometry[name].concat(Array(numMissingValues).fill(0));
+    //     }
+    //     if (this.geometry.userAttributes[name] != size){
+    //       console.log("This user attribute has different sizes");
+    //     }
+    //     for (let i = 0; i < data.length; i+=size){
+    //       this.geometry.setAttribute(name, data.slice(i, i + size));
+    //     }
+    //   }
+    // }
 
     if (this.renderer._doFill) {
       this.geometry.faces.push(
