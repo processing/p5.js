@@ -46,7 +46,7 @@ p5.RendererGL.prototype.beginShape = function(mode) {
   return this;
 };
 
-const immediateBufferStrides = {
+p5.RendererGL.prototype.immediateBufferStrides = {
   vertices: 1,
   vertexNormals: 1,
   vertexColors: 4,
@@ -86,8 +86,8 @@ p5.RendererGL.prototype.vertex = function(x, y) {
     // 1--2     1--2   4
     // When vertex index 3 is being added, add the necessary duplicates.
     if (this.immediateMode.geometry.vertices.length % 6 === 3) {
-      for (const key in immediateBufferStrides) {
-        const stride = immediateBufferStrides[key];
+      for (const key in this.immediateBufferStrides) {
+        const stride = this.immediateBufferStrides[key];
         const buffer = this.immediateMode.geometry[key];
         buffer.push(
           ...buffer.slice(
