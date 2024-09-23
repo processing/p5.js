@@ -634,7 +634,7 @@ p5.Graphics = class Graphics {
    * </div>
    */
   createFramebuffer(options) {
-    return new p5.Framebuffer(this, options);
+    return new p5.Framebuffer(this._pInst, options);
   }
 };
 

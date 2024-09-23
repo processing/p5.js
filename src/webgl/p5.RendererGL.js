@@ -438,6 +438,11 @@ p5.RendererGL = class RendererGL extends Renderer {
 
     // Create new canvas
     this.canvas = this.elt = elt || document.createElement('canvas');
+    this._initContext();
+    // This redundant property is useful in reminding you that you are
+    // interacting with WebGLRenderingContext, still worth considering future removal
+    this.GL = this.drawingContext;
+    this._pInst.drawingContext = this.drawingContext;
 
     if (this._isMainCanvas) {
       // for pixel method sharing with pimage
@@ -450,11 +455,26 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.elt.id = 'defaultCanvas0';
     this.elt.classList.add('p5Canvas');
 
+    const dimensions = this._adjustDimensions(w, h);
+    w = dimensions.adjustedWidth;
+    h = dimensions.adjustedHeight;
+
+    this.width = w;
+    this.height = h;
+
     // Set canvas size
     this.elt.width = w * this._pixelDensity;
     this.elt.height = h * this._pixelDensity;
     this.elt.style.width = `${w}px`;
     this.elt.style.height = `${h}px`;
+    this._origViewport = {
+      width: this.GL.drawingBufferWidth,
+      height: this.GL.drawingBufferHeight
+    };
+    this.viewport(
+      this._origViewport.width,
+      this._origViewport.height
+    );
 
     // Attach canvas element to DOM
     if (this._pInst._userNode) {
@@ -471,16 +491,10 @@ p5.RendererGL = class RendererGL extends Renderer {
     }
 
     this._setAttributeDefaults(pInst);
-    this._initContext();
     this.isP3D = true; //lets us know we're in 3d mode
 
     // When constructing a new p5.Geometry, this will represent the builder
     this.geometryBuilder = undefined;
-
-    // This redundant property is useful in reminding you that you are
-    // interacting with WebGLRenderingContext, still worth considering future removal
-    this.GL = this.drawingContext;
-    this._pInst.drawingContext = this.drawingContext;
 
     // Push/pop state
     this.states.uModelMatrix = new p5.Matrix();
@@ -786,7 +800,7 @@ p5.RendererGL = class RendererGL extends Renderer {
   }
 
   _initContext() {
-    if (this._pInst._glAttributes.version !== 1) {
+    if (this._pInst._glAttributes?.version !== 1) {
       // Unless WebGL1 is explicitly asked for, try to create a WebGL2 context
       this.drawingContext =
         this.canvas.getContext('webgl2', this._pInst._glAttributes);

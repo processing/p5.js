@@ -1892,13 +1892,17 @@ p5.prototype.texture = function (tex) {
     tex._animateGif(this);
   }
 
-  this._renderer.states.drawMode = constants.TEXTURE;
-  this._renderer.states._useNormalMaterial = false;
-  this._renderer.states._tex = tex;
-  this._renderer.states.doFill = true;
+  this._renderer.texture(tex);
 
   return this;
 };
+
+p5.RendererGL.prototype.texture = function(tex) {
+  this.states.drawMode = constants.TEXTURE;
+  this.states._useNormalMaterial = false;
+  this.states._tex = tex;
+  this.states.doFill = true;
+}
 
 /**
  * Changes the coordinate system used for textures when they’re applied to

@@ -1744,34 +1744,38 @@ p5.prototype.noLights = function (...args) {
   this._assert3d('noLights');
   p5._validateParameters('noLights', args);
 
-  this._renderer.states.activeImageLight = null;
-  this._renderer.states._enableLighting = false;
-
-  this._renderer.states.ambientLightColors.length = 0;
-  this._renderer.states.specularColors = [1, 1, 1];
-
-  this._renderer.states.directionalLightDirections.length = 0;
-  this._renderer.states.directionalLightDiffuseColors.length = 0;
-  this._renderer.states.directionalLightSpecularColors.length = 0;
-
-  this._renderer.states.pointLightPositions.length = 0;
-  this._renderer.states.pointLightDiffuseColors.length = 0;
-  this._renderer.states.pointLightSpecularColors.length = 0;
-
-  this._renderer.states.spotLightPositions.length = 0;
-  this._renderer.states.spotLightDirections.length = 0;
-  this._renderer.states.spotLightDiffuseColors.length = 0;
-  this._renderer.states.spotLightSpecularColors.length = 0;
-  this._renderer.states.spotLightAngle.length = 0;
-  this._renderer.states.spotLightConc.length = 0;
-
-  this._renderer.states.constantAttenuation = 1;
-  this._renderer.states.linearAttenuation = 0;
-  this._renderer.states.quadraticAttenuation = 0;
-  this._renderer.states._useShininess = 1;
-  this._renderer.states._useMetalness = 0;
+  this._renderer.noLights();
 
   return this;
 };
+
+p5.RendererGL.prototype.noLights  = function() {
+  this.states.activeImageLight = null;
+  this.states._enableLighting = false;
+
+  this.states.ambientLightColors.length = 0;
+  this.states.specularColors = [1, 1, 1];
+
+  this.states.directionalLightDirections.length = 0;
+  this.states.directionalLightDiffuseColors.length = 0;
+  this.states.directionalLightSpecularColors.length = 0;
+
+  this.states.pointLightPositions.length = 0;
+  this.states.pointLightDiffuseColors.length = 0;
+  this.states.pointLightSpecularColors.length = 0;
+
+  this.states.spotLightPositions.length = 0;
+  this.states.spotLightDirections.length = 0;
+  this.states.spotLightDiffuseColors.length = 0;
+  this.states.spotLightSpecularColors.length = 0;
+  this.states.spotLightAngle.length = 0;
+  this.states.spotLightConc.length = 0;
+
+  this.states.constantAttenuation = 1;
+  this.states.linearAttenuation = 0;
+  this.states.quadraticAttenuation = 0;
+  this.states._useShininess = 1;
+  this.states._useMetalness = 0;
+}
 
 export default p5;

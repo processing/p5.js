@@ -80,11 +80,7 @@ class Renderer2D extends Renderer {
   getFilterGraphicsLayer() {
     // create hidden webgl renderer if it doesn't exist
     if (!this.filterGraphicsLayer) {
-      // the real _pInst is buried when this is a secondary p5.Graphics
-      const pInst =
-        this._pInst instanceof p5.Graphics ?
-          this._pInst._pInst :
-          this._pInst;
+      const pInst = this._pInst;
 
       // create secondary layer
       this.filterGraphicsLayer =
