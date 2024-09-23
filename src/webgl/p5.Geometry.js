@@ -1918,13 +1918,16 @@ p5.Geometry = class Geometry {
     return this;
   }
 
-  setAttribute(attributeName, data){
-    const size = data.length ? data.length : 1;
+  setAttribute(attributeName, data, size = data.length ? data.length : 1){
     if (!this.hasOwnProperty(attributeName)){
       this[attributeName] = [];
       this.userAttributes[attributeName] = size;
     }
-    if (size > 1){
+    if (size != this.userAttributes[attributeName]){
+      p5._friendlyError(`Custom attribute ${attributeName} has been set with various data sizes. You can change it's name,
+         or if it was an accident, set ${attributeName} to have the same number of inputs each time!`, 'setAttribute()');
+    }
+    if (data.length){
     this[attributeName].push(...data);
     } else{
       this[attributeName].push(data);
