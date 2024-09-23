@@ -484,8 +484,13 @@ p5.RendererGL.prototype._tesselateShape = function() {
       const size = this.userAttributes[attr].length ? this.userAttributes[attr].length : 1;
       const start = i * size;
       const end = start + size;
-      const vals = this.immediateMode.geometry[attr].slice(start, end);
-      contours[contours.length-1].push(...vals);
+      if (this.immediateMode.geometry[attr]){
+        const vals = this.immediateMode.geometry[attr].slice(start, end);
+        contours[contours.length-1].push(...vals);
+      } else{
+        delete this.userAttributes[attr];
+        this.tessyVertexSize -= size;
+      }
     }
   }
   const polyTriangles = this._triangulate(contours);
@@ -507,11 +512,11 @@ p5.RendererGL.prototype._tesselateShape = function() {
     {
       let offset = 12;
       for (const attr in this.userAttributes){
-        const size = this.userAttributes[attr].length ? this.userAttributes[attr].length : 1;
-        const start = j + offset;
-        const end = start + size;
-        this.setAttribute(attr, polyTriangles.slice(start, end), size);
-        offset += size;
+          const size = this.userAttributes[attr].length ? this.userAttributes[attr].length : 1;
+          const start = j + offset;
+          const end = start + size;
+          this.setAttribute(attr, polyTriangles.slice(start, end), size);
+          offset += size;
       }
     }
     this.vertex(...polyTriangles.slice(j, j + 5));
