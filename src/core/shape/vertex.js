@@ -2091,7 +2091,7 @@ p5.prototype.vertex = function(x, y, moveTo, u, v) {
  * `normal()` will affect all following vertices until `normal()` is called
  * again:
  *
- * <code>
+ * ```javascript
  * beginShape();
  *
  * // Set the vertex normal.
@@ -2114,7 +2114,7 @@ p5.prototype.vertex = function(x, y, moveTo, u, v) {
  * vertex(-30, 30, 0);
  *
  * endShape();
- * </code>
+ * ```
  *
  * @method normal
  * @param  {p5.Vector} vector vertex normal as a <a href="#/p5.Vector">p5.Vector</a> object.
