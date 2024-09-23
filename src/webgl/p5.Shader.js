@@ -1354,11 +1354,6 @@ p5.Shader = class Shader {
     return this.isLightShader() && this.isTextureShader();
   }
 
-  isStrokeShader() {
-    return this.uniforms.uStrokeWeight !== undefined;
-  }
-
-
   /**
    * @chainable
    * @private
