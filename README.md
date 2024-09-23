@@ -1064,6 +1064,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/calliecramer"><img src="https://avatars.githubusercontent.com/u/46458628?v=4?s=120" width="120px;" alt="Callie"/><br /><sub><b>Callie</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=calliecramer" title="Documentation">📖</a> <a href="https://github.com/processing/p5.js/commits?author=calliecramer" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/jaredberghold"><img src="https://avatars.githubusercontent.com/u/13672640?v=4?s=120" width="120px;" alt="Jared Berghold"/><br /><sub><b>Jared Berghold</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=jaredberghold" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://computationalmama.xyz"><img src="https://avatars.githubusercontent.com/u/10388784?v=4?s=120" width="120px;" alt="computational mama"/><br /><sub><b>computational mama</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=computationalmama" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
