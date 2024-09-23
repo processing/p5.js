@@ -886,17 +886,15 @@ p5.RendererGL = class RendererGL extends Renderer {
     }
 
     const renderer = new p5.RendererGL(
-      this._pInst.canvas,
       this._pInst,
-      !isPGraphics
+      w,
+      h,
+      !isPGraphics,
+      this._pInst.canvas,
     );
     this._pInst._renderer = renderer;
-    renderer.resize(w, h);
-    renderer._applyDefaults();
 
-    // if (!isPGraphics) {
-    //   this._pInst._elements.push(renderer);
-    // }
+    renderer._applyDefaults();
 
     if (typeof callback === 'function') {
       //setTimeout with 0 forces the task to the back of the queue, this ensures that

@@ -96,18 +96,6 @@ p5.Graphics = class Graphics {
   constructor(w, h, renderer, pInst, canvas) {
     const r = renderer || constants.P2D;
 
-    // bind methods and props of p5 to the new object
-    // for (const p in p5.prototype) {
-    //   if (!this[p]) {
-    //     if (typeof p5.prototype[p] === 'function') {
-    //       this[p] = p5.prototype[p].bind(this);
-    //     } else if(p !== 'deltaTime') {
-    //       this[p] = p5.prototype[p];
-    //     }
-    //   }
-    // }
-    // p5.prototype._initializeInstanceVariables.apply(this);
-
     this._pInst = pInst;
     this._renderer = new p5.renderers[r](this._pInst, w, h, false, canvas);
 
@@ -133,6 +121,19 @@ p5.Graphics = class Graphics {
       })
     }
 
+    // bind methods and props of p5 to the new object
+    for (const p in p5.prototype) {
+      if (!this[p]) {
+        // console.log(p);
+        if (typeof p5.prototype[p] === 'function') {
+          this[p] = p5.prototype[p].bind(this);
+        } else if(p !== 'deltaTime') {
+          this[p] = p5.prototype[p];
+        }
+      }
+    }
+    p5.prototype._initializeInstanceVariables.apply(this);
+
     this._renderer._applyDefaults();
     return this;
   }
@@ -157,10 +158,6 @@ p5.Graphics = class Graphics {
 
   resizeCanvas(w, h){
     this._renderer.resize(w, h);
-  }
-
-  get(...args){
-    return this._pInst.get.apply(this, args);
   }
 
   /**

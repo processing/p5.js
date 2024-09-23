@@ -8,7 +8,7 @@ import './core/friendly_errors/file_errors';
 import './core/friendly_errors/fes_core';
 import './core/friendly_errors/sketch_reader';
 import './core/helpers';
-import './core/legacy';
+// import './core/legacy';
 // import './core/preload';
 import './core/p5.Element';
 import './core/p5.Graphics';
