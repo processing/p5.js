@@ -1577,15 +1577,19 @@ suite('p5.RendererGL', function() {
       renderer.beginShape(myp5.TESS);
       renderer.fill(255, 255, 255);
       renderer.normal(-1, -1, 1);
+      renderer.setAttribute('aCustom', [1, 1, 1])
       renderer.vertex(-10, -10, 0, 0);
       renderer.fill(255, 0, 0);
       renderer.normal(1, -1, 1);
+      renderer.setAttribute('aCustom', [1, 0, 0])
       renderer.vertex(10, -10, 1, 0);
       renderer.fill(0, 255, 0);
       renderer.normal(1, 1, 1);
+      renderer.setAttribute('aCustom', [0, 1, 0])
       renderer.vertex(10, 10, 1, 1);
       renderer.fill(0, 0, 255);
       renderer.normal(-1, 1, 1);
+      renderer.setAttribute('aCustom', [0, 0, 1])
       renderer.vertex(-10, 10, 0, 1);
       renderer.endShape(myp5.CLOSE);
 
@@ -1640,6 +1644,15 @@ suite('p5.RendererGL', function() {
         renderer.immediateMode.geometry.vertexNormals[5].array(),
         [1, 1, 1]
       );
+
+      assert.deepEqual(renderer.immediateMode.geometry.aCustom, [
+          1, 0, 0,
+          0, 0, 1,
+          1, 1, 1,
+          0, 0, 1,
+          1, 0, 0,
+          0, 1, 0
+        ]);
 
       assert.deepEqual(renderer.immediateMode.geometry.vertexColors, [
         1, 0, 0, 1,
