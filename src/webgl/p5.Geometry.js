@@ -1599,6 +1599,7 @@ p5.Geometry = class Geometry {
  * @chainable
  */
   _edgesToVertices() {
+    // probably needs to add something in here for custom attributes
     this.lineVertices.clear();
     this.lineTangentsIn.clear();
     this.lineTangentsOut.clear();
