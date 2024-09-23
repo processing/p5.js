@@ -152,10 +152,18 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     for (const buff of this.retainedMode.buffers.fill) {
       buff._prepareBuffer(geometry, fillShader);
     }
-    if (Object.keys(geometry.model.userAttributes).length > 0){
-      for (const buff of this.retainedMode.buffers.user){
-        buff._prepareBuffer(geometry, fillShader);
+    for (const buff of this.retainedMode.buffers.user){
+      if(!geometry.model[buff.src]){
+        continue;
       }
+      const adjustedLength = geometry.model[buff.src].length / buff.size;
+      if(adjustedLength != geometry.model.vertices.length){
+        p5._friendlyError(`One of the geometries has a custom attribute with
+          either too many or too few values compared to vertices. 
+          There may be unexpected results from the shaders.
+          `, 'setAttribute()');
+      }
+      buff._prepareBuffer(geometry, fillShader);
     }
     fillShader.disableRemainingAttributes();
     if (geometry.indexBuffer) {
@@ -177,10 +185,18 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     for (const buff of this.retainedMode.buffers.stroke) {
       buff._prepareBuffer(geometry, strokeShader);
     }
-    if (Object.keys(geometry.model.userAttributes).length > 0){
-      for (const buff of this.retainedMode.buffers.user){
-        buff._prepareBuffer(geometry, strokeShader);
+    for (const buff of this.retainedMode.buffers.user){
+      if(!geometry.model[buff.src]){
+        continue;
       }
+      const adjustedLength = geometry.model[buff.src].length / buff.size;
+      if(adjustedLength != geometry.model.vertices.length){
+        p5._friendlyError(`One of the geometries has a custom attribute with
+          either too many or too few values compared to vertices. 
+          There may be unexpected results from the shaders.
+          `, 'setAttribute()');
+      }
+      buff._prepareBuffer(geometry, strokeShader);
     }
     strokeShader.disableRemainingAttributes();
     this._applyColorBlend(
