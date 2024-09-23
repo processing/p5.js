@@ -452,8 +452,8 @@ p5.Geometry = class Geometry {
     this.vertexNormals.length = 0;
     this.uvs.length = 0;
 
-    for (const attr of Object.keys(this.userAttributes)){
-      delete this[attr.name];
+    for (const attr in this.userAttributes){
+      delete this[attr];
     }
     this.userAttributes = {};
 
