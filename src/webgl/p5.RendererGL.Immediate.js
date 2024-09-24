@@ -42,7 +42,6 @@ p5.RendererGL.prototype.beginShape = function(mode) {
   }
   if (this.tessyVertexSize > 12){
     this.tessyVertexSize = 12;
-    this._updateTessyCombineCallback();
   }
   this.immediateMode.geometry.reset();
   this.immediateMode.contourIndices = [];
@@ -495,9 +494,6 @@ p5.RendererGL.prototype._tesselateShape = function() {
         this.tessyVertexSize -= size;
       }
     }
-  }
-  if (this.tessyVertexSize > 12){
-    this._updateTessyCombineCallback();
   }
   const polyTriangles = this._triangulate(contours);
   const originalVertices = this.immediateMode.geometry.vertices;
