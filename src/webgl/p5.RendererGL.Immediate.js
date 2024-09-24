@@ -40,8 +40,10 @@ p5.RendererGL.prototype.beginShape = function(mode) {
     delete this.userAttributes;
     this._useUserAttributes = false;
   }
-  this.tessyVertexSize = 12;
-  this.tessy = this._initTessy(this.tessyVertexSize);
+  if (this.tessyVertexSize > 12){
+    this.tessyVertexSize = 12;
+    this._updateTessyCombineCallback();
+  }
   this.immediateMode.geometry.reset();
   this.immediateMode.contourIndices = [];
   return this;
@@ -457,9 +459,6 @@ p5.RendererGL.prototype._calculateEdges = function(
  */
 p5.RendererGL.prototype._tesselateShape = function() {
   // TODO: handle non-TESS shape modes that have contours
-  if (this.tessyVertexSize > 12){
-    this._tessy = this._initTessy(this.tessyVertexSize);
-  }
   this.immediateMode.shapeMode = constants.TRIANGLES;
   const contours = [[]];
   for (let i = 0; i < this.immediateMode.geometry.vertices.length; i++) {
@@ -494,9 +493,11 @@ p5.RendererGL.prototype._tesselateShape = function() {
       } else{
         delete this.userAttributes[attr];
         this.tessyVertexSize -= size;
-        this._tessy = this._initTessy(this.tessyVertexSize);
       }
     }
+  }
+  if (this.tessyVertexSize > 12){
+    this._updateTessyCombineCallback();
   }
   const polyTriangles = this._triangulate(contours);
   const originalVertices = this.immediateMode.geometry.vertices;
