@@ -671,8 +671,7 @@ p5.RendererGL = class RendererGL extends Renderer {
 
     // Used to distinguish between user calls to vertex() and internal calls
     this.isProcessingVertices = false;
-    this.tessyVertexSize = 12;
-    this._tessy = this._initTessy(this.tessyVertexSize);
+    this._tessy = this._initTessy();
 
     this.fontInfos = {};
 
@@ -2418,7 +2417,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     const p = [p1, p2, p3, p4];
     return p;
   }
-  _initTessy(tessyVertexSize) {
+  _initTessy() {
     // function called for each vertex of tesselator output
     function vertexCallback(data, polyVertArray) {
       for (const element of data) {
@@ -2438,7 +2437,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     }
     // callback for when segments intersect and must be split
     function combinecallback(coords, data, weight) {
-      const result = new Array(tessyVertexSize).fill(0);
+      const result = new Array(p5.RendererGL.prototype.tessyVertexSize).fill(0);
       for (let i = 0; i < weight.length; i++) {
         for (let j = 0; j < result.length; j++) {
           if (weight[i] === 0 || !data[i]) continue;
@@ -2464,6 +2463,23 @@ p5.RendererGL = class RendererGL extends Renderer {
     );
 
     return tessy;
+  }
+
+  _updateTessyCombineCallback() {
+    // If custom attributes have been used, the vertex data which needs to be 
+    // combined has changed, so libtess must have its combine callback updated
+    const combinecallback = (coords, data, weight) => {
+      const result = new Array(this.tessyVertexSize).fill(0);
+      for (let i = 0; i < weight.length; i++) {
+        for (let j = 0; j < result.length; j++) {
+          if (weight[i] === 0 || !data[i]) continue;
+          result[j] += data[i][j] * weight[i];
+        }
+      }
+      return result;
+    };
+  
+    this._tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_COMBINE, combinecallback);
   }
 
   _triangulate(contours) {
@@ -2527,5 +2543,9 @@ p5.prototype._assert3d = function (name) {
       `${name}() is only supported in WEBGL mode. If you'd like to use 3D graphics and WebGL, see  https://p5js.org/examples/form-3d-primitives.html for more information.`
     );
 };
+
+// Initial vertex data size for libtess
+
+p5.RendererGL.prototype.tessyVertexSize = 12;
 
 export default p5.RendererGL;
