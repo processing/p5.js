@@ -354,7 +354,7 @@ function vector(p5, fn) {
      * </div>
      */
     toString() {
-      return `p5.Vector Object : [${this.values.join(', ')}]`;
+      return `${this.values.join(', ')}]`;
     }
 
     /**
