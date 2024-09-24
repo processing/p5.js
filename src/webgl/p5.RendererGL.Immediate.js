@@ -40,13 +40,16 @@ p5.RendererGL.prototype.beginShape = function(mode) {
     delete this.userAttributes;
     this._useUserAttributes = false;
   }
-  this.tessyVertexSize = 12;
+  if (this.tessyVertexSize > 12){
+    this.tessyVertexSize = 12;
+    this._updateTessyCombineCallback();
+  }
   this.immediateMode.geometry.reset();
   this.immediateMode.contourIndices = [];
   return this;
 };
 
-const immediateBufferStrides = {
+p5.RendererGL.prototype.immediateBufferStrides = {
   vertices: 1,
   vertexNormals: 1,
   vertexColors: 4,
@@ -86,8 +89,8 @@ p5.RendererGL.prototype.vertex = function(x, y) {
     // 1--2     1--2   4
     // When vertex index 3 is being added, add the necessary duplicates.
     if (this.immediateMode.geometry.vertices.length % 6 === 3) {
-      for (const key in immediateBufferStrides) {
-        const stride = immediateBufferStrides[key];
+      for (const key in this.immediateBufferStrides) {
+        const stride = this.immediateBufferStrides[key];
         const buffer = this.immediateMode.geometry[key];
         buffer.push(
           ...buffer.slice(
@@ -493,13 +496,16 @@ p5.RendererGL.prototype._tesselateShape = function() {
       }
     }
   }
+  if (this.tessyVertexSize > 12){
+    this._updateTessyCombineCallback();
+  }
   const polyTriangles = this._triangulate(contours);
   const originalVertices = this.immediateMode.geometry.vertices;
   this.immediateMode.geometry.vertices = [];
   this.immediateMode.geometry.vertexNormals = [];
   this.immediateMode.geometry.uvs = [];
   for (const attr in this.userAttributes){
-    delete this.immediateMode.geometry[attr]
+    this.immediateMode.geometry[attr] = [];
   }
   const colors = [];
   for (

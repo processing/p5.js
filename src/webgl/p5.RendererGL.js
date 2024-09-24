@@ -2465,6 +2465,23 @@ p5.RendererGL = class RendererGL extends Renderer {
     return tessy;
   }
 
+  _updateTessyCombineCallback() {
+    // If custom attributes have been used, the vertex data which needs to be 
+    // combined has changed, so libtess must have its combine callback updated
+    const combinecallback = (coords, data, weight) => {
+      const result = new Array(this.tessyVertexSize).fill(0);
+      for (let i = 0; i < weight.length; i++) {
+        for (let j = 0; j < result.length; j++) {
+          if (weight[i] === 0 || !data[i]) continue;
+          result[j] += data[i][j] * weight[i];
+        }
+      }
+      return result;
+    };
+  
+    this._tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_COMBINE, combinecallback);
+  }
+
   _triangulate(contours) {
     // libtess will take 3d verts and flatten to a plane for tesselation.
     // libtess is capable of calculating a plane to tesselate on, but
@@ -2527,7 +2544,7 @@ p5.prototype._assert3d = function (name) {
     );
 };
 
-// function to initialize GLU Tesselator
+// Initial vertex data size for libtess
 
 p5.RendererGL.prototype.tessyVertexSize = 12;
 
