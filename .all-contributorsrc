@@ -6348,6 +6348,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "ff6347",
+      "name": "Fabian Morón Zirfas",
+      "avatar_url": "https://avatars.githubusercontent.com/u/315106?v=4",
+      "profile": "https://fabianmoronzirfas.me",
+      "contributions": [
+        "doc",
+        "code"
+      ]
     }
   ],
   "repoType": "github",
