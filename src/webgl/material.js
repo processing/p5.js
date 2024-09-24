@@ -887,7 +887,7 @@ p5.prototype.shader = function (s) {
  * Get the default shader used with lights, materials,
  * and textures.
  *
- * You can call <a href="#/p5.Shader/modify">`materialShader().modify()`</a>
+ * You can call <a href="#/p5.Shader/modify">`baseMaterialShader().modify()`</a>
  * and change any of the following hooks:
  *
  * <table>
@@ -1032,10 +1032,10 @@ p5.prototype.shader = function (s) {
  * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
  * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
  *
- * Call `materialShader().inspectHooks()` to see all the possible hooks and
+ * Call `baseMaterialShader().inspectHooks()` to see all the possible hooks and
  * their default implementations.
  *
- * @method materialShader
+ * @method baseMaterialShader
  * @beta
  * @returns {p5.Shader} The material shader
  *
@@ -1046,7 +1046,7 @@ p5.prototype.shader = function (s) {
  *
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = materialShader().modify({
+ *   myShader = baseMaterialShader().modify({
  *     uniforms: {
  *       'float time': () => millis()
  *     },
@@ -1075,7 +1075,7 @@ p5.prototype.shader = function (s) {
  *
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = materialShader().modify({
+ *   myShader = baseMaterialShader().modify({
  *     declarations: 'vec3 myNormal;',
  *     'Inputs getPixelInputs': `(Inputs inputs) {
  *       myNormal = inputs.normal;
@@ -1115,7 +1115,7 @@ p5.prototype.shader = function (s) {
  *
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = materialShader().modify({
+ *   myShader = baseMaterialShader().modify({
  *     'Inputs getPixelInputs': `(Inputs inputs) {
  *       float factor =
  *         sin(
@@ -1150,7 +1150,7 @@ p5.prototype.shader = function (s) {
  *
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = materialShader().modify({
+ *   myShader = baseMaterialShader().modify({
  *     'Inputs getPixelInputs': `(Inputs inputs) {
  *       vec3 newNormal = inputs.normal;
  *       // Simple bump mapping: adjust the normal based on position
@@ -1189,15 +1189,15 @@ p5.prototype.shader = function (s) {
  * </code>
  * </div>
  */
-p5.prototype.materialShader = function() {
-  this._assert3d('materialShader');
-  return this._renderer.materialShader();
+p5.prototype.baseMaterialShader = function() {
+  this._assert3d('baseMaterialShader');
+  return this._renderer.baseMaterialShader();
 };
 
 /**
  * Get the shader used by <a href="#/p5/normalMaterial">`normalMaterial()`</a>.
  *
- * You can call <a href="#/p5.Shader/modify">`normalShader().modify()`</a>
+ * You can call <a href="#/p5.Shader/modify">`baseNormalShader().modify()`</a>
  * and change any of the following hooks:
  *
  * Hook | Description
@@ -1217,10 +1217,10 @@ p5.prototype.materialShader = function() {
  * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
  * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
  *
- * Call `normalShader().inspectHooks()` to see all the possible hooks and
+ * Call `baseNormalShader().inspectHooks()` to see all the possible hooks and
  * their default implementations.
  *
- * @method normalShader
+ * @method baseNormalShader
  * @beta
  * @returns {p5.Shader} The `normalMaterial` shader
  *
@@ -1231,7 +1231,7 @@ p5.prototype.materialShader = function() {
  *
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = normalShader().modify({
+ *   myShader = baseNormalShader().modify({
  *     uniforms: {
  *       'float time': () => millis()
  *     },
@@ -1258,7 +1258,7 @@ p5.prototype.materialShader = function() {
  *
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = normalShader().modify({
+ *   myShader = baseNormalShader().modify({
  *     'vec3 getWorldNormal': '(vec3 normal) { return abs(normal); }',
  *     'vec4 getFinalColor': `(vec4 color) {
  *       // Map the r, g, and b values of the old normal to new colors
@@ -1284,15 +1284,15 @@ p5.prototype.materialShader = function() {
  * </code>
  * </div>
  */
-p5.prototype.normalShader = function() {
-  this._assert3d('materialShader');
-  return this._renderer.normalShader();
+p5.prototype.baseNormalShader = function() {
+  this._assert3d('baseNormalShader');
+  return this._renderer.baseNormalShader();
 };
 
 /**
  * Get the shader used when no lights or materials are applied.
  *
- * You can call <a href="#/p5.Shader/modify">`colorShader().modify()`</a>
+ * You can call <a href="#/p5.Shader/modify">`baseColorShader().modify()`</a>
  * and change any of the following hooks:
  *
  * Hook | Description
@@ -1312,10 +1312,10 @@ p5.prototype.normalShader = function() {
  * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
  * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
  *
- * Call `colorShader().inspectHooks()` to see all the possible hooks and
+ * Call `baseColorShader().inspectHooks()` to see all the possible hooks and
  * their default implementations.
  *
- * @method colorShader
+ * @method baseColorShader
  * @beta
  * @returns {p5.Shader} The color shader
  *
@@ -1326,7 +1326,7 @@ p5.prototype.normalShader = function() {
  *
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = colorShader().modify({
+ *   myShader = baseColorShader().modify({
  *     uniforms: {
  *       'float time': () => millis()
  *     },
@@ -1347,15 +1347,15 @@ p5.prototype.normalShader = function() {
  * </code>
  * </div>
  */
-p5.prototype.colorShader = function() {
-  this._assert3d('colorShader');
-  return this._renderer.colorShader();
+p5.prototype.baseColorShader = function() {
+  this._assert3d('baseColorShader');
+  return this._renderer.baseColorShader();
 };
 
 /**
  * Get the shader used when drawing the strokes of shapes.
  *
- * You can call <a href="#/p5.Shader/modify">`strokeShader().modify()`</a>
+ * You can call <a href="#/p5.Shader/modify">`baseStrokeShader().modify()`</a>
  * and change any of the following hooks:
  *
  * <table>
@@ -1487,10 +1487,10 @@ p5.prototype.colorShader = function() {
  * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
  * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
  *
- * Call `strokeShader().inspectHooks()` to see all the possible hooks and
+ * Call `baseStrokeShader().inspectHooks()` to see all the possible hooks and
  * their default implementations.
  *
- * @method strokeShader
+ * @method baseStrokeShader
  * @beta
  * @returns {p5.Shader} The stroke shader
  *
@@ -1501,7 +1501,7 @@ p5.prototype.colorShader = function() {
  *
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = strokeShader().modify({
+ *   myShader = baseStrokeShader().modify({
  *     'Inputs getPixelInputs': `(Inputs inputs) {
  *       float opacity = 1.0 - smoothstep(
  *         0.0,
@@ -1535,7 +1535,7 @@ p5.prototype.colorShader = function() {
  *
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = strokeShader().modify({
+ *   myShader = baseStrokeShader().modify({
  *     uniforms: {
  *       'float time': () => millis()
  *     },
@@ -1581,7 +1581,7 @@ p5.prototype.colorShader = function() {
  *
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = strokeShader().modify({
+ *   myShader = baseStrokeShader().modify({
  *     'float random': `(vec2 p) {
  *       vec3 p3  = fract(vec3(p.xyx) * .1031);
  *       p3 += dot(p3, p3.yzx + 33.33);
@@ -1620,9 +1620,9 @@ p5.prototype.colorShader = function() {
  * </code>
  * </div>
  */
-p5.prototype.strokeShader = function() {
-  this._assert3d('strokeShader');
-  return this._renderer.strokeShader();
+p5.prototype.baseStrokeShader = function() {
+  this._assert3d('baseStrokeShader');
+  return this._renderer.baseStrokeShader();
 };
 
 /**
