@@ -34,7 +34,7 @@ function vector(p5, fn) {
   const calculateRemainderND = function (...components) {
     for (let i = 0; i < components.length; i++) {
       if (components[i] !== 0) {
-        this[i] = this[i] % components[i];
+        this._values[i] = this._values[i] % components[i];
       }
     }
     return this;
@@ -145,17 +145,90 @@ function vector(p5, fn) {
       }
     }
 
+    /**
+     * Gets the values of the vector.
+     *
+     * This method returns an array of numbers that represent the vector. 
+     * Each number in the array corresponds to a different component of the vector, 
+     * like its position in different directions (e.g., x, y, z).
+     *
+     * @returns {Array<number>} The array of values representing the vector.
+     */
     get values() {
       return this._values
     }
 
+    /**
+     * Sets the values of the vector.
+     *
+     * This method allows you to update the entire vector with a new set of values.
+     * You need to provide an array of numbers, where each number represents a component
+     * of the vector (e.g., x, y, z). The length of the array should match the number of
+     * dimensions of the vector. If the array is shorter, the missing components will be
+     * set to 0. If the array is longer, the extra values will be ignored.
+     *
+     * @param {Array<number>} newValues - An array of numbers representing the new values for the vector.
+     *
+     */
     set values(newValues) {
       this._values = newValues.slice()
     }
 
+    /**
+     * Gets the x component of the vector.
+     *
+     * This method returns the value of the x component of the vector. 
+     * Think of the x component as the horizontal position or the first number in the vector.
+     * If the x component is not defined, it will return 0.
+     *
+     * @returns {number} The x component of the vector. Returns 0 if the value is not defined.
+     */
     get x() {
       return this._values[0] || 0
     }
+
+    /**
+     * Retrieves the value at the specified index from the vector.
+     *
+     * This method allows you to get the value of a specific component of the vector
+     * by providing its index. Think of the vector as a list of numbers, where each
+     * number represents a different direction (like x, y, or z). The index is just
+     * the position of the number in that list.
+     *
+     * For example, if you have a vector with values 10, 20, 30 the index 0 would
+     * give you the first value 10, index 1 would give you the second value 20,
+     * and so on.
+     *
+     * @param {number} index - The position of the value you want to get from the vector.
+     * @returns {number} The value at the specified position in the vector.
+     * @throws Will throw an error if the index is out of bounds, meaning if you try to
+     *          get a value from a position that doesn't exist in the vector.
+     */
+    getValue(index) {
+      if (index < this._values.length) {
+        return this._values[index]
+      } else {
+        p5._friendlyError(
+          'The index parameter is trying to set a value outside the bounds of the vector',
+          'p5.Vector.setValue'
+        );
+      }
+    }
+
+    /**
+     * Sets the value at the specified index of the vector.
+     *
+     * This method allows you to change a specific component of the vector by providing its index and the new value you want to set. 
+     * Think of the vector as a list of numbers, where each number represents a different direction (like x, y, or z). 
+     * The index is just the position of the number in that list.
+     *
+     * For example, if you have a vector with values [0, 20, 30], and you want to change the second value (20) to 50, 
+     * you would use this method with index 1 (since indexes start at 0) and value 50.
+     *
+     * @param {number} index - The position in the vector where you want to set the new value.
+     * @param {number} value - The new value you want to set at the specified position.
+     * @throws Will throw an error if the index is outside the bounds of the vector, meaning if you try to set a value at a position that doesn't exist in the vector.
+     */
 
     setValue(index, value) {
       if (index < this._values.length) {
@@ -167,23 +240,97 @@ function vector(p5, fn) {
         );
       }
     }
+
+    /**
+     * Gets the y component of the vector.
+     *
+     * This method returns the value of the y component of the vector.
+     * Think of the y component as the vertical position or the second number in the vector.
+     * If the y component is not defined, it will return 0.
+     *
+     * @returns {number} The y component of the vector. Returns 0 if the value is not defined.
+     */
     get y() {
       return this._values[1] || 0
     }
+
+    /**
+     * Gets the z component of the vector.
+     *
+     * This method returns the value of the z component of the vector.
+     * Think of the z component as the depth or the third number in the vector.
+     * If the z component is not defined, it will return 0.
+     *
+     * @returns {number} The z component of the vector. Returns 0 if the value is not defined.
+     */
     get z() {
       return this._values[2] || 0
     }
 
+
+    /**
+     * Gets the w component of the vector.
+     *
+     * This method returns the value of the w component of the vector.
+     * Think of the w component as the fourth number in the vector.
+     * If the w component is not defined, it will return 0.
+     *
+     * @returns {number} The w component of the vector. Returns 0 if the value is not defined.
+     */
+    get w() {
+      return this._values[3] || 0;
+    }
+
+    /**
+     * Sets the x component of the vector.
+     *
+     * This method allows you to change the x value of the vector. 
+     * The x value is the first number in the vector, representing the horizontal position.
+     * By calling this method, you can update the x value to a new number.
+     *
+     * @param {number} xVal - The new value for the x component.
+     */
     set x(xVal) {
       this._values[0] = xVal
     }
 
+    /**
+     * Sets the y component of the vector.
+     *
+     * This method allows you to change the y value of the vector. 
+     * The y value is the second number in the vector, representing the vertical position.
+     * By calling this method, you can update the y value to a new number.
+     *
+     * @param {number} yVal - The new value for the y component.
+     */
     set y(yVal) {
       this._values[1] = yVal
     }
 
+    /**
+     * Sets the z component of the vector.
+     *
+     * This method allows you to change the z value of the vector. 
+     * The z value is the third number in the vector, representing the depth or the third dimension.
+     * By calling this method, you can update the z value to a new number.
+     *
+     * @param {number} zVal - The new value for the z component.
+     */
     set z(zVal) {
       this._values[2] = zVal
+    }
+
+    /**
+     * Sets the w component of the vector.
+     *
+     * This method allows you to change the w value of the vector. 
+     * The w value is the fourth number in the vector, representing the fourth dimension.
+     * By calling this method, you can update the w value to a new number.
+     *
+     * @param {number} wVal - The new value for the w component.
+     */
+    set w(wVal) {
+      this._values[3] = wVal;
     }
 
     /**
@@ -278,6 +425,7 @@ function vector(p5, fn) {
       this.dimensions = this.values.length;
       return this;
     }
+
     /**
      * Returns a copy of the <a href="#/p5.Vector">p5.Vector</a> object.
      *
@@ -461,6 +609,7 @@ function vector(p5, fn) {
       });
       return this;
     }
+
     /**
      * Performs modulo (remainder) division with a vector's `x`, `y`, and `z`
      * components.
@@ -1010,6 +1159,7 @@ function vector(p5, fn) {
       }
       return this;
     }
+
     /**
      * Divides a vector's `x`, `y`, and `z` components.
      *
@@ -2996,23 +3146,24 @@ function vector(p5, fn) {
      * @param {p5.Vector|Array} value vector to compare.
      * @return {Boolean}
      */
-    equals(x, y, z) {
-      let a, b, c;
-      if (x instanceof p5.Vector) {
-        a = x.x || 0;
-        b = x.y || 0;
-        c = x.z || 0;
-      } else if (Array.isArray(x)) {
-        a = x[0] || 0;
-        b = x[1] || 0;
-        c = x[2] || 0;
+    equals(...args) {
+      let values;
+      if (args[0] instanceof p5.Vector) {
+        values = args[0]._values;
+      } else if (Array.isArray(args[0])) {
+        values = args[0];
       } else {
-        a = x || 0;
-        b = y || 0;
-        c = z || 0;
+        values = args;
       }
-      return this.x === a && this.y === b && this.z === c;
+
+      for (let i = 0; i < this._values.length; i++) {
+        if (this._values[i] !== (values[i] || 0)) {
+          return false;
+        }
+      }
+      return true;
     }
+
 
     /**
      * Replaces the components of a <a href="#/p5.Vector">p5.Vector</a> that are very close to zero with zero.
@@ -3028,9 +3179,9 @@ function vector(p5, fn) {
      * @chainable
      */
     clampToZero() {
-      this.x = this._clampToZero(this.x);
-      this.y = this._clampToZero(this.y);
-      this.z = this._clampToZero(this.z);
+      for (let i = 0; i < this._values.length; i++) {
+        this._values[i] = this._clampToZero(this._values[i]);
+      }
       return this;
     }
 
