@@ -474,6 +474,7 @@ p5.prototype.loadModel = function(path,options) {
           if (flipV) {
             model.flipV();
           }
+          model._makeTriangleEdges();
 
           self._decrementPreload();
           if (typeof successCallback === 'function') {
@@ -1117,11 +1118,6 @@ p5.prototype.model = function(model) {
   p5._validateParameters('model', arguments);
   if (model.vertices.length > 0) {
     if (!this._renderer.geometryInHash(model.gid)) {
-
-      if (model.edges.length === 0) {
-        model._makeTriangleEdges();
-      }
-
       model._edgesToVertices();
       this._renderer.createBuffers(model.gid, model);
     }
@@ -1292,6 +1288,8 @@ p5.prototype.createModel = function(modelString, fileType=' ', options) {
   if (flipV) {
     model.flipV();
   }
+
+  model._makeTriangleEdges();
 
   if (typeof successCallback === 'function') {
     successCallback(model);

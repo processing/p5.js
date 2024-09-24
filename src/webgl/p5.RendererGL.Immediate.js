@@ -214,7 +214,7 @@ p5.RendererGL.prototype.endShape = function(
   if (this.immediateMode.geometry.vertices.length === 3 &&
       this.immediateMode.shapeMode === constants.TESS
   ) {
-    this.immediateMode.shapeMode === constants.TRIANGLES;
+    this.immediateMode.shapeMode = constants.TRIANGLES;
   }
 
   this.isProcessingVertices = true;
