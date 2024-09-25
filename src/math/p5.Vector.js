@@ -1354,98 +1354,44 @@ function vector(p5, fn) {
      * @param  {p5.Vector} v vector to divide the components of the original vector by.
      * @chainable
      */
-    div(x, y, z) {
-      if (x instanceof p5.Vector) {
-        // new p5.Vector will check that values are valid upon construction but it's possible
-        // that someone could change the value of a component after creation, which is why we still
-        // perform this check
-        if (
-          Number.isFinite(x.x) &&
-          Number.isFinite(x.y) &&
-          Number.isFinite(x.z) &&
-          typeof x.x === 'number' &&
-          typeof x.y === 'number' &&
-          typeof x.z === 'number'
-        ) {
-          const isLikely2D = x.z === 0 && this.z === 0;
-          if (x.x === 0 || x.y === 0 || (!isLikely2D && x.z === 0)) {
+    div(...args) {
+      if (args.length === 0) return this
+      if (args.length === 1 && args[0] instanceof p5.Vector) {
+        const v = args[0];
+        if (v._values.every(val => Number.isFinite(val) && typeof val === 'number')) {
+          if (v._values.some(val => val === 0)) {
             console.warn('p5.Vector.prototype.div:', 'divide by 0');
             return this;
           }
-          this.x /= x.x;
-          this.y /= x.y;
-          if (!isLikely2D) {
-            this.z /= x.z;
-          }
+          this._values = this._values.map((val, i) => val / v._values[i]);
         } else {
-          console.warn(
-            'p5.Vector.prototype.div:',
-            'x contains components that are either undefined or not finite numbers'
-          );
+          console.warn('p5.Vector.prototype.div:', 'vector contains components that are either undefined or not finite numbers');
         }
         return this;
       }
-      if (Array.isArray(x)) {
-        if (
-          x.every(element => Number.isFinite(element)) &&
-          x.every(element => typeof element === 'number')
-        ) {
-          if (x.some(element => element === 0)) {
+
+      if (args.length === 1 && Array.isArray(args[0])) {
+        const arr = args[0];
+        if (arr.every(val => Number.isFinite(val) && typeof val === 'number')) {
+          if (arr.some(val => val === 0)) {
             console.warn('p5.Vector.prototype.div:', 'divide by 0');
             return this;
           }
-
-          if (x.length === 1) {
-            this.x /= x[0];
-            this.y /= x[0];
-            this.z /= x[0];
-          } else if (x.length === 2) {
-            this.x /= x[0];
-            this.y /= x[1];
-          } else if (x.length === 3) {
-            this.x /= x[0];
-            this.y /= x[1];
-            this.z /= x[2];
-          }
+          this._values = this._values.map((val, i) => val / arr[i]);
         } else {
-          console.warn(
-            'p5.Vector.prototype.div:',
-            'x contains components that are either undefined or not finite numbers'
-          );
+          console.warn('p5.Vector.prototype.div:', 'array contains components that are either undefined or not finite numbers');
         }
-
         return this;
       }
 
-      const vectorComponents = [...arguments];
-      if (
-        vectorComponents.every(element => Number.isFinite(element)) &&
-        vectorComponents.every(element => typeof element === 'number')
-      ) {
-        if (vectorComponents.some(element => element === 0)) {
+      if (args.every(val => Number.isFinite(val) && typeof val === 'number')) {
+        if (args.some(val => val === 0)) {
           console.warn('p5.Vector.prototype.div:', 'divide by 0');
           return this;
         }
-
-        if (arguments.length === 1) {
-          this.x /= x;
-          this.y /= x;
-          this.z /= x;
-        }
-        if (arguments.length === 2) {
-          this.x /= x;
-          this.y /= y;
-        }
-        if (arguments.length === 3) {
-          this.x /= x;
-          this.y /= y;
-          this.z /= z;
-        }
+        this._values = this._values.map((val, i) => val / args[0]);
       } else {
-        console.warn(
-          'p5.Vector.prototype.div:',
-          'x, y, or z arguments are either undefined or not a finite number'
-        );
+        console.warn('p5.Vector.prototype.div:', 'arguments contain components that are either undefined or not finite numbers');
       }
 
       return this;
