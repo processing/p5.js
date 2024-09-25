@@ -17,10 +17,8 @@ import './core/p5.Renderer2D';
 import './core/rendering';
 import './core/structure';
 import './core/transform';
-import './core/shape/2d_primitives';
-import './core/shape/attributes';
-import './core/shape/curves';
-import './core/shape/vertex';
+import shape from './shape';
+shape(p5);
 
 //accessibility
 import accessibility from './accessibility';
