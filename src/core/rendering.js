@@ -728,7 +728,7 @@ p5.prototype.clearDepth = function(depth) {
  * final color results from blending the source pixel's color with the canvas
  * pixel's color. RGB color values from the source and canvas pixels are
  * compared, added, subtracted, multiplied, and divided to create different
- * effects. #d41159 values with #d41159 values, greens with greens, and blues with
+ * effects. Red values with red values, greens with greens, and blues with
  * blues.
  *
  * The parameter, `mode`, sets the blend mode. For example, calling
@@ -805,14 +805,66 @@ p5.prototype.clearDepth = function(depth) {
  *   strokeWeight(30);
  *
  *   // Draw the first line.
- *   stroke('#25b7ff');
+ *   stroke('#1a85ff');
  *   line(25, 25, 75, 75);
  *
  *   // Draw the second line.
- *   stroke('#e6187e');
+ *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('A faint #25b7ff line and a faint #e6187e line form an X on a gray background. The area where they overlap is #b518b2.');
+ *   describe('A faint #1a85ff line and a faint #d41159 line form an X on a gray background. The area where they overlap is #B518B2.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(180);
+ *
+ *   // Set the blend mode.
+ *   blendMode(ADD);
+ *
+ *   // Style the lines.
+ *   strokeWeight(30);
+ *
+ *   // Draw the first line.
+ *   stroke('#1a85ff');
+ *   line(25, 25, 75, 75);
+ *
+ *   // Draw the second line.
+ *   stroke('#d41159');
+ *   line(75, 25, 25, 75);
+ *
+ *   describe('A faint #1a85ff line and a faint #d41159 line form an X on a gray background. The area where they overlap is #b518b2.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(180);
+ *
+ *   // Set the blend mode.
+ *   blendMode(DARKEST);
+ *
+ *   // Style the lines.
+ *   strokeWeight(30);
+ *
+ *   // Draw the first line.
+ *   stroke('#1a85ff');
+ *   line(25, 25, 75, 75);
+ *
+ *   // Draw the second line.
+ *   stroke('#d41159');
+ *   line(75, 25, 25, 75);
+ *
+ *   describe('A faint #1a85ff line and a faint #d41159 line form an X on a gray background. The area where they overlap is #b518b2.');
  * }
  * </code>
  * </div>
@@ -831,14 +883,14 @@ p5.prototype.clearDepth = function(depth) {
  *   strokeWeight(30);
  *
  *   // Draw the first line.
- *   stroke('#006fb4');
+ *   stroke('#1a85ff');
  *   line(25, 25, 75, 75);
  *
  *   // Draw the second line.
- *   stroke('#a50028');
+ *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('A #006fb4 line and a #a50028 line form an X on a gray background. The area where they overlap is black.');
+ *   describe('A #1a85ff line and a #d41159 line form an X on a gray background. The area where they overlap is black.');
  * }
  * </code>
  * </div>
@@ -857,14 +909,14 @@ p5.prototype.clearDepth = function(depth) {
  *   strokeWeight(30);
  *
  *   // Draw the first line.
- *   stroke('#b4b4ff');
+ *   stroke('#1a85ff');
  *   line(25, 25, 75, 75);
  *
  *   // Draw the second line.
- *   stroke('#d4b4b4');
+ *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('A faint #b4b4ff line and a faint #d4b4b4 line form an X on a gray background. The area where they overlap is #f4ddff.');
+ *   describe('A faint #1a85ff line and a faint #d41159 line form an X on a gray background. The area where they overlap is #d4b4ff.');
  * }
  * </code>
  * </div>
@@ -883,14 +935,14 @@ p5.prototype.clearDepth = function(depth) {
  *   strokeWeight(30);
  *
  *   // Draw the first line.
- *   stroke('#a97d4b');
+ *   stroke('#1a85ff');
  *   line(25, 25, 75, 75);
  *
  *   // Draw the second line.
- *   stroke('#a97d4b');
+ *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('A #a97d4b line and a #a97d4b line form an X on a gray background. The area where they overlap is #f4ddff.');
+ *   describe('A #1a85ff line and a #d41159 line form an X on a gray background. The area where they overlap is #647d70.');
  * }
  * </code>
  * </div>
@@ -909,14 +961,14 @@ p5.prototype.clearDepth = function(depth) {
  *   strokeWeight(30);
  *
  *   // Draw the first line.
- *   stroke('#125eb4');
+ *   stroke('#1a85ff');
  *   line(25, 25, 75, 75);
  *
  *   // Draw the second line.
- *   stroke('#96187e');
+ *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('A #125eb4 line and a #96187e line form an X on a gray background. The area where they overlap is #f4ddff.');
+ *   describe('A #1a85ff line and a #d41159 line form an X on a gray background. The area where they overlap is #0f063f.');
  * }
  * </code>
  * </div>
@@ -935,14 +987,14 @@ p5.prototype.clearDepth = function(depth) {
  *   strokeWeight(30);
  *
  *   // Draw the first line.
- *   stroke('#bcdbff');
+ *   stroke('#1a85ff');
  *   line(25, 25, 75, 75);
  *
  *   // Draw the second line.
- *   stroke('#f2b9ce');
+ *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('A faint #bcdbff line and a faint #f2b9ce line form an X on a gray background. The area where they overlap is #f4ddff.');
+ *   describe('A faint #1a85ff line and a faint #d41159 line form an X on a gray background. The area where they overlap is #f4ddff.');
  * }
  * </code>
  * </div>
@@ -1013,14 +1065,14 @@ p5.prototype.clearDepth = function(depth) {
  *   strokeWeight(30);
  *
  *   // Draw the first line.
- *   stroke('#9a2f4b');
+ *   stroke('#1a85ff');
  *   line(25, 25, 75, 75);
  *
  *   // Draw the second line.
- *   stroke('#20a35b');
+ *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('A #9a2f4b line and a #20a35b line form an X on a gray background. The area where they overlap is #647e70.');
+ *   describe('A #1a85ff line and a #d41159 line form an X on a gray background. The area where they overlap is #3a1e0e.');
  * }
  * </code>
  * </div>
@@ -1039,14 +1091,14 @@ p5.prototype.clearDepth = function(depth) {
  *   strokeWeight(30);
  *
  *   // Draw the first line.
- *   stroke('#78b7ff');
+ *   stroke('#1a85ff');
  *   line(25, 25, 75, 75);
  *
  *   // Draw the second line.
- *   stroke('#e6739d');
+ *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('A faint #78b7ff line and a faint #e6739d line form an X on a gray background. The area where they overlap is #c879ff.');
+ *   describe('A faint #1a85ff line and a faint #d41159 line form an X on a gray background. The area where they overlap is #c879ff.');
  * }
  * </code>
  * </div>
@@ -1065,14 +1117,14 @@ p5.prototype.clearDepth = function(depth) {
  *   strokeWeight(30);
  *
  *   // Draw the first line.
- *   stroke('#8ab6d6');
+ *   stroke('#1a85ff');
  *   line(25, 25, 75, 75);
  *
  *   // Draw the second line.
- *   stroke('#cb86a4');
+ *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('A faint #8ab6d6 line and a faint #cb86a4 line form an X on a gray background. The area where they overlap is #aa89cb.');
+ *   describe('A faint #1a85ff line and a faint #d41159 line form an X on a gray background. The area where they overlap is #ab87cc.');
  * }
  * </code>
  * </div>
@@ -1091,14 +1143,14 @@ p5.prototype.clearDepth = function(depth) {
  *   strokeWeight(30);
  *
  *   // Draw the first line.
- *   stroke('#c8ffff');
+ *   stroke('#1a85ff');
  *   line(25, 25, 75, 75);
  *
  *   // Draw the second line.
- *   stroke('#ffc1ff');
+ *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('A faint #c8ffff line and a faint #ffc1ff line form an X on a gray background. The area where they overlap is white.');
+ *   describe('A faint #1a85ff line and a faint #d41159 line form an X on a gray background. The area where they overlap is white.');
  * }
  * </code>
  * </div>
@@ -1118,11 +1170,11 @@ p5.prototype.clearDepth = function(depth) {
  *   // Style the lines.
  *   strokeWeight(30);
  *
- *   // Draw the #1a85ff line.
+ *   // Draw the blue line.
  *   stroke('blue');
  *   line(-25, -25, 25, 25);
  *
- *   // Draw the #d41159 line.
+ *   // Draw the red line.
  *   stroke('red');
  *   line(25, -25, -25, 25);
  *
