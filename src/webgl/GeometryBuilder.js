@@ -74,7 +74,8 @@ class GeometryBuilder {
       this.geometry.setAttribute(attr, missingValues, size);
     }
     for (const attr in inputAttrs){
-      const data = input[attr];
+      const src = attr.concat('Src');
+      const data = input[src];
       const size = inputAttrs[attr];
       if (numPreviousVertices > 0 && !(attr in this.geometry.userAttributes)){
         const numMissingValues = size * numPreviousVertices;

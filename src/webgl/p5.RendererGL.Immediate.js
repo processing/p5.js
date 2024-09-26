@@ -128,8 +128,9 @@ p5.RendererGL.prototype.vertex = function(x, y) {
     const geom = this.immediateMode.geometry;
     const verts = geom.vertices;
     const data = this.userAttributes[attr];
+    const src = attr.concat('Src');
     const size = data.length ? data.length : 1;
-    if (!geom.hasOwnProperty(attr) && verts.length > 1) {
+    if (!geom.hasOwnProperty(src) && verts.length > 1) {
       const numMissingValues = size * (verts.length - 1);
       const missingValues = Array(numMissingValues).fill(0);
       geom.setAttribute(attr, missingValues, size);
@@ -199,15 +200,16 @@ p5.RendererGL.prototype.setAttribute = function(attributeName, data){
   if (!this.userAttributes.hasOwnProperty(attributeName)){
     this.tessyVertexSize += size;
   }
-  this.userAttributes[attributeName] = data;
   const buff = attributeName.concat('Buffer');
+  const attributeSrc = attributeName.concat('Src');
+  this.userAttributes[attributeName] = data;
   const bufferExists = this.immediateMode
     .buffers
     .user
     .some(buffer => buffer.dst === buff);
   if(!bufferExists){
     this.immediateMode.buffers.user.push(
-      new p5.RenderBuffer(size, attributeName, buff, attributeName, this)
+      new p5.RenderBuffer(size, attributeSrc, buff, attributeName, this)
     );
   }
 };
@@ -483,11 +485,12 @@ p5.RendererGL.prototype._tesselateShape = function() {
       this.immediateMode.geometry.vertexNormals[i].z
     );
     for (const attr in this.userAttributes){
+      const attributeSrc = attr.concat('Src'); 
       const size = this.userAttributes[attr].length ? this.userAttributes[attr].length : 1;
       const start = i * size;
       const end = start + size;
-      if (this.immediateMode.geometry[attr]){
-        const vals = this.immediateMode.geometry[attr].slice(start, end);
+      if (this.immediateMode.geometry[attributeSrc]){
+        const vals = this.immediateMode.geometry[attributeSrc].slice(start, end);
         contours[contours.length-1].push(...vals);
       } else{
         delete this.userAttributes[attr];
@@ -501,7 +504,8 @@ p5.RendererGL.prototype._tesselateShape = function() {
   this.immediateMode.geometry.vertexNormals = [];
   this.immediateMode.geometry.uvs = [];
   for (const attr in this.userAttributes){
-    this.immediateMode.geometry[attr] = [];
+    const attributeSrc = attr.concat('Src'); 
+    this.immediateMode.geometry[attributeSrc] = [];
   }
   const colors = [];
   for (

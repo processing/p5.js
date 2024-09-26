@@ -117,6 +117,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, model) {
 
   for (const attr in model.userAttributes){
     const buff = attr.concat('Buffer');
+    const attributeSrc = attr.concat('Src');
     const size = model.userAttributes[attr];
     const bufferExists = this.retainedMode
     .buffers
@@ -124,7 +125,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, model) {
     .some(buffer => buffer.dst === buff);
     if (!bufferExists){
       this.retainedMode.buffers.user.push(
-        new p5.RenderBuffer(size, attr, buff, attr, this)
+        new p5.RenderBuffer(size, attributeSrc, buff, attr, this)
       );
     }
   }

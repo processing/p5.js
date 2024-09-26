@@ -453,7 +453,8 @@ p5.Geometry = class Geometry {
     this.uvs.length = 0;
 
     for (const attr in this.userAttributes){
-      delete this[attr];
+      const src = attr.concat('Src'); 
+      delete this[src];
     }
     this.userAttributes = {};
 
@@ -1920,8 +1921,9 @@ p5.Geometry = class Geometry {
   }
 
   setAttribute(attributeName, data, size = data.length ? data.length : 1){
-    if (!this.hasOwnProperty(attributeName)){
-      this[attributeName] = [];
+    const attributeSrc = attributeName.concat('Src');
+    if (!this.hasOwnProperty(attributeSrc)){
+      this[attributeSrc] = [];
       this.userAttributes[attributeName] = size;
     }
     if (size != this.userAttributes[attributeName]){
@@ -1929,9 +1931,9 @@ p5.Geometry = class Geometry {
          or if it was an accident, set ${attributeName} to have the same number of inputs each time!`, 'setAttribute()');
     }
     if (data.length){
-    this[attributeName].push(...data);
+    this[attributeSrc].push(...data);
     } else{
-      this[attributeName].push(data);
+      this[attributeSrc].push(data);
     }
   }
 };
