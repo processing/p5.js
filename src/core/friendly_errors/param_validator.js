@@ -112,6 +112,18 @@ function validateParams(p5, fn) {
    * @returns {z.ZodSchema} Zod schema
    */
   function generateZodSchemasForFunc(func) {
+    // A special case for `p5.Color.paletteLerp`, which has an unusual and
+    // complicated function signature not shared by any other function in p5.
+    if (func === 'p5.Color.paletteLerp') {
+      return z.tuple([
+        z.array(z.tuple([
+          z.instanceof(p5.Color),
+          z.number()
+        ])),
+        z.number()
+      ]);
+    }
+
     // Expect global functions like `sin` and class methods like `p5.Vector.add`
     const ichDot = func.lastIndexOf('.');
     const funcName = func.slice(ichDot + 1);

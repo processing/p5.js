@@ -197,4 +197,16 @@ suite('Validate Params', function () {
       });
     });
   });
+
+  suite('validateParams: paletteLerp', function () {
+    test('paletteLerp(): no firendly-err-msg', function () {
+      const colorStops = [
+        [new mockP5.Color(), 0.2],
+        [new mockP5.Color(), 0.8],
+        [new mockP5.Color(), 0.5]
+      ];
+      const result = mockP5Prototype._validateParams('p5.Color.paletteLerp', [colorStops, 0.5]);
+      assert.isTrue(result.success);
+    })
+  })
 });
