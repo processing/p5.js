@@ -2255,30 +2255,31 @@ p5.prototype.normal = function(x, y, z) {
 
 /** Sets the shader's vertex attribute variables.
  * 
- * Shader programs run on the computer's graphics processing unit (GPU)
- * They live in a part of the computer's memory that's completely separate from
- * the sketch that runs them. Attributes are variables attached to vertices
- * within a shader program. They provide a way to attach data to vertices
- * and pass values from a sketch running on the CPU to a shader program.
+ * An attribute is a variable belonging to a vertex in a shader. p5.js provides some
+ * default attributes, such as `aPosition`, `aNormal`, `aVertexColor`, etc. Custom
+ * attributes can also be defined within `beginShape()` and `endShape()`.
  * 
  * The first parameter, `attributeName`, is a string with the attribute's name.
+ * This is the same variable name which should be declared in the shader, similar to
+ * `setUniform()`.
  * 
- * The second parameter, `data`, is the value that should be assigned to the 
- * attribute. This value will be applied to subsequent vertices created with
+ * The second parameter, `data`, is the value assigned to the attribute. This 
+ * value will be applied to subsequent vertices created with 
  * <a href="#/p5/vertex">vertex()</a>. It can be a Number or an array of numbers,
- * and in the shader program the type can be interpreted according to the WebGL
+ * and in the shader program the type can be declared according to the WebGL
  * specification. Common types include `float`, `vec2`, `vec3`, `vec4` or matrices.
  * 
  * @example
  * <div>
  * <code>
  * let vertSrc = `
+ *  #version 300 es
  *  precision highp float;
  *  uniform mat4 uModelViewMatrix;
  *  uniform mat4 uProjectionMatrix;
  *  
- *  attribute vec3 aPosition;
- *  attribute vec2 aOffset;
+ *  in vec3 aPosition;
+ *  in vec2 aOffset;
  * 
  *  void main(){
  *    vec4 positionVec4 = vec4(aPosition.xyz, 1.0);
@@ -2288,6 +2289,7 @@ p5.prototype.normal = function(x, y, z) {
  * `;
  * 
  * let fragSrc = `
+ *  #version 300 es
  *  precision highp float;
  * 
  *  void main(){
