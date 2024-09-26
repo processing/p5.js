@@ -6,6 +6,14 @@
 
 import p5 from './main';
 import * as constants from './constants';
+import primitives2D from '../shape/2d_primitives';
+import attributes from '../shape/attributes';
+import curves from '../shape/curves';
+import vertex from '../shape/vertex';
+import setting from '../color/setting';
+import image from '../image/image';
+import loadingDisplaying from '../image/loading_displaying';
+import pixels from '../image/pixels';
 
 /**
  * A class to describe a drawing surface that's separate from the main canvas.
@@ -100,16 +108,16 @@ p5.Graphics = class Graphics {
     this._renderer = new p5.renderers[r](this._pInst, w, h, false, canvas);
 
     // Attach renderer methods
-    for(const p of Object.getOwnPropertyNames(p5.renderers[r].prototype)) {
-      if(
-        p !== 'constructor' &&
-        p[0] !== '_' &&
-        !(p in this) &&
-        typeof this._renderer[p] === 'function'
-      ){
-        this[p] = this._renderer[p].bind(this._renderer);
-      }
-    }
+    // for(const p of Object.getOwnPropertyNames(p5.renderers[r].prototype)) {
+    //   if(
+    //     p !== 'constructor' &&
+    //     p[0] !== '_' &&
+    //     !(p in this) &&
+    //     typeof this._renderer[p] === 'function'
+    //   ){
+    //     this[p] = this._renderer[p].bind(this._renderer);
+    //   }
+    // }
 
     // Attach renderer properties
     for (const p in this._renderer) {
@@ -122,25 +130,47 @@ p5.Graphics = class Graphics {
     }
 
     // bind methods and props of p5 to the new object
-    for (const p in p5.prototype) {
-      if (!this[p]) {
-        // console.log(p);
-        if (typeof p5.prototype[p] === 'function') {
-          this[p] = p5.prototype[p].bind(this);
-        } else if(p !== 'deltaTime') {
-          this[p] = p5.prototype[p];
-        }
-      }
-    }
+    // for (const p in p5.prototype) {
+    //   if (!this[p]) {
+    //     // console.log(p);
+    //     if (typeof p5.prototype[p] === 'function') {
+    //       this[p] = p5.prototype[p].bind(this);
+    //     } else if(p !== 'deltaTime') {
+    //       this[p] = p5.prototype[p];
+    //     }
+    //   }
+    // }
     p5.prototype._initializeInstanceVariables.apply(this);
 
     this._renderer._applyDefaults();
+    this._renderer.scale(this._renderer._pixelDensity, this._renderer._pixelDensity);
     return this;
+  }
+
+  // NOTE: Temporary no op placeholder
+  static _validateParameters(){
+
   }
 
   get deltaTime(){
     return this._pInst.deltaTime;
   }
+
+  // get canvas(){
+  //   return this._renderer.canvas;
+  // }
+
+  // get drawingContext(){
+  //   return this._renderer.drawingContext;
+  // }
+
+  // get width(){
+  //   return this._renderer.width;
+  // }
+
+  // get height(){
+  //   return this._renderer.height;
+  // }
 
   pixelDensity(val){
     let returnValue;
@@ -637,5 +667,16 @@ p5.Graphics = class Graphics {
     return new p5.Framebuffer(this._pInst, options);
   }
 };
+
+// Shapes
+primitives2D(p5.Graphics, p5.Graphics.prototype);
+attributes(p5.Graphics, p5.Graphics.prototype);
+curves(p5.Graphics, p5.Graphics.prototype);
+vertex(p5.Graphics, p5.Graphics.prototype);
+
+setting(p5.Graphics, p5.Graphics.prototype);
+loadingDisplaying(p5.Graphics, p5.Graphics.prototype);
+image(p5.Graphics, p5.Graphics.prototype);
+pixels(p5.Graphics, p5.Graphics.prototype);
 
 export default p5.Graphics;

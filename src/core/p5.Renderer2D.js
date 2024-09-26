@@ -343,15 +343,7 @@ class Renderer2D extends Renderer {
       if (this._isErasing) {
         this.blendMode(this._cachedBlendMode);
       }
-      // console.log(this.elt, cnv,
-      //   s * sx,
-      //   s * sy,
-      //   s * sWidth,
-      //   s * sHeight,
-      //   dx,
-      //   dy,
-      //   dWidth,
-      //   dHeight);
+
       this.drawingContext.drawImage(
         cnv,
         s * sx,

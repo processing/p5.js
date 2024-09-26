@@ -425,7 +425,7 @@ class p5 {
   }
 }
 
-// attach constants to p5 prototype
+// Attach constants to p5 prototype
 for (const k in constants) {
   p5.prototype[k] = constants[k];
 }
