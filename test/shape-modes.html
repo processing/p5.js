@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html  lang="en">
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+</head>
+<body>
+  <script src="../lib/p5.js"></script>
+
+  <script>
+    function setup() {
+      createCanvas(600, 900);
+      noFill();
+      noLoop();
+    }
+
+    const SHAPES = [ 'ellipse', 'arc', 'rect' ];
+    const MODES = [ 'corners', 'corner', 'center', 'radius' ];
+    let SHAPE = 'ellipse';
+    let MODE = 'corners';
+    let num = 1;
+
+    function nextSetting() {
+        let modeIdx = MODES.indexOf(MODE);
+        let shapeIdx = SHAPES.indexOf(SHAPE);
+        modeIdx++;
+        if (modeIdx >= MODES.length) {
+            modeIdx = 0;
+            shapeIdx++;
+            if (shapeIdx >= SHAPES.length) {
+                shapeIdx = 0;
+            }
+        }
+        SHAPE = SHAPES[shapeIdx];
+        MODE = MODES[modeIdx];
+        num = (shapeIdx * MODES.length + modeIdx) + 1;
+        redraw();
+    }
+
+    function keyPressed() {
+        nextSetting();
+    }
+
+    function mousePressed() {
+        nextSetting();
+    }
+
+    function ellipseCorners(x1, y1, x2, y2) {
+      // Bounding box (light gray)
+      rectMode(CORNERS);
+      stroke(200);
+      noFill();
+      strokeWeight(1);
+      rect(x1, y1, x2, y2);
+
+      // Adjust coordinates for testing modes other than CORNERS
+      if (MODE == CORNER) {
+        let x = min(x1, x2);  // x
+        let y = min(y1, y2);  // y
+        // Don't use abs on w and h, so we get negative values as well
+        let w = x2 - x1; // w
+        let h = y2 - y1; // h
+        x1 = x; y1 = y; x2 = w; y2 = h;
+      } else if (MODE == CENTER) {
+        let x = (x2 + x1) / 2; // x
+        let y = (y2 + y1) / 2; // y
+        // Don't use abs on w and h, so we get negative values as well
+        let w = x2 - x1;
+        let h = y2 - y1;
+        x1 = x; y1 = y; x2 = w; y2 = h;
+      } else if (MODE == RADIUS) {
+        let x = (x2 + x1) / 2; // x
+        let y = (y2 + y1) / 2; // y
+        // Don't use abs on w and h, so we get negative values as well
+        let r1 = (x2 - x1) / 2; // r1;
+        let r2 = (y2 - y1) / 2; // r2
+        x1 = x; y1 = y; x2 = r1; y2 = r2;
+      }
+
+
+      // P1, P2 dots
+      stroke(150);
+      strokeWeight(4);
+      point(x1, y1);
+      if (MODE === CORNERS) {
+        point(x2, y2);
+      }
+
+      // P1, P2 text labels
+      fill(150);
+      noStroke();
+      text('P1', x1 + 5, y1);
+      if (MODE === CORNERS) {
+        text('P2', x2 + 5, y2);
+      }
+
+
+      // Shape
+      noFill();
+      stroke(0);
+      strokeWeight(1);
+      ellipseMode(MODE);
+      rectMode(MODE);
+
+      try {
+        console.log(`Drawing (${x1}, ${y1}, ${x2}, ${y2})`);
+        if (SHAPE === 'ellipse') {
+            ellipse(x1, y1, x2, y2);
+        } else if (SHAPE === 'arc') {
+            const GAP = 0.1;
+            arc(x1, y1, x2, y2, 0 + GAP/2, HALF_PI - GAP);
+            arc(x1, y1, x2, y2, HALF_PI + GAP, PI - GAP);
+            arc(x1, y1, x2, y2, PI + GAP, PI + HALF_PI - GAP);
+            arc(x1, y1, x2, y2, PI + HALF_PI + GAP, TWO_PI - GAP);
+        } else if (SHAPE === 'rect') {
+            rect(x1, y1, x2, y2);
+        }
+      } catch (e) {
+        console.warn(`Error drawing (${x1}, ${y1}, ${x2}, ${y2})`);
+        console.error(e);
+      }
+    }
+
+
+    function draw() {
+      background(220);
+      translate(width/2, height/2);
+
+      // Coordinate System
+      stroke(200);
+      line(-width/2, 0, width/2, 0);
+      line(0, -height/2, 0, height/2);
+      stroke(0);
+
+      // Shape + Mode Text Labels
+      fill(0);
+      noStroke();
+      const counterLabel = `(${num}/${SHAPES.length * MODES.length})`;
+      text(counterLabel, 5, 15);
+      text(SHAPE, 5, 30);
+      text(MODE.toUpperCase(), 5, 45);
+
+      console.log(counterLabel);
+      console.log("Shape: ", SHAPE);
+      console.log("Mode:  ", MODE);
+
+
+      // Quadrant I (Bottom Right)
+      console.log("(I) BOTTOM RIGHT");
+      ellipseCorners(100, 50, 200, 100);  // OK
+      ellipseCorners(100, 200, 200, 150); // Error
+      ellipseCorners(200, 300, 100, 250); // Error
+      ellipseCorners(200, 350, 100, 400); // Error
+
+
+      // Quadrant II (Bottom Left)
+      console.log();
+      console.log("(II) BOTTOM LEFT");
+      ellipseCorners(-200, 50, -100, 100);  // Wrong ellipse
+      ellipseCorners(-200, 200, -100, 150); // Error
+      ellipseCorners(-100, 300, -200, 250); // Error
+      ellipseCorners(-100, 350, -200, 400); // Wrong ellipse
+
+
+      // Quadrant III (Top Left)
+      console.log();
+      console.log("(III) TOP LEFT");
+      ellipseCorners(-200, -400, -100, -350); // Wrong ellipse
+      ellipseCorners(-200, -250, -100, -300); // Wrong ellipse
+      ellipseCorners(-100, -150, -200, -200); // Wrong ellipse
+      ellipseCorners(-100, -100, -200, -50);  // Wrong ellipse
+
+
+      // Quadrant IV (Top Right)
+      console.log();
+      console.log("(IV) TOP RIGHT");
+      ellipseCorners(100, -400, 200, -350); // Wrong ellipse
+      ellipseCorners(100, -250, 200, -300); // Wrong ellipse
+      ellipseCorners(200, -150, 100, -200); // Error
+      ellipseCorners(200, -100, 100, -50);  // Error
+    }
+  </script>
+</body>
+</html>
