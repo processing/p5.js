@@ -3018,6 +3018,10 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
     strokeColors[0] = this.immediateMode.geometry.vertexStrokeColors.slice(-4);
     strokeColors[3] = this.curStrokeColor.slice();
 
+    // Do the same for custom attributes
+    const customAttributes = [];
+
+
     if (argLength === 6) {
       this.isBezier = true;
 
@@ -3163,20 +3167,33 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
     }
 
     const LUTLength = this._lookUpTableQuadratic.length;
+    const immediateGeometry = this.immediateMode.geometry;
 
     // fillColors[0]: start point color
     // fillColors[1]: control point color
     // fillColors[2]: end point color
     const fillColors = [];
-    for (m = 0; m < 3; m++) fillColors.push([]);
-    fillColors[0] = this.immediateMode.geometry.vertexColors.slice(-4);
+    for (let m = 0; m < 3; m++) fillColors.push([]);
+    fillColors[0] = immediateGeometry.vertexColors.slice(-4);
     fillColors[2] = this.curFillColor.slice();
 
     // Do the same for strokeColor.
     const strokeColors = [];
-    for (m = 0; m < 3; m++) strokeColors.push([]);
-    strokeColors[0] = this.immediateMode.geometry.vertexStrokeColors.slice(-4);
+    for (let m = 0; m < 3; m++) strokeColors.push([]);
+    strokeColors[0] = immediateGeometry.vertexStrokeColors.slice(-4);
     strokeColors[2] = this.curStrokeColor.slice();
+
+    // Do the same for custom (user defined) attributes
+    const userAttributes = {};
+    for (const attr in immediateGeometry.userAttributes){
+      const attributeSrc = attr.concat('Src');
+      const size = immediateGeometry.userAttributes[attr];
+      const curData = this.userAttributes[attr];
+      userAttributes[attr] = [];
+      for (let m = 0; m < 3; m++) userAttributes[attr].push([]);
+      userAttributes[attr][0] = immediateGeometry[attributeSrc].slice(-size);
+      userAttributes[attr][2] = curData;
+    } 
 
     if (argLength === 4) {
       this.isQuadratic = true;
@@ -3190,7 +3207,7 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
       let d1 = Math.hypot(w_x[1]-w_x[2], w_y[1]-w_y[2]);
       const totalLength = d0 + d1;
       d0 /= totalLength;
-      for (k = 0; k < 4; k++) {
+      for (let k = 0; k < 4; k++) {
         fillColors[1].push(
           fillColors[0][k] * (1-d0) + fillColors[2][k] * d0
         );
@@ -3198,14 +3215,22 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
           strokeColors[0][k] * (1-d0) + strokeColors[2][k] * d0
         );
       }
+      for (const attr in immediateGeometry.userAttributes){
+        const size = immediateGeometry.userAttributes[attr];
+        for (let k = 0; k < size; k++){
+          userAttributes[attr][1].push(
+            userAttributes[attr][0][k] * (1-d0) + userAttributes[attr][2][k] * d0
+          );
+        }
+      }
 
-      for (i = 0; i < LUTLength; i++) {
+      for (let i = 0; i < LUTLength; i++) {
         // Interpolate colors using control points
         this.curFillColor = [0, 0, 0, 0];
         this.curStrokeColor = [0, 0, 0, 0];
         _x = _y = 0;
-        for (m = 0; m < 3; m++) {
-          for (k = 0; k < 4; k++) {
+        for (let m = 0; m < 3; m++) {
+          for (let k = 0; k < 4; k++) {
             this.curFillColor[k] +=
               this._lookUpTableQuadratic[i][m] * fillColors[m][k];
             this.curStrokeColor[k] +=
@@ -3213,6 +3238,17 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
           }
           _x += w_x[m] * this._lookUpTableQuadratic[i][m];
           _y += w_y[m] * this._lookUpTableQuadratic[i][m];
+        }
+
+        for (const attr in immediateGeometry.userAttributes) {
+          const size = immediateGeometry.userAttributes[attr];
+          this.userAttributes[attr] = Array(size).fill(0);
+          for (let m = 0; m < 3; m++){
+            for (let k = 0; k < size; k++){
+              this.userAttributes[attr][k] +=
+                this._lookUpTableQuadratic[i][m] * userAttributes[attr][m][k];
+            }
+          } 
         }
         this.vertex(_x, _y);
       }
