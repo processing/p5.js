@@ -1645,7 +1645,7 @@ suite('p5.RendererGL', function() {
         [1, 1, 1]
       );
 
-      assert.deepEqual(renderer.immediateMode.geometry.aCustom, [
+      assert.deepEqual(renderer.immediateMode.geometry.aCustomSrc, [
           1, 0, 0,
           0, 0, 1,
           1, 1, 1,
