@@ -38,9 +38,10 @@ p5.RendererGL.prototype.beginShape = function(mode) {
       delete this.immediateMode.geometry[name];
       delete this.immediateBufferStrides[name.concat('Src')];
     }
-    delete this.userAttributes;
+    this.userAttributes = {};
     this._useUserAttributes = false;
     this.tessyVertexSize = 12;
+    this.immediateMode.buffers.user = [];
   }
   this.immediateMode.geometry.reset();
   this.immediateMode.contourIndices = [];
