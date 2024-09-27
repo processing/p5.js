@@ -36,11 +36,10 @@ p5.RendererGL.prototype.beginShape = function(mode) {
   if (this._useUserAttributes === true){
     for (const name in this.userAttributes){
       delete this.immediateMode.geometry[name];
+      delete this.immediateBufferStrides[name.concat('Src')];
     }
     delete this.userAttributes;
     this._useUserAttributes = false;
-  }
-  if (this.tessyVertexSize > 12){
     this.tessyVertexSize = 12;
   }
   this.immediateMode.geometry.reset();
@@ -196,12 +195,12 @@ p5.RendererGL.prototype.setAttribute = function(attributeName, data){
     this._useUserAttributes = true;
     this.userAttributes = {};
   }
-  const size = data.length ? data.length : 1;
+  const buff = attributeName.concat('Buffer');
+  const attributeSrc = attributeName.concat('Src'); const size = data.length ? data.length : 1;
   if (!this.userAttributes.hasOwnProperty(attributeName)){
     this.tessyVertexSize += size;
+    this.immediateBufferStrides[attributeSrc] = size;
   }
-  const buff = attributeName.concat('Buffer');
-  const attributeSrc = attributeName.concat('Src');
   this.userAttributes[attributeName] = data;
   const bufferExists = this.immediateMode
     .buffers
