@@ -1954,7 +1954,7 @@ p5.Geometry = class Geometry {
  * 
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   myShader = materialShader().modify({
+ *   const myShader = materialShader().modify({
  *     vertexDeclarations:`in float aRoughness;
  *                         out float vRoughness;`,
  *     fragmentDeclarations: 'in float vRoughness;',
