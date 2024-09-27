@@ -2320,6 +2320,76 @@ p5.prototype.normal = function(x, y, z) {
  * }
  * </code>
  * </div>
+ * 
+ * <div>
+ * <code>
+ * let myShader;
+ * const cols = 10;
+ * const rows = 10;
+ * const cellSize = 16;
+ * 
+ * const vertSrc = `#version 300 es
+ *   precision mediump float;
+ *   uniform mat4 uProjectionMatrix;
+ *   uniform mat4 uModelViewMatrix;
+ * 
+ *   in vec3 aPosition;
+ *   in vec3 aNormal;
+ *   in vec3 aVertexColor;
+ *   in float aDistance;
+ * 
+ *   out vec3 vVertexColor;
+ *   
+ *   void main(){
+ *     vec4 positionVec4 = vec4(aPosition, 1.0);
+ *     positionVec4.xyz += aDistance * aNormal;
+ *     vVertexColor = aVertexColor;
+ *     gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+ *   }
+ * `;
+ * 
+ * const fragSrc = `#version 300 es
+ *   precision mediump float;
+ *   
+ *   in vec3 vVertexColor;
+ *   out vec4 outColor;
+ *   
+ *   void main(){
+ *     outColor = vec4(vVertexColor, 1.0);
+ *   }
+ * `;
+ * 
+ * async function setup(){
+ *   myShader = createShader(vertSrc, fragSrc);
+ *   createCanvas(200, 200, WEBGL);
+ *   shader(myShader);
+ *   noStroke();
+ *   describe('A blue grid, which moves away from the mouse position, on a grey background.');
+ * }
+ * 
+ * function draw(){
+ *   background(200);
+ *   translate(-cols*cellSize/2, -rows*cellSize/2);
+ *   beginShape(QUADS);
+ *   for (let x = 0; x < cols; x++) {
+ *     for (let y = 0; y < rows; y++) {
+ *       let x1 = x * cellSize;
+ *       let y1 = y * cellSize;
+ *       let x2 = x1 + cellSize;
+ *       let y2 = y1 + cellSize;
+ *       fill(x/rows*255, y/cols*255, 255);
+ *       let distance = dist(x1,y1, mouseX, mouseY);
+ *       setAttribute('aDistance', min(distance, 200));
+ *       vertex(x1, y1);
+ *       vertex(x2, y1);
+ *       vertex(x2, y2);
+ *       vertex(x1, y2);
+ *     }
+ *   }
+ *   endShape();
+ * }
+ * </code>
+ * </div>
 /
 /**
  * @method setAttribute
