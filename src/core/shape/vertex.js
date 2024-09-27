@@ -2324,7 +2324,7 @@ p5.prototype.normal = function(x, y, z) {
  * let myShader;
  * const cols = 10;
  * const rows = 10;
- * const cellSize = 16;
+ * const cellSize = 9;
  * 
  * const vertSrc = `#version 300 es
  *   precision mediump float;
@@ -2377,7 +2377,7 @@ p5.prototype.normal = function(x, y, z) {
  *       let y2 = y1 + cellSize;
  *       fill(x/rows*255, y/cols*255, 255);
  *       let distance = dist(x1,y1, mouseX, mouseY);
- *       setAttribute('aDistance', min(distance, 200));
+ *       setAttribute('aDistance', min(distance, 100));
  *       vertex(x1, y1);
  *       vertex(x2, y1);
  *       vertex(x2, y2);
