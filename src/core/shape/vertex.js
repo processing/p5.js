@@ -2272,9 +2272,8 @@ p5.prototype.normal = function(x, y, z) {
  * @example
  * <div>
  * <code>
- * let vertSrc = `
- *  #version 300 es
- *  precision highp float;
+ * const vertSrc = `#version 300 es
+ *  precision mediump float;
  *  uniform mat4 uModelViewMatrix;
  *  uniform mat4 uProjectionMatrix;
  *  
@@ -2288,18 +2287,17 @@ p5.prototype.normal = function(x, y, z) {
  *  }
  * `;
  * 
- * let fragSrc = `
- *  #version 300 es
- *  precision highp float;
- * 
+ * const fragSrc = `#version 300 es
+ *  precision mediump float;
+ *  out vec4 outColor;  
  *  void main(){
- *    gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);    
+ *    outColor = vec4(0.0, 1.0, 1.0, 1.0);    
  *  }
  * `;
  * 
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
- *   let myShader = createShader(vertSrc, fragSrc);
+ *   const myShader = createShader(vertSrc, fragSrc);
  *   shader(myShader);
  *   noStroke();
  *   describe('A wobbly, cyan circle on a grey background.');
@@ -2309,10 +2307,10 @@ p5.prototype.normal = function(x, y, z) {
  *   background(125);
  *   beginShape();
  *   for (let i = 0; i < 30; i++){
- *     let x = 40 * cos(i/30 * TWO_PI);
- *     let y = 40 * sin(i/30 * TWO_PI);
- *     let xOff = 10 * noise(x + millis()/1000) - 5;
- *     let yOff = 10 * noise(y + millis()/1000) - 5;
+ *     const x = 40 * cos(i/30 * TWO_PI);
+ *     const y = 40 * sin(i/30 * TWO_PI);
+ *     const xOff = 10 * noise(x + millis()/1000) - 5;
+ *     const yOff = 10 * noise(y + millis()/1000) - 5;
  *     setAttribute('aOffset', [xOff, yOff]);
  *     vertex(x, y);
  *   }
@@ -2361,7 +2359,7 @@ p5.prototype.normal = function(x, y, z) {
  * 
  * async function setup(){
  *   myShader = createShader(vertSrc, fragSrc);
- *   createCanvas(200, 200, WEBGL);
+ *   createCanvas(100, 100, WEBGL);
  *   shader(myShader);
  *   noStroke();
  *   describe('A blue grid, which moves away from the mouse position, on a grey background.');
