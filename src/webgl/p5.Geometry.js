@@ -1943,6 +1943,56 @@ p5.Geometry = class Geometry {
  * @example
  * <div>
  * <code>
+  * let geo;
+ * 
+ * function cartesianToSpherical(x, y, z) {
+ *   let r = sqrt(x * x + y * y + z * z);
+ *   let theta = acos(z / r);
+ *   let phi = atan2(y, x);
+ *   return { theta, phi };
+ * }
+ * 
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   myShader = materialShader().modify({
+ *     vertexDeclarations:`in float aRoughness;
+ *                         out float vRoughness;`,
+ *     fragmentDeclarations: 'in float vRoughness;',
+ *     'void afterVertex': `() {
+ *         vRoughness = aRoughness;
+ *     }`,
+ *     'vec4 combineColors': `(ColorComponents components) {
+ *             vec4 color = vec4(0.);
+ *             color.rgb += components.diffuse * components.baseColor * (1.0-vRoughness);
+ *             color.rgb += components.ambient * components.ambientColor;
+ *             color.rgb += components.specular * components.specularColor * (1.0-vRoughness);
+ *             color.a = components.opacity;
+ *             return color;
+ *     }`
+ *   });
+ *   beginGeometry();
+ *   fill('hotpink');
+ *   sphere(45, 50, 50);
+ *   geo = endGeometry();
+ *   for (let v of geo.vertices){
+ *     let spherical = cartesianToSpherical(v.x, v.y, v.z);
+ *     let roughness = noise(spherical.theta*5, spherical.phi*5);
+ *     geo.setAttribute('aRoughness', roughness);
+ *   }
+ *   shader(myShader);
+ *   noStroke();
+ *   describe('A rough pink sphere rotating on a blue background.');
+ * }
+ * 
+ * function draw() {
+ *   rotateY(millis()*0.001);
+ *   background('lightblue');
+ *   directionalLight('white', -1, 1, -1);
+ *   ambientLight(320);
+ *   shininess(2);
+ *   specularMaterial(255,125,100);
+ *   model(geo);
+ * }
  * </code>
  * </div>
 /
