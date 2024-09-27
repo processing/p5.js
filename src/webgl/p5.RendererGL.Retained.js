@@ -63,6 +63,7 @@ p5.RendererGL.prototype._freeBuffers = function(gId) {
   freeBuffers(this.retainedMode.buffers.stroke);
   freeBuffers(this.retainedMode.buffers.fill);
   freeBuffers(this.retainedMode.buffers.user);
+  this.retainedMode.buffers.user = [];
 };
 
 /**
@@ -162,7 +163,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
         p5._friendlyError(`One of the geometries has a custom attribute with more values than vertices. 
           This is probably from directly using the Geometry.setAttribute() method.`, 'setAttribute()');
       } else if(adjustedLength < geometry.model.vertices.length){
-        p5._friendlyError(`One of the geometries has a custom attribute with less values than vertices. 
+        p5._friendlyError(`One of the geometries has a custom attribute with fewer values than vertices. 
           This is probably from directly using the Geometry.setAttribute() method.`, 'setAttribute()');
       }
       buff._prepareBuffer(geometry, fillShader);
@@ -213,7 +214,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   if (this.geometryBuilder) {
     this.geometryBuilder.addRetained(geometry);
   }
-
+  
   return this;
 };
 
