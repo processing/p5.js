@@ -812,7 +812,7 @@ p5.prototype.clearDepth = function(depth) {
  *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('An Ocean Blue line and a Hot pink line form an X on a gray background. The area where they overlap is Magenta purple.');
+ *   describe('An ocean blue line and a hot pink line form an X on a gray background. The area where they overlap is Magenta purple.');
  * }
  * </code>
  * </div>
@@ -838,7 +838,7 @@ p5.prototype.clearDepth = function(depth) {
  *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('An Icy Blue line and a Light lavender line form an X on a gray background. The area where they overlap is white.');
+ *   describe('An icy blue line and a light lavender line form an X on a gray background. The area where they overlap is white.');
  * }
  * </code>
  * </div>
@@ -864,7 +864,7 @@ p5.prototype.clearDepth = function(depth) {
  *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('A Steel Blue line and a Cranberry line form an X on a gray background. The area where they overlap is Deep purple.');
+ *   describe('A steel blue line and a cranberry line form an X on a gray background. The area where they overlap is deep purple.');
  * }
  * </code>
  * </div>
@@ -890,7 +890,7 @@ p5.prototype.clearDepth = function(depth) {
  *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('A Cobalt Blue line and a Burgundy line form an X on a gray background. The area where they overlap is black.');
+ *   describe('A cobalt blue line and a burgundy line form an X on a gray background. The area where they overlap is black.');
  * }
  * </code>
  * </div>
@@ -916,7 +916,7 @@ p5.prototype.clearDepth = function(depth) {
  *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('A Pale lavender line and a Soft beige line form an X on a gray background. The area where they overlap is pale lilac.');
+ *   describe('A pale lavender line and a soft beige line form an X on a gray background. The area where they overlap is pale lilac.');
  * }
  * </code>
  * </div>
@@ -942,7 +942,7 @@ p5.prototype.clearDepth = function(depth) {
  *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('An Earthy Brown line and a Muted Sage line form an X on a gray background. The area where they overlap is Sage Green.');
+ *   describe('An earthy brown line and a muted sage line form an X on a gray background. The area where they overlap is sage green.');
  * }
  * </code>
  * </div>
@@ -994,7 +994,7 @@ p5.prototype.clearDepth = function(depth) {
  *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('A Baby Blue line and a Peach Pink line form an X on a gray background. The area where they overlap is Misty Lilac.');
+ *   describe('A baby blue line and a peach pink line form an X on a gray background. The area where they overlap is misty lilac.');
  * }
  * </code>
  * </div>
@@ -1020,7 +1020,7 @@ p5.prototype.clearDepth = function(depth) {
  *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('A diagonal Deep Rose line.');
+ *   describe('A diagonal deep rose line.');
  * }
  * </code>
  * </div>
@@ -1072,7 +1072,7 @@ p5.prototype.clearDepth = function(depth) {
  *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('A Light Burgundy line and a Forest Green line form an X on a gray background. The area where they overlap is Dark Cocoa.');
+ *   describe('A light burgundy line and a forest green line form an X on a gray background. The area where they overlap is dark cocoa.');
  * }
  * </code>
  * </div>
@@ -1098,7 +1098,7 @@ p5.prototype.clearDepth = function(depth) {
  *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('A Cornflower Blue line and a Light Rose line form an X on a gray background. The area where they overlap is Violet.');
+ *   describe('A cornflower blue line and a light rose line form an X on a gray background. The area where they overlap is violet.');
  * }
  * </code>
  * </div>
@@ -1124,7 +1124,7 @@ p5.prototype.clearDepth = function(depth) {
  *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('A Pale Sky line and a Rose Blush line form an X on a gray background. The area where they overlap is Lavender.');
+ *   describe('A pale sky line and a rose blush line form an X on a gray background. The area where they overlap is lavender.');
  * }
  * </code>
  * </div>
@@ -1150,7 +1150,7 @@ p5.prototype.clearDepth = function(depth) {
  *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('An Aqua Blue line and a Light Pink line form an X on a gray background. The area where they overlap is white.');
+ *   describe('An aqua blue line and a light pink line form an X on a gray background. The area where they overlap is white.');
  * }
  * </code>
  * </div>
@@ -1178,7 +1178,7 @@ p5.prototype.clearDepth = function(depth) {
  *   stroke('#d41159');
  *   line(25, -25, -25, 25);
  *
- *   describe('A Burnt Orange and a Sea green line form an X on a gray background. The area where they overlap is Forest green.');
+ *   describe('A burnt orange and a sea green line form an X on a gray background. The area where they overlap is forest green.');
  * }
  * </code>
  * </div>
@@ -1247,7 +1247,7 @@ p5.prototype.blendMode = function(mode) {
  *   // Draw the circle.
  *   circle(50, 50, 40);
  *
- *   describe('A fiery sun drawn on a light #1a85ff background.');
+ *   describe('A fiery sun drawn on a light blue background.');
  * }
  * </code>
  * </div>
