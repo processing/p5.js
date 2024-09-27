@@ -130,4 +130,100 @@ visualSuite('WebGL', function() {
       }
     );
   });
+
+  visualSuite('setAttribute', function(){
+    const vertSrc = `#version 300 es
+    precision mediump float;
+    uniform mat4 uProjectionMatrix;
+    uniform mat4 uModelViewMatrix;
+    in vec3 aPosition;
+    in vec3 aCol;
+    out vec3 vCol;
+    void main(){
+      vCol = aCol;
+      gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+    }`;
+    const fragSrc = `#version 300 es
+      precision mediump float;
+      in vec3 vCol;
+      out vec4 outColor;
+      void main(){
+        outColor = vec4(vCol, 1.0);
+      }`;
+    visualTest(
+      'on TESS shape mode', function(p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        p5.background('white');
+        const myShader = p5.createShader(vertSrc, fragSrc);
+        p5.shader(myShader);
+        p5.beginShape(p5.TESS);
+        p5.noStroke();
+        for (let i = 0; i < 20; i++){
+          let x = 20 * p5.sin(i/20*p5.TWO_PI);
+          let y = 20 * p5.cos(i/20*p5.TWO_PI);
+          p5.setAttribute('aCol', [x/20, -y/20, 0]);
+          p5.vertex(x, y);
+        }
+        p5.endShape();
+        screenshot();
+      }
+    );
+    visualTest(
+      'on QUADS shape mode', function(p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        p5.background('white');
+        const myShader = p5.createShader(vertSrc, fragSrc);
+        p5.shader(myShader)
+        p5.beginShape(p5.QUADS);
+        p5.noStroke();
+        p5.translate(-25,-25);
+        for (let i = 0; i < 5; i++){
+          for (let j = 0; j < 5; j++){
+            let x1 = i * 10;
+            let x2 = x1 + 10;
+            let y1 = j * 10;
+            let y2 = y1 + 10;
+            p5.setAttribute('aCol', [1, 0, 0]);
+            p5.vertex(x1, y1);
+            p5.setAttribute('aCol', [0, 0, 1]);
+            p5.vertex(x2, y1);
+            p5.setAttribute('aCol', [0, 1, 1]);
+            p5.vertex(x2, y2);
+            p5.setAttribute('aCol', [1, 1, 1]);
+            p5.vertex(x1, y2);
+          }
+        }
+        p5.endShape();
+        screenshot();
+      }
+    );
+    visualTest(
+      'on buildGeometry outputs containing 3D primitives', function(p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        p5.background('white');
+        const myShader = p5.createShader(vertSrc, fragSrc);
+        p5.shader(myShader);
+        const shape = p5.buildGeometry(() => {
+          p5.push();
+          p5.translate(15,-10,0);
+          p5.sphere(5);
+          p5.pop();
+          p5.beginShape(p5.TRIANGLES);
+          p5.setAttribute('aCol', [1,0,0])
+          p5.vertex(-5, 5, 0);
+          p5.setAttribute('aCol', [0,1,0])
+          p5.vertex(5, 5, 0);
+          p5.setAttribute('aCol', [0,0,1])
+          p5.vertex(0, -5, 0);
+          p5.endShape(p5.CLOSE);
+          p5.push();
+          p5.translate(-15,10,0);
+          p5.box(10);
+          p5.pop();
+        })
+        p5.model(shape);
+        screenshot();
+      }
+    );
+  });
 });
