@@ -84,6 +84,10 @@ function validateParams(p5, fn) {
   // Add web API schemas to the schema map.
   Object.assign(schemaMap, webAPISchemas);
 
+  // For mapping 0-indexed parameters to their ordinal representation, e.g.
+  // "first" for 0, "second" for 1, "third" for 2, etc.
+  const ordinals = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth"];
+
   /**
    * This is a helper function that generates Zod schemas for a function based on
    * the parameter data from `docs/parameterData.json`.
@@ -101,12 +105,6 @@ function validateParams(p5, fn) {
       }
    * Where each array in `overloads` represents a set of valid overloaded
    * parameters, and `?` is a shorthand for `Optional`.
-   *
-   * TODO:
-   * - [ ] Support for p5 constructors
-   * - [ ] Support for more obscure types, such as `lerpPalette` and optional
-   * objects in `p5.Geometry.computeNormals()`
-   * (see https://github.com/processing/p5.js/pull/7186#discussion_r1724983249)
    *
    * @param {String} func - Name of the function.
    * @returns {z.ZodSchema} Zod schema
@@ -152,9 +150,7 @@ function validateParams(p5, fn) {
       }
       // All p5 objects start with `p5` in the documentation, i.e. `p5.Camera`.
       else if (baseType.startsWith('p5')) {
-        console.log('type', baseType);
         const className = baseType.substring(baseType.indexOf('.') + 1);
-        console.log('className', p5Constructors[className]);
         typeSchema = z.instanceof(p5Constructors[className]);
       }
       // For primitive types and web API objects.
@@ -244,7 +240,6 @@ function validateParams(p5, fn) {
 
   /**
    * This is a helper function to print out the Zod schema in a readable format.
-   * This is for debugging purposes only and will be removed in the future.
    *
    * @param {z.ZodSchema} schema - Zod schema.
    * @param {number} indent - Indentation level.
@@ -289,14 +284,27 @@ function validateParams(p5, fn) {
     // Helper function that scores how close the input arguments are to a schema.
     // Lower score means closer match.
     const scoreSchema = schema => {
+      let score = Infinity;
       if (!(schema instanceof z.ZodTuple)) {
         console.warn('Schema below is not a tuple: ');
         printZodSchema(schema);
-        return Infinity;
+        return score;
       }
 
+      const numArgs = args.length;
       const schemaItems = schema.items;
-      let score = Math.abs(schemaItems.length - args.length) * 2;
+      const numSchemaItems = schemaItems.length;
+      const numRequiredSchemaItems = schemaItems.filter(item => !item.isOptional()).length;
+
+      if (numArgs >= numRequiredSchemaItems && numArgs <= numSchemaItems) {
+        score = 0;
+      }
+
+      else {
+        score = Math.abs(
+          numArgs < numRequiredSchemaItems ? numRequiredSchemaItems - numArgs : numArgs - numSchemaItems
+        ) * 4;
+      }
 
       for (let i = 0; i < Math.min(schemaItems.length, args.length); i++) {
         const paramSchema = schemaItems[i];
@@ -326,6 +334,97 @@ function validateParams(p5, fn) {
   }
 
   /**
+   * Prints a friendly error message after parameter validation, if validation
+   * has failed.
+   * 
+   * @method _friendlyParamError
+   * @private
+   * @param {z.ZodError} zodErrorObj - The Zod error object containing validation errors.
+   * @returns {String} The friendly error message.
+   */
+  p5._friendlyParamError = function (zodErrorObj) {
+    let message;
+    // The `zodErrorObj` might contain multiple errors of equal importance
+    // (after scoring the schema closeness in `findClosestSchema`). Here, we
+    // always print the first error so that user can work through the errors
+    // one by one.
+    let currentError = zodErrorObj.errors[0];
+
+    // Helper function to build a type mismatch message.
+    const buildTypeMismatchMessage = (actualType, expectedTypeStr, position) => {
+      const positionStr = position ? `at the ${ordinals[position]} parameter` : '';
+      const actualTypeStr = actualType ? `, but received ${actualType}` : '';
+      return `Expected ${expectedTypeStr} ${positionStr}${actualTypeStr}.`;
+    }
+
+    // Union errors occur when a parameter can be of multiple types but is not
+    // of any of them. In this case, aggregate all possible types and print
+    // a friendly error message that indicates what the expected types are at
+    // which position (position is not 0-indexed, for accessibility reasons).
+    const processUnionError = (error) => {
+      const expectedTypes = new Set();
+      let actualType;
+
+      error.unionErrors.forEach(err => {
+        const issue = err.issues[0];
+        if (issue) {
+          if (!actualType) {
+            actualType = issue.received;
+          }
+
+          if (issue.code === 'invalid_type') {
+            expectedTypes.add(issue.expected);
+          }
+          // The case for constants. Since we don't want to print out the actual
+          // constant values in the error message, the error message will
+          // direct users to the documentation.
+          else if (issue.code === 'invalid_literal') {
+            expectedTypes.add("constant (please refer to documentation for allowed values)");
+          } else if (issue.code === 'custom') {
+            const match = issue.message.match(/Input not instance of (\w+)/);
+            if (match) expectedTypes.add(match[1]);
+          }
+        }
+      });
+
+      if (expectedTypes.size > 0) {
+        const expectedTypesStr = Array.from(expectedTypes).join(' or ');
+        const position = error.path.join('.');
+
+        message = buildTypeMismatchMessage(actualType, expectedTypesStr, position);
+      }
+
+      return message;
+    }
+
+    switch (currentError.code) {
+      case 'invalid_union': {
+        processUnionError(currentError);
+        break;
+      }
+      case 'too_small': {
+        const minArgs = currentError.minimum;
+        message = `Expected at least ${minArgs} argument${minArgs > 1 ? 's' : ''}, but received fewer. Please add more arguments!`;
+        break;
+      }
+      case 'invalid_type': {
+        message = buildTypeMismatchMessage(currentError.received, currentError.expected, currentError.path.join('.'));
+        break;
+      }
+      case 'too_big': {
+        const maxArgs = currentError.maximum;
+        message = `Expected at most ${maxArgs} argument${maxArgs > 1 ? 's' : ''}, but received more. Please delete some arguments!`;
+        break;
+      }
+      default: {
+        console.log('Zod error object', currentError);
+      }
+    }
+
+    return message;
+  }
+
+  /**
    * Runs parameter validation by matching the input parameters to Zod schemas
    * generated from the parameter data from `docs/parameterData.json`.
    *
@@ -334,7 +433,7 @@ function validateParams(p5, fn) {
    * @returns {Object} The validation result.
    * @returns {Boolean} result.success - Whether the validation was successful.
    * @returns {any} [result.data] - The parsed data if validation was successful.
-   * @returns {import('zod-validation-error').ZodValidationError} [result.error] - The validation error if validation failed.
+   * @returns {String} [result.error] - The validation error message if validation has failed.
    */
   fn._validateParams = function (func, args) {
     if (p5.disableFriendlyErrors) {
@@ -346,12 +445,11 @@ function validateParams(p5, fn) {
     // user intended to call the function with non-undefined arguments. Skip
     // regular workflow and return a friendly error message right away.
     if (Array.isArray(args) && args.every(arg => arg === undefined)) {
-      const undefinedError = new Error(`All arguments for function ${func} are undefined. There is likely an error in the code.`);
-      const zodUndefinedError = fromError(undefinedError);
+      const undefinedErrorMessage = `All arguments for function ${func} are undefined. There is likely an error in the code.`;
 
       return {
         success: false,
-        error: zodUndefinedError
+        error: undefinedErrorMessage
       };
     }
 
@@ -368,11 +466,12 @@ function validateParams(p5, fn) {
       };
     } catch (error) {
       const closestSchema = findClosestSchema(funcSchemas, args);
-      const validationError = fromError(closestSchema.safeParse(args).error);
+      const zodError = closestSchema.safeParse(args).error;
+      const errorMessage = p5._friendlyParamError(zodError);
 
       return {
         success: false,
-        error: validationError
+        error: errorMessage
       };
     }
   };

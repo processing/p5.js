@@ -27,8 +27,7 @@
     "gifenc": "^1.0.3",
     "libtess": "^1.2.2",
     "omggif": "^1.0.10",
-    "opentype.js": "^1.3.1",
-    "zod-validation-error": "^3.3.1"
+    "opentype.js": "^1.3.1"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",

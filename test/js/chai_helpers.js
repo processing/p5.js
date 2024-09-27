@@ -12,7 +12,7 @@ assert.arrayApproximately = function (arr1, arr2, delta, desc) {
   }
 }
 
-assert.deepCloseTo = function(actual, expected, digits = 4) {
+assert.deepCloseTo = function (actual, expected, digits = 4) {
   expect(actual.length).toBe(expected.length);
   for (let i = 0; i < actual.length; i++) {
     expect(actual[i]).withContext(`[${i}]`).toBeCloseTo(expected[i], digits);
@@ -26,15 +26,5 @@ assert.validationError = function (fn) {
     assert.throws(fn, p5.ValidationError);
   } else {
     assert.doesNotThrow(fn, Error, 'got unwanted exception');
-  }
-};
-
-// A custom assertion for validation results for the new parameter validation
-// system.
-assert.validationResult = function (result, expectSuccess) {
-  if (expectSuccess) {
-    assert.isTrue(result.success);
-  } else {
-    assert.instanceOf(result.error, ValidationError);
   }
 };
