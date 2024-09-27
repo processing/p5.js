@@ -65,6 +65,7 @@ class Renderer2D extends Renderer {
     // Get and store drawing context
     this.drawingContext = this.canvas.getContext('2d');
     this._pInst.drawingContext = this.drawingContext;
+    this.scale(this._pixelDensity, this._pixelDensity);
 
     // Set and return p5.Element
     this.wrappedElt = new p5.Element(this.elt, this._pInst);

@@ -14,6 +14,7 @@ import setting from '../color/setting';
 import image from '../image/image';
 import loadingDisplaying from '../image/loading_displaying';
 import pixels from '../image/pixels';
+import transform from './transform';
 
 /**
  * A class to describe a drawing surface that's separate from the main canvas.
@@ -143,7 +144,6 @@ p5.Graphics = class Graphics {
     p5.prototype._initializeInstanceVariables.apply(this);
 
     this._renderer._applyDefaults();
-    this._renderer.scale(this._renderer._pixelDensity, this._renderer._pixelDensity);
     return this;
   }
 
@@ -678,5 +678,7 @@ setting(p5.Graphics, p5.Graphics.prototype);
 loadingDisplaying(p5.Graphics, p5.Graphics.prototype);
 image(p5.Graphics, p5.Graphics.prototype);
 pixels(p5.Graphics, p5.Graphics.prototype);
+
+transform(p5.Graphics, p5.Graphics.prototype);
 
 export default p5.Graphics;

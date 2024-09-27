@@ -160,6 +160,10 @@ p5.Renderer = class Renderer {
     return region;
   }
 
+  scale(x, y){
+
+  }
+
   textSize(s) {
     if (typeof s === 'number') {
       this.states.textSize = s;

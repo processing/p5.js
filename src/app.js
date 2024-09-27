@@ -16,7 +16,8 @@ import './core/p5.Graphics';
 import './core/p5.Renderer2D';
 import './core/rendering';
 import './core/structure';
-import './core/transform';
+import transform from './core/transform';
+p5.registerAddon(transform);
 import shape from './shape';
 shape(p5);
 
