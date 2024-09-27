@@ -1,5 +1,4 @@
 import p5 from '../../src/app.js';
-import { ValidationError } from 'zod-validation-error';
 
 // Setup chai
 var expect = chai.expect;
