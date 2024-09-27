@@ -2503,4 +2503,180 @@ suite('p5.RendererGL', function() {
       }
     );
   });
+
+  suite('setAttribute()', function() {
+    test('Immediate mode data and buffers created in beginShape', 
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        
+        myp5.beginShape();
+        myp5.setAttribute('aCustom', 1);
+        myp5.setAttribute('aCustomVec3', [1,2,3]);
+        myp5.vertex(0,0,0);
+        assert.deepEqual(myp5._renderer.userAttributes,{
+          aCustom: 1,
+          aCustomVec3: [1,2,3]
+        });
+        assert.deepEqual(myp5._renderer.immediateMode.geometry.aCustomSrc, [1]);
+        assert.deepEqual(myp5._renderer.immediateMode.geometry.aCustomVec3Src, [1,2,3]);
+        assert.deepEqual(myp5._renderer.immediateMode.geometry.userAttributes, {
+          aCustom: 1,
+          aCustomVec3: 3
+        });
+        assert.deepEqual(myp5._renderer.immediateMode.buffers.user, [
+          {
+            size: 1,
+            src: 'aCustomSrc',
+            dst: 'aCustomBuffer',
+            attr: 'aCustom',
+            _renderer: myp5._renderer,
+            map: undefined
+          },
+          {
+            size: 3,
+            src: 'aCustomVec3Src',
+            dst: 'aCustomVec3Buffer',
+            attr: 'aCustomVec3',
+            _renderer: myp5._renderer,
+            map: undefined
+          }
+        ]);
+        myp5.endShape();
+
+      }
+    );
+    test('Immediate mode data and buffers deleted after beginShape', 
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        
+        myp5.beginShape();
+        myp5.setAttribute('aCustom', 1);
+        myp5.setAttribute('aCustomVec3', [1,2,3]);
+        myp5.vertex(0,0,0);
+        myp5.endShape();
+
+        myp5.beginShape();
+        assert.isUndefined(myp5._renderer.immediateMode.geometry.aCustomSrc);
+        assert.isUndefined(myp5._renderer.immediateMode.geometry.aCustomVec3Src);
+        assert.deepEqual(myp5._renderer.immediateMode.geometry.userAttributes, {});
+        assert.deepEqual(myp5._renderer.userAttributes, {});
+        assert.deepEqual(myp5._renderer.immediateMode.buffers.user, []);
+        myp5.endShape();
+      }
+    );
+    test('Data copied over from beginGeometry',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.beginGeometry();
+        myp5.beginShape();
+        myp5.setAttribute('aCustom', 1);
+        myp5.setAttribute('aCustomVec3', [1,2,3]);
+        myp5.vertex(0,1,0);
+        myp5.vertex(-1,0,0);
+        myp5.vertex(1,0,0);
+        const immediateCopy = myp5._renderer.immediateMode.geometry;
+        myp5.endShape();
+        const myGeo = myp5.endGeometry();
+        assert.deepEqual(immediateCopy.aCustomSrc, myGeo.aCustomSrc);
+        assert.deepEqual(immediateCopy.aCustomVec3Src, myGeo.aCustomVec3Src);
+        assert.deepEqual(immediateCopy.userAttributes, myGeo.userAttributes);
+      }
+    );
+    test('Retained mode buffers are created for rendering',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.beginGeometry();
+        myp5.beginShape();
+        myp5.setAttribute('aCustom', 1);
+        myp5.setAttribute('aCustomVec3', [1,2,3]);
+        myp5.vertex(0,0,0);
+        myp5.vertex(1,0,0);
+        myp5.endShape();
+        const myGeo = myp5.endGeometry();
+        myp5._renderer.createBuffers(myGeo.gId, myGeo);
+        assert.deepEqual(myp5._renderer.retainedMode.buffers.user, [
+          {
+            size: 1,
+            src: 'aCustomSrc',
+            dst: 'aCustomBuffer',
+            attr: 'aCustom',
+            _renderer: myp5._renderer,
+            map: undefined
+          },
+          {
+            size: 3,
+            src: 'aCustomVec3Src',
+            dst: 'aCustomVec3Buffer',
+            attr: 'aCustomVec3',
+            _renderer: myp5._renderer,
+            map: undefined
+          }
+        ]);
+      }
+    );
+    test('Retained mode buffers deleted after rendering',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.beginGeometry();
+        myp5.beginShape();
+        myp5.setAttribute('aCustom', 1);
+        myp5.setAttribute('aCustomVec3', [1,2,3]);
+        myp5.vertex(0,0,0);
+        myp5.vertex(1,0,0);
+        myp5.endShape();
+        const myGeo = myp5.endGeometry();
+        myp5.model(myGeo);
+        assert.equal(myp5._renderer.retainedMode.buffers.user.length, 0);
+      }
+    );
+    test('Friendly error if different sizes used',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const logs = [];
+        const myLog = (...data) => logs.push(data.join(', '));
+        const oldLog = console.log;
+        console.log = myLog;
+        myp5.beginShape();
+        myp5.setAttribute('aCustom', [1,2,3]);
+        myp5.vertex(0,0,0);
+        myp5.setAttribute('aCustom', [1,2]);
+        myp5.vertex(1,0,0);
+        myp5.endShape();
+        console.log = oldLog;
+        expect(logs.join('\n')).to.match(/Custom attribute aCustom has been set with various data sizes/);
+      }
+    );
+    test('Friendly error too many values set',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const logs = [];
+        const myLog = (...data) => logs.push(data.join(', '));
+        const oldLog = console.log;
+        console.log = myLog;
+        let myGeo = new p5.Geometry();
+        myGeo.vertices.push(new p5.Vector(0,0,0));
+        myGeo.setAttribute('aCustom', 1);
+        myGeo.setAttribute('aCustom', 2);
+        myp5.model(myGeo);
+        console.log = oldLog;
+        expect(logs.join('\n')).to.match(/One of the geometries has a custom attribute with more values than vertices./);
+      }
+    );
+    test('Friendly error if too few values set',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const logs = [];
+        const myLog = (...data) => logs.push(data.join(', '));
+        const oldLog = console.log;
+        console.log = myLog;
+        let myGeo = new p5.Geometry();
+        myGeo.vertices.push(new p5.Vector(0,0,0));
+        myGeo.vertices.push(new p5.Vector(0,0,0));
+        myGeo.setAttribute('aCustom', 1);
+        myp5.model(myGeo);
+        console.log = oldLog;
+        expect(logs.join('\n')).to.match(/One of the geometries has a custom attribute with fewer values than vertices./);
+      }
+    );
+  })
 });
