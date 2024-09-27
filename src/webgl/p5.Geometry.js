@@ -1920,6 +1920,35 @@ p5.Geometry = class Geometry {
     return this;
   }
 
+/** Sets the shader's vertex attribute variables.
+ * 
+ * An attribute is a variable belonging to a vertex in a shader. p5.js provides some
+ * default attributes, such as `aPosition`, `aNormal`, `aVertexColor`, etc. Custom
+ * attributes can also be defined within `beginShape()` and `endShape()`.
+ * 
+ * The first parameter, `attributeName`, is a string with the attribute's name.
+ * This is the same variable name which should be declared in the shader, similar to
+ * `setUniform()`.
+ * 
+ * The second parameter, `data`, is the value assigned to the attribute. This value
+ * will be pushed directly onto the Geometry object. There should be the same number 
+ * of custom attribute values as vertices.
+ * 
+ * The `data` can be a Number or an array of numbers. Tn the shader program the type
+ * can be declared according to the WebGL specification. Common types include `float`, 
+ * `vec2`, `vec3`, `vec4` or matrices.
+ * 
+ * @example
+ * <div>
+ * <code>
+ * </code>
+ * </div>
+/
+/**
+ * @method setAttribute
+ * @param {String} attributeName the name of the vertex attribute.
+ * @param {Number|Number[]} data the data tied to the vertex attribute.
+ */
   setAttribute(attributeName, data, size = data.length ? data.length : 1){
     const attributeSrc = attributeName.concat('Src');
     if (!this.hasOwnProperty(attributeSrc)){
