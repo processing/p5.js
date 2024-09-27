@@ -1938,6 +1938,8 @@ p5.Geometry = class Geometry {
  * can be declared according to the WebGL specification. Common types include `float`, 
  * `vec2`, `vec3`, `vec4` or matrices.
  * 
+ * See also the global <a href="#/p5/setAttribute">setAttribute()</a> function.
+ * 
  * @example
  * <div>
  * <code>
