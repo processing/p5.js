@@ -171,7 +171,14 @@ function vector(p5, fn) {
      *
      */
     set values(newValues) {
-      this._values = newValues.slice()
+      let dimensions = newValues.length; 
+      if (dimensions === 0) {
+        this.dimensions = dimensions;
+        this._values = [0, 0, 0];
+      } else {
+        this.dimensions = dimensions;
+        this._values = newValues.slice();
+      }
     }
 
     /**
@@ -291,7 +298,9 @@ function vector(p5, fn) {
      * @param {number} xVal - The new value for the x component.
      */
     set x(xVal) {
+      if (this._values.length > 1) {
       this._values[0] = xVal
+      }
     }
 
     /**
@@ -304,7 +313,9 @@ function vector(p5, fn) {
      * @param {number} yVal - The new value for the y component.
      */
     set y(yVal) {
+      if (this._values.length > 1) {
       this._values[1] = yVal
+      }
     }
 
     /**
@@ -317,7 +328,9 @@ function vector(p5, fn) {
      * @param {number} zVal - The new value for the z component.
      */
     set z(zVal) {
-      this._values[2] = zVal
+      if (this._values.length > 2) {
+        this._values[2] = zVal
+      }
     }
 
     /**
@@ -330,7 +343,9 @@ function vector(p5, fn) {
      * @param {number} wVal - The new value for the w component.
      */
     set w(wVal) {
-      this._values[3] = wVal;
+      if (this._values.length > 3) {
+        this._values[3] = wVal;
+      }
     }
 
     /**
@@ -354,7 +369,7 @@ function vector(p5, fn) {
      * </div>
      */
     toString() {
-      return `${this.values.join(', ')}]`;
+      return `[${this.values.join(', ')}]`;
     }
 
     /**
