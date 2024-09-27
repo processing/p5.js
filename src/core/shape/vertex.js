@@ -2269,6 +2269,9 @@ p5.prototype.normal = function(x, y, z) {
  * and in the shader program the type can be declared according to the WebGL
  * specification. Common types include `float`, `vec2`, `vec3`, `vec4` or matrices.
  * 
+ * See also the <a href="#/p5/setAttribute">setAttribute()</a> method on 
+ * <a href="#/p5/Geometry">Geometry</a> objects.
+ * 
  * @example
  * <div>
  * <code>
