@@ -5,7 +5,6 @@
 import p5 from '../main.js';
 import * as constants from '../constants.js';
 import { z } from 'zod';
-import { fromError } from 'zod-validation-error';
 import dataDoc from '../../../docs/parameterData.json';
 
 function validateParams(p5, fn) {
@@ -239,33 +238,6 @@ function validateParams(p5, fn) {
   }
 
   /**
-   * This is a helper function to print out the Zod schema in a readable format.
-   *
-   * @param {z.ZodSchema} schema - Zod schema.
-   * @param {number} indent - Indentation level.
-   */
-  function printZodSchema(schema, indent = 0) {
-    const i = ' '.repeat(indent);
-    const log = msg => console.log(`${i}${msg}`);
-
-    if (schema instanceof z.ZodUnion || schema instanceof z.ZodTuple) {
-      const type = schema instanceof z.ZodUnion ? 'Union' : 'Tuple';
-      log(`${type}: [`);
-
-      const items = schema instanceof z.ZodUnion
-        ? schema._def.options
-        : schema.items;
-      items.forEach((item, index) => {
-        log(`  ${type === 'Union' ? 'Option' : 'Item'} ${index + 1}:`);
-        printZodSchema(item, indent + 4);
-      });
-      log(']');
-    } else {
-      log(schema.constructor.name);
-    }
-  }
-
-  /**
    * Finds the closest schema to the input arguments.
    *
    * This is a helper function that identifies the closest schema to the input
@@ -299,7 +271,17 @@ function validateParams(p5, fn) {
       if (numArgs >= numRequiredSchemaItems && numArgs <= numSchemaItems) {
         score = 0;
       }
-
+      // Here, give more weight to mismatch in number of arguments.
+      //
+      // For example, color() can either take [Number, Number?] or
+      // [Number, Number, Number, Number?] as list of parameters.
+      // If the user passed in 3 arguments, [10, undefined, undefined], it's
+      // more than likely that they intended to pass in 3 arguments, but the
+      // last two arguments are invalid.
+      //
+      // If there's no bias towards matching the number of arguments, the error
+      // message will show that we're expecting at most 2 arguments, but more
+      // are received.
       else {
         score = Math.abs(
           numArgs < numRequiredSchemaItems ? numRequiredSchemaItems - numArgs : numArgs - numSchemaItems
