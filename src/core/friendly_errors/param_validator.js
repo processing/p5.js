@@ -87,6 +87,13 @@ function validateParams(p5, fn) {
   // "first" for 0, "second" for 1, "third" for 2, etc.
   const ordinals = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth"];
 
+  function extractFuncNameAndClass(func) {
+    const ichDot = func.lastIndexOf('.');
+    const funcName = func.slice(ichDot + 1);
+    const funcClass = func.slice(0, ichDot !== -1 ? ichDot : 0) || 'p5';
+    return { funcName, funcClass };
+  }
+
   /**
    * This is a helper function that generates Zod schemas for a function based on
    * the parameter data from `docs/parameterData.json`.
@@ -105,7 +112,7 @@ function validateParams(p5, fn) {
    * Where each array in `overloads` represents a set of valid overloaded
    * parameters, and `?` is a shorthand for `Optional`.
    *
-   * @param {String} func - Name of the function.
+   * @param {String} func - Name of the function. Expect global functions like `sin` and class methods like `p5.Vector.add`
    * @returns {z.ZodSchema} Zod schema
    */
   function generateZodSchemasForFunc(func) {
@@ -121,11 +128,7 @@ function validateParams(p5, fn) {
       ]);
     }
 
-    // Expect global functions like `sin` and class methods like `p5.Vector.add`
-    const ichDot = func.lastIndexOf('.');
-    const funcName = func.slice(ichDot + 1);
-    const funcClass = func.slice(0, ichDot !== -1 ? ichDot : 0) || 'p5';
-
+    const { funcName, funcClass } = extractFuncNameAndClass(func);
     let funcInfo = dataDoc[funcClass][funcName];
 
     let overloads = [];
@@ -322,9 +325,10 @@ function validateParams(p5, fn) {
    * @method _friendlyParamError
    * @private
    * @param {z.ZodError} zodErrorObj - The Zod error object containing validation errors.
+   * @param {String} func - Name of the function. Expect global functions like `sin` and class methods like `p5.Vector.add`
    * @returns {String} The friendly error message.
    */
-  p5._friendlyParamError = function (zodErrorObj) {
+  p5._friendlyParamError = function (zodErrorObj, func) {
     let message;
     // The `zodErrorObj` might contain multiple errors of equal importance
     // (after scoring the schema closeness in `findClosestSchema`). Here, we
@@ -403,6 +407,22 @@ function validateParams(p5, fn) {
       }
     }
 
+    // Generates a link to the documentation based on the given function name.
+    // TODO: Check if the link is reachable before appending it to the error
+    // message. 
+    const generateDocumentationLink = (func) => {
+      const { funcName, funcClass } = extractFuncNameAndClass(func);
+      const p5BaseUrl = 'https://p5js.org/reference';
+      const url = `${p5BaseUrl}/${funcClass}/${funcName}`;
+
+      return url;
+    }
+
+    if (currentError.code === 'too_big' || currentError.code === 'too_small') {
+      const documentationLink = generateDocumentationLink(func);
+      message += ` For more information, see ${documentationLink}.`;
+    }
+
     return message;
   }
 
@@ -449,7 +469,7 @@ function validateParams(p5, fn) {
     } catch (error) {
       const closestSchema = findClosestSchema(funcSchemas, args);
       const zodError = closestSchema.safeParse(args).error;
-      const errorMessage = p5._friendlyParamError(zodError);
+      const errorMessage = p5._friendlyParamError(zodError, func);
 
       return {
         success: false,

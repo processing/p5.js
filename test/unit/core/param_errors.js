@@ -88,7 +88,7 @@ suite('Validate Params', function () {
     });
 
     const invalidInputs = [
-      { name: 'missing required arc parameters #4, #5', input: [200, 100, 100, 80], msg: 'Expected at least 6 arguments, but received fewer. Please add more arguments!' },
+      { name: 'missing required arc parameters #4, #5', input: [200, 100, 100, 80], msg: 'Expected at least 6 arguments, but received fewer. Please add more arguments! For more information, see https://p5js.org/reference/p5/arc.' },
       { name: 'missing required param #0', input: [undefined, 100, 100, 80, 0, Math.PI, constants.PIE, 30], msg: 'Expected number at the first parameter, but received undefined.' },
       { name: 'missing required param #4', input: [200, 100, 100, 80, undefined, 0], msg: 'Expected number at the fifth parameter, but received undefined.' },
       { name: 'missing optional param #5', input: [200, 100, 100, 80, 0, undefined, Math.PI], msg: 'Expected number at the sixth parameter, but received undefined.' },
@@ -116,7 +116,7 @@ suite('Validate Params', function () {
       { fn: 'color', name: 'superfluous parameter', input: [[0, 0, 0], 0], msg: 'Expected number at the first parameter, but received array.' },
       { fn: 'color', name: 'wrong element types', input: [['A', 'B', 'C']], msg: 'Expected number at the first parameter, but received array.' },
       { fn: 'rect', name: 'null, non-trailing, optional parameter', input: [0, 0, 0, 0, null, 0, 0, 0], msg: 'Expected number at the fifth parameter, but received null.' },
-      { fn: 'color', name: 'too many args + wrong types too', input: ['A', 'A', 0, 0, 0, 0, 0, 0, 0, 0], msg: 'Expected at most 4 arguments, but received more. Please delete some arguments!' },
+      { fn: 'color', name: 'too many args + wrong types too', input: ['A', 'A', 0, 0, 0, 0, 0, 0, 0, 0], msg: 'Expected at most 4 arguments, but received more. Please delete some arguments! For more information, see https://p5js.org/reference/p5/color.' },
       { fn: 'line', name: 'null string given', input: [1, 2, 4, 'null'], msg: 'Expected number at the fourth parameter, but received string.' },
       { fn: 'line', name: 'NaN value given', input: [1, 2, 4, NaN], msg: 'Expected number at the fourth parameter, but received nan.' }
     ];
@@ -164,7 +164,7 @@ suite('Validate Params', function () {
       { name: 'optional parameter, incorrect type', input: [65, 100, 100, 'a'], msg: 'Expected number at the fourth parameter, but received string.' },
       { name: 'extra parameter', input: [[65, 100, 100], 100], msg: 'Expected number at the first parameter, but received array.' },
       { name: 'incorrect element type', input: ['A', 'B', 'C'], msg: 'Expected number at the first parameter, but received string.' },
-      { name: 'incorrect parameter count', input: ['A', 'A', 0, 0, 0, 0, 0, 0], msg: 'Expected at most 4 arguments, but received more. Please delete some arguments!' }
+      { name: 'incorrect parameter count', input: ['A', 'A', 0, 0, 0, 0, 0, 0], msg: 'Expected at most 4 arguments, but received more. Please delete some arguments! For more information, see https://p5js.org/reference/p5/color.' }
     ];
 
     invalidInputs.forEach(({ name, input, msg }) => {
