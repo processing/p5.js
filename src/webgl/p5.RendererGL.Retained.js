@@ -158,11 +158,12 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
         continue;
       }
       const adjustedLength = geometry.model[buff.src].length / buff.size;
-      if(adjustedLength != geometry.model.vertices.length){
-        p5._friendlyError(`One of the geometries has a custom attribute with
-          either too many or too few values compared to vertices. 
-          There may be unexpected results from the shaders.
-          `, 'setAttribute()');
+      if(adjustedLength > geometry.model.vertices.length){
+        p5._friendlyError(`One of the geometries has a custom attribute with more values than vertices. 
+          This is probably from directly using the Geometry.setAttribute() method.`, 'setAttribute()');
+      } else if(adjustedLength < geometry.model.vertices.length){
+        p5._friendlyError(`One of the geometries has a custom attribute with less values than vertices. 
+          This is probably from directly using the Geometry.setAttribute() method.`, 'setAttribute()');
       }
       buff._prepareBuffer(geometry, fillShader);
     }
@@ -191,11 +192,12 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
         continue;
       }
       const adjustedLength = geometry.model[buff.src].length / buff.size;
-      if(adjustedLength != geometry.model.vertices.length){
-        p5._friendlyError(`One of the geometries has a custom attribute with
-          either too many or too few values compared to vertices. 
-          There may be unexpected results from the shaders.
-          `, 'setAttribute()');
+      if(adjustedLength > geometry.model.vertices.length){
+        p5._friendlyError(`One of the geometries has a custom attribute with more values than vertices. 
+          This is probably from directly using the Geometry.setAttribute() method.`, 'setAttribute()');
+      } else if(adjustedLength < geometry.model.vertices.length){
+        p5._friendlyError(`One of the geometries has a custom attribute with fewer values than vertices. 
+          This is probably from directly using the Geometry.setAttribute() method.`, 'setAttribute()');
       }
       buff._prepareBuffer(geometry, strokeShader);
     }
