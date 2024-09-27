@@ -968,7 +968,7 @@ p5.prototype.clearDepth = function(depth) {
  *   stroke('#d41159');
  *   line(75, 25, 25, 75);
  *
- *   describe('A Slate Blue line and a Plum line form an X on a gray background. The area where they overlap is Dark Indigo.');
+ *   describe('A slate blue line and a plum line form an X on a gray background. The area where they overlap is dark Indigo.');
  * }
  * </code>
  * </div>
