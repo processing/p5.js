@@ -68,15 +68,15 @@ class GeometryBuilder {
       if (attr in inputAttrs){
         continue;
       }
-      const size = builtAttrs[attr];
+      const size = builtAttrs[attr].getDataSize();
       const numMissingValues = size * input.vertices.length;
       const missingValues = Array(numMissingValues).fill(0);
       this.geometry.setAttribute(attr, missingValues, size);
     }
     for (const attr in inputAttrs){
       const src = attr.concat('Src');
-      const data = input[src];
-      const size = inputAttrs[attr];
+      const data = input.userAttributes[attr].getSrcArray();
+      const size = inputAttrs[attr].getDataSize();
       if (numPreviousVertices > 0 && !(attr in this.geometry.userAttributes)){
         const numMissingValues = size * numPreviousVertices;
         const missingValues = Array(numMissingValues).fill(0);
