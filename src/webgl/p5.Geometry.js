@@ -453,8 +453,7 @@ p5.Geometry = class Geometry {
     this.uvs.length = 0;
 
     for (const attr in this.userAttributes){
-      const src = attr.concat('Src'); 
-      delete this[src];
+      this.userAttributes[attr].delete();
     }
     this.userAttributes = {};
 
@@ -2016,21 +2015,78 @@ p5.Geometry = class Geometry {
  * @param {String} attributeName the name of the vertex attribute.
  * @param {Number|Number[]} data the data tied to the vertex attribute.
  */
-  setAttribute(attributeName, data, size = data.length ? data.length : 1){
-    const attributeSrc = attributeName.concat('Src');
-    if (!this.hasOwnProperty(attributeSrc)){
-      this[attributeSrc] = [];
-      this.userAttributes[attributeName] = size;
+  setAttribute(attributeName, data, size){
+    let attr;
+    if (!this.userAttributes[attributeName]){
+      attr = this.userAttributes[attributeName] = 
+        this._createUserAttributeHelper(attributeName, data, this);
     }
-    if (size != this.userAttributes[attributeName]){
-      p5._friendlyError(`Custom attribute ${attributeName} has been set with various data sizes. You can change it's name,
-         or if it was an accident, set ${attributeName} to have the same number of inputs each time!`, 'setAttribute()');
-    }
-    if (data.length){
-    this[attributeSrc].push(...data);
+    attr = this.userAttributes[attributeName]
+    if (size){
+      attr.pushDirect(data);
     } else{
-      this[attributeSrc].push(data);
+      attr.setCurrentData(data);
+      attr.pushCurrentData();
     }
+  }
+
+  _createUserAttributeHelper(attributeName, data){
+    const geometryInstace = this;
+    const attr = this.userAttributes[attributeName] = {
+      name: attributeName,
+      currentData: data,
+      dataSize: data.length ? data.length : 1,
+      geometry: geometryInstace,
+      // Getters
+      getCurrentData(){
+        return this.currentData;
+      },
+      getDataSize() {
+        return this.dataSize;
+      },
+      getSrcName() {
+        const src = this.name.concat('Src');  
+        return src;
+      },
+      getDstName() {
+        const dst = this.name.concat('Buffer');
+        return dst;
+      },
+      getSrcArray() {
+        const srcName = this.getSrcName();
+        return this.geometry[srcName];
+      },
+      //Setters
+      setCurrentData(data) {
+        const size = data.length ? data.length : 1;
+        if (size != this.getDataSize()){
+          p5._friendlyError(`Custom attribute ${this.name} has been set with various data sizes. You can change it's name, or if it was an accident, set ${this.name} to have the same number of inputs each time!`, 'setAttribute()');
+        }
+        this.currentData = data;
+      },
+      // Utilities
+      pushCurrentData(){
+        const data = this.getCurrentData();
+        this.pushDirect(data);
+      },
+      pushDirect(data) {
+        if (data.length){
+          this.getSrcArray().push(...data);
+        } else{
+          this.getSrcArray().push(data);
+        }
+      },
+      resetSrcArray(){
+        this.geometry[this.getSrcName] = [];
+      },
+      delete() {
+        const srcName = this.getSrcName();
+        delete this.geometry[srcName];
+        delete this;
+      }
+    };
+    this[attr.getSrcName()] = []; 
+    return this.userAttributes[attributeName];
   }
 };
 
