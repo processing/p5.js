@@ -1943,7 +1943,7 @@ p5.Geometry = class Geometry {
  * @example
  * <div>
  * <code>
-  * let geo;
+ * let geo;
  * 
  * function cartesianToSpherical(x, y, z) {
  *   let r = sqrt(x * x + y * y + z * z);
@@ -1954,6 +1954,8 @@ p5.Geometry = class Geometry {
  * 
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ * 
+ *   // Modify the material shader to display roughness.
  *   const myShader = materialShader().modify({
  *     vertexDeclarations:`in float aRoughness;
  *                         out float vRoughness;`,
@@ -1970,27 +1972,40 @@ p5.Geometry = class Geometry {
  *             return color;
  *     }`
  *   });
+ * 
+ *   // Create the Geometry object.
  *   beginGeometry();
  *   fill('hotpink');
  *   sphere(45, 50, 50);
  *   geo = endGeometry();
+ * 
+ *   // Set the roughness value for every vertex.
  *   for (let v of geo.vertices){
+ *     // convert coordinates to spherical coordinates
  *     let spherical = cartesianToSpherical(v.x, v.y, v.z);
  *     let roughness = noise(spherical.theta*5, spherical.phi*5);
  *     geo.setAttribute('aRoughness', roughness);
  *   }
+ * 
+ *   // Use the custom shader.
  *   shader(myShader);
- *   noStroke();
  *   describe('A rough pink sphere rotating on a blue background.');
  * }
  * 
  * function draw() {
- *   rotateY(millis()*0.001);
+ *   // Set some styles and lighting
  *   background('lightblue');
+ *   noStroke();
+ * 
+ *   specularMaterial(255,125,100);
+ *   shininess(2);
+ *
  *   directionalLight('white', -1, 1, -1);
  *   ambientLight(320);
- *   shininess(2);
- *   specularMaterial(255,125,100);
+ *
+ *   rotateY(millis()*0.001);
+ *
+ *   // Draw the geometry
  *   model(geo);
  * }
  * </code>
