@@ -1799,7 +1799,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     return this._getImmediateLineShader();
   }
 
-  materialShader() {
+  baseMaterialShader() {
     if (!this._pInst._glAttributes.perPixelLighting) {
       throw new Error(
         'The material shader does not support hooks without perPixelLighting. Try turning it back on.'
@@ -1873,7 +1873,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     return this._defaultImmediateModeShader;
   }
 
-  normalShader() {
+  baseNormalShader() {
     return this._getNormalShader();
   }
 
@@ -1908,7 +1908,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     return this._defaultNormalShader;
   }
 
-  colorShader() {
+  baseColorShader() {
     return this._getColorShader();
   }
 
@@ -1999,7 +1999,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     return this._defaultPointShader;
   }
 
-  strokeShader() {
+  baseStrokeShader() {
     return this._getLineShader();
   }
 
@@ -2207,15 +2207,15 @@ p5.RendererGL = class RendererGL extends Renderer {
     return new p5.Framebuffer(this, options);
   }
 
-  _setStrokeUniforms(strokeShader) {
-    strokeShader.bindShader();
+  _setStrokeUniforms(baseStrokeShader) {
+    baseStrokeShader.bindShader();
 
     // set the uniform values
-    strokeShader.setUniform('uUseLineColor', this._useLineColor);
-    strokeShader.setUniform('uMaterialColor', this.curStrokeColor);
-    strokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
-    strokeShader.setUniform('uStrokeCap', STROKE_CAP_ENUM[this.curStrokeCap]);
-    strokeShader.setUniform('uStrokeJoin', STROKE_JOIN_ENUM[this.curStrokeJoin]);
+    baseStrokeShader.setUniform('uUseLineColor', this._useLineColor);
+    baseStrokeShader.setUniform('uMaterialColor', this.curStrokeColor);
+    baseStrokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
+    baseStrokeShader.setUniform('uStrokeCap', STROKE_CAP_ENUM[this.curStrokeCap]);
+    baseStrokeShader.setUniform('uStrokeJoin', STROKE_JOIN_ENUM[this.curStrokeJoin]);
   }
 
   _setFillUniforms(fillShader) {
