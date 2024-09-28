@@ -693,8 +693,8 @@ p5.prototype.createFilterShader = function (fragSrc) {
  *
  * The parameter, `s`, is the <a href="#/p5.Shader">p5.Shader</a> object to
  * apply. For example, calling `shader(myShader)` applies `myShader` to
- * process each pixel on the canvas. This only affects the fill (the inside part of shapes),
- * not the strokes (outlines).
+ * process each pixel on the canvas. This only changes the fill (the inner part of shapes),
+ * but does not affect the outlines (strokes) or any images drawn using the `image()` function.
  * The source code from a <a href="#/p5.Shader">p5.Shader</a> object's
  * fragment and vertex shaders will be compiled the first time it's passed to
  * `shader()`. See
@@ -710,7 +710,7 @@ p5.prototype.createFilterShader = function (fragSrc) {
  * <p>
  *
  * If you want to apply shaders to strokes or images, use the following methods:
- * - **[useStrokeShader()](#/p5/useStrokeShader)**: Applies a shader to the stroke (outline) of shapes, allowing independent control over the stroke rendering using shaders.
+ * - **[strokeShader()](#/p5/strokeShader)**: Applies a shader to the stroke (outline) of shapes, allowing independent control over the stroke rendering using shaders.
  * - **[imageShader()](#/p5/imageShader)**: Applies a shader to images or textures, controlling how the shader modifies their appearance during rendering.
  *
  * </p>
@@ -884,7 +884,7 @@ p5.prototype.shader = function (s) {
  * The shader will be used for:
  * - Strokes only, regardless of whether the uniform `uStrokeWeight` is present.
  *
- * @method useStrokeShader
+ * @method strokeShader
  * @chainable
  * @param {p5.Shader} s <a href="#/p5.Shader">p5.Shader</a> object
  *                      to apply for strokes.
@@ -969,7 +969,7 @@ p5.prototype.shader = function (s) {
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   myStrokeShader = createShader(vertSrc, fragSrc);
- *   useStrokeShader(myStrokeShader);
+ *   strokeShader(myStrokeShader);
  *   strokeWeight(5);
  * }
 
@@ -1064,7 +1064,7 @@ p5.prototype.shader = function (s) {
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   animatedStrokeShader = createShader(vertSrc, fragSrc);
- *   useStrokeShader(animatedStrokeShader);
+ *   strokeShader(animatedStrokeShader);
  *   strokeWeight(4);
  * }
  *
@@ -1078,9 +1078,9 @@ p5.prototype.shader = function (s) {
  * </code>
  * </div>
  */
-p5.prototype.useStrokeShader = function (s) {
-  this._assert3d('useStrokeShader');
-  p5._validateParameters('useStrokeShader', arguments);
+p5.prototype.strokeShader = function (s) {
+  this._assert3d('strokeShader');
+  p5._validateParameters('strokeShader', arguments);
 
   s.ensureCompiledOnContext(this);
 
