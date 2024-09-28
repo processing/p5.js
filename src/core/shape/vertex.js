@@ -2356,7 +2356,7 @@ p5.prototype.normal = function(x, y, z) {
  *   
  *   void main(){
  *     vec4 positionVec4 = vec4(aPosition, 1.0);
- *     positionVec4.xyz += aDistance * aNormal;
+ *     positionVec4.xyz += aDistance * aNormal * 2.0;;
  *     vVertexColor = aVertexColor;
  *     gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
  *   }
@@ -2391,9 +2391,12 @@ p5.prototype.normal = function(x, y, z) {
  *   beginShape(QUADS);
  *   for (let i = 0; i < cols; i++) {
  *     for (let j = 0; j < rows; j++) {
+ * 
+ *       // Calculate the cell position.
  *       let x = i * cellSize;
  *       let y = j * cellSize;
- *       fill(x/rows*255, y/cols*255, 255);
+ * 
+ *       fill(j/rows*255, j/cols*255, 255);
  * 
  *       // Calculate the distance from the corner of each cell to the mouse.
  *       let distance = dist(x1,y1, mouseX, mouseY);
@@ -2402,9 +2405,9 @@ p5.prototype.normal = function(x, y, z) {
  *       setAttribute('aDistance', min(distance, 100));
  * 
  *       vertex(x, y);
- *       vertex(x + cellsize, y);
- *       vertex(x + cellsize, y1 + cellsize);
- *       vertex(x, y + cellsize);
+ *       vertex(x + cellSize, y);
+ *       vertex(x + cellSize, y + cellSize);
+ *       vertex(x, y + cellSize);
  *     }
  *   }
  *   endShape();
