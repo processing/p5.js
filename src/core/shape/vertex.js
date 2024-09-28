@@ -2256,8 +2256,11 @@ p5.prototype.normal = function(x, y, z) {
 /** Sets the shader's vertex attribute variables.
  * 
  * An attribute is a variable belonging to a vertex in a shader. p5.js provides some
- * default attributes, such as `aPosition`, `aNormal`, `aVertexColor`, etc. Custom
- * attributes can also be defined within `beginShape()` and `endShape()`.
+ * default attributes, such as `aPosition`, `aNormal`, `aVertexColor`, etc. These are
+ * set using <a href="#/p5/vertex">vertex()</a>, <a href="#/p5/normal">normal()</a> 
+ * and <a href="#/p5/fill">fill()</a> respectively. Custom attribute data can also
+ * be defined within <a href="#/p5/beginShape">beginShape()</a> and 
+ * <a href="#/p5/endShape">endShape()</a>.
  * 
  * The first parameter, `attributeName`, is a string with the attribute's name.
  * This is the same variable name which should be declared in the shader, similar to
@@ -2300,20 +2303,30 @@ p5.prototype.normal = function(x, y, z) {
  * 
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create and use the custom shader.
  *   const myShader = createShader(vertSrc, fragSrc);
  *   shader(myShader);
- *   noStroke();
+ * 
  *   describe('A wobbly, cyan circle on a grey background.');
  * }
  * 
  * function draw(){
+ *   // Set the styles
  *   background(125);
+ *   noStroke();
+ * 
+ *   // Draw the circle.
  *   beginShape();
  *   for (let i = 0; i < 30; i++){
  *     const x = 40 * cos(i/30 * TWO_PI);
  *     const y = 40 * sin(i/30 * TWO_PI);
+ *
+ *     // Apply some noise to the coordinates.
  *     const xOff = 10 * noise(x + millis()/1000) - 5;
  *     const yOff = 10 * noise(y + millis()/1000) - 5;
+ * 
+ *     // Apply these noise values to the following vertex.
  *     setAttribute('aOffset', [xOff, yOff]);
  *     vertex(x, y);
  *   }
@@ -2360,9 +2373,11 @@ p5.prototype.normal = function(x, y, z) {
  *   }
  * `;
  * 
- * async function setup(){
- *   myShader = createShader(vertSrc, fragSrc);
+ * function setup(){
  *   createCanvas(100, 100, WEBGL);
+ * 
+ *   // Create and apply the custom shader.
+ *   myShader = createShader(vertSrc, fragSrc);
  *   shader(myShader);
  *   noStroke();
  *   describe('A blue grid, which moves away from the mouse position, on a grey background.');
@@ -2370,21 +2385,26 @@ p5.prototype.normal = function(x, y, z) {
  * 
  * function draw(){
  *   background(200);
+ * 
+ *   // Draw the grid in the middle of the screen.
  *   translate(-cols*cellSize/2, -rows*cellSize/2);
  *   beginShape(QUADS);
- *   for (let x = 0; x < cols; x++) {
- *     for (let y = 0; y < rows; y++) {
- *       let x1 = x * cellSize;
- *       let y1 = y * cellSize;
- *       let x2 = x1 + cellSize;
- *       let y2 = y1 + cellSize;
+ *   for (let i = 0; i < cols; i++) {
+ *     for (let j = 0; j < rows; j++) {
+ *       let x = i * cellSize;
+ *       let y = j * cellSize;
  *       fill(x/rows*255, y/cols*255, 255);
+ * 
+ *       // Calculate the distance from the corner of each cell to the mouse.
  *       let distance = dist(x1,y1, mouseX, mouseY);
+ * 
+ *       // Send the distance to the shader.
  *       setAttribute('aDistance', min(distance, 100));
- *       vertex(x1, y1);
- *       vertex(x2, y1);
- *       vertex(x2, y2);
- *       vertex(x1, y2);
+ * 
+ *       vertex(x, y);
+ *       vertex(x + cellsize, y);
+ *       vertex(x + cellsize, y1 + cellsize);
+ *       vertex(x, y + cellsize);
  *     }
  *   }
  *   endShape();
