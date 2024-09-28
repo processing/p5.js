@@ -34,14 +34,7 @@ p5.RendererGL.prototype.beginShape = function(mode) {
   this.immediateMode.shapeMode =
     mode !== undefined ? mode : constants.TESS;
   if (this._useUserAttributes === true){
-    for (const name in this.userAttributes){
-      delete this.immediateMode.geometry[name];
-      delete this.immediateBufferStrides[name.concat('Src')];
-    }
-    this.userAttributes = {};
-    this._useUserAttributes = false;
-    this.tessyVertexSize = 12;
-    this.immediateMode.buffers.user = [];
+    this._resetUserAttributes();
   }
   this.immediateMode.geometry.reset();
   this.immediateMode.contourIndices = [];
@@ -124,18 +117,16 @@ p5.RendererGL.prototype.vertex = function(x, y) {
   this.immediateMode.geometry.vertices.push(vert);
   this.immediateMode.geometry.vertexNormals.push(this._currentNormal);
 
-  for (const attr in this.userAttributes){
+  for (const attrName in this.immediateMode.geometry.userAttributes){
     const geom = this.immediateMode.geometry;
+    const attr = geom.userAttributes[attrName];
     const verts = geom.vertices;
-    const data = this.userAttributes[attr];
-    const src = attr.concat('Src');
-    const size = data.length ? data.length : 1;
-    if (!geom.hasOwnProperty(src) && verts.length > 1) {
-      const numMissingValues = size * (verts.length - 1);
+    if (!attr.getSrcArray() && verts.length > 1) {
+      const numMissingValues = attr.getDataSize() * (verts.length - 1);
       const missingValues = Array(numMissingValues).fill(0);
-      geom.setAttribute(attr, missingValues, size);
+      attr.pushDirect(missingValues);
     }
-    geom.setAttribute(attr, data);
+    attr.pushCurrentData();
   }
 
   const vertexColor = this.curFillColor || [0.5, 0.5, 0.5, 1.0];
@@ -191,27 +182,35 @@ p5.RendererGL.prototype.vertex = function(x, y) {
 };
 
 p5.RendererGL.prototype.setAttribute = function(attributeName, data){
-  // if attributeName is in one of default, throw some warning
   if(!this._useUserAttributes){
     this._useUserAttributes = true;
-    this.userAttributes = {};
   }
-  const buff = attributeName.concat('Buffer');
-  const attributeSrc = attributeName.concat('Src'); const size = data.length ? data.length : 1;
-  if (!this.userAttributes.hasOwnProperty(attributeName)){
-    this.tessyVertexSize += size;
-    this.immediateBufferStrides[attributeSrc] = size;
-  }
-  this.userAttributes[attributeName] = data;
-  const bufferExists = this.immediateMode
-    .buffers
-    .user
-    .some(buffer => buffer.dst === buff);
-  if(!bufferExists){
+  const attrExists = this.immediateMode.geometry.userAttributes[attributeName];
+  let attr;
+  if (attrExists){
+    attr = this.immediateMode.geometry.userAttributes[attributeName];
+  } 
+  else {
+    attr = this.immediateMode.geometry._createUserAttributeHelper(attributeName, data);
+    this.tessyVertexSize += attr.getDataSize();
+    this.immediateBufferStrides[attr.getSrcName()] = attr.getDataSize();
     this.immediateMode.buffers.user.push(
-      new p5.RenderBuffer(size, attributeSrc, buff, attributeName, this)
+      new p5.RenderBuffer(attr.getDataSize(), attr.getSrcName(), attr.getDstName(), attributeName, this)
     );
   }
+  attr.setCurrentData(data);
+};
+
+p5.RendererGL.prototype._resetUserAttributes = function(){
+  const attributes = this.immediateMode.geometry.userAttributes;
+  for (const attrName in attributes){
+    const attr = attributes[attrName];
+    delete this.immediateBufferStrides[attr.getSrcName()];
+    attr.delete();
+  }
+  this._userUserAttributes = false;
+  this.tessyVertexSize = 12;
+  this.immediateMode.buffers.user = [];
 };
 
 /**
@@ -484,18 +483,12 @@ p5.RendererGL.prototype._tesselateShape = function() {
       this.immediateMode.geometry.vertexNormals[i].y,
       this.immediateMode.geometry.vertexNormals[i].z
     );
-    for (const attr in this.userAttributes){
-      const attributeSrc = attr.concat('Src'); 
-      const size = this.userAttributes[attr].length ? this.userAttributes[attr].length : 1;
-      const start = i * size;
-      const end = start + size;
-      if (this.immediateMode.geometry[attributeSrc]){
-        const vals = this.immediateMode.geometry[attributeSrc].slice(start, end);
-        contours[contours.length-1].push(...vals);
-      } else{
-        delete this.userAttributes[attr];
-        this.tessyVertexSize -= size;
-      }
+    for (const attrName in this.immediateMode.geometry.userAttributes){
+      const attr = this.immediateMode.geometry.userAttributes[attrName];
+      const start = i * attr.getDataSize();
+      const end = start + attr.getDataSize();
+      const vals = attr.getSrcArray().slice(start, end);
+      contours[contours.length-1].push(...vals);
     }
   }
   const polyTriangles = this._triangulate(contours);
@@ -503,9 +496,9 @@ p5.RendererGL.prototype._tesselateShape = function() {
   this.immediateMode.geometry.vertices = [];
   this.immediateMode.geometry.vertexNormals = [];
   this.immediateMode.geometry.uvs = [];
-  for (const attr in this.userAttributes){
-    const attributeSrc = attr.concat('Src'); 
-    this.immediateMode.geometry[attributeSrc] = [];
+  for (const attrName in this.immediateMode.geometry.userAttributes){
+    const attr = this.immediateMode.geometry.userAttributes[attrName];
+    attr.resetSrcArray();
   }
   const colors = [];
   for (
@@ -517,12 +510,12 @@ p5.RendererGL.prototype._tesselateShape = function() {
     this.normal(...polyTriangles.slice(j + 9, j + 12));
     {
       let offset = 12;
-      for (const attr in this.userAttributes){
-          const size = this.userAttributes[attr].length ? this.userAttributes[attr].length : 1;
+      for (const attrName in this.immediateMode.geometry.userAttributes){
+          const attr = this.immediateMode.geometry.userAttributes[attrName];
           const start = j + offset;
-          const end = start + size;
-          this.setAttribute(attr, polyTriangles.slice(start, end), size);
-          offset += size;
+          const end = start + attr.getDataSize();
+          attr.setCurrentData(polyTriangles.slice(start, end))
+          offset += attr.getDataSize();
       }
     }
     this.vertex(...polyTriangles.slice(j, j + 5));
