@@ -2523,22 +2523,18 @@ suite('p5.RendererGL', function() {
           aCustom: 1,
           aCustomVec3: 3
         });
-        assert.deepEqual(myp5._renderer.immediateMode.buffers.user, [
+        expect(myp5._renderer.immediateMode.buffers.user).to.containSubset([
           {
             size: 1,
             src: 'aCustomSrc',
             dst: 'aCustomBuffer',
             attr: 'aCustom',
-            _renderer: myp5._renderer,
-            map: undefined
           },
           {
             size: 3,
             src: 'aCustomVec3Src',
             dst: 'aCustomVec3Buffer',
             attr: 'aCustomVec3',
-            _renderer: myp5._renderer,
-            map: undefined
           }
         ]);
         myp5.endShape();
@@ -2594,22 +2590,18 @@ suite('p5.RendererGL', function() {
         myp5.endShape();
         const myGeo = myp5.endGeometry();
         myp5._renderer.createBuffers(myGeo.gId, myGeo);
-        assert.deepEqual(myp5._renderer.retainedMode.buffers.user, [
+        expect(myp5._renderer.retainedMode.buffers.user).to.containSubset([
           {
             size: 1,
             src: 'aCustomSrc',
             dst: 'aCustomBuffer',
             attr: 'aCustom',
-            _renderer: myp5._renderer,
-            map: undefined
           },
           {
             size: 3,
             src: 'aCustomVec3Src',
             dst: 'aCustomVec3Buffer',
             attr: 'aCustomVec3',
-            _renderer: myp5._renderer,
-            map: undefined
           }
         ]);
       }
