@@ -2340,7 +2340,7 @@ p5.prototype.normal = function(x, y, z) {
  * let myShader;
  * const cols = 10;
  * const rows = 10;
- * const cellSize = 9;
+ * const cellSize = 6;
  * 
  * const vertSrc = `#version 300 es
  *   precision mediump float;
