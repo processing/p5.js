@@ -2308,7 +2308,7 @@ p5.prototype.normal = function(x, y, z) {
  *   const myShader = createShader(vertSrc, fragSrc);
  *   shader(myShader);
  * 
- *   describe('A wobbly, cyan circle on a grey background.');
+ *   describe('A wobbly, cyan circle on a gray background.');
  * }
  * 
  * function draw(){
@@ -2380,7 +2380,7 @@ p5.prototype.normal = function(x, y, z) {
  *   myShader = createShader(vertSrc, fragSrc);
  *   shader(myShader);
  *   noStroke();
- *   describe('A blue grid, which moves away from the mouse position, on a grey background.');
+ *   describe('A blue grid, which moves away from the mouse position, on a gray background.');
  * }
  * 
  * function draw(){
