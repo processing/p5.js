@@ -2038,6 +2038,9 @@ p5.Geometry = class Geometry {
       dataSize: data.length ? data.length : 1,
       geometry: geometryInstace,
       // Getters
+      getName(){
+        return this.name;
+      },
       getCurrentData(){
         return this.currentData;
       },
