@@ -19,7 +19,7 @@ function validateParams(p5, fn) {
   // and so on.
   const p5Constructors = {};
 
-  fn._loadP5Constructors = function () {
+  fn.loadP5Constructors = function () {
     // Make a list of all p5 classes to be used for argument validation
     // This must be done only when everything has loaded otherwise we get
     // an empty array
@@ -112,10 +112,11 @@ function validateParams(p5, fn) {
    * Where each array in `overloads` represents a set of valid overloaded
    * parameters, and `?` is a shorthand for `Optional`.
    *
+   * @method generateZodSchemasForFunc
    * @param {String} func - Name of the function. Expect global functions like `sin` and class methods like `p5.Vector.add`
    * @returns {z.ZodSchema} Zod schema
    */
-  function generateZodSchemasForFunc(func) {
+  fn.generateZodSchemasForFunc = function (func) {
     // A special case for `p5.Color.paletteLerp`, which has an unusual and
     // complicated function signature not shared by any other function in p5.
     if (func === 'p5.Color.paletteLerp') {
@@ -251,7 +252,7 @@ function validateParams(p5, fn) {
    * @param {Array} args - User input arguments.
    * @returns {z.ZodSchema} Closest schema matching the input arguments.
    */
-  function findClosestSchema(schema, args) {
+  fn.findClosestSchema = function (schema, args) {
     if (!(schema instanceof z.ZodUnion)) {
       return schema;
     }
@@ -328,7 +329,7 @@ function validateParams(p5, fn) {
    * @param {String} func - Name of the function. Expect global functions like `sin` and class methods like `p5.Vector.add`
    * @returns {String} The friendly error message.
    */
-  p5._friendlyParamError = function (zodErrorObj, func) {
+  fn.friendlyParamError = function (zodErrorObj, func) {
     let message;
     // The `zodErrorObj` might contain multiple errors of equal importance
     // (after scoring the schema closeness in `findClosestSchema`). Here, we
@@ -340,7 +341,7 @@ function validateParams(p5, fn) {
     const buildTypeMismatchMessage = (actualType, expectedTypeStr, position) => {
       const positionStr = position ? `at the ${ordinals[position]} parameter` : '';
       const actualTypeStr = actualType ? `, but received ${actualType}` : '';
-      return `Expected ${expectedTypeStr} ${positionStr}${actualTypeStr}.`;
+      return `Expected ${expectedTypeStr} ${positionStr}${actualTypeStr}`;
     }
 
     // Union errors occur when a parameter can be of multiple types but is not
@@ -390,7 +391,7 @@ function validateParams(p5, fn) {
       }
       case 'too_small': {
         const minArgs = currentError.minimum;
-        message = `Expected at least ${minArgs} argument${minArgs > 1 ? 's' : ''}, but received fewer. Please add more arguments!`;
+        message = `Expected at least ${minArgs} argument${minArgs > 1 ? 's' : ''}, but received fewer`;
         break;
       }
       case 'invalid_type': {
@@ -399,13 +400,16 @@ function validateParams(p5, fn) {
       }
       case 'too_big': {
         const maxArgs = currentError.maximum;
-        message = `Expected at most ${maxArgs} argument${maxArgs > 1 ? 's' : ''}, but received more. Please delete some arguments!`;
+        message = `Expected at most ${maxArgs} argument${maxArgs > 1 ? 's' : ''}, but received more`;
         break;
       }
       default: {
         console.log('Zod error object', currentError);
       }
     }
+
+    // Let the user know which function is generating the error.
+    message += ` in ${func}().`;
 
     // Generates a link to the documentation based on the given function name.
     // TODO: Check if the link is reachable before appending it to the error
@@ -423,6 +427,7 @@ function validateParams(p5, fn) {
       message += ` For more information, see ${documentationLink}.`;
     }
 
+    console.log(message);
     return message;
   }
 
@@ -437,7 +442,7 @@ function validateParams(p5, fn) {
    * @returns {any} [result.data] - The parsed data if validation was successful.
    * @returns {String} [result.error] - The validation error message if validation has failed.
    */
-  fn._validateParams = function (func, args) {
+  fn.validate = function (func, args) {
     if (p5.disableFriendlyErrors) {
       return; // skip FES
     }
@@ -447,7 +452,7 @@ function validateParams(p5, fn) {
     // user intended to call the function with non-undefined arguments. Skip
     // regular workflow and return a friendly error message right away.
     if (Array.isArray(args) && args.every(arg => arg === undefined)) {
-      const undefinedErrorMessage = `All arguments for function ${func} are undefined. There is likely an error in the code.`;
+      const undefinedErrorMessage = `All arguments for ${func}() are undefined. There is likely an error in the code.`;
 
       return {
         success: false,
@@ -457,7 +462,7 @@ function validateParams(p5, fn) {
 
     let funcSchemas = schemaRegistry.get(func);
     if (!funcSchemas) {
-      funcSchemas = generateZodSchemasForFunc(func);
+      funcSchemas = fn.generateZodSchemasForFunc(func);
       schemaRegistry.set(func, funcSchemas);
     }
 
@@ -467,9 +472,9 @@ function validateParams(p5, fn) {
         data: funcSchemas.parse(args)
       };
     } catch (error) {
-      const closestSchema = findClosestSchema(funcSchemas, args);
+      const closestSchema = fn.findClosestSchema(funcSchemas, args);
       const zodError = closestSchema.safeParse(args).error;
-      const errorMessage = p5._friendlyParamError(zodError, func);
+      const errorMessage = fn.friendlyParamError(zodError, func);
 
       return {
         success: false,
@@ -483,5 +488,5 @@ export default validateParams;
 
 if (typeof p5 !== 'undefined') {
   validateParams(p5, p5.prototype);
-  p5.prototype._loadP5Constructors();
+  p5.prototype.loadP5Constructors();
 }
