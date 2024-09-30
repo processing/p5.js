@@ -2031,12 +2031,12 @@ p5.Geometry = class Geometry {
   }
 
   _createUserAttributeHelper(attributeName, data, size){
-    const geometryInstace = this;
+    const geometryInstance = this;
     const attr = this.userAttributes[attributeName] = {
       name: attributeName,
       currentData: data,
       dataSize: size ? size : data.length ? data.length : 1,
-      geometry: geometryInstace,
+      geometry: geometryInstance,
       // Getters
       getName(){
         return this.name;
