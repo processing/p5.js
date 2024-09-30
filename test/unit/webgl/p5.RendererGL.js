@@ -2511,18 +2511,20 @@ suite('p5.RendererGL', function() {
         
         myp5.beginShape();
         myp5.setAttribute('aCustom', 1);
-        myp5.setAttribute('aCustomVec3', [1,2,3]);
+        myp5.setAttribute('aCustomVec3', [1, 2, 3]);
         myp5.vertex(0,0,0);
-        assert.deepEqual(myp5._renderer.userAttributes,{
-          aCustom: 1,
-          aCustomVec3: [1,2,3]
+        expect(myp5._renderer.immediateMode.geometry.userAttributes.aCustom).to.containSubset({
+          name: 'aCustom',
+          currentData: 1,
+          dataSize: 1
+        });
+        expect(myp5._renderer.immediateMode.geometry.userAttributes.aCustomVec3).to.containSubset({
+          name: 'aCustomVec3',
+          currentData: [1, 2, 3],
+          dataSize: 3
         });
         assert.deepEqual(myp5._renderer.immediateMode.geometry.aCustomSrc, [1]);
         assert.deepEqual(myp5._renderer.immediateMode.geometry.aCustomVec3Src, [1,2,3]);
-        assert.deepEqual(myp5._renderer.immediateMode.geometry.userAttributes, {
-          aCustom: 1,
-          aCustomVec3: 3
-        });
         expect(myp5._renderer.immediateMode.buffers.user).to.containSubset([
           {
             size: 1,
@@ -2538,7 +2540,6 @@ suite('p5.RendererGL', function() {
           }
         ]);
         myp5.endShape();
-
       }
     );
     test('Immediate mode data and buffers deleted after beginShape', 
@@ -2555,7 +2556,6 @@ suite('p5.RendererGL', function() {
         assert.isUndefined(myp5._renderer.immediateMode.geometry.aCustomSrc);
         assert.isUndefined(myp5._renderer.immediateMode.geometry.aCustomVec3Src);
         assert.deepEqual(myp5._renderer.immediateMode.geometry.userAttributes, {});
-        assert.deepEqual(myp5._renderer.userAttributes, {});
         assert.deepEqual(myp5._renderer.immediateMode.buffers.user, []);
         myp5.endShape();
       }
@@ -2575,7 +2575,6 @@ suite('p5.RendererGL', function() {
         const myGeo = myp5.endGeometry();
         assert.deepEqual(immediateCopy.aCustomSrc, myGeo.aCustomSrc);
         assert.deepEqual(immediateCopy.aCustomVec3Src, myGeo.aCustomVec3Src);
-        assert.deepEqual(immediateCopy.userAttributes, myGeo.userAttributes);
       }
     );
     test('Retained mode buffers are created for rendering',
@@ -2635,7 +2634,7 @@ suite('p5.RendererGL', function() {
         myp5.vertex(1,0,0);
         myp5.endShape();
         console.log = oldLog;
-        expect(logs.join('\n')).to.match(/Custom attribute aCustom has been set with various data sizes/);
+        expect(logs.join('\n')).to.match(/Custom attribute 'aCustom' has been set with various data sizes/);
       }
     );
     test('Friendly error too many values set',
@@ -2651,7 +2650,7 @@ suite('p5.RendererGL', function() {
         myGeo.setAttribute('aCustom', 2);
         myp5.model(myGeo);
         console.log = oldLog;
-        expect(logs.join('\n')).to.match(/One of the geometries has a custom attribute with more values than vertices./);
+        expect(logs.join('\n')).to.match(/One of the geometries has a custom attribute 'aCustom' with more values than vertices./);
       }
     );
     test('Friendly error if too few values set',
@@ -2667,7 +2666,7 @@ suite('p5.RendererGL', function() {
         myGeo.setAttribute('aCustom', 1);
         myp5.model(myGeo);
         console.log = oldLog;
-        expect(logs.join('\n')).to.match(/One of the geometries has a custom attribute with fewer values than vertices./);
+        expect(logs.join('\n')).to.match(/One of the geometries has a custom attribute 'aCustom' with fewer values than vertices./);
       }
     );
   })

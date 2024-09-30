@@ -64,25 +64,26 @@ class GeometryBuilder {
     const builtAttrs = this.geometry.userAttributes;
     const numPreviousVertices = this.geometry.vertices.length - input.vertices.length;
 
-    for (const attr in builtAttrs){
-      if (attr in inputAttrs){
+    for (const attrName in builtAttrs){
+      if (attrName in inputAttrs){
         continue;
       }
-      const size = builtAttrs[attr];
+      const attr = builtAttrs[attrName]
+      const size = attr.getDataSize();
       const numMissingValues = size * input.vertices.length;
       const missingValues = Array(numMissingValues).fill(0);
-      this.geometry.setAttribute(attr, missingValues, size);
+      attr.pushDirect(missingValues);
     }
-    for (const attr in inputAttrs){
-      const src = attr.concat('Src');
-      const data = input[src];
-      const size = inputAttrs[attr];
-      if (numPreviousVertices > 0 && !(attr in this.geometry.userAttributes)){
+    for (const attrName in inputAttrs){
+      const attr = inputAttrs[attrName]; 
+      const data = attr.getSrcArray();
+      const size = attr.getDataSize();
+      if (numPreviousVertices > 0 && !(attrName in builtAttrs)){
         const numMissingValues = size * numPreviousVertices;
         const missingValues = Array(numMissingValues).fill(0);
-        this.geometry.setAttribute(attr, missingValues, size);
+        this.geometry.setAttribute(attrName, missingValues, size);
       }
-      this.geometry.setAttribute(attr, data, size);
+      this.geometry.setAttribute(attrName, data, size);
     }
 
     if (this.renderer._doFill) {

@@ -671,7 +671,6 @@ p5.RendererGL = class RendererGL extends Renderer {
 
     // Used to distinguish between user calls to vertex() and internal calls
     this.isProcessingVertices = false;
-    this.tessyVertexSize = 12;
     this._tessy = this._initTessy();
 
     this.fontInfos = {};
@@ -2419,6 +2418,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     return p;
   }
   _initTessy() {
+    this.tessyVertexSize = 12;
     // function called for each vertex of tesselator output
     function vertexCallback(data, polyVertArray) {
       for (const element of data) {
