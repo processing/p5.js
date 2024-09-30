@@ -2021,7 +2021,7 @@ p5.Geometry = class Geometry {
       attr = this.userAttributes[attributeName] = 
         this._createUserAttributeHelper(attributeName, data, size);
     }
-    attr = this.userAttributes[attributeName]
+    attr = this.userAttributes[attributeName];
     if (size){
       attr.pushDirect(data);
     } else{
@@ -2034,7 +2034,6 @@ p5.Geometry = class Geometry {
     const geometryInstance = this;
     const attr = this.userAttributes[attributeName] = {
       name: attributeName,
-      currentData: data,
       dataSize: size ? size : data.length ? data.length : 1,
       geometry: geometryInstance,
       // Getters
