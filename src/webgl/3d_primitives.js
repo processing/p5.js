@@ -3021,14 +3021,13 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
 
     // Do the same for custom attributes
     const userAttributes = {};
-    for (const attr in immediateGeometry.userAttributes){
-      const attributeSrc = attr.concat('Src');
-      const size = immediateGeometry.userAttributes[attr];
-      const curData = this.userAttributes[attr];
-      userAttributes[attr] = [];
-      for (m = 0; m < 4; m++) userAttributes[attr].push([]);
-      userAttributes[attr][0] = immediateGeometry[attributeSrc].slice(-size);
-      userAttributes[attr][3] = curData;
+    for (const attrName in immediateGeometry.userAttributes){
+      const attr = immediateGeometry.userAttributes[attrName];
+      const size = attr.getDataSize();
+      userAttributes[attrName] = [];
+      for (m = 0; m < 4; m++) userAttributes[attrName].push([]);
+      userAttributes[attrName][0] = attr.getSrcArray().slice(-size);
+      userAttributes[attrName][3] = attr.getCurrentData();
     } 
 
     if (argLength === 6) {
@@ -3058,14 +3057,14 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
           strokeColors[0][k] * d2 + strokeColors[3][k] * (1-d2)
         );
       }
-      for (const attr in immediateGeometry.userAttributes){
-        const size = immediateGeometry.userAttributes[attr];
+      for (const attrName in immediateGeometry.userAttributes){
+        const size = immediateGeometry.userAttributes[attrName].getDataSize();
         for (k = 0; k < size; k++){
-          userAttributes[attr][1].push(
-            userAttributes[attr][0][k] * (1-d0) + userAttributes[attr][3][k] * d0
+          userAttributes[attrName][1].push(
+            userAttributes[attrName][0][k] * (1-d0) + userAttributes[attrName][3][k] * d0
           );
-          userAttributes[attr][2].push(
-            userAttributes[attr][0][k] * (1-d2) + userAttributes[attr][3][k] * d2
+          userAttributes[attrName][2].push(
+            userAttributes[attrName][0][k] * (1-d2) + userAttributes[attrName][3][k] * d2
           );
         }
       }
@@ -3085,21 +3084,26 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
           _x += w_x[m] * this._lookUpTableBezier[i][m];
           _y += w_y[m] * this._lookUpTableBezier[i][m];
         }
-        for (const attr in immediateGeometry.userAttributes){
-          const size = immediateGeometry.userAttributes[attr];
-          this.userAttributes[attr] = Array(size).fill(0);
+        for (const attrName in immediateGeometry.userAttributes){
+          const attr = immediateGeometry.userAttributes[attrName];
+          const size = attr.getDataSize();
+          let newValues = Array(size).fill(0);
           for (let m = 0; m < 4; m++){
             for (let k = 0; k < size; k++){
-              this.userAttributes[attr][k] +=
-                this._lookUpTableBezier[i][m] * userAttributes[attr][m][k];
+              newValues[k] += this._lookUpTableBezier[i][m] * userAttributes[attrName][m][k];
             }
           }
+          attr.setCurrentData(newValues);
         }
         this.vertex(_x, _y);
       }
       // so that we leave currentColor with the last value the user set it to
       this.curFillColor = fillColors[3];
       this.curStrokeColor = strokeColors[3];
+      for (const attrName in immediateGeometry.userAttributes) {
+        const attr = immediateGeometry.userAttributes[attrName];
+        attr.setCurrentData(userAttributes[attrName][2]);
+      }
       this.immediateMode._bezierVertex[0] = args[4];
       this.immediateMode._bezierVertex[1] = args[5];
     } else if (argLength === 9) {
@@ -3130,6 +3134,17 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
           strokeColors[0][k] * d2 + strokeColors[3][k] * (1-d2)
         );
       }
+      for (const attrName in immediateGeometry.userAttributes){
+        const size = immediateGeometry.userAttributes[attrName].getDataSize();
+        for (k = 0; k < size; k++){
+          userAttributes[attrName][1].push(
+            userAttributes[attrName][0][k] * (1-d0) + userAttributes[attrName][3][k] * d0
+          );
+          userAttributes[attrName][2].push(
+            userAttributes[attrName][0][k] * (1-d2) + userAttributes[attrName][3][k] * d2
+          );
+        }
+      }
       for (let i = 0; i < LUTLength; i++) {
         // Interpolate colors using control points
         this.curFillColor = [0, 0, 0, 0];
@@ -3146,11 +3161,26 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
           _y += w_y[m] * this._lookUpTableBezier[i][m];
           _z += w_z[m] * this._lookUpTableBezier[i][m];
         }
+        for (const attrName in immediateGeometry.userAttributes){
+          const attr = immediateGeometry.userAttributes[attrName];
+          const size = attr.getDataSize();
+          let newValues = Array(size).fill(0);
+          for (let m = 0; m < 4; m++){
+            for (let k = 0; k < size; k++){
+              newValues[k] += this._lookUpTableBezier[i][m] * userAttributes[attrName][m][k];
+            }
+          }
+          attr.setCurrentData(newValues);
+        }
         this.vertex(_x, _y, _z);
       }
       // so that we leave currentColor with the last value the user set it to
       this.curFillColor = fillColors[3];
       this.curStrokeColor = strokeColors[3];
+      for (const attrName in immediateGeometry.userAttributes) {
+        const attr = immediateGeometry.userAttributes[attrName];
+        attr.setCurrentData(userAttributes[attrName][2]);
+      }
       this.immediateMode._bezierVertex[0] = args[6];
       this.immediateMode._bezierVertex[1] = args[7];
       this.immediateMode._bezierVertex[2] = args[8];
