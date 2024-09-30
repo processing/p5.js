@@ -150,9 +150,9 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
       const attr = geometry.model.userAttributes[buff.attr];
       const adjustedLength = attr.getSrcArray().length / attr.getDataSize();
       if(adjustedLength > geometry.model.vertices.length){
-        p5._friendlyError(`One of the geometries has a custom attribute ${attr.name} with more values than vertices. This is probably caused by directly using the Geometry.setAttribute() method.`, 'setAttribute()');
+        p5._friendlyError(`One of the geometries has a custom attribute '${attr.getName()}' with more values than vertices. This is probably caused by directly using the Geometry.setAttribute() method.`, 'setAttribute()');
       } else if(adjustedLength < geometry.model.vertices.length){
-        p5._friendlyError(`One of the geometries has a custom attribute ${attr.name} with fewer values than vertices. This is probably caused by directly using the Geometry.setAttribute() method.`, 'setAttribute()');
+        p5._friendlyError(`One of the geometries has a custom attribute '${attr.getName()}' with fewer values than vertices. This is probably caused by directly using the Geometry.setAttribute() method.`, 'setAttribute()');
       }
       buff._prepareBuffer(geometry, fillShader);
     }
