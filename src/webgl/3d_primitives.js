@@ -3215,14 +3215,13 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
 
     // Do the same for custom (user defined) attributes
     const userAttributes = {};
-    for (const attr in immediateGeometry.userAttributes){
-      const attributeSrc = attr.concat('Src');
-      const size = immediateGeometry.userAttributes[attr];
-      const curData = this.userAttributes[attr];
-      userAttributes[attr] = [];
-      for (m = 0; m < 3; m++) userAttributes[attr].push([]);
-      userAttributes[attr][0] = immediateGeometry[attributeSrc].slice(-size);
-      userAttributes[attr][2] = curData;
+    for (const attrName in immediateGeometry.userAttributes){
+      const attr = immediateGeometry.userAttributes[attrName];
+      const size = attr.getDataSize();
+      userAttributes[attrName] = [];
+      for (m = 0; m < 3; m++) userAttributes[attrName].push([]);
+      userAttributes[attrName][0] = attr.getSrcArray().slice(-size);
+      userAttributes[attrName][2] = attr.getCurrentData();
     } 
 
     if (argLength === 4) {
@@ -3245,11 +3244,12 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
           strokeColors[0][k] * (1-d0) + strokeColors[2][k] * d0
         );
       }
-      for (const attr in immediateGeometry.userAttributes){
-        const size = immediateGeometry.userAttributes[attr];
+      for (const attrName in immediateGeometry.userAttributes){
+        const attr = immediateGeometry.userAttributes[attrName];
+        const size = attr.getDataSize();
         for (let k = 0; k < size; k++){
-          userAttributes[attr][1].push(
-            userAttributes[attr][0][k] * (1-d0) + userAttributes[attr][2][k] * d0
+          userAttributes[attrName][1].push(
+            userAttributes[attrName][0][k] * (1-d0) + userAttributes[attrName][2][k] * d0
           );
         }
       }
@@ -3270,15 +3270,16 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
           _y += w_y[m] * this._lookUpTableQuadratic[i][m];
         }
 
-        for (const attr in immediateGeometry.userAttributes) {
-          const size = immediateGeometry.userAttributes[attr];
-          this.userAttributes[attr] = Array(size).fill(0);
+        for (const attrName in immediateGeometry.userAttributes) {
+          const attr = immediateGeometry.userAttributes[attrName];
+          const size = attr.getDataSize();
+          let newValues = Array(size).fill(0);
           for (let m = 0; m < 3; m++){
             for (let k = 0; k < size; k++){
-              this.userAttributes[attr][k] +=
-                this._lookUpTableQuadratic[i][m] * userAttributes[attr][m][k];
+              newValues[k] += this._lookUpTableQuadratic[i][m] * userAttributes[attrName][m][k];
             }
-          } 
+          }
+          attr.setCurrentData(newValues);
         }
         this.vertex(_x, _y);
       }
