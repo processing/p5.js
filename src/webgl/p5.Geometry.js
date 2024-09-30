@@ -2079,7 +2079,7 @@ p5.Geometry = class Geometry {
         }
       },
       resetSrcArray(){
-        this.geometry[this.getSrcName] = [];
+        this.geometry[this.getSrcName()] = [];
       },
       delete() {
         const srcName = this.getSrcName();
