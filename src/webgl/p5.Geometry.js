@@ -452,8 +452,8 @@ p5.Geometry = class Geometry {
     this.vertexNormals.length = 0;
     this.uvs.length = 0;
 
-    for (const attr in this.userAttributes){
-      this.userAttributes[attr].delete();
+    for (const attrName in this.userAttributes){
+      this.userAttributes[attrName].delete();
     }
     this.userAttributes = {};
 
@@ -2019,7 +2019,7 @@ p5.Geometry = class Geometry {
     let attr;
     if (!this.userAttributes[attributeName]){
       attr = this.userAttributes[attributeName] = 
-        this._createUserAttributeHelper(attributeName, data, this);
+        this._createUserAttributeHelper(attributeName, data, size);
     }
     attr = this.userAttributes[attributeName]
     if (size){
@@ -2030,12 +2030,12 @@ p5.Geometry = class Geometry {
     }
   }
 
-  _createUserAttributeHelper(attributeName, data){
+  _createUserAttributeHelper(attributeName, data, size){
     const geometryInstace = this;
     const attr = this.userAttributes[attributeName] = {
       name: attributeName,
       currentData: data,
-      dataSize: data.length ? data.length : 1,
+      dataSize: size ? size : data.length ? data.length : 1,
       geometry: geometryInstace,
       // Getters
       getName(){
