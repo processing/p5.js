@@ -3287,6 +3287,10 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
       // so that we leave currentColor with the last value the user set it to
       this.curFillColor = fillColors[2];
       this.curStrokeColor = strokeColors[2];
+      for (const attrName in immediateGeometry.userAttributes) {
+        const attr = immediateGeometry.userAttributes[attrName];
+        attr.setCurrentData(userAttributes[attrName][2]);
+      }
       this.immediateMode._quadraticVertex[0] = args[2];
       this.immediateMode._quadraticVertex[1] = args[3];
     } else if (argLength === 6) {
@@ -3311,6 +3315,16 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
         );
       }
 
+      for (const attrName in immediateGeometry.userAttributes){
+        const attr = immediateGeometry.userAttributes[attrName];
+        const size = attr.getDataSize();
+        for (let k = 0; k < size; k++){
+          userAttributes[attrName][1].push(
+            userAttributes[attrName][0][k] * (1-d0) + userAttributes[attrName][2][k] * d0
+          );
+        }
+      }
+
       for (i = 0; i < LUTLength; i++) {
         // Interpolate colors using control points
         this.curFillColor = [0, 0, 0, 0];
@@ -3327,12 +3341,27 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
           _y += w_y[m] * this._lookUpTableQuadratic[i][m];
           _z += w_z[m] * this._lookUpTableQuadratic[i][m];
         }
+        for (const attrName in immediateGeometry.userAttributes) {
+          const attr = immediateGeometry.userAttributes[attrName];
+          const size = attr.getDataSize();
+          let newValues = Array(size).fill(0);
+          for (let m = 0; m < 3; m++){
+            for (let k = 0; k < size; k++){
+              newValues[k] += this._lookUpTableQuadratic[i][m] * userAttributes[attrName][m][k];
+            }
+          }
+          attr.setCurrentData(newValues);
+        }
         this.vertex(_x, _y, _z);
       }
 
       // so that we leave currentColor with the last value the user set it to
       this.curFillColor = fillColors[2];
       this.curStrokeColor = strokeColors[2];
+      for (const attrName in immediateGeometry.userAttributes) {
+        const attr = immediateGeometry.userAttributes[attrName];
+        attr.setCurrentData(userAttributes[attrName][2]);
+      }
       this.immediateMode._quadraticVertex[0] = args[3];
       this.immediateMode._quadraticVertex[1] = args[4];
       this.immediateMode._quadraticVertex[2] = args[5];
