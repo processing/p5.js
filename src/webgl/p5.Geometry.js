@@ -2010,11 +2010,10 @@ p5.Geometry = class Geometry {
  * }
  * </code>
  * </div>
-/
-/**
- * @method setAttribute
+ *
  * @param {String} attributeName the name of the vertex attribute.
  * @param {Number|Number[]} data the data tied to the vertex attribute.
+ * @param {Number} size optional size of each unit of data
  */
   setAttribute(attributeName, data, size = data.length ? data.length : 1){
     const attributeSrc = attributeName.concat('Src');

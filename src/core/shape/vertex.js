@@ -2414,8 +2414,7 @@ p5.prototype.normal = function(x, y, z) {
  * }
  * </code>
  * </div>
-/
-/**
+ *
  * @method setAttribute
  * @param {String} attributeName the name of the vertex attribute.
  * @param {Number|Number[]} data the data tied to the vertex attribute.
