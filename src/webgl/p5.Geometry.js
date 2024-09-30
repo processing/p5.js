@@ -2009,11 +2009,11 @@ p5.Geometry = class Geometry {
  * }
  * </code>
  * </div>
-/
-/**
+ *
  * @method setAttribute
  * @param {String} attributeName the name of the vertex attribute.
  * @param {Number|Number[]} data the data tied to the vertex attribute.
+ * @param {Number} [size] optional size of each unit of data. 
  */
   setAttribute(attributeName, data, size){
     let attr;
@@ -2062,7 +2062,7 @@ p5.Geometry = class Geometry {
       setCurrentData(data) {
         const size = data.length ? data.length : 1;
         if (size != this.getDataSize()){
-          p5._friendlyError(`Custom attribute ${this.name} has been set with various data sizes. You can change it's name, or if it was an accident, set ${this.name} to have the same number of inputs each time!`, 'setAttribute()');
+          p5._friendlyError(`Custom attribute '${this.name}' has been set with various data sizes. You can change it's name, or if it was an accident, set '${this.name}' to have the same number of inputs each time!`, 'setAttribute()');
         }
         this.currentData = data;
       },
