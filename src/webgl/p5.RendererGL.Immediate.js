@@ -121,7 +121,7 @@ p5.RendererGL.prototype.vertex = function(x, y) {
     const geom = this.immediateMode.geometry;
     const attr = geom.userAttributes[attrName];
     const verts = geom.vertices;
-    if (!attr.getSrcArray() && verts.length > 1) {
+    if (attr.getSrcArray().length === 0 && verts.length > 1) {
       const numMissingValues = attr.getDataSize() * (verts.length - 1);
       const missingValues = Array(numMissingValues).fill(0);
       attr.pushDirect(missingValues);
@@ -184,6 +184,7 @@ p5.RendererGL.prototype.vertex = function(x, y) {
 p5.RendererGL.prototype.setAttribute = function(attributeName, data){
   if(!this._useUserAttributes){
     this._useUserAttributes = true;
+    this.immediateMode.geometry.userAttributes = {};
   }
   const attrExists = this.immediateMode.geometry.userAttributes[attributeName];
   let attr;
@@ -205,11 +206,12 @@ p5.RendererGL.prototype._resetUserAttributes = function(){
   const attributes = this.immediateMode.geometry.userAttributes;
   for (const attrName in attributes){
     const attr = attributes[attrName];
-    delete this.immediateBufferStrides[attr.getSrcName()];
+    delete this.immediateBufferStrides[attrName];
     attr.delete();
   }
   this._userUserAttributes = false;
   this.tessyVertexSize = 12;
+  this.immediateMode.geometry.userAttributes = {};
   this.immediateMode.buffers.user = [];
 };
 
@@ -512,10 +514,11 @@ p5.RendererGL.prototype._tesselateShape = function() {
       let offset = 12;
       for (const attrName in this.immediateMode.geometry.userAttributes){
           const attr = this.immediateMode.geometry.userAttributes[attrName];
+          const size = attr.getDataSize();
           const start = j + offset;
-          const end = start + attr.getDataSize();
-          attr.setCurrentData(polyTriangles.slice(start, end))
-          offset += attr.getDataSize();
+          const end = start + size;
+          this.setAttribute(attrName, polyTriangles.slice(start, end), size);
+          offset += size;
       }
     }
     this.vertex(...polyTriangles.slice(j, j + 5));
