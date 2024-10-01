@@ -60,6 +60,32 @@ class GeometryBuilder {
     );
     this.geometry.uvs.push(...input.uvs);
 
+    const inputUserVertexProps = input.userVertexProperties;
+    const builtUserVertexProps = this.geometry.userVertexProperties;
+    const numPreviousVertices = this.geometry.vertices.length - input.vertices.length;
+
+    for (const propName in builtUserVertexProps){
+      if (propName in inputUserVertexProps){
+        continue;
+      }
+      const prop = builtUserVertexProps[propName]
+      const size = prop.getDataSize();
+      const numMissingValues = size * input.vertices.length;
+      const missingValues = Array(numMissingValues).fill(0);
+      prop.pushDirect(missingValues);
+    }
+    for (const propName in inputUserVertexProps){
+      const prop = inputUserVertexProps[propName];
+      const data = prop.getSrcArray();
+      const size = prop.getDataSize();
+      if (numPreviousVertices > 0 && !(propName in builtUserVertexProps)){
+        const numMissingValues = size * numPreviousVertices;
+        const missingValues = Array(numMissingValues).fill(0);
+        this.geometry.vertexProperty(propName, missingValues, size);
+      }
+      this.geometry.vertexProperty(propName, data, size);
+    }
+
     if (this.renderer.states.doFill) {
       this.geometry.faces.push(
         ...input.faces.map(f => f.map(idx => idx + startIdx))

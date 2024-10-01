@@ -268,7 +268,7 @@ p5.Shader = class Shader {
    * For example, this shader will produce the following output:
    *
    * ```js
-   * myShader = materialShader().modify({
+   * myShader = baseMaterialShader().modify({
    *   declarations: 'uniform float time;',
    *   'vec3 getWorldPosition': `(vec3 pos) {
    *     pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
@@ -378,7 +378,7 @@ p5.Shader = class Shader {
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = materialShader().modify({
+   *   myShader = baseMaterialShader().modify({
    *     uniforms: {
    *       'float time': () => millis()
    *     },
@@ -407,7 +407,7 @@ p5.Shader = class Shader {
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = materialShader().modify({
+   *   myShader = baseMaterialShader().modify({
    *     // Manually specifying a uniform
    *     declarations: 'uniform float time;',
    *     'vec3 getWorldPosition': `(vec3 pos) {

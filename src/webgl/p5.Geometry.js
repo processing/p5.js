@@ -283,6 +283,8 @@ p5.Geometry = class Geometry {
     // One color per vertex representing the stroke color at that vertex
     this.vertexStrokeColors = [];
 
+    this.userVertexProperties = {};
+
     // One color per line vertex, generated automatically based on
     // vertexStrokeColors in _edgesToVertices()
     this.lineVertexColors = new p5.DataArray();
@@ -449,6 +451,11 @@ p5.Geometry = class Geometry {
     this.lineVertexColors.clear();
     this.vertexNormals.length = 0;
     this.uvs.length = 0;
+
+    for (const propName in this.userVertexProperties){
+      this.userVertexProperties[propName].delete();
+    }
+    this.userVertexProperties = {};
 
     this.dirtyFlags = {};
   }
@@ -1909,6 +1916,186 @@ p5.Geometry = class Geometry {
       }
     }
     return this;
+  }
+
+/** Sets the shader's vertex property or attribute variables.
+ * 
+ * An vertex property or vertex attribute is a variable belonging to a vertex in a shader. p5.js provides some
+ * default properties, such as `aPosition`, `aNormal`, `aVertexColor`, etc. These are
+ * set using <a href="#/p5/vertex">vertex()</a>, <a href="#/p5/normal">normal()</a> 
+ * and <a href="#/p5/fill">fill()</a> respectively. Custom properties can also
+ * be defined within <a href="#/p5/beginShape">beginShape()</a> and 
+ * <a href="#/p5/endShape">endShape()</a>.
+ * 
+ * The first parameter, `propertyName`, is a string with the property's name.
+ * This is the same variable name which should be declared in the shader, as in
+ * `in vec3 aProperty`, similar to .`setUniform()`.
+ * 
+ * The second parameter, `data`, is the value assigned to the shader variable. This value
+ * will be pushed directly onto the Geometry object. There should be the same number 
+ * of custom property values as vertices, this method should be invoked once for each 
+ * vertex. 
+ * 
+ * The `data` can be a Number or an array of numbers. Tn the shader program the type
+ * can be declared according to the WebGL specification. Common types include `float`, 
+ * `vec2`, `vec3`, `vec4` or matrices.
+ * 
+ * See also the global <a href="#/p5/vertexProperty">vertexProperty()</a> function.
+ * 
+ * @example
+ * <div>
+ * <code>
+ * let geo;
+ * 
+ * function cartesianToSpherical(x, y, z) {
+ *   let r = sqrt(pow(x, x) + pow(y, y) + pow(z, z));
+ *   let theta = acos(z / r);
+ *   let phi = atan2(y, x);
+ *   return { theta, phi };
+ * }
+ * 
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * 
+ *   // Modify the material shader to display roughness.
+ *   const myShader = materialShader().modify({
+ *     vertexDeclarations:`in float aRoughness;
+ *                         out float vRoughness;`,
+ *     fragmentDeclarations: 'in float vRoughness;',
+ *     'void afterVertex': `() {
+ *         vRoughness = aRoughness;
+ *     }`,
+ *     'vec4 combineColors': `(ColorComponents components) {
+ *             vec4 color = vec4(0.);
+ *             color.rgb += components.diffuse * components.baseColor * (1.0-vRoughness);
+ *             color.rgb += components.ambient * components.ambientColor;
+ *             color.rgb += components.specular * components.specularColor * (1.0-vRoughness);
+ *             color.a = components.opacity;
+ *             return color;
+ *     }`
+ *   });
+ * 
+ *   // Create the Geometry object.
+ *   beginGeometry();
+ *   fill('hotpink');
+ *   sphere(45, 50, 50);
+ *   geo = endGeometry();
+ * 
+ *   // Set the roughness value for every vertex.
+ *   for (let v of geo.vertices){
+ * 
+ *     // convert coordinates to spherical coordinates
+ *     let spherical = cartesianToSpherical(v.x, v.y, v.z);
+ *
+ *     // Set the custom roughness vertex property.
+ *     let roughness = noise(spherical.theta*5, spherical.phi*5);
+ *     geo.vertexProperty('aRoughness', roughness);
+ *   }
+ * 
+ *   // Use the custom shader.
+ *   shader(myShader);
+ * 
+ *   describe('A rough pink sphere rotating on a blue background.');
+ * }
+ * 
+ * function draw() {
+ *   // Set some styles and lighting
+ *   background('lightblue');
+ *   noStroke();
+ * 
+ *   specularMaterial(255,125,100);
+ *   shininess(2);
+ *
+ *   directionalLight('white', -1, 1, -1);
+ *   ambientLight(320);
+ *
+ *   rotateY(millis()*0.001);
+ *
+ *   // Draw the geometry
+ *   model(geo);
+ * }
+ * </code>
+ * </div>
+ *
+ * @method vertexProperty
+ * @param {String} propertyName the name of the vertex property.
+ * @param {Number|Number[]} data the data tied to the vertex property.
+ * @param {Number} [size] optional size of each unit of data. 
+ */
+  vertexProperty(propertyName, data, size){
+    let prop;
+    if (!this.userVertexProperties[propertyName]){
+      prop = this.userVertexProperties[propertyName] = 
+        this._userVertexPropertyHelper(propertyName, data, size);
+    }
+    prop = this.userVertexProperties[propertyName];
+    if (size){
+      prop.pushDirect(data);
+    } else{
+      prop.setCurrentData(data);
+      prop.pushCurrentData();
+    }
+  }
+
+  _userVertexPropertyHelper(propertyName, data, size){
+    const geometryInstance = this;
+    const prop = this.userVertexProperties[propertyName] = {
+      name: propertyName,
+      dataSize: size ? size : data.length ? data.length : 1,
+      geometry: geometryInstance,
+      // Getters
+      getName(){
+        return this.name;
+      },
+      getCurrentData(){
+        return this.currentData;
+      },
+      getDataSize() {
+        return this.dataSize;
+      },
+      getSrcName() {
+        const src = this.name.concat('Src');  
+        return src;
+      },
+      getDstName() {
+        const dst = this.name.concat('Buffer');
+        return dst;
+      },
+      getSrcArray() {
+        const srcName = this.getSrcName();
+        return this.geometry[srcName];
+      },
+      //Setters
+      setCurrentData(data) {
+        const size = data.length ? data.length : 1;
+        if (size != this.getDataSize()){
+          p5._friendlyError(`Custom vertex property '${this.name}' has been set with various data sizes. You can change it's name, or if it was an accident, set '${this.name}' to have the same number of inputs each time!`, 'vertexProperty()');
+        }
+        this.currentData = data;
+      },
+      // Utilities
+      pushCurrentData(){
+        const data = this.getCurrentData();
+        this.pushDirect(data);
+      },
+      pushDirect(data) {
+        if (data.length){
+          this.getSrcArray().push(...data);
+        } else{
+          this.getSrcArray().push(data);
+        }
+      },
+      resetSrcArray(){
+        this.geometry[this.getSrcName()] = [];
+      },
+      delete() {
+        const srcName = this.getSrcName();
+        delete this.geometry[srcName];
+        delete this;
+      }
+    };
+    this[prop.getSrcName()] = []; 
+    return this.userVertexProperties[propertyName];
   }
 };
 
