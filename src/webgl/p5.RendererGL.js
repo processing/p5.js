@@ -575,7 +575,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.userFillShader = undefined;
     this.userStrokeShader = undefined;
     this.userPointShader = undefined;
-
+    this._useUserAttributes = undefined;
     // Default drawing is done in Retained Mode
     // Geometry and Material hashes stored here
     this.retainedMode = {
@@ -599,7 +599,8 @@ p5.RendererGL = class RendererGL extends Renderer {
         text: [
           new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
           new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
-        ]
+        ],
+        user:[]
       }
     };
 
@@ -627,7 +628,8 @@ p5.RendererGL = class RendererGL extends Renderer {
           new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this),
           new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
         ],
-        point: this.GL.createBuffer()
+        point: this.GL.createBuffer(),
+        user:[]
       }
     };
 
@@ -2416,6 +2418,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     return p;
   }
   _initTessy() {
+    this.tessyVertexSize = 12;
     // function called for each vertex of tesselator output
     function vertexCallback(data, polyVertArray) {
       for (const element of data) {
@@ -2434,8 +2437,8 @@ p5.RendererGL = class RendererGL extends Renderer {
       console.log(`error number: ${errno}`);
     }
     // callback for when segments intersect and must be split
-    function combinecallback(coords, data, weight) {
-      const result = new Array(p5.RendererGL.prototype.tessyVertexSize).fill(0);
+    const combinecallback = (coords, data, weight) => {
+      const result = new Array(this.tessyVertexSize).fill(0);
       for (let i = 0; i < weight.length; i++) {
         for (let j = 0; j < result.length; j++) {
           if (weight[i] === 0 || !data[i]) continue;
@@ -2443,7 +2446,7 @@ p5.RendererGL = class RendererGL extends Renderer {
         }
       }
       return result;
-    }
+    };
 
     function edgeCallback(flag) {
       // don't really care about the flag, but need no-strip/no-fan behavior
@@ -2475,7 +2478,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       for (
         let j = 0;
         j < contour.length;
-        j += p5.RendererGL.prototype.tessyVertexSize
+        j += this.tessyVertexSize
       ) {
         if (contour[j + 2] !== z) {
           allSameZ = false;
@@ -2498,11 +2501,11 @@ p5.RendererGL = class RendererGL extends Renderer {
       for (
         let j = 0;
         j < contour.length;
-        j += p5.RendererGL.prototype.tessyVertexSize
+        j += this.tessyVertexSize
       ) {
         const coords = contour.slice(
           j,
-          j + p5.RendererGL.prototype.tessyVertexSize
+          j + this.tessyVertexSize
         );
         this._tessy.gluTessVertex(coords, coords);
       }
@@ -2524,9 +2527,5 @@ p5.prototype._assert3d = function (name) {
       `${name}() is only supported in WEBGL mode. If you'd like to use 3D graphics and WebGL, see  https://p5js.org/examples/form-3d-primitives.html for more information.`
     );
 };
-
-// function to initialize GLU Tesselator
-
-p5.RendererGL.prototype.tessyVertexSize = 12;
 
 export default p5.RendererGL;

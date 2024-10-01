@@ -62,6 +62,8 @@ p5.RendererGL.prototype._freeBuffers = function(gId) {
   // free all the buffers
   freeBuffers(this.retainedMode.buffers.stroke);
   freeBuffers(this.retainedMode.buffers.fill);
+  freeBuffers(this.retainedMode.buffers.user);
+  this.retainedMode.buffers.user = [];
 };
 
 /**
@@ -114,6 +116,12 @@ p5.RendererGL.prototype.createBuffers = function(gId, model) {
     ? model.lineVertices.length / 3
     : 0;
 
+  for (const propName in model.userVertexProperties){
+    const prop = model.userVertexProperties[propName];
+    this.retainedMode.buffers.user.push(
+      new p5.RenderBuffer(prop.getDataSize(), prop.getSrcName(), prop.getDstName(), prop.getName(), this)
+    );
+  }
   return buffers;
 };
 
@@ -130,12 +138,22 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   if (
     !this.geometryBuilder &&
     this._doFill &&
-    this.retainedMode.geometry[gId].vertexCount > 0
+    geometry.vertexCount > 0
   ) {
     this._useVertexColor = (geometry.model.vertexColors.length > 0);
     const fillShader = this._getRetainedFillShader();
     this._setFillUniforms(fillShader);
     for (const buff of this.retainedMode.buffers.fill) {
+      buff._prepareBuffer(geometry, fillShader);
+    }
+    for (const buff of this.retainedMode.buffers.user){
+      const prop = geometry.model.userVertexProperties[buff.attr];
+      const adjustedLength = prop.getSrcArray().length / prop.getDataSize();
+      if(adjustedLength > geometry.model.vertices.length){
+        p5._friendlyError(`One of the geometries has a custom vertex property '${prop.getName()}' with more values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`, 'vertexProperty()');
+      } else if(adjustedLength < geometry.model.vertices.length){
+        p5._friendlyError(`One of the geometries has a custom vertex property '${prop.getName()}' with fewer values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`, 'vertexProperty()');
+      }
       buff._prepareBuffer(geometry, fillShader);
     }
     fillShader.disableRemainingAttributes();
@@ -158,6 +176,16 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     for (const buff of this.retainedMode.buffers.stroke) {
       buff._prepareBuffer(geometry, strokeShader);
     }
+    for (const buff of this.retainedMode.buffers.user){
+      const prop = geometry.model.userVertexProperties[buff.attr];
+      const adjustedLength = prop.getSrcArray().length / prop.getDataSize();
+      if(adjustedLength > geometry.model.vertices.length){
+        p5._friendlyError(`One of the geometries has a custom vertex property ${prop.name} with more values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`, 'vertexProperty()');
+      } else if(adjustedLength < geometry.model.vertices.length){
+        p5._friendlyError(`One of the geometries has a custom vertex property ${prop.name} with fewer values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`, 'vertexProperty()');
+      }
+      buff._prepareBuffer(geometry, strokeShader);
+    }
     strokeShader.disableRemainingAttributes();
     this._applyColorBlend(
       this.curStrokeColor,
@@ -170,7 +198,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   if (this.geometryBuilder) {
     this.geometryBuilder.addRetained(geometry);
   }
-
+  
   return this;
 };
 
