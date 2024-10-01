@@ -116,10 +116,10 @@ p5.RendererGL.prototype.createBuffers = function(gId, model) {
     ? model.lineVertices.length / 3
     : 0;
 
-  for (const attrName in model.userAttributes){
-    const attr = model.userAttributes[attrName];
+  for (const propName in model.userVertexProperties){
+    const prop = model.userVertexProperties[propName];
     this.retainedMode.buffers.user.push(
-      new p5.RenderBuffer(attr.getDataSize(), attr.getSrcName(), attr.getDstName(), attr.getName(), this)
+      new p5.RenderBuffer(prop.getDataSize(), prop.getSrcName(), prop.getDstName(), prop.getName(), this)
     );
   }
   return buffers;
@@ -147,12 +147,12 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
       buff._prepareBuffer(geometry, fillShader);
     }
     for (const buff of this.retainedMode.buffers.user){
-      const attr = geometry.model.userAttributes[buff.attr];
-      const adjustedLength = attr.getSrcArray().length / attr.getDataSize();
+      const prop = geometry.model.userVertexProperties[buff.attr];
+      const adjustedLength = prop.getSrcArray().length / prop.getDataSize();
       if(adjustedLength > geometry.model.vertices.length){
-        p5._friendlyError(`One of the geometries has a custom attribute '${attr.getName()}' with more values than vertices. This is probably caused by directly using the Geometry.setAttribute() method.`, 'setAttribute()');
+        p5._friendlyError(`One of the geometries has a custom vertex property '${prop.getName()}' with more values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`, 'vertexProperty()');
       } else if(adjustedLength < geometry.model.vertices.length){
-        p5._friendlyError(`One of the geometries has a custom attribute '${attr.getName()}' with fewer values than vertices. This is probably caused by directly using the Geometry.setAttribute() method.`, 'setAttribute()');
+        p5._friendlyError(`One of the geometries has a custom vertex property '${prop.getName()}' with fewer values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`, 'vertexProperty()');
       }
       buff._prepareBuffer(geometry, fillShader);
     }
@@ -177,12 +177,12 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
       buff._prepareBuffer(geometry, strokeShader);
     }
     for (const buff of this.retainedMode.buffers.user){
-      const attr = geometry.model.userAttributes[buff.attr];
-      const adjustedLength = attr.getSrcArray().length / attr.getDataSize();
+      const prop = geometry.model.userVertexProperties[buff.attr];
+      const adjustedLength = prop.getSrcArray().length / prop.getDataSize();
       if(adjustedLength > geometry.model.vertices.length){
-        p5._friendlyError(`One of the geometries has a custom attribute ${attr.name} with more values than vertices. This is probably caused by directly using the Geometry.setAttribute() method.`, 'setAttribute()');
+        p5._friendlyError(`One of the geometries has a custom vertex property ${prop.name} with more values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`, 'vertexProperty()');
       } else if(adjustedLength < geometry.model.vertices.length){
-        p5._friendlyError(`One of the geometries has a custom attribute ${attr.name} with fewer values than vertices. This is probably caused by directly using the Geometry.setAttribute() method.`, 'setAttribute()');
+        p5._friendlyError(`One of the geometries has a custom vertex property ${prop.name} with fewer values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`, 'vertexProperty()');
       }
       buff._prepareBuffer(geometry, strokeShader);
     }

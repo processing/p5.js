@@ -283,7 +283,7 @@ p5.Geometry = class Geometry {
     // One color per vertex representing the stroke color at that vertex
     this.vertexStrokeColors = [];
 
-    this.userAttributes = {};
+    this.userVertexProperties = {};
 
     // One color per line vertex, generated automatically based on
     // vertexStrokeColors in _edgesToVertices()
@@ -452,10 +452,10 @@ p5.Geometry = class Geometry {
     this.vertexNormals.length = 0;
     this.uvs.length = 0;
 
-    for (const attrName in this.userAttributes){
-      this.userAttributes[attrName].delete();
+    for (const propName in this.userVertexProperties){
+      this.userVertexProperties[propName].delete();
     }
-    this.userAttributes = {};
+    this.userVertexProperties = {};
 
     this.dirtyFlags = {};
   }
@@ -1599,7 +1599,6 @@ p5.Geometry = class Geometry {
  * @chainable
  */
   _edgesToVertices() {
-    // probably needs to add something in here for custom attributes
     this.lineVertices.clear();
     this.lineTangentsIn.clear();
     this.lineTangentsOut.clear();
@@ -1919,25 +1918,29 @@ p5.Geometry = class Geometry {
     return this;
   }
 
-/** Sets the shader's vertex attribute variables.
+/** Sets the shader's vertex property or attribute variables.
  * 
- * An attribute is a variable belonging to a vertex in a shader. p5.js provides some
- * default attributes, such as `aPosition`, `aNormal`, `aVertexColor`, etc. Custom
- * attributes can also be defined within `beginShape()` and `endShape()`.
+ * An vertex property or vertex attribute is a variable belonging to a vertex in a shader. p5.js provides some
+ * default properties, such as `aPosition`, `aNormal`, `aVertexColor`, etc. These are
+ * set using <a href="#/p5/vertex">vertex()</a>, <a href="#/p5/normal">normal()</a> 
+ * and <a href="#/p5/fill">fill()</a> respectively. Custom properties can also
+ * be defined within <a href="#/p5/beginShape">beginShape()</a> and 
+ * <a href="#/p5/endShape">endShape()</a>.
  * 
- * The first parameter, `attributeName`, is a string with the attribute's name.
- * This is the same variable name which should be declared in the shader, similar to
- * `setUniform()`.
+ * The first parameter, `propertyName`, is a string with the property's name.
+ * This is the same variable name which should be declared in the shader, as in
+ * `in vec3 aProperty`, similar to .`setUniform()`.
  * 
- * The second parameter, `data`, is the value assigned to the attribute. This value
+ * The second parameter, `data`, is the value assigned to the shader variable. This value
  * will be pushed directly onto the Geometry object. There should be the same number 
- * of custom attribute values as vertices.
+ * of custom property values as vertices, this method should be invoked once for each 
+ * vertex. 
  * 
  * The `data` can be a Number or an array of numbers. Tn the shader program the type
  * can be declared according to the WebGL specification. Common types include `float`, 
  * `vec2`, `vec3`, `vec4` or matrices.
  * 
- * See also the global <a href="#/p5/setAttribute">setAttribute()</a> function.
+ * See also the global <a href="#/p5/vertexProperty">vertexProperty()</a> function.
  * 
  * @example
  * <div>
@@ -1980,14 +1983,18 @@ p5.Geometry = class Geometry {
  * 
  *   // Set the roughness value for every vertex.
  *   for (let v of geo.vertices){
+ * 
  *     // convert coordinates to spherical coordinates
  *     let spherical = cartesianToSpherical(v.x, v.y, v.z);
+ *
+ *     // Set the custom roughness vertex property.
  *     let roughness = noise(spherical.theta*5, spherical.phi*5);
- *     geo.setAttribute('aRoughness', roughness);
+ *     geo.vertexProperty('aRoughness', roughness);
  *   }
  * 
  *   // Use the custom shader.
  *   shader(myShader);
+ * 
  *   describe('A rough pink sphere rotating on a blue background.');
  * }
  * 
@@ -2010,30 +2017,30 @@ p5.Geometry = class Geometry {
  * </code>
  * </div>
  *
- * @method setAttribute
- * @param {String} attributeName the name of the vertex attribute.
- * @param {Number|Number[]} data the data tied to the vertex attribute.
+ * @method vertexProperty
+ * @param {String} propertyName the name of the vertex property.
+ * @param {Number|Number[]} data the data tied to the vertex property.
  * @param {Number} [size] optional size of each unit of data. 
  */
-  setAttribute(attributeName, data, size){
-    let attr;
-    if (!this.userAttributes[attributeName]){
-      attr = this.userAttributes[attributeName] = 
-        this._createUserAttributeHelper(attributeName, data, size);
+  vertexProperty(propertyName, data, size){
+    let prop;
+    if (!this.userVertexProperties[propertyName]){
+      prop = this.userVertexProperties[propertyName] = 
+        this._userVertexPropertyHelper(propertyName, data, size);
     }
-    attr = this.userAttributes[attributeName];
+    prop = this.userVertexProperties[propertyName];
     if (size){
-      attr.pushDirect(data);
+      prop.pushDirect(data);
     } else{
-      attr.setCurrentData(data);
-      attr.pushCurrentData();
+      prop.setCurrentData(data);
+      prop.pushCurrentData();
     }
   }
 
-  _createUserAttributeHelper(attributeName, data, size){
+  _userVertexPropertyHelper(propertyName, data, size){
     const geometryInstance = this;
-    const attr = this.userAttributes[attributeName] = {
-      name: attributeName,
+    const prop = this.userVertexProperties[propertyName] = {
+      name: propertyName,
       dataSize: size ? size : data.length ? data.length : 1,
       geometry: geometryInstance,
       // Getters
@@ -2062,7 +2069,7 @@ p5.Geometry = class Geometry {
       setCurrentData(data) {
         const size = data.length ? data.length : 1;
         if (size != this.getDataSize()){
-          p5._friendlyError(`Custom attribute '${this.name}' has been set with various data sizes. You can change it's name, or if it was an accident, set '${this.name}' to have the same number of inputs each time!`, 'setAttribute()');
+          p5._friendlyError(`Custom vertex property '${this.name}' has been set with various data sizes. You can change it's name, or if it was an accident, set '${this.name}' to have the same number of inputs each time!`, 'vertexProperty()');
         }
         this.currentData = data;
       },
@@ -2087,8 +2094,8 @@ p5.Geometry = class Geometry {
         delete this;
       }
     };
-    this[attr.getSrcName()] = []; 
-    return this.userAttributes[attributeName];
+    this[prop.getSrcName()] = []; 
+    return this.userVertexProperties[propertyName];
   }
 };
 

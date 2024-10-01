@@ -1577,19 +1577,19 @@ suite('p5.RendererGL', function() {
       renderer.beginShape(myp5.TESS);
       renderer.fill(255, 255, 255);
       renderer.normal(-1, -1, 1);
-      renderer.setAttribute('aCustom', [1, 1, 1])
+      renderer.vertexProperty('aCustom', [1, 1, 1])
       renderer.vertex(-10, -10, 0, 0);
       renderer.fill(255, 0, 0);
       renderer.normal(1, -1, 1);
-      renderer.setAttribute('aCustom', [1, 0, 0])
+      renderer.vertexProperty('aCustom', [1, 0, 0])
       renderer.vertex(10, -10, 1, 0);
       renderer.fill(0, 255, 0);
       renderer.normal(1, 1, 1);
-      renderer.setAttribute('aCustom', [0, 1, 0])
+      renderer.vertexProperty('aCustom', [0, 1, 0])
       renderer.vertex(10, 10, 1, 1);
       renderer.fill(0, 0, 255);
       renderer.normal(-1, 1, 1);
-      renderer.setAttribute('aCustom', [0, 0, 1])
+      renderer.vertexProperty('aCustom', [0, 0, 1])
       renderer.vertex(-10, 10, 0, 1);
       renderer.endShape(myp5.CLOSE);
 
@@ -2504,21 +2504,21 @@ suite('p5.RendererGL', function() {
     );
   });
 
-  suite('setAttribute()', function() {
+  suite('vertexProperty()', function() {
     test('Immediate mode data and buffers created in beginShape', 
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
         
         myp5.beginShape();
-        myp5.setAttribute('aCustom', 1);
-        myp5.setAttribute('aCustomVec3', [1, 2, 3]);
+        myp5.vertexProperty('aCustom', 1);
+        myp5.vertexProperty('aCustomVec3', [1, 2, 3]);
         myp5.vertex(0,0,0);
-        expect(myp5._renderer.immediateMode.geometry.userAttributes.aCustom).to.containSubset({
+        expect(myp5._renderer.immediateMode.geometry.userVertexProperties.aCustom).to.containSubset({
           name: 'aCustom',
           currentData: 1,
           dataSize: 1
         });
-        expect(myp5._renderer.immediateMode.geometry.userAttributes.aCustomVec3).to.containSubset({
+        expect(myp5._renderer.immediateMode.geometry.userVertexProperties.aCustomVec3).to.containSubset({
           name: 'aCustomVec3',
           currentData: [1, 2, 3],
           dataSize: 3
@@ -2547,15 +2547,15 @@ suite('p5.RendererGL', function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
         
         myp5.beginShape();
-        myp5.setAttribute('aCustom', 1);
-        myp5.setAttribute('aCustomVec3', [1,2,3]);
+        myp5.vertexProperty('aCustom', 1);
+        myp5.vertexProperty('aCustomVec3', [1,2,3]);
         myp5.vertex(0,0,0);
         myp5.endShape();
 
         myp5.beginShape();
         assert.isUndefined(myp5._renderer.immediateMode.geometry.aCustomSrc);
         assert.isUndefined(myp5._renderer.immediateMode.geometry.aCustomVec3Src);
-        assert.deepEqual(myp5._renderer.immediateMode.geometry.userAttributes, {});
+        assert.deepEqual(myp5._renderer.immediateMode.geometry.userVertexProperties, {});
         assert.deepEqual(myp5._renderer.immediateMode.buffers.user, []);
         myp5.endShape();
       }
@@ -2565,8 +2565,8 @@ suite('p5.RendererGL', function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
         myp5.beginGeometry();
         myp5.beginShape();
-        myp5.setAttribute('aCustom', 1);
-        myp5.setAttribute('aCustomVec3', [1,2,3]);
+        myp5.vertexProperty('aCustom', 1);
+        myp5.vertexProperty('aCustomVec3', [1,2,3]);
         myp5.vertex(0,1,0);
         myp5.vertex(-1,0,0);
         myp5.vertex(1,0,0);
@@ -2582,8 +2582,8 @@ suite('p5.RendererGL', function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
         myp5.beginGeometry();
         myp5.beginShape();
-        myp5.setAttribute('aCustom', 1);
-        myp5.setAttribute('aCustomVec3', [1,2,3]);
+        myp5.vertexProperty('aCustom', 1);
+        myp5.vertexProperty('aCustomVec3', [1,2,3]);
         myp5.vertex(0,0,0);
         myp5.vertex(1,0,0);
         myp5.endShape();
@@ -2610,8 +2610,8 @@ suite('p5.RendererGL', function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
         myp5.beginGeometry();
         myp5.beginShape();
-        myp5.setAttribute('aCustom', 1);
-        myp5.setAttribute('aCustomVec3', [1,2,3]);
+        myp5.vertexProperty('aCustom', 1);
+        myp5.vertexProperty('aCustomVec3', [1,2,3]);
         myp5.vertex(0,0,0);
         myp5.vertex(1,0,0);
         myp5.endShape();
@@ -2628,13 +2628,13 @@ suite('p5.RendererGL', function() {
         const oldLog = console.log;
         console.log = myLog;
         myp5.beginShape();
-        myp5.setAttribute('aCustom', [1,2,3]);
+        myp5.vertexProperty('aCustom', [1,2,3]);
         myp5.vertex(0,0,0);
-        myp5.setAttribute('aCustom', [1,2]);
+        myp5.vertexProperty('aCustom', [1,2]);
         myp5.vertex(1,0,0);
         myp5.endShape();
         console.log = oldLog;
-        expect(logs.join('\n')).to.match(/Custom attribute 'aCustom' has been set with various data sizes/);
+        expect(logs.join('\n')).to.match(/Custom vertex property 'aCustom' has been set with various data sizes/);
       }
     );
     test('Friendly error too many values set',
@@ -2646,11 +2646,11 @@ suite('p5.RendererGL', function() {
         console.log = myLog;
         let myGeo = new p5.Geometry();
         myGeo.vertices.push(new p5.Vector(0,0,0));
-        myGeo.setAttribute('aCustom', 1);
-        myGeo.setAttribute('aCustom', 2);
+        myGeo.vertexProperty('aCustom', 1);
+        myGeo.vertexProperty('aCustom', 2);
         myp5.model(myGeo);
         console.log = oldLog;
-        expect(logs.join('\n')).to.match(/One of the geometries has a custom attribute 'aCustom' with more values than vertices./);
+        expect(logs.join('\n')).to.match(/One of the geometries has a custom vertex property 'aCustom' with more values than vertices./);
       }
     );
     test('Friendly error if too few values set',
@@ -2663,10 +2663,10 @@ suite('p5.RendererGL', function() {
         let myGeo = new p5.Geometry();
         myGeo.vertices.push(new p5.Vector(0,0,0));
         myGeo.vertices.push(new p5.Vector(0,0,0));
-        myGeo.setAttribute('aCustom', 1);
+        myGeo.vertexProperty('aCustom', 1);
         myp5.model(myGeo);
         console.log = oldLog;
-        expect(logs.join('\n')).to.match(/One of the geometries has a custom attribute 'aCustom' with fewer values than vertices./);
+        expect(logs.join('\n')).to.match(/One of the geometries has a custom vertex property 'aCustom' with fewer values than vertices./);
       }
     );
   })

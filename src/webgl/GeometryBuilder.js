@@ -60,30 +60,30 @@ class GeometryBuilder {
     );
     this.geometry.uvs.push(...input.uvs);
 
-    const inputAttrs = input.userAttributes;
-    const builtAttrs = this.geometry.userAttributes;
+    const inputUserVertexProps = input.userVertexProperties;
+    const builtUserVertexProps = this.geometry.userVertexProperties;
     const numPreviousVertices = this.geometry.vertices.length - input.vertices.length;
 
-    for (const attrName in builtAttrs){
-      if (attrName in inputAttrs){
+    for (const propName in builtUserVertexProps){
+      if (propName in inputUserVertexProps){
         continue;
       }
-      const attr = builtAttrs[attrName]
-      const size = attr.getDataSize();
+      const prop = builtUserVertexProps[propName]
+      const size = prop.getDataSize();
       const numMissingValues = size * input.vertices.length;
       const missingValues = Array(numMissingValues).fill(0);
-      attr.pushDirect(missingValues);
+      prop.pushDirect(missingValues);
     }
-    for (const attrName in inputAttrs){
-      const attr = inputAttrs[attrName]; 
-      const data = attr.getSrcArray();
-      const size = attr.getDataSize();
-      if (numPreviousVertices > 0 && !(attrName in builtAttrs)){
+    for (const propName in inputUserVertexProps){
+      const prop = inputUserVertexProps[propName]; 
+      const data = prop.getSrcArray();
+      const size = prop.getDataSize();
+      if (numPreviousVertices > 0 && !(propName in builtUserVertexProps)){
         const numMissingValues = size * numPreviousVertices;
         const missingValues = Array(numMissingValues).fill(0);
-        this.geometry.setAttribute(attrName, missingValues, size);
+        this.geometry.vertexProperty(propName, missingValues, size);
       }
-      this.geometry.setAttribute(attrName, data, size);
+      this.geometry.vertexProperty(propName, data, size);
     }
 
     if (this.renderer._doFill) {

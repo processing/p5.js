@@ -131,7 +131,7 @@ visualSuite('WebGL', function() {
     );
   });
 
-  visualSuite('setAttribute', function(){
+  visualSuite('vertexProperty', function(){
     const vertSrc = `#version 300 es
     precision mediump float;
     uniform mat4 uProjectionMatrix;
@@ -161,7 +161,7 @@ visualSuite('WebGL', function() {
         for (let i = 0; i < 20; i++){
           let x = 20 * p5.sin(i/20*p5.TWO_PI);
           let y = 20 * p5.cos(i/20*p5.TWO_PI);
-          p5.setAttribute('aCol', [x/20, -y/20, 0]);
+          p5.vertexProperty('aCol', [x/20, -y/20, 0]);
           p5.vertex(x, y);
         }
         p5.endShape();
@@ -183,13 +183,13 @@ visualSuite('WebGL', function() {
             let x2 = x1 + 10;
             let y1 = j * 10;
             let y2 = y1 + 10;
-            p5.setAttribute('aCol', [1, 0, 0]);
+            p5.vertexProperty('aCol', [1, 0, 0]);
             p5.vertex(x1, y1);
-            p5.setAttribute('aCol', [0, 0, 1]);
+            p5.vertexProperty('aCol', [0, 0, 1]);
             p5.vertex(x2, y1);
-            p5.setAttribute('aCol', [0, 1, 1]);
+            p5.vertexProperty('aCol', [0, 1, 1]);
             p5.vertex(x2, y2);
-            p5.setAttribute('aCol', [1, 1, 1]);
+            p5.vertexProperty('aCol', [1, 1, 1]);
             p5.vertex(x1, y2);
           }
         }
@@ -209,11 +209,11 @@ visualSuite('WebGL', function() {
           p5.sphere(5);
           p5.pop();
           p5.beginShape(p5.TRIANGLES);
-          p5.setAttribute('aCol', [1,0,0])
+          p5.vertexProperty('aCol', [1,0,0])
           p5.vertex(-5, 5, 0);
-          p5.setAttribute('aCol', [0,1,0])
+          p5.vertexProperty('aCol', [0,1,0])
           p5.vertex(5, 5, 0);
-          p5.setAttribute('aCol', [0,0,1])
+          p5.vertexProperty('aCol', [0,0,1])
           p5.vertex(0, -5, 0);
           p5.endShape(p5.CLOSE);
           p5.push();

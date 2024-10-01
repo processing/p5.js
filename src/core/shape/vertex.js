@@ -2253,26 +2253,26 @@ p5.prototype.normal = function(x, y, z) {
   return this;
 };
 
-/** Sets the shader's vertex attribute variables.
+/** Sets the shader's vertex property or attribute variables.
  * 
- * An attribute is a variable belonging to a vertex in a shader. p5.js provides some
- * default attributes, such as `aPosition`, `aNormal`, `aVertexColor`, etc. These are
+ * An vertex property or vertex attribute is a variable belonging to a vertex in a shader. p5.js provides some
+ * default properties, such as `aPosition`, `aNormal`, `aVertexColor`, etc. These are
  * set using <a href="#/p5/vertex">vertex()</a>, <a href="#/p5/normal">normal()</a> 
- * and <a href="#/p5/fill">fill()</a> respectively. Custom attribute data can also
+ * and <a href="#/p5/fill">fill()</a> respectively. Custom properties can also
  * be defined within <a href="#/p5/beginShape">beginShape()</a> and 
  * <a href="#/p5/endShape">endShape()</a>.
  * 
- * The first parameter, `attributeName`, is a string with the attribute's name.
- * This is the same variable name which should be declared in the shader, similar to
- * `setUniform()`.
+ * The first parameter, `propertyName`, is a string with the property's name.
+ * This is the same variable name which should be declared in the shader, such as
+ * `in vec3 aProperty`, similar to .`setUniform()`.
  * 
- * The second parameter, `data`, is the value assigned to the attribute. This 
+ * The second parameter, `data`, is the value assigned to the shader variable. This 
  * value will be applied to subsequent vertices created with 
  * <a href="#/p5/vertex">vertex()</a>. It can be a Number or an array of numbers,
  * and in the shader program the type can be declared according to the WebGL
  * specification. Common types include `float`, `vec2`, `vec3`, `vec4` or matrices.
  * 
- * See also the <a href="#/p5/setAttribute">setAttribute()</a> method on 
+ * See also the <a href="#/p5/vertexProperty">vertexProperty()</a> method on 
  * <a href="#/p5/Geometry">Geometry</a> objects.
  * 
  * @example
@@ -2327,7 +2327,7 @@ p5.prototype.normal = function(x, y, z) {
  *     const yOff = 10 * noise(y + millis()/1000) - 5;
  * 
  *     // Apply these noise values to the following vertex.
- *     setAttribute('aOffset', [xOff, yOff]);
+ *     vertexProperty('aOffset', [xOff, yOff]);
  *     vertex(x, y);
  *   }
  *   endShape(CLOSE);
@@ -2402,7 +2402,7 @@ p5.prototype.normal = function(x, y, z) {
  *       let distance = dist(x1,y1, mouseX, mouseY);
  * 
  *       // Send the distance to the shader.
- *       setAttribute('aDistance', min(distance, 100));
+ *       vertexProperty('aDistance', min(distance, 100));
  * 
  *       vertex(x, y);
  *       vertex(x + cellSize, y);
@@ -2415,14 +2415,14 @@ p5.prototype.normal = function(x, y, z) {
  * </code>
  * </div>
  *
- * @method setAttribute
+ * @method vertexProperty
  * @param {String} attributeName the name of the vertex attribute.
  * @param {Number|Number[]} data the data tied to the vertex attribute.
  */
-p5.prototype.setAttribute = function(attributeName, data){
-  // this._assert3d('setAttribute');
-  // p5._validateParameters('setAttribute', arguments);
-  this._renderer.setAttribute(attributeName, data);
+p5.prototype.vertexProperty = function(attributeName, data){
+  // this._assert3d('vertexProperty');
+  // p5._validateParameters('vertexProperty', arguments);
+  this._renderer.vertexProperty(attributeName, data);
 };
 
 export default p5;

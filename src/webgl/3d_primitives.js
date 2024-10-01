@@ -3019,15 +3019,15 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
     strokeColors[0] = immediateGeometry.vertexStrokeColors.slice(-4);
     strokeColors[3] = this.curStrokeColor.slice();
 
-    // Do the same for custom attributes
-    const userAttributes = {};
-    for (const attrName in immediateGeometry.userAttributes){
-      const attr = immediateGeometry.userAttributes[attrName];
-      const size = attr.getDataSize();
-      userAttributes[attrName] = [];
-      for (m = 0; m < 4; m++) userAttributes[attrName].push([]);
-      userAttributes[attrName][0] = attr.getSrcArray().slice(-size);
-      userAttributes[attrName][3] = attr.getCurrentData();
+    // Do the same for custom vertex properties
+    const userVertexProperties = {};
+    for (const propName in immediateGeometry.userVertexProperties){
+      const prop = immediateGeometry.userVertexProperties[propName];
+      const size = prop.getDataSize();
+      userVertexProperties[propName] = [];
+      for (m = 0; m < 4; m++) userVertexProperties[propName].push([]);
+      userVertexProperties[propName][0] = prop.getSrcArray().slice(-size);
+      userVertexProperties[propName][3] = prop.getCurrentData();
     } 
 
     if (argLength === 6) {
@@ -3057,14 +3057,14 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
           strokeColors[0][k] * d2 + strokeColors[3][k] * (1-d2)
         );
       }
-      for (const attrName in immediateGeometry.userAttributes){
-        const size = immediateGeometry.userAttributes[attrName].getDataSize();
+      for (const propName in immediateGeometry.userVertexProperties){
+        const size = immediateGeometry.userVertexProperties[propName].getDataSize();
         for (k = 0; k < size; k++){
-          userAttributes[attrName][1].push(
-            userAttributes[attrName][0][k] * (1-d0) + userAttributes[attrName][3][k] * d0
+          userVertexProperties[propName][1].push(
+            userVertexProperties[propName][0][k] * (1-d0) + userVertexProperties[propName][3][k] * d0
           );
-          userAttributes[attrName][2].push(
-            userAttributes[attrName][0][k] * (1-d2) + userAttributes[attrName][3][k] * d2
+          userVertexProperties[propName][2].push(
+            userVertexProperties[propName][0][k] * (1-d2) + userVertexProperties[propName][3][k] * d2
           );
         }
       }
@@ -3084,25 +3084,25 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
           _x += w_x[m] * this._lookUpTableBezier[i][m];
           _y += w_y[m] * this._lookUpTableBezier[i][m];
         }
-        for (const attrName in immediateGeometry.userAttributes){
-          const attr = immediateGeometry.userAttributes[attrName];
-          const size = attr.getDataSize();
+        for (const propName in immediateGeometry.userVertexProperties){
+          const prop = immediateGeometry.userVertexProperties[propName];
+          const size = prop.getDataSize();
           let newValues = Array(size).fill(0);
           for (let m = 0; m < 4; m++){
             for (let k = 0; k < size; k++){
-              newValues[k] += this._lookUpTableBezier[i][m] * userAttributes[attrName][m][k];
+              newValues[k] += this._lookUpTableBezier[i][m] * userVertexProperties[propName][m][k];
             }
           }
-          attr.setCurrentData(newValues);
+          prop.setCurrentData(newValues);
         }
         this.vertex(_x, _y);
       }
       // so that we leave currentColor with the last value the user set it to
       this.curFillColor = fillColors[3];
       this.curStrokeColor = strokeColors[3];
-      for (const attrName in immediateGeometry.userAttributes) {
-        const attr = immediateGeometry.userAttributes[attrName];
-        attr.setCurrentData(userAttributes[attrName][2]);
+      for (const propName in immediateGeometry.userVertexProperties) {
+        const prop = immediateGeometry.userVertexProperties[propName];
+        prop.setCurrentData(userVertexProperties[propName][2]);
       }
       this.immediateMode._bezierVertex[0] = args[4];
       this.immediateMode._bezierVertex[1] = args[5];
@@ -3134,14 +3134,14 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
           strokeColors[0][k] * d2 + strokeColors[3][k] * (1-d2)
         );
       }
-      for (const attrName in immediateGeometry.userAttributes){
-        const size = immediateGeometry.userAttributes[attrName].getDataSize();
+      for (const propName in immediateGeometry.userVertexProperties){
+        const size = immediateGeometry.userVertexProperties[propName].getDataSize();
         for (k = 0; k < size; k++){
-          userAttributes[attrName][1].push(
-            userAttributes[attrName][0][k] * (1-d0) + userAttributes[attrName][3][k] * d0
+          userVertexProperties[propName][1].push(
+            userVertexProperties[propName][0][k] * (1-d0) + userVertexProperties[propName][3][k] * d0
           );
-          userAttributes[attrName][2].push(
-            userAttributes[attrName][0][k] * (1-d2) + userAttributes[attrName][3][k] * d2
+          userVertexProperties[propName][2].push(
+            userVertexProperties[propName][0][k] * (1-d2) + userVertexProperties[propName][3][k] * d2
           );
         }
       }
@@ -3161,25 +3161,25 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
           _y += w_y[m] * this._lookUpTableBezier[i][m];
           _z += w_z[m] * this._lookUpTableBezier[i][m];
         }
-        for (const attrName in immediateGeometry.userAttributes){
-          const attr = immediateGeometry.userAttributes[attrName];
-          const size = attr.getDataSize();
+        for (const propName in immediateGeometry.userVertexProperties){
+          const prop = immediateGeometry.userVertexProperties[propName];
+          const size = prop.getDataSize();
           let newValues = Array(size).fill(0);
           for (let m = 0; m < 4; m++){
             for (let k = 0; k < size; k++){
-              newValues[k] += this._lookUpTableBezier[i][m] * userAttributes[attrName][m][k];
+              newValues[k] += this._lookUpTableBezier[i][m] * userVertexProperties[propName][m][k];
             }
           }
-          attr.setCurrentData(newValues);
+          prop.setCurrentData(newValues);
         }
         this.vertex(_x, _y, _z);
       }
       // so that we leave currentColor with the last value the user set it to
       this.curFillColor = fillColors[3];
       this.curStrokeColor = strokeColors[3];
-      for (const attrName in immediateGeometry.userAttributes) {
-        const attr = immediateGeometry.userAttributes[attrName];
-        attr.setCurrentData(userAttributes[attrName][2]);
+      for (const propName in immediateGeometry.userVertexProperties) {
+        const prop = immediateGeometry.userVertexProperties[propName];
+        prop.setCurrentData(userVertexProperties[propName][2]);
       }
       this.immediateMode._bezierVertex[0] = args[6];
       this.immediateMode._bezierVertex[1] = args[7];
@@ -3243,15 +3243,15 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
     strokeColors[0] = immediateGeometry.vertexStrokeColors.slice(-4);
     strokeColors[2] = this.curStrokeColor.slice();
 
-    // Do the same for custom (user defined) attributes
-    const userAttributes = {};
-    for (const attrName in immediateGeometry.userAttributes){
-      const attr = immediateGeometry.userAttributes[attrName];
-      const size = attr.getDataSize();
-      userAttributes[attrName] = [];
-      for (m = 0; m < 3; m++) userAttributes[attrName].push([]);
-      userAttributes[attrName][0] = attr.getSrcArray().slice(-size);
-      userAttributes[attrName][2] = attr.getCurrentData();
+    // Do the same for user defined vertex properties
+    const userVertexProperties = {};
+    for (const propName in immediateGeometry.userVertexProperties){
+      const prop = immediateGeometry.userVertexProperties[propName];
+      const size = prop.getDataSize();
+      userVertexProperties[propName] = [];
+      for (m = 0; m < 3; m++) userVertexProperties[propName].push([]);
+      userVertexProperties[propName][0] = prop.getSrcArray().slice(-size);
+      userVertexProperties[propName][2] = prop.getCurrentData();
     } 
 
     if (argLength === 4) {
@@ -3274,12 +3274,12 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
           strokeColors[0][k] * (1-d0) + strokeColors[2][k] * d0
         );
       }
-      for (const attrName in immediateGeometry.userAttributes){
-        const attr = immediateGeometry.userAttributes[attrName];
-        const size = attr.getDataSize();
+      for (const propName in immediateGeometry.userVertexProperties){
+        const prop = immediateGeometry.userVertexProperties[propName];
+        const size = prop.getDataSize();
         for (let k = 0; k < size; k++){
-          userAttributes[attrName][1].push(
-            userAttributes[attrName][0][k] * (1-d0) + userAttributes[attrName][2][k] * d0
+          userVertexProperties[propName][1].push(
+            userVertexProperties[propName][0][k] * (1-d0) + userVertexProperties[propName][2][k] * d0
           );
         }
       }
@@ -3300,16 +3300,16 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
           _y += w_y[m] * this._lookUpTableQuadratic[i][m];
         }
 
-        for (const attrName in immediateGeometry.userAttributes) {
-          const attr = immediateGeometry.userAttributes[attrName];
-          const size = attr.getDataSize();
+        for (const propName in immediateGeometry.userVertexProperties) {
+          const prop = immediateGeometry.userVertexProperties[propName];
+          const size = prop.getDataSize();
           let newValues = Array(size).fill(0);
           for (let m = 0; m < 3; m++){
             for (let k = 0; k < size; k++){
-              newValues[k] += this._lookUpTableQuadratic[i][m] * userAttributes[attrName][m][k];
+              newValues[k] += this._lookUpTableQuadratic[i][m] * userVertexProperties[propName][m][k];
             }
           }
-          attr.setCurrentData(newValues);
+          prop.setCurrentData(newValues);
         }
         this.vertex(_x, _y);
       }
@@ -3317,9 +3317,9 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
       // so that we leave currentColor with the last value the user set it to
       this.curFillColor = fillColors[2];
       this.curStrokeColor = strokeColors[2];
-      for (const attrName in immediateGeometry.userAttributes) {
-        const attr = immediateGeometry.userAttributes[attrName];
-        attr.setCurrentData(userAttributes[attrName][2]);
+      for (const propName in immediateGeometry.userVertexProperties) {
+        const prop = immediateGeometry.userVertexProperties[propName];
+        prop.setCurrentData(userVertexProperties[propName][2]);
       }
       this.immediateMode._quadraticVertex[0] = args[2];
       this.immediateMode._quadraticVertex[1] = args[3];
@@ -3345,12 +3345,12 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
         );
       }
 
-      for (const attrName in immediateGeometry.userAttributes){
-        const attr = immediateGeometry.userAttributes[attrName];
-        const size = attr.getDataSize();
+      for (const propName in immediateGeometry.userVertexProperties){
+        const prop = immediateGeometry.userVertexProperties[propName];
+        const size = prop.getDataSize();
         for (let k = 0; k < size; k++){
-          userAttributes[attrName][1].push(
-            userAttributes[attrName][0][k] * (1-d0) + userAttributes[attrName][2][k] * d0
+          userVertexProperties[propName][1].push(
+            userVertexProperties[propName][0][k] * (1-d0) + userVertexProperties[propName][2][k] * d0
           );
         }
       }
@@ -3371,16 +3371,16 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
           _y += w_y[m] * this._lookUpTableQuadratic[i][m];
           _z += w_z[m] * this._lookUpTableQuadratic[i][m];
         }
-        for (const attrName in immediateGeometry.userAttributes) {
-          const attr = immediateGeometry.userAttributes[attrName];
-          const size = attr.getDataSize();
+        for (const propName in immediateGeometry.userVertexProperties) {
+          const prop = immediateGeometry.userVertexProperties[propName];
+          const size = prop.getDataSize();
           let newValues = Array(size).fill(0);
           for (let m = 0; m < 3; m++){
             for (let k = 0; k < size; k++){
-              newValues[k] += this._lookUpTableQuadratic[i][m] * userAttributes[attrName][m][k];
+              newValues[k] += this._lookUpTableQuadratic[i][m] * userVertexProperties[propName][m][k];
             }
           }
-          attr.setCurrentData(newValues);
+          prop.setCurrentData(newValues);
         }
         this.vertex(_x, _y, _z);
       }
@@ -3388,9 +3388,9 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
       // so that we leave currentColor with the last value the user set it to
       this.curFillColor = fillColors[2];
       this.curStrokeColor = strokeColors[2];
-      for (const attrName in immediateGeometry.userAttributes) {
-        const attr = immediateGeometry.userAttributes[attrName];
-        attr.setCurrentData(userAttributes[attrName][2]);
+      for (const propName in immediateGeometry.userVertexProperties) {
+        const prop = immediateGeometry.userVertexProperties[propName];
+        prop.setCurrentData(userVertexProperties[propName][2]);
       }
       this.immediateMode._quadraticVertex[0] = args[3];
       this.immediateMode._quadraticVertex[1] = args[4];
