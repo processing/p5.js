@@ -37,6 +37,16 @@ function sketchVerifier(p5, fn) {
     return userCode;
   }
 
+  /**
+   * Extracts the user-defined variables and functions from the user code with
+   * the help of Espree parser.
+   * 
+   * @method extractUserDefinedVariablesAndFuncs
+   * @param {string} codeStr - The code to extract variables and functions from.
+   * @returns {Object} An object containing the user's defined variables and functions.
+   * @returns {string[]} [userDefinitions.variables] Array of user-defined variable names.
+   * @returns {strings[]} [userDefinitions.functions] Array of user-defined function names.
+   */
   fn.extractUserDefinedVariablesAndFuncs = function (codeStr) {
     const userDefinitions = {
       variables: [],
@@ -53,23 +63,22 @@ function sketchVerifier(p5, fn) {
       });
 
       function traverse(node) {
-        switch (node.type) {
+        const { type, declarations, id, init } = node;
+
+        switch (type) {
           case 'VariableDeclaration':
-            node.declarations.forEach(declaration => {
-              if (declaration.id.type === 'Identifier') {
-                userDefinitions.variables.push(declaration.id.name);
+            declarations.forEach(({ id, init }) => {
+              if (id.type === 'Identifier') {
+                const category = init && ['ArrowFunctionExpression', 'FunctionExpression'].includes(init.type)
+                  ? 'functions'
+                  : 'variables';
+                userDefinitions[category].push(id.name);
               }
             });
             break;
           case 'FunctionDeclaration':
-            if (node.id && node.id.type === 'Identifier') {
-              userDefinitions.functions.push(node.id.name);
-            }
-            break;
-          case 'ArrowFunctionExpression':
-          case 'FunctionExpression':
-            if (node.parent && node.parent.type === 'VariableDeclarator') {
-              userDefinitions.functions.push(node.parent.id.name);
+            if (id?.type === 'Identifier') {
+              userDefinitions.functions.push(id.name);
             }
             break;
         }
@@ -87,6 +96,7 @@ function sketchVerifier(p5, fn) {
 
       traverse(ast);
     } catch (error) {
+      // TODO: Replace this with a friendly error message.
       console.error('Error parsing code:', error);
     }
 
@@ -96,7 +106,8 @@ function sketchVerifier(p5, fn) {
   fn.run = async function () {
     const userCode = await fn.getUserCode();
     const userDefinedVariablesAndFuncs = fn.extractUserDefinedVariablesAndFuncs(userCode);
-    console.log(userDefinedVariablesAndFuncs);
+
+    return userDefinedVariablesAndFuncs;
   }
 }
 
