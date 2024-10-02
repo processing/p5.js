@@ -2,11 +2,7 @@ import p5 from '../core/main';
 import * as constants from '../core/constants';
 import GeometryBuilder from './GeometryBuilder';
 import libtess from 'libtess'; // Fixed with exporting module from libtess
-import './p5.Shader';
-import './p5.Camera';
 import Renderer from '../core/p5.Renderer';
-import './p5.Matrix';
-import './p5.Framebuffer';
 import { MipmapTexture } from './p5.Texture';
 
 const STROKE_CAP_ENUM = {};

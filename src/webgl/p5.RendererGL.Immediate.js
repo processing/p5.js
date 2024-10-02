@@ -13,7 +13,6 @@
  */
 import p5 from '../core/main';
 import * as constants from '../core/constants';
-import './p5.RenderBuffer';
 
 /**
  * Begin shape drawing.  This is a helpful way of generating
