@@ -123,11 +123,12 @@ p5.Texture = class Texture {
     } else if (
       this.isSrcMediaElement ||
     this.isSrcP5Graphics ||
-    this.isSrcP5Renderer ||
     this.isSrcHTMLElement
     ) {
     // if param is a video HTML element
       textureData = this.src.elt;
+    } else if (this.isSrcP5Renderer) {
+      textureData = this.src.canvas;
     } else if (this.isImageData) {
       textureData = this.src;
     }

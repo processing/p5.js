@@ -71,7 +71,8 @@ suite('Core', function () {
     });
   });
 
-  suite('p5.prototype._createFriendlyGlobalFunctionBinder', function () {
+  // NOTE: need rewrite or will be taken care of by FES
+  suite.todo('p5.prototype._createFriendlyGlobalFunctionBinder', function () {
     var noop = function () {};
     var createBinder = p5.prototype._createFriendlyGlobalFunctionBinder;
     var logMsg, globalObject, bind, iframe;

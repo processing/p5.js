@@ -872,10 +872,10 @@ p5.prototype.shader = function (s) {
   s.ensureCompiledOnContext(this);
 
   if (s.isStrokeShader()) {
-    this._renderer.userStrokeShader = s;
+    this._renderer.states.userStrokeShader = s;
   } else {
-    this._renderer.userFillShader = s;
-    this._renderer._useNormalMaterial = false;
+    this._renderer.states.userFillShader = s;
+    this._renderer.states._useNormalMaterial = false;
   }
 
   s.setDefaultUniforms();
@@ -1709,7 +1709,7 @@ p5.prototype.baseStrokeShader = function() {
  * </div>
  */
 p5.prototype.resetShader = function () {
-  this._renderer.userFillShader = this._renderer.userStrokeShader = null;
+  this._renderer.states.userFillShader = this._renderer.states.userStrokeShader = null;
   return this;
 };
 
@@ -1892,10 +1892,10 @@ p5.prototype.texture = function (tex) {
     tex._animateGif(this);
   }
 
-  this._renderer.drawMode = constants.TEXTURE;
-  this._renderer._useNormalMaterial = false;
-  this._renderer._tex = tex;
-  this._renderer._setProperty('_doFill', true);
+  this._renderer.states.drawMode = constants.TEXTURE;
+  this._renderer.states._useNormalMaterial = false;
+  this._renderer.states._tex = tex;
+  this._renderer.states.doFill = true;
 
   return this;
 };
@@ -2403,12 +2403,12 @@ p5.prototype.textureWrap = function (wrapX, wrapY = wrapX) {
 p5.prototype.normalMaterial = function (...args) {
   this._assert3d('normalMaterial');
   p5._validateParameters('normalMaterial', args);
-  this._renderer.drawMode = constants.FILL;
-  this._renderer._useSpecularMaterial = false;
-  this._renderer._useEmissiveMaterial = false;
-  this._renderer._useNormalMaterial = true;
-  this._renderer.curFillColor = [1, 1, 1, 1];
-  this._renderer._setProperty('_doFill', true);
+  this._renderer.states.drawMode = constants.FILL;
+  this._renderer.states._useSpecularMaterial = false;
+  this._renderer.states._useEmissiveMaterial = false;
+  this._renderer.states._useNormalMaterial = true;
+  this._renderer.states.curFillColor = [1, 1, 1, 1];
+  this._renderer.states.doFill = true;
   this.noStroke();
   return this;
 };
@@ -2636,11 +2636,11 @@ p5.prototype.ambientMaterial = function (v1, v2, v3) {
   p5._validateParameters('ambientMaterial', arguments);
 
   const color = p5.prototype.color.apply(this, arguments);
-  this._renderer._hasSetAmbient = true;
-  this._renderer.curAmbientColor = color._array;
-  this._renderer._useNormalMaterial = false;
-  this._renderer._enableLighting = true;
-  this._renderer._setProperty('_doFill', true);
+  this._renderer.states._hasSetAmbient = true;
+  this._renderer.states.curAmbientColor = color._array;
+  this._renderer.states._useNormalMaterial = false;
+  this._renderer.states._enableLighting = true;
+  this._renderer.states.doFill = true;
   return this;
 };
 
@@ -2732,10 +2732,10 @@ p5.prototype.emissiveMaterial = function (v1, v2, v3, a) {
   p5._validateParameters('emissiveMaterial', arguments);
 
   const color = p5.prototype.color.apply(this, arguments);
-  this._renderer.curEmissiveColor = color._array;
-  this._renderer._useEmissiveMaterial = true;
-  this._renderer._useNormalMaterial = false;
-  this._renderer._enableLighting = true;
+  this._renderer.states.curEmissiveColor = color._array;
+  this._renderer.states._useEmissiveMaterial = true;
+  this._renderer.states._useNormalMaterial = false;
+  this._renderer.states._enableLighting = true;
 
   return this;
 };
@@ -2987,10 +2987,10 @@ p5.prototype.specularMaterial = function (v1, v2, v3, alpha) {
   p5._validateParameters('specularMaterial', arguments);
 
   const color = p5.prototype.color.apply(this, arguments);
-  this._renderer.curSpecularColor = color._array;
-  this._renderer._useSpecularMaterial = true;
-  this._renderer._useNormalMaterial = false;
-  this._renderer._enableLighting = true;
+  this._renderer.states.curSpecularColor = color._array;
+  this._renderer.states._useSpecularMaterial = true;
+  this._renderer.states._useNormalMaterial = false;
+  this._renderer.states._enableLighting = true;
 
   return this;
 };
@@ -3062,7 +3062,7 @@ p5.prototype.shininess = function (shine) {
   if (shine < 1) {
     shine = 1;
   }
-  this._renderer._useShininess = shine;
+  this._renderer.states._useShininess = shine;
   return this;
 };
 
@@ -3178,7 +3178,7 @@ p5.prototype.shininess = function (shine) {
 p5.prototype.metalness = function (metallic) {
   this._assert3d('metalness');
   const metalMix = 1 - Math.exp(-metallic / 100);
-  this._renderer._useMetalness = metalMix;
+  this._renderer.states._useMetalness = metalMix;
   return this;
 };
 
@@ -3194,22 +3194,22 @@ p5.prototype.metalness = function (metallic) {
 p5.RendererGL.prototype._applyColorBlend = function (colors, hasTransparency) {
   const gl = this.GL;
 
-  const isTexture = this.drawMode === constants.TEXTURE;
+  const isTexture = this.states.drawMode === constants.TEXTURE;
   const doBlend =
     hasTransparency ||
-    this.userFillShader ||
-    this.userStrokeShader ||
-    this.userPointShader ||
+    this.states.userFillShader ||
+    this.states.userStrokeShader ||
+    this.states.userPointShader ||
     isTexture ||
-    this.curBlendMode !== constants.BLEND ||
+    this.states.curBlendMode !== constants.BLEND ||
     colors[colors.length - 1] < 1.0 ||
     this._isErasing;
 
   if (doBlend !== this._isBlending) {
     if (
       doBlend ||
-      (this.curBlendMode !== constants.BLEND &&
-        this.curBlendMode !== constants.ADD)
+      (this.states.curBlendMode !== constants.BLEND &&
+        this.states.curBlendMode !== constants.ADD)
     ) {
       gl.enable(gl.BLEND);
     } else {
@@ -3228,11 +3228,11 @@ p5.RendererGL.prototype._applyColorBlend = function (colors, hasTransparency) {
  * @return {Number[]}  Normalized numbers array
  */
 p5.RendererGL.prototype._applyBlendMode = function () {
-  if (this._cachedBlendMode === this.curBlendMode) {
+  if (this._cachedBlendMode === this.states.curBlendMode) {
     return;
   }
   const gl = this.GL;
-  switch (this.curBlendMode) {
+  switch (this.states.curBlendMode) {
     case constants.BLEND:
       gl.blendEquation(gl.FUNC_ADD);
       gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
@@ -3303,7 +3303,7 @@ p5.RendererGL.prototype._applyBlendMode = function () {
       break;
   }
   if (!this._isErasing) {
-    this._cachedBlendMode = this.curBlendMode;
+    this._cachedBlendMode = this.states.curBlendMode;
   }
 };
 
