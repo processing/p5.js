@@ -1146,6 +1146,128 @@ function exitFullscreen() {
   }
 }
 
+
+/**
+ * Converts 3D world coordinates to 2D screen coordinates.
+ *
+ * This function takes a 3D vector and converts its coordinates
+ * from the world space to screen space. This is useful for placing
+ * 2D elements in a 3D scene or for determining the screen position
+ * of 3D objects.
+ *
+ * @method worldToScreen
+ * @param {p5.Vector} worldPosition The 3D coordinates in the world space.
+ * @return {p5.Vector} A vector containing the 2D screen coordinates.
+ * @example
+ * <div>
+ * <code>
+ * // Example 1: Convert 2D world coordinates of a rotating square to screen coordinates
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   let vertices = [
+ *     createVector(-5, -5),
+ *     createVector(5, -5),
+ *     createVector(5, 5),
+ *     createVector(-5, 5)
+ *   ];
+ *
+ *   push(); // Start a new drawing state
+ *   translate(50, 50);
+ *   rotate(PI / 4);
+ *
+ *   // Convert each vertex to screen coordinates
+ *   let screenPos = vertices.map(v => worldToScreen(v));
+ *   pop(); // Restore original drawing state
+ *
+ *   background(200);
+ *
+ *   screenPos.forEach((pos, i) => {
+ *     text(`(${pos.x.toFixed(1)}, ${pos.y.toFixed(1)})`, pos.x, pos.y);
+ *   });
+ * }
+ * </code>
+ * </div>
+ * @example
+ * <div>
+ * <code>
+ * // Example 2: Convert 3D world coordinates of a rotating cube to 2D screen coordinates
+ * let vertices;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   vertices = [
+ *     createVector(-25, -25, -25),
+ *     createVector(25, -25, -25),
+ *     createVector(25, 25, -25),
+ *     createVector(-25, 25, -25),
+ *     createVector(-25, -25, 25),
+ *     createVector(25, -25, 25),
+ *     createVector(25, 25, 25),
+ *     createVector(-25, 25, 25)
+ *   ];
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Animate rotation
+ *   let rotationX = millis() / 1000;
+ *   let rotationY = millis() / 1200;
+ *
+ *   push();
+ *
+ *   rotateX(rotationX);
+ *   rotateY(rotationY);
+ *
+ *   // Convert world coordinates to screen coordinates
+ *   let screenPos = vertices.map(v => worldToScreen(v));
+ *
+ *   pop();
+ *
+ *   // Display screen coordinates
+ *   screenPos.forEach((pos, i) => {
+ *
+ *     let screenX = pos.x - width / 2;
+ *     let screenY = pos.y - height / 2;
+ *     fill(255);
+ *     noStroke();
+ *     ellipse(screenX, screenY, 3, 3); // Draw points as small ellipses
+ *     fill(0);
+ *     text(`(${screenX.toFixed(1)}, ${screenY.toFixed(1)})`, screenX, screenY);
+ *   });
+ * }
+ * </code>
+ * </div>
+ *
+ */
+
+p5.prototype.worldToScreen = function(worldPosition) {
+  const renderer = this._renderer;
+  if (renderer.drawingContext instanceof CanvasRenderingContext2D) {
+    // Handle 2D context
+    const transformMatrix = new DOMMatrix()
+      .scale(1 / renderer._pInst.pixelDensity())
+      .multiply(renderer.drawingContext.getTransform());
+    const screenCoordinates = transformMatrix.transformPoint(
+      new DOMPoint(worldPosition.x, worldPosition.y)
+    );
+    return new p5.Vector(screenCoordinates.x, screenCoordinates.y);
+  } else {
+        // Handle WebGL context (3D)
+        const modelViewMatrix = renderer.calculateCombinedMatrix();
+        const cameraCoordinates = modelViewMatrix.multiplyPoint(worldPosition);
+        const normalizedDeviceCoordinates =
+          renderer.uPMatrix.multiplyAndNormalizePoint(cameraCoordinates);
+        const screenX = (0.5 + 0.5 * normalizedDeviceCoordinates.x) * this.width;
+        const screenY = (0.5 - 0.5 * normalizedDeviceCoordinates.y) * this.height;
+        const screenZ = 0.5 + 0.5 * normalizedDeviceCoordinates.z;
+        return new p5.Vector(screenX, screenY, screenZ);
+  }
+};
+
+
+
 /**
  * Returns the sketch's current
  * <a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL" target="_blank">URL</a>
