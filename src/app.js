@@ -76,7 +76,7 @@ import './webgl/material';
 import './webgl/p5.Camera';
 import './webgl/p5.DataArray';
 import './webgl/p5.Geometry';
-import './webgl/p5.Matrix';
+import './math/p5.Matrix';
 import './webgl/p5.Quat';
 import './webgl/p5.RendererGL.Immediate';
 import './webgl/p5.RendererGL';
