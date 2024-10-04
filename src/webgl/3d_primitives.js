@@ -993,7 +993,7 @@ p5.prototype.plane = function(
     planeGeom.computeFaces().computeNormals();
     if (detailX <= 1 && detailY <= 1) {
       planeGeom._makeTriangleEdges()._edgesToVertices();
-    } else if (this._renderer._doStroke) {
+    } else if (this._renderer.states.doStroke) {
       console.log(
         'Cannot draw stroke on plane objects with more' +
         ' than 1 detailX or 1 detailY'
@@ -1208,7 +1208,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
     boxGeom.computeNormals();
     if (detailX <= 4 && detailY <= 4) {
       boxGeom._edgesToVertices();
-    } else if (this._renderer._doStroke) {
+    } else if (this._renderer.states.doStroke) {
       console.log(
         'Cannot draw stroke on box objects with more' +
         ' than 4 detailX or 4 detailY'
@@ -1713,7 +1713,7 @@ p5.prototype.cylinder = function(
     // normals are computed in call to _truncatedCone
     if (detailX <= 24 && detailY <= 16) {
       cylinderGeom._makeTriangleEdges()._edgesToVertices();
-    } else if (this._renderer._doStroke) {
+    } else if (this._renderer.states.doStroke) {
       console.log(
         'Cannot draw stroke on cylinder objects with more' +
         ' than 24 detailX or 16 detailY'
@@ -1948,7 +1948,7 @@ p5.prototype.cone = function(
     _truncatedCone.call(coneGeom, 1, 0, 1, detailX, detailY, cap, false);
     if (detailX <= 24 && detailY <= 16) {
       coneGeom._makeTriangleEdges()._edgesToVertices();
-    } else if (this._renderer._doStroke) {
+    } else if (this._renderer.states.doStroke) {
       console.log(
         'Cannot draw stroke on cone objects with more' +
         ' than 24 detailX or 16 detailY'
@@ -2166,7 +2166,7 @@ p5.prototype.ellipsoid = function(
     ellipsoidGeom.computeFaces();
     if (detailX <= 24 && detailY <= 24) {
       ellipsoidGeom._makeTriangleEdges()._edgesToVertices();
-    } else if (this._renderer._doStroke) {
+    } else if (this._renderer.states.doStroke) {
       console.log(
         'Cannot draw stroke on ellipsoids with more' +
         ' than 24 detailX or 24 detailY'
@@ -2388,7 +2388,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
     torusGeom.computeFaces();
     if (detailX <= 24 && detailY <= 16) {
       torusGeom._makeTriangleEdges()._edgesToVertices();
-    } else if (this._renderer._doStroke) {
+    } else if (this._renderer.states.doStroke) {
       console.log(
         'Cannot draw strokes on torus object with more' +
         ' than 24 detailX or 16 detailY'
@@ -2481,7 +2481,7 @@ p5.RendererGL.prototype.triangle = function(args) {
   // this matrix multiplication transforms those two unit vectors
   // onto the required vector prior to rendering, and moves the
   // origin appropriately.
-  const uModelMatrix = this.uModelMatrix.copy();
+  const uModelMatrix = this.states.uModelMatrix.copy();
   try {
     // triangle orientation.
     const orientation = Math.sign(x1*y2-x2*y1 + x2*y3-x3*y2 + x3*y1-x1*y3);
@@ -2490,13 +2490,13 @@ p5.RendererGL.prototype.triangle = function(args) {
       x3 - x1, y3 - y1, 0, 0, // the resulting unit Y-axis
       0, 0, orientation, 0,   // the resulting unit Z-axis (Reflect the specified order of vertices)
       x1, y1, 0, 1            // the resulting origin
-    ]).mult(this.uModelMatrix);
+    ]).mult(this.states.uModelMatrix);
 
-    this.uModelMatrix = mult;
+    this.states.uModelMatrix = mult;
 
     this.drawBuffers(gId);
   } finally {
-    this.uModelMatrix = uModelMatrix;
+    this.states.uModelMatrix = uModelMatrix;
   }
 
   return this;
@@ -2609,7 +2609,7 @@ p5.RendererGL.prototype.arc = function(...args) {
 
     if (detail <= 50) {
       arcGeom._edgesToVertices(arcGeom);
-    } else if (this._doStroke) {
+    } else if (this.states.doStroke) {
       console.log(
         `Cannot apply a stroke to an ${shape} with more than 50 detail`
       );
@@ -2618,15 +2618,15 @@ p5.RendererGL.prototype.arc = function(...args) {
     this.createBuffers(gId, arcGeom);
   }
 
-  const uModelMatrix = this.uModelMatrix.copy();
+  const uModelMatrix = this.states.uModelMatrix.copy();
 
   try {
-    this.uModelMatrix.translate([x, y, 0]);
-    this.uModelMatrix.scale(width, height, 1);
+    this.states.uModelMatrix.translate([x, y, 0]);
+    this.states.uModelMatrix.scale(width, height, 1);
 
     this.drawBuffers(gId);
   } finally {
-    this.uModelMatrix = uModelMatrix;
+    this.states.uModelMatrix = uModelMatrix;
   }
 
   return this;
@@ -2678,14 +2678,14 @@ p5.RendererGL.prototype.rect = function(args) {
     // opposite corners at (0,0) & (1,1).
     //
     // before rendering, this square is scaled & moved to the required location.
-    const uModelMatrix = this.uModelMatrix.copy();
+    const uModelMatrix = this.states.uModelMatrix.copy();
     try {
-      this.uModelMatrix.translate([x, y, 0]);
-      this.uModelMatrix.scale(width, height, 1);
+      this.states.uModelMatrix.translate([x, y, 0]);
+      this.states.uModelMatrix.scale(width, height, 1);
 
       this.drawBuffers(gId);
     } finally {
-      this.uModelMatrix = uModelMatrix;
+      this.states.uModelMatrix = uModelMatrix;
     }
   } else {
     // Use Immediate mode to round the rectangle corner,
@@ -3011,13 +3011,13 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
     const fillColors = [];
     for (m = 0; m < 4; m++) fillColors.push([]);
     fillColors[0] = immediateGeometry.vertexColors.slice(-4);
-    fillColors[3] = this.curFillColor.slice();
+    fillColors[3] = this.states.curFillColor.slice();
 
     // Do the same for strokeColor.
     const strokeColors = [];
     for (m = 0; m < 4; m++) strokeColors.push([]);
     strokeColors[0] = immediateGeometry.vertexStrokeColors.slice(-4);
-    strokeColors[3] = this.curStrokeColor.slice();
+    strokeColors[3] = this.states.curStrokeColor.slice();
 
     // Do the same for custom vertex properties
     const userVertexProperties = {};
@@ -3028,7 +3028,7 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
       for (m = 0; m < 4; m++) userVertexProperties[propName].push([]);
       userVertexProperties[propName][0] = prop.getSrcArray().slice(-size);
       userVertexProperties[propName][3] = prop.getCurrentData();
-    } 
+    }
 
     if (argLength === 6) {
       this.isBezier = true;
@@ -3071,14 +3071,14 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
 
       for (let i = 0; i < LUTLength; i++) {
         // Interpolate colors using control points
-        this.curFillColor = [0, 0, 0, 0];
-        this.curStrokeColor = [0, 0, 0, 0];
+        this.states.curFillColor = [0, 0, 0, 0];
+        this.states.curStrokeColor = [0, 0, 0, 0];
         _x = _y = 0;
         for (let m = 0; m < 4; m++) {
           for (let k = 0; k < 4; k++) {
-            this.curFillColor[k] +=
+            this.states.curFillColor[k] +=
               this._lookUpTableBezier[i][m] * fillColors[m][k];
-            this.curStrokeColor[k] +=
+            this.states.curStrokeColor[k] +=
               this._lookUpTableBezier[i][m] * strokeColors[m][k];
           }
           _x += w_x[m] * this._lookUpTableBezier[i][m];
@@ -3098,8 +3098,8 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
         this.vertex(_x, _y);
       }
       // so that we leave currentColor with the last value the user set it to
-      this.curFillColor = fillColors[3];
-      this.curStrokeColor = strokeColors[3];
+      this.states.curFillColor = fillColors[3];
+      this.states.curStrokeColor = strokeColors[3];
       for (const propName in immediateGeometry.userVertexProperties) {
         const prop = immediateGeometry.userVertexProperties[propName];
         prop.setCurrentData(userVertexProperties[propName][2]);
@@ -3147,14 +3147,14 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
       }
       for (let i = 0; i < LUTLength; i++) {
         // Interpolate colors using control points
-        this.curFillColor = [0, 0, 0, 0];
-        this.curStrokeColor = [0, 0, 0, 0];
+        this.states.curFillColor = [0, 0, 0, 0];
+        this.states.curStrokeColor = [0, 0, 0, 0];
         _x = _y = _z = 0;
         for (m = 0; m < 4; m++) {
           for (k = 0; k < 4; k++) {
-            this.curFillColor[k] +=
+            this.states.curFillColor[k] +=
               this._lookUpTableBezier[i][m] * fillColors[m][k];
-            this.curStrokeColor[k] +=
+            this.states.curStrokeColor[k] +=
               this._lookUpTableBezier[i][m] * strokeColors[m][k];
           }
           _x += w_x[m] * this._lookUpTableBezier[i][m];
@@ -3175,8 +3175,8 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
         this.vertex(_x, _y, _z);
       }
       // so that we leave currentColor with the last value the user set it to
-      this.curFillColor = fillColors[3];
-      this.curStrokeColor = strokeColors[3];
+      this.states.curFillColor = fillColors[3];
+      this.states.curStrokeColor = strokeColors[3];
       for (const propName in immediateGeometry.userVertexProperties) {
         const prop = immediateGeometry.userVertexProperties[propName];
         prop.setCurrentData(userVertexProperties[propName][2]);
@@ -3235,13 +3235,13 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
     const fillColors = [];
     for (m = 0; m < 3; m++) fillColors.push([]);
     fillColors[0] = immediateGeometry.vertexColors.slice(-4);
-    fillColors[2] = this.curFillColor.slice();
+    fillColors[2] = this.states.curFillColor.slice();
 
     // Do the same for strokeColor.
     const strokeColors = [];
     for (m = 0; m < 3; m++) strokeColors.push([]);
     strokeColors[0] = immediateGeometry.vertexStrokeColors.slice(-4);
-    strokeColors[2] = this.curStrokeColor.slice();
+    strokeColors[2] = this.states.curStrokeColor.slice();
 
     // Do the same for user defined vertex properties
     const userVertexProperties = {};
@@ -3252,7 +3252,7 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
       for (m = 0; m < 3; m++) userVertexProperties[propName].push([]);
       userVertexProperties[propName][0] = prop.getSrcArray().slice(-size);
       userVertexProperties[propName][2] = prop.getCurrentData();
-    } 
+    }
 
     if (argLength === 4) {
       this.isQuadratic = true;
@@ -3286,14 +3286,14 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
 
       for (let i = 0; i < LUTLength; i++) {
         // Interpolate colors using control points
-        this.curFillColor = [0, 0, 0, 0];
-        this.curStrokeColor = [0, 0, 0, 0];
+        this.states.curFillColor = [0, 0, 0, 0];
+        this.states.curStrokeColor = [0, 0, 0, 0];
         _x = _y = 0;
         for (let m = 0; m < 3; m++) {
           for (let k = 0; k < 4; k++) {
-            this.curFillColor[k] +=
+            this.states.curFillColor[k] +=
               this._lookUpTableQuadratic[i][m] * fillColors[m][k];
-            this.curStrokeColor[k] +=
+            this.states.curStrokeColor[k] +=
               this._lookUpTableQuadratic[i][m] * strokeColors[m][k];
           }
           _x += w_x[m] * this._lookUpTableQuadratic[i][m];
@@ -3315,8 +3315,8 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
       }
 
       // so that we leave currentColor with the last value the user set it to
-      this.curFillColor = fillColors[2];
-      this.curStrokeColor = strokeColors[2];
+      this.states.curFillColor = fillColors[2];
+      this.states.curStrokeColor = strokeColors[2];
       for (const propName in immediateGeometry.userVertexProperties) {
         const prop = immediateGeometry.userVertexProperties[propName];
         prop.setCurrentData(userVertexProperties[propName][2]);
@@ -3357,14 +3357,14 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
 
       for (i = 0; i < LUTLength; i++) {
         // Interpolate colors using control points
-        this.curFillColor = [0, 0, 0, 0];
-        this.curStrokeColor = [0, 0, 0, 0];
+        this.states.curFillColor = [0, 0, 0, 0];
+        this.states.curStrokeColor = [0, 0, 0, 0];
         _x = _y = _z = 0;
         for (m = 0; m < 3; m++) {
           for (k = 0; k < 4; k++) {
-            this.curFillColor[k] +=
+            this.states.curFillColor[k] +=
               this._lookUpTableQuadratic[i][m] * fillColors[m][k];
-            this.curStrokeColor[k] +=
+            this.states.curStrokeColor[k] +=
               this._lookUpTableQuadratic[i][m] * strokeColors[m][k];
           }
           _x += w_x[m] * this._lookUpTableQuadratic[i][m];
@@ -3386,8 +3386,8 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
       }
 
       // so that we leave currentColor with the last value the user set it to
-      this.curFillColor = fillColors[2];
-      this.curStrokeColor = strokeColors[2];
+      this.states.curFillColor = fillColors[2];
+      this.states.curStrokeColor = strokeColors[2];
       for (const propName in immediateGeometry.userVertexProperties) {
         const prop = immediateGeometry.userVertexProperties[propName];
         prop.setCurrentData(userVertexProperties[propName][2]);

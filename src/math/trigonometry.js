@@ -754,14 +754,14 @@ function trigonometry(p5, fn){
       // This is necessary for acceleration events to work properly
       if(mode === RADIANS) {
         // Change pRotation to radians
-        this._setProperty('pRotationX', this.pRotationX * constants.DEG_TO_RAD);
-        this._setProperty('pRotationY', this.pRotationY * constants.DEG_TO_RAD);
-        this._setProperty('pRotationZ', this.pRotationZ * constants.DEG_TO_RAD);
+        this.pRotationX = this.pRotationX * constants.DEG_TO_RAD;
+        this.pRotationY = this.pRotationY * constants.DEG_TO_RAD;
+        this.pRotationZ = this.pRotationZ * constants.DEG_TO_RAD;
       } else {
         // Change pRotation to degrees
-        this._setProperty('pRotationX', this.pRotationX * constants.RAD_TO_DEG);
-        this._setProperty('pRotationY', this.pRotationY * constants.RAD_TO_DEG);
-        this._setProperty('pRotationZ', this.pRotationZ * constants.RAD_TO_DEG);
+        this.pRotationX = this.pRotationX * constants.RAD_TO_DEG;
+        this.pRotationY = this.pRotationY * constants.RAD_TO_DEG;
+        this.pRotationZ = this.pRotationZ * constants.RAD_TO_DEG;
       }
 
       this._angleMode = mode;

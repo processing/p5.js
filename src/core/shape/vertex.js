@@ -1528,7 +1528,7 @@ p5.prototype.endShape = function(mode, count = 1) {
     if (vertices.length === 0) {
       return this;
     }
-    if (!this._renderer._doStroke && !this._renderer._doFill) {
+    if (!this._renderer.states.doStroke && !this._renderer.states.doFill) {
       return this;
     }
 

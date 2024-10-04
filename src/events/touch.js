@@ -103,7 +103,7 @@ function touch(p5, fn){
           i
         );
       }
-      this._setProperty('touches', touches);
+      this.touches = touches;
     }
   };
 
@@ -277,7 +277,7 @@ function touch(p5, fn){
   fn._ontouchstart = function(e) {
     const context = this._isGlobal ? window : this;
     let executeDefault;
-    this._setProperty('mouseIsPressed', true);
+    this.mouseIsPressed = true;
     this._updateTouchCoords(e);
     this._updateNextMouseCoords(e);
     this._updateMouseCoords(); // reset pmouseXY at the start of each touch event
@@ -287,7 +287,7 @@ function touch(p5, fn){
       if (executeDefault === false) {
         e.preventDefault();
       }
-      this.touchstart = true;
+      this._touchstart = true;
     }
   };
 
@@ -619,7 +619,7 @@ function touch(p5, fn){
    * </div>
    */
   fn._ontouchend = function(e) {
-    this._setProperty('mouseIsPressed', false);
+    this.mouseIsPressed = false;
     this._updateTouchCoords(e);
     this._updateNextMouseCoords(e);
     const context = this._isGlobal ? window : this;
@@ -629,7 +629,7 @@ function touch(p5, fn){
       if (executeDefault === false) {
         e.preventDefault();
       }
-      this.touchend = true;
+      this._touchend = true;
     }
   };
 }

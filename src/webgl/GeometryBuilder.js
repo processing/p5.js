@@ -11,7 +11,7 @@ class GeometryBuilder {
     this.renderer = renderer;
     renderer._pInst.push();
     this.identityMatrix = new p5.Matrix();
-    renderer.uModelMatrix = new p5.Matrix();
+    renderer.states.uModelMatrix = new p5.Matrix();
     this.geometry = new p5.Geometry();
     this.geometry.gid = `_p5_GeometryBuilder_${GeometryBuilder.nextGeometryId}`;
     GeometryBuilder.nextGeometryId++;
@@ -25,7 +25,7 @@ class GeometryBuilder {
   transformVertices(vertices) {
     if (!this.hasTransform) return vertices;
 
-    return vertices.map(v => this.renderer.uModelMatrix.multiplyPoint(v));
+    return vertices.map(v => this.renderer.states.uModelMatrix.multiplyPoint(v));
   }
 
   /**
@@ -36,7 +36,7 @@ class GeometryBuilder {
     if (!this.hasTransform) return normals;
 
     return normals.map(
-      v => this.renderer.uNMatrix.multiplyVec3(v)
+      v => this.renderer.states.uNMatrix.multiplyVec3(v)
     );
   }
 
@@ -46,11 +46,11 @@ class GeometryBuilder {
    * transformations.
    */
   addGeometry(input) {
-    this.hasTransform = !this.renderer.uModelMatrix.mat4
+    this.hasTransform = !this.renderer.states.uModelMatrix.mat4
       .every((v, i) => v === this.identityMatrix.mat4[i]);
 
     if (this.hasTransform) {
-      this.renderer.uNMatrix.inverseTranspose(this.renderer.uModelMatrix);
+      this.renderer.states.uNMatrix.inverseTranspose(this.renderer.states.uModelMatrix);
     }
 
     let startIdx = this.geometry.vertices.length;
@@ -75,7 +75,7 @@ class GeometryBuilder {
       prop.pushDirect(missingValues);
     }
     for (const propName in inputUserVertexProps){
-      const prop = inputUserVertexProps[propName]; 
+      const prop = inputUserVertexProps[propName];
       const data = prop.getSrcArray();
       const size = prop.getDataSize();
       if (numPreviousVertices > 0 && !(propName in builtUserVertexProps)){
@@ -86,19 +86,19 @@ class GeometryBuilder {
       this.geometry.vertexProperty(propName, data, size);
     }
 
-    if (this.renderer._doFill) {
+    if (this.renderer.states.doFill) {
       this.geometry.faces.push(
         ...input.faces.map(f => f.map(idx => idx + startIdx))
       );
     }
-    if (this.renderer._doStroke) {
+    if (this.renderer.states.doStroke) {
       this.geometry.edges.push(
         ...input.edges.map(edge => edge.map(idx => idx + startIdx))
       );
     }
     const vertexColors = [...input.vertexColors];
     while (vertexColors.length < input.vertices.length * 4) {
-      vertexColors.push(...this.renderer.curFillColor);
+      vertexColors.push(...this.renderer.states.curFillColor);
     }
     this.geometry.vertexColors.push(...vertexColors);
   }
@@ -112,7 +112,7 @@ class GeometryBuilder {
     const shapeMode = this.renderer.immediateMode.shapeMode;
     const faces = [];
 
-    if (this.renderer._doFill) {
+    if (this.renderer.states.doFill) {
       if (
         shapeMode === constants.TRIANGLE_STRIP ||
         shapeMode === constants.QUAD_STRIP
