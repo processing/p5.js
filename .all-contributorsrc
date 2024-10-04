@@ -6358,6 +6358,25 @@
         "doc",
         "code"
       ]
+    },
+    {
+      "login": "lukeplowden",
+      "name": "Luke Plowden",
+      "avatar_url": "https://avatars.githubusercontent.com/u/62835749?v=4",
+      "profile": "http://www.lukeplowden.com",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "martinleopold",
+      "name": "Martin Leopold",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1692826?v=4",
+      "profile": "https://github.com/martinleopold",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "repoType": "github",
