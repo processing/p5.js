@@ -74,9 +74,49 @@ suite('Validate Params', function () {
       `;
 
       const result = mockP5Prototype.extractUserDefinedVariablesAndFuncs(code);
-
-      expect(result.variables).toEqual(['x', 'y', 'z', 'v1', 'v2', 'v3']);
-      expect(result.functions).toEqual(['foo', 'bar', 'baz']);
+      const expectedResult = {
+        "functions": [
+          {
+            "line": 5,
+            "name": "foo",
+          },
+          {
+            "line": 6,
+            "name": "bar",
+          },
+          {
+            "line": 7,
+            "name": "baz",
+          },
+        ],
+        "variables": [
+          {
+            "line": 1,
+            "name": "x",
+          },
+          {
+            "line": 2,
+            "name": "y",
+          },
+          {
+            "line": 3,
+            "name": "z",
+          },
+          {
+            "line": 4,
+            "name": "v1",
+          },
+          {
+            "line": 4,
+            "name": "v2",
+          },
+          {
+            "line": 4,
+            "name": "v3",
+          },
+        ],
+      };
+      expect(result).toEqual(expectedResult);
     });
 
     // Sketch verifier should ignore the following types of lines:
@@ -101,9 +141,29 @@ suite('Validate Params', function () {
       `;
 
       const result = mockP5Prototype.extractUserDefinedVariablesAndFuncs(code);
+      const expectedResult = {
+        "functions": [],
+        "variables": [
+          {
+            "line": 2,
+            "name": "x",
+          },
+          {
+            "line": 6,
+            "name": "y",
+          },
+          {
+            "line": 11,
+            "name": "z",
+          },
+          {
+            "line": 13,
+            "name": "i",
+          },
+        ],
+      };
 
-      expect(result.variables).toEqual(['x', 'y', 'z', 'i']);
-      expect(result.functions).toEqual([]);
+      expect(result).toEqual(expectedResult);
     });
 
     test('Handles parsing errors', function () {
@@ -130,13 +190,31 @@ suite('Validate Params', function () {
       mockP5Prototype.getUserCode = vi.fn(() => Promise.resolve(mockScript));
 
       const result = await mockP5Prototype.run();
+      const expectedResult = {
+        "functions": [
+          {
+            "line": 3,
+            "name": "foo",
+          },
+          {
+            "line": 4,
+            "name": "bar",
+          },
+        ],
+        "variables": [
+          {
+            "line": 1,
+            "name": "x",
+          },
+          {
+            "line": 2,
+            "name": "y",
+          },
+        ],
+      };
 
       expect(mockP5Prototype.getUserCode).toHaveBeenCalledTimes(1);
-
-      expect(result).toEqual({
-        variables: ['x', 'y'],
-        functions: ['foo', 'bar']
-      });
+      expect(result).toEqual(expectedResult);
     });
   });
 });

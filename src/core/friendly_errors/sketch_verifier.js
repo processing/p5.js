@@ -1,4 +1,5 @@
-import * as espree from 'espree';
+import * as acorn from 'acorn';
+import * as walk from 'acorn-walk';
 
 /**
  * @for p5
@@ -14,8 +15,14 @@ function sketchVerifier(p5, fn) {
    */
   fn.fetchScript = async function (script) {
     if (script.src) {
-      const contents = await fetch(script.src).then((res) => res.text());
-      return contents;
+      try {
+        const contents = await fetch(script.src).then((res) => res.text());
+        return contents;
+      } catch (error) {
+        // TODO: Handle CORS error here.
+        console.error('Error fetching script:', error);
+        return '';
+      }
     } else {
       return script.textContent;
     }
@@ -30,6 +37,8 @@ function sketchVerifier(p5, fn) {
    * @returns {Promise<string>} The user's code as a string.
    */
   fn.getUserCode = async function () {
+    // TODO: think of a more robust way to get the user's code. Refer to
+    // https://github.com/processing/p5.js/pull/7293.
     const scripts = document.querySelectorAll('script');
     const userCodeScript = scripts[scripts.length - 1];
     const userCode = await fn.fetchScript(userCodeScript);
@@ -42,59 +51,58 @@ function sketchVerifier(p5, fn) {
    * the help of Espree parser.
    * 
    * @method extractUserDefinedVariablesAndFuncs
-   * @param {string} codeStr - The code to extract variables and functions from.
+   * @param {string} code - The code to extract variables and functions from.
    * @returns {Object} An object containing the user's defined variables and functions.
-   * @returns {string[]} [userDefinitions.variables] Array of user-defined variable names.
-   * @returns {strings[]} [userDefinitions.functions] Array of user-defined function names.
+   * @returns {Array<{name: string, line: number}>} [userDefinitions.variables] Array of user-defined variable names and their line numbers.
+   * @returns {Array<{name: string, line: number}>} [userDefinitions.functions] Array of user-defined function names and their line numbers.
    */
-  fn.extractUserDefinedVariablesAndFuncs = function (codeStr) {
+  fn.extractUserDefinedVariablesAndFuncs = function (code) {
     const userDefinitions = {
       variables: [],
       functions: []
     };
+    // The line numbers from the parser are consistently off by one, add
+    // `lineOffset` here to correct them.
+    const lineOffset = -1;
 
     try {
-      const ast = espree.parse(codeStr, {
+      const ast = acorn.parse(code, {
         ecmaVersion: 2021,
         sourceType: 'module',
-        ecmaFeatures: {
-          jsx: true
-        }
+        locations: true  // This helps us get the line number.
       });
 
-      function traverse(node) {
-        const { type, declarations, id, init } = node;
-
-        switch (type) {
-          case 'VariableDeclaration':
-            declarations.forEach(({ id, init }) => {
-              if (id.type === 'Identifier') {
-                const category = init && ['ArrowFunctionExpression', 'FunctionExpression'].includes(init.type)
-                  ? 'functions'
-                  : 'variables';
-                userDefinitions[category].push(id.name);
-              }
+      walk.simple(ast, {
+        VariableDeclarator(node) {
+          if (node.id.type === 'Identifier') {
+            const category = node.init && ['ArrowFunctionExpression', 'FunctionExpression'].includes(node.init.type)
+              ? 'functions'
+              : 'variables';
+            userDefinitions[category].push({
+              name: node.id.name,
+              line: node.loc.start.line + lineOffset
             });
-            break;
-          case 'FunctionDeclaration':
-            if (id?.type === 'Identifier') {
-              userDefinitions.functions.push(id.name);
-            }
-            break;
-        }
-
-        for (const key in node) {
-          if (node[key] && typeof node[key] === 'object') {
-            if (Array.isArray(node[key])) {
-              node[key].forEach(child => traverse(child));
-            } else {
-              traverse(node[key]);
-            }
+          }
+        },
+        FunctionDeclaration(node) {
+          if (node.id && node.id.type === 'Identifier') {
+            userDefinitions.functions.push({
+              name: node.id.name,
+              line: node.loc.start.line + lineOffset
+            });
+          }
+        },
+        // We consider class declarations to be a special form of variable
+        // declaration.
+        ClassDeclaration(node) {
+          if (node.id && node.id.type === 'Identifier') {
+            userDefinitions.variables.push({
+              name: node.id.name,
+              line: node.loc.start.line + lineOffset
+            });
           }
         }
-      }
-
-      traverse(ast);
+      });
     } catch (error) {
       // TODO: Replace this with a friendly error message.
       console.error('Error parsing code:', error);
