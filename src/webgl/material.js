@@ -693,12 +693,8 @@ p5.prototype.createFilterShader = function (fragSrc) {
  *
  * The parameter, `s`, is the <a href="#/p5.Shader">p5.Shader</a> object to
  * apply. For example, calling `shader(myShader)` applies `myShader` to
- * process each pixel on the canvas. The shader will be used for:
- * - Fills when a texture is enabled if it includes a uniform `sampler2D`.
- * - Fills when lights are enabled if it includes the attribute `aNormal`, or if it has any of the following uniforms: `uUseLighting`, `uAmbientLightCount`, `uDirectionalLightCount`, `uPointLightCount`, `uAmbientColor`, `uDirectionalDiffuseColors`, `uDirectionalSpecularColors`, `uPointLightLocation`, `uPointLightDiffuseColors`, `uPointLightSpecularColors`, `uLightingDirection`, or `uSpecular`.
- * - Fills whenever there are no lights or textures.
- * - Strokes if it includes the uniform `uStrokeWeight`.
- *
+ * process each pixel on the canvas. This only changes the fill (the inner part of shapes),
+ * but does not affect the outlines (strokes) or any images drawn using the `image()` function.
  * The source code from a <a href="#/p5.Shader">p5.Shader</a> object's
  * fragment and vertex shaders will be compiled the first time it's passed to
  * `shader()`. See
@@ -710,6 +706,17 @@ p5.prototype.createFilterShader = function (fragSrc) {
  *
  * Note: Shaders can only be used in WebGL mode.
  *
+ * <div>
+ * <p>
+ *
+ * If you want to apply shaders to strokes or images, use the following methods:
+ * - **[strokeShader()](#/p5/strokeShader)**: Applies a shader to the stroke (outline) of shapes, allowing independent control over the stroke rendering using shaders.
+ * - **[imageShader()](#/p5/imageShader)**: Applies a shader to images or textures, controlling how the shader modifies their appearance during rendering.
+ *
+ * </p>
+ * </div>
+ *
+ *
  * @method shader
  * @chainable
  * @param {p5.Shader} s <a href="#/p5.Shader">p5.Shader</a> object
@@ -718,149 +725,137 @@ p5.prototype.createFilterShader = function (fragSrc) {
  * @example
  * <div modernizr='webgl'>
  * <code>
- * // Note: A "uniform" is a global variable within a shader program.
+ * let fillShader;
  *
- * // Create a string with the vertex shader program.
- * // The vertex shader is called for each vertex.
  * let vertSrc = `
  * precision highp float;
- * uniform mat4 uModelViewMatrix;
- * uniform mat4 uProjectionMatrix;
- *
  * attribute vec3 aPosition;
- * attribute vec2 aTexCoord;
- * varying vec2 vTexCoord;
- *
  * void main() {
- *   vTexCoord = aTexCoord;
- *   vec4 positionVec4 = vec4(aPosition, 1.0);
- *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+ *   gl_Position = vec4(aPosition, 1.0);
  * }
  * `;
  *
- * // Create a string with the fragment shader program.
- * // The fragment shader is called for each pixel.
  * let fragSrc = `
  * precision highp float;
- *
+ * uniform float uMouseX;
  * void main() {
- *   // Set each pixel's RGBA value to yellow.
- *   gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+ *   vec3 color = vec3(uMouseX, 0.0, 1.0); // Color based on mouse X
+ *   gl_FragColor = vec4(color, 1.0);
  * }
  * `;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *
- *   // Create a p5.Shader object.
- *   let shaderProgram = createShader(vertSrc, fragSrc);
- *
- *   // Apply the p5.Shader object.
- *   shader(shaderProgram);
- *
- *   // Style the drawing surface.
+ *   fillShader = createShader(vertSrc, fragSrc);
+ *   shader(fillShader);
  *   noStroke();
+ *   describe('A square with color changing based on mouse X without lighting.');
+ * }
  *
- *   // Add a plane as a drawing surface.
+ * function draw() {
+ *   fillShader.setUniform('uMouseX', map(mouseX, 0, width, 0, 1));
  *   plane(100, 100);
- *
- *   describe('A yellow square.');
  * }
  * </code>
  * </div>
  *
- * <div>
+ * @example
+ * <div modernizr='webgl'>
  * <code>
- * // Note: A "uniform" is a global variable within a shader program.
+ * let fillShader;
  *
- * let mandelbrot;
+ * let vertSrc = `
+ * precision highp float;
+ * attribute vec3 aPosition;
+ * uniform mat4 uModelViewMatrix;
+ * uniform mat4 uProjectionMatrix;
+ * varying vec3 vPosition;
  *
- * // Load the shader and create a p5.Shader object.
- * function preload() {
- *   mandelbrot = loadShader('assets/shader.vert', 'assets/shader.frag');
+ * void main() {
+ *   vPosition = aPosition;
+ *   gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
  * }
+ * `;
+ *
+ * let fragSrc = `
+ * precision highp float;
+ * uniform vec3 uLightDir;
+ * varying vec3 vPosition;
+ *
+ * void main() {
+ *   vec3 lightDir = normalize(uLightDir);
+ *   float brightness = dot(lightDir, normalize(vPosition));
+ *   brightness = clamp(brightness, 0.4, 1.0);
+ *   vec3 color = vec3(0.3, 0.5, 1.0);
+ *   color = color * brightness * 3.0;
+ *   gl_FragColor = vec4(color, 1.0);
+ * }
+ * `;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *
- *   // Use the p5.Shader object.
- *   shader(mandelbrot);
- *
- *   // Set the shader uniform p to an array.
- *   mandelbrot.setUniform('p', [-0.74364388703, 0.13182590421]);
- *
- *   describe('A fractal image zooms in and out of focus.');
- * }
- *
- * function draw() {
- *   // Set the shader uniform r to a value that oscillates between 0 and 2.
- *   mandelbrot.setUniform('r', sin(frameCount * 0.01) + 1);
- *
- *   // Add a quad as a display surface for the shader.
- *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * // Note: A "uniform" is a global variable within a shader program.
- *
- * let redGreen;
- * let orangeBlue;
- * let showRedGreen = false;
- *
- * // Load the shader and create two separate p5.Shader objects.
- * function preload() {
- *   redGreen = loadShader('assets/shader.vert', 'assets/shader-gradient.frag');
- *   orangeBlue = loadShader('assets/shader.vert', 'assets/shader-gradient.frag');
- * }
- *
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *
- *   // Initialize the redGreen shader.
- *   shader(redGreen);
- *
- *   // Set the redGreen shader's center and background color.
- *   redGreen.setUniform('colorCenter', [1.0, 0.0, 0.0]);
- *   redGreen.setUniform('colorBackground', [0.0, 1.0, 0.0]);
- *
- *   // Initialize the orangeBlue shader.
- *   shader(orangeBlue);
- *
- *   // Set the orangeBlue shader's center and background color.
- *   orangeBlue.setUniform('colorCenter', [1.0, 0.5, 0.0]);
- *   orangeBlue.setUniform('colorBackground', [0.226, 0.0, 0.615]);
- *
- *   describe(
- *     'The scene toggles between two circular gradients when the user double-clicks. An orange and blue gradient vertically, and red and green gradient moves horizontally.'
- *   );
- * }
- *
- * function draw() {
- *   // Update the offset values for each shader.
- *   // Move orangeBlue vertically.
- *   // Move redGreen horizontally.
- *   orangeBlue.setUniform('offset', [0, sin(frameCount * 0.01) + 1]);
- *   redGreen.setUniform('offset', [sin(frameCount * 0.01), 1]);
- *
- *   if (showRedGreen === true) {
- *     shader(redGreen);
- *   } else {
- *     shader(orangeBlue);
- *   }
- *
- *   // Style the drawing surface.
+ *   fillShader = createShader(vertSrc, fragSrc);
  *   noStroke();
- *
- *   // Add a quad as a drawing surface.
- *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
+ *   describe('A rotating torus with simulated directional lighting.');
  * }
  *
- * // Toggle between shaders when the user double-clicks.
- * function doubleClicked() {
- *   showRedGreen = !showRedGreen;
+ * function draw() {
+ *   background(20, 20, 40);
+ *   let lightDir = [0.5, 0.5, -1.0];
+ *   fillShader.setUniform('uLightDir', lightDir);
+ *   shader(fillShader);
+ *   rotateY(frameCount * 0.02);
+ *   rotateX(frameCount * 0.02);
+ *   //lights();
+ *   torus(25, 10, 30, 30);
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let fillShader;
+ *
+ * let vertSrc = `
+ * precision highp float;
+ * attribute vec3 aPosition;
+ * uniform mat4 uProjectionMatrix;
+ * uniform mat4 uModelViewMatrix;
+ * varying vec3 vPosition;
+ * void main() {
+ *   vPosition = aPosition;
+ *   gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+ * }
+ * `;
+ *
+ * let fragSrc = `
+ * precision highp float;
+ * uniform vec3 uLightPos;
+ * uniform vec3 uFillColor;
+ * varying vec3 vPosition;
+ * void main() {
+ *   float brightness = dot(normalize(uLightPos), normalize(vPosition));
+ *   brightness = clamp(brightness, 0.0, 1.0);
+ *   vec3 color = uFillColor * brightness;
+ *   gl_FragColor = vec4(color, 1.0);
+ * }
+ * `;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   fillShader = createShader(vertSrc, fragSrc);
+ *   shader(fillShader);
+ *   noStroke();
+ *   describe('A square affected by both fill color and lighting, with lights controlled by mouse.');
+ * }
+ *
+ * function draw() {
+ *   let lightPos = [(mouseX - width / 2) / width, (mouseY - height / 2) / height, 1.0];
+ *   fillShader.setUniform('uLightPos', lightPos);
+ *   let fillColor = [map(mouseX, 0, width, 0, 1), map(mouseY, 0, height, 0, 1), 0.5];
+ *   fillShader.setUniform('uFillColor', fillColor);
+ *   plane(100, 100);
  * }
  * </code>
  * </div>
@@ -871,17 +866,280 @@ p5.prototype.shader = function (s) {
 
   s.ensureCompiledOnContext(this);
 
-  if (s.isStrokeShader()) {
-    this._renderer.states.userStrokeShader = s;
-  } else {
-    this._renderer.states.userFillShader = s;
-    this._renderer.states._useNormalMaterial = false;
-  }
+  // Always set the shader as a fill shader
+  this._renderer.userFillShader = s;
+  this._renderer._useNormalMaterial = false;
+
+  return this;
+};
+
+/**
+ * Sets the <a href="#/p5.Shader">p5.Shader</a> object to apply for strokes.
+ *
+ * This method applies the given shader to strokes, allowing customization of
+ * how lines and outlines are drawn in 3D space. The shader will be used for
+ * strokes until <a href="#/p5/resetShader">resetShader()</a> is called or another
+ * strokeShader is applied.
+ *
+ * The shader will be used for:
+ * - Strokes only, regardless of whether the uniform `uStrokeWeight` is present.
+ *
+ * @method strokeShader
+ * @chainable
+ * @param {p5.Shader} s <a href="#/p5.Shader">p5.Shader</a> object
+ *                      to apply for strokes.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * // Example: Custom stroke with 3D perspective and dynamic scaling
+ * let myStrokeShader;
+ * let vertSrc = `
+ *
+ * precision mediump int;
+ *
+ * uniform mat4 uModelViewMatrix;
+ * uniform mat4 uProjectionMatrix;
+ * uniform float uStrokeWeight;
+ *
+ * uniform bool uUseLineColor;
+ * uniform vec4 uMaterialColor;
+ *
+ * uniform vec4 uViewport;
+ * uniform int uPerspective;
+ * uniform int uStrokeJoin;
+ *
+ * attribute vec4 aPosition;
+ * attribute vec3 aTangentIn;
+ * attribute vec3 aTangentOut;
+ * attribute float aSide;
+ * attribute vec4 aVertexColor;
+ *
+ * void main() {
+ *   vec4 posp = uModelViewMatrix * aPosition;
+ *   vec4 posqIn = uModelViewMatrix * (aPosition + vec4(aTangentIn, 0));
+ *   vec4 posqOut = uModelViewMatrix * (aPosition + vec4(aTangentOut, 0));
+ *
+ *   float facingCamera = pow(
+ *     abs(normalize(posqIn-posp).z),
+ *     0.25
+ *   );
+ *
+ *   float scale = mix(1., 0.995, facingCamera);
+ *
+ *   posp.xyz = posp.xyz * scale;
+ *   posqIn.xyz = posqIn.xyz * scale;
+ *   posqOut.xyz = posqOut.xyz * scale;
+ *
+ *   vec4 p = uProjectionMatrix * posp;
+ *   vec4 qIn = uProjectionMatrix * posqIn;
+ *   vec4 qOut = uProjectionMatrix * posqOut;
+ *
+ *   vec2 tangentIn = normalize((qIn.xy*p.w - p.xy*qIn.w) * uViewport.zw);
+ *   vec2 tangentOut = normalize((qOut.xy*p.w - p.xy*qOut.w) * uViewport.zw);
+ *
+ *   vec2 curPerspScale;
+ *   if(uPerspective == 1) {
+ *     curPerspScale = (uProjectionMatrix * vec4(1, sign(uProjectionMatrix[1][1]), 0, 0)).xy;
+ *   } else {
+ *     curPerspScale = p.w / (0.5 * uViewport.zw);
+ *   }
+ *
+ *   vec2 offset;
+ *   vec2 tangent = aTangentIn == vec3(0.) ? tangentOut : tangentIn;
+ *   vec2 normal = vec2(-tangent.y, tangent.x);
+ *   float normalOffset = sign(aSide);
+ *   float tangentOffset = abs(aSide) - 1.;
+ *   offset = (normal * normalOffset + tangent * tangentOffset) *
+ *     uStrokeWeight * 0.5;
+ *
+ *   gl_Position.xy = p.xy + offset.xy * curPerspScale;
+ *   gl_Position.zw = p.zw;
+ * }
+ * `;
+
+ * let fragSrc = `
+ * precision mediump float;
+ *
+ * void main() {
+ *   gl_FragColor = vec4(0.0, 0.5, 1.0, 1.0);  // Force blue color for stroke
+ * }
+ * `;
+
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   myStrokeShader = createShader(vertSrc, fragSrc);
+ *   strokeShader(myStrokeShader);
+ *   strokeWeight(5);
+ * }
+
+ * function draw() {
+ *   background(255);  // White background
+ *   rotateY(frameCount * 0.01);  // Rotate box
+ *   noFill();  // Only stroke for the box
+ *   box(50);  // Draw 3D box
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * // Example 3: Animated stroke shader with time-based color change
+ * let animatedStrokeShader;
+ *
+ * let vertSrc = `
+ * precision mediump int;
+ *
+ * uniform mat4 uModelViewMatrix;
+ * uniform mat4 uProjectionMatrix;
+ * uniform float uStrokeWeight;
+ *
+ * uniform bool uUseLineColor;
+ * uniform vec4 uMaterialColor;
+ *
+ * uniform vec4 uViewport;
+ * uniform int uPerspective;
+ * uniform int uStrokeJoin;
+ *
+ * attribute vec4 aPosition;
+ * attribute vec3 aTangentIn;
+ * attribute vec3 aTangentOut;
+ * attribute float aSide;
+ * attribute vec4 aVertexColor;
+ *
+ * void main() {
+ *   vec4 posp = uModelViewMatrix * aPosition;
+ *   vec4 posqIn = uModelViewMatrix * (aPosition + vec4(aTangentIn, 0));
+ *   vec4 posqOut = uModelViewMatrix * (aPosition + vec4(aTangentOut, 0));
+ *
+ *   float facingCamera = pow(
+ *     abs(normalize(posqIn-posp).z),
+ *     0.25
+ *   );
+ *
+ *   float scale = mix(1., 0.995, facingCamera);
+ *
+ *   posp.xyz = posp.xyz * scale;
+ *   posqIn.xyz = posqIn.xyz * scale;
+ *   posqOut.xyz = posqOut.xyz * scale;
+ *
+ *   vec4 p = uProjectionMatrix * posp;
+ *   vec4 qIn = uProjectionMatrix * posqIn;
+ *   vec4 qOut = uProjectionMatrix * posqOut;
+ *
+ *   vec2 tangentIn = normalize((qIn.xy*p.w - p.xy*qIn.w) * uViewport.zw);
+ *   vec2 tangentOut = normalize((qOut.xy*p.w - p.xy*qOut.w) * uViewport.zw);
+ *
+ *   vec2 curPerspScale;
+ *   if(uPerspective == 1) {
+ *     curPerspScale = (uProjectionMatrix * vec4(1, sign(uProjectionMatrix[1][1]), 0, 0)).xy;
+ *   } else {
+ *     curPerspScale = p.w / (0.5 * uViewport.zw);
+ *   }
+ *
+ *   vec2 offset;
+ *   vec2 tangent = aTangentIn == vec3(0.) ? tangentOut : tangentIn;
+ *   vec2 normal = vec2(-tangent.y, tangent.x);
+ *   float normalOffset = sign(aSide);
+ *   float tangentOffset = abs(aSide) - 1.;
+ *   offset = (normal * normalOffset + tangent * tangentOffset) *
+ *     uStrokeWeight * 0.5;
+ *
+ *   gl_Position.xy = p.xy + offset.xy * curPerspScale;
+ *   gl_Position.zw = p.zw;
+ * }
+ * `;
+ *
+ * let fragSrc = `
+ * precision mediump float;
+ * uniform float uTime;
+ *
+ * void main() {
+ *   float wave = sin(gl_FragCoord.x * 0.1 + uTime) * 0.5 + 0.5;
+ *   gl_FragColor = vec4(wave, 0.5, 1.0, 1.0);  // Animated color based on time
+ * }
+ * `;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   animatedStrokeShader = createShader(vertSrc, fragSrc);
+ *   strokeShader(animatedStrokeShader);
+ *   strokeWeight(4);
+ * }
+ *
+ * function draw() {
+ *   animatedStrokeShader.setUniform('uTime', millis() / 1000.0);  // Pass time to shader
+ *   background(50);  // Grey background
+ *   rotateY(frameCount * 0.02);  // Rotate box
+ *   noFill();  // Only stroke for the box
+ *   box(50);  // Draw 3D box
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.strokeShader = function (s) {
+  this._assert3d('strokeShader');
+  p5._validateParameters('strokeShader', arguments);
+
+  s.ensureCompiledOnContext(this);
+
+  this._renderer.userStrokeShader = s;
+
+  return this;
+};
+
+
+/**
+ * Sets the <a href="#/p5.Shader">p5.Shader</a> object to apply while rendering images.
+ *
+ * The shader will be used for image rendering only.
+ *
+ * The parameter, `s`, is the <a href="#/p5.Shader">p5.Shader</a> object to apply.
+ *
+ * Note: Shaders can only be used in WebGL mode.
+ *
+ * @method imageShader
+ * @chainable
+ * @param {p5.Shader} s <a href="#/p5.Shader">p5.Shader</a> object to apply.
+ *
+ * @example
+ * <div>
+ * <code>
+ * let img;
+ * let imgShader;
+ *
+ * function preload() {
+ *   img = loadImage('assets/sample.jpg');
+ *   imgShader = loadShader('assets/vertex.vert', 'assets/image.frag');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(800, 600, WEBGL);
+ *   imageShader(imgShader);
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *   image(img, -width / 2, -height / 2, width, height);
+ * }
+ * </code>
+ * </div>
+ */
+
+p5.prototype.imageShader = function (s) {
+  this._assert3d('imageShader');
+  p5._validateParameters('imageShader', arguments);
+
+  s.ensureCompiledOnContext(this);
+
+  this._renderer.userImageShader = s;
 
   s.setDefaultUniforms();
 
   return this;
 };
+
 
 /**
  * Get the default shader used with lights, materials,
@@ -1629,7 +1887,8 @@ p5.prototype.baseStrokeShader = function() {
  * Restores the default shaders.
  *
  * `resetShader()` deactivates any shaders previously applied by
- * <a href="#/p5/shader">shader()</a>.
+ * <a href="#/p5/shader">shader()</a>, <a href="#/p5/strokeShader">strokeShader()</a>,
+ * or <a href="#/p5/imageShader">imageShader()</a>.
  *
  * Note: Shaders can only be used in WebGL mode.
  *
@@ -1709,7 +1968,11 @@ p5.prototype.baseStrokeShader = function() {
  * </div>
  */
 p5.prototype.resetShader = function () {
-  this._renderer.states.userFillShader = this._renderer.states.userStrokeShader = null;
+
+  this._renderer.userFillShader = null;
+  this._renderer.userStrokeShader = null;
+  this._renderer.userImageShader = null;
+
   return this;
 };
 

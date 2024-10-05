@@ -145,15 +145,19 @@ p5.RendererGL.prototype.vertex = function(x, y) {
   );
 
   if (this.textureMode === constants.IMAGE && !this.isProcessingVertices) {
-    if (this.states._tex !== null) {
-      if (this.states._tex.width > 0 && this.states._tex.height > 0) {
-        u /= this.states._tex.width;
-        v /= this.states._tex.height;
+    const imageShader = this._getImmediateImageShader();
+    if(imageShader){
+      // We have an image shader, normalize UV coordinates based on texture dimensions
+    if (this._tex !== null) {
+      if (this._tex.width > 0 && this._tex.height > 0) {
+        u /= this._tex.width;
+        v /= this._tex.height;
       }
     } else if (
-      this.states.userFillShader !== undefined ||
-      this.states.userStrokeShader !== undefined ||
-      this.states.userPointShader !== undefined
+      this.userFillShader !== undefined ||
+      this.userStrokeShader !== undefined ||
+      this.userPointShader !== undefined ||
+      this.userImageShader !== undefined
     ) {
     // Do nothing if user-defined shaders are present
     } else if (
@@ -167,6 +171,7 @@ p5.RendererGL.prototype.vertex = function(x, y) {
       );
     }
   }
+}
 
   this.immediateMode.geometry.uvs.push(u, v);
 
@@ -296,6 +301,14 @@ p5.RendererGL.prototype.endShape = function(
       !this.geometryBuilder &&
       this.immediateMode.geometry.vertices.length >= 3
     ) {
+      let imgShader = this._getRetainedImageShader();
+      let fillShader = this._getImmediateFillShader();
+      // Check if the texture mode is IMAGE, apply the image shader, else apply the fill shader
+      if (this.textureMode === constants.IMAGE && imgShader) {
+        imageShader(imgShader); 
+      } else {
+        strokeShader(fillShader);
+      }
       this._drawImmediateFill(count);
     }
   }
@@ -657,5 +670,47 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
   );
   shader.unbindShader();
 };
+
+/**
+ * Called from image rendering functions. Responsible for setting shader uniforms,
+ * enabling all appropriate buffers, binding textures, applying color blend,
+ * and drawing the image geometry.
+ * @private
+ */
+p5.RendererGL.prototype._drawImmediateImage = function(count = 1) {
+  const gl = this.GL;
+  let shader = this._getImmediateImageShader();
+  this._setFillUniforms(shader);
+
+  for (const buff of this.immediateMode.buffers.image) {
+    buff._prepareBuffer(this.immediateMode.geometry, shader);
+  }
+  shader.disableRemainingAttributes();
+  this._setTexUniforms(shader);
+  this._applyColorBlend(
+    this.curFillColor,
+    this.immediateMode.geometry.hasFillTransparency()
+  );
+  if (count === 1) {
+    gl.drawArrays(
+      this.immediateMode.shapeMode,
+      0,
+      this.immediateMode.geometry.vertices.length
+    );
+  } else {
+    try {
+      gl.drawArraysInstanced(
+        this.immediateMode.shapeMode,
+        0,
+        this.immediateMode.geometry.vertices.length,
+        count
+      );
+    } catch (e) {
+      console.log('🌸 p5.js says: Instancing is only supported in WebGL2 mode');
+    }
+  }
+  shader.unbindShader();
+};
+
 
 export default p5.RendererGL;

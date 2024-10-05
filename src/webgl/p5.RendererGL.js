@@ -574,11 +574,11 @@ p5.RendererGL = class RendererGL extends Renderer {
     this._defaultColorShader = undefined;
     this._defaultPointShader = undefined;
 
-    this.states.userFillShader = undefined;
-    this.states.userStrokeShader = undefined;
-    this.states.userPointShader = undefined;
+    this.userFillShader = undefined;
+    this.userStrokeShader = undefined;
+    this.userPointShader = undefined;
+    this.userImageShader = undefined;
 
-    this._useUserVertexProperties = undefined;
 
     // Default drawing is done in Retained Mode
     // Geometry and Material hashes stored here
@@ -633,7 +633,10 @@ p5.RendererGL = class RendererGL extends Renderer {
           new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
         ],
         point: this.GL.createBuffer(),
-        user:[]
+        image: [
+          new p5.RenderBuffer(3, 'imageVertices', 'imageVertexBuffer', 'aPosition', this, this._vToNArray),
+          new p5.RenderBuffer(2, 'imageUVs', 'imageUVBuffer', 'aTexCoord', this, this._flatten)
+        ]
       }
     };
 
@@ -1590,6 +1593,80 @@ p5.RendererGL = class RendererGL extends Renderer {
     return this;
   }
 
+
+  push() {
+    // get the base renderer style
+    const style = Renderer.prototype.push.apply(this);
+
+    // add webgl-specific style properties
+    const properties = style.properties;
+
+    properties.uModelMatrix = this.uModelMatrix.copy();
+    properties.uViewMatrix = this.uViewMatrix.copy();
+    properties.uPMatrix = this.uPMatrix.copy();
+    properties._curCamera = this._curCamera;
+
+    // make a copy of the current camera for the push state
+    // this preserves any references stored using 'createCamera'
+    this._curCamera = this._curCamera.copy();
+
+    properties.ambientLightColors = this.ambientLightColors.slice();
+    properties.specularColors = this.specularColors.slice();
+
+    properties.directionalLightDirections =
+      this.directionalLightDirections.slice();
+    properties.directionalLightDiffuseColors =
+      this.directionalLightDiffuseColors.slice();
+    properties.directionalLightSpecularColors =
+      this.directionalLightSpecularColors.slice();
+
+    properties.pointLightPositions = this.pointLightPositions.slice();
+    properties.pointLightDiffuseColors = this.pointLightDiffuseColors.slice();
+    properties.pointLightSpecularColors = this.pointLightSpecularColors.slice();
+
+    properties.spotLightPositions = this.spotLightPositions.slice();
+    properties.spotLightDirections = this.spotLightDirections.slice();
+    properties.spotLightDiffuseColors = this.spotLightDiffuseColors.slice();
+    properties.spotLightSpecularColors = this.spotLightSpecularColors.slice();
+    properties.spotLightAngle = this.spotLightAngle.slice();
+    properties.spotLightConc = this.spotLightConc.slice();
+
+    properties.userFillShader = this.userFillShader;
+    properties.userStrokeShader = this.userStrokeShader;
+    properties.userImageShader = this.userImageShader;
+    properties.userPointShader = this.userPointShader;
+
+    properties.pointSize = this.pointSize;
+    properties.curStrokeWeight = this.curStrokeWeight;
+    properties.curStrokeColor = this.curStrokeColor;
+    properties.curFillColor = this.curFillColor;
+    properties.curAmbientColor = this.curAmbientColor;
+    properties.curSpecularColor = this.curSpecularColor;
+    properties.curEmissiveColor = this.curEmissiveColor;
+
+    properties._hasSetAmbient = this._hasSetAmbient;
+    properties._useSpecularMaterial = this._useSpecularMaterial;
+    properties._useEmissiveMaterial = this._useEmissiveMaterial;
+    properties._useShininess = this._useShininess;
+    properties._useMetalness = this._useMetalness;
+
+    properties.constantAttenuation = this.constantAttenuation;
+    properties.linearAttenuation = this.linearAttenuation;
+    properties.quadraticAttenuation = this.quadraticAttenuation;
+
+    properties._enableLighting = this._enableLighting;
+    properties._useNormalMaterial = this._useNormalMaterial;
+    properties._tex = this._tex;
+    properties.drawMode = this.drawMode;
+
+    properties._currentNormal = this._currentNormal;
+    properties.curBlendMode = this.curBlendMode;
+
+    // So that the activeImageLight gets reset in push/pop
+    properties.activeImageLight = this.activeImageLight;
+
+    return style;
+  }
   pop(...args) {
     if (
       this._clipDepths.length > 0 &&
@@ -1630,11 +1707,11 @@ p5.RendererGL = class RendererGL extends Renderer {
 
   _getImmediateStrokeShader() {
     // select the stroke shader to use
-    const stroke = this.states.userStrokeShader;
-    if (!stroke || !stroke.isStrokeShader()) {
-      return this._getLineShader();
+    const stroke = this.userStrokeShader;
+    if (stroke) {
+      return stroke;
     }
-    return stroke;
+    return this._getLineShader();
   }
 
 
@@ -1687,23 +1764,21 @@ p5.RendererGL = class RendererGL extends Renderer {
    * for retained mode.
    */
   _getRetainedFillShader() {
-    if (this.states._useNormalMaterial) {
+    if (this._useNormalMaterial) {
       return this._getNormalShader();
     }
-
-    const fill = this.states.userFillShader;
-    if (this.states._enableLighting) {
-      if (!fill || !fill.isLightShader()) {
-        return this._getLightShader();
-      }
-    } else if (this.states._tex) {
-      if (!fill || !fill.isTextureShader()) {
-        return this._getLightShader();
-      }
-    } else if (!fill /* || !fill.isColorShader()*/) {
-      return this._getColorShader();
+    // Check if the fill shader is a texture shader
+    const fill = this.userFillShader;
+    if(fill && !fill.isTextureShader()){
+      return fill;
     }
-    return fill;
+    
+    // Return the appropriate light shader if lighting is enabled or it's a texture shader
+    if (this._enableLighting || this._tex) {
+      return this._getLightShader();
+    }
+    // Default to the color shader
+    return this._getColorShader();
   }
 
   _getImmediatePointShader() {
@@ -1714,6 +1789,17 @@ p5.RendererGL = class RendererGL extends Renderer {
     }
     return point;
   }
+
+  _getImmediateImageShader() {
+    const imageShader = this.userImageShader;
+    if (this._tex) {
+      if (!imageShader || !imageShader.isTextureShader()) {
+        return this._getLightShader(); 
+      }
+    }
+    return imageShader ; 
+  }
+  
 
   _getRetainedLineShader() {
     return this._getImmediateLineShader();
@@ -1971,6 +2057,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     }
     return this._defaultFontShader;
   }
+
 
   _webGL2CompatibilityPrefix(
     shaderType,
