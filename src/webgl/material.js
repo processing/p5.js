@@ -725,8 +725,6 @@ p5.prototype.createFilterShader = function (fragSrc) {
  * @example
  * <div modernizr='webgl'>
  * <code>
- * // Example 1: Basic Fill Shader without Lights
- * // Applies a custom shader to the fill of objects
  * let fillShader;
  *
  * let vertSrc = `
@@ -764,8 +762,7 @@ p5.prototype.createFilterShader = function (fragSrc) {
  * @example
  * <div modernizr='webgl'>
  * <code>
- * // Example 2: Fill Shader with Lights Affected by Mouse
- * // Demonstrating interaction between light and shader, with the light position controlled by the mouse
+ * let fillShader;
  *
  * let vertSrc = `
  * precision highp float;
@@ -782,30 +779,35 @@ p5.prototype.createFilterShader = function (fragSrc) {
  *
  * let fragSrc = `
  * precision highp float;
- * uniform vec3 uLightPos;
+ * uniform vec3 uLightDir;
  * varying vec3 vPosition;
+ *
  * void main() {
- *   float brightness = dot(normalize(uLightPos), normalize(vPosition));
- *   brightness = clamp(brightness, 0.0, 1.0);
- *   vec3 color = vec3(brightness, brightness * 0.7, 1.0); // Blue-based color affected by light
+ *   vec3 lightDir = normalize(uLightDir);
+ *   float brightness = dot(lightDir, normalize(vPosition));
+ *   brightness = clamp(brightness, 0.4, 1.0);
+ *   vec3 color = vec3(0.3, 0.5, 1.0);
+ *   color = color * brightness * 3.0;
  *   gl_FragColor = vec4(color, 1.0);
  * }
  * `;
  *
- * let fillShader;
- *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   fillShader = createShader(vertSrc, fragSrc);
- *   shader(fillShader);
  *   noStroke();
- *   describe('A square with fill color affected by light, light position changes with mouse.');
+ *   describe('A rotating torus with simulated directional lighting.');
  * }
  *
  * function draw() {
- *   let lightPos = [(mouseX - width / 2) / width, (mouseY - height / 2) / height, 1.0];
- *   fillShader.setUniform('uLightPos', lightPos); // Mouse changes light position
- *   plane(100, 100);
+ *   background(20, 20, 40);
+ *   let lightDir = [0.5, 0.5, -1.0];
+ *   fillShader.setUniform('uLightDir', lightDir);
+ *   shader(fillShader);
+ *   rotateY(frameCount * 0.02);
+ *   rotateX(frameCount * 0.02);
+ *   //lights();
+ *   torus(25, 10, 30, 30);
  * }
  * </code>
  * </div>
@@ -813,8 +815,6 @@ p5.prototype.createFilterShader = function (fragSrc) {
  * @example
  * <div modernizr='webgl'>
  * <code>
- * // Example 3: Mixed Fill Shader with Lights and No Lights
- * // Light interaction with fill shader
  * let fillShader;
  *
  * let vertSrc = `
