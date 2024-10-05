@@ -542,12 +542,7 @@ p5.prototype.isLooping = function() {
  * </div>
  */
 p5.prototype.push = function() {
-  this._styles.push({
-    props: {
-      _colorMode: this._colorMode
-    },
-    renderer: this._renderer.push()
-  });
+  this._renderer.push();
 };
 
 /**
@@ -826,13 +821,7 @@ p5.prototype.push = function() {
  * </div>
  */
 p5.prototype.pop = function() {
-  const style = this._styles.pop();
-  if (style) {
-    this._renderer.pop(style.renderer);
-    Object.assign(this, style.props);
-  } else {
-    console.warn('pop() was called without matching push()');
-  }
+  this._renderer.pop();
 };
 
 /**
@@ -940,10 +929,10 @@ p5.prototype.redraw = async function(n) {
       if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
         this._updateAccsOutput();
       }
-      if (context._renderer.isP3D) {
-        context._renderer._update();
+      if (this._renderer.isP3D) {
+        this._renderer._update();
       }
-      this._setProperty('frameCount', context.frameCount + 1);
+      this.frameCount = context.frameCount + 1;
       await this._runLifecycleHook('predraw');
       this._inUserDraw = true;
       try {

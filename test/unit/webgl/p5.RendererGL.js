@@ -72,21 +72,21 @@ suite('p5.RendererGL', function() {
     test('check activate and deactivating fill and stroke', function() {
       myp5.noStroke();
       assert(
-        !myp5._renderer._doStroke,
+        !myp5._renderer.states.doStroke,
         'stroke shader still active after noStroke()'
       );
       assert.isTrue(
-        myp5._renderer._doFill,
+        myp5._renderer.states.doFill,
         'fill shader deactivated by noStroke()'
       );
       myp5.stroke(0);
       myp5.noFill();
       assert(
-        myp5._renderer._doStroke,
+        myp5._renderer.states.doStroke,
         'stroke shader not active after stroke()'
       );
       assert.isTrue(
-        !myp5._renderer._doFill,
+        !myp5._renderer.states.doFill,
         'fill shader still active after noFill()'
       );
     });
@@ -284,9 +284,9 @@ suite('p5.RendererGL', function() {
     test('stroke and other settings are unaffected after filter', function() {
       let c = myp5.createCanvas(5, 5, myp5.WEBGL);
       let getShapeAttributes = () => [
-        c._ellipseMode,
+        c.states.ellipseMode,
         c.drawingContext.imageSmoothingEnabled,
-        c._rectMode,
+        c.states.rectMode,
         c.curStrokeWeight,
         c.curStrokeCap,
         c.curStrokeJoin,
@@ -605,8 +605,8 @@ suite('p5.RendererGL', function() {
   suite('push() and pop() work in WEBGL Mode', function() {
     test('push/pop and translation works as expected in WEBGL Mode', function() {
       myp5.createCanvas(100, 100, myp5.WEBGL);
-      var modelMatrixBefore = myp5._renderer.uModelMatrix.copy();
-      var viewMatrixBefore = myp5._renderer.uViewMatrix.copy();
+      var modelMatrixBefore = myp5._renderer.states.uModelMatrix.copy();
+      var viewMatrixBefore = myp5._renderer.states.uViewMatrix.copy();
 
       myp5.push();
       // Change view
@@ -616,52 +616,52 @@ suite('p5.RendererGL', function() {
       myp5.translate(20, 100, 5);
       // Check if the model matrix has changed
       assert.notDeepEqual(modelMatrixBefore.mat4,
-        myp5._renderer.uModelMatrix.mat4);
+        myp5._renderer.states.uModelMatrix.mat4);
       // Check if the view matrix has changed
       assert.notDeepEqual(viewMatrixBefore.mat4,
-        myp5._renderer.uViewMatrix.mat4);
+        myp5._renderer.states.uViewMatrix.mat4);
       myp5.pop();
       // Check if both the model and view matrices are restored after popping
       assert.deepEqual(modelMatrixBefore.mat4,
-        myp5._renderer.uModelMatrix.mat4);
-      assert.deepEqual(viewMatrixBefore.mat4, myp5._renderer.uViewMatrix.mat4);
+        myp5._renderer.states.uModelMatrix.mat4);
+      assert.deepEqual(viewMatrixBefore.mat4, myp5._renderer.states.uViewMatrix.mat4);
     });
 
     test('push/pop and directionalLight() works', function() {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.directionalLight(255, 0, 0, 0, 0, 0);
       var dirDiffuseColors =
-        myp5._renderer.directionalLightDiffuseColors.slice();
+        myp5._renderer.states.directionalLightDiffuseColors.slice();
       var dirSpecularColors =
-        myp5._renderer.directionalLightSpecularColors.slice();
+        myp5._renderer.states.directionalLightSpecularColors.slice();
       var dirLightDirections =
-        myp5._renderer.directionalLightDirections.slice();
+        myp5._renderer.states.directionalLightDirections.slice();
       myp5.push();
       myp5.directionalLight(0, 0, 255, 0, 10, 5);
       assert.notEqual(
         dirDiffuseColors,
-        myp5._renderer.directionalLightDiffuseColors
+        myp5._renderer.states.directionalLightDiffuseColors
       );
       assert.notEqual(
         dirSpecularColors,
-        myp5._renderer.directionalLightSpecularColors
+        myp5._renderer.states.directionalLightSpecularColors
       );
       assert.notEqual(
         dirLightDirections,
-        myp5._renderer.directionalLightDirections
+        myp5._renderer.states.directionalLightDirections
       );
       myp5.pop();
       assert.deepEqual(
         dirDiffuseColors,
-        myp5._renderer.directionalLightDiffuseColors
+        myp5._renderer.states.directionalLightDiffuseColors
       );
       assert.deepEqual(
         dirSpecularColors,
-        myp5._renderer.directionalLightSpecularColors
+        myp5._renderer.states.directionalLightSpecularColors
       );
       assert.deepEqual(
         dirLightDirections,
-        myp5._renderer.directionalLightDirections
+        myp5._renderer.states.directionalLightDirections
       );
     });
 
@@ -669,120 +669,120 @@ suite('p5.RendererGL', function() {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.ambientLight(100, 0, 100);
       myp5.ambientLight(0, 0, 200);
-      var ambColors = myp5._renderer.ambientLightColors.slice();
+      var ambColors = myp5._renderer.states.ambientLightColors.slice();
       myp5.push();
       myp5.ambientLight(0, 0, 0);
-      assert.notEqual(ambColors, myp5._renderer.ambientLightColors);
+      assert.notEqual(ambColors, myp5._renderer.states.ambientLightColors);
       myp5.pop();
-      assert.deepEqual(ambColors, myp5._renderer.ambientLightColors);
+      assert.deepEqual(ambColors, myp5._renderer.states.ambientLightColors);
     });
 
     test('push/pop and pointLight() works', function() {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.pointLight(255, 0, 0, 0, 0, 0);
-      var pointDiffuseColors = myp5._renderer.pointLightDiffuseColors.slice();
-      var pointSpecularColors = myp5._renderer.pointLightSpecularColors.slice();
-      var pointLocs = myp5._renderer.pointLightPositions.slice();
+      var pointDiffuseColors = myp5._renderer.states.pointLightDiffuseColors.slice();
+      var pointSpecularColors = myp5._renderer.states.pointLightSpecularColors.slice();
+      var pointLocs = myp5._renderer.states.pointLightPositions.slice();
       myp5.push();
       myp5.pointLight(0, 0, 255, 0, 10, 5);
       assert.notEqual(
         pointDiffuseColors,
-        myp5._renderer.pointLightDiffuseColors
+        myp5._renderer.states.pointLightDiffuseColors
       );
       assert.notEqual(
         pointSpecularColors,
-        myp5._renderer.pointLightSpecularColors
+        myp5._renderer.states.pointLightSpecularColors
       );
-      assert.notEqual(pointLocs, myp5._renderer.pointLightPositions);
+      assert.notEqual(pointLocs, myp5._renderer.states.pointLightPositions);
       myp5.pop();
       assert.deepEqual(
         pointDiffuseColors,
-        myp5._renderer.pointLightDiffuseColors
+        myp5._renderer.states.pointLightDiffuseColors
       );
       assert.deepEqual(
         pointSpecularColors,
-        myp5._renderer.pointLightSpecularColors
+        myp5._renderer.states.pointLightSpecularColors
       );
-      assert.deepEqual(pointLocs, myp5._renderer.pointLightPositions);
+      assert.deepEqual(pointLocs, myp5._renderer.states.pointLightPositions);
     });
 
     test('push/pop and specularColor() works', function() {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.specularColor(255, 0, 0);
-      var specularColors = myp5._renderer.specularColors.slice();
+      var specularColors = myp5._renderer.states.specularColors.slice();
       myp5.push();
       myp5.specularColor(0, 0, 255);
-      assert.notEqual(specularColors, myp5._renderer.specularColors);
+      assert.notEqual(specularColors, myp5._renderer.states.specularColors);
       myp5.pop();
-      assert.deepEqual(specularColors, myp5._renderer.specularColors);
+      assert.deepEqual(specularColors, myp5._renderer.states.specularColors);
     });
 
     test('push/pop and spotLight() works', function() {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.spotLight(255, 0, 255, 1, 2, 3, 0, 1, 0, Math.PI / 4, 7);
       let spotLightDiffuseColors =
-        myp5._renderer.spotLightDiffuseColors.slice();
+        myp5._renderer.states.spotLightDiffuseColors.slice();
       let spotLightSpecularColors =
-        myp5._renderer.spotLightSpecularColors.slice();
-      let spotLightPositions = myp5._renderer.spotLightPositions.slice();
-      let spotLightDirections = myp5._renderer.spotLightDirections.slice();
-      let spotLightAngle = myp5._renderer.spotLightAngle.slice();
-      let spotLightConc = myp5._renderer.spotLightConc.slice();
+        myp5._renderer.states.spotLightSpecularColors.slice();
+      let spotLightPositions = myp5._renderer.states.spotLightPositions.slice();
+      let spotLightDirections = myp5._renderer.states.spotLightDirections.slice();
+      let spotLightAngle = myp5._renderer.states.spotLightAngle.slice();
+      let spotLightConc = myp5._renderer.states.spotLightConc.slice();
       myp5.push();
       myp5.spotLight(255, 0, 0, 2, 2, 3, 1, 0, 0, Math.PI / 3, 8);
       assert.notEqual(
         spotLightDiffuseColors,
-        myp5._renderer.spotLightDiffuseColors
+        myp5._renderer.states.spotLightDiffuseColors
       );
       assert.notEqual(
         spotLightSpecularColors,
-        myp5._renderer.spotLightSpecularColors
+        myp5._renderer.states.spotLightSpecularColors
       );
-      assert.notEqual(spotLightPositions, myp5._renderer.spotLightPositions);
-      assert.notEqual(spotLightDirections, myp5._renderer.spotLightDirections);
-      assert.notEqual(spotLightAngle, myp5._renderer.spotLightAngle);
-      assert.notEqual(spotLightConc, myp5._renderer.spotLightConc);
+      assert.notEqual(spotLightPositions, myp5._renderer.states.spotLightPositions);
+      assert.notEqual(spotLightDirections, myp5._renderer.states.spotLightDirections);
+      assert.notEqual(spotLightAngle, myp5._renderer.states.spotLightAngle);
+      assert.notEqual(spotLightConc, myp5._renderer.states.spotLightConc);
       myp5.pop();
       assert.deepEqual(
         spotLightDiffuseColors,
-        myp5._renderer.spotLightDiffuseColors
+        myp5._renderer.states.spotLightDiffuseColors
       );
       assert.deepEqual(
         spotLightSpecularColors,
-        myp5._renderer.spotLightSpecularColors
+        myp5._renderer.states.spotLightSpecularColors
       );
-      assert.deepEqual(spotLightPositions, myp5._renderer.spotLightPositions);
-      assert.deepEqual(spotLightDirections, myp5._renderer.spotLightDirections);
-      assert.deepEqual(spotLightAngle, myp5._renderer.spotLightAngle);
-      assert.deepEqual(spotLightConc, myp5._renderer.spotLightConc);
+      assert.deepEqual(spotLightPositions, myp5._renderer.states.spotLightPositions);
+      assert.deepEqual(spotLightDirections, myp5._renderer.states.spotLightDirections);
+      assert.deepEqual(spotLightAngle, myp5._renderer.states.spotLightAngle);
+      assert.deepEqual(spotLightConc, myp5._renderer.states.spotLightConc);
     });
 
     test('push/pop and noLights() works', function() {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.ambientLight(0, 0, 200);
-      var ambColors = myp5._renderer.ambientLightColors.slice();
+      var ambColors = myp5._renderer.states.ambientLightColors.slice();
       myp5.push();
       myp5.ambientLight(0, 200, 0);
-      var ambPopColors = myp5._renderer.ambientLightColors.slice();
+      var ambPopColors = myp5._renderer.states.ambientLightColors.slice();
       myp5.noLights();
-      assert.notEqual(ambColors, myp5._renderer.ambientLightColors);
-      assert.notEqual(ambPopColors, myp5._renderer.ambientLightColors);
+      assert.notEqual(ambColors, myp5._renderer.states.ambientLightColors);
+      assert.notEqual(ambPopColors, myp5._renderer.states.ambientLightColors);
       myp5.pop();
-      assert.deepEqual(ambColors, myp5._renderer.ambientLightColors);
+      assert.deepEqual(ambColors, myp5._renderer.states.ambientLightColors);
     });
 
     test('push/pop and texture() works', function() {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       var tex1 = myp5.createGraphics(1, 1);
       myp5.texture(tex1);
-      assert.equal(tex1, myp5._renderer._tex);
+      assert.equal(tex1, myp5._renderer.states._tex);
       myp5.push();
       var tex2 = myp5.createGraphics(2, 2);
       myp5.texture(tex2);
-      assert.equal(tex2, myp5._renderer._tex);
-      assert.notEqual(tex1, myp5._renderer._tex);
+      assert.equal(tex2, myp5._renderer.states._tex);
+      assert.notEqual(tex1, myp5._renderer.states._tex);
       myp5.pop();
-      assert.equal(tex1, myp5._renderer._tex);
+      assert.equal(tex1, myp5._renderer.states._tex);
     });
 
     test('ambientLight() changes when metalness is applied', function () {
@@ -792,7 +792,7 @@ suite('p5.RendererGL', function() {
       myp5.metalness(100000);
       myp5.sphere(50);
       expect(myp5._renderer.mixedAmbientLight).to.not.deep.equal(
-        myp5._renderer.ambientLightColors);
+        myp5._renderer.states.ambientLightColors);
     });
 
     test('specularColor transforms to fill color when metalness is applied',
@@ -804,7 +804,7 @@ suite('p5.RendererGL', function() {
         myp5.metalness(100000);
         myp5.sphere(50);
         expect(myp5._renderer.mixedSpecularColor).to.deep.equal(
-          myp5._renderer.curFillColor);
+          myp5._renderer.states.curFillColor);
       });
 
     test('push/pop and shader() works with fill', function() {
@@ -812,13 +812,13 @@ suite('p5.RendererGL', function() {
       var fillShader1 = myp5._renderer._getLightShader();
       var fillShader2 = myp5._renderer._getColorShader();
       myp5.shader(fillShader1);
-      assert.equal(fillShader1, myp5._renderer.userFillShader);
+      assert.equal(fillShader1, myp5._renderer.states.userFillShader);
       myp5.push();
       myp5.shader(fillShader2);
-      assert.equal(fillShader2, myp5._renderer.userFillShader);
-      assert.notEqual(fillShader1, myp5._renderer.userFillShader);
+      assert.equal(fillShader2, myp5._renderer.states.userFillShader);
+      assert.notEqual(fillShader1, myp5._renderer.states.userFillShader);
       myp5.pop();
-      assert.equal(fillShader1, myp5._renderer.userFillShader);
+      assert.equal(fillShader1, myp5._renderer.states.userFillShader);
     });
 
     test('push/pop builds/unbuilds stack properly', function() {
@@ -835,9 +835,9 @@ suite('p5.RendererGL', function() {
       }
       for (var j = i; j > 0; j--) {
         if (j % 2 === 0) {
-          assert.deepEqual(col2._array, myp5._renderer.curFillColor);
+          assert.deepEqual(col2._array, myp5._renderer.states.curFillColor);
         } else {
-          assert.deepEqual(col1._array, myp5._renderer.curFillColor);
+          assert.deepEqual(col1._array, myp5._renderer.states.curFillColor);
         }
         myp5.pop();
       }
@@ -849,7 +849,7 @@ suite('p5.RendererGL', function() {
     test('changing cameras keeps transforms', function() {
       myp5.createCanvas(50, 50, myp5.WEBGL);
 
-      const origModelMatrix = myp5._renderer.uModelMatrix.copy();
+      const origModelMatrix = myp5._renderer.states.uModelMatrix.copy();
 
       const cam2 = myp5.createCamera();
       cam2.setPosition(0, 0, -500);
@@ -858,21 +858,21 @@ suite('p5.RendererGL', function() {
       // cam1 is applied right now so technically this is redundant
       myp5.setCamera(cam1);
       const cam1Matrix = cam1.cameraMatrix.copy();
-      assert.deepEqual(myp5._renderer.uViewMatrix.mat4, cam1Matrix.mat4);
+      assert.deepEqual(myp5._renderer.states.uViewMatrix.mat4, cam1Matrix.mat4);
 
       // Translation only changes the model matrix
       myp5.translate(100, 0, 0);
       assert.notDeepEqual(
-        myp5._renderer.uModelMatrix.mat4,
+        myp5._renderer.states.uModelMatrix.mat4,
         origModelMatrix.mat4
       );
-      assert.deepEqual(myp5._renderer.uViewMatrix.mat4, cam1Matrix.mat4);
+      assert.deepEqual(myp5._renderer.states.uViewMatrix.mat4, cam1Matrix.mat4);
 
       // Switchnig cameras only changes the view matrix
-      const transformedModel = myp5._renderer.uModelMatrix.copy();
+      const transformedModel = myp5._renderer.states.uModelMatrix.copy();
       myp5.setCamera(cam2);
-      assert.deepEqual(myp5._renderer.uModelMatrix.mat4, transformedModel.mat4);
-      assert.notDeepEqual(myp5._renderer.uViewMatrix.mat4, cam1Matrix.mat4);
+      assert.deepEqual(myp5._renderer.states.uModelMatrix.mat4, transformedModel.mat4);
+      assert.notDeepEqual(myp5._renderer.states.uViewMatrix.mat4, cam1Matrix.mat4);
     });
   });
 
@@ -1163,7 +1163,7 @@ suite('p5.RendererGL', function() {
   suite('blendMode()', function() {
     var testBlend = function(mode, intended) {
       myp5.blendMode(mode);
-      assert.deepEqual(intended, myp5._renderer.curBlendMode);
+      assert.deepEqual(intended, myp5._renderer.states.curBlendMode);
     };
 
     test('blendMode sets _curBlendMode correctly', function() {
@@ -1264,10 +1264,10 @@ suite('p5.RendererGL', function() {
       myp5.blendMode(myp5.MULTIPLY);
       myp5.push();
       myp5.blendMode(myp5.ADD);
-      assert.equal(myp5._renderer.curBlendMode, myp5.ADD, 'Changed to ADD');
+      assert.equal(myp5._renderer.states.curBlendMode, myp5.ADD, 'Changed to ADD');
       myp5.pop();
       assert.equal(
-        myp5._renderer.curBlendMode,
+        myp5._renderer.states.curBlendMode,
         myp5.MULTIPLY,
         'Resets to MULTIPLY'
       );
@@ -1344,31 +1344,31 @@ suite('p5.RendererGL', function() {
   suite('tint() in WEBGL mode', function() {
     test('default tint value is set and not null', function() {
       myp5.createCanvas(100, 100, myp5.WEBGL);
-      assert.deepEqual(myp5._renderer._tint, [255, 255, 255, 255]);
+      assert.deepEqual(myp5._renderer.states.tint, [255, 255, 255, 255]);
     });
 
     test('tint value is modified correctly when tint() is called', function() {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.tint(0, 153, 204, 126);
-      assert.deepEqual(myp5._renderer._tint, [0, 153, 204, 126]);
+      assert.deepEqual(myp5._renderer.states.tint, [0, 153, 204, 126]);
       myp5.tint(100, 120, 140);
-      assert.deepEqual(myp5._renderer._tint, [100, 120, 140, 255]);
+      assert.deepEqual(myp5._renderer.states.tint, [100, 120, 140, 255]);
       myp5.tint('violet');
-      assert.deepEqual(myp5._renderer._tint, [238, 130, 238, 255]);
+      assert.deepEqual(myp5._renderer.states.tint, [238, 130, 238, 255]);
       myp5.tint(100);
-      assert.deepEqual(myp5._renderer._tint, [100, 100, 100, 255]);
+      assert.deepEqual(myp5._renderer.states.tint, [100, 100, 100, 255]);
       myp5.tint(100, 126);
-      assert.deepEqual(myp5._renderer._tint, [100, 100, 100, 126]);
+      assert.deepEqual(myp5._renderer.states.tint, [100, 100, 100, 126]);
       myp5.tint([100, 126, 0, 200]);
-      assert.deepEqual(myp5._renderer._tint, [100, 126, 0, 200]);
+      assert.deepEqual(myp5._renderer.states.tint, [100, 126, 0, 200]);
       myp5.tint([100, 126, 0]);
-      assert.deepEqual(myp5._renderer._tint, [100, 126, 0, 255]);
+      assert.deepEqual(myp5._renderer.states.tint, [100, 126, 0, 255]);
       myp5.tint([100]);
-      assert.deepEqual(myp5._renderer._tint, [100, 100, 100, 255]);
+      assert.deepEqual(myp5._renderer.states.tint, [100, 100, 100, 255]);
       myp5.tint([100, 126]);
-      assert.deepEqual(myp5._renderer._tint, [100, 100, 100, 126]);
+      assert.deepEqual(myp5._renderer.states.tint, [100, 100, 100, 126]);
       myp5.tint(myp5.color(255, 204, 0));
-      assert.deepEqual(myp5._renderer._tint, [255, 204, 0, 255]);
+      assert.deepEqual(myp5._renderer.states.tint, [255, 204, 0, 255]);
     });
 
     test('tint should be reset after draw loop', function() {
@@ -1379,7 +1379,7 @@ suite('p5.RendererGL', function() {
           };
           p.draw = function() {
             if (p.frameCount === 2) {
-              resolve(p._renderer._tint);
+              resolve(p._renderer.states.tint);
             }
             p.tint(0, 153, 204, 126);
           };
@@ -1577,15 +1577,19 @@ suite('p5.RendererGL', function() {
       renderer.beginShape(myp5.TESS);
       renderer.fill(255, 255, 255);
       renderer.normal(-1, -1, 1);
+      renderer.vertexProperty('aCustom', [1, 1, 1])
       renderer.vertex(-10, -10, 0, 0);
       renderer.fill(255, 0, 0);
       renderer.normal(1, -1, 1);
+      renderer.vertexProperty('aCustom', [1, 0, 0])
       renderer.vertex(10, -10, 1, 0);
       renderer.fill(0, 255, 0);
       renderer.normal(1, 1, 1);
+      renderer.vertexProperty('aCustom', [0, 1, 0])
       renderer.vertex(10, 10, 1, 1);
       renderer.fill(0, 0, 255);
       renderer.normal(-1, 1, 1);
+      renderer.vertexProperty('aCustom', [0, 0, 1])
       renderer.vertex(-10, 10, 0, 1);
       renderer.endShape(myp5.CLOSE);
 
@@ -1640,6 +1644,15 @@ suite('p5.RendererGL', function() {
         renderer.immediateMode.geometry.vertexNormals[5].array(),
         [1, 1, 1]
       );
+
+      assert.deepEqual(renderer.immediateMode.geometry.aCustomSrc, [
+          1, 0, 0,
+          0, 0, 1,
+          1, 1, 1,
+          0, 0, 1,
+          1, 0, 0,
+          0, 1, 0
+        ]);
 
       assert.deepEqual(renderer.immediateMode.geometry.vertexColors, [
         1, 0, 0, 1,
@@ -2490,4 +2503,171 @@ suite('p5.RendererGL', function() {
       }
     );
   });
+
+  suite('vertexProperty()', function() {
+    test('Immediate mode data and buffers created in beginShape', 
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        
+        myp5.beginShape();
+        myp5.vertexProperty('aCustom', 1);
+        myp5.vertexProperty('aCustomVec3', [1, 2, 3]);
+        myp5.vertex(0,0,0);
+        expect(myp5._renderer.immediateMode.geometry.userVertexProperties.aCustom).to.containSubset({
+          name: 'aCustom',
+          currentData: 1,
+          dataSize: 1
+        });
+        expect(myp5._renderer.immediateMode.geometry.userVertexProperties.aCustomVec3).to.containSubset({
+          name: 'aCustomVec3',
+          currentData: [1, 2, 3],
+          dataSize: 3
+        });
+        assert.deepEqual(myp5._renderer.immediateMode.geometry.aCustomSrc, [1]);
+        assert.deepEqual(myp5._renderer.immediateMode.geometry.aCustomVec3Src, [1,2,3]);
+        expect(myp5._renderer.immediateMode.buffers.user).to.containSubset([
+          {
+            size: 1,
+            src: 'aCustomSrc',
+            dst: 'aCustomBuffer',
+            attr: 'aCustom',
+          },
+          {
+            size: 3,
+            src: 'aCustomVec3Src',
+            dst: 'aCustomVec3Buffer',
+            attr: 'aCustomVec3',
+          }
+        ]);
+        myp5.endShape();
+      }
+    );
+    test('Immediate mode data and buffers deleted after beginShape', 
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        
+        myp5.beginShape();
+        myp5.vertexProperty('aCustom', 1);
+        myp5.vertexProperty('aCustomVec3', [1,2,3]);
+        myp5.vertex(0,0,0);
+        myp5.endShape();
+
+        myp5.beginShape();
+        assert.isUndefined(myp5._renderer.immediateMode.geometry.aCustomSrc);
+        assert.isUndefined(myp5._renderer.immediateMode.geometry.aCustomVec3Src);
+        assert.deepEqual(myp5._renderer.immediateMode.geometry.userVertexProperties, {});
+        assert.deepEqual(myp5._renderer.immediateMode.buffers.user, []);
+        myp5.endShape();
+      }
+    );
+    test('Data copied over from beginGeometry',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.beginGeometry();
+        myp5.beginShape();
+        myp5.vertexProperty('aCustom', 1);
+        myp5.vertexProperty('aCustomVec3', [1,2,3]);
+        myp5.vertex(0,1,0);
+        myp5.vertex(-1,0,0);
+        myp5.vertex(1,0,0);
+        const immediateCopy = myp5._renderer.immediateMode.geometry;
+        myp5.endShape();
+        const myGeo = myp5.endGeometry();
+        assert.deepEqual(immediateCopy.aCustomSrc, myGeo.aCustomSrc);
+        assert.deepEqual(immediateCopy.aCustomVec3Src, myGeo.aCustomVec3Src);
+      }
+    );
+    test('Retained mode buffers are created for rendering',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.beginGeometry();
+        myp5.beginShape();
+        myp5.vertexProperty('aCustom', 1);
+        myp5.vertexProperty('aCustomVec3', [1,2,3]);
+        myp5.vertex(0,0,0);
+        myp5.vertex(1,0,0);
+        myp5.endShape();
+        const myGeo = myp5.endGeometry();
+        myp5._renderer.createBuffers(myGeo.gId, myGeo);
+        expect(myp5._renderer.retainedMode.buffers.user).to.containSubset([
+          {
+            size: 1,
+            src: 'aCustomSrc',
+            dst: 'aCustomBuffer',
+            attr: 'aCustom',
+          },
+          {
+            size: 3,
+            src: 'aCustomVec3Src',
+            dst: 'aCustomVec3Buffer',
+            attr: 'aCustomVec3',
+          }
+        ]);
+      }
+    );
+    test('Retained mode buffers deleted after rendering',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.beginGeometry();
+        myp5.beginShape();
+        myp5.vertexProperty('aCustom', 1);
+        myp5.vertexProperty('aCustomVec3', [1,2,3]);
+        myp5.vertex(0,0,0);
+        myp5.vertex(1,0,0);
+        myp5.endShape();
+        const myGeo = myp5.endGeometry();
+        myp5.model(myGeo);
+        assert.equal(myp5._renderer.retainedMode.buffers.user.length, 0);
+      }
+    );
+    test('Friendly error if different sizes used',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const logs = [];
+        const myLog = (...data) => logs.push(data.join(', '));
+        const oldLog = console.log;
+        console.log = myLog;
+        myp5.beginShape();
+        myp5.vertexProperty('aCustom', [1,2,3]);
+        myp5.vertex(0,0,0);
+        myp5.vertexProperty('aCustom', [1,2]);
+        myp5.vertex(1,0,0);
+        myp5.endShape();
+        console.log = oldLog;
+        expect(logs.join('\n')).to.match(/Custom vertex property 'aCustom' has been set with various data sizes/);
+      }
+    );
+    test('Friendly error too many values set',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const logs = [];
+        const myLog = (...data) => logs.push(data.join(', '));
+        const oldLog = console.log;
+        console.log = myLog;
+        let myGeo = new p5.Geometry();
+        myGeo.vertices.push(new p5.Vector(0,0,0));
+        myGeo.vertexProperty('aCustom', 1);
+        myGeo.vertexProperty('aCustom', 2);
+        myp5.model(myGeo);
+        console.log = oldLog;
+        expect(logs.join('\n')).to.match(/One of the geometries has a custom vertex property 'aCustom' with more values than vertices./);
+      }
+    );
+    test('Friendly error if too few values set',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const logs = [];
+        const myLog = (...data) => logs.push(data.join(', '));
+        const oldLog = console.log;
+        console.log = myLog;
+        let myGeo = new p5.Geometry();
+        myGeo.vertices.push(new p5.Vector(0,0,0));
+        myGeo.vertices.push(new p5.Vector(0,0,0));
+        myGeo.vertexProperty('aCustom', 1);
+        myp5.model(myGeo);
+        console.log = oldLog;
+        expect(logs.join('\n')).to.match(/One of the geometries has a custom vertex property 'aCustom' with fewer values than vertices./);
+      }
+    );
+  })
 });

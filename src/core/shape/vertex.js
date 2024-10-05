@@ -1528,7 +1528,7 @@ p5.prototype.endShape = function(mode, count = 1) {
     if (vertices.length === 0) {
       return this;
     }
-    if (!this._renderer._doStroke && !this._renderer._doFill) {
+    if (!this._renderer.states.doStroke && !this._renderer.states.doFill) {
       return this;
     }
 
@@ -2091,7 +2091,7 @@ p5.prototype.vertex = function(x, y, moveTo, u, v) {
  * `normal()` will affect all following vertices until `normal()` is called
  * again:
  *
- * <code>
+ * ```javascript
  * beginShape();
  *
  * // Set the vertex normal.
@@ -2114,7 +2114,7 @@ p5.prototype.vertex = function(x, y, moveTo, u, v) {
  * vertex(-30, 30, 0);
  *
  * endShape();
- * </code>
+ * ```
  *
  * @method normal
  * @param  {p5.Vector} vector vertex normal as a <a href="#/p5.Vector">p5.Vector</a> object.
@@ -2251,6 +2251,178 @@ p5.prototype.normal = function(x, y, z) {
   this._renderer.normal(...arguments);
 
   return this;
+};
+
+/** Sets the shader's vertex property or attribute variables.
+ * 
+ * An vertex property or vertex attribute is a variable belonging to a vertex in a shader. p5.js provides some
+ * default properties, such as `aPosition`, `aNormal`, `aVertexColor`, etc. These are
+ * set using <a href="#/p5/vertex">vertex()</a>, <a href="#/p5/normal">normal()</a> 
+ * and <a href="#/p5/fill">fill()</a> respectively. Custom properties can also
+ * be defined within <a href="#/p5/beginShape">beginShape()</a> and 
+ * <a href="#/p5/endShape">endShape()</a>.
+ * 
+ * The first parameter, `propertyName`, is a string with the property's name.
+ * This is the same variable name which should be declared in the shader, such as
+ * `in vec3 aProperty`, similar to .`setUniform()`.
+ * 
+ * The second parameter, `data`, is the value assigned to the shader variable. This 
+ * value will be applied to subsequent vertices created with 
+ * <a href="#/p5/vertex">vertex()</a>. It can be a Number or an array of numbers,
+ * and in the shader program the type can be declared according to the WebGL
+ * specification. Common types include `float`, `vec2`, `vec3`, `vec4` or matrices.
+ * 
+ * See also the <a href="#/p5/vertexProperty">vertexProperty()</a> method on 
+ * <a href="#/p5/Geometry">Geometry</a> objects.
+ * 
+ * @example
+ * <div>
+ * <code>
+ * const vertSrc = `#version 300 es
+ *  precision mediump float;
+ *  uniform mat4 uModelViewMatrix;
+ *  uniform mat4 uProjectionMatrix;
+ *  
+ *  in vec3 aPosition;
+ *  in vec2 aOffset;
+ * 
+ *  void main(){
+ *    vec4 positionVec4 = vec4(aPosition.xyz, 1.0);
+ *    positionVec4.xy += aOffset;   
+ *    gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+ *  }
+ * `;
+ * 
+ * const fragSrc = `#version 300 es
+ *  precision mediump float;
+ *  out vec4 outColor;  
+ *  void main(){
+ *    outColor = vec4(0.0, 1.0, 1.0, 1.0);    
+ *  }
+ * `;
+ * 
+ * function setup(){
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create and use the custom shader.
+ *   const myShader = createShader(vertSrc, fragSrc);
+ *   shader(myShader);
+ * 
+ *   describe('A wobbly, cyan circle on a gray background.');
+ * }
+ * 
+ * function draw(){
+ *   // Set the styles
+ *   background(125);
+ *   noStroke();
+ * 
+ *   // Draw the circle.
+ *   beginShape();
+ *   for (let i = 0; i < 30; i++){
+ *     const x = 40 * cos(i/30 * TWO_PI);
+ *     const y = 40 * sin(i/30 * TWO_PI);
+ *
+ *     // Apply some noise to the coordinates.
+ *     const xOff = 10 * noise(x + millis()/1000) - 5;
+ *     const yOff = 10 * noise(y + millis()/1000) - 5;
+ * 
+ *     // Apply these noise values to the following vertex.
+ *     vertexProperty('aOffset', [xOff, yOff]);
+ *     vertex(x, y);
+ *   }
+ *   endShape(CLOSE);
+ * }
+ * </code>
+ * </div>
+ * 
+ * <div>
+ * <code>
+ * let myShader;
+ * const cols = 10;
+ * const rows = 10;
+ * const cellSize = 6;
+ * 
+ * const vertSrc = `#version 300 es
+ *   precision mediump float;
+ *   uniform mat4 uProjectionMatrix;
+ *   uniform mat4 uModelViewMatrix;
+ * 
+ *   in vec3 aPosition;
+ *   in vec3 aNormal;
+ *   in vec3 aVertexColor;
+ *   in float aDistance;
+ * 
+ *   out vec3 vVertexColor;
+ *   
+ *   void main(){
+ *     vec4 positionVec4 = vec4(aPosition, 1.0);
+ *     positionVec4.xyz += aDistance * aNormal * 2.0;;
+ *     vVertexColor = aVertexColor;
+ *     gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+ *   }
+ * `;
+ * 
+ * const fragSrc = `#version 300 es
+ *   precision mediump float;
+ *   
+ *   in vec3 vVertexColor;
+ *   out vec4 outColor;
+ *   
+ *   void main(){
+ *     outColor = vec4(vVertexColor, 1.0);
+ *   }
+ * `;
+ * 
+ * function setup(){
+ *   createCanvas(100, 100, WEBGL);
+ * 
+ *   // Create and apply the custom shader.
+ *   myShader = createShader(vertSrc, fragSrc);
+ *   shader(myShader);
+ *   noStroke();
+ *   describe('A blue grid, which moves away from the mouse position, on a gray background.');
+ * }
+ * 
+ * function draw(){
+ *   background(200);
+ * 
+ *   // Draw the grid in the middle of the screen.
+ *   translate(-cols*cellSize/2, -rows*cellSize/2);
+ *   beginShape(QUADS);
+ *   for (let i = 0; i < cols; i++) {
+ *     for (let j = 0; j < rows; j++) {
+ * 
+ *       // Calculate the cell position.
+ *       let x = i * cellSize;
+ *       let y = j * cellSize;
+ * 
+ *       fill(j/rows*255, j/cols*255, 255);
+ * 
+ *       // Calculate the distance from the corner of each cell to the mouse.
+ *       let distance = dist(x1,y1, mouseX, mouseY);
+ * 
+ *       // Send the distance to the shader.
+ *       vertexProperty('aDistance', min(distance, 100));
+ * 
+ *       vertex(x, y);
+ *       vertex(x + cellSize, y);
+ *       vertex(x + cellSize, y + cellSize);
+ *       vertex(x, y + cellSize);
+ *     }
+ *   }
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ *
+ * @method vertexProperty
+ * @param {String} attributeName the name of the vertex attribute.
+ * @param {Number|Number[]} data the data tied to the vertex attribute.
+ */
+p5.prototype.vertexProperty = function(attributeName, data){
+  // this._assert3d('vertexProperty');
+  // p5._validateParameters('vertexProperty', arguments);
+  this._renderer.vertexProperty(attributeName, data);
 };
 
 export default p5;

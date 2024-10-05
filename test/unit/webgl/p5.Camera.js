@@ -68,13 +68,13 @@ suite('p5.Camera', function() {
 
     test('createCamera does not immediately attach to renderer', function() {
       var myCam2 = myp5.createCamera();
-      assert.notEqual(myCam2, myp5._renderer._curCamera);
+      assert.notEqual(myCam2, myp5._renderer.states.curCamera);
     });
 
     test('setCamera() attaches a camera to renderer', function() {
       var myCam2 = myp5.createCamera();
       myp5.setCamera(myCam2);
-      assert.equal(myCam2, myp5._renderer._curCamera);
+      assert.equal(myCam2, myp5._renderer.states.curCamera);
     });
   });
 
@@ -487,11 +487,11 @@ suite('p5.Camera', function() {
       // the renderer's matrix will also change.
       assert.deepCloseTo(
         copyCam.cameraMatrix.mat4,
-        myp5._renderer.uViewMatrix.mat4
+        myp5._renderer.states.uViewMatrix.mat4
       );
       assert.deepCloseTo(
         copyCam.projMatrix.mat4,
-        myp5._renderer.uPMatrix.mat4
+        myp5._renderer.states.uPMatrix.mat4
       );
     });
 
@@ -725,7 +725,7 @@ suite('p5.Camera', function() {
       test('ortho() sets renderer uPMatrix', function() {
         myCam.ortho(-10, 10, -10, 10, 0, 100);
 
-        assert.deepCloseTo(myCam.projMatrix.mat4, myp5._renderer.uPMatrix.mat4);
+        assert.deepCloseTo(myCam.projMatrix.mat4, myp5._renderer.states.uPMatrix.mat4);
       });
 
       test('ortho() sets projection matrix correctly', function() {
@@ -765,7 +765,7 @@ suite('p5.Camera', function() {
       test('perspective() sets renderer uPMatrix', function() {
         myCam.perspective(Math.PI / 3.0, 1, 1, 100);
 
-        assert.deepCloseTo(myCam.projMatrix.mat4, myp5._renderer.uPMatrix.mat4);
+        assert.deepCloseTo(myCam.projMatrix.mat4, myp5._renderer.states.uPMatrix.mat4);
       });
       test('perspective() sets projection matrix correctly', function() {
         var expectedMatrix = new Float32Array([
@@ -802,7 +802,7 @@ suite('p5.Camera', function() {
       test('frustum() sets renderer uPMatrix', function() {
         myCam.frustum(-10, 10, -20, 20, -100, 100);
 
-        assert.deepCloseTo(myCam.projMatrix.mat4, myp5._renderer.uPMatrix.mat4);
+        assert.deepCloseTo(myCam.projMatrix.mat4, myp5._renderer.states.uPMatrix.mat4);
       });
       test('frustum() sets projection matrix correctly', function() {
         /* eslint-disable indent */
@@ -1111,15 +1111,15 @@ suite('p5.Camera', function() {
       var myCam2 = myp5.createCamera();
       var myCam3 = myp5.createCamera();
       myp5.setCamera(myCam2);
-      assert.deepCloseTo(myCam2, myp5._renderer._curCamera);
+      assert.deepCloseTo(myCam2, myp5._renderer.states.curCamera);
       myp5.setCamera(myCam3);
-      assert.deepCloseTo(myCam3, myp5._renderer._curCamera);
+      assert.deepCloseTo(myCam3, myp5._renderer.states.curCamera);
       myp5.setCamera(myCam);
-      assert.deepCloseTo(myCam, myp5._renderer._curCamera);
+      assert.deepCloseTo(myCam, myp5._renderer.states.curCamera);
     });
     test("Camera's Renderer is correctly set after setAttributes", function() {
       var myCam2 = myp5.createCamera();
-      assert.deepCloseTo(myCam2, myp5._renderer._curCamera);
+      assert.deepCloseTo(myCam2, myp5._renderer.states.curCamera);
       myp5.setAttributes('antialias', true);
       assert.deepCloseTo(myCam2._renderer, myp5._renderer);
     });

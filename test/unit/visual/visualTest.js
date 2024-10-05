@@ -62,15 +62,20 @@ export function visualSuite(
   }
   suiteFn(name, () => {
     let lastPrefix;
+    let lastDeviceRatio = window.devicePixelRatio;
     beforeAll(() => {
       lastPrefix = namePrefix;
       namePrefix += escapeName(name) + '/';
+
+      // Force everything to be 1x
+      window.devicePixelRatio = 1;
     })
 
     callback()
 
     afterAll(() => {
       namePrefix = lastPrefix;
+      window.devicePixelRatio = lastDeviceRatio;
     });
   });
 }
@@ -186,7 +191,9 @@ export function visualTest(
 
       // Generate screenshots
       await callback(myp5, () => {
-        actual.push(myp5.get());
+        const img = myp5.get();
+        img.pixelDensity(1);
+        actual.push(img);
       });
 
 

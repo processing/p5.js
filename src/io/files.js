@@ -6,7 +6,6 @@
  */
 
 import * as fileSaver from 'file-saver';
-import Renderer from '../core/p5.Renderer';
 
 function files(p5, fn){
   /**
@@ -1902,7 +1901,7 @@ function files(p5, fn){
     if (args.length === 0) {
       fn.saveCanvas(cnv);
       return;
-    } else if (args[0] instanceof Renderer || args[0] instanceof p5.Graphics) {
+    } else if (args[0] instanceof p5.Renderer || args[0] instanceof p5.Graphics) {
       // otherwise, parse the arguments
 
       // if first param is a p5Graphics, then saveCanvas

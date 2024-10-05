@@ -202,10 +202,9 @@ p5.prototype._legacyPreloadGenerator = function(
 };
 
 p5.prototype._decrementPreload = function() {
-  const context = this._isGlobal ? window : this;
-  if (!context._preloadDone && typeof context.preload === 'function') {
-    context._setProperty('_preloadCount', context._preloadCount - 1);
-    context._runIfPreloadsAreDone();
+  if (!this._preloadDone && typeof this.preload === 'function') {
+    this._preloadCount = context._preloadCount - 1;
+    this._runIfPreloadsAreDone();
   }
 };
 
@@ -219,10 +218,9 @@ p5.prototype._wrapPreload = function(obj, fnName) {
 };
 
 p5.prototype._incrementPreload = function() {
-  const context = this._isGlobal ? window : this;
   // Do nothing if we tried to increment preloads outside of `preload`
-  if (context._preloadDone) return;
-  context._setProperty('_preloadCount', context._preloadCount + 1);
+  if (this._preloadDone) return;
+  this._preloadCount = context._preloadCount + 1;
 };
 
 p5.prototype._runIfPreloadsAreDone = function() {

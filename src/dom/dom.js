@@ -3701,8 +3701,8 @@ p5.Element.prototype.size = function (w, h) {
       if (this._pInst && this._pInst._curElement) {
         // main canvas associated with p5 instance
         if (this._pInst._curElement.elt === this.elt) {
-          this._pInst._setProperty('width', aW);
-          this._pInst._setProperty('height', aH);
+          this._pInst.width = aW;
+          this._pInst.height = aH;
         }
       }
     }

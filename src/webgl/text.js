@@ -640,7 +640,7 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
     );
     return;
   }
-  if (y >= maxY || !this._doFill) {
+  if (y >= maxY || !this.states.doFill) {
     return; // don't render lines beyond our maxY position
   }
 
@@ -654,11 +654,11 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   p.push(); // fix to #803
 
   // remember this state, so it can be restored later
-  const doStroke = this._doStroke;
-  const drawMode = this.drawMode;
+  const doStroke = this.states.doStroke;
+  const drawMode = this.states.drawMode;
 
-  this._doStroke = false;
-  this.drawMode = constants.TEXTURE;
+  this.states.doStroke = false;
+  this.states.drawMode = constants.TEXTURE;
 
   // get the cached FontInfo object
   const font = this._textFont.font;
@@ -688,7 +688,7 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
     sh.setUniform('uStrokeImageSize', [strokeImageWidth, strokeImageHeight]);
     sh.setUniform('uGridSize', [charGridWidth, charGridHeight]);
   }
-  this._applyColorBlend(this.curFillColor);
+  this._applyColorBlend(this.states.curFillColor);
 
   let g = this.retainedMode.geometry['glyph'];
   if (!g) {
@@ -712,7 +712,7 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   this._bindBuffer(g.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
 
   // this will have to do for now...
-  sh.setUniform('uMaterialColor', this.curFillColor);
+  sh.setUniform('uMaterialColor', this.states.curFillColor);
   gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
 
   try {
@@ -750,8 +750,8 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
     // clean up
     sh.unbindShader();
 
-    this._doStroke = doStroke;
-    this.drawMode = drawMode;
+    this.states.doStroke = doStroke;
+    this.states.drawMode = drawMode;
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 
     p.pop();

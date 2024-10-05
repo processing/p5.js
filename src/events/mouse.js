@@ -825,27 +825,26 @@ function mouse(p5, fn){
         this.height,
         e
       );
-      this._setProperty('movedX', e.movementX);
-      this._setProperty('movedY', e.movementY);
-      this._setProperty('mouseX', mousePos.x);
-      this._setProperty('mouseY', mousePos.y);
-      this._setProperty('winMouseX', mousePos.winX);
-      this._setProperty('winMouseY', mousePos.winY);
+      this.movedX = e.movementX;
+      this.movedY = e.movementY;
+      this.mouseX = mousePos.x;
+      this.mouseY = mousePos.y;
+      this.winMouseX = mousePos.winX;
+      this.winMouseY = mousePos.winY;
     }
     if (!this._hasMouseInteracted) {
       // For first draw, make previous and next equal
       this._updateMouseCoords();
-      this._setProperty('_hasMouseInteracted', true);
+      this._hasMouseInteracted = true;
     }
   };
 
   fn._updateMouseCoords = function() {
-    this._setProperty('pmouseX', this.mouseX);
-    this._setProperty('pmouseY', this.mouseY);
-    this._setProperty('pwinMouseX', this.winMouseX);
-    this._setProperty('pwinMouseY', this.winMouseY);
-
-    this._setProperty('_pmouseWheelDeltaY', this._mouseWheelDeltaY);
+    this.pmouseX = this.mouseX;
+    this.pmouseY = this.mouseY;
+    this.pwinMouseX = this.winMouseX;
+    this.pwinMouseY = this.winMouseY;
+    this._pmouseWheelDeltaY = this._mouseWheelDeltaY;
   };
 
   function getMousePos(canvas, w, h, evt) {
@@ -871,11 +870,11 @@ function mouse(p5, fn){
 
   fn._setMouseButton = function(e) {
     if (e.button === 1) {
-      this._setProperty('mouseButton', constants.CENTER);
+      this.mouseButton = constants.CENTER;
     } else if (e.button === 2) {
-      this._setProperty('mouseButton', constants.RIGHT);
+      this.mouseButton = constants.RIGHT;
     } else {
-      this._setProperty('mouseButton', constants.LEFT);
+      this.mouseButton = constants.LEFT;
     }
   };
 
@@ -1229,12 +1228,12 @@ function mouse(p5, fn){
   fn._onmousedown = function(e) {
     const context = this._isGlobal ? window : this;
     let executeDefault;
-    this._setProperty('mouseIsPressed', true);
+    this.mouseIsPressed = true;
     this._setMouseButton(e);
     this._updateNextMouseCoords(e);
 
-    // _ontouchstart triggers first and sets this.touchstart
-    if (this.touchstart) {
+    // _ontouchstart triggers first and sets this._touchstart
+    if (this._touchstart) {
       return;
     }
 
@@ -1250,7 +1249,7 @@ function mouse(p5, fn){
       }
     }
 
-    this.touchstart = false;
+    this._touchstart = false;
   };
 
   /**
@@ -1402,10 +1401,10 @@ function mouse(p5, fn){
   fn._onmouseup = function(e) {
     const context = this._isGlobal ? window : this;
     let executeDefault;
-    this._setProperty('mouseIsPressed', false);
+    this.mouseIsPressed = false;
 
-    // _ontouchend triggers first and sets this.touchend
-    if (this.touchend) {
+    // _ontouchend triggers first and sets this._touchend
+    if (this._touchend) {
       return;
     }
 
@@ -1420,7 +1419,7 @@ function mouse(p5, fn){
         e.preventDefault();
       }
     }
-    this.touchend = false;
+    this._touchend = false;
   };
 
   fn._ondragend = fn._onmouseup;
@@ -1853,7 +1852,7 @@ function mouse(p5, fn){
    */
   fn._onwheel = function(e) {
     const context = this._isGlobal ? window : this;
-    this._setProperty('_mouseWheelDeltaY', e.deltaY);
+    this._mouseWheelDeltaY = e.deltaY;
     if (typeof context.mouseWheel === 'function') {
       e.delta = e.deltaY;
       const executeDefault = context.mouseWheel(e);

@@ -11,7 +11,6 @@ suite('Trigonometry', function() {
     _validateParameters: vi.fn()
   };
   const mockP5Prototype = {
-    _setProperty: vi.fn()
   };
 
   beforeEach(async function() {

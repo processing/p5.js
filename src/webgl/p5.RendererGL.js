@@ -309,8 +309,8 @@ p5.prototype.setAttributes = function (key, value) {
   this._renderer._resetContext();
   this.pop();
 
-  if (this._renderer._curCamera) {
-    this._renderer._curCamera._renderer = this._renderer;
+  if (this._renderer.states.curCamera) {
+    this._renderer.states.curCamera._renderer = this._renderer;
   }
 };
 /**
@@ -435,6 +435,8 @@ export function readPixelWebGL(
 p5.RendererGL = class RendererGL extends Renderer {
   constructor(elt, pInst, isMainCanvas, attr) {
     super(elt, pInst, isMainCanvas);
+    this.elt = elt;
+    this.canvas = elt;
     this._setAttributeDefaults(pInst);
     this._initContext();
     this.isP3D = true; //lets us know we're in 3d mode
@@ -445,7 +447,70 @@ p5.RendererGL = class RendererGL extends Renderer {
     // This redundant property is useful in reminding you that you are
     // interacting with WebGLRenderingContext, still worth considering future removal
     this.GL = this.drawingContext;
-    this._pInst._setProperty('drawingContext', this.drawingContext);
+    this._pInst.drawingContext = this.drawingContext;
+
+    if (isMainCanvas) {
+      // for pixel method sharing with pimage
+      this._pInst._curElement = this;
+      this._pInst.canvas = this.canvas;
+    } else {
+      // hide if offscreen buffer by default
+      this.canvas.style.display = 'none';
+    }
+
+    // Push/pop state
+    this.states.uModelMatrix = new p5.Matrix();
+    this.states.uViewMatrix = new p5.Matrix();
+    this.states.uMVMatrix = new p5.Matrix();
+    this.states.uPMatrix = new p5.Matrix();
+    this.states.uNMatrix = new p5.Matrix('mat3');
+    this.states.curMatrix = new p5.Matrix('mat3');
+
+    this.states.curCamera = new p5.Camera(this);
+
+    this.states.enableLighting = false;
+    this.states.ambientLightColors = [];
+    this.states.specularColors = [1, 1, 1];
+    this.states.directionalLightDirections = [];
+    this.states.directionalLightDiffuseColors = [];
+    this.states.directionalLightSpecularColors = [];
+    this.states.pointLightPositions = [];
+    this.states.pointLightDiffuseColors = [];
+    this.states.pointLightSpecularColors = [];
+    this.states.spotLightPositions = [];
+    this.states.spotLightDirections = [];
+    this.states.spotLightDiffuseColors = [];
+    this.states.spotLightSpecularColors = [];
+    this.states.spotLightAngle = [];
+    this.states.spotLightConc = [];
+    this.states.activeImageLight = null;
+
+    this.states.curFillColor = [1, 1, 1, 1];
+    this.states.curAmbientColor = [1, 1, 1, 1];
+    this.states.curSpecularColor = [0, 0, 0, 0];
+    this.states.curEmissiveColor = [0, 0, 0, 0];
+    this.states.curStrokeColor = [0, 0, 0, 1];
+
+    this.states.curBlendMode = constants.BLEND;
+
+    this.states._hasSetAmbient = false;
+    this.states._useSpecularMaterial = false;
+    this.states._useEmissiveMaterial = false;
+    this.states._useNormalMaterial = false;
+    this.states._useShininess = 1;
+    this.states._useMetalness = 0;
+
+    this.states.tint = [255, 255, 255, 255];
+
+    this.states.constantAttenuation = 1;
+    this.states.linearAttenuation = 0;
+    this.states.quadraticAttenuation = 0;
+
+    this.states._currentNormal = new p5.Vector(0, 0, 1);
+
+    this.states.drawMode = constants.FILL;
+
+    this.states._tex = null;
 
     // erasing
     this._isErasing = false;
@@ -455,53 +520,20 @@ p5.RendererGL = class RendererGL extends Renderer {
     this._isClipApplied = false;
     this._stencilTestOn = false;
 
-    // lights
-    this._enableLighting = false;
-
-    this.ambientLightColors = [];
     this.mixedAmbientLight = [];
     this.mixedSpecularColor = [];
-    this.specularColors = [1, 1, 1];
 
-    this.directionalLightDirections = [];
-    this.directionalLightDiffuseColors = [];
-    this.directionalLightSpecularColors = [];
-
-    this.pointLightPositions = [];
-    this.pointLightDiffuseColors = [];
-    this.pointLightSpecularColors = [];
-
-    this.spotLightPositions = [];
-    this.spotLightDirections = [];
-    this.spotLightDiffuseColors = [];
-    this.spotLightSpecularColors = [];
-    this.spotLightAngle = [];
-    this.spotLightConc = [];
-
-    // This property contains the input image if imageLight function
-    // is called.
-    // activeImageLight is checked by _setFillUniforms
-    // for sending uniforms to the fillshader
-    this.activeImageLight = null;
-    // If activeImageLight property is Null, diffusedTextures,
-    // specularTextures are Empty.
-    // Else, it maps a p5.Image used by imageLight() to a p5.framebuffer.
     // p5.framebuffer for this are calculated in getDiffusedTexture function
     this.diffusedTextures = new Map();
     // p5.framebuffer for this are calculated in getSpecularTexture function
     this.specularTextures = new Map();
 
-    this.drawMode = constants.FILL;
 
-    this.curFillColor = this._cachedFillStyle = [1, 1, 1, 1];
-    this.curAmbientColor = this._cachedFillStyle = [1, 1, 1, 1];
-    this.curSpecularColor = this._cachedFillStyle = [0, 0, 0, 0];
-    this.curEmissiveColor = this._cachedFillStyle = [0, 0, 0, 0];
-    this.curStrokeColor = this._cachedStrokeStyle = [0, 0, 0, 1];
 
-    this.curBlendMode = constants.BLEND;
     this.preEraseBlend = undefined;
     this._cachedBlendMode = undefined;
+    this._cachedFillStyle = [1, 1, 1, 1];
+    this._cachedStrokeStyle = [0, 0, 0, 1];
     if (this.webglVersion === constants.WEBGL2) {
       this.blendExt = this.GL;
     } else {
@@ -509,44 +541,14 @@ p5.RendererGL = class RendererGL extends Renderer {
     }
     this._isBlending = false;
 
-
-    this._hasSetAmbient = false;
-    this._useSpecularMaterial = false;
-    this._useEmissiveMaterial = false;
-    this._useNormalMaterial = false;
-    this._useShininess = 1;
-    this._useMetalness = 0;
-
     this._useLineColor = false;
     this._useVertexColor = false;
 
     this.registerEnabled = new Set();
 
-    this._tint = [255, 255, 255, 255];
-
-    // lightFalloff variables
-    this.constantAttenuation = 1;
-    this.linearAttenuation = 0;
-    this.quadraticAttenuation = 0;
-
-    /**
- * model view, projection, & normal
- * matrices
- */
-    this.uModelMatrix = new p5.Matrix();
-    this.uViewMatrix = new p5.Matrix();
-    this.uMVMatrix = new p5.Matrix();
-    this.uPMatrix = new p5.Matrix();
-    this.uNMatrix = new p5.Matrix('mat3');
-    this.curMatrix = new p5.Matrix('mat3');
-
-    // Current vertex normal
-    this._currentNormal = new p5.Vector(0, 0, 1);
-
     // Camera
-    this._curCamera = new p5.Camera(this);
-    this._curCamera._computeCameraDefaultSettings();
-    this._curCamera._setDefaultCamera();
+    this.states.curCamera._computeCameraDefaultSettings();
+    this.states.curCamera._setDefaultCamera();
 
     // FilterCamera
     this.filterCamera = new p5.Camera(this);
@@ -563,9 +565,9 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.executeZoom = false;
     this.executeRotateAndMove = false;
 
-    this.specularShader = undefined;
+    this.states.specularShader = undefined;
     this.sphereMapping = undefined;
-    this.diffusedShader = undefined;
+    this.states.diffusedShader = undefined;
     this._defaultLightShader = undefined;
     this._defaultImmediateModeShader = undefined;
     this._defaultNormalShader = undefined;
@@ -576,6 +578,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.userStrokeShader = undefined;
     this.userPointShader = undefined;
     this.userImageShader = undefined;
+
 
     // Default drawing is done in Retained Mode
     // Geometry and Material hashes stored here
@@ -600,7 +603,8 @@ p5.RendererGL = class RendererGL extends Renderer {
         text: [
           new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
           new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
-        ]
+        ],
+        user:[]
       }
     };
 
@@ -650,7 +654,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.activeFramebuffers = [];
 
     // for post processing step
-    this.filterShader = undefined;
+    this.states.filterShader = undefined;
     this.filterLayer = undefined;
     this.filterLayerTemp = undefined;
     this.defaultFilterShaders = {};
@@ -659,7 +663,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     // default wrap settings
     this.textureWrapX = constants.CLAMP;
     this.textureWrapY = constants.CLAMP;
-    this._tex = null;
+    this.states._tex = null;
     this._curveTightness = 6;
 
     // lookUpTable for coefficients needed to be calculated for bezierVertex, same are used for curveVertex
@@ -697,8 +701,8 @@ p5.RendererGL = class RendererGL extends Renderer {
       throw new Error('It looks like `beginGeometry()` is being called while another p5.Geometry is already being build.');
     }
     this.geometryBuilder = new GeometryBuilder(this);
-    this.geometryBuilder.prevFillColor = [...this.curFillColor];
-    this.curFillColor = [-1, -1, -1, -1];
+    this.geometryBuilder.prevFillColor = [...this.states.curFillColor];
+    this.states.curFillColor = [-1, -1, -1, -1];
   }
 
   /**
@@ -714,7 +718,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       throw new Error('Make sure you call beginGeometry() before endGeometry()!');
     }
     const geometry = this.geometryBuilder.finish();
-    this.curFillColor = this.geometryBuilder.prevFillColor;
+    this.states.curFillColor = this.geometryBuilder.prevFillColor;
     this.geometryBuilder = undefined;
     return geometry;
   }
@@ -775,7 +779,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.webglVersion =
       this.drawingContext ? constants.WEBGL2 : constants.WEBGL;
     // If this is the main canvas, make sure the global `webglVersion` is set
-    this._pInst._setProperty('webglVersion', this.webglVersion);
+    this._pInst.webglVersion = this.webglVersion;
     if (!this.drawingContext) {
       // If we were unable to create a WebGL2 context (either because it was
       // disabled via `setAttributes({ version: 1 })` or because the device
@@ -872,7 +876,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       this._pInst,
       !isPGraphics
     );
-    this._pInst._setProperty('_renderer', renderer);
+    this._pInst._renderer = renderer;
     renderer.resize(w, h);
     renderer._applyDefaults();
 
@@ -893,33 +897,33 @@ p5.RendererGL = class RendererGL extends Renderer {
   _update() {
     // reset model view and apply initial camera transform
     // (containing only look at info; no projection).
-    this.uModelMatrix.reset();
-    this.uViewMatrix.set(this._curCamera.cameraMatrix);
+    this.states.uModelMatrix.reset();
+    this.states.uViewMatrix.set(this.states.curCamera.cameraMatrix);
 
     // reset light data for new frame.
 
-    this.ambientLightColors.length = 0;
-    this.specularColors = [1, 1, 1];
+    this.states.ambientLightColors.length = 0;
+    this.states.specularColors = [1, 1, 1];
 
-    this.directionalLightDirections.length = 0;
-    this.directionalLightDiffuseColors.length = 0;
-    this.directionalLightSpecularColors.length = 0;
+    this.states.directionalLightDirections.length = 0;
+    this.states.directionalLightDiffuseColors.length = 0;
+    this.states.directionalLightSpecularColors.length = 0;
 
-    this.pointLightPositions.length = 0;
-    this.pointLightDiffuseColors.length = 0;
-    this.pointLightSpecularColors.length = 0;
+    this.states.pointLightPositions.length = 0;
+    this.states.pointLightDiffuseColors.length = 0;
+    this.states.pointLightSpecularColors.length = 0;
 
-    this.spotLightPositions.length = 0;
-    this.spotLightDirections.length = 0;
-    this.spotLightDiffuseColors.length = 0;
-    this.spotLightSpecularColors.length = 0;
-    this.spotLightAngle.length = 0;
-    this.spotLightConc.length = 0;
+    this.states.spotLightPositions.length = 0;
+    this.states.spotLightDirections.length = 0;
+    this.states.spotLightDiffuseColors.length = 0;
+    this.states.spotLightSpecularColors.length = 0;
+    this.states.spotLightAngle.length = 0;
+    this.states.spotLightConc.length = 0;
 
-    this._enableLighting = false;
+    this.states._enableLighting = false;
 
     //reset tint value for new frame
-    this._tint = [255, 255, 255, 255];
+    this.states.tint = [255, 255, 255, 255];
 
     //Clear depth every frame
     this.GL.clearStencil(0);
@@ -975,10 +979,10 @@ p5.RendererGL = class RendererGL extends Renderer {
   fill(v1, v2, v3, a) {
     //see material.js for more info on color blending in webgl
     const color = p5.prototype.color.apply(this._pInst, arguments);
-    this.curFillColor = color._array;
-    this.drawMode = constants.FILL;
-    this._useNormalMaterial = false;
-    this._tex = null;
+    this.states.curFillColor = color._array;
+    this.states.drawMode = constants.FILL;
+    this.states._useNormalMaterial = false;
+    this.states._tex = null;
   }
 
   /**
@@ -1012,7 +1016,7 @@ p5.RendererGL = class RendererGL extends Renderer {
  */
   stroke(r, g, b, a) {
     const color = p5.prototype.color.apply(this._pInst, arguments);
-    this.curStrokeColor = color._array;
+    this.states.curStrokeColor = color._array;
   }
 
   strokeCap(cap) {
@@ -1073,12 +1077,12 @@ p5.RendererGL = class RendererGL extends Renderer {
           filterShaderFrags[operation]
         );
       }
-      this.filterShader = this.defaultFilterShaders[operation];
+      this.states.filterShader = this.defaultFilterShaders[operation];
 
     }
     // use custom user-supplied shader
     else {
-      this.filterShader = args[0];
+      this.states.filterShader = args[0];
     }
 
     // Setting the target to the framebuffer when applying a filter to a framebuffer.
@@ -1107,27 +1111,27 @@ p5.RendererGL = class RendererGL extends Renderer {
       this._pInst.blendMode(constants.BLEND);
 
       // draw main to temp buffer
-      this._pInst.shader(this.filterShader);
-      this.filterShader.setUniform('texelSize', texelSize);
-      this.filterShader.setUniform('canvasSize', [target.width, target.height]);
-      this.filterShader.setUniform('radius', Math.max(1, filterParameter));
+      this._pInst.shader(this.states.filterShader);
+      this.states.filterShader.setUniform('texelSize', texelSize);
+      this.states.filterShader.setUniform('canvasSize', [target.width, target.height]);
+      this.states.filterShader.setUniform('radius', Math.max(1, filterParameter));
 
       // Horiz pass: draw `target` to `tmp`
       tmp.draw(() => {
-        this.filterShader.setUniform('direction', [1, 0]);
-        this.filterShader.setUniform('tex0', target);
+        this.states.filterShader.setUniform('direction', [1, 0]);
+        this.states.filterShader.setUniform('tex0', target);
         this._pInst.clear();
-        this._pInst.shader(this.filterShader);
+        this._pInst.shader(this.states.filterShader);
         this._pInst.noLights();
         this._pInst.plane(target.width, target.height);
       });
 
       // Vert pass: draw `tmp` to `fbo`
       fbo.draw(() => {
-        this.filterShader.setUniform('direction', [0, 1]);
-        this.filterShader.setUniform('tex0', tmp);
+        this.states.filterShader.setUniform('direction', [0, 1]);
+        this.states.filterShader.setUniform('tex0', tmp);
         this._pInst.clear();
-        this._pInst.shader(this.filterShader);
+        this._pInst.shader(this.states.filterShader);
         this._pInst.noLights();
         this._pInst.plane(target.width, target.height);
       });
@@ -1139,13 +1143,13 @@ p5.RendererGL = class RendererGL extends Renderer {
       fbo.draw(() => {
         this._pInst.noStroke();
         this._pInst.blendMode(constants.BLEND);
-        this._pInst.shader(this.filterShader);
-        this.filterShader.setUniform('tex0', target);
-        this.filterShader.setUniform('texelSize', texelSize);
-        this.filterShader.setUniform('canvasSize', [target.width, target.height]);
+        this._pInst.shader(this.states.filterShader);
+        this.states.filterShader.setUniform('tex0', target);
+        this.states.filterShader.setUniform('texelSize', texelSize);
+        this.states.filterShader.setUniform('canvasSize', [target.width, target.height]);
         // filterParameter uniform only used for POSTERIZE, and THRESHOLD
         // but shouldn't hurt to always set
-        this.filterShader.setUniform('filterParameter', filterParameter);
+        this.states.filterShader.setUniform('filterParameter', filterParameter);
         this._pInst.noLights();
         this._pInst.plane(target.width, target.height);
       });
@@ -1191,7 +1195,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       mode === constants.MULTIPLY ||
       mode === constants.REMOVE
     )
-      this.curBlendMode = mode;
+      this.states.curBlendMode = mode;
     else if (
       mode === constants.BURN ||
       mode === constants.OVERLAY ||
@@ -1207,23 +1211,23 @@ p5.RendererGL = class RendererGL extends Renderer {
 
   erase(opacityFill, opacityStroke) {
     if (!this._isErasing) {
-      this.preEraseBlend = this.curBlendMode;
+      this.preEraseBlend = this.states.curBlendMode;
       this._isErasing = true;
       this.blendMode(constants.REMOVE);
-      this._cachedFillStyle = this.curFillColor.slice();
-      this.curFillColor = [1, 1, 1, opacityFill / 255];
-      this._cachedStrokeStyle = this.curStrokeColor.slice();
-      this.curStrokeColor = [1, 1, 1, opacityStroke / 255];
+      this._cachedFillStyle = this.states.curFillColor.slice();
+      this.states.curFillColor = [1, 1, 1, opacityFill / 255];
+      this._cachedStrokeStyle = this.states.curStrokeColor.slice();
+      this.states.curStrokeColor = [1, 1, 1, opacityStroke / 255];
     }
   }
 
   noErase() {
     if (this._isErasing) {
       // Restore colors
-      this.curFillColor = this._cachedFillStyle.slice();
-      this.curStrokeColor = this._cachedStrokeStyle.slice();
+      this.states.curFillColor = this._cachedFillStyle.slice();
+      this.states.curStrokeColor = this._cachedStrokeStyle.slice();
       // Restore blend mode
-      this.curBlendMode = this.preEraseBlend;
+      this.states.curBlendMode = this.preEraseBlend;
       this.blendMode(this.preEraseBlend);
       // Ensure that _applyBlendMode() sets preEraseBlend back to the original blend mode
       this._isErasing = false;
@@ -1259,8 +1263,8 @@ p5.RendererGL = class RendererGL extends Renderer {
 
     this._pInst.push();
     this._pInst.resetShader();
-    if (this._doFill) this._pInst.fill(0, 0);
-    if (this._doStroke) this._pInst.stroke(0, 0);
+    if (this.states.doFill) this._pInst.fill(0, 0);
+    if (this.states.doStroke) this._pInst.stroke(0, 0);
   }
 
   endClip() {
@@ -1376,8 +1380,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     const pd = this._pInst._pixelDensity;
     const gl = this.GL;
 
-    pixelsState._setProperty(
-      'pixels',
+    pixelsState.pixels =
       readPixelsWebGL(
         pixelsState.pixels,
         gl,
@@ -1389,8 +1392,7 @@ p5.RendererGL = class RendererGL extends Renderer {
         gl.RGBA,
         gl.UNSIGNED_BYTE,
         this.height * pd
-      )
-    );
+      );
   }
 
   updatePixels() {
@@ -1448,6 +1450,10 @@ p5.RendererGL = class RendererGL extends Renderer {
  */
   resize(w, h) {
     Renderer.prototype.resize.call(this, w, h);
+    this.canvas.width = w * this._pInst._pixelDensity;
+    this.canvas.height = h * this._pInst._pixelDensity;
+    this.canvas.style.width = `${w}px`;
+    this.canvas.style.height = `${h}px`;
     this._origViewport = {
       width: this.GL.drawingBufferWidth,
       height: this.GL.drawingBufferHeight
@@ -1457,17 +1463,15 @@ p5.RendererGL = class RendererGL extends Renderer {
       this._origViewport.height
     );
 
-    this._curCamera._resize();
+    this.states.curCamera._resize();
 
     //resize pixels buffer
     const pixelsState = this._pixelsState;
     if (typeof pixelsState.pixels !== 'undefined') {
-      pixelsState._setProperty(
-        'pixels',
+      pixelsState.pixels =
         new Uint8Array(
           this.GL.drawingBufferWidth * this.GL.drawingBufferHeight * 4
-        )
-      );
+        );
     }
 
     for (const framebuffer of this.framebuffers) {
@@ -1523,9 +1527,9 @@ p5.RendererGL = class RendererGL extends Renderer {
 
   applyMatrix(a, b, c, d, e, f) {
     if (arguments.length === 16) {
-      p5.Matrix.prototype.apply.apply(this.uModelMatrix, arguments);
+      p5.Matrix.prototype.apply.apply(this.states.uModelMatrix, arguments);
     } else {
-      this.uModelMatrix.apply([
+      this.states.uModelMatrix.apply([
         a, b, 0, 0,
         c, d, 0, 0,
         0, 0, 1, 0,
@@ -1549,7 +1553,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       y = x.y;
       x = x.x;
     }
-    this.uModelMatrix.translate([x, y, z]);
+    this.states.uModelMatrix.translate([x, y, z]);
     return this;
   }
 
@@ -1562,7 +1566,7 @@ p5.RendererGL = class RendererGL extends Renderer {
  * @chainable
  */
   scale(x, y, z) {
-    this.uModelMatrix.scale(x, y, z);
+    this.states.uModelMatrix.scale(x, y, z);
     return this;
   }
 
@@ -1570,7 +1574,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     if (typeof axis === 'undefined') {
       return this.rotateZ(rad);
     }
-    p5.Matrix.prototype.rotate.apply(this.uModelMatrix, arguments);
+    p5.Matrix.prototype.rotate.apply(this.states.uModelMatrix, arguments);
     return this;
   }
 
@@ -1588,6 +1592,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.rotate(rad, 0, 0, 1);
     return this;
   }
+
 
   push() {
     // get the base renderer style
@@ -1685,8 +1690,8 @@ p5.RendererGL = class RendererGL extends Renderer {
     }
   }
   resetMatrix() {
-    this.uModelMatrix.reset();
-    this.uViewMatrix.set(this._curCamera.cameraMatrix);
+    this.states.uModelMatrix.reset();
+    this.states.uViewMatrix.set(this.states.curCamera.cameraMatrix);
     return this;
   }
 
@@ -1720,11 +1725,11 @@ p5.RendererGL = class RendererGL extends Renderer {
         sphereMapping
       );
     }
-    this.uNMatrix.inverseTranspose(this.uViewMatrix);
-    this.uNMatrix.invert3x3(this.uNMatrix);
-    this.sphereMapping.setUniform('uFovY', this._curCamera.cameraFOV);
-    this.sphereMapping.setUniform('uAspect', this._curCamera.aspectRatio);
-    this.sphereMapping.setUniform('uNewNormalMatrix', this.uNMatrix.mat3);
+    this.states.uNMatrix.inverseTranspose(this.states.uViewMatrix);
+    this.states.uNMatrix.invert3x3(this.states.uNMatrix);
+    this.sphereMapping.setUniform('uFovY', this.states.curCamera.cameraFOV);
+    this.sphereMapping.setUniform('uAspect', this.states.curCamera.aspectRatio);
+    this.sphereMapping.setUniform('uNewNormalMatrix', this.states.uNMatrix.mat3);
     this.sphereMapping.setUniform('uSampler', img);
     return this.sphereMapping;
   }
@@ -1734,17 +1739,17 @@ p5.RendererGL = class RendererGL extends Renderer {
    * for use with begin/endShape and immediate vertex mode.
    */
   _getImmediateFillShader() {
-    const fill = this.userFillShader;
-    if (this._useNormalMaterial) {
+    const fill = this.states.userFillShader;
+    if (this.states._useNormalMaterial) {
       if (!fill || !fill.isNormalShader()) {
         return this._getNormalShader();
       }
     }
-    if (this._enableLighting) {
+    if (this.states._enableLighting) {
       if (!fill || !fill.isLightShader()) {
         return this._getLightShader();
       }
-    } else if (this._tex) {
+    } else if (this.states._tex) {
       if (!fill || !fill.isTextureShader()) {
         return this._getLightShader();
       }
@@ -1767,6 +1772,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     if(fill && !fill.isTextureShader()){
       return fill;
     }
+    
     // Return the appropriate light shader if lighting is enabled or it's a texture shader
     if (this._enableLighting || this._tex) {
       return this._getLightShader();
@@ -1777,7 +1783,7 @@ p5.RendererGL = class RendererGL extends Renderer {
 
   _getImmediatePointShader() {
     // select the point shader to use
-    const point = this.userPointShader;
+    const point = this.states.userPointShader;
     if (!point || !point.isPointShader()) {
       return this._getPointShader();
     }
@@ -2120,15 +2126,15 @@ p5.RendererGL = class RendererGL extends Renderer {
     });
     // create framebuffer is like making a new sketch, all functions on main
     // sketch it would be available on framebuffer
-    if (!this.diffusedShader) {
-      this.diffusedShader = this._pInst.createShader(
+    if (!this.states.diffusedShader) {
+      this.states.diffusedShader = this._pInst.createShader(
         defaultShaders.imageLightVert,
         defaultShaders.imageLightDiffusedFrag
       );
     }
     newFramebuffer.draw(() => {
-      this._pInst.shader(this.diffusedShader);
-      this.diffusedShader.setUniform('environmentMap', input);
+      this._pInst.shader(this.states.diffusedShader);
+      this.states.diffusedShader.setUniform('environmentMap', input);
       this._pInst.noStroke();
       this._pInst.rectMode(constants.CENTER);
       this._pInst.noLights();
@@ -2161,8 +2167,8 @@ p5.RendererGL = class RendererGL extends Renderer {
       width: size, height: size, density: 1
     });
     let count = Math.log(size) / Math.log(2);
-    if (!this.specularShader) {
-      this.specularShader = this._pInst.createShader(
+    if (!this.states.specularShader) {
+      this.states.specularShader = this._pInst.createShader(
         defaultShaders.imageLightVert,
         defaultShaders.imageLightSpecularFrag
       );
@@ -2177,10 +2183,10 @@ p5.RendererGL = class RendererGL extends Renderer {
       let currCount = Math.log(w) / Math.log(2);
       let roughness = 1 - currCount / count;
       framebuffer.draw(() => {
-        this._pInst.shader(this.specularShader);
+        this._pInst.shader(this.states.specularShader);
         this._pInst.clear();
-        this.specularShader.setUniform('environmentMap', input);
-        this.specularShader.setUniform('roughness', roughness);
+        this.states.specularShader.setUniform('environmentMap', input);
+        this.states.specularShader.setUniform('roughness', roughness);
         this._pInst.noStroke();
         this._pInst.noLights();
         this._pInst.plane(w, w);
@@ -2212,7 +2218,7 @@ p5.RendererGL = class RendererGL extends Renderer {
 
     // set the uniform values
     baseStrokeShader.setUniform('uUseLineColor', this._useLineColor);
-    baseStrokeShader.setUniform('uMaterialColor', this.curStrokeColor);
+    baseStrokeShader.setUniform('uMaterialColor', this.states.curStrokeColor);
     baseStrokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
     baseStrokeShader.setUniform('uStrokeCap', STROKE_CAP_ENUM[this.curStrokeCap]);
     baseStrokeShader.setUniform('uStrokeJoin', STROKE_JOIN_ENUM[this.curStrokeJoin]);
@@ -2221,90 +2227,90 @@ p5.RendererGL = class RendererGL extends Renderer {
   _setFillUniforms(fillShader) {
     fillShader.bindShader();
 
-    this.mixedSpecularColor = [...this.curSpecularColor];
+    this.mixedSpecularColor = [...this.states.curSpecularColor];
 
-    if (this._useMetalness > 0) {
+    if (this.states._useMetalness > 0) {
       this.mixedSpecularColor = this.mixedSpecularColor.map(
         (mixedSpecularColor, index) =>
-          this.curFillColor[index] * this._useMetalness +
-          mixedSpecularColor * (1 - this._useMetalness)
+          this.states.curFillColor[index] * this.states._useMetalness +
+          mixedSpecularColor * (1 - this.states._useMetalness)
       );
     }
 
     // TODO: optimize
     fillShader.setUniform('uUseVertexColor', this._useVertexColor);
-    fillShader.setUniform('uMaterialColor', this.curFillColor);
-    fillShader.setUniform('isTexture', !!this._tex);
-    if (this._tex) {
-      fillShader.setUniform('uSampler', this._tex);
+    fillShader.setUniform('uMaterialColor', this.states.curFillColor);
+    fillShader.setUniform('isTexture', !!this.states._tex);
+    if (this.states._tex) {
+      fillShader.setUniform('uSampler', this.states._tex);
     }
-    fillShader.setUniform('uTint', this._tint);
+    fillShader.setUniform('uTint', this.states.tint);
 
-    fillShader.setUniform('uHasSetAmbient', this._hasSetAmbient);
-    fillShader.setUniform('uAmbientMatColor', this.curAmbientColor);
+    fillShader.setUniform('uHasSetAmbient', this.states._hasSetAmbient);
+    fillShader.setUniform('uAmbientMatColor', this.states.curAmbientColor);
     fillShader.setUniform('uSpecularMatColor', this.mixedSpecularColor);
-    fillShader.setUniform('uEmissiveMatColor', this.curEmissiveColor);
-    fillShader.setUniform('uSpecular', this._useSpecularMaterial);
-    fillShader.setUniform('uEmissive', this._useEmissiveMaterial);
-    fillShader.setUniform('uShininess', this._useShininess);
-    fillShader.setUniform('uMetallic', this._useMetalness);
+    fillShader.setUniform('uEmissiveMatColor', this.states.curEmissiveColor);
+    fillShader.setUniform('uSpecular', this.states._useSpecularMaterial);
+    fillShader.setUniform('uEmissive', this.states._useEmissiveMaterial);
+    fillShader.setUniform('uShininess', this.states._useShininess);
+    fillShader.setUniform('uMetallic', this.states._useMetalness);
 
     this._setImageLightUniforms(fillShader);
 
-    fillShader.setUniform('uUseLighting', this._enableLighting);
+    fillShader.setUniform('uUseLighting', this.states._enableLighting);
 
-    const pointLightCount = this.pointLightDiffuseColors.length / 3;
+    const pointLightCount = this.states.pointLightDiffuseColors.length / 3;
     fillShader.setUniform('uPointLightCount', pointLightCount);
-    fillShader.setUniform('uPointLightLocation', this.pointLightPositions);
+    fillShader.setUniform('uPointLightLocation', this.states.pointLightPositions);
     fillShader.setUniform(
       'uPointLightDiffuseColors',
-      this.pointLightDiffuseColors
+      this.states.pointLightDiffuseColors
     );
     fillShader.setUniform(
       'uPointLightSpecularColors',
-      this.pointLightSpecularColors
+      this.states.pointLightSpecularColors
     );
 
-    const directionalLightCount = this.directionalLightDiffuseColors.length / 3;
+    const directionalLightCount = this.states.directionalLightDiffuseColors.length / 3;
     fillShader.setUniform('uDirectionalLightCount', directionalLightCount);
-    fillShader.setUniform('uLightingDirection', this.directionalLightDirections);
+    fillShader.setUniform('uLightingDirection', this.states.directionalLightDirections);
     fillShader.setUniform(
       'uDirectionalDiffuseColors',
-      this.directionalLightDiffuseColors
+      this.states.directionalLightDiffuseColors
     );
     fillShader.setUniform(
       'uDirectionalSpecularColors',
-      this.directionalLightSpecularColors
+      this.states.directionalLightSpecularColors
     );
 
     // TODO: sum these here...
-    const ambientLightCount = this.ambientLightColors.length / 3;
-    this.mixedAmbientLight = [...this.ambientLightColors];
+    const ambientLightCount = this.states.ambientLightColors.length / 3;
+    this.mixedAmbientLight = [...this.states.ambientLightColors];
 
-    if (this._useMetalness > 0) {
+    if (this.states._useMetalness > 0) {
       this.mixedAmbientLight = this.mixedAmbientLight.map((ambientColors => {
-        let mixing = ambientColors - this._useMetalness;
+        let mixing = ambientColors - this.states._useMetalness;
         return Math.max(0, mixing);
       }));
     }
     fillShader.setUniform('uAmbientLightCount', ambientLightCount);
     fillShader.setUniform('uAmbientColor', this.mixedAmbientLight);
 
-    const spotLightCount = this.spotLightDiffuseColors.length / 3;
+    const spotLightCount = this.states.spotLightDiffuseColors.length / 3;
     fillShader.setUniform('uSpotLightCount', spotLightCount);
-    fillShader.setUniform('uSpotLightAngle', this.spotLightAngle);
-    fillShader.setUniform('uSpotLightConc', this.spotLightConc);
-    fillShader.setUniform('uSpotLightDiffuseColors', this.spotLightDiffuseColors);
+    fillShader.setUniform('uSpotLightAngle', this.states.spotLightAngle);
+    fillShader.setUniform('uSpotLightConc', this.states.spotLightConc);
+    fillShader.setUniform('uSpotLightDiffuseColors', this.states.spotLightDiffuseColors);
     fillShader.setUniform(
       'uSpotLightSpecularColors',
-      this.spotLightSpecularColors
+      this.states.spotLightSpecularColors
     );
-    fillShader.setUniform('uSpotLightLocation', this.spotLightPositions);
-    fillShader.setUniform('uSpotLightDirection', this.spotLightDirections);
+    fillShader.setUniform('uSpotLightLocation', this.states.spotLightPositions);
+    fillShader.setUniform('uSpotLightDirection', this.states.spotLightDirections);
 
-    fillShader.setUniform('uConstantAttenuation', this.constantAttenuation);
-    fillShader.setUniform('uLinearAttenuation', this.linearAttenuation);
-    fillShader.setUniform('uQuadraticAttenuation', this.quadraticAttenuation);
+    fillShader.setUniform('uConstantAttenuation', this.states.constantAttenuation);
+    fillShader.setUniform('uLinearAttenuation', this.states.linearAttenuation);
+    fillShader.setUniform('uQuadraticAttenuation', this.states.quadraticAttenuation);
 
     fillShader.bindTextures();
   }
@@ -2312,14 +2318,14 @@ p5.RendererGL = class RendererGL extends Renderer {
   // getting called from _setFillUniforms
   _setImageLightUniforms(shader) {
     //set uniform values
-    shader.setUniform('uUseImageLight', this.activeImageLight != null);
+    shader.setUniform('uUseImageLight', this.states.activeImageLight != null);
     // true
-    if (this.activeImageLight) {
-      // this.activeImageLight has image as a key
+    if (this.states.activeImageLight) {
+      // this.states.activeImageLight has image as a key
       // look up the texture from the diffusedTexture map
-      let diffusedLight = this.getDiffusedTexture(this.activeImageLight);
+      let diffusedLight = this.getDiffusedTexture(this.states.activeImageLight);
       shader.setUniform('environmentMapDiffused', diffusedLight);
-      let specularLight = this.getSpecularTexture(this.activeImageLight);
+      let specularLight = this.getSpecularTexture(this.states.activeImageLight);
 
       shader.setUniform('environmentMapSpecular', specularLight);
     }
@@ -2329,7 +2335,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     pointShader.bindShader();
 
     // set the uniform values
-    pointShader.setUniform('uMaterialColor', this.curStrokeColor);
+    pointShader.setUniform('uMaterialColor', this.states.curStrokeColor);
     // @todo is there an instance where this isn't stroke weight?
     // should be they be same var?
     pointShader.setUniform(
@@ -2431,6 +2437,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     return p;
   }
   _initTessy() {
+    this.tessyVertexSize = 12;
     // function called for each vertex of tesselator output
     function vertexCallback(data, polyVertArray) {
       for (const element of data) {
@@ -2449,8 +2456,8 @@ p5.RendererGL = class RendererGL extends Renderer {
       console.log(`error number: ${errno}`);
     }
     // callback for when segments intersect and must be split
-    function combinecallback(coords, data, weight) {
-      const result = new Array(p5.RendererGL.prototype.tessyVertexSize).fill(0);
+    const combinecallback = (coords, data, weight) => {
+      const result = new Array(this.tessyVertexSize).fill(0);
       for (let i = 0; i < weight.length; i++) {
         for (let j = 0; j < result.length; j++) {
           if (weight[i] === 0 || !data[i]) continue;
@@ -2458,7 +2465,7 @@ p5.RendererGL = class RendererGL extends Renderer {
         }
       }
       return result;
-    }
+    };
 
     function edgeCallback(flag) {
       // don't really care about the flag, but need no-strip/no-fan behavior
@@ -2490,7 +2497,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       for (
         let j = 0;
         j < contour.length;
-        j += p5.RendererGL.prototype.tessyVertexSize
+        j += this.tessyVertexSize
       ) {
         if (contour[j + 2] !== z) {
           allSameZ = false;
@@ -2513,11 +2520,11 @@ p5.RendererGL = class RendererGL extends Renderer {
       for (
         let j = 0;
         j < contour.length;
-        j += p5.RendererGL.prototype.tessyVertexSize
+        j += this.tessyVertexSize
       ) {
         const coords = contour.slice(
           j,
-          j + p5.RendererGL.prototype.tessyVertexSize
+          j + this.tessyVertexSize
         );
         this._tessy.gluTessVertex(coords, coords);
       }
@@ -2539,9 +2546,5 @@ p5.prototype._assert3d = function (name) {
       `${name}() is only supported in WEBGL mode. If you'd like to use 3D graphics and WebGL, see  https://p5js.org/examples/form-3d-primitives.html for more information.`
     );
 };
-
-// function to initialize GLU Tesselator
-
-p5.RendererGL.prototype.tessyVertexSize = 12;
 
 export default p5.RendererGL;

@@ -92,7 +92,7 @@ p5.prototype.ellipseMode = function(m) {
     m === constants.RADIUS ||
     m === constants.CENTER
   ) {
-    this._renderer._ellipseMode = m;
+    this._renderer.states.ellipseMode = m;
   }
   return this;
 };
@@ -295,7 +295,7 @@ p5.prototype.rectMode = function(m) {
     m === constants.RADIUS ||
     m === constants.CENTER
   ) {
-    this._renderer._rectMode = m;
+    this._renderer.states.rectMode = m;
   }
   return this;
 };

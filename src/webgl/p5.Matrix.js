@@ -140,6 +140,10 @@ p5.Matrix = class Matrix {
     return copied;
   }
 
+  clone() {
+    return this.copy();
+  }
+
   /**
  * return an identity matrix
  * @return {p5.Matrix}   the result matrix

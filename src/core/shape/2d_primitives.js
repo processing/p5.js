@@ -316,7 +316,7 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
 
   // if the current stroke and fill settings wouldn't result in something
   // visible, exit immediately
-  if (!this._renderer._doStroke && !this._renderer._doFill) {
+  if (!this._renderer.states.doStroke && !this._renderer.states.doFill) {
     return this;
   }
 
@@ -331,7 +331,7 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
   w = Math.abs(w);
   h = Math.abs(h);
 
-  const vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
+  const vals = canvas.modeAdjust(x, y, w, h, this._renderer.states.ellipseMode);
   const angles = this._normalizeArcAngles(start, stop, vals.w, vals.h, true);
 
   if (angles.correspondToSamePoint) {
@@ -543,7 +543,7 @@ p5.prototype.circle = function(...args) {
 p5.prototype._renderEllipse = function(x, y, w, h, detailX) {
   // if the current stroke and fill settings wouldn't result in something
   // visible, exit immediately
-  if (!this._renderer._doStroke && !this._renderer._doFill) {
+  if (!this._renderer.states.doStroke && !this._renderer.states.doFill) {
     return this;
   }
 
@@ -559,7 +559,7 @@ p5.prototype._renderEllipse = function(x, y, w, h, detailX) {
     h = Math.abs(h);
   }
 
-  const vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
+  const vals = canvas.modeAdjust(x, y, w, h, this._renderer.states.ellipseMode);
   this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detailX]);
 
   //accessible Outputs
@@ -715,7 +715,7 @@ p5.prototype._renderEllipse = function(x, y, w, h, detailX) {
 p5.prototype.line = function(...args) {
   p5._validateParameters('line', args);
 
-  if (this._renderer._doStroke) {
+  if (this._renderer.states.doStroke) {
     this._renderer.line(...args);
   }
 
@@ -899,7 +899,7 @@ p5.prototype.line = function(...args) {
 p5.prototype.point = function(...args) {
   p5._validateParameters('point', args);
 
-  if (this._renderer._doStroke) {
+  if (this._renderer.states.doStroke) {
     if (args.length === 1 && args[0] instanceof p5.Vector) {
       this._renderer.point.call(
         this._renderer,
@@ -1060,7 +1060,7 @@ p5.prototype.point = function(...args) {
 p5.prototype.quad = function(...args) {
   p5._validateParameters('quad', args);
 
-  if (this._renderer._doStroke || this._renderer._doFill) {
+  if (this._renderer.states.doStroke || this._renderer.states.doFill) {
     if (this._renderer.isP3D && args.length < 12) {
       // if 3D and we weren't passed 12 args, assume Z is 0
       this._renderer.quad.call(
@@ -1337,7 +1337,7 @@ p5.prototype.square = function(x, y, s, tl, tr, br, bl) {
 
 // internal method to have renderer draw a rectangle
 p5.prototype._renderRect = function() {
-  if (this._renderer._doStroke || this._renderer._doFill) {
+  if (this._renderer.states.doStroke || this._renderer.states.doFill) {
     // duplicate width for height in case only 3 arguments is provided
     if (arguments.length === 3) {
       arguments[3] = arguments[2];
@@ -1347,7 +1347,7 @@ p5.prototype._renderRect = function() {
       arguments[1],
       arguments[2],
       arguments[3],
-      this._renderer._rectMode
+      this._renderer.states.rectMode
     );
 
     const args = [vals.x, vals.y, vals.w, vals.h];
@@ -1436,7 +1436,7 @@ p5.prototype._renderRect = function() {
 p5.prototype.triangle = function(...args) {
   p5._validateParameters('triangle', args);
 
-  if (this._renderer._doStroke || this._renderer._doFill) {
+  if (this._renderer.states.doStroke || this._renderer.states.doFill) {
     this._renderer.triangle(args);
   }
 

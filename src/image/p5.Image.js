@@ -11,7 +11,6 @@
  * drawing images to the main display canvas.
  */
 import Filters from './filters';
-import Renderer from '../core/p5.Renderer';
 
 function image(p5, fn){
   /**
@@ -192,14 +191,6 @@ function image(p5, fn){
           }
         }
       }
-    }
-
-    /**
-     * Helper fxn for sharing pixel methods
-     */
-    _setProperty(prop, value) {
-      this[prop] = value;
-      this.setModified(true);
     }
 
     /**
@@ -964,7 +955,7 @@ function image(p5, fn){
 
       let imgScaleFactor = this._pixelDensity;
       let maskScaleFactor = 1;
-      if (p5Image instanceof Renderer) {
+      if (p5Image instanceof p5.Renderer) {
         maskScaleFactor = p5Image._pInst._pixelDensity;
       }
 

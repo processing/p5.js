@@ -1172,7 +1172,7 @@ function loadingDisplaying(p5, fn){
     _sh *= pd;
     _sw *= pd;
 
-    let vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer._imageMode);
+    let vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer.states.imageMode);
     vals = _imageFit(
       fit,
       xAlign,
@@ -1351,7 +1351,7 @@ function loadingDisplaying(p5, fn){
   fn.tint = function(...args) {
     p5._validateParameters('tint', args);
     const c = this.color(...args);
-    this._renderer._tint = c.levels;
+    this._renderer.states.tint = c.levels;
   };
 
   /**
@@ -1390,7 +1390,7 @@ function loadingDisplaying(p5, fn){
    * </div>
    */
   fn.noTint = function() {
-    this._renderer._tint = null;
+    this._renderer.states.tint = null;
   };
 
   /**
@@ -1509,7 +1509,7 @@ function loadingDisplaying(p5, fn){
       m === constants.CORNERS ||
       m === constants.CENTER
     ) {
-      this._renderer._imageMode = m;
+      this._renderer.states.imageMode = m;
     }
   };
 }

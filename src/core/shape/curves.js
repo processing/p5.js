@@ -209,7 +209,7 @@ p5.prototype.bezier = function(...args) {
 
   // if the current stroke and fill settings wouldn't result in something
   // visible, exit immediately
-  if (!this._renderer._doStroke && !this._renderer._doFill) {
+  if (!this._renderer.states.doStroke && !this._renderer.states.doFill) {
     return this;
   }
 
@@ -762,7 +762,7 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
 p5.prototype.curve = function(...args) {
   p5._validateParameters('curve', args);
 
-  if (this._renderer._doStroke) {
+  if (this._renderer.states.doStroke) {
     this._renderer.curve(...args);
   }
 

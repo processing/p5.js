@@ -86,14 +86,14 @@ suite('color/Setting', function() {
 
     test.todo('should cache renderer fill', function() {
       my3D.fill(255, 0, 0);
-      const curFillColor = my3D._renderer.curFillColor;
+      const curFillColor = my3D._renderer.states.curFillColor;
       my3D.erase();
       assert.deepEqual(my3D._renderer._cachedFillStyle, curFillColor);
     });
 
     test.todo('should cache renderer stroke', function() {
       my3D.stroke(255, 0, 0);
-      const strokeStyle = my3D._renderer.curStrokeColor;
+      const strokeStyle = my3D._renderer.states.curStrokeColor;
       my3D.erase();
       assert.deepEqual(my3D._renderer._cachedStrokeStyle, strokeStyle);
     });
@@ -106,18 +106,18 @@ suite('color/Setting', function() {
 
     test('should set fill strength', function() {
       my3D.erase(125);
-      assert.deepEqual(my3D._renderer.curFillColor, [1, 1, 1, 125 / 255]);
+      assert.deepEqual(my3D._renderer.states.curFillColor, [1, 1, 1, 125 / 255]);
     });
 
     test('should set stroke strength', function() {
       my3D.erase(255, 50);
-      assert.deepEqual(my3D._renderer.curStrokeColor, [1, 1, 1, 50 / 255]);
+      assert.deepEqual(my3D._renderer.states.curStrokeColor, [1, 1, 1, 50 / 255]);
     });
 
     test('should set default values when no arguments', function() {
       my3D.erase();
-      assert.deepEqual(my3D._renderer.curFillColor, [1, 1, 1, 1]);
-      assert.deepEqual(my3D._renderer.curStrokeColor, [1, 1, 1, 1]);
+      assert.deepEqual(my3D._renderer.states.curFillColor, [1, 1, 1, 1]);
+      assert.deepEqual(my3D._renderer.states.curStrokeColor, [1, 1, 1, 1]);
     });
   });
 
@@ -158,7 +158,7 @@ suite('color/Setting', function() {
 
     test.todo('should restore cached renderer fill', function() {
       my3D.fill(255, 0, 0);
-      const fillStyle = my3D._renderer.curFillColor.slice();
+      const fillStyle = my3D._renderer.states.curFillColor.slice();
       my3D.erase();
       my3D.noErase();
       assert.deepEqual([1, 0, 0, 1], fillStyle);
@@ -166,7 +166,7 @@ suite('color/Setting', function() {
 
     test.todo('should restore cached renderer stroke', function() {
       my3D.stroke(255, 0, 0);
-      const strokeStyle = my3D._renderer.curStrokeColor.slice();
+      const strokeStyle = my3D._renderer.states.curStrokeColor.slice();
       my3D.erase();
       my3D.noErase();
       assert.deepEqual([1, 0, 0, 1], strokeStyle);

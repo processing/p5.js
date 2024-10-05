@@ -236,25 +236,25 @@ suite('p5.Shader', function() {
 
     test('Able to setUniform empty arrays', function() {
       myp5.shader(myp5._renderer._getLightShader());
-      var s = myp5._renderer.userFillShader;
+      var s = myp5._renderer.states.userFillShader;
 
       s.setUniform('uMaterialColor', []);
       s.setUniform('uLightingDirection', []);
     });
 
     test('Able to set shininess', function() {
-      assert.deepEqual(myp5._renderer._useShininess, 1);
+      assert.deepEqual(myp5._renderer.states._useShininess, 1);
       myp5.shininess(50);
-      assert.deepEqual(myp5._renderer._useShininess, 50);
+      assert.deepEqual(myp5._renderer.states._useShininess, 50);
     });
 
     test('Shader is reset after resetShader is called', function() {
       myp5.shader(myp5._renderer._getColorShader());
-      var prevShader = myp5._renderer.userFillShader;
+      var prevShader = myp5._renderer.states.userFillShader;
       assert.isTrue(prevShader !== null);
 
       myp5.resetShader();
-      var curShader = myp5._renderer.userFillShader;
+      var curShader = myp5._renderer.states.userFillShader;
       assert.isTrue(curShader === null);
     });
 

@@ -181,7 +181,7 @@ suite('p5.Geometry', function() {
         drawGeometry();
         myp5.pop();
         myp5.resetShader();
-        const regularImage = myp5._renderer.elt.toDataURL();
+        const regularImage = myp5._renderer.canvas.toDataURL();
 
         // Geometry mode
         myp5.fill(255);
@@ -192,7 +192,7 @@ suite('p5.Geometry', function() {
         myp5.model(geom);
         myp5.pop();
         myp5.resetShader();
-        const geometryImage = myp5._renderer.elt.toDataURL();
+        const geometryImage = myp5._renderer.canvas.toDataURL();
 
         assert.equal(regularImage, geometryImage);
       }

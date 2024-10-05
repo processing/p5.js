@@ -473,24 +473,49 @@ function cleanUpClassItems(data) {
     }
   }
 
+  // Reduce the amount of information in each function's overloads, while
+  // keeping all the essential data available.
   const flattenOverloads = funcObj => {
     const result = {};
 
+    const processOverload = overload => {
+      if (overload.params) {
+        return Object.values(overload.params).map(param => processOptionalParam(param));
+      }
+      return overload;
+    }
+
+    // To simplify `parameterData.json`, instead of having a separate field for
+    // optional parameters, we'll add a ? to the end of parameter type to
+    // indicate that it's optional.
+    const processOptionalParam = param => {
+      let type = param.type;
+      if (param.optional) {
+        type += '?';
+      }
+      return type;
+    }
+
+    // In some cases, even when the arguments are intended to mean different
+    // things, their types and order are identical. Since the exact meaning
+    // of the arguments is less important for parameter validation, we'll
+    // perform overload deduplication here.
+    const removeDuplicateOverloads = (overload, uniqueOverloads) => {
+      const overloadString = JSON.stringify(overload);
+      if (uniqueOverloads.has(overloadString)) {
+        return false;
+      }
+      uniqueOverloads.add(overloadString);
+      return true;
+    }
+
     for (const [key, value] of Object.entries(funcObj)) {
       if (value && typeof value === 'object' && value.overloads) {
+        const uniqueOverloads = new Set();
         result[key] = {
-          overloads: Object.values(value.overloads).map(overload => {
-            if (overload.params) {
-              return Object.values(overload.params).map(param => {
-                let type = param.type;
-                if (param.optional) {
-                  type += '?';
-                }
-                return type;
-              });
-            }
-            return overload;
-          })
+          overloads: Object.values(value.overloads)
+            .map(overload => processOverload(overload))
+            .filter(overload => removeDuplicateOverloads(overload, uniqueOverloads))
         };
       } else {
         result[key] = value;
@@ -517,6 +542,11 @@ function buildParamDocs(docs) {
   for (let classitem of docs.classitems) {
     // If `classitem` doesn't have overloads, then it's not a function—skip processing in this case
     if (classitem.name && classitem.class && classitem.hasOwnProperty('overloads')) {
+      // Skip if the item already exists in newClassItems
+      if (newClassItems[classitem.class] && newClassItems[classitem.class][classitem.name]) {
+        continue;
+      }
+
       // Clean up fields that will not be used in each classitem's overloads
       classitem.overloads?.forEach(overload => {
         delete overload.line;
