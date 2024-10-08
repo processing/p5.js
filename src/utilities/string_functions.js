@@ -252,6 +252,9 @@ p5.prototype.matchAll = function(str, reg) {
  *   let formatted = nf(number);
  *   text(formatted, 20, 25);
  *
+ *   let negative = nf(-number, 4, 2);
+ *   text(negative, 20, 37);
+ *
  *   // Display the number with four digits
  *   // to the left of the decimal.
  *   let left = nf(number, 4);
