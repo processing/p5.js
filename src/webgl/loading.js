@@ -1176,15 +1176,14 @@ p5.prototype.model = function(model) {
  * f     6 5 4
  * f     6 4 3
  * f     6 3 2
- * f     6 2 1
- * f     6 1 5
+ * f     6 2 5
  * `;
  * //draw a spinning octahedron
  * let octahedron;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   octahedron = createModel(octahedron_model);
+ *   octahedron = createModel(octahedron_model, '.obj');
  *   describe('Vertically rotating 3D octahedron.');
  * }
  *
