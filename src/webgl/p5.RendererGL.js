@@ -2,12 +2,7 @@ import p5 from '../core/main';
 import * as constants from '../core/constants';
 import GeometryBuilder from './GeometryBuilder';
 import libtess from 'libtess'; // Fixed with exporting module from libtess
-import './p5.Shader';
-import './p5.Camera';
 import Renderer from '../core/p5.Renderer';
-import './p5.Matrix';
-import './p5.Framebuffer';
-import { MipmapTexture } from './p5.Texture';
 
 const STROKE_CAP_ENUM = {};
 const STROKE_JOIN_ENUM = {};
@@ -614,6 +609,8 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.states.userStrokeShader = undefined;
     this.states.userPointShader = undefined;
 
+    this._useUserVertexProperties = undefined;
+
     // Default drawing is done in Retained Mode
     // Geometry and Material hashes stored here
     this.retainedMode = {
@@ -637,7 +634,8 @@ p5.RendererGL = class RendererGL extends Renderer {
         text: [
           new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
           new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
-        ]
+        ],
+        user:[]
       }
     };
 
@@ -665,7 +663,8 @@ p5.RendererGL = class RendererGL extends Renderer {
           new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this),
           new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
         ],
-        point: this.GL.createBuffer()
+        point: this.GL.createBuffer(),
+        user:[]
       }
     };
 
@@ -1774,7 +1773,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     return this._getImmediateLineShader();
   }
 
-  materialShader() {
+  baseMaterialShader() {
     if (!this._pInst._glAttributes.perPixelLighting) {
       throw new Error(
         'The material shader does not support hooks without perPixelLighting. Try turning it back on.'
@@ -1848,7 +1847,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     return this._defaultImmediateModeShader;
   }
 
-  normalShader() {
+  baseNormalShader() {
     return this._getNormalShader();
   }
 
@@ -1883,7 +1882,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     return this._defaultNormalShader;
   }
 
-  colorShader() {
+  baseColorShader() {
     return this._getColorShader();
   }
 
@@ -1974,7 +1973,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     return this._defaultPointShader;
   }
 
-  strokeShader() {
+  baseStrokeShader() {
     return this._getLineShader();
   }
 
@@ -2163,7 +2162,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     }
     // Free the Framebuffer
     framebuffer.remove();
-    tex = new MipmapTexture(this, levels, {});
+    tex = new p5.MipmapTexture(this, levels, {});
     this.specularTextures.set(input, tex);
     return tex;
   }
@@ -2181,15 +2180,15 @@ p5.RendererGL = class RendererGL extends Renderer {
     return new p5.Framebuffer(this, options);
   }
 
-  _setStrokeUniforms(strokeShader) {
-    strokeShader.bindShader();
+  _setStrokeUniforms(baseStrokeShader) {
+    baseStrokeShader.bindShader();
 
     // set the uniform values
-    strokeShader.setUniform('uUseLineColor', this._useLineColor);
-    strokeShader.setUniform('uMaterialColor', this.states.curStrokeColor);
-    strokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
-    strokeShader.setUniform('uStrokeCap', STROKE_CAP_ENUM[this.curStrokeCap]);
-    strokeShader.setUniform('uStrokeJoin', STROKE_JOIN_ENUM[this.curStrokeJoin]);
+    baseStrokeShader.setUniform('uUseLineColor', this._useLineColor);
+    baseStrokeShader.setUniform('uMaterialColor', this.states.curStrokeColor);
+    baseStrokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
+    baseStrokeShader.setUniform('uStrokeCap', STROKE_CAP_ENUM[this.curStrokeCap]);
+    baseStrokeShader.setUniform('uStrokeJoin', STROKE_JOIN_ENUM[this.curStrokeJoin]);
   }
 
   _setFillUniforms(fillShader) {
@@ -2405,6 +2404,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     return p;
   }
   _initTessy() {
+    this.tessyVertexSize = 12;
     // function called for each vertex of tesselator output
     function vertexCallback(data, polyVertArray) {
       for (const element of data) {
@@ -2423,8 +2423,8 @@ p5.RendererGL = class RendererGL extends Renderer {
       console.log(`error number: ${errno}`);
     }
     // callback for when segments intersect and must be split
-    function combinecallback(coords, data, weight) {
-      const result = new Array(p5.RendererGL.prototype.tessyVertexSize).fill(0);
+    const combinecallback = (coords, data, weight) => {
+      const result = new Array(this.tessyVertexSize).fill(0);
       for (let i = 0; i < weight.length; i++) {
         for (let j = 0; j < result.length; j++) {
           if (weight[i] === 0 || !data[i]) continue;
@@ -2432,7 +2432,7 @@ p5.RendererGL = class RendererGL extends Renderer {
         }
       }
       return result;
-    }
+    };
 
     function edgeCallback(flag) {
       // don't really care about the flag, but need no-strip/no-fan behavior
@@ -2464,7 +2464,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       for (
         let j = 0;
         j < contour.length;
-        j += p5.RendererGL.prototype.tessyVertexSize
+        j += this.tessyVertexSize
       ) {
         if (contour[j + 2] !== z) {
           allSameZ = false;
@@ -2487,11 +2487,11 @@ p5.RendererGL = class RendererGL extends Renderer {
       for (
         let j = 0;
         j < contour.length;
-        j += p5.RendererGL.prototype.tessyVertexSize
+        j += this.tessyVertexSize
       ) {
         const coords = contour.slice(
           j,
-          j + p5.RendererGL.prototype.tessyVertexSize
+          j + this.tessyVertexSize
         );
         this._tessy.gluTessVertex(coords, coords);
       }
@@ -2513,9 +2513,5 @@ p5.prototype._assert3d = function (name) {
       `${name}() is only supported in WEBGL mode. If you'd like to use 3D graphics and WebGL, see  https://p5js.org/examples/form-3d-primitives.html for more information.`
     );
 };
-
-// function to initialize GLU Tesselator
-
-p5.RendererGL.prototype.tessyVertexSize = 12;
 
 export default p5.RendererGL;
