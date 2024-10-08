@@ -34,6 +34,35 @@ suite('p5.Font', function() {
       assert.property(bbox, 'w');
       assert.property(bbox, 'h');
     });
+
+    test('returns null and logs an error when a number is passed instead of text', async function() {
+      const errorLog = await promisedSketch(function(sketch, resolve, reject){
+        let _font;
+        let invalidText = 10;
+        sketch.preload = function() {
+          _font = sketch.loadFont('path/to/valid/font.ttf', function() {}, reject);
+        };
+        sketch.setup = function() {
+          console.error = function(message) {
+            // Check if the error message contains the expected substring
+            if (message.includes('Error: Text parameter must be a string.')) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          };
+
+          let _bbox = _font.textBounds(invalidText, 0, 0, 12);
+          if (_bbox === null) {
+            resolve(false);
+          } else {
+            resolve(false);
+          }
+        };
+      });
+
+      assert.isTrue(errorLog, 'Error was logged for invalid text parameter');
+    });
   });
 
   suite('p5.Font.prototype.textToPoints', function() {
