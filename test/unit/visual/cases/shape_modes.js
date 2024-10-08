@@ -43,7 +43,7 @@ function shapeCorners(p5, shape, mode, x1, y1, x2, y2) {
     p5.ellipse(x1, y1, x2, y2);
   } else if (shape === 'arc') {
     // Draw four arcs with gaps inbetween
-    const GAP = p5.radians(30);
+    const GAP = p5.radians(20);
     p5.ellipseMode(mode);
     p5.arc(x1, y1, x2, y2, 0 + GAP, p5.HALF_PI - GAP);
     p5.arc(x1, y1, x2, y2, p5.HALF_PI + GAP, p5.PI - GAP);
@@ -75,7 +75,7 @@ visualSuite('Shape Modes', function(...args) {
 
       for (let mode of MODES) {
         visualTest(`Mode ${mode}`, function(p5, screenshot) {
-          p5.createCanvas(240, 500);
+          p5.createCanvas(60, 125);
           p5.translate(p5.width/2, p5.height/2);
 
           // Make the following calls to shapeCorners shorter
@@ -85,29 +85,29 @@ visualSuite('Shape Modes', function(...args) {
           }
 
           // Quadrant I (Bottom Right)
-          //                P1        P2
-          _shapeCorners( 10, 10,  110,  60); // P1 Top Left,     P2 Bottom Right
-          _shapeCorners( 10, 120, 110,  70); // P1 Bottom Left,  P2 Top Right
-          _shapeCorners(110, 180,  10, 130); // P1 Bottom Right, P2 Top Left
-          _shapeCorners(110, 190,  10, 240); // P1 Top Right,    P2 Bottom Left
+          //              P1      P2
+          _shapeCorners( 5,  5, 25, 15); // P1 Top Left,     P2 Bottom Right
+          _shapeCorners( 5, 20, 25, 30); // P1 Bottom Left,  P2 Top Right
+          _shapeCorners(25, 45,  5, 35); // P1 Bottom Right, P2 Top Left
+          _shapeCorners(25, 50,  5, 60); // P1 Top Right,    P2 Bottom Left
 
           // Quadrant II (Bottom Left)
-          _shapeCorners(-110,  10,  -10,  60);
-          _shapeCorners(-110, 120,  -10,  70);
-          _shapeCorners(-10,  180, -110, 130);
-          _shapeCorners(-10,  190, -110, 240);
+          _shapeCorners(-25,  5,  -5, 15);
+          _shapeCorners(-25, 20,  -5, 30);
+          _shapeCorners( -5, 45, -25, 35);
+          _shapeCorners( -5, 50, -25, 60);
 
           // Quadrant III (Top Left)
-          _shapeCorners(-110, -240,  -10, -190);
-          _shapeCorners(-110, -130,  -10, -180);
-          _shapeCorners(-10,   -70, -110, -120);
-          _shapeCorners(-10,   -60, -110,  -10);
+          _shapeCorners(-25, -60,  -5, -50);
+          _shapeCorners(-25, -35,  -5, -45);
+          _shapeCorners( -5, -20, -25, -30);
+          _shapeCorners( -5, -15, -25,  -5);
 
           // Quadrant IV (Top Right)
-          _shapeCorners( 10, -240, 110, -190);
-          _shapeCorners( 10, -130, 110, -180);
-          _shapeCorners(110,  -70,  10, -120);
-          _shapeCorners(110,  -60,  10,  -10);
+          _shapeCorners( 5, -60, 25, -50);
+          _shapeCorners( 5, -35, 25, -45);
+          _shapeCorners(25, -20,  5, -30);
+          _shapeCorners(25, -15,  5,  -5);
 
           screenshot();
         }); // End of: visualTest
