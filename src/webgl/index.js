@@ -12,6 +12,7 @@ import framebuffer from './p5.Framebuffer';
 import dataArray from './p5.DataArray';
 import shader from './p5.Shader';
 import camera from './p5.Camera';
+import texture from './p5.Texture';
 
 export default function(p5){
   primitives3D(p5, p5.prototype);
@@ -28,4 +29,5 @@ export default function(p5){
   framebuffer(p5, p5.prototype);
   dataArray(p5, p5.prototype);
   shader(p5, p5.prototype);
+  texture(p5, p5.prototype);
 }
