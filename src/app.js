@@ -8,7 +8,7 @@ import './core/friendly_errors/file_errors';
 import './core/friendly_errors/fes_core';
 import './core/friendly_errors/sketch_reader';
 import './core/helpers';
-import './core/legacy';
+// import './core/legacy';
 // import './core/preload';
 import './core/p5.Element';
 import './core/p5.Graphics';
@@ -16,11 +16,10 @@ import './core/p5.Graphics';
 import './core/p5.Renderer2D';
 import './core/rendering';
 import './core/structure';
-import './core/transform';
-import './core/shape/2d_primitives';
-import './core/shape/attributes';
-import './core/shape/curves';
-import './core/shape/vertex';
+import transform from './core/transform';
+p5.registerAddon(transform);
+import shape from './shape';
+shape(p5);
 
 //accessibility
 import accessibility from './accessibility';

@@ -18,8 +18,15 @@ import * as constants from '../core/constants';
  * @param {Boolean} [isMainCanvas] whether we're using it as main canvas
  */
 p5.Renderer = class Renderer {
-  constructor(elt, pInst, isMainCanvas) {
+  constructor(pInst, w, h, isMainCanvas) {
     this._pInst = this._pixelsState = pInst;
+    this._isMainCanvas = isMainCanvas;
+    this.pixels = [];
+    this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
+
+    this.width = w;
+    this.height = h;
+
     this._events = {};
 
     if (isMainCanvas) {
@@ -54,11 +61,22 @@ p5.Renderer = class Renderer {
     this._curveTightness = 0;
   }
 
-  createCanvas(w, h) {
-    this.width = w;
-    this.height = h;
-    this._pInst.width = this.width;
-    this._pInst.height = this.height;
+  remove() {
+
+  }
+
+  pixelDensity(val){
+    let returnValue;
+    if (typeof val === 'number') {
+      if (val !== this._pixelDensity) {
+        this._pixelDensity = val;
+      }
+      returnValue = this;
+      this.resize(this.width, this.height);
+    } else {
+      returnValue = this._pixelDensity;
+    }
+    return returnValue;
   }
 
   // Makes a shallow copy of the current states
@@ -101,20 +119,16 @@ p5.Renderer = class Renderer {
   }
 
   /**
- * Resize our canvas element.
- */
+   * Resize our canvas element.
+   */
   resize(w, h) {
     this.width = w;
     this.height = h;
-    if (this._isMainCanvas) {
-      this._pInst.width = this.width;
-      this._pInst.height = this.height;
-    }
   }
 
   get(x, y, w, h) {
     const pixelsState = this._pixelsState;
-    const pd = pixelsState._pixelDensity;
+    const pd = this._pixelDensity;
     const canvas = this.canvas;
 
     if (typeof x === 'undefined' && typeof y === 'undefined') {
@@ -144,6 +158,10 @@ p5.Renderer = class Renderer {
       .drawImage(canvas, x, y, w * pd, h * pd, 0, 0, w*pd, h*pd);
 
     return region;
+  }
+
+  scale(x, y){
+
   }
 
   textSize(s) {

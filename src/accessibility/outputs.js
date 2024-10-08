@@ -547,8 +547,8 @@ function outputs(p5, fn){
       this.drawingContext.getTransform();
     const { x: transformedX, y: transformedY } = untransformedPosition
       .matrixTransform(currentTransform);
-    const canvasWidth = this.width * this._pixelDensity;
-    const canvasHeight = this.height * this._pixelDensity;
+    const canvasWidth = this.width * this._renderer._pixelDensity;
+    const canvasHeight = this.height * this._renderer._pixelDensity;
     if (transformedX < 0.4 * canvasWidth) {
       if (transformedY < 0.4 * canvasHeight) {
         return 'top left';
@@ -653,8 +653,8 @@ function outputs(p5, fn){
       // (Ax( By −  Cy) + Bx(Cy − Ay) + Cx(Ay − By ))/2
     }
     //  Store the positions of the canvas corners
-    const canvasWidth = this.width * this._pixelDensity;
-    const canvasHeight = this.height * this._pixelDensity;
+    const canvasWidth = this.width * this._renderer._pixelDensity;
+    const canvasHeight = this.height * this._renderer._pixelDensity;
     const canvasCorners = [
       new DOMPoint(0, 0),
       new DOMPoint(canvasWidth, 0),

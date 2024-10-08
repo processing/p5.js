@@ -876,7 +876,11 @@ p5.prototype._updateWindowSize = function() {
  * @property {Number} width
  * @readOnly
  */
-p5.prototype.width = 0;
+Object.defineProperty(p5.prototype, 'width', {
+  get(){
+    return this._renderer.width;
+  }
+});
 
 /**
  * A `Number` variable that stores the height of the canvas in pixels.
@@ -945,7 +949,11 @@ p5.prototype.width = 0;
  * @property {Number} height
  * @readOnly
  */
-p5.prototype.height = 0;
+Object.defineProperty(p5.prototype, 'height', {
+  get(){
+    return this._renderer.height;
+  }
+});
 
 /**
  * Toggles full-screen mode or returns the current mode.
@@ -1064,13 +1072,13 @@ p5.prototype.pixelDensity = function(val) {
   p5._validateParameters('pixelDensity', arguments);
   let returnValue;
   if (typeof val === 'number') {
-    if (val !== this._pixelDensity) {
-      this._pixelDensity = this._maxAllowedPixelDimensions = val;
+    if (val !== this._renderer._pixelDensity) {
+      this._renderer._pixelDensity = val;
     }
     returnValue = this;
     this.resizeCanvas(this.width, this.height, true); // as a side effect, it will clear the canvas
   } else {
-    returnValue = this._pixelDensity;
+    returnValue = this._renderer._pixelDensity;
   }
   return returnValue;
 };

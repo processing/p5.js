@@ -428,23 +428,18 @@ export function readPixelWebGL(
  * rendering (FBO).
  */
 p5.RendererGL = class RendererGL extends Renderer {
-  constructor(elt, pInst, isMainCanvas, attr) {
-    super(elt, pInst, isMainCanvas);
-    this.elt = elt;
-    this.canvas = elt;
-    this._setAttributeDefaults(pInst);
+  constructor(pInst, w, h, isMainCanvas, elt, attr) {
+    super(pInst, w, h, isMainCanvas);
+
+    // Create new canvas
+    this.canvas = this.elt = elt || document.createElement('canvas');
     this._initContext();
-    this.isP3D = true; //lets us know we're in 3d mode
-
-    // When constructing a new p5.Geometry, this will represent the builder
-    this.geometryBuilder = undefined;
-
     // This redundant property is useful in reminding you that you are
     // interacting with WebGLRenderingContext, still worth considering future removal
     this.GL = this.drawingContext;
     this._pInst.drawingContext = this.drawingContext;
 
-    if (isMainCanvas) {
+    if (this._isMainCanvas) {
       // for pixel method sharing with pimage
       this._pInst._curElement = this;
       this._pInst.canvas = this.canvas;
@@ -452,6 +447,49 @@ p5.RendererGL = class RendererGL extends Renderer {
       // hide if offscreen buffer by default
       this.canvas.style.display = 'none';
     }
+    this.elt.id = 'defaultCanvas0';
+    this.elt.classList.add('p5Canvas');
+
+    const dimensions = this._adjustDimensions(w, h);
+    w = dimensions.adjustedWidth;
+    h = dimensions.adjustedHeight;
+
+    this.width = w;
+    this.height = h;
+
+    // Set canvas size
+    this.elt.width = w * this._pixelDensity;
+    this.elt.height = h * this._pixelDensity;
+    this.elt.style.width = `${w}px`;
+    this.elt.style.height = `${h}px`;
+    this._origViewport = {
+      width: this.GL.drawingBufferWidth,
+      height: this.GL.drawingBufferHeight
+    };
+    this.viewport(
+      this._origViewport.width,
+      this._origViewport.height
+    );
+
+    // Attach canvas element to DOM
+    if (this._pInst._userNode) {
+      // user input node case
+      this._pInst._userNode.appendChild(this.elt);
+    } else {
+      //create main element
+      if (document.getElementsByTagName('main').length === 0) {
+        let m = document.createElement('main');
+        document.body.appendChild(m);
+      }
+      //append canvas to main
+      document.getElementsByTagName('main')[0].appendChild(this.elt);
+    }
+
+    this._setAttributeDefaults(pInst);
+    this.isP3D = true; //lets us know we're in 3d mode
+
+    // When constructing a new p5.Geometry, this will represent the builder
+    this.geometryBuilder = undefined;
 
     // Push/pop state
     this.states.uModelMatrix = new p5.Matrix();
@@ -522,8 +560,6 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.diffusedTextures = new Map();
     // p5.framebuffer for this are calculated in getSpecularTexture function
     this.specularTextures = new Map();
-
-
 
     this.preEraseBlend = undefined;
     this._cachedBlendMode = undefined;
@@ -763,7 +799,7 @@ p5.RendererGL = class RendererGL extends Renderer {
   }
 
   _initContext() {
-    if (this._pInst._glAttributes.version !== 1) {
+    if (this._pInst._glAttributes?.version !== 1) {
       // Unless WebGL1 is explicitly asked for, try to create a WebGL2 context
       this.drawingContext =
         this.canvas.getContext('webgl2', this._pInst._glAttributes);
@@ -807,10 +843,9 @@ p5.RendererGL = class RendererGL extends Renderer {
       this._maxTextureSize = this._getMaxTextureSize();
     }
     let maxTextureSize = this._maxTextureSize;
-    let maxAllowedPixelDimensions = p5.prototype._maxAllowedPixelDimensions;
 
-    maxAllowedPixelDimensions = Math.floor(
-      maxTextureSize / this.pixelDensity()
+    let maxAllowedPixelDimensions = Math.floor(
+      maxTextureSize / this._pixelDensity
     );
     let adjustedWidth = Math.min(
       width, maxAllowedPixelDimensions
@@ -864,17 +899,15 @@ p5.RendererGL = class RendererGL extends Renderer {
     }
 
     const renderer = new p5.RendererGL(
-      this._pInst.canvas,
       this._pInst,
-      !isPGraphics
+      w,
+      h,
+      !isPGraphics,
+      this._pInst.canvas,
     );
     this._pInst._renderer = renderer;
-    renderer.resize(w, h);
-    renderer._applyDefaults();
 
-    if (!isPGraphics) {
-      this._pInst._elements.push(renderer);
-    }
+    renderer._applyDefaults();
 
     if (typeof callback === 'function') {
       //setTimeout with 0 forces the task to the back of the queue, this ensures that
@@ -1369,7 +1402,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       return;
     }
 
-    const pd = this._pInst._pixelDensity;
+    const pd = this._pixelDensity;
     const gl = this.GL;
 
     pixelsState.pixels =
@@ -1441,9 +1474,26 @@ p5.RendererGL = class RendererGL extends Renderer {
  * @param  {Number} h [description]
  */
   resize(w, h) {
-    Renderer.prototype.resize.call(this, w, h);
-    this.canvas.width = w * this._pInst._pixelDensity;
-    this.canvas.height = h * this._pInst._pixelDensity;
+    super.resize(w, h);
+
+    // save canvas properties
+    const props = {};
+    for (const key in this.drawingContext) {
+      const val = this.drawingContext[key];
+      if (typeof val !== 'object' && typeof val !== 'function') {
+        props[key] = val;
+      }
+    }
+
+    const dimensions = this._adjustDimensions(w, h);
+    w = dimensions.adjustedWidth;
+    h = dimensions.adjustedHeight;
+
+    this.width = w;
+    this.height = h;
+
+    this.canvas.width = w * this._pixelDensity;
+    this.canvas.height = h * this._pixelDensity;
     this.canvas.style.width = `${w}px`;
     this.canvas.style.height = `${h}px`;
     this._origViewport = {
@@ -1470,6 +1520,15 @@ p5.RendererGL = class RendererGL extends Renderer {
       // Notify framebuffers of the resize so that any auto-sized framebuffers
       // can also update their size
       framebuffer._canvasSizeChanged();
+    }
+
+    // reset canvas properties
+    for (const savedKey in props) {
+      try {
+        this.drawingContext[savedKey] = props[savedKey];
+      } catch (err) {
+        // ignore read-only property errors
+      }
     }
   }
 
@@ -2248,7 +2307,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     // should be they be same var?
     pointShader.setUniform(
       'uPointSize',
-      this.pointSize * this._pInst._pixelDensity
+      this.pointSize * this._pixelDensity
     );
   }
 
