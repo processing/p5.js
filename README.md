@@ -1069,6 +1069,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="http://www.lukeplowden.com"><img src="https://avatars.githubusercontent.com/u/62835749?v=4?s=120" width="120px;" alt="Luke Plowden"/><br /><sub><b>Luke Plowden</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=lukeplowden" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/martinleopold"><img src="https://avatars.githubusercontent.com/u/1692826?v=4?s=120" width="120px;" alt="Martin Leopold"/><br /><sub><b>Martin Leopold</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Amartinleopold" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=martinleopold" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://www.linkedin.com/in/ashish1729/"><img src="https://avatars.githubusercontent.com/u/10610651?v=4?s=120" width="120px;" alt="ashish singh"/><br /><sub><b>ashish singh</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ashish1729" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
