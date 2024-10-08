@@ -222,6 +222,9 @@ p5.prototype.matchAll = function(str, reg) {
  * then unused decimal places will be set to 0. For example, calling
  * `nf(123.45, 4, 3)` returns the string `'0123.450'`.
  *
+ * When the number is negative, for example, calling `nf(-123.45, 5, 2)`
+ * returns the string `'-00123.45'`.
+ *
  * @method nf
  * @param {Number|String} num number to format.
  * @param {Integer|String} [left] number of digits to include to the left of
