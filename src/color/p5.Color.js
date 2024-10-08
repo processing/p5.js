@@ -379,6 +379,7 @@ p5.Color = class Color {
    * 'rgb%' 'hsb%' 'hsl%' 'rgba%' 'hsba%' and 'hsla%' format as percentages.
    * @return {String} the formatted string.
    *
+   * @example
    * <div>
    * <code>
    * function setup() {
