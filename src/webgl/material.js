@@ -869,6 +869,7 @@ p5.prototype.shader = function (s) {
   // Always set the shader as a fill shader
   this._renderer.userFillShader = s;
   this._renderer._useNormalMaterial = false;
+  s.setDefaultUniforms();
 
   return this;
 };

@@ -1764,7 +1764,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     }
     // Check if the fill shader is a texture shader
     const fill = this.userFillShader;
-    if(fill && !fill.isTextureShader()){
+    if(fill){
       return fill;
     }
     // Return the appropriate light shader if lighting is enabled or it's a texture shader
