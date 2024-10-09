@@ -1334,6 +1334,23 @@ p5.Shader = class Shader {
    *
    **/
 
+  isLightShader() {
+    return [
+      this.attributes.aNormal,
+      this.uniforms.uUseLighting,
+      this.uniforms.uAmbientLightCount,
+      this.uniforms.uDirectionalLightCount,
+      this.uniforms.uPointLightCount,
+      this.uniforms.uAmbientColor,
+      this.uniforms.uDirectionalDiffuseColors,
+      this.uniforms.uDirectionalSpecularColors,
+      this.uniforms.uPointLightLocation,
+      this.uniforms.uPointLightDiffuseColors,
+      this.uniforms.uPointLightSpecularColors,
+      this.uniforms.uLightingDirection,
+      this.uniforms.uSpecular
+    ].some(x => x !== undefined);
+  }
 
   isNormalShader() {
     return this.attributes.aNormal !== undefined;
@@ -1352,6 +1369,10 @@ p5.Shader = class Shader {
 
   isTexLightShader() {
     return this.isLightShader() && this.isTextureShader();
+  }
+
+  isStrokeShader(){
+    return this.uniforms.uStrokeWeight !== undefined;
   }
 
   /**

@@ -251,14 +251,6 @@ p5.RendererGL.prototype.endShape = function(
       !this.geometryBuilder &&
       this.immediateMode.geometry.vertices.length >= 3
     ) {
-      let imgShader = this._getRetainedImageShader();
-      let fillShader = this._getImmediateFillShader();
-      // Check if the texture mode is IMAGE, apply the image shader, else apply the fill shader
-      if (this.textureMode === constants.IMAGE && imgShader) {
-        imageShader(imgShader); 
-      } else {
-        strokeShader(fillShader);
-      }
       this._drawImmediateFill(count);
     }
   }

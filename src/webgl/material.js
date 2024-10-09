@@ -889,103 +889,11 @@ p5.prototype.shader = function (s) {
  * @param {p5.Shader} s <a href="#/p5.Shader">p5.Shader</a> object
  *                      to apply for strokes.
  *
- * @example
- * <div modernizr='webgl'>
- * <code>
- * // Example: Custom stroke with 3D perspective and dynamic scaling
- * let myStrokeShader;
- * let vertSrc = `
- *
- * precision mediump int;
- *
- * uniform mat4 uModelViewMatrix;
- * uniform mat4 uProjectionMatrix;
- * uniform float uStrokeWeight;
- *
- * uniform bool uUseLineColor;
- * uniform vec4 uMaterialColor;
- *
- * uniform vec4 uViewport;
- * uniform int uPerspective;
- * uniform int uStrokeJoin;
- *
- * attribute vec4 aPosition;
- * attribute vec3 aTangentIn;
- * attribute vec3 aTangentOut;
- * attribute float aSide;
- * attribute vec4 aVertexColor;
- *
- * void main() {
- *   vec4 posp = uModelViewMatrix * aPosition;
- *   vec4 posqIn = uModelViewMatrix * (aPosition + vec4(aTangentIn, 0));
- *   vec4 posqOut = uModelViewMatrix * (aPosition + vec4(aTangentOut, 0));
- *
- *   float facingCamera = pow(
- *     abs(normalize(posqIn-posp).z),
- *     0.25
- *   );
- *
- *   float scale = mix(1., 0.995, facingCamera);
- *
- *   posp.xyz = posp.xyz * scale;
- *   posqIn.xyz = posqIn.xyz * scale;
- *   posqOut.xyz = posqOut.xyz * scale;
- *
- *   vec4 p = uProjectionMatrix * posp;
- *   vec4 qIn = uProjectionMatrix * posqIn;
- *   vec4 qOut = uProjectionMatrix * posqOut;
- *
- *   vec2 tangentIn = normalize((qIn.xy*p.w - p.xy*qIn.w) * uViewport.zw);
- *   vec2 tangentOut = normalize((qOut.xy*p.w - p.xy*qOut.w) * uViewport.zw);
- *
- *   vec2 curPerspScale;
- *   if(uPerspective == 1) {
- *     curPerspScale = (uProjectionMatrix * vec4(1, sign(uProjectionMatrix[1][1]), 0, 0)).xy;
- *   } else {
- *     curPerspScale = p.w / (0.5 * uViewport.zw);
- *   }
- *
- *   vec2 offset;
- *   vec2 tangent = aTangentIn == vec3(0.) ? tangentOut : tangentIn;
- *   vec2 normal = vec2(-tangent.y, tangent.x);
- *   float normalOffset = sign(aSide);
- *   float tangentOffset = abs(aSide) - 1.;
- *   offset = (normal * normalOffset + tangent * tangentOffset) *
- *     uStrokeWeight * 0.5;
- *
- *   gl_Position.xy = p.xy + offset.xy * curPerspScale;
- *   gl_Position.zw = p.zw;
- * }
- * `;
-
- * let fragSrc = `
- * precision mediump float;
- *
- * void main() {
- *   gl_FragColor = vec4(0.0, 0.5, 1.0, 1.0);  // Force blue color for stroke
- * }
- * `;
-
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *   myStrokeShader = createShader(vertSrc, fragSrc);
- *   strokeShader(myStrokeShader);
- *   strokeWeight(5);
- * }
-
- * function draw() {
- *   background(255);  // White background
- *   rotateY(frameCount * 0.01);  // Rotate box
- *   noFill();  // Only stroke for the box
- *   box(50);  // Draw 3D box
- * }
- * </code>
- * </div>
  *
  * @example
  * <div modernizr='webgl'>
  * <code>
- * // Example 3: Animated stroke shader with time-based color change
+ * // Animated stroke shader with time-based color change
  * let animatedStrokeShader;
  *
  * let vertSrc = `
@@ -1074,6 +982,51 @@ p5.prototype.shader = function (s) {
  *   rotateY(frameCount * 0.02);  // Rotate box
  *   noFill();  // Only stroke for the box
  *   box(50);  // Draw 3D box
+ * }
+ * </code>
+ * </div>
+ * 
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseStrokeShader().modify({
+ *     'float random': `(vec2 p) {
+ *       vec3 p3  = fract(vec3(p.xyx) * .1471); 
+ *       p3 += dot(p3, p3.yzx + 32.33);  
+ *       return fract((p3.x + p3.y) * p3.z);
+ *     }`,
+ *     'Inputs getPixelInputs': `(Inputs inputs) {
+ *       // Modify alpha with dithering effect
+ *       float a = inputs.color.a;
+ *       inputs.color.a = 1.0;
+ *       inputs.color *= random(inputs.position.xy) > a ? 0.0 : 1.0;
+ *       return inputs;
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   strokeShader(myShader);
+ *   strokeWeight(12); 
+ *   beginShape();
+ *   for (let i = 0; i <= 50; i++) {
+ *     stroke(
+ *       map(i, 0, 50, 150, 255),  
+ *       100 + 155 * sin(i / 5),   
+ *       255 * map(i, 0, 50, 1, 0) 
+ *     );
+ *     vertex(
+ *       map(i, 0, 50, 1, -1) * width / 3,
+ *       50 * cos(i / 10 + frameCount / 80) 
+ *     );
+ *   }
+ *   endShape();
  * }
  * </code>
  * </div>
@@ -1774,7 +1727,7 @@ p5.prototype.baseColorShader = function() {
  *
  * function draw() {
  *   background(255);
- *   shader(myShader);
+ *   strokeShader(myShader);
  *   strokeWeight(30);
  *   line(
  *     -width/3,
@@ -1817,7 +1770,7 @@ p5.prototype.baseColorShader = function() {
  *
  * function draw() {
  *   background(255);
- *   shader(myShader);
+ *   strokeShader(myShader);
  *   myShader.setUniform('time', millis());
  *   strokeWeight(10);
  *   beginShape();
@@ -1858,7 +1811,7 @@ p5.prototype.baseColorShader = function() {
  *
  * function draw() {
  *   background(255);
- *   shader(myShader);
+ *   strokeShader(myShader);
  *   strokeWeight(10);
  *   beginShape();
  *   for (let i = 0; i <= 50; i++) {
