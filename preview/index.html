@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>P5 test</title>
   <meta http-equiv="pragma" content="no-cache" />
@@ -7,35 +8,37 @@
   <meta charset="utf-8">
 
   <style>
-  body{
-    margin:0;
-    overflow: hidden;
-  }
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
   </style>
 </head>
+
 <body>
-<script type="module">
-import p5 from '../src/app.js';
-// import calculation from './src/math/calculation.js';
+  <script type="module">
+    import p5 from '../src/app.js';
+    // import calculation from './src/math/calculation.js';
 
-// p5.registerAddon(calculation);
+    // p5.registerAddon(calculation);
 
-const sketch = function(p){
-  p.setup = function(){
-    p.createCanvas(200, 200);
-  };
+    const sketch = function (p) {
+      p.setup = function () {
+        p.createCanvas(200, 200);
+      };
 
-  p.draw = function(){
-    p.background(0, 50, 50);
-    p.circle(100, 100, 50);
+      p.draw = function () {
+        p.background(0, 50, 50);
+        p.circle(100, 100, 50);
 
-    p.fill('white');
-    p.textSize(30);
-    p.text('hello', 10, 30);
-  };
-};
+        p.fill('white');
+        p.textSize(30);
+        p.text('hello', 10, 30);
+      };
+    };
 
-new p5(sketch);
-</script>
+    new p5(sketch);
+  </script>
 </body>
+
 </html>

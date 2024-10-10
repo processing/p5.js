@@ -13,6 +13,7 @@ var spec = {
     'param_errors',
     'preload',
     'rendering',
+    'sketch_overrides',
     'structure',
     'transform',
     'version',
