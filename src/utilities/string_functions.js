@@ -267,7 +267,7 @@ p5.prototype.matchAll = function(str, reg) {
  *   text(right, 20, 80);
  *
  *   describe(
- *     'The numbers "123.45", "0123.45", and "0123.5" written on three separate lines. The text is in black on a gray background.'
+ *     'The numbers "123.45", "-0123.45", "0123.45", and "0123.5" written on four separate lines. The text is in black on a gray background.'
  *   );
  * }
  * </code>
