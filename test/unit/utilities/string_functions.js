@@ -111,6 +111,12 @@ suite('String functions', function() {
       result = myp5.nf(num, 3, 0);
       assert.equal(result, '123');
     });
+
+    test('should return correct string', function() {
+      var num = -123;
+      result = myp5.nf(num, 5);
+      assert.equal(result, '-00123');
+    });
   });
 
   suite('p5.prototype.nfc', function() {

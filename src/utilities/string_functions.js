@@ -222,6 +222,9 @@ p5.prototype.matchAll = function(str, reg) {
  * then unused decimal places will be set to 0. For example, calling
  * `nf(123.45, 4, 3)` returns the string `'0123.450'`.
  *
+ * When the number is negative, for example, calling `nf(-123.45, 5, 2)`
+ * returns the string `'-00123.45'`.
+ *
  * @method nf
  * @param {Number|String} num number to format.
  * @param {Integer|String} [left] number of digits to include to the left of
@@ -247,21 +250,24 @@ p5.prototype.matchAll = function(str, reg) {
  *
  *   // Display the number as a string.
  *   let formatted = nf(number);
- *   text(formatted, 20, 25);
+ *   text(formatted, 20, 20);
+ *
+ *   let negative = nf(-number, 4, 2);
+ *   text(negative, 20, 40);
  *
  *   // Display the number with four digits
  *   // to the left of the decimal.
  *   let left = nf(number, 4);
- *   text(left, 20, 50);
+ *   text(left, 20, 60);
  *
  *   // Display the number with four digits
  *   // to the left of the decimal and one
  *   // to the right.
  *   let right = nf(number, 4, 1);
- *   text(right, 20, 75);
+ *   text(right, 20, 80);
  *
  *   describe(
- *     'The numbers "123.45", "0123.45", and "0123.5" written on three separate lines. The text is in black on a gray background.'
+ *     'The numbers "123.45", "-0123.45", "0123.45", and "0123.5" written on four separate lines. The text is in black on a gray background.'
  *   );
  * }
  * </code>
@@ -295,20 +301,21 @@ p5.prototype.nf = function(nums, left, right) {
 };
 
 function doNf(num, left, right) {
+  let isNegative = num < 0;
+  num = Math.abs(num);
   let [leftPart, rightPart] = num.toString().split('.');
+
 
   if (typeof right === 'undefined') {
     leftPart = leftPart.padStart(left, '0');
-    return rightPart ? leftPart + '.' + rightPart : leftPart;
+    let result = rightPart ? leftPart + '.' + rightPart : leftPart;
+    return isNegative ? '-' + result : result;
   } else {
     let roundedOff = num.toFixed(right);
     [leftPart, rightPart] = roundedOff.toString().split('.');
     leftPart = leftPart.padStart(left, '0');
-    if(typeof rightPart === 'undefined'){
-      return leftPart;
-    }else{
-      return leftPart + '.' + rightPart;
-    }
+    let result = typeof rightPart === 'undefined' ? leftPart : leftPart + '.' + rightPart;
+    return isNegative ? '-' + result : result;
   }
 }
 
