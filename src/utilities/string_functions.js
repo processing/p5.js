@@ -250,21 +250,21 @@ p5.prototype.matchAll = function(str, reg) {
  *
  *   // Display the number as a string.
  *   let formatted = nf(number);
- *   text(formatted, 20, 25);
+ *   text(formatted, 20, 20);
  *
  *   let negative = nf(-number, 4, 2);
- *   text(negative, 20, 37);
+ *   text(negative, 20, 40);
  *
  *   // Display the number with four digits
  *   // to the left of the decimal.
  *   let left = nf(number, 4);
- *   text(left, 20, 50);
+ *   text(left, 20, 60);
  *
  *   // Display the number with four digits
  *   // to the left of the decimal and one
  *   // to the right.
  *   let right = nf(number, 4, 1);
- *   text(right, 20, 75);
+ *   text(right, 20, 80);
  *
  *   describe(
  *     'The numbers "123.45", "0123.45", and "0123.5" written on three separate lines. The text is in black on a gray background.'
