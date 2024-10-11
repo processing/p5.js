@@ -484,7 +484,7 @@ The functionality described under `fesErrorMonitor()` currently only works on th
 
 ### Performance Issue with the FES
 
-By default, FES is enabled for p5.js and disabled in `p5.min.js` to prevent FES functions from slowing down the process. The error-checking system can significantly slow down your code (up to \~10x in some cases). See the [Friendly Error performance test](https://github.com/processing/p5.js-website/tree/main/src/assets/learn/performance/code/friendly-error-system).
+By default, FES is enabled for p5.js and disabled in `p5.min.js` to prevent FES functions from slowing down the process. The error-checking system can significantly slow down your code (up to \~10x in some cases). See the [Friendly Error performance test](https://github.com/poswalsameer/p5.js-poswalsameer/edit/main/contributor_docs/friendly_error_system.md).
 
 You can disable the FES with one line of code at the top of your sketch:
 
