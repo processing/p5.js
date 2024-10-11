@@ -1734,24 +1734,16 @@ p5.RendererGL = class RendererGL extends Renderer {
    * for use with begin/endShape and immediate vertex mode.
    */
   _getImmediateFillShader() {
-    const fill = this.userFillShader;
-    if (this._useNormalMaterial) {
-      if (!fill || !fill.isNormalShader()) {
-        return this._getNormalShader();
-      }
+    const fillShader = this.userFillShader;
+
+    if (fillShader) {
+      return fillShader;
     }
     if (this._enableLighting) {
-      if (!fill || !fill.isLightShader()) {
-        return this._getLightShader();
-      }
-    } else if (this._tex) {
-      if (!fill || !fill.isTextureShader()) {
-        return this._getLightShader();
-      }
-    } else if (!fill /*|| !fill.isColorShader()*/) {
-      return this._getImmediateModeShader();
+      return this._getLightShader();
     }
-    return fill;
+
+    return this._getImmediateModeShader();
   }
 
   /*
@@ -1786,12 +1778,10 @@ p5.RendererGL = class RendererGL extends Renderer {
 
   _getImmediateImageShader() {
     const imageShader = this.userImageShader;
-    if (this._tex) {
-      if (!imageShader || !imageShader.isTextureShader()) {
-        return this._getLightShader(); 
-      }
+    if(imageShader) {
+      return imageShader;
     }
-    return imageShader ; 
+    return this._getImmediateModeShader() ; 
   }
   
 

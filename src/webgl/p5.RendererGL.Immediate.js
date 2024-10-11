@@ -251,7 +251,18 @@ p5.RendererGL.prototype.endShape = function(
       !this.geometryBuilder &&
       this.immediateMode.geometry.vertices.length >= 3
     ) {
-      this._drawImmediateFill(count);
+      let fillShader = this._getImmediateFillShader();
+      let imgShader = this._getImmediateImageShader();
+
+      if (this.textureMode === constants.IMAGE && imgShader) {
+        usimageShader(imgShader);
+        this._drawImmediateImage(count);
+      }
+      else {
+        shader(fillShader);
+        this._drawImmediateFill(count);
+      }
+
     }
   }
   if (this._doStroke) {
