@@ -126,12 +126,10 @@ p5.Texture = class Texture {
     this.isSrcHTMLElement
     ) {
     // if param is a video HTML element
-      // UPDATED:
       if (this.src._ensureCanvas) {
-        this.src._ensureCanvas()
+        this.src._ensureCanvas();
       }
       textureData = this.src.canvas || this.src.elt;
-      // End update
     } else if (this.isImageData) {
       textureData = this.src;
     }
