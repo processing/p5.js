@@ -112,21 +112,26 @@ p5.Texture = class Texture {
     return this;
   }
 
-  _getTextureDataFromSource () {
+  _getTextureDataFromSource() {
     let textureData;
     if (this.isFramebufferTexture) {
       textureData = this.src.rawTexture();
     } else if (this.isSrcP5Image) {
-    // param is a p5.Image
+      // param is a p5.Image
       textureData = this.src.canvas;
     } else if (
       this.isSrcMediaElement ||
-    this.isSrcP5Graphics ||
-    this.isSrcP5Renderer ||
-    this.isSrcHTMLElement
+      this.isSrcP5Graphics ||
+      this.isSrcP5Renderer ||
+      this.isSrcHTMLElement
     ) {
-    // if param is a video HTML element
-      textureData = this.src.elt;
+      // if param is a video HTML element
+      // UPDATED:
+      if (this.src._ensureCanvas) {
+        this.src._ensureCanvas();
+      }
+      textureData = this.src.canvas || this.src.elt;
+      // End update
     } else if (this.isImageData) {
       textureData = this.src;
     }
