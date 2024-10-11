@@ -5,8 +5,8 @@
  * @requires constants
  */
 
-// Core needs the PVariables object
 import * as constants from './constants';
+
 /**
  * This is the p5 instance constructor.
  *
@@ -657,5 +657,19 @@ for (const k in constants) {
  * </div>
  */
 p5.disableFriendlyErrors = false;
+
+import transform from './transform';
+import structure from './structure';
+import environment from './environment';
+import rendering from './rendering';
+import renderer from './p5.Renderer';
+import renderer2D from './p5.Renderer2D';
+
+p5.registerAddon(transform);
+p5.registerAddon(structure);
+p5.registerAddon(environment);
+p5.registerAddon(rendering);
+p5.registerAddon(renderer);
+p5.registerAddon(renderer2D);
 
 export default p5;
