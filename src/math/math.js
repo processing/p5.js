@@ -104,6 +104,32 @@ function math(p5, fn){
       return new p5.Vector(x, y, z);
     }
   };
+
+  /**
+   * Creates a new <a href="#/p5.Matrix">p5.Matrix</a> object.
+   *
+   * A matrix is a mathematical concept that is useful in many fields, including
+   * computer graphics. In p5.js, matrices are used to perform transformations
+   * on shapes and images.
+   *
+   * @method createMatrix
+   * @return {p5.Matrix} new <a href="#/p5.Matrix">p5.Matrix</a> object.
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   let matrix = createMatrix();
+   *   console.log(matrix);
+   *   describe('Logs a new p5.Matrix object to the console.');
+   * }
+   * </code>
+   * </div>
+   */
+  fn.createMatrix = function (...args) {
+    return new p5.Matrix(...args);
+  };
 }
 
 export default math;
