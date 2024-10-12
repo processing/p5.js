@@ -79,14 +79,6 @@ function text2d(p5, fn) {
         theSize = Number.parseFloat(theSize);
       }
 
-      // font props to be added to P5.Renderer.states (also textStretch, lineHeight?)
-      if (typeof this.states.textWeight === 'undefined') {
-        this.states.textWeight = 400;
-      }
-      if (typeof this.states.textWeight === 'undefined') {
-        this.states.textVariant = 'normal';
-      }
-
       this.states.textFont = theFont;
 
       if (typeof theSize !== 'undefined') {
@@ -105,7 +97,7 @@ function text2d(p5, fn) {
       return this._applyTextProperties();
     }
 
-    return this._buildFontString(states);
+    return this._buildFontString();
   }
 
   p5.Renderer2D.prototype.textLeading = function (leading) {
@@ -118,6 +110,7 @@ function text2d(p5, fn) {
   }
 
   p5.Renderer2D.prototype.textSize = function (theSize) {
+
     if (typeof theSize !== 'undefined') {
       this.states.textSize = Number.parseFloat(theSize);
 
@@ -283,9 +276,9 @@ function text2d(p5, fn) {
 
         let offset = 0;
         if (this.states.textBaseline === constants.CENTER) {
-          offset = (nlines.length - 1) * p.textLeading() / 2;
+          offset = (nlines.length - 1) * this.textLeading() / 2;
         } else if (this.states.textBaseline === constants.BOTTOM) {
-          offset = (nlines.length - 1) * p.textLeading();
+          offset = (nlines.length - 1) * this.textLeading();
         }
 
         for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
@@ -296,7 +289,7 @@ function text2d(p5, fn) {
             testWidth = this.textWidth(testLine);
             if (testWidth > maxWidth && line.length > 0) {
               this._renderText(
-                p,
+                //p,
                 line.trim(),
                 x,
                 y - offset,
@@ -304,7 +297,7 @@ function text2d(p5, fn) {
                 finalMinHeight
               );
               line = `${words[wordIndex]}` + ' ';
-              y += p.textLeading();
+              y += this.textLeading();
             } else {
               line = testLine;
             }
@@ -317,7 +310,7 @@ function text2d(p5, fn) {
             finalMaxHeight,
             finalMinHeight
           );
-          y += p.textLeading();
+          y += this.textLeading();
         }
       } else {
         let nlines = [];
@@ -339,9 +332,9 @@ function text2d(p5, fn) {
         nlines.push(line);
         let offset = 0;
         if (this.states.textBaseline === constants.CENTER) {
-          offset = (nlines.length - 1) * p.textLeading() / 2;
+          offset = (nlines.length - 1) * this.textLeading() / 2;
         } else if (this.states.textBaseline === constants.BOTTOM) {
-          offset = (nlines.length - 1) * p.textLeading();
+          offset = (nlines.length - 1) * this.textLeading();
         }
 
         // Splits lines at characters, for loop adds one char at a time
@@ -363,7 +356,7 @@ function text2d(p5, fn) {
                 finalMaxHeight,
                 finalMinHeight
               );
-              y += p.textLeading();
+              y += this.textLeading();
               line = `${chars[charIndex]}`;
             }
           }
@@ -376,29 +369,29 @@ function text2d(p5, fn) {
           finalMaxHeight,
           finalMinHeight
         );
-        y += p.textLeading();
+        y += this.textLeading();
       }
     } else {
       // Offset to account for vertically centering multiple lines of text - no
       // need to adjust anything for vertical align top or baseline
       let offset = 0;
       if (this.states.textBaseline === constants.CENTER) {
-        offset = (lines.length - 1) * p.textLeading() / 2;
+        offset = (lines.length - 1) * this.textLeading() / 2;
       } else if (this.states.textBaseline === constants.BOTTOM) {
-        offset = (lines.length - 1) * p.textLeading();
+        offset = (lines.length - 1) * this.textLeading();
       }
 
       // Renders lines of text at any line breaks present in the original string
       for (let i = 0; i < lines.length; i++) {
         this._renderText(
-          p,
+          //          p,
           lines[i],
           x,
           y - offset,
           finalMaxHeight,
           finalMinHeight - offset
         );
-        y += p.textLeading();
+        y += this.textLeading();
       }
     }
 
@@ -411,22 +404,71 @@ function text2d(p5, fn) {
   };
   //////////////////////// end API ////////////////////////
 
-  p5.Renderer2D.prototype._buildFontString =function (states) {
-    let { textStyle, textVariant, textWeight, textSize, textFont } = this.states;
+  p5.Renderer2D.prototype._buildFontString = function () {
+    let { textFont, textSize, textStyle, textVariant, textWeight } = this.states;
     let style = (textStyle === 'normal') ? '' : textStyle;
     let weight = (textWeight === 'normal' || textWeight === 400) ? '' : textWeight;
     let variant = (textVariant === 'normal') ? '' : textVariant;
     let css = `${style} ${weight} ${variant} ${textSize}px ${textFont}`;
-    return css;
+    return css.trim();
   }
 
   p5.Renderer2D.prototype._applyTextProperties = function () {
+
+    // TMP: font props to be added to P5.Renderer.states (also textStretch, lineHeight?)
+
+    // {properties: default} for font-string
+    let fontProps = { 
+      textSize: 12,
+      textFont: 'sans-serif',
+      textStyle: constants.NORMAL,
+      textVariant: constants.NORMAL,
+      textWeight: constants.NORMAL,
+      textWrap: constants.WORD,
+    };
+
+    Object.keys(fontProps).forEach(p => {
+      if (!(p in this.states)) {
+        this.states[p] = fontProps[p];
+      }
+    });
+
+    // {properties: {context-property-name,default} for drawingContext
+    let contextProps = {
+      wordSpacing: { default: 0 },
+      textAlign: { default: constants.LEFT },
+      textRendering: { default: constants.AUTO },
+      /* textBaseline: { default: constants.BASELINE }, TODO: unusual case*/ 
+      textKerning: { property: 'fontKerning', default: constants.AUTO },
+      textStretch: { property: 'fontStretch', default: constants.NORMAL },
+      textVariantCaps: { property: 'fontVariantCaps', default: constants.NORMAL },
+    };
+
+    // check and set default font properties if missing
+    Object.keys(contextProps).forEach(prop => {
+      if (!(prop in this.states)) {
+        this.states[prop] = contextProps[prop].default;
+      }
+      else {
+        let ctxProp = contextProps[prop].property || prop;
+        this.drawingContext[ctxProp] = this.states[prop];
+      }
+    });
+
     let { drawingContext, states } = this;
-    drawingContext.font = this._buildFontString(states);
-    drawingContext.textAlign = states.textAlign;
+
+    const fontString = this._buildFontString();
+    drawingContext.font = fontString;
+    if (fontString !== drawingContext.font) {
+      throw Error('Error setting text properties: css='
+        + fontString + ' ctx.font=' + drawingContext.font);
+    }
+
+    //drawingContext.textAlign = states.textAlign;
     if (states.textBaseline === constants.CENTER) {
       drawingContext.textBaseline = constants._CTX_MIDDLE;
-    } else {
+    } 
+    else {
       drawingContext.textBaseline = states.textBaseline;
     }
     return this._pInst;
@@ -441,15 +483,14 @@ function text2d(p5, fn) {
 
 
   // text() calls this method to render text
-  p5.Renderer2D.prototype._renderText = function (p, line, x, y, maxY, minY) {
-    // TODO: replace p arg with this._pInst
+  p5.Renderer2D.prototype._renderText = function (/*p,*/line, x, y, maxY, minY) {
     let { drawingContext, states } = this;
 
     if (y < minY || y >= maxY) {
       return; // don't render lines beyond minY/maxY
     }
 
-    p.push(); // fix to #803
+    this._pInst.push(); // fix to #803
 
     // no stroke unless specified by user
     if (states.doStroke && states.strokeSet) {
@@ -465,16 +506,10 @@ function text2d(p5, fn) {
 
       drawingContext.fillText(line, x, y);
     }
-    p.pop();
+    this._pInst.pop();
 
-    return p;
+    return this._pInst;
   };
-
-  rendererFuncs.forEach(func => { // tmp-check
-    if (typeof p5.Renderer2D.prototype[func] !== 'function') {
-      throw Error(`p5.Renderer2D.prototype.${func} is not a function`);
-    }
-  });
 }
 
 export default text2d;
