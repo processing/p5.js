@@ -1047,36 +1047,147 @@ p5.prototype.strokeShader = function (s) {
 
 
 /**
- * Sets the <a href="#/p5.Shader">p5.Shader</a> object to apply while rendering images.
+ * Sets the <a href="#/p5.Shader">p5.Shader</a> object to apply for images.
  *
- * The shader will be used for image rendering only.
+ * This method allows the user to apply a custom shader to images, enabling
+ * advanced visual effects such as pixel manipulation, color adjustments,
+ * or dynamic behavior. The shader will be applied to the image drawn using
+ * the <a href="#/p5/image">image()</a> function.
  *
- * The parameter, `s`, is the <a href="#/p5.Shader">p5.Shader</a> object to apply.
- *
- * Note: Shaders can only be used in WebGL mode.
+ * The shader will be used for:
+ * - Images only, regardless of whether the image is being drawn with
+ *   <a href="#/p5/texture">texture()</a> or used in other 3D contexts.
  *
  * @method imageShader
  * @chainable
- * @param {p5.Shader} s <a href="#/p5.Shader">p5.Shader</a> object to apply.
+ * @param {p5.Shader} s <a href="#/p5.Shader">p5.Shader</a> object
+ *                      to apply for images.
  *
  * @example
- * <div>
+ * <div modernizr='webgl'>
  * <code>
  * let img;
  * let imgShader;
  *
  * function preload() {
- *   img = loadImage('assets/sample.jpg');
- *   imgShader = loadShader('assets/vertex.vert', 'assets/image.frag');
+ *   img = loadImage('assets/outdoor_image.jpg');
  * }
  *
  * function setup() {
- *   createCanvas(800, 600, WEBGL);
- *   imageShader(imgShader);
+ *   createCanvas(100, 100, WEBGL);
+ *   noStroke();
+ *
+ *   imgShader = createShader(`
+ *     precision mediump float;
+ *     attribute vec3 aPosition;
+ *     attribute vec2 aTexCoord;
+ *     varying vec2 vTexCoord;
+ *     uniform mat4 uModelViewMatrix;
+ *     uniform mat4 uProjectionMatrix;
+ *
+ *     void main() {
+ *       vTexCoord = aTexCoord;
+ *       gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+ *     }
+ *   `, `
+ *     precision mediump float;
+ *     varying vec2 vTexCoord;
+ *     uniform sampler2D uTexture;
+ *     uniform vec2 uMousePos;
+ *
+ *     void main() {
+ *       vec4 texColor = texture2D(uTexture, vTexCoord);
+ *       // Adjust the color based on mouse position
+ *       float r = uMousePos.x * texColor.r;
+ *       float g = uMousePos.y * texColor.g;
+ *       gl_FragColor = vec4(r, g, texColor.b, texColor.a);
+ *     }
+ *   `);
+ *
+ * describe(
+ * 'An image on a gray background where the colors change based on the mouse position.'
+ * );
  * }
  *
  * function draw() {
- *   background(0);
+ *   background(220);
+ *
+ *   imageShader(imgShader);
+ *
+ *   // Map the mouse position to a range between 0 and 1
+ *   let mousePosX = map(mouseX, 0, width, 0, 1);
+ *   let mousePosY = map(mouseY, 0, height, 0, 1);
+ *
+ *   // Pass the mouse position to the shader as a uniform
+ *   imgShader.setUniform('uMousePos', [mousePosX, mousePosY]);
+ *
+ *   // Bind the image texture to the shader
+ *   imgShader.setUniform('uTexture', img);
+ *
+ *   image(img, -width / 2, -height / 2, width, height);
+ * }
+ *
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let img;
+ * let imgShader;
+ *
+ * function preload() {
+ *   img = loadImage('assets/outdoor_image.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   noStroke();
+ *
+ *   imgShader = createShader(`
+ *     precision mediump float;
+ *     attribute vec3 aPosition;
+ *     attribute vec2 aTexCoord;
+ *     varying vec2 vTexCoord;
+ *     uniform mat4 uModelViewMatrix;
+ *     uniform mat4 uProjectionMatrix;
+ *
+ *     void main() {
+ *       vTexCoord = aTexCoord;
+ *       gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+ *     }
+ *   `, `
+ *     precision mediump float;
+ *     varying vec2 vTexCoord;
+ *     uniform sampler2D uTexture;
+ *     uniform vec2 uMousePos;
+ *
+ *     void main() {
+ *       // Distance from the current pixel to the mouse
+ *       float distFromMouse = distance(vTexCoord, uMousePos);
+ *
+ *       // Adjust pixelation based on distance (closer = more detail, farther = blockier)
+ *       float pixelSize = mix(0.002, 0.05, distFromMouse);
+ *       vec2 pixelatedCoord = vec2(floor(vTexCoord.x / pixelSize) * pixelSize,
+ *                                  floor(vTexCoord.y / pixelSize) * pixelSize);
+ *
+ *       vec4 texColor = texture2D(uTexture, pixelatedCoord);
+ *       gl_FragColor = texColor;
+ *     }
+ *   `);
+ *
+ * describe('A static image with a grid-like, pixelated effect created by the shader. Each cell in the grid alternates visibility, producing a dithered visual effect.');
+ * }
+ *
+ * function draw() {
+ *   background(220);
+ *   imageShader(imgShader);
+ *
+ *   let mousePosX = map(mouseX, 0, width, 0, 1);
+ *   let mousePosY = map(mouseY, 0, height, 0, 1);
+ *
+ *   imgShader.setUniform('uMousePos', [mousePosX, mousePosY]);
+ *   imgShader.setUniform('uTexture', img);
  *   image(img, -width / 2, -height / 2, width, height);
  * }
  * </code>
