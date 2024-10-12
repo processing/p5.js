@@ -628,11 +628,7 @@ p5.RendererGL = class RendererGL extends Renderer {
           new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this),
           new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
         ],
-        point: this.GL.createBuffer(),
-        image: [
-          new p5.RenderBuffer(3, 'imageVertices', 'imageVertexBuffer', 'aPosition', this, this._vToNArray),
-          new p5.RenderBuffer(2, 'imageUVs', 'imageUVBuffer', 'aTexCoord', this, this._flatten)
-        ]
+        point: this.GL.createBuffer()
       }
     };
 
@@ -1730,41 +1726,28 @@ p5.RendererGL = class RendererGL extends Renderer {
   }
 
   /*
-   * selects which fill shader should be used based on renderer state,
-   * for use with begin/endShape and immediate vertex mode.
+   * This method will handle both image shaders and
+   * fill shaders, returning the appropriate shader
+   * depending on the current context (image or shape).
    */
-  _getImmediateFillShader() {
-    const fillShader = this.userFillShader;
-
-    if (fillShader) {
-      return fillShader;
+   _getFillShader() {
+    if (this._drawingImage) {
+      if(this.userImageShader){
+        return this.userImageShader;
+      }
     }
-    if (this._enableLighting) {
-      return this._getLightShader();
+    else if (this.userFillShader) {
+      return this.userFillShader;
     }
-
-    return this._getImmediateModeShader();
-  }
-
-  /*
-   * selects which fill shader should be used based on renderer state
-   * for retained mode.
-   */
-  _getRetainedFillShader() {
-    if (this._useNormalMaterial) {
+    else if (this._useNormalMaterial) {
       return this._getNormalShader();
     }
-    // Check if the fill shader is a texture shader
-    const fill = this.userFillShader;
-    if(fill){
-      return fill;
-    }
-    // Return the appropriate light shader if lighting is enabled or it's a texture shader
-    if (this._enableLighting || this._tex) {
+    else if (this._enableLighting || this._tex) {
       return this._getLightShader();
     }
-    // Default to the color shader
-    return this._getColorShader();
+    else {
+      return this._getColorShader();
+    }
   }
 
   _getImmediatePointShader() {
@@ -1775,15 +1758,6 @@ p5.RendererGL = class RendererGL extends Renderer {
     }
     return point;
   }
-
-  _getImmediateImageShader() {
-    const imageShader = this.userImageShader;
-    if(imageShader) {
-      return imageShader;
-    }
-    return this._getImmediateModeShader() ; 
-  }
-  
 
   _getRetainedLineShader() {
     return this._getImmediateLineShader();

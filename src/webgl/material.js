@@ -851,9 +851,11 @@ p5.prototype.createFilterShader = function (fragSrc) {
  * }
  *
  * function draw() {
- *   let lightPos = [(mouseX - width / 2) / width, (mouseY - height / 2) / height, 1.0];
+ *   let lightPos = [(mouseX - width / 2) / width, 
+ *     (mouseY - height / 2) / height, 1.0];
  *   fillShader.setUniform('uLightPos', lightPos);
- *   let fillColor = [map(mouseX, 0, width, 0, 1), map(mouseY, 0, height, 0, 1), 0.5];
+ *   let fillColor = [map(mouseX, 0, width, 0, 1),
+ *     map(mouseY, 0, height, 0, 1), 0.5];
  *   fillShader.setUniform('uFillColor', fillColor);
  *   plane(100, 100);
  * }
