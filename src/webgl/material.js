@@ -886,6 +886,10 @@ p5.prototype.shader = function (s) {
  *
  * The shader will be used for:
  * - Strokes only, regardless of whether the uniform `uStrokeWeight` is present.
+ * 
+ * To further customize its behavior, refer to the various hooks provided by
+ * the <a href="#/p5/baseStrokeShader">baseStrokeShader()</a> method, which allow
+ * control over stroke weight, vertex positions, colors, and more.
  *
  * @method strokeShader
  * @chainable

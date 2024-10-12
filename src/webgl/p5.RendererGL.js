@@ -1730,9 +1730,14 @@ p5.RendererGL = class RendererGL extends Renderer {
    * fill shaders, returning the appropriate shader
    * depending on the current context (image or shape).
    */
-   _getFillShader() {
+  _getFillShader() {
     if (this._drawingImage) {
-      return this.userImageShader;
+      if(this.userImageShader){
+        return this.userImageShader;
+      }
+      else{
+        return this._getLightShader();
+      }
     }
     else if (this.userFillShader) {
       return this.userFillShader;
@@ -1743,10 +1748,10 @@ p5.RendererGL = class RendererGL extends Renderer {
     else if (this._enableLighting || this._tex) {
       return this._getLightShader();
     }
-    else {
-      return this._getColorShader();
-    }
+
+    return this._getColorShader();
   }
+
 
   _getImmediatePointShader() {
     // select the point shader to use
