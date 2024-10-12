@@ -24,7 +24,7 @@ function textApi(p5, fn) {
 
   const validFontTypes = ['ttf', 'otf', 'woff', 'woff2'];
   const validFontTypesRE = new RegExp(`\.(${validFontTypes.join('|')})$`, 'i');
-  const invalidFontError = 'Sorry, a string path is invalid. Only TTF, OTF, WOFF and WOFF2 font files are supported.';
+  const invalidFontError = 'Sorry, only TTF, OTF, WOFF and WOFF2 font files are supported.';
 
   //////////////////////////// API ////////////////////////////
 

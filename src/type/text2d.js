@@ -23,9 +23,8 @@ function text2d(p5, fn) {
     'textWrap',
   ];
 
-  // textWeight: 400, // ADDED DCH
-  // textVariant: 'normal', // ADDED DCH
-  //  // textStretch, lineHeight ?
+  p5.Renderer2D.TabsRe = /\t/g;
+  p5.Renderer2D.LinebreakRE = /\r?\n/g;
 
   //////////////////////// start API ////////////////////////
 
@@ -78,6 +77,9 @@ function text2d(p5, fn) {
         // TODO: handle other units and possibly convert to px
         theSize = Number.parseFloat(theSize);
       }
+
+      // TODO: handle strings with multiple properties when args.length=1
+      // could attempt to parse but prob better to use a hidden element
 
       this.states.textFont = theFont;
 
@@ -144,10 +146,10 @@ function text2d(p5, fn) {
     if (theText.length === 0) return 0;
 
     // Only use the line with the longest width, and replace tabs with double-space
-    const lines = theText.replace(tabsRE, '  ').split(linebreakRE);
+    const lines = theText.replace(p5.Renderer2D.TabsRE, '  ').split(p5.Renderer2D.LinebreakRE);
 
     // Get the textWidth for every line
-    const newArr = lines.map(this._lineWidth);
+    const newArr = lines.map(this._lineWidth.bind(this));
 
     // Return the largest textWidth
     return Math.max(...newArr);
@@ -218,7 +220,7 @@ function text2d(p5, fn) {
         }
 
         let originalY = y;
-        let ascent = p.textAscent();
+        let ascent = this._pInst.textAscent();
 
         switch (this.states.textBaseline) {
           case constants.BOTTOM:
@@ -405,12 +407,27 @@ function text2d(p5, fn) {
   //////////////////////// end API ////////////////////////
 
   p5.Renderer2D.prototype._buildFontString = function () {
+    /*
+    The font property is a shorthand property for:
+    font-style
+    font-variant
+    font-weight
+    font-size/line-height
+    font-family
+    */
     let { textFont, textSize, textStyle, textVariant, textWeight } = this.states;
-    let style = (textStyle === 'normal') ? '' : textStyle;
-    let weight = (textWeight === 'normal' || textWeight === 400) ? '' : textWeight;
-    let variant = (textVariant === 'normal') ? '' : textVariant;
-    let css = `${style} ${weight} ${variant} ${textSize}px ${textFont}`;
-    return css.trim();
+    /*let css = `${textSize}px ${textFont}`;
+    if (textStyle && textStyle.length && textStyle !== 'normal') {
+      css = textStyle + ' ' + css;
+    }
+    if (textWeight && textWeight.length && textWeight !== 'normal') {
+      css = textWeight + ' ' + css;
+    }
+    if (textVariant && textVariant.length && textVariant !== 'normal') {
+      css = textVariant + ' ' + css;
+    }*/
+    let css = `${textStyle} ${textWeight} ${textVariant} ${textSize}px ${textFont}`;
+    return css;
   }
 
   p5.Renderer2D.prototype._applyTextProperties = function () {
@@ -418,13 +435,12 @@ function text2d(p5, fn) {
     // TMP: font props to be added to P5.Renderer.states (also textStretch, lineHeight?)
 
     // {properties: default} for font-string
-    let fontProps = { 
+    let fontProps = {
       textSize: 12,
       textFont: 'sans-serif',
       textStyle: constants.NORMAL,
       textVariant: constants.NORMAL,
       textWeight: constants.NORMAL,
-      textWrap: constants.WORD,
     };
 
     Object.keys(fontProps).forEach(p => {
@@ -435,13 +451,15 @@ function text2d(p5, fn) {
 
     // {properties: {context-property-name,default} for drawingContext
     let contextProps = {
+      
       wordSpacing: { default: 0 },
       textAlign: { default: constants.LEFT },
       textRendering: { default: constants.AUTO },
-      /* textBaseline: { default: constants.BASELINE }, TODO: unusual case*/ 
+      /* textBaseline: { default: constants.BASELINE }, TODO: unusual case*/
       textKerning: { property: 'fontKerning', default: constants.AUTO },
       textStretch: { property: 'fontStretch', default: constants.NORMAL },
       textVariantCaps: { property: 'fontVariantCaps', default: constants.NORMAL },
+      textWrap: { default: constants.WORD },
     };
 
     // check and set default font properties if missing
@@ -459,15 +477,14 @@ function text2d(p5, fn) {
 
     const fontString = this._buildFontString();
     drawingContext.font = fontString;
-    if (fontString !== drawingContext.font) {
-      throw Error('Error setting text properties: css='
-        + fontString + ' ctx.font=' + drawingContext.font);
+    if (fontString.replace(/normal /g, '') !== drawingContext.font) { // TMP: warn if font not set properly
+      console.warn('Error setting text properties: \ncss="' + fontString + '"\nctx="' + drawingContext.font + '"');
     }
 
     //drawingContext.textAlign = states.textAlign;
     if (states.textBaseline === constants.CENTER) {
       drawingContext.textBaseline = constants._CTX_MIDDLE;
-    } 
+    }
     else {
       drawingContext.textBaseline = states.textBaseline;
     }
@@ -480,7 +497,6 @@ function text2d(p5, fn) {
     return Math.abs(metrics.actualBoundingBoxLeft)
       + Math.abs(metrics.actualBoundingBoxRight);
   };
-
 
   // text() calls this method to render text
   p5.Renderer2D.prototype._renderText = function (/*p,*/line, x, y, maxY, minY) {
