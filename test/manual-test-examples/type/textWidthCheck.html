@@ -1,0 +1,88 @@
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- <script language="javascript" type="text/javascript" src="img/../../../../lib/p5.js"></script>
+  <script language="javascript" type="text/javascript" src="img/sketch.js"></script> -->
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+    }
+
+    canvas {
+      border: 1px solid #f0f0f0;
+      display: block;
+    }
+
+    img {
+      border: 1px solid #fff;
+    }
+
+    img.gray {
+      border: 1px solid #eee;
+    }
+
+    img.red {
+      border: 1px solid #f00;
+    }
+
+    div {
+      margin: 100px 0px;
+    }
+
+    p.caption {
+      margin: 2px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+
+
+<body>
+  <script type="module">
+
+    import p5 from '../../../src/app.js';
+    let textWidthCheck = function (p) {
+      p.setup = function () {
+        p.createCanvas(1280, 540);
+        p.fill(0);
+        p.textSize(92);
+        let s = "Let's get the width of this line.";
+        let metrics = p.drawingContext.measureText(s);
+        let x = 40, y = 200;
+        p.text(s, x, y);
+        p.noFill();
+        p.circle(x, y, 10);
+        p.line(x, 0, x, p.height);
+        p.line(0, y, p.width, y);
+        p.line(x + metrics.width, 0, x + metrics.width, p.height);
+
+        let tw = p.textWidth(s);
+        let bbx = x + Math.abs(metrics.actualBoundingBoxLeft);
+
+        
+        p.stroke('red');
+        p.line(bbx, 0, bbx, p.height);
+        p.line(bbx+tw, 0, bbx+tw, p.height);
+        
+        p.fill('red');
+        p.textSize(32);
+        p.noStroke();
+        p.text('tight-width: ' + tw, 300, y + 40);
+
+        p.fill(0);
+        p.text('font-width: ' + metrics.width, 300, y + 80);
+      }
+    };
+    new p5(textWidthCheck, 'textWidthCheck');
+
+  </script>
+
+  <div id='textWidthCheck'>
+  </div>
+
+</body>
+
+</html>
