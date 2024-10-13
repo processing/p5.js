@@ -130,4 +130,88 @@ visualSuite('WebGL', function() {
       }
     );
   });
+  
+  visualSuite('Shader Functionality', function() {
+    visualTest('Fill Shader', (p5, screenshot) => {
+      return new Promise(resolve => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const fillShader = p5.createShader(
+          `
+          attribute vec3 aPosition;
+          void main() {
+            gl_Position = vec4(aPosition, 1.0);
+          }
+          `,
+          `
+          precision mediump float;
+          void main() {
+            gl_FragColor = vec4(gl_FragCoord.x / 100.0, 0.5, gl_FragCoord.y / 100.0, 1.0);
+          }
+          `
+        );
+        p5.shader(fillShader);
+        p5.noStroke();
+        p5.rect(-25, -25, 50, 50);
+        screenshot();
+        resolve();
+      });
+    });
+
+    visualTest('Stroke Shader', (p5, screenshot) => {
+      return new Promise(resolve => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const strokeshader = p5.createShader(
+          `
+          attribute vec3 aPosition;
+          void main() {
+            gl_Position = vec4(aPosition, 1.0);
+          }
+          `,
+          `
+          precision mediump float;
+          void main() {
+            float dist = distance(vec2(0.5, 0.5), gl_FragCoord.xy / 100.0);
+            gl_FragColor = vec4(dist, 0.0, 1.0 - dist, 1.0);
+          }
+          `
+        );
+        p5.strokeShader(strokeshader);
+        p5.noFill();
+        p5.strokeWeight(2);
+        p5.rect(-20, -20, 40, 40);
+        screenshot();
+        resolve();
+      });
+    });
+
+    visualTest('Image Shader', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const img = await new Promise(resolve => p5.loadImage('unit/assets/cat.jpg', resolve));
+      const imgShader = p5.createShader(
+        `
+        attribute vec3 aPosition;
+        varying vec2 vTexCoord;
+        void main() {
+          gl_Position = vec4(aPosition, 1.0);
+          vTexCoord = aPosition.xy * 0.5 + 0.5;
+        }
+        `,
+        `
+        precision mediump float;
+        varying vec2 vTexCoord;
+        uniform sampler2D uTexture;
+        void main() {
+          vec4 texColor = texture2D(uTexture, vTexCoord);
+          gl_FragColor = texColor;
+        }
+        `
+      );
+      p5.imageShader(imgShader);
+      p5.texture(img);
+      p5.noStroke();
+      p5.rect(-25, -25, 50, 50);
+      screenshot();
+    });
+  });
+
 });
