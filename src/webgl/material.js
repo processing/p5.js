@@ -6,6 +6,7 @@
  */
 
 import * as constants from '../core/constants';
+import { RendererGL } from './p5.RendererGL';
 
 function material(p5, fn){
   /**
@@ -3190,7 +3191,7 @@ function material(p5, fn){
    * transparency internally, e.g. via vertex colors
    * @return {Number[]}  Normalized numbers array
    */
-  p5.RendererGL.prototype._applyColorBlend = function (colors, hasTransparency) {
+  RendererGL.prototype._applyColorBlend = function (colors, hasTransparency) {
     const gl = this.GL;
 
     const isTexture = this.states.drawMode === constants.TEXTURE;
@@ -3226,7 +3227,7 @@ function material(p5, fn){
    * @param  {Number[]} color [description]
    * @return {Number[]}  Normalized numbers array
    */
-  p5.RendererGL.prototype._applyBlendMode = function () {
+  RendererGL.prototype._applyBlendMode = function () {
     if (this._cachedBlendMode === this.states.curBlendMode) {
       return;
     }

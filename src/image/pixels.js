@@ -410,8 +410,7 @@ function pixels(p5, fn){
       dstImage.noLights();
       dstImage.blendMode(dstImage.BLEND);
       dstImage.imageMode(dstImage.CORNER);
-      p5.RendererGL.prototype.image.call(
-        dstImage._renderer,
+      dstImage._renderer.image(
         srcImage,
         sx + sxMod,
         sy + syMod,

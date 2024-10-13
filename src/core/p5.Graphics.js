@@ -16,97 +16,19 @@ import loadingDisplaying from '../image/loading_displaying';
 import pixels from '../image/pixels';
 import transform from './transform';
 
-/**
- * A class to describe a drawing surface that's separate from the main canvas.
- *
- * Each `p5.Graphics` object provides a dedicated drawing surface called a
- * *graphics buffer*. Graphics buffers are helpful when drawing should happen
- * offscreen. For example, separate scenes can be drawn offscreen and
- * displayed only when needed.
- *
- * `p5.Graphics` objects have nearly all the drawing features of the main
- * canvas. For example, calling the method `myGraphics.circle(50, 50, 20)`
- * draws to the graphics buffer. The resulting image can be displayed on the
- * main canvas by passing the `p5.Graphics` object to the
- * <a href="#/p5/image">image()</a> function, as in `image(myGraphics, 0, 0)`.
- *
- * Note: <a href="#/p5/createGraphics">createGraphics()</a> is the recommended
- * way to create an instance of this class.
- *
- * @class p5.Graphics
- * @extends p5.Element
- * @param {Number} w            width width of the graphics buffer in pixels.
- * @param {Number} h            height height of the graphics buffer in pixels.
- * @param {(P2D|WEBGL)} renderer   the renderer to use, either P2D or WEBGL.
- * @param {p5} [pInst]          sketch instance.
- * @param {HTMLCanvasElement} [canvas]     existing `&lt;canvas&gt;` element to use.
- *
- * @example
- * <div>
- * <code>
- * let pg;
- *
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   // Create a p5.Graphics object.
- *   pg = createGraphics(50, 50);
- *
- *   // Draw to the p5.Graphics object.
- *   pg.background(100);
- *   pg.circle(25, 25, 20);
- *
- *   describe('A dark gray square with a white circle at its center drawn on a gray background.');
- * }
- *
- * function draw() {
- *   background(200);
- *
- *   // Display the p5.Graphics object.
- *   image(pg, 25, 25);
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * // Click the canvas to display the graphics buffer.
- *
- * let pg;
- *
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   // Create a p5.Graphics object.
- *   pg = createGraphics(50, 50);
- *
- *   describe('A square appears on a gray background when the user presses the mouse. The square cycles between white and black.');
- * }
- *
- * function draw() {
- *   background(200);
- *
- *   // Calculate the background color.
- *   let bg = frameCount % 255;
- *
- *   // Draw to the p5.Graphics object.
- *   pg.background(bg);
- *
- *   // Display the p5.Graphics object while
- *   // the user presses the mouse.
- *   if (mouseIsPressed === true) {
- *     image(pg, 25, 25);
- *   }
- * }
- * </code>
- * </div>
- */
-p5.Graphics = class Graphics {
+import primitives3D from '../webgl/3d_primitives';
+import light from '../webgl/light';
+import material from '../webgl/material';
+import creatingReading from '../color/creating_reading';
+import trigonometry from '../math/trigonometry';
+import { renderers } from './rendering';
+
+class Graphics {
   constructor(w, h, renderer, pInst, canvas) {
     const r = renderer || constants.P2D;
 
     this._pInst = pInst;
-    this._renderer = new p5.renderers[r](this._pInst, w, h, false, canvas);
+    this._renderer = new renderers[r](this._pInst, w, h, false, canvas);
 
     // Attach renderer methods
     // for(const p of Object.getOwnPropertyNames(p5.renderers[r].prototype)) {
@@ -145,11 +67,6 @@ p5.Graphics = class Graphics {
 
     this._renderer._applyDefaults();
     return this;
-  }
-
-  // NOTE: Temporary no op placeholder
-  static _validateParameters(){
-
   }
 
   get deltaTime(){
@@ -664,21 +581,124 @@ p5.Graphics = class Graphics {
    * </div>
    */
   createFramebuffer(options) {
-    return new p5.Framebuffer(this._pInst, options);
+    return new p5.Framebuffer(this, options);
   }
+
+  _assert3d(name) {
+    if (!this._renderer.isP3D)
+      throw new Error(
+        `${name}() is only supported in WEBGL mode. If you'd like to use 3D graphics and WebGL, see  https://p5js.org/examples/form-3d-primitives.html for more information.`
+      );
+  };
 };
 
-// Shapes
-primitives2D(p5.Graphics, p5.Graphics.prototype);
-attributes(p5.Graphics, p5.Graphics.prototype);
-curves(p5.Graphics, p5.Graphics.prototype);
-vertex(p5.Graphics, p5.Graphics.prototype);
+function graphics(p5, fn){
+  /**
+   * A class to describe a drawing surface that's separate from the main canvas.
+   *
+   * Each `p5.Graphics` object provides a dedicated drawing surface called a
+   * *graphics buffer*. Graphics buffers are helpful when drawing should happen
+   * offscreen. For example, separate scenes can be drawn offscreen and
+   * displayed only when needed.
+   *
+   * `p5.Graphics` objects have nearly all the drawing features of the main
+   * canvas. For example, calling the method `myGraphics.circle(50, 50, 20)`
+   * draws to the graphics buffer. The resulting image can be displayed on the
+   * main canvas by passing the `p5.Graphics` object to the
+   * <a href="#/p5/image">image()</a> function, as in `image(myGraphics, 0, 0)`.
+   *
+   * Note: <a href="#/p5/createGraphics">createGraphics()</a> is the recommended
+   * way to create an instance of this class.
+   *
+   * @class p5.Graphics
+   * @extends p5.Element
+   * @param {Number} w            width width of the graphics buffer in pixels.
+   * @param {Number} h            height height of the graphics buffer in pixels.
+   * @param {(P2D|WEBGL)} renderer   the renderer to use, either P2D or WEBGL.
+   * @param {p5} [pInst]          sketch instance.
+   * @param {HTMLCanvasElement} [canvas]     existing `&lt;canvas&gt;` element to use.
+   *
+   * @example
+   * <div>
+   * <code>
+   * let pg;
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   // Create a p5.Graphics object.
+   *   pg = createGraphics(50, 50);
+   *
+   *   // Draw to the p5.Graphics object.
+   *   pg.background(100);
+   *   pg.circle(25, 25, 20);
+   *
+   *   describe('A dark gray square with a white circle at its center drawn on a gray background.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Display the p5.Graphics object.
+   *   image(pg, 25, 25);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // Click the canvas to display the graphics buffer.
+   *
+   * let pg;
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   // Create a p5.Graphics object.
+   *   pg = createGraphics(50, 50);
+   *
+   *   describe('A square appears on a gray background when the user presses the mouse. The square cycles between white and black.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Calculate the background color.
+   *   let bg = frameCount % 255;
+   *
+   *   // Draw to the p5.Graphics object.
+   *   pg.background(bg);
+   *
+   *   // Display the p5.Graphics object while
+   *   // the user presses the mouse.
+   *   if (mouseIsPressed === true) {
+   *     image(pg, 25, 25);
+   *   }
+   * }
+   * </code>
+   * </div>
+   */
+  p5.Graphics = Graphics;
 
-setting(p5.Graphics, p5.Graphics.prototype);
-loadingDisplaying(p5.Graphics, p5.Graphics.prototype);
-image(p5.Graphics, p5.Graphics.prototype);
-pixels(p5.Graphics, p5.Graphics.prototype);
+  // Shapes
+  primitives2D(p5, p5.Graphics.prototype);
+  attributes(p5, p5.Graphics.prototype);
+  curves(p5, p5.Graphics.prototype);
+  vertex(p5, p5.Graphics.prototype);
 
-transform(p5.Graphics, p5.Graphics.prototype);
+  setting(p5, p5.Graphics.prototype);
+  loadingDisplaying(p5, p5.Graphics.prototype);
+  image(p5, p5.Graphics.prototype);
+  pixels(p5, p5.Graphics.prototype);
 
-export default p5.Graphics;
+  transform(p5, p5.Graphics.prototype);
+
+  primitives3D(p5, p5.Graphics.prototype);
+  light(p5, p5.Graphics.prototype);
+  material(p5, p5.Graphics.prototype);
+  creatingReading(p5, p5.Graphics.prototype);
+  trigonometry(p5, p5.Graphics.prototype);
+}
+
+export default graphics;
+export { Graphics };

@@ -8,9 +8,6 @@
 
 import * as constants from '../core/constants';
 import canvas from '../core/helpers';
-import '../core/friendly_errors/fes_core';
-import '../core/friendly_errors/file_errors';
-import '../core/friendly_errors/validate_params';
 
 function primitives(p5, fn){
   /**

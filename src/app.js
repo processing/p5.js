@@ -6,8 +6,8 @@ import './core/friendly_errors/file_errors';
 import './core/friendly_errors/fes_core';
 import './core/friendly_errors/sketch_reader';
 import './core/p5.Element';
-import './core/p5.Graphics';
-import './core/rendering';
+// import './core/p5.Graphics';
+// import './core/rendering';
 import shape from './shape';
 shape(p5);
 
@@ -29,7 +29,8 @@ import data from './data';
 data(p5);
 
 // DOM
-import './dom/dom';
+import dom from './dom/dom';
+dom(p5, p5.prototype);
 
 // events
 import events from './events';

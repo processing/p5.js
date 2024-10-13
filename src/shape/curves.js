@@ -5,10 +5,6 @@
  * @requires core
  */
 
-import '../core/friendly_errors/fes_core';
-import '../core/friendly_errors/file_errors';
-import '../core/friendly_errors/validate_params';
-
 function curves(p5, fn){
   /**
    * Draws a Bézier curve.

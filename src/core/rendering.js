@@ -6,11 +6,12 @@
 
 import * as constants from './constants';
 
+let renderers;
 function rendering(p5, fn){
   let defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
   const defaultClass = 'p5Canvas';
   // Extend additional renderers object to p5 class, new renderer can be similarly attached
-  const renderers = p5.renderers = {};
+  renderers = p5.renderers = {};
 
   /**
    * Creates a canvas element on the web page.
@@ -680,6 +681,7 @@ function rendering(p5, fn){
 }
 
 export default rendering;
+export { renderers };
 
 if(typeof p5 !== 'undefined'){
   rendering(p5, p5.prototype);

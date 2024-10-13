@@ -7,6 +7,7 @@
  */
 
 import * as constants from '../core/constants';
+import { RendererGL } from './p5.RendererGL';
 
 function primitives3D(p5, fn){
   /**
@@ -2439,7 +2440,7 @@ function primitives3D(p5, fn){
    * </code>
    * </div>
    */
-  p5.RendererGL.prototype.point = function(x, y, z = 0) {
+  RendererGL.prototype.point = function(x, y, z = 0) {
 
     const _vertex = [];
     _vertex.push(new p5.Vector(x, y, z));
@@ -2448,7 +2449,7 @@ function primitives3D(p5, fn){
     return this;
   };
 
-  p5.RendererGL.prototype.triangle = function(args) {
+  RendererGL.prototype.triangle = function(args) {
     const x1 = args[0],
       y1 = args[1];
     const x2 = args[2],
@@ -2501,7 +2502,7 @@ function primitives3D(p5, fn){
     return this;
   };
 
-  p5.RendererGL.prototype.ellipse = function(args) {
+  RendererGL.prototype.ellipse = function(args) {
     this.arc(
       args[0],
       args[1],
@@ -2514,7 +2515,7 @@ function primitives3D(p5, fn){
     );
   };
 
-  p5.RendererGL.prototype.arc = function(...args) {
+  RendererGL.prototype.arc = function(...args) {
     const x = args[0];
     const y = args[1];
     const width = args[2];
@@ -2631,7 +2632,7 @@ function primitives3D(p5, fn){
     return this;
   };
 
-  p5.RendererGL.prototype.rect = function(args) {
+  RendererGL.prototype.rect = function(args) {
     const x = args[0];
     const y = args[1];
     const width = args[2];
@@ -2764,7 +2765,7 @@ function primitives3D(p5, fn){
   };
 
   /* eslint-disable max-len */
-  p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, detailX=2, detailY=2) {
+  RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, detailX=2, detailY=2) {
     /* eslint-enable max-len */
 
     const gId =
@@ -2827,7 +2828,7 @@ function primitives3D(p5, fn){
   //this implementation of bezier curve
   //is based on Bernstein polynomial
   // pretier-ignore
-  p5.RendererGL.prototype.bezier = function(
+  RendererGL.prototype.bezier = function(
     x1,
     y1,
     z1, // x2
@@ -2868,7 +2869,7 @@ function primitives3D(p5, fn){
   };
 
   // pretier-ignore
-  p5.RendererGL.prototype.curve = function(
+  RendererGL.prototype.curve = function(
     x1,
     y1,
     z1, // x2
@@ -2948,7 +2949,7 @@ function primitives3D(p5, fn){
    * </code>
    * </div>
    */
-  p5.RendererGL.prototype.line = function(...args) {
+  RendererGL.prototype.line = function(...args) {
     if (args.length === 6) {
       this.beginShape(constants.LINES);
       this.vertex(args[0], args[1], args[2]);
@@ -2963,7 +2964,7 @@ function primitives3D(p5, fn){
     return this;
   };
 
-  p5.RendererGL.prototype.bezierVertex = function(...args) {
+  RendererGL.prototype.bezierVertex = function(...args) {
     if (this.immediateMode._bezierVertex.length === 0) {
       throw Error('vertex() must be used once before calling bezierVertex()');
     } else {
@@ -3187,7 +3188,7 @@ function primitives3D(p5, fn){
     }
   };
 
-  p5.RendererGL.prototype.quadraticVertex = function(...args) {
+  RendererGL.prototype.quadraticVertex = function(...args) {
     if (this.immediateMode._quadraticVertex.length === 0) {
       throw Error('vertex() must be used once before calling quadraticVertex()');
     } else {
@@ -3398,7 +3399,7 @@ function primitives3D(p5, fn){
     }
   };
 
-  p5.RendererGL.prototype.curveVertex = function(...args) {
+  RendererGL.prototype.curveVertex = function(...args) {
     let w_x = [];
     let w_y = [];
     let w_z = [];
@@ -3516,7 +3517,7 @@ function primitives3D(p5, fn){
     }
   };
 
-  p5.RendererGL.prototype.image = function(
+  RendererGL.prototype.image = function(
     img,
     sx,
     sy,
