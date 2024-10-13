@@ -807,7 +807,7 @@ suite('p5.RendererGL', function() {
           myp5._renderer.curFillColor);
       });
 
-    test('push/pop and shader() works with fill', function() {
+    test('push/pop and shader() works with fill shaders by default', function() {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       var fillShader1 = myp5._renderer._getLightShader();
       var fillShader2 = myp5._renderer._getColorShader();

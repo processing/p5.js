@@ -1108,9 +1108,9 @@ p5.prototype.strokeShader = function (s) {
  *     }
  *   `);
  *
- * describe(
- * 'An image on a gray background where the colors change based on the mouse position.'
- * );
+ *   describe(
+ *     'An image on a gray background where the colors change based on the mouse position.'
+ *   );
  * }
  *
  * function draw() {
@@ -1180,7 +1180,7 @@ p5.prototype.strokeShader = function (s) {
  *     }
  *   `);
  *
- * describe('A static image with a grid-like, pixelated effect created by the shader. Each cell in the grid alternates visibility, producing a dithered visual effect.');
+ *   describe('A static image with a grid-like, pixelated effect created by the shader. Each cell in the grid alternates visibility, producing a dithered visual effect.');
  * }
  *
  * function draw() {
