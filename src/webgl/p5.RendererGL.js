@@ -1731,7 +1731,12 @@ p5.RendererGL = class RendererGL extends Renderer {
    * depending on the current context (image or shape).
    */
   _getFillShader() {
-    if (this._drawingImage) {
+    // If a filter like BLUR is applied, disable imageShader
+    if (this._drawingFilter) {
+      return this._getLightShader(); // Ignore user-defined imageShader
+    }
+    // If drawing an image, use the image shader or light shader
+    else if (this._drawingImage) {
       if(this.userImageShader){
         return this.userImageShader;
       }
@@ -1739,16 +1744,19 @@ p5.RendererGL = class RendererGL extends Renderer {
         return this._getLightShader();
       }
     }
+    // If user has defined a fill shader, return that
     else if (this.userFillShader) {
       return this.userFillShader;
     }
+    // Use normal shader if normal material is active
     else if (this._useNormalMaterial) {
       return this._getNormalShader();
     }
+    // Use light shader if lighting or textures are enabled
     else if (this._enableLighting || this._tex) {
       return this._getLightShader();
     }
-
+    // Default to color shader if no other conditions are met
     return this._getColorShader();
   }
 
