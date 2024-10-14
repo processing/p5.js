@@ -131,87 +131,98 @@ visualSuite('WebGL', function() {
     );
   });
   
-  visualSuite('Shader Functionality', function() {
-    visualTest('Fill Shader', (p5, screenshot) => {
-      return new Promise(resolve => {
+  visualSuite('ShaderFunctionality', function() {
+    visualTest('FillShader', async (p5, screenshot) => {
+      return new Promise(async resolve => {
         p5.createCanvas(50, 50, p5.WEBGL);
+        const img = await new Promise(resolve => p5.loadImage('unit/assets/cat.jpg', resolve));
         const fillShader = p5.createShader(
           `
-          attribute vec3 aPosition;
-          void main() {
-            gl_Position = vec4(aPosition, 1.0);
-          }
-          `,
+        attribute vec3 aPosition;
+        void main() {
+          gl_Position = vec4(aPosition, 1.0);
+        }
+        `,
           `
-          precision mediump float;
-          void main() {
-            gl_FragColor = vec4(gl_FragCoord.x / 100.0, 0.5, gl_FragCoord.y / 100.0, 1.0);
-          }
-          `
+        precision mediump float;
+        void main() {
+          gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+        }
+        `
         );
         p5.shader(fillShader);
+        p5.lights();
+        p5.texture(img);
         p5.noStroke();
-        p5.rect(-25, -25, 50, 50);
+        p5.rect(-p5.width / 2, -p5.height / 2, p5.width, p5.height);
         screenshot();
         resolve();
       });
     });
 
-    visualTest('Stroke Shader', (p5, screenshot) => {
+    visualTest('StrokeShader', (p5, screenshot) => {
       return new Promise(resolve => {
-        p5.createCanvas(50, 50, p5.WEBGL);
-        const strokeshader = p5.createShader(
-          `
-          attribute vec3 aPosition;
-          void main() {
-            gl_Position = vec4(aPosition, 1.0);
-          }
-          `,
-          `
-          precision mediump float;
-          void main() {
-            float dist = distance(vec2(0.5, 0.5), gl_FragCoord.xy / 100.0);
-            gl_FragColor = vec4(dist, 0.0, 1.0 - dist, 1.0);
-          }
-          `
-        );
+        p5.createCanvas(200, 200, p5.WEBGL);
+        // Create a stroke shader with a fading effect based on distance
+        const strokeshader = p5.baseStrokeShader().modify({
+          'Inputs getPixelInputs': `(Inputs inputs) {
+          float opacity = 1.0 - smoothstep(
+            0.0,
+            15.0,
+            length(inputs.position - inputs.center)
+          );
+          inputs.color *= opacity;
+          return inputs;
+        }`
+        });
+
         p5.strokeShader(strokeshader);
-        p5.noFill();
-        p5.strokeWeight(2);
-        p5.rect(-20, -20, 40, 40);
+        p5.strokeWeight(30);
+        p5.line(
+          -p5.width / 3,
+          p5.sin(p5.millis() * 0.001) * p5.height / 4,
+          p5.width / 3,
+          p5.sin(p5.millis() * 0.001 + 1) * p5.height / 4
+        );
         screenshot();
         resolve();
       });
     });
 
-    visualTest('Image Shader', async (p5, screenshot) => {
-      p5.createCanvas(50, 50, p5.WEBGL);
+    visualTest('ImageShader', async (p5, screenshot) => {
+      p5.createCanvas(100, 100, p5.WEBGL);
       const img = await new Promise(resolve => p5.loadImage('unit/assets/cat.jpg', resolve));
       const imgShader = p5.createShader(
         `
-        attribute vec3 aPosition;
-        varying vec2 vTexCoord;
-        void main() {
-          gl_Position = vec4(aPosition, 1.0);
-          vTexCoord = aPosition.xy * 0.5 + 0.5;
-        }
-        `,
+      precision mediump float;
+      attribute vec3 aPosition;
+      attribute vec2 aTexCoord;
+      varying vec2 vTexCoord;
+      uniform mat4 uModelViewMatrix;
+      uniform mat4 uProjectionMatrix;
+  
+      void main() {
+        vTexCoord = aTexCoord;
+        gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+      }
+      `,
         `
-        precision mediump float;
-        varying vec2 vTexCoord;
-        uniform sampler2D uTexture;
-        void main() {
-          vec4 texColor = texture2D(uTexture, vTexCoord);
-          gl_FragColor = texColor;
-        }
-        `
+      precision mediump float;
+      varying vec2 vTexCoord;
+      uniform sampler2D uTexture;
+  
+      void main() {
+        vec4 texColor = texture2D(uTexture, vTexCoord);
+        gl_FragColor = texColor * vec4(1.5, 0.5, 0.5, 1.0);
+      }
+      `
       );
+
       p5.imageShader(imgShader);
-      p5.texture(img);
+      imgShader.setUniform('uTexture', img);
       p5.noStroke();
-      p5.rect(-25, -25, 50, 50);
+      p5.image(img, -p5.width / 2, -p5.height / 2, p5.width, p5.height);
       screenshot();
     });
   });
-
 });
