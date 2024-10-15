@@ -6,7 +6,7 @@ import material from './material';
 import text from './text';
 import renderBuffer from './p5.RenderBuffer';
 import quat from './p5.Quat';
-import matrix from './p5.Matrix';
+import matrix from '../math/p5.Matrix';
 import geometry from './p5.Geometry';
 import framebuffer from './p5.Framebuffer';
 import dataArray from './p5.DataArray';
