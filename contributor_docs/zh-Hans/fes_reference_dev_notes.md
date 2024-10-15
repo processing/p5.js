@@ -23,15 +23,15 @@
 `_report()` 是一个主要函数，直接将错误助手消息的输出打印到控制台。
 如果设置了 `_fesLogger`（即我们正在运行测试），`_report` 将调用 `_fesLogger` 而不是 console.log。
 ##### 语法
-````JavaScript
+```javascript
 _report(message)
-````
-````JavaScript
+```
+```javascript
 _report(message, func)
-````
-````JavaScript
+```
+```javascript
 _report(message, func, color)
-````
+```
 ##### 参数
 ```
 @param  {String}        message   要打印的消息
@@ -65,15 +65,15 @@ _friendlyError
 ```
 
 ##### 语法
-````JavaScript
+```javascript
 _friendlyError(message)
-````
-````JavaScript
+```
+```javascript
 _friendlyError(message, func)
-````
-````JavaScript
+```
+```javascript
 _friendlyError(message, func, color)
-````
+```
 ##### 参数
 ```
 @param  {String}        message   要打印的消息
@@ -108,9 +108,9 @@ _friendlyFileLoadError
   _report
 ```
 ##### 语法
-````JavaScript
+```javascript
 _friendlyFileLoadError(errorType, filePath)
-````
+```
 ##### 参数
 ```
 @param  {Number}  errorType   文件加载错误类型的数字
@@ -118,7 +118,7 @@ _friendlyFileLoadError(errorType, filePath)
 ```
 ##### 示例
 <ins>文件加载错误示例</ins>
-````JavaScript
+```javascript
 /// missing font file
 let myFont;
 function preload() {
@@ -131,7 +131,7 @@ function setup() {
   text('p5*js', 10, 50);
 };
 function draw() {};
-````
+```
 FES会在控制台生成以下消息：
 > 🌸 p5.js says: 看起来加载字体文件时出现了问题。请检查文件路径 [assets/OpenSans-Regular.ttf] 是否正确，尝试将字体文件托管到在线服务器上，或者运行本地服务器。[https://github.com/processing/p5.js/wiki/Local-server]
 
@@ -195,9 +195,9 @@ validateParameters
         friendlyWelcome
 ```
 ##### 语法
-````JavaScript
+```javascript
 _validateParameters(func, args)
-````
+```
 ##### 参数
 ```
 @param  {String}  func    函数名
@@ -205,18 +205,18 @@ _validateParameters(func, args)
 ```
 ##### 示例
 <ins>缺少参数的示例</ins>
-````JavaScript
+```javascript
 arc(1, 1, 10.5, 10);
-````
+```
 FES将在控制台生成以下消息：
 > 🌸 p5.js 说：看起来arc()在位置#4（从零开始的索引）收到了一个空变量。如果不是故意的，这通常是作用域问题：[https://p5js.org/examples/data-variable-scope.html]。[http://p5js.org/reference/#p5/arc]
 
 > 🌸 p5.js 说：看起来arc()在位置#5（从零开始的索引）收到了一个空变量。如果不是故意的，这通常是作用域问题：[https://p5js.org/examples/data-variable-scope.html]。[http://p5js.org/reference/#p5/arc]
 
 <ins>类型不匹配的示例</ins>
-````JavaScript
+```javascript
 arc('1', 1, 10.5, 10, 0, Math.PI, 'pie');
-````
+```
 FES将在控制台生成以下消息：
 > 🌸 p5.js 说：arc()在参数#0（从零开始的索引）处期望接收Number，但收到了字符串。[http://p5js.org/reference/#/p5/arc]
 ##### 位置
@@ -255,16 +255,16 @@ try { someCode(); } catch(err) { p5._fesErrorMonitor(err); }
        printFriendlyStack
 ```
 ##### 语法
-````JavaScript
+```javascript
 fesErrorMonitor(event)
-````
+```
 ##### 参数
 ```
 @param {*}  e     错误事件
 ```
 ### 示例
 <ins>内部错误示例 1</ins>
-```JavaScript
+```javascript
 function preload() {
   // 由于在preload中调用background()而引发
   // 错误
@@ -275,7 +275,7 @@ FES将在控制台中生成以下消息：
 > 🌸 p5.js说：当调用background时（位于sketch.js的第4行[http://localhost:8000/lib/empty-example/sketch.js:4:3]），在p5js库内部发生了一个错误，错误消息为“无法读取未定义的属性'background'”。（如果没有另外说明，这可能是由于从preload中调用了background。preload函数中除了load函数（loadImage、loadJSON、loadFont、loadStrings等）之外不应该有其他内容。）（http://p5js.org/reference/#/p5/preload）
 
 <ins>内部错误示例 2</ins>
-```JavaScript
+```javascript
 function setup() {
   cnv = createCanvas(200, 200);
   cnv.mouseClicked();
@@ -285,7 +285,7 @@ FES将在控制台中生成以下消息：
 > 🌸 p5.js说：当调用mouseClicked时（位于sketch.js的第3行[http://localhost:8000/lib/empty-example/sketch.js:3:7]），在p5js库内部发生了一个错误，错误消息为“无法读取未定义的属性'bind'”。（如果没有另外说明，这可能是由于传递给mouseClicked的参数存在问题。）（http://p5js.org/reference/#/p5/mouseClicked）
 
 <ins>用户示例中的作用域错误示例</ins>
-```JavaScript
+```javascript
 function setup() {
   let b = 1;
 }
@@ -297,7 +297,7 @@ FES将在控制台中生成以下消息：
 > 🌸 p5.js说：由于当前范围内未定义“b”，出现了一个错误（位于sketch.js的第5行[http://localhost:8000/lib/empty-example/sketch.js:5:3]）。如果在代码中定义了它，请检查其作用域、拼写和大小写（JavaScript区分大小写）。更多信息：https://p5js.org/examples/data-variable-scope.html https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Not_Defined#What_went_wrong
 
 <ins>用户示例中的拼写错误示例</ins>
-```JavaScript
+```javascript
 function setup() {
   colour(1, 2, 3);
 }
@@ -324,22 +324,22 @@ core/friendly_errors/fes_core.js
 
 ##### 示例
 <ins>重新定义 p5.js 保留常量的示例</ins>
-````JavaScript
+```javascript
 function setup() {
   // PI 是 p5.js 的保留常量
   let PI = 100;
 }
-````
+```
 FES 将在控制台生成以下消息：
 > 🌸 p5.js 提示：您使用了 p5.js 的保留变量 "PI"，请确保将变量名更改为其他名称。(https://p5js.org/reference/#/p5/PI)
 
 <ins>重新定义 p5.js 保留函数的示例</ins>
-````JavaScript
+```javascript
 function setup() {
   // text 是 p5.js 的保留函数
   let text = 100;
 }
-````
+```
 FES 将在控制台生成以下消息：
 > 🌸 p5.js 提示：您使用了 p5.js 的保留函数 "text"，请确保将函数名更改为其他名称。
 
@@ -354,20 +354,20 @@ core/friendly_errors/sketch_reader.js
 生成并打印一个友好的错误消息，错误类型为 `fes.checkUserDefinedFns`。
 
 ##### 语法
-````JavaScript
+```javascript
 checkForUserDefinedFunctions(context)
-````
+```
 ##### 参数
 ```
 @param {*} context  当前默认上下文。
                     在“全局模式”下设置为 window，在“实例模式”下设置为 p5 实例。
 ```
 ##### 示例
-````JavaScript
+```javascript
 function preLoad() {
   loadImage('myimage.png');
 }
-````
+```
 FES 将在控制台生成以下消息：
 > 🌸 p5.js 提示：似乎您可能误写了 preLoad，应该是 preload。如果这不是您的意图，请进行更正。(http://p5js.org/reference/#/p5/preload)
 
@@ -409,7 +409,7 @@ p5.newObject = function(parameter) {
    this.parameter = 'some parameter';
    this.name = 'p5.newObject';
 };
-````
+```
 * 内联文档：允许的参数类型包括 `Boolean`、`Number`、`String`，以及对象的名称（参见上述项目符号）。对于任何数组参数，请使用 `Array`。如果需要，可以在描述部分解释允许的特定类型的数组参数（例如 `Number[]`、`String[]`）。
 * 目前支持的类类型（具有其 `name` 参数）：`p5.Color`、`p5.Element`、`p5.Graphics`、`p5.Renderer`、`p5.Renderer2D`、`p5.Image`、`p5.Table`、`p5.TableRow`、`p5.XML`、`p5.Vector`、`p5.Font`、`p5.Geometry`、`p5.Matrix`、`p5.RendererGL`。
 
@@ -419,7 +419,7 @@ p5.newObject = function(parameter) {
 
 您可以在代码的顶部添加一行代码来禁用此功能：
 
-```JavaScript
+```javascript
 p5.disableFriendlyErrors = true; // 禁用 FES
 
 function setup() {
@@ -437,7 +437,7 @@ function draw() {
 ## 已知限制
 
 * FES 可能仍然会导致假阴性的情况。这通常是由于设计与实际使用情况之间的不匹配而导致的（例如，绘图函数最初设计用于在 2D 和 3D 设置中可以互换使用），例如：
-```JavaScript
+```javascript
 const x3; // 未定义
 line(0, 0, 100, 100, x3, Math.PI);
 ```
@@ -465,7 +465,7 @@ line(0, 0, 100, 100, x3, Math.PI);
 * 改进 `sketch_reader.js` 的代码读取和提取变量/函数名的功能（提取用户在代码中声明的函数和变量名）。例如，如果所有代码都写在一行中，`sketch_reader.js` 就无法正确提取变量/函数名。我们欢迎未来的提案，以识别所有这些"逃逸"情况，并添加单元测试以捕捉它们。
 
 * `sketch_reader.js` 可以扩展，可以添加新功能（例如：当用户在 `draw()` 函数中声明变量时向用户发出警告）。以更好地帮助用户。
-```JavaScript
+```javascript
 // 这段代码片段使用新函数包装了 window.console 方法，以修改其功能
 // 目前尚未实现，但可以使用它来提供更好格式的错误消息
 const original = window.console;

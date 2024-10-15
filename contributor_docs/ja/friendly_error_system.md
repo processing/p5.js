@@ -82,7 +82,7 @@ i18next は補間をサポートしているため、変数を渡してメッセ
 ここで、キーは「greeting」、変数名は「who」です。
 
 このメッセージを動的に生成するには、値を渡す必要があります。
-```JavaScript
+```javascript
 translator('greeting', { who: 'everyone' } );
 ```
 「translator」によって生成された結果は次のようになります。
@@ -95,7 +95,7 @@ translator('greeting', { who: 'everyone' } );
 "image": "看起来加载图像时出现问题。{{suggestion}}"
 ```
 最終メッセージを動的に生成するために、FES はこのキーと事前に生成された `suggestion` 値を使用して `translator()` を呼び出します。
-```JavaScript
+```javascript
 translator('fes.fileLoadError.image', { suggestion });
 ```
 
@@ -137,7 +137,7 @@ FESのコアコンポーネントは以下の場所で見つけることがで�
 #### FESメッセージ表示
 `fes_core.js/_friendlyError()` 生成されたわかりやすいエラー メッセージをコンソールに出力します。 例えば：
 
-```JavaScript
+```javascript
 p5._friendlyError(
   translator('fes.globalErrors.type.notfunc', translationObj)
 );
@@ -150,7 +150,7 @@ p5._friendlyError(
 `p5.disableFriendlyErrors` が `true` に設定されている場合、FES をオフにすることができます。
 
 例：
-```JavaScript
+```javascript
 p5.disableFriendlyErrors = true;
 
 function setup() {

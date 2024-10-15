@@ -83,7 +83,7 @@ i18next支持插值，允许我们传递一个变量以动态生成消息。我�
 这里，键是`greeting`，变量名是`who`。
 
 为了动态生成该消息，我们需要传递一个值：
-```JavaScript
+```javascript
 translator('greeting', { who: 'everyone' } );
 ```
 由`translator`生成的结果将如下所示：
@@ -96,7 +96,7 @@ translator('greeting', { who: 'everyone' } );
 "image": "看起来加载图像时出现问题。{{suggestion}}"
 ```
 为了动态生成最终的消息，FES将使用该键和预先生成的`suggestion`值调用`translator()`。
-```JavaScript
+```javascript
 translator('fes.fileLoadError.image', { suggestion });
 ```
 
@@ -142,7 +142,7 @@ p5.js从多个位置调用FES，以处理不同的情况，包括：
 #### FES消息显示器
 `fes_core.js/_friendlyError()` 在控制台中打印生成的友好错误消息。例如：
 
-```JavaScript
+```javascript
 p5._friendlyError(
   translator('fes.globalErrors.type.notfunc', translationObj)
 );
@@ -155,7 +155,7 @@ p5._friendlyError(
 当`p5.disableFriendlyErrors`设置为`true`时，您可以关闭FES。
 
 示例：
-```JavaScript
+```javascript
 p5.disableFriendlyErrors = true;
 
 function setup() {
