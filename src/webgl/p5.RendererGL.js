@@ -563,6 +563,8 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.executeZoom = false;
     this.executeRotateAndMove = false;
 
+    this._drawingFilter = false;
+
     this.specularShader = undefined;
     this.sphereMapping = undefined;
     this.diffusedShader = undefined;
@@ -1157,6 +1159,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     target.filterCamera._resize();
     this._pInst.setCamera(target.filterCamera);
     this._pInst.resetMatrix();
+    this._drawingFilter = true;
     this._pInst.image(fbo, -target.width / 2, -target.height / 2,
       target.width, target.height);
     this._pInst.clearDepth();
@@ -1731,17 +1734,13 @@ p5.RendererGL = class RendererGL extends Renderer {
    * depending on the current context (image or shape).
    */
   _getFillShader() {
-    // If a filter like BLUR is applied, disable imageShader
-    if (this._drawingFilter) {
-      return this._getLightShader(); // Ignore user-defined imageShader
-    }
-    // If drawing an image, use the image shader or light shader
-    else if (this._drawingImage) {
-      if(this.userImageShader){
+    // If drawing an image, check for user-defined image shader and filters
+    if (this._drawingImage) {
+      // Use user-defined image shader if available and no filter is applied
+      if (this.userImageShader && !this._drawingFilter) {
         return this.userImageShader;
-      }
-      else{
-        return this._getLightShader();
+      } else {
+        return this._getLightShader(); // Fallback to light shader
       }
     }
     // If user has defined a fill shader, return that
