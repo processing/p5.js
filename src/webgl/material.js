@@ -730,43 +730,6 @@ p5.prototype.createFilterShader = function (fragSrc) {
  * let vertSrc = `
  * precision highp float;
  * attribute vec3 aPosition;
- * void main() {
- *   gl_Position = vec4(aPosition, 1.0);
- * }
- * `;
- *
- * let fragSrc = `
- * precision highp float;
- * uniform float uMouseX;
- * void main() {
- *   vec3 color = vec3(uMouseX, 0.0, 1.0); // Color based on mouse X
- *   gl_FragColor = vec4(color, 1.0);
- * }
- * `;
- *
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *   fillShader = createShader(vertSrc, fragSrc);
- *   shader(fillShader);
- *   noStroke();
- *   describe('A square with color changing based on mouse X without lighting.');
- * }
- *
- * function draw() {
- *   fillShader.setUniform('uMouseX', map(mouseX, 0, width, 0, 1));
- *   plane(100, 100);
- * }
- * </code>
- * </div>
- *
- * @example
- * <div modernizr='webgl'>
- * <code>
- * let fillShader;
- *
- * let vertSrc = `
- * precision highp float;
- * attribute vec3 aPosition;
  * uniform mat4 uModelViewMatrix;
  * uniform mat4 uProjectionMatrix;
  * varying vec3 vPosition;
@@ -861,7 +824,42 @@ p5.prototype.createFilterShader = function (fragSrc) {
  * }
  * </code>
  * </div>
+ * 
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   myShader = baseMaterialShader().modify({
+ *     declarations: 'uniform float time;',
+ *     'vec4 getFinalColor': `(vec4 color) {
+ *       float r = 0.2 + 0.5 * abs(sin(time + 0.0));
+ *       float g = 0.2 + 0.5 * abs(sin(time + 1.0));
+ *       float b = 0.2 + 0.5 * abs(sin(time + 2.0));
+ *       color.rgb = vec3(r, g, b);
+ *       return color;
+ *     }`
+ *   });
+ *
+ *   noStroke();
+ *   describe('A 3D cube with dynamically changing colors on a beige background.');
+ * }
+ *
+ * function draw() {
+ *   background(245, 245, 220);
+ *   shader(myShader);
+ *   myShader.setUniform('time', millis() / 1000.0);
+ *
+ *   box(50);
+ * }
+ * </code>
+ * </div>
+ * 
  */
+
 p5.prototype.shader = function (s) {
   this._assert3d('shader');
   p5._validateParameters('shader', arguments);
@@ -1060,9 +1058,10 @@ p5.prototype.strokeShader = function (s) {
  * or dynamic behavior. The shader will be applied to the image drawn using
  * the <a href="#/p5/image">image()</a> function.
  *
- * The shader will be used for:
- * - Images only, regardless of whether the image is being drawn with
- *   <a href="#/p5/texture">texture()</a> or used in other 3D contexts.
+ * The shader will be used exclusively for:
+ * - `image()` calls, applying only when drawing 2D images.
+ * - This shader will NOT apply to images used in <a href="#/p5/texture">texture()</a> or other 3D contexts.
+ *   Any attempts to use the imageShader in these cases will be ignored.
  *
  * @method imageShader
  * @chainable
