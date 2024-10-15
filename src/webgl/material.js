@@ -6,6 +6,8 @@
  */
 
 import * as constants from '../core/constants';
+import { RendererGL } from './p5.RendererGL';
+import { Shader } from './p5.Shader';
 
 function material(p5, fn){
   /**
@@ -129,7 +131,7 @@ function material(p5, fn){
       failureCallback = console.error;
     }
 
-    const loadedShader = new p5.Shader();
+    const loadedShader = new Shader();
 
     const self = this;
     let loadedFrag = false;
@@ -533,7 +535,7 @@ function material(p5, fn){
    */
   fn.createShader = function (vertSrc, fragSrc, options) {
     p5._validateParameters('createShader', arguments);
-    return new p5.Shader(this._renderer, vertSrc, fragSrc, options);
+    return new Shader(this._renderer, vertSrc, fragSrc, options);
   };
 
   /**
@@ -669,7 +671,7 @@ function material(p5, fn){
       }
     `;
     let vertSrc = fragSrc.includes('#version 300 es') ? defaultVertV2 : defaultVertV1;
-    const shader = new p5.Shader(this._renderer, vertSrc, fragSrc);
+    const shader = new Shader(this._renderer, vertSrc, fragSrc);
     if (this._renderer.GL) {
       shader.ensureCompiledOnContext(this);
     } else {
@@ -2638,7 +2640,7 @@ function material(p5, fn){
     this._renderer.states._hasSetAmbient = true;
     this._renderer.states.curAmbientColor = color._array;
     this._renderer.states._useNormalMaterial = false;
-    this._renderer.states._enableLighting = true;
+    this._renderer.states.enableLighting = true;
     this._renderer.states.doFill = true;
     return this;
   };
@@ -2734,7 +2736,7 @@ function material(p5, fn){
     this._renderer.states.curEmissiveColor = color._array;
     this._renderer.states._useEmissiveMaterial = true;
     this._renderer.states._useNormalMaterial = false;
-    this._renderer.states._enableLighting = true;
+    this._renderer.states.enableLighting = true;
 
     return this;
   };
@@ -2989,7 +2991,7 @@ function material(p5, fn){
     this._renderer.states.curSpecularColor = color._array;
     this._renderer.states._useSpecularMaterial = true;
     this._renderer.states._useNormalMaterial = false;
-    this._renderer.states._enableLighting = true;
+    this._renderer.states.enableLighting = true;
 
     return this;
   };
@@ -3190,7 +3192,7 @@ function material(p5, fn){
    * transparency internally, e.g. via vertex colors
    * @return {Number[]}  Normalized numbers array
    */
-  p5.RendererGL.prototype._applyColorBlend = function (colors, hasTransparency) {
+  RendererGL.prototype._applyColorBlend = function (colors, hasTransparency) {
     const gl = this.GL;
 
     const isTexture = this.states.drawMode === constants.TEXTURE;
@@ -3226,7 +3228,7 @@ function material(p5, fn){
    * @param  {Number[]} color [description]
    * @return {Number[]}  Normalized numbers array
    */
-  p5.RendererGL.prototype._applyBlendMode = function () {
+  RendererGL.prototype._applyBlendMode = function () {
     if (this._cachedBlendMode === this.states.curBlendMode) {
       return;
     }
@@ -3304,6 +3306,13 @@ function material(p5, fn){
     if (!this._isErasing) {
       this._cachedBlendMode = this.states.curBlendMode;
     }
+  };
+
+  RendererGL.prototype.texture = function(tex) {
+    this.states.drawMode = constants.TEXTURE;
+    this.states._useNormalMaterial = false;
+    this.states._tex = tex;
+    this.states.doFill = true;
   };
 }
 

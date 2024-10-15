@@ -6,6 +6,7 @@
  */
 
 import * as constants from '../core/constants';
+import { Vector } from '../math/p5.Vector';
 
 function interaction(p5, fn){
   /**
@@ -428,7 +429,7 @@ function interaction(p5, fn){
       const viewZ = Math.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
 
       // position vector of the center.
-      let cv = new p5.Vector(cam.centerX, cam.centerY, cam.centerZ);
+      let cv = new Vector(cam.centerX, cam.centerY, cam.centerZ);
 
       // Calculate the normalized device coordinates of the center.
       cv = cam.cameraMatrix.multiplyPoint(cv);

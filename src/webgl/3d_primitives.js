@@ -7,6 +7,10 @@
  */
 
 import * as constants from '../core/constants';
+import { RendererGL } from './p5.RendererGL';
+import { Vector } from '../math/p5.Vector';
+import { Geometry } from './p5.Geometry';
+import { Matrix } from './p5.Matrix';
 
 function primitives3D(p5, fn){
   /**
@@ -982,13 +986,13 @@ function primitives3D(p5, fn){
           v = i / this.detailY;
           for (let j = 0; j <= this.detailX; j++) {
             u = j / this.detailX;
-            p = new p5.Vector(u - 0.5, v - 0.5, 0);
+            p = new Vector(u - 0.5, v - 0.5, 0);
             this.vertices.push(p);
             this.uvs.push(u, v);
           }
         }
       };
-      const planeGeom = new p5.Geometry(detailX, detailY, _plane);
+      const planeGeom = new Geometry(detailX, detailY, _plane);
       planeGeom.computeFaces().computeNormals();
       if (detailX <= 1 && detailY <= 1) {
         planeGeom._makeTriangleEdges()._edgesToVertices();
@@ -1191,7 +1195,7 @@ function primitives3D(p5, fn){
             //inspired by lightgl:
             //https://github.com/evanw/lightgl.js
             //octants:https://en.wikipedia.org/wiki/Octant_(solid_geometry)
-            const octant = new p5.Vector(
+            const octant = new Vector(
               ((d & 1) * 2 - 1) / 2,
               ((d & 2) - 1) / 2,
               ((d & 4) / 2 - 1) / 2
@@ -1203,7 +1207,7 @@ function primitives3D(p5, fn){
           this.faces.push([v + 2, v + 1, v + 3]);
         });
       };
-      const boxGeom = new p5.Geometry(detailX, detailY, _box);
+      const boxGeom = new Geometry(detailX, detailY, _box);
       boxGeom.computeNormals();
       if (detailX <= 4 && detailY <= 4) {
         boxGeom._edgesToVertices();
@@ -1416,16 +1420,16 @@ function primitives3D(p5, fn){
         const cur = Math.cos(ur);
 
         //VERTICES
-        this.vertices.push(new p5.Vector(sur * ringRadius, y, cur * ringRadius));
+        this.vertices.push(new Vector(sur * ringRadius, y, cur * ringRadius));
 
         //VERTEX NORMALS
         let vertexNormal;
         if (yy < 0) {
-          vertexNormal = new p5.Vector(0, -1, 0);
+          vertexNormal = new Vector(0, -1, 0);
         } else if (yy > detailY && topRadius) {
-          vertexNormal = new p5.Vector(0, 1, 0);
+          vertexNormal = new Vector(0, 1, 0);
         } else {
-          vertexNormal = new p5.Vector(sur * cosSlant, sinSlant, cur * cosSlant);
+          vertexNormal = new Vector(sur * cosSlant, sinSlant, cur * cosSlant);
         }
         this.vertexNormals.push(vertexNormal);
         //UVs
@@ -1943,7 +1947,7 @@ function primitives3D(p5, fn){
 
     const gId = `cone|${detailX}|${detailY}|${cap}`;
     if (!this._renderer.geometryInHash(gId)) {
-      const coneGeom = new p5.Geometry(detailX, detailY);
+      const coneGeom = new Geometry(detailX, detailY);
       _truncatedCone.call(coneGeom, 1, 0, 1, detailX, detailY, cap, false);
       if (detailX <= 24 && detailY <= 16) {
         coneGeom._makeTriangleEdges()._edgesToVertices();
@@ -2161,7 +2165,7 @@ function primitives3D(p5, fn){
           }
         }
       };
-      const ellipsoidGeom = new p5.Geometry(detailX, detailY, _ellipsoid);
+      const ellipsoidGeom = new Geometry(detailX, detailY, _ellipsoid);
       ellipsoidGeom.computeFaces();
       if (detailX <= 24 && detailY <= 24) {
         ellipsoidGeom._makeTriangleEdges()._edgesToVertices();
@@ -2369,13 +2373,13 @@ function primitives3D(p5, fn){
             const cosTheta = Math.cos(theta);
             const sinTheta = Math.sin(theta);
 
-            const p = new p5.Vector(
+            const p = new Vector(
               r * cosTheta,
               r * sinTheta,
               tubeRatio * sinPhi
             );
 
-            const n = new p5.Vector(cosPhi * cosTheta, cosPhi * sinTheta, sinPhi);
+            const n = new Vector(cosPhi * cosTheta, cosPhi * sinTheta, sinPhi);
 
             this.vertices.push(p);
             this.vertexNormals.push(n);
@@ -2383,7 +2387,7 @@ function primitives3D(p5, fn){
           }
         }
       };
-      const torusGeom = new p5.Geometry(detailX, detailY, _torus);
+      const torusGeom = new Geometry(detailX, detailY, _torus);
       torusGeom.computeFaces();
       if (detailX <= 24 && detailY <= 16) {
         torusGeom._makeTriangleEdges()._edgesToVertices();
@@ -2439,16 +2443,16 @@ function primitives3D(p5, fn){
    * </code>
    * </div>
    */
-  p5.RendererGL.prototype.point = function(x, y, z = 0) {
+  RendererGL.prototype.point = function(x, y, z = 0) {
 
     const _vertex = [];
-    _vertex.push(new p5.Vector(x, y, z));
+    _vertex.push(new Vector(x, y, z));
     this._drawPoints(_vertex, this.immediateMode.buffers.point);
 
     return this;
   };
 
-  p5.RendererGL.prototype.triangle = function(args) {
+  RendererGL.prototype.triangle = function(args) {
     const x1 = args[0],
       y1 = args[1];
     const x2 = args[2],
@@ -2460,15 +2464,15 @@ function primitives3D(p5, fn){
     if (!this.geometryInHash(gId)) {
       const _triangle = function() {
         const vertices = [];
-        vertices.push(new p5.Vector(0, 0, 0));
-        vertices.push(new p5.Vector(1, 0, 0));
-        vertices.push(new p5.Vector(0, 1, 0));
+        vertices.push(new Vector(0, 0, 0));
+        vertices.push(new Vector(1, 0, 0));
+        vertices.push(new Vector(0, 1, 0));
         this.edges = [[0, 1], [1, 2], [2, 0]];
         this.vertices = vertices;
         this.faces = [[0, 1, 2]];
         this.uvs = [0, 0, 1, 0, 1, 1];
       };
-      const triGeom = new p5.Geometry(1, 1, _triangle);
+      const triGeom = new Geometry(1, 1, _triangle);
       triGeom._edgesToVertices();
       triGeom.computeNormals();
       this.createBuffers(gId, triGeom);
@@ -2484,7 +2488,7 @@ function primitives3D(p5, fn){
     try {
       // triangle orientation.
       const orientation = Math.sign(x1*y2-x2*y1 + x2*y3-x3*y2 + x3*y1-x1*y3);
-      const mult = new p5.Matrix([
+      const mult = new Matrix([
         x2 - x1, y2 - y1, 0, 0, // the resulting unit X-axis
         x3 - x1, y3 - y1, 0, 0, // the resulting unit Y-axis
         0, 0, orientation, 0,   // the resulting unit Z-axis (Reflect the specified order of vertices)
@@ -2501,7 +2505,7 @@ function primitives3D(p5, fn){
     return this;
   };
 
-  p5.RendererGL.prototype.ellipse = function(args) {
+  RendererGL.prototype.ellipse = function(args) {
     this.arc(
       args[0],
       args[1],
@@ -2514,7 +2518,7 @@ function primitives3D(p5, fn){
     );
   };
 
-  p5.RendererGL.prototype.arc = function(...args) {
+  RendererGL.prototype.arc = function(...args) {
     const x = args[0];
     const y = args[1];
     const width = args[2];
@@ -2543,7 +2547,7 @@ function primitives3D(p5, fn){
         if (start.toFixed(10) !== stop.toFixed(10)) {
           // if the mode specified is PIE or null, push the mid point of the arc in vertices
           if (mode === constants.PIE || typeof mode === 'undefined') {
-            this.vertices.push(new p5.Vector(0.5, 0.5, 0));
+            this.vertices.push(new Vector(0.5, 0.5, 0));
             this.uvs.push([0.5, 0.5]);
           }
 
@@ -2555,7 +2559,7 @@ function primitives3D(p5, fn){
             const _x = 0.5 + Math.cos(theta) / 2;
             const _y = 0.5 + Math.sin(theta) / 2;
 
-            this.vertices.push(new p5.Vector(_x, _y, 0));
+            this.vertices.push(new Vector(_x, _y, 0));
             this.uvs.push([_x, _y]);
 
             if (i < detail - 1) {
@@ -2603,7 +2607,7 @@ function primitives3D(p5, fn){
         }
       };
 
-      const arcGeom = new p5.Geometry(detail, 1, _arc);
+      const arcGeom = new Geometry(detail, 1, _arc);
       arcGeom.computeNormals();
 
       if (detail <= 50) {
@@ -2631,7 +2635,7 @@ function primitives3D(p5, fn){
     return this;
   };
 
-  p5.RendererGL.prototype.rect = function(args) {
+  RendererGL.prototype.rect = function(args) {
     const x = args[0];
     const y = args[1];
     const width = args[2];
@@ -2650,7 +2654,7 @@ function primitives3D(p5, fn){
             const v = i / this.detailY;
             for (let j = 0; j <= this.detailX; j++) {
               const u = j / this.detailX;
-              const p = new p5.Vector(u, v, 0);
+              const p = new Vector(u, v, 0);
               this.vertices.push(p);
               this.uvs.push(u, v);
             }
@@ -2665,7 +2669,7 @@ function primitives3D(p5, fn){
             ];
           }
         };
-        const rectGeom = new p5.Geometry(detailX, detailY, _rect);
+        const rectGeom = new Geometry(detailX, detailY, _rect);
         rectGeom
           .computeFaces()
           .computeNormals()
@@ -2764,14 +2768,14 @@ function primitives3D(p5, fn){
   };
 
   /* eslint-disable max-len */
-  p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, detailX=2, detailY=2) {
+  RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, detailX=2, detailY=2) {
     /* eslint-enable max-len */
 
     const gId =
       `quad|${x1}|${y1}|${z1}|${x2}|${y2}|${z2}|${x3}|${y3}|${z3}|${x4}|${y4}|${z4}|${detailX}|${detailY}`;
 
     if (!this.geometryInHash(gId)) {
-      const quadGeom = new p5.Geometry(detailX, detailY, function() {
+      const quadGeom = new Geometry(detailX, detailY, function() {
         //algorithm adapted from c++ to js
         //https://stackoverflow.com/questions/16989181/whats-the-correct-way-to-draw-a-distorted-plane-in-opengl/16993202#16993202
         let xRes = 1.0 / (this.detailX - 1);
@@ -2792,7 +2796,7 @@ function primitives3D(p5, fn){
             let pty = (1 - pctx) * linePt0y + pctx * linePt1y;
             let ptz = (1 - pctx) * linePt0z + pctx * linePt1z;
 
-            this.vertices.push(new p5.Vector(ptx, pty, ptz));
+            this.vertices.push(new Vector(ptx, pty, ptz));
             this.uvs.push([pctx, pcty]);
           }
         }
@@ -2827,7 +2831,7 @@ function primitives3D(p5, fn){
   //this implementation of bezier curve
   //is based on Bernstein polynomial
   // pretier-ignore
-  p5.RendererGL.prototype.bezier = function(
+  RendererGL.prototype.bezier = function(
     x1,
     y1,
     z1, // x2
@@ -2868,7 +2872,7 @@ function primitives3D(p5, fn){
   };
 
   // pretier-ignore
-  p5.RendererGL.prototype.curve = function(
+  RendererGL.prototype.curve = function(
     x1,
     y1,
     z1, // x2
@@ -2948,7 +2952,7 @@ function primitives3D(p5, fn){
    * </code>
    * </div>
    */
-  p5.RendererGL.prototype.line = function(...args) {
+  RendererGL.prototype.line = function(...args) {
     if (args.length === 6) {
       this.beginShape(constants.LINES);
       this.vertex(args[0], args[1], args[2]);
@@ -2963,7 +2967,7 @@ function primitives3D(p5, fn){
     return this;
   };
 
-  p5.RendererGL.prototype.bezierVertex = function(...args) {
+  RendererGL.prototype.bezierVertex = function(...args) {
     if (this.immediateMode._bezierVertex.length === 0) {
       throw Error('vertex() must be used once before calling bezierVertex()');
     } else {
@@ -3187,7 +3191,7 @@ function primitives3D(p5, fn){
     }
   };
 
-  p5.RendererGL.prototype.quadraticVertex = function(...args) {
+  RendererGL.prototype.quadraticVertex = function(...args) {
     if (this.immediateMode._quadraticVertex.length === 0) {
       throw Error('vertex() must be used once before calling quadraticVertex()');
     } else {
@@ -3398,7 +3402,7 @@ function primitives3D(p5, fn){
     }
   };
 
-  p5.RendererGL.prototype.curveVertex = function(...args) {
+  RendererGL.prototype.curveVertex = function(...args) {
     let w_x = [];
     let w_y = [];
     let w_z = [];
@@ -3516,7 +3520,7 @@ function primitives3D(p5, fn){
     }
   };
 
-  p5.RendererGL.prototype.image = function(
+  RendererGL.prototype.image = function(
     img,
     sx,
     sy,
@@ -3531,13 +3535,12 @@ function primitives3D(p5, fn){
       this.blendMode(this._cachedBlendMode);
     }
 
-    this._pInst.push();
+    this.push();
+    this.noLights();
+    this.states.doStroke = false;;
 
-    this._pInst.noLights();
-    this._pInst.noStroke();
-
-    this._pInst.texture(img);
-    this._pInst.textureMode(constants.NORMAL);
+    this.texture(img);
+    this.textureMode = constants.NORMAL;
 
     let u0 = 0;
     if (sx <= img.width) {
@@ -3566,7 +3569,7 @@ function primitives3D(p5, fn){
     this.vertex(dx, dy + dHeight, 0, u0, v1);
     this.endShape(constants.CLOSE);
 
-    this._pInst.pop();
+    this.pop();
 
     if (this._isErasing) {
       this.blendMode(constants.REMOVE);

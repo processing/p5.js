@@ -4,22 +4,18 @@
  * @for p5
  */
 
-import p5 from './main';
 import * as constants from '../core/constants';
 
-/**
- * Main graphics and rendering context, as well as the base API
- * implementation for p5.js "core". To be used as the superclass for
- * Renderer2D and Renderer3D classes, respectively.
- *
- * @class p5.Renderer
- * @param {HTMLElement} elt DOM node that is wrapped
- * @param {p5} [pInst] pointer to p5 instance
- * @param {Boolean} [isMainCanvas] whether we're using it as main canvas
- */
-p5.Renderer = class Renderer {
-  constructor(elt, pInst, isMainCanvas) {
+class Renderer {
+  constructor(pInst, w, h, isMainCanvas) {
     this._pInst = this._pixelsState = pInst;
+    this._isMainCanvas = isMainCanvas;
+    this.pixels = [];
+    this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
+
+    this.width = w;
+    this.height = h;
+
     this._events = {};
 
     if (isMainCanvas) {
@@ -54,11 +50,22 @@ p5.Renderer = class Renderer {
     this._curveTightness = 0;
   }
 
-  createCanvas(w, h) {
-    this.width = w;
-    this.height = h;
-    this._pInst.width = this.width;
-    this._pInst.height = this.height;
+  remove() {
+
+  }
+
+  pixelDensity(val){
+    let returnValue;
+    if (typeof val === 'number') {
+      if (val !== this._pixelDensity) {
+        this._pixelDensity = val;
+      }
+      returnValue = this;
+      this.resize(this.width, this.height);
+    } else {
+      returnValue = this._pixelDensity;
+    }
+    return returnValue;
   }
 
   // Makes a shallow copy of the current states
@@ -101,20 +108,16 @@ p5.Renderer = class Renderer {
   }
 
   /**
- * Resize our canvas element.
- */
+   * Resize our canvas element.
+   */
   resize(w, h) {
     this.width = w;
     this.height = h;
-    if (this._isMainCanvas) {
-      this._pInst.width = this.width;
-      this._pInst.height = this.height;
-    }
   }
 
   get(x, y, w, h) {
     const pixelsState = this._pixelsState;
-    const pd = pixelsState._pixelDensity;
+    const pd = this._pixelDensity;
     const canvas = this.canvas;
 
     if (typeof x === 'undefined' && typeof y === 'undefined') {
@@ -144,6 +147,10 @@ p5.Renderer = class Renderer {
       .drawImage(canvas, x, y, w * pd, h * pd, 0, 0, w*pd, h*pd);
 
     return region;
+  }
+
+  scale(x, y){
+
   }
 
   textSize(s) {
@@ -510,23 +517,38 @@ p5.Renderer = class Renderer {
   }
 };
 
-/**
- * Helper fxn to measure ascent and descent.
- * Adapted from http://stackoverflow.com/a/25355178
- */
-function calculateOffset(object) {
-  let currentLeft = 0,
-    currentTop = 0;
-  if (object.offsetParent) {
-    do {
+function renderer(p5, fn){
+  /**
+   * Main graphics and rendering context, as well as the base API
+   * implementation for p5.js "core". To be used as the superclass for
+   * Renderer2D and Renderer3D classes, respectively.
+   *
+   * @class p5.Renderer
+   * @param {HTMLElement} elt DOM node that is wrapped
+   * @param {p5} [pInst] pointer to p5 instance
+   * @param {Boolean} [isMainCanvas] whether we're using it as main canvas
+   */
+  p5.Renderer = Renderer;
+
+  /**
+   * Helper fxn to measure ascent and descent.
+   * Adapted from http://stackoverflow.com/a/25355178
+   */
+  function calculateOffset(object) {
+    let currentLeft = 0,
+      currentTop = 0;
+    if (object.offsetParent) {
+      do {
+        currentLeft += object.offsetLeft;
+        currentTop += object.offsetTop;
+      } while ((object = object.offsetParent));
+    } else {
       currentLeft += object.offsetLeft;
       currentTop += object.offsetTop;
-    } while ((object = object.offsetParent));
-  } else {
-    currentLeft += object.offsetLeft;
-    currentTop += object.offsetTop;
+    }
+    return [currentLeft, currentTop];
   }
-  return [currentLeft, currentTop];
 }
 
-export default p5.Renderer;
+export default renderer;
+export { Renderer };
