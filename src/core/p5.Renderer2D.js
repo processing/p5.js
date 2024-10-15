@@ -1242,8 +1242,6 @@ class Renderer2D extends Renderer {
   _setFill(fillStyle) {
     if (fillStyle !== this._cachedFillStyle) {
       this.drawingContext.fillStyle = fillStyle;
-      // console.log('here', this.drawingContext.fillStyle);
-      // console.trace();
       this._cachedFillStyle = fillStyle;
     }
   }

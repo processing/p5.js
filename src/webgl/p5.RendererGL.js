@@ -638,7 +638,7 @@ class RendererGL extends Renderer {
     this.states.spotLightAngle.length = 0;
     this.states.spotLightConc.length = 0;
 
-    this.states._enableLighting = false;
+    this.states.enableLighting = false;
 
     //reset tint value for new frame
     this.states.tint = [255, 255, 255, 255];
@@ -1414,7 +1414,7 @@ class RendererGL extends Renderer {
         return this._getNormalShader();
       }
     }
-    if (this.states._enableLighting) {
+    if (this.states.enableLighting) {
       if (!fill || !fill.isLightShader()) {
         return this._getLightShader();
       }
@@ -1438,7 +1438,7 @@ class RendererGL extends Renderer {
     }
 
     const fill = this.states.userFillShader;
-    if (this.states._enableLighting) {
+    if (this.states.enableLighting) {
       if (!fill || !fill.isLightShader()) {
         return this._getLightShader();
       }
@@ -1916,7 +1916,7 @@ class RendererGL extends Renderer {
 
     this._setImageLightUniforms(fillShader);
 
-    fillShader.setUniform('uUseLighting', this.states._enableLighting);
+    fillShader.setUniform('uUseLighting', this.states.enableLighting);
 
     const pointLightCount = this.states.pointLightDiffuseColors.length / 3;
     fillShader.setUniform('uPointLightCount', pointLightCount);

@@ -2640,7 +2640,7 @@ function material(p5, fn){
     this._renderer.states._hasSetAmbient = true;
     this._renderer.states.curAmbientColor = color._array;
     this._renderer.states._useNormalMaterial = false;
-    this._renderer.states._enableLighting = true;
+    this._renderer.states.enableLighting = true;
     this._renderer.states.doFill = true;
     return this;
   };
@@ -2736,7 +2736,7 @@ function material(p5, fn){
     this._renderer.states.curEmissiveColor = color._array;
     this._renderer.states._useEmissiveMaterial = true;
     this._renderer.states._useNormalMaterial = false;
-    this._renderer.states._enableLighting = true;
+    this._renderer.states.enableLighting = true;
 
     return this;
   };
@@ -2991,7 +2991,7 @@ function material(p5, fn){
     this._renderer.states.curSpecularColor = color._array;
     this._renderer.states._useSpecularMaterial = true;
     this._renderer.states._useNormalMaterial = false;
-    this._renderer.states._enableLighting = true;
+    this._renderer.states.enableLighting = true;
 
     return this;
   };

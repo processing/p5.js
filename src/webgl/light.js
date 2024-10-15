@@ -199,7 +199,7 @@ function light(p5, fn){
       color._array[2]
     );
 
-    this._renderer.states._enableLighting = true;
+    this._renderer.states.enableLighting = true;
 
     return this;
   };
@@ -676,7 +676,7 @@ function light(p5, fn){
       this._renderer.states.specularColors
     );
 
-    this._renderer.states._enableLighting = true;
+    this._renderer.states.enableLighting = true;
 
     return this;
   };
@@ -949,7 +949,7 @@ function light(p5, fn){
       this._renderer.states.specularColors
     );
 
-    this._renderer.states._enableLighting = true;
+    this._renderer.states.enableLighting = true;
 
     return this;
   };
@@ -1016,7 +1016,7 @@ function light(p5, fn){
     // activeImageLight property is checked by _setFillUniforms
     // for sending uniforms to the fillshader
     this._renderer.states.activeImageLight = img;
-    this._renderer.states._enableLighting = true;
+    this._renderer.states.enableLighting = true;
   };
 
   /**
@@ -1679,7 +1679,7 @@ function light(p5, fn){
     this._renderer.states.spotLightAngle = [Math.cos(angle)];
     this._renderer.states.spotLightConc = [concentration];
 
-    this._renderer.states._enableLighting = true;
+    this._renderer.states.enableLighting = true;
 
     return this;
   };
@@ -1754,7 +1754,7 @@ function light(p5, fn){
 
 RendererGL.prototype.noLights = function(){
   this.states.activeImageLight = null;
-  this.states._enableLighting = false;
+  this.states.enableLighting = false;
 
   this.states.ambientLightColors.length = 0;
   this.states.specularColors = [1, 1, 1];

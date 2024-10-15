@@ -3535,12 +3535,12 @@ function primitives3D(p5, fn){
       this.blendMode(this._cachedBlendMode);
     }
 
-    this._pInst.push();
+    this.push();
     this.noLights();
-    this._pInst.noStroke();
+    this.states.doStroke = false;;
 
     this.texture(img);
-    this._pInst.textureMode(constants.NORMAL);
+    this.textureMode = constants.NORMAL;
 
     let u0 = 0;
     if (sx <= img.width) {
@@ -3569,7 +3569,7 @@ function primitives3D(p5, fn){
     this.vertex(dx, dy + dHeight, 0, u0, v1);
     this.endShape(constants.CLOSE);
 
-    this._pInst.pop();
+    this.pop();
 
     if (this._isErasing) {
       this.blendMode(constants.REMOVE);
