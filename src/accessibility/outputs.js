@@ -543,7 +543,7 @@ function outputs(p5, fn){
   fn._getPos = function (x, y) {
     const untransformedPosition = new DOMPointReadOnly(x, y);
     const currentTransform = this._renderer.isP3D ?
-      new DOMMatrix(this._renderer.uMVMatrix.mat4) :
+      new DOMMatrix(this._renderer.states.uMVMatrix.mat4) :
       this.drawingContext.getTransform();
     const { x: transformedX, y: transformedY } = untransformedPosition
       .matrixTransform(currentTransform);
@@ -663,7 +663,7 @@ function outputs(p5, fn){
     ];
     //  Apply the inverse of the current transformations to the canvas corners
     const currentTransform = this._renderer.isP3D ?
-      new DOMMatrix(this._renderer.uMVMatrix.mat4) :
+      new DOMMatrix(this._renderer.states.uMVMatrix.mat4) :
       this.drawingContext.getTransform();
     const invertedTransform = currentTransform.inverse();
     const tc = canvasCorners.map(

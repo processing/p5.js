@@ -325,7 +325,7 @@ p5.prototype.loadFont = async function(path, onSuccess, onError) {
  */
 p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   p5._validateParameters('text', arguments);
-  return !(this._renderer._doFill || this._renderer._doStroke)
+  return !(this._renderer.states.doFill || this._renderer.states.doStroke)
     ? this
     : this._renderer.text(...arguments);
 };
@@ -426,23 +426,20 @@ p5.prototype.textFont = function(theFont, theSize) {
       throw new Error('null font passed to textFont');
     }
 
-    this._renderer._setProperty('_textFont', theFont);
+    this._renderer.states.textFont = theFont;
 
     if (theSize) {
-      this._renderer._setProperty('_textSize', theSize);
-      if (!this._renderer._leadingSet) {
+      this._renderer.states.textSize = theSize;
+      if (!this._renderer.states.leadingSet) {
         // only use a default value if not previously set (#5181)
-        this._renderer._setProperty(
-          '_textLeading',
-          theSize * constants._DEFAULT_LEADMULT
-        );
+        this._renderer.states._textLeading = theSize * constants._DEFAULT_LEADMULT;
       }
     }
 
     return this._renderer._applyTextProperties();
   }
 
-  return this._renderer._textFont;
+  return this._renderer.states.textFont;
 };
 
 export default p5;

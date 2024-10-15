@@ -444,11 +444,11 @@ function keyboard(p5, fn){
       // prevent multiple firings
       return;
     }
-    this._setProperty('isKeyPressed', true);
-    this._setProperty('keyIsPressed', true);
-    this._setProperty('keyCode', e.which);
+    this.isKeyPressed = true;
+    this.keyIsPressed = true;
+    this.keyCode = e.which;
     this._downKeys[e.which] = true;
-    this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
+    this.key = e.key || String.fromCharCode(e.which) || e.which;
     const context = this._isGlobal ? window : this;
     if (typeof context.keyPressed === 'function' && !e.charCode) {
       const executeDefault = context.keyPressed(e);
@@ -617,14 +617,14 @@ function keyboard(p5, fn){
     this._downKeys[e.which] = false;
 
     if (!this._areDownKeys()) {
-      this._setProperty('isKeyPressed', false);
-      this._setProperty('keyIsPressed', false);
+      this.isKeyPressed = false;
+      this.keyIsPressed = false;
     }
 
-    this._setProperty('_lastKeyCodeTyped', null);
+    this._lastKeyCodeTyped = null;
 
-    this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
-    this._setProperty('keyCode', e.which);
+    this.key = e.key || String.fromCharCode(e.which) || e.which;
+    this.keyCode = e.which;
 
     const context = this._isGlobal ? window : this;
     if (typeof context.keyReleased === 'function') {
@@ -770,8 +770,8 @@ function keyboard(p5, fn){
       // prevent multiple firings
       return;
     }
-    this._setProperty('_lastKeyCodeTyped', e.which); // track last keyCode
-    this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
+    this._lastKeyCodeTyped = e.which; // track last keyCode
+    this.key = e.key || String.fromCharCode(e.which) || e.which;
 
     const context = this._isGlobal ? window : this;
     if (typeof context.keyTyped === 'function') {
