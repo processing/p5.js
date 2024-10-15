@@ -426,7 +426,52 @@ class Texture {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, this.glWrapT);
     this.unbindTexture();
   }
-};
+}
+
+class MipmapTexture extends Texture {
+  constructor(renderer, levels, settings) {
+    super(renderer, levels, settings);
+    const gl = this._renderer.GL;
+    if (this.glMinFilter === gl.LINEAR) {
+      this.glMinFilter = gl.LINEAR_MIPMAP_LINEAR;
+    }
+  }
+
+  glFilter(_filter) {
+    const gl = this._renderer.GL;
+    // TODO: support others
+    return gl.LINEAR_MIPMAP_LINEAR;
+  }
+
+  _getTextureDataFromSource() {
+    return this.src;
+  }
+
+  init(levels) {
+    const gl = this._renderer.GL;
+    this.glTex = gl.createTexture();
+
+    this.bindTexture();
+    for (let level = 0; level < levels.length; level++) {
+      gl.texImage2D(
+        this.glTarget,
+        level,
+        this.glFormat,
+        this.glFormat,
+        this.glDataType,
+        levels[level]
+      );
+    }
+
+    this.glMinFilter = gl.LINEAR_MIPMAP_LINEAR;
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this.glMagFilter);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this.glMinFilter);
+
+    this.unbindTexture();
+  }
+
+  update() {}
+}
 
 function texture(p5, fn){
   /**
@@ -462,50 +507,7 @@ function texture(p5, fn){
    */
   p5.Texture = Texture;
 
-  p5.MipmapTexture = class MipmapTexture extends p5.Texture {
-    constructor(renderer, levels, settings) {
-      super(renderer, levels, settings);
-      const gl = this._renderer.GL;
-      if (this.glMinFilter === gl.LINEAR) {
-        this.glMinFilter = gl.LINEAR_MIPMAP_LINEAR;
-      }
-    }
-
-    glFilter(_filter) {
-      const gl = this._renderer.GL;
-      // TODO: support others
-      return gl.LINEAR_MIPMAP_LINEAR;
-    }
-
-    _getTextureDataFromSource() {
-      return this.src;
-    }
-
-    init(levels) {
-      const gl = this._renderer.GL;
-      this.glTex = gl.createTexture();
-
-      this.bindTexture();
-      for (let level = 0; level < levels.length; level++) {
-        gl.texImage2D(
-          this.glTarget,
-          level,
-          this.glFormat,
-          this.glFormat,
-          this.glDataType,
-          levels[level]
-        );
-      }
-
-      this.glMinFilter = gl.LINEAR_MIPMAP_LINEAR;
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this.glMagFilter);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this.glMinFilter);
-
-      this.unbindTexture();
-    }
-
-    update() {}
-  };
+  p5.MipmapTexture = MipmapTexture;
 }
 
 export function checkWebGLCapabilities({ GL, webglVersion }) {
@@ -530,7 +532,7 @@ export function checkWebGLCapabilities({ GL, webglVersion }) {
 }
 
 export default texture;
-export { Texture };
+export { Texture, MipmapTexture };
 
 if(typeof p5 !== 'undefined'){
   texture(p5, p5.prototype);

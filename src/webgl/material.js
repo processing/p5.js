@@ -7,6 +7,7 @@
 
 import * as constants from '../core/constants';
 import { RendererGL } from './p5.RendererGL';
+import { Shader } from './p5.Shader';
 
 function material(p5, fn){
   /**
@@ -130,7 +131,7 @@ function material(p5, fn){
       failureCallback = console.error;
     }
 
-    const loadedShader = new p5.Shader();
+    const loadedShader = new Shader();
 
     const self = this;
     let loadedFrag = false;
@@ -534,7 +535,7 @@ function material(p5, fn){
    */
   fn.createShader = function (vertSrc, fragSrc, options) {
     p5._validateParameters('createShader', arguments);
-    return new p5.Shader(this._renderer, vertSrc, fragSrc, options);
+    return new Shader(this._renderer, vertSrc, fragSrc, options);
   };
 
   /**
@@ -670,7 +671,7 @@ function material(p5, fn){
       }
     `;
     let vertSrc = fragSrc.includes('#version 300 es') ? defaultVertV2 : defaultVertV1;
-    const shader = new p5.Shader(this._renderer, vertSrc, fragSrc);
+    const shader = new Shader(this._renderer, vertSrc, fragSrc);
     if (this._renderer.GL) {
       shader.ensureCompiledOnContext(this);
     } else {
@@ -3305,6 +3306,13 @@ function material(p5, fn){
     if (!this._isErasing) {
       this._cachedBlendMode = this.states.curBlendMode;
     }
+  };
+
+  RendererGL.prototype.texture = function(tex) {
+    this.states.drawMode = constants.TEXTURE;
+    this.states._useNormalMaterial = false;
+    this.states._tex = tex;
+    this.states.doFill = true;
   };
 }
 

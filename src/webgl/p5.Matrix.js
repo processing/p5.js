@@ -153,7 +153,7 @@ class Matrix {
  */
   transpose(a) {
     let a01, a02, a03, a12, a13, a23;
-    if (a instanceof p5.Matrix) {
+    if (a instanceof Matrix) {
       a01 = a.mat4[1];
       a02 = a.mat4[2];
       a03 = a.mat4[3];
@@ -214,7 +214,7 @@ class Matrix {
   invert(a) {
     let a00, a01, a02, a03, a10, a11, a12, a13;
     let a20, a21, a22, a23, a30, a31, a32, a33;
-    if (a instanceof p5.Matrix) {
+    if (a instanceof Matrix) {
       a00 = a.mat4[0];
       a01 = a.mat4[1];
       a02 = a.mat4[2];

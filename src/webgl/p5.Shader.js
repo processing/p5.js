@@ -321,7 +321,7 @@ class Shader {
       modifiedFragment[key] = true;
     }
 
-    return new p5.Shader(this._renderer, this._vertSrc, this._fragSrc, {
+    return new Shader(this._renderer, this._vertSrc, this._fragSrc, {
       declarations:
         (this.hooks.declarations || '') + '\n' + (hooks.declarations || ''),
       uniforms: Object.assign({}, this.hooks.uniforms, hooks.uniforms || {}),
@@ -607,7 +607,7 @@ class Shader {
    * </div>
    */
   copyToContext(context) {
-    const shader = new p5.Shader(
+    const shader = new Shader(
       context._renderer,
       this._vertSrc,
       this._fragSrc

@@ -6,6 +6,9 @@
  * @requires p5.Geometry
  */
 
+import { Geometry } from "./p5.Geometry";
+import { Vector } from "../math/p5.Vector";
+
 function loading(p5, fn){
   /**
    * Loads a 3D model to create a
@@ -363,7 +366,7 @@ function loading(p5, fn){
       }
     }
 
-    const model = new p5.Geometry();
+    const model = new Geometry();
     model.gid = `${path}|${normalize}`;
     const self = this;
 
@@ -810,12 +813,12 @@ function loading(p5, fn){
           b = defaultB;
         }
       }
-      const newNormal = new p5.Vector(normalX, normalY, normalZ);
+      const newNormal = new Vector(normalX, normalY, normalZ);
 
       for (let i = 1; i <= 3; i++) {
         const vertexstart = start + i * 12;
 
-        const newVertex = new p5.Vector(
+        const newVertex = new Vector(
           reader.getFloat32(vertexstart, true),
           reader.getFloat32(vertexstart + 4, true),
           reader.getFloat32(vertexstart + 8, true)
@@ -891,7 +894,7 @@ function loading(p5, fn){
             return;
           } else {
             // Push normal for first face
-            newNormal = new p5.Vector(
+            newNormal = new Vector(
               parseFloat(parts[2]),
               parseFloat(parts[3]),
               parseFloat(parts[4])
@@ -916,7 +919,7 @@ function loading(p5, fn){
         case 'vertex':
           if (parts[0] === 'vertex') {
             //Vertex of triangle
-            newVertex = new p5.Vector(
+            newVertex = new Vector(
               parseFloat(parts[1]),
               parseFloat(parts[2]),
               parseFloat(parts[3])
@@ -955,7 +958,7 @@ function loading(p5, fn){
             // End of solid
           } else if (parts[0] === 'facet' && parts[1] === 'normal') {
             // Next face
-            newNormal = new p5.Vector(
+            newNormal = new Vector(
               parseFloat(parts[2]),
               parseFloat(parts[3]),
               parseFloat(parts[4])

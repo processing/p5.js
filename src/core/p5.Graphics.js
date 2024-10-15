@@ -44,7 +44,7 @@ class Graphics {
 
     // Attach renderer properties
     for (const p in this._renderer) {
-      if(p[0] === '_') continue;
+      if(p[0] === '_' || typeof this._renderer[p] === 'function') continue;
       Object.defineProperty(this, p, {
         get(){
           return this._renderer?.[p];

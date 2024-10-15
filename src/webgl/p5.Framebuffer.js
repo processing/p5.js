@@ -8,6 +8,7 @@ import { checkWebGLCapabilities } from './p5.Texture';
 import { readPixelsWebGL, readPixelWebGL } from './p5.RendererGL';
 import { Camera } from './p5.Camera';
 import { Texture } from './p5.Texture';
+import { Image } from '../image/p5.Image';
 
 class FramebufferCamera extends Camera {
   constructor(framebuffer) {
@@ -1446,7 +1447,7 @@ class Framebuffer {
     }
 
     // Create an image from the data
-    const region = new p5.Image(w * this.density, h * this.density);
+    const region = new Image(w * this.density, h * this.density);
     region.imageData = region.canvas.getContext('2d').createImageData(
       region.width,
       region.height

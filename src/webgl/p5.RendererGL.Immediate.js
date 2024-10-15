@@ -12,6 +12,9 @@
  * geometric ideas.
  */
 import * as constants from '../core/constants';
+import { RendererGL } from './p5.RendererGL';
+import { Vector } from '../math/p5.Vector';
+import { RenderBuffer } from './p5.RenderBuffer';
 
 function rendererGLImmediate(p5, fn){
   /**
@@ -29,7 +32,7 @@ function rendererGLImmediate(p5, fn){
    *                       and TESS(WEBGL only)
    * @chainable
    */
-  p5.RendererGL.prototype.beginShape = function(mode) {
+  RendererGL.prototype.beginShape = function(mode) {
     this.immediateMode.shapeMode =
       mode !== undefined ? mode : constants.TESS;
     if (this._useUserVertexProperties === true){
@@ -40,7 +43,7 @@ function rendererGLImmediate(p5, fn){
     return this;
   };
 
-  p5.RendererGL.prototype.immediateBufferStrides = {
+  RendererGL.prototype.immediateBufferStrides = {
     vertices: 1,
     vertexNormals: 1,
     vertexColors: 4,
@@ -48,7 +51,7 @@ function rendererGLImmediate(p5, fn){
     uvs: 2
   };
 
-  p5.RendererGL.prototype.beginContour = function() {
+  RendererGL.prototype.beginContour = function() {
     if (this.immediateMode.shapeMode !== constants.TESS) {
       throw new Error('WebGL mode can only use contours with beginShape(TESS).');
     }
@@ -67,7 +70,7 @@ function rendererGLImmediate(p5, fn){
    * @chainable
    * @TODO implement handling of <a href="#/p5.Vector">p5.Vector</a> args
    */
-  p5.RendererGL.prototype.vertex = function(x, y) {
+  RendererGL.prototype.vertex = function(x, y) {
     // WebGL 1 doesn't support QUADS or QUAD_STRIP, so we duplicate data to turn
     // QUADS into TRIANGLES and QUAD_STRIP into TRIANGLE_STRIP. (There is no extra
     // work to convert QUAD_STRIP here, since the only difference is in how edges
@@ -112,7 +115,7 @@ function rendererGLImmediate(p5, fn){
       u = arguments[3];
       v = arguments[4];
     }
-    const vert = new p5.Vector(x, y, z);
+    const vert = new Vector(x, y, z);
     this.immediateMode.geometry.vertices.push(vert);
     this.immediateMode.geometry.vertexNormals.push(this.states._currentNormal);
 
@@ -180,7 +183,7 @@ function rendererGLImmediate(p5, fn){
     return this;
   };
 
-  p5.RendererGL.prototype.vertexProperty = function(propertyName, data){
+  RendererGL.prototype.vertexProperty = function(propertyName, data){
     if(!this._useUserVertexProperties){
       this._useUserVertexProperties = true;
       this.immediateMode.geometry.userVertexProperties = {};
@@ -195,13 +198,13 @@ function rendererGLImmediate(p5, fn){
       this.tessyVertexSize += prop.getDataSize();
       this.immediateBufferStrides[prop.getSrcName()] = prop.getDataSize();
       this.immediateMode.buffers.user.push(
-        new p5.RenderBuffer(prop.getDataSize(), prop.getSrcName(), prop.getDstName(), propertyName, this)
+        new RenderBuffer(prop.getDataSize(), prop.getSrcName(), prop.getDstName(), propertyName, this)
       );
     }
     prop.setCurrentData(data);
   };
 
-  p5.RendererGL.prototype._resetUserVertexProperties = function(){
+  RendererGL.prototype._resetUserVertexProperties = function(){
     const properties = this.immediateMode.geometry.userVertexProperties;
     for (const propName in properties){
       const prop = properties[propName];
@@ -227,11 +230,11 @@ function rendererGLImmediate(p5, fn){
    * @param  {Vector} v
    * @chainable
    */
-  p5.RendererGL.prototype.normal = function(xorv, y, z) {
-    if (xorv instanceof p5.Vector) {
+  RendererGL.prototype.normal = function(xorv, y, z) {
+    if (xorv instanceof Vector) {
       this.states._currentNormal = xorv;
     } else {
-      this.states._currentNormal = new p5.Vector(xorv, y, z);
+      this.states._currentNormal = new Vector(xorv, y, z);
     }
 
     return this;
@@ -241,7 +244,7 @@ function rendererGLImmediate(p5, fn){
    * End shape drawing and render vertices to screen.
    * @chainable
    */
-  p5.RendererGL.prototype.endShape = function(
+  RendererGL.prototype.endShape = function(
     mode,
     isCurve,
     isBezier,
@@ -330,7 +333,7 @@ function rendererGLImmediate(p5, fn){
    *                       POINTS,LINES,LINE_STRIP,LINE_LOOP,TRIANGLES,
    *                       TRIANGLE_STRIP, TRIANGLE_FAN and TESS(WEBGL only)
    */
-  p5.RendererGL.prototype._processVertices = function(mode) {
+  RendererGL.prototype._processVertices = function(mode) {
     if (this.immediateMode.geometry.vertices.length === 0) return;
 
     const calculateStroke = this.states.doStroke;
@@ -373,7 +376,7 @@ function rendererGLImmediate(p5, fn){
    * @private
    * @returns  {Number[]} indices for custom shape vertices indicating edges.
    */
-  p5.RendererGL.prototype._calculateEdges = function(
+  RendererGL.prototype._calculateEdges = function(
     shapeMode,
     verts,
     shouldClose
@@ -459,7 +462,7 @@ function rendererGLImmediate(p5, fn){
    * Called from _processVertices() when applicable. This function tesselates immediateMode.geometry.
    * @private
    */
-  p5.RendererGL.prototype._tesselateShape = function() {
+  RendererGL.prototype._tesselateShape = function() {
     // TODO: handle non-TESS shape modes that have contours
     this.immediateMode.shapeMode = constants.TRIANGLES;
     const contours = [[]];
@@ -579,7 +582,7 @@ function rendererGLImmediate(p5, fn){
    * enabling all appropriate buffers, applying color blend, and drawing the fill geometry.
    * @private
    */
-  p5.RendererGL.prototype._drawImmediateFill = function(count = 1) {
+  RendererGL.prototype._drawImmediateFill = function(count = 1) {
     const gl = this.GL;
     this._useVertexColor = (this.immediateMode.geometry.vertexColors.length > 0);
 
@@ -629,7 +632,7 @@ function rendererGLImmediate(p5, fn){
    * enabling all appropriate buffers, applying color blend, and drawing the stroke geometry.
    * @private
    */
-  p5.RendererGL.prototype._drawImmediateStroke = function() {
+  RendererGL.prototype._drawImmediateStroke = function() {
     const gl = this.GL;
 
     this._useLineColor =

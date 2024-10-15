@@ -1,14 +1,18 @@
 import * as constants from '../core/constants';
 
+import { RendererGL } from './p5.RendererGL';
+import { Vector } from '../math/p5.Vector';
+import { Geometry } from './p5.Geometry';
+
 function text(p5, fn){
   // Text/Typography
   // @TODO:
-  p5.RendererGL.prototype._applyTextProperties = function() {
+  RendererGL.prototype._applyTextProperties = function() {
     //@TODO finish implementation
     //console.error('text commands not yet implemented in webgl');
   };
 
-  p5.RendererGL.prototype.textWidth = function(s) {
+  RendererGL.prototype.textWidth = function(s) {
     if (this._isOpenType()) {
       return this._textFont._textWidth(s, this._textSize);
     }
@@ -312,9 +316,9 @@ function text(p5, fn){
              */
         quadError () {
           return (
-            p5.Vector.sub(
-              p5.Vector.sub(this.p1, this.p0),
-              p5.Vector.mult(p5.Vector.sub(this.c1, this.c0), 3)
+            Vector.sub(
+              Vector.sub(this.p1, this.p0),
+              Vector.mult(Vector.sub(this.c1, this.c0), 3)
             ).mag() / 2
           );
         }
@@ -328,13 +332,13 @@ function text(p5, fn){
              * point at 't'. the 'end half is returned.
              */
         split (t) {
-          const m1 = p5.Vector.lerp(this.p0, this.c0, t);
-          const m2 = p5.Vector.lerp(this.c0, this.c1, t);
-          const mm1 = p5.Vector.lerp(m1, m2, t);
+          const m1 = Vector.lerp(this.p0, this.c0, t);
+          const m2 = Vector.lerp(this.c0, this.c1, t);
+          const mm1 = Vector.lerp(m1, m2, t);
 
-          this.c1 = p5.Vector.lerp(this.c1, this.p1, t);
-          this.c0 = p5.Vector.lerp(m2, this.c1, t);
-          const pt = p5.Vector.lerp(mm1, this.c0, t);
+          this.c1 = Vector.lerp(this.c1, this.p1, t);
+          this.c0 = Vector.lerp(m2, this.c1, t);
+          const pt = Vector.lerp(mm1, this.c0, t);
           const part1 = new Cubic(this.p0, m1, mm1, pt);
           this.p0 = pt;
           return part1;
@@ -348,11 +352,11 @@ function text(p5, fn){
              * this cubic is (potentially) altered and returned in the list.
              */
         splitInflections () {
-          const a = p5.Vector.sub(this.c0, this.p0);
-          const b = p5.Vector.sub(p5.Vector.sub(this.c1, this.c0), a);
-          const c = p5.Vector.sub(
-            p5.Vector.sub(p5.Vector.sub(this.p1, this.c1), a),
-            p5.Vector.mult(b, 2)
+          const a = Vector.sub(this.c0, this.p0);
+          const b = Vector.sub(Vector.sub(this.c1, this.c0), a);
+          const c = Vector.sub(
+            Vector.sub(Vector.sub(this.p1, this.c1), a),
+            Vector.mult(b, 2)
           );
 
           const cubics = [];
@@ -413,10 +417,10 @@ function text(p5, fn){
       function cubicToQuadratics(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
         // create the Cubic object and split it at its inflections
         const cubics = new Cubic(
-          new p5.Vector(x0, y0),
-          new p5.Vector(cx0, cy0),
-          new p5.Vector(cx1, cy1),
-          new p5.Vector(x1, y1)
+          new Vector(x0, y0),
+          new Vector(cx0, cy0),
+          new Vector(cx1, cy1),
+          new Vector(x1, y1)
         ).splitInflections();
 
         const qs = []; // the final list of quadratics
@@ -631,7 +635,7 @@ function text(p5, fn){
     }
   }
 
-  p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
+  RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
     if (!this._textFont || typeof this._textFont === 'string') {
       console.log(
         'WEBGL: you must load and set a font before drawing text. See `loadFont` and `textFont` for more details.'
@@ -691,10 +695,10 @@ function text(p5, fn){
     let g = this.retainedMode.geometry['glyph'];
     if (!g) {
       // create the geometry for rendering a quad
-      const geom = (this._textGeom = new p5.Geometry(1, 1, function() {
+      const geom = (this._textGeom = new Geometry(1, 1, function() {
         for (let i = 0; i <= 1; i++) {
           for (let j = 0; j <= 1; j++) {
-            this.vertices.push(new p5.Vector(j, i, 0));
+            this.vertices.push(new Vector(j, i, 0));
             this.uvs.push(j, i);
           }
         }

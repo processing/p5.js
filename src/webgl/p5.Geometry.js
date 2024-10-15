@@ -10,6 +10,7 @@
 
 import * as constants from '../core/constants';
 import { DataArray } from './p5.DataArray';
+import { Vector } from '../math/p5.Vector';
 
 class Geometry {
   constructor(detailX, detailY, callback) {
@@ -168,9 +169,9 @@ class Geometry {
       return this.boundingBoxCache; // Return cached result if available
     }
 
-    let minVertex = new p5.Vector(
+    let minVertex = new Vector(
       Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
-    let maxVertex = new p5.Vector(
+    let maxVertex = new Vector(
       Number.MIN_VALUE, Number.MIN_VALUE, Number.MIN_VALUE);
 
     for (let i = 0; i < this.vertices.length; i++) {
@@ -184,9 +185,9 @@ class Geometry {
       maxVertex.z = Math.max(maxVertex.z, vertex.z);
     }
     // Calculate size and offset properties
-    let size = new p5.Vector(maxVertex.x - minVertex.x,
+    let size = new Vector(maxVertex.x - minVertex.x,
       maxVertex.y - minVertex.y, maxVertex.z - minVertex.z);
-    let offset = new p5.Vector((minVertex.x + maxVertex.x) / 2,
+    let offset = new Vector((minVertex.x + maxVertex.x) / 2,
       (minVertex.y + maxVertex.y) / 2, (minVertex.z + maxVertex.z) / 2);
 
     // Cache the result for future access
@@ -478,12 +479,12 @@ class Geometry {
     let name = fileName.substring(0, fileName.lastIndexOf('.'));
     let faceNormals = [];
     for (let f of this.faces) {
-      const U = p5.Vector.sub(this.vertices[f[1]], this.vertices[f[0]]);
-      const V = p5.Vector.sub(this.vertices[f[2]], this.vertices[f[0]]);
+      const U = Vector.sub(this.vertices[f[1]], this.vertices[f[0]]);
+      const V = Vector.sub(this.vertices[f[2]], this.vertices[f[0]]);
       const nx = U.y * V.z - U.z * V.y;
       const ny = U.z * V.x - U.x * V.z;
       const nz = U.x * V.y - U.y * V.x;
-      faceNormals.push(new p5.Vector(nx, ny, nz).normalize());
+      faceNormals.push(new Vector(nx, ny, nz).normalize());
     }
     if (binary) {
       let offset = 80;
@@ -536,89 +537,89 @@ class Geometry {
   }
 
   /**
- * Flips the geometry’s texture u-coordinates.
- *
- * In order for <a href="#/p5/texture">texture()</a> to work, the geometry
- * needs a way to map the points on its surface to the pixels in a rectangular
- * image that's used as a texture. The geometry's vertex at coordinates
- * `(x, y, z)` maps to the texture image's pixel at coordinates `(u, v)`.
- *
- * The <a href="#/p5.Geometry/uvs">myGeometry.uvs</a> array stores the
- * `(u, v)` coordinates for each vertex in the order it was added to the
- * geometry. Calling `myGeometry.flipU()` flips a geometry's u-coordinates
- * so that the texture appears mirrored horizontally.
- *
- * For example, a plane's four vertices are added clockwise starting from the
- * top-left corner. Here's how calling `myGeometry.flipU()` would change a
- * plane's texture coordinates:
- *
- * ```js
- * // Print the original texture coordinates.
- * // Output: [0, 0, 1, 0, 0, 1, 1, 1]
- * console.log(myGeometry.uvs);
- *
- * // Flip the u-coordinates.
- * myGeometry.flipU();
- *
- * // Print the flipped texture coordinates.
- * // Output: [1, 0, 0, 0, 1, 1, 0, 1]
- * console.log(myGeometry.uvs);
- *
- * // Notice the swaps:
- * // Top vertices: [0, 0, 1, 0] --> [1, 0, 0, 0]
- * // Bottom vertices: [0, 1, 1, 1] --> [1, 1, 0, 1]
- * ```
- *
- * @for p5.Geometry
- *
- * @example
- * <div>
- * <code>
- * let img;
- *
- * function preload() {
- *   img = loadImage('assets/laDefense.jpg');
- * }
- *
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *
- *   background(200);
- *
- *   // Create p5.Geometry objects.
- *   let geom1 = buildGeometry(createShape);
- *   let geom2 = buildGeometry(createShape);
- *
- *   // Flip geom2's U texture coordinates.
- *   geom2.flipU();
- *
- *   // Left (original).
- *   push();
- *   translate(-25, 0, 0);
- *   texture(img);
- *   noStroke();
- *   model(geom1);
- *   pop();
- *
- *   // Right (flipped).
- *   push();
- *   translate(25, 0, 0);
- *   texture(img);
- *   noStroke();
- *   model(geom2);
- *   pop();
- *
- *   describe(
- *     'Two photos of a ceiling on a gray background. The photos are mirror images of each other.'
- *   );
- * }
- *
- * function createShape() {
- *   plane(40);
- * }
- * </code>
- * </div>
- */
+   * Flips the geometry’s texture u-coordinates.
+   *
+   * In order for <a href="#/p5/texture">texture()</a> to work, the geometry
+   * needs a way to map the points on its surface to the pixels in a rectangular
+   * image that's used as a texture. The geometry's vertex at coordinates
+   * `(x, y, z)` maps to the texture image's pixel at coordinates `(u, v)`.
+   *
+   * The <a href="#/p5.Geometry/uvs">myGeometry.uvs</a> array stores the
+   * `(u, v)` coordinates for each vertex in the order it was added to the
+   * geometry. Calling `myGeometry.flipU()` flips a geometry's u-coordinates
+   * so that the texture appears mirrored horizontally.
+   *
+   * For example, a plane's four vertices are added clockwise starting from the
+   * top-left corner. Here's how calling `myGeometry.flipU()` would change a
+   * plane's texture coordinates:
+   *
+   * ```js
+   * // Print the original texture coordinates.
+   * // Output: [0, 0, 1, 0, 0, 1, 1, 1]
+   * console.log(myGeometry.uvs);
+   *
+   * // Flip the u-coordinates.
+   * myGeometry.flipU();
+   *
+   * // Print the flipped texture coordinates.
+   * // Output: [1, 0, 0, 0, 1, 1, 0, 1]
+   * console.log(myGeometry.uvs);
+   *
+   * // Notice the swaps:
+   * // Top vertices: [0, 0, 1, 0] --> [1, 0, 0, 0]
+   * // Bottom vertices: [0, 1, 1, 1] --> [1, 1, 0, 1]
+   * ```
+   *
+   * @for p5.Geometry
+   *
+   * @example
+   * <div>
+   * <code>
+   * let img;
+   *
+   * function preload() {
+   *   img = loadImage('assets/laDefense.jpg');
+   * }
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   background(200);
+   *
+   *   // Create p5.Geometry objects.
+   *   let geom1 = buildGeometry(createShape);
+   *   let geom2 = buildGeometry(createShape);
+   *
+   *   // Flip geom2's U texture coordinates.
+   *   geom2.flipU();
+   *
+   *   // Left (original).
+   *   push();
+   *   translate(-25, 0, 0);
+   *   texture(img);
+   *   noStroke();
+   *   model(geom1);
+   *   pop();
+   *
+   *   // Right (flipped).
+   *   push();
+   *   translate(25, 0, 0);
+   *   texture(img);
+   *   noStroke();
+   *   model(geom2);
+   *   pop();
+   *
+   *   describe(
+   *     'Two photos of a ceiling on a gray background. The photos are mirror images of each other.'
+   *   );
+   * }
+   *
+   * function createShape() {
+   *   plane(40);
+   * }
+   * </code>
+   * </div>
+   */
   flipU() {
     this.uvs = this.uvs.flat().map((val, index) => {
       if (index % 2 === 0) {
@@ -630,89 +631,89 @@ class Geometry {
   }
 
   /**
- * Flips the geometry’s texture v-coordinates.
- *
- * In order for <a href="#/p5/texture">texture()</a> to work, the geometry
- * needs a way to map the points on its surface to the pixels in a rectangular
- * image that's used as a texture. The geometry's vertex at coordinates
- * `(x, y, z)` maps to the texture image's pixel at coordinates `(u, v)`.
- *
- * The <a href="#/p5.Geometry/uvs">myGeometry.uvs</a> array stores the
- * `(u, v)` coordinates for each vertex in the order it was added to the
- * geometry. Calling `myGeometry.flipV()` flips a geometry's v-coordinates
- * so that the texture appears mirrored vertically.
- *
- * For example, a plane's four vertices are added clockwise starting from the
- * top-left corner. Here's how calling `myGeometry.flipV()` would change a
- * plane's texture coordinates:
- *
- * ```js
- * // Print the original texture coordinates.
- * // Output: [0, 0, 1, 0, 0, 1, 1, 1]
- * console.log(myGeometry.uvs);
- *
- * // Flip the v-coordinates.
- * myGeometry.flipV();
- *
- * // Print the flipped texture coordinates.
- * // Output: [0, 1, 1, 1, 0, 0, 1, 0]
- * console.log(myGeometry.uvs);
- *
- * // Notice the swaps:
- * // Left vertices: [0, 0] <--> [1, 0]
- * // Right vertices: [1, 0] <--> [1, 1]
- * ```
- *
- * @for p5.Geometry
- *
- * @example
- * <div>
- * <code>
- * let img;
- *
- * function preload() {
- *   img = loadImage('assets/laDefense.jpg');
- * }
- *
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *
- *   background(200);
- *
- *   // Create p5.Geometry objects.
- *   let geom1 = buildGeometry(createShape);
- *   let geom2 = buildGeometry(createShape);
- *
- *   // Flip geom2's V texture coordinates.
- *   geom2.flipV();
- *
- *   // Left (original).
- *   push();
- *   translate(-25, 0, 0);
- *   texture(img);
- *   noStroke();
- *   model(geom1);
- *   pop();
- *
- *   // Right (flipped).
- *   push();
- *   translate(25, 0, 0);
- *   texture(img);
- *   noStroke();
- *   model(geom2);
- *   pop();
- *
- *   describe(
- *     'Two photos of a ceiling on a gray background. The photos are mirror images of each other.'
- *   );
- * }
- *
- * function createShape() {
- *   plane(40);
- * }
- * </code>
- * </div>
- */
+   * Flips the geometry’s texture v-coordinates.
+   *
+   * In order for <a href="#/p5/texture">texture()</a> to work, the geometry
+   * needs a way to map the points on its surface to the pixels in a rectangular
+   * image that's used as a texture. The geometry's vertex at coordinates
+   * `(x, y, z)` maps to the texture image's pixel at coordinates `(u, v)`.
+   *
+   * The <a href="#/p5.Geometry/uvs">myGeometry.uvs</a> array stores the
+   * `(u, v)` coordinates for each vertex in the order it was added to the
+   * geometry. Calling `myGeometry.flipV()` flips a geometry's v-coordinates
+   * so that the texture appears mirrored vertically.
+   *
+   * For example, a plane's four vertices are added clockwise starting from the
+   * top-left corner. Here's how calling `myGeometry.flipV()` would change a
+   * plane's texture coordinates:
+   *
+   * ```js
+   * // Print the original texture coordinates.
+   * // Output: [0, 0, 1, 0, 0, 1, 1, 1]
+   * console.log(myGeometry.uvs);
+   *
+   * // Flip the v-coordinates.
+   * myGeometry.flipV();
+   *
+   * // Print the flipped texture coordinates.
+   * // Output: [0, 1, 1, 1, 0, 0, 1, 0]
+   * console.log(myGeometry.uvs);
+   *
+   * // Notice the swaps:
+   * // Left vertices: [0, 0] <--> [1, 0]
+   * // Right vertices: [1, 0] <--> [1, 1]
+   * ```
+   *
+   * @for p5.Geometry
+   *
+   * @example
+   * <div>
+   * <code>
+   * let img;
+   *
+   * function preload() {
+   *   img = loadImage('assets/laDefense.jpg');
+   * }
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   background(200);
+   *
+   *   // Create p5.Geometry objects.
+   *   let geom1 = buildGeometry(createShape);
+   *   let geom2 = buildGeometry(createShape);
+   *
+   *   // Flip geom2's V texture coordinates.
+   *   geom2.flipV();
+   *
+   *   // Left (original).
+   *   push();
+   *   translate(-25, 0, 0);
+   *   texture(img);
+   *   noStroke();
+   *   model(geom1);
+   *   pop();
+   *
+   *   // Right (flipped).
+   *   push();
+   *   translate(25, 0, 0);
+   *   texture(img);
+   *   noStroke();
+   *   model(geom2);
+   *   pop();
+   *
+   *   describe(
+   *     'Two photos of a ceiling on a gray background. The photos are mirror images of each other.'
+   *   );
+   * }
+   *
+   * function createShape() {
+   *   plane(40);
+   * }
+   * </code>
+   * </div>
+   */
   flipV() {
     this.uvs = this.uvs.flat().map((val, index) => {
       if (index % 2 === 0) {
@@ -724,134 +725,134 @@ class Geometry {
   }
 
   /**
- * Computes the geometry's faces using its vertices.
- *
- * All 3D shapes are made by connecting sets of points called *vertices*. A
- * geometry's surface is formed by connecting vertices to form triangles that
- * are stitched together. Each triangular patch on the geometry's surface is
- * called a *face*. `myGeometry.computeFaces()` performs the math needed to
- * define each face based on the distances between vertices.
- *
- * The geometry's vertices are stored as <a href="#/p5.Vector">p5.Vector</a>
- * objects in the <a href="#/p5.Geometry/vertices">myGeometry.vertices</a>
- * array. The geometry's first vertex is the
- * <a href="#/p5.Vector">p5.Vector</a> object at `myGeometry.vertices[0]`,
- * its second vertex is `myGeometry.vertices[1]`, its third vertex is
- * `myGeometry.vertices[2]`, and so on.
- *
- * Calling `myGeometry.computeFaces()` fills the
- * <a href="#/p5.Geometry/faces">myGeometry.faces</a> array with three-element
- * arrays that list the vertices that form each face. For example, a geometry
- * made from a rectangle has two faces because a rectangle is made by joining
- * two triangles. <a href="#/p5.Geometry/faces">myGeometry.faces</a> for a
- * rectangle would be the two-dimensional array
- * `[[0, 1, 2], [2, 1, 3]]`. The first face, `myGeometry.faces[0]`, is the
- * array `[0, 1, 2]` because it's formed by connecting
- * `myGeometry.vertices[0]`, `myGeometry.vertices[1]`,and
- * `myGeometry.vertices[2]`. The second face, `myGeometry.faces[1]`, is the
- * array `[2, 1, 3]` because it's formed by connecting
- * `myGeometry.vertices[2]`, `myGeometry.vertices[1]`, and
- * `myGeometry.vertices[3]`.
- *
- * Note: `myGeometry.computeFaces()` only works when geometries have four or more vertices.
- *
- * @chainable
- *
- * @example
- * <div>
- * <code>
- * // Click and drag the mouse to view the scene from different angles.
- *
- * let myGeometry;
- *
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *
- *   // Create a p5.Geometry object.
- *   myGeometry = new p5.Geometry();
- *
- *   // Create p5.Vector objects to position the vertices.
- *   let v0 = createVector(-40, 0, 0);
- *   let v1 = createVector(0, -40, 0);
- *   let v2 = createVector(0, 40, 0);
- *   let v3 = createVector(40, 0, 0);
- *
- *   // Add the vertices to myGeometry's vertices array.
- *   myGeometry.vertices.push(v0, v1, v2, v3);
- *
- *   // Compute myGeometry's faces array.
- *   myGeometry.computeFaces();
- *
- *   describe('A red square drawn on a gray background.');
- * }
- *
- * function draw() {
- *   background(200);
- *
- *   // Enable orbiting with the mouse.
- *   orbitControl();
- *
- *   // Turn on the lights.
- *   lights();
- *
- *   // Style the shape.
- *   noStroke();
- *   fill(255, 0, 0);
- *
- *   // Draw the p5.Geometry object.
- *   model(myGeometry);
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * // Click and drag the mouse to view the scene from different angles.
- *
- * let myGeometry;
- *
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *
- *   // Create a p5.Geometry object using a callback function.
- *   myGeometry = new p5.Geometry(1, 1, createShape);
- *
- *   describe('A red square drawn on a gray background.');
- * }
- *
- * function draw() {
- *   background(200);
- *
- *   // Enable orbiting with the mouse.
- *   orbitControl();
- *
- *   // Turn on the lights.
- *   lights();
- *
- *   // Style the shape.
- *   noStroke();
- *   fill(255, 0, 0);
- *
- *   // Draw the p5.Geometry object.
- *   model(myGeometry);
- * }
- *
- * function createShape() {
- *   // Create p5.Vector objects to position the vertices.
- *   let v0 = createVector(-40, 0, 0);
- *   let v1 = createVector(0, -40, 0);
- *   let v2 = createVector(0, 40, 0);
- *   let v3 = createVector(40, 0, 0);
- *
- *   // Add the vertices to the p5.Geometry object's vertices array.
- *   this.vertices.push(v0, v1, v2, v3);
- *
- *   // Compute the faces array.
- *   this.computeFaces();
- * }
- * </code>
- * </div>
- */
+   * Computes the geometry's faces using its vertices.
+   *
+   * All 3D shapes are made by connecting sets of points called *vertices*. A
+   * geometry's surface is formed by connecting vertices to form triangles that
+   * are stitched together. Each triangular patch on the geometry's surface is
+   * called a *face*. `myGeometry.computeFaces()` performs the math needed to
+   * define each face based on the distances between vertices.
+   *
+   * The geometry's vertices are stored as <a href="#/p5.Vector">p5.Vector</a>
+   * objects in the <a href="#/p5.Geometry/vertices">myGeometry.vertices</a>
+   * array. The geometry's first vertex is the
+   * <a href="#/p5.Vector">p5.Vector</a> object at `myGeometry.vertices[0]`,
+   * its second vertex is `myGeometry.vertices[1]`, its third vertex is
+   * `myGeometry.vertices[2]`, and so on.
+   *
+   * Calling `myGeometry.computeFaces()` fills the
+   * <a href="#/p5.Geometry/faces">myGeometry.faces</a> array with three-element
+   * arrays that list the vertices that form each face. For example, a geometry
+   * made from a rectangle has two faces because a rectangle is made by joining
+   * two triangles. <a href="#/p5.Geometry/faces">myGeometry.faces</a> for a
+   * rectangle would be the two-dimensional array
+   * `[[0, 1, 2], [2, 1, 3]]`. The first face, `myGeometry.faces[0]`, is the
+   * array `[0, 1, 2]` because it's formed by connecting
+   * `myGeometry.vertices[0]`, `myGeometry.vertices[1]`,and
+   * `myGeometry.vertices[2]`. The second face, `myGeometry.faces[1]`, is the
+   * array `[2, 1, 3]` because it's formed by connecting
+   * `myGeometry.vertices[2]`, `myGeometry.vertices[1]`, and
+   * `myGeometry.vertices[3]`.
+   *
+   * Note: `myGeometry.computeFaces()` only works when geometries have four or more vertices.
+   *
+   * @chainable
+   *
+   * @example
+   * <div>
+   * <code>
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * let myGeometry;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Geometry object.
+   *   myGeometry = new p5.Geometry();
+   *
+   *   // Create p5.Vector objects to position the vertices.
+   *   let v0 = createVector(-40, 0, 0);
+   *   let v1 = createVector(0, -40, 0);
+   *   let v2 = createVector(0, 40, 0);
+   *   let v3 = createVector(40, 0, 0);
+   *
+   *   // Add the vertices to myGeometry's vertices array.
+   *   myGeometry.vertices.push(v0, v1, v2, v3);
+   *
+   *   // Compute myGeometry's faces array.
+   *   myGeometry.computeFaces();
+   *
+   *   describe('A red square drawn on a gray background.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Turn on the lights.
+   *   lights();
+   *
+   *   // Style the shape.
+   *   noStroke();
+   *   fill(255, 0, 0);
+   *
+   *   // Draw the p5.Geometry object.
+   *   model(myGeometry);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * let myGeometry;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Geometry object using a callback function.
+   *   myGeometry = new p5.Geometry(1, 1, createShape);
+   *
+   *   describe('A red square drawn on a gray background.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Turn on the lights.
+   *   lights();
+   *
+   *   // Style the shape.
+   *   noStroke();
+   *   fill(255, 0, 0);
+   *
+   *   // Draw the p5.Geometry object.
+   *   model(myGeometry);
+   * }
+   *
+   * function createShape() {
+   *   // Create p5.Vector objects to position the vertices.
+   *   let v0 = createVector(-40, 0, 0);
+   *   let v1 = createVector(0, -40, 0);
+   *   let v2 = createVector(0, 40, 0);
+   *   let v3 = createVector(40, 0, 0);
+   *
+   *   // Add the vertices to the p5.Geometry object's vertices array.
+   *   this.vertices.push(v0, v1, v2, v3);
+   *
+   *   // Compute the faces array.
+   *   this.computeFaces();
+   * }
+   * </code>
+   * </div>
+   */
   computeFaces() {
     this.faces.length = 0;
     const sliceCount = this.detailX + 1;
@@ -875,11 +876,11 @@ class Geometry {
     const vA = this.vertices[face[0]];
     const vB = this.vertices[face[1]];
     const vC = this.vertices[face[2]];
-    const ab = p5.Vector.sub(vB, vA);
-    const ac = p5.Vector.sub(vC, vA);
-    const n = p5.Vector.cross(ab, ac);
-    const ln = p5.Vector.mag(n);
-    let sinAlpha = ln / (p5.Vector.mag(ab) * p5.Vector.mag(ac));
+    const ab = Vector.sub(vB, vA);
+    const ac = Vector.sub(vC, vA);
+    const n = Vector.cross(ab, ac);
+    const ln = Vector.mag(n);
+    let sinAlpha = ln / (Vector.mag(ab) * Vector.mag(ac));
     if (sinAlpha === 0 || isNaN(sinAlpha)) {
       console.warn(
         'p5.Geometry.prototype._getFaceNormal:',
@@ -1249,7 +1250,7 @@ class Geometry {
     // initialize the vertexNormals array with empty vectors
     vertexNormals.length = 0;
     for (iv = 0; iv < vertices.length; ++iv) {
-      vertexNormals.push(new p5.Vector());
+      vertexNormals.push(new Vector());
     }
 
     // loop through all the faces adding its normal to the normal
@@ -1281,12 +1282,12 @@ class Geometry {
   averageNormals() {
     for (let i = 0; i <= this.detailY; i++) {
       const offset = this.detailX + 1;
-      let temp = p5.Vector.add(
+      let temp = Vector.add(
         this.vertexNormals[i * offset],
         this.vertexNormals[i * offset + this.detailX]
       );
 
-      temp = p5.Vector.div(temp, 2);
+      temp = Vector.div(temp, 2);
       this.vertexNormals[i * offset] = temp;
       this.vertexNormals[i * offset + this.detailX] = temp;
     }
@@ -1300,18 +1301,18 @@ class Geometry {
  */
   averagePoleNormals() {
     //average the north pole
-    let sum = new p5.Vector(0, 0, 0);
+    let sum = new Vector(0, 0, 0);
     for (let i = 0; i < this.detailX; i++) {
       sum.add(this.vertexNormals[i]);
     }
-    sum = p5.Vector.div(sum, this.detailX);
+    sum = Vector.div(sum, this.detailX);
 
     for (let i = 0; i < this.detailX; i++) {
       this.vertexNormals[i] = sum;
     }
 
     //average the south pole
-    sum = new p5.Vector(0, 0, 0);
+    sum = new Vector(0, 0, 0);
     for (
       let i = this.vertices.length - 1;
       i > this.vertices.length - 1 - this.detailX;
@@ -1319,7 +1320,7 @@ class Geometry {
     ) {
       sum.add(this.vertexNormals[i]);
     }
-    sum = p5.Vector.div(sum, this.detailX);
+    sum = Vector.div(sum, this.detailX);
 
     for (
       let i = this.vertices.length - 1;
@@ -1670,8 +1671,8 @@ class Geometry {
         minPosition.z = Math.min(minPosition.z, this.vertices[i].z);
       }
 
-      const center = p5.Vector.lerp(maxPosition, minPosition, 0.5);
-      const dist = p5.Vector.sub(maxPosition, minPosition);
+      const center = Vector.lerp(maxPosition, minPosition, 0.5);
+      const dist = Vector.sub(maxPosition, minPosition);
       const longestDist = Math.max(Math.max(dist.x, dist.y), dist.z);
       const scale = 200 / longestDist;
 

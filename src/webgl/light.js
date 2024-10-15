@@ -5,6 +5,9 @@
  * @requires core
  */
 
+import { RendererGL } from './p5.RendererGL';
+import { Vector } from '../math/p5.Vector';
+
 function light(p5, fn){
   /**
    * Creates a light that shines from all directions.
@@ -1492,69 +1495,69 @@ function light(p5, fn){
       case 11:
       case 10:
         color = this.color(v1, v2, v3);
-        position = new p5.Vector(x, y, z);
-        direction = new p5.Vector(nx, ny, nz);
+        position = new Vector(x, y, z);
+        direction = new Vector(nx, ny, nz);
         break;
 
       case 9:
         if (v1 instanceof p5.Color) {
           color = v1;
-          position = new p5.Vector(v2, v3, x);
-          direction = new p5.Vector(y, z, nx);
+          position = new Vector(v2, v3, x);
+          direction = new Vector(y, z, nx);
           angle = ny;
           concentration = nz;
-        } else if (x instanceof p5.Vector) {
+        } else if (x instanceof Vector) {
           color = this.color(v1, v2, v3);
           position = x;
-          direction = new p5.Vector(y, z, nx);
+          direction = new Vector(y, z, nx);
           angle = ny;
           concentration = nz;
-        } else if (nx instanceof p5.Vector) {
+        } else if (nx instanceof Vector) {
           color = this.color(v1, v2, v3);
-          position = new p5.Vector(x, y, z);
+          position = new Vector(x, y, z);
           direction = nx;
           angle = ny;
           concentration = nz;
         } else {
           color = this.color(v1, v2, v3);
-          position = new p5.Vector(x, y, z);
-          direction = new p5.Vector(nx, ny, nz);
+          position = new Vector(x, y, z);
+          direction = new Vector(nx, ny, nz);
         }
         break;
 
       case 8:
         if (v1 instanceof p5.Color) {
           color = v1;
-          position = new p5.Vector(v2, v3, x);
-          direction = new p5.Vector(y, z, nx);
+          position = new Vector(v2, v3, x);
+          direction = new Vector(y, z, nx);
           angle = ny;
-        } else if (x instanceof p5.Vector) {
+        } else if (x instanceof Vector) {
           color = this.color(v1, v2, v3);
           position = x;
-          direction = new p5.Vector(y, z, nx);
+          direction = new Vector(y, z, nx);
           angle = ny;
         } else {
           color = this.color(v1, v2, v3);
-          position = new p5.Vector(x, y, z);
+          position = new Vector(x, y, z);
           direction = nx;
           angle = ny;
         }
         break;
 
       case 7:
-        if (v1 instanceof p5.Color && v2 instanceof p5.Vector) {
+        if (v1 instanceof p5.Color && v2 instanceof Vector) {
           color = v1;
           position = v2;
-          direction = new p5.Vector(v3, x, y);
+          direction = new Vector(v3, x, y);
           angle = z;
           concentration = nx;
-        } else if (v1 instanceof p5.Color && y instanceof p5.Vector) {
+        } else if (v1 instanceof p5.Color && y instanceof Vector) {
           color = v1;
-          position = new p5.Vector(v2, v3, x);
+          position = new Vector(v2, v3, x);
           direction = y;
           angle = z;
           concentration = nx;
-        } else if (x instanceof p5.Vector && y instanceof p5.Vector) {
+        } else if (x instanceof Vector && y instanceof Vector) {
           color = this.color(v1, v2, v3);
           position = x;
           direction = y;
@@ -1562,34 +1565,34 @@ function light(p5, fn){
           concentration = nx;
         } else if (v1 instanceof p5.Color) {
           color = v1;
-          position = new p5.Vector(v2, v3, x);
-          direction = new p5.Vector(y, z, nx);
-        } else if (x instanceof p5.Vector) {
+          position = new Vector(v2, v3, x);
+          direction = new Vector(y, z, nx);
+        } else if (x instanceof Vector) {
           color = this.color(v1, v2, v3);
           position = x;
-          direction = new p5.Vector(y, z, nx);
+          direction = new Vector(y, z, nx);
         } else {
           color = this.color(v1, v2, v3);
-          position = new p5.Vector(x, y, z);
+          position = new Vector(x, y, z);
           direction = nx;
         }
         break;
 
       case 6:
-        if (x instanceof p5.Vector && y instanceof p5.Vector) {
+        if (x instanceof Vector && y instanceof Vector) {
           color = this.color(v1, v2, v3);
           position = x;
           direction = y;
           angle = z;
-        } else if (v1 instanceof p5.Color && y instanceof p5.Vector) {
+        } else if (v1 instanceof p5.Color && y instanceof Vector) {
           color = v1;
-          position = new p5.Vector(v2, v3, x);
+          position = new Vector(v2, v3, x);
           direction = y;
           angle = z;
-        } else if (v1 instanceof p5.Color && v2 instanceof p5.Vector) {
+        } else if (v1 instanceof p5.Color && v2 instanceof Vector) {
           color = v1;
           position = v2;
-          direction = new p5.Vector(v3, x, y);
+          direction = new Vector(v3, x, y);
           angle = z;
         }
         break;
@@ -1597,26 +1600,26 @@ function light(p5, fn){
       case 5:
         if (
           v1 instanceof p5.Color &&
-          v2 instanceof p5.Vector &&
-          v3 instanceof p5.Vector
+          v2 instanceof Vector &&
+          v3 instanceof Vector
         ) {
           color = v1;
           position = v2;
           direction = v3;
           angle = x;
           concentration = y;
-        } else if (x instanceof p5.Vector && y instanceof p5.Vector) {
+        } else if (x instanceof Vector && y instanceof Vector) {
           color = this.color(v1, v2, v3);
           position = x;
           direction = y;
-        } else if (v1 instanceof p5.Color && y instanceof p5.Vector) {
+        } else if (v1 instanceof p5.Color && y instanceof Vector) {
           color = v1;
-          position = new p5.Vector(v2, v3, x);
+          position = new Vector(v2, v3, x);
           direction = y;
-        } else if (v1 instanceof p5.Color && v2 instanceof p5.Vector) {
+        } else if (v1 instanceof p5.Color && v2 instanceof Vector) {
           color = v1;
           position = v2;
-          direction = new p5.Vector(v3, x, y);
+          direction = new Vector(v3, x, y);
         }
         break;
 
@@ -1743,35 +1746,39 @@ function light(p5, fn){
     this._assert3d('noLights');
     p5._validateParameters('noLights', args);
 
-    this._renderer.states.activeImageLight = null;
-    this._renderer.states._enableLighting = false;
-
-    this._renderer.states.ambientLightColors.length = 0;
-    this._renderer.states.specularColors = [1, 1, 1];
-
-    this._renderer.states.directionalLightDirections.length = 0;
-    this._renderer.states.directionalLightDiffuseColors.length = 0;
-    this._renderer.states.directionalLightSpecularColors.length = 0;
-
-    this._renderer.states.pointLightPositions.length = 0;
-    this._renderer.states.pointLightDiffuseColors.length = 0;
-    this._renderer.states.pointLightSpecularColors.length = 0;
-
-    this._renderer.states.spotLightPositions.length = 0;
-    this._renderer.states.spotLightDirections.length = 0;
-    this._renderer.states.spotLightDiffuseColors.length = 0;
-    this._renderer.states.spotLightSpecularColors.length = 0;
-    this._renderer.states.spotLightAngle.length = 0;
-    this._renderer.states.spotLightConc.length = 0;
-
-    this._renderer.states.constantAttenuation = 1;
-    this._renderer.states.linearAttenuation = 0;
-    this._renderer.states.quadraticAttenuation = 0;
-    this._renderer.states._useShininess = 1;
-    this._renderer.states._useMetalness = 0;
+    this._renderer.noLights();
 
     return this;
   };
+}
+
+RendererGL.prototype.noLights = function(){
+  this.states.activeImageLight = null;
+  this.states._enableLighting = false;
+
+  this.states.ambientLightColors.length = 0;
+  this.states.specularColors = [1, 1, 1];
+
+  this.states.directionalLightDirections.length = 0;
+  this.states.directionalLightDiffuseColors.length = 0;
+  this.states.directionalLightSpecularColors.length = 0;
+
+  this.states.pointLightPositions.length = 0;
+  this.states.pointLightDiffuseColors.length = 0;
+  this.states.pointLightSpecularColors.length = 0;
+
+  this.states.spotLightPositions.length = 0;
+  this.states.spotLightDirections.length = 0;
+  this.states.spotLightDiffuseColors.length = 0;
+  this.states.spotLightSpecularColors.length = 0;
+  this.states.spotLightAngle.length = 0;
+  this.states.spotLightConc.length = 0;
+
+  this.states.constantAttenuation = 1;
+  this.states.linearAttenuation = 0;
+  this.states.quadraticAttenuation = 0;
+  this.states._useShininess = 1;
+  this.states._useMetalness = 0;
 }
 
 export default light;
