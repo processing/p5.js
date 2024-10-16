@@ -1,8 +1,10 @@
 import * as constants from '../core/constants';
 
+// NEXT: fix multiLine line-breaking in html test
+
 /**
  * @module Type
- * @submodule Rendering
+ * @submodule text2d
  * @for p5
  * @requires core
  */
@@ -21,7 +23,9 @@ function text2d(p5, fn) {
     'textStyle',
     'textWidth',
     'textWrap',
-    'fontBounds'
+
+    'fontBounds', // ?
+    'fontWidth' // ?
   ];
 
   p5.Renderer2D.TabsRe = /\t/g;
@@ -33,6 +37,9 @@ function text2d(p5, fn) {
     if (typeof h !== 'undefined') {
       this.states.textAlign = h;
       if (typeof v !== 'undefined') {
+        if (v === constants.CENTER) {
+          v = constants._CTX_MIDDLE;
+        }
         this.states.textBaseline = v;
       }
       return this._applyTextProperties();
@@ -45,24 +52,24 @@ function text2d(p5, fn) {
   };
 
   p5.Renderer2D.prototype._fontWidth = function (s) {
-    let metrics = s instanceof TextMetrics ? s : this.drawingContext.measureText(s);
+    let metrics = s instanceof TextMetrics ? s : this._measureText(s);
     return metrics.width; // used in textBounds for p5.v1
   };
 
   p5.Renderer2D.prototype._textWidth = function (s) {
-    let metrics = s instanceof TextMetrics ? s : this.drawingContext.measureText(s);
+    let metrics = s instanceof TextMetrics ? s : this._measureText(s);
     // this should be pixel accurate (but different than p5.v1)
-    return Math.abs(metrics.actualBoundingBoxRight) - Math.abs(metrics.actualBoundingBoxLeft);
+    return metrics.actualBoundingBoxRight - Math.abs(metrics.actualBoundingBoxLeft);
   };
 
   p5.Renderer2D.prototype._fontHeight = function (s) {
-    let metrics = s instanceof TextMetrics ? s : this.drawingContext.measureText(s);
+    let metrics = s instanceof TextMetrics ? s : this._measureText(s);
     // this should be pixel accurate (but different than p5.v1)
     return Math.abs(metrics.fontBoundingBoxDescent) + metrics.fontBoundingBoxAscent;
   };
 
   p5.Renderer2D.prototype._textHeight = function (s) {
-    let metrics = s instanceof TextMetrics ? s : this.drawingContext.measureText(s);
+    let metrics = s instanceof TextMetrics ? s : this._measureText(s);
     // this should be pixel accurate (but different than p5.v1)
     return Math.abs(metrics.actualBoundingBoxDescent) + metrics.actualBoundingBoxAscent;
   };
@@ -101,25 +108,42 @@ function text2d(p5, fn) {
     const lines = theText.replace(p5.Renderer2D.TabsRE, '  ').split(p5.Renderer2D.LinebreakRE);
 
     // Get the textWidth for every line
-    const newArr = lines.map(this._textWidth.bind(this)); // tight-bounds
+    const newArr = [];
+    for (let i = 0; i < lines.length; i++) {
+      let tw = this._textWidth(lines[i]);
+      console.log(i, lines[i], tw);
+      newArr.push(tw);
+    }
+    //const newArr = lines.map(this._textWidth.bind(this)); // tight-bounds
 
     // Return the largest textWidth
     return Math.max(...newArr);
   };
 
-  p5.Renderer2D.prototype.textBounds = function (s, x = 0, y = 0) {
+  p5.Renderer2D.prototype._measureText = function (s) {
+    // this handles an apparent bug in some browsers where actualBoundBox
+    // values are not returned correctly if align is not 'left'
+    let align = this.drawingContext.textAlign;
+    this.drawingContext.textAlign = 'left';
     let metrics = this.drawingContext.measureText(s);
+    this.drawingContext.textAlign = align;
+    return metrics;
+  }
+  
+
+  p5.Renderer2D.prototype.textBounds = function (s, x = 0, y = 0) {
+    let metrics = this._measureText(s);
     // TODO: should this pay attention to rectMode or textAlign?
+    let px = x + Math.abs(metrics.actualBoundingBoxLeft);
+    let py = y - Math.abs(metrics.actualBoundingBoxAscent);
     return {
-      x: x + Math.abs(metrics.actualBoundingBoxLeft),
-      y: y + Math.abs(metrics.actualBoundingBoxDescent),
       w: this._textWidth(s, metrics),
       h: this._textHeight(s, metrics)
     };
   };
 
   p5.Renderer2D.prototype.fontBounds = function (s, x = 0, y = 0) {
-    let metrics = this.drawingContext.measureText(s);
+    let metrics = this._measureText(s);
     // TODO: should this pay attention to rectMode or textAlign?
     return {
       x,
@@ -129,7 +153,8 @@ function text2d(p5, fn) {
     };
   };
 
-  p5.Renderer2D.prototype.textFont = function (theFont, theSize, theWeight, theStyle, theVariant) {
+  // TODO: rethink parameter list, examine FontFace.properties
+  p5.Renderer2D.prototype.textFont = function (theFont, theSize, opts) { // need to add fontStretch/lineHeight
 
     if (arguments.length) {
 
@@ -142,6 +167,7 @@ function text2d(p5, fn) {
       if (typeof theSize === 'string') { // defaults to px
         // TODO: handle other units and possibly convert to px
         theSize = Number.parseFloat(theSize);
+        this.states.textSize = theSize;
       }
 
       // TODO: handle strings with multiple properties when args.length=1
@@ -149,17 +175,14 @@ function text2d(p5, fn) {
 
       this.states.textFont = theFont;
 
-      if (typeof theSize !== 'undefined') {
-        this.states.textSize = theSize;
+      if (typeof opts?.theWeight !== 'undefined') {
+        this.states.textWeight = opts?.theWeight;
       }
-      if (typeof theWeight !== 'undefined') {
-        this.states.textWeight = theWeight;
+      if (typeof opts?.theStyle !== 'undefined') {
+        this.states.textStyle = opts?.theStyle;
       }
-      if (typeof theStyle !== 'undefined') {
-        this.states.textStyle = theStyle;
-      }
-      if (typeof theVariant !== 'undefined') {
-        this.states.textVariant = theVariant;
+      if (typeof opts?.theVariant !== 'undefined') {
+        this.states.textVariant = opts?.theVariant;
       }
 
       return this._applyTextProperties();
@@ -509,33 +532,41 @@ function text2d(p5, fn) {
       textWrap: { default: constants.WORD },
     };
 
-    // verify all font properties are set in states, or set with default
+    // verify all font properties exist in `states`, else set with default
     Object.keys(fontProps).forEach(p => {
       if (!(p in this.states)) {
         this.states[p] = fontProps[p];
       }
     });
 
-    // verify context properties are set in states, or set with default
+    // verify context properties exist in `states`, else set with default
     Object.keys(contextProps).forEach(prop => {
       if (!(prop in this.states)) {
         this.states[prop] = contextProps[prop].default;
       }
     });
 
-    // update any context properties that differ from states
+    // update any context properties that differ from `states`
     Object.keys(contextProps).forEach(prop => {
       let ctxProp = contextProps[prop].property || prop;
       this.drawingContext[ctxProp] = this.states[prop];
+      if (prop.startsWith('text')) {
+        console.log(prop,'=', this.states[prop]);
+      }
     });
+    
 
     // handle one-off cases with p5.CENTER vs MIDDLE
     if (this.states.textBaseline === constants.CENTER) {
+      console.log('OLD: setting textBaseline to MIDDLE');
       this.drawingContext.textBaseline = constants._CTX_MIDDLE;
     }
 
     const fontString = this._buildFontString(); // create font-string from states
     this.drawingContext.font = fontString;
+
+    console.log(this.drawingContext.font+'\n'+'-'.repeat(80));
+
     if (fontString.replace(/normal /g, '') !== this.drawingContext.font) { // TMP: warn if font not set properly
       console.warn('Error setting text properties: \ncss="' + fontString + '"\nctx="' + this.drawingContext.font + '"');
     }
