@@ -52,7 +52,8 @@ var spec = {
     // Add the visual tests that you want run as part of CI here. Feel free
     // to omit some for speed if they should only be run manually.
     'webgl',
-    'typography'
+    'typography',
+    'shape_modes'
   ]
 };
 document.write(
