@@ -47,36 +47,165 @@
 
     const DISPLAY_ANIMATIONS = false;
 
-    let typographyLetterSketch = function (p) {
+    let boundingBoxSketch = function (p) {
+      let x, y, s;
+
       p.setup = function () {
-        let margin = 10;
-        let gap = 46;
-        let counter = 35;
-        p.createCanvas(720, 320);
-        p.background(0);
-        p.textFont('Georgia');
-        p.textSize(24);
-        p.textStyle(p.BOLD);
-        p.textAlign(p.CENTER, p.CENTER);
-        p.translate(margin * 4, margin * 4);
-        for (let y = 0; y < p.height - gap; y += gap) {
-          for (let x = 0; x < p.width - gap; x += gap) {
-            let letter = p.char(counter);
-            if (letter === 'P' || letter === '5') {
-              p.fill(255, 204, 0);
-            } else if (letter === 'J' || letter === 'S') {
-              p.fill(204, 0, 255);
-            } else {
-              p.fill(255);
-            }
-            p.text(letter, x, y);
-            counter++;
-          }
-        }
-        p.translate(margin * -4, margin * -4);
-        p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 21, 1));
+        p.createCanvas(240 * 5, 200);
+        p.textSize(30);
+
+        ///////////////////////////// BASELINE (L,C,R) ///////////////////////////////
+        y = 50;
+
+        //1
+        x = 10, s = 'LEFT BASELINE is funky.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        //2
+        x += 580, s = 'CENTER BASELINE is funky.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        //3
+        x += 600, s = 'RIGHT BASELINE is funky.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
+        y += 50;
+
+        // 4
+        x = 10, s = 'LEFT BOTTOM is funky.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BOTTOM) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        // 5
+        x += 580, s = 'CENTER BOTTOM is funky.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BOTTOM) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        // 6
+        x += 600, s = 'RIGHT BOTTOM is funky.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BOTTOM) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        //////////////////////////// CENTER (L,C,R) /////////////////////////////////
+        y += 30;
+
+        x = 10, s = 'LEFT CENTER is funky.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.CENTER) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        x += 580, s = 'CENTER CENTER is funky.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.CENTER) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        x += 600, s = 'RIGHT CENTER is funky.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        ///////////////////////////// TOP (L,C,R) ///////////////////////////////
+        y += 30;
+
+        x = 10, s = 'LEFT TOP is funky.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        x += 580, s = 'CENTER TOP is funky.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.TOP) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        x += 600, s = 'RIGHT TOP is funky.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
       };
     };
+
+    let boundingBoxMulti = function (p) { // NEXT: WORKING HERE
+      let x, y, w = 300, showBB = 0, s, suf = 'is text that wraps when it gets too long.';
+
+      p.setup = function () {
+        p.createCanvas(1100, 350);
+        p.textSize(20);
+        p.textLeading(22);
+
+        ///////////////////////////// BASELINE (L,C,R) ///////////////////////////////
+        y = 20;
+
+        //1
+        x = 20, s = 'LEFT BASELINE ' + suf;
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y, w);
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y, w)));
+        p.noFill() && p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y);//&& p.line(x, 0, x, p.height);
+
+        //2
+        x += 380, s = 'CENTER BASELINE ' + suf;
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y, w);
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+      
+        //3
+        x += 380, s = 'RIGHT BASELINE ' + suf;
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y, w);
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
+        y += 120;
+
+        // 4
+        x = 20, s = 'LEFT BOTTOM ' + suf;
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BOTTOM) && p.text(s, x, y, w);
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.noFill() && p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y);
+
+        // 5
+        x += 380, s = 'CENTER BOTTOM ' + suf;
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BOTTOM) && p.text(s, x, y, w);
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        // 6
+        x += 380, s = 'RIGHT BOTTOM ' + suf;
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BOTTOM) && p.text(s, x, y, w);
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        if (1) {
+          //////////////////////////// CENTER (L,C,R) /////////////////////////////////
+          y += 60;
+
+          x = 20, s = 'LEFT CENTER ' + suf;
+          p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.CENTER) && p.text(s, x, y, w);
+          if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+          p.noFill() && p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y);
+
+          x += 380, s = 'CENTER CENTER ' + suf;
+          p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.CENTER) && p.text(s, x, y, w);
+          if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+          x += 380, s = 'RIGHT CENTER ' + suf;
+          p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y, w);
+          if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+          ///////////////////////////// TOP (L,C,R) ///////////////////////////////
+          y += 60;
+
+          x = 20, s = 'LEFT TOP ' + suf;
+          p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y, w);
+          if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+          p.noFill() && p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y);
+
+          x += 380, s = 'CENTER TOP ' + suf;
+          p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.TOP) && p.text(s, x, y, w);
+          if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+          x += 380, s = 'RIGHT TOP ' + suf;
+          p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y, w);
+          if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+          //p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
+        }
+      };
+    };
+
 
     let textSketch = function (p) {
       p.setup = function () {
@@ -97,7 +226,7 @@
           .textStyle(p.NORMAL)
           .textSize(13.5)
           .text(
-            'Simple long Text: Lorem Ipsum is simply dummy text of the printing and typesetting industry. ',
+            'Simple long Text: Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
             10,
             92,
             220,
@@ -236,12 +365,15 @@
       };
     };
 
-    let multilineAlignSketch = function (p) {
+    let multilineAlignWord = function (p) {
       p.setup = function () {
         p.createCanvas(240 * 4, 160);
         p.textWrap(p.WORD);
         p.textSize(10);
         p.stroke(0);
+        //p.noFill();
+        //p.line(10, 10, p.width - 10, 10);
+
         //1
         p.fill(255);
         p.strokeWeight(1);
@@ -250,8 +382,9 @@
         p.fill(0);
         p.textAlign(p.LEFT, p.TOP);
         p.text(
-          'LEFT TOP is simply dummy text of the printing and typesetting industry. ',
+          'LEFT TOP is simply dummy text of the printing and typesetting industry.',
           10, 10, 220, 40);
+
         //2
         p.fill(255);
         p.strokeWeight(1);
@@ -260,8 +393,9 @@
         p.fill(0);
         p.textAlign(p.CENTER, p.TOP);
         p.text(
-          'CENTER TOP is simply dummy text of the printing and typesetting industry. ',
+          'CENTER TOP is simply dummy text of the printing and typesetting industry.',
           10, 60, 220, 40);
+
         //3
         p.fill(255);
         p.strokeWeight(1);
@@ -270,7 +404,7 @@
         p.fill(0);
         p.textAlign(p.RIGHT, p.TOP);
         p.text(
-          'RIGHT TOP is simply dummy text of the printing and typesetting industry. ',
+          'RIGHT TOP is simply dummy text of the printing and typesetting industry.',
           10, 110, 220, 40
         );
 
@@ -282,12 +416,13 @@
         p.fill(0);
         p.textAlign(p.LEFT, p.CENTER);
         p.text(
-          'LEFT CENTER is simply dummy text of the printing and typesetting industry. ',
+          'LEFT CENTER is simply dummy text of the printing and typesetting industry.',
           250,
           10,
           220,
           40
         );
+
         //2
         p.fill(255);
         p.strokeWeight(1);
@@ -296,12 +431,13 @@
         p.fill(0);
         p.textAlign(p.CENTER, p.CENTER);
         p.text(
-          'CENTER CENTER is simply dummy text of the printing and typesetting industry. ',
+          'CENTER CENTER is simply dummy text of the printing and typesetting industry.',
           250,
           60,
           220,
           40
         );
+
         //3
         p.fill(255);
         p.strokeWeight(1);
@@ -310,7 +446,7 @@
         p.fill(0);
         p.textAlign(p.RIGHT, p.CENTER);
         p.text(
-          'RIGHT CENTER is simply dummy text of the printing and typesetting industry. ',
+          'RIGHT CENTER is simply dummy text of the printing and typesetting industry.',
           250,
           110,
           220,
@@ -325,12 +461,13 @@
         p.fill(0);
         p.textAlign(p.LEFT, p.BOTTOM);
         p.text(
-          'LEFT BOTTOM is simply dummy text of the printing and typesetting industry. ',
+          'LEFT BOTTOM is simply dummy text of the printing and typesetting industry.',
           490,
           10,
           220,
           40
         );
+
         //2
         p.fill(255);
         p.strokeWeight(1);
@@ -339,12 +476,13 @@
         p.fill(0);
         p.textAlign(p.CENTER, p.BOTTOM);
         p.text(
-          'CENTER BOTTOM is simply dummy text of the printing and typesetting industry. ',
+          'CENTER BOTTOM is simply dummy text of the printing and typesetting industry.',
           490,
           60,
           220,
           40
         );
+
         //3
         p.fill(255);
         p.strokeWeight(1);
@@ -353,7 +491,7 @@
         p.fill(0);
         p.textAlign(p.RIGHT, p.BOTTOM);
         p.text(
-          'RIGHT BOTTOM is simply dummy text of the printing and typesetting industry. ',
+          'RIGHT BOTTOM is simply dummy text of the printing and typesetting industry.',
           490,
           110,
           220,
@@ -368,7 +506,7 @@
         p.fill(0);
         p.textAlign(p.LEFT, p.BASELINE);
         p.text(
-          'LEFT BASELINE is simply dummy text of the printing and typesetting industry. ',
+          'LEFT BASELINE is simply dummy text of the printing and typesetting industry.',
           730,
           10,
           220,
@@ -382,7 +520,7 @@
         p.fill(0);
         p.textAlign(p.CENTER, p.BASELINE);
         p.text(
-          'CENTER BASELINE is simply dummy text of the printing and typesetting industry. ',
+          'CENTER BASELINE is simply dummy text of the printing and typesetting industry.',
           730,
           60,
           220,
@@ -396,13 +534,14 @@
         p.fill(0);
         p.textAlign(p.RIGHT, p.BASELINE);
         p.text(
-          'RIGHT BASELINE is simply dummy text of the printing and typesetting industry. ',
+          'RIGHT BASELINE is simply dummy text of the printing and typesetting industry.',
           730,
           110,
           220,
           40
         );
         p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 20, 0));
+
       };
     };
 
@@ -422,7 +561,7 @@
         p.textAlign(p.LEFT, p.TOP);
 
         p.text(
-          'LEFT TOP is simply dummy text of the printing and typesetting industry. ',
+          'LEFT TOP is simply dummy text of the printing and typesetting industry.',
           10, 10, 220, 40);
         //2
         p.fill(255);
@@ -432,7 +571,7 @@
         p.fill(0);
         p.textAlign(p.CENTER, p.TOP);
         p.text(
-          'CENTER TOP is simply dummy text of the printing and typesetting industry. ',
+          'CENTER TOP is simply dummy text of the printing and typesetting industry.',
           10, 60, 220, 40);
         //3
         p.fill(255);
@@ -442,7 +581,7 @@
         p.fill(0);
         p.textAlign(p.RIGHT, p.TOP);
         p.text(
-          'RIGHT TOP is simply dummy text of the printing and typesetting industry. ',
+          'RIGHT TOP is simply dummy text of the printing and typesetting industry.',
           10, 110, 220, 40
         );
 
@@ -454,7 +593,7 @@
         p.fill(0);
         p.textAlign(p.LEFT, p.CENTER);
         p.text(
-          'LEFT CENTER is simply dummy text of the printing and typesetting industry. ',
+          'LEFT CENTER is simply dummy text of the printing and typesetting industry.',
           250,
           10,
           220,
@@ -468,7 +607,7 @@
         p.fill(0);
         p.textAlign(p.CENTER, p.CENTER);
         p.text(
-          'CENTER CENTER is simply dummy text of the printing and typesetting industry. ',
+          'CENTER CENTER is simply dummy text of the printing and typesetting industry.',
           250,
           60,
           220,
@@ -482,7 +621,7 @@
         p.fill(0);
         p.textAlign(p.RIGHT, p.CENTER);
         p.text(
-          'RIGHT CENTER is simply dummy text of the printing and typesetting industry. ',
+          'RIGHT CENTER is simply dummy text of the printing and typesetting industry.',
           250,
           110,
           220,
@@ -497,7 +636,7 @@
         p.fill(0);
         p.textAlign(p.LEFT, p.BOTTOM);
         p.text(
-          'LEFT BOTTOM is simply dummy text of the printing and typesetting industry. ',
+          'LEFT BOTTOM is simply dummy text of the printing and typesetting industry.',
           490,
           10,
           220,
@@ -511,7 +650,7 @@
         p.fill(0);
         p.textAlign(p.CENTER, p.BOTTOM);
         p.text(
-          'CENTER BOTTOM is simply dummy text of the printing and typesetting industry. ',
+          'CENTER BOTTOM is simply dummy text of the printing and typesetting industry.',
           490,
           60,
           220,
@@ -525,7 +664,7 @@
         p.fill(0);
         p.textAlign(p.RIGHT, p.BOTTOM);
         p.text(
-          'RIGHT BOTTOM is simply dummy text of the printing and typesetting industry. ',
+          'RIGHT BOTTOM is simply dummy text of the printing and typesetting industry.',
           490,
           110,
           220,
@@ -540,7 +679,7 @@
         p.fill(0);
         p.textAlign(p.LEFT, p.BASELINE);
         p.text(
-          'LEFT BASELINE is simply dummy text of the printing and typesetting industry. ',
+          'LEFT BASELINE is simply dummy text of the printing and typesetting industry.',
           730,
           10,
           220,
@@ -554,7 +693,7 @@
         p.fill(0);
         p.textAlign(p.CENTER, p.BASELINE);
         p.text(
-          'CENTER BASELINE is simply dummy text of the printing and typesetting industry. ',
+          'CENTER BASELINE is simply dummy text of the printing and typesetting industry.',
           730,
           60,
           220,
@@ -568,14 +707,14 @@
         p.fill(0);
         p.textAlign(p.RIGHT, p.BASELINE);
         p.text(
-          'RIGHT BASELINE is simply dummy text of the printing and typesetting industry. ',
+          'RIGHT BASELINE is simply dummy text of the printing and typesetting industry.',
           730,
           110,
           220,
           40
         );
+        p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 20, 0));
       };
-      p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 20, 0));
     };
 
     let textFontSketch = function (p) {
@@ -859,6 +998,37 @@
       };
     };
 
+    let typographyLetterSketch = function (p) {
+      p.setup = function () {
+        let margin = 10;
+        let gap = 46;
+        let counter = 35;
+        p.createCanvas(720, 320);
+        p.background(0);
+        p.textFont('Georgia');
+        p.textSize(24);
+        p.textStyle(p.BOLD);
+        p.textAlign(p.CENTER, p.CENTER);
+        p.translate(margin * 4, margin * 4);
+        for (let y = 0; y < p.height - gap; y += gap) {
+          for (let x = 0; x < p.width - gap; x += gap) {
+            let letter = p.char(counter);
+            if (letter === 'P' || letter === '5') {
+              p.fill(255, 204, 0);
+            } else if (letter === 'J' || letter === 'S') {
+              p.fill(204, 0, 255);
+            } else {
+              p.fill(255);
+            }
+            p.text(letter, x, y);
+            counter++;
+          }
+        }
+        p.translate(margin * -4, margin * -4);
+        p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 21, 1));
+      };
+    };
+
     let textOverlapSketch = function (p) {
       p.setup = function () {
         p.createCanvas(240, 160);
@@ -1009,10 +1179,11 @@
       };
     };
 
-    new p5(typographyLetterSketch, 'typographyLetterSketch');
+    new p5(boundingBoxMulti, 'boundingBoxMulti');
     new p5(textSketch, 'textSketch');
+    new p5(boundingBoxSketch, 'boundingBoxSketch');
     new p5(textVerticalAlign, 'textVerticalAlign');
-    new p5(multilineAlignSketch, 'multilineAlignSketch');
+    new p5(multilineAlignWord, 'multilineAlignWord');
     new p5(multilineAlignChar, 'multilineAlignChar');
     new p5(textFontSketch, 'textFontSketch');
     new p5(loadedFontSketch, 'loadedFontSketch');
@@ -1026,7 +1197,9 @@
     new p5(textSizeSketch, 'textSizeSketch');
     new p5(textStyleSketch, 'textStyleSketch');
     new p5(textWidthSketch, 'textWidthSketch');
+    new p5(typographyLetterSketch, 'typographyLetterSketch');
     new p5(textOverlapSketch, 'textOverlapSketch');
+
     if (DISPLAY_ANIMATIONS) {
       new p5(textFlySketch, 'textFlySketch');
       new p5(textFlickerSketch, 'textFlickerSketch');
@@ -1039,10 +1212,13 @@
 
   </script>
 
-  <div id='typographyLetterSketch'>
-    <p class="caption">typographyGrid</p>
-    <img src="img/typographyLetterSketch.png" width="720" height="320"></img>
-    <img src="img/typographyLetterSketch.p5.png" width="720" height="320"></img>
+  <div id='boundingBoxMulti'>
+    <p class="caption">boundingBoxMulti(in-progress*)</p>
+  </div>
+  <div id='boundingBoxSketch'>
+    <p class="caption">boundingBoxSketch</p>
+    <!-- <img src="img/boundingBoxSketch.p5.png" width="1200" height="320"></img> -->
+    <!--img src="img/boundingBoxSketch.png" width="720" height="320"></img> -->
   </div>
   <div id='textSketch'>
     <p class="caption">textAttributes</p>
@@ -1054,7 +1230,7 @@
     <img src="img/textVerticalAlign.png" width="960" height="160" class="gray"></img>
     <img src="img/textVerticalAlign.p5.png" width="960" height="160" class="gray"></img>
   </div>
-  <div id='multilineAlignSketch'>
+  <div id='multilineAlignWord'>
     <p class="caption">multilineAlign.Word</p>
     <img src="img/multilineAlignSketch.png" width="960" height="160" class="gray"></img>
     <img src="img/multilineAlignSketch.p5.png" width="960" height="160" class="gray"></img>
@@ -1071,7 +1247,6 @@
   <div id='loadedFontSketch'>
     <p class="caption">loadFont</p>
     <img src="img/loadedFontSketch.p5.png" width="240" height="240" class="gray"></img>
-    <!-- <img src="img/loadedFontSketch.jpg" width="240" height="160" class="gray"></img> -->
   </div>
   <div id='textAlignSketch'>
     <p class="caption">textAlign</p>
@@ -1079,11 +1254,9 @@
     <img src="img/textAlignSketch.png" width="240" height="160" class="gray"></img>
   </div>
   <div id="textAllAlignmentsSketch" style="position:relative;">
-    <!-- <p class="caption">textAlign 1</p> -->
     <img src="img/textAllAlignmentsSketch.png" width="400" height="600" style="display:inline-block;"></img>
   </div>
   <div id="textAllAlignmentsSketch2" style="position:relative;">
-    <!-- <p class="caption">textAlign 2</p> -->
     <img src="img/textAllAlignmentsSketch.p5.jpg" width="400" height="600" style="display:inline-block;"></img>
   </div>
   <div id='textLeadingSketch'>
@@ -1119,6 +1292,11 @@
     <img src="img/textWidthSketch.p5.png" width="240" height="160" class="red"></img>
     <img src="img/textWidthSketch.png" width="240" height="160" class="gray"></img>
   </div>
+  <div id='typographyLetterSketch'>
+    <p class="caption">typographyGrid</p>
+    <img src="img/typographyLetterSketch.png" width="720" height="320"></img>
+    <img src="img/typographyLetterSketch.p5.png" width="720" height="320"></img>
+  </div>
   <div id='textOverlapSketch'>
     <p class="caption">textAlpha</p>
     <img src="img/textOverlapSketch.p5.png" width="240" height="160" class="gray"></img>
@@ -1126,6 +1304,7 @@
   </div>
 
   <!-- animations -->
+
   <div id='textFlySketch'>
   </div>
   <div id='textFlickerSketch'>
