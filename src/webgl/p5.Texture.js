@@ -132,6 +132,8 @@ p5.Texture = class Texture {
       textureData = this.src.canvas || this.src.elt;
     } else if (this.isImageData) {
       textureData = this.src;
+    } else if (this.isCubemapTexture) {
+      textureData = this.src;
     }
     return textureData;
   }
@@ -196,7 +198,7 @@ p5.Texture = class Texture {
   /**
    * Checks if the source data for this texture has changed (if it's
    * easy to do so) and reuploads the texture if necessary. If it's not
-   * possible or to expensive to do a calculation to determine wheter or
+   * possible or too expensive to do a calculation to determine whether or
    * not the data has occurred, this method simply re-uploads the texture.
    * @method update
    */
@@ -513,12 +515,85 @@ export function checkWebGLCapabilities({ GL, webglVersion }) {
     : gl.getExtension('OES_texture_half_float');
   const supportsHalfFloatLinear = supportsHalfFloat &&
     gl.getExtension('OES_texture_half_float_linear');
+  const supportsCubemap = (webglVersion === constants.WEBGL2)
+    || (gl.getExtension('OES_texture_cube_map'));
   return {
     float: supportsFloat,
     floatLinear: supportsFloatLinear,
     halfFloat: supportsHalfFloat,
-    halfFloatLinear: supportsHalfFloatLinear
+    halfFloatLinear: supportsHalfFloatLinear,
+    cubemap: supportsCubemap
   };
+}
+
+export class CubemapTexture extends p5.Texture {
+  constructor(renderer, faces, settings) {
+    super(renderer, faces, settings);
+
+    this.isCubemapTexture = false; // Default value
+
+    if (faces instanceof CubemapTexture) {
+      this.isCubemapTexture = true;
+    }
+  }
+
+  glFilter(_filter) {
+    const gl = this._renderer.GL;
+    // TODO: Support other filters if needed
+    return gl.LINEAR;
+  }
+
+  _getTextureDataFromSource() {
+    return this.src;
+  }
+
+  init(faces) {
+    const gl = this._renderer.GL;
+    this.glTex = gl.createTexture();
+
+    this.bindTexture();
+
+    // Looping through each face and loading the data
+    const targets = [
+      gl.TEXTURE_CUBE_MAP_POSITIVE_X,
+      gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
+      gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
+      gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
+      gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
+      gl.TEXTURE_CUBE_MAP_NEGATIVE_Z
+    ];
+    // Looping through each face and loading the data
+    for (let faceIndex = 0; faceIndex < targets.length; faceIndex++) {
+      // Setting up each face of the cubemap
+      gl.texImage2D(
+        targets[faceIndex],
+        0,
+        this.glFormat,
+        this.width,
+        this.height,
+        0,
+        this.glFormat,
+        this.glDataType,
+        faces[faceIndex]
+      );
+    }
+
+    // Set parameters for the cubemap
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP
+      , gl.TEXTURE_MAG_FILTER, this.glMagFilter);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP
+      , gl.TEXTURE_MIN_FILTER, this.glMinFilter);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP
+      , gl.TEXTURE_WRAP_S, this.glWrapS);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP
+      , gl.TEXTURE_WRAP_T, this.glWrapT);
+
+    this.unbindTexture();
+  }
+
+  update() {
+    // Custom update logic, if needed
+  }
 }
 
 export default p5.Texture;
