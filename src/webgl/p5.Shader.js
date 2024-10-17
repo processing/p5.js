@@ -1325,31 +1325,6 @@ function shader(p5, fn){
       return this;
     }
 
-    /* NONE OF THIS IS FAST OR EFFICIENT BUT BEAR WITH ME
-     *
-     * these shader "type" query methods are used by various
-     * facilities of the renderer to determine if changing
-     * the shader type for the required action (for example,
-     * do we need to load the default lighting shader if the
-     * current shader cannot handle lighting?)
-     *
-     **/
-
-    isNormalShader() {
-      return this.attributes.aNormal !== undefined;
-    }
-
-    isTextureShader() {
-      return this.samplers.length > 0;
-    }
-
-    isColorShader() {
-      return (
-        this.attributes.aVertexColor !== undefined ||
-        this.uniforms.uMaterialColor !== undefined
-      );
-    }
-
     /**
      * @chainable
      * @private

@@ -256,18 +256,6 @@ suite('p5.Shader', function() {
       assert.isTrue(curShader === null);
     });
 
-    test('isNormalShader returns true if there is a normal attribute', function() {
-      var s = myp5._renderer._getNormalShader();
-      myp5.shader(s);
-      assert.isTrue(s.isNormalShader());
-    });
-
-    test('isNormalShader returns false if there is no normal attribute', function() {
-      var s = myp5._renderer._getPointShader();
-      myp5.shader(s);
-      assert.isFalse(s.isNormalShader());
-    });
-
     suite('Hooks', function() {
       let myShader;
 
