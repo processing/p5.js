@@ -47,7 +47,7 @@ suite('p5.Texture', function() {
 
   var testTextureSet = function(src) {
     var lightShader = myp5._renderer._getLightShader();
-    var selectedShader = myp5._renderer._getRetainedFillShader();
+    var selectedShader = myp5._renderer._getFillShader();
     assert(
       lightShader === selectedShader,
       "_renderer's retain mode shader was not light shader " +
