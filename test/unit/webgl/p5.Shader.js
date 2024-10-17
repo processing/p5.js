@@ -236,25 +236,25 @@ suite('p5.Shader', function() {
 
     test('Able to setUniform empty arrays', function() {
       myp5.shader(myp5._renderer._getLightShader());
-      var s = myp5._renderer.userFillShader;
+      var s = myp5._renderer.states.userFillShader;
 
       s.setUniform('uMaterialColor', []);
       s.setUniform('uLightingDirection', []);
     });
 
     test('Able to set shininess', function() {
-      assert.deepEqual(myp5._renderer._useShininess, 1);
+      assert.deepEqual(myp5._renderer.states._useShininess, 1);
       myp5.shininess(50);
-      assert.deepEqual(myp5._renderer._useShininess, 50);
+      assert.deepEqual(myp5._renderer.states._useShininess, 50);
     });
 
     test('Shader is reset after resetShader is called', function() {
       myp5.shader(myp5._renderer._getColorShader());
-      var prevShader = myp5._renderer.userFillShader;
+      var prevShader = myp5._renderer.states.userFillShader;
       assert.isTrue(prevShader !== null);
 
       myp5.resetShader();
-      var curShader = myp5._renderer.userFillShader;
+      var curShader = myp5._renderer.states.userFillShader;
       assert.isTrue(curShader === null);
     });
 
@@ -304,6 +304,84 @@ suite('p5.Shader', function() {
       var s = myp5._renderer._getLightShader();
       myp5.shader(s);
       assert.isFalse(s.isStrokeShader());
+    });
+
+    suite('Hooks', function() {
+      let myShader;
+
+      beforeEach(function() {
+        myShader = myp5.createShader(
+          `
+            precision highp float;
+
+            attribute vec3 aPosition;
+            attribute vec2 aTexCoord;
+            attribute vec4 aVertexColor;
+
+            uniform mat4 uModelViewMatrix;
+            uniform mat4 uProjectionMatrix;
+
+            varying vec2 vTexCoord;
+            varying vec4 vVertexColor;
+
+            void main() {
+                // Apply the camera transform
+                vec4 viewModelPosition =
+                  uModelViewMatrix *
+                  vec4(aPosition, 1.0);
+
+                // Tell WebGL where the vertex goes
+                gl_Position =
+                  uProjectionMatrix *
+                  viewModelPosition;
+
+                // Pass along data to the fragment shader
+                vTexCoord = aTexCoord;
+                vVertexColor = aVertexColor;
+            }
+          `,
+          `
+            precision highp float;
+
+            varying vec2 vTexCoord;
+            varying vec4 vVertexColor;
+
+            void main() {
+              // Tell WebGL what color to make the pixel
+              gl_FragColor = HOOK_getVertexColor(vVertexColor);
+            }
+          `,
+          {
+            fragment: {
+              'vec4 getVertexColor': '(vec4 color) { return color; }'
+            }
+          }
+        );
+      });
+
+      test('available hooks show up in inspectHooks()', function() {
+        const logs = [];
+        const myLog = (...data) => logs.push(data.join(', '));
+        const oldLog = console.log;
+        console.log = myLog;
+        myShader.inspectHooks();
+        console.log = oldLog;
+        expect(logs.join('\n')).to.match(/vec4 getVertexColor/);
+      });
+
+      test('unfilled hooks do not have an AUGMENTED_HOOK define', function() {
+        const modified = myShader.modify({});
+        expect(modified.fragSrc()).not.to.match(/#define AUGMENTED_HOOK_getVertexColor/);
+      });
+
+      test('filled hooks do have an AUGMENTED_HOOK define', function() {
+        const modified = myShader.modify({
+          'vec4 getVertexColor': `(vec4 c) {
+            return vec4(1., 0., 0., 1.);
+          }`
+        });
+        expect(modified.fragSrc()).to.match(/#define AUGMENTED_HOOK_getVertexColor/);
+      });
     });
   });
 });

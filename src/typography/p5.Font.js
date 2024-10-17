@@ -178,7 +178,7 @@ p5.Font = class Font {
     let result;
     let key;
 
-    fontSize = fontSize || p._renderer._textSize;
+    fontSize = fontSize || p._renderer.states.textSize;
 
     // NOTE: cache disabled for now pending further discussion of #3436
     if (cacheResults) {
@@ -335,7 +335,7 @@ p5.Font = class Font {
     const result = [];
 
     let lines = txt.split(/\r?\n|\r|\n/g);
-    fontSize = fontSize || this.parent._renderer._textSize;
+    fontSize = fontSize || this.parent._renderer.states.textSize;
 
     function isSpace(i, text, glyphsLine) {
       return (
@@ -373,7 +373,7 @@ p5.Font = class Font {
         xoff += glyphs[j].advanceWidth * this._scale(fontSize);
       }
 
-      y = y + this.parent._renderer._textLeading;
+      y = y + this.parent._renderer.states.textLeading;
     }
 
     return result;
@@ -412,7 +412,7 @@ p5.Font = class Font {
       renderer = p._renderer,
       pos = this._handleAlignment(renderer, line, x, y);
 
-    return this.font.getPath(line, pos.x, pos.y, renderer._textSize, options);
+    return this.font.getPath(line, pos.x, pos.y, renderer.states.textSize, options);
   }
 
   /*
@@ -538,13 +538,13 @@ p5.Font = class Font {
     }
 
     // only draw stroke if manually set by user
-    if (pg._doStroke && pg._strokeSet && !pg._clipping) {
+    if (pg.states.doStroke && pg.states.strokeSet && !pg._clipping) {
       ctx.stroke();
     }
 
-    if (pg._doFill && !pg._clipping) {
+    if (pg.states.doFill && !pg._clipping) {
     // if fill hasn't been set by user, use default-text-fill
-      if (!pg._fillSet) {
+      if (!pg.states.fillSet) {
         pg._setFill(constants._DEFAULT_TEXT_FILL);
       }
       ctx.fill();
@@ -567,18 +567,18 @@ p5.Font = class Font {
 
   _scale(fontSize) {
     return (
-      1 / this.font.unitsPerEm * (fontSize || this.parent._renderer._textSize)
+      1 / this.font.unitsPerEm * (fontSize || this.parent._renderer.states.textSize)
     );
   }
 
   _handleAlignment(renderer, line, x, y, textWidth) {
-    const fontSize = renderer._textSize;
+    const fontSize = renderer.states.textSize;
 
     if (typeof textWidth === 'undefined') {
       textWidth = this._textWidth(line, fontSize);
     }
 
-    switch (renderer._textAlign) {
+    switch (renderer.states.textAlign) {
       case constants.CENTER:
         x -= textWidth / 2;
         break;
@@ -587,7 +587,7 @@ p5.Font = class Font {
         break;
     }
 
-    switch (renderer._textBaseline) {
+    switch (renderer.states.textBaseline) {
       case constants.TOP:
         y += this._textAscent(fontSize);
         break;
