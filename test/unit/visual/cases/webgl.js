@@ -229,65 +229,59 @@ visualSuite('WebGL', function() {
 
   visualSuite('ShaderFunctionality', function() {
     visualTest('FillShader', async (p5, screenshot) => {
-      return new Promise(async resolve => {
-        p5.createCanvas(50, 50, p5.WEBGL);
-        const img = await new Promise(resolve => p5.loadImage('unit/assets/cat.jpg', resolve));
-        const fillShader = p5.createShader(
-          `
-        attribute vec3 aPosition;
-        void main() {
-          gl_Position = vec4(aPosition, 1.0);
-        }
-        `,
-          `
-        precision mediump float;
-        void main() {
-          gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-        }
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const img = await new Promise(resolve => p5.loadImage('/unit/assets/cat.jpg', resolve));
+      const fillShader = p5.createShader(
         `
-        );
-        p5.shader(fillShader);
-        p5.lights();
-        p5.texture(img);
-        p5.noStroke();
-        p5.rect(-p5.width / 2, -p5.height / 2, p5.width, p5.height);
-        screenshot();
-        resolve();
-      });
+      attribute vec3 aPosition;
+      void main() {
+        gl_Position = vec4(aPosition, 1.0);
+      }
+      `,
+        `
+      precision mediump float;
+      void main() {
+        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+      }
+      `
+      );
+      p5.shader(fillShader);
+      p5.lights();
+      p5.texture(img);
+      p5.noStroke();
+      p5.rect(-p5.width / 2, -p5.height / 2, p5.width, p5.height);
+      screenshot();
     });
 
     visualTest('StrokeShader', (p5, screenshot) => {
-      return new Promise(resolve => {
-        p5.createCanvas(50, 50, p5.WEBGL);
-        // Create a stroke shader with a fading effect based on distance
-        const strokeshader = p5.baseStrokeShader().modify({
-          'Inputs getPixelInputs': `(Inputs inputs) {
-          float opacity = 1.0 - smoothstep(
-            0.0,
-            15.0,
-            length(inputs.position - inputs.center)
-          );
-          inputs.color *= opacity;
-          return inputs;
-        }`
-        });
-
-        p5.strokeShader(strokeshader);
-        p5.strokeWeight(15);
-        p5.line(
-          -p5.width / 3,
-          p5.sin(p5.millis() * 0.001) * p5.height / 4,
-          p5.width / 3,
-          p5.sin(p5.millis() * 0.001 + 1) * p5.height / 4
+      p5.createCanvas(50, 50, p5.WEBGL);
+      // Create a stroke shader with a fading effect based on distance
+      const strokeshader = p5.baseStrokeShader().modify({
+        'Inputs getPixelInputs': `(Inputs inputs) {
+        float opacity = 1.0 - smoothstep(
+          0.0,
+          15.0,
+          length(inputs.position - inputs.center)
         );
-        screenshot();
-        resolve();
+        inputs.color *= opacity;
+        return inputs;
+      }`
       });
+
+      p5.strokeShader(strokeshader);
+      p5.strokeWeight(15);
+      p5.line(
+        -p5.width / 3,
+        p5.sin(p5.millis() * 0.001) * p5.height / 4,
+        p5.width / 3,
+        p5.sin(p5.millis() * 0.001 + 1) * p5.height / 4
+      );
+      screenshot();
     });
 
     visualTest('ImageShader', async (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
-      const img = await new Promise(resolve => p5.loadImage('unit/assets/cat.jpg', resolve));
+      const img = await new Promise(resolve => p5.loadImage('/unit/assets/cat.jpg', resolve));
       const imgShader = p5.createShader(
         `
       precision mediump float;

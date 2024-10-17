@@ -28,9 +28,6 @@ defineStrokeJoinEnum('BEVEL', 2);
 
 import lightingShader from './shaders/lighting.glsl';
 import webgl2CompatibilityShader from './shaders/webgl2Compatibility.glsl';
-import immediateVert from './shaders/immediate.vert';
-import vertexColorVert from './shaders/vertexColor.vert';
-import vertexColorFrag from './shaders/vertexColor.frag';
 import normalVert from './shaders/normal.vert';
 import normalFrag from './shaders/normal.frag';
 import basicFrag from './shaders/basic.frag';
@@ -50,9 +47,6 @@ import imageLightDiffusedFrag from './shaders/imageLightDiffused.frag';
 import imageLightSpecularFrag from './shaders/imageLightSpecular.frag';
 
 const defaultShaders = {
-  immediateVert,
-  vertexColorVert,
-  vertexColorFrag,
   normalVert,
   normalFrag,
   basicFrag,
@@ -560,7 +554,8 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.executeZoom = false;
     this.executeRotateAndMove = false;
 
-    this.states._drawingFilter = false;
+    this._drawingFilter = false;
+    this._drawingImage = false;
 
     this.states.specularShader = undefined;
     this.sphereMapping = undefined;
@@ -1160,9 +1155,10 @@ p5.RendererGL = class RendererGL extends Renderer {
     target.filterCamera._resize();
     this._pInst.setCamera(target.filterCamera);
     this._pInst.resetMatrix();
-    this.states._drawingFilter = true;
+    this._drawingFilter = true;
     this._pInst.image(fbo, -target.width / 2, -target.height / 2,
       target.width, target.height);
+    this._drawingFilter = false;
     this._pInst.clearDepth();
     this._pInst.pop();
     this._pInst.pop();
@@ -1663,9 +1659,9 @@ p5.RendererGL = class RendererGL extends Renderer {
    */
   _getFillShader() {
     // If drawing an image, check for user-defined image shader and filters
-    if (this.states._drawingImage) {
+    if (this._drawingImage) {
       // Use user-defined image shader if available and no filter is applied
-      if (this.states.userImageShader && !this.states._drawingFilter) {
+      if (this.states.userImageShader && !this._drawingFilter) {
         return this.states.userImageShader;
       } else {
         return this._getLightShader(); // Fallback to light shader
@@ -1676,11 +1672,11 @@ p5.RendererGL = class RendererGL extends Renderer {
       return this.states.userFillShader;
     }
     // Use normal shader if normal material is active
-    else if (this._useNormalMaterial) {
+    else if (this.states._useNormalMaterial) {
       return this._getNormalShader();
     }
     // Use light shader if lighting or textures are enabled
-    else if (this._enableLighting || this._tex) {
+    else if (this.states._enableLighting || this.states._tex) {
       return this._getLightShader();
     }
     // Default to color shader if no other conditions are met
@@ -1759,20 +1755,6 @@ p5.RendererGL = class RendererGL extends Renderer {
     }
 
     return this._defaultLightShader;
-  }
-
-  _getImmediateModeShader() {
-    if (!this._defaultImmediateModeShader) {
-      this._defaultImmediateModeShader = new p5.Shader(
-        this,
-        this._webGL2CompatibilityPrefix('vert', 'mediump') +
-        defaultShaders.immediateVert,
-        this._webGL2CompatibilityPrefix('frag', 'mediump') +
-        defaultShaders.vertexColorFrag
-      );
-    }
-
-    return this._defaultImmediateModeShader;
   }
 
   baseNormalShader() {

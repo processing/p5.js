@@ -123,13 +123,11 @@ suite('p5.Shader', function() {
       var expectedUniforms = [
         'uModelViewMatrix',
         'uProjectionMatrix',
-        /*'uResolution',*/
-        'uPointSize'
       ];
 
       testShader(
         'Immediate Mode Shader',
-        myp5._renderer._getImmediateModeShader(),
+        myp5._renderer._getColorShader(),
         expectedAttributes,
         expectedUniforms
       );
@@ -154,7 +152,7 @@ suite('p5.Shader', function() {
       myp5.fill(0);
       var retainedColorShader = myp5._renderer._getColorShader();
       var texLightShader = myp5._renderer._getLightShader();
-      var immediateColorShader = myp5._renderer._getImmediateModeShader();
+      var immediateColorShader = myp5._renderer._getColorShader();
       var selectedRetainedShader = myp5._renderer._getFillShader();
       var selectedImmediateShader = myp5._renderer._getFillShader();
 

@@ -141,7 +141,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     this._useVertexColor = (geometry.model.vertexColors.length > 0);
 
     let fillShader;
-    if (this.states._drawingFilter && this.states.userFillShader) {
+    if (this._drawingFilter && this.states.userFillShader) {
       fillShader = this.states.userFillShader;
     } else {
       fillShader = this._getFillShader();
