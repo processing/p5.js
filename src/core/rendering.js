@@ -133,6 +133,14 @@ p5.prototype.createCanvas = function (w, h, renderer, canvas) {
   p5._validateParameters('createCanvas', arguments);
   //optional: renderer, otherwise defaults to p2d
 
+  let selectedRenderer = constants.P2D
+  // Check third argument whether it is renderer constants
+  if(Reflect.ownKeys(renderers).includes(renderer)){
+    selectedRenderer = renderer;
+  }
+
+
+
   let r;
   if (arguments[2] instanceof HTMLCanvasElement) {
     renderer = constants.P2D;
@@ -217,29 +225,13 @@ p5.prototype.createCanvas = function (w, h, renderer, canvas) {
   }
 
   // Init our graphics renderer
-  //webgl mode
-  // if (r === constants.WEBGL) {
-  //   this._setProperty('_renderer', new p5.RendererGL(c, this, true));
-  //   this._elements.push(this._renderer);
-  //   NOTE: these needs to be taken cared of below
-  //     const dimensions =
-  //       this._renderer._adjustDimensions(w, h);
-  //     w = dimensions.adjustedWidth;
-  //     h = dimensions.adjustedHeight;
-  // } else {
-  //   //P2D mode
-  //   if (!this._defaultGraphicsCreated) {
-  //     this._setProperty('_renderer', new p5.Renderer2D(c, this, true));
-  //     this._defaultGraphicsCreated = true;
-  //     this._elements.push(this._renderer);
-  //   }
-  // }
-  this._setProperty('_renderer', new renderers[r](c, this, true));
+  this._renderer = new renderers[r](c, this, true);
   this._defaultGraphicsCreated = true;
   this._elements.push(this._renderer);
-  // Instead of resize, just create with the right size in the first place
   this._renderer.resize(w, h);
   this._renderer._applyDefaults();
+  this._renderer.createCanvas(w, h, canvas);
+  // return this._renderer.createCanvas(w, h, canvas);
   return this._renderer;
 };
 

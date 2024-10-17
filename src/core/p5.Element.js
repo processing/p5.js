@@ -335,7 +335,7 @@ p5.Element = class {
     // This is required so that mouseButton is set correctly prior to calling the callback (fxn).
     // For details, see https://github.com/processing/p5.js/issues/3087.
     const eventPrependedFxn = function (event) {
-      this._pInst._setProperty('mouseIsPressed', true);
+      this._pInst.mouseIsPressed = true;
       this._pInst._setMouseButton(event);
       // Pass along the return-value of the callback:
       return fxn.call(this, event);
@@ -941,13 +941,6 @@ p5.Element = class {
     const f = ctx._events[ev];
     ctx.elt.removeEventListener(ev, f, false);
     ctx._events[ev] = null;
-  }
-
-  /**
-   * Helper fxn for sharing pixel methods
-   */
-  _setProperty(prop, value) {
-    this[prop] = value;
   }
 };
 

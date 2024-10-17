@@ -1209,8 +1209,8 @@ function setting(p5, fn){
    * @chainable
    */
   fn.fill = function(...args) {
-    this._renderer._setProperty('_fillSet', true);
-    this._renderer._setProperty('_doFill', true);
+    this._renderer.states.fillSet = true;
+    this._renderer.states.doFill = true;
     this._renderer.fill(...args);
     return this;
   };
@@ -1271,7 +1271,7 @@ function setting(p5, fn){
    * </div>
    */
   fn.noFill = function() {
-    this._renderer._setProperty('_doFill', false);
+    this._renderer.states.doFill = false;
     return this;
   };
 
@@ -1327,7 +1327,7 @@ function setting(p5, fn){
    * </div>
    */
   fn.noStroke = function() {
-    this._renderer._setProperty('_doStroke', false);
+    this._renderer.states.doStroke = false;
     return this;
   };
 
@@ -1581,8 +1581,8 @@ function setting(p5, fn){
    */
 
   fn.stroke = function(...args) {
-    this._renderer._setProperty('_strokeSet', true);
-    this._renderer._setProperty('_doStroke', true);
+    this._renderer.states.strokeSet = true;
+    this._renderer.states.doStroke = true;
     this._renderer.stroke(...args);
     return this;
   };

@@ -410,9 +410,9 @@ p5.prototype.frameRate = function(fps) {
   if (typeof fps !== 'number' || fps < 0) {
     return this._frameRate;
   } else {
-    this._setProperty('_targetFrameRate', fps);
+    this._targetFrameRate = fps;
     if (fps === 0) {
-      this._setProperty('_frameRate', fps);
+      this._frameRate = fps;
     }
     return this;
   }
@@ -770,8 +770,8 @@ p5.prototype.windowHeight = 0;
  * This example does not render anything.
  */
 p5.prototype._onresize = function(e) {
-  this._setProperty('windowWidth', getWindowWidth());
-  this._setProperty('windowHeight', getWindowHeight());
+  this.windowWidth = getWindowWidth();
+  this.windowHeight = getWindowHeight();
   const context = this._isGlobal ? window : this;
   let executeDefault;
   if (typeof context.windowResized === 'function') {
@@ -805,8 +805,8 @@ function getWindowHeight() {
  * possibility of the window being resized when no sketch is active.
  */
 p5.prototype._updateWindowSize = function() {
-  this._setProperty('windowWidth', getWindowWidth());
-  this._setProperty('windowHeight', getWindowHeight());
+  this.windowWidth = getWindowWidth();
+  this.windowHeight = getWindowHeight();
 };
 
 /**

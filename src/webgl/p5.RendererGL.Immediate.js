@@ -13,7 +13,6 @@
  */
 import p5 from '../core/main';
 import * as constants from '../core/constants';
-import './p5.RenderBuffer';
 
 /**
  * Begin shape drawing.  This is a helpful way of generating
@@ -33,12 +32,15 @@ import './p5.RenderBuffer';
 p5.RendererGL.prototype.beginShape = function(mode) {
   this.immediateMode.shapeMode =
     mode !== undefined ? mode : constants.TESS;
+  if (this._useUserVertexProperties === true){
+    this._resetUserVertexProperties();
+  }
   this.immediateMode.geometry.reset();
   this.immediateMode.contourIndices = [];
   return this;
 };
 
-const immediateBufferStrides = {
+p5.RendererGL.prototype.immediateBufferStrides = {
   vertices: 1,
   vertexNormals: 1,
   vertexColors: 4,
@@ -78,8 +80,8 @@ p5.RendererGL.prototype.vertex = function(x, y) {
     // 1--2     1--2   4
     // When vertex index 3 is being added, add the necessary duplicates.
     if (this.immediateMode.geometry.vertices.length % 6 === 3) {
-      for (const key in immediateBufferStrides) {
-        const stride = immediateBufferStrides[key];
+      for (const key in this.immediateBufferStrides) {
+        const stride = this.immediateBufferStrides[key];
         const buffer = this.immediateMode.geometry[key];
         buffer.push(
           ...buffer.slice(
@@ -112,15 +114,28 @@ p5.RendererGL.prototype.vertex = function(x, y) {
   }
   const vert = new p5.Vector(x, y, z);
   this.immediateMode.geometry.vertices.push(vert);
-  this.immediateMode.geometry.vertexNormals.push(this._currentNormal);
-  const vertexColor = this.curFillColor || [0.5, 0.5, 0.5, 1.0];
+  this.immediateMode.geometry.vertexNormals.push(this.states._currentNormal);
+
+  for (const propName in this.immediateMode.geometry.userVertexProperties){
+    const geom = this.immediateMode.geometry;
+    const prop = geom.userVertexProperties[propName];
+    const verts = geom.vertices;
+    if (prop.getSrcArray().length === 0 && verts.length > 1) {
+      const numMissingValues = prop.getDataSize() * (verts.length - 1);
+      const missingValues = Array(numMissingValues).fill(0);
+      prop.pushDirect(missingValues);
+    }
+    prop.pushCurrentData();
+  }
+
+  const vertexColor = this.states.curFillColor || [0.5, 0.5, 0.5, 1.0];
   this.immediateMode.geometry.vertexColors.push(
     vertexColor[0],
     vertexColor[1],
     vertexColor[2],
     vertexColor[3]
   );
-  const lineVertexColor = this.curStrokeColor || [0.5, 0.5, 0.5, 1];
+  const lineVertexColor = this.states.curStrokeColor || [0.5, 0.5, 0.5, 1];
   this.immediateMode.geometry.vertexStrokeColors.push(
     lineVertexColor[0],
     lineVertexColor[1],
@@ -129,20 +144,20 @@ p5.RendererGL.prototype.vertex = function(x, y) {
   );
 
   if (this.textureMode === constants.IMAGE && !this.isProcessingVertices) {
-    if (this._tex !== null) {
-      if (this._tex.width > 0 && this._tex.height > 0) {
-        u /= this._tex.width;
-        v /= this._tex.height;
+    if (this.states._tex !== null) {
+      if (this.states._tex.width > 0 && this.states._tex.height > 0) {
+        u /= this.states._tex.width;
+        v /= this.states._tex.height;
       }
     } else if (
-      this.userFillShader !== undefined ||
-      this.userStrokeShader !== undefined ||
-      this.userPointShader !== undefined ||
-      this.userImageShader !== undefined
+      this.states.userFillShader !== undefined ||
+      this.states.userStrokeShader !== undefined ||
+      this.states.userPointShader !== undefined ||
+      this.states.userImageShader !== undefined
     ) {
     // Do nothing if user-defined shaders are present
     } else if (
-      this._tex === null &&
+      this.states._tex === null &&
       arguments.length >= 4
     ) {
       // Only throw this warning if custom uv's have  been provided
@@ -166,6 +181,40 @@ p5.RendererGL.prototype.vertex = function(x, y) {
   return this;
 };
 
+p5.RendererGL.prototype.vertexProperty = function(propertyName, data){
+  if(!this._useUserVertexProperties){
+    this._useUserVertexProperties = true;
+    this.immediateMode.geometry.userVertexProperties = {};
+  }
+  const propertyExists = this.immediateMode.geometry.userVertexProperties[propertyName];
+  let prop;
+  if (propertyExists){
+    prop = this.immediateMode.geometry.userVertexProperties[propertyName];
+  }
+  else {
+    prop = this.immediateMode.geometry._userVertexPropertyHelper(propertyName, data);
+    this.tessyVertexSize += prop.getDataSize();
+    this.immediateBufferStrides[prop.getSrcName()] = prop.getDataSize();
+    this.immediateMode.buffers.user.push(
+      new p5.RenderBuffer(prop.getDataSize(), prop.getSrcName(), prop.getDstName(), propertyName, this)
+    );
+  }
+  prop.setCurrentData(data);
+};
+
+p5.RendererGL.prototype._resetUserVertexProperties = function(){
+  const properties = this.immediateMode.geometry.userVertexProperties;
+  for (const propName in properties){
+    const prop = properties[propName];
+    delete this.immediateBufferStrides[propName];
+    prop.delete();
+  }
+  this._useUserVertexProperties = false;
+  this.tessyVertexSize = 12;
+  this.immediateMode.geometry.userVertexProperties = {};
+  this.immediateMode.buffers.user = [];
+};
+
 /**
  * Sets the normal to use for subsequent vertices.
  * @private
@@ -181,9 +230,9 @@ p5.RendererGL.prototype.vertex = function(x, y) {
  */
 p5.RendererGL.prototype.normal = function(xorv, y, z) {
   if (xorv instanceof p5.Vector) {
-    this._currentNormal = xorv;
+    this.states._currentNormal = xorv;
   } else {
-    this._currentNormal = new p5.Vector(xorv, y, z);
+    this.states._currentNormal = new p5.Vector(xorv, y, z);
   }
 
   return this;
@@ -242,15 +291,15 @@ p5.RendererGL.prototype.endShape = function(
     this.immediateMode.shapeMode = constants.TRIANGLE_STRIP;
   }
 
-  if (this._doFill && !is_line) {
+  if (this.states.doFill && !is_line) {
     if (
       !this.geometryBuilder &&
       this.immediateMode.geometry.vertices.length >= 3
     ) {
-        this._drawImmediateFill(count);
-      }
+      this._drawImmediateFill(count);
     }
-  if (this._doStroke) {
+  }
+  if (this.states.doStroke) {
     if (
       !this.geometryBuilder &&
       this.immediateMode.geometry.lineVertices.length >= 1
@@ -269,6 +318,7 @@ p5.RendererGL.prototype.endShape = function(
   this.immediateMode._bezierVertex.length = 0;
   this.immediateMode._quadraticVertex.length = 0;
   this.immediateMode._curveVertex.length = 0;
+
   return this;
 };
 
@@ -284,7 +334,7 @@ p5.RendererGL.prototype.endShape = function(
 p5.RendererGL.prototype._processVertices = function(mode) {
   if (this.immediateMode.geometry.vertices.length === 0) return;
 
-  const calculateStroke = this._doStroke;
+  const calculateStroke = this.states.doStroke;
   const shouldClose = mode === constants.CLOSE;
   if (calculateStroke) {
     this.immediateMode.geometry.edges = this._calculateEdges(
@@ -303,7 +353,7 @@ p5.RendererGL.prototype._processVertices = function(mode) {
   const hasContour = this.immediateMode.contourIndices.length > 0;
   // We tesselate when drawing curves or convex shapes
   const shouldTess =
-    this._doFill &&
+    this.states.doFill &&
     (
       this.isBezier ||
       this.isQuadratic ||
@@ -436,20 +486,42 @@ p5.RendererGL.prototype._tesselateShape = function() {
       this.immediateMode.geometry.vertexNormals[i].y,
       this.immediateMode.geometry.vertexNormals[i].z
     );
+    for (const propName in this.immediateMode.geometry.userVertexProperties){
+      const prop = this.immediateMode.geometry.userVertexProperties[propName];
+      const start = i * prop.getDataSize();
+      const end = start + prop.getDataSize();
+      const vals = prop.getSrcArray().slice(start, end);
+      contours[contours.length-1].push(...vals);
+    }
   }
   const polyTriangles = this._triangulate(contours);
   const originalVertices = this.immediateMode.geometry.vertices;
   this.immediateMode.geometry.vertices = [];
   this.immediateMode.geometry.vertexNormals = [];
   this.immediateMode.geometry.uvs = [];
+  for (const propName in this.immediateMode.geometry.userVertexProperties){
+    const prop = this.immediateMode.geometry.userVertexProperties[propName];
+    prop.resetSrcArray();
+  }
   const colors = [];
   for (
     let j = 0, polyTriLength = polyTriangles.length;
     j < polyTriLength;
-    j = j + p5.RendererGL.prototype.tessyVertexSize
+    j = j + this.tessyVertexSize
   ) {
     colors.push(...polyTriangles.slice(j + 5, j + 9));
     this.normal(...polyTriangles.slice(j + 9, j + 12));
+    {
+      let offset = 12;
+      for (const propName in this.immediateMode.geometry.userVertexProperties){
+          const prop = this.immediateMode.geometry.userVertexProperties[propName];
+          const size = prop.getDataSize();
+          const start = j + offset;
+          const end = start + size;
+          prop.setCurrentData(polyTriangles.slice(start, end));
+          offset += size;
+      }
+    }
     this.vertex(...polyTriangles.slice(j, j + 5));
   }
   if (this.geometryBuilder) {
@@ -520,10 +592,13 @@ p5.RendererGL.prototype._drawImmediateFill = function(count = 1) {
   for (const buff of this.immediateMode.buffers.fill) {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
   }
+  for (const buff of this.immediateMode.buffers.user){
+    buff._prepareBuffer(this.immediateMode.geometry, shader);
+  }
   shader.disableRemainingAttributes();
 
   this._applyColorBlend(
-    this.curFillColor,
+    this.states.curFillColor,
     this.immediateMode.geometry.hasFillTransparency()
   );
 
@@ -566,9 +641,12 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
   for (const buff of this.immediateMode.buffers.stroke) {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
   }
+  for (const buff of this.immediateMode.buffers.user){
+    buff._prepareBuffer(this.immediateMode.geometry, shader);
+  }
   shader.disableRemainingAttributes();
   this._applyColorBlend(
-    this.curStrokeColor,
+    this.states.curStrokeColor,
     this.immediateMode.geometry.hasFillTransparency()
   );
 

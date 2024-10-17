@@ -122,9 +122,9 @@ function acceleration(p5, fn){
    * @private
    */
   fn._updatePAccelerations = function () {
-    this._setProperty('pAccelerationX', this.accelerationX);
-    this._setProperty('pAccelerationY', this.accelerationY);
-    this._setProperty('pAccelerationZ', this.accelerationZ);
+    this.pAccelerationX = this.accelerationX;
+    this.pAccelerationY = this.accelerationY;
+    this.pAccelerationZ = this.accelerationZ;
   };
 
   /**
@@ -369,9 +369,9 @@ function acceleration(p5, fn){
   fn.pRotateDirectionZ = undefined;
 
   fn._updatePRotations = function () {
-    this._setProperty('pRotationX', this.rotationX);
-    this._setProperty('pRotationY', this.rotationY);
-    this._setProperty('pRotationZ', this.rotationZ);
+    this.pRotationX = this.rotationX;
+    this.pRotationY = this.rotationY;
+    this.pRotationZ = this.rotationZ;
   };
 
   /**
@@ -619,25 +619,25 @@ function acceleration(p5, fn){
     this._updatePRotations();
 
     // Convert from degrees into current angle mode
-    this._setProperty('rotationX', this._fromDegrees(e.beta));
-    this._setProperty('rotationY', this._fromDegrees(e.gamma));
-    this._setProperty('rotationZ', this._fromDegrees(e.alpha));
+    this.rotationX = this._fromDegrees(e.beta);
+    this.rotationY = this._fromDegrees(e.gamma);
+    this.rotationZ = this._fromDegrees(e.alpha);
     this._handleMotion();
   };
   fn._ondevicemotion = function (e) {
     this._updatePAccelerations();
-    this._setProperty('accelerationX', e.acceleration.x * 2);
-    this._setProperty('accelerationY', e.acceleration.y * 2);
-    this._setProperty('accelerationZ', e.acceleration.z * 2);
+    this.accelerationX = e.acceleration.x * 2;
+    this.accelerationY = e.acceleration.y * 2;
+    this.accelerationZ = e.acceleration.z * 2;
     this._handleMotion();
   };
   fn._handleMotion = function () {
     if (window.orientation === 90 || window.orientation === -90) {
-      this._setProperty('deviceOrientation', 'landscape');
+      this.deviceOrientation = 'landscape';
     } else if (window.orientation === 0) {
-      this._setProperty('deviceOrientation', 'portrait');
+      this.deviceOrientation = 'portrait';
     } else if (window.orientation === undefined) {
-      this._setProperty('deviceOrientation', 'undefined');
+      this.deviceOrientation = 'undefined';
     }
     const context = this._isGlobal ? window : this;
     if (typeof context.deviceMoved === 'function') {
@@ -670,7 +670,7 @@ function acceleration(p5, fn){
       }
       if (Math.abs(wRX - wSAX) > 90 && Math.abs(wRX - wSAX) < 270) {
         wSAX = wRX;
-        this._setProperty('turnAxis', 'X');
+        this.turnAxis = 'X';
         context.deviceTurned();
       }
       this.pRotateDirectionX = rotateDirectionX;
@@ -690,7 +690,7 @@ function acceleration(p5, fn){
       }
       if (Math.abs(wRY - wSAY) > 90 && Math.abs(wRY - wSAY) < 270) {
         wSAY = wRY;
-        this._setProperty('turnAxis', 'Y');
+        this.turnAxis = 'Y';
         context.deviceTurned();
       }
       this.pRotateDirectionY = rotateDirectionY;
@@ -719,11 +719,11 @@ function acceleration(p5, fn){
         Math.abs(rotZ - startAngleZ) < 270
       ) {
         startAngleZ = rotZ;
-        this._setProperty('turnAxis', 'Z');
+        this.turnAxis = 'Z';
         context.deviceTurned();
       }
       this.pRotateDirectionZ = rotateDirectionZ;
-      this._setProperty('turnAxis', undefined);
+      this.turnAxis = undefined;
     }
     if (typeof context.deviceShaken === 'function') {
       let accelerationChangeX;
