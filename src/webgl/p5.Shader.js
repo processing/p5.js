@@ -287,7 +287,7 @@ class Shader {
    * </div>
    */
   modify(hooks) {
-    p5._validateParameters('p5.Shader.modify', arguments);
+    // p5._validateParameters('p5.Shader.modify', arguments);
     const newHooks = {
       vertex: {},
       fragment: {},

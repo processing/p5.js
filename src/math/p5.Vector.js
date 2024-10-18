@@ -6,6 +6,30 @@
 
 import * as constants from '../core/constants';
 
+/// HELPERS FOR REMAINDER METHOD
+const calculateRemainder2D = function (xComponent, yComponent) {
+  if (xComponent !== 0) {
+    this.x = this.x % xComponent;
+  }
+  if (yComponent !== 0) {
+    this.y = this.y % yComponent;
+  }
+  return this;
+};
+
+const calculateRemainder3D = function (xComponent, yComponent, zComponent) {
+  if (xComponent !== 0) {
+    this.x = this.x % xComponent;
+  }
+  if (yComponent !== 0) {
+    this.y = this.y % yComponent;
+  }
+  if (zComponent !== 0) {
+    this.z = this.z % zComponent;
+  }
+  return this;
+};
+
 class Vector {
   // This is how it comes in with createVector()
   // This check if the first argument is a function
@@ -3693,30 +3717,6 @@ class Vector {
 };
 
 function vector(p5, fn) {
-  /// HELPERS FOR REMAINDER METHOD
-  const calculateRemainder2D = function (xComponent, yComponent) {
-    if (xComponent !== 0) {
-      this.x = this.x % xComponent;
-    }
-    if (yComponent !== 0) {
-      this.y = this.y % yComponent;
-    }
-    return this;
-  };
-
-  const calculateRemainder3D = function (xComponent, yComponent, zComponent) {
-    if (xComponent !== 0) {
-      this.x = this.x % xComponent;
-    }
-    if (yComponent !== 0) {
-      this.y = this.y % yComponent;
-    }
-    if (zComponent !== 0) {
-      this.z = this.z % zComponent;
-    }
-    return this;
-  };
-
   /**
    * A class to describe a two or three-dimensional vector.
    *

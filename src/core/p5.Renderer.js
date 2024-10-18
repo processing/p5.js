@@ -529,25 +529,25 @@ function renderer(p5, fn){
    * @param {Boolean} [isMainCanvas] whether we're using it as main canvas
    */
   p5.Renderer = Renderer;
+}
 
-  /**
-   * Helper fxn to measure ascent and descent.
-   * Adapted from http://stackoverflow.com/a/25355178
-   */
-  function calculateOffset(object) {
-    let currentLeft = 0,
-      currentTop = 0;
-    if (object.offsetParent) {
-      do {
-        currentLeft += object.offsetLeft;
-        currentTop += object.offsetTop;
-      } while ((object = object.offsetParent));
-    } else {
+/**
+ * Helper fxn to measure ascent and descent.
+ * Adapted from http://stackoverflow.com/a/25355178
+ */
+function calculateOffset(object) {
+  let currentLeft = 0,
+    currentTop = 0;
+  if (object.offsetParent) {
+    do {
       currentLeft += object.offsetLeft;
       currentTop += object.offsetTop;
-    }
-    return [currentLeft, currentTop];
+    } while ((object = object.offsetParent));
+  } else {
+    currentLeft += object.offsetLeft;
+    currentTop += object.offsetTop;
   }
+  return [currentLeft, currentTop];
 }
 
 export default renderer;

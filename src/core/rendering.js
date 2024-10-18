@@ -5,6 +5,7 @@
  */
 
 import * as constants from './constants';
+import { Framebuffer } from '../webgl/p5.Framebuffer';
 
 let renderers;
 function rendering(p5, fn){
@@ -533,7 +534,7 @@ function rendering(p5, fn){
    * </div>
    */
   p5.prototype.createFramebuffer = function (options) {
-    return new p5.Framebuffer(this, options);
+    return new Framebuffer(this, options);
   };
 
   /**

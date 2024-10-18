@@ -146,7 +146,7 @@ class Element {
         p = p.substring(1);
       }
       p = document.getElementById(p);
-    } else if (p instanceof p5.Element) {
+    } else if (p instanceof Element) {
       p = p.elt;
     }
     p.appendChild(this.elt);
@@ -295,7 +295,7 @@ class Element {
       return fxn.call(this, event);
     };
     // Pass along the event-prepended form of the callback.
-    p5.Element._adjustListener('mousedown', eventPrependedFxn, this);
+    Element._adjustListener('mousedown', eventPrependedFxn, this);
     return this;
   }
 
@@ -336,7 +336,7 @@ class Element {
    * </div>
    */
   doubleClicked(fxn) {
-    p5.Element._adjustListener('dblclick', fxn, this);
+    Element._adjustListener('dblclick', fxn, this);
     return this;
   }
 
@@ -421,7 +421,7 @@ class Element {
    * </div>
    */
   mouseWheel(fxn) {
-    p5.Element._adjustListener('wheel', fxn, this);
+    Element._adjustListener('wheel', fxn, this);
     return this;
   }
 
@@ -465,7 +465,7 @@ class Element {
    * </div>
    */
   mouseReleased(fxn) {
-    p5.Element._adjustListener('mouseup', fxn, this);
+    Element._adjustListener('mouseup', fxn, this);
     return this;
   }
 
@@ -509,7 +509,7 @@ class Element {
    * </div>
    */
   mouseClicked(fxn) {
-    p5.Element._adjustListener('click', fxn, this);
+    Element._adjustListener('click', fxn, this);
     return this;
   }
 
@@ -550,7 +550,7 @@ class Element {
    * </div>
    */
   mouseMoved(fxn) {
-    p5.Element._adjustListener('mousemove', fxn, this);
+    Element._adjustListener('mousemove', fxn, this);
     return this;
   }
 
@@ -591,7 +591,7 @@ class Element {
    * </div>
    */
   mouseOver(fxn) {
-    p5.Element._adjustListener('mouseover', fxn, this);
+    Element._adjustListener('mouseover', fxn, this);
     return this;
   }
 
@@ -632,7 +632,7 @@ class Element {
    * </div>
    */
   mouseOut(fxn) {
-    p5.Element._adjustListener('mouseout', fxn, this);
+    Element._adjustListener('mouseout', fxn, this);
     return this;
   }
 
@@ -675,7 +675,7 @@ class Element {
    * </div>
    */
   touchStarted(fxn) {
-    p5.Element._adjustListener('touchstart', fxn, this);
+    Element._adjustListener('touchstart', fxn, this);
     return this;
   }
 
@@ -718,7 +718,7 @@ class Element {
    * </div>
    */
   touchMoved(fxn) {
-    p5.Element._adjustListener('touchmove', fxn, this);
+    Element._adjustListener('touchmove', fxn, this);
     return this;
   }
 
@@ -761,7 +761,7 @@ class Element {
    * </div>
    */
   touchEnded(fxn) {
-    p5.Element._adjustListener('touchend', fxn, this);
+    Element._adjustListener('touchend', fxn, this);
     return this;
   }
 
@@ -802,7 +802,7 @@ class Element {
    * </div>
    */
   dragOver(fxn) {
-    p5.Element._adjustListener('dragover', fxn, this);
+    Element._adjustListener('dragover', fxn, this);
     return this;
   }
 
@@ -843,7 +843,7 @@ class Element {
    * </div>
    */
   dragLeave(fxn) {
-    p5.Element._adjustListener('dragleave', fxn, this);
+    Element._adjustListener('dragleave', fxn, this);
     return this;
   }
 
@@ -861,9 +861,9 @@ class Element {
    */
   static _adjustListener(ev, fxn, ctx) {
     if (fxn === false) {
-      p5.Element._detachListener(ev, ctx);
+      Element._detachListener(ev, ctx);
     } else {
-      p5.Element._attachListener(ev, fxn, ctx);
+      Element._attachListener(ev, fxn, ctx);
     }
     return this;
   }
@@ -878,7 +878,7 @@ class Element {
   static _attachListener(ev, fxn, ctx) {
     // detach the old listener if there was one
     if (ctx._events[ev]) {
-      p5.Element._detachListener(ev, ctx);
+      Element._detachListener(ev, ctx);
     }
     const f = fxn.bind(ctx);
     ctx.elt.addEventListener(ev, f, false);

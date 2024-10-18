@@ -12,6 +12,8 @@ import { Shader } from './p5.Shader';
 import { Image } from '../image/p5.Image';
 import { Texture, MipmapTexture } from './p5.Texture';
 import { Framebuffer } from './p5.Framebuffer';
+import { Graphics } from '../core/p5.Graphics';
+import { Element } from '../core/p5.Element';
 
 import lightingShader from './shaders/lighting.glsl';
 import webgl2CompatibilityShader from './shaders/webgl2Compatibility.glsl';
@@ -564,7 +566,7 @@ class RendererGL extends Renderer {
     const w = this.width;
     const h = this.height;
     const defaultId = this.canvas.id;
-    const isPGraphics = this._pInst instanceof p5.Graphics;
+    const isPGraphics = this._pInst instanceof Graphics;
 
     if (isPGraphics) {
       const pg = this._pInst;
@@ -572,7 +574,7 @@ class RendererGL extends Renderer {
       pg.canvas = document.createElement('canvas');
       const node = pg._pInst._userNode || document.body;
       node.appendChild(pg.canvas);
-      p5.Element.call(pg, pg.canvas, pg._pInst);
+      Element.call(pg, pg.canvas, pg._pInst);
       pg.width = w;
       pg.height = h;
     } else {
@@ -591,7 +593,7 @@ class RendererGL extends Renderer {
       this.canvas = c;
     }
 
-    const renderer = new p5.RendererGL(
+    const renderer = new RendererGL(
       this._pInst,
       w,
       h,
