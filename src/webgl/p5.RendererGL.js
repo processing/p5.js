@@ -938,8 +938,8 @@ p5.RendererGL = class RendererGL extends Renderer {
   // Combines the model and view matrices to get the uMVMatrix
   // This method will be reusable wherever you need to update the combined matrix.
   calculateCombinedMatrix() {
-    const modelMatrix = this.uModelMatrix;
-    const viewMatrix = this.uViewMatrix;
+    const modelMatrix = this.states.uModelMatrix;
+    const viewMatrix = this.states.uViewMatrix;
     return modelMatrix.copy().mult(viewMatrix);
   }
 
