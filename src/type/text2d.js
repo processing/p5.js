@@ -33,6 +33,111 @@ function text2d(p5, fn) {
 
   //////////////////////// start API ////////////////////////
 
+  p5.Renderer2D.prototype.text = function (str, x, y, width, height) {
+
+    let setBaseline = this.drawingContext.textBaseline;
+    let leading = this.states.textLeading;
+    let lines = this._splitLines(str);
+
+    if (typeof width !== 'undefined') {
+      if (this.drawingContext.textBaseline === constants.BASELINE) {
+        this.drawingContext.textBaseline = constants.TOP;
+      }
+      // if we have a maxWidth and any of the lines exceed it, relineate
+      if (lines.some(l => this.textWidth(l) > width)) {
+        lines = this._lineate(lines, width);
+      }
+      y += this._vAdjust(height, leading, lines.length);
+    }
+
+    lines.forEach((line, i) => this._renderText(line, x, y + i * leading));
+
+    this.drawingContext.textBaseline = setBaseline;
+  };
+
+  p5.Renderer2D.prototype.textBounds = function (str, x, y, width, height) {
+
+    //console.log('textBounds:', str, x, y, width, height);
+    let setBaseline = this.drawingContext.textBaseline;
+    let leading = this.states.textLeading;
+    let lines = this._splitLines(str);
+
+    // if we have a maxWidth and any of the lines exceed it, relineate
+    if (typeof width !== 'undefined') {
+      if (this.drawingContext.textBaseline === constants.BASELINE) {
+        this.drawingContext.textBaseline = constants.TOP;
+      }
+      if (lines.some(l => this.lineBounds(l).w > width)) {
+        lines = this._lineate(lines, width);
+      }
+    }
+
+    let bbs = lines.map((line, i) => this.lineBounds(line, x, y + i * leading));
+    if (lines.length === 1) return bbs[0];
+
+    0&&bbs.forEach(bb => {
+      this.drawingContext.fillStyle = 'rgba(255,0,0,0.25)';
+      this.drawingContext.fillRect(bb.x, bb.y, bb.w, bb.h);
+    });
+
+    x = Math.min(...bbs.map(b => b.x));
+    y = Math.min(...bbs.map(b => b.y));
+    y += this._vAdjust(height, leading, lines.length);
+    //y += this._vAdjust(height, leading, lines.length);
+    
+    
+    //let ny = Math.max(...bbs.map(b => b.y));
+    // WORKING HERE: need to adjust the x,y of the bounding box
+    // based on the vertical alignment
+
+    let w = Math.max(...bbs.map(b => b.w));
+    let h = bbs[bbs.length - 1].y - bbs[0].y + bbs[bbs.length - 1].h;
+
+    return { x, y, w, h };
+    return;
+
+    // ok
+    // let w = this._fontWidths(lines);
+    // let h = (lines.length - 1) * leading
+    //   + this._textHeight(lines[lines.length - 1]);
+
+    // use lineBounds to get the width and height of each line
+    // let bounds = lines.map((line, i) => this.lineBounds(line, x, y + i * leading));
+    // let w = Math.max(...bounds.map(b => b.w));
+    // let h = bounds.reduce((acc, b) => acc + b.h, 0);
+
+    switch (this.drawingContext.textAlign) {
+      case constants.CENTER:
+        x -= w / 2;
+        break;
+      case constants.RIGHT:
+        x -= w;
+        break;
+    }
+
+    console.log(str, '->', this.drawingContext.textBaseline);
+    switch (this.drawingContext.textBaseline) {
+
+      case constants.BASELINE:
+        y -= this.textAscent();
+        break;
+      case constants.TOP:
+        // no-op
+        break;
+      case constants.BOTTOM:
+        y += height - h;
+        break;
+      case constants._CTX_MIDDLE:
+        y += (height - h) / 2
+        break;
+    }
+
+    //console.log('h', yh);
+    this.drawingContext.textBaseline = setBaseline;
+
+    return { x, y, w, h };
+  }
+
   p5.Renderer2D.prototype.textAlign = function (h, v) {
     if (typeof h !== 'undefined') {
       this.states.textAlign = h; // TODO: should use this.drawingContext.textAlign
@@ -49,49 +154,6 @@ function text2d(p5, fn) {
         vertical: this.states.textBaseline
       };
     }
-  };
-
-  p5.Renderer2D.prototype._fontWidth = function (s) {
-    let metrics = s instanceof TextMetrics ? s : this._measureText(s);
-    return metrics.width; // used in textBounds for p5.v1
-  };
-  p5.Renderer2D.prototype._fontWidths = function (arr) {
-    if (!Array.isArray(arr)) throw Error('_fontWidths: invalid argument');
-    // return the max of all font widths in an array
-    return arr.reduce((acc, s) => Math.max(acc, this._fontWidth(s)), 0);
-  };
-
-  p5.Renderer2D.prototype._textWidth = function (s) {
-    let metrics = s instanceof TextMetrics ? s : this._measureText(s);
-    // this should be pixel accurate (but different than p5.v1)
-    return metrics.actualBoundingBoxRight - Math.abs(metrics.actualBoundingBoxLeft);
-  };
-  p5.Renderer2D.prototype._textWidths = function (arr) {
-    if (!Array.isArray(arr)) throw Error('_textWidths: invalid argument');
-    // return the max of all text widths in an array
-    return arr.reduce((acc, s) => Math.max(acc, this._textWidth(s)), 0);
-  }
-
-  p5.Renderer2D.prototype._fontHeight = function (s) {
-    let metrics = s instanceof TextMetrics ? s : this._measureText(s);
-    // this should be pixel accurate (but different than p5.v1)
-    return Math.abs(metrics.fontBoundingBoxDescent) + metrics.fontBoundingBoxAscent;
-  };
-  p5.Renderer2D.prototype._fontHeights = function (arr) {
-    if (!Array.isArray(arr)) throw Error('_fontHeights: invalid argument');
-    // return the sum of all text heights in an array
-    return arr.reduce((acc, s) => acc + this._fontHeight(s), 0);
-  };
-
-  p5.Renderer2D.prototype._textHeight = function (s) {
-    let metrics = s instanceof TextMetrics ? s : this._measureText(s);
-    return Math.abs(metrics.actualBoundingBoxDescent) + metrics.actualBoundingBoxAscent;
-  };
-  p5.Renderer2D.prototype._textHeights = function (arr) {
-    if (!Array.isArray(arr)) throw Error('_textHeights: invalid argument');
-    // return the sum of all text heights in an array via leading
-    //return arr.reduce((acc, s) => acc + this._textHeight(s), 0);
-    return arr.length * this.states.textLeading; // tight-bounds
   };
 
   p5.Renderer2D.prototype.textAscent = function (s = '') {
@@ -135,6 +197,7 @@ function text2d(p5, fn) {
     // return Math.max(...newArr);
   };
 
+
   p5.Renderer2D.prototype._splitLines = function (s) {
     if (!s || s.length === 0) return [''];
     return s.replace(p5.Renderer2D.TabsRE, '  ').split(p5.Renderer2D.LinebreakRE);
@@ -153,39 +216,41 @@ function text2d(p5, fn) {
     return metrics;
   }
 
-  p5.Renderer2D.prototype.textBounds = function (str, x = 0, y = 0, width = 0, height = 0) {
+  p5.Renderer2D.prototype._vAdjust = function (height, leading, numLines) {
 
-    let leading = this.states.textLeading;
-    let minY = y, maxY = y + height;
+    let offset = 0;
+    if (typeof height !== 'undefined') {
 
-    let lines = this._splitLines(str);
-
-    // if we have a maxWidth and any of the lines exceed it, relineate
-    if (typeof width !== 'undefined') {
-      if (lines.some(l => this.textWidth(l) > width)) {
-        lines = this._lineate(lines, width);
+      let baseline = this.states.textBaseline;
+      let ydiff = height - (leading * (numLines - 1));
+      if (baseline === constants._CTX_MIDDLE) {
+        offset = ydiff / 2;
       }
-      ({ x, y, width, height } = this._vAlign(x, y, width, height, leading, lines.length));
+      else if (baseline === constants.BOTTOM) {
+        //console.log('bottom***');
+
+        // diff between y and last line's y
+        offset = ydiff;
+      }
     }
 
-    if (lines.length === 1) {
-      return this._textWidth(lines[0]);
-    }
+    /*
+        case constants.BOTTOM:
+          y += height - h;
+          break;
+        case constants._CTX_MIDDLE:
+          y += (height - h) / 2
+          break;
+    */
+    return offset
+  };
 
-    let w = this._textWidths(lines);
-    let h = y + (lines.length-1) * leading;
-    
-    //console.log('h', yh);
-    
-    return { x, y, w, h };
-  }
-
-  p5.Renderer2D.prototype.textBounds2 = function (s, x = 0, y = 0) {
+  p5.Renderer2D.prototype.lineBounds = function (s, x = 0, y = 0) {
 
     let metrics = this._measureText(s);
-    let w = this._textWidth(metrics);
-    let w2 = this._fontWidth(metrics);
-    let h = this._textHeight(metrics);
+    let tw = this._textWidth(metrics);
+    let fw = this._fontWidth(metrics);
+    let th = this._textHeight(metrics);
 
     // TODO: should this pay attention to rectMode or textAlign?
     x += Math.abs(metrics.actualBoundingBoxLeft);
@@ -200,10 +265,10 @@ function text2d(p5, fn) {
         throw new Error('textBounds: END not yet supported for textAlign');
         break;
       case constants.CENTER:
-        x -= w2 / 2;
+        x -= tw / 2;
         break;
       case constants.RIGHT:
-        x -= w2;
+        x -= tw;
         break;
     }
 
@@ -230,7 +295,7 @@ function text2d(p5, fn) {
         break;
     }
 
-    return { x, y, w, h };
+    return { x, y, w: tw, h: th };
   };
 
   p5.Renderer2D.prototype.fontBounds = function (s, x = 0, y = 0) {
@@ -330,25 +395,25 @@ function text2d(p5, fn) {
     return this.states.textWrap;
   };
 
-  p5.Renderer2D.prototype._lineate = function (lines, maxWidth, maxHeight) {
+  p5.Renderer2D.prototype._lineate = function (lines, maxWidth = Infinity) {
     let newLines = [];
     let splitter = this.states.textWrap === constants.WORD ? ' ' : '';
     let line, testLine, testWidth, words;
 
-    for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+    for (let lidx = 0; lidx < lines.length; lidx++) {
       line = '';
-      words = lines[lineIndex].split(splitter);
-      for (let wordIndex = 0; wordIndex < words.length; wordIndex++) {
-        testLine = `${line + words[wordIndex]}` + splitter;
+      words = lines[lidx].split(splitter);
+      for (let widx = 0; widx < words.length; widx++) {
+        testLine = `${line + words[widx]}` + splitter;
         testWidth = this.textWidth(testLine);
-        if (testWidth > maxWidth && line.length > 0) {
-          newLines.push(line);
-          line = `${words[wordIndex]}` + splitter;
+        if (line.length > 0 && testWidth > maxWidth) {
+          newLines.push(line.trim());
+          line = `${words[widx]}` + splitter;
         } else {
           line = testLine;
         }
       }
-      newLines.push(line);
+      newLines.push(line.trim());
     }
 
     return newLines;
@@ -359,7 +424,9 @@ function text2d(p5, fn) {
 
   };
 
-  p5.Renderer2D.prototype._vAlign = function (x, y, width, height, leading, numLines) {
+
+
+  p5.Renderer2D.prototype._vAlignXX = function (x, y, width, height, leading, numLines) {
 
     if (typeof width !== 'undefined') {
 
@@ -379,26 +446,39 @@ function text2d(p5, fn) {
     return { x, y, width, height };
   };
 
-  p5.Renderer2D.prototype.text = function (str, x, y, width, height) {
 
-    let setBaseline = this.drawingContext.textBaseline;
-    let leading = this.states.textLeading;
-    let lines = this._splitLines(str);
+  p5.Renderer2D.prototype._fontWidth = function (s) {
+    let metrics = s instanceof TextMetrics ? s : this._measureText(s);
+    return metrics.width; // used in textBounds for p5.v1
+  };
 
-    // if we have a maxWidth and any of the lines exceed it, relineate
-    if (typeof width !== 'undefined') {
-      if (this.drawingContext.textBaseline === constants.BASELINE) {
-        this.drawingContext.textBaseline = constants.TOP;
-      }
-      if (lines.some(l => this.textWidth(l) > width)) {
-        lines = this._lineate(lines, width);
-      }
-      ({ x, y, width, height } = this._vAlign(x, y, width, height, leading, lines.length));
-    }
+  p5.Renderer2D.prototype._fontWidths = function (arr) {
+    if (!Array.isArray(arr)) throw Error('_fontWidths: invalid argument');
+    // return the max of all font widths in an array
+    return arr.reduce((acc, s) => Math.max(acc, this._fontWidth(s)), 0);
+  };
 
-    lines.forEach((line, i) => this._renderText(line, x, y + i * leading));
+  p5.Renderer2D.prototype._textWidth = function (s) {
+    let metrics = s instanceof TextMetrics ? s : this._measureText(s);
+    // this should be pixel accurate (but different than p5.v1)
+    return metrics.actualBoundingBoxRight - Math.abs(metrics.actualBoundingBoxLeft);
+  };
 
-    this.drawingContext.textBaseline = setBaseline;
+  p5.Renderer2D.prototype._textWidths = function (arr) {
+    if (!Array.isArray(arr)) throw Error('_textWidths: invalid argument');
+    // return the max of all text widths in an array
+    return arr.reduce((acc, s) => Math.max(acc, this._textWidth(s)), 0);
+  }
+
+  p5.Renderer2D.prototype._fontHeight = function (s) {
+    let metrics = s instanceof TextMetrics ? s : this._measureText(s);
+    // this should be pixel accurate (but different than p5.v1)
+    return Math.abs(metrics.fontBoundingBoxDescent) + metrics.fontBoundingBoxAscent;
+  };
+
+  p5.Renderer2D.prototype._textHeight = function (s) {
+    let metrics = s instanceof TextMetrics ? s : this._measureText(s);
+    return Math.abs(metrics.actualBoundingBoxDescent) + metrics.actualBoundingBoxAscent;
   };
 
   // this is a mess: refactor
@@ -737,17 +817,16 @@ function text2d(p5, fn) {
   };
 
   // text() calls this method to render text
-  p5.Renderer2D.prototype._renderText = function (/*p,*/
-    line, x, y, maxY, minY) {
+  p5.Renderer2D.prototype._renderText = function (line, x, y, maxY, minY) { // TODO: remove maxY, minY
     let { drawingContext, states } = this;
 
-    console.log('renderText:', line, x, y, maxY, minY, this.drawingContext.textBaseline);
+    //console.log('renderText:', line, x, y, maxY, minY, this.drawingContext.textBaseline);
 
     if (y < minY || y >= maxY) {
       return; // don't render lines beyond minY/maxY
     }
 
-    this._pInst.push(); // fix to #803
+    this._pInst.push(); // fix to #803 TODO: remove ?
 
     // no stroke unless specified by user
     if (states.doStroke && states.strokeSet) {
@@ -760,9 +839,10 @@ function text2d(p5, fn) {
       if (!states.fillSet) {
         this._setFill(constants._DEFAULT_TEXT_FILL);
       }
+
       drawingContext.fillText(line, x, y);
     }
-    this._pInst.pop();
+    this._pInst.pop(); //TODO: remove ?
 
     return this._pInst;
   };
