@@ -55,23 +55,43 @@ function text2d(p5, fn) {
     let metrics = s instanceof TextMetrics ? s : this._measureText(s);
     return metrics.width; // used in textBounds for p5.v1
   };
+  p5.Renderer2D.prototype._fontWidths = function (arr) {
+    if (!Array.isArray(arr)) throw Error('_fontWidths: invalid argument');
+    // return the max of all font widths in an array
+    return arr.reduce((acc, s) => Math.max(acc, this._fontWidth(s)), 0);
+  };
 
   p5.Renderer2D.prototype._textWidth = function (s) {
     let metrics = s instanceof TextMetrics ? s : this._measureText(s);
     // this should be pixel accurate (but different than p5.v1)
     return metrics.actualBoundingBoxRight - Math.abs(metrics.actualBoundingBoxLeft);
   };
+  p5.Renderer2D.prototype._textWidths = function (arr) {
+    if (!Array.isArray(arr)) throw Error('_textWidths: invalid argument');
+    // return the max of all text widths in an array
+    return arr.reduce((acc, s) => Math.max(acc, this._textWidth(s)), 0);
+  }
 
   p5.Renderer2D.prototype._fontHeight = function (s) {
     let metrics = s instanceof TextMetrics ? s : this._measureText(s);
     // this should be pixel accurate (but different than p5.v1)
     return Math.abs(metrics.fontBoundingBoxDescent) + metrics.fontBoundingBoxAscent;
   };
+  p5.Renderer2D.prototype._fontHeights = function (arr) {
+    if (!Array.isArray(arr)) throw Error('_fontHeights: invalid argument');
+    // return the sum of all text heights in an array
+    return arr.reduce((acc, s) => acc + this._fontHeight(s), 0);
+  };
 
   p5.Renderer2D.prototype._textHeight = function (s) {
     let metrics = s instanceof TextMetrics ? s : this._measureText(s);
-    // this should be pixel accurate (but different than p5.v1)
     return Math.abs(metrics.actualBoundingBoxDescent) + metrics.actualBoundingBoxAscent;
+  };
+  p5.Renderer2D.prototype._textHeights = function (arr) {
+    if (!Array.isArray(arr)) throw Error('_textHeights: invalid argument');
+    // return the sum of all text heights in an array via leading
+    //return arr.reduce((acc, s) => acc + this._textHeight(s), 0);
+    return arr.length * this.states.textLeading; // tight-bounds
   };
 
   p5.Renderer2D.prototype.textAscent = function (s = '') {
@@ -91,27 +111,28 @@ function text2d(p5, fn) {
   p5.Renderer2D.prototype.fontWidth = function (theText) {
     if (theText.length === 0) return 0;
 
-    // Only use the line with the longest width, and replace tabs with double-space
-    const lines = theText.replace(p5.Renderer2D.TabsRE, '  ').split(p5.Renderer2D.LinebreakRE);
+    let lines = Array.isArray(theText) ? theText : this._splitLines(theText);
 
-    // Get the textWidth for every line
-    const newArr = lines.map(this._fontWidth.bind(this)); // tight-bounds
+    return this._fontWidths(lines);
+    // // Get the fontWidth for every line
+    // const newArr = lines.map(this._fontWidth.bind(this)); // tight-bounds
 
-    // Return the largest fontWidth
-    return Math.max(...newArr);
+    // // Return the largest fontWidth
+    // return Math.max(...newArr);
   };
 
   p5.Renderer2D.prototype.textWidth = function (theText) {
+
     if (!theText || theText.length === 0) return 0;
 
-    // Only use the line with the longest width, and replace tabs with double-space
-    const lines = this._splitLines(theText);
+    let lines = Array.isArray(theText) ? theText : this._splitLines(theText);
 
-    // Get the textWidth for every line
-    const newArr = lines.map(this._textWidth.bind(this)); // tight-bounds
+    return this._textWidths(lines);
+    // // Get the textWidth for every line
+    // const newArr = lines.map(this._textWidth.bind(this)); // tight-bounds
 
-    // Return the largest textWidth
-    return Math.max(...newArr);
+    // // Return the largest textWidth
+    // return Math.max(...newArr);
   };
 
   p5.Renderer2D.prototype._splitLines = function (s) {
@@ -132,7 +153,34 @@ function text2d(p5, fn) {
     return metrics;
   }
 
-  p5.Renderer2D.prototype.textBounds = function (s, x = 0, y = 0) {
+  p5.Renderer2D.prototype.textBounds = function (str, x = 0, y = 0, width = 0, height = 0) {
+
+    let leading = this.states.textLeading;
+    let minY = y, maxY = y + height;
+
+    let lines = this._splitLines(str);
+
+    // if we have a maxWidth and any of the lines exceed it, relineate
+    if (typeof width !== 'undefined') {
+      if (lines.some(l => this.textWidth(l) > width)) {
+        lines = this._lineate(lines, width);
+      }
+      ({ x, y, width, height } = this._vAlign(x, y, width, height, leading, lines.length));
+    }
+
+    if (lines.length === 1) {
+      return this._textWidth(lines[0]);
+    }
+
+    let w = this._textWidths(lines);
+    let h = y + (lines.length-1) * leading;
+    
+    //console.log('h', yh);
+    
+    return { x, y, w, h };
+  }
+
+  p5.Renderer2D.prototype.textBounds2 = function (s, x = 0, y = 0) {
 
     let metrics = this._measureText(s);
     let w = this._textWidth(metrics);
@@ -240,7 +288,7 @@ function text2d(p5, fn) {
       this.states.textLeading = leading;
       return this._pInst;
     }
-    return this.states.textLeading; // TODO: is there a prop we can use ?
+    return this.states.textLeading; // TODO: is there a prop we can use ? lineHeight
   }
 
   p5.Renderer2D.prototype.textSize = function (theSize) {
@@ -282,8 +330,79 @@ function text2d(p5, fn) {
     return this.states.textWrap;
   };
 
+  p5.Renderer2D.prototype._lineate = function (lines, maxWidth, maxHeight) {
+    let newLines = [];
+    let splitter = this.states.textWrap === constants.WORD ? ' ' : '';
+    let line, testLine, testWidth, words;
+
+    for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+      line = '';
+      words = lines[lineIndex].split(splitter);
+      for (let wordIndex = 0; wordIndex < words.length; wordIndex++) {
+        testLine = `${line + words[wordIndex]}` + splitter;
+        testWidth = this.textWidth(testLine);
+        if (testWidth > maxWidth && line.length > 0) {
+          newLines.push(line);
+          line = `${words[wordIndex]}` + splitter;
+        } else {
+          line = testLine;
+        }
+      }
+      newLines.push(line);
+    }
+
+    return newLines;
+  };
+
+  p5.Renderer2D.prototype._hAlign = function (x, y, maxW, maxH) {
+
+
+  };
+
+  p5.Renderer2D.prototype._vAlign = function (x, y, width, height, leading, numLines) {
+
+    if (typeof width !== 'undefined') {
+
+      if (typeof height !== 'undefined') {
+
+        let baseline = this.states.textBaseline;
+        let yoff = height - (leading * (numLines - 1));
+        if (baseline === constants._CTX_MIDDLE) {
+          y = y + yoff / 2;
+        }
+        else if (baseline === constants.BOTTOM) {
+          y = y + yoff;
+        }
+      }
+    }
+
+    return { x, y, width, height };
+  };
+
+  p5.Renderer2D.prototype.text = function (str, x, y, width, height) {
+
+    let setBaseline = this.drawingContext.textBaseline;
+    let leading = this.states.textLeading;
+    let lines = this._splitLines(str);
+
+    // if we have a maxWidth and any of the lines exceed it, relineate
+    if (typeof width !== 'undefined') {
+      if (this.drawingContext.textBaseline === constants.BASELINE) {
+        this.drawingContext.textBaseline = constants.TOP;
+      }
+      if (lines.some(l => this.textWidth(l) > width)) {
+        lines = this._lineate(lines, width);
+      }
+      ({ x, y, width, height } = this._vAlign(x, y, width, height, leading, lines.length));
+    }
+
+    lines.forEach((line, i) => this._renderText(line, x, y + i * leading));
+
+    this.drawingContext.textBaseline = setBaseline;
+  };
+
   // this is a mess: refactor
-  p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
+  p5.Renderer2D.prototype.text2 = function (str, x, y, maxWidth, maxHeight) {
     let baselineHacked;
 
     // TODO: can we remove this?
@@ -378,7 +497,7 @@ function text2d(p5, fn) {
       // Render lines of text according to settings of textWrap
       // Splits lines at spaces, for loop adds one word + space
       // at a time and tests length with next word added
-      if (this.states.textWrap === constants.WORD) { // TODO: is there a prop we can use ?
+      if (this.states.textWrap === constants.WORD) {
         let nlines = [];
         for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
           line = '';
@@ -618,8 +737,11 @@ function text2d(p5, fn) {
   };
 
   // text() calls this method to render text
-  p5.Renderer2D.prototype._renderText = function (/*p,*/line, x, y, maxY, minY) {
+  p5.Renderer2D.prototype._renderText = function (/*p,*/
+    line, x, y, maxY, minY) {
     let { drawingContext, states } = this;
+
+    console.log('renderText:', line, x, y, maxY, minY, this.drawingContext.textBaseline);
 
     if (y < minY || y >= maxY) {
       return; // don't render lines beyond minY/maxY
