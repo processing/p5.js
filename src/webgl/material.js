@@ -563,7 +563,7 @@ p5.prototype.createShader = function (vertSrc, fragSrc, options) {
  * `vTexCoord` describes where on the canvas the pixel will be drawn.
  *
  * For more info about filters and shaders, see Adam Ferriss' <a href="https://github.com/aferriss/p5jsShaderExamples">repo of shader examples</a>
- * or the <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">Introduction to Shaders</a> tutorial.
+ * or the <a href="https://p5js.org/tutorials/intro-to-shaders/">Introduction to Shaders</a> tutorial.
  *
  * @method createFilterShader
  * @param {String} fragSrc source code for the fragment shader.
