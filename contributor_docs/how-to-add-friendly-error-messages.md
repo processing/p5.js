@@ -189,7 +189,7 @@ In the example above, anything in double angle brackets (`{{}}`) is something th
 
 After adding your case, you can now call `p5._friendlyFileLoadError([case number], [file path])` inside your error handling statements.
 
-For example, please take a look at `loadStrings()` method loading a string-based file (which corresponds to `case 3` from `fileLoadErrorCases`). The  `loadStrings()` method uses [`httpDo.call()`](https://p5js.org/reference/#/p5/httpDo) with a custom callback method that is executed in the case of a file error:
+For example, please take a look at `loadStrings()` method loading a string-based file (which corresponds to `case 3` from `fileLoadErrorCases`). The  `loadStrings()` method uses [`httpDo.call()`](https://p5js.org/reference/p5/httpDo) with a custom callback method that is executed in the case of a file error:
 
 ```js
 p5.prototype.httpDo.call(
