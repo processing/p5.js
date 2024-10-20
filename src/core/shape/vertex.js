@@ -1359,7 +1359,7 @@ p5.prototype.endContour = function() {
  * The `count` parameter tells WebGL mode how many copies to draw. For
  * example, calling `endShape(CLOSE, 400)` after drawing a custom shape will
  * make it efficient to draw 400 copies. This feature requires
- * <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html" target="_blank">writing a custom shader</a>.
+ * <a href="https://p5js.org/tutorials/intro-to-shaders/" target="_blank">writing a custom shader</a>.
  *
  * After calling <a href="#/p5/beginShape">beginShape()</a>, shapes can be
  * built by calling <a href="#/p5/vertex">vertex()</a>,
