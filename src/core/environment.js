@@ -1151,7 +1151,7 @@ function exitFullscreen() {
  * Converts 3D world coordinates to 2D screen coordinates.
  *
  * This function takes a 3D vector and converts its coordinates
- * from the world space to screen space. This is useful for placing
+ * from the world space to screen space. This can be useful for placing
  * 2D elements in a 3D scene or for determining the screen position
  * of 3D objects.
  *
@@ -1161,37 +1161,63 @@ function exitFullscreen() {
  * @example
  * <div>
  * <code>
- * // Example 1: Convert 2D world coordinates of a rotating square to screen coordinates
- * function setup() {
- *   createCanvas(100, 100);
  *
+ * function setup() {
+ *   createCanvas(150, 150);
  *   let vertices = [
- *     createVector(-5, -5),
- *     createVector(5, -5),
- *     createVector(5, 5),
- *     createVector(-5, 5)
+ *     createVector(-20, -20),
+ *     createVector(20, -20),
+ *     createVector(20, 20),
+ *     createVector(-20, 20)
  *   ];
  *
- *   push(); // Start a new drawing state
- *   translate(50, 50);
+ *   push();
+ *   translate(75, 55);
  *   rotate(PI / 4);
  *
- *   // Convert each vertex to screen coordinates
+ *   // Convert world coordinates to screen coordinates
  *   let screenPos = vertices.map(v => worldToScreen(v));
- *   pop(); // Restore original drawing state
+ *   pop();
  *
  *   background(200);
  *
+ *   stroke(0);
+ *   fill(100, 150, 255, 100);
+ *   beginShape();
+ *   screenPos.forEach(pos => vertex(pos.x, pos.y));
+ *   endShape(CLOSE);
+ *
  *   screenPos.forEach((pos, i) => {
- *     text(`(${pos.x.toFixed(1)}, ${pos.y.toFixed(1)})`, pos.x, pos.y);
+ *     fill(0);
+ *     textSize(10);
+ *     if (i === 0) {
+ *       text(i + 1, pos.x + 3, pos.y - 7);
+ *     } else if (i === 1) {
+ *       text(i + 1, pos.x + 7, pos.y + 2);
+ *     } else if (i === 2) {
+ *       text(i + 1, pos.x - 2, pos.y + 12);
+ *     } else if (i === 3) {
+ *       text(i + 1, pos.x - 12, pos.y - 2);
+ *     }
  *   });
+ *
+ *   fill(0);
+ *   noStroke();
+ *   textSize(10);
+ *   let legendY = height - 35;
+ *   screenPos.forEach((pos, i) => {
+ *     text(`Vertex ${i + 1}: (${pos.x.toFixed(1)}, ${pos.y.toFixed(1)})`, 5, legendY + i * 10);
+ *   });
+ *
+ *  describe('A rotating square is transformed and drawn using screen coordinates.');
+ *
  * }
  * </code>
  * </div>
+ *
  * @example
  * <div>
  * <code>
- * // Example 2: Convert 3D world coordinates of a rotating cube to 2D screen coordinates
  * let vertices;
  *
  * function setup() {
@@ -1206,6 +1232,9 @@ function exitFullscreen() {
  *     createVector(25, 25, 25),
  *     createVector(-25, 25, 25)
  *   ];
+ *
+ * describe('A rotating cube with points mapped to 2D screen space and displayed as ellipses.');
+ *
  * }
  *
  * function draw() {
@@ -1225,16 +1254,13 @@ function exitFullscreen() {
  *
  *   pop();
  *
- *   // Display screen coordinates
  *   screenPos.forEach((pos, i) => {
  *
  *     let screenX = pos.x - width / 2;
  *     let screenY = pos.y - height / 2;
- *     fill(255);
- *     noStroke();
- *     ellipse(screenX, screenY, 3, 3); // Draw points as small ellipses
  *     fill(0);
- *     text(`(${screenX.toFixed(1)}, ${screenY.toFixed(1)})`, screenX, screenY);
+ *     noStroke();
+ *     ellipse(screenX, screenY, 3, 3);
  *   });
  * }
  * </code>
