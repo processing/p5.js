@@ -1695,7 +1695,7 @@ p5.Vector = class {
  *   textAlign(CENTER);
  *
  *   // Display the magnitude. The same as floor(v3.mag());
- *   let m = floor(p5.Vector.dist(v1, v3));
+ *   let m = floor(p5.Vector.dist(v1, v2));
  *   text(m, 50, 75);
  * }
  *
