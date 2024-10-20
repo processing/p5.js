@@ -1258,7 +1258,7 @@ p5.prototype.worldToScreen = function(worldPosition) {
         const modelViewMatrix = renderer.calculateCombinedMatrix();
         const cameraCoordinates = modelViewMatrix.multiplyPoint(worldPosition);
         const normalizedDeviceCoordinates =
-          renderer.uPMatrix.multiplyAndNormalizePoint(cameraCoordinates);
+          renderer.states.uPMatrix.multiplyAndNormalizePoint(cameraCoordinates);
         const screenX = (0.5 + 0.5 * normalizedDeviceCoordinates.x) * this.width;
         const screenY = (0.5 - 0.5 * normalizedDeviceCoordinates.y) * this.height;
         const screenZ = 0.5 + 0.5 * normalizedDeviceCoordinates.z;
