@@ -247,7 +247,7 @@ p5.prototype.mouseX = 0;
  *   background(200);
  *
  *   // Draw a horizontal line that follows the mouse's y-coordinate.
- *   line(0, mouseY, 0, mouseY);
+ *   line(0, mouseY, 100, mouseY);
  * }
  * </code>
  * </div>
