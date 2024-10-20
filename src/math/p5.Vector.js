@@ -1694,8 +1694,8 @@ p5.Vector = class {
  *   // Style the text.
  *   textAlign(CENTER);
  *
- *   // Display the magnitude.
- *   let m = floor(v3.mag());
+ *   // Display the magnitude. The same as floor(v3.mag());
+ *   let m = floor(p5.Vector.dist(v1, v3));
  *   text(m, 50, 75);
  * }
  *
