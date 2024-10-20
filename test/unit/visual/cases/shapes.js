@@ -167,6 +167,126 @@ visualSuite('Shape drawing', function() {
         p5.endShape();
         screenshot();
       });
+
+      if (mode === 'WebGL') {
+        visualTest('3D vertex coordinates', function(p5, screenshot) {
+          setup(p5);
+
+          p5.beginShape(p5.QUAD_STRIP);
+          p5.vertex(10, 10, 0);
+          p5.vertex(10, 40, -150);
+          p5.vertex(40, 10, 150);
+          p5.vertex(40, 40, 200);
+          p5.endShape();
+
+          screenshot();
+        });
+
+        visualTest('3D quadratic coordinates', function(p5, screenshot) {
+          setup(p5);
+
+          p5.beginShape();
+          p5.vertex(10, 10, 0);
+          p5.vertex(10, 40, -150);
+          p5.quadraticVertex(40, 40, 200, 40, 10, 150);
+          p5.endShape(p5.CLOSE);
+
+          screenshot();
+        });
+
+        visualTest('3D cubic coordinates', function(p5, screenshot) {
+          setup(p5);
+
+          p5.beginShape();
+          p5.vertex(10, 10, 0);
+          p5.vertex(10, 40, -150);
+          p5.bezierVertex(40, 40, 200, 40, 10, 150, 10, 10, 0);
+          p5.endShape();
+
+          screenshot();
+        });
+
+        visualTest('Texture coordinates', async function(p5, screenshot) {
+          setup(p5);
+          const tex = await p5.loadImage('/unit/assets/cat.jpg');
+
+          p5.texture(tex);
+          p5.beginShape(p5.QUAD_STRIP);
+          p5.vertex(10, 10, 0, 0, 0);
+          p5.vertex(45, 5, 0, tex.width, 0);
+          p5.vertex(15, 35, 0, 0, tex.height);
+          p5.vertex(40, 45, 0, tex.width, tex.height);
+          p5.endShape();
+
+          screenshot();
+        });
+
+        visualTest('Normalized texture coordinates', async function(p5, screenshot) {
+          setup(p5);
+          const tex = await p5.loadImage('/unit/assets/cat.jpg');
+
+          p5.texture(tex);
+          p5.textureMode(p5.NORMAL);
+          p5.beginShape(p5.QUAD_STRIP);
+          p5.vertex(10, 10, 0, 0, 0);
+          p5.vertex(45, 5, 0, 1, 0);
+          p5.vertex(15, 35, 0, 0, 1);
+          p5.vertex(40, 45, 0, 1, 1);
+          p5.endShape();
+
+          screenshot();
+        });
+
+        visualTest('Per-vertex fills', async function(p5, screenshot) {
+          setup(p5);
+          p5.beginShape(p5.QUAD_STRIP);
+          p5.fill(0);
+          p5.vertex(10, 10);
+          p5.fill(255, 0, 0);
+          p5.vertex(45, 5);
+          p5.fill(0, 255, 0);
+          p5.vertex(15, 35);
+          p5.fill(255, 255, 0);
+          p5.vertex(40, 45);
+          p5.endShape();
+
+          screenshot();
+        });
+
+        visualTest('Per-vertex strokes', async function(p5, screenshot) {
+          setup(p5);
+          p5.strokeWeight(5);
+          p5.beginShape(p5.QUAD_STRIP);
+          p5.stroke(0);
+          p5.vertex(10, 10);
+          p5.stroke(255, 0, 0);
+          p5.vertex(45, 5);
+          p5.stroke(0, 255, 0);
+          p5.vertex(15, 35);
+          p5.stroke(255, 255, 0);
+          p5.vertex(40, 45);
+          p5.endShape();
+
+          screenshot();
+        });
+
+        visualTest('Per-vertex normals', async function(p5, screenshot) {
+          setup(p5);
+          p5.normalMaterial();
+          p5.beginShape(p5.QUAD_STRIP);
+          p5.normal(-1, -1, 1);
+          p5.vertex(10, 10);
+          p5.normal(1, -1, 1);
+          p5.vertex(45, 5);
+          p5.normal(-1, 1, 1);
+          p5.vertex(15, 35);
+          p5.normal(1, 1, 1);
+          p5.vertex(40, 45);
+          p5.endShape();
+
+          screenshot();
+        });
+      }
     });
   }
 });
