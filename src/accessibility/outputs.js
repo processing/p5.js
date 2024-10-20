@@ -34,7 +34,7 @@ import p5 from '../core/main';
  * mode.
  *
  * Read
- * <a href="/learn/accessible-labels.html">Writing accessible canvas descriptions</a>
+ * <a href="https://p5js.org/tutorials/writing-accessible-canvas-descriptions/">Writing accessible canvas descriptions</a>
  * to learn more about making sketches accessible.
  *
  * @method textOutput
@@ -169,7 +169,7 @@ p5.prototype.textOutput = function(display) {
  * mode.
  *
  * Read
- * <a href="/learn/accessible-labels.html">Writing accessible canvas descriptions</a>
+ * <a href="https://p5js.org/tutorials/writing-accessible-canvas-descriptions/">Writing accessible canvas descriptions</a>
  * to learn more about making sketches accessible.
  *
  * @method gridOutput
