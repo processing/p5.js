@@ -1,13 +1,17 @@
 import sketchVerifier from '../../../src/core/friendly_errors/sketch_verifier.js';
 
-suite('Validate Params', function () {
+suite('Sketch Verifier', function () {
   const mockP5 = {
-    _validateParameters: vi.fn()
+    _validateParameters: vi.fn(),
+    Render: function () {
+      return 'mock render';
+    },
   };
   const mockP5Prototype = {};
 
   beforeAll(function () {
     sketchVerifier(mockP5, mockP5Prototype);
+    mockP5Prototype.loadP5Constructors();
   });
 
   afterAll(function () {
@@ -179,42 +183,110 @@ suite('Validate Params', function () {
     });
   });
 
+  suite('checkForConstsAndFuncs()', function () {
+    test('Detects conflict with p5.js constant', function () {
+      const userDefinitions = {
+        variables: [{ name: 'PI', line: 1 }],
+        functions: []
+      };
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => { });
+
+      const result = mockP5Prototype.checkForConstsAndFuncs(userDefinitions);
+
+      expect(result).toBe(true);
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Constant "PI" on line 1 is being redeclared and conflicts with a p5.js constant'));
+
+      consoleSpy.mockRestore();
+    });
+
+    test('Detects conflict with p5.js global function', function () {
+      const userDefinitions = {
+        variables: [],
+        functions: [{ name: 'setup', line: 2 }]
+      };
+      //const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => { });
+
+      const result = mockP5Prototype.checkForConstsAndFuncs(userDefinitions);
+
+      expect(result).toBe(true);
+      //expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Function "setup" on line 2 is being redeclared and conflicts with a p5.js function'));
+
+      //consoleSpy.mockRestore();
+    });
+
+    test('Returns false when no conflicts are found', function () {
+      const userDefinitions = {
+        variables: [{ name: 'img', line: 1 }],
+        functions: [{ name: 'cut', line: 2 }]
+      };
+
+      const result = mockP5Prototype.checkForConstsAndFuncs(userDefinitions);
+
+      expect(result).toBe(false);
+    });
+  });
+
   suite('run()', function () {
-    test('Returns extracted variables and functions', async function () {
+    test('Extracts user-defined variables and functions and checks for conflicts', async function () {
       const mockScript = `
         let x = 5;
         const y = 10;
         function foo() {}
         const bar = () => {};
+        class MyClass {}
       `;
       mockP5Prototype.getUserCode = vi.fn(() => Promise.resolve(mockScript));
+      mockP5Prototype.extractUserDefinedVariablesAndFuncs = vi.fn(() => ({
+        variables: [
+          { name: 'x', line: 1 },
+          { name: 'y', line: 2 },
+          { name: 'MyClass', line: 5 }
+        ],
+        functions: [
+          { name: 'foo', line: 3 },
+          { name: 'bar', line: 4 }
+        ]
+      }));
+      mockP5Prototype.checkForConstsAndFuncs = vi.fn(() => false);
 
-      const result = await mockP5Prototype.run();
-      const expectedResult = {
-        "functions": [
-          {
-            "line": 3,
-            "name": "foo",
-          },
-          {
-            "line": 4,
-            "name": "bar",
-          },
-        ],
-        "variables": [
-          {
-            "line": 1,
-            "name": "x",
-          },
-          {
-            "line": 2,
-            "name": "y",
-          },
-        ],
-      };
+      await mockP5Prototype.run();
 
       expect(mockP5Prototype.getUserCode).toHaveBeenCalledTimes(1);
-      expect(result).toEqual(expectedResult);
+      expect(mockP5Prototype.extractUserDefinedVariablesAndFuncs).toHaveBeenCalledWith(mockScript);
+      expect(mockP5Prototype.checkForConstsAndFuncs).toHaveBeenCalledWith({
+        variables: [
+          { name: 'x', line: 1 },
+          { name: 'y', line: 2 },
+          { name: 'MyClass', line: 5 }
+        ],
+        functions: [
+          { name: 'foo', line: 3 },
+          { name: 'bar', line: 4 }
+        ]
+      });
+    });
+
+    test('Stops execution when a conflict is found', async function () {
+      const mockScript = `
+        let PI = 3.14;
+        function setup() {}
+      `;
+      mockP5Prototype.getUserCode = vi.fn(() => Promise.resolve(mockScript));
+      mockP5Prototype.extractUserDefinedVariablesAndFuncs = vi.fn(() => ({
+        variables: [{ name: 'PI', line: 1 }],
+        functions: [{ name: 'setup', line: 2 }]
+      }));
+      mockP5Prototype.checkForConstsAndFuncs = vi.fn(() => true);
+
+      const result = await mockP5Prototype.run();
+
+      expect(mockP5Prototype.getUserCode).toHaveBeenCalledTimes(1);
+      expect(mockP5Prototype.extractUserDefinedVariablesAndFuncs).toHaveBeenCalledWith(mockScript);
+      expect(mockP5Prototype.checkForConstsAndFuncs).toHaveBeenCalledWith({
+        variables: [{ name: 'PI', line: 1 }],
+        functions: [{ name: 'setup', line: 2 }]
+      });
+      expect(result).toBeUndefined();
     });
   });
 });

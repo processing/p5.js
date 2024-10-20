@@ -1,11 +1,66 @@
 import * as acorn from 'acorn';
 import * as walk from 'acorn-walk';
+import * as constants from '../constants';
 
 /**
  * @for p5
  * @requires core
  */
 function sketchVerifier(p5, fn) {
+  // List of functions to ignore as they either are meant to be re-defined or
+  // generate false positive outputs.
+  const ignoreFunction = [
+    'setup',
+    'draw',
+    'preload',
+    'deviceMoved',
+    'deviceTurned',
+    'deviceShaken',
+    'doubleClicked',
+    'mousePressed',
+    'mouseReleased',
+    'mouseMoved',
+    'mouseDragged',
+    'mouseClicked',
+    'mouseWheel',
+    'touchStarted',
+    'touchMoved',
+    'touchEnded',
+    'keyPressed',
+    'keyReleased',
+    'keyTyped',
+    'windowResized',
+    'name',
+    'parent',
+    'toString',
+    'print',
+    'stop',
+    'onended'
+  ];
+
+  // Mapping names of p5 types to their constructor functions.
+  // p5Constructors:
+  //   - Color: f()
+  //   - Graphics: f()
+  //   - Vector: f()
+  // and so on.
+  const p5Constructors = {};
+
+  fn.loadP5Constructors = function () {
+    console.log("loading...");
+    // Make a list of all p5 classes to be used for argument validation
+    // This must be done only when everything has loaded otherwise we get
+    // an empty array
+    for (let key of Object.keys(p5)) {
+      // Get a list of all constructors in p5. They are functions whose names
+      // start with a capital letter
+      if (typeof p5[key] === 'function' && key[0] !== key[0].toLowerCase()) {
+        p5Constructors[key] = p5[key];
+      }
+    }
+    console.log('p5Constructors:', p5Constructors);
+  }
+
   /**
    * Fetches the contents of a script element in the user's sketch.
    * 
@@ -111,11 +166,105 @@ function sketchVerifier(p5, fn) {
     return userDefinitions;
   }
 
+  /**
+   * Checks user-defined variables and functions for conflicts with p5.js
+   * constants and global functions.
+   * 
+   * This function performs two main checks:
+   * 1. Verifies if any user definition conflicts with p5.js constants.
+   * 2. Checks if any user definition conflicts with global functions from
+   * p5.js renderer classes.
+   * 
+   * If a conflict is found, it reports a friendly error message and halts
+   * further checking.
+   * 
+   * @param {Object} userDefinitions - An object containing user-defined variables and functions.
+   * @param {Array<{name: string, line: number}>} userDefinitions.variables - Array of user-defined variable names and their line numbers.
+   * @param {Array<{name: string, line: number}>} userDefinitions.functions - Array of user-defined function names and their line numbers.
+   * @returns {boolean} - Returns true if a conflict is found, false otherwise.
+   */
+  fn.checkForConstsAndFuncs = function (userDefinitions) {
+    const allDefinitions = [
+      ...userDefinitions.variables,
+      ...userDefinitions.functions
+    ];
+    console.log(allDefinitions);
+
+    function generateFriendlyError(errorType, name, line) {
+      const url = `https://p5js.org/reference/#/p5/${name}`;
+      const message = `${errorType} "${name}" on line ${line} is being redeclared and conflicts with a p5.js ${errorType.toLowerCase()}. JavaScript does not declaring a ${errorType.toLowerCase()} more than once. p5.js reference: ${url}.`;
+      return message;
+    }
+
+    function checkForRedefinition(name, libValue, line, type) {
+      console.log('name:', name, 'libValue:', libValue, 'line:', line, 'type:', type);
+      try {
+        const userValue = eval(name);
+        if (libValue !== userValue) {
+          let message = generateFriendlyError(type, name, line);
+          console.log(message);
+          return true;
+        }
+      } catch (e) {
+        // If eval fails, the function hasn't been redefined
+        return false;
+      }
+      return false;
+    }
+
+    for (let { name, line } of allDefinitions) {
+      const libDefinition = constants[name];
+      if (libDefinition !== undefined) {
+        if (checkForRedefinition(name, libDefinition, line, "Constant")) {
+          return true;
+        }
+      }
+    }
+
+    // Get the names of all p5.js functions which are available globally
+    const classesWithGlobalFns = ['Renderer', 'Renderer2D', 'RendererGL'];
+    const globalFunctions = new Set(
+      classesWithGlobalFns.flatMap(className =>
+        Object.keys(p5Constructors[className]?.prototype || {})
+      )
+    );
+
+    for (let { name, line } of allDefinitions) {
+      if (!ignoreFunction.includes(name) && globalFunctions.has(name)) {
+        for (let className of classesWithGlobalFns) {
+          const prototypeFunc = p5Constructors[className]?.prototype[name];
+          if (prototypeFunc && checkForRedefinition(name, prototypeFunc, line, "Function")) {
+            return true;
+          }
+        }
+      }
+    }
+
+    // Additional check for other p5 constructors
+    const otherP5ConstructorKeys = Object.keys(p5Constructors).filter(
+      key => !classesWithGlobalFns.includes(key)
+    );
+    for (let { name, line } of allDefinitions) {
+      for (let key of otherP5ConstructorKeys) {
+        if (p5Constructors[key].prototype[name] !== undefined) {
+          const prototypeFunc = p5Constructors[key].prototype[name];
+          if (prototypeFunc && checkForRedefinition(name, prototypeFunc, line, "Function")) {
+            return true;
+          }
+        }
+      }
+    }
+
+    return false;
+  }
+
   fn.run = async function () {
     const userCode = await fn.getUserCode();
     const userDefinedVariablesAndFuncs = fn.extractUserDefinedVariablesAndFuncs(userCode);
 
-    return userDefinedVariablesAndFuncs;
+    if (fn.checkForConstsAndFuncs(userDefinedVariablesAndFuncs)) {
+      return;
+    }
   }
 }
 
@@ -123,4 +272,5 @@ export default sketchVerifier;
 
 if (typeof p5 !== 'undefined') {
   sketchVerifier(p5, p5.prototype);
+  p5.prototype.loadP5Constructors();
 }
