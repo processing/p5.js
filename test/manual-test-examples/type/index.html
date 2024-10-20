@@ -48,36 +48,39 @@
 
     const DISPLAY_ANIMATIONS = false;
 
-    let boundingBoxSketch = function (p) {
+    let boundingBoxSingle = function (p) {
       let x, y, s;
 
       p.setup = function () {
         p.createCanvas(240 * 5, 200);
         p.textSize(30);
 
-        //        return;
-
         ///////////////////////////// BASELINE (L,C,R) ///////////////////////////////
         y = 50;
 
-        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
-        if (1) {
-          //1
-          x = 10, s = 'LEFT BASELINE is funky.';
-          p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y);
-          p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
-          //2
-          x += 580, s = 'CENTER BASELINE is funky.';
-          p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y);
-          p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        // p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y); h-line
 
-          //3
-          x += 600, s = 'RIGHT BASELINE is funky.';
-          p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y);
-          p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
-          /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
-          y += 50;
-        }
+        //1
+        x = 10, s = 'LEFT BASELINE is funky.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+
+        //2
+        x += 580, s = 'CENTER BASELINE is funky.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+
+        //3
+        x += 600, s = 'RIGHT BASELINE is funky.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+        return;
+        /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
+        y += 50;
+
         // 4
         x = 10, s = 'LEFT BOTTOM is funky.';
         p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BOTTOM) && p.text(s, x, y);
@@ -93,39 +96,39 @@
         p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BOTTOM) && p.text(s, x, y);
         p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
 
-        if (1) {
 
-          //////////////////////////// CENTER (L,C,R) /////////////////////////////////
-          y += 30;
 
-          x = 10, s = 'LEFT CENTER is funky.';
-          p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.CENTER) && p.text(s, x, y);
-          p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        //////////////////////////// CENTER (L,C,R) /////////////////////////////////
+        y += 30;
 
-          x += 580, s = 'CENTER CENTER is funky.';
-          p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.CENTER) && p.text(s, x, y);
-          p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        x = 10, s = 'LEFT CENTER is funky.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.CENTER) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
 
-          x += 600, s = 'RIGHT CENTER is funky.';
-          p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y);
-          p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        x += 580, s = 'CENTER CENTER is funky.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.CENTER) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
 
-          ///////////////////////////// TOP (L,C,R) ///////////////////////////////
-          y += 30;
+        x += 600, s = 'RIGHT CENTER is funky.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
 
-          x = 10, s = 'LEFT TOP is funky.';
-          p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y);
-          p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        ///////////////////////////// TOP (L,C,R) ///////////////////////////////
+        y += 30;
 
-          x += 580, s = 'CENTER TOP is funky.';
-          p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.TOP) && p.text(s, x, y);
-          p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        x = 10, s = 'LEFT TOP is funky.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
 
-          x += 600, s = 'RIGHT TOP is funky.';
-          p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y);
-          p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
-        }
-        //p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
+        x += 580, s = 'CENTER TOP is funky.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.TOP) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        x += 600, s = 'RIGHT TOP is funky.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
 
       };
 
@@ -142,28 +145,28 @@
 
         ///////////////////////////// BASELINE (L,C,R) ///////////////////////////////
         y = 20;
-        if (1) {
-          //1
-          x = 20, s = 'LEFT BASELINE ' + suf;
-          p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
-          p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y, w, h);
-          if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
-          // draw horizontal line at y=64
-          p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
+        //1
+        x = 20, s = 'LEFT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        // draw horizontal line at y=64
+        p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
 
-          //2
-          x += 480, s = 'CENTER BASELINE ' + suf;
-          p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x - w / 2, y, w, h);
-          p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y, w, h);
-          if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        //2
+        x += 330, s = 'CENTER BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
 
 
-          //3
-          x += 480, s = 'RIGHT BASELINE ' + suf;
-          p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, -w, h);
-          p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y, w, h);
-          if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
-        }
+        //3
+        x += 330, s = 'RIGHT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+
 
         /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
         y += 120;
@@ -176,59 +179,57 @@
         //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
 
         // 5
-        x += 480, s = 'CENTER BOTTOM ' + suf;
-        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x - w / 2, y, w, h);
+        x += 330, s = 'CENTER BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
         p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BOTTOM) && p.text(s, x, y, w, h);
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
 
         // 6
-        x += 480, s = 'RIGHT BOTTOM ' + suf;
-        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, -w, h);
+        x += 330, s = 'RIGHT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
         p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BOTTOM) && p.text(s, x, y, w, h);
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
 
         //////////////////////////// CENTER (L,C,R) /////////////////////////////////
         y += 120;
-        if (2) {
-          x = 20, s = 'LEFT CENTER ' + suf;
-          p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
-          p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.CENTER) && p.text(s, x, y, w, h);
-          if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
 
-          x += 480, s = 'CENTER CENTER ' + suf;
-          p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x - w / 2, y, w, h);
-          p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.CENTER) && p.text(s, x, y, w, h);
-          if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        x = 20, s = 'LEFT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.CENTER) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
 
-          x += 480, s = 'RIGHT CENTER ' + suf;
-          p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, -w, h);
-          p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y, w, h);
-          if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        x += 330, s = 'CENTER CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.CENTER) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
 
-          ///////////////////////////// TOP (L,C,R) ///////////////////////////////
-          y += 120;
+        x += 330, s = 'RIGHT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
 
-          x = 20, s = 'LEFT TOP ' + suf;
-          p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
-          p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y, w, h);
-          if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
-          p.noFill() && p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y);
+        ///////////////////////////// TOP (L,C,R) ///////////////////////////////
+        y += 120;
 
-          x += 480, s = 'CENTER TOP ' + suf;
-          p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x - w / 2, y, w, h);
-          p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.TOP) && p.text(s, x, y, w, h);
-          if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        x = 20, s = 'LEFT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        p.noFill() && p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y);
 
-          x += 480, s = 'RIGHT TOP ' + suf;
-          p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, -w, h);
-          p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y, w, h);
-          if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        x += 330, s = 'CENTER TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.TOP) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
 
-          //p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
-        }
-      };
+        x += 330, s = 'RIGHT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
+      }
     };
-
 
     let textSketch = function (p) {
       p.setup = function () {
@@ -398,7 +399,7 @@
         //p.line(10, 10, p.width - 10, 10);
 
         //1
-        p.fill(255);
+        p.noFill();
         p.strokeWeight(1);
         p.rect(10, 10, 220, 40);
         p.strokeWeight(0);
@@ -409,7 +410,7 @@
           10, 10, 220, 40);
 
         //2
-        p.fill(255);
+        p.noFill();
         p.strokeWeight(1);
         p.rect(10, 60, 220, 40);
         p.strokeWeight(0);
@@ -420,7 +421,7 @@
           10, 60, 220, 40);
 
         //3
-        p.fill(255);
+        p.noFill();
         p.strokeWeight(1);
         p.rect(10, 110, 220, 40);
         p.strokeWeight(0);
@@ -432,7 +433,7 @@
         );
 
         //1
-        p.fill(255);
+        p.noFill();
         p.strokeWeight(1);
         p.rect(250, 10, 220, 40);
         p.strokeWeight(0);
@@ -447,7 +448,7 @@
         );
 
         //2
-        p.fill(255);
+        p.noFill();
         p.strokeWeight(1);
         p.rect(250, 60, 220, 40);
         p.strokeWeight(0);
@@ -462,7 +463,7 @@
         );
 
         //3
-        p.fill(255);
+        p.noFill();
         p.strokeWeight(1);
         p.rect(250, 110, 220, 40);
         p.strokeWeight(0);
@@ -477,7 +478,7 @@
         );
 
         //1
-        p.fill(255);
+        p.noFill();
         p.strokeWeight(1);
         p.rect(490, 10, 220, 40);
         p.strokeWeight(0);
@@ -492,7 +493,7 @@
         );
 
         //2
-        p.fill(255);
+        p.noFill();
         p.strokeWeight(1);
         p.rect(490, 60, 220, 40);
         p.strokeWeight(0);
@@ -507,7 +508,7 @@
         );
 
         //3
-        p.fill(255);
+        p.noFill();
         p.strokeWeight(1);
         p.rect(490, 110, 220, 40);
         p.strokeWeight(0);
@@ -522,7 +523,7 @@
         );
 
         //1
-        p.fill(255);
+        p.noFill();
         p.strokeWeight(1);
         p.rect(730, 10, 220, 40);
         p.strokeWeight(0);
@@ -536,7 +537,7 @@
           40
         );
         //2
-        p.fill(255);
+        p.noFill();
         p.strokeWeight(1);
         p.rect(730, 60, 220, 40);
         p.strokeWeight(0);
@@ -550,7 +551,7 @@
           40
         );
         //3
-        p.fill(255);
+        p.noFill();
         p.strokeWeight(1);
         p.rect(730, 110, 220, 40);
         p.strokeWeight(0);
@@ -1202,11 +1203,16 @@
       };
     };
 
+
+
+    new p5(boundingBoxSingle, 'boundingBoxSingle');
     new p5(boundingBoxMulti, 'boundingBoxMulti');
-    // new p5(textSketch, 'textSketch');
-    new p5(boundingBoxSketch, 'boundingBoxSketch');
+
     if (0) {
 
+      new p5(boundingBoxSingle, 'boundingBoxSingle');
+      new p5(boundingBoxMulti, 'boundingBoxMulti');
+      new p5(textSketch, 'textSketch');
       new p5(textVerticalAlign, 'textVerticalAlign');
       new p5(multilineAlignWord, 'multilineAlignWord');
       new p5(multilineAlignChar, 'multilineAlignChar');
@@ -1236,13 +1242,14 @@
     }
 
   </script>
-
-  <!-- <div id='boundingBoxMulti'>
-    <p class="caption">boundingBoxMulti(in-progress*)</p>
-  </div> -->
-  <!--div id='boundingBoxSketch'>
-    <p class="caption">boundingBoxSketch</p>
+  <div id='boundingBoxSingle'>
+    <p class="caption">boundingBoxSingle</p>
   </div>
+
+  <div id='boundingBoxMulti'>
+    <p class="caption">boundingBoxMulti</p>
+  </div>
+
   <div id='textSketch'>
     <p class="caption">textAttributes</p>
     <img src="img/textSketch.p5.png" width="240" height="160"></img>
@@ -1324,11 +1331,11 @@
     <p class="caption">textAlpha</p>
     <img src="img/textOverlapSketch.p5.png" width="240" height="160" class="gray"></img>
     <img src="img/textOverlapSketch.png" width="240" height="160" class="gray"></img>
-  </div-->
+  </div>
 
   <!-- animations -->
 
-  <!--div id='textFlySketch'>
+  <div id='textFlySketch'>
   </div>
   <div id='textFlickerSketch'>
   </div>
@@ -1341,7 +1348,7 @@
   <div id='textAvoidSketch'>
   </div>
   <div id='textBendSketch'>
-  </div-->
+  </div>
 
 </body>
 

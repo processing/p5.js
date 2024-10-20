@@ -1,6 +1,6 @@
 import * as constants from '../core/constants';
 
-// NEXT: fix multiLine line-breaking in html test
+// NEXT: multilineAlign.Word
 
 /**
  * @module Type
@@ -19,6 +19,7 @@ function text2d(p5, fn) {
     'textDescent',
     'textLeading',
     'textFont',
+    'textMode', // no-op
     'textSize',
     'textStyle',
     'textWidth',
@@ -33,26 +34,74 @@ function text2d(p5, fn) {
 
   //////////////////////// start API ////////////////////////
 
-  p5.Renderer2D.prototype.text = function (str, x, y, width, height) {
+  p5.Renderer2D.prototype.text = function (str, x, y, width, height, opts) {
 
     let setBaseline = this.drawingContext.textBaseline;
     let leading = this.states.textLeading;
     let lines = this._splitLines(str);
 
     if (typeof width !== 'undefined') {
+
+      // match processing's handling of textBaseline
       if (this.drawingContext.textBaseline === constants.BASELINE) {
         this.drawingContext.textBaseline = constants.TOP;
       }
+
       // if we have a maxWidth and any of the lines exceed it, relineate
       if (lines.some(l => this.textWidth(l) > width)) {
-        lines = this._lineate(lines, width);
+        lines = this._lineate(lines, width, opts);
       }
-      y += this._vAdjust(height, leading, lines.length);
     }
+    // get the adjusted positions [x,y] for each line
+    let positions = this._handleAlignment(lines.length, x, y, width, height, leading);
 
-    lines.forEach((line, i) => this._renderText(line, x, y + i * leading));
+    //console.log('text:', lines, x, y, width, height, this.drawingContext.textBaseline);
+
+    lines.forEach((line, i) => this._renderLine(line, ...positions[i]));
 
     this.drawingContext.textBaseline = setBaseline;
+  };
+
+
+
+  p5.Renderer2D.prototype._handleAlignment = function (numLines, x, y, width, height, leading) {
+
+    //let positions;
+    if (typeof width !== 'undefined') {
+
+      //y += this._vAdjust(height, leading, numLines); // do we do this when width OR height are undefined??
+      if (typeof height !== 'undefined') {
+
+        let baseline = this.states.textBaseline;
+        let ydiff = height - (leading * (numLines - 1));
+        if (baseline === constants._CTX_MIDDLE) {
+          y += ydiff / 2;
+        }
+        else if (baseline === constants.BOTTOM) {
+          //console.log('bottom***');
+
+          // diff between y and last line's y
+          y += ydiff;
+        }
+      }
+    }
+
+    let positions = [];
+    for (let i = 0; i < numLines; i++) {
+      let px = x;
+      let halign = this.drawingContext.textAlign;
+      if (typeof width !== 'undefined') {
+        if (halign === constants.CENTER) {
+          px = x + width / 2;
+        }
+        else if (halign === constants.RIGHT) {
+          px = x + width;
+        }
+      }
+      positions.push([px, y + (i * leading)]);
+    }
+
+    return positions;
   };
 
   p5.Renderer2D.prototype.textBounds = function (str, x, y, width, height) {
@@ -71,72 +120,83 @@ function text2d(p5, fn) {
         lines = this._lineate(lines, width);
       }
     }
+    //console.log('textBounds:', lines, x, y, width, height);
+    //let positions = this._handleAlignment(lines, x, y, width, height, leading);
 
-    let bbs = lines.map((line, i) => this.lineBounds(line, x, y + i * leading));
-    if (lines.length === 1) return bbs[0];
+    let boxes = lines.map((line, i) => this.lineBounds(line, x, y + i * leading));
+    // if (lines.length === 1) return bbs[0];
 
-    0&&bbs.forEach(bb => {
+    0 && boxes.forEach(bb => {
+      this.drawingContext.strokeStyle = 'none';
       this.drawingContext.fillStyle = 'rgba(255,0,0,0.25)';
       this.drawingContext.fillRect(bb.x, bb.y, bb.w, bb.h);
     });
 
-    x = Math.min(...bbs.map(b => b.x));
-    y = Math.min(...bbs.map(b => b.y));
-    y += this._vAdjust(height, leading, lines.length);
-    //y += this._vAdjust(height, leading, lines.length);
-    
-    
-    //let ny = Math.max(...bbs.map(b => b.y));
-    // WORKING HERE: need to adjust the x,y of the bounding box
-    // based on the vertical alignment
+    let bb = {
+      x: Math.min(...boxes.map(b => b.x)),
+      y: y,
+      w: Math.max(...boxes.map(b => b.w)),
+      h: boxes[boxes.length - 1].y - boxes[0].y + boxes[boxes.length - 1].h
+    };
 
-    let w = Math.max(...bbs.map(b => b.w));
-    let h = bbs[bbs.length - 1].y - bbs[0].y + bbs[bbs.length - 1].h;
+    this._handleBboxAlignment(lines, x, y, width, height, bb);
 
-    return { x, y, w, h };
-    return;
+    this.drawingContext.textBaseline = setBaseline;
+    return bb;
+  };
 
-    // ok
-    // let w = this._fontWidths(lines);
-    // let h = (lines.length - 1) * leading
-    //   + this._textHeight(lines[lines.length - 1]);
+  p5.Renderer2D.prototype._handleBboxAlignment = function (lines, x, y, width, height, bb) {
+    console.log('handleBboxAlignment:', lines, x, y, width, height, bb, this.drawingContext.textAlign);
 
-    // use lineBounds to get the width and height of each line
-    // let bounds = lines.map((line, i) => this.lineBounds(line, x, y + i * leading));
-    // let w = Math.max(...bounds.map(b => b.w));
-    // let h = bounds.reduce((acc, b) => acc + b.h, 0);
+    let isMultiLine = lines.length > 1;
 
+    // adjust the bounding box based on textAlign and textBaseline
+    let xdiff = width - bb.w;
     switch (this.drawingContext.textAlign) {
       case constants.CENTER:
-        x -= w / 2;
+        if (isMultiLine) {
+          bb.x += xdiff / 2;
+        }
+        else {
+          // ?
+        }
         break;
       case constants.RIGHT:
-        x -= w;
+        if (isMultiLine) {
+          bb.x += xdiff;
+        }
+        else {
+         // ??
+        }
         break;
     }
+    //console.log('textBaseline:', this.drawingContext.textBaseline);
 
-    console.log(str, '->', this.drawingContext.textBaseline);
+    let ydiff = height - bb.h;
     switch (this.drawingContext.textBaseline) {
-
       case constants.BASELINE:
-        y -= this.textAscent();
-        break;
-      case constants.TOP:
-        // no-op
-        break;
-      case constants.BOTTOM:
-        y += height - h;
+        if (isMultiLine) throw Error('textBounds: BASELINE not supported for multi-line text');
+        bb.y -= this.textAscent(lines[0]);
         break;
       case constants._CTX_MIDDLE:
-        y += (height - h) / 2
+        bb.y += ydiff / 2;
+        break;
+      case constants.BOTTOM:
+        bb.y += ydiff;
         break;
     }
+  };
 
-    //console.log('h', yh);
-    this.drawingContext.textBaseline = setBaseline;
 
-    return { x, y, w, h };
-  }
+
+
+
+
+
+
+
+
+
 
   p5.Renderer2D.prototype.textAlign = function (h, v) {
     if (typeof h !== 'undefined') {
@@ -197,66 +257,18 @@ function text2d(p5, fn) {
     // return Math.max(...newArr);
   };
 
-
-  p5.Renderer2D.prototype._splitLines = function (s) {
-    if (!s || s.length === 0) return [''];
-    return s.replace(p5.Renderer2D.TabsRE, '  ').split(p5.Renderer2D.LinebreakRE);
-  }
-
-  p5.Renderer2D.prototype._measureText = function (s) {
-    // this handles an apparent bug in some browsers where actualBoundingBox
-    // values are not returned correctly if align is not 'left/alphabetic'
-    let align = this.drawingContext.textAlign;
-    let baseline = this.drawingContext.textBaseline;
-    this.drawingContext.textAlign = 'left';
-    this.drawingContext.textBaseline = 'alphabetic';
-    let metrics = this.drawingContext.measureText(s);
-    this.drawingContext.textBaseline = baseline;
-    this.drawingContext.textAlign = align;
-    return metrics;
-  }
-
-  p5.Renderer2D.prototype._vAdjust = function (height, leading, numLines) {
-
-    let offset = 0;
-    if (typeof height !== 'undefined') {
-
-      let baseline = this.states.textBaseline;
-      let ydiff = height - (leading * (numLines - 1));
-      if (baseline === constants._CTX_MIDDLE) {
-        offset = ydiff / 2;
-      }
-      else if (baseline === constants.BOTTOM) {
-        //console.log('bottom***');
-
-        // diff between y and last line's y
-        offset = ydiff;
-      }
-    }
-
-    /*
-        case constants.BOTTOM:
-          y += height - h;
-          break;
-        case constants._CTX_MIDDLE:
-          y += (height - h) / 2
-          break;
-    */
-    return offset
-  };
-
   p5.Renderer2D.prototype.lineBounds = function (s, x = 0, y = 0) {
 
     let metrics = this._measureText(s);
     let tw = this._textWidth(metrics);
-    let fw = this._fontWidth(metrics);
+    let fw = this._fontWidth(metrics); // unused ?
     let th = this._textHeight(metrics);
 
     // TODO: should this pay attention to rectMode or textAlign?
     x += Math.abs(metrics.actualBoundingBoxLeft);
     y -= Math.abs(metrics.actualBoundingBoxAscent);
 
-    switch (this.drawingContext.textAlign) {
+    /*switch (this.drawingContext.textAlign) {
       // TODO: support start, end alignment (direction?)
       case constants.START:
         throw new Error('textBounds: START not yet supported for textAlign');
@@ -271,7 +283,7 @@ function text2d(p5, fn) {
         x -= tw;
         break;
     }
-
+  
     switch (this.drawingContext.textBaseline) {
       // TODO: support hanging, ideographic alignment
       case constants.TOP:
@@ -293,12 +305,13 @@ function text2d(p5, fn) {
       case constants.BOTTOM:
         y -= metrics.fontBoundingBoxDescent;
         break;
-    }
+    }*/
 
     return { x, y, w: tw, h: th };
   };
 
   p5.Renderer2D.prototype.fontBounds = function (s, x = 0, y = 0) {
+
     let metrics = this._measureText(s);
     // TODO: should this pay attention to rectMode or textAlign?
     return {
@@ -310,7 +323,8 @@ function text2d(p5, fn) {
   };
 
   // TODO: rethink parameter list, examine FontFace.properties
-  p5.Renderer2D.prototype.textFont = function (theFont, theSize, opts) { // need to add fontStretch/lineHeight
+  p5.Renderer2D.prototype.textFont = function (theFont, theSize, opts) {
+    // need to add fontStretch/lineHeight
 
     if (arguments.length) {
 
@@ -348,6 +362,7 @@ function text2d(p5, fn) {
   }
 
   p5.Renderer2D.prototype.textLeading = function (leading) {
+
     if (typeof leading === 'number') {
       this.states.leadingSet = true;
       this.states.textLeading = leading;
@@ -372,13 +387,11 @@ function text2d(p5, fn) {
   };
 
   p5.Renderer2D.prototype.textStyle = function (s) {
-    if (s) {
-      if (
-        s === constants.NORMAL ||
+    if (typeof s !== 'undefined') {
+      if (s === constants.NORMAL ||
         s === constants.ITALIC ||
         s === constants.BOLD ||
-        s === constants.BOLDITALIC
-      ) {
+        s === constants.BOLDITALIC) {
         this.states.textStyle = s;
       }
       return this._applyTextProperties();
@@ -395,10 +408,16 @@ function text2d(p5, fn) {
     return this.states.textWrap;
   };
 
-  p5.Renderer2D.prototype._lineate = function (lines, maxWidth = Infinity) {
-    let newLines = [];
-    let splitter = this.states.textWrap === constants.WORD ? ' ' : '';
-    let line, testLine, testWidth, words;
+  p5.Renderer2D.prototype.textMode = function () {
+    /* no-op for processing api compat */
+  };
+
+  //////////////////////////// end API ///////////////////////////////
+
+  p5.Renderer2D.prototype._lineate = function (lines, maxWidth = Infinity, opts = {}) {
+
+    let splitter = opts.splitChar ?? (this.states.textWrap === constants.WORD ? ' ' : '');
+    let line, testLine, testWidth, words, newLines = [];
 
     for (let lidx = 0; lidx < lines.length; lidx++) {
       line = '';
@@ -419,31 +438,42 @@ function text2d(p5, fn) {
     return newLines;
   };
 
-  p5.Renderer2D.prototype._hAlign = function (x, y, maxW, maxH) {
+  p5.Renderer2D.prototype._splitLines = function (s) {
+    if (!s || s.length === 0) return [''];
+    return s.replace(p5.Renderer2D.TabsRE, '  ').split(p5.Renderer2D.LinebreakRE);
+  }
 
+  p5.Renderer2D.prototype._measureText = function (s) {
+    // this handles an apparent bug in some browsers where actualBoundingBox
+    // values are not returned correctly if align is not 'left/alphabetic'
+    let align = this.drawingContext.textAlign;
+    let baseline = this.drawingContext.textBaseline;
+    this.drawingContext.textAlign = 'left';
+    this.drawingContext.textBaseline = 'alphabetic';
+    let metrics = this.drawingContext.measureText(s);
+    this.drawingContext.textBaseline = baseline;
+    this.drawingContext.textAlign = align;
+    return metrics;
+  }
 
-  };
+  p5.Renderer2D.prototype._vAdjust = function (height, leading, numLines) {
 
+    let offset = 0;
+    if (typeof height !== 'undefined') {
 
+      let baseline = this.states.textBaseline;
+      let ydiff = height - (leading * (numLines - 1));
+      if (baseline === constants._CTX_MIDDLE) {
+        offset = ydiff / 2;
+      }
+      else if (baseline === constants.BOTTOM) {
+        //console.log('bottom***');
 
-  p5.Renderer2D.prototype._vAlignXX = function (x, y, width, height, leading, numLines) {
-
-    if (typeof width !== 'undefined') {
-
-      if (typeof height !== 'undefined') {
-
-        let baseline = this.states.textBaseline;
-        let yoff = height - (leading * (numLines - 1));
-        if (baseline === constants._CTX_MIDDLE) {
-          y = y + yoff / 2;
-        }
-        else if (baseline === constants.BOTTOM) {
-          y = y + yoff;
-        }
+        // diff between y and last line's y
+        offset = ydiff;
       }
     }
-
-    return { x, y, width, height };
+    return offset
   };
 
 
@@ -725,7 +755,7 @@ function text2d(p5, fn) {
 
     return this._pInst;
   };
-  //////////////////////// end API ////////////////////////
+
 
   p5.Renderer2D.prototype._buildFontString = function () {
     /*
@@ -791,25 +821,19 @@ function text2d(p5, fn) {
       }
     });
 
-    // update any context properties that differ from `states`
+    // update any context properties that differ from `states`  (TODO: REMOVE)
     Object.keys(contextProps).forEach(prop => {
       let ctxProp = contextProps[prop].property || prop;
       this.drawingContext[ctxProp] = this.states[prop];
       // if (prop.startsWith('text'))  console.log(prop, '=', this.states[prop]);
     });
 
-    // handle case with p5.CENTER vs MIDDLE
-    if (this.states.textBaseline === constants.CENTER) { // TMP: remove
-      console.log('OLD: setting textBaseline to MIDDLE');
-      this.drawingContext.textBaseline = constants._CTX_MIDDLE;
-    }
-
     const fontString = this._buildFontString(); // create font-string from states
     this.drawingContext.font = fontString;
 
     //console.log(this.drawingContext.font + '\n' + '-'.repeat(80));
 
-    if (fontString.replace(/normal /g, '') !== this.drawingContext.font) { // TMP: warn if font not set properly
+    if (fontString.replace(/normal /g, '') !== this.drawingContext.font) { // TMP: rm, warn if font not set properly
       console.warn('Error setting text properties: \ncss="' + fontString + '"\nctx="' + this.drawingContext.font + '"');
     }
 
@@ -817,10 +841,10 @@ function text2d(p5, fn) {
   };
 
   // text() calls this method to render text
-  p5.Renderer2D.prototype._renderText = function (line, x, y, maxY, minY) { // TODO: remove maxY, minY
+  p5.Renderer2D.prototype._renderLine = function (line, x, y, maxY, minY) { // TODO: remove maxY, minY
     let { drawingContext, states } = this;
 
-    //console.log('renderText:', line, x, y, maxY, minY, this.drawingContext.textBaseline);
+    //console.log('renderText:', line, x, y, this.drawingContext.textAlign + '/' + this.drawingContext.textBaseline);
 
     if (y < minY || y >= maxY) {
       return; // don't render lines beyond minY/maxY
