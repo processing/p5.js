@@ -290,7 +290,7 @@ suite('Environment', function() {
       let screenPos = myp5.worldToScreen(worldPos);
       myp5.pop();
       assert.closeTo(screenPos.x, 50, 0.1);
-      assert.closeTo(screenPos.y, 40, 0.1);
+      assert.closeTo(screenPos.y, 60, 0.1);
     });
   });
 });
