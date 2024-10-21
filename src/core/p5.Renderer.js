@@ -5,6 +5,7 @@
  */
 
 import * as constants from '../core/constants';
+import { Image } from '../image/p5.Image';
 
 class Renderer {
   constructor(pInst, w, h, isMainCanvas) {
@@ -140,7 +141,7 @@ class Renderer {
     // get(x,y,w,h)
     }
 
-    const region = new p5.Image(w*pd, h*pd);
+    const region = new Image(w*pd, h*pd);
     region.pixelDensity(pd);
     region.canvas
       .getContext('2d')

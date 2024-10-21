@@ -11,7 +11,7 @@
  * drawing images to the main display canvas.
  */
 import Filters from './filters';
-import { Renderer2D } from '../core/p5.Renderer2D';
+import { Renderer } from '../core/p5.Renderer';
 
 class Image {
   constructor(width, height) {
@@ -31,18 +31,18 @@ class Image {
   }
 
   /**
- * Gets or sets the pixel density for high pixel density displays.
- *
- * By default, the density will be set to 1.
- *
- * Call this method with no arguments to get the default density, or pass
- * in a number to set the density. If a non-positive number is provided,
- * it defaults to 1.
- *
- * @param {Number} [density] A scaling factor for the number of pixels per
- * side
- * @returns {Number} The current density if called without arguments, or the instance for chaining if setting density.
- */
+   * Gets or sets the pixel density for high pixel density displays.
+   *
+   * By default, the density will be set to 1.
+   *
+   * Call this method with no arguments to get the default density, or pass
+   * in a number to set the density. If a non-positive number is provided,
+   * it defaults to 1.
+   *
+   * @param {Number} [density] A scaling factor for the number of pixels per
+   * side
+   * @returns {Number} The current density if called without arguments, or the instance for chaining if setting density.
+   */
   pixelDensity(density) {
     if (typeof density !== 'undefined') {
     // Setter: set the density and handle resize
@@ -53,7 +53,7 @@ class Image {
           position: 1
         };
 
-        p5._friendlyParamError(errorObj, 'pixelDensity');
+        // p5._friendlyParamError(errorObj, 'pixelDensity');
 
         // Default to 1 in case of an invalid value
         density = 1;
@@ -143,42 +143,51 @@ class Image {
    * </div>
    *
    * <div>
-     * <code>
-     * function setup() {
-     *   createCanvas(100, 100);
-     *
-     *   background(200);
-     *
-     *   // Create a p5.Image object.
-     *   let img = createImage(66, 66);
-     *
-     *   // Load the image's pixels.
-     *   img.loadPixels();
-     *
-     *   for (let i = 0; i < img.pixels.length; i += 4) {
-     *     // Red.
-     *     img.pixels[i] = 0;
-     *     // Green.
-     *     img.pixels[i + 1] = 0;
-     *     // Blue.
-     *     img.pixels[i + 2] = 0;
-     *     // Alpha.
-     *     img.pixels[i + 3] = 255;
-     *   }
-     *
-     *   // Update the image.
-     *   img.updatePixels();
-     *
-     *   // Display the image.
-     *   image(img, 17, 17);
-     *
-     *   describe('A black square drawn in the middle of a gray square.');
-     * }
-     * </code>
-     * </div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Create a p5.Image object.
+   *   let img = createImage(66, 66);
+   *
+   *   // Load the image's pixels.
+   *   img.loadPixels();
+   *
+   *   for (let i = 0; i < img.pixels.length; i += 4) {
+   *     // Red.
+   *     img.pixels[i] = 0;
+   *     // Green.
+   *     img.pixels[i + 1] = 0;
+   *     // Blue.
+   *     img.pixels[i + 2] = 0;
+   *     // Alpha.
+   *     img.pixels[i + 3] = 255;
+   *   }
+   *
+   *   // Update the image.
+   *   img.updatePixels();
+   *
+   *   // Display the image.
+   *   image(img, 17, 17);
+   *
+   *   describe('A black square drawn in the middle of a gray square.');
+   * }
+   * </code>
+   * </div>
    */
   loadPixels() {
-    Renderer2D.prototype.loadPixels.call(this);
+    // Renderer2D.prototype.loadPixels.call(this);
+    const pixelsState = this._pixelsState;
+    const pd = this._pixelDensity;
+    const w = this.width * pd;
+    const h = this.height * pd;
+    const imageData = this.drawingContext.getImageData(0, 0, w, h);
+    // @todo this should actually set pixels per object, so diff buffers can
+    // have diff pixel arrays.
+    pixelsState.imageData = imageData;
+    this.pixels = pixelsState.pixels = imageData.data;
     this.setModified(true);
   }
 
@@ -277,7 +286,31 @@ class Image {
   /**
    */
   updatePixels(x, y, w, h) {
-    Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
+    // Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
+    const pixelsState = this._pixelsState;
+    const pd = this._pixelDensity;
+    if (
+      x === undefined &&
+      y === undefined &&
+      w === undefined &&
+      h === undefined
+    ) {
+      x = 0;
+      y = 0;
+      w = this.width;
+      h = this.height;
+    }
+    x *= pd;
+    y *= pd;
+    w *= pd;
+    h *= pd;
+
+    if (this.gifProperties) {
+      this.gifProperties.frames[this.gifProperties.displayIndex].image =
+        pixelsState.imageData;
+    }
+
+    this.drawingContext.putImageData(pixelsState.imageData, x, y, 0, 0, w, h);
     this.setModified(true);
   }
 
@@ -404,12 +437,52 @@ class Image {
    * @return {Number[]}      color of the pixel at (x, y) in array format `[R, G, B, A]`.
    */
   get(x, y, w, h) {
-    p5._validateParameters('p5.Image.get', arguments);
-    return Renderer2D.prototype.get.apply(this, arguments);
+    // p5._validateParameters('p5.Image.get', arguments);
+    // return Renderer2D.prototype.get.apply(this, arguments);
+    const pixelsState = this._pixelsState;
+    const pd = this._pixelDensity;
+    const canvas = this.canvas;
+
+    if (typeof x === 'undefined' && typeof y === 'undefined') {
+    // get()
+      x = y = 0;
+      w = pixelsState.width;
+      h = pixelsState.height;
+    } else {
+      x *= pd;
+      y *= pd;
+
+      if (typeof w === 'undefined' && typeof h === 'undefined') {
+      // get(x,y)
+        if (x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) {
+          return [0, 0, 0, 0];
+        }
+
+        return this._getPixel(x, y);
+      }
+    // get(x,y,w,h)
+    }
+
+    const region = new Image(w*pd, h*pd);
+    region.pixelDensity(pd);
+    region.canvas
+      .getContext('2d')
+      .drawImage(canvas, x, y, w * pd, h * pd, 0, 0, w*pd, h*pd);
+
+    return region;
   }
 
   _getPixel(...args) {
-    return Renderer2D.prototype._getPixel.apply(this, args);
+    let imageData, index;
+    imageData = this.drawingContext.getImageData(x, y, 1, 1).data;
+    index = 0;
+    return [
+      imageData[index + 0],
+      imageData[index + 1],
+      imageData[index + 2],
+      imageData[index + 3]
+    ];
+    // return Renderer2D.prototype._getPixel.apply(this, args);
   }
 
   /**
@@ -547,7 +620,80 @@ class Image {
    * </div>
    */
   set(x, y, imgOrCol) {
-    Renderer2D.prototype.set.call(this, x, y, imgOrCol);
+    // Renderer2D.prototype.set.call(this, x, y, imgOrCol);
+    // round down to get integer numbers
+    x = Math.floor(x);
+    y = Math.floor(y);
+    const pixelsState = this._pixelsState;
+    if (imgOrCol instanceof Image) {
+      this.drawingContext.save();
+      this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
+      this.drawingContext.scale(
+        this._pixelDensity,
+        this._pixelDensity
+      );
+      this.drawingContext.clearRect(x, y, imgOrCol.width, imgOrCol.height);
+      this.drawingContext.drawImage(imgOrCol.canvas, x, y);
+      this.drawingContext.restore();
+    } else {
+      let r = 0,
+        g = 0,
+        b = 0,
+        a = 0;
+      let idx =
+        4 *
+        (y *
+          this._pixelDensity *
+          (this.width * this._pixelDensity) +
+          x * this._pixelDensity);
+      if (!pixelsState.imageData) {
+        pixelsState.loadPixels();
+      }
+      if (typeof imgOrCol === 'number') {
+        if (idx < pixelsState.pixels.length) {
+          r = imgOrCol;
+          g = imgOrCol;
+          b = imgOrCol;
+          a = 255;
+          //this.updatePixels.call(this);
+        }
+      } else if (Array.isArray(imgOrCol)) {
+        if (imgOrCol.length < 4) {
+          throw new Error('pixel array must be of the form [R, G, B, A]');
+        }
+        if (idx < pixelsState.pixels.length) {
+          r = imgOrCol[0];
+          g = imgOrCol[1];
+          b = imgOrCol[2];
+          a = imgOrCol[3];
+          //this.updatePixels.call(this);
+        }
+      } else if (imgOrCol instanceof p5.Color) {
+        if (idx < pixelsState.pixels.length) {
+          r = imgOrCol.levels[0];
+          g = imgOrCol.levels[1];
+          b = imgOrCol.levels[2];
+          a = imgOrCol.levels[3];
+          //this.updatePixels.call(this);
+        }
+      }
+      // loop over pixelDensity * pixelDensity
+      for (let i = 0; i < this._pixelDensity; i++) {
+        for (let j = 0; j < this._pixelDensity; j++) {
+          // loop over
+          idx =
+            4 *
+            ((y * this._pixelDensity + j) *
+              this.width *
+              this._pixelDensity +
+              (x * this._pixelDensity + i));
+          pixelsState.pixels[idx] = r;
+          pixelsState.pixels[idx + 1] = g;
+          pixelsState.pixels[idx + 2] = b;
+          pixelsState.pixels[idx + 3] = a;
+        }
+      }
+    }
     this.setModified(true);
   }
 
@@ -865,7 +1011,7 @@ class Image {
 
     let imgScaleFactor = this._pixelDensity;
     let maskScaleFactor = 1;
-    if (p5Image instanceof p5.Renderer) {
+    if (p5Image instanceof Renderer) {
       maskScaleFactor = p5Image._pInst._renderer._pixelDensity;
     }
 
@@ -1276,7 +1422,7 @@ class Image {
    * @param  {(BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|NORMAL)} blendMode
    */
   blend(...args) {
-    p5._validateParameters('p5.Image.blend', arguments);
+    // p5._validateParameters('p5.Image.blend', arguments);
     fn.blend.apply(this, args);
     this.setModified(true);
   }

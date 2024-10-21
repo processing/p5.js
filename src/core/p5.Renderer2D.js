@@ -646,12 +646,12 @@ class Renderer2D extends Renderer {
   }
 
   /*
- * This function requires that:
- *
- *   0 <= start < TWO_PI
- *
- *   start <= stop < start + TWO_PI
- */
+   * This function requires that:
+   *
+   *   0 <= start < TWO_PI
+   *
+   *   start <= stop < start + TWO_PI
+   */
   arc(x, y, w, h, start, stop, mode) {
     const ctx = this.drawingContext;
     const rx = w / 2.0;
