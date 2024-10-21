@@ -48,6 +48,103 @@
 
     const DISPLAY_ANIMATIONS = false;
 
+    let simpleTextBoundsSingle = function (p) {
+
+      function dt(s, x, y, halign, valign) {
+        drawP5(s, x, y, halign, valign);
+        drawDirect(s, x, y, halign, valign);
+      }
+
+      function drawP5(s, x, y, halign, valign) {
+        p.textAlign(halign,valign);
+        let m = p.drawingContext.measureText(s);
+        p.stroke(0) && p.line(0, y, p.width, y) && p.line(x, 0, x, p.height);
+        p.fill(0) && p.noStroke() && p.text(s, x, y);
+        let bb = p._renderer._textBoundsSingle(s, x, y);
+        p.noFill() && p.stroke('red') && p.rect(bb.x, bb.y, bb.w, bb.h);
+      }
+
+      function drawDirect(s, x, y, halign, valign) {
+        p.drawingContext.textAlign = halign;
+        p.drawingContext.textBaseline = valign;
+        p.drawingContext.fillStyle = 'black';
+        p.drawingContext.fillText(s, x, y);
+        let m = p.drawingContext.measureText(s);
+        let asc = m.actualBoundingBoxAscent;
+        let desc = m.actualBoundingBoxDescent;
+        let abl = m.actualBoundingBoxLeft;
+        let abr = m.actualBoundingBoxRight;
+        let bb = {
+          x: x - abl,
+          y: y - asc,
+          w: abr + abl,
+          h: asc + desc,
+        };
+        p.drawingContext.strokeStyle = 'red';
+        p.drawingContext.strokeRect(bb.x, bb.y, bb.w, bb.h);
+      }
+
+      p.setup = function () {
+        p.createCanvas(1200, 1200);
+        p.textSize(64);
+        let x = 150, y = 0;
+        dt('.ooo', x, y += 80, p.LEFT, p.TOP);
+        dt(',doi', x, y += 80, p.LEFT, p.TOP);
+        dt('.dog', x, y += 80, p.LEFT, p.TOP);
+        dt('-oog', x, y += 80, p.LEFT, p.TOP);
+        dt('.ooo', x, y += 80, p.CENTER, p.TOP);
+        dt(',doi', x, y += 80, p.CENTER, p.TOP);
+        dt('.dog', x, y += 80, p.CENTER, p.TOP);
+        dt('-oog', x, y += 80, p.CENTER, p.TOP);
+        dt('.ooo', x, y += 80, p.RIGHT, p.TOP);
+        dt(',doi', x, y += 80, p.RIGHT, p.TOP);
+        dt('.dog', x, y += 80, p.RIGHT, p.TOP);
+        dt('-oog', x, y += 80, p.RIGHT, p.TOP);
+
+        y = 0, x = 450;
+        dt('.ooo', x, y += 80, p.LEFT, p.BASELINE);
+        dt(',doi', x, y += 80, p.LEFT, p.BASELINE);
+        dt('.dog', x, y += 80, p.LEFT, p.BASELINE);
+        dt('-oog', x, y += 80, p.LEFT, p.BASELINE);
+        dt('.ooo', x, y += 80, p.CENTER, p.BASELINE);
+        dt(',doi', x, y += 80, p.CENTER, p.BASELINE);
+        dt('.dog', x, y += 80, p.CENTER, p.BASELINE);
+        dt('-oog', x, y += 80, p.CENTER, p.BASELINE);
+        dt('.ooo', x, y += 80, p.RIGHT, p.BASELINE);
+        dt(',doi', x, y += 80, p.RIGHT, p.BASELINE);
+        dt('.dog', x, y += 80, p.RIGHT, p.BASELINE);
+        dt('-oog', x, y += 80, p.RIGHT, p.BASELINE);
+
+        y = 0, x = 750;
+        dt('.ooo', x, y += 80, p.LEFT, p._CTX_MIDDLE);
+        dt(',doi', x, y += 80, p.LEFT, p._CTX_MIDDLE);
+        dt('.dog', x, y += 80, p.LEFT, p._CTX_MIDDLE);
+        dt('-oog', x, y += 80, p.LEFT, p._CTX_MIDDLE);
+        dt('.ooo', x, y += 80, p.CENTER, p._CTX_MIDDLE);
+        dt(',doi', x, y += 80, p.CENTER, p._CTX_MIDDLE);
+        dt('.dog', x, y += 80, p.CENTER, p._CTX_MIDDLE);
+        dt('-oog', x, y += 80, p.CENTER, p._CTX_MIDDLE);
+        dt('.ooo', x, y += 80, p.RIGHT, p._CTX_MIDDLE);
+        dt(',doi', x, y += 80, p.RIGHT, p._CTX_MIDDLE);
+        dt('.dog', x, y += 80, p.RIGHT, p._CTX_MIDDLE);
+        dt('-oog', x, y += 80, p.RIGHT, p._CTX_MIDDLE);
+
+        y = 0, x = 1050;
+        dt('.ooo', x, y += 80, p.LEFT, p.BOTTOM);
+        dt(',doi', x, y += 80, p.LEFT, p.BOTTOM);
+        dt('.dog', x, y += 80, p.LEFT, p.BOTTOM);
+        dt('-oog', x, y += 80, p.LEFT, p.BOTTOM);
+        dt('.ooo', x, y += 80, p.CENTER, p.BOTTOM);
+        dt(',doi', x, y += 80, p.CENTER, p.BOTTOM);
+        dt('.dog', x, y += 80, p.CENTER, p.BOTTOM);
+        dt('-oog', x, y += 80, p.CENTER, p.BOTTOM);
+        dt('.ooo', x, y += 80, p.RIGHT, p.BOTTOM);
+        dt(',doi', x, y += 80, p.RIGHT, p.BOTTOM);
+        dt('.dog', x, y += 80, p.RIGHT, p.BOTTOM);
+        dt('-oog', x, y += 80, p.RIGHT, p.BOTTOM);
+      };
+    };
+
     let boundingBoxSingle = function (p) {
       let x, y, s;
 
@@ -57,76 +154,80 @@
 
         ///////////////////////////// BASELINE (L,C,R) ///////////////////////////////
         y = 50;
-
-        // p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y); h-line
+        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y); //h-line
 
         //1
         x = 10, s = 'LEFT BASELINE is funky.';
         p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y);
-        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
-        p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+        //p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        let bb = Object.values(p._renderer._textBoundsSingle(s, x, y));
+        p.noFill() && p.stroke(0) && p.rect(...bb);
+        //p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
 
         //2
         x += 580, s = 'CENTER BASELINE is funky.';
         p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y);
-        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
-        p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p._renderer._textBoundsSingle(s, x, y)));
+        //p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
 
         //3
         x += 600, s = 'RIGHT BASELINE is funky.';
         p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y);
-        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
-        p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
-        return;
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p._renderer._textBoundsSingle(s, x, y)));
+        //p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+
         /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
         y += 50;
+        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y); //h-line
 
         // 4
         x = 10, s = 'LEFT BOTTOM is funky.';
         p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BOTTOM) && p.text(s, x, y);
-        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p._renderer._textBoundsSingle(s, x, y)));
 
         // 5
         x += 580, s = 'CENTER BOTTOM is funky.';
         p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BOTTOM) && p.text(s, x, y);
-        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p._renderer._textBoundsSingle(s, x, y)));
 
         // 6
         x += 600, s = 'RIGHT BOTTOM is funky.';
         p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BOTTOM) && p.text(s, x, y);
-        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p._renderer._textBoundsSingle(s, x, y)));
 
 
 
         //////////////////////////// CENTER (L,C,R) /////////////////////////////////
         y += 30;
+        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y); //h-line
 
         x = 10, s = 'LEFT CENTER is funky.';
         p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.CENTER) && p.text(s, x, y);
-        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p._renderer._textBoundsSingle(s, x, y)));
 
         x += 580, s = 'CENTER CENTER is funky.';
         p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.CENTER) && p.text(s, x, y);
-        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p._renderer._textBoundsSingle(s, x, y)));
 
         x += 600, s = 'RIGHT CENTER is funky.';
         p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y);
-        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p._renderer._textBoundsSingle(s, x, y)));
 
         ///////////////////////////// TOP (L,C,R) ///////////////////////////////
         y += 30;
+        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y); //h-line
 
         x = 10, s = 'LEFT TOP is funky.';
         p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y);
-        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p._renderer._textBoundsSingle(s, x, y)));
 
         x += 580, s = 'CENTER TOP is funky.';
         p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.TOP) && p.text(s, x, y);
-        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p._renderer._textBoundsSingle(s, x, y)));
 
         x += 600, s = 'RIGHT TOP is funky.';
         p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y);
-        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p._renderer._textBoundsSingle(s, x, y)));
 
         p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
 
@@ -134,9 +235,9 @@
 
     };
 
-    let boundingBoxMulti = function (p) { // NEXT: WORKING HERE
+    let boundingBoxMulti = function (p) {
       let x, y, w = 300, h = 70, showBB = 1;
-      let s, suf = 'text gonna wraps when it gets too long and is often breaking.';
+      let s, suf = 'text gonna wrap when it gets too long and is then breaking.';
 
       p.setup = function () {
         p.createCanvas(1100, 500);
@@ -159,7 +260,7 @@
         p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y, w, h);
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
 
-
+ 
         //3
         x += 330, s = 'RIGHT BASELINE ' + suf;
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
@@ -167,7 +268,7 @@
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
 
 
-
+  
         /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
         y += 120;
 
@@ -177,7 +278,7 @@
         p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BOTTOM) && p.text(s, x, y, w, h);
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
         //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
-
+  
         // 5
         x += 330, s = 'CENTER BOTTOM ' + suf;
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
@@ -189,7 +290,7 @@
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
         p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BOTTOM) && p.text(s, x, y, w, h);
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
-
+      
         //////////////////////////// CENTER (L,C,R) /////////////////////////////////
         y += 120;
 
@@ -207,7 +308,7 @@
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
         p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y, w, h);
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
-
+  
         ///////////////////////////// TOP (L,C,R) ///////////////////////////////
         y += 120;
 
@@ -226,7 +327,7 @@
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
         p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y, w, h);
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
-
+        
         p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
       }
     };
@@ -1205,7 +1306,8 @@
 
 
 
-    new p5(boundingBoxSingle, 'boundingBoxSingle');
+    //new p5(simpleTextBoundsSingle, 'simpleTextBoundsSingle');
+    //new p5(boundingBoxSingle, 'boundingBoxSingle');
     new p5(boundingBoxMulti, 'boundingBoxMulti');
 
     if (0) {
@@ -1242,14 +1344,18 @@
     }
 
   </script>
-  <div id='boundingBoxSingle'>
+  <!-- <div id='simpleTextBoundsSingle'>
+    <p class="caption">simpleTextBoundsSingle</p>
+
+  </div>
+ <div id='boundingBoxSingle'>
     <p class="caption">boundingBoxSingle</p>
-  </div>
+  </div> -->
 
-  <div id='boundingBoxMulti'>
+   <!-- <div id='boundingBoxMulti'>
     <p class="caption">boundingBoxMulti</p>
-  </div>
-
+  </div> -->
+<!-- 
   <div id='textSketch'>
     <p class="caption">textAttributes</p>
     <img src="img/textSketch.p5.png" width="240" height="160"></img>
@@ -1331,9 +1437,9 @@
     <p class="caption">textAlpha</p>
     <img src="img/textOverlapSketch.p5.png" width="240" height="160" class="gray"></img>
     <img src="img/textOverlapSketch.png" width="240" height="160" class="gray"></img>
-  </div>
+  </div>-->
 
-  <!-- animations -->
+  <!-- animations
 
   <div id='textFlySketch'>
   </div>
@@ -1348,7 +1454,7 @@
   <div id='textAvoidSketch'>
   </div>
   <div id='textBendSketch'>
-  </div>
+  </div> -->
 
 </body>
 
