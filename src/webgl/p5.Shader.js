@@ -942,12 +942,10 @@ function shader(p5, fn){
       const modelViewProjectionMatrix = modelViewMatrix.copy();
       modelViewProjectionMatrix.mult(projectionMatrix);
 
-      if (this.isStrokeShader()) {
-        this.setUniform(
-          'uPerspective',
-          this._renderer.states.curCamera.useLinePerspective ? 1 : 0
-        );
-      }
+      this.setUniform(
+        'uPerspective',
+        this._renderer.states.curCamera.useLinePerspective ? 1 : 0
+      );
       this.setUniform('uViewMatrix', viewMatrix.mat4);
       this.setUniform('uProjectionMatrix', projectionMatrix.mat4);
       this.setUniform('uModelMatrix', modelMatrix.mat4);
@@ -1325,57 +1323,6 @@ function shader(p5, fn){
         //@todo complete all types
       }
       return this;
-    }
-
-    /* NONE OF THIS IS FAST OR EFFICIENT BUT BEAR WITH ME
-     *
-     * these shader "type" query methods are used by various
-     * facilities of the renderer to determine if changing
-     * the shader type for the required action (for example,
-     * do we need to load the default lighting shader if the
-     * current shader cannot handle lighting?)
-     *
-     **/
-
-    isLightShader() {
-      return [
-        this.attributes.aNormal,
-        this.uniforms.uUseLighting,
-        this.uniforms.uAmbientLightCount,
-        this.uniforms.uDirectionalLightCount,
-        this.uniforms.uPointLightCount,
-        this.uniforms.uAmbientColor,
-        this.uniforms.uDirectionalDiffuseColors,
-        this.uniforms.uDirectionalSpecularColors,
-        this.uniforms.uPointLightLocation,
-        this.uniforms.uPointLightDiffuseColors,
-        this.uniforms.uPointLightSpecularColors,
-        this.uniforms.uLightingDirection,
-        this.uniforms.uSpecular
-      ].some(x => x !== undefined);
-    }
-
-    isNormalShader() {
-      return this.attributes.aNormal !== undefined;
-    }
-
-    isTextureShader() {
-      return this.samplers.length > 0;
-    }
-
-    isColorShader() {
-      return (
-        this.attributes.aVertexColor !== undefined ||
-        this.uniforms.uMaterialColor !== undefined
-      );
-    }
-
-    isTexLightShader() {
-      return this.isLightShader() && this.isTextureShader();
-    }
-
-    isStrokeShader() {
-      return this.uniforms.uStrokeWeight !== undefined;
     }
 
     /**
