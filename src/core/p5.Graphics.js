@@ -581,7 +581,7 @@ class Graphics {
    * </div>
    */
   createFramebuffer(options) {
-    return new p5.Framebuffer(this, options);
+    return new p5.Framebuffer(this._renderer, options);
   }
 
   _assert3d(name) {

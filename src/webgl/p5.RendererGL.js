@@ -696,9 +696,10 @@ class RendererGL extends Renderer {
    * @alt
    * black canvas with purple cube spinning
    */
-  fill(v1, v2, v3, a) {
+  fill(...args) {
     //see material.js for more info on color blending in webgl
-    const color = fn.color.apply(this._pInst, arguments);
+    // const color = fn.color.apply(this._pInst, arguments);
+    const color = this._pInst.color(...args);
     this.states.curFillColor = color._array;
     this.states.drawMode = constants.FILL;
     this.states._useNormalMaterial = false;
@@ -734,8 +735,9 @@ class RendererGL extends Renderer {
    * @alt
    * black canvas with purple cube with pink outline spinning
    */
-  stroke(r, g, b, a) {
-    const color = fn.color.apply(this._pInst, arguments);
+  stroke(...args) {
+    // const color = fn.color.apply(this._pInst, arguments);
+    const color = this._pInst.color(...args);
     this.states.curStrokeColor = color._array;
   }
 
@@ -748,13 +750,15 @@ class RendererGL extends Renderer {
   }
   getFilterLayer() {
     if (!this.filterLayer) {
-      this.filterLayer = this._pInst.createFramebuffer();
+      // this.filterLayer = this._pInst.createFramebuffer();
+      this.filterLayer = new Framebuffer(this);
     }
     return this.filterLayer;
   }
   getFilterLayerTemp() {
     if (!this.filterLayerTemp) {
-      this.filterLayerTemp = this._pInst.createFramebuffer();
+      // this.filterLayerTemp = this._pInst.createFramebuffer();
+      this.filterLayerTemp = new Framebuffer(this);
     }
     return this.filterLayerTemp;
   }
@@ -1136,7 +1140,13 @@ class RendererGL extends Renderer {
    */
   _getTempFramebuffer() {
     if (!this._tempFramebuffer) {
-      this._tempFramebuffer = this._pInst.createFramebuffer({
+      // this._tempFramebuffer = this._pInst.createFramebuffer({
+      //   format: constants.UNSIGNED_BYTE,
+      //   useDepth: this._pInst._glAttributes.depth,
+      //   depthFormat: constants.UNSIGNED_INT,
+      //   antialias: this._pInst._glAttributes.antialias
+      // });
+      this._tempFramebuffer = new Framebuffer(this, {
         format: constants.UNSIGNED_BYTE,
         useDepth: this._pInst._glAttributes.depth,
         depthFormat: constants.UNSIGNED_INT,
@@ -1782,9 +1792,12 @@ class RendererGL extends Renderer {
     let smallWidth = 200;
     let width = smallWidth;
     let height = Math.floor(smallWidth * (input.height / input.width));
-    newFramebuffer = this._pInst.createFramebuffer({
+    // newFramebuffer = this._pInst.createFramebuffer({
+    //   width, height, density: 1
+    // });
+    newFramebuffer = new Framebuffer(this, {
       width, height, density: 1
-    });
+    })
     // create framebuffer is like making a new sketch, all functions on main
     // sketch it would be available on framebuffer
     if (!this.states.diffusedShader) {
@@ -1824,7 +1837,10 @@ class RendererGL extends Renderer {
     const size = 512;
     let tex;
     const levels = [];
-    const framebuffer = this._pInst.createFramebuffer({
+    // const framebuffer = this._pInst.createFramebuffer({
+    //   width: size, height: size, density: 1
+    // });
+    const framebuffer = new Framebuffer(this, {
       width: size, height: size, density: 1
     });
     let count = Math.log(size) / Math.log(2);
@@ -1871,7 +1887,7 @@ class RendererGL extends Renderer {
   }
 
   createFramebuffer(options) {
-    return new p5.Framebuffer(this, options);
+    return new Framebuffer(this, options);
   }
 
   _setStrokeUniforms(baseStrokeShader) {

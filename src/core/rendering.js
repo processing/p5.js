@@ -534,7 +534,7 @@ function rendering(p5, fn){
    * </div>
    */
   p5.prototype.createFramebuffer = function (options) {
-    return new Framebuffer(this, options);
+    return new Framebuffer(this._renderer, options);
   };
 
   /**
