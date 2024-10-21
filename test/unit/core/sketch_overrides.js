@@ -3,10 +3,9 @@ import sketchVerifier from '../../../src/core/friendly_errors/sketch_verifier.js
 suite('Sketch Verifier', function () {
   const mockP5 = {
     _validateParameters: vi.fn(),
-    Render: function () {
-      return 'mock render';
-    },
+    Renderer: function () { },
   };
+  mockP5.Renderer.prototype.rect = vi.fn();
   const mockP5Prototype = {};
 
   beforeAll(function () {
@@ -184,34 +183,53 @@ suite('Sketch Verifier', function () {
   });
 
   suite('checkForConstsAndFuncs()', function () {
+    // Set up for this suite of tests
+    let consoleSpy;
+
+    beforeEach(function () {
+      consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => { });
+    });
+
+    afterEach(function () {
+      consoleSpy.mockRestore();
+    });
+
     test('Detects conflict with p5.js constant', function () {
       const userDefinitions = {
         variables: [{ name: 'PI', line: 1 }],
         functions: []
       };
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => { });
-
       const result = mockP5Prototype.checkForConstsAndFuncs(userDefinitions);
 
       expect(result).toBe(true);
       expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Constant "PI" on line 1 is being redeclared and conflicts with a p5.js constant'));
-
-      consoleSpy.mockRestore();
     });
 
     test('Detects conflict with p5.js global function', function () {
       const userDefinitions = {
         variables: [],
-        functions: [{ name: 'setup', line: 2 }]
+        functions: [{ name: 'rect', line: 2 }]
       };
-      //const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => { });
-
       const result = mockP5Prototype.checkForConstsAndFuncs(userDefinitions);
 
       expect(result).toBe(true);
-      //expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Function "setup" on line 2 is being redeclared and conflicts with a p5.js function'));
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Function "rect" on line 2 is being redeclared and conflicts with a p5.js function'));
+    });
 
-      //consoleSpy.mockRestore();
+    test('allows redefinition of whitelisted functions', function () {
+      const userDefinitions = {
+        variables: [],
+        functions: [
+          { name: 'setup', line: 1 },
+          { name: 'draw', line: 2 },
+          { name: 'preload', line: 3 }
+        ]
+      };
+
+      const result = mockP5Prototype.checkForConstsAndFuncs(userDefinitions);
+
+      expect(result).toBe(false);
+      expect(consoleSpy).not.toHaveBeenCalled();
     });
 
     test('Returns false when no conflicts are found', function () {

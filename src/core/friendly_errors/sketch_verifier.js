@@ -47,7 +47,6 @@ function sketchVerifier(p5, fn) {
   const p5Constructors = {};
 
   fn.loadP5Constructors = function () {
-    console.log("loading...");
     // Make a list of all p5 classes to be used for argument validation
     // This must be done only when everything has loaded otherwise we get
     // an empty array
@@ -58,7 +57,6 @@ function sketchVerifier(p5, fn) {
         p5Constructors[key] = p5[key];
       }
     }
-    console.log('p5Constructors:', p5Constructors);
   }
 
   /**
@@ -188,18 +186,22 @@ function sketchVerifier(p5, fn) {
       ...userDefinitions.variables,
       ...userDefinitions.functions
     ];
-    console.log(allDefinitions);
 
+    // Helper function that generates a friendly error message that contains
+    // the type of redefinition (constant or function), the name of the
+    // redefinition, the line number in user's code, and a link to its
+    // reference on the p5.js website.
     function generateFriendlyError(errorType, name, line) {
       const url = `https://p5js.org/reference/#/p5/${name}`;
       const message = `${errorType} "${name}" on line ${line} is being redeclared and conflicts with a p5.js ${errorType.toLowerCase()}. JavaScript does not declaring a ${errorType.toLowerCase()} more than once. p5.js reference: ${url}.`;
       return message;
     }
 
+    // Helper function that checks if a user definition has already been defined
+    // in the p5.js library, either as a constant or as a function.
     function checkForRedefinition(name, libValue, line, type) {
-      console.log('name:', name, 'libValue:', libValue, 'line:', line, 'type:', type);
       try {
-        const userValue = eval(name);
+        const userValue = eval("name");
         if (libValue !== userValue) {
           let message = generateFriendlyError(type, name, line);
           console.log(message);
@@ -212,6 +214,7 @@ function sketchVerifier(p5, fn) {
       return false;
     }
 
+    // Checks for constant redefinitions.
     for (let { name, line } of allDefinitions) {
       const libDefinition = constants[name];
       if (libDefinition !== undefined) {
