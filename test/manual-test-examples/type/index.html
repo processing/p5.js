@@ -56,7 +56,7 @@
       }
 
       function drawP5(s, x, y, halign, valign) {
-        p.textAlign(halign,valign);
+        p.textAlign(halign, valign);
         let m = p.drawingContext.measureText(s);
         p.stroke(0) && p.line(0, y, p.width, y) && p.line(x, 0, x, p.height);
         p.fill(0) && p.noStroke() && p.text(s, x, y);
@@ -85,7 +85,7 @@
       }
 
       p.setup = function () {
-        p.createCanvas(1200, 1200);
+        p.createCanvas(1200, 1050);
         p.textSize(64);
         let x = 150, y = 0;
         dt('.ooo', x, y += 80, p.LEFT, p.TOP);
@@ -142,11 +142,14 @@
         dt(',doi', x, y += 80, p.RIGHT, p.BOTTOM);
         dt('.dog', x, y += 80, p.RIGHT, p.BOTTOM);
         dt('-oog', x, y += 80, p.RIGHT, p.BOTTOM);
+
+        p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
       };
+
     };
 
     let boundingBoxSingle = function (p) {
-      let x, y, s;
+      let x, y, s, showBB = 1;
 
       p.setup = function () {
         p.createCanvas(240 * 5, 200);
@@ -161,20 +164,21 @@
         p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y);
         //p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
         let bb = Object.values(p._renderer._textBoundsSingle(s, x, y));
-        p.noFill() && p.stroke(0) && p.rect(...bb);
-        //p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...bb);
+        p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
 
         //2
         x += 580, s = 'CENTER BASELINE is funky.';
         p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y);
-        p.noFill() && p.stroke(0) && p.rect(...Object.values(p._renderer._textBoundsSingle(s, x, y)));
-        //p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p._renderer._textBoundsSingle(s, x, y)));
+        p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
 
         //3
         x += 600, s = 'RIGHT BASELINE is funky.';
         p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y);
-        p.noFill() && p.stroke(0) && p.rect(...Object.values(p._renderer._textBoundsSingle(s, x, y)));
-        //p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p._renderer._textBoundsSingle(s, x, y)));
+        p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+
 
         /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
         y += 50;
@@ -194,8 +198,6 @@
         x += 600, s = 'RIGHT BOTTOM is funky.';
         p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BOTTOM) && p.text(s, x, y);
         p.noFill() && p.stroke(0) && p.rect(...Object.values(p._renderer._textBoundsSingle(s, x, y)));
-
-
 
         //////////////////////////// CENTER (L,C,R) /////////////////////////////////
         y += 30;
@@ -260,7 +262,7 @@
         p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y, w, h);
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
 
- 
+
         //3
         x += 330, s = 'RIGHT BASELINE ' + suf;
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
@@ -268,7 +270,7 @@
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
 
 
-  
+
         /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
         y += 120;
 
@@ -278,7 +280,7 @@
         p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BOTTOM) && p.text(s, x, y, w, h);
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
         //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
-  
+
         // 5
         x += 330, s = 'CENTER BOTTOM ' + suf;
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
@@ -290,7 +292,7 @@
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
         p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BOTTOM) && p.text(s, x, y, w, h);
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
-      
+
         //////////////////////////// CENTER (L,C,R) /////////////////////////////////
         y += 120;
 
@@ -308,7 +310,7 @@
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
         p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y, w, h);
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
-  
+
         ///////////////////////////// TOP (L,C,R) ///////////////////////////////
         y += 120;
 
@@ -327,18 +329,21 @@
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
         p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y, w, h);
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
-        
+
         p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
       }
     };
 
     let textSketch = function (p) {
+
       p.setup = function () {
+        console.log(p._renderer);
         p.createCanvas(240, 160);
         p.background(204);
         p.textSize(19.5);
         p.fill(255);
         p.text('Default Text', 10, 30);
+
         p.noStroke();
         p.fill(57, 112, 155);
         p.text('Black No Stroke Text', 10, 60);
@@ -1306,15 +1311,18 @@
 
 
 
-    //new p5(simpleTextBoundsSingle, 'simpleTextBoundsSingle');
-    //new p5(boundingBoxSingle, 'boundingBoxSingle');
-    new p5(boundingBoxMulti, 'boundingBoxMulti');
+
 
     if (0) {
+      //new p5(boundingBoxSingle, 'boundingBoxSingle');
+      //new p5(boundingBoxMulti, 'boundingBoxMulti');
+    }
+    else {
 
+      new p5(textSketch, 'textSketch');
       new p5(boundingBoxSingle, 'boundingBoxSingle');
       new p5(boundingBoxMulti, 'boundingBoxMulti');
-      new p5(textSketch, 'textSketch');
+      new p5(simpleTextBoundsSingle, 'simpleTextBoundsSingle');
       new p5(textVerticalAlign, 'textVerticalAlign');
       new p5(multilineAlignWord, 'multilineAlignWord');
       new p5(multilineAlignChar, 'multilineAlignChar');
@@ -1333,6 +1341,7 @@
       new p5(typographyLetterSketch, 'typographyLetterSketch');
       new p5(textOverlapSketch, 'textOverlapSketch');
     }
+
     if (DISPLAY_ANIMATIONS) {
       new p5(textFlySketch, 'textFlySketch');
       new p5(textFlickerSketch, 'textFlickerSketch');
@@ -1344,19 +1353,18 @@
     }
 
   </script>
-  <!-- <div id='simpleTextBoundsSingle'>
-    <p class="caption">simpleTextBoundsSingle</p>
 
-  </div>
- <div id='boundingBoxSingle'>
+  <!-- <div id='boundingBoxSingle'>
     <p class="caption">boundingBoxSingle</p>
-  </div> -->
-
-   <!-- <div id='boundingBoxMulti'>
+  </div>
+  <div id='boundingBoxMulti'>
     <p class="caption">boundingBoxMulti</p>
+  </div>
+  <div id='simpleTextBoundsSingle'>
+    <p class="caption">simpleTextBoundsSingle</p>
   </div> -->
-<!-- 
   <div id='textSketch'>
+
     <p class="caption">textAttributes</p>
     <img src="img/textSketch.p5.png" width="240" height="160"></img>
     <img src="img/textSketch.png" width="240" height="160"></img>
@@ -1437,7 +1445,7 @@
     <p class="caption">textAlpha</p>
     <img src="img/textOverlapSketch.p5.png" width="240" height="160" class="gray"></img>
     <img src="img/textOverlapSketch.png" width="240" height="160" class="gray"></img>
-  </div>-->
+  </div>
 
   <!-- animations
 
