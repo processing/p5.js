@@ -168,7 +168,7 @@ let perlin; // will be initialized lazily by noise() or noiseSeed()
  *   let noiseScale = 0.002;
  *
  *   // Iterate from left to right.
- *   for (let x = 0; x < 100; x += 1) {
+ *   for (let x = 0; x < width; x += 1) {
  *     // Scale the input coordinates.
  *     let nx = noiseScale * x;
  *     let nt = noiseScale * frameCount;
@@ -195,9 +195,9 @@ let perlin; // will be initialized lazily by noise() or noiseSeed()
  *   let noiseScale = 0.01;
  *
  *   // Iterate from top to bottom.
- *   for (let y = 0; y < 100; y += 1) {
+ *   for (let y = 0; y < height; y += 1) {
  *     // Iterate from left to right.
- *     for (let x = 0; x < 100; x += 1) {
+ *     for (let x = 0; x < width; x += 1) {
  *       // Scale the input coordinates.
  *       let nx = noiseScale * x;
  *       let ny = noiseScale * y;
@@ -230,7 +230,7 @@ let perlin; // will be initialized lazily by noise() or noiseSeed()
  *   let noiseScale = 0.009;
  *
  *   // Iterate from top to bottom.
- *   for (let y = 0; y < 100; y += 1) {
+ *   for (let y = 0; y < height; y += 1) {
  *     // Iterate from left to right.
  *     for (let x = 0; x < width; x += 1) {
  *       // Scale the input coordinates.
@@ -361,9 +361,9 @@ p5.prototype.noise = function(x, y = 0, z = 0) {
  *   let noiseScale = 0.02;
  *
  *   // Iterate from top to bottom.
- *   for (let y = 0; y < 100; y += 1) {
+ *   for (let y = 0; y < height; y += 1) {
  *     // Iterate from left to right.
- *     for (let x = 0; x < 50; x += 1) {
+ *     for (let x = 0; x < width / 2; x += 1) {
  *       // Scale the input coordinates.
  *       let nx = noiseScale * x;
  *       let ny = noiseScale * y;
