@@ -18,6 +18,21 @@
 
 import p5 from '../core/main';
 
+function media(p5, fn){
+
+/**
+ * Helpers for create methods.
+ */
+function addElement(elt, pInst, media) {
+  const node = pInst._userNode ? pInst._userNode : document.body;
+  node.appendChild(elt);
+  const c = media
+    ? new p5.MediaElement(elt, pInst)
+    : new p5.Element(elt, pInst);
+  pInst._elements.push(c);
+  return c;
+}
+
 /** VIDEO STUFF **/
 
 // Helps perform similar tasks for media element methods.
@@ -1859,4 +1874,10 @@ p5.MediaElement = class MediaElement extends p5.Element {
  * </div>
  */
 
-export default p5;
+}
+
+export default media;
+
+if(typeof p5 !== 'undefined'){
+  media(p5, p5.prototype);
+}

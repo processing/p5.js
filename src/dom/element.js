@@ -11,12 +11,14 @@
  * for more info on how to use this library.</a>
  *
  * @module DOM
- * @submodule DOM
+ * @submodule Element
  * @for p5
  * @requires p5
  */
 
 import p5 from '../core/main';
+
+function element(p5, fn){
 
 // =============================================================================
 //                         p5.Element additions
@@ -1637,5 +1639,10 @@ class Cue {
     this.val = val;
   }
 }
+}
 
-export default p5;
+export default element;
+
+if(typeof p5 !== 'undefined'){
+  element(p5, p5.prototype);
+}

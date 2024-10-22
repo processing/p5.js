@@ -40,7 +40,8 @@ import data from './data';
 data(p5);
 
 // DOM
-import './dom/dom';
+import DOM from './dom';
+DOM(p5);
 
 // events
 import events from './events';
@@ -76,5 +77,6 @@ import './webgl/p5.RendererGL.Retained';
 import './webgl/p5.Texture';
 
 import './core/init';
+import dom from './dom/dom';
 
 export default p5;

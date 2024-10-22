@@ -18,6 +18,7 @@
 
 import p5 from '../core/main';
 
+function dom(p5, fn){
 /**
  * Searches the page for the first element that matches the given
  * <a href="https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/CSS_basics#different_types_of_selectors" target="_blank">CSS selector string</a>.
@@ -1971,5 +1972,9 @@ p5.prototype.createFileInput = function (callback, multiple = false) {
   fileInput.addEventListener('change', handleFileSelect, false);
   return addElement(fileInput, this);
 };
+}
+export default dom;
 
-export default p5;
+if(typeof p5 !== 'undefined'){
+  dom(p5, p5.prototype);
+}

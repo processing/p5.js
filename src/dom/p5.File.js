@@ -11,12 +11,16 @@
  * for more info on how to use this library.</a>
  *
  * @module DOM
- * @submodule DOM
+ * @submodule File
  * @for p5
  * @requires p5
  */
 
-import p5 from '../core/main';
+//import p5 from '../core/main';
+
+function file(p5, fn){
+
+
 
 /**
  * A class to describe a file.
@@ -387,5 +391,6 @@ p5.File = class File {
  * </code>
  * </div>
  */
+}
 
-export default p5;
+export default file;
