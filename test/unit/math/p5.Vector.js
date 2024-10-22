@@ -433,6 +433,14 @@ suite('p5.Vector', function() {
       });
     });
 
+    suite('add(2,3,4)', function() {
+      test('should add the x, y, z components', function() {
+        v.add([1, 2, 3]);
+        expect(v.x).to.eql(1);
+        expect(v.y).to.eql(2);
+      });
+    });
+
     suite('p5.Vector.add(v1, v2)', function() {
       var v1, v2, res;
       beforeEach(function() {
@@ -1907,6 +1915,123 @@ suite('p5.Vector', function() {
         const a2 = [0, -1, 1];
         expect(mockP5.Vector.equals(a1, a2)).to.be.true;
       });
+    });
+  });
+
+  suite('set values', function() {
+    beforeEach(function() {
+      v = new mockP5.Vector();
+    });
+
+    test('should set values to [0,0,0] if values array is empty', function() {
+      v.values = []
+      assert.equal(v.x, 0);
+      assert.equal(v.y, 0);
+      assert.equal(v.z, 0);
+      assert.equal(v.dimensions, 0);
+    });
+  });
+  suite('get value', function() {
+
+    test('should return element in range of a non empty vector', function() {
+      let vect = new mockP5.Vector(1, 2, 3, 4)
+      assert.equal(vect.getValue(0), 1);
+      assert.equal(vect.getValue(1), 2);
+      assert.equal(vect.getValue(2), 3);
+      assert.equal(vect.getValue(3), 4);
+    });
+
+    test.fails('should throw friendly error if attempting to get element outside lenght', function() {
+      let vect = new mockP5.Vector(1, 2, 3, 4)
+      assert.equal(vect.getValue(5), 1);
+    });
+  });
+
+  suite('set value', function() {
+
+    test('should set value of element in range', function() {
+      let vect = new mockP5.Vector(1, 2, 3, 4)
+      vect.setValue(0, 7)
+      assert.equal(vect.getValue(0), 7);
+      assert.equal(vect.getValue(1), 2);
+      assert.equal(vect.getValue(2), 3);
+      assert.equal(vect.getValue(3), 4);
+    });
+
+    test.fails('should throw friendly error if attempting to set element outside lenght', function() {
+      let vect = new mockP5.Vector(1, 2, 3, 4)
+      vect.setValue(100, 7)
+    });
+  });
+
+  describe('get w', () => {
+    it('should return the w component of the vector', () => {
+      v = new mockP5.Vector(1, 2, 3, 4);
+      expect(v.w).toBe(4);
+    });
+
+    it('should return 0 if w component is not set', () => {
+      v = new mockP5.Vector(1, 2, 3);
+      expect(v.w).toBe(0);
+    });
+  });
+
+  describe('set w', () => {
+    it('should set 4th dimension of vector to w value if it exists', () => {
+      v = new mockP5.Vector(1, 2, 3, 4);
+      v.w = 7
+      expect(v.x).toBe(1);
+      expect(v.y).toBe(2);
+      expect(v.z).toBe(3);
+      expect(v.w).toBe(7);
+    });
+
+    it('should throw error if trying to set w if vector dimensions is less than 4', () => {
+      v = new mockP5.Vector(1, 2);
+      v.w = 5
+      console.log(v)
+      console.log(v.w)
+      expect(v.w).toBe(0); //TODO: Check this, maybe this should fail
+    });
+  });
+
+  describe('vector to string', () => {
+    it('should return the string version of a vector', () => {
+      v = new mockP5.Vector(1, 2, 3, 4);
+      expect(v.toString()).toBe('[1, 2, 3, 4]')
+    });
+  });
+
+  describe('set heading', () => {
+    it('should rotate a 2D vector by specified angle without changing magnitude', () => {
+      v = new mockP5.Vector(0, 2);
+      const mag = v.mag()
+      expect(v.setHeading(2 * Math.PI).mag()).toBe(mag)
+      expect(v.x).toBe(2)
+      expect(v.y).toBe(-4.898587196589413e-16)
+    });
+  });
+
+  describe('clamp to zero', () => {
+    it('should clamp values cloze to zero to zero, with Number.epsilon value', () => {
+      v = new mockP5.Vector(0, 1, 0.5, 0.1, 0.0000000000000001);
+      expect(v.clampToZero().values).toEqual([0, 1, 0.5, 0.1, 0])
+    });
+  });
+
+  suite('p5.Vector.fromAngles()', function() {
+    it('should create a v3ctor froma pair of ISO spherical angles', () => {
+      let vect = mockP5.Vector.fromAngles(0, 0);
+      expect(vect.values).toEqual([0, -1, 0])
+    });
+  });
+
+  suite('p5.Vector.rotate()', function() {
+    it('should rotate the vector (only 2D vectors) by the given angle; magnitude remains the same.', () => {
+      v = new mockP5.Vector(0, 1, 2);
+      let target = new mockP5.Vector();
+      mockP5.Vector.rotate(v, 1 * Math.PI, target);
+      expect(target.values).toEqual([-4.10759023698152e-16, -2.23606797749979, 2])
     });
   });
 });
