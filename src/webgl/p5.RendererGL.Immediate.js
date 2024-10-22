@@ -155,7 +155,8 @@ RendererGL.prototype.vertex = function(x, y) {
     } else if (
       this.states.userFillShader !== undefined ||
       this.states.userStrokeShader !== undefined ||
-      this.states.userPointShader !== undefined
+      this.states.userPointShader !== undefined ||
+      this.states.userImageShader !== undefined
     ) {
     // Do nothing if user-defined shaders are present
     } else if (
@@ -587,7 +588,7 @@ RendererGL.prototype._drawImmediateFill = function(count = 1) {
   this._useVertexColor = (this.immediateMode.geometry.vertexColors.length > 0);
 
   let shader;
-  shader = this._getImmediateFillShader();
+  shader = this._getFillShader();
 
   this._setFillUniforms(shader);
 

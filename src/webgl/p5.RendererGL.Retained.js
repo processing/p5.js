@@ -141,8 +141,15 @@ RendererGL.prototype.drawBuffers = function(gId) {
     geometry.vertexCount > 0
   ) {
     this._useVertexColor = (geometry.model.vertexColors.length > 0);
-    const fillShader = this._getRetainedFillShader();
+
+    let fillShader;
+    if (this._drawingFilter && this.states.userFillShader) {
+      fillShader = this.states.userFillShader;
+    } else {
+      fillShader = this._getFillShader();
+    }
     this._setFillUniforms(fillShader);
+
     for (const buff of this.retainedMode.buffers.fill) {
       buff._prepareBuffer(geometry, fillShader);
     }

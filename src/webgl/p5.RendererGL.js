@@ -17,9 +17,6 @@ import { Element } from '../core/p5.Element';
 
 import lightingShader from './shaders/lighting.glsl';
 import webgl2CompatibilityShader from './shaders/webgl2Compatibility.glsl';
-import immediateVert from './shaders/immediate.vert';
-import vertexColorVert from './shaders/vertexColor.vert';
-import vertexColorFrag from './shaders/vertexColor.frag';
 import normalVert from './shaders/normal.vert';
 import normalFrag from './shaders/normal.frag';
 import basicFrag from './shaders/basic.frag';
@@ -71,9 +68,6 @@ defineStrokeJoinEnum('MITER', 1);
 defineStrokeJoinEnum('BEVEL', 2);
 
 const defaultShaders = {
-  immediateVert,
-  vertexColorVert,
-  vertexColorFrag,
   normalVert,
   normalFrag,
   basicFrag,
@@ -291,6 +285,9 @@ class RendererGL extends Renderer {
     this.executeZoom = false;
     this.executeRotateAndMove = false;
 
+    this._drawingFilter = false;
+    this._drawingImage = false;
+
     this.states.specularShader = undefined;
     this.sphereMapping = undefined;
     this.states.diffusedShader = undefined;
@@ -303,6 +300,7 @@ class RendererGL extends Renderer {
     this.states.userFillShader = undefined;
     this.states.userStrokeShader = undefined;
     this.states.userPointShader = undefined;
+    this.states.userImageShader = undefined;
 
     this._useUserVertexProperties = undefined;
 
@@ -889,8 +887,10 @@ class RendererGL extends Renderer {
     target.filterCamera._resize();
     this._pInst.setCamera(target.filterCamera);
     this._pInst.resetMatrix();
+    this._drawingFilter = true;
     this._pInst.image(fbo, -target.width / 2, -target.height / 2,
       target.width, target.height);
+    this._drawingFilter = false;
     this._pInst.clearDepth();
     this._pInst.pop();
     this._pInst.pop();
@@ -1389,10 +1389,10 @@ class RendererGL extends Renderer {
   _getImmediateStrokeShader() {
     // select the stroke shader to use
     const stroke = this.states.userStrokeShader;
-    if (!stroke || !stroke.isStrokeShader()) {
-      return this._getLineShader();
+    if (stroke) {
+      return stroke;
     }
-    return stroke;
+    return this._getLineShader();
   }
 
 
@@ -1416,53 +1416,36 @@ class RendererGL extends Renderer {
   }
 
   /*
-   * selects which fill shader should be used based on renderer state,
-   * for use with begin/endShape and immediate vertex mode.
+   * This method will handle both image shaders and
+   * fill shaders, returning the appropriate shader
+   * depending on the current context (image or shape).
    */
-  _getImmediateFillShader() {
-    const fill = this.states.userFillShader;
-    if (this.states._useNormalMaterial) {
-      if (!fill || !fill.isNormalShader()) {
-        return this._getNormalShader();
+  _getFillShader() {
+    // If drawing an image, check for user-defined image shader and filters
+    if (this._drawingImage) {
+      // Use user-defined image shader if available and no filter is applied
+      if (this.states.userImageShader && !this._drawingFilter) {
+        return this.states.userImageShader;
+      } else {
+        return this._getLightShader(); // Fallback to light shader
       }
     }
-    if (this.states.enableLighting) {
-      if (!fill || !fill.isLightShader()) {
-        return this._getLightShader();
-      }
-    } else if (this.states._tex) {
-      if (!fill || !fill.isTextureShader()) {
-        return this._getLightShader();
-      }
-    } else if (!fill /*|| !fill.isColorShader()*/) {
-      return this._getImmediateModeShader();
+    // If user has defined a fill shader, return that
+    else if (this.states.userFillShader) {
+      return this.states.userFillShader;
     }
-    return fill;
-  }
-
-  /*
-   * selects which fill shader should be used based on renderer state
-   * for retained mode.
-   */
-  _getRetainedFillShader() {
-    if (this.states._useNormalMaterial) {
+    // Use normal shader if normal material is active
+    else if (this.states._useNormalMaterial) {
       return this._getNormalShader();
     }
-
-    const fill = this.states.userFillShader;
-    if (this.states.enableLighting) {
-      if (!fill || !fill.isLightShader()) {
-        return this._getLightShader();
-      }
-    } else if (this.states._tex) {
-      if (!fill || !fill.isTextureShader()) {
-        return this._getLightShader();
-      }
-    } else if (!fill /* || !fill.isColorShader()*/) {
-      return this._getColorShader();
+    // Use light shader if lighting or textures are enabled
+    else if (this.states._enableLighting || this.states._tex) {
+      return this._getLightShader();
     }
-    return fill;
+    // Default to color shader if no other conditions are met
+    return this._getColorShader();
   }
+
 
   _getImmediatePointShader() {
     // select the point shader to use
@@ -1535,20 +1518,6 @@ class RendererGL extends Renderer {
     }
 
     return this._defaultLightShader;
-  }
-
-  _getImmediateModeShader() {
-    if (!this._defaultImmediateModeShader) {
-      this._defaultImmediateModeShader = new Shader(
-        this,
-        this._webGL2CompatibilityPrefix('vert', 'mediump') +
-        defaultShaders.immediateVert,
-        this._webGL2CompatibilityPrefix('frag', 'mediump') +
-        defaultShaders.vertexColorFrag
-      );
-    }
-
-    return this._defaultImmediateModeShader;
   }
 
   baseNormalShader() {
@@ -1729,6 +1698,7 @@ class RendererGL extends Renderer {
     }
     return this._defaultFontShader;
   }
+
 
   _webGL2CompatibilityPrefix(
     shaderType,

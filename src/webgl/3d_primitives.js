@@ -3562,12 +3562,14 @@ function primitives3D(p5, fn){
       v1 = (sy + sHeight) / img.height;
     }
 
+    this._drawingImage = true;
     this.beginShape();
     this.vertex(dx, dy, 0, u0, v0);
     this.vertex(dx + dWidth, dy, 0, u1, v0);
     this.vertex(dx + dWidth, dy + dHeight, 0, u1, v1);
     this.vertex(dx, dy + dHeight, 0, u0, v1);
     this.endShape(constants.CLOSE);
+    this._drawingImage = false;
 
     this.pop();
 
