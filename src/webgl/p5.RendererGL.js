@@ -885,7 +885,7 @@ class RendererGL extends Renderer {
     this._pInst.imageMode(constants.CORNER);
     this._pInst.blendMode(constants.BLEND);
     target.filterCamera._resize();
-    this._pInst.setCamera(target.filterCamera);
+    this.setCamera(target.filterCamera);
     this._pInst.resetMatrix();
     this._drawingFilter = true;
     this._pInst.image(fbo, -target.width / 2, -target.height / 2,

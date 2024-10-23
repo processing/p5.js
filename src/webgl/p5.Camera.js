@@ -3178,7 +3178,7 @@ function camera(p5, fn){
   fn.camera = function (...args) {
     this._assert3d('camera');
     p5._validateParameters('camera', args);
-    this._renderer.states.curCamera.camera(...args);
+    this._renderer.camera(...args);
     return this;
   };
 
@@ -3309,7 +3309,7 @@ function camera(p5, fn){
   fn.perspective = function (...args) {
     this._assert3d('perspective');
     p5._validateParameters('perspective', args);
-    this._renderer.states.curCamera.perspective(...args);
+    this._renderer.perspective(...args);
     return this;
   };
 
@@ -3436,13 +3436,7 @@ function camera(p5, fn){
     if (!(this._renderer instanceof RendererGL)) {
       throw new Error('linePerspective() must be called in WebGL mode.');
     }
-    if (enable !== undefined) {
-      // Set the line perspective if enable is provided
-      this._renderer.states.curCamera.useLinePerspective = enable;
-    } else {
-      // If no argument is provided, return the current value
-      return this._renderer.states.curCamera.useLinePerspective;
-    }
+    this._renderer.linePerspective(enable);
   };
 
 
@@ -3552,7 +3546,7 @@ function camera(p5, fn){
   fn.ortho = function (...args) {
     this._assert3d('ortho');
     p5._validateParameters('ortho', args);
-    this._renderer.states.curCamera.ortho(...args);
+    this._renderer.ortho(...args);
     return this;
   };
 
@@ -3664,13 +3658,9 @@ function camera(p5, fn){
   fn.frustum = function (...args) {
     this._assert3d('frustum');
     p5._validateParameters('frustum', args);
-    this._renderer.states.curCamera.frustum(...args);
+    this._renderer.frustum(...args);
     return this;
   };
-
-  ////////////////////////////////////////////////////////////////////////////////
-  // p5.Camera
-  ////////////////////////////////////////////////////////////////////////////////
 
   /**
    * Creates a new <a href="#/p5.Camera">p5.Camera</a> object and sets it
@@ -3746,12 +3736,72 @@ function camera(p5, fn){
   fn.createCamera = function () {
     this._assert3d('createCamera');
 
-    // compute default camera settings, then set a default camera
-    const _cam = new Camera(this._renderer);
-    _cam._computeCameraDefaultSettings();
-    _cam._setDefaultCamera();
+    return this._renderer.createCamera();
+  };
 
-    return _cam;
+  /**
+   * Sets the current (active) camera of a 3D sketch.
+   *
+   * `setCamera()` allows for switching between multiple cameras created with
+   * <a href="#/p5/createCamera">createCamera()</a>.
+   *
+   * Note: `setCamera()` can only be used in WebGL mode.
+   *
+   * @method setCamera
+   * @param  {p5.Camera} cam camera that should be made active.
+   * @for p5
+   *
+   * @example
+   * <div>
+   * <code>
+   * // Double-click to toggle between cameras.
+   *
+   * let cam1;
+   * let cam2;
+   * let usingCam1 = true;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create the first camera.
+   *   // Keep its default settings.
+   *   cam1 = createCamera();
+   *
+   *   // Create the second camera.
+   *   // Place it at the top-left.
+   *   // Point it at the origin.
+   *   cam2 = createCamera();
+   *   cam2.setPosition(400, -400, 800);
+   *   cam2.lookAt(0, 0, 0);
+   *
+   *   // Set the current camera to cam1.
+   *   setCamera(cam1);
+   *
+   *   describe('A white cube on a gray background. The camera toggles between frontal and aerial views when the user double-clicks.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Draw the box.
+   *   box();
+   * }
+   *
+   * // Toggle the current camera when the user double-clicks.
+   * function doubleClicked() {
+   *   if (usingCam1 === true) {
+   *     setCamera(cam2);
+   *     usingCam1 = false;
+   *   } else {
+   *     setCamera(cam1);
+   *     usingCam1 = true;
+   *   }
+   * }
+   * </code>
+   * </div>
+   */
+  fn.setCamera = function (cam) {
+    this._renderer.setCamera(cam);
   };
 
   /**
@@ -3873,74 +3923,48 @@ function camera(p5, fn){
    */
   p5.Camera = Camera;
 
-  /**
-   * Sets the current (active) camera of a 3D sketch.
-   *
-   * `setCamera()` allows for switching between multiple cameras created with
-   * <a href="#/p5/createCamera">createCamera()</a>.
-   *
-   * Note: `setCamera()` can only be used in WebGL mode.
-   *
-   * @method setCamera
-   * @param  {p5.Camera} cam camera that should be made active.
-   * @for p5
-   *
-   * @example
-   * <div>
-   * <code>
-   * // Double-click to toggle between cameras.
-   *
-   * let cam1;
-   * let cam2;
-   * let usingCam1 = true;
-   *
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create the first camera.
-   *   // Keep its default settings.
-   *   cam1 = createCamera();
-   *
-   *   // Create the second camera.
-   *   // Place it at the top-left.
-   *   // Point it at the origin.
-   *   cam2 = createCamera();
-   *   cam2.setPosition(400, -400, 800);
-   *   cam2.lookAt(0, 0, 0);
-   *
-   *   // Set the current camera to cam1.
-   *   setCamera(cam1);
-   *
-   *   describe('A white cube on a gray background. The camera toggles between frontal and aerial views when the user double-clicks.');
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Draw the box.
-   *   box();
-   * }
-   *
-   * // Toggle the current camera when the user double-clicks.
-   * function doubleClicked() {
-   *   if (usingCam1 === true) {
-   *     setCamera(cam2);
-   *     usingCam1 = false;
-   *   } else {
-   *     setCamera(cam1);
-   *     usingCam1 = true;
-   *   }
-   * }
-   * </code>
-   * </div>
-   */
-  fn.setCamera = function (cam) {
-    this._renderer.states.curCamera = cam;
+  RendererGL.prototype.camera = function(...args) {
+    this.states.curCamera.camera(...args);
+  }
+
+  RendererGL.prototype.perspective = function(...args) {
+    this.states.curCamera.perspective(...args);
+  }
+
+  RendererGL.prototype.linePerspective = function(enable) {
+    if (enable !== undefined) {
+      // Set the line perspective if enable is provided
+      this.states.curCamera.useLinePerspective = enable;
+    } else {
+      // If no argument is provided, return the current value
+      return this.states.curCamera.useLinePerspective;
+    }
+  }
+
+  RendererGL.prototype.ortho = function(...args) {
+    this.states.curCamera.ortho(...args);
+  }
+
+  RendererGL.prototype.frustum = function(...args) {
+    this.states.curCamera.frustum(...args);
+  }
+
+  RendererGL.prototype.createCamera = function() {
+    // compute default camera settings, then set a default camera
+    const _cam = new Camera(this);
+    _cam._computeCameraDefaultSettings();
+    _cam._setDefaultCamera();
+
+    return _cam;
+  }
+
+  RendererGL.prototype.setCamera = function(cam) {
+    this.states.curCamera = cam;
 
     // set the projection matrix (which is not normally updated each frame)
-    this._renderer.states.uPMatrix.set(cam.projMatrix);
-    this._renderer.states.uViewMatrix.set(cam.cameraMatrix);
-  };
+    this.states.uPMatrix.set(cam.projMatrix);
+    this.states.uViewMatrix.set(cam.cameraMatrix);
+  }
 }
 
 export default camera;
