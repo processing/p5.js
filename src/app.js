@@ -40,8 +40,8 @@ import data from './data';
 data(p5);
 
 // DOM
-import DOM from './dom';
-DOM(p5);
+import dom from './dom';
+dom(p5);
 
 // events
 import events from './events';
