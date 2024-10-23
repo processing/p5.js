@@ -977,35 +977,7 @@ function primitives3D(p5, fn){
     this._assert3d('plane');
     p5._validateParameters('plane', arguments);
 
-    const gId = `plane|${detailX}|${detailY}`;
-
-    if (!this._renderer.geometryInHash(gId)) {
-      const _plane = function() {
-        let u, v, p;
-        for (let i = 0; i <= this.detailY; i++) {
-          v = i / this.detailY;
-          for (let j = 0; j <= this.detailX; j++) {
-            u = j / this.detailX;
-            p = new Vector(u - 0.5, v - 0.5, 0);
-            this.vertices.push(p);
-            this.uvs.push(u, v);
-          }
-        }
-      };
-      const planeGeom = new Geometry(detailX, detailY, _plane);
-      planeGeom.computeFaces().computeNormals();
-      if (detailX <= 1 && detailY <= 1) {
-        planeGeom._makeTriangleEdges()._edgesToVertices();
-      } else if (this._renderer.states.doStroke) {
-        console.log(
-          'Cannot draw stroke on plane objects with more' +
-          ' than 1 detailX or 1 detailY'
-        );
-      }
-      this._renderer.createBuffers(gId, planeGeom);
-    }
-
-    this._renderer.drawBuffersScaled(gId, width, height, 1);
+    this._renderer.plane(width, height, detailX, detailY);
     return this;
   };
 
@@ -1141,88 +1113,8 @@ function primitives3D(p5, fn){
   fn.box = function(width, height, depth, detailX, detailY) {
     this._assert3d('box');
     p5._validateParameters('box', arguments);
-    if (typeof width === 'undefined') {
-      width = 50;
-    }
-    if (typeof height === 'undefined') {
-      height = width;
-    }
-    if (typeof depth === 'undefined') {
-      depth = height;
-    }
 
-    const perPixelLighting =
-      this._renderer.attributes && this._renderer.attributes.perPixelLighting;
-    if (typeof detailX === 'undefined') {
-      detailX = perPixelLighting ? 1 : 4;
-    }
-    if (typeof detailY === 'undefined') {
-      detailY = perPixelLighting ? 1 : 4;
-    }
-
-    const gId = `box|${detailX}|${detailY}`;
-    if (!this._renderer.geometryInHash(gId)) {
-      const _box = function() {
-        const cubeIndices = [
-          [0, 4, 2, 6], // -1, 0, 0],// -x
-          [1, 3, 5, 7], // +1, 0, 0],// +x
-          [0, 1, 4, 5], // 0, -1, 0],// -y
-          [2, 6, 3, 7], // 0, +1, 0],// +y
-          [0, 2, 1, 3], // 0, 0, -1],// -z
-          [4, 5, 6, 7] // 0, 0, +1] // +z
-        ];
-        //using custom edges
-        //to avoid diagonal stroke lines across face of box
-        this.edges = [
-          [0, 1],
-          [1, 3],
-          [3, 2],
-          [6, 7],
-          [8, 9],
-          [9, 11],
-          [14, 15],
-          [16, 17],
-          [17, 19],
-          [18, 19],
-          [20, 21],
-          [22, 23]
-        ];
-
-        cubeIndices.forEach((cubeIndex, i) => {
-          const v = i * 4;
-          for (let j = 0; j < 4; j++) {
-            const d = cubeIndex[j];
-            //inspired by lightgl:
-            //https://github.com/evanw/lightgl.js
-            //octants:https://en.wikipedia.org/wiki/Octant_(solid_geometry)
-            const octant = new Vector(
-              ((d & 1) * 2 - 1) / 2,
-              ((d & 2) - 1) / 2,
-              ((d & 4) / 2 - 1) / 2
-            );
-            this.vertices.push(octant);
-            this.uvs.push(j & 1, (j & 2) / 2);
-          }
-          this.faces.push([v, v + 1, v + 2]);
-          this.faces.push([v + 2, v + 1, v + 3]);
-        });
-      };
-      const boxGeom = new Geometry(detailX, detailY, _box);
-      boxGeom.computeNormals();
-      if (detailX <= 4 && detailY <= 4) {
-        boxGeom._edgesToVertices();
-      } else if (this._renderer.states.doStroke) {
-        console.log(
-          'Cannot draw stroke on box objects with more' +
-          ' than 4 detailX or 4 detailY'
-        );
-      }
-      //initialize our geometry buffer with
-      //the key val pair:
-      //geometry Id, Geom object
-      this._renderer.createBuffers(gId, boxGeom);
-    }
-    this._renderer.drawBuffersScaled(gId, width, height, depth);
+    this._renderer.box(width, height, depth, detailX, detailY);
 
     return this;
   };
@@ -1354,127 +1246,9 @@ function primitives3D(p5, fn){
     this._assert3d('sphere');
     p5._validateParameters('sphere', arguments);
 
-    this.ellipsoid(radius, radius, radius, detailX, detailY);
+    this._renderer.sphere(radius, detailX, detailY);
 
     return this;
-  };
-
-  /**
-   * @private
-   * Helper function for creating both cones and cylinders
-   * Will only generate well-defined geometry when bottomRadius, height > 0
-   * and topRadius >= 0
-   * If topRadius == 0, topCap should be false
-   */
-  const _truncatedCone = function(
-    bottomRadius,
-    topRadius,
-    height,
-    detailX,
-    detailY,
-    bottomCap,
-    topCap
-  ) {
-    bottomRadius = bottomRadius <= 0 ? 1 : bottomRadius;
-    topRadius = topRadius < 0 ? 0 : topRadius;
-    height = height <= 0 ? bottomRadius : height;
-    detailX = detailX < 3 ? 3 : detailX;
-    detailY = detailY < 1 ? 1 : detailY;
-    bottomCap = bottomCap === undefined ? true : bottomCap;
-    topCap = topCap === undefined ? topRadius !== 0 : topCap;
-    const start = bottomCap ? -2 : 0;
-    const end = detailY + (topCap ? 2 : 0);
-    //ensure constant slant for interior vertex normals
-    const slant = Math.atan2(bottomRadius - topRadius, height);
-    const sinSlant = Math.sin(slant);
-    const cosSlant = Math.cos(slant);
-    let yy, ii, jj;
-    for (yy = start; yy <= end; ++yy) {
-      let v = yy / detailY;
-      let y = height * v;
-      let ringRadius;
-      if (yy < 0) {
-        //for the bottomCap edge
-        y = 0;
-        v = 0;
-        ringRadius = bottomRadius;
-      } else if (yy > detailY) {
-        //for the topCap edge
-        y = height;
-        v = 1;
-        ringRadius = topRadius;
-      } else {
-        //for the middle
-        ringRadius = bottomRadius + (topRadius - bottomRadius) * v;
-      }
-      if (yy === -2 || yy === detailY + 2) {
-        //center of bottom or top caps
-        ringRadius = 0;
-      }
-
-      y -= height / 2; //shift coordiate origin to the center of object
-      for (ii = 0; ii < detailX; ++ii) {
-        const u = ii / (detailX - 1);
-        const ur = 2 * Math.PI * u;
-        const sur = Math.sin(ur);
-        const cur = Math.cos(ur);
-
-        //VERTICES
-        this.vertices.push(new Vector(sur * ringRadius, y, cur * ringRadius));
-
-        //VERTEX NORMALS
-        let vertexNormal;
-        if (yy < 0) {
-          vertexNormal = new Vector(0, -1, 0);
-        } else if (yy > detailY && topRadius) {
-          vertexNormal = new Vector(0, 1, 0);
-        } else {
-          vertexNormal = new Vector(sur * cosSlant, sinSlant, cur * cosSlant);
-        }
-        this.vertexNormals.push(vertexNormal);
-        //UVs
-        this.uvs.push(u, v);
-      }
-    }
-
-    let startIndex = 0;
-    if (bottomCap) {
-      for (jj = 0; jj < detailX; ++jj) {
-        const nextjj = (jj + 1) % detailX;
-        this.faces.push([
-          startIndex + jj,
-          startIndex + detailX + nextjj,
-          startIndex + detailX + jj
-        ]);
-      }
-      startIndex += detailX * 2;
-    }
-    for (yy = 0; yy < detailY; ++yy) {
-      for (ii = 0; ii < detailX; ++ii) {
-        const nextii = (ii + 1) % detailX;
-        this.faces.push([
-          startIndex + ii,
-          startIndex + nextii,
-          startIndex + detailX + nextii
-        ]);
-        this.faces.push([
-          startIndex + ii,
-          startIndex + detailX + nextii,
-          startIndex + detailX + ii
-        ]);
-      }
-      startIndex += detailX;
-    }
-    if (topCap) {
-      startIndex += detailX;
-      for (ii = 0; ii < detailX; ++ii) {
-        this.faces.push([
-          startIndex + ii,
-          startIndex + (ii + 1) % detailX,
-          startIndex + detailX
-        ]);
-      }
-    }
   };
 
   /**
@@ -1700,32 +1474,7 @@ function primitives3D(p5, fn){
     this._assert3d('cylinder');
     p5._validateParameters('cylinder', arguments);
 
-    const gId = `cylinder|${detailX}|${detailY}|${bottomCap}|${topCap}`;
-    if (!this._renderer.geometryInHash(gId)) {
-      const cylinderGeom = new p5.Geometry(detailX, detailY);
-      _truncatedCone.call(
-        cylinderGeom,
-        1,
-        1,
-        1,
-        detailX,
-        detailY,
-        bottomCap,
-        topCap
-      );
-      // normals are computed in call to _truncatedCone
-      if (detailX <= 24 && detailY <= 16) {
-        cylinderGeom._makeTriangleEdges()._edgesToVertices();
-      } else if (this._renderer.states.doStroke) {
-        console.log(
-          'Cannot draw stroke on cylinder objects with more' +
-          ' than 24 detailX or 16 detailY'
-        );
-      }
-      this._renderer.createBuffers(gId, cylinderGeom);
-    }
-
-    this._renderer.drawBuffersScaled(gId, radius, height, radius);
+    this._renderer.cylinder(radius, height, detailX, detailY, bottomCap, topCap);
 
     return this;
   };
@@ -1945,22 +1694,7 @@ function primitives3D(p5, fn){
     this._assert3d('cone');
     p5._validateParameters('cone', arguments);
 
-    const gId = `cone|${detailX}|${detailY}|${cap}`;
-    if (!this._renderer.geometryInHash(gId)) {
-      const coneGeom = new Geometry(detailX, detailY);
-      _truncatedCone.call(coneGeom, 1, 0, 1, detailX, detailY, cap, false);
-      if (detailX <= 24 && detailY <= 16) {
-        coneGeom._makeTriangleEdges()._edgesToVertices();
-      } else if (this._renderer.states.doStroke) {
-        console.log(
-          'Cannot draw stroke on cone objects with more' +
-          ' than 24 detailX or 16 detailY'
-        );
-      }
-      this._renderer.createBuffers(gId, coneGeom);
-    }
-
-    this._renderer.drawBuffersScaled(gId, radius, height, radius);
+    this._renderer.cone(radius, height, detailX, detailY, cap);
 
     return this;
   };
@@ -2143,42 +1877,7 @@ function primitives3D(p5, fn){
     this._assert3d('ellipsoid');
     p5._validateParameters('ellipsoid', arguments);
 
-    const gId = `ellipsoid|${detailX}|${detailY}`;
-
-    if (!this._renderer.geometryInHash(gId)) {
-      const _ellipsoid = function() {
-        for (let i = 0; i <= this.detailY; i++) {
-          const v = i / this.detailY;
-          const phi = Math.PI * v - Math.PI / 2;
-          const cosPhi = Math.cos(phi);
-          const sinPhi = Math.sin(phi);
-
-          for (let j = 0; j <= this.detailX; j++) {
-            const u = j / this.detailX;
-            const theta = 2 * Math.PI * u;
-            const cosTheta = Math.cos(theta);
-            const sinTheta = Math.sin(theta);
-            const p = new p5.Vector(cosPhi * sinTheta, sinPhi, cosPhi * cosTheta);
-            this.vertices.push(p);
-            this.vertexNormals.push(p);
-            this.uvs.push(u, v);
-          }
-        }
-      };
-      const ellipsoidGeom = new Geometry(detailX, detailY, _ellipsoid);
-      ellipsoidGeom.computeFaces();
-      if (detailX <= 24 && detailY <= 24) {
-        ellipsoidGeom._makeTriangleEdges()._edgesToVertices();
-      } else if (this._renderer.states.doStroke) {
-        console.log(
-          'Cannot draw stroke on ellipsoids with more' +
-          ' than 24 detailX or 24 detailY'
-        );
-      }
-      this._renderer.createBuffers(gId, ellipsoidGeom);
-    }
-
-    this._renderer.drawBuffersScaled(gId, radiusX, radiusY, radiusZ);
+    this._renderer.ellipsoid(radiusX, radiusY, radiusZ, detailX, detailY);
 
     return this;
   };
@@ -2336,77 +2035,15 @@ function primitives3D(p5, fn){
   fn.torus = function(radius, tubeRadius, detailX, detailY) {
     this._assert3d('torus');
     p5._validateParameters('torus', arguments);
-    if (typeof radius === 'undefined') {
-      radius = 50;
-    } else if (!radius) {
-      return; // nothing to draw
-    }
 
-    if (typeof tubeRadius === 'undefined') {
-      tubeRadius = 10;
-    } else if (!tubeRadius) {
-      return; // nothing to draw
-    }
-
-    if (typeof detailX === 'undefined') {
-      detailX = 24;
-    }
-    if (typeof detailY === 'undefined') {
-      detailY = 16;
-    }
-
-    const tubeRatio = (tubeRadius / radius).toPrecision(4);
-    const gId = `torus|${tubeRatio}|${detailX}|${detailY}`;
-
-    if (!this._renderer.geometryInHash(gId)) {
-      const _torus = function() {
-        for (let i = 0; i <= this.detailY; i++) {
-          const v = i / this.detailY;
-          const phi = 2 * Math.PI * v;
-          const cosPhi = Math.cos(phi);
-          const sinPhi = Math.sin(phi);
-          const r = 1 + tubeRatio * cosPhi;
-
-          for (let j = 0; j <= this.detailX; j++) {
-            const u = j / this.detailX;
-            const theta = 2 * Math.PI * u;
-            const cosTheta = Math.cos(theta);
-            const sinTheta = Math.sin(theta);
-
-            const p = new Vector(
-              r * cosTheta,
-              r * sinTheta,
-              tubeRatio * sinPhi
-            );
-
-            const n = new Vector(cosPhi * cosTheta, cosPhi * sinTheta, sinPhi);
-
-            this.vertices.push(p);
-            this.vertexNormals.push(n);
-            this.uvs.push(u, v);
-          }
-        }
-      };
-      const torusGeom = new Geometry(detailX, detailY, _torus);
-      torusGeom.computeFaces();
-      if (detailX <= 24 && detailY <= 16) {
-        torusGeom._makeTriangleEdges()._edgesToVertices();
-      } else if (this._renderer.states.doStroke) {
-        console.log(
-          'Cannot draw strokes on torus object with more' +
-          ' than 24 detailX or 16 detailY'
-        );
-      }
-      this._renderer.createBuffers(gId, torusGeom);
-    }
-    this._renderer.drawBuffersScaled(gId, radius, radius, radius);
+    this._renderer.torus(radius, tubeRadius, detailX, detailY);
 
     return this;
   };
 
   ///////////////////////
-  /// 2D primitives
-  /////////////////////////
+  ///  2D primitives  ///
+  ///////////////////////
   //
   // Note: Documentation is not generated on the p5.js website for functions on
   // the p5.RendererGL prototype.
@@ -3577,6 +3214,420 @@ function primitives3D(p5, fn){
       this.blendMode(constants.REMOVE);
     }
   };
+
+  ///////////////////////
+  ///  3D primitives  ///
+  ///////////////////////
+  /**
+   * @private
+   * Helper function for creating both cones and cylinders
+   * Will only generate well-defined geometry when bottomRadius, height > 0
+   * and topRadius >= 0
+   * If topRadius == 0, topCap should be false
+   */
+  const _truncatedCone = function(
+    bottomRadius,
+    topRadius,
+    height,
+    detailX,
+    detailY,
+    bottomCap,
+    topCap
+  ) {
+    bottomRadius = bottomRadius <= 0 ? 1 : bottomRadius;
+    topRadius = topRadius < 0 ? 0 : topRadius;
+    height = height <= 0 ? bottomRadius : height;
+    detailX = detailX < 3 ? 3 : detailX;
+    detailY = detailY < 1 ? 1 : detailY;
+    bottomCap = bottomCap === undefined ? true : bottomCap;
+    topCap = topCap === undefined ? topRadius !== 0 : topCap;
+    const start = bottomCap ? -2 : 0;
+    const end = detailY + (topCap ? 2 : 0);
+    //ensure constant slant for interior vertex normals
+    const slant = Math.atan2(bottomRadius - topRadius, height);
+    const sinSlant = Math.sin(slant);
+    const cosSlant = Math.cos(slant);
+    let yy, ii, jj;
+    for (yy = start; yy <= end; ++yy) {
+      let v = yy / detailY;
+      let y = height * v;
+      let ringRadius;
+      if (yy < 0) {
+        //for the bottomCap edge
+        y = 0;
+        v = 0;
+        ringRadius = bottomRadius;
+      } else if (yy > detailY) {
+        //for the topCap edge
+        y = height;
+        v = 1;
+        ringRadius = topRadius;
+      } else {
+        //for the middle
+        ringRadius = bottomRadius + (topRadius - bottomRadius) * v;
+      }
+      if (yy === -2 || yy === detailY + 2) {
+        //center of bottom or top caps
+        ringRadius = 0;
+      }
+
+      y -= height / 2; //shift coordiate origin to the center of object
+      for (ii = 0; ii < detailX; ++ii) {
+        const u = ii / (detailX - 1);
+        const ur = 2 * Math.PI * u;
+        const sur = Math.sin(ur);
+        const cur = Math.cos(ur);
+
+        //VERTICES
+        this.vertices.push(new Vector(sur * ringRadius, y, cur * ringRadius));
+
+        //VERTEX NORMALS
+        let vertexNormal;
+        if (yy < 0) {
+          vertexNormal = new Vector(0, -1, 0);
+        } else if (yy > detailY && topRadius) {
+          vertexNormal = new Vector(0, 1, 0);
+        } else {
+          vertexNormal = new Vector(sur * cosSlant, sinSlant, cur * cosSlant);
+        }
+        this.vertexNormals.push(vertexNormal);
+        //UVs
+        this.uvs.push(u, v);
+      }
+    }
+
+    let startIndex = 0;
+    if (bottomCap) {
+      for (jj = 0; jj < detailX; ++jj) {
+        const nextjj = (jj + 1) % detailX;
+        this.faces.push([
+          startIndex + jj,
+          startIndex + detailX + nextjj,
+          startIndex + detailX + jj
+        ]);
+      }
+      startIndex += detailX * 2;
+    }
+    for (yy = 0; yy < detailY; ++yy) {
+      for (ii = 0; ii < detailX; ++ii) {
+        const nextii = (ii + 1) % detailX;
+        this.faces.push([
+          startIndex + ii,
+          startIndex + nextii,
+          startIndex + detailX + nextii
+        ]);
+        this.faces.push([
+          startIndex + ii,
+          startIndex + detailX + nextii,
+          startIndex + detailX + ii
+        ]);
+      }
+      startIndex += detailX;
+    }
+    if (topCap) {
+      startIndex += detailX;
+      for (ii = 0; ii < detailX; ++ii) {
+        this.faces.push([
+          startIndex + ii,
+          startIndex + (ii + 1) % detailX,
+          startIndex + detailX
+        ]);
+      }
+    }
+  };
+
+  RendererGL.prototype.plane = function(
+    width = 50,
+    height = width,
+    detailX = 1,
+    detailY = 1
+  ) {
+    const gId = `plane|${detailX}|${detailY}`;
+
+    if (!this.geometryInHash(gId)) {
+      const _plane = function() {
+        let u, v, p;
+        for (let i = 0; i <= this.detailY; i++) {
+          v = i / this.detailY;
+          for (let j = 0; j <= this.detailX; j++) {
+            u = j / this.detailX;
+            p = new Vector(u - 0.5, v - 0.5, 0);
+            this.vertices.push(p);
+            this.uvs.push(u, v);
+          }
+        }
+      };
+      const planeGeom = new Geometry(detailX, detailY, _plane);
+      planeGeom.computeFaces().computeNormals();
+      if (detailX <= 1 && detailY <= 1) {
+        planeGeom._makeTriangleEdges()._edgesToVertices();
+      } else if (this.states.doStroke) {
+        console.log(
+          'Cannot draw stroke on plane objects with more' +
+          ' than 1 detailX or 1 detailY'
+        );
+      }
+      this.createBuffers(gId, planeGeom);
+    }
+
+    this.drawBuffersScaled(gId, width, height, 1);
+  }
+
+  RendererGL.prototype.box = function(
+    width = 50,
+    height = width,
+    depth = height,
+    detailX,
+    detailY
+  ){
+    const perPixelLighting =
+      this.attributes && this.attributes.perPixelLighting;
+    if (typeof detailX === 'undefined') {
+      detailX = perPixelLighting ? 1 : 4;
+    }
+    if (typeof detailY === 'undefined') {
+      detailY = perPixelLighting ? 1 : 4;
+    }
+
+    const gId = `box|${detailX}|${detailY}`;
+    if (!this.geometryInHash(gId)) {
+      const _box = function() {
+        const cubeIndices = [
+          [0, 4, 2, 6], // -1, 0, 0],// -x
+          [1, 3, 5, 7], // +1, 0, 0],// +x
+          [0, 1, 4, 5], // 0, -1, 0],// -y
+          [2, 6, 3, 7], // 0, +1, 0],// +y
+          [0, 2, 1, 3], // 0, 0, -1],// -z
+          [4, 5, 6, 7] // 0, 0, +1] // +z
+        ];
+        //using custom edges
+        //to avoid diagonal stroke lines across face of box
+        this.edges = [
+          [0, 1],
+          [1, 3],
+          [3, 2],
+          [6, 7],
+          [8, 9],
+          [9, 11],
+          [14, 15],
+          [16, 17],
+          [17, 19],
+          [18, 19],
+          [20, 21],
+          [22, 23]
+        ];
+
+        cubeIndices.forEach((cubeIndex, i) => {
+          const v = i * 4;
+          for (let j = 0; j < 4; j++) {
+            const d = cubeIndex[j];
+            //inspired by lightgl:
+            //https://github.com/evanw/lightgl.js
+            //octants:https://en.wikipedia.org/wiki/Octant_(solid_geometry)
+            const octant = new Vector(
+              ((d & 1) * 2 - 1) / 2,
+              ((d & 2) - 1) / 2,
+              ((d & 4) / 2 - 1) / 2
+            );
+            this.vertices.push(octant);
+            this.uvs.push(j & 1, (j & 2) / 2);
+          }
+          this.faces.push([v, v + 1, v + 2]);
+          this.faces.push([v + 2, v + 1, v + 3]);
+        });
+      };
+      const boxGeom = new Geometry(detailX, detailY, _box);
+      boxGeom.computeNormals();
+      if (detailX <= 4 && detailY <= 4) {
+        boxGeom._edgesToVertices();
+      } else if (this.states.doStroke) {
+        console.log(
+          'Cannot draw stroke on box objects with more' +
+          ' than 4 detailX or 4 detailY'
+        );
+      }
+      //initialize our geometry buffer with
+      //the key val pair:
+      //geometry Id, Geom object
+      this.createBuffers(gId, boxGeom);
+    }
+    this.drawBuffersScaled(gId, width, height, depth);
+  }
+
+  RendererGL.prototype.sphere = function(
+    radius = 50,
+    detailX = 24,
+    detailY = 16
+  ) {
+    this.ellipsoid(radius, radius, radius, detailX, detailY);
+  }
+
+  RendererGL.prototype.ellipsoid = function(
+    radiusX = 50,
+    radiusY = radiusX,
+    radiusZ = radiusX,
+    detailX = 24,
+    detailY = 16
+  ) {
+    const gId = `ellipsoid|${detailX}|${detailY}`;
+
+    if (!this.geometryInHash(gId)) {
+      const _ellipsoid = function() {
+        for (let i = 0; i <= this.detailY; i++) {
+          const v = i / this.detailY;
+          const phi = Math.PI * v - Math.PI / 2;
+          const cosPhi = Math.cos(phi);
+          const sinPhi = Math.sin(phi);
+
+          for (let j = 0; j <= this.detailX; j++) {
+            const u = j / this.detailX;
+            const theta = 2 * Math.PI * u;
+            const cosTheta = Math.cos(theta);
+            const sinTheta = Math.sin(theta);
+            const p = new p5.Vector(cosPhi * sinTheta, sinPhi, cosPhi * cosTheta);
+            this.vertices.push(p);
+            this.vertexNormals.push(p);
+            this.uvs.push(u, v);
+          }
+        }
+      };
+      const ellipsoidGeom = new Geometry(detailX, detailY, _ellipsoid);
+      ellipsoidGeom.computeFaces();
+      if (detailX <= 24 && detailY <= 24) {
+        ellipsoidGeom._makeTriangleEdges()._edgesToVertices();
+      } else if (this.states.doStroke) {
+        console.log(
+          'Cannot draw stroke on ellipsoids with more' +
+          ' than 24 detailX or 24 detailY'
+        );
+      }
+      this.createBuffers(gId, ellipsoidGeom);
+    }
+
+    this.drawBuffersScaled(gId, radiusX, radiusY, radiusZ);
+  }
+
+  RendererGL.prototype.cylinder = function(
+    radius = 50,
+    height = radius,
+    detailX = 24,
+    detailY = 1,
+    bottomCap = true,
+    topCap = true
+  ) {
+    const gId = `cylinder|${detailX}|${detailY}|${bottomCap}|${topCap}`;
+    if (!this.geometryInHash(gId)) {
+      const cylinderGeom = new p5.Geometry(detailX, detailY);
+      _truncatedCone.call(
+        cylinderGeom,
+        1,
+        1,
+        1,
+        detailX,
+        detailY,
+        bottomCap,
+        topCap
+      );
+      // normals are computed in call to _truncatedCone
+      if (detailX <= 24 && detailY <= 16) {
+        cylinderGeom._makeTriangleEdges()._edgesToVertices();
+      } else if (this.states.doStroke) {
+        console.log(
+          'Cannot draw stroke on cylinder objects with more' +
+          ' than 24 detailX or 16 detailY'
+        );
+      }
+      this.createBuffers(gId, cylinderGeom);
+    }
+
+    this.drawBuffersScaled(gId, radius, height, radius);
+  }
+
+  RendererGL.prototype.cone = function(
+    radius = 50,
+    height = radius,
+    detailX = 24,
+    detailY = 1,
+    cap = true
+  ) {
+    const gId = `cone|${detailX}|${detailY}|${cap}`;
+    if (!this.geometryInHash(gId)) {
+      const coneGeom = new Geometry(detailX, detailY);
+      _truncatedCone.call(coneGeom, 1, 0, 1, detailX, detailY, cap, false);
+      if (detailX <= 24 && detailY <= 16) {
+        coneGeom._makeTriangleEdges()._edgesToVertices();
+      } else if (this.states.doStroke) {
+        console.log(
+          'Cannot draw stroke on cone objects with more' +
+          ' than 24 detailX or 16 detailY'
+        );
+      }
+      this.createBuffers(gId, coneGeom);
+    }
+
+    this.drawBuffersScaled(gId, radius, height, radius);
+  }
+
+  RendererGL.prototype.torus = function(
+    radius = 50,
+    tubeRadius = 10,
+    detailX = 24,
+    detailY = 16
+  ) {
+    if (radius === 0) {
+      return; // nothing to draw
+    }
+
+    if (tubeRadius === 0) {
+      return; // nothing to draw
+    }
+
+    const tubeRatio = (tubeRadius / radius).toPrecision(4);
+    const gId = `torus|${tubeRatio}|${detailX}|${detailY}`;
+
+    if (!this.geometryInHash(gId)) {
+      const _torus = function() {
+        for (let i = 0; i <= this.detailY; i++) {
+          const v = i / this.detailY;
+          const phi = 2 * Math.PI * v;
+          const cosPhi = Math.cos(phi);
+          const sinPhi = Math.sin(phi);
+          const r = 1 + tubeRatio * cosPhi;
+
+          for (let j = 0; j <= this.detailX; j++) {
+            const u = j / this.detailX;
+            const theta = 2 * Math.PI * u;
+            const cosTheta = Math.cos(theta);
+            const sinTheta = Math.sin(theta);
+
+            const p = new Vector(
+              r * cosTheta,
+              r * sinTheta,
+              tubeRatio * sinPhi
+            );
+
+            const n = new Vector(cosPhi * cosTheta, cosPhi * sinTheta, sinPhi);
+
+            this.vertices.push(p);
+            this.vertexNormals.push(n);
+            this.uvs.push(u, v);
+          }
+        }
+      };
+      const torusGeom = new Geometry(detailX, detailY, _torus);
+      torusGeom.computeFaces();
+      if (detailX <= 24 && detailY <= 16) {
+        torusGeom._makeTriangleEdges()._edgesToVertices();
+      } else if (this.states.doStroke) {
+        console.log(
+          'Cannot draw strokes on torus object with more' +
+          ' than 24 detailX or 16 detailY'
+        );
+      }
+      this.createBuffers(gId, torusGeom);
+    }
+    this.drawBuffersScaled(gId, radius, radius, radius);
+  }
 }
 
 export default primitives3D;
