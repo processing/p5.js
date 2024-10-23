@@ -864,12 +864,10 @@ function material(p5, fn){
     this._assert3d('shader');
     p5._validateParameters('shader', arguments);
 
+    // NOTE: make generic or remove need for
     s.ensureCompiledOnContext(this);
 
-    // Always set the shader as a fill shader
-    this._renderer.states.userFillShader = s;
-    this._renderer.states._useNormalMaterial = false;
-    s.setDefaultUniforms();
+    this._renderer.shader(s);
 
     return this;
   };
@@ -1042,15 +1040,13 @@ function material(p5, fn){
     this._assert3d('strokeShader');
     p5._validateParameters('strokeShader', arguments);
 
+    // NOTE: make generic or remove need for
     s.ensureCompiledOnContext(this);
 
-    this._renderer.states.userStrokeShader = s;
-
-    s.setDefaultUniforms();
+    this._renderer.strokeShader(s);
 
     return this;
   };
-
 
   /**
    * Sets the <a href="#/p5.Shader">p5.Shader</a> object to apply for images.
@@ -1200,16 +1196,14 @@ function material(p5, fn){
    * </code>
    * </div>
    */
-
   fn.imageShader = function (s) {
     this._assert3d('imageShader');
     p5._validateParameters('imageShader', arguments);
 
+    // NOTE: make generic or remove need for
     s.ensureCompiledOnContext(this);
 
-    this._renderer.states.userImageShader = s;
-
-    s.setDefaultUniforms();
+    this._renderer.imageShader(s);
 
     return this;
   };
@@ -2042,10 +2036,7 @@ function material(p5, fn){
    * </div>
    */
   fn.resetShader = function () {
-    this._renderer.states.userFillShader = null;
-    this._renderer.states.userStrokeShader = null;
-    this._renderer.states.userImageShader = null;
-
+    this._renderer.resetShader();
     return this;
   };
 
@@ -2224,14 +2215,13 @@ function material(p5, fn){
   fn.texture = function (tex) {
     this._assert3d('texture');
     p5._validateParameters('texture', arguments);
+
+    // NOTE: make generic or remove need for
     if (tex.gifProperties) {
       tex._animateGif(this);
     }
 
-    this._renderer.states.drawMode = constants.TEXTURE;
-    this._renderer.states._useNormalMaterial = false;
-    this._renderer.states._tex = tex;
-    this._renderer.states.doFill = true;
+    this._renderer.texture(tex);
 
     return this;
   };
@@ -2739,13 +2729,9 @@ function material(p5, fn){
   fn.normalMaterial = function (...args) {
     this._assert3d('normalMaterial');
     p5._validateParameters('normalMaterial', args);
-    this._renderer.states.drawMode = constants.FILL;
-    this._renderer.states._useSpecularMaterial = false;
-    this._renderer.states._useEmissiveMaterial = false;
-    this._renderer.states._useNormalMaterial = true;
-    this._renderer.states.curFillColor = [1, 1, 1, 1];
-    this._renderer.states.doFill = true;
-    this.noStroke();
+
+    this._renderer.normalMaterial(...args);
+
     return this;
   };
 
@@ -3395,10 +3381,8 @@ function material(p5, fn){
     this._assert3d('shininess');
     p5._validateParameters('shininess', arguments);
 
-    if (shine < 1) {
-      shine = 1;
-    }
-    this._renderer.states._useShininess = shine;
+    this._renderer.shininess(shine);
+
     return this;
   };
 
@@ -3513,10 +3497,12 @@ function material(p5, fn){
    */
   fn.metalness = function (metallic) {
     this._assert3d('metalness');
-    const metalMix = 1 - Math.exp(-metallic / 100);
-    this._renderer.states._useMetalness = metalMix;
+
+    this._renderer.metalness(metallic);
+
     return this;
   };
+
 
   /**
    * @private blends colors according to color components.
@@ -3643,12 +3629,66 @@ function material(p5, fn){
     }
   };
 
+  RendererGL.prototype.shader = function(s) {
+    // Always set the shader as a fill shader
+    this.states.userFillShader = s;
+    this.states._useNormalMaterial = false;
+    s.setDefaultUniforms();
+  }
+
+  RendererGL.prototype.strokeShader = function(s) {
+    this.states.userStrokeShader = s;
+    s.setDefaultUniforms();
+  }
+
+  RendererGL.prototype.imageShader = function(s) {
+    this.states.userImageShader = s;
+    s.setDefaultUniforms();
+  }
+
+  RendererGL.prototype.resetShader = function() {
+    this.states.userFillShader = null;
+    this.states.userStrokeShader = null;
+    this.states.userImageShader = null;
+  }
+
   RendererGL.prototype.texture = function(tex) {
     this.states.drawMode = constants.TEXTURE;
     this.states._useNormalMaterial = false;
     this.states._tex = tex;
     this.states.doFill = true;
   };
+
+  RendererGL.prototype.normalMaterial = function(...args) {
+    this.states.drawMode = constants.FILL;
+    this.states._useSpecularMaterial = false;
+    this.states._useEmissiveMaterial = false;
+    this.states._useNormalMaterial = true;
+    this.states.curFillColor = [1, 1, 1, 1];
+    this.states.doFill = true;
+    this.states.doStroke = false;
+  }
+
+  // RendererGL.prototype.ambientMaterial = function(v1, v2, v3) {
+  // }
+
+  // RendererGL.prototype.emissiveMaterial = function(v1, v2, v3, a) {
+  // }
+
+  // RendererGL.prototype.specularMaterial = function(v1, v2, v3, alpha) {
+  // }
+
+  RendererGL.prototype.shininess = function(shine) {
+    if (shine < 1) {
+      shine = 1;
+    }
+    this.states._useShininess = shine;
+  }
+
+  RendererGL.prototype.metalness = function(metallic) {
+    const metalMix = 1 - Math.exp(-metallic / 100);
+    this.states._useMetalness = metalMix;
+  }
 }
 
 export default material;

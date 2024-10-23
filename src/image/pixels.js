@@ -728,7 +728,7 @@ function pixels(p5, fn){
 
     // when passed a shader, use it directly
     if (this._renderer.isP3D && shader) {
-      p5.RendererGL.prototype.filter.call(this._renderer, shader);
+      this._renderer.filter(shader);
       return;
     }
 
@@ -748,7 +748,7 @@ function pixels(p5, fn){
 
     // when this is a webgl renderer, apply constant shader filter
     if (this._renderer.isP3D) {
-      p5.RendererGL.prototype.filter.call(this._renderer, operation, value);
+      this._renderer.filter(operation, value);
     }
 
     // when this is P2D renderer, create/use hidden webgl renderer

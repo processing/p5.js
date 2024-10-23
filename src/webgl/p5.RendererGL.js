@@ -828,12 +828,12 @@ class RendererGL extends Renderer {
       // Resize the framebuffer 'tmp' and adjust its pixel density if it doesn't match the target.
       this.matchSize(tmp, target);
       // setup
-      this._pInst.push();
+      this.push();
       this._pInst.noStroke();
       this._pInst.blendMode(constants.BLEND);
 
       // draw main to temp buffer
-      this._pInst.shader(this.states.filterShader);
+      this.shader(this.states.filterShader);
       this.states.filterShader.setUniform('texelSize', texelSize);
       this.states.filterShader.setUniform('canvasSize', [target.width, target.height]);
       this.states.filterShader.setUniform('radius', Math.max(1, filterParameter));
@@ -843,9 +843,9 @@ class RendererGL extends Renderer {
         this.states.filterShader.setUniform('direction', [1, 0]);
         this.states.filterShader.setUniform('tex0', target);
         this._pInst.clear();
-        this._pInst.shader(this.states.filterShader);
-        this._pInst.noLights();
-        this._pInst.plane(target.width, target.height);
+        this.shader(this.states.filterShader);
+        this.noLights();
+        this.plane(target.width, target.height);
       });
 
       // Vert pass: draw `tmp` to `fbo`
@@ -853,35 +853,35 @@ class RendererGL extends Renderer {
         this.states.filterShader.setUniform('direction', [0, 1]);
         this.states.filterShader.setUniform('tex0', tmp);
         this._pInst.clear();
-        this._pInst.shader(this.states.filterShader);
-        this._pInst.noLights();
-        this._pInst.plane(target.width, target.height);
+        this.shader(this.states.filterShader);
+        this.noLights();
+        this.plane(target.width, target.height);
       });
 
-      this._pInst.pop();
+      this.pop();
     }
     // every other non-blur shader uses single pass
     else {
       fbo.draw(() => {
         this._pInst.noStroke();
         this._pInst.blendMode(constants.BLEND);
-        this._pInst.shader(this.states.filterShader);
+        this.shader(this.states.filterShader);
         this.states.filterShader.setUniform('tex0', target);
         this.states.filterShader.setUniform('texelSize', texelSize);
         this.states.filterShader.setUniform('canvasSize', [target.width, target.height]);
         // filterParameter uniform only used for POSTERIZE, and THRESHOLD
         // but shouldn't hurt to always set
         this.states.filterShader.setUniform('filterParameter', filterParameter);
-        this._pInst.noLights();
-        this._pInst.plane(target.width, target.height);
+        this.noLights();
+        this.plane(target.width, target.height);
       });
 
     }
     // draw fbo contents onto main renderer.
-    this._pInst.push();
+    this.push();
     this._pInst.noStroke();
     this.clear();
-    this._pInst.push();
+    this.push();
     this._pInst.imageMode(constants.CORNER);
     this._pInst.blendMode(constants.BLEND);
     target.filterCamera._resize();
@@ -892,8 +892,8 @@ class RendererGL extends Renderer {
       target.width, target.height);
     this._drawingFilter = false;
     this._pInst.clearDepth();
-    this._pInst.pop();
-    this._pInst.pop();
+    this.pop();
+    this.pop();
   }
 
   // Pass this off to the host instance so that we can treat a renderer and a
