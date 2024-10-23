@@ -77,6 +77,5 @@ import './webgl/p5.RendererGL.Retained';
 import './webgl/p5.Texture';
 
 import './core/init';
-import dom from './dom/dom';
 
 export default p5;
