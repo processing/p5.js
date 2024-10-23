@@ -8,23 +8,9 @@
 
 function textApi(p5, fn) {
 
-  const rendererFuncs = [
-    'text',
-    'textAlign',
-    'textAscent',
-    'textBounds',
-    'textDescent',
-    'textLeading',
-    'textFont',
-    'textSize',
-    'textStyle',
-    'textWidth',
-    'textWrap',
-  ];
-
   const validFontTypes = ['ttf', 'otf', 'woff', 'woff2'];
   const validFontTypesRE = new RegExp(`\.(${validFontTypes.join('|')})$`, 'i');
-  const invalidFontError = 'Sorry, only TTF, OTF, WOFF and WOFF2 font files are supported.';
+  const invalidFontError = 'Sorry, only TTF and OTF font files are supported.'; // WOFF and WOFF2 ?
 
   //////////////////////////// API ////////////////////////////
 
@@ -32,7 +18,12 @@ function textApi(p5, fn) {
   // each delegating to the current renderer
   p5.Renderer2D.textFunctions.forEach(func => {
     fn[func] = function (...args) {
-      p5._validateParameters(func, args);
+      if (func in p5.prototype) {
+        p5._validateParameters(func, args);
+      }
+      if (!(func in p5.Renderer2D.prototype)) {
+        throw Error(`Renderer2D.prototype.${func} is not defined.`);
+      }
       return this._renderer[func](...args);
     };
   });
@@ -90,13 +81,6 @@ function textApi(p5, fn) {
         }
       ));
   };
-
-  ['loadFont', ...rendererFuncs].forEach(f => { // tmp-check
-    if (typeof fn[f] !== 'function') {
-      throw new Error(`p5.prototype.${f} is not a function`);
-    }
-  });
-
 }
 
 export default textApi;

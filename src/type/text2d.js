@@ -17,14 +17,14 @@ function text2d(p5, fn) {
     'textDescent',
     'textLeading',
     'textFont',
-    'textMode', // no-op
+    'textMode', // no-op, for processing
     'textSize',
     'textStyle',
     'textWidth',
     'textWrap',
-
-    'fontBounds', // ?
-    'fontWidth' // ?
+    // ?
+    'fontBounds',
+    'fontWidth'
   ];
 
   p5.Renderer2D.TabsRe = /\t/g;
@@ -39,12 +39,21 @@ function text2d(p5, fn) {
 
     // parse the lines according to the width & linebreaks
     let lines = this._parseLines(str, width);
-
     // get the adjusted positions [x,y] for each line
     let positions = this._positionLines(x, y, width, height, leading, lines.length);
 
+    if (0 && typeof width === 'undefined') {
+      let ydiff = - (lines.length - 1) * leading;
+      if (this.drawingContext.textBaseline === constants._CTX_MIDDLE) {
+        positions.forEach(p => p.y += ydiff / 2);
+      }
+      else if (this.drawingContext.textBaseline === constants.BOTTOM) {
+        positions.forEach(p => p.y += ydiff);
+      }
+    }
+
     // render each line at the adjusted position
-    lines.forEach((line, i) => this._renderText(line, ...positions[i]));
+    lines.forEach((line, i) => this._renderText(line, positions[i].x, positions[i].y));
 
     this.drawingContext.textBaseline = setBaseline; // restore baseline
   };
@@ -115,6 +124,13 @@ function text2d(p5, fn) {
     return Math.max(...widths);
   };
 
+  p5.Renderer2D.prototype.fontWidth = function (theText) {
+    // return the max width of the lines
+    let lines = this._parseLines(theText);
+    let widths = lines.map(l => this._fontWidthSingle(l));
+    return Math.max(...widths);
+  };
+
   /*
     Optional parameters to be specified in the `opts` object:
       textSize: 12, font-size: <absolute-size> | <relative-size> | <length> | <percentage>
@@ -127,7 +143,7 @@ function text2d(p5, fn) {
   
       // TODO: this can be used before anything else to get the font properties
   */
-  p5.Renderer2D.prototype.textFont = function (theFont, theSize, opts) {
+  p5.Renderer2D.prototype.textFont = function (theFont, theSize, fontOptions) {
     // need to add fontStretch/lineHeight
 
     if (arguments.length) {
@@ -147,10 +163,10 @@ function text2d(p5, fn) {
       this.states.textFont = theFont;
 
       // update any opts font properties in `states`
-      if (opts && typeof opts === 'object') {
-        Object.keys(opts).forEach(prop => {
+      if (fontOptions && typeof fontOptions === 'object') {
+        Object.keys(fontOptions).forEach(prop => {
           if (prop in p5.Renderer2D.FontProps) {
-            this.states[prop] = opts[prop];
+            this.states[prop] = fontOptions[prop];
           }
         });
       }
@@ -217,7 +233,6 @@ function text2d(p5, fn) {
 
     let adjustedX, positions = [];
     let adjustedW = typeof width === 'undefined' ? 0 : width;
-    let adjustedY = numLines > 1 ? this._alignY(y, height, leading, numLines) : y;
 
     for (let i = 0; i < numLines; i++) {
       switch (this.drawingContext.textAlign) {
@@ -234,13 +249,16 @@ function text2d(p5, fn) {
         case constants.RIGHT:
           adjustedX = x + adjustedW;
           break;
-
         case 'end': //constants.END:
           throw new Error('textBounds: END not yet supported for textAlign');
           break;
+
       }
-      positions.push([adjustedX, adjustedY + (i * leading)]);
+      positions.push({ x: adjustedX, y: y + (i * leading) });
     }
+
+    let yOff = this._yAlignOffset(height || 0, leading, numLines);
+    positions.forEach(p => p.y += yOff);
 
     return positions;
   };
@@ -251,67 +269,87 @@ function text2d(p5, fn) {
     let hasWidth = typeof width !== 'undefined';
     let exceedsWidth = hasWidth && lines.some(l => this._textWidthSingle(l) > width);
     if (!hasLineBreaks && !exceedsWidth) return lines; // a single-line
-    // match processing's handling of textBaseline
-    if (this.drawingContext.textBaseline === constants.BASELINE) {
-      this.drawingContext.textBaseline = constants.TOP;
+    if (typeof width !== 'undefined') { // only for text with bounds
+      // match processing's handling of textBaseline
+      if (this.drawingContext.textBaseline === constants.BASELINE) {
+        this.drawingContext.textBaseline = constants.TOP;
+      }
     }
     if (hasWidth) lines = this._lineate(lines, width);
     return lines;
   };
 
   p5.Renderer2D.prototype._alignBounds = function (bb, width, height, leading, numLines) {
-    bb.x = this._alignX(bb.x, width);
-    bb.y = this._alignY(bb.y, height, leading, numLines);
+    bb.x += this._xAlignOffset(width);
+    bb.y += this._yAlignOffset(height, leading, numLines);
   }
 
-  p5.Renderer2D.prototype._alignX = function (x, width) {
+  p5.Renderer2D.prototype._xAlignOffset = function (x, width) {
     switch (this.drawingContext.textAlign) {
+      case constants.LEFT:
+        return 0;
       case constants.CENTER:
-        x += width / 2;
-        break;
+        return width / 2;
       case constants.RIGHT:
-        x += width;
-        break;
+        return width;
       case 'start': // constants.START:
-        //throw new Error('textBounds: START not yet supported for textAlign');
-        break;
+        return 0;
       case 'end': // constants.END:
         throw new Error('textBounds: END not yet supported for textAlign');
-        break;
+      default:
+        return 0;
     }
-    return x;
   }
 
-  p5.Renderer2D.prototype._alignY = function (y, height, leading, numLines) {
+  p5.Renderer2D.prototype._yAlignOffset = function (height, leading, numLines) {
+
+    if (typeof height === 'undefined') {
+      throw Error('_yAlignOffset: height is required');
+    }
+
     let ydiff = height - (leading * (numLines - 1));
+
     switch (this.drawingContext.textBaseline) {
+      case constants.TOP:
+        return 0;
+      case constants.BASELINE:
+        return 0;
       case constants._CTX_MIDDLE:
-        y += ydiff / 2;
-        break;
+        return ydiff / 2;
       case constants.BOTTOM:
-        y += ydiff;
-        break;
+        return ydiff;
       case 'ideographic':// constants.IDEOGRAPHIC:
-        throw Error('textBounds: IDEOGRAPHIC not yet supported for textBaseline');
-        break;
+        console.warn('textBounds: IDEOGRAPHIC not yet supported for textBaseline');
+        return 0;
       case 'hanging'://  constants.HANGING:
-        throw Error('textBounds: HANGING not yet supported for textBaseline');
-        break;
+        console.warn('textBounds: HANGING not yet supported for textBaseline');
+      default:
+        return 0;
     }
-    return y;
   }
 
-  p5.Renderer2D.prototype._textWidthSingle = function (s, x = 0, y = 0) {
+  p5.Renderer2D.prototype._textWidthSingle = function (s) {
     let metrics = this.drawingContext.measureText(s);
     let abl = metrics.actualBoundingBoxLeft;
     let abr = metrics.actualBoundingBoxRight;
     return abr + abl;
   };
 
-  p5.Renderer2D.prototype._textHeightSingle = function (s, x = 0, y = 0) {
+  p5.Renderer2D.prototype._fontWidthSingle = function (s) {
+    return this.drawingContext.measureText(s).width;
+  };
+
+  p5.Renderer2D.prototype._textHeightSingle = function (s) {
     let metrics = this.drawingContext.measureText(s);
     let asc = metrics.actualBoundingBoxAscent;
     let desc = metrics.actualBoundingBoxDescent;
+    return asc + desc;
+  };
+
+  p5.Renderer2D.prototype._fontHeightSingle = function (s) {
+    let metrics = this.drawingContext.measureText(s);
+    let asc = metrics.fontBoundingBoxAscent;
+    let desc = metrics.fontBoundingBoxDescent;
     return asc + desc;
   };
 
@@ -322,6 +360,16 @@ function text2d(p5, fn) {
     let desc = metrics.actualBoundingBoxDescent;
     let abl = metrics.actualBoundingBoxLeft;
     let abr = metrics.actualBoundingBoxRight;
+    return { x: x - abl, y: y - asc, w: abr + abl, h: asc + desc };
+  };
+
+  p5.Renderer2D.prototype._fontBoundsSingle = function (s, x = 0, y = 0) {
+
+    let metrics = this.drawingContext.measureText(s);
+    let asc = metrics.fontBoundingBoxAscent;
+    let desc = metrics.fontBoundingBoxDescent;
+    let abl = metrics.fontBoundingBoxLeft;
+    let abr = metrics.fontBoundingBoxRight;
     return { x: x - abl, y: y - asc, w: abr + abl, h: asc + desc };
   };
 
@@ -460,7 +508,7 @@ function text2d(p5, fn) {
         this._setFill(constants._DEFAULT_TEXT_FILL);
       }
 
-      console.log('fillText:', line, x, y, this._textProperties());
+      //console.log('fillText:', line, x, y, this._textProperties());
       drawingContext.fillText(line, x, y);
     }
     //this._pInst.pop(); //DH: removed
