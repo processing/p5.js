@@ -1013,10 +1013,7 @@ function light(p5, fn){
    * </div>
    */
   fn.imageLight = function (img) {
-    // activeImageLight property is checked by _setFillUniforms
-    // for sending uniforms to the fillshader
-    this._renderer.states.activeImageLight = img;
-    this._renderer.states.enableLighting = true;
+    this._renderer.imageLight(img);
   };
 
   /**
@@ -1232,40 +1229,11 @@ function light(p5, fn){
     this._assert3d('lightFalloff');
     p5._validateParameters('lightFalloff', arguments);
 
-    if (constantAttenuation < 0) {
-      constantAttenuation = 0;
-      console.warn(
-        'Value of constant argument in lightFalloff() should be never be negative. Set to 0.'
-      );
-    }
-
-    if (linearAttenuation < 0) {
-      linearAttenuation = 0;
-      console.warn(
-        'Value of linear argument in lightFalloff() should be never be negative. Set to 0.'
-      );
-    }
-
-    if (quadraticAttenuation < 0) {
-      quadraticAttenuation = 0;
-      console.warn(
-        'Value of quadratic argument in lightFalloff() should be never be negative. Set to 0.'
-      );
-    }
-
-    if (
-      constantAttenuation === 0 &&
-      (linearAttenuation === 0 && quadraticAttenuation === 0)
-    ) {
-      constantAttenuation = 1;
-      console.warn(
-        'Either one of the three arguments in lightFalloff() should be greater than zero. Set constant argument to 1.'
-      );
-    }
-
-    this._renderer.states.constantAttenuation = constantAttenuation;
-    this._renderer.states.linearAttenuation = linearAttenuation;
-    this._renderer.states.quadraticAttenuation = quadraticAttenuation;
+    this._renderer.lightFalloff(
+      constantAttenuation,
+      linearAttenuation,
+      quadraticAttenuation
+    );
 
     return this;
   };
@@ -1750,35 +1718,103 @@ function light(p5, fn){
 
     return this;
   };
-}
 
-RendererGL.prototype.noLights = function(){
-  this.states.activeImageLight = null;
-  this.states.enableLighting = false;
 
-  this.states.ambientLightColors.length = 0;
-  this.states.specularColors = [1, 1, 1];
+  // RendererGL.prototype.ambientLight = function(v1, v2, v3, a) {
+  // }
 
-  this.states.directionalLightDirections.length = 0;
-  this.states.directionalLightDiffuseColors.length = 0;
-  this.states.directionalLightSpecularColors.length = 0;
+  // RendererGL.prototype.specularColor = function(v1, v2, v3) {
+  // }
 
-  this.states.pointLightPositions.length = 0;
-  this.states.pointLightDiffuseColors.length = 0;
-  this.states.pointLightSpecularColors.length = 0;
+  // RendererGL.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
+  // }
 
-  this.states.spotLightPositions.length = 0;
-  this.states.spotLightDirections.length = 0;
-  this.states.spotLightDiffuseColors.length = 0;
-  this.states.spotLightSpecularColors.length = 0;
-  this.states.spotLightAngle.length = 0;
-  this.states.spotLightConc.length = 0;
+  // RendererGL.prototype.pointLight = function(v1, v2, v3, x, y, z) {
+  // }
 
-  this.states.constantAttenuation = 1;
-  this.states.linearAttenuation = 0;
-  this.states.quadraticAttenuation = 0;
-  this.states._useShininess = 1;
-  this.states._useMetalness = 0;
+  RendererGL.prototype.imageLight = function(img) {
+    // activeImageLight property is checked by _setFillUniforms
+    // for sending uniforms to the fillshader
+    this.states.activeImageLight = img;
+    this.states.enableLighting = true;
+  }
+
+  // RendererGL.prototype.lights = function() {
+  // }
+
+  RendererGL.prototype.lightFalloff = function(
+    constantAttenuation,
+    linearAttenuation,
+    quadraticAttenuation
+  ) {
+    if (constantAttenuation < 0) {
+      constantAttenuation = 0;
+      console.warn(
+        'Value of constant argument in lightFalloff() should be never be negative. Set to 0.'
+      );
+    }
+
+    if (linearAttenuation < 0) {
+      linearAttenuation = 0;
+      console.warn(
+        'Value of linear argument in lightFalloff() should be never be negative. Set to 0.'
+      );
+    }
+
+    if (quadraticAttenuation < 0) {
+      quadraticAttenuation = 0;
+      console.warn(
+        'Value of quadratic argument in lightFalloff() should be never be negative. Set to 0.'
+      );
+    }
+
+    if (
+      constantAttenuation === 0 &&
+      (linearAttenuation === 0 && quadraticAttenuation === 0)
+    ) {
+      constantAttenuation = 1;
+      console.warn(
+        'Either one of the three arguments in lightFalloff() should be greater than zero. Set constant argument to 1.'
+      );
+    }
+
+    this.states.constantAttenuation = constantAttenuation;
+    this.states.linearAttenuation = linearAttenuation;
+    this.states.quadraticAttenuation = quadraticAttenuation;
+  }
+
+  // RendererGL.prototype.spotLight = function(
+  // ) {
+  // }
+
+  RendererGL.prototype.noLights = function() {
+    this.states.activeImageLight = null;
+    this.states.enableLighting = false;
+
+    this.states.ambientLightColors.length = 0;
+    this.states.specularColors = [1, 1, 1];
+
+    this.states.directionalLightDirections.length = 0;
+    this.states.directionalLightDiffuseColors.length = 0;
+    this.states.directionalLightSpecularColors.length = 0;
+
+    this.states.pointLightPositions.length = 0;
+    this.states.pointLightDiffuseColors.length = 0;
+    this.states.pointLightSpecularColors.length = 0;
+
+    this.states.spotLightPositions.length = 0;
+    this.states.spotLightDirections.length = 0;
+    this.states.spotLightDiffuseColors.length = 0;
+    this.states.spotLightSpecularColors.length = 0;
+    this.states.spotLightAngle.length = 0;
+    this.states.spotLightConc.length = 0;
+
+    this.states.constantAttenuation = 1;
+    this.states.linearAttenuation = 0;
+    this.states.quadraticAttenuation = 0;
+    this.states._useShininess = 1;
+    this.states._useMetalness = 0;
+  }
 }
 
 export default light;
