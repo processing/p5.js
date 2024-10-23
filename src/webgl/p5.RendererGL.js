@@ -794,7 +794,7 @@ class RendererGL extends Renderer {
       // eg. filter(BLUR) then filter(GRAY)
       if (!(operation in this.defaultFilterShaders)) {
         this.defaultFilterShaders[operation] = new Shader(
-          fbo._renderer,
+          fbo.renderer,
           filterShaderVert,
           filterShaderFrags[operation]
         );
