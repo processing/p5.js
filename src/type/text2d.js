@@ -39,18 +39,9 @@ function text2d(p5, fn) {
 
     // parse the lines according to the width & linebreaks
     let lines = this._parseLines(str, width);
+
     // get the adjusted positions [x,y] for each line
     let positions = this._positionLines(x, y, width, height, leading, lines.length);
-
-    if (0 && typeof width === 'undefined') {
-      let ydiff = - (lines.length - 1) * leading;
-      if (this.drawingContext.textBaseline === constants._CTX_MIDDLE) {
-        positions.forEach(p => p.y += ydiff / 2);
-      }
-      else if (this.drawingContext.textBaseline === constants.BOTTOM) {
-        positions.forEach(p => p.y += ydiff);
-      }
-    }
 
     // render each line at the adjusted position
     lines.forEach((line, i) => this._renderText(line, positions[i].x, positions[i].y));
@@ -78,7 +69,7 @@ function text2d(p5, fn) {
         h: boxes[boxes.length - 1].y - boxes[0].y + boxes[boxes.length - 1].h
       };
       // align the bounds if it is multi-line
-      this._alignBounds(bounds, width, height, leading, lines.length);
+      this._alignBounds(bounds, width||0, height||0, leading, lines.length);
     }
 
     this.drawingContext.textBaseline = setBaseline; // restore baseline
@@ -233,13 +224,13 @@ function text2d(p5, fn) {
 
     let adjustedX, positions = [];
     let adjustedW = typeof width === 'undefined' ? 0 : width;
+    let adjustedH = typeof height === 'undefined' ? 0 : height;
 
     for (let i = 0; i < numLines; i++) {
       switch (this.drawingContext.textAlign) {
         case 'start'://constants.START:
           console.warn('textBounds: START not yet supported for RTL rendering');
           this.drawingContext.textAlign = constants.LEFT; // TMP
-        //break;
         case constants.LEFT:
           adjustedX = x;
           break;
@@ -257,7 +248,7 @@ function text2d(p5, fn) {
       positions.push({ x: adjustedX, y: y + (i * leading) });
     }
 
-    let yOff = this._yAlignOffset(height || 0, leading, numLines);
+    let yOff = this._yAlignOffset(adjustedH, leading, numLines);
     positions.forEach(p => p.y += yOff);
 
     return positions;
@@ -284,7 +275,7 @@ function text2d(p5, fn) {
     bb.y += this._yAlignOffset(height, leading, numLines);
   }
 
-  p5.Renderer2D.prototype._xAlignOffset = function (x, width) {
+  p5.Renderer2D.prototype._xAlignOffset = function (width) {
     switch (this.drawingContext.textAlign) {
       case constants.LEFT:
         return 0;
