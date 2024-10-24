@@ -4,53 +4,7 @@
  * @for p5.Element
  */
 
-import p5 from './main';
-
-/**
- * A class to describe an
- * <a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Getting_started" target="_blank">HTML element</a>.
- *
- * Sketches can use many elements. Common elements include the drawing canvas,
- * buttons, sliders, webcam feeds, and so on.
- *
- * All elements share the methods of the `p5.Element` class. They're created
- * with functions such as <a href="#/p5/createCanvas">createCanvas()</a> and
- * <a href="#/p5/createButton">createButton()</a>.
- *
- * @class p5.Element
- * @param {HTMLElement} elt wrapped DOM element.
- * @param {p5} [pInst] pointer to p5 instance.
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Create a button element and
- *   // place it beneath the canvas.
- *   let btn = createButton('change');
- *   btn.position(0, 100);
- *
- *   // Call randomColor() when
- *   // the button is pressed.
- *   btn.mousePressed(randomColor);
- *
- *   describe('A gray square with a button that says "change" beneath it. The square changes color when the user presses the button.');
- * }
- *
- * // Paint the background either
- * // red, yellow, blue, or green.
- * function randomColor() {
- *   let c = random(['red', 'yellow', 'blue', 'green']);
- *   background(c);
- * }
- * </code>
- * </div>
- */
-p5.Element = class {
+class Element {
   constructor(elt, pInst) {
     this.elt = elt;
     this._pInst = this._pixelsState = pInst;
@@ -192,7 +146,7 @@ p5.Element = class {
         p = p.substring(1);
       }
       p = document.getElementById(p);
-    } else if (p instanceof p5.Element) {
+    } else if (p instanceof Element) {
       p = p.elt;
     }
     p.appendChild(this.elt);
@@ -341,7 +295,7 @@ p5.Element = class {
       return fxn.call(this, event);
     };
     // Pass along the event-prepended form of the callback.
-    p5.Element._adjustListener('mousedown', eventPrependedFxn, this);
+    Element._adjustListener('mousedown', eventPrependedFxn, this);
     return this;
   }
 
@@ -382,7 +336,7 @@ p5.Element = class {
    * </div>
    */
   doubleClicked(fxn) {
-    p5.Element._adjustListener('dblclick', fxn, this);
+    Element._adjustListener('dblclick', fxn, this);
     return this;
   }
 
@@ -467,7 +421,7 @@ p5.Element = class {
    * </div>
    */
   mouseWheel(fxn) {
-    p5.Element._adjustListener('wheel', fxn, this);
+    Element._adjustListener('wheel', fxn, this);
     return this;
   }
 
@@ -511,7 +465,7 @@ p5.Element = class {
    * </div>
    */
   mouseReleased(fxn) {
-    p5.Element._adjustListener('mouseup', fxn, this);
+    Element._adjustListener('mouseup', fxn, this);
     return this;
   }
 
@@ -555,7 +509,7 @@ p5.Element = class {
    * </div>
    */
   mouseClicked(fxn) {
-    p5.Element._adjustListener('click', fxn, this);
+    Element._adjustListener('click', fxn, this);
     return this;
   }
 
@@ -596,7 +550,7 @@ p5.Element = class {
    * </div>
    */
   mouseMoved(fxn) {
-    p5.Element._adjustListener('mousemove', fxn, this);
+    Element._adjustListener('mousemove', fxn, this);
     return this;
   }
 
@@ -637,7 +591,7 @@ p5.Element = class {
    * </div>
    */
   mouseOver(fxn) {
-    p5.Element._adjustListener('mouseover', fxn, this);
+    Element._adjustListener('mouseover', fxn, this);
     return this;
   }
 
@@ -678,7 +632,7 @@ p5.Element = class {
    * </div>
    */
   mouseOut(fxn) {
-    p5.Element._adjustListener('mouseout', fxn, this);
+    Element._adjustListener('mouseout', fxn, this);
     return this;
   }
 
@@ -721,7 +675,7 @@ p5.Element = class {
    * </div>
    */
   touchStarted(fxn) {
-    p5.Element._adjustListener('touchstart', fxn, this);
+    Element._adjustListener('touchstart', fxn, this);
     return this;
   }
 
@@ -764,7 +718,7 @@ p5.Element = class {
    * </div>
    */
   touchMoved(fxn) {
-    p5.Element._adjustListener('touchmove', fxn, this);
+    Element._adjustListener('touchmove', fxn, this);
     return this;
   }
 
@@ -807,7 +761,7 @@ p5.Element = class {
    * </div>
    */
   touchEnded(fxn) {
-    p5.Element._adjustListener('touchend', fxn, this);
+    Element._adjustListener('touchend', fxn, this);
     return this;
   }
 
@@ -848,7 +802,7 @@ p5.Element = class {
    * </div>
    */
   dragOver(fxn) {
-    p5.Element._adjustListener('dragover', fxn, this);
+    Element._adjustListener('dragover', fxn, this);
     return this;
   }
 
@@ -889,7 +843,7 @@ p5.Element = class {
    * </div>
    */
   dragLeave(fxn) {
-    p5.Element._adjustListener('dragleave', fxn, this);
+    Element._adjustListener('dragleave', fxn, this);
     return this;
   }
 
@@ -907,9 +861,9 @@ p5.Element = class {
    */
   static _adjustListener(ev, fxn, ctx) {
     if (fxn === false) {
-      p5.Element._detachListener(ev, ctx);
+      Element._detachListener(ev, ctx);
     } else {
-      p5.Element._attachListener(ev, fxn, ctx);
+      Element._attachListener(ev, fxn, ctx);
     }
     return this;
   }
@@ -924,7 +878,7 @@ p5.Element = class {
   static _attachListener(ev, fxn, ctx) {
     // detach the old listener if there was one
     if (ctx._events[ev]) {
-      p5.Element._detachListener(ev, ctx);
+      Element._detachListener(ev, ctx);
     }
     const f = fxn.bind(ctx);
     ctx.elt.addEventListener(ev, f, false);
@@ -944,52 +898,101 @@ p5.Element = class {
   }
 };
 
-/**
- * The element's underlying `HTMLElement` object.
- *
- * The
- * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement" target="_blank">HTMLElement</a>
- * object's properties and methods can be used directly.
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   // Create a canvas element and
- *   // assign it to cnv.
- *   let cnv = createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Set the border style for the
- *   // canvas.
- *   cnv.elt.style.border = '5px dashed deeppink';
- *
- *   describe('A gray square with a pink border drawn with dashed lines.');
- * }
- * </code>
- * </div>
- *
- * @property elt
- * @for p5.Element
- * @name elt
- * @readOnly
- */
+function element(p5, fn){
+  /**
+   * A class to describe an
+   * <a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Getting_started" target="_blank">HTML element</a>.
+   *
+   * Sketches can use many elements. Common elements include the drawing canvas,
+   * buttons, sliders, webcam feeds, and so on.
+   *
+   * All elements share the methods of the `p5.Element` class. They're created
+   * with functions such as <a href="#/p5/createCanvas">createCanvas()</a> and
+   * <a href="#/p5/createButton">createButton()</a>.
+   *
+   * @class p5.Element
+   * @param {HTMLElement} elt wrapped DOM element.
+   * @param {p5} [pInst] pointer to p5 instance.
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Create a button element and
+   *   // place it beneath the canvas.
+   *   let btn = createButton('change');
+   *   btn.position(0, 100);
+   *
+   *   // Call randomColor() when
+   *   // the button is pressed.
+   *   btn.mousePressed(randomColor);
+   *
+   *   describe('A gray square with a button that says "change" beneath it. The square changes color when the user presses the button.');
+   * }
+   *
+   * // Paint the background either
+   * // red, yellow, blue, or green.
+   * function randomColor() {
+   *   let c = random(['red', 'yellow', 'blue', 'green']);
+   *   background(c);
+   * }
+   * </code>
+   * </div>
+   */
+  p5.Element = Element;
 
-/**
- * A `Number` property that stores the element's width.
- *
- * @type {Number}
- * @property width
- * @for p5.Element
- */
+  /**
+   * The element's underlying `HTMLElement` object.
+   *
+   * The
+   * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement" target="_blank">HTMLElement</a>
+   * object's properties and methods can be used directly.
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Set the border style for the
+   *   // canvas.
+   *   cnv.elt.style.border = '5px dashed deeppink';
+   *
+   *   describe('A gray square with a pink border drawn with dashed lines.');
+   * }
+   * </code>
+   * </div>
+   *
+   * @property elt
+   * @for p5.Element
+   * @name elt
+   * @readOnly
+   */
 
-/**
- * A `Number` property that stores the element's height.
- *
- * @type {Number}
- * @property height
- * @for p5.Element
- */
+  /**
+   * A `Number` property that stores the element's width.
+   *
+   * @type {Number}
+   * @property width
+   * @for p5.Element
+   */
 
-export default p5.Element;
+  /**
+   * A `Number` property that stores the element's height.
+   *
+   * @type {Number}
+   * @property height
+   * @for p5.Element
+   */
+}
+
+export default element;
+export { Element };
