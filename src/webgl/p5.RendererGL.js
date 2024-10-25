@@ -1439,7 +1439,7 @@ class RendererGL extends Renderer {
       return this._getNormalShader();
     }
     // Use light shader if lighting or textures are enabled
-    else if (this.states._enableLighting || this.states._tex) {
+    else if (this.states.enableLighting || this.states._tex) {
       return this._getLightShader();
     }
     // Default to color shader if no other conditions are met
