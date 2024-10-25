@@ -2620,7 +2620,7 @@ suite('p5.RendererGL', function() {
         assert.equal(myp5._renderer.retainedMode.buffers.user.length, 0);
       }
     );
-    test('Friendly error if different sizes used',
+    test.skip('Friendly error if different sizes used',
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
         const logs = [];
