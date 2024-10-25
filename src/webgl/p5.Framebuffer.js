@@ -1555,7 +1555,8 @@ class Framebuffer {
       // framebuffer.
       this.begin();
       this.renderer.push();
-      this.renderer.imageMode(constants.CENTER);
+      // this.renderer.imageMode(constants.CENTER);
+      this.renderer.states.imageMode = constants.CENTER;
       this.renderer.resetMatrix();
       this.renderer.states.doStroke = false;
       this.renderer.clear();

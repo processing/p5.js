@@ -22,22 +22,115 @@
 
     // p5.registerAddon(calculation);
 
-    const sketch = function (p) {
-      p.setup = function () {
-        p.createCanvas(200, 200);
+    const sketch = function(p){
+      let myBuffer, pg, torusLayer, boxLayer;
+      p.setup = function(){
+        p.createCanvas(200, 200, p.WEBGL);
+        pg = p.createGraphics(100, 100, p.WEBGL);
+
+        torusLayer = pg.createFramebuffer();
+
+        const i = p.get(10, 10, 10, 10);
+        console.log(i);
       };
 
-      p.draw = function () {
-        p.background(0, 50, 50);
-        p.circle(100, 100, 50);
-
-        p.fill('white');
-        p.textSize(30);
-        p.text('hello', 10, 30);
+      p.draw = function(){
+        drawTorus();
+        p.background(200);
+        pg.background(50);
+        pg.imageMode(p.CENTER);
+        pg.image(torusLayer, 0, 0);
+        p.imageMode(p.CENTER)
+        p.image(pg, 0, 0, 100, 100);
       };
+
+      function drawTorus() {
+        // Start drawing to the torus p5.Framebuffer.
+        torusLayer.begin();
+
+        // Clear the drawing surface.
+        pg.clear();
+
+        // Turn on the lights.
+        pg.lights();
+
+        // Rotate the coordinate system.
+        pg.rotateX(p.frameCount * 0.01);
+        pg.rotateY(p.frameCount * 0.01);
+
+        // Style the torus.
+        pg.noStroke();
+
+        pg.box(20);
+
+        // Start drawing to the torus p5.Framebuffer.
+        torusLayer.end();
+      }
     };
 
     new p5(sketch);
+
+    // const sketch = function(p){
+    //   let myBuffer, pg, torusLayer, boxLayer;
+    //   p.setup = function(){
+    //     p.createCanvas(200, 200);
+    //     p.noLoop();
+    //     pg = p.createGraphics(100, 100, p.WEBGL);
+
+    //     torusLayer = pg.createFramebuffer();
+    //   };
+
+    //   p.draw = function(){
+    //     // p.translate(-p.width/2, -p.height/2);
+    //     // p.background(0, 50, 50);
+    //     // p.circle(100, 100, 50);
+
+    //     drawTorus();
+    //     p.background(200);
+    //     pg.background(50);
+
+    //     // pg.sphere();
+    //     for (let x = -50; x < 50; x += 25) {
+    //       // Iterate from top to bottom.
+    //       for (let y = -50; y < 50; y += 25) {
+    //         // Draw the layer to the p5.Graphics object
+    //         pg.image(torusLayer, x, y, 25, 25);
+    //       }
+    //     }
+    //     p.image(pg, 0, 0, 100, 100);
+
+
+    //     // p.fill('white');
+    //     // p.textSize(30);
+    //     // p.text('hello', 10, 30);
+    //   };
+
+    //   function drawTorus() {
+    //     // Start drawing to the torus p5.Framebuffer.
+    //     torusLayer.begin();
+
+    //     // Clear the drawing surface.
+    //     pg.clear();
+
+    //     // Turn on the lights.
+    //     pg.lights();
+
+    //     // Rotate the coordinate system.
+    //     pg.rotateX(p.frameCount * 0.01);
+    //     pg.rotateY(p.frameCount * 0.01);
+
+    //     // Style the torus.
+    //     pg.noStroke();
+
+    //     // Draw the torus.
+    //     pg.torus(20);
+
+    //     // Start drawing to the torus p5.Framebuffer.
+    //     torusLayer.end();
+    //   }
+    // };
+
+    // new p5(sketch);
   </script>
 </body>
 
