@@ -62,6 +62,7 @@ function textApi(p5, fn) {
         options = arg;
       }
     }
+    // WORKING HERE
     // let font = new p5.Font(name, `url(${path})`, options);
     // document.fonts.add(font.delegate);
     // return await font.load(callback, errorCallback);
