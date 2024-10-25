@@ -1,4 +1,6 @@
 
+import p5Font from './p5.Font.js';
+
 /**
  * @module Type
  * @submodule p5Api
@@ -60,6 +62,9 @@ function textApi(p5, fn) {
         options = arg;
       }
     }
+    // let font = new p5.Font(name, `url(${path})`, options);
+    // document.fonts.add(font.delegate);
+    // return await font.load(callback, errorCallback);
 
     const fontFile = new FontFace(name, `url(${path})`, options);
     document.fonts.add(fontFile);
