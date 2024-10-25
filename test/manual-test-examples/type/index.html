@@ -235,7 +235,7 @@
       };
     };
 
-    let manualBreaksLeft = function (p) {
+    let boundingBoxBreaksLeft = function (p) {
       let x = 10, y = 120, s, showBB = 0, h = 54.5;
       p.setup = function () {
         p.createCanvas(900, 400);
@@ -275,12 +275,13 @@
     }
 
     let boundingBoxBreaks = function (p) {
-      let x, y, s, showBB = 1;
+      let x, y, s, showBB = 0;
 
       p.setup = function () {
         p.createCanvas(240 * 5, 400);
         p.textSize(30);
         p.textLeading(26);
+
 
         ///////////////////////////// BASELINE (L,C,R) ///////////////////////////////
         y = 50;
@@ -351,7 +352,7 @@
 
         x += 580, s = 'CENTER TOP\nis easy.';
         p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.TOP) && p.text(s, x, y);
-        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        if (showBB) sp.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
 
         x += 600, s = 'RIGHT TOP\nis easy.';
         p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y);
@@ -380,22 +381,23 @@
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
         p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y, w, h);
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
-    
-        p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);  // h-line at y=64
+        // draw horizontal line at y=64
+        p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
 
         //2
         x += 330, s = 'CENTER BASELINE ' + suf;
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
         p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y, w, h);
-        let bb = p.textBounds(s, x, y, w, h);
-        //console.log(bb);
-        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(bb));
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
 
         //3
         x += 330, s = 'RIGHT BASELINE ' + suf;
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
         p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y, w, h);
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+
 
         /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
         y += 120;
@@ -444,7 +446,7 @@
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
         p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y, w, h);
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
-        //p.noFill() && p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y) && p.strokeWeight(1);
+        p.noFill() && p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y);
 
         x += 330, s = 'CENTER TOP ' + suf;
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
@@ -463,6 +465,7 @@
     let textSketch = function (p) {
 
       p.setup = function () {
+        console.log(p._renderer);
         p.createCanvas(240, 160);
         p.background(204);
         p.textSize(19.5);
@@ -1249,7 +1252,7 @@
         let tw = p.fontWidth(s), x = 10, y = 30;
         p.text(s, x, y);
         p.rect(x, y, tw, 2);
-        p.text('width: ' + tw, x, y+30);
+        p.text('width: ' + tw, x, y + 30);
 
         p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 20, 0));
         return;
@@ -1259,15 +1262,15 @@
         p.noFill();
         p.stroke(0);
         p.rect(x, y, tw, 2);
-        p.line(x+tw, 0, x+tw, p.height);
+        p.line(x + tw, 0, x + tw, p.height);
 
         y += 90;
         tw = p.textWidth(s);
         p.text(s, x, y);
         p.rect(x, y, tw, 2);
-        p.text('width: ' + tw, x, y+30);
-        
-        
+        p.text('width: ' + tw, x, y + 30);
+
+
       };
     };
 
@@ -1454,18 +1457,18 @@
 
 
     if (0) {
-      //new p5(textWidthSketch, 'textWidthSketch');
+      new p5(textWidthSketch, 'textWidthSketch');
       //new p5(boundingBoxBreaks, 'boundingBoxBreaks');
       //new p5(textLeadingBottom, 'textLeadingBottom');
       //new p5(boundingBoxSingle, 'boundingBoxSingle');
-      new p5(boundingBoxMulti, 'boundingBoxMulti');
+      //new p5(boundingBoxMulti, 'boundingBoxMulti');
     }
     else {
 
       new p5(textSketch, 'textSketch');
       new p5(boundingBoxSingle, 'boundingBoxSingle');
       new p5(boundingBoxMulti, 'boundingBoxMulti');
-      new p5(manualBreaksLeft, 'manualBreaksLeft');
+      new p5(boundingBoxBreaksLeft, 'boundingBoxBreaksLeft');
       new p5(boundingBoxBreaks, 'boundingBoxBreaks');
       new p5(simpleTextBoundsSingle, 'simpleTextBoundsSingle');
       new p5(textVerticalAlign, 'textVerticalAlign');
@@ -1498,7 +1501,6 @@
     }
 
   </script>
-   
   <div id='textSketch'>
     <p class="caption">textAttributes</p>
     <img src="img/textSketch.p5.png" width="240" height="160"></img>
@@ -1509,18 +1511,18 @@
   </div>
   <div id='boundingBoxMulti'>
     <p class="caption">boundingBoxMulti</p>
-    <img src="img/boundingBoxMulti.p5.jpg" width="600" />
+    <!-- <img src="img/boundingBoxMulti.p5.jpg" width="600" /> -->
   </div>
   <div id='simpleTextBoundsSingle'>
     <p class="caption">simpleTextBoundsSingle</p>
   </div>
-  <div id='manualBreaksLeft'>
-    <p class="caption">manualBreaksLeft</p>
+  <div id='boundingBoxBreaksLeft'>
+    <p class="caption">boundingBoxBreaksLeft</p>
     <img src="img/boundingBoxBreaksLeft.p5.jpg" width="900" height="400"></img>
   </div>
   <div id='boundingBoxBreaks'>
     <p class="caption">boundingBoxBreaks</p>
-    <img src="img/boundingBoxBreaks.p5.jpg" width="900" height="200">
+    <img src="img/boundingBoxBreaks.p5.jpg" width="1200" height="400">
   </div>
   <div id='textVerticalAlign'>
     <p class="caption">textVerticalAlign</p>
@@ -1558,24 +1560,28 @@
   </div>
   <div id='textLeadingTop'>
     <p class="caption">textLeading.Top</p>
-    <img src="img/LEFT.TOP.lead.png" width="400" height="200" class="gray"></img>
     <img src="img/textLeadingTop.p5.jpg" width="400" height="200" class="gray">
+    <img src="img/LEFT.TOP.lead.png" width="400" height="200" class="gray"></img>
+
   </div>
   <div id='textLeadingCenter'>
     <p class="caption">textLeading.Center</p>
 
-    <img src="img/LEFT.CENTER.lead.png" width="400" height="200" class="gray"></img>
     <img src="img/textLeadingCenter.p5.jpg" width="400" height="200" class="gray"></img>
+    <img src="img/LEFT.CENTER.lead.png" width="400" height="200" class="gray"></img>
+
   </div>
   <div id='textLeadingBaseline'>
     <p class="caption">textLeading.Baseline</p>
-    <img src="img/LEFT.BL.lead.png" width="400" height="200" class="gray"></img>
     <img src="img/textLeadingBaseline.p5.jpg" width="400" height="200" class="gray"></img>
+    <img src="img/LEFT.BL.lead.png" width="400" height="200" class="gray"></img>
+
   </div>
   <div id='textLeadingBottom'>
     <p class="caption">textLeading.Bottom</p>
-    <img src="img/LEFT.BOTTOM.lead.png" width="400" height="200" class="gray"></img>
     <img src="img/textLeadingBottom.p5.jpg" width="400" height="200" class="gray">
+    <img src="img/LEFT.BOTTOM.lead.png" width="400" height="200" class="gray"></img>
+
   </div>
   <div id='textSizeSketch'>
     <p class="caption">textSize</p>
