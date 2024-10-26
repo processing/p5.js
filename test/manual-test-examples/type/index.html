@@ -667,9 +667,7 @@
     };
 
     let textSketch = function (p) {
-
       p.setup = function () {
-        console.log(p._renderer);
         p.createCanvas(240, 160);
         p.background(204);
         p.textSize(19.5);
@@ -1196,7 +1194,26 @@
       };
     };
 
+    let fontFaceProperties = function (p) {
+
+      // working here
+      
+      p.setup = async function () {
+        p.createCanvas(240, 220);
+        p.background(255);
+        let font = await p.loadFont("font/PlayfairDisplay.ttf", {
+          style: "italic",
+          weight: 800,
+          stretch: "condensed",
+          //variant: "small-caps"
+        });
+        p.textFont(font);//'PlayfairDisplay');
+        p.text('PlayfairDisplay.ttf', 10, 200);
+      }
+    };
+
     let loadedFontSketch = function (p) {
+
       p.setup = async function () {
         p.createCanvas(240, 220);
         p.background(255);
@@ -1232,6 +1249,7 @@
         p.text('PlayfairDisplay.ttf', 10, 200);
 
         p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 20, 0));
+
       };
     };
 
@@ -1662,16 +1680,16 @@
     };
 
 
-    if (0) {
+    if (1) {
+      new p5(fontFaceProperties, 'fontFaceProperties');
       //new p5(loadedsystemBoundsMulti, 'loadedsystemBoundsMulti');
       // new p5(loadedFontSketch, 'loadedFontSketch');
       // new p5(manualLineBreaks, 'manualLineBreaks');
       // new p5(textLeadingBottom, 'textLeadingBottom');
-      new p5(loadedBoundsSingle, 'loadedBoundsSingle');
+      //new p5(loadedBoundsSingle, 'loadedBoundsSingle');
       // new p5(systemBoundsMulti, 'systemBoundsMulti');
     }
     else {
-
       new p5(textSketch, 'textSketch');
       new p5(textBoundsSingle, 'textBoundsSingle');
       new p5(loadedBoundsSingle, 'loadedBoundsSingle');
@@ -1709,7 +1727,7 @@
     }
 
   </script>
-
+<!-- 
   <div id='textSketch'>
     <p class="caption">textAttributes</p>
     <img src="img/textSketch.p5.png" width="240" height="160"></img>
@@ -1824,7 +1842,7 @@
     <p class="caption">textAlphaSketch</p>
     <img src="img/textOverlapSketch.p5.png" width="240" height="160" class="gray"></img>
     <img src="img/textOverlapSketch.png" width="240" height="160" class="gray"></img>
-  </div>
+  </div> -->
 
   <!-- animations
 

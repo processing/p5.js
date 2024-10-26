@@ -160,7 +160,7 @@ function text2d(p5, fn) {
     let family = theFont;
     if (arguments.length) {
       if (theFont instanceof p5.Font) {
-        family = theFont.delegate.family;
+        family = theFont.font.family;
       }
       if (typeof family !== 'string') {
         throw new Error('null font passed to textFont');
@@ -194,11 +194,17 @@ function text2d(p5, fn) {
       // don't have corresponding properties in `states`?
 
       // update any font properties in `states`
-      if (theFont instanceof FontFace) {
+      if (theFont.font instanceof FontFace) {
         Object.keys(fontFacePropMap).forEach(prop => {
-          if (prop in theFont) {
-            if (fontFacePropMap[prop]) {
-              this.states[fontFacePropMap[prop]] = theFont.delegate[prop];
+          if (prop in theFont.font) {
+            console.log('checking ' + prop + ': theFont.font[' + prop + ']=' + theFont.font[prop]
+              + ' vs this.states.' + fontFacePropMap[prop] + '=' + this.states[fontFacePropMap[prop]]);
+            if (fontFacePropMap[prop] && fontFacePropMap[prop] in this.states) {
+              console.log('checking this.states[' + fontFacePropMap[prop] + '] = ' + this.states[fontFacePropMap[prop]]);
+              if (this.states[fontFacePropMap[prop]] !== theFont.font[prop]) {
+                console.log('setting', fontFacePropMap[prop], 'to', theFont.font[prop]);
+              }
+              this.states[fontFacePropMap[prop]] = theFont.font[prop];
             }
           }
         });
@@ -409,7 +415,7 @@ function text2d(p5, fn) {
     let desc = metrics.fontBoundingBoxDescent;
     x -= this._xAlignOffset(metrics.width);
     return { x, y: y - asc, w: metrics.width, h: asc + desc };;
-    
+
   };
 
   p5.Renderer2D.prototype._lineate = function (lines, maxWidth = Infinity, opts = {}) {
@@ -531,7 +537,7 @@ function text2d(p5, fn) {
         this._setFill(constants._DEFAULT_TEXT_FILL);
       }
 
-      //console.log('fillText:', line, x, y,  this.drawingContext.font);
+      console.log('fillText: "' + line + '"', x, y, "'" + this.drawingContext.font + "'");
       drawingContext.fillText(line, x, y);
     }
     //this._pInst.pop(); //DH: removed
@@ -541,3 +547,7 @@ function text2d(p5, fn) {
 }
 
 export default text2d;
+
+if (typeof p5 !== 'undefined') {
+  text2d(p5, p5.prototype);
+}
