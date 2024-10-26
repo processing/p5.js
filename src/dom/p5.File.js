@@ -16,8 +16,6 @@
  * @requires p5
  */
 
-//import p5 from '../core/main';
-
 function file(p5, fn){
 
 

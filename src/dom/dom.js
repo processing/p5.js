@@ -16,8 +16,6 @@
  * @requires p5
  */
 
-import p5 from '../core/main';
-
 function dom(p5, fn){
 /**
  * Searches the page for the first element that matches the given
