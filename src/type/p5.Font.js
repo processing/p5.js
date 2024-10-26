@@ -5,7 +5,7 @@ function font(p5, fn) {
   const invalidFontError = 'Sorry, only TTF, OTF, WOFF and WOFF2 files are supported.';
 
   /**
-   * Options for creating a p5.Font object, with examples:
+   * p5.Font descriptors / examples:
    *   ascentOverride: "normal"
    *   descentOverride: "normal"
    *   display: "auto"
@@ -25,10 +25,11 @@ function font(p5, fn) {
    *  font-string { textFont=family, textSize=?, textStyle=style, textVariant=variant, textWeight=weight, textHeight=?, textStretch=stretch}
    */
   p5.Font = class Font {
-    constructor(p, name, path, options) {
+
+    constructor(p, name, path, descriptors) {
       this.pInst = p;
       p._renderer._applyTextProperties(); // tmp
-      this.font = new FontFace(name, `url(${path})`, options);
+      this.font = new FontFace(name, `url(${path})`, descriptors);
     }
 
     async load() {
@@ -43,16 +44,36 @@ function font(p5, fn) {
       return this.pInst.textBounds(...args);
 
     }
-    textToPoints() { // stub
-      throw Error('Not implemented in basic p5.Font');
+    textToPoints(s, x, y, fsize, options) { // hack via rendering and checking pixels
+      const ctx = document.createElement("canvas").getContext("2d"); // TODO: cache
+      ctx.canvas.width = this.pInst._renderer.canvas.width; // match p5 canvas
+      ctx.canvas.height = this.pInst._renderer.canvas.height; // match p5 canvas
+      const fontSize = Math.min(canvas.width / 6, canvas.height / 6);
+      ctx.font = `900 ${fontSize}px Arial`;
+      ctx.fillStyle = "white";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+      const coordinates = [];
+      for (let y = 0; y < canvas.height; y += 4) {
+        for (let x = 0; x < canvas.width; x += 4) {
+          const index = (y * canvas.width + x) * 4;
+          if (imageData[index + 3] > 128) {
+            coordinates.push({ x, y });
+            // TODO: scale to position/size
+          }
+        }
+      }
+      return coordinates;
     }
 
     static async create(...args/*path, name, onSuccess, onError*/) {
 
-      let { path, name, success, error, options } = p5.Font._parseArgs(...args);
+      let { path, name, success, error, descriptors } = p5.Font._parseArgs(...args);
 
       return await new Promise((resolve, reject) => {
-        let pfont = new p5.Font(this/*p5 instance*/, name, path, options);
+        let pfont = new p5.Font(this/*p5 instance*/, name, path, descriptors);
         pfont.load().then(() => {
           if (document?.fonts) {
             document.fonts.add(pfont.font);
@@ -89,7 +110,7 @@ function font(p5, fn) {
         p5._friendlyError(invalidFontError, 'p5.loadFont'); // ?
       }
       // check for callbacks
-      let success, error, options;
+      let success, error, descriptors;
       for (let i = 0; i < args.length; i++) {
         const arg = args[i];
         if (typeof arg === 'function') {
@@ -100,10 +121,10 @@ function font(p5, fn) {
           }
         }
         else if (typeof arg === 'object') {
-          options = arg;
+          descriptors = arg;
         }
       }
-      return { path, name, success, error, options };
+      return { path, name, success, error, descriptors };
     }
   }// end p5.Font
 
