@@ -1,5 +1,9 @@
 function font(p5, fn) {
- 
+
+  const validFontTypes = ['ttf', 'otf', 'woff', 'woff2'];
+  const validFontTypesRE = new RegExp(`\.(${validFontTypes.join('|')})$`, 'i');
+  const invalidFontError = 'Sorry, only TTF, OTF, WOFF and WOFF2 files are supported.';
+
   /**
    * Options for creating a p5.Font object, with examples:
    *   ascentOverride: "normal"
@@ -21,54 +25,25 @@ function font(p5, fn) {
    *  font-string { textFont=family, textSize=?, textStyle=style, textVariant=variant, textWeight=weight, textHeight=?, textStretch=stretch}
    */
   p5.Font = class Font {
-    constructor(name, path, options) {
+    constructor(p, name, path, options) {
+      this.pInst = p;
       this.delegate = new FontFace(name, `url(${path})`, options);
     }
-
-    async loadY() {
-      try {
-        // wait for font to be loaded
-        await this.delegate.load();
-        // add font to document
-        if (document) document.fonts.add(this.delegate);
-      } catch (e) {
-        console.error(e);
-      }
+    async load() {
+      return this.delegate.load();
     }
-
-    async loadX(callback, errorCallback) {
-      return await new Promise(resolve => {
-        try {
-          this.delegate.load().then(() => {
-            if (typeof callback !== 'undefined') {
-              callback(this.delegate);
-            }
-            resolve(this.delegate)
-          }, err => {
-            console.log("[ERROR] loading: '" + this.path + "'\n" + err);
-            p5._friendlyFileLoadError(4, this.path); // ?
-            if (errorCallback) {
-              errorCallback(err);
-            } else {
-              throw err;
-            }
-          }
-          );
-        }
-        catch (err) {
-          console.log("ERRRORRRR:" + err);
-
-          p5._friendlyFileLoadError(4, this.path); // ?
-          if (errorCallback) {
-            errorCallback(err);
-          } else {
-            throw err;
-          }
-        }
-      });
+    fontBounds(...args) { // alias for p5.fontBounds
+      return this.pInst.fontBounds(...args);
+    }
+    textBounds(...args) { // alias for p5.textBounds
+      return this.pInst.textBounds(...args);
+    }
+    textToPoints() { // stub
+      throw Error('Not implemented in basic p5.Font');
     }
   };
 }
+
 export default font;
 
 if (typeof p5 !== 'undefined') {

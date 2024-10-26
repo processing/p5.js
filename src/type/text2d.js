@@ -30,6 +30,19 @@ function text2d(p5, fn) {
   p5.Renderer2D.TabsRe = /\t/g;
   p5.Renderer2D.LinebreakRE = /\r?\n/g;
 
+  // attach functions to p5 prototype, delegating each to the renderer
+  p5.Renderer2D.textFunctions.forEach(func => {
+    fn[func] = function (...args) {
+      if (func in p5.prototype) {
+        p5._validateParameters(func, args);
+      }
+      if (!(func in p5.Renderer2D.prototype)) {
+        throw Error(`Renderer2D.prototype.${func} is not defined.`);
+      }
+      return this._renderer[func](...args);
+    };
+  });
+
   //////////////////////// start API ////////////////////////
 
   p5.Renderer2D.prototype.text = function (str, x, y, width, height, opts) {
@@ -50,6 +63,14 @@ function text2d(p5, fn) {
   };
 
   p5.Renderer2D.prototype.textBounds = function (str, x, y, width, height) {
+    return this._computeBounds(this._textBoundsSingle.bind(this), str, x, y, width, height);
+  };
+
+  p5.Renderer2D.prototype.fontBounds = function (str, x, y, width, height) {
+    return this._computeBounds(this._fontBoundsSingle.bind(this), str, x, y, width, height);
+  };
+
+  p5.Renderer2D.prototype._computeBounds = function (measureFunc, str, x, y, width, height) {
     let setBaseline = this.drawingContext.textBaseline;
     let leading = this.states.textLeading;
 
@@ -57,7 +78,7 @@ function text2d(p5, fn) {
     let lines = this._parseLines(str, width);
 
     // get the adjusted positions [x,y] for each line
-    let boxes = lines.map((line, i) => this._textBoundsSingle(line, x, y + i * leading));
+    let boxes = lines.map((line, i) => measureFunc(line, x, y + i * leading));
 
     // get the bounds for the text block
     let bounds = boxes[0];
@@ -135,7 +156,7 @@ function text2d(p5, fn) {
       // TODO: this can be used before anything else to get the font properties
   */
   p5.Renderer2D.prototype.textFont = function (theFont, theSize, fontOptions) {
-  
+
     let family = theFont;
     if (arguments.length) {
       if (theFont instanceof p5.Font) {
@@ -177,7 +198,7 @@ function text2d(p5, fn) {
         Object.keys(fontFacePropMap).forEach(prop => {
           if (prop in theFont) {
             if (fontFacePropMap[prop]) {
-              this.states[fontFacePropMap[prop]] = theFont[prop];
+              this.states[fontFacePropMap[prop]] = theFont.delegate[prop];
             }
           }
         });
@@ -244,9 +265,7 @@ function text2d(p5, fn) {
     return this.states.textWrap;
   };
 
-  p5.Renderer2D.prototype.textMode = function () {
-    /* no-op for processing api compat */
-  };
+  p5.Renderer2D.prototype.textMode = function () { /* no-op for processing api */ };
 
   //////////////////////////// end API ///////////////////////////////
   p5.Renderer2D.prototype._positionLines = function (x, y, width, height, leading, numLines) {
@@ -388,11 +407,10 @@ function text2d(p5, fn) {
     let metrics = this.drawingContext.measureText(s);
     let asc = metrics.fontBoundingBoxAscent;
     let desc = metrics.fontBoundingBoxDescent;
-    let abl = metrics.fontBoundingBoxLeft;
-    let abr = metrics.fontBoundingBoxRight;
-    return { x: x - abl, y: y - asc, w: abr + abl, h: asc + desc };
+    x -= this._xAlignOffset(metrics.width);
+    return { x, y: y - asc, w: metrics.width, h: asc + desc };;
+    
   };
-
 
   p5.Renderer2D.prototype._lineate = function (lines, maxWidth = Infinity, opts = {}) {
 

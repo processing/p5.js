@@ -63,8 +63,8 @@ function textApi(p5, fn) {
       }
     }
     return await new Promise((resolve, reject) => {
-      let pfont = new p5.Font(name, path, options);
-      pfont.delegate.load().then(() => {
+      let pfont = new p5.Font(this, name, path, options);
+      pfont.load().then(() => {
         document.fonts.add(pfont.delegate);
         if (typeof callback === 'function') {
           callback(pfont);
