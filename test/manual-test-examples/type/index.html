@@ -1001,7 +1001,7 @@
         p.strokeWeight(0);
 
         // await plus (name, path) -> font-string
-        await p.loadFont("font/acmesa.ttf", "acmesa")
+        await p.loadFont("font/acmesa.ttf", "acmesa");
         p.textFont("acmesa");
         p.text('Acmesa.ttf', 10, 40);
 
@@ -1020,6 +1020,7 @@
         f = await p.loadFont("font/Lato-Black.ttf");
         p.textFont(f);
         p.text('Lato-Black.ttf', 10, 160);
+
 
         // await plus (path) -> font-string
         await p.loadFont("font/PlayfairDisplay.ttf");
@@ -1097,6 +1098,7 @@
         drawFontAlignments(systemFonts[0], 'Arial', 0, 0);
         drawFontAlignments(systemFonts[1], 'Times', 0, 200);
         drawFontAlignments(systemFonts[2], 'Consolas', 0, 400);
+
         // These proprietary fonts aren't included in the repo!
         // p.loadFont("../arial.ttf", function(font) {drawFontAlignments(font, "Arial", 0, 0)});
         // p.loadFont("../times.ttf", function(font) {drawFontAlignments(font, "Times", 0, 200)});
@@ -1457,7 +1459,7 @@
 
 
     if (0) {
-      new p5(textWidthSketch, 'textWidthSketch');
+      new p5(loadedFontSketch, 'loadedFontSketch');
       //new p5(boundingBoxBreaks, 'boundingBoxBreaks');
       //new p5(textLeadingBottom, 'textLeadingBottom');
       //new p5(boundingBoxSingle, 'boundingBoxSingle');
@@ -1501,6 +1503,7 @@
     }
 
   </script>
+
   <div id='textSketch'>
     <p class="caption">textAttributes</p>
     <img src="img/textSketch.p5.png" width="240" height="160"></img>
@@ -1511,7 +1514,6 @@
   </div>
   <div id='boundingBoxMulti'>
     <p class="caption">boundingBoxMulti</p>
-    <!-- <img src="img/boundingBoxMulti.p5.jpg" width="600" /> -->
   </div>
   <div id='simpleTextBoundsSingle'>
     <p class="caption">simpleTextBoundsSingle</p>

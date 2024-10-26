@@ -12,7 +12,7 @@ function textApi(p5, fn) {
 
   const validFontTypes = ['ttf', 'otf', 'woff', 'woff2'];
   const validFontTypesRE = new RegExp(`\.(${validFontTypes.join('|')})$`, 'i');
-  const invalidFontError = 'Sorry, only TTF and OTF font files are supported.'; // WOFF and WOFF2 ?
+  const invalidFontError = 'Sorry, only TTF, OTF, WOFF and WOFF2 files are supported.';
 
   //////////////////////////// API ////////////////////////////
 
@@ -62,32 +62,97 @@ function textApi(p5, fn) {
         options = arg;
       }
     }
-    // WORKING HERE
-    // let font = new p5.Font(name, `url(${path})`, options);
-    // document.fonts.add(font.delegate);
-    // return await font.load(callback, errorCallback);
-
-    const fontFile = new FontFace(name, `url(${path})`, options);
-    document.fonts.add(fontFile);
-
-    return await new Promise(resolve =>
-      fontFile.load().then(() => {
-        if (typeof callback !== 'undefined') {
-          callback(fontFile);
+    return await new Promise((resolve, reject) => {
+      let pfont = new p5.Font(name, path, options);
+      pfont.delegate.load().then(() => {
+        document.fonts.add(pfont.delegate);
+        if (typeof callback === 'function') {
+          callback(pfont);
         }
-        resolve(fontFile)
-      },
-        err => {
-          p5._friendlyFileLoadError(4, path); // ?
-          if (errorCallback) {
-            errorCallback(err);
-          } else {
-            throw err;
-          }
+        else {
+          resolve(pfont);
         }
-      ));
+      }, err => {
+        p5._friendlyFileLoadError(4, path); // ?
+        if (errorCallback) {
+          errorCallback(err);
+        } else {
+          reject(err);
+        }
+      });
+    });
   };
-}
+} // end class  
+
+
+
+
+// const ff = new FontFace(name, `url(${path})`, options);
+// ff.load().then(() => {
+//   document.fonts.add(ff);
+//   if (typeof callback === 'function') {
+//     callback(ff);
+//   }
+//   else {
+//     return ff;
+//   }
+// }, err => {
+//   p5._friendlyFileLoadError(4, path); // ?
+//   if (errorCallback) {
+//     errorCallback(err);
+//   } else {
+//     throw err;
+//   }
+// } 
+
+//   // WORKING HERE//
+//const pfont = new p5.Font(name, path, options);
+//   let font = new p5.Font(name, path, options);
+//   font.delegate.load(callback, errorCallback).then(() => {
+//     document.fonts.add(font.delegate);
+//     if (typeof callback !== 'undefined') {
+//       callback(font.delegate);
+//     }
+//   }
+//   /*else {
+//     let font = new p5.Font();
+//     const ff = new FontFace(name, `url(${path})`, options);
+//     await new Promise((resolve, reject) => {
+//       img.onload = () => {
+//         pImg.width = pImg.canvas.width = img.width;
+//         pImg.height = pImg.canvas.height = img.height;
+
+//         // Draw the image into the backing canvas of the p5.Image
+//         pImg.drawingContext.drawImage(img, 0, 0);
+//         pImg.modified = true;
+//         if (typeof successCallback === 'function') {
+//           successCallback(pImg);
+//         }
+//         resolve();
+//       };
+//   }*/
+
+//   // const fontFile = new FontFace(name, `url(${path})`, options);
+//   // document.fonts.add(fontFile);
+
+//   // return await new Promise(resolve =>
+//   //   fontFile.load().then(() => {
+//   //     if (typeof callback !== 'undefined') {
+//   //       callback(fontFile);
+//   //     }
+//   //     resolve(fontFile)
+//   //   },
+//   //     err => {
+//   //       p5._friendlyFileLoadError(4, path); // ?
+//   //       if (errorCallback) {
+//   //         errorCallback(err);
+//   //       } else {
+//   //         throw err;
+//   //       }
+//   //     }
+//   //   ));
+// };
+//}
 
 export default textApi;
 

@@ -69,7 +69,7 @@ function text2d(p5, fn) {
         h: boxes[boxes.length - 1].y - boxes[0].y + boxes[boxes.length - 1].h
       };
       // align the bounds if it is multi-line
-      this._alignBounds(bounds, width||0, height||0, leading, lines.length);
+      this._alignBounds(bounds, width || 0, height || 0, leading, lines.length);
     }
 
     this.drawingContext.textBaseline = setBaseline; // restore baseline
@@ -135,14 +135,13 @@ function text2d(p5, fn) {
       // TODO: this can be used before anything else to get the font properties
   */
   p5.Renderer2D.prototype.textFont = function (theFont, theSize, fontOptions) {
-    // need to add fontStretch/lineHeight
-
+  
+    let family = theFont;
     if (arguments.length) {
-
-      if (theFont instanceof FontFace) {
-        theFont = theFont.family;
+      if (theFont instanceof p5.Font) {
+        family = theFont.delegate.family;
       }
-      if (typeof theFont !== 'string') {
+      if (typeof family !== 'string') {
         throw new Error('null font passed to textFont');
       }
       if (typeof theSize === 'string') { // defaults to px
@@ -151,9 +150,40 @@ function text2d(p5, fn) {
         this.states.textSize = theSize;
       }
 
-      this.states.textFont = theFont;
+      this.states.textFont = family;
 
-      // update any opts font properties in `states`
+      const fontFacePropMap = {
+        stretch: 'textStretch',
+        style: 'textStyle',
+        weight: 'textWeight',
+        variant: 'textVariant',
+        /*ascentOverride: null,
+        descentOverride: null,
+        display: null,
+        family: null,
+        featureSettings: null,
+        lineGapOverride: null,
+        sizeAdjust: null,
+        status: null,
+        unicodeRange: null,
+        variationSettings: null,*/
+      }
+
+      // TODO: what to do with ^properties in FontFace that
+      // don't have corresponding properties in `states`?
+
+      // update any font properties in `states`
+      if (theFont instanceof FontFace) {
+        Object.keys(fontFacePropMap).forEach(prop => {
+          if (prop in theFont) {
+            if (fontFacePropMap[prop]) {
+              this.states[fontFacePropMap[prop]] = theFont[prop];
+            }
+          }
+        });
+      }
+
+      // update any fontOptions properties in `states`
       if (fontOptions && typeof fontOptions === 'object') {
         Object.keys(fontOptions).forEach(prop => {
           if (prop in p5.Renderer2D.FontProps) {
@@ -164,7 +194,6 @@ function text2d(p5, fn) {
 
       return this._applyTextProperties();
     }
-
     return this._buildFontString();
   }
 
@@ -175,7 +204,7 @@ function text2d(p5, fn) {
       this.states.textLeading = leading;
       return this._pInst;
     }
-    return this.states.textLeading; // TODO: is there a prop we can use ? lineHeight
+    return this.states.textLeading; // TODO: is there a prop we can use, eg. lineHeight ?
   }
 
   p5.Renderer2D.prototype.textSize = function (theSize) {
@@ -187,13 +216,13 @@ function text2d(p5, fn) {
       if (!this.states.leadingSet) {
         this.states.textLeading = this.states.textSize * 1.275;
       }
-
       return this._applyTextProperties();
     }
     return this.states.textSize;
   };
 
   p5.Renderer2D.prototype.textStyle = function (s) {
+
     if (typeof s !== 'undefined') {
       if (s === constants.NORMAL ||
         s === constants.ITALIC ||
@@ -203,11 +232,11 @@ function text2d(p5, fn) {
       }
       return this._applyTextProperties();
     }
-
     return this.states.textStyle;
   }
 
   p5.Renderer2D.prototype.textWrap = function (wrapStyle) {
+
     if (wrapStyle === constants.WORD || wrapStyle === constants.CHAR) {
       this.states.textWrap = wrapStyle;  // TODO: is there a prop we can use ?
       return this._pInst;
@@ -392,18 +421,18 @@ function text2d(p5, fn) {
   p5.Renderer2D.prototype._splitOnBreaks = function (s) {
     if (!s || s.length === 0) return [''];
     return s.replace(p5.Renderer2D.TabsRE, '  ').split(p5.Renderer2D.LinebreakRE);
-  }
+  };
 
   p5.Renderer2D.prototype._buildFontString = function () {
     let { textFont, textSize, textStyle, textVariant, textWeight, textHeight, textStretch } = this.states;
     let size = `${textSize}px` + (textHeight !== constants.NORMAL ? `/${textHeight}` : '');
     let css = `${textStretch} ${textStyle} ${textWeight} ${textVariant} ${size} ${textFont}`;
     return css;
-  }
-
+  };
 
   p5.Renderer2D.prototype._textProperties = function () {
     return {
+      textWrap: this.states.textWrap,
       textSize: this.states.textSize,
       textFont: this.states.textFont,
       textStretch: this.states.textStretch,
@@ -413,8 +442,7 @@ function text2d(p5, fn) {
       textVariant: this.states.textVariant,
       textLeading: this.states.textLeading,
       textAlign: this.drawingContext.textAlign,
-      textBaseline: this.drawingContext.textBaseline,
-      textWrap: this.states.textWrap
+      textBaseline: this.drawingContext.textBaseline
     };
   };
 
@@ -451,24 +479,10 @@ function text2d(p5, fn) {
       textStretch: { property: 'fontStretch', default: constants.NORMAL },
       textVariantCaps: { property: 'fontVariantCaps', default: constants.NORMAL },
       textWrap: { default: constants.WORD },
-    };
-    // verify context properties exist in `states`, else set with default
-    Object.keys(contextProps).forEach(prop => {
-      if (!(prop in this.states)) {
-        this.states[prop] = contextProps[prop].default;
-      }
-    });
-  
-    // update any context properties that differ from `states`  (TODO: REMOVE)
-    Object.keys(contextProps).forEach(prop => {
-      let ctxProp = contextProps[prop].property || prop;
-      this.drawingContext[ctxProp] = this.states[prop];
-    });*/
+    };*/
 
     const fontString = this._buildFontString(); // create font-string from states
     this.drawingContext.font = fontString;
-
-    //console.log(this.drawingContext.font + '\n' + '-'.repeat(80));
 
     if (fontString.replace(/normal /g, '') !== this.drawingContext.font) { // TMP: rm, warn if font not set properly
       console.warn('Error setting text properties: \ncss="' + fontString + '"\nctx="' + this.drawingContext.font + '"');
@@ -499,7 +513,7 @@ function text2d(p5, fn) {
         this._setFill(constants._DEFAULT_TEXT_FILL);
       }
 
-      //console.log('fillText:', line, x, y, this._textProperties());
+      //console.log('fillText:', line, x, y,  this.drawingContext.font);
       drawingContext.fillText(line, x, y);
     }
     //this._pInst.pop(); //DH: removed
