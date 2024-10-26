@@ -1,16 +1,22 @@
 import sketchVerifier from '../../../src/core/friendly_errors/sketch_verifier.js';
+import { loadP5Constructors } from '../../../src/core/friendly_errors/friendly_errors_utils.js';
 
 suite('Sketch Verifier', function () {
   const mockP5 = {
     _validateParameters: vi.fn(),
-    Renderer: function () { },
+    Color: function () { },
+    Vector: function () { },
+    prototype: {
+      rect: function () { },
+      ellipse: function () { },
+    }
   };
-  mockP5.Renderer.prototype.rect = vi.fn();
   const mockP5Prototype = {};
+  let p5Constructors;
 
   beforeAll(function () {
+    p5Constructors = loadP5Constructors(mockP5);
     sketchVerifier(mockP5, mockP5Prototype);
-    mockP5Prototype.loadP5Constructors();
   });
 
   afterAll(function () {
@@ -199,7 +205,7 @@ suite('Sketch Verifier', function () {
         variables: [{ name: 'PI', line: 1 }],
         functions: []
       };
-      const result = mockP5Prototype.checkForConstsAndFuncs(userDefinitions);
+      const result = mockP5Prototype.checkForConstsAndFuncs(userDefinitions, p5Constructors);
 
       expect(result).toBe(true);
       expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Constant "PI" on line 1 is being redeclared and conflicts with a p5.js constant'));
@@ -210,13 +216,13 @@ suite('Sketch Verifier', function () {
         variables: [],
         functions: [{ name: 'rect', line: 2 }]
       };
-      const result = mockP5Prototype.checkForConstsAndFuncs(userDefinitions);
+      const result = mockP5Prototype.checkForConstsAndFuncs(userDefinitions, p5Constructors);
 
       expect(result).toBe(true);
       expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Function "rect" on line 2 is being redeclared and conflicts with a p5.js function'));
     });
 
-    test('allows redefinition of whitelisted functions', function () {
+    test('Allows redefinition of whitelisted functions', function () {
       const userDefinitions = {
         variables: [],
         functions: [
@@ -226,7 +232,7 @@ suite('Sketch Verifier', function () {
         ]
       };
 
-      const result = mockP5Prototype.checkForConstsAndFuncs(userDefinitions);
+      const result = mockP5Prototype.checkForConstsAndFuncs(userDefinitions, p5Constructors);
 
       expect(result).toBe(false);
       expect(consoleSpy).not.toHaveBeenCalled();
@@ -238,14 +244,27 @@ suite('Sketch Verifier', function () {
         functions: [{ name: 'cut', line: 2 }]
       };
 
-      const result = mockP5Prototype.checkForConstsAndFuncs(userDefinitions);
+      const result = mockP5Prototype.checkForConstsAndFuncs(userDefinitions, p5Constructors);
 
       expect(result).toBe(false);
     });
   });
 
   suite('run()', function () {
+    let originalReadyState;
+
+    beforeEach(function () {
+      originalReadyState = document.readyState;
+      vi.spyOn(window, 'addEventListener');
+    });
+
+    afterEach(function () {
+      Object.defineProperty(document, 'readyState', { value: originalReadyState });
+      vi.restoreAllMocks();
+    });
+
     test('Extracts user-defined variables and functions and checks for conflicts', async function () {
+      Object.defineProperty(document, 'readyState', { value: 'complete' });
       const mockScript = `
         let x = 5;
         const y = 10;
@@ -281,10 +300,15 @@ suite('Sketch Verifier', function () {
           { name: 'foo', line: 3 },
           { name: 'bar', line: 4 }
         ]
-      });
+      },
+        expect.any(Object) // This is the p5Constructors object
+      );
+      expect(window.addEventListener).not.toHaveBeenCalled();
     });
 
     test('Stops execution when a conflict is found', async function () {
+      Object.defineProperty(document, 'readyState', { value: 'complete' });
+
       const mockScript = `
         let PI = 3.14;
         function setup() {}
@@ -300,10 +324,12 @@ suite('Sketch Verifier', function () {
 
       expect(mockP5Prototype.getUserCode).toHaveBeenCalledTimes(1);
       expect(mockP5Prototype.extractUserDefinedVariablesAndFuncs).toHaveBeenCalledWith(mockScript);
-      expect(mockP5Prototype.checkForConstsAndFuncs).toHaveBeenCalledWith({
-        variables: [{ name: 'PI', line: 1 }],
-        functions: [{ name: 'setup', line: 2 }]
-      });
+      expect(mockP5Prototype.checkForConstsAndFuncs).toHaveBeenCalledWith(
+        {
+          variables: [{ name: 'PI', line: 1 }],
+          functions: [{ name: 'setup', line: 2 }]
+        },
+        expect.any(Object));  // This is the p5Constructors object
       expect(result).toBeUndefined();
     });
   });
