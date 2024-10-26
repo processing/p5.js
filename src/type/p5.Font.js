@@ -27,8 +27,8 @@ function font(p5, fn) {
   p5.Font = class Font {
     constructor(p, name, path, options) {
       this.pInst = p;
+      p._renderer._applyTextProperties(); // tmp
       this.font = new FontFace(name, `url(${path})`, options);
-      console.log('Font', this.font);
     }
 
     async load() {
@@ -49,6 +49,32 @@ function font(p5, fn) {
 
     static async create(...args/*path, name, onSuccess, onError*/) {
 
+      let { path, name, success, error, options } = p5.Font._parseArgs(...args);
+
+      return await new Promise((resolve, reject) => {
+        let pfont = new p5.Font(this/*p5 instance*/, name, path, options);
+        pfont.load().then(() => {
+          if (document?.fonts) {
+            document.fonts.add(pfont.font);
+          }
+          if (typeof success === 'function') {
+            success(pfont);
+          }
+          else {
+            resolve(pfont);
+          }
+        }, err => {
+          p5._friendlyFileLoadError(4, path);
+          if (error) {
+            error(err);
+          } else {
+            reject(err);
+          }
+        });
+      });
+    };
+
+    static _parseArgs(...args/*path, name, onSuccess, onError*/) {
       let name, path = args.shift();
       if (typeof path !== 'string' || path.length === 0) {
         p5._friendlyError(invalidFontError, 'p5.loadFont'); // ?
@@ -62,46 +88,24 @@ function font(p5, fn) {
       else {
         p5._friendlyError(invalidFontError, 'p5.loadFont'); // ?
       }
-
-      let callback, errorCallback, options;
-
       // check for callbacks
+      let success, error, options;
       for (let i = 0; i < args.length; i++) {
         const arg = args[i];
         if (typeof arg === 'function') {
-          if (!callback) {
-            callback = arg;
+          if (!success) {
+            success = arg;
           } else {
-            errorCallback = arg;
+            error = arg;
           }
         }
         else if (typeof arg === 'object') {
           options = arg;
         }
       }
-      return await new Promise((resolve, reject) => {
-        let pfont = new p5.Font(this, name, path, options);
-        pfont.load().then(() => {
-          if (document?.fonts) {
-            document.fonts.add(pfont.font);
-          }
-          if (typeof callback === 'function') {
-            callback(pfont);
-          }
-          else {
-            resolve(pfont);
-          }
-        }, err => {
-          p5._friendlyFileLoadError(4, path); // ?
-          if (errorCallback) {
-            errorCallback(err);
-          } else {
-            reject(err);
-          }
-        });
-      });
-    };
-  }
+      return { path, name, success, error, options };
+    }
+  }// end p5.Font
 
   // attach as p5.loadFont
   fn.loadFont = p5.Font.create;

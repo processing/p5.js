@@ -1194,24 +1194,6 @@
       };
     };
 
-    let fontFaceProperties = function (p) {
-
-      // working here
-      
-      p.setup = async function () {
-        p.createCanvas(240, 220);
-        p.background(255);
-        let font = await p.loadFont("font/PlayfairDisplay.ttf", {
-          style: "italic",
-          weight: 800,
-          stretch: "condensed",
-          //variant: "small-caps"
-        });
-        p.textFont(font);//'PlayfairDisplay');
-        p.text('PlayfairDisplay.ttf', 10, 200);
-      }
-    };
-
     let loadedFontSketch = function (p) {
 
       p.setup = async function () {
@@ -1680,8 +1662,7 @@
     };
 
 
-    if (1) {
-      new p5(fontFaceProperties, 'fontFaceProperties');
+    if (0) {
       //new p5(loadedsystemBoundsMulti, 'loadedsystemBoundsMulti');
       // new p5(loadedFontSketch, 'loadedFontSketch');
       // new p5(manualLineBreaks, 'manualLineBreaks');
@@ -1727,7 +1708,7 @@
     }
 
   </script>
-<!-- 
+
   <div id='textSketch'>
     <p class="caption">textAttributes</p>
     <img src="img/textSketch.p5.png" width="240" height="160"></img>
@@ -1842,7 +1823,7 @@
     <p class="caption">textAlphaSketch</p>
     <img src="img/textOverlapSketch.p5.png" width="240" height="160" class="gray"></img>
     <img src="img/textOverlapSketch.png" width="240" height="160" class="gray"></img>
-  </div> -->
+  </div>
 
   <!-- animations
 

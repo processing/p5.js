@@ -197,10 +197,9 @@ function text2d(p5, fn) {
       if (theFont.font instanceof FontFace) {
         Object.keys(fontFacePropMap).forEach(prop => {
           if (prop in theFont.font) {
-            console.log('checking ' + prop + ': theFont.font[' + prop + ']=' + theFont.font[prop]
-              + ' vs this.states.' + fontFacePropMap[prop] + '=' + this.states[fontFacePropMap[prop]]);
+            //console.log('checking ' + prop + ': theFont.font[' + prop + ']=' + theFont.font[prop]
+              //+ ' vs this.states.' + fontFacePropMap[prop] + '=' + this.states[fontFacePropMap[prop]]);
             if (fontFacePropMap[prop] && fontFacePropMap[prop] in this.states) {
-              console.log('checking this.states[' + fontFacePropMap[prop] + '] = ' + this.states[fontFacePropMap[prop]]);
               if (this.states[fontFacePropMap[prop]] !== theFont.font[prop]) {
                 console.log('setting', fontFacePropMap[prop], 'to', theFont.font[prop]);
               }
@@ -472,6 +471,8 @@ function text2d(p5, fn) {
 
   p5.Renderer2D.prototype._applyTextProperties = function () {
 
+    if (!p5.Renderer2D.FontProps) console.log('initializing FontProps');
+
     p5.Renderer2D.FontProps = p5.Renderer2D.FontProps ?? {
       textSize: 12, // font-size: <absolute-size> | <relative-size> | <length> | <percentage>
       textFont: 'sans-serif', // font-family: <family-name> | <generic-family>
@@ -481,6 +482,7 @@ function text2d(p5, fn) {
       textStyle: constants.NORMAL, // font-style: normal | italic | oblique
       textVariant: constants.NORMAL, // font-variant: normal | small-caps
     };
+    if (!p5.Renderer2D.FontProps) throw Error('FontProps not set');
 
     // TMP: font props to be added to P5.Renderer.states,
     // but nothing that can be set on context2d (eg. textBaseline)
@@ -537,7 +539,7 @@ function text2d(p5, fn) {
         this._setFill(constants._DEFAULT_TEXT_FILL);
       }
 
-      console.log('fillText: "' + line + '"', x, y, "'" + this.drawingContext.font + "'");
+      //console.log('fillText: "' + line + '"', x, y, "'" + this.drawingContext.font + "'");
       drawingContext.fillText(line, x, y);
     }
     //this._pInst.pop(); //DH: removed
