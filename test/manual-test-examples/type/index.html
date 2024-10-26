@@ -235,7 +235,7 @@
       };
     };
 
-    let boundingBoxBreaksLeft = function (p) {
+    let manualLineBreaksLeft = function (p) {
       let x = 10, y = 120, s, showBB = 0, h = 54.5;
       p.setup = function () {
         p.createCanvas(900, 400);
@@ -274,7 +274,7 @@
       }
     }
 
-    let boundingBoxBreaks = function (p) {
+    let manualLineBreaks = function (p) {
       let x, y, s, showBB = 0;
 
       p.setup = function () {
@@ -1460,7 +1460,7 @@
 
     if (0) {
       new p5(loadedFontSketch, 'loadedFontSketch');
-      //new p5(boundingBoxBreaks, 'boundingBoxBreaks');
+      //new p5(manualLineBreaks, 'manualLineBreaks');
       //new p5(textLeadingBottom, 'textLeadingBottom');
       //new p5(boundingBoxSingle, 'boundingBoxSingle');
       //new p5(boundingBoxMulti, 'boundingBoxMulti');
@@ -1470,8 +1470,8 @@
       new p5(textSketch, 'textSketch');
       new p5(boundingBoxSingle, 'boundingBoxSingle');
       new p5(boundingBoxMulti, 'boundingBoxMulti');
-      new p5(boundingBoxBreaksLeft, 'boundingBoxBreaksLeft');
-      new p5(boundingBoxBreaks, 'boundingBoxBreaks');
+      new p5(manualLineBreaksLeft, 'manualLineBreaksLeft');
+      new p5(manualLineBreaks, 'manualLineBreaks');
       new p5(simpleTextBoundsSingle, 'simpleTextBoundsSingle');
       new p5(textVerticalAlign, 'textVerticalAlign');
       new p5(multilineAlignWord, 'multilineAlignWord');
@@ -1518,12 +1518,12 @@
   <div id='simpleTextBoundsSingle'>
     <p class="caption">simpleTextBoundsSingle</p>
   </div>
-  <div id='boundingBoxBreaksLeft'>
-    <p class="caption">boundingBoxBreaksLeft</p>
+  <div id='manualLineBreaksLeft'>
+    <p class="caption">manualLineBreaksLeft</p>
     <img src="img/boundingBoxBreaksLeft.p5.jpg" width="900" height="400"></img>
   </div>
-  <div id='boundingBoxBreaks'>
-    <p class="caption">boundingBoxBreaks</p>
+  <div id='manualLineBreaks'>
+    <p class="caption">manualLineBreaks</p>
     <img src="img/boundingBoxBreaks.p5.jpg" width="1200" height="400">
   </div>
   <div id='textVerticalAlign'>
