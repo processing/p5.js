@@ -1398,7 +1398,7 @@ class Renderer2D extends Renderer {
       }
     }
 
-    const p = p5.prototype.text.apply(this, arguments);
+    const p = super.text(...arguments);
 
     if (baselineHacked) {
       this.drawingContext.textBaseline = constants.BASELINE;
