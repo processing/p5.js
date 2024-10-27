@@ -61,7 +61,9 @@ class Renderer2D extends Renderer {
 
     // Get and store drawing context
     this.drawingContext = this.canvas.getContext('2d');
-    this._pInst.drawingContext = this.drawingContext;
+    if (isMainCanvas) {
+      this._pInst.drawingContext = this.drawingContext;
+    }
     this.scale(this._pixelDensity, this._pixelDensity);
 
     // Set and return p5.Element
@@ -101,6 +103,7 @@ class Renderer2D extends Renderer {
     ) {
       this.filterGraphicsLayer.pixelDensity(this._pInst.pixelDensity());
     }
+
     return this.filterGraphicsLayer;
   }
 

@@ -126,7 +126,9 @@ class RendererGL extends Renderer {
     // This redundant property is useful in reminding you that you are
     // interacting with WebGLRenderingContext, still worth considering future removal
     this.GL = this.drawingContext;
-    this._pInst.drawingContext = this.drawingContext;
+    if (isMainCanvas) {
+      this._pInst.drawingContext = this.drawingContext;
+    }
 
     if (this._isMainCanvas) {
       // for pixel method sharing with pimage

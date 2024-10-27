@@ -754,7 +754,6 @@ function pixels(p5, fn){
     // when this is P2D renderer, create/use hidden webgl renderer
     else {
       const filterGraphicsLayer = this.getFilterGraphicsLayer();
-
       // copy p2d canvas contents to secondary webgl renderer
       // dest
       filterGraphicsLayer.copy(
