@@ -750,14 +750,12 @@ class RendererGL extends Renderer {
   }
   getFilterLayer() {
     if (!this.filterLayer) {
-      // this.filterLayer = this._pInst.createFramebuffer();
       this.filterLayer = new Framebuffer(this);
     }
     return this.filterLayer;
   }
   getFilterLayerTemp() {
     if (!this.filterLayerTemp) {
-      // this.filterLayerTemp = this._pInst.createFramebuffer();
       this.filterLayerTemp = new Framebuffer(this);
     }
     return this.filterLayerTemp;
@@ -992,9 +990,9 @@ class RendererGL extends Renderer {
     gl.disable(gl.DEPTH_TEST);
 
     this.push();
-    this._pInst.resetShader();
-    if (this.states.doFill) this._pInst.fill(0, 0);
-    if (this.states.doStroke) this._pInst.stroke(0, 0);
+    this.resetShader();
+    if (this.states.doFill) this.fill(0, 0);
+    if (this.states.doStroke) this.stroke(0, 0);
   }
 
   endClip() {
@@ -1132,8 +1130,7 @@ class RendererGL extends Renderer {
     this.resetMatrix();
     this.clear();
     this.states.imageMode = constants.CENTER;
-    // NOTE: call renderer image directly, need more arguments
-    this._pInst.image(fbo, 0, 0);
+    this.image(fbo, 0, 0, fbo.width, fbo.height, 0, 0, fbo.width, fbo.height);
     this.pop();
     this.GL.clearDepth(1);
     this.GL.clear(this.GL.DEPTH_BUFFER_BIT);
@@ -1147,12 +1144,6 @@ class RendererGL extends Renderer {
    */
   _getTempFramebuffer() {
     if (!this._tempFramebuffer) {
-      // this._tempFramebuffer = this._pInst.createFramebuffer({
-      //   format: constants.UNSIGNED_BYTE,
-      //   useDepth: this._pInst._glAttributes.depth,
-      //   depthFormat: constants.UNSIGNED_INT,
-      //   antialias: this._pInst._glAttributes.antialias
-      // });
       this._tempFramebuffer = new Framebuffer(this, {
         format: constants.UNSIGNED_BYTE,
         useDepth: this._pInst._glAttributes.depth,
@@ -1769,9 +1760,6 @@ class RendererGL extends Renderer {
     let smallWidth = 200;
     let width = smallWidth;
     let height = Math.floor(smallWidth * (input.height / input.width));
-    // newFramebuffer = this._pInst.createFramebuffer({
-    //   width, height, density: 1
-    // });
     newFramebuffer = new Framebuffer(this, {
       width, height, density: 1
     })
@@ -1784,12 +1772,12 @@ class RendererGL extends Renderer {
       );
     }
     newFramebuffer.draw(() => {
-      this._pInst.shader(this.states.diffusedShader);
+      this.shader(this.states.diffusedShader);
       this.states.diffusedShader.setUniform('environmentMap', input);
       this.states.doStroke = false;
-      this._pInst.rectMode(constants.CENTER);
-      this._pInst.noLights();
-      this._pInst.rect(0, 0, width, height);
+      this.rectMode(constants.CENTER);
+      this.noLights();
+      this.rect(0, 0, width, height);
     });
     this.diffusedTextures.set(input, newFramebuffer);
     return newFramebuffer;
@@ -1814,9 +1802,6 @@ class RendererGL extends Renderer {
     const size = 512;
     let tex;
     const levels = [];
-    // const framebuffer = this._pInst.createFramebuffer({
-    //   width: size, height: size, density: 1
-    // });
     const framebuffer = new Framebuffer(this, {
       width: size, height: size, density: 1
     });
@@ -1837,13 +1822,13 @@ class RendererGL extends Renderer {
       let currCount = Math.log(w) / Math.log(2);
       let roughness = 1 - currCount / count;
       framebuffer.draw(() => {
-        this._pInst.shader(this.states.specularShader);
+        this.shader(this.states.specularShader);
         this.clear();
         this.states.specularShader.setUniform('environmentMap', input);
         this.states.specularShader.setUniform('roughness', roughness);
         this.states.doStroke = false;
-        this._pInst.noLights();
-        this._pInst.plane(w, w);
+        this.noLights();
+        this.plane(w, w);
       });
       levels.push(framebuffer.get().drawingContext.getImageData(0, 0, w, w));
     }
