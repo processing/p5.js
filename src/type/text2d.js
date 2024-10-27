@@ -1,25 +1,31 @@
 import * as constants from '../core/constants';
 
+/*
+ * Questions: 
+ *    textProp(s)
+ */
+
 /**
  * @module Type
  * @submodule text2d
  * @for p5
  * @requires core
  */
-
 function text2d(p5, fn, lifecycles) {
 
   lifecycles.presetup = function () {
 
     p5.Renderer2D.FontProps = {
-      textSize: 12, // font-size: <absolute-size> | <relative-size> | <length> | <percentage>
-      textFont: 'sans-serif', // font-family: <family-name> | <generic-family>
-      textStretch: constants.NORMAL, // font-stretch: normal | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded
-      textWeight: constants.NORMAL, // font-weight: normal | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900
-      textHeight: constants.NORMAL, // line-height: normal | number | length | percentage
-      textStyle: constants.NORMAL, // font-style: normal | italic | oblique
-      textVariant: constants.NORMAL, // font-variant: normal | small-caps
+      textSize: { default: 12 }, // font-size: { default:  <absolute-size> | <relative-size> | <length> | <percentage>
+      textFont: { default: 'sans-serif' }, // font-family: { default:  <family-name> | <generic-family>
+      textStretch: { default: constants.NORMAL, property: 'fontStretch' }, // font-stretch: { default:  normal | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded
+      textWeight: { default: constants.NORMAL, property: 'fontWeight' }, // font-weight: { default:  normal | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900
+      textHeight: { default: constants.NORMAL, property: 'lineHeight' }, // line-height: { default:  normal | number | length | percentage
+      textStyle: { default: constants.NORMAL, property: 'fontStyle' },  // font-style: { default:  normal | italic | oblique
+      textVariant: { default: constants.NORMAL, property: 'fontVariant' }, // font-variant: { default:  normal | small-caps
     };
+
+    p5.Renderer2D.ContextProps = ['direction', 'fillStyle', 'filter', 'font', 'fontKerning', 'fontStretch', 'fontVariantCaps', 'globalAlpha', 'globalCompositeOperation', 'imageSmoothingEnabled', 'imageSmoothingQuality', 'letterSpacing', 'lineCap', 'lineDashOffset', 'lineJoin', 'lineWidth', 'miterLimit', 'shadowBlur', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY', 'strokeStyle', 'textAlign', 'textBaseline', 'textRendering', 'wordSpacing'];
 
     const textFunctions = [
       'text',
@@ -27,19 +33,23 @@ function text2d(p5, fn, lifecycles) {
       'textAscent',
       'textDescent',
       'textLeading',
+      // no-op, for processing
+      'textMode',
       'textFont',
       'textSize',
       'textStyle',
       'textWidth',
       'textWrap',
-      'textMode',   // no-op, for processing
-      'textBounds', // new
-      'fontBounds',  // new
-      'fontWidth',     // new
-      'textToPoints' // new
+      // new text functions
+      'textBounds',
+      'fontBounds',
+      'fontWidth',
+      'textToPoints',
+      'textProp',
+      'textProps',
     ];
 
-    // attach functions to p5 prototype, delegating each to the renderer
+    // attach each to p5 prototype, delegating to the renderer
     textFunctions.forEach(func => {
       fn[func] = function (...args) {
         if (func in p5.prototype) {
@@ -64,7 +74,7 @@ function text2d(p5, fn, lifecycles) {
     let leading = this.states.textLeading;
 
     // parse the lines according to the width & linebreaks
-    let lines = this._parseLines(str, width);
+    let lines = this._processLines(str, width);
 
     // get the adjusted positions [x,y] for each line
     let positions = this._positionLines(x, y, width, height, leading, lines.length);
@@ -81,33 +91,6 @@ function text2d(p5, fn, lifecycles) {
 
   p5.Renderer2D.prototype.fontBounds = function (str, x, y, width, height) {
     return this._computeBounds(this._fontBoundsSingle.bind(this), str, x, y, width, height);
-  };
-
-  p5.Renderer2D.prototype._computeBounds = function (measureFunc, str, x, y, width, height) {
-    let setBaseline = this.drawingContext.textBaseline;
-    let leading = this.states.textLeading;
-
-    // parse the lines according to the width & linebreaks
-    let lines = this._parseLines(str, width);
-
-    // get the adjusted positions [x,y] for each line
-    let boxes = lines.map((line, i) => measureFunc(line, x, y + i * leading));
-
-    // get the bounds for the text block
-    let bounds = boxes[0];
-    if (lines.length > 1) {
-      bounds = {
-        x: Math.min(...boxes.map(b => b.x)),
-        y: Math.min(...boxes.map(b => b.y)), // could use boxes[0].y
-        w: Math.max(...boxes.map(b => b.w)),
-        h: boxes[boxes.length - 1].y - boxes[0].y + boxes[boxes.length - 1].h
-      };
-      // align the bounds if it is multi-line
-      this._alignBounds(bounds, width || 0, height || 0, leading, lines.length);
-    }
-
-    this.drawingContext.textBaseline = setBaseline; // restore baseline
-    return bounds;
   };
 
   p5.Renderer2D.prototype.textAlign = function (h, v) {
@@ -144,14 +127,14 @@ function text2d(p5, fn, lifecycles) {
 
   p5.Renderer2D.prototype.textWidth = function (theText) {
     // return the max width of the lines
-    let lines = this._parseLines(theText);
+    let lines = this._processLines(theText);
     let widths = lines.map(l => this._textWidthSingle(l));
     return Math.max(...widths);
   };
 
   p5.Renderer2D.prototype.fontWidth = function (theText) {
     // return the max width of the lines
-    let lines = this._parseLines(theText);
+    let lines = this._processLines(theText);
     let widths = lines.map(l => this._fontWidthSingle(l));
     return Math.max(...widths);
   };
@@ -164,50 +147,43 @@ function text2d(p5, fn, lifecycles) {
       textWeight: constants.NORMAL, font-weight: normal | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900
       textHeight: constants.NORMAL, line-height: normal | number | length | percentage
       textStyle: constants.NORMAL, font-style: normal | italic | oblique
-      textVariant: constants.NORMAL, font-variant: normal | small-caps
-  
-      // TODO: this can be used before anything else to get the font properties
+      textVariant: constants.NORMAL, font-variant: normal | small-caps  
   */
   p5.Renderer2D.prototype.textFont = function (theFont, theSize, options) {
 
-    let family = theFont;
-    if (arguments.length) {
-      if (theFont instanceof p5.Font) {
-        family = theFont.font.family;
-      }
-      if (typeof family !== 'string') {
-        throw new Error('null font passed to textFont');
-      }
-      if (typeof theSize === 'string') { // defaults to px
-        // TODO: handle other units and possibly convert to px
-        theSize = Number.parseFloat(theSize);
-      }
-      if (typeof theSize === 'number') {
-        this.states.textSize = theSize;
-      }
+    this._initFontProps();
 
-      this.states.textFont = family;
-
-      // set all font properties to their default in `states`
-      Object.keys(p5.Renderer2D.FontProps).forEach(p => {
-        if (!(p in this.states)) {
-          this.states[p] = p5.Renderer2D.FontProps[p];
-        }
-      });
-
-      // update any fontOptions properties in `states`
-      if (typeof options === 'object') {
-        Object.keys(options).forEach(prop => {
-          // set to value in options object
-          if (prop in p5.Renderer2D.FontProps) {
-            this.states[prop] = options[prop];
-          }
-        });
-      }
-
-      return this._applyTextProperties();
+    if (arguments.length === 0) {
+      this._applyTextProperties();
+      return this.drawingContext.font;
     }
-    return this._buildFontString();
+
+    let family = theFont;
+    if (theFont instanceof p5.Font) {
+      family = theFont.font.family;
+    }
+    if (typeof family !== 'string') {
+      throw new Error('null font passed to textFont');
+    }
+    if (typeof theSize === 'string') { // defaults to px
+      // TODO: handle other units and possibly convert to px
+      theSize = Number.parseFloat(theSize);
+    }
+
+    // update font properties in this.states
+    if (typeof family === 'string') {
+      this.states.textFont = family;
+    }
+    if (typeof theSize === 'number') {
+      this.states.textSize = theSize;
+    }
+
+    // apply options to this.states
+    if (typeof options === 'object') {
+      this.textProps(options);
+    }
+
+    return this._applyTextProperties();
   }
 
   p5.Renderer2D.prototype.textLeading = function (leading) {
@@ -257,31 +233,70 @@ function text2d(p5, fn, lifecycles) {
     return this.states.textWrap;
   };
 
-  p5.Renderer2D.prototype.textMode = function () { /* no-op for processing api */ };
-
   p5.Renderer2D.prototype.textToPoints = function (s, x, y, fsize, options) { // hack via rendering and checking pixels
+
+    // create a hidden canvas
     const canvas = document.createElement("canvas")
     const ctx = canvas.getContext("2d"); // TODO: cache
+
+    // set its dimensions to match the p5 canvas
     canvas.width = this._pInst._renderer.canvas.width; // match p5 canvas
     canvas.height = this._pInst._renderer.canvas.height; // match p5 canvas
-    const ctx2 = this._pInst.drawingContext;
-    ctx.font = ctx2.font;
-    ctx.textAlign = ctx2.textAlign;
-    ctx.textBaseline = ctx2.textBaseline;
+
+    // set context properties to match the p5 context (a better way?)
+    p5.Renderer2D.ContextProps.forEach(p => ctx[p] = this.drawingContext[p]);
+
+    // render the text to the hidden canvas
     ctx.fillText(s, x, y);
+
+    // get the pixel data from the hidden canvas
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
     const coordinates = [];
     for (let y = 0; y < canvas.height; y += 4) {
       for (let x = 0; x < canvas.width; x += 4) {
         const index = (y * canvas.width + x) * 4;
-        if (imageData[index + 3] > 128) {
+        if (imageData[index + 3] > 128) { // threshold alpha (better with averaging
           coordinates.push({ x, y });
         }
       }
     }
     return coordinates;
   }
+
+  p5.Renderer2D.prototype.textMode = function () { /* no-op for processing api */ };
+
   //////////////////////////// end API ///////////////////////////////
+  p5.Renderer2D.prototype._computeBounds = function (measureFunc, str, x, y, width, height) {
+    let setBaseline = this.drawingContext.textBaseline;
+    let leading = this.states.textLeading;
+
+    // parse the lines according to the width & linebreaks
+    let lines = this._processLines(str, width);
+
+    // get the adjusted positions [x,y] for each line
+    let boxes = lines.map((line, i) => measureFunc(line, x, y + i * leading));
+
+    // get the bounds for the text block
+    let bounds = boxes[0];
+    if (lines.length > 1) {
+
+      // get the bounds for the multi-line text block
+      bounds = {
+        x: Math.min(...boxes.map(b => b.x)),
+        y: Math.min(...boxes.map(b => b.y)), // could use boxes[0].y
+        w: Math.max(...boxes.map(b => b.w)),
+        h: boxes[boxes.length - 1].y - boxes[0].y + boxes[boxes.length - 1].h
+      };
+
+      // align the bounds if it is multi-line
+      this._alignBounds(bounds, width || 0, height || 0, leading, lines.length);
+    }
+
+    this.drawingContext.textBaseline = setBaseline; // restore baseline
+
+    return bounds;
+  };
+
   p5.Renderer2D.prototype._positionLines = function (x, y, width, height, leading, numLines) {
 
     let adjustedX, positions = [];
@@ -291,7 +306,7 @@ function text2d(p5, fn, lifecycles) {
     for (let i = 0; i < numLines; i++) {
       switch (this.drawingContext.textAlign) {
         case 'start'://constants.START:
-          console.warn('textBounds: START not yet supported for RTL rendering');
+          //console.warn('textBounds: START not yet supported for RTL rendering');
           this.drawingContext.textAlign = constants.LEFT; // TMP
         case constants.LEFT:
           adjustedX = x;
@@ -305,7 +320,6 @@ function text2d(p5, fn, lifecycles) {
         case 'end': //constants.END:
           throw new Error('textBounds: END not yet supported for textAlign');
           break;
-
       }
       positions.push({ x: adjustedX, y: y + (i * leading) });
     }
@@ -316,7 +330,20 @@ function text2d(p5, fn, lifecycles) {
     return positions;
   };
 
-  p5.Renderer2D.prototype._parseLines = function (str, width) {
+  /* 
+    Set all font properties to their defaults in `renderer.states` 
+    TODO: move to Renderer2D.constructor ?
+  */
+  p5.Renderer2D.prototype._initFontProps = function () {
+    Object.keys(p5.Renderer2D.FontProps).forEach(p => {
+      if (!(p in this.states)) { // use the default if not already set
+        this.states[p] = p5.Renderer2D.FontProps[p].default;
+      }
+    });
+    return this._pInst;
+  };
+
+  p5.Renderer2D.prototype._processLines = function (str, width) {
     let lines = this._splitOnBreaks(str);
     let hasLineBreaks = lines.length > 1;
     let hasWidth = typeof width !== 'undefined';
@@ -455,21 +482,94 @@ function text2d(p5, fn, lifecycles) {
     return s.replace(p5.Renderer2D.TabsRE, '  ').split(p5.Renderer2D.LinebreakRE);
   };
 
-  p5.Renderer2D.prototype._buildFontString = function () {
-    //let { textFont, textSize, textStyle, textVariant, textWeight, textHeight, textStretch } = this.states;
+  p5.Renderer2D.prototype._applyTextProperties = function () {
+
+    this._initFontProps();
+
     let { textFont, textSize, textHeight } = this.states;
-    if (textFont.indexOf(' ') !== -1) textFont = `"${textFont}"`;
-    let textStretch = this.states.textStretch !== constants.NORMAL ? ` ${this.states.textStretch} ` : '';
-    let textStyle = this.states.textStyle !== constants.NORMAL ? ` ${this.states.textStyle} ` : '';
-    let textWeight = this.states.textWeight !== constants.NORMAL ? ` ${this.states.textWeight} ` : '';
-    let textVariant = this.states.textVariant !== constants.NORMAL ? ` ${this.states.textVariant} ` : '';
-    let size = `${textSize}px` + (textHeight !== constants.NORMAL ? `/${textHeight}` : '');
-    let css = `${textStretch}${textStyle}${textWeight}${textVariant}${size} ${textFont}`;
-    return css.trim();
+
+    let family = textFont.indexOf(' ') > -1 ? `"${textFont}"` : textFont;
+    let size = `${textSize}px` + (textHeight !== constants.NORMAL ? `/${textHeight} ` : ' ');
+    let textStretch = this.states.textStretch !== constants.NORMAL ? `${this.states.textStretch} ` : '';
+    let textStyle = this.states.textStyle !== constants.NORMAL ? `${this.states.textStyle} ` : '';
+    let textWeight = this.states.textWeight !== constants.NORMAL ? `${this.states.textWeight} ` : '';
+    let textVariant = this.states.textVariant !== constants.NORMAL ? `${this.states.textVariant} ` : '';
+    let fontString = `${textStretch}${textStyle}${textWeight}${textVariant}${size}${family}`;
+
+    this.drawingContext.font = fontString.trim();
+
+    return this._pInst;
   };
 
-  p5.Renderer2D.prototype._textProperties = function () {
-    return {
+  /**
+   * Sets/gets a single text property for the renderer, eg. textFont, textSize, etc.
+   * Sets either a mapped or unmapped property on this.states, or a property on this.drawingContext
+   * Gets a property from this.states or this.drawingContext
+   */
+  p5.Renderer2D.prototype.textProp = function (opt, val) {
+
+    // get the option from this.states or this.drawingContext if it exists
+    if (typeof val === 'undefined') {
+      let props = this.textProps();
+      if (opt in props) return props[opt];
+      throw Error('Unknown text option "' + opt + '"');
+    }
+
+    // set the option in this.states if it exists
+    if (opt in this.states) {
+      if (this.states[opt] === val) {
+        return this._pInst;  // short-circuit if no change
+      }
+      this.states[opt] = val;
+      //console.log('this.states.' + opt + '="' + options[opt] + '"');
+    }
+    // does it exist in CanvasRenderingContext2D ?
+    else if (opt in this.drawingContext) {
+
+      // is it a property mapped to one managed in this.states ?
+      let [state, _] = Object.entries(p5.Renderer2D.FontProps)
+        .find(([_, v]) => v.property === opt);
+
+      // then set the mapped property in this.states instead
+      if (state) {
+        if (this.states[state] === val) {
+          return this._pInst;  // short-circuit if no change
+        }
+        this.states[state] = val;
+        //console.log('set mapped property "' + opt + '"/"' + state + '" to "' + val + '"');
+      }
+
+      // otherwise, set the property directly and hope for the best
+      else if (opt in this.drawingContext) {
+        if (this.drawingContext[opt] === val) {
+          return this._pInst;  // short-circuit if no change
+        }
+        this.drawingContext[opt] = val;
+      }
+    }
+    else {
+      console.log('textFont(): ignoring unknown option "' + opt + '"\n', this.states);
+    }
+
+    // only if we've modified something
+    return this._applyTextProperties();
+  };
+
+  /**
+   * Batch set/get text properties for the renderer
+   */
+  p5.Renderer2D.prototype.textProps = function (properties) {
+
+    if (typeof properties === 'object') {
+      Object.keys(properties).forEach(opt => {
+        this.textProp(opt, properties[opt]);
+      });
+      return this._pInst;
+    }
+
+    this._applyTextProperties();
+
+    return { // QUESTION:
       textWrap: this.states.textWrap,
       textSize: this.states.textSize,
       textFont: this.states.textFont,
@@ -479,36 +579,18 @@ function text2d(p5, fn, lifecycles) {
       textStyle: this.states.textStyle,
       textVariant: this.states.textVariant,
       textLeading: this.states.textLeading,
+
       textAlign: this.drawingContext.textAlign,
-      textBaseline: this.drawingContext.textBaseline
+      textBaseline: this.drawingContext.textBaseline,
+
+      font: this.drawingContext.font,
+      fontKerning: this.drawingContext.fontKerning,
+      fontStretch: this.drawingContext.fontStretch,
+      fontVariantCaps: this.drawingContext.fontVariantCaps,
+      textRendering: this.drawingContext.textRendering,
+      letterSpacing: this.drawingContext.letterSpacing,
+      wordSpacing: this.drawingContext.wordSpacing,
     };
-  };
-
-  p5.Renderer2D.prototype._applyTextProperties = function () {
-
-    /* Disabled for now, SAVE
-    {properties: {context-property-name,default} for drawingContext
-    let contextProps = { // TODO: remove all these from this.states
-      wordSpacing: { default: 0 },
-      textAlign: { default: constants.LEFT },
-      textRendering: { default: constants.AUTO },
-      textBaseline: { default: constants.BASELINE },
-      textKerning: { property: 'fontKerning', default: constants.AUTO },
-      textStretch: { property: 'fontStretch', default: constants.NORMAL },
-      textVariantCaps: { property: 'fontVariantCaps', default: constants.NORMAL },
-      textWrap: { default: constants.WORD },
-    };*/
-
-    const fontString = this._buildFontString(); // create font-string from states
-    this.drawingContext.font = fontString;
-    console.log('setting font to "' + fontString + '"');
-
-
-    if (fontString.replace(/normal /g, '') !== this.drawingContext.font) { // TMP: rm, warn if font not set properly
-      console.warn('Error setting text properties: \ncss="' + fontString + '"\nctx="' + this.drawingContext.font + '"');
-    }
-
-    return this._pInst;
   };
 
   // text() calls this method to render text

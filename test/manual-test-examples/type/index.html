@@ -48,6 +48,50 @@
 
     const DISPLAY_ANIMATIONS = false;
 
+    const textStretchSketch = function (p) {
+      let url = 'url(https://fonts.gstatic.com/s/inconsolata/v31/QlddNThLqRwH-OJ1UHjlKENVzlm-WkL3GZQmAwPyya15.woff2) format("woff2")';
+      let opts = ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'];
+      p.setup = async function () {
+        p.createCanvas(900, 330);
+        let f = await p.loadFont(url, 'Inconsolata', { stretch: "50% 200%" });
+        p.textFont(f, 32);
+        p.text(`Hello world (default: normal)`, 5, 35);
+        opts.forEach((opt, i) => {
+          p.textFont(f, 32, { fontStretch: opt });
+          p.text(`Hello world (${opt})`, 5, 35 * (i + 2));
+        });
+      };
+    };
+
+    const textToPointsSketch = function (p) {
+      let pts, txs;
+      p.setup = function () {
+        p.createCanvas(700, 300);
+        p.textSize(300);
+        p.textStyle(p.BOLD);
+        p.textAlign(p.CENTER, p.CENTER);
+        p.strokeWeight(3);
+        p.stroke('#E92D55');
+        txs = p.textToPoints('p5.js', p.width / 2, p.height / 2);
+        pts = txs.map(pt => ({ x: p.random(p.width), y: p.random(p.height) }));
+      };
+      p.draw = function () {
+        p.background(255);
+        pts.forEach((pt, i) => {
+          pt.x = p.lerp(pt.x, txs[i].x, 0.03);
+          pt.y = p.lerp(pt.y, txs[i].y, 0.03);
+          p.point(pt.x, pt.y);
+        });
+        if (p.frameCount > 300) {
+          p.noFill();
+          p.stroke(0, 100);
+          p.text('p5.js', p.width / 2, p.height / 2);
+          p.noLoop();
+        }
+      };
+
+    };
+
     let textBoundsSingle2 = function (p) {
 
       function dt(s, x, y, halign, valign) {
@@ -1672,6 +1716,7 @@
     }
     else {
       new p5(textSketch, 'textSketch');
+      new p5(textStretchSketch, 'textStretchSketch');
       new p5(textBoundsSingle, 'textBoundsSingle');
       new p5(loadedBoundsSingle, 'loadedBoundsSingle');
       new p5(systemBoundsMulti, 'systemBoundsMulti');
@@ -1698,6 +1743,7 @@
     }
 
     if (DISPLAY_ANIMATIONS) {
+      new p5(textToPointsSketch, 'textToPointsSketch');
       new p5(textFlySketch, 'textFlySketch');
       new p5(textFlickerSketch, 'textFlickerSketch');
       new p5(textFadeSketch, 'textFadeSketch');
@@ -1714,12 +1760,19 @@
     <img src="img/textSketch.p5.png" width="240" height="160"></img>
     <img src="img/textSketch.png" width="240" height="160"></img>
   </div>
+
+  <div id='textStretchSketch'>
+    <p class="caption">textStretchSketch</p>
+  </div>
+
   <div id='textBoundsSingle'>
     <p class="caption">textBoundsSingle</p>
   </div>
+
   <div id='loadedBoundsSingle'>
     <p class="caption">loadedBoundsSingle</p>
   </div>
+
   <div id='systemBoundsMulti'>
     <p class="caption">systemBoundsMulti</p>
   </div>
@@ -1727,37 +1780,45 @@
   <div id='textBoundsSingle2'>
     <p class="caption">textBoundsSingle2</p>
   </div>
+
   <div id='manualLineBreaksLeft'>
     <p class="caption">manualLineBreaksLeft</p>
     <img src="img/boundingBoxBreaksLeft.p5.jpg" width="900" height="400"></img>
   </div>
+
   <div id='manualLineBreaks'>
     <p class="caption">manualLineBreaks</p>
     <img src="img/boundingBoxBreaks.p5.jpg" width="1200" height="400">
   </div>
+
   <div id='textVerticalAlign'>
     <p class="caption">textVerticalAlign</p>
     <img src="img/textVerticalAlign.png" width="960" height="160" class="gray"></img>
     <img src="img/textVerticalAlign.p5.png" width="960" height="160" class="gray"></img>
   </div>
+
   <div id='multilineAlignWord'>
     <p class="caption">multilineAlign.Word</p>
     <img src="img/multilineAlignSketch.png" width="960" height="160" class="gray"></img>
     <img src="img/multilineAlignSketch.p5.png" width="960" height="160" class="gray"></img>
   </div>
+
   <div id='multilineAlignChar'>
     <p class="caption">multilineAlign.Char</p>
     <img src="img/multilineAlignChar.p5.png" width="960" height="160" class="gray"></img>
   </div>
+
   <div id='textFontSketch'>
     <p class="caption">textFont</p>
     <img src="img/textFontSketch.p5.jpg" width="240" height="160" class="gray"></img>
     <img src="img/textFontSketch.jpg" width="240" height="160" class="gray"></img>
   </div>
+
   <div id='loadedFontSketch'>
     <p class="caption">loadFont</p>
     <img src="img/loadedFontSketch.p5.png" width="240" height="240" class="gray"></img>
   </div>
+
   <div id='textAlignSketch'>
     <p class="caption">textAlign</p>
     <img src="img/textAlignSketch.p5.png" width="240" height="160" class="gray"></img>
@@ -1771,62 +1832,63 @@
   </div>
   <div id="textAllAlignmentsSketch2" style="position:relative;">
     <img src="img/textAllAlignmentsSketch.p5.jpg" width="400" height="600" style="display:inline-block;"></img>
-    <p class="caption">Overlay (p5.js v1.x)</p>
-
+    <p class="caption">Overlay (p5.js v1)</p>
   </div>
+
   <div id='textLeadingTop'>
     <p class="caption">textLeading.Top</p>
     <img src="img/textLeadingTop.p5.jpg" width="400" height="200" class="gray">
     <img src="img/LEFT.TOP.lead.png" width="400" height="200" class="gray"></img>
-
   </div>
+
   <div id='textLeadingCenter'>
     <p class="caption">textLeading.Center</p>
-
     <img src="img/textLeadingCenter.p5.jpg" width="400" height="200" class="gray"></img>
     <img src="img/LEFT.CENTER.lead.png" width="400" height="200" class="gray"></img>
-
   </div>
+
   <div id='textLeadingBaseline'>
     <p class="caption">textLeading.Baseline</p>
     <img src="img/textLeadingBaseline.p5.jpg" width="400" height="200" class="gray"></img>
     <img src="img/LEFT.BL.lead.png" width="400" height="200" class="gray"></img>
-
   </div>
+
   <div id='textLeadingBottom'>
     <p class="caption">textLeading.Bottom</p>
     <img src="img/textLeadingBottom.p5.jpg" width="400" height="200" class="gray">
     <img src="img/LEFT.BOTTOM.lead.png" width="400" height="200" class="gray"></img>
-
   </div>
+
   <div id='textSizeSketch'>
     <p class="caption">textSizeSketch</p>
     <img src="img/textSizeSketch.p5.png" width="240" height="160" class="gray"></img>
     <img src="img/textSizeSketch.png" width="240" height="160" class="gray"></img>
   </div>
+
   <div id='textStyleSketch'>
     <p class="caption">textStyleSketch</p>
-
     <img src="img/textStyleSketch.p5.jpg" width="240" height="160" class="gray"></img>
   </div>
+
   <div id='textWidthSketch'>
     <p class="caption">fontWidth/textWidth</p>
     <img src="img/textWidthSketch.p5.png" width="240" height="160" class="gray"></img>
     <img src="img/textWidthSketch.png" width="240" height="160" class="gray"></img>
   </div>
+
   <div id='typographyLetterSketch'>
     <p class="caption">typographyGrid</p>
     <img src="img/typographyLetterSketch.png" width="720" height="320"></img>
     <img src="img/typographyLetterSketch.p5.png" width="720" height="320"></img>
   </div>
+
   <div id='textOverlapSketch'>
     <p class="caption">textAlphaSketch</p>
     <img src="img/textOverlapSketch.p5.png" width="240" height="160" class="gray"></img>
     <img src="img/textOverlapSketch.png" width="240" height="160" class="gray"></img>
   </div>
 
-  <!-- animations
-
+  <!-- animations -->
   <div id='textFlySketch'>
   </div>
   <div id='textFlickerSketch'>
@@ -1840,7 +1902,9 @@
   <div id='textAvoidSketch'>
   </div>
   <div id='textBendSketch'>
-  </div> -->
+  </div>
+  <div id='textToPointsSketch'>
+  </div>
 
 </body>
 
