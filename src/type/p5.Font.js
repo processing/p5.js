@@ -44,28 +44,9 @@ function font(p5, fn) {
       return this.pInst.textBounds(...args);
 
     }
-    textToPoints(s, x, y, fsize, options) { // hack via rendering and checking pixels
-      const ctx = document.createElement("canvas").getContext("2d"); // TODO: cache
-      ctx.canvas.width = this.pInst._renderer.canvas.width; // match p5 canvas
-      ctx.canvas.height = this.pInst._renderer.canvas.height; // match p5 canvas
-      const fontSize = Math.min(canvas.width / 6, canvas.height / 6);
-      ctx.font = `900 ${fontSize}px Arial`;
-      ctx.fillStyle = "white";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-      const coordinates = [];
-      for (let y = 0; y < canvas.height; y += 4) {
-        for (let x = 0; x < canvas.width; x += 4) {
-          const index = (y * canvas.width + x) * 4;
-          if (imageData[index + 3] > 128) {
-            coordinates.push({ x, y });
-            // TODO: scale to position/size
-          }
-        }
-      }
-      return coordinates;
+
+    textToPoints(...args) { // alias for p5.textToPoints
+      return this.pInst.textToPoints(...args);
     }
 
     static async create(...args/*path, name, onSuccess, onError*/) {
