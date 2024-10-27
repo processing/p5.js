@@ -773,7 +773,6 @@ class RendererGL extends Renderer {
     }
   }
   filter(...args) {
-
     let fbo = this.getFilterLayer();
 
     // use internal shader for filter constants BLUR, INVERT, etc
@@ -814,7 +813,7 @@ class RendererGL extends Renderer {
     // Resize the framebuffer 'fbo' and adjust its pixel density if it doesn't match the target.
     this.matchSize(fbo, target);
 
-    fbo.draw(() => this._pInst.clear()); // prevent undesirable feedback effects accumulating secretly.
+    fbo.draw(() => this.clear()); // prevent undesirable feedback effects accumulating secretly.
 
     let texelSize = [
       1 / (target.width * target.pixelDensity()),
@@ -829,8 +828,8 @@ class RendererGL extends Renderer {
       this.matchSize(tmp, target);
       // setup
       this.push();
-      this._pInst.noStroke();
-      this._pInst.blendMode(constants.BLEND);
+      this.states.doStroke = false;
+      this.blendMode(constants.BLEND);
 
       // draw main to temp buffer
       this.shader(this.states.filterShader);
@@ -842,7 +841,7 @@ class RendererGL extends Renderer {
       tmp.draw(() => {
         this.states.filterShader.setUniform('direction', [1, 0]);
         this.states.filterShader.setUniform('tex0', target);
-        this._pInst.clear();
+        this.clear();
         this.shader(this.states.filterShader);
         this.noLights();
         this.plane(target.width, target.height);
@@ -852,7 +851,7 @@ class RendererGL extends Renderer {
       fbo.draw(() => {
         this.states.filterShader.setUniform('direction', [0, 1]);
         this.states.filterShader.setUniform('tex0', tmp);
-        this._pInst.clear();
+        this.clear();
         this.shader(this.states.filterShader);
         this.noLights();
         this.plane(target.width, target.height);
@@ -863,8 +862,8 @@ class RendererGL extends Renderer {
     // every other non-blur shader uses single pass
     else {
       fbo.draw(() => {
-        this._pInst.noStroke();
-        this._pInst.blendMode(constants.BLEND);
+        this.states.doStroke = false;
+        this.blendMode(constants.BLEND);
         this.shader(this.states.filterShader);
         this.states.filterShader.setUniform('tex0', target);
         this.states.filterShader.setUniform('texelSize', texelSize);
@@ -879,19 +878,24 @@ class RendererGL extends Renderer {
     }
     // draw fbo contents onto main renderer.
     this.push();
-    this._pInst.noStroke();
+    this.states.doStroke = false;
     this.clear();
     this.push();
-    this._pInst.imageMode(constants.CORNER);
-    this._pInst.blendMode(constants.BLEND);
+    this.states.imageMode = constants.CORNER;
+    this.blendMode(constants.BLEND);
     target.filterCamera._resize();
     this.setCamera(target.filterCamera);
-    this._pInst.resetMatrix();
+    this.resetMatrix();
     this._drawingFilter = true;
-    this._pInst.image(fbo, -target.width / 2, -target.height / 2,
-      target.width, target.height);
+    this.image(
+      fbo,
+      0, 0,
+      this.width, this.height,
+      -target.width / 2, -target.height / 2,
+      target.width, target.height
+    );
     this._drawingFilter = false;
-    this._pInst.clearDepth();
+    this.clearDepth();
     this.pop();
     this.pop();
   }
@@ -985,14 +989,14 @@ class RendererGL extends Renderer {
     );
     gl.disable(gl.DEPTH_TEST);
 
-    this._pInst.push();
+    this.push();
     this._pInst.resetShader();
     if (this.states.doFill) this._pInst.fill(0, 0);
     if (this.states.doStroke) this._pInst.stroke(0, 0);
   }
 
   endClip() {
-    this._pInst.pop();
+    this.pop();
 
     const gl = this.GL;
     gl.stencilOp(
@@ -1122,12 +1126,13 @@ class RendererGL extends Renderer {
     const fbo = this._getTempFramebuffer();
     fbo.pixels = this._pixelsState.pixels;
     fbo.updatePixels();
-    this._pInst.push();
-    this._pInst.resetMatrix();
-    this._pInst.clear();
-    this._pInst.imageMode(constants.CENTER);
+    this.push();
+    this.resetMatrix();
+    this.clear();
+    this.states.imageMode = constants.CENTER;
+    // NOTE: call renderer image directly, need more arguments
     this._pInst.image(fbo, 0, 0);
-    this._pInst.pop();
+    this.pop();
     this.GL.clearDepth(1);
     this.GL.clear(this.GL.DEPTH_BUFFER_BIT);
   }
@@ -1779,7 +1784,7 @@ class RendererGL extends Renderer {
     newFramebuffer.draw(() => {
       this._pInst.shader(this.states.diffusedShader);
       this.states.diffusedShader.setUniform('environmentMap', input);
-      this._pInst.noStroke();
+      this.states.doStroke = false;
       this._pInst.rectMode(constants.CENTER);
       this._pInst.noLights();
       this._pInst.rect(0, 0, width, height);
@@ -1831,10 +1836,10 @@ class RendererGL extends Renderer {
       let roughness = 1 - currCount / count;
       framebuffer.draw(() => {
         this._pInst.shader(this.states.specularShader);
-        this._pInst.clear();
+        this.clear();
         this.states.specularShader.setUniform('environmentMap', input);
         this.states.specularShader.setUniform('roughness', roughness);
-        this._pInst.noStroke();
+        this.states.doStroke = false;
         this._pInst.noLights();
         this._pInst.plane(w, w);
       });

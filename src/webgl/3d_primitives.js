@@ -3168,6 +3168,7 @@ function primitives3D(p5, fn){
     dWidth,
     dHeight
   ) {
+    // console.log(arguments);
     if (this._isErasing) {
       this.blendMode(this._cachedBlendMode);
     }
