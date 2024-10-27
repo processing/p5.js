@@ -1470,8 +1470,8 @@
         p.text('Font Size 14', 10, 60);
         p.textSize(16);
         p.text('Font Size 16', 10, 90);
+        //console.log(p.textProps());
         p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 20, 0));
-
       };
     };
 
@@ -1707,12 +1707,7 @@
 
 
     if (0) {
-      //new p5(loadedsystemBoundsMulti, 'loadedsystemBoundsMulti');
-      // new p5(loadedFontSketch, 'loadedFontSketch');
-      // new p5(manualLineBreaks, 'manualLineBreaks');
-      // new p5(textLeadingBottom, 'textLeadingBottom');
-      //new p5(loadedBoundsSingle, 'loadedBoundsSingle');
-      // new p5(systemBoundsMulti, 'systemBoundsMulti');
+      new p5(textSizeSketch, 'textSizeSketch');
     }
     else {
       new p5(textSketch, 'textSketch');
@@ -1754,7 +1749,7 @@
     }
 
   </script>
-
+ 
   <div id='textSketch'>
     <p class="caption">textAttributes</p>
     <img src="img/textSketch.p5.png" width="240" height="160"></img>
