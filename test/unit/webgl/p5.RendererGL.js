@@ -2506,10 +2506,10 @@ suite('p5.RendererGL', function() {
   });
 
   suite('vertexProperty()', function() {
-    test('Immediate mode data and buffers created in beginShape', 
+    test('Immediate mode data and buffers created in beginShape',
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
-        
+
         myp5.beginShape();
         myp5.vertexProperty('aCustom', 1);
         myp5.vertexProperty('aCustomVec3', [1, 2, 3]);
@@ -2543,10 +2543,10 @@ suite('p5.RendererGL', function() {
         myp5.endShape();
       }
     );
-    test('Immediate mode data and buffers deleted after beginShape', 
+    test('Immediate mode data and buffers deleted after beginShape',
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
-        
+
         myp5.beginShape();
         myp5.vertexProperty('aCustom', 1);
         myp5.vertexProperty('aCustomVec3', [1,2,3]);
