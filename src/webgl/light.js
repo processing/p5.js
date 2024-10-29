@@ -465,7 +465,8 @@ p5.prototype.specularColor = function (v1, v2, v3) {
  * that shines from somewhere offscreen. The light’s direction is set using
  * three `(x, y, z)` values between -1 and 1. For example, setting a light’s
  * direction as `(1, 0, 0)` will light <a href="#/p5.Geometry">p5.Geometry</a>
- * objects from the left since the light faces directly to the right.
+ * objects from the left since the light faces directly to the right. A
+ * maximum of 5 directional lights can be active at once.
  *
  * There are four ways to call `directionalLight()` with parameters to set the
  * light’s color and direction.
