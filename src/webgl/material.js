@@ -864,9 +864,6 @@ function material(p5, fn){
     this._assert3d('shader');
     p5._validateParameters('shader', arguments);
 
-    // NOTE: make generic or remove need for
-    s.ensureCompiledOnContext(this);
-
     this._renderer.shader(s);
 
     return this;
@@ -1040,9 +1037,6 @@ function material(p5, fn){
     this._assert3d('strokeShader');
     p5._validateParameters('strokeShader', arguments);
 
-    // NOTE: make generic or remove need for
-    s.ensureCompiledOnContext(this);
-
     this._renderer.strokeShader(s);
 
     return this;
@@ -1199,9 +1193,6 @@ function material(p5, fn){
   fn.imageShader = function (s) {
     this._assert3d('imageShader');
     p5._validateParameters('imageShader', arguments);
-
-    // NOTE: make generic or remove need for
-    s.ensureCompiledOnContext(this);
 
     this._renderer.imageShader(s);
 
@@ -3633,16 +3624,19 @@ function material(p5, fn){
     // Always set the shader as a fill shader
     this.states.userFillShader = s;
     this.states._useNormalMaterial = false;
+    s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
   }
 
   RendererGL.prototype.strokeShader = function(s) {
     this.states.userStrokeShader = s;
+    s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
   }
 
   RendererGL.prototype.imageShader = function(s) {
     this.states.userImageShader = s;
+    s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
   }
 
