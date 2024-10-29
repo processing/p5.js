@@ -199,21 +199,25 @@ suite('p5.Framebuffer', function() {
 
       test('resizes the framebuffer by createFramebuffer based on max texture size', function() {
         myp5.createCanvas(10, 10, myp5.WEBGL);
+        delete myp5._renderer._maxTextureSize;
         glStub = vi.spyOn(myp5._renderer, '_getMaxTextureSize');
         const fakeMaxTextureSize = 100;
         glStub.mockReturnValue(fakeMaxTextureSize);
         const fbo = myp5.createFramebuffer({ width: 200, height: 200 });
+        delete myp5._renderer._maxTextureSize;
         expect(fbo.width).to.equal(100);
         expect(fbo.height).to.equal(100);
       });
 
       test('resizes the framebuffer by resize method based on max texture size', function() {
         myp5.createCanvas(10, 10, myp5.WEBGL);
+        delete myp5._renderer._maxTextureSize;
         glStub = vi.spyOn(myp5._renderer, '_getMaxTextureSize');
         const fakeMaxTextureSize = 100;
         glStub.mockReturnValue(fakeMaxTextureSize);
         const fbo = myp5.createFramebuffer({ width: 10, height: 10 });
         fbo.resize(200, 200);
+        delete myp5._renderer._maxTextureSize;
         expect(fbo.width).to.equal(100);
         expect(fbo.height).to.equal(100);
       });
