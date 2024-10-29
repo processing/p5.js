@@ -200,6 +200,7 @@ class Renderer2D extends Renderer {
   }
 
   fill(...args) {
+    super.fill(...args);
     const color = this._pInst.color(...args);
     this._setFill(color.toString());
 
@@ -210,6 +211,7 @@ class Renderer2D extends Renderer {
   }
 
   stroke(...args) {
+    super.stroke(...args);
     const color = this._pInst.color(...args);
     this._setStroke(color.toString());
 

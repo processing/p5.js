@@ -697,6 +697,7 @@ class RendererGL extends Renderer {
    * black canvas with purple cube spinning
    */
   fill(...args) {
+    super.fill(...args);
     //see material.js for more info on color blending in webgl
     // const color = fn.color.apply(this._pInst, arguments);
     const color = this._pInst.color(...args);
@@ -736,6 +737,7 @@ class RendererGL extends Renderer {
    * black canvas with purple cube with pink outline spinning
    */
   stroke(...args) {
+    super.stroke(...args);
     // const color = fn.color.apply(this._pInst, arguments);
     const color = this._pInst.color(...args);
     this.states.curStrokeColor = color._array;

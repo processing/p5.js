@@ -154,6 +154,16 @@ class Renderer {
 
   }
 
+  fill() {
+    this.states.fillSet = true;
+    this.states.doFill = true;
+  }
+
+  stroke() {
+    this.states.strokeSet = true;
+    this.states.doStroke = true;
+  }
+
   textSize(s) {
     if (typeof s === 'number') {
       this.states.textSize = s;

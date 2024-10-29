@@ -1209,8 +1209,6 @@ function setting(p5, fn){
    * @chainable
    */
   fn.fill = function(...args) {
-    this._renderer.states.fillSet = true;
-    this._renderer.states.doFill = true;
     this._renderer.fill(...args);
     return this;
   };
@@ -1581,8 +1579,6 @@ function setting(p5, fn){
    */
 
   fn.stroke = function(...args) {
-    this._renderer.states.strokeSet = true;
-    this._renderer.states.doStroke = true;
     this._renderer.stroke(...args);
     return this;
   };
