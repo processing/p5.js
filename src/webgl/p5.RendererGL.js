@@ -122,6 +122,7 @@ class RendererGL extends Renderer {
 
     // Create new canvas
     this.canvas = this.elt = elt || document.createElement('canvas');
+    this._setAttributeDefaults(pInst);
     this._initContext();
     // This redundant property is useful in reminding you that you are
     // interacting with WebGLRenderingContext, still worth considering future removal
@@ -176,7 +177,6 @@ class RendererGL extends Renderer {
       document.getElementsByTagName('main')[0].appendChild(this.elt);
     }
 
-    this._setAttributeDefaults(pInst);
     this.isP3D = true; //lets us know we're in 3d mode
 
     // When constructing a new Geometry, this will represent the builder
