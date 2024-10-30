@@ -5,7 +5,7 @@
  */
 
 import * as constants from '../core/constants';
-
+let VectorClass
 function vector(p5, fn) {
   /// HELPERS FOR REMAINDER METHOD
   const calculateRemainder2D = function (xComponent, yComponent) {
@@ -123,7 +123,7 @@ function vector(p5, fn) {
    * </code>
    * </div>
    */
-  p5.Vector = class Vector {
+   VectorClass = class Vector {
     // This is how it comes in with createVector()
     // This check if the first argument is a function
     constructor(...args) {
@@ -3895,7 +3895,7 @@ function vector(p5, fn) {
       return v.equals(v2);
     }
   };
-
+p5.Vector = VectorClass
   /**
    * The x component of the vector
    * @type {Number}
@@ -3922,7 +3922,7 @@ function vector(p5, fn) {
 }
 
 export default vector;
-
+export { VectorClass }
 if (typeof p5 !== 'undefined') {
   vector(p5, p5.prototype);
 }
