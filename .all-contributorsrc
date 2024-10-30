@@ -6386,6 +6386,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "blackboxlogic",
+      "name": "blackboxlogic",
+      "avatar_url": "https://avatars.githubusercontent.com/u/31355456?v=4",
+      "profile": "http://alexhennings.dev",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
