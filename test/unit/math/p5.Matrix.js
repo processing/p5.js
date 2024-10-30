@@ -107,7 +107,7 @@ suite('p5.Matrix', function() {
       var m = new p5.Matrix(mat4);
       var m2 = m.get();
       assert.notEqual(m, m2);
-      assert.equal(m.mat4, m2.mat4);
+      expect(m.mat4).toEqual(m2.mat4)
     });
     test('copy', function() {
       var m = new p5.Matrix(mat4);
@@ -156,7 +156,7 @@ suite('p5.Matrix', function() {
 
     test('arguments', function() {
       var m = new p5.Matrix(mat4.slice());
-      m.mult.apply(m, other);
+      m.mult(other);
       assert.deepEqual([].slice.call(m.mat4), mm);
     });
   });

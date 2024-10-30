@@ -1,4 +1,5 @@
 import MatrixLegacy from './MatrixLegacy'
+import MatrixNumjs from './MatrixNumjs';
 /**
  * @requires constants
  * @todo see methods below needing further implementation.
@@ -17,7 +18,8 @@ function matrix(p5, fn) {
    * @private
    * @param {Array} [mat4] column-major array literal of our 4×4 matrix
    */
-  p5.Matrix = MatrixLegacy
+  // p5.Matrix = MatrixLegacy
+  p5.Matrix = MatrixNumjs
 }
 export default matrix;
 
