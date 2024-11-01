@@ -1379,8 +1379,8 @@ p5.prototype.endContour = function() {
  * <a href="#/p5/beginShape">beginShape()</a> and `endShape()`.
  *
  * @method endShape
- * @param  {CLOSE} [mode] use CLOSE to close the shape
- * @param  {Integer} [count] number of times you want to draw/instance the shape (for WebGL mode).
+ * @param  {CLOSE|OPEN} [mode=OPEN] use CLOSE or OPEN to close or open the shape
+ * @param  {Integer} [count=1] number of times you want to draw/instance the shape (for WebGL mode).
  * @chainable
  *
  * @example
@@ -1504,7 +1504,7 @@ p5.prototype.endContour = function() {
  * </code>
  * </div>
  */
-p5.prototype.endShape = function(mode, count = 1) {
+p5.prototype.endShape = function(mode = constants.OPEN, count = 1) {
   p5._validateParameters('endShape', arguments);
   if (count < 1) {
     console.log('🌸 p5.js says: You can not have less than one instance');
@@ -1532,7 +1532,7 @@ p5.prototype.endShape = function(mode, count = 1) {
       return this;
     }
 
-    const closeShape = mode === constants.CLOSE;
+    const closeShape = mode != constants.OPEN;
 
     // if the shape is closed, the first element is also the last element
     if (closeShape && !isContour) {
