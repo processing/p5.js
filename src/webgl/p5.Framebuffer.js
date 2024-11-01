@@ -1752,7 +1752,7 @@ class Framebuffer {
  */
 
 /**
- * An object that stores the framebuffer's dpeth data.
+ * An object that stores the framebuffer's depth data.
  *
  * Each framebuffer uses a
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebGLTexture" target="_blank">WebGLTexture</a>
