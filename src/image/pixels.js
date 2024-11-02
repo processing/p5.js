@@ -142,7 +142,6 @@ function pixels(p5, fn){
    * </code>
    * </div>
    */
-  fn.pixels = [];
 
   /**
    * Copies a region of pixels from one image to another.

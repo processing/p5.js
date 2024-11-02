@@ -2624,17 +2624,14 @@ function dom(p5, fn){
     if (arg instanceof p5.Element && arg.elt instanceof HTMLSelectElement) {
       // If given argument is p5.Element of select type
       self = arg;
-      this.elt = arg.elt;
     } else if (arg instanceof HTMLSelectElement) {
       self = addElement(arg, this);
-      this.elt = arg;
     } else {
       const elt = document.createElement('select');
       if (arg && typeof arg === 'boolean') {
         elt.setAttribute('multiple', 'true');
       }
       self = addElement(elt, this);
-      this.elt = elt;
     }
     self.option = function (name, value) {
       let index;
@@ -2884,21 +2881,18 @@ function dom(p5, fn){
     ) {
       // If given argument is p5.Element of div/span type
       self = arg0;
-      this.elt = arg0.elt;
     } else if (
       // If existing radio Element is provided as argument 0
       arg0 instanceof HTMLDivElement ||
       arg0 instanceof HTMLSpanElement
     ) {
       self = addElement(arg0, this);
-      this.elt = arg0;
       radioElement = arg0;
       if (typeof args[1] === 'string') name = args[1];
     } else {
       if (typeof arg0 === 'string') name = arg0;
       radioElement = document.createElement('div');
       self = addElement(radioElement, this);
-      this.elt = radioElement;
     }
     self._name = name || 'radioOption';
 

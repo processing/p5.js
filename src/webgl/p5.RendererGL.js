@@ -235,6 +235,9 @@ class RendererGL extends Renderer {
     this.states.drawMode = constants.FILL;
 
     this.states._tex = null;
+    this.states.textureMode = constants.IMAGE;
+    this.states.textureWrapX = constants.CLAMP;
+    this.states.textureWrapY = constants.CLAMP;
 
     // erasing
     this._isErasing = false;
@@ -382,11 +385,6 @@ class RendererGL extends Renderer {
     this.filterLayerTemp = undefined;
     this.defaultFilterShaders = {};
 
-    this.textureMode = constants.IMAGE;
-    // default wrap settings
-    this.textureWrapX = constants.CLAMP;
-    this.textureWrapY = constants.CLAMP;
-    this.states._tex = null;
     this._curveTightness = 6;
 
     // lookUpTable for coefficients needed to be calculated for bezierVertex, same are used for curveVertex
@@ -1096,8 +1094,6 @@ class RendererGL extends Renderer {
    * @private
    */
   loadPixels() {
-    const pixelsState = this._pixelsState;
-
     //@todo_FES
     if (this._pInst._glAttributes.preserveDrawingBuffer !== true) {
       console.log(
@@ -1109,9 +1105,9 @@ class RendererGL extends Renderer {
     const pd = this._pixelDensity;
     const gl = this.GL;
 
-    pixelsState.pixels =
+    this.pixels =
       readPixelsWebGL(
-        pixelsState.pixels,
+        this.pixels,
         gl,
         null,
         0,
@@ -1126,7 +1122,7 @@ class RendererGL extends Renderer {
 
   updatePixels() {
     const fbo = this._getTempFramebuffer();
-    fbo.pixels = this._pixelsState.pixels;
+    fbo.pixels = this.pixels;
     fbo.updatePixels();
     this.push();
     this.resetMatrix();
@@ -1212,9 +1208,8 @@ class RendererGL extends Renderer {
     this.states.curCamera._resize();
 
     //resize pixels buffer
-    const pixelsState = this._pixelsState;
-    if (typeof pixelsState.pixels !== 'undefined') {
-      pixelsState.pixels =
+    if (typeof this.pixels !== 'undefined') {
+      this.pixels =
         new Uint8Array(
           this.GL.drawingBufferWidth * this.GL.drawingBufferHeight * 4
         );

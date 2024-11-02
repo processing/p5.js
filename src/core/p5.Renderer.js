@@ -9,7 +9,7 @@ import { Image } from '../image/p5.Image';
 
 class Renderer {
   constructor(pInst, w, h, isMainCanvas) {
-    this._pInst = this._pixelsState = pInst;
+    this._pInst = pInst;
     this._isMainCanvas = isMainCanvas;
     this.pixels = [];
     this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
@@ -117,15 +117,14 @@ class Renderer {
   }
 
   get(x, y, w, h) {
-    const pixelsState = this._pixelsState;
     const pd = this._pixelDensity;
     const canvas = this.canvas;
 
     if (typeof x === 'undefined' && typeof y === 'undefined') {
     // get()
       x = y = 0;
-      w = pixelsState.width;
-      h = pixelsState.height;
+      w = this.width;
+      h = this.height;
     } else {
       x *= pd;
       y *= pd;

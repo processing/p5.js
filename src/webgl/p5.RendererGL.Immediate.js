@@ -146,7 +146,7 @@ function rendererGLImmediate(p5, fn){
       lineVertexColor[3]
     );
 
-    if (this.textureMode === constants.IMAGE && !this.isProcessingVertices) {
+    if (this.states.textureMode === constants.IMAGE && !this.isProcessingVertices) {
       if (this.states._tex !== null) {
         if (this.states._tex.width > 0 && this.states._tex.height > 0) {
           u /= this.states._tex.width;

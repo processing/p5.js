@@ -127,11 +127,11 @@ suite('p5.Texture', function() {
     );
     test('Set textureMode to NORMAL', function() {
       myp5.textureMode(myp5.NORMAL);
-      assert.deepEqual(myp5._renderer.textureMode, myp5.NORMAL);
+      assert.deepEqual(myp5._renderer.states.textureMode, myp5.NORMAL);
     });
     test('Set textureMode to IMAGE', function() {
       myp5.textureMode(myp5.IMAGE);
-      assert.deepEqual(myp5._renderer.textureMode, myp5.IMAGE);
+      assert.deepEqual(myp5._renderer.states.textureMode, myp5.IMAGE);
     });
     test('Set global wrap mode to clamp', function() {
       myp5.textureWrap(myp5.CLAMP);

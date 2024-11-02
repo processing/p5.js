@@ -3178,7 +3178,7 @@ function primitives3D(p5, fn){
     this.states.doStroke = false;;
 
     this.texture(img);
-    this.textureMode = constants.NORMAL;
+    this.states.textureMode = constants.NORMAL;
 
     let u0 = 0;
     if (sx <= img.width) {

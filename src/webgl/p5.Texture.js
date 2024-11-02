@@ -122,8 +122,8 @@ class Texture {
       this.glTex = gl.createTexture();
     }
 
-    this.glWrapS = this._renderer.textureWrapX;
-    this.glWrapT = this._renderer.textureWrapY;
+    this.glWrapS = this._renderer.states.textureWrapX;
+    this.glWrapT = this._renderer.states.textureWrapY;
 
     this.setWrapMode(this.glWrapS, this.glWrapT);
     this.bindTexture();

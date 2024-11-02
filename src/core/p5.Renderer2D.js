@@ -495,23 +495,20 @@ class Renderer2D extends Renderer {
   }
 
   loadPixels() {
-    const pixelsState = this._pixelsState; // if called by p5.Image
-
     const pd = this._pixelDensity;
     const w = this.width * pd;
     const h = this.height * pd;
     const imageData = this.drawingContext.getImageData(0, 0, w, h);
     // @todo this should actually set pixels per object, so diff buffers can
     // have diff pixel arrays.
-    pixelsState.imageData = imageData;
-    this.pixels = pixelsState.pixels = imageData.data;
+    this.imageData = imageData;
+    this.pixels = imageData.data;
   }
 
   set(x, y, imgOrCol) {
     // round down to get integer numbers
     x = Math.floor(x);
     y = Math.floor(y);
-    const pixelsState = this._pixelsState;
     if (imgOrCol instanceof Image) {
       this.drawingContext.save();
       this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
@@ -533,11 +530,11 @@ class Renderer2D extends Renderer {
           this._pixelDensity *
           (this.width * this._pixelDensity) +
           x * this._pixelDensity);
-      if (!pixelsState.imageData) {
-        pixelsState.loadPixels();
+      if (!this.imageData) {
+        this.loadPixels();
       }
       if (typeof imgOrCol === 'number') {
-        if (idx < pixelsState.pixels.length) {
+        if (idx < this.pixels.length) {
           r = imgOrCol;
           g = imgOrCol;
           b = imgOrCol;
@@ -548,7 +545,7 @@ class Renderer2D extends Renderer {
         if (imgOrCol.length < 4) {
           throw new Error('pixel array must be of the form [R, G, B, A]');
         }
-        if (idx < pixelsState.pixels.length) {
+        if (idx < this.pixels.length) {
           r = imgOrCol[0];
           g = imgOrCol[1];
           b = imgOrCol[2];
@@ -556,7 +553,7 @@ class Renderer2D extends Renderer {
           //this.updatePixels.call(this);
         }
       } else if (imgOrCol instanceof p5.Color) {
-        if (idx < pixelsState.pixels.length) {
+        if (idx < this.pixels.length) {
           r = imgOrCol.levels[0];
           g = imgOrCol.levels[1];
           b = imgOrCol.levels[2];
@@ -574,17 +571,16 @@ class Renderer2D extends Renderer {
               this.width *
               this._pixelDensity +
               (x * this._pixelDensity + i));
-          pixelsState.pixels[idx] = r;
-          pixelsState.pixels[idx + 1] = g;
-          pixelsState.pixels[idx + 2] = b;
-          pixelsState.pixels[idx + 3] = a;
+          this.pixels[idx] = r;
+          this.pixels[idx + 1] = g;
+          this.pixels[idx + 2] = b;
+          this.pixels[idx + 3] = a;
         }
       }
     }
   }
 
   updatePixels(x, y, w, h) {
-    const pixelsState = this._pixelsState;
     const pd = this._pixelDensity;
     if (
       x === undefined &&
@@ -604,10 +600,10 @@ class Renderer2D extends Renderer {
 
     if (this.gifProperties) {
       this.gifProperties.frames[this.gifProperties.displayIndex].image =
-        pixelsState.imageData;
+        this.imageData;
     }
 
-    this.drawingContext.putImageData(pixelsState.imageData, x, y, 0, 0, w, h);
+    this.drawingContext.putImageData(this.imageData, x, y, 0, 0, w, h);
   }
 
   //////////////////////////////////////////////

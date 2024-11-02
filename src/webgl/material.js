@@ -2392,7 +2392,7 @@ function material(p5, fn){
         `You tried to set ${mode} textureMode only supports IMAGE & NORMAL `
       );
     } else {
-      this._renderer.textureMode = mode;
+      this._renderer.states.textureMode = mode;
     }
   };
 
@@ -2671,8 +2671,8 @@ function material(p5, fn){
    * </div>
    */
   fn.textureWrap = function (wrapX, wrapY = wrapX) {
-    this._renderer.textureWrapX = wrapX;
-    this._renderer.textureWrapY = wrapY;
+    this._renderer.states.textureWrapX = wrapX;
+    this._renderer.states.textureWrapY = wrapY;
 
     for (const texture of this._renderer.textures.values()) {
       texture.setWrapMode(wrapX, wrapY);
