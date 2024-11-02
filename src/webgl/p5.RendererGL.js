@@ -13,7 +13,7 @@ import { Image } from '../image/p5.Image';
 import { Texture, MipmapTexture } from './p5.Texture';
 import { Framebuffer } from './p5.Framebuffer';
 import { Graphics } from '../core/p5.Graphics';
-import { Element } from '../core/p5.Element';
+import { Element } from '../dom/p5.Element';
 
 import lightingShader from './shaders/lighting.glsl';
 import webgl2CompatibilityShader from './shaders/webgl2Compatibility.glsl';

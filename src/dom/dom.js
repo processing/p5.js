@@ -16,6 +16,10 @@
  * @requires p5
  */
 
+import { Element } from './p5.Element';
+import { MediaElement } from './p5.MediaElement';
+import { File } from './p5.File';
+
 function dom(p5, fn){
   /**
    * Searches the page for the first element that matches the given
@@ -223,7 +227,7 @@ function dom(p5, fn){
   fn._wrapElement = function (elt) {
     const children = Array.prototype.slice.call(elt.children);
     if (elt.tagName === 'INPUT' && elt.type === 'checkbox') {
-      let converted = new p5.Element(elt, this);
+      let converted = new Element(elt, this);
       converted.checked = function (...args) {
         if (args.length === 0) {
           return this.elt.checked;
@@ -236,9 +240,9 @@ function dom(p5, fn){
       };
       return converted;
     } else if (elt.tagName === 'VIDEO' || elt.tagName === 'AUDIO') {
-      return new p5.MediaElement(elt, this);
+      return new MediaElement(elt, this);
     } else if (elt.tagName === 'SELECT') {
-      return this.createSelect(new p5.Element(elt, this));
+      return this.createSelect(new Element(elt, this));
     } else if (
       children.length > 0 &&
       children.every(function (c) {
@@ -246,9 +250,9 @@ function dom(p5, fn){
       }) &&
       (elt.tagName === 'DIV' || elt.tagName === 'SPAN')
     ) {
-      return this.createRadio(new p5.Element(elt, this));
+      return this.createRadio(new Element(elt, this));
     } else {
-      return new p5.Element(elt, this);
+      return new Element(elt, this);
     }
   };
 
@@ -394,8 +398,8 @@ function dom(p5, fn){
    * </code>
    * </div>
    */
-  p5.Element.prototype.input = function (fxn) {
-    p5.Element._adjustListener('input', fxn, this);
+  Element.prototype.input = function (fxn) {
+    Element._adjustListener('input', fxn, this);
     return this;
   };
 
@@ -406,8 +410,8 @@ function dom(p5, fn){
     const node = pInst._userNode ? pInst._userNode : document.body;
     node.appendChild(elt);
     const c = media
-      ? new p5.MediaElement(elt, pInst)
-      : new p5.Element(elt, pInst);
+      ? new MediaElement(elt, pInst)
+      : new Element(elt, pInst);
     pInst._elements.push(c);
     return c;
   }
@@ -1952,7 +1956,7 @@ function dom(p5, fn){
 
     const handleFileSelect = function (event) {
       for (const file of event.target.files) {
-        p5.File._load(file, callback);
+        File._load(file, callback);
       }
     };
 

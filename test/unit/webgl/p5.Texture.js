@@ -48,13 +48,15 @@ suite('p5.Texture', function() {
   var testTextureSet = function(src) {
     var lightShader = myp5._renderer._getLightShader();
     var selectedShader = myp5._renderer._getFillShader();
+    console.log('first');
     assert(
       lightShader === selectedShader,
       "_renderer's retain mode shader was not light shader " +
         'after call to texture()'
     );
-
+    console.log('second');
     var tex = myp5._renderer.getTexture(src);
+    console.log('third');
     assert(tex !== undefined, 'texture was undefined');
     assert(tex instanceof p5.Texture, 'texture was not a p5.Texture object');
     assert(tex.src === src, 'texture did not have expected image as source');
