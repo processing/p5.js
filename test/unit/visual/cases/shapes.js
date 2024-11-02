@@ -168,6 +168,58 @@ visualSuite('Shape drawing', function() {
         screenshot();
       });
 
+      visualTest('Drawing with points', function(p5, screenshot) {
+        setup(p5);
+        p5.strokeWeight(5);
+        p5.beginShape(p5.POINTS);
+        p5.vertex(10, 10);
+        p5.vertex(15, 40);
+        p5.vertex(40, 35);
+        p5.vertex(25, 15);
+        p5.vertex(15, 25);
+        p5.endShape();
+        screenshot();
+      });
+
+      visualTest('Drawing with lines', function(p5, screenshot) {
+        setup(p5);
+        p5.beginShape(p5.LINES);
+        p5.vertex(10, 10);
+        p5.vertex(15, 40);
+        p5.vertex(40, 35);
+        p5.vertex(25, 15);
+        p5.endShape();
+        screenshot();
+      });
+
+      visualTest('Drawing with triangles', function(p5, screenshot) {
+        setup(p5);
+        p5.beginShape(p5.TRIANGLES);
+        p5.vertex(10, 10);
+        p5.vertex(15, 40);
+        p5.vertex(40, 35);
+        p5.vertex(25, 15);
+        p5.vertex(15, 25);
+        p5.vertex(10, 10);
+        p5.endShape();
+        screenshot();
+      });
+
+      visualTest('Drawing with quads', function(p5, screenshot) {
+        setup(p5);
+        p5.beginShape(p5.QUADS);
+        p5.vertex(10, 10);
+        p5.vertex(15, 10);
+        p5.vertex(15, 15);
+        p5.vertex(10, 15);
+        p5.vertex(25, 25);
+        p5.vertex(30, 25);
+        p5.vertex(30, 30);
+        p5.vertex(25, 30);
+        p5.endShape();
+        screenshot();
+      });
+
       if (mode === 'WebGL') {
         visualTest('3D vertex coordinates', function(p5, screenshot) {
           setup(p5);

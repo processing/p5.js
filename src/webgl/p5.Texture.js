@@ -10,7 +10,7 @@
 import * as constants from '../core/constants';
 import { Element } from '../core/p5.Element';
 import { Renderer } from '../core/p5.Renderer';
-import { MediaElement } from '../dom/dom';
+import { MediaElement } from '../dom/media_element';
 import { Image } from '../image/p5.Image';
 import { Graphics } from '../core/p5.Graphics';
 import { FramebufferTexture } from './p5.Framebuffer';

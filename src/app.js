@@ -29,8 +29,8 @@ import data from './data';
 data(p5);
 
 // DOM
-import dom from './dom/dom';
-dom(p5, p5.prototype);
+import dom from './dom';
+dom(p5);
 
 // events
 import events from './events';

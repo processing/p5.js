@@ -795,7 +795,7 @@ class Shader {
     const viewMatrix = this._renderer.states.uViewMatrix;
     const projectionMatrix = this._renderer.states.uPMatrix;
     const modelViewMatrix = (modelMatrix.copy()).mult(viewMatrix);
-    this._renderer.states.uMVMatrix = modelViewMatrix;
+    this._renderer.states.uMVMatrix = this._renderer.calculateCombinedMatrix();
 
     const modelViewProjectionMatrix = modelViewMatrix.copy();
     modelViewProjectionMatrix.mult(projectionMatrix);
