@@ -59,6 +59,11 @@ window.checkMatch = function(actual, expected, p5) {
       Math.ceil(img.height * scale)
     );
   }
+  // The below algorithm to calculate differences can produce false negatives in certain cases.
+  // Immediately return true for exact matches.
+  if (toBase64(expected) === toBase64(actual)) {
+    return { ok: true };
+  }
   const diff = p5.createImage(actual.width, actual.height);
   diff.drawingContext.drawImage(actual.canvas, 0, 0);
   diff.drawingContext.globalCompositeOperation = 'difference';
@@ -151,6 +156,10 @@ window.visualTest = function(
         actual.push(myp5.get());
       });
 
+
+      if (actual.length === 0) {
+        throw new Error('No screenshots were generated. Check if your test generates screenshots correctly. If the test includes asynchronous operations, ensure they complete before the test ends.');
+      }
       if (expectedScreenshots && actual.length !== expectedScreenshots) {
         throw new Error(
           `Expected ${expectedScreenshots} screenshot(s) but generated ${actual.length}`

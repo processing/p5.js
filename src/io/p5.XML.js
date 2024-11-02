@@ -7,47 +7,62 @@
 import p5 from '../core/main';
 
 /**
- * XML is a representation of an XML object, able to parse XML code. Use
- * <a href="#/p5/loadXML">loadXML()</a> to load external XML files and create XML objects.
+ * A class to describe an XML object.
+ *
+ * Each `p5.XML` object provides an easy way to interact with XML data.
+ * Extensible Markup Language
+ * (<a href="https://developer.mozilla.org/en-US/docs/Web/XML/XML_introduction" target="_blank">XML</a>)
+ * is a standard format for sending data between applications. Like HTML, the
+ * XML format is based on tags and attributes, as in
+ * `&lt;time units="s"&gt;1234&lt;/time&gt;`.
+ *
+ * Note: Use <a href="#/p5/loadXML">loadXML()</a> to load external XML files.
  *
  * @class p5.XML
  * @constructor
+ *
  * @example
- * <div class='norender'><code>
- * // The following short XML file called "mammals.xml" is parsed
- * // in the code below.
- * //
- * // <?xml version="1.0"?>
- * // &lt;mammals&gt;
- * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
- * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
- * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
- * // &lt;/mammals&gt;
+ * <div>
+ * <code>
+ * let myXML;
  *
- * let xml;
- *
+ * // Load the XML and create a p5.XML object.
  * function preload() {
- *   xml = loadXML('assets/mammals.xml');
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
  * function setup() {
- *   let children = xml.getChildren('animal');
+ *   createCanvas(100, 100);
  *
- *   for (let i = 0; i < children.length; i++) {
- *     let id = children[i].getNum('id');
- *     let coloring = children[i].getString('species');
- *     let name = children[i].getContent();
- *     print(id + ', ' + coloring + ', ' + name);
+ *   background(200);
+ *
+ *   // Get an array with all mammal tags.
+ *   let mammals = myXML.getChildren('mammal');
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Iterate over the mammals array.
+ *   for (let i = 0; i < mammals.length; i += 1) {
+ *
+ *     // Calculate the y-coordinate.
+ *     let y = (i + 1) * 25;
+ *
+ *     // Get the mammal's common name.
+ *     let name = mammals[i].getContent();
+ *
+ *     // Display the mammal's name.
+ *     text(name, 20, y);
  *   }
  *
- *   describe('no image displayed');
+ *   describe(
+ *     'The words "Goat", "Leopard", and "Zebra" written on three separate lines. The text is black on a gray background.'
+ *   );
  * }
- *
- * // Sketch prints:
- * // 0, Capra hircus, Goat
- * // 1, Panthera pardus, Leopard
- * // 2, Equus zebra, Zebra
- * </code></div>
+ * </code>
+ * </div>
  */
 p5.XML = class  {
   constructor(DOM){
@@ -60,110 +75,156 @@ p5.XML = class  {
   }
 
   /**
- * Gets a copy of the element's parent. Returns the parent as another
- * <a href="#/p5.XML">p5.XML</a> object.
+ * Returns the element's parent element as a new <a href="#/p5.XML">p5.XML</a>
+ * object.
  *
  * @method getParent
- * @return {p5.XML}   element parent
+ * @return {p5.XML} parent element.
+ *
  * @example
- * <div class='norender'><code>
- * // The following short XML file called "mammals.xml" is parsed
- * // in the code below.
- * //
- * // <?xml version="1.0"?>
- * // &lt;mammals&gt;
- * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
- * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
- * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
- * // &lt;/mammals&gt;
+ * <div>
+ * <code>
+ * let myXML;
  *
- * let xml;
- *
+ * // Load the XML and create a p5.XML object.
  * function preload() {
- *   xml = loadXML('assets/mammals.xml');
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
  * function setup() {
- *   let children = xml.getChildren('animal');
- *   let parent = children[1].getParent();
- *   print(parent.getName());
- * }
+ *   createCanvas(100, 100);
  *
- * // Sketch prints:
- * // mammals
- * </code></div>
+ *   background(200);
+ *
+ *   // Get an array with all mammal elements.
+ *   let mammals = myXML.getChildren('mammal');
+ *
+ *   // Get the first mammal element.
+ *   let firstMammal = mammals[0];
+ *
+ *   // Get the parent element.
+ *   let parent = firstMammal.getParent();
+ *
+ *   // Get the parent element's name.
+ *   let name = parent.getName();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Display the parent element's name.
+ *   text(name, 50, 50);
+ *
+ *   describe('The word "animals" written in black on a gray background.');
+ * }
+ * </code>
+ * </div>
  */
   getParent() {
     return new p5.XML(this.DOM.parentElement);
   }
 
   /**
- *  Gets the element's full name, which is returned as a String.
+ * Returns the element's name as a `String`.
+ *
+ * An XML element's name is given by its tag. For example, the element
+ * `&lt;language&gt;JavaScript&lt;/language&gt;` has the name `language`.
  *
  * @method getName
- * @return {String} the name of the node
- * @example&lt;animal
- * <div class='norender'><code>
- * // The following short XML file called "mammals.xml" is parsed
- * // in the code below.
- * //
- * // <?xml version="1.0"?>
- * // &lt;mammals&gt;
- * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
- * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
- * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
- * // &lt;/mammals&gt;
+ * @return {String} name of the element.
  *
- * let xml;
+ * @example
+ * <div>
+ * <code>
+ * let myXML;
  *
+ * // Load the XML and create a p5.XML object.
  * function preload() {
- *   xml = loadXML('assets/mammals.xml');
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
  * function setup() {
- *   print(xml.getName());
- * }
+ *   createCanvas(100, 100);
  *
- * // Sketch prints:
- * // mammals
- * </code></div>
+ *   background(200);
+ *
+ *   // Get an array with all mammal elements.
+ *   let mammals = myXML.getChildren('mammal');
+ *
+ *   // Get the first mammal element.
+ *   let firstMammal = mammals[0];
+ *
+ *   // Get the mammal element's name.
+ *   let name = firstMammal.getName();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Display the element's name.
+ *   text(name, 50, 50);
+ *
+ *   describe('The word "mammal" written in black on a gray background.');
+ * }
+ * </code>
+</div>
  */
   getName() {
     return this.DOM.tagName;
   }
 
   /**
- * Sets the element's name, which is specified as a String.
+ * Sets the element's tag name.
+ *
+ * An XML element's name is given by its tag. For example, the element
+ * `&lt;language&gt;JavaScript&lt;/language&gt;` has the name `language`.
+ *
+ * The parameter, `name`, is the element's new name as a string. For example,
+ * calling `myXML.setName('planet')` will make the element's new tag name
+ * `&lt;planet&gt;&lt;/planet&gt;`.
  *
  * @method setName
- * @param {String} the new name of the node
- * @example&lt;animal
- * <div class='norender'><code>
- * // The following short XML file called "mammals.xml" is parsed
- * // in the code below.
- * //
- * // <?xml version="1.0"?>
- * // &lt;mammals&gt;
- * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
- * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
- * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
- * // &lt;/mammals&gt;
+ * @param {String} name new tag name of the element.
  *
- * let xml;
+ * @example
+ * <div>
+ * <code>
+ * let myXML;
  *
+ * // Load the XML and create a p5.XML object.
  * function preload() {
- *   xml = loadXML('assets/mammals.xml');
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
  * function setup() {
- *   print(xml.getName());
- *   xml.setName('fish');
- *   print(xml.getName());
- * }
+ *   createCanvas(100, 100);
  *
- * // Sketch prints:
- * // mammals
- * // fish
+ *   background(200);
+ *
+ *   // Get the element's original name.
+ *   let oldName = myXML.getName();
+ *
+ *   // Set the element's name.
+ *   myXML.setName('monsters');
+ *
+ *   // Get the element's new name.
+ *   let newName = myXML.getName();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Display the element's names.
+ *   text(oldName, 50, 33);
+ *   text(newName, 50, 67);
+ *
+ *   describe(
+ *     'The words "animals" and "monsters" written on separate lines. The text is black on a gray background.'
+ *   );
+ * }
  * </code></div>
  */
   setName(name) {
@@ -173,79 +234,102 @@ p5.XML = class  {
     const newDOM = xmlDoc.createElement(name);
     newDOM.innerHTML = content;
     for (let i = 0; i < attributes.length; i++) {
-      newDOM.setAttribute(attributes[i].nodeName, attributes.nodeValue);
+      newDOM.setAttribute(attributes[i].nodeName, attributes[i].nodeValue);
     }
     this.DOM = newDOM;
   }
 
   /**
- * Checks whether or not the element has any children, and returns the result
- * as a boolean.
+ * Returns `true` if the element has child elements and `false` if not.
  *
  * @method hasChildren
- * @return {boolean}
- * @example&lt;animal
- * <div class='norender'><code>
- * // The following short XML file called "mammals.xml" is parsed
- * // in the code below.
- * //
- * // <?xml version="1.0"?>
- * // &lt;mammals&gt;
- * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
- * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
- * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
- * // &lt;/mammals&gt;
+ * @return {boolean} whether the element has children.
  *
- * let xml;
+ * @example
+ * <div>
+ * <code>
+ * let myXML;
  *
+ * // Load the XML and create a p5.XML object.
  * function preload() {
- *   xml = loadXML('assets/mammals.xml');
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
  * function setup() {
- *   print(xml.hasChildren());
- * }
+ *   createCanvas(100, 100);
  *
- * // Sketch prints:
- * // true
- * </code></div>
+ *   background(200);
+ *
+ *   // Check whether the element has child elements.
+ *   let isParent = myXML.hasChildren();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Style the text.
+ *   if (isParent === true) {
+ *     text('Parent', 50, 50);
+ *   } else {
+ *     text('Not Parent', 50, 50);
+ *   }
+ *
+ *   describe('The word "Parent" written in black on a gray background.');
+ * }
+ * </code>
+ * </div>
  */
   hasChildren() {
     return this.DOM.children.length > 0;
   }
 
   /**
- * Get the names of all of the element's children, and returns the names as an
- * array of Strings. This is the same as looping through and calling <a href="#/p5.XML/getName">getName()</a>
- * on each child element individually.
+ * Returns an array with the names of the element's child elements as
+ * `String`s.
  *
  * @method listChildren
- * @return {String[]} names of the children of the element
- * @example&lt;animal
- * <div class='norender'><code>
- * // The following short XML file called "mammals.xml" is parsed
- * // in the code below.
- * //
- * // <?xml version="1.0"?>
- * // &lt;mammals&gt;
- * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
- * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
- * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
- * // &lt;/mammals&gt;
+ * @return {String[]} names of the child elements.
  *
- * let xml;
+ * @example
+ * <div>
+ * <code>
+ * let myXML;
  *
+ * // Load the XML and create a p5.XML object.
  * function preload() {
- *   xml = loadXML('assets/mammals.xml');
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
  * function setup() {
- *   print(xml.listChildren());
- * }
+ *   createCanvas(100, 100);
  *
- * // Sketch prints:
- * // ["animal", "animal", "animal"]
- * </code></div>
+ *   background(200);
+ *
+ *   // Get the names of the element's children as an array.
+ *   let children = myXML.listChildren();
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Iterate over the array.
+ *   for (let i = 0; i < children.length; i += 1) {
+ *
+ *     // Calculate the y-coordinate.
+ *     let y = (i + 1) * 25;
+ *
+ *     // Display the child element's name.
+ *     text(children[i], 10, y);
+ *   }
+ *
+ *   describe(
+ *     'The words "mammal", "mammal", "mammal", and "reptile" written on separate lines. The text is black on a gray background.'
+ *   );
+ * }
+ * </code>
+ * </div>
  */
   listChildren() {
     const arr = [];
@@ -256,44 +340,102 @@ p5.XML = class  {
   }
 
   /**
- * Returns all of the element's children as an array of <a href="#/p5.XML">p5.XML</a> objects. When
- * the name parameter is specified, then it will return all children that match
- * that name.
+ * Returns an array with the element's child elements as new
+ * <a href="#/p5.XML">p5.XML</a> objects.
+ *
+ * The parameter, `name`, is optional. If a string is passed, as in
+ * `myXML.getChildren('cat')`, then the method will only return child elements
+ * with the tag `&lt;cat&gt;`.
  *
  * @method getChildren
- * @param {String} [name] element name
- * @return {p5.XML[]} children of the element
- * @example&lt;animal
- * <div class='norender'><code>
- * // The following short XML file called "mammals.xml" is parsed
- * // in the code below.
- * //
- * // <?xml version="1.0"?>
- * // &lt;mammals&gt;
- * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
- * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
- * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
- * // &lt;/mammals&gt;
+ * @param {String} [name] name of the elements to return.
+ * @return {p5.XML[]} child elements.
  *
- * let xml;
+ * @example
+ * <div>
+ * <code>
+ * let myXML;
  *
+ * // Load the XML and create a p5.XML object.
  * function preload() {
- *   xml = loadXML('assets/mammals.xml');
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
  * function setup() {
- *   let animals = xml.getChildren('animal');
+ *   createCanvas(100, 100);
  *
- *   for (let i = 0; i < animals.length; i++) {
- *     print(animals[i].getContent());
+ *   background(200);
+ *
+ *   // Get an array of the child elements.
+ *   let children = myXML.getChildren();
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Iterate over the array.
+ *   for (let i = 0; i < children.length; i += 1) {
+ *
+ *     // Calculate the y-coordinate.
+ *     let y = (i + 1) * 20;
+ *
+ *     // Get the child element's content.
+ *     let content = children[i].getContent();
+ *
+ *     // Display the child element's content.
+ *     text(content, 10, y);
  *   }
+ *
+ *   describe(
+ *     'The words "Goat", "Leopard", "Zebra", and "Turtle" written on separate lines. The text is black on a gray background.'
+ *   );
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let myXML;
+ *
+ * // Load the XML and create a p5.XML object.
+ * function preload() {
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
- * // Sketch prints:
- * // "Goat"
- * // "Leopard"
- * // "Zebra"
- * </code></div>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Get an array of the child elements
+ *   // that are mammals.
+ *   let children = myXML.getChildren('mammal');
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Iterate over the array.
+ *   for (let i = 0; i < children.length; i += 1) {
+ *
+ *     // Calculate the y-coordinate.
+ *     let y = (i + 1) * 20;
+ *
+ *     // Get the child element's content.
+ *     let content = children[i].getContent();
+ *
+ *     // Display the child element's content.
+ *     text(content, 10, y);
+ *   }
+ *
+ *   describe(
+ *     'The words "Goat", "Leopard", and "Zebra" written on separate lines. The text is black on a gray background.'
+ *   );
+ * }
+ * </code>
+ * </div>
  */
   getChildren(param) {
     if (param) {
@@ -303,57 +445,85 @@ p5.XML = class  {
     }
   }
 
-
-
   /**
- * Returns the first of the element's children that matches the name parameter
- * or the child of the given index.It returns undefined if no matching
- * child is found.
+ * Returns the first matching child element as a new
+ * <a href="#/p5.XML">p5.XML</a> object.
+ *
+ * The parameter, `name`, is optional. If a string is passed, as in
+ * `myXML.getChild('cat')`, then the first child element with the tag
+ * `&lt;cat&gt;` will be returned. If a number is passed, as in
+ * `myXML.getChild(1)`, then the child element at that index will be returned.
  *
  * @method getChild
- * @param {String|Integer} name element name or index
- * @return {p5.XML}
- * @example&lt;animal
- * <div class='norender'><code>
- * // The following short XML file called "mammals.xml" is parsed
- * // in the code below.
- * //
- * // <?xml version="1.0"?>
- * // &lt;mammals&gt;
- * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
- * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
- * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
- * // &lt;/mammals&gt;
+ * @param {String|Integer} name element name or index.
+ * @return {p5.XML} child element.
  *
- * let xml;
+ * @example
+ * <div>
+ * <code>
+ * let myXML;
  *
+ * // Load the XML and create a p5.XML object.
  * function preload() {
- *   xml = loadXML('assets/mammals.xml');
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
  * function setup() {
- *   let firstChild = xml.getChild('animal');
- *   print(firstChild.getContent());
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Get the first child element that is a mammal.
+ *   let goat = myXML.getChild('mammal');
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Get the child element's content.
+ *   let content = goat.getContent();
+ *
+ *   // Display the child element's content.
+ *   text(content, 50, 50);
+ *
+ *   describe('The word "Goat" written in black on a gray background.');
  * }
+ * </code>
+ * </div>
  *
- * // Sketch prints:
- * // "Goat"
- * </code></div>
- * <div class='norender'><code>
- * let xml;
+ * <div>
+ * <code>
+ * let myXML;
  *
+ * // Load the XML and create a p5.XML object.
  * function preload() {
- *   xml = loadXML('assets/mammals.xml');
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
  * function setup() {
- *   let secondChild = xml.getChild(1);
- *   print(secondChild.getContent());
- * }
+ *   createCanvas(100, 100);
  *
- * // Sketch prints:
- * // "Leopard"
- * </code></div>
+ *   background(200);
+ *
+ *   // Get the child element at index 1.
+ *   let leopard = myXML.getChild(1);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Get the child element's content.
+ *   let content = leopard.getContent();
+ *
+ *   // Display the child element's content.
+ *   text(content, 50, 50);
+ *
+ *   describe('The word "Leopard" written in black on a gray background.');
+ * }
+ * </code>
+ * </div>
  */
   getChild(param) {
     if (typeof param === 'string') {
@@ -366,48 +536,61 @@ p5.XML = class  {
   }
 
   /**
- * Appends a new child to the element. The child can be specified with
- * either a String, which will be used as the new tag's name, or as a
- * reference to an existing <a href="#/p5.XML">p5.XML</a> object.
- * A reference to the newly created child is returned as an <a href="#/p5.XML">p5.XML</a> object.
+ * Adds a new child element and returns a reference to it.
+ *
+ * The parameter, `child`, is the <a href="#/p5.XML">p5.XML</a> object to add
+ * as a child element. For example, calling `myXML.addChild(otherXML)` inserts
+ * `otherXML` as a child element of `myXML`.
  *
  * @method addChild
- * @param {p5.XML} node a <a href="#/p5.XML">p5.XML</a> Object which will be the child to be added
+ * @param {p5.XML} child child element to add.
+ * @return {p5.XML} added child element.
+ *
  * @example
- * <div class='norender'><code>
- * // The following short XML file called "mammals.xml" is parsed
- * // in the code below.
- * //
- * // <?xml version="1.0"?>
- * // &lt;mammals&gt;
- * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
- * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
- * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
- * // &lt;/mammals&gt;
+ * <div>
+ * <code>
+ * let myXML;
  *
- * let xml;
- *
+ * // Load the XML and create a p5.XML object.
  * function preload() {
- *   xml = loadXML('assets/mammals.xml');
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
  * function setup() {
- *   let child = new p5.XML();
- *   child.setName('animal');
- *   child.setAttribute('id', '3');
- *   child.setAttribute('species', 'Ornithorhynchus anatinus');
- *   child.setContent('Platypus');
- *   xml.addChild(child);
+ *   createCanvas(100, 100);
  *
- *   let animals = xml.getChildren('animal');
- *   print(animals[animals.length - 1].getContent());
+ *   background(200);
+ *
+ *   // Create a new p5.XML object.
+ *   let newAnimal = new p5.XML();
+ *
+ *   // Set its properties.
+ *   newAnimal.setName('hydrozoa');
+ *   newAnimal.setAttribute('id', 4);
+ *   newAnimal.setAttribute('species', 'Physalia physalis');
+ *   newAnimal.setContent('Bluebottle');
+ *
+ *   // Add the child element.
+ *   myXML.addChild(newAnimal);
+ *
+ *   // Get the first child element that is a hydrozoa.
+ *   let blueBottle = myXML.getChild('hydrozoa');
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Get the child element's content.
+ *   let content = blueBottle.getContent();
+ *
+ *   // Display the child element's content.
+ *   text(content, 50, 50);
+ *
+ *   describe('The word "Bluebottle" written in black on a gray background.');
  * }
- *
- * // Sketch prints:
- * // "Goat"
- * // "Leopard"
- * // "Zebra"
- * </code></div>
+ * </code>
+ * </div>
  */
   addChild(node) {
     if (node instanceof p5.XML) {
@@ -418,59 +601,107 @@ p5.XML = class  {
   }
 
   /**
- * Removes the element specified by name or index.
+ * Removes the first matching child element.
+ *
+ * The parameter, `name`, is the child element to remove. If a string is
+ * passed, as in `myXML.removeChild('cat')`, then the first child element
+ * with the tag `&lt;cat&gt;` will be removed. If a number is passed, as in
+ * `myXML.removeChild(1)`, then the child element at that index will be
+ * removed.
  *
  * @method removeChild
- * @param {String|Integer} name element name or index
+ * @param {String|Integer} name name or index of the child element to remove.
+ *
  * @example
- * <div class='norender'><code>
- * // The following short XML file called "mammals.xml" is parsed
- * // in the code below.
- * //
- * // <?xml version="1.0"?>
- * // &lt;mammals&gt;
- * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
- * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
- * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
- * // &lt;/mammals&gt;
+ * <div>
+ * <code>
+ * let myXML;
  *
- * let xml;
- *
+ * // Load the XML and create a p5.XML object.
  * function preload() {
- *   xml = loadXML('assets/mammals.xml');
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
  * function setup() {
- *   xml.removeChild('animal');
- *   let children = xml.getChildren();
- *   for (let i = 0; i < children.length; i++) {
- *     print(children[i].getContent());
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Remove the first mammal element.
+ *   myXML.removeChild('mammal');
+ *
+ *   // Get an array of child elements.
+ *   let children = myXML.getChildren();
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Iterate over the array.
+ *   for (let i = 0; i < children.length; i += 1) {
+ *
+ *     // Calculate the y-coordinate.
+ *     let y = (i + 1) * 25;
+ *
+ *     // Get the child element's content.
+ *     let content = children[i].getContent();
+ *
+ *     // Display the child element's content.
+ *     text(content, 10, y);
  *   }
+ *
+ *   describe(
+ *     'The words "Leopard", "Zebra", and "Turtle" written on separate lines. The text is black on a gray background.'
+ *   );
  * }
+ * </code>
+ * </div>
  *
- * // Sketch prints:
- * // "Leopard"
- * // "Zebra"
- * </code></div>
- * <div class='norender'><code>
- * let xml;
+ * <div>
+ * <code>
+ * let myXML;
  *
+ * // Load the XML and create a p5.XML object.
  * function preload() {
- *   xml = loadXML('assets/mammals.xml');
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
  * function setup() {
- *   xml.removeChild(1);
- *   let children = xml.getChildren();
- *   for (let i = 0; i < children.length; i++) {
- *     print(children[i].getContent());
- *   }
- * }
+ *   createCanvas(100, 100);
  *
- * // Sketch prints:
- * // "Goat"
- * // "Zebra"
- * </code></div>
+ *   background(200);
+ *
+ *   // Remove the element at index 2.
+ *   myXML.removeChild(2);
+ *
+ *   // Get an array of child elements.
+ *   let children = myXML.getChildren();
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Iterate over the array.
+ *   for (let i = 0; i < children.length; i += 1) {
+ *
+ *     // Calculate the y-coordinate.
+ *     let y = (i + 1) * 25;
+ *
+ *     // Get the child element's content.
+ *     let content = children[i].getContent();
+ *
+ *     // Display the child element's content.
+ *     text(content, 10, y);
+ *   }
+ *
+ *   describe(
+ *     'The words "Goat", "Leopard", and "Turtle" written on separate lines. The text is black on a gray background.'
+ *   );
+ * }
+ * </code>
+ * </div>
  */
   removeChild(param) {
     let ind = -1;
@@ -490,73 +721,92 @@ p5.XML = class  {
   }
 
   /**
- * Counts the specified element's number of attributes, returned as an Number.
+ * Returns the number of attributes the element has.
  *
  * @method getAttributeCount
- * @return {Integer}
+ * @return {Integer} number of attributes.
+ *
  * @example
- * <div class='norender'><code>
- * // The following short XML file called "mammals.xml" is parsed
- * // in the code below.
- * //
- * // <?xml version="1.0"?>
- * // &lt;mammals&gt;
- * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
- * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
- * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
- * // &lt;/mammals&gt;
+ * <div>
+ * <code>
+ * let myXML;
  *
- * let xml;
- *
+ * // Load the XML and create a p5.XML object.
  * function preload() {
- *   xml = loadXML('assets/mammals.xml');
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
  * function setup() {
- *   let firstChild = xml.getChild('animal');
- *   print(firstChild.getAttributeCount());
- * }
+ *   createCanvas(100, 100);
  *
- * // Sketch prints:
- * // 2
- * </code></div>
+ *   background(200);
+ *
+ *   // Get the first child element.
+ *   let first = myXML.getChild(0);
+ *
+ *   // Get the number of attributes.
+ *   let numAttributes = first.getAttributeCount();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Display the number of attributes.
+ *   text(numAttributes, 50, 50);
+ *
+ *   describe('The number "2" written in black on a gray background.');
+ * }
+ * </code>
+ * </div>
  */
   getAttributeCount() {
     return this.DOM.attributes.length;
   }
 
   /**
- * Gets all of the specified element's attributes, and returns them as an
- * array of Strings.
+ * Returns an `Array` with the names of the element's attributes.
+ *
+ * Note: Use
+ * <a href="#/p5.XML/getString">myXML.getString()</a> or
+ * <a href="#/p5.XML/getNum">myXML.getNum()</a> to return an attribute's value.
  *
  * @method listAttributes
- * @return {String[]} an array of strings containing the names of attributes
+ * @return {String[]} attribute names.
+ *
  * @example
- * <div class='norender'><code>
- * // The following short XML file called "mammals.xml" is parsed
- * // in the code below.
- * //
- * // <?xml version="1.0"?>
- * // &lt;mammals&gt;
- * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
- * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
- * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
- * // &lt;/mammals&gt;
+ * <div>
+ * <code>
+ * let myXML;
  *
- * let xml;
- *
+ * // Load the XML and create a p5.XML object.
  * function preload() {
- *   xml = loadXML('assets/mammals.xml');
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
  * function setup() {
- *   let firstChild = xml.getChild('animal');
- *   print(firstChild.listAttributes());
- * }
+ *   createCanvas(100, 100);
  *
- * // Sketch prints:
- * // ["id", "species"]
- * </code></div>
+ *   background(200);
+ *
+ *   // Get the first child element.
+ *   let first = myXML.getChild(0);
+ *
+ *   // Get the number of attributes.
+ *   let attributes = first.listAttributes();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Display the element's attributes.
+ *   text(attributes, 50, 50);
+ *
+ *   describe('The text "id,species" written in black on a gray background.');
+ * }
+ * </code>
+ * </div>
  */
   listAttributes() {
     const arr = [];
@@ -569,39 +819,57 @@ p5.XML = class  {
   }
 
   /**
- *  Checks whether or not an element has the specified attribute.
+ * Returns `true` if the element has a given attribute and `false` if not.
+ *
+ * The parameter, `name`, is a string with the name of the attribute being
+ * checked.
+ *
+ * Note: Use
+ * <a href="#/p5.XML/getString">myXML.getString()</a> or
+ * <a href="#/p5.XML/getNum">myXML.getNum()</a> to return an attribute's value.
  *
  * @method hasAttribute
- * @param {String} the attribute to be checked
- * @return {boolean} true if attribute found else false
+ * @param {String} name name of the attribute to be checked.
+ * @return {boolean} whether the element has the attribute.
+ *
  * @example
- * <div class='norender'><code>
- * // The following short XML file called "mammals.xml" is parsed
- * // in the code below.
- * //
- * // <?xml version="1.0"?>
- * // &lt;mammals&gt;
- * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
- * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
- * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
- * // &lt;/mammals&gt;
+ * <div>
+ * <code>
+ * let myXML;
  *
- * let xml;
- *
+ * // Load the XML and create a p5.XML object.
  * function preload() {
- *   xml = loadXML('assets/mammals.xml');
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
  * function setup() {
- *   let firstChild = xml.getChild('animal');
- *   print(firstChild.hasAttribute('species'));
- *   print(firstChild.hasAttribute('color'));
- * }
+ *   createCanvas(100, 100);
  *
- * // Sketch prints:
- * // true
- * // false
- * </code></div>
+ *   background(200);
+ *
+ *   // Get the first mammal child element.
+ *   let mammal = myXML.getChild('mammal');
+ *
+ *   // Check whether the element has an
+ *   // species attribute.
+ *   let hasSpecies = mammal.hasAttribute('species');
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Display whether the element has a species attribute.
+ *   if (hasSpecies === true) {
+ *     text('Species', 50, 50);
+ *   } else {
+ *     text('No species', 50, 50);
+ *   }
+ *
+ *   describe('The text "Species" written in black on a gray background.');
+ * }
+ * </code>
+ * </div>
  */
   hasAttribute(name) {
     const obj = {};
@@ -614,41 +882,99 @@ p5.XML = class  {
   }
 
   /**
- * Returns an attribute value of the element as an Number. If the defaultValue
- * parameter is specified and the attribute doesn't exist, then defaultValue
- * is returned. If no defaultValue is specified and the attribute doesn't
- * exist, the value 0 is returned.
+ * Return an attribute's value as a `Number`.
+ *
+ * The first parameter, `name`, is a string with the name of the attribute
+ * being checked. For example, calling `myXML.getNum('id')` returns the
+ * element's `id` attribute as a number.
+ *
+ * The second parameter, `defaultValue`, is optional. If a number is passed,
+ * as in `myXML.getNum('id', -1)`, it will be returned if the attribute
+ * doesn't exist or can't be converted to a number.
+ *
+ * Note: Use
+ * <a href="#/p5.XML/getString">myXML.getString()</a> or
+ * <a href="#/p5.XML/getNum">myXML.getNum()</a> to return an attribute's value.
  *
  * @method getNum
- * @param {String} name            the non-null full name of the attribute
- * @param {Number} [defaultValue]  the default value of the attribute
- * @return {Number}
+ * @param {String} name name of the attribute to be checked.
+ * @param {Number} [defaultValue] value to return if the attribute doesn't exist.
+ * @return {Number} attribute value as a number.
+ *
  * @example
- * <div class='norender'><code>
- * // The following short XML file called "mammals.xml" is parsed
- * // in the code below.
- * //
- * // <?xml version="1.0"?>
- * // &lt;mammals&gt;
- * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
- * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
- * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
- * // &lt;/mammals&gt;
+ * <div>
+ * <code>
+ * let myXML;
  *
- * let xml;
- *
+ * // Load the XML and create a p5.XML object.
  * function preload() {
- *   xml = loadXML('assets/mammals.xml');
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
  * function setup() {
- *   let firstChild = xml.getChild('animal');
- *   print(firstChild.getNum('id'));
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Get the first reptile child element.
+ *   let reptile = myXML.getChild('reptile');
+ *
+ *   // Get the reptile's content.
+ *   let content = reptile.getContent();
+ *
+ *   // Get the reptile's ID.
+ *   let id = reptile.getNum('id');
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Display the ID attribute.
+ *   text(`${content} is ${id + 1}th`, 5, 50, 90);
+ *
+ *   describe(`The text "${content} is ${id + 1}th" written in black on a gray background.`);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let myXML;
+ *
+ * // Load the XML and create a p5.XML object.
+ * function preload() {
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
- * // Sketch prints:
- * // 0
- * </code></div>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Get the first reptile child element.
+ *   let reptile = myXML.getChild('reptile');
+ *
+ *   // Get the reptile's content.
+ *   let content = reptile.getContent();
+ *
+ *   // Get the reptile's size.
+ *   let weight = reptile.getNum('weight', 135);
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Display the ID attribute.
+ *   text(`${content} is ${weight}kg`, 5, 50, 90);
+ *
+ *   describe(
+ *     `The text "${content} is ${weight}kg" written in black on a gray background.`
+ *   );
+ * }
+ * </code>
+ * </div>
  */
   getNum(name, defaultValue) {
     const obj = {};
@@ -661,41 +987,98 @@ p5.XML = class  {
   }
 
   /**
- * Returns an attribute value of the element as an String. If the defaultValue
- * parameter is specified and the attribute doesn't exist, then defaultValue
- * is returned. If no defaultValue is specified and the attribute doesn't
- * exist, null is returned.
+ * Return an attribute's value as a string.
+ *
+ * The first parameter, `name`, is a string with the name of the attribute
+ * being checked. For example, calling `myXML.getString('color')` returns the
+ * element's `id` attribute as a string.
+ *
+ * The second parameter, `defaultValue`, is optional. If a string is passed,
+ * as in `myXML.getString('color', 'deeppink')`, it will be returned if the
+ * attribute doesn't exist.
+ *
+ * Note: Use
+ * <a href="#/p5.XML/getString">myXML.getString()</a> or
+ * <a href="#/p5.XML/getNum">myXML.getNum()</a> to return an attribute's value.
  *
  * @method getString
- * @param {String} name            the non-null full name of the attribute
- * @param {Number} [defaultValue]  the default value of the attribute
- * @return {String}
+ * @param {String} name name of the attribute to be checked.
+ * @param {Number} [defaultValue] value to return if the attribute doesn't exist.
+ * @return {String} attribute value as a string.
+ *
  * @example
- * <div class='norender'><code>
- * // The following short XML file called "mammals.xml" is parsed
- * // in the code below.
- * //
- * // <?xml version="1.0"?>
- * // &lt;mammals&gt;
- * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
- * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
- * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
- * // &lt;/mammals&gt;
+ * <div>
+ * <code>
+ * let myXML;
  *
- * let xml;
- *
+ * // Load the XML and create a p5.XML object.
  * function preload() {
- *   xml = loadXML('assets/mammals.xml');
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
  * function setup() {
- *   let firstChild = xml.getChild('animal');
- *   print(firstChild.getString('species'));
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Get the first reptile child element.
+ *   let reptile = myXML.getChild('reptile');
+ *
+ *   // Get the reptile's content.
+ *   let content = reptile.getContent();
+ *
+ *   // Get the reptile's species.
+ *   let species = reptile.getString('species');
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Display the species attribute.
+ *   text(`${content}: ${species}`, 5, 50, 90);
+ *
+ *   describe(`The text "${content}: ${species}" written in black on a gray background.`);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let myXML;
+ *
+ * // Load the XML and create a p5.XML object.
+ * function preload() {
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
- * // Sketch prints:
- * // "Capra hircus"
- * </code></div>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Get the first reptile child element.
+ *   let reptile = myXML.getChild('reptile');
+ *
+ *   // Get the reptile's content.
+ *   let content = reptile.getContent();
+ *
+ *   // Get the reptile's color.
+ *   let attribute = reptile.getString('color', 'green');
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *   fill(attribute);
+ *
+ *   // Display the element's content.
+ *   text(content, 50, 50);
+ *
+ *   describe(`The text "${content}" written in green on a gray background.`);
+ * }
+ * </code>
+ * </div>
  */
   getString(name, defaultValue) {
     const obj = {};
@@ -708,79 +1091,136 @@ p5.XML = class  {
   }
 
   /**
- * Sets the content of an element's attribute. The first parameter specifies
- * the attribute name, while the second specifies the new content.
+ * Sets an attribute to a given value.
+ *
+ * The first parameter, `name`, is a string with the name of the attribute
+ * being set.
+ *
+ * The second parameter, `value`, is the attribute's new value. For example,
+ * calling `myXML.setAttribute('id', 123)` sets the `id` attribute to the
+ * value 123.
  *
  * @method setAttribute
- * @param {String} name            the full name of the attribute
- * @param {Number|String|Boolean} value  the value of the attribute
+ * @param {String} name name of the attribute to be set.
+ * @param {Number|String|Boolean} value attribute's new value.
+ *
  * @example
- * <div class='norender'><code>
- * // The following short XML file called "mammals.xml" is parsed
- * // in the code below.
- * //
- * // <?xml version="1.0"?>
- * // &lt;mammals&gt;
- * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
- * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
- * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
- * // &lt;/mammals&gt;
+ * <div>
+ * <code>
+ * let myXML;
  *
- * let xml;
- *
+ * // Load the XML and create a p5.XML object.
  * function preload() {
- *   xml = loadXML('assets/mammals.xml');
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
  * function setup() {
- *   let firstChild = xml.getChild('animal');
- *   print(firstChild.getString('species'));
- *   firstChild.setAttribute('species', 'Jamides zebra');
- *   print(firstChild.getString('species'));
- * }
+ *   createCanvas(100, 100);
  *
- * // Sketch prints:
- * // "Capra hircus"
- * // "Jamides zebra"
- * </code></div>
+ *   background(200);
+ *
+ *   // Get the first reptile child element.
+ *   let reptile = myXML.getChild('reptile');
+ *
+ *   // Set the reptile's color.
+ *   reptile.setAttribute('color', 'green');
+ *
+ *   // Get the reptile's content.
+ *   let content = reptile.getContent();
+ *
+ *   // Get the reptile's color.
+ *   let attribute = reptile.getString('color');
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Display the element's content.
+ *   text(`${content} is ${attribute}`, 5, 50, 90);
+ *
+ *   describe(
+ *     `The text "${content} is ${attribute}" written in green on a gray background.`
+ *   );
+ * }
+ * </code>
+ * </div>
  */
   setAttribute(name, value) {
     this.DOM.setAttribute(name, value);
   }
 
   /**
- * Returns the content of an element. If there is no such content,
- * defaultValue is returned if specified, otherwise null is returned.
+ * Returns the element's content as a `String`.
+ *
+ * The parameter, `defaultValue`, is optional. If a string is passed, as in
+ * `myXML.getContent('???')`, it will be returned if the element has no
+ * content.
  *
  * @method getContent
- * @param {String} [defaultValue] value returned if no content is found
- * @return {String}
+ * @param {String} [defaultValue] value to return if the element has no
+ *                                content.
+ * @return {String} element's content as a string.
+ *
  * @example
- * <div class='norender'><code>
- * // The following short XML file called "mammals.xml" is parsed
- * // in the code below.
- * //
- * // <?xml version="1.0"?>
- * // &lt;mammals&gt;
- * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
- * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
- * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
- * // &lt;/mammals&gt;
+ * <div>
+ * <code>
+ * let myXML;
  *
- * let xml;
- *
+ * // Load the XML and create a p5.XML object.
  * function preload() {
- *   xml = loadXML('assets/mammals.xml');
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
  * function setup() {
- *   let firstChild = xml.getChild('animal');
- *   print(firstChild.getContent());
- * }
+ *   createCanvas(100, 100);
  *
- * // Sketch prints:
- * // "Goat"
- * </code></div>
+ *   background(200);
+ *
+ *   // Get the first reptile child element.
+ *   let reptile = myXML.getChild('reptile');
+ *
+ *   // Get the reptile's content.
+ *   let content = reptile.getContent();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Display the element's content.
+ *   text(content, 5, 50, 90);
+ *
+ *   describe(`The text "${content}" written in green on a gray background.`);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a p5.XML object.
+ *   let blankSpace = new p5.XML();
+ *
+ *   // Get the element's content and use a default value.
+ *   let content = blankSpace.getContent('Your name');
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Display the element's content.
+ *   text(content, 5, 50, 90);
+ *
+ *   describe(`The text "${content}" written in green on a gray background.`);
+ * }
+ * </code>
+ * </div>
  */
   getContent(defaultValue) {
     let str;
@@ -792,37 +1232,55 @@ p5.XML = class  {
   /**
  * Sets the element's content.
  *
+ * An element's content is the text between its tags. For example, the element
+ * `&lt;language&gt;JavaScript&lt;/language&gt;` has the content `JavaScript`.
+ *
+ * The parameter, `content`, is a string with the element's new content.
+ *
  * @method setContent
- * @param {String} text the new content
+ * @param {String} content new content for the element.
+ *
  * @example
- * <div class='norender'><code>
- * // The following short XML file called "mammals.xml" is parsed
- * // in the code below.
- * //
- * // <?xml version="1.0"?>
- * // &lt;mammals&gt;
- * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
- * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
- * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
- * // &lt;/mammals&gt;
+ * <div>
+ * <code>
+ * let myXML;
  *
- * let xml;
- *
+ * // Load the XML and create a p5.XML object.
  * function preload() {
- *   xml = loadXML('assets/mammals.xml');
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
  * function setup() {
- *   let firstChild = xml.getChild('animal');
- *   print(firstChild.getContent());
- *   firstChild.setContent('Mountain Goat');
- *   print(firstChild.getContent());
- * }
+ *   createCanvas(100, 100);
  *
- * // Sketch prints:
- * // "Goat"
- * // "Mountain Goat"
- * </code></div>
+ *   background(200);
+ *
+ *   // Get the first reptile child element.
+ *   let reptile = myXML.getChild('reptile');
+ *
+ *   // Get the reptile's original content.
+ *   let oldContent = reptile.getContent();
+ *
+ *   // Set the reptile's content.
+ *   reptile.setContent('Loggerhead');
+ *
+ *   // Get the reptile's new content.
+ *   let newContent = reptile.getContent();
+ *
+ *   // Style the text.
+ *   textAlign(CENTER, CENTER);
+ *   textFont('Courier New');
+ *   textSize(14);
+ *
+ *   // Display the element's old and new content.
+ *   text(`${oldContent}: ${newContent}`, 5, 50, 90);
+ *
+ *   describe(
+ *     `The text "${oldContent}: ${newContent}" written in green on a gray background.`
+ *   );
+ * }
+ * </code>
+ * </div>
  */
   setContent(content) {
     if (!this.DOM.children.length) {
@@ -831,30 +1289,57 @@ p5.XML = class  {
   }
 
   /**
- * Serializes the element into a string. This function is useful for preparing
- * the content to be sent over a http request or saved to file.
+ * Returns the element as a `String`.
+ *
+ * `myXML.serialize()` is useful for sending the element over the network or
+ * saving it to a file.
  *
  * @method serialize
- * @return {String} Serialized string of the element
- * @example
- * <div class='norender'><code>
- * let xml;
+ * @return {String} element as a string.
  *
+ * @example
+ * <div>
+ * <code>
+ * let myXML;
+ *
+ * // Load the XML and create a p5.XML object.
  * function preload() {
- *   xml = loadXML('assets/mammals.xml');
+ *   myXML = loadXML('assets/animals.xml');
  * }
  *
  * function setup() {
- *   print(xml.serialize());
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(LEFT, CENTER);
+ *   textFont('Courier New');
+ *   textSize(12);
+ *
+ *   // Display instructions.
+ *   text('Double-click to save', 5, 50, 90);
+ *
+ *   describe('The text "Double-click to save" written in black on a gray background.');
  * }
  *
- * // Sketch prints:
- * // <mammals>
- * //   <animal id="0" species="Capra hircus">Goat</animal>
- * //   <animal id="1" species="Panthera pardus">Leopard</animal>
- * //   <animal id="2" species="Equus zebra">Zebra</animal>
- * // </mammals>
- * </code></div>
+ * // Save the file when the user double-clicks.
+ * function doubleClicked() {
+ *   // Create a p5.PrintWriter object.
+ *   // Use the file format .xml.
+ *   let myWriter = createWriter('animals', 'xml');
+ *
+ *   // Serialize the XML data to a string.
+ *   let data = myXML.serialize();
+ *
+ *   // Write the data to the print stream.
+ *   myWriter.write(data);
+ *
+ *   // Save the file and close the print stream.
+ *   myWriter.close();
+ * }
+ * </code>
+ * </div>
  */
   serialize() {
     const xmlSerializer = new XMLSerializer();

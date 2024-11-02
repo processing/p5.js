@@ -214,7 +214,7 @@ p5.RendererGL.prototype.endShape = function(
   if (this.immediateMode.geometry.vertices.length === 3 &&
       this.immediateMode.shapeMode === constants.TESS
   ) {
-    this.immediateMode.shapeMode === constants.TRIANGLES;
+    this.immediateMode.shapeMode = constants.TRIANGLES;
   }
 
   this.isProcessingVertices = true;
@@ -223,11 +223,13 @@ p5.RendererGL.prototype.endShape = function(
 
   // LINE_STRIP and LINES are not used for rendering, instead
   // they only indicate a way to modify vertices during the _processVertices() step
+  let is_line = false;
   if (
     this.immediateMode.shapeMode === constants.LINE_STRIP ||
     this.immediateMode.shapeMode === constants.LINES
   ) {
     this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
+    is_line = true;
   }
 
   // WebGL doesn't support the QUADS and QUAD_STRIP modes, so we
@@ -239,7 +241,7 @@ p5.RendererGL.prototype.endShape = function(
     this.immediateMode.shapeMode = constants.TRIANGLE_STRIP;
   }
 
-  if (this._doFill) {
+  if (this._doFill && !is_line) {
     if (
       !this.geometryBuilder &&
       this.immediateMode.geometry.vertices.length >= 3
@@ -319,7 +321,7 @@ p5.RendererGL.prototype._processVertices = function(mode) {
  * Called from _processVertices(). This function calculates the stroke vertices for custom shapes and
  * tesselates shapes when applicable.
  * @private
- * @returns  {Array[Number]} indices for custom shape vertices indicating edges.
+ * @returns  {Number[]} indices for custom shape vertices indicating edges.
  */
 p5.RendererGL.prototype._calculateEdges = function(
   shapeMode,
@@ -519,7 +521,10 @@ p5.RendererGL.prototype._drawImmediateFill = function(count = 1) {
   }
   shader.disableRemainingAttributes();
 
-  this._applyColorBlend(this.curFillColor);
+  this._applyColorBlend(
+    this.curFillColor,
+    this.immediateMode.geometry.hasFillTransparency()
+  );
 
   if (count === 1) {
     gl.drawArrays(
@@ -561,7 +566,10 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
   }
   shader.disableRemainingAttributes();
-  this._applyColorBlend(this.curStrokeColor);
+  this._applyColorBlend(
+    this.curStrokeColor,
+    this.immediateMode.geometry.hasFillTransparency()
+  );
 
   gl.drawArrays(
     gl.TRIANGLES,

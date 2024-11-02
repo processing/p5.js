@@ -79,7 +79,7 @@ There are definitely points of improvement on the editor, for instance:
 - **01/07 - [#1467 Mobile Sketch Preview Screen](https://github.com/processing/p5.js-web-editor/pull/1467)**
 - **01/07 - [#1472 Mobile Preferences Screen Prototype](https://github.com/processing/p5.js-web-editor/pull/1472)**
 - 06/07 - [#1490 Fixes #1487](https://github.com/processing/p5.js-web-editor/pull/1490)
-- **21/07 - [#1502 Add <Console /> to Mobile Views](https://github.com/processing/p5.js-web-editor/pull/1502)**
+- **21/07 - [#1502 Add `<Console />` to Mobile Views](https://github.com/processing/p5.js-web-editor/pull/1502)**
 - 21/07 - [#1507 Refactor mobile components to react hooks](https://github.com/processing/p5.js-web-editor/pull/1507)
 - 03/08 - [#1513 Add Dropdown Menu to the mobile IDE View](https://github.com/processing/p5.js-web-editor/pull/1513)
 - 04/08 - [#1531 [HOTFIX] Restore Devtools Sidebar](https://github.com/processing/p5.js-web-editor/pull/1531)

@@ -308,5 +308,83 @@ suite('p5.Shader', function() {
       myp5.shader(s);
       assert.isFalse(s.isStrokeShader());
     });
+
+    suite('Hooks', function() {
+      let myShader;
+
+      setup(function() {
+        myShader = myp5.createShader(
+          `
+            precision highp float;
+
+            attribute vec3 aPosition;
+            attribute vec2 aTexCoord;
+            attribute vec4 aVertexColor;
+
+            uniform mat4 uModelViewMatrix;
+            uniform mat4 uProjectionMatrix;
+
+            varying vec2 vTexCoord;
+            varying vec4 vVertexColor;
+
+            void main() {
+                // Apply the camera transform
+                vec4 viewModelPosition =
+                  uModelViewMatrix *
+                  vec4(aPosition, 1.0);
+
+                // Tell WebGL where the vertex goes
+                gl_Position =
+                  uProjectionMatrix *
+                  viewModelPosition;
+
+                // Pass along data to the fragment shader
+                vTexCoord = aTexCoord;
+                vVertexColor = aVertexColor;
+            }
+          `,
+          `
+            precision highp float;
+
+            varying vec2 vTexCoord;
+            varying vec4 vVertexColor;
+
+            void main() {
+              // Tell WebGL what color to make the pixel
+              gl_FragColor = HOOK_getVertexColor(vVertexColor);
+            }
+          `,
+          {
+            fragment: {
+              'vec4 getVertexColor': '(vec4 color) { return color; }'
+            }
+          }
+        );
+      });
+
+      test('available hooks show up in inspectHooks()', function() {
+        const logs = [];
+        const myLog = (...data) => logs.push(data.join(', '));
+        const oldLog = console.log;
+        console.log = myLog;
+        myShader.inspectHooks();
+        console.log = oldLog;
+        expect(logs.join('\n')).to.match(/vec4 getVertexColor/);
+      });
+
+      test('unfilled hooks do not have an AUGMENTED_HOOK define', function() {
+        const modified = myShader.modify({});
+        expect(modified.fragSrc()).not.to.match(/#define AUGMENTED_HOOK_getVertexColor/);
+      });
+
+      test('filled hooks do have an AUGMENTED_HOOK define', function() {
+        const modified = myShader.modify({
+          'vec4 getVertexColor': `(vec4 c) {
+            return vec4(1., 0., 0., 1.);
+          }`
+        });
+        expect(modified.fragSrc()).to.match(/#define AUGMENTED_HOOK_getVertexColor/);
+      });
+    });
   });
 });

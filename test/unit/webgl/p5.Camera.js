@@ -1,3 +1,5 @@
+import { HALF_PI } from '../../../src/core/constants';
+
 suite('p5.Camera', function() {
   var myp5;
   var myCam;
@@ -194,6 +196,69 @@ suite('p5.Camera', function() {
       assert.strictEqual(myCam.eyeZ, orig.ez, 'eye Z pos changed');
     });
 
+    test('Roll() with positive parameter sets correct Matrix w/o \
+    changing eyeXYZ', function() {
+      var orig = getVals(myCam);
+
+      var expectedMatrix = new Float32Array([
+        0, -1, 0, 0,
+        1, 0, 0, 0,
+        0, 0, 1, 0,
+        0, 0, -86.6025390625, 1
+      ]);
+
+      myCam.roll(HALF_PI);
+
+      assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
+
+      assert.strictEqual(myCam.eyeX, orig.ex, 'eye X pos changed');
+      assert.strictEqual(myCam.eyeY, orig.ey, 'eye Y pos changed');
+      assert.strictEqual(myCam.eyeZ, orig.ez, 'eye Z pos changed');
+    });
+
+    test('Roll() with negative parameter sets correct matrix w/o \
+    changing eyeXYZ', function() {
+      var orig = getVals(myCam);
+
+      var expectedMatrix = new Float32Array([
+        0, 1, 0, 0,
+        -1, 0, 0, 0,
+        0, 0, 1, 0,
+        0, 0, -86.6025390625, 1
+      ]);
+
+      myCam.tilt(HALF_PI);
+
+      assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
+
+      assert.strictEqual(myCam.eyeX, orig.ex, 'eye X pos changed');
+      assert.strictEqual(myCam.eyeY, orig.ey, 'eye Y pos changed');
+      assert.strictEqual(myCam.eyeZ, orig.ez, 'eye Z pos changed');
+    });
+
+    test('Roll(0) sets correct matrix w/o changing upXYZ and eyeXYZ', function() {
+      var orig = getVals(myCam);
+
+      var expectedMatrix = new Float32Array([
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, -86.6025390625, 1
+      ]);
+
+      myCam.roll(0);
+
+      assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
+
+      assert.strictEqual(myCam.eyeX, orig.ex, 'eye X pos changed');
+      assert.strictEqual(myCam.eyeY, orig.ey, 'eye Y pos changed');
+      assert.strictEqual(myCam.eyeZ, orig.ez, 'eye Z pos changed');
+
+      assert.strictEqual(myCam.upX, orig.ux, 'up X pos changed');
+      assert.strictEqual(myCam.upY, orig.uy, 'up Y pos changed');
+      assert.strictEqual(myCam.upZ, orig.uz, 'up Z pos changed');
+    });
+
     test('LookAt() should set centerXYZ without changing eyeXYZ or \
     upXYZ', function() {
       var orig = getVals(myCam);
@@ -265,6 +330,26 @@ suite('p5.Camera', function() {
       assert.strictEqual(myCam.eyeX, orig.ex, 'eye X pos changed');
       assert.strictEqual(myCam.eyeY, orig.ey, 'eye Y pos changed');
       assert.strictEqual(myCam.eyeZ, orig.ez, 'eye Z pos changed');
+    });
+
+    test('Roll() with positive parameter sets correct Matrix w/o \
+    changing eyeXYZ', function() {
+      var orig = getVals(myCam);
+
+      var expectedMatrix = new Float32Array([
+        0, -1, 0, 0,
+        1, 0, 0, 0,
+        0, 0, 1, 0,
+        0, 0, -86.6025390625, 1
+      ]);
+
+      myCam.roll(90);
+
+      assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
+
+      assert.strictEqual(myCam.eyeX, orig.eyeX, 'eye X pos changed');
+      assert.strictEqual(myCam.eyeY, orig.eyeY, 'eye Y pos changed');
+      assert.strictEqual(myCam.eyeZ, orig.eyeZ, 'eye Z pos changed');
     });
   });
 
@@ -392,7 +477,7 @@ suite('p5.Camera', function() {
       // the renderer's matrix will also change.
       assert.deepEqual(
         copyCam.cameraMatrix.mat4,
-        myp5._renderer.uMVMatrix.mat4
+        myp5._renderer.uViewMatrix.mat4
       );
       assert.deepEqual(
         copyCam.projMatrix.mat4,

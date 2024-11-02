@@ -1,0 +1,72 @@
+newmtl m000001
+Ns 100
+Kd 0 0 0.5
+Ks 1 1 1
+Ka 0 0 0
+Ni 1
+d 1
+illum 2
+
+newmtl m003627
+Ns 100
+Kd 0 0 0.942654
+Ks 1 1 1
+Ka 0 0 0
+Ni 1
+d 1
+illum 2
+
+newmtl m010778
+Ns 100
+Kd 0 0.815632 1
+Ks 1 1 1
+Ka 0 0 0
+Ni 1
+d 1
+illum 2
+
+newmtl m012003
+Ns 100
+Kd 0 0.965177 1
+Ks 1 1 1
+Ka 0 0 0
+Ni 1
+d 1
+illum 2
+
+newmtl m019240
+Ns 100
+Kd 0.848654 1 0.151346
+Ks 1 1 1
+Ka 0 0 0
+Ni 1
+d 1
+illum 2
+
+newmtl m021392
+Ns 100
+Kd 1 0.888635 0
+Ks 1 1 1
+Ka 0 0 0
+Ni 1
+d 1
+illum 2
+
+newmtl m022299
+Ns 100
+Kd 1 0.77791 0
+Ks 1 1 1
+Ka 0 0 0
+Ni 1
+d 1
+illum 2
+
+newmtl m032767
+Ns 100
+Kd 0.5 0 0
+Ks 1 1 1
+Ka 0 0 0
+Ni 1
+d 1
+illum 2
+

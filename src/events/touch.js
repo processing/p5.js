@@ -8,13 +8,35 @@
 import p5 from '../core/main';
 
 /**
- * The system variable touches[] contains an array of the positions of all
- * current touch points, relative to (0, 0) of the canvas, and IDs identifying a
- * unique touch as it moves. Each element in the array is an object with x, y,
- * and id properties.
+ * An `Array` of all the current touch points on a touchscreen device.
  *
- * The touches[] array is not supported on Safari and IE on touch-based
- * desktops (laptops).
+ * The `touches` array is empty by default. When the user touches their
+ * screen, a new touch point is tracked and added to the array. Touch points
+ * are `Objects` with the following properties:
+ *
+ * ```js
+ * // Iterate over the touches array.
+ * for (let touch of touches) {
+ *   // x-coordinate relative to the top-left
+ *   // corner of the canvas.
+ *   console.log(touch.x);
+ *
+ *   // y-coordinate relative to the top-left
+ *   // corner of the canvas.
+ *   console.log(touch.y);
+ *
+ *   // x-coordinate relative to the top-left
+ *   // corner of the browser.
+ *   console.log(touch.winX);
+ *
+ *   // y-coordinate relative to the top-left
+ *   // corner of the browser.
+ *   console.log(touch.winY);
+ *
+ *   // ID number
+ *   console.log(touch.id);
+ * }
+ * ```
  *
  * @property {Object[]} touches
  * @readOnly
@@ -22,15 +44,48 @@ import p5 from '../core/main';
  * @example
  * <div>
  * <code>
- * // On a touchscreen device, touch
- * // the canvas using one or more fingers
- * // at the same time
+ * // On a touchscreen device, touch the canvas using one or more fingers
+ * // at the same time.
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square. White circles appear where the user touches the square.'
+ *   );
+ * }
+ *
  * function draw() {
- *   clear();
- *   let display = touches.length + ' touches';
- *   text(display, 5, 10);
- *   describe(`Number of touches currently registered are displayed
- *     on the canvas`);
+ *   background(200);
+ *
+ *   // Draw a circle at each touch point.
+ *   for (let touch of touches) {
+ *     circle(touch.x, touch.y, 40);
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // On a touchscreen device, touch the canvas using one or more fingers
+ * // at the same time.
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square. Labels appear where the user touches the square, displaying the coordinates.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Draw a label above each touch point.
+ *   for (let touch of touches) {
+ *     text(`${touch.x}, ${touch.y}`, touch.x, touch.y - 40);
+ *   }
  * }
  * </code>
  * </div>
@@ -68,27 +123,85 @@ function getTouchInfo(canvas, w, h, e, i = 0) {
 }
 
 /**
- * The touchStarted() function is called once after every time a touch is
- * registered. If no <a href="#/p5/touchStarted">touchStarted()</a> function is defined, the <a href="#/p5/mousePressed">mousePressed()</a>
- * function will be called instead if it is defined.<br><br>
- * Browsers may have different default behaviors attached to various touch
- * events. To prevent any default behavior for this event, add "return false"
- * to the end of the method.
+ * A function that's called once each time the user touches the screen.
+ *
+ * Declaring a function called `touchStarted()` sets a code block to run
+ * automatically each time the user begins touching a touchscreen device:
+ *
+ * ```js
+ * function touchStarted() {
+ *   // Code to run.
+ * }
+ * ```
+ *
+ * The <a href="#/p5/touches">touches</a> array will be updated with the most
+ * recent touch points when `touchStarted()` is called by p5.js:
+ *
+ * ```js
+ * function touchStarted() {
+ *   // Paint over the background.
+ *   background(200);
+ *
+ *   // Mark each touch point once with a circle.
+ *   for (let touch of touches) {
+ *     circle(touch.x, touch.y, 40);
+ *   }
+ * }
+ * ```
+ *
+ * The parameter, event, is optional. `touchStarted()` will be passed a
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/TouchEvent" target="_blank">TouchEvent</a>
+ * object with properties that describe the touch event:
+ *
+ * ```js
+ * function touchStarted(event) {
+ *   // Code to run that uses the event.
+ *   console.log(event);
+ * }
+ * ```
+ *
+ * On touchscreen devices, <a href="#/p5/mousePressed">mousePressed()</a> will
+ * run when a user’s touch starts if `touchStarted()` isn’t declared. If
+ * `touchStarted()` is declared, then `touchStarted()` will run when a user’s
+ * touch starts and <a href="#/p5/mousePressed">mousePressed()</a> won’t.
+ *
+ * Note: `touchStarted()`, <a href="#/p5/touchEnded">touchEnded()</a>, and
+ * <a href="#/p5/touchMoved">touchMoved()</a> are all related.
+ * `touchStarted()` runs as soon as the user touches a touchscreen device.
+ * <a href="#/p5/touchEnded">touchEnded()</a> runs as soon as the user ends a
+ * touch. <a href="#/p5/touchMoved">touchMoved()</a> runs repeatedly as the
+ * user moves any touch points.
  *
  * @method touchStarted
- * @param  {TouchEvent} [event] optional TouchEvent callback argument.
+ * @param  {TouchEvent} [event] optional `TouchEvent` argument.
+ *
  * @example
  * <div>
  * <code>
- * // Touch within the image to change
- * // the value of the rectangle
+ * // On a touchscreen device, touch the canvas using one or more fingers
+ * // at the same time.
  *
  * let value = 0;
- * function draw() {
- *   fill(value);
- *   rect(25, 25, 50, 50);
- *   describe('50-by-50 black rect turns white with touch event.');
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square with a black square at its center. The inner square switches color between black and white each time the user touches the screen.'
+ *   );
  * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the square.
+ *   fill(value);
+ *
+ *   // Draw the square.
+ *   square(25, 25, 50);
+ * }
+ *
+ * // Toggle colors with each touch.
  * function touchStarted() {
  *   if (value === 0) {
  *     value = 255;
@@ -99,25 +212,66 @@ function getTouchInfo(canvas, w, h, e, i = 0) {
  * </code>
  * </div>
  *
- * <div class="norender">
+ * <div>
  * <code>
- * function touchStarted() {
- *   ellipse(mouseX, mouseY, 5, 5);
- *   // prevent default
- *   return false;
- * }
- * describe('no image displayed');
- * </code>
- * </div>
+ * // On a touchscreen device, touch the canvas using one or more fingers
+ * // at the same time.
  *
- * <div class="norender">
- * <code>
- * // returns a TouchEvent object
- * // as a callback argument
- * function touchStarted(event) {
- *   console.log(event);
+ * let bgColor = 50;
+ * let fillColor = 255;
+ * let borderWidth = 0.5;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square with the number 0 at the top-center. The number tracks the number of places the user is touching the screen. Circles appear at each touch point and change style in response to events.'
+ *   );
  * }
- * describe('no image displayed');
+ *
+ * function draw() {
+ *   background(bgColor);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   fill(0);
+ *   noStroke();
+ *
+ *   // Display the number of touch points.
+ *   text(touches.length, 50, 20);
+ *
+ *   // Style the touch points.
+ *   fill(fillColor);
+ *   stroke(0);
+ *   strokeWeight(borderWidth);
+ *
+ *   // Display the touch points as circles.
+ *   for (let touch of touches) {
+ *     circle(touch.x, touch.y, 40);
+ *   }
+ * }
+ *
+ * // Set the background color to a random grayscale value.
+ * function touchStarted() {
+ *   bgColor = random(80, 255);
+ * }
+ *
+ * // Set the fill color to a random grayscale value.
+ * function touchEnded() {
+ *   fillColor = random(0, 255);
+ * }
+ *
+ * // Set the stroke weight.
+ * function touchMoved() {
+ *   // Increment the border width.
+ *   borderWidth += 0.1;
+ *
+ *   // Reset the border width once it's too thick.
+ *   if (borderWidth > 20) {
+ *     borderWidth = 0.5;
+ *   }
+ * }
  * </code>
  * </div>
  */
@@ -139,29 +293,90 @@ p5.prototype._ontouchstart = function(e) {
 };
 
 /**
- * The <a href="#/p5/touchMoved">touchMoved()</a> function is called every time a touch move is registered.
- * If no <a href="#/p5/touchMoved">touchMoved()</a> function is defined, the <a href="#/p5/mouseDragged">mouseDragged()</a> function will
- * be called instead if it is defined.<br><br>
- * Browsers may have different default behaviors attached to various touch
- * events. To prevent any default behavior for this event, add "return false"
- * to the end of the method.
+ * A function that's called when the user touches the screen and moves.
+ *
+ * Declaring the function `touchMoved()` sets a code block to run
+ * automatically when the user touches a touchscreen device and moves:
+ *
+ * ```js
+ * function touchMoved() {
+ *   // Code to run.
+ * }
+ * ```
+ *
+ * The <a href="#/p5/touches">touches</a> array will be updated with the most
+ * recent touch points when `touchMoved()` is called by p5.js:
+ *
+ * ```js
+ * function touchMoved() {
+ *   // Paint over the background.
+ *   background(200);
+ *
+ *   // Mark each touch point while the user moves.
+ *   for (let touch of touches) {
+ *     circle(touch.x, touch.y, 40);
+ *   }
+ * }
+ * ```
+ *
+ * The parameter, event, is optional. `touchMoved()` will be passed a
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/TouchEvent" target="_blank">TouchEvent</a>
+ * object with properties that describe the touch event:
+ *
+ * ```js
+ * function touchMoved(event) {
+ *   // Code to run that uses the event.
+ *   console.log(event);
+ * }
+ * ```
+ *
+ * On touchscreen devices, <a href="#/p5/mouseDragged">mouseDragged()</a> will
+ * run when the user’s touch points move if `touchMoved()` isn’t declared. If
+ * `touchMoved()` is declared, then `touchMoved()` will run when a user’s
+ * touch points move and <a href="#/p5/mouseDragged">mouseDragged()</a> won’t.
+ *
+ * Note: <a href="#/p5/touchStarted">touchStarted()</a>,
+ * <a href="#/p5/touchEnded">touchEnded()</a>, and
+ * `touchMoved()` are all related.
+ * <a href="#/p5/touchStarted">touchStarted()</a> runs as soon as the user
+ * touches a touchscreen device. <a href="#/p5/touchEnded">touchEnded()</a>
+ * runs as soon as the user ends a touch. `touchMoved()` runs repeatedly as
+ * the user moves any touch points.
  *
  * @method touchMoved
- * @param  {TouchEvent} [event] optional TouchEvent callback argument.
+ * @param  {TouchEvent} [event] optional TouchEvent argument.
+ *
  * @example
  * <div>
  * <code>
- * // Move your finger across the page
- * // to change its value
+ * // On a touchscreen device, touch the canvas using one or more fingers
+ * // at the same time.
  *
  * let value = 0;
- * function draw() {
- *   fill(value);
- *   rect(25, 25, 50, 50);
- *   describe('50-by-50 black rect turns lighter with touch until white. resets');
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square with a black square at its center. The inner square becomes lighter when the user touches the screen and moves.'
+ *   );
  * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the square.
+ *   fill(value);
+ *
+ *   // Draw the square.
+ *   square(25, 25, 50);
+ * }
+ *
  * function touchMoved() {
- *   value = value + 5;
+ *   // Update the grayscale value.
+ *   value += 5;
+ *
+ *   // Reset the grayscale value.
  *   if (value > 255) {
  *     value = 0;
  *   }
@@ -169,25 +384,66 @@ p5.prototype._ontouchstart = function(e) {
  * </code>
  * </div>
  *
- * <div class="norender">
+ * <div>
  * <code>
- * function touchMoved() {
- *   ellipse(mouseX, mouseY, 5, 5);
- *   // prevent default
- *   return false;
- * }
- * describe('no image displayed');
- * </code>
- * </div>
+ * // On a touchscreen device, touch the canvas using one or more fingers
+ * // at the same time.
  *
- * <div class="norender">
- * <code>
- * // returns a TouchEvent object
- * // as a callback argument
- * function touchMoved(event) {
- *   console.log(event);
+ * let bgColor = 50;
+ * let fillColor = 255;
+ * let borderWidth = 0.5;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square with the number 0 at the top-center. The number tracks the number of places the user is touching the screen. Circles appear at each touch point and change style in response to events.'
+ *   );
  * }
- * describe('no image displayed');
+ *
+ * function draw() {
+ *   background(bgColor);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   fill(0);
+ *   noStroke();
+ *
+ *   // Display the number of touch points.
+ *   text(touches.length, 50, 20);
+ *
+ *   // Style the touch points.
+ *   fill(fillColor);
+ *   stroke(0);
+ *   strokeWeight(borderWidth);
+ *
+ *   // Display the touch points as circles.
+ *   for (let touch of touches) {
+ *     circle(touch.x, touch.y, 40);
+ *   }
+ * }
+ *
+ * // Set the background color to a random grayscale value.
+ * function touchStarted() {
+ *   bgColor = random(80, 255);
+ * }
+ *
+ * // Set the fill color to a random grayscale value.
+ * function touchEnded() {
+ *   fillColor = random(0, 255);
+ * }
+ *
+ * // Set the stroke weight.
+ * function touchMoved() {
+ *   // Increment the border width.
+ *   borderWidth += 0.1;
+ *
+ *   // Reset the border width once it's too thick.
+ *   if (borderWidth > 20) {
+ *     borderWidth = 0.5;
+ *   }
+ * }
  * </code>
  * </div>
  */
@@ -210,27 +466,86 @@ p5.prototype._ontouchmove = function(e) {
 };
 
 /**
- * The <a href="#/p5/touchEnded">touchEnded()</a> function is called every time a touch ends. If no
- * <a href="#/p5/touchEnded">touchEnded()</a> function is defined, the <a href="#/p5/mouseReleased">mouseReleased()</a> function will be
- * called instead if it is defined.<br><br>
- * Browsers may have different default behaviors attached to various touch
- * events. To prevent any default behavior for this event, add "return false"
- * to the end of the method.
+ * A function that's called once each time a screen touch ends.
+ *
+ * Declaring the function `touchEnded()` sets a code block to run
+ * automatically when the user stops touching a touchscreen device:
+ *
+ * ```js
+ * function touchEnded() {
+ *   // Code to run.
+ * }
+ * ```
+ *
+ * The <a href="#/p5/touches">touches</a> array will be updated with the most
+ * recent touch points when `touchEnded()` is called by p5.js:
+ *
+ * ```js
+ * function touchEnded() {
+ *   // Paint over the background.
+ *   background(200);
+ *
+ *   // Mark each remaining touch point when the user stops
+ *   // a touch.
+ *   for (let touch of touches) {
+ *     circle(touch.x, touch.y, 40);
+ *   }
+ * }
+ * ```
+ *
+ * The parameter, event, is optional. `touchEnded()` will be passed a
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/TouchEvent" target="_blank">TouchEvent</a>
+ * object with properties that describe the touch event:
+ *
+ * ```js
+ * function touchEnded(event) {
+ *   // Code to run that uses the event.
+ *   console.log(event);
+ * }
+ * ```
+ *
+ * On touchscreen devices, <a href="#/p5/mouseReleased">mouseReleased()</a> will
+ * run when the user’s touch ends if `touchEnded()` isn’t declared. If
+ * `touchEnded()` is declared, then `touchEnded()` will run when a user’s
+ * touch ends and <a href="#/p5/mouseReleased">mouseReleased()</a> won’t.
+ *
+ * Note: <a href="#/p5/touchStarted">touchStarted()</a>,
+ * `touchEnded()`, and <a href="#/p5/touchMoved">touchMoved()</a> are all
+ * related. <a href="#/p5/touchStarted">touchStarted()</a> runs as soon as the
+ * user touches a touchscreen device. `touchEnded()` runs as soon as the user
+ * ends a touch. <a href="#/p5/touchMoved">touchMoved()</a> runs repeatedly as
+ * the user moves any touch points.
  *
  * @method touchEnded
- * @param  {TouchEvent} [event] optional TouchEvent callback argument.
+ * @param  {TouchEvent} [event] optional `TouchEvent` argument.
+ *
  * @example
  * <div>
  * <code>
- * // Release touch within the image to
- * // change the value of the rectangle
+ * // On a touchscreen device, touch the canvas using one or more fingers
+ * // at the same time.
  *
  * let value = 0;
- * function draw() {
- *   fill(value);
- *   rect(25, 25, 50, 50);
- *   describe('50-by-50 black rect turns white with touch.');
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square with a black square at its center. The inner square switches color between black and white each time the user stops touching the screen.'
+ *   );
  * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the square.
+ *   fill(value);
+ *
+ *   // Draw the square.
+ *   square(25, 25, 50);
+ * }
+ *
+ * // Toggle colors when a touch ends.
  * function touchEnded() {
  *   if (value === 0) {
  *     value = 255;
@@ -241,25 +556,66 @@ p5.prototype._ontouchmove = function(e) {
  * </code>
  * </div>
  *
- * <div class="norender">
+ * <div>
  * <code>
- * function touchEnded() {
- *   ellipse(mouseX, mouseY, 5, 5);
- *   // prevent default
- *   return false;
- * }
- * describe('no image displayed');
- * </code>
- * </div>
+ * // On a touchscreen device, touch the canvas using one or more fingers
+ * // at the same time.
  *
- * <div class="norender">
- * <code>
- * // returns a TouchEvent object
- * // as a callback argument
- * function touchEnded(event) {
- *   console.log(event);
+ * let bgColor = 50;
+ * let fillColor = 255;
+ * let borderWidth = 0.5;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A gray square with the number 0 at the top-center. The number tracks the number of places the user is touching the screen. Circles appear at each touch point and change style in response to events.'
+ *   );
  * }
- * describe('no image displayed');
+ *
+ * function draw() {
+ *   background(bgColor);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   fill(0);
+ *   noStroke();
+ *
+ *   // Display the number of touch points.
+ *   text(touches.length, 50, 20);
+ *
+ *   // Style the touch points.
+ *   fill(fillColor);
+ *   stroke(0);
+ *   strokeWeight(borderWidth);
+ *
+ *   // Display the touch points as circles.
+ *   for (let touch of touches) {
+ *     circle(touch.x, touch.y, 40);
+ *   }
+ * }
+ *
+ * // Set the background color to a random grayscale value.
+ * function touchStarted() {
+ *   bgColor = random(80, 255);
+ * }
+ *
+ * // Set the fill color to a random grayscale value.
+ * function touchEnded() {
+ *   fillColor = random(0, 255);
+ * }
+ *
+ * // Set the stroke weight.
+ * function touchMoved() {
+ *   // Increment the border width.
+ *   borderWidth += 0.1;
+ *
+ *   // Reset the border width once it's too thick.
+ *   if (borderWidth > 20) {
+ *     borderWidth = 0.5;
+ *   }
+ * }
  * </code>
  * </div>
  */
