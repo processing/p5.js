@@ -1,8 +1,49 @@
-import p5 from '../core/main';
 import * as constants from '../core/constants';
 import GeometryBuilder from './GeometryBuilder';
 import libtess from 'libtess'; // Fixed with exporting module from libtess
-import Renderer from '../core/p5.Renderer';
+import { Renderer } from '../core/p5.Renderer';
+import { Matrix } from './p5.Matrix';
+import { Camera } from './p5.Camera';
+import { Vector } from '../math/p5.Vector';
+import { RenderBuffer } from './p5.RenderBuffer';
+import { Geometry } from './p5.Geometry';
+import { DataArray } from './p5.DataArray';
+import { Shader } from './p5.Shader';
+import { Image } from '../image/p5.Image';
+import { Texture, MipmapTexture } from './p5.Texture';
+import { Framebuffer } from './p5.Framebuffer';
+import { Graphics } from '../core/p5.Graphics';
+import { Element } from '../core/p5.Element';
+
+import lightingShader from './shaders/lighting.glsl';
+import webgl2CompatibilityShader from './shaders/webgl2Compatibility.glsl';
+import normalVert from './shaders/normal.vert';
+import normalFrag from './shaders/normal.frag';
+import basicFrag from './shaders/basic.frag';
+import sphereMappingFrag from './shaders/sphereMapping.frag';
+import lightVert from './shaders/light.vert';
+import lightTextureFrag from './shaders/light_texture.frag';
+import phongVert from './shaders/phong.vert';
+import phongFrag from './shaders/phong.frag';
+import fontVert from './shaders/font.vert';
+import fontFrag from './shaders/font.frag';
+import lineVert from './shaders/line.vert';
+import lineFrag from './shaders/line.frag';
+import pointVert from './shaders/point.vert';
+import pointFrag from './shaders/point.frag';
+import imageLightVert from './shaders/imageLight.vert';
+import imageLightDiffusedFrag from './shaders/imageLightDiffused.frag';
+import imageLightSpecularFrag from './shaders/imageLightSpecular.frag';
+
+import filterGrayFrag from './shaders/filters/gray.frag';
+import filterErodeFrag from './shaders/filters/erode.frag';
+import filterDilateFrag from './shaders/filters/dilate.frag';
+import filterBlurFrag from './shaders/filters/blur.frag';
+import filterPosterizeFrag from './shaders/filters/posterize.frag';
+import filterOpaqueFrag from './shaders/filters/opaque.frag';
+import filterInvertFrag from './shaders/filters/invert.frag';
+import filterThresholdFrag from './shaders/filters/threshold.frag';
+import filterShaderVert from './shaders/filters/default.vert';
 
 const STROKE_CAP_ENUM = {};
 const STROKE_JOIN_ENUM = {};
@@ -25,26 +66,6 @@ defineStrokeCapEnum('SQUARE', 2);
 defineStrokeJoinEnum('ROUND', 0);
 defineStrokeJoinEnum('MITER', 1);
 defineStrokeJoinEnum('BEVEL', 2);
-
-import lightingShader from './shaders/lighting.glsl';
-import webgl2CompatibilityShader from './shaders/webgl2Compatibility.glsl';
-import normalVert from './shaders/normal.vert';
-import normalFrag from './shaders/normal.frag';
-import basicFrag from './shaders/basic.frag';
-import sphereMappingFrag from './shaders/sphereMapping.frag';
-import lightVert from './shaders/light.vert';
-import lightTextureFrag from './shaders/light_texture.frag';
-import phongVert from './shaders/phong.vert';
-import phongFrag from './shaders/phong.frag';
-import fontVert from './shaders/font.vert';
-import fontFrag from './shaders/font.frag';
-import lineVert from './shaders/line.vert';
-import lineFrag from './shaders/line.frag';
-import pointVert from './shaders/point.vert';
-import pointFrag from './shaders/point.frag';
-import imageLightVert from './shaders/imageLight.vert';
-import imageLightDiffusedFrag from './shaders/imageLightDiffused.frag';
-import imageLightSpecularFrag from './shaders/imageLightSpecular.frag';
 
 const defaultShaders = {
   normalVert,
@@ -76,16 +97,6 @@ for (const key in defaultShaders) {
   defaultShaders[key] = webgl2CompatibilityShader + defaultShaders[key];
 }
 
-import filterGrayFrag from './shaders/filters/gray.frag';
-import filterErodeFrag from './shaders/filters/erode.frag';
-import filterDilateFrag from './shaders/filters/dilate.frag';
-import filterBlurFrag from './shaders/filters/blur.frag';
-import filterPosterizeFrag from './shaders/filters/posterize.frag';
-import filterOpaqueFrag from './shaders/filters/opaque.frag';
-import filterInvertFrag from './shaders/filters/invert.frag';
-import filterThresholdFrag from './shaders/filters/threshold.frag';
-import filterShaderVert from './shaders/filters/default.vert';
-
 const filterShaderFrags = {
   [constants.GRAY]: filterGrayFrag,
   [constants.ERODE]: filterErodeFrag,
@@ -98,322 +109,6 @@ const filterShaderFrags = {
 };
 
 /**
- * @module Rendering
- * @submodule Rendering
- * @for p5
- */
-/**
- * Set attributes for the WebGL Drawing context.
- * This is a way of adjusting how the WebGL
- * renderer works to fine-tune the display and performance.
- *
- * Note that this will reinitialize the drawing context
- * if called after the WebGL canvas is made.
- *
- * If an object is passed as the parameter, all attributes
- * not declared in the object will be set to defaults.
- *
- * The available attributes are:
- * <br>
- * alpha - indicates if the canvas contains an alpha buffer
- * default is true
- *
- * depth - indicates whether the drawing buffer has a depth buffer
- * of at least 16 bits - default is true
- *
- * stencil - indicates whether the drawing buffer has a stencil buffer
- * of at least 8 bits
- *
- * antialias - indicates whether or not to perform anti-aliasing
- * default is false (true in Safari)
- *
- * premultipliedAlpha - indicates that the page compositor will assume
- * the drawing buffer contains colors with pre-multiplied alpha
- * default is true
- *
- * preserveDrawingBuffer - if true the buffers will not be cleared and
- * and will preserve their values until cleared or overwritten by author
- * (note that p5 clears automatically on draw loop)
- * default is true
- *
- * perPixelLighting - if true, per-pixel lighting will be used in the
- * lighting shader otherwise per-vertex lighting is used.
- * default is true.
- *
- * version - either 1 or 2, to specify which WebGL version to ask for. By
- * default, WebGL 2 will be requested. If WebGL2 is not available, it will
- * fall back to WebGL 1. You can check what version is used with by looking at
- * the global `webglVersion` property.
- *
- * @method setAttributes
- * @for p5
- * @param  {String}  key Name of attribute
- * @param  {Boolean}        value New value of named attribute
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- * }
- *
- * function draw() {
- *   background(255);
- *   push();
- *   rotateZ(frameCount * 0.02);
- *   rotateX(frameCount * 0.02);
- *   rotateY(frameCount * 0.02);
- *   fill(0, 0, 0);
- *   box(50);
- *   pop();
- * }
- * </code>
- * </div>
- * <br>
- * Now with the antialias attribute set to true.
- * <br>
- * <div>
- * <code>
- * function setup() {
- *   setAttributes('antialias', true);
- *   createCanvas(100, 100, WEBGL);
- * }
- *
- * function draw() {
- *   background(255);
- *   push();
- *   rotateZ(frameCount * 0.02);
- *   rotateX(frameCount * 0.02);
- *   rotateY(frameCount * 0.02);
- *   fill(0, 0, 0);
- *   box(50);
- *   pop();
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * // press the mouse button to disable perPixelLighting
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *   noStroke();
- *   fill(255);
- * }
- *
- * let lights = [
- *   { c: '#f00', t: 1.12, p: 1.91, r: 0.2 },
- *   { c: '#0f0', t: 1.21, p: 1.31, r: 0.2 },
- *   { c: '#00f', t: 1.37, p: 1.57, r: 0.2 },
- *   { c: '#ff0', t: 1.12, p: 1.91, r: 0.7 },
- *   { c: '#0ff', t: 1.21, p: 1.31, r: 0.7 },
- *   { c: '#f0f', t: 1.37, p: 1.57, r: 0.7 }
- * ];
- *
- * function draw() {
- *   let t = millis() / 1000 + 1000;
- *   background(0);
- *   directionalLight(color('#222'), 1, 1, 1);
- *
- *   for (let i = 0; i < lights.length; i++) {
- *     let light = lights[i];
- *     pointLight(
- *       color(light.c),
- *       p5.Vector.fromAngles(t * light.t, t * light.p, width * light.r)
- *     );
- *   }
- *
- *   specularMaterial(255);
- *   sphere(width * 0.1);
- *
- *   rotateX(t * 0.77);
- *   rotateY(t * 0.83);
- *   rotateZ(t * 0.91);
- *   torus(width * 0.3, width * 0.07, 24, 10);
- * }
- *
- * function mousePressed() {
- *   setAttributes('perPixelLighting', false);
- *   noStroke();
- *   fill(255);
- * }
- * function mouseReleased() {
- *   setAttributes('perPixelLighting', true);
- *   noStroke();
- *   fill(255);
- * }
- * </code>
- * </div>
- *
- * @alt a rotating cube with smoother edges
- */
-/**
- * @method setAttributes
- * @for p5
- * @param  {Object}  obj object with key-value pairs
- */
-p5.prototype.setAttributes = function (key, value) {
-  if (typeof this._glAttributes === 'undefined') {
-    console.log(
-      'You are trying to use setAttributes on a p5.Graphics object ' +
-      'that does not use a WEBGL renderer.'
-    );
-    return;
-  }
-  let unchanged = true;
-  if (typeof value !== 'undefined') {
-    //first time modifying the attributes
-    if (this._glAttributes === null) {
-      this._glAttributes = {};
-    }
-    if (this._glAttributes[key] !== value) {
-      //changing value of previously altered attribute
-      this._glAttributes[key] = value;
-      unchanged = false;
-    }
-    //setting all attributes with some change
-  } else if (key instanceof Object) {
-    if (this._glAttributes !== key) {
-      this._glAttributes = key;
-      unchanged = false;
-    }
-  }
-  //@todo_FES
-  if (!this._renderer.isP3D || unchanged) {
-    return;
-  }
-
-  if (!this._setupDone) {
-    for (const x in this._renderer.retainedMode.geometry) {
-      if (this._renderer.retainedMode.geometry.hasOwnProperty(x)) {
-        p5._friendlyError(
-          'Sorry, Could not set the attributes, you need to call setAttributes() ' +
-          'before calling the other drawing methods in setup()'
-        );
-        return;
-      }
-    }
-  }
-
-  this.push();
-  this._renderer._resetContext();
-  this.pop();
-
-  if (this._renderer.states.curCamera) {
-    this._renderer.states.curCamera._renderer = this._renderer;
-  }
-};
-/**
- * @private
- * @param {Uint8Array|Float32Array|undefined} pixels An existing pixels array to reuse if the size is the same
- * @param {WebGLRenderingContext} gl The WebGL context
- * @param {WebGLFramebuffer|null} framebuffer The Framebuffer to read
- * @param {Number} x The x coordiante to read, premultiplied by pixel density
- * @param {Number} y The y coordiante to read, premultiplied by pixel density
- * @param {Number} width The width in pixels to be read (factoring in pixel density)
- * @param {Number} height The height in pixels to be read (factoring in pixel density)
- * @param {GLEnum} format Either RGB or RGBA depending on how many channels to read
- * @param {GLEnum} type The datatype of each channel, e.g. UNSIGNED_BYTE or FLOAT
- * @param {Number|undefined} flipY If provided, the total height with which to flip the y axis about
- * @returns {Uint8Array|Float32Array} pixels A pixels array with the current state of the
- * WebGL context read into it
- */
-export function readPixelsWebGL(
-  pixels,
-  gl,
-  framebuffer,
-  x,
-  y,
-  width,
-  height,
-  format,
-  type,
-  flipY
-) {
-  // Record the currently bound framebuffer so we can go back to it after, and
-  // bind the framebuffer we want to read from
-  const prevFramebuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
-  gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
-
-  const channels = format === gl.RGBA ? 4 : 3;
-
-  // Make a pixels buffer if it doesn't already exist
-  const len = width * height * channels;
-  const TypedArrayClass = type === gl.UNSIGNED_BYTE ? Uint8Array : Float32Array;
-  if (!(pixels instanceof TypedArrayClass) || pixels.length !== len) {
-    pixels = new TypedArrayClass(len);
-  }
-
-  gl.readPixels(
-    x,
-    flipY ? (flipY - y - height) : y,
-    width,
-    height,
-    format,
-    type,
-    pixels
-  );
-
-  // Re-bind whatever was previously bound
-  gl.bindFramebuffer(gl.FRAMEBUFFER, prevFramebuffer);
-
-  if (flipY) {
-    // WebGL pixels are inverted compared to 2D pixels, so we have to flip
-    // the resulting rows. Adapted from https://stackoverflow.com/a/41973289
-    const halfHeight = Math.floor(height / 2);
-    const tmpRow = new TypedArrayClass(width * channels);
-    for (let y = 0; y < halfHeight; y++) {
-      const topOffset = y * width * 4;
-      const bottomOffset = (height - y - 1) * width * 4;
-      tmpRow.set(pixels.subarray(topOffset, topOffset + width * 4));
-      pixels.copyWithin(topOffset, bottomOffset, bottomOffset + width * 4);
-      pixels.set(tmpRow, bottomOffset);
-    }
-  }
-
-  return pixels;
-}
-
-/**
- * @private
- * @param {WebGLRenderingContext} gl The WebGL context
- * @param {WebGLFramebuffer|null} framebuffer The Framebuffer to read
- * @param {Number} x The x coordinate to read, premultiplied by pixel density
- * @param {Number} y The y coordinate to read, premultiplied by pixel density
- * @param {GLEnum} format Either RGB or RGBA depending on how many channels to read
- * @param {GLEnum} type The datatype of each channel, e.g. UNSIGNED_BYTE or FLOAT
- * @param {Number|undefined} flipY If provided, the total height with which to flip the y axis about
- * @returns {Number[]} pixels The channel data for the pixel at that location
- */
-export function readPixelWebGL(
-  gl,
-  framebuffer,
-  x,
-  y,
-  format,
-  type,
-  flipY
-) {
-  // Record the currently bound framebuffer so we can go back to it after, and
-  // bind the framebuffer we want to read from
-  const prevFramebuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
-  gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
-
-  const channels = format === gl.RGBA ? 4 : 3;
-  const TypedArrayClass = type === gl.UNSIGNED_BYTE ? Uint8Array : Float32Array;
-  const pixels = new TypedArrayClass(channels);
-
-  gl.readPixels(
-    x, flipY ? (flipY - y - 1) : y, 1, 1,
-    format, type,
-    pixels
-  );
-
-  // Re-bind whatever was previously bound
-  gl.bindFramebuffer(gl.FRAMEBUFFER, prevFramebuffer);
-
-  return Array.from(pixels);
-}
-/**
  * 3D graphics class
  * @private
  * @class p5.RendererGL
@@ -421,24 +116,22 @@ export function readPixelWebGL(
  * @todo extend class to include public method for offscreen
  * rendering (FBO).
  */
-p5.RendererGL = class RendererGL extends Renderer {
-  constructor(elt, pInst, isMainCanvas, attr) {
-    super(elt, pInst, isMainCanvas);
-    this.elt = elt;
-    this.canvas = elt;
+class RendererGL extends Renderer {
+  constructor(pInst, w, h, isMainCanvas, elt, attr) {
+    super(pInst, w, h, isMainCanvas);
+
+    // Create new canvas
+    this.canvas = this.elt = elt || document.createElement('canvas');
     this._setAttributeDefaults(pInst);
     this._initContext();
-    this.isP3D = true; //lets us know we're in 3d mode
-
-    // When constructing a new p5.Geometry, this will represent the builder
-    this.geometryBuilder = undefined;
-
     // This redundant property is useful in reminding you that you are
     // interacting with WebGLRenderingContext, still worth considering future removal
     this.GL = this.drawingContext;
-    this._pInst.drawingContext = this.drawingContext;
-
     if (isMainCanvas) {
+      this._pInst.drawingContext = this.drawingContext;
+    }
+
+    if (this._isMainCanvas) {
       // for pixel method sharing with pimage
       this._pInst._curElement = this;
       this._pInst.canvas = this.canvas;
@@ -446,16 +139,58 @@ p5.RendererGL = class RendererGL extends Renderer {
       // hide if offscreen buffer by default
       this.canvas.style.display = 'none';
     }
+    this.elt.id = 'defaultCanvas0';
+    this.elt.classList.add('p5Canvas');
+
+    const dimensions = this._adjustDimensions(w, h);
+    w = dimensions.adjustedWidth;
+    h = dimensions.adjustedHeight;
+
+    this.width = w;
+    this.height = h;
+
+    // Set canvas size
+    this.elt.width = w * this._pixelDensity;
+    this.elt.height = h * this._pixelDensity;
+    this.elt.style.width = `${w}px`;
+    this.elt.style.height = `${h}px`;
+    this._origViewport = {
+      width: this.GL.drawingBufferWidth,
+      height: this.GL.drawingBufferHeight
+    };
+    this.viewport(
+      this._origViewport.width,
+      this._origViewport.height
+    );
+
+    // Attach canvas element to DOM
+    if (this._pInst._userNode) {
+      // user input node case
+      this._pInst._userNode.appendChild(this.elt);
+    } else {
+      //create main element
+      if (document.getElementsByTagName('main').length === 0) {
+        let m = document.createElement('main');
+        document.body.appendChild(m);
+      }
+      //append canvas to main
+      document.getElementsByTagName('main')[0].appendChild(this.elt);
+    }
+
+    this.isP3D = true; //lets us know we're in 3d mode
+
+    // When constructing a new Geometry, this will represent the builder
+    this.geometryBuilder = undefined;
 
     // Push/pop state
-    this.states.uModelMatrix = new p5.Matrix();
-    this.states.uViewMatrix = new p5.Matrix();
-    this.states.uMVMatrix = new p5.Matrix();
-    this.states.uPMatrix = new p5.Matrix();
-    this.states.uNMatrix = new p5.Matrix('mat3');
-    this.states.curMatrix = new p5.Matrix('mat3');
+    this.states.uModelMatrix = new Matrix();
+    this.states.uViewMatrix = new Matrix();
+    this.states.uMVMatrix = new Matrix();
+    this.states.uPMatrix = new Matrix();
+    this.states.uNMatrix = new Matrix('mat3');
+    this.states.curMatrix = new Matrix('mat3');
 
-    this.states.curCamera = new p5.Camera(this);
+    this.states.curCamera = new Camera(this);
 
     this.states.enableLighting = false;
     this.states.ambientLightColors = [];
@@ -495,11 +230,14 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.states.linearAttenuation = 0;
     this.states.quadraticAttenuation = 0;
 
-    this.states._currentNormal = new p5.Vector(0, 0, 1);
+    this.states._currentNormal = new Vector(0, 0, 1);
 
     this.states.drawMode = constants.FILL;
 
     this.states._tex = null;
+    this.states.textureMode = constants.IMAGE;
+    this.states.textureWrapX = constants.CLAMP;
+    this.states.textureWrapY = constants.CLAMP;
 
     // erasing
     this._isErasing = false;
@@ -516,8 +254,6 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.diffusedTextures = new Map();
     // p5.framebuffer for this are calculated in getSpecularTexture function
     this.specularTextures = new Map();
-
-
 
     this.preEraseBlend = undefined;
     this._cachedBlendMode = undefined;
@@ -540,7 +276,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.states.curCamera._setDefaultCamera();
 
     // FilterCamera
-    this.filterCamera = new p5.Camera(this);
+    this.filterCamera = new Camera(this);
     this.filterCamera._computeCameraDefaultSettings();
     this.filterCamera._setDefaultCamera();
     // Information about the previous frame's touch object
@@ -548,8 +284,8 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.prevTouches = [];
     // Velocity variable for use with orbitControl()
     this.zoomVelocity = 0;
-    this.rotateVelocity = new p5.Vector(0, 0);
-    this.moveVelocity = new p5.Vector(0, 0);
+    this.rotateVelocity = new Vector(0, 0);
+    this.moveVelocity = new Vector(0, 0);
     // Flags for recording the state of zooming, rotation and moving
     this.executeZoom = false;
     this.executeRotateAndMove = false;
@@ -579,23 +315,23 @@ p5.RendererGL = class RendererGL extends Renderer {
       geometry: {},
       buffers: {
         stroke: [
-          new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this),
-          new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this),
-          new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this),
-          new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this),
-          new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
+          new RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this),
+          new RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this),
+          new RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this),
+          new RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this),
+          new RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
         ],
         fill: [
-          new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
-          new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
-          new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
-          new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
+          new RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
+          new RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
+          new RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
+          new RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
           //new BufferDef(3, 'vertexSpeculars', 'specularBuffer', 'aSpecularColor'),
-          new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+          new RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
         ],
         text: [
-          new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
-          new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+          new RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
+          new RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
         ],
         user:[]
       }
@@ -604,7 +340,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     // Immediate Mode
     // Geometry and Material hashes stored here
     this.immediateMode = {
-      geometry: new p5.Geometry(),
+      geometry: new Geometry(),
       shapeMode: constants.TRIANGLE_FAN,
       contourIndices: [],
       _bezierVertex: [],
@@ -612,18 +348,18 @@ p5.RendererGL = class RendererGL extends Renderer {
       _curveVertex: [],
       buffers: {
         fill: [
-          new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
-          new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
-          new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
-          new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
-          new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+          new RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
+          new RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
+          new RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
+          new RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
+          new RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
         ],
         stroke: [
-          new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this),
-          new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this),
-          new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this),
-          new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this),
-          new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
+          new RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this),
+          new RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this),
+          new RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this),
+          new RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this),
+          new RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
         ],
         point: this.GL.createBuffer(),
         user:[]
@@ -649,11 +385,6 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.filterLayerTemp = undefined;
     this.defaultFilterShaders = {};
 
-    this.textureMode = constants.IMAGE;
-    // default wrap settings
-    this.textureWrapX = constants.CLAMP;
-    this.textureWrapY = constants.CLAMP;
-    this.states._tex = null;
     this._curveTightness = 6;
 
     // lookUpTable for coefficients needed to be calculated for bezierVertex, same are used for curveVertex
@@ -761,7 +492,7 @@ p5.RendererGL = class RendererGL extends Renderer {
   }
 
   _initContext() {
-    if (this._pInst._glAttributes.version !== 1) {
+    if (this._pInst._glAttributes?.version !== 1) {
       // Unless WebGL1 is explicitly asked for, try to create a WebGL2 context
       this.drawingContext =
         this.canvas.getContext('webgl2', this._pInst._glAttributes);
@@ -805,10 +536,9 @@ p5.RendererGL = class RendererGL extends Renderer {
       this._maxTextureSize = this._getMaxTextureSize();
     }
     let maxTextureSize = this._maxTextureSize;
-    let maxAllowedPixelDimensions = p5.prototype._maxAllowedPixelDimensions;
 
-    maxAllowedPixelDimensions = Math.floor(
-      maxTextureSize / this.pixelDensity()
+    let maxAllowedPixelDimensions = Math.floor(
+      maxTextureSize / this._pixelDensity
     );
     let adjustedWidth = Math.min(
       width, maxAllowedPixelDimensions
@@ -834,7 +564,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     const w = this.width;
     const h = this.height;
     const defaultId = this.canvas.id;
-    const isPGraphics = this._pInst instanceof p5.Graphics;
+    const isPGraphics = this._pInst instanceof Graphics;
 
     if (isPGraphics) {
       const pg = this._pInst;
@@ -842,7 +572,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       pg.canvas = document.createElement('canvas');
       const node = pg._pInst._userNode || document.body;
       node.appendChild(pg.canvas);
-      p5.Element.call(pg, pg.canvas, pg._pInst);
+      Element.call(pg, pg.canvas, pg._pInst);
       pg.width = w;
       pg.height = h;
     } else {
@@ -861,18 +591,16 @@ p5.RendererGL = class RendererGL extends Renderer {
       this.canvas = c;
     }
 
-    const renderer = new p5.RendererGL(
-      this._pInst.canvas,
+    const renderer = new RendererGL(
       this._pInst,
-      !isPGraphics
+      w,
+      h,
+      !isPGraphics,
+      this._pInst.canvas,
     );
     this._pInst._renderer = renderer;
-    renderer.resize(w, h);
-    renderer._applyDefaults();
 
-    if (!isPGraphics) {
-      this._pInst._elements.push(renderer);
-    }
+    renderer._applyDefaults();
 
     if (typeof callback === 'function') {
       //setTimeout with 0 forces the task to the back of the queue, this ensures that
@@ -910,7 +638,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.states.spotLightAngle.length = 0;
     this.states.spotLightConc.length = 0;
 
-    this.states._enableLighting = false;
+    this.states.enableLighting = false;
 
     //reset tint value for new frame
     this.states.tint = [255, 255, 255, 255];
@@ -922,8 +650,8 @@ p5.RendererGL = class RendererGL extends Renderer {
   }
 
   /**
- * [background description]
- */
+   * [background description]
+   */
   background(...args) {
     const _col = this._pInst.color(...args);
     const _r = _col.levels[0] / 255;
@@ -946,38 +674,40 @@ p5.RendererGL = class RendererGL extends Renderer {
   // COLOR
   //////////////////////////////////////////////
   /**
- * Basic fill material for geometry with a given color
- * @param  {Number|Number[]|String|p5.Color} v1  gray value,
- * red or hue value (depending on the current color mode),
- * or color Array, or CSS color string
- * @param  {Number}            [v2] green or saturation value
- * @param  {Number}            [v3] blue or brightness value
- * @param  {Number}            [a]  opacity
- * @chainable
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(200, 200, WEBGL);
- * }
- *
- * function draw() {
- *   background(0);
- *   noStroke();
- *   fill(100, 100, 240);
- *   rotateX(frameCount * 0.01);
- *   rotateY(frameCount * 0.01);
- *   box(75, 75, 75);
- * }
- * </code>
- * </div>
- *
- * @alt
- * black canvas with purple cube spinning
- */
-  fill(v1, v2, v3, a) {
+   * Basic fill material for geometry with a given color
+   * @param  {Number|Number[]|String|p5.Color} v1  gray value,
+   * red or hue value (depending on the current color mode),
+   * or color Array, or CSS color string
+   * @param  {Number}            [v2] green or saturation value
+   * @param  {Number}            [v3] blue or brightness value
+   * @param  {Number}            [a]  opacity
+   * @chainable
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   * }
+   *
+   * function draw() {
+   *   background(0);
+   *   noStroke();
+   *   fill(100, 100, 240);
+   *   rotateX(frameCount * 0.01);
+   *   rotateY(frameCount * 0.01);
+   *   box(75, 75, 75);
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt
+   * black canvas with purple cube spinning
+   */
+  fill(...args) {
+    super.fill(...args);
     //see material.js for more info on color blending in webgl
-    const color = p5.prototype.color.apply(this._pInst, arguments);
+    // const color = fn.color.apply(this._pInst, arguments);
+    const color = this._pInst.color(...args);
     this.states.curFillColor = color._array;
     this.states.drawMode = constants.FILL;
     this.states._useNormalMaterial = false;
@@ -985,36 +715,38 @@ p5.RendererGL = class RendererGL extends Renderer {
   }
 
   /**
- * Basic stroke material for geometry with a given color
- * @param  {Number|Number[]|String|p5.Color} v1  gray value,
- * red or hue value (depending on the current color mode),
- * or color Array, or CSS color string
- * @param  {Number}            [v2] green or saturation value
- * @param  {Number}            [v3] blue or brightness value
- * @param  {Number}            [a]  opacity
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(200, 200, WEBGL);
- * }
- *
- * function draw() {
- *   background(0);
- *   stroke(240, 150, 150);
- *   fill(100, 100, 240);
- *   rotateX(frameCount * 0.01);
- *   rotateY(frameCount * 0.01);
- *   box(75, 75, 75);
- * }
- * </code>
- * </div>
- *
- * @alt
- * black canvas with purple cube with pink outline spinning
- */
-  stroke(r, g, b, a) {
-    const color = p5.prototype.color.apply(this._pInst, arguments);
+   * Basic stroke material for geometry with a given color
+   * @param  {Number|Number[]|String|p5.Color} v1  gray value,
+   * red or hue value (depending on the current color mode),
+   * or color Array, or CSS color string
+   * @param  {Number}            [v2] green or saturation value
+   * @param  {Number}            [v3] blue or brightness value
+   * @param  {Number}            [a]  opacity
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   * }
+   *
+   * function draw() {
+   *   background(0);
+   *   stroke(240, 150, 150);
+   *   fill(100, 100, 240);
+   *   rotateX(frameCount * 0.01);
+   *   rotateY(frameCount * 0.01);
+   *   box(75, 75, 75);
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt
+   * black canvas with purple cube with pink outline spinning
+   */
+  stroke(...args) {
+    super.stroke(...args);
+    // const color = fn.color.apply(this._pInst, arguments);
+    const color = this._pInst.color(...args);
     this.states.curStrokeColor = color._array;
   }
 
@@ -1027,13 +759,13 @@ p5.RendererGL = class RendererGL extends Renderer {
   }
   getFilterLayer() {
     if (!this.filterLayer) {
-      this.filterLayer = this._pInst.createFramebuffer();
+      this.filterLayer = new Framebuffer(this);
     }
     return this.filterLayer;
   }
   getFilterLayerTemp() {
     if (!this.filterLayerTemp) {
-      this.filterLayerTemp = this._pInst.createFramebuffer();
+      this.filterLayerTemp = new Framebuffer(this);
     }
     return this.filterLayerTemp;
   }
@@ -1050,7 +782,6 @@ p5.RendererGL = class RendererGL extends Renderer {
     }
   }
   filter(...args) {
-
     let fbo = this.getFilterLayer();
 
     // use internal shader for filter constants BLUR, INVERT, etc
@@ -1070,8 +801,8 @@ p5.RendererGL = class RendererGL extends Renderer {
       // Need to store multiple in case user calls different filters,
       // eg. filter(BLUR) then filter(GRAY)
       if (!(operation in this.defaultFilterShaders)) {
-        this.defaultFilterShaders[operation] = new p5.Shader(
-          fbo._renderer,
+        this.defaultFilterShaders[operation] = new Shader(
+          fbo.renderer,
           filterShaderVert,
           filterShaderFrags[operation]
         );
@@ -1091,7 +822,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     // Resize the framebuffer 'fbo' and adjust its pixel density if it doesn't match the target.
     this.matchSize(fbo, target);
 
-    fbo.draw(() => this._pInst.clear()); // prevent undesirable feedback effects accumulating secretly.
+    fbo.draw(() => this.clear()); // prevent undesirable feedback effects accumulating secretly.
 
     let texelSize = [
       1 / (target.width * target.pixelDensity()),
@@ -1105,12 +836,12 @@ p5.RendererGL = class RendererGL extends Renderer {
       // Resize the framebuffer 'tmp' and adjust its pixel density if it doesn't match the target.
       this.matchSize(tmp, target);
       // setup
-      this._pInst.push();
-      this._pInst.noStroke();
-      this._pInst.blendMode(constants.BLEND);
+      this.push();
+      this.states.doStroke = false;
+      this.blendMode(constants.BLEND);
 
       // draw main to temp buffer
-      this._pInst.shader(this.states.filterShader);
+      this.shader(this.states.filterShader);
       this.states.filterShader.setUniform('texelSize', texelSize);
       this.states.filterShader.setUniform('canvasSize', [target.width, target.height]);
       this.states.filterShader.setUniform('radius', Math.max(1, filterParameter));
@@ -1119,58 +850,63 @@ p5.RendererGL = class RendererGL extends Renderer {
       tmp.draw(() => {
         this.states.filterShader.setUniform('direction', [1, 0]);
         this.states.filterShader.setUniform('tex0', target);
-        this._pInst.clear();
-        this._pInst.shader(this.states.filterShader);
-        this._pInst.noLights();
-        this._pInst.plane(target.width, target.height);
+        this.clear();
+        this.shader(this.states.filterShader);
+        this.noLights();
+        this.plane(target.width, target.height);
       });
 
       // Vert pass: draw `tmp` to `fbo`
       fbo.draw(() => {
         this.states.filterShader.setUniform('direction', [0, 1]);
         this.states.filterShader.setUniform('tex0', tmp);
-        this._pInst.clear();
-        this._pInst.shader(this.states.filterShader);
-        this._pInst.noLights();
-        this._pInst.plane(target.width, target.height);
+        this.clear();
+        this.shader(this.states.filterShader);
+        this.noLights();
+        this.plane(target.width, target.height);
       });
 
-      this._pInst.pop();
+      this.pop();
     }
     // every other non-blur shader uses single pass
     else {
       fbo.draw(() => {
-        this._pInst.noStroke();
-        this._pInst.blendMode(constants.BLEND);
-        this._pInst.shader(this.states.filterShader);
+        this.states.doStroke = false;
+        this.blendMode(constants.BLEND);
+        this.shader(this.states.filterShader);
         this.states.filterShader.setUniform('tex0', target);
         this.states.filterShader.setUniform('texelSize', texelSize);
         this.states.filterShader.setUniform('canvasSize', [target.width, target.height]);
         // filterParameter uniform only used for POSTERIZE, and THRESHOLD
         // but shouldn't hurt to always set
         this.states.filterShader.setUniform('filterParameter', filterParameter);
-        this._pInst.noLights();
-        this._pInst.plane(target.width, target.height);
+        this.noLights();
+        this.plane(target.width, target.height);
       });
 
     }
     // draw fbo contents onto main renderer.
-    this._pInst.push();
-    this._pInst.noStroke();
+    this.push();
+    this.states.doStroke = false;
     this.clear();
-    this._pInst.push();
-    this._pInst.imageMode(constants.CORNER);
-    this._pInst.blendMode(constants.BLEND);
+    this.push();
+    this.states.imageMode = constants.CORNER;
+    this.blendMode(constants.BLEND);
     target.filterCamera._resize();
-    this._pInst.setCamera(target.filterCamera);
-    this._pInst.resetMatrix();
+    this.setCamera(target.filterCamera);
+    this.resetMatrix();
     this._drawingFilter = true;
-    this._pInst.image(fbo, -target.width / 2, -target.height / 2,
-      target.width, target.height);
+    this.image(
+      fbo,
+      0, 0,
+      this.width, this.height,
+      -target.width / 2, -target.height / 2,
+      target.width, target.height
+    );
     this._drawingFilter = false;
-    this._pInst.clearDepth();
-    this._pInst.pop();
-    this._pInst.pop();
+    this.clearDepth();
+    this.pop();
+    this.pop();
   }
 
   // Pass this off to the host instance so that we can treat a renderer and a
@@ -1262,14 +998,14 @@ p5.RendererGL = class RendererGL extends Renderer {
     );
     gl.disable(gl.DEPTH_TEST);
 
-    this._pInst.push();
-    this._pInst.resetShader();
-    if (this.states.doFill) this._pInst.fill(0, 0);
-    if (this.states.doStroke) this._pInst.stroke(0, 0);
+    this.push();
+    this.resetShader();
+    if (this.states.doFill) this.fill(0, 0);
+    if (this.states.doStroke) this.stroke(0, 0);
   }
 
   endClip() {
-    this._pInst.pop();
+    this.pop();
 
     const gl = this.GL;
     gl.stencilOp(
@@ -1301,43 +1037,43 @@ p5.RendererGL = class RendererGL extends Renderer {
   }
 
   /**
- * Change weight of stroke
- * @param  {Number} stroke weight to be used for drawing
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(200, 400, WEBGL);
- *   setAttributes('antialias', true);
- * }
- *
- * function draw() {
- *   background(0);
- *   noStroke();
- *   translate(0, -100, 0);
- *   stroke(240, 150, 150);
- *   fill(100, 100, 240);
- *   push();
- *   strokeWeight(8);
- *   rotateX(frameCount * 0.01);
- *   rotateY(frameCount * 0.01);
- *   sphere(75);
- *   pop();
- *   push();
- *   translate(0, 200, 0);
- *   strokeWeight(1);
- *   rotateX(frameCount * 0.01);
- *   rotateY(frameCount * 0.01);
- *   sphere(75);
- *   pop();
- * }
- * </code>
- * </div>
- *
- * @alt
- * black canvas with two purple rotating spheres with pink
- * outlines the sphere on top has much heavier outlines,
- */
+   * Change weight of stroke
+   * @param  {Number} stroke weight to be used for drawing
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(200, 400, WEBGL);
+   *   setAttributes('antialias', true);
+   * }
+   *
+   * function draw() {
+   *   background(0);
+   *   noStroke();
+   *   translate(0, -100, 0);
+   *   stroke(240, 150, 150);
+   *   fill(100, 100, 240);
+   *   push();
+   *   strokeWeight(8);
+   *   rotateX(frameCount * 0.01);
+   *   rotateY(frameCount * 0.01);
+   *   sphere(75);
+   *   pop();
+   *   push();
+   *   translate(0, 200, 0);
+   *   strokeWeight(1);
+   *   rotateX(frameCount * 0.01);
+   *   rotateY(frameCount * 0.01);
+   *   sphere(75);
+   *   pop();
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt
+   * black canvas with two purple rotating spheres with pink
+   * outlines the sphere on top has much heavier outlines,
+   */
   strokeWeight(w) {
     if (this.curStrokeWeight !== w) {
       this.pointSize = w;
@@ -1360,16 +1096,13 @@ p5.RendererGL = class RendererGL extends Renderer {
   }
 
   /**
- * Loads the pixels data for this canvas into the pixels[] attribute.
- * Note that updatePixels() and set() do not work.
- * Any pixel manipulation must be done directly to the pixels[] array.
- *
- * @private
- */
-
+   * Loads the pixels data for this canvas into the pixels[] attribute.
+   * Note that updatePixels() and set() do not work.
+   * Any pixel manipulation must be done directly to the pixels[] array.
+   *
+   * @private
+   */
   loadPixels() {
-    const pixelsState = this._pixelsState;
-
     //@todo_FES
     if (this._pInst._glAttributes.preserveDrawingBuffer !== true) {
       console.log(
@@ -1378,12 +1111,12 @@ p5.RendererGL = class RendererGL extends Renderer {
       return;
     }
 
-    const pd = this._pInst._pixelDensity;
+    const pd = this._pixelDensity;
     const gl = this.GL;
 
-    pixelsState.pixels =
+    this.pixels =
       readPixelsWebGL(
-        pixelsState.pixels,
+        this.pixels,
         gl,
         null,
         0,
@@ -1398,27 +1131,27 @@ p5.RendererGL = class RendererGL extends Renderer {
 
   updatePixels() {
     const fbo = this._getTempFramebuffer();
-    fbo.pixels = this._pixelsState.pixels;
+    fbo.pixels = this.pixels;
     fbo.updatePixels();
-    this._pInst.push();
-    this._pInst.resetMatrix();
-    this._pInst.clear();
-    this._pInst.imageMode(constants.CENTER);
-    this._pInst.image(fbo, 0, 0);
-    this._pInst.pop();
+    this.push();
+    this.resetMatrix();
+    this.clear();
+    this.states.imageMode = constants.CORNER;
+    this.image(fbo, 0, 0, fbo.width, fbo.height, -fbo.width/2, -fbo.height/2, fbo.width, fbo.height);
+    this.pop();
     this.GL.clearDepth(1);
     this.GL.clear(this.GL.DEPTH_BUFFER_BIT);
   }
 
   /**
- * @private
- * @returns {p5.Framebuffer} A p5.Framebuffer set to match the size and settings
- * of the renderer's canvas. It will be created if it does not yet exist, and
- * reused if it does.
- */
+   * @private
+   * @returns {p5.Framebuffer} A p5.Framebuffer set to match the size and settings
+   * of the renderer's canvas. It will be created if it does not yet exist, and
+   * reused if it does.
+   */
   _getTempFramebuffer() {
     if (!this._tempFramebuffer) {
-      this._tempFramebuffer = this._pInst.createFramebuffer({
+      this._tempFramebuffer = new Framebuffer(this, {
         format: constants.UNSIGNED_BYTE,
         useDepth: this._pInst._glAttributes.depth,
         depthFormat: constants.UNSIGNED_INT,
@@ -1444,15 +1177,32 @@ p5.RendererGL = class RendererGL extends Renderer {
   }
 
   /**
- * [resize description]
- * @private
- * @param  {Number} w [description]
- * @param  {Number} h [description]
- */
+   * [resize description]
+   * @private
+   * @param  {Number} w [description]
+   * @param  {Number} h [description]
+   */
   resize(w, h) {
-    Renderer.prototype.resize.call(this, w, h);
-    this.canvas.width = w * this._pInst._pixelDensity;
-    this.canvas.height = h * this._pInst._pixelDensity;
+    super.resize(w, h);
+
+    // save canvas properties
+    const props = {};
+    for (const key in this.drawingContext) {
+      const val = this.drawingContext[key];
+      if (typeof val !== 'object' && typeof val !== 'function') {
+        props[key] = val;
+      }
+    }
+
+    const dimensions = this._adjustDimensions(w, h);
+    w = dimensions.adjustedWidth;
+    h = dimensions.adjustedHeight;
+
+    this.width = w;
+    this.height = h;
+
+    this.canvas.width = w * this._pixelDensity;
+    this.canvas.height = h * this._pixelDensity;
     this.canvas.style.width = `${w}px`;
     this.canvas.style.height = `${h}px`;
     this._origViewport = {
@@ -1467,9 +1217,8 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.states.curCamera._resize();
 
     //resize pixels buffer
-    const pixelsState = this._pixelsState;
-    if (typeof pixelsState.pixels !== 'undefined') {
-      pixelsState.pixels =
+    if (typeof this.pixels !== 'undefined') {
+      this.pixels =
         new Uint8Array(
           this.GL.drawingBufferWidth * this.GL.drawingBufferHeight * 4
         );
@@ -1480,17 +1229,26 @@ p5.RendererGL = class RendererGL extends Renderer {
       // can also update their size
       framebuffer._canvasSizeChanged();
     }
+
+    // reset canvas properties
+    for (const savedKey in props) {
+      try {
+        this.drawingContext[savedKey] = props[savedKey];
+      } catch (err) {
+        // ignore read-only property errors
+      }
+    }
   }
 
   /**
- * clears color and depth buffers
- * with r,g,b,a
- * @private
- * @param {Number} r normalized red val.
- * @param {Number} g normalized green val.
- * @param {Number} b normalized blue val.
- * @param {Number} a normalized alpha val.
- */
+   * clears color and depth buffers
+   * with r,g,b,a
+   * @private
+   * @param {Number} r normalized red val.
+   * @param {Number} g normalized green val.
+   * @param {Number} b normalized blue val.
+   * @param {Number} a normalized alpha val.
+   */
   clear(...args) {
     const _r = args[0] || 0;
     const _g = args[1] || 0;
@@ -1528,7 +1286,7 @@ p5.RendererGL = class RendererGL extends Renderer {
 
   applyMatrix(a, b, c, d, e, f) {
     if (arguments.length === 16) {
-      p5.Matrix.prototype.apply.apply(this.states.uModelMatrix, arguments);
+      Matrix.prototype.apply.apply(this.states.uModelMatrix, arguments);
     } else {
       this.states.uModelMatrix.apply([
         a, b, 0, 0,
@@ -1540,16 +1298,16 @@ p5.RendererGL = class RendererGL extends Renderer {
   }
 
   /**
- * [translate description]
- * @private
- * @param  {Number} x [description]
- * @param  {Number} y [description]
- * @param  {Number} z [description]
- * @chainable
- * @todo implement handle for components or vector as args
- */
+   * [translate description]
+   * @private
+   * @param  {Number} x [description]
+   * @param  {Number} y [description]
+   * @param  {Number} z [description]
+   * @chainable
+   * @todo implement handle for components or vector as args
+   */
   translate(x, y, z) {
-    if (x instanceof p5.Vector) {
+    if (x instanceof Vector) {
       z = x.z;
       y = x.y;
       x = x.x;
@@ -1559,13 +1317,13 @@ p5.RendererGL = class RendererGL extends Renderer {
   }
 
   /**
- * Scales the Model View Matrix by a vector
- * @private
- * @param  {Number | p5.Vector | Array} x [description]
- * @param  {Number} [y] y-axis scalar
- * @param  {Number} [z] z-axis scalar
- * @chainable
- */
+   * Scales the Model View Matrix by a vector
+   * @private
+   * @param  {Number | p5.Vector | Array} x [description]
+   * @param  {Number} [y] y-axis scalar
+   * @param  {Number} [z] z-axis scalar
+   * @chainable
+   */
   scale(x, y, z) {
     this.states.uModelMatrix.scale(x, y, z);
     return this;
@@ -1575,7 +1333,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     if (typeof axis === 'undefined') {
       return this.rotateZ(rad);
     }
-    p5.Matrix.prototype.rotate.apply(this.states.uModelMatrix, arguments);
+    Matrix.prototype.rotate.apply(this.states.uModelMatrix, arguments);
     return this;
   }
 
@@ -1627,10 +1385,10 @@ p5.RendererGL = class RendererGL extends Renderer {
   //////////////////////////////////////////////
 
   /*
- * shaders are created and cached on a per-renderer basis,
- * on the grounds that each renderer will have its own gl context
- * and the shader must be valid in that context.
- */
+   * shaders are created and cached on a per-renderer basis,
+   * on the grounds that each renderer will have its own gl context
+   * and the shader must be valid in that context.
+   */
 
   _getImmediateStrokeShader() {
     // select the stroke shader to use
@@ -1685,7 +1443,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       return this._getNormalShader();
     }
     // Use light shader if lighting or textures are enabled
-    else if (this.states._enableLighting || this.states._tex) {
+    else if (this.states.enableLighting || this.states._tex) {
       return this._getLightShader();
     }
     // Default to color shader if no other conditions are met
@@ -1718,7 +1476,7 @@ p5.RendererGL = class RendererGL extends Renderer {
   _getLightShader() {
     if (!this._defaultLightShader) {
       if (this._pInst._glAttributes.perPixelLighting) {
-        this._defaultLightShader = new p5.Shader(
+        this._defaultLightShader = new Shader(
           this,
           this._webGL2CompatibilityPrefix('vert', 'highp') +
           defaultShaders.phongVert,
@@ -1753,7 +1511,7 @@ p5.RendererGL = class RendererGL extends Renderer {
           }
         );
       } else {
-        this._defaultLightShader = new p5.Shader(
+        this._defaultLightShader = new Shader(
           this,
           this._webGL2CompatibilityPrefix('vert', 'highp') +
           defaultShaders.lightVert,
@@ -1772,7 +1530,7 @@ p5.RendererGL = class RendererGL extends Renderer {
 
   _getNormalShader() {
     if (!this._defaultNormalShader) {
-      this._defaultNormalShader = new p5.Shader(
+      this._defaultNormalShader = new Shader(
         this,
         this._webGL2CompatibilityPrefix('vert', 'mediump') +
         defaultShaders.normalVert,
@@ -1807,7 +1565,7 @@ p5.RendererGL = class RendererGL extends Renderer {
 
   _getColorShader() {
     if (!this._defaultColorShader) {
-      this._defaultColorShader = new p5.Shader(
+      this._defaultColorShader = new Shader(
         this,
         this._webGL2CompatibilityPrefix('vert', 'mediump') +
         defaultShaders.normalVert,
@@ -1866,7 +1624,7 @@ p5.RendererGL = class RendererGL extends Renderer {
 
   _getPointShader() {
     if (!this._defaultPointShader) {
-      this._defaultPointShader = new p5.Shader(
+      this._defaultPointShader = new Shader(
         this,
         this._webGL2CompatibilityPrefix('vert', 'mediump') +
         defaultShaders.pointVert,
@@ -1898,7 +1656,7 @@ p5.RendererGL = class RendererGL extends Renderer {
 
   _getLineShader() {
     if (!this._defaultLineShader) {
-      this._defaultLineShader = new p5.Shader(
+      this._defaultLineShader = new Shader(
         this,
         this._webGL2CompatibilityPrefix('vert', 'mediump') +
         defaultShaders.lineVert,
@@ -1934,7 +1692,7 @@ p5.RendererGL = class RendererGL extends Renderer {
       if (this.webglVersion === constants.WEBGL) {
         this.GL.getExtension('OES_standard_derivatives');
       }
-      this._defaultFontShader = new p5.Shader(
+      this._defaultFontShader = new Shader(
         this,
         this._webGL2CompatibilityPrefix('vert', 'mediump') +
         defaultShaders.fontVert,
@@ -1968,16 +1726,16 @@ p5.RendererGL = class RendererGL extends Renderer {
   _getEmptyTexture() {
     if (!this._emptyTexture) {
       // a plain white texture RGBA, full alpha, single pixel.
-      const im = new p5.Image(1, 1);
+      const im = new Image(1, 1);
       im.set(0, 0, 255);
-      this._emptyTexture = new p5.Texture(this, im);
+      this._emptyTexture = new Texture(this, im);
     }
     return this._emptyTexture;
   }
 
   getTexture(input) {
     let src = input;
-    if (src instanceof p5.Framebuffer) {
+    if (src instanceof Framebuffer) {
       src = src.color;
     }
 
@@ -1986,16 +1744,16 @@ p5.RendererGL = class RendererGL extends Renderer {
       return texture;
     }
 
-    const tex = new p5.Texture(this, src);
+    const tex = new Texture(this, src);
     this.textures.set(src, tex);
     return tex;
   }
   /*
-    *  used in imageLight,
-    *  To create a blurry image from the input non blurry img, if it doesn't already exist
-    *  Add it to the diffusedTexture map,
-    *  Returns the blurry image
-    *  maps a p5.Image used by imageLight() to a p5.Framebuffer
+   *  used in imageLight,
+   *  To create a blurry image from the input non blurry img, if it doesn't already exist
+   *  Add it to the diffusedTexture map,
+   *  Returns the blurry image
+   *  maps a Image used by imageLight() to a p5.Framebuffer
    */
   getDiffusedTexture(input) {
     // if one already exists for a given input image
@@ -2008,9 +1766,9 @@ p5.RendererGL = class RendererGL extends Renderer {
     let smallWidth = 200;
     let width = smallWidth;
     let height = Math.floor(smallWidth * (input.height / input.width));
-    newFramebuffer = this._pInst.createFramebuffer({
+    newFramebuffer = new Framebuffer(this, {
       width, height, density: 1
-    });
+    })
     // create framebuffer is like making a new sketch, all functions on main
     // sketch it would be available on framebuffer
     if (!this.states.diffusedShader) {
@@ -2020,12 +1778,12 @@ p5.RendererGL = class RendererGL extends Renderer {
       );
     }
     newFramebuffer.draw(() => {
-      this._pInst.shader(this.states.diffusedShader);
+      this.shader(this.states.diffusedShader);
       this.states.diffusedShader.setUniform('environmentMap', input);
-      this._pInst.noStroke();
-      this._pInst.rectMode(constants.CENTER);
-      this._pInst.noLights();
-      this._pInst.rect(0, 0, width, height);
+      this.states.doStroke = false;
+      this.rectMode(constants.CENTER);
+      this.noLights();
+      this.rect(0, 0, width, height);
     });
     this.diffusedTextures.set(input, newFramebuffer);
     return newFramebuffer;
@@ -2038,7 +1796,7 @@ p5.RendererGL = class RendererGL extends Renderer {
    *  sizes and atoring them in `levels` array
    *  Creating a new Mipmap texture with that `levels` array
    *  Storing the texture for input image in map called `specularTextures`
-   *  maps the input p5.Image to a p5.MipmapTexture
+   *  maps the input Image to a p5.MipmapTexture
    */
   getSpecularTexture(input) {
     // check if already exits (there are tex of diff resolution so which one to check)
@@ -2050,7 +1808,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     const size = 512;
     let tex;
     const levels = [];
-    const framebuffer = this._pInst.createFramebuffer({
+    const framebuffer = new Framebuffer(this, {
       width: size, height: size, density: 1
     });
     let count = Math.log(size) / Math.log(2);
@@ -2070,19 +1828,19 @@ p5.RendererGL = class RendererGL extends Renderer {
       let currCount = Math.log(w) / Math.log(2);
       let roughness = 1 - currCount / count;
       framebuffer.draw(() => {
-        this._pInst.shader(this.states.specularShader);
-        this._pInst.clear();
+        this.shader(this.states.specularShader);
+        this.clear();
         this.states.specularShader.setUniform('environmentMap', input);
         this.states.specularShader.setUniform('roughness', roughness);
-        this._pInst.noStroke();
-        this._pInst.noLights();
-        this._pInst.plane(w, w);
+        this.states.doStroke = false;
+        this.noLights();
+        this.plane(w, w);
       });
       levels.push(framebuffer.get().drawingContext.getImageData(0, 0, w, w));
     }
     // Free the Framebuffer
     framebuffer.remove();
-    tex = new p5.MipmapTexture(this, levels, {});
+    tex = new MipmapTexture(this, levels, {});
     this.specularTextures.set(input, tex);
     return tex;
   }
@@ -2097,7 +1855,7 @@ p5.RendererGL = class RendererGL extends Renderer {
   }
 
   createFramebuffer(options) {
-    return new p5.Framebuffer(this, options);
+    return new Framebuffer(this, options);
   }
 
   _setStrokeUniforms(baseStrokeShader) {
@@ -2144,7 +1902,7 @@ p5.RendererGL = class RendererGL extends Renderer {
 
     this._setImageLightUniforms(fillShader);
 
-    fillShader.setUniform('uUseLighting', this.states._enableLighting);
+    fillShader.setUniform('uUseLighting', this.states.enableLighting);
 
     const pointLightCount = this.states.pointLightDiffuseColors.length / 3;
     fillShader.setUniform('uPointLightCount', pointLightCount);
@@ -2227,14 +1985,14 @@ p5.RendererGL = class RendererGL extends Renderer {
     // should be they be same var?
     pointShader.setUniform(
       'uPointSize',
-      this.pointSize * this._pInst._pixelDensity
+      this.pointSize * this._pixelDensity
     );
   }
 
   /* Binds a buffer to the drawing context
-  * when passed more than two arguments it also updates or initializes
-  * the data associated with the buffer
-  */
+   * when passed more than two arguments it also updates or initializes
+   * the data associated with the buffer
+   */
   _bindBuffer(
     buffer,
     target,
@@ -2246,7 +2004,7 @@ p5.RendererGL = class RendererGL extends Renderer {
     this.GL.bindBuffer(target, buffer);
     if (values !== undefined) {
       let data = values;
-      if (values instanceof p5.DataArray) {
+      if (values instanceof DataArray) {
         data = values.dataArray();
       } else if (!(data instanceof (type || Float32Array))) {
         data = new (type || Float32Array)(data);
@@ -2424,14 +2182,345 @@ p5.RendererGL = class RendererGL extends Renderer {
     return triangleVerts;
   }
 };
-/**
- * ensures that p5 is using a 3d renderer. throws an error if not.
- */
-p5.prototype._assert3d = function (name) {
-  if (!this._renderer.isP3D)
-    throw new Error(
-      `${name}() is only supported in WEBGL mode. If you'd like to use 3D graphics and WebGL, see  https://p5js.org/examples/form-3d-primitives.html for more information.`
-    );
-};
 
-export default p5.RendererGL;
+function rendererGL(p5, fn){
+  p5.RendererGL = RendererGL;
+
+  /**
+   * @module Rendering
+   * @submodule Rendering
+   * @for p5
+   */
+  /**
+   * Set attributes for the WebGL Drawing context.
+   * This is a way of adjusting how the WebGL
+   * renderer works to fine-tune the display and performance.
+   *
+   * Note that this will reinitialize the drawing context
+   * if called after the WebGL canvas is made.
+   *
+   * If an object is passed as the parameter, all attributes
+   * not declared in the object will be set to defaults.
+   *
+   * The available attributes are:
+   * <br>
+   * alpha - indicates if the canvas contains an alpha buffer
+   * default is true
+   *
+   * depth - indicates whether the drawing buffer has a depth buffer
+   * of at least 16 bits - default is true
+   *
+   * stencil - indicates whether the drawing buffer has a stencil buffer
+   * of at least 8 bits
+   *
+   * antialias - indicates whether or not to perform anti-aliasing
+   * default is false (true in Safari)
+   *
+   * premultipliedAlpha - indicates that the page compositor will assume
+   * the drawing buffer contains colors with pre-multiplied alpha
+   * default is true
+   *
+   * preserveDrawingBuffer - if true the buffers will not be cleared and
+   * and will preserve their values until cleared or overwritten by author
+   * (note that p5 clears automatically on draw loop)
+   * default is true
+   *
+   * perPixelLighting - if true, per-pixel lighting will be used in the
+   * lighting shader otherwise per-vertex lighting is used.
+   * default is true.
+   *
+   * version - either 1 or 2, to specify which WebGL version to ask for. By
+   * default, WebGL 2 will be requested. If WebGL2 is not available, it will
+   * fall back to WebGL 1. You can check what version is used with by looking at
+   * the global `webglVersion` property.
+   *
+   * @method setAttributes
+   * @for p5
+   * @param  {String}  key Name of attribute
+   * @param  {Boolean}        value New value of named attribute
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   * }
+   *
+   * function draw() {
+   *   background(255);
+   *   push();
+   *   rotateZ(frameCount * 0.02);
+   *   rotateX(frameCount * 0.02);
+   *   rotateY(frameCount * 0.02);
+   *   fill(0, 0, 0);
+   *   box(50);
+   *   pop();
+   * }
+   * </code>
+   * </div>
+   * <br>
+   * Now with the antialias attribute set to true.
+   * <br>
+   * <div>
+   * <code>
+   * function setup() {
+   *   setAttributes('antialias', true);
+   *   createCanvas(100, 100, WEBGL);
+   * }
+   *
+   * function draw() {
+   *   background(255);
+   *   push();
+   *   rotateZ(frameCount * 0.02);
+   *   rotateX(frameCount * 0.02);
+   *   rotateY(frameCount * 0.02);
+   *   fill(0, 0, 0);
+   *   box(50);
+   *   pop();
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // press the mouse button to disable perPixelLighting
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   noStroke();
+   *   fill(255);
+   * }
+   *
+   * let lights = [
+   *   { c: '#f00', t: 1.12, p: 1.91, r: 0.2 },
+   *   { c: '#0f0', t: 1.21, p: 1.31, r: 0.2 },
+   *   { c: '#00f', t: 1.37, p: 1.57, r: 0.2 },
+   *   { c: '#ff0', t: 1.12, p: 1.91, r: 0.7 },
+   *   { c: '#0ff', t: 1.21, p: 1.31, r: 0.7 },
+   *   { c: '#f0f', t: 1.37, p: 1.57, r: 0.7 }
+   * ];
+   *
+   * function draw() {
+   *   let t = millis() / 1000 + 1000;
+   *   background(0);
+   *   directionalLight(color('#222'), 1, 1, 1);
+   *
+   *   for (let i = 0; i < lights.length; i++) {
+   *     let light = lights[i];
+   *     pointLight(
+   *       color(light.c),
+   *       p5.Vector.fromAngles(t * light.t, t * light.p, width * light.r)
+   *     );
+   *   }
+   *
+   *   specularMaterial(255);
+   *   sphere(width * 0.1);
+   *
+   *   rotateX(t * 0.77);
+   *   rotateY(t * 0.83);
+   *   rotateZ(t * 0.91);
+   *   torus(width * 0.3, width * 0.07, 24, 10);
+   * }
+   *
+   * function mousePressed() {
+   *   setAttributes('perPixelLighting', false);
+   *   noStroke();
+   *   fill(255);
+   * }
+   * function mouseReleased() {
+   *   setAttributes('perPixelLighting', true);
+   *   noStroke();
+   *   fill(255);
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt a rotating cube with smoother edges
+   */
+  /**
+   * @method setAttributes
+   * @for p5
+   * @param  {Object}  obj object with key-value pairs
+   */
+  fn.setAttributes = function (key, value) {
+    if (typeof this._glAttributes === 'undefined') {
+      console.log(
+        'You are trying to use setAttributes on a p5.Graphics object ' +
+        'that does not use a WEBGL renderer.'
+      );
+      return;
+    }
+    let unchanged = true;
+    if (typeof value !== 'undefined') {
+      //first time modifying the attributes
+      if (this._glAttributes === null) {
+        this._glAttributes = {};
+      }
+      if (this._glAttributes[key] !== value) {
+        //changing value of previously altered attribute
+        this._glAttributes[key] = value;
+        unchanged = false;
+      }
+      //setting all attributes with some change
+    } else if (key instanceof Object) {
+      if (this._glAttributes !== key) {
+        this._glAttributes = key;
+        unchanged = false;
+      }
+    }
+    //@todo_FES
+    if (!this._renderer.isP3D || unchanged) {
+      return;
+    }
+
+    if (!this._setupDone) {
+      for (const x in this._renderer.retainedMode.geometry) {
+        if (this._renderer.retainedMode.geometry.hasOwnProperty(x)) {
+          p5._friendlyError(
+            'Sorry, Could not set the attributes, you need to call setAttributes() ' +
+            'before calling the other drawing methods in setup()'
+          );
+          return;
+        }
+      }
+    }
+
+    this.push();
+    this._renderer._resetContext();
+    this.pop();
+
+    if (this._renderer.states.curCamera) {
+      this._renderer.states.curCamera._renderer = this._renderer;
+    }
+  };
+
+  /**
+   * ensures that p5 is using a 3d renderer. throws an error if not.
+   */
+  fn._assert3d = function (name) {
+    if (!this._renderer.isP3D)
+      throw new Error(
+        `${name}() is only supported in WEBGL mode. If you'd like to use 3D graphics and WebGL, see  https://p5js.org/examples/form-3d-primitives.html for more information.`
+      );
+  };
+
+  p5.renderers[constants.WEBGL] = p5.RendererGL;
+  p5.renderers[constants.WEBGL2] = p5.RendererGL;
+}
+
+/**
+ * @private
+ * @param {Uint8Array|Float32Array|undefined} pixels An existing pixels array to reuse if the size is the same
+ * @param {WebGLRenderingContext} gl The WebGL context
+ * @param {WebGLFramebuffer|null} framebuffer The Framebuffer to read
+ * @param {Number} x The x coordiante to read, premultiplied by pixel density
+ * @param {Number} y The y coordiante to read, premultiplied by pixel density
+ * @param {Number} width The width in pixels to be read (factoring in pixel density)
+ * @param {Number} height The height in pixels to be read (factoring in pixel density)
+ * @param {GLEnum} format Either RGB or RGBA depending on how many channels to read
+ * @param {GLEnum} type The datatype of each channel, e.g. UNSIGNED_BYTE or FLOAT
+ * @param {Number|undefined} flipY If provided, the total height with which to flip the y axis about
+ * @returns {Uint8Array|Float32Array} pixels A pixels array with the current state of the
+ * WebGL context read into it
+ */
+export function readPixelsWebGL(
+  pixels,
+  gl,
+  framebuffer,
+  x,
+  y,
+  width,
+  height,
+  format,
+  type,
+  flipY
+) {
+  // Record the currently bound framebuffer so we can go back to it after, and
+  // bind the framebuffer we want to read from
+  const prevFramebuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+
+  const channels = format === gl.RGBA ? 4 : 3;
+
+  // Make a pixels buffer if it doesn't already exist
+  const len = width * height * channels;
+  const TypedArrayClass = type === gl.UNSIGNED_BYTE ? Uint8Array : Float32Array;
+  if (!(pixels instanceof TypedArrayClass) || pixels.length !== len) {
+    pixels = new TypedArrayClass(len);
+  }
+
+  gl.readPixels(
+    x,
+    flipY ? (flipY - y - height) : y,
+    width,
+    height,
+    format,
+    type,
+    pixels
+  );
+
+  // Re-bind whatever was previously bound
+  gl.bindFramebuffer(gl.FRAMEBUFFER, prevFramebuffer);
+
+  if (flipY) {
+    // WebGL pixels are inverted compared to 2D pixels, so we have to flip
+    // the resulting rows. Adapted from https://stackoverflow.com/a/41973289
+    const halfHeight = Math.floor(height / 2);
+    const tmpRow = new TypedArrayClass(width * channels);
+    for (let y = 0; y < halfHeight; y++) {
+      const topOffset = y * width * 4;
+      const bottomOffset = (height - y - 1) * width * 4;
+      tmpRow.set(pixels.subarray(topOffset, topOffset + width * 4));
+      pixels.copyWithin(topOffset, bottomOffset, bottomOffset + width * 4);
+      pixels.set(tmpRow, bottomOffset);
+    }
+  }
+
+  return pixels;
+}
+
+/**
+ * @private
+ * @param {WebGLRenderingContext} gl The WebGL context
+ * @param {WebGLFramebuffer|null} framebuffer The Framebuffer to read
+ * @param {Number} x The x coordinate to read, premultiplied by pixel density
+ * @param {Number} y The y coordinate to read, premultiplied by pixel density
+ * @param {GLEnum} format Either RGB or RGBA depending on how many channels to read
+ * @param {GLEnum} type The datatype of each channel, e.g. UNSIGNED_BYTE or FLOAT
+ * @param {Number|undefined} flipY If provided, the total height with which to flip the y axis about
+ * @returns {Number[]} pixels The channel data for the pixel at that location
+ */
+export function readPixelWebGL(
+  gl,
+  framebuffer,
+  x,
+  y,
+  format,
+  type,
+  flipY
+) {
+  // Record the currently bound framebuffer so we can go back to it after, and
+  // bind the framebuffer we want to read from
+  const prevFramebuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+
+  const channels = format === gl.RGBA ? 4 : 3;
+  const TypedArrayClass = type === gl.UNSIGNED_BYTE ? Uint8Array : Float32Array;
+  const pixels = new TypedArrayClass(channels);
+
+  gl.readPixels(
+    x, flipY ? (flipY - y - 1) : y, 1, 1,
+    format, type,
+    pixels
+  );
+
+  // Re-bind whatever was previously bound
+  gl.bindFramebuffer(gl.FRAMEBUFFER, prevFramebuffer);
+
+  return Array.from(pixels);
+}
+
+export default rendererGL;
+export { RendererGL };
+
+if(typeof p5 !== 'undefined'){
+  rendererGL(p5, p5.prototype);
+}

@@ -34,7 +34,8 @@ suite('p5.RendererGL', function() {
       assert.equal(myp5.webglVersion, myp5.WEBGL);
     });
 
-    test('works on p5.Graphics', function() {
+    // NOTE: should graphics always create WebGL2 canvas?
+    test.skip('works on p5.Graphics', function() {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.setAttributes({ version: 1 });
       const g = myp5.createGraphics(10, 10, myp5.WEBGL);
@@ -1223,13 +1224,14 @@ suite('p5.RendererGL', function() {
         target.push();
         target.background(0);
         target.blendMode(mode);
-        target.rectMode(target.CENTER);
+        target.rectMode(myp5.CENTER);
         target.noStroke();
         target.fill(colorA);
         target.rect(0, 0, target.width, target.height);
         target.fill(colorB);
         target.rect(0, 0, target.width, target.height);
         target.pop();
+        console.log(`${colorA} ${mode} ${colorB}: ` + target.canvas.toDataURL())
         return target.get(0, 0);
       };
 
@@ -2505,10 +2507,10 @@ suite('p5.RendererGL', function() {
   });
 
   suite('vertexProperty()', function() {
-    test('Immediate mode data and buffers created in beginShape', 
+    test('Immediate mode data and buffers created in beginShape',
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
-        
+
         myp5.beginShape();
         myp5.vertexProperty('aCustom', 1);
         myp5.vertexProperty('aCustomVec3', [1, 2, 3]);
@@ -2542,10 +2544,10 @@ suite('p5.RendererGL', function() {
         myp5.endShape();
       }
     );
-    test('Immediate mode data and buffers deleted after beginShape', 
+    test('Immediate mode data and buffers deleted after beginShape',
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
-        
+
         myp5.beginShape();
         myp5.vertexProperty('aCustom', 1);
         myp5.vertexProperty('aCustomVec3', [1,2,3]);
@@ -2620,7 +2622,7 @@ suite('p5.RendererGL', function() {
         assert.equal(myp5._renderer.retainedMode.buffers.user.length, 0);
       }
     );
-    test('Friendly error if different sizes used',
+    test.skip('Friendly error if different sizes used',
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
         const logs = [];

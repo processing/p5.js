@@ -259,9 +259,8 @@ visualSuite('Shape drawing', function() {
         });
 
         visualTest('Texture coordinates', async function(p5, screenshot) {
-          setup(p5);
           const tex = await p5.loadImage('/unit/assets/cat.jpg');
-
+          setup(p5);
           p5.texture(tex);
           p5.beginShape(p5.QUAD_STRIP);
           p5.vertex(10, 10, 0, 0, 0);
@@ -274,9 +273,8 @@ visualSuite('Shape drawing', function() {
         });
 
         visualTest('Normalized texture coordinates', async function(p5, screenshot) {
-          setup(p5);
           const tex = await p5.loadImage('/unit/assets/cat.jpg');
-
+          setup(p5);
           p5.texture(tex);
           p5.textureMode(p5.NORMAL);
           p5.beginShape(p5.QUAD_STRIP);

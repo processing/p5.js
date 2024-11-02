@@ -1,560 +1,6 @@
-/**
- * The web is much more than just canvas and the DOM functionality makes it easy to interact
- * with other HTML5 objects, including text, hyperlink, image, input, video,
- * audio, and webcam.
- * There is a set of creation methods, DOM manipulation methods, and
- * an extended <a href="#/p5.Element">p5.Element</a> that supports a range of HTML elements. See the
- * <a href='https://github.com/processing/p5.js/wiki/Beyond-the-canvas'>
- * beyond the canvas tutorial</a> for a full overview of how this addon works.
- *
- * See <a href='https://github.com/processing/p5.js/wiki/Beyond-the-canvas'>tutorial: beyond the canvas</a>
- * for more info on how to use this library.</a>
- *
- * @module DOM
- * @submodule DOM
- * @for p5
- * @requires p5
- */
+import { Element } from '../core/p5.Element';
 
-function media(p5, fn){
-
-/**
- * Helpers for create methods.
- */
-function addElement(elt, pInst, media) {
-  const node = pInst._userNode ? pInst._userNode : document.body;
-  node.appendChild(elt);
-  const c = media
-    ? new p5.MediaElement(elt, pInst)
-    : new p5.Element(elt, pInst);
-  pInst._elements.push(c);
-  return c;
-}
-
-/** VIDEO STUFF **/
-
-// Helps perform similar tasks for media element methods.
-function createMedia(pInst, type, src, callback) {
-  const elt = document.createElement(type);
-
-  // Create source elements from given sources
-  src = src || '';
-  if (typeof src === 'string') {
-    src = [src];
-  }
-  for (const mediaSource of src) {
-    const sourceEl = document.createElement('source');
-    sourceEl.setAttribute('src', mediaSource);
-    elt.appendChild(sourceEl);
-  }
-
-  // If callback is provided, attach to element
-  if (typeof callback === 'function') {
-    const callbackHandler = () => {
-      callback();
-      elt.removeEventListener('canplaythrough', callbackHandler);
-    };
-    elt.addEventListener('canplaythrough', callbackHandler);
-  }
-
-  const mediaEl = addElement(elt, pInst, true);
-  mediaEl.loadedmetadata = false;
-
-  // set width and height onload metadata
-  elt.addEventListener('loadedmetadata', () => {
-    mediaEl.width = elt.videoWidth;
-    mediaEl.height = elt.videoHeight;
-
-    // set elt width and height if not set
-    if (mediaEl.elt.width === 0) mediaEl.elt.width = elt.videoWidth;
-    if (mediaEl.elt.height === 0) mediaEl.elt.height = elt.videoHeight;
-    if (mediaEl.presetPlaybackRate) {
-      mediaEl.elt.playbackRate = mediaEl.presetPlaybackRate;
-      delete mediaEl.presetPlaybackRate;
-    }
-    mediaEl.loadedmetadata = true;
-  });
-
-  return mediaEl;
-}
-
-/**
- * Creates a `&lt;video&gt;` element for simple audio/video playback.
- *
- * `createVideo()` returns a new
- * <a href="#/p5.MediaElement">p5.MediaElement</a> object. Videos are shown by
- * default. They can be hidden by calling `video.hide()` and drawn to the
- * canvas using <a href="#/p5/image">image()</a>.
- *
- * The first parameter, `src`, is the path the video. If a single string is
- * passed, as in `'assets/topsecret.mp4'`, a single video is loaded. An array
- * of strings can be used to load the same video in different formats. For
- * example, `['assets/topsecret.mp4', 'assets/topsecret.ogv', 'assets/topsecret.webm']`.
- * This is useful for ensuring that the video can play across different browsers with
- * different capabilities. See
- * <a href='https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats'>MDN</a>
- * for more information about supported formats.
- *
- * The second parameter, `callback`, is optional. It's a function to call once
- * the video is ready to play.
- *
- * @method createVideo
- * @param  {String|String[]} src path to a video file, or an array of paths for
- *                               supporting different browsers.
- * @param  {Function} [callback] function to call once the video is ready to play.
- * @return {p5.MediaElement}   new <a href="#/p5.MediaElement">p5.MediaElement</a> object.
- *
- * @example
- * <div class='notest'>
- * <code>
- * function setup() {
- *   noCanvas();
- *
- *   // Load a video and add it to the page.
- *   // Note: this may not work in some browsers.
- *   let video = createVideo('assets/small.mp4');
- *
- *   // Show the default video controls.
- *   video.showControls();
- *
- *   describe('A video of a toy robot with playback controls beneath it.');
- * }
- * </code>
- * </div>
- *
- * <div class='notest'>
- * <code>
- * function setup() {
- *   noCanvas();
- *
- *   // Load a video and add it to the page.
- *   // Provide an array options for different file formats.
- *   let video = createVideo(
- *     ['assets/small.mp4', 'assets/small.ogv', 'assets/small.webm']
- *   );
- *
- *   // Show the default video controls.
- *   video.showControls();
- *
- *   describe('A video of a toy robot with playback controls beneath it.');
- * }
- * </code>
- * </div>
- *
- * <div class='notest'>
- * <code>
- * let video;
- *
- * function setup() {
- *   noCanvas();
- *
- *   // Load a video and add it to the page.
- *   // Provide an array options for different file formats.
- *   // Call mute() once the video loads.
- *   video = createVideo(
- *     ['assets/small.mp4', 'assets/small.ogv', 'assets/small.webm'],
- *     muteVideo
- *   );
- *
- *   // Show the default video controls.
- *   video.showControls();
- *
- *   describe('A video of a toy robot with playback controls beneath it.');
- * }
- *
- * // Mute the video once it loads.
- * function muteVideo() {
- *   video.volume(0);
- * }
- * </code>
- * </div>
- */
-p5.prototype.createVideo = function (src, callback) {
-  p5._validateParameters('createVideo', arguments);
-  return createMedia(this, 'video', src, callback);
-};
-
-/** AUDIO STUFF **/
-
-/**
- * Creates a hidden `&lt;audio&gt;` element for simple audio playback.
- *
- * `createAudio()` returns a new
- * <a href="#/p5.MediaElement">p5.MediaElement</a> object.
- *
- * The first parameter, `src`, is the path the video. If a single string is
- * passed, as in `'assets/video.mp4'`, a single video is loaded. An array
- * of strings can be used to load the same video in different formats. For
- * example, `['assets/video.mp4', 'assets/video.ogv', 'assets/video.webm']`.
- * This is useful for ensuring that the video can play across different
- * browsers with different capabilities. See
- * <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats" target="_blank">MDN</a>
- * for more information about supported formats.
- *
- * The second parameter, `callback`, is optional. It's a function to call once
- * the audio is ready to play.
- *
- * @method createAudio
- * @param  {String|String[]} [src] path to an audio file, or an array of paths
- *                                 for supporting different browsers.
- * @param  {Function} [callback]   function to call once the audio is ready to play.
- * @return {p5.MediaElement}       new <a href="#/p5.MediaElement">p5.MediaElement</a> object.
- *
- * @example
- * <div class='notest'>
- * <code>
- * function setup() {
- *   noCanvas();
- *
- *   // Load the audio.
- *   let beat = createAudio('assets/beat.mp3');
- *
- *   // Show the default audio controls.
- *   beat.showControls();
- *
- *   describe('An audio beat plays when the user double-clicks the square.');
- * }
- * </code>
- * </div>
- */
-p5.prototype.createAudio = function (src, callback) {
-  p5._validateParameters('createAudio', arguments);
-  return createMedia(this, 'audio', src, callback);
-};
-
-/** CAMERA STUFF **/
-
-p5.prototype.VIDEO = 'video';
-
-p5.prototype.AUDIO = 'audio';
-
-// from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-// Older browsers might not implement mediaDevices at all, so we set an empty object first
-if (navigator.mediaDevices === undefined) {
-  navigator.mediaDevices = {};
-}
-
-// Some browsers partially implement mediaDevices. We can't just assign an object
-// with getUserMedia as it would overwrite existing properties.
-// Here, we will just add the getUserMedia property if it's missing.
-if (navigator.mediaDevices.getUserMedia === undefined) {
-  navigator.mediaDevices.getUserMedia = function (constraints) {
-    // First get ahold of the legacy getUserMedia, if present
-    const getUserMedia =
-      navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-
-    // Some browsers just don't implement it - return a rejected promise with an error
-    // to keep a consistent interface
-    if (!getUserMedia) {
-      return Promise.reject(
-        new Error('getUserMedia is not implemented in this browser')
-      );
-    }
-
-    // Otherwise, wrap the call to the old navigator.getUserMedia with a Promise
-    return new Promise(function (resolve, reject) {
-      getUserMedia.call(navigator, constraints, resolve, reject);
-    });
-  };
-}
-
-/**
- * Creates a `&lt;video&gt;` element that "captures" the audio/video stream from
- * the webcam and microphone.
- *
- * `createCapture()` returns a new
- * <a href="#/p5.MediaElement">p5.MediaElement</a> object. Videos are shown by
- * default. They can be hidden by calling `capture.hide()` and drawn to the
- * canvas using <a href="#/p5/image">image()</a>.
- *
- * The first parameter, `type`, is optional. It sets the type of capture to
- * use. By default, `createCapture()` captures both audio and video. If `VIDEO`
- * is passed, as in `createCapture(VIDEO)`, only video will be captured.
- * If `AUDIO` is passed, as in `createCapture(AUDIO)`, only audio will be
- * captured. A constraints object can also be passed to customize the stream.
- * See the <a href="http://w3c.github.io/mediacapture-main/getusermedia.html#media-track-constraints" target="_blank">
- * W3C documentation</a> for possible properties. Different browsers support different
- * properties.
- *
- * The 'flipped' property is an optional property which can be set to `{flipped:true}`
- * to mirror the video output.If it is true then it means that video will be mirrored
- * or flipped and if nothing is mentioned then by default it will be `false`.
- *
- * The second parameter,`callback`, is optional. It's a function to call once
- * the capture is ready for use. The callback function should have one
- * parameter, `stream`, that's a
- * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MediaStream" target="_blank">MediaStream</a> object.
- *
- * Note: `createCapture()` only works when running a sketch locally or using HTTPS. Learn more
- * <a href="http://stackoverflow.com/questions/34197653/getusermedia-in-chrome-47-without-using-https" target="_blank">here</a>
- * and <a href="https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia" target="_blank">here</a>.
- *
- * @method createCapture
- * @param  {(AUDIO|VIDEO|Object)}  [type] type of capture, either AUDIO or VIDEO,
- *                                   or a constraints object. Both video and audio
- *                                   audio streams are captured by default.
- * @param  {Object}                  [flipped] flip the capturing video and mirror the output with `{flipped:true}`. By
- *                                   default it is false.
- * @param  {Function}                [callback] function to call once the stream
- *                                   has loaded.
- * @return {p5.MediaElement} new <a href="#/p5.MediaElement">p5.MediaElement</a> object.
- *
- * @example
- * <div class='notest'>
- * <code>
- * function setup() {
- *   noCanvas();
- *
- *   // Create the video capture.
- *   createCapture(VIDEO);
- *
- *   describe('A video stream from the webcam.');
- * }
- * </code>
- * </div>
- *
- * <div class='notest'>
- * <code>
- * let capture;
- *
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   // Create the video capture and hide the element.
- *   capture = createCapture(VIDEO);
- *   capture.hide();
- *
- *   describe('A video stream from the webcam with inverted colors.');
- * }
- *
- * function draw() {
- *   // Draw the video capture within the canvas.
- *   image(capture, 0, 0, width, width * capture.height / capture.width);
- *
- *   // Invert the colors in the stream.
- *   filter(INVERT);
- * }
- * </code>
- * </div>
- * <div class='notest'>
- * <code>
- * let capture;
- *
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   // Create the video capture with mirrored output.
- *   capture = createCapture(VIDEO,{ flipped:true });
- *   capture.size(100,100);
- *
- *   describe('A video stream from the webcam with flipped or mirrored output.');
- * }
- *
- * </code>
- * </div>
- *
- * <div class='notest norender'>
- * <code>
- * function setup() {
- *   createCanvas(480, 120);
- *
- *   // Create a constraints object.
- *   let constraints = {
- *     video: {
- *       mandatory: {
- *         minWidth: 1280,
- *         minHeight: 720
- *       },
- *       optional: [{ maxFrameRate: 10 }]
- *     },
- *     audio: false
- *   };
- *
- *   // Create the video capture.
- *   createCapture(constraints);
- *
- *   describe('A video stream from the webcam.');
- * }
- * </code>
- * </div>
- */
-p5.prototype.createCapture = function (...args) {
-  p5._validateParameters('createCapture', args);
-
-  // return if getUserMedia is not supported by the browser
-  if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
-    throw new DOMException('getUserMedia not supported in this browser');
-  }
-
-  let useVideo = true;
-  let useAudio = true;
-  let constraints;
-  let callback;
-  let flipped = false;
-
-  for (const arg of args) {
-    if (arg === p5.prototype.VIDEO) useAudio = false;
-    else if (arg === p5.prototype.AUDIO) useVideo = false;
-    else if (typeof arg === 'object') {
-      if (arg.flipped !== undefined) {
-        flipped = arg.flipped;
-        delete arg.flipped;
-      }
-      constraints = Object.assign({}, constraints, arg);
-    }
-    else if (typeof arg === 'function') {
-      callback = arg;
-    }
-  }
-
-  const videoConstraints = { video: useVideo, audio: useAudio };
-  constraints = Object.assign({}, videoConstraints, constraints);
-  const domElement = document.createElement('video');
-  // required to work in iOS 11 & up:
-  domElement.setAttribute('playsinline', '');
-  navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
-    try {
-      if ('srcObject' in domElement) {
-        domElement.srcObject = stream;
-      } else {
-        domElement.src = window.URL.createObjectURL(stream);
-      }
-    }
-    catch (err) {
-      domElement.src = stream;
-    }
-  }).catch(e => {
-    if (e.name === 'NotFoundError')
-      p5._friendlyError('No webcam found on this device', 'createCapture');
-    if (e.name === 'NotAllowedError')
-      p5._friendlyError('Access to the camera was denied', 'createCapture');
-
-    console.error(e);
-  });
-
-  const videoEl = addElement(domElement, this, true);
-  videoEl.loadedmetadata = false;
-  // set width and height onload metadata
-  domElement.addEventListener('loadedmetadata', function () {
-    domElement.play();
-    if (domElement.width) {
-      videoEl.width = domElement.width;
-      videoEl.height = domElement.height;
-      if (flipped) {
-        videoEl.elt.style.transform = 'scaleX(-1)';
-      }
-    } else {
-      videoEl.width = videoEl.elt.width = domElement.videoWidth;
-      videoEl.height = videoEl.elt.height = domElement.videoHeight;
-    }
-    videoEl.loadedmetadata = true;
-
-    if (callback) callback(domElement.srcObject);
-  });
-  videoEl.flipped = flipped;
-  return videoEl;
-};
-
-
-/**
- * Creates a new <a href="#/p5.Element">p5.Element</a> object.
- *
- * The first parameter, `tag`, is a string an HTML tag such as `'h5'`.
- *
- * The second parameter, `content`, is optional. It's a string that sets the
- * HTML content to insert into the new element. New elements have no content
- * by default.
- *
- * @method createElement
- * @param  {String} tag tag for the new element.
- * @param  {String} [content] HTML content to insert into the element.
- * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Create an h5 element with nothing in it.
- *   createElement('h5');
- *
- *   describe('A gray square.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Create an h5 element with the content "p5*js".
- *   let h5 = createElement('h5', 'p5*js');
- *
- *   // Set the element's style and position.
- *   h5.style('color', 'deeppink');
- *   h5.position(30, 15);
- *
- *   describe('The text "p5*js" written in pink in the middle of a gray square.');
- * }
- * </code>
- * </div>
- */
-p5.prototype.createElement = function (tag, content) {
-  p5._validateParameters('createElement', arguments);
-  const elt = document.createElement(tag);
-  if (typeof content !== 'undefined') {
-    elt.innerHTML = content;
-  }
-  return addElement(elt, this);
-};
-
-// =============================================================================
-//                         p5.MediaElement additions
-// =============================================================================
-
-/**
- * A class to handle audio and video.
- *
- * `p5.MediaElement` extends <a href="#/p5.Element">p5.Element</a> with
- * methods to handle audio and video. `p5.MediaElement` objects are created by
- * calling <a href="#/p5/createVideo">createVideo</a>,
- * <a href="#/p5/createAudio">createAudio</a>, and
- * <a href="#/p5/createCapture">createCapture</a>.
- *
- * @class p5.MediaElement
- * @param {String} elt DOM node that is wrapped
- * @extends p5.Element
- *
- * @example
- * <div class='notest'>
- * <code>
- * let capture;
- *
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   // Create a p5.MediaElement using createCapture().
- *   capture = createCapture(VIDEO);
- *   capture.hide();
- *
- *   describe('A webcam feed with inverted colors.');
- * }
- *
- * function draw() {
- *   // Display the video stream and invert the colors.
- *   image(capture, 0, 0, width, width * capture.height / capture.width);
- *   filter(INVERT);
- * }
- * </code>
- * </div>
- */
-p5.MediaElement = class MediaElement extends p5.Element {
+class MediaElement extends Element {
   constructor(elt, pInst) {
     super(elt, pInst);
 
@@ -1366,7 +812,7 @@ p5.MediaElement = class MediaElement extends p5.Element {
   }
   copy(...args) {
     this._ensureCanvas();
-    p5.prototype.copy.apply(this, args);
+    fn.copy.apply(this, args);
   }
   mask(...args) {
     this.loadPixels();
@@ -1486,8 +932,8 @@ p5.MediaElement = class MediaElement extends p5.Element {
     let audioContext, mainOutput;
 
     // if p5.sound exists, same audio context
-    if (typeof p5.prototype.getAudioContext === 'function') {
-      audioContext = p5.prototype.getAudioContext();
+    if (typeof fn.getAudioContext === 'function') {
+      audioContext = fn.getAudioContext();
       mainOutput = p5.soundOut.input;
     } else {
       try {
@@ -1630,56 +1076,56 @@ p5.MediaElement = class MediaElement extends p5.Element {
   }
 
   /**
- * Schedules a function to call when the audio/video reaches a specific time
- * during its playback.
- *
- * The first parameter, `time`, is the time, in seconds, when the function
- * should run. This value is passed to `callback` as its first argument.
- *
- * The second parameter, `callback`, is the function to call at the specified
- * cue time.
- *
- * The third parameter, `value`, is optional and can be any type of value.
- * `value` is passed to `callback`.
- *
- * Calling `media.addCue()` returns an ID as a string. This is useful for
- * removing the cue later.
- *
- * @param {Number}   time     cue time to run the callback function.
- * @param {Function} callback function to call at the cue time.
- * @param {Object} [value]    object to pass as the argument to
- *                            `callback`.
- * @return {Number} id ID of this cue,
- *                     useful for `media.removeCue(id)`.
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   // Create a p5.MediaElement using createAudio().
- *   let beat = createAudio('assets/beat.mp3');
- *
- *   // Play the beat in a loop.
- *   beat.loop();
- *
- *   // Schedule a few events.
- *   beat.addCue(0, changeBackground, 'red');
- *   beat.addCue(2, changeBackground, 'deeppink');
- *   beat.addCue(4, changeBackground, 'orchid');
- *   beat.addCue(6, changeBackground, 'lavender');
- *
- *   describe('A red square with a beat playing in the background. Its color changes every 2 seconds while the audio plays.');
- * }
- *
- * // Change the background color.
- * function changeBackground(c) {
- *   background(c);
- * }
- * </code>
- * </div>
- */
+   * Schedules a function to call when the audio/video reaches a specific time
+   * during its playback.
+   *
+   * The first parameter, `time`, is the time, in seconds, when the function
+   * should run. This value is passed to `callback` as its first argument.
+   *
+   * The second parameter, `callback`, is the function to call at the specified
+   * cue time.
+   *
+   * The third parameter, `value`, is optional and can be any type of value.
+   * `value` is passed to `callback`.
+   *
+   * Calling `media.addCue()` returns an ID as a string. This is useful for
+   * removing the cue later.
+   *
+   * @param {Number}   time     cue time to run the callback function.
+   * @param {Function} callback function to call at the cue time.
+   * @param {Object} [value]    object to pass as the argument to
+   *                            `callback`.
+   * @return {Number} id ID of this cue,
+   *                     useful for `media.removeCue(id)`.
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   // Create a p5.MediaElement using createAudio().
+   *   let beat = createAudio('assets/beat.mp3');
+   *
+   *   // Play the beat in a loop.
+   *   beat.loop();
+   *
+   *   // Schedule a few events.
+   *   beat.addCue(0, changeBackground, 'red');
+   *   beat.addCue(2, changeBackground, 'deeppink');
+   *   beat.addCue(4, changeBackground, 'orchid');
+   *   beat.addCue(6, changeBackground, 'lavender');
+   *
+   *   describe('A red square with a beat playing in the background. Its color changes every 2 seconds while the audio plays.');
+   * }
+   *
+   * // Change the background color.
+   * function changeBackground(c) {
+   *   background(c);
+   * }
+   * </code>
+   * </div>
+   */
   addCue(time, callback, val) {
     const id = this._cueIDCounter++;
 
@@ -1694,62 +1140,62 @@ p5.MediaElement = class MediaElement extends p5.Element {
   }
 
   /**
- * Removes a callback based on its ID.
- *
- * @param  {Number} id ID of the cue, created by `media.addCue()`.
- *
- * @example
- * <div>
- * <code>
- * let lavenderID;
- * let isRemoved = false;
- *
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   // Create a p5.MediaElement using createAudio().
- *   let beat = createAudio('assets/beat.mp3');
- *
- *   // Play the beat in a loop.
- *   beat.loop();
- *
- *   // Schedule a few events.
- *   beat.addCue(0, changeBackground, 'red');
- *   beat.addCue(2, changeBackground, 'deeppink');
- *   beat.addCue(4, changeBackground, 'orchid');
- *
- *   // Record the ID of the "lavender" callback.
- *   lavenderID = beat.addCue(6, changeBackground, 'lavender');
- *
- *   describe('The text "Double-click to remove lavender." written on a red square. The color changes every 2 seconds while the audio plays. The lavender option is removed when the user double-clicks the square.');
- * }
- *
- * function draw() {
- *   background(200);
- *
- *   // Display different instructions based on the available callbacks.
- *   if (isRemoved === false) {
- *     text('Double-click to remove lavender.', 10, 10, 80, 80);
- *   } else {
- *     text('No more lavender.', 10, 10, 80, 80);
- *   }
- * }
- *
- * // Change the background color.
- * function changeBackground(c) {
- *   background(c);
- * }
- *
- * // Remove the lavender color-change cue when the user double-clicks.
- * function doubleClicked() {
- *   if (isRemoved === false) {
- *     beat.removeCue(lavenderID);
- *     isRemoved = true;
- *   }
- * }
- * </code>
- * </div>
- */
+   * Removes a callback based on its ID.
+   *
+   * @param  {Number} id ID of the cue, created by `media.addCue()`.
+   *
+   * @example
+   * <div>
+   * <code>
+   * let lavenderID;
+   * let isRemoved = false;
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   // Create a p5.MediaElement using createAudio().
+   *   let beat = createAudio('assets/beat.mp3');
+   *
+   *   // Play the beat in a loop.
+   *   beat.loop();
+   *
+   *   // Schedule a few events.
+   *   beat.addCue(0, changeBackground, 'red');
+   *   beat.addCue(2, changeBackground, 'deeppink');
+   *   beat.addCue(4, changeBackground, 'orchid');
+   *
+   *   // Record the ID of the "lavender" callback.
+   *   lavenderID = beat.addCue(6, changeBackground, 'lavender');
+   *
+   *   describe('The text "Double-click to remove lavender." written on a red square. The color changes every 2 seconds while the audio plays. The lavender option is removed when the user double-clicks the square.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Display different instructions based on the available callbacks.
+   *   if (isRemoved === false) {
+   *     text('Double-click to remove lavender.', 10, 10, 80, 80);
+   *   } else {
+   *     text('No more lavender.', 10, 10, 80, 80);
+   *   }
+   * }
+   *
+   * // Change the background color.
+   * function changeBackground(c) {
+   *   background(c);
+   * }
+   *
+   * // Remove the lavender color-change cue when the user double-clicks.
+   * function doubleClicked() {
+   *   if (isRemoved === false) {
+   *     beat.removeCue(lavenderID);
+   *     isRemoved = true;
+   *   }
+   * }
+   * </code>
+   * </div>
+   */
   removeCue(id) {
     for (let i = 0; i < this._cues.length; i++) {
       if (this._cues[i].id === id) {
@@ -1764,60 +1210,60 @@ p5.MediaElement = class MediaElement extends p5.Element {
   }
 
   /**
- * Removes all functions scheduled with `media.addCue()`.
- *
- * @example
- * <div>
- * <code>
- * let isChanging = true;
- *
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Create a p5.MediaElement using createAudio().
- *   let beat = createAudio('assets/beat.mp3');
- *
- *   // Play the beat in a loop.
- *   beat.loop();
- *
- *   // Schedule a few events.
- *   beat.addCue(0, changeBackground, 'red');
- *   beat.addCue(2, changeBackground, 'deeppink');
- *   beat.addCue(4, changeBackground, 'orchid');
- *   beat.addCue(6, changeBackground, 'lavender');
- *
- *   describe('The text "Double-click to stop changing." written on a square. The color changes every 2 seconds while the audio plays. The color stops changing when the user double-clicks the square.');
- * }
- *
- * function draw() {
- *   background(200);
- *
- *   // Display different instructions based on the available callbacks.
- *   if (isChanging === true) {
- *     text('Double-click to stop changing.', 10, 10, 80, 80);
- *   } else {
- *     text('No more changes.', 10, 10, 80, 80);
- *   }
- * }
- *
- * // Change the background color.
- * function changeBackground(c) {
- *   background(c);
- * }
- *
- * // Remove cued functions and stop changing colors when the user
- * // double-clicks.
- * function doubleClicked() {
- *   if (isChanging === true) {
- *     beat.clearCues();
- *     isChanging = false;
- *   }
- * }
- * </code>
- * </div>
- */
+   * Removes all functions scheduled with `media.addCue()`.
+   *
+   * @example
+   * <div>
+   * <code>
+   * let isChanging = true;
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Create a p5.MediaElement using createAudio().
+   *   let beat = createAudio('assets/beat.mp3');
+   *
+   *   // Play the beat in a loop.
+   *   beat.loop();
+   *
+   *   // Schedule a few events.
+   *   beat.addCue(0, changeBackground, 'red');
+   *   beat.addCue(2, changeBackground, 'deeppink');
+   *   beat.addCue(4, changeBackground, 'orchid');
+   *   beat.addCue(6, changeBackground, 'lavender');
+   *
+   *   describe('The text "Double-click to stop changing." written on a square. The color changes every 2 seconds while the audio plays. The color stops changing when the user double-clicks the square.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Display different instructions based on the available callbacks.
+   *   if (isChanging === true) {
+   *     text('Double-click to stop changing.', 10, 10, 80, 80);
+   *   } else {
+   *     text('No more changes.', 10, 10, 80, 80);
+   *   }
+   * }
+   *
+   * // Change the background color.
+   * function changeBackground(c) {
+   *   background(c);
+   * }
+   *
+   * // Remove cued functions and stop changing colors when the user
+   * // double-clicks.
+   * function doubleClicked() {
+   *   if (isChanging === true) {
+   *     beat.clearCues();
+   *     isChanging = false;
+   *   }
+   * }
+   * </code>
+   * </div>
+   */
   clearCues() {
     this._cues = [];
     this.elt.ontimeupdate = null;
@@ -1842,39 +1288,579 @@ p5.MediaElement = class MediaElement extends p5.Element {
   }
 };
 
-/**
- * Path to the media element's source as a string.
- *
- * @for p5.MediaElement
- * @property src
- * @return {String} src
- * @example
- * <div>
- * <code>
- * let beat;
- *
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   // Create a p5.MediaElement using createAudio().
- *   beat = createAudio('assets/beat.mp3');
- *
- *   describe('The text "https://p5js.org/reference/assets/beat.mp3" written in black on a gray background.');
- * }
- *
- * function draw() {
- *   background(200);
- *
- *   textWrap(CHAR);
- *   text(beat.src, 10, 10, 80, 80);
- * }
- * </code>
- * </div>
- */
+function media(p5, fn){
 
+  /**
+   * Helpers for create methods.
+   */
+  function addElement(elt, pInst, media) {
+    const node = pInst._userNode ? pInst._userNode : document.body;
+    node.appendChild(elt);
+    const c = media
+      ? new p5.MediaElement(elt, pInst)
+      : new p5.Element(elt, pInst);
+    pInst._elements.push(c);
+    return c;
+  }
+
+  /** VIDEO STUFF **/
+
+  // Helps perform similar tasks for media element methods.
+  function createMedia(pInst, type, src, callback) {
+    const elt = document.createElement(type);
+
+    // Create source elements from given sources
+    src = src || '';
+    if (typeof src === 'string') {
+      src = [src];
+    }
+    for (const mediaSource of src) {
+      const sourceEl = document.createElement('source');
+      sourceEl.setAttribute('src', mediaSource);
+      elt.appendChild(sourceEl);
+    }
+
+    // If callback is provided, attach to element
+    if (typeof callback === 'function') {
+      const callbackHandler = () => {
+        callback();
+        elt.removeEventListener('canplaythrough', callbackHandler);
+      };
+      elt.addEventListener('canplaythrough', callbackHandler);
+    }
+
+    const mediaEl = addElement(elt, pInst, true);
+    mediaEl.loadedmetadata = false;
+
+    // set width and height onload metadata
+    elt.addEventListener('loadedmetadata', () => {
+      mediaEl.width = elt.videoWidth;
+      mediaEl.height = elt.videoHeight;
+
+      // set elt width and height if not set
+      if (mediaEl.elt.width === 0) mediaEl.elt.width = elt.videoWidth;
+      if (mediaEl.elt.height === 0) mediaEl.elt.height = elt.videoHeight;
+      if (mediaEl.presetPlaybackRate) {
+        mediaEl.elt.playbackRate = mediaEl.presetPlaybackRate;
+        delete mediaEl.presetPlaybackRate;
+      }
+      mediaEl.loadedmetadata = true;
+    });
+
+    return mediaEl;
+  }
+
+  /**
+   * Creates a `&lt;video&gt;` element for simple audio/video playback.
+   *
+   * `createVideo()` returns a new
+   * <a href="#/p5.MediaElement">p5.MediaElement</a> object. Videos are shown by
+   * default. They can be hidden by calling `video.hide()` and drawn to the
+   * canvas using <a href="#/p5/image">image()</a>.
+   *
+   * The first parameter, `src`, is the path the video. If a single string is
+   * passed, as in `'assets/topsecret.mp4'`, a single video is loaded. An array
+   * of strings can be used to load the same video in different formats. For
+   * example, `['assets/topsecret.mp4', 'assets/topsecret.ogv', 'assets/topsecret.webm']`.
+   * This is useful for ensuring that the video can play across different browsers with
+   * different capabilities. See
+   * <a href='https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats'>MDN</a>
+   * for more information about supported formats.
+   *
+   * The second parameter, `callback`, is optional. It's a function to call once
+   * the video is ready to play.
+   *
+   * @method createVideo
+   * @param  {String|String[]} src path to a video file, or an array of paths for
+   *                               supporting different browsers.
+   * @param  {Function} [callback] function to call once the video is ready to play.
+   * @return {p5.MediaElement}   new <a href="#/p5.MediaElement">p5.MediaElement</a> object.
+   *
+   * @example
+   * <div class='notest'>
+   * <code>
+   * function setup() {
+   *   noCanvas();
+   *
+   *   // Load a video and add it to the page.
+   *   // Note: this may not work in some browsers.
+   *   let video = createVideo('assets/small.mp4');
+   *
+   *   // Show the default video controls.
+   *   video.showControls();
+   *
+   *   describe('A video of a toy robot with playback controls beneath it.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div class='notest'>
+   * <code>
+   * function setup() {
+   *   noCanvas();
+   *
+   *   // Load a video and add it to the page.
+   *   // Provide an array options for different file formats.
+   *   let video = createVideo(
+   *     ['assets/small.mp4', 'assets/small.ogv', 'assets/small.webm']
+   *   );
+   *
+   *   // Show the default video controls.
+   *   video.showControls();
+   *
+   *   describe('A video of a toy robot with playback controls beneath it.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div class='notest'>
+   * <code>
+   * let video;
+   *
+   * function setup() {
+   *   noCanvas();
+   *
+   *   // Load a video and add it to the page.
+   *   // Provide an array options for different file formats.
+   *   // Call mute() once the video loads.
+   *   video = createVideo(
+   *     ['assets/small.mp4', 'assets/small.ogv', 'assets/small.webm'],
+   *     muteVideo
+   *   );
+   *
+   *   // Show the default video controls.
+   *   video.showControls();
+   *
+   *   describe('A video of a toy robot with playback controls beneath it.');
+   * }
+   *
+   * // Mute the video once it loads.
+   * function muteVideo() {
+   *   video.volume(0);
+   * }
+   * </code>
+   * </div>
+   */
+  fn.createVideo = function (src, callback) {
+    p5._validateParameters('createVideo', arguments);
+    return createMedia(this, 'video', src, callback);
+  };
+
+  /** AUDIO STUFF **/
+
+  /**
+   * Creates a hidden `&lt;audio&gt;` element for simple audio playback.
+   *
+   * `createAudio()` returns a new
+   * <a href="#/p5.MediaElement">p5.MediaElement</a> object.
+   *
+   * The first parameter, `src`, is the path the video. If a single string is
+   * passed, as in `'assets/video.mp4'`, a single video is loaded. An array
+   * of strings can be used to load the same video in different formats. For
+   * example, `['assets/video.mp4', 'assets/video.ogv', 'assets/video.webm']`.
+   * This is useful for ensuring that the video can play across different
+   * browsers with different capabilities. See
+   * <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats" target="_blank">MDN</a>
+   * for more information about supported formats.
+   *
+   * The second parameter, `callback`, is optional. It's a function to call once
+   * the audio is ready to play.
+   *
+   * @method createAudio
+   * @param  {String|String[]} [src] path to an audio file, or an array of paths
+   *                                 for supporting different browsers.
+   * @param  {Function} [callback]   function to call once the audio is ready to play.
+   * @return {p5.MediaElement}       new <a href="#/p5.MediaElement">p5.MediaElement</a> object.
+   *
+   * @example
+   * <div class='notest'>
+   * <code>
+   * function setup() {
+   *   noCanvas();
+   *
+   *   // Load the audio.
+   *   let beat = createAudio('assets/beat.mp3');
+   *
+   *   // Show the default audio controls.
+   *   beat.showControls();
+   *
+   *   describe('An audio beat plays when the user double-clicks the square.');
+   * }
+   * </code>
+   * </div>
+   */
+  fn.createAudio = function (src, callback) {
+    p5._validateParameters('createAudio', arguments);
+    return createMedia(this, 'audio', src, callback);
+  };
+
+  /** CAMERA STUFF **/
+
+  fn.VIDEO = 'video';
+
+  fn.AUDIO = 'audio';
+
+  // from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+  // Older browsers might not implement mediaDevices at all, so we set an empty object first
+  if (navigator.mediaDevices === undefined) {
+    navigator.mediaDevices = {};
+  }
+
+  // Some browsers partially implement mediaDevices. We can't just assign an object
+  // with getUserMedia as it would overwrite existing properties.
+  // Here, we will just add the getUserMedia property if it's missing.
+  if (navigator.mediaDevices.getUserMedia === undefined) {
+    navigator.mediaDevices.getUserMedia = function (constraints) {
+      // First get ahold of the legacy getUserMedia, if present
+      const getUserMedia =
+        navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+      // Some browsers just don't implement it - return a rejected promise with an error
+      // to keep a consistent interface
+      if (!getUserMedia) {
+        return Promise.reject(
+          new Error('getUserMedia is not implemented in this browser')
+        );
+      }
+
+      // Otherwise, wrap the call to the old navigator.getUserMedia with a Promise
+      return new Promise(function (resolve, reject) {
+        getUserMedia.call(navigator, constraints, resolve, reject);
+      });
+    };
+  }
+
+  /**
+   * Creates a `&lt;video&gt;` element that "captures" the audio/video stream from
+   * the webcam and microphone.
+   *
+   * `createCapture()` returns a new
+   * <a href="#/p5.MediaElement">p5.MediaElement</a> object. Videos are shown by
+   * default. They can be hidden by calling `capture.hide()` and drawn to the
+   * canvas using <a href="#/p5/image">image()</a>.
+   *
+   * The first parameter, `type`, is optional. It sets the type of capture to
+   * use. By default, `createCapture()` captures both audio and video. If `VIDEO`
+   * is passed, as in `createCapture(VIDEO)`, only video will be captured.
+   * If `AUDIO` is passed, as in `createCapture(AUDIO)`, only audio will be
+   * captured. A constraints object can also be passed to customize the stream.
+   * See the <a href="http://w3c.github.io/mediacapture-main/getusermedia.html#media-track-constraints" target="_blank">
+   * W3C documentation</a> for possible properties. Different browsers support different
+   * properties.
+   *
+   * The 'flipped' property is an optional property which can be set to `{flipped:true}`
+   * to mirror the video output.If it is true then it means that video will be mirrored
+   * or flipped and if nothing is mentioned then by default it will be `false`.
+   *
+   * The second parameter,`callback`, is optional. It's a function to call once
+   * the capture is ready for use. The callback function should have one
+   * parameter, `stream`, that's a
+   * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MediaStream" target="_blank">MediaStream</a> object.
+   *
+   * Note: `createCapture()` only works when running a sketch locally or using HTTPS. Learn more
+   * <a href="http://stackoverflow.com/questions/34197653/getusermedia-in-chrome-47-without-using-https" target="_blank">here</a>
+   * and <a href="https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia" target="_blank">here</a>.
+   *
+   * @method createCapture
+   * @param  {(AUDIO|VIDEO|Object)}  [type] type of capture, either AUDIO or VIDEO,
+   *                                   or a constraints object. Both video and audio
+   *                                   audio streams are captured by default.
+   * @param  {Object}                  [flipped] flip the capturing video and mirror the output with `{flipped:true}`. By
+   *                                   default it is false.
+   * @param  {Function}                [callback] function to call once the stream
+   *                                   has loaded.
+   * @return {p5.MediaElement} new <a href="#/p5.MediaElement">p5.MediaElement</a> object.
+   *
+   * @example
+   * <div class='notest'>
+   * <code>
+   * function setup() {
+   *   noCanvas();
+   *
+   *   // Create the video capture.
+   *   createCapture(VIDEO);
+   *
+   *   describe('A video stream from the webcam.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div class='notest'>
+   * <code>
+   * let capture;
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   // Create the video capture and hide the element.
+   *   capture = createCapture(VIDEO);
+   *   capture.hide();
+   *
+   *   describe('A video stream from the webcam with inverted colors.');
+   * }
+   *
+   * function draw() {
+   *   // Draw the video capture within the canvas.
+   *   image(capture, 0, 0, width, width * capture.height / capture.width);
+   *
+   *   // Invert the colors in the stream.
+   *   filter(INVERT);
+   * }
+   * </code>
+   * </div>
+   * <div class='notest'>
+   * <code>
+   * let capture;
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   // Create the video capture with mirrored output.
+   *   capture = createCapture(VIDEO,{ flipped:true });
+   *   capture.size(100,100);
+   *
+   *   describe('A video stream from the webcam with flipped or mirrored output.');
+   * }
+   *
+   * </code>
+   * </div>
+   *
+   * <div class='notest norender'>
+   * <code>
+   * function setup() {
+   *   createCanvas(480, 120);
+   *
+   *   // Create a constraints object.
+   *   let constraints = {
+   *     video: {
+   *       mandatory: {
+   *         minWidth: 1280,
+   *         minHeight: 720
+   *       },
+   *       optional: [{ maxFrameRate: 10 }]
+   *     },
+   *     audio: false
+   *   };
+   *
+   *   // Create the video capture.
+   *   createCapture(constraints);
+   *
+   *   describe('A video stream from the webcam.');
+   * }
+   * </code>
+   * </div>
+   */
+  fn.createCapture = function (...args) {
+    p5._validateParameters('createCapture', args);
+
+    // return if getUserMedia is not supported by the browser
+    if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
+      throw new DOMException('getUserMedia not supported in this browser');
+    }
+
+    let useVideo = true;
+    let useAudio = true;
+    let constraints;
+    let callback;
+    let flipped = false;
+
+    for (const arg of args) {
+      if (arg === fn.VIDEO) useAudio = false;
+      else if (arg === fn.AUDIO) useVideo = false;
+      else if (typeof arg === 'object') {
+        if (arg.flipped !== undefined) {
+          flipped = arg.flipped;
+          delete arg.flipped;
+        }
+        constraints = Object.assign({}, constraints, arg);
+      }
+      else if (typeof arg === 'function') {
+        callback = arg;
+      }
+    }
+
+    const videoConstraints = { video: useVideo, audio: useAudio };
+    constraints = Object.assign({}, videoConstraints, constraints);
+    const domElement = document.createElement('video');
+    // required to work in iOS 11 & up:
+    domElement.setAttribute('playsinline', '');
+    navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
+      try {
+        if ('srcObject' in domElement) {
+          domElement.srcObject = stream;
+        } else {
+          domElement.src = window.URL.createObjectURL(stream);
+        }
+      }
+      catch (err) {
+        domElement.src = stream;
+      }
+    }).catch(e => {
+      if (e.name === 'NotFoundError')
+        p5._friendlyError('No webcam found on this device', 'createCapture');
+      if (e.name === 'NotAllowedError')
+        p5._friendlyError('Access to the camera was denied', 'createCapture');
+
+      console.error(e);
+    });
+
+    const videoEl = addElement(domElement, this, true);
+    videoEl.loadedmetadata = false;
+    // set width and height onload metadata
+    domElement.addEventListener('loadedmetadata', function () {
+      domElement.play();
+      if (domElement.width) {
+        videoEl.width = domElement.width;
+        videoEl.height = domElement.height;
+        if (flipped) {
+          videoEl.elt.style.transform = 'scaleX(-1)';
+        }
+      } else {
+        videoEl.width = videoEl.elt.width = domElement.videoWidth;
+        videoEl.height = videoEl.elt.height = domElement.videoHeight;
+      }
+      videoEl.loadedmetadata = true;
+
+      if (callback) callback(domElement.srcObject);
+    });
+    videoEl.flipped = flipped;
+    return videoEl;
+  };
+
+
+  /**
+   * Creates a new <a href="#/p5.Element">p5.Element</a> object.
+   *
+   * The first parameter, `tag`, is a string an HTML tag such as `'h5'`.
+   *
+   * The second parameter, `content`, is optional. It's a string that sets the
+   * HTML content to insert into the new element. New elements have no content
+   * by default.
+   *
+   * @method createElement
+   * @param  {String} tag tag for the new element.
+   * @param  {String} [content] HTML content to insert into the element.
+   * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Create an h5 element with nothing in it.
+   *   createElement('h5');
+   *
+   *   describe('A gray square.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Create an h5 element with the content "p5*js".
+   *   let h5 = createElement('h5', 'p5*js');
+   *
+   *   // Set the element's style and position.
+   *   h5.style('color', 'deeppink');
+   *   h5.position(30, 15);
+   *
+   *   describe('The text "p5*js" written in pink in the middle of a gray square.');
+   * }
+   * </code>
+   * </div>
+   */
+  fn.createElement = function (tag, content) {
+    p5._validateParameters('createElement', arguments);
+    const elt = document.createElement(tag);
+    if (typeof content !== 'undefined') {
+      elt.innerHTML = content;
+    }
+    return addElement(elt, this);
+  };
+
+  // =============================================================================
+  //                         p5.MediaElement additions
+  // =============================================================================
+
+  /**
+   * A class to handle audio and video.
+   *
+   * `p5.MediaElement` extends <a href="#/p5.Element">p5.Element</a> with
+   * methods to handle audio and video. `p5.MediaElement` objects are created by
+   * calling <a href="#/p5/createVideo">createVideo</a>,
+   * <a href="#/p5/createAudio">createAudio</a>, and
+   * <a href="#/p5/createCapture">createCapture</a>.
+   *
+   * @class p5.MediaElement
+   * @param {String} elt DOM node that is wrapped
+   * @extends p5.Element
+   *
+   * @example
+   * <div class='notest'>
+   * <code>
+   * let capture;
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   // Create a p5.MediaElement using createCapture().
+   *   capture = createCapture(VIDEO);
+   *   capture.hide();
+   *
+   *   describe('A webcam feed with inverted colors.');
+   * }
+   *
+   * function draw() {
+   *   // Display the video stream and invert the colors.
+   *   image(capture, 0, 0, width, width * capture.height / capture.width);
+   *   filter(INVERT);
+   * }
+   * </code>
+   * </div>
+   */
+  p5.MediaElement = MediaElement;
+
+  /**
+   * Path to the media element's source as a string.
+   *
+   * @for p5.MediaElement
+   * @property src
+   * @return {String} src
+   * @example
+   * <div>
+   * <code>
+   * let beat;
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   // Create a p5.MediaElement using createAudio().
+   *   beat = createAudio('assets/beat.mp3');
+   *
+   *   describe('The text "https://p5js.org/reference/assets/beat.mp3" written in black on a gray background.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   textWrap(CHAR);
+   *   text(beat.src, 10, 10, 80, 80);
+   * }
+   * </code>
+   * </div>
+   */
 }
 
 export default media;
+export { MediaElement };
 
 if(typeof p5 !== 'undefined'){
   media(p5, p5.prototype);
