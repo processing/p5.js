@@ -144,15 +144,13 @@ function rendering(p5, fn){
     this._elements.push(this._renderer);
     this._renderer._applyDefaults();
 
-    // Attach renderer properties
-    for (const p in this._renderer) {
-      if (p[0] === '_' || typeof this._renderer[p] === 'function') continue;
-      if (Object.hasOwn(this, p)) continue;
-      Object.defineProperty(this, p, {
+    // Make the renderer own `pixels`
+    if (!Object.hasOwn(this, 'pixels')) {
+      Object.defineProperty(this, 'pixels', {
         get(){
-          return this._renderer?.[p];
+          return this._renderer?.pixels;
         }
-      })
+      });
     }
 
     return this._renderer;
