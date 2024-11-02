@@ -1224,13 +1224,14 @@ suite('p5.RendererGL', function() {
         target.push();
         target.background(0);
         target.blendMode(mode);
-        target.rectMode(target.CENTER);
+        target.rectMode(myp5.CENTER);
         target.noStroke();
         target.fill(colorA);
         target.rect(0, 0, target.width, target.height);
         target.fill(colorB);
         target.rect(0, 0, target.width, target.height);
         target.pop();
+        console.log(`${colorA} ${mode} ${colorB}: ` + target.canvas.toDataURL())
         return target.get(0, 0);
       };
 
