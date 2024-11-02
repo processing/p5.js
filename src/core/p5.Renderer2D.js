@@ -202,6 +202,7 @@ class Renderer2D extends Renderer {
   fill(...args) {
     super.fill(...args);
     const color = this._pInst.color(...args);
+    console.log(color.toString(), color);
     this._setFill(color.toString());
 
     //accessible Outputs
