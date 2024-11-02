@@ -331,79 +331,6 @@ function dom(p5, fn){
   };
 
   /**
-   * Calls a function when the element receives input.
-   *
-   * `myElement.input()` is often used to with text inputs and sliders. Calling
-   * `myElement.input(false)` disables the function.
-   *
-   * @method input
-   * @param  {Function|Boolean} fxn function to call when input is detected within
-   *                                the element.
-   *                                `false` disables the function.
-   * @chainable
-   *
-   * @example
-   * <div>
-   * <code>
-   * let slider;
-   *
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Create a slider and place it beneath the canvas.
-   *   slider = createSlider(0, 255, 200);
-   *   slider.position(0, 100);
-   *
-   *   // Call repaint() when the slider changes.
-   *   slider.input(repaint);
-   *
-   *   describe('A gray square with a range slider underneath it. The background changes shades of gray when the slider is moved.');
-   * }
-   *
-   * // Paint the background using slider's value.
-   * function repaint() {
-   *   let g = slider.value();
-   *   background(g);
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * let input;
-   *
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Create an input and place it beneath the canvas.
-   *   input = createInput('');
-   *   input.position(0, 100);
-   *
-   *   // Call repaint() when input is detected.
-   *   input.input(repaint);
-   *
-   *   describe('A gray square with a text input bar beneath it. Any text written in the input appears in the middle of the square.');
-   * }
-   *
-   * // Paint the background gray and display the input's value.
-   * function repaint() {
-   *   background(200);
-   *   let msg = input.value();
-   *   text(msg, 5, 50);
-   * }
-   * </code>
-   * </div>
-   */
-  Element.prototype.input = function (fxn) {
-    Element._adjustListener('input', fxn, this);
-    return this;
-  };
-
-  /**
    * Helpers for create methods.
    */
   function addElement(elt, pInst, media) {
@@ -712,8 +639,7 @@ function dom(p5, fn){
     return addElement(elt, this);
   };
 
-  /** INPUT **/
-
+  /* INPUT */
   /**
    * Creates a slider `&lt;input&gt;&lt;/input&gt;` element.
    *
