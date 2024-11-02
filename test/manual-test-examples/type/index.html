@@ -48,6 +48,37 @@
 
     const DISPLAY_ANIMATIONS = false;
 
+    let textSketch = function (p) {
+      p.setup = function () {
+        p.createCanvas(240, 160);
+        console.log(p.textProperties());
+        p.background(204);
+        p.textSize(19.5);
+        p.fill(255);
+        p.text('Default Text', 10, 30);
+
+        p.noStroke();
+        p.fill(57, 112, 155);
+        p.text('Black No Stroke Text', 10, 60);
+        //p.textStyle(p.ITALIC);
+        //p.text('Blue No Stroke Text Italic', 10, 80);
+        //p.textStyle(p.BOLD);
+        //p.text('Blue No Stroke Text Bold', 10, 100);
+        p
+          .fill(120)
+          .textStyle(p.NORMAL)
+          .textSize(13.5)
+          .text(
+            'Simple long Text: Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+            10,
+            92,
+            220,
+            60
+          );
+        p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
+      };
+    };
+
     const textStretchSketch = function (p) {
       let url = 'url(https://fonts.gstatic.com/s/inconsolata/v31/QlddNThLqRwH-OJ1UHjlKENVzlm-WkL3GZQmAwPyya15.woff2) format("woff2")';
       let opts = ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'];
@@ -60,6 +91,34 @@
           p.textFont(f, 32, { fontStretch: opt });
           p.text(`Hello world (${opt})`, 5, 35 * (i + 2));
         });
+      };
+    };
+
+    const letterSpacingSketch = function (p) {
+      p.setup = function () {
+        p.createCanvas(650, 375);
+        p.textSize('2em');
+        //p.text(`Hello world (default: 0)`, 5, 35);
+        for (let i = 0; i < 10; i++) {
+          let ls = p.map(i, 0, 10, -3, 7);
+          p.textProperty('letterSpacing', ls);
+          let key = (ls === 0) ? 'default' : 'letterSpacing';
+          p.text(`Hello world (${key}: ${ls})`, 5, 35 * (i + 1));
+        };
+      };
+    };
+
+    const fontKerningSketch = function (p) {
+      p.setup = function () {
+        p.createCanvas(650, 125);
+        p.textFont('serif', '2em');
+        let opts = ['auto', 'normal', 'none'];
+        for (let i = 0; i < opts.length; i++) {
+          let k = opts[i];
+          p.textProperty('fontKerning', k);
+          p.text(`AVA Ta We  (fontKerning: ${k})`, 5, 35 * (i + 1));
+        };
+        //console.log(p.textProperties());
       };
     };
 
@@ -710,35 +769,7 @@
       }
     };
 
-    let textSketch = function (p) {
-      p.setup = function () {
-        p.createCanvas(240, 160);
-        p.background(204);
-        p.textSize(19.5);
-        p.fill(255);
-        p.text('Default Text', 10, 30);
 
-        p.noStroke();
-        p.fill(57, 112, 155);
-        p.text('Black No Stroke Text', 10, 60);
-        //p.textStyle(p.ITALIC);
-        //p.text('Blue No Stroke Text Italic', 10, 80);
-        //p.textStyle(p.BOLD);
-        //p.text('Blue No Stroke Text Bold', 10, 100);
-        p
-          .fill(120)
-          .textStyle(p.NORMAL)
-          .textSize(13.5)
-          .text(
-            'Simple long Text: Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-            10,
-            92,
-            220,
-            60
-          );
-        p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
-      };
-    };
 
     let textVerticalAlign = function (p) {
       p.setup = function () {
@@ -1470,7 +1501,7 @@
         p.text('Font Size 14', 10, 60);
         p.textSize(16);
         p.text('Font Size 16', 10, 90);
-        //console.log(p.textProps());
+        //console.log(p.textProperties());
         p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 20, 0));
       };
     };
@@ -1712,6 +1743,9 @@
     else {
       new p5(textSketch, 'textSketch');
       new p5(textStretchSketch, 'textStretchSketch');
+      new p5(letterSpacingSketch, 'letterSpacingSketch');
+      new p5(fontKerningSketch, 'fontKerningSketch');
+
       new p5(textBoundsSingle, 'textBoundsSingle');
       new p5(loadedBoundsSingle, 'loadedBoundsSingle');
       new p5(systemBoundsMulti, 'systemBoundsMulti');
@@ -1749,7 +1783,7 @@
     }
 
   </script>
- 
+
   <div id='textSketch'>
     <p class="caption">textAttributes</p>
     <img src="img/textSketch.p5.png" width="240" height="160"></img>
@@ -1758,6 +1792,14 @@
 
   <div id='textStretchSketch'>
     <p class="caption">textStretchSketch</p>
+  </div>
+
+  <div id='letterSpacingSketch'>
+    <p class="caption">letterSpacing</p>
+  </div>
+
+  <div id='fontKerningSketch'>
+    <p class="caption">fontKerning</p>
   </div>
 
   <div id='textBoundsSingle'>
