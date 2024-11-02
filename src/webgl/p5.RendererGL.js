@@ -1127,8 +1127,8 @@ class RendererGL extends Renderer {
     this.push();
     this.resetMatrix();
     this.clear();
-    this.states.imageMode = constants.CENTER;
-    this.image(fbo, 0, 0, fbo.width, fbo.height, 0, 0, fbo.width, fbo.height);
+    this.states.imageMode = constants.CORNER;
+    this.image(fbo, 0, 0, fbo.width, fbo.height, -fbo.width/2, -fbo.height/2, fbo.width, fbo.height);
     this.pop();
     this.GL.clearDepth(1);
     this.GL.clear(this.GL.DEPTH_BUFFER_BIT);

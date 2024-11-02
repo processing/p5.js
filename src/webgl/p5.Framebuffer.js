@@ -1556,11 +1556,20 @@ class Framebuffer {
       this.begin();
       this.renderer.push();
       // this.renderer.imageMode(constants.CENTER);
-      this.renderer.states.imageMode = constants.CENTER;
+      this.renderer.states.imageMode = constants.CORNER;
+      this.renderer.setCamera(this.filterCamera);
       this.renderer.resetMatrix();
       this.renderer.states.doStroke = false;
       this.renderer.clear();
-      this.renderer.image(this, 0, 0);
+      this.renderer._drawingFilter = true;
+      this.renderer.image(
+        this,
+        0, 0,
+        this.width, this.height,
+        -this.renderer.width / 2, -this.renderer.height / 2,
+        this.renderer.width, this.renderer.height
+      );
+      this.renderer._drawingFilter = false;
       this.renderer.pop();
       if (this.useDepth) {
         gl.clearDepth(1);
