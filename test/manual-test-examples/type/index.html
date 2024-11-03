@@ -102,7 +102,7 @@
       };
     };
 
-    const fontVariantSketch = function (p) {
+    const fontVariantCapsSketch = function (p) {
       p.setup = function () {
         p.createCanvas(500, 270);
         p.textFont('serif', '2em');
@@ -1755,7 +1755,7 @@
       new p5(textStretchSketch, 'textStretchSketch');
       new p5(letterSpacingSketch, 'letterSpacingSketch');
       new p5(fontKerningSketch, 'fontKerningSketch');
-      new p5(fontVariantSketch, 'fontVariantSketch');
+      new p5(fontVariantCapsSketch, 'fontVariantCapsSketch');
 
       new p5(textBoundsSingle, 'textBoundsSingle');
       new p5(loadedBoundsSingle, 'loadedBoundsSingle');
@@ -1818,8 +1818,8 @@
     <p class="caption">fontKerning</p>
   </div>
 
-  <div id='fontVariantSketch'>
-    <p class="caption">fontVariant</p>
+  <div id='fontVariantCapsSketch'>
+    <p class="caption">fontVariantCaps</p>
   </div>
 
   <div id='textBoundsSingle'>
