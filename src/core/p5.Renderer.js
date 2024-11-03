@@ -36,6 +36,7 @@ p5.Renderer = class Renderer {
       imageMode: constants.CORNER,
       rectMode: constants.CORNER,
       ellipseMode: constants.CENTER,
+
       textFont: 'sans-serif',
       textLeading: 15,
       leadingSet: false,
@@ -43,7 +44,13 @@ p5.Renderer = class Renderer {
       textAlign: constants.LEFT,
       textBaseline: constants.BASELINE,
       textStyle: constants.NORMAL,
-      textWrap: constants.WORD
+      textWrap: constants.WORD,
+
+      // added v2.0
+      textStretch: constants.NORMAL,
+      textWeight: constants.NORMAL,
+      textHeight: constants.NORMAL,
+      textVariant: constants.NORMAL,
     };
     this._pushPopStack = [];
     // NOTE: can use the length of the push pop stack instead
