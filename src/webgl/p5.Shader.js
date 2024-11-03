@@ -747,7 +747,6 @@ class Shader {
   unbindShader() {
     if (this._bound) {
       this.unbindTextures();
-      //this._renderer.GL.useProgram(0); ??
       this._bound = false;
     }
     return this;
@@ -781,8 +780,12 @@ class Shader {
   }
 
   unbindTextures() {
+    const gl = this._renderer.GL;
+    const empty = this._renderer._getEmptyTexture();
     for (const uniform of this.samplers) {
-      this.setUniform(uniform.name, this._renderer._getEmptyTexture());
+      gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
+      empty.bindTexture();
+      gl.uniform1i(uniform.location, uniform.samplerIndex);
     }
   }
 

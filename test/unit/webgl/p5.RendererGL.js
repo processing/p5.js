@@ -69,6 +69,45 @@ suite('p5.RendererGL', function() {
     });
   });
 
+  suite('texture binding', function() {
+    test('textures remain bound after each draw call', function() {
+      myp5.createCanvas(20, 10, myp5.WEBGL);
+      myp5.background(255);
+
+      const myShader = myp5.baseMaterialShader().modify({
+        uniforms: {
+          'sampler2D myTex': undefined,
+        },
+        'Inputs getPixelInputs': `(Inputs inputs) {
+          inputs.color = texture(myTex, inputs.texCoord);
+          return inputs;
+        }`
+      })
+
+      // Make a red texture
+      const tex = myp5.createFramebuffer();
+      tex.draw(() => myp5.background('red'));
+
+      myp5.shader(myShader);
+      // myp5.fill('red');
+      myp5.noStroke();
+      myShader.setUniform('myTex', tex);
+
+      myp5.translate(-myp5.width/2, -myp5.height/2);
+      myp5.rectMode(myp5.CORNER);
+
+      // Draw once to the left
+      myp5.rect(0, 0, 10, 10);
+
+      // Draw once to the right
+      myp5.rect(10, 0, 10, 10);
+
+      // Both rectangles should be red
+      assert.deepEqual(myp5.get(5, 5), [255, 0, 0, 255]);
+      assert.deepEqual(myp5.get(15, 5), [255, 0, 0, 255]);
+    })
+  });
+
   suite('default stroke shader', function() {
     test('check activate and deactivating fill and stroke', function() {
       myp5.noStroke();

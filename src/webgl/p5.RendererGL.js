@@ -551,8 +551,10 @@ class RendererGL extends Renderer {
     const shader = this._drawingFilter && this.states.userFillShader
       ? this.states.userFillShader
       : this._getFillShader();
+    shader.bindShader();
     this._setGlobalUniforms(shader);
     this._setFillUniforms(shader);
+    shader.bindTextures();
 
     for (const buff of this.buffers.fill) {
       buff._prepareBuffer(geometry, shader);
@@ -576,8 +578,10 @@ class RendererGL extends Renderer {
     this._useLineColor = geometry.vertexStrokeColors.length > 0;
 
     const shader = this._getStrokeShader();
+    shader.bindShader();
     this._setGlobalUniforms(shader);
     this._setStrokeUniforms(shader);
+    shader.bindTextures();
 
     for (const buff of this.buffers.stroke) {
       buff._prepareBuffer(geometry, shader);
@@ -615,8 +619,10 @@ class RendererGL extends Renderer {
   _drawPoints(vertices, vertexBuffer) {
     const gl = this.GL;
     const pointShader = this._getPointShader();
+    pointShader.bindShader();
     this._setGlobalUniforms(pointShader);
     this._setPointUniforms(pointShader);
+    pointShader.bindTextures();
 
     this._bindBuffer(
       vertexBuffer,
@@ -2104,8 +2110,6 @@ class RendererGL extends Renderer {
   }
 
   _setGlobalUniforms(shader) {
-    shader.bindShader();
-
     const modelMatrix = this.states.uModelMatrix;
     const viewMatrix = this.states.uViewMatrix;
     const projectionMatrix = this.states.uPMatrix;
@@ -2139,8 +2143,6 @@ class RendererGL extends Renderer {
   }
 
   _setStrokeUniforms(strokeShader) {
-    strokeShader.bindShader();
-
     // set the uniform values
     strokeShader.setUniform('uUseLineColor', this._useLineColor);
     strokeShader.setUniform('uMaterialColor', this.states.curStrokeColor);
@@ -2150,8 +2152,6 @@ class RendererGL extends Renderer {
   }
 
   _setFillUniforms(fillShader) {
-    fillShader.bindShader();
-
     this.mixedSpecularColor = [...this.states.curSpecularColor];
 
     if (this.states._useMetalness > 0) {
@@ -2236,8 +2236,6 @@ class RendererGL extends Renderer {
     fillShader.setUniform('uConstantAttenuation', this.states.constantAttenuation);
     fillShader.setUniform('uLinearAttenuation', this.states.linearAttenuation);
     fillShader.setUniform('uQuadraticAttenuation', this.states.quadraticAttenuation);
-
-    fillShader.bindTextures();
   }
 
   // getting called from _setFillUniforms
@@ -2257,8 +2255,6 @@ class RendererGL extends Renderer {
   }
 
   _setPointUniforms(pointShader) {
-    pointShader.bindShader();
-
     // set the uniform values
     pointShader.setUniform('uMaterialColor', this.states.curStrokeColor);
     // @todo is there an instance where this isn't stroke weight?

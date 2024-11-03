@@ -20,17 +20,37 @@
     import p5 from '../src/app.js';
 
     const sketch = function (p) {
+      let myShader
+      let tex
       p.setup = function () {
-        p.createCanvas(200, 200);
-      };
+        p.createCanvas(20, 10, p.WEBGL);
+        p.background(255);
 
-      p.draw = function () {
-        p.background(0, 50, 50);
-        p.circle(100, 100, 50);
+        myShader = p.baseMaterialShader().modify({
+          uniforms: {
+            'sampler2D myTex': undefined,
+          },
+          'Inputs getPixelInputs': `(Inputs inputs) {
+            inputs.color = texture(myTex, inputs.texCoord);
+            return inputs;
+          }`
+        })
 
-        p.fill('white');
-        p.textSize(30);
-        p.text('hello', 10, 30);
+        // Make a red texture
+        tex = p.createFramebuffer();
+        tex.draw(() => p.background('red'));
+
+        p.translate(-p.width/2, -p.height/2)
+        p.shader(myShader);
+        p.noStroke();
+        myShader.setUniform('myTex', tex);
+
+        // Draw once to the left
+        p.rect(0, 0, 10, 10);
+
+        // Draw once to the right
+        p.rect(10, 0, 10, 10);
+        console.log(p.canvas.toDataURL())
       };
     };
 
