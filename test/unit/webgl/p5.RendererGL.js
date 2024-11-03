@@ -70,6 +70,36 @@ suite('p5.RendererGL', function() {
   });
 
   suite('texture binding', function() {
+    test('setting a custom texture works', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      myp5.background(255);
+
+      const myShader = myp5.baseMaterialShader().modify({
+        uniforms: {
+          'sampler2D myTex': undefined,
+        },
+        'Inputs getPixelInputs': `(Inputs inputs) {
+          inputs.color = texture(myTex, inputs.texCoord);
+          return inputs;
+        }`
+      })
+
+      // Make a red texture
+      const tex = myp5.createFramebuffer();
+      tex.draw(() => myp5.background('red'));
+      console.log(tex.get().canvas.toDataURL());
+
+      myp5.shader(myShader);
+      myp5.fill('red')
+      myp5.noStroke();
+      myShader.setUniform('myTex', tex);
+
+      myp5.rectMode(myp5.CENTER)
+      myp5.rect(0, 0, myp5.width, myp5.height);
+
+      // It should be red
+      assert.deepEqual(myp5.get(5, 5), [255, 0, 0, 255]);
+    })
     test('textures remain bound after each draw call', function() {
       myp5.createCanvas(20, 10, myp5.WEBGL);
       myp5.background(255);
@@ -89,7 +119,6 @@ suite('p5.RendererGL', function() {
       tex.draw(() => myp5.background('red'));
 
       myp5.shader(myShader);
-      // myp5.fill('red');
       myp5.noStroke();
       myShader.setUniform('myTex', tex);
 

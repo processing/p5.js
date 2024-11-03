@@ -1974,6 +1974,12 @@ class RendererGL extends Renderer {
     return code;
   }
 
+  /**
+   * @private
+   * Note: DO NOT CALL THIS while in the middle of binding another texture,
+   * since it will change the texture binding in order to allocate the empty
+   * texture! Grab its value beforehand!
+   */
   _getEmptyTexture() {
     if (!this._emptyTexture) {
       // a plain white texture RGBA, full alpha, single pixel.

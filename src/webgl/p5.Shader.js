@@ -755,13 +755,15 @@ class Shader {
   bindTextures() {
     const gl = this._renderer.GL;
 
+    const empty = this._renderer._getEmptyTexture();
+
     for (const uniform of this.samplers) {
       let tex = uniform.texture;
       if (tex === undefined) {
         // user hasn't yet supplied a texture for this slot.
         // (or there may not be one--maybe just lighting),
         // so we supply a default texture instead.
-        tex = this._renderer._getEmptyTexture();
+        uniform.texture = tex = empty;
       }
       gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
       tex.bindTexture();
@@ -783,9 +785,11 @@ class Shader {
     const gl = this._renderer.GL;
     const empty = this._renderer._getEmptyTexture();
     for (const uniform of this.samplers) {
-      gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
-      empty.bindTexture();
-      gl.uniform1i(uniform.location, uniform.samplerIndex);
+      if (uniform.texture?.isFramebufferTexture) {
+        gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
+        empty.bindTexture();
+        gl.uniform1i(uniform.location, uniform.samplerIndex);
+      }
     }
   }
 
@@ -1037,6 +1041,8 @@ class Shader {
    * </div>
    */
   setUniform(uniformName, data) {
+    this.init();
+
     const uniform = this.uniforms[uniformName];
     if (!uniform) {
       return;
