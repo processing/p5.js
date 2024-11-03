@@ -51,30 +51,11 @@
     let textSketch = function (p) {
       p.setup = function () {
         p.createCanvas(240, 160);
-        console.log(p.textProperties());
+        //console.log(p.textProperties());
         p.background(204);
-        p.textSize(19.5);
-        p.fill(255);
-        p.text('Default Text', 10, 30);
-
-        p.noStroke();
-        p.fill(57, 112, 155);
-        p.text('Black No Stroke Text', 10, 60);
-        //p.textStyle(p.ITALIC);
-        //p.text('Blue No Stroke Text Italic', 10, 80);
-        //p.textStyle(p.BOLD);
-        //p.text('Blue No Stroke Text Bold', 10, 100);
-        p
-          .fill(120)
-          .textStyle(p.NORMAL)
-          .textSize(13.5)
-          .text(
-            'Simple long Text: Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-            10,
-            92,
-            220,
-            60
-          );
+        p.textSize(19.5).fill(255).text('Default Text', 10, 30)
+        p.noStroke().fill(57, 112, 155).text('Black No Stroke Text', 10, 60)
+        p.fill(120).textStyle(p.NORMAL).textSize(13.5).text('Simple long Text: Lorem Ipsum is simply dummy text of the printing and typesetting industry.', 10, 92, 220, 60);
         p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
       };
     };
@@ -98,9 +79,8 @@
       p.setup = function () {
         p.createCanvas(650, 375);
         p.textSize('2em');
-        //p.text(`Hello world (default: 0)`, 5, 35);
         for (let i = 0; i < 10; i++) {
-          let ls = p.map(i, 0, 10, -3, 7);
+          let ls = p.map(i, 0, 10, -3, 7) + 'px';
           p.textProperty('letterSpacing', ls);
           let key = (ls === 0) ? 'default' : 'letterSpacing';
           p.text(`Hello world (${key}: ${ls})`, 5, 35 * (i + 1));
@@ -110,7 +90,7 @@
 
     const fontKerningSketch = function (p) {
       p.setup = function () {
-        p.createCanvas(650, 125);
+        p.createCanvas(500, 125);
         p.textFont('serif', '2em');
         let opts = ['auto', 'normal', 'none'];
         for (let i = 0; i < opts.length; i++) {
@@ -122,10 +102,40 @@
       };
     };
 
+    const fontVariantSketch = function (p) {
+      p.setup = function () {
+        p.createCanvas(500, 270);
+        p.textFont('serif', '2em');
+        let opts = ['small-caps', "all-small-caps", "petite-caps", "all-petite-caps", "unicase", "titling-caps"];
+        p.text(`Hello World  (${this.drawingContext.fontVariantCaps})`, 5, 35);
+        for (let i = 0; i < opts.length; i++) {
+          let k = opts[i];
+          p.textProperty('fontVariantCaps', k);
+          p.text(`Hello World  (${k})`, 5, 35 * (i + 2));
+        };
+        //console.log(p.textProperties());
+      };
+    };
+
     const textToPointsSketch = function (p) {
       let pts, txs;
       p.setup = function () {
-        p.createCanvas(700, 300);
+        p.createCanvas(700, 350);
+        p.background(255);
+        p.textSize(300);
+        p.textStyle(p.BOLD);
+        p.textAlign(p.CENTER, p.CENTER);
+        p.strokeWeight(3);
+        p.stroke('#E92D55');
+        txs = p.textToPoints('p5.js', p.width / 2, p.height / 2);
+        txs.forEach(pt => p.point(pt.x, pt.y));
+      };
+    };
+
+    const textToPointsAnimation = function (p) {
+      let pts, txs;
+      p.setup = function () {
+        p.createCanvas(700, 350);
         p.textSize(300);
         p.textStyle(p.BOLD);
         p.textAlign(p.CENTER, p.CENTER);
@@ -148,7 +158,6 @@
           p.noLoop();
         }
       };
-
     };
 
     let textBoundsSingle2 = function (p) {
@@ -572,19 +581,19 @@
       };
 
     };
-    let loadedsystemBoundsMulti = function (p) {
+    let loadedSystemBoundsMulti = function (p) {
       let x, y, w = 300, h = 70, showBB = 1, font;
       let s, suf = 'text gonna wrap when it gets too long and is then breaking.';
 
       p.setup = async function () {
-        p.createCanvas(1100, 500);
+        p.createCanvas(1000, 420);
         let font = await p.loadFont("font/Lato-Black.ttf");
         p.textFont(font);
         p.textSize(20);
         p.textLeading(22);
 
         ///////////////////////////// BASELINE (L,C,R) ///////////////////////////////
-        y = 20;
+        y = 30;
         //1
         x = 20, s = 'LEFT BASELINE ' + suf;
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
@@ -609,7 +618,7 @@
 
 
         /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
-        y += 120;
+        y += 100;
 
         // 4
         x = 20, s = 'LEFT BOTTOM ' + suf;
@@ -631,7 +640,7 @@
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(font.textBounds(s, x, y, w, h)));
 
         //////////////////////////// CENTER (L,C,R) /////////////////////////////////
-        y += 120;
+        y += 100;
 
         x = 20, s = 'LEFT CENTER ' + suf;
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
@@ -649,7 +658,7 @@
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(font.textBounds(s, x, y, w, h)));
 
         ///////////////////////////// TOP (L,C,R) ///////////////////////////////
-        y += 120;
+        y += 100;
 
         x = 20, s = 'LEFT TOP ' + suf;
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
@@ -677,12 +686,12 @@
       let s, suf = 'text gonna wrap when it gets too long and is then breaking.';
 
       p.setup = function () {
-        p.createCanvas(1100, 500);
+        p.createCanvas(1010, 430);
         p.textSize(20);
         p.textLeading(22);
 
         ///////////////////////////// BASELINE (L,C,R) ///////////////////////////////
-        y = 20;
+        y = 30;
         //1
         x = 20, s = 'LEFT BASELINE ' + suf;
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
@@ -707,7 +716,7 @@
 
 
         /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
-        y += 120;
+        y += 100;
 
         // 4
         x = 20, s = 'LEFT BOTTOM ' + suf;
@@ -729,7 +738,7 @@
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
 
         //////////////////////////// CENTER (L,C,R) /////////////////////////////////
-        y += 120;
+        y += 100;
 
         x = 20, s = 'LEFT CENTER ' + suf;
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
@@ -747,7 +756,7 @@
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
 
         ///////////////////////////// TOP (L,C,R) ///////////////////////////////
-        y += 120;
+        y += 100;
 
         x = 20, s = 'LEFT TOP ' + suf;
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
@@ -1742,13 +1751,16 @@
     }
     else {
       new p5(textSketch, 'textSketch');
+      new p5(textToPointsSketch, 'textToPointsSketch');
       new p5(textStretchSketch, 'textStretchSketch');
       new p5(letterSpacingSketch, 'letterSpacingSketch');
       new p5(fontKerningSketch, 'fontKerningSketch');
+      new p5(fontVariantSketch, 'fontVariantSketch');
 
       new p5(textBoundsSingle, 'textBoundsSingle');
       new p5(loadedBoundsSingle, 'loadedBoundsSingle');
       new p5(systemBoundsMulti, 'systemBoundsMulti');
+      new p5(loadedSystemBoundsMulti, 'loadedSystemBoundsMulti');
       new p5(manualLineBreaksLeft, 'manualLineBreaksLeft');
       new p5(manualLineBreaks, 'manualLineBreaks');
       new p5(textBoundsSingle2, 'textBoundsSingle2');
@@ -1772,7 +1784,7 @@
     }
 
     if (DISPLAY_ANIMATIONS) {
-      new p5(textToPointsSketch, 'textToPointsSketch');
+      new p5(textToPointsAnimation, 'textToPointsAnimation');
       new p5(textFlySketch, 'textFlySketch');
       new p5(textFlickerSketch, 'textFlickerSketch');
       new p5(textFadeSketch, 'textFadeSketch');
@@ -1790,6 +1802,10 @@
     <img src="img/textSketch.png" width="240" height="160"></img>
   </div>
 
+  <div id='textToPointsSketch'>
+    <p class="caption">textToPoints</p>
+  </div>
+
   <div id='textStretchSketch'>
     <p class="caption">textStretchSketch</p>
   </div>
@@ -1802,6 +1818,10 @@
     <p class="caption">fontKerning</p>
   </div>
 
+  <div id='fontVariantSketch'>
+    <p class="caption">fontVariant</p>
+  </div>
+
   <div id='textBoundsSingle'>
     <p class="caption">textBoundsSingle</p>
   </div>
@@ -1812,6 +1832,10 @@
 
   <div id='systemBoundsMulti'>
     <p class="caption">systemBoundsMulti</p>
+  </div>
+
+  <div id='loadedSystemBoundsMulti'>
+    <p class="caption">loadedSystemBoundsMulti</p>
   </div>
 
   <div id='textBoundsSingle2'>
@@ -1926,6 +1950,8 @@
   </div>
 
   <!-- animations -->
+  <div id='textToPointsAnimation'>
+  </div>
   <div id='textFlySketch'>
   </div>
   <div id='textFlickerSketch'>
@@ -1940,8 +1966,7 @@
   </div>
   <div id='textBendSketch'>
   </div>
-  <div id='textToPointsSketch'>
-  </div>
+
 
 </body>
 

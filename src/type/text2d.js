@@ -2,8 +2,9 @@ import * as constants from '../core/constants';
 
 /*
  * Next: 
- *   add tests for all font-size strings
- *
+ *   test/handle alignment in textToPoints
+ *   deal with font-size-adjust and font-kerning ctx props
+ *  
  * Questions: 
  *   textProperty(s)
  *   static properties for renderer
@@ -21,21 +22,24 @@ function text2d(p5, fn, lifecycles) {
 
   lifecycles.presetup = function () {
 
-    p5.Renderer2D.ContextProps = ['direction', 'fillStyle', 'filter', 'font', 'fontKerning', 'fontStretch', 'fontVariantCaps', 'globalAlpha', 'globalCompositeOperation', 'imageSmoothingEnabled', 'imageSmoothingQuality', 'letterSpacing', 'lineCap', 'lineDashOffset', 'lineJoin', 'lineWidth', 'miterLimit', 'shadowBlur', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY', 'strokeStyle', 'textAlign', 'textBaseline', 'textRendering', 'wordSpacing'];
+    p5.Renderer2D.ContextQueue = undefined;
     p5.Renderer2D.CachedCanvas = undefined;
     p5.Renderer2D.CachedDiv = undefined;
-    p5.Renderer2D.LeadingScale = 1.275; 
+    p5.Renderer2D.LeadingScale = 1.275;
     p5.Renderer2D.LinebreakRE = /\r?\n/g;
     p5.Renderer2D.TabsRe = /\t/g;
+
+    // note: font must be first here otherwise it may reset other properties
+    p5.Renderer2D.ContextProps = ['font', 'direction', 'fillStyle', 'filter', 'fontKerning', 'fontStretch', 'fontVariantCaps', 'globalAlpha', 'globalCompositeOperation', 'imageSmoothingEnabled', 'imageSmoothingQuality', 'letterSpacing', 'lineCap', 'lineDashOffset', 'lineJoin', 'lineWidth', 'miterLimit', 'shadowBlur', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY', 'strokeStyle', 'textAlign', 'textBaseline', 'textRendering', 'wordSpacing'];
 
     p5.Renderer2D.FontProps = {
       textSize: { default: 12 }, // font-size: { default:  <absolute-size> | <relative-size> | <length> | <percentage>
       textFont: { default: 'sans-serif' }, // font-family: { default:  <family-name> | <generic-family>
-      textStretch: { default: constants.NORMAL, property: 'fontStretch' }, // font-stretch: { default:  normal | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded
-      textWeight: { default: constants.NORMAL, property: 'fontWeight' }, // font-weight: { default:  normal | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900
-      textHeight: { default: constants.NORMAL, property: 'lineHeight' }, // line-height: { default:  normal | number | length | percentage
-      textStyle: { default: constants.NORMAL, property: 'fontStyle' },  // font-style: { default:  normal | italic | oblique
-      textVariant: { default: constants.NORMAL, property: 'fontVariant' }, // font-variant: { default:  normal | small-caps
+      textStretch: { default: constants.NORMAL, property: 'fontStretch' }, // font-stretch: { default:  normal | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded }
+      textWeight: { default: constants.NORMAL, property: 'fontWeight' }, // font-weight: { default:  normal | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 }
+      textHeight: { default: constants.NORMAL, property: 'lineHeight' }, // line-height: { default:  normal | number | length | percentage }
+      textStyle: { default: constants.NORMAL, property: 'fontStyle' },  // font-style: { default:  normal | italic | oblique }
+      textVariant: { default: constants.NORMAL, property: 'fontVariant' }, // font-variant: { default:  normal | small-caps }
     };
 
     const textFunctions = [
@@ -164,14 +168,7 @@ function text2d(p5, fn, lifecycles) {
   };
 
   /*
-    Optional parameters to be specified in the `opts` object:
-      textSize: 12, font-size: <absolute-size> | <relative-size> | <length> | <percentage>
-      textFont: 'sans-serif', font-family: <family-name> | <generic-family>
-      textStretch: constants.NORMAL, font-stretch: normal | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded
-      textWeight: constants.NORMAL, font-weight: normal | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900
-      textHeight: constants.NORMAL, line-height: normal | number | length | percentage
-      textStyle: constants.NORMAL, font-style: normal | italic | oblique
-      textVariant: constants.NORMAL, font-variant: normal | small-caps  
+    For optional parameters to be specified in the `options` object see p5.Renderer2D.FontProps
   */
   p5.Renderer2D.prototype.textFont = function (theFont, theSize, options) {
 
@@ -280,8 +277,8 @@ function text2d(p5, fn, lifecycles) {
   p5.Renderer2D.prototype.textToPoints = function (s, x, y, fsize, options) { // hack via rendering and checking pixels
 
     // use the cached canvas for rendering
-    let cvs = p5.Renderer2D.CachedCanvas ?? document.createElement("canvas");
-    const ctx = cvs.getContext("2d");
+    const cvs = (p5.Renderer2D.CachedCanvas ??= document.createElement("canvas"));
+    const ctx = p5.Renderer2D.CachedCanvas.getContext("2d");
 
     // set its dimensions to match the p5 canvas
     cvs.width = this._pInst._renderer.canvas.width;
@@ -304,6 +301,7 @@ function text2d(p5, fn, lifecycles) {
         }
       }
     }
+
     return points;
   }
 
@@ -559,15 +557,24 @@ function text2d(p5, fn, lifecycles) {
 
     this.drawingContext.font = fontString.trim();
 
+    // apply each property in queue after setting font so they're not overridden
+    while (p5.Renderer2D?.ContextQueue?.length) {
+      let [prop, val] = p5.Renderer2D.ContextQueue.shift();
+      //console.log('apply context property "' + prop + '" = "' + val + '"');
+      this.drawingContext[prop] = val;
+    }
+
     return this._pInst;
   };
 
   /**
-   * Sets/gets a single text property for the renderer, eg. textFont, textSize, etc.
-   * Sets either a mapped or unmapped property on this.states, or a property on this.drawingContext
-   * Gets a property from this.states or this.drawingContext
+   * Sets/gets a single text property for the renderer (eg. textStyle, fontStretch, etc.)
+   * The property to be set can be a mapped or unmapped property on `this.states` or a property on `this.drawingContext`
+   * The property to get can exist in `this.states` or `this.drawingContext`
    */
   p5.Renderer2D.prototype.textProperty = function (opt, val) {
+
+    let dbug = false;
 
     // get the option from this.states or this.drawingContext if it exists
     if (typeof val === 'undefined') {
@@ -582,7 +589,7 @@ function text2d(p5, fn, lifecycles) {
         return this._pInst;  // short-circuit if no change
       }
       this.states[opt] = val;
-      //console.log('this.states.' + opt + '="' + options[opt] + '"');
+      if (dbug) console.log('this.states.' + opt + '="' + options[opt] + '"');
     }
     // does it exist in CanvasRenderingContext2D ?
     else if (opt in this.drawingContext) {
@@ -598,7 +605,7 @@ function text2d(p5, fn, lifecycles) {
           return this._pInst;  // short-circuit if no change
         }
         this.states[state] = val;
-        //console.log('set mapped property "' + opt + '"/"' + state + '" to "' + val + '"');
+        if (dbug) console.log('set mapped property "' + opt + '"/"' + state + '" to "' + val + '"');
       }
 
       // otherwise, set the property directly and hope for the best
@@ -606,7 +613,10 @@ function text2d(p5, fn, lifecycles) {
         if (this.drawingContext[opt] === val) {
           return this._pInst;  // short-circuit if no change
         }
-        this.drawingContext[opt] = val;
+
+        // add propert:value to context queue for later application
+        (p5.Renderer2D.ContextQueue ??= []).push([opt, val]);
+        if (dbug) console.log('stack: context property "' + opt + '" = "' + val + '"');
       }
     }
     else {
@@ -618,7 +628,9 @@ function text2d(p5, fn, lifecycles) {
   };
 
   /**
-   * Batch set/get text properties for the renderer
+   * Batch set/get text properties for the renderer.
+   * The properties can be either mapped or unmapped properties 
+   *    on `this.states` or properties on `this.drawingContext`
    */
   p5.Renderer2D.prototype.textProperties = function (properties) {
 
@@ -657,7 +669,8 @@ function text2d(p5, fn, lifecycles) {
 
   // text() calls this method to render text
   p5.Renderer2D.prototype._renderText = function (line, x, y, maxY, minY) { // TODO: remove maxY, minY
-    let { drawingContext, states } = this;
+
+    let states = this.states;
 
     if (y < minY || y >= maxY) {
       return; // don't render lines beyond minY/maxY
@@ -667,7 +680,7 @@ function text2d(p5, fn, lifecycles) {
 
     // no stroke unless specified by user
     if (states.doStroke && states.strokeSet) {
-      drawingContext.strokeText(line, x, y);
+      this.drawingContext.strokeText(line, x, y);
     }
 
     if (!this._clipping && states.doFill) {
@@ -677,8 +690,8 @@ function text2d(p5, fn, lifecycles) {
         this._setFill(constants._DEFAULT_TEXT_FILL);
       }
 
-      //console.log('fillText: "' + line + '"', x, y, "'" + this.drawingContext.font + "'");
-      drawingContext.fillText(line, x, y);
+      //console.log('fillText: "' + line + '" fvc: ' + this.drawingContext.fontVariantCaps);
+      this.drawingContext.fillText(line, x, y);
     }
     //this._pInst.pop(); //DH: removed
 
