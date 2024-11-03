@@ -57,7 +57,7 @@
       };
     };
 
-    const textStretchSketch = function (p) {
+    const fontStretchSketch = function (p) {
       let url = 'url(https://fonts.gstatic.com/s/inconsolata/v31/QlddNThLqRwH-OJ1UHjlKENVzlm-WkL3GZQmAwPyya15.woff2) format("woff2")';
       let opts = ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'];
       p.setup = async function () {
@@ -72,7 +72,7 @@
       };
     };
 
-    const textStretchViaProp = function (p) {
+    const fontStretchViaProp = function (p) {
       let url = 'url(https://fonts.gstatic.com/s/inconsolata/v31/QlddNThLqRwH-OJ1UHjlKENVzlm-WkL3GZQmAwPyya15.woff2) format("woff2")';
       let opts = ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'];
       p.setup = async function () {
@@ -87,6 +87,24 @@
         });
       };
     };
+
+
+    const textStretchViaProp = function (p) {
+      let url = 'url(https://fonts.gstatic.com/s/inconsolata/v31/QlddNThLqRwH-OJ1UHjlKENVzlm-WkL3GZQmAwPyya15.woff2) format("woff2")';
+      let opts = ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'];
+      p.setup = async function () {
+        p.createCanvas(900, 330);
+        let f = await p.loadFont(url, 'Inconsolata', { stretch: "50% 200%" });
+        p.textFont(f, 32);
+        p.text(`Hello world (default: normal)`, 5, 35);
+        opts.forEach((opt, i) => {
+          p.textFont(f, 32);
+          p.textProperty('textStretch', opt);
+          p.text(`Hello world (${opt})`, 5, 35 * (i + 2));
+        });
+      };
+    };
+    
 
     const letterSpacingSketch = function (p) {
       p.setup = function () {
@@ -1623,8 +1641,9 @@
 
     new p5(textSketch, 'textSketch');
     new p5(textToPointsSketch, 'textToPointsSketch');
-    new p5(textStretchSketch, 'textStretchSketch'); // warnings
-    new p5(textStretchViaProp, 'textStretchViaProp'); // warnings
+    new p5(fontStretchSketch, 'fontStretchSketch'); 
+    new p5(fontStretchViaProp, 'fontStretchViaProp');
+    new p5(textStretchViaProp, 'textStretchViaProp');
     new p5(letterSpacingSketch, 'letterSpacingSketch');
     new p5(wordSpacingSketch, 'wordSpacingSketch');
     new p5(fontKerningSketch, 'fontKerningSketch');
@@ -1679,8 +1698,12 @@
     <p class="caption">textToPoints</p>
   </div>
 
-  <div id='textStretchSketch'>
-    <p class="caption">textStretch (via textFont)</p>
+  <div id='fontStretchSketch'>
+    <p class="caption">fontStretch (via textFont)</p>
+  </div>
+
+  <div id='fontStretchViaProp'>
+    <p class="caption">fontStretch (via textProperty)</p>
   </div>
 
   <div id='textStretchViaProp'>
