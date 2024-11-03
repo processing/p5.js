@@ -758,8 +758,9 @@ function text2d(p5, fn, lifecycles) {
     this.drawingContext.font = fontString;
 
     // case-insensitive check to see if the font was set correctly
-    if (this.drawingContext.font.toLowerCase() !== fontString.toLowerCase()) {
-      console.warn(`Unable to set font to "${fontString}", found "${this.drawingContext.font}"`);
+    let expected = fontString.replace(textStretch, ''); // fontStretch issue
+    if (this.drawingContext.font.toLowerCase() !== expected.toLowerCase()) {
+      console.warn(`Unable to set font="${fontString}", found "${this.drawingContext.font}"`);
     }
 
     // apply each property in queue after the font so they're not overridden
