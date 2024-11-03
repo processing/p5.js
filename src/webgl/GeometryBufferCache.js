@@ -12,7 +12,7 @@ export class GeometryBufferCache {
     return this.cache[gid] !== undefined;
   }
 
-  getModelByID(gid) {
+  getGeometryByID(gid) {
     return this.cache[gid]?.geometry;
   }
 
@@ -68,22 +68,13 @@ export class GeometryBufferCache {
       buffers.indexBufferType = hasVertexIndicesOverMaxUInt16
         ? gl.UNSIGNED_INT
         : gl.UNSIGNED_SHORT;
-
-      // the vertex count is based on the number of faces
-      buffers.vertexCount = geometry.faces.length * 3;
     } else {
       // the index buffer is unused, remove it
       if (indexBuffer) {
         gl.deleteBuffer(indexBuffer);
         buffers.indexBuffer = null;
       }
-      // the vertex count comes directly from the geometry
-      buffers.vertexCount = geometry.vertices ? geometry.vertices.length : 0;
     }
-
-    buffers.lineVertexCount = geometry.lineVertices
-      ? geometry.lineVertices.length / 3
-      : 0;
 
     return buffers;
   }

@@ -2135,7 +2135,7 @@ function primitives3D(p5, fn){
 
       this.states.uModelMatrix = mult;
 
-      this._drawGeometry(this.geometryBufferCache.getModelByID(gid));
+      this._drawGeometry(this.geometryBufferCache.getGeometryByID(gid));
     } finally {
       this.states.uModelMatrix = uModelMatrix;
     }
@@ -2266,7 +2266,7 @@ function primitives3D(p5, fn){
       this.states.uModelMatrix.translate([x, y, 0]);
       this.states.uModelMatrix.scale(width, height, 1);
 
-      this._drawGeometry(this.geometryBufferCache.getModelByID(gid));
+      this._drawGeometry(this.geometryBufferCache.getGeometryByID(gid));
     } finally {
       this.states.uModelMatrix = uModelMatrix;
     }
@@ -2326,7 +2326,7 @@ function primitives3D(p5, fn){
         this.states.uModelMatrix.translate([x, y, 0]);
         this.states.uModelMatrix.scale(width, height, 1);
 
-        this._drawGeometry(this.geometryBufferCache.getModelByID(gid));
+        this._drawGeometry(this.geometryBufferCache.getGeometryByID(gid));
       } finally {
         this.states.uModelMatrix = uModelMatrix;
       }
@@ -2465,7 +2465,7 @@ function primitives3D(p5, fn){
       quadGeom.gid = gid;
       this.geometryBufferCache.ensureCached(quadGeom);
     }
-    this._drawGeometry(this.geometryBufferCache.getModelByID(gid));
+    this._drawGeometry(this.geometryBufferCache.getGeometryByID(gid));
     return this;
   };
 
@@ -3376,7 +3376,7 @@ function primitives3D(p5, fn){
       this.geometryBufferCache.ensureCached(planeGeom);
     }
 
-    this._drawGeometryScaled(this.geometryBufferCache.getModelByID(gid), width, height, 1);
+    this._drawGeometryScaled(this.geometryBufferCache.getGeometryByID(gid), width, height, 1);
   }
 
   RendererGL.prototype.box = function(
@@ -3458,7 +3458,7 @@ function primitives3D(p5, fn){
       boxGeom.gid = gid;
       this.geometryBufferCache.ensureCached(boxGeom);
     }
-    this._drawGeometryScaled(this.geometryBufferCache.getModelByID(gid), width, height, depth);
+    this._drawGeometryScaled(this.geometryBufferCache.getGeometryByID(gid), width, height, depth);
   }
 
   RendererGL.prototype.sphere = function(
@@ -3512,7 +3512,7 @@ function primitives3D(p5, fn){
       this.geometryBufferCache.ensureCached(ellipsoidGeom);
     }
 
-    this._drawGeometryScaled(this.geometryBufferCache.getModelByID(gid), radiusX, radiusY, radiusZ);
+    this._drawGeometryScaled(this.geometryBufferCache.getGeometryByID(gid), radiusX, radiusY, radiusZ);
   }
 
   RendererGL.prototype.cylinder = function(
@@ -3549,7 +3549,7 @@ function primitives3D(p5, fn){
       this.geometryBufferCache.ensureCached(cylinderGeom);
     }
 
-    this._drawGeometryScaled(this.geometryBufferCache.getModelByID(gid), radius, height, radius);
+    this._drawGeometryScaled(this.geometryBufferCache.getGeometryByID(gid), radius, height, radius);
   }
 
   RendererGL.prototype.cone = function(
@@ -3575,7 +3575,7 @@ function primitives3D(p5, fn){
       this.geometryBufferCache.ensureCached(coneGeom);
     }
 
-    this._drawGeometryScaled(this.geometryBufferCache.getModelByID(gid), radius, height, radius);
+    this._drawGeometryScaled(this.geometryBufferCache.getGeometryByID(gid), radius, height, radius);
   }
 
   RendererGL.prototype.torus = function(
@@ -3637,7 +3637,7 @@ function primitives3D(p5, fn){
       torusGeom.gid = gid;
       this.geometryBufferCache.ensureCached(torusGeom);
     }
-    this._drawGeometryScaled(this.geometryBufferCache.getModelByID(gid), radius, radius, radius);
+    this._drawGeometryScaled(this.geometryBufferCache.getGeometryByID(gid), radius, radius, radius);
   }
 }
 

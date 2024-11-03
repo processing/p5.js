@@ -1320,7 +1320,8 @@ suite('p5.RendererGL', function() {
       myp5.stroke(255);
       myp5.triangle(0, 0, 1, 0, 0, 1);
 
-      var buffers = renderer.geometryBufferCache.getCachedID('tri');
+      const buffers = renderer.geometryBufferCache.getCachedID('tri');
+      const geom = renderer.geometryBufferCache.getGeometryByID('tri');
 
       assert.isObject(buffers);
       assert.isDefined(buffers.indexBuffer);
@@ -1332,13 +1333,13 @@ suite('p5.RendererGL', function() {
       assert.isDefined(buffers.lineTangentsOutBuffer);
       assert.isDefined(buffers.vertexBuffer);
 
-      assert.equal(buffers.vertexCount, 3);
+      assert.equal(geom.faces.length, 1);
 
       //   6 verts per line segment x3 (each is a quad made of 2 triangles)
       // + 12 verts per join x3 (2 quads each, 1 is discarded in the shader)
       // + 6 verts per line cap x0 (1 quad each)
       // = 54
-      assert.equal(buffers.lineVertexCount, 54);
+      assert.equal(geom.lineVertices.length, 54 * 3);
 
     });
   });

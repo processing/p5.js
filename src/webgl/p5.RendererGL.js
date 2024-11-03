@@ -654,7 +654,9 @@ class RendererGL extends Renderer {
     const gl = this.GL;
     const glBuffers = this.geometryBufferCache.getCached(geometry);
 
-    if (glBuffers?.indexBuffer) {
+    if (!glBuffers) return;
+
+    if (glBuffers.indexBuffer) {
       // If this model is using a Uint32Array we need to ensure the
       // OES_element_index_uint WebGL extension is enabled.
       if (
@@ -671,7 +673,7 @@ class RendererGL extends Renderer {
       if (count === 1) {
         gl.drawElements(
           gl.TRIANGLES,
-          glBuffers.vertexCount,
+          geometry.faces.length * 3,
           glBuffers.indexBufferType,
           0
         );
@@ -679,7 +681,7 @@ class RendererGL extends Renderer {
         try {
           gl.drawElementsInstanced(
             gl.TRIANGLES,
-            glBuffers.vertexCount,
+            geometry.faces.length * 3,
             glBuffers.indexBufferType,
             0,
             count
