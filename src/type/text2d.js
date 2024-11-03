@@ -2,18 +2,19 @@ import * as constants from '../core/constants';
 
 /*
  * TODO:
- *   - match current behavior for textBounds vs fontBounds
+ *   - match current rectMode() behavior for textBounds/fontBounds
  *   - update test/unit/type
+ *   - spurious warning in oneoff.html (local)
  * 
  * ON-HOLD:
  *   - textToPoints: alignments, line-breaking, better thresholding, scaling for small fonts
  * 
- * QUESTIONS: 
+ * PR-QUESTIONS: 
  *   - textProperty(ies) -> properties in states, mapped-states, context and canvas.style [PR]
  *   - do we want to support a text-font string (yes, how to handle?) [PR]
  * 
  *  ENHANCEMENTS:
- *   - support direct font string
+ *   - support direct setting of context2d.font with string
  *   - add 'justify' alignment
  */
 
