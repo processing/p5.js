@@ -16,34 +16,13 @@ function rendererGLRetained(p5, fn){
     this._freeBuffers(geometry.gid);
   };
 
-  /**
-   * _initBufferDefaults
-   * @private
-   * @description initializes buffer defaults. runs each time a new geometry is
-   * registered
-   * @param  {String} gId  key of the geometry object
-   * @returns {Object} a new buffer object
-   */
-  RendererGL.prototype._initBufferDefaults = function(gId) {
-    this._freeBuffers(gId);
-
-    //@TODO remove this limit on hashes in retainedMode.geometry
-    if (Object.keys(this.retainedMode.geometry).length > 1000) {
-      const key = Object.keys(this.retainedMode.geometry)[0];
-      this._freeBuffers(key);
-    }
-
-    //create a new entry in our retainedMode.geometry
-    return (this.retainedMode.geometry[gId] = {});
-  };
-
-  RendererGL.prototype._freeBuffers = function(gId) {
-    const buffers = this.retainedMode.geometry[gId];
+  RendererGL.prototype._freeBuffers = function(gid) {
+    const buffers = this.geometryBufferCache[gid];
     if (!buffers) {
       return;
     }
 
-    delete this.retainedMode.geometry[gId];
+    delete this.geometryBufferCache[gid];
 
     const gl = this.GL;
     if (buffers.indexBuffer) {
@@ -60,23 +39,38 @@ function rendererGLRetained(p5, fn){
     }
 
     // free all the buffers
-    freeBuffers(this.retainedMode.buffers.stroke);
-    freeBuffers(this.retainedMode.buffers.fill);
-    freeBuffers(this.retainedMode.buffers.user);
-    this.retainedMode.buffers.user = [];
+    freeBuffers(this.buffers.stroke);
+    freeBuffers(this.buffers.fill);
+    freeBuffers(this.buffers.user);
   };
 
   /**
-   * creates a buffers object that holds the WebGL render buffers
+   * Creates a buffers object that holds the WebGL render buffers
    * for a geometry.
    * @private
-   * @param  {String} gId    key of the geometry object
    * @param  {p5.Geometry}  model contains geometry data
    */
-  RendererGL.prototype.createBuffers = function(gId, model) {
+  RendererGL.prototype.createBuffers = function(model) {
     const gl = this.GL;
+
+    const gid = model.gid;
+    if (!gid) {
+      throw new Error('The p5.Geometry you passed in has no gid property!');
+    }
+
     //initialize the gl buffers for our geom groups
-    const buffers = this._initBufferDefaults(gId);
+    this._freeBuffers(gid);
+
+    //@TODO remove this limit on hashes in geometryBufferCache
+    if (Object.keys(this.geometryBufferCache).length > 1000) {
+      const key = Object.keys(this.geometryBufferCache)[0];
+      this._freeBuffers(key);
+    }
+
+    //create a new entry in our geometryBufferCache
+    const buffers = {};
+    this.geometryBufferCache[gid] = buffers;
+
     buffers.model = model;
 
     let indexBuffer = buffers.indexBuffer;
@@ -108,105 +102,23 @@ function rendererGLRetained(p5, fn){
         gl.deleteBuffer(indexBuffer);
         buffers.indexBuffer = null;
       }
+      // TODO: delete?
       // the vertex count comes directly from the model
       buffers.vertexCount = model.vertices ? model.vertices.length : 0;
     }
 
+    // TODO: delete?
     buffers.lineVertexCount = model.lineVertices
       ? model.lineVertices.length / 3
       : 0;
 
-    for (const propName in model.userVertexProperties){
+    for (const propName in model.userVertexProperties) {
       const prop = model.userVertexProperties[propName];
-      this.retainedMode.buffers.user.push(
+      this.buffers.user.push(
         new RenderBuffer(prop.getDataSize(), prop.getSrcName(), prop.getDstName(), prop.getName(), this)
       );
     }
     return buffers;
-  };
-
-  /**
-   * Draws buffers given a geometry key ID
-   * @private
-   * @param  {String} gId     ID in our geom hash
-   * @chainable
-   */
-  RendererGL.prototype.drawBuffers = function(gId) {
-    const gl = this.GL;
-    const geometry = this.retainedMode.geometry[gId];
-
-    if (
-      !this.geometryBuilder &&
-      this.states.doFill &&
-      geometry.vertexCount > 0
-    ) {
-      this._useVertexColor = (geometry.model.vertexColors.length > 0);
-
-      let fillShader;
-      if (this._drawingFilter && this.states.userFillShader) {
-        fillShader = this.states.userFillShader;
-      } else {
-        fillShader = this._getFillShader();
-      }
-      this._setFillUniforms(fillShader);
-
-      for (const buff of this.retainedMode.buffers.fill) {
-        buff._prepareBuffer(geometry, fillShader);
-      }
-      for (const buff of this.retainedMode.buffers.user){
-        const prop = geometry.model.userVertexProperties[buff.attr];
-        const adjustedLength = prop.getSrcArray().length / prop.getDataSize();
-        if(adjustedLength > geometry.model.vertices.length){
-          p5._friendlyError(`One of the geometries has a custom vertex property '${prop.getName()}' with more values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`, 'vertexProperty()');
-        } else if(adjustedLength < geometry.model.vertices.length){
-          p5._friendlyError(`One of the geometries has a custom vertex property '${prop.getName()}' with fewer values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`, 'vertexProperty()');
-        }
-        buff._prepareBuffer(geometry, fillShader);
-      }
-      fillShader.disableRemainingAttributes();
-      if (geometry.indexBuffer) {
-        //vertex index buffer
-        this._bindBuffer(geometry.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
-      }
-      this._applyColorBlend(
-        this.states.curFillColor,
-        geometry.model.hasFillTransparency()
-      );
-      this._drawElements(gl.TRIANGLES, gId);
-      fillShader.unbindShader();
-    }
-
-    if (!this.geometryBuilder && this.states.doStroke && geometry.lineVertexCount > 0) {
-      this._useLineColor = (geometry.model.vertexStrokeColors.length > 0);
-      const strokeShader = this._getRetainedStrokeShader();
-      this._setStrokeUniforms(strokeShader);
-      for (const buff of this.retainedMode.buffers.stroke) {
-        buff._prepareBuffer(geometry, strokeShader);
-      }
-      for (const buff of this.retainedMode.buffers.user){
-        const prop = geometry.model.userVertexProperties[buff.attr];
-        const adjustedLength = prop.getSrcArray().length / prop.getDataSize();
-        if(adjustedLength > geometry.model.vertices.length){
-          p5._friendlyError(`One of the geometries has a custom vertex property ${prop.name} with more values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`, 'vertexProperty()');
-        } else if(adjustedLength < geometry.model.vertices.length){
-          p5._friendlyError(`One of the geometries has a custom vertex property ${prop.name} with fewer values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`, 'vertexProperty()');
-        }
-        buff._prepareBuffer(geometry, strokeShader);
-      }
-      strokeShader.disableRemainingAttributes();
-      this._applyColorBlend(
-        this.states.curStrokeColor,
-        geometry.model.hasStrokeTransparency()
-      );
-      this._drawArrays(gl.TRIANGLES, gId);
-      strokeShader.unbindShader();
-    }
-
-    if (this.geometryBuilder) {
-      this.geometryBuilder.addRetained(geometry);
-    }
-
-    return this;
   };
 
   /**
@@ -219,13 +131,13 @@ function rendererGLRetained(p5, fn){
    *
    * @private
    * @method drawBuffersScaled
-   * @param {String} gId     ID in our geom hash
+   * @param {String} gid     ID in our geom hash
    * @param {Number} scaleX  the amount to scale in the X direction
    * @param {Number} scaleY  the amount to scale in the Y direction
    * @param {Number} scaleZ  the amount to scale in the Z direction
    */
   RendererGL.prototype.drawBuffersScaled = function(
-    gId,
+    model,
     scaleX,
     scaleY,
     scaleZ
@@ -234,48 +146,14 @@ function rendererGLRetained(p5, fn){
     try {
       this.states.uModelMatrix.scale(scaleX, scaleY, scaleZ);
 
-      this.drawBuffers(gId);
+      if (this.geometryBuilder) {
+        this.geometryBuilder.addRetained(model);
+      } else {
+        this._drawGeometry(model);
+      }
     } finally {
 
       this.states.uModelMatrix = originalModelMatrix;
-    }
-  };
-  RendererGL.prototype._drawArrays = function(drawMode, gId) {
-    this.GL.drawArrays(
-      drawMode,
-      0,
-      this.retainedMode.geometry[gId].lineVertexCount
-    );
-    return this;
-  };
-
-  RendererGL.prototype._drawElements = function(drawMode, gId) {
-    const buffers = this.retainedMode.geometry[gId];
-    const gl = this.GL;
-    // render the fill
-    if (buffers.indexBuffer) {
-      // If this model is using a Uint32Array we need to ensure the
-      // OES_element_index_uint WebGL extension is enabled.
-      if (
-        this._pInst.webglVersion !== constants.WEBGL2 &&
-        buffers.indexBufferType === gl.UNSIGNED_INT
-      ) {
-        if (!gl.getExtension('OES_element_index_uint')) {
-          throw new Error(
-            'Unable to render a 3d model with > 65535 triangles. Your web browser does not support the WebGL Extension OES_element_index_uint.'
-          );
-        }
-      }
-      // we're drawing faces
-      gl.drawElements(
-        gl.TRIANGLES,
-        buffers.vertexCount,
-        buffers.indexBufferType,
-        0
-      );
-    } else {
-      // drawing vertices
-      gl.drawArrays(drawMode || gl.TRIANGLES, 0, buffers.vertexCount);
     }
   };
 

@@ -108,9 +108,7 @@ class GeometryBuilder {
    * Adds geometry from the renderer's immediate mode into the builder's
    * combined geometry.
    */
-  addImmediate() {
-    const geometry = this.renderer.immediateMode.geometry;
-    const shapeMode = this.renderer.immediateMode.shapeMode;
+  addImmediate(geometry, shapeMode) {
     const faces = [];
 
     if (this.renderer.states.doFill) {
@@ -143,7 +141,7 @@ class GeometryBuilder {
    * combined geometry.
    */
   addRetained(geometry) {
-    this.addGeometry(geometry.model);
+    this.addGeometry(geometry);
   }
 
   /**

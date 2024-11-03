@@ -1320,7 +1320,7 @@ suite('p5.RendererGL', function() {
       myp5.stroke(255);
       myp5.triangle(0, 0, 1, 0, 0, 1);
 
-      var buffers = renderer.retainedMode.geometry['tri'];
+      var buffers = renderer.geometryBufferCache['tri'];
 
       assert.isObject(buffers);
       assert.isDefined(buffers.indexBuffer);
@@ -1442,13 +1442,13 @@ suite('p5.RendererGL', function() {
         [3, 1, 7]
       ];
       assert.equal(
-        renderer.immediateMode.geometry.vertices.length,
+        renderer.shapeBuilder.geometry.vertices.length,
         expectedVerts.length
       );
       expectedVerts.forEach(function([x, y, z], i) {
-        assert.equal(renderer.immediateMode.geometry.vertices[i].x, x);
-        assert.equal(renderer.immediateMode.geometry.vertices[i].y, y);
-        assert.equal(renderer.immediateMode.geometry.vertices[i].z, z);
+        assert.equal(renderer.shapeBuilder.geometry.vertices[i].x, x);
+        assert.equal(renderer.shapeBuilder.geometry.vertices[i].y, y);
+        assert.equal(renderer.shapeBuilder.geometry.vertices[i].z, z);
       });
 
       const expectedUVs = [
@@ -1468,7 +1468,7 @@ suite('p5.RendererGL', function() {
         [1, 0],
         [1, 1]
       ].flat();
-      assert.deepEqual(renderer.immediateMode.geometry.uvs, expectedUVs);
+      assert.deepEqual(renderer.shapeBuilder.geometry.uvs, expectedUVs);
 
       const expectedColors = [
         [1, 0, 0, 1],
@@ -1488,7 +1488,7 @@ suite('p5.RendererGL', function() {
         [1, 0, 1, 1]
       ].flat();
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertexColors,
+        renderer.shapeBuilder.geometry.vertexColors,
         expectedColors
       );
 
@@ -1510,13 +1510,13 @@ suite('p5.RendererGL', function() {
         [21, 22, 23]
       ];
       assert.equal(
-        renderer.immediateMode.geometry.vertexNormals.length,
+        renderer.shapeBuilder.geometry.vertexNormals.length,
         expectedNormals.length
       );
       expectedNormals.forEach(function([x, y, z], i) {
-        assert.equal(renderer.immediateMode.geometry.vertexNormals[i].x, x);
-        assert.equal(renderer.immediateMode.geometry.vertexNormals[i].y, y);
-        assert.equal(renderer.immediateMode.geometry.vertexNormals[i].z, z);
+        assert.equal(renderer.shapeBuilder.geometry.vertexNormals[i].x, x);
+        assert.equal(renderer.shapeBuilder.geometry.vertexNormals[i].y, y);
+        assert.equal(renderer.shapeBuilder.geometry.vertexNormals[i].z, z);
       });
     });
 
@@ -1534,7 +1534,7 @@ suite('p5.RendererGL', function() {
       renderer.vertex(3, 1);
       renderer.endShape();
 
-      assert.equal(renderer.immediateMode.geometry.edges.length, 8);
+      assert.equal(renderer.shapeBuilder.geometry.edges.length, 8);
     });
 
     test('QUAD_STRIP mode makes edges for strip outlines', function() {
@@ -1551,7 +1551,7 @@ suite('p5.RendererGL', function() {
       renderer.endShape();
 
       // Two full quads (2 * 4) plus two edges connecting them
-      assert.equal(renderer.immediateMode.geometry.edges.length, 10);
+      assert.equal(renderer.shapeBuilder.geometry.edges.length, 10);
     });
 
     test('TRIANGLE_FAN mode makes edges for each triangle', function() {
@@ -1569,7 +1569,7 @@ suite('p5.RendererGL', function() {
       renderer.vertex(-5, 0);
       renderer.endShape();
 
-      assert.equal(renderer.immediateMode.geometry.edges.length, 7);
+      assert.equal(renderer.shapeBuilder.geometry.edges.length, 7);
     });
 
     test('TESS preserves vertex data', function() {
@@ -1595,59 +1595,59 @@ suite('p5.RendererGL', function() {
       renderer.vertex(-10, 10, 0, 1);
       renderer.endShape(myp5.CLOSE);
 
-      assert.equal(renderer.immediateMode.geometry.vertices.length, 6);
+      assert.equal(renderer.shapeBuilder.geometry.vertices.length, 6);
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertices[0].array(),
+        renderer.shapeBuilder.geometry.vertices[0].array(),
         [10, -10, 0]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertices[1].array(),
+        renderer.shapeBuilder.geometry.vertices[1].array(),
         [-10, 10, 0]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertices[2].array(),
+        renderer.shapeBuilder.geometry.vertices[2].array(),
         [-10, -10, 0]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertices[3].array(),
+        renderer.shapeBuilder.geometry.vertices[3].array(),
         [-10, 10, 0]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertices[4].array(),
+        renderer.shapeBuilder.geometry.vertices[4].array(),
         [10, -10, 0]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertices[5].array(),
+        renderer.shapeBuilder.geometry.vertices[5].array(),
         [10, 10, 0]
       );
 
-      assert.equal(renderer.immediateMode.geometry.vertexNormals.length, 6);
+      assert.equal(renderer.shapeBuilder.geometry.vertexNormals.length, 6);
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertexNormals[0].array(),
+        renderer.shapeBuilder.geometry.vertexNormals[0].array(),
         [1, -1, 1]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertexNormals[1].array(),
+        renderer.shapeBuilder.geometry.vertexNormals[1].array(),
         [-1, 1, 1]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertexNormals[2].array(),
+        renderer.shapeBuilder.geometry.vertexNormals[2].array(),
         [-1, -1, 1]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertexNormals[3].array(),
+        renderer.shapeBuilder.geometry.vertexNormals[3].array(),
         [-1, 1, 1]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertexNormals[4].array(),
+        renderer.shapeBuilder.geometry.vertexNormals[4].array(),
         [1, -1, 1]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertexNormals[5].array(),
+        renderer.shapeBuilder.geometry.vertexNormals[5].array(),
         [1, 1, 1]
       );
 
-      assert.deepEqual(renderer.immediateMode.geometry.aCustomSrc, [
+      assert.deepEqual(renderer.shapeBuilder.geometry.aCustomSrc, [
           1, 0, 0,
           0, 0, 1,
           1, 1, 1,
@@ -1656,7 +1656,7 @@ suite('p5.RendererGL', function() {
           0, 1, 0
         ]);
 
-      assert.deepEqual(renderer.immediateMode.geometry.vertexColors, [
+      assert.deepEqual(renderer.shapeBuilder.geometry.vertexColors, [
         1, 0, 0, 1,
         0, 0, 1, 1,
         1, 1, 1, 1,
@@ -1665,7 +1665,7 @@ suite('p5.RendererGL', function() {
         0, 1, 0, 1
       ]);
 
-      assert.deepEqual(renderer.immediateMode.geometry.uvs, [
+      assert.deepEqual(renderer.shapeBuilder.geometry.uvs, [
         1, 0,
         0, 1,
         0, 0,
@@ -1692,7 +1692,7 @@ suite('p5.RendererGL', function() {
       renderer.endShape(myp5.CLOSE);
 
       // Vertex colors are not run through tessy
-      assert.deepEqual(renderer.immediateMode.geometry.vertexStrokeColors, [
+      assert.deepEqual(renderer.shapeBuilder.geometry.vertexStrokeColors, [
         1, 1, 1, 1,
         1, 0, 0, 1,
         0, 1, 0, 1,
@@ -1715,7 +1715,7 @@ suite('p5.RendererGL', function() {
       renderer.endShape(myp5.CLOSE);
 
       // UVs are correctly translated through tessy
-      assert.deepEqual(renderer.immediateMode.geometry.uvs, [
+      assert.deepEqual(renderer.shapeBuilder.geometry.uvs, [
         0, 0,
         1, 0,
         1, 1,
@@ -1752,59 +1752,59 @@ suite('p5.RendererGL', function() {
       renderer.vertex(-10, 10, 0, 1);
       renderer.endShape(myp5.CLOSE);
 
-      assert.equal(renderer.immediateMode.geometry.vertices.length, 6);
+      assert.equal(renderer.shapeBuilder.geometry.vertices.length, 6);
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertices[0].array(),
+        renderer.shapeBuilder.geometry.vertices[0].array(),
         [0, 0, 0]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertices[1].array(),
+        renderer.shapeBuilder.geometry.vertices[1].array(),
         [-10, 10, 0]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertices[2].array(),
+        renderer.shapeBuilder.geometry.vertices[2].array(),
         [-10, -10, 0]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertices[3].array(),
+        renderer.shapeBuilder.geometry.vertices[3].array(),
         [10, 10, 0]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertices[4].array(),
+        renderer.shapeBuilder.geometry.vertices[4].array(),
         [0, 0, 0]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertices[5].array(),
+        renderer.shapeBuilder.geometry.vertices[5].array(),
         [10, -10, 0]
       );
 
-      assert.equal(renderer.immediateMode.geometry.vertexNormals.length, 6);
+      assert.equal(renderer.shapeBuilder.geometry.vertexNormals.length, 6);
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertexNormals[0].array(),
+        renderer.shapeBuilder.geometry.vertexNormals[0].array(),
         [0, 0, 1]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertexNormals[1].array(),
+        renderer.shapeBuilder.geometry.vertexNormals[1].array(),
         [-1, 1, 1]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertexNormals[2].array(),
+        renderer.shapeBuilder.geometry.vertexNormals[2].array(),
         [-1, -1, 1]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertexNormals[3].array(),
+        renderer.shapeBuilder.geometry.vertexNormals[3].array(),
         [1, 1, 1]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertexNormals[4].array(),
+        renderer.shapeBuilder.geometry.vertexNormals[4].array(),
         [0, 0, 1]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertexNormals[5].array(),
+        renderer.shapeBuilder.geometry.vertexNormals[5].array(),
         [1, -1, 1]
       );
 
-      assert.deepEqual(renderer.immediateMode.geometry.vertexColors, [
+      assert.deepEqual(renderer.shapeBuilder.geometry.vertexColors, [
         0.5, 0.5, 0.5, 1,
         0, 0, 1, 1,
         1, 1, 1, 1,
@@ -1813,7 +1813,7 @@ suite('p5.RendererGL', function() {
         1, 0, 0, 1
       ]);
 
-      assert.deepEqual(renderer.immediateMode.geometry.uvs, [
+      assert.deepEqual(renderer.shapeBuilder.geometry.uvs, [
         0.5, 0.5,
         0, 1,
         0, 0,
@@ -1834,29 +1834,29 @@ suite('p5.RendererGL', function() {
       renderer.vertex(-10, 0, 10);
       renderer.endShape(myp5.CLOSE);
 
-      assert.equal(renderer.immediateMode.geometry.vertices.length, 6);
+      assert.equal(renderer.shapeBuilder.geometry.vertices.length, 6);
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertices[0].array(),
+        renderer.shapeBuilder.geometry.vertices[0].array(),
         [10, 0, 10]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertices[1].array(),
+        renderer.shapeBuilder.geometry.vertices[1].array(),
         [-10, 0, -10]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertices[2].array(),
+        renderer.shapeBuilder.geometry.vertices[2].array(),
         [10, 0, -10]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertices[3].array(),
+        renderer.shapeBuilder.geometry.vertices[3].array(),
         [-10, 0, -10]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertices[4].array(),
+        renderer.shapeBuilder.geometry.vertices[4].array(),
         [10, 0, 10]
       );
       assert.deepEqual(
-        renderer.immediateMode.geometry.vertices[5].array(),
+        renderer.shapeBuilder.geometry.vertices[5].array(),
         [-10, 0, 10]
       );
     });
@@ -2515,19 +2515,19 @@ suite('p5.RendererGL', function() {
         myp5.vertexProperty('aCustom', 1);
         myp5.vertexProperty('aCustomVec3', [1, 2, 3]);
         myp5.vertex(0,0,0);
-        expect(myp5._renderer.immediateMode.geometry.userVertexProperties.aCustom).to.containSubset({
+        expect(myp5._renderer.shapeBuilder.geometry.userVertexProperties.aCustom).to.containSubset({
           name: 'aCustom',
           currentData: 1,
           dataSize: 1
         });
-        expect(myp5._renderer.immediateMode.geometry.userVertexProperties.aCustomVec3).to.containSubset({
+        expect(myp5._renderer.shapeBuilder.geometry.userVertexProperties.aCustomVec3).to.containSubset({
           name: 'aCustomVec3',
           currentData: [1, 2, 3],
           dataSize: 3
         });
-        assert.deepEqual(myp5._renderer.immediateMode.geometry.aCustomSrc, [1]);
-        assert.deepEqual(myp5._renderer.immediateMode.geometry.aCustomVec3Src, [1,2,3]);
-        expect(myp5._renderer.immediateMode.buffers.user).to.containSubset([
+        assert.deepEqual(myp5._renderer.shapeBuilder.geometry.aCustomSrc, [1]);
+        assert.deepEqual(myp5._renderer.shapeBuilder.geometry.aCustomVec3Src, [1,2,3]);
+        expect(myp5._renderer.buffers.user).to.containSubset([
           {
             size: 1,
             src: 'aCustomSrc',
@@ -2555,10 +2555,10 @@ suite('p5.RendererGL', function() {
         myp5.endShape();
 
         myp5.beginShape();
-        assert.isUndefined(myp5._renderer.immediateMode.geometry.aCustomSrc);
-        assert.isUndefined(myp5._renderer.immediateMode.geometry.aCustomVec3Src);
-        assert.deepEqual(myp5._renderer.immediateMode.geometry.userVertexProperties, {});
-        assert.deepEqual(myp5._renderer.immediateMode.buffers.user, []);
+        assert.isUndefined(myp5._renderer.shapeBuilder.geometry.aCustomSrc);
+        assert.isUndefined(myp5._renderer.shapeBuilder.geometry.aCustomVec3Src);
+        assert.deepEqual(myp5._renderer.shapeBuilder.geometry.userVertexProperties, {});
+        assert.deepEqual(myp5._renderer.buffers.user, []);
         myp5.endShape();
       }
     );
@@ -2572,7 +2572,7 @@ suite('p5.RendererGL', function() {
         myp5.vertex(0,1,0);
         myp5.vertex(-1,0,0);
         myp5.vertex(1,0,0);
-        const immediateCopy = myp5._renderer.immediateMode.geometry;
+        const immediateCopy = myp5._renderer.shapeBuilder.geometry;
         myp5.endShape();
         const myGeo = myp5.endGeometry();
         assert.deepEqual(immediateCopy.aCustomSrc, myGeo.aCustomSrc);
@@ -2590,8 +2590,8 @@ suite('p5.RendererGL', function() {
         myp5.vertex(1,0,0);
         myp5.endShape();
         const myGeo = myp5.endGeometry();
-        myp5._renderer.createBuffers(myGeo.gId, myGeo);
-        expect(myp5._renderer.retainedMode.buffers.user).to.containSubset([
+        myp5._renderer.createBuffers(myGeo);
+        expect(myp5._renderer.buffers.user).to.containSubset([
           {
             size: 1,
             src: 'aCustomSrc',
@@ -2607,7 +2607,7 @@ suite('p5.RendererGL', function() {
         ]);
       }
     );
-    test('Retained mode buffers deleted after rendering',
+    test.only('Retained mode buffers deleted after rendering',
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
         myp5.beginGeometry();
@@ -2616,10 +2616,11 @@ suite('p5.RendererGL', function() {
         myp5.vertexProperty('aCustomVec3', [1,2,3]);
         myp5.vertex(0,0,0);
         myp5.vertex(1,0,0);
+        myp5.vertex(1,1,0);
         myp5.endShape();
         const myGeo = myp5.endGeometry();
         myp5.model(myGeo);
-        assert.equal(myp5._renderer.retainedMode.buffers.user.length, 0);
+        assert.equal(myp5._renderer.buffers.user.length, 0);
       }
     );
     test.skip('Friendly error if different sizes used',
@@ -2647,6 +2648,7 @@ suite('p5.RendererGL', function() {
         const oldLog = console.log;
         console.log = myLog;
         let myGeo = new p5.Geometry();
+        myGeo.gid = 'myGeo';
         myGeo.vertices.push(new p5.Vector(0,0,0));
         myGeo.vertexProperty('aCustom', 1);
         myGeo.vertexProperty('aCustom', 2);
@@ -2663,6 +2665,7 @@ suite('p5.RendererGL', function() {
         const oldLog = console.log;
         console.log = myLog;
         let myGeo = new p5.Geometry();
+        myGeo.gid = 'myGeo';
         myGeo.vertices.push(new p5.Vector(0,0,0));
         myGeo.vertices.push(new p5.Vector(0,0,0));
         myGeo.vertexProperty('aCustom', 1);

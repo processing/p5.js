@@ -2084,7 +2084,7 @@ function primitives3D(p5, fn){
 
     const _vertex = [];
     _vertex.push(new Vector(x, y, z));
-    this._drawPoints(_vertex, this.immediateMode.buffers.point);
+    this._drawPoints(_vertex, this.buffers.point);
 
     return this;
   };
@@ -2097,8 +2097,8 @@ function primitives3D(p5, fn){
     const x3 = args[4],
       y3 = args[5];
 
-    const gId = 'tri';
-    if (!this.geometryInHash(gId)) {
+    const gid = 'tri';
+    if (!this.geometryInHash(gid)) {
       const _triangle = function() {
         const vertices = [];
         vertices.push(new Vector(0, 0, 0));
@@ -2112,7 +2112,8 @@ function primitives3D(p5, fn){
       const triGeom = new Geometry(1, 1, _triangle);
       triGeom._edgesToVertices();
       triGeom.computeNormals();
-      this.createBuffers(gId, triGeom);
+      triGeom.gid = gid;
+      this.createBuffers(triGeom);
     }
 
     // only one triangle is cached, one point is at the origin, and the
@@ -2134,7 +2135,7 @@ function primitives3D(p5, fn){
 
       this.states.uModelMatrix = mult;
 
-      this.drawBuffers(gId);
+      this._drawGeometry(this.geometryBufferCache[gid].model);
     } finally {
       this.states.uModelMatrix = uModelMatrix;
     }
@@ -2166,18 +2167,18 @@ function primitives3D(p5, fn){
     const detail = args[7] || 25;
 
     let shape;
-    let gId;
+    let gid;
 
     // check if it is an ellipse or an arc
     if (Math.abs(stop - start) >= constants.TWO_PI) {
       shape = 'ellipse';
-      gId = `${shape}|${detail}|`;
+      gid = `${shape}|${detail}|`;
     } else {
       shape = 'arc';
-      gId = `${shape}|${start}|${stop}|${mode}|${detail}|`;
+      gid = `${shape}|${start}|${stop}|${mode}|${detail}|`;
     }
 
-    if (!this.geometryInHash(gId)) {
+    if (!this.geometryInHash(gid)) {
       const _arc = function() {
 
         // if the start and stop angles are not the same, push vertices to the array
@@ -2255,7 +2256,8 @@ function primitives3D(p5, fn){
         );
       }
 
-      this.createBuffers(gId, arcGeom);
+      arcGeom.gid = gid;
+      this.createBuffers(arcGeom);
     }
 
     const uModelMatrix = this.states.uModelMatrix.copy();
@@ -2264,7 +2266,7 @@ function primitives3D(p5, fn){
       this.states.uModelMatrix.translate([x, y, 0]);
       this.states.uModelMatrix.scale(width, height, 1);
 
-      this.drawBuffers(gId);
+      this._drawGeometry(this.geometryBufferCache[gid].model);
     } finally {
       this.states.uModelMatrix = uModelMatrix;
     }
@@ -2284,8 +2286,8 @@ function primitives3D(p5, fn){
       const perPixelLighting = this._pInst._glAttributes.perPixelLighting;
       const detailX = args[4] || (perPixelLighting ? 1 : 24);
       const detailY = args[5] || (perPixelLighting ? 1 : 16);
-      const gId = `rect|${detailX}|${detailY}`;
-      if (!this.geometryInHash(gId)) {
+      const gid = `rect|${detailX}|${detailY}`;
+      if (!this.geometryInHash(gid)) {
         const _rect = function() {
           for (let i = 0; i <= this.detailY; i++) {
             const v = i / this.detailY;
@@ -2311,7 +2313,8 @@ function primitives3D(p5, fn){
           .computeFaces()
           .computeNormals()
           ._edgesToVertices();
-        this.createBuffers(gId, rectGeom);
+        rectGeom.gid = gid;
+        this.createBuffers(rectGeom);
       }
 
       // only a single rectangle (of a given detail) is cached: a square with
@@ -2323,7 +2326,7 @@ function primitives3D(p5, fn){
         this.states.uModelMatrix.translate([x, y, 0]);
         this.states.uModelMatrix.scale(width, height, 1);
 
-        this.drawBuffers(gId);
+        this._drawGeometry(this.geometryBufferCache[gid].model);
       } finally {
         this.states.uModelMatrix = uModelMatrix;
       }
@@ -2392,11 +2395,11 @@ function primitives3D(p5, fn){
         this.vertex(x1, y1);
       }
 
-      this.immediateMode.geometry.uvs.length = 0;
-      for (const vert of this.immediateMode.geometry.vertices) {
+      this.shapeBuilder.geometry.uvs.length = 0;
+      for (const vert of this.shapeBuilder.geometry.vertices) {
         const u = (vert.x - x1) / width;
         const v = (vert.y - y1) / height;
-        this.immediateMode.geometry.uvs.push(u, v);
+        this.shapeBuilder.geometry.uvs.push(u, v);
       }
 
       this.endShape(constants.CLOSE);
@@ -2408,10 +2411,10 @@ function primitives3D(p5, fn){
   RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, detailX=2, detailY=2) {
     /* eslint-enable max-len */
 
-    const gId =
+    const gid =
       `quad|${x1}|${y1}|${z1}|${x2}|${y2}|${z2}|${x3}|${y3}|${z3}|${x4}|${y4}|${z4}|${detailX}|${detailY}`;
 
-    if (!this.geometryInHash(gId)) {
+    if (!this.geometryInHash(gid)) {
       const quadGeom = new Geometry(detailX, detailY, function() {
         //algorithm adapted from c++ to js
         //https://stackoverflow.com/questions/16989181/whats-the-correct-way-to-draw-a-distorted-plane-in-opengl/16993202#16993202
@@ -2459,9 +2462,10 @@ function primitives3D(p5, fn){
         quadGeom.edges.push([startVertex, endVertex]);
       }
       quadGeom._edgesToVertices();
-      this.createBuffers(gId, quadGeom);
+      quadGeom.gid = gid;
+      this.createBuffers(quadGeom);
     }
-    this.drawBuffers(gId);
+    this._drawGeometry(this.geometryBufferCache[gid].model);
     return this;
   };
 
@@ -2605,7 +2609,7 @@ function primitives3D(p5, fn){
   };
 
   RendererGL.prototype.bezierVertex = function(...args) {
-    if (this.immediateMode._bezierVertex.length === 0) {
+    if (this.shapeBuilder._bezierVertex.length === 0) {
       throw Error('vertex() must be used once before calling bezierVertex()');
     } else {
       let w_x = [];
@@ -2643,7 +2647,7 @@ function primitives3D(p5, fn){
       }
 
       const LUTLength = this._lookUpTableBezier.length;
-      const immediateGeometry = this.immediateMode.geometry;
+      const immediateGeometry = this.shapeBuilder.geometry;
 
       // fillColors[0]: start point color
       // fillColors[1],[2]: control point color
@@ -2673,8 +2677,8 @@ function primitives3D(p5, fn){
       if (argLength === 6) {
         this.isBezier = true;
 
-        w_x = [this.immediateMode._bezierVertex[0], args[0], args[2], args[4]];
-        w_y = [this.immediateMode._bezierVertex[1], args[1], args[3], args[5]];
+        w_x = [this.shapeBuilder._bezierVertex[0], args[0], args[2], args[4]];
+        w_y = [this.shapeBuilder._bezierVertex[1], args[1], args[3], args[5]];
         // The ratio of the distance between the start point, the two control-
         // points, and the end point determines the intermediate color.
         let d0 = Math.hypot(w_x[0]-w_x[1], w_y[0]-w_y[1]);
@@ -2744,14 +2748,14 @@ function primitives3D(p5, fn){
           const prop = immediateGeometry.userVertexProperties[propName];
           prop.setCurrentData(userVertexProperties[propName][2]);
         }
-        this.immediateMode._bezierVertex[0] = args[4];
-        this.immediateMode._bezierVertex[1] = args[5];
+        this.shapeBuilder._bezierVertex[0] = args[4];
+        this.shapeBuilder._bezierVertex[1] = args[5];
       } else if (argLength === 9) {
         this.isBezier = true;
 
-        w_x = [this.immediateMode._bezierVertex[0], args[0], args[3], args[6]];
-        w_y = [this.immediateMode._bezierVertex[1], args[1], args[4], args[7]];
-        w_z = [this.immediateMode._bezierVertex[2], args[2], args[5], args[8]];
+        w_x = [this.shapeBuilder._bezierVertex[0], args[0], args[3], args[6]];
+        w_y = [this.shapeBuilder._bezierVertex[1], args[1], args[4], args[7]];
+        w_z = [this.shapeBuilder._bezierVertex[2], args[2], args[5], args[8]];
         // The ratio of the distance between the start point, the two control-
         // points, and the end point determines the intermediate color.
         let d0 = Math.hypot(w_x[0]-w_x[1], w_y[0]-w_y[1], w_z[0]-w_z[1]);
@@ -2821,15 +2825,15 @@ function primitives3D(p5, fn){
           const prop = immediateGeometry.userVertexProperties[propName];
           prop.setCurrentData(userVertexProperties[propName][2]);
         }
-        this.immediateMode._bezierVertex[0] = args[6];
-        this.immediateMode._bezierVertex[1] = args[7];
-        this.immediateMode._bezierVertex[2] = args[8];
+        this.shapeBuilder._bezierVertex[0] = args[6];
+        this.shapeBuilder._bezierVertex[1] = args[7];
+        this.shapeBuilder._bezierVertex[2] = args[8];
       }
     }
   };
 
   RendererGL.prototype.quadraticVertex = function(...args) {
-    if (this.immediateMode._quadraticVertex.length === 0) {
+    if (this.shapeBuilder._quadraticVertex.length === 0) {
       throw Error('vertex() must be used once before calling quadraticVertex()');
     } else {
       let w_x = [];
@@ -2867,7 +2871,7 @@ function primitives3D(p5, fn){
       }
 
       const LUTLength = this._lookUpTableQuadratic.length;
-      const immediateGeometry = this.immediateMode.geometry;
+      const immediateGeometry = this.shapeBuilder.geometry;
 
       // fillColors[0]: start point color
       // fillColors[1]: control point color
@@ -2897,8 +2901,8 @@ function primitives3D(p5, fn){
       if (argLength === 4) {
         this.isQuadratic = true;
 
-        w_x = [this.immediateMode._quadraticVertex[0], args[0], args[2]];
-        w_y = [this.immediateMode._quadraticVertex[1], args[1], args[3]];
+        w_x = [this.shapeBuilder._quadraticVertex[0], args[0], args[2]];
+        w_y = [this.shapeBuilder._quadraticVertex[1], args[1], args[3]];
 
         // The ratio of the distance between the start point, the control-
         // point, and the end point determines the intermediate color.
@@ -2961,14 +2965,14 @@ function primitives3D(p5, fn){
           const prop = immediateGeometry.userVertexProperties[propName];
           prop.setCurrentData(userVertexProperties[propName][2]);
         }
-        this.immediateMode._quadraticVertex[0] = args[2];
-        this.immediateMode._quadraticVertex[1] = args[3];
+        this.shapeBuilder._quadraticVertex[0] = args[2];
+        this.shapeBuilder._quadraticVertex[1] = args[3];
       } else if (argLength === 6) {
         this.isQuadratic = true;
 
-        w_x = [this.immediateMode._quadraticVertex[0], args[0], args[3]];
-        w_y = [this.immediateMode._quadraticVertex[1], args[1], args[4]];
-        w_z = [this.immediateMode._quadraticVertex[2], args[2], args[5]];
+        w_x = [this.shapeBuilder._quadraticVertex[0], args[0], args[3]];
+        w_y = [this.shapeBuilder._quadraticVertex[1], args[1], args[4]];
+        w_z = [this.shapeBuilder._quadraticVertex[2], args[2], args[5]];
 
         // The ratio of the distance between the start point, the control-
         // point, and the end point determines the intermediate color.
@@ -3032,9 +3036,9 @@ function primitives3D(p5, fn){
           const prop = immediateGeometry.userVertexProperties[propName];
           prop.setCurrentData(userVertexProperties[propName][2]);
         }
-        this.immediateMode._quadraticVertex[0] = args[3];
-        this.immediateMode._quadraticVertex[1] = args[4];
-        this.immediateMode._quadraticVertex[2] = args[5];
+        this.shapeBuilder._quadraticVertex[0] = args[3];
+        this.shapeBuilder._quadraticVertex[1] = args[4];
+        this.shapeBuilder._quadraticVertex[2] = args[5];
       }
     }
   };
@@ -3075,21 +3079,21 @@ function primitives3D(p5, fn){
     const LUTLength = this._lookUpTableBezier.length;
 
     if (argLength === 2) {
-      this.immediateMode._curveVertex.push(args[0]);
-      this.immediateMode._curveVertex.push(args[1]);
-      if (this.immediateMode._curveVertex.length === 8) {
+      this.shapeBuilder._curveVertex.push(args[0]);
+      this.shapeBuilder._curveVertex.push(args[1]);
+      if (this.shapeBuilder._curveVertex.length === 8) {
         this.isCurve = true;
         w_x = this._bezierToCatmull([
-          this.immediateMode._curveVertex[0],
-          this.immediateMode._curveVertex[2],
-          this.immediateMode._curveVertex[4],
-          this.immediateMode._curveVertex[6]
+          this.shapeBuilder._curveVertex[0],
+          this.shapeBuilder._curveVertex[2],
+          this.shapeBuilder._curveVertex[4],
+          this.shapeBuilder._curveVertex[6]
         ]);
         w_y = this._bezierToCatmull([
-          this.immediateMode._curveVertex[1],
-          this.immediateMode._curveVertex[3],
-          this.immediateMode._curveVertex[5],
-          this.immediateMode._curveVertex[7]
+          this.shapeBuilder._curveVertex[1],
+          this.shapeBuilder._curveVertex[3],
+          this.shapeBuilder._curveVertex[5],
+          this.shapeBuilder._curveVertex[7]
         ]);
         for (i = 0; i < LUTLength; i++) {
           _x =
@@ -3105,32 +3109,32 @@ function primitives3D(p5, fn){
           this.vertex(_x, _y);
         }
         for (i = 0; i < argLength; i++) {
-          this.immediateMode._curveVertex.shift();
+          this.shapeBuilder._curveVertex.shift();
         }
       }
     } else if (argLength === 3) {
-      this.immediateMode._curveVertex.push(args[0]);
-      this.immediateMode._curveVertex.push(args[1]);
-      this.immediateMode._curveVertex.push(args[2]);
-      if (this.immediateMode._curveVertex.length === 12) {
+      this.shapeBuilder._curveVertex.push(args[0]);
+      this.shapeBuilder._curveVertex.push(args[1]);
+      this.shapeBuilder._curveVertex.push(args[2]);
+      if (this.shapeBuilder._curveVertex.length === 12) {
         this.isCurve = true;
         w_x = this._bezierToCatmull([
-          this.immediateMode._curveVertex[0],
-          this.immediateMode._curveVertex[3],
-          this.immediateMode._curveVertex[6],
-          this.immediateMode._curveVertex[9]
+          this.shapeBuilder._curveVertex[0],
+          this.shapeBuilder._curveVertex[3],
+          this.shapeBuilder._curveVertex[6],
+          this.shapeBuilder._curveVertex[9]
         ]);
         w_y = this._bezierToCatmull([
-          this.immediateMode._curveVertex[1],
-          this.immediateMode._curveVertex[4],
-          this.immediateMode._curveVertex[7],
-          this.immediateMode._curveVertex[10]
+          this.shapeBuilder._curveVertex[1],
+          this.shapeBuilder._curveVertex[4],
+          this.shapeBuilder._curveVertex[7],
+          this.shapeBuilder._curveVertex[10]
         ]);
         w_z = this._bezierToCatmull([
-          this.immediateMode._curveVertex[2],
-          this.immediateMode._curveVertex[5],
-          this.immediateMode._curveVertex[8],
-          this.immediateMode._curveVertex[11]
+          this.shapeBuilder._curveVertex[2],
+          this.shapeBuilder._curveVertex[5],
+          this.shapeBuilder._curveVertex[8],
+          this.shapeBuilder._curveVertex[11]
         ]);
         for (i = 0; i < LUTLength; i++) {
           _x =
@@ -3151,7 +3155,7 @@ function primitives3D(p5, fn){
           this.vertex(_x, _y, _z);
         }
         for (i = 0; i < argLength; i++) {
-          this.immediateMode._curveVertex.shift();
+          this.shapeBuilder._curveVertex.shift();
         }
       }
     }
@@ -3343,9 +3347,9 @@ function primitives3D(p5, fn){
     detailX = 1,
     detailY = 1
   ) {
-    const gId = `plane|${detailX}|${detailY}`;
+    const gid = `plane|${detailX}|${detailY}`;
 
-    if (!this.geometryInHash(gId)) {
+    if (!this.geometryInHash(gid)) {
       const _plane = function() {
         let u, v, p;
         for (let i = 0; i <= this.detailY; i++) {
@@ -3368,10 +3372,11 @@ function primitives3D(p5, fn){
           ' than 1 detailX or 1 detailY'
         );
       }
-      this.createBuffers(gId, planeGeom);
+      planeGeom.gid = gid;
+      this.createBuffers(planeGeom);
     }
 
-    this.drawBuffersScaled(gId, width, height, 1);
+    this.drawBuffersScaled(this.geometryBufferCache[gid].model, width, height, 1);
   }
 
   RendererGL.prototype.box = function(
@@ -3390,8 +3395,8 @@ function primitives3D(p5, fn){
       detailY = perPixelLighting ? 1 : 4;
     }
 
-    const gId = `box|${detailX}|${detailY}`;
-    if (!this.geometryInHash(gId)) {
+    const gid = `box|${detailX}|${detailY}`;
+    if (!this.geometryInHash(gid)) {
       const _box = function() {
         const cubeIndices = [
           [0, 4, 2, 6], // -1, 0, 0],// -x
@@ -3450,9 +3455,10 @@ function primitives3D(p5, fn){
       //initialize our geometry buffer with
       //the key val pair:
       //geometry Id, Geom object
-      this.createBuffers(gId, boxGeom);
+      boxGeom.gid = gid;
+      this.createBuffers(boxGeom);
     }
-    this.drawBuffersScaled(gId, width, height, depth);
+    this.drawBuffersScaled(this.geometryBufferCache[gid].model, width, height, depth);
   }
 
   RendererGL.prototype.sphere = function(
@@ -3470,9 +3476,9 @@ function primitives3D(p5, fn){
     detailX = 24,
     detailY = 16
   ) {
-    const gId = `ellipsoid|${detailX}|${detailY}`;
+    const gid = `ellipsoid|${detailX}|${detailY}`;
 
-    if (!this.geometryInHash(gId)) {
+    if (!this.geometryInHash(gid)) {
       const _ellipsoid = function() {
         for (let i = 0; i <= this.detailY; i++) {
           const v = i / this.detailY;
@@ -3502,10 +3508,11 @@ function primitives3D(p5, fn){
           ' than 24 detailX or 24 detailY'
         );
       }
-      this.createBuffers(gId, ellipsoidGeom);
+      ellipsoidGeom.gid = gid;
+      this.createBuffers(ellipsoidGeom);
     }
 
-    this.drawBuffersScaled(gId, radiusX, radiusY, radiusZ);
+    this.drawBuffersScaled(this.geometryBufferCache[gid].model, radiusX, radiusY, radiusZ);
   }
 
   RendererGL.prototype.cylinder = function(
@@ -3516,8 +3523,8 @@ function primitives3D(p5, fn){
     bottomCap = true,
     topCap = true
   ) {
-    const gId = `cylinder|${detailX}|${detailY}|${bottomCap}|${topCap}`;
-    if (!this.geometryInHash(gId)) {
+    const gid = `cylinder|${detailX}|${detailY}|${bottomCap}|${topCap}`;
+    if (!this.geometryInHash(gid)) {
       const cylinderGeom = new p5.Geometry(detailX, detailY);
       _truncatedCone.call(
         cylinderGeom,
@@ -3538,10 +3545,11 @@ function primitives3D(p5, fn){
           ' than 24 detailX or 16 detailY'
         );
       }
-      this.createBuffers(gId, cylinderGeom);
+      cylinderGeom.gid = gid;
+      this.createBuffers(cylinderGeom);
     }
 
-    this.drawBuffersScaled(gId, radius, height, radius);
+    this.drawBuffersScaled(this.geometryBufferCache[gid].model, radius, height, radius);
   }
 
   RendererGL.prototype.cone = function(
@@ -3551,8 +3559,8 @@ function primitives3D(p5, fn){
     detailY = 1,
     cap = true
   ) {
-    const gId = `cone|${detailX}|${detailY}|${cap}`;
-    if (!this.geometryInHash(gId)) {
+    const gid = `cone|${detailX}|${detailY}|${cap}`;
+    if (!this.geometryInHash(gid)) {
       const coneGeom = new Geometry(detailX, detailY);
       _truncatedCone.call(coneGeom, 1, 0, 1, detailX, detailY, cap, false);
       if (detailX <= 24 && detailY <= 16) {
@@ -3563,10 +3571,11 @@ function primitives3D(p5, fn){
           ' than 24 detailX or 16 detailY'
         );
       }
-      this.createBuffers(gId, coneGeom);
+      coneGeom.gid = gid;
+      this.createBuffers(coneGeom);
     }
 
-    this.drawBuffersScaled(gId, radius, height, radius);
+    this.drawBuffersScaled(this.geometryBufferCache[gid].model, radius, height, radius);
   }
 
   RendererGL.prototype.torus = function(
@@ -3584,9 +3593,9 @@ function primitives3D(p5, fn){
     }
 
     const tubeRatio = (tubeRadius / radius).toPrecision(4);
-    const gId = `torus|${tubeRatio}|${detailX}|${detailY}`;
+    const gid = `torus|${tubeRatio}|${detailX}|${detailY}`;
 
-    if (!this.geometryInHash(gId)) {
+    if (!this.geometryInHash(gid)) {
       const _torus = function() {
         for (let i = 0; i <= this.detailY; i++) {
           const v = i / this.detailY;
@@ -3625,9 +3634,10 @@ function primitives3D(p5, fn){
           ' than 24 detailX or 16 detailY'
         );
       }
-      this.createBuffers(gId, torusGeom);
+      torusGeom.gid = gid;
+      this.createBuffers(torusGeom);
     }
-    this.drawBuffersScaled(gId, radius, radius, radius);
+    this.drawBuffersScaled(this.geometryBufferCache[gid].model, radius, radius, radius);
   }
 }
 
