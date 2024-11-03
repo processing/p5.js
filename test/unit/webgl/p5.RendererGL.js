@@ -2607,7 +2607,7 @@ suite('p5.RendererGL', function() {
         ]);
       }
     );
-    test.only('Retained mode buffers deleted after rendering',
+    test('Retained mode buffers deleted after rendering',
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
         myp5.beginGeometry();
@@ -2649,9 +2649,13 @@ suite('p5.RendererGL', function() {
         console.log = myLog;
         let myGeo = new p5.Geometry();
         myGeo.gid = 'myGeo';
-        myGeo.vertices.push(new p5.Vector(0,0,0));
+        myGeo.vertices.push(new myp5.createVector(0,0,0));
+        myGeo.vertices.push(new myp5.createVector(1,0,0));
+        myGeo.vertices.push(new myp5.createVector(1,1,0));
         myGeo.vertexProperty('aCustom', 1);
         myGeo.vertexProperty('aCustom', 2);
+        myGeo.vertexProperty('aCustom', 3);
+        myGeo.vertexProperty('aCustom', 4);
         myp5.model(myGeo);
         console.log = oldLog;
         expect(logs.join('\n')).to.match(/One of the geometries has a custom vertex property 'aCustom' with more values than vertices./);
@@ -2666,8 +2670,9 @@ suite('p5.RendererGL', function() {
         console.log = myLog;
         let myGeo = new p5.Geometry();
         myGeo.gid = 'myGeo';
-        myGeo.vertices.push(new p5.Vector(0,0,0));
-        myGeo.vertices.push(new p5.Vector(0,0,0));
+        myGeo.vertices.push(new myp5.createVector(0,0,0));
+        myGeo.vertices.push(new myp5.createVector(1,0,0));
+        myGeo.vertices.push(new myp5.createVector(1,1,0));
         myGeo.vertexProperty('aCustom', 1);
         myp5.model(myGeo);
         console.log = oldLog;

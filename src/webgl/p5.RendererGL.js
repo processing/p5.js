@@ -583,14 +583,16 @@ class RendererGL extends Renderer {
 
   _prepareUserAttributes(geometry, shader) {
     for (const buff of this.buffers.user) {
-      // Check for the right data size
-      const prop = geometry.userVertexProperties[buff.attr];
-      if (prop) {
-        const adjustedLength = prop.getSrcArray().length / prop.getDataSize();
-        if (adjustedLength > geometry.vertices.length) {
-          p5._friendlyError(`One of the geometries has a custom vertex property '${prop.getName()}' with more values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`, 'vertexProperty()');
-        } else if (adjustedLength < geometry.vertices.length) {
-          p5._friendlyError(`One of the geometries has a custom vertex property '${prop.getName()}' with fewer values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`, 'vertexProperty()');
+      if (!this._pInst.constructor.disableFriendleErrors) {
+        // Check for the right data size
+        const prop = geometry.userVertexProperties[buff.attr];
+        if (prop) {
+          const adjustedLength = prop.getSrcArray().length / prop.getDataSize();
+          if (adjustedLength > geometry.vertices.length) {
+            this._pInst.constructor._friendlyError(`One of the geometries has a custom vertex property '${prop.getName()}' with more values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`, 'vertexProperty()');
+          } else if (adjustedLength < geometry.vertices.length) {
+            this._pInst.constructor._friendlyError(`One of the geometries has a custom vertex property '${prop.getName()}' with fewer values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`, 'vertexProperty()');
+          }
         }
       }
       buff._prepareBuffer(geometry, shader);
