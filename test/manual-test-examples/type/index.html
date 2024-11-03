@@ -75,6 +75,22 @@
       };
     };
 
+    const textStretchViaProp = function (p) {
+      let url = 'url(https://fonts.gstatic.com/s/inconsolata/v31/QlddNThLqRwH-OJ1UHjlKENVzlm-WkL3GZQmAwPyya15.woff2) format("woff2")';
+      let opts = ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'];
+      p.setup = async function () {
+        p.createCanvas(900, 330);
+        let f = await p.loadFont(url, 'Inconsolata', { stretch: "50% 200%" });
+        p.textFont(f, 32);
+        p.text(`Hello world (default: normal)`, 5, 35);
+        opts.forEach((opt, i) => {
+          p.textFont(f, 32);
+          p.textProperty('fontStretch', opt);
+          p.text(`Hello world (${opt})`, 5, 35 * (i + 2));
+        });
+      };
+    };
+
     const letterSpacingSketch = function (p) {
       p.setup = function () {
         p.createCanvas(650, 375);
@@ -83,6 +99,20 @@
           let ls = p.map(i, 0, 10, -3, 7) + 'px';
           p.textProperty('letterSpacing', ls);
           let key = (ls === 0) ? 'default' : 'letterSpacing';
+          p.text(`Hello world (${key}: ${ls})`, 5, 35 * (i + 1));
+        };
+      };
+    };
+
+
+    const wordSpacingSketch = function (p) {
+      p.setup = function () {
+        p.createCanvas(650, 375);
+        p.textSize('2em');
+        for (let i = 0; i < 10; i++) {
+          let ls = p.map(i, 0, 10, -3, 7) + 'px';
+          p.textProperty('wordSpacing', ls);
+          let key = (ls === 0) ? 'default' : 'wordSpacing';
           p.text(`Hello world (${key}: ${ls})`, 5, 35 * (i + 1));
         };
       };
@@ -1753,7 +1783,9 @@
       new p5(textSketch, 'textSketch');
       new p5(textToPointsSketch, 'textToPointsSketch');
       new p5(textStretchSketch, 'textStretchSketch');
+      new p5(textStretchViaProp, 'textStretchViaProp');
       new p5(letterSpacingSketch, 'letterSpacingSketch');
+      new p5(wordSpacingSketch, 'wordSpacingSketch');
       new p5(fontKerningSketch, 'fontKerningSketch');
       new p5(fontVariantCapsSketch, 'fontVariantCapsSketch');
 
@@ -1807,11 +1839,19 @@
   </div>
 
   <div id='textStretchSketch'>
-    <p class="caption">textStretchSketch</p>
+    <p class="caption">textStretch (via textFont)</p>
+  </div>
+
+  <div id='textStretchViaProp'>
+    <p class="caption">textStretch (via textProperty)</p>
   </div>
 
   <div id='letterSpacingSketch'>
     <p class="caption">letterSpacing</p>
+  </div>
+
+  <div id='wordSpacingSketch'>
+    <p class="caption">wordSpacing</p>
   </div>
 
   <div id='fontKerningSketch'>

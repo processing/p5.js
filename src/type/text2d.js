@@ -7,15 +7,18 @@ import * as constants from '../core/constants';
  *    https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/textRendering
  * 
  *  - test/handle alignment in textToPoints - should call text(...arg, ctx);
+ *  - font warning for textStretch
  * 
  * Questions: 
  *   textProperty(ies) -> properties in states, mapped-states, context and canvas.style
  *   static properties for renderer
+ *   do we want to support a text-font string (yes, how to handle?)
  *   changing this.states properties
  *   push/pop for text rendering
  *   console.warn and thrown Errors
  *   fontSizeAdjust issue (see html) - is this true of all canvas.style properties
  *   search 'QUESTION:'
+ *   _initFontProps to constructor?
  */
 
 /**
@@ -95,7 +98,7 @@ function text2d(p5, fn, lifecycles) {
 
   p5.Renderer2D.prototype.text = function (str, x, y, width, height) {
 
-    
+
     let setBaseline = this.drawingContext.textBaseline; // store current baseline
     let leading = this.states.textLeading;
 
@@ -174,9 +177,12 @@ function text2d(p5, fn, lifecycles) {
     return Math.max(...widths);
   };
 
-  /*
-    For optional parameters to be specified in the `options` object see p5.Renderer2D.FontProps
-  */
+  /**
+   * Set the font and [size] and [options] for rendering text
+   * @param {p5.Font | string} theFont - the font to use for rendering text
+   * @param {number} theSize - the size of the text, can be a number or a css-style string
+   * @param {object} options - additional options for rendering text, see p5.Renderer2D.FontProps
+   */
   p5.Renderer2D.prototype.textFont = function (theFont, theSize, options) {
 
     this._initFontProps();
@@ -202,8 +208,16 @@ function text2d(p5, fn, lifecycles) {
       this.states.textFont = family;
     }
 
+    // handle two-arg case: textFont(font, options)
+    if (arguments.length === 2 && typeof theSize === 'object') {
+      options = theSize;
+      theSize = undefined;
+    }
+
     // convert/update the size in this.states
-    this._setTextSize(theSize);
+    if (typeof theSize !== 'undefined') {
+      this._setTextSize(theSize);
+    }
 
     // apply any options to this.states
     if (typeof options === 'object') {
@@ -214,15 +228,17 @@ function text2d(p5, fn, lifecycles) {
   }
 
   p5.Renderer2D.prototype.textLeading = function (leading) {
-
     if (typeof leading === 'number') {
       this.states.leadingSet = true;
       this.states.textLeading = leading;
       return this._pInst;
     }
-    return this.states.textLeading; // TODO: is there a prop we can use, eg. lineHeight ?
+    return this.states.textLeading; // TODO: can we use lineHeight here ?
   }
 
+  /**
+   * @param {*} theSize - the size of the text, can be a number or a css-style string
+   */
   p5.Renderer2D.prototype.textSize = function (theSize) {
 
     // the getter
@@ -298,6 +314,130 @@ function text2d(p5, fn, lifecycles) {
 
     return points;
   }
+
+  /**
+   * Sets/gets a single text property for the renderer (eg. textStyle, fontStretch, etc.)
+   * The property to be set can be a mapped or unmapped property on `this.states` or a property on `this.drawingContext`
+   * The property to get can exist in `this.states` or `this.drawingContext`
+   */
+  p5.Renderer2D.prototype.textProperty = function (opt, val) {
+
+    let dbug = false;
+
+    // getter: return option from this.states or this.drawingContext
+    if (typeof val === 'undefined') {
+      let props = this.textProperties();
+      if (opt in props) return props[opt];
+      throw Error('Unknown text option "' + opt + '"');
+    }
+
+    // set the option in this.states if it exists
+    if (opt in this.states) {
+      if (this.states[opt] === val) {
+        return this._pInst;  // short-circuit if no change
+      }
+      this.states[opt] = val;
+      if (dbug) console.log('this.states.' + opt + '="' + options[opt] + '"');
+    }
+    // does it exist in CanvasRenderingContext2D ?
+    else if (opt in this.drawingContext) {
+      this._setContextProperty(opt, val);
+    }
+    else {
+      if (opt in this.drawingContext.canvas.style) {
+
+        val = val.toString(); // ensure it's a string
+
+        // check if the value is actually different
+        if (this.drawingContext.canvas.style[opt] === val) {
+          return this._pInst;  // short-circuit if no change
+        }
+
+        // lets try to set it on the canvas style
+        this.drawingContext.canvas.style[opt] = val;
+
+        // check if the value was set successfully
+        if (this.drawingContext.canvas.style[opt] !== val) {
+          console.warn(`Unable to set '${opt}' property on canvas.style. It may not be supported.`);
+        }
+      }
+      else {
+        console.warn('Ignoring unknown text rendering option: "' + opt + '"\n');
+      }
+    }
+
+    // only if we've modified something
+    return this._applyTextProperties();
+  };
+
+  p5.Renderer2D.prototype._setContextProperty = function (prop, val, dbug = false) {
+    // is it a property mapped to one managed in this.states ?
+    let managed = Object.entries(p5.Renderer2D.FontProps)
+      .find(([_, v]) => v.property === prop);
+
+    // then set the mapped property in this.states instead
+    if (managed && managed.length && managed[0] in this.states) {
+      let state = managed[0];
+      if (this.states[state] === val) {
+        return this._pInst;  // short-circuit if no change
+      }
+      this.states[state] = val;
+      if (dbug) console.log('set mapped property "' + prop + '"/"' + state + '" to "' + val + '"');
+      return this._pInst;
+    }
+
+    // check if the value is actually different
+    if (this.drawingContext[prop] === val) {
+      return this._pInst;  // short-circuit if no change
+    }
+
+    // otherwise, we will set the property directly on the `this.drawingContext`
+    // add [property, value] to context-queue for later application
+    (p5.Renderer2D.ContextQueue ??= []).push([prop, val]);
+    if (dbug) console.log('stack: context property "' + prop + '" = "' + val + '"');
+  };
+
+  /**
+   * Batch set/get text properties for the renderer.
+   * The properties can be either mapped or unmapped properties 
+   *    on `this.states` or properties on `this.drawingContext`
+   */
+  p5.Renderer2D.prototype.textProperties = function (properties) {
+
+    // setter
+    if (typeof properties === 'object') {
+      Object.keys(properties).forEach(opt => {
+        this.textProperty(opt, properties[opt]);
+      });
+      return this._pInst;
+    }
+
+    // getter
+    this._applyTextProperties();
+    return {
+      // QUESTION: should we include font/text options on canvas.style ?
+      textWrap: this.states.textWrap,
+      textSize: this.states.textSize,
+      textFont: this.states.textFont,
+      textStretch: this.states.textStretch,
+      textWeight: this.states.textWeight,
+      textHeight: this.states.textHeight,
+      textStyle: this.states.textStyle,
+      textVariant: this.states.textVariant,
+      textLeading: this.states.textLeading,
+
+      textAlign: this.drawingContext.textAlign,
+      textBaseline: this.drawingContext.textBaseline,
+
+      font: this.drawingContext.font,
+      fontKerning: this.drawingContext.fontKerning,
+      fontStretch: this.drawingContext.fontStretch,
+      fontVariantCaps: this.drawingContext.fontVariantCaps,
+      textRendering: this.drawingContext.textRendering,
+      letterSpacing: this.drawingContext.letterSpacing,
+      wordSpacing: this.drawingContext.wordSpacing,
+    };
+  };
 
   p5.Renderer2D.prototype.textMode = function () { /* no-op for processing api */ };
 
@@ -565,28 +705,54 @@ function text2d(p5, fn, lifecycles) {
     return s.replace(p5.Renderer2D.TabsRE, '  ').split(p5.Renderer2D.LinebreakRE);
   };
 
+  /*
+    Apply the text properties in `this.states` to the `this.drawingContext`
+    Then apply any properties in the context-queue
+   */
   p5.Renderer2D.prototype._applyTextProperties = function () {
 
     this._initFontProps();
 
+    /*
+      If font is specified as a shorthand for several font-related properties, then:
+      - it must include values for: <font-size> and <font-family>
+      - it may optionally include values for: 
+          [<font-style>, <font-variant>, <font-weight>, <font-stretch>, <line-height>]
+
+      Format:
+      - font-style, font-variant and font-weight must precede font-size
+      - font-variant may only specify the values defined in CSS 2.1, that is 'normal' and 'small-caps'.
+      - font-stretch may only be a single keyword value.
+      - line-height must immediately follow font-size, preceded by "/", eg 16px/3.
+      - font-family must be the last value specified.
+    */
+
     let { textFont, textSize, textHeight } = this.states;
 
-    console.log('textFont="' + textFont + '"');
-    
     let parts = textFont.split(/,\s+/); // handle complex names and fallbacks
-    let family = parts.map(f => f.indexOf(' ') > -1 ? `"${f.trim()}"` : f.trim()).join(', ');
+    let family = parts.map(f => {
+      f = f.trim();
+      if (f.indexOf(' ') > -1 && !/^".*"$/.test(f)) {
+        f = `"${f}"`; // quote font names with spaces
+      }
+      return f;
+    }).join(', ');
 
     let size = `${textSize}px` + (textHeight !== constants.NORMAL ? `/${textHeight} ` : ' ');
     let textStretch = this.states.textStretch !== constants.NORMAL ? `${this.states.textStretch} ` : '';
     let textStyle = this.states.textStyle !== constants.NORMAL ? `${this.states.textStyle} ` : '';
     let textWeight = this.states.textWeight !== constants.NORMAL ? `${this.states.textWeight} ` : '';
     let textVariant = this.states.textVariant !== constants.NORMAL ? `${this.states.textVariant} ` : '';
-    let fontString = `${textStretch}${textStyle}${textWeight}${textVariant}${size}${family}`;
+    let fontString = `${textStretch}${textStyle}${textWeight}${textVariant}${size}${family}`.trim();
 
-    this.drawingContext.font = fontString.trim();
-    console.log('ctx.font=\'' + this.drawingContext.font+"'");
-    
-    // apply each property in queue after setting font so they're not overridden
+    this.drawingContext.font = fontString;
+
+    // case-insensitive check to see if the font was set correctly
+    if (this.drawingContext.font.toLowerCase() !== fontString.toLowerCase()) {
+      console.warn(`Unable to set font to "${fontString}", found "${this.drawingContext.font}"`);
+    }
+
+    // apply each property in queue after the font so they're not overridden
     while (p5.Renderer2D?.ContextQueue?.length) {
       let [prop, val] = p5.Renderer2D.ContextQueue.shift();
       //console.log('apply context property "' + prop + '" = "' + val + '"');
@@ -594,126 +760,6 @@ function text2d(p5, fn, lifecycles) {
     }
 
     return this._pInst;
-  };
-
-  /**
-   * Sets/gets a single text property for the renderer (eg. textStyle, fontStretch, etc.)
-   * The property to be set can be a mapped or unmapped property on `this.states` or a property on `this.drawingContext`
-   * The property to get can exist in `this.states` or `this.drawingContext`
-   */
-  p5.Renderer2D.prototype.textProperty = function (opt, val) {
-
-    let dbug = false;
-
-    // get the option from this.states or this.drawingContext if it exists
-    if (typeof val === 'undefined') {
-      let props = this.textProperties();
-      if (opt in props) return props[opt];
-      throw Error('Unknown text option "' + opt + '"');
-    }
-
-    // set the option in this.states if it exists
-    if (opt in this.states) {
-      if (this.states[opt] === val) {
-        return this._pInst;  // short-circuit if no change
-      }
-      this.states[opt] = val;
-      if (dbug) console.log('this.states.' + opt + '="' + options[opt] + '"');
-    }
-    // does it exist in CanvasRenderingContext2D ?
-    else if (opt in this.drawingContext) {
-
-      // is it a property mapped to one managed in this.states ?
-      let managed = Object.entries(p5.Renderer2D.FontProps)
-        .find(([_, v]) => v.property === opt);
-
-      // then set the mapped property in this.states instead
-      if (managed && managed.length && managed[0] in this.states) {
-        let state = managed[0];
-        if (this.states[state] === val) {
-          return this._pInst;  // short-circuit if no change
-        }
-        this.states[state] = val;
-        if (dbug) console.log('set mapped property "' + opt + '"/"' + state + '" to "' + val + '"');
-      }
-
-      // check if the value is actually different
-      if (this.drawingContext[opt] === val) {
-        return this._pInst;  // short-circuit if no change
-      }
-
-      // otherwise, we will set the property directly on the `this.drawingContext`
-      // add [property, value] to context-queue for later application
-      (p5.Renderer2D.ContextQueue ??= []).push([opt, val]);
-      if (dbug) console.log('stack: context property "' + opt + '" = "' + val + '"');
-    }
-    else {
-      if (opt in this.drawingContext.canvas.style) {
-
-        val = val.toString(); // ensure it's a string
-
-        // check if the value is actually different
-        if (this.drawingContext.canvas.style[opt] === val) {
-          return this._pInst;  // short-circuit if no change
-        }
-
-        // lets try to set it on the canvas style
-        this.drawingContext.canvas.style[opt] = val;
-
-        // check if the value was set successfully
-        if (this.drawingContext.canvas.style[opt] !== val) {
-          console.warn(`Unable to set '${opt}' property on canvas.style. It may not be supported.`);
-        }
-      }
-      else {
-        console.warn('Ignoring unknown text rendering option: "' + opt + '"\n');
-      }
-    }
-
-    // only if we've modified something
-    return this._applyTextProperties();
-  };
-
-  /**
-   * Batch set/get text properties for the renderer.
-   * The properties can be either mapped or unmapped properties 
-   *    on `this.states` or properties on `this.drawingContext`
-   */
-  p5.Renderer2D.prototype.textProperties = function (properties) {
-
-    if (typeof properties === 'object') {
-      Object.keys(properties).forEach(opt => {
-        this.textProperty(opt, properties[opt]);
-      });
-      return this._pInst;
-    }
-
-    this._applyTextProperties();
-
-    return {
-       // QUESTION: should we include font/text options on canvas.style ?
-       // QUESTION: should we return all properties or just the ones set ?
-      textWrap: this.states.textWrap,
-      textSize: this.states.textSize,
-      textFont: this.states.textFont,
-      textStretch: this.states.textStretch,
-      textWeight: this.states.textWeight,
-      textHeight: this.states.textHeight,
-      textStyle: this.states.textStyle,
-      textVariant: this.states.textVariant,
-      textLeading: this.states.textLeading,
-
-      textAlign: this.drawingContext.textAlign,
-      textBaseline: this.drawingContext.textBaseline,
-
-      font: this.drawingContext.font,
-      fontKerning: this.drawingContext.fontKerning,
-      fontStretch: this.drawingContext.fontStretch,
-      fontVariantCaps: this.drawingContext.fontVariantCaps,
-      textRendering: this.drawingContext.textRendering,
-      letterSpacing: this.drawingContext.letterSpacing,
-      wordSpacing: this.drawingContext.wordSpacing,
-    };
   };
 
   // text() calls this method to render text
