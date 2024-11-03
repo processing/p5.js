@@ -14,6 +14,7 @@ import { Framebuffer } from './p5.Framebuffer';
 import { Graphics } from '../core/p5.Graphics';
 import { Element } from '../core/p5.Element';
 import { ShapeBuilder } from './ShapeBuilder';
+import { GeometryBufferCache } from './GeometryBufferCache';
 
 import lightingShader from './shaders/lighting.glsl';
 import webgl2CompatibilityShader from './shaders/webgl2Compatibility.glsl';
@@ -316,7 +317,7 @@ class RendererGL extends Renderer {
         new RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
         new RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
         new RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
-        new RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+        new RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, (arr) => arr.flat())
       ],
       stroke: [
         new RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this),
@@ -327,13 +328,13 @@ class RendererGL extends Renderer {
       ],
       text: [
         new RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
-        new RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+        new RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, (arr) => arr.flat())
       ],
       point: this.GL.createBuffer(),
       user:[]
     }
 
-    this.geometryBufferCache = {};
+    this.geometryBufferCache = new GeometryBufferCache(this);
 
     this.pointSize = 5.0; //default point size
     this.curStrokeWeight = 1;
@@ -501,6 +502,13 @@ class RendererGL extends Renderer {
   //////////////////////////////////////////////
 
   _drawGeometry(geometry, { mode = constants.TRIANGLES, count = 1 } = {}) {
+    for (const propName in geometry.userVertexProperties) {
+      const prop = geometry.userVertexProperties[propName];
+      this.buffers.user.push(
+        new RenderBuffer(prop.getDataSize(), prop.getSrcName(), prop.getDstName(), prop.getName(), this)
+      );
+    }
+
     if (
       this.states.doFill &&
       geometry.vertices.length >= 3 &&
@@ -514,6 +522,27 @@ class RendererGL extends Renderer {
     }
 
     this.buffers.user = [];
+  }
+
+  _drawGeometryScaled(
+    model,
+    scaleX,
+    scaleY,
+    scaleZ
+  ) {
+    let originalModelMatrix = this.states.uModelMatrix.copy();
+    try {
+      this.states.uModelMatrix.scale(scaleX, scaleY, scaleZ);
+
+      if (this.geometryBuilder) {
+        this.geometryBuilder.addRetained(model);
+      } else {
+        this._drawGeometry(model);
+      }
+    } finally {
+
+      this.states.uModelMatrix = originalModelMatrix;
+    }
   }
 
   _drawFills(geometry, { count, mode } = {}) {
@@ -581,6 +610,28 @@ class RendererGL extends Renderer {
     shader.unbindShader();
   }
 
+  _drawPoints(vertices, vertexBuffer) {
+    const gl = this.GL;
+    const pointShader = this._getPointShader();
+    this._setPointUniforms(pointShader);
+
+    this._bindBuffer(
+      vertexBuffer,
+      gl.ARRAY_BUFFER,
+      this._vToNArray(vertices),
+      Float32Array,
+      gl.STATIC_DRAW
+    );
+
+    pointShader.enableAttrib(pointShader.attributes.aPosition, 3);
+
+    this._applyColorBlend(this.states.curStrokeColor);
+
+    gl.drawArrays(gl.Points, 0, vertices.length);
+
+    pointShader.unbindShader();
+  }
+
   _prepareUserAttributes(geometry, shader) {
     for (const buff of this.buffers.user) {
       if (!this._pInst.constructor.disableFriendleErrors) {
@@ -601,7 +652,7 @@ class RendererGL extends Renderer {
 
   _drawBuffers(geometry, { mode = this.GL.TRIANGLES, count }) {
     const gl = this.GL;
-    const glBuffers = this.geometryBufferCache[geometry.gid];
+    const glBuffers = this.geometryBufferCache.getCached(geometry);
 
     if (glBuffers?.indexBuffer) {
       // If this model is using a Uint32Array we need to ensure the
@@ -660,10 +711,7 @@ class RendererGL extends Renderer {
   }
 
   _getOrMakeCachedBuffers(geometry) {
-    if (!this.geometryInHash(geometry.gid)) {
-      this.createBuffers(geometry);
-    }
-    return this.geometryBufferCache[geometry.gid]
+    return this.geometryBufferCache.ensureCached(geometry);
   }
 
   //////////////////////////////////////////////
@@ -1368,7 +1416,7 @@ class RendererGL extends Renderer {
   //////////////////////////////////////////////
 
   geometryInHash(gid) {
-    return this.geometryBufferCache[gid] !== undefined;
+    return this.geometryBufferCache.isCached(gid);
   }
 
   viewport(w, h) {
@@ -1647,7 +1695,7 @@ class RendererGL extends Renderer {
   }
 
 
-  _getImmediatePointShader() {
+  _getPointShader() {
     // select the point shader to use
     const point = this.states.userPointShader;
     if (!point || !point.isPointShader()) {
@@ -2223,16 +2271,6 @@ class RendererGL extends Renderer {
       Uint32Array
     ].some(x => arr instanceof x);
   }
-  /**
-   * turn a two dimensional array into one dimensional array
-   * @private
-   * @param  {Array} arr 2-dimensional array
-   * @return {Array}     1-dimensional array
-   * [[1, 2, 3],[4, 5, 6]] -> [1, 2, 3, 4, 5, 6]
-   */
-  _flatten(arr) {
-    return arr.flat();
-  }
 
   /**
    * turn a p5.Vector Array into a one dimensional number array
@@ -2465,14 +2503,12 @@ function rendererGL(p5, fn){
     }
 
     if (!this._setupDone) {
-      for (const x in this._renderer.geometryBufferCache) {
-        if (this._renderer.geometryBufferCache.hasOwnProperty(x)) {
-          p5._friendlyError(
-            'Sorry, Could not set the attributes, you need to call setAttributes() ' +
-            'before calling the other drawing methods in setup()'
-          );
-          return;
-        }
+      if (this._renderer.geometryBufferCache.numCached() > 0) {
+        p5._friendlyError(
+          'Sorry, Could not set the attributes, you need to call setAttributes() ' +
+          'before calling the other drawing methods in setup()'
+        );
+        return;
       }
     }
 

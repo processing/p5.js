@@ -704,7 +704,7 @@ function text(p5, fn){
         }
       }));
       geom.computeFaces().computeNormals();
-      g = this.createBuffers('glyph', geom);
+      g = this.geometryBufferCache.ensureCached(geom);
     }
 
     // bind the shader buffers

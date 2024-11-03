@@ -1320,7 +1320,7 @@ suite('p5.RendererGL', function() {
       myp5.stroke(255);
       myp5.triangle(0, 0, 1, 0, 0, 1);
 
-      var buffers = renderer.geometryBufferCache['tri'];
+      var buffers = renderer.geometryBufferCache.getCachedID('tri');
 
       assert.isObject(buffers);
       assert.isDefined(buffers.indexBuffer);
@@ -2582,29 +2582,44 @@ suite('p5.RendererGL', function() {
     test('Retained mode buffers are created for rendering',
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
-        myp5.beginGeometry();
-        myp5.beginShape();
-        myp5.vertexProperty('aCustom', 1);
-        myp5.vertexProperty('aCustomVec3', [1,2,3]);
-        myp5.vertex(0,0,0);
-        myp5.vertex(1,0,0);
-        myp5.endShape();
-        const myGeo = myp5.endGeometry();
-        myp5._renderer.createBuffers(myGeo);
-        expect(myp5._renderer.buffers.user).to.containSubset([
-          {
-            size: 1,
-            src: 'aCustomSrc',
-            dst: 'aCustomBuffer',
-            attr: 'aCustom',
-          },
-          {
-            size: 3,
-            src: 'aCustomVec3Src',
-            dst: 'aCustomVec3Buffer',
-            attr: 'aCustomVec3',
-          }
-        ]);
+
+        const prevDrawFills = myp5._renderer._drawFills;
+        let called = false;
+        myp5._renderer._drawFills = function(...args) {
+          called = true;
+          expect(myp5._renderer.buffers.user).to.containSubset([
+            {
+              size: 1,
+              src: 'aCustomSrc',
+              dst: 'aCustomBuffer',
+              attr: 'aCustom',
+            },
+            {
+              size: 3,
+              src: 'aCustomVec3Src',
+              dst: 'aCustomVec3Buffer',
+              attr: 'aCustomVec3',
+            }
+          ]);
+
+          prevDrawFills.apply(this, args);
+        }
+
+        try {
+          myp5.beginGeometry();
+          myp5.beginShape();
+          myp5.vertexProperty('aCustom', 1);
+          myp5.vertexProperty('aCustomVec3', [1,2,3]);
+          myp5.vertex(0,0,0);
+          myp5.vertex(1,0,0);
+          myp5.vertex(1,1,0);
+          myp5.endShape();
+          const myGeo = myp5.endGeometry();
+          myp5.model(myGeo);
+          expect(called).to.equal(true);
+        } finally {
+          myp5._renderer._drawFills = prevDrawFills;
+        }
       }
     );
     test('Retained mode buffers deleted after rendering',
