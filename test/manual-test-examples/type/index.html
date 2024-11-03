@@ -2,8 +2,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <!-- <script language="javascript" type="text/javascript" src="img/../../../../lib/p5.js"></script>
-  <script language="javascript" type="text/javascript" src="img/sketch.js"></script> -->
+  <!-- <script language="javascript" type="text/javascript" src="img/../../../../lib/p5.js"></script-->
   <style>
     body {
       padding: 0;
@@ -28,7 +27,7 @@
     }
 
     div {
-      margin: 100px 0px;
+      margin: 40px 0px;
     }
 
     p.caption {
@@ -45,8 +44,6 @@
 
     import p5 from '../../../src/app.js';
     //import 'https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.0/p5.js';
-
-    const DISPLAY_ANIMATIONS = false;
 
     let textSketch = function (p) {
       p.setup = function () {
@@ -111,7 +108,7 @@
         for (let i = 0; i < 10; i++) {
           let ls = p.map(i, 0, 10, 0, 60) + 'px';
           p.textProperty('wordSpacing', ls);
-          p.text(`Hello world (wordSpacing: ${ls})`, 5, 35 * (i + 1));          
+          p.text(`Hello world (wordSpacing: ${ls})`, 5, 35 * (i + 1));
         };
       };
     };
@@ -168,34 +165,6 @@
         p.stroke('#E92D55');
         txs = p.textToPoints('p5.js', p.width / 2, p.height / 2);
         txs.forEach(pt => p.point(pt.x, pt.y));
-      };
-    };
-
-    const textToPointsAnimation = function (p) {
-      let pts, txs;
-      p.setup = function () {
-        p.createCanvas(700, 350);
-        p.textSize(300);
-        p.textStyle(p.BOLD);
-        p.textAlign(p.CENTER, p.CENTER);
-        p.strokeWeight(3);
-        p.stroke('#E92D55');
-        txs = p.textToPoints('p5.js', p.width / 2, p.height / 2);
-        pts = txs.map(pt => ({ x: p.random(p.width), y: p.random(p.height) }));
-      };
-      p.draw = function () {
-        p.background(255);
-        pts.forEach((pt, i) => {
-          pt.x = p.lerp(pt.x, txs[i].x, 0.03);
-          pt.y = p.lerp(pt.y, txs[i].y, 0.03);
-          p.point(pt.x, pt.y);
-        });
-        if (p.frameCount > 300) {
-          p.noFill();
-          p.stroke(0, 100);
-          p.text('p5.js', p.width / 2, p.height / 2);
-          p.noLoop();
-        }
       };
     };
 
@@ -1652,141 +1621,6 @@
       };
     };
 
-    let textFlySketch = function (p) {
-      let x1 = 100;
-      let x2 = 0;
-      p.setup = function () {
-        p.createCanvas(240, 160);
-        p.fill(0);
-        p.textSize(48);
-      };
-      p.draw = function () {
-        p.background(204);
-        p.text('Left', x1, 50);
-        p.text('Right', x2, 150);
-        x2 += 2.0;
-        if (x2 > 240) {
-          x2 = -100;
-        }
-        x1 -= 1.0;
-        if (x1 < -100) {
-          x1 = 240;
-        }
-      };
-    };
-
-    let textFlickerSketch = function (p) {
-      p.setup = function () {
-        p.createCanvas(240, 160);
-        p.textSize(48);
-        p.noStroke();
-      };
-      p.draw = function () {
-        p.fill(204, 24);
-        p.rect(0, 0, p.width, p.height);
-        p.fill(0);
-        p.text('flicker Text', p.random(-100, 240), p.random(-20, 160));
-      };
-    };
-
-    let textFadeSketch = function (p) {
-      let opacity = 0;
-      let direction = 1;
-      p.setup = function () {
-        p.createCanvas(240, 160);
-        p.textSize(72);
-        p.noStroke();
-      };
-      p.draw = function () {
-        p.background(204);
-        opacity += 4 * direction;
-        if (opacity < 0 || opacity > 255) {
-          direction = -direction;
-        }
-        p.fill(0, opacity);
-        p.text('fade', 50, 100);
-      };
-    };
-
-    let textRotateSketch = function (p) {
-      let angle = 0.0;
-      p.setup = function () {
-        p.createCanvas(240, 160);
-        p.textSize(24);
-        p.noStroke();
-        p.fill(0);
-      };
-      p.draw = function () {
-        p.background(204);
-        angle += 0.05;
-        p.push();
-        p.translate(120, 80);
-        p.scale((p.cos(angle / 4.0) + 1.2) * 2.0);
-        p.rotate(angle);
-        p.text('Rotating', 0, 0);
-        p.pop();
-      };
-    };
-
-    let textGrowSketch = function (p) {
-      let angle = 0.0;
-      let str = 'GROW';
-      p.setup = function () {
-        p.createCanvas(240, 160);
-        p.textSize(24);
-        p.noStroke();
-        p.fill(0, 0, 0, 120);
-      };
-      p.draw = function () {
-        p.background(204);
-        angle += 0.1;
-        for (let i = 0; i < str.length; i++) {
-          let c = p.sin(angle + i / p.PI);
-          p.textSize((c + 1.0) * 40 + 10);
-          p.text(str.charAt(i), i * 40 + 20, 100);
-        }
-      };
-    };
-
-    let textAvoidSketch = function (p) {
-      p.setup = function () {
-        p.createCanvas(240, 160);
-        p.textSize(24);
-        p.noStroke();
-        p.fill(0);
-        p.textAlign(p.CENTER);
-      };
-      p.draw = function () {
-        p.background(204);
-        p.text('AVOID', p.width - p.mouseX, p.height - p.mouseY);
-      };
-    };
-
-    let textBendSketch = function (p) {
-      let str = 'Flexibility';
-      p.setup = function () {
-        p.createCanvas(240, 160);
-        p.textSize(30);
-        p.noStroke();
-        p.fill(0);
-      };
-      p.draw = function () {
-        p.background(204);
-        p.push();
-        p.translate(0, 33);
-        for (let i = 0; i < str.length; i++) {
-          let angle = p.max(0, p.map(p.mouseX, 0, p.width, 0, p.PI / 8));
-          p.rotate(angle);
-          p.text(str[i], 50, 0);
-          p.translate(p.textWidth(str[i]), 0);
-        }
-        p.pop();
-      };
-    };
-
-
-
-
     new p5(textSketch, 'textSketch');
     new p5(textToPointsSketch, 'textToPointsSketch');
     new p5(textStretchSketch, 'textStretchSketch'); // warnings
@@ -1820,26 +1654,26 @@
     new p5(textWidthSketch, 'textWidthSketch');
     new p5(typographyLetterSketch, 'typographyLetterSketch');
     new p5(textOverlapSketch, 'textOverlapSketch');
-
-
-    if (DISPLAY_ANIMATIONS) {
-      new p5(textToPointsAnimation, 'textToPointsAnimation');
-      new p5(textFlySketch, 'textFlySketch');
-      new p5(textFlickerSketch, 'textFlickerSketch');
-      new p5(textFadeSketch, 'textFadeSketch');
-      new p5(textRotateSketch, 'textRotateSketch');
-      new p5(textGrowSketch, 'textGrowSketch');
-      new p5(textAvoidSketch, 'textAvoidSketch');
-      new p5(textBendSketch, 'textBendSketch');
-    }
-
   </script>
+
+  <div id='textFontSketch'>
+    <p class="caption">textFont</p>
+    <img src="img/textFontSketch.p5.jpg" width="240" height="160" class="gray"></img>
+    <img src="img/textFontSketch.jpg" width="240" height="160" class="gray"></img>
+  </div>
+
+  <div id='loadedFontSketch'>
+    <p class="caption">loadFont</p>
+    <img src="img/loadedFontSketch.p5.png" width="240" height="240" class="gray"></img>
+  </div>
 
   <div id='textSketch'>
     <p class="caption">textAttributes</p>
     <img src="img/textSketch.p5.png" width="240" height="160"></img>
     <img src="img/textSketch.png" width="240" height="160"></img>
   </div>
+
+
 
   <div id='textToPointsSketch'>
     <p class="caption">textToPoints</p>
@@ -1920,17 +1754,6 @@
     <img src="img/multilineAlignChar.p5.png" width="960" height="160" class="gray"></img>
   </div>
 
-  <div id='textFontSketch'>
-    <p class="caption">textFont</p>
-    <img src="img/textFontSketch.p5.jpg" width="240" height="160" class="gray"></img>
-    <img src="img/textFontSketch.jpg" width="240" height="160" class="gray"></img>
-  </div>
-
-  <div id='loadedFontSketch'>
-    <p class="caption">loadFont</p>
-    <img src="img/loadedFontSketch.p5.png" width="240" height="240" class="gray"></img>
-  </div>
-
   <div id='textAlignSketch'>
     <p class="caption">textAlign</p>
     <img src="img/textAlignSketch.p5.png" width="240" height="160" class="gray"></img>
@@ -1999,25 +1822,6 @@
     <img src="img/textOverlapSketch.p5.png" width="240" height="160" class="gray"></img>
     <img src="img/textOverlapSketch.png" width="240" height="160" class="gray"></img>
   </div>
-
-  <!-- animations -->
-  <div id='textToPointsAnimation'>
-  </div>
-  <div id='textFlySketch'>
-  </div>
-  <div id='textFlickerSketch'>
-  </div>
-  <div id='textFadeSketch'>
-  </div>
-  <div id='textRotateSketch'>
-  </div>
-  <div id='textGrowSketch'>
-  </div>
-  <div id='textAvoidSketch'>
-  </div>
-  <div id='textBendSketch'>
-  </div>
-
 
 </body>
 

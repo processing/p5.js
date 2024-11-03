@@ -2,12 +2,8 @@ import * as constants from '../core/constants';
 
 /*
  * Next: 
- *  - tests: ctx.textRendering, ctx.wordSpacing, warning on fontStretch
- *    https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/wordSpacing
- *    https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/textRendering
- * 
+ *  - tests: warning on fontStretch/textStretch
  *  - test/handle alignment in textToPoints - should call text(...arg, ctx);
- *  - font warning for textStretch
  * 
  * Questions: 
  *   textProperty(ies) -> properties in states, mapped-states, context and canvas.style
@@ -340,7 +336,9 @@ function text2d(p5, fn, lifecycles) {
         return this._pInst;  // short-circuit if no change
       }
       this.states[opt] = val;
-      if (debug) console.log('this.states.' + opt + '="' + options[opt] + '"');
+      if (debug) {
+        console.log('this.states.' + opt + '="' + options[opt] + '"');
+      }
     }
     // does it exist in CanvasRenderingContext2D ?
     else if (opt in this.drawingContext) {
