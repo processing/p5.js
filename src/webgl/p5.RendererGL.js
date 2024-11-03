@@ -551,6 +551,7 @@ class RendererGL extends Renderer {
     const shader = this._drawingFilter && this.states.userFillShader
       ? this.states.userFillShader
       : this._getFillShader();
+    this._setGlobalUniforms(shader);
     this._setFillUniforms(shader);
 
     for (const buff of this.buffers.fill) {
@@ -575,6 +576,7 @@ class RendererGL extends Renderer {
     this._useLineColor = geometry.vertexStrokeColors.length > 0;
 
     const shader = this._getStrokeShader();
+    this._setGlobalUniforms(shader);
     this._setStrokeUniforms(shader);
 
     for (const buff of this.buffers.stroke) {
@@ -613,6 +615,7 @@ class RendererGL extends Renderer {
   _drawPoints(vertices, vertexBuffer) {
     const gl = this.GL;
     const pointShader = this._getPointShader();
+    this._setGlobalUniforms(pointShader);
     this._setPointUniforms(pointShader);
 
     this._bindBuffer(
@@ -2098,6 +2101,41 @@ class RendererGL extends Renderer {
 
   createFramebuffer(options) {
     return new Framebuffer(this, options);
+  }
+
+  _setGlobalUniforms(shader) {
+    shader.bindShader();
+
+    const modelMatrix = this.states.uModelMatrix;
+    const viewMatrix = this.states.uViewMatrix;
+    const projectionMatrix = this.states.uPMatrix;
+    const modelViewMatrix = (modelMatrix.copy()).mult(viewMatrix);
+    this.states.uMVMatrix = this.calculateCombinedMatrix();
+
+    const modelViewProjectionMatrix = modelViewMatrix.copy();
+    modelViewProjectionMatrix.mult(projectionMatrix);
+
+    shader.setUniform(
+      'uPerspective',
+      this.states.curCamera.useLinePerspective ? 1 : 0
+    );
+    shader.setUniform('uViewMatrix', viewMatrix.mat4);
+    shader.setUniform('uProjectionMatrix', projectionMatrix.mat4);
+    shader.setUniform('uModelMatrix', modelMatrix.mat4);
+    shader.setUniform('uModelViewMatrix', modelViewMatrix.mat4);
+    shader.setUniform(
+      'uModelViewProjectionMatrix',
+      modelViewProjectionMatrix.mat4
+    );
+    if (shader.uniforms.uNormalMatrix) {
+      this.states.uNMatrix.inverseTranspose(this.states.uMVMatrix);
+      shader.setUniform('uNormalMatrix', this.states.uNMatrix.mat3);
+    }
+    if (shader.uniforms.uCameraRotation) {
+      this.states.curMatrix.inverseTranspose(this.states.uViewMatrix);
+      shader.setUniform('uCameraRotation', this.states.curMatrix.mat3);
+    }
+    shader.setUniform('uViewport', this._viewport);
   }
 
   _setStrokeUniforms(strokeShader) {
