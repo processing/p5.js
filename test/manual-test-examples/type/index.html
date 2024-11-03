@@ -144,6 +144,18 @@
       };
     };
 
+    const textRenderingProp = function (p) {
+      p.setup = function () {
+        p.createCanvas(500, 150);
+        p.textFont('serif', '2em');
+        let opts = ['auto', 'optimizeSpeed', 'optimizeLegibility', 'geometricPrecision'];
+        for (let i = 0; i < opts.length; i++) {
+          p.textProperty('textRendering', opts[i]);
+          p.text(`Hello world (${opts[i] === 'auto' ? 'default: auto' : opts[i]})`, 10, 30 + 35 * i);
+        };
+      };
+    };
+
     const textToPointsSketch = function (p) {
       let pts, txs;
       p.setup = function () {
@@ -1783,6 +1795,7 @@
     new p5(wordSpacingSketch, 'wordSpacingSketch');
     new p5(fontKerningSketch, 'fontKerningSketch');
     new p5(fontVariantCapsSketch, 'fontVariantCapsSketch'); // warning
+    new p5(textRenderingProp, 'textRenderingProp'); // warning
     new p5(textBoundsSingle, 'textBoundsSingle');
     new p5(loadedBoundsSingle, 'loadedBoundsSingle');
     new p5(systemBoundsMulti, 'systemBoundsMulti');
@@ -1854,6 +1867,10 @@
 
   <div id='fontVariantCapsSketch'>
     <p class="caption">fontVariantCaps (differs between FF/Chrome)</p>
+  </div>
+
+  <div id='textRenderingProp'>
+    <p class="caption">textRendering property</p>
   </div>
 
   <div id='textBoundsSingle'>

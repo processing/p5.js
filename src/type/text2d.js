@@ -325,7 +325,7 @@ function text2d(p5, fn, lifecycles) {
    */
   p5.Renderer2D.prototype.textProperty = function (opt, val) {
 
-    let dbug = false;
+    let debug = false;
 
     // getter: return option from this.states or this.drawingContext
     if (typeof val === 'undefined') {
@@ -340,15 +340,15 @@ function text2d(p5, fn, lifecycles) {
         return this._pInst;  // short-circuit if no change
       }
       this.states[opt] = val;
-      if (dbug) console.log('this.states.' + opt + '="' + options[opt] + '"');
+      if (debug) console.log('this.states.' + opt + '="' + options[opt] + '"');
     }
     // does it exist in CanvasRenderingContext2D ?
     else if (opt in this.drawingContext) {
-      this._setContextProperty(opt, val);
+      this._setContextProperty(opt, val, debug);
     }
     // does it exist in the canvas.style ?
     else if (opt in this.canvas.style) {
-      this._setCanvasStyleProperty(opt, val.toString());
+      this._setCanvasStyleProperty(opt, val.toString(), debug);
     }
     else {
       console.warn('Ignoring unknown text rendering option: "' + opt + '"\n');
@@ -448,7 +448,7 @@ function text2d(p5, fn, lifecycles) {
     }
   };
 
-  p5.Renderer2D.prototype._setContextProperty = function (prop, val, dbug = false) {
+  p5.Renderer2D.prototype._setContextProperty = function (prop, val, debug = false) {
     
     // is it a property mapped to one managed in this.states ?
     let managed = Object.entries(p5.Renderer2D.FontProps)
@@ -461,7 +461,9 @@ function text2d(p5, fn, lifecycles) {
         return this._pInst;  // short-circuit if no change
       }
       this.states[state] = val;
-      if (dbug) console.log('set mapped property "' + prop + '"/"' + state + '" to "' + val + '"');
+      if (debug) {
+        console.log('set mapped states.' + prop + '/' + state + '="' + val + '"');
+      }
       return this._pInst;
     }
 
@@ -474,7 +476,9 @@ function text2d(p5, fn, lifecycles) {
     // by adding [property, value] to context-queue for later application
     (p5.Renderer2D.ContextQueue ??= []).push([prop, val]);
 
-    if (dbug) console.log('stack: context property "' + prop + '" = "' + val + '"');
+    if (debug) {
+      console.log('queued context2d.' + prop + '="' + val + '"');
+    }
   };
 
   p5.Renderer2D.prototype._fontSizePx = function (size, font = this.states.textFont) {
