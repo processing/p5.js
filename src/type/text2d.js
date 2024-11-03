@@ -31,8 +31,6 @@ function text2d(p5, fn, lifecycles) {
   const QuotedRe = /^".*"$/;
   const TabsRe = /\t/g;
 
-  let ContextQueue, CachedCanvas, CachedDiv; // lazy
-
   const textFunctions = [
     'text',
     'textAlign',
@@ -74,10 +72,11 @@ function text2d(p5, fn, lifecycles) {
   // note: font must be first here otherwise it may reset other properties
   const ContextProps = ['font', 'direction', 'fillStyle', 'filter', 'fontKerning', 'fontStretch', 'fontVariantCaps', 'globalAlpha', 'globalCompositeOperation', 'imageSmoothingEnabled', 'imageSmoothingQuality', 'letterSpacing', 'lineCap', 'lineDashOffset', 'lineJoin', 'lineWidth', 'miterLimit', 'shadowBlur', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY', 'strokeStyle', 'textAlign', 'textBaseline', 'textRendering', 'wordSpacing'];
 
+  let ContextQueue, CachedCanvas, CachedDiv; // lazy
+
   ////////////////////////////// start API ///////////////////////////////
 
   p5.Renderer2D.prototype.text = function (str, x, y, width, height) {
-
 
     let setBaseline = this.drawingContext.textBaseline; // store current baseline
     let leading = this.states.textLeading;
@@ -105,7 +104,7 @@ function text2d(p5, fn, lifecycles) {
   };
 
   p5.Renderer2D.prototype.textAlign = function (h, v) {
-    // setter
+    // the setter
     if (typeof h !== 'undefined') {
       this.drawingContext.textAlign = h;
       if (typeof v !== 'undefined') {
@@ -116,7 +115,7 @@ function text2d(p5, fn, lifecycles) {
       }
       return this._applyTextProperties();
     }
-    // getter
+    // the getter
     return {
       horizontal: this.drawingContext.textAlign,
       vertical: this.drawingContext.textBaseline
@@ -208,12 +207,14 @@ function text2d(p5, fn, lifecycles) {
   }
 
   p5.Renderer2D.prototype.textLeading = function (leading) {
+    // the setter
     if (typeof leading === 'number') {
       this.states.leadingSet = true;
       this.states.textLeading = leading;
       return this._pInst;
     }
-    return this.states.textLeading; // TODO: can we use lineHeight here ?
+    // the getter
+    return this.states.textLeading; // TODO: use lineHeight here ? no
   }
 
   /**
@@ -236,6 +237,7 @@ function text2d(p5, fn, lifecycles) {
 
   p5.Renderer2D.prototype.textStyle = function (s) {
 
+    // the setter
     if (typeof s !== 'undefined') {
       if (s === constants.NORMAL ||
         s === constants.ITALIC ||
@@ -245,13 +247,14 @@ function text2d(p5, fn, lifecycles) {
       }
       return this._applyTextProperties();
     }
+    // the getter
     return this.states.textStyle;
   }
 
   p5.Renderer2D.prototype.textWrap = function (wrapStyle) {
 
     if (wrapStyle === constants.WORD || wrapStyle === constants.CHAR) {
-      this.states.textWrap = wrapStyle;  // TODO: is there a prop we can use ?
+      this.states.textWrap = wrapStyle;
       return this._pInst;
     }
     return this.states.textWrap;
@@ -278,15 +281,13 @@ function text2d(p5, fn, lifecycles) {
     // render the text to the hidden canvas
     ctx.fillText(s, x, y);
 
-    // TODO: scale up smaller font-sizes for better resolution
-
     // get the pixel data from the hidden canvas
     const imageData = ctx.getImageData(0, 0, cvs.width, cvs.height).data;
     const points = [];
     for (let y = 0; y < cvs.height; y += 4) {
       for (let x = 0; x < cvs.width; x += 4) {
         const idx = (y * cvs.width + x) * 4;
-        if (imageData[idx + 3] > 128) { // threshold alpha (better with averaging?)
+        if (imageData[idx + 3] > 128) { // threshold alpha (averaging?)
           points.push({ x, y });
         }
       }
@@ -327,7 +328,7 @@ function text2d(p5, fn, lifecycles) {
     }
     // does it exist in the canvas.style ?
     else if (opt in this.canvas.style) {
-      this._setCanvasStyleProperty(opt, val.toString(), debug);
+      this._setCanvasStyleProperty(opt, val, debug);
     }
     else {
       console.warn('Ignoring unknown text rendering option: "' + opt + '"\n'); // FES?
@@ -385,6 +386,10 @@ function text2d(p5, fn, lifecycles) {
 
   /////////////////////////////// end API ////////////////////////////////
 
+  /*
+    Compute the bounds for a block of text based on the specified 
+    measure function, either _textBoundsSingle or _fontBoundsSingle
+  */
   p5.Renderer2D.prototype._computeBounds = function (measureFunc, str, x, y, width, height) {
     let setBaseline = this.drawingContext.textBaseline;
     let leading = this.states.textLeading;
@@ -411,22 +416,26 @@ function text2d(p5, fn, lifecycles) {
     return bounds;
   };
 
+  /*
+    Attempts to set a property directly on the canvas.style object
+  */
   p5.Renderer2D.prototype._setCanvasStyleProperty = function (opt, val) {
 
-    // check if the value is actually different, else short-circuit
-    if (this.canvas.style[opt] === val) {
-      return this._pInst;
-    }
-
     // lets try to set it on the canvas style
-    this.canvas.style[opt] = val;
+    this.canvas.style[opt] = val.toString();
 
     // check if the value was set successfully
-    if (this.canvas.style[opt] !== val) {
-      console.warn(`Unable to set '${opt}' property on canvas.style. It may not be supported.`); // FES?
+    if (this.canvas.style[opt] !== val.toString()) {
+      console.warn(`Unable to set '${opt}' property` // FES?
+        + ' on canvas.style. It may not be supported.');
     }
   };
 
+  /*
+    For properties not directly managed by the renderer in this.states
+      we check if it has a mapping to a property in this.states
+    Otherwise, add the property to the context-queue for later application
+  */
   p5.Renderer2D.prototype._setContextProperty = function (prop, val, debug = false) {
 
     // is it a property mapped to one managed in this.states ?
@@ -808,7 +817,10 @@ function text2d(p5, fn, lifecycles) {
     return this._pInst;
   };
 
-  // text() calls this method to render text
+  /* 
+    Render a single line of text at the given position
+    called by text() to render each line
+  */
   p5.Renderer2D.prototype._renderText = function (line, x, y, maxY, minY) { // TODO: remove maxY, minY
 
     let states = this.states;

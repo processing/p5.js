@@ -1,8 +1,8 @@
 function font(p5, fn) {
 
   const validFontTypes = ['ttf', 'otf', 'woff', 'woff2'];
-  const validFontTypesRE = new RegExp(`\\.(${validFontTypes.join('|')})`, 'i');
-  const extractFontNameRE = new RegExp(`([^/]+)(\\.(?:${validFontTypes.join('|')}))`, 'i');
+  const validFontTypesRe = new RegExp(`\\.(${validFontTypes.join('|')})`, 'i');
+  const extractFontNameRe = new RegExp(`([^/]+)(\\.(?:${validFontTypes.join('|')}))`, 'i');
   const invalidFontError = 'Sorry, only TTF, OTF, WOFF and WOFF2 files are supported.';
 
   p5.Font = class Font {
@@ -32,7 +32,7 @@ function font(p5, fn) {
 
     static async create(...args/*path, name, onSuccess, onError*/) {
 
-      let { path, name, success, error, descriptors } = parseCreateArgs(...args);
+      let { path, name, success, error, descriptors } = _parseCreateArgs(...args);
 
       return await new Promise((resolve, reject) => {
         let pfont = new p5.Font(this/*p5 instance*/, name, path, descriptors);
@@ -59,7 +59,7 @@ function font(p5, fn) {
 
   }// end p5.Font
 
-  function parseCreateArgs(...args/*path, name, onSuccess, onError*/) {
+  function _parseCreateArgs(...args/*path, name, onSuccess, onError*/) {
 
     // parse the path
     let path = args.shift();
@@ -72,9 +72,9 @@ function font(p5, fn) {
     if (typeof args[0] === 'string') {
       name = args.shift();
     }
-    else if (validFontTypesRE.test(path)) {
+    else if (validFontTypesRe.test(path)) {
       // try to extract the name from the path
-      let matches = extractFontNameRE.exec(path);
+      let matches = extractFontNameRe.exec(path);
       if (matches && matches.length >= 3) {
         name = matches[1];
       }
