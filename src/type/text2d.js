@@ -2,7 +2,7 @@ import * as constants from '../core/constants';
 
 /*
  * Next: 
- *  - tests: ctx.textRendering, ctx.wordSpacing
+ *  - tests: ctx.textRendering, ctx.wordSpacing, warning on fontStretch
  *    https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/wordSpacing
  *    https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/textRendering
  * 
@@ -187,7 +187,7 @@ function text2d(p5, fn, lifecycles) {
    * @param {object} options - additional options for rendering text, see p5.Renderer2D.FontProps
    */
   p5.Renderer2D.prototype.textFont = function (theFont, theSize, options) {
-
+    
     this._initFontProps();
 
     if (arguments.length === 0) {

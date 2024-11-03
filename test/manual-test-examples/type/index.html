@@ -104,16 +104,14 @@
       };
     };
 
-
     const wordSpacingSketch = function (p) {
       p.setup = function () {
         p.createCanvas(650, 375);
         p.textSize('2em');
         for (let i = 0; i < 10; i++) {
-          let ls = p.map(i, 0, 10, -3, 7) + 'px';
+          let ls = p.map(i, 0, 10, 0, 60) + 'px';
           p.textProperty('wordSpacing', ls);
-          let key = (ls === 0) ? 'default' : 'wordSpacing';
-          p.text(`Hello world (${key}: ${ls})`, 5, 35 * (i + 1));
+          p.text(`Hello world (wordSpacing: ${ls})`, 5, 35 * (i + 1));          
         };
       };
     };
@@ -139,9 +137,8 @@
         let opts = ['small-caps', "all-small-caps", "petite-caps", "all-petite-caps", "unicase", "titling-caps"];
         p.text(`Hello World  (${this.drawingContext.fontVariantCaps})`, 5, 35);
         for (let i = 0; i < opts.length; i++) {
-          let k = opts[i];
-          p.textProperty('fontVariantCaps', k);
-          p.text(`Hello World  (${k})`, 5, 35 * (i + 2));
+          p.textProperty('fontVariantCaps', opts[i]);
+          p.text(`Hello World  (${opts[i]})`, 5, 35 * (i + 2));
         };
         //console.log(p.textProperties());
       };
@@ -1776,44 +1773,41 @@
     };
 
 
-    if (0) {
-      new p5(textSizeSketch, 'textSizeSketch');
-    }
-    else {
-      new p5(textSketch, 'textSketch');
-      new p5(textToPointsSketch, 'textToPointsSketch');
-      new p5(textStretchSketch, 'textStretchSketch');
-      new p5(textStretchViaProp, 'textStretchViaProp');
-      new p5(letterSpacingSketch, 'letterSpacingSketch');
-      new p5(wordSpacingSketch, 'wordSpacingSketch');
-      new p5(fontKerningSketch, 'fontKerningSketch');
-      new p5(fontVariantCapsSketch, 'fontVariantCapsSketch');
 
-      new p5(textBoundsSingle, 'textBoundsSingle');
-      new p5(loadedBoundsSingle, 'loadedBoundsSingle');
-      new p5(systemBoundsMulti, 'systemBoundsMulti');
-      new p5(loadedSystemBoundsMulti, 'loadedSystemBoundsMulti');
-      new p5(manualLineBreaksLeft, 'manualLineBreaksLeft');
-      new p5(manualLineBreaks, 'manualLineBreaks');
-      new p5(textBoundsSingle2, 'textBoundsSingle2');
-      new p5(textVerticalAlign, 'textVerticalAlign');
-      new p5(multilineAlignWord, 'multilineAlignWord');
-      new p5(multilineAlignChar, 'multilineAlignChar');
-      new p5(textFontSketch, 'textFontSketch');
-      new p5(loadedFontSketch, 'loadedFontSketch');
-      new p5(textAlignSketch, 'textAlignSketch');
-      new p5(textAllAlignmentsSketch, 'textAllAlignmentsSketch');
-      new p5(textAllAlignmentsSketch, 'textAllAlignmentsSketch2');
-      new p5(textLeadingTop, 'textLeadingTop');
-      new p5(textLeadingCenter, 'textLeadingCenter');
-      new p5(textLeadingBaseline, 'textLeadingBaseline');
-      new p5(textLeadingBottom, 'textLeadingBottom');
-      new p5(textSizeSketch, 'textSizeSketch');
-      new p5(textStyleSketch, 'textStyleSketch');
-      new p5(textWidthSketch, 'textWidthSketch');
-      new p5(typographyLetterSketch, 'typographyLetterSketch');
-      new p5(textOverlapSketch, 'textOverlapSketch');
-    }
+
+    new p5(textSketch, 'textSketch');
+    new p5(textToPointsSketch, 'textToPointsSketch');
+    new p5(textStretchSketch, 'textStretchSketch'); // warnings
+    new p5(textStretchViaProp, 'textStretchViaProp'); // warnings
+    new p5(letterSpacingSketch, 'letterSpacingSketch');
+    new p5(wordSpacingSketch, 'wordSpacingSketch');
+    new p5(fontKerningSketch, 'fontKerningSketch');
+    new p5(fontVariantCapsSketch, 'fontVariantCapsSketch'); // warning
+    new p5(textBoundsSingle, 'textBoundsSingle');
+    new p5(loadedBoundsSingle, 'loadedBoundsSingle');
+    new p5(systemBoundsMulti, 'systemBoundsMulti');
+    new p5(loadedSystemBoundsMulti, 'loadedSystemBoundsMulti');
+    new p5(manualLineBreaksLeft, 'manualLineBreaksLeft');
+    new p5(manualLineBreaks, 'manualLineBreaks');
+    new p5(textBoundsSingle2, 'textBoundsSingle2');
+    new p5(textVerticalAlign, 'textVerticalAlign');
+    new p5(multilineAlignWord, 'multilineAlignWord');
+    new p5(multilineAlignChar, 'multilineAlignChar');
+    new p5(textFontSketch, 'textFontSketch');
+    new p5(loadedFontSketch, 'loadedFontSketch');
+    new p5(textAlignSketch, 'textAlignSketch');
+    new p5(textAllAlignmentsSketch, 'textAllAlignmentsSketch');
+    new p5(textAllAlignmentsSketch, 'textAllAlignmentsSketch2');
+    new p5(textLeadingTop, 'textLeadingTop');
+    new p5(textLeadingCenter, 'textLeadingCenter');
+    new p5(textLeadingBaseline, 'textLeadingBaseline');
+    new p5(textLeadingBottom, 'textLeadingBottom');
+    new p5(textSizeSketch, 'textSizeSketch');
+    new p5(textStyleSketch, 'textStyleSketch');
+    new p5(textWidthSketch, 'textWidthSketch');
+    new p5(typographyLetterSketch, 'typographyLetterSketch');
+    new p5(textOverlapSketch, 'textOverlapSketch');
+
 
     if (DISPLAY_ANIMATIONS) {
       new p5(textToPointsAnimation, 'textToPointsAnimation');
