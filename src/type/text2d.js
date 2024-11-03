@@ -19,6 +19,9 @@ import * as constants from '../core/constants';
  *   fontSizeAdjust issue (see html) - is this true of all canvas.style properties
  *   search 'QUESTION:'
  *   _initFontProps to constructor?
+ * 
+ *  TODO:
+ *    - textToPoints: alignments, line-breaking, better thresholding, scaling for small fonts
  */
 
 /**
@@ -343,58 +346,16 @@ function text2d(p5, fn, lifecycles) {
     else if (opt in this.drawingContext) {
       this._setContextProperty(opt, val);
     }
+    // does it exist in the canvas.style ?
+    else if (opt in this.canvas.style) {
+      this._setCanvasStyleProperty(opt, val.toString());
+    }
     else {
-      if (opt in this.drawingContext.canvas.style) {
-
-        val = val.toString(); // ensure it's a string
-
-        // check if the value is actually different
-        if (this.drawingContext.canvas.style[opt] === val) {
-          return this._pInst;  // short-circuit if no change
-        }
-
-        // lets try to set it on the canvas style
-        this.drawingContext.canvas.style[opt] = val;
-
-        // check if the value was set successfully
-        if (this.drawingContext.canvas.style[opt] !== val) {
-          console.warn(`Unable to set '${opt}' property on canvas.style. It may not be supported.`);
-        }
-      }
-      else {
-        console.warn('Ignoring unknown text rendering option: "' + opt + '"\n');
-      }
+      console.warn('Ignoring unknown text rendering option: "' + opt + '"\n');
     }
 
     // only if we've modified something
     return this._applyTextProperties();
-  };
-
-  p5.Renderer2D.prototype._setContextProperty = function (prop, val, dbug = false) {
-    // is it a property mapped to one managed in this.states ?
-    let managed = Object.entries(p5.Renderer2D.FontProps)
-      .find(([_, v]) => v.property === prop);
-
-    // then set the mapped property in this.states instead
-    if (managed && managed.length && managed[0] in this.states) {
-      let state = managed[0];
-      if (this.states[state] === val) {
-        return this._pInst;  // short-circuit if no change
-      }
-      this.states[state] = val;
-      if (dbug) console.log('set mapped property "' + prop + '"/"' + state + '" to "' + val + '"');
-      return this._pInst;
-    }
-
-    // check if the value is actually different
-    if (this.drawingContext[prop] === val) {
-      return this._pInst;  // short-circuit if no change
-    }
-
-    // otherwise, we will set the property directly on the `this.drawingContext`
-    // add [property, value] to context-queue for later application
-    (p5.Renderer2D.ContextQueue ??= []).push([prop, val]);
-    if (dbug) console.log('stack: context property "' + prop + '" = "' + val + '"');
   };
 
   /**
@@ -467,6 +428,53 @@ function text2d(p5, fn, lifecycles) {
 
     this.drawingContext.textBaseline = setBaseline; // restore baseline
     return bounds;
+  };
+
+  p5.Renderer2D.prototype._setCanvasStyleProperty = function (opt, val) {
+
+    //console.log('_setCanvasStyleProperty(' + opt + ', "' + val + '")');
+
+    // check if the value is actually different, else short-circuit
+    if (this.canvas.style[opt] === val) {
+      return this._pInst;
+    }
+
+    // lets try to set it on the canvas style
+    this.canvas.style[opt] = val;
+
+    // check if the value was set successfully
+    if (this.canvas.style[opt] !== val) {
+      console.warn(`Unable to set '${opt}' property on canvas.style. It may not be supported.`);
+    }
+  };
+
+  p5.Renderer2D.prototype._setContextProperty = function (prop, val, dbug = false) {
+    
+    // is it a property mapped to one managed in this.states ?
+    let managed = Object.entries(p5.Renderer2D.FontProps)
+      .find(([_, v]) => v.property === prop);
+
+    // if so, set the mapped property in this.states instead
+    if (managed && managed.length && managed[0] in this.states) {
+      let state = managed[0];
+      if (this.states[state] === val) {
+        return this._pInst;  // short-circuit if no change
+      }
+      this.states[state] = val;
+      if (dbug) console.log('set mapped property "' + prop + '"/"' + state + '" to "' + val + '"');
+      return this._pInst;
+    }
+
+    // check if the value is actually different, else short-circuit
+    if (this.drawingContext[prop] === val) {
+      return this._pInst;
+    }
+
+    // otherwise, we will set the property directly on the `this.drawingContext`
+    // by adding [property, value] to context-queue for later application
+    (p5.Renderer2D.ContextQueue ??= []).push([prop, val]);
+
+    if (dbug) console.log('stack: context property "' + prop + '" = "' + val + '"');
   };
 
   p5.Renderer2D.prototype._fontSizePx = function (size, font = this.states.textFont) {
