@@ -5,6 +5,7 @@ import * as constants from '../core/constants';
  *  - tests: ctx.textRendering, ctx.wordSpacing
  *    https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/wordSpacing
  *    https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/textRendering
+ * 
  *  - test/handle alignment in textToPoints - should call text(...arg, ctx);
  * 
  * Questions: 
@@ -94,6 +95,7 @@ function text2d(p5, fn, lifecycles) {
 
   p5.Renderer2D.prototype.text = function (str, x, y, width, height) {
 
+    
     let setBaseline = this.drawingContext.textBaseline; // store current baseline
     let leading = this.states.textLeading;
 
@@ -279,6 +281,8 @@ function text2d(p5, fn, lifecycles) {
 
     // render the text to the hidden canvas
     ctx.fillText(s, x, y);
+
+    // TODO: scale up smaller font-sizes for better resolution
 
     // get the pixel data from the hidden canvas
     const imageData = ctx.getImageData(0, 0, cvs.width, cvs.height).data;
@@ -567,9 +571,10 @@ function text2d(p5, fn, lifecycles) {
 
     let { textFont, textSize, textHeight } = this.states;
 
-    let parts = textFont.split(/,\s+/);
+    console.log('textFont="' + textFont + '"');
+    
+    let parts = textFont.split(/,\s+/); // handle complex names and fallbacks
     let family = parts.map(f => f.indexOf(' ') > -1 ? `"${f.trim()}"` : f.trim()).join(', ');
-    console.log('family: ' + family);
 
     let size = `${textSize}px` + (textHeight !== constants.NORMAL ? `/${textHeight} ` : ' ');
     let textStretch = this.states.textStretch !== constants.NORMAL ? `${this.states.textStretch} ` : '';
@@ -579,7 +584,8 @@ function text2d(p5, fn, lifecycles) {
     let fontString = `${textStretch}${textStyle}${textWeight}${textVariant}${size}${family}`;
 
     this.drawingContext.font = fontString.trim();
-
+    console.log('ctx.font=\'' + this.drawingContext.font+"'");
+    
     // apply each property in queue after setting font so they're not overridden
     while (p5.Renderer2D?.ContextQueue?.length) {
       let [prop, val] = p5.Renderer2D.ContextQueue.shift();
@@ -643,6 +649,8 @@ function text2d(p5, fn, lifecycles) {
     }
     else {
       if (opt in this.drawingContext.canvas.style) {
+
+        val = val.toString(); // ensure it's a string
 
         // check if the value is actually different
         if (this.drawingContext.canvas.style[opt] === val) {
@@ -731,7 +739,7 @@ function text2d(p5, fn, lifecycles) {
         this._setFill(constants._DEFAULT_TEXT_FILL);
       }
 
-      //console.log('fillText: "' + line + '" fvc: ' + this.drawingContext.fontVariantCaps);
+      //console.log('fillText: "' + line + '"');
       this.drawingContext.fillText(line, x, y);
     }
     //this._pInst.pop(); //DH: removed
