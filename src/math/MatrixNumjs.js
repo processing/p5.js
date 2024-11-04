@@ -39,6 +39,7 @@ if (typeof Float32Array !== "undefined") {
  *
  *   // Create Vector objects.
  *   let p1 = createMatrix(1,1,1,1,1,1,1,1,1);
+ *   console.log(p1);
  * }
  * </code>
  * </div>
@@ -80,9 +81,9 @@ class MatrixNumjs {
    */
   reset() {
     if (this._mat3) {
-      this._mat3 = nj.identity(3);
+      this._mat3 = nj.identity(3).flatten();
     } else if (this._mat4) {
-      this._mat4 = nj.identity(4);
+      this._mat4 = nj.identity(4).flatten();
     }
     return this;
   }
@@ -120,15 +121,26 @@ class MatrixNumjs {
     return this;
   }
 
+  setMat3Elem(index, value) {
+    if (this._mat3) {
+      this._mat3.set(index, value)
+    }
+   return this 
+  }
+
+  setMat4Elem(index, value) {
+    if (this._mat4) {
+    this._mat4.set(index, value)
+    }
+   return this 
+  }
   /**
    * Gets a copy of the vector, returns a MatrixNumjs object.
    *
    * @return {MatrixNumjs} the copy of the MatrixNumjs object
    */
   get() {
-    
     let temp = new MatrixNumjs(this.mat4);
-    console.log(temp)
     return new MatrixNumjs(this.mat4);
   }
 
@@ -142,10 +154,12 @@ class MatrixNumjs {
   copy() {
     if (this._mat3 !== undefined) {
       const copied3x3 = new MatrixNumjs("mat3", this._mat3.tolist());
+      copied3x3._mat3=copied3x3._mat3.flatten()
       return copied3x3;
     }
     const copied = new MatrixNumjs(this._mat4.tolist());
     // copied.set(this);
+      copied._mat4=copied._mat4.flatten()
     return copied;
   }
 
@@ -347,6 +361,7 @@ class MatrixNumjs {
       // p5._friendlyError("sorry, this function only works with mat3");
     } else {
       //convert mat4 -> mat3
+      this._mat3 = this._mat3.flatten()
       this._mat3.set(0, mat4[0]);
       this._mat3.set(1, mat4[1]);
       this._mat3.set(2, mat4[2]);
@@ -515,7 +530,7 @@ class MatrixNumjs {
       z = x[2];
       x = x[0]; // must be last
     }
-
+    this._mat4 = this._mat4.flatten()
     const vect = nj.array([x, y, z, 1]);
     this._mat4.set(0, x * this._mat4.get(0));
     this._mat4.set(1, x * this._mat4.get(1));
@@ -558,6 +573,7 @@ class MatrixNumjs {
     z *= 1 / len;
 
     // const aMat = this._mat4.reshape(4,4)
+    this._mat4 = this._mat4.flatten()
     const a00 = this._mat4.get(0);
     const a01 = this._mat4.get(1);
     const a02 = this._mat4.get(2);
@@ -614,35 +630,13 @@ class MatrixNumjs {
     const x = v[0],
       y = v[1],
       z = v[2] || 0;
-    this._mat4.set(
-      12,
-      this._mat4.get(0) * x +
-        this._mat4.get(4) * y +
-        this._mat4.get(8) * z +
-        this._mat4.get(12)
-    );
-    this._mat4.set(
-      13,
-      this._mat4.get(1) * x +
-        this._mat4.get(5) * y +
-        this._mat4.get(9) * z +
-        this._mat4.get(13)
-    );
-    this._mat4.set(
-      14,
-      this._mat4.get(2) * x +
-        this._mat4.get(6) * y +
-        this._mat4.get(10) * z +
-        this._mat4.get(14)
-    );
-    this._mat4.set(
-      15,
-      this._mat4.get(3) * x +
-        this._mat4.get(7) * y +
-        this._mat4.get(11) * z +
-        this._mat4.get(15)
-    );
+    this._mat4=  this._mat4.flatten()
+    this._mat4.set( 12, this._mat4.get(0) * x + this._mat4.get(4) * y + this._mat4.get(8) * z + this._mat4.get(12));
+    this._mat4.set( 13, this._mat4.get(1) * x + this._mat4.get(5) * y + this._mat4.get(9) * z + this._mat4.get(13));
+    this._mat4.set( 14, this._mat4.get(2) * x + this._mat4.get(6) * y + this._mat4.get(10) * z + this._mat4.get(14));
+    this._mat4.set( 15, this._mat4.get(3) * x + this._mat4.get(7) * y + this._mat4.get(11) * z + this._mat4.get(15));
   }
+
   rotateX(a) {
     this.rotate(a, 1, 0, 0);
   }
@@ -665,6 +659,7 @@ class MatrixNumjs {
     const f = 1.0 / Math.tan(fovy / 2),
       nf = 1 / (near - far);
 
+    this._mat4 = this._mat4.flatten()
     this._mat4.set(0, f / aspect);
     this._mat4.set(1, 0);
     this._mat4.set(2, 0);
@@ -699,6 +694,7 @@ class MatrixNumjs {
     const lr = 1 / (left - right),
       bt = 1 / (bottom - top),
       nf = 1 / (near - far);
+    this._mat4 = this._mat4.flatten()
     this._mat4.set(0, -2 * lr);
     this._mat4.set(1, 0);
     this._mat4.set(2, 0);
@@ -887,15 +883,16 @@ class MatrixNumjs {
    */
   createSubMatrix3x3() {
     const result = new MatrixNumjs("mat3");
-    result._mat3.set(0, 0, this._mat4.get(0));
-    result._mat3.set(0, 1, this._mat4.get(1));
-    result._mat3.set(0, 2, this._mat4.get(2));
-    result._mat3.set(0, 3, this._mat4.get(4));
-    result._mat3.set(0, 4, this._mat4.get(5));
-    result._mat3.set(0, 5, this._mat4.get(6));
-    result._mat3.set(0, 6, this._mat4.get(8));
-    result._mat3.set(0, 7, this._mat4.get(9));
-    result._mat3.set(0, 8, this._mat4.get(10));
+    result._mat3 = result._mat3.flatten()
+    result._mat3.set(0, this._mat4.get(0));
+    result._mat3.set(1, this._mat4.get(1));
+    result._mat3.set(2, this._mat4.get(2));
+    result._mat3.set(3, this._mat4.get(4));
+    result._mat3.set(4, this._mat4.get(5));
+    result._mat3.set(5, this._mat4.get(6));
+    result._mat3.set(6, this._mat4.get(8));
+    result._mat3.set(7, this._mat4.get(9));
+    result._mat3.set(8, this._mat4.get(10));
     return result;
   }
 

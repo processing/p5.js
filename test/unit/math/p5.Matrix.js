@@ -441,4 +441,117 @@ suite("p5.Matrix", function () {
       expect(det).toBeCloseTo(0);
     });
   });
+
+  describe("invert", () => {
+    it("should correctly invert a 4x4 matrix", () => {
+      const matrix = new p5.Matrix([
+        1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+      ]);
+
+      const invertedMatrix = matrix.invert(matrix);
+
+      expect(invertedMatrix.mat4).toEqual([
+        1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+      ]);
+    });
+
+    it("should return null for a non-invertible matrix", () => {
+      const matrix = new p5.Matrix([
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      ]);
+
+      const invertedMatrix = matrix.invert(matrix);
+
+      expect(invertedMatrix).toBeNull();
+    });
+
+    it("should correctly invert a non-identity 4x4 matrix", () => {
+      const matrix = new p5.Matrix([
+        1, 1, 1, 1, 1, -1, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0,
+      ]);
+
+      const invertedMatrix = matrix.invert(matrix);
+
+      expect(invertedMatrix.mat4).toEqual([
+        0, 0, 0, 1, 0, 0, 1, -1, 0, 1, 1, -2, 1, -1, -2, 2,
+      ]);
+    });
+  });
+  //
+  describe("invert3x3", () => {
+    it("should correctly invert a 3x3 matrix", () => {
+      const matrix = new p5.Matrix("mat3", [
+        1, 2, 3,
+        0, 1, 4,
+        5, 6, 0
+      ]);
+      const invertedMatrix = matrix.invert3x3();
+
+      expect(invertedMatrix.mat3).toEqual([
+        -24, 18, 5,
+        20, -15, -4,
+        -5, 4, 1
+      ]);
+    });
+
+    it("should return null for a non-invertible 3x3 matrix", () => {
+      const matrix = new p5.Matrix("mat3", [
+        1, 2, 3,
+        4, 5, 6,
+        7, 8, 9
+      ]);
+      const invertedMatrix = matrix.invert3x3();
+
+      expect(invertedMatrix).toBeNull();
+    });
+
+    it("should return the identity matrix when inverting the identity matrix", () => {
+      const matrix = new p5.Matrix("mat3", [
+        1, 0, 0,
+        0, 1, 0,
+        0, 0, 1
+      ]);
+      const invertedMatrix = matrix.invert3x3();
+
+      expect(invertedMatrix.mat3).toEqual([
+        1, 0, 0,
+        0, 1, 0,
+        0, 0, 1
+      ]);
+    });
+  });
+
+describe("mat set element", () => {
+    it("should set element of mat4 matrix", () => {
+      const matrix = new p5.Matrix( [
+        1, 2, 3, 5,
+        0, 1, 4, 5,
+        5, 6, 0, 5,
+        5, 6, 0, 5,
+      ]);
+      const invertedMatrix = matrix.setMat4Elem(2,0);
+
+      expect(invertedMatrix.mat4).toEqual([
+        1, 2, 0, 5,
+        0, 1, 4, 5,
+        5, 6, 0, 5,
+        5, 6, 0, 5,
+      ]);
+    });
+
+ it("should set element of mat3 matrix", () => {
+      const matrix = new p5.Matrix('mat3', [
+        1, 2, 3,
+        0, 1, 4,
+        5, 6, 0
+      ]);
+      const invertedMatrix = matrix.setMat3Elem(2,0);
+
+      expect(invertedMatrix.mat3).toEqual([
+        1, 2, 0,
+        0, 1, 4,
+        5, 6, 0,
+      ]);
+    });
+  });
 });
