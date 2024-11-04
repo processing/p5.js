@@ -1667,6 +1667,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // So that the activeImageLight gets reset in push/pop
     properties.activeImageLight = this.activeImageLight;
 
+    properties.textureMode = this.textureMode;
+
     return style;
   }
   pop(...args) {
