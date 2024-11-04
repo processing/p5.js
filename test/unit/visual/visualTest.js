@@ -1,7 +1,7 @@
-import p5 from '../../../src/app.js';
-import { server } from '@vitest/browser/context'
-import { THRESHOLD } from '../../../src/core/constants.js';
-const { readFile, writeFile } = server.commands
+import p5 from "../../../src/app.js";
+import { server } from "@vitest/browser/context";
+import { THRESHOLD } from "../../../src/core/constants.js";
+const { readFile, writeFile } = server.commands;
 
 // By how much can each color channel value (0-255) differ before
 // we call it a mismatch? This should be large enough to not trigger
@@ -21,11 +21,11 @@ const MAX_SIDE = 50;
 // diffing. This is used because canvas DIFFERENCE blend mode
 // does not handle alpha well. This should be a color that is
 // unlikely to be in the images originally.
-const BG = '#F0F';
+const BG = "#F0F";
 
 function writeImageFile(filename, base64Data) {
   const prefix = /^data:image\/\w+;base64,/;
-  writeFile(filename, base64Data.replace(prefix, ''), 'base64');
+  writeFile(filename, base64Data.replace(prefix, ""), "base64");
 }
 
 function toBase64(img) {
@@ -34,10 +34,10 @@ function toBase64(img) {
 
 function escapeName(name) {
   // Encode slashes as `encodeURIComponent('/')`
-  return name.replace(/\//g, '%2F');
+  return name.replace(/\//g, "%2F");
 }
 
-let namePrefix = '';
+let namePrefix = "";
 
 /**
  * A helper to define a category of visual tests.
@@ -65,13 +65,13 @@ export function visualSuite(
     let lastDeviceRatio = window.devicePixelRatio;
     beforeAll(() => {
       lastPrefix = namePrefix;
-      namePrefix += escapeName(name) + '/';
+      namePrefix += escapeName(name) + "/";
 
       // Force everything to be 1x
       window.devicePixelRatio = 1;
-    })
+    });
 
-    callback()
+    callback();
 
     afterAll(() => {
       namePrefix = lastPrefix;
@@ -81,13 +81,10 @@ export function visualSuite(
 }
 
 export async function checkMatch(actual, expected, p5) {
-  const scale = Math.min(MAX_SIDE/expected.width, MAX_SIDE/expected.height);
+  const scale = Math.min(MAX_SIDE / expected.width, MAX_SIDE / expected.height);
 
   for (const img of [actual, expected]) {
-    img.resize(
-      Math.ceil(img.width * scale),
-      Math.ceil(img.height * scale)
-    );
+    img.resize(Math.ceil(img.width * scale), Math.ceil(img.height * scale));
   }
 
   const expectedWithBg = p5.createGraphics(expected.width, expected.height);
@@ -113,7 +110,7 @@ export async function checkMatch(actual, expected, p5) {
   let ok = true;
   for (let i = 0; i < diff.pixels.length; i += 4) {
     for (let off = 0; off < 3; off++) {
-      if (diff.pixels[i+off] > COLOR_THRESHOLD) {
+      if (diff.pixels[i + off] > COLOR_THRESHOLD) {
         ok = false;
         break;
       }
@@ -156,31 +153,31 @@ export function visualTest(
     suiteFn = suiteFn.skip;
   }
 
-  suiteFn(testName, function() {
+  suiteFn(testName, function () {
     let name;
     let myp5;
 
-    beforeAll(function() {
+    beforeAll(function () {
       name = namePrefix + escapeName(testName);
-      return new Promise(res => {
-        myp5 = new p5(function(p) {
-          p.setup = function() {
+      return new Promise((res) => {
+        myp5 = new p5(function (p) {
+          p.setup = function () {
             res();
           };
         });
       });
     });
 
-    afterAll(function() {
+    afterAll(function () {
       myp5.remove();
     });
 
-    test('matches expected screenshots', async function() {
+    test("matches expected screenshots", async function () {
       let expectedScreenshots;
       try {
-        const metadata = JSON.parse(await readFile(
-          `../screenshots/${name}/metadata.json`
-        ));
+        const metadata = JSON.parse(
+          await readFile(`../screenshots/${name}/metadata.json`)
+        );
         expectedScreenshots = metadata.numScreenshots;
       } catch (e) {
         console.log(e);
@@ -196,9 +193,10 @@ export function visualTest(
         actual.push(img);
       });
 
-
       if (actual.length === 0) {
-        throw new Error('No screenshots were generated. Check if your test generates screenshots correctly. If the test includes asynchronous operations, ensure they complete before the test ends.');
+        throw new Error(
+          "No screenshots were generated. Check if your test generates screenshots correctly. If the test includes asynchronous operations, ensure they complete before the test ends."
+        );
       }
       if (expectedScreenshots && actual.length !== expectedScreenshots) {
         throw new Error(
@@ -213,14 +211,14 @@ export function visualTest(
       }
 
       const expectedFilenames = actual.map(
-        (_, i) => `../screenshots/${name}/${i.toString().padStart(3, '0')}.png`
+        (_, i) => `../screenshots/${name}/${i.toString().padStart(3, "0")}.png`
       );
       const expected = expectedScreenshots
-        ? (
-          await Promise.all(
-            expectedFilenames.map(path => myp5.loadImage('/unit/visual' + path.slice(2)))
+        ? await Promise.all(
+            expectedFilenames.map((path) =>
+              myp5.loadImage("/unit/visual" + path.slice(2))
+            )
           )
-        )
         : [];
 
       for (let i = 0; i < actual.length; i++) {
@@ -228,9 +226,13 @@ export function visualTest(
           const result = await checkMatch(actual[i], expected[i], myp5);
           if (!result.ok) {
             throw new Error(
-              `Screenshots do not match! Expected:\n${toBase64(expected[i])}\n\nReceived:\n${toBase64(actual[i])}\n\nDiff:\n${toBase64(result.diff)}\n\n` +
-              'If this is unexpected, paste these URLs into your browser to inspect them.\n\n' +
-              `If this change is expected, please delete the screenshots/${name} folder and run tests again to generate a new screenshot.`,
+              `Screenshots do not match! Expected:\n${toBase64(
+                expected[i]
+              )}\n\nReceived:\n${toBase64(actual[i])}\n\nDiff:\n${toBase64(
+                result.diff
+              )}\n\n` +
+                "If this is unexpected, paste these URLs into your browser to inspect them.\n\n" +
+                `If this change is expected, please delete the screenshots/${name} folder and run tests again to generate a new screenshot.`
             );
           }
         } else {
