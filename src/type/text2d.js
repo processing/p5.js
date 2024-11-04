@@ -11,7 +11,7 @@ import * as constants from '../core/constants';
  * 
  * PR-QUESTIONS: 
  *   - textProperty(ies) -> properties in states, mapped-states, context and canvas.style [PR]
- *   - do we want to support a text-font string (yes, how to handle?) [PR]
+ *   - do we want to support direct set/get on drawingContext.font (yes, how to handle?) [PR]
  * 
  *  ENHANCEMENTS:
  *   - support direct setting of context2d.font with string
@@ -169,7 +169,7 @@ function text2d(p5, fn, lifecycles) {
 
     if (arguments.length === 0) {
       this._applyTextProperties();
-      return this.drawingContext.font;
+      return this.states.textFont ;
     }
 
     let family = theFont;

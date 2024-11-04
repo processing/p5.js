@@ -67,7 +67,7 @@ suite('Typography Attributes', function() {
 
   suite('p5.prototype.textWrap', function() {
     test('returns textWrap text attribute', function() {
-      assert.strictEqual(myp5.textWrap(myp5.WORD), myp5.WORD);
+      assert.strictEqual(myp5.textWrap(), myp5.WORD);
     });
   });
 });
