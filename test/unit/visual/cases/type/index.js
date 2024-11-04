@@ -1,4 +1,4 @@
-import { visualSuite, visualTest } from '../visualTest';
+import { visualSuite, visualTest } from '../../visualTest';
 
 visualSuite('Typography', function() {
   visualSuite('textFont() with default fonts', function() {
