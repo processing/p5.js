@@ -737,10 +737,6 @@ class Shader {
     if (!this._bound) {
       this.useProgram();
       this._bound = true;
-
-      this._setMatrixUniforms();
-
-      this.setUniform('uViewport', this._renderer._viewport);
     }
   }
 
@@ -751,7 +747,6 @@ class Shader {
   unbindShader() {
     if (this._bound) {
       this.unbindTextures();
-      //this._renderer.GL.useProgram(0); ??
       this._bound = false;
     }
     return this;
@@ -760,13 +755,15 @@ class Shader {
   bindTextures() {
     const gl = this._renderer.GL;
 
+    const empty = this._renderer._getEmptyTexture();
+
     for (const uniform of this.samplers) {
       let tex = uniform.texture;
       if (tex === undefined) {
         // user hasn't yet supplied a texture for this slot.
         // (or there may not be one--maybe just lighting),
         // so we supply a default texture instead.
-        tex = this._renderer._getEmptyTexture();
+        uniform.texture = tex = empty;
       }
       gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
       tex.bindTexture();
@@ -785,40 +782,14 @@ class Shader {
   }
 
   unbindTextures() {
+    const gl = this._renderer.GL;
+    const empty = this._renderer._getEmptyTexture();
     for (const uniform of this.samplers) {
-      this.setUniform(uniform.name, this._renderer._getEmptyTexture());
-    }
-  }
-
-  _setMatrixUniforms() {
-    const modelMatrix = this._renderer.states.uModelMatrix;
-    const viewMatrix = this._renderer.states.uViewMatrix;
-    const projectionMatrix = this._renderer.states.uPMatrix;
-    const modelViewMatrix = (modelMatrix.copy()).mult(viewMatrix);
-    this._renderer.states.uMVMatrix = this._renderer.calculateCombinedMatrix();
-
-    const modelViewProjectionMatrix = modelViewMatrix.copy();
-    modelViewProjectionMatrix.mult(projectionMatrix);
-
-    this.setUniform(
-      'uPerspective',
-      this._renderer.states.curCamera.useLinePerspective ? 1 : 0
-    );
-    this.setUniform('uViewMatrix', viewMatrix.mat4);
-    this.setUniform('uProjectionMatrix', projectionMatrix.mat4);
-    this.setUniform('uModelMatrix', modelMatrix.mat4);
-    this.setUniform('uModelViewMatrix', modelViewMatrix.mat4);
-    this.setUniform(
-      'uModelViewProjectionMatrix',
-      modelViewProjectionMatrix.mat4
-    );
-    if (this.uniforms.uNormalMatrix) {
-      this._renderer.states.uNMatrix.inverseTranspose(this._renderer.states.uMVMatrix);
-      this.setUniform('uNormalMatrix', this._renderer.states.uNMatrix.mat3);
-    }
-    if (this.uniforms.uCameraRotation) {
-      this._renderer.states.curMatrix.inverseTranspose(this._renderer.states.uViewMatrix);
-      this.setUniform('uCameraRotation', this._renderer.states.curMatrix.mat3);
+      if (uniform.texture?.isFramebufferTexture) {
+        gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
+        empty.bindTexture();
+        gl.uniform1i(uniform.location, uniform.samplerIndex);
+      }
     }
   }
 
@@ -1070,6 +1041,8 @@ class Shader {
    * </div>
    */
   setUniform(uniformName, data) {
+    this.init();
+
     const uniform = this.uniforms[uniformName];
     if (!uniform) {
       return;

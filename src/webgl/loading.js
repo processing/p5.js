@@ -1112,7 +1112,7 @@ function loading(p5, fn){
    * </code>
    * </div>
    */
-  fn.model = function (model) {
+  fn.model = function (model, count = 1) {
     this._assert3d('model');
     p5._validateParameters('model', arguments);
     if (model.vertices.length > 0) {
@@ -1123,10 +1123,10 @@ function loading(p5, fn){
         }
 
         model._edgesToVertices();
-        this._renderer.createBuffers(model.gid, model);
+        this._renderer._getOrMakeCachedBuffers(model);
       }
 
-      this._renderer.drawBuffers(model.gid);
+      this._renderer._drawGeometry(model, { count });
     }
   };
 }

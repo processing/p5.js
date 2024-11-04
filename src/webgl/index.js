@@ -14,8 +14,6 @@ import shader from './p5.Shader';
 import camera from './p5.Camera';
 import texture from './p5.Texture';
 import rendererGL from './p5.RendererGL';
-import rendererGLImmediate from './p5.RendererGL.Immediate';
-import rendererGLRetained from './p5.RendererGL.Retained';
 
 export default function(p5){
   rendererGL(p5, p5.prototype);
@@ -34,6 +32,4 @@ export default function(p5){
   dataArray(p5, p5.prototype);
   shader(p5, p5.prototype);
   texture(p5, p5.prototype);
-  rendererGLImmediate(p5, p5.prototype);
-  rendererGLRetained(p5, p5.prototype);
 }
