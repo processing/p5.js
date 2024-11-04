@@ -1225,9 +1225,7 @@ class Mover {
 - Always load assets from a folder called "assets".
 
 > Why? It models good project organization. It's also required for assets to load on the p5.js website. Place assets in the following folders to include them in our online documentation:
-- Examples: [src/data/examples/assets](https://github.com/processing/p5.js-website/tree/main/src/data/examples)
-- Reference Pages: [src/templates/pages/reference/assets](https://github.com/processing/p5.js-website/tree/main/src/templates/pages/reference/assets)
-- Learn Pages: [src/assets/learn](https://github.com/processing/p5.js-website/tree/main/src/assets/learn)
+- [public/assets](https://github.com/processing/p5.js-website/tree/main/public)
 
 ```javascript
 let img;
