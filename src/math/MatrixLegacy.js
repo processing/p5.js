@@ -1,4 +1,4 @@
-import {VectorClass as Vector} from "./p5.Vector";
+import { Vector } from "./p5.Vector";
 
 let GLMAT_ARRAY_TYPE = Array;
 let isMatrixArray = (x) => Array.isArray(x);
@@ -6,7 +6,6 @@ if (typeof Float32Array !== "undefined") {
   GLMAT_ARRAY_TYPE = Float32Array;
   isMatrixArray = (x) => Array.isArray(x) || x instanceof Float32Array;
 }
-
 
 class MatrixLegacy {
   constructor(...args) {
@@ -29,9 +28,11 @@ class MatrixLegacy {
 
   reset() {
     if (this.mat3) {
-      this.mat3.set([1, 0, 0, 0, 1, 0, 0, 0, 1]);
+      this.mat3 = new GLMAT_ARRAY_TYPE([1, 0, 0, 0, 1, 0, 0, 0, 1]);
     } else if (this.mat4) {
-      this.mat4.set([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+      this.mat4 = new GLMAT_ARRAY_TYPE([
+        1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+      ]);
     }
     return this;
   }
@@ -67,6 +68,20 @@ class MatrixLegacy {
     }
     for (let i = 0; i < 16; i++) {
       this.mat4[i] = refArray[i];
+    }
+    return this;
+  }
+
+  setMat3Elem(index, value) {
+    if (this.mat3) {
+      this.mat3[index] = value;
+    }
+    return this;
+  }
+
+  setMat4Elem(index, value) {
+    if (this.mat4) {
+      this.mat4[index] = value;
     }
     return this;
   }
@@ -354,7 +369,7 @@ class MatrixLegacy {
    */
   inverseTranspose({ mat4 }) {
     if (this.mat3 === undefined) {
-    //   p5._friendlyError("sorry, this function only works with mat3");
+      //  TODO: how to integrate p5 in decoupled classes? p5._friendlyError("sorry, this function only works with mat3");
     } else {
       //convert mat4 -> mat3
       this.mat3[0] = mat4[0];

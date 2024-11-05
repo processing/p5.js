@@ -1,5 +1,5 @@
 import nj from "@d4c/numjs/build/module/numjs.min.js";
-import { VectorClass as Vector} from "./p5.Vector";
+import { Vector } from "./p5.Vector";
 
 /**
  * @requires constants
@@ -134,6 +134,7 @@ class MatrixNumjs {
     }
    return this 
   }
+
   /**
    * Gets a copy of the vector, returns a MatrixNumjs object.
    *

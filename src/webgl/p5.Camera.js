@@ -4,7 +4,7 @@
  * @requires core
  */
 
-import { Matrix } from './p5.Matrix';
+import { Matrix } from '../math/p5.Matrix';
 import { Vector } from '../math/p5.Vector';
 import { Quat } from './p5.Quat';
 import { RendererGL } from './p5.RendererGL';
@@ -2561,17 +2561,21 @@ class Camera {
       this.set(cam1);
       return;
     }
-
+    
     // For this cameras is ortho, assume that cam0 and cam1 are also ortho
     // and interpolate the elements of the projection matrix.
     // Use logarithmic interpolation for interpolation.
     if (this.projMatrix.mat4[15] !== 0) {
-      this.projMatrix.mat4[0] =
+      this.projMatrix.setMat4Elem(
+        0,
         cam0.projMatrix.mat4[0] *
-        Math.pow(cam1.projMatrix.mat4[0] / cam0.projMatrix.mat4[0], amt);
-      this.projMatrix.mat4[5] =
+          Math.pow(cam1.projMatrix.mat4[0] / cam0.projMatrix.mat4[0], amt)
+      );
+      this.projMatrix.setMat4Elem(
+        5,
         cam0.projMatrix.mat4[5] *
-        Math.pow(cam1.projMatrix.mat4[5] / cam0.projMatrix.mat4[5], amt);
+          Math.pow(cam1.projMatrix.mat4[5] / cam0.projMatrix.mat4[5], amt)
+      );
       // If the camera is active, make uPMatrix reflect changes in projMatrix.
       if (this._isActive()) {
         this._renderer.states.uPMatrix.mat4 = this.projMatrix.mat4.slice();
@@ -2658,16 +2662,28 @@ class Camera {
       // calculate newEye, newCenter with newFront vector.
       newFront.set(Vector.lerp(front0, front1, amt)).normalize();
 
-      newEye.set(newFront).mult(ratio * lerpedDist).add(lerpedMedium);
-      newCenter.set(newFront).mult((ratio - 1) * lerpedDist).add(lerpedMedium);
+      newEye
+        .set(newFront)
+        .mult(ratio * lerpedDist)
+        .add(lerpedMedium);
+      newCenter
+        .set(newFront)
+        .mult((ratio - 1) * lerpedDist)
+        .add(lerpedMedium);
 
       newUp.set(Vector.lerp(up0, up1, amt)).normalize();
 
       // set the camera
       this.camera(
-        newEye.x, newEye.y, newEye.z,
-        newCenter.x, newCenter.y, newCenter.z,
-        newUp.x, newUp.y, newUp.z
+        newEye.x,
+        newEye.y,
+        newEye.z,
+        newCenter.x,
+        newCenter.y,
+        newCenter.z,
+        newUp.x,
+        newUp.y,
+        newUp.z
       );
       return;
     }
@@ -2688,21 +2704,19 @@ class Camera {
       invOneMinusCosTheta /= a;
       b = 0.5 * offDiagSum13 * invOneMinusCosTheta;
       c = 0.5 * offDiagSum26 * invOneMinusCosTheta;
-      sinTheta = 0.5 * (deltaRot.mat3[7] - deltaRot.mat3[5]) / a;
-
+      sinTheta = (0.5 * (deltaRot.mat3[7] - deltaRot.mat3[5])) / a;
     } else if (maxDiag === diag[1]) {
       b = Math.sqrt((diag[1] - cosTheta) * invOneMinusCosTheta); // not zero.
       invOneMinusCosTheta /= b;
       c = 0.5 * offDiagSum57 * invOneMinusCosTheta;
       a = 0.5 * offDiagSum13 * invOneMinusCosTheta;
-      sinTheta = 0.5 * (deltaRot.mat3[2] - deltaRot.mat3[6]) / b;
-
+      sinTheta = (0.5 * (deltaRot.mat3[2] - deltaRot.mat3[6])) / b;
     } else {
       c = Math.sqrt((diag[2] - cosTheta) * invOneMinusCosTheta); // not zero.
       invOneMinusCosTheta /= c;
       a = 0.5 * offDiagSum26 * invOneMinusCosTheta;
       b = 0.5 * offDiagSum57 * invOneMinusCosTheta;
-      sinTheta = 0.5 * (deltaRot.mat3[3] - deltaRot.mat3[1]) / c;
+      sinTheta = (0.5 * (deltaRot.mat3[3] - deltaRot.mat3[1])) / c;
     }
 
     // Constructs a new matrix after interpolating the angles.
@@ -2716,7 +2730,7 @@ class Camera {
     const ab = a * b;
     const bc = b * c;
     const ca = c * a;
-    const lerpedRotMat = new Matrix('mat3', [
+    const lerpedRotMat = new Matrix("mat3", [
       cosAngle + oneMinusCosAngle * a * a,
       oneMinusCosAngle * ab + sinAngle * c,
       oneMinusCosAngle * ca - sinAngle * b,
@@ -2725,24 +2739,36 @@ class Camera {
       oneMinusCosAngle * bc + sinAngle * a,
       oneMinusCosAngle * ca + sinAngle * b,
       oneMinusCosAngle * bc - sinAngle * a,
-      cosAngle + oneMinusCosAngle * c * c
+      cosAngle + oneMinusCosAngle * c * c,
     ]);
 
     // Multiply this to mat0 from left to get the interpolated front vector.
     // calculate newEye, newCenter with newFront vector.
     lerpedRotMat.multiplyVec3(front0, newFront);
 
-    newEye.set(newFront).mult(ratio * lerpedDist).add(lerpedMedium);
-    newCenter.set(newFront).mult((ratio - 1) * lerpedDist).add(lerpedMedium);
+    newEye
+      .set(newFront)
+      .mult(ratio * lerpedDist)
+      .add(lerpedMedium);
+    newCenter
+      .set(newFront)
+      .mult((ratio - 1) * lerpedDist)
+      .add(lerpedMedium);
 
     lerpedRotMat.multiplyVec3(up0, newUp);
 
     // We also get the up vector in the same way and set the camera.
     // The eye position and center position are calculated based on the front vector.
     this.camera(
-      newEye.x, newEye.y, newEye.z,
-      newCenter.x, newCenter.y, newCenter.z,
-      newUp.x, newUp.y, newUp.z
+      newEye.x,
+      newEye.y,
+      newEye.z,
+      newCenter.x,
+      newCenter.y,
+      newCenter.z,
+      newUp.x,
+      newUp.y,
+      newUp.z
     );
   }
 

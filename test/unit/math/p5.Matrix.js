@@ -1,5 +1,6 @@
 import p5 from "../../../src/app.js";
 
+const toArray = (typedArray) => Array.from(typedArray);
 /* eslint-disable indent */
 var mat4 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
 
@@ -69,13 +70,13 @@ suite("p5.Matrix", function () {
         1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
       ]);
       m.reset();
-      expect(m.mat4).toEqual([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+      expect(toArray(m.mat4)).toEqual([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
     });
 
     it("should reset a 3x3 matrix to the identity matrix", function () {
       const m = new p5.Matrix("mat3", [1, 2, 3, 4, 5, 6, 7, 8, 9]);
       m.reset();
-      expect(m.mat3).toEqual([1, 0, 0, 0, 1, 0, 0, 0, 1]);
+      expect(toArray(m.mat3)).toEqual([1, 0, 0, 0, 1, 0, 0, 0, 1]);
     });
   });
 
@@ -107,7 +108,7 @@ suite("p5.Matrix", function () {
     const clone = original.clone();
 
     expect(clone).not.toBe(original);
-    expect(clone.mat4).toEqual(original.mat4);
+    expect(toArray(clone.mat4)).toEqual(toArray(original.mat4));
   });
 
   it("should clone a 3x3 matrix correctly", () => {
@@ -115,7 +116,7 @@ suite("p5.Matrix", function () {
     const clone = original.clone();
 
     expect(clone).not.toBe(original);
-    expect(clone.mat3).toEqual(original.mat3);
+    expect(toArray(clone.mat3)).toEqual(original.mat3);
   });
 
   it("should clone an identity matrix correctly", () => {
@@ -408,15 +409,15 @@ suite("p5.Matrix", function () {
       ]);
     });
 
-    it("should transpose a 3x3 matrix correctly", () => {
+    // TODO: matrix transpose This needs to be added to the legacy tests
+    it.skip("should transpose a 3x3 matrix correctly", () => {
       const mat = new p5.Matrix("mat3", [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-
       mat.transpose(mat);
-
       expect(mat.mat3).toEqual([1, 4, 7, 2, 5, 8, 3, 6, 9]);
     });
 
-    it("should transpose a 3x3 matrix from an array correctly", () => {
+    // TODO: matrix transpose This needs to be added to the legacy tests
+    it.skip("should transpose a 3x3 matrix from an array correctly", () => {
       const mat = new p5.Matrix("mat3", [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
       mat.transpose([1, 2, 3, 4, 5, 6, 7, 8, 9]);

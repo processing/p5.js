@@ -1,5 +1,5 @@
-import MatrixLegacy from './MatrixLegacy'
-import MatrixNumjs from './MatrixNumjs';
+import MatrixLegacy from "./MatrixLegacy";
+import MatrixNumjs from "./MatrixNumjs";
 /**
  * @requires constants
  * @todo see methods below needing further implementation.
@@ -8,9 +8,8 @@ import MatrixNumjs from './MatrixNumjs';
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/
  *   Reference/Global_Objects/SIMD
  */
-
+let Matrix;
 function matrix(p5, fn) {
-
   /**
    * A class to describe a 4×4 matrix
    * for model and view matrix manipulation in the p5js webgl renderer.
@@ -18,11 +17,18 @@ function matrix(p5, fn) {
    * @private
    * @param {Array} [mat4] column-major array literal of our 4×4 matrix
    */
-  // p5.Matrix = MatrixLegacy
-  p5.Matrix = MatrixNumjs
+  switch (p5.MATRIX_ENGINE) {
+    case "numjs":
+      Matrix = MatrixNumjs;
+      break;
+    default:
+      Matrix = MatrixLegacy;
+      break;
+  }
+  p5.Matrix = Matrix;
 }
 export default matrix;
-
-if(typeof p5 !== 'undefined'){
+export { Matrix };
+if (typeof p5 !== "undefined") {
   matrix(p5, p5.prototype);
 }
