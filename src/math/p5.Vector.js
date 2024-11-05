@@ -173,7 +173,7 @@ function vector(p5, fn) {
     set values(newValues) {
       let dimensions = newValues.length; 
       if (dimensions === 0) {
-        this.dimensions = dimensions;
+        this.dimensions = 2;
         this._values = [0, 0, 0];
       } else {
         this.dimensions = dimensions;

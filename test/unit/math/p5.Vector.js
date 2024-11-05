@@ -1928,7 +1928,7 @@ suite('p5.Vector', function() {
       assert.equal(v.x, 0);
       assert.equal(v.y, 0);
       assert.equal(v.z, 0);
-      assert.equal(v.dimensions, 0);
+      assert.equal(v.dimensions, 2);
     });
   });
   suite('get value', function() {
