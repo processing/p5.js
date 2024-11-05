@@ -1905,7 +1905,7 @@ function files(p5, fn){
       // otherwise, parse the arguments
 
       // if first param is a p5Graphics, then saveCanvas
-      fn.saveCanvas(args[0].elt, args[1], args[2]);
+      fn.saveCanvas(args[0].canvas, args[1], args[2]);
       return;
     } else if (args.length === 1 && typeof args[0] === 'string') {
       // if 1st param is String and only one arg, assume it is canvas filename
