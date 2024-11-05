@@ -1,5 +1,6 @@
-import p5 from '../core/main';
 import * as constants from '../core/constants';
+import { Matrix } from './p5.Matrix';
+import { Geometry } from './p5.Geometry';
 
 /**
  * @private
@@ -10,9 +11,9 @@ class GeometryBuilder {
   constructor(renderer) {
     this.renderer = renderer;
     renderer._pInst.push();
-    this.identityMatrix = new p5.Matrix();
-    renderer.states.uModelMatrix = new p5.Matrix();
-    this.geometry = new p5.Geometry();
+    this.identityMatrix = new Matrix();
+    renderer.states.uModelMatrix = new Matrix();
+    this.geometry = new Geometry();
     this.geometry.gid = `_p5_GeometryBuilder_${GeometryBuilder.nextGeometryId}`;
     GeometryBuilder.nextGeometryId++;
     this.hasTransform = false;
@@ -107,9 +108,7 @@ class GeometryBuilder {
    * Adds geometry from the renderer's immediate mode into the builder's
    * combined geometry.
    */
-  addImmediate() {
-    const geometry = this.renderer.immediateMode.geometry;
-    const shapeMode = this.renderer.immediateMode.shapeMode;
+  addImmediate(geometry, shapeMode) {
     const faces = [];
 
     if (this.renderer.states.doFill) {
@@ -142,7 +141,7 @@ class GeometryBuilder {
    * combined geometry.
    */
   addRetained(geometry) {
-    this.addGeometry(geometry.model);
+    this.addGeometry(geometry);
   }
 
   /**

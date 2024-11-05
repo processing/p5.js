@@ -375,7 +375,7 @@ function loadingDisplaying(p5, fn){
     let frameIterator = nFramesDelay;
     this.frameCount = frameIterator;
 
-    const lastPixelDensity = this._pixelDensity;
+    const lastPixelDensity = this._renderer._pixelDensity;
     this.pixelDensity(1);
 
     // We first take every frame that we are going to use for the animation
@@ -1401,8 +1401,8 @@ function loadingDisplaying(p5, fn){
    * @param {p5.Image} The image to be tinted
    * @return {canvas} The resulting tinted canvas
    */
-  fn._getTintedImageCanvas =
-    p5.Renderer2D.prototype._getTintedImageCanvas;
+  // fn._getTintedImageCanvas =
+  //   p5.Renderer2D.prototype._getTintedImageCanvas;
 
   /**
    * Changes the location from which images are drawn when

@@ -123,13 +123,11 @@ suite('p5.Shader', function() {
       var expectedUniforms = [
         'uModelViewMatrix',
         'uProjectionMatrix',
-        /*'uResolution',*/
-        'uPointSize'
       ];
 
       testShader(
         'Immediate Mode Shader',
-        myp5._renderer._getImmediateModeShader(),
+        myp5._renderer._getColorShader(),
         expectedAttributes,
         expectedUniforms
       );
@@ -154,9 +152,9 @@ suite('p5.Shader', function() {
       myp5.fill(0);
       var retainedColorShader = myp5._renderer._getColorShader();
       var texLightShader = myp5._renderer._getLightShader();
-      var immediateColorShader = myp5._renderer._getImmediateModeShader();
-      var selectedRetainedShader = myp5._renderer._getRetainedFillShader();
-      var selectedImmediateShader = myp5._renderer._getImmediateFillShader();
+      var immediateColorShader = myp5._renderer._getColorShader();
+      var selectedRetainedShader = myp5._renderer._getFillShader();
+      var selectedImmediateShader = myp5._renderer._getFillShader();
 
       // both color and light shader are valid, depending on
       // conditions set earlier.
@@ -174,8 +172,8 @@ suite('p5.Shader', function() {
     test('Normal Shader is set after normalMaterial()', function() {
       myp5.normalMaterial();
       var normalShader = myp5._renderer._getNormalShader();
-      var selectedRetainedShader = myp5._renderer._getRetainedFillShader();
-      var selectedImmediateShader = myp5._renderer._getRetainedFillShader();
+      var selectedRetainedShader = myp5._renderer._getFillShader();
+      var selectedImmediateShader = myp5._renderer._getFillShader();
       assert(
         normalShader === selectedRetainedShader,
         "_renderer's retain mode shader was not normal shader"
@@ -188,8 +186,8 @@ suite('p5.Shader', function() {
     test('Light shader set after ambientMaterial()', function() {
       var lightShader = myp5._renderer._getLightShader();
       myp5.ambientMaterial(128);
-      var selectedRetainedShader = myp5._renderer._getRetainedFillShader();
-      var selectedImmediateShader = myp5._renderer._getImmediateFillShader();
+      var selectedRetainedShader = myp5._renderer._getFillShader();
+      var selectedImmediateShader = myp5._renderer._getFillShader();
       assert(
         lightShader === selectedRetainedShader,
         "_renderer's retain mode shader was not light shader " +
@@ -204,8 +202,8 @@ suite('p5.Shader', function() {
     test('Light shader set after specularMaterial()', function() {
       var lightShader = myp5._renderer._getLightShader();
       myp5.specularMaterial(128);
-      var selectedRetainedShader = myp5._renderer._getRetainedFillShader();
-      var selectedImmediateShader = myp5._renderer._getImmediateFillShader();
+      var selectedRetainedShader = myp5._renderer._getFillShader();
+      var selectedImmediateShader = myp5._renderer._getFillShader();
       assert(
         lightShader === selectedRetainedShader,
         "_renderer's retain mode shader was not light shader " +
@@ -220,8 +218,8 @@ suite('p5.Shader', function() {
     test('Light shader set after emissiveMaterial()', function() {
       var lightShader = myp5._renderer._getLightShader();
       myp5.emissiveMaterial(128);
-      var selectedRetainedShader = myp5._renderer._getRetainedFillShader();
-      var selectedImmediateShader = myp5._renderer._getImmediateFillShader();
+      var selectedRetainedShader = myp5._renderer._getFillShader();
+      var selectedImmediateShader = myp5._renderer._getFillShader();
       assert(
         lightShader === selectedRetainedShader,
         "_renderer's retain mode shader was not light shader " +
@@ -256,54 +254,6 @@ suite('p5.Shader', function() {
       myp5.resetShader();
       var curShader = myp5._renderer.states.userFillShader;
       assert.isTrue(curShader === null);
-    });
-
-    test('isTextureShader returns true if there is a sampler', function() {
-      var s = myp5._renderer._getLightShader();
-      myp5.shader(s);
-      assert.isTrue(s.isTextureShader());
-    });
-
-    test('isTextureShader returns false if there is no sampler', function() {
-      var s = myp5._renderer._getColorShader();
-      myp5.shader(s);
-      assert.isFalse(s.isTextureShader());
-    });
-
-    test('isLightShader returns true if there are lighting uniforms', function() {
-      var s = myp5._renderer._getLightShader();
-      myp5.shader(s);
-      assert.isTrue(s.isLightShader());
-    });
-
-    test('isLightShader returns false if there are no lighting uniforms', function() {
-      var s = myp5._renderer._getPointShader();
-      myp5.shader(s);
-      assert.isFalse(s.isLightShader());
-    });
-
-    test('isNormalShader returns true if there is a normal attribute', function() {
-      var s = myp5._renderer._getNormalShader();
-      myp5.shader(s);
-      assert.isTrue(s.isNormalShader());
-    });
-
-    test('isNormalShader returns false if there is no normal attribute', function() {
-      var s = myp5._renderer._getPointShader();
-      myp5.shader(s);
-      assert.isFalse(s.isNormalShader());
-    });
-
-    test('isStrokeShader returns true if there is a stroke weight uniform', function() {
-      var s = myp5._renderer._getLineShader();
-      myp5.shader(s);
-      assert.isTrue(s.isStrokeShader());
-    });
-
-    test('isStrokeShader returns false if there is no stroke weight uniform', function() {
-      var s = myp5._renderer._getLightShader();
-      myp5.shader(s);
-      assert.isFalse(s.isStrokeShader());
     });
 
     suite('Hooks', function() {

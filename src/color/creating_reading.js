@@ -683,7 +683,7 @@ function creatingReading(p5, fn){
     }
 
     const arg = Array.isArray(args[0]) ? args[0] : args;
-    return new p5.Color(this, arg);
+    return new p5.Color(arg, this._colorMode, this._colorMaxes);
   };
 
   /**
@@ -1027,7 +1027,7 @@ function creatingReading(p5, fn){
       space: c1.color.space.path[spaceIndex].id
     })(amt);
 
-    return new p5.Color(this, lerpColor);
+    return new p5.Color(lerpColor, this._colorMode, this._colorMaxes);
   };
 
   /**

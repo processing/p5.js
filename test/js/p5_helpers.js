@@ -30,6 +30,17 @@ export function testWithDownload(name, fn, asyncFn = false) {
     return new Promise((resolve, reject) => {
       let blobContainer = {};
 
+      const prevClick = HTMLAnchorElement.prototype.click;
+      const prevDispatchEvent = HTMLAnchorElement.prototype.dispatchEvent;
+      const blockDownloads = () => {
+        HTMLAnchorElement.prototype.click = () => {};
+        HTMLAnchorElement.prototype.dispatchEvent = () => {};
+      }
+      const unblockDownloads = () => {
+        HTMLAnchorElement.prototype.click = prevClick;
+        HTMLAnchorElement.prototype.dispatchEvent = prevDispatchEvent;
+      }
+
       // create a backup of createObjectURL
       let couBackup = window.URL.createObjectURL;
 
@@ -40,6 +51,7 @@ export function testWithDownload(name, fn, asyncFn = false) {
         blobContainer.blob = blob;
         return couBackup(blob);
       };
+      blockDownloads();
 
       let error;
       if (asyncFn) {
@@ -54,6 +66,7 @@ export function testWithDownload(name, fn, asyncFn = false) {
             // restore createObjectURL to the original one
             window.URL.createObjectURL = couBackup;
             error ? reject(error) : resolve();
+            unblockDownloads();
           });
       } else {
         try {
@@ -64,6 +77,7 @@ export function testWithDownload(name, fn, asyncFn = false) {
         // restore createObjectURL to the original one
         window.URL.createObjectURL = couBackup;
         error ? reject(error) : resolve();
+        unblockDownloads();
       }
     });
   };
