@@ -13,8 +13,10 @@ import dataArray from './p5.DataArray';
 import shader from './p5.Shader';
 import camera from './p5.Camera';
 import texture from './p5.Texture';
+import rendererGL from './p5.RendererGL';
 
 export default function(p5){
+  rendererGL(p5, p5.prototype);
   primitives3D(p5, p5.prototype);
   interaction(p5, p5.prototype);
   light(p5, p5.prototype);

@@ -1,24 +1,19 @@
-import p5 from './main';
 import * as constants from './constants';
-
-import Renderer from './p5.Renderer';
+import p5 from './main';
+import { Renderer } from './p5.Renderer';
+import { Element } from './p5.Element';
+import { Graphics } from './p5.Graphics';
+import { Image } from '../image/p5.Image';
+import { MediaElement } from '../dom/media_element';
 
 const styleEmpty = 'rgba(0,0,0,0)';
 // const alphaThreshold = 0.00125; // minimum visible
 
-/**
- * p5.Renderer2D
- * The 2D graphics canvas renderer class.
- * extends p5.Renderer
- * @private
- */
 class Renderer2D extends Renderer {
-  constructor(elt, pInst, isMainCanvas) {
-    super(elt, pInst, isMainCanvas);
-    this.elt = elt;
-    this.canvas = elt;
-    this.drawingContext = this.canvas.getContext('2d');
-    this._pInst.drawingContext = this.drawingContext;
+  constructor(pInst, w, h, isMainCanvas, elt) {
+    super(pInst, w, h, isMainCanvas);
+
+    this.canvas = this.elt = elt || document.createElement('canvas');
 
     if (isMainCanvas) {
       // for pixel method sharing with pimage
@@ -29,9 +24,12 @@ class Renderer2D extends Renderer {
       this.canvas.style.display = 'none';
     }
 
+    this.elt.id = 'defaultCanvas0';
+    this.elt.classList.add('p5Canvas');
+
     // Extend renderer with methods of p5.Element with getters
-    this.wrappedElt = new p5.Element(elt, pInst);
-    for (const p of Object.getOwnPropertyNames(p5.Element.prototype)) {
+    // this.wrappedElt = new p5.Element(elt, pInst);
+    for (const p of Object.getOwnPropertyNames(Element.prototype)) {
       if (p !== 'constructor' && p[0] !== '_') {
         Object.defineProperty(this, p, {
           get() {
@@ -40,32 +38,53 @@ class Renderer2D extends Renderer {
         })
       }
     }
+
+    // Set canvas size
+    this.elt.width = w * this._pixelDensity;
+    this.elt.height = h * this._pixelDensity;
+    this.elt.style.width = `${w}px`;
+    this.elt.style.height = `${h}px`;
+
+    // Attach canvas element to DOM
+    if (this._pInst._userNode) {
+      // user input node case
+      this._pInst._userNode.appendChild(this.elt);
+    } else {
+      //create main element
+      if (document.getElementsByTagName('main').length === 0) {
+        let m = document.createElement('main');
+        document.body.appendChild(m);
+      }
+      //append canvas to main
+      document.getElementsByTagName('main')[0].appendChild(this.elt);
+    }
+
+    // Get and store drawing context
+    this.drawingContext = this.canvas.getContext('2d');
+    if (isMainCanvas) {
+      this._pInst.drawingContext = this.drawingContext;
+    }
+    this.scale(this._pixelDensity, this._pixelDensity);
+
+    // Set and return p5.Element
+    this.wrappedElt = new Element(this.elt, this._pInst);
   }
 
-  // NOTE: renderer won't be created until instance createCanvas was called
-  // This createCanvas should handle the HTML stuff while other createCanvas
-  // be generic
-  createCanvas(w, h, canvas) {
-    super.createCanvas(w, h);
-    // this.canvas = this.elt = canvas || document.createElement('canvas');
-    // this.drawingContext = this.canvas.getContext('2d');
-    // this._pInst.drawingContext = this.drawingContext;
-
-    return this.wrappedElt;
+  remove(){
+    this.wrappedElt.remove();
+    this.wrappedElt = null;
+    this.canvas = null;
+    this.elt = null;
   }
 
   getFilterGraphicsLayer() {
     // create hidden webgl renderer if it doesn't exist
     if (!this.filterGraphicsLayer) {
-      // the real _pInst is buried when this is a secondary p5.Graphics
-      const pInst =
-        this._pInst instanceof p5.Graphics ?
-          this._pInst._pInst :
-          this._pInst;
+      const pInst = this._pInst;
 
       // create secondary layer
       this.filterGraphicsLayer =
-        new p5.Graphics(
+        new Graphics(
           this.width,
           this.height,
           constants.WEBGL,
@@ -84,6 +103,7 @@ class Renderer2D extends Renderer {
     ) {
       this.filterGraphicsLayer.pixelDensity(this._pInst.pixelDensity());
     }
+
     return this.filterGraphicsLayer;
   }
 
@@ -98,14 +118,33 @@ class Renderer2D extends Renderer {
 
   resize(w, h) {
     super.resize(w, h);
-    this.canvas.width = w * this._pInst._pixelDensity;
-    this.canvas.height = h * this._pInst._pixelDensity;
+
+    // save canvas properties
+    const props = {};
+    for (const key in this.drawingContext) {
+      const val = this.drawingContext[key];
+      if (typeof val !== 'object' && typeof val !== 'function') {
+        props[key] = val;
+      }
+    }
+
+    this.canvas.width = w * this._pixelDensity;
+    this.canvas.height = h * this._pixelDensity;
     this.canvas.style.width = `${w}px`;
     this.canvas.style.height = `${h}px`;
     this.drawingContext.scale(
-      this._pInst._pixelDensity,
-      this._pInst._pixelDensity
+      this._pixelDensity,
+      this._pixelDensity
     );
+
+    // reset canvas properties
+    for (const savedKey in props) {
+      try {
+        this.drawingContext[savedKey] = props[savedKey];
+      } catch (err) {
+        // ignore read-only property errors
+      }
+    }
   }
 
   //////////////////////////////////////////////
@@ -116,7 +155,7 @@ class Renderer2D extends Renderer {
     this.drawingContext.save();
     this.resetMatrix();
 
-    if (args[0] instanceof p5.Image) {
+    if (args[0] instanceof Image) {
       if (args[1] >= 0) {
         // set transparency of background
         const img = args[0];
@@ -161,6 +200,7 @@ class Renderer2D extends Renderer {
   }
 
   fill(...args) {
+    super.fill(...args);
     const color = this._pInst.color(...args);
     this._setFill(color.toString());
 
@@ -171,6 +211,7 @@ class Renderer2D extends Renderer {
   }
 
   stroke(...args) {
+    super.stroke(...args);
     const color = this._pInst.color(...args);
     this._setStroke(color.toString());
 
@@ -289,7 +330,7 @@ class Renderer2D extends Renderer {
     }
 
     try {
-      if (p5.MediaElement && img instanceof p5.MediaElement) {
+      if (img instanceof MediaElement) {
         img._ensureCanvas();
       }
       if (this.states.tint && img.canvas) {
@@ -305,6 +346,7 @@ class Renderer2D extends Renderer {
       if (this._isErasing) {
         this.blendMode(this._cachedBlendMode);
       }
+
       this.drawingContext.drawImage(
         cnv,
         s * sx,
@@ -453,29 +495,26 @@ class Renderer2D extends Renderer {
   }
 
   loadPixels() {
-    const pixelsState = this._pixelsState; // if called by p5.Image
-
-    const pd = pixelsState._pixelDensity;
+    const pd = this._pixelDensity;
     const w = this.width * pd;
     const h = this.height * pd;
     const imageData = this.drawingContext.getImageData(0, 0, w, h);
     // @todo this should actually set pixels per object, so diff buffers can
     // have diff pixel arrays.
-    pixelsState.imageData = imageData;
-    pixelsState.pixels = imageData.data;
+    this.imageData = imageData;
+    this.pixels = imageData.data;
   }
 
   set(x, y, imgOrCol) {
     // round down to get integer numbers
     x = Math.floor(x);
     y = Math.floor(y);
-    const pixelsState = this._pixelsState;
-    if (imgOrCol instanceof p5.Image) {
+    if (imgOrCol instanceof Image) {
       this.drawingContext.save();
       this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
       this.drawingContext.scale(
-        pixelsState._pixelDensity,
-        pixelsState._pixelDensity
+        this._pixelDensity,
+        this._pixelDensity
       );
       this.drawingContext.clearRect(x, y, imgOrCol.width, imgOrCol.height);
       this.drawingContext.drawImage(imgOrCol.canvas, x, y);
@@ -488,14 +527,14 @@ class Renderer2D extends Renderer {
       let idx =
         4 *
         (y *
-          pixelsState._pixelDensity *
-          (this.width * pixelsState._pixelDensity) +
-          x * pixelsState._pixelDensity);
-      if (!pixelsState.imageData) {
-        pixelsState.loadPixels();
+          this._pixelDensity *
+          (this.width * this._pixelDensity) +
+          x * this._pixelDensity);
+      if (!this.imageData) {
+        this.loadPixels();
       }
       if (typeof imgOrCol === 'number') {
-        if (idx < pixelsState.pixels.length) {
+        if (idx < this.pixels.length) {
           r = imgOrCol;
           g = imgOrCol;
           b = imgOrCol;
@@ -506,7 +545,7 @@ class Renderer2D extends Renderer {
         if (imgOrCol.length < 4) {
           throw new Error('pixel array must be of the form [R, G, B, A]');
         }
-        if (idx < pixelsState.pixels.length) {
+        if (idx < this.pixels.length) {
           r = imgOrCol[0];
           g = imgOrCol[1];
           b = imgOrCol[2];
@@ -514,7 +553,7 @@ class Renderer2D extends Renderer {
           //this.updatePixels.call(this);
         }
       } else if (imgOrCol instanceof p5.Color) {
-        if (idx < pixelsState.pixels.length) {
+        if (idx < this.pixels.length) {
           r = imgOrCol.levels[0];
           g = imgOrCol.levels[1];
           b = imgOrCol.levels[2];
@@ -523,27 +562,26 @@ class Renderer2D extends Renderer {
         }
       }
       // loop over pixelDensity * pixelDensity
-      for (let i = 0; i < pixelsState._pixelDensity; i++) {
-        for (let j = 0; j < pixelsState._pixelDensity; j++) {
+      for (let i = 0; i < this._pixelDensity; i++) {
+        for (let j = 0; j < this._pixelDensity; j++) {
           // loop over
           idx =
             4 *
-            ((y * pixelsState._pixelDensity + j) *
+            ((y * this._pixelDensity + j) *
               this.width *
-              pixelsState._pixelDensity +
-              (x * pixelsState._pixelDensity + i));
-          pixelsState.pixels[idx] = r;
-          pixelsState.pixels[idx + 1] = g;
-          pixelsState.pixels[idx + 2] = b;
-          pixelsState.pixels[idx + 3] = a;
+              this._pixelDensity +
+              (x * this._pixelDensity + i));
+          this.pixels[idx] = r;
+          this.pixels[idx + 1] = g;
+          this.pixels[idx + 2] = b;
+          this.pixels[idx + 3] = a;
         }
       }
     }
   }
 
   updatePixels(x, y, w, h) {
-    const pixelsState = this._pixelsState;
-    const pd = pixelsState._pixelDensity;
+    const pd = this._pixelDensity;
     if (
       x === undefined &&
       y === undefined &&
@@ -562,10 +600,10 @@ class Renderer2D extends Renderer {
 
     if (this.gifProperties) {
       this.gifProperties.frames[this.gifProperties.displayIndex].image =
-        pixelsState.imageData;
+        this.imageData;
     }
 
-    this.drawingContext.putImageData(pixelsState.imageData, x, y, 0, 0, w, h);
+    this.drawingContext.putImageData(this.imageData, x, y, 0, 0, w, h);
   }
 
   //////////////////////////////////////////////
@@ -609,12 +647,12 @@ class Renderer2D extends Renderer {
   }
 
   /*
- * This function requires that:
- *
- *   0 <= start < TWO_PI
- *
- *   start <= stop < start + TWO_PI
- */
+   * This function requires that:
+   *
+   *   0 <= start < TWO_PI
+   *
+   *   start <= stop < start + TWO_PI
+   */
   arc(x, y, w, h, start, stop, mode) {
     const ctx = this.drawingContext;
     const rx = w / 2.0;
@@ -1271,8 +1309,8 @@ class Renderer2D extends Renderer {
   resetMatrix() {
     this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
     this.drawingContext.scale(
-      this._pInst._pixelDensity,
-      this._pInst._pixelDensity
+      this._pixelDensity,
+      this._pixelDensity
     );
     return this;
   }
@@ -1344,6 +1382,29 @@ class Renderer2D extends Renderer {
     return this.drawingContext.measureText(s).width;
   }
 
+  text(str, x, y, maxWidth, maxHeight) {
+    let baselineHacked;
+
+    // baselineHacked: (HACK)
+    // A temporary fix to conform to Processing's implementation
+    // of BASELINE vertical alignment in a bounding box
+
+    if (typeof maxWidth !== 'undefined') {
+      if (this.drawingContext.textBaseline === constants.BASELINE) {
+        baselineHacked = true;
+        this.drawingContext.textBaseline = constants.TOP;
+      }
+    }
+
+    const p = super.text(...arguments);
+
+    if (baselineHacked) {
+      this.drawingContext.textBaseline = constants.BASELINE;
+    }
+
+    return p;
+  }
+
   _applyTextProperties() {
     let font;
     const p = this._pInst;
@@ -1407,30 +1468,16 @@ class Renderer2D extends Renderer {
   }
 }
 
-// Fix test
-Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
-  let baselineHacked;
+function renderer2D(p5, fn){
+  /**
+   * p5.Renderer2D
+   * The 2D graphics canvas renderer class.
+   * extends p5.Renderer
+   * @private
+   */
+  p5.Renderer2D = Renderer2D;
+  p5.renderers[constants.P2D] = Renderer2D;
+}
 
-  // baselineHacked: (HACK)
-  // A temporary fix to conform to Processing's implementation
-  // of BASELINE vertical alignment in a bounding box
-
-  if (typeof maxWidth !== 'undefined') {
-    if (this.drawingContext.textBaseline === constants.BASELINE) {
-      baselineHacked = true;
-      this.drawingContext.textBaseline = constants.TOP;
-    }
-  }
-
-  const p = Renderer.prototype.text.apply(this, arguments);
-
-  if (baselineHacked) {
-    this.drawingContext.textBaseline = constants.BASELINE;
-  }
-
-  return p;
-};
-
-p5.Renderer2D = Renderer2D;
-
-export default p5.Renderer2D;
+export default renderer2D;
+export { Renderer2D };
