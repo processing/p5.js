@@ -8,8 +8,11 @@ suite('p5.Texture', function() {
   var imgElementNotPowerOfTwo;
   var imgElementPowerOfTwo;
   var canvas;
+  let prevPixelRatio;
 
   beforeEach(function() {
+    prevPixelRatio = window.devicePixelRatio;
+    window.devicePixelRatio = 1;
     return new Promise(done => {
       myp5 = new p5(function(p) {
         p.setup = async function() {
@@ -42,6 +45,7 @@ suite('p5.Texture', function() {
   });
 
   afterEach(function() {
+    window.devicePixelRatio = prevPixelRatio;
     myp5.remove();
   });
 

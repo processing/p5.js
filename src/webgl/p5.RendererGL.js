@@ -1,12 +1,10 @@
 import * as constants from '../core/constants';
 import GeometryBuilder from './GeometryBuilder';
-import libtess from 'libtess'; // Fixed with exporting module from libtess
 import { Renderer } from '../core/p5.Renderer';
 import { Matrix } from './p5.Matrix';
 import { Camera } from './p5.Camera';
 import { Vector } from '../math/p5.Vector';
 import { RenderBuffer } from './p5.RenderBuffer';
-import { Geometry } from './p5.Geometry';
 import { DataArray } from './p5.DataArray';
 import { Shader } from './p5.Shader';
 import { Image } from '../image/p5.Image';
@@ -14,6 +12,8 @@ import { Texture, MipmapTexture } from './p5.Texture';
 import { Framebuffer } from './p5.Framebuffer';
 import { Graphics } from '../core/p5.Graphics';
 import { Element } from '../dom/p5.Element';
+import { ShapeBuilder } from './ShapeBuilder';
+import { GeometryBufferCache } from './GeometryBufferCache';
 
 import lightingShader from './shaders/lighting.glsl';
 import webgl2CompatibilityShader from './shaders/webgl2Compatibility.glsl';
@@ -307,64 +307,33 @@ class RendererGL extends Renderer {
     this.states.userPointShader = undefined;
     this.states.userImageShader = undefined;
 
-    this._useUserVertexProperties = undefined;
+    // Used by beginShape/endShape functions to construct a p5.Geometry
+    this.shapeBuilder = new ShapeBuilder(this);
 
-    // Default drawing is done in Retained Mode
-    // Geometry and Material hashes stored here
-    this.retainedMode = {
-      geometry: {},
-      buffers: {
-        stroke: [
-          new RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this),
-          new RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this),
-          new RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this),
-          new RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this),
-          new RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
-        ],
-        fill: [
-          new RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
-          new RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
-          new RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
-          new RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
-          //new BufferDef(3, 'vertexSpeculars', 'specularBuffer', 'aSpecularColor'),
-          new RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
-        ],
-        text: [
-          new RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
-          new RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
-        ],
-        user:[]
-      }
-    };
+    this.buffers = {
+      fill: [
+        new RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
+        new RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
+        new RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
+        new RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
+        new RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, (arr) => arr.flat())
+      ],
+      stroke: [
+        new RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this),
+        new RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this),
+        new RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this),
+        new RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this),
+        new RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
+      ],
+      text: [
+        new RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
+        new RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, (arr) => arr.flat())
+      ],
+      point: this.GL.createBuffer(),
+      user:[]
+    }
 
-    // Immediate Mode
-    // Geometry and Material hashes stored here
-    this.immediateMode = {
-      geometry: new Geometry(),
-      shapeMode: constants.TRIANGLE_FAN,
-      contourIndices: [],
-      _bezierVertex: [],
-      _quadraticVertex: [],
-      _curveVertex: [],
-      buffers: {
-        fill: [
-          new RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
-          new RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
-          new RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
-          new RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
-          new RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
-        ],
-        stroke: [
-          new RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this),
-          new RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this),
-          new RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this),
-          new RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this),
-          new RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
-        ],
-        point: this.GL.createBuffer(),
-        user:[]
-      }
-    };
+    this.geometryBufferCache = new GeometryBufferCache(this);
 
     this.pointSize = 5.0; //default point size
     this.curStrokeWeight = 1;
@@ -397,14 +366,15 @@ class RendererGL extends Renderer {
     // current curveDetail in the Quadratic lookUpTable
     this._lutQuadraticDetail = 0;
 
-    // Used to distinguish between user calls to vertex() and internal calls
-    this.isProcessingVertices = false;
-    this._tessy = this._initTessy();
 
     this.fontInfos = {};
 
     this._curShader = undefined;
   }
+
+  //////////////////////////////////////////////
+  // Geometry Building
+  //////////////////////////////////////////////
 
   /**
     * Starts creating a new p5.Geometry. Subsequent shapes drawn will be added
@@ -464,6 +434,294 @@ class RendererGL extends Renderer {
     this.beginGeometry();
     callback();
     return this.endGeometry();
+  }
+
+
+  //////////////////////////////////////////////
+  // Shape drawing
+  //////////////////////////////////////////////
+
+  beginShape(...args) {
+    this.shapeBuilder.beginShape(...args);
+  }
+
+  endShape(
+    mode,
+    isCurve,
+    isBezier,
+    isQuadratic,
+    isContour,
+    shapeKind,
+    count = 1
+  ) {
+    this.shapeBuilder.endShape(
+      mode,
+      isCurve,
+      isBezier,
+      isQuadratic,
+      isContour,
+      shapeKind
+    );
+
+    if (this.geometryBuilder) {
+      this.geometryBuilder.addImmediate(
+        this.shapeBuilder.geometry,
+        this.shapeBuilder.shapeMode
+      );
+    } else if (this.states.doFill || this.states.doStroke) {
+      this._drawGeometry(
+        this.shapeBuilder.geometry,
+        { mode: this.shapeBuilder.shapeMode, count }
+      );
+    }
+  }
+
+  beginContour(...args) {
+    this.shapeBuilder.beginContour(...args);
+  }
+
+  vertex(...args) {
+    this.shapeBuilder.vertex(...args);
+  }
+
+  vertexProperty(...args) {
+    this.shapeBuilder.vertexProperty(...args);
+  }
+
+  normal(xorv, y, z) {
+    if (xorv instanceof Vector) {
+      this.states._currentNormal = xorv;
+    } else {
+      this.states._currentNormal = new Vector(xorv, y, z);
+    }
+  }
+
+  //////////////////////////////////////////////
+  // Rendering
+  //////////////////////////////////////////////
+
+  _drawGeometry(geometry, { mode = constants.TRIANGLES, count = 1 } = {}) {
+    for (const propName in geometry.userVertexProperties) {
+      const prop = geometry.userVertexProperties[propName];
+      this.buffers.user.push(
+        new RenderBuffer(prop.getDataSize(), prop.getSrcName(), prop.getDstName(), prop.getName(), this)
+      );
+    }
+
+    if (
+      this.states.doFill &&
+      geometry.vertices.length >= 3 &&
+      ![constants.LINES, constants.POINTS].includes(mode)
+    ) {
+      this._drawFills(geometry, { mode, count });
+    }
+
+    if (this.states.doStroke && geometry.lineVertices.length >= 1) {
+      this._drawStrokes(geometry, { count });
+    }
+
+    this.buffers.user = [];
+  }
+
+  _drawGeometryScaled(
+    model,
+    scaleX,
+    scaleY,
+    scaleZ
+  ) {
+    let originalModelMatrix = this.states.uModelMatrix.copy();
+    try {
+      this.states.uModelMatrix.scale(scaleX, scaleY, scaleZ);
+
+      if (this.geometryBuilder) {
+        this.geometryBuilder.addRetained(model);
+      } else {
+        this._drawGeometry(model);
+      }
+    } finally {
+
+      this.states.uModelMatrix = originalModelMatrix;
+    }
+  }
+
+  _drawFills(geometry, { count, mode } = {}) {
+    this._useVertexColor = geometry.vertexColors.length > 0;
+
+    const shader = this._drawingFilter && this.states.userFillShader
+      ? this.states.userFillShader
+      : this._getFillShader();
+    shader.bindShader();
+    this._setGlobalUniforms(shader);
+    this._setFillUniforms(shader);
+    shader.bindTextures();
+
+    for (const buff of this.buffers.fill) {
+      buff._prepareBuffer(geometry, shader);
+    }
+    this._prepareUserAttributes(geometry, shader);
+    shader.disableRemainingAttributes();
+
+    this._applyColorBlend(
+      this.states.curFillColor,
+      geometry.hasFillTransparency()
+    );
+
+    this._drawBuffers(geometry, { mode, count });
+
+    shader.unbindShader();
+  }
+
+  _drawStrokes(geometry, { count } = {}) {
+    const gl = this.GL;
+
+    this._useLineColor = geometry.vertexStrokeColors.length > 0;
+
+    const shader = this._getStrokeShader();
+    shader.bindShader();
+    this._setGlobalUniforms(shader);
+    this._setStrokeUniforms(shader);
+    shader.bindTextures();
+
+    for (const buff of this.buffers.stroke) {
+      buff._prepareBuffer(geometry, shader);
+    }
+    this._prepareUserAttributes(geometry, shader);
+    shader.disableRemainingAttributes();
+
+    this._applyColorBlend(
+      this.states.curStrokeColor,
+      geometry.hasStrokeTransparency()
+    );
+
+    if (count === 1) {
+      gl.drawArrays(
+        gl.TRIANGLES,
+        0,
+        geometry.lineVertices.length / 3
+      );
+    } else {
+      try {
+        gl.drawArraysInstanced(
+          gl.TRIANGLES,
+          0,
+          geometry.lineVertices.length / 3,
+          count
+        );
+      } catch (e) {
+        console.log('🌸 p5.js says: Instancing is only supported in WebGL2 mode');
+      }
+    }
+
+    shader.unbindShader();
+  }
+
+  _drawPoints(vertices, vertexBuffer) {
+    const gl = this.GL;
+    const pointShader = this._getPointShader();
+    pointShader.bindShader();
+    this._setGlobalUniforms(pointShader);
+    this._setPointUniforms(pointShader);
+    pointShader.bindTextures();
+
+    this._bindBuffer(
+      vertexBuffer,
+      gl.ARRAY_BUFFER,
+      this._vToNArray(vertices),
+      Float32Array,
+      gl.STATIC_DRAW
+    );
+
+    pointShader.enableAttrib(pointShader.attributes.aPosition, 3);
+
+    this._applyColorBlend(this.states.curStrokeColor);
+
+    gl.drawArrays(gl.Points, 0, vertices.length);
+
+    pointShader.unbindShader();
+  }
+
+  _prepareUserAttributes(geometry, shader) {
+    for (const buff of this.buffers.user) {
+      if (!this._pInst.constructor.disableFriendleErrors) {
+        // Check for the right data size
+        const prop = geometry.userVertexProperties[buff.attr];
+        if (prop) {
+          const adjustedLength = prop.getSrcArray().length / prop.getDataSize();
+          if (adjustedLength > geometry.vertices.length) {
+            this._pInst.constructor._friendlyError(`One of the geometries has a custom vertex property '${prop.getName()}' with more values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`, 'vertexProperty()');
+          } else if (adjustedLength < geometry.vertices.length) {
+            this._pInst.constructor._friendlyError(`One of the geometries has a custom vertex property '${prop.getName()}' with fewer values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`, 'vertexProperty()');
+          }
+        }
+      }
+      buff._prepareBuffer(geometry, shader);
+    }
+  }
+
+  _drawBuffers(geometry, { mode = this.GL.TRIANGLES, count }) {
+    const gl = this.GL;
+    const glBuffers = this.geometryBufferCache.getCached(geometry);
+
+    if (!glBuffers) return;
+
+    if (glBuffers.indexBuffer) {
+      // If this model is using a Uint32Array we need to ensure the
+      // OES_element_index_uint WebGL extension is enabled.
+      if (
+        this._pInst.webglVersion !== constants.WEBGL2 &&
+        glBuffers.indexBufferType === gl.UNSIGNED_INT
+      ) {
+        if (!gl.getExtension('OES_element_index_uint')) {
+          throw new Error(
+            'Unable to render a 3d model with > 65535 triangles. Your web browser does not support the WebGL Extension OES_element_index_uint.'
+          );
+        }
+      }
+
+      if (count === 1) {
+        gl.drawElements(
+          gl.TRIANGLES,
+          geometry.faces.length * 3,
+          glBuffers.indexBufferType,
+          0
+        );
+      } else {
+        try {
+          gl.drawElementsInstanced(
+            gl.TRIANGLES,
+            geometry.faces.length * 3,
+            glBuffers.indexBufferType,
+            0,
+            count
+          );
+        } catch (e) {
+          console.log('🌸 p5.js says: Instancing is only supported in WebGL2 mode');
+        }
+      }
+    } else {
+      if (count === 1) {
+        gl.drawArrays(
+          mode,
+          0,
+          geometry.vertices.length
+        );
+      } else {
+        try {
+          gl.drawArraysInstanced(
+            mode,
+            0,
+            geometry.vertices.length,
+            count
+          );
+        } catch (e) {
+          console.log('🌸 p5.js says: Instancing is only supported in WebGL2 mode');
+        }
+      }
+    }
+  }
+
+  _getOrMakeCachedBuffers(geometry) {
+    return this.geometryBufferCache.ensureCached(geometry);
   }
 
   //////////////////////////////////////////////
@@ -1167,8 +1425,8 @@ class RendererGL extends Renderer {
   // HASH | for geometry
   //////////////////////////////////////////////
 
-  geometryInHash(gId) {
-    return this.retainedMode.geometry[gId] !== undefined;
+  geometryInHash(gid) {
+    return this.geometryBufferCache.isCached(gid);
   }
 
   viewport(w, h) {
@@ -1390,7 +1648,7 @@ class RendererGL extends Renderer {
    * and the shader must be valid in that context.
    */
 
-  _getImmediateStrokeShader() {
+  _getStrokeShader() {
     // select the stroke shader to use
     const stroke = this.states.userStrokeShader;
     if (stroke) {
@@ -1399,10 +1657,6 @@ class RendererGL extends Renderer {
     return this._getLineShader();
   }
 
-
-  _getRetainedStrokeShader() {
-    return this._getImmediateStrokeShader();
-  }
 
   _getSphereMapping(img) {
     if (!this.sphereMapping) {
@@ -1451,17 +1705,13 @@ class RendererGL extends Renderer {
   }
 
 
-  _getImmediatePointShader() {
+  _getPointShader() {
     // select the point shader to use
     const point = this.states.userPointShader;
     if (!point || !point.isPointShader()) {
       return this._getPointShader();
     }
     return point;
-  }
-
-  _getRetainedLineShader() {
-    return this._getImmediateLineShader();
   }
 
   baseMaterialShader() {
@@ -1723,6 +1973,12 @@ class RendererGL extends Renderer {
     return code;
   }
 
+  /**
+   * @private
+   * Note: DO NOT CALL THIS while in the middle of binding another texture,
+   * since it will change the texture binding in order to allocate the empty
+   * texture! Grab its value beforehand!
+   */
   _getEmptyTexture() {
     if (!this._emptyTexture) {
       // a plain white texture RGBA, full alpha, single pixel.
@@ -1858,20 +2114,49 @@ class RendererGL extends Renderer {
     return new Framebuffer(this, options);
   }
 
-  _setStrokeUniforms(baseStrokeShader) {
-    baseStrokeShader.bindShader();
+  _setGlobalUniforms(shader) {
+    const modelMatrix = this.states.uModelMatrix;
+    const viewMatrix = this.states.uViewMatrix;
+    const projectionMatrix = this.states.uPMatrix;
+    const modelViewMatrix = (modelMatrix.copy()).mult(viewMatrix);
+    this.states.uMVMatrix = this.calculateCombinedMatrix();
 
+    const modelViewProjectionMatrix = modelViewMatrix.copy();
+    modelViewProjectionMatrix.mult(projectionMatrix);
+
+    shader.setUniform(
+      'uPerspective',
+      this.states.curCamera.useLinePerspective ? 1 : 0
+    );
+    shader.setUniform('uViewMatrix', viewMatrix.mat4);
+    shader.setUniform('uProjectionMatrix', projectionMatrix.mat4);
+    shader.setUniform('uModelMatrix', modelMatrix.mat4);
+    shader.setUniform('uModelViewMatrix', modelViewMatrix.mat4);
+    shader.setUniform(
+      'uModelViewProjectionMatrix',
+      modelViewProjectionMatrix.mat4
+    );
+    if (shader.uniforms.uNormalMatrix) {
+      this.states.uNMatrix.inverseTranspose(this.states.uMVMatrix);
+      shader.setUniform('uNormalMatrix', this.states.uNMatrix.mat3);
+    }
+    if (shader.uniforms.uCameraRotation) {
+      this.states.curMatrix.inverseTranspose(this.states.uViewMatrix);
+      shader.setUniform('uCameraRotation', this.states.curMatrix.mat3);
+    }
+    shader.setUniform('uViewport', this._viewport);
+  }
+
+  _setStrokeUniforms(strokeShader) {
     // set the uniform values
-    baseStrokeShader.setUniform('uUseLineColor', this._useLineColor);
-    baseStrokeShader.setUniform('uMaterialColor', this.states.curStrokeColor);
-    baseStrokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
-    baseStrokeShader.setUniform('uStrokeCap', STROKE_CAP_ENUM[this.curStrokeCap]);
-    baseStrokeShader.setUniform('uStrokeJoin', STROKE_JOIN_ENUM[this.curStrokeJoin]);
+    strokeShader.setUniform('uUseLineColor', this._useLineColor);
+    strokeShader.setUniform('uMaterialColor', this.states.curStrokeColor);
+    strokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
+    strokeShader.setUniform('uStrokeCap', STROKE_CAP_ENUM[this.curStrokeCap]);
+    strokeShader.setUniform('uStrokeJoin', STROKE_JOIN_ENUM[this.curStrokeJoin]);
   }
 
   _setFillUniforms(fillShader) {
-    fillShader.bindShader();
-
     this.mixedSpecularColor = [...this.states.curSpecularColor];
 
     if (this.states._useMetalness > 0) {
@@ -1956,8 +2241,6 @@ class RendererGL extends Renderer {
     fillShader.setUniform('uConstantAttenuation', this.states.constantAttenuation);
     fillShader.setUniform('uLinearAttenuation', this.states.linearAttenuation);
     fillShader.setUniform('uQuadraticAttenuation', this.states.quadraticAttenuation);
-
-    fillShader.bindTextures();
   }
 
   // getting called from _setFillUniforms
@@ -1977,8 +2260,6 @@ class RendererGL extends Renderer {
   }
 
   _setPointUniforms(pointShader) {
-    pointShader.bindShader();
-
     // set the uniform values
     pointShader.setUniform('uMaterialColor', this.states.curStrokeColor);
     // @todo is there an instance where this isn't stroke weight?
@@ -2031,16 +2312,6 @@ class RendererGL extends Renderer {
       Uint32Array
     ].some(x => arr instanceof x);
   }
-  /**
-   * turn a two dimensional array into one dimensional array
-   * @private
-   * @param  {Array} arr 2-dimensional array
-   * @return {Array}     1-dimensional array
-   * [[1, 2, 3],[4, 5, 6]] -> [1, 2, 3, 4, 5, 6]
-   */
-  _flatten(arr) {
-    return arr.flat();
-  }
 
   /**
    * turn a p5.Vector Array into a one dimensional number array
@@ -2081,106 +2352,7 @@ class RendererGL extends Renderer {
     const p = [p1, p2, p3, p4];
     return p;
   }
-  _initTessy() {
-    this.tessyVertexSize = 12;
-    // function called for each vertex of tesselator output
-    function vertexCallback(data, polyVertArray) {
-      for (const element of data) {
-        polyVertArray.push(element);
-      }
-    }
 
-    function begincallback(type) {
-      if (type !== libtess.primitiveType.GL_TRIANGLES) {
-        console.log(`expected TRIANGLES but got type: ${type}`);
-      }
-    }
-
-    function errorcallback(errno) {
-      console.log('error callback');
-      console.log(`error number: ${errno}`);
-    }
-    // callback for when segments intersect and must be split
-    const combinecallback = (coords, data, weight) => {
-      const result = new Array(this.tessyVertexSize).fill(0);
-      for (let i = 0; i < weight.length; i++) {
-        for (let j = 0; j < result.length; j++) {
-          if (weight[i] === 0 || !data[i]) continue;
-          result[j] += data[i][j] * weight[i];
-        }
-      }
-      return result;
-    };
-
-    function edgeCallback(flag) {
-      // don't really care about the flag, but need no-strip/no-fan behavior
-    }
-
-    const tessy = new libtess.GluTesselator();
-    tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_VERTEX_DATA, vertexCallback);
-    tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_BEGIN, begincallback);
-    tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_ERROR, errorcallback);
-    tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_COMBINE, combinecallback);
-    tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_EDGE_FLAG, edgeCallback);
-    tessy.gluTessProperty(
-      libtess.gluEnum.GLU_TESS_WINDING_RULE,
-      libtess.windingRule.GLU_TESS_WINDING_NONZERO
-    );
-
-    return tessy;
-  }
-
-  _triangulate(contours) {
-    // libtess will take 3d verts and flatten to a plane for tesselation.
-    // libtess is capable of calculating a plane to tesselate on, but
-    // if all of the vertices have the same z values, we'll just
-    // assume the face is facing the camera, letting us skip any performance
-    // issues or bugs in libtess's automatic calculation.
-    const z = contours[0] ? contours[0][2] : undefined;
-    let allSameZ = true;
-    for (const contour of contours) {
-      for (
-        let j = 0;
-        j < contour.length;
-        j += this.tessyVertexSize
-      ) {
-        if (contour[j + 2] !== z) {
-          allSameZ = false;
-          break;
-        }
-      }
-    }
-    if (allSameZ) {
-      this._tessy.gluTessNormal(0, 0, 1);
-    } else {
-      // Let libtess pick a plane for us
-      this._tessy.gluTessNormal(0, 0, 0);
-    }
-
-    const triangleVerts = [];
-    this._tessy.gluTessBeginPolygon(triangleVerts);
-
-    for (const contour of contours) {
-      this._tessy.gluTessBeginContour();
-      for (
-        let j = 0;
-        j < contour.length;
-        j += this.tessyVertexSize
-      ) {
-        const coords = contour.slice(
-          j,
-          j + this.tessyVertexSize
-        );
-        this._tessy.gluTessVertex(coords, coords);
-      }
-      this._tessy.gluTessEndContour();
-    }
-
-    // finish polygon
-    this._tessy.gluTessEndPolygon();
-
-    return triangleVerts;
-  }
 };
 
 function rendererGL(p5, fn){
@@ -2372,14 +2544,12 @@ function rendererGL(p5, fn){
     }
 
     if (!this._setupDone) {
-      for (const x in this._renderer.retainedMode.geometry) {
-        if (this._renderer.retainedMode.geometry.hasOwnProperty(x)) {
-          p5._friendlyError(
-            'Sorry, Could not set the attributes, you need to call setAttributes() ' +
-            'before calling the other drawing methods in setup()'
-          );
-          return;
-        }
+      if (this._renderer.geometryBufferCache.numCached() > 0) {
+        p5._friendlyError(
+          'Sorry, Could not set the attributes, you need to call setAttributes() ' +
+          'before calling the other drawing methods in setup()'
+        );
+        return;
       }
     }
 

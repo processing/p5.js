@@ -3,8 +3,11 @@ import { vi } from 'vitest';
 
 suite('p5.Framebuffer', function() {
   let myp5;
+  let prevPixelRatio;
 
   beforeAll(function() {
+    prevPixelRatio = window.devicePixelRatio;
+    window.devicePixelRatio = 1;
     myp5 = new p5(function(p) {
       p.setup = function() {};
       p.draw = function() {};
@@ -13,6 +16,7 @@ suite('p5.Framebuffer', function() {
 
   afterAll(function() {
     myp5.remove();
+    window.devicePixelRatio = prevPixelRatio;
   });
 
   suite('formats and channels', function() {
