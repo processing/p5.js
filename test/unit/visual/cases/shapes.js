@@ -168,6 +168,58 @@ visualSuite('Shape drawing', function() {
         screenshot();
       });
 
+      visualTest('Drawing with points', function(p5, screenshot) {
+        setup(p5);
+        p5.strokeWeight(5);
+        p5.beginShape(p5.POINTS);
+        p5.vertex(10, 10);
+        p5.vertex(15, 40);
+        p5.vertex(40, 35);
+        p5.vertex(25, 15);
+        p5.vertex(15, 25);
+        p5.endShape();
+        screenshot();
+      });
+
+      visualTest('Drawing with lines', function(p5, screenshot) {
+        setup(p5);
+        p5.beginShape(p5.LINES);
+        p5.vertex(10, 10);
+        p5.vertex(15, 40);
+        p5.vertex(40, 35);
+        p5.vertex(25, 15);
+        p5.endShape();
+        screenshot();
+      });
+
+      visualTest('Drawing with triangles', function(p5, screenshot) {
+        setup(p5);
+        p5.beginShape(p5.TRIANGLES);
+        p5.vertex(10, 10);
+        p5.vertex(15, 40);
+        p5.vertex(40, 35);
+        p5.vertex(25, 15);
+        p5.vertex(15, 25);
+        p5.vertex(10, 10);
+        p5.endShape();
+        screenshot();
+      });
+
+      visualTest('Drawing with quads', function(p5, screenshot) {
+        setup(p5);
+        p5.beginShape(p5.QUADS);
+        p5.vertex(10, 10);
+        p5.vertex(15, 10);
+        p5.vertex(15, 15);
+        p5.vertex(10, 15);
+        p5.vertex(25, 25);
+        p5.vertex(30, 25);
+        p5.vertex(30, 30);
+        p5.vertex(25, 30);
+        p5.endShape();
+        screenshot();
+      });
+
       if (mode === 'WebGL') {
         visualTest('3D vertex coordinates', function(p5, screenshot) {
           setup(p5);
@@ -207,9 +259,8 @@ visualSuite('Shape drawing', function() {
         });
 
         visualTest('Texture coordinates', async function(p5, screenshot) {
-          setup(p5);
           const tex = await p5.loadImage('/unit/assets/cat.jpg');
-
+          setup(p5);
           p5.texture(tex);
           p5.beginShape(p5.QUAD_STRIP);
           p5.vertex(10, 10, 0, 0, 0);
@@ -222,9 +273,8 @@ visualSuite('Shape drawing', function() {
         });
 
         visualTest('Normalized texture coordinates', async function(p5, screenshot) {
-          setup(p5);
           const tex = await p5.loadImage('/unit/assets/cat.jpg');
-
+          setup(p5);
           p5.texture(tex);
           p5.textureMode(p5.NORMAL);
           p5.beginShape(p5.QUAD_STRIP);

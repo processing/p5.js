@@ -8,8 +8,11 @@ suite('p5.Texture', function() {
   var imgElementNotPowerOfTwo;
   var imgElementPowerOfTwo;
   var canvas;
+  let prevPixelRatio;
 
   beforeEach(function() {
+    prevPixelRatio = window.devicePixelRatio;
+    window.devicePixelRatio = 1;
     return new Promise(done => {
       myp5 = new p5(function(p) {
         p.setup = async function() {
@@ -42,6 +45,7 @@ suite('p5.Texture', function() {
   });
 
   afterEach(function() {
+    window.devicePixelRatio = prevPixelRatio;
     myp5.remove();
   });
 
@@ -127,11 +131,11 @@ suite('p5.Texture', function() {
     );
     test('Set textureMode to NORMAL', function() {
       myp5.textureMode(myp5.NORMAL);
-      assert.deepEqual(myp5._renderer.textureMode, myp5.NORMAL);
+      assert.deepEqual(myp5._renderer.states.textureMode, myp5.NORMAL);
     });
     test('Set textureMode to IMAGE', function() {
       myp5.textureMode(myp5.IMAGE);
-      assert.deepEqual(myp5._renderer.textureMode, myp5.IMAGE);
+      assert.deepEqual(myp5._renderer.states.textureMode, myp5.IMAGE);
     });
     test('Set global wrap mode to clamp', function() {
       myp5.textureWrap(myp5.CLAMP);
