@@ -30,39 +30,6 @@ class Graphics {
     this._pInst = pInst;
     this._renderer = new renderers[r](this._pInst, w, h, false, canvas);
 
-    // Attach renderer methods
-    // for(const p of Object.getOwnPropertyNames(p5.renderers[r].prototype)) {
-    //   if(
-    //     p !== 'constructor' &&
-    //     p[0] !== '_' &&
-    //     !(p in this) &&
-    //     typeof this._renderer[p] === 'function'
-    //   ){
-    //     this[p] = this._renderer[p].bind(this._renderer);
-    //   }
-    // }
-
-    // Attach renderer properties
-    for (const p in this._renderer) {
-      if(p[0] === '_' || typeof this._renderer[p] === 'function') continue;
-      Object.defineProperty(this, p, {
-        get(){
-          return this._renderer?.[p];
-        }
-      })
-    }
-
-    // bind methods and props of p5 to the new object
-    // for (const p in p5.prototype) {
-    //   if (!this[p]) {
-    //     // console.log(p);
-    //     if (typeof p5.prototype[p] === 'function') {
-    //       this[p] = p5.prototype[p].bind(this);
-    //     } else if(p !== 'deltaTime') {
-    //       this[p] = p5.prototype[p];
-    //     }
-    //   }
-    // }
     p5.prototype._initializeInstanceVariables.apply(this);
 
     this._renderer._applyDefaults();
@@ -73,21 +40,25 @@ class Graphics {
     return this._pInst.deltaTime;
   }
 
-  // get canvas(){
-  //   return this._renderer.canvas;
-  // }
+  get canvas(){
+    return this._renderer?.canvas;
+  }
 
-  // get drawingContext(){
-  //   return this._renderer.drawingContext;
-  // }
+  get drawingContext(){
+    return this._renderer.drawingContext;
+  }
 
-  // get width(){
-  //   return this._renderer.width;
-  // }
+  get width(){
+    return this._renderer?.width;
+  }
 
-  // get height(){
-  //   return this._renderer.height;
-  // }
+  get height(){
+    return this._renderer?.height;
+  }
+
+  get pixels(){
+    return this._renderer?.pixels;
+  }
 
   pixelDensity(val){
     let returnValue;

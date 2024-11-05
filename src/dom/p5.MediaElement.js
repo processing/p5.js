@@ -1,4 +1,10 @@
-import { Element } from '../core/p5.Element';
+/**
+ * @module DOM
+ * @submodule DOM
+ * @for p5.Element
+ */
+
+import { Element } from './p5.Element';
 
 class MediaElement extends Element {
   constructor(elt, pInst) {
@@ -1286,10 +1292,21 @@ class MediaElement extends Element {
 
     this._prevTime = playbackTime;
   }
-};
+}
+
+// Cue inspired by JavaScript setTimeout, and the
+// Tone.js Transport Timeline Event, MIT License Yotam Mann 2015 tonejs.org
+// eslint-disable-next-line no-unused-vars
+class Cue {
+  constructor(callback, time, id, val) {
+    this.callback = callback;
+    this.time = time;
+    this.id = id;
+    this.val = val;
+  }
+}
 
 function media(p5, fn){
-
   /**
    * Helpers for create methods.
    */
@@ -1297,8 +1314,8 @@ function media(p5, fn){
     const node = pInst._userNode ? pInst._userNode : document.body;
     node.appendChild(elt);
     const c = media
-      ? new p5.MediaElement(elt, pInst)
-      : new p5.Element(elt, pInst);
+      ? new MediaElement(elt, pInst)
+      : new Element(elt, pInst);
     pInst._elements.push(c);
     return c;
   }

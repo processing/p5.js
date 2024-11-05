@@ -665,7 +665,7 @@ import rendering from './rendering';
 import renderer from './p5.Renderer';
 import renderer2D from './p5.Renderer2D';
 import graphics from './p5.Graphics';
-import element from './p5.Element';
+// import element from './p5.Element';
 
 p5.registerAddon(transform);
 p5.registerAddon(structure);
@@ -674,6 +674,6 @@ p5.registerAddon(rendering);
 p5.registerAddon(renderer);
 p5.registerAddon(renderer2D);
 p5.registerAddon(graphics);
-p5.registerAddon(element);
+// p5.registerAddon(element);
 
 export default p5;

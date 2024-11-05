@@ -1,6 +1,6 @@
 import dom from './dom';
-import element from './element';
-import media from './media_element';
+import element from './p5.Element';
+import media from './p5.MediaElement';
 import file from './p5.File';
 
 export default function(p5){

@@ -5,14 +5,13 @@ import { Matrix } from './p5.Matrix';
 import { Camera } from './p5.Camera';
 import { Vector } from '../math/p5.Vector';
 import { RenderBuffer } from './p5.RenderBuffer';
-import { Geometry } from './p5.Geometry';
 import { DataArray } from './p5.DataArray';
 import { Shader } from './p5.Shader';
 import { Image } from '../image/p5.Image';
 import { Texture, MipmapTexture } from './p5.Texture';
 import { Framebuffer } from './p5.Framebuffer';
 import { Graphics } from '../core/p5.Graphics';
-import { Element } from '../core/p5.Element';
+import { Element } from '../dom/p5.Element';
 import { ShapeBuilder } from './ShapeBuilder';
 import { GeometryBufferCache } from './GeometryBufferCache';
 
