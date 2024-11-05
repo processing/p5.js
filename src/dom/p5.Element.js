@@ -5,6 +5,7 @@
  */
 
 import { File } from './p5.File';
+import { Color } from '../color/p5.Color';
 import * as constants from '../core/constants';
 
 class Element {
@@ -1213,7 +1214,7 @@ class Element {
   style(prop, val) {
     const self = this;
 
-    if (val instanceof p5.Color) {
+    if (val instanceof Color) {
       val =
         'rgba(' +
         val.levels[0] +
