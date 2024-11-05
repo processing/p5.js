@@ -201,7 +201,7 @@ visualSuite("Type.v1", function () {
     );
 
     visualTest(
-      "all alignments with multi-line manual text",
+      "all alignments with multi-line Manual Text",
       function (p5, screenshot) {
         const alignments = [
           { alignX: p5.LEFT, alignY: p5.TOP },
@@ -293,23 +293,26 @@ visualSuite("Type.v1", function () {
   });
 
   visualSuite("textLeading", function () {
-    visualTest("text leading with different values", function (p5, screenshot) {
-      p5.createCanvas(300, 200);
-      const leadingValues = [10, 20, 30];
-      let yOffset = 0;
+    visualTest(
+      "text leading with different values",
+      function (p5, screenshot) {
+        p5.createCanvas(300, 200);
+        const leadingValues = [10, 20, 30];
+        let yOffset = 0;
 
-      p5.textSize(20);
-      p5.textAlign(p5.LEFT, p5.TOP);
+        p5.textSize(20);
+        p5.textAlign(p5.LEFT, p5.TOP);
 
-      leadingValues.forEach((leading) => {
-        p5.textLeading(leading);
-        p5.text(`Leading: ${leading}`, 0, yOffset);
-        p5.text("This is a line of text.", 0, yOffset + 30);
-        p5.text("This is another line of text.", 0, yOffset + 30 + leading);
-        yOffset += 30 + leading;
-      });
-      screenshot();
-    });
+        leadingValues.forEach((leading) => {
+          p5.textLeading(leading);
+          p5.text(`Leading: ${leading}`, 0, yOffset);
+          p5.text("This is a line of text.", 0, yOffset + 30);
+          p5.text("This is another line of text.", 0, yOffset + 30 + leading);
+          yOffset += 30 + leading;
+        });
+        screenshot();
+      }
+    );
   });
 
   visualSuite("textWidth", function () {
@@ -554,10 +557,10 @@ export function visualTest(
       );
       const expected = expectedScreenshots
         ? await Promise.all(
-            expectedFilenames.map((path) =>
-              myp5.loadImage("/unit/visual" + path.slice(2))
-            )
+          expectedFilenames.map((path) =>
+            myp5.loadImage("/unit/visual" + path.slice(2))
           )
+        )
         : [];
 
       for (let i = 0; i < actual.length; i++) {
@@ -570,8 +573,8 @@ export function visualTest(
               )}\n\nReceived:\n${toBase64(actual[i])}\n\nDiff:\n${toBase64(
                 result.diff
               )}\n\n` +
-                "If this is unexpected, paste these URLs into your browser to inspect them.\n\n" +
-                `If this change is expected, please delete the screenshots/${name} folder and run tests again to generate a new screenshot.`
+              "If this is unexpected, paste these URLs into your browser to inspect them.\n\n" +
+              `If this change is expected, please delete the screenshots/${name} folder and run tests again to generate a new screenshot.`
             );
           }
         } else {
