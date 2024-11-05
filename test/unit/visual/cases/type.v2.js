@@ -196,7 +196,7 @@ visualSuite("Type.v2", function () {
     );
 
     visualTest(
-      "all alignments with multi-line manual text",
+      "all alignments with multi-line Manual Text",
       function (p5, screenshot) {
         const alignments = [
           { alignX: p5.LEFT, alignY: p5.TOP },
@@ -288,23 +288,26 @@ visualSuite("Type.v2", function () {
   });
 
   visualSuite("textLeading", function () {
-    visualTest("text leading with different values", function (p5, screenshot) {
-      p5.createCanvas(300, 200);
-      const leadingValues = [10, 20, 30];
-      let yOffset = 0;
+    visualTest(
+      "text leading with different values",
+      function (p5, screenshot) {
+        p5.createCanvas(300, 200);
+        const leadingValues = [10, 20, 30];
+        let yOffset = 0;
 
-      p5.textSize(20);
-      p5.textAlign(p5.LEFT, p5.TOP);
+        p5.textSize(20);
+        p5.textAlign(p5.LEFT, p5.TOP);
 
-      leadingValues.forEach((leading) => {
-        p5.textLeading(leading);
-        p5.text(`Leading: ${leading}`, 0, yOffset);
-        p5.text("This is a line of text.", 0, yOffset + 30);
-        p5.text("This is another line of text.", 0, yOffset + 30 + leading);
-        yOffset += 30 + leading;
-      });
-      screenshot();
-    });
+        leadingValues.forEach((leading) => {
+          p5.textLeading(leading);
+          p5.text(`Leading: ${leading}`, 0, yOffset);
+          p5.text("This is a line of text.", 0, yOffset + 30);
+          p5.text("This is another line of text.", 0, yOffset + 30 + leading);
+          yOffset += 30 + leading;
+        });
+        screenshot();
+      }
+    );
   });
 
   visualSuite("textWidth", function () {
