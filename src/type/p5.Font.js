@@ -8,9 +8,15 @@ function font(p5, fn) {
   p5.Font = class Font {
 
     constructor(p, name, path, descriptors) {
+      if (!(p instanceof p5)) {
+        throw Error('p5 instance is required');
+      }
+      if (!path.startsWith('url(')) {
+        path = `url(${path})`; // hmm
+      }
       this.pInst = p;
-      if (!(p instanceof p5)) throw Error('p5 instance is required');
-      if (!path.startsWith('url(')) path = `url(${path})`; // hmm
+      this.name = name;
+      this.path = path;
       this.font = new FontFace(name, path, descriptors);
     }
 
@@ -32,7 +38,7 @@ function font(p5, fn) {
 
     static async create(...args/*path, name, onSuccess, onError*/) {
 
-      let { path, name, success, error, descriptors } = _parseCreateArgs(...args);
+      let { path, name, success, error, descriptors } = parseCreateArgs(...args);
 
       return await new Promise((resolve, reject) => {
         let pfont = new p5.Font(this/*p5 instance*/, name, path, descriptors);
@@ -59,7 +65,7 @@ function font(p5, fn) {
 
   }// end p5.Font
 
-  function _parseCreateArgs(...args/*path, name, onSuccess, onError*/) {
+  function parseCreateArgs(...args/*path, name, onSuccess, onError*/) {
 
     // parse the path
     let path = args.shift();

@@ -548,7 +548,7 @@ function text2d(p5, fn, lifecycles) {
     @returns {array} - the processed lines of text
   */
   p5.Renderer2D.prototype._processLines = function (str, width) {
-    let lines = this._splitOnBreaks(str);
+    let lines = this._splitOnBreaks(str.toString());
     let hasLineBreaks = lines.length > 1;
     let hasWidth = typeof width !== 'undefined';
     let exceedsWidth = hasWidth && lines.some(l => this._textWidthSingle(l) > width);

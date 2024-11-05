@@ -1,46 +1,45 @@
 import p5 from '../../../src/app.js';
 
 suite('Typography Attributes', function() {
-  let myp5;
+  var myp5;
 
-  beforeAll(function() {
-    new p5(function(p) {
-      p.setup = function() {
-        myp5 = p;
-      };
+  beforeEach(function () {
+    myp5 = new p5(function (p) {
+      p.setup = function () { };
+      p.draw = function () { };
     });
   });
 
-  afterAll(function() {
+  afterEach(function () {
     myp5.remove();
   });
 
-  suite('p5.prototype.textLeading', function() {
-    test('sets and gets the spacing value', function() {
+  suite('textLeading', function() {
+    test('sets and gets the leading value', function() {
       myp5.textLeading(20);
       assert.strictEqual(myp5.textLeading(), 20);
     });
-    test('should work for negative spacing value', function() {
+    test('should work for negative leadings', function() {
       myp5.textLeading(-20);
       assert.strictEqual(myp5.textLeading(), -20);
     });
   });
 
-  suite('p5.prototype.textSize', function() {
-    test('sets and gets the font size', function() {
+  suite('textSize', function() {
+    test('sets and gets the text size', function() {
       myp5.textSize(24);
       assert.strictEqual(myp5.textSize(), 24);
     });
   });
 
-  suite('p5.prototype.textStyle', function() {
-    test('sets and gets the font style', function() {
+  suite('textStyle', function() {
+    test('sets and gets the text style', function() {
       myp5.textStyle(myp5.ITALIC);
       assert.strictEqual(myp5.textStyle(), myp5.ITALIC);
     });
   });
 
-  suite('p5.prototype.textWidth', function() {
+  suite('textWidth', function() {
     test('should return a number for char input', function() {
       assert.isNumber(myp5.textWidth('P'));
     });
@@ -49,25 +48,30 @@ suite('Typography Attributes', function() {
     });
     // Either should not throw error
     test('should return a number for number input', function() {
-      assert.isNumber(myp5.textWidth('p5.js'));
+      assert.isNumber(myp5.textWidth(100));
     });
   });
 
-  suite('p5.prototype.textAscent', function() {
+  suite('textAscent', function() {
     test('should return a number', function() {
       assert.isNumber(myp5.textAscent());
     });
   });
 
-  suite('p5.prototype.textDescent', function() {
+  suite('textDescent', function() {
     test('should return a number', function() {
       assert.isNumber(myp5.textDescent());
     });
   });
 
-  suite('p5.prototype.textWrap', function() {
-    test('returns textWrap text attribute', function() {
+  suite('textWrap', function() {
+    test('gets the default text wrap attribute', function() {
       assert.strictEqual(myp5.textWrap(), myp5.WORD);
     });
+    test('sets and gets the text wrap value', function() {
+      myp5.textWrap(myp5.CHAR);
+      assert.strictEqual(myp5.textWrap(), myp5.CHAR);
+    });
+
   });
 });
