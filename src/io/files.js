@@ -7,6 +7,58 @@
 
 import * as fileSaver from 'file-saver';
 
+class HTTPError extends Error {
+  status;
+  response;
+  ok;
+}
+
+async function request(path, type){
+  try {
+    const res = await fetch(path);
+
+    if (res.ok) {
+      let body;
+      switch(type) {
+        case 'json':
+          body = await res.json();
+          break;
+        case 'string':
+          body = await res.text();
+          break;
+        case 'arrayBuffer':
+          body = await res.arrayBuffer();
+          break;
+        case 'blob':
+          body = await res.blob();
+          break;
+        default:
+          throw new Error('Unsupported response type');
+      }
+
+      return body;
+
+    } else {
+      const err = new HTTPError(res.statusText);
+      err.status = res.status;
+      err.response = res;
+      err.ok = false;
+
+      throw err;
+    }
+
+  } catch(err) {
+    // Handle both fetch error and HTTP error
+    if (err instanceof TypeError) {
+      console.log('You may have encountered a CORS error');
+    } else if(err instanceof HTTPError) {
+      console.log('You have encountered a HTTP error');
+    }
+
+    throw err;
+  }
+}
+
 function files(p5, fn){
   /**
    * Loads a JSON file to create an `Object`.
@@ -236,60 +288,22 @@ function files(p5, fn){
    * </code>
    * </div>
    */
-  fn.loadJSON = async function (...args) {
-    p5._validateParameters('loadJSON', args);
-    const path = args[0];
-    let callback;
-    let errorCallback;
-    let options;
+  fn.loadJSON = async function (path, successCallback, errorCallback) {
+    p5._validateParameters('loadJSON', arguments);
 
-    const ret = {}; // object needed for preload
-    let t = 'json';
-
-    // check for explicit data type argument
-    for (let i = 1; i < args.length; i++) {
-      const arg = args[i];
-      if (typeof arg === 'string') {
-        if (arg === 'json') {
-          t = arg;
-        }
-      } else if (typeof arg === 'function') {
-        if (!callback) {
-          callback = arg;
-        } else {
-          errorCallback = arg;
-        }
+    try{
+      const data = await request(path, 'json');
+      if (successCallback) successCallback(data);
+      return data;
+    } catch(err) {
+      if(errorCallback) {
+        errorCallback(err);
+      } else {
+        throw err;
       }
     }
 
-    await new Promise(resolve => this.httpDo(
-      path,
-      'GET',
-      options,
-      t,
-      resp => {
-        for (const k in resp) {
-          ret[k] = resp[k];
-        }
-        if (typeof callback !== 'undefined') {
-          callback(resp);
-        }
-
-        resolve()
-      },
-      err => {
-        // Error handling
-        p5._friendlyFileLoadError(5, path);
-
-        if (errorCallback) {
-          errorCallback(err);
-        } else {
-          throw err;
-        }
-      }
-    ));
-
-    return ret;
+    //     p5._friendlyFileLoadError(5, path);
   };
 
   /**
@@ -432,8 +446,7 @@ function files(p5, fn){
     const ret = [];
     let callback, errorCallback;
 
-    for (let i = 1; i < args.length; i++) {
-      const arg = args[i];
+    for (let arg of args) {
       if (typeof arg === 'function') {
         if (typeof callback === 'undefined') {
           callback = arg;
@@ -926,8 +939,7 @@ function files(p5, fn){
     const ret = new p5.XML();
     let callback, errorCallback;
 
-    for (let i = 1; i < args.length; i++) {
-      const arg = args[i];
+    for (let arg of args) {
       if (typeof arg === 'function') {
         if (typeof callback === 'undefined') {
           callback = arg;
@@ -992,35 +1004,33 @@ function files(p5, fn){
    * }
    * </code></div>
    */
-  fn.loadBytes = async function (file, callback, errorCallback) {
-    const ret = {};
-
-    await new Promise(resolve => this.httpDo(
-      file,
-      'GET',
-      'arrayBuffer',
-      arrayBuffer => {
-        ret.bytes = new Uint8Array(arrayBuffer);
-
-        if (typeof callback === 'function') {
-          callback(ret);
-        }
-
-        resolve();
-      },
-      err => {
-        // Error handling
-        p5._friendlyFileLoadError(6, file);
-
-        if (errorCallback) {
-          errorCallback(err);
-        } else {
-          throw err;
-        }
+  fn.loadBytes = async function (path, successCallback, errorCallback) {
+    try{
+      const data = await request(path, 'arrayBuffer');
+      if (successCallback) successCallback(data);
+      return data;
+    } catch(err) {
+      if(errorCallback) {
+        errorCallback(err);
+      } else {
+        throw err;
       }
-    ));
-    return ret;
+    }
   };
+
+  fn.loadBlob = async function(path, successCallback, errorCallback) {
+    try{
+      const data = await request(path, 'blob');
+      if (successCallback) successCallback(data);
+      return data;
+    } catch(err) {
+      if(errorCallback) {
+        errorCallback(err);
+      } else {
+        throw err;
+      }
+    }
+  }
 
   /**
    * Method for executing an HTTP GET request. If data type is not specified,
@@ -1389,6 +1399,11 @@ function files(p5, fn){
     promise.then(callback || (() => { }));
     promise.catch(errorCallback || console.error);
     return promise;
+  };
+
+  fn.promiseDo = async function(path) {
+    const res = await fetch(path);
+    const body = await res.json();
   };
 
   /**
