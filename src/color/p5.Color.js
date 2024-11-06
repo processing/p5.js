@@ -8,56 +8,84 @@
  */
 
 import * as constants from '../core/constants';
+// import {
+//   ColorSpace,
+//   to,
+//   // toGamut,
+//   serialize,
+//   parse,
+//   // range,
+
+//   XYZ_D65,
+//   sRGB_Linear,
+//   sRGB,
+//   HSL,
+//   HSV,
+//   HWB,
+
+//   XYZ_D50,
+//   Lab,
+//   LCH,
+
+//   OKLab,
+//   OKLCH,
+
+//   P3_Linear,
+//   P3,
+
+//   A98RGB_Linear,
+//   A98RGB
+// } from 'colorjs.io/fn';
+
+
+//for CSS string parsing 
+//import 'culori/css';
+
+//importing culori/fn to optimize bundle size and
+//'opting into' the tree-shakable version
+// handle operations and conversions within color spaces
 import {
-  ColorSpace,
-  to,
-  // toGamut,
-  serialize,
-  parse,
-  // range,
+  //converter, // string or color objects -> return object
+  //parse, // string -> return object
+  useMode,
+  modeHsl,
+  modeHwb,
+  modeOklab,
+  modeOklch,
+  modeP3,
+  modeRgb
+} from 'culori/fn';
 
-  XYZ_D65,
-  sRGB_Linear,
-  sRGB,
-  HSL,
-  HSV,
-  HWB,
+import {converter, parse} from 'culori';
 
-  XYZ_D50,
-  Lab,
-  LCH,
+//Registering color spaces with useMode()
+const hsl = useMode(modeHsl);
+const hwb = useMode(modeHwb);
+const oklab = useMode(modeOklab);
+const oklch = useMode(modeOklch);
+const p3 = useMode(modeP3);
+const rgb = useMode(modeRgb);
 
-  OKLab,
-  OKLCH,
+// ColorSpace.register(XYZ_D65);
+// ColorSpace.register(sRGB_Linear);
+// ColorSpace.register(sRGB);
+// ColorSpace.register(HSL);
+// ColorSpace.register(HSV);
+// ColorSpace.register(HWB);
+// ColorSpace.register(HSB);
 
-  P3_Linear,
-  P3,
+// ColorSpace.register(XYZ_D50);
+// ColorSpace.register(Lab);
+// ColorSpace.register(LCH);
 
-  A98RGB_Linear,
-  A98RGB
-} from 'colorjs.io/fn';
-import HSB from './color_spaces/hsb.js';
+// ColorSpace.register(OKLab);
+// ColorSpace.register(OKLCH);
 
-ColorSpace.register(XYZ_D65);
-ColorSpace.register(sRGB_Linear);
-ColorSpace.register(sRGB);
-ColorSpace.register(HSL);
-ColorSpace.register(HSV);
-ColorSpace.register(HWB);
-ColorSpace.register(HSB);
+// ColorSpace.register(P3_Linear);
+// ColorSpace.register(P3);
 
-ColorSpace.register(XYZ_D50);
-ColorSpace.register(Lab);
-ColorSpace.register(LCH);
-
-ColorSpace.register(OKLab);
-ColorSpace.register(OKLCH);
-
-ColorSpace.register(P3_Linear);
-ColorSpace.register(P3);
-
-ColorSpace.register(A98RGB_Linear);
-ColorSpace.register(A98RGB);
+// ColorSpace.register(A98RGB_Linear);
+// ColorSpace.register(A98RGB);
 
 class Color {
   color;
@@ -65,20 +93,20 @@ class Color {
   mode;
 
   constructor(vals, colorMode='rgb', colorMaxes={rgb: [255, 255, 255, 255]}) {
-    // This changes with the sketch's setting
-    // NOTE: Maintaining separate maxes for different color space is awkward.
-    //       Consider just one universal maxes.
-    // this.maxes = pInst._colorMaxes;
-    this.maxes = colorMaxes;
-    // This changes with the color object
-    // this.mode = pInst._colorMode;
+    
+    //storing default rgb color mode and maxes
     this.mode = colorMode;
+    this.maxes = colorMaxes;
 
+    //if vals is an object
     if (typeof vals === 'object' && !Array.isArray(vals) && vals !== null){
-      this.color = vals;
-    } else if(typeof vals[0] === 'string') {
+      this.color = vals; //color-compatible format
+      console.log("Color object detected:", this.color);
+      console.log("Current color mode:", this.color.mode);
+
+    } else if( typeof vals[0] === 'string') {
       try{
-        // NOTE: this will not necessarily have the right color mode
+        // parse the string
         this.color = parse(vals[0]);
       }catch(err){
         // TODO: Invalid color string
@@ -102,11 +130,11 @@ class Color {
 
       // _colorMode can be 'rgb', 'hsb', or 'hsl'
       // These should map to color.js color space
-      let space = 'srgb';
+      let space = 'rgb';
       let coords = vals;
       switch(this.mode){
         case 'rgb':
-          space = 'srgb';
+          space = 'rgb';
           coords = [
             vals[0] / this.maxes[this.mode][0],
             vals[1] / this.maxes[this.mode][1],
@@ -118,28 +146,38 @@ class Color {
           space = 'hsb';
           coords = [
             vals[0] / this.maxes[this.mode][0] * 360,
-            vals[1] / this.maxes[this.mode][1] * 100,
-            vals[2] / this.maxes[this.mode][2] * 100
+            vals[1] / this.maxes[this.mode][1] ,
+            vals[2] / this.maxes[this.mode][2] 
           ];
           break;
         case 'hsl':
           space = 'hsl';
           coords = [
             vals[0] / this.maxes[this.mode][0] * 360,
-            vals[1] / this.maxes[this.mode][1] * 100,
-            vals[2] / this.maxes[this.mode][2] * 100
+            vals[1] / this.maxes[this.mode][1] ,
+            vals[2] / this.maxes[this.mode][2] 
           ];
           break;
         default:
           console.error('Invalid color mode');
       }
 
-      const color = {
-        space,
-        coords,
-        alpha
-      };
-      this.color = to(color, space);
+      // Set the color object with space, coordinates, and alpha
+      this.color = { space, coords, alpha };
+      console.log("Constructed color object:", this.color);
+
+      // Use converter to ensure compatibility with Culori's color space conversion
+      const convertToSpace = converter(space);
+      this.color = convertToSpace(this.color); // Convert color to specified space
+      console.log("Converted color object:", this.color);
+
+      // const color = {
+      //   space,
+      //   coords,
+      //   alpha
+      // };
+      // //this.color = to(color, space);
+      // this.color = converter(space);
     }
   }
 
@@ -184,12 +222,12 @@ class Color {
    * </code>
    * </div>
    */
-  toString(format) {
-    // NOTE: memoize
-    return serialize(this.color, {
-      format
-    });
-  }
+  // toString(format) {
+  //   // NOTE: memoize
+  //   return serialize(this.color, {
+  //     format
+  //   });
+  // }
 
   /**
    * Sets the red component of a color.
