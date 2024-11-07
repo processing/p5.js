@@ -23,7 +23,7 @@ async function request(path, type){
         case 'json':
           body = await res.json();
           break;
-        case 'string':
+        case 'text':
           body = await res.text();
           break;
         case 'arrayBuffer':
@@ -51,8 +51,10 @@ async function request(path, type){
     // Handle both fetch error and HTTP error
     if (err instanceof TypeError) {
       console.log('You may have encountered a CORS error');
-    } else if(err instanceof HTTPError) {
+    } else if (err instanceof HTTPError) {
       console.log('You have encountered a HTTP error');
+    } else if (err instanceof SyntaxError) {
+      console.log('There is an error parsing the response to requested data structure');
     }
 
     throw err;
@@ -440,64 +442,22 @@ function files(p5, fn){
    * </code>
    * </div>
    */
-  fn.loadStrings = async function (...args) {
-    p5._validateParameters('loadStrings', args);
+  fn.loadStrings = async function (path, successCallback, errorCallback) {
+    p5._validateParameters('loadStrings', arguments);
 
-    const ret = [];
-    let callback, errorCallback;
+    try{
+      let data = await request(path, 'text');
+      data = data.split(/\r?\n/);
 
-    for (let arg of args) {
-      if (typeof arg === 'function') {
-        if (typeof callback === 'undefined') {
-          callback = arg;
-        } else if (typeof errorCallback === 'undefined') {
-          errorCallback = arg;
-        }
+      if (successCallback) successCallback(data);
+      return data;
+    } catch(err) {
+      if(errorCallback) {
+        errorCallback(err);
+      } else {
+        throw err;
       }
     }
-
-    await new Promise(resolve => fn.httpDo.call(
-      this,
-      args[0],
-      'GET',
-      'text',
-      data => {
-        // split lines handling mac/windows/linux endings
-        const lines = data
-          .replace(/\r\n/g, '\r')
-          .replace(/\n/g, '\r')
-          .split(/\r/);
-
-        // safe insert approach which will not blow up stack when inserting
-        // >100k lines, but still be faster than iterating line-by-line. based on
-        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply#Examples
-        const QUANTUM = 32768;
-        for (let i = 0, len = lines.length; i < len; i += QUANTUM) {
-          Array.prototype.push.apply(
-            ret,
-            lines.slice(i, Math.min(i + QUANTUM, len))
-          );
-        }
-
-        if (typeof callback !== 'undefined') {
-          callback(ret);
-        }
-
-        resolve()
-      },
-      function (err) {
-        // Error handling
-        p5._friendlyFileLoadError(3, arguments[0]);
-
-        if (errorCallback) {
-          errorCallback(err);
-        } else {
-          throw err;
-        }
-      }
-    ));
-
-    return ret;
   };
 
   /**
@@ -1101,11 +1061,27 @@ function files(p5, fn){
    * @param  {Function}      [errorCallback]
    * @return {Promise}
    */
-  fn.httpGet = function (...args) {
-    p5._validateParameters('httpGet', args);
+  fn.httpGet = async function (path, datatype, successCallback, errorCallback) {
+    p5._validateParameters('httpGet', arguments);
 
-    args.splice(1, 0, 'GET');
-    return fn.httpDo.apply(this, args);
+    // NOTE: This is like a more primitive version of the other load functions.
+    //       If the user wanted to customize more behavior, pass in Request to path.
+
+    const req = new Request(path, {
+      method: 'GET'
+    });
+
+    try{
+      const data = await request(req, datatype);
+      if (successCallback) successCallback(data);
+      return data;
+    } catch(err) {
+      if(errorCallback) {
+        errorCallback(err);
+      } else {
+        throw err;
+      }
+    }
   };
 
   /**
@@ -1190,11 +1166,49 @@ function files(p5, fn){
    * @param  {Function}      [errorCallback]
    * @return {Promise}
    */
-  fn.httpPost = function (...args) {
-    p5._validateParameters('httpPost', args);
+  fn.httpPost = async function (path, data, datatype, successCallback, errorCallback) {
+    p5._validateParameters('httpPost', arguments);
 
-    args.splice(1, 0, 'POST');
-    return fn.httpDo.apply(this, args);
+    // NOTE: This behave similarly to httpGet and additional options should be passed
+    //       as a Request to path. Both method and body will be overridden.
+    //       Will try to infer correct Content-Type for given data.
+
+    let reqData = data;
+    let contentType = 'text/plain';
+    // Normalize data
+    if (typeof data === 'object') {
+      reqData = JSON.stringify(data);
+      contentType = 'application/json';
+
+    } else if(data instanceof p5.XML) {
+      reqData = data.serialize();
+      contentType = 'application/xml';
+
+    // NOTE: p5.Image.toBlob() will need to be implemented
+    // } else if(data instanceof p5.Image) {
+    //   reqData = data.toBlob();
+    //   contentType = 'image/png';
+    }
+
+    const req = new Request(path, {
+      method: 'POST',
+      body: reqData,
+      headers: {
+        'Content-Type': contentType
+      }
+    });
+
+    try{
+      const data = await request(req, datatype);
+      if (successCallback) successCallback(data);
+      return data;
+    } catch(err) {
+      if(errorCallback) {
+        errorCallback(err);
+      } else {
+        throw err;
+      }
+    }
   };
 
   /**
@@ -1278,132 +1292,25 @@ function files(p5, fn){
    * @param  {Function}      [errorCallback]
    * @return {Promise}
    */
-  fn.httpDo = function (...args) {
-    let type;
-    let callback;
-    let errorCallback;
-    let request;
-    let promise;
-    let cbCount = 0;
-    let contentType = 'text/plain';
-    // Trim the callbacks off the end to get an idea of how many arguments are passed
-    for (let i = args.length - 1; i > 0; i--) {
-      if (typeof args[i] === 'function') {
-        cbCount++;
-      } else {
-        break;
-      }
-    }
-    // The number of arguments minus callbacks
-    const argsCount = args.length - cbCount;
-    const path = args[0];
-    if (
-      argsCount === 2 &&
-      typeof path === 'string' &&
-      typeof args[1] === 'object'
-    ) {
-      // Intended for more advanced use, pass in Request parameters directly
-      request = new Request(path, args[1]);
-      callback = args[2];
-      errorCallback = args[3];
-    } else {
-      // Provided with arguments
-      let method = 'GET';
-      let data;
-
-      for (let j = 1; j < args.length; j++) {
-        const a = args[j];
-        if (typeof a === 'string') {
-          if (a === 'GET' || a === 'POST' || a === 'PUT' || a === 'DELETE') {
-            method = a;
-          } else if (
-            a === 'json' ||
-            a === 'binary' ||
-            a === 'arrayBuffer' ||
-            a === 'xml' ||
-            a === 'text' ||
-            a === 'table'
-          ) {
-            type = a;
-          } else {
-            data = a;
-          }
-        } else if (typeof a === 'number') {
-          data = a.toString();
-        } else if (typeof a === 'object') {
-          if (a instanceof p5.XML) {
-            data = a.serialize();
-            contentType = 'application/xml';
-          } else {
-            data = JSON.stringify(a);
-            contentType = 'application/json';
-          }
-        } else if (typeof a === 'function') {
-          if (!callback) {
-            callback = a;
-          } else {
-            errorCallback = a;
-          }
-        }
-      }
-
-      let headers =
-        method === 'GET'
-          ? new Headers()
-          : new Headers({ 'Content-Type': contentType });
-
-      request = new Request(path, {
-        method,
-        mode: 'cors',
-        body: data,
-        headers
-      });
-    }
-    // do some sort of smart type checking
-    if (!type) {
-      if (path.includes('json')) {
-        type = 'json';
-      } else if (path.includes('xml')) {
-        type = 'xml';
-      } else {
-        type = 'text';
-      }
-    }
-
-    promise = fetch(request);
-    promise = promise.then(res => {
-      if (!res.ok) {
-        const err = new Error(res.body);
-        err.status = res.status;
-        err.ok = false;
-        throw err;
-      } else {
-        switch (type) {
-          case 'json':
-            return res.json();
-          case 'binary':
-            return res.blob();
-          case 'arrayBuffer':
-            return res.arrayBuffer();
-          case 'xml':
-            return res.text().then(text => {
-              const parser = new DOMParser();
-              const xml = parser.parseFromString(text, 'text/xml');
-              return new p5.XML(xml.documentElement);
-            });
-          default:
-            return res.text();
-        }
-      }
+  fn.httpDo = async function (path, method, datatype, successCallback, errorCallback) {
+    // NOTE: This behave similarly to httpGet but even more primitive. The user
+    //       will most likely want to pass in a Request to path, the only convenience
+    //       is that datatype will be taken into account to parse the response.
+    const req = new Request(path, {
+      method
     });
-    promise.then(callback || (() => { }));
-    promise.catch(errorCallback || console.error);
-    return promise;
-  };
 
-  fn.promiseDo = async function(path) {
-    const res = await fetch(path);
-    const body = await res.json();
+    try{
+      const data = await request(req, datatype);
+      if (successCallback) successCallback(data);
+      return data;
+    } catch(err) {
+      if(errorCallback) {
+        errorCallback(err);
+      } else {
+        throw err;
+      }
+    }
   };
 
   /**
