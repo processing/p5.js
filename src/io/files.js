@@ -895,47 +895,24 @@ function files(p5, fn){
    * </code>
    * </div>
    */
-  fn.loadXML = async function (...args) {
-    const ret = new p5.XML();
-    let callback, errorCallback;
+  fn.loadXML = async function (path, successCallback, errorCallback) {
+    try{
+      const parser = new DOMParser();
 
-    for (let arg of args) {
-      if (typeof arg === 'function') {
-        if (typeof callback === 'undefined') {
-          callback = arg;
-        } else if (typeof errorCallback === 'undefined') {
-          errorCallback = arg;
-        }
+      let data = await request(path, 'text');
+      const parsedDOM = parser.parseFromString(data, 'application/xml');
+      data = new p5.XML(parsedDOM);
+
+      if (successCallback) successCallback(data);
+      return data;
+    } catch(err) {
+
+      if(errorCallback) {
+        errorCallback(err);
+      } else {
+        throw err;
       }
     }
-
-    await new Promise(resolve => this.httpDo(
-      args[0],
-      'GET',
-      'xml',
-      xml => {
-        for (const key in xml) {
-          ret[key] = xml[key];
-        }
-        if (typeof callback !== 'undefined') {
-          callback(ret);
-        }
-
-        resolve()
-      },
-      function (err) {
-        // Error handling
-        p5._friendlyFileLoadError(1, arguments[0]);
-
-        if (errorCallback) {
-          errorCallback(err);
-        } else {
-          throw err;
-        }
-      }
-    ));
-
-    return ret;
   };
 
   /**
