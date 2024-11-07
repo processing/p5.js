@@ -8,9 +8,9 @@
 
 // import p5 from '../core/main';
 import * as constants from '../core/constants';
-import { Element } from '../core/p5.Element';
+import { Element } from '../dom/p5.Element';
 import { Renderer } from '../core/p5.Renderer';
-import { MediaElement } from '../dom/media_element';
+import { MediaElement } from '../dom/p5.MediaElement';
 import { Image } from '../image/p5.Image';
 import { Graphics } from '../core/p5.Graphics';
 import { FramebufferTexture } from './p5.Framebuffer';
@@ -96,12 +96,11 @@ class Texture {
       textureData = this.src.canvas;
     } else if (
       this.isSrcMediaElement ||
-    this.isSrcP5Graphics ||
-    this.isSrcHTMLElement
+      this.isSrcHTMLElement
     ) {
     // if param is a video HTML element
       textureData = this.src.elt;
-    } else if (this.isSrcP5Renderer) {
+    } else if (this.isSrcP5Graphics || this.isSrcP5Renderer) {
       textureData = this.src.canvas;
     } else if (this.isImageData) {
       textureData = this.src;

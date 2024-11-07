@@ -1,10 +1,10 @@
 import * as constants from './constants';
 import p5 from './main';
 import { Renderer } from './p5.Renderer';
-import { Element } from './p5.Element';
 import { Graphics } from './p5.Graphics';
 import { Image } from '../image/p5.Image';
-import { MediaElement } from '../dom/media_element';
+import { Element } from '../dom/p5.Element';
+import { MediaElement } from '../dom/p5.MediaElement';
 
 const styleEmpty = 'rgba(0,0,0,0)';
 // const alphaThreshold = 0.00125; // minimum visible
