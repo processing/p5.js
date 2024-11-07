@@ -530,194 +530,33 @@ function files(p5, fn){
    * </code>
    * </div>
    */
-  fn.loadTable = async function (path) {
-    // p5._validateParameters('loadTable', arguments);
-    let callback;
-    let errorCallback;
-    const options = [];
-    let header = false;
-    const ext = path.substring(path.lastIndexOf('.') + 1, path.length);
+  fn.loadTable = async function (path, separator=',', header, successCallback, errorCallback) {
+    try{
+      let data = await request(path, 'text');
+      data = data.split(/\r?\n/);
 
-    let sep;
-    if (ext === 'csv') {
-      sep = ',';
-    } else if (ext === 'ssv') {
-      sep = ';';
-    } else if (ext === 'tsv') {
-      sep = '\t';
-    }
+      let ret = new p5.Table();
 
-    for (let i = 1; i < arguments.length; i++) {
-      if (typeof arguments[i] === 'function') {
-        if (typeof callback === 'undefined') {
-          callback = arguments[i];
-        } else if (typeof errorCallback === 'undefined') {
-          errorCallback = arguments[i];
-        }
-      } else if (typeof arguments[i] === 'string') {
-        options.push(arguments[i]);
-        if (arguments[i] === 'header') {
-          header = true;
-        }
-        if (arguments[i] === 'csv') {
-          sep = ',';
-        } else if (arguments[i] === 'ssv') {
-          sep = ';';
-        } else if (arguments[i] === 'tsv') {
-          sep = '\t';
-        }
+      if(header){
+        ret.columns = data.shift().split(separator);
+      }else{
+        ret.columns = data[0].split(separator).map(() => null);
+      }
+
+      data.forEach((line) => {
+        const row = new p5.TableRow(line, separator);
+        ret.addRow(row);
+      });
+
+      if (successCallback) successCallback(ret);
+      return ret;
+    } catch(err) {
+      if(errorCallback) {
+        errorCallback(err);
+      } else {
+        throw err;
       }
     }
-
-    const t = new p5.Table();
-
-    await new Promise(resolve => this.httpDo(
-      path,
-      'GET',
-      'table',
-      resp => {
-        const state = {};
-
-        // define constants
-        const PRE_TOKEN = 0,
-          MID_TOKEN = 1,
-          POST_TOKEN = 2,
-          POST_RECORD = 4;
-
-        const QUOTE = '"',
-          CR = '\r',
-          LF = '\n';
-
-        const records = [];
-        let offset = 0;
-        let currentRecord = null;
-        let currentChar;
-
-        const tokenBegin = () => {
-          state.currentState = PRE_TOKEN;
-          state.token = '';
-        };
-
-        const tokenEnd = () => {
-          currentRecord.push(state.token);
-          tokenBegin();
-        };
-
-        const recordBegin = () => {
-          state.escaped = false;
-          currentRecord = [];
-          tokenBegin();
-        };
-
-        const recordEnd = () => {
-          state.currentState = POST_RECORD;
-          records.push(currentRecord);
-          currentRecord = null;
-        };
-
-        for (; ;) {
-          currentChar = resp[offset++];
-
-          // EOF
-          if (currentChar == null) {
-            if (state.escaped) {
-              throw new Error('Unclosed quote in file.');
-            }
-            if (currentRecord) {
-              tokenEnd();
-              recordEnd();
-              break;
-            }
-          }
-          if (currentRecord === null) {
-            recordBegin();
-          }
-
-          // Handle opening quote
-          if (state.currentState === PRE_TOKEN) {
-            if (currentChar === QUOTE) {
-              state.escaped = true;
-              state.currentState = MID_TOKEN;
-              continue;
-            }
-            state.currentState = MID_TOKEN;
-          }
-
-          // mid-token and escaped, look for sequences and end quote
-          if (state.currentState === MID_TOKEN && state.escaped) {
-            if (currentChar === QUOTE) {
-              if (resp[offset] === QUOTE) {
-                state.token += QUOTE;
-                offset++;
-              } else {
-                state.escaped = false;
-                state.currentState = POST_TOKEN;
-              }
-            } else if (currentChar === CR) {
-              continue;
-            } else {
-              state.token += currentChar;
-            }
-            continue;
-          }
-
-          // fall-through: mid-token or post-token, not escaped
-          if (currentChar === CR) {
-            if (resp[offset] === LF) {
-              offset++;
-            }
-            tokenEnd();
-            recordEnd();
-          } else if (currentChar === LF) {
-            tokenEnd();
-            recordEnd();
-          } else if (currentChar === sep) {
-            tokenEnd();
-          } else if (state.currentState === MID_TOKEN) {
-            state.token += currentChar;
-          }
-        }
-
-        // set up column names
-        if (header) {
-          t.columns = records.shift();
-        } else {
-          for (let i = 0; i < records[0].length; i++) {
-            t.columns[i] = 'null';
-          }
-        }
-        let row;
-        for (let i = 0; i < records.length; i++) {
-          //Handles row of 'undefined' at end of some CSVs
-          if (records[i].length === 1) {
-            if (records[i][0] === 'undefined' || records[i][0] === '') {
-              continue;
-            }
-          }
-          row = new p5.TableRow();
-          row.arr = records[i];
-          row.obj = makeObject(records[i], t.columns);
-          t.addRow(row);
-        }
-        if (typeof callback === 'function') {
-          callback(t);
-        }
-
-        resolve()
-      },
-      err => {
-        // Error handling
-        p5._friendlyFileLoadError(2, path);
-
-        if (errorCallback) {
-          errorCallback(err);
-        } else {
-          console.error(err);
-        }
-      }
-    ));
-
-    return t;
   };
 
   // helper function to turn a row into a JSON object
