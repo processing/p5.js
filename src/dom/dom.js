@@ -1463,15 +1463,28 @@ p5.prototype.createSelect = function(...args) {
  * @example
  * <div>
  * <code>
+ * let style = document.createElement('style');
+ * style.innerHTML = `
+ * .p5-radio label {
+ *    display: flex;
+ *    align-items: center;
+ *  }
+ *  .p5-radio input {
+ *    margin-right: 5px;
+ *  }
+ *  `;
+ * document.head.appendChild(style);
+ *
  * let myRadio;
  *
  * function setup() {
  *   createCanvas(100, 100);
  *
  *   // Create a radio button element and place it
- *   // in the top-left corner.
+ *   // in the top-right corner.
  *   myRadio = createRadio();
  *   myRadio.position(0, 0);
+ *   myRadio.class('p5-radio');
  *   myRadio.size(60);
  *
  *   // Add a few color options.
@@ -1535,9 +1548,10 @@ p5.prototype.createSelect = function(...args) {
  *   createCanvas(100, 100);
  *
  *   // Create a radio button element and place it
- *   // in the top-left corner.
+ *   // in the top-right corner.
  *   myRadio = createRadio();
  *   myRadio.position(0, 0);
+ *   myRadio.class('p5-radio');
  *   myRadio.size(50);
  *
  *   // Add a few color options.
