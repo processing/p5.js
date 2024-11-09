@@ -117,7 +117,7 @@ void main() {
 
   // Moving vertices slightly toward camera when far away 
   // https://github.com/processing/p5.js/issues/6956 
-  float zOffset = mix(-0.00045, -1., facingCamera);
+  float zOffset = mix(0., -1., facingCamera);
   float dynamicZAdjustment = mix(0.0, zOffset, distanceFactor); // Closer = less zAdjustment, farther = more
 
   posp.z -= dynamicZAdjustment;
