@@ -23,22 +23,26 @@ suite('Loading Fonts', function () {
     assert.equal(pFont.name, 'acmesa');
     assert.isTrue(pFont instanceof p5.Font);
   });
-  
-  test('loadFont.then', () => {
+
+  test('loadFont.then', () => new Promise(done => {
+
     myp5.loadFont(fontFile).then(pFont => {
       assert.ok(pFont, 'acmesa.ttf loaded');
       assert.equal(pFont.name, 'acmesa');
       assert.isTrue(pFont instanceof p5.Font);
+      done();
     });
-  });
 
-  test('loadFont.callback', () => {
+  }));
+
+  test('loadFont.callback', () => new Promise(done => {
     myp5.loadFont(fontFile, (pFont) => {
-      
+
       assert.ok(pFont, 'acmesa.ttf loaded');
       assert.equal(pFont.name, 'acmesa');
       assert.isTrue(pFont instanceof p5.Font);
+      done();
     });
-  });
+  }));
 
 });
