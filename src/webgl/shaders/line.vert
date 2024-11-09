@@ -18,7 +18,8 @@
 
 #define PROCESSING_LINE_SHADER
 
-precision mediump int;
+precision highp int;
+precision highp float;
 
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
