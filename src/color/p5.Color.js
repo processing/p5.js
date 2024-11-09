@@ -56,7 +56,14 @@ import {
   modeRgb
 } from 'culori/fn';
 
-import {converter, parse} from 'culori';
+import {
+  converter, 
+  parse,
+  formatHex,
+  formatHex8,
+  formatRgb,
+  formatHsl,
+  formatCss} from 'culori';
 
 //Registering color spaces with useMode()
 const hsl = useMode(modeHsl);
@@ -129,45 +136,70 @@ class Color {
         : 1;
 
       // _colorMode can be 'rgb', 'hsb', or 'hsl'
-      // These should map to color.js color space
-      let space = 'rgb';
-      let coords = vals;
+      // Color representation for Culori.js
+      
+      //let space = 'rgb'; -> to specify color mode
+      //let coords = vals; -> to access coordinates
       switch(this.mode){
         case 'rgb':
-          space = 'rgb';
-          coords = [
-            vals[0] / this.maxes[this.mode][0],
-            vals[1] / this.maxes[this.mode][1],
-            vals[2] / this.maxes[this.mode][2]
-          ];
+          this.color = {
+            mode: 'rgb',
+            r: vals[0]/ this.maxes[this.mode][0],
+            g: vals[1] / this.maxes[this.mode][1],
+            b: vals[2]/ this.maxes[this.mode][2],
+            alpha: alpha
+          };
+          // space = 'rgb';
+          // coords = [
+          //   vals[0] / this.maxes[this.mode][0],
+          //   vals[1] / this.maxes[this.mode][1],
+          //   vals[2] / this.maxes[this.mode][2]
+          // ];
           break;
         case 'hsb':
-          // TODO: need implementation
-          space = 'hsb';
-          coords = [
-            vals[0] / this.maxes[this.mode][0] * 360,
-            vals[1] / this.maxes[this.mode][1] ,
-            vals[2] / this.maxes[this.mode][2] 
-          ];
+          this.color = {
+            mode: 'hsv', // Culori uses "hsv" instead of "hsb"
+            h: (vals[0] / this.maxes.hsb[0]) * 360,
+            s: vals[1] / this.maxes.hsb[1],
+            v: vals[2] / this.maxes.hsb[2],
+            alpha: alpha
+          };
+          // space = 'hsb';
+          // coords = [
+          //   vals[0] / this.maxes[this.mode][0] * 360,
+          //   vals[1] / this.maxes[this.mode][1] ,
+          //   vals[2] / this.maxes[this.mode][2] 
+          // ];
           break;
         case 'hsl':
-          space = 'hsl';
-          coords = [
-            vals[0] / this.maxes[this.mode][0] * 360,
-            vals[1] / this.maxes[this.mode][1] ,
-            vals[2] / this.maxes[this.mode][2] 
-          ];
+          this.color = {
+            mode: 'hsl',
+            h: (vals[0] / this.maxes.hsl[0]) * 360,
+            s: vals[1] / this.maxes.hsl[1],
+            l: vals[2] / this.maxes.hsl[2],
+            alpha: alpha
+          };
+          // space = 'hsl';
+          // coords = [
+          //   vals[0] / this.maxes[this.mode][0] * 360,
+          //   vals[1] / this.maxes[this.mode][1] ,
+          //   vals[2] / this.maxes[this.mode][2] 
+          // ];
           break;
         default:
           console.error('Invalid color mode');
-      }
+      };
+      
+      // Define `toSpace` as an inline function within the constructor
+      // this.toSpace = (targetSpace) => {
+      //   const toTargetSpace = converter(targetSpace);
+      //   const convertedColor = toTargetSpace(this.color);
+      //   console.log(`Converted color to ${targetSpace} mode:`, convertedColor);
+      //   return convertedColor;
+      // };
 
-      // Set the color object with space, coordinates, and alpha
-      this.color = { space, coords, alpha };
-      console.log("Constructed color object:", this.color);
-
-      // Use converter to ensure compatibility with Culori's color space conversion
-      const convertToSpace = converter(space);
+      // // Use converter to ensure compatibility with Culori's color space conversion
+      const convertToSpace = converter(this.mode);
       this.color = convertToSpace(this.color); // Convert color to specified space
       console.log("Converted color object:", this.color);
 
@@ -228,6 +260,25 @@ class Color {
   //     format
   //   });
   // }
+  
+  //Culori.js doesn't have a single serialize function
+  //it rather has the following methods to serialize 
+  //colours to strings in various formats
+  toString(format) {
+    switch (format) {
+      case 'hex':
+        return formatHex(this.color);
+      case 'hex8':
+        return formatHex8(this.color);
+      case 'rgb':
+        return formatRgb(this.color);
+      case 'hsl':
+        return formatHsl(this.color);
+      default:
+        // Fallback to a default format, like RGB
+        return formatRgb(this.color);
+    }
+  }
 
   /**
    * Sets the red component of a color.
@@ -268,7 +319,8 @@ class Color {
   setRed(new_red) {
     const red_val = new_red / this.maxes[constants.RGB][0];
     if(this.mode === constants.RGB){
-      this.color.coords[0] = red_val;
+      //this.color.coords[0] = red_val;
+      this.color.r = red_val;
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
       const space = this.color.space.id;

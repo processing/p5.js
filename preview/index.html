@@ -22,12 +22,13 @@
     const sketch = function (p) {
       p.setup = function () {
         p.createCanvas(200, 200);
+        //p.background(255, 255, 255);
       };
 
       p.draw = function () {
-        p.background(0, 50, 50);
         p.circle(100, 100, 50);
-        p.fill(255, 255, 0, 0.5);
+        //p.fill('hsl(160, 100%, 50%)');
+        p.fill('hsb(160, 100%, 50%)'); //hsb seems to be having issues to render
         p.textSize(30);
         p.text('hello', 10, 30);
       };
