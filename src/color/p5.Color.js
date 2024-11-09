@@ -50,6 +50,7 @@ import {
   useMode,
   modeHsl,
   modeHwb,
+  modeHsv,
   modeOklab,
   modeOklch,
   modeP3,
@@ -72,6 +73,7 @@ const oklab = useMode(modeOklab);
 const oklch = useMode(modeOklch);
 const p3 = useMode(modeP3);
 const rgb = useMode(modeRgb);
+const hsv = useMode(modeHsv);
 
 // ColorSpace.register(XYZ_D65);
 // ColorSpace.register(sRGB_Linear);
@@ -137,7 +139,7 @@ class Color {
 
       // _colorMode can be 'rgb', 'hsb', or 'hsl'
       // Color representation for Culori.js
-      
+
       //let space = 'rgb'; -> to specify color mode
       //let coords = vals; -> to access coordinates
       switch(this.mode){
@@ -274,6 +276,8 @@ class Color {
         return formatRgb(this.color);
       case 'hsl':
         return formatHsl(this.color);
+      case 'css':
+        return formatCss(this.color);  //not sure of the use for CSS here
       default:
         // Fallback to a default format, like RGB
         return formatRgb(this.color);
@@ -323,10 +327,14 @@ class Color {
       this.color.r = red_val;
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
-      const space = this.color.space.id;
-      const representation = to(this.color, 'srgb');
-      representation.coords[0] = red_val;
-      this.color = to(representation, space);
+      //const space = this.color.space.id;
+      //const representation = to(this.color, 'srgb');
+      //representation.coords[0] = red_val;
+      //this.color = to(representation, space);
+      const space = this.color.mode;
+      const representation = converter('rgb')(this.color)
+      representation.color.r = red_val;
+      this.color = converter(space)(representation)
     }
   }
 
