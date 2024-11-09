@@ -18,13 +18,14 @@
 <body>
   <script type="module">
     import p5 from '../src/app.js';
-    // import calculation from './src/math/calculation.js';
-
-    // p5.registerAddon(calculation);
 
     const sketch = function (p) {
+      let g, f;
+
       p.setup = function () {
         p.createCanvas(200, 200);
+        g = p.createGraphics(200, 200);
+        f = p.createGraphics(200, 200, p.WEBGL);
       };
 
       p.draw = function () {
@@ -34,6 +35,10 @@
         p.fill('white');
         p.textSize(30);
         p.text('hello', 10, 30);
+
+        // f.fill('red');
+        f.sphere();
+        p.image(f, 0, 0);
       };
     };
 

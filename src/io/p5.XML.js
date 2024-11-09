@@ -4,74 +4,17 @@
  * @requires core
  */
 
-function xml(p5, fn){
-  /**
-   * A class to describe an XML object.
-   *
-   * Each `p5.XML` object provides an easy way to interact with XML data.
-   * Extensible Markup Language
-   * (<a href="https://developer.mozilla.org/en-US/docs/Web/XML/XML_introduction" target="_blank">XML</a>)
-   * is a standard format for sending data between applications. Like HTML, the
-   * XML format is based on tags and attributes, as in
-   * `&lt;time units="s"&gt;1234&lt;/time&gt;`.
-   *
-   * Note: Use <a href="#/p5/loadXML">loadXML()</a> to load external XML files.
-   *
-   * @class p5.XML
-   * @example
-   * <div>
-   * <code>
-   * let myXML;
-   *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
-   *
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Get an array with all mammal tags.
-   *   let mammals = myXML.getChildren('mammal');
-   *
-   *   // Style the text.
-   *   textAlign(LEFT, CENTER);
-   *   textFont('Courier New');
-   *   textSize(14);
-   *
-   *   // Iterate over the mammals array.
-   *   for (let i = 0; i < mammals.length; i += 1) {
-   *
-   *     // Calculate the y-coordinate.
-   *     let y = (i + 1) * 25;
-   *
-   *     // Get the mammal's common name.
-   *     let name = mammals[i].getContent();
-   *
-   *     // Display the mammal's name.
-   *     text(name, 20, y);
-   *   }
-   *
-   *   describe(
-   *     'The words "Goat", "Leopard", and "Zebra" written on three separate lines. The text is black on a gray background.'
-   *   );
-   * }
-   * </code>
-   * </div>
-   */
-  p5.XML = class  {
-    constructor(DOM){
-      if (!DOM) {
-        const xmlDoc = document.implementation.createDocument(null, 'doc');
-        this.DOM = xmlDoc.createElement('root');
-      } else {
-        this.DOM = DOM;
-      }
+class XML {
+  constructor(DOM){
+    if (!DOM) {
+      const xmlDoc = document.implementation.createDocument(null, 'doc');
+      this.DOM = xmlDoc.createElement('root');
+    } else {
+      this.DOM = DOM;
     }
+  }
 
-    /**
+  /**
    * Returns the element's parent element as a new <a href="#/p5.XML">p5.XML</a>
    * object.
    *
@@ -117,11 +60,11 @@ function xml(p5, fn){
    * </code>
    * </div>
    */
-    getParent() {
-      return new p5.XML(this.DOM.parentElement);
-    }
+  getParent() {
+    return new XML(this.DOM.parentElement);
+  }
 
-    /**
+  /**
    * Returns the element's name as a `String`.
    *
    * An XML element's name is given by its tag. For example, the element
@@ -166,11 +109,11 @@ function xml(p5, fn){
    * </code>
    * </div>
    */
-    getName() {
-      return this.DOM.tagName;
-    }
+  getName() {
+    return this.DOM.tagName;
+  }
 
-    /**
+  /**
    * Sets the element's tag name.
    *
    * An XML element's name is given by its tag. For example, the element
@@ -221,19 +164,19 @@ function xml(p5, fn){
    * }
    * </code></div>
    */
-    setName(name) {
-      const content = this.DOM.innerHTML;
-      const attributes = this.DOM.attributes;
-      const xmlDoc = document.implementation.createDocument(null, 'default');
-      const newDOM = xmlDoc.createElement(name);
-      newDOM.innerHTML = content;
-      for (let i = 0; i < attributes.length; i++) {
-        newDOM.setAttribute(attributes[i].nodeName, attributes[i].nodeValue);
-      }
-      this.DOM = newDOM;
+  setName(name) {
+    const content = this.DOM.innerHTML;
+    const attributes = this.DOM.attributes;
+    const xmlDoc = document.implementation.createDocument(null, 'default');
+    const newDOM = xmlDoc.createElement(name);
+    newDOM.innerHTML = content;
+    for (let i = 0; i < attributes.length; i++) {
+      newDOM.setAttribute(attributes[i].nodeName, attributes[i].nodeValue);
     }
+    this.DOM = newDOM;
+  }
 
-    /**
+  /**
    * Returns `true` if the element has child elements and `false` if not.
    *
    * @return {boolean} whether the element has children.
@@ -273,11 +216,11 @@ function xml(p5, fn){
    * </code>
    * </div>
    */
-    hasChildren() {
-      return this.DOM.children.length > 0;
-    }
+  hasChildren() {
+    return this.DOM.children.length > 0;
+  }
 
-    /**
+  /**
    * Returns an array with the names of the element's child elements as
    * `String`s.
    *
@@ -323,15 +266,15 @@ function xml(p5, fn){
    * </code>
    * </div>
    */
-    listChildren() {
-      const arr = [];
-      for (let i = 0; i < this.DOM.childNodes.length; i++) {
-        arr.push(this.DOM.childNodes[i].nodeName);
-      }
-      return arr;
+  listChildren() {
+    const arr = [];
+    for (let i = 0; i < this.DOM.childNodes.length; i++) {
+      arr.push(this.DOM.childNodes[i].nodeName);
     }
+    return arr;
+  }
 
-    /**
+  /**
    * Returns an array with the element's child elements as new
    * <a href="#/p5.XML">p5.XML</a> objects.
    *
@@ -428,15 +371,15 @@ function xml(p5, fn){
    * </code>
    * </div>
    */
-    getChildren(param) {
-      if (param) {
-        return elementsToP5XML(this.DOM.getElementsByTagName(param));
-      } else {
-        return elementsToP5XML(this.DOM.children);
-      }
+  getChildren(param) {
+    if (param) {
+      return elementsToP5XML(this.DOM.getElementsByTagName(param));
+    } else {
+      return elementsToP5XML(this.DOM.children);
     }
+  }
 
-    /**
+  /**
    * Returns the first matching child element as a new
    * <a href="#/p5.XML">p5.XML</a> object.
    *
@@ -515,17 +458,17 @@ function xml(p5, fn){
    * </code>
    * </div>
    */
-    getChild(param) {
-      if (typeof param === 'string') {
-        for (const child of this.DOM.children) {
-          if (child.tagName === param) return new p5.XML(child);
-        }
-      } else {
-        return new p5.XML(this.DOM.children[param]);
+  getChild(param) {
+    if (typeof param === 'string') {
+      for (const child of this.DOM.children) {
+        if (child.tagName === param) return new XML(child);
       }
+    } else {
+      return new XML(this.DOM.children[param]);
     }
+  }
 
-    /**
+  /**
    * Adds a new child element and returns a reference to it.
    *
    * The parameter, `child`, is the <a href="#/p5.XML">p5.XML</a> object to add
@@ -581,15 +524,15 @@ function xml(p5, fn){
    * </code>
    * </div>
    */
-    addChild(node) {
-      if (node instanceof p5.XML) {
-        this.DOM.appendChild(node.DOM);
-      } else {
-      // PEND
-      }
+  addChild(node) {
+    if (node instanceof XML) {
+      this.DOM.appendChild(node.DOM);
+    } else {
+    // PEND
     }
+  }
 
-    /**
+  /**
    * Removes the first matching child element.
    *
    * The parameter, `name`, is the child element to remove. If a string is
@@ -691,24 +634,24 @@ function xml(p5, fn){
    * </code>
    * </div>
    */
-    removeChild(param) {
-      let ind = -1;
-      if (typeof param === 'string') {
-        for (let i = 0; i < this.DOM.children.length; i++) {
-          if (this.DOM.children[i].tagName === param) {
-            ind = i;
-            break;
-          }
+  removeChild(param) {
+    let ind = -1;
+    if (typeof param === 'string') {
+      for (let i = 0; i < this.DOM.children.length; i++) {
+        if (this.DOM.children[i].tagName === param) {
+          ind = i;
+          break;
         }
-      } else {
-        ind = param;
       }
-      if (ind !== -1) {
-        this.DOM.removeChild(this.DOM.children[ind]);
-      }
+    } else {
+      ind = param;
     }
+    if (ind !== -1) {
+      this.DOM.removeChild(this.DOM.children[ind]);
+    }
+  }
 
-    /**
+  /**
    * Returns the number of attributes the element has.
    *
    * @return {Integer} number of attributes.
@@ -747,11 +690,11 @@ function xml(p5, fn){
    * </code>
    * </div>
    */
-    getAttributeCount() {
-      return this.DOM.attributes.length;
-    }
+  getAttributeCount() {
+    return this.DOM.attributes.length;
+  }
 
-    /**
+  /**
    * Returns an `Array` with the names of the element's attributes.
    *
    * Note: Use
@@ -794,17 +737,17 @@ function xml(p5, fn){
    * </code>
    * </div>
    */
-    listAttributes() {
-      const arr = [];
+  listAttributes() {
+    const arr = [];
 
-      for (const attribute of this.DOM.attributes) {
-        arr.push(attribute.nodeName);
-      }
-
-      return arr;
+    for (const attribute of this.DOM.attributes) {
+      arr.push(attribute.nodeName);
     }
 
-    /**
+    return arr;
+  }
+
+  /**
    * Returns `true` if the element has a given attribute and `false` if not.
    *
    * The parameter, `name`, is a string with the name of the attribute being
@@ -856,17 +799,17 @@ function xml(p5, fn){
    * </code>
    * </div>
    */
-    hasAttribute(name) {
-      const obj = {};
+  hasAttribute(name) {
+    const obj = {};
 
-      for (const attribute of this.DOM.attributes) {
-        obj[attribute.nodeName] = attribute.nodeValue;
-      }
-
-      return obj[name] ? true : false;
+    for (const attribute of this.DOM.attributes) {
+      obj[attribute.nodeName] = attribute.nodeValue;
     }
 
-    /**
+    return obj[name] ? true : false;
+  }
+
+  /**
    * Return an attribute's value as a `Number`.
    *
    * The first parameter, `name`, is a string with the name of the attribute
@@ -960,17 +903,17 @@ function xml(p5, fn){
    * </code>
    * </div>
    */
-    getNum(name, defaultValue) {
-      const obj = {};
+  getNum(name, defaultValue) {
+    const obj = {};
 
-      for (const attribute of this.DOM.attributes) {
-        obj[attribute.nodeName] = attribute.nodeValue;
-      }
-
-      return Number(obj[name]) || defaultValue || 0;
+    for (const attribute of this.DOM.attributes) {
+      obj[attribute.nodeName] = attribute.nodeValue;
     }
 
-    /**
+    return Number(obj[name]) || defaultValue || 0;
+  }
+
+  /**
    * Return an attribute's value as a string.
    *
    * The first parameter, `name`, is a string with the name of the attribute
@@ -1063,17 +1006,17 @@ function xml(p5, fn){
    * </code>
    * </div>
    */
-    getString(name, defaultValue) {
-      const obj = {};
+  getString(name, defaultValue) {
+    const obj = {};
 
-      for (const attribute of this.DOM.attributes) {
-        obj[attribute.nodeName] = attribute.nodeValue;
-      }
-
-      return obj[name] ? String(obj[name]) : defaultValue || null;
+    for (const attribute of this.DOM.attributes) {
+      obj[attribute.nodeName] = attribute.nodeValue;
     }
 
-    /**
+    return obj[name] ? String(obj[name]) : defaultValue || null;
+  }
+
+  /**
    * Sets an attribute to a given value.
    *
    * The first parameter, `name`, is a string with the name of the attribute
@@ -1128,11 +1071,11 @@ function xml(p5, fn){
    * </code>
    * </div>
    */
-    setAttribute(name, value) {
-      this.DOM.setAttribute(name, value);
-    }
+  setAttribute(name, value) {
+    this.DOM.setAttribute(name, value);
+  }
 
-    /**
+  /**
    * Returns the element's content as a `String`.
    *
    * The parameter, `defaultValue`, is optional. If a string is passed, as in
@@ -1203,14 +1146,14 @@ function xml(p5, fn){
    * </code>
    * </div>
    */
-    getContent(defaultValue) {
-      let str;
-      str = this.DOM.textContent;
-      str = str.replace(/\s\s+/g, ',');
-      return str || defaultValue || null;
-    }
+  getContent(defaultValue) {
+    let str;
+    str = this.DOM.textContent;
+    str = str.replace(/\s\s+/g, ',');
+    return str || defaultValue || null;
+  }
 
-    /**
+  /**
    * Sets the element's content.
    *
    * An element's content is the text between its tags. For example, the element
@@ -1263,13 +1206,13 @@ function xml(p5, fn){
    * </code>
    * </div>
    */
-    setContent(content) {
-      if (!this.DOM.children.length) {
-        this.DOM.textContent = content;
-      }
+  setContent(content) {
+    if (!this.DOM.children.length) {
+      this.DOM.textContent = content;
     }
+  }
 
-    /**
+  /**
    * Returns the element as a `String`.
    *
    * `myXML.serialize()` is useful for sending the element over the network or
@@ -1321,22 +1264,82 @@ function xml(p5, fn){
    * </code>
    * </div>
    */
-    serialize() {
-      const xmlSerializer = new XMLSerializer();
-      return xmlSerializer.serializeToString(this.DOM);
-    }
-  };
-
-  function elementsToP5XML(elements) {
-    const arr = [];
-    for (let i = 0; i < elements.length; i++) {
-      arr.push(new p5.XML(elements[i]));
-    }
-    return arr;
+  serialize() {
+    const xmlSerializer = new XMLSerializer();
+    return xmlSerializer.serializeToString(this.DOM);
   }
 }
 
+function elementsToP5XML(elements) {
+  const arr = [];
+  for (let i = 0; i < elements.length; i++) {
+    arr.push(new XML(elements[i]));
+  }
+  return arr;
+}
+
+function xml(p5, fn){
+  /**
+   * A class to describe an XML object.
+   *
+   * Each `p5.XML` object provides an easy way to interact with XML data.
+   * Extensible Markup Language
+   * (<a href="https://developer.mozilla.org/en-US/docs/Web/XML/XML_introduction" target="_blank">XML</a>)
+   * is a standard format for sending data between applications. Like HTML, the
+   * XML format is based on tags and attributes, as in
+   * `&lt;time units="s"&gt;1234&lt;/time&gt;`.
+   *
+   * Note: Use <a href="#/p5/loadXML">loadXML()</a> to load external XML files.
+   *
+   * @class p5.XML
+   * @example
+   * <div>
+   * <code>
+   * let myXML;
+   *
+   * // Load the XML and create a p5.XML object.
+   * function preload() {
+   *   myXML = loadXML('assets/animals.xml');
+   * }
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Get an array with all mammal tags.
+   *   let mammals = myXML.getChildren('mammal');
+   *
+   *   // Style the text.
+   *   textAlign(LEFT, CENTER);
+   *   textFont('Courier New');
+   *   textSize(14);
+   *
+   *   // Iterate over the mammals array.
+   *   for (let i = 0; i < mammals.length; i += 1) {
+   *
+   *     // Calculate the y-coordinate.
+   *     let y = (i + 1) * 25;
+   *
+   *     // Get the mammal's common name.
+   *     let name = mammals[i].getContent();
+   *
+   *     // Display the mammal's name.
+   *     text(name, 20, y);
+   *   }
+   *
+   *   describe(
+   *     'The words "Goat", "Leopard", and "Zebra" written on three separate lines. The text is black on a gray background.'
+   *   );
+   * }
+   * </code>
+   * </div>
+   */
+  p5.XML = XML;
+}
+
 export default xml;
+export { XML }
 
 if(typeof p5 !== 'undefined'){
   xml(p5, p5.prototype);

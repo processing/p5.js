@@ -5,8 +5,8 @@
  * @requires constants
  */
 
-// Core needs the PVariables object
 import * as constants from './constants';
+
 /**
  * This is the p5 instance constructor.
  *
@@ -48,9 +48,6 @@ class p5 {
     //////////////////////////////////////////////
 
     this._setupDone = false;
-    // for handling hidpi
-    this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
-    this._maxAllowedPixelDimensions = 0;
     this._userNode = node;
     this._curElement = null;
     this._elements = [];
@@ -89,8 +86,6 @@ class p5 {
     // States used in the custom random generators
     this._lcg_random_state = null; // NOTE: move to random.js
     this._gaussian_previous = false; // NOTE: move to random.js
-
-    this._loadingScreenId = 'p5_loading';
 
     if (window.DeviceOrientationEvent) {
       this._events.deviceorientation = null;
@@ -351,10 +346,7 @@ class p5 {
     if(this._startListener){
       window.removeEventListener('load', this._startListener, false);
     }
-    const loadingScreen = document.getElementById(this._loadingScreenId);
-    if (loadingScreen) {
-      loadingScreen.parentNode.removeChild(loadingScreen);
-    }
+
     if (this._curElement) {
       // stop draw
       this._loop = false;
@@ -433,7 +425,7 @@ class p5 {
   }
 }
 
-// attach constants to p5 prototype
+// Attach constants to p5 prototype
 for (const k in constants) {
   p5.prototype[k] = constants[k];
 }
@@ -665,5 +657,23 @@ for (const k in constants) {
  * </div>
  */
 p5.disableFriendlyErrors = false;
+
+import transform from './transform';
+import structure from './structure';
+import environment from './environment';
+import rendering from './rendering';
+import renderer from './p5.Renderer';
+import renderer2D from './p5.Renderer2D';
+import graphics from './p5.Graphics';
+// import element from './p5.Element';
+
+p5.registerAddon(transform);
+p5.registerAddon(structure);
+p5.registerAddon(environment);
+p5.registerAddon(rendering);
+p5.registerAddon(renderer);
+p5.registerAddon(renderer2D);
+p5.registerAddon(graphics);
+// p5.registerAddon(element);
 
 export default p5;

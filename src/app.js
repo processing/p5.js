@@ -1,26 +1,12 @@
 // core
 import p5 from './core/main';
-import './core/constants';
-import './core/environment';
 import './core/friendly_errors/stacktrace';
 import './core/friendly_errors/validate_params';
 import './core/friendly_errors/file_errors';
 import './core/friendly_errors/fes_core';
 import './core/friendly_errors/sketch_reader';
-import './core/helpers';
-import './core/legacy';
-// import './core/preload';
-import './core/p5.Element';
-import './core/p5.Graphics';
-// import './core/p5.Renderer';
-import './core/p5.Renderer2D';
-import './core/rendering';
-import './core/structure';
-import './core/transform';
-import './core/shape/2d_primitives';
-import './core/shape/attributes';
-import './core/shape/curves';
-import './core/shape/vertex';
+import shape from './shape';
+shape(p5);
 
 // shapes
 import customShapes from './shape';
@@ -44,7 +30,8 @@ import data from './data';
 data(p5);
 
 // DOM
-import './dom/dom';
+import dom from './dom';
+dom(p5);
 
 // events
 import events from './events';
@@ -74,10 +61,6 @@ utilities(p5);
 // webgl
 import webgl from './webgl';
 webgl(p5);
-import './webgl/p5.RendererGL.Immediate';
-import './webgl/p5.RendererGL';
-import './webgl/p5.RendererGL.Retained';
-import './webgl/p5.Texture';
 
 import './core/init';
 
