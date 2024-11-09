@@ -8,6 +8,10 @@ import './core/friendly_errors/sketch_reader';
 import shape from './shape';
 shape(p5);
 
+// shapes
+import customShapes from './shape';
+customShapes(p5);
+
 //accessibility
 import accessibility from './accessibility';
 accessibility(p5);
