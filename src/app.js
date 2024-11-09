@@ -22,6 +22,10 @@ import './core/shape/attributes';
 import './core/shape/curves';
 import './core/shape/vertex';
 
+// shapes
+import customShapes from './shape';
+customShapes(p5);
+
 //accessibility
 import accessibility from './accessibility';
 accessibility(p5);
