@@ -1114,6 +1114,7 @@ function files(p5, fn){
 
     try{
       const data = await request(req, datatype);
+      console.log("data", data);
       if (successCallback) {
         return successCallback(data);
       } else {

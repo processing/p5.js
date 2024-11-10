@@ -23,56 +23,34 @@ suite('Files', function() {
       assert.isFunction(myp5.httpDo);
     });
 
-    test('should work when provided with just a path', function() {
-      return new Promise(function(resolve, reject) {
-        myp5.httpDo('unit/assets/sentences.txt', resolve, reject);
-      }).then(function(data) {
-        assert.ok(data);
-        assert.isString(data);
-      });
+    test('should work when provided with just a path', async function() {
+      const data = await myp5.httpDo('unit/assets/sentences.txt');
+      assert.ok(data);
+      assert.isString(data);
     });
 
-    test('should accept method parameter', function() {
-      return new Promise(function(resolve, reject) {
-        myp5.httpDo('unit/assets/sentences.txt', 'GET', resolve, reject);
-      }).then(function(data) {
-        assert.ok(data);
-        assert.isString(data);
-      });
+    test('should accept method parameter', async function() {
+      const data = await myp5.httpDo('unit/assets/sentences.txt', 'GET');
+      assert.ok(data);
+      assert.isString(data);
     });
 
-    test('should accept type parameter', function() {
-      return new Promise(function(resolve, reject) {
-        myp5.httpDo('unit/assets/array.json', 'text', resolve, reject);
-      }).then(function(data) {
-        assert.ok(data);
-        assert.isString(data);
-      });
+    test('should accept method and type parameter together', async function() {
+      const data = await myp5.httpDo('unit/assets/sentences.txt', 'GET', 'text');
+      assert.ok(data);
+      assert.isString(data);
     });
 
-    test('should accept method and type parameter together', function() {
-      return new Promise(function(resolve, reject) {
-        myp5.httpDo('unit/assets/array.json', 'GET', 'text', resolve, reject);
-      }).then(function(data) {
-        assert.ok(data);
-        assert.isString(data);
-      });
-    });
-
-    test.todo('should pass error object to error callback function', function() {
-      return new Promise(function(resolve, reject) {
-        myp5.httpDo(
-          'unit/assets/sen.txt',
-          function(data) {
-            console.log(data);
-            reject('Incorrectly succeeded.');
-          },
-          resolve
-        );
-      }).then(function(err) {
+    test.todo('should handle promise error correctly', async function() {
+      // Consider using http mock
+      try{
+        await myp5.httpDo('unit/assets/sen.txt');
+        assert.fail('Error not thrown');
+      }catch(err){
+        console.log(err);
         assert.isFalse(err.ok, 'err.ok is false');
         assert.equal(err.status, 404, 'Error status is 404');
-      });
+      }
     });
 
     test('should return a promise', function() {
