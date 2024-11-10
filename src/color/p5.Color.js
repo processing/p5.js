@@ -485,6 +485,7 @@ class Color {
    **/
   setAlpha(new_alpha) {
     this.color.alpha = new_alpha / this.maxes[this.mode][3];
+    console.log("Updated alpha:", this.color.alpha);
   }
 
   _getRed() {
@@ -573,26 +574,51 @@ class Color {
   //HSB/ HSV - Brightness channel
   _getBrightness() {
     if(this.mode === constants.HSB){
-      return this.color.coords[2] / 100 * this.maxes[this.mode][2];
+      //return this.color.coords[2] / 100 * this.maxes[this.mode][2];
+      return this.color.v * this.maxes[this.mode][2];
     }else{
       // Will do an imprecise conversion to 'HSB', not recommended
-      return to(this.color, 'hsb').coords[2] / 100 * this.maxes[this.mode][2];
+      //return to(this.color, 'hsb').coords[2] / 100 * this.maxes[this.mode][2];
+      const hsbColor = converter('hsv')(this.color) //Convert to HSV
+      return hsbColor.v * this.maxes[this.mode][2]; //Access Brightness channel and scale
     }
   }
 
   //HSL - Lightness channel
   _getLightness() {
     if(this.mode === constants.HSL){
-      return this.color.coords[2] / 100 * this.maxes[this.mode][2];
+      //return this.color.coords[2] / 100 * this.maxes[this.mode][2];
+      return this.color.l * this.maxes[this.mode][2];
     }else{
-      // Will do an imprecise conversion to 'HSB', not recommended
-      return to(this.color, 'hsl').coords[2] / 100 * this.maxes[this.mode][2];
+      // Will do an imprecise conversion to 'HSL', not recommended
+      //return to(this.color, 'hsl').coords[2] / 100 * this.maxes[this.mode][2];
+      const hslColor = converter('hsl')(this.color) //Convert to HSL
+      return hslColor.l * this.maxes[this.mode][2]; //Access Lightness channel and scale
     }
   }
 
+  // get _array() {
+  //   return [...this.color.coords, this.color.alpha];
+  // }
+
+  //Since Culori.js uses plain objects with named properties, 
+  //get_array would need to adjust to this structure.
   get _array() {
-    return [...this.color.coords, this.color.alpha];
-  }
+    // For RGB mode, check for `r`, `g`, and `b`; for HSL, check for `h`, `s`, and `l`, etc.
+    const colorComponents = [];
+
+    if (this.color.mode === 'rgb') {
+        colorComponents.push(this.color.r, this.color.g, this.color.b);
+    } else if (this.color.mode === 'hsl') {
+        colorComponents.push(this.color.h, this.color.s, this.color.l);
+    } else if (this.color.mode === 'hsv') {
+        colorComponents.push(this.color.h, this.color.s, this.color.v);
+    }
+    // Add alpha, if present, or default to 1 if alpha is undefined
+    colorComponents.push(this.color.alpha !== undefined ? this.color.alpha : 1);
+
+    return colorComponents;
+}
 
   get levels() {
     return this._array.map(v => v * 255);

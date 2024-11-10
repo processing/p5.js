@@ -23,18 +23,22 @@
       p.setup = function () {
         p.createCanvas(600, 600);
         p.background(200);
+        p.colorMode('RGB');
       };
 
       p.draw = function () {
-      
-        p.colorMode('HSB');
         // Create a p5.Color object using RGB values
-        let c = p.color(255, 128, 128);
+        let c = p.color(175, 100, 220);
+        p.noStroke();
         p.fill(c);
-        p.circle(200, 200, 100);
+        p.rect(100, 150, 90, 150);
 
-        c.setRed(64);
-        p.fill(c);
+        let redValue = red(c);
+        //c.setRed(64)
+        //c.setGreen(255);
+        //c.setBlue(255);
+        //c.setAlpha(128);
+        p.fill(0, 0, redValue);
         p.rect(150, 300, 200, 100);
         //p.fill('hsb(160, 100%, 50%)'); //hsb seems to be having issues to render
         p.textSize(50);
