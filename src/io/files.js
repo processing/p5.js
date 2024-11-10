@@ -1624,7 +1624,6 @@ function files(p5, fn){
    *   with line breaks.`);
    * </code></div>
    */
-
   fn.save = function (object, _filename, _options) {
     // parse the arguments and figure out which things we are saving
     const args = arguments;

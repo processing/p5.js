@@ -107,110 +107,57 @@ function loadingDisplaying(p5, fn){
     failureCallback
   ) {
     p5._validateParameters('loadImage', arguments);
-    const pImg = new p5.Image(1, 1, this);
-    const self = this;
 
-    const req = new Request(path, {
-      method: 'GET',
-      mode: 'cors'
-    });
+    try{
+      let pImg = new p5.Image(1, 1, this);
 
-    return fetch(path, req)
-      .then(async response => {
-        // GIF section
-        const contentType = response.headers.get('content-type');
-        if (contentType === null) {
-          console.warn(
-            'The image you loaded does not have a Content-Type header. If you are using the online editor consider reuploading the asset.'
-          );
-        }
-        if (contentType && contentType.includes('image/gif')) {
-          await response.arrayBuffer().then(
-            arrayBuffer => new Promise((resolve, reject) => {
-              if (arrayBuffer) {
-                const byteArray = new Uint8Array(arrayBuffer);
-                try{
-                  _createGif(
-                    byteArray,
-                    pImg,
-                    successCallback,
-                    failureCallback,
-                    (pImg => {
-                      resolve(pImg);
-                    }).bind(self)
-                  );
-                }catch(e){
-                  console.error(e.toString(), e.stack);
-                  if (typeof failureCallback === 'function') {
-                    failureCallback(e);
-                  } else {
-                    console.error(e);
-                  }
-                  reject(e);
-                }
-              }
-            })
-          ).catch(
-            e => {
-              if (typeof failureCallback === 'function') {
-                failureCallback(e);
-              } else {
-                console.error(e);
-              }
-            }
-          );
-        } else {
-          // Non-GIF Section
-          const img = new Image();
-
-          await new Promise((resolve, reject) => {
-            img.onload = () => {
-              pImg.width = pImg.canvas.width = img.width;
-              pImg.height = pImg.canvas.height = img.height;
-
-              // Draw the image into the backing canvas of the p5.Image
-              pImg.drawingContext.drawImage(img, 0, 0);
-              pImg.modified = true;
-              if (typeof successCallback === 'function') {
-                successCallback(pImg);
-              }
-              resolve();
-            };
-
-            img.onerror = e => {
-              p5._friendlyFileLoadError(0, img.src);
-              if (typeof failureCallback === 'function') {
-                failureCallback(e);
-              } else {
-                console.error(e);
-              }
-              reject();
-            };
-
-            // Set crossOrigin in case image is served with CORS headers.
-            // This will let us draw to the canvas without tainting it.
-            // See https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
-            // When using data-uris the file will be loaded locally
-            // so we don't need to worry about crossOrigin with base64 file types.
-            if (path.indexOf('data:image/') !== 0) {
-              img.crossOrigin = 'Anonymous';
-            }
-            // start loading the image
-            img.src = path;
-          });
-        }
-        pImg.modified = true;
-        return pImg;
-      })
-      .catch(e => {
-        p5._friendlyFileLoadError(0, path);
-        if (typeof failureCallback === 'function') {
-          failureCallback(e);
-        } else {
-          console.error(e);
-        }
+      const req = new Request(path, {
+        method: 'GET',
+        mode: 'cors'
       });
-    // return pImg;
+
+      const response = await fetch(req);
+      // GIF section
+      const contentType = response.headers.get('content-type');
+
+      if (contentType === null) {
+        console.warn(
+          'The image you loaded does not have a Content-Type header. If you are using the online editor consider reuploading the asset.'
+        );
+      }
+
+      if (contentType && contentType.includes('image/gif')) {
+        const arrayBuffer = await response.arrayBuffer()
+        const byteArray = new Uint8Array(arrayBuffer);
+        // try{
+        await _createGif(
+          byteArray,
+          pImg
+        );
+
+      } else {
+        // Non-GIF Section
+        const data = await response.blob();
+        const img = await createImageBitmap(data);
+
+        pImg.width = pImg.canvas.width = img.width;
+        pImg.height = pImg.canvas.height = img.height;
+
+        // Draw the image into the backing canvas of the p5.Image
+        pImg.drawingContext.drawImage(img, 0, 0);
+      }
+
+      pImg.modified = true;
+      return pImg;
+
+    } catch(err) {
+      p5._friendlyFileLoadError(0, path);
+      if (typeof failureCallback === 'function') {
+        failureCallback(err);
+      } else {
+        throw err;
+      }
+    }
   };
 
   /**
@@ -651,31 +598,25 @@ function loadingDisplaying(p5, fn){
   /**
    * Helper function for loading GIF-based images
    */
-  function _createGif(
-    arrayBuffer,
-    pImg,
-    successCallback,
-    failureCallback,
-    finishCallback
-  ) {
+  async function _createGif(arrayBuffer, pImg) {
+    // TODO: Replace with ImageDecoder once it is widely available
+    // https://developer.mozilla.org/en-US/docs/Web/API/ImageDecoder
     const gifReader = new omggif.GifReader(arrayBuffer);
     pImg.width = pImg.canvas.width = gifReader.width;
     pImg.height = pImg.canvas.height = gifReader.height;
     const frames = [];
     const numFrames = gifReader.numFrames();
     let framePixels = new Uint8ClampedArray(pImg.width * pImg.height * 4);
+
     const loadGIFFrameIntoImage = (frameNum, gifReader) => {
       try {
         gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
       } catch (e) {
         p5._friendlyFileLoadError(8, pImg.src);
-        if (typeof failureCallback === 'function') {
-          failureCallback(e);
-        } else {
-          console.error(e);
-        }
+        throw e;
       }
     };
+
     for (let j = 0; j < numFrames; j++) {
       const frameInfo = gifReader.frameInfo(j);
       const prevFrameData = pImg.drawingContext.getImageData(
@@ -764,10 +705,7 @@ function loadingDisplaying(p5, fn){
       };
     }
 
-    if (typeof successCallback === 'function') {
-      successCallback(pImg);
-    }
-    finishCallback();
+    return pImg;
   }
 
   /**

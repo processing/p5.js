@@ -117,7 +117,7 @@ visualSuite('WebGL', function() {
       'Object with different texture coordinates per use of vertex keeps the coordinates intact',
       async function(p5, screenshot) {
         p5.createCanvas(50, 50, p5.WEBGL);
-        const tex = await new Promise(resolve => p5.loadImage('/unit/assets/cat.jpg', resolve));
+        const tex = await p5.loadImage('/unit/assets/cat.jpg');
         const cube = await new Promise(resolve => p5.loadModel('/unit/assets/cube-textures.obj', resolve));
         cube.normalize();
         p5.background(255);
@@ -230,7 +230,7 @@ visualSuite('WebGL', function() {
   visualSuite('ShaderFunctionality', function() {
     visualTest('FillShader', async (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
-      const img = await new Promise(resolve => p5.loadImage('/unit/assets/cat.jpg', resolve));
+      const img = await p5.loadImage('/unit/assets/cat.jpg');
       const fillShader = p5.createShader(
         `
       attribute vec3 aPosition;
@@ -281,7 +281,7 @@ visualSuite('WebGL', function() {
 
     visualTest('ImageShader', async (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
-      const img = await new Promise(resolve => p5.loadImage('/unit/assets/cat.jpg', resolve));
+      const img = await p5.loadImage('/unit/assets/cat.jpg');
       const imgShader = p5.createShader(
         `
       precision mediump float;

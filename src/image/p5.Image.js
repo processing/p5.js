@@ -1454,7 +1454,7 @@ class Image {
   /**
    * Saves the image to a file.
    *
-    * By default, `img.save()` saves the image as a PNG image called
+   * By default, `img.save()` saves the image as a PNG image called
    * `untitled.png`.
    *
    * The first parameter, `filename`, is optional. It's a string that sets the
