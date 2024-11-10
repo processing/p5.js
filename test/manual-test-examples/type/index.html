@@ -89,7 +89,7 @@
     };
 
 
-    const textStretchViaProp = function (p) {
+    const textStretchViaProp = function (p) { // not used
       let url = 'url(https://fonts.gstatic.com/s/inconsolata/v31/QlddNThLqRwH-OJ1UHjlKENVzlm-WkL3GZQmAwPyya15.woff2) format("woff2")';
       let opts = ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'];
       p.setup = async function () {
@@ -1492,10 +1492,32 @@
       };
     };
 
+    let rightToLeftBounds = function (p) {
+      p.setup = async function () {
+        p.createCanvas(1000, 600);
+        let bb, str = "السلام عليكم";
+        let x = p.width / 2, y = p.height / 4 + 20;
+
+        p.textProperties({ direction: 'rtl', align: 'right' });
+
+        p.textSize(200).textAlign(p.CENTER).noStroke().fill(0).text(str, x, y);
+
+        bb = p.textBounds(str, x, y);
+        p.noFill().stroke(0, 255, 0).rect(bb.x, bb.y, bb.w, bb.h);
+
+        y += p.height / 2;
+        p.textFont(await p.loadFont('./font/NotoNaskhArabic.woff2')).noStroke().fill(0).text(str, x, y);
+        //console.log(p.textProperties());
+
+        bb = p.textBounds(str, x, y);
+        p.noFill().stroke(0, 255, 0).strokeWeight(1).rect(bb.x, bb.y, bb.w, bb.h);
+      };
+    };
+
     let loadedFontSketch = function (p) {
 
       p.setup = async function () {
-        p.createCanvas(240, 220);
+        p.createCanvas(240, 260);
         p.background(255);
         p.textSize(27);
         p.fill(0);
@@ -1527,6 +1549,12 @@
         await p.loadFont("font/PlayfairDisplay.ttf");
         p.textFont('PlayfairDisplay');
         p.text('PlayfairDisplay.ttf', 10, 200);
+
+        // test arabic writing
+        f = await p.loadFont("font/NotoNaskhArabic.woff2");
+        p.textFont(f, 40);
+        //p.textProperty('direction', 'rtl');
+        p.text("السلام عليكم", 10, 240);
 
         p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 20, 0));
 
@@ -1831,7 +1859,7 @@
     new p5(textToPointsSketch, 'textToPointsSketch');
     new p5(fontStretchSketch, 'fontStretchSketch');
     new p5(fontStretchViaProp, 'fontStretchViaProp');
-    new p5(textStretchViaProp, 'textStretchViaProp');
+    //new p5(textStretchViaProp, 'textStretchViaProp');
     new p5(letterSpacingSketch, 'letterSpacingSketch');
     new p5(wordSpacingSketch, 'wordSpacingSketch');
     new p5(fontKerningSketch, 'fontKerningSketch');
@@ -1851,6 +1879,7 @@
     new p5(multilineAlignChar, 'multilineAlignChar');
     new p5(textFontSketch, 'textFontSketch');
     new p5(loadedFontSketch, 'loadedFontSketch');
+    new p5(rightToLeftBounds, 'rightToLeftBounds');
     new p5(textAlignSketch, 'textAlignSketch');
     new p5(textAllAlignmentsSketch, 'textAllAlignmentsSketch');
     new p5(textAllAlignmentsSketch, 'textAllAlignmentsSketch2');
@@ -1876,13 +1905,15 @@
     <img src="img/loadedFontSketch.p5.png" width="240" height="240" class="gray"></img>
   </div>
 
+  <div id='rightToLeftBounds'>
+    <p class="caption">right-to-leftBounds</p>
+  </div>
+
   <div id='textSketch'>
     <p class="caption">textAttributes</p>
     <img src="img/textSketch.p5.png" width="240" height="160"></img>
     <img src="img/textSketch.png" width="240" height="160"></img>
   </div>
-
-
 
   <div id='textToPointsSketch'>
     <p class="caption">textToPoints</p>
@@ -1896,9 +1927,9 @@
     <p class="caption">fontStretch (via textProperty)</p>
   </div>
 
-  <div id='textStretchViaProp'>
+  <!-- <div id='textStretchViaProp'>
     <p class="caption">textStretch (via textProperty)</p>
-  </div>
+  </div> -->
 
   <div id='letterSpacingSketch'>
     <p class="caption">letterSpacing</p>
