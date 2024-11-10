@@ -210,8 +210,8 @@ class Color {
       //   coords,
       //   alpha
       // };
-      // //this.color = to(color, space);
-      // this.color = converter(space);
+      //this.color = to(color, space);
+      
     }
   }
 
@@ -321,20 +321,20 @@ class Color {
    * </div>
    */
   setRed(new_red) {
-    const red_val = new_red / this.maxes[constants.RGB][0];
+    const red_val = new_red / this.maxes[constants.RGB][0]; //normalize red value
     if(this.mode === constants.RGB){
       //this.color.coords[0] = red_val;
       this.color.r = red_val;
     }else{
-      // Will do an imprecise conversion to 'srgb', not recommended
+      // Handling Non-RGB Color Modes
       //const space = this.color.space.id;
       //const representation = to(this.color, 'srgb');
       //representation.coords[0] = red_val;
       //this.color = to(representation, space);
       const space = this.color.mode;
-      const representation = converter('rgb')(this.color)
-      representation.color.r = red_val;
-      this.color = converter(space)(representation)
+      const representation = converter('rgb')(this.color) //temporarily convert to RGB
+      representation.r = red_val; //update red value
+      this.color = converter(space)(representation) //convert back to original space
     }
   }
 
@@ -377,13 +377,18 @@ class Color {
   setGreen(new_green) {
     const green_val = new_green / this.maxes[constants.RGB][1];
     if(this.mode === constants.RGB){
-      this.color.coords[1] = green_val;
+      //this.color.coords[1] = green_val;
+      this.color.g = green_val;
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
-      const space = this.color.space.id;
-      const representation = to(this.color, 'srgb');
-      representation.coords[1] = green_val;
-      this.color = to(representation, space);
+      //const space = this.color.space.id;
+      //const representation = to(this.color, 'srgb');
+      //representation.coords[1] = green_val;
+      //this.color = to(representation, space);
+      const space = this.color.mode;
+      const representation = converter('rgb')(this.color) //temporarily convert to RGB
+      representation.g = green_val; //update green value
+      this.color = converter(space)(representation) //convert back to original space
     }
   }
 
@@ -426,13 +431,18 @@ class Color {
   setBlue(new_blue) {
     const blue_val = new_blue / this.maxes[constants.RGB][2];
     if(this.mode === constants.RGB){
-      this.color.coords[2] = blue_val;
+      //this.color.coords[2] = blue_val;
+      this.color.b = blue_val;
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
-      const space = this.color.space.id;
-      const representation = to(this.color, 'srgb');
-      representation.coords[2] = blue_val;
-      this.color = to(representation, space);
+      //const space = this.color.space.id;
+      //const representation = to(this.color, 'srgb');
+      //representation.coords[2] = blue_val;
+      //this.color = to(representation, space);
+      const space = this.color.mode;
+      const representation = converter('rgb')(this.color) //temporarily convert to RGB
+      representation.b = blue_val; //update red value
+      this.color = converter(space)(representation) //convert back to original space
     }
   }
 
@@ -479,28 +489,37 @@ class Color {
 
   _getRed() {
     if(this.mode === constants.RGB){
-      return this.color.coords[0] * this.maxes[constants.RGB][0];
+      //return this.color.coords[0] * this.maxes[constants.RGB][0];
+      return this.color.r * this.maxes[constants.RGB][0];
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
-      return to(this.color, 'srgb').coords[0] * this.maxes[constants.RGB][0];
+      //return to(this.color, 'srgb').coords[0] * this.maxes[constants.RGB][0];
+      const rgbColor = converter('rgb')(this.color) //Convert to RGB
+      return rgbColor.r * this.maxes[constants.RGB][0]; //Access red channel and scale
     }
   }
 
   _getGreen() {
     if(this.mode === constants.RGB){
-      return this.color.coords[1] * this.maxes[constants.RGB][1];
+      //return this.color.coords[1] * this.maxes[constants.RGB][1];
+      return this.color.g * this.maxes[constants.RGB][1];
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
-      return to(this.color, 'srgb').coords[1]  * this.maxes[constants.RGB][1];
+      //return to(this.color, 'srgb').coords[1]  * this.maxes[constants.RGB][1];
+      const rgbColor = converter('rgb')(this.color) //Convert to RGB
+      return rgbColor.g * this.maxes[constants.RGB][1]; //Access red channel and scale
     }
   }
 
   _getBlue() {
     if(this.mode === constants.RGB){
-      return this.color.coords[2]  * this.maxes[constants.RGB][2];
+      //return this.color.coords[2]  * this.maxes[constants.RGB][2];
+      return this.color.b * this.maxes[constants.RGB][2];
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
-      return to(this.color, 'srgb').coords[2]  * this.maxes[constants.RGB][2];
+      //return to(this.color, 'srgb').coords[2]  * this.maxes[constants.RGB][2];
+      const rgbColor = converter('rgb')(this.color) //Convert to RGB
+      return rgbColor.b * this.maxes[constants.RGB][2]; //Access red channel and scale
     }
   }
 
@@ -524,10 +543,13 @@ class Color {
    */
   _getHue() {
     if(this.mode === constants.HSB || this.mode === constants.HSL){
-      return this.color.coords[0] / 360 * this.maxes[this.mode][0];
+      //return this.color.coords[0] / 360 * this.maxes[this.mode][0];
+      return this.color.h / 360 * this.maxes[this.mode][0];
     }else{
       // Will do an imprecise conversion to 'HSL', not recommended
-      return to(this.color, 'hsl').coords[0] / 360 * this.maxes[this.mode][0];
+      //return to(this.color, 'hsl').coords[0] / 360 * this.maxes[this.mode][0];
+      const hslColor = converter('hsl')(this.color) //Convert to HSL
+      return hslColor.h / 360 * this.maxes[this.mode][0]; //Access Hue channel and scale
     }
   }
 
@@ -538,13 +560,17 @@ class Color {
    */
   _getSaturation() {
     if(this.mode === constants.HSB || this.mode === constants.HSL){
-      return this.color.coords[1] / 100 * this.maxes[this.mode][1];
+      //return this.color.coords[1] / 100 * this.maxes[this.mode][1];
+      return this.color.s * this.maxes[this.mode][1];
     }else{
       // Will do an imprecise conversion to 'HSL', not recommended
-      return to(this.color, 'hsl').coords[1] / 100 * this.maxes[this.mode][1];
+      //return to(this.color, 'hsl').coords[1] / 100 * this.maxes[this.mode][1];
+      const hslColor = converter('hsl')(this.color) //Convert to HSL
+      return hslColor.s * this.maxes[this.mode][1]; //Access Hue channel and scale
     }
   }
 
+  //HSB/ HSV - Brightness channel
   _getBrightness() {
     if(this.mode === constants.HSB){
       return this.color.coords[2] / 100 * this.maxes[this.mode][2];
@@ -554,6 +580,7 @@ class Color {
     }
   }
 
+  //HSL - Lightness channel
   _getLightness() {
     if(this.mode === constants.HSL){
       return this.color.coords[2] / 100 * this.maxes[this.mode][2];
