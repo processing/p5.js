@@ -1,8 +1,6 @@
 
 /*
  * TODO:
- *   - match current rectMode() behavior for textBounds/fontBounds
- *   - update test/unit/type
  *   - spurious warning in oneoff.html (local)
  * 
  * ON-HOLD:
@@ -67,6 +65,24 @@ function text2d(p5, fn) {
     };
   });
 
+  const StateTextProps = {
+    textFont: undefined,
+    textLeading: undefined,
+    leadingSet: undefined,
+    textSize: undefined,
+    textAlign: undefined,
+    textBaseline: undefined,
+    textWrap: undefined,
+    textStyle: 'fontStyle',
+
+    // added v2.0
+    textStretch: 'fontStretch',
+    textWeight: 'fontWeight',
+    textHeight: 'lineHeight',
+    textVariant: 'fontVariant',
+  };
+
+
   const StatePropMappings = {
     textStretch: 'fontStretch', // font-stretch: { default:  normal | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded }
     textWeight: 'fontWeight', // font-weight: { default:  normal | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 }
@@ -88,26 +104,9 @@ function text2d(p5, fn) {
     let leading = this.states.textLeading;
 
     if (typeof width !== 'undefined') {
-
-      // adjust x,y,w,h properties based on current rectMode
-      switch (this.states.rectMode) {
-        case fn.RADIUS:
-          width *= 2;
-          height *= 2;
-          x -= width / 2;
-          y -= height / 2;
-          break;
-        case fn.CENTER:
-          x -= width / 2;
-          y -= height / 2;
-          break;
-        case fn.CORNERS:
-          width -= x;
-          height -= y;
-          break;
-      }
+      // adjust {x,y,w,h} properties based on rectMode
+      ({ x, y, width, height } = this._doRectMode(x, y, width, height));
     }
-
 
     // parse the lines according to the width & linebreaks
     let lines = this._processLines(str, width);
@@ -401,6 +400,7 @@ function text2d(p5, fn) {
       textBaseline: this.drawingContext.textBaseline,
 
       font: this.drawingContext.font,
+      font: this.drawingContext.direction,
       fontKerning: this.drawingContext.fontKerning,
       fontStretch: this.drawingContext.fontStretch,
       fontVariantCaps: this.drawingContext.fontVariantCaps,
@@ -438,7 +438,6 @@ function text2d(p5, fn) {
       }
     }
 
-
     // parse the lines according to the width & linebreaks
     let lines = this._processLines(str, width);
 
@@ -466,11 +465,13 @@ function text2d(p5, fn) {
   */
   p5.Renderer2D.prototype._setCanvasStyleProperty = function (opt, val) {
 
+    let value = val.toString(); // ensure its a string
+
     // lets try to set it on the canvas style
-    this.canvas.style[opt] = val.toString();
+    this.canvas.style[opt] = value;
 
     // check if the value was set successfully
-    if (this.canvas.style[opt] !== val.toString()) {
+    if (this.canvas.style[opt] !== value) {
       console.warn(`Unable to set '${opt}' property` // FES?
         + ' on canvas.style. It may not be supported.');
     }
@@ -511,6 +512,36 @@ function text2d(p5, fn) {
     if (debug) {
       console.log('queued context2d.' + prop + '="' + val + '"');
     }
+  };
+
+  /*
+     Adjust parameters (x,y,w,h) based on current rectMode
+  */
+  p5.Renderer2D.prototype._doRectMode = function (x, y, width, height) {
+
+    switch (this.states.rectMode) {
+      case fn.RADIUS:
+        width *= 2;
+        x -= width / 2;
+        if (typeof height !== 'undefined') {
+          height *= 2;
+          y -= height / 2;
+        }
+        break;
+      case fn.CENTER:
+        x -= width / 2;
+        if (typeof height !== 'undefined') {
+          y -= height / 2;
+        }
+        break;
+      case fn.CORNERS:
+        width -= x;
+        if (typeof height !== 'undefined') {
+          height -= y;
+        }
+        break;
+    }
+    return { x, y, width, height };
   };
 
   /*
@@ -674,8 +705,8 @@ function text2d(p5, fn) {
   }
 
   /*
-  Align the bounding box based on the current rectMode property
- */
+    Align the bounding box based on the current rectMode property
+  */
   p5.Renderer2D.prototype._rectModeAlign = function (bb, width, height) {
     if (typeof width !== 'undefined') {
 
@@ -742,6 +773,8 @@ function text2d(p5, fn) {
   p5.Renderer2D.prototype._textBoundsSingle = function (s, x = 0, y = 0) {
 
     let metrics = this.drawingContext.measureText(s);
+    console.log(metrics);
+
     let asc = metrics.actualBoundingBoxAscent;
     let desc = metrics.actualBoundingBoxDescent;
     let abl = metrics.actualBoundingBoxLeft;
