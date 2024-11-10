@@ -559,20 +559,6 @@ function files(p5, fn){
     }
   };
 
-  // helper function to turn a row into a JSON object
-  function makeObject(row, headers) {
-    headers = headers || [];
-    if (typeof headers === 'undefined') {
-      for (let j = 0; j < row.length; j++) {
-        headers[j.toString()] = j;
-      }
-    }
-    return Object.fromEntries(
-      headers
-        .map((key, i) => [key, row[i]])
-    );
-  }
-
   /**
    * Loads an XML file to create a <a href="#/p5.XML">p5.XML</a> object.
    *
@@ -806,7 +792,7 @@ function files(p5, fn){
         throw err;
       }
     }
-  }
+  };
 
   /**
    * Method for executing an HTTP GET request. If data type is not specified,
@@ -883,21 +869,7 @@ function files(p5, fn){
     // NOTE: This is like a more primitive version of the other load functions.
     //       If the user wanted to customize more behavior, pass in Request to path.
 
-    const req = new Request(path, {
-      method: 'GET'
-    });
-
-    try{
-      const data = await request(req, datatype);
-      if (successCallback) successCallback(data);
-      return data;
-    } catch(err) {
-      if(errorCallback) {
-        errorCallback(err);
-      } else {
-        throw err;
-      }
-    }
+    return this.httpDo(path, 'GET', datatype, successCallback, errorCallback);
   };
 
   /**
@@ -1014,17 +986,7 @@ function files(p5, fn){
       }
     });
 
-    try{
-      const data = await request(req, datatype);
-      if (successCallback) successCallback(data);
-      return data;
-    } catch(err) {
-      if(errorCallback) {
-        errorCallback(err);
-      } else {
-        throw err;
-      }
-    }
+    return this.httpDo(req, 'POST', datatype, successCallback, errorCallback);
   };
 
   /**
@@ -1112,17 +1074,54 @@ function files(p5, fn){
     // NOTE: This behave similarly to httpGet but even more primitive. The user
     //       will most likely want to pass in a Request to path, the only convenience
     //       is that datatype will be taken into account to parse the response.
+
+    if(typeof datatype === 'function'){
+      errorCallback = successCallback;
+      successCallback = datatype;
+      datatype = undefined;
+    }
+
+    // Try to infer data type if it is defined
+    if(!datatype){
+      const extension = typeof path === 'string' ?
+        path.split(".").pop() :
+        path.url.split(".").pop();
+      switch(extension) {
+        case 'json':
+          datatype = 'json';
+          break;
+
+        case 'jpg':
+        case 'jpeg':
+        case 'png':
+        case 'webp':
+        case 'gif':
+          datatype = 'blob';
+          break;
+
+        case 'xml':
+          // NOTE: still need to normalize type handling/mapping
+          // datatype = 'xml';
+        case 'txt':
+        default:
+          datatype = 'text';
+      }
+    }
+
     const req = new Request(path, {
       method
     });
 
     try{
       const data = await request(req, datatype);
-      if (successCallback) successCallback(data);
-      return data;
+      if (successCallback) {
+        return successCallback(data);
+      } else {
+        return data;
+      }
     } catch(err) {
       if(errorCallback) {
-        errorCallback(err);
+        return errorCallback(err);
       } else {
         throw err;
       }
@@ -1134,9 +1133,6 @@ function files(p5, fn){
    * @submodule Output
    * @for p5
    */
-
-  window.URL = window.URL || window.webkitURL;
-
   // private array of p5.PrintWriter objects
   fn._pWriters = [];
 
