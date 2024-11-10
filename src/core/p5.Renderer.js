@@ -41,13 +41,14 @@ class Renderer {
       textAlign: constants.LEFT,
       textBaseline: constants.BASELINE,
       textWrap: constants.WORD,
-      fontStyle: constants.NORMAL,
 
       // added v2.0
+      fontStyle: constants.NORMAL, // v1: textStyle
       fontStretch: constants.NORMAL,
       fontWeight: constants.NORMAL,
       lineHeight: constants.NORMAL,
       fontVariant: constants.NORMAL,
+      direction: 'inherit'
     };
     this._pushPopStack = [];
     // NOTE: can use the length of the push pop stack instead

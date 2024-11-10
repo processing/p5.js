@@ -13,6 +13,7 @@
  * 
  *  ENHANCEMENTS:
  *   - support direct setting of context2d.font with string
+ *   - support idographic and hanging baselines
  *   - add 'justify' alignment
  */
 
@@ -26,6 +27,8 @@ function text2d(p5, fn) {
 
   // additional constants
   fn.IDEOGRAPHIC = 'ideographic';
+  fn.RIGHT_TO_LEFT = 'rtl';
+  fn.LEFT_TO_RIGHT = 'ltr';
   fn.HANGING = 'hanging';
   fn.START = 'start';
   fn.END = 'end';
@@ -50,8 +53,10 @@ function text2d(p5, fn) {
     'textStyle',
     'textWidth',
     'textWrap',
+
     'textBounds',
     'textToPoints',
+    'textDirection',
     'textProperty',
     'textProperties',
     'fontBounds',
@@ -81,12 +86,13 @@ function text2d(p5, fn) {
     lineHeight: RendererProp, // line-height: { default:  normal | number | length | percentage }
     fontVariant: RendererProp,// font-variant: { default:  normal | small-caps }
     fontStyle: RendererProp, // font-style: { default:  normal | italic | oblique } [was 'textStyle' in v1]
+    direction: RendererProp, // direction: { default:  ltr | rtl }
   };
 
   // note: font must be first here otherwise it may reset other properties
   const ContextTextProps = ['font', 'direction', 'fontKerning', 'fontStretch', 'fontVariantCaps', 'letterSpacing', 'textAlign', 'textBaseline', 'textRendering', 'wordSpacing'];
 
-  let ContextQueue, CachedCanvas, CachedDiv; // lazy
+  let contextQueue, cachedCanvas, cachedDiv; // lazy
 
   ////////////////////////////// start API ///////////////////////////////
 
@@ -112,33 +118,56 @@ function text2d(p5, fn) {
     this.drawingContext.textBaseline = setBaseline; // restore baseline
   };
 
+  /**
+   * Computes the precise (tight) bounding box for a block of text
+   * @param {string} str - the text to measure
+   * @param {number} x - the x-coordinate of the text
+   * @param {number} y - the y-coordinate of the text
+   * @param {number} width - the max width of the text block
+   * @param {number} height - the max height of the text block
+   * @returns - a bounding box object for the text block: {x,y,w,h}
+   */
   p5.Renderer2D.prototype.textBounds = function (str, x, y, width, height) {
-    // delegate to _computeBounds with the appropriate measure function
+    // delegate to _computeBounds with _textBoundsSingle measure function
     return this._computeBounds(this._textBoundsSingle.bind(this), str, x, y, width, height);
   };
 
+  /**
+   * Computes a generic (non-tight) bounding box for a block of text
+   * @param {string} str - the text to measure
+   * @param {number} x - the x-coordinate of the text
+   * @param {number} y - the y-coordinate of the text
+   * @param {number} width - the max width of the text block
+   * @param {number} height - the max height of the text block
+   * @returns - a bounding box object for the text block: {x,y,w,h}
+   */
   p5.Renderer2D.prototype.fontBounds = function (str, x, y, width, height) {
-    // delegate to _computeBounds with the appropriate measure function
+    // delegate to _computeBounds with _fontBoundsSingle measure function
     return this._computeBounds(this._fontBoundsSingle.bind(this), str, x, y, width, height);
   };
 
-  p5.Renderer2D.prototype.textAlign = function (h, v) {
-    // the setter
-    if (typeof h !== 'undefined') {
-      this.drawingContext.textAlign = h;
-      if (typeof v !== 'undefined') {
-        if (v === fn.CENTER) {
-          v = fn._CTX_MIDDLE;
-        }
-        this.drawingContext.textBaseline = v;
-      }
-      return this._applyTextProperties();
-    }
-    // the getter
-    return {
-      horizontal: this.drawingContext.textAlign,
-      vertical: this.drawingContext.textBaseline
-    };
+  /**
+   * Get the width of a text string in pixels (tight bounds)
+   * @param {string} theText 
+   * @returns - the width of the text in pixels
+   */
+  p5.Renderer2D.prototype.textWidth = function (theText) {
+    // return the max width of the lines (using tight bounds)
+    let lines = this._processLines(theText);
+    let widths = lines.map(l => this._textWidthSingle(l));
+    return Math.max(...widths);
+  };
+
+  /**
+   * Get the width of a text string in pixels (loose bounds)
+   * @param {string} theText 
+   * @returns - the width of the text in pixels
+   */
+  p5.Renderer2D.prototype.fontWidth = function (theText) {
+    // return the max width of the lines (using loose bounds)
+    let lines = this._processLines(theText);
+    let widths = lines.map(l => this._fontWidthSingle(l));
+    return Math.max(...widths);
   };
 
   /**
@@ -161,18 +190,62 @@ function text2d(p5, fn) {
     return this.drawingContext.measureText(txt)[prop];
   };
 
-  p5.Renderer2D.prototype.textWidth = function (theText) {
-    // return the max width of the lines (using tight bounds)
-    let lines = this._processLines(theText);
-    let widths = lines.map(l => this._textWidthSingle(l));
-    return Math.max(...widths);
-  };
+  p5.Renderer2D.prototype.textToPoints = function (s, x, y, fsize, options) { // hack via rendering and checking pixels
 
-  p5.Renderer2D.prototype.fontWidth = function (theText) {
-    // return the max width of the lines (using loose bounds)
-    let lines = this._processLines(theText);
-    let widths = lines.map(l => this._fontWidthSingle(l));
-    return Math.max(...widths);
+    // use the cached canvas for rendering
+    const cvs = (cachedCanvas ??= document.createElement("canvas"));
+    const ctx = cachedCanvas.getContext("2d");
+
+    // set dimensions to match the p5 canvas
+    cvs.style.width = this._pInst.width + 'px';
+    cvs.width = this._pInst.width; // needed?
+    cvs.style.height = this._pInst.height + 'px';
+    cvs.height = this._pInst.height;// needed?
+
+    // set the scale to match the p5 canvas
+    ctx.scale(this._pInst._pixelDensity, this._pInst._pixelDensity);
+
+    // set context props to match the p5 context (a better way?)
+    const ctxProps = [...ContextTextProps, 'fillStyle', 'filter', 'globalAlpha', 'globalCompositeOperation', 'imageSmoothingEnabled', 'imageSmoothingQuality', 'lineCap', 'lineDashOffset', 'lineJoin', 'lineWidth', 'miterLimit', 'shadowBlur', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY', 'strokeStyle'];
+    ctxProps.forEach(p => ctx[p] = this.drawingContext[p]);
+
+    // render the text to the hidden canvas
+    ctx.fillText(s, x, y);
+
+    // get the pixel data from the hidden canvas
+    const imageData = ctx.getImageData(0, 0, cvs.width, cvs.height).data;
+    const points = [];
+    for (let y = 0; y < cvs.height; y += 4) {
+      for (let x = 0; x < cvs.width; x += 4) {
+        const idx = (y * cvs.width + x) * 4;
+        if (imageData[idx + 3] > 128) { // threshold alpha (averaging?)
+          points.push({ x, y });
+        }
+      }
+    }
+
+    return points;
+  }
+
+  // setters/getters for text properties //////////////////////////
+
+  p5.Renderer2D.prototype.textAlign = function (h, v) {
+    // the setter
+    if (typeof h !== 'undefined') {
+      this.states.textAlign = h;
+      if (typeof v !== 'undefined') {
+        if (v === fn.CENTER) {
+          v = fn._CTX_MIDDLE;
+        }
+        this.states.textBaseline = v;
+      }
+      return this._applyTextProperties();
+    }
+    // the getter
+    return {
+      horizontal: this.states.textAlign,
+      vertical: this.states.textBaseline
+    };
   };
 
   /**
@@ -183,10 +256,7 @@ function text2d(p5, fn) {
    */
   p5.Renderer2D.prototype.textFont = function (theFont, theSize, options) {
 
-    //this._initFontProps();
-
     if (arguments.length === 0) {
-      this._applyTextProperties();
       return this.states.textFont;
     }
 
@@ -230,7 +300,7 @@ function text2d(p5, fn) {
     if (typeof leading === 'number') {
       this.states.leadingSet = true;
       this.states.textLeading = leading;
-      return this._pInst;
+      return this._applyTextProperties();
     }
     // the getter
     return this.states.textLeading;
@@ -246,19 +316,15 @@ function text2d(p5, fn) {
       return this.states.textSize;
     }
     // the setter
-    if (this._setTextSize(theSize)) {
-
-      // apply properties if size was changed
-      return this._applyTextProperties();
-    }
-    return this._pInst;
+    this._setTextSize(theSize);
+    return this._applyTextProperties();
   }
 
-  p5.Renderer2D.prototype.fontStyle = function (s) {
+  p5.Renderer2D.prototype.textStyle = function (s) {
 
     // the setter
     if (typeof s !== 'undefined') {
-      if (s === fn.NORMAL ||
+      if (s === fn.NORMAL || // ignores other options: 'inherit', 'initial', 'unset'
         s === fn.ITALIC ||
         s === fn.BOLD ||
         s === fn.BOLDITALIC) {
@@ -274,47 +340,20 @@ function text2d(p5, fn) {
 
     if (wrapStyle === fn.WORD || wrapStyle === fn.CHAR) {
       this.states.textWrap = wrapStyle;
+      // no need to apply text properties here as it's not a context property
       return this._pInst;
     }
     return this.states.textWrap;
   };
 
-  p5.Renderer2D.prototype.textToPoints = function (s, x, y, fsize, options) { // hack via rendering and checking pixels
+  p5.Renderer2D.prototype.textDirection = function (direction) {
 
-    // use the cached canvas for rendering
-    const cvs = (CachedCanvas ??= document.createElement("canvas"));
-    const ctx = CachedCanvas.getContext("2d");
-
-    // set dimensions to match the p5 canvas
-    cvs.style.width = this._pInst.width + 'px';
-    cvs.width = this._pInst.width; // needed?
-    cvs.style.height = this._pInst.height + 'px';
-    cvs.height = this._pInst.height;// needed?
-
-    // set the scale to match the p5 canvas
-    ctx.scale(this._pInst._pixelDensity, this._pInst._pixelDensity);
-
-    // set context props to match the p5 context (a better way?)
-    const ctxProps = [...ContextTextProps, 'fillStyle', 'filter', 'globalAlpha', 'globalCompositeOperation', 'imageSmoothingEnabled', 'imageSmoothingQuality', 'lineCap', 'lineDashOffset', 'lineJoin', 'lineWidth', 'miterLimit', 'shadowBlur', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY', 'strokeStyle'];
-    ctxProps.forEach(p => ctx[p] = this.drawingContext[p]);
-
-    // render the text to the hidden canvas
-    ctx.fillText(s, x, y);
-
-    // get the pixel data from the hidden canvas
-    const imageData = ctx.getImageData(0, 0, cvs.width, cvs.height).data;
-    const points = [];
-    for (let y = 0; y < cvs.height; y += 4) {
-      for (let x = 0; x < cvs.width; x += 4) {
-        const idx = (y * cvs.width + x) * 4;
-        if (imageData[idx + 3] > 128) { // threshold alpha (averaging?)
-          points.push({ x, y });
-        }
-      }
+    if ([fn.RIGHT_TO_LEFT, fn.LEFT_TO_RIGHT, 'inherit'].includes(direction)) {
+      this.states.direction = direction;
+      return this._applyTextProperties();
     }
-
-    return points;
-  }
+    return this.states.direction;
+  };
 
   /**
    * Sets/gets a single text property for the renderer (eg. fontStyle, fontStretch, etc.)
@@ -373,10 +412,7 @@ function text2d(p5, fn) {
       return this._pInst;
     }
 
-    // getter
-    this._applyTextProperties();
-
-    // get props from this.drawingContext
+    // getter: get props from this.drawingContext
     textProps = ContextTextProps.reduce((props, p) => {
       props[p] = this.drawingContext[p];
       return props;
@@ -474,7 +510,7 @@ function text2d(p5, fn) {
 
     // otherwise, we will set the property directly on the `this.drawingContext`
     // by adding [property, value] to context-queue for later application
-    (ContextQueue ??= []).push([prop, val]);
+    (contextQueue ??= []).push([prop, val]);
 
     if (debug) {
       console.log('queued context2d.' + prop + '="' + val + '"');
@@ -517,7 +553,7 @@ function text2d(p5, fn) {
     @returns {number} - the computed font-size in pixels
    */
   p5.Renderer2D.prototype._fontSizePx = function (size) {
-    let el = CachedDiv;
+    let el = cachedDiv;
     if (typeof el === 'undefined') {
       el = document.createElement('div');
       el.ariaHidden = 'true';
@@ -773,7 +809,6 @@ function text2d(p5, fn) {
 
     // set it in `this.states` if its been changed
     if (this.states.textSize !== theSize) {
-
       this.states.textSize = theSize;
 
       // handle leading here, if not set otherwise 
@@ -782,6 +817,7 @@ function text2d(p5, fn) {
       }
       return true;
     }
+
     return false;
   };
 
@@ -872,6 +908,11 @@ function text2d(p5, fn) {
     */
     this.drawingContext.font = fontString;
 
+    // set these after the font so they're not overridden
+    this.drawingContext.direction = this.states.direction;
+    this.drawingContext.textAlign = this.states.textAlign;
+    this.drawingContext.textBaseline = this.states.textBaseline;
+
     // case-insensitive check to see if the font was set successfully
     let expected = fontString.replace(fontStretch, ''); // for fontStretch issue
     if (this.drawingContext.font.toLowerCase() !== expected.toLowerCase()) {
@@ -879,9 +920,9 @@ function text2d(p5, fn) {
     }
 
     // apply each property in queue after the font so they're not overridden
-    while (ContextQueue?.length) {
+    while (contextQueue?.length) {
 
-      let [prop, val] = ContextQueue.shift();
+      let [prop, val] = contextQueue.shift();
       //console.log('apply context property "' + prop + '" = "' + val + '"');
       this.drawingContext[prop] = val;
 
@@ -919,8 +960,11 @@ function text2d(p5, fn) {
       if (!states.fillSet) {
         this._setFill(fn._DEFAULT_TEXT_FILL);
       }
+      // this.drawingContext.font = "48px serif";
+      // this.drawingContext.direction = 'rtl';
+      console.log('fillText: "' + line + '"', this.drawingContext.direction);//, "=?", this.textProperties().font);
+      //console.log();
 
-      //console.log('fillText: "' + line + '"');
       this.drawingContext.fillText(line, x, y);
     }
 
