@@ -297,7 +297,7 @@ function attributes(p5, fn){
     ) {
       this._renderer.states.rectMode = m;
     }
-    return this;
+    return this; // return current rectMode ?
   };
 
   /**

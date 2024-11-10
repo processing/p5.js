@@ -40,14 +40,14 @@ class Renderer {
       textSize: 12,
       textAlign: constants.LEFT,
       textBaseline: constants.BASELINE,
-      textStyle: constants.NORMAL,
       textWrap: constants.WORD,
+      fontStyle: constants.NORMAL,
 
       // added v2.0
-      textStretch: constants.NORMAL,
-      textWeight: constants.NORMAL,
-      textHeight: constants.NORMAL,
-      textVariant: constants.NORMAL,
+      fontStretch: constants.NORMAL,
+      fontWeight: constants.NORMAL,
+      lineHeight: constants.NORMAL,
+      fontVariant: constants.NORMAL,
     };
     this._pushPopStack = [];
     // NOTE: can use the length of the push pop stack instead
@@ -201,13 +201,13 @@ class Renderer {
         s === constants.BOLD ||
         s === constants.BOLDITALIC
       ) {
-        this.states.textStyle = s;
+        this.states.fontStyle = s;
       }
 
       return this._applyTextProperties();
     }
 
-    return this.states.textStyle;
+    return this.states.fontStyle;
   }
 
   textAscent () {
