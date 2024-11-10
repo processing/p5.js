@@ -129,7 +129,6 @@ function loadingDisplaying(p5, fn){
       if (contentType && contentType.includes('image/gif')) {
         const arrayBuffer = await response.arrayBuffer()
         const byteArray = new Uint8Array(arrayBuffer);
-        // try{
         await _createGif(
           byteArray,
           pImg
@@ -148,12 +147,17 @@ function loadingDisplaying(p5, fn){
       }
 
       pImg.modified = true;
-      return pImg;
+
+      if(successCallback){
+        return successCallback(pImg);
+      }else{
+        return pImg;
+      }
 
     } catch(err) {
       p5._friendlyFileLoadError(0, path);
       if (typeof failureCallback === 'function') {
-        failureCallback(err);
+        return failureCallback(err);
       } else {
         throw err;
       }
