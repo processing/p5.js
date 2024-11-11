@@ -298,14 +298,13 @@ function files(p5, fn){
       if (successCallback) successCallback(data);
       return data;
     } catch(err) {
+      p5._friendlyFileLoadError(5, path);
       if(errorCallback) {
         errorCallback(err);
       } else {
         throw err;
       }
     }
-
-    //     p5._friendlyFileLoadError(5, path);
   };
 
   /**
@@ -452,6 +451,7 @@ function files(p5, fn){
       if (successCallback) successCallback(data);
       return data;
     } catch(err) {
+      p5._friendlyFileLoadError(3, path);
       if(errorCallback) {
         errorCallback(err);
       } else {
@@ -566,6 +566,7 @@ function files(p5, fn){
         return ret;
       }
     } catch(err) {
+      p5._friendlyFileLoadError(2, path);
       if(errorCallback) {
         return errorCallback(err);
       } else {
@@ -746,7 +747,7 @@ function files(p5, fn){
       if (successCallback) successCallback(data);
       return data;
     } catch(err) {
-
+      p5._friendlyFileLoadError(1, path);
       if(errorCallback) {
         errorCallback(err);
       } else {
@@ -788,6 +789,7 @@ function files(p5, fn){
       if (successCallback) successCallback(data);
       return data;
     } catch(err) {
+      p5._friendlyFileLoadError(6, path);
       if(errorCallback) {
         errorCallback(err);
       } else {
@@ -882,8 +884,8 @@ function files(p5, fn){
   fn.httpGet = async function (path, datatype, successCallback, errorCallback) {
     p5._validateParameters('httpGet', arguments);
 
-    // NOTE: This is like a more primitive version of the other load functions.
-    //       If the user wanted to customize more behavior, pass in Request to path.
+    // This is like a more primitive version of the other load functions.
+    // If the user wanted to customize more behavior, pass in Request to path.
 
     return this.httpDo(path, 'GET', datatype, successCallback, errorCallback);
   };
@@ -973,9 +975,9 @@ function files(p5, fn){
   fn.httpPost = async function (path, data, datatype, successCallback, errorCallback) {
     p5._validateParameters('httpPost', arguments);
 
-    // NOTE: This behave similarly to httpGet and additional options should be passed
-    //       as a Request to path. Both method and body will be overridden.
-    //       Will try to infer correct Content-Type for given data.
+    // This behave similarly to httpGet and additional options should be passed
+    // as a `Request`` to path. Both method and body will be overridden.
+    // Will try to infer correct Content-Type for given data.
 
     let reqData = data;
     let contentType = 'text/plain';
@@ -1087,9 +1089,9 @@ function files(p5, fn){
    * @return {Promise}
    */
   fn.httpDo = async function (path, method, datatype, successCallback, errorCallback) {
-    // NOTE: This behave similarly to httpGet but even more primitive. The user
-    //       will most likely want to pass in a Request to path, the only convenience
-    //       is that datatype will be taken into account to parse the response.
+    // This behave similarly to httpGet but even more primitive. The user
+    // will most likely want to pass in a Request to path, the only convenience
+    // is that datatype will be taken into account to parse the response.
 
     if(typeof datatype === 'function'){
       errorCallback = successCallback;
@@ -1130,7 +1132,6 @@ function files(p5, fn){
 
     try{
       const data = await request(req, datatype);
-      console.log("data", data);
       if (successCallback) {
         return successCallback(data);
       } else {
