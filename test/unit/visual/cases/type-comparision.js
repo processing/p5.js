@@ -18,10 +18,8 @@ const combinedTests = {
 };
 
 visualSuite("Type Comparison", function () {
-  // Compare matching suites
   Object.keys(combinedTests).forEach((suite) => {
     visualSuite(suite, function () {
-      // Compare matching tests within suite
       combinedTests[suite].forEach((testName) => {
         visualTest(`compare ${testName}`, async function (p5, screenshot) {
           try {
