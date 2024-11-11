@@ -10,7 +10,7 @@ visualSuite("Type.v2", function () {
       screenshot();
     });
 
-    visualTest("With the default monospace font", function (p5, screenshot) {
+    visualTest("with the default monospace font", function (p5, screenshot) {
       p5.createCanvas(50, 50);
       p5.textSize(20);
       p5.textFont("monospace");
