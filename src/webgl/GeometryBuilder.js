@@ -1,5 +1,5 @@
 import * as constants from '../core/constants';
-import { Matrix } from './p5.Matrix';
+import { Matrix } from '../math/p5.Matrix';
 import { Geometry } from './p5.Geometry';
 
 /**

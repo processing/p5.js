@@ -31,6 +31,7 @@ import * as constants from './constants';
  */
 class p5 {
   static VERSION = constants.VERSION;
+  static MATRIX_ENGINE = constants.MATRIX_ENGINE
   // This is a pointer to our global mode p5 instance, if we're in
   // global mode.
   static instance = null;

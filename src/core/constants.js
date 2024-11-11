@@ -12,6 +12,7 @@ const _PI = Math.PI;
  * @final
  */
 export const VERSION = 'VERSION_WILL_BE_REPLACED_BY_BUILD';
+export const MATRIX_ENGINE = 'legacy';
 
 // GRAPHICS RENDERER
 /**

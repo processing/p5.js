@@ -10,7 +10,7 @@ import * as constants from '../core/constants';
 import { RendererGL } from './p5.RendererGL';
 import { Vector } from '../math/p5.Vector';
 import { Geometry } from './p5.Geometry';
-import { Matrix } from './p5.Matrix';
+import { Matrix } from '../math/p5.Matrix';
 
 function primitives3D(p5, fn){
   /**
