@@ -19,7 +19,8 @@ export const httpMock = setupWorker(...httpMocks);
 
 // p5.js module mocks
 export const mockP5 = {
-  _validateParameters: vi.fn()
+  _validateParameters: vi.fn(),
+  _friendlyFileLoadError: vi.fn()
 };
 
 export const mockP5Prototype = {};

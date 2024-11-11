@@ -23,7 +23,6 @@ suite('loadTable', function() {
   test('error callback is called', async () => {
     await new Promise((resolve, reject) => {
       mockP5Prototype.loadTable(invalidFile, () => {
-        console.log("here");
         reject("Success callback executed");
       }, () => {
         // Wait a bit so that if both callbacks are executed we will get an error.

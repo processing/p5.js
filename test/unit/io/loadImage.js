@@ -43,20 +43,6 @@ suite.todo('loadImage', function() {
     };
   });
 
-  testSketchWithPromise('loading correctly triggers setup', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    sketch.preload = function() {
-      sketch.loadImage(validFile);
-    };
-
-    sketch.setup = function() {
-      resolve();
-    };
-  });
-
   testSketchWithPromise('success callback is called', function(
     sketch,
     resolve,

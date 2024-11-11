@@ -472,7 +472,7 @@ class Image {
     return region;
   }
 
-  _getPixel(...args) {
+  _getPixel(x, y) {
     let imageData, index;
     imageData = this.drawingContext.getImageData(x, y, 1, 1).data;
     index = 0;

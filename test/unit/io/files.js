@@ -24,19 +24,19 @@ suite('Files', function() {
     });
 
     test('should work when provided with just a path', async function() {
-      const data = await myp5.httpDo('unit/assets/sentences.txt');
+      const data = await myp5.httpDo('/test/unit/assets/sentences.txt');
       assert.ok(data);
       assert.isString(data);
     });
 
     test('should accept method parameter', async function() {
-      const data = await myp5.httpDo('unit/assets/sentences.txt', 'GET');
+      const data = await myp5.httpDo('/test/unit/assets/sentences.txt', 'GET');
       assert.ok(data);
       assert.isString(data);
     });
 
     test('should accept method and type parameter together', async function() {
-      const data = await myp5.httpDo('unit/assets/sentences.txt', 'GET', 'text');
+      const data = await myp5.httpDo('/test/unit/assets/sentences.txt', 'GET', 'text');
       assert.ok(data);
       assert.isString(data);
     });
@@ -44,17 +44,16 @@ suite('Files', function() {
     test.todo('should handle promise error correctly', async function() {
       // Consider using http mock
       try{
-        await myp5.httpDo('unit/assets/sen.txt');
+        await myp5.httpDo('/test/unit/assets/sen.txt');
         assert.fail('Error not thrown');
       }catch(err){
-        console.log(err);
         assert.isFalse(err.ok, 'err.ok is false');
         assert.equal(err.status, 404, 'Error status is 404');
       }
     });
 
     test('should return a promise', function() {
-      var promise = myp5.httpDo('unit/assets/sentences.txt');
+      var promise = myp5.httpDo('/test/unit/assets/sentences.txt');
       assert.instanceOf(promise, Promise);
       return promise.then(function(data) {
         assert.ok(data);

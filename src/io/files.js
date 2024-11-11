@@ -7,7 +7,7 @@
 
 import * as fileSaver from 'file-saver';
 
-class HTTPError extends Error {
+export class HTTPError extends Error {
   status;
   response;
   ok;

@@ -7,6 +7,7 @@
 
 import canvas from '../core/helpers';
 import * as constants from '../core/constants';
+import { HTTPError } from '../io/files';
 import * as omggif from 'omggif';
 import { GIFEncoder, quantize, nearestColorIndex } from 'gifenc';
 
@@ -117,6 +118,16 @@ function loadingDisplaying(p5, fn){
       });
 
       const response = await fetch(req);
+
+      if(!response.ok){
+        const err = new HTTPError(response.statusText);
+        err.status = response.status;
+        err.response = response;
+        err.ok = false;
+
+        throw err;
+      }
+
       // GIF section
       const contentType = response.headers.get('content-type');
 
