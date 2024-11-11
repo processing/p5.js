@@ -530,7 +530,19 @@ function files(p5, fn){
    * </code>
    * </div>
    */
-  fn.loadTable = async function (path, separator=',', header, successCallback, errorCallback) {
+  fn.loadTable = async function (path, separator, header, successCallback, errorCallback) {
+    if(typeof arguments[arguments.length-1] === 'function'){
+      if(typeof arguments[arguments.length-2] === 'function'){
+        successCallback = arguments[arguments.length-2];
+        errorCallback = arguments[arguments.length-1];
+      }else{
+        successCallback = arguments[arguments.length-1];
+      }
+    }
+
+    if(typeof separator !== 'string') separator = ',';
+    if(typeof header === 'function') header = false;
+
     try{
       let data = await request(path, 'text');
       data = data.split(/\r?\n/);
@@ -548,11 +560,14 @@ function files(p5, fn){
         ret.addRow(row);
       });
 
-      if (successCallback) successCallback(ret);
-      return ret;
+      if (successCallback) {
+        successCallback(ret);
+      } else {
+        return ret;
+      }
     } catch(err) {
       if(errorCallback) {
-        errorCallback(err);
+        return errorCallback(err);
       } else {
         throw err;
       }
@@ -768,7 +783,8 @@ function files(p5, fn){
    */
   fn.loadBytes = async function (path, successCallback, errorCallback) {
     try{
-      const data = await request(path, 'arrayBuffer');
+      let data = await request(path, 'arrayBuffer');
+      data = new Uint8Array(data);
       if (successCallback) successCallback(data);
       return data;
     } catch(err) {
