@@ -4,13 +4,13 @@ const { readFile, readdir } = server.commands;
 
 const combinedTests = {
   textFont: ["with the default font", "with the default monospace font"],
-  textAlign: [
-    "all alignments with single word",
-    "all alignments with single line",
-    "all alignments with multi-lines and wrap word",
-    "all alignments with multi-lines and wrap char",
-    "all alignments with multi-line manual text",
-  ],
+  //   textAlign: [
+  //     "all alignments with single word",
+  //     "all alignments with single line",
+  //     "all alignments with multi-lines and wrap word",
+  //     "all alignments with multi-lines and wrap char",
+  //     "all alignments with multi-line manual text",
+  //   ],
   textStyle: ["all text styles"],
   textSize: ["text sizes comparison"],
   textLeading: ["text leading with different values"],

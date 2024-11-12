@@ -1,9 +1,14 @@
-// import { visualSuite, visualTest } from "../visualTest";
-// VISUAL SUITE DUPLICATE FOR V1 AT THE BOTTOM FROM LINE ~350
-
-import p5 from "https://cdn.skypack.dev/p5";
+// import p5 from "../../../../src/app.js";
+import p5 from "https://cdn.jsdelivr.net/npm/p5@1.11.1/+esm"; // v1
 import { server } from "@vitest/browser/context";
+import {
+  THRESHOLD,
+  DIFFERENCE,
+  ERODE,
+} from "../../../../src/core/constants.js";
 const { readFile, writeFile } = server.commands;
+
+// import { visualSuite, visualTest } from "../visualTest";
 
 visualSuite("Type.v1", function () {
   visualSuite("textFont", function () {
@@ -139,66 +144,66 @@ visualSuite("Type.v1", function () {
   //       }
   //     );
 
-  //     visualTest(
-  //       "all alignments with multi-lines and wrap char",
-  //       function (p5, screenshot) {
-  //         const alignments = [
-  //           { alignX: p5.LEFT, alignY: p5.TOP },
-  //           { alignX: p5.CENTER, alignY: p5.TOP },
-  //           { alignX: p5.RIGHT, alignY: p5.TOP },
-  //           { alignX: p5.LEFT, alignY: p5.CENTER },
-  //           { alignX: p5.CENTER, alignY: p5.CENTER },
-  //           { alignX: p5.RIGHT, alignY: p5.CENTER },
-  //           { alignX: p5.LEFT, alignY: p5.BOTTOM },
-  //           { alignX: p5.CENTER, alignY: p5.BOTTOM },
-  //           { alignX: p5.RIGHT, alignY: p5.BOTTOM },
-  //         ];
+  // visualTest(
+  //   "all alignments with multi-lines and wrap char",
+  //   function (p5, screenshot) {
+  //     const alignments = [
+  //       { alignX: p5.LEFT, alignY: p5.TOP },
+  //       { alignX: p5.CENTER, alignY: p5.TOP },
+  //       { alignX: p5.RIGHT, alignY: p5.TOP },
+  //       { alignX: p5.LEFT, alignY: p5.CENTER },
+  //       { alignX: p5.CENTER, alignY: p5.CENTER },
+  //       { alignX: p5.RIGHT, alignY: p5.CENTER },
+  //       { alignX: p5.LEFT, alignY: p5.BOTTOM },
+  //       { alignX: p5.CENTER, alignY: p5.BOTTOM },
+  //       { alignX: p5.RIGHT, alignY: p5.BOTTOM },
+  //     ];
 
-  //         p5.createCanvas(300, 200);
-  //         p5.textSize(20);
-  //         p5.textWrap(p5.CHAR);
+  //     p5.createCanvas(300, 200);
+  //     p5.textSize(20);
+  //     p5.textWrap(p5.CHAR);
 
-  //         let xPos = 20;
-  //         let yPos = 20;
-  //         const boxWidth = 100;
-  //         const boxHeight = 60;
+  //     let xPos = 20;
+  //     let yPos = 20;
+  //     const boxWidth = 100;
+  //     const boxHeight = 60;
 
-  //         alignments.forEach((alignment, i) => {
-  //           if (i % 3 === 0 && i !== 0) {
-  //             yPos += 70;
-  //             xPos = 20;
-  //           }
-
-  //           p5.textAlign(alignment.alignX, alignment.alignY);
-
-  //           p5.noFill();
-  //           p5.stroke(200);
-  //           p5.rect(xPos, yPos, boxWidth, boxHeight);
-
-  //           p5.fill(0);
-  //           p5.text(
-  //             "A really long text that should wrap automatically as it reaches the end of the box",
-  //             xPos,
-  //             yPos,
-  //             boxWidth,
-  //             boxHeight
-  //           );
-  //           const bb = p5.textBounds(
-  //             "A really long text that should wrap automatically as it reaches the end of the box",
-  //             xPos,
-  //             yPos,
-  //             boxWidth,
-  //             boxHeight
-  //           );
-  //           p5.noFill();
-  //           p5.stroke("red");
-  //           p5.rect(bb.x, bb.y, bb.w, bb.h);
-
-  //           xPos += 120;
-  //         });
-  //         screenshot();
+  //     alignments.forEach((alignment, i) => {
+  //       if (i % 3 === 0 && i !== 0) {
+  //         yPos += 70;
+  //         xPos = 20;
   //       }
-  //     );
+
+  //       p5.textAlign(alignment.alignX, alignment.alignY);
+
+  //       p5.noFill();
+  //       p5.stroke(200);
+  //       p5.rect(xPos, yPos, boxWidth, boxHeight);
+
+  //       p5.fill(0);
+  //       p5.text(
+  //         "A really long text that should wrap automatically as it reaches the end of the box",
+  //         xPos,
+  //         yPos,
+  //         boxWidth,
+  //         boxHeight
+  //       );
+  //       const bb = p5.textBounds(
+  //         "A really long text that should wrap automatically as it reaches the end of the box",
+  //         xPos,
+  //         yPos,
+  //         boxWidth,
+  //         boxHeight
+  //       );
+  //       p5.noFill();
+  //       p5.stroke("red");
+  //       p5.rect(bb.x, bb.y, bb.w, bb.h);
+
+  //       xPos += 120;
+  //     });
+  //     screenshot();
+  //   }
+  // );
 
   //     visualTest(
   //       "all alignments with multi-line manual text",
@@ -325,22 +330,9 @@ visualSuite("Type.v1", function () {
       screenshot();
     });
   });
-
-  //   visualSuite("TextToPoints", function () {
-  //     visualTest("TextToPoints testtest", async function (p5, screenshot) {
-  //       p5.createCanvas(300, 100);
-  //       p5.textSize(20);
-  //       const font = await p5.loadFont("./Workbench-Regular.ttf");
-  //       const points = font.textToPoints("TextToPoints", 10, 50, 20);
-  //       points.forEach((pt) => {
-  //         p5.ellipse(pt.x, pt.y);
-  //       });
-  //       screenshot();
-  //     });
-  //   });
 });
 
-// VISUAL SUITE DUPLICATE FOR V1
+// ------------
 
 // By how much can each color channel value (0-255) differ before
 // we call it a mismatch? This should be large enough to not trigger
@@ -387,11 +379,7 @@ let namePrefix = "";
  * @param [options] An options object with optional additional settings. Set its
  * key `focus` to true to only run this test, or its `skip` key to skip it.
  */
-export function visualSuite(
-  name,
-  callback,
-  { focus = false, skip = false } = {}
-) {
+function visualSuite(name, callback, { focus = false, skip = false } = {}) {
   let suiteFn = describe;
   if (focus) {
     suiteFn = suiteFn.only;
@@ -435,11 +423,11 @@ export async function checkMatch(actual, expected, p5) {
   cnv.pixelDensity(1);
   cnv.background(BG);
   cnv.image(actual, 0, 0);
-  cnv.blendMode(cnv.DIFFERENCE);
+  cnv.blendMode(DIFFERENCE);
   cnv.image(expectedWithBg, 0, 0);
   for (let i = 0; i < SHIFT_THRESHOLD; i++) {
-    cnv.filter(cnv.ERODE, false);
-    cnv.filter(cnv.ERODE, false);
+    cnv.filter(ERODE, false);
+    cnv.filter(ERODE, false);
   }
   const diff = cnv.get();
   cnv.remove();
