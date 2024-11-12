@@ -75,26 +75,6 @@ const p3 = useMode(modeP3);
 const rgb = useMode(modeRgb);
 const hsv = useMode(modeHsv);
 
-// ColorSpace.register(XYZ_D65);
-// ColorSpace.register(sRGB_Linear);
-// ColorSpace.register(sRGB);
-// ColorSpace.register(HSL);
-// ColorSpace.register(HSV);
-// ColorSpace.register(HWB);
-// ColorSpace.register(HSB);
-
-// ColorSpace.register(XYZ_D50);
-// ColorSpace.register(Lab);
-// ColorSpace.register(LCH);
-
-// ColorSpace.register(OKLab);
-// ColorSpace.register(OKLCH);
-
-// ColorSpace.register(P3_Linear);
-// ColorSpace.register(P3);
-
-// ColorSpace.register(A98RGB_Linear);
-// ColorSpace.register(A98RGB);
 
 class Color {
   color;
@@ -107,7 +87,7 @@ class Color {
     this.mode = colorMode;
     this.maxes = colorMaxes;
 
-    //if vals is an object
+    //if vals is an object or a non-array, non-null object
     if (typeof vals === 'object' && !Array.isArray(vals) && vals !== null){
       this.color = vals; //color-compatible format
       console.log("Color object detected:", this.color);
@@ -117,6 +97,9 @@ class Color {
       try{
         // parse the string
         this.color = parse(vals[0]);
+        console.log("Color object detected:", this.color);
+        console.log("Current color mode:", this.color.mode);
+        console.log("Current alpha:", this.color.alpha);
       }catch(err){
         // TODO: Invalid color string
         console.error('Invalid color string');
@@ -137,11 +120,12 @@ class Color {
         ? alpha / this.maxes[this.mode][3]
         : 1;
 
+      console.log("Color object detected:", vals);
+      console.log("Current color mode:", this.mode);
+      
       // _colorMode can be 'rgb', 'hsb', or 'hsl'
       // Color representation for Culori.js
-
-      //let space = 'rgb'; -> to specify color mode
-      //let coords = vals; -> to access coordinates
+      
       switch(this.mode){
         case 'rgb':
           this.color = {
@@ -151,66 +135,35 @@ class Color {
             b: vals[2]/ this.maxes[this.mode][2],
             alpha: alpha
           };
-          // space = 'rgb';
-          // coords = [
-          //   vals[0] / this.maxes[this.mode][0],
-          //   vals[1] / this.maxes[this.mode][1],
-          //   vals[2] / this.maxes[this.mode][2]
-          // ];
           break;
         case 'hsb':
           this.color = {
             mode: 'hsv', // Culori uses "hsv" instead of "hsb"
-            h: (vals[0] / this.maxes.hsb[0]) * 360,
-            s: vals[1] / this.maxes.hsb[1],
-            v: vals[2] / this.maxes.hsb[2],
+            h: (vals[0] / this.maxes[0]) * 360,
+            s: vals[1] / this.maxes[1],
+            v: vals[2] / this.maxes[2],
             alpha: alpha
           };
-          // space = 'hsb';
-          // coords = [
-          //   vals[0] / this.maxes[this.mode][0] * 360,
-          //   vals[1] / this.maxes[this.mode][1] ,
-          //   vals[2] / this.maxes[this.mode][2] 
-          // ];
+
           break;
         case 'hsl':
           this.color = {
             mode: 'hsl',
-            h: (vals[0] / this.maxes.hsl[0]) * 360,
-            s: vals[1] / this.maxes.hsl[1],
-            l: vals[2] / this.maxes.hsl[2],
+            h: (vals[0] / this.maxes[0]) * 360,
+            s: vals[1] / this.maxes[1],
+            l: vals[2] / this.maxes[2],
             alpha: alpha
           };
-          // space = 'hsl';
-          // coords = [
-          //   vals[0] / this.maxes[this.mode][0] * 360,
-          //   vals[1] / this.maxes[this.mode][1] ,
-          //   vals[2] / this.maxes[this.mode][2] 
-          // ];
           break;
         default:
           console.error('Invalid color mode');
       };
       
-      // Define `toSpace` as an inline function within the constructor
-      // this.toSpace = (targetSpace) => {
-      //   const toTargetSpace = converter(targetSpace);
-      //   const convertedColor = toTargetSpace(this.color);
-      //   console.log(`Converted color to ${targetSpace} mode:`, convertedColor);
-      //   return convertedColor;
-      // };
-
+   
       // // Use converter to ensure compatibility with Culori's color space conversion
       const convertToSpace = converter(this.mode);
       this.color = convertToSpace(this.color); // Convert color to specified space
-      console.log("Converted color object:", this.color);
-
-      // const color = {
-      //   space,
-      //   coords,
-      //   alpha
-      // };
-      //this.color = to(color, space);
+      //console.log("Converted color object:", this.color);
       
     }
   }
