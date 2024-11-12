@@ -1,3 +1,29 @@
+/** API:
+ *    loadFont("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap")
+ *    loadFont("{ font-family: "Bricolage Grotesque", serif; font-optical-sizing: auto; font-weight: <weight> font-style: normal; font-variation-settings: "wdth" 100; });
+ *    loadFont({ 
+ *        fontFamily: '"Bricolage Grotesque", serif'; 
+ *        fontOpticalSizing: 'auto'; 
+ *        fontWeight: '<weight>'; 
+ *        fontStyle: 'normal'; 
+ *        fontVariationSettings: '"wdth" 100'; 
+ *    });
+ *    loadFont("https://fonts.gstatic.com/s/bricolagegrotesque/v1/pxiAZBhjZQIdd8jGnEotWQ.woff2");
+ *    loadFont("./path/to/localFont.ttf");
+ *    loadFont("system-font-name");
+ * 
+ *   
+ *   NEXT:
+ *     extract axes from font file
+ * 
+ *   TEST: 
+ *    const font = new FontFace("Inter", "url(./fonts/inter-latin-variable-full-font.woff2)", {
+        style: "oblique 0deg 10deg",
+        weight: "100 900",
+        display: 'fallback'
+      });
+*/
+
 function font(p5, fn) {
 
   const validFontTypes = ['ttf', 'otf', 'woff', 'woff2'];
@@ -6,8 +32,21 @@ function font(p5, fn) {
   const invalidFontError = 'Sorry, only TTF, OTF, WOFF and WOFF2 files are supported.';
 
   p5.Font = class Font {
-
+    static list(log = false) {
+      if (log) {
+        console.log('There are', document.fonts.size, 'font-faces loaded\n');
+        for (var fontFace of document.fonts.values()) {
+          console.log('FontFace: {');
+          for (var property in fontFace) {
+            console.log('  ' + property + ': ' + fontFace[property]);
+          }
+          console.log('}\n');
+        }
+      }
+      return Array.from(document.fonts);
+    }
     constructor(p, name, path, descriptors) {
+      console.log('p5.Font', 'constructor', name, path, descriptors);
       if (!(p instanceof p5)) {
         throw Error('p5 instance is required');
       }
@@ -36,7 +75,7 @@ function font(p5, fn) {
       return this.pInst.textToPoints(...args);
     }
 
-    static async create(...args/*path, name, onSuccess, onError*/) {
+    static async create(...args/*path, name, onSuccess, onError, descriptors*/) {
 
       let { path, name, success, error, descriptors } = parseCreateArgs(...args);
 

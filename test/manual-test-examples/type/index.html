@@ -1498,8 +1498,8 @@
         let bb, str = "السلام عليكم";
         let x = p.width / 2, y = p.height / 4 + 20;
 
-        p.textProperties({ direction: 'rtl', align: 'right' });
-
+        p.textDirection(p.RIGHT_TO_LEFT);
+        
         p.textSize(200).textAlign(p.CENTER).noStroke().fill(0).text(str, x, y);
 
         bb = p.textBounds(str, x, y);
