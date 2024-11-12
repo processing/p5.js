@@ -6,8 +6,23 @@ function font(p5, fn) {
   const invalidFontError = 'Sorry, only TTF, OTF, WOFF and WOFF2 files are supported.';
 
   p5.Font = class Font {
+    static list() {
+      console.log('There are', document.fonts.size, 'FontFaces loaded.\n');
 
+      // document.fonts has a Set-like interface.
+      // Here, we iterate over its values.
+      for (var fontFace of document.fonts.values()) {
+        console.log('FontFace:');
+        for (var property in fontFace) {
+          console.log('  ' + property + ': ' + fontFace[property]);
+        }
+        console.log('\n');
+      }
+
+      return Array.from(document.fonts);
+    }
     constructor(p, name, path, descriptors) {
+      console.log('p5.Font', 'constructor', name, path, descriptors);
       if (!(p instanceof p5)) {
         throw Error('p5 instance is required');
       }
@@ -36,7 +51,7 @@ function font(p5, fn) {
       return this.pInst.textToPoints(...args);
     }
 
-    static async create(...args/*path, name, onSuccess, onError*/) {
+    static async create(...args/*path, name, onSuccess, onError, descriptors*/) {
 
       let { path, name, success, error, descriptors } = parseCreateArgs(...args);
 
