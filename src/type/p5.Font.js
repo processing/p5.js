@@ -1,4 +1,5 @@
-/** API:
+/** 
+ * API:
  *    loadFont("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap")
  *    loadFont("{ font-family: "Bricolage Grotesque", serif; font-optical-sizing: auto; font-weight: <weight> font-style: normal; font-variation-settings: "wdth" 100; });
  *    loadFont({ 
@@ -32,6 +33,7 @@ function font(p5, fn) {
   const invalidFontError = 'Sorry, only TTF, OTF, WOFF and WOFF2 files are supported.';
 
   p5.Font = class Font {
+
     static list(log = false) {
       if (log) {
         console.log('There are', document.fonts.size, 'font-faces loaded\n');
@@ -45,8 +47,9 @@ function font(p5, fn) {
       }
       return Array.from(document.fonts);
     }
+
     constructor(p, name, path, descriptors) {
-      console.log('p5.Font', 'constructor', name, path, descriptors);
+      //console.log('p5.Font', 'constructor', name, path, descriptors);
       if (!(p instanceof p5)) {
         throw Error('p5 instance is required');
       }

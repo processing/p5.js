@@ -1,7 +1,9 @@
 
 /*
  * TODO:
+ *   - bug: text somtimes extends beyond y-bounds
  *   - finish existing ticket review
+ *      - single-word widing than bounding box
  *   - add test for line-height property in textFont() and textProperty()
  *      - how does this integrate with textLeading?
  *   - spurious warning in oneoff.html (local)
@@ -109,8 +111,8 @@ function text2d(p5, fn) {
       ({ x, y, width, height } = this._doRectMode(x, y, width, height));
     }
 
-    // parse the lines according to the width & linebreaks
-    let lines = this._processLines(str, width);
+    // parse the lines according to the width, height & linebreaks
+    let lines = this._processLines(str, width, height, leading);
 
     // get the adjusted positions [x,y] for each line
     let positions = this._positionLines(x, y, width, height, leading, lines.length);
@@ -131,6 +133,7 @@ function text2d(p5, fn) {
    * @returns - a bounding box object for the text block: {x,y,w,h}
    */
   p5.Renderer2D.prototype.textBounds = function (str, x, y, width, height) {
+    //console.log('TEXT BOUNDS: ', str, x, y, width, height);
     // delegate to _computeBounds with _textBoundsSingle measure function
     return this._computeBounds(this._textBoundsSingle.bind(this), str, x, y, width, height);
   };
@@ -155,8 +158,8 @@ function text2d(p5, fn) {
    * @returns - the width of the text in pixels
    */
   p5.Renderer2D.prototype.textWidth = function (theText) {
-    // return the max width of the lines (using tight bounds)
     let lines = this._processLines(theText);
+    // return the max width of the lines (using tight bounds)
     let widths = lines.map(l => this._textWidthSingle(l));
     return Math.max(...widths);
   };
@@ -456,21 +459,36 @@ function text2d(p5, fn) {
     }
 
     // parse the lines according to the width & linebreaks
-    let lines = this._processLines(str, width);
+    let lines = this._processLines(str, width, height, leading);
 
     // get the adjusted positions [x,y] for each line
     let boxes = lines.map((line, i) => measureFunc(line, x, y + i * leading));
 
+    // adjust the bounding boxes based on horiz. text alignment
+    if (lines.length > 1) {
+      boxes.forEach((bb, i) => bb.x += this._xAlignOffset(width));
+    }
+
+    // adjust the bounding boxes based on vert. text alignment
+    if (typeof height !== 'undefined') {
+      boxes.forEach(bb => bb.y += this._yAlignOffset(height, leading, lines.length));
+    }
+
+    if (0) boxes.forEach((b, i) => { // draw bounds for debugging
+      this.drawingContext.strokeStyle = 'green';
+      this.drawingContext.strokeRect(b.x, b.y, b.w, b.h);
+    });
+
     // get the bounds for the text block
     let bounds = boxes[0];
-
     if (lines.length > 1) {
 
       // get the bounds for the multi-line text block
-      bounds = this._aggregateBounds(boxes);
+      bounds = this._aggregateBounds(/*x, y,*/boxes);
 
       // align the multi-line bounds
-      this._alignBounds(bounds, width || 0, height || 0, leading, lines.length);
+      //this._alignBounds(bounds, width || 0, height || 0, leading, lines.length);
+      this._rectModeAlign(bounds, width || 0, height || 0);
     }
 
     this.drawingContext.textBaseline = setBaseline; // restore baseline
@@ -582,13 +600,24 @@ function text2d(p5, fn) {
     @returns {object} - the aggregated bounding box
   */
   p5.Renderer2D.prototype._aggregateBounds = function (bboxes) {
-    return {
-      x: Math.min(...bboxes.map(b => b.x)),
-      y: Math.min(...bboxes.map(b => b.y)), // use boxes[0].y ?
-      w: Math.max(...bboxes.map(b => b.w)),
-      h: bboxes[bboxes.length - 1].y - bboxes[0].y + bboxes[bboxes.length - 1].h
-    };
+    // loop over the bounding boxes to get the min/max x/y values
+    let minX = Math.min(...bboxes.map(b => b.x));
+    let minY = Math.min(...bboxes.map(b => b.y));
+    let maxY = Math.max(...bboxes.map(b => b.y + b.h));
+    let maxX = Math.max(...bboxes.map(b => b.x + b.w));
+    return { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
   };
+
+  // p5.Renderer2D.prototype._aggregateBounds = function (tx, ty, bboxes) {
+  //   let x = Math.min(...bboxes.map(b => b.x));
+  //   let y = Math.min(...bboxes.map(b => b.y));
+  //   // the width is the max of the x-offset + the box width
+  //   let w = Math.max(...bboxes.map(b => (b.x - tx) + b.w));
+  //   let h = bboxes[bboxes.length - 1].y - bboxes[0].y + bboxes[bboxes.length - 1].h;
+
+
+  //   return { x, y, w, h };
+  // };
 
   /*
     Position the lines of text based on their textAlign/textBaseline properties
@@ -600,9 +629,9 @@ function text2d(p5, fn) {
     let adjustedH = typeof height === 'undefined' ? 0 : height;
 
     for (let i = 0; i < numLines; i++) {
-      switch (this.drawingContext.textAlign) {
+      switch (this.states.textAlign) { // drawingContext ?
         case fn.START:
-          this.drawingContext.textAlign = fn.LEFT; // TMP
+          throw new Error('textBounds: START not yet supported for textAlign'); // default to LEFT
         case fn.LEFT:
           adjustedX = x;
           break;
@@ -620,7 +649,7 @@ function text2d(p5, fn) {
     }
 
     let yOff = this._yAlignOffset(adjustedH, leading, numLines);
-    positions.forEach(p => p.y += yOff);
+    positions.forEach((p, i) => p.y += yOff);
 
     return positions;
   };
@@ -631,36 +660,60 @@ function text2d(p5, fn) {
     @param {number} width - the width to wrap the text to
     @returns {array} - the processed lines of text
   */
-  p5.Renderer2D.prototype._processLines = function (str, width) {
-    let lines = this._splitOnBreaks(str.toString());
-    let hasLineBreaks = lines.length > 1;
-    let hasWidth = typeof width !== 'undefined';
-    let exceedsWidth = hasWidth && lines.some(l => this._textWidthSingle(l) > width);
-    if (!hasLineBreaks && !exceedsWidth) return lines; // a single-line
+  p5.Renderer2D.prototype._processLines = function (str, width, height, leading) {
+
     if (typeof width !== 'undefined') { // only for text with bounds
       // match processing's handling of textBaseline
       if (this.drawingContext.textBaseline === fn.BASELINE) {
         this.drawingContext.textBaseline = fn.TOP;
       }
     }
-    if (hasWidth) lines = this._lineate(lines, width);
+
+    let lines = this._splitOnBreaks(str.toString());
+    let hasLineBreaks = lines.length > 1;
+    let hasWidth = typeof width !== 'undefined';
+    let exceedsWidth = hasWidth && lines.some(l => this._textWidthSingle(l) > width);
+
+    //if (!hasLineBreaks && !exceedsWidth) return lines; // a single-line
+    if (hasLineBreaks || exceedsWidth) {
+      if (hasWidth) lines = this._lineate(lines, width);
+    }
+
+    // handle height truncation
+    if (hasWidth && typeof height !== 'undefined') {
+
+      if (typeof leading === 'undefined') {
+        throw Error('leading is required if height is specified');
+      }
+
+      // truncate lines that exceed the height
+      for (let i = 0; i < lines.length; i++) {
+        let lh = leading * (i + 1);
+        if (lh > height) {
+          //console.log('TRUNCATING: ', i, '-', lines.length, '"' + lines.slice(i) + '"');
+          lines = lines.slice(0, i);
+          break;
+        }
+      }
+    }
+
     return lines;
   };
 
   /*
     Align the bounding box based on the textAlign/textBaseline/rectMode properties
   */
-  p5.Renderer2D.prototype._alignBounds = function (bb, width, height, leading, numLines) {
-    bb.x += this._xAlignOffset(width);
-    bb.y += this._yAlignOffset(height, leading, numLines);
-    return this._rectModeAlign(bb, width, height);
-  }
+  // p5.Renderer2D.prototype._alignBounds = function (bb, width, height, leading, numLines) {
+  //   //bb.x += this._xAlignOffset(width);
+  //   //bb.y += this._yAlignOffset(height, leading, numLines);
+  //   return this._rectModeAlign(bb, width, height);
+  // }
 
   /*  
     Get the x-offset for text given the width and textAlign property
   */
   p5.Renderer2D.prototype._xAlignOffset = function (width) {
-    switch (this.drawingContext.textAlign) {
+    switch (this.states.textAlign) { // drawingContext ?
       case fn.LEFT:
         return 0;
       case fn.CENTER:
@@ -687,7 +740,7 @@ function text2d(p5, fn) {
 
     let ydiff = height - (leading * (numLines - 1));
 
-    switch (this.drawingContext.textBaseline) {
+    switch (this.states.textBaseline) { // drawingContext ?
       case fn.TOP:
         return 0;
       case fn.BASELINE:

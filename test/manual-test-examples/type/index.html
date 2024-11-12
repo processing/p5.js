@@ -605,8 +605,8 @@
         p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
 
       };
-
     };
+    
     let loadedSystemBoundsMulti = function (p) {
       let x, y, w = 300, h = 70, showBB = 1, font;
       let s, suf = 'text gonna wrap when it gets too long and is then breaking.';
@@ -732,14 +732,105 @@
         p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y, w, h);
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
 
-
         //3
         x += 330, s = 'RIGHT BASELINE ' + suf;
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
         p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y, w, h);
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
 
+        /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
+        y += 100;
 
+        // 4
+        x = 20, s = 'LEFT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BOTTOM) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
+
+        // 5
+        x += 330, s = 'CENTER BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BOTTOM) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        // 6
+        x += 330, s = 'RIGHT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BOTTOM) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        //////////////////////////// CENTER (L,C,R) /////////////////////////////////
+        y += 100;
+
+        x = 20, s = 'LEFT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.CENTER) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        x += 330, s = 'CENTER CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.CENTER) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        x += 330, s = 'RIGHT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        ///////////////////////////// TOP (L,C,R) ///////////////////////////////
+        y += 100;
+
+        x = 20, s = 'LEFT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        p.noFill() && p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y);
+
+        x += 330, s = 'CENTER TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.TOP) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        x += 330, s = 'RIGHT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
+      }
+    };
+
+    let systemBoundsMultiOverflow = function (p) {
+      let x, y, w = 300, h = 70, showBB = 1;
+      let s, suf = 'text gonna wrap when it gets too long and is then breaking. This is actually just overflow.';
+
+      p.setup = function () {
+        p.createCanvas(1010, 430);
+        p.textSize(20);
+        p.textLeading(22);
+
+        ///////////////////////////// BASELINE (L,C,R) ///////////////////////////////
+        y = 30;
+        //1
+        x = 20, s = 'LEFT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        // draw horizontal line at y=64
+        p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
+
+        //2
+        x += 330, s = 'CENTER BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        //3
+        x += 330, s = 'RIGHT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
 
         /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
         y += 100;
@@ -917,7 +1008,7 @@
         p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y, rw, rh);
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
         // draw horizontal line at y=64
-        p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
+        p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y);
 
         //2
         x += 330, s = 'CENTER BASELINE ' + suf;
@@ -1868,6 +1959,7 @@
     new p5(textBoundsSingle, 'textBoundsSingle');
     new p5(loadedBoundsSingle, 'loadedBoundsSingle');
     new p5(systemBoundsMulti, 'systemBoundsMulti');
+    new p5(systemBoundsMultiOverflow, 'systemBoundsMultiOverflow');
     new p5(systemBoundsMulti_RectModeCorners, 'systemBoundsMulti_RectModeCorners');
     new p5(systemBoundsMulti_RectModeRadius, 'systemBoundsMulti_RectModeRadius');
     new p5(loadedSystemBoundsMulti, 'loadedSystemBoundsMulti');
@@ -1969,6 +2061,10 @@
 
   <div id='systemBoundsMulti_RectModeRadius'>
     <p class="caption">systemBoundsMulti (RectMode.RADIUS)</p>
+  </div>
+
+  <div id='systemBoundsMultiOverflow'>
+    <p class="caption">systemBoundsMulti.Overflow (RectMode.DEFAULT)</p>
   </div>
 
   <div id='loadedSystemBoundsMulti'>
