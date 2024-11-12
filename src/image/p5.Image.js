@@ -283,8 +283,6 @@ class Image {
    * </code>
    * </div>
    */
-  /**
-   */
   updatePixels(x, y, w, h) {
     // Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
     const pixelsState = this._pixelsState;
@@ -1515,6 +1513,12 @@ class Image {
     } else {
       fn.saveCanvas(this.canvas, filename, extension);
     }
+  }
+
+  async toBlob() {
+    return new Promise(resolve => {
+      this.canvas.toBlob(resolve);
+    });
   }
 
   // GIF Section

@@ -7,36 +7,45 @@
 
 import * as fileSaver from 'file-saver';
 
-export class HTTPError extends Error {
+class HTTPError extends Error {
   status;
   response;
   ok;
 }
 
-async function request(path, type){
+export async function request(path, type){
   try {
     const res = await fetch(path);
 
     if (res.ok) {
-      let body;
+      let data;
       switch(type) {
         case 'json':
-          body = await res.json();
+          data = await res.json();
           break;
         case 'text':
-          body = await res.text();
+          data = await res.text();
           break;
         case 'arrayBuffer':
-          body = await res.arrayBuffer();
+          data = await res.arrayBuffer();
           break;
         case 'blob':
-          body = await res.blob();
+          data = await res.blob();
+          break;
+        case 'bytes':
+          // TODO: Chrome does not implement res.bytes() yet
+          if(res.bytes){
+            data = await res.bytes();
+          }else{
+            const d = await res.arrayBuffer();
+            data = new Uint8Array(d);
+          }
           break;
         default:
           throw new Error('Unsupported response type');
       }
 
-      return body;
+      return { data, headers: res.headers };
 
     } else {
       const err = new HTTPError(res.statusText);
@@ -294,7 +303,7 @@ function files(p5, fn){
     p5._validateParameters('loadJSON', arguments);
 
     try{
-      const data = await request(path, 'json');
+      const { data } = await request(path, 'json');
       if (successCallback) successCallback(data);
       return data;
     } catch(err) {
@@ -445,7 +454,7 @@ function files(p5, fn){
     p5._validateParameters('loadStrings', arguments);
 
     try{
-      let data = await request(path, 'text');
+      let { data } = await request(path, 'text');
       data = data.split(/\r?\n/);
 
       if (successCallback) successCallback(data);
@@ -544,7 +553,7 @@ function files(p5, fn){
     if(typeof header === 'function') header = false;
 
     try{
-      let data = await request(path, 'text');
+      let { data } = await request(path, 'text');
       data = data.split(/\r?\n/);
 
       let ret = new p5.Table();
@@ -740,7 +749,7 @@ function files(p5, fn){
     try{
       const parser = new DOMParser();
 
-      let data = await request(path, 'text');
+      let { data } = await request(path, 'text');
       const parsedDOM = parser.parseFromString(data, 'application/xml');
       data = new p5.XML(parsedDOM);
 
@@ -784,7 +793,7 @@ function files(p5, fn){
    */
   fn.loadBytes = async function (path, successCallback, errorCallback) {
     try{
-      let data = await request(path, 'arrayBuffer');
+      let { data } = await request(path, 'arrayBuffer');
       data = new Uint8Array(data);
       if (successCallback) successCallback(data);
       return data;
@@ -800,7 +809,7 @@ function files(p5, fn){
 
   fn.loadBlob = async function(path, successCallback, errorCallback) {
     try{
-      const data = await request(path, 'blob');
+      const { data } = await request(path, 'blob');
       if (successCallback) successCallback(data);
       return data;
     } catch(err) {
@@ -982,18 +991,17 @@ function files(p5, fn){
     let reqData = data;
     let contentType = 'text/plain';
     // Normalize data
-    if (typeof data === 'object') {
-      reqData = JSON.stringify(data);
-      contentType = 'application/json';
-
-    } else if(data instanceof p5.XML) {
+    if(data instanceof p5.XML) {
       reqData = data.serialize();
       contentType = 'application/xml';
 
-    // NOTE: p5.Image.toBlob() will need to be implemented
-    // } else if(data instanceof p5.Image) {
-    //   reqData = data.toBlob();
-    //   contentType = 'image/png';
+    } else if(data instanceof p5.Image) {
+      reqData = await data.toBlob();
+      contentType = 'image/png';
+
+    } else if (typeof data === 'object') {
+      reqData = JSON.stringify(data);
+      contentType = 'application/json';
     }
 
     const req = new Request(path, {
@@ -1131,7 +1139,7 @@ function files(p5, fn){
     });
 
     try{
-      const data = await request(req, datatype);
+      const { data } = await request(req, datatype);
       if (successCallback) {
         return successCallback(data);
       } else {

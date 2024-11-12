@@ -7,7 +7,7 @@
 
 import canvas from '../core/helpers';
 import * as constants from '../core/constants';
-import { HTTPError } from '../io/files';
+import { request } from '../io/files';
 import * as omggif from 'omggif';
 import { GIFEncoder, quantize, nearestColorIndex } from 'gifenc';
 
@@ -117,19 +117,10 @@ function loadingDisplaying(p5, fn){
         mode: 'cors'
       });
 
-      const response = await fetch(req);
-
-      if(!response.ok){
-        const err = new HTTPError(response.statusText);
-        err.status = response.status;
-        err.response = response;
-        err.ok = false;
-
-        throw err;
-      }
+      const { data, headers } = await request(req, 'bytes');
 
       // GIF section
-      const contentType = response.headers.get('content-type');
+      const contentType = headers.get('content-type');
 
       if (contentType === null) {
         console.warn(
@@ -138,17 +129,15 @@ function loadingDisplaying(p5, fn){
       }
 
       if (contentType && contentType.includes('image/gif')) {
-        const arrayBuffer = await response.arrayBuffer()
-        const byteArray = new Uint8Array(arrayBuffer);
         await _createGif(
-          byteArray,
+          data,
           pImg
         );
 
       } else {
         // Non-GIF Section
-        const data = await response.blob();
-        const img = await createImageBitmap(data);
+        const blob = new Blob([data]);
+        const img = await createImageBitmap(blob);
 
         pImg.width = pImg.canvas.width = img.width;
         pImg.height = pImg.canvas.height = img.height;
