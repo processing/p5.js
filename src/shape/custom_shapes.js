@@ -150,7 +150,28 @@ function customShapes(p5, fn) {
 
     /**
      * @private
-     * A class responsible for... 
+     * A class to describe a custom shape made with 
+     * <a href="#/p5/beginShape">beginShape()</a>/<a href="#/p5/endShape">endShape()</a>.
+     * 
+     * Every `Shape` has a `kind`. The kind takes any value that
+     * can be passed to <a href="#/p5/beginShape">beginShape()</a>:
+     * 
+     * - `PATH`
+     * - `POINTS`
+     * - `LINES`
+     * - `TRIANGLES`
+     * - `QUADS`
+     * - `TRIANGLE_FAN`
+     * - `TRIANGLE_STRIP`
+     * - `QUAD_STRIP`
+     * 
+     * All `Shapes` consist of `contours`, which can be thought of as
+     * subshapes (shapes inside another shape).
+     * 
+     * @class p5.Shape
+     * @constructor
+     * @param {Constant} [kind] either PATH, POINTS, LINES, TRIANGLES, QUADS, TRIANGLE_FAN, 
+     * TRIANGLE_STRIP, or QUAD_STRIP.
      */
 
     p5.Shape = Shape;
