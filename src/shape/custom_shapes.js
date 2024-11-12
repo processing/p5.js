@@ -170,8 +170,8 @@ function customShapes(p5, fn) {
      * 
      * @class p5.Shape
      * @constructor
-     * @param {Constant} [kind] either PATH, POINTS, LINES, TRIANGLES, QUADS, TRIANGLE_FAN, 
-     * TRIANGLE_STRIP, or QUAD_STRIP.
+     * @param {(PATH|POINTS|LINES|TRIANGLES|QUADS|TRIANGLE_FAN|TRIANGLE_STRIP|QUAD_STRIP)} [kind=PATH] either 
+     * PATH, POINTS, LINES, TRIANGLES, QUADS, TRIANGLE_FAN, TRIANGLE_STRIP, or QUAD_STRIP.
      */
 
     p5.Shape = Shape;
