@@ -894,6 +894,7 @@ function text2d(p5, fn) {
     */
     this.drawingContext.font = fontString;
 
+    // verify that the font was set successfully
     this._verifyFont(fontString, fontStretch);
 
     // set these after the font so they're not overridden
