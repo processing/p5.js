@@ -1,162 +1,94 @@
-import p5 from '../../../src/app.js';
-import { testSketchWithPromise, promisedSketch } from '../../js/p5_helpers';
+// import p5 from '../../../src/app.js';
+// import { testSketchWithPromise, promisedSketch } from '../../js/p5_helpers';
+import { mockP5, mockP5Prototype, httpMock } from '../../js/mocks';
+import material from '../../../src/webgl/material';
 
-suite.todo('loadShader', function() {
-  var invalidFile = '404file';
-  var vertFile = 'unit/assets/vert.glsl';
-  var fragFile = 'unit/assets/frag.glsl';
+suite('loadShader', function() {
+  const invalidFile = '404file';
+  const vertFile = '/test/unit/assets/vert.glsl';
+  const fragFile = '/test/unit/assets/frag.glsl';
 
-  testSketchWithPromise('error with vert prevents sketch continuing', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    sketch.preload = function() {
-      sketch.loadShader(invalidFile, fragFile);
-      setTimeout(resolve, 50);
-    };
-
-    sketch.setup = function() {
-      reject(new Error('Setup called'));
-    };
-
-    sketch.draw = function() {
-      reject(new Error('Draw called'));
-    };
+  beforeAll(async () => {
+    material(mockP5, mockP5Prototype);
+    await httpMock.start({ quiet: true });
   });
 
-  testSketchWithPromise('error with frag prevents sketch continuing', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    sketch.preload = function() {
-      sketch.loadShader(vertFile, invalidFile);
-      setTimeout(resolve, 50);
-    };
-
-    sketch.setup = function() {
-      reject(new Error('Setup called'));
-    };
-
-    sketch.draw = function() {
-      reject(new Error('Draw called'));
-    };
+  test('throws error when encountering HTTP errors in vert shader', async () => {
+    await expect(mockP5Prototype.loadShader(invalidFile, fragFile))
+      .rejects
+      .toThrow('Not Found');
   });
 
-  testSketchWithPromise('error callback is called for vert', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    sketch.preload = function() {
-      sketch.loadShader(
-        invalidFile,
-        fragFile,
-        function() {
-          reject(new Error('Success callback executed.'));
-        },
-        function() {
-          // Wait a bit so that if both callbacks are executed we will get an error.
-          setTimeout(resolve, 50);
-        }
-      );
-    };
+  test('throws error when encountering HTTP errors in frag shader', async () => {
+    await expect(mockP5Prototype.loadShader(vertFile, invalidFile))
+      .rejects
+      .toThrow('Not Found');
   });
 
-  testSketchWithPromise('error callback is called for frag', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    sketch.preload = function() {
-      sketch.loadShader(
-        vertFile,
-        invalidFile,
-        function() {
-          reject(new Error('Success callback executed.'));
-        },
-        function() {
-          // Wait a bit so that if both callbacks are executed we will get an error.
-          setTimeout(resolve, 50);
-        }
-      );
-    };
-  });
-
-  testSketchWithPromise('loading correctly triggers setup', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    sketch.preload = function() {
-      sketch.loadShader(vertFile, fragFile);
-    };
-
-    sketch.setup = function() {
-      resolve();
-    };
-  });
-
-  testSketchWithPromise('success callback is called', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    var hasBeenCalled = false;
-    sketch.preload = function() {
-      sketch.loadShader(
-        vertFile,
-        fragFile,
-        function() {
-          hasBeenCalled = true;
-        },
-        function(err) {
-          reject(new Error('Error callback was entered: ' + err));
-        }
-      );
-    };
-
-    sketch.setup = function() {
-      if (!hasBeenCalled) {
-        reject(new Error('Setup called prior to success callback'));
-      } else {
+  test('error callback is called for vert shader', async () => {
+    await new Promise((resolve, reject) => {
+      mockP5Prototype.loadShader(invalidFile, fragFile, () => {
+        reject("Success callback executed");
+      }, () => {
+        // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
-      }
-    };
-  });
-
-  test('returns an object with correct data', async function() {
-    const shader = await promisedSketch(function(sketch, resolve, reject) {
-      var _shader;
-      sketch.preload = function() {
-        _shader = sketch.loadShader(vertFile, fragFile, function() {}, reject);
-      };
-
-      sketch.setup = function() {
-        resolve(_shader);
-      };
+      });
     });
-    assert.instanceOf(shader, p5.Shader);
   });
 
-  test('passes an object with correct data to callback', async function() {
-    const model = await promisedSketch(function(sketch, resolve, reject) {
-      sketch.preload = function() {
-        sketch.loadShader(vertFile, fragFile, resolve, reject);
-      };
+  test('error callback is called for frag shader', async () => {
+    await new Promise((resolve, reject) => {
+      mockP5Prototype.loadShader(vertFile, invalidFile, () => {
+        reject("Success callback executed");
+      }, () => {
+        // Wait a bit so that if both callbacks are executed we will get an error.
+        setTimeout(resolve, 50);
+      });
     });
-    assert.instanceOf(model, p5.Shader);
   });
 
-  test('does not run setup after complete when called outside of preload', async function() {
-    let setupCallCount = 0;
-    await promisedSketch(function(sketch, resolve, reject) {
-      sketch.setup = function() {
-        setupCallCount++;
-        sketch.loadShader(vertFile, fragFile, resolve, reject);
-      };
+  test('success callback is called', async () => {
+    await new Promise((resolve, reject) => {
+      mockP5Prototype.loadShader(vertFile, fragFile, () => {
+        // Wait a bit so that if both callbacks are executed we will get an error.
+        setTimeout(resolve, 50);
+      }, (err) => {
+        reject(`Error callback called: ${err.toString()}`);
+      });
     });
-    assert.equal(setupCallCount, 1);
   });
+
+  // test('returns an object with correct data', async function() {
+  //   const shader = await promisedSketch(function(sketch, resolve, reject) {
+  //     var _shader;
+  //     sketch.preload = function() {
+  //       _shader = sketch.loadShader(vertFile, fragFile, function() {}, reject);
+  //     };
+
+  //     sketch.setup = function() {
+  //       resolve(_shader);
+  //     };
+  //   });
+  //   assert.instanceOf(shader, p5.Shader);
+  // });
+
+  // test('passes an object with correct data to callback', async function() {
+  //   const model = await promisedSketch(function(sketch, resolve, reject) {
+  //     sketch.preload = function() {
+  //       sketch.loadShader(vertFile, fragFile, resolve, reject);
+  //     };
+  //   });
+  //   assert.instanceOf(model, p5.Shader);
+  // });
+
+  // test('does not run setup after complete when called outside of preload', async function() {
+  //   let setupCallCount = 0;
+  //   await promisedSketch(function(sketch, resolve, reject) {
+  //     sketch.setup = function() {
+  //       setupCallCount++;
+  //       sketch.loadShader(vertFile, fragFile, resolve, reject);
+  //     };
+  //   });
+  //   assert.equal(setupCallCount, 1);
+  // });
 });

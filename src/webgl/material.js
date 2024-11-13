@@ -8,6 +8,7 @@
 import * as constants from '../core/constants';
 import { RendererGL } from './p5.RendererGL';
 import { Shader } from './p5.Shader';
+import { request } from '../io/files';
 
 function material(p5, fn){
   /**
@@ -120,55 +121,32 @@ function material(p5, fn){
    * </code>
    * </div>
    */
-  fn.loadShader = function (
+  fn.loadShader = async function (
     vertFilename,
     fragFilename,
     successCallback,
     failureCallback
   ) {
     p5._validateParameters('loadShader', arguments);
-    if (!failureCallback) {
-      failureCallback = console.error;
-    }
 
     const loadedShader = new Shader();
 
-    const self = this;
-    let loadedFrag = false;
-    let loadedVert = false;
+    try {
+      loadedShader._vertSrc = await request(vertFilename, 'text');
+      loadedShader._fragSrc = await request(fragFilename, 'text');
 
-    const onLoad = () => {
-      self._decrementPreload();
       if (successCallback) {
-        successCallback(loadedShader);
+        return successCallback(loadedShader);
+      } else {
+        return loadedShader
       }
-    };
-
-    this.loadStrings(
-      vertFilename,
-      result => {
-        loadedShader._vertSrc = result.join('\n');
-        loadedVert = true;
-        if (loadedFrag) {
-          onLoad();
-        }
-      },
-      failureCallback
-    );
-
-    this.loadStrings(
-      fragFilename,
-      result => {
-        loadedShader._fragSrc = result.join('\n');
-        loadedFrag = true;
-        if (loadedVert) {
-          onLoad();
-        }
-      },
-      failureCallback
-    );
-
-    return loadedShader;
+    } catch(err) {
+      if (failureCallback) {
+        return failureCallback(err);
+      } else {
+        throw err;
+      }
+    }
   };
 
   /**

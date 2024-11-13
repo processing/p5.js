@@ -6,7 +6,6 @@
  * @requires core
  */
 
-// import p5 from '../core/main';
 import * as constants from '../core/constants';
 import { Element } from '../dom/p5.Element';
 import { Renderer } from '../core/p5.Renderer';
