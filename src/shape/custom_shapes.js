@@ -165,8 +165,11 @@ function customShapes(p5, fn) {
      * - `TRIANGLE_STRIP`
      * - `QUAD_STRIP`
      * 
-     * All `Shapes` consist of `contours`, which can be thought of as
+     * A `Shape` of any kind consists of `contours`, which can be thought of as
      * subshapes (shapes inside another shape).
+     * 
+     * To construct a `Shape` called `myShape`, methods such as `myShape.beginShape()`, 
+     * `myShape.vertex()`, and `myShape.endShape()` may be called.
      * 
      * @class p5.Shape
      * @constructor
