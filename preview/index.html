@@ -24,19 +24,20 @@
         p.createCanvas(600, 600);
         p.background(200);
         //p.colorMode('hsl');
-
+       
         //let c1 = p.color('hsl(160, 100%, 50%)');
-        //let c1 = p.color('rgb(0, 0, 255)');
-        let c1 = p.color('hsb(160, 100%, 50%)'); //triggers 'invalid color string'
+        let c = 'hsl(50, 90%, 37%)';
+        //let c1 = p.color('hsb(160, 100%, 50%)'); //triggers 'invalid color string'
         p.noStroke();
-        p.fill(c1);
+        p.fill(c);
         p.rect(100, 150, 90, 150);
 
         //let c2 = p.color('hsla(160, 100%, 50%, 0.5)');
         //let c2 = p.color('rgba(0, 0, 255, 0.1)');
-        let c2 = p.color('hsba(160, 100%, 50%, 0.5)'); //triggers 'invalid color string'
-        p.fill(c2);
-        p.rect(200,150,90,150);
+        //let c2 = p.color('hsba(160, 100%, 50%, 0.5)'); //triggers 'invalid color string'
+        let redValue = p.red(c);
+        p.fill(redValue, 0, 0);
+        p.rect(200, 150, 90, 150);
       };
 
       p.draw = function () {

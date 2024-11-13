@@ -130,18 +130,18 @@ class Color {
         case 'rgb':
           this.color = {
             mode: 'rgb',
-            r: vals[0]/ this.maxes[this.mode][0],
-            g: vals[1] / this.maxes[this.mode][1],
-            b: vals[2]/ this.maxes[this.mode][2],
+            r: vals[0]/ this.maxes[this.mode][0],  // R /255 -> Range [0 , 1]
+            g: vals[1]/ this.maxes[this.mode][1],  // G /255
+            b: vals[2]/ this.maxes[this.mode][2],  // B /255
             alpha: alpha
           };
           break;
         case 'hsb':
           this.color = {
             mode: 'hsv', // Culori uses "hsv" instead of "hsb"
-            h: (vals[0] / this.maxes[0]) * 360,
-            s: vals[1] / this.maxes[1],
-            v: vals[2] / this.maxes[2],
+            h: (vals[0] / this.maxes[this.mode][0]) * 360,  //(H/360) * 360 -> Range [0, 360]
+            s: vals[1] / this.maxes[this.mode][1],          //S /100                 [0,1]
+            v: vals[2] / this.maxes[this.mode][2],          //V /100                 [0,1]
             alpha: alpha
           };
 
@@ -149,9 +149,9 @@ class Color {
         case 'hsl':
           this.color = {
             mode: 'hsl',
-            h: (vals[0] / this.maxes[0]) * 360,
-            s: vals[1] / this.maxes[1],
-            l: vals[2] / this.maxes[2],
+            h: (vals[0] / this.maxes[this.mode][0]) * 360,  //(H/360) * 360 ->Range [0, 360]
+            s: vals[1] / this.maxes[this.mode][1],          //S / 100               [0,1]
+            l: vals[2] / this.maxes[this.mode][2],          //L / 100               [0,1]
             alpha: alpha
           };
           break;
@@ -159,7 +159,6 @@ class Color {
           console.error('Invalid color mode');
       };
       
-   
       // // Use converter to ensure compatibility with Culori's color space conversion
       const convertToSpace = converter(this.mode);
       this.color = convertToSpace(this.color); // Convert color to specified space
@@ -443,8 +442,15 @@ class Color {
 
   _getRed() {
     if(this.mode === constants.RGB){
-      //return this.color.coords[0] * this.maxes[constants.RGB][0];
+      console.log("The color mode is RGB");
+      //Check if the color is in RGB format; otherwise, convert it to RGB
+      if (typeof this.color.r === 'undefined'){
+        const rgbColor = converter('rgb')(this.color) //Convert to RGB
+        return rgbColor.r * this.maxes[constants.RGB][0]; //Access red channel and scale
+      } else {
+        //return this.color.coords[0] * this.maxes[constants.RGB][0];
       return this.color.r * this.maxes[constants.RGB][0];
+      }
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
       //return to(this.color, 'srgb').coords[0] * this.maxes[constants.RGB][0];
@@ -455,25 +461,40 @@ class Color {
 
   _getGreen() {
     if(this.mode === constants.RGB){
-      //return this.color.coords[1] * this.maxes[constants.RGB][1];
-      return this.color.g * this.maxes[constants.RGB][1];
+      console.log("The color mode is RGB");
+      //Check if the color is in RGB format; otherwise, convert it to RGB
+      if (typeof this.color.g === 'undefined'){
+        //Convert to RGB first, if `g` (green channel) is not directly accessible
+        const rgbColor = converter('rgb')(this.color);
+        return rgbColor.g * this.maxes[constants.RGB][1];
+      } else {
+        //if color is already in RGB, just use it directly
+        return this.color.g * this.maxes[constants.RGB][1];
+      }
     }else{
-      // Will do an imprecise conversion to 'srgb', not recommended
-      //return to(this.color, 'srgb').coords[1]  * this.maxes[constants.RGB][1];
+      console.log("The color mode is something else");
       const rgbColor = converter('rgb')(this.color) //Convert to RGB
-      return rgbColor.g * this.maxes[constants.RGB][1]; //Access red channel and scale
+      return rgbColor.g * this.maxes[constants.RGB][1]; //Access green channel and scale
     }
   }
 
   _getBlue() {
     if(this.mode === constants.RGB){
-      //return this.color.coords[2]  * this.maxes[constants.RGB][2];
-      return this.color.b * this.maxes[constants.RGB][2];
+      console.log("The color mode is RGB");
+      // Check if the color is in RGB format; otherwise, convert it to RGB
+      if (typeof this.color.b === 'undefined') {
+        // Convert to RGB first, if `b` (blue channel) is not directly accessible
+        const rgbColor = converter('rgb')(this.color); // Convert to RGB
+        return rgbColor.b * this.maxes[constants.RGB][2];
+    } else {
+        // If color is already in RGB, just use it directly
+        return this.color.b * this.maxes[constants.RGB][2];
+    }
     }else{
-      // Will do an imprecise conversion to 'srgb', not recommended
-      //return to(this.color, 'srgb').coords[2]  * this.maxes[constants.RGB][2];
+      console.log("The color mode is something else");
       const rgbColor = converter('rgb')(this.color) //Convert to RGB
-      return rgbColor.b * this.maxes[constants.RGB][2]; //Access red channel and scale
+      return rgbColor.b * this.maxes[constants.RGB][2]; //Access blue channel and scale
+      
     }
   }
 
