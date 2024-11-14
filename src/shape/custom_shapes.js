@@ -195,7 +195,41 @@ function customShapes(p5, fn) {
 
     /**
      * @private
-     * A class responsible for... 
+     * A class to describe a vertex (a point on a shape), in 2D or 3D.
+     * 
+     * Vertices are the basic building blocks of all `p5.Shape` objects, including
+     * shapes made with <a href="#/p5/vertex">vertex()</a>, <a href="#/p5/arcVertex">arcVertex()</a>,
+     * <a href="#/p5/bezierVertex">bezierVertex()</a>, and <a href="#/p5/splineVertex">splineVertex()</a>.
+     * 
+     * Like a point on an object in the real world, a vertex has different properties. These include coordinate
+     * properties `position`, `textureCoordinates`, and `normal`, as well as color properties `fill` and `stroke`.
+     * 
+     * A vertex called `myVertex` with position coordinates `(2, 3, 5)` and a green stroke may be created like this:
+     * 
+     * <pre><code>
+     * let myVertex = new p5.Vertex({
+     *   position: createVector(2, 3, 5),
+     *   stroke: color('green')
+     * });
+     * </code></pre>
+     * 
+     * Note:
+     * - Coordinate properties are `p5.Vector` objects. 
+     * - Color properties are `p5.Color` objects. 
+     * 
+     * Properties may be specified in all the ways supported by `createVector()` 
+     * and `color()`. For example, a vertex position can be set with two coordinates, as in  `createVector(2, 3)`. 
+     * The position is then a `p5.Vector` object with coordinates `(2, 3, 0)`.
+     * 
+     * In general, the vertices that make up a shape contain the same data, in the same format, regardless of 
+     * how the shape is drawn. Like an artist who decides to ignore color or depth, a renderer can decide
+     * which of the vertex data to use. This data may be be reformatted using methods of `p5.Vector` and 
+     * `p5.Color`. For easier use with certain renderers, vertices also have a `toArray()` method that converts 
+     * a full vertex object to a one-dimensional array.
+     * 
+     * @class p5.Vertex
+     * @constructor
+     * @param {Object} [properties] vertex properties.
      */
 
     p5.Vertex = Vertex;
