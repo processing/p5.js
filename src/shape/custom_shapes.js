@@ -206,12 +206,12 @@ function customShapes(p5, fn) {
      * 
      * A vertex called `myVertex` with position coordinates `(2, 3, 5)` and a green stroke may be created like this:
      * 
-     * <pre><code>
+     * ```js
      * let myVertex = new p5.Vertex({
      *   position: createVector(2, 3, 5),
      *   stroke: color('green')
      * });
-     * </code></pre>
+     * ```
      * 
      * Note:
      * - Coordinate properties are `p5.Vector` objects. 
