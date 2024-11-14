@@ -7,7 +7,7 @@
  * @requires color_conversion
  */
 
-import * as constants from '../core/constants';
+import * as constants from "../core/constants";
 // import {
 //   ColorSpace,
 //   to,
@@ -37,8 +37,7 @@ import * as constants from '../core/constants';
 //   A98RGB
 // } from 'colorjs.io/fn';
 
-
-//for CSS string parsing 
+//for CSS string parsing
 //import 'culori/css';
 
 //importing culori/fn to optimize bundle size and
@@ -54,17 +53,18 @@ import {
   modeOklab,
   modeOklch,
   modeP3,
-  modeRgb
-} from 'culori/fn';
+  modeRgb,
+} from "culori/fn";
 
 import {
-  converter, 
+  converter,
   parse,
   formatHex,
   formatHex8,
   formatRgb,
   formatHsl,
-  formatCss} from 'culori';
+  formatCss,
+} from "culori";
 
 //Registering color spaces with useMode()
 const hsl = useMode(modeHsl);
@@ -75,95 +75,115 @@ const p3 = useMode(modeP3);
 const rgb = useMode(modeRgb);
 const hsv = useMode(modeHsv);
 
-
 class Color {
   color;
   maxes;
   mode;
 
-  constructor(vals, colorMode='rgb', colorMaxes={rgb: [255, 255, 255, 255]}) {
-    
+  constructor(
+    vals,
+    colorMode = "rgb",
+    colorMaxes = { rgb: [255, 255, 255, 255] }
+  ) {
     //storing default rgb color mode and maxes
     this.mode = colorMode;
     this.maxes = colorMaxes;
 
     //if vals is an object or a non-array, non-null object
-    if (typeof vals === 'object' && !Array.isArray(vals) && vals !== null){
+    if (typeof vals === "object" && !Array.isArray(vals) && vals !== null) {
       this.color = vals; //color-compatible format
       console.log("Color object detected:", this.color);
       console.log("Current color mode:", this.color.mode);
-
-    } else if( typeof vals[0] === 'string') {
-      try{
+    } else if (typeof vals[0] === "string") {
+      try {
         // parse the string
-        this.color = parse(vals[0]);
+        //this.color = parse(vals[0]);
+        let colorString = vals[0].trim();
+        console.log("Original color string:", colorString); // Debugging
+        // Preprocess string to replace 'hsb' or 'hsba' with 'hsv' or 'hsva' for Culori compatibility
+        if (colorString.toLowerCase().startsWith("hsba(")) {
+          colorString = colorString.replace(/hsba/i, "hsva");
+        } else if (colorString.toLowerCase().startsWith("hsb(")) {
+          colorString = colorString.replace(/hsb/i, "hsv");
+        }
+
+        console.log("Modified color string for parsing:", colorString); // Debugging
+
+        // Parse the modified string
+        this.color = parse(colorString);
         console.log("Color object detected:", this.color);
         console.log("Current color mode:", this.color.mode);
         console.log("Current alpha:", this.color.alpha);
-      }catch(err){
+      } catch (err) {
         // TODO: Invalid color string
-        console.error('Invalid color string');
+        console.error("Invalid color string format:", vals[0], "\nError:", err);
       }
-
-    }else{
+    } else {
       let alpha;
 
-      if(vals.length === 4){
-        alpha = vals[vals.length-1];
-      }else if (vals.length === 2){
+      if (vals.length === 4) {
+        alpha = vals[vals.length - 1];
+      } else if (vals.length === 2) {
         alpha = vals[1];
         vals = [vals[0], vals[0], vals[0]];
-      }else if(vals.length === 1){
+      } else if (vals.length === 1) {
         vals = [vals[0], vals[0], vals[0]];
       }
-      alpha = alpha !== undefined
-        ? alpha / this.maxes[this.mode][3]
-        : 1;
+      alpha = alpha !== undefined ? alpha / this.maxes[this.mode][3] : 1;
 
       console.log("Color object detected:", vals);
       console.log("Current color mode:", this.mode);
-      
+
       // _colorMode can be 'rgb', 'hsb', or 'hsl'
       // Color representation for Culori.js
-      
-      switch(this.mode){
-        case 'rgb':
+
+      switch (this.mode) {
+        case "rgb":
           this.color = {
-            mode: 'rgb',
-            r: vals[0]/ this.maxes[this.mode][0],  // R /255 -> Range [0 , 1]
-            g: vals[1]/ this.maxes[this.mode][1],  // G /255
-            b: vals[2]/ this.maxes[this.mode][2],  // B /255
-            alpha: alpha
+            mode: "rgb",
+            r: vals[0] / this.maxes[this.mode][0], // R /255 -> Range [0 , 1]
+            g: vals[1] / this.maxes[this.mode][1], // G /255
+            b: vals[2] / this.maxes[this.mode][2], // B /255
+            alpha: alpha,
           };
           break;
-        case 'hsb':
+        case "hsb":
           this.color = {
-            mode: 'hsv', // Culori uses "hsv" instead of "hsb"
-            h: (vals[0] / this.maxes[this.mode][0]) * 360,  //(H/360) * 360 -> Range [0, 360]
-            s: vals[1] / this.maxes[this.mode][1],          //S /100                 [0,1]
-            v: vals[2] / this.maxes[this.mode][2],          //V /100                 [0,1]
-            alpha: alpha
+            mode: "hsv", // Culori uses "hsv" instead of "hsb"
+            h: (vals[0] / this.maxes[this.mode][0]) * 360, //(H/360) * 360 -> Range [0, 360]
+            s: vals[1] / this.maxes[this.mode][1], //S /100                 [0,1]
+            v: vals[2] / this.maxes[this.mode][2], //V /100                 [0,1]
+            alpha: alpha,
           };
 
           break;
-        case 'hsl':
+        case "hsl":
           this.color = {
-            mode: 'hsl',
-            h: (vals[0] / this.maxes[this.mode][0]) * 360,  //(H/360) * 360 ->Range [0, 360]
-            s: vals[1] / this.maxes[this.mode][1],          //S / 100               [0,1]
-            l: vals[2] / this.maxes[this.mode][2],          //L / 100               [0,1]
-            alpha: alpha
+            mode: "hsl",
+            h: (vals[0] / this.maxes[this.mode][0]) * 360, //(H/360) * 360 ->Range [0, 360]
+            s: vals[1] / this.maxes[this.mode][1], //S / 100               [0,1]
+            l: vals[2] / this.maxes[this.mode][2], //L / 100               [0,1]
+            alpha: alpha,
           };
           break;
         default:
-          console.error('Invalid color mode');
-      };
-      
+          console.error("Invalid color mode");
+      }
+
       // // Use converter to ensure compatibility with Culori's color space conversion
-      const convertToSpace = converter(this.mode);
+      //const convertToSpace = converter(this.mode);
+      //this.color = convertToSpace(this.color); // Convert color to specified space
+
+      // Convert 'hsb' to 'hsv' and 'hsba' to 'hsva' for compatibility with Culori
+      const convertToSpace = converter(
+        this.mode === "hsb" || this.mode === "hsba"
+          ? this.mode === "hsb"
+            ? "hsv"
+            : "hsva"
+          : this.mode
+      );
       this.color = convertToSpace(this.color); // Convert color to specified space
       //console.log("Converted color object:", this.color);
-      
     }
   }
 
@@ -214,22 +234,22 @@ class Color {
   //     format
   //   });
   // }
-  
+
   //Culori.js doesn't have a single serialize function
-  //it rather has the following methods to serialize 
+  //it rather has the following methods to serialize
   //colours to strings in various formats
   toString(format) {
     switch (format) {
-      case 'hex':
+      case "hex":
         return formatHex(this.color);
-      case 'hex8':
+      case "hex8":
         return formatHex8(this.color);
-      case 'rgb':
+      case "rgb":
         return formatRgb(this.color);
-      case 'hsl':
+      case "hsl":
         return formatHsl(this.color);
-      case 'css':
-        return formatCss(this.color);  //not sure of the use for CSS here
+      case "css":
+        return formatCss(this.color); //not sure of the use for CSS here
       default:
         // Fallback to a default format, like RGB
         return formatRgb(this.color);
@@ -274,19 +294,19 @@ class Color {
    */
   setRed(new_red) {
     const red_val = new_red / this.maxes[constants.RGB][0]; //normalize red value
-    if(this.mode === constants.RGB){
+    if (this.mode === constants.RGB) {
       //this.color.coords[0] = red_val;
       this.color.r = red_val;
-    }else{
+    } else {
       // Handling Non-RGB Color Modes
       //const space = this.color.space.id;
       //const representation = to(this.color, 'srgb');
       //representation.coords[0] = red_val;
       //this.color = to(representation, space);
       const space = this.color.mode;
-      const representation = converter('rgb')(this.color) //temporarily convert to RGB
+      const representation = converter("rgb")(this.color); //temporarily convert to RGB
       representation.r = red_val; //update red value
-      this.color = converter(space)(representation) //convert back to original space
+      this.color = converter(space)(representation); //convert back to original space
     }
   }
 
@@ -328,19 +348,19 @@ class Color {
    **/
   setGreen(new_green) {
     const green_val = new_green / this.maxes[constants.RGB][1];
-    if(this.mode === constants.RGB){
+    if (this.mode === constants.RGB) {
       //this.color.coords[1] = green_val;
       this.color.g = green_val;
-    }else{
+    } else {
       // Will do an imprecise conversion to 'srgb', not recommended
       //const space = this.color.space.id;
       //const representation = to(this.color, 'srgb');
       //representation.coords[1] = green_val;
       //this.color = to(representation, space);
       const space = this.color.mode;
-      const representation = converter('rgb')(this.color) //temporarily convert to RGB
+      const representation = converter("rgb")(this.color); //temporarily convert to RGB
       representation.g = green_val; //update green value
-      this.color = converter(space)(representation) //convert back to original space
+      this.color = converter(space)(representation); //convert back to original space
     }
   }
 
@@ -382,19 +402,19 @@ class Color {
    **/
   setBlue(new_blue) {
     const blue_val = new_blue / this.maxes[constants.RGB][2];
-    if(this.mode === constants.RGB){
+    if (this.mode === constants.RGB) {
       //this.color.coords[2] = blue_val;
       this.color.b = blue_val;
-    }else{
+    } else {
       // Will do an imprecise conversion to 'srgb', not recommended
       //const space = this.color.space.id;
       //const representation = to(this.color, 'srgb');
       //representation.coords[2] = blue_val;
       //this.color = to(representation, space);
       const space = this.color.mode;
-      const representation = converter('rgb')(this.color) //temporarily convert to RGB
+      const representation = converter("rgb")(this.color); //temporarily convert to RGB
       representation.b = blue_val; //update red value
-      this.color = converter(space)(representation) //convert back to original space
+      this.color = converter(space)(representation); //convert back to original space
     }
   }
 
@@ -441,60 +461,59 @@ class Color {
   }
 
   _getRed() {
-    if(this.mode === constants.RGB){
+    if (this.mode === constants.RGB) {
       console.log("The color mode is RGB");
       //Check if the color is in RGB format; otherwise, convert it to RGB
-      if (typeof this.color.r === 'undefined'){
-        const rgbColor = converter('rgb')(this.color) //Convert to RGB
+      if (typeof this.color.r === "undefined") {
+        const rgbColor = converter("rgb")(this.color); //Convert to RGB
         return rgbColor.r * this.maxes[constants.RGB][0]; //Access red channel and scale
       } else {
         //return this.color.coords[0] * this.maxes[constants.RGB][0];
-      return this.color.r * this.maxes[constants.RGB][0];
+        return this.color.r * this.maxes[constants.RGB][0];
       }
-    }else{
+    } else {
       // Will do an imprecise conversion to 'srgb', not recommended
       //return to(this.color, 'srgb').coords[0] * this.maxes[constants.RGB][0];
-      const rgbColor = converter('rgb')(this.color) //Convert to RGB
+      const rgbColor = converter("rgb")(this.color); //Convert to RGB
       return rgbColor.r * this.maxes[constants.RGB][0]; //Access red channel and scale
     }
   }
 
   _getGreen() {
-    if(this.mode === constants.RGB){
+    if (this.mode === constants.RGB) {
       console.log("The color mode is RGB");
       //Check if the color is in RGB format; otherwise, convert it to RGB
-      if (typeof this.color.g === 'undefined'){
+      if (typeof this.color.g === "undefined") {
         //Convert to RGB first, if `g` (green channel) is not directly accessible
-        const rgbColor = converter('rgb')(this.color);
+        const rgbColor = converter("rgb")(this.color);
         return rgbColor.g * this.maxes[constants.RGB][1];
       } else {
         //if color is already in RGB, just use it directly
         return this.color.g * this.maxes[constants.RGB][1];
       }
-    }else{
+    } else {
       console.log("The color mode is something else");
-      const rgbColor = converter('rgb')(this.color) //Convert to RGB
+      const rgbColor = converter("rgb")(this.color); //Convert to RGB
       return rgbColor.g * this.maxes[constants.RGB][1]; //Access green channel and scale
     }
   }
 
   _getBlue() {
-    if(this.mode === constants.RGB){
+    if (this.mode === constants.RGB) {
       console.log("The color mode is RGB");
       // Check if the color is in RGB format; otherwise, convert it to RGB
-      if (typeof this.color.b === 'undefined') {
+      if (typeof this.color.b === "undefined") {
         // Convert to RGB first, if `b` (blue channel) is not directly accessible
-        const rgbColor = converter('rgb')(this.color); // Convert to RGB
+        const rgbColor = converter("rgb")(this.color); // Convert to RGB
         return rgbColor.b * this.maxes[constants.RGB][2];
-    } else {
+      } else {
         // If color is already in RGB, just use it directly
         return this.color.b * this.maxes[constants.RGB][2];
-    }
-    }else{
+      }
+    } else {
       console.log("The color mode is something else");
-      const rgbColor = converter('rgb')(this.color) //Convert to RGB
+      const rgbColor = converter("rgb")(this.color); //Convert to RGB
       return rgbColor.b * this.maxes[constants.RGB][2]; //Access blue channel and scale
-      
     }
   }
 
@@ -517,14 +536,14 @@ class Color {
    * otherwise.
    */
   _getHue() {
-    if(this.mode === constants.HSB || this.mode === constants.HSL){
+    if (this.mode === constants.HSB || this.mode === constants.HSL) {
       //return this.color.coords[0] / 360 * this.maxes[this.mode][0];
-      return this.color.h / 360 * this.maxes[this.mode][0];
-    }else{
+      return (this.color.h / 360) * this.maxes[this.mode][0];
+    } else {
       // Will do an imprecise conversion to 'HSL', not recommended
       //return to(this.color, 'hsl').coords[0] / 360 * this.maxes[this.mode][0];
-      const hslColor = converter('hsl')(this.color) //Convert to HSL
-      return hslColor.h / 360 * this.maxes[this.mode][0]; //Access Hue channel and scale
+      const hslColor = converter("hsl")(this.color); //Convert to HSL
+      return (hslColor.h / 360) * this.maxes[this.mode][0]; //Access Hue channel and scale
     }
   }
 
@@ -534,39 +553,39 @@ class Color {
    * to the HSL saturation otherwise.
    */
   _getSaturation() {
-    if(this.mode === constants.HSB || this.mode === constants.HSL){
+    if (this.mode === constants.HSB || this.mode === constants.HSL) {
       //return this.color.coords[1] / 100 * this.maxes[this.mode][1];
       return this.color.s * this.maxes[this.mode][1];
-    }else{
+    } else {
       // Will do an imprecise conversion to 'HSL', not recommended
       //return to(this.color, 'hsl').coords[1] / 100 * this.maxes[this.mode][1];
-      const hslColor = converter('hsl')(this.color) //Convert to HSL
+      const hslColor = converter("hsl")(this.color); //Convert to HSL
       return hslColor.s * this.maxes[this.mode][1]; //Access Hue channel and scale
     }
   }
 
   //HSB/ HSV - Brightness channel
   _getBrightness() {
-    if(this.mode === constants.HSB){
+    if (this.mode === constants.HSB) {
       //return this.color.coords[2] / 100 * this.maxes[this.mode][2];
       return this.color.v * this.maxes[this.mode][2];
-    }else{
+    } else {
       // Will do an imprecise conversion to 'HSB', not recommended
       //return to(this.color, 'hsb').coords[2] / 100 * this.maxes[this.mode][2];
-      const hsbColor = converter('hsv')(this.color) //Convert to HSV
+      const hsbColor = converter("hsv")(this.color); //Convert to HSV
       return hsbColor.v * this.maxes[this.mode][2]; //Access Brightness channel and scale
     }
   }
 
   //HSL - Lightness channel
   _getLightness() {
-    if(this.mode === constants.HSL){
+    if (this.mode === constants.HSL) {
       //return this.color.coords[2] / 100 * this.maxes[this.mode][2];
       return this.color.l * this.maxes[this.mode][2];
-    }else{
+    } else {
       // Will do an imprecise conversion to 'HSL', not recommended
       //return to(this.color, 'hsl').coords[2] / 100 * this.maxes[this.mode][2];
-      const hslColor = converter('hsl')(this.color) //Convert to HSL
+      const hslColor = converter("hsl")(this.color); //Convert to HSL
       return hslColor.l * this.maxes[this.mode][2]; //Access Lightness channel and scale
     }
   }
@@ -575,31 +594,31 @@ class Color {
   //   return [...this.color.coords, this.color.alpha];
   // }
 
-  //Since Culori.js uses plain objects with named properties, 
+  //Since Culori.js uses plain objects with named properties,
   //get_array would need to adjust to this structure.
   get _array() {
     // For RGB mode, check for `r`, `g`, and `b`; for HSL, check for `h`, `s`, and `l`, etc.
     const colorComponents = [];
 
-    if (this.color.mode === 'rgb') {
-        colorComponents.push(this.color.r, this.color.g, this.color.b);
-    } else if (this.color.mode === 'hsl') {
-        colorComponents.push(this.color.h, this.color.s, this.color.l);
-    } else if (this.color.mode === 'hsv') {
-        colorComponents.push(this.color.h, this.color.s, this.color.v);
+    if (this.color.mode === "rgb") {
+      colorComponents.push(this.color.r, this.color.g, this.color.b);
+    } else if (this.color.mode === "hsl") {
+      colorComponents.push(this.color.h, this.color.s, this.color.l);
+    } else if (this.color.mode === "hsv") {
+      colorComponents.push(this.color.h, this.color.s, this.color.v);
     }
     // Add alpha, if present, or default to 1 if alpha is undefined
     colorComponents.push(this.color.alpha !== undefined ? this.color.alpha : 1);
 
     return colorComponents;
-}
+  }
 
   get levels() {
-    return this._array.map(v => v * 255);
+    return this._array.map((v) => v * 255);
   }
 }
 
-function color(p5, fn){
+function color(p5, fn) {
   /**
    * A class to describe a color.
    *
@@ -631,8 +650,8 @@ function color(p5, fn){
 }
 
 export default color;
-export { Color }
+export { Color };
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== "undefined") {
   color(p5, p5.prototype);
 }
