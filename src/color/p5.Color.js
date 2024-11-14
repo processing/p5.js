@@ -83,7 +83,7 @@ class Color {
   constructor(
     vals,
     colorMode = "rgb",
-    colorMaxes = { rgb: [255, 255, 255, 255] }
+    colorMaxes = { rgb: [255, 255, 255, 255] , hsb: [360, 100, 100, 1] }
   ) {
     //storing default rgb color mode and maxes
     this.mode = colorMode;
@@ -108,7 +108,6 @@ class Color {
         }
 
         console.log("Modified color string for parsing:", colorString); // Debugging
-
         // Parse the modified string
         this.color = parse(colorString);
         console.log("Color object detected:", this.color);
@@ -147,7 +146,7 @@ class Color {
             alpha: alpha,
           };
           break;
-        case "hsb":
+        case "hsv": 
           this.color = {
             mode: "hsv", // Culori uses "hsv" instead of "hsb"
             h: (vals[0] / this.maxes[this.mode][0]) * 360, //(H/360) * 360 -> Range [0, 360]
@@ -537,12 +536,17 @@ class Color {
    */
   _getHue() {
     if (this.mode === constants.HSB || this.mode === constants.HSL) {
-      //return this.color.coords[0] / 360 * this.maxes[this.mode][0];
-      return (this.color.h / 360) * this.maxes[this.mode][0];
+      if (typeof this.color.h === "undefined"){
+        const hslColor = converter("hsl")(this.color);
+        return (hslColor.h / 360) * this.maxes[this.mode][0];
+      } else {
+        return (this.color.h / 360) * this.maxes[this.mode][0];
+      }
     } else {
       // Will do an imprecise conversion to 'HSL', not recommended
       //return to(this.color, 'hsl').coords[0] / 360 * this.maxes[this.mode][0];
       const hslColor = converter("hsl")(this.color); //Convert to HSL
+      console.log("If color mode isn't HSB||HSL", hslColor)
       return (hslColor.h / 360) * this.maxes[this.mode][0]; //Access Hue channel and scale
     }
   }

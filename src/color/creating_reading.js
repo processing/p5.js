@@ -6,10 +6,11 @@
  * @requires constants
  */
 
-import './p5.Color';
-import { range } from 'colorjs.io/fn';
+import "./p5.Color";
+import { range } from "colorjs.io/fn";
+import { interpolate, parse, converter } from "culori";
 
-function creatingReading(p5, fn){
+function creatingReading(p5, fn) {
   /**
    * Gets the alpha (transparency) value of a color.
    *
@@ -106,8 +107,8 @@ function creatingReading(p5, fn){
    * </code>
    * </div>
    */
-  fn.alpha = function(c) {
-    p5._validateParameters('alpha', arguments);
+  fn.alpha = function (c) {
+    p5._validateParameters("alpha", arguments);
     return this.color(c)._getAlpha();
   };
 
@@ -242,8 +243,8 @@ function creatingReading(p5, fn){
    * </code>
    * </div>
    */
-  fn.blue = function(c) {
-    p5._validateParameters('blue', arguments);
+  fn.blue = function (c) {
+    p5._validateParameters("blue", arguments);
     return this.color(c)._getBlue();
   };
 
@@ -387,8 +388,8 @@ function creatingReading(p5, fn){
    * </code>
    * </div>
    */
-  fn.brightness = function(c) {
-    p5._validateParameters('brightness', arguments);
+  fn.brightness = function (c) {
+    p5._validateParameters("brightness", arguments);
     return this.color(c)._getBrightness();
   };
 
@@ -676,8 +677,8 @@ function creatingReading(p5, fn){
    * @param  {p5.Color}     color
    * @return {p5.Color}
    */
-  fn.color = function(...args) {
-    p5._validateParameters('color', args);
+  fn.color = function (...args) {
+    p5._validateParameters("color", args);
     if (args[0] instanceof p5.Color) {
       return args[0]; // Do nothing if argument is already a color object.
     }
@@ -817,8 +818,8 @@ function creatingReading(p5, fn){
    * </code>
    * </div>
    */
-  fn.green = function(c) {
-    p5._validateParameters('green', arguments);
+  fn.green = function (c) {
+    p5._validateParameters("green", arguments);
     return this.color(c)._getGreen();
   };
 
@@ -938,8 +939,8 @@ function creatingReading(p5, fn){
    * </code>
    * </div>
    */
-  fn.hue = function(c) {
-    p5._validateParameters('hue', arguments);
+  fn.hue = function (c) {
+    p5._validateParameters("hue", arguments);
     return this.color(c)._getHue();
   };
 
@@ -1002,31 +1003,59 @@ function creatingReading(p5, fn){
    * </code>
    * </div>
    */
-  fn.lerpColor = function(c1, c2, amt) {
-    p5._validateParameters('lerpColor', arguments);
+  
+  // fn.lerpColor = function(c1, c2, amt) {
+  //   p5._validateParameters('lerpColor', arguments);
 
-    // Find the closest common ancestor color space
-    let spaceIndex = -1;
-    while(
-      (
-        spaceIndex+1 < c1.color.space.path.length ||
-        spaceIndex+1 < c2.color.space.path.length
-      ) &&
-      c1.color.space.path[spaceIndex+1] === c2.color.space.path[spaceIndex+1]
-    ){
-      spaceIndex += 1;
+  //   // Find the closest common ancestor color space
+  //   let spaceIndex = -1;
+  //   while(
+  //     (
+  //       spaceIndex+1 < c1.color.space.path.length ||
+  //       spaceIndex+1 < c2.color.space.path.length
+  //     ) &&
+  //     c1.color.space.path[spaceIndex+1] === c2.color.space.path[spaceIndex+1]
+  //   ){
+  //     spaceIndex += 1;
+  //   }
+
+  //   if (spaceIndex === -1) {
+  //     // This probably will not occur in practice
+  //     throw new Error('Cannot lerp colors. No common color space found');
+  //   }
+
+  //   // Get lerp value as a color in the common ancestor color space
+  //   const lerpColor = range(c1.color, c2.color, {
+  //     space: c1.color.space.path[spaceIndex].id
+  //   })(amt);
+
+  //   return new p5.Color(lerpColor, this._colorMode, this._colorMaxes);
+  // };
+
+  fn.lerpColor = function (c1, c2, amt) {
+    p5._validateParameters("lerpColor", arguments);
+
+    // Check if both colors are in the same color space
+    const mode1 = c1.color.mode;
+    console.log("ColorMode 1 is:", mode1);
+    const mode2 = c2.color.mode;
+    console.log("ColorMode 2 is:", mode2);
+
+    let interpolator;
+
+    if (mode1 === mode2) {
+      // If they are in the same color space, interpolate directly in that space
+      interpolator = interpolate([c1.color, c2.color], mode1);
+    } else {
+      // If not in the same space, convert `c2` to `c1`'s color space for interpolation
+      const convertedC2 = converter(mode1)(c2.color);
+      interpolator = interpolate([c1.color, convertedC2], mode1);
     }
 
-    if (spaceIndex === -1) {
-      // This probably will not occur in practice
-      throw new Error('Cannot lerp colors. No common color space found');
-    }
+    // Interpolate the color based on amt
+    const lerpColor = interpolator(amt);
 
-    // Get lerp value as a color in the common ancestor color space
-    const lerpColor = range(c1.color, c2.color, {
-      space: c1.color.space.path[spaceIndex].id
-    })(amt);
-
+    // Return the new p5.Color object with the interpolated color
     return new p5.Color(lerpColor, this._colorMode, this._colorMaxes);
   };
 
@@ -1170,8 +1199,8 @@ function creatingReading(p5, fn){
    * </code>
    * </div>
    */
-  fn.lightness = function(c) {
-    p5._validateParameters('lightness', arguments);
+  fn.lightness = function (c) {
+    p5._validateParameters("lightness", arguments);
     return this.color(c)._getLightness();
   };
 
@@ -1306,8 +1335,8 @@ function creatingReading(p5, fn){
    * </code>
    * </div>
    */
-  fn.red = function(c) {
-    p5._validateParameters('red', arguments);
+  fn.red = function (c) {
+    p5._validateParameters("red", arguments);
     return this.color(c)._getRed();
   };
 
@@ -1483,14 +1512,14 @@ function creatingReading(p5, fn){
    * </code>
    * </div>
    */
-  fn.saturation = function(c) {
-    p5._validateParameters('saturation', arguments);
+  fn.saturation = function (c) {
+    p5._validateParameters("saturation", arguments);
     return this.color(c)._getSaturation();
   };
 }
 
 export default creatingReading;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== "undefined") {
   creatingReading(p5, p5.prototype);
 }
