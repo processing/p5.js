@@ -309,7 +309,7 @@ function files(p5, fn){
     } catch(err) {
       p5._friendlyFileLoadError(5, path);
       if(errorCallback) {
-        errorCallback(err);
+        return errorCallback(err);
       } else {
         throw err;
       }
