@@ -1,9 +1,9 @@
 
 /*
- * TODO:
- *   - bug: text somtimes extends beyond y-bounds
- *   - finish existing ticket review
- *      - single-word widing than bounding box
+ *  NEXT: in variable-font.html, line 63 bug, then get axes and values from font, then test with other loading methods, then add sliders
+ *  TODO:
+ *   - variable fonts
+ *   - better font-loading (google fonts, font-face declarations, multiple fonts with Promise.all())
  *   - add test for line-height property in textFont() and textProperty()
  *      - how does this integrate with textLeading?
  *   - spurious warning in oneoff.html (local)
@@ -361,9 +361,9 @@ function text2d(p5, fn) {
    * The property to be set can be a mapped or unmapped property on `this.states` or a property on `this.drawingContext` or on `this.canvas.style`
    * The property to get can exist in `this.states` or `this.drawingContext` or `this.canvas.style`
    */
-  p5.Renderer2D.prototype.textProperty = function (prop, value) {
+  p5.Renderer2D.prototype.textProperty = function (prop, value, opts) {
 
-    let debug = false;
+    let debug = opts?.debug || true;
 
     // getter: return option from this.states or this.drawingContext
     if (typeof value === 'undefined') {
@@ -507,8 +507,11 @@ function text2d(p5, fn) {
 
     // check if the value was set successfully
     if (this.canvas.style[opt] !== value) {
-      console.warn(`Unable to set '${opt}' property` // FES?
-        + ' on canvas.style. It may not be supported.');
+      
+      // fails on precision for floating points, also quotes and spaces
+
+      // console.warn(`Unable to set '${opt}' property` // FES?
+      //   + ' on canvas.style. It may not be supported.', "'"+this.canvas.style[opt]+"'");
     }
   };
 

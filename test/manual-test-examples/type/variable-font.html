@@ -1,0 +1,93 @@
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- <script language="javascript" type="text/javascript" src="img/../../../../lib/p5.js"></script>
+  <script language="javascript" type="text/javascript" src="img/sketch.js"></script> -->
+
+  <!-- <link id="font" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wdth,wght@75..100,200..800&amp;display=swap" rel="stylesheet"> -->
+
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+    }
+
+    canvas {
+      border: 1px solid #f0f0f0;
+      display: block;
+    }
+
+    img {
+      border: 1px solid #fff;
+    }
+
+    div {
+      margin: 100px 0px;
+    }
+  </style>
+</head>
+
+
+
+<body>
+  <script type="module">
+    import p5 from '../../../src/app.js';
+
+    let sketch = function (p) {
+      let fonts;
+      p.setup = async function () {
+        p.createCanvas(800, 400);
+        fonts = await loadGoogleFontSet(p, "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
+        //console.log(fonts[0]);
+        p.textAlign(p.CENTER, p.CENTER);
+        p.textSize(60);
+      }
+
+      p.draw = function () {
+        p.background(255);
+
+        const o = p.map(p.sin(p.frameCount / 20), -1, 1, 12, 96);
+        const m = p.map(p.cos(p.frameCount / 20), -1, 1, 200, 800);
+
+        p.textFont(fonts[0].name, 60, { fontVariationSettings: `"wght" ${m}, "opsz" ${o}` });
+        p.text(`This is a variable font.`, 400, 200);
+      };
+
+      async function loadGoogleFontSet(p, url) {
+        linkStylesheet(url);
+
+        let dfonts = document.fonts;
+        
+        // NEXT: need to wait here until fonts are loaded
+        console.log(dfonts.ready);
+
+        let fonts = Array.from(dfonts);
+
+        if (!fonts || !fonts.length) {
+          throw Error("Failed to load font(s) at url: " + url);
+        }
+
+        let pfonts = fonts.map(f => new p5.Font(p, f));
+        pfonts.forEach(pf => pf.path ??= url);
+
+        await Promise.all(pfonts.map(pf => pf.load()));
+        return pfonts;
+      }
+
+      function linkStylesheet(href) {
+        const link = document.createElement("link");
+        link.id = "font";
+        link.href = href;
+        link.rel = "stylesheet";
+        document.head.appendChild(link);
+      }
+    }
+
+    new p5(sketch);
+  </script>
+
+</body>
+
+
+</html>

@@ -34,18 +34,23 @@ function font(p5, fn) {
 
   p5.Font = class Font {
 
-    static list(log = false) {
+    static async list(log = false) {
       if (log) {
-        console.log('There are', document.fonts.size, 'font-faces loaded\n');
-        for (var fontFace of document.fonts.values()) {
+        console.log('There are', document.fonts.size, 'font-faces\n');
+        let loaded = 0;
+        for (let fontFace of document.fonts.values()) {
           console.log('FontFace: {');
-          for (var property in fontFace) {
+          for (let property in fontFace) {
             console.log('  ' + property + ': ' + fontFace[property]);
           }
           console.log('}\n');
+          if (fontFace.status === 'loaded') {
+            loaded++;
+          }
         }
+        console.log(loaded+' loaded');
       }
-      return Array.from(document.fonts);
+      return await Array.from(document.fonts);
     }
 
     constructor(p, name, path, descriptors) {
@@ -53,10 +58,16 @@ function font(p5, fn) {
       if (!(p instanceof p5)) {
         throw Error('p5 instance is required');
       }
+      this.pInst = p;
+      if (name instanceof FontFace) {
+        this.font = name;
+        this.name = name.family;
+        this.path = name.src;
+        return;
+      }
       if (!path.startsWith('url(')) {
         path = `url(${path})`; // hmm
       }
-      this.pInst = p;
       this.name = name;
       this.path = path;
       this.font = new FontFace(name, path, descriptors);
