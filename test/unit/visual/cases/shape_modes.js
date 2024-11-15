@@ -17,10 +17,12 @@ function shapeCorners(p5, shape, mode, x1, y1, x2, y2) {
     // Don't use abs(), so we get negative values as well
     let w = x2 - x1; // w
     let h = y2 - y1; // h
-    // With mode CORNER, negative widths/heights result in mirrored/flipped shapes
-    // In this case, adjust position so the shape is in line with the other cases
-    if (w < 0) { x += (-w); } // Move right
-    if (h < 0) { y += (-h); } // Move down
+    // With mode CORNER, rects with negative widths/heights result in mirrored/flipped rendering
+    // In this case, adjust position so the rect is in line with the other cases
+    if (shape === 'rect') {
+      if (w < 0) { x += (-w); } // Move right
+      if (h < 0) { y += (-h); } // Move down
+    }
     x1 = x; y1 = y; x2 = w; y2 = h;
   } else if (mode === p5.CENTER) {
     // Find center
@@ -124,10 +126,11 @@ visualSuite('Shape Modes', function(...args) {
 
   /*
     An extra test suite specific to shape mode CORNER and negative dimensions.
-    Negative width should result in the shape flipped horizontally (to the left).
-    Negative height should result in the shape flipped vertically (up).
+    For rect, negative widths/heights result in flipped rendering (horizontally/vertically)
+    For ellipse and arc, using negative widths/heights has no effect (the absolute value is used)
   */
   visualSuite('Negative dimensions', function() {
+    // Negative widths/height result in flipped rects.
     visualTest('rect', function(p5, screenshot) {
       p5.createCanvas(50, 50);
       p5.translate(p5.width/2, p5.height/2);
@@ -141,6 +144,8 @@ visualSuite('Shape Modes', function(...args) {
       p5.rect(0, 0, -20, -10);
       screenshot();
     });
+    // Since negative widths/heights are used with their absolute value,
+    // ellipses are drawn on top of each other, blue one last
     visualTest('ellipse', function(p5, screenshot) {
       p5.createCanvas(50, 50);
       p5.translate(p5.width/2, p5.height/2);
@@ -154,6 +159,8 @@ visualSuite('Shape Modes', function(...args) {
       p5.ellipse(0, 0, -20, -10);
       screenshot();
     });
+    // Since negative widths/heights are used with their absolute value,
+    // arcs are drawn on top of each other, blue one last.
     visualTest('arc', function(p5, screenshot) {
       p5.createCanvas(50, 50);
       p5.translate(p5.width/2, p5.height/2);

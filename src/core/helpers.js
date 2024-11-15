@@ -16,14 +16,12 @@ function modeAdjust(a, b, c, d, mode) {
   if (mode === constants.CORNER) {
 
     // CORNER mode already corresponds to a bounding box (top-left corner, width, height).
-    // Negative dimensions (width and/or height) result in 'flipping' the shape.
-    if (c < 0) { c = -c; a -= c;  } // Negative width: Move shape to the left (flip left)
-    if (d < 0) { d = -d; b -= d;  } // Negative height: Move shape up (flip up)
+    // For negative widhts or heights, the absolute value is used.
     bbox = {
       x: a,
       y: b,
-      w: c,
-      h: d
+      w: Math.abs(c),
+      h: Math.abs(d)
     };
 
   } else if (mode === constants.CORNERS) {

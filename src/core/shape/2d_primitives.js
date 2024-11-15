@@ -1339,6 +1339,15 @@ p5.prototype._renderRect = function() {
       this._renderer._rectMode
     );
 
+    // For the default rectMode (CORNER), restore a possible negative width/height
+    // removed by modeAdjust(). This results in flipped/mirrored rendering,
+    // which is especially noticable when using WEGBL rendering and texture().
+    // Note that this behavior only applies to rect(), NOT to ellipse() and arc().
+    if (this._renderer._rectMode === constants.CORNER) {
+      vals.w = arguments[2];
+      vals.h = arguments[3];
+    }
+
     const args = [vals.x, vals.y, vals.w, vals.h];
     // append the additional arguments (either cornder radii, or
     // segment details) to the argument list
