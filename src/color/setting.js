@@ -1000,7 +1000,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * @param  {Number}        v1      red value if color mode is RGB or hue value if color mode is HSB.
  * @param  {Number}        v2      green value if color mode is RGB or saturation value if color mode is HSB.
  * @param  {Number}        v3      blue value if color mode is RGB or brightness value if color mode is HSB.
- * @param  {Number}        [alpha]
+ * @param  {Number}        [alpha] optional alpha value, controls transparency (0 - transparent, 255 - opaque).
  * @chainable
  * @example
  * <div>
