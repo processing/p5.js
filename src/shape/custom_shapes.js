@@ -30,6 +30,34 @@ class ShapePrimitive {
     }
 }
 
+/*
+TODO:
+
+If we can rename the p5.Vector method `array()` as `toArray()` for clarity and 
+consistency with `toString()`, and if we can make the private p5.Color method for
+converting to an array public, with the name `toArray()`, then we'll be able to 
+make Vertex more flexible.
+
+We can modify the Vertex constructor so that a vertex has only the data it needs, by dynamically
+generating properties based on a required properties object:
+
+```
+class Vertex {
+  constructor(properties) {
+    for (const [key, value] of Object.entries(properties)) {
+      this[key] = value;
+    }
+  }
+  
+  toArray() {
+    //convert to 1D array
+  }
+}
+```
+Any property names or values may be used, but values that are objects must have 
+a `toArray()` method.
+*/
+
 class Vertex {
     constructor() {
     
@@ -218,13 +246,10 @@ function customShapes(p5, fn) {
      * - Color properties are `p5.Color` objects. 
      * 
      * Properties may be specified in all the ways supported by `createVector()` 
-     * and `color()`. For example, a vertex position can be set with two coordinates, as in  `createVector(2, 3)`. 
-     * The position is then a `p5.Vector` object with coordinates `(2, 3, 0)`.
+     * and `color()`. For example, a vertex position can be set with two coordinates, 
+     * as in  `createVector(2, 3)`.
      * 
-     * In general, the vertices that make up a shape contain the same data, in the same format, regardless of 
-     * how the shape is drawn. Like an artist who decides to ignore color or depth, a renderer can decide
-     * which of the vertex data to use. This data may be be reformatted using methods of `p5.Vector` and 
-     * `p5.Color`. For easier use with certain renderers, vertices also have a `toArray()` method that converts 
+     * Vertices also have a `toArray()` method that converts 
      * a full vertex object to a one-dimensional array.
      * 
      * @class p5.Vertex
