@@ -150,8 +150,7 @@ function customShapes(p5, fn) {
 
     /**
      * @private
-     * A class to describe a custom shape made with 
-     * <a href="#/p5/beginShape">beginShape()</a>/<a href="#/p5/endShape">endShape()</a>.
+     * A class to describe a custom shape made with `beginShape()`/`endShape()`.
      * 
      * Every `Shape` has a `kind`. The kind takes any value that
      * can be passed to <a href="#/p5/beginShape">beginShape()</a>:
@@ -181,12 +180,12 @@ function customShapes(p5, fn) {
 
     /**
      * @private
-     * A class to describe a contour made with
-     * <a href="#/p5/beginContour">beginContour()</a>/<a href="#/p5/endContour">endContour()</a>.
+     * A class to describe a contour made with `beginContour()`/`endContour()`.
      * 
      * Contours are subshapes: they're made inside of shapes created with
      * <a href="#/p5/beginShape">beginShape()</a>/<a href="#/p5/endShape">endShape()</a>.
-     * For example, a contour may be used to create a hole in a shape.
+     * For example, a contour may be used to create a hole in a shape. Multiple contours
+     * may be used to create multiple holes.
      * 
      * Contours can have any `kind` that a shape can have:
      * 
@@ -199,8 +198,8 @@ function customShapes(p5, fn) {
      * - `TRIANGLE_STRIP`
      * - `QUAD_STRIP`
      * 
-     * By default, a contour has the same kind as the shape that contains it, 
-     * but different kinds of contours can be made inside the same shape.
+     * By default, a contour has the same kind as the shape that contains it, but this 
+     * may be changed by passing a different `kind` to <a href="#/p5/beginContour">beginContour()</a>.
      * 
      * A `Contour` of any kind consists of `primitives`, which are the most basic
      * shapes that can be drawn. For example, if a contour is a hexagon, then
@@ -216,7 +215,31 @@ function customShapes(p5, fn) {
 
     /**
      * @private
-     * A class responsible for... 
+     * A base class to describe a shape primitive (a basic shape drawn with 
+     * `beginShape()`/`endShape()`).
+     * 
+     * Shape primitives are the most basic shapes that can be drawn with 
+     * <a href="#/p5/beginShape">beginShape()</a>/<a href="#/p5/endShape">endShape()</a>:
+     * 
+     * - segment primitives: line segments, bezier segments, spline segments, and arc segments 
+     * - isolated primitives: points, lines, triangles, and quads
+     * - tessellation primitives: triangle fans, triangle strips, and quad strips
+     * 
+     * More complex shapes may be created by combining many primitives, possibly of different kinds.
+     * 
+     * In a similar way, every shape primitive is built from one or more vertices. 
+     * For example, a point consists of a single vertex, while a triangle consists of three vertices. 
+     * 
+     * Each primitive can add itself to a shape, with an `addToShape()` method.
+     * 
+     * It can also accept visitor objects with an `accept()` method. When a primitive accepts a visitor, 
+     * it gives the visitor access to its vertex data. For example, one visitor to a segment might turn 
+     * the data into 2D drawing instructions. Another might find a point at a given distance 
+     * along the segment.
+     * 
+     * @class p5.ShapePrimitive
+     * @constructor
+     * @param {p5.Vertex} vertex the first vertex to include in the primitive.
      */
 
     p5.ShapePrimitive = ShapePrimitive;
