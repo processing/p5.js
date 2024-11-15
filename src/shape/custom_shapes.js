@@ -182,10 +182,10 @@ function customShapes(p5, fn) {
      * @private
      * A class to describe a contour made with `beginContour()`/`endContour()`.
      * 
-     * Contours are subshapes: they're made inside of shapes created with
-     * <a href="#/p5/beginShape">beginShape()</a>/<a href="#/p5/endShape">endShape()</a>.
-     * For example, a contour may be used to create a hole in a shape. Multiple contours
-     * may be used to create multiple holes.
+     * Contours may be thought of as shapes inside of other shapes.
+     * For example, a contour may be used to create a hole in a shape that is created
+     * with <a href="#/p5/beginShape">beginShape()</a>/<a href="#/p5/endShape">endShape()</a>. 
+     * Multiple contours may be used to create multiple holes.
      * 
      * Contours can have any `kind` that a shape can have:
      * 
@@ -225,7 +225,8 @@ function customShapes(p5, fn) {
      * - isolated primitives: points, lines, triangles, and quads
      * - tessellation primitives: triangle fans, triangle strips, and quad strips
      * 
-     * More complex shapes may be created by combining many primitives, possibly of different kinds.
+     * More complex shapes may be created by combining many primitives, possibly of different kinds,
+     * into a single shape.
      * 
      * In a similar way, every shape primitive is built from one or more vertices. 
      * For example, a point consists of a single vertex, while a triangle consists of three vertices. 
