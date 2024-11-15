@@ -11,9 +11,9 @@
 
 // ---- GENERAL CLASSES ----
 
-class Shape {
+class Shape {    
     constructor() {
-    
+        
     }
 }
 
@@ -181,7 +181,35 @@ function customShapes(p5, fn) {
 
     /**
      * @private
-     * A class responsible for... 
+     * A class to describe a contour made with
+     * <a href="#/p5/beginContour">beginContour()</a>/<a href="#/p5/endContour">endContour()</a>.
+     * 
+     * Contours are subshapes: they're made inside of shapes created with
+     * <a href="#/p5/beginShape">beginShape()</a>/<a href="#/p5/endShape">endShape()</a>.
+     * For example, a contour may be used to create a hole in a shape.
+     * 
+     * Contours can have any `kind` that a shape can have:
+     * 
+     * - `PATH`
+     * - `POINTS`
+     * - `LINES`
+     * - `TRIANGLES`
+     * - `QUADS`
+     * - `TRIANGLE_FAN`
+     * - `TRIANGLE_STRIP`
+     * - `QUAD_STRIP`
+     * 
+     * By default, a contour has the same kind as the shape that contains it, 
+     * but different kinds of contours can be made inside the same shape.
+     * 
+     * A `Contour` of any kind consists of `primitives`, which are the most basic
+     * shapes that can be drawn. For example, if a contour is a hexagon, then
+     * it's made from six line-segment primitives.
+     * 
+     * @class p5.Contour
+     * @constructor
+     * @param {(PATH|POINTS|LINES|TRIANGLES|QUADS|TRIANGLE_FAN|TRIANGLE_STRIP|QUAD_STRIP)} [kind=PATH] either 
+     * PATH, POINTS, LINES, TRIANGLES, QUADS, TRIANGLE_FAN, TRIANGLE_STRIP, or QUAD_STRIP.
      */
 
     p5.Contour = Contour;
