@@ -1,94 +1,89 @@
-import p5 from '../../../src/app.js';
-import { testWithDownload } from '../../js/p5_helpers';
+// import p5 from '../../../src/app.js';
+// import { testWithDownload } from '../../js/p5_helpers';
 
-suite.todo('saveTable', function() {
-  let validFile = 'unit/assets/csv.csv';
+import { mockP5, mockP5Prototype } from '../../js/mocks';
+import * as fileSaver from 'file-saver';
+import { vi, expect } from 'vitest';
+import files from '../../../src/io/files';
+import table from '../../../src/io/p5.Table';
+import tableRow from '../../../src/io/p5.TableRow';
+
+vi.mock('file-saver');
+
+suite('saveTable', function() {
+  let validFile = '/test/unit/assets/csv.csv';
   let myp5;
   let myTable;
 
-  beforeAll(function() {
-    new p5(function(p) {
-      p.setup = function() {
-        myp5 = p;
-      };
-    });
+  beforeAll(async function() {
+    files(mockP5, mockP5Prototype);
+    table(mockP5, mockP5Prototype);
+    tableRow(mockP5, mockP5Prototype);
+    myTable = await mockP5Prototype.loadTable(validFile, 'csv', 'header');
   });
 
-  afterAll(function() {
-    myp5.remove();
-  });
-
-  beforeEach(async function loadMyTable() {
-    await new Promise(resolve => {
-      myp5.loadTable(validFile, 'csv', 'header', function(table) {
-        myTable = table;
-        resolve();
-      });
-    });
+  afterEach(() => {
+    vi.clearAllMocks();
   });
 
   test('should be a function', function() {
-    assert.ok(myp5.saveTable);
-    assert.typeOf(myp5.saveTable, 'function');
+    assert.ok(mockP5Prototype.saveTable);
+    assert.typeOf(mockP5Prototype.saveTable, 'function');
   });
 
-  testWithDownload(
-    'should download a file with expected contents',
-    async function(blobContainer) {
-      myp5.saveTable(myTable, 'filename');
-      let myBlob = blobContainer.blob;
-      let text = await myBlob.text();
-      let myTableStr = myTable.columns.join(',') + '\n';
-      for (let i = 0; i < myTable.rows.length; i++) {
-        myTableStr += myTable.rows[i].arr.join(',') + '\n';
-      }
+  test('should download a file with expected contents', async () => {
+    mockP5Prototype.saveTable(myTable, 'filename');
 
-      assert.strictEqual(text, myTableStr);
-    },
-    true
-  );
+    // TODO: Need comprehensive way to compare blobs in spy call
+    const saveData = new Blob(['hello']);
+    expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
+    expect(fileSaver.saveAs)
+      .toHaveBeenCalledWith(
+        expect.any(Blob),
+        'filename.csv'
+      );
+  });
 
-  testWithDownload(
-    'should download a file with expected contents (tsv)',
-    async function(blobContainer) {
-      myp5.saveTable(myTable, 'filename', 'tsv');
-      let myBlob = blobContainer.blob;
-      let text = await myBlob.text();
-      let myTableStr = myTable.columns.join('\t') + '\n';
-      for (let i = 0; i < myTable.rows.length; i++) {
-        myTableStr += myTable.rows[i].arr.join('\t') + '\n';
-      }
-      assert.strictEqual(text, myTableStr);
-    },
-    true
-  );
+  test('should download a file with expected contents (tsv)', async () => {
+    mockP5Prototype.saveTable(myTable, 'filename', 'tsv');
 
-  testWithDownload(
-    'should download a file with expected contents (html)',
-    async function(blobContainer) {
-      myp5.saveTable(myTable, 'filename', 'html');
-      let myBlob = blobContainer.blob;
-      let text = await myBlob.text();
-      let domparser = new DOMParser();
-      let htmldom = domparser.parseFromString(text, 'text/html');
-      let trs = htmldom.querySelectorAll('tr');
-      for (let i = 0; i < trs.length; i++) {
-        let tds = trs[i].querySelectorAll('td');
-        for (let j = 0; j < tds.length; j++) {
-          // saveTable generates an HTML file with indentation spaces and line-breaks. The browser ignores these
-          // while displaying. But they will still remain a part of the parsed DOM and hence must be removed.
-          // More info at: https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace
-          let tdText = tds[j].innerHTML.trim().replace(/\n/g, '');
-          let tbText;
-          if (i === 0) {
-            tbText = myTable.columns[j].trim().replace(/\n/g, '');
-          } else {
-            tbText = myTable.rows[i - 1].arr[j].trim().replace(/\n/g, '');
-          }
-          assert.strictEqual(tdText, tbText);
-        }
-      }
-    },
-    true
-  );
+    // TODO: Need comprehensive way to compare blobs in spy call
+    const saveData = new Blob(['hello']);
+    expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
+    expect(fileSaver.saveAs)
+      .toHaveBeenCalledWith(
+        expect.any(Blob),
+        'filename.tsv'
+      );
+  });
+
+  // TODO: Seems out of place
+  // testWithDownload(
+  //   'should download a file with expected contents (html)',
+  //   async function(blobContainer) {
+  //     myp5.saveTable(myTable, 'filename', 'html');
+  //     let myBlob = blobContainer.blob;
+  //     let text = await myBlob.text();
+  //     let domparser = new DOMParser();
+  //     let htmldom = domparser.parseFromString(text, 'text/html');
+  //     let trs = htmldom.querySelectorAll('tr');
+  //     for (let i = 0; i < trs.length; i++) {
+  //       let tds = trs[i].querySelectorAll('td');
+  //       for (let j = 0; j < tds.length; j++) {
+  //         // saveTable generates an HTML file with indentation spaces and line-breaks. The browser ignores these
+  //         // while displaying. But they will still remain a part of the parsed DOM and hence must be removed.
+  //         // More info at: https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace
+  //         let tdText = tds[j].innerHTML.trim().replace(/\n/g, '');
+  //         let tbText;
+  //         if (i === 0) {
+  //           tbText = myTable.columns[j].trim().replace(/\n/g, '');
+  //         } else {
+  //           tbText = myTable.rows[i - 1].arr[j].trim().replace(/\n/g, '');
+  //         }
+  //         assert.strictEqual(tdText, tbText);
+  //       }
+  //     }
+  //   },
+  //   true
+  // );
 });

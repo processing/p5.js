@@ -2040,6 +2040,7 @@ function files(p5, fn){
     let ext;
     if (options === undefined) {
       ext = filename.substring(filename.lastIndexOf('.') + 1, filename.length);
+      if(ext === filename) ext = 'csv';
     } else {
       ext = options;
     }
