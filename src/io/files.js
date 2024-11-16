@@ -1666,15 +1666,17 @@ function files(p5, fn){
     if (args.length === 0) {
       fn.saveCanvas(cnv);
       return;
+
     } else if (args[0] instanceof Renderer || args[0] instanceof Graphics) {
       // otherwise, parse the arguments
-
       // if first param is a p5Graphics, then saveCanvas
       fn.saveCanvas(args[0].canvas, args[1], args[2]);
       return;
+
     } else if (args.length === 1 && typeof args[0] === 'string') {
       // if 1st param is String and only one arg, assume it is canvas filename
       fn.saveCanvas(cnv, args[0]);
+
     } else {
       // =================================================
       // OPTION 2: extension clarifies saveStrings vs. saveJSON

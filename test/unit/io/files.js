@@ -1,5 +1,3 @@
-import p5 from '../../../src/app.js';
-import { testWithDownload } from '../../js/p5_helpers';
 import { mockP5, mockP5Prototype, httpMock } from '../../js/mocks';
 import files from '../../../src/io/files';
 import { vi } from 'vitest';
@@ -8,20 +6,9 @@ import * as fileSaver from 'file-saver';
 vi.mock('file-saver');
 
 suite('Files', function() {
-  var myp5;
-
-  beforeAll(function() {
+  beforeAll(async function() {
     files(mockP5, mockP5Prototype);
-
-    new p5(function(p) {
-      p.setup = function() {
-        myp5 = p;
-      };
-    });
-  });
-
-  afterAll(function() {
-    myp5.remove();
+    await httpMock.start({ quiet: true });
   });
 
   afterEach(() => {
@@ -141,42 +128,20 @@ suite('Files', function() {
         assert.typeOf(mockP5Prototype.save, 'function');
       });
 
-      // TODO: Default save require a canvas, need to mock relevant functionalities
-      // testWithDownload(
-      //   'should download a png file',
-      //   async function(blobContainer) {
-      //     myp5.save();
-      //     await waitForBlob(blobContainer);
-      //     let myBlob = blobContainer.blob;
-      //     assert.strictEqual(myBlob.type, 'image/png');
+      // Test the call to `saveCanvas`
+      // `saveCanvas` is responsible for testing download is correct
+      test('should call saveCanvas', async () => {
+        mockP5Prototype.save();
+        expect(mockP5Prototype.saveCanvas).toHaveBeenCalledTimes(1);
+        expect(mockP5Prototype.saveCanvas).toHaveBeenCalledWith(mockP5Prototype.elt);
+      });
 
-      //     blobContainer.blob = null;
-      //     let gb = myp5.createGraphics(100, 100);
-      //     myp5.save(gb);
-      //     await waitForBlob(blobContainer);
-      //     myBlob = blobContainer.blob;
-      //     assert.strictEqual(myBlob.type, 'image/png');
-      //   },
-      //   true
-      // );
-
-      // testWithDownload(
-      //   'should download a jpg file',
-      //   async function(blobContainer) {
-      //     myp5.save('filename.jpg');
-      //     await waitForBlob(blobContainer);
-      //     let myBlob = blobContainer.blob;
-      //     assert.strictEqual(myBlob.type, 'image/jpeg');
-
-      //     blobContainer.blob = null;
-      //     let gb = myp5.createGraphics(100, 100);
-      //     myp5.save(gb, 'filename.jpg');
-      //     await waitForBlob(blobContainer);
-      //     myBlob = blobContainer.blob;
-      //     assert.strictEqual(myBlob.type, 'image/jpeg');
-      //   },
-      //   true
-      // );
+      test('should call saveCanvas with filename', async () => {
+        mockP5Prototype.save('filename.jpg');
+        expect(mockP5Prototype.saveCanvas).toHaveBeenCalledTimes(1);
+        expect(mockP5Prototype.saveCanvas)
+          .toHaveBeenCalledWith(mockP5Prototype.elt, 'filename.jpg');
+      });
     });
 
     suite('saving strings and json', function() {

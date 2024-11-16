@@ -24,4 +24,7 @@ export const mockP5 = {
   _friendlyError: vi.fn()
 };
 
-export const mockP5Prototype = {};
+export const mockP5Prototype = {
+  saveCanvas: vi.fn(),
+  elt: document.createElement('canvas')
+};
