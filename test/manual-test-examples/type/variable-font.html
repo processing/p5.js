@@ -2,6 +2,8 @@
 
 <head>
   <meta charset="UTF-8">
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/fontfaceobserver/2.1.0/fontfaceobserver.js"></script> -->
+
   <!-- <script language="javascript" type="text/javascript" src="img/../../../../lib/p5.js"></script>
   <script language="javascript" type="text/javascript" src="img/sketch.js"></script> -->
 
@@ -33,13 +35,12 @@
 <body>
   <script type="module">
     import p5 from '../../../src/app.js';
-
+    const googleFont = "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap";
     let sketch = function (p) {
       let fonts;
       p.setup = async function () {
-        p.createCanvas(800, 400);
-        fonts = await loadGoogleFontSet(p, "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
-        //console.log(fonts[0]);
+        p.createCanvas(800, 200);
+        fonts = await loadGoogleFontSet(p, googleFont);
         p.textAlign(p.CENTER, p.CENTER);
         p.textSize(60);
       }
@@ -51,27 +52,15 @@
         const m = p.map(p.cos(p.frameCount / 20), -1, 1, 200, 800);
 
         p.textFont(fonts[0].name, 60, { fontVariationSettings: `"wght" ${m}, "opsz" ${o}` });
-        p.text(`This is a variable font.`, 400, 200);
+        p.text(`This is a variable font.`, 400, 100);
       };
 
       async function loadGoogleFontSet(p, url) {
         linkStylesheet(url);
-
-        let dfonts = document.fonts;
-        
-        // NEXT: need to wait here until fonts are loaded
-        console.log(dfonts.ready);
-
-        let fonts = Array.from(dfonts);
-
-        if (!fonts || !fonts.length) {
-          throw Error("Failed to load font(s) at url: " + url);
-        }
-
+        await document.fonts.ready; // ?
+        let fonts = Array.from(document.fonts);
         let pfonts = fonts.map(f => new p5.Font(p, f));
         pfonts.forEach(pf => pf.path ??= url);
-
-        await Promise.all(pfonts.map(pf => pf.load()));
         return pfonts;
       }
 
