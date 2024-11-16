@@ -6,6 +6,8 @@
  */
 
 import * as fileSaver from 'file-saver';
+import { Renderer } from '../core/p5.Renderer';
+import { Graphics } from '../core/p5.Graphics';
 
 class HTTPError extends Error {
   status;
@@ -69,6 +71,10 @@ export async function request(path, type){
     throw err;
   }
 }
+
+// TODO: Previous version seems to attempt to make singletons
+//       based on filename but actual implementation always
+//       create new object. Consider if needed.
 
 function files(p5, fn){
   /**
@@ -1660,7 +1666,7 @@ function files(p5, fn){
     if (args.length === 0) {
       fn.saveCanvas(cnv);
       return;
-    } else if (args[0] instanceof p5.Renderer || args[0] instanceof p5.Graphics) {
+    } else if (args[0] instanceof Renderer || args[0] instanceof Graphics) {
       // otherwise, parse the arguments
 
       // if first param is a p5Graphics, then saveCanvas
@@ -1821,19 +1827,16 @@ function files(p5, fn){
    * </code>
    * </div>
    */
-  fn.saveJSON = function (json, filename, opt) {
+  fn.saveJSON = function (json, filename, optimize) {
     p5._validateParameters('saveJSON', arguments);
     let stringify;
-    if (opt) {
+    if (optimize) {
       stringify = JSON.stringify(json);
     } else {
       stringify = JSON.stringify(json, undefined, 2);
     }
     this.saveStrings(stringify.split('\n'), filename, 'json');
   };
-
-  fn.saveJSONObject = fn.saveJSON;
-  fn.saveJSONArray = fn.saveJSON;
 
   /**
    * Saves an `Array` of `String`s to a file, one per line.
@@ -1971,9 +1974,9 @@ function files(p5, fn){
   fn.saveStrings = function (list, filename, extension, isCRLF) {
     p5._validateParameters('saveStrings', arguments);
     const ext = extension || 'txt';
-    const pWriter = this.createWriter(filename, ext);
-    for (let i = 0; i < list.length; i++) {
-      isCRLF ? pWriter.write(list[i] + '\r\n') : pWriter.write(list[i] + '\n');
+    const pWriter = new p5.PrintWriter(filename, ext);
+    for (let item of list) {
+      isCRLF ? pWriter.write(item + '\r\n') : pWriter.write(item + '\n');
     }
     pWriter.close();
     pWriter.clear();
@@ -2162,34 +2165,13 @@ function files(p5, fn){
   fn.downloadFile = function (data, fName, extension) {
     const fx = _checkFileExtension(fName, extension);
     const filename = fx[0];
+    let saveData = data;
 
-    if (data instanceof Blob) {
-      fileSaver.saveAs(data, filename);
-      return;
+    if (!(saveData instanceof Blob)) {
+      saveData = new Blob([data]);
     }
 
-    const a = document.createElement('a');
-    a.href = data;
-    a.download = filename;
-
-    // Firefox requires the link to be added to the DOM before click()
-    a.onclick = e => {
-      destroyClickedElement(e);
-      e.stopPropagation();
-    };
-
-    a.style.display = 'none';
-    document.body.appendChild(a);
-
-    // Safari will open this file in the same page as a confusing Blob.
-    if (fn._isSafari()) {
-      let aText = 'Hello, Safari user! To download this file...\n';
-      aText += '1. Go to File --> Save As.\n';
-      aText += '2. Choose "Page Source" as the Format.\n';
-      aText += `3. Name it with this extension: ."${fx[1]}"`;
-      alert(aText);
-    }
-    a.click();
+    fileSaver.saveAs(saveData, filename);
   };
 
   /**
