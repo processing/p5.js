@@ -1054,7 +1054,7 @@ function mouse(p5, fn){
    * </code>
    * </div>
    */
-  fn._onmousemove = function(e) {
+  fn._onpointermove = function(e) {
     const context = this._isGlobal ? window : this;
     let executeDefault;
     this._updateNextMouseCoords(e);
@@ -1225,17 +1225,12 @@ function mouse(p5, fn){
    * </code>
    * </div>
    */
-  fn._onmousedown = function(e) {
+  fn._onpointerdown = function(e) {
     const context = this._isGlobal ? window : this;
     let executeDefault;
     this.mouseIsPressed = true;
     this._setMouseButton(e);
     this._updateNextMouseCoords(e);
-
-    // _ontouchstart triggers first and sets this._touchstart
-    if (this._touchstart) {
-      return;
-    }
 
     if (typeof context.mousePressed === 'function') {
       executeDefault = context.mousePressed(e);
@@ -1248,8 +1243,6 @@ function mouse(p5, fn){
         e.preventDefault();
       }
     }
-
-    this._touchstart = false;
   };
 
   /**
@@ -1398,15 +1391,10 @@ function mouse(p5, fn){
    * </code>
    * </div>
    */
-  fn._onmouseup = function(e) {
+  fn._onpointerup = function(e) {
     const context = this._isGlobal ? window : this;
     let executeDefault;
     this.mouseIsPressed = false;
-
-    // _ontouchend triggers first and sets this._touchend
-    if (this._touchend) {
-      return;
-    }
 
     if (typeof context.mouseReleased === 'function') {
       executeDefault = context.mouseReleased(e);
@@ -1419,11 +1407,10 @@ function mouse(p5, fn){
         e.preventDefault();
       }
     }
-    this._touchend = false;
   };
 
-  fn._ondragend = fn._onmouseup;
-  fn._ondragover = fn._onmousemove;
+  fn._ondragend = fn._onpointerup;
+  fn._ondragover = fn._onpointermove;
 
   /**
    * A function that's called once after a mouse button is pressed and released.
