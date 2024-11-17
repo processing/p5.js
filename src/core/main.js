@@ -62,6 +62,10 @@ class p5 {
       mousemove: null,
       mousedown: null,
       mouseup: null,
+      pointerdown: null,
+      pointerup: null,
+      pointermove: null,
+      pointercancle:null,
       dragend: null,
       dragover: null,
       click: null,
@@ -238,6 +242,7 @@ class p5 {
         k.style.visibility = '';
         delete k.dataset.hidden;
       }
+      k.style.touchAction = 'none';
     }
 
     this._lastTargetFrameTime = window.performance.now();
