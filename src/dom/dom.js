@@ -1481,7 +1481,7 @@ p5.prototype.createSelect = function(...args) {
  *   createCanvas(100, 100);
  *
  *   // Create a radio button element and place it
- *   // in the top-right corner.
+ *   // in the top-left corner.
  *   myRadio = createRadio();
  *   myRadio.position(0, 0);
  *   myRadio.class('p5-radio');
@@ -1548,7 +1548,7 @@ p5.prototype.createSelect = function(...args) {
  *   createCanvas(100, 100);
  *
  *   // Create a radio button element and place it
- *   // in the top-right corner.
+ *   // in the top-left corner.
  *   myRadio = createRadio();
  *   myRadio.position(0, 0);
  *   myRadio.class('p5-radio');
