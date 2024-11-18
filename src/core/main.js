@@ -65,7 +65,7 @@ class p5 {
       pointerdown: null,
       pointerup: null,
       pointermove: null,
-      pointercancle:null,
+      pointercancel:null,
       dragend: null,
       dragover: null,
       click: null,

@@ -1004,10 +1004,7 @@ function mouse(p5, fn){
    * ```
    *
    * On touchscreen devices, `mouseDragged()` will run when a user moves a touch
-   * point if <a href="#/p5/touchMoved">touchMoved()</a> isn’t declared. If
-   * <a href="#/p5/touchMoved">touchMoved()</a> is declared, then
-   * <a href="#/p5/touchMoved">touchMoved()</a> will run when a user moves a
-   * touch point and `mouseDragged()` won’t.
+   * point.
    *
    * Browsers may have default behaviors attached to various mouse events. For
    * example, some browsers highlight text when the user moves the mouse while
@@ -1071,12 +1068,7 @@ function mouse(p5, fn){
         if (executeDefault === false) {
           e.preventDefault();
         }
-      } else if (typeof context.touchMoved === 'function') {
-        executeDefault = context.touchMoved(e);
-        if (executeDefault === false) {
-          e.preventDefault();
-        }
-      }
+      } 
     }
   };
 
@@ -1120,10 +1112,7 @@ function mouse(p5, fn){
    * ```
    *
    * On touchscreen devices, `mousePressed()` will run when a user’s touch
-   * begins if <a href="#/p5/touchStarted">touchStarted()</a> isn’t declared. If
-   * <a href="#/p5/touchStarted">touchStarted()</a> is declared, then
-   * <a href="#/p5/touchStarted">touchStarted()</a> will run when a user’s touch
-   * begins and `mousePressed()` won’t.
+   * begins.
    *
    * Browsers may have default behaviors attached to various mouse events. For
    * example, some browsers highlight text when the user moves the mouse while
@@ -1237,12 +1226,7 @@ function mouse(p5, fn){
       if (executeDefault === false) {
         e.preventDefault();
       }
-    } else if (typeof context.touchStarted === 'function') {
-      executeDefault = context.touchStarted(e);
-      if (executeDefault === false) {
-        e.preventDefault();
-      }
-    }
+    } 
   };
 
   /**
@@ -1286,10 +1270,7 @@ function mouse(p5, fn){
    * ```
    *
    * On touchscreen devices, `mouseReleased()` will run when a user’s touch
-   * ends if <a href="#/p5/touchEnded">touchEnded()</a> isn’t declared. If
-   * <a href="#/p5/touchEnded">touchEnded()</a> is declared, then
-   * <a href="#/p5/touchEnded">touchEnded()</a> will run when a user’s touch
-   * ends and `mouseReleased()` won’t.
+   * ends.
    *
    * Browsers may have default behaviors attached to various mouse events. For
    * example, some browsers highlight text when the user moves the mouse while
@@ -1401,11 +1382,6 @@ function mouse(p5, fn){
       if (executeDefault === false) {
         e.preventDefault();
       }
-    } else if (typeof context.touchEnded === 'function') {
-      executeDefault = context.touchEnded(e);
-      if (executeDefault === false) {
-        e.preventDefault();
-      }
     }
   };
 
@@ -1453,10 +1429,7 @@ function mouse(p5, fn){
    * ```
    *
    * On touchscreen devices, `mouseClicked()` will run when a user’s touch
-   * ends if <a href="#/p5/touchEnded">touchEnded()</a> isn’t declared. If
-   * <a href="#/p5/touchEnded">touchEnded()</a> is declared, then
-   * <a href="#/p5/touchEnded">touchEnded()</a> will run when a user’s touch
-   * ends and `mouseClicked()` won’t.
+   * ends.
    *
    * Browsers may have default behaviors attached to various mouse events. For
    * example, some browsers highlight text when the user moves the mouse while
