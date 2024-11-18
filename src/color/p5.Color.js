@@ -546,7 +546,7 @@ class Color {
       // Will do an imprecise conversion to 'HSL', not recommended
       //return to(this.color, 'hsl').coords[0] / 360 * this.maxes[this.mode][0];
       const hslColor = converter("hsl")(this.color); //Convert to HSL
-      console.log("If color mode isn't HSB||HSL", hslColor)
+      console.log("If color mode isn't HSB||HSL", hslColor);
       return (hslColor.h / 360) * this.maxes[this.mode][0]; //Access Hue channel and scale
     }
   }
@@ -561,15 +561,22 @@ class Color {
     * family; however, the saturaton is computed differently in each. 
     * The saturation in HSL is not interchangeable with the saturation 
     * from HSV, nor HSI. */
-   
+
   _getSaturation() {
     if (this.mode === constants.HSB || this.mode === constants.HSL) {
-      //return this.color.coords[1] / 100 * this.maxes[this.mode][1];
-      return this.color.s * this.maxes[this.mode][1];
+      if (typeof this.color.s == "undefined"){
+        //HSL or HSB colorMode, but input color is of different color space
+        //default to HSL colorMode for now
+        const hslColor = converter("hsl")(this.color);
+        return hslColor.s * this.maxes[this.mode][1];
+      } else {
+        console.log("The color mode is HSL or HSB")
+        return this.color.s * this.maxes[this.mode][1];
+      }
     } else {
       // Will do an imprecise conversion to 'HSL', not recommended
-      //return to(this.color, 'hsl').coords[1] / 100 * this.maxes[this.mode][1];
       const hslColor = converter("hsl")(this.color); //Convert to HSL
+      console.log("If color mode isn't HSB||HSL", hslColor);
       return hslColor.s * this.maxes[this.mode][1]; //Access Hue channel and scale
     }
   }
