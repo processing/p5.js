@@ -89,6 +89,12 @@ function font(p5, fn) {
       return this.pInst.textToPoints(...args);
     }
 
+    /**
+     * Load a font and returns a p5.Font instance. The font can be specified by its path or a url.
+     * Optional arguments include the font name, descriptors for the FontFace object, and callbacks for success and error.
+     * @param  {...any} args - path, name, onSuccess, onError, descriptors
+     * @returns a Promise that resolves with a p5.Font instance
+     */
     static async create(...args/*path, name, onSuccess, onError, descriptors*/) {
 
       let { path, name, success, error, descriptors } = parseCreateArgs(...args);

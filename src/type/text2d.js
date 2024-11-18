@@ -236,6 +236,7 @@ function text2d(p5, fn) {
   // setters/getters for text properties //////////////////////////
 
   p5.Renderer2D.prototype.textAlign = function (h, v) {
+    
     // the setter
     if (typeof h !== 'undefined') {
       this.states.textAlign = h;
