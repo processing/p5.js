@@ -468,7 +468,7 @@ class RendererGL extends Renderer {
         this.shapeBuilder.geometry,
         this.shapeBuilder.shapeMode
       );
-    } else if (this.states.doFill || this.states.doStroke) {
+    } else if (this.states.fillColor || this.states.strokeColor) {
       this._drawGeometry(
         this.shapeBuilder.geometry,
         { mode: this.shapeBuilder.shapeMode, count }
@@ -509,14 +509,14 @@ class RendererGL extends Renderer {
     }
 
     if (
-      this.states.doFill &&
+      this.states.fillColor &&
       geometry.vertices.length >= 3 &&
       ![constants.LINES, constants.POINTS].includes(mode)
     ) {
       this._drawFills(geometry, { mode, count });
     }
 
-    if (this.states.doStroke && geometry.lineVertices.length >= 1) {
+    if (this.states.strokeColor && geometry.lineVertices.length >= 1) {
       this._drawStrokes(geometry, { count });
     }
 
@@ -967,7 +967,7 @@ class RendererGL extends Renderer {
     super.fill(...args);
     //see material.js for more info on color blending in webgl
     // const color = fn.color.apply(this._pInst, arguments);
-    const color = this._pInst.color(...args);
+    const color = this.states.fillColor;
     this.states.curFillColor = color._array;
     this.states.drawMode = constants.FILL;
     this.states._useNormalMaterial = false;
@@ -1006,8 +1006,7 @@ class RendererGL extends Renderer {
   stroke(...args) {
     super.stroke(...args);
     // const color = fn.color.apply(this._pInst, arguments);
-    const color = this._pInst.color(...args);
-    this.states.curStrokeColor = color._array;
+    this.states.curStrokeColor = this.states.strokeColor._array;
   }
 
   strokeCap(cap) {
@@ -1097,7 +1096,7 @@ class RendererGL extends Renderer {
       this.matchSize(tmp, target);
       // setup
       this.push();
-      this.states.doStroke = false;
+      this.states.strokeColor = false;
       this.blendMode(constants.BLEND);
 
       // draw main to temp buffer
@@ -1131,7 +1130,7 @@ class RendererGL extends Renderer {
     // every other non-blur shader uses single pass
     else {
       fbo.draw(() => {
-        this.states.doStroke = false;
+        this.states.strokeColor = false;
         this.blendMode(constants.BLEND);
         this.shader(this.states.filterShader);
         this.states.filterShader.setUniform('tex0', target);
@@ -1147,7 +1146,7 @@ class RendererGL extends Renderer {
     }
     // draw fbo contents onto main renderer.
     this.push();
-    this.states.doStroke = false;
+    this.states.strokeColor = false;
     this.clear();
     this.push();
     this.states.imageMode = constants.CORNER;
@@ -1260,8 +1259,8 @@ class RendererGL extends Renderer {
 
     this.push();
     this.resetShader();
-    if (this.states.doFill) this.fill(0, 0);
-    if (this.states.doStroke) this.stroke(0, 0);
+    if (this.states.fillColor) this.fill(0, 0);
+    if (this.states.strokeColor) this.stroke(0, 0);
   }
 
   endClip() {
@@ -2038,7 +2037,8 @@ class RendererGL extends Renderer {
     newFramebuffer.draw(() => {
       this.shader(this.states.diffusedShader);
       this.states.diffusedShader.setUniform('environmentMap', input);
-      this.states.doStroke = false;
+      this.states.strokeColor = false;
+      this.rectMode(constants.CENTER);
       this.noLights();
       this.plane(width, height);
     });
@@ -2089,7 +2089,7 @@ class RendererGL extends Renderer {
         this.clear();
         this.states.specularShader.setUniform('environmentMap', input);
         this.states.specularShader.setUniform('roughness', roughness);
-        this.states.doStroke = false;
+        this.states.strokeColor = false;
         this.noLights();
         this.plane(w, w);
       });

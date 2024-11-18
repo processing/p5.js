@@ -538,11 +538,11 @@ p5.Font = class Font {
     }
 
     // only draw stroke if manually set by user
-    if (pg.states.doStroke && pg.states.strokeSet && !pg._clipping) {
+    if (pg.states.strokeColor && pg.states.strokeSet && !pg._clipping) {
       ctx.stroke();
     }
 
-    if (pg.states.doFill && !pg._clipping) {
+    if (pg.states.fillColor && !pg._clipping) {
     // if fill hasn't been set by user, use default-text-fill
       if (!pg.states.fillSet) {
         pg._setFill(constants._DEFAULT_TEXT_FILL);

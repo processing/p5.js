@@ -325,7 +325,7 @@ p5.prototype.loadFont = async function(path, onSuccess, onError) {
  */
 p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   p5._validateParameters('text', arguments);
-  return !(this._renderer.states.doFill || this._renderer.states.doStroke)
+  return !(this._renderer.states.fillColor || this._renderer.states.strokeColor)
     ? this
     : this._renderer.text(...arguments);
 };

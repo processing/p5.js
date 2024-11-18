@@ -2250,7 +2250,7 @@ function primitives3D(p5, fn){
 
       if (detail <= 50) {
         arcGeom._edgesToVertices(arcGeom);
-      } else if (this.states.doStroke) {
+      } else if (this.states.strokeColor) {
         console.log(
           `Cannot apply a stroke to an ${shape} with more than 50 detail`
         );
@@ -3179,7 +3179,7 @@ function primitives3D(p5, fn){
 
     this.push();
     this.noLights();
-    this.states.doStroke = false;;
+    this.states.strokeColor = false;;
 
     this.texture(img);
     this.states.textureMode = constants.NORMAL;
@@ -3366,7 +3366,7 @@ function primitives3D(p5, fn){
       planeGeom.computeFaces().computeNormals();
       if (detailX <= 1 && detailY <= 1) {
         planeGeom._makeTriangleEdges()._edgesToVertices();
-      } else if (this.states.doStroke) {
+      } else if (this.states.strokeColor) {
         console.log(
           'Cannot draw stroke on plane objects with more' +
           ' than 1 detailX or 1 detailY'
@@ -3446,7 +3446,7 @@ function primitives3D(p5, fn){
       boxGeom.computeNormals();
       if (detailX <= 4 && detailY <= 4) {
         boxGeom._edgesToVertices();
-      } else if (this.states.doStroke) {
+      } else if (this.states.strokeColor) {
         console.log(
           'Cannot draw stroke on box objects with more' +
           ' than 4 detailX or 4 detailY'
@@ -3502,7 +3502,7 @@ function primitives3D(p5, fn){
       ellipsoidGeom.computeFaces();
       if (detailX <= 24 && detailY <= 24) {
         ellipsoidGeom._makeTriangleEdges()._edgesToVertices();
-      } else if (this.states.doStroke) {
+      } else if (this.states.strokeColor) {
         console.log(
           'Cannot draw stroke on ellipsoids with more' +
           ' than 24 detailX or 24 detailY'
@@ -3539,7 +3539,7 @@ function primitives3D(p5, fn){
       // normals are computed in call to _truncatedCone
       if (detailX <= 24 && detailY <= 16) {
         cylinderGeom._makeTriangleEdges()._edgesToVertices();
-      } else if (this.states.doStroke) {
+      } else if (this.states.strokeColor) {
         console.log(
           'Cannot draw stroke on cylinder objects with more' +
           ' than 24 detailX or 16 detailY'
@@ -3565,7 +3565,7 @@ function primitives3D(p5, fn){
       _truncatedCone.call(coneGeom, 1, 0, 1, detailX, detailY, cap, false);
       if (detailX <= 24 && detailY <= 16) {
         coneGeom._makeTriangleEdges()._edgesToVertices();
-      } else if (this.states.doStroke) {
+      } else if (this.states.strokeColor) {
         console.log(
           'Cannot draw stroke on cone objects with more' +
           ' than 24 detailX or 16 detailY'
@@ -3628,7 +3628,7 @@ function primitives3D(p5, fn){
       torusGeom.computeFaces();
       if (detailX <= 24 && detailY <= 16) {
         torusGeom._makeTriangleEdges()._edgesToVertices();
-      } else if (this.states.doStroke) {
+      } else if (this.states.strokeColor) {
         console.log(
           'Cannot draw strokes on torus object with more' +
           ' than 24 detailX or 16 detailY'
