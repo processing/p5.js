@@ -239,16 +239,16 @@ class Color {
   //colours to strings in various formats
   toString(format) {
     switch (format) {
-      case "hex":
+      case "hex": //cover cases #rgb | #rgba | #rrggbb
         return formatHex(this.color);
-      case "hex8":
+      case "hex8": //cover case #rrggbbaa
         return formatHex8(this.color);
-      case "rgb":
+      case "rgb": //cover cases  rgb and rgba
         return formatRgb(this.color);
-      case "hsl":
+      case "hsl": //cover case hsl and hsla
         return formatHsl(this.color);
-      case "css":
-        return formatCss(this.color); //not sure of the use for CSS here
+      case "css": //returns color mode and normalized color values
+        return formatCss(this.color); 
       default:
         // Fallback to a default format, like RGB
         return formatRgb(this.color);

@@ -17,15 +17,32 @@
   <body>
     <script type="module">
       import p5 from "../src/app.js";
+      import {Color} from "../src/color/p5.Color.js"
 
       const sketch = function (p) {
         p.setup = function () {
           p.createCanvas(600, 600);
-          //p.background(200);
+          p.background(200);
           //p.colorMode('hsl');
+          // Test the Color class
+          const rgbColor = new Color([255, 100, 50, 1], "rgb");
+          const rgbColor2 = new Color([30, 1, 0.5, 0.5], "rgb");
+          const cssColor = new Color(["darkorchid"]);
+
+          console.log("RGB Color:", rgbColor.color);
+          console.log("RGB Color:", rgbColor2.color);
+          console.log("CSS Color:", cssColor.color);
+
+          console.log("RGB as String (hex):", rgbColor.toString("hex"));
+          console.log("RGB as String (rgb):", rgbColor2.toString("hsl"));
+          console.log("CSS as String (default):", cssColor.toString("css"));
+
+          //Testing toString
+          //let myColor = p.color('darkorchid');
+          //console.log ('this is the color object', myColor);
+          //console.log('this is the string', p.toString(myColor))
 
           //Testing interpolation
-       
           //let from = p.color(50, 55, 100);
           //let to = p.color('hsl(160, 100%, 50%)');
 
@@ -71,12 +88,6 @@
           p.textSize(50);
           p.text("hello", 200, 80);
           // The background goes from white to red to green to blue fill
-          p.background(p.paletteLerp([
-            ['rgb(0,255,0)', 0],
-            ['red', 0.05],
-            ['green', 0.25],
-            ['blue', 1]
-          ], p.millis() / 10000 % 1));
         };
       };
 
