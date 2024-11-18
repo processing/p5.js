@@ -72,6 +72,22 @@
       };
     };
 
+    const singleWideLine = function (p) {
+      let x = 20, y = 10, w = 350, h = 24;
+      let s, bb, suf = 'the-text-is-gonna-extend-beyond-the-max-width';
+      p.setup = function () {
+        p.createCanvas(450, 100);
+        p.noFill() && p.rect(x, y, w, h);
+        p.textSize(20).textLeading(22).fill(0).text(suf, x, y, w, h);
+
+        y += 40;
+        h += 20;
+        suf = 'the ' + suf;
+        p.noFill() && p.rect(x, y, w, h);
+        p.textSize(20).textLeading(22).fill(0).text(suf, x, y, w, h);
+      };
+    };
+
     const fontStretchViaProp = function (p) {
       let url = 'url(https://fonts.gstatic.com/s/inconsolata/v31/QlddNThLqRwH-OJ1UHjlKENVzlm-WkL3GZQmAwPyya15.woff2) format("woff2")';
       let opts = ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'];
@@ -606,7 +622,7 @@
 
       };
     };
-    
+
     let loadedSystemBoundsMulti = function (p) {
       let x, y, w = 300, h = 70, showBB = 1, font;
       let s, suf = 'text gonna wrap when it gets too long and is then breaking.';
@@ -1590,7 +1606,7 @@
         let x = p.width / 2, y = p.height / 4 + 20;
 
         p.textDirection(p.RIGHT_TO_LEFT);
-        
+
         p.textSize(200).textAlign(p.CENTER).noStroke().fill(0).text(str, x, y);
 
         bb = p.textBounds(str, x, y);
@@ -1983,6 +1999,7 @@
     new p5(textStyleSketch, 'textStyleSketch');
     new p5(textWidthSketch, 'textWidthSketch');
     new p5(typographyLetterSketch, 'typographyLetterSketch');
+    new p5(singleWideLine, 'singleWideLine');
     new p5(textOverlapSketch, 'textOverlapSketch');
   </script>
 
@@ -2163,6 +2180,10 @@
     <p class="caption">typographyGrid</p>
     <img src="img/typographyLetterSketch.png" width="720" height="320"></img>
     <img src="img/typographyLetterSketch.p5.png" width="720" height="320"></img>
+  </div>
+
+  <div id='singleWideLine'>
+    <p class="caption">singleWideLine </p>
   </div>
 
   <div id='textOverlapSketch'>
