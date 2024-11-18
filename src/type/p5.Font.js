@@ -4,9 +4,9 @@
  *    loadFont("{ font-family: "Bricolage Grotesque", serif; font-optical-sizing: auto; font-weight: <weight> font-style: normal; font-variation-settings: "wdth" 100; });
  *    loadFont({ 
  *        fontFamily: '"Bricolage Grotesque", serif'; 
- *        fontOpticalSizing: 'auto'; 
- *        fontWeight: '<weight>'; 
- *        fontStyle: 'normal'; 
+ *        fontOpticalSizing: 'auto';
+ *        fontWeight: '<weight>';
+ *        fontStyle: 'normal';
  *        fontVariationSettings: '"wdth" 100'; 
  *    });
  *    loadFont("https://fonts.gstatic.com/s/bricolagegrotesque/v1/pxiAZBhjZQIdd8jGnEotWQ.woff2");

@@ -45,6 +45,8 @@ function text2d(p5, fn) {
   const TabsRe = /\t/g;
   const RendererProp = 0;
   const Context2dProp = 1;
+  const VariableAxes = ['wght', 'wdth', 'ital', 'slnt', 'opsz'];
+  const VariableAxesRe = new RegExp(`(?:${VariableAxes.join('|')})`);
 
   const textFunctions = [
     'text',
@@ -77,6 +79,18 @@ function text2d(p5, fn) {
       return this._renderer[func](...args);
     };
   });
+
+  const FontStretchMap = {
+    "ultra-condensed": 50,
+    "extra-condensed": 62.5,
+    "condensed": 75,
+    "semi-condensed": 87.5,
+    "normal": 100,
+    "semi-expanded": 112.5,
+    "expanded": 125,
+    "extra-expanded": 150,
+    "ultra-expanded": 200,
+  };
 
   const RendererTextProps = {
     textAlign: Context2dProp,
@@ -236,7 +250,7 @@ function text2d(p5, fn) {
   // setters/getters for text properties //////////////////////////
 
   p5.Renderer2D.prototype.textAlign = function (h, v) {
-    
+
     // the setter
     if (typeof h !== 'undefined') {
       this.states.textAlign = h;
@@ -499,22 +513,76 @@ function text2d(p5, fn) {
   /*
     Attempts to set a property directly on the canvas.style object
   */
-  p5.Renderer2D.prototype._setCanvasStyleProperty = function (opt, val) {
+  p5.Renderer2D.prototype._setCanvasStyleProperty = function (opt, val, debug) {
 
     let value = val.toString(); // ensure its a string
+
+    //if (debug) console.log('setting canvas.style.' + opt + '="' + value + '"');
+
+    if (opt === 'fontVariationSettings') {
+      this._handleFontVariationSettings(value);
+    }
 
     // lets try to set it on the canvas style
     this.canvas.style[opt] = value;
 
     // check if the value was set successfully
     if (this.canvas.style[opt] !== value) {
-      
+
       // fails on precision for floating points, also quotes and spaces
 
-      // console.warn(`Unable to set '${opt}' property` // FES?
-      //   + ' on canvas.style. It may not be supported.', "'"+this.canvas.style[opt]+"'");
+      if (0) console.warn(`Unable to set '${opt}' property` // FES?
+        + ' on canvas.style. It may not be supported. Expected "'
+        + value + '" but got: "' + this.canvas.style[opt] + "'");
     }
   };
+
+  p5.Renderer2D.prototype._handleFontVariationSettings = function (value, debug = false) {
+    // check if the value is a string or an object
+    if (typeof value === 'object') {
+      value = Object.keys(value).map(k => k + ' ' + value[k]).join(', ');
+    }
+    let values = value.split(CommaDelimRe);
+    values.forEach(v => {
+      v = v.replace(/["']/g, ''); // remove quotes
+      let matches = VariableAxesRe.exec(v);
+      //console.log('matches: ', matches);
+      if (matches && matches.length) {
+        let axis = matches[0];
+        // get the value to 3 digits of precision with no trailing zeros
+        let val = parseFloat(parseFloat(v.replace(axis, '').trim()).toFixed(3));
+        switch (axis) {
+          case 'wght':
+            if (debug) console.log('setting font-weight=' + val);
+            // manually set the font-weight via the font string
+            this.states.fontWeight = val;
+            return val;
+          case 'wdth':
+            if (0) { // attempt to map font-stretch to allowed keywords
+              let values = Object.values(FontStretchMap);
+              const indexArr = values.map(function (k) { return Math.abs(k - val) })
+              const min = Math.min.apply(Math, indexArr)
+              let idx = indexArr.indexOf(min);
+              let stretch = Object.keys(FontStretchMap)[idx];
+              this.states.fontStretch = stretch;
+            }
+            break;
+          case 'ital':
+            if (debug) console.log('setting font-style=' + (val ? 'italic' : 'normal'));
+            break;
+          case 'slnt':
+            if (debug) console.log('setting font-style=' + (val ? 'oblique' : 'normal'));
+            break;
+          case 'opsz':
+            if (debug) console.log('setting font-optical-size=' + val);
+            break;
+        }
+      }
+    });
+  };
+
+
+
 
   /*
     For properties not directly managed by the renderer in this.states
