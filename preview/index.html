@@ -21,33 +21,33 @@
       const sketch = function (p) {
         p.setup = function () {
           p.createCanvas(600, 600);
-          p.background(200);
-          p.colorMode('hsl');
+          //p.background(200);
+          //p.colorMode('hsl');
 
           //Testing interpolation
        
-          let from = p.color('hsl(305, 69%,53%)');
-          let to = p.color('hsl(160, 100%, 50%)');
+          //let from = p.color(50, 55, 100);
+          //let to = p.color('hsl(160, 100%, 50%)');
 
-          let interA = p.lerpColor(from, to, 0.33);
-          let interB = p.lerpColor(from, to, 0.66);
+          //let interA = p.lerpColor(from, to, 0.33);
+          //let interB = p.lerpColor(from, to, 0.66);
 
           // Draw the left rectangle.
-          p.noStroke();
-          p.fill(from);
-          p.rect(10, 20, 20, 60);
+          //p.noStroke();
+          //p.fill(from);
+          //p.rect(10, 20, 20, 60);
 
           // Draw the left-center rectangle.
-          p.fill(interA);
-          p.rect(30, 20, 20, 60);
+          //p.fill(interA);
+          //p.rect(30, 20, 20, 60);
 
           // Draw the right-center rectangle.
-          p.fill(interB);
-          p.rect(50, 20, 20, 60);
+          //p.fill(interB);
+          //p.rect(50, 20, 20, 60);
 
           // Draw the right rectangle.
-          p.fill(to);
-          p.rect(70, 20, 20, 60);
+          //p.fill(to);
+          //p.rect(70, 20, 20, 60);
 
           //let c1 = p.color('hsl(160, 100%, 50%)');
           //let c = [250, 100, 200];
@@ -70,6 +70,13 @@
           //p.fill('hsb(160, 100%, 50%)'); //hsb seems to be having issues to render
           p.textSize(50);
           p.text("hello", 200, 80);
+          // The background goes from white to red to green to blue fill
+          p.background(p.paletteLerp([
+            ['rgb(0,255,0)', 0],
+            ['red', 0.05],
+            ['green', 0.25],
+            ['blue', 1]
+          ], p.millis() / 10000 % 1));
         };
       };
 

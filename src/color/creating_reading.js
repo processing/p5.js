@@ -1003,7 +1003,7 @@ function creatingReading(p5, fn) {
    * </code>
    * </div>
    */
-  
+
   // fn.lerpColor = function(c1, c2, amt) {
   //   p5._validateParameters('lerpColor', arguments);
 
@@ -1057,6 +1057,64 @@ function creatingReading(p5, fn) {
 
     // Return the new p5.Color object with the interpolated color
     return new p5.Color(lerpColor, this._colorMode, this._colorMaxes);
+  };
+
+  /**
+ * Blends multiple colors to find a color between them.
+ *
+ * The `amt` parameter specifies the amount to interpolate between the color
+ * stops which are colors at each `amt` value "location" with `amt` values
+ * that are between 2 color stops interpolating between them based on its relative
+ * distance to both.
+ *
+ * The way that colors are interpolated depends on the current
+ * <a href="#/colorMode">colorMode()</a>.
+ *
+ * @method paletteLerp
+ * @param  {[p5.Color, Number][]} colors_stops color stops to interpolate from
+ * @param  {Number} amt number to use to interpolate relative to color stops
+ * @return {p5.Color} interpolated color.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(400, 400);
+ * }
+ *
+ * function draw() {
+ *   // The background goes from white to red to green to blue fill
+ *   background(paletteLerp([
+ *     ['white', 0],
+ *     ['red', 0.05],
+ *     ['green', 0.25],
+ *     ['blue', 1]
+ *   ], millis() / 10000 % 1));
+ * }
+ * </code>
+ * </div>
+ */
+
+  fn.paletteLerp = function (color_stops, amt) {
+    const first_color_stop = color_stops[0];
+    console.log ("This is first color stop", first_color_stop);
+
+    if (amt < first_color_stop[1])
+      return this.color(first_color_stop[0]);
+  
+    for (let i = 1; i < color_stops.length; i++) {
+      const color_stop = color_stops[i];
+      if (amt < color_stop[1]) {
+        const prev_color_stop = color_stops[i - 1];
+        return this.lerpColor(
+          this.color(prev_color_stop[0]),
+          this.color(color_stop[0]),
+          (amt - prev_color_stop[1]) / (color_stop[1] - prev_color_stop[1])
+        );
+      }
+    }
+  
+    return this.color(color_stops[color_stops.length - 1][0]);
   };
 
   /**
