@@ -172,6 +172,13 @@ class Renderer {
     this.states.strokeColor = null;
   }
 
+  vertexProperties() {
+    return {
+      stroke: this.states.strokeColor,
+      fill: this.states.fillColor,
+    }
+  }
+
   textSize(s) {
     if (typeof s === 'number') {
       this.states.textSize = s;
