@@ -556,6 +556,12 @@ class Color {
    * the HSB saturation when supplied with an HSB color object, but will default
    * to the HSL saturation otherwise.
    */
+
+    /**According to Culori.js The hue is identical across all color models in this 
+    * family; however, the saturaton is computed differently in each. 
+    * The saturation in HSL is not interchangeable with the saturation 
+    * from HSV, nor HSI. */
+   
   _getSaturation() {
     if (this.mode === constants.HSB || this.mode === constants.HSL) {
       //return this.color.coords[1] / 100 * this.maxes[this.mode][1];
@@ -585,10 +591,12 @@ class Color {
   _getLightness() {
     if (this.mode === constants.HSL) {
       //return this.color.coords[2] / 100 * this.maxes[this.mode][2];
-      return this.color.l * this.maxes[this.mode][2];
+      console.log("The color mode is HSL", this.color)
+      return (this.color.l) * this.maxes[this.mode][2];
     } else {
       // Will do an imprecise conversion to 'HSL', not recommended
       //return to(this.color, 'hsl').coords[2] / 100 * this.maxes[this.mode][2];
+      console.log("The color mode is not HSL")
       const hslColor = converter("hsl")(this.color); //Convert to HSL
       return hslColor.l * this.maxes[this.mode][2]; //Access Lightness channel and scale
     }

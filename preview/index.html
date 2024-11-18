@@ -17,69 +17,28 @@
   <body>
     <script type="module">
       import p5 from "../src/app.js";
-      import {Color} from "../src/color/p5.Color.js"
 
       const sketch = function (p) {
         p.setup = function () {
           p.createCanvas(600, 600);
-          p.background(200);
-          //p.colorMode('hsl');
-          // Test the Color class
-          const rgbColor = new Color([255, 100, 50, 1], "rgb");
-          const rgbColor2 = new Color([30, 1, 0.5, 0.5], "rgb");
-          const cssColor = new Color(["darkorchid"]);
-
-          console.log("RGB Color:", rgbColor.color);
-          console.log("RGB Color:", rgbColor2.color);
-          console.log("CSS Color:", cssColor.color);
-
-          console.log("RGB as String (hex):", rgbColor.toString("hex"));
-          console.log("RGB as String (rgb):", rgbColor2.toString("hsl"));
-          console.log("CSS as String (default):", cssColor.toString("css"));
-
-          //Testing toString
-          //let myColor = p.color('darkorchid');
-          //console.log ('this is the color object', myColor);
-          //console.log('this is the string', p.toString(myColor))
-
-          //Testing interpolation
-          //let from = p.color(50, 55, 100);
-          //let to = p.color('hsl(160, 100%, 50%)');
-
-          //let interA = p.lerpColor(from, to, 0.33);
-          //let interB = p.lerpColor(from, to, 0.66);
+          p.background(50);
+          p.colorMode('hsl');
+          // Create a p5.Color object using HSL values.
+          let c = [0, 100, 75];
 
           // Draw the left rectangle.
-          //p.noStroke();
-          //p.fill(from);
-          //p.rect(10, 20, 20, 60);
+          p.noStroke();
+          p.fill(c);
+          p.rect(15, 15, 35, 70);
 
-          // Draw the left-center rectangle.
-          //p.fill(interA);
-          //p.rect(30, 20, 20, 60);
-
-          // Draw the right-center rectangle.
-          //p.fill(interB);
-          //p.rect(50, 20, 20, 60);
+          // Set 'lightValue' to 75.
+          let lightValue = p.lightness(c);
+          console.log("This is the 'l' value", lightValue)
 
           // Draw the right rectangle.
-          //p.fill(to);
-          //p.rect(70, 20, 20, 60);
-
-          //let c1 = p.color('hsl(160, 100%, 50%)');
-          //let c = [250, 100, 200];
-          //let c = 'rgb(170, 128, 128)'; //triggers 'invalid color string'
-          //p.noStroke();
-          //p.fill(c);
-          //p.rect(100, 150, 90, 150);
-
-          //let c2 = p.color('hsla(160, 100%, 50%, 0.5)');
-          //let c2 = p.color('rgba(0, 0, 255, 0.1)');
-          //let c2 = p.color('hsba(160, 100%, 50%, 0.5)'); //triggers 'invalid color string'
-          //let redValue = p.red(c);
-          //let hueValue = p.hue(c);
-          //p.fill(hueValue, 100, 90);
-          // p.rect(200, 150, 90, 150);
+          //p.colorMode('rgb')
+          p.fill(lightValue);
+          p.rect(50, 15, 35, 70);
         };
 
         p.draw = function () {
