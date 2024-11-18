@@ -1559,7 +1559,7 @@ class Framebuffer {
       this.renderer.states.imageMode = constants.CORNER;
       this.renderer.setCamera(this.filterCamera);
       this.renderer.resetMatrix();
-      this.renderer.states.doStroke = false;
+      this.renderer.states.strokeColor = false;
       this.renderer.clear();
       this.renderer._drawingFilter = true;
       this.renderer.image(

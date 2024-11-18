@@ -1529,7 +1529,7 @@ function vertex(p5, fn){
       if (vertices.length === 0) {
         return this;
       }
-      if (!this._renderer.states.doStroke && !this._renderer.states.doFill) {
+      if (!this._renderer.states.strokeColor && !this._renderer.states.fillColor) {
         return this;
       }
 

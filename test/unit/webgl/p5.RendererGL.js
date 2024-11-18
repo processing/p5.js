@@ -141,21 +141,21 @@ suite('p5.RendererGL', function() {
     test('check activate and deactivating fill and stroke', function() {
       myp5.noStroke();
       assert(
-        !myp5._renderer.states.doStroke,
+        !myp5._renderer.states.strokeColor,
         'stroke shader still active after noStroke()'
       );
-      assert.isTrue(
-        myp5._renderer.states.doFill,
+      assert(
+        !myp5._renderer.states.doFill,
         'fill shader deactivated by noStroke()'
       );
       myp5.stroke(0);
       myp5.noFill();
       assert(
-        myp5._renderer.states.doStroke,
+        !!myp5._renderer.states.strokeColor,
         'stroke shader not active after stroke()'
       );
       assert.isTrue(
-        !myp5._renderer.states.doFill,
+        !myp5._renderer.states.fillColor,
         'fill shader still active after noFill()'
       );
     });

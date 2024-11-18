@@ -260,7 +260,7 @@ export class ShapeBuilder {
   _processVertices(mode) {
     if (this.geometry.vertices.length === 0) return;
 
-    const calculateStroke = this.renderer.states.doStroke;
+    const calculateStroke = this.renderer.states.strokeColor;
     const shouldClose = mode === constants.CLOSE;
     if (calculateStroke) {
       this.geometry.edges = this._calculateEdges(
@@ -280,7 +280,7 @@ export class ShapeBuilder {
     const hasContour = this.contourIndices.length > 0;
     // We tesselate when drawing curves or convex shapes
     const shouldTess =
-      this.renderer.states.doFill &&
+      this.renderer.states.fillColor &&
       (
         this.isBezier ||
         this.isQuadratic ||

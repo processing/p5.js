@@ -2953,7 +2953,7 @@ function material(p5, fn){
     this._renderer.states.curAmbientColor = color._array;
     this._renderer.states._useNormalMaterial = false;
     this._renderer.states.enableLighting = true;
-    this._renderer.states.doFill = true;
+    this._renderer.states.fillColor = true;
     return this;
   };
 
@@ -3650,7 +3650,7 @@ function material(p5, fn){
     this.states.drawMode = constants.TEXTURE;
     this.states._useNormalMaterial = false;
     this.states._tex = tex;
-    this.states.doFill = true;
+    this.states.fillColor = true;
   };
 
   RendererGL.prototype.normalMaterial = function(...args) {
@@ -3659,8 +3659,8 @@ function material(p5, fn){
     this.states._useEmissiveMaterial = false;
     this.states._useNormalMaterial = true;
     this.states.curFillColor = [1, 1, 1, 1];
-    this.states.doFill = true;
-    this.states.doStroke = false;
+    this.states.fillColor = true;
+    this.states.strokeColor = false;
   }
 
   // RendererGL.prototype.ambientMaterial = function(v1, v2, v3) {

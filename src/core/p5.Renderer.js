@@ -4,6 +4,7 @@
  * @for p5
  */
 
+import { Color } from '../color/p5.Color';
 import * as constants from '../core/constants';
 import { Image } from '../image/p5.Image';
 
@@ -25,9 +26,9 @@ class Renderer {
 
     // Renderer state machine
     this.states = {
-      doStroke: true,
+      strokeColor: new Color([0, 0, 0]),
       strokeSet: false,
-      doFill: true,
+      fillColor: new Color([255, 255, 255]),
       fillSet: false,
       tint: null,
       imageMode: constants.CORNER,
@@ -153,14 +154,22 @@ class Renderer {
 
   }
 
-  fill() {
+  fill(...args) {
     this.states.fillSet = true;
-    this.states.doFill = true;
+    this.states.fillColor = this._pInst.color(...args);
   }
 
-  stroke() {
+  noFill() {
+    this.states.fillColor = null;
+  }
+
+  stroke(...args) {
     this.states.strokeSet = true;
-    this.states.doStroke = true;
+    this.states.strokeColor = this._pInst.color(...args);
+  }
+
+  noStroke() {
+    this.states.strokeColor = null;
   }
 
   textSize(s) {
@@ -254,7 +263,7 @@ class Renderer {
     // fix for #5785 (top of bounding box)
     let finalMinHeight = y;
 
-    if (!(this.states.doFill || this.states.doStroke)) {
+    if (!(this.states.fillColor || this.states.strokeColor)) {
       return;
     }
 

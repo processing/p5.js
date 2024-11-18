@@ -87,12 +87,12 @@ class GeometryBuilder {
       this.geometry.vertexProperty(propName, data, size);
     }
 
-    if (this.renderer.states.doFill) {
+    if (this.renderer.states.fillColor) {
       this.geometry.faces.push(
         ...input.faces.map(f => f.map(idx => idx + startIdx))
       );
     }
-    if (this.renderer.states.doStroke) {
+    if (this.renderer.states.strokeColor) {
       this.geometry.edges.push(
         ...input.edges.map(edge => edge.map(idx => idx + startIdx))
       );
@@ -111,7 +111,7 @@ class GeometryBuilder {
   addImmediate(geometry, shapeMode) {
     const faces = [];
 
-    if (this.renderer.states.doFill) {
+    if (this.renderer.states.fillColor) {
       if (
         shapeMode === constants.TRIANGLE_STRIP ||
         shapeMode === constants.QUAD_STRIP

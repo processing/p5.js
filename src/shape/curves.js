@@ -205,7 +205,7 @@ function curves(p5, fn){
 
     // if the current stroke and fill settings wouldn't result in something
     // visible, exit immediately
-    if (!this._renderer.states.doStroke && !this._renderer.states.doFill) {
+    if (!this._renderer.states.strokeColor && !this._renderer.states.fillColor) {
       return this;
     }
 
@@ -758,7 +758,7 @@ function curves(p5, fn){
   fn.curve = function(...args) {
     p5._validateParameters('curve', args);
 
-    if (this._renderer.states.doStroke) {
+    if (this._renderer.states.strokeColor) {
       this._renderer.curve(...args);
     }
 
