@@ -1007,6 +1007,13 @@ class RendererGL extends Renderer {
     this.states.curStrokeColor = this.states.strokeColor._array;
   }
 
+  vertexProperties() {
+    return {
+      ...super.vertexProperties(),
+      normal: this.states._currentNormal,
+    }
+  }
+
   strokeCap(cap) {
     this.curStrokeCap = cap;
   }
