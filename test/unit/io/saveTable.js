@@ -32,7 +32,6 @@ suite('saveTable', function() {
     mockP5Prototype.saveTable(myTable, 'filename');
 
     // TODO: Need comprehensive way to compare blobs in spy call
-    const saveData = new Blob(['hello']);
     expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
     expect(fileSaver.saveAs)
       .toHaveBeenCalledWith(
@@ -45,7 +44,6 @@ suite('saveTable', function() {
     mockP5Prototype.saveTable(myTable, 'filename', 'tsv');
 
     // TODO: Need comprehensive way to compare blobs in spy call
-    const saveData = new Blob(['hello']);
     expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
     expect(fileSaver.saveAs)
       .toHaveBeenCalledWith(
@@ -54,7 +52,16 @@ suite('saveTable', function() {
       );
   });
 
-  // TODO: Seems out of place
+  test('should download a file with expected contents (html)', async () => {
+    mockP5Prototype.saveTable(myTable, 'filename', 'html');
+
+    expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
+    expect(fileSaver.saveAs)
+      .toHaveBeenCalledWith(
+        expect.any(Blob),
+        'filename.html'
+      );
+  });
   // testWithDownload(
   //   'should download a file with expected contents (html)',
   //   async function(blobContainer) {
