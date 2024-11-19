@@ -8,8 +8,7 @@ import tableRow from '../../../src/io/p5.TableRow';
 vi.mock('file-saver');
 
 suite('saveTable', function() {
-  let validFile = '/test/unit/assets/csv.csv';
-  let myp5;
+  const validFile = '/test/unit/assets/csv.csv';
   let myTable;
 
   beforeAll(async function() {

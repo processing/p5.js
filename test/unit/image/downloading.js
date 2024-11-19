@@ -172,33 +172,6 @@ suite('Downloading', () => {
   });
 
   suite('p5.prototype.saveGif', function() {
-    // let myp5;
-
-    // let waitForBlob = async function(blc) {
-    //   let sleep = function(ms) {
-    //     return new Promise(r => setTimeout(r, ms));
-    //   };
-    //   while (!blc.blob) {
-    //     await sleep(5);
-    //   }
-    // };
-
-    // beforeAll(function() {
-    //   return new Promise(resolve => {
-    //     new p5(function(p) {
-    //       p.setup = function() {
-    //         myp5 = p;
-    //         p.createCanvas(10, 10);
-    //         resolve();
-    //       };
-    //     });
-    //   });
-    // });
-
-    // afterAll(function() {
-    //   myp5.remove();
-    // });
-
     test('should be a function', function() {
       assert.ok(mockP5Prototype.saveGif);
       assert.typeOf(mockP5Prototype.saveGif, 'function');
