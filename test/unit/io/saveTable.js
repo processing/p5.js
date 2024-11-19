@@ -1,6 +1,3 @@
-// import p5 from '../../../src/app.js';
-// import { testWithDownload } from '../../js/p5_helpers';
-
 import { mockP5, mockP5Prototype } from '../../js/mocks';
 import * as fileSaver from 'file-saver';
 import { vi } from 'vitest';
