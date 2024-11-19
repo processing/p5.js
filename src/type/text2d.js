@@ -1,6 +1,6 @@
 
 /*
- *  NEXT: in variable-font.html, line 63 bug, then get axes and values from font, then test with other loading methods, then add sliders
+ *  NEXT: then get axes and values from font, then test with other loading methods, then add sliders
  *  TODO:
  *   - variable fonts
  *   - better font-loading (google fonts, font-face declarations, multiple fonts with Promise.all())
@@ -287,9 +287,19 @@ function text2d(p5, fn) {
     if (theFont instanceof p5.Font) {
       family = theFont.font.family;
     }
+    else if (theFont?._data instanceof Uint8Array) {
+      family = theFont.name.fontFamily;
+      console.log(theFont.name.fontSubfamily);
+      
+      if (theFont.name?.fontSubfamily) {
+        console.log('fontSubFamily: ', theFont.name.fontSubfamily);
+        
+        family += '-' + theFont.name.fontSubfamily;
+      }
+    }
 
     if (typeof family !== 'string') {
-      throw Error('null font passed to textFont');
+      throw Error('null font passed to textFont', theFont);
     }
 
     // update font properties in this.states
@@ -373,7 +383,8 @@ function text2d(p5, fn) {
 
   /**
    * Sets/gets a single text property for the renderer (eg. fontStyle, fontStretch, etc.)
-   * The property to be set can be a mapped or unmapped property on `this.states` or a property on `this.drawingContext` or on `this.canvas.style`
+   * The property to be set can be a mapped or unmapped property on `this.states` or a property 
+   * on `this.drawingContext` or on `this.canvas.style`
    * The property to get can exist in `this.states` or `this.drawingContext` or `this.canvas.style`
    */
   p5.Renderer2D.prototype.textProperty = function (prop, value, opts) {

@@ -25,6 +25,8 @@
       });
 */
 
+// pf.Font = {font, fontData, name, path}: font is either a string or a FontFace object, fontData is the optional 
+//  Typr raw font data, name is the font name, and path is the font path or url. ???
 function font(p5, fn) {
 
   const validFontTypes = ['ttf', 'otf', 'woff', 'woff2'];
@@ -53,7 +55,7 @@ function font(p5, fn) {
       return await Array.from(document.fonts);
     }
 
-    constructor(p, name, path, descriptors) {
+    constructor(p, name, path, descriptors) { // remove p
       //console.log('p5.Font', 'constructor', name, path, descriptors);
       if (!(p instanceof p5)) {
         throw Error('p5 instance is required');
