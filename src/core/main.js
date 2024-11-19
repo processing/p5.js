@@ -59,13 +59,9 @@ class p5 {
     this._initializeInstanceVariables();
     this._events = {
       // keep track of user-events for unregistering later
-      mousemove: null,
-      mousedown: null,
-      mouseup: null,
       pointerdown: null,
       pointerup: null,
       pointermove: null,
-      pointercancel:null,
       dragend: null,
       dragover: null,
       click: null,
@@ -84,8 +80,6 @@ class p5 {
     };
     this._millisStart = -1;
     this._recording = false;
-    this._touchstart = false;
-    this._touchend = false;
 
     // States used in the custom random generators
     this._lcg_random_state = null; // NOTE: move to random.js
