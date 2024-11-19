@@ -1,7 +1,6 @@
-// import p5 from '../../../src/app.js';
-// import { testSketchWithPromise, promisedSketch } from '../../js/p5_helpers';
 import { mockP5, mockP5Prototype, httpMock } from '../../js/mocks';
 import material from '../../../src/webgl/material';
+import { Shader } from '../../../src/webgl/p5.Shader';
 
 suite('loadShader', function() {
   const invalidFile = '404file';
@@ -58,37 +57,14 @@ suite('loadShader', function() {
     });
   });
 
-  // test('returns an object with correct data', async function() {
-  //   const shader = await promisedSketch(function(sketch, resolve, reject) {
-  //     var _shader;
-  //     sketch.preload = function() {
-  //       _shader = sketch.loadShader(vertFile, fragFile, function() {}, reject);
-  //     };
+  test('returns an object with correct data', async function() {
+    const shader = await mockP5Prototype.loadShader(vertFile, fragFile);
+    assert.instanceOf(shader, Shader);
+  });
 
-  //     sketch.setup = function() {
-  //       resolve(_shader);
-  //     };
-  //   });
-  //   assert.instanceOf(shader, p5.Shader);
-  // });
-
-  // test('passes an object with correct data to callback', async function() {
-  //   const model = await promisedSketch(function(sketch, resolve, reject) {
-  //     sketch.preload = function() {
-  //       sketch.loadShader(vertFile, fragFile, resolve, reject);
-  //     };
-  //   });
-  //   assert.instanceOf(model, p5.Shader);
-  // });
-
-  // test('does not run setup after complete when called outside of preload', async function() {
-  //   let setupCallCount = 0;
-  //   await promisedSketch(function(sketch, resolve, reject) {
-  //     sketch.setup = function() {
-  //       setupCallCount++;
-  //       sketch.loadShader(vertFile, fragFile, resolve, reject);
-  //     };
-  //   });
-  //   assert.equal(setupCallCount, 1);
-  // });
+  test('passes an object with correct data to callback', async function() {
+    await mockP5Prototype.loadShader(vertFile, fragFile, (shader) => {
+      assert.instanceOf(shader, Shader);
+    });
+  });
 });
