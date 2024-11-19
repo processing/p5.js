@@ -3,7 +3,7 @@
 
 import { mockP5, mockP5Prototype } from '../../js/mocks';
 import * as fileSaver from 'file-saver';
-import { vi, expect } from 'vitest';
+import { vi } from 'vitest';
 import files from '../../../src/io/files';
 import table from '../../../src/io/p5.Table';
 import tableRow from '../../../src/io/p5.TableRow';
