@@ -35,26 +35,27 @@ function material(p5, fn){
    * The third parameter, `successCallback`, is optional. If a function is
    * passed, it will be called once the shader has loaded. The callback function
    * can use the new <a href="#/p5.Shader">p5.Shader</a> object as its
-   * parameter.
+   * parameter. The return value of the `successCallback()` function will be used
+   * as the final return value of `loadShader()`.
    *
    * The fourth parameter, `failureCallback`, is also optional. If a function is
    * passed, it will be called if the shader fails to load. The callback
-   * function can use the event error as its parameter.
+   * function can use the event error as its parameter. The return value of the `
+   * failureCallback()` function will be used as the final return value of `loadShader()`.
    *
-   * Shaders can take time to load. Calling `loadShader()` in
-   * <a href="#/p5/preload">preload()</a> ensures shaders load before they're
-   * used in <a href="#/p5/setup">setup()</a> or <a href="#/p5/draw">draw()</a>.
+   * This function returns a `Promise` and should be used in an `async` setup with
+   * `await`. See the examples for the usage syntax.
    *
    * Note: Shaders can only be used in WebGL mode.
    *
    * @method loadShader
-   * @param {String} vertFilename path of the vertex shader to be loaded.
-   * @param {String} fragFilename path of the fragment shader to be loaded.
+   * @param {String|Request} vertFilename path of the vertex shader to be loaded.
+   * @param {String|Request} fragFilename path of the fragment shader to be loaded.
    * @param {Function} [successCallback] function to call once the shader is loaded. Can be passed the
    *                                     <a href="#/p5.Shader">p5.Shader</a> object.
    * @param {Function} [failureCallback] function to call if the shader fails to load. Can be passed an
    *                                     `Error` event object.
-   * @return {p5.Shader} new shader created from the vertex and fragment shader files.
+   * @return {Promise<p5.Shader>} new shader created from the vertex and fragment shader files.
    *
    * @example
    * <div modernizr='webgl'>
@@ -64,11 +65,9 @@ function material(p5, fn){
    * let mandelbrot;
    *
    * // Load the shader and create a p5.Shader object.
-   * function preload() {
-   *   mandelbrot = loadShader('assets/shader.vert', 'assets/shader.frag');
-   * }
+   * async function setup() {
+   *   mandelbrot = await loadShader('assets/shader.vert', 'assets/shader.frag');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Compile and apply the p5.Shader object.
@@ -95,11 +94,9 @@ function material(p5, fn){
    * let mandelbrot;
    *
    * // Load the shader and create a p5.Shader object.
-   * function preload() {
-   *   mandelbrot = loadShader('assets/shader.vert', 'assets/shader.frag');
-   * }
+   * async function setup() {
+   *   mandelbrot = await loadShader('assets/shader.vert', 'assets/shader.frag');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Use the p5.Shader object.

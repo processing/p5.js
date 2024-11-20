@@ -72,10 +72,6 @@ export async function request(path, type){
   }
 }
 
-// TODO: Previous version seems to attempt to make singletons
-//       based on filename but actual implementation always
-//       create new object. Consider if needed.
-
 function files(p5, fn){
   /**
    * Loads a JSON file to create an `Object`.
@@ -87,31 +83,35 @@ function files(p5, fn){
    * data in an object with strings as keys. Values can be strings, numbers,
    * Booleans, arrays, `null`, or other objects.
    *
-   * The first parameter, `path`, is always a string with the path to the file.
+   * The first parameter, `path`, is a string with the path to the file.
    * Paths to local files should be relative, as in
    * `loadJSON('assets/data.json')`. URLs such as
    * `'https://example.com/data.json'` may be blocked due to browser security.
+   * The `path` parameter can also be defined as a [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request)
+   * object for more advanced usage.
    *
    * The second parameter, `successCallback`, is optional. If a function is
    * passed, as in `loadJSON('assets/data.json', handleData)`, then the
    * `handleData()` function will be called once the data loads. The object
    * created from the JSON data will be passed to `handleData()` as its only argument.
+   * The return value of the `handleData()` function will be used as the final return
+   * value of `loadJSON('assets/data.json', handleData)`.
    *
    * The third parameter, `failureCallback`, is also optional. If a function is
    * passed, as in `loadJSON('assets/data.json', handleData, handleFailure)`,
    * then the `handleFailure()` function will be called if an error occurs while
    * loading. The `Error` object will be passed to `handleFailure()` as its only
-   * argument.
+   * argument. The return value of the `handleFailure()` function will be used as the
+   * final return value of `loadJSON('assets/data.json', handleData, handleFailure)`.
    *
-   * Note: Data can take time to load. Calling `loadJSON()` within
-   * <a href="#/p5/preload">preload()</a> ensures data loads before it's used in
-   * <a href="#/p5/setup">setup()</a> or <a href="#/p5/draw">draw()</a>.
+   * This function returns a `Promise` and should be used in an `async` setup with
+   * `await`. See the examples for the usage syntax.
    *
    * @method loadJSON
-   * @param  {String} path path of the JSON file to be loaded.
+   * @param  {String|Request} path path of the JSON file to be loaded.
    * @param  {Function} [successCallback] function to call once the data is loaded. Will be passed the object.
    * @param  {Function} [errorCallback] function to call if the data fails to load. Will be passed an `Error` event object.
-   * @return {Object} object containing the loaded data.
+   * @return {Promise<Object>} object containing the loaded data.
    *
    * @example
    *
@@ -119,12 +119,8 @@ function files(p5, fn){
    * <code>
    * let myData;
    *
-   * // Load the JSON and create an object.
-   * function preload() {
-   *   myData = loadJSON('assets/data.json');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   myData = await loadJSON('assets/data.json');
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -145,12 +141,8 @@ function files(p5, fn){
    * <code>
    * let myData;
    *
-   * // Load the JSON and create an object.
-   * function preload() {
-   *   myData = loadJSON('assets/data.json');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   myData = await loadJSON('assets/data.json');
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -178,12 +170,8 @@ function files(p5, fn){
    * <code>
    * let myData;
    *
-   * // Load the GeoJSON and create an object.
-   * function preload() {
-   *   myData = loadJSON('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   myData = await loadJSON('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson');
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -212,14 +200,12 @@ function files(p5, fn){
    * let bigQuake;
    *
    * // Load the GeoJSON and preprocess it.
-   * function preload() {
-   *   loadJSON(
+   * async function setup() {
+   *   await loadJSON(
    *     'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson',
    *     handleData
    *   );
-   * }
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -258,15 +244,13 @@ function files(p5, fn){
    * let bigQuake;
    *
    * // Load the GeoJSON and preprocess it.
-   * function preload() {
-   *   loadJSON(
+   * async function setup() {
+   *   await loadJSON(
    *     'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson',
    *     handleData,
    *     handleError
    *   );
-   * }
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -329,31 +313,34 @@ function files(p5, fn){
    * Paths to local files should be relative, as in
    * `loadStrings('assets/data.txt')`. URLs such as
    * `'https://example.com/data.txt'` may be blocked due to browser security.
+   * The `path` parameter can also be defined as a [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request)
+   * object for more advanced usage.
    *
    * The second parameter, `successCallback`, is optional. If a function is
    * passed, as in `loadStrings('assets/data.txt', handleData)`, then the
    * `handleData()` function will be called once the data loads. The array
    * created from the text data will be passed to `handleData()` as its only
-   * argument.
+   * argument. The return value of the `handleData()` function will be used as
+   * the final return value of `loadStrings('assets/data.txt', handleData)`.
    *
    * The third parameter, `failureCallback`, is also optional. If a function is
    * passed, as in `loadStrings('assets/data.txt', handleData, handleFailure)`,
    * then the `handleFailure()` function will be called if an error occurs while
    * loading. The `Error` object will be passed to `handleFailure()` as its only
-   * argument.
+   * argument. The return value of the `handleFailure()` function will be used as
+   * the final return value of `loadStrings('assets/data.txt', handleData, handleFailure)`.
    *
-   * Note: Data can take time to load. Calling `loadStrings()` within
-   * <a href="#/p5/preload">preload()</a> ensures data loads before it's used in
-   * <a href="#/p5/setup">setup()</a> or <a href="#/p5/draw">draw()</a>.
+   * This function returns a `Promise` and should be used in an `async` setup with
+   * `await`. See the examples for the usage syntax.
    *
    * @method loadStrings
-   * @param  {String} path path of the text file to be loaded.
+   * @param  {String|Request} path path of the text file to be loaded.
    * @param  {Function} [successCallback] function to call once the data is
    *                                      loaded. Will be passed the array.
    * @param  {Function} [errorCallback] function to call if the data fails to
    *                                    load. Will be passed an `Error` event
    *                                    object.
-   * @return {String[]} new array containing the loaded text.
+   * @return {Promise<String[]>} new array containing the loaded text.
    *
    * @example
    *
@@ -361,12 +348,9 @@ function files(p5, fn){
    * <code>
    * let myData;
    *
-   * // Load the text and create an array.
-   * function preload() {
-   *   myData = loadStrings('assets/test.txt');
-   * }
+   * async function setup() {
+   *   myData = await loadStrings('assets/test.txt');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -392,11 +376,9 @@ function files(p5, fn){
    * let lastLine;
    *
    * // Load the text and preprocess it.
-   * function preload() {
-   *   loadStrings('assets/test.txt', handleData);
-   * }
+   * async function setup() {
+   *   await loadStrings('assets/test.txt', handleData);
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -424,11 +406,9 @@ function files(p5, fn){
    * let lastLine;
    *
    * // Load the text and preprocess it.
-   * function preload() {
-   *   loadStrings('assets/test.txt', handleData, handleError);
-   * }
+   * async function setup() {
+   *   await loadStrings('assets/test.txt', handleData, handleError);
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -483,17 +463,14 @@ function files(p5, fn){
    * format). Table only looks for a header row if the 'header' option is
    * included.
    *
-   * This method is asynchronous, meaning it may not finish before the next
-   * line in your sketch is executed. Calling <a href="#/p5/loadTable">loadTable()</a> inside <a href="#/p5/preload">preload()</a>
-   * guarantees to complete the operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.
-   * Outside of <a href="#/p5/preload">preload()</a>, you may supply a callback function to handle the
-   * object:
+   * This function returns a `Promise` and should be used in an `async` setup with
+   * `await`. See the examples for the usage syntax.
    *
    * All files loaded and saved use UTF-8 encoding. This method is suitable for fetching files up to size of 64MB.
+   *
    * @method loadTable
-   * @param  {String}         filename    name of the file or URL to load
-   * @param  {String}         [extension] parse the table by comma-separated values "csv", semicolon-separated
-   *                                      values "ssv", or tab-separated values "tsv"
+   * @param  {String|Request} filename    name of the file or URL to load
+   * @param  {String}         [separator] the separator character used by the file, defaults to `','`
    * @param  {String}         [header]    "header" to indicate table has header row
    * @param  {Function}       [callback]  function to be executed after
    *                                      <a href="#/p5/loadTable">loadTable()</a> completes. On success, the
@@ -502,7 +479,7 @@ function files(p5, fn){
    * @param  {Function}  [errorCallback]  function to be executed if
    *                                      there is an error, response is passed
    *                                      in as first argument
-   * @return {Object}                     <a href="#/p5.Table">Table</a> object containing data
+   * @return {Promise<Object>}            <a href="#/p5.Table">Table</a> object containing data
    *
    * @example
    * <div class='norender'>
@@ -517,16 +494,9 @@ function files(p5, fn){
    *
    * let table;
    *
-   * function preload() {
-   *   //my table is comma separated value "csv"
-   *   //and has a header specifying the columns labels
-   *   table = loadTable('assets/mammals.csv', 'csv', 'header');
-   *   //the file can be remote
-   *   //table = loadTable("http://p5js.org/reference/assets/mammals.csv",
-   *   //                  "csv", "header");
-   * }
+   * async function setup() {
+   *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
    *
-   * function setup() {
    *   //count the columns
    *   print(table.getRowCount() + ' total rows in table');
    *   print(table.getColumnCount() + ' total columns in table');
@@ -602,33 +572,36 @@ function files(p5, fn){
    * The first parameter, `path`, is always a string with the path to the file.
    * Paths to local files should be relative, as in
    * `loadXML('assets/data.xml')`. URLs such as `'https://example.com/data.xml'`
-   * may be blocked due to browser security.
+   * may be blocked due to browser security. The `path` parameter can also be defined
+   * as a [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request)
+   * object for more advanced usage.
    *
    * The second parameter, `successCallback`, is optional. If a function is
    * passed, as in `loadXML('assets/data.xml', handleData)`, then the
    * `handleData()` function will be called once the data loads. The
    * <a href="#/p5.XML">p5.XML</a> object created from the data will be passed
-   * to `handleData()` as its only argument.
+   * to `handleData()` as its only argument. The return value of the `handleData()`
+   * function will be used as the final return value of `loadXML('assets/data.xml', handleData)`.
    *
    * The third parameter, `failureCallback`, is also optional. If a function is
    * passed, as in `loadXML('assets/data.xml', handleData, handleFailure)`, then
    * the `handleFailure()` function will be called if an error occurs while
    * loading. The `Error` object will be passed to `handleFailure()` as its only
-   * argument.
+   * argument. The return value of the `handleFailure()` function will be used as the
+   * final return value of `loadXML('assets/data.xml', handleData, handleFailure)`.
    *
-   * Note: Data can take time to load. Calling `loadXML()` within
-   * <a href="#/p5/preload">preload()</a> ensures data loads before it's used in
-   * <a href="#/p5/setup">setup()</a> or <a href="#/p5/draw">draw()</a>.
+   * This function returns a `Promise` and should be used in an `async` setup with
+   * `await`. See the examples for the usage syntax.
    *
    * @method loadXML
-   * @param  {String} path path of the XML file to be loaded.
+   * @param  {String|Request} path        path of the XML file to be loaded.
    * @param  {Function} [successCallback] function to call once the data is
    *                                      loaded. Will be passed the
    *                                      <a href="#/p5.XML">p5.XML</a> object.
    * @param  {Function} [errorCallback] function to call if the data fails to
    *                                    load. Will be passed an `Error` event
    *                                    object.
-   * @return {p5.XML} XML data loaded into a <a href="#/p5.XML">p5.XML</a>
+   * @return {Promise<p5.XML>} XML data loaded into a <a href="#/p5.XML">p5.XML</a>
    *                  object.
    *
    * @example
@@ -637,11 +610,9 @@ function files(p5, fn){
    * let myXML;
    *
    * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -679,11 +650,9 @@ function files(p5, fn){
    * let lastMammal;
    *
    * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   loadXML('assets/animals.xml', handleData);
-   * }
+   * async function setup() {
+   *   await loadXML('assets/animals.xml', handleData);
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -715,11 +684,9 @@ function files(p5, fn){
    * let lastMammal;
    *
    * // Load the XML and preprocess it.
-   * function preload() {
-   *   loadXML('assets/animals.xml', handleData, handleError);
-   * }
+   * async function setup() {
+   *   await loadXML('assets/animals.xml', handleData, handleError);
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -773,23 +740,22 @@ function files(p5, fn){
 
   /**
    * This method is suitable for fetching files up to size of 64MB.
+   *
    * @method loadBytes
-   * @param {String}   file            name of the file or URL to load
+   * @param {String|Request}   file            name of the file or URL to load
    * @param {Function} [callback]      function to be executed after <a href="#/p5/loadBytes">loadBytes()</a>
    *                                    completes
    * @param {Function} [errorCallback] function to be executed if there
    *                                    is an error
-   * @returns {Object} an object whose 'bytes' property will be the loaded buffer
+   * @returns {Promise<Object>} an object whose 'bytes' property will be the loaded buffer
    *
    * @example
    * <div class='norender'><code>
    * let data;
    *
-   * function preload() {
-   *   data = loadBytes('assets/mammals.xml');
-   * }
+   * async function setup() {
+   *   data = await loadBytes('assets/mammals.xml');
    *
-   * function setup() {
    *   for (let i = 0; i < 5; i++) {
    *     console.log(data.bytes[i].toString(16));
    *   }
@@ -829,16 +795,15 @@ function files(p5, fn){
 
   /**
    * Method for executing an HTTP GET request. If data type is not specified,
-   * p5 will try to guess based on the URL, defaulting to text. This is equivalent to
+   * it will default to `'text'`. This is equivalent to
    * calling <code>httpDo(path, 'GET')</code>. The 'binary' datatype will return
    * a Blob object, and the 'arrayBuffer' datatype will return an ArrayBuffer
    * which can be used to initialize typed arrays (such as Uint8Array).
    *
    * @method httpGet
-   * @param  {String}        path       name of the file or url to load
+   * @param  {String|Request}        path       name of the file or url to load
    * @param  {String}        [datatype] "json", "jsonp", "binary", "arrayBuffer",
    *                                    "xml", or "text"
-   * @param  {Object|Boolean} [data]    param data passed sent with request
    * @param  {Function}      [callback] function to be executed after
    *                                    <a href="#/p5/httpGet">httpGet()</a> completes, data is passed in
    *                                    as first argument
@@ -853,16 +818,12 @@ function files(p5, fn){
    * // Examples use USGS Earthquake API:
    * //   https://earthquake.usgs.gov/fdsnws/event/1/#methods
    * let earthquakes;
-   * function preload() {
+   * async function setup() {
    *   // Get the most recent earthquake in the database
    *   let url =
       'https://earthquake.usgs.gov/fdsnws/event/1/query?' +
    *     'format=geojson&limit=1&orderby=time';
-   *   httpGet(url, 'json', function(response) {
-   *     // when the HTTP request completes, populate the variable that holds the
-   *     // earthquake data used in the visualization.
-   *     earthquakes = response;
-   *   });
+   *   earthquakes = await httpGet(url, 'json');
    * }
    *
    * function draw() {
@@ -883,21 +844,19 @@ function files(p5, fn){
    */
   /**
    * @method httpGet
-   * @param  {String}        path
-   * @param  {Object|Boolean} data
-   * @param  {Function}      [callback]
-   * @param  {Function}      [errorCallback]
+   * @param  {String|Request}  path
+   * @param  {Function}        callback
+   * @param  {Function}        [errorCallback]
    * @return {Promise}
    */
-  /**
-   * @method httpGet
-   * @param  {String}        path
-   * @param  {Function}      callback
-   * @param  {Function}      [errorCallback]
-   * @return {Promise}
-   */
-  fn.httpGet = async function (path, datatype, successCallback, errorCallback) {
+  fn.httpGet = async function (path, datatype='text', successCallback, errorCallback) {
     p5._validateParameters('httpGet', arguments);
+
+    if (typeof datatype === 'function') {
+      errorCallback = successCallback;
+      successCallback = datatype;
+      datatype = 'text';
+    }
 
     // This is like a more primitive version of the other load functions.
     // If the user wanted to customize more behavior, pass in Request to path.
@@ -907,20 +866,20 @@ function files(p5, fn){
 
   /**
    * Method for executing an HTTP POST request. If data type is not specified,
-   * p5 will try to guess based on the URL, defaulting to text. This is equivalent to
+   * it will default to `'text'`. This is equivalent to
    * calling <code>httpDo(path, 'POST')</code>.
    *
    * @method httpPost
-   * @param  {String}        path       name of the file or url to load
-   * @param  {String}        [datatype] "json", "jsonp", "xml", or "text".
+   * @param  {String|Request} path       name of the file or url to load
+   * @param  {Object|Boolean} [data]     param data passed sent with request
+   * @param  {String}         [datatype] "json", "jsonp", "xml", or "text".
    *                                    If omitted, <a href="#/p5/httpPost">httpPost()</a> will guess.
-   * @param  {Object|Boolean} [data]    param data passed sent with request
-   * @param  {Function}      [callback] function to be executed after
-   *                                    <a href="#/p5/httpPost">httpPost()</a> completes, data is passed in
-   *                                    as first argument
-   * @param  {Function}      [errorCallback] function to be executed if
-   *                                    there is an error, response is passed
-   *                                    in as first argument
+   * @param  {Function}       [callback] function to be executed after
+   *                                     <a href="#/p5/httpPost">httpPost()</a> completes, data is passed in
+   *                                     as first argument
+   * @param  {Function}       [errorCallback] function to be executed if
+   *                                          there is an error, response is passed
+   *                                          in as first argument
    * @return {Promise} A promise that resolves with the data when the operation
    *                   completes successfully or rejects with the error after
    *                   one occurs.
@@ -974,25 +933,39 @@ function files(p5, fn){
    */
   /**
    * @method httpPost
-   * @param  {String}        path
-   * @param  {Object|Boolean} data
-   * @param  {Function}      [callback]
-   * @param  {Function}      [errorCallback]
+   * @param  {String|Request}    path
+   * @param  {Object|Boolean}    data
+   * @param  {Function}         [callback]
+   * @param  {Function}         [errorCallback]
    * @return {Promise}
    */
   /**
    * @method httpPost
-   * @param  {String}        path
-   * @param  {Function}      callback
-   * @param  {Function}      [errorCallback]
+   * @param  {String|Request}    path
+   * @param  {Function}         [callback]
+   * @param  {Function}         [errorCallback]
    * @return {Promise}
    */
-  fn.httpPost = async function (path, data, datatype, successCallback, errorCallback) {
+  fn.httpPost = async function (path, data, datatype='text', successCallback, errorCallback) {
     p5._validateParameters('httpPost', arguments);
 
     // This behave similarly to httpGet and additional options should be passed
     // as a `Request`` to path. Both method and body will be overridden.
     // Will try to infer correct Content-Type for given data.
+
+    if (typeof data === 'function') {
+      // Assume both data and datatype are functions as data should not be function
+      successCallback = data;
+      errorCallback = datatype;
+      data = undefined;
+      datatype = 'text';
+
+    } else if (typeof datatype === 'function') {
+      // Data is provided but not datatype\
+      errorCallback = successCallback;
+      successCallback = datatype;
+      datatype = 'text';
+    }
 
     let reqData = data;
     let contentType = 'text/plain';
@@ -1010,37 +983,45 @@ function files(p5, fn){
       contentType = 'application/json';
     }
 
-    const req = new Request(path, {
+    const requestOptions = {
       method: 'POST',
       body: reqData,
       headers: {
         'Content-Type': contentType
       }
-    });
+    };
+
+    if (reqData) {
+      requestOptions.body = reqData;
+    }
+
+    const req = new Request(path, requestOptions);
 
     return this.httpDo(req, 'POST', datatype, successCallback, errorCallback);
   };
 
   /**
    * Method for executing an HTTP request. If data type is not specified,
-   * p5 will try to guess based on the URL, defaulting to text.<br><br>
-   * For more advanced use, you may also pass in the path as the first argument
-   * and a object as the second argument, the signature follows the one specified
-   * in the Fetch API specification.
+   * it will default to `'text'`.
+   *
+   * This function is meant for more advanced usage of HTTP requests in p5.js. It is
+   * best used when a [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request)
+   * object is passed to the `path` parameter.
+   *
    * This method is suitable for fetching files up to size of 64MB when "GET" is used.
    *
    * @method httpDo
-   * @param  {String}        path       name of the file or url to load
-   * @param  {String}        [method]   either "GET", "POST", or "PUT",
-   *                                    defaults to "GET"
-   * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
-   * @param  {Object}        [data]     param data passed sent with request
-   * @param  {Function}      [callback] function to be executed after
-   *                                    <a href="#/p5/httpGet">httpGet()</a> completes, data is passed in
-   *                                    as first argument
-   * @param  {Function}      [errorCallback] function to be executed if
-   *                                    there is an error, response is passed
-   *                                    in as first argument
+   * @param  {String|Request}   path      name of the file or url to load
+   * @param  {String}           [method]    either "GET", "POST", "PUT", "DELETE",
+   *                                      or other HTTP request methods
+   * @param  {String}          [datatype] "json", "jsonp", "xml", or "text"
+   * @param  {Object}          [data]     param data passed sent with request
+   * @param  {Function}        [callback] function to be executed after
+   *                                      <a href="#/p5/httpGet">httpGet()</a> completes, data is passed in
+   *                                      as first argument
+   * @param  {Function}        [errorCallback] function to be executed if
+   *                                      there is an error, response is passed
+   *                                      in as first argument
    * @return {Promise} A promise that resolves with the data when the operation
    *                   completes successfully or rejects with the error after
    *                   one occurs.
@@ -1055,7 +1036,7 @@ function files(p5, fn){
    * let earthquakes;
    * let eqFeatureIndex = 0;
    *
-   * function preload() {
+   * function setup() {
    *   let url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson';
    *   httpDo(
    *     url,
@@ -1094,12 +1075,9 @@ function files(p5, fn){
    */
   /**
    * @method httpDo
-   * @param  {String}        path
-   * @param  {Object}        options   Request object options as documented in the
-   *                                    "fetch" API
-   * <a href="https://developer.mozilla.org/en/docs/Web/API/Fetch_API">reference</a>
-   * @param  {Function}      [callback]
-   * @param  {Function}      [errorCallback]
+   * @param  {String|Request}    path
+   * @param  {Function}         [callback]
+   * @param  {Function}         [errorCallback]
    * @return {Promise}
    */
   fn.httpDo = async function (path, method, datatype, successCallback, errorCallback) {
@@ -1656,6 +1634,7 @@ function files(p5, fn){
    * </code></div>
    */
   fn.save = function (object, _filename, _options) {
+    // TODO: parameters is not used correctly
     // parse the arguments and figure out which things we are saving
     const args = arguments;
     // =================================================

@@ -20,28 +20,31 @@ function loadingDisplaying(p5, fn){
    * files should be relative, such as `'assets/thundercat.jpg'`. URLs such as
    * `'https://example.com/thundercat.jpg'` may be blocked due to browser
    * security. Raw image data can also be passed as a base64 encoded image in
-   * the form `'data:image/png;base64,arandomsequenceofcharacters'`.
+   * the form `'data:image/png;base64,arandomsequenceofcharacters'`. The `path`
+   * parameter can also be defined as a [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request)
+   * object for more advanced usage.
    *
    * The second parameter is optional. If a function is passed, it will be
    * called once the image has loaded. The callback function can optionally use
-   * the new <a href="#/p5.Image">p5.Image</a> object.
+   * the new <a href="#/p5.Image">p5.Image</a> object. The return value of the
+   * function will be used as the final return value of `loadImage()`.
    *
    * The third parameter is also optional. If a function is passed, it will be
    * called if the image fails to load. The callback function can optionally use
-   * the event error.
+   * the event error. The return value of the function will be used as the final
+   * return value of `loadImage()`.
    *
-   * Images can take time to load. Calling `loadImage()` in
-   * <a href="#/p5/preload">preload()</a> ensures images load before they're
-   * used in <a href="#/p5/setup">setup()</a> or <a href="#/p5/draw">draw()</a>.
+   * This function returns a `Promise` and should be used in an `async` setup with
+   * `await`. See the examples for the usage syntax.
    *
    * @method loadImage
-   * @param  {String} path path of the image to be loaded or base64 encoded image.
+   * @param  {String|Request}      path  path of the image to be loaded or base64 encoded image.
    * @param  {function(p5.Image)} [successCallback] function called with
    *                               <a href="#/p5.Image">p5.Image</a> once it
    *                               loads.
    * @param  {function(Event)}    [failureCallback] function called with event
    *                               error if the image fails to load.
-   * @return {p5.Image}            the <a href="#/p5.Image">p5.Image</a> object.
+   * @return {Promise<p5.Image>}   the <a href="#/p5.Image">p5.Image</a> object.
    *
    * @example
    * <div>
@@ -49,11 +52,8 @@ function loadingDisplaying(p5, fn){
    * let img;
    *
    * // Load the image and create a p5.Image object.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   img = await loadImage('assets/laDefense.jpg');
    *   createCanvas(100, 100);
    *
    *   // Draw the image.

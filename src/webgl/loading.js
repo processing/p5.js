@@ -31,10 +31,11 @@ function loading(p5, fn){
    * There are three ways to call `loadModel()` with optional parameters to help
    * process the model.
    *
-   * The first parameter, `path`, is always a `String` with the path to the
-   * file. Paths to local files should be relative, as in
-   * `loadModel('assets/model.obj')`. URLs such as
-   * `'https://example.com/model.obj'` may be blocked due to browser security.
+   * The first parameter, `path`, is a `String` with the path to the file. Paths
+   * to local files should be relative, as in `loadModel('assets/model.obj')`.
+   * URLs such as `'https://example.com/model.obj'` may be blocked due to browser
+   * security. The `path` parameter can also be defined as a [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request)
+   * object for more advanced usage.
    *
    * The first way to call `loadModel()` has three optional parameters after the
    * file path. The first optional parameter, `successCallback`, is a function
@@ -85,21 +86,20 @@ function loading(p5, fn){
    * loadModel('assets/model.obj', options);
    * ```
    *
-   * Models can take time to load. Calling `loadModel()` in
-   * <a href="#/p5/preload">preload()</a> ensures models load before they're
-   * used in <a href="#/p5/setup">setup()</a> or <a href="#/p5/draw">draw()</a>.
+   * This function returns a `Promise` and should be used in an `async` setup with
+   * `await`. See the examples for the usage syntax.
    *
    * Note: There’s no support for colored STL files. STL files with color will
    * be rendered without color.
    *
    * @method loadModel
-   * @param  {String} path              path of the model to be loaded.
+   * @param  {String|Request} path      path of the model to be loaded.
    * @param  {Boolean} normalize        if `true`, scale the model to fit the canvas.
    * @param  {function(p5.Geometry)} [successCallback] function to call once the model is loaded. Will be passed
    *                                                   the <a href="#/p5.Geometry">p5.Geometry</a> object.
    * @param  {function(Event)} [failureCallback] function to call if the model fails to load. Will be passed an `Error` event object.
    * @param  {String} [fileType]          model’s file extension. Either `'.obj'` or `'.stl'`.
-   * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
+   * @return {Promise<p5.Geometry>} the <a href="#/p5.Geometry">p5.Geometry</a> object
    *
    * @example
    * <div>
@@ -109,11 +109,9 @@ function loading(p5, fn){
    * let shape;
    *
    * // Load the file and create a p5.Geometry object.
-   * function preload() {
-   *   shape = loadModel('assets/teapot.obj');
-   * }
+   * async function setup() {
+   *   shape = await loadModel('assets/teapot.obj');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('A white teapot drawn against a gray background.');
@@ -139,11 +137,9 @@ function loading(p5, fn){
    *
    * // Load the file and create a p5.Geometry object.
    * // Normalize the geometry's size to fit the canvas.
-   * function preload() {
-   *   shape = loadModel('assets/teapot.obj', true);
-   * }
+   * async function setup() {
+   *   shape = await loadModel('assets/teapot.obj', true);
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('A white teapot drawn against a gray background.');
@@ -168,11 +164,9 @@ function loading(p5, fn){
    * let shape;
    *
    * // Load the file and create a p5.Geometry object.
-   * function preload() {
-   *   loadModel('assets/teapot.obj', true, handleModel);
-   * }
-   *
    * function setup() {
+   *   loadModel('assets/teapot.obj', true, handleModel);
+   *
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('A white teapot drawn against a gray background.');
@@ -204,11 +198,9 @@ function loading(p5, fn){
    * let shape;
    *
    * // Load the file and create a p5.Geometry object.
-   * function preload() {
-   *   loadModel('assets/wrong.obj', true, handleModel, handleError);
-   * }
-   *
    * function setup() {
+   *   loadModel('assets/wrong.obj', true, handleModel, handleError);
+   *
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('A white teapot drawn against a gray background.');
@@ -245,11 +237,9 @@ function loading(p5, fn){
    * let shape;
    *
    * // Load the file and create a p5.Geometry object.
-   * function preload() {
-   *   loadModel('assets/teapot.obj', true, handleModel, handleError, '.obj');
-   * }
-   *
    * function setup() {
+   *   loadModel('assets/teapot.obj', true, handleModel, handleError, '.obj');
+   *
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('A white teapot drawn against a gray background.');
@@ -292,11 +282,9 @@ function loading(p5, fn){
    * };
    *
    * // Load the file and create a p5.Geometry object.
-   * function preload() {
-   *   loadModel('assets/teapot.obj', options);
-   * }
-   *
    * function setup() {
+   *   loadModel('assets/teapot.obj', options);
+   *
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('A white teapot drawn against a gray background.');
@@ -328,15 +316,15 @@ function loading(p5, fn){
    */
   /**
    * @method loadModel
-   * @param  {String} path
+   * @param  {String|Request} path
    * @param  {function(p5.Geometry)} [successCallback]
    * @param  {function(Event)} [failureCallback]
    * @param  {String} [fileType]
-   * @return {p5.Geometry} new <a href="#/p5.Geometry">p5.Geometry</a> object.
+   * @return {Promise<p5.Geometry>} new <a href="#/p5.Geometry">p5.Geometry</a> object.
    */
   /**
    * @method loadModel
-   * @param  {String} path
+   * @param  {String|Request} path
    * @param  {Object} [options] loading options.
    * @param  {function(p5.Geometry)} [options.successCallback]
    * @param  {function(Event)} [options.failureCallback]
@@ -344,7 +332,7 @@ function loading(p5, fn){
    * @param  {Boolean} [options.normalize]
    * @param  {Boolean} [options.flipU]
    * @param  {Boolean} [options.flipV]
-   * @return {p5.Geometry} new <a href="#/p5.Geometry">p5.Geometry</a> object.
+   * @return {Promise<p5.Geometry>} new <a href="#/p5.Geometry">p5.Geometry</a> object.
    */
   fn.loadModel = async function (path, fileType, normalize, successCallback, failureCallback) {
     p5._validateParameters('loadModel', arguments);
