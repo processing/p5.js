@@ -389,7 +389,7 @@ function text2d(p5, fn) {
    */
   p5.Renderer2D.prototype.textProperty = function (prop, value, opts) {
 
-    let debug = opts?.debug || true;
+    let debug = opts?.debug || false;
 
     // getter: return option from this.states or this.drawingContext
     if (typeof value === 'undefined') {

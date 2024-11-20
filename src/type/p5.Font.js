@@ -55,28 +55,15 @@ function font(p5, fn) {
       return await Array.from(document.fonts);
     }
 
-    constructor(p, font, name, path) { // remove p
+    newConstructor(p, font, name, path) {
       //console.log('p5.Font', 'constructor', name, path, descriptors);
       this.pInst = p;
       this.font = font;
       this.name = name;
       this.path = path;
-
-      // if (name instanceof FontFace) {
-      //   this.font = name;
-      //   this.name = name.family;
-      //   this.path = name.src;
-      //   return;
-      // }
-      // if (!path.startsWith('url(')) {
-      //   path = `url(${path})`; // hmm
-      // }
-      // this.name = name;
-      // this.path = path;
-      // this.font = new FontFace(name, path, descriptors);
     }
 
-    constructorx(p, name, path, descriptors) { // remove p
+    constructor(p, name, path, descriptors) {
       //console.log('p5.Font', 'constructor', name, path, descriptors);
       if (!(p instanceof p5)) {
         throw Error('p5 instance is required');
