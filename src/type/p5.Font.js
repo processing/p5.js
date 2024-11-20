@@ -50,7 +50,7 @@ function font(p5, fn) {
             loaded++;
           }
         }
-        console.log(loaded+' loaded');
+        console.log(loaded + ' loaded');
       }
       return await Array.from(document.fonts);
     }
@@ -68,19 +68,21 @@ function font(p5, fn) {
       if (!(p instanceof p5)) {
         throw Error('p5 instance is required');
       }
-      this.pInst = p;
-      if (name instanceof FontFace) {
-        this.font = name;
-        this.name = name.family;
-        this.path = name.src;
-        return;
+      if (typeof name !== 'undefined') {
+        this.pInst = p;
+        if (name instanceof FontFace) {
+          this.font = name;
+          this.name = name.family;
+          this.path = name.src;
+          return;
+        }
+        if (!path.startsWith('url(')) {
+          path = `url(${path})`; // hmm
+        }
+        this.name = name;
+        this.path = path;
+        this.font = new FontFace(name, path, descriptors);
       }
-      if (!path.startsWith('url(')) {
-        path = `url(${path})`; // hmm
-      }
-      this.name = name;
-      this.path = path;
-      this.font = new FontFace(name, path, descriptors);
     }
 
     async load() {

@@ -92,8 +92,10 @@ Font-variation style properties:
           await ff.load();
         }
         document.fonts.add(ff);
-        pfont = new p5.Font(instance, ff, name, path);
-        console.log('TYYped:', f._data instanceof Uint8Array);
+        pfont = new p5.Font(instance)
+        pfont.font = ff;
+        pfont.name = name;
+        pfont.path = path;
 
         if (f._data instanceof Uint8Array) {
           let fonts = Typr.parse(f._data);
@@ -158,14 +160,15 @@ Font-variation style properties:
     }
 
     function ttp(p, ctx, font, str, x, y) {
-      console.log('ttp', font, str, x, y);
+      //console.log('ttp', font, str, x, y);
 
       let shape = Typr.U.shape(font, str);
       let path = Typr.U.shapeToPath(font, shape);
       let crds = path.crds; // remove
       var scale = 180 * getDPR() / font.head.unitsPerEm;
-      console.log(scale, getDPR() / font.head.unitsPerEm);
+      //console.log(scale, getDPR() / font.head.unitsPerEm);
 
+      // save
       // p.translate(4 * getDPR(), 150 * getDPR());
       // p.scale(-160, -160);
 
