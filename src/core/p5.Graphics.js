@@ -4,7 +4,7 @@
  * @for p5
  */
 
-import p5 from './main';
+// import p5 from './main';
 import * as constants from './constants';
 import primitives2D from '../shape/2d_primitives';
 import attributes from '../shape/attributes';
@@ -15,6 +15,7 @@ import image from '../image/image';
 import loadingDisplaying from '../image/loading_displaying';
 import pixels from '../image/pixels';
 import transform from './transform';
+import { Framebuffer } from '../webgl/p5.Framebuffer';
 
 import primitives3D from '../webgl/3d_primitives';
 import light from '../webgl/light';
@@ -30,7 +31,7 @@ class Graphics {
     this._pInst = pInst;
     this._renderer = new renderers[r](this._pInst, w, h, false, canvas);
 
-    p5.prototype._initializeInstanceVariables.apply(this);
+    this._initializeInstanceVariables(this);
 
     this._renderer._applyDefaults();
     return this;
@@ -552,7 +553,7 @@ class Graphics {
    * </div>
    */
   createFramebuffer(options) {
-    return new p5.Framebuffer(this._renderer, options);
+    return new Framebuffer(this._renderer, options);
   }
 
   _assert3d(name) {
@@ -561,6 +562,29 @@ class Graphics {
         `${name}() is only supported in WEBGL mode. If you'd like to use 3D graphics and WebGL, see  https://p5js.org/examples/form-3d-primitives.html for more information.`
       );
   };
+
+  _initializeInstanceVariables() {
+    this._accessibleOutputs = {
+      text: false,
+      grid: false,
+      textLabel: false,
+      gridLabel: false
+    };
+
+    this._styles = [];
+
+    this._bezierDetail = 20;
+    this._curveDetail = 20;
+
+    this._colorMode = constants.RGB;
+    this._colorMaxes = {
+      rgb: [255, 255, 255, 255],
+      hsb: [360, 100, 100, 1],
+      hsl: [360, 100, 100, 1]
+    };
+
+    this._downKeys = {}; //Holds the key codes of currently pressed keys
+  }
 };
 
 function graphics(p5, fn){
