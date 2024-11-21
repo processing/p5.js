@@ -44,7 +44,8 @@ function font(p5, fn) {
   p5.Font = class Font {
 
     constructor(p, font, name, path, data) {
-      if (!('loadBytes' in p)) {
+      //if (!('loadBytes' in p)) {
+      if (!(p instanceof p5)) {
         throw Error('p5 instance is required');
       }
       if (!(font instanceof FontFace)) {
@@ -70,96 +71,20 @@ function font(p5, fn) {
     }
 
     textToPoints(str, x, y, width, height) {
+
+      // TODO: implement width and height, line-breaks, alignment
+
       let font = this.data;
       let shape = Typr.U.shape(font, str);
       let path = Typr.U.shapeToPath(font, shape);
-      let dpr = window["devicePixelRatio"] || 1;
-      let fontSize = this._pInst.states.textSize;
+      let dpr = window?.devicePixelRatio || 1;
+      let fontSize = this._pInst._renderer.states.textSize;
       let scale = fontSize * dpr / font.head.unitsPerEm;
       let pts = [];
       for (let i = 0; i < path.crds.length; i += 2) {
         pts.push({ x: x + path.crds[i] * scale, y: y + path.crds[i + 1] * -scale });
       }
       return pts;
-    }
-
-    /**
-     * Load a font and returns a p5.Font instance. The font can be specified by its path or a url.
-     * Optional arguments include the font name, descriptors for the FontFace object, 
-     * and callbacks for success and error.
-     * @param  {...any} args - path, name, onSuccess, onError, descriptors
-     * @returns a Promise that resolves with a p5.Font instance
-     */
-    static async loadFont(...args/*path, name, onSuccess, onError, descriptors*/) {
-
-      let { path, name, success, error, descriptors } = parseCreateArgs(...args);
-
-      const extractFontName = (font, path) => {
-        let meta = font?.name;
-
-        // use the metadata if we have it
-        if (meta) {
-          if (meta.fullName) {
-            return meta.fullName;
-          }
-          if (meta.familyName) {
-            return meta.familyName;
-          }
-        }
-
-        // if not, extract the name from the path
-        let matches = extractFontNameRe.exec(path);
-        if (matches && matches.length >= 3) {
-          return matches[1];
-        }
-
-        // give up and return the full path
-        return path;
-      };
-
-      let pfont;
-      try {
-        // load the raw font bytes
-        let result = await fn.loadBytes(path);
-
-        // parse the font data
-        let fonts = Typr.parse(result.bytes);
-        if (fonts.length !== 1) throw Error('Invalid font data');
-
-        // make sure we have a valid name
-        name = name || extractFontName(fonts[0], path);
-        
-        // create a FontFace object and pass it to the p5.Font constructor
-        pfont = await p5.Font.create(name, path, descriptors, fonts[0]);
-
-      } catch (err) {
-        // failed to parse the font, load it as a simple FontFace
-        try {
-          // create a FontFace object and pass it to p5.Font
-          pfont = await p5.Font.create(name, path, descriptors);
-        }
-        catch (err) {
-          if (error) {
-            error(err);
-          }
-          throw err;
-        }
-      }
-      if (success) {
-        success(pfont);
-      }
-
-      return pfont;
-    }
-
-    static async create(name, path, descriptors, rawFont) {
-      let ff = new FontFace(name, rawFont?._data || path, descriptors);
-      if (ff.status !== 'loaded') {
-        await ff.load();
-      }
-      document.fonts.add(ff);
-
-      return new p5.Font(fn, ff, name, path, rawFont);
     }
 
     static async createX(...args/*path, name, onSuccess, onError, descriptors*/) { // tmp
@@ -242,8 +167,83 @@ function font(p5, fn) {
     return { path, name, success, error, descriptors };
   }
 
-  // attach as p5.loadFont
-  fn.loadFont = p5.Font.loadFont;
+  /**
+   * Load a font and returns a p5.Font instance. The font can be specified by its path or a url.
+   * Optional arguments include the font name, descriptors for the FontFace object, 
+   * and callbacks for success and error.
+   * @param  {...any} args - path, name, onSuccess, onError, descriptors
+   * @returns a Promise that resolves with a p5.Font instance
+   */
+  p5.prototype.loadFont = async function(...args/*path, name, onSuccess, onError, descriptors*/) {
+
+    let { path, name, success, error, descriptors } = parseCreateArgs(...args);
+
+    const extractFontName = (font, path) => {
+      let meta = font?.name;
+
+      // use the metadata if we have it
+      if (meta) {
+        if (meta.fullName) {
+          return meta.fullName;
+        }
+        if (meta.familyName) {
+          return meta.familyName;
+        }
+      }
+
+      // if not, extract the name from the path
+      let matches = extractFontNameRe.exec(path);
+      if (matches && matches.length >= 3) {
+        return matches[1];
+      }
+
+      // give up and return the full path
+      return path;
+    };
+
+    let pfont;
+    try {
+      // load the raw font bytes
+      let result = await fn.loadBytes(path);
+
+      // parse the font data
+      let fonts = Typr.parse(result.bytes);
+      if (fonts.length !== 1) throw Error('Invalid font data');
+
+      // make sure we have a valid name
+      name = name || extractFontName(fonts[0], path);
+      
+      // create a FontFace object and pass it to the p5.Font constructor
+      pfont = await create(this, name, path, descriptors, fonts[0]);
+
+    } catch (err) {
+      // failed to parse the font, load it as a simple FontFace
+      try {
+        // create a FontFace object and pass it to p5.Font
+        pfont = await create(this, name, path, descriptors);
+      }
+      catch (err) {
+        if (error) {
+          error(err);
+        }
+        throw err;
+      }
+    }
+    if (success) {
+      success(pfont);
+    }
+
+    return pfont;
+  }
+
+  async function create(pInst, name, path, descriptors, rawFont) {
+    let ff = new FontFace(name, rawFont?._data || path, descriptors);
+    if (ff.status !== 'loaded') {
+      await ff.load();
+    }
+    document.fonts.add(ff);
+    return new p5.Font(pInst, ff, name, path, rawFont);
+  }
 };
 
 export default font;

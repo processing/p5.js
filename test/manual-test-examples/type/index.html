@@ -188,17 +188,18 @@
     };
 
     const textToPointsSketch = function (p) {
-      let pts, txs;
-      p.setup = function () {
+      let pts, txs, f;
+      p.setup = async function () {
         p.createCanvas(700, 350);
         p.background(255);
-        p.textSize(300);
-        p.textStyle(p.BOLD);
-        p.textAlign(p.CENTER, p.CENTER);
-        p.strokeWeight(3);
+        p.textFont(f = await p.loadFont('./font/LiberationSans-Bold.ttf'), 300);
+
+        p.fill(220);
+        p.text('p5.js', 5, 250);
         p.stroke('#E92D55');
-        txs = p.textToPoints('p5.js', p.width / 2, p.height / 2);
-        txs.forEach(pt => p.point(pt.x, pt.y));
+
+        txs = f.textToPoints('p5.js', 5, 250);
+        txs.forEach(pt => p.circle(pt.x, pt.y, 5));
       };
     };
 
