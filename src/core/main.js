@@ -72,9 +72,6 @@ class p5 {
       keyup: null,
       keypress: null,
       wheel: null,
-      touchstart: null,
-      touchmove: null,
-      touchend: null,
       resize: null,
       blur: null
     };

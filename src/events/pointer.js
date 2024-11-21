@@ -1150,6 +1150,14 @@ function pointer(p5, fn){
     let executeDefault;
     this._updatePointerCoords(e);
 
+    if(e.pointerType === 'touch') {
+      this._activeTouches.set(e.pointerId, e);
+      const touches = Array.from(this._activeTouches.values()).map((touch)=>
+      getTouchInfo(this._curElement.elt, this.width, this.height, touch)
+    );
+    this.touches = touches;
+    }
+
       if (!this.mouseIsPressed && typeof context.mouseMoved === 'function') {
         executeDefault = context.mouseMoved(e);
         if (executeDefault === false) {
