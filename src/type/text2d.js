@@ -1,6 +1,6 @@
 
 /*
- *  NEXT: then get axes and values from font, then test with other loading methods, then add sliders
+ *  NEXT: then get axes and values from font, test with other loading methods, do sliders
  *  TODO:
  *   - variable fonts
  *   - better font-loading (google fonts, font-face declarations, multiple fonts with Promise.all())

@@ -12,8 +12,8 @@ Font-variation style properties:
 
 <head>
   <meta charset='UTF-8'>
-  <script language="javascript" type="text/javascript" src="./lib/Typr.js"></script>
-  <script language="javascript" type="text/javascript" src="./lib/Typr.U.js"></script>
+  <!-- <script language="javascript" type="text/javascript" src="./lib/Typr.js"></script>
+  <script language="javascript" type="text/javascript" src="./lib/Typr.U.js"></script> -->
 
   <style>
     body {
@@ -40,209 +40,24 @@ Font-variation style properties:
 
 <body>
   <script type='module'>
-    // var font;
-    // var off = 0, num = 100;
-    // var gid = 0;
-    // var uncd = null;
     import p5 from '../../../src/app.js';
-    let instance;
     let sketch = function (p) {
-      instance = p;
       p.setup = async function () {
+        let s = 'Hello, World!', x = 120, y = 170, fsize = 160;
+
         let cvs = p.createCanvas(1150, 230);
 
-        let font = await loadFont('./font/LiberationSans-Bold.ttf');
-        //loadFontPaths(p, './font/LiberationSans-Bold.ttf');
-        //console.log(font);
+        let font = await p.loadFont('./font/LiberationSans-Bold.ttf');
 
-        //let pts = drawWord(p, p.drawingContext, font, 'Hello, World!');
-        p.textFont(font, 160);
-        let s = 'Hello, World!', x = 120, y = 170;
+        p.textFont(font, fsize);
         p.text(s, x, y);
 
-        if (1) {
-
-          let pts = ttp(p, p.drawingContext, font.data, s, x, y);
-          console.log(p.textProperties());
-
-          pts.forEach((pt, i) => {
-            if (i < 5) console.log(pt);
-            p.fill(255, 0, 0);
-            let sc = 12.8;
-            p.circle(110 + (pt.x / sc), (pt.y / -sc) + 184, 5);
-          });
-        }
+        font.textToPoints(s, x, y).forEach((pt, i) => {
+          p.fill(255, 0, 0);
+          p.circle(pt.x, pt.y, 5);
+        });
       }
     }
-    const validFontTypes = ['ttf', 'otf', 'woff', 'woff2'];
-    const validFontTypesRe = new RegExp(`\\.(${validFontTypes.join('|')})`, 'i');
-    const extractFontNameRe = new RegExp(`([^/]+)(\\.(?:${validFontTypes.join('|')}))`, 'i');
-    const invalidFontError = 'Sorry, only TTF, OTF, WOFF and WOFF2 files are supported.';
-
-    async function loadFont(...args/*path, name, onSuccess, onError, descriptors*/) {
-
-      let { path, name, success, error, descriptors } = parseCreateArgs(...args);
-      let pfont;
-      try {
-        let result = await instance.loadBytes(path);
-        let fonts = Typr.parse(result.bytes);
-        let f = fonts[0];
-        let ff = new FontFace(f.name.fontFamily + '-' + f.name.fontSubfamily, f._data, descriptors);
-        if (ff.status !== 'loaded') {
-          await ff.load();
-        }
-        document.fonts.add(ff);
-        pfont = new p5.Font(instance)
-        pfont.font = ff;
-        pfont.name = name;
-        pfont.path = path;
-
-        if (f._data instanceof Uint8Array) {
-          let fonts = Typr.parse(f._data);
-          if (fonts.length !== 1) throw Error('Invalid font data');
-          pfont.data = fonts[0];
-        }
-      } catch (err) {
-        if (error) {
-          error(err);
-        }
-        throw err;
-      };
-      if (success) {
-        success(pfont);
-      }
-      return pfont;
-    };
-
-    function parseCreateArgs(...args/*path, name, onSuccess, onError*/) {
-
-      // parse the path
-      let path = args.shift();
-      if (typeof path !== 'string' || path.length === 0) {
-        p5._friendlyError(invalidFontError, 'p5.loadFont'); // ?
-      }
-
-      // parse the name
-      let name;
-      if (typeof args[0] === 'string') {
-        name = args.shift();
-      }
-      else if (validFontTypesRe.test(path)) {
-        // try to extract the name from the path
-        let matches = extractFontNameRe.exec(path);
-        if (matches && matches.length >= 3) {
-          name = matches[1];
-        }
-      }
-
-      // validate the name
-      if (typeof name !== 'string' || name.length === 0) {
-        p5._friendlyError(invalidFontError, 'p5.loadFont'); // ?
-      }
-
-      // get the callbacks if any
-      let success, error, descriptors;
-      for (let i = 0; i < args.length; i++) {
-        const arg = args[i];
-        if (typeof arg === 'function') {
-          if (!success) {
-            success = arg;
-          } else {
-            error = arg;
-          }
-        }
-        else if (typeof arg === 'object') {
-          descriptors = arg;
-        }
-      }
-
-      return { path, name, success, error, descriptors };
-    }
-
-    function ttp(p, ctx, font, str, x, y) {
-      //console.log('ttp', font, str, x, y);
-
-      let shape = Typr.U.shape(font, str);
-      let path = Typr.U.shapeToPath(font, shape);
-      let crds = path.crds; // remove
-      var scale = 180 * getDPR() / font.head.unitsPerEm;
-      //console.log(scale, getDPR() / font.head.unitsPerEm);
-
-      // save
-      // p.translate(4 * getDPR(), 150 * getDPR());
-      // p.scale(-160, -160);
-
-      Typr.U.pathToContext(path, ctx);
-      let ss = 0.0025 * font.head.unitsPerEm * 4;
-
-      let pts = [];
-      scale = 1;
-      for (let i = 0; i < path.crds.length; i += 2) {
-        pts.push({ x: x + path.crds[i] / scale, y: y + path.crds[i + 1] / scale });
-        //ctx.fillRect(crds[i] - ss, crds[i + 1] - ss, 2 * ss, 2 * ss);
-      }
-      return pts;
-    }
-
-    async function loadFontPaths(p, path) {
-      let result = await p.loadBytes(path);
-      let fonts = Typr.parse(result.bytes);
-      let f = fonts[0];
-      console.log(f);
-
-      let font = new FontFace(f.name.fontFamily + '-' + f.name.fontSubfamily, f._data);
-      console.log(font);
-      return font;
-    }
-
-    function drawWord(p, ctx, font, str) {
-
-      var scale = 180 * getDPR() / font.head.unitsPerEm;
-      console.log(scale);
-
-      var shape = Typr.U.shape(font, str);
-      var path = Typr.U.shapeToPath(font, shape);
-
-      //p.translate(4 * getDPR(), 150 * getDPR());
-
-      ctx.fillStyle = "#000000";
-      ctx.fillRect(0, 0, p.width, 1);
-
-      // console.log(font.hhea.ascender * scale);
-      ctx.fillRect(0, -162, 20, 20);
-      ctx.fillRect(0, -Math.round(font.hhea.ascender * scale), p.width, 1);
-      ctx.fillRect(0, -Math.round(font.hhea.descender * scale), p.width, 1);
-
-      //p.scale(scale, -scale);
-
-      //Typr.U.pathToContext(path, ctx);  // setting color and calling fill() already in path
-      //ctx.fill();
-
-      return drawOutline(p, ctx, font, path);
-    }
-
-    function drawOutline(p, ctx, font, path) {
-      var ci = 0, x = 0, y = 0;
-      var crds = path.crds;
-      var w = 0.0025 * font.head.unitsPerEm;
-
-      ctx.lineWidth = w;
-      ctx.strokeStyle = "#00ffff";
-      Typr.U.pathToContext(path, ctx);
-
-      ctx.stroke();
-
-      var ss = w * 4;
-      ctx.fillStyle = "#ff0055";
-      let pts = [];
-      for (var i = 0; i < crds.length; i += 2) {
-        pts.push({ x: crds[i], y: crds[i + 1] });
-        //ctx.fillRect(crds[i] - ss, crds[i + 1] - ss, 2 * ss, 2 * ss);
-      }
-      return pts;
-    }
-
-    function getDPR() { return window["devicePixelRatio"] || 1; }
 
     new p5(sketch);
   </script>
