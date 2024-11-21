@@ -25,66 +25,6 @@ export function testSketchWithPromise(name, sketch_fn) {
   return test(name, test_fn);
 }
 
-export function testWithDownload(name, fn, asyncFn = false) {
-  const test_fn = function() {
-    return new Promise((resolve, reject) => {
-      let blobContainer = {};
-
-      const prevClick = HTMLAnchorElement.prototype.click;
-      const prevDispatchEvent = HTMLAnchorElement.prototype.dispatchEvent;
-      const blockDownloads = () => {
-        HTMLAnchorElement.prototype.click = () => {};
-        HTMLAnchorElement.prototype.dispatchEvent = () => {};
-      }
-      const unblockDownloads = () => {
-        HTMLAnchorElement.prototype.click = prevClick;
-        HTMLAnchorElement.prototype.dispatchEvent = prevDispatchEvent;
-      }
-
-      // create a backup of createObjectURL
-      let couBackup = window.URL.createObjectURL;
-
-      // file-saver uses createObjectURL as an intermediate step. If we
-      // modify the definition a just a little bit we can capture whenever
-      // it is called and also peek in the data that was passed to it
-      window.URL.createObjectURL = blob => {
-        blobContainer.blob = blob;
-        return couBackup(blob);
-      };
-      blockDownloads();
-
-      let error;
-      if (asyncFn) {
-        fn(blobContainer)
-          .then(() => {
-            window.URL.createObjectURL = couBackup;
-          })
-          .catch(err => {
-            error = err;
-          })
-          .finally(() => {
-            // restore createObjectURL to the original one
-            window.URL.createObjectURL = couBackup;
-            error ? reject(error) : resolve();
-            unblockDownloads();
-          });
-      } else {
-        try {
-          fn(blobContainer);
-        } catch (err) {
-          error = err;
-        }
-        // restore createObjectURL to the original one
-        window.URL.createObjectURL = couBackup;
-        error ? reject(error) : resolve();
-        unblockDownloads();
-      }
-    });
-  };
-
-  return test(name, test_fn);
-}
-
 // Tests should run only for the unminified script
 export function testUnMinified(name, test_fn) {
   return !window.IS_TESTING_MINIFIED_VERSION ? test(name, test_fn) : null;

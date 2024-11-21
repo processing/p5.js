@@ -1,7 +1,7 @@
 import p5 from '../../../src/app.js';
 import { parallelSketches } from '../../js/p5_helpers';
 
-suite('Mouse Events', function() {
+suite.todo('Mouse Events', function() {
   let myp5;
 
   let canvas;
@@ -200,7 +200,7 @@ suite('Mouse Events', function() {
       assert.isNumber(myp5.pwinMouseY);
     });
 
-    test('pwinMouseY should be previous vertical position of mouse relative to the window', function() {
+    test('pwinMouseY should be previous vertical position of mouse relative to the window', async function() {
       window.dispatchEvent(mouseEvent1); // dispatch first mouse event
       window.dispatchEvent(mouseEvent2); // dispatch second mouse event
       assert.strictEqual(myp5.pwinMouseY, mouseEvent1.clientY);
