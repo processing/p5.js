@@ -4,9 +4,6 @@ import { parallelSketches } from '../../js/p5_helpers';
 suite('Touch Events', function() {
   let myp5;
 
-  let canvas;
-  let touchObj1;
-  let touchObj2;
   let touchEvent1;
   let touchEvent2;
 
@@ -14,24 +11,19 @@ suite('Touch Events', function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        canvas = myp5._curElement.elt;
-        touchObj1 = new Touch({
-          target: canvas,
+        touchEvent1 = new PointerEvent('pointerdown', {
+          pointerId: 1,
           clientX: 100,
           clientY: 100,
-          identifier: 36
+          pointerType: 'touch'
         });
-        touchObj2 = new Touch({
-          target: canvas,
+
+        // Simulate second touch event
+        touchEvent2 = new PointerEvent('pointerdown', {
+          pointerId: 2,
           clientX: 200,
           clientY: 200,
-          identifier: 35
-        });
-        touchEvent1 = new TouchEvent('touchmove', {
-          touches: [touchObj1, touchObj2]
-        });
-        touchEvent2 = new TouchEvent('touchmove', {
-          touches: [touchObj2]
+          pointerType: 'touch'
         });
       };
     });
@@ -48,12 +40,12 @@ suite('Touch Events', function() {
 
     test('should be an array of multiple touches', function() {
       window.dispatchEvent(touchEvent1);
+      window.dispatchEvent(touchEvent2);
       assert.strictEqual(myp5.touches.length, 2);
     });
 
     test('should contain the touch registered', function() {
-      window.dispatchEvent(touchEvent2);
-      assert.strictEqual(myp5.touches[0].id, 35);
+      assert.strictEqual(myp5.touches[0].id, 1);
     });
   });
 });
