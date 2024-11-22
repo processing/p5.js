@@ -297,7 +297,7 @@ function customShapes(p5, fn) {
      * all the vertex data in a single array.
      * 
      * @class p5.Vertex
-     * @param {Object} [properties] vertex properties.
+     * @param {Object} [properties={position: createVector(0, 0)}] vertex properties.
      */
 
     p5.Vertex = Vertex;
