@@ -11,28 +11,34 @@
 
 // ---- GENERAL CLASSES ----
 
-class Shape {    
+class Shape {
+    vertexProperties = {};
+
     constructor() {
-        
+
+    }
+
+    reset() {
+       // TODO: remove existing vertices
     }
 }
 
 class Contour {
     constructor() {
-    
+
     }
 }
 
 // abstract class
 class ShapePrimitive {
     constructor() {
-    
+
     }
 }
 
 class Vertex {
     constructor() {
-    
+
     }
 
     // TODO: make sure name of array conversion method is
@@ -44,26 +50,26 @@ class Vertex {
 
 class Anchor {
     constructor() {
-    
+
     }
 }
 
 // abstract class
 class Segment extends ShapePrimitive {
     constructor() {
-    
+
     }
 }
 
 class LineSegment extends Segment {
     constructor() {
-    
+
     }
 }
 
 class BezierSegment extends Segment {
     constructor() {
-    
+
     }
 }
 
@@ -71,7 +77,7 @@ class BezierSegment extends Segment {
 // may want to use separate classes, but maybe not
 class SplineSegment extends Segment {
     constructor() {
-    
+
     }
 }
 
@@ -79,25 +85,25 @@ class SplineSegment extends Segment {
 
 class Point extends ShapePrimitive {
     constructor() {
-    
+
     }
 }
 
 class Line extends ShapePrimitive {
     constructor() {
-    
+
     }
 }
 
 class Triangle extends ShapePrimitive {
     constructor() {
-    
+
     }
 }
 
 class Quad extends ShapePrimitive {
     constructor() {
-    
+
     }
 }
 
@@ -105,19 +111,19 @@ class Quad extends ShapePrimitive {
 
 class TriangleFan extends ShapePrimitive {
     constructor() {
-    
+
     }
 }
 
 class TriangleStrip extends ShapePrimitive {
     constructor() {
-    
+
     }
 }
 
 class QuadStrip extends ShapePrimitive {
     constructor() {
-    
+
     }
 }
 
@@ -126,26 +132,26 @@ class QuadStrip extends ShapePrimitive {
 // abstract class
 class PrimitiveVisitor {
     constructor() {
-    
+
     }
 }
 
 // using this instead of PrimitiveToContext2DConverter for now
 class PrimitiveToPath2DConverter extends PrimitiveVisitor {
     constructor() {
-    
+
     }
 }
 
 class PrimitiveToVerticesConverter extends PrimitiveVisitor {
     constructor() {
-    
+
     }
 }
 
 class PointAtLengthGetter extends PrimitiveVisitor {
     constructor() {
-    
+
     }
 }
 
@@ -155,10 +161,10 @@ function customShapes(p5, fn) {
     /**
      * @private
      * A class to describe a custom shape made with `beginShape()`/`endShape()`.
-     * 
+     *
      * Every `Shape` has a `kind`. The kind takes any value that
      * can be passed to <a href="#/p5/beginShape">beginShape()</a>:
-     * 
+     *
      * - `PATH`
      * - `POINTS`
      * - `LINES`
@@ -167,32 +173,32 @@ function customShapes(p5, fn) {
      * - `TRIANGLE_FAN`
      * - `TRIANGLE_STRIP`
      * - `QUAD_STRIP`
-     * 
+     *
      * A `Shape` of any kind consists of `contours`, which can be thought of as
      * subshapes (shapes inside another shape). Each `contour` is built from
      * basic shapes called primitives, and each primitive consists of one or more vertices.
-     * 
-     * For example, a square can be made from a single path contour with four line-segment 
-     * primitives. Each line segment contains a vertex that indicates its endpoint. A square 
+     *
+     * For example, a square can be made from a single path contour with four line-segment
+     * primitives. Each line segment contains a vertex that indicates its endpoint. A square
      * with a circular hole in it contains the circle in a separate contour.
-     * 
-     * By default, each vertex only has a position, but a shape's vertices may have other 
-     * properties such as texture coordinates, a normal vector, a fill color, and a stroke color. 
-     * The properties every vertex should have may be customized by passing `vertexProperties` to 
+     *
+     * By default, each vertex only has a position, but a shape's vertices may have other
+     * properties such as texture coordinates, a normal vector, a fill color, and a stroke color.
+     * The properties every vertex should have may be customized by passing `vertexProperties` to
      * `createShape()`.
-     * 
+     *
      * Once a shape is created and given a name like `myShape`, it can be built up with
      * methods such as `myShape.beginShape()`, `myShape.vertex()`, and `myShape.endShape()`.
-     * 
+     *
      * Vertex functions such as `vertex()` or `bezierVertex()` are used to set the `position`
      * property of vertices, as well as the `textureCoordinates` property if applicable. Those
      * properties only apply to a single vertex.
-     * 
-     * If `vertexProperties` includes other properties, they are each set by a method of the 
-     * same name. For example, if vertices in `myShape` have a `fill`, then that is set with 
+     *
+     * If `vertexProperties` includes other properties, they are each set by a method of the
+     * same name. For example, if vertices in `myShape` have a `fill`, then that is set with
      * `myShape.fill()`. In the same way that a <a href="#/p5/fill">fill()</a> may be applied
      * to one or more shapes, `myShape.fill()` may be applied to one or more vertices.
-     * 
+     *
      * @class p5.Shape
      * @param {Object} [vertexProperties={position: createVector(0, 0)}] vertex properties and their initial values.
      */
@@ -202,14 +208,14 @@ function customShapes(p5, fn) {
     /**
      * @private
      * A class to describe a contour made with `beginContour()`/`endContour()`.
-     * 
+     *
      * Contours may be thought of as shapes inside of other shapes.
      * For example, a contour may be used to create a hole in a shape that is created
-     * with <a href="#/p5/beginShape">beginShape()</a>/<a href="#/p5/endShape">endShape()</a>. 
+     * with <a href="#/p5/beginShape">beginShape()</a>/<a href="#/p5/endShape">endShape()</a>.
      * Multiple contours may be included inside a single shape.
-     * 
+     *
      * Contours can have any `kind` that a shape can have:
-     * 
+     *
      * - `PATH`
      * - `POINTS`
      * - `LINES`
@@ -218,14 +224,14 @@ function customShapes(p5, fn) {
      * - `TRIANGLE_FAN`
      * - `TRIANGLE_STRIP`
      * - `QUAD_STRIP`
-     * 
-     * By default, a contour has the same kind as the shape that contains it, but this 
+     *
+     * By default, a contour has the same kind as the shape that contains it, but this
      * may be changed by passing a different `kind` to <a href="#/p5/beginContour">beginContour()</a>.
-     * 
+     *
      * A `Contour` of any kind consists of `primitives`, which are the most basic
      * shapes that can be drawn. For example, if a contour is a hexagon, then
      * it's made from six line-segment primitives.
-     * 
+     *
      * @class p5.Contour
      */
 
@@ -233,32 +239,32 @@ function customShapes(p5, fn) {
 
     /**
      * @private
-     * A base class to describe a shape primitive (a basic shape drawn with 
+     * A base class to describe a shape primitive (a basic shape drawn with
      * `beginShape()`/`endShape()`).
-     * 
-     * Shape primitives are the most basic shapes that can be drawn with 
+     *
+     * Shape primitives are the most basic shapes that can be drawn with
      * <a href="#/p5/beginShape">beginShape()</a>/<a href="#/p5/endShape">endShape()</a>:
-     * 
-     * - segment primitives: line segments, bezier segments, spline segments, and arc segments 
+     *
+     * - segment primitives: line segments, bezier segments, spline segments, and arc segments
      * - isolated primitives: points, lines, triangles, and quads
      * - tessellation primitives: triangle fans, triangle strips, and quad strips
-     * 
+     *
      * More complex shapes may be created by combining many primitives, possibly of different kinds,
      * into a single shape.
-     * 
-     * In a similar way, every shape primitive is built from one or more vertices. 
+     *
+     * In a similar way, every shape primitive is built from one or more vertices.
      * For example, a point consists of a single vertex, while a triangle consists of three vertices.
-     * Each type of shape primitive has a `vertexCapacity`, which may be `Infinity` (for example, a 
-     * spline may consist of any number of vertices). A primitive's `vertexCount` is the number of 
+     * Each type of shape primitive has a `vertexCapacity`, which may be `Infinity` (for example, a
+     * spline may consist of any number of vertices). A primitive's `vertexCount` is the number of
      * vertices it currently contains.
-     * 
+     *
      * Each primitive can add itself to a shape with an `addToShape()` method.
-     * 
-     * It can also accept visitor objects with an `accept()` method. When a primitive accepts a visitor, 
-     * it gives the visitor access to its vertex data. For example, one visitor to a segment might turn 
-     * the data into 2D drawing instructions. Another might find a point at a given distance 
+     *
+     * It can also accept visitor objects with an `accept()` method. When a primitive accepts a visitor,
+     * it gives the visitor access to its vertex data. For example, one visitor to a segment might turn
+     * the data into 2D drawing instructions. Another might find a point at a given distance
      * along the segment.
-     * 
+     *
      * @class p5.ShapePrimitive
      * @param {...p5.Vertex} vertices the vertices to include in the primitive.
      */
@@ -268,34 +274,34 @@ function customShapes(p5, fn) {
     /**
      * @private
      * A class to describe a vertex (a point on a shape), in 2D or 3D.
-     * 
+     *
      * Vertices are the basic building blocks of all `p5.Shape` objects, including
      * shapes made with <a href="#/p5/vertex">vertex()</a>, <a href="#/p5/arcVertex">arcVertex()</a>,
      * <a href="#/p5/bezierVertex">bezierVertex()</a>, and <a href="#/p5/splineVertex">splineVertex()</a>.
-     * 
-     * Like a point on an object in the real world, a vertex may have different properties. 
-     * These may include coordinate properties such as `position`, `textureCoordinates`, and `normal`, 
+     *
+     * Like a point on an object in the real world, a vertex may have different properties.
+     * These may include coordinate properties such as `position`, `textureCoordinates`, and `normal`,
      * color properties such as `fill` and `stroke`, and more.
-     * 
-     * A vertex called `myVertex` with position coordinates `(2, 3, 5)` and a green stroke may be created 
+     *
+     * A vertex called `myVertex` with position coordinates `(2, 3, 5)` and a green stroke may be created
      * like this:
-     * 
+     *
      * ```js
      * let myVertex = new p5.Vertex({
      *   position: createVector(2, 3, 5),
      *   stroke: color('green')
      * });
      * ```
-     * 
-     * Any property names may be used. Property values may be any 
-     * <a href="https://developer.mozilla.org/en-US/docs/Glossary/Primitive">JavaScript primitive</a>, any 
-     * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer">object literal</a>, 
-     * or any object with an `array` property. 
-     * 
+     *
+     * Any property names may be used. Property values may be any
+     * <a href="https://developer.mozilla.org/en-US/docs/Glossary/Primitive">JavaScript primitive</a>, any
+     * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer">object literal</a>,
+     * or any object with an `array` property.
+     *
      * For example, if a position is stored as a `p5.Vector` object and a stroke is stored as a `p5.Color` object,
      * then the `array` properties of those objects will be used by the vertex's own `array` property, which provides
      * all the vertex data in a single array.
-     * 
+     *
      * @class p5.Vertex
      * @param {Object} [properties={position: createVector(0, 0)}] vertex properties.
      */
@@ -306,7 +312,7 @@ function customShapes(p5, fn) {
 
     /**
      * @private
-     * A class responsible for... 
+     * A class responsible for...
      */
 
     p5.Anchor = Anchor;
@@ -320,7 +326,7 @@ function customShapes(p5, fn) {
 
     /**
      * @private
-     * A class responsible for... 
+     * A class responsible for...
      */
 
     p5.LineSegment = LineSegment;
@@ -334,7 +340,7 @@ function customShapes(p5, fn) {
 
     /**
      * @private
-     * A class responsible for... 
+     * A class responsible for...
      */
 
     p5.SplineSegment = SplineSegment;
@@ -343,14 +349,14 @@ function customShapes(p5, fn) {
 
     /**
      * @private
-     * A class responsible for... 
+     * A class responsible for...
      */
 
     p5.Point = Point;
 
     /**
      * @private
-     * A class responsible for... 
+     * A class responsible for...
      */
 
     p5.Line = Line;
@@ -364,7 +370,7 @@ function customShapes(p5, fn) {
 
     /**
      * @private
-     * A class responsible for... 
+     * A class responsible for...
      */
 
     p5.Quad = Quad;
@@ -373,14 +379,14 @@ function customShapes(p5, fn) {
 
     /**
      * @private
-     * A class responsible for... 
+     * A class responsible for...
      */
 
     p5.TriangleFan = TriangleFan;
 
     /**
      * @private
-     * A class responsible for... 
+     * A class responsible for...
      */
 
     p5.TriangleStrip = TriangleStrip;
@@ -396,7 +402,7 @@ function customShapes(p5, fn) {
 
     /**
      * @private
-     * A class responsible for... 
+     * A class responsible for...
      */
 
     p5.PrimitiveVisitor = PrimitiveVisitor;
@@ -421,11 +427,11 @@ function customShapes(p5, fn) {
      */
 
     p5.PointAtLengthGetter = PointAtLengthGetter;
-    
+
     // ---- FUNCTIONS ----
 
     // Note: Code is commented out for now, to avoid conflicts with the existing implementation.
-    
+
     /**
      * Top-line description
      *
@@ -436,7 +442,7 @@ function customShapes(p5, fn) {
     //     // example of how to call an existing p5 function:
     //     // this.background('yellow');
     // };
-    
+
     /**
      * Top-line description
      *

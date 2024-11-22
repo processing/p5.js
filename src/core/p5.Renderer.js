@@ -7,6 +7,7 @@
 import { Color } from '../color/p5.Color';
 import * as constants from '../core/constants';
 import { Image } from '../image/p5.Image';
+import { Shape } from '../shape/custom_shapes';
 
 class Renderer {
   constructor(pInst, w, h, isMainCanvas) {
@@ -50,6 +51,8 @@ class Renderer {
     this._clipping = false;
     this._clipInvert = false;
     this._curveTightness = 0;
+
+    this.currentShape = new Shape();
   }
 
   remove() {
@@ -92,6 +95,7 @@ class Renderer {
   pop() {
     this._pushPopDepth--;
     Object.assign(this.states, this._pushPopStack.pop());
+    this.updateShapeVertexProperties();
   }
 
   beginClip(options = {}) {
@@ -157,6 +161,7 @@ class Renderer {
   fill(...args) {
     this.states.fillSet = true;
     this.states.fillColor = this._pInst.color(...args);
+    this.updateShapeVertexProperties();
   }
 
   noFill() {
@@ -166,6 +171,7 @@ class Renderer {
   stroke(...args) {
     this.states.strokeSet = true;
     this.states.strokeColor = this._pInst.color(...args);
+    this.updateShapeVertexProperties();
   }
 
   noStroke() {
@@ -177,6 +183,10 @@ class Renderer {
       stroke: this.states.strokeColor,
       fill: this.states.fillColor,
     }
+  }
+
+  updateShapeVertexProperties() {
+    this.currentShape.vertexProperties = this.vertexProperties();
   }
 
   textSize(s) {

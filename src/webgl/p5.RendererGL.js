@@ -442,6 +442,7 @@ class RendererGL extends Renderer {
   //////////////////////////////////////////////
 
   beginShape(...args) {
+    this.currentShape.reset();
     this.shapeBuilder.beginShape(...args);
   }
 
@@ -494,6 +495,7 @@ class RendererGL extends Renderer {
     } else {
       this.states._currentNormal = new Vector(xorv, y, z);
     }
+    this.updateShapeVertexProperties();
   }
 
   //////////////////////////////////////////////
