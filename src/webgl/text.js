@@ -659,7 +659,7 @@ function text(p5, fn){
     const doStroke = this.states.strokeColor;
     const drawMode = this.states.drawMode;
 
-    this.states.strokeColor = false;
+    this.states.strokeColor = null;
     this.states.drawMode = constants.TEXTURE;
 
     // get the cached FontInfo object

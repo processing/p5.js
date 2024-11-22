@@ -1103,7 +1103,7 @@ class RendererGL extends Renderer {
       this.matchSize(tmp, target);
       // setup
       this.push();
-      this.states.strokeColor = false;
+      this.states.strokeColor = null;
       this.blendMode(constants.BLEND);
 
       // draw main to temp buffer
@@ -1137,7 +1137,7 @@ class RendererGL extends Renderer {
     // every other non-blur shader uses single pass
     else {
       fbo.draw(() => {
-        this.states.strokeColor = false;
+        this.states.strokeColor = null;
         this.blendMode(constants.BLEND);
         this.shader(this.states.filterShader);
         this.states.filterShader.setUniform('tex0', target);
@@ -1153,7 +1153,7 @@ class RendererGL extends Renderer {
     }
     // draw fbo contents onto main renderer.
     this.push();
-    this.states.strokeColor = false;
+    this.states.strokeColor = null;
     this.clear();
     this.push();
     this.states.imageMode = constants.CORNER;
@@ -2044,8 +2044,7 @@ class RendererGL extends Renderer {
     newFramebuffer.draw(() => {
       this.shader(this.states.diffusedShader);
       this.states.diffusedShader.setUniform('environmentMap', input);
-      this.states.strokeColor = false;
-      this.rectMode(constants.CENTER);
+      this.states.strokeColor = null;
       this.noLights();
       this.plane(width, height);
     });
@@ -2096,7 +2095,7 @@ class RendererGL extends Renderer {
         this.clear();
         this.states.specularShader.setUniform('environmentMap', input);
         this.states.specularShader.setUniform('roughness', roughness);
-        this.states.strokeColor = false;
+        this.states.strokeColor = null;
         this.noLights();
         this.plane(w, w);
       });

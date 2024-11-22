@@ -3179,7 +3179,7 @@ function primitives3D(p5, fn){
 
     this.push();
     this.noLights();
-    this.states.strokeColor = false;;
+    this.states.strokeColor = null;;
 
     this.texture(img);
     this.states.textureMode = constants.NORMAL;

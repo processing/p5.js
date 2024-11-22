@@ -1325,7 +1325,7 @@ function setting(p5, fn){
    * </div>
    */
   fn.noStroke = function() {
-    this._renderer.states.strokeColor = false;
+    this._renderer.states.strokeColor = null;
     return this;
   };
 

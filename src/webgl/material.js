@@ -3635,7 +3635,7 @@ function material(p5, fn){
     this.states._useNormalMaterial = true;
     this.states.curFillColor = [1, 1, 1, 1];
     this.states.fillColor = true;
-    this.states.strokeColor = false;
+    this.states.strokeColor = null;
   }
 
   // RendererGL.prototype.ambientMaterial = function(v1, v2, v3) {
