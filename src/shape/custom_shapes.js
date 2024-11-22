@@ -169,15 +169,33 @@ function customShapes(p5, fn) {
      * - `QUAD_STRIP`
      * 
      * A `Shape` of any kind consists of `contours`, which can be thought of as
-     * subshapes (shapes inside another shape).
+     * subshapes (shapes inside another shape). Each `contour` is built from
+     * basic shapes called primitives, and each primitive consists of one or more vertices.
      * 
-     * To construct a `Shape` called `myShape`, methods such as `myShape.beginShape()`, 
-     * `myShape.vertex()`, and `myShape.endShape()` may be called.
+     * For example, a square can be made from a single path contour with four line segment 
+     * primitives. Each line segment contains a vertex that indicates its endpoint. A square 
+     * with a circular hole in it contains the circle in a separate contour.
+     * 
+     * By default, each vertex only has a position, but a shape's vertices may have other 
+     * properties such as texture coordinates, a normal vector, a fill color, and a stroke color. 
+     * The properties every vertex should have may be customized by passing `vertexProperties` to 
+     * `createShape()`.
+     * 
+     * Once a shape is created and given a name like `myShape`, it can be built up with
+     * methods such as `myShape.beginShape()`, `myShape.vertex()`, and `myShape.endShape()`.
+     * 
+     * Vertex functions such as `vertex()` or `bezierVertex()` are used to set the `position`
+     * property of vertices, as well as the `textureCoordinates` property if applicable. Those
+     * properties only apply to a single vertex.
+     * 
+     * If `vertexProperties` includes other properties, they are each set by a method of the 
+     * same name. For example, if vertices in `myShape` have a `fill`, then that is set with 
+     * `myShape.fill()`. In the same way that a <a href="#/p5/fill">fill()</a> may be applied
+     * to one or more shapes, `myShape.fill()` may be applied to one or more vertices.
      * 
      * @class p5.Shape
      * @constructor
-     * @param {(PATH|POINTS|LINES|TRIANGLES|QUADS|TRIANGLE_FAN|TRIANGLE_STRIP|QUAD_STRIP)} [kind=PATH] either 
-     * PATH, POINTS, LINES, TRIANGLES, QUADS, TRIANGLE_FAN, TRIANGLE_STRIP, or QUAD_STRIP.
+     * @param {Object} [vertexProperties={position: createVector(0, 0)}] vertex properties and their initial values.
      */
 
     p5.Shape = Shape;
