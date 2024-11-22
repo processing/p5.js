@@ -207,7 +207,7 @@ function customShapes(p5, fn) {
      * Contours may be thought of as shapes inside of other shapes.
      * For example, a contour may be used to create a hole in a shape that is created
      * with <a href="#/p5/beginShape">beginShape()</a>/<a href="#/p5/endShape">endShape()</a>. 
-     * Multiple contours may be used to create multiple holes.
+     * Multiple contours may be included inside a single shape.
      * 
      * Contours can have any `kind` that a shape can have:
      * 
@@ -229,8 +229,6 @@ function customShapes(p5, fn) {
      * 
      * @class p5.Contour
      * @constructor
-     * @param {(PATH|POINTS|LINES|TRIANGLES|QUADS|TRIANGLE_FAN|TRIANGLE_STRIP|QUAD_STRIP)} [kind=PATH] either 
-     * PATH, POINTS, LINES, TRIANGLES, QUADS, TRIANGLE_FAN, TRIANGLE_STRIP, or QUAD_STRIP.
      */
 
     p5.Contour = Contour;
