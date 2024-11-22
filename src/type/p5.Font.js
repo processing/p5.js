@@ -237,6 +237,7 @@ function font(p5, fn) {
   }
 
   async function create(pInst, name, path, descriptors, rawFont) {
+    // TODO: handle wrapping path in url()
     let ff = new FontFace(name, rawFont?._data || path, descriptors);
     if (ff.status !== 'loaded') {
       await ff.load();
