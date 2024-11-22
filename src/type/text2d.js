@@ -1,15 +1,17 @@
 
 /*
- *  NEXT: then get axes and values from font, test with other loading methods, do sliders
  *  TODO:
- *   - variable fonts
+ *   - textToPoints: line-breaking, alignments, rectMode
+ *   - textToPaths: return value ?
+ *   - get axes and values for parsed fonts
+ *   - cache parsed fonts (and/or lazy load)
+ *   - test textToPoints with google/variable fonts
+ *   - more with variable fonts, do slider example
  *   - better font-loading (google fonts, font-face declarations, multiple fonts with Promise.all())
  *   - add test for line-height property in textFont() and textProperty()
  *      - how does this integrate with textLeading?
  *   - spurious warning in oneoff.html (local)
- * 
- * ON-HOLD:
- *   - textToPoints: alignments, line-breaking, better thresholding, scaling for small fonts
+ *   - textToPoints: line-breaking, alignments, rectMode
  * 
  * PR-QUESTIONS: 
  *   - textProperty(ies) -> properties in states, mapped-states, context and canvas.style [PR]
