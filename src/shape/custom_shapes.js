@@ -34,6 +34,10 @@ class Vertex {
     constructor() {
     
     }
+
+    // TODO: make sure name of array conversion method is
+    // consistent with any modifications to the names of corresponding
+    // properties of p5.Vector and p5.Color
 }
 
 // ---- PATH PRIMITIVES ----
