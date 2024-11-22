@@ -194,7 +194,6 @@ function customShapes(p5, fn) {
      * to one or more shapes, `myShape.fill()` may be applied to one or more vertices.
      * 
      * @class p5.Shape
-     * @constructor
      * @param {Object} [vertexProperties={position: createVector(0, 0)}] vertex properties and their initial values.
      */
 
@@ -228,7 +227,6 @@ function customShapes(p5, fn) {
      * it's made from six line-segment primitives.
      * 
      * @class p5.Contour
-     * @constructor
      */
 
     p5.Contour = Contour;
@@ -259,7 +257,6 @@ function customShapes(p5, fn) {
      * along the segment.
      * 
      * @class p5.ShapePrimitive
-     * @constructor
      * @param {p5.Vertex} vertex the first vertex to include in the primitive.
      */
 
@@ -297,7 +294,6 @@ function customShapes(p5, fn) {
      * a full vertex object to a one-dimensional array.
      * 
      * @class p5.Vertex
-     * @constructor
      * @param {Object} [properties] vertex properties.
      */
 
