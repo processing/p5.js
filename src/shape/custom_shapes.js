@@ -247,9 +247,12 @@ function customShapes(p5, fn) {
      * into a single shape.
      * 
      * In a similar way, every shape primitive is built from one or more vertices. 
-     * For example, a point consists of a single vertex, while a triangle consists of three vertices. 
+     * For example, a point consists of a single vertex, while a triangle consists of three vertices.
+     * Each type of shape primitive has a `vertexCapacity`, which may be `Infinity` (for example, a 
+     * spline may consist of any number of vertices). A primitive's `vertexCount` is the number of 
+     * vertices it currently contains.
      * 
-     * Each primitive can add itself to a shape, with an `addToShape()` method.
+     * Each primitive can add itself to a shape with an `addToShape()` method.
      * 
      * It can also accept visitor objects with an `accept()` method. When a primitive accepts a visitor, 
      * it gives the visitor access to its vertex data. For example, one visitor to a segment might turn 
@@ -257,7 +260,7 @@ function customShapes(p5, fn) {
      * along the segment.
      * 
      * @class p5.ShapePrimitive
-     * @param {p5.Vertex} vertex the first vertex to include in the primitive.
+     * @param {...p5.Vertex} vertices the vertices to include in the primitive.
      */
 
     p5.ShapePrimitive = ShapePrimitive;
