@@ -273,10 +273,12 @@ function customShapes(p5, fn) {
      * shapes made with <a href="#/p5/vertex">vertex()</a>, <a href="#/p5/arcVertex">arcVertex()</a>,
      * <a href="#/p5/bezierVertex">bezierVertex()</a>, and <a href="#/p5/splineVertex">splineVertex()</a>.
      * 
-     * Like a point on an object in the real world, a vertex has different properties. These include coordinate
-     * properties `position`, `textureCoordinates`, and `normal`, as well as color properties `fill` and `stroke`.
+     * Like a point on an object in the real world, a vertex may have different properties. 
+     * These may include coordinate properties such as `position`, `textureCoordinates`, and `normal`, 
+     * color properties such as `fill` and `stroke`, and more.
      * 
-     * A vertex called `myVertex` with position coordinates `(2, 3, 5)` and a green stroke may be created like this:
+     * A vertex called `myVertex` with position coordinates `(2, 3, 5)` and a green stroke may be created 
+     * like this:
      * 
      * ```js
      * let myVertex = new p5.Vertex({
@@ -285,16 +287,14 @@ function customShapes(p5, fn) {
      * });
      * ```
      * 
-     * Note:
-     * - Coordinate properties are `p5.Vector` objects. 
-     * - Color properties are `p5.Color` objects. 
+     * Any property names may be used. Property values may be any 
+     * <a href="https://developer.mozilla.org/en-US/docs/Glossary/Primitive">JavaScript primitive</a>, any 
+     * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer">object literal</a>, 
+     * or any object with an `array` property. 
      * 
-     * Properties may be specified in all the ways supported by `createVector()` 
-     * and `color()`. For example, a vertex position can be set with two coordinates, 
-     * as in  `createVector(2, 3)`.
-     * 
-     * Vertices also have a `toArray()` method that converts 
-     * a full vertex object to a one-dimensional array.
+     * For example, if a position is stored as a `p5.Vector` object and a stroke is stored as a `p5.Color` object,
+     * then the `array` properties of those objects will be used by the vertex's own `array` property, which provides
+     * all the vertex data in a single array.
      * 
      * @class p5.Vertex
      * @param {Object} [properties] vertex properties.
