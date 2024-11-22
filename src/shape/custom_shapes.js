@@ -172,7 +172,7 @@ function customShapes(p5, fn) {
      * subshapes (shapes inside another shape). Each `contour` is built from
      * basic shapes called primitives, and each primitive consists of one or more vertices.
      * 
-     * For example, a square can be made from a single path contour with four line segment 
+     * For example, a square can be made from a single path contour with four line-segment 
      * primitives. Each line segment contains a vertex that indicates its endpoint. A square 
      * with a circular hole in it contains the circle in a separate contour.
      * 
