@@ -252,6 +252,10 @@ class Renderer2D extends Renderer {
     }
   }
 
+  drawShape(shape) {
+    // TODO
+  }
+
   beginClip(options = {}) {
     super.beginClip(options);
 
@@ -933,7 +937,7 @@ class Renderer2D extends Renderer {
     }
   }
 
-  endShape(
+  legacyEndShape(
     mode,
     vertices,
     isCurve,

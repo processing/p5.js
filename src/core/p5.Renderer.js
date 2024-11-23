@@ -7,6 +7,7 @@
 import { Color } from '../color/p5.Color';
 import * as constants from '../core/constants';
 import { Image } from '../image/p5.Image';
+import { Vector } from '../math/p5.Vector';
 import { Shape } from '../shape/custom_shapes';
 
 class Renderer {
@@ -96,6 +97,44 @@ class Renderer {
     this._pushPopDepth--;
     Object.assign(this.states, this._pushPopStack.pop());
     this.updateShapeVertexProperties();
+  }
+
+  beginShape(...args) {
+    this.currentShape.reset();
+    this.currentShape.beginShape(...args);
+  }
+
+  endShape(...args) {
+    this.currentShape.endShape(...args);
+    this.drawShape(this.currentShape);
+  }
+
+  drawShape(shape) {
+    throw new Error('Unimplemented')
+  }
+
+  vertex(x, y) {
+    let z, u, v;
+
+    // default to (x, y) mode: all other arguments assumed to be 0.
+    z = u = v = 0;
+
+    if (arguments.length === 3) {
+      // (x, y, z) mode: (u, v) assumed to be 0.
+      z = arguments[2];
+    } else if (arguments.length === 4) {
+      // (x, y, u, v) mode: z assumed to be 0.
+      u = arguments[2];
+      v = arguments[3];
+    } else if (arguments.length === 5) {
+      // (x, y, z, u, v) mode
+      z = arguments[2];
+      u = arguments[3];
+      v = arguments[4];
+    }
+    const position = new Vector(x, y, z);
+    const textureCoordinates = new Vector(u, v);
+    this.currentShape.vertex(position, textureCoordinates);
   }
 
   beginClip(options = {}) {

@@ -7,7 +7,7 @@
  */
 
 // uncomment the following once you need it (otherwise VS Code complains):
-// import * as constants from '../core/constants';
+import * as constants from '../core/constants';
 
 // ---- GENERAL CLASSES ----
 
@@ -28,6 +28,28 @@ class Shape {
 
     reset() {
        // TODO: remove existing vertices
+    }
+
+    vertex(position, textureCoordinates) {
+      // Add the current position and texture coordiantes to the existing state
+      let vertex = this.createVertex({ ...this.vertexProperties, position, textureCoordinates });
+      // TODO
+      // primitiveShapeCreator = primitiveShapeCreators.get(['vertex', this.kind]);
+      // primitiveShape = primitiveShapeCreator(vertex);
+      // primitiveShape.addToShape(this);
+    }
+
+    createVertex(properties) {
+      // TODO
+      // return vertex;
+    }
+
+    beginShape(shapeKind) {
+      // TODO
+    }
+
+    endShape(closeMode = constants.OPEN) {
+      // TODO
     }
 }
 

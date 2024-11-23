@@ -442,11 +442,16 @@ class RendererGL extends Renderer {
   //////////////////////////////////////////////
 
   beginShape(...args) {
-    this.currentShape.reset();
+    super.beginShape(...args);
+    // TODO remove when shape refactor is complete
     this.shapeBuilder.beginShape(...args);
   }
 
-  endShape(
+  drawShape(shape) {
+    // TODO
+  }
+
+  legacyEndShape(
     mode,
     isCurve,
     isBezier,
@@ -481,7 +486,7 @@ class RendererGL extends Renderer {
     this.shapeBuilder.beginContour(...args);
   }
 
-  vertex(...args) {
+  legacyVertex(...args) {
     this.shapeBuilder.vertex(...args);
   }
 
