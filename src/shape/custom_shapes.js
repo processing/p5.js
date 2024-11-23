@@ -382,6 +382,7 @@ function customShapes(p5, fn) {
      * A class responsible for...
      * 
      * @class p5.Anchor
+     * @extends p5.ShapePrimitive
      * @param {p5.Vertex} vertex the vertex to include in the anchor.
      */
 
