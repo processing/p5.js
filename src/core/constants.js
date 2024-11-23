@@ -60,6 +60,18 @@ export const WEBGL2 = Symbol('webgl2');
  * @final
  */
 export const ARROW = 'default';
+
+/**
+ * @property {String} SIMPLE
+ * @final
+ */
+export const SIMPLE = 'simple';
+/**
+ * @property {String} FULLY
+ * @final
+ */
+export const FULLY = 'fully';
+
 /**
  * @typedef {'crosshair'} CROSS
  * @property {CROSS} CROSS

@@ -26,6 +26,7 @@ uniform mat4 uProjectionMatrix;
 uniform float uStrokeWeight;
 
 uniform bool uUseLineColor;
+uniform bool uSimpleLines;
 uniform vec4 uMaterialColor;
 
 uniform vec4 uViewport;
@@ -67,6 +68,8 @@ vec2 lineIntersection(vec2 aPoint, vec2 aDir, vec2 bPoint, vec2 bDir) {
 
 void main() {
   HOOK_beforeVertex();
+
+  if(!uSimpleLines){
   // Caps have one of either the in or out tangent set to 0
   vCap = (aTangentIn == vec3(0.)) != (aTangentOut == (vec3(0.)))
     ? 1. : 0.;
@@ -77,6 +80,7 @@ void main() {
     aTangentOut != vec3(0.) &&
     aTangentIn != aTangentOut
   ) ? 1. : 0.;
+  }
 
   vec4 localPosition = vec4(HOOK_getLocalPosition(aPosition.xyz), 1.);
   vec4 posp = vec4(HOOK_getWorldPosition((uModelViewMatrix * localPosition).xyz), 1.);
@@ -171,7 +175,7 @@ void main() {
   }
 
   vec2 offset;
-  if (vJoin == 1.) {
+  if (vJoin == 1. && !uSimpleLines) {
     vTangent = normalize(tangentIn + tangentOut);
     vec2 normalIn = vec2(-tangentIn.y, tangentIn.x);
     vec2 normalOut = vec2(-tangentOut.y, tangentOut.x);

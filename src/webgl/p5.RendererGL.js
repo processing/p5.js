@@ -242,6 +242,9 @@ class RendererGL extends Renderer {
     // erasing
     this._isErasing = false;
 
+    // simple lines
+    this._simpleLines = false;    
+
     // clipping
     this._clipDepths = [];
     this._isClipApplied = false;
@@ -2150,6 +2153,7 @@ class RendererGL extends Renderer {
 
   _setStrokeUniforms(strokeShader) {
     // set the uniform values
+    strokeShader.setUniform('uSimpleLines', this._simpleLines);
     strokeShader.setUniform('uUseLineColor', this._useLineColor);
     strokeShader.setUniform('uMaterialColor', this.states.curStrokeColor);
     strokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);

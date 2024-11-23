@@ -13,7 +13,8 @@ import { DataArray } from './p5.DataArray';
 import { Vector } from '../math/p5.Vector';
 
 class Geometry {
-  constructor(detailX, detailY, callback) {
+  constructor(detailX, detailY, callback, renderer) {
+    this.renderer = renderer;
     this.vertices = [];
 
     this.boundingBoxCache = null;
@@ -1398,7 +1399,7 @@ class Geometry {
       if (dirOK) {
         this._addSegment(begin, end, fromColor, toColor, dir);
       }
-
+      if(!this.renderer._simpleLines){
       if (i > 0 && prevEdge[1] === currEdge[0]) {
         if (!connected.has(currEdge[0])) {
           connected.add(currEdge[0]);
@@ -1481,6 +1482,7 @@ class Geometry {
         lastValidDir = dir;
       }
     }
+  }
     for (const { point, dir, color } of potentialCaps.values()) {
       this._addCap(point, dir, color);
     }
@@ -1520,6 +1522,7 @@ class Geometry {
       }
     }
     this.lineVertices.push(...a, ...b, ...a, ...b, ...b, ...a);
+    if(!this.renderer._simpleLines){
     this.lineVertexColors.push(
       ...fromColor,
       ...toColor,
@@ -1528,6 +1531,7 @@ class Geometry {
       ...toColor,
       ...fromColor
     );
+  }
     return this;
   }
 
