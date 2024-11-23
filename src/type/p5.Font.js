@@ -55,11 +55,11 @@ function font(p5, fn) {
       this.font = font;
       this.name = name;
       this.path = path;
-      this.data = data;
+      this.fontData = data;
     }
 
     metadata() {
-      return this.data?.name || {};
+      return this.fontData?.name || {};
     }
 
     fontBounds(...args) { // alias for p5.fontBounds
@@ -73,8 +73,12 @@ function font(p5, fn) {
     textToPoints(str, x, y, width, height) {
 
       // TODO: implement width and height, line-breaks, alignment
+      if (!this.fontData) {
+        throw Error('No font data available for "' + this.name
+          + '"\nTry downloading a local copy of the font file');
+      }
 
-      let font = this.data;
+      let font = this.fontData;
       let shape = Typr.U.shape(font, str);
       let path = Typr.U.shapeToPath(font, shape);
       let dpr = window?.devicePixelRatio || 1;
@@ -86,33 +90,6 @@ function font(p5, fn) {
       }
       return pts;
     }
-
-    static async createX(...args/*path, name, onSuccess, onError, descriptors*/) { // tmp
-
-      let { path, name, success, error, descriptors } = parseCreateArgs(...args);
-
-      return await new Promise((resolve, reject) => {
-        let pfont = new p5.Font(this/*p5 instance*/, name, path, descriptors);
-        pfont.load().then(() => {
-          if (document?.fonts) {
-            document.fonts.add(pfont.font);
-          }
-          if (typeof success === 'function') {
-            success(pfont);
-          }
-          else {
-            resolve(pfont);
-          }
-        }, err => {
-          p5._friendlyFileLoadError(4, path);
-          if (error) {
-            error(err);
-          } else {
-            reject(err);
-          }
-        });
-      });
-    };
 
     static async list(log = false) { // tmp
       if (log) {
@@ -167,6 +144,8 @@ function font(p5, fn) {
     return { path, name, success, error, descriptors };
   }
 
+
+
   /**
    * Load a font and returns a p5.Font instance. The font can be specified by its path or a url.
    * Optional arguments include the font name, descriptors for the FontFace object, 
@@ -174,32 +153,9 @@ function font(p5, fn) {
    * @param  {...any} args - path, name, onSuccess, onError, descriptors
    * @returns a Promise that resolves with a p5.Font instance
    */
-  p5.prototype.loadFont = async function(...args/*path, name, onSuccess, onError, descriptors*/) {
+  p5.prototype.loadFont = async function (...args/*path, name, onSuccess, onError, descriptors*/) {
 
     let { path, name, success, error, descriptors } = parseCreateArgs(...args);
-
-    const extractFontName = (font, path) => {
-      let meta = font?.name;
-
-      // use the metadata if we have it
-      if (meta) {
-        if (meta.fullName) {
-          return meta.fullName;
-        }
-        if (meta.familyName) {
-          return meta.familyName;
-        }
-      }
-
-      // if not, extract the name from the path
-      let matches = extractFontNameRe.exec(path);
-      if (matches && matches.length >= 3) {
-        return matches[1];
-      }
-
-      // give up and return the full path
-      return path;
-    };
 
     let pfont;
     try {
@@ -208,18 +164,21 @@ function font(p5, fn) {
 
       // parse the font data
       let fonts = Typr.parse(result.bytes);
-      if (fonts.length !== 1) throw Error('Invalid font data');
+      if (fonts.length !== 1) throw Error('Invalid font data (1)');
+      //if (!('cmap' in fonts[0])) throw Error('Invalid font data (2)');
 
       // make sure we have a valid name
       name = name || extractFontName(fonts[0], path);
-      
+
       // create a FontFace object and pass it to the p5.Font constructor
       pfont = await create(this, name, path, descriptors, fonts[0]);
 
     } catch (err) {
       // failed to parse the font, load it as a simple FontFace
+      console.warn('Failed to parse font data:', err);
       try {
         // create a FontFace object and pass it to p5.Font
+        console.log('Retrying with FontFace path:', typeof path);
         pfont = await create(this, name, path, descriptors);
       }
       catch (err) {
@@ -237,14 +196,59 @@ function font(p5, fn) {
   }
 
   async function create(pInst, name, path, descriptors, rawFont) {
-    // TODO: handle wrapping path in url()
-    let ff = new FontFace(name, rawFont?._data || path, descriptors);
-    if (ff.status !== 'loaded') {
-      await ff.load();
+
+    let face = createFontFace(name, path, descriptors, rawFont);
+
+    // load if we need to
+    if (face.status !== 'loaded') {
+      await face.load();
     }
-    document.fonts.add(ff);
-    return new p5.Font(pInst, ff, name, path, rawFont);
+
+    // add it to the document
+    document.fonts.add(face);
+
+    // return a p5.Font instance
+    return new p5.Font(pInst, face, name, path, rawFont);
   }
+
+  function createFontFace(name, path, descriptors, rawFont) {
+    let fontArg = rawFont?._data;
+    if (!fontArg) {
+      if (!validFontTypesRe.test(path)) {
+        throw Error(invalidFontError);
+      }
+      if (!path.startsWith('url(')) {
+        path = 'url(' + path + ')';
+      }
+      fontArg = path;
+    }
+    // create/return the FontFace object
+    return new FontFace(name, fontArg, descriptors);
+  }
+
+  function extractFontName(font, path) {
+    let meta = font?.name;
+
+    // use the metadata if we have it
+    if (meta) {
+      if (meta.fullName) {
+        return meta.fullName;
+      }
+      if (meta.familyName) {
+        return meta.familyName;
+      }
+    }
+
+    // if not, extract the name from the path
+    let matches = extractFontNameRe.exec(path);
+    if (matches && matches.length >= 3) {
+      return matches[1];
+    }
+
+    // give up and return the full path
+    return path;
+  };
+
 };
 
 export default font;
