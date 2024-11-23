@@ -703,6 +703,12 @@ export const BASELINE = 'alphabetic';
  */
 export const PATH = Symbol('path');
 /**
+ * @typedef {unique symbol} EMPTY_PATH
+ * @property {EMPTY_PATH} EMPTY_PATH
+ * @final
+ */
+export const EMPTY_PATH = Symbol('empty_path');
+/**
  * @typedef {0x0000} POINTS
  * @property {POINTS} POINTS
  * @final
