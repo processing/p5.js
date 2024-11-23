@@ -54,8 +54,9 @@ class Shape {
 }
 
 class Contour {
-    constructor() {
-
+    constructor(kind = constants.PATH) {
+        this.kind = kind;
+        this.primitives = [];
     }
 }
 
