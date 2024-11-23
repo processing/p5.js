@@ -67,8 +67,18 @@ class ShapePrimitive {
 }
 
 class Vertex {
-    constructor() {
-
+    constructor(properties) {
+        for (const [key, value] of Object.entries(properties)) {
+            this[key] = value;
+        }
+    }
+    
+    get array() {
+      // convert to 1D array
+      // call `toArray()` if value is an object with a toArray() method
+      // handle primitive values separately
+      // maybe handle object literals too, with Object.values()?
+      // probably don’t need anything else for now?
     }
 
     // TODO: make sure name of array conversion method is
