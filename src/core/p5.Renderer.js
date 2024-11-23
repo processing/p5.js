@@ -52,7 +52,7 @@ class Renderer {
     this._clipInvert = false;
     this._curveTightness = 0;
 
-    this.currentShape = new Shape();
+    this.currentShape = new Shape(this.vertexProperties());
   }
 
   remove() {
@@ -186,7 +186,10 @@ class Renderer {
   }
 
   updateShapeVertexProperties() {
-    this.currentShape.vertexProperties = this.vertexProperties();
+    const props = this.vertexProperties();
+    for (const key in props) {
+      this.currentShape[key](props[key]);
+    }
   }
 
   textSize(s) {

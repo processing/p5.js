@@ -12,10 +12,18 @@
 // ---- GENERAL CLASSES ----
 
 class Shape {
-    vertexProperties = {};
+    vertexProperties;
 
-    constructor() {
+    constructor(vertexProperties) {
+      this.vertexProperties = vertexProperties;
 
+      for (const key in this.vertexProperties) {
+        if (key !== 'position' && key !== 'textureCoordinates') {
+          this[key] = function(value) {
+            this.vertexProperties[key] = value;
+          }
+        }
+      }
     }
 
     reset() {
