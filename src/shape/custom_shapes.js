@@ -70,10 +70,13 @@ class Contour {
 }
 
 class ShapePrimitive {
-    constructor() {
+    vertices;
+
+    constructor(...vertices) {
         if (this.constructor === ShapePrimitive) {
             throw new Error("ShapePrimitive is an abstract class: it cannot be instantiated.");
         }
+        this.vertices = vertices;
     }
 
     get vertexCount() {
@@ -115,9 +118,34 @@ class Vertex {
 
 // ---- PATH PRIMITIVES ----
 
-class Anchor {
-    constructor() {
+class Anchor extends ShapePrimitive {
+    #vertexCapacity;
 
+    constructor(...vertices) {
+        super(...vertices);
+        this.#vertexCapacity = 1;
+    }
+
+    get vertexCount() {
+        return this.vertices.length;
+    }
+
+    get vertexCapacity() {
+        return this.#vertexCapacity;
+    }
+
+    accept(visitor) {
+        visitor.visitAnchor(this);
+    }
+
+    addToShape(shape) {
+        let lastContour = shape.contours.at(-1);
+        if (lastContour.kind === constants.EMPTY_PATH) {
+            lastContour.primitives.push(this);
+        }
+        else {
+            throw new Error("Anchor can only be added to an empty path contour.");
+        }
     }
 }
 
