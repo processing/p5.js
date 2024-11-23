@@ -59,10 +59,27 @@ class Contour {
     }
 }
 
-// abstract class
 class ShapePrimitive {
     constructor() {
+        if (this.constructor === ShapePrimitive) {
+            throw new Error("ShapePrimitive is an abstract class: it cannot be instantiated.");
+        }
+    }
 
+    get vertexCount() {
+        throw new Error("Getter vertexCount must be implemented.");
+    }
+
+    get vertexCapacity() {
+        throw new Error("Getter vertexCapacity must be implemented.");
+    }
+
+    accept(visitor) {
+        throw new Error("Method accept() must be implemented.");
+    }
+
+    addToShape(shape) {
+        throw new Error("Method addToShape() must be implemented.");
     }
 }
 
@@ -306,7 +323,7 @@ function customShapes(p5, fn) {
      * along the segment.
      *
      * @class p5.ShapePrimitive
-     * @param {...p5.Vertex} vertices the vertices to include in the primitive.
+     * @abstract
      */
 
     p5.ShapePrimitive = ShapePrimitive;
@@ -353,6 +370,9 @@ function customShapes(p5, fn) {
     /**
      * @private
      * A class responsible for...
+     * 
+     * @class p5.Anchor
+     * @param {p5.Vertex} vertex the vertex to include in the anchor.
      */
 
     p5.Anchor = Anchor;
@@ -367,6 +387,9 @@ function customShapes(p5, fn) {
     /**
      * @private
      * A class responsible for...
+     * 
+     * @class p5.LineSegment
+     * @param {p5.Vertex} vertex the vertex to include in the anchor.
      */
 
     p5.LineSegment = LineSegment;
@@ -397,6 +420,9 @@ function customShapes(p5, fn) {
     /**
      * @private
      * A class responsible for...
+     * 
+     * @class p5.Line
+     * @param {...p5.Vertex} vertices the vertices to include in the line.
      */
 
     p5.Line = Line;
