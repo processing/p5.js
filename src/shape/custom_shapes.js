@@ -54,9 +54,18 @@ class Shape {
 }
 
 class Contour {
+    #kind;
+    primitives;
+
     constructor(kind = constants.PATH) {
-        this.kind = kind;
+        this.#kind = kind;
         this.primitives = [];
+    }
+
+    get kind() {
+        const isEmpty = this.primitives.length === 0;
+        const isPath = this.#kind === constants.PATH;
+        return isEmpty && isPath ? constants.EMPTY_PATH : this.#kind;
     }
 }
 
