@@ -697,6 +697,12 @@ export const BOTTOM = 'bottom';
  */
 export const BASELINE = 'alphabetic';
 /**
+ * @typedef {unique symbol} PATH
+ * @property {PATH} PATH
+ * @final
+ */
+export const PATH = Symbol('path');
+/**
  * @typedef {0x0000} POINTS
  * @property {POINTS} POINTS
  * @final
