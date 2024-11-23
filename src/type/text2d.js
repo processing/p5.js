@@ -1061,11 +1061,16 @@ function text2d(p5, fn) {
     ignoring font-stretch property (as this is not properly set in chromium browsers) 
   */
   p5.Renderer2D.prototype._verifyFont = function (fontString, fontStretch) {
+
+
     if (this.drawingContext.font !== fontString) {
       let expected = fontString.replace(fontStretch, '').toLowerCase();
       let actual = this.drawingContext.font.replace(fontStretch, '').toLowerCase();
       if (expected !== actual) {
-        console.warn(`Unable to set font="${fontString}", found "${this.drawingContext.font}"`);
+
+        // TODO: need to handle floating points here for textWeight
+        
+        //console.warn(`Unable to set font="${fontString}", found "${this.drawingContext.font}"`);
       }
       return false;
     }

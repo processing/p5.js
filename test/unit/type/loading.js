@@ -37,7 +37,6 @@ suite('Loading Fonts', function () {
 
   test('loadFont.callback', async () => new Promise(done => {
     myp5.loadFont(fontFile, (pFont) => {
-
       assert.ok(pFont, 'acmesa.ttf loaded');
       assert.equal(pFont.name, 'A.C.M.E. Secret Agent');
       assert.isTrue(pFont instanceof p5.Font);

@@ -33,6 +33,7 @@
  * loading fonts from files and urls, and extracting points from their paths.
  */
 import Typr from './lib/Typr.js';
+import './text2d.js';
 
 function font(p5, fn) {
 
@@ -44,10 +45,6 @@ function font(p5, fn) {
   p5.Font = class Font {
 
     constructor(p, font, name, path, data) {
-      //if (!('loadBytes' in p)) {
-      if (!(p instanceof p5)) {
-        throw Error('p5 instance is required');
-      }
       if (!(font instanceof FontFace)) {
         throw Error('FontFace is required');
       }
@@ -63,14 +60,52 @@ function font(p5, fn) {
     }
 
     fontBounds(...args) { // alias for p5.fontBounds
+      if (!this._pInst) throw Error('p5 instance required for fontBounds()'); // TODO:
       return this._pInst.fontBounds(...args);
     }
 
     textBounds(...args) { // alias for p5.textBounds
+      if (!this._pInst) throw Error('p5 instance required for textBounds()'); // TODO:
       return this._pInst.textBounds(...args);
     }
 
-    textToPoints(str, x, y, width, height) {
+    textToPointsNew(str, x, y, width, height, options) {
+
+      // NEXT: WORKING HERE
+
+      /*
+      let setBaseline = this.drawingContext.textBaseline; // store current baseline
+      let leading = this.states.textLeading;
+
+      if (typeof width !== 'undefined') {
+        // adjust {x,y,w,h} properties based on rectMode
+        ({ x, y, width, height } = this._doRectMode(x, y, width, height));
+      }
+
+      // parse the lines according to the width, height & linebreaks
+      let lines = this._processLines(str, width, height, leading);
+
+      // get the adjusted positions [x,y] for each line
+      let positions = this._positionLines(x, y, width, height, leading, lines.length);
+
+      // render each line at the adjusted position
+      lines.forEach((line, i) => this._lineToPoints(line, positions[i].x, positions[i].y));
+
+      this.drawingContext.textBaseline = setBaseline; // restore baseline
+      */
+    }
+
+    textToPoints(str, x, y, width, height, options) {
+
+      if (typeof width === 'object') {
+        options = width;
+        width = height = undefined;
+      }
+      if (typeof height === 'object') {
+        options = height;
+        height = undefined;
+      }
+      options = options || {};
 
       // TODO: implement width and height, line-breaks, alignment
       if (!this.fontData) {
@@ -82,8 +117,15 @@ function font(p5, fn) {
       let shape = Typr.U.shape(font, str);
       let path = Typr.U.shapeToPath(font, shape);
       let dpr = window?.devicePixelRatio || 1;
-      let fontSize = this._pInst._renderer.states.textSize;
-      let scale = fontSize * dpr / font.head.unitsPerEm;
+
+      // combine states and options into a props object
+      let states = this?._pInst?._renderer?.states || {};
+      let props = Object.entries(states).reduce((obj, [k, v]) => {
+        obj[k] = (k in options) ? options[k] : v;
+        return obj;
+      }, {});
+
+      let scale = props.textSize * dpr / font.head.unitsPerEm;
       let pts = [];
       for (let i = 0; i < path.crds.length; i += 2) {
         pts.push({ x: x + path.crds[i] * scale, y: y + path.crds[i + 1] * -scale });
@@ -178,7 +220,7 @@ function font(p5, fn) {
       console.warn('Failed to parse font data:', err);
       try {
         // create a FontFace object and pass it to p5.Font
-        console.log('Retrying with FontFace path:', typeof path);
+        console.log(`Retrying '${name}' without font-data: '${path}'`);
         pfont = await create(this, name, path, descriptors);
       }
       catch (err) {
