@@ -92,7 +92,35 @@ class ShapePrimitive {
   }
 
   addToShape(shape) {
-    throw new Error('Method addToShape() must be implemented.');
+    /*
+    TODO: Test this method once more primitives are implemented.
+    */
+    let lastContour = shape.contours.at(-1);
+
+    if (lastContour.length === 0) {
+      lastContour.push(this);
+      return;
+    }
+
+    // last primitive in shape
+    let lastPrimitive = lastContour.primitives.at(-1);
+    let hasSameType = lastPrimitive instanceof this.constructor;
+    let spareCapacity = lastPrimitive.vertexCapacity -
+                        lastPrimitive.vertexCount;
+
+    // this primitive
+    let pushableVertices = this.vertices.splice(0, spareCapacity);
+    let remainingVertices = this.vertices;
+
+    if (hasSameType && spareCapacity > 0) {
+      lastPrimitive.vertices.push(...pushableVertices);
+      if (remainingVertices.length > 0) {
+        lastContour.push(this);
+      }
+    }
+    else {
+      lastContour.push(this);
+    }
   }
 }
 
