@@ -2,7 +2,9 @@
 /*
  *  TODO:
  *   - add fontAscent/Descent and textWeight functions
- *   - textToPoints: line-breaking, alignments, rectMode
+ *   - add textFont(string) that forces context2d.font to be set (if including size part)
+ *   - textToPoints: test rectMode, enable assing props in options (textSize, textLeading, etc.)
+ *   - test textToPoints with single line, and overlapping text
  *   - textToPaths: return value ?
  *   - get axes and values for parsed fonts
  *   - cache parsed fonts (and/or lazy load)
@@ -12,7 +14,6 @@
  *   - add test for line-height property in textFont() and textProperty()
  *      - how does this integrate with textLeading?
  *   - spurious warning in oneoff.html (local)
- *   - textToPoints: line-breaking, alignments, rectMode
  * 
  * PR-QUESTIONS: 
  *   - textProperty(ies) -> properties in states, mapped-states, context and canvas.style [PR]
@@ -73,6 +74,7 @@ function text2d(p5, fn) {
     'textProperties',
     'fontBounds',
     'fontWidth',
+    //TODO: 'fontAscent','fontDescent','textWeight'
   ];
 
   // attach each text func to p5, delegating to the renderer

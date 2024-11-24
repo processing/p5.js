@@ -107,7 +107,7 @@ function font(p5, fn) {
       return props;
     }
 
-    textToPoints(str, x, y, width, height, options) {
+    textToPoints(str, x, y, width, height, opts) {
 
       let renderer = this._pInst._renderer;
 
@@ -115,18 +115,19 @@ function font(p5, fn) {
       let setBaseline = renderer.drawingContext.textBaseline;
 
       // combine states and options into props object
-      let props = this._parseArgs(options, width, height);
+      let props = this._parseArgs(opts, width, height);
+      let textSize = props.textSize;
 
       // lineate and get the bounds for the text
-      let measure = renderer._fontBoundsSingle.bind(renderer);
+      let measurer = renderer._fontBoundsSingle.bind(renderer);
       let { lines, bounds } = renderer._computeBounds
-        (measure, str, x, y, width, height, props);
+        (measurer, str, x, y, width, height, props);
 
       // compute positions for each of the lines
       lines = this._position(lines, bounds, props);
 
       // convert lines to points at specified size
-      let pts = lines.map(l => this._lineToPoints(l, props.textSize, options));
+      let pts = lines.map(l => this._lineToPoints(l, textSize, opts));
 
       // restore the baseline
       renderer.drawingContext.textBaseline = setBaseline;
@@ -171,7 +172,7 @@ function font(p5, fn) {
       // do we need to deal with devicePixelRatio here?
       let scale = fontSize / font.head.unitsPerEm; // * dpr
 
-      return this._pathToPoints(path, x, y, scale, opts);
+      return this._pathToPoints(path, x, y, scale, opts?.maxDistance);
     }
 
     _pathToPoints(path, x, y, scale, maxDistance = scale * 500) {
