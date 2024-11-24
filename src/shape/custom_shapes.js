@@ -179,8 +179,6 @@ class Anchor extends ShapePrimitive {
 
 // abstract class
 class Segment extends ShapePrimitive {
-  index = null;
-
   constructor(...vertices) {
     super(...vertices);
     if (this.constructor === Segment) {
@@ -198,8 +196,11 @@ class Segment extends ShapePrimitive {
 }
 
 class LineSegment extends Segment {
-  constructor() {
+  #index = null;
+  #shape = null;
 
+  // TODO: finish implementation
+  constructor() {
   }
 }
 
