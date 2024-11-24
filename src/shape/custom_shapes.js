@@ -6,254 +6,266 @@
  * @requires constants
  */
 
-// uncomment the following once you need it (otherwise VS Code complains):
-import * as constants from '../core/constants';
+// REMINDER: remove .js extension (currently using it to run file locally)
+import * as constants from '../core/constants.js';
 
 // ---- GENERAL CLASSES ----
 
 class Shape {
-    vertexProperties;
+  vertexProperties;
 
-    constructor(vertexProperties) {
-      this.vertexProperties = vertexProperties;
+  constructor(vertexProperties) {
+    this.vertexProperties = vertexProperties;
 
-      for (const key in this.vertexProperties) {
-        if (key !== 'position' && key !== 'textureCoordinates') {
-          this[key] = function(value) {
-            this.vertexProperties[key] = value;
-          }
-        }
+    for (const key in this.vertexProperties) {
+      if (key !== 'position' && key !== 'textureCoordinates') {
+        this[key] = function(value) {
+          this.vertexProperties[key] = value;
+        };
       }
     }
+  }
 
-    reset() {
-       // TODO: remove existing vertices
-    }
+  reset() {
+    // TODO: remove existing vertices
+  }
 
-    vertex(position, textureCoordinates) {
-      // Add the current position and texture coordiantes to the existing state
-      let vertex = this.createVertex({ ...this.vertexProperties, position, textureCoordinates });
-      // TODO
-      // primitiveShapeCreator = primitiveShapeCreators.get(['vertex', this.kind]);
-      // primitiveShape = primitiveShapeCreator(vertex);
-      // primitiveShape.addToShape(this);
-    }
+  vertex(position, textureCoordinates) {
+    // Add the current position and texture coordiantes to the existing state
+    let vertex = this.createVertex({ ...this.vertexProperties, position, textureCoordinates });
+    // TODO
+    // primitiveShapeCreator = primitiveShapeCreators.get(['vertex', this.kind]);
+    // primitiveShape = primitiveShapeCreator(vertex);
+    // primitiveShape.addToShape(this);
+  }
 
-    createVertex(properties) {
-      // TODO
-      // return vertex;
-    }
+  createVertex(properties) {
+    // TODO
+    // return vertex;
+  }
 
-    beginShape(shapeKind) {
-      // TODO
-    }
+  beginShape(shapeKind) {
+    // TODO
+  }
 
-    endShape(closeMode = constants.OPEN) {
-      // TODO
-    }
+  endShape(closeMode = constants.OPEN) {
+    // TODO
+  }
 }
 
 class Contour {
-    #kind;
-    primitives;
+  #kind;
+  primitives;
 
-    constructor(kind = constants.PATH) {
-        this.#kind = kind;
-        this.primitives = [];
-    }
+  constructor(kind = constants.PATH) {
+    this.#kind = kind;
+    this.primitives = [];
+  }
 
-    get kind() {
-        const isEmpty = this.primitives.length === 0;
-        const isPath = this.#kind === constants.PATH;
-        return isEmpty && isPath ? constants.EMPTY_PATH : this.#kind;
-    }
+  get kind() {
+    const isEmpty = this.primitives.length === 0;
+    const isPath = this.#kind === constants.PATH;
+    return isEmpty && isPath ? constants.EMPTY_PATH : this.#kind;
+  }
 }
 
 class ShapePrimitive {
-    vertices;
+  vertices;
 
-    constructor(...vertices) {
-        if (this.constructor === ShapePrimitive) {
-            throw new Error("ShapePrimitive is an abstract class: it cannot be instantiated.");
-        }
-        this.vertices = vertices;
+  constructor(...vertices) {
+    if (this.constructor === ShapePrimitive) {
+      throw new Error('ShapePrimitive is an abstract class: it cannot be instantiated.');
     }
+    this.vertices = vertices;
+  }
 
-    get vertexCount() {
-        throw new Error("Getter vertexCount must be implemented.");
-    }
+  get vertexCount() {
+    throw new Error('Getter vertexCount must be implemented.');
+  }
 
-    get vertexCapacity() {
-        throw new Error("Getter vertexCapacity must be implemented.");
-    }
+  get vertexCapacity() {
+    throw new Error('Getter vertexCapacity must be implemented.');
+  }
 
-    accept(visitor) {
-        throw new Error("Method accept() must be implemented.");
-    }
+  accept(visitor) {
+    throw new Error('Method accept() must be implemented.');
+  }
 
-    addToShape(shape) {
-        throw new Error("Method addToShape() must be implemented.");
-    }
+  addToShape(shape) {
+    throw new Error('Method addToShape() must be implemented.');
+  }
 }
 
 class Vertex {
-    constructor(properties) {
-        for (const [key, value] of Object.entries(properties)) {
-            this[key] = value;
-        }
+  constructor(properties) {
+    for (const [key, value] of Object.entries(properties)) {
+      this[key] = value;
     }
-    
-    get array() {
-      // convert to 1D array
-      // call `toArray()` if value is an object with a toArray() method
-      // handle primitive values separately
-      // maybe handle object literals too, with Object.values()?
-      // probably don’t need anything else for now?
-    }
-
-    // TODO: make sure name of array conversion method is
-    // consistent with any modifications to the names of corresponding
-    // properties of p5.Vector and p5.Color
+  }
+  /*
+  get array() {
+    // convert to 1D array
+    // call `toArray()` if value is an object with a toArray() method
+    // handle primitive values separately
+    // maybe handle object literals too, with Object.values()?
+    // probably don’t need anything else for now?
+  }
+  */
+  // TODO: make sure name of array conversion method is
+  // consistent with any modifications to the names of corresponding
+  // properties of p5.Vector and p5.Color
 }
 
 // ---- PATH PRIMITIVES ----
 
 class Anchor extends ShapePrimitive {
-    #vertexCapacity;
+  #vertexCapacity;
 
-    constructor(...vertices) {
-        super(...vertices);
-        this.#vertexCapacity = 1;
-    }
+  constructor(...vertices) {
+    super(...vertices);
+    this.#vertexCapacity = 1;
+  }
 
-    get vertexCount() {
-        return this.vertices.length;
-    }
+  get vertexCount() {
+    return this.vertices.length;
+  }
 
-    get vertexCapacity() {
-        return this.#vertexCapacity;
-    }
+  get vertexCapacity() {
+    return this.#vertexCapacity;
+  }
 
-    accept(visitor) {
-        visitor.visitAnchor(this);
-    }
+  accept(visitor) {
+    visitor.visitAnchor(this);
+  }
 
-    addToShape(shape) {
-        let lastContour = shape.contours.at(-1);
-        if (lastContour.kind === constants.EMPTY_PATH) {
-            lastContour.primitives.push(this);
-        }
-        else {
-            throw new Error("Anchor can only be added to an empty path contour.");
-        }
+  addToShape(shape) {
+    let lastContour = shape.contours.at(-1);
+    if (lastContour.kind === constants.EMPTY_PATH) {
+      lastContour.primitives.push(this);
     }
+    else {
+      throw new Error('Anchor can only be added to an empty path contour.');
+    }
+  }
 }
 
 // abstract class
 class Segment extends ShapePrimitive {
-    constructor() {
+  index = 0;
 
+  constructor(...vertices) {
+    super(...vertices);
+    if (this.constructor === Segment) {
+      throw new Error('Segment is an abstract class: it cannot be instantiated.');
     }
+  }
+
+  getStartVertex() {
+    throw new Error('Method getStartVertex() must be implemented.');
+  }
+
+  getEndVertex() {
+    throw new Error('Method getEndVertex() must be implemented.');
+  }
 }
 
 class LineSegment extends Segment {
-    constructor() {
-
-    }
+  constructor(...vertices) {
+  }
 }
 
 class BezierSegment extends Segment {
-    constructor() {
+  constructor() {
 
-    }
+  }
 }
 
 // consider type and end modes -- see #6766)
 // may want to use separate classes, but maybe not
 class SplineSegment extends Segment {
-    constructor() {
+  constructor() {
 
-    }
+  }
 }
 
 // ---- ISOLATED PRIMITIVES ----
 
 class Point extends ShapePrimitive {
-    constructor() {
+  constructor() {
 
-    }
+  }
 }
 
 class Line extends ShapePrimitive {
-    constructor() {
+  constructor() {
 
-    }
+  }
 }
 
 class Triangle extends ShapePrimitive {
-    constructor() {
+  constructor() {
 
-    }
+  }
 }
 
 class Quad extends ShapePrimitive {
-    constructor() {
+  constructor() {
 
-    }
+  }
 }
 
 // ---- TESSELLATION PRIMITIVES ----
 
 class TriangleFan extends ShapePrimitive {
-    constructor() {
+  constructor() {
 
-    }
+  }
 }
 
 class TriangleStrip extends ShapePrimitive {
-    constructor() {
+  constructor() {
 
-    }
+  }
 }
 
 class QuadStrip extends ShapePrimitive {
-    constructor() {
+  constructor() {
 
-    }
+  }
 }
 
 // ---- PRIMITIVE VISITORS ----
 
 // abstract class
 class PrimitiveVisitor {
-    constructor() {
+  constructor() {
 
-    }
+  }
 }
 
 // using this instead of PrimitiveToContext2DConverter for now
 class PrimitiveToPath2DConverter extends PrimitiveVisitor {
-    constructor() {
+  constructor() {
 
-    }
+  }
 }
 
 class PrimitiveToVerticesConverter extends PrimitiveVisitor {
-    constructor() {
+  constructor() {
 
-    }
+  }
 }
 
 class PointAtLengthGetter extends PrimitiveVisitor {
-    constructor() {
+  constructor() {
 
-    }
+  }
 }
 
 function customShapes(p5, fn) {
-    // ---- GENERAL CLASSES ----
+  // ---- GENERAL CLASSES ----
 
-    /**
+  /**
      * @private
      * A class to describe a custom shape made with `beginShape()`/`endShape()`.
      *
@@ -298,9 +310,9 @@ function customShapes(p5, fn) {
      * @param {Object} [vertexProperties={position: createVector(0, 0)}] vertex properties and their initial values.
      */
 
-    p5.Shape = Shape;
+  p5.Shape = Shape;
 
-    /**
+  /**
      * @private
      * A class to describe a contour made with `beginContour()`/`endContour()`.
      *
@@ -330,9 +342,9 @@ function customShapes(p5, fn) {
      * @class p5.Contour
      */
 
-    p5.Contour = Contour;
+  p5.Contour = Contour;
 
-    /**
+  /**
      * @private
      * A base class to describe a shape primitive (a basic shape drawn with
      * `beginShape()`/`endShape()`).
@@ -364,9 +376,9 @@ function customShapes(p5, fn) {
      * @abstract
      */
 
-    p5.ShapePrimitive = ShapePrimitive;
+  p5.ShapePrimitive = ShapePrimitive;
 
-    /**
+  /**
      * @private
      * A class to describe a vertex (a point on a shape), in 2D or 3D.
      *
@@ -401,258 +413,262 @@ function customShapes(p5, fn) {
      * @param {Object} [properties={position: createVector(0, 0)}] vertex properties.
      */
 
-    p5.Vertex = Vertex;
+  p5.Vertex = Vertex;
 
-    // ---- PATH PRIMITIVES ----
+  // ---- PATH PRIMITIVES ----
 
-    /**
+  /**
      * @private
      * A class responsible for...
-     * 
+     *
      * @class p5.Anchor
      * @extends p5.ShapePrimitive
      * @param {p5.Vertex} vertex the vertex to include in the anchor.
      */
 
-    p5.Anchor = Anchor;
+  p5.Anchor = Anchor;
 
-    /**
+  /**
      * @private
      * A class responsible for...
+     *
+     * @class p5.Segment
+     * @extends p5.ShapePrimitive
+     * @param {...p5.Vertex} vertices the vertices to include in the segment.
      */
 
-    p5.Segment = Segment;
+  p5.Segment = Segment;
 
-    /**
+  /**
      * @private
      * A class responsible for...
-     * 
+     *
      * @class p5.LineSegment
      * @param {p5.Vertex} vertex the vertex to include in the anchor.
      */
 
-    p5.LineSegment = LineSegment;
+  p5.LineSegment = LineSegment;
 
-    /**
+  /**
      * @private
      * A class responsible for...
      */
 
-    p5.BezierSegment = BezierSegment;
+  p5.BezierSegment = BezierSegment;
 
-    /**
+  /**
      * @private
      * A class responsible for...
      */
 
-    p5.SplineSegment = SplineSegment;
+  p5.SplineSegment = SplineSegment;
 
-    // ---- ISOLATED PRIMITIVES ----
+  // ---- ISOLATED PRIMITIVES ----
 
-    /**
+  /**
      * @private
      * A class responsible for...
      */
 
-    p5.Point = Point;
+  p5.Point = Point;
 
-    /**
+  /**
      * @private
      * A class responsible for...
-     * 
+     *
      * @class p5.Line
      * @param {...p5.Vertex} vertices the vertices to include in the line.
      */
 
-    p5.Line = Line;
+  p5.Line = Line;
 
-    /**
+  /**
      * @private
      * A class responsible for...
      */
 
-    p5.Triangle = Triangle;
+  p5.Triangle = Triangle;
 
-    /**
+  /**
      * @private
      * A class responsible for...
      */
 
-    p5.Quad = Quad;
+  p5.Quad = Quad;
 
-    // ---- TESSELLATION PRIMITIVES ----
+  // ---- TESSELLATION PRIMITIVES ----
 
-    /**
+  /**
      * @private
      * A class responsible for...
      */
 
-    p5.TriangleFan = TriangleFan;
+  p5.TriangleFan = TriangleFan;
 
-    /**
+  /**
      * @private
      * A class responsible for...
      */
 
-    p5.TriangleStrip = TriangleStrip;
+  p5.TriangleStrip = TriangleStrip;
 
-    /**
+  /**
      * @private
      * A class responsible for...
      */
 
-    p5.QuadStrip = QuadStrip;
+  p5.QuadStrip = QuadStrip;
 
-    // ---- PRIMITIVE VISITORS ----
+  // ---- PRIMITIVE VISITORS ----
 
-    /**
+  /**
      * @private
      * A class responsible for...
      */
 
-    p5.PrimitiveVisitor = PrimitiveVisitor;
+  p5.PrimitiveVisitor = PrimitiveVisitor;
 
-    /**
+  /**
      * @private
      * A class responsible for...
      */
 
-    p5.PrimitiveToPath2DConverter = PrimitiveToPath2DConverter;
+  p5.PrimitiveToPath2DConverter = PrimitiveToPath2DConverter;
 
-    /**
+  /**
      * @private
      * A class responsible for...
      */
 
-    p5.PrimitiveToVerticesConverter = PrimitiveToVerticesConverter;
+  p5.PrimitiveToVerticesConverter = PrimitiveToVerticesConverter;
 
-    /**
+  /**
      * @private
      * A class responsible for...
      */
 
-    p5.PointAtLengthGetter = PointAtLengthGetter;
+  p5.PointAtLengthGetter = PointAtLengthGetter;
 
-    // ---- FUNCTIONS ----
+  // ---- FUNCTIONS ----
 
-    // Note: Code is commented out for now, to avoid conflicts with the existing implementation.
+  // Note: Code is commented out for now, to avoid conflicts with the existing implementation.
 
-    /**
+  /**
      * Top-line description
      *
      * More details...
      */
 
-    // fn.beginContour = function() {
-    //     // example of how to call an existing p5 function:
-    //     // this.background('yellow');
-    // };
+  // fn.beginContour = function() {
+  //     // example of how to call an existing p5 function:
+  //     // this.background('yellow');
+  // };
 
-    /**
+  /**
      * Top-line description
      *
      * More details...
      */
 
-    // fn.beginShape = function() {
+  // fn.beginShape = function() {
 
-    // };
+  // };
 
-    /**
+  /**
      * Top-line description
      *
      * More details...
      */
 
-    // fn.bezierVertex = function() {
+  // fn.bezierVertex = function() {
 
-    // };
+  // };
 
-    /**
+  /**
      * Top-line description
      *
      * More details...
      */
 
-    // fn.curveVertex = function() {
+  // fn.curveVertex = function() {
 
-    // };
+  // };
 
-    /**
+  /**
      * Top-line description
      *
      * More details...
      */
 
-    // fn.endContour = function() {
+  // fn.endContour = function() {
 
-    // };
+  // };
 
-    /**
+  /**
      * Top-line description
      *
      * More details...
      */
 
-    // fn.endShape = function() {
+  // fn.endShape = function() {
 
-    // };
+  // };
 
-    /**
+  /**
      * Top-line description
      *
      * More details...
      */
 
-    // fn.vertex = function() {
+  // fn.vertex = function() {
 
-    // };
+  // };
 
-    /**
+  /**
      * Top-line description
      *
      * More details...
      */
 
-    // fn.normal = function() {
+  // fn.normal = function() {
 
-    // };
+  // };
 
-    /**
+  /**
      * Top-line description
      *
      * More details...
      */
 
-    // fn.vertexProperty = function() {
+  // fn.vertexProperty = function() {
 
-    // };
+  // };
 }
 
 export default customShapes;
 export {
-    Shape,
-    Contour,
-    ShapePrimitive,
-    Vertex,
-    Anchor,
-    Segment,
-    LineSegment,
-    BezierSegment,
-    SplineSegment,
-    Point,
-    Line,
-    Triangle,
-    Quad,
-    TriangleFan,
-    TriangleStrip,
-    QuadStrip,
-    PrimitiveVisitor,
-    PrimitiveToPath2DConverter,
-    PrimitiveToVerticesConverter,
-    PointAtLengthGetter
+  Shape,
+  Contour,
+  ShapePrimitive,
+  Vertex,
+  Anchor,
+  Segment,
+  LineSegment,
+  BezierSegment,
+  SplineSegment,
+  Point,
+  Line,
+  Triangle,
+  Quad,
+  TriangleFan,
+  TriangleStrip,
+  QuadStrip,
+  PrimitiveVisitor,
+  PrimitiveToPath2DConverter,
+  PrimitiveToVerticesConverter,
+  PointAtLengthGetter
 };
 
 if (typeof p5 !== 'undefined') {
-    customShapes(p5, p5.prototype);
+  customShapes(p5, p5.prototype);
 }
