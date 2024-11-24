@@ -461,6 +461,9 @@ function customShapes(p5, fn) {
      * @private
      * A class responsible for...
      *
+     * Note: When a segment is added to a shape, it's attached to an anchor or another segment.
+     * Adding it to another shape may result in unexpected behavior.
+     *
      * @class p5.Segment
      * @extends p5.ShapePrimitive
      * @param {...p5.Vertex} vertices the vertices to include in the segment.
