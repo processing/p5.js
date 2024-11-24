@@ -13,6 +13,7 @@ import * as constants from '../core/constants.js';
 
 class Shape {
   vertexProperties;
+  contours = [];
 
   constructor(vertexProperties) {
     this.vertexProperties = vertexProperties;
@@ -23,6 +24,24 @@ class Shape {
           this.vertexProperties[key] = value;
         };
       }
+    }
+  }
+
+  // TODO: TEST, MAYBE REFACTOR
+  at(contoursIndex, primitivesIndex, verticesIndex) {
+    let contour;
+    let primitive;
+
+    contour = this.contours.at(contoursIndex);
+
+    switch(arguments.length) {
+      case 1:
+        return contour;
+      case 2:
+        return contour.primitives.at(primitivesIndex);
+      case 3:
+        primitive = contour.primitives.at(primitivesIndex);
+        return primitive.vertices.at(verticesIndex);
     }
   }
 
@@ -76,11 +95,16 @@ class ShapePrimitive {
     if (this.constructor === ShapePrimitive) {
       throw new Error('ShapePrimitive is an abstract class: it cannot be instantiated.');
     }
-    this.vertices = vertices;
+    if (vertices.length > 0) {
+      this.vertices = vertices;
+    }
+    else {
+      throw new Error('At least one vertex must be passed to the constructor.');
+    }
   }
 
   get vertexCount() {
-    throw new Error('Getter vertexCount must be implemented.');
+    return this.vertices.length;
   }
 
   get vertexCapacity() {
@@ -93,9 +117,11 @@ class ShapePrimitive {
 
   addToShape(shape) {
     /*
-    TODO: Test this method once more primitives are implemented.
+    TODO:
+    Test this method once more primitives are implemented.
+    Test segments separately (Segment adds an extra step to this method).
     */
-    let lastContour = shape.contours.at(-1);
+    let lastContour = shape.at(-1);
 
     if (lastContour.length === 0) {
       lastContour.push(this);
@@ -103,7 +129,7 @@ class ShapePrimitive {
     }
 
     // last primitive in shape
-    let lastPrimitive = lastContour.primitives.at(-1);
+    let lastPrimitive = shape.at(-1, -1);
     let hasSameType = lastPrimitive instanceof this.constructor;
     let spareCapacity = lastPrimitive.vertexCapacity -
                         lastPrimitive.vertexCount;
@@ -147,15 +173,10 @@ class Vertex {
 // ---- PATH PRIMITIVES ----
 
 class Anchor extends ShapePrimitive {
-  #vertexCapacity;
+  #vertexCapacity = 1;
 
   constructor(...vertices) {
     super(...vertices);
-    this.#vertexCapacity = 1;
-  }
-
-  get vertexCount() {
-    return this.vertices.length;
   }
 
   get vertexCapacity() {
@@ -166,19 +187,17 @@ class Anchor extends ShapePrimitive {
     visitor.visitAnchor(this);
   }
 
-  addToShape(shape) {
-    let lastContour = shape.contours.at(-1);
-    if (lastContour.kind === constants.EMPTY_PATH) {
-      lastContour.primitives.push(this);
-    }
-    else {
-      throw new Error('Anchor can only be added to an empty path contour.');
-    }
+  getEndVertex() {
+    return this.vertices[0];
   }
 }
 
 // abstract class
 class Segment extends ShapePrimitive {
+  _primitivesIndex = null;
+  _contoursIndex = null;
+  _shape = null;
+
   constructor(...vertices) {
     super(...vertices);
     if (this.constructor === Segment) {
@@ -186,8 +205,26 @@ class Segment extends ShapePrimitive {
     }
   }
 
+  addToShape(shape) {
+    super.addToShape(shape);
+
+    // if primitive itself was added
+    // (i.e. its individual vertices weren't all added to an existing primitive)
+    // give it a reference to the shape and store its location within the shape
+    if (this.vertices > 0) {
+      let lastContour = shape.at(-1);
+      this._primitivesIndex = lastContour.primitives.length - 1;
+      this._contoursIndex = shape.contours.length - 1;
+      this._shape = shape;
+    }
+  }
+
   getStartVertex() {
-    throw new Error('Method getStartVertex() must be implemented.');
+    let previousPrimitive = this._shape.at(
+      this._contoursIndex,
+      this._primitivesIndex - 1
+    );
+    return previousPrimitive.getEndVertex();
   }
 
   getEndVertex() {
@@ -196,11 +233,22 @@ class Segment extends ShapePrimitive {
 }
 
 class LineSegment extends Segment {
-  #index = null;
-  #shape = null;
+  #vertexCapacity = 1;
 
-  // TODO: finish implementation
-  constructor() {
+  constructor(...vertices) {
+    super(...vertices);
+  }
+
+  get vertexCapacity() {
+    return this.#vertexCapacity;
+  }
+
+  accept(visitor) {
+    visitor.visitLineSegment(this);
+  }
+
+  getEndVertex() {
+    return this.vertices[0];
   }
 }
 
