@@ -76,6 +76,12 @@ function font(p5, fn) {
       return metrics;
     }
 
+    textToPath(str, x, y, width, height, options) {
+      let paths = this._getPaths(str, x, y, width, height, options);
+      return [];
+    }
+
+
     /* uses: 
         renderer.states: textBaseline, textAlign, textLeading, textSize},
         renderer.fontWidthSingle(), 
@@ -84,11 +90,26 @@ function font(p5, fn) {
      */
     textToPoints(str, x, y, width, height, options) {
 
+      // lineate and get paths for each line
       let renderer = options?.renderer || this._pInst._renderer;
-      let context = options?.context || renderer.drawingContext;
+      let paths = this._getPaths(renderer, str, x, y, width, height, options);
+
+      //  get the array of points for each line
+      let fontSize = renderer.states.textSize;
+      let scale = fontSize / this.fontData.head.unitsPerEm; // * dpr
+      let pts = paths.map(p => this._pointify(p, scale, options));
+
+      // TODO: resample points along the path
+      return pts.flat();
+    }
+
+    /*
+      Returns an array of paths, one for each line of text
+    */
+    _getPaths(renderer, str, x, y, width, height, options) {
 
       // save the baseline
-      let setBaseline = context.textBaseline;
+      let setBaseline = renderer.drawingContext.textBaseline;
 
       // combine states and options into props object
       ({ width, height, options } = this._parseArgs
@@ -101,13 +122,13 @@ function font(p5, fn) {
       // compute positions for each of the lines
       lines = this._position(renderer, lines, bounds);
 
-      // convert lines to arrays of points
-      let pts = lines.map(l => this._lineToPoints(renderer, l, options));
+      // convert lines to paths
+      let paths = lines.map(l => this._pathify(l, options));
 
       // restore the baseline
       renderer.drawingContext.textBaseline = setBaseline;
 
-      return pts.flat();
+      return paths;
     }
 
     _parseArgs(renderer, width, height, options) {
@@ -164,7 +185,7 @@ function font(p5, fn) {
       return lines.map(coordify);
     }
 
-    _lineToPoints(renderer, line, opts) {
+    _pathify(line, opts) {
 
       if (!this.fontData) {
         throw Error('No font data available for "' + this.name
@@ -172,25 +193,28 @@ function font(p5, fn) {
       }
 
       let font = this.fontData;
-      let { text, x, y } = line;
-      let shape = Typr.U.shape(font, text);
-      let path = Typr.U.shapeToPath(font, shape);
+      //let { text, x, y } = line;
+      let shape = Typr.U.shape(font, line.text);
+      line.path = Typr.U.shapeToPath(font, shape);
 
-      let fontSize = renderer.states.textSize;
-
-      // do we need to deal with devicePixelRatio here?
-      let scale = fontSize / font.head.unitsPerEm; // * dpr
-
-      return this._pathToPoints(path, x, y, scale, opts?.maxDistance);
+      return line;
     }
 
-    _pathToPoints(path, x, y, scale, maxDist = scale * 500) {
+    _pointify(path, scale, opts) {
+      this._pathify(path, opts);
+      let pts = this._pathToPoints(path, scale, opts?.maxDistance);
+      path.points = pts;
+      return pts;
+    }
 
-      let c = 0, pts = [], crds = path["crds"];
+    _pathToPoints(pathData, scale, maxDist = scale * 500) {
+
+      let { x, y, path } = pathData;
+      let c = 0, pts = [], { crds, cmds } = path;
 
       // iterate over the path, storing each non-control point
-      for (let j = 0; j < path.cmds.length; j++) {
-        let cmd = path.cmds[j];
+      for (let j = 0; j < cmds.length; j++) {
+        let cmd = cmds[j];
         if (cmd == "M" || cmd == "L") {
           let pt = { x: x + crds[c] * scale, y: y + crds[c + 1] * -scale }
           c += 2;
