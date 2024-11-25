@@ -906,7 +906,6 @@ function pointer(p5, fn){
   fn._updatePointerCoords = function (e) {
     if (this._curElement !== null) {
        const canvas = this._curElement.elt;
-       const rect = canvas.getBoundingClientRect();
        const sx = canvas.scrollWidth / this.width || 1;
        const sy = canvas.scrollHeight / this.height || 1;
 
@@ -1152,10 +1151,6 @@ function pointer(p5, fn){
 
     if(e.pointerType === 'touch') {
       this._activeTouches.set(e.pointerId, e);
-      const touches = Array.from(this._activeTouches.values()).map((touch)=>
-      getTouchInfo(this._curElement.elt, this.width, this.height, touch)
-    );
-    this.touches = touches;
     }
 
       if (!this.mouseIsPressed && typeof context.mouseMoved === 'function') {
@@ -1484,6 +1479,9 @@ function pointer(p5, fn){
 
     if(e.pointerType == 'touch'){
       this._activeTouches.delete(e.pointerId);
+      this.touches = Array.from(this._activeTouches.values()).map((touch) =>
+        getTouchInfo(this._curElement.elt, this.width, this.height, touch)
+      );
     }
 
     this._updatePointerCoords(e);
