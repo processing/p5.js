@@ -25,14 +25,10 @@
       });
 */
 
-// pf.Font = {font, fontData, name, path}: font is either a string or a FontFace object, fontData is the optional 
-//  Typr raw font data, name is the font name, and path is the font path or url. ???
-
 /**
  * This module defines the <a href="#/p5.Font">p5.Font</a> class and P5 methods for
  * loading fonts from files and urls, and extracting points from their paths.
  */
-import { parse } from 'opentype.js';
 import Typr from './lib/Typr.js';
 
 function font(p5, fn) {
