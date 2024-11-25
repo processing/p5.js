@@ -8,6 +8,7 @@
 import * as fileSaver from 'file-saver';
 import { Renderer } from '../core/p5.Renderer';
 import { Graphics } from '../core/p5.Graphics';
+import { parse } from '@vanillaes/csv';
 
 class HTTPError extends Error {
   status;
@@ -530,14 +531,14 @@ function files(p5, fn){
 
     try{
       let { data } = await request(path, 'text');
-      data = data.split(/\r?\n/);
 
       let ret = new p5.Table();
+      data = parse(data);
 
       if(header){
-        ret.columns = data.shift().split(separator);
+        ret.columns = data.shift();
       }else{
-        ret.columns = data[0].split(separator).map(() => null);
+        ret.columns = Array(data[0].length).fill(null);
       }
 
       data.forEach((line) => {

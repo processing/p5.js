@@ -44,14 +44,14 @@ suite('loadTable', function() {
 
   test('returns an object with correct data', async () => {
     const table = await mockP5Prototype.loadTable(validFile);
-    assert.equal(table.getRowCount(), 5);
+    assert.equal(table.getRowCount(), 4);
     assert.strictEqual(table.getRow(1).getString(0), 'David');
     assert.strictEqual(table.getRow(1).getNum(1), 31);
   });
 
   test('passes an object with correct data to success callback', async () => {
     await mockP5Prototype.loadTable(validFile, (table) => {
-      assert.equal(table.getRowCount(), 5);
+      assert.equal(table.getRowCount(), 4);
       assert.strictEqual(table.getRow(1).getString(0), 'David');
       assert.strictEqual(table.getRow(1).getNum(1), 31);
     });
@@ -59,32 +59,31 @@ suite('loadTable', function() {
 
   test('separator option returns the correct data', async () => {
     const table = await mockP5Prototype.loadTable(validFile, ',');
-    assert.equal(table.getRowCount(), 5);
+    assert.equal(table.getRowCount(), 4);
     assert.strictEqual(table.getRow(1).getString(0), 'David');
     assert.strictEqual(table.getRow(1).getNum(1), 31);
   });
 
   test('using the header option works', async () => {
     const table = await mockP5Prototype.loadTable(validFile, ',', true);
-    assert.equal(table.getRowCount(), 4);
+    assert.equal(table.getRowCount(), 3);
     assert.strictEqual(table.getRow(0).getString(0), 'David');
     assert.strictEqual(table.getRow(0).getNum(1), 31);
   });
 
-  test.todo('CSV files should handle commas within quoted fields', async () => {
-    // TODO: Current parsing does not handle quoted fields
+  test('CSV files should handle commas within quoted fields', async () => {
     const table = await mockP5Prototype.loadTable(validFile);
-    assert.equal(table.getRowCount(), 5);
+    assert.equal(table.getRowCount(), 4);
     assert.equal(table.getRow(2).get(0), 'David, Jr.');
     assert.equal(table.getRow(2).getString(0), 'David, Jr.');
     assert.equal(table.getRow(2).get(1), '11');
     assert.equal(table.getRow(2).getString(1), 11);
   });
 
-  test.todo('CSV files should handle escaped quotes and returns within quoted fields', async () => {
+  test('CSV files should handle escaped quotes and returns within quoted fields', async () => {
     // TODO: Current parsing does not handle quoted fields
     const table = await mockP5Prototype.loadTable(validFile);
-    assert.equal(table.getRowCount(), 5);
+    assert.equal(table.getRowCount(), 4);
     assert.equal(table.getRow(3).get(0), 'David,\nSr. "the boss"');
   });
 });
