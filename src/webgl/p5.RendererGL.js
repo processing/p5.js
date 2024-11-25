@@ -665,6 +665,8 @@ class RendererGL extends Renderer {
     if (!glBuffers) return;
 
     if (glBuffers.indexBuffer) {
+      this._bindBuffer(glBuffers.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
+
       // If this model is using a Uint32Array we need to ensure the
       // OES_element_index_uint WebGL extension is enabled.
       if (
@@ -2037,9 +2039,8 @@ class RendererGL extends Renderer {
       this.shader(this.states.diffusedShader);
       this.states.diffusedShader.setUniform('environmentMap', input);
       this.states.doStroke = false;
-      this.rectMode(constants.CENTER);
       this.noLights();
-      this.rect(0, 0, width, height);
+      this.plane(width, height);
     });
     this.diffusedTextures.set(input, newFramebuffer);
     return newFramebuffer;
