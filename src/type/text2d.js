@@ -1,6 +1,7 @@
 
 /*
  *  TODO:
+ *   - change renderer.state to use getters for textAlign, textBaseline, etc.
  *   - add fontAscent/Descent and textWeight functions
  *   - add textFont(string) that forces context2d.font to be set (if including size part)
  *   - textToPoints: test rectMode, enable assing props in options (textSize, textLeading, etc.)
@@ -11,6 +12,7 @@
  *   - test textToPoints with google/variable fonts
  *   - more with variable fonts, do slider example
  *   - better font-loading (google fonts, font-face declarations, multiple fonts with Promise.all())
+ *   - test textToPoints with offscreen graphics.drawingContext passed in as 'context'
  *   - add test for line-height property in textFont() and textProperty()
  *      - how does this integrate with textLeading?
  *   - spurious warning in oneoff.html (local)
@@ -39,6 +41,8 @@ function text2d(p5, fn) {
   fn.RIGHT_TO_LEFT = 'rtl';
   fn.LEFT_TO_RIGHT = 'ltr';
   fn._CTX_MIDDLE = 'middle';
+  fn._TEXT_BOUNDS = '_textBoundsSingle';
+  fn._FONT_BOUNDS = '_fontBoundsSingle';
   fn.HANGING = 'hanging';
   fn.START = 'start';
   fn.END = 'end';
@@ -157,16 +161,16 @@ function text2d(p5, fn) {
     this.drawingContext.textBaseline = setBaseline; // restore baseline
   };
 
-  p5.Renderer2D.prototype._lineateAndAlign = function (str, x, y, width, height, props = this.states) {
+  p5.Renderer2D.prototype._lineateAndAlign = function (str, x, y, width, height) {
 
     // adjust {x,y,w,h} properties based on rectMode
-    ({ x, y, width, height } = this._handleRectMode(props.rectMode, x, y, width, height));
+    ({ x, y, width, height } = this._handleRectMode(x, y, width, height));
 
     // parse the lines according to the width, height & linebreaks
-    let lines = this._processLines(str, width, height, props);
+    let lines = this._processLines(str, width, height);
 
     // add the adjusted positions [x,y] to each line
-    return this._positionLines(x, y, width, height, lines, props);
+    return this._positionLines(x, y, width, height, lines);
   }
 
   /**
@@ -181,7 +185,7 @@ function text2d(p5, fn) {
   p5.Renderer2D.prototype.textBounds = function (str, x, y, width, height) {
     //console.log('TEXT BOUNDS: ', str, x, y, width, height);
     // delegate to _computeBounds with _textBoundsSingle measure function
-    return this._computeBounds(this._textBoundsSingle.bind(this), str, x, y, width, height).bounds;
+    return this._computeBounds(fn._TEXT_BOUNDS, str, x, y, width, height).bounds;
   };
 
   /**
@@ -195,7 +199,7 @@ function text2d(p5, fn) {
    */
   p5.Renderer2D.prototype.fontBounds = function (str, x, y, width, height) {
     // delegate to _computeBounds with _fontBoundsSingle measure function
-    return this._computeBounds(this._fontBoundsSingle.bind(this), str, x, y, width, height).bounds;
+    return this._computeBounds(fn._FONT_BOUNDS, str, x, y, width, height).bounds;
   };
 
   /**
@@ -497,20 +501,21 @@ function text2d(p5, fn) {
     Compute the bounds for a block of text based on the specified 
     measure function, either _textBoundsSingle or _fontBoundsSingle
   */
-  p5.Renderer2D.prototype._computeBounds = function
-    (measureFunc, str, x, y, width, height, props = this.states) {
+  p5.Renderer2D.prototype._computeBounds = function (type, str, x, y, width, height) {
 
     let setBaseline = this.drawingContext.textBaseline;
-    let { rectMode, textLeading, textAlign } = props;
+
+    let { rectMode, textLeading, textAlign } = this.states;
 
     // adjust width, height based on current rectMode
     ({ width, height } = this._rectModeAdjust(rectMode, x, y, width, height));
 
     // parse the lines according to the width & linebreaks
-    let lines = this._processLines(str, width, height, props);
+    let lines = this._processLines(str, width, height);
 
     // get the adjusted positions [x,y] for each line
-    let boxes = lines.map((line, i) => measureFunc(line, x, y + i * textLeading));
+    let boxes = lines.map((line, i) => this[type].bind(this)
+      (line, x, y + i * textLeading));
 
     // adjust the bounding boxes based on horiz. text alignment
     if (lines.length > 1) {
@@ -519,7 +524,7 @@ function text2d(p5, fn) {
 
     // adjust the bounding boxes based on vert. text alignment
     if (typeof height !== 'undefined') {
-      this._yAlignOffset(boxes, height, props);
+      this._yAlignOffset(boxes, height);
     }
 
     if (0) boxes.forEach((b, i) => { // draw bounds for debugging
@@ -539,6 +544,7 @@ function text2d(p5, fn) {
     }
 
     this.drawingContext.textBaseline = setBaseline; // restore baseline
+
     return { bounds, lines };
   };
 
@@ -661,7 +667,10 @@ function text2d(p5, fn) {
   /*
      Adjust parameters (x,y,w,h) based on current rectMode
   */
-  p5.Renderer2D.prototype._handleRectMode = function (rectMode, x, y, width, height) {
+  p5.Renderer2D.prototype._handleRectMode = function (x, y, width, height) {
+
+    let rectMode = this.states.rectMode;
+
     if (typeof width !== 'undefined') {
       switch (rectMode) {
         case fn.RADIUS:
@@ -748,15 +757,15 @@ function text2d(p5, fn) {
   /*
     Position the lines of text based on their textAlign/textBaseline properties
   */
-  p5.Renderer2D.prototype._positionLines = function (x, y, width, height, lines, props = this.states) {
+  p5.Renderer2D.prototype._positionLines = function (x, y, width, height, lines) {
 
-    let leading = props.textLeading;
+    let { textLeading, textAlign } = this.states;
     let adjustedX, lineData = new Array(lines.length);
     let adjustedW = typeof width === 'undefined' ? 0 : width;
     let adjustedH = typeof height === 'undefined' ? 0 : height;
 
     for (let i = 0; i < lines.length; i++) {
-      switch (props.textAlign) {
+      switch (textAlign) {
         case fn.START:
           throw new Error('textBounds: START not yet supported for textAlign'); // default to LEFT
         case fn.LEFT:
@@ -771,10 +780,10 @@ function text2d(p5, fn) {
         case fn.END: // TODO: add fn.END:
           throw new Error('textBounds: END not yet supported for textAlign');
       }
-      lineData[i] = { text: lines[i], x: adjustedX, y: y + (i * leading) };
+      lineData[i] = { text: lines[i], x: adjustedX, y: y + i * textLeading };
     }
 
-    return this._yAlignOffset(lineData, adjustedH, props);
+    return this._yAlignOffset(lineData, adjustedH);
   };
 
   /*
@@ -783,7 +792,7 @@ function text2d(p5, fn) {
     @param {number} width - the width to wrap the text to
     @returns {array} - the processed lines of text
   */
-  p5.Renderer2D.prototype._processLines = function (str, width, height, props = this.states) {
+  p5.Renderer2D.prototype._processLines = function (str, width, height) {
 
     if (typeof width !== 'undefined') { // only for text with bounds
       if (this.drawingContext.textBaseline === fn.BASELINE) {
@@ -795,7 +804,7 @@ function text2d(p5, fn) {
     let hasLineBreaks = lines.length > 1;
     let hasWidth = typeof width !== 'undefined';
     let exceedsWidth = hasWidth && lines.some(l => this._textWidthSingle(l) > width);
-    let { textLeading: leading, textWrap } = props;
+    let { textLeading: leading, textWrap } = this.states;
 
     //if (!hasLineBreaks && !exceedsWidth) return lines; // a single-line
     if (hasLineBreaks || exceedsWidth) {
@@ -846,16 +855,16 @@ function text2d(p5, fn) {
   /*  
     Get the y-offset for text given the height, leading, line-count and textBaseline property
   */
-  p5.Renderer2D.prototype._yAlignOffset = function (dataArr, height, props = this.states) {
+  p5.Renderer2D.prototype._yAlignOffset = function (dataArr, height) {
 
     if (typeof height === 'undefined') {
       throw Error('_yAlignOffset: height is required');
     }
 
-    let leading = props.textLeading;
+    let { textLeading, textBaseline } = this.states;
     let yOff = 0, numLines = dataArr.length;
-    let ydiff = height - (leading * (numLines - 1));
-    switch (props.textBaseline) { // drawingContext ?
+    let ydiff = height - (textLeading * (numLines - 1));
+    switch (textBaseline) { // drawingContext ?
       case fn.TOP:
         break; // ??
       case fn.BASELINE:
@@ -936,12 +945,12 @@ function text2d(p5, fn) {
   /*
     Get the (loose) bounds of a single line of text based on its font's bounding box
   */
-  p5.Renderer2D.prototype._fontBoundsSingle = function (s, x = 0, y = 0, props = this.states) {
+  p5.Renderer2D.prototype._fontBoundsSingle = function (s, x = 0, y = 0) {
 
     let metrics = this.drawingContext.measureText(s);
     let asc = metrics.fontBoundingBoxAscent;
     let desc = metrics.fontBoundingBoxDescent;
-    x -= this._xAlignOffset(props.textAlign, metrics.width);
+    x -= this._xAlignOffset(this.states.textAlign, metrics.width);
     return { x, y: y - asc, w: metrics.width, h: asc + desc };;
   };
 

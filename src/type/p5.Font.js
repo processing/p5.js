@@ -69,9 +69,9 @@ function font(p5, fn) {
       return this._pInst.textBounds(...args);
     }
 
-    _measureTextDefault(str) {
-      let ctx = this._pInst._renderer.drawingContext;
-      let { textAlign, textBaseline } = ctx;
+    _measureTextDefault(renderer, str) {
+      let { textAlign, textBaseline } = renderer.states;
+      let ctx = renderer.drawingContext;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'alphabetic';
       let metrics = ctx.measureText(str);
@@ -80,54 +80,33 @@ function font(p5, fn) {
       return metrics;
     }
 
-    _parseArgs(options, width, height) {
+    /* uses: 
+        renderer.states: textBaseline, textAlign, textLeading, textSize},
+        renderer.fontWidthSingle(), 
+        renderer.fontBoundsSingle()
+        drawingContext.measureText(), 
+     */
+    textToPoints(str, x, y, width, height, options) {
 
-      let states = this?._pInst?._renderer?.states || {};
-
-      if (typeof width === 'object') {
-        options = width;
-        width = height = undefined;
-      }
-      if (typeof height === 'object') {
-        options = height;
-        height = undefined;
-      }
-      options = options || {};
-
-      // combine states and options into a props object
-      let props = Object.entries(states).reduce((obj, [k, v]) => {
-        obj[k] = (k in options) ? options[k] : v;
-        return obj;
-      }, {});
-
-      if (props.textBaseline === fn.BASELINE) {
-        props.textBaseline = fn.TOP;
-      }
-
-      return props;
-    }
-
-    textToPoints(str, x, y, width, height, opts) {
-
-      let renderer = this._pInst._renderer;
+      let renderer = options?.renderer || this._pInst._renderer;
+      let context = options?.context || renderer.drawingContext;
 
       // save the baseline
-      let setBaseline = renderer.drawingContext.textBaseline;
+      let setBaseline = context.textBaseline;
 
       // combine states and options into props object
-      let props = this._parseArgs(opts, width, height);
-      let textSize = props.textSize;
+      ({ width, height, options } = this._parseArgs
+        (renderer, width, height, options));
 
-      // lineate and get the bounds for the text
-      let measurer = renderer._fontBoundsSingle.bind(renderer);
+      // lineate and compute bounds for the text
       let { lines, bounds } = renderer._computeBounds
-        (measurer, str, x, y, width, height, props);
+        (fn._FONT_BOUNDS, str, x, y, width, height, options);
 
       // compute positions for each of the lines
-      lines = this._position(lines, bounds, props);
+      lines = this._position(renderer, lines, bounds);
 
-      // convert lines to points at specified size
-      let pts = lines.map(l => this._lineToPoints(l, textSize, opts));
+      // convert lines to arrays of points
+      let pts = lines.map(l => this._lineToPoints(renderer, l, options));
 
       // restore the baseline
       renderer.drawingContext.textBaseline = setBaseline;
@@ -135,29 +114,61 @@ function font(p5, fn) {
       return pts.flat();
     }
 
-    _position(lines, bounds, props) {
+    _parseArgs(renderer, width, height, options) {
 
-      let renderer = this._pInst._renderer;
-      let { textAlign, textLeading } = props;
-      let { fontBoundingBoxAscent: ascent } = this._measureTextDefault('X');
+      // requires args, renderer.states, textBaseline
+
+      if (typeof renderer?.states !== 'object') {
+        throw Error('Invalid renderer state');
+      }
+
+      if (typeof width === 'object') {
+        options = width;
+        width = height = undefined;
+      }
+
+      if (typeof height === 'object') {
+        options = height;
+        height = undefined;
+      }
+
+      options = options || {};
+
+      if (0) { // not used
+        // combine states and options into a props object
+        let props = Object.entries(renderer.states).reduce((obj, [k, v]) => {
+          obj[k] = (k in options) ? options[k] : v;
+          return obj;
+        }, {});
+        return { width, height, options: props };
+      }
+
+      return { width, height, options };
+    }
+
+    _position(renderer, lines, bounds) {
+
+      let { textAlign, textLeading } = renderer.states;
+      let metrics = this._measureTextDefault(renderer, 'X');
+      let ascent = metrics.fontBoundingBoxAscent;
 
       let coordify = (text, i) => {
-        let lx = bounds.x;
-        let ly = bounds.y + (i * textLeading) + ascent;
-        let lw = renderer._fontWidthSingle(text);
+        let x = bounds.x;
+        let y = bounds.y + (i * textLeading) + ascent;
+        let width = renderer._fontWidthSingle(text);
         if (textAlign === fn.CENTER) {
-          lx += (bounds.w - lw) / 2;
+          x += (bounds.w - width) / 2;
         }
         else if (textAlign === fn.RIGHT) {
-          lx += (bounds.w - lw);
+          x += (bounds.w - width);
         }
-        return { text, x: lx, y: ly };
+        return { text, x, y };
       }
 
       return lines.map(coordify);
     }
 
-    _lineToPoints(line, fontSize, opts) {
+    _lineToPoints(renderer, line, opts) {
 
       if (!this.fontData) {
         throw Error('No font data available for "' + this.name
@@ -169,13 +180,15 @@ function font(p5, fn) {
       let shape = Typr.U.shape(font, text);
       let path = Typr.U.shapeToPath(font, shape);
 
+      let fontSize = renderer.states.textSize;
+
       // do we need to deal with devicePixelRatio here?
       let scale = fontSize / font.head.unitsPerEm; // * dpr
 
       return this._pathToPoints(path, x, y, scale, opts?.maxDistance);
     }
 
-    _pathToPoints(path, x, y, scale, maxDistance = scale * 500) {
+    _pathToPoints(path, x, y, scale, maxDist = scale * 500) {
 
       let c = 0, pts = [], crds = path["crds"];
 
@@ -185,8 +198,8 @@ function font(p5, fn) {
         if (cmd == "M" || cmd == "L") {
           let pt = { x: x + crds[c] * scale, y: y + crds[c + 1] * -scale }
           c += 2;
-          if (cmd == "L" && maxDistance && pts.length > 1) {
-            subdivide(pts, pts[pts.length - 1], pt, maxDistance);
+          if (cmd == "L" && maxDist && pts.length > 1) {
+            subdivide(pts, pts[pts.length - 1], pt, maxDist);
           }
           pts.push(pt);
         }
