@@ -2037,40 +2037,6 @@ function files(p5, fn){
     if (ext !== 'html') {
       const output = table.toString(sep);
       pWriter.write(output);
-      // make header if it has values
-      // if (header[0] !== '0') {
-      //   for (let h = 0; h < header.length; h++) {
-      //     if (h < header.length - 1) {
-      //       pWriter.write(header[h] + sep);
-      //     } else {
-      //       pWriter.write(header[h]);
-      //     }
-      //   }
-      //   pWriter.write('\n');
-      // }
-
-      // // make rows
-      // for (let i = 0; i < table.rows.length; i++) {
-      //   let j;
-      //   for (j = 0; j < table.rows[i].arr.length; j++) {
-      //     if (j < table.rows[i].arr.length - 1) {
-      //       //double quotes should be inserted in csv only if contains comma separated single value
-      //       if (ext === 'csv' && String(table.rows[i].arr[j]).includes(',')) {
-      //         pWriter.write('"' + table.rows[i].arr[j] + '"' + sep);
-      //       } else {
-      //         pWriter.write(table.rows[i].arr[j] + sep);
-      //       }
-      //     } else {
-      //       //double quotes should be inserted in csv only if contains comma separated single value
-      //       if (ext === 'csv' && String(table.rows[i].arr[j]).includes(',')) {
-      //         pWriter.write('"' + table.rows[i].arr[j] + '"');
-      //       } else {
-      //         pWriter.write(table.rows[i].arr[j]);
-      //       }
-      //     }
-      //   }
-      //   pWriter.write('\n');
-      // }
     } else {
       // otherwise, make HTML
       pWriter.print('<html>');
