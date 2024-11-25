@@ -22,7 +22,6 @@
   },
   "version": "1.9.4",
   "dependencies": {
-    "@vanillaes/csv": "^3.0.4",
     "acorn": "^8.12.1",
     "acorn-walk": "^8.3.4",
     "colorjs.io": "^0.5.2",

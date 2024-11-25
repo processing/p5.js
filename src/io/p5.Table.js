@@ -4,6 +4,8 @@
  * @requires core
  */
 
+import { stringify } from './csv';
+
 function table(p5, fn){
   /**
    *  Table Options
@@ -41,6 +43,18 @@ function table(p5, fn){
     constructor(rows) {
       this.columns = [];
       this.rows = [];
+    }
+
+    toString(separator=',') {
+      let rows = this.rows.map((row) => row.arr);
+
+      if(!this.columns.some((column) => column === null)){
+        rows = [this.columns, ...rows,]
+      }
+
+      return stringify(rows, {
+        separator
+      });
     }
 
     /**
