@@ -78,7 +78,9 @@ function text2d(p5, fn) {
     'textProperties',
     'fontBounds',
     'fontWidth',
-    //TODO: 'fontAscent','fontDescent','textWeight'
+    'fontAscent',
+    'fontDescent',
+    'textWeight'
   ];
 
   // attach each text func to p5, delegating to the renderer
@@ -90,18 +92,6 @@ function text2d(p5, fn) {
       return this._renderer[func](...args);
     };
   });
-
-  const FontStretchMap = {
-    "ultra-condensed": 50,
-    "extra-condensed": 62.5,
-    "condensed": 75,
-    "semi-condensed": 87.5,
-    "normal": 100,
-    "semi-expanded": 112.5,
-    "expanded": 125,
-    "extra-expanded": 150,
-    "ultra-expanded": 200,
-  };
 
   const RendererTextProps = {
     textAlign: Context2dProp,
@@ -125,28 +115,6 @@ function text2d(p5, fn) {
   let contextQueue, cachedCanvas, cachedDiv; // lazy
 
   ////////////////////////////// start API ///////////////////////////////
-
-  /*p5.Renderer2D.prototype.textOld = function (str, x, y, width, height) {
-
-    let setBaseline = this.drawingContext.textBaseline; // store current baseline
-    let leading = this.states.textLeading;
-
-    if (typeof width !== 'undefined') {
-      // adjust {x,y,w,h} properties based on rectMode
-      ({ x, y, width, height } = this._handleRectMode(x, y, width, height));
-    }
-
-    // parse the lines according to the width, height & linebreaks
-    let lines = this._processLines(str, width, height, leading);
-
-    // get the adjusted positions [x,y] for each line
-    let positions = this._positionLines(x, y, width, height, leading, lines.length);
-
-    // render each line at the adjusted position
-    lines.forEach((line, i) => this._renderText(line, positions[i].x, positions[i].y));
-
-    this.drawingContext.textBaseline = setBaseline; // restore baseline
-  };*/
 
   p5.Renderer2D.prototype.text = function (str, x, y, width, height) {
 
@@ -228,22 +196,37 @@ function text2d(p5, fn) {
 
   /**
    * 
-   * @param {*} txt - optional text to measure, if provided will be used to compute the ascent, otherwise the font's ascent will be used
+   * @param {*} txt - optional text to measure, if provided will be
+   * used to compute the ascent, otherwise the font's ascent will be used
    * @returns - the ascent of the text
    */
   p5.Renderer2D.prototype.textAscent = function (txt = '') {
-    let prop = txt.length ? 'actualBoundingBoxAscent' : 'fontBoundingBoxAscent';
+    if (!txt.length) return this.fontAscent();
     return this.drawingContext.measureText(txt)[prop];
   };
 
   /**
-   * 
-   * @param {*} txt - optional text to measure, if provided will be used to compute the descent, otherwise the font's descent will be used
+   * @returns - returns the ascent for the current font
+   */
+  p5.Renderer2D.prototype.fontAscent = function () {
+    return this.drawingContext.measureText('_').fontBoundingBoxAscent;
+  };
+
+  /**
+   * @param {*} txt - optional text to measure, if provided will
+   * be used to compute the descent, otherwise the font's descent will be used
    * @returns - the descent of the text
    */
   p5.Renderer2D.prototype.textDescent = function (txt = '') {
-    let prop = txt.length ? 'actualBoundingBoxDescent' : 'fontBoundingBoxDescent';
+    if (!txt.length) return this.textDescent();
     return this.drawingContext.measureText(txt)[prop];
+  };
+
+  /**
+   * @returns - returns the descent for the current font
+   */
+  p5.Renderer2D.prototype.fontDescent = function () {
+    return this.drawingContext.measureText('_').fontBoundingBoxDescent;
   };
 
   p5.Renderer2D.prototype.textRasterToPoints = function (s, x, y, fsize, options) { // hack via rendering and checking pixels
@@ -371,6 +354,16 @@ function text2d(p5, fn) {
     }
     // the getter
     return this.states.textLeading;
+  }
+
+  p5.Renderer2D.prototype.textWeight = function (weight) {
+    // the setter
+    if (typeof weight === 'number') {
+      this.states.fontWeight = weight;
+      return this._applyTextProperties();
+    }
+    // the getter
+    return this.states.fontWeight;
   }
 
   /**
@@ -505,10 +498,10 @@ function text2d(p5, fn) {
 
     let setBaseline = this.drawingContext.textBaseline;
 
-    let { rectMode, textLeading, textAlign } = this.states;
+    let { textLeading, textAlign } = this.states;
 
     // adjust width, height based on current rectMode
-    ({ width, height } = this._rectModeAdjust(rectMode, x, y, width, height));
+    ({ width, height } = this._rectModeAdjust(x, y, width, height));
 
     // parse the lines according to the width & linebreaks
     let lines = this._processLines(str, width, height);
@@ -540,7 +533,7 @@ function text2d(p5, fn) {
       bounds = this._aggregateBounds(boxes);
 
       // align the multi-line bounds
-      this._rectModeAlign(rectMode, bounds, width || 0, height || 0);
+      this._rectModeAlign(bounds, width || 0, height || 0);
     }
 
     this.drawingContext.textBaseline = setBaseline; // restore baseline
@@ -551,10 +544,10 @@ function text2d(p5, fn) {
   /*
     Adjust width, height of bounds based on current rectMode
   */
-  p5.Renderer2D.prototype._rectModeAdjust = function (rectMode, x, y, width, height) {
+  p5.Renderer2D.prototype._rectModeAdjust = function (x, y, width, height) {
 
     if (typeof width !== 'undefined') {
-      switch (rectMode) {
+      switch (this.states.rectMode) {
         case fn.CENTER:
           break;
         case fn.CORNERS:
@@ -614,10 +607,21 @@ function text2d(p5, fn) {
           case 'wght':
             if (debug) console.log('setting font-weight=' + val);
             // manually set the font-weight via the font string
-            this.states.fontWeight = val;
+            this.textWeight(val);
             return val;
           case 'wdth':
             if (0) { // attempt to map font-stretch to allowed keywords
+              const FontStretchMap = {
+                "ultra-condensed": 50,
+                "extra-condensed": 62.5,
+                "condensed": 75,
+                "semi-condensed": 87.5,
+                "normal": 100,
+                "semi-expanded": 112.5,
+                "expanded": 125,
+                "extra-expanded": 150,
+                "ultra-expanded": 200,
+              };
               let values = Object.values(FontStretchMap);
               const indexArr = values.map(function (k) { return Math.abs(k - val) })
               const min = Math.min.apply(Math, indexArr)
@@ -889,10 +893,10 @@ function text2d(p5, fn) {
   /*
     Align the bounding box based on the current rectMode setting
   */
-  p5.Renderer2D.prototype._rectModeAlign = function (rectMode, bb, width, height) {
+  p5.Renderer2D.prototype._rectModeAlign = function (bb, width, height) {
     if (typeof width !== 'undefined') {
 
-      switch (rectMode) {
+      switch (this.states.rectMode) {
         case fn.CENTER:
           bb.x -= (width - bb.w) / 2;
           bb.y -= (height - bb.h) / 2;

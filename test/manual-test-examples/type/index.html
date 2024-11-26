@@ -203,11 +203,20 @@
       };
     };
 
-    let textBoundsSingle2 = function (p) {
+    let singleWordBounds = function (p) {
+      let font;
 
       function dt(s, x, y, halign, valign) {
         drawP5(s, x, y, halign, valign);
         drawDirect(s, x, y, halign, valign);
+        drawPoints(s, x, y, halign, valign);
+      }
+      // call font.textToPoints() and draw the points
+      function drawPoints(s, x, y, halign, valign) {
+        p.textAlign(halign, valign);
+        let pts = font.textToPoints(s, x, y);
+        p.stroke('green').fill('green');
+        pts.forEach(pt => p.circle(pt.x, pt.y, 2));
       }
 
       function drawP5(s, x, y, halign, valign) {
@@ -239,9 +248,10 @@
         p.drawingContext.strokeRect(bb.x, bb.y, bb.w, bb.h);
       }
 
-      p.setup = function () {
+      p.setup = async function () {
         p.createCanvas(1200, 1050);
-        p.textSize(64);
+        font = await p.loadFont("font/Lato-Black.ttf");
+        p.textFont(font, 64);
         let x = 150, y = 0;
         dt('.ooo', x, y += 80, p.LEFT, p.TOP);
         dt(',doi', x, y += 80, p.LEFT, p.TOP);
@@ -303,7 +313,7 @@
 
     };
 
-    let textBoundsSingle = function (p) {
+    let singleLineBounds = function (p) {
       let x, y, s, showBB = 1;
 
       p.setup = function () {
@@ -1108,6 +1118,118 @@
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
         p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y, rw, rh);
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+
+        //p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
+      }
+    };
+    
+    let customBoundsMulti_RectModeCorners = function (p) {
+    }
+
+    let customBoundsMulti_RectModeRadius = function (p) {
+      let x = 170, ox = x, y = 65, rw = 150, ox2 = rw, rh = 35, showBB = 1;
+      let s, pts, suf = 'text gonna wrap when it gets too long and is then breaking.';
+
+      p.setup = async function () {
+        p.createCanvas(1010, 430);
+        let font = await p.loadFont("font/Lato-Black.ttf");
+        p.textFont(font, 20);
+        p.textLeading(22);
+        p.rectMode(p.RADIUS);
+        //p.rect(x,y,rw,rh);
+
+        ///////////////////////////// BASELINE (L,C,R) ///////////////////////////////
+        //1
+        s = 'LEFT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+
+        // draw horizontal line at y=64
+        p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y);
+
+        //2
+        x += 330, s = 'CENTER BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+
+        //3
+        x += 330, s = 'RIGHT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+
+        /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
+        x = ox, y += 100;
+
+        // 4
+        s = 'LEFT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BOTTOM) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
+
+        // 5
+        x += 330, s = 'CENTER BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BOTTOM) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+
+        // 6
+        x += 330, s = 'RIGHT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BOTTOM) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+
+        //////////////////////////// CENTER (L,C,R) /////////////////////////////////
+        x = ox, y += 100;
+
+        s = 'LEFT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.CENTER) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+
+        x += 330, s = 'CENTER CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.CENTER) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+
+        x += 330, s = 'RIGHT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+
+        ///////////////////////////// TOP (L,C,R) ///////////////////////////////
+        x = ox, y += 100;
+
+        s = 'LEFT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        //p.noFill() && p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y);
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+
+        x += 330, s = 'CENTER TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.TOP) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+
+        x += 330, s = 'RIGHT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
 
         //p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
       }
@@ -1984,16 +2106,18 @@
     new p5(fontKerningSketch, 'fontKerningSketch');
     new p5(fontVariantCapsSketch, 'fontVariantCapsSketch'); // warning
     new p5(textRenderingProp, 'textRenderingProp'); // warning
-    new p5(textBoundsSingle, 'textBoundsSingle');
+    new p5(singleLineBounds, 'singleLineBounds');
     new p5(loadedBoundsSingle, 'loadedBoundsSingle');
     new p5(systemBoundsMulti, 'systemBoundsMulti');
     new p5(systemBoundsMultiOverflow, 'systemBoundsMultiOverflow');
     new p5(systemBoundsMulti_RectModeCorners, 'systemBoundsMulti_RectModeCorners');
     new p5(systemBoundsMulti_RectModeRadius, 'systemBoundsMulti_RectModeRadius');
+    new p5(customBoundsMulti_RectModeCorners, 'customBoundsMulti_RectModeCorners');
+    new p5(customBoundsMulti_RectModeRadius, 'customBoundsMulti_RectModeRadius');
     new p5(loadedBoundsWithPoints, 'loadedBoundsWithPoints');
     new p5(manualLineBreaksLeft, 'manualLineBreaksLeft');
     new p5(manualLineBreaks, 'manualLineBreaks');
-    new p5(textBoundsSingle2, 'textBoundsSingle2');
+    new p5(singleWordBounds, 'singleWordBounds');
     new p5(textVerticalAlign, 'textVerticalAlign');
     new p5(multilineAlignWord, 'multilineAlignWord');
     new p5(multilineAlignChar, 'multilineAlignChar');
@@ -2072,8 +2196,8 @@
     <p class="caption">textRendering property</p>
   </div>
 
-  <div id='textBoundsSingle'>
-    <p class="caption">textBoundsSingle</p>
+  <div id='singleLineBounds'>
+    <p class="caption">singleLineBounds</p>
   </div>
 
   <div id='loadedBoundsSingle'>
@@ -2092,16 +2216,24 @@
     <p class="caption">systemBoundsMulti (RectMode.RADIUS)</p>
   </div>
 
+  <div id='customBoundsMulti_RectModeCorners'>
+    <p class="caption">customBoundsMulti (RectMode.CORNERS)</p>
+  </div>
+
+  <div id='customBoundsMulti_RectModeRadius'>
+    <p class="caption">customBoundsMulti (RectMode.RADIUS)</p>
+  </div>
+
   <div id='systemBoundsMultiOverflow'>
-    <p class="caption">systemBoundsMulti.Overflow (RectMode.DEFAULT)</p>
+    <p class="caption">systemBoundsMulti.Overflow</p>
   </div>
 
   <div id='loadedBoundsWithPoints'>
     <p class="caption">textToPointsBounds</p>
   </div>
 
-  <div id='textBoundsSingle2'>
-    <p class="caption">textBoundsSingle2</p>
+  <div id='singleWordBounds'>
+    <p class="caption">singleWordBounds</p>
   </div>
 
   <div id='manualLineBreaksLeft'>

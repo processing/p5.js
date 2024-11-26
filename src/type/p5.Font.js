@@ -111,12 +111,20 @@ function font(p5, fn) {
       ({ width, height, options } = this._parseArgs
         (renderer, width, height, options));
 
+      // console.log({ x, y, width, height });
+
+      // ({ width, height } = renderer._rectModeAdjust(x, y, width, height));
+
+      //console.log({ x, y, width, height });
+
       // lineate and compute bounds for the text
       let { lines, bounds } = renderer._computeBounds
         (fn._FONT_BOUNDS, str, x, y, width, height, options);
 
+      //renderer.drawingContext.strokeRect(bounds.x, bounds.y, bounds.w, bounds.h);
+
       // compute positions for each of the lines
-      lines = this._position(renderer, lines, bounds);
+      lines = this._position(renderer, lines, bounds, width, height);
 
       // convert lines to paths
       let paths = lines.map(l => this._pathify(l, options));
@@ -159,7 +167,7 @@ function font(p5, fn) {
       return { width, height, options };
     }
 
-    _position(renderer, lines, bounds) {
+    _position(renderer, lines, bounds, width, height) {
 
       let { textAlign, textLeading } = renderer.states;
       let metrics = this._measureTextDefault(renderer, 'X');
@@ -167,18 +175,40 @@ function font(p5, fn) {
 
       let coordify = (text, i) => {
         let x = bounds.x;
-        let y = bounds.y + (i * textLeading) + ascent;
-        let width = renderer._fontWidthSingle(text);
+        let y = bounds.y + (i * textLeading) + ascent - bounds.h;
+        let lineWidth = renderer._fontWidthSingle(text);
         if (textAlign === fn.CENTER) {
-          x += (bounds.w - width) / 2;
+          x += (bounds.w - lineWidth) / 2;
         }
         else if (textAlign === fn.RIGHT) {
-          x += (bounds.w - width);
+          x += (bounds.w - lineWidth);
         }
         return { text, x, y };
       }
 
-      return lines.map(coordify);
+      let plines = lines.map(coordify);
+      plines.forEach(pl => {
+        // handle rectMode
+        if (typeof width !== 'undefined') {
+          switch (renderer.states.rectMode) {
+            case fn.CENTER:
+              break;
+            case fn.CORNERS:
+              break;
+            case fn.RADIUS:
+              if (textAlign === fn.LEFT) {
+                pl.x -= bounds.w;
+              }
+              else if (textAlign === fn.CENTER) {
+                pl.x -= bounds.w / 2;
+              }
+              else if (textAlign === fn.RIGHT) {
+              }
+              break;
+          }
+        }
+      });
+      return plines;
     }
 
     _pathify(line, opts) {
@@ -214,9 +244,7 @@ function font(p5, fn) {
       return metrics;
     }
 
-    renderPaths(ctx, paths) {
-      //ctx.strokeStyle = 'red';
-      //ctx.fillStyle = 'gray';
+    strokePaths(ctx, paths) {
       ctx.beginPath();
       paths.forEach(({ type, data }) => {
         if (type === 'M') {
@@ -231,8 +259,8 @@ function font(p5, fn) {
           ctx.closePath();
         }
       });
+      ctx.strokeStyle ??= 'red';
       ctx.stroke();
-      //ctx.fill();
     }
 
     _pathsToCommands(paths, scale) {
