@@ -26,10 +26,16 @@ Object.assign(mockP5, {
 });
 
 const mockCanvas = document.createElement('canvas');
+mockCanvas.id = 'myCanvasID';
+document.getElementsByTagName("body")[0].appendChild(mockCanvas);
+
 export const mockP5Prototype = {
   saveCanvas: vi.fn(),
   elt: mockCanvas,
   _curElement: {
     elt: mockCanvas
+  },
+  canvas: {
+    id: 'myCanvasID'
   }
 };

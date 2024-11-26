@@ -1,72 +1,72 @@
-import p5 from '../../../src/app.js';
+import { mockP5, mockP5Prototype } from '../../js/mocks';
+import describe from '../../../src/accessibility/describe';
 
 suite('describe', function() {
-  let myp5;
   let myID = 'myCanvasID';
 
   beforeAll(function() {
-    new p5(function(p) {
-      p.setup = function() {
-        let cnv = p.createCanvas(100, 100);
-        cnv.id(myID);
-        myp5 = p;
-      };
-    });
-  });
+    describe(mockP5, mockP5Prototype);
 
-  afterAll(function() {
-    myp5.remove();
+    mockP5Prototype.LABEL = 'label';
+    mockP5Prototype.FALLBACK = 'fallback';
   });
 
   suite('p5.prototype.describe', function() {
     test('should be a function', function() {
-      assert.ok(myp5.describe);
-      assert.typeOf(myp5.describe, 'function');
+      assert.ok(mockP5Prototype.describe);
+      assert.typeOf(mockP5Prototype.describe, 'function');
     });
+
     test('err when LABEL at param #0', function() {
       assert.throws(
         function() {
-          myp5.describe(myp5.LABEL);
+          mockP5Prototype.describe(mockP5Prototype.LABEL);
         },
         Error,
         'description should not be LABEL or FALLBACK'
       );
     });
+
     test('should create description as fallback', function() {
-      myp5.describe('a');
+      mockP5Prototype.describe('a');
       let actual = document.getElementById(myID + '_fallbackDesc');
       assert.deepEqual(actual.innerHTML, 'a.');
     });
+
     test('should not add extra period if string ends in "."', function() {
-      myp5.describe('A.');
+      mockP5Prototype.describe('A.');
       let actual = document.getElementById(myID + '_fallbackDesc');
       assert.deepEqual(actual.innerHTML, 'A.');
     });
+
     test('should not add period if string ends in "!" or "?', function() {
-      myp5.describe('A!');
+      mockP5Prototype.describe('A!');
       let actual = document.getElementById(myID + '_fallbackDesc');
       if (actual.innerHTML === 'A!') {
-        myp5.describe('A?');
+        mockP5Prototype.describe('A?');
 
         actual = document.getElementById(myID + '_fallbackDesc');
         assert.deepEqual(actual.innerHTML, 'A?');
       }
     });
+
     test('should create description when called after describeElement()', function() {
-      myp5.describeElement('b', 'c');
-      myp5.describe('a');
+      mockP5Prototype.describeElement('b', 'c');
+      mockP5Prototype.describe('a');
       let actual = document.getElementById(myID + '_fallbackDesc');
       assert.deepEqual(actual.innerHTML, 'a.');
     });
+
     test('should create Label adjacent to canvas', function() {
-      myp5.describe('a', myp5.LABEL);
+      mockP5Prototype.describe('a', mockP5Prototype.LABEL);
 
       let actual = document.getElementById(myID + '_labelDesc');
       assert.deepEqual(actual.innerHTML, 'a.');
     });
+
     test('should create Label adjacent to canvas when label of element already exists', function() {
-      myp5.describeElement('ba', 'c', myp5.LABEL);
-      myp5.describe('a', myp5.LABEL);
+      mockP5Prototype.describeElement('ba', 'c', mockP5Prototype.LABEL);
+      mockP5Prototype.describe('a', mockP5Prototype.LABEL);
       let actual = document.getElementById(myID + '_labelDesc');
       assert.deepEqual(actual.innerHTML, 'a.');
     });
@@ -74,69 +74,77 @@ suite('describe', function() {
 
   suite('p5.prototype.describeElement', function() {
     test('should be a function', function() {
-      assert.ok(myp5.describeElement);
-      assert.typeOf(myp5.describeElement, 'function');
+      assert.ok(mockP5Prototype.describeElement);
+      assert.typeOf(mockP5Prototype.describeElement, 'function');
     });
+
     test('err when LABEL at param #0', function() {
       assert.throws(
         function() {
-          myp5.describeElement(myp5.LABEL, 'b');
+          mockP5Prototype.describeElement(mockP5Prototype.LABEL, 'b');
         },
         Error,
         'element name should not be LABEL or FALLBACK'
       );
     });
+
     test('err when LABEL at param #1', function() {
       assert.throws(
         function() {
-          myp5.describeElement('a', myp5.LABEL);
+          mockP5Prototype.describeElement('a', mockP5Prototype.LABEL);
         },
         Error,
         'description should not be LABEL or FALLBACK'
       );
     });
+
     test('should create element description as fallback', function() {
-      myp5.describeElement('az', 'b');
+      mockP5Prototype.describeElement('az', 'b');
       let actual = document.getElementById(myID + '_fte_az').innerHTML;
       assert.deepEqual(actual, '<th scope="row">az:</th><td>b.</td>');
     });
+
     test('should not add extra ":" if element name ends in colon', function() {
-      myp5.describeElement('ab:', 'b.');
+      mockP5Prototype.describeElement('ab:', 'b.');
       let actual = document.getElementById(myID + '_fte_ab').innerHTML;
       assert.deepEqual(actual, '<th scope="row">ab:</th><td>b.</td>');
     });
+
     test('should replace ";", ",", "." for ":" in element name', function() {
       let actual;
-      myp5.describeElement('ac;', 'b.');
+      mockP5Prototype.describeElement('ac;', 'b.');
       if (
         document.getElementById(myID + '_fte_ac').innerHTML ===
         '<th scope="row">ac:</th><td>b.</td>'
       ) {
-        myp5.describeElement('ad,', 'b.');
+        mockP5Prototype.describeElement('ad,', 'b.');
         if (
           document.getElementById(myID + '_fte_ad').innerHTML ===
           '<th scope="row">ad:</th><td>b.</td>'
         ) {
-          myp5.describeElement('ae.', 'b.');
+          mockP5Prototype.describeElement('ae.', 'b.');
           actual = document.getElementById(myID + '_fte_ae').innerHTML;
           assert.deepEqual(actual, '<th scope="row">ae:</th><td>b.</td>');
         }
       }
     });
+
     test('should create element description when called after describe()', function() {
-      myp5.describe('c');
-      myp5.describeElement('af', 'b');
+      mockP5Prototype.describe('c');
+      mockP5Prototype.describeElement('af', 'b');
       let actual = document.getElementById(myID + '_fte_af').innerHTML;
       assert.deepEqual(actual, '<th scope="row">af:</th><td>b.</td>');
     });
+
     test('should create element label adjacent to canvas', function() {
-      myp5.describeElement('ag', 'b', myp5.LABEL);
+      mockP5Prototype.describeElement('ag', 'b', mockP5Prototype.LABEL);
       const actual = document.getElementById(myID + '_lte_ag').innerHTML;
       assert.deepEqual(actual, '<th scope="row">ag:</th><td>b.</td>');
     });
+
     test('should create element label adjacent to canvas when called after describe()', function() {
-      myp5.describe('c', myp5.LABEL);
-      myp5.describeElement('ah:', 'b', myp5.LABEL);
+      mockP5Prototype.describe('c', mockP5Prototype.LABEL);
+      mockP5Prototype.describeElement('ah:', 'b', mockP5Prototype.LABEL);
       const actual = document.getElementById(myID + '_lte_ah').innerHTML;
       assert.deepEqual(actual, '<th scope="row">ah:</th><td>b.</td>');
     });
