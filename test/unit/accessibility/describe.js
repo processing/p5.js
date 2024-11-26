@@ -2,7 +2,7 @@ import { mockP5, mockP5Prototype } from '../../js/mocks';
 import describe from '../../../src/accessibility/describe';
 
 suite('describe', function() {
-  let myID = 'myCanvasID';
+  const myID = 'myCanvasID';
 
   beforeAll(function() {
     describe(mockP5, mockP5Prototype);
