@@ -65,22 +65,15 @@ function font(p5, fn) {
       return this._pInst.textBounds(...args);
     }
 
-    _measureTextDefault(renderer, str) {
-      let { textAlign, textBaseline } = renderer.states;
-      let ctx = renderer.drawingContext;
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'alphabetic';
-      let metrics = ctx.measureText(str);
-      ctx.textAlign = textAlign;
-      ctx.textBaseline = textBaseline;
-      return metrics;
-    }
+    textToPaths(str, x, y, width, height, options) {
 
-    textToPath(str, x, y, width, height, options) {
-      let paths = this._getPaths(str, x, y, width, height, options);
-      return [];
+      // lineate and get paths for each line
+      let renderer = options?.renderer || this._pInst._renderer;
+      let paths = this._getPaths(renderer, str, x, y, width, height, options);
+      let fontSize = renderer.states.textSize;
+      let scale = fontSize / this.fontData.head.unitsPerEm; // * dpr
+      return this._pathsToCommands([...paths], scale);
     }
-
 
     /* uses: 
         renderer.states: textBaseline, textAlign, textLeading, textSize},
@@ -103,10 +96,13 @@ function font(p5, fn) {
       return pts.flat();
     }
 
+
     /*
       Returns an array of paths, one for each line of text
     */
     _getPaths(renderer, str, x, y, width, height, options) {
+
+      //console.log(renderer);
 
       // save the baseline
       let setBaseline = renderer.drawingContext.textBaseline;
@@ -205,6 +201,71 @@ function font(p5, fn) {
       let pts = this._pathToPoints(path, scale, opts?.maxDistance);
       path.points = pts;
       return pts;
+    }
+
+    _measureTextDefault(renderer, str) {
+      let { textAlign, textBaseline } = renderer.states;
+      let ctx = renderer.drawingContext;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'alphabetic';
+      let metrics = ctx.measureText(str);
+      ctx.textAlign = textAlign;
+      ctx.textBaseline = textBaseline;
+      return metrics;
+    }
+
+    renderPaths(ctx, paths) {
+      //ctx.strokeStyle = 'red';
+      //ctx.fillStyle = 'gray';
+      ctx.beginPath();
+      paths.forEach(({ type, data }) => {
+        if (type === 'M') {
+          ctx.moveTo(...data);
+        } else if (type === 'L') {
+          ctx.lineTo(...data);
+        } else if (type === 'C') {
+          ctx.bezierCurveTo(...data);
+        } else if (type === 'Q') {
+          ctx.quadraticCurveTo(...data);
+        } else if (type === 'Z') {
+          ctx.closePath();
+        }
+      });
+      ctx.stroke();
+      //ctx.fill();
+    }
+
+    _pathsToCommands(paths, scale) {
+      let commands = [];
+      for (let i = 0; i < paths.length; i++) {
+        let pathData = paths[i];
+        let { x, y, path } = pathData;
+        let { crds, cmds } = path;
+
+        // iterate over the path, storing each non-control point
+        for (let c = 0, j = 0; j < cmds.length; j++) {
+          let cmd = cmds[j], obj = { type: cmd, data: [] };
+          if (cmd == "M" || cmd == "L") {
+            obj.data.push(x + crds[c] * scale, y + crds[c + 1] * -scale);
+            c += 2;
+          }
+          else if (cmd == "C") {
+            for (let i = 0; i < 6; i += 2) {
+              obj.data.push(x + crds[c + i] * scale, y + crds[c + i + 1] * -scale);
+            }
+            c += 6;
+          }
+          else if (cmd == "Q") {
+            for (let i = 0; i < 4; i += 2) {
+              obj.data.push(x + crds[c + i] * scale, y + crds[c + i + 1] * -scale);
+            }
+            c += 4;
+          }
+          commands.push(obj);
+        }
+      }
+
+      return commands;
     }
 
     _pathToPoints(pathData, scale, maxDist = scale * 500) {
