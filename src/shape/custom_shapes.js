@@ -27,7 +27,17 @@ class Shape {
     }
   }
 
-  // TODO: TEST, MAYBE REFACTOR
+  // TODO for at() method:
+
+  // RENAME?
+  // -at() indicates it works like Array.prototype.at(), e.g. with negative indices
+  // -get() may work better if we want to add a corresponding set() method
+  // -a set() method could maybe check for problematic usage (e.g. inserting a Triangle into a PATH)
+  // -renaming or removing would necessitate changes at call sites (it's already in use)
+
+  // REFACTOR?
+
+  // TEST
   at(contoursIndex, primitivesIndex, verticesIndex) {
     let contour;
     let primitive;
@@ -45,6 +55,7 @@ class Shape {
     }
   }
 
+  // maybe call this clear() for consistency with PrimitiveShapeCreators.clear()?
   reset() {
     // TODO: remove existing vertices
   }
@@ -252,63 +263,119 @@ class LineSegment extends Segment {
   }
 }
 
-class BezierSegment extends Segment {
-  constructor() {
+// TOOO: Finish implementing remaining primitive classes
 
+class BezierSegment extends Segment {
+  constructor(...vertices) {
+    super(...vertices);
   }
 }
 
 // consider type and end modes -- see #6766)
 // may want to use separate classes, but maybe not
 class SplineSegment extends Segment {
-  constructor() {
-
+  constructor(...vertices) {
+    super(...vertices);
   }
 }
 
 // ---- ISOLATED PRIMITIVES ----
 
 class Point extends ShapePrimitive {
-  constructor() {
-
+  constructor(...vertices) {
+    super(...vertices);
   }
 }
 
 class Line extends ShapePrimitive {
-  constructor() {
-
+  constructor(...vertices) {
+    super(...vertices);
   }
 }
 
 class Triangle extends ShapePrimitive {
-  constructor() {
-
+  constructor(...vertices) {
+    super(...vertices);
   }
 }
 
 class Quad extends ShapePrimitive {
-  constructor() {
-
+  constructor(...vertices) {
+    super(...vertices);
   }
 }
 
 // ---- TESSELLATION PRIMITIVES ----
 
 class TriangleFan extends ShapePrimitive {
-  constructor() {
-
+  constructor(...vertices) {
+    super(...vertices);
   }
 }
 
 class TriangleStrip extends ShapePrimitive {
-  constructor() {
-
+  constructor(...vertices) {
+    super(...vertices);
   }
 }
 
 class QuadStrip extends ShapePrimitive {
-  constructor() {
+  constructor(...vertices) {
+    super(...vertices);
+  }
+}
 
+// ---- PRIMITIVE SHAPE CREATORS ----
+
+class PrimitiveShapeCreators {
+  constructor() {
+    let creators = new Map();
+
+    // Store Symbols as strings for use in Map keys
+    const EMPTY_PATH = constants.EMPTY_PATH.description;
+    const PATH = constants.PATH.description;
+    const POINTS = constants.POINTS.description;
+    const LINES = constants.LINES.description;
+    const TRIANGLES = constants.TRIANGLES.description;
+    const QUADS = constants.QUADS.description;
+    const TRIANGLE_FAN = constants.TRIANGLE_FAN.description;
+    const TRIANGLE_STRIP = constants.TRIANGLE_STRIP.description;
+    const QUAD_STRIP = constants.QUAD_STRIP.description;
+
+    // vertex
+    creators.set(`vertex-${EMPTY_PATH}`, (...vertices) => new Anchor(...vertices));
+    creators.set(`vertex-${PATH}`, (...vertices) => new LineSegment(...vertices));
+    creators.set(`vertex-${POINTS}`, (...vertices) => new Point(...vertices));
+    creators.set(`vertex-${LINES}`, (...vertices) => new Line(...vertices));
+    creators.set(`vertex-${TRIANGLES}`, (...vertices) => new Triangle(...vertices));
+    creators.set(`vertex-${QUADS}`, (...vertices) => new Quad(...vertices));
+    creators.set(`vertex-${TRIANGLE_FAN}`, (...vertices) => new TriangleFan(...vertices));
+    creators.set(`vertex-${TRIANGLE_STRIP}`, (...vertices) => new TriangleStrip(...vertices));
+    creators.set(`vertex-${QUAD_STRIP}`, (...vertices) => new QuadStrip(...vertices));
+
+    // bezierVertex
+    creators.set(`bezierVertex-${EMPTY_PATH}`, (...vertices) => new Anchor(...vertices));
+    creators.set(`bezierVertex-${PATH}`, (...vertices) => new BezierSegment(...vertices));
+
+    // splineVertex
+    creators.set(`splineVertex-${EMPTY_PATH}`, (...vertices) => new Anchor(...vertices));
+    creators.set(`splineVertex-${PATH}`, (...vertices) => new SplineSegment(...vertices));
+
+    this.creators = creators;
+  }
+
+  get(vertexKind, shapeKind) {
+    const key = `${vertexKind}-${shapeKind.description}`;
+    return this.creators.get(key);
+  }
+
+  set(vertexKind, shapeKind, creator) {
+    const key = `${vertexKind}-${shapeKind.description}`;
+    this.creators.set(key, creator);
+  }
+
+  clear() {
+    this.creators.clear();
   }
 }
 
