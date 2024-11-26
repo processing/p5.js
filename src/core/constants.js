@@ -67,10 +67,10 @@ export const ARROW = 'default';
  */
 export const SIMPLE = 'simple';
 /**
- * @property {String} FULLY
+ * @property {String} FULL
  * @final
  */
-export const FULLY = 'fully';
+export const FULL = 'full';
 
 /**
  * @typedef {'crosshair'} CROSS

@@ -528,7 +528,7 @@ function primitives3D(p5, fn){
  *
  * - `SIMPLE`: Optimizes for speed by disabling caps, joins, and stroke color features.
  *   Use this mode for faster line rendering when these visual details are unnecessary.
- * - `FULLY`: Enables caps, joins, and stroke color for lines.
+ * - `FULL`: Enables caps, joins, and stroke color for lines.
  *   This mode provides enhanced visuals but may reduce performance due to additional processing.
  *
  * Choose the mode that best suits your application's needs to either improve rendering speed or enhance visual quality.
@@ -536,34 +536,32 @@ function primitives3D(p5, fn){
  * @method strokeMode
  * @param {string} mode - The stroke mode to set. Possible values are:
  *   - `'SIMPLE'`: Fast rendering without caps, joins, or stroke color.
- *   - `'FULLY'`: Detailed rendering with caps, joins, and stroke color.
+ *   - `'FULL'`: Detailed rendering with caps, joins, and stroke color.
  *
  * @example
  * <div>
  * <code>
  * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *   strokeWeight(10);
- *   stroke(0);
+ *   createCanvas(300, 300, WEBGL);
  * 
- *  describe('A red, horizontal, rectangular shape with rounded edges (resembling a pill or capsule) in a grey background');
+ *  describe('A sphere with red stroke and a red, wavy line on a gray background.');
  * }
  * 
  * function draw() {
- *   strokeMode(FULLY); // Enables detailed rendering with caps, joins, and stroke color.
- *   stroke('red');
- * 
  *   background(128);
- *   
- *   let centerX = 0;
- *   let centerY = 0;
- *
- *   // Length of the small centered line
- *   let lineLength = 50; 
+ *   strokeMode(FULL); // Enables detailed rendering with caps, joins, and stroke color.
+ *   push();
+ *   strokeWeight(1);
+ *   translate(0, -50, 0);
+ *   sphere(50);
+ *   pop(); 
  * 
- *   beginShape(LINES);
- *   vertex(centerX - lineLength / 2, centerY, 0);
- *   vertex(centerX + lineLength / 2, centerY, 0); 
+ *   noFill();
+ *   strokeWeight(15);
+ *   beginShape();
+ *   vertex(-150, 100);
+ *   stroke('red');
+ *   bezierVertex(-50, -100, 30, 300, 130, 50);
  *   endShape();
  * }
  * </code>
@@ -571,38 +569,39 @@ function primitives3D(p5, fn){
  * 
  * <div>
  * <code>
- *  function setup() {
- *   createCanvas(100, 100, WEBGL);
- *   strokeWeight(10);
- *   stroke(0);
+ * function setup() {
+ *   createCanvas(300, 300, WEBGL);
  * 
- *   describe('A black, horizontal, rectangular shape without rounded edges in a grey background');
+ *  describe('A sphere with red stroke and a  wavy line without full curve decorations without caps and color on a gray background.');
  * }
  * 
  * function draw() {
- *   strokeMode(SIMPLE); // Enables detailed rendering with caps, joins, and stroke color.
- *   stroke(`red`); 
  *   background(128);
- *
- *   let centerX = 0;
- *   let centerY = 0;
- *
- *   // Length of the small centered line
- *   let lineLength = 50; 
+ *   strokeMode(SIMPLE); // Enables simple rendering without caps, joins, and stroke color.
+ *   push();
+ *   strokeWeight(1);
+ *   translate(0, -50, 0);
+ *   sphere(50);
+ *   pop(); 
  * 
- *   beginShape(LINES);
- *   vertex(centerX - lineLength / 2, centerY, 0);
- *   vertex(centerX + lineLength / 2, centerY, 0); 
+ *   noFill();
+ *   strokeWeight(15);
+ *   beginShape();
+ *   vertex(-150, 100);
+ *   stroke('red');
+ *   bezierVertex(-50, -100, 30, 300, 130, 50);
  *   endShape();
  * }
  * </code>
  * </div>
  */
   
-fn.strokeMode = function(mode){
-  if(mode === constants.SIMPLE){
-     this._renderer._simpleLines = true;
-    } else if (mode === constants.FULLY) {
+  fn.strokeMode = function (mode) {
+    if (mode === undefined) {
+      return this._renderer._simpleLines ? constants.SIMPLE : constants.FULL;
+    } else if (mode === constants.SIMPLE) {
+      this._renderer._simpleLines = true;
+    } else if (mode === constants.FULL) {
       this._renderer._simpleLines = false;
     } else {
       throw Error('no such parameter');

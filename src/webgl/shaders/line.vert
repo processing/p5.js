@@ -69,17 +69,16 @@ vec2 lineIntersection(vec2 aPoint, vec2 aDir, vec2 bPoint, vec2 bDir) {
 void main() {
   HOOK_beforeVertex();
 
-  if(!uSimpleLines){
-  // Caps have one of either the in or out tangent set to 0
-  vCap = (aTangentIn == vec3(0.)) != (aTangentOut == (vec3(0.)))
-    ? 1. : 0.;
+  if (!uSimpleLines) {
+      // Caps have one of either the in or out tangent set to 0
+      vCap = (aTangentIn == vec3(0.)) != (aTangentOut == vec3(0.)) ? 1. : 0.;
 
-  // Joins have two unique, defined tangents
-  vJoin = (
-    aTangentIn != vec3(0.) &&
-    aTangentOut != vec3(0.) &&
-    aTangentIn != aTangentOut
-  ) ? 1. : 0.;
+      // Joins have two unique, defined tangents
+      vJoin = (
+          aTangentIn != vec3(0.) &&
+          aTangentOut != vec3(0.) &&
+          aTangentIn != aTangentOut
+      ) ? 1. : 0.;
   }
 
   vec4 localPosition = vec4(HOOK_getLocalPosition(aPosition.xyz), 1.);
