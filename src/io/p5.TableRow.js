@@ -14,18 +14,12 @@ function tableRow(p5, fn){
    *
    *  @class p5.TableRow
    *  @constructor
-   *  @param {String} [str]       optional: populate the row with a
-   *                              string of values, separated by the
-   *                              separator
-   *  @param {String} [separator] comma separated values (csv) by default
+   *  @param {any[]} row         optional: populate the row with an
+   *                              array of values
    */
   p5.TableRow = class {
-    constructor(str, separator){
-      let arr = [];
-      if (str) {
-        separator = separator || ',';
-        arr = str.split(separator);
-      }
+    constructor(row=[]){
+      let arr = row;
 
       this.arr = arr;
       this.obj = Object.fromEntries(arr.entries());
