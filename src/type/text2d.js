@@ -218,7 +218,7 @@ function text2d(p5, fn) {
    * @returns - the descent of the text
    */
   p5.Renderer2D.prototype.textDescent = function (txt = '') {
-    if (!txt.length) return this.textDescent();
+    if (!txt.length) return this.fontDescent();
     return this.drawingContext.measureText(txt)[prop];
   };
 

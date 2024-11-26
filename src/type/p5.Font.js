@@ -121,7 +121,7 @@ function font(p5, fn) {
       let { lines, bounds } = renderer._computeBounds
         (fn._FONT_BOUNDS, str, x, y, width, height, options);
 
-      //renderer.drawingContext.strokeRect(bounds.x, bounds.y, bounds.w, bounds.h);
+      renderer.drawingContext.strokeRect(bounds.x, bounds.y, bounds.w, bounds.h);
 
       // compute positions for each of the lines
       lines = this._position(renderer, lines, bounds, width, height);
@@ -175,7 +175,7 @@ function font(p5, fn) {
 
       let coordify = (text, i) => {
         let x = bounds.x;
-        let y = bounds.y + (i * textLeading) + ascent - bounds.h;
+        let y = bounds.y + (i * textLeading) + ascent;
         let lineWidth = renderer._fontWidthSingle(text);
         if (textAlign === fn.CENTER) {
           x += (bounds.w - lineWidth) / 2;
@@ -191,11 +191,23 @@ function font(p5, fn) {
         // handle rectMode
         if (typeof width !== 'undefined') {
           switch (renderer.states.rectMode) {
+            case fn.CORNER:
+              y -= bounds.h;
+              break;
             case fn.CENTER:
               break;
             case fn.CORNERS:
+              if (textAlign === fn.LEFT) {
+              }
+              else if (textAlign === fn.CENTER) {
+                pl.x -= bounds.w / 4;
+                //bounds.w /=2;
+              }
+              else if (textAlign === fn.RIGHT) {
+              }
               break;
             case fn.RADIUS:
+              y -= bounds.h;
               if (textAlign === fn.LEFT) {
                 pl.x -= bounds.w;
               }
