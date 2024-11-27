@@ -14,6 +14,7 @@ import * as constants from '../core/constants.js';
 class Shape {
   vertexProperties;
   contours = [];
+  kind = null;
 
   constructor(vertexProperties) {
     this.vertexProperties = vertexProperties;
@@ -76,11 +77,30 @@ class Shape {
   }
 
   beginShape(shapeKind) {
-    // TODO
+    this.kind = shapeKind;
+    this.contours.push(new Contour(shapeKind));
   }
 
   endShape(closeMode = constants.OPEN) {
-    // TODO
+    // shape characteristics
+    const shapeIsPath = this.kind === constants.PATH;
+    const shapeIsClosed = closeMode === constants.CLOSE;
+    const shapeHasOneContour = this.contours.length === 1;
+
+    // anchor characteristics
+    const anchorVertex = this.at(0, 0, 0);
+    const anchorHasPos = Object.hasOwn(anchorVertex, 'position');
+    const anchorHasTex = Object.hasOwn(anchorVertex, 'textureCoordinates');
+
+    // close path
+    if (shapeIsPath && shapeIsClosed && shapeHasOneContour && anchorHasPos) {
+      if (anchorHasTex) {
+        this.vertex(anchorVertex.position, anchorVertex.textureCoordinates);
+      }
+      else {
+        this.vertex(anchorVertex.position);
+      }
+    }
   }
 }
 
@@ -559,7 +579,11 @@ function customShapes(p5, fn) {
      * });
      * ```
      *
-     * Any property names may be used. Property values may be any
+     * Any property names may be used. The `p5.Shape` class assumes that if a vertex has a
+     * position or texture coordinates, they are stored in `position` and `textureCoordinates`
+     * properties.
+     *
+     * Property values may be any
      * <a href="https://developer.mozilla.org/en-US/docs/Glossary/Primitive">JavaScript primitive</a>, any
      * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer">object literal</a>,
      * or any object with an `array` property.
