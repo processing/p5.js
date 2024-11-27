@@ -10,6 +10,7 @@
 import * as constants from '../core/constants.js';
 
 // ---- GENERAL BUILDING BLOCKS ----
+
 class Vertex {
   constructor(properties) {
     for (const [key, value] of Object.entries(properties)) {
@@ -325,6 +326,7 @@ class PrimitiveShapeCreators {
 }
 
 // ---- SHAPE ----
+
 class Shape {
   #vertexProperties;
   #primitiveShapeCreators;
