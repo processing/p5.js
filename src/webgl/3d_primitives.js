@@ -520,6 +520,93 @@ function primitives3D(p5, fn){
     return this._renderer.endGeometry();
   };
 
+
+/**
+ * Sets the stroke rendering mode to balance performance and visual features when drawing lines.
+ *
+ * `strokeMode()` offers two modes:
+ *
+ * - `SIMPLE`: Optimizes for speed by disabling caps, joins, and stroke color features.
+ *   Use this mode for faster line rendering when these visual details are unnecessary.
+ * - `FULL`: Enables caps, joins, and stroke color for lines.
+ *   This mode provides enhanced visuals but may reduce performance due to additional processing.
+ *
+ * Choose the mode that best suits your application's needs to either improve rendering speed or enhance visual quality.
+ *
+ * @method strokeMode
+ * @param {string} mode - The stroke mode to set. Possible values are:
+ *   - `'SIMPLE'`: Fast rendering without caps, joins, or stroke color.
+ *   - `'FULL'`: Detailed rendering with caps, joins, and stroke color.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(300, 300, WEBGL);
+ * 
+ *  describe('A sphere with red stroke and a red, wavy line on a gray background.');
+ * }
+ * 
+ * function draw() {
+ *   background(128);
+ *   strokeMode(FULL); // Enables detailed rendering with caps, joins, and stroke color.
+ *   push();
+ *   strokeWeight(1);
+ *   translate(0, -50, 0);
+ *   sphere(50);
+ *   pop(); 
+ * 
+ *   noFill();
+ *   strokeWeight(15);
+ *   beginShape();
+ *   vertex(-150, 100);
+ *   stroke('red');
+ *   bezierVertex(-50, -100, 30, 300, 130, 50);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ * 
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(300, 300, WEBGL);
+ * 
+ *  describe('A sphere with red stroke and a  wavy line without full curve decorations without caps and color on a gray background.');
+ * }
+ * 
+ * function draw() {
+ *   background(128);
+ *   strokeMode(SIMPLE); // Enables simple rendering without caps, joins, and stroke color.
+ *   push();
+ *   strokeWeight(1);
+ *   translate(0, -50, 0);
+ *   sphere(50);
+ *   pop(); 
+ * 
+ *   noFill();
+ *   strokeWeight(15);
+ *   beginShape();
+ *   vertex(-150, 100);
+ *   stroke('red');
+ *   bezierVertex(-50, -100, 30, 300, 130, 50);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ */
+  
+  fn.strokeMode = function (mode) {
+    if (mode === undefined) {
+      return this._renderer._simpleLines ? constants.SIMPLE : constants.FULL;
+    } else if (mode === constants.SIMPLE) {
+      this._renderer._simpleLines = true;
+    } else if (mode === constants.FULL) {
+      this._renderer._simpleLines = false;
+    } else {
+      throw Error('no such parameter');
+    }
+  }
   /**
    * Creates a custom <a href="#/p5.Geometry">p5.Geometry</a> object from
    * simpler 3D shapes.
@@ -2109,7 +2196,7 @@ function primitives3D(p5, fn){
         this.faces = [[0, 1, 2]];
         this.uvs = [0, 0, 1, 0, 1, 1];
       };
-      const triGeom = new Geometry(1, 1, _triangle);
+      const triGeom = new Geometry(1, 1, _triangle, this);
       triGeom._edgesToVertices();
       triGeom.computeNormals();
       triGeom.gid = gid;
@@ -2245,7 +2332,7 @@ function primitives3D(p5, fn){
         }
       };
 
-      const arcGeom = new Geometry(detail, 1, _arc);
+      const arcGeom = new Geometry(detail, 1, _arc, this);
       arcGeom.computeNormals();
 
       if (detail <= 50) {
@@ -2308,7 +2395,7 @@ function primitives3D(p5, fn){
             ];
           }
         };
-        const rectGeom = new Geometry(detailX, detailY, _rect);
+        const rectGeom = new Geometry(detailX, detailY, _rect, this);
         rectGeom
           .computeFaces()
           .computeNormals()
@@ -2441,7 +2528,7 @@ function primitives3D(p5, fn){
             this.uvs.push([pctx, pcty]);
           }
         }
-      });
+      }, this);
 
       quadGeom.faces = [];
       for(let y = 0; y < detailY-1; y++){
@@ -3367,7 +3454,7 @@ function primitives3D(p5, fn){
           }
         }
       };
-      const planeGeom = new Geometry(detailX, detailY, _plane);
+      const planeGeom = new Geometry(detailX, detailY, _plane, this);
       planeGeom.computeFaces().computeNormals();
       if (detailX <= 1 && detailY <= 1) {
         planeGeom._makeTriangleEdges()._edgesToVertices();
@@ -3447,7 +3534,7 @@ function primitives3D(p5, fn){
           this.faces.push([v + 2, v + 1, v + 3]);
         });
       };
-      const boxGeom = new Geometry(detailX, detailY, _box);
+      const boxGeom = new Geometry(detailX, detailY, _box, this);
       boxGeom.computeNormals();
       if (detailX <= 4 && detailY <= 4) {
         boxGeom._edgesToVertices();
@@ -3503,7 +3590,7 @@ function primitives3D(p5, fn){
           }
         }
       };
-      const ellipsoidGeom = new Geometry(detailX, detailY, _ellipsoid);
+      const ellipsoidGeom = new Geometry(detailX, detailY, _ellipsoid, this);
       ellipsoidGeom.computeFaces();
       if (detailX <= 24 && detailY <= 24) {
         ellipsoidGeom._makeTriangleEdges()._edgesToVertices();
@@ -3530,17 +3617,18 @@ function primitives3D(p5, fn){
   ) {
     const gid = `cylinder|${detailX}|${detailY}|${bottomCap}|${topCap}`;
     if (!this.geometryInHash(gid)) {
-      const cylinderGeom = new p5.Geometry(detailX, detailY);
-      _truncatedCone.call(
-        cylinderGeom,
-        1,
-        1,
-        1,
-        detailX,
-        detailY,
-        bottomCap,
-        topCap
-      );
+      const cylinderGeom = new p5.Geometry(detailX, detailY, function() {
+        _truncatedCone.call(
+          this,
+          1,
+          1,
+          1,
+          detailX,
+          detailY,
+          bottomCap,
+          topCap
+        );
+      }, this);
       // normals are computed in call to _truncatedCone
       if (detailX <= 24 && detailY <= 16) {
         cylinderGeom._makeTriangleEdges()._edgesToVertices();
@@ -3566,8 +3654,18 @@ function primitives3D(p5, fn){
   ) {
     const gid = `cone|${detailX}|${detailY}|${cap}`;
     if (!this.geometryInHash(gid)) {
-      const coneGeom = new Geometry(detailX, detailY);
-      _truncatedCone.call(coneGeom, 1, 0, 1, detailX, detailY, cap, false);
+      const coneGeom = new Geometry(detailX, detailY, function() {
+        _truncatedCone.call(
+          this,
+          1,
+          0,
+          1, 
+          detailX,
+          detailY,
+          cap,   
+          false 
+        );
+      }, this);
       if (detailX <= 24 && detailY <= 16) {
         coneGeom._makeTriangleEdges()._edgesToVertices();
       } else if (this.states.strokeColor) {
@@ -3629,7 +3727,7 @@ function primitives3D(p5, fn){
           }
         }
       };
-      const torusGeom = new Geometry(detailX, detailY, _torus);
+      const torusGeom = new Geometry(detailX, detailY, _torus, this);
       torusGeom.computeFaces();
       if (detailX <= 24 && detailY <= 16) {
         torusGeom._makeTriangleEdges()._edgesToVertices();
