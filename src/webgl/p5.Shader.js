@@ -1327,7 +1327,11 @@ p5.Shader = class {
         break;
       case gl.SAMPLER_2D:
         if (typeof data == 'number') {
-          gl.activeTexture(gl.TEXTURE0 + data);
+          if (data < gl.TEXTURE0 && data > gl.TEXTURE31 && data === Math.ceil(data)) {
+            console.log('🌸 p5.js says: You\'re trying to use a number as the data for a texture. Please use a texture.');
+            return this;
+          }
+          gl.activeTexture(data);
           gl.uniform1i(location, data);
         }
         else {
