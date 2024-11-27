@@ -697,89 +697,89 @@ export const BOTTOM = 'bottom';
  */
 export const BASELINE = 'alphabetic';
 /**
- * @typedef {unique symbol} EMPTY_PATH
- * @property {EMPTY_PATH} EMPTY_PATH
- * @final
- */
-export const EMPTY_PATH = Symbol('empty_path');
-/**
- * @typedef {unique symbol} PATH
- * @property {PATH} PATH
- * @final
- */
-export const PATH = Symbol('path');
-/**
- * @typedef {unique symbol} POINTS
+ * @typedef {0x0000} POINTS
  * @property {POINTS} POINTS
  * @final
  */
-export const POINTS = Symbol('points');
+export const POINTS = 0x0000;
 /**
- * @typedef {unique symbol} LINES
+ * @typedef {0x0001} LINES
  * @property {LINES} LINES
  * @final
  */
-export const LINES = Symbol('lines');
+export const LINES = 0x0001;
 /**
- * @typedef {unique symbol} LINE_STRIP
+ * @property {0x0003} LINE_STRIP
  * @property {LINE_STRIP} LINE_STRIP
  * @final
  */
-export const LINE_STRIP = Symbol('line_strip');
+export const LINE_STRIP = 0x0003;
 /**
- * @typedef {unique symbol} LINE_LOOP
+ * @typedef {0x0002} LINE_LOOP
  * @property {LINE_LOOP} LINE_LOOP
  * @final
  */
-export const LINE_LOOP = Symbol('line_loop');
+export const LINE_LOOP = 0x0002;
 /**
- * @typedef {unique symbol} TRIANGLES
+ * @typedef {0x0004} TRIANGLES
  * @property {TRIANGLES} TRIANGLES
  * @final
  */
-export const TRIANGLES = Symbol('triangles');
+export const TRIANGLES = 0x0004;
 /**
- * @typedef {unique symbol} TRIANGLE_FAN
+ * @typedef {0x0006} TRIANGLE_FAN
  * @property {TRIANGLE_FAN} TRIANGLE_FAN
  * @final
  */
-export const TRIANGLE_FAN = Symbol('triangle_fan');
+export const TRIANGLE_FAN = 0x0006;
 /**
- * @typedef {unique symbol} TRIANGLE_STRIP
+ * @typedef {0x0005} TRIANGLE_STRIP
  * @property {TRIANGLE_STRIP} TRIANGLE_STRIP
  * @final
  */
-export const TRIANGLE_STRIP = Symbol('triangle_strip');
+export const TRIANGLE_STRIP = 0x0005;
 /**
- * @typedef {unique symbol} QUADS
+ * @typedef {'quads'} QUADS
  * @property {QUADS} QUADS
  * @final
  */
-export const QUADS = Symbol('quads');
+export const QUADS = 'quads';
 /**
- * @typedef {unique symbol} QUAD_STRIP
+ * @typedef {'quad_strip'} QUAD_STRIP
  * @property {QUAD_STRIP} QUAD_STRIP
  * @final
  */
-export const QUAD_STRIP = Symbol('quad_strip');
+export const QUAD_STRIP = 'quad_strip';
 /**
- * @typedef {unique symbol} TESS
+ * @typedef {'tess'} TESS
  * @property {TESS} TESS
  * @final
  */
-export const TESS = Symbol('tess');
+export const TESS = 'tess';
 /**
- * @typedef {unique symbol} CLOSE
+ * @typedef {0x0007} EMPTY_PATH
+ * @property {EMPTY_PATH} EMPTY_PATH
+ * @final
+ */
+export const EMPTY_PATH = 0x0007;
+/**
+ * @typedef {0x0008} PATH
+ * @property {PATH} PATH
+ * @final
+ */
+export const PATH = 0x0008;
+/**
+ * @typedef {'close'} CLOSE
  * @property {CLOSE} CLOSE
  * @final
  */
-export const CLOSE = Symbol('close');
+export const CLOSE = 'close';
 /**
- * @typedef {unique symbol} OPEN
+ * @typedef {'open'} OPEN
  * @property {OPEN} OPEN
  * @final
  */
-export const OPEN = Symbol('open');
+export const OPEN = 'open';
 /**
  * @typedef {'chord'} CHORD
  * @property {CHORD} CHORD
