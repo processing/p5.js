@@ -69,6 +69,7 @@ class Shape {
     // primitiveShape.addToShape(this);
   }
 
+  // implement this as a separate function in this file, and attach it to p5?
   createVertex(properties) {
     // TODO
     // return vertex;
@@ -328,49 +329,62 @@ class QuadStrip extends ShapePrimitive {
 // ---- PRIMITIVE SHAPE CREATORS ----
 
 class PrimitiveShapeCreators {
+  // TODO: make creators private?
+  // That'd probably be better, but for now, it may be convenient to use
+  // native Map properties like size, e.g. for testing, and it's simpler to
+  // not have to wrap all the properties that might be useful
+  creators;
+
   constructor() {
     let creators = new Map();
+
+    /* TODO: REFACTOR BASED ON THE CODE BELOW,
+       ONCE CONSTANTS ARE IMPLEMENTED AS SYMBOLS
 
     // Store Symbols as strings for use in Map keys
     const EMPTY_PATH = constants.EMPTY_PATH.description;
     const PATH = constants.PATH.description;
-    const POINTS = constants.POINTS.description;
-    const LINES = constants.LINES.description;
-    const TRIANGLES = constants.TRIANGLES.description;
-    const QUADS = constants.QUADS.description;
-    const TRIANGLE_FAN = constants.TRIANGLE_FAN.description;
-    const TRIANGLE_STRIP = constants.TRIANGLE_STRIP.description;
-    const QUAD_STRIP = constants.QUAD_STRIP.description;
+    //etc.
+
+    creators.set(`vertex-${EMPTY_PATH}`, (...vertices) => new Anchor(...vertices));
+    // etc.
+
+    get(vertexKind, shapeKind) {
+      const key = `${vertexKind}-${shapeKind.description}`;
+      return this.creators.get(key);
+    }
+    // etc.
+    */
 
     // vertex
-    creators.set(`vertex-${EMPTY_PATH}`, (...vertices) => new Anchor(...vertices));
-    creators.set(`vertex-${PATH}`, (...vertices) => new LineSegment(...vertices));
-    creators.set(`vertex-${POINTS}`, (...vertices) => new Point(...vertices));
-    creators.set(`vertex-${LINES}`, (...vertices) => new Line(...vertices));
-    creators.set(`vertex-${TRIANGLES}`, (...vertices) => new Triangle(...vertices));
-    creators.set(`vertex-${QUADS}`, (...vertices) => new Quad(...vertices));
-    creators.set(`vertex-${TRIANGLE_FAN}`, (...vertices) => new TriangleFan(...vertices));
-    creators.set(`vertex-${TRIANGLE_STRIP}`, (...vertices) => new TriangleStrip(...vertices));
-    creators.set(`vertex-${QUAD_STRIP}`, (...vertices) => new QuadStrip(...vertices));
+    creators.set(`vertex-${constants.EMPTY_PATH}`, (...vertices) => new Anchor(...vertices));
+    creators.set(`vertex-${constants.PATH}`, (...vertices) => new LineSegment(...vertices));
+    creators.set(`vertex-${constants.POINTS}`, (...vertices) => new Point(...vertices));
+    creators.set(`vertex-${constants.LINES}`, (...vertices) => new Line(...vertices));
+    creators.set(`vertex-${constants.TRIANGLES}`, (...vertices) => new Triangle(...vertices));
+    creators.set(`vertex-${constants.QUADS}`, (...vertices) => new Quad(...vertices));
+    creators.set(`vertex-${constants.TRIANGLE_FAN}`, (...vertices) => new TriangleFan(...vertices));
+    creators.set(`vertex-${constants.TRIANGLE_STRIP}`, (...vertices) => new TriangleStrip(...vertices));
+    creators.set(`vertex-${constants.QUAD_STRIP}`, (...vertices) => new QuadStrip(...vertices));
 
     // bezierVertex
-    creators.set(`bezierVertex-${EMPTY_PATH}`, (...vertices) => new Anchor(...vertices));
-    creators.set(`bezierVertex-${PATH}`, (...vertices) => new BezierSegment(...vertices));
+    creators.set(`bezierVertex-${constants.EMPTY_PATH}`, (...vertices) => new Anchor(...vertices));
+    creators.set(`bezierVertex-${constants.PATH}`, (...vertices) => new BezierSegment(...vertices));
 
     // splineVertex
-    creators.set(`splineVertex-${EMPTY_PATH}`, (...vertices) => new Anchor(...vertices));
-    creators.set(`splineVertex-${PATH}`, (...vertices) => new SplineSegment(...vertices));
+    creators.set(`splineVertex-${constants.EMPTY_PATH}`, (...vertices) => new Anchor(...vertices));
+    creators.set(`splineVertex-${constants.PATH}`, (...vertices) => new SplineSegment(...vertices));
 
     this.creators = creators;
   }
 
   get(vertexKind, shapeKind) {
-    const key = `${vertexKind}-${shapeKind.description}`;
+    const key = `${vertexKind}-${shapeKind}`;
     return this.creators.get(key);
   }
 
   set(vertexKind, shapeKind, creator) {
-    const key = `${vertexKind}-${shapeKind.description}`;
+    const key = `${vertexKind}-${shapeKind}`;
     this.creators.set(key, creator);
   }
 
