@@ -9,115 +9,25 @@
 // REMINDER: remove .js extension (currently using it to run file locally)
 import * as constants from '../core/constants.js';
 
-// ---- GENERAL CLASSES ----
-
-class Shape {
-  vertexProperties;
-  contours = [];
-  kind = null;
-
-  constructor(vertexProperties) {
-    this.vertexProperties = vertexProperties;
-
-    for (const key in this.vertexProperties) {
-      if (key !== 'position' && key !== 'textureCoordinates') {
-        this[key] = function(value) {
-          this.vertexProperties[key] = value;
-        };
-      }
+// ---- GENERAL BUILDING BLOCKS ----
+class Vertex {
+  constructor(properties) {
+    for (const [key, value] of Object.entries(properties)) {
+      this[key] = value;
     }
   }
-
-  // TODO for at() method:
-
-  // RENAME?
-  // -at() indicates it works like Array.prototype.at(), e.g. with negative indices
-  // -get() may work better if we want to add a corresponding set() method
-  // -a set() method could maybe check for problematic usage (e.g. inserting a Triangle into a PATH)
-  // -renaming or removing would necessitate changes at call sites (it's already in use)
-
-  // REFACTOR?
-
-  // TEST
-  at(contoursIndex, primitivesIndex, verticesIndex) {
-    let contour;
-    let primitive;
-
-    contour = this.contours.at(contoursIndex);
-
-    switch(arguments.length) {
-      case 1:
-        return contour;
-      case 2:
-        return contour.primitives.at(primitivesIndex);
-      case 3:
-        primitive = contour.primitives.at(primitivesIndex);
-        return primitive.vertices.at(verticesIndex);
-    }
+  /*
+  get array() {
+    // convert to 1D array
+    // call `toArray()` if value is an object with a toArray() method
+    // handle primitive values separately
+    // maybe handle object literals too, with Object.values()?
+    // probably don’t need anything else for now?
   }
-
-  // maybe call this clear() for consistency with PrimitiveShapeCreators.clear()?
-  reset() {
-    // TODO: remove existing vertices
-  }
-
-  vertex(position, textureCoordinates) {
-    // Add the current position and texture coordiantes to the existing state
-    let vertex = this.createVertex({ ...this.vertexProperties, position, textureCoordinates });
-    // TODO
-    // primitiveShapeCreator = primitiveShapeCreators.get(['vertex', this.kind]);
-    // primitiveShape = primitiveShapeCreator(vertex);
-    // primitiveShape.addToShape(this);
-  }
-
-  // implement this as a separate function in this file, and attach it to p5?
-  createVertex(properties) {
-    // TODO
-    // return vertex;
-  }
-
-  beginShape(shapeKind) {
-    this.kind = shapeKind;
-    this.contours.push(new Contour(shapeKind));
-  }
-
-  endShape(closeMode = constants.OPEN) {
-    // shape characteristics
-    const shapeIsPath = this.kind === constants.PATH;
-    const shapeIsClosed = closeMode === constants.CLOSE;
-    const shapeHasOneContour = this.contours.length === 1;
-
-    // anchor characteristics
-    const anchorVertex = this.at(0, 0, 0);
-    const anchorHasPos = Object.hasOwn(anchorVertex, 'position');
-    const anchorHasTex = Object.hasOwn(anchorVertex, 'textureCoordinates');
-
-    // close path
-    if (shapeIsPath && shapeIsClosed && shapeHasOneContour && anchorHasPos) {
-      if (anchorHasTex) {
-        this.vertex(anchorVertex.position, anchorVertex.textureCoordinates);
-      }
-      else {
-        this.vertex(anchorVertex.position);
-      }
-    }
-  }
-}
-
-class Contour {
-  #kind;
-  primitives;
-
-  constructor(kind = constants.PATH) {
-    this.#kind = kind;
-    this.primitives = [];
-  }
-
-  get kind() {
-    const isEmpty = this.primitives.length === 0;
-    const isPath = this.#kind === constants.PATH;
-    return isEmpty && isPath ? constants.EMPTY_PATH : this.#kind;
-  }
+  */
+  // TODO: make sure name of array conversion method is
+  // consistent with any modifications to the names of corresponding
+  // properties of p5.Vector and p5.Color
 }
 
 class ShapePrimitive {
@@ -150,13 +60,14 @@ class ShapePrimitive {
   addToShape(shape) {
     /*
     TODO:
+    Refactor?
     Test this method once more primitives are implemented.
     Test segments separately (Segment adds an extra step to this method).
     */
     let lastContour = shape.at(-1);
 
-    if (lastContour.length === 0) {
-      lastContour.push(this);
+    if (lastContour.primitives.length === 0) {
+      lastContour.primitives.push(this);
       return;
     }
 
@@ -167,39 +78,39 @@ class ShapePrimitive {
                         lastPrimitive.vertexCount;
 
     // this primitive
-    let pushableVertices = this.vertices.splice(0, spareCapacity);
-    let remainingVertices = this.vertices;
+    let pushableVertices;
+    let remainingVertices;
 
     if (hasSameType && spareCapacity > 0) {
+
+      pushableVertices = this.vertices.splice(0, spareCapacity);
+      remainingVertices = this.vertices;
       lastPrimitive.vertices.push(...pushableVertices);
+
       if (remainingVertices.length > 0) {
-        lastContour.push(this);
+        lastContour.primitives.push(this);
       }
     }
     else {
-      lastContour.push(this);
+      lastContour.primitives.push(this);
     }
   }
 }
 
-class Vertex {
-  constructor(properties) {
-    for (const [key, value] of Object.entries(properties)) {
-      this[key] = value;
-    }
+class Contour {
+  #kind;
+  primitives;
+
+  constructor(kind = constants.PATH) {
+    this.#kind = kind;
+    this.primitives = [];
   }
-  /*
-  get array() {
-    // convert to 1D array
-    // call `toArray()` if value is an object with a toArray() method
-    // handle primitive values separately
-    // maybe handle object literals too, with Object.values()?
-    // probably don’t need anything else for now?
+
+  get kind() {
+    const isEmpty = this.primitives.length === 0;
+    const isPath = this.#kind === constants.PATH;
+    return isEmpty && isPath ? constants.EMPTY_PATH : this.#kind;
   }
-  */
-  // TODO: make sure name of array conversion method is
-  // consistent with any modifications to the names of corresponding
-  // properties of p5.Vector and p5.Color
 }
 
 // ---- PATH PRIMITIVES ----
@@ -243,7 +154,7 @@ class Segment extends ShapePrimitive {
     // if primitive itself was added
     // (i.e. its individual vertices weren't all added to an existing primitive)
     // give it a reference to the shape and store its location within the shape
-    if (this.vertices > 0) {
+    if (this.vertices.length > 0) {
       let lastContour = shape.at(-1);
       this._primitivesIndex = lastContour.primitives.length - 1;
       this._contoursIndex = shape.contours.length - 1;
@@ -413,6 +324,105 @@ class PrimitiveShapeCreators {
   }
 }
 
+// ---- SHAPE ----
+class Shape {
+  #vertexProperties;
+  #primitiveShapeCreators;
+  kind = null;
+  contours = [];
+
+  constructor(
+    vertexProperties,
+    primitiveShapeCreators = new PrimitiveShapeCreators()
+  ) {
+    this.#vertexProperties = vertexProperties;
+    this.#primitiveShapeCreators = primitiveShapeCreators;
+
+    for (const key in this.#vertexProperties) {
+      if (key !== 'position' && key !== 'textureCoordinates') {
+        this[key] = function(value) {
+          this.#vertexProperties[key] = value;
+        };
+      }
+    }
+  }
+
+  // TODO for at() method:
+
+  // RENAME?
+  // -at() indicates it works like Array.prototype.at(), e.g. with negative indices
+  // -get() may work better if we want to add a corresponding set() method
+  // -a set() method could maybe check for problematic usage (e.g. inserting a Triangle into a PATH)
+  // -renaming or removing would necessitate changes at call sites (it's already in use)
+
+  // REFACTOR?
+
+  // TEST
+  at(contoursIndex, primitivesIndex, verticesIndex) {
+    let contour;
+    let primitive;
+
+    contour = this.contours.at(contoursIndex);
+
+    switch(arguments.length) {
+      case 1:
+        return contour;
+      case 2:
+        return contour.primitives.at(primitivesIndex);
+      case 3:
+        primitive = contour.primitives.at(primitivesIndex);
+        return primitive.vertices.at(verticesIndex);
+    }
+  }
+
+  // maybe call this clear() for consistency with PrimitiveShapeCreators.clear()?
+  reset() {
+    // TODO: remove existing vertices
+  }
+
+  vertex(position, textureCoordinates) {
+    this.#vertexProperties.position = position;
+
+    if (textureCoordinates !== undefined) {
+      this.#vertexProperties.textureCoordinates = textureCoordinates;
+    }
+
+    let vertex = new Vertex(this.#vertexProperties);
+    let lastContour = this.at(-1);
+    let primitiveShapeCreator = this.#primitiveShapeCreators.get('vertex', lastContour.kind);
+    let primitiveShape = primitiveShapeCreator(vertex);
+    primitiveShape.addToShape(this);
+  }
+
+  beginShape(shapeKind = constants.PATH) {
+    this.kind = shapeKind;
+    this.contours.push(new Contour(shapeKind));
+  }
+
+  endShape(closeMode = constants.OPEN) {
+    if (closeMode === constants.CLOSE) {
+      // shape characteristics
+      const shapeIsPath = this.kind === constants.PATH;
+      const shapeHasOneContour = this.contours.length === 1;
+
+      // anchor characteristics
+      const anchorVertex = this.at(0, 0, 0);
+      const anchorHasPosition = Object.hasOwn(anchorVertex, 'position');
+      const anchorHasTextureCoordinates = Object.hasOwn(anchorVertex, 'textureCoordinates');
+
+      // close path
+      if (shapeIsPath && shapeHasOneContour && anchorHasPosition) {
+        if (anchorHasTextureCoordinates) {
+          this.vertex(anchorVertex.position, anchorVertex.textureCoordinates);
+        }
+        else {
+          this.vertex(anchorVertex.position);
+        }
+      }
+    }
+  }
+}
+
 // ---- PRIMITIVE VISITORS ----
 
 // abstract class
@@ -425,19 +435,19 @@ class PrimitiveVisitor {
 // using this instead of PrimitiveToContext2DConverter for now
 class PrimitiveToPath2DConverter extends PrimitiveVisitor {
   constructor() {
-
+    super();
   }
 }
 
 class PrimitiveToVerticesConverter extends PrimitiveVisitor {
   constructor() {
-
+    super();
   }
 }
 
 class PointAtLengthGetter extends PrimitiveVisitor {
   constructor() {
-
+    super();
   }
 }
 
