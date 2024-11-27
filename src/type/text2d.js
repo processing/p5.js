@@ -152,7 +152,7 @@ function text2d(p5, fn) {
    */
   p5.Renderer2D.prototype.textBounds = function (str, x, y, width, height) {
     //console.log('TEXT BOUNDS: ', str, x, y, width, height);
-    // delegate to _computeBounds with _textBoundsSingle measure function
+    // delegate to _textBoundsSingle measure function
     return this._computeBounds(fn._TEXT_BOUNDS, str, x, y, width, height).bounds;
   };
 
@@ -166,7 +166,7 @@ function text2d(p5, fn) {
    * @returns - a bounding box object for the text block: {x,y,w,h}
    */
   p5.Renderer2D.prototype.fontBounds = function (str, x, y, width, height) {
-    // delegate to _computeBounds with _fontBoundsSingle measure function
+    // delegate to _fontBoundsSingle measure function
     return this._computeBounds(fn._FONT_BOUNDS, str, x, y, width, height).bounds;
   };
 
@@ -494,10 +494,9 @@ function text2d(p5, fn) {
     Compute the bounds for a block of text based on the specified 
     measure function, either _textBoundsSingle or _fontBoundsSingle
   */
-  p5.Renderer2D.prototype._computeBounds = function (type, str, x, y, width, height) {
-
+  p5.Renderer2D.prototype._computeBounds = function (type, str, x, y, width, height, opts) {
+    
     let setBaseline = this.drawingContext.textBaseline;
-
     let { textLeading, textAlign } = this.states;
 
     // adjust width, height based on current rectMode
@@ -520,11 +519,6 @@ function text2d(p5, fn) {
       this._yAlignOffset(boxes, height);
     }
 
-    if (0) boxes.forEach((b, i) => { // draw bounds for debugging
-      this.drawingContext.strokeStyle = 'green';
-      this.drawingContext.strokeRect(b.x, b.y, b.w, b.h);
-    });
-
     // get the bounds for the text block
     let bounds = boxes[0];
     if (lines.length > 1) {
@@ -533,8 +527,17 @@ function text2d(p5, fn) {
       bounds = this._aggregateBounds(boxes);
 
       // align the multi-line bounds
-      this._rectModeAlign(bounds, width || 0, height || 0);
+      if (!opts?.ignoreRectMode) {
+        this._rectModeAlign(bounds, width || 0, height || 0);
+      }
     }
+    
+    if (0&&opts?.ignoreRectMode) boxes.forEach((b, i) => { // draw bounds for debugging
+      let ss = this.drawingContext.strokeStyle;
+      this.drawingContext.strokeStyle = 'green';
+      this.drawingContext.strokeRect(bounds.x, bounds.y, bounds.w, bounds.h);
+      this.drawingContext.strokeStyle = ss;
+    });
 
     this.drawingContext.textBaseline = setBaseline; // restore baseline
 
@@ -562,6 +565,27 @@ function text2d(p5, fn) {
     }
     return { x, y, width, height };
   }
+  
+  // p5.Renderer2D.prototype._rectModeUnadjust = function (x, y, width, height) {
+
+  //   if (typeof width !== 'undefined') {
+  //     switch (this.states.rectMode) {
+  //       case fn.CENTER:
+  //         break;
+  //       case fn.CORNERS:
+  //         width += x;
+  //         height += y;
+  //         break;
+  //       case fn.RADIUS:
+  //         width /= 2;
+  //         height /= 2;
+  //         break;
+  //     }
+  //   }
+  //   return { x, y, width, height };
+  // }
+  
+
   /*
     Attempts to set a property directly on the canvas.style object
   */
@@ -910,6 +934,29 @@ function text2d(p5, fn) {
           bb.y -= (height - bb.h) / 2;
           bb.w /= 2;
           bb.h /= 2;
+          break;
+      }
+      return bb;
+    }
+  }
+
+  p5.Renderer2D.prototype._rectModeAlignRevert = function (bb, width, height) {
+    if (typeof width !== 'undefined') {
+
+      switch (this.states.rectMode) {
+        case fn.CENTER:
+          bb.x += (width - bb.w) / 2;
+          bb.y += (height - bb.h) / 2;
+          break;
+        case fn.CORNERS:
+          bb.w -= bb.x;
+          bb.h -= bb.y;
+          break;
+        case fn.RADIUS:
+          bb.x += (width - bb.w) / 2;
+          bb.y += (height - bb.h) / 2;
+          bb.w *= 2;
+          bb.h *= 2;
           break;
       }
       return bb;

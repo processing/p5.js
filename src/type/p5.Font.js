@@ -100,9 +100,7 @@ function font(p5, fn) {
     /*
       Returns an array of paths, one for each line of text
     */
-    _getPaths(renderer, str, x, y, width, height, options) {
-
-      //console.log(renderer);
+    _getPaths(renderer, str, x, y, width, height, options = {}) {
 
       // save the baseline
       let setBaseline = renderer.drawingContext.textBaseline;
@@ -111,17 +109,10 @@ function font(p5, fn) {
       ({ width, height, options } = this._parseArgs
         (renderer, width, height, options));
 
-      // console.log({ x, y, width, height });
-
-      // ({ width, height } = renderer._rectModeAdjust(x, y, width, height));
-
-      //console.log({ x, y, width, height });
-
       // lineate and compute bounds for the text
       let { lines, bounds } = renderer._computeBounds
-        (fn._FONT_BOUNDS, str, x, y, width, height, options);
-
-      renderer.drawingContext.strokeRect(bounds.x, bounds.y, bounds.w, bounds.h);
+        (fn._FONT_BOUNDS, str, x, y, width, height,
+          { ignoreRectMode: true, ...options });
 
       // compute positions for each of the lines
       lines = this._position(renderer, lines, bounds, width, height);
@@ -183,44 +174,22 @@ function font(p5, fn) {
         else if (textAlign === fn.RIGHT) {
           x += (bounds.w - lineWidth);
         }
-        return { text, x, y };
-      }
-
-      let plines = lines.map(coordify);
-      plines.forEach(pl => {
-        // handle rectMode
         if (typeof width !== 'undefined') {
           switch (renderer.states.rectMode) {
-            case fn.CORNER:
-              y -= bounds.h;
-              break;
             case fn.CENTER:
-              break;
-            case fn.CORNERS:
-              if (textAlign === fn.LEFT) {
-              }
-              else if (textAlign === fn.CENTER) {
-                pl.x -= bounds.w / 4;
-                //bounds.w /=2;
-              }
-              else if (textAlign === fn.RIGHT) {
-              }
+              x -= width / 2;
+              y -= height/2;
               break;
             case fn.RADIUS:
-              y -= bounds.h;
-              if (textAlign === fn.LEFT) {
-                pl.x -= bounds.w;
-              }
-              else if (textAlign === fn.CENTER) {
-                pl.x -= bounds.w / 2;
-              }
-              else if (textAlign === fn.RIGHT) {
-              }
+              x -= width ;
+              y -= height;
               break;
           }
         }
-      });
-      return plines;
+        return { text, x, y };
+      }
+
+      return lines.map(coordify);
     }
 
     _pathify(line, opts) {
@@ -230,10 +199,8 @@ function font(p5, fn) {
           + '"\nTry downloading a local copy of the font file');
       }
 
-      let font = this.fontData;
-      //let { text, x, y } = line;
-      let shape = Typr.U.shape(font, line.text);
-      line.path = Typr.U.shapeToPath(font, shape);
+      let shape = Typr.U.shape(this.fontData, line.text);
+      line.path = Typr.U.shapeToPath(this.fontData, shape);
 
       return line;
     }
