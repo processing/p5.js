@@ -1326,12 +1326,18 @@ p5.Shader = class {
         }
         break;
       case gl.SAMPLER_2D:
-        gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
-        uniform.texture =
-          data instanceof p5.Texture ? data : this._renderer.getTexture(data);
-        gl.uniform1i(location, uniform.samplerIndex);
-        if (uniform.texture.src.gifProperties) {
-          uniform.texture.src._animateGif(this._renderer._pInst);
+        if (typeof data == 'number') {
+          gl.activeTexture(gl.TEXTURE0 + data);
+          gl.uniform1i(location, data);
+        }
+        else {
+          gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
+          uniform.texture =
+            data instanceof p5.Texture ? data : this._renderer.getTexture(data);
+          gl.uniform1i(location, uniform.samplerIndex);
+          if (uniform.texture.src.gifProperties) {
+            uniform.texture.src._animateGif(this._renderer._pInst);
+          }
         }
         break;
       //@todo complete all types
