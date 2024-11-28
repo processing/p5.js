@@ -430,7 +430,47 @@ class Shape {
 // abstract class
 class PrimitiveVisitor {
   constructor() {
+    if (this.constructor === PrimitiveVisitor) {
+      throw new Error('PrimitiveVisitor is an abstract class: it cannot be instantiated.');
+    }
+  }
+  // segment primitives
+  visitLineSegment(lineSegment) {
+    throw new Error('Method visitLineSegment() has not been implemented.');
+  }
+  visitBezierSegment(bezierSegment) {
+    throw new Error('Method visitBezierSegment() has not been implemented.');
+  }
+  visitSplineSegment(curveSegment) {
+    throw new Error('Method visitSplineSegment() has not been implemented.');
+  }
+  visitArcSegment(arcSegment) {
+    throw new Error('Method visitArcSegment() has not been implemented.');
+  }
 
+  // isolated primitives
+  visitPoint(point) {
+    throw new Error('Method visitPoint() has not been implemented.');
+  }
+  visitLine(line) {
+    throw new Error('Method visitLine() has not been implemented.');
+  }
+  visitTriangle(triangle) {
+    throw new Error('Method visitTriangle() has not been implemented.');
+  }
+  visitQuad(quad) {
+    throw new Error('Method visitQuad() has not been implemented.');
+  }
+
+  // tessellation primitives
+  visitTriangleFan(triangleFan) {
+    throw new Error('Method visitTriangleFan() has not been implemented.');
+  }
+  visitTriangleStrip(triangleStrip) {
+    throw new Error('Method visitTriangleStrip() has not been implemented.');
+  }
+  visitQuadStrip(quadStrip) {
+    throw new Error('Method visitQuadStrip() has not been implemented.');
   }
 }
 
