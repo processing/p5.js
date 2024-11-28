@@ -8,34 +8,6 @@
  */
 
 import * as constants from "../core/constants";
-// import {
-//   ColorSpace,
-//   to,
-//   // toGamut,
-//   serialize,
-//   parse,
-//   // range,
-
-//   XYZ_D65,
-//   sRGB_Linear,
-//   sRGB,
-//   HSL,
-//   HSV,
-//   HWB,
-
-//   XYZ_D50,
-//   Lab,
-//   LCH,
-
-//   OKLab,
-//   OKLCH,
-
-//   P3_Linear,
-//   P3,
-
-//   A98RGB_Linear,
-//   A98RGB
-// } from 'colorjs.io/fn';
 
 //for CSS string parsing
 //import 'culori/css';
@@ -74,6 +46,10 @@ const oklch = useMode(modeOklch);
 const p3 = useMode(modeP3);
 const rgb = useMode(modeRgb);
 const hsv = useMode(modeHsv);
+
+console.time("culori");
+let test = converter('rgb');
+console.timeEnd("culori")
 
 class Color {
   color;
