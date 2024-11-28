@@ -1,0 +1,96 @@
+<html>
+
+<!-- 
+CSS-style font properties (preferred, but doesn't support custom axes):
+  font-weight: 650;
+  font-style: oblique 80deg;  (must add deg)
+  font-stretch: 75%;          (only accepts percentage with %)  
+  font-optical-sizing: auto;  (only allows for 'auto' or 'none')
+
+Font-variation style properties:
+  font-variations-settings: 'wght' 650, 'slnt' 80, 'wdth' 75, 'opsz' 100;
+-->
+
+<head>
+  <meta charset='UTF-8'>
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+    }
+
+    canvas {
+      border: 1px solid #f0f0f0;
+      display: block;
+      font-stretch: 50%;
+    }
+
+    img {
+      border: 1px solid #fff;
+    }
+
+    div {
+      margin: 100px 0px;
+    }
+  </style>
+</head>
+
+
+
+<body>
+  <script type='module'>
+    import p5 from '../../../src/app.js';
+    let sketch = function (p) {
+      let fonts, fontUrl = 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wdth,wght@75..100,200..800&display=swap';
+      p.setup = async function () {
+        p.createCanvas(800, 200);
+        fonts = await loadGoogleFontSet(p, fontUrl);
+        p.textAlign(p.CENTER, p.CENTER);
+        p.textSize(60);
+      }
+
+      p.draw = function () {
+        p.background(255);
+
+        //if (p.frameCount > 5) p.noLoop();
+
+        let m = p.map(p.cos(p.frameCount / 20), -1, 1, 200, 800);// m = 100;
+        let n = p.map(p.sin(p.frameCount / 30), -1, 1, 75, 100);// n = 400;
+        let o = p.map(p.sin(p.frameCount / 20), -1, 1, 12, 96);// o = 48; 
+
+        p.textFont('Bricolage Grotesque', 72, {
+          fontVariationSettings: `'wght' ${m}, 'wdth' ${n}, 'opsz' ${o}`
+        });
+        p.text(`This is a variable font.`, 400, 100);
+      };
+
+      document.fonts.onloadingdone = () => {
+        console.log('Fonts loaded', Array.from(document.fonts));
+      }
+
+      async function loadGoogleFontSet(p, url) {
+        injectFontLink(url);
+        await document.fonts.ready; // ??
+        let pfonts = Array.from(document.fonts).map(f => {
+          let pf = new p5.Font(p, f);
+          pf.path ??= url;
+        });
+        return pfonts;
+      }
+
+      function injectFontLink(href) {
+        const link = document.createElement('link');
+        link.id = 'font';
+        link.href = href;
+        link.rel = 'stylesheet';
+        document.head.appendChild(link);
+      }
+    }
+
+    new p5(sketch);
+  </script>
+
+</body>
+
+
+</html>

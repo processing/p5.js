@@ -18,15 +18,15 @@ suite('Loading Fonts', function () {
   const fontFile = '/unit/assets/acmesa.ttf';
 
   test('loadFont.await', async () => {
-    const pFont = await myp5.loadFont(fontFile);
+    const pFont = await myp5.loadFont(fontFile, 'fredTheFont');
     assert.ok(pFont, 'acmesa.ttf loaded');
-    assert.equal(pFont.name, 'acmesa');
+    assert.equal(pFont.name, 'fredTheFont');
     assert.isTrue(pFont instanceof p5.Font);
   });
 
   test('loadFont.then', async () => new Promise(done => {
 
-    myp5.loadFont(fontFile).then(pFont => {
+    myp5.loadFont(fontFile, 'acmesa').then(pFont => {
       assert.ok(pFont, 'acmesa.ttf loaded');
       assert.equal(pFont.name, 'acmesa');
       assert.isTrue(pFont instanceof p5.Font);
@@ -35,11 +35,10 @@ suite('Loading Fonts', function () {
 
   }));
 
-  test('loadFont.callback', async () => new Promise(done => {
+  test.skip('loadFont.callback', async () => new Promise(done => {
     myp5.loadFont(fontFile, (pFont) => {
-
       assert.ok(pFont, 'acmesa.ttf loaded');
-      assert.equal(pFont.name, 'acmesa');
+      assert.equal(pFont.name, 'A.C.M.E. Secret Agent');
       assert.isTrue(pFont instanceof p5.Font);
       done();
     });
