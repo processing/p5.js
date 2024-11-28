@@ -178,10 +178,10 @@ function font(p5, fn) {
           switch (renderer.states.rectMode) {
             case fn.CENTER:
               x -= width / 2;
-              y -= height/2;
+              y -= height / 2;
               break;
             case fn.RADIUS:
-              x -= width ;
+              x -= width;
               y -= height;
               break;
           }
@@ -199,16 +199,70 @@ function font(p5, fn) {
           + '"\nTry downloading a local copy of the font file');
       }
 
-      let shape = Typr.U.shape(this.fontData, line.text);
-      line.path = Typr.U.shapeToPath(this.fontData, shape);
+      let glyphShapes = Typr.U.shape(this.fontData, line.text);
+      line.path = this._shapeToPaths(glyphShapes);
 
       return line;
+    }
+
+    _shapeToPaths(shape, clr) {
+      let font = this.fontData;
+      let tpath = { cmds: [], crds: [] };
+      let x = 0, y = 0;
+
+      for (let i = 0; i < shape.length; i++) {
+        let it = shape[i]
+        let path = Typr["U"]["glyphToPath"](font, it["g"]), crds = path["crds"];
+        for (let j = 0; j < crds.length; j += 2) {
+          tpath.crds.push(crds[j] + x + it["dx"]);
+          tpath.crds.push(crds[j + 1] + y + it["dy"]);
+        }
+        //if (clr) tpath.cmds.push(clr);
+        for (let j = 0; j < path["cmds"].length; j++) {
+          tpath.cmds.push(path["cmds"][j]);
+        }
+        //let clen = tpath.cmds.length;
+        // SVG fonts might contain "X". Then, nothing would stroke non-SVG glyphs.
+        //if (clr) if (clen != 0 && tpath.cmds[clen - 1] != "X") tpath.cmds.push("X");
+
+        x += it["ax"]; y += it["ay"];
+      }
+      return { "cmds": tpath.cmds, "crds": tpath.crds };
     }
 
     _pointify(path, scale, opts) {
       this._pathify(path, opts);
       let pts = this._pathToPoints(path, scale, opts?.maxDistance);
       path.points = pts;
+      return pts;
+    }
+
+    _pathToPoints(pathData, scale, maxDist = scale * 500) {
+
+      let { x, y, path } = pathData;
+      let c = 0, pts = [], { crds, cmds } = path;
+
+      // iterate over the path, storing each non-control point
+      for (let j = 0; j < cmds.length; j++) {
+        let cmd = cmds[j];
+        if (cmd == "M" || cmd == "L") {
+          let pt = { x: x + crds[c] * scale, y: y + crds[c + 1] * -scale }
+          c += 2;
+          if (cmd == "L" && maxDist && pts.length > 1) {
+            subdivide(pts, pts[pts.length - 1], pt, maxDist);
+          }
+          pts.push(pt);
+        }
+        else if (cmd == "C") {
+          pts.push({ x: x + crds[c + 4] * scale, y: y + crds[c + 5] * -scale });
+          c += 6;
+        }
+        else if (cmd == "Q") {
+          pts.push({ x: x + crds[c + 2] * scale, y: y + crds[c + 3] * -scale });
+          c += 4;
+        }
+      }
+
       return pts;
     }
 
@@ -223,7 +277,8 @@ function font(p5, fn) {
       return metrics;
     }
 
-    strokePaths(ctx, paths) {
+    strokePaths(ctx, paths, col) {
+      ctx.strokeStyle = col || ctx.strokeStyle;
       ctx.beginPath();
       paths.forEach(({ type, data }) => {
         if (type === 'M') {
@@ -274,36 +329,6 @@ function font(p5, fn) {
 
       return commands;
     }
-
-    _pathToPoints(pathData, scale, maxDist = scale * 500) {
-
-      let { x, y, path } = pathData;
-      let c = 0, pts = [], { crds, cmds } = path;
-
-      // iterate over the path, storing each non-control point
-      for (let j = 0; j < cmds.length; j++) {
-        let cmd = cmds[j];
-        if (cmd == "M" || cmd == "L") {
-          let pt = { x: x + crds[c] * scale, y: y + crds[c + 1] * -scale }
-          c += 2;
-          if (cmd == "L" && maxDist && pts.length > 1) {
-            subdivide(pts, pts[pts.length - 1], pt, maxDist);
-          }
-          pts.push(pt);
-        }
-        else if (cmd == "C") {
-          pts.push({ x: x + crds[c + 4] * scale, y: y + crds[c + 5] * -scale });
-          c += 6;
-        }
-        else if (cmd == "Q") {
-          pts.push({ x: x + crds[c + 2] * scale, y: y + crds[c + 3] * -scale });
-          c += 4;
-        }
-      }
-
-      return pts;
-    }
-
 
     static async list(log = false) { // tmp
       if (log) {
