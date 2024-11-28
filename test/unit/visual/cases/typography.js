@@ -1,6 +1,6 @@
 import { visualSuite, visualTest } from "../visualTest";
 
-visualSuite("Type.v2", function () {
+visualSuite("Typography", function () {
   visualSuite("textFont", function () {
     visualTest("with the default font", function (p5, screenshot) {
       p5.createCanvas(50, 50);
