@@ -478,8 +478,24 @@ class PrimitiveVisitor {
 }
 
 // using this instead of PrimitiveToContext2DConverter for now
+// requires testing
 class PrimitiveToPath2DConverter extends PrimitiveVisitor {
+  #drawingContext;
 
+  constructor(renderer) {
+    super();
+    this.#drawingContext = renderer.drawingContext;
+  }
+
+  // path primitives
+  visitAnchor(anchor) {
+    let vertex = anchor.getEndVertex();
+    this.#drawingContext.moveTo(vertex.x, vertex.y);
+  }
+  visitLineSegment(lineSegment) {
+    let vertex = lineSegment.getEndVertex();
+    this.#drawingContext.lineTo(vertex.x, vertex.y);
+  }
 }
 
 class PrimitiveToVerticesConverter extends PrimitiveVisitor {
@@ -770,6 +786,10 @@ function customShapes(p5, fn) {
   /**
      * @private
      * A class responsible for...
+     *
+     * Notes:
+     * 1. Assumes vertex positions are stored as p5.Vector instances.
+     * 2. Currently only supports position properties of vectors.
      */
 
   p5.PrimitiveToPath2DConverter = PrimitiveToPath2DConverter;
