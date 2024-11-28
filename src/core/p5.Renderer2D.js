@@ -5,6 +5,7 @@ import { Graphics } from './p5.Graphics';
 import { Image } from '../image/p5.Image';
 import { Element } from '../dom/p5.Element';
 import { MediaElement } from '../dom/p5.MediaElement';
+import { PrimitiveToPath2DConverter } from '../shape/custom_shapes';
 
 const styleEmpty = 'rgba(0,0,0,0)';
 // const alphaThreshold = 0.00125; // minimum visible
@@ -253,7 +254,14 @@ class Renderer2D extends Renderer {
   }
 
   drawShape(shape) {
-    // TODO
+    const visitor = new PrimitiveToPath2DConverter();
+    shape.accept(visitor);
+    if (this.states.fillColor) {
+      this.drawingContext.fill(visitor.path);
+    }
+    if (this.states.strokeColor) {
+      this.drawingContext.stroke(visitor.path);
+    }
   }
 
   beginClip(options = {}) {

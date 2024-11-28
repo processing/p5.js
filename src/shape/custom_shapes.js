@@ -112,6 +112,12 @@ class Contour {
     const isPath = this.#kind === constants.PATH;
     return isEmpty && isPath ? constants.EMPTY_PATH : this.#kind;
   }
+
+  accept(visitor) {
+    for (const primitive of this.primitives) {
+      primitive.accept(visitor);
+    }
+  }
 }
 
 // ---- PATH PRIMITIVES ----
@@ -329,6 +335,7 @@ class PrimitiveShapeCreators {
 
 class Shape {
   #vertexProperties;
+  #initialVertexProperties;
   #primitiveShapeCreators;
   kind = null;
   contours = [];
@@ -337,6 +344,7 @@ class Shape {
     vertexProperties,
     primitiveShapeCreators = new PrimitiveShapeCreators()
   ) {
+    this.#initialVertexProperties = vertexProperties;
     this.#vertexProperties = vertexProperties;
     this.#primitiveShapeCreators = primitiveShapeCreators;
 
@@ -379,7 +387,10 @@ class Shape {
 
   // maybe call this clear() for consistency with PrimitiveShapeCreators.clear()?
   reset() {
-    // TODO: remove existing vertices
+    this.kind = null;
+    this.#vertexProperties = { ...this.#initialVertexProperties };
+    this.kind = null;
+    this.contours = [];
   }
 
   vertex(position, textureCoordinates) {
@@ -421,6 +432,12 @@ class Shape {
           this.vertex(anchorVertex.position);
         }
       }
+    }
+  }
+
+  accept(visitor) {
+    for (const contour of this.contours) {
+      contour.accept(visitor);
     }
   }
 }
@@ -481,20 +498,20 @@ class PrimitiveVisitor {
 // requires testing
 class PrimitiveToPath2DConverter extends PrimitiveVisitor {
   #drawingContext;
+  path = new Path2D();
 
-  constructor(renderer) {
+  constructor() {
     super();
-    this.#drawingContext = renderer.drawingContext;
   }
 
   // path primitives
   visitAnchor(anchor) {
     let vertex = anchor.getEndVertex();
-    this.#drawingContext.moveTo(vertex.x, vertex.y);
+    this.path.moveTo(vertex.position.x, vertex.position.y);
   }
   visitLineSegment(lineSegment) {
     let vertex = lineSegment.getEndVertex();
-    this.#drawingContext.lineTo(vertex.x, vertex.y);
+    this.path.lineTo(vertex.position.x, vertex.position.y);
   }
 }
 

@@ -519,6 +519,7 @@ function vertex(p5, fn){
   fn.beginShape = function(kind) {
     p5._validateParameters('beginShape', arguments);
     this._renderer.beginShape(...arguments);
+    return;
 
     // TODO remove this once shape implementation is complete
     if (!this._renderer.isP3D) {
@@ -1514,6 +1515,7 @@ function vertex(p5, fn){
     }
 
     this._renderer.endShape(mode, count);
+    return;
 
     // TODO remove once shape refactor is complete
     if (this._renderer.isP3D) {
@@ -2041,6 +2043,7 @@ function vertex(p5, fn){
    */
   fn.vertex = function(x, y, moveTo, u, v) {
     this._renderer.vertex(...arguments);
+    return;
 
     // TODO remove after shape refactor
     if (this._renderer.isP3D) {
