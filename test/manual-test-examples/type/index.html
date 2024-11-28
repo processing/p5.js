@@ -57,6 +57,33 @@
       };
     };
 
+    
+    let directFontSet = function (p) {
+      let font = "italic bold 32px Georgia";
+      p.setup = async function () {
+        p.createCanvas(550, 280);
+        p.textSize(32);
+        p.text("Normal font using the defaults", 20, 40);
+
+        p.textFont(font);
+        p.text('direct: ' + font, 20, 80);
+
+        p.textFont(font = font.replace('italic bold', 'oblique'));
+        p.text('direct: ' + font, 20, 120);
+
+        p.textFont(font = font.replace(32,36).replace('oblique', 800));
+        p.text('direct: ' + font, 20, 160);
+
+        p.textFont(font = font.replace('800', 'small-caps'));
+        p.text('direct: ' + font, 20, 200);
+        
+        p.textFont(font = '2em BADFONT, Times');
+        p.text('direct: ' + font, 20, 240);
+
+        //console.log(p.drawingContext.font, p._renderer.states);
+      }
+    };
+
     const fontStretchSketch = function (p) {
       let url = 'url(https://fonts.gstatic.com/s/inconsolata/v31/QlddNThLqRwH-OJ1UHjlKENVzlm-WkL3GZQmAwPyya15.woff2) format("woff2")';
       let opts = ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'];
@@ -2427,7 +2454,7 @@
     new p5(textToPointsSketch, 'textToPointsSketch');
     new p5(fontStretchSketch, 'fontStretchSketch');
     new p5(fontStretchViaProp, 'fontStretchViaProp');
-    //new p5(textStretchViaProp, 'textStretchViaProp');
+    new p5(directFontSet, 'directFontSet');
     new p5(letterSpacingSketch, 'letterSpacingSketch');
     new p5(wordSpacingSketch, 'wordSpacingSketch');
     new p5(fontKerningSketch, 'fontKerningSketch');
@@ -2502,6 +2529,10 @@
 
   <div id='fontStretchViaProp'>
     <p class="caption">fontStretch (via textProperty)</p>
+  </div>
+
+  <div id='directFontSet'>
+    <p class="directFontSet">directFontSet</p>
   </div>
 
   <!-- <div id='textStretchViaProp'>
