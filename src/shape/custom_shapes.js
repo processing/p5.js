@@ -434,7 +434,10 @@ class PrimitiveVisitor {
       throw new Error('PrimitiveVisitor is an abstract class: it cannot be instantiated.');
     }
   }
-  // segment primitives
+  // path primitives
+  visitAnchor(anchor) {
+    throw new Error('Method visitAnchor() has not been implemented.');
+  }
   visitLineSegment(lineSegment) {
     throw new Error('Method visitLineSegment() has not been implemented.');
   }
@@ -476,9 +479,7 @@ class PrimitiveVisitor {
 
 // using this instead of PrimitiveToContext2DConverter for now
 class PrimitiveToPath2DConverter extends PrimitiveVisitor {
-  constructor() {
-    super();
-  }
+
 }
 
 class PrimitiveToVerticesConverter extends PrimitiveVisitor {
