@@ -9,10 +9,11 @@ import './p5.Matrix';
 import './p5.Framebuffer';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { MipmapTexture } from './p5.Texture';
+import { CubemapTexture, MipmapTexture } from './p5.Texture';
 
 const STROKE_CAP_ENUM = {};
 const STROKE_JOIN_ENUM = {};
+
 let lineDefs = '';
 const defineStrokeCapEnum = function (key, val) {
   lineDefs += `#define STROKE_CAP_${key} ${val}\n`;
@@ -83,7 +84,9 @@ const defaultShaders = {
   pointFrag: readFileSync(join(__dirname, '/shaders/point.frag'), 'utf-8'),
   imageLightVert: readFileSync(join(__dirname, '/shaders/imageLight.vert'), 'utf-8'),
   imageLightDiffusedFrag: readFileSync(join(__dirname, '/shaders/imageLightDiffused.frag'), 'utf-8'),
-  imageLightSpecularFrag: readFileSync(join(__dirname, '/shaders/imageLightSpecular.frag'), 'utf-8')
+  imageLightSpecularFrag: readFileSync(join(__dirname, '/shaders/imageLightSpecular.frag'), 'utf-8'),
+  cubemapVertexShader: readFileSync(join(__dirname, '/shaders/cubeVertex.vert'), 'utf-8'),
+  cubemapFragmentShader: readFileSync(join(__dirname, '/shaders/cubeFragment.frag'), 'utf-8')
 };
 let sphereMapping = defaultShaders.sphereMappingFrag;
 for (const key in defaultShaders) {
@@ -109,6 +112,14 @@ const filterShaderFrags = {
     readFileSync(join(__dirname, '/shaders/filters/threshold.frag'), 'utf-8')
 };
 const filterShaderVert = readFileSync(join(__dirname, '/shaders/filters/default.vert'), 'utf-8');
+
+
+function renderCube() {
+  push(); // Save the current state of the drawing
+  translate(0, 0, 0); // Translate to the position where you want to draw the cube
+  box(2); // Draw a cube with a size of 2 units (you can adjust the size)
+  pop(); // Restore the previous state of the drawing
+}
 
 /**
  * @module Rendering
@@ -450,6 +461,19 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.GL = this.drawingContext;
     this._pInst._setProperty('drawingContext', this.drawingContext);
 
+    if (!this._pInst.shaderCache) {
+      this._pInst.shaderCache = {}; // ensures a unique shaderCache for each instance of p5.RendererGL
+    }
+    this.getCachedShader =
+    function (shaderKey, vertexShaderSource, fragmentShaderSource) {
+      if (!this._pInst.shaderCache[shaderKey]) {
+
+        this._pInst.shaderCache[shaderKey] = this._pInst.createShader(
+          vertexShaderSource, fragmentShaderSource);
+      }
+      return this._pInst.shaderCache[shaderKey];
+    };
+
     // erasing
     this._isErasing = false;
 
@@ -574,6 +598,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this._defaultNormalShader = undefined;
     this._defaultColorShader = undefined;
     this._defaultPointShader = undefined;
+    this._defaultCubemapShader=undefined;
 
     this.userFillShader = undefined;
     this.userStrokeShader = undefined;
@@ -872,6 +897,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this._pInst,
       !isPGraphics
     );
+
     this._pInst._setProperty('_renderer', renderer);
     renderer.resize(w, h);
     renderer._applyDefaults();
@@ -2053,6 +2079,15 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     return this._defaultFontShader;
   }
 
+  _getCubemapShader() {
+    return this.getCachedShader('_defaultCubemapShader',
+      this._webGL2CompatibilityPrefix('vert', 'mediump') +
+    defaultShaders.cubemapVertexShader,
+      this._webGL2CompatibilityPrefix('frag', 'mediump') +
+    defaultShaders.cubemapFragmentShader
+    );
+  }
+
   _webGL2CompatibilityPrefix(
     shaderType,
     floatPrecision
@@ -2105,44 +2140,87 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     *  maps a p5.Image used by imageLight() to a p5.Framebuffer
    */
   getDiffusedTexture(input) {
-    // if one already exists for a given input image
+    // If one already exists for a given input image
     if (this.diffusedTextures.get(input) != null) {
       return this.diffusedTextures.get(input);
     }
-    // if not, only then create one
-    let newFramebuffer;
-    // hardcoded to 200px, because it's going to be blurry and smooth
-    let smallWidth = 200;
-    let width = smallWidth;
-    let height = Math.floor(smallWidth * (input.height / input.width));
-    newFramebuffer = this._pInst.createFramebuffer({
-      width, height, density: 1
-    });
-    // create framebuffer is like making a new sketch, all functions on main
-    // sketch it would be available on framebuffer
-    if (!this.diffusedShader) {
-      this.diffusedShader = this._pInst.createShader(
-        defaultShaders.imageLightVert,
-        defaultShaders.imageLightDiffusedFrag
+
+    // Create a cubemap texture
+    const envCubemap = this.GL.createTexture();
+    this.GL.bindTexture(this.GL.TEXTURE_CUBE_MAP, envCubemap);
+
+    // Loop through each face and allocate storage
+    for (let i = 0; i < 6; ++i) {
+      this.GL.texImage2D(
+        this.GL.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0,
+        this.GL.RGB16F, 512, 512, 0,
+        this.GL.RGB, this.GL.FLOAT, null
       );
     }
-    newFramebuffer.draw(() => {
-      this._pInst.shader(this.diffusedShader);
-      this.diffusedShader.setUniform('environmentMap', input);
-      this._pInst.noStroke();
-      this._pInst.rectMode(constants.CENTER);
-      this._pInst.noLights();
-      this._pInst.rect(0, 0, width, height);
+
+    // Set parameters for the cubemap
+    this.GL.texParameteri(this.GL.TEXTURE_CUBE_MAP
+      , this.GL.TEXTURE_WRAP_S, this.GL.CLAMP_TO_EDGE);
+    this.GL.texParameteri(this.GL.TEXTURE_CUBE_MAP
+      , this.GL.TEXTURE_WRAP_T, this.GL.CLAMP_TO_EDGE);
+    this.GL.texParameteri(this.GL.TEXTURE_CUBE_MAP
+      , this.GL.TEXTURE_WRAP_R, this.GL.CLAMP_TO_EDGE);
+    this.GL.texParameteri(this.GL.TEXTURE_CUBE_MAP
+      , this.GL.TEXTURE_MIN_FILTER, this.GL.LINEAR);
+    this.GL.texParameteri(this.GL.TEXTURE_CUBE_MAP
+      , this.GL.TEXTURE_MAG_FILTER, this.GL.LINEAR);
+
+    // Get the cubemap shader
+    const cubemapShader = this._getCubemapShader();
+    this._pInst.shader(cubemapShader);
+
+    // Convert p5.Image to WebGLTexture
+    const texture = new p5.Texture(this, input);
+    const webglTexture = texture.glTex;
+
+    cubemapShader.setUniform('equirectangularMap', webglTexture);
+
+    this.GL.activeTexture(this.GL.TEXTURE0);
+    this.GL.bindTexture(this.GL.TEXTURE_2D, input);
+
+    // Create a new framebuffer
+    let newFramebuffer = this._pInst.createFramebuffer({
+      width: 512,
+      height: 512,
+      density: 1
     });
-    this.diffusedTextures.set(input, newFramebuffer);
-    return newFramebuffer;
+
+    this.GL.bindFramebuffer(this.GL.FRAMEBUFFER, newFramebuffer.handle);
+
+    // Render each face of the cubemap
+    for (let i = 0; i < 6; ++i) {
+      this.GL.framebufferTexture2D(
+        this.GL.FRAMEBUFFER,
+        this.GL.COLOR_ATTACHMENT0,
+        this.GL.TEXTURE_CUBE_MAP_POSITIVE_X + i,
+        envCubemap,
+        0
+      );
+
+      this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
+
+      renderCube(); // Renders a 1x1 cube
+    }
+
+    this.GL.bindFramebuffer(this.GL.FRAMEBUFFER, null);
+
+    // Initialize CubemapTexture class with the cubemap texture
+    let cubemapTexture = new CubemapTexture(this, envCubemap, {});
+    this.diffusedTextures.set(input, cubemapTexture);
+
+    return cubemapTexture;
   }
 
   /*
    *  used in imageLight,
    *  To create a texture from the input non blurry image, if it doesn't already exist
    *  Creating 8 different levels of textures according to different
-   *  sizes and atoring them in `levels` array
+   *  sizes and storing them in `levels` array
    *  Creating a new Mipmap texture with that `levels` array
    *  Storing the texture for input image in map called `specularTextures`
    *  maps the input p5.Image to a p5.MipmapTexture
@@ -2319,7 +2397,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       // this.activeImageLight has image as a key
       // look up the texture from the diffusedTexture map
       let diffusedLight = this.getDiffusedTexture(this.activeImageLight);
-      shader.setUniform('environmentMapDiffused', diffusedLight);
+      shader.setUniform('environmentMapDiffusedCubemap', diffusedLight);
       let specularLight = this.getSpecularTexture(this.activeImageLight);
 
       shader.setUniform('environmentMapSpecular', specularLight);
