@@ -37,5 +37,6 @@ export const mockP5Prototype = {
   },
   canvas: {
     id: 'myCanvasID'
-  }
+  },
+  _elements: []
 };
