@@ -17,6 +17,12 @@ function shapeCorners(p5, shape, mode, x1, y1, x2, y2) {
     // Don't use abs(), so we get negative values as well
     let w = x2 - x1; // w
     let h = y2 - y1; // h
+    // With mode CORNER, rects with negative widths/heights result in mirrored/flipped rendering
+    // In this case, adjust position so the rect is in line with the other cases
+    if (shape === 'rect') {
+      if (w < 0) { x += (-w); } // Move right
+      if (h < 0) { y += (-h); } // Move down
+    }
     x1 = x; y1 = y; x2 = w; y2 = h;
   } else if (mode === p5.CENTER) {
     // Find center
@@ -56,14 +62,15 @@ function shapeCorners(p5, shape, mode, x1, y1, x2, y2) {
 }
 
 
-/*
-  Comprehensive test for rendering ellipse(), arc(), and rect()
-  with the different ellipseMode() / rectMode() values: CORNERS, CORNER, CENTER, RADIUS.
-  Each of the 3 shapes is tested with each of the 4 possible modes, resulting in 12 test.
-  Each test renders the shape in 16 different coordinate configurations,
-  testing combinations of positive and negative coordinate values.
-*/
 visualSuite('Shape Modes', function(...args) {
+  /*
+    Comprehensive test for rendering ellipse(), arc(), and rect()
+    with the different ellipseMode() / rectMode() values: CORNERS, CORNER, CENTER, RADIUS.
+    Each of the 3 shapes is tested with each of the 4 possible modes, resulting in 12 tests.
+    Each test renders the shape in 16 different coordinate configurations,
+    testing combinations of positive and negative coordinate values.
+  */
+
   // Shapes to test
   const SHAPES = [ 'ellipse', 'arc', 'rect' ];
 
@@ -113,6 +120,60 @@ visualSuite('Shape Modes', function(...args) {
         }); // End of: visualTest
       } // End of: MODES loop
 
-    }); // End of: Inner visualSuite
+    }); // End of: visualSuite
   } // End of: SHAPES loop
-}); // End of: Outer visualSuite
+
+
+  /*
+    An extra test suite specific to shape mode CORNER and negative dimensions.
+    For rect, negative widths/heights result in flipped rendering (horizontally/vertically)
+    For ellipse and arc, using negative widths/heights has no effect (the absolute value is used)
+  */
+  visualSuite('Negative dimensions', function() {
+    // Negative widths/height result in flipped rects.
+    visualTest('rect', function(p5, screenshot) {
+      p5.createCanvas(50, 50);
+      p5.translate(p5.width/2, p5.height/2);
+      p5.rectMode(p5.CORNER);
+      p5.rect(0, 0,  20,  10);
+      p5.fill('red');
+      p5.rect(0, 0, -20,  10);
+      p5.fill('green');
+      p5.rect(0, 0,  20, -10);
+      p5.fill('blue');
+      p5.rect(0, 0, -20, -10);
+      screenshot();
+    });
+    // Since negative widths/heights are used with their absolute value,
+    // ellipses are drawn on top of each other, blue one last
+    visualTest('ellipse', function(p5, screenshot) {
+      p5.createCanvas(50, 50);
+      p5.translate(p5.width/2, p5.height/2);
+      p5.ellipseMode(p5.CORNER);
+      p5.ellipse(0, 0,  20,  10);
+      p5.fill('red');
+      p5.ellipse(0, 0, -20,  10);
+      p5.fill('green');
+      p5.ellipse(0, 0,  20, -10);
+      p5.fill('blue');
+      p5.ellipse(0, 0, -20, -10);
+      screenshot();
+    });
+    // Since negative widths/heights are used with their absolute value,
+    // arcs are drawn on top of each other, blue one last.
+    visualTest('arc', function(p5, screenshot) {
+      p5.createCanvas(50, 50);
+      p5.translate(p5.width/2, p5.height/2);
+      p5.ellipseMode(p5.CORNER);
+      p5.arc(0, 0,  20,  10, 0, p5.PI + p5.HALF_PI);
+      p5.fill('red');
+      p5.arc(0, 0, -20,  10, 0, p5.PI + p5.HALF_PI);
+      p5.fill('green');
+      p5.arc(0, 0,  20, -10, 0, p5.PI + p5.HALF_PI);
+      p5.fill('blue');
+      p5.arc(0, 0, -20, -10, 0, p5.PI + p5.HALF_PI);
+      screenshot();
+    });
+  });
+
+});
