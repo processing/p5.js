@@ -44,6 +44,7 @@ import filterOpaqueFrag from './shaders/filters/opaque.frag';
 import filterInvertFrag from './shaders/filters/invert.frag';
 import filterThresholdFrag from './shaders/filters/threshold.frag';
 import filterShaderVert from './shaders/filters/default.vert';
+import { PrimitiveToVerticesConverter } from '../shape/custom_shapes';
 
 const STROKE_CAP_ENUM = {};
 const STROKE_JOIN_ENUM = {};
@@ -243,7 +244,7 @@ class RendererGL extends Renderer {
     this._isErasing = false;
 
     // simple lines
-    this._simpleLines = false;    
+    this._simpleLines = false;
 
     // clipping
     this._clipDepths = [];
@@ -373,6 +374,7 @@ class RendererGL extends Renderer {
     this.fontInfos = {};
 
     this._curShader = undefined;
+    this.drawShapeCount = 1;
   }
 
   //////////////////////////////////////////////
@@ -447,11 +449,31 @@ class RendererGL extends Renderer {
   beginShape(...args) {
     super.beginShape(...args);
     // TODO remove when shape refactor is complete
-    this.shapeBuilder.beginShape(...args);
+    // this.shapeBuilder.beginShape(...args);
   }
 
   drawShape(shape) {
-    // TODO
+    const visitor = new PrimitiveToVerticesConverter();
+    shape.accept(visitor);
+    this.shapeBuilder.constructFromContours(shape, visitor.contours);
+
+    if (this.geometryBuilder) {
+      this.geometryBuilder.addImmediate(
+        this.shapeBuilder.geometry,
+        this.shapeBuilder.shapeMode
+      );
+    } else if (this.states.fillColor || this.states.strokeColor) {
+      this._drawGeometry(
+        this.shapeBuilder.geometry,
+        { mode: this.shapeBuilder.shapeMode, count: this.drawShapeCount }
+      );
+    }
+    this.drawShapeCount = 1;
+  }
+
+  endShape(mode, count) {
+    super.endShape(mode, count);
+    this.drawShapeCount = count;
   }
 
   legacyEndShape(

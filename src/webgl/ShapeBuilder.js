@@ -49,6 +49,46 @@ export class ShapeBuilder {
     this.contourIndices = [];
   }
 
+  constructFromContours(shape, contours) {
+    if (this._useUserVertexProperties === true){
+      this._resetUserVertexProperties();
+    }
+    this.geometry.reset();
+    this.contourIndices = [];
+    this.shapeMode = constants.TESS;
+    const shouldProcessEdges = !!this.renderer.states.strokeColor;
+
+    let idx = -1;
+    for (const contour of contours) {
+      this.contourIndices.push(this.geometry.vertices.length);
+      let prevIdx = -1;
+      for (const vertex of contour) {
+        idx++
+        this.geometry.vertices.push(vertex.position);
+        this.geometry.vertexNormals.push(vertex.normal);
+        this.geometry.uvs.push(vertex.textureCoordinates.x, vertex.textureCoordinates.y);
+        this.geometry.vertexColors.push(...vertex.fill.array());
+        this.geometry.vertexStrokeColors.push(...vertex.stroke.array());
+        if (shouldProcessEdges && prevIdx >= 0) {
+          // TODO: handle other shape modes
+          this.geometry.edges.push([prevIdx, idx]);
+        }
+
+        prevIdx++
+      }
+    }
+
+    if (shouldProcessEdges && !this.renderer.geometryBuilder) {
+      this.geometry._edgesToVertices();
+    }
+
+    this.isProcessingVertices = true;
+    this._tesselateShape();
+    this.isProcessingVertices = false;
+  }
+
+  // TODO: remove all below
+
   endShape = function(
     mode,
     isCurve,
@@ -390,7 +430,8 @@ export class ShapeBuilder {
   _tesselateShape() {
     // TODO: handle non-TESS shape modes that have contours
     this.shapeMode = constants.TRIANGLES;
-    const contours = [[]];
+    // const contours = [[]];
+    const contours = [];
     for (let i = 0; i < this.geometry.vertices.length; i++) {
       if (
         this.contourIndices.length > 0 &&

@@ -109,7 +109,7 @@ class Renderer {
     this.drawShape(this.currentShape);
   }
 
-  drawShape(shape) {
+  drawShape(shape, count) {
     throw new Error('Unimplemented')
   }
 

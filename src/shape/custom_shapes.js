@@ -497,12 +497,7 @@ class PrimitiveVisitor {
 // using this instead of PrimitiveToContext2DConverter for now
 // requires testing
 class PrimitiveToPath2DConverter extends PrimitiveVisitor {
-  #drawingContext;
   path = new Path2D();
-
-  constructor() {
-    super();
-  }
 
   // path primitives
   visitAnchor(anchor) {
@@ -516,8 +511,18 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
 }
 
 class PrimitiveToVerticesConverter extends PrimitiveVisitor {
-  constructor() {
-    super();
+  contours = [];
+
+  lastContour() {
+    return this.contours[this.contours.length - 1];
+  }
+
+  visitAnchor(anchor) {
+    this.contours.push([]);
+    this.lastContour().push(anchor.getEndVertex());
+  }
+  visitLineSegment(lineSegment) {
+    this.lastContour().push(lineSegment.getEndVertex());
   }
 }
 
