@@ -10,6 +10,10 @@ import p5 from '../core/main';
 
 //updates gridOutput
 p5.prototype._updateGridOutput = function(idT) {
+  // Check if the current rendering mode is WEBGL
+  if (this._renderer && this._renderer.isWEBGL) {
+    throw new Error('gridOutput() is not supported in WEBGL mode.');
+  }
   //if html structure is not there yet
   if (!this.dummyDOM.querySelector(`#${idT}_summary`)) {
     return;
