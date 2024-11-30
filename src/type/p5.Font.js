@@ -31,8 +31,6 @@
  */
 import Typr from './lib/Typr.js';
 
-const ORIG = 0;
-
 function font(p5, fn) {
 
   const pathArgCounts = { M: 2, L: 2, C: 6, Q: 4 };
@@ -76,24 +74,16 @@ function font(p5, fn) {
       return paths;
     }
 
-    /* uses: 
-        renderer.states: textBaseline, textAlign, textLeading, textSize},
-        renderer.fontWidthSingle(), 
-        renderer.fontBoundsSingle()
-        drawingContext.measureText(), 
-     */
     textToPoints(str, x, y, width, height, options) {
 
       // lineate and get paths for each line
       let renderer = options?.renderer || this._pInst._renderer;
       let paths = this._getPaths(renderer, str, x, y, width, height, options);
-      //console.log(paths[0].glyphs[1].path.commands);
 
       //  get the array of points for each line
       let fontSize = renderer.states.textSize;
       let scale = fontSize / this.fontData.head.unitsPerEm; // * dpr
       let pts = paths.map(p => this._pointify(p, scale, options));
-      //console.log(paths[0].points);
 
       // TODO: resample points along the path
       return pts.flat();
@@ -122,7 +112,7 @@ function font(p5, fn) {
 
       // convert lines to paths
       let scale = renderer.states.textSize / this.fontData.head.unitsPerEm;
-      let paths = lines.map(l => this._pathify(l, scale, options));      
+      let paths = lines.map(l => this._pathify(l, scale, options));
 
       // restore the baseline
       renderer.drawingContext.textBaseline = setBaseline;
@@ -202,106 +192,51 @@ function font(p5, fn) {
         throw Error('No font data available for "' + this.name
           + '"\nTry downloading a local copy of the font file');
       }
-
       let glyphShapes = Typr.U.shape(this.fontData, line.text);
-
-
-      if (!ORIG) {
-        line.glyphs = this._shapeToPaths(glyphShapes, line, scale);
-      }
-      else {
-        line.paths = this._shapeToPathsOrig(glyphShapes);
-      }
+      line.glyphs = this._shapeToPaths(glyphShapes, line, scale);
 
       return line;
     }
 
     _shapeToPaths(glyphShapes, line, scale) {
       let font = this.fontData;
-      let tpath = { cmds: [], crds: [] };
-      let x = 0, y = 0;
+      let x = 0, y = 0, paths = [];
 
       if (glyphShapes.length !== line.text.length) {
         throw Error('Invalid shape data');
       }
 
-      let dpath = [];
-      let crdCount = 0;
+      // iterate over the glyphs, converting each to a glyph object
+      // with a path property containing an array of commands
       for (let i = 0; i < glyphShapes.length; i++) {
+        let crdIdx = 0;
         let { g, ax, ay, dx, dy } = glyphShapes[i];
-        let glyphPath = Typr.U.glyphToPath(font, g);
-        let { crds, cmds } = glyphPath;
-        //console.log(line.text[i], 'path:', glyphPath);
-
-        for (let j = 0; j < crds.length; j += 2) {
-          tpath.crds.push(crds[j] + x + dx);
-          tpath.crds.push(crds[j + 1] + y + dy);
-        }
+        let { crds, cmds } = Typr.U.glyphToPath(font, g);
+        let glyph = { g: line.text[i], path: { commands: [] } };
 
         for (let j = 0; j < cmds.length; j++) {
-          tpath.cmds.push(cmds[j]);
-        }
-
-        let glyph = { glyph: line.text[i], path: { commands: [] } };
-        for (let j = 0; j < cmds.length; j++) {
-          let type = cmds[j];
-          let command = { type, data: [] };
+          let type = cmds[j], command = { type, data: [] };
           if (type in pathArgCounts) {
             let argCount = pathArgCounts[type];
-            for (let k = 0; k < argCount; k+=2) {
-
-              // WORKING HERE:
-              
-              let gx = crds[k+crdCount++] + x + dx;
-              let gy = crds[k+crdCount++] + y + dy;
+            for (let k = 0; k < argCount; k += 2) {
+              let gx = crds[k + crdIdx] + x + dx;
+              let gy = crds[k + crdIdx + 1] + y + dy;
               command.data.push(line.x + gx * scale);
               command.data.push(line.y + gy * -scale);
             }
+            crdIdx += argCount;
           }
           glyph.path.commands.push(command);
         }
-        dpath.push(glyph);
+        paths.push(glyph);
         x += ax; y += ay;
       }
 
-      return ORIG ? tpath : dpath;
-    }
-
-
-    _shapeToPathsOrig(shape, clr) {
-      let font = this.fontData;
-      let tpath = { cmds: [], crds: [] };
-      let x = 0, y = 0;
-
-      for (let i = 0; i < shape.length; i++) {
-        let it = shape[i]
-        let path = Typr["U"]["glyphToPath"](font, it["g"]), crds = path["crds"];
-        for (let j = 0; j < crds.length; j += 2) {
-          tpath.crds.push(crds[j] + x + it["dx"]);
-          tpath.crds.push(crds[j + 1] + y + it["dy"]);
-        }
-        //if (clr) tpath.cmds.push(clr);
-        for (let j = 0; j < path["cmds"].length; j++) {
-          tpath.cmds.push(path["cmds"][j]);
-        }
-        //let clen = tpath.cmds.length;
-        // SVG fonts might contain "X". Then, nothing would stroke non-SVG glyphs.
-        //if (clr) if (clen != 0 && tpath.cmds[clen - 1] != "X") tpath.cmds.push("X");
-
-        x += it["ax"]; y += it["ay"];
-      }
-      return { "cmds": tpath.cmds, "crds": tpath.crds };
+      return paths;
     }
 
     _pointify(paths, scale, opts) {
-      //this._pathify(path, scale, opts);
-      let pts;
-      if (ORIG) {
-        pts = this._pathToPointsOrig(paths, scale, scale * 500);
-      }
-      else {
-        pts = this._pathToPoints(paths, scale * 500);
-      }
+      let pts = this._pathToPoints(paths, scale * 500);
       paths.points = pts;
       return pts;
     }
@@ -329,44 +264,14 @@ function font(p5, fn) {
             if (data.length !== 4) throw Error('Invalid data length');
             pts.push({ x: data[2], y: data[3] });
             //console.log('Q', data, pts[pts.length - 1]);
-            
+
           }
         }
       }
       return pts;
     }
 
-    _pathToPointsOrig(pathData, scale, maxDist = scale * 500) {
 
-      let { x, y, paths } = pathData;
-      console.log(pathData);
-
-      let c = 0, pts = [], { crds, cmds } = paths;
-
-      // iterate over the path, storing each non-control point
-      for (let j = 0; j < cmds.length; j++) {
-        let cmd = cmds[j];
-        if (cmd == "M" || cmd == "L") {
-          let pt = { x: x + crds[c] * scale, y: y + crds[c + 1] * -scale }
-          c += 2;
-          /* TMP
-          if (cmd == "L" && maxDist && pts.length > 1) {
-            subdivide(pts, pts[pts.length - 1], pt, maxDist);
-          }*/
-          pts.push(pt);
-        }
-        else if (cmd == "C") {
-          pts.push({ x: x + crds[c + 4] * scale, y: y + crds[c + 5] * -scale });
-          c += 6;
-        }
-        else if (cmd == "Q") {
-          pts.push({ x: x + crds[c + 2] * scale, y: y + crds[c + 3] * -scale });
-          c += 4;
-        }
-      }
-
-      return pts;
-    }
 
     _measureTextDefault(renderer, str) {
       let { textAlign, textBaseline } = renderer.states;
@@ -378,78 +283,85 @@ function font(p5, fn) {
       ctx.textBaseline = textBaseline;
       return metrics;
     }
-    
-    strokePaths(ctx, paths, col) {
-      ctx.strokeStyle = col || ctx.strokeStyle;
-      ctx.beginPath();
-      paths.forEach(({ type, data }) => {
-        if (type === 'M') {
-          ctx.moveTo(...data);
-        } else if (type === 'L') {
-          ctx.lineTo(...data);
-        } else if (type === 'C') {
-          ctx.bezierCurveTo(...data);
-        } else if (type === 'Q') {
-          ctx.quadraticCurveTo(...data);
-        } else if (type === 'Z') {
-          ctx.closePath();
-        }
+
+    drawPaths(ctx, paths, opts) {
+      ctx.strokeStyle = opts?.stroke || ctx.strokeStyle;
+      ctx.fillStyle = opts?.fill || ctx.strokeStyle;
+      paths.forEach((path, i) => {
+        let glyphs = path.glyphs;
+        glyphs.forEach((glyph, j) => {
+          let commands = glyph.path.commands;
+          ctx.beginPath();
+          commands.forEach(({ type, data }) => {
+            if (type === 'M') {
+              ctx.moveTo(...data);
+            } else if (type === 'L') {
+              ctx.lineTo(...data);
+            } else if (type === 'C') {
+              ctx.bezierCurveTo(...data);
+            } else if (type === 'Q') {
+              ctx.quadraticCurveTo(...data);
+            } else if (type === 'Z') {
+              ctx.closePath();
+            }
+          });
+          ctx.fill();
+          ctx.stroke();
+        });
       });
-      ctx.strokeStyle ??= 'red';
-      ctx.stroke();
     }
 
     _pathsToCommands(paths, scale) {
-      let commands = [];
-      for (let i = 0; i < paths.length; i++) {
-        let pathData = paths[i];
-        let { x, y, path } = pathData;
-        let { crds, cmds } = path;
+          let commands =[];
+          for(let i = 0; i<paths.length; i++) {
+          let pathData = paths[i];
+          let { x, y, path } = pathData;
+          let { crds, cmds } = path;
 
-        // iterate over the path, storing each non-control point
-        for (let c = 0, j = 0; j < cmds.length; j++) {
-          let cmd = cmds[j], obj = { type: cmd, data: [] };
-          if (cmd == "M" || cmd == "L") {
-            obj.data.push(x + crds[c] * scale, y + crds[c + 1] * -scale);
-            c += 2;
-          }
-          else if (cmd == "C") {
-            for (let i = 0; i < 6; i += 2) {
-              obj.data.push(x + crds[c + i] * scale, y + crds[c + i + 1] * -scale);
+          // iterate over the path, storing each non-control point
+          for (let c = 0, j = 0; j < cmds.length; j++) {
+            let cmd = cmds[j], obj = { type: cmd, data: [] };
+            if (cmd == "M" || cmd == "L") {
+              obj.data.push(x + crds[c] * scale, y + crds[c + 1] * -scale);
+              c += 2;
             }
-            c += 6;
-          }
-          else if (cmd == "Q") {
-            for (let i = 0; i < 4; i += 2) {
-              obj.data.push(x + crds[c + i] * scale, y + crds[c + i + 1] * -scale);
+            else if (cmd == "C") {
+              for (let i = 0; i < 6; i += 2) {
+                obj.data.push(x + crds[c + i] * scale, y + crds[c + i + 1] * -scale);
+              }
+              c += 6;
             }
-            c += 4;
+            else if (cmd == "Q") {
+              for (let i = 0; i < 4; i += 2) {
+                obj.data.push(x + crds[c + i] * scale, y + crds[c + i + 1] * -scale);
+              }
+              c += 4;
+            }
+            commands.push(obj);
           }
-          commands.push(obj);
         }
-      }
 
-      return commands;
-    }
+        return commands;
+      }
 
     static async list(log = false) { // tmp
-      if (log) {
-        console.log('There are', document.fonts.size, 'font-faces\n');
-        let loaded = 0;
-        for (let fontFace of document.fonts.values()) {
-          console.log('FontFace: {');
-          for (let property in fontFace) {
-            console.log('  ' + property + ': ' + fontFace[property]);
+        if(log) {
+          console.log('There are', document.fonts.size, 'font-faces\n');
+          let loaded = 0;
+          for (let fontFace of document.fonts.values()) {
+            console.log('FontFace: {');
+            for (let property in fontFace) {
+              console.log('  ' + property + ': ' + fontFace[property]);
+            }
+            console.log('}\n');
+            if (fontFace.status === 'loaded') {
+              loaded++;
+            }
           }
-          console.log('}\n');
-          if (fontFace.status === 'loaded') {
-            loaded++;
-          }
+          console.log(loaded + ' loaded');
         }
-        console.log(loaded + ' loaded');
-      }
       return await Array.from(document.fonts);
-    }
+      }
 
   }// end p5.Font
 
