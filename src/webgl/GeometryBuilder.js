@@ -13,7 +13,7 @@ class GeometryBuilder {
     renderer._pInst.push();
     this.identityMatrix = new Matrix();
     renderer.states.uModelMatrix = new Matrix();
-    this.geometry = new Geometry();
+    this.geometry = new Geometry(undefined, undefined, undefined, this.renderer);
     this.geometry.gid = `_p5_GeometryBuilder_${GeometryBuilder.nextGeometryId}`;
     GeometryBuilder.nextGeometryId++;
     this.hasTransform = false;

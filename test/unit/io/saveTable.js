@@ -15,7 +15,7 @@ suite('saveTable', function() {
     files(mockP5, mockP5Prototype);
     table(mockP5, mockP5Prototype);
     tableRow(mockP5, mockP5Prototype);
-    myTable = await mockP5Prototype.loadTable(validFile, 'csv', 'header');
+    myTable = await mockP5Prototype.loadTable(validFile, ',', 'header');
   });
 
   afterEach(() => {
