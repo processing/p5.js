@@ -3,6 +3,7 @@
  *  TODO:
  *   - change renderer.state to use getters for textAlign, textBaseline, etc.
  *   - add fontAscent/Descent and textWeight functions [x]
+ *   - textToPaths should split into glyphs and paths
  *   - add textFont(string) that forces context2d.font to be set (if including size part) [x]
  *   - textToPoints: test rectMode, enable passing props in options (textSize, textLeading, etc.)?
  *   - test textToPoints with single line, and overlapping text [x]
@@ -23,8 +24,6 @@
  *   - support start and end text-alignments
  *   - add 'justify' alignment
  */
-
-import font from "./p5.Font";
 
 /**
  * @module Type

@@ -43,7 +43,7 @@ suite('Typography Attributes', function() {
     test('should return a number for char input', function() {
       assert.isNumber(myp5.textWidth('P'));
     });
-    test('should return a number for string input.', function() {
+    test('should return a number for string input.', function () {
       assert.isNumber(myp5.textWidth('p5.js'));
     });
     // Either should not throw error

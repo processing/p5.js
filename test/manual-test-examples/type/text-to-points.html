@@ -42,17 +42,15 @@ Font-variation style properties:
   <script type='module'>
     import p5 from '../../../src/app.js';
     let sketch = function (p) {
+      let s = 'Hello, World!', x = 120, y = 170, font;
       p.setup = async function () {
-        let s = 'Hello, World!', x = 120, y = 170, fsize = 160;
-
-        let cvs = p.createCanvas(1150, 230);
-
-        let font = await p.loadFont('./font/LiberationSans-Bold.ttf');
-
-        p.textFont(font, fsize);
+      
+        p.createCanvas(1150, 230);
+        p.textFont(font = await p.loadFont('./font/LiberationSans-Bold.ttf'), 160);
         p.text(s, x, y);
 
-        font.textToPoints(s, x, y).forEach((pt, i) => {
+        let pts = font.textToPoints(s, x, y);
+        pts.forEach((pt, i) => {
           p.fill(255, 0, 0);
           p.circle(pt.x, pt.y, 5);
         });
