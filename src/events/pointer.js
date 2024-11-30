@@ -1479,9 +1479,6 @@ function pointer(p5, fn){
 
     if(e.pointerType == 'touch'){
       this._activeTouches.delete(e.pointerId);
-      this.touches = Array.from(this._activeTouches.values()).map((touch) =>
-        getTouchInfo(this._curElement.elt, this.width, this.height, touch)
-      );
     }
 
     this._updatePointerCoords(e);

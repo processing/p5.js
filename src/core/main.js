@@ -228,12 +228,19 @@ class p5 {
     // unhide any hidden canvases that were created
     const canvases = document.getElementsByTagName('canvas');
 
+    // Apply touchAction = 'none' to canvases if pointer events exist
+    if (Object.keys(this._events).some(event => event.startsWith('pointer'))) {
+      for (const k of canvases) {
+        k.style.touchAction = 'none';
+      }
+    }
+
+
     for (const k of canvases) {
       if (k.dataset.hidden === 'true') {
         k.style.visibility = '';
         delete k.dataset.hidden;
       }
-      k.style.touchAction = 'none';
     }
 
     this._lastTargetFrameTime = window.performance.now();
