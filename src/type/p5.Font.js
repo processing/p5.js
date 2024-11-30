@@ -70,23 +70,18 @@ function font(p5, fn) {
 
       // lineate and get paths for each line
       let renderer = options?.renderer || this._pInst._renderer;
-      let paths = [...this._getPaths(renderer, str, x, y, width, height, options)];
-      return paths;
+      let paths = this._getPaths(renderer, str, x, y, width, height, options);
+      let glyphs = paths.map(o => o.glyphs).flat();
+      return glyphs.map(g => g.path.commands).flat();
     }
 
     textToPoints(str, x, y, width, height, options) {
 
-      // lineate and get paths for each line
+      // lineate and get points for each line
       let renderer = options?.renderer || this._pInst._renderer;
       let paths = this._getPaths(renderer, str, x, y, width, height, options);
-
-      //  get the array of points for each line
-      let fontSize = renderer.states.textSize;
-      let scale = fontSize / this.fontData.head.unitsPerEm; // * dpr
-      let pts = paths.map(p => this._pointify(p, scale, options));
-
-      // TODO: resample points along the path
-      return pts.flat();
+      let glyphs = paths.map(o => o.glyphs).flat();
+      return glyphs.map(g => g.points).flat();
     }
 
 
@@ -112,17 +107,15 @@ function font(p5, fn) {
 
       // convert lines to paths
       let scale = renderer.states.textSize / this.fontData.head.unitsPerEm;
-      let paths = lines.map(l => this._pathify(l, scale, options));
+      let result = lines.map(l => this._pathify(l, scale, options));
 
       // restore the baseline
       renderer.drawingContext.textBaseline = setBaseline;
 
-      return paths;
+      return result;
     }
 
     _parseArgs(renderer, width, height, options) {
-
-      // requires args, renderer.states, textBaseline
 
       if (typeof renderer?.states !== 'object') {
         throw Error('Invalid renderer state');
@@ -198,21 +191,21 @@ function font(p5, fn) {
       return line;
     }
 
-    _shapeToPaths(glyphShapes, line, scale) {
+    _shapeToPaths(glyphs, line, scale) {
       let font = this.fontData;
       let x = 0, y = 0, paths = [];
 
-      if (glyphShapes.length !== line.text.length) {
+      if (glyphs.length !== line.text.length) {
         throw Error('Invalid shape data');
       }
 
       // iterate over the glyphs, converting each to a glyph object
       // with a path property containing an array of commands
-      for (let i = 0; i < glyphShapes.length; i++) {
+      for (let i = 0; i < glyphs.length; i++) {
         let crdIdx = 0;
-        let { g, ax, ay, dx, dy } = glyphShapes[i];
+        let { g, ax, ay, dx, dy } = glyphs[i];
         let { crds, cmds } = Typr.U.glyphToPath(font, g);
-        let glyph = { g: line.text[i], path: { commands: [] } };
+        let glyph = { g: line.text[i], points: [], path: { commands: [] } };
 
         for (let j = 0; j < cmds.length; j++) {
           let type = cmds[j], command = { type, data: [] };
@@ -221,8 +214,13 @@ function font(p5, fn) {
             for (let k = 0; k < argCount; k += 2) {
               let gx = crds[k + crdIdx] + x + dx;
               let gy = crds[k + crdIdx + 1] + y + dy;
-              command.data.push(line.x + gx * scale);
-              command.data.push(line.y + gy * -scale);
+              let fx = line.x + gx * scale;
+              let fy = line.y + gy * -scale;
+              command.data.push(fx);
+              command.data.push(fy);
+              if (k === argCount - 2) {
+                glyph.points.push({ x: fx, y: fy });
+              }
             }
             crdIdx += argCount;
           }
@@ -271,8 +269,6 @@ function font(p5, fn) {
       return pts;
     }
 
-
-
     _measureTextDefault(renderer, str) {
       let { textAlign, textBaseline } = renderer.states;
       let ctx = renderer.drawingContext;
@@ -284,84 +280,78 @@ function font(p5, fn) {
       return metrics;
     }
 
-    drawPaths(ctx, paths, opts) {
+    drawPaths(ctx, commands, opts) {
       ctx.strokeStyle = opts?.stroke || ctx.strokeStyle;
       ctx.fillStyle = opts?.fill || ctx.strokeStyle;
-      paths.forEach((path, i) => {
-        let glyphs = path.glyphs;
-        glyphs.forEach((glyph, j) => {
-          let commands = glyph.path.commands;
-          ctx.beginPath();
-          commands.forEach(({ type, data }) => {
-            if (type === 'M') {
-              ctx.moveTo(...data);
-            } else if (type === 'L') {
-              ctx.lineTo(...data);
-            } else if (type === 'C') {
-              ctx.bezierCurveTo(...data);
-            } else if (type === 'Q') {
-              ctx.quadraticCurveTo(...data);
-            } else if (type === 'Z') {
-              ctx.closePath();
-            }
-          });
-          ctx.fill();
-          ctx.stroke();
-        });
+      ctx.beginPath();
+      commands.forEach(({ type, data }) => {
+        if (type === 'M') {
+          ctx.moveTo(...data);
+        } else if (type === 'L') {
+          ctx.lineTo(...data);
+        } else if (type === 'C') {
+          ctx.bezierCurveTo(...data);
+        } else if (type === 'Q') {
+          ctx.quadraticCurveTo(...data);
+        } else if (type === 'Z') {
+          ctx.closePath();
+        }
       });
+      ctx.fill();
+      ctx.stroke();
     }
 
     _pathsToCommands(paths, scale) {
-          let commands =[];
-          for(let i = 0; i<paths.length; i++) {
-          let pathData = paths[i];
-          let { x, y, path } = pathData;
-          let { crds, cmds } = path;
+      let commands = [];
+      for (let i = 0; i < paths.length; i++) {
+        let pathData = paths[i];
+        let { x, y, path } = pathData;
+        let { crds, cmds } = path;
 
-          // iterate over the path, storing each non-control point
-          for (let c = 0, j = 0; j < cmds.length; j++) {
-            let cmd = cmds[j], obj = { type: cmd, data: [] };
-            if (cmd == "M" || cmd == "L") {
-              obj.data.push(x + crds[c] * scale, y + crds[c + 1] * -scale);
-              c += 2;
-            }
-            else if (cmd == "C") {
-              for (let i = 0; i < 6; i += 2) {
-                obj.data.push(x + crds[c + i] * scale, y + crds[c + i + 1] * -scale);
-              }
-              c += 6;
-            }
-            else if (cmd == "Q") {
-              for (let i = 0; i < 4; i += 2) {
-                obj.data.push(x + crds[c + i] * scale, y + crds[c + i + 1] * -scale);
-              }
-              c += 4;
-            }
-            commands.push(obj);
+        // iterate over the path, storing each non-control point
+        for (let c = 0, j = 0; j < cmds.length; j++) {
+          let cmd = cmds[j], obj = { type: cmd, data: [] };
+          if (cmd == "M" || cmd == "L") {
+            obj.data.push(x + crds[c] * scale, y + crds[c + 1] * -scale);
+            c += 2;
           }
+          else if (cmd == "C") {
+            for (let i = 0; i < 6; i += 2) {
+              obj.data.push(x + crds[c + i] * scale, y + crds[c + i + 1] * -scale);
+            }
+            c += 6;
+          }
+          else if (cmd == "Q") {
+            for (let i = 0; i < 4; i += 2) {
+              obj.data.push(x + crds[c + i] * scale, y + crds[c + i + 1] * -scale);
+            }
+            c += 4;
+          }
+          commands.push(obj);
         }
-
-        return commands;
       }
+
+      return commands;
+    }
 
     static async list(log = false) { // tmp
-        if(log) {
-          console.log('There are', document.fonts.size, 'font-faces\n');
-          let loaded = 0;
-          for (let fontFace of document.fonts.values()) {
-            console.log('FontFace: {');
-            for (let property in fontFace) {
-              console.log('  ' + property + ': ' + fontFace[property]);
-            }
-            console.log('}\n');
-            if (fontFace.status === 'loaded') {
-              loaded++;
-            }
+      if (log) {
+        console.log('There are', document.fonts.size, 'font-faces\n');
+        let loaded = 0;
+        for (let fontFace of document.fonts.values()) {
+          console.log('FontFace: {');
+          for (let property in fontFace) {
+            console.log('  ' + property + ': ' + fontFace[property]);
           }
-          console.log(loaded + ' loaded');
+          console.log('}\n');
+          if (fontFace.status === 'loaded') {
+            loaded++;
+          }
         }
-      return await Array.from(document.fonts);
+        console.log(loaded + ' loaded');
       }
+      return await Array.from(document.fonts);
+    }
 
   }// end p5.Font
 

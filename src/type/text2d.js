@@ -2,12 +2,9 @@
 /*
  *  TODO:
  *   - change renderer.state to use getters for textAlign, textBaseline, etc.
- *   - add fontAscent/Descent and textWeight functions [x]
- *   - textToPaths should split into glyphs and paths
- *   - add textFont(string) that forces context2d.font to be set (if including size part) [x]
- *   - textToPoints: test rectMode, enable passing props in options (textSize, textLeading, etc.)?
- *   - test textToPoints with single line, and overlapping text [x]
- *   - textToPaths: test rendering in p5 (new/old api)
+
+ *   - textToPoints: enable passing props in options (textSize, textLeading, etc.)?
+ *   - textToPaths: test rendering in p5 (new?/old api) [x] -- inner hole problem
  *   - get axes and values for parsed fonts
  *   - cache parsed fonts (and/or lazy load)
  *   - test textToPoints with google/variable fonts
@@ -17,6 +14,11 @@
  *   - add test for line-height property in textFont() and textProperty()
  *      - how does this integrate with textLeading?
  *   - spurious warning in oneoff.html (local)
+ *   - add fontAscent/Descent and textWeight functions [x]
+ *   - textToPaths should split into glyphs and paths [x]
+ *   - add textFont(string) that forces context2d.font to be set (if including size part) [x]
+ *   - textToPoints: test rectMode for all alignments [x]
+ *   - test textToPoints with single line, and overlapping text [x]
  * 
  *  ENHANCEMENTS:
  *   - support direct setting of context2d.font with string [x]
