@@ -34,16 +34,16 @@ visualSuite("Typography", function () {
         { alignX: p5.RIGHT, alignY: p5.BOTTOM },
       ];
 
-      p5.createCanvas(300, 200);
-      p5.textSize(20);
+      p5.createCanvas(300, 80);
+      p5.textSize(60);
       alignments.forEach((alignment) => {
         p5.textAlign(alignment.alignX, alignment.alignY);
-        p5.text("Word", 0, 0);
-        const bb = p5.textBounds("Word", 0, 0);
+        p5.text("Single Line", 0, 0);
+        const bb = p5.textBounds("Single Line", 0, 0);
         p5.noFill();
         p5.stroke("red");
         p5.rect(bb.x, bb.y, bb.w, bb.h);
-      });
+      })
       screenshot();
     });
 
