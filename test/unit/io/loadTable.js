@@ -1,154 +1,78 @@
-import { testSketchWithPromise, promisedSketch } from '../../js/p5_helpers';
+import { mockP5, mockP5Prototype, httpMock } from '../../js/mocks';
+import files from '../../../src/io/files';
+import table from '../../../src/io/p5.Table';
+import tableRow from '../../../src/io/p5.TableRow';
 
-suite.todo('loadTable', function() {
-  var invalidFile = '404file';
-  var validFile = 'unit/assets/csv.csv';
+suite('loadTable', function() {
+  const invalidFile = '404file';
+  const validFile = '/test/unit/assets/csv.csv';
 
-  testSketchWithPromise('error prevents sketch continuing', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    sketch.preload = function() {
-      sketch.loadTable(invalidFile);
-      setTimeout(resolve, 50);
-    };
-
-    sketch.setup = function() {
-      reject(new Error('Setup called'));
-    };
-
-    sketch.draw = function() {
-      reject(new Error('Draw called'));
-    };
+  beforeAll(async () => {
+    files(mockP5, mockP5Prototype);
+    table(mockP5, mockP5Prototype);
+    tableRow(mockP5, mockP5Prototype);
+    await httpMock.start({ quiet: true });
   });
 
-  testSketchWithPromise('error callback is called', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    sketch.preload = function() {
-      sketch.loadTable(
-        invalidFile,
-        function() {
-          reject(new Error('Success callback executed.'));
-        },
-        function() {
-          // Wait a bit so that if both callbacks are executed we will get an error.
-          setTimeout(resolve, 50);
-        }
-      );
-    };
+  test('throws error when encountering HTTP errors', async () => {
+    await expect(mockP5Prototype.loadTable(invalidFile))
+      .rejects
+      .toThrow('Not Found');
   });
 
-  testSketchWithPromise('loading correctly triggers setup', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    sketch.preload = function() {
-      sketch.loadTable(validFile);
-    };
-
-    sketch.setup = function() {
-      resolve();
-    };
-  });
-
-  testSketchWithPromise('success callback is called', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    var hasBeenCalled = false;
-    sketch.preload = function() {
-      sketch.loadTable(
-        validFile,
-        function() {
-          hasBeenCalled = true;
-        },
-        function(err) {
-          reject(new Error('Error callback was entered: ' + err));
-        }
-      );
-    };
-
-    sketch.setup = function() {
-      if (!hasBeenCalled) {
-        reject(new Error('Setup called prior to success callback'));
-      } else {
+  test('error callback is called', async () => {
+    await new Promise((resolve, reject) => {
+      mockP5Prototype.loadTable(invalidFile, () => {
+        reject("Success callback executed");
+      }, () => {
+        // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
-      }
-    };
+      });
+    });
   });
 
-  test('returns an object with correct data', async function() {
-    const table = await promisedSketch(function(sketch, resolve, reject) {
-      let _table;
-      sketch.preload = function() {
-        _table = sketch.loadTable(validFile, function() {}, reject);
-      };
-
-      sketch.setup = function() {
-        resolve(_table);
-      };
+  test('success callback is called', async () => {
+    await new Promise((resolve, reject) => {
+      mockP5Prototype.loadTable(validFile, () => {
+        // Wait a bit so that if both callbacks are executed we will get an error.
+        setTimeout(resolve, 50);
+      }, (err) => {
+        reject(`Error callback called: ${err.toString()}`);
+      });
     });
+  });
+
+  test('returns an object with correct data', async () => {
+    const table = await mockP5Prototype.loadTable(validFile);
     assert.equal(table.getRowCount(), 4);
     assert.strictEqual(table.getRow(1).getString(0), 'David');
     assert.strictEqual(table.getRow(1).getNum(1), 31);
   });
 
-  test('passes an object to success callback for object JSON', async function() {
-    const table = await promisedSketch(function(sketch, resolve, reject) {
-      sketch.preload = function() {
-        sketch.loadTable(validFile, resolve, reject);
-      };
+  test('passes an object with correct data to success callback', async () => {
+    await mockP5Prototype.loadTable(validFile, (table) => {
+      assert.equal(table.getRowCount(), 4);
+      assert.strictEqual(table.getRow(1).getString(0), 'David');
+      assert.strictEqual(table.getRow(1).getNum(1), 31);
     });
+  });
+
+  test('separator option returns the correct data', async () => {
+    const table = await mockP5Prototype.loadTable(validFile, ',');
     assert.equal(table.getRowCount(), 4);
     assert.strictEqual(table.getRow(1).getString(0), 'David');
     assert.strictEqual(table.getRow(1).getNum(1), 31);
   });
 
-  test('csv option returns the correct data', async function() {
-    const table = await promisedSketch(function(sketch, resolve, reject) {
-      sketch.preload = function() {
-        sketch.loadTable(validFile, 'csv', resolve, reject);
-      };
-    });
-    assert.equal(table.getRowCount(), 4);
-    assert.strictEqual(table.getRow(1).getString(0), 'David');
-    assert.strictEqual(table.getRow(1).getNum(1), 31);
-  });
-
-  test('using the header option works', async function() {
-    const table = await promisedSketch(function(sketch, resolve, reject) {
-      sketch.preload = function() {
-        sketch.loadTable(validFile, 'header', resolve, reject);
-      };
-    });
+  test('using the header option works', async () => {
+    const table = await mockP5Prototype.loadTable(validFile, ',', true);
     assert.equal(table.getRowCount(), 3);
-    assert.strictEqual(table.getRow(0).getString('name'), 'David');
-    assert.strictEqual(table.getRow(0).getNum('age'), 31);
+    assert.strictEqual(table.getRow(0).getString(0), 'David');
+    assert.strictEqual(table.getRow(0).getNum(1), 31);
   });
 
-  test('allows the csv and header options together', async function() {
-    const table = await promisedSketch(function(sketch, resolve, reject) {
-      sketch.preload = function() {
-        sketch.loadTable(validFile, 'csv', 'header', resolve, reject);
-      };
-    });
-    assert.equal(table.getRowCount(), 3);
-    assert.strictEqual(table.getRow(0).getString('name'), 'David');
-    assert.strictEqual(table.getRow(0).getNum('age'), 31);
-  });
-
-  test('CSV files should handle commas within quoted fields', async function() {
-    const table = await promisedSketch(function(sketch, resolve, reject) {
-      sketch.preload = function() {
-        sketch.loadTable(validFile, resolve, reject);
-      };
-    });
+  test('CSV files should handle commas within quoted fields', async () => {
+    const table = await mockP5Prototype.loadTable(validFile);
     assert.equal(table.getRowCount(), 4);
     assert.equal(table.getRow(2).get(0), 'David, Jr.');
     assert.equal(table.getRow(2).getString(0), 'David, Jr.');
@@ -156,12 +80,9 @@ suite.todo('loadTable', function() {
     assert.equal(table.getRow(2).getString(1), 11);
   });
 
-  test('CSV files should handle escaped quotes and returns within quoted fields', async function() {
-    const table = await promisedSketch(function(sketch, resolve, reject) {
-      sketch.preload = function() {
-        sketch.loadTable(validFile, resolve, reject);
-      };
-    });
+  test('CSV files should handle escaped quotes and returns within quoted fields', async () => {
+    // TODO: Current parsing does not handle quoted fields
+    const table = await mockP5Prototype.loadTable(validFile);
     assert.equal(table.getRowCount(), 4);
     assert.equal(table.getRow(3).get(0), 'David,\nSr. "the boss"');
   });

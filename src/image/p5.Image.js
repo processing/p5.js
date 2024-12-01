@@ -283,8 +283,6 @@ class Image {
    * </code>
    * </div>
    */
-  /**
-   */
   updatePixels(x, y, w, h) {
     // Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
     const pixelsState = this._pixelsState;
@@ -472,7 +470,7 @@ class Image {
     return region;
   }
 
-  _getPixel(...args) {
+  _getPixel(x, y) {
     let imageData, index;
     imageData = this.drawingContext.getImageData(x, y, 1, 1).data;
     index = 0;
@@ -1454,7 +1452,7 @@ class Image {
   /**
    * Saves the image to a file.
    *
-    * By default, `img.save()` saves the image as a PNG image called
+   * By default, `img.save()` saves the image as a PNG image called
    * `untitled.png`.
    *
    * The first parameter, `filename`, is optional. It's a string that sets the
@@ -1515,6 +1513,12 @@ class Image {
     } else {
       fn.saveCanvas(this.canvas, filename, extension);
     }
+  }
+
+  async toBlob() {
+    return new Promise(resolve => {
+      this.canvas.toBlob(resolve);
+    });
   }
 
   // GIF Section

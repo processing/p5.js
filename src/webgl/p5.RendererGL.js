@@ -5,14 +5,13 @@ import { Matrix } from './p5.Matrix';
 import { Camera } from './p5.Camera';
 import { Vector } from '../math/p5.Vector';
 import { RenderBuffer } from './p5.RenderBuffer';
-import { Geometry } from './p5.Geometry';
 import { DataArray } from './p5.DataArray';
 import { Shader } from './p5.Shader';
 import { Image } from '../image/p5.Image';
 import { Texture, MipmapTexture } from './p5.Texture';
 import { Framebuffer } from './p5.Framebuffer';
 import { Graphics } from '../core/p5.Graphics';
-import { Element } from '../core/p5.Element';
+import { Element } from '../dom/p5.Element';
 import { ShapeBuilder } from './ShapeBuilder';
 import { GeometryBufferCache } from './GeometryBufferCache';
 
@@ -242,6 +241,9 @@ class RendererGL extends Renderer {
 
     // erasing
     this._isErasing = false;
+
+    // simple lines
+    this._simpleLines = false;    
 
     // clipping
     this._clipDepths = [];
@@ -666,6 +668,8 @@ class RendererGL extends Renderer {
     if (!glBuffers) return;
 
     if (glBuffers.indexBuffer) {
+      this._bindBuffer(glBuffers.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
+
       // If this model is using a Uint32Array we need to ensure the
       // OES_element_index_uint WebGL extension is enabled.
       if (
@@ -2038,9 +2042,8 @@ class RendererGL extends Renderer {
       this.shader(this.states.diffusedShader);
       this.states.diffusedShader.setUniform('environmentMap', input);
       this.states.doStroke = false;
-      this.rectMode(constants.CENTER);
       this.noLights();
-      this.rect(0, 0, width, height);
+      this.plane(width, height);
     });
     this.diffusedTextures.set(input, newFramebuffer);
     return newFramebuffer;
@@ -2150,6 +2153,7 @@ class RendererGL extends Renderer {
 
   _setStrokeUniforms(strokeShader) {
     // set the uniform values
+    strokeShader.setUniform('uSimpleLines', this._simpleLines);
     strokeShader.setUniform('uUseLineColor', this._useLineColor);
     strokeShader.setUniform('uMaterialColor', this.states.curStrokeColor);
     strokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);

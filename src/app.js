@@ -5,11 +5,12 @@ import './core/friendly_errors/validate_params';
 import './core/friendly_errors/file_errors';
 import './core/friendly_errors/fes_core';
 import './core/friendly_errors/sketch_reader';
-import './core/p5.Element';
-// import './core/p5.Graphics';
-// import './core/rendering';
 import shape from './shape';
 shape(p5);
+
+// shapes
+import customShapes from './shape';
+customShapes(p5);
 
 //accessibility
 import accessibility from './accessibility';

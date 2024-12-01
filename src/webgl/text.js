@@ -702,7 +702,7 @@ function text(p5, fn){
             this.uvs.push(j, i);
           }
         }
-      }));
+      }, this) );
       geom.computeFaces().computeNormals();
       g = this.geometryBufferCache.ensureCached(geom);
     }

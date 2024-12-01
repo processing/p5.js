@@ -2058,7 +2058,7 @@ suite('p5.RendererGL', function() {
           0, 1, 0, 1
         );
         this._edgesToVertices();
-      });
+      }, myp5._renderer);
       myp5.background(255);
       myp5.fill(255);
       myp5.strokeWeight(4);
@@ -2239,7 +2239,7 @@ suite('p5.RendererGL', function() {
         this.faces.push([0, 1, 2]);
         this.faces.push([0, 2, 3]);
         this.computeNormals();
-      });
+      }, myp5._renderer);
 
       myp5.fill(255);
       myp5.noStroke();

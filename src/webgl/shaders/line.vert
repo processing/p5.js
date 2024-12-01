@@ -18,13 +18,15 @@
 
 #define PROCESSING_LINE_SHADER
 
-precision mediump int;
+precision highp int;
+precision highp float;
 
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 uniform float uStrokeWeight;
 
 uniform bool uUseLineColor;
+uniform bool uSimpleLines;
 uniform vec4 uMaterialColor;
 
 uniform vec4 uViewport;
@@ -66,16 +68,18 @@ vec2 lineIntersection(vec2 aPoint, vec2 aDir, vec2 bPoint, vec2 bDir) {
 
 void main() {
   HOOK_beforeVertex();
-  // Caps have one of either the in or out tangent set to 0
-  vCap = (aTangentIn == vec3(0.)) != (aTangentOut == (vec3(0.)))
-    ? 1. : 0.;
 
-  // Joins have two unique, defined tangents
-  vJoin = (
-    aTangentIn != vec3(0.) &&
-    aTangentOut != vec3(0.) &&
-    aTangentIn != aTangentOut
-  ) ? 1. : 0.;
+  if (!uSimpleLines) {
+      // Caps have one of either the in or out tangent set to 0
+      vCap = (aTangentIn == vec3(0.)) != (aTangentOut == vec3(0.)) ? 1. : 0.;
+
+      // Joins have two unique, defined tangents
+      vJoin = (
+          aTangentIn != vec3(0.) &&
+          aTangentOut != vec3(0.) &&
+          aTangentIn != aTangentOut
+      ) ? 1. : 0.;
+  }
 
   vec4 localPosition = vec4(HOOK_getLocalPosition(aPosition.xyz), 1.);
   vec4 posp = vec4(HOOK_getWorldPosition((uModelViewMatrix * localPosition).xyz), 1.);
@@ -95,13 +99,33 @@ void main() {
 
   // Moving vertices slightly toward the camera
   // to avoid depth-fighting with the fill triangles.
-  // This prevents popping effects due to half of
+  // A mix of scaling and offsetting is used based on distance
+  // Discussion here:
+  // https://github.com/processing/p5.js/issues/7200 
+
+  // using a scale <1 moves the lines towards nearby camera
+  // in order to prevent popping effects due to half of
   // the line disappearing behind the geometry faces.
+  float zDistance = -posp.z; 
+  float distanceFactor = smoothstep(0.0, 800.0, zDistance); 
   
-  float zOffset = mix(-0.00045, -1., facingCamera);
-  posp.z -= zOffset;
-  posqIn.z -= zOffset;
-  posqOut.z -= zOffset;
+  // Discussed here:
+  // http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=252848  
+  float scale = mix(1., 0.995, facingCamera);
+  float dynamicScale = mix(scale, 1.0, distanceFactor); // Closer = more scale, farther = less
+
+  posp.xyz = posp.xyz * dynamicScale;
+  posqIn.xyz = posqIn.xyz * dynamicScale;
+  posqOut.xyz = posqOut.xyz * dynamicScale;
+
+  // Moving vertices slightly toward camera when far away 
+  // https://github.com/processing/p5.js/issues/6956 
+  float zOffset = mix(0., -1., facingCamera);
+  float dynamicZAdjustment = mix(0.0, zOffset, distanceFactor); // Closer = less zAdjustment, farther = more
+
+  posp.z -= dynamicZAdjustment;
+  posqIn.z -= dynamicZAdjustment;
+  posqOut.z -= dynamicZAdjustment;
   
   vec4 p = uProjectionMatrix * posp;
   vec4 qIn = uProjectionMatrix * posqIn;
@@ -150,7 +174,7 @@ void main() {
   }
 
   vec2 offset;
-  if (vJoin == 1.) {
+  if (vJoin == 1. && !uSimpleLines) {
     vTangent = normalize(tangentIn + tangentOut);
     vec2 normalIn = vec2(-tangentIn.y, tangentIn.x);
     vec2 normalOut = vec2(-tangentOut.y, tangentOut.x);
