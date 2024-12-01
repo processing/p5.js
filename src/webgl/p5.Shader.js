@@ -1330,7 +1330,7 @@ p5.Shader = class {
           if (
             data < gl.TEXTURE0 ||
             data > gl.TEXTURE31 ||
-            data === Math.ceil(data)
+            data !== Math.ceil(data)
           ) {
             console.log(
               '🌸 p5.js says: ' +
