@@ -2,11 +2,10 @@
 /*
  *  TODO:
  *   - change renderer.state to use getters for textAlign, textBaseline, etc.
-
  *   - textToPoints: enable passing props in options (textSize, textLeading, etc.)?
  *   - textToPaths: test rendering in p5 (new?/old api) [x] -- inner hole problem
  *   - get axes and values for parsed fonts
- *   - cache parsed fonts (and/or lazy load)
+ *   - cache parsed fonts (and/or lazy load) ?
  *   - test textToPoints with google/variable fonts
  *   - more with variable fonts, do slider example
  *   - better font-loading (google fonts, font-face declarations, multiple fonts with Promise.all())
@@ -14,6 +13,8 @@
  *   - add test for line-height property in textFont() and textProperty()
  *      - how does this integrate with textLeading?
  *   - spurious warning in oneoff.html (local)
+ * 
+ *   - textToPoints/Path: add re-sampling support with current options [x]
  *   - add fontAscent/Descent and textWeight functions [x]
  *   - textToPaths should split into glyphs and paths [x]
  *   - add textFont(string) that forces context2d.font to be set (if including size part) [x]

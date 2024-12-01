@@ -57,7 +57,7 @@
       };
     };
 
-    
+
     let directFontSet = function (p) {
       let font = "italic bold 32px Georgia";
       p.setup = async function () {
@@ -71,12 +71,12 @@
         p.textFont(font = font.replace('italic bold', 'oblique'));
         p.text('direct: ' + font, 20, 120);
 
-        p.textFont(font = font.replace(32,36).replace('oblique', 800));
+        p.textFont(font = font.replace(32, 36).replace('oblique', 800));
         p.text('direct: ' + font, 20, 160);
 
         p.textFont(font = font.replace('800', 'small-caps'));
         p.text('direct: ' + font, 20, 200);
-        
+
         p.textFont(font = '2em BADFONT, Times');
         p.text('direct: ' + font, 20, 240);
 
@@ -215,20 +215,32 @@
     };
 
     const textToPointsSketch = function (p) {
-      let pts, txs, f;
+      let pts, f;
       p.setup = async function () {
-        p.createCanvas(700, 350);
+        p.createCanvas(750, 350);
         p.background(255);
         p.textFont(f = await p.loadFont('./font/LiberationSans-Bold.ttf'), 300);
-
         p.fill(220);
-        p.text('p5.js', 5, 250);
-        p.stroke('green');
-
-        txs = f.textToPoints('p5.js', 5, 250);
-        txs.forEach(pt => p.circle(pt.x, pt.y, 5));
+        p.stroke(0);
+        p.text('p5*js', 5, 250);
+        p.stroke('#E92D55');
+        pts = f.textToPoints('p5*js', 5, 250);
+        pts.forEach(pt => p.circle(pt.x, pt.y, 5));
       };
     };
+
+    let textToPathsSketch = function (p) {
+      let paths, f;
+      p.setup = async function () {
+        p.createCanvas(750, 350);
+        p.background(255);
+        p.textFont(f = await p.loadFont('./font/LiberationSans-Bold.ttf'), 300);
+        p.fill('#E92D55');
+        paths = f.textToPaths('p5*js', 5, 250);
+        //drawPaths(paths, p);
+        f.drawPaths(p.drawingContext, paths, { fill: '#E92D55' });
+      }
+    }
 
     let singleWordBounds = function (p) {
       let font;
@@ -1180,7 +1192,7 @@
         p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
         p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y, rw, rh);
         if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
-        
+
         // draw horizontal line at y=64
         p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y);
 
@@ -2452,6 +2464,7 @@
 
     new p5(textSketch, 'textSketch');
     new p5(textToPointsSketch, 'textToPointsSketch');
+    new p5(textToPathsSketch, 'textToPathsSketch');
     new p5(fontStretchSketch, 'fontStretchSketch');
     new p5(fontStretchViaProp, 'fontStretchViaProp');
     new p5(directFontSet, 'directFontSet');
@@ -2523,6 +2536,10 @@
     <p class="caption">textToPoints</p>
   </div>
 
+  <div id='textToPathsSketch'>
+    <p class="caption">textToPaths</p>
+  </div>
+
   <div id='fontStretchSketch'>
     <p class="caption">fontStretch (via textFont)</p>
   </div>
@@ -2532,7 +2549,7 @@
   </div>
 
   <div id='directFontSet'>
-    <p class="directFontSet">directFontSet</p>
+    <p class="caption">directFontSet</p>
   </div>
 
   <!-- <div id='textStretchViaProp'>
