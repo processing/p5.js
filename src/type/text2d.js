@@ -1,10 +1,10 @@
 
 /*
  *  TODO:
- *   - change renderer.state to use getters for textAlign, textBaseline, etc.
+ *   - get axes and values for parsed fonts
+ *   - change renderer.state to use getters for textAlign, textBaseline, etc. ??
  *   - textToPoints: enable passing props in options (textSize, textLeading, etc.)?
  *   - textToPaths: test rendering in p5 (new?/old api) [x] -- inner hole problem
- *   - get axes and values for parsed fonts
  *   - cache parsed fonts (and/or lazy load) ?
  *   - test textToPoints with google/variable fonts
  *   - more with variable fonts, do slider example
@@ -270,9 +270,9 @@ function text2d(p5, fn) {
 
     // do we have a custon loaded font ?
     if (font instanceof p5.Font) {
-      family = font.font.family;
+      family = font.face.family;
     }
-    else if (font?._data instanceof Uint8Array) {
+    else if (font.data instanceof Uint8Array) {
       family = font.name.fontFamily;
       if (font.name?.fontSubfamily) {
         family += '-' + font.name.fontSubfamily;

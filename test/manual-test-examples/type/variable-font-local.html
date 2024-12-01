@@ -36,6 +36,8 @@
       p.setup = async function () {
         p.createCanvas(800, 200);
         font = await p.loadFont(path);
+        console.log(font.data);
+        
         p.textAlign(p.CENTER, p.CENTER);
         p.textSize(60);
       }
@@ -52,6 +54,9 @@
           fontVariationSettings: `"wght" ${m}, "wdth" ${n}, "opsz" ${o}`
         });
         p.text(`This is a variable font.`, 400, 100);
+
+        let bb = p.textBounds(`This is a variable font.`, 400, 100);
+        p.noFill().stroke(0).rect(bb.x, bb.y, bb.w, bb.h);
       };
     };
 

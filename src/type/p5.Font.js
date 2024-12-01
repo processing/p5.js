@@ -38,22 +38,48 @@ function font(p5, fn) {
   const validFontTypesRe = new RegExp(`\\.(${validFontTypes.join('|')})`, 'i');
   const extractFontNameRe = new RegExp(`([^/]+)(\\.(?:${validFontTypes.join('|')}))`, 'i');
   const invalidFontError = 'Sorry, only TTF, OTF, WOFF and WOFF2 files are supported.';
+  const fontFaceVariations = ['weight', 'stretch', 'style'];
 
   p5.Font = class Font {
 
-    constructor(p, font, name, path, data) {
-      if (!(font instanceof FontFace)) {
+    constructor(p, fontFace, name, path, data) {
+      if (!(fontFace instanceof FontFace)) {
         throw Error('FontFace is required');
       }
       this._pInst = p;
-      this.font = font;
       this.name = name;
       this.path = path;
-      this.tables = data;
+      this.data = data;
+      this.face = fontFace;
+    }
+
+    variations() {
+      let vars = {};
+      if (this.data) {
+        let axes = this.face?.axes;
+        if (axes) {
+          axes.forEach(ax => {
+            vars[ax.tag] = ax.value;
+          });
+        }
+      }
+      fontFaceVariations.forEach(v => {
+        let val = this.face[v];
+        if (val !== 'normal') {
+          vars[v] = vars[v] || val;
+        }
+      });
+      return vars;
     }
 
     metadata() {
-      return this.tables?.name || {};
+      let meta = this.data?.name || {};
+      for (let p in this.face) {
+        if (!/^load/.test(p)) {
+          meta[p] = meta[p] || this.face[p];
+        }
+      }
+      return meta;
     }
 
     fontBounds(...args) { // alias for p5.fontBounds
@@ -133,13 +159,48 @@ function font(p5, fn) {
       lines = this._position(renderer, lines, bounds, width, height);
 
       // convert lines to paths
-      let scale = renderer.states.textSize / this.tables.head.unitsPerEm;
-      let pathsForLine = lines.map(l => this._lineToGlyphs(l, scale, options));
+      let scale = renderer.states.textSize / this.data.head.unitsPerEm;
+      let pathsForLine = lines.map(l => this._lineToGlyphs(l, scale));
 
       // restore the baseline
       renderer.drawingContext.textBaseline = setBaseline;
 
       return pathsForLine;
+    }
+
+    _textToPathPoints(str, x, y, width, height, options) {
+
+      ({ width, height, options } = this._parseArgs(width, height, options));
+
+      // lineate and get the points for each line
+      let cmds = this.textToPaths(str, x, y, width, height, options);
+
+      // divide line-segments with intermediate points
+      const subdivide = (pts, pt1, pt2, maxDist) => {
+        if (fn.dist(pt1.x, pt1.y, pt2.x, pt2.y) > maxDist) {
+          let middle = { x: (pt1.x + pt2.x) / 2, y: (pt1.y + pt2.y) / 2 };
+          pts.push(middle);
+          subdivide(pts, pt1, middle, maxDist);
+          subdivide(pts, middle, pt2, maxDist);
+        }
+      }
+
+      // a point for each path-command plus line subdivisions
+      let pts = [];
+      let { textSize } = this._pInst._renderer.states;
+      let maxDist = textSize / this.data.head.unitsPerEm * 500;
+      for (let i = 0; i < cmds.length; i++) {
+        let { type, data: d } = cmds[i];
+        if (type !== 'Z') {
+          let pt = { x: d[d.length - 2], y: d[d.length - 1] }
+          if (type === 'L' && pts.length) {
+            subdivide(pts, pts[pts.length - 1], pt, maxDist);
+          }
+          pts.push(pt);
+        }
+      }
+
+      return pts;
     }
 
     _parseArgs(width, height, options = {}) {
@@ -189,20 +250,20 @@ function font(p5, fn) {
       return lines.map(coordify);
     }
 
-    _lineToGlyphs(line, scale, opts) {
+    _lineToGlyphs(line, scale) {
 
-      if (!this.tables) {
+      if (!this.data) {
         throw Error('No font data available for "' + this.name
           + '"\nTry downloading a local copy of the font file');
       }
-      let glyphShapes = Typr.U.shape(this.tables, line.text);
+      let glyphShapes = Typr.U.shape(this.data, line.text);
       line.glyphs = this._shapeToPaths(glyphShapes, line, scale);
 
       return line;
     }
 
     _shapeToPaths(glyphs, line, scale) {
-      let font = this.tables;
+      let font = this.data;
       let x = 0, y = 0, paths = [];
 
       if (glyphs.length !== line.text.length) {
@@ -642,17 +703,14 @@ function font(p5, fn) {
     }
 
     const path2curve = (path, path2) => {
-      const p = pathToAbsolute(path),
-        p2 = path2 && pathToAbsolute(path2);
+      const p = pathToAbsolute(path), p2 = path2 && pathToAbsolute(path2);
       const attrs = { x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null };
       const attrs2 = { x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null };
       const pcoms1 = []; // path commands of original path p
       const pcoms2 = []; // path commands of original path p2
       let ii;
       const processPath = (path, d, pcom) => {
-        let nx;
-        let ny;
-        const tq = { T: 1, Q: 1 };
+        let nx, ny, tq = { T: 1, Q: 1 };
         if (!path) {
           return ['C', d.x, d.y, d.x, d.y, d.x, d.y];
         }
@@ -743,7 +801,6 @@ function font(p5, fn) {
         if (p[i]) {
           pfirst = p[i][0];
         } // save current path command
-
         if (pfirst !== 'C') {
           pcoms1[i] = pfirst; // Save current path command
           if (i) {
@@ -751,13 +808,10 @@ function font(p5, fn) {
           } // Get previous path command pcom
         }
         p[i] = processPath(p[i], attrs, pcom);
-
         if (pcoms1[i] !== 'A' && pfirst === 'C') {
           pcoms1[i] = 'C';
         }
-
         fixArc(p, i); // fixArc adds also the right amount of A:s to pcoms1
-
         if (p2) {
           // the same procedures is done to p2
           if (p2[i]) {
@@ -770,19 +824,14 @@ function font(p5, fn) {
             }
           }
           p2[i] = processPath(p2[i], attrs2, pcom);
-
           if (pcoms2[i] !== 'A' && pfirst === 'C') {
             pcoms2[i] = 'C';
           }
-
           fixArc(p2, i);
         }
         fixM(p, p2, attrs, attrs2, i);
         fixM(p2, p, attrs2, attrs, i);
-        const seg = p[i],
-          seg2 = p2 && p2[i],
-          seglen = seg.length,
-          seg2len = p2 && seg2.length;
+        const seg = p[i], seg2 = p2 && p2[i], seglen = seg.length, seg2len = p2 && seg2.length;
         attrs.x = seg[seglen - 2];
         attrs.y = seg[seglen - 1];
         attrs.bx = parseFloat(seg[seglen - 4]) || attrs.x;
@@ -823,15 +872,9 @@ function font(p5, fn) {
           rx = h * rx;
           ry = h * ry;
         }
-        const rx2 = rx * rx,
-          ry2 = ry * ry;
-        const k =
-          (lac === sweep_flag ? -1 : 1) *
-          Math.sqrt(
-            Math.abs(
-              (rx2 * ry2 - rx2 * y * y - ry2 * x * x) / (rx2 * y * y + ry2 * x * x)
-            )
-          );
+        const rx2 = rx * rx, ry2 = ry * ry;
+        const k = (lac === sweep_flag ? -1 : 1) * Math.sqrt(Math.abs(
+          (rx2 * ry2 - rx2 * y * y - ry2 * x * x) / (rx2 * y * y + ry2 * x * x)));
 
         cx = k * rx * y / ry + (x1 + x2) / 2;
         cy = k * -ry * x / rx + (y1 + y2) / 2;
@@ -862,18 +905,12 @@ function font(p5, fn) {
       }
       let df = f2 - f1;
       if (Math.abs(df) > _120) {
-        const f2old = f2,
-          x2old = x2,
-          y2old = y2;
+        const f2old = f2, x2old = x2, y2old = y2;
         f2 = f1 + _120 * (sweep_flag && f2 > f1 ? 1 : -1);
         x2 = cx + rx * Math.cos(f2);
         y2 = cy + ry * Math.sin(f2);
-        res = a2c(x2, y2, rx, ry, angle, 0, sweep_flag, x2old, y2old, [
-          f2,
-          f2old,
-          cx,
-          cy
-        ]);
+        res = a2c(x2, y2, rx, ry, angle, 0, sweep_flag,
+          x2old, y2old, [f2, f2old, cx, cy]);
       }
       df = f2 - f1;
       const c1 = Math.cos(f1),
@@ -892,16 +929,11 @@ function font(p5, fn) {
       if (recursive) {
         return [m2, m3, m4].concat(res);
       } else {
-        res = [m2, m3, m4]
-          .concat(res)
-          .join()
-          .split(',');
+        res = [m2, m3, m4].concat(res).join().split(',');
         const newres = [];
         for (let i = 0, ii = res.length; i < ii; i++) {
-          newres[i] =
-            i % 2
-              ? rotate(res[i - 1], res[i], rad).y
-              : rotate(res[i], res[i + 1], rad).x;
+          newres[i] = i % 2 ? rotate(res[i - 1], res[i], rad).y
+            : rotate(res[i], res[i + 1], rad).x;
         }
         return newres;
       }
@@ -912,52 +944,25 @@ function font(p5, fn) {
       const d = [];
       for (let i = 0, iLen = crp.length; iLen - 2 * !z > i; i += 2) {
         const p = [
-          {
-            x: +crp[i - 2],
-            y: +crp[i - 1]
-          },
-          {
-            x: +crp[i],
-            y: +crp[i + 1]
-          },
-          {
-            x: +crp[i + 2],
-            y: +crp[i + 3]
-          },
-          {
-            x: +crp[i + 4],
-            y: +crp[i + 5]
-          }
+          { x: +crp[i - 2], y: +crp[i - 1] },
+          { x: +crp[i], y: +crp[i + 1] },
+          { x: +crp[i + 2], y: +crp[i + 3] },
+          { x: +crp[i + 4], y: +crp[i + 5] }
         ];
         if (z) {
           if (!i) {
-            p[0] = {
-              x: +crp[iLen - 2],
-              y: +crp[iLen - 1]
-            };
+            p[0] = { x: +crp[iLen - 2], y: +crp[iLen - 1] };
           } else if (iLen - 4 === i) {
-            p[3] = {
-              x: +crp[0],
-              y: +crp[1]
-            };
+            p[3] = { x: +crp[0], y: +crp[1] };
           } else if (iLen - 2 === i) {
-            p[2] = {
-              x: +crp[0],
-              y: +crp[1]
-            };
-            p[3] = {
-              x: +crp[2],
-              y: +crp[3]
-            };
+            p[2] = { x: +crp[0], y: +crp[1] };
+            p[3] = { x: +crp[2], y: +crp[3] };
           }
         } else {
           if (iLen - 4 === i) {
             p[3] = p[2];
           } else if (!i) {
-            p[0] = {
-              x: +crp[i],
-              y: +crp[i + 1]
-            };
+            p[0] = { x: +crp[i], y: +crp[i + 1] };
           }
         }
         d.push(['C',
@@ -968,7 +973,6 @@ function font(p5, fn) {
           p[2].x, p[2].y
         ]);
       }
-
       return d;
     }
 
@@ -977,16 +981,9 @@ function font(p5, fn) {
     }
 
     function q2c(x1, y1, ax, ay, x2, y2) {
-      const _13 = 1 / 3,
-        _23 = 2 / 3;
-      return [
-        _13 * x1 + _23 * ax,
-        _13 * y1 + _23 * ay,
-        _13 * x2 + _23 * ax,
-        _13 * y2 + _23 * ay,
-        x2,
-        y2
-      ];
+      const _13 = 1 / 3, _23 = 2 / 3;
+      return [_13 * x1 + _23 * ax, _13 * y1 + _23 * ay,
+      _13 * x2 + _23 * ax, _13 * y2 + _23 * ay, x2, y2];
     }
 
     const bezlen = (x1, y1, x2, y2, x3, y3, x4, y4, z) => {
@@ -997,10 +994,8 @@ function font(p5, fn) {
       const Tvalues = [-0.1252, 0.1252, -0.3678, 0.3678, -0.5873, 0.5873, -0.7699, 0.7699, -0.9041, 0.9041, -0.9816, 0.9816];
       const Cvalues = [0.2491, 0.2491, 0.2335, 0.2335, 0.2032, 0.2032, 0.1601, 0.1601, 0.1069, 0.1069, 0.0472, 0.0472];
       for (let i = 0; i < n; i++) {
-        const ct = z2 * Tvalues[i] + z2,
-          xbase = base3(ct, x1, x2, x3, x4),
-          ybase = base3(ct, y1, y2, y3, y4),
-          comb = xbase * xbase + ybase * ybase;
+        const ct = z2 * Tvalues[i] + z2, xbase = base3(ct, x1, x2, x3, x4),
+          ybase = base3(ct, y1, y2, y3, y4), comb = xbase * xbase + ybase * ybase;
         sum += Cvalues[i] * Math.sqrt(comb);
       }
       return z2 * sum;
@@ -1046,49 +1041,6 @@ function font(p5, fn) {
 
     return points;
   }
-  /*_pointify(paths, scale, opts) {
-   let pts = this._pathToPoints(paths, scale * 500);
-   paths.points = pts;
-   return pts;
- }
- _pathToPoints(pathData, maxDist) {
-   // recursive function to subdivide lines by adding 
-   // new points until none are longer than maxDist
-   function subdivide(pts, pt1, pt2, maxDist) { // TODO: remove
-     if (fn.dist(pt1.x, pt1.y, pt2.x, pt2.y) > maxDist) {
-       let middle = { x: (pt1.x + pt2.x) / 2, y: (pt1.y + pt2.y) / 2 };
-       pts.push(middle);
-       subdivide(pts, pt1, middle, maxDist);
-       subdivide(pts, middle, pt2, maxDist);
-     }
-   }
-   let pts = [];
-   // iterate over the path, storing each non-control point
-   for (let j = 0; j < pathData.glyphs.length; j++) {
-     let glyph = pathData.glyphs[j];
-     for (let k = 0; k < glyph.path.commands.length; k++) {
-       let { type, data } = glyph.path.commands[k];
-       if (type === 'M' || type === 'L') {
-         let pt = { x: data[0], y: data[1] };
-         if (type == "L" && maxDist && pts.length > 1) {
-           subdivide(pts, pts[pts.length - 1], pt, maxDist);
-         }
-         pts.push(pt);
-       }
-       else if (type === 'C') {
-         if (data.length !== 6) throw Error('Invalid data length');
-         pts.push({ x: data[4], y: data[5] });
-       }
-       else if (type === 'Q') {
-         if (data.length !== 4) throw Error('Invalid data length');
-         pts.push({ x: data[2], y: data[3] });
-         //console.log('Q', data, pts[pts.length - 1]);
-
-       }
-     }
-   }
-   return pts;
- }*/
 };
 
 export default font;

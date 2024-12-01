@@ -33,6 +33,8 @@ Font-variation style properties:
       margin: 100px 0px;
     }
   </style>
+  <!-- link fontfaceobserver.js in the head -->
+  <script src='./fontfaceobserver.standalone.js'></script>
 </head>
 
 
@@ -40,11 +42,12 @@ Font-variation style properties:
 <body>
   <script type='module'>
     import p5 from '../../../src/app.js';
+
     let sketch = function (p) {
       let fonts, fontUrl = 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wdth,wght@75..100,200..800&display=swap';
       p.setup = async function () {
         p.createCanvas(800, 200);
-        fonts = await loadGoogleFontSet(p, fontUrl);
+        fonts = await loadGoogleFontSet(p, 'Bricolage Grotesque', fontUrl);
         p.textAlign(p.CENTER, p.CENTER);
         p.textSize(60);
       }
@@ -62,20 +65,23 @@ Font-variation style properties:
           fontVariationSettings: `'wght' ${m}, 'wdth' ${n}, 'opsz' ${o}`
         });
         p.text(`This is a variable font.`, 400, 100);
+        
+        let bb = p.textBounds(`This is a variable font.`, 400, 100);
+        p.noFill().stroke(0).rect(bb.x, bb.y, bb.w, bb.h);
       };
 
-      document.fonts.onloadingdone = () => {
-        console.log('Fonts loaded', Array.from(document.fonts));
+      p5.Font.variationsRaw = function () {
+        return fonts[0].fontFace.tables.fvar.instances.map(i => i.coordinates);
       }
 
-      async function loadGoogleFontSet(p, url) {
-        injectFontLink(url);
-        await document.fonts.ready; // ??
-        let pfonts = Array.from(document.fonts).map(f => {
-          let pf = new p5.Font(p, f);
-          pf.path ??= url;
+      async function loadGoogleFontSet(p, name, url) {
+        injectFontLink(fontUrl);
+        const obs = new FontFaceObserver(name);
+        await obs.load();
+        return Array.from(document.fonts).map(f => {
+          if (name !== f.family) throw Error('Font-name mismatch');
+          return new p5.Font(p, f, name, fontUrl)
         });
-        return pfonts;
       }
 
       function injectFontLink(href) {
