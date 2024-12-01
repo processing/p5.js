@@ -422,10 +422,12 @@ function font(p5, fn) {
     try {
       // load the raw font bytes
       let result = await fn.loadBytes(path);
-
+      
       // parse the font data
-      let fonts = Typr.parse(result.bytes);
-      if (fonts.length !== 1) throw Error('Invalid font data (1)');
+      let fonts = Typr.parse(result);
+      if (fonts.length !== 1 || fonts[0]._data.length === 0) {
+        throw Error('Unable to parse font data');
+      }
 
       // make sure we have a valid name
       name = name || extractFontName(fonts[0], path);
@@ -482,8 +484,13 @@ function font(p5, fn) {
       }
       fontArg = path;
     }
+
     // create/return the FontFace object
-    return new FontFace(name, fontArg, descriptors);
+    let face = new FontFace(name, fontArg, descriptors);
+    if (face.status === 'error') {
+      throw Error('Failed to create FontFace for "' + name + '"');
+    }
+    return face;
   }
 
   function extractFontName(font, path) {
