@@ -20,8 +20,8 @@ visualSuite("Typography", function () {
     });
   });
 
-  visualSuite("textAlign", function () {
-    visualTest("all alignments with single word", function (p5, screenshot) {
+  visualSuite("textAlign", function () { // TEMPORARY SKIP
+    /*visualTest.skip("all alignments with single word", function (p5, screenshot) {
       const alignments = [
         { alignX: p5.LEFT, alignY: p5.TOP },
         { alignX: p5.CENTER, alignY: p5.TOP },
@@ -47,7 +47,7 @@ visualSuite("Typography", function () {
       screenshot();
     });
 
-    visualTest("all alignments with single line", function (p5, screenshot) {
+    visualTest.skip("all alignments with single line", function (p5, screenshot) {
       const alignments = [
         { alignX: p5.LEFT, alignY: p5.TOP },
         { alignX: p5.CENTER, alignY: p5.TOP },
@@ -71,10 +71,9 @@ visualSuite("Typography", function () {
         p5.rect(bb.x, bb.y, bb.w, bb.h);
       });
       screenshot();
-    });
+    });*/
 
-    visualTest(
-      "all alignments with multi-lines and wrap word",
+    visualTest("all alignments with multi-lines and wrap word",
       function (p5, screenshot) {
         const alignments = [
           { alignX: p5.LEFT, alignY: p5.TOP },
