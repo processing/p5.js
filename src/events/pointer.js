@@ -1158,7 +1158,7 @@ function pointer(p5, fn){
         if (executeDefault === false) {
           e.preventDefault();
         }
-      } else if (typeof context.mouseDragged === 'function') {
+      } else if (this.mouseIsPressed && typeof context.mouseDragged === 'function') {
         executeDefault = context.mouseDragged(e);
         if (executeDefault === false) {
           e.preventDefault();
