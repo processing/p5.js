@@ -387,7 +387,6 @@ class Shape {
 
   // maybe call this clear() for consistency with PrimitiveShapeCreators.clear()?
   reset() {
-    this.kind = null;
     this.#vertexProperties = { ...this.#initialVertexProperties };
     this.kind = null;
     this.contours = [];
