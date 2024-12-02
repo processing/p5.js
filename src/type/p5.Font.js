@@ -109,14 +109,11 @@ function font(p5, fn) {
     textToPoints(str, x, y, width, height, options) {
       ({ width, height, options } = this._parseArgs(width, height, options));
 
-      // lineate and get the points for each line
+      // lineate and get the glyphs for each line
       let glyphs = this.textToPaths(str, x, y, width, height, options);
 
-      // create a 2d array with path elements: [type, data[0], data[1], ...]
-      let cmds = glyphs.map(g => [g.type, ...g.data]); // TODO: rm
-
-      // convert paths to points with {sampleFactor, simplifyThreshold}
-      return pathToPoints(cmds, options);
+      // convert glyphs to points array with {sampleFactor, simplifyThreshold}
+      return pathToPoints(glyphs, options);
     }
 
     static async list(log = false) { // tmp
@@ -176,24 +173,25 @@ function font(p5, fn) {
       let cmds = this.textToPaths(str, x, y, width, height, options);
 
       // divide line-segments with intermediate points
-      const subdivide = (pts, pt1, pt2, maxDist) => {
-        if (fn.dist(pt1.x, pt1.y, pt2.x, pt2.y) > maxDist) {
+      const subdivide = (pts, pt1, pt2, md) => {
+        if (fn.dist(pt1.x, pt1.y, pt2.x, pt2.y) > md) {
           let middle = { x: (pt1.x + pt2.x) / 2, y: (pt1.y + pt2.y) / 2 };
           pts.push(middle);
-          subdivide(pts, pt1, middle, maxDist);
-          subdivide(pts, middle, pt2, maxDist);
+          subdivide(pts, pt1, middle, md);
+          subdivide(pts, middle, pt2, md);
         }
       }
 
       // a point for each path-command plus line subdivisions
       let pts = [];
       let { textSize } = this._pInst._renderer.states;
-      let maxDist = textSize / this.data.head.unitsPerEm * 500;
+      let maxDist = (textSize / this.data.head.unitsPerEm) * 500;
+      
       for (let i = 0; i < cmds.length; i++) {
         let { type, data: d } = cmds[i];
         if (type !== 'Z') {
           let pt = { x: d[d.length - 2], y: d[d.length - 1] }
-          if (type === 'L' && pts.length) {
+          if (type === 'L' && pts.length && !options?.nodivide > 0) {
             subdivide(pts, pts[pts.length - 1], pt, maxDist);
           }
           pts.push(pt);
@@ -281,7 +279,7 @@ function font(p5, fn) {
         let glyph = { g: line.text[i], /*points: [],*/ path: { commands: [] } };
 
         for (let j = 0; j < cmds.length; j++) {
-          let type = cmds[j], command = { type, data: [] };
+          let type = cmds[j], command = [ type ];
           if (type in pathArgCounts) {
             let argCount = pathArgCounts[type];
             for (let k = 0; k < argCount; k += 2) {
@@ -289,8 +287,8 @@ function font(p5, fn) {
               let gy = crds[k + crdIdx + 1] + y + dy;
               let fx = line.x + gx * scale;
               let fy = line.y + gy * -scale;
-              command.data.push(fx);
-              command.data.push(fy);
+              command.push(fx);
+              command.push(fy);
               /*if (k === argCount - 2) {
                 glyph.points.push({ x: fx, y: fy });
               }*/
@@ -317,7 +315,7 @@ function font(p5, fn) {
       return metrics;
     }
 
-    drawPaths(ctx, commands, opts) {
+    drawPaths(ctx, commands, opts) { // for debugging
       ctx.strokeStyle = opts?.stroke || ctx.strokeStyle;
       ctx.fillStyle = opts?.fill || ctx.strokeStyle;
       ctx.beginPath();
@@ -422,7 +420,7 @@ function font(p5, fn) {
     try {
       // load the raw font bytes
       let result = await fn.loadBytes(path);
-      
+
       // parse the font data
       let fonts = Typr.parse(result);
       if (fonts.length !== 1 || fonts[0]._data.length === 0) {
@@ -517,7 +515,6 @@ function font(p5, fn) {
   };
 
   function pathToPoints(cmds, options) {
-    //console.log('pathToPoints', cmds, options);
 
     const parseOpts = (options, defaults) => {
       if (typeof options !== 'object') {

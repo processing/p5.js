@@ -1153,7 +1153,7 @@ function text2d(p5, fn) {
       return; // don't render lines beyond minY/maxY
     }
 
-    this._pInst.push(); // fix to v1 #803
+    this._pInst.push();
 
     // no stroke unless specified by user
     if (states.doStroke && states.strokeSet) {
