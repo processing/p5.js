@@ -178,7 +178,7 @@ class Segment extends ShapePrimitive {
   }
 
   getEndVertex() {
-    throw new Error('Method getEndVertex() must be implemented.');
+    return this.vertices.at(-1);
   }
 }
 
@@ -196,13 +196,7 @@ class LineSegment extends Segment {
   accept(visitor) {
     visitor.visitLineSegment(this);
   }
-
-  getEndVertex() {
-    return this.vertices[0];
-  }
 }
-
-// TOOO: Finish implementing remaining primitive classes
 
 class BezierSegment extends Segment {
   constructor(...vertices) {
