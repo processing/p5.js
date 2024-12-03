@@ -324,7 +324,7 @@ class PrimitiveShapeCreators {
     creators.set(`vertex-${constants.QUAD_STRIP}`, (...vertices) => new QuadStrip(...vertices));
 
     // bezierVertex
-    creators.set(`bezierVertex-${constants.EMPTY_PATH}`, (...vertices) => new Anchor(...vertices));
+    creators.set(`bezierVertex-${constants.EMPTY_PATH}`, (order, ...vertices) => new Anchor(...vertices));
     creators.set(`bezierVertex-${constants.PATH}`, (order, ...vertices) => new BezierSegment(order, ...vertices));
 
     // splineVertex
@@ -417,26 +417,69 @@ class Shape {
 
   /*
   Note: Internally, #bezierOrder is stored as an array, in order to accommodate
-  primitives including Bezier segments, Bezier triangles, and Bezier quads. Whereas
-  a segment may have #bezierOrder [m], a quad may have #bezierOrder [m, n], for example.
+  primitives including Bezier segments, Bezier triangles, and Bezier quads. For example,
+  a segment may have #bezierOrder [m], whereas a quad may have #bezierOrder [m, n].
    */
 
   bezierOrder(...order) {
     this.#bezierOrder = order;
   }
 
-  vertex(position, textureCoordinates) {
+  #createVertex(position, textureCoordinates) {
     this.#vertexProperties.position = position;
 
     if (textureCoordinates !== undefined) {
       this.#vertexProperties.textureCoordinates = textureCoordinates;
     }
 
-    let vertex = new Vertex(this.#vertexProperties);
-    let lastContour = this.at(-1);
-    let primitiveShapeCreator = this.#primitiveShapeCreators.get('vertex', lastContour.kind);
-    let primitiveShape = primitiveShapeCreator(vertex);
+    return new Vertex(this.#vertexProperties);
+  }
+
+  #createPrimitiveShape(vertexKind, shapeKind, ...vertices) {
+    let primitiveShapeCreator = this.#primitiveShapeCreators.get(
+      vertexKind, shapeKind
+    );
+
+    return  vertexKind === 'bezierVertex' ?
+      primitiveShapeCreator(this.#bezierOrder, ...vertices) :
+      primitiveShapeCreator(...vertices);
+  }
+
+  /*
+    #generalVertex() is reused by the special vertex functions,
+    including vertex(), bezierVertex(), splineVertex(), and arcVertex():
+
+    It creates a vertex, builds a primitive including that
+    vertex, and has the primitive add itself to the shape.
+  */
+  #generalVertex(kind, position, textureCoordinates) {
+    let vertexKind = kind;
+    let lastContourKind = this.at(-1).kind;
+    let vertex = this.#createVertex(position, textureCoordinates);
+
+    let primitiveShape = this.#createPrimitiveShape(
+      vertexKind,
+      lastContourKind,
+      vertex
+    );
+
     primitiveShape.addToShape(this);
+  }
+
+  vertex(position, textureCoordinates) {
+    this.#generalVertex('vertex', position, textureCoordinates);
+  }
+
+  bezierVertex(position, textureCoordinates) {
+    this.#generalVertex('bezierVertex', position, textureCoordinates);
+  }
+
+  splineVertex() {
+    this.#generalVertex('splineVertex', position, textureCoordinates);
+  }
+
+  arcVertex() {
+    this.#generalVertex('arcVertex', position, textureCoordinates);
   }
 
   beginShape(shapeKind = constants.PATH) {
