@@ -388,7 +388,7 @@ class Shape {
   // maybe call this clear() for consistency with PrimitiveShapeCreators.clear()?
   // note: p5.Geometry has a reset() method, but also clearColors()
   // looks like reset() isn't in the public reference, so maybe we can switch
-  // everything to clear()? Not sure if reset/clear is used in other classes, 
+  // everything to clear()? Not sure if reset/clear is used in other classes,
   // but it'd be good if geometries and shapes are consistent
   reset() {
     this.#vertexProperties = { ...this.#initialVertexProperties };
