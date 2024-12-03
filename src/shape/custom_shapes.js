@@ -204,9 +204,8 @@ Bezier-based primitives (such as segments, triangle patches, and quad patches)
 could be accommodated by letting order be an array. Then a segment could
 have order [m], and a quad patch could have order [m, n], for example.
 
-This would allow Shape.prototype.bezierVertex() to pass in the same data to
-`primitiveShapeCreator()`, which it gets from #primitiveShapeCreators,
-regardless of the type of primitive.
+This would allow Shape.prototype.bezierVertex() to pass in the same type of
+data to `primitiveShapeCreator()`, regardless of the type of primitive.
 
 However, while Bezier segments are the only Bezier-based primitives supported,
 order is implemented as a number, rather than an array.
