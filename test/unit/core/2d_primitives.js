@@ -1,72 +1,63 @@
-import p5 from '../../../src/app.js';
+import { mockP5, mockP5Prototype } from '../../js/mocks';
+import primitives from '../../../src/shape/2d_primitives';
 
 suite('2D Primitives', function() {
-  var myp5;
-
   beforeAll(function() {
-    new p5(function(p) {
-      p.setup = function() {
-        myp5 = p;
-      };
-    });
-  });
-
-  afterAll(async function() {
-    await myp5.remove();
+    primitives(mockP5, mockP5Prototype);
   });
 
   suite('p5.prototype.arc', function() {
     test('should be a function', function() {
-      assert.ok(myp5.arc);
-      assert.typeOf(myp5.arc, 'function');
+      assert.ok(mockP5Prototype.arc);
+      assert.typeOf(mockP5Prototype.arc, 'function');
     });
   });
 
   suite('p5.prototype.ellipse', function() {
     test('should be a function', function() {
-      assert.ok(myp5.ellipse);
-      assert.typeOf(myp5.ellipse, 'function');
+      assert.ok(mockP5Prototype.ellipse);
+      assert.typeOf(mockP5Prototype.ellipse, 'function');
     });
   });
 
   suite('p5.prototype.line', function() {
     test('should be a function', function() {
-      assert.ok(myp5.line);
-      assert.typeOf(myp5.line, 'function');
+      assert.ok(mockP5Prototype.line);
+      assert.typeOf(mockP5Prototype.line, 'function');
     });
   });
 
   suite('p5.prototype.point', function() {
     test('should be a function', function() {
-      assert.ok(myp5.point);
-      assert.typeOf(myp5.point, 'function');
+      assert.ok(mockP5Prototype.point);
+      assert.typeOf(mockP5Prototype.point, 'function');
     });
   });
 
   suite('p5.prototype.quad', function() {
     test('should be a function', function() {
-      assert.ok(myp5.quad);
-      assert.typeOf(myp5.quad, 'function');
+      assert.ok(mockP5Prototype.quad);
+      assert.typeOf(mockP5Prototype.quad, 'function');
     });
   });
 
   suite('p5.prototype.rect', function() {
     test('should be a function', function() {
-      assert.ok(myp5.rect);
-      assert.typeOf(myp5.rect, 'function');
+      assert.ok(mockP5Prototype.rect);
+      assert.typeOf(mockP5Prototype.rect, 'function');
     });
   });
 
   suite('p5.prototype.triangle', function() {
     test('should be a function', function() {
-      assert.ok(myp5.triangle);
-      assert.typeOf(myp5.triangle, 'function');
+      assert.ok(mockP5Prototype.triangle);
+      assert.typeOf(mockP5Prototype.triangle, 'function');
     });
   });
   suite('p5.prototype.square', function() {
     test('should be a function', function() {
-      assert.ok(myp5.square);
-      assert.typeOf(myp5.square, 'function');
+      assert.ok(mockP5Prototype.square);
+      assert.typeOf(mockP5Prototype.square, 'function');
     });
   });
 
@@ -75,7 +66,7 @@ suite('2D Primitives', function() {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
-          angles = myp5._normalizeArcAngles(
+          angles = mockP5Prototype._normalizeArcAngles(
             2 * Math.PI * i,
             2 * Math.PI * j,
             500,
@@ -92,7 +83,7 @@ suite('2D Primitives', function() {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
-          angles = myp5._normalizeArcAngles(
+          angles = mockP5Prototype._normalizeArcAngles(
             2 * Math.PI * i + 1,
             2 * Math.PI * j + 1,
             500,
@@ -109,7 +100,7 @@ suite('2D Primitives', function() {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
-          angles = myp5._normalizeArcAngles(
+          angles = mockP5Prototype._normalizeArcAngles(
             2 * Math.PI * i - 0.000001,
             2 * Math.PI * j + 0.000001,
             500,
@@ -126,7 +117,7 @@ suite('2D Primitives', function() {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
-          angles = myp5._normalizeArcAngles(
+          angles = mockP5Prototype._normalizeArcAngles(
             2 * Math.PI * i + 0.000001,
             2 * Math.PI * j - 0.000001,
             500,
@@ -143,7 +134,7 @@ suite('2D Primitives', function() {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
-          angles = myp5._normalizeArcAngles(
+          angles = mockP5Prototype._normalizeArcAngles(
             2 * Math.PI * i + 0.999999,
             2 * Math.PI * j + 1.000001,
             500,
@@ -160,7 +151,7 @@ suite('2D Primitives', function() {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
-          angles = myp5._normalizeArcAngles(
+          angles = mockP5Prototype._normalizeArcAngles(
             2 * Math.PI * i + 1.000001,
             2 * Math.PI * j + 0.999999,
             500,
@@ -177,7 +168,7 @@ suite('2D Primitives', function() {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
-          angles = myp5._normalizeArcAngles(
+          angles = mockP5Prototype._normalizeArcAngles(
             2 * Math.PI * i - 0.1,
             2 * Math.PI * j + 0.1,
             500,
@@ -194,7 +185,7 @@ suite('2D Primitives', function() {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
-          angles = myp5._normalizeArcAngles(
+          angles = mockP5Prototype._normalizeArcAngles(
             2 * Math.PI * i + 0.1,
             2 * Math.PI * j - 0.1,
             500,
@@ -211,7 +202,7 @@ suite('2D Primitives', function() {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
-          angles = myp5._normalizeArcAngles(
+          angles = mockP5Prototype._normalizeArcAngles(
             2 * Math.PI * i + 0.9,
             2 * Math.PI * j + 1.1,
             500,
@@ -228,7 +219,7 @@ suite('2D Primitives', function() {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
-          angles = myp5._normalizeArcAngles(
+          angles = mockP5Prototype._normalizeArcAngles(
             2 * Math.PI * i + 1.1,
             2 * Math.PI * j + 0.9,
             500,
@@ -245,7 +236,7 @@ suite('2D Primitives', function() {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
-          angles = myp5._normalizeArcAngles(
+          angles = mockP5Prototype._normalizeArcAngles(
             2 * Math.PI * (i + 40 / 360),
             2 * Math.PI * (j + 230 / 360),
             500,
@@ -262,7 +253,7 @@ suite('2D Primitives', function() {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
-          angles = myp5._normalizeArcAngles(
+          angles = mockP5Prototype._normalizeArcAngles(
             2 * Math.PI * (i + 320 / 360),
             2 * Math.PI * (j + 130 / 360),
             500,
