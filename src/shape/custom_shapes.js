@@ -198,26 +198,20 @@ class LineSegment extends Segment {
   }
 }
 
-/*
-Note:
-Bezier-based primitives (such as segments, triangle patches, and quad patches)
-could be accommodated by letting order be an array. Then a segment could
-have order [m], and a quad patch could have order [m, n], for example.
-
-This would allow Shape.prototype.bezierVertex() to pass in the same type of
-data to `primitiveShapeCreator()`, regardless of the type of primitive.
-
-However, while Bezier segments are the only Bezier-based primitives supported,
-order is implemented as a number, rather than an array.
-*/
 class BezierSegment extends Segment {
   #order;
   #vertexCapacity;
 
   constructor(order, ...vertices) {
     super(...vertices);
-    this.#order = order;
-    this.#vertexCapacity = order;
+
+    // Order m may sometimes be passed as an array [m], since arrays
+    // may be used elsewhere to store order of
+    // Bezier curves and surfaces in a common format
+
+    let numericalOrder = Array.isArray(order) ? order[0] : order;
+    this.#order = numericalOrder;
+    this.#vertexCapacity = numericalOrder;
   }
 
   get order() {
@@ -361,6 +355,7 @@ class Shape {
   #vertexProperties;
   #initialVertexProperties;
   #primitiveShapeCreators;
+  #bezierOrder;
   kind = null;
   contours = [];
 
@@ -418,6 +413,16 @@ class Shape {
     this.#vertexProperties = { ...this.#initialVertexProperties };
     this.kind = null;
     this.contours = [];
+  }
+
+  /*
+  Note: Internally, #bezierOrder is stored as an array, in order to accommodate
+  primitives including Bezier segments, Bezier triangles, and Bezier quads. Whereas
+  a segment may have #bezierOrder [m], a quad may have #bezierOrder [m, n], for example.
+   */
+
+  bezierOrder(...order) {
+    this.#bezierOrder = order;
   }
 
   vertex(position, textureCoordinates) {
