@@ -199,13 +199,31 @@ class LineSegment extends Segment {
 }
 
 class BezierSegment extends Segment {
-  constructor(...vertices) {
+  #order;
+  #vertexCapacity;
+
+  constructor(order, ...vertices) {
     super(...vertices);
+    this.#order = order;
+    this.#vertexCapacity = order;
+  }
+
+  get order() {
+    return this.#order;
+  }
+
+  get vertexCapacity() {
+    return this.#vertexCapacity;
+  }
+
+  accept(visitor) {
+    visitor.visitBezierSegment(this);
   }
 }
 
 // consider type and end modes -- see #6766)
 // may want to use separate classes, but maybe not
+// may need to implement getEndVertex() to override super.getEndVertex()
 class SplineSegment extends Segment {
   constructor(...vertices) {
     super(...vertices);
@@ -301,7 +319,7 @@ class PrimitiveShapeCreators {
 
     // bezierVertex
     creators.set(`bezierVertex-${constants.EMPTY_PATH}`, (...vertices) => new Anchor(...vertices));
-    creators.set(`bezierVertex-${constants.PATH}`, (...vertices) => new BezierSegment(...vertices));
+    creators.set(`bezierVertex-${constants.PATH}`, (order, ...vertices) => new BezierSegment(order, ...vertices));
 
     // splineVertex
     creators.set(`splineVertex-${constants.EMPTY_PATH}`, (...vertices) => new Anchor(...vertices));
