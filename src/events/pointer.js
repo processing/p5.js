@@ -1,6 +1,6 @@
 /**
  * @module Events
- * @submodule Mouse
+ * @submodule Pointer
  * @for p5
  * @requires core
  * @requires constants
@@ -8,7 +8,7 @@
 
 import * as constants from '../core/constants';
 
-function mouse(p5, fn){
+function pointer(p5, fn){
   /**
    * A `Number` system variable that tracks the mouse's horizontal movement.
    *
@@ -758,6 +758,92 @@ function mouse(p5, fn){
    */
   fn.mouseButton = 0;
 
+   /**
+   * An `Array` of all the current touch points on a touchscreen device.
+   *
+   * The `touches` array is empty by default. When the user touches their
+   * screen, a new touch point is tracked and added to the array. Touch points
+   * are `Objects` with the following properties:
+   *
+   * ```js
+   * // Iterate over the touches array.
+   * for (let touch of touches) {
+   *   // x-coordinate relative to the top-left
+   *   // corner of the canvas.
+   *   console.log(touch.x);
+   *
+   *   // y-coordinate relative to the top-left
+   *   // corner of the canvas.
+   *   console.log(touch.y);
+   *
+   *   // x-coordinate relative to the top-left
+   *   // corner of the browser.
+   *   console.log(touch.winX);
+   *
+   *   // y-coordinate relative to the top-left
+   *   // corner of the browser.
+   *   console.log(touch.winY);
+   *
+   *   // ID number
+   *   console.log(touch.id);
+   * }
+   * ```
+   *
+   * @property {Object[]} touches
+   * @readOnly
+   *
+   * @example
+   * <div>
+   * <code>
+   * // On a touchscreen device, touch the canvas using one or more fingers
+   * // at the same time.
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   describe(
+   *     'A gray square. White circles appear where the user touches the square.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Draw a circle at each touch point.
+   *   for (let touch of touches) {
+   *     circle(touch.x, touch.y, 40);
+   *   }
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // On a touchscreen device, touch the canvas using one or more fingers
+   * // at the same time.
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   describe(
+   *     'A gray square. Labels appear where the user touches the square, displaying the coordinates.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Draw a label above each touch point.
+   *   for (let touch of touches) {
+   *     text(`${touch.x}, ${touch.y}`, touch.x, touch.y - 40);
+   *   }
+   * }
+   * </code>
+   * </div>
+   */
+   fn.touches = [];
+   fn._activeTouches = new Map();
+
   /**
    * A `Boolean` system variable that's `true` if the mouse is pressed and
    * `false` if not.
@@ -817,27 +903,34 @@ function mouse(p5, fn){
    */
   fn.mouseIsPressed = false;
 
-  fn._updateNextMouseCoords = function(e) {
-    if (this._curElement !== null && (!e.touches || e.touches.length > 0)) {
-      const mousePos = getMousePos(
-        this._curElement.elt,
-        this.width,
-        this.height,
-        e
-      );
-      this.movedX = e.movementX;
-      this.movedY = e.movementY;
-      this.mouseX = mousePos.x;
-      this.mouseY = mousePos.y;
-      this.winMouseX = mousePos.winX;
-      this.winMouseY = mousePos.winY;
+  fn._updatePointerCoords = function (e) {
+    if (this._curElement !== null) {
+       const canvas = this._curElement.elt;
+       const sx = canvas.scrollWidth / this.width || 1;
+       const sy = canvas.scrollHeight / this.height || 1;
+
+       if (e.pointerType == 'touch') {
+          const touches = [];
+          for (const touch of this._activeTouches.values()) {
+             touches.push(getTouchInfo(canvas, sx, sy, touch));
+          }
+          this.touches = touches;
+       } else {
+          const mousePos = getMouseInfo(canvas, sx, sy, e);
+          this.movedX = e.movementX || 0;
+          this.movedY = e.movementY || 0;
+          this.mouseX = mousePos.x;
+          this.mouseY = mousePos.y;
+          this.winMouseX = mousePos.winX;
+          this.winMouseY = mousePos.winY;
+       }
+
+       if (!this._hasMouseInteracted) {
+          this._updateMouseCoords();
+          this._hasMouseInteracted = true;
+       }
     }
-    if (!this._hasMouseInteracted) {
-      // For first draw, make previous and next equal
-      this._updateMouseCoords();
-      this._hasMouseInteracted = true;
-    }
-  };
+ };
 
   fn._updateMouseCoords = function() {
     this.pmouseX = this.mouseX;
@@ -847,26 +940,26 @@ function mouse(p5, fn){
     this._pmouseWheelDeltaY = this._mouseWheelDeltaY;
   };
 
-  function getMousePos(canvas, w, h, evt) {
-    if (evt && !evt.clientX) {
-      // use touches if touch and not mouse
-      if (evt.touches) {
-        evt = evt.touches[0];
-      } else if (evt.changedTouches) {
-        evt = evt.changedTouches[0];
-      }
-    }
+  function getMouseInfo(canvas, sx, sy, evt) {
     const rect = canvas.getBoundingClientRect();
-    const sx = canvas.scrollWidth / w || 1;
-    const sy = canvas.scrollHeight / h || 1;
     return {
-      x: (evt.clientX - rect.left) / sx,
-      y: (evt.clientY - rect.top) / sy,
-      winX: evt.clientX,
-      winY: evt.clientY,
-      id: evt.identifier
+       x: (evt.clientX - rect.left) / sx,
+       y: (evt.clientY - rect.top) / sy,
+       winX: evt.clientX,
+       winY: evt.clientY,
     };
-  }
+ }
+
+ function getTouchInfo(canvas, sx, sy, touch) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+     x: (touch.clientX - rect.left) / sx,
+     y: (touch.clientY - rect.top) / sy,
+     winX: touch.clientX,
+     winY: touch.clientY,
+     id: touch.pointerId,
+  };
+}
 
   fn._setMouseButton = function(e) {
     if (e.button === 1) {
@@ -1004,10 +1097,7 @@ function mouse(p5, fn){
    * ```
    *
    * On touchscreen devices, `mouseDragged()` will run when a user moves a touch
-   * point if <a href="#/p5/touchMoved">touchMoved()</a> isn’t declared. If
-   * <a href="#/p5/touchMoved">touchMoved()</a> is declared, then
-   * <a href="#/p5/touchMoved">touchMoved()</a> will run when a user moves a
-   * touch point and `mouseDragged()` won’t.
+   * point.
    *
    * Browsers may have default behaviors attached to various mouse events. For
    * example, some browsers highlight text when the user moves the mouse while
@@ -1054,30 +1144,26 @@ function mouse(p5, fn){
    * </code>
    * </div>
    */
-  fn._onmousemove = function(e) {
+  fn._onpointermove = function(e) {
     const context = this._isGlobal ? window : this;
     let executeDefault;
-    this._updateNextMouseCoords(e);
-    if (!this.mouseIsPressed) {
-      if (typeof context.mouseMoved === 'function') {
+    this._updatePointerCoords(e);
+
+    if(e.pointerType === 'touch') {
+      this._activeTouches.set(e.pointerId, e);
+    }
+
+      if (!this.mouseIsPressed && typeof context.mouseMoved === 'function') {
         executeDefault = context.mouseMoved(e);
         if (executeDefault === false) {
           e.preventDefault();
         }
-      }
-    } else {
-      if (typeof context.mouseDragged === 'function') {
+      } else if (this.mouseIsPressed && typeof context.mouseDragged === 'function') {
         executeDefault = context.mouseDragged(e);
         if (executeDefault === false) {
           e.preventDefault();
         }
-      } else if (typeof context.touchMoved === 'function') {
-        executeDefault = context.touchMoved(e);
-        if (executeDefault === false) {
-          e.preventDefault();
-        }
-      }
-    }
+      } 
   };
 
   /**
@@ -1120,10 +1206,7 @@ function mouse(p5, fn){
    * ```
    *
    * On touchscreen devices, `mousePressed()` will run when a user’s touch
-   * begins if <a href="#/p5/touchStarted">touchStarted()</a> isn’t declared. If
-   * <a href="#/p5/touchStarted">touchStarted()</a> is declared, then
-   * <a href="#/p5/touchStarted">touchStarted()</a> will run when a user’s touch
-   * begins and `mousePressed()` won’t.
+   * begins.
    *
    * Browsers may have default behaviors attached to various mouse events. For
    * example, some browsers highlight text when the user moves the mouse while
@@ -1225,31 +1308,25 @@ function mouse(p5, fn){
    * </code>
    * </div>
    */
-  fn._onmousedown = function(e) {
+  fn._onpointerdown = function(e) {
     const context = this._isGlobal ? window : this;
     let executeDefault;
     this.mouseIsPressed = true;
-    this._setMouseButton(e);
-    this._updateNextMouseCoords(e);
 
-    // _ontouchstart triggers first and sets this._touchstart
-    if (this._touchstart) {
-      return;
-    }
+    if (e.pointerType === 'touch') {
+      this._activeTouches.set(e.pointerId, e);
+   } else {
+      this._setMouseButton(e);
+   }
+
+   this._updatePointerCoords(e);
 
     if (typeof context.mousePressed === 'function') {
       executeDefault = context.mousePressed(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
-    } else if (typeof context.touchStarted === 'function') {
-      executeDefault = context.touchStarted(e);
-      if (executeDefault === false) {
-        e.preventDefault();
-      }
-    }
-
-    this._touchstart = false;
+    } 
   };
 
   /**
@@ -1293,10 +1370,7 @@ function mouse(p5, fn){
    * ```
    *
    * On touchscreen devices, `mouseReleased()` will run when a user’s touch
-   * ends if <a href="#/p5/touchEnded">touchEnded()</a> isn’t declared. If
-   * <a href="#/p5/touchEnded">touchEnded()</a> is declared, then
-   * <a href="#/p5/touchEnded">touchEnded()</a> will run when a user’s touch
-   * ends and `mouseReleased()` won’t.
+   * ends.
    *
    * Browsers may have default behaviors attached to various mouse events. For
    * example, some browsers highlight text when the user moves the mouse while
@@ -1398,32 +1472,27 @@ function mouse(p5, fn){
    * </code>
    * </div>
    */
-  fn._onmouseup = function(e) {
+  fn._onpointerup = function(e) {
     const context = this._isGlobal ? window : this;
     let executeDefault;
     this.mouseIsPressed = false;
 
-    // _ontouchend triggers first and sets this._touchend
-    if (this._touchend) {
-      return;
+    if(e.pointerType == 'touch'){
+      this._activeTouches.delete(e.pointerId);
     }
 
+    this._updatePointerCoords(e);
+   
     if (typeof context.mouseReleased === 'function') {
       executeDefault = context.mouseReleased(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
-    } else if (typeof context.touchEnded === 'function') {
-      executeDefault = context.touchEnded(e);
-      if (executeDefault === false) {
-        e.preventDefault();
-      }
     }
-    this._touchend = false;
   };
 
-  fn._ondragend = fn._onmouseup;
-  fn._ondragover = fn._onmousemove;
+  fn._ondragend = fn._onpointerup;
+  fn._ondragover = fn._onpointermove;
 
   /**
    * A function that's called once after a mouse button is pressed and released.
@@ -1466,10 +1535,7 @@ function mouse(p5, fn){
    * ```
    *
    * On touchscreen devices, `mouseClicked()` will run when a user’s touch
-   * ends if <a href="#/p5/touchEnded">touchEnded()</a> isn’t declared. If
-   * <a href="#/p5/touchEnded">touchEnded()</a> is declared, then
-   * <a href="#/p5/touchEnded">touchEnded()</a> will run when a user’s touch
-   * ends and `mouseClicked()` won’t.
+   * ends.
    *
    * Browsers may have default behaviors attached to various mouse events. For
    * example, some browsers highlight text when the user moves the mouse while
@@ -1989,8 +2055,8 @@ function mouse(p5, fn){
   };
 }
 
-export default mouse;
+export default pointer;
 
 if(typeof p5 !== 'undefined'){
-  mouse(p5, p5.prototype);
+  pointer(p5, p5.prototype);
 }
