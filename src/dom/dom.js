@@ -213,7 +213,7 @@ function dom(p5, fn){
     let container = document;
     if (typeof p === 'string') {
       container = document.querySelector(p) || document;
-    } else if (p instanceof p5.Element) {
+    } else if (p instanceof Element) {
       container = p.elt;
     } else if (p instanceof HTMLElement) {
       container = p;
@@ -254,6 +254,64 @@ function dom(p5, fn){
     } else {
       return new Element(elt, this);
     }
+  };
+
+  /**
+   * Creates a new <a href="#/p5.Element">p5.Element</a> object.
+   *
+   * The first parameter, `tag`, is a string an HTML tag such as `'h5'`.
+   *
+   * The second parameter, `content`, is optional. It's a string that sets the
+   * HTML content to insert into the new element. New elements have no content
+   * by default.
+   *
+   * @method createElement
+   * @param  {String} tag tag for the new element.
+   * @param  {String} [content] HTML content to insert into the element.
+   * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Create an h5 element with nothing in it.
+   *   createElement('h5');
+   *
+   *   describe('A gray square.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Create an h5 element with the content "p5*js".
+   *   let h5 = createElement('h5', 'p5*js');
+   *
+   *   // Set the element's style and position.
+   *   h5.style('color', 'deeppink');
+   *   h5.position(30, 15);
+   *
+   *   describe('The text "p5*js" written in pink in the middle of a gray square.');
+   * }
+   * </code>
+   * </div>
+   */
+  fn.createElement = function (tag, content) {
+    p5._validateParameters('createElement', arguments);
+    const elt = document.createElement(tag);
+    if (typeof content !== 'undefined') {
+      elt.innerHTML = content;
+    }
+    return addElement(elt, this);
   };
 
   /**
@@ -1186,7 +1244,7 @@ function dom(p5, fn){
     p5._validateParameters('createSelect', args);
     let self;
     let arg = args[0];
-    if (arg instanceof p5.Element && arg.elt instanceof HTMLSelectElement) {
+    if (arg instanceof Element && arg.elt instanceof HTMLSelectElement) {
       // If given argument is p5.Element of select type
       self = arg;
       this.elt = arg.elt;
@@ -1444,7 +1502,7 @@ function dom(p5, fn){
     let name;
     const arg0 = args[0];
     if (
-      arg0 instanceof p5.Element &&
+      arg0 instanceof Element &&
       (arg0.elt instanceof HTMLDivElement || arg0.elt instanceof HTMLSpanElement)
     ) {
       // If given argument is p5.Element of div/span type
