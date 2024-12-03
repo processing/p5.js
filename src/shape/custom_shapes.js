@@ -583,6 +583,30 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
     let vertex = lineSegment.getEndVertex();
     this.path.lineTo(vertex.position.x, vertex.position.y);
   }
+  visitBezierSegment(bezierSegment) {
+    let [v1, v2, v3] = bezierSegment.vertices;
+
+    switch (bezierSegment.order) {
+      case 2:
+        this.path.quadraticCurveTo(
+          v1.position.x,
+          v1.position.y,
+          v2.position.x,
+          v2.position.y
+        );
+        break;
+      case 3:
+        this.path.bezierCurveTo(
+          v1.position.x,
+          v1.position.y,
+          v2.position.x,
+          v2.position.y,
+          v3.position.x,
+          v3.position.y
+        );
+        break;
+    }
+  }
 }
 
 class PrimitiveToVerticesConverter extends PrimitiveVisitor {
