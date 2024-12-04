@@ -1,24 +1,16 @@
-/**
- * @requires constants
- * @todo see methods below needing further implementation.
- * future consideration: implement SIMD optimizations
- * when browser compatibility becomes available
- * https://developer.mozilla.org/en-US/docs/Web/JavaScript/
- *   Reference/Global_Objects/SIMD
- */
+import { Vector } from "../p5.Vector";
+import { MatrixInterface } from "./MatrixInterface";
 
-import { Vector } from '../math/p5.Vector';
-
-let GLMAT_ARRAY_TYPE = Array;
-let isMatrixArray = x => Array.isArray(x);
-if (typeof Float32Array !== 'undefined') {
+export let GLMAT_ARRAY_TYPE = Array;
+export let isMatrixArray = (x) => Array.isArray(x);
+if (typeof Float32Array !== "undefined") {
   GLMAT_ARRAY_TYPE = Float32Array;
-  isMatrixArray = x => Array.isArray(x) || x instanceof Float32Array;
+  isMatrixArray = (x) => Array.isArray(x) || x instanceof Float32Array;
 }
 
-class Matrix {
-  constructor(...args){
-
+export class Matrix extends MatrixInterface{
+  constructor(...args) {
+    super(...args)
     // This is default behavior when object
     // instantiated using createMatrix()
     // @todo implement createMatrix() in core/math.js
@@ -26,43 +18,60 @@ class Matrix {
     //   this.p5 = args[args.length - 1];
     // }
 
-    if (args[0] === 'mat3') {
+    if (args[0] === "mat3") {
       this.mat3 = Array.isArray(args[1])
         ? args[1]
         : new GLMAT_ARRAY_TYPE([1, 0, 0, 0, 1, 0, 0, 0, 1]);
     } else {
       this.mat4 = Array.isArray(args[0])
         ? args[0]
-        : new GLMAT_ARRAY_TYPE(
-          [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+        : new GLMAT_ARRAY_TYPE([
+            1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+          ]);
     }
     return this;
   }
 
+  setMat3Elem(index, value) {
+    if (this.mat3) {
+      this.mat3[index] = value;
+    }
+    return this;
+  }
+
+  setMat4Elem(index, value) {
+    if (this.mat4) {
+      this.mat4[index] = value;
+    }
+    return this;
+  }
+  
   reset() {
     if (this.mat3) {
-      this.mat3.set([1, 0, 0, 0, 1, 0, 0, 0, 1]);
+      this.mat3 = new GLMAT_ARRAY_TYPE([1, 0, 0, 0, 1, 0, 0, 0, 1]);
     } else if (this.mat4) {
-      this.mat4.set([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+      this.mat4 = new GLMAT_ARRAY_TYPE([
+        1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+      ]);
     }
     return this;
   }
 
   /**
- * Replace the entire contents of a 4x4 matrix.
- * If providing an array or a p5.Matrix, the values will be copied without
- * referencing the source object.
- * Can also provide 16 numbers as individual arguments.
- *
- * @param {p5.Matrix|Float32Array|Number[]} [inMatrix] the input p5.Matrix or
- *                                     an Array of length 16
- * @chainable
- */
+   * Replace the entire contents of a 4x4 matrix.
+   * If providing an array or a p5.Matrix, the values will be copied without
+   * referencing the source object.
+   * Can also provide 16 numbers as individual arguments.
+   *
+   * @param {p5.Matrix|Float32Array|Number[]} [inMatrix] the input p5.Matrix or
+   *                                     an Array of length 16
+   * @chainable
+   */
   /**
- * @param {Number[]} elements 16 numbers passed by value to avoid
- *                                     array copying.
- * @chainable
- */
+   * @param {Number[]} elements 16 numbers passed by value to avoid
+   *                                     array copying.
+   * @chainable
+   */
   set(inMatrix) {
     let refArray = arguments;
     if (inMatrix instanceof Matrix) {
@@ -73,7 +82,7 @@ class Matrix {
     if (refArray.length !== 16) {
       p5._friendlyError(
         `Expected 16 values but received ${refArray.length}.`,
-        'p5.Matrix.set'
+        "p5.Matrix.set"
       );
       return this;
     }
@@ -84,24 +93,24 @@ class Matrix {
   }
 
   /**
- * Gets a copy of the vector, returns a p5.Matrix object.
- *
- * @return {p5.Matrix} the copy of the p5.Matrix object
- */
+   * Gets a copy of the vector, returns a p5.Matrix object.
+   *
+   * @return {p5.Matrix} the copy of the p5.Matrix object
+   */
   get() {
     return new Matrix(this.mat4, this.p5);
   }
 
   /**
- * return a copy of this matrix.
- * If this matrix is 4x4, a 4x4 matrix with exactly the same entries will be
- * generated. The same is true if this matrix is 3x3.
- *
- * @return {p5.Matrix}   the result matrix
- */
+   * return a copy of this matrix.
+   * If this matrix is 4x4, a 4x4 matrix with exactly the same entries will be
+   * generated. The same is true if this matrix is 3x3.
+   *
+   * @return {p5.Matrix}   the result matrix
+   */
   copy() {
     if (this.mat3 !== undefined) {
-      const copied3x3 = new Matrix('mat3', this.p5);
+      const copied3x3 = new Matrix("mat3", this.p5);
       copied3x3.mat3[0] = this.mat3[0];
       copied3x3.mat3[1] = this.mat3[1];
       copied3x3.mat3[2] = this.mat3[2];
@@ -138,19 +147,19 @@ class Matrix {
   }
 
   /**
- * return an identity matrix
- * @return {p5.Matrix}   the result matrix
- */
-  static identity(pInst){
+   * return an identity matrix
+   * @return {p5.Matrix}   the result matrix
+   */
+  static identity(pInst) {
     return new Matrix(pInst);
   }
 
   /**
- * transpose according to a given matrix
- * @param  {p5.Matrix|Float32Array|Number[]} a  the matrix to be
- *                                               based on to transpose
- * @chainable
- */
+   * transpose according to a given matrix
+   * @param  {p5.Matrix|Float32Array|Number[]} a  the matrix to be
+   *                                               based on to transpose
+   * @chainable
+   */
   transpose(a) {
     let a01, a02, a03, a12, a13, a23;
     if (a instanceof Matrix) {
@@ -206,11 +215,11 @@ class Matrix {
   }
 
   /**
- * invert  matrix according to a give matrix
- * @param  {p5.Matrix|Float32Array|Number[]} a   the matrix to be
- *                                                based on to invert
- * @chainable
- */
+   * invert  matrix according to a give matrix
+   * @param  {p5.Matrix|Float32Array|Number[]} a   the matrix to be
+   *                                                based on to invert
+   * @chainable
+   */
   invert(a) {
     let a00, a01, a02, a03, a10, a11, a12, a13;
     let a20, a21, a22, a23, a30, a31, a32, a33;
@@ -264,7 +273,7 @@ class Matrix {
 
     // Calculate the determinant
     let det =
-    b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
+      b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
 
     if (!det) {
       return null;
@@ -292,9 +301,9 @@ class Matrix {
   }
 
   /**
- * Inverts a 3×3 matrix
- * @chainable
- */
+   * Inverts a 3×3 matrix
+   * @chainable
+   */
   invert3x3() {
     const a00 = this.mat3[0];
     const a01 = this.mat3[1];
@@ -328,15 +337,15 @@ class Matrix {
   }
 
   /**
- * This function is only for 3x3 matrices.
- * transposes a 3×3 p5.Matrix by a mat3
- * If there is an array of arguments, the matrix obtained by transposing
- * the 3x3 matrix generated based on that array is set.
- * If no arguments, it transposes itself and returns it.
- *
- * @param  {Number[]} mat3 1-dimensional array
- * @chainable
- */
+   * This function is only for 3x3 matrices.
+   * transposes a 3×3 p5.Matrix by a mat3
+   * If there is an array of arguments, the matrix obtained by transposing
+   * the 3x3 matrix generated based on that array is set.
+   * If no arguments, it transposes itself and returns it.
+   *
+   * @param  {Number[]} mat3 1-dimensional array
+   * @chainable
+   */
   transpose3x3(mat3) {
     if (mat3 === undefined) {
       mat3 = this.mat3;
@@ -358,17 +367,17 @@ class Matrix {
   }
 
   /**
- * converts a 4×4 matrix to its 3×3 inverse transform
- * commonly used in MVMatrix to NMatrix conversions.
- * @param  {p5.Matrix} mat4 the matrix to be based on to invert
- * @chainable
- * @todo  finish implementation
- */
+   * converts a 4×4 matrix to its 3×3 inverse transform
+   * commonly used in MVMatrix to NMatrix conversions.
+   * @param  {p5.Matrix} mat4 the matrix to be based on to invert
+   * @chainable
+   * @todo  finish implementation
+   */
   inverseTranspose({ mat4 }) {
     if (this.mat3 === undefined) {
-      p5._friendlyError('sorry, this function only works with mat3');
+      p5._friendlyError("sorry, this function only works with mat3");
     } else {
-    //convert mat4 -> mat3
+      //convert mat4 -> mat3
       this.mat3[0] = mat4[0];
       this.mat3[1] = mat4[1];
       this.mat3[2] = mat4[2];
@@ -385,7 +394,7 @@ class Matrix {
     if (inverse) {
       inverse.transpose3x3(this.mat3);
     } else {
-    // in case of singularity, just zero the matrix
+      // in case of singularity, just zero the matrix
       for (let i = 0; i < 9; i++) {
         this.mat3[i] = 0;
       }
@@ -394,9 +403,9 @@ class Matrix {
   }
 
   /**
- * inspired by Toji's mat4 determinant
- * @return {Number} Determinant of our 4×4 matrix
- */
+   * inspired by Toji's mat4 determinant
+   * @return {Number} Determinant of our 4×4 matrix
+   */
   determinant() {
     const d00 = this.mat4[0] * this.mat4[5] - this.mat4[1] * this.mat4[4],
       d01 = this.mat4[0] * this.mat4[6] - this.mat4[2] * this.mat4[4],
@@ -412,16 +421,17 @@ class Matrix {
       d11 = this.mat4[10] * this.mat4[15] - this.mat4[11] * this.mat4[14];
 
     // Calculate the determinant
-    return d00 * d11 - d01 * d10 + d02 * d09 +
-    d03 * d08 - d04 * d07 + d05 * d06;
+    return (
+      d00 * d11 - d01 * d10 + d02 * d09 + d03 * d08 - d04 * d07 + d05 * d06
+    );
   }
 
   /**
- * multiply two mat4s
- * @param {p5.Matrix|Float32Array|Number[]} multMatrix The matrix
- *                                                we want to multiply by
- * @chainable
- */
+   * multiply two mat4s
+   * @param {p5.Matrix|Float32Array|Number[]} multMatrix The matrix
+   *                                                we want to multiply by
+   * @chainable
+   */
   mult(multMatrix) {
     let _src;
 
@@ -535,18 +545,18 @@ class Matrix {
   }
 
   /**
- * scales a p5.Matrix by scalars or a vector
- * @param  {p5.Vector|Float32Array|Number[]} s vector to scale by
- * @chainable
- */
+   * scales a p5.Matrix by scalars or a vector
+   * @param  {p5.Vector|Float32Array|Number[]} s vector to scale by
+   * @chainable
+   */
   scale(x, y, z) {
     if (x instanceof Vector) {
-    // x is a vector, extract the components from it.
+      // x is a vector, extract the components from it.
       y = x.y;
       z = x.z;
       x = x.x; // must be last
     } else if (x instanceof Array) {
-    // x is an array, extract the components from it.
+      // x is an array, extract the components from it.
       y = x[1];
       z = x[2];
       x = x[0]; // must be last
@@ -569,20 +579,20 @@ class Matrix {
   }
 
   /**
- * rotate our Matrix around an axis by the given angle.
- * @param  {Number} a The angle of rotation in radians
- * @param  {p5.Vector|Number[]} axis  the axis(es) to rotate around
- * @chainable
- * inspired by Toji's gl-matrix lib, mat4 rotation
- */
+   * rotate our Matrix around an axis by the given angle.
+   * @param  {Number} a The angle of rotation in radians
+   * @param  {p5.Vector|Number[]} axis  the axis(es) to rotate around
+   * @chainable
+   * inspired by Toji's gl-matrix lib, mat4 rotation
+   */
   rotate(a, x, y, z) {
     if (x instanceof Vector) {
-    // x is a vector, extract the components from it.
+      // x is a vector, extract the components from it.
       y = x.y;
       z = x.z;
       x = x.x; //must be last
     } else if (x instanceof Array) {
-    // x is an array, extract the components from it.
+      // x is an array, extract the components from it.
       y = x[1];
       z = x[2];
       x = x[0]; //must be last
@@ -639,11 +649,11 @@ class Matrix {
   }
 
   /**
- * @todo  finish implementing this method!
- * translates
- * @param  {Number[]} v vector to translate by
- * @chainable
- */
+   * @todo  finish implementing this method!
+   * translates
+   * @param  {Number[]} v vector to translate by
+   * @chainable
+   */
   translate(v) {
     const x = v[0],
       y = v[1],
@@ -665,13 +675,13 @@ class Matrix {
   }
 
   /**
- * sets the perspective matrix
- * @param  {Number} fovy   [description]
- * @param  {Number} aspect [description]
- * @param  {Number} near   near clipping plane
- * @param  {Number} far    far clipping plane
- * @chainable
- */
+   * sets the perspective matrix
+   * @param  {Number} fovy   [description]
+   * @param  {Number} aspect [description]
+   * @param  {Number} near   near clipping plane
+   * @param  {Number} far    far clipping plane
+   * @chainable
+   */
   perspective(fovy, aspect, near, far) {
     const f = 1.0 / Math.tan(fovy / 2),
       nf = 1 / (near - far);
@@ -697,15 +707,15 @@ class Matrix {
   }
 
   /**
- * sets the ortho matrix
- * @param  {Number} left   [description]
- * @param  {Number} right  [description]
- * @param  {Number} bottom [description]
- * @param  {Number} top    [description]
- * @param  {Number} near   near clipping plane
- * @param  {Number} far    far clipping plane
- * @chainable
- */
+   * sets the ortho matrix
+   * @param  {Number} left   [description]
+   * @param  {Number} right  [description]
+   * @param  {Number} bottom [description]
+   * @param  {Number} top    [description]
+   * @param  {Number} near   near clipping plane
+   * @param  {Number} far    far clipping plane
+   * @chainable
+   */
   ortho(left, right, bottom, top, near, far) {
     const lr = 1 / (left - right),
       bt = 1 / (bottom - top),
@@ -731,11 +741,11 @@ class Matrix {
   }
 
   /**
- * apply a matrix to a vector with x,y,z,w components
- * get the results in the form of an array
- * @param {Number}
- * @return {Number[]}
- */
+   * apply a matrix to a vector with x,y,z,w components
+   * get the results in the form of an array
+   * @param {Number}
+   * @return {Number[]}
+   */
   multiplyVec4(x, y, z, w) {
     const result = new Array(4);
     const m = this.mat4;
@@ -749,28 +759,28 @@ class Matrix {
   }
 
   /**
- * Applies a matrix to a vector.
- * The fourth component is set to 1.
- * Returns a vector consisting of the first
- * through third components of the result.
- *
- * @param {p5.Vector}
- * @return {p5.Vector}
- */
+   * Applies a matrix to a vector.
+   * The fourth component is set to 1.
+   * Returns a vector consisting of the first
+   * through third components of the result.
+   *
+   * @param {p5.Vector}
+   * @return {p5.Vector}
+   */
   multiplyPoint({ x, y, z }) {
     const array = this.multiplyVec4(x, y, z, 1);
     return new Vector(array[0], array[1], array[2]);
   }
 
   /**
- * Applies a matrix to a vector.
- * The fourth component is set to 1.
- * Returns the result of dividing the 1st to 3rd components
- * of the result by the 4th component as a vector.
- *
- * @param {p5.Vector}
- * @return {p5.Vector}
- */
+   * Applies a matrix to a vector.
+   * The fourth component is set to 1.
+   * Returns the result of dividing the 1st to 3rd components
+   * of the result by the 4th component as a vector.
+   *
+   * @param {p5.Vector}
+   * @return {p5.Vector}
+   */
   multiplyAndNormalizePoint({ x, y, z }) {
     const array = this.multiplyVec4(x, y, z, 1);
     array[0] /= array[3];
@@ -780,30 +790,30 @@ class Matrix {
   }
 
   /**
- * Applies a matrix to a vector.
- * The fourth component is set to 0.
- * Returns a vector consisting of the first
- * through third components of the result.
- *
- * @param {p5.Vector}
- * @return {p5.Vector}
- */
+   * Applies a matrix to a vector.
+   * The fourth component is set to 0.
+   * Returns a vector consisting of the first
+   * through third components of the result.
+   *
+   * @param {p5.Vector}
+   * @return {p5.Vector}
+   */
   multiplyDirection({ x, y, z }) {
     const array = this.multiplyVec4(x, y, z, 0);
     return new Vector(array[0], array[1], array[2]);
   }
 
   /**
- * This function is only for 3x3 matrices.
- * multiply two mat3s. It is an operation to multiply the 3x3 matrix of
- * the argument from the right. Arguments can be a 3x3 p5.Matrix,
- * a Float32Array of length 9, or a javascript array of length 9.
- * In addition, it can also be done by enumerating 9 numbers.
- *
- * @param {p5.Matrix|Float32Array|Number[]} multMatrix The matrix
- *                                                we want to multiply by
- * @chainable
- */
+   * This function is only for 3x3 matrices.
+   * multiply two mat3s. It is an operation to multiply the 3x3 matrix of
+   * the argument from the right. Arguments can be a 3x3 p5.Matrix,
+   * a Float32Array of length 9, or a javascript array of length 9.
+   * In addition, it can also be done by enumerating 9 numbers.
+   *
+   * @param {p5.Matrix|Float32Array|Number[]} multMatrix The matrix
+   *                                                we want to multiply by
+   * @chainable
+   */
   mult3x3(multMatrix) {
     let _src;
 
@@ -845,12 +855,12 @@ class Matrix {
   }
 
   /**
- * This function is only for 3x3 matrices.
- * A function that returns a column vector of a 3x3 matrix.
- *
- * @param {Number} columnIndex matrix column number
- * @return {p5.Vector}
- */
+   * This function is only for 3x3 matrices.
+   * A function that returns a column vector of a 3x3 matrix.
+   *
+   * @param {Number} columnIndex matrix column number
+   * @return {p5.Vector}
+   */
   column(columnIndex) {
     return new Vector(
       this.mat3[3 * columnIndex],
@@ -860,12 +870,12 @@ class Matrix {
   }
 
   /**
- * This function is only for 3x3 matrices.
- * A function that returns a row vector of a 3x3 matrix.
- *
- * @param {Number} rowIndex matrix row number
- * @return {p5.Vector}
- */
+   * This function is only for 3x3 matrices.
+   * A function that returns a row vector of a 3x3 matrix.
+   *
+   * @param {Number} rowIndex matrix row number
+   * @return {p5.Vector}
+   */
   row(rowIndex) {
     return new Vector(
       this.mat3[rowIndex],
@@ -875,13 +885,13 @@ class Matrix {
   }
 
   /**
- * Returns the diagonal elements of the matrix in the form of an array.
- * A 3x3 matrix will return an array of length 3.
- * A 4x4 matrix will return an array of length 4.
- *
- * @return {Number[]} An array obtained by arranging the diagonal elements
- *                    of the matrix in ascending order of index
- */
+   * Returns the diagonal elements of the matrix in the form of an array.
+   * A 3x3 matrix will return an array of length 3.
+   * A 4x4 matrix will return an array of length 4.
+   *
+   * @return {Number[]} An array obtained by arranging the diagonal elements
+   *                    of the matrix in ascending order of index
+   */
   diagonal() {
     if (this.mat3 !== undefined) {
       return [this.mat3[0], this.mat3[4], this.mat3[8]];
@@ -890,14 +900,14 @@ class Matrix {
   }
 
   /**
- * This function is only for 3x3 matrices.
- * Takes a vector and returns the vector resulting from multiplying to
- * that vector by this matrix from left.
- *
- * @param {p5.Vector} multVector the vector to which this matrix applies
- * @param {p5.Vector} [target] The vector to receive the result
- * @return {p5.Vector}
- */
+   * This function is only for 3x3 matrices.
+   * Takes a vector and returns the vector resulting from multiplying to
+   * that vector by this matrix from left.
+   *
+   * @param {p5.Vector} multVector the vector to which this matrix applies
+   * @param {p5.Vector} [target] The vector to receive the result
+   * @return {p5.Vector}
+   */
   multiplyVec3(multVector, target) {
     if (target === undefined) {
       target = multVector.copy();
@@ -909,13 +919,13 @@ class Matrix {
   }
 
   /**
- * This function is only for 4x4 matrices.
- * Creates a 3x3 matrix whose entries are the top left 3x3 part and returns it.
- *
- * @return {p5.Matrix}
- */
+   * This function is only for 4x4 matrices.
+   * Creates a 3x3 matrix whose entries are the top left 3x3 part and returns it.
+   *
+   * @return {p5.Matrix}
+   */
   createSubMatrix3x3() {
-    const result = new Matrix('mat3');
+    const result = new Matrix("mat3");
     result.mat3[0] = this.mat4[0];
     result.mat3[1] = this.mat4[1];
     result.mat3[2] = this.mat4[2];
@@ -929,8 +939,8 @@ class Matrix {
   }
 
   /**
- * PRIVATE
- */
+   * PRIVATE
+   */
   // matrix methods adapted from:
   // https://developer.mozilla.org/en-US/docs/Web/WebGL/
   // gluPerspective
@@ -962,33 +972,15 @@ class Matrix {
   //return frustrumMatrix;
   // }
 
-// function _setMVPMatrices(){
-////an identity matrix
-////@TODO use the p5.Matrix class to abstract away our MV matrices and
-///other math
-//const _mvMatrix =
-//[
-//  1.0,0.0,0.0,0.0,
-//  0.0,1.0,0.0,0.0,
-//  0.0,0.0,1.0,0.0,
-//  0.0,0.0,0.0,1.0
-//];
-};
-
-function matrix(p5, fn){
-  /**
-   * A class to describe a 4×4 matrix
-   * for model and view matrix manipulation in the p5js webgl renderer.
-   * @class p5.Matrix
-   * @private
-   * @param {Array} [mat4] column-major array literal of our 4×4 matrix
-   */
-  p5.Matrix = Matrix
-}
-
-export default matrix;
-export { Matrix };
-
-if(typeof p5 !== 'undefined'){
-  matrix(p5, p5.prototype);
+  // function _setMVPMatrices(){
+  ////an identity matrix
+  ////@TODO use the p5.Matrix class to abstract away our MV matrices and
+  ///other math
+  //const _mvMatrix =
+  //[
+  //  1.0,0.0,0.0,0.0,
+  //  0.0,1.0,0.0,0.0,
+  //  0.0,0.0,1.0,0.0,
+  //  0.0,0.0,0.0,1.0
+  //];
 }

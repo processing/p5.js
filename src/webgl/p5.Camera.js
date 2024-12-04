@@ -4,7 +4,7 @@
  * @requires core
  */
 
-import { Matrix } from './p5.Matrix';
+import { Matrix } from '../math/p5.Matrix';
 import { Vector } from '../math/p5.Vector';
 import { Quat } from './p5.Quat';
 import { RendererGL } from './p5.RendererGL';
@@ -2566,12 +2566,16 @@ class Camera {
     // and interpolate the elements of the projection matrix.
     // Use logarithmic interpolation for interpolation.
     if (this.projMatrix.mat4[15] !== 0) {
-      this.projMatrix.mat4[0] =
-        cam0.projMatrix.mat4[0] *
-        Math.pow(cam1.projMatrix.mat4[0] / cam0.projMatrix.mat4[0], amt);
-      this.projMatrix.mat4[5] =
-        cam0.projMatrix.mat4[5] *
-        Math.pow(cam1.projMatrix.mat4[5] / cam0.projMatrix.mat4[5], amt);
+        this.projMatrix.setMat4Elem(
+          0,
+          cam0.projMatrix.mat4[0] *
+            Math.pow(cam1.projMatrix.mat4[0] / cam0.projMatrix.mat4[0], amt)
+        );
+        this.projMatrix.setMat4Elem(
+          5,
+          cam0.projMatrix.mat4[5] *
+            Math.pow(cam1.projMatrix.mat4[5] / cam0.projMatrix.mat4[5], amt)
+        );
       // If the camera is active, make uPMatrix reflect changes in projMatrix.
       if (this._isActive()) {
         this._renderer.states.uPMatrix.mat4 = this.projMatrix.mat4.slice();
