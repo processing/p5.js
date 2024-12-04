@@ -50,7 +50,7 @@ This README file formatted with Markdown :)
 # What's next?
 
 If you need more information to help get you started, please refer to our website:  
-https://p5js.org/get-started/ and https://p5js.org/learn/
+https://p5js.org/tutorials/get-started/ and https://p5js.org/tutorials/
 
 An online reference to the p5.js library is available here:  
 https://p5js.org/reference/
