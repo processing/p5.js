@@ -1,32 +1,34 @@
 
 /*
  *  TODO:
- *   - get axes and values for parsed fonts
- *   - change renderer.state to use getters for textAlign, textBaseline, etc. ??
- *   - textToPoints: enable passing props in options (textSize, textLeading, etc.)?
- *   - textToPaths: test rendering in p5 (new?/old api) [x] -- inner hole problem
- *   - cache parsed fonts (and/or lazy load) ?
- *   - test textToPoints with google/variable fonts
  *   - more with variable fonts, do slider example
- *   - better font-loading (google fonts, font-face declarations, multiple fonts with Promise.all())
- *   - test textToPoints with offscreen graphics.drawingContext passed in as 'context'
+ *   - better font-loading? (google fonts, font-face declarations, multiple fonts with Promise.all())
+ *   - test textToPoints with google/variable fonts?
  *   - add test for line-height property in textFont() and textProperty()
  *      - how does this integrate with textLeading?
  *   - spurious warning in oneoff.html (local)
- * 
+
+ *  ON HOLD:
+ *   - get axes and values for parsed fonts
+ *   - change renderer.state to use getters for textAlign, textBaseline, etc. ??
+ *  DONE:
+ *   - textToPoints/Paths should accept offscreen `graphics` passed in as `options.graphics` [x]
+ *   - textToPaths: test rendering in p5 [x]
+ *   - support direct setting of context2d.font with string [x]
  *   - textToPoints/Path: add re-sampling support with current options [x]
  *   - add fontAscent/Descent and textWeight functions [x]
  *   - textToPaths should split into glyphs and paths [x]
  *   - add textFont(string) that forces context2d.font to be set (if including size part) [x]
  *   - textToPoints: test rectMode for all alignments [x]
  *   - test textToPoints with single line, and overlapping text [x]
- * 
  *  ENHANCEMENTS:
- *   - support direct setting of context2d.font with string [x]
+ *   - cache parsed fonts
  *   - support idographic and hanging baselines
  *   - support start and end text-alignments
  *   - add 'justify' alignment
  */
+
+import { Graphics } from '../core/p5.Graphics';
 
 /**
  * @module Type
@@ -53,8 +55,7 @@ function text2d(p5, fn) {
   const CommaDelimRe = /,\s+/;
   const QuotedRe = /^".*"$/;
   const TabsRe = /\t/g;
-  const RendererProp = 0;
-  const Context2dProp = 1;
+
   const FontVariationSettings = 'fontVariationSettings';
   const VariableAxes = ['wght', 'wdth', 'ital', 'slnt', 'opsz'];
   const VariableAxesRe = new RegExp(`(?:${VariableAxes.join('|')})`);
@@ -90,6 +91,9 @@ function text2d(p5, fn) {
       if (!(func in p5.Renderer2D.prototype)) {
         throw Error(`Renderer2D.prototype.${func} is not defined.`);
       }
+      return this._renderer[func](...args);
+    };
+    p5.Graphics.prototype[func] = function (...args) {
       return this._renderer[func](...args);
     };
   });

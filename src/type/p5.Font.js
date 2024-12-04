@@ -142,7 +142,7 @@ function font(p5, fn) {
     */
     _lineateAndPathify(str, x, y, width, height, options = {}) {
 
-      let renderer = options?.renderer || this._pInst._renderer;
+      let renderer = options?.graphics?._renderer || this._pInst._renderer;
 
       // save the baseline
       let setBaseline = renderer.drawingContext.textBaseline;
@@ -317,9 +317,9 @@ function font(p5, fn) {
 
     drawPaths(ctx, commands, opts) { // for debugging
       ctx.strokeStyle = opts?.stroke || ctx.strokeStyle;
-      ctx.fillStyle = opts?.fill || ctx.strokeStyle;
+      ctx.fillStyle = opts?.fill || ctx.fillStyle;
       ctx.beginPath();
-      commands.forEach(({ type, data }) => {
+      commands.forEach(([type, ...data ]) => {
         if (type === 'M') {
           ctx.moveTo(...data);
         } else if (type === 'L') {
@@ -332,8 +332,8 @@ function font(p5, fn) {
           ctx.closePath();
         }
       });
-      ctx.fill();
-      ctx.stroke();
+      if (opts?.fill) ctx.fill();
+      if (opts?.stroke) ctx.stroke();      
     }
 
     _pathsToCommands(paths, scale) {
