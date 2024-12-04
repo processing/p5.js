@@ -323,7 +323,7 @@ class PrimitiveShapeCreators {
     creators.set(`vertex-${constants.TRIANGLE_STRIP}`, (...vertices) => new TriangleStrip(...vertices));
     creators.set(`vertex-${constants.QUAD_STRIP}`, (...vertices) => new QuadStrip(...vertices));
 
-    // bezierVertex
+    // bezierVertex (constructors all take order and vertices so they can be called in a uniform way)
     creators.set(`bezierVertex-${constants.EMPTY_PATH}`, (order, ...vertices) => new Anchor(...vertices));
     creators.set(`bezierVertex-${constants.PATH}`, (order, ...vertices) => new BezierSegment(order, ...vertices));
 
@@ -486,7 +486,12 @@ class Shape {
     this.kind = shapeKind;
     this.contours.push(new Contour(shapeKind));
   }
-
+  /* TO-DO:
+     Refactor?
+     - Might not need anchorHasPosition.
+     - Might combine conditions at top, and rely on shortcircuiting.
+     Does nothing if shape is not a path or has multiple contours. Might discuss this.
+  */
   endShape(closeMode = constants.OPEN) {
     if (closeMode === constants.CLOSE) {
       // shape characteristics
