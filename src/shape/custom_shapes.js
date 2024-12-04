@@ -9,6 +9,61 @@
 // REMINDER: remove .js extension (currently using it to run file locally)
 import * as constants from '../core/constants.js';
 
+// ---- UTILITY FUNCTIONS ----
+
+/*
+catmullRomToBezier(vertices, tightness)
+
+Abbreviated description:
+Converts a Catmull-Rom spline to a sequence of Bezier curves.
+
+Parameters:
+vertices -> Array [x1, y1, x2, y2, ...] of at least four vertices
+tightness -> Number affecting shape of curve
+
+Returns:
+array of Bezier curves, each represented as [x1, y1, x2, y2, x3, y3]
+*/
+
+/*
+TODO:
+1. It seems p5 contains code for converting from Catmull-Rom to Bezier in at least two places:
+
+catmullRomToBezier() is based on code in the legacy endShape() function:
+https://github.com/processing/p5.js/blob/1b66f097761d3c2057c0cec4349247d6125f93ca/src/core/p5.Renderer2D.js#L859C1-L886C1
+
+A different conversion can be found elsewhere in p5:
+https://github.com/processing/p5.js/blob/17304ce9e9ef3f967bd828102a51b62a2d39d4f4/src/typography/p5.Font.js#L1179
+
+A more careful review and comparison of both implementations would be helpful. They're different. I put
+catmullRomToBezier() together quickly without checking the math/algorithm, when I made the proof of concept
+for the refactor.
+
+2. It may be possible to replace the code in p5.Font.js with the code here, to reduce duplication.
+*/
+function catmullRomToBezier(vertices, tightness) {
+  let X0, Y0, X1, Y1, X2, Y2, X3, Y3;
+  let s = 1 - tightness;
+  let bezX1, bezY1, bezX2, bezY2, bezX3, bezY3;
+  let bezArrays = [];
+
+  for (let i = 0; i + 6 < vertices.length; i += 2) {
+    [X0, Y0, X1, Y1, X2, Y2, X3, Y3] = vertices.slice(i, i + 8);
+
+    bezX1 = X1 + s * (X2 - X0) / 6;
+    bezY1 = Y1 + s * (Y2 - Y0) / 6;
+
+    bezX2 = X2 + s * (X1 - X3) / 6;
+    bezY2 = Y2 + s * (Y1 - Y3) / 6;
+
+    bezX3 = X2;
+    bezY3 = Y2;
+
+    bezArrays.push([bezX1, bezY1, bezX2, bezY2, bezX3, bezY3]);
+  }
+  return bezArrays;
+}
+
 // ---- GENERAL BUILDING BLOCKS ----
 
 class Vertex {
@@ -663,7 +718,6 @@ class PrimitiveVisitor {
   }
 }
 
-// using this instead of PrimitiveToContext2DConverter for now
 // requires testing
 class PrimitiveToPath2DConverter extends PrimitiveVisitor {
   path = new Path2D();
@@ -1121,6 +1175,7 @@ function customShapes(p5, fn) {
 
 export default customShapes;
 export {
+  catmullRomToBezier,
   Shape,
   Contour,
   ShapePrimitive,
