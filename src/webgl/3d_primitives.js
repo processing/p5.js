@@ -543,10 +543,10 @@ function primitives3D(p5, fn){
  * <code>
  * function setup() {
  *   createCanvas(300, 300, WEBGL);
- * 
- *  describe('A sphere with red stroke and a red, wavy line on a gray background.');
+ *
+ *   describe('A sphere with red stroke and a red, wavy line on a gray background.');
  * }
- * 
+ *
  * function draw() {
  *   background(128);
  *   strokeMode(FULL); // Enables detailed rendering with caps, joins, and stroke color.
@@ -554,8 +554,8 @@ function primitives3D(p5, fn){
  *   strokeWeight(1);
  *   translate(0, -50, 0);
  *   sphere(50);
- *   pop(); 
- * 
+ *   pop();
+ *
  *   noFill();
  *   strokeWeight(15);
  *   beginShape();
@@ -566,15 +566,15 @@ function primitives3D(p5, fn){
  * }
  * </code>
  * </div>
- * 
+ *
  * <div>
  * <code>
  * function setup() {
  *   createCanvas(300, 300, WEBGL);
- * 
- *  describe('A sphere with red stroke and a  wavy line without full curve decorations without caps and color on a gray background.');
+ *
+ *   describe('A sphere with red stroke and a  wavy line without full curve decorations without caps and color on a gray background.');
  * }
- * 
+ *
  * function draw() {
  *   background(128);
  *   strokeMode(SIMPLE); // Enables simple rendering without caps, joins, and stroke color.
@@ -582,8 +582,8 @@ function primitives3D(p5, fn){
  *   strokeWeight(1);
  *   translate(0, -50, 0);
  *   sphere(50);
- *   pop(); 
- * 
+ *   pop();
+ *
  *   noFill();
  *   strokeWeight(15);
  *   beginShape();
@@ -595,7 +595,7 @@ function primitives3D(p5, fn){
  * </code>
  * </div>
  */
-  
+
   fn.strokeMode = function (mode) {
     if (mode === undefined) {
       return this._renderer._simpleLines ? constants.SIMPLE : constants.FULL;
@@ -2699,7 +2699,7 @@ function primitives3D(p5, fn){
     return this;
   };
 
-  RendererGL.prototype.bezierVertex = function(...args) {
+  /*RendererGL.prototype.bezierVertex = function(...args) {
     if (this.shapeBuilder._bezierVertex.length === 0) {
       throw Error('vertex() must be used once before calling bezierVertex()');
     } else {
@@ -3250,7 +3250,7 @@ function primitives3D(p5, fn){
         }
       }
     }
-  };
+  };*/
 
   RendererGL.prototype.image = function(
     img,
@@ -3659,11 +3659,11 @@ function primitives3D(p5, fn){
           this,
           1,
           0,
-          1, 
+          1,
           detailX,
           detailY,
-          cap,   
-          false 
+          cap,
+          false
         );
       }, this);
       if (detailX <= 24 && detailY <= 16) {
@@ -3742,6 +3742,108 @@ function primitives3D(p5, fn){
     }
     this._drawGeometryScaled(this.geometryBufferCache.getGeometryByID(gid), radius, radius, radius);
   }
+
+  /**
+   * Sets the number of segments used to draw spline curves in WebGL mode.
+   *
+   * In WebGL mode, smooth shapes are drawn using many flat segments. Adding
+   * more flat segments makes shapes appear smoother.
+   *
+   * The parameter, `detail`, is the number of segments to use while drawing a
+   * spline curve. For example, calling `curveDetail(5)` will use 5 segments to
+   * draw curves with the <a href="#/p5/curve">curve()</a> function. By
+   * default,`detail` is 20.
+   *
+   * Note: `curveDetail()` has no effect in 2D mode.
+   *
+   * @method curveDetail
+   * @param {Number} resolution number of segments to use. Defaults to 20.
+   * @chainable
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Draw a black spline curve.
+   *   noFill();
+   *   strokeWeight(1);
+   *   stroke(0);
+   *   curve(5, 26, 73, 24, 73, 61, 15, 65);
+   *
+   *   // Draw red spline curves from the anchor points to the control points.
+   *   stroke(255, 0, 0);
+   *   curve(5, 26, 5, 26, 73, 24, 73, 61);
+   *   curve(73, 24, 73, 61, 15, 65, 15, 65);
+   *
+   *   // Draw the anchor points in black.
+   *   strokeWeight(5);
+   *   stroke(0);
+   *   point(73, 24);
+   *   point(73, 61);
+   *
+   *   // Draw the control points in red.
+   *   stroke(255, 0, 0);
+   *   point(5, 26);
+   *   point(15, 65);
+   *
+   *   describe(
+   *     'A gray square with a curve drawn in three segments. The curve is a sideways U shape with red segments on top and bottom, and a black segment on the right. The endpoints of all the segments are marked with dots.'
+   *   );
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   background(200);
+   *
+   *   // Set the curveDetail() to 3.
+   *   curveDetail(3);
+   *
+   *   // Draw a black spline curve.
+   *   noFill();
+   *   strokeWeight(1);
+   *   stroke(0);
+   *   curve(-45, -24, 0, 23, -26, 0, 23, 11, 0, -35, 15, 0);
+   *
+   *   // Draw red spline curves from the anchor points to the control points.
+   *   stroke(255, 0, 0);
+   *   curve(-45, -24, 0, -45, -24, 0, 23, -26, 0, 23, 11, 0);
+   *   curve(23, -26, 0, 23, 11, 0, -35, 15, 0, -35, 15, 0);
+   *
+   *   // Draw the anchor points in black.
+   *   strokeWeight(5);
+   *   stroke(0);
+   *   point(23, -26);
+   *   point(23, 11);
+   *
+   *   // Draw the control points in red.
+   *   stroke(255, 0, 0);
+   *   point(-45, -24);
+   *   point(-35, 15);
+   *
+   *   describe(
+   *     'A gray square with a jagged curve drawn in three segments. The curve is a sideways U shape with red segments on top and bottom, and a black segment on the right. The endpoints of all the segments are marked with dots.'
+   *   );
+   * }
+   * </code>
+   * </div>
+   */
+  fn.curveDetail = function(d) {
+    if (!(this._renderer instanceof RendererGL)) {
+      throw new Error(
+        'curveDetail() only works in WebGL mode. Did you mean to call createCanvas(width, height, WEBGL)?'
+      );
+    }
+    return this._renderer.curveDetail(d);
+  };
 }
 
 export default primitives3D;

@@ -311,6 +311,8 @@ class RendererGL extends Renderer {
     this.states.userPointShader = undefined;
     this.states.userImageShader = undefined;
 
+    this.states.curveDetail = 0.5;
+
     // Used by beginShape/endShape functions to construct a p5.Geometry
     this.shapeBuilder = new ShapeBuilder(this);
 
@@ -359,16 +361,6 @@ class RendererGL extends Renderer {
     this.defaultFilterShaders = {};
 
     this._curveTightness = 6;
-
-    // lookUpTable for coefficients needed to be calculated for bezierVertex, same are used for curveVertex
-    this._lookUpTableBezier = [];
-    // lookUpTable for coefficients needed to be calculated for quadraticVertex
-    this._lookUpTableQuadratic = [];
-
-    // current curveDetail in the Bezier lookUpTable
-    this._lutBezierDetail = 0;
-    // current curveDetail in the Quadratic lookUpTable
-    this._lutQuadraticDetail = 0;
 
 
     this.fontInfos = {};
@@ -452,8 +444,18 @@ class RendererGL extends Renderer {
     // this.shapeBuilder.beginShape(...args);
   }
 
+  curveDetail(d) {
+    if (d === undefined) {
+      return this.states.curveDetail;
+    } else {
+      this.states.curveDetail = d;
+    }
+  }
+
   drawShape(shape) {
-    const visitor = new PrimitiveToVerticesConverter();
+    const visitor = new PrimitiveToVerticesConverter({
+      curveDetail: this.states.curveDetail,
+    });
     shape.accept(visitor);
     this.shapeBuilder.constructFromContours(shape, visitor.contours);
 

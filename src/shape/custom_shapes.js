@@ -348,7 +348,7 @@ class SplineSegment extends Segment {
     let lastPrimitive = shape.at(-1, -1);
 
     let message = (array1, array2) =>
-      `Spline does not start where previous path segment ends: 
+      `Spline does not start where previous path segment ends:
       second spline vertex at (${array1})
       expected to be at (${array2}).`;
 
@@ -786,6 +786,12 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
 
 class PrimitiveToVerticesConverter extends PrimitiveVisitor {
   contours = [];
+  curveDetail;
+
+  constructor({ curveDetail = 1 } = {}) {
+    super();
+    this.curveDetail = curveDetail;
+  }
 
   lastContour() {
     return this.contours[this.contours.length - 1];
@@ -797,6 +803,11 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
   }
   visitLineSegment(lineSegment) {
     this.lastContour().push(lineSegment.getEndVertex());
+  }
+  visitBezierSegment(bezierSegment) {
+    // TODO: use this.curveDetail and actually evaluate the curve.
+    // Currently just returning the control points for testing.
+    this.lastContour().push(...bezierSegment.vertices.slice(0, bezierSegment.order));
   }
 }
 
@@ -1105,6 +1116,10 @@ function customShapes(p5, fn) {
   p5.PointAtLengthGetter = PointAtLengthGetter;
 
   // ---- FUNCTIONS ----
+
+  fn.bezierOrder = function(order) {
+    return this._renderer.bezierOrder(order);
+  }
 
   // Note: Code is commented out for now, to avoid conflicts with the existing implementation.
 

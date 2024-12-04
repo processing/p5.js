@@ -43,7 +43,8 @@ class Renderer {
       textAlign: constants.LEFT,
       textBaseline: constants.BASELINE,
       textStyle: constants.NORMAL,
-      textWrap: constants.WORD
+      textWrap: constants.WORD,
+      bezierOrder: 3
     };
     this._pushPopStack = [];
     // NOTE: can use the length of the push pop stack instead
@@ -97,6 +98,30 @@ class Renderer {
     this._pushPopDepth--;
     Object.assign(this.states, this._pushPopStack.pop());
     this.updateShapeVertexProperties();
+    this.updateShapeProperties();
+  }
+
+  bezierOrder(order) {
+    if (order === undefined) {
+      return this.states.bezierOrder;
+    } else {
+      this.states.bezierOrder = order;
+      this.updateShapeProperties();
+    }
+  }
+
+  bezierVertex(x, y, z = 0, u = 0, v = 0) {
+    const position = new Vector(x, y, z);
+    const textureCoordinates = new Vector(u, v);
+    this.currentShape.bezierVertex(position, textureCoordinates);
+  }
+
+  curveDetail(d) {
+    if (d === undefined) {
+      return this.states.curveDetail;
+    } else {
+      this.states.curveDetail = d;
+    }
   }
 
   beginShape(...args) {
@@ -222,6 +247,10 @@ class Renderer {
       stroke: this.states.strokeColor,
       fill: this.states.fillColor,
     }
+  }
+
+  updateShapeProperties() {
+    this.currentShape.bezierOrder(this.states.bezierOrder)
   }
 
   updateShapeVertexProperties() {

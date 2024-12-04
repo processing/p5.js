@@ -576,7 +576,6 @@ function vertex(p5, fn){
    * @param  {Number} y3 y-coordinate of the second control point.
    * @param  {Number} x4 x-coordinate of the anchor point.
    * @param  {Number} y4 y-coordinate of the anchor point.
-   * @chainable
    *
    * @example
    * <div>
@@ -803,33 +802,21 @@ function vertex(p5, fn){
    * @param  {Number} x4
    * @param  {Number} y4
    * @param  {Number} z4 z-coordinate of the anchor point.
-   * @chainable
    */
   fn.bezierVertex = function(...args) {
-    p5._validateParameters('bezierVertex', args);
-    if (this._renderer.isP3D) {
-      this._renderer.bezierVertex(...args);
-    } else {
-      if (vertices.length === 0) {
-        p5._friendlyError(
-          'vertex() must be used once before calling bezierVertex()',
-          'bezierVertex'
-        );
-      } else {
-        isBezier = true;
-        const vert = [];
-        for (let i = 0; i < args.length; i++) {
-          vert[i] = args[i];
-        }
-        vert.isVert = false;
-        if (isContour) {
-          contourVertices.push(vert);
-        } else {
-          vertices.push(vert);
-        }
+    if (args.length === 2 * 3 || args.length === 3 * 3) {
+      // Handle the legacy case where all bezier control points are provided
+      // at once. We'll translate them into 3 individual calls.
+      const stride = args.length / 3;
+
+      const prevOrder = this._renderer.bezierOrder();
+      for (let i = 0; i < args.length; i += stride) {
+        this._renderer.bezierVertex(...args.slice(i, i + stride));
       }
+      this._renderer.bezierOrder(prevOrder);
+    } else {
+      this._renderer.bezierVertex(...args);
     }
-    return this;
   };
 
   /**

@@ -21,23 +21,23 @@
 
     const sketch = function (p) {
       p.setup = function () {
-        p.createCanvas(200, 200, p.WEBGL);
+        p.createCanvas(200, 200); // , p.WEBGL
       };
 
       p.draw = function () {
         p.background(0, 50, 50);
-        p.translate(-p.width/2, -p.height/2);
+        //p.translate(-p.width/2, -p.height/2);
         p.fill('red');
         p.stroke('white');
         p.strokeWeight(10);
         p.beginShape();
         p.vertex(50, 50);
         p.vertex(100, 50);
-        p.stroke('blue');
-        p.vertex(100, 100);
-        p.vertex(50, 100);
-        p.vertex(70, 70);
-        p.stroke('white');
+        p.bezierOrder(3);
+        // p.bezierVertex(100, 100, 50, 100, 70, 70);
+        p.bezierVertex(100, 100);
+        p.bezierVertex(50, 100);
+        p.bezierVertex(70, 70);
         p.endShape(p.CLOSE);
       };
     };
