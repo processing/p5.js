@@ -269,8 +269,8 @@ class SplineSegment extends Segment {
 
   get _chainedToSegment() {
     if (this._belongsToShape && this._comesAfterSegment) {
-      let predecessorEnd = this.getStartVertex().position;
-      return predecessorEnd.equals(this._interpolatedStartPosition);
+      let predecessorEndPosition = this.getStartVertex().position;
+      return predecessorEndPosition.equals(this._interpolatedStartPosition);
     }
     else {
       return false;
@@ -294,9 +294,9 @@ class SplineSegment extends Segment {
       verticesPushed &&
       !lastPrimitive._chainedToSegment
     ) {
-      let interpolatedStart = lastPrimitive._interpolatedStartPosition;
-      let predecessorEnd = lastPrimitive.getStartVertex().position;
-      console.warn(message(interpolatedStart.array(), predecessorEnd.array()));
+      let interpolatedStartPosition = lastPrimitive._interpolatedStartPosition;
+      let predecessorEndPosition = lastPrimitive.getStartVertex().position;
+      console.warn(message(interpolatedStartPosition.array(), predecessorEndPosition.array()));
     }
 
     // Note: Could add a warning in an else-if case for when this spline segment
