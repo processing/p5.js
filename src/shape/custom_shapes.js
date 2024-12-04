@@ -169,12 +169,20 @@ class Segment extends ShapePrimitive {
     }
   }
 
+  get _belongsToShape() {
+    return this._shape !== null;
+  }
+
+  // segments in a shape always have a predecessor
+  // (either an anchor or another segment)
+  get _previousPrimitive() {
+    return this._belongsToShape ?
+      this._shape.at(this._contoursIndex, this._primitivesIndex - 1) :
+      null;
+  }
+
   getStartVertex() {
-    let previousPrimitive = this._shape.at(
-      this._contoursIndex,
-      this._primitivesIndex - 1
-    );
-    return previousPrimitive.getEndVertex();
+    return this._previousPrimitive.getEndVertex();
   }
 
   getEndVertex() {
@@ -227,12 +235,82 @@ class BezierSegment extends Segment {
   }
 }
 
-// consider type and end modes -- see #6766)
-// may want to use separate classes, but maybe not
-// may need to implement getEndVertex() to override super.getEndVertex()
+/*
+To-do: Consider type and end modes -- see #6766
+may want to use separate classes, but maybe not
+
+For now, the implementation overrides
+super.getEndVertex() in order to preserve current p5
+endpoint behavior, but we're considering defaulting
+to interpolated endpoints (a breaking change)
+*/
 class SplineSegment extends Segment {
+  #vertexCapacity = Infinity;
+
   constructor(...vertices) {
     super(...vertices);
+  }
+
+  get vertexCapacity() {
+    return this.#vertexCapacity;
+  }
+
+  accept(visitor) {
+    visitor.visitSplineSegment(this);
+  }
+
+  get _comesAfterSegment() {
+    return this._previousPrimitive instanceof Segment;
+  }
+
+  get _interpolatedStartPosition() {
+    return this.vertices[1].position;
+  }
+
+  get _chainedToSegment() {
+    if (this._belongsToShape && this._comesAfterSegment) {
+      let predecessorEnd = this.getStartVertex().position;
+      return predecessorEnd.equals(this._interpolatedStartPosition);
+    }
+    else {
+      return false;
+    }
+  }
+
+  // extend addToShape() with a warning in case second vertex
+  // doesn't line up with end of last segment
+  addToShape(shape) {
+    super.addToShape(shape);
+
+    let verticesPushed = !this._belongsToShape;
+    let lastPrimitive = shape.at(-1, -1);
+
+    let message = (array1, array2) =>
+      `A spline does not start where previous path segment ends: 
+      second spline vertex at (${array1})
+      expected to be at (${array2}).`;
+
+    if (
+      verticesPushed &&
+      !lastPrimitive._chainedToSegment
+    ) {
+      let interpolatedStart = lastPrimitive._interpolatedStartPosition;
+      let predecessorEnd = lastPrimitive.getStartVertex().position;
+      console.warn(message(interpolatedStart.array(), predecessorEnd.array()));
+    }
+
+    // Note: Could add a warning in an else-if case for when this spline segment
+    // is added directly to the shape instead of pushing its vertices to
+    // an existing spline segment. However, if we assume addToShape() is called by
+    // splineVertex(), it'd add a new spline segment with only one vertex in that case,
+    // and the check wouldn't be needed yet.
+
+    // TODO: Consider case where positions match but other vertex properties don't.
+  }
+
+  // override method on base class
+  getEndVertex() {
+    return this.vertices.at(-2);
   }
 }
 
@@ -351,6 +429,11 @@ class PrimitiveShapeCreators {
 
 // ---- SHAPE ----
 
+/* Note: It's assumed that Shape instances are always built through
+ * their beginShape()/endShape() methods. For example, this ensures
+ * that a segment is never the first primitive in a contour (paths
+ * always start with an anchor), which simplifies code elsewhere.
+ */
 class Shape {
   #vertexProperties;
   #initialVertexProperties;
