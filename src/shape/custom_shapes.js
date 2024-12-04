@@ -290,7 +290,10 @@ class SplineSegment extends Segment {
       second spline vertex at (${array1})
       expected to be at (${array2}).`;
 
-    if (verticesPushed && !lastPrimitive._chainedToSegment) {
+    if (verticesPushed &&
+      lastPrimitive._comesAfterSegment &&
+      !lastPrimitive._chainedToSegment
+    ) {
       let interpolatedStartPosition = lastPrimitive._interpolatedStartPosition;
       let predecessorEndPosition = lastPrimitive.getStartVertex().position;
 
