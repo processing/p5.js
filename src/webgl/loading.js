@@ -377,7 +377,7 @@ function loading(p5, fn){
       fileType = '.obj';
     }
 
-    const model = new Geometry();
+    const model = new Geometry(undefined, undefined, undefined, this._renderer);
     model.gid = `${path}|${normalize}`;
 
     async function getMaterials(lines) {

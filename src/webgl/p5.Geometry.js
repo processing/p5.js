@@ -13,7 +13,8 @@ import { DataArray } from './p5.DataArray';
 import { Vector } from '../math/p5.Vector';
 
 class Geometry {
-  constructor(detailX, detailY, callback) {
+  constructor(detailX, detailY, callback, renderer) {
+    this.renderer = renderer;
     this.vertices = [];
 
     this.boundingBoxCache = null;
@@ -489,7 +490,7 @@ class Geometry {
     if (binary) {
       let offset = 80;
       const bufferLength =
-          this.faces.length * 2 + this.faces.length * 3 * 4 * 4 + 80 + 4;
+        this.faces.length * 2 + this.faces.length * 3 * 4 * 4 + 80 + 4;
       const arrayBuffer = new ArrayBuffer(bufferLength);
       modelOutput = new DataView(arrayBuffer);
       modelOutput.setUint32(offset, this.faces.length, true);
@@ -1398,87 +1399,88 @@ class Geometry {
       if (dirOK) {
         this._addSegment(begin, end, fromColor, toColor, dir);
       }
-
-      if (i > 0 && prevEdge[1] === currEdge[0]) {
-        if (!connected.has(currEdge[0])) {
-          connected.add(currEdge[0]);
-          potentialCaps.delete(currEdge[0]);
-          // Add a join if this segment shares a vertex with the previous. Skip
-          // actually adding join vertices if either the previous segment or this
-          // one has a length of 0.
-          //
-          // Don't add a join if the tangents point in the same direction, which
-          // would mean the edges line up exactly, and there is no need for a join.
-          if (lastValidDir && dirOK && dir.dot(lastValidDir) < 1 - 1e-8) {
-            this._addJoin(begin, lastValidDir, dir, fromColor);
-          }
-        }
-      } else {
-        // Start a new line
-        if (dirOK && !connected.has(currEdge[0])) {
-          const existingCap = potentialCaps.get(currEdge[0]);
-          if (existingCap) {
-            this._addJoin(
-              begin,
-              existingCap.dir,
-              dir,
-              fromColor
-            );
-            potentialCaps.delete(currEdge[0]);
+      if (!this.renderer?._simpleLines) {
+        if (i > 0 && prevEdge[1] === currEdge[0]) {
+          if (!connected.has(currEdge[0])) {
             connected.add(currEdge[0]);
-          } else {
-            potentialCaps.set(currEdge[0], {
-              point: begin,
-              dir: dir.copy().mult(-1),
-              color: fromColor
-            });
+            potentialCaps.delete(currEdge[0]);
+            // Add a join if this segment shares a vertex with the previous. Skip
+            // actually adding join vertices if either the previous segment or this
+            // one has a length of 0.
+            //
+            // Don't add a join if the tangents point in the same direction, which
+            // would mean the edges line up exactly, and there is no need for a join.
+            if (lastValidDir && dirOK && dir.dot(lastValidDir) < 1 - 1e-8) {
+              this._addJoin(begin, lastValidDir, dir, fromColor);
+            }
+          }
+        } else {
+          // Start a new line
+          if (dirOK && !connected.has(currEdge[0])) {
+            const existingCap = potentialCaps.get(currEdge[0]);
+            if (existingCap) {
+              this._addJoin(
+                begin,
+                existingCap.dir,
+                dir,
+                fromColor
+              );
+              potentialCaps.delete(currEdge[0]);
+              connected.add(currEdge[0]);
+            } else {
+              potentialCaps.set(currEdge[0], {
+                point: begin,
+                dir: dir.copy().mult(-1),
+                color: fromColor
+              });
+            }
+          }
+          if (lastValidDir && !connected.has(prevEdge[1])) {
+            const existingCap = potentialCaps.get(prevEdge[1]);
+            if (existingCap) {
+              this._addJoin(
+                this.vertices[prevEdge[1]],
+                lastValidDir,
+                existingCap.dir.copy().mult(-1),
+                fromColor
+              );
+              potentialCaps.delete(prevEdge[1]);
+              connected.add(prevEdge[1]);
+            } else {
+              // Close off the last segment with a cap
+              potentialCaps.set(prevEdge[1], {
+                point: this.vertices[prevEdge[1]],
+                dir: lastValidDir,
+                color: fromColor
+              });
+            }
+            lastValidDir = undefined;
           }
         }
-        if (lastValidDir && !connected.has(prevEdge[1])) {
-          const existingCap = potentialCaps.get(prevEdge[1]);
+
+        if (i === this.edges.length - 1 && !connected.has(currEdge[1])) {
+          const existingCap = potentialCaps.get(currEdge[1]);
           if (existingCap) {
             this._addJoin(
-              this.vertices[prevEdge[1]],
-              lastValidDir,
+              end,
+              dir,
               existingCap.dir.copy().mult(-1),
-              fromColor
+              toColor
             );
-            potentialCaps.delete(prevEdge[1]);
-            connected.add(prevEdge[1]);
+            potentialCaps.delete(currEdge[1]);
+            connected.add(currEdge[1]);
           } else {
-            // Close off the last segment with a cap
-            potentialCaps.set(prevEdge[1], {
-              point: this.vertices[prevEdge[1]],
-              dir: lastValidDir,
-              color: fromColor
+            potentialCaps.set(currEdge[1], {
+              point: end,
+              dir,
+              color: toColor
             });
           }
-          lastValidDir = undefined;
         }
-      }
 
-      if (i === this.edges.length - 1 && !connected.has(currEdge[1])) {
-        const existingCap = potentialCaps.get(currEdge[1]);
-        if (existingCap) {
-          this._addJoin(
-            end,
-            dir,
-            existingCap.dir.copy().mult(-1),
-            toColor
-          );
-          potentialCaps.delete(currEdge[1]);
-          connected.add(currEdge[1]);
-        } else {
-          potentialCaps.set(currEdge[1], {
-            point: end,
-            dir,
-            color: toColor
-          });
+        if (dirOK) {
+          lastValidDir = dir;
         }
-      }
-
-      if (dirOK) {
-        lastValidDir = dir;
       }
     }
     for (const { point, dir, color } of potentialCaps.values()) {
@@ -1520,14 +1522,16 @@ class Geometry {
       }
     }
     this.lineVertices.push(...a, ...b, ...a, ...b, ...b, ...a);
-    this.lineVertexColors.push(
-      ...fromColor,
-      ...toColor,
-      ...fromColor,
-      ...toColor,
-      ...toColor,
-      ...fromColor
-    );
+    if (!this.renderer?._simpleLines) {
+      this.lineVertexColors.push(
+        ...fromColor,
+        ...toColor,
+        ...fromColor,
+        ...toColor,
+        ...toColor,
+        ...fromColor
+      );
+    }
     return this;
   }
 
@@ -1684,110 +1688,110 @@ class Geometry {
     return this;
   }
 
-/** Sets the shader's vertex property or attribute variables.
- *
- * An vertex property or vertex attribute is a variable belonging to a vertex in a shader. p5.js provides some
- * default properties, such as `aPosition`, `aNormal`, `aVertexColor`, etc. These are
- * set using <a href="#/p5/vertex">vertex()</a>, <a href="#/p5/normal">normal()</a>
- * and <a href="#/p5/fill">fill()</a> respectively. Custom properties can also
- * be defined within <a href="#/p5/beginShape">beginShape()</a> and
- * <a href="#/p5/endShape">endShape()</a>.
- *
- * The first parameter, `propertyName`, is a string with the property's name.
- * This is the same variable name which should be declared in the shader, as in
- * `in vec3 aProperty`, similar to .`setUniform()`.
- *
- * The second parameter, `data`, is the value assigned to the shader variable. This value
- * will be pushed directly onto the Geometry object. There should be the same number
- * of custom property values as vertices, this method should be invoked once for each
- * vertex.
- *
- * The `data` can be a Number or an array of numbers. Tn the shader program the type
- * can be declared according to the WebGL specification. Common types include `float`,
- * `vec2`, `vec3`, `vec4` or matrices.
- *
- * See also the global <a href="#/p5/vertexProperty">vertexProperty()</a> function.
- *
- * @example
- * <div>
- * <code>
- * let geo;
- *
- * function cartesianToSpherical(x, y, z) {
- *   let r = sqrt(pow(x, x) + pow(y, y) + pow(z, z));
- *   let theta = acos(z / r);
- *   let phi = atan2(y, x);
- *   return { theta, phi };
- * }
- *
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *
- *   // Modify the material shader to display roughness.
- *   const myShader = materialShader().modify({
- *     vertexDeclarations:`in float aRoughness;
- *                         out float vRoughness;`,
- *     fragmentDeclarations: 'in float vRoughness;',
- *     'void afterVertex': `() {
- *         vRoughness = aRoughness;
- *     }`,
- *     'vec4 combineColors': `(ColorComponents components) {
- *             vec4 color = vec4(0.);
- *             color.rgb += components.diffuse * components.baseColor * (1.0-vRoughness);
- *             color.rgb += components.ambient * components.ambientColor;
- *             color.rgb += components.specular * components.specularColor * (1.0-vRoughness);
- *             color.a = components.opacity;
- *             return color;
- *     }`
- *   });
- *
- *   // Create the Geometry object.
- *   beginGeometry();
- *   fill('hotpink');
- *   sphere(45, 50, 50);
- *   geo = endGeometry();
- *
- *   // Set the roughness value for every vertex.
- *   for (let v of geo.vertices){
- *
- *     // convert coordinates to spherical coordinates
- *     let spherical = cartesianToSpherical(v.x, v.y, v.z);
- *
- *     // Set the custom roughness vertex property.
- *     let roughness = noise(spherical.theta*5, spherical.phi*5);
- *     geo.vertexProperty('aRoughness', roughness);
- *   }
- *
- *   // Use the custom shader.
- *   shader(myShader);
- *
- *   describe('A rough pink sphere rotating on a blue background.');
- * }
- *
- * function draw() {
- *   // Set some styles and lighting
- *   background('lightblue');
- *   noStroke();
- *
- *   specularMaterial(255,125,100);
- *   shininess(2);
- *
- *   directionalLight('white', -1, 1, -1);
- *   ambientLight(320);
- *
- *   rotateY(millis()*0.001);
- *
- *   // Draw the geometry
- *   model(geo);
- * }
- * </code>
- * </div>
- *
- * @method vertexProperty
- * @param {String} propertyName the name of the vertex property.
- * @param {Number|Number[]} data the data tied to the vertex property.
- * @param {Number} [size] optional size of each unit of data.
- */
+  /** Sets the shader's vertex property or attribute variables.
+   *
+   * An vertex property or vertex attribute is a variable belonging to a vertex in a shader. p5.js provides some
+   * default properties, such as `aPosition`, `aNormal`, `aVertexColor`, etc. These are
+   * set using <a href="#/p5/vertex">vertex()</a>, <a href="#/p5/normal">normal()</a>
+   * and <a href="#/p5/fill">fill()</a> respectively. Custom properties can also
+   * be defined within <a href="#/p5/beginShape">beginShape()</a> and
+   * <a href="#/p5/endShape">endShape()</a>.
+   *
+   * The first parameter, `propertyName`, is a string with the property's name.
+   * This is the same variable name which should be declared in the shader, as in
+   * `in vec3 aProperty`, similar to .`setUniform()`.
+   *
+   * The second parameter, `data`, is the value assigned to the shader variable. This value
+   * will be pushed directly onto the Geometry object. There should be the same number
+   * of custom property values as vertices, this method should be invoked once for each
+   * vertex.
+   *
+   * The `data` can be a Number or an array of numbers. Tn the shader program the type
+   * can be declared according to the WebGL specification. Common types include `float`,
+   * `vec2`, `vec3`, `vec4` or matrices.
+   *
+   * See also the global <a href="#/p5/vertexProperty">vertexProperty()</a> function.
+   *
+   * @example
+   * <div>
+   * <code>
+   * let geo;
+   *
+   * function cartesianToSpherical(x, y, z) {
+   *   let r = sqrt(pow(x, x) + pow(y, y) + pow(z, z));
+   *   let theta = acos(z / r);
+   *   let phi = atan2(y, x);
+   *   return { theta, phi };
+   * }
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Modify the material shader to display roughness.
+   *   const myShader = materialShader().modify({
+   *     vertexDeclarations:`in float aRoughness;
+   *                         out float vRoughness;`,
+   *     fragmentDeclarations: 'in float vRoughness;',
+   *     'void afterVertex': `() {
+   *         vRoughness = aRoughness;
+   *     }`,
+   *     'vec4 combineColors': `(ColorComponents components) {
+   *             vec4 color = vec4(0.);
+   *             color.rgb += components.diffuse * components.baseColor * (1.0-vRoughness);
+   *             color.rgb += components.ambient * components.ambientColor;
+   *             color.rgb += components.specular * components.specularColor * (1.0-vRoughness);
+   *             color.a = components.opacity;
+   *             return color;
+   *     }`
+   *   });
+   *
+   *   // Create the Geometry object.
+   *   beginGeometry();
+   *   fill('hotpink');
+   *   sphere(45, 50, 50);
+   *   geo = endGeometry();
+   *
+   *   // Set the roughness value for every vertex.
+   *   for (let v of geo.vertices){
+   *
+   *     // convert coordinates to spherical coordinates
+   *     let spherical = cartesianToSpherical(v.x, v.y, v.z);
+   *
+   *     // Set the custom roughness vertex property.
+   *     let roughness = noise(spherical.theta*5, spherical.phi*5);
+   *     geo.vertexProperty('aRoughness', roughness);
+   *   }
+   *
+   *   // Use the custom shader.
+   *   shader(myShader);
+   *
+   *   describe('A rough pink sphere rotating on a blue background.');
+   * }
+   *
+   * function draw() {
+   *   // Set some styles and lighting
+   *   background('lightblue');
+   *   noStroke();
+   *
+   *   specularMaterial(255,125,100);
+   *   shininess(2);
+   *
+   *   directionalLight('white', -1, 1, -1);
+   *   ambientLight(320);
+   *
+   *   rotateY(millis()*0.001);
+   *
+   *   // Draw the geometry
+   *   model(geo);
+   * }
+   * </code>
+   * </div>
+   *
+   * @method vertexProperty
+   * @param {String} propertyName the name of the vertex property.
+   * @param {Number|Number[]} data the data tied to the vertex property.
+   * @param {Number} [size] optional size of each unit of data.
+   */
   vertexProperty(propertyName, data, size){
     let prop;
     if (!this.userVertexProperties[propertyName]){

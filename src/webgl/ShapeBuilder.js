@@ -21,7 +21,7 @@ export class ShapeBuilder {
   constructor(renderer) {
     this.renderer = renderer;
     this.shapeMode = constants.TESS;
-    this.geometry = new Geometry();
+    this.geometry = new Geometry(undefined, undefined, undefined, this.renderer);
     this.geometry.gid = '__IMMEDIATE_MODE_GEOMETRY__';
 
     this.contourIndices = [];

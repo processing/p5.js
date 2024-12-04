@@ -1744,65 +1744,6 @@ function media(p5, fn){
     return videoEl;
   };
 
-
-  /**
-   * Creates a new <a href="#/p5.Element">p5.Element</a> object.
-   *
-   * The first parameter, `tag`, is a string an HTML tag such as `'h5'`.
-   *
-   * The second parameter, `content`, is optional. It's a string that sets the
-   * HTML content to insert into the new element. New elements have no content
-   * by default.
-   *
-   * @method createElement
-   * @param  {String} tag tag for the new element.
-   * @param  {String} [content] HTML content to insert into the element.
-   * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
-   *
-   * @example
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Create an h5 element with nothing in it.
-   *   createElement('h5');
-   *
-   *   describe('A gray square.');
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Create an h5 element with the content "p5*js".
-   *   let h5 = createElement('h5', 'p5*js');
-   *
-   *   // Set the element's style and position.
-   *   h5.style('color', 'deeppink');
-   *   h5.position(30, 15);
-   *
-   *   describe('The text "p5*js" written in pink in the middle of a gray square.');
-   * }
-   * </code>
-   * </div>
-   */
-  fn.createElement = function (tag, content) {
-    p5._validateParameters('createElement', arguments);
-    const elt = document.createElement(tag);
-    if (typeof content !== 'undefined') {
-      elt.innerHTML = content;
-    }
-    return addElement(elt, this);
-  };
-
   // =============================================================================
   //                         p5.MediaElement additions
   // =============================================================================
