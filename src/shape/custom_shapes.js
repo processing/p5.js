@@ -318,14 +318,21 @@ class SplineSegment extends Segment {
     return this._previousPrimitive instanceof Segment;
   }
 
-  get _interpolatedStartPosition() {
-    return this.vertices[1].position;
+  // assuming for now that the first interpolated vertex is always
+  // the second vertex passed to splineVertex()
+  // if this spline segment doesn't follow another segment,
+  // the first vertex is in an anchor
+  get _firstInterpolatedVertex() {
+    return this._comesAfterSegment ?
+      this.vertices[1] :
+      this.vertices[0];
   }
 
   get _chainedToSegment() {
     if (this._belongsToShape && this._comesAfterSegment) {
+      let interpolatedStartPosition = this._firstInterpolatedVertex.position;
       let predecessorEndPosition = this.getStartVertex().position;
-      return predecessorEndPosition.equals(this._interpolatedStartPosition);
+      return predecessorEndPosition.equals(interpolatedStartPosition);
     }
     else {
       return false;
@@ -349,14 +356,11 @@ class SplineSegment extends Segment {
       lastPrimitive._comesAfterSegment &&
       !lastPrimitive._chainedToSegment
     ) {
-      let interpolatedStartPosition = lastPrimitive._interpolatedStartPosition;
-      let predecessorEndPosition = lastPrimitive.getStartVertex().position;
+      let interpolatedStart = lastPrimitive._firstInterpolatedVertex.position;
+      let predecessorEnd = lastPrimitive.getStartVertex().position;
 
       console.warn(
-        message(
-          interpolatedStartPosition.array(),
-          predecessorEndPosition.array()
-        )
+        message(interpolatedStart.array(), predecessorEnd.array())
       );
     }
 
@@ -499,7 +503,8 @@ class Shape {
   #vertexProperties;
   #initialVertexProperties;
   #primitiveShapeCreators;
-  #bezierOrder;
+  #bezierOrder = 3;
+  _splineTightness = 0;
   kind = null;
   contours = [];
 
@@ -567,6 +572,10 @@ class Shape {
 
   bezierOrder(...order) {
     this.#bezierOrder = order;
+  }
+
+  splineTightness(tightness) {
+    this._splineTightness = tightness;
   }
 
   #createVertex(position, textureCoordinates) {
@@ -753,6 +762,24 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
           v3.position.y
         );
         break;
+    }
+  }
+  visitSplineSegment(splineSegment) {
+    let shape = splineSegment._shape;
+    let flatVertices = [];
+
+    for (const vertex of splineSegment.vertices) {
+      flatVertices.push(vertex.position.x, vertex.position.y);
+    }
+
+    if (!splineSegment._comesAfterSegment) {
+      let startVertex = splineSegment._firstInterpolatedVertex;
+      this.path.moveTo(startVertex.position.x, startVertex.position.y);
+    }
+
+    let bezierArrays = catmullRomToBezier(flatVertices, shape._splineTightness);
+    for (const array of bezierArrays) {
+      this.path.bezierCurveTo(...array);
     }
   }
 }
