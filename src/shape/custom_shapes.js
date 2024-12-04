@@ -286,17 +286,20 @@ class SplineSegment extends Segment {
     let lastPrimitive = shape.at(-1, -1);
 
     let message = (array1, array2) =>
-      `A spline does not start where previous path segment ends: 
+      `Spline does not start where previous path segment ends: 
       second spline vertex at (${array1})
       expected to be at (${array2}).`;
 
-    if (
-      verticesPushed &&
-      !lastPrimitive._chainedToSegment
-    ) {
+    if (verticesPushed && !lastPrimitive._chainedToSegment) {
       let interpolatedStartPosition = lastPrimitive._interpolatedStartPosition;
       let predecessorEndPosition = lastPrimitive.getStartVertex().position;
-      console.warn(message(interpolatedStartPosition.array(), predecessorEndPosition.array()));
+
+      console.warn(
+        message(
+          interpolatedStartPosition.array(),
+          predecessorEndPosition.array()
+        )
+      );
     }
 
     // Note: Could add a warning in an else-if case for when this spline segment
