@@ -6,7 +6,7 @@
  * @requires constants
  */
 
-import './p5.Color';
+import { Color } from './p5.Color';
 import { range } from 'colorjs.io/fn';
 
 function creatingReading(p5, fn){
@@ -678,12 +678,12 @@ function creatingReading(p5, fn){
    */
   fn.color = function(...args) {
     p5._validateParameters('color', args);
-    if (args[0] instanceof p5.Color) {
+    if (args[0] instanceof Color) {
       return args[0]; // Do nothing if argument is already a color object.
     }
 
     const arg = Array.isArray(args[0]) ? args[0] : args;
-    return new p5.Color(arg, this._colorMode, this._colorMaxes);
+    return new Color(arg, this._colorMode, this._colorMaxes);
   };
 
   /**
@@ -1027,7 +1027,7 @@ function creatingReading(p5, fn){
       space: c1.color.space.path[spaceIndex].id
     })(amt);
 
-    return new p5.Color(lerpColor, this._colorMode, this._colorMaxes);
+    return new Color(lerpColor, this._colorMode, this._colorMaxes);
   };
 
   /**

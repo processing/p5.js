@@ -21,6 +21,9 @@ export const VERSION = 'VERSION_WILL_BE_REPLACED_BY_BUILD';
  * @final
  */
 export const P2D = Symbol('p2d');
+
+export const P2DHDR = 'p2d-hdr';
+
 /**
  * One of the two render modes in p5.js, used for computationally intensive tasks like 3D rendering and shaders.
  *
