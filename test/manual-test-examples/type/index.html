@@ -1,0 +1,2724 @@
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- <script language="javascript" type="text/javascript" src="img/../../../../lib/p5.js"></script-->
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+    }
+
+    canvas {
+      border: 1px solid #f0f0f0;
+      display: block;
+    }
+
+    img {
+      border: 1px solid #fff;
+    }
+
+    img.gray {
+      border: 1px solid #eee;
+    }
+
+    img.red {
+      border: 1px solid #f00;
+    }
+
+    div {
+      margin: 40px 0px;
+    }
+
+    p.caption {
+      margin: 2px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+
+
+<body>
+  <script type="module">
+
+    import p5 from '../../../src/app.js';
+    //import 'https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.0/p5.js';
+
+    let textSketch = function (p) {
+      p.setup = function () {
+        p.createCanvas(240, 160);
+        //console.log(p.textProperties());
+        p.background(204);
+        p.textSize(19.5).fill(255).text('Default Text', 10, 30)
+        p.noStroke().fill(57, 112, 155).text('Black No Stroke Text', 10, 60)
+        p.fill(120).textStyle(p.NORMAL).textSize(13.5).text('Simple long Text: Lorem Ipsum is simply dummy text of the printing and typesetting industry.', 10, 92, 220, 60);
+        p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
+      };
+    };
+
+
+    let directFontSet = function (p) {
+      let font = "italic bold 32px Georgia";
+      p.setup = async function () {
+        p.createCanvas(550, 280);
+        p.textSize(32);
+        p.text("Normal font using the defaults", 20, 40);
+
+        p.textFont(font);
+        p.text('direct: ' + font, 20, 80);
+
+        p.textFont(font = font.replace('italic bold', 'oblique'));
+        p.text('direct: ' + font, 20, 120);
+
+        p.textFont(font = font.replace(32, 36).replace('oblique', 800));
+        p.text('direct: ' + font, 20, 160);
+
+        p.textFont(font = font.replace('800', 'small-caps'));
+        p.text('direct: ' + font, 20, 200);
+
+        p.textFont(font = '2em BADFONT, Times');
+        p.text('direct: ' + font, 20, 240);
+
+        //console.log(p.drawingContext.font, p._renderer.states);
+      }
+    };
+
+    const fontStretchSketch = function (p) {
+      let url = 'url(https://fonts.gstatic.com/s/inconsolata/v31/QlddNThLqRwH-OJ1UHjlKENVzlm-WkL3GZQmAwPyya15.woff2) format("woff2")';
+      let opts = ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'];
+      p.setup = async function () {
+        p.createCanvas(900, 330);
+        let f = await p.loadFont(url, 'Inconsolata', { stretch: "50% 200%" });
+        p.textFont(f, 32);
+        p.text(`Hello world (default: normal)`, 5, 35);
+        opts.forEach((opt, i) => {
+          p.textFont(f, 32, { fontStretch: opt });
+          p.text(`Hello world (${opt})`, 5, 35 * (i + 2));
+        });
+      };
+    };
+
+    const singleWideLine = function (p) {
+      let x = 20, y = 10, w = 350, h = 24;
+      let s, bb, suf = 'the-text-is-gonna-extend-beyond-the-max-width';
+      p.setup = function () {
+        p.createCanvas(450, 100);
+        p.noFill() && p.rect(x, y, w, h);
+        p.textSize(20).textLeading(22).fill(0).text(suf, x, y, w, h);
+
+        y += 40;
+        h += 20;
+        suf = 'the ' + suf;
+        p.noFill() && p.rect(x, y, w, h);
+        p.textSize(20).textLeading(22).fill(0).text(suf, x, y, w, h);
+      };
+    };
+
+    const fontStretchViaProp = function (p) {
+      let url = 'url(https://fonts.gstatic.com/s/inconsolata/v31/QlddNThLqRwH-OJ1UHjlKENVzlm-WkL3GZQmAwPyya15.woff2) format("woff2")';
+      let opts = ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'];
+      p.setup = async function () {
+        p.createCanvas(900, 330);
+        let f = await p.loadFont(url, 'Inconsolata', { stretch: "50% 200%" });
+        p.textFont(f, 32);
+        p.text(`Hello world (default: normal)`, 5, 35);
+        opts.forEach((opt, i) => {
+          p.textFont(f, 32);
+          p.textProperty('fontStretch', opt);
+          p.text(`Hello world (${opt})`, 5, 35 * (i + 2));
+        });
+      };
+    };
+
+
+    const textStretchViaProp = function (p) { // not used
+      let url = 'url(https://fonts.gstatic.com/s/inconsolata/v31/QlddNThLqRwH-OJ1UHjlKENVzlm-WkL3GZQmAwPyya15.woff2) format("woff2")';
+      let opts = ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'];
+      p.setup = async function () {
+        p.createCanvas(900, 330);
+        let f = await p.loadFont(url, 'Inconsolata', { stretch: "50% 200%" });
+        p.textFont(f, 32);
+        p.text(`Hello world (default: normal)`, 5, 35);
+        opts.forEach((opt, i) => {
+          p.textFont(f, 32);
+          p.textProperty('textStretch', opt);
+          p.text(`Hello world (${opt})`, 5, 35 * (i + 2));
+        });
+      };
+    };
+
+
+    const letterSpacingSketch = function (p) {
+      p.setup = function () {
+        p.createCanvas(650, 375);
+        p.textSize('2em');
+        for (let i = 0; i < 10; i++) {
+          let ls = p.map(i, 0, 10, -3, 7) + 'px';
+          p.textProperty('letterSpacing', ls);
+          let key = (ls === 0) ? 'default' : 'letterSpacing';
+          p.text(`Hello world (${key}: ${ls})`, 5, 35 * (i + 1));
+        };
+      };
+    };
+
+    const wordSpacingSketch = function (p) {
+      p.setup = function () {
+        p.createCanvas(650, 375);
+        p.textSize('2em');
+        for (let i = 0; i < 10; i++) {
+          let ls = p.map(i, 0, 10, 0, 60) + 'px';
+          p.textProperty('wordSpacing', ls);
+          p.text(`Hello world (wordSpacing: ${ls})`, 5, 35 * (i + 1));
+        };
+      };
+    };
+
+    const fontKerningSketch = function (p) {
+      p.setup = function () {
+        p.createCanvas(500, 125);
+        p.textFont('serif', '2em');
+        let opts = ['auto', 'normal', 'none'];
+        for (let i = 0; i < opts.length; i++) {
+          let k = opts[i];
+          p.textProperty('fontKerning', k);
+          p.text(`AVA Ta We  (fontKerning: ${k})`, 5, 35 * (i + 1));
+        };
+        //console.log(p.textProperties());
+      };
+    };
+
+    const fontVariantCapsSketch = function (p) {
+      p.setup = function () {
+        p.createCanvas(500, 270);
+        p.textFont('serif', '2em');
+        let opts = ['small-caps', "all-small-caps", "petite-caps", "all-petite-caps", "unicase", "titling-caps"];
+        p.text(`Hello World  (${this.drawingContext.fontVariantCaps})`, 5, 35);
+        for (let i = 0; i < opts.length; i++) {
+          p.textProperty('fontVariantCaps', opts[i]);
+          p.text(`Hello World  (${opts[i]})`, 5, 35 * (i + 2));
+        };
+        //console.log(p.textProperties());
+      };
+    };
+
+    const textRenderingProp = function (p) {
+      p.setup = function () {
+        p.createCanvas(500, 150);
+        p.textFont('serif', '2em');
+        let opts = ['auto', 'optimizeSpeed', 'optimizeLegibility', 'geometricPrecision'];
+        for (let i = 0; i < opts.length; i++) {
+          p.textProperty('textRendering', opts[i]);
+          p.text(`Hello world (${opts[i] === 'auto' ? 'default: auto' : opts[i]})`, 10, 30 + 35 * i);
+        };
+      };
+    };
+
+    const textToPointsSketch = function (p) {
+      let pts, f;
+      p.setup = async function () {
+        p.createCanvas(750, 350);
+        p.background(255);
+        p.textFont(f = await p.loadFont('./font/LiberationSans-Bold.ttf'), 300);
+        p.fill(220);
+        p.stroke(0);
+        p.text('p5*js', 5, 250);
+        p.stroke('#E92D55');
+        pts = f.textToPoints('p5*js', 5, 250);
+        pts.forEach(pt => p.circle(pt.x, pt.y, 5));
+      };
+    };
+
+    let textToPathsSketch = function (p) {
+      let paths, f;
+      p.setup = async function () {
+        p.createCanvas(750, 350);
+        p.background(255);
+        p.textFont(f = await p.loadFont('./font/LiberationSans-Bold.ttf'), 300);
+        p.fill('#E92D55');
+        paths = f.textToPaths('p5*js', 5, 250);
+        //drawPaths(paths, p);
+        f.drawPaths(p.drawingContext, paths, { fill: '#E92D55' });
+      }
+    }
+
+    let singleWordBounds = function (p) {
+      let font;
+
+      function dt(s, x, y, halign, valign) {
+        drawP5(s, x, y, halign, valign);
+        drawDirect(s, x, y, halign, valign);
+        drawPoints(s, x, y, halign, valign);
+      }
+      // call font.textToPoints() and draw the points
+      function drawPoints(s, x, y, halign, valign) {
+        p.textAlign(halign, valign);
+        let pts = font.textToPoints(s, x, y);
+        p.stroke('green').fill('green');
+        pts.forEach(pt => p.circle(pt.x, pt.y, 2));
+      }
+
+      function drawP5(s, x, y, halign, valign) {
+        p.textAlign(halign, valign);
+        let m = p.drawingContext.measureText(s);
+        p.stroke(0) && p.line(0, y, p.width, y) && p.line(x, 0, x, p.height);
+        p.fill(0) && p.noStroke() && p.text(s, x, y);
+        let bb = p.textBounds(s, x, y);
+        p.noFill() && p.stroke('red') && p.rect(bb.x, bb.y, bb.w, bb.h);
+      }
+
+      function drawDirect(s, x, y, halign, valign) {
+        p.drawingContext.textAlign = halign;
+        p.drawingContext.textBaseline = valign;
+        p.drawingContext.fillStyle = 'black';
+        p.drawingContext.fillText(s, x, y);
+        let m = p.drawingContext.measureText(s);
+        let asc = m.actualBoundingBoxAscent;
+        let desc = m.actualBoundingBoxDescent;
+        let abl = m.actualBoundingBoxLeft;
+        let abr = m.actualBoundingBoxRight;
+        let bb = {
+          x: x - abl,
+          y: y - asc,
+          w: abr + abl,
+          h: asc + desc,
+        };
+        p.drawingContext.strokeStyle = 'red';
+        p.drawingContext.strokeRect(bb.x, bb.y, bb.w, bb.h);
+      }
+
+      p.setup = async function () {
+        p.createCanvas(1200, 1050);
+        font = await p.loadFont("font/Lato-Black.ttf");
+        p.textFont(font, 64);
+        let x = 150, y = 0;
+        dt('.ooo', x, y += 80, p.LEFT, p.TOP);
+        dt(',doi', x, y += 80, p.LEFT, p.TOP);
+        dt('.dog', x, y += 80, p.LEFT, p.TOP);
+        dt('-oog', x, y += 80, p.LEFT, p.TOP);
+        dt('.ooo', x, y += 80, p.CENTER, p.TOP);
+        dt(',doi', x, y += 80, p.CENTER, p.TOP);
+        dt('.dog', x, y += 80, p.CENTER, p.TOP);
+        dt('-oog', x, y += 80, p.CENTER, p.TOP);
+        dt('.ooo', x, y += 80, p.RIGHT, p.TOP);
+        dt(',doi', x, y += 80, p.RIGHT, p.TOP);
+        dt('.dog', x, y += 80, p.RIGHT, p.TOP);
+        dt('-oog', x, y += 80, p.RIGHT, p.TOP);
+
+        y = 0, x = 450;
+        dt('.ooo', x, y += 80, p.LEFT, p.BASELINE);
+        dt(',doi', x, y += 80, p.LEFT, p.BASELINE);
+        dt('.dog', x, y += 80, p.LEFT, p.BASELINE);
+        dt('-oog', x, y += 80, p.LEFT, p.BASELINE);
+        dt('.ooo', x, y += 80, p.CENTER, p.BASELINE);
+        dt(',doi', x, y += 80, p.CENTER, p.BASELINE);
+        dt('.dog', x, y += 80, p.CENTER, p.BASELINE);
+        dt('-oog', x, y += 80, p.CENTER, p.BASELINE);
+        dt('.ooo', x, y += 80, p.RIGHT, p.BASELINE);
+        dt(',doi', x, y += 80, p.RIGHT, p.BASELINE);
+        dt('.dog', x, y += 80, p.RIGHT, p.BASELINE);
+        dt('-oog', x, y += 80, p.RIGHT, p.BASELINE);
+
+        y = 0, x = 750;
+        dt('.ooo', x, y += 80, p.LEFT, p._CTX_MIDDLE);
+        dt(',doi', x, y += 80, p.LEFT, p._CTX_MIDDLE);
+        dt('.dog', x, y += 80, p.LEFT, p._CTX_MIDDLE);
+        dt('-oog', x, y += 80, p.LEFT, p._CTX_MIDDLE);
+        dt('.ooo', x, y += 80, p.CENTER, p._CTX_MIDDLE);
+        dt(',doi', x, y += 80, p.CENTER, p._CTX_MIDDLE);
+        dt('.dog', x, y += 80, p.CENTER, p._CTX_MIDDLE);
+        dt('-oog', x, y += 80, p.CENTER, p._CTX_MIDDLE);
+        dt('.ooo', x, y += 80, p.RIGHT, p._CTX_MIDDLE);
+        dt(',doi', x, y += 80, p.RIGHT, p._CTX_MIDDLE);
+        dt('.dog', x, y += 80, p.RIGHT, p._CTX_MIDDLE);
+        dt('-oog', x, y += 80, p.RIGHT, p._CTX_MIDDLE);
+
+        y = 0, x = 1050;
+        dt('.ooo', x, y += 80, p.LEFT, p.BOTTOM);
+        dt(',doi', x, y += 80, p.LEFT, p.BOTTOM);
+        dt('.dog', x, y += 80, p.LEFT, p.BOTTOM);
+        dt('-oog', x, y += 80, p.LEFT, p.BOTTOM);
+        dt('.ooo', x, y += 80, p.CENTER, p.BOTTOM);
+        dt(',doi', x, y += 80, p.CENTER, p.BOTTOM);
+        dt('.dog', x, y += 80, p.CENTER, p.BOTTOM);
+        dt('-oog', x, y += 80, p.CENTER, p.BOTTOM);
+        dt('.ooo', x, y += 80, p.RIGHT, p.BOTTOM);
+        dt(',doi', x, y += 80, p.RIGHT, p.BOTTOM);
+        dt('.dog', x, y += 80, p.RIGHT, p.BOTTOM);
+        dt('-oog', x, y += 80, p.RIGHT, p.BOTTOM);
+
+        p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
+      };
+
+    };
+
+    let singleLineBounds = function (p) {
+      let x, y, s, showBB = 1;
+
+      p.setup = function () {
+        p.createCanvas(240 * 5, 200);
+        p.textSize(30);
+
+        ///////////////////////////// BASELINE (L,C,R) ///////////////////////////////
+        y = 50;
+        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y); //h-line
+
+        //1
+        x = 10, s = 'LEFT BASELINE is easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y);
+        //p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        let bb = Object.values(p.textBounds(s, x, y));
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...bb);
+        p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+
+        //2
+        x += 580, s = 'CENTER BASELINE is easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y);
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+
+        //3
+        x += 600, s = 'RIGHT BASELINE is easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y);
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+
+
+        /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
+        y += 50;
+        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y); //h-line
+
+        // 4
+        x = 10, s = 'LEFT BOTTOM is easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BOTTOM) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        // 5
+        x += 580, s = 'CENTER BOTTOM is easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BOTTOM) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        // 6
+        x += 600, s = 'RIGHT BOTTOM is easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BOTTOM) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        //////////////////////////// CENTER (L,C,R) /////////////////////////////////
+        y += 30;
+        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y); //h-line
+
+        x = 10, s = 'LEFT CENTER is easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.CENTER) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        x += 580, s = 'CENTER CENTER is easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.CENTER) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        x += 600, s = 'RIGHT CENTER is easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        ///////////////////////////// TOP (L,C,R) ///////////////////////////////
+        y += 30;
+        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y); //h-line
+
+        x = 10, s = 'LEFT TOP is easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        x += 580, s = 'CENTER TOP is easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.TOP) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        x += 600, s = 'RIGHT TOP is easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
+      };
+    };
+
+
+    let loadedBoundsSingle = function (p) {
+      let x, y, s, showBB = 1;
+
+      p.setup = async function () {
+        p.createCanvas(240 * 5, 200);
+        p.textFont(await p.loadFont("font/AndaleMono.ttf"));
+        p.textSize(30);
+
+        let measureFunc = p._renderer._textBoundsSingle.bind(p._renderer);
+
+        ///////////////////////////// BASELINE (L,C,R) ///////////////////////////////
+        y = 50;
+        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y); //h-line
+
+        //1
+        x = 10, s = 'LEFT BASELINE easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y);
+        //p.noFill() && p.stroke(0) && p.rect(...Object.values(p.fontBounds(s, x, y)));
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.fontBounds(s, x, y)));
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+
+        //2
+        x += 580, s = 'CENTER BASELINE easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y);
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.fontBounds(s, x, y)));
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+
+
+        //3
+        x += 600, s = 'RIGHT BASELINE easy?';
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y);
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.fontBounds(s, x, y)));
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+
+
+        /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
+        y += 50;
+        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y); //h-line
+
+        // 4
+        x = 10, s = 'LEFT BOTTOM ease.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BOTTOM) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.fontBounds(s, x, y)));
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+
+        // 5
+        x += 580, s = 'CENTER BOTTOM ease.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BOTTOM) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.fontBounds(s, x, y)));
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+
+        // 6
+        x += 600, s = 'RIGHT BOTTOM easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BOTTOM) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.fontBounds(s, x, y)));
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        //////////////////////////// CENTER (L,C,R) /////////////////////////////////
+        y += 30;
+        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y); //h-line
+
+        x = 10, s = 'LEFT CENTER easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.CENTER) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.fontBounds(s, x, y)));
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        x += 580, s = 'CENTER CENTER easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.CENTER) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.fontBounds(s, x, y)));
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        x += 600, s = 'RIGHT CENTER easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.fontBounds(s, x, y)));
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        ///////////////////////////// TOP (L,C,R) ///////////////////////////////
+        y += 30;
+        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y); //h-line
+
+        x = 10, s = 'LEFT TOP easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.fontBounds(s, x, y)));
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        x += 580, s = 'CENTER TOP is WoW';
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.TOP) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.fontBounds(s, x, y)));
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        x += 600, s = 'RIGHT TOP easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y);
+        p.noFill() && p.stroke(0) && p.rect(...Object.values(p.fontBounds(s, x, y)));
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
+      };
+    };
+
+
+    let manualLineBreaksLeft = function (p) {
+      let x = 10, y = 120, s, showBB = 0, h = 54.5;
+      p.setup = function () {
+        p.createCanvas(900, 400);
+        p.textSize(30);
+        p.textLeading(26);
+        p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y); //h-line
+
+        //1
+        s = 'LEFT TOP\nalignment\nis easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y);
+        //p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+
+        //2
+        x += 165, s = 'LEFT BASELINE\nalignment\nis easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y);
+        //p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+
+        //3 
+        x += 250, s = 'LEFT CENTER\nalignment\nis easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.CENTER) && p.text(s, x, y);
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+
+        //4
+        x += 225, s = 'LEFT BOTTOM\nalignment\nis easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BOTTOM) && p.text(s, x, y);
+        //p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+
+        p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
+      }
+    }
+
+    let manualLineBreaks = function (p) {
+      let x, y, s, showBB = 0;
+
+      p.setup = function () {
+        p.createCanvas(240 * 5, 400);
+        p.textSize(30);
+        p.textLeading(26);
+
+
+        ///////////////////////////// BASELINE (L,C,R) ///////////////////////////////
+        y = 50;
+        p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y); //h-line
+
+        //1
+        x = 10, s = 'LEFT BASELINE\nis easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y);
+        //p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+
+        //2
+        x += 580, s = 'CENTER BASELINE\nis easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y);
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+
+        //3
+        x += 600, s = 'RIGHT BASELINE\nis easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y);
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+        p.stroke(0) && p.strokeWeight(1) && p.line(x, 0, x, p.height); // v-line
+
+
+        /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
+        y += 120;
+        p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y); //h-line
+
+        // 4
+        x = 10, s = 'LEFT BOTTOM\nis easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BOTTOM) && p.text(s, x, y);
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        // 5
+        x += 580, s = 'CENTER BOTTOM\nis easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BOTTOM) && p.text(s, x, y);
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        // 6
+        x += 600, s = 'RIGHT BOTTOM\nis easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BOTTOM) && p.text(s, x, y);
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        //////////////////////////// CENTER (L,C,R) /////////////////////////////////
+        y += 70;
+        p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y); //h-line
+
+        x = 10, s = 'LEFT CENTER\nis easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.CENTER) && p.text(s, x, y);
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        x += 580, s = 'CENTER CENTER\nis easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.CENTER) && p.text(s, x, y);
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        x += 600, s = 'RIGHT CENTER\nis easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y);
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        ///////////////////////////// TOP (L,C,R) ///////////////////////////////
+        y += 70;
+        p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y); //h-line
+
+        x = 10, s = 'LEFT TOP\nis easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y);
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        x += 580, s = 'CENTER TOP\nis easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.TOP) && p.text(s, x, y);
+        if (showBB) sp.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        x += 600, s = 'RIGHT TOP\nis easy.';
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y);
+        if (showBB) p.noFill() && p.stroke(0) && p.rect(...Object.values(p.textBounds(s, x, y)));
+
+        p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
+
+      };
+    };
+
+    let loadedBoundsWithPoints = function (p) {
+      let x, y, w = 300, h = 70, showBB = 1, font;
+      let s, suf = 'text gonna wrap when it gets too long and is then breaking.';
+
+      p.setup = async function () {
+        p.createCanvas(1000, 420);
+        let font = await p.loadFont("font/Lato-Black.ttf");
+        p.textFont(font);
+        p.textSize(20);
+        p.textLeading(22);
+
+        ///////////////////////////// BASELINE (L,C,R) ///////////////////////////////
+        y = 30;
+
+        //1
+        x = 20, s = 'LEFT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(font.textBounds(s, x, y, w, h)));
+        font.textToPoints(s, x, y, w, h).forEach(pt => p.stroke('green').point(pt.x, pt.y));
+        // draw horizontal line at y=64
+        p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
+
+        //2
+        x += 330, s = 'CENTER BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(font.textBounds(s, x, y, w, h)));
+        font.textToPoints(s, x, y, w, h).forEach(pt => p.stroke('green').point(pt.x, pt.y));
+
+
+        //3
+        x += 330, s = 'RIGHT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(font.textBounds(s, x, y, w, h)));
+        font.textToPoints(s, x, y, w, h).forEach(pt => p.stroke('green').point(pt.x, pt.y));
+
+
+
+        /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
+        y += 100;
+
+        // 4
+        x = 20, s = 'LEFT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BOTTOM) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(font.textBounds(s, x, y, w, h)));
+        font.textToPoints(s, x, y, w, h).forEach(pt => p.stroke('green').point(pt.x, pt.y));
+
+        // 5
+        x += 330, s = 'CENTER BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BOTTOM) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(font.textBounds(s, x, y, w, h)));
+        font.textToPoints(s, x, y, w, h).forEach(pt => p.stroke('green').point(pt.x, pt.y));
+
+        // 6
+        x += 330, s = 'RIGHT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BOTTOM) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(font.textBounds(s, x, y, w, h)));
+        font.textToPoints(s, x, y, w, h).forEach(pt => p.stroke('green').point(pt.x, pt.y));
+
+        //////////////////////////// CENTER (L,C,R) /////////////////////////////////
+        y += 100;
+
+        x = 20, s = 'LEFT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.CENTER) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(font.textBounds(s, x, y, w, h)));
+        font.textToPoints(s, x, y, w, h).forEach(pt => p.stroke('green').point(pt.x, pt.y));
+
+        x += 330, s = 'CENTER CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.CENTER) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(font.textBounds(s, x, y, w, h)));
+        font.textToPoints(s, x, y, w, h).forEach(pt => p.stroke('green').point(pt.x, pt.y));
+
+        x += 330, s = 'RIGHT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(font.textBounds(s, x, y, w, h)));
+        font.textToPoints(s, x, y, w, h).forEach(pt => p.stroke('green').point(pt.x, pt.y));
+
+        ///////////////////////////// TOP (L,C,R) ///////////////////////////////
+        y += 100;
+
+        x = 20, s = 'LEFT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(font.textBounds(s, x, y, w, h)));
+        font.textToPoints(s, x, y, w, h).forEach(pt => p.stroke('green').point(pt.x, pt.y));
+
+        x += 330, s = 'CENTER TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.TOP) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(font.textBounds(s, x, y, w, h)));
+        font.textToPoints(s, x, y, w, h).forEach(pt => p.stroke('green').point(pt.x, pt.y));
+
+        x += 330, s = 'RIGHT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(font.textBounds(s, x, y, w, h)));
+        font.textToPoints(s, x, y, w, h).forEach(pt => p.stroke('green').point(pt.x, pt.y));
+
+        p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
+      }
+    };
+
+
+
+    let systemBoundsMultiOverflow = function (p) {
+      let x, y, w = 300, h = 70, showBB = 1;
+      let s, suf = 'text gonna wrap when it gets too long and is then breaking. This is actually just overflow.';
+
+      p.setup = function () {
+        p.createCanvas(1010, 430);
+        p.textSize(20);
+        p.textLeading(22);
+
+        ///////////////////////////// BASELINE (L,C,R) ///////////////////////////////
+        y = 30;
+        //1
+        x = 20, s = 'LEFT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        // draw horizontal line at y=64
+        p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
+
+        //2
+        x += 330, s = 'CENTER BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        //3
+        x += 330, s = 'RIGHT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
+        y += 100;
+
+        // 4
+        x = 20, s = 'LEFT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BOTTOM) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
+
+        // 5
+        x += 330, s = 'CENTER BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BOTTOM) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        // 6
+        x += 330, s = 'RIGHT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BOTTOM) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        //////////////////////////// CENTER (L,C,R) /////////////////////////////////
+        y += 100;
+
+        x = 20, s = 'LEFT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.CENTER) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        x += 330, s = 'CENTER CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.CENTER) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        x += 330, s = 'RIGHT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        ///////////////////////////// TOP (L,C,R) ///////////////////////////////
+        y += 100;
+
+        x = 20, s = 'LEFT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        p.noFill() && p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y);
+
+        x += 330, s = 'CENTER TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.TOP) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        x += 330, s = 'RIGHT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
+      }
+    };
+
+    let systemBoundsMulti = function (p) { // RectMode=CENTER(default)
+      let x, y, w = 300, h = 70, showBB = 1;
+      let s, suf = 'text gonna wrap when it gets too long and is then breaking.';
+
+      p.setup = function () {
+        p.createCanvas(1010, 430);
+        p.textSize(20);
+        p.textLeading(22);
+
+        ///////////////////////////// BASELINE (L,C,R) ///////////////////////////////
+        y = 30;
+        //1
+        x = 20, s = 'LEFT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        // draw horizontal line at y=64
+        p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
+
+        //2
+        x += 330, s = 'CENTER BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        //3
+        x += 330, s = 'RIGHT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
+        y += 100;
+
+        // 4
+        x = 20, s = 'LEFT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BOTTOM) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
+
+        // 5
+        x += 330, s = 'CENTER BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BOTTOM) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        // 6
+        x += 330, s = 'RIGHT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BOTTOM) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        //////////////////////////// CENTER (L,C,R) /////////////////////////////////
+        y += 100;
+
+        x = 20, s = 'LEFT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.CENTER) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        x += 330, s = 'CENTER CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.CENTER) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        x += 330, s = 'RIGHT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        ///////////////////////////// TOP (L,C,R) ///////////////////////////////
+        y += 100;
+
+        x = 20, s = 'LEFT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        p.noFill() && p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y);
+
+        x += 330, s = 'CENTER TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.TOP) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        x += 330, s = 'RIGHT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
+      }
+    };
+
+    let systemBoundsMulti_RectModeCenter = function (p) {
+      //let x, y, w = 300, h = 70, 
+      let x = 170, ox = x, y = 65, w = 300, h = 70, showBB = 1, showPoints = 1;
+      let s, suf = 'text gonna wrap when it gets too long and is then breaking.';
+
+      p.setup = function () {
+        p.createCanvas(1010, 430);
+        p.textSize(20);
+        p.textLeading(22);
+        p.rectMode(p.CENTER);
+
+        ///////////////////////////// BASELINE (L,C,R) ///////////////////////////////
+        //1
+        s = 'LEFT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        // draw horizontal line at y=64
+
+
+        //2
+        x += 330, s = 'CENTER BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+
+        //3
+        x += 330, s = 'RIGHT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+
+        /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
+        x = ox, y += 100;
+
+        // 4
+        s = 'LEFT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BOTTOM) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
+
+        // 5
+        x += 330, s = 'CENTER BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BOTTOM) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+
+        // 6
+        x += 330, s = 'RIGHT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BOTTOM) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+
+        //////////////////////////// CENTER (L,C,R) /////////////////////////////////
+        x = ox, y += 100;
+
+        s = 'LEFT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.CENTER) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+
+        x += 330, s = 'CENTER CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.CENTER) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+
+        x += 330, s = 'RIGHT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+
+        ///////////////////////////// TOP (L,C,R) ///////////////////////////////
+        x = ox, y += 100;
+
+        s = 'LEFT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+        //p.noFill() && p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y);
+
+        x += 330, s = 'CENTER TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.TOP) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+
+        x += 330, s = 'RIGHT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+
+
+        //p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
+      }
+    };
+
+    let systemBoundsMulti_RectModeCorners = function (p) {
+      let x = 20, ox = x, y = 30, x2 = 320, ox2 = x2, y2 = 100, showBB = 1;
+      let s, suf = 'text gonna wrap when it gets too long and is then breaking.';
+
+      p.setup = function () {
+        p.createCanvas(1010, 430);
+        p.textSize(20);
+        p.textLeading(22);
+        p.rectMode(p.CORNERS);
+
+        ///////////////////////////// BASELINE (L,C,R) ///////////////////////////////
+        //1
+        s = 'LEFT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+        // draw horizontal line at y=64
+        p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
+
+        //2
+        x += 330, x2 += 330, s = 'CENTER BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+
+
+        //3
+        x += 330, x2 += 330, s = 'RIGHT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+
+        /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
+        x = ox, x2 = ox2, y += 100, y2 += 100;
+
+        // 4
+        s = 'LEFT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BOTTOM) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
+
+        // 5
+        x += 330, x2 += 330, s = 'CENTER BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BOTTOM) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+
+        // 6
+        x += 330, x2 += 330, s = 'RIGHT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BOTTOM) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+
+        //////////////////////////// CENTER (L,C,R) /////////////////////////////////
+        x = ox, x2 = ox2, y += 100, y2 += 100;
+
+        s = 'LEFT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.CENTER) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+
+        x += 330, x2 += 330, s = 'CENTER CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.CENTER) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+
+        x += 330, x2 += 330, s = 'RIGHT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+
+        ///////////////////////////// TOP (L,C,R) ///////////////////////////////
+        x = ox, x2 = ox2, y += 100, y2 += 100;
+
+        s = 'LEFT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+        //p.noFill() && p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y);
+
+        x += 330, x2 += 330, s = 'CENTER TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.TOP) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+
+        x += 330, x2 += 330, s = 'RIGHT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+
+        //p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
+      }
+    };
+
+    let systemBoundsMulti_RectModeRadius = function (p) {
+      let x = 170, ox = x, y = 65, rw = 150, ox2 = rw, rh = 35, showBB = 1;
+      let s, suf = 'text gonna wrap when it gets too long and is then breaking.';
+
+      p.setup = function () {
+        p.createCanvas(1010, 430);
+        p.textSize(20);
+        p.textLeading(22);
+        p.rectMode(p.RADIUS);
+        //p.rect(x,y,rw,rh);
+
+        ///////////////////////////// BASELINE (L,C,R) ///////////////////////////////
+        //1
+        s = 'LEFT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+
+        // draw horizontal line at y=64
+        p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y);
+
+        //2
+        x += 330, s = 'CENTER BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+
+
+        //3
+        x += 330, s = 'RIGHT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
+        x = ox, y += 100;
+
+        // 4
+        s = 'LEFT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BOTTOM) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
+
+        // 5
+        x += 330, s = 'CENTER BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BOTTOM) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+
+        // 6
+        x += 330, s = 'RIGHT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BOTTOM) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+
+        //////////////////////////// CENTER (L,C,R) /////////////////////////////////
+        x = ox, y += 100;
+
+        s = 'LEFT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.CENTER) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+
+        x += 330, s = 'CENTER CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.CENTER) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+
+        x += 330, s = 'RIGHT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+
+        ///////////////////////////// TOP (L,C,R) ///////////////////////////////
+        x = ox, y += 100;
+
+        s = 'LEFT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        //p.noFill() && p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y);
+
+        x += 330, s = 'CENTER TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.TOP) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+
+        x += 330, s = 'RIGHT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+
+        //p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
+      }
+    };
+
+
+    let customBoundsMulti_RectModeCenter = function (p) {
+      //let x, y, w = 300, h = 70, 
+      let x = 170, ox = x, y = 65, w = 300, h = 70, showBB = 1, showPoints = 1;
+      let s, suf = 'text gonna wrap when it gets too long and is then breaking.';
+
+      p.setup = async function () {
+        p.createCanvas(1010, 430);
+        let font = await p.loadFont("font/Lato-Black.ttf");
+        p.textFont(font, 20);
+        p.textLeading(22);
+        p.rectMode(p.CENTER);
+
+        ///////////////////////////// BASELINE (L,C,R) ///////////////////////////////
+        //1
+        s = 'LEFT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, w, h).forEach(pt => p.point(pt.x, pt.y));
+
+        // draw horizontal line at y=64
+
+
+        //2
+        x += 330, s = 'CENTER BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, w, h).forEach(pt => p.point(pt.x, pt.y));
+
+        //3
+        x += 330, s = 'RIGHT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, w, h).forEach(pt => p.point(pt.x, pt.y));
+
+        /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
+        x = ox, y += 100;
+
+        // 4
+        s = 'LEFT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BOTTOM) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, w, h).forEach(pt => p.point(pt.x, pt.y));
+        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
+
+        // 5
+        x += 330, s = 'CENTER BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BOTTOM) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, w, h).forEach(pt => p.point(pt.x, pt.y));
+
+        // 6
+        x += 330, s = 'RIGHT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BOTTOM) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, w, h).forEach(pt => p.point(pt.x, pt.y));
+
+        //////////////////////////// CENTER (L,C,R) /////////////////////////////////
+        x = ox, y += 100;
+
+        s = 'LEFT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.CENTER) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, w, h).forEach(pt => p.point(pt.x, pt.y));
+
+        x += 330, s = 'CENTER CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.CENTER) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, w, h).forEach(pt => p.point(pt.x, pt.y));
+
+        x += 330, s = 'RIGHT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, w, h).forEach(pt => p.point(pt.x, pt.y));
+
+        ///////////////////////////// TOP (L,C,R) ///////////////////////////////
+        x = ox, y += 100;
+
+        s = 'LEFT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, w, h).forEach(pt => p.point(pt.x, pt.y));
+        //p.noFill() && p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y);
+
+        x += 330, s = 'CENTER TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.TOP) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, w, h).forEach(pt => p.point(pt.x, pt.y));
+
+        x += 330, s = 'RIGHT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, w, h);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y, w, h);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, w, h)));
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, w, h).forEach(pt => p.point(pt.x, pt.y));
+
+        //p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
+      }
+    };
+
+    let customBoundsMulti_RectModeCorners = function (p) {
+      let x = 20, ox = x, y = 30, x2 = 320, ox2 = x2, y2 = 100, showBB = 1, showPoints = 1;
+      let s, bb, suf = 'text gonna wrap when it gets too long and is then breaking.';
+
+      p.setup = async function () {
+        p.createCanvas(1010, 430);
+        let font = await p.loadFont("font/Lato-Black.ttf");
+        p.textFont(font, 20);
+        p.textLeading(22);
+        p.rectMode(p.CORNERS);
+
+        ///////////////////////////// BASELINE (L,C,R) ///////////////////////////////
+        //1
+        p.circle(x, y, 5);
+        p.circle(x2, y2, 5);
+        s = 'LEFT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, x2, y2).forEach(pt => p.point(pt.x, pt.y));
+
+        // draw horizontal line at y=64
+        p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
+
+        //2
+        x += 330, x2 += 330, s = 'CENTER BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, x2, y2).forEach(pt => p.point(pt.x, pt.y));
+
+
+        //3
+        x += 330, x2 += 330, s = 'RIGHT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, x2, y2).forEach(pt => p.point(pt.x, pt.y));
+
+        /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
+        x = ox, x2 = ox2, y += 100, y2 += 100;
+
+        // 4
+        s = 'LEFT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BOTTOM) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, x2, y2).forEach(pt => p.point(pt.x, pt.y));
+
+        // 5
+        x += 330, x2 += 330, s = 'CENTER BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BOTTOM) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, x2, y2).forEach(pt => p.point(pt.x, pt.y));
+
+        // 6
+        x += 330, x2 += 330, s = 'RIGHT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BOTTOM) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, x2, y2).forEach(pt => p.point(pt.x, pt.y));
+
+        //////////////////////////// CENTER (L,C,R) /////////////////////////////////
+        x = ox, x2 = ox2, y += 100, y2 += 100;
+
+        s = 'LEFT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.CENTER) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, x2, y2).forEach(pt => p.point(pt.x, pt.y));
+
+        x += 330, x2 += 330, s = 'CENTER CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.CENTER) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, x2, y2).forEach(pt => p.point(pt.x, pt.y));
+
+        x += 330, x2 += 330, s = 'RIGHT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, x2, y2).forEach(pt => p.point(pt.x, pt.y));
+
+        ///////////////////////////// TOP (L,C,R) ///////////////////////////////
+        x = ox, x2 = ox2, y += 100, y2 += 100;
+
+        s = 'LEFT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+        //p.noFill() && p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y);
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, x2, y2).forEach(pt => p.point(pt.x, pt.y));
+
+        x += 330, x2 += 330, s = 'CENTER TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.TOP) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, x2, y2).forEach(pt => p.point(pt.x, pt.y));
+
+        x += 330, x2 += 330, s = 'RIGHT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, x2, y2);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y, x2, y2);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, x2, y2)));
+        if (showPoints) p.stroke('green') && font.textToPoints(s, x, y, x2, y2).forEach(pt => p.point(pt.x, pt.y));
+
+        //p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
+      }
+    };
+
+    let customBoundsMulti_RectModeRadius = function (p) {
+      let x = 170, ox = x, y = 65, rw = 150, ox2 = rw, rh = 35, showBB = 1;
+      let s, pts, suf = 'text gonna wrap when it gets too long and is then breaking.';
+
+      p.setup = async function () {
+        p.createCanvas(1010, 430);
+        let font = await p.loadFont("font/Lato-Black.ttf");
+        p.textFont(font, 20);
+        p.textLeading(22);
+        p.rectMode(p.RADIUS);
+        //p.rect(x,y,rw,rh);
+
+        ///////////////////////////// BASELINE (L,C,R) ///////////////////////////////
+        //1
+        s = 'LEFT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BASELINE) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+
+        // draw horizontal line at y=64
+        p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y);
+
+        //2
+        x += 330, s = 'CENTER BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BASELINE) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+
+        //3
+        x += 330, s = 'RIGHT BASELINE ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BASELINE) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+
+        /////////////////////////// BOTTOM (L,C,R) /////////////////////////////////
+        x = ox, y += 100;
+
+        // 4
+        s = 'LEFT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.BOTTOM) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+        //p.stroke(0) && p.strokeWeight(1) && p.line(0, y, p.width, y);
+
+        // 5
+        x += 330, s = 'CENTER BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.BOTTOM) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+
+        // 6
+        x += 330, s = 'RIGHT BOTTOM ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.BOTTOM) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+
+        //////////////////////////// CENTER (L,C,R) /////////////////////////////////
+        x = ox, y += 100;
+
+        s = 'LEFT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.CENTER) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+
+        x += 330, s = 'CENTER CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.CENTER) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+
+        x += 330, s = 'RIGHT CENTER ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.CENTER) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+
+        ///////////////////////////// TOP (L,C,R) ///////////////////////////////
+        x = ox, y += 100;
+
+        s = 'LEFT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.LEFT, p.TOP) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        //p.noFill() && p.stroke(0) && p.strokeWeight(.1) && p.line(0, y, p.width, y);
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+
+        x += 330, s = 'CENTER TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.CENTER, p.TOP) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+
+        x += 330, s = 'RIGHT TOP ' + suf;
+        p.noFill() && p.stroke(0) && p.strokeWeight(1) && p.rect(x, y, rw, rh);
+        p.fill(0) && p.noStroke() && p.textAlign(p.RIGHT, p.TOP) && p.text(s, x, y, rw, rh);
+        if (showBB) p.noFill() && p.stroke('red') && p.rect(...Object.values(p.textBounds(s, x, y, rw, rh)));
+        p.stroke('green') && font.textToPoints(s, x, y, rw, rh).forEach(pt => p.point(pt.x, pt.y));
+
+        //p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 20, 0));
+      }
+    };
+
+    let textVerticalAlign = function (p) {
+      p.setup = function () {
+        p.createCanvas(240 * 4, 160);
+        p.textSize(10);
+        p.stroke(0);
+
+        ///////////////////////////// TOP (L,C,R) ///////////////////////////////
+
+        //1
+        p.fill(255);
+        p.strokeWeight(1);
+        p.line(10, 10, 220, 10);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.LEFT, p.TOP);
+        p.text('LEFT TOP is simply dummy text.', 10, 10);
+
+        //2
+        p.fill(255);
+        p.strokeWeight(1);
+        p.line(10, 60, 220, 60);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.CENTER, p.TOP); // off-canvas
+        p.text('CENTER TOP is simply dummy text.', 10, 60);
+
+        //3
+        p.fill(255);
+        p.strokeWeight(1);
+        p.line(10, 110, 220, 110);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.RIGHT, p.TOP); // off-canvas
+        p.text('RIGHT TOP is simply dummy text.', 10, 110);
+
+        /////////////////////////// CENTER (L,C,R) /////////////////////////////////
+
+        //1
+        p.fill(255);
+        p.strokeWeight(1);
+        p.line(250, 10, 470, 10);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.LEFT, p.CENTER);
+        p.text('LEFT CENTER is simply dummy text.', 250, 10);
+
+        //2
+        p.fill(255);
+        p.strokeWeight(1);
+        p.line(250, 60, 470, 60);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.CENTER, p.CENTER);
+        p.text('CENTER CENTER is simply dummy text.', 250, 60);
+
+        //3
+        p.fill(255);
+        p.strokeWeight(1);
+        p.line(250, 110, 470, 110);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.RIGHT, p.CENTER);
+        p.text('RIGHT CENTER is simply dummy text.', 250, 110);
+
+        //////////////////////////// BOTTOM (L,C,R) ////////////////////////////////
+
+        //1
+        p.fill(255);
+        p.strokeWeight(1);
+        p.line(490, 10, 710, 10);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.LEFT, p.BOTTOM);
+        p.text('LEFT BOTTOM is simply dummy text.', 490, 10);
+
+        //2
+        p.fill(255);
+        p.strokeWeight(1);
+        p.line(490, 60, 710, 60);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.CENTER, p.BOTTOM);
+        p.text('CENTER BOTTOM is simply dummy text.', 490, 60);
+
+        //3
+        p.fill(255);
+        p.strokeWeight(1);
+        p.line(490, 110, 710, 110);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.RIGHT, p.BOTTOM);
+        p.text('RIGHT BOTTOM is simply dummy text.', 490, 110);
+
+        ////////////////////////////////// BASELINE /////////////////////////////////
+
+        //1
+        p.fill(255);
+        p.strokeWeight(1);
+        p.line(730, 10, 950, 10);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.LEFT, p.BASELINE);
+        p.text('LEFT BASELINE is simply dummy text.', 730, 10);
+
+        //2
+        p.fill(255);
+        p.strokeWeight(1);
+        p.line(730, 60, 950, 60);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.CENTER, p.BASELINE);
+        p.text('CENTER BASELINE is simply dummy text.', 730, 60);
+
+        //3
+        p.fill(255);
+        p.strokeWeight(1);
+        p.line(730, 110, 950, 110);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.RIGHT, p.BASELINE);
+        p.text('RIGHT BASELINE is simply dummy text.', 730, 110);
+
+        ////////////////////////////////////////////////////////////////////////
+
+        p.loadImage('img/p5v2.jpg').then((img) => p.image(img, p.width - 30, 0));
+
+      };
+    };
+
+    let multilineAlignWord = function (p) {
+      p.setup = function () {
+        p.createCanvas(240 * 4, 160);
+        p.textWrap(p.WORD);
+        p.textSize(10);
+        p.stroke(0);
+        //p.noFill();
+        //p.line(10, 10, p.width - 10, 10);
+
+        //1
+        p.noFill();
+        p.strokeWeight(1);
+        p.rect(10, 10, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.LEFT, p.TOP);
+        p.text(
+          'LEFT TOP is simply dummy text of the printing and typesetting industry.',
+          10, 10, 220, 40);
+
+        //2
+        p.noFill();
+        p.strokeWeight(1);
+        p.rect(10, 60, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.CENTER, p.TOP);
+        p.text(
+          'CENTER TOP is simply dummy text of the printing and typesetting industry.',
+          10, 60, 220, 40);
+
+        //3
+        p.noFill();
+        p.strokeWeight(1);
+        p.rect(10, 110, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.RIGHT, p.TOP);
+        p.text(
+          'RIGHT TOP is simply dummy text of the printing and typesetting industry.',
+          10, 110, 220, 40
+        );
+
+        //1
+        p.noFill();
+        p.strokeWeight(1);
+        p.rect(250, 10, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.LEFT, p.CENTER);
+        p.text(
+          'LEFT CENTER is simply dummy text of the printing and typesetting industry.',
+          250,
+          10,
+          220,
+          40
+        );
+
+        //2
+        p.noFill();
+        p.strokeWeight(1);
+        p.rect(250, 60, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.CENTER, p.CENTER);
+        p.text(
+          'CENTER CENTER is simply dummy text of the printing and typesetting industry.',
+          250,
+          60,
+          220,
+          40
+        );
+
+        //3
+        p.noFill();
+        p.strokeWeight(1);
+        p.rect(250, 110, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.RIGHT, p.CENTER);
+        p.text(
+          'RIGHT CENTER is simply dummy text of the printing and typesetting industry.',
+          250,
+          110,
+          220,
+          40
+        );
+
+        //1
+        p.noFill();
+        p.strokeWeight(1);
+        p.rect(490, 10, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.LEFT, p.BOTTOM);
+        p.text(
+          'LEFT BOTTOM is simply dummy text of the printing and typesetting industry.',
+          490,
+          10,
+          220,
+          40
+        );
+
+        //2
+        p.noFill();
+        p.strokeWeight(1);
+        p.rect(490, 60, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.CENTER, p.BOTTOM);
+        p.text(
+          'CENTER BOTTOM is simply dummy text of the printing and typesetting industry.',
+          490,
+          60,
+          220,
+          40
+        );
+
+        //3
+        p.noFill();
+        p.strokeWeight(1);
+        p.rect(490, 110, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.RIGHT, p.BOTTOM);
+        p.text(
+          'RIGHT BOTTOM is simply dummy text of the printing and typesetting industry.',
+          490,
+          110,
+          220,
+          40
+        );
+
+        //1
+        p.noFill();
+        p.strokeWeight(1);
+        p.rect(730, 10, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.LEFT, p.BASELINE);
+        p.text(
+          'LEFT BASELINE is simply dummy text of the printing and typesetting industry.',
+          730,
+          10,
+          220,
+          40
+        );
+        //2
+        p.noFill();
+        p.strokeWeight(1);
+        p.rect(730, 60, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.CENTER, p.BASELINE);
+        p.text(
+          'CENTER BASELINE is simply dummy text of the printing and typesetting industry.',
+          730,
+          60,
+          220,
+          40
+        );
+        //3
+        p.noFill();
+        p.strokeWeight(1);
+        p.rect(730, 110, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.RIGHT, p.BASELINE);
+        p.text(
+          'RIGHT BASELINE is simply dummy text of the printing and typesetting industry.',
+          730,
+          110,
+          220,
+          40
+        );
+        p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 20, 0));
+
+      };
+    };
+
+    let multilineAlignChar = function (p) {
+
+      p.setup = function () {
+        p.createCanvas(240 * 4, 160);
+        p.textWrap(p.CHAR);
+        p.textSize(10);
+        p.stroke(0);
+        //1
+        p.fill(255);
+        p.strokeWeight(1);
+        p.rect(10, 10, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.LEFT, p.TOP);
+
+        p.text(
+          'LEFT TOP is simply dummy text of the printing and typesetting industry.',
+          10, 10, 220, 40);
+        //2
+        p.fill(255);
+        p.strokeWeight(1);
+        p.rect(10, 60, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.CENTER, p.TOP);
+        p.text(
+          'CENTER TOP is simply dummy text of the printing and typesetting industry.',
+          10, 60, 220, 40);
+        //3
+        p.fill(255);
+        p.strokeWeight(1);
+        p.rect(10, 110, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.RIGHT, p.TOP);
+        p.text(
+          'RIGHT TOP is simply dummy text of the printing and typesetting industry.',
+          10, 110, 220, 40
+        );
+
+        //1
+        p.fill(255);
+        p.strokeWeight(1);
+        p.rect(250, 10, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.LEFT, p.CENTER);
+        p.text(
+          'LEFT CENTER is simply dummy text of the printing and typesetting industry.',
+          250,
+          10,
+          220,
+          40
+        );
+        //2
+        p.fill(255);
+        p.strokeWeight(1);
+        p.rect(250, 60, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.CENTER, p.CENTER);
+        p.text(
+          'CENTER CENTER is simply dummy text of the printing and typesetting industry.',
+          250,
+          60,
+          220,
+          40
+        );
+        //3
+        p.fill(255);
+        p.strokeWeight(1);
+        p.rect(250, 110, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.RIGHT, p.CENTER);
+        p.text(
+          'RIGHT CENTER is simply dummy text of the printing and typesetting industry.',
+          250,
+          110,
+          220,
+          40
+        );
+
+        //1
+        p.fill(255);
+        p.strokeWeight(1);
+        p.rect(490, 10, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.LEFT, p.BOTTOM);
+        p.text(
+          'LEFT BOTTOM is simply dummy text of the printing and typesetting industry.',
+          490,
+          10,
+          220,
+          40
+        );
+        //2
+        p.fill(255);
+        p.strokeWeight(1);
+        p.rect(490, 60, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.CENTER, p.BOTTOM);
+        p.text(
+          'CENTER BOTTOM is simply dummy text of the printing and typesetting industry.',
+          490,
+          60,
+          220,
+          40
+        );
+        //3
+        p.fill(255);
+        p.strokeWeight(1);
+        p.rect(490, 110, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.RIGHT, p.BOTTOM);
+        p.text(
+          'RIGHT BOTTOM is simply dummy text of the printing and typesetting industry.',
+          490,
+          110,
+          220,
+          40
+        );
+
+        //1
+        p.fill(255);
+        p.strokeWeight(1);
+        p.rect(730, 10, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.LEFT, p.BASELINE);
+        p.text(
+          'LEFT BASELINE is simply dummy text of the printing and typesetting industry.',
+          730,
+          10,
+          220,
+          40
+        );
+        //2
+        p.fill(255);
+        p.strokeWeight(1);
+        p.rect(730, 60, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.CENTER, p.BASELINE);
+        p.text(
+          'CENTER BASELINE is simply dummy text of the printing and typesetting industry.',
+          730,
+          60,
+          220,
+          40
+        );
+        //3
+        p.fill(255);
+        p.strokeWeight(1);
+        p.rect(730, 110, 220, 40);
+        p.strokeWeight(0);
+        p.fill(0);
+        p.textAlign(p.RIGHT, p.BASELINE);
+        p.text(
+          'RIGHT BASELINE is simply dummy text of the printing and typesetting industry.',
+          730,
+          110,
+          220,
+          40
+        );
+        p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 20, 0));
+      };
+    };
+
+    let textFontSketch = function (p) {
+      p.setup = function () {
+        p.createCanvas(240, 160);
+        p.background(255);
+        p.textSize(20);
+        p.fill(0);
+        p.strokeWeight(0);
+        p.textFont('times');
+        p.text('Times Font', 10, 30);
+        p.textFont('arial');
+        p.text('Arial Font', 10, 60);
+        p.textFont('Courier');
+        p.text('Courier Font', 10, 90);
+        p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 20, 0));
+      };
+    };
+
+    let rightToLeftBounds = function (p) {
+      p.setup = async function () {
+        p.createCanvas(1000, 600);
+        let bb, str = "السلام عليكم";
+        let x = p.width / 2, y = p.height / 4 + 20;
+
+        p.textDirection(p.RIGHT_TO_LEFT);
+
+        p.textSize(200).textAlign(p.CENTER).noStroke().fill(0).text(str, x, y);
+
+        bb = p.textBounds(str, x, y);
+        p.noFill().stroke(0, 255, 0).rect(bb.x, bb.y, bb.w, bb.h);
+
+        y += p.height / 2;
+        p.textFont(await p.loadFont('./font/NotoNaskhArabic.woff2')).noStroke().fill(0).text(str, x, y);
+        //console.log(p.textProperties());
+
+        bb = p.textBounds(str, x, y);
+        p.noFill().stroke(0, 255, 0).strokeWeight(1).rect(bb.x, bb.y, bb.w, bb.h);
+      };
+    };
+
+    let loadedFontSketch = function (p) {
+
+      p.setup = async function () {
+        p.createCanvas(240, 260);
+        p.background(255);
+        p.textSize(27);
+        p.fill(0);
+        p.strokeWeight(0);
+
+        // await plus (name, path) -> font-string
+        await p.loadFont("font/acmesa.ttf", "acmesa");
+        p.textFont("acmesa");
+        p.text('Acmesa.ttf', 10, 40);
+
+        // await plus (name, path) -> font-object
+        let f = await p.loadFont("font/AndaleMono.ttf", "andale");
+        p.textFont(f);
+        p.text('AndaleMono.ttf', 10, 80);
+
+        // then plus (name, path) -> font-object
+        p.loadFont("font/FiraSans-Book.otf", "FiraSans").then(f => {
+          p.textFont(f);
+          p.text('FiraSans-Book.otf', 10, 120);
+        });
+
+        // await plus (path) -> font-object
+        f = await p.loadFont("font/Lato-Black.ttf");
+        p.textFont(f);
+        p.text('Lato-Black.ttf', 10, 160);
+
+
+        // await plus (path) -> font-string
+        await p.loadFont("font/PlayfairDisplay.ttf");
+        p.textFont('PlayfairDisplay');
+        p.text('PlayfairDisplay.ttf', 10, 200);
+
+        // test arabic writing
+        f = await p.loadFont("font/NotoNaskhArabic.woff2");
+        p.textFont(f, 40);
+        //p.textProperty('direction', 'rtl');
+        p.text("السلام عليكم", 10, 240);
+
+        p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 20, 0));
+
+      };
+    };
+
+    let textAlignSketch = function (p) {
+      p.setup = function () {
+        p.createCanvas(240, 160);
+        p.fill(0);
+        p.strokeWeight(0);
+        p.textSize(12);
+        p.textAlign(p.RIGHT, p.TOP);
+        p.text('Top Right', 120, 30);
+        p.textAlign(p.CENTER, p.CENTER);
+        p.text('Center Center', 120, 60);
+        p.textAlign(p.LEFT, p.BOTTOM);
+        p.text('Left Bottom', 120, 90);
+        p.textAlign(p.RIGHT, p.BASELINE);
+        p.text('Right Baseline', 120, 90);
+        p.strokeWeight(1);
+        p.line(120, 0, 120, 160);
+        p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 20, 0));
+
+      };
+    };
+
+    let textAllAlignmentsSketch = function (p) {
+      let systemFonts = ['Arial', 'Times New Roman', 'Consolas'];
+      let font1, font2, font3;
+      let hAligns = [p.LEFT, p.CENTER, p.RIGHT];
+      let vAligns = [p.TOP, p.CENTER, p.BASELINE, p.BOTTOM];
+      let padding = 10;
+
+      let drawFontAlignments = function (font, textString, xOff, yOff) {
+        p.textFont(font);
+        p.textSize(20);
+        for (let h = 0; h < hAligns.length; h += 1) {
+          for (let v = 0; v < vAligns.length; v += 1) {
+
+            // Distribute words across the screen
+            let x = xOff + p.map(h, 0, hAligns.length - 1, padding, 400 - padding);
+            let y = yOff + p.map(v, 0, vAligns.length - 1, padding, 200 - padding);
+
+            p.stroke(200);
+            p.line(0, y, p.width, y);
+            p.line(x, 0, x, p.height);
+
+            // Align the text & calculate the bounds
+            p.textAlign(hAligns[h], vAligns[v]);
+
+            // Draw the text
+            p.fill(255, 0, 0);
+            p.noStroke();
+            p.text(textString, x, y);
+
+            // Draw the (x, y) coordinates
+            p.stroke(0);
+            p.fill('#FF8132');
+            p.ellipse(x, y, 3, 3);
+          }
+        }
+      };
+
+
+      p.setup = function () {
+        let renderer = p.createCanvas(400, 600);
+        renderer.elt.style.position = 'absolute';
+        renderer.elt.style.top = '0';
+        renderer.elt.style.left = '0';
+        drawFontAlignments(systemFonts[0], 'Arial', 0, 0);
+        drawFontAlignments(systemFonts[1], 'Times', 0, 200);
+        drawFontAlignments(systemFonts[2], 'Consolas', 0, 400);
+
+        // These proprietary fonts aren't included in the repo!
+        // p.loadFont("../arial.ttf", function(font) {drawFontAlignments(font, "Arial", 0, 0)});
+        // p.loadFont("../times.ttf", function(font) {drawFontAlignments(font, "Times", 0, 200)});
+        // p.loadFont("../consola.ttf", function(font) {drawFontAlignments(font, "Consolas", 0, 400)});
+        //p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 40, 0));
+      };
+    };
+
+    let textLeadingTop = function (p) {
+      p.setup = function () {
+        p.createCanvas(400, 200);
+        p.textFont('Arial');
+        p.fill(0);
+        p.textSize(12);
+
+        p.line(0, 100, p.width, 100);
+        p.textAlign(p.LEFT, p.TOP);
+        p.strokeWeight(0);
+
+        let s10 = 'LEFT/TOP@10px',
+          s20 = s10.replace('1', '2'),
+          s30 = s10.replace('1', '3');
+
+        p.textLeading(10); // Set leading to 10
+        p.text(s10 + '\n' + s10 + '\n' + s10, 10, 100);
+        p.textLeading(20); // Set leading to 20
+        p.text(s20 + '\n' + s20 + '\n' + s20, 140, 100);
+        p.textLeading(30); // Set leading to 30
+        p.text(s30 + '\n' + s30 + '\n' + s30, 270, 100);
+        p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 20, 0));
+
+      };
+    };
+
+    let textLeadingCenter = function (p) {
+      p.setup = function () {
+        p.createCanvas(400, 200);
+        p.textFont('Arial');
+        p.fill(0);
+        p.textSize(12);
+
+        p.line(0, 100, p.width, 100);
+        p.textAlign(p.LEFT, p.CENTER);
+        p.strokeWeight(0);
+
+        let s10 = 'LEFT/CENTER@10px',
+          s20 = s10.replace('1', '2'),
+          s30 = s10.replace('1', '3');
+
+        p.textLeading(10); // Set leading to 10
+        p.text(s10 + '\n' + s10 + '\n' + s10, 10, 100);
+        p.textLeading(20); // Set leading to 20
+        p.text(s20 + '\n' + s20 + '\n' + s20, 140, 100);
+        p.textLeading(30); // Set leading to 30
+        p.text(s30 + '\n' + s30 + '\n' + s30, 270, 100);
+        p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 20, 0));
+
+      };
+    };
+
+    let textLeadingBaseline = function (p) {
+      p.setup = function () {
+        p.createCanvas(400, 200);
+        p.textFont('Arial');
+        p.fill(0);
+        p.textSize(12);
+
+        p.line(0, 100, p.width, 100);
+        p.textAlign(p.LEFT, p.BASELINE);
+        p.strokeWeight(0);
+
+        let s10 = 'LEFT/BASELINE@10px',
+          s20 = s10.replace('1', '2'),
+          s30 = s10.replace('1', '3');
+
+        p.textLeading(10); // Set leading to 10
+        p.text(s10 + '\n' + s10 + '\n' + s10, 10, 100);
+        p.textLeading(20); // Set leading to 20
+        p.text(s20 + '\n' + s20 + '\n' + s20, 140, 100);
+        p.textLeading(30); // Set leading to 30
+        p.text(s30 + '\n' + s30 + '\n' + s30, 270, 100);
+        p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 20, 0));
+
+      };
+    };
+
+    let textLeadingBottom = function (p) {
+      p.setup = function () {
+        p.createCanvas(400, 200);
+        p.textFont('Arial');
+        p.fill(0);
+        p.textSize(12);
+
+        p.line(0, 100, p.width, 100);
+        p.textAlign(p.LEFT, p.BOTTOM);
+        p.strokeWeight(0);
+
+        let s10 = 'LEFT/BOTTOM@10px',
+          s20 = s10.replace('1', '2'),
+          s30 = s10.replace('1', '3');
+
+        p.textLeading(10); // Set leading to 10
+        p.text(s10 + '\n' + s10 + '\n' + s10, 10, 100);
+        p.textLeading(20); // Set leading to 20
+        p.text(s20 + '\n' + s20 + '\n' + s20, 140, 100);
+        p.textLeading(30); // Set leading to 30
+        p.text(s30 + '\n' + s30 + '\n' + s30, 270, 100);
+        p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 20, 0));
+
+      };
+    };
+
+    let textSizeSketch = function (p) {
+      p.setup = function () {
+        p.createCanvas(240, 160);
+        p.fill(0);
+        p.strokeWeight(0);
+        p.textSize(12);
+        p.text('Font Size 12', 10, 30);
+        p.textSize(14);
+        p.text('Font Size 14', 10, 60);
+        p.textSize(16);
+        p.text('Font Size 16', 10, 90);
+        //console.log(p.textProperties());
+        p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 20, 0));
+      };
+    };
+
+    let textStyleSketch = function (p) {
+      p.setup = function () {
+        p.createCanvas(240, 160);
+        p.fill(0);
+        p.strokeWeight(0);
+        p.textSize(12);
+        p.textStyle(p.NORMAL);
+        p.text('Font Style Normal', 10, 30);
+        p.textStyle(p.ITALIC);
+        p.text('Font Style Italic', 10, 60);
+        p.textStyle(p.BOLD);
+        p.text('Font Style Bold', 10, 90);
+        p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 20, 0));
+      };
+    };
+
+    let textWidthSketch = function (p) {
+      p.setup = function () {
+
+        p.createCanvas(240, 160);
+        p.fill(0);
+        p.strokeWeight(0);
+        p.textSize(12);
+        let s = "What's the width of this line?";
+        let tw = p.fontWidth(s), x = 10, y = 30;
+        p.text(s, x, y);
+        p.rect(x, y, tw, 2);
+        p.text('width: ' + tw, x, y + 30);
+
+        p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 20, 0));
+        return;
+
+        // TODO: compare textWidth with fontWidth
+
+        p.noFill();
+        p.stroke(0);
+        p.rect(x, y, tw, 2);
+        p.line(x + tw, 0, x + tw, p.height);
+
+        y += 90;
+        tw = p.textWidth(s);
+        p.text(s, x, y);
+        p.rect(x, y, tw, 2);
+        p.text('width: ' + tw, x, y + 30);
+
+
+      };
+    };
+
+    let typographyLetterSketch = function (p) {
+      p.setup = function () {
+        let margin = 10;
+        let gap = 46;
+        let counter = 35;
+        p.createCanvas(720, 320);
+        p.background(0);
+        p.textFont('Georgia');
+        p.textSize(24);
+        p.textStyle(p.BOLD);
+        p.textAlign(p.CENTER, p.CENTER);
+        p.translate(margin * 4, margin * 4);
+        for (let y = 0; y < p.height - gap; y += gap) {
+          for (let x = 0; x < p.width - gap; x += gap) {
+            let letter = p.char(counter);
+            if (letter === 'P' || letter === '5') {
+              p.fill(255, 204, 0);
+            } else if (letter === 'J' || letter === 'S') {
+              p.fill(204, 0, 255);
+            } else {
+              p.fill(255);
+            }
+            p.text(letter, x, y);
+            counter++;
+          }
+        }
+        p.translate(margin * -4, margin * -4);
+        p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 21, 1));
+      };
+    };
+
+    let textOverlapSketch = function (p) {
+      p.setup = function () {
+        p.createCanvas(240, 160);
+        p.fill(0);
+        p.strokeWeight(0);
+        p.textSize(72);
+        p.fill(0, 160); // Black with low opacity
+        p.text('O', 0, 100);
+        p.text('V', 30, 100);
+        p.text('E', 60, 100);
+        p.text('R', 90, 100);
+        p.text('L', 120, 100);
+        p.text('A', 150, 100);
+        p.text('P', 180, 100);
+        p.loadImage('img/p5v2.jpg').then(img => p.image(img, p.width - 20, 0));
+      };
+    };
+
+    new p5(textSketch, 'textSketch');
+    new p5(textToPointsSketch, 'textToPointsSketch');
+    new p5(textToPathsSketch, 'textToPathsSketch');
+    new p5(fontStretchSketch, 'fontStretchSketch');
+    new p5(fontStretchViaProp, 'fontStretchViaProp');
+    new p5(directFontSet, 'directFontSet');
+    new p5(letterSpacingSketch, 'letterSpacingSketch');
+    new p5(wordSpacingSketch, 'wordSpacingSketch');
+    new p5(fontKerningSketch, 'fontKerningSketch');
+    new p5(fontVariantCapsSketch, 'fontVariantCapsSketch'); // warning
+    new p5(textRenderingProp, 'textRenderingProp'); // warning
+    new p5(singleLineBounds, 'singleLineBounds');
+    new p5(loadedBoundsSingle, 'loadedBoundsSingle');
+    new p5(systemBoundsMulti, 'systemBoundsMulti');
+    new p5(systemBoundsMultiOverflow, 'systemBoundsMultiOverflow');
+
+    new p5(systemBoundsMulti_RectModeCenter, 'systemBoundsMulti_RectModeCenter');
+    new p5(systemBoundsMulti_RectModeCorners, 'systemBoundsMulti_RectModeCorners');
+    new p5(systemBoundsMulti_RectModeRadius, 'systemBoundsMulti_RectModeRadius');
+
+    new p5(customBoundsMulti_RectModeCenter, 'customBoundsMulti_RectModeCenter');
+    new p5(customBoundsMulti_RectModeCorners, 'customBoundsMulti_RectModeCorners');
+    new p5(customBoundsMulti_RectModeRadius, 'customBoundsMulti_RectModeRadius');
+
+    new p5(loadedBoundsWithPoints, 'loadedBoundsWithPoints');
+    new p5(manualLineBreaksLeft, 'manualLineBreaksLeft');
+    new p5(manualLineBreaks, 'manualLineBreaks');
+    new p5(singleWordBounds, 'singleWordBounds');
+    new p5(textVerticalAlign, 'textVerticalAlign');
+    new p5(multilineAlignWord, 'multilineAlignWord');
+    new p5(multilineAlignChar, 'multilineAlignChar');
+    new p5(textFontSketch, 'textFontSketch');
+    new p5(loadedFontSketch, 'loadedFontSketch');
+    new p5(rightToLeftBounds, 'rightToLeftBounds');
+    new p5(textAlignSketch, 'textAlignSketch');
+    new p5(textAllAlignmentsSketch, 'textAllAlignmentsSketch');
+    new p5(textAllAlignmentsSketch, 'textAllAlignmentsSketch2');
+    new p5(textLeadingTop, 'textLeadingTop');
+    new p5(textLeadingCenter, 'textLeadingCenter');
+    new p5(textLeadingBaseline, 'textLeadingBaseline');
+    new p5(textLeadingBottom, 'textLeadingBottom');
+    new p5(textSizeSketch, 'textSizeSketch');
+    new p5(textStyleSketch, 'textStyleSketch');
+    new p5(textWidthSketch, 'textWidthSketch');
+    new p5(typographyLetterSketch, 'typographyLetterSketch');
+    new p5(singleWideLine, 'singleWideLine');
+    new p5(textOverlapSketch, 'textOverlapSketch');
+  </script>
+
+  <div id='textFontSketch'>
+    <p class="caption">textFont</p>
+    <img src="img/textFontSketch.p5.jpg" width="240" height="160" class="gray"></img>
+    <img src="img/textFontSketch.jpg" width="240" height="160" class="gray"></img>
+  </div>
+
+  <div id='loadedFontSketch'>
+    <p class="caption">loadFont</p>
+    <img src="img/loadedFontSketch.p5.png" width="240" height="240" class="gray"></img>
+  </div>
+
+  <div id='rightToLeftBounds'>
+    <p class="caption">right-to-leftBounds</p>
+  </div>
+
+  <div id='textSketch'>
+    <p class="caption">textAttributes</p>
+    <img src="img/textSketch.p5.png" width="240" height="160"></img>
+    <img src="img/textSketch.png" width="240" height="160"></img>
+  </div>
+
+  <div id='textToPointsSketch'>
+    <p class="caption">textToPoints</p>
+  </div>
+
+  <div id='textToPathsSketch'>
+    <p class="caption">textToPaths</p>
+  </div>
+
+  <div id='fontStretchSketch'>
+    <p class="caption">fontStretch (via textFont)</p>
+  </div>
+
+  <div id='fontStretchViaProp'>
+    <p class="caption">fontStretch (via textProperty)</p>
+  </div>
+
+  <div id='directFontSet'>
+    <p class="caption">directFontSet</p>
+  </div>
+
+  <!-- <div id='textStretchViaProp'>
+    <p class="caption">textStretch (via textProperty)</p>
+  </div> -->
+
+  <div id='letterSpacingSketch'>
+    <p class="caption">letterSpacing</p>
+  </div>
+
+  <div id='wordSpacingSketch'>
+    <p class="caption">wordSpacing</p>
+  </div>
+
+  <div id='fontKerningSketch'>
+    <p class="caption">fontKerning</p>
+  </div>
+
+  <div id='fontVariantCapsSketch'>
+    <p class="caption">fontVariantCaps (differs between FF/Chrome)</p>
+  </div>
+
+  <div id='textRenderingProp'>
+    <p class="caption">textRendering property</p>
+  </div>
+
+  <div id='singleLineBounds'>
+    <p class="caption">singleLineBounds</p>
+  </div>
+
+  <div id='loadedBoundsSingle'>
+    <p class="caption">loadedBoundsSingle</p>
+  </div>
+
+  <div id='systemBoundsMulti'>
+    <p class="caption">systemBoundsMulti (RectMode.DEFAULT)</p>
+  </div>
+  <div id='systemBoundsMulti_RectModeCenter'>
+    <p class="caption">systemBoundsMulti (RectMode.CENTER)</p>
+  </div>
+  <div id='systemBoundsMulti_RectModeCorners'>
+    <p class="caption">systemBoundsMulti (RectMode.CORNERS)</p>
+  </div>
+  <div id='systemBoundsMulti_RectModeRadius'>
+    <p class="caption">systemBoundsMulti (RectMode.RADIUS)</p>
+  </div>
+
+  <div id='loadedBoundsWithPoints'>
+    <p class="caption">textToPointsBounds (RectMode.DEFAULT)</p>
+  </div>
+  <div id='customBoundsMulti_RectModeCenter'>
+    <p class="caption">textToPointsBounds (RectMode.CENTER)</p>
+  </div>
+  <div id='customBoundsMulti_RectModeCorners'>
+    <p class="caption">textToPointsBounds (RectMode.CORNERS)</p>
+  </div>
+  <div id='customBoundsMulti_RectModeRadius'>
+    <p class="caption">textToPointsBounds (RectMode.RADIUS)</p>
+  </div>
+
+
+  <div id='systemBoundsMultiOverflow'>
+    <p class="caption">systemBoundsMulti.Overflow</p>
+  </div>
+
+  <div id='singleWordBounds'>
+    <p class="caption">singleWordBounds</p>
+  </div>
+
+  <div id='manualLineBreaksLeft'>
+    <p class="caption">manualLineBreaksLeft</p>
+    <img src="img/boundingBoxBreaksLeft.p5.jpg" width="900" height="400"></img>
+  </div>
+
+  <div id='manualLineBreaks'>
+    <p class="caption">manualLineBreaks</p>
+    <img src="img/boundingBoxBreaks.p5.jpg" width="1200" height="400">
+  </div>
+
+  <div id='textVerticalAlign'>
+    <p class="caption">textVerticalAlign</p>
+    <img src="img/textVerticalAlign.png" width="960" height="160" class="gray"></img>
+    <img src="img/textVerticalAlign.p5.png" width="960" height="160" class="gray"></img>
+  </div>
+
+  <div id='multilineAlignWord'>
+    <p class="caption">multilineAlign.Word</p>
+    <img src="img/multilineAlignSketch.png" width="960" height="160" class="gray"></img>
+    <img src="img/multilineAlignSketch.p5.png" width="960" height="160" class="gray"></img>
+  </div>
+
+  <div id='multilineAlignChar'>
+    <p class="caption">multilineAlign.Char</p>
+    <img src="img/multilineAlignChar.p5.png" width="960" height="160" class="gray"></img>
+  </div>
+
+  <div id='textAlignSketch'>
+    <p class="caption">textAlign</p>
+    <img src="img/textAlignSketch.p5.png" width="240" height="160" class="gray"></img>
+    <img src="img/textAlignSketch.png" width="240" height="160" class="gray"></img>
+  </div>
+
+  <div id="textAllAlignmentsSketch" style="position:relative;">
+    <img src="img/textAllAlignmentsSketch.png" width="400" height="600" style="display:inline-block;"></img>
+    <p class="caption">Overlay (Processing)</p>
+
+  </div>
+  <div id="textAllAlignmentsSketch2" style="position:relative;">
+    <img src="img/textAllAlignmentsSketch.p5.jpg" width="400" height="600" style="display:inline-block;"></img>
+    <p class="caption">Overlay (p5.js v1)</p>
+  </div>
+
+  <div id='textLeadingTop'>
+    <p class="caption">textLeading.Top</p>
+    <img src="img/textLeadingTop.p5.jpg" width="400" height="200" class="gray">
+    <img src="img/LEFT.TOP.lead.png" width="400" height="200" class="gray"></img>
+  </div>
+
+  <div id='textLeadingCenter'>
+    <p class="caption">textLeading.Center</p>
+    <img src="img/textLeadingCenter.p5.jpg" width="400" height="200" class="gray"></img>
+    <img src="img/LEFT.CENTER.lead.png" width="400" height="200" class="gray"></img>
+  </div>
+
+  <div id='textLeadingBaseline'>
+    <p class="caption">textLeading.Baseline</p>
+    <img src="img/textLeadingBaseline.p5.jpg" width="400" height="200" class="gray"></img>
+    <img src="img/LEFT.BL.lead.png" width="400" height="200" class="gray"></img>
+  </div>
+
+  <div id='textLeadingBottom'>
+    <p class="caption">textLeading.Bottom</p>
+    <img src="img/textLeadingBottom.p5.jpg" width="400" height="200" class="gray">
+    <img src="img/LEFT.BOTTOM.lead.png" width="400" height="200" class="gray"></img>
+  </div>
+
+  <div id='textSizeSketch'>
+    <p class="caption">textSizeSketch</p>
+    <img src="img/textSizeSketch.p5.png" width="240" height="160" class="gray"></img>
+    <img src="img/textSizeSketch.png" width="240" height="160" class="gray"></img>
+  </div>
+
+  <div id='textStyleSketch'>
+    <p class="caption">textStyleSketch</p>
+    <img src="img/textStyleSketch.p5.jpg" width="240" height="160" class="gray"></img>
+  </div>
+
+  <div id='textWidthSketch'>
+    <p class="caption">fontWidth/textWidth</p>
+    <img src="img/textWidthSketch.p5.png" width="240" height="160" class="gray"></img>
+    <img src="img/textWidthSketch.png" width="240" height="160" class="gray"></img>
+  </div>
+
+  <div id='typographyLetterSketch'>
+    <p class="caption">typographyGrid</p>
+    <img src="img/typographyLetterSketch.png" width="720" height="320"></img>
+    <img src="img/typographyLetterSketch.p5.png" width="720" height="320"></img>
+  </div>
+
+  <div id='singleWideLine'>
+    <p class="caption">singleWideLine </p>
+  </div>
+
+  <div id='textOverlapSketch'>
+    <p class="caption">textAlphaSketch</p>
+    <img src="img/textOverlapSketch.p5.png" width="240" height="160" class="gray"></img>
+    <img src="img/textOverlapSketch.png" width="240" height="160" class="gray"></img>
+  </div>
+
+</body>
+
+</html>
