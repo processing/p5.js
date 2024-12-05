@@ -1,31 +1,22 @@
-import p5 from '../../../src/app.js';
+import { mockP5, mockP5Prototype } from '../../js/mocks';
+import creatingReading from '../../../src/color/creating_reading';
+import setting from '../../../src/color/setting';
+import { Color } from '../../../src/color/p5.Color';
 
 suite('p5.Color', function() {
-  var myp5;
-
-  beforeEach(async function() {
-    await new Promise(resolve => {
-      new p5(function(p) {
-        p.setup = function() {
-          myp5 = p;
-          resolve();
-        };
-      });
-    });
-  });
-
-  afterEach(function() {
-    myp5.remove();
+  beforeAll(() => {
+    creatingReading(mockP5, mockP5Prototype);
+    setting(mockP5, mockP5Prototype);
   });
 
   var c;
 
   suite('p5.prototype.color(r,g,b)', function() {
     beforeEach(function() {
-      c = myp5.color(255, 0, 102);
+      c = mockP5Prototype.color(255, 0, 102);
     });
     test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
+      assert.instanceOf(c, Color);
     });
     test('should correctly set RGBA property', function() {
       assert.deepEqual(c.color.coords, [1, 0, 0.4]);
@@ -35,10 +26,10 @@ suite('p5.Color', function() {
 
   suite('p5.prototype.color(r,g,b,a)', function() {
     beforeEach(function() {
-      c = myp5.color(255, 0, 102, 204);
+      c = mockP5Prototype.color(255, 0, 102, 204);
     });
     test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
+      assert.instanceOf(c, Color);
     });
 
     test('should correctly set RGBA property', function() {
@@ -52,10 +43,10 @@ suite('p5.Color', function() {
   suite('p5.prototype.color(string)', function(){
     suite('#rgb', function(){
       beforeEach(function() {
-        c = myp5.color('#f06');
+        c = mockP5Prototype.color('#f06');
       });
       test('should create instance of p5.Color', function() {
-        assert.instanceOf(c, p5.Color);
+        assert.instanceOf(c, Color);
       });
 
       test('should correctly set RGBA property', function() {
@@ -66,10 +57,10 @@ suite('p5.Color', function() {
 
     suite('#rgba', function(){
       beforeEach(function() {
-        c = myp5.color('#f066');
+        c = mockP5Prototype.color('#f066');
       });
       test('should create instance of p5.Color', function() {
-        assert.instanceOf(c, p5.Color);
+        assert.instanceOf(c, Color);
       });
 
       test('should correctly set RGBA property', function() {
@@ -80,11 +71,11 @@ suite('p5.Color', function() {
 
     suite('#rrggbb', function(){
       beforeEach(function() {
-        c = myp5.color('#ff0066');
+        c = mockP5Prototype.color('#ff0066');
       });
 
       test('should create instance of p5.Color', function() {
-        assert.instanceOf(c, p5.Color);
+        assert.instanceOf(c, Color);
       });
 
       test('should correctly set RGBA property', function() {
@@ -95,11 +86,11 @@ suite('p5.Color', function() {
 
     suite('#rrggbbaa', function(){
       beforeEach(function() {
-        c = myp5.color('#f01dab1e');
+        c = mockP5Prototype.color('#f01dab1e');
       });
 
       test('should create instance of p5.Color', function() {
-        assert.instanceOf(c, p5.Color);
+        assert.instanceOf(c, Color);
       });
 
       test('should correctly set RGBA property', function() {
@@ -110,10 +101,10 @@ suite('p5.Color', function() {
 
     suite('rgb(r,g,b)', function(){
       beforeEach(function() {
-        c = myp5.color('rgb(255,0,102)');
+        c = mockP5Prototype.color('rgb(255,0,102)');
       });
       test('should create instance of p5.Color', function() {
-        assert.instanceOf(c, p5.Color);
+        assert.instanceOf(c, Color);
       });
 
       test('should correctly set RGBA property', function() {
@@ -124,10 +115,10 @@ suite('p5.Color', function() {
 
     suite('rgb(r%,g%,b%)', function(){
       beforeEach(function() {
-        c = myp5.color('rgb(100%, 0%, 40%)');
+        c = mockP5Prototype.color('rgb(100%, 0%, 40%)');
       });
       test('should create instance of p5.Color', function() {
-        assert.instanceOf(c, p5.Color);
+        assert.instanceOf(c, Color);
       });
 
       test('should correctly set RGBA property', function() {
@@ -138,11 +129,11 @@ suite('p5.Color', function() {
 
     suite('rgba(r,g,b,a)', function(){
       beforeEach(function() {
-        c = myp5.color('rgba(255,0,102,0.8)');
+        c = mockP5Prototype.color('rgba(255,0,102,0.8)');
       });
 
       test('should create instance of p5.Color', function() {
-        assert.instanceOf(c, p5.Color);
+        assert.instanceOf(c, Color);
       });
 
       test('should correctly set RGBA property', function() {
@@ -153,11 +144,11 @@ suite('p5.Color', function() {
 
     suite('rgba(r%,g%,b%,a)', function(){
       beforeEach(function() {
-        c = myp5.color('rgba(100.0%,0.0%,40%,0.8)');
+        c = mockP5Prototype.color('rgba(100.0%,0.0%,40%,0.8)');
       });
 
       test('should create instance of p5.Color', function() {
-        assert.instanceOf(c, p5.Color);
+        assert.instanceOf(c, Color);
       });
 
       test('should correctly set RGBA property', function() {
@@ -168,10 +159,10 @@ suite('p5.Color', function() {
 
     suite('hsl(h, s%, l%)', function(){
       beforeEach(function() {
-        c = myp5.color('hsl(336, 100%, 50%)');
+        c = mockP5Prototype.color('hsl(336, 100%, 50%)');
       });
       test('should create instance of p5.Color', function() {
-        assert.instanceOf(c, p5.Color);
+        assert.instanceOf(c, Color);
       });
       test('should correctly set RGBA property', function() {
         // NOTE: 0.5.2 of color.js uses `new Number` which is corrected in future version
@@ -185,10 +176,10 @@ suite('p5.Color', function() {
 
     suite('hsla(h, s%, l%, a)', function() {
       beforeEach(function() {
-        c = myp5.color('hsla(336, 100%, 50%, 0.8)');
+        c = mockP5Prototype.color('hsla(336, 100%, 50%, 0.8)');
       });
       test('should create instance of p5.Color', function() {
-        assert.instanceOf(c, p5.Color);
+        assert.instanceOf(c, Color);
       });
       test('should correctly set RGBA property', function() {
         // NOTE: 0.5.2 of color.js uses `new Number` which is corrected in future version
@@ -202,10 +193,10 @@ suite('p5.Color', function() {
 
     suite('hsb(h, s%, b%)', function() {
       beforeEach(function() {
-        c = myp5.color('hsb(336, 100%, 100%)');
+        c = mockP5Prototype.color('hsb(336, 100%, 100%)');
       });
       test('should create instance of p5.Color', function() {
-        assert.instanceOf(c, p5.Color);
+        assert.instanceOf(c, Color);
       });
       test('should correctly set RGBA property', function() {
         // NOTE: 0.5.2 of color.js uses `new Number` which is corrected in future version
@@ -219,10 +210,10 @@ suite('p5.Color', function() {
 
     suite('hsba(h, s%, b%, a)', function() {
       beforeEach(function() {
-        c = myp5.color('hsba(336, 100%, 100%, 0.8)');
+        c = mockP5Prototype.color('hsba(336, 100%, 100%, 0.8)');
       });
       test('should create instance of p5.Color', function() {
-        assert.instanceOf(c, p5.Color);
+        assert.instanceOf(c, Color);
       });
       test('should correctly set RGBA property', function() {
         // NOTE: 0.5.2 of color.js uses `new Number` which is corrected in future version
@@ -236,11 +227,11 @@ suite('p5.Color', function() {
 
     suite('named colors', function() {
       beforeEach(function() {
-        c = myp5.color('papayawhip');
+        c = mockP5Prototype.color('papayawhip');
       });
 
       test('should create instance of p5.Color', function() {
-        assert.instanceOf(c, p5.Color);
+        assert.instanceOf(c, Color);
       });
 
       test('should correctly set RGBA property', function() {
@@ -255,11 +246,11 @@ suite('p5.Color', function() {
 
   suite('p5.prototype.color([])', function() {
     beforeEach(function() {
-      c = myp5.color([255, 0, 102]);
+      c = mockP5Prototype.color([255, 0, 102]);
     });
 
     test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
+      assert.instanceOf(c, Color);
     });
 
     test('should correctly set RGBA property', function() {
@@ -271,7 +262,7 @@ suite('p5.Color', function() {
   // color level setters
   suite('in default mode', function() {
     test('can be modified with alpha setter', function() {
-      let cc = myp5.color(255, 0, 102, 204);
+      let cc = mockP5Prototype.color(255, 0, 102, 204);
       assert.deepEqual(cc.color.coords, [1, 0, 0.4]);
       assert.equal(cc.color.alpha, 0.8);
       cc.setAlpha(98);
@@ -280,7 +271,7 @@ suite('p5.Color', function() {
     });
 
     test('can be modified with rgb setters', function() {
-      var cc = myp5.color(255, 0, 102, 204);
+      var cc = mockP5Prototype.color(255, 0, 102, 204);
       assert.deepEqual(cc.color.coords, [1, 0, 0.4]);
       assert.equal(cc.color.alpha, 0.8);
       cc.setRed(98);
@@ -298,8 +289,8 @@ suite('p5.Color', function() {
   // Color Mode
   suite('p5.Color in RGB mode with custom range', function() {
     beforeEach(function() {
-      myp5.colorMode(myp5.RGB, 1);
-      c = myp5.color(1, 0, 0.4, 0.8);
+      mockP5Prototype.colorMode(mockP5Prototype.RGB, 1);
+      c = mockP5Prototype.color(1, 0, 0.4, 0.8);
     });
 
     test('should correctly convert to RGBA', function() {
@@ -319,7 +310,7 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get RGBA property after overwrite', function() {
-      myp5.colorMode(myp5.RGB, 255, 255, 255, 255);
+      mockP5Prototype.colorMode(mockP5Prototype.RGB, 255, 255, 255, 255);
       assert.equal(c._getRed(), 255);
       assert.equal(c._getGreen(), 0);
       assert.equal(c._getBlue(), 102);
@@ -329,12 +320,12 @@ suite('p5.Color', function() {
 
   suite('p5.Color in HSL mode', function() {
     beforeEach(function() {
-      myp5.colorMode(myp5.HSL);
-      c = myp5.color(336, 100, 50);
+      mockP5Prototype.colorMode(mockP5Prototype.HSL);
+      c = mockP5Prototype.color(336, 100, 50);
     });
 
     test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
+      assert.instanceOf(c, Color);
     });
 
     test('should correctly set RGBA property', function() {
@@ -343,14 +334,14 @@ suite('p5.Color', function() {
     });
 
     test('can be modified with alpha setter', function() {
-      let cc = myp5.color(336, 100, 50);
+      let cc = mockP5Prototype.color(336, 100, 50);
       cc.setAlpha(0.73);
       assert.deepEqual(cc.color.coords, [336, 100, 50]);
       assert.equal(cc.color.alpha, 0.73);
     });
 
     test('can be modified with rgb setters', function() {
-      let cc = myp5.color(336, 100, 50);
+      let cc = mockP5Prototype.color(336, 100, 50);
       assert.deepEqual(cc.color.coords, [336, 100, 50]);
       assert.equal(cc.color.alpha, 1);
 
@@ -377,12 +368,12 @@ suite('p5.Color', function() {
 
   suite('p5.Color in HSL mode with Alpha', function() {
     beforeEach(function() {
-      myp5.colorMode(myp5.HSL);
-      c = myp5.color(336, 100, 50, 0.8);
+      mockP5Prototype.colorMode(mockP5Prototype.HSL);
+      c = mockP5Prototype.color(336, 100, 50, 0.8);
     });
 
     test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
+      assert.instanceOf(c, Color);
     });
 
     test('should correctly set RGBA property', function() {
@@ -400,8 +391,8 @@ suite('p5.Color', function() {
 
   suite('p5.Color in HSL mode with custom range', function() {
     beforeEach(function() {
-      myp5.colorMode(myp5.HSL, 100, 200, 300, 10);
-      c = myp5.color(93.33, 200, 150, 8);
+      mockP5Prototype.colorMode(mockP5Prototype.HSL, 100, 200, 300, 10);
+      c = mockP5Prototype.color(93.33, 200, 150, 8);
     });
 
     test('should correctly get HSLA property', function() {
@@ -423,7 +414,7 @@ suite('p5.Color', function() {
     });
 
     test('can be modified with alpha setter', function() {
-      let cc = myp5.color(93.33, 200, 150, 8);
+      let cc = mockP5Prototype.color(93.33, 200, 150, 8);
       cc.setAlpha(7.3);
       assert.closeTo(cc.color.coords[0], 336, 1);
       assert.equal(cc.color.coords[1], 100);
@@ -432,7 +423,7 @@ suite('p5.Color', function() {
     });
 
     test('can be modified with rgb setters', function() {
-      let cc = myp5.color(93.33, 200, 150, 8);
+      let cc = mockP5Prototype.color(93.33, 200, 150, 8);
       assert.closeTo(c.color.coords[0], 336, 1);
       assert.equal(c.color.coords[1], 100);
       assert.equal(c.color.coords[2], 50);
@@ -461,8 +452,8 @@ suite('p5.Color', function() {
   suite('p5.Color in HSL mode with RGB string', function() {
     // NOTE: will still create a sRGB color in this case
     beforeEach(function() {
-      myp5.colorMode(myp5.HSL, 360, 100, 100, 1);
-      c = myp5.color('rgba(255, 0, 102, 0.8)');
+      mockP5Prototype.colorMode(mockP5Prototype.HSL, 360, 100, 100, 1);
+      c = mockP5Prototype.color('rgba(255, 0, 102, 0.8)');
     });
 
     test.todo('should correctly get HSLA property', function() {
@@ -484,8 +475,8 @@ suite('p5.Color', function() {
 
   suite('p5.Color in HSL mode with HSL string', function() {
     beforeEach(function() {
-      myp5.colorMode(myp5.HSL, 360, 100, 100, 1);
-      c = myp5.color('hsla(336, 100%, 50%, 0.8)');
+      mockP5Prototype.colorMode(mockP5Prototype.HSL, 360, 100, 100, 1);
+      c = mockP5Prototype.color('hsla(336, 100%, 50%, 0.8)');
     });
 
     test.todo('should correctly get HSLA property', function() {
@@ -511,8 +502,8 @@ suite('p5.Color', function() {
 
   suite('p5.Color in HSL mode with HSB string', function() {
     beforeEach(function() {
-      myp5.colorMode(myp5.HSL, 360, 100, 100, 1);
-      c = myp5.color('hsba(336, 100%, 100%, 0.8)');
+      mockP5Prototype.colorMode(mockP5Prototype.HSL, 360, 100, 100, 1);
+      c = mockP5Prototype.color('hsba(336, 100%, 100%, 0.8)');
     });
 
     test.todo('should correctly get HSLA property', function() {
@@ -538,12 +529,12 @@ suite('p5.Color', function() {
 
   suite('p5.Color in HSB mode', function() {
     beforeEach(function() {
-      myp5.colorMode(myp5.HSB);
-      c = myp5.color(336, 100, 100);
+      mockP5Prototype.colorMode(mockP5Prototype.HSB);
+      c = mockP5Prototype.color(336, 100, 100);
     });
 
     test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
+      assert.instanceOf(c, Color);
     });
 
     test('should correctly set RGBA property', function() {
@@ -552,14 +543,14 @@ suite('p5.Color', function() {
     });
 
     test('can be modified with alpha setter', function() {
-      var cc = myp5.color(336, 100, 100);
+      var cc = mockP5Prototype.color(336, 100, 100);
       cc.setAlpha(0.73);
       assert.deepEqual(cc.color.coords, [336, 100, 100]);
       assert.equal(cc.color.alpha, 0.73);
     });
 
     test('can be modified with rgb setters', function() {
-      var cc = myp5.color(336, 100, 100);
+      var cc = mockP5Prototype.color(336, 100, 100);
       assert.deepEqual(cc.color.coords, [336, 100, 100]);
       assert.equal(cc.color.alpha, 1);
 
@@ -585,11 +576,11 @@ suite('p5.Color', function() {
 
   suite('p5.Color in HSB mode with Alpha', function() {
     beforeEach(function() {
-      myp5.colorMode(myp5.HSB);
-      c = myp5.color(336, 100, 100, 0.8);
+      mockP5Prototype.colorMode(mockP5Prototype.HSB);
+      c = mockP5Prototype.color(336, 100, 100, 0.8);
     });
     test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
+      assert.instanceOf(c, Color);
     });
     test('should correctly set RGBA property', function() {
       assert.deepEqual(c.color.coords, [336, 100, 100]);
@@ -606,8 +597,8 @@ suite('p5.Color', function() {
 
   suite('p5.Color in HSB mode with custom range', function() {
     beforeEach(function() {
-      myp5.colorMode(myp5.HSB, 100, 200, 300, 10);
-      c = myp5.color(93.33, 200, 300, 8);
+      mockP5Prototype.colorMode(mockP5Prototype.HSB, 100, 200, 300, 10);
+      c = mockP5Prototype.color(93.33, 200, 300, 8);
     });
 
     test('should correctly get HSBA property', function() {
@@ -631,8 +622,8 @@ suite('p5.Color', function() {
 
   suite('p5.Color in HSB mode with RGB string', function() {
     beforeEach(function() {
-      myp5.colorMode(myp5.HSB, 360, 100, 100, 1);
-      c = myp5.color('rgba(255, 0, 102, 0.8)');
+      mockP5Prototype.colorMode(mockP5Prototype.HSB, 360, 100, 100, 1);
+      c = mockP5Prototype.color('rgba(255, 0, 102, 0.8)');
     });
 
     test.todo('should correctly get HSBA property', function() {
@@ -654,8 +645,8 @@ suite('p5.Color', function() {
 
   suite('p5.Color in HSB mode with HSB string', function() {
     beforeEach(function() {
-      myp5.colorMode(myp5.HSB, 360, 100, 100, 1);
-      c = myp5.color('hsba(336, 100%, 100%, 0.8)');
+      mockP5Prototype.colorMode(mockP5Prototype.HSB, 360, 100, 100, 1);
+      c = mockP5Prototype.color('hsba(336, 100%, 100%, 0.8)');
     });
 
     test('should correctly get HSBA property', function() {
@@ -679,8 +670,8 @@ suite('p5.Color', function() {
 
   suite('p5.Color in HSB mode with HSL string', function() {
     beforeEach(function() {
-      myp5.colorMode(myp5.HSB, 360, 100, 100, 1);
-      c = myp5.color('hsla(336, 100%, 50%, 0.8)');
+      mockP5Prototype.colorMode(mockP5Prototype.HSB, 360, 100, 100, 1);
+      c = mockP5Prototype.color('hsla(336, 100%, 50%, 0.8)');
     });
 
     test.todo('should correctly get HSBA property', function() {
@@ -704,8 +695,8 @@ suite('p5.Color', function() {
 
   suite('p5.Color in RGB mode with grayscale value', function() {
     beforeEach(function() {
-      myp5.colorMode(myp5.RGB);
-      c = myp5.color(100);
+      mockP5Prototype.colorMode(mockP5Prototype.RGB);
+      c = mockP5Prototype.color(100);
     });
 
     test('should create instance of p5.Color', function() {
@@ -720,8 +711,8 @@ suite('p5.Color', function() {
 
   suite('p5.Color in RGB mode with grayscale value and alpha', function() {
     beforeEach(function() {
-      myp5.colorMode(myp5.RGB);
-      c = myp5.color(100, 70);
+      mockP5Prototype.colorMode(mockP5Prototype.RGB);
+      c = mockP5Prototype.color(100, 70);
     });
 
     test('should create instance of p5.Color', function() {
@@ -736,8 +727,8 @@ suite('p5.Color', function() {
 
   suite('p5.Color in HSB mode with grayscale value', function() {
     beforeEach(function() {
-      myp5.colorMode(myp5.HSB);
-      c = myp5.color(39.3);
+      mockP5Prototype.colorMode(mockP5Prototype.HSB);
+      c = mockP5Prototype.color(39.3);
     });
 
     test('should create instance of p5.Color', function() {
@@ -752,8 +743,8 @@ suite('p5.Color', function() {
 
   suite('p5.Color in HSB mode with grayscale value and alpha', function() {
     beforeEach(function() {
-      myp5.colorMode(myp5.HSB);
-      c = myp5.color(39.3, 0.275);
+      mockP5Prototype.colorMode(mockP5Prototype.HSB);
+      c = mockP5Prototype.color(39.3, 0.275);
     });
 
     test('should create instance of p5.Color', function() {
@@ -768,8 +759,8 @@ suite('p5.Color', function() {
 
   suite('p5.Color in HSL mode with grayscale value', function() {
     beforeEach(function() {
-      myp5.colorMode(myp5.HSL);
-      c = myp5.color(39.3);
+      mockP5Prototype.colorMode(mockP5Prototype.HSL);
+      c = mockP5Prototype.color(39.3);
     });
 
     test('should create instance of p5.Color', function() {
@@ -784,8 +775,8 @@ suite('p5.Color', function() {
 
   suite('p5.Color in HSL mode with grayscale value and alpha', function() {
     beforeEach(function() {
-      myp5.colorMode(myp5.HSL);
-      c = myp5.color(39.3, 0.275);
+      mockP5Prototype.colorMode(mockP5Prototype.HSL);
+      c = mockP5Prototype.color(39.3, 0.275);
     });
 
     test('should create instance of p5.Color', function() {
@@ -802,8 +793,8 @@ suite('p5.Color', function() {
     // var colorStr;
 
     // beforeEach(function() {
-    //   myp5.colorMode(myp5.RGB, 255, 255, 255, 255);
-    //   c = myp5.color(128, 0, 128, 128);
+    //   mockP5Prototype.colorMode(mockP5Prototype.RGB, 255, 255, 255, 255);
+    //   c = mockP5Prototype.color(128, 0, 128, 128);
     //   colorStr = c.toString();
     // });
 
