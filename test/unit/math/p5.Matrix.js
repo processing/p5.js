@@ -142,6 +142,8 @@ suite("p5.Matrix", function () {
     });
   });
 
+  suite.todo("add", () => { })
+  
   suite("mult", function () {
     /* eslint-disable indent */
     var mm = [

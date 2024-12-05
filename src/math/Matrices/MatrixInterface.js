@@ -14,7 +14,7 @@ export class MatrixInterface {
     }
     const methods = [
       // Public
-      // "add",
+      "add",
       "reset",
       "set",
       "get",

@@ -81,7 +81,15 @@ export class Matrix extends MatrixInterface {
       return undefined;
     }
   }
-
+  add(matrix) {
+    if (this.matrix.length !== matrix.matrix.length) {
+      throw new Error("Matrices must be of the same dimension to add.");
+    }
+    for (let i = 0; i < this.matrix.length; i++) {
+      this.matrix[i] += matrix.matrix[i];
+    }
+    return this;
+  }
   setMat3Elem(index, value) {
     if (this.mat3) {
       this.mat3[index] = value;
