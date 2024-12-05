@@ -810,6 +810,7 @@ function vertex(p5, fn){
       const stride = args.length / 3;
 
       const prevOrder = this._renderer.bezierOrder();
+      this._renderer.bezierOrder(3);
       for (let i = 0; i < args.length; i += stride) {
         this._renderer.bezierVertex(...args.slice(i, i + stride));
       }
