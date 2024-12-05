@@ -374,7 +374,7 @@ class SplineSegment extends Segment {
     super.addToShape(shape);
     this._splineEnds = shape._splineEnds;
 
-    if (this.splineEnds !== constants.HIDE) return;
+    if (this._splineEnds !== constants.HIDE) return;
 
     let verticesPushed = !this._belongsToShape;
     let lastPrimitive = shape.at(-1, -1);
@@ -385,6 +385,8 @@ class SplineSegment extends Segment {
       expected to be at (${array2}).`;
 
     if (verticesPushed &&
+      // Only check once the first interpolated vertex has been added
+      lastPrimitive.vertices.length === 2 &&
       lastPrimitive._comesAfterSegment &&
       !lastPrimitive._chainedToSegment
     ) {
