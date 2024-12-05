@@ -4,6 +4,7 @@
  */
 
 import * as constants from '../core/constants';
+import { RGB, RGBA } from '../color/p5.Color';
 import { checkWebGLCapabilities } from './p5.Texture';
 import { readPixelsWebGL, readPixelWebGL } from './p5.RendererGL';
 import { Camera } from './p5.Camera';
@@ -63,8 +64,8 @@ class Framebuffer {
     this.format = settings.format || constants.UNSIGNED_BYTE;
     this.channels = settings.channels || (
       this.renderer._pInst._glAttributes.alpha
-        ? constants.RGBA
-        : constants.RGB
+        ? RGBA
+        : RGB
     );
     this.useDepth = settings.depth === undefined ? true : settings.depth;
     this.depthFormat = settings.depthFormat || constants.FLOAT;
@@ -449,14 +450,14 @@ class Framebuffer {
     }
 
     if (
-      this.channels === constants.RGB &&
+      this.channels === RGB &&
       [constants.FLOAT, constants.HALF_FLOAT].includes(this.format)
     ) {
       console.warn(
         'FLOAT and HALF_FLOAT formats do not work cross-platform with only ' +
           'RGB channels. Falling back to RGBA.'
       );
-      this.channels = constants.RGBA;
+      this.channels = RGBA;
     }
   }
 
@@ -640,7 +641,7 @@ class Framebuffer {
       type = gl.UNSIGNED_BYTE;
     }
 
-    if (this.channels === constants.RGBA) {
+    if (this.channels === RGBA) {
       format = gl.RGBA;
     } else {
       format = gl.RGB;

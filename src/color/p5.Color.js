@@ -3,11 +3,9 @@
  * @submodule Creating & Reading
  * @for p5
  * @requires core
- * @requires constants
  * @requires color_conversion
  */
 
-import * as constants from '../core/constants';
 import {
   ColorSpace,
   to,
@@ -19,7 +17,7 @@ import {
   XYZ_D65,
   sRGB_Linear,
   sRGB,
-  HSL,
+  HSL as HSLSpace,
   HSV,
   HWB,
 
@@ -36,15 +34,15 @@ import {
   A98RGB_Linear,
   A98RGB
 } from 'colorjs.io/fn';
-import HSB from './color_spaces/hsb.js';
+import { default as HSBSpace } from './color_spaces/hsb.js';
 
 ColorSpace.register(XYZ_D65);
 ColorSpace.register(sRGB_Linear);
 ColorSpace.register(sRGB);
-ColorSpace.register(HSL);
+ColorSpace.register(HSLSpace);
 ColorSpace.register(HSV);
 ColorSpace.register(HWB);
-ColorSpace.register(HSB);
+ColorSpace.register(HSBSpace);
 
 ColorSpace.register(XYZ_D50);
 ColorSpace.register(Lab);
@@ -58,6 +56,11 @@ ColorSpace.register(P3);
 
 ColorSpace.register(A98RGB_Linear);
 ColorSpace.register(A98RGB);
+
+export const RGB = 'rgb';
+export const HSB = 'hsb';
+export const HSL = 'hsl';
+export const RGBA = 'rgba';
 
 class Color {
   color;
@@ -228,8 +231,8 @@ class Color {
    * </div>
    */
   setRed(new_red) {
-    const red_val = new_red / this.maxes[constants.RGB][0];
-    if(this.mode === constants.RGB){
+    const red_val = new_red / this.maxes[RGB][0];
+    if(this.mode === RGB){
       this.color.coords[0] = red_val;
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
@@ -277,8 +280,8 @@ class Color {
    * </div>
    **/
   setGreen(new_green) {
-    const green_val = new_green / this.maxes[constants.RGB][1];
-    if(this.mode === constants.RGB){
+    const green_val = new_green / this.maxes[RGB][1];
+    if(this.mode === RGB){
       this.color.coords[1] = green_val;
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
@@ -326,8 +329,8 @@ class Color {
    * </div>
    **/
   setBlue(new_blue) {
-    const blue_val = new_blue / this.maxes[constants.RGB][2];
-    if(this.mode === constants.RGB){
+    const blue_val = new_blue / this.maxes[RGB][2];
+    if(this.mode === RGB){
       this.color.coords[2] = blue_val;
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
@@ -380,29 +383,29 @@ class Color {
   }
 
   _getRed() {
-    if(this.mode === constants.RGB){
-      return this.color.coords[0] * this.maxes[constants.RGB][0];
+    if(this.mode === RGB){
+      return this.color.coords[0] * this.maxes[RGB][0];
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
-      return to(this.color, 'srgb').coords[0] * this.maxes[constants.RGB][0];
+      return to(this.color, 'srgb').coords[0] * this.maxes[RGB][0];
     }
   }
 
   _getGreen() {
-    if(this.mode === constants.RGB){
-      return this.color.coords[1] * this.maxes[constants.RGB][1];
+    if(this.mode === RGB){
+      return this.color.coords[1] * this.maxes[RGB][1];
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
-      return to(this.color, 'srgb').coords[1]  * this.maxes[constants.RGB][1];
+      return to(this.color, 'srgb').coords[1]  * this.maxes[RGB][1];
     }
   }
 
   _getBlue() {
-    if(this.mode === constants.RGB){
-      return this.color.coords[2]  * this.maxes[constants.RGB][2];
+    if(this.mode === RGB){
+      return this.color.coords[2]  * this.maxes[RGB][2];
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
-      return to(this.color, 'srgb').coords[2]  * this.maxes[constants.RGB][2];
+      return to(this.color, 'srgb').coords[2]  * this.maxes[RGB][2];
     }
   }
 
@@ -425,7 +428,7 @@ class Color {
    * otherwise.
    */
   _getHue() {
-    if(this.mode === constants.HSB || this.mode === constants.HSL){
+    if(this.mode === HSB || this.mode === HSL){
       return this.color.coords[0] / 360 * this.maxes[this.mode][0];
     }else{
       // Will do an imprecise conversion to 'HSL', not recommended
@@ -439,7 +442,7 @@ class Color {
    * to the HSL saturation otherwise.
    */
   _getSaturation() {
-    if(this.mode === constants.HSB || this.mode === constants.HSL){
+    if(this.mode === HSB || this.mode === HSL){
       return this.color.coords[1] / 100 * this.maxes[this.mode][1];
     }else{
       // Will do an imprecise conversion to 'HSL', not recommended
@@ -448,7 +451,7 @@ class Color {
   }
 
   _getBrightness() {
-    if(this.mode === constants.HSB){
+    if(this.mode === HSB){
       return this.color.coords[2] / 100 * this.maxes[this.mode][2];
     }else{
       // Will do an imprecise conversion to 'HSB', not recommended
@@ -457,7 +460,7 @@ class Color {
   }
 
   _getLightness() {
-    if(this.mode === constants.HSL){
+    if(this.mode === HSL){
       return this.color.coords[2] / 100 * this.maxes[this.mode][2];
     }else{
       // Will do an imprecise conversion to 'HSB', not recommended
@@ -503,6 +506,14 @@ function color(p5, fn){
    *                                          or CSS color.
    */
   p5.Color = Color;
+
+  // Set color related defaults
+  fn._colorMode = RGB;
+  fn._colorMaxes = {
+    [RGB]: [255, 255, 255, 255],
+    [HSB]: [360, 100, 100, 1],
+    [HSL]: [360, 100, 100, 1]
+  };
 }
 
 export default color;

@@ -4,8 +4,8 @@
  * @for p5
  */
 
-// import p5 from './main';
 import * as constants from './constants';
+import { RGB, HSB, HSL } from '../color/p5.Color';
 import primitives2D from '../shape/2d_primitives';
 import attributes from '../shape/attributes';
 import curves from '../shape/curves';
@@ -576,7 +576,7 @@ class Graphics {
     this._bezierDetail = 20;
     this._curveDetail = 20;
 
-    this._colorMode = constants.RGB;
+    this._colorMode = RGB;
     this._colorMaxes = {
       rgb: [255, 255, 255, 255],
       hsb: [360, 100, 100, 1],

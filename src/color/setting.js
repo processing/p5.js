@@ -7,6 +7,7 @@
  */
 
 import * as constants from '../core/constants';
+import { RGB, HSB, HSL } from './p5.Color';
 
 function setting(p5, fn){
   /**
@@ -949,9 +950,9 @@ function setting(p5, fn){
   fn.colorMode = function(mode, max1, max2, max3, maxA) {
     p5._validateParameters('colorMode', arguments);
     if (
-      mode === constants.RGB ||
-      mode === constants.HSB ||
-      mode === constants.HSL
+      mode === RGB ||
+      mode === HSB ||
+      mode === HSL
     ) {
       // Set color mode.
       this._colorMode = mode;
