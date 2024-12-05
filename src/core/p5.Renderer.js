@@ -33,14 +33,22 @@ class Renderer {
       imageMode: constants.CORNER,
       rectMode: constants.CORNER,
       ellipseMode: constants.CENTER,
+
       textFont: 'sans-serif',
       textLeading: 15,
       leadingSet: false,
       textSize: 12,
       textAlign: constants.LEFT,
       textBaseline: constants.BASELINE,
-      textStyle: constants.NORMAL,
-      textWrap: constants.WORD
+      textWrap: constants.WORD,
+
+      // added v2.0
+      fontStyle: constants.NORMAL, // v1: textStyle
+      fontStretch: constants.NORMAL,
+      fontWeight: constants.NORMAL,
+      lineHeight: constants.NORMAL,
+      fontVariant: constants.NORMAL,
+      direction: 'inherit'
     };
     this._pushPopStack = [];
     // NOTE: can use the length of the push pop stack instead
@@ -194,13 +202,13 @@ class Renderer {
         s === constants.BOLD ||
         s === constants.BOLDITALIC
       ) {
-        this.states.textStyle = s;
+        this.states.fontStyle = s;
       }
 
       return this._applyTextProperties();
     }
 
-    return this.states.textStyle;
+    return this.states.fontStyle;
   }
 
   textAscent () {
