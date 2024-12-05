@@ -571,6 +571,7 @@ class Shape {
   kind = null;
   contours = [];
   _splineEnds = constants.SHOW;
+  userVertexProperties = null;
 
   constructor(
     vertexProperties,
@@ -626,6 +627,22 @@ class Shape {
     this.#vertexProperties = { ...this.#initialVertexProperties };
     this.kind = null;
     this.contours = [];
+    this.userVertexProperties = null;
+  }
+
+  vertexProperty(name, data) {
+    this.userVertexProperties = this.userVertexProperties || {};
+    const key = this.vertexPropertyKey(name);
+    if (!this.userVertexProperties[key]) {
+      this.userVertexProperties[key] = data.length ? data.length : 1;
+    }
+    this.#vertexProperties[key] = data;
+  }
+  vertexPropertyName(key) {
+    return key.replace(/Src$/, '');
+  }
+  vertexPropertyKey(name) {
+    return name + 'Src';
   }
 
   /*

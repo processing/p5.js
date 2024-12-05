@@ -50,13 +50,30 @@ export class ShapeBuilder {
   }
 
   constructFromContours(shape, contours) {
-    if (this._useUserVertexProperties === true){
+    if (this._useUserVertexProperties){
       this._resetUserVertexProperties();
     }
     this.geometry.reset();
     this.contourIndices = [];
     this.shapeMode = constants.TESS;
     const shouldProcessEdges = !!this.renderer.states.strokeColor;
+
+    const userVertexPropertyHelpers = {};
+    if (shape.userVertexProperties) {
+      this._useUserVertexProperties = true;
+      for (const key in shape.userVertexProperties) {
+        const name = shape.vertexPropertyName(key);
+        const prop = this.geometry._userVertexPropertyHelper(name, [], shape.userVertexProperties[key]);
+        userVertexPropertyHelpers[key] = prop;
+        this.tessyVertexSize += prop.getDataSize();
+        this.bufferStrides[prop.getSrcName()] = prop.getDataSize();
+        this.renderer.buffers.user.push(
+          new RenderBuffer(prop.getDataSize(), prop.getSrcName(), prop.getDstName(), name, this.renderer)
+        );
+      }
+    } else {
+      this._useUserVertexProperties = false;
+    }
 
     let idx = -1;
     for (const contour of contours) {
@@ -65,10 +82,25 @@ export class ShapeBuilder {
       for (const vertex of contour) {
         idx++
         this.geometry.vertices.push(vertex.position);
-        this.geometry.vertexNormals.push(vertex.normal);
+        this.geometry.vertexNormals.push(vertex.normal || new Vector(0, 0, 0));
         this.geometry.uvs.push(vertex.textureCoordinates.x, vertex.textureCoordinates.y);
-        this.geometry.vertexColors.push(...vertex.fill.array());
-        this.geometry.vertexStrokeColors.push(...vertex.stroke.array());
+        if (this.renderer.states.fillColor) {
+          this.geometry.vertexColors.push(...vertex.fill.array());
+        } else {
+          this.geometry.vertexColors.push(0, 0, 0, 0);
+        }
+        if (this.renderer.states.strokeColor) {
+          this.geometry.vertexStrokeColors.push(...vertex.stroke.array());
+        } else {
+          this.geometry.vertexColors.push(0, 0, 0, 0);
+        }
+        for (const key in userVertexPropertyHelpers) {
+          const prop = userVertexPropertyHelpers[key];
+          if (key in vertex) {
+            prop.setCurrentData(vertex[key]);
+          }
+          prop.pushCurrentData();
+        }
         if (shouldProcessEdges && prevIdx >= 0) {
           // TODO: handle other shape modes
           this.geometry.edges.push([prevIdx, idx]);
@@ -257,26 +289,6 @@ export class ShapeBuilder {
     this._quadraticVertex[2] = z;
 
     return this;
-  }
-
-  vertexProperty(propertyName, data) {
-    if (!this._useUserVertexProperties) {
-      this._useUserVertexProperties = true;
-      this.geometry.userVertexProperties = {};
-    }
-    const propertyExists = this.geometry.userVertexProperties[propertyName];
-    let prop;
-    if (propertyExists){
-      prop = this.geometry.userVertexProperties[propertyName];
-    } else {
-      prop = this.geometry._userVertexPropertyHelper(propertyName, data);
-      this.tessyVertexSize += prop.getDataSize();
-      this.bufferStrides[prop.getSrcName()] = prop.getDataSize();
-      this.renderer.buffers.user.push(
-        new RenderBuffer(prop.getDataSize(), prop.getSrcName(), prop.getDstName(), propertyName, this.renderer)
-      );
-    }
-    prop.setCurrentData(data);
   }
 
   _resetUserVertexProperties() {

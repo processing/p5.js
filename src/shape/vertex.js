@@ -2398,7 +2398,7 @@ function vertex(p5, fn){
    *       fill(j/rows*255, j/cols*255, 255);
    *
    *       // Calculate the distance from the corner of each cell to the mouse.
-   *       let distance = dist(x1,y1, mouseX, mouseY);
+   *       let distance = dist(x, y, mouseX, mouseY);
    *
    *       // Send the distance to the shader.
    *       vertexProperty('aDistance', min(distance, 100));

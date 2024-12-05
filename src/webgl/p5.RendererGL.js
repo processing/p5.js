@@ -518,7 +518,7 @@ class RendererGL extends Renderer {
   }
 
   vertexProperty(...args) {
-    this.shapeBuilder.vertexProperty(...args);
+    this.currentShape.vertexProperty(...args);
   }
 
   normal(xorv, y, z) {
