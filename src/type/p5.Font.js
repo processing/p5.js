@@ -96,6 +96,11 @@ function font(p5, fn) {
 
       ({ width, height, options } = this._parseArgs(width, height, options));
 
+      if (!this.data) {
+        throw Error('No font data available for "' + this.name
+          + '"\nTry downloading a local copy of the font file');
+      }
+
       // lineate and get glyphs/paths for each line
       let lines = this._lineateAndPathify(str, x, y, width, height, options);
 
@@ -156,7 +161,8 @@ function font(p5, fn) {
       lines = this._position(renderer, lines, bounds, width, height);
 
       // convert lines to paths
-      let scale = renderer.states.textSize / this.data.head.unitsPerEm;
+      let uPE = this.data?.head?.unitsPerEm || 1000;
+      let scale = renderer.states.textSize / uPE;
       let pathsForLine = lines.map(l => this._lineToGlyphs(l, scale));
 
       // restore the baseline
@@ -186,7 +192,7 @@ function font(p5, fn) {
       let pts = [];
       let { textSize } = this._pInst._renderer.states;
       let maxDist = (textSize / this.data.head.unitsPerEm) * 500;
-      
+
       for (let i = 0; i < cmds.length; i++) {
         let { type, data: d } = cmds[i];
         if (type !== 'Z') {
@@ -279,7 +285,7 @@ function font(p5, fn) {
         let glyph = { g: line.text[i], /*points: [],*/ path: { commands: [] } };
 
         for (let j = 0; j < cmds.length; j++) {
-          let type = cmds[j], command = [ type ];
+          let type = cmds[j], command = [type];
           if (type in pathArgCounts) {
             let argCount = pathArgCounts[type];
             for (let k = 0; k < argCount; k += 2) {
@@ -319,7 +325,7 @@ function font(p5, fn) {
       ctx.strokeStyle = opts?.stroke || ctx.strokeStyle;
       ctx.fillStyle = opts?.fill || ctx.fillStyle;
       ctx.beginPath();
-      commands.forEach(([type, ...data ]) => {
+      commands.forEach(([type, ...data]) => {
         if (type === 'M') {
           ctx.moveTo(...data);
         } else if (type === 'L') {
@@ -333,7 +339,7 @@ function font(p5, fn) {
         }
       });
       if (opts?.fill) ctx.fill();
-      if (opts?.stroke) ctx.stroke();      
+      if (opts?.stroke) ctx.stroke();
     }
 
     _pathsToCommands(paths, scale) {
@@ -403,8 +409,6 @@ function font(p5, fn) {
     return { path, name, success, error, descriptors };
   }
 
-
-
   /**
    * Load a font and returns a p5.Font instance. The font can be specified by its path or a url.
    * Optional arguments include the font name, descriptors for the FontFace object, 
@@ -420,11 +424,15 @@ function font(p5, fn) {
     try {
       // load the raw font bytes
       let result = await fn.loadBytes(path);
+      if (!result) {
+        throw Error('Failed to load font data');
+      }
 
       // parse the font data
       let fonts = Typr.parse(result);
-      if (fonts.length !== 1 || fonts[0]._data.length === 0) {
-        throw Error('Unable to parse font data');
+      
+      if (fonts.length !== 1 || fonts[0].cmap === undefined) {
+        throw Error(23);
       }
 
       // make sure we have a valid name
