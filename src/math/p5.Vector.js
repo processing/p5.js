@@ -34,23 +34,223 @@ class Vector {
   // This is how it comes in with createVector()
   // This check if the first argument is a function
   constructor(...args) {
-    let x, y, z;
-    if (typeof args[0] === 'function') {
+    let dimensions = args.length; // TODO: make default 3 if no arguments
+    let values = args.map((arg) => arg || 0);
+    if (typeof args[0] === "function") {
       this.isPInst = true;
       this._fromRadians = args[0];
       this._toRadians = args[1];
-      x = args[2] || 0;
-      y = args[3] || 0;
-      z = args[4] || 0;
-      // This is what we'll get with new Vector()
-    } else {
-      x = args[0] || 0;
-      y = args[1] || 0;
-      z = args[2] || 0;
+      values = args.slice(2).map((arg) => arg || 0);
     }
-    this.x = x;
-    this.y = y;
-    this.z = z;
+    if (dimensions === 0) {
+      this.dimensions = 2;
+      this._values = [0, 0, 0];
+    } else {
+      this.dimensions = dimensions;
+      this._values = values;
+    }
+  }
+
+  /**
+   * Gets the values of the vector.
+   *
+   * This method returns an array of numbers that represent the vector.
+   * Each number in the array corresponds to a different component of the vector,
+   * like its position in different directions (e.g., x, y, z).
+   *
+   * @returns {Array<number>} The array of values representing the vector.
+   */
+  get values() {
+    return this._values;
+  }
+
+  /**
+   * Sets the values of the vector.
+   *
+   * This method allows you to update the entire vector with a new set of values.
+   * You need to provide an array of numbers, where each number represents a component
+   * of the vector (e.g., x, y, z). The length of the array should match the number of
+   * dimensions of the vector. If the array is shorter, the missing components will be
+   * set to 0. If the array is longer, the extra values will be ignored.
+   *
+   * @param {Array<number>} newValues - An array of numbers representing the new values for the vector.
+   *
+   */
+  set values(newValues) {
+    let dimensions = newValues.length;
+    if (dimensions === 0) {
+      this.dimensions = 2;
+      this._values = [0, 0, 0];
+    } else {
+      this.dimensions = dimensions;
+      this._values = newValues.slice();
+    }
+  }
+
+  /**
+   * Gets the x component of the vector.
+   *
+   * This method returns the value of the x component of the vector.
+   * Think of the x component as the horizontal position or the first number in the vector.
+   * If the x component is not defined, it will return 0.
+   *
+   * @returns {number} The x component of the vector. Returns 0 if the value is not defined.
+   */
+  get x() {
+    return this._values[0] || 0;
+  }
+
+  /**
+   * Retrieves the value at the specified index from the vector.
+   *
+   * This method allows you to get the value of a specific component of the vector
+   * by providing its index. Think of the vector as a list of numbers, where each
+   * number represents a different direction (like x, y, or z). The index is just
+   * the position of the number in that list.
+   *
+   * For example, if you have a vector with values 10, 20, 30 the index 0 would
+   * give you the first value 10, index 1 would give you the second value 20,
+   * and so on.
+   *
+   * @param {number} index - The position of the value you want to get from the vector.
+   * @returns {number} The value at the specified position in the vector.
+   * @throws Will throw an error if the index is out of bounds, meaning if you try to
+   *          get a value from a position that doesn't exist in the vector.
+   */
+  getValue(index) {
+    if (index < this._values.length) {
+      return this._values[index];
+    } else {
+      p5._friendlyError(
+        "The index parameter is trying to set a value outside the bounds of the vector",
+        "p5.Vector.setValue"
+      );
+    }
+  }
+
+  /**
+   * Sets the value at the specified index of the vector.
+   *
+   * This method allows you to change a specific component of the vector by providing its index and the new value you want to set.
+   * Think of the vector as a list of numbers, where each number represents a different direction (like x, y, or z).
+   * The index is just the position of the number in that list.
+   *
+   * For example, if you have a vector with values [0, 20, 30], and you want to change the second value (20) to 50,
+   * you would use this method with index 1 (since indexes start at 0) and value 50.
+   *
+   * @param {number} index - The position in the vector where you want to set the new value.
+   * @param {number} value - The new value you want to set at the specified position.
+   * @throws Will throw an error if the index is outside the bounds of the vector, meaning if you try to set a value at a position that doesn't exist in the vector.
+   */
+
+  setValue(index, value) {
+    if (index < this._values.length) {
+      this._values[index] = value;
+    } else {
+      p5._friendlyError(
+        "The index parameter is trying to set a value outside the bounds of the vector",
+        "p5.Vector.setValue"
+      );
+    }
+  }
+
+  /**
+   * Gets the y component of the vector.
+   *
+   * This method returns the value of the y component of the vector.
+   * Think of the y component as the vertical position or the second number in the vector.
+   * If the y component is not defined, it will return 0.
+   *
+   * @returns {number} The y component of the vector. Returns 0 if the value is not defined.
+   */
+  get y() {
+    return this._values[1] || 0;
+  }
+
+  /**
+   * Gets the z component of the vector.
+   *
+   * This method returns the value of the z component of the vector.
+   * Think of the z component as the depth or the third number in the vector.
+   * If the z component is not defined, it will return 0.
+   *
+   * @returns {number} The z component of the vector. Returns 0 if the value is not defined.
+   */
+  get z() {
+    return this._values[2] || 0;
+  }
+
+  /**
+   * Gets the w component of the vector.
+   *
+   * This method returns the value of the w component of the vector.
+   * Think of the w component as the fourth number in the vector.
+   * If the w component is not defined, it will return 0.
+   *
+   * @returns {number} The w component of the vector. Returns 0 if the value is not defined.
+   */
+  get w() {
+    return this._values[3] || 0;
+  }
+
+  /**
+   * Sets the x component of the vector.
+   *
+   * This method allows you to change the x value of the vector.
+   * The x value is the first number in the vector, representing the horizontal position.
+   * By calling this method, you can update the x value to a new number.
+   *
+   * @param {number} xVal - The new value for the x component.
+   */
+  set x(xVal) {
+    if (this._values.length > 1) {
+      this._values[0] = xVal;
+    }
+  }
+
+  /**
+   * Sets the y component of the vector.
+   *
+   * This method allows you to change the y value of the vector.
+   * The y value is the second number in the vector, representing the vertical position.
+   * By calling this method, you can update the y value to a new number.
+   *
+   * @param {number} yVal - The new value for the y component.
+   */
+  set y(yVal) {
+    if (this._values.length > 1) {
+      this._values[1] = yVal;
+    }
+  }
+
+  /**
+   * Sets the z component of the vector.
+   *
+   * This method allows you to change the z value of the vector.
+   * The z value is the third number in the vector, representing the depth or the third dimension.
+   * By calling this method, you can update the z value to a new number.
+   *
+   * @param {number} zVal - The new value for the z component.
+   */
+  set z(zVal) {
+    if (this._values.length > 2) {
+      this._values[2] = zVal;
+    }
+  }
+
+  /**
+   * Sets the w component of the vector.
+   *
+   * This method allows you to change the w value of the vector.
+   * The w value is the fourth number in the vector, representing the fourth dimension.
+   * By calling this method, you can update the w value to a new number.
+   *
+   * @param {number} wVal - The new value for the w component.
+   */
+  set w(wVal) {
+    if (this._values.length > 3) {
+      this._values[3] = wVal;
+    }
   }
 
   /**
@@ -74,7 +274,7 @@ class Vector {
    * </div>
    */
   toString() {
-    return `p5.Vector Object : [${this.x}, ${this.y}, ${this.z}]`;
+    return `[${this.values.join(", ")}]`;
   }
 
   /**
@@ -134,23 +334,15 @@ class Vector {
    * @param {p5.Vector|Number[]} value vector to set.
    * @chainable
    */
-  set(x, y, z) {
-    if (x instanceof Vector) {
-      this.x = x.x || 0;
-      this.y = x.y || 0;
-      this.z = x.z || 0;
-      return this;
+  set(...args) {
+    if (args[0] instanceof Vector) {
+      this.values = args[0].values.slice();
+    } else if (Array.isArray(args[0])) {
+      this.values = args[0].map((arg) => arg || 0);
+    } else {
+      this.values = args.map((arg) => arg || 0);
     }
-    if (Array.isArray(x)) {
-      this.x = x[0] || 0;
-      this.y = x[1] || 0;
-      this.z = x[2] || 0;
-      return this;
-    }
-    this.x = x || 0;
-    this.y = y || 0;
-    this.z = z || 0;
-
+    this.dimensions = this.values.length;
     return this;
   }
 
@@ -184,15 +376,9 @@ class Vector {
    */
   copy() {
     if (this.isPInst) {
-      return new Vector(
-        this._fromRadians,
-        this._toRadians,
-        this.x,
-        this.y,
-        this.z
-      );
+      return new Vector(this._fromRadians, this._toRadians, ...this.values);
     } else {
-      return new Vector(this.x, this.y, this.z);
+      return new Vector(...this.values);
     }
   }
 
@@ -328,22 +514,15 @@ class Vector {
    * @param  {p5.Vector|Number[]} value The vector to add
    * @chainable
    */
-  add(x, y, z) {
-    if (x instanceof Vector) {
-      this.x += x.x || 0;
-      this.y += x.y || 0;
-      this.z += x.z || 0;
-      return this;
+  add(...args) {
+    if (args[0] instanceof Vector) {
+      args = args[0].values;
+    } else if (Array.isArray(args[0])) {
+      args = args[0];
     }
-    if (Array.isArray(x)) {
-      this.x += x[0] || 0;
-      this.y += x[1] || 0;
-      this.z += x[2] || 0;
-      return this;
-    }
-    this.x += x || 0;
-    this.y += y || 0;
-    this.z += z || 0;
+    args.forEach((value, index) => {
+      this.values[index] = (this.values[index] || 0) + (value || 0);
+    });
     return this;
   }
 
@@ -481,7 +660,7 @@ class Vector {
         );
       }
     } else if (Array.isArray(x)) {
-      if (x.every(element => Number.isFinite(element))) {
+      if (x.every((element) => Number.isFinite(element))) {
         if (x.length === 2) {
           return calculateRemainder2D.call(this, x[0], x[1]);
         }
@@ -498,7 +677,7 @@ class Vector {
       }
     } else if (arguments.length === 2) {
       const vectorComponents = [...arguments];
-      if (vectorComponents.every(element => Number.isFinite(element))) {
+      if (vectorComponents.every((element) => Number.isFinite(element))) {
         if (vectorComponents.length === 2) {
           return calculateRemainder2D.call(
             this,
@@ -509,7 +688,7 @@ class Vector {
       }
     } else if (arguments.length === 3) {
       const vectorComponents = [...arguments];
-      if (vectorComponents.every(element => Number.isFinite(element))) {
+      if (vectorComponents.every((element) => Number.isFinite(element))) {
         if (vectorComponents.length === 3) {
           return calculateRemainder3D.call(
             this,
@@ -651,22 +830,20 @@ class Vector {
    * @param  {p5.Vector|Number[]} value the vector to subtract
    * @chainable
    */
-  sub(x, y, z) {
-    if (x instanceof Vector) {
-      this.x -= x.x || 0;
-      this.y -= x.y || 0;
-      this.z -= x.z || 0;
-      return this;
+  sub(...args) {
+    if (args[0] instanceof Vector) {
+      args[0].values.forEach((value, index) => {
+        this.values[index] -= value || 0;
+      });
+    } else if (Array.isArray(args[0])) {
+      args[0].forEach((value, index) => {
+        this.values[index] -= value || 0;
+      });
+    } else {
+      args.forEach((value, index) => {
+        this.values[index] -= value || 0;
+      });
     }
-    if (Array.isArray(x)) {
-      this.x -= x[0] || 0;
-      this.y -= x[1] || 0;
-      this.z -= x[2] || 0;
-      return this;
-    }
-    this.x -= x || 0;
-    this.y -= y || 0;
-    this.z -= z || 0;
     return this;
   }
 
@@ -862,82 +1039,44 @@ class Vector {
    * @param  {p5.Vector} v vector to multiply with the components of the original vector.
    * @chainable
    */
-  mult(x, y, z) {
-    if (x instanceof Vector) {
-      // new p5.Vector will check that values are valid upon construction but it's possible
-      // that someone could change the value of a component after creation, which is why we still
-      // perform this check
-      if (
-        Number.isFinite(x.x) &&
-        Number.isFinite(x.y) &&
-        Number.isFinite(x.z) &&
-        typeof x.x === 'number' &&
-        typeof x.y === 'number' &&
-        typeof x.z === 'number'
-      ) {
-        this.x *= x.x;
-        this.y *= x.y;
-        this.z *= x.z;
-      } else {
-        console.warn(
-          'p5.Vector.prototype.mult:',
-          'x contains components that are either undefined or not finite numbers'
-        );
-      }
-      return this;
-    }
-    if (Array.isArray(x)) {
-      if (
-        x.every(element => Number.isFinite(element)) &&
-        x.every(element => typeof element === 'number')
-      ) {
-        if (x.length === 1) {
-          this.x *= x[0];
-          this.y *= x[0];
-          this.z *= x[0];
-        } else if (x.length === 2) {
-          this.x *= x[0];
-          this.y *= x[1];
-        } else if (x.length === 3) {
-          this.x *= x[0];
-          this.y *= x[1];
-          this.z *= x[2];
+  mult(...args) {
+    if (args.length === 1 && args[0] instanceof Vector) {
+      const v = args[0];
+      const maxLen = Math.min(this.values.length, v.values.length);
+      for (let i = 0; i < maxLen; i++) {
+        if (Number.isFinite(v.values[i]) && typeof v.values[i] === "number") {
+          this._values[i] *= v.values[i];
+        } else {
+          console.warn(
+            "p5.Vector.prototype.mult:",
+            "v contains components that are either undefined or not finite numbers"
+          );
+          return this;
         }
-      } else {
-        console.warn(
-          'p5.Vector.prototype.mult:',
-          'x contains elements that are either undefined or not finite numbers'
-        );
       }
-      return this;
-    }
-
-    const vectorComponents = [...arguments];
-    if (
-      vectorComponents.every(element => Number.isFinite(element)) &&
-      vectorComponents.every(element => typeof element === 'number')
+    } else if (args.length === 1 && Array.isArray(args[0])) {
+      const arr = args[0];
+      const maxLen = Math.min(this.values.length, arr.length);
+      for (let i = 0; i < maxLen; i++) {
+        if (Number.isFinite(arr[i]) && typeof arr[i] === "number") {
+          this._values[i] *= arr[i];
+        } else {
+          console.warn(
+            "p5.Vector.prototype.mult:",
+            "arr contains elements that are either undefined or not finite numbers"
+          );
+          return this;
+        }
+      }
+    } else if (
+      args.length === 1 &&
+      typeof args[0] === "number" &&
+      Number.isFinite(args[0])
     ) {
-      if (arguments.length === 1) {
-        this.x *= x;
-        this.y *= x;
-        this.z *= x;
+      for (let i = 0; i < this._values.length; i++) {
+        this._values[i] *= args[0];
       }
-      if (arguments.length === 2) {
-        this.x *= x;
-        this.y *= y;
-      }
-      if (arguments.length === 3) {
-        this.x *= x;
-        this.y *= y;
-        this.z *= z;
-      }
-    } else {
-      console.warn(
-        'p5.Vector.prototype.mult:',
-        'x, y, or z arguments are either undefined or not a finite number'
-      );
     }
-
     return this;
   }
 
@@ -1135,97 +1274,56 @@ class Vector {
    * @param  {p5.Vector} v vector to divide the components of the original vector by.
    * @chainable
    */
-  div(x, y, z) {
-    if (x instanceof Vector) {
-      // new p5.Vector will check that values are valid upon construction but it's possible
-      // that someone could change the value of a component after creation, which is why we still
-      // perform this check
+  div(...args) {
+    if (args.length === 0) return this;
+    if (args.length === 1 && args[0] instanceof Vector) {
+      const v = args[0];
       if (
-        Number.isFinite(x.x) &&
-        Number.isFinite(x.y) &&
-        Number.isFinite(x.z) &&
-        typeof x.x === 'number' &&
-        typeof x.y === 'number' &&
-        typeof x.z === 'number'
+        v._values.every(
+          (val) => Number.isFinite(val) && typeof val === "number"
+        )
       ) {
-        const isLikely2D = x.z === 0 && this.z === 0;
-        if (x.x === 0 || x.y === 0 || (!isLikely2D && x.z === 0)) {
-          console.warn('p5.Vector.prototype.div:', 'divide by 0');
+        if (v._values.some((val) => val === 0)) {
+          console.warn("p5.Vector.prototype.div:", "divide by 0");
           return this;
         }
-        this.x /= x.x;
-        this.y /= x.y;
-        if (!isLikely2D) {
-          this.z /= x.z;
-        }
+        this._values = this._values.map((val, i) => val / v._values[i]);
       } else {
         console.warn(
-          'p5.Vector.prototype.div:',
-          'x contains components that are either undefined or not finite numbers'
+          "p5.Vector.prototype.div:",
+          "vector contains components that are either undefined or not finite numbers"
         );
       }
       return this;
     }
-    if (Array.isArray(x)) {
-      if (
-        x.every(element => Number.isFinite(element)) &&
-        x.every(element => typeof element === 'number')
-      ) {
-        if (x.some(element => element === 0)) {
-          console.warn('p5.Vector.prototype.div:', 'divide by 0');
+
+    if (args.length === 1 && Array.isArray(args[0])) {
+      const arr = args[0];
+      if (arr.every((val) => Number.isFinite(val) && typeof val === "number")) {
+        if (arr.some((val) => val === 0)) {
+          console.warn("p5.Vector.prototype.div:", "divide by 0");
           return this;
         }
-
-        if (x.length === 1) {
-          this.x /= x[0];
-          this.y /= x[0];
-          this.z /= x[0];
-        } else if (x.length === 2) {
-          this.x /= x[0];
-          this.y /= x[1];
-        } else if (x.length === 3) {
-          this.x /= x[0];
-          this.y /= x[1];
-          this.z /= x[2];
-        }
+        this._values = this._values.map((val, i) => val / arr[i]);
       } else {
         console.warn(
-          'p5.Vector.prototype.div:',
-          'x contains components that are either undefined or not finite numbers'
+          "p5.Vector.prototype.div:",
+          "array contains components that are either undefined or not finite numbers"
         );
       }
-
       return this;
     }
 
-    const vectorComponents = [...arguments];
-    if (
-      vectorComponents.every(element => Number.isFinite(element)) &&
-      vectorComponents.every(element => typeof element === 'number')
-    ) {
-      if (vectorComponents.some(element => element === 0)) {
-        console.warn('p5.Vector.prototype.div:', 'divide by 0');
+    if (args.every((val) => Number.isFinite(val) && typeof val === "number")) {
+      if (args.some((val) => val === 0)) {
+        console.warn("p5.Vector.prototype.div:", "divide by 0");
         return this;
       }
-
-      if (arguments.length === 1) {
-        this.x /= x;
-        this.y /= x;
-        this.z /= x;
-      }
-      if (arguments.length === 2) {
-        this.x /= x;
-        this.y /= y;
-      }
-      if (arguments.length === 3) {
-        this.x /= x;
-        this.y /= y;
-        this.z /= z;
-      }
+      this._values = this._values.map((val, i) => val / args[0]);
     } else {
       console.warn(
-        'p5.Vector.prototype.div:',
-        'x, y, or z arguments are either undefined or not a finite number'
+        "p5.Vector.prototype.div:",
+        "arguments contain components that are either undefined or not finite numbers"
       );
     }
 
@@ -1303,10 +1401,10 @@ class Vector {
    * </div>
    */
   magSq() {
-    const x = this.x;
-    const y = this.y;
-    const z = this.z;
-    return x * x + y * y + z * z;
+    return this._values.reduce(
+      (sum, component) => sum + component * component,
+      0
+    );
   }
 
   /**
@@ -1413,11 +1511,13 @@ class Vector {
    * @param  {p5.Vector} v <a href="#/p5.Vector">p5.Vector</a> to be dotted.
    * @return {Number}
    */
-  dot(x, y, z) {
-    if (x instanceof Vector) {
-      return this.dot(x.x, x.y, x.z);
+  dot(...args) {
+    if (args[0] instanceof Vector) {
+      return this.dot(...args[0]._values);
     }
-    return this.x * (x || 0) + this.y * (y || 0) + this.z * (z || 0);
+    return this._values.reduce((sum, component, index) => {
+      return sum + component * (args[index] || 0);
+    }, 0);
   }
 
   /**
@@ -1584,10 +1684,7 @@ class Vector {
    * </div>
    */
   dist(v) {
-    return v
-      .copy()
-      .sub(this)
-      .mag();
+    return v.copy().sub(this).mag();
   }
 
   /**
@@ -2658,8 +2755,12 @@ class Vector {
    */
   slerp(v, amt) {
     // edge cases.
-    if (amt === 0) { return this; }
-    if (amt === 1) { return this.set(v); }
+    if (amt === 0) {
+      return this;
+    }
+    if (amt === 1) {
+      return this.set(v);
+    }
 
     // calculate magnitudes
     const selfMag = this.mag();
@@ -2708,7 +2809,7 @@ class Vector {
     // Since 'axis' is a unit vector, ey is a vector of the same length as 'this'.
     const ey = axis.cross(this);
     // interpolate the length with 'this' and 'v'.
-    const lerpedMagFactor = (1 - amt) + amt * vMag / selfMag;
+    const lerpedMagFactor = 1 - amt + (amt * vMag) / selfMag;
     // imagine a situation where 'axis', 'this', and 'ey' are pointing
     // along the z, x, and y axes, respectively.
     // rotates 'this' around 'axis' by amt * theta towards 'ey'.
@@ -2928,22 +3029,22 @@ class Vector {
    * @param {p5.Vector|Array} value vector to compare.
    * @return {Boolean}
    */
-  equals(x, y, z) {
-    let a, b, c;
-    if (x instanceof Vector) {
-      a = x.x || 0;
-      b = x.y || 0;
-      c = x.z || 0;
-    } else if (Array.isArray(x)) {
-      a = x[0] || 0;
-      b = x[1] || 0;
-      c = x[2] || 0;
+  equals(...args) {
+    let values;
+    if (args[0] instanceof Vector) {
+      values = args[0]._values;
+    } else if (Array.isArray(args[0])) {
+      values = args[0];
     } else {
-      a = x || 0;
-      b = y || 0;
-      c = z || 0;
+      values = args;
     }
-    return this.x === a && this.y === b && this.z === c;
+
+    for (let i = 0; i < this._values.length; i++) {
+      if (this._values[i] !== (values[i] || 0)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
@@ -2960,9 +3061,9 @@ class Vector {
    * @chainable
    */
   clampToZero() {
-    this.x = this._clampToZero(this.x);
-    this.y = this._clampToZero(this.y);
-    this.z = this._clampToZero(this.z);
+    for (let i = 0; i < this._values.length; i++) {
+      this._values[i] = this._clampToZero(this._values[i]);
+    }
     return this;
   }
 
@@ -3047,14 +3148,10 @@ class Vector {
    * </div>
    */
   static fromAngle(angle, length) {
-    if (typeof length === 'undefined') {
+    if (typeof length === "undefined") {
       length = 1;
     }
-    return new Vector(
-      length * Math.cos(angle),
-      length * Math.sin(angle),
-      0
-    );
+    return new Vector(length * Math.cos(angle), length * Math.sin(angle), 0);
   }
 
   /**
@@ -3113,7 +3210,7 @@ class Vector {
    * </div>
    */
   static fromAngles(theta, phi, length) {
-    if (typeof length === 'undefined') {
+    if (typeof length === "undefined") {
       length = 1;
     }
     const cosPhi = Math.cos(phi);
@@ -3246,8 +3343,8 @@ class Vector {
       target = v1.copy();
       if (arguments.length === 3) {
         p5._friendlyError(
-          'The target parameter is undefined, it should be of type p5.Vector',
-          'p5.Vector.add'
+          "The target parameter is undefined, it should be of type p5.Vector",
+          "p5.Vector.add"
         );
       }
     } else {
@@ -3293,8 +3390,8 @@ class Vector {
       target = v1.copy();
       if (arguments.length === 3) {
         p5._friendlyError(
-          'The target parameter is undefined, it should be of type p5.Vector',
-          'p5.Vector.sub'
+          "The target parameter is undefined, it should be of type p5.Vector",
+          "p5.Vector.sub"
         );
       }
     } else {
@@ -3337,8 +3434,8 @@ class Vector {
       target = v.copy();
       if (arguments.length === 3) {
         p5._friendlyError(
-          'The target parameter is undefined, it should be of type p5.Vector',
-          'p5.Vector.mult'
+          "The target parameter is undefined, it should be of type p5.Vector",
+          "p5.Vector.mult"
         );
       }
     } else {
@@ -3363,8 +3460,8 @@ class Vector {
     } else {
       if (!(target instanceof Vector)) {
         p5._friendlyError(
-          'The target parameter should be of type p5.Vector',
-          'p5.Vector.rotate'
+          "The target parameter should be of type p5.Vector",
+          "p5.Vector.rotate"
         );
       }
       target.set(v);
@@ -3407,8 +3504,8 @@ class Vector {
 
       if (arguments.length === 3) {
         p5._friendlyError(
-          'The target parameter is undefined, it should be of type p5.Vector',
-          'p5.Vector.div'
+          "The target parameter is undefined, it should be of type p5.Vector",
+          "p5.Vector.div"
         );
       }
     } else {
@@ -3445,15 +3542,15 @@ class Vector {
   }
 
   /**
-     * Calculates the Euclidean distance between two points (considering a
-     * point as a vector object).
-     */
+   * Calculates the Euclidean distance between two points (considering a
+   * point as a vector object).
+   */
   /**
-     * @static
-     * @param  {p5.Vector} v1 The first <a href="#/p5.Vector">p5.Vector</a>
-     * @param  {p5.Vector} v2 The second <a href="#/p5.Vector">p5.Vector</a>
-     * @return {Number}     The distance
-     */
+   * @static
+   * @param  {p5.Vector} v1 The first <a href="#/p5.Vector">p5.Vector</a>
+   * @param  {p5.Vector} v2 The second <a href="#/p5.Vector">p5.Vector</a>
+   * @return {Number}     The distance
+   */
   static dist(v1, v2) {
     return v1.dist(v2);
   }
@@ -3475,8 +3572,8 @@ class Vector {
       target = v1.copy();
       if (arguments.length === 4) {
         p5._friendlyError(
-          'The target parameter is undefined, it should be of type p5.Vector',
-          'p5.Vector.lerp'
+          "The target parameter is undefined, it should be of type p5.Vector",
+          "p5.Vector.lerp"
         );
       }
     } else {
@@ -3505,8 +3602,8 @@ class Vector {
       target = v1.copy();
       if (arguments.length === 4) {
         p5._friendlyError(
-          'The target parameter is undefined, it should be of type p5.Vector',
-          'p5.Vector.slerp'
+          "The target parameter is undefined, it should be of type p5.Vector",
+          "p5.Vector.slerp"
         );
       }
     } else {
@@ -3559,8 +3656,8 @@ class Vector {
     } else {
       if (!(target instanceof Vector)) {
         p5._friendlyError(
-          'The target parameter should be of type p5.Vector',
-          'p5.Vector.normalize'
+          "The target parameter should be of type p5.Vector",
+          "p5.Vector.normalize"
         );
       }
       target.set(v);
@@ -3585,8 +3682,8 @@ class Vector {
     } else {
       if (!(target instanceof Vector)) {
         p5._friendlyError(
-          'The target parameter should be of type p5.Vector',
-          'p5.Vector.limit'
+          "The target parameter should be of type p5.Vector",
+          "p5.Vector.limit"
         );
       }
       target.set(v);
@@ -3611,8 +3708,8 @@ class Vector {
     } else {
       if (!(target instanceof Vector)) {
         p5._friendlyError(
-          'The target parameter should be of type p5.Vector',
-          'p5.Vector.setMag'
+          "The target parameter should be of type p5.Vector",
+          "p5.Vector.setMag"
         );
       }
       target.set(v);
@@ -3667,8 +3764,8 @@ class Vector {
     } else {
       if (!(target instanceof Vector)) {
         p5._friendlyError(
-          'The target parameter should be of type p5.Vector',
-          'p5.Vector.reflect'
+          "The target parameter should be of type p5.Vector",
+          "p5.Vector.reflect"
         );
       }
       target.set(incidentVector);
@@ -3708,8 +3805,8 @@ class Vector {
       v = new Vector().set(v1);
     } else {
       p5._friendlyError(
-        'The v1 parameter should be of type Array or p5.Vector',
-        'p5.Vector.equals'
+        "The v1 parameter should be of type Array or p5.Vector",
+        "p5.Vector.equals"
       );
     }
     return v.equals(v2);

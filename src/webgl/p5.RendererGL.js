@@ -1,7 +1,7 @@
 import * as constants from '../core/constants';
 import GeometryBuilder from './GeometryBuilder';
 import { Renderer } from '../core/p5.Renderer';
-import { Matrix } from './p5.Matrix';
+import { Matrix } from '../math/p5.Matrix';
 import { Camera } from './p5.Camera';
 import { Vector } from '../math/p5.Vector';
 import { RenderBuffer } from './p5.RenderBuffer';
@@ -183,10 +183,10 @@ class RendererGL extends Renderer {
     this.geometryBuilder = undefined;
 
     // Push/pop state
-    this.states.uModelMatrix = new Matrix();
-    this.states.uViewMatrix = new Matrix();
-    this.states.uMVMatrix = new Matrix();
-    this.states.uPMatrix = new Matrix();
+    this.states.uModelMatrix = new Matrix('mat4');
+    this.states.uViewMatrix = new Matrix('mat4');
+    this.states.uMVMatrix = new Matrix('mat4');
+    this.states.uPMatrix = new Matrix('mat4');
     this.states.uNMatrix = new Matrix('mat3');
     this.states.curMatrix = new Matrix('mat3');
 

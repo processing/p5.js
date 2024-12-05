@@ -10,7 +10,7 @@ import * as constants from '../core/constants';
 import { RendererGL } from './p5.RendererGL';
 import { Vector } from '../math/p5.Vector';
 import { Geometry } from './p5.Geometry';
-import { Matrix } from './p5.Matrix';
+import { Matrix } from '../math/p5.Matrix';
 
 function primitives3D(p5, fn){
   /**
@@ -544,7 +544,7 @@ function primitives3D(p5, fn){
  * function setup() {
  *   createCanvas(300, 300, WEBGL);
  * 
- *  describe('A sphere with red stroke and a red, wavy line on a gray background.');
+ *   describe('A sphere with red stroke and a red, wavy line on a gray background.');
  * }
  * 
  * function draw() {
@@ -554,7 +554,7 @@ function primitives3D(p5, fn){
  *   strokeWeight(1);
  *   translate(0, -50, 0);
  *   sphere(50);
- *   pop(); 
+ *   pop();
  * 
  *   noFill();
  *   strokeWeight(15);
@@ -572,7 +572,7 @@ function primitives3D(p5, fn){
  * function setup() {
  *   createCanvas(300, 300, WEBGL);
  * 
- *  describe('A sphere with red stroke and a  wavy line without full curve decorations without caps and color on a gray background.');
+ *   describe('A sphere with red stroke and a  wavy line without full curve decorations without caps and color on a gray background.');
  * }
  * 
  * function draw() {
@@ -582,7 +582,7 @@ function primitives3D(p5, fn){
  *   strokeWeight(1);
  *   translate(0, -50, 0);
  *   sphere(50);
- *   pop(); 
+ *   pop();
  * 
  *   noFill();
  *   strokeWeight(15);

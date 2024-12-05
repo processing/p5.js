@@ -4,7 +4,7 @@
  * @requires core
  */
 
-import { Matrix } from './p5.Matrix';
+import { Matrix } from '../math/p5.Matrix';
 import { Vector } from '../math/p5.Vector';
 import { Quat } from './p5.Quat';
 import { RendererGL } from './p5.RendererGL';
@@ -15,8 +15,8 @@ class Camera {
 
     this.cameraType = 'default';
     this.useLinePerspective = true;
-    this.cameraMatrix = new Matrix();
-    this.projMatrix = new Matrix();
+    this.cameraMatrix = new Matrix('mat4');
+    this.projMatrix = new Matrix('mat4');
     this.yScale = 1;
   }
   /**
@@ -1236,7 +1236,7 @@ class Camera {
     this.cameraNear = near;
     this.cameraFar = far;
 
-    this.projMatrix = Matrix.identity();
+    this.projMatrix = Matrix.identity(4);
 
     const f = 1.0 / Math.tan(this.cameraFOV / 2);
     const nf = 1.0 / (this.cameraNear - this.cameraFar);
@@ -1428,7 +1428,7 @@ class Camera {
     const tx = -(right + left) / w;
     const ty = -(top + bottom) / h;
     const tz = -(far + near) / d;
-    this.projMatrix = Matrix.identity();
+    this.projMatrix = Matrix.identity(4);
     /* eslint-disable indent */
     this.projMatrix.set(x, 0, 0, 0,
       0, -y, 0, 0,
@@ -1564,7 +1564,7 @@ class Camera {
     const ty = (top + bottom) / h;
     const tz = -(far + near) / d;
 
-    this.projMatrix = Matrix.identity();
+    this.projMatrix = Matrix.identity(4);
 
     /* eslint-disable indent */
     this.projMatrix.set(x, 0, 0, 0,
@@ -1599,7 +1599,7 @@ class Camera {
     centerY -= this.eyeY;
     centerZ -= this.eyeZ;
 
-    const rotation = Matrix.identity(this._renderer._pInst);
+    const rotation = Matrix.identity(4); // TODO Maybe pass p5
     rotation.rotate(this._renderer._pInst._toRadians(a), x, y, z);
 
     /* eslint-disable max-len */
@@ -2566,12 +2566,16 @@ class Camera {
     // and interpolate the elements of the projection matrix.
     // Use logarithmic interpolation for interpolation.
     if (this.projMatrix.mat4[15] !== 0) {
-      this.projMatrix.mat4[0] =
-        cam0.projMatrix.mat4[0] *
-        Math.pow(cam1.projMatrix.mat4[0] / cam0.projMatrix.mat4[0], amt);
-      this.projMatrix.mat4[5] =
-        cam0.projMatrix.mat4[5] *
-        Math.pow(cam1.projMatrix.mat4[5] / cam0.projMatrix.mat4[5], amt);
+        this.projMatrix.setMat4Elem(
+          0,
+          cam0.projMatrix.mat4[0] *
+            Math.pow(cam1.projMatrix.mat4[0] / cam0.projMatrix.mat4[0], amt)
+        );
+        this.projMatrix.setMat4Elem(
+          5,
+          cam0.projMatrix.mat4[5] *
+            Math.pow(cam1.projMatrix.mat4[5] / cam0.projMatrix.mat4[5], amt)
+        );
       // If the camera is active, make uPMatrix reflect changes in projMatrix.
       if (this._isActive()) {
         this._renderer.states.uPMatrix.mat4 = this.projMatrix.mat4.slice();
