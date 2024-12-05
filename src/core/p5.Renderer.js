@@ -44,7 +44,8 @@ class Renderer {
       textBaseline: constants.BASELINE,
       textStyle: constants.NORMAL,
       textWrap: constants.WORD,
-      bezierOrder: 3
+      bezierOrder: 3,
+      splineEnds: constants.SHOW
     };
     this._pushPopStack = [];
     // NOTE: can use the length of the push pop stack instead
@@ -114,6 +115,21 @@ class Renderer {
     const position = new Vector(x, y, z);
     const textureCoordinates = new Vector(u, v);
     this.currentShape.bezierVertex(position, textureCoordinates);
+  }
+
+  splineEnds(mode) {
+    if (mode === undefined) {
+      return this.states.splineEnds;
+    } else {
+      this.states.splineEnds = mode;
+    }
+    this.updateShapeProperties();
+  }
+
+  splineVertex(x, y, z = 0, u = 0, v = 0) {
+    const position = new Vector(x, y, z);
+    const textureCoordinates = new Vector(u, v);
+    this.currentShape.splineVertex(position, textureCoordinates);
   }
 
   curveDetail(d) {
@@ -250,7 +266,8 @@ class Renderer {
   }
 
   updateShapeProperties() {
-    this.currentShape.bezierOrder(this.states.bezierOrder)
+    this.currentShape.bezierOrder(this.states.bezierOrder);
+    this.currentShape.splineEnds(this.states.splineEnds);
   }
 
   updateShapeVertexProperties() {

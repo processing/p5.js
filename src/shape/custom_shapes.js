@@ -88,6 +88,9 @@ class Vertex {
 
 class ShapePrimitive {
   vertices;
+  _shape = null;
+  _primitivesIndex = null;
+  _contoursIndex = null;
 
   constructor(...vertices) {
     if (this.constructor === ShapePrimitive) {
@@ -109,6 +112,14 @@ class ShapePrimitive {
     throw new Error('Getter vertexCapacity must be implemented.');
   }
 
+  get _firstInterpolatedVertex() {
+    return this.startVertex();
+  }
+
+  get canOverrideAnchor() {
+    return false;
+  }
+
   accept(visitor) {
     throw new Error('Method accept() must be implemented.');
   }
@@ -124,32 +135,55 @@ class ShapePrimitive {
 
     if (lastContour.primitives.length === 0) {
       lastContour.primitives.push(this);
-      return;
-    }
+    } else {
+      // last primitive in shape
+      let lastPrimitive = shape.at(-1, -1);
+      let hasSameType = lastPrimitive instanceof this.constructor;
+      let spareCapacity = lastPrimitive.vertexCapacity -
+                          lastPrimitive.vertexCount;
 
-    // last primitive in shape
-    let lastPrimitive = shape.at(-1, -1);
-    let hasSameType = lastPrimitive instanceof this.constructor;
-    let spareCapacity = lastPrimitive.vertexCapacity -
-                        lastPrimitive.vertexCount;
+      // this primitive
+      let pushableVertices;
+      let remainingVertices;
 
-    // this primitive
-    let pushableVertices;
-    let remainingVertices;
+      if (hasSameType && spareCapacity > 0) {
 
-    if (hasSameType && spareCapacity > 0) {
+        pushableVertices = this.vertices.splice(0, spareCapacity);
+        remainingVertices = this.vertices;
+        lastPrimitive.vertices.push(...pushableVertices);
 
-      pushableVertices = this.vertices.splice(0, spareCapacity);
-      remainingVertices = this.vertices;
-      lastPrimitive.vertices.push(...pushableVertices);
-
-      if (remainingVertices.length > 0) {
+        if (remainingVertices.length > 0) {
+          lastContour.primitives.push(this);
+        }
+      }
+      else {
         lastContour.primitives.push(this);
       }
     }
-    else {
-      lastContour.primitives.push(this);
+
+    // if primitive itself was added
+    // (i.e. its individual vertices weren't all added to an existing primitive)
+    // give it a reference to the shape and store its location within the shape
+    if (this.shouldAddToShape) {
+      let lastContour = shape.at(-1);
+      this._primitivesIndex = lastContour.primitives.length - 1;
+      this._contoursIndex = shape.contours.length - 1;
+      this._shape = shape;
     }
+  }
+
+  get shouldAddToShape() {
+    return false;
+  }
+
+  get _nextPrimitive() {
+    return this._belongsToShape ?
+      this._shape.at(this._contoursIndex, this._primitivesIndex + 1) :
+      null;
+  }
+
+  get _belongsToShape() {
+    return this._shape !== null;
   }
 }
 
@@ -188,6 +222,10 @@ class Anchor extends ShapePrimitive {
     return this.#vertexCapacity;
   }
 
+  get shouldAddToShape() {
+    return true;
+  }
+
   accept(visitor) {
     visitor.visitAnchor(this);
   }
@@ -199,10 +237,6 @@ class Anchor extends ShapePrimitive {
 
 // abstract class
 class Segment extends ShapePrimitive {
-  _primitivesIndex = null;
-  _contoursIndex = null;
-  _shape = null;
-
   constructor(...vertices) {
     super(...vertices);
     if (this.constructor === Segment) {
@@ -210,22 +244,8 @@ class Segment extends ShapePrimitive {
     }
   }
 
-  addToShape(shape) {
-    super.addToShape(shape);
-
-    // if primitive itself was added
-    // (i.e. its individual vertices weren't all added to an existing primitive)
-    // give it a reference to the shape and store its location within the shape
-    if (this.vertices.length > 0) {
-      let lastContour = shape.at(-1);
-      this._primitivesIndex = lastContour.primitives.length - 1;
-      this._contoursIndex = shape.contours.length - 1;
-      this._shape = shape;
-    }
-  }
-
-  get _belongsToShape() {
-    return this._shape !== null;
+  get shouldAddToShape() {
+    return this.vertices.length > 0;
   }
 
   // segments in a shape always have a predecessor
@@ -301,6 +321,7 @@ to interpolated endpoints (a breaking change)
 */
 class SplineSegment extends Segment {
   #vertexCapacity = Infinity;
+  _splineEnds = constants.SHOW;
 
   constructor(...vertices) {
     super(...vertices);
@@ -318,14 +339,22 @@ class SplineSegment extends Segment {
     return this._previousPrimitive instanceof Segment;
   }
 
+  get canOverrideAnchor() {
+    return this._splineEnds === constants.HIDE;
+  }
+
   // assuming for now that the first interpolated vertex is always
   // the second vertex passed to splineVertex()
   // if this spline segment doesn't follow another segment,
   // the first vertex is in an anchor
   get _firstInterpolatedVertex() {
-    return this._comesAfterSegment ?
-      this.vertices[1] :
-      this.vertices[0];
+    if (this._splineEnds === constants.HIDE) {
+      return this._comesAfterSegment ?
+        this.vertices[1] :
+        this.vertices[0];
+    } else {
+      return this.vertices[0];
+    }
   }
 
   get _chainedToSegment() {
@@ -343,6 +372,9 @@ class SplineSegment extends Segment {
   // doesn't line up with end of last segment
   addToShape(shape) {
     super.addToShape(shape);
+    this._splineEnds = shape._splineEnds;
+
+    if (this.splineEnds !== constants.HIDE) return;
 
     let verticesPushed = !this._belongsToShape;
     let lastPrimitive = shape.at(-1, -1);
@@ -375,7 +407,36 @@ class SplineSegment extends Segment {
 
   // override method on base class
   getEndVertex() {
-    return this.vertices.at(-2);
+    if (this._splineEnds === constants.SHOW) {
+      return super.getEndVertex()
+    } else if (this._splineEnds === constants.HIDE) {
+      return this.vertices.at(-2);
+    } else {
+      return this.getStartVertex();
+    }
+  }
+
+  getControlPoints() {
+    let points = [];
+
+    if (this._comesAfterSegment) {
+      points.push(this.getStartVertex());
+    }
+
+    for (const vertex of this.vertices) {
+      points.push(vertex);
+    }
+
+    const prevVertex = this.getStartVertex()
+    if (this._splineEnds === constants.SHOW) {
+      points.unshift(prevVertex);
+      points.push(this.vertices.at(-1));
+    } else if (this._splineEnds === constants.JOIN) {
+      points.unshift(this.vertices.at(-1), prevVertex);
+      points.push(prevVertex, this.vertices.at(0));
+    }
+
+    return points;
   }
 }
 
@@ -507,6 +568,7 @@ class Shape {
   _splineTightness = 0;
   kind = null;
   contours = [];
+  _splineEnds = constants.SHOW;
 
   constructor(
     vertexProperties,
@@ -574,6 +636,10 @@ class Shape {
     this.#bezierOrder = order;
   }
 
+  splineEnds(mode) {
+    this._splineEnds = mode;
+  }
+
   splineTightness(tightness) {
     this._splineTightness = tightness;
   }
@@ -627,7 +693,7 @@ class Shape {
     this.#generalVertex('bezierVertex', position, textureCoordinates);
   }
 
-  splineVertex() {
+  splineVertex(position, textureCoordinates) {
     this.#generalVertex('splineVertex', position, textureCoordinates);
   }
 
@@ -766,13 +832,14 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
   }
   visitSplineSegment(splineSegment) {
     let shape = splineSegment._shape;
-    let flatVertices = [];
+    let flatVertices = splineSegment
+      .getControlPoints()
+      .flatMap((v) => [v.position.x, v.position.y]);
 
-    for (const vertex of splineSegment.vertices) {
-      flatVertices.push(vertex.position.x, vertex.position.y);
-    }
-
-    if (!splineSegment._comesAfterSegment) {
+    if (
+      splineSegment._splineEnds === constants.HIDE &&
+      !splineSegment._comesAfterSegment
+    ) {
       let startVertex = splineSegment._firstInterpolatedVertex;
       this.path.moveTo(startVertex.position.x, startVertex.position.y);
     }
@@ -799,7 +866,14 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
 
   visitAnchor(anchor) {
     this.contours.push([]);
-    this.lastContour().push(anchor.getEndVertex());
+    // Weird edge case: if the next segment is a spline, we might
+    // need to jump to a different vertex.
+    const next = anchor._nextPrimitive;
+    if (next?.canOverrideAnchor) {
+      this.lastContour().push(next._firstInterpolatedVertex);
+    } else {
+      this.lastContour().push(anchor.getEndVertex());
+    }
   }
   visitLineSegment(lineSegment) {
     this.lastContour().push(lineSegment.getEndVertex());
@@ -808,6 +882,11 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
     // TODO: use this.curveDetail and actually evaluate the curve.
     // Currently just returning the control points for testing.
     this.lastContour().push(...bezierSegment.vertices.slice(0, bezierSegment.order));
+  }
+  visitSplineSegment(splineSegment) {
+    // TODO: convert these to bezier and then do whatever we will also
+    // be doing in visitBezierSegment
+    this.lastContour().push(...splineSegment.getControlPoints().slice(1, -1));
   }
 }
 
@@ -1117,9 +1196,36 @@ function customShapes(p5, fn) {
 
   // ---- FUNCTIONS ----
 
+  /**
+   * TODO: documentation
+   */
   fn.bezierOrder = function(order) {
     return this._renderer.bezierOrder(order);
-  }
+  };
+
+  /**
+   * TODO: documentation
+   */
+  fn.splineVertex = function(...args) {
+    let x = 0, y = 0, z = 0, u = 0, v = 0;
+    if (args.length === 2) {
+      [x, y] = args;
+    } else if (args.length === 4) {
+      [x, y, u, v] = args;
+    } else if (args.length === 3) {
+      [x, y, z] = args;
+    } else if (args.length === 5) {
+      [x, y, z, u, v] = args;
+    }
+    this._renderer.splineVertex(x, y, z, u, v);
+  };
+
+  /**
+   * TODO: documentation
+   */
+  fn.splineEnds = function(mode) {
+    return this._renderer.splineEnds(mode);
+  };
 
   // Note: Code is commented out for now, to avoid conflicts with the existing implementation.
 
