@@ -25,8 +25,8 @@ suite("p5.Matrix", function () {
   });
 
   suite("construction", function () {
-    test("new p5.Matrix()", function () {
-      var m = new p5.Matrix();
+    test("new p5.Matrix('mat4')", function () {
+      var m = new p5.Matrix('mat4');
       assert.instanceOf(m, p5.Matrix);
       assert.isUndefined(m.mat3);
       /* eslint-disable indent */
@@ -41,7 +41,7 @@ suite("p5.Matrix", function () {
       var m = new p5.Matrix(mat4);
       assert.instanceOf(m, p5.Matrix);
       assert.isUndefined(m.mat3);
-      assert.deepEqual([].slice.call(m.mat4), mat4);
+      expect(m.mat4).toEqual( mat4 );
     });
 
     test("new p5.Matrix(mat3)", function () {
@@ -52,14 +52,11 @@ suite("p5.Matrix", function () {
     });
 
     test("identity()", function () {
-      var m = p5.Matrix.identity();
+      var m = p5.Matrix.identity(4);
       assert.instanceOf(m, p5.Matrix);
       assert.isUndefined(m.mat3);
       /* eslint-disable indent */
-      assert.deepEqual(
-        [].slice.call(m.mat4),
-        [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
-      );
+       expect(toArray(m.mat4)).toEqual([ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ]);
       /* eslint-enable indent */
     });
   });
@@ -84,22 +81,22 @@ suite("p5.Matrix", function () {
 
   suite("set", function () {
     test("p5.Matrix", function () {
-      var m = new p5.Matrix();
+      var m = new p5.Matrix('mat4'); 
       m.set(new p5.Matrix(mat4));
-      assert.deepEqual([].slice.call(m.mat4), mat4);
+            expect(m.mat4).toEqual(mat4);
+      // assert.deepEqual([].slice.call(m.mat4), mat4);
     });
 
     test("array", function () {
-      var m = new p5.Matrix();
+      var m = new p5.Matrix('mat4');
       m.set(mat4);
       assert.deepEqual([].slice.call(m.mat4), mat4);
     });
 
     test("arguments", function () {
-      var m = new p5.Matrix();
-      m.set.apply(m, mat4);
-      assert.notEqual(m.mat4, mat4);
-      assert.deepEqual([].slice.call(m.mat4), mat4);
+      var m = new p5.Matrix('mat4');
+      m.set(1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6);
+      expect(m.mat4).toEqual([1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6]);
     });
   });
 
@@ -122,11 +119,11 @@ suite("p5.Matrix", function () {
   });
 
   it("should clone an identity matrix correctly", () => {
-    const original = new p5.Matrix();
+    const original = new p5.Matrix('mat4');
     const clone = original.clone();
 
     expect(clone).not.toBe(original);
-    expect(clone.mat4).toEqual(original.mat4);
+    expect(toArray(clone.mat4)).toEqual(toArray(original.mat4));
   });
 
   suite("get / copy", function () {

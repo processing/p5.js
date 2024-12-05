@@ -13,18 +13,21 @@ export class MatrixInterface {
       throw new Error("Class is of abstract type and can't be instantiated");
     }
     const methods = [
+      // Public
+      // "add",
       "reset",
       "set",
       "get",
       "copy",
       "clone",
       "mult",
-      "mult3x3",
       "column",
       "row",
       "diagonal",
-      "createSubMatrix3x3",
       "transpose",
+      // Private
+      "mult3x3",
+      "createSubMatrix3x3",
       "invert",
       "invert3x3",
       "transpose3x3",

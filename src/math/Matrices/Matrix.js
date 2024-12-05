@@ -8,9 +8,12 @@ if (typeof Float32Array !== "undefined") {
   isMatrixArray = (x) => Array.isArray(x) || x instanceof Float32Array;
 }
 
-export class Matrix extends MatrixInterface{
+export class Matrix extends MatrixInterface {
+  matrix;
+  #isMat3;
+  #isMat4;
   constructor(...args) {
-    super(...args)
+    super(...args);
     // This is default behavior when object
     // instantiated using createMatrix()
     // @todo implement createMatrix() in core/math.js
@@ -19,17 +22,64 @@ export class Matrix extends MatrixInterface{
     // }
 
     if (args[0] === "mat3") {
-      this.mat3 = Array.isArray(args[1])
+      this.#isMat3 = true;
+      this.#isMat4 = false;
+      this.matrix = Array.isArray(args[1])
         ? args[1]
         : new GLMAT_ARRAY_TYPE([1, 0, 0, 0, 1, 0, 0, 0, 1]);
-    } else {
-      this.mat4 = Array.isArray(args[0])
+    } else if (args[0] === "mat4") {
+      this.#isMat3 = false;
+      this.#isMat4 = true;
+      this.matrix = Array.isArray(args[1])
         ? args[0]
         : new GLMAT_ARRAY_TYPE([
             1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
           ]);
+    } else if (isMatrixArray(args[0]) && Array.from(args[0]).length === 9) {
+      this.#isMat3 = true;
+      this.#isMat4 = false;
+      this.matrix = Array.from(args[0]);
+      // this.matrix = new Float32Array(args[0]);
+    } else if (isMatrixArray(args[0]) && Array.from(args[0]).length === 16) {
+      this.#isMat4 = true;
+      this.#isMat3 = false;
+      this.matrix = Array.from(...args);
+      // this.matrix = new Float32Array(args[0]);
+    } else if (typeof args[0] === "number") {
+      this.#isMat3 = args[0] === 3;
+      this.#isMat4 = args[0] === 4;
+      this.matrix = this.#createIdentityMatrix(args[0]);
+    } else if (typeof args[0] === "number") {
+      this.#isMat3 = args[0] === 3;
+      this.#isMat4 = args[0] === 4;
+      this.matrix = this.#createIdentityMatrix(args[0]);
     }
+
     return this;
+  }
+  // Private method to create an identity matrix of dimension N
+  #createIdentityMatrix(dimension) {
+    const identityMatrix = new GLMAT_ARRAY_TYPE(dimension * dimension).fill(0);
+    for (let i = 0; i < dimension; i++) {
+      identityMatrix[i * dimension + i] = 1;
+    }
+    return identityMatrix;
+  }
+
+  get mat3() {
+    if (this.#isMat3) {
+      return this.matrix;
+    } else {
+      return undefined;
+    }
+  }
+
+  get mat4() {
+    if (this.#isMat4) {
+      return this.matrix;
+    } else {
+      return undefined;
+    }
   }
 
   setMat3Elem(index, value) {
@@ -45,14 +95,12 @@ export class Matrix extends MatrixInterface{
     }
     return this;
   }
-  
+
   reset() {
-    if (this.mat3) {
-      this.mat3 = new GLMAT_ARRAY_TYPE([1, 0, 0, 0, 1, 0, 0, 0, 1]);
-    } else if (this.mat4) {
-      this.mat4 = new GLMAT_ARRAY_TYPE([
-        1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
-      ]);
+    if (this.#isMat3) {
+      this.matrix = this.#createIdentityMatrix(3);
+    } else if (this.#isMat4) {
+      this.matrix = this.#createIdentityMatrix(4);
     }
     return this;
   }
@@ -73,22 +121,20 @@ export class Matrix extends MatrixInterface{
    * @chainable
    */
   set(inMatrix) {
-    let refArray = arguments;
+    let refArray = Array.from([...arguments]);
     if (inMatrix instanceof Matrix) {
-      refArray = inMatrix.mat4;
+      refArray  = inMatrix.matrix;
     } else if (isMatrixArray(inMatrix)) {
       refArray = inMatrix;
     }
-    if (refArray.length !== 16) {
+    if (refArray.length !== this.matrix.length) {
       p5._friendlyError(
-        `Expected 16 values but received ${refArray.length}.`,
+        `Expected same dimentions values but received different ${refArray.length}.`,
         "p5.Matrix.set"
       );
       return this;
     }
-    for (let i = 0; i < 16; i++) {
-      this.mat4[i] = refArray[i];
-    }
+    this.matrix = [...refArray]
     return this;
   }
 
@@ -98,7 +144,7 @@ export class Matrix extends MatrixInterface{
    * @return {p5.Matrix} the copy of the p5.Matrix object
    */
   get() {
-    return new Matrix(this.mat4, this.p5);
+    return new Matrix(this.mat4); // TODO: Pass p5
   }
 
   /**
@@ -109,37 +155,7 @@ export class Matrix extends MatrixInterface{
    * @return {p5.Matrix}   the result matrix
    */
   copy() {
-    if (this.mat3 !== undefined) {
-      const copied3x3 = new Matrix("mat3", this.p5);
-      copied3x3.mat3[0] = this.mat3[0];
-      copied3x3.mat3[1] = this.mat3[1];
-      copied3x3.mat3[2] = this.mat3[2];
-      copied3x3.mat3[3] = this.mat3[3];
-      copied3x3.mat3[4] = this.mat3[4];
-      copied3x3.mat3[5] = this.mat3[5];
-      copied3x3.mat3[6] = this.mat3[6];
-      copied3x3.mat3[7] = this.mat3[7];
-      copied3x3.mat3[8] = this.mat3[8];
-      return copied3x3;
-    }
-    const copied = new Matrix(this.p5);
-    copied.mat4[0] = this.mat4[0];
-    copied.mat4[1] = this.mat4[1];
-    copied.mat4[2] = this.mat4[2];
-    copied.mat4[3] = this.mat4[3];
-    copied.mat4[4] = this.mat4[4];
-    copied.mat4[5] = this.mat4[5];
-    copied.mat4[6] = this.mat4[6];
-    copied.mat4[7] = this.mat4[7];
-    copied.mat4[8] = this.mat4[8];
-    copied.mat4[9] = this.mat4[9];
-    copied.mat4[10] = this.mat4[10];
-    copied.mat4[11] = this.mat4[11];
-    copied.mat4[12] = this.mat4[12];
-    copied.mat4[13] = this.mat4[13];
-    copied.mat4[14] = this.mat4[14];
-    copied.mat4[15] = this.mat4[15];
-    return copied;
+    return new Matrix(this.matrix)
   }
 
   clone() {
@@ -150,8 +166,8 @@ export class Matrix extends MatrixInterface{
    * return an identity matrix
    * @return {p5.Matrix}   the result matrix
    */
-  static identity(pInst) {
-    return new Matrix(pInst);
+  static identity(size) {
+    return new Matrix(size);
   }
 
   /**

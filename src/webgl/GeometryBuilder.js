@@ -11,8 +11,8 @@ class GeometryBuilder {
   constructor(renderer) {
     this.renderer = renderer;
     renderer._pInst.push();
-    this.identityMatrix = new Matrix();
-    renderer.states.uModelMatrix = new Matrix();
+    this.identityMatrix = new Matrix('mat4');
+    renderer.states.uModelMatrix = new Matrix('mat4');
     this.geometry = new Geometry(undefined, undefined, undefined, this.renderer);
     this.geometry.gid = `_p5_GeometryBuilder_${GeometryBuilder.nextGeometryId}`;
     GeometryBuilder.nextGeometryId++;
