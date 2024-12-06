@@ -7,7 +7,9 @@
  */
 
 // REMINDER: remove .js extension (currently using it to run file locally)
-import * as constants from '../core/constants.js';
+import { Color } from '../color/p5.Color';
+import { Vector } from '../math/p5.Vector';
+import * as constants from '../core/constants';
 
 // ---- UTILITY FUNCTIONS ----
 
@@ -305,6 +307,18 @@ class BezierSegment extends Segment {
     return this.#vertexCapacity;
   }
 
+  #_hullLength;
+  hullLength() {
+    if (this.#_hullLength === undefined) {
+      let length = 0
+      for (let i = 1; i < this.order; i++) {
+        length += this.vertices[i-1].position.dist(this.vertices[i].position);
+      }
+      this.#_hullLength = length;
+    }
+    return this.#_hullLength;
+  }
+
   accept(visitor) {
     visitor.visitBezierSegment(this);
   }
@@ -588,6 +602,103 @@ class Shape {
         };
       }
     }
+  }
+
+  serializeToArray(val) {
+    if (val instanceof Number) {
+      return [val];
+    } else if (val instanceof Array) {
+      return val;
+    } else if (val.array instanceof Function) {
+      return val.array();
+    } else {
+      throw new Error(`Can't convert ${val} to array!`);
+    }
+  }
+
+  vertexToArray(vertex) {
+    const array = [];
+    for (const key in this.#vertexProperties) {
+      if (this.userVertexProperties && key in this.userVertexProperties) continue;
+      const val = vertex[key];
+      array.push(...this.serializeToArray(val));
+    }
+    for (const key in this.userVertexProperties) {
+      if (key in vertex) {
+        array.push(...this.serializeToArray(vertex[key]));
+      } else {
+        array.push(...new Array(this.userVertexProperties[key]).fill(0));
+      }
+    }
+    return array;
+  }
+
+  hydrateValue(queue, original) {
+    if (original instanceof Number) {
+      return queue.shift();
+    } else if (original instanceof Array) {
+      const array = [];
+      for (let i = 0; i < original.length; i++) {
+        array.push(queue.shift());
+      }
+      // TODO: handle typed array here? Generally doesn't matter though
+      return array;
+    } else if (original instanceof Vector) {
+      return new Vector(queue.shift(), queue.shift(), queue.shift());
+    } else if (original instanceof Color) {
+      const array = [queue.shift(), queue.shift(), queue.shift(), queue.shift()];
+      return new Color(
+        array.map((v, i) => v * original.maxes[original.mode][i]),
+        original.mode,
+        original.maxes
+      );
+    }
+  }
+
+  arrayToVertex(array) {
+    const vertex = {};
+
+    for (const key in this.#vertexProperties) {
+      if (this.userVertexProperties && key in this.userVertexProperties) continue;
+      const original = this.#vertexProperties[key];
+      vertex[key] = this.hydrateValue(array, original);
+    }
+    for (const key in this.userVertexProperties) {
+      const original = this.#vertexProperties[key];
+      vertex[key] = this.hydrateValue(array, original);
+    }
+    return vertex;
+  }
+
+  arrayScale(array, scale) {
+    return array.map((v) => v * scale);
+  }
+
+  arraySum(first, ...rest) {
+    return first.map((v, i) => {
+      let result = v;
+      for (let j = 0; j < rest.length; j++) {
+        result += rest[j][i];
+      }
+      return result;
+    });
+  }
+
+  evaluateCubicBezier([a, b, c, d], t) {
+    return this.arraySum(
+      this.arrayScale(a, Math.pow(1 - t, 3)),
+      this.arrayScale(b, 3 * Math.pow(1 - t, 2) * t),
+      this.arrayScale(c, 3 * (1 - t) * Math.pow(t, 2)),
+      this.arrayScale(d, Math.pow(t, 3)),
+    );
+  }
+
+  evaluateQuadraticBezier([a, b, c], t) {
+    return this.arraySum(
+      this.arrayScale(a, Math.pow(1 - t, 2)),
+      this.arrayScale(b, 2 * (1 - t) * t),
+      this.arrayScale(c, t * t),
+    );
   }
 
   // TODO for at() method:
@@ -898,9 +1009,22 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
     this.lastContour().push(lineSegment.getEndVertex());
   }
   visitBezierSegment(bezierSegment) {
-    // TODO: use this.curveDetail and actually evaluate the curve.
-    // Currently just returning the control points for testing.
-    this.lastContour().push(...bezierSegment.vertices.slice(0, bezierSegment.order));
+    const contour = this.lastContour();
+    const numPoints = Math.max(1, bezierSegment.hullLength() * this.curveDetail);
+    const vertexArrays = [
+      bezierSegment.getStartVertex(),
+      ...bezierSegment.vertices
+    ].map((v) => bezierSegment._shape.vertexToArray(v));
+    for (let i = 0; i < numPoints; i++) {
+      const t = (i + 1) / numPoints;
+      contour.push(
+        bezierSegment._shape.arrayToVertex(
+          bezierSegment.order === 3
+            ? bezierSegment._shape.evaluateCubicBezier(vertexArrays, t)
+            : bezierSegment._shape.evaluateQuadraticBezier(vertexArrays, t)
+        )
+      )
+    }
   }
   visitSplineSegment(splineSegment) {
     // TODO: convert these to bezier and then do whatever we will also

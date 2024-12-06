@@ -21,24 +21,26 @@
 
     const sketch = function (p) {
       p.setup = function () {
-        p.createCanvas(200, 200); // , p.WEBGL
+        p.createCanvas(200, 200, p.WEBGL);
       };
 
       p.draw = function () {
         p.background(0, 50, 50);
-        //p.translate(-p.width/2, -p.height/2);
+        p.translate(-p.width/2, -p.height/2);
         p.fill('red');
         p.stroke('white');
         p.strokeWeight(10);
         p.beginShape();
-        p.splineEnds(p.HIDE);
         p.vertex(50, 50);
-        p.splineVertex(100, 50);
-        p.splineVertex(100, 100);
-        p.splineVertex(50, 100);
-        p.splineVertex(70, 70);
-        p.vertex(50, 50);
-        p.endShape(); // p.CLOSE
+        p.vertex(100, 50);
+        p.bezierOrder(3);
+        // p.bezierVertex(100, 100, 50, 100, 70, 70);
+        p.bezierVertex(100, 100);
+        p.stroke('blue');
+        p.bezierVertex(50, 100);
+        p.bezierVertex(70, 70);
+        p.stroke('white');
+        p.endShape(p.CLOSE);
       };
     };
 
