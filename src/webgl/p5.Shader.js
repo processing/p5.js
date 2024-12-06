@@ -1352,7 +1352,7 @@ p5.Shader = class {
           }
         }
         break;
-      case gl.SAMPLER_CUBE: 
+      case gl.SAMPLER_CUBE:
       case gl.SAMPLER_3D:
       case gl.SAMPLER_2D_SHADOW:
       case gl.SAMPLER_2D_ARRAY:
