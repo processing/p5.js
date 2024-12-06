@@ -12,37 +12,14 @@ import { Vector } from '../math/p5.Vector';
 import * as constants from '../core/constants';
 
 // ---- UTILITY FUNCTIONS ----
+function polylineLength(vertices) {
+  let length = 0
+  for (let i = 1; i < vertices.length; i++) {
+    length += vertices[i-1].position.dist(vertices[i].position);
+  }
+  return length;
+}
 
-/*
-catmullRomToBezier(vertices, tightness)
-
-Abbreviated description:
-Converts a Catmull-Rom spline to a sequence of Bezier curves.
-
-Parameters:
-vertices -> Array [x1, y1, x2, y2, ...] of at least four vertices
-tightness -> Number affecting shape of curve
-
-Returns:
-array of Bezier curves, each represented as [x1, y1, x2, y2, x3, y3]
-*/
-
-/*
-TODO:
-1. It seems p5 contains code for converting from Catmull-Rom to Bezier in at least two places:
-
-catmullRomToBezier() is based on code in the legacy endShape() function:
-https://github.com/processing/p5.js/blob/1b66f097761d3c2057c0cec4349247d6125f93ca/src/core/p5.Renderer2D.js#L859C1-L886C1
-
-A different conversion can be found elsewhere in p5:
-https://github.com/processing/p5.js/blob/17304ce9e9ef3f967bd828102a51b62a2d39d4f4/src/typography/p5.Font.js#L1179
-
-A more careful review and comparison of both implementations would be helpful. They're different. I put
-catmullRomToBezier() together quickly without checking the math/algorithm, when I made the proof of concept
-for the refactor.
-
-2. It may be possible to replace the code in p5.Font.js with the code here, to reduce duplication.
-*/
 function catmullRomToBezier(vertices, tightness) {
   let X0, Y0, X1, Y1, X2, Y2, X3, Y3;
   let s = 1 - tightness;
@@ -310,11 +287,7 @@ class BezierSegment extends Segment {
   #_hullLength;
   hullLength() {
     if (this.#_hullLength === undefined) {
-      let length = 0
-      for (let i = 1; i < this.order; i++) {
-        length += this.vertices[i-1].position.dist(this.vertices[i].position);
-      }
-      this.#_hullLength = length;
+      this.#_hullLength = polylineLength([this.getStartVertex(), ...this.vertices]);
     }
     return this.#_hullLength;
   }
@@ -336,6 +309,7 @@ to interpolated endpoints (a breaking change)
 class SplineSegment extends Segment {
   #vertexCapacity = Infinity;
   _splineEnds = constants.SHOW;
+  _splineTightness = 0;
 
   constructor(...vertices) {
     super(...vertices);
@@ -387,6 +361,7 @@ class SplineSegment extends Segment {
   addToShape(shape) {
     super.addToShape(shape);
     this._splineEnds = shape._splineEnds;
+    this._splineTightness = shape._splineTightness;
 
     if (this._splineEnds !== constants.HIDE) return;
 
@@ -641,7 +616,6 @@ class Shape {
       for (let i = 0; i < original.length; i++) {
         array.push(queue.shift());
       }
-      // TODO: handle typed array here? Generally doesn't matter though
       return array;
     } else if (original instanceof Vector) {
       return new Vector(queue.shift(), queue.shift(), queue.shift());
@@ -657,15 +631,16 @@ class Shape {
 
   arrayToVertex(array) {
     const vertex = {};
+    const queue = [...array];
 
     for (const key in this.#vertexProperties) {
       if (this.userVertexProperties && key in this.userVertexProperties) continue;
       const original = this.#vertexProperties[key];
-      vertex[key] = this.hydrateValue(array, original);
+      vertex[key] = this.hydrateValue(queue, original);
     }
     for (const key in this.userVertexProperties) {
       const original = this.#vertexProperties[key];
-      vertex[key] = this.hydrateValue(array, original);
+      vertex[key] = this.hydrateValue(queue, original);
     }
     return vertex;
   }
@@ -684,6 +659,10 @@ class Shape {
     });
   }
 
+  arrayMinus(a, b) {
+    return a.map((v, i) => v - b[i]);
+  }
+
   evaluateCubicBezier([a, b, c, d], t) {
     return this.arraySum(
       this.arrayScale(a, Math.pow(1 - t, 3)),
@@ -699,6 +678,55 @@ class Shape {
       this.arrayScale(b, 2 * (1 - t) * t),
       this.arrayScale(c, t * t),
     );
+  }
+
+  /*
+  catmullRomToBezier(vertices, tightness)
+
+  Abbreviated description:
+  Converts a Catmull-Rom spline to a sequence of Bezier curveTo points.
+
+  Parameters:
+  vertices -> Array [v0, v1, v2, v3, ...] of at least four vertices
+  tightness -> Number affecting shape of curve
+
+  Returns:
+  array of Bezier curveTo control points, each represented as [c1, c2, c3][]
+
+  TODO:
+  1. It seems p5 contains code for converting from Catmull-Rom to Bezier in at least two places:
+
+  catmullRomToBezier() is based on code in the legacy endShape() function:
+  https://github.com/processing/p5.js/blob/1b66f097761d3c2057c0cec4349247d6125f93ca/src/core/p5.Renderer2D.js#L859C1-L886C1
+
+  A different conversion can be found elsewhere in p5:
+  https://github.com/processing/p5.js/blob/17304ce9e9ef3f967bd828102a51b62a2d39d4f4/src/typography/p5.Font.js#L1179
+
+  A more careful review and comparison of both implementations would be helpful. They're different. I put
+  catmullRomToBezier() together quickly without checking the math/algorithm, when I made the proof of concept
+  for the refactor.
+
+  2. It may be possible to replace the code in p5.Font.js with the code here, to reduce duplication.
+  */
+  catmullRomToBezier(vertices, tightness) {
+    let s = 1 - tightness;
+    let bezArrays = [];
+
+    for (let i = 0; i + 3 < vertices.length; i++) {
+      const [a, b, c, d] = vertices.slice(i, i + 4);
+      const bezB = this.arraySum(
+        b,
+        this.arrayScale(this.arrayMinus(c, a), s / 6)
+      );
+      const bezC = this.arraySum(
+        c,
+        this.arrayScale(this.arrayMinus(b, d), s / 6)
+      );
+      const bezD = c;
+
+      bezArrays.push([bezB, bezC, bezD]);
+    }
+    return bezArrays;
   }
 
   // TODO for at() method:
@@ -961,10 +989,7 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
     }
   }
   visitSplineSegment(splineSegment) {
-    let shape = splineSegment._shape;
-    let flatVertices = splineSegment
-      .getControlPoints()
-      .flatMap((v) => [v.position.x, v.position.y]);
+    const shape = splineSegment._shape;
 
     if (
       splineSegment._splineEnds === constants.HIDE &&
@@ -974,9 +999,12 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
       this.path.moveTo(startVertex.position.x, startVertex.position.y);
     }
 
-    let bezierArrays = catmullRomToBezier(flatVertices, shape._splineTightness);
+    const arrayVertices = splineSegment.getControlPoints().map((v) => shape.vertexToArray(v));
+    let bezierArrays = shape.catmullRomToBezier(arrayVertices, splineSegment._splineTightness)
+      .map((arr) => arr.map((vertArr) => shape.arrayToVertex(vertArr)));
     for (const array of bezierArrays) {
-      this.path.bezierCurveTo(...array);
+      const points = array.flatMap((vert) => [vert.position.x, vert.position.y]);
+      this.path.bezierCurveTo(...points);
     }
   }
 }
@@ -1010,7 +1038,7 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
   }
   visitBezierSegment(bezierSegment) {
     const contour = this.lastContour();
-    const numPoints = Math.max(1, bezierSegment.hullLength() * this.curveDetail);
+    const numPoints = Math.max(1, Math.ceil(bezierSegment.hullLength() * this.curveDetail));
     const vertexArrays = [
       bezierSegment.getStartVertex(),
       ...bezierSegment.vertices
@@ -1027,9 +1055,21 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
     }
   }
   visitSplineSegment(splineSegment) {
-    // TODO: convert these to bezier and then do whatever we will also
-    // be doing in visitBezierSegment
-    this.lastContour().push(...splineSegment.getControlPoints().slice(1, -1));
+    const shape = splineSegment._shape;
+    const contour = this.lastContour();
+
+    const arrayVertices = splineSegment.getControlPoints().map((v) => shape.vertexToArray(v));
+    let bezierArrays = shape.catmullRomToBezier(arrayVertices, splineSegment._splineTightness)
+    let startVertex = shape.vertexToArray(splineSegment.getStartVertex());
+    for (const array of bezierArrays) {
+      const bezierControls = [startVertex, ...array];
+      const numPoints = Math.max(1, Math.ceil(polylineLength(bezierControls.map(v => shape.arrayToVertex(v))) * this.curveDetail));
+      for (let i = 0; i < numPoints; i++) {
+        const t = (i + 1) / numPoints;
+        contour.push(shape.arrayToVertex(shape.evaluateCubicBezier(bezierControls, t)));
+      }
+      startVertex = array[2];
+    }
   }
 }
 

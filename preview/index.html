@@ -31,16 +31,14 @@
         p.stroke('white');
         p.strokeWeight(10);
         p.beginShape();
+        //p.splineEnds(p.HIDE);
         p.vertex(50, 50);
-        p.vertex(100, 50);
-        p.bezierOrder(3);
-        // p.bezierVertex(100, 100, 50, 100, 70, 70);
-        p.bezierVertex(100, 100);
-        p.stroke('blue');
-        p.bezierVertex(50, 100);
-        p.bezierVertex(70, 70);
-        p.stroke('white');
-        p.endShape(p.CLOSE);
+        p.splineVertex(100, 50);
+        p.splineVertex(100, 100);
+        p.splineVertex(50, 100);
+        p.splineVertex(70, 70);
+        p.vertex(50, 50);
+        p.endShape(); // p.CLOSE
       };
     };
 

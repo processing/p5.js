@@ -311,7 +311,7 @@ class RendererGL extends Renderer {
     this.states.userPointShader = undefined;
     this.states.userImageShader = undefined;
 
-    this.states.curveDetail = 0.5;
+    this.states.curveDetail = 1 / 4;
 
     // Used by beginShape/endShape functions to construct a p5.Geometry
     this.shapeBuilder = new ShapeBuilder(this);
