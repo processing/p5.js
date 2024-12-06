@@ -7,7 +7,7 @@
  */
 
 import * as constants from '../core/constants';
-import { RGB, HSB, HSL } from './p5.Color';
+import { RGB, HSB, HSL } from './creating_reading';
 
 function setting(p5, fn){
   /**

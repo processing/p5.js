@@ -4,7 +4,7 @@
  */
 
 import * as constants from '../core/constants';
-import { RGB, RGBA } from '../color/p5.Color';
+import { RGB, RGBA } from '../color/creating_reading';
 import { checkWebGLCapabilities } from './p5.Texture';
 import { readPixelsWebGL, readPixelWebGL } from './p5.RendererGL';
 import { Camera } from './p5.Camera';

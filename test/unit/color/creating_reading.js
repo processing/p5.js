@@ -40,13 +40,13 @@ suite('color/CreatingReading', function() {
       var interA = mockP5Prototype.lerpColor(fromColor, toColor, 0.33);
       var interB = mockP5Prototype.lerpColor(fromColor, toColor, 0.66);
 
-      assert.closeTo(interA.color.coords[0] * 255, 170, 1);
-      assert.closeTo(interA.color.coords[1] * 255, 131, 1);
-      assert.closeTo(interA.color.coords[2] * 255, 67, 1);
+      assert.closeTo(interA._color.coords[0] * 255, 170, 1);
+      assert.closeTo(interA._color.coords[1] * 255, 131, 1);
+      assert.closeTo(interA._color.coords[2] * 255, 67, 1);
 
-      assert.closeTo(interB.color.coords[0] * 255, 122, 1);
-      assert.closeTo(interB.color.coords[1] * 255, 96, 1);
-      assert.closeTo(interB.color.coords[2] * 255, 103, 1);
+      assert.closeTo(interB._color.coords[0] * 255, 122, 1);
+      assert.closeTo(interB._color.coords[1] * 255, 96, 1);
+      assert.closeTo(interB._color.coords[2] * 255, 103, 1);
     });
 
     test('should correctly get lerp colors in HSL', function() {
@@ -55,13 +55,13 @@ suite('color/CreatingReading', function() {
       var interA = mockP5Prototype.lerpColor(fromColor, toColor, 0.33);
       var interB = mockP5Prototype.lerpColor(fromColor, toColor, 0.66);
 
-      assert.closeTo(interA.color.coords[0] * 255, 170, 1);
-      assert.closeTo(interA.color.coords[1] * 255, 131, 1);
-      assert.closeTo(interA.color.coords[2] * 255, 67, 1);
+      assert.closeTo(interA._color.coords[0] * 255, 170, 1);
+      assert.closeTo(interA._color.coords[1] * 255, 131, 1);
+      assert.closeTo(interA._color.coords[2] * 255, 67, 1);
 
-      assert.closeTo(interB.color.coords[0] * 255, 122, 1);
-      assert.closeTo(interB.color.coords[1] * 255, 96, 1);
-      assert.closeTo(interB.color.coords[2] * 255, 103, 1);
+      assert.closeTo(interB._color.coords[0] * 255, 122, 1);
+      assert.closeTo(interB._color.coords[1] * 255, 96, 1);
+      assert.closeTo(interB._color.coords[2] * 255, 103, 1);
     });
 
     test('should correctly get lerp colors in HSB', function() {
@@ -70,13 +70,13 @@ suite('color/CreatingReading', function() {
       var interA = mockP5Prototype.lerpColor(fromColor, toColor, 0.33);
       var interB = mockP5Prototype.lerpColor(fromColor, toColor, 0.66);
 
-      assert.closeTo(interA.color.coords[0] * 255, 170, 1);
-      assert.closeTo(interA.color.coords[1] * 255, 131, 1);
-      assert.closeTo(interA.color.coords[2] * 255, 67, 1);
+      assert.closeTo(interA._color.coords[0] * 255, 170, 1);
+      assert.closeTo(interA._color.coords[1] * 255, 131, 1);
+      assert.closeTo(interA._color.coords[2] * 255, 67, 1);
 
-      assert.closeTo(interB.color.coords[0] * 255, 122, 1);
-      assert.closeTo(interB.color.coords[1] * 255, 96, 1);
-      assert.closeTo(interB.color.coords[2] * 255, 103, 1);
+      assert.closeTo(interB._color.coords[0] * 255, 122, 1);
+      assert.closeTo(interB._color.coords[1] * 255, 96, 1);
+      assert.closeTo(interB._color.coords[2] * 255, 103, 1);
     });
 
     test.todo('should not extrapolate', function() {
@@ -99,15 +99,15 @@ suite('color/CreatingReading', function() {
       var interA = mockP5Prototype.lerpColor(fromColor, toColor, 0.33);
       var interB = mockP5Prototype.lerpColor(fromColor, toColor, 0.66);
 
-      assert.closeTo(interA.color.coords[0] * 255, 170, 1);
-      assert.closeTo(interA.color.coords[1] * 255, 131, 1);
-      assert.closeTo(interA.color.coords[2] * 255, 67, 1);
-      assert.closeTo(interA.color.alpha * 255, 99, 1);
+      assert.closeTo(interA._color.coords[0] * 255, 170, 1);
+      assert.closeTo(interA._color.coords[1] * 255, 131, 1);
+      assert.closeTo(interA._color.coords[2] * 255, 67, 1);
+      assert.closeTo(interA._color.alpha * 255, 99, 1);
 
-      assert.closeTo(interB.color.coords[0] * 255, 122, 1);
-      assert.closeTo(interB.color.coords[1] * 255, 96, 1);
-      assert.closeTo(interB.color.coords[2] * 255, 103, 1);
-      assert.closeTo(interB.color.alpha * 255, 149, 1);
+      assert.closeTo(interB._color.coords[0] * 255, 122, 1);
+      assert.closeTo(interB._color.coords[1] * 255, 96, 1);
+      assert.closeTo(interB._color.coords[2] * 255, 103, 1);
+      assert.closeTo(interB._color.alpha * 255, 149, 1);
     });
 
     test('should correctly get lerp colors in HSL with alpha', function() {
@@ -116,15 +116,15 @@ suite('color/CreatingReading', function() {
       var interA = mockP5Prototype.lerpColor(fromColor, toColor, 0.33);
       var interB = mockP5Prototype.lerpColor(fromColor, toColor, 0.66);
 
-      assert.closeTo(interA.color.coords[0] * 255, 170, 1);
-      assert.closeTo(interA.color.coords[1] * 255, 131, 1);
-      assert.closeTo(interA.color.coords[2] * 255, 67, 1);
-      assert.closeTo(interA.color.alpha * 255, 99, 1);
+      assert.closeTo(interA._color.coords[0] * 255, 170, 1);
+      assert.closeTo(interA._color.coords[1] * 255, 131, 1);
+      assert.closeTo(interA._color.coords[2] * 255, 67, 1);
+      assert.closeTo(interA._color.alpha * 255, 99, 1);
 
-      assert.closeTo(interB.color.coords[0] * 255, 122, 1);
-      assert.closeTo(interB.color.coords[1] * 255, 96, 1);
-      assert.closeTo(interB.color.coords[2] * 255, 103, 1);
-      assert.closeTo(interB.color.alpha * 255, 149, 1);
+      assert.closeTo(interB._color.coords[0] * 255, 122, 1);
+      assert.closeTo(interB._color.coords[1] * 255, 96, 1);
+      assert.closeTo(interB._color.coords[2] * 255, 103, 1);
+      assert.closeTo(interB._color.alpha * 255, 149, 1);
     });
 
     test('should correctly get lerp colors in HSB with alpha', function() {
@@ -133,15 +133,15 @@ suite('color/CreatingReading', function() {
       var interA = mockP5Prototype.lerpColor(fromColor, toColor, 0.33);
       var interB = mockP5Prototype.lerpColor(fromColor, toColor, 0.66);
 
-      assert.closeTo(interA.color.coords[0] * 255, 170, 1);
-      assert.closeTo(interA.color.coords[1] * 255, 131, 1);
-      assert.closeTo(interA.color.coords[2] * 255, 67, 1);
-      assert.closeTo(interA.color.alpha * 255, 99, 1);
+      assert.closeTo(interA._color.coords[0] * 255, 170, 1);
+      assert.closeTo(interA._color.coords[1] * 255, 131, 1);
+      assert.closeTo(interA._color.coords[2] * 255, 67, 1);
+      assert.closeTo(interA._color.alpha * 255, 99, 1);
 
-      assert.closeTo(interB.color.coords[0] * 255, 122, 1);
-      assert.closeTo(interB.color.coords[1] * 255, 96, 1);
-      assert.closeTo(interB.color.coords[2] * 255, 103, 1);
-      assert.closeTo(interB.color.alpha * 255, 149, 1);
+      assert.closeTo(interB._color.coords[0] * 255, 122, 1);
+      assert.closeTo(interB._color.coords[1] * 255, 96, 1);
+      assert.closeTo(interB._color.coords[2] * 255, 103, 1);
+      assert.closeTo(interB._color.alpha * 255, 149, 1);
     });
 
     test.todo('should not extrapolate', function() {

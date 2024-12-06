@@ -9,7 +9,25 @@
 import { Color } from './p5.Color';
 import { range } from 'colorjs.io/fn';
 
+export const RGB = 'rgb';
+export const HSB = 'hsb';
+export const HSL = 'hsl';
+export const RGBA = 'rgba';
+
 function creatingReading(p5, fn){
+  fn.RGB = RGB;
+  fn.HSB = HSB;
+  fn.HSL = HSL;
+  fn.RGBA = RGBA;
+
+  // Set color related defaults
+  fn._colorMode = RGB;
+  fn._colorMaxes = {
+    [RGB]: [255, 255, 255, 255],
+    [HSB]: [360, 100, 100, 1],
+    [HSL]: [360, 100, 100, 1]
+  };
+
   /**
    * Creates a <a href="#/p5/p5.Color">p5.Color</a> object.
    *
@@ -1467,10 +1485,10 @@ function creatingReading(p5, fn){
     let spaceIndex = -1;
     while(
       (
-        spaceIndex+1 < c1.color.space.path.length ||
-        spaceIndex+1 < c2.color.space.path.length
+        spaceIndex+1 < c1._color.space.path.length ||
+        spaceIndex+1 < c2._color.space.path.length
       ) &&
-      c1.color.space.path[spaceIndex+1] === c2.color.space.path[spaceIndex+1]
+      c1._color.space.path[spaceIndex+1] === c2._color.space.path[spaceIndex+1]
     ){
       spaceIndex += 1;
     }
@@ -1481,8 +1499,8 @@ function creatingReading(p5, fn){
     }
 
     // Get lerp value as a color in the common ancestor color space
-    const lerpColor = range(c1.color, c2.color, {
-      space: c1.color.space.path[spaceIndex].id
+    const lerpColor = range(c1._color, c2._color, {
+      space: c1._color.space.path[spaceIndex].id
     })(amt);
 
     return new Color(lerpColor, this._colorMode, this._colorMaxes);
