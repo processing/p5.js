@@ -713,7 +713,7 @@ function pointer(p5, fn){
    * <div>
    * <code>
    * function setup() {
-   *   createCanvas(100, 100);
+   *   createCanvas(400, 400);
    *
    *   describe(
    *     'A gray square with black text at its center. The text changes from 0 to either "left" or "right" when the user clicks a mouse button.'
@@ -851,7 +851,7 @@ function pointer(p5, fn){
    * </div>
    */
    fn.touches = [];
-   fn._activeTouches = new Map();
+   fn._activePointers = new Map();
 
   /**
    * A `Boolean` system variable that's `true` if the mouse is pressed and
@@ -920,7 +920,7 @@ function pointer(p5, fn){
 
        if (e.pointerType == 'touch') {
           const touches = [];
-          for (const touch of this._activeTouches.values()) {
+          for (const touch of this._activePointers.values()) {
              touches.push(getTouchInfo(canvas, sx, sy, touch));
           }
           this.touches = touches;
@@ -969,11 +969,19 @@ function pointer(p5, fn){
      id: touch.pointerId,
   };
 }
-  fn._setMouseButton = function(e) {
-    this.mouseButton.left = (e.buttons & 1) !== 0;   
-    this.mouseButton.center = (e.buttons & 4) !== 0; 
-    this.mouseButton.right = (e.buttons & 2) !== 0;  
-  };
+
+fn._setMouseButton = function(e) {
+  // Check all active touches to determine button states
+  this.mouseButton.left = Array.from(this._activePointers.values()).some(touch => 
+    (touch.buttons & 1) !== 0
+  );
+  this.mouseButton.center = Array.from(this._activePointers.values()).some(touch =>
+    (touch.buttons & 4) !== 0
+  );
+  this.mouseButton.right = Array.from(this._activePointers.values()).some(touch =>
+    (touch.buttons & 2) !== 0
+  );
+};
 
   /**
    * A function that's called when the mouse moves.
@@ -1152,10 +1160,9 @@ function pointer(p5, fn){
     const context = this._isGlobal ? window : this;
     let executeDefault;
     this._updatePointerCoords(e);
-
-    if(e.pointerType === 'touch') {
-      this._activeTouches.set(e.pointerId, e);
-    }
+    this._activePointers.set(e.pointerId, e);
+    this._setMouseButton(e);
+    
 
       if (!this.mouseIsPressed && typeof context.mouseMoved === 'function') {
         executeDefault = context.mouseMoved(e);
@@ -1167,8 +1174,6 @@ function pointer(p5, fn){
         if (executeDefault === false) {
           e.preventDefault();
         }
-      } else {
-        this._setMouseButton(e);
       }
   };
 
@@ -1319,13 +1324,9 @@ function pointer(p5, fn){
     let executeDefault;
     this.mouseIsPressed = true;
 
-    if (e.pointerType === 'touch') {
-      this._activeTouches.set(e.pointerId, e);
-   } else {
-      this._setMouseButton(e);
-   }
-
-   this._updatePointerCoords(e);
+    this._activePointers.set(e.pointerId, e);
+    this._setMouseButton(e);
+    this._updatePointerCoords(e);
 
     if (typeof context.mousePressed === 'function') {
       executeDefault = context.mousePressed(e);
@@ -1483,11 +1484,8 @@ function pointer(p5, fn){
     let executeDefault;
     this.mouseIsPressed = false;
 
-    if(e.pointerType == 'touch'){
-      this._activeTouches.delete(e.pointerId);
-    } else {
-      this._setMouseButton(e);
-    }
+    this._activePointers.delete(e.pointerId);
+    this._setMouseButton(e);
 
     this._updatePointerCoords(e);
    
