@@ -835,6 +835,31 @@ p5.Color = class Color {
       return this.hsla[1] * this.maxes[constants.HSL][1];
     }
   }
+
+  //Added the gradients for color
+  _generateGradient() {
+    const hue = this._getHue(); // Fetch hue
+    const lightness = this._getLightness(); // Fetch lightness
+
+    // Adjust properties for variation
+    const startLightness = Math.max(0, lightness - 20); // Darker start
+    const endLightness = Math.min(100, lightness + 20); // Lighter end
+
+    // Generate color stops
+    const startColor = `hsl(${hue}, 80%, ${startLightness}%)`;
+    const endColor = `hsl(${hue}, 80%, ${endLightness}%)`;
+
+    // Create linear gradient
+    return `linear-gradient(90deg, ${startColor}, ${endColor})`;
+  }
+
+  // Usage: Apply the gradient to an element
+  applyGradient(element) {
+    const gradient = this._generateGradient();
+    element.style.background = gradient;
+  }
+
+  //end of gradient logic
   /**
  * For a number of different inputs, returns a color formatted as [r, g, b, a]
  * arrays, with each component normalized between 0 and 1.

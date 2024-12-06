@@ -1075,6 +1075,8 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="http://alexhennings.dev"><img src="https://avatars.githubusercontent.com/u/31355456?v=4?s=120" width="120px;" alt="blackboxlogic"/><br /><sub><b>blackboxlogic</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=blackboxlogic" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/zs-5"><img src="https://avatars.githubusercontent.com/u/177980470?v=4?s=120" width="120px;" alt="ℤ"/><br /><sub><b>ℤ</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=zs-5" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Dhanush111"><img src="https://avatars.githubusercontent.com/u/51503598?v=4?s=120" width="120px;" alt="dhanush"/><br /><sub><b>dhanush</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Dhanush111" title="Documentation">📖</a></td>
+       <td align="center" valign="top" width="16.66%"><a href="https://github.com/NalinDalal"><img src="" width="120px;" alt="Nalin Dalal"/><br /><sub><b>Nalin Dalal</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Amartinleopold" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=nalindalal" title="Code">💻</a></td>
+
     </tr>
   </tbody>
 </table>
