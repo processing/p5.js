@@ -1352,6 +1352,39 @@ p5.Shader = class {
           }
         }
         break;
+      case gl.SAMPLER_2D:
+      case gl.SAMPLER_CUBE: 
+      case gl.SAMPLER_3D:
+      case gl.SAMPLER_2D_SHADOW:
+      case gl.SAMPLER_2D_ARRAY:
+      case gl.SAMPLER_2D_ARRAY_SHADOW:
+      case gl.SAMPLER_CUBE_SHADOW:
+      case gl.INT_SAMPLER_2D:
+      case gl.INT_SAMPLER_3D:
+      case gl.INT_SAMPLER_CUBE:
+      case gl.INT_SAMPLER_2D_ARRAY:
+      case gl.UNSIGNED_INT_SAMPLER_2D:
+      case gl.UNSIGNED_INT_SAMPLER_3D:
+      case gl.UNSIGNED_INT_SAMPLER_CUBE:
+      case gl.UNSIGNED_INT_SAMPLER_2D_ARRAY:
+        if (typeof data !== 'number') {
+          break;
+        }
+        if (
+          data < gl.TEXTURE0 ||
+          data > gl.TEXTURE31 ||
+          data !== Math.ceil(data)
+        ) {
+          console.log(
+            '🌸 p5.js says: ' +
+            'You\'re trying to use a number as the data for a texture.' +
+            'Please use a texture.'
+          );
+          break;
+        }
+        gl.activeTexture(data);
+        gl.uniform1i(location, data);
+        break;
       //@todo complete all types
     }
     return this;
