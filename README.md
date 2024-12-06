@@ -71,17 +71,19 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 p5.js was created by [Lauren Lee McCarthy](https://github.com/lmccart) in 2013 as a new interpretation of Processing for the context of the web. Since then we have allowed ourselves space to deviate and grow, while drawing inspiration from Processing and our shared community. p5.js is sustained by a community of contributors, with support from the Processing Foundation. p5.js follows a rotating leadership model started in 2020, and [Qianqian Ye](https://github.com/qianqianye) has been leading p5.js since 2021. Learn more about the [people](https://p5js.org/people/) behind p5.js.
 
 Current Lead/Mentor
-* [@qianqianye](https://github.com/qianqianye) - p5.js Lead，2021-present
+* [@ksen0](https://github.com/ksen0) - p5.js Lead，2024-present
 * [@limzykenneth](https://github.com/limzykenneth) - p5.js Mentor，2023-present
 
 Lead/Mentor Alumni
 * [@lmccart](https://github.com/lmccart)- p5.js Creator
+* [@qianqianye](https://github.com/qianqianye) - p5.js Lead，2021-2024
 * [@outofambit](https://github.com/outofambit) - p5.js Co-Lead 2021-22, Mentor 2022-2023
 * [@mcturner1995](https://github.com/mcturner1995) - p5.js Lead 2020
   
 | Area                                                                                 | Steward(s)                                                                                                               |
 | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
-| Overall                                                                              | [@qianqianye](https://github.com/qianqianye)                                                                                                             |
+| Overall                                                                              | [@ksen0](https://github.com/ksen0)                                                                                                             
+|
 | [Accessibility](https://github.com/processing/p5.js/tree/main/src/accessibility)     | [@calebfoss](https://github.com/calebfoss), [@cosmicbhejafry](https://github.com/cosmicbhejafry), [@apoorva-a98](https://github.com/apoorva-a98), [@tedkmburu](https://github.com/tedkmburu), [@Zarkv](https://github.com/Zarkv), [@SkylerW99](https://github.com/SkylerW99), [@itsjoopark](https://github.com/itsjoopark), [@hannahvy](https://github.com/hannahvy), [@nhasalajoshi](https://github.com/nhasalajoshi)|
 | [Color](https://github.com/processing/p5.js/tree/main/src/color)                     | [@paulaxisabel](https://github.com/paulaxisabel), [@SoundaryaKoutharapu](https://github.com/SoundaryaKoutharapu), [@mrbrack](https://github.com/mrbrack), [@TJ723](https://github.com/TJ723), [@Zarkv](https://github.com/Zarkv), [@SkylerW99](https://github.com/SkylerW99), [@ramya202000](https://github.com/ramya202000), [@hannahvy](https://github.com/hannahvy), [@robin-haxx](https://github.com/robin-haxx), [@hiddenenigma](https://github.com/hiddenenigma)  |
 | [Core](https://github.com/processing/p5.js/tree/main/src/core)/Environment/Rendering | [@limzykenneth](https://github.com/limzykenneth), [@davepagurek](https://github.com/davepagurek), [@ChihYungChang](https://github.com/ChihYungChang), [@teragramgius](https://github.com/teragramgius), [@tuminzee](https://github.com/tuminzee), [@Zarkv](https://github.com/Zarkv), [@robin-haxx](https://github.com/robin-haxx), [@Gaurav-1306](https://github.com/Gaurav-1306) |
