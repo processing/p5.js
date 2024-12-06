@@ -6013,7 +6013,9 @@
       "profile": "https://aboutmonica.com",
       "contributions": [
         "talk",
-        "example"
+        "example",
+        "doc",
+        "bug"
       ]
     },
     {
