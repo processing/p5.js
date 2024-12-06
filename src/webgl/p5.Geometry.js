@@ -1993,6 +1993,12 @@ p5.Geometry = class Geometry {
       const currEdge = this.edges[i];
       const begin = this.vertices[currEdge[0]];
       const end = this.vertices[currEdge[1]];
+      const prevColor = (this.vertexStrokeColors.length > 0 && prevEdge)
+        ? this.vertexStrokeColors.slice(
+          prevEdge[1] * 4,
+          (prevEdge[1] + 1) * 4
+        )
+        : [0, 0, 0, 0];
       const fromColor = this.vertexStrokeColors.length > 0
         ? this.vertexStrokeColors.slice(
           currEdge[0] * 4,
@@ -2056,7 +2062,7 @@ p5.Geometry = class Geometry {
               this.vertices[prevEdge[1]],
               lastValidDir,
               existingCap.dir.copy().mult(-1),
-              fromColor
+              prevColor
             );
             potentialCaps.delete(prevEdge[1]);
             connected.add(prevEdge[1]);
@@ -2065,7 +2071,7 @@ p5.Geometry = class Geometry {
             potentialCaps.set(prevEdge[1], {
               point: this.vertices[prevEdge[1]],
               dir: lastValidDir,
-              color: fromColor
+              color: prevColor
             });
           }
           lastValidDir = undefined;
