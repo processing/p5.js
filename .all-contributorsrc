@@ -6413,6 +6413,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "mahaidong",
+      "name": "ma haidong",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5458532?v=4",
+      "profile": "http://caad.xyz",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "repoType": "github",
