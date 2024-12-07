@@ -70,6 +70,7 @@ class ShapePrimitive {
   _shape = null;
   _primitivesIndex = null;
   _contoursIndex = null;
+  isClosing = false;
 
   constructor(...vertices) {
     if (this.constructor === ShapePrimitive) {
@@ -149,6 +150,8 @@ class ShapePrimitive {
       this._contoursIndex = shape.contours.length - 1;
       this._shape = shape;
     }
+
+    return shape.at(-1, -1);
   }
 
   get shouldAddToShape() {
@@ -163,6 +166,14 @@ class ShapePrimitive {
 
   get _belongsToShape() {
     return this._shape !== null;
+  }
+
+  handlesClose() {
+    return false;
+  }
+
+  close(vertex) {
+    throw new Error('Unimplemented!');
   }
 }
 
@@ -359,11 +370,11 @@ class SplineSegment extends Segment {
   // extend addToShape() with a warning in case second vertex
   // doesn't line up with end of last segment
   addToShape(shape) {
-    super.addToShape(shape);
+    const added = super.addToShape(shape);
     this._splineEnds = shape._splineEnds;
     this._splineTightness = shape._splineTightness;
 
-    if (this._splineEnds !== constants.HIDE) return;
+    if (this._splineEnds !== constants.HIDE) return added;
 
     let verticesPushed = !this._belongsToShape;
     let lastPrimitive = shape.at(-1, -1);
@@ -840,11 +851,12 @@ class Shape {
       vertex
     );
 
-    primitiveShape.addToShape(this);
+    return primitiveShape.addToShape(this);
   }
 
-  vertex(position, textureCoordinates) {
-    this.#generalVertex('vertex', position, textureCoordinates);
+  vertex(position, textureCoordinates, { isClosing = false } = {}) {
+    const added = this.#generalVertex('vertex', position, textureCoordinates);
+    added.isClosing = isClosing;
   }
 
   bezierVertex(position, textureCoordinates) {
@@ -878,15 +890,14 @@ class Shape {
       // anchor characteristics
       const anchorVertex = this.at(0, 0, 0);
       const anchorHasPosition = Object.hasOwn(anchorVertex, 'position');
-      const anchorHasTextureCoordinates = Object.hasOwn(anchorVertex, 'textureCoordinates');
+      const lastSegment = this.at(0, -1);
 
       // close path
       if (shapeIsPath && shapeHasOneContour && anchorHasPosition) {
-        if (anchorHasTextureCoordinates) {
-          this.vertex(anchorVertex.position, anchorVertex.textureCoordinates);
-        }
-        else {
-          this.vertex(anchorVertex.position);
+        if (lastSegment.handlesClose()) {
+          lastSegment.close(anchorVertex);
+        } else {
+          this.vertex(anchorVertex.position, anchorVertex.textureCoordinates, { isClosing: true });
         }
       }
     }
@@ -961,8 +972,14 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
     this.path.moveTo(vertex.position.x, vertex.position.y);
   }
   visitLineSegment(lineSegment) {
-    let vertex = lineSegment.getEndVertex();
-    this.path.lineTo(vertex.position.x, vertex.position.y);
+    if (lineSegment.isClosing) {
+      // The same as lineTo, but it adds a stroke join between this
+      // and the starting vertex rather than having two caps
+      this.path.closePath();
+    } else {
+      let vertex = lineSegment.getEndVertex();
+      this.path.lineTo(vertex.position.x, vertex.position.y);
+    }
   }
   visitBezierSegment(bezierSegment) {
     let [v1, v2, v3] = bezierSegment.vertices;

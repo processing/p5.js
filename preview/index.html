@@ -21,12 +21,13 @@
 
     const sketch = function (p) {
       p.setup = function () {
-        p.createCanvas(200, 200, p.WEBGL);
+        p.createCanvas(200, 200);
+        p.strokeJoin(p.MITER);
       };
 
       p.draw = function () {
         p.background(0, 50, 50);
-        p.translate(-p.width/2, -p.height/2);
+        //p.translate(-p.width/2, -p.height/2);
         p.fill('red');
         p.stroke('white');
         p.strokeWeight(10);
@@ -37,8 +38,7 @@
         p.splineVertex(100, 100);
         p.splineVertex(50, 100);
         p.splineVertex(70, 70);
-        p.vertex(50, 50);
-        p.endShape(); // p.CLOSE
+        p.endShape(p.CLOSE);
       };
     };
 
