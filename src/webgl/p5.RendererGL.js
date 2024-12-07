@@ -509,10 +509,6 @@ class RendererGL extends Renderer {
     }
   }
 
-  beginContour(...args) {
-    this.shapeBuilder.beginContour(...args);
-  }
-
   legacyVertex(...args) {
     this.shapeBuilder.vertex(...args);
   }

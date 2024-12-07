@@ -163,6 +163,14 @@ class Renderer {
     this.drawShape(this.currentShape);
   }
 
+  beginContour(shapeKind) {
+    this.currentShape.beginContour(shapeKind);
+  }
+
+  endContour(mode) {
+    this.currentShape.endContour(mode);
+  }
+
   drawShape(shape, count) {
     throw new Error('Unimplemented')
   }

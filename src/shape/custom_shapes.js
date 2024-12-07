@@ -885,9 +885,43 @@ class Shape {
     this.#generalVertex('arcVertex', position, textureCoordinates);
   }
 
+  beginContour(shapeKind = constants.PATH) {
+    if (this.at(-1)?.kind === constants.EMPTY_PATH) {
+      this.contours.pop();
+    }
+    this.contours.push(new Contour(shapeKind));
+  }
+
+  endContour(closeMode = constants.OPEN, _index = -1) {
+    const contour = this.at(_index);
+    if (closeMode === constants.CLOSE) {
+      // shape characteristics
+      const isPath = contour.kind === constants.PATH;
+
+      // anchor characteristics
+      const anchorVertex = this.at(_index, 0, 0);
+      const anchorHasPosition = Object.hasOwn(anchorVertex, 'position');
+      const lastSegment = this.at(_index, -1);
+
+      // close path
+      if (isPath && anchorHasPosition) {
+        if (lastSegment.handlesClose()) {
+          lastSegment.close(anchorVertex);
+        } else {
+          // Temporarily remove contours after the current one so that we add to the original
+          // contour again
+          const rest = this.contours.splice(_index + 1, this.contours.length - _index - 1);
+          this.vertex(anchorVertex.position, anchorVertex.textureCoordinates, { isClosing: true });
+          this.contours.push(...rest);
+        }
+      }
+    }
+  }
+
   beginShape(shapeKind = constants.PATH) {
     this.kind = shapeKind;
-    this.contours.push(new Contour(shapeKind));
+    // Implicitly start a contour
+    this.beginContour(shapeKind);
   }
   /* TO-DO:
      Refactor?
@@ -897,23 +931,9 @@ class Shape {
   */
   endShape(closeMode = constants.OPEN) {
     if (closeMode === constants.CLOSE) {
-      // shape characteristics
-      const shapeIsPath = this.kind === constants.PATH;
-      const shapeHasOneContour = this.contours.length === 1;
-
-      // anchor characteristics
-      const anchorVertex = this.at(0, 0, 0);
-      const anchorHasPosition = Object.hasOwn(anchorVertex, 'position');
-      const lastSegment = this.at(0, -1);
-
-      // close path
-      if (shapeIsPath && shapeHasOneContour && anchorHasPosition) {
-        if (lastSegment.handlesClose()) {
-          lastSegment.close(anchorVertex);
-        } else {
-          this.vertex(anchorVertex.position, anchorVertex.textureCoordinates, { isClosing: true });
-        }
-      }
+      // Close the first contour, the one implicitly used for shape data
+      // added without an explicit contour
+      this.endContour(closeMode, 0);
     }
   }
 
@@ -1462,7 +1482,6 @@ function customShapes(p5, fn) {
    * @method vertex
    * @param  {Number} x x-coordinate of the vertex.
    * @param  {Number} y y-coordinate of the vertex.
-   * @chainable
    *
    * @example
    * <div>
@@ -1618,7 +1637,6 @@ function customShapes(p5, fn) {
    * @param  {Number} x
    * @param  {Number} y
    * @param  {Number} [z]   z-coordinate of the vertex. Defaults to 0.
-   * @chainable
    */
   /**
    * @method vertex
@@ -1627,7 +1645,6 @@ function customShapes(p5, fn) {
    * @param  {Number} [z]
    * @param  {Number} [u]   u-coordinate of the vertex's texture. Defaults to 0.
    * @param  {Number} [v]   v-coordinate of the vertex's texture. Defaults to 0.
-   * @chainable
    */
   fn.vertex = function(x, y) {
     let z, u, v;
@@ -1660,17 +1677,6 @@ function customShapes(p5, fn) {
      * More details...
      */
 
-  // fn.beginContour = function() {
-  //     // example of how to call an existing p5 function:
-  //     // this.background('yellow');
-  // };
-
-  /**
-     * Top-line description
-     *
-     * More details...
-     */
-
   // fn.beginShape = function() {
 
   // };
@@ -1696,14 +1702,207 @@ function customShapes(p5, fn) {
   // };
 
   /**
-     * Top-line description
-     *
-     * More details...
-     */
+   * Begins creating a hole within a flat shape.
+   *
+   * The `beginContour()` and <a href="#/p5/endContour">endContour()</a>
+   * functions allow for creating negative space within custom shapes that are
+   * flat. `beginContour()` begins adding vertices to a negative space and
+   * <a href="#/p5/endContour">endContour()</a> stops adding them.
+   * `beginContour()` and <a href="#/p5/endContour">endContour()</a> must be
+   * called between <a href="#/p5/beginShape">beginShape()</a> and
+   * <a href="#/p5/endShape">endShape()</a>.
+   *
+   * Transformations such as <a href="#/p5/translate">translate()</a>,
+   * <a href="#/p5/rotate">rotate()</a>, and <a href="#/p5/scale">scale()</a>
+   * don't work between `beginContour()` and
+   * <a href="#/p5/endContour">endContour()</a>. It's also not possible to use
+   * other shapes, such as <a href="#/p5/ellipse">ellipse()</a> or
+   * <a href="#/p5/rect">rect()</a>, between `beginContour()` and
+   * <a href="#/p5/endContour">endContour()</a>.
+   *
+   * Note: The vertices that define a negative space must "wind" in the opposite
+   * direction from the outer shape. First, draw vertices for the outer shape
+   * clockwise order. Then, draw vertices for the negative space in
+   * counter-clockwise order.
+   *
+   * @method beginContour
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Start drawing the shape.
+   *   beginShape();
+   *
+   *   // Exterior vertices, clockwise winding.
+   *   vertex(10, 10);
+   *   vertex(90, 10);
+   *   vertex(90, 90);
+   *   vertex(10, 90);
+   *
+   *   // Interior vertices, counter-clockwise winding.
+   *   beginContour();
+   *   vertex(30, 30);
+   *   vertex(30, 70);
+   *   vertex(70, 70);
+   *   vertex(70, 30);
+   *   endContour();
+   *
+   *   // Stop drawing the shape.
+   *   endShape(CLOSE);
+   *
+   *   describe('A white square with a square hole in its center drawn on a gray background.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   describe('A white square with a square hole in its center drawn on a gray background.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Start drawing the shape.
+   *   beginShape();
+   *
+   *   // Exterior vertices, clockwise winding.
+   *   vertex(-40, -40);
+   *   vertex(40, -40);
+   *   vertex(40, 40);
+   *   vertex(-40, 40);
+   *
+   *   // Interior vertices, counter-clockwise winding.
+   *   beginContour();
+   *   vertex(-20, -20);
+   *   vertex(-20, 20);
+   *   vertex(20, 20);
+   *   vertex(20, -20);
+   *   endContour();
+   *
+   *   // Stop drawing the shape.
+   *   endShape(CLOSE);
+   * }
+   * </code>
+   * </div>
+   */
+  fn.beginContour = function(kind) {
+    this._renderer.beginContour(kind);
+  };
 
-  // fn.endContour = function() {
-
-  // };
+  /**
+   * Stops creating a hole within a flat shape.
+   *
+   * The <a href="#/p5/beginContour">beginContour()</a> and `endContour()`
+   * functions allow for creating negative space within custom shapes that are
+   * flat. <a href="#/p5/beginContour">beginContour()</a> begins adding vertices
+   * to a negative space and `endContour()` stops adding them.
+   * <a href="#/p5/beginContour">beginContour()</a> and `endContour()` must be
+   * called between <a href="#/p5/beginShape">beginShape()</a> and
+   * <a href="#/p5/endShape">endShape()</a>.
+   *
+   * Transformations such as <a href="#/p5/translate">translate()</a>,
+   * <a href="#/p5/rotate">rotate()</a>, and <a href="#/p5/scale">scale()</a>
+   * don't work between <a href="#/p5/beginContour">beginContour()</a> and
+   * `endContour()`. It's also not possible to use other shapes, such as
+   * <a href="#/p5/ellipse">ellipse()</a> or <a href="#/p5/rect">rect()</a>,
+   * between <a href="#/p5/beginContour">beginContour()</a> and `endContour()`.
+   *
+   * Note: The vertices that define a negative space must "wind" in the opposite
+   * direction from the outer shape. First, draw vertices for the outer shape
+   * clockwise order. Then, draw vertices for the negative space in
+   * counter-clockwise order.
+   *
+   * @method endContour
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Start drawing the shape.
+   *   beginShape();
+   *
+   *   // Exterior vertices, clockwise winding.
+   *   vertex(10, 10);
+   *   vertex(90, 10);
+   *   vertex(90, 90);
+   *   vertex(10, 90);
+   *
+   *   // Interior vertices, counter-clockwise winding.
+   *   beginContour();
+   *   vertex(30, 30);
+   *   vertex(30, 70);
+   *   vertex(70, 70);
+   *   vertex(70, 30);
+   *   endContour();
+   *
+   *   // Stop drawing the shape.
+   *   endShape(CLOSE);
+   *
+   *   describe('A white square with a square hole in its center drawn on a gray background.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   describe('A white square with a square hole in its center drawn on a gray background.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Start drawing the shape.
+   *   beginShape();
+   *
+   *   // Exterior vertices, clockwise winding.
+   *   vertex(-40, -40);
+   *   vertex(40, -40);
+   *   vertex(40, 40);
+   *   vertex(-40, 40);
+   *
+   *   // Interior vertices, counter-clockwise winding.
+   *   beginContour();
+   *   vertex(-20, -20);
+   *   vertex(-20, 20);
+   *   vertex(20, 20);
+   *   vertex(20, -20);
+   *   endContour();
+   *
+   *   // Stop drawing the shape.
+   *   endShape(CLOSE);
+   * }
+   * </code>
+   * </div>
+   */
+  fn.endContour = function(mode = constants.OPEN) {
+    this._renderer.endContour(mode);
+  };
 
   /**
      * Top-line description

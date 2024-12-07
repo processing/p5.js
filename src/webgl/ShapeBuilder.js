@@ -101,12 +101,12 @@ export class ShapeBuilder {
           }
           prop.pushCurrentData();
         }
-        if (shouldProcessEdges && prevIdx >= 0) {
+        if (shouldProcessEdges && prevIdx >= 0 && idx !== this.contourIndices.at(-1)) {
           // TODO: handle other shape modes
           this.geometry.edges.push([prevIdx, idx]);
         }
 
-        prevIdx++
+        prevIdx = idx;
       }
     }
 
