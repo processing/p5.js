@@ -543,10 +543,10 @@ function primitives3D(p5, fn){
  * <code>
  * function setup() {
  *   createCanvas(300, 300, WEBGL);
- * 
- *  describe('A sphere with red stroke and a red, wavy line on a gray background.');
+ *
+ *   describe('A sphere with red stroke and a red, wavy line on a gray background.');
  * }
- * 
+ *
  * function draw() {
  *   background(128);
  *   strokeMode(FULL); // Enables detailed rendering with caps, joins, and stroke color.
@@ -554,8 +554,8 @@ function primitives3D(p5, fn){
  *   strokeWeight(1);
  *   translate(0, -50, 0);
  *   sphere(50);
- *   pop(); 
- * 
+ *   pop();
+ *
  *   noFill();
  *   strokeWeight(15);
  *   beginShape();
@@ -566,15 +566,15 @@ function primitives3D(p5, fn){
  * }
  * </code>
  * </div>
- * 
+ *
  * <div>
  * <code>
  * function setup() {
  *   createCanvas(300, 300, WEBGL);
- * 
- *  describe('A sphere with red stroke and a  wavy line without full curve decorations without caps and color on a gray background.');
+ *
+ *   describe('A sphere with red stroke and a  wavy line without full curve decorations without caps and color on a gray background.');
  * }
- * 
+ *
  * function draw() {
  *   background(128);
  *   strokeMode(SIMPLE); // Enables simple rendering without caps, joins, and stroke color.
@@ -582,8 +582,8 @@ function primitives3D(p5, fn){
  *   strokeWeight(1);
  *   translate(0, -50, 0);
  *   sphere(50);
- *   pop(); 
- * 
+ *   pop();
+ *
  *   noFill();
  *   strokeWeight(15);
  *   beginShape();
@@ -595,7 +595,7 @@ function primitives3D(p5, fn){
  * </code>
  * </div>
  */
-  
+
   fn.strokeMode = function (mode) {
     if (mode === undefined) {
       return this._renderer._simpleLines ? constants.SIMPLE : constants.FULL;
@@ -2337,7 +2337,7 @@ function primitives3D(p5, fn){
 
       if (detail <= 50) {
         arcGeom._edgesToVertices(arcGeom);
-      } else if (this.states.doStroke) {
+      } else if (this.states.strokeColor) {
         console.log(
           `Cannot apply a stroke to an ${shape} with more than 50 detail`
         );
@@ -2456,30 +2456,31 @@ function primitives3D(p5, fn){
       let x2 = c;
       let y2 = d;
 
+      // TODO shapes refactor
       this.beginShape();
       if (tr !== 0) {
-        this.vertex(x2 - tr, y1);
+        this.legacyVertex(x2 - tr, y1);
         this.quadraticVertex(x2, y1, x2, y1 + tr);
       } else {
-        this.vertex(x2, y1);
+        this.legacyVertex(x2, y1);
       }
       if (br !== 0) {
-        this.vertex(x2, y2 - br);
+        this.legacyVertex(x2, y2 - br);
         this.quadraticVertex(x2, y2, x2 - br, y2);
       } else {
-        this.vertex(x2, y2);
+        this.legacyVertex(x2, y2);
       }
       if (bl !== 0) {
-        this.vertex(x1 + bl, y2);
+        this.legacyVertex(x1 + bl, y2);
         this.quadraticVertex(x1, y2, x1, y2 - bl);
       } else {
-        this.vertex(x1, y2);
+        this.legacyVertex(x1, y2);
       }
       if (tl !== 0) {
-        this.vertex(x1, y1 + tl);
+        this.legacyVertex(x1, y1 + tl);
         this.quadraticVertex(x1, y1, x1 + tl, y1);
       } else {
-        this.vertex(x1, y1);
+        this.legacyVertex(x1, y1);
       }
 
       this.shapeBuilder.geometry.uvs.length = 0;
@@ -2489,7 +2490,7 @@ function primitives3D(p5, fn){
         this.shapeBuilder.geometry.uvs.push(u, v);
       }
 
-      this.endShape(constants.CLOSE);
+      this.legacyEndShape(constants.CLOSE);
     }
     return this;
   };
@@ -2583,19 +2584,20 @@ function primitives3D(p5, fn){
       z1 = z2 = z3 = z4 = 0;
     }
     const bezierDetail = this._pInst._bezierDetail || 20; //value of Bezier detail
+    // TODO shapes refactor
     this.beginShape();
     for (let i = 0; i <= bezierDetail; i++) {
       const c1 = Math.pow(1 - i / bezierDetail, 3);
       const c2 = 3 * (i / bezierDetail) * Math.pow(1 - i / bezierDetail, 2);
       const c3 = 3 * Math.pow(i / bezierDetail, 2) * (1 - i / bezierDetail);
       const c4 = Math.pow(i / bezierDetail, 3);
-      this.vertex(
+      this.legacyVertex(
         x1 * c1 + x2 * c2 + x3 * c3 + x4 * c4,
         y1 * c1 + y2 * c2 + y3 * c3 + y4 * c4,
         z1 * c1 + z2 * c2 + z3 * c3 + z4 * c4
       );
     }
-    this.endShape();
+    this.legacyEndShape();
     return this;
   };
 
@@ -2624,6 +2626,7 @@ function primitives3D(p5, fn){
       z1 = z2 = z3 = z4 = 0;
     }
     const curveDetail = this._pInst._curveDetail;
+    // TODO shapes refactor
     this.beginShape();
     for (let i = 0; i <= curveDetail; i++) {
       const c1 = Math.pow(i / curveDetail, 3) * 0.5;
@@ -2645,9 +2648,9 @@ function primitives3D(p5, fn){
         c2 * (2 * z1 - 5 * z2 + 4 * z3 - z4) +
         c3 * (-z1 + z3) +
         c4 * (2 * z2);
-      this.vertex(vx, vy, vz);
+      this.legacyVertex(vx, vy, vz);
     }
-    this.endShape();
+    this.legacyEndShape();
     return this;
   };
 
@@ -2682,20 +2685,21 @@ function primitives3D(p5, fn){
    */
   RendererGL.prototype.line = function(...args) {
     if (args.length === 6) {
+      // TODO shapes refactor
       this.beginShape(constants.LINES);
-      this.vertex(args[0], args[1], args[2]);
-      this.vertex(args[3], args[4], args[5]);
-      this.endShape();
+      this.legacyVertex(args[0], args[1], args[2]);
+      this.legacyVertex(args[3], args[4], args[5]);
+      this.legacyEndShape();
     } else if (args.length === 4) {
       this.beginShape(constants.LINES);
-      this.vertex(args[0], args[1], 0);
-      this.vertex(args[2], args[3], 0);
-      this.endShape();
+      this.legacyVertex(args[0], args[1], 0);
+      this.legacyVertex(args[2], args[3], 0);
+      this.legacyEndShape();
     }
     return this;
   };
 
-  RendererGL.prototype.bezierVertex = function(...args) {
+  /*RendererGL.prototype.bezierVertex = function(...args) {
     if (this.shapeBuilder._bezierVertex.length === 0) {
       throw Error('vertex() must be used once before calling bezierVertex()');
     } else {
@@ -2826,7 +2830,7 @@ function primitives3D(p5, fn){
             }
             prop.setCurrentData(newValues);
           }
-          this.vertex(_x, _y);
+          this.legacyVertex(_x, _y);
         }
         // so that we leave currentColor with the last value the user set it to
         this.states.curFillColor = fillColors[3];
@@ -2903,7 +2907,7 @@ function primitives3D(p5, fn){
             }
             prop.setCurrentData(newValues);
           }
-          this.vertex(_x, _y, _z);
+          this.legacyVertex(_x, _y, _z);
         }
         // so that we leave currentColor with the last value the user set it to
         this.states.curFillColor = fillColors[3];
@@ -3042,7 +3046,7 @@ function primitives3D(p5, fn){
             }
             prop.setCurrentData(newValues);
           }
-          this.vertex(_x, _y);
+          this.legacyVertex(_x, _y);
         }
 
         // so that we leave currentColor with the last value the user set it to
@@ -3113,7 +3117,7 @@ function primitives3D(p5, fn){
             }
             prop.setCurrentData(newValues);
           }
-          this.vertex(_x, _y, _z);
+          this.legacyVertex(_x, _y, _z);
         }
 
         // so that we leave currentColor with the last value the user set it to
@@ -3193,7 +3197,7 @@ function primitives3D(p5, fn){
             w_y[1] * this._lookUpTableBezier[i][1] +
             w_y[2] * this._lookUpTableBezier[i][2] +
             w_y[3] * this._lookUpTableBezier[i][3];
-          this.vertex(_x, _y);
+          this.legacyVertex(_x, _y);
         }
         for (i = 0; i < argLength; i++) {
           this.shapeBuilder._curveVertex.shift();
@@ -3239,14 +3243,14 @@ function primitives3D(p5, fn){
             w_z[1] * this._lookUpTableBezier[i][1] +
             w_z[2] * this._lookUpTableBezier[i][2] +
             w_z[3] * this._lookUpTableBezier[i][3];
-          this.vertex(_x, _y, _z);
+          this.legacyVertex(_x, _y, _z);
         }
         for (i = 0; i < argLength; i++) {
           this.shapeBuilder._curveVertex.shift();
         }
       }
     }
-  };
+  };*/
 
   RendererGL.prototype.image = function(
     img,
@@ -3266,7 +3270,7 @@ function primitives3D(p5, fn){
 
     this.push();
     this.noLights();
-    this.states.doStroke = false;;
+    this.states.strokeColor = null;;
 
     this.texture(img);
     this.states.textureMode = constants.NORMAL;
@@ -3292,12 +3296,13 @@ function primitives3D(p5, fn){
     }
 
     this._drawingImage = true;
+    // TODO shape refactor
     this.beginShape();
-    this.vertex(dx, dy, 0, u0, v0);
-    this.vertex(dx + dWidth, dy, 0, u1, v0);
-    this.vertex(dx + dWidth, dy + dHeight, 0, u1, v1);
-    this.vertex(dx, dy + dHeight, 0, u0, v1);
-    this.endShape(constants.CLOSE);
+    this.legacyVertex(dx, dy, 0, u0, v0);
+    this.legacyVertex(dx + dWidth, dy, 0, u1, v0);
+    this.legacyVertex(dx + dWidth, dy + dHeight, 0, u1, v1);
+    this.legacyVertex(dx, dy + dHeight, 0, u0, v1);
+    this.legacyEndShape(constants.CLOSE);
     this._drawingImage = false;
 
     this.pop();
@@ -3453,7 +3458,7 @@ function primitives3D(p5, fn){
       planeGeom.computeFaces().computeNormals();
       if (detailX <= 1 && detailY <= 1) {
         planeGeom._makeTriangleEdges()._edgesToVertices();
-      } else if (this.states.doStroke) {
+      } else if (this.states.strokeColor) {
         console.log(
           'Cannot draw stroke on plane objects with more' +
           ' than 1 detailX or 1 detailY'
@@ -3533,7 +3538,7 @@ function primitives3D(p5, fn){
       boxGeom.computeNormals();
       if (detailX <= 4 && detailY <= 4) {
         boxGeom._edgesToVertices();
-      } else if (this.states.doStroke) {
+      } else if (this.states.strokeColor) {
         console.log(
           'Cannot draw stroke on box objects with more' +
           ' than 4 detailX or 4 detailY'
@@ -3589,7 +3594,7 @@ function primitives3D(p5, fn){
       ellipsoidGeom.computeFaces();
       if (detailX <= 24 && detailY <= 24) {
         ellipsoidGeom._makeTriangleEdges()._edgesToVertices();
-      } else if (this.states.doStroke) {
+      } else if (this.states.strokeColor) {
         console.log(
           'Cannot draw stroke on ellipsoids with more' +
           ' than 24 detailX or 24 detailY'
@@ -3627,7 +3632,7 @@ function primitives3D(p5, fn){
       // normals are computed in call to _truncatedCone
       if (detailX <= 24 && detailY <= 16) {
         cylinderGeom._makeTriangleEdges()._edgesToVertices();
-      } else if (this.states.doStroke) {
+      } else if (this.states.strokeColor) {
         console.log(
           'Cannot draw stroke on cylinder objects with more' +
           ' than 24 detailX or 16 detailY'
@@ -3654,16 +3659,16 @@ function primitives3D(p5, fn){
           this,
           1,
           0,
-          1, 
+          1,
           detailX,
           detailY,
-          cap,   
-          false 
+          cap,
+          false
         );
       }, this);
       if (detailX <= 24 && detailY <= 16) {
         coneGeom._makeTriangleEdges()._edgesToVertices();
-      } else if (this.states.doStroke) {
+      } else if (this.states.strokeColor) {
         console.log(
           'Cannot draw stroke on cone objects with more' +
           ' than 24 detailX or 16 detailY'
@@ -3726,7 +3731,7 @@ function primitives3D(p5, fn){
       torusGeom.computeFaces();
       if (detailX <= 24 && detailY <= 16) {
         torusGeom._makeTriangleEdges()._edgesToVertices();
-      } else if (this.states.doStroke) {
+      } else if (this.states.strokeColor) {
         console.log(
           'Cannot draw strokes on torus object with more' +
           ' than 24 detailX or 16 detailY'
@@ -3737,6 +3742,108 @@ function primitives3D(p5, fn){
     }
     this._drawGeometryScaled(this.geometryBufferCache.getGeometryByID(gid), radius, radius, radius);
   }
+
+  /**
+   * Sets the number of segments used to draw spline curves in WebGL mode.
+   *
+   * In WebGL mode, smooth shapes are drawn using many flat segments. Adding
+   * more flat segments makes shapes appear smoother.
+   *
+   * The parameter, `detail`, is the number of segments to use while drawing a
+   * spline curve. For example, calling `curveDetail(5)` will use 5 segments to
+   * draw curves with the <a href="#/p5/curve">curve()</a> function. By
+   * default,`detail` is 20.
+   *
+   * Note: `curveDetail()` has no effect in 2D mode.
+   *
+   * @method curveDetail
+   * @param {Number} resolution number of segments to use. Defaults to 20.
+   * @chainable
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Draw a black spline curve.
+   *   noFill();
+   *   strokeWeight(1);
+   *   stroke(0);
+   *   curve(5, 26, 73, 24, 73, 61, 15, 65);
+   *
+   *   // Draw red spline curves from the anchor points to the control points.
+   *   stroke(255, 0, 0);
+   *   curve(5, 26, 5, 26, 73, 24, 73, 61);
+   *   curve(73, 24, 73, 61, 15, 65, 15, 65);
+   *
+   *   // Draw the anchor points in black.
+   *   strokeWeight(5);
+   *   stroke(0);
+   *   point(73, 24);
+   *   point(73, 61);
+   *
+   *   // Draw the control points in red.
+   *   stroke(255, 0, 0);
+   *   point(5, 26);
+   *   point(15, 65);
+   *
+   *   describe(
+   *     'A gray square with a curve drawn in three segments. The curve is a sideways U shape with red segments on top and bottom, and a black segment on the right. The endpoints of all the segments are marked with dots.'
+   *   );
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   background(200);
+   *
+   *   // Set the curveDetail() to 3.
+   *   curveDetail(3);
+   *
+   *   // Draw a black spline curve.
+   *   noFill();
+   *   strokeWeight(1);
+   *   stroke(0);
+   *   curve(-45, -24, 0, 23, -26, 0, 23, 11, 0, -35, 15, 0);
+   *
+   *   // Draw red spline curves from the anchor points to the control points.
+   *   stroke(255, 0, 0);
+   *   curve(-45, -24, 0, -45, -24, 0, 23, -26, 0, 23, 11, 0);
+   *   curve(23, -26, 0, 23, 11, 0, -35, 15, 0, -35, 15, 0);
+   *
+   *   // Draw the anchor points in black.
+   *   strokeWeight(5);
+   *   stroke(0);
+   *   point(23, -26);
+   *   point(23, 11);
+   *
+   *   // Draw the control points in red.
+   *   stroke(255, 0, 0);
+   *   point(-45, -24);
+   *   point(-35, 15);
+   *
+   *   describe(
+   *     'A gray square with a jagged curve drawn in three segments. The curve is a sideways U shape with red segments on top and bottom, and a black segment on the right. The endpoints of all the segments are marked with dots.'
+   *   );
+   * }
+   * </code>
+   * </div>
+   */
+  fn.curveDetail = function(d) {
+    if (!(this._renderer instanceof RendererGL)) {
+      throw new Error(
+        'curveDetail() only works in WebGL mode. Did you mean to call createCanvas(width, height, WEBGL)?'
+      );
+    }
+    return this._renderer.curveDetail(d);
+  };
 }
 
 export default primitives3D;

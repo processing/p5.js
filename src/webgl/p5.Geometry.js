@@ -1818,6 +1818,9 @@ class Geometry {
         return this.name;
       },
       getCurrentData(){
+        if (this.currentData === undefined) {
+          this.currentData = new Array(this.getDataSize()).fill(0);
+        }
         return this.currentData;
       },
       getDataSize() {

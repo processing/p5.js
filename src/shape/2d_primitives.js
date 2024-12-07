@@ -313,7 +313,7 @@ function primitives(p5, fn){
 
     // if the current stroke and fill settings wouldn't result in something
     // visible, exit immediately
-    if (!this._renderer.states.doStroke && !this._renderer.states.doFill) {
+    if (!this._renderer.states.strokeColor && !this._renderer.states.fillColor) {
       return this;
     }
 
@@ -540,7 +540,7 @@ function primitives(p5, fn){
   fn._renderEllipse = function(x, y, w, h, detailX) {
     // if the current stroke and fill settings wouldn't result in something
     // visible, exit immediately
-    if (!this._renderer.states.doStroke && !this._renderer.states.doFill) {
+    if (!this._renderer.states.strokeColor && !this._renderer.states.fillColor) {
       return this;
     }
 
@@ -712,7 +712,7 @@ function primitives(p5, fn){
   fn.line = function(...args) {
     p5._validateParameters('line', args);
 
-    if (this._renderer.states.doStroke) {
+    if (this._renderer.states.strokeColor) {
       this._renderer.line(...args);
     }
 
@@ -896,7 +896,7 @@ function primitives(p5, fn){
   fn.point = function(...args) {
     p5._validateParameters('point', args);
 
-    if (this._renderer.states.doStroke) {
+    if (this._renderer.states.strokeColor) {
       if (args.length === 1 && args[0] instanceof p5.Vector) {
         this._renderer.point.call(
           this._renderer,
@@ -1057,7 +1057,7 @@ function primitives(p5, fn){
   fn.quad = function(...args) {
     p5._validateParameters('quad', args);
 
-    if (this._renderer.states.doStroke || this._renderer.states.doFill) {
+    if (this._renderer.states.strokeColor || this._renderer.states.fillColor) {
       if (this._renderer.isP3D && args.length < 12) {
         // if 3D and we weren't passed 12 args, assume Z is 0
         this._renderer.quad.call(
@@ -1334,7 +1334,7 @@ function primitives(p5, fn){
 
   // internal method to have renderer draw a rectangle
   fn._renderRect = function() {
-    if (this._renderer.states.doStroke || this._renderer.states.doFill) {
+    if (this._renderer.states.strokeColor || this._renderer.states.fillColor) {
       // duplicate width for height in case only 3 arguments is provided
       if (arguments.length === 3) {
         arguments[3] = arguments[2];
@@ -1433,7 +1433,7 @@ function primitives(p5, fn){
   fn.triangle = function(...args) {
     p5._validateParameters('triangle', args);
 
-    if (this._renderer.states.doStroke || this._renderer.states.doFill) {
+    if (this._renderer.states.strokeColor || this._renderer.states.fillColor) {
       this._renderer.triangle(args);
     }
 

@@ -49,6 +49,78 @@ export class ShapeBuilder {
     this.contourIndices = [];
   }
 
+  constructFromContours(shape, contours) {
+    if (this._useUserVertexProperties){
+      this._resetUserVertexProperties();
+    }
+    this.geometry.reset();
+    this.contourIndices = [];
+    this.shapeMode = constants.TESS;
+    const shouldProcessEdges = !!this.renderer.states.strokeColor;
+
+    const userVertexPropertyHelpers = {};
+    if (shape.userVertexProperties) {
+      this._useUserVertexProperties = true;
+      for (const key in shape.userVertexProperties) {
+        const name = shape.vertexPropertyName(key);
+        const prop = this.geometry._userVertexPropertyHelper(name, [], shape.userVertexProperties[key]);
+        userVertexPropertyHelpers[key] = prop;
+        this.tessyVertexSize += prop.getDataSize();
+        this.bufferStrides[prop.getSrcName()] = prop.getDataSize();
+        this.renderer.buffers.user.push(
+          new RenderBuffer(prop.getDataSize(), prop.getSrcName(), prop.getDstName(), name, this.renderer)
+        );
+      }
+    } else {
+      this._useUserVertexProperties = false;
+    }
+
+    let idx = -1;
+    for (const contour of contours) {
+      this.contourIndices.push(this.geometry.vertices.length);
+      let prevIdx = -1;
+      for (const vertex of contour) {
+        idx++
+        this.geometry.vertices.push(vertex.position);
+        this.geometry.vertexNormals.push(vertex.normal || new Vector(0, 0, 0));
+        this.geometry.uvs.push(vertex.textureCoordinates.x, vertex.textureCoordinates.y);
+        if (this.renderer.states.fillColor) {
+          this.geometry.vertexColors.push(...vertex.fill.array());
+        } else {
+          this.geometry.vertexColors.push(0, 0, 0, 0);
+        }
+        if (this.renderer.states.strokeColor) {
+          this.geometry.vertexStrokeColors.push(...vertex.stroke.array());
+        } else {
+          this.geometry.vertexColors.push(0, 0, 0, 0);
+        }
+        for (const key in userVertexPropertyHelpers) {
+          const prop = userVertexPropertyHelpers[key];
+          if (key in vertex) {
+            prop.setCurrentData(vertex[key]);
+          }
+          prop.pushCurrentData();
+        }
+        if (shouldProcessEdges && prevIdx >= 0 && idx !== this.contourIndices.at(-1)) {
+          // TODO: handle other shape modes
+          this.geometry.edges.push([prevIdx, idx]);
+        }
+
+        prevIdx = idx;
+      }
+    }
+
+    if (shouldProcessEdges && !this.renderer.geometryBuilder) {
+      this.geometry._edgesToVertices();
+    }
+
+    this.isProcessingVertices = true;
+    this._tesselateShape();
+    this.isProcessingVertices = false;
+  }
+
+  // TODO: remove all below
+
   endShape = function(
     mode,
     isCurve,
@@ -219,26 +291,6 @@ export class ShapeBuilder {
     return this;
   }
 
-  vertexProperty(propertyName, data) {
-    if (!this._useUserVertexProperties) {
-      this._useUserVertexProperties = true;
-      this.geometry.userVertexProperties = {};
-    }
-    const propertyExists = this.geometry.userVertexProperties[propertyName];
-    let prop;
-    if (propertyExists){
-      prop = this.geometry.userVertexProperties[propertyName];
-    } else {
-      prop = this.geometry._userVertexPropertyHelper(propertyName, data);
-      this.tessyVertexSize += prop.getDataSize();
-      this.bufferStrides[prop.getSrcName()] = prop.getDataSize();
-      this.renderer.buffers.user.push(
-        new RenderBuffer(prop.getDataSize(), prop.getSrcName(), prop.getDstName(), propertyName, this.renderer)
-      );
-    }
-    prop.setCurrentData(data);
-  }
-
   _resetUserVertexProperties() {
     const properties = this.geometry.userVertexProperties;
     for (const propName in properties){
@@ -260,7 +312,7 @@ export class ShapeBuilder {
   _processVertices(mode) {
     if (this.geometry.vertices.length === 0) return;
 
-    const calculateStroke = this.renderer.states.doStroke;
+    const calculateStroke = this.renderer.states.strokeColor;
     const shouldClose = mode === constants.CLOSE;
     if (calculateStroke) {
       this.geometry.edges = this._calculateEdges(
@@ -280,7 +332,7 @@ export class ShapeBuilder {
     const hasContour = this.contourIndices.length > 0;
     // We tesselate when drawing curves or convex shapes
     const shouldTess =
-      this.renderer.states.doFill &&
+      this.renderer.states.fillColor &&
       (
         this.isBezier ||
         this.isQuadratic ||
@@ -390,7 +442,8 @@ export class ShapeBuilder {
   _tesselateShape() {
     // TODO: handle non-TESS shape modes that have contours
     this.shapeMode = constants.TRIANGLES;
-    const contours = [[]];
+    // const contours = [[]];
+    const contours = [];
     for (let i = 0; i < this.geometry.vertices.length; i++) {
       if (
         this.contourIndices.length > 0 &&

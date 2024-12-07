@@ -44,6 +44,7 @@ import filterOpaqueFrag from './shaders/filters/opaque.frag';
 import filterInvertFrag from './shaders/filters/invert.frag';
 import filterThresholdFrag from './shaders/filters/threshold.frag';
 import filterShaderVert from './shaders/filters/default.vert';
+import { PrimitiveToVerticesConverter } from '../shape/custom_shapes';
 
 const STROKE_CAP_ENUM = {};
 const STROKE_JOIN_ENUM = {};
@@ -243,7 +244,7 @@ class RendererGL extends Renderer {
     this._isErasing = false;
 
     // simple lines
-    this._simpleLines = false;    
+    this._simpleLines = false;
 
     // clipping
     this._clipDepths = [];
@@ -310,6 +311,8 @@ class RendererGL extends Renderer {
     this.states.userPointShader = undefined;
     this.states.userImageShader = undefined;
 
+    this.states.curveDetail = 1 / 4;
+
     // Used by beginShape/endShape functions to construct a p5.Geometry
     this.shapeBuilder = new ShapeBuilder(this);
 
@@ -359,20 +362,11 @@ class RendererGL extends Renderer {
 
     this._curveTightness = 6;
 
-    // lookUpTable for coefficients needed to be calculated for bezierVertex, same are used for curveVertex
-    this._lookUpTableBezier = [];
-    // lookUpTable for coefficients needed to be calculated for quadraticVertex
-    this._lookUpTableQuadratic = [];
-
-    // current curveDetail in the Bezier lookUpTable
-    this._lutBezierDetail = 0;
-    // current curveDetail in the Quadratic lookUpTable
-    this._lutQuadraticDetail = 0;
-
 
     this.fontInfos = {};
 
     this._curShader = undefined;
+    this.drawShapeCount = 1;
   }
 
   //////////////////////////////////////////////
@@ -445,10 +439,46 @@ class RendererGL extends Renderer {
   //////////////////////////////////////////////
 
   beginShape(...args) {
-    this.shapeBuilder.beginShape(...args);
+    super.beginShape(...args);
+    // TODO remove when shape refactor is complete
+    // this.shapeBuilder.beginShape(...args);
   }
 
-  endShape(
+  curveDetail(d) {
+    if (d === undefined) {
+      return this.states.curveDetail;
+    } else {
+      this.states.curveDetail = d;
+    }
+  }
+
+  drawShape(shape) {
+    const visitor = new PrimitiveToVerticesConverter({
+      curveDetail: this.states.curveDetail,
+    });
+    shape.accept(visitor);
+    this.shapeBuilder.constructFromContours(shape, visitor.contours);
+
+    if (this.geometryBuilder) {
+      this.geometryBuilder.addImmediate(
+        this.shapeBuilder.geometry,
+        this.shapeBuilder.shapeMode
+      );
+    } else if (this.states.fillColor || this.states.strokeColor) {
+      this._drawGeometry(
+        this.shapeBuilder.geometry,
+        { mode: this.shapeBuilder.shapeMode, count: this.drawShapeCount }
+      );
+    }
+    this.drawShapeCount = 1;
+  }
+
+  endShape(mode, count) {
+    super.endShape(mode, count);
+    this.drawShapeCount = count;
+  }
+
+  legacyEndShape(
     mode,
     isCurve,
     isBezier,
@@ -471,7 +501,7 @@ class RendererGL extends Renderer {
         this.shapeBuilder.geometry,
         this.shapeBuilder.shapeMode
       );
-    } else if (this.states.doFill || this.states.doStroke) {
+    } else if (this.states.fillColor || this.states.strokeColor) {
       this._drawGeometry(
         this.shapeBuilder.geometry,
         { mode: this.shapeBuilder.shapeMode, count }
@@ -479,16 +509,12 @@ class RendererGL extends Renderer {
     }
   }
 
-  beginContour(...args) {
-    this.shapeBuilder.beginContour(...args);
-  }
-
-  vertex(...args) {
+  legacyVertex(...args) {
     this.shapeBuilder.vertex(...args);
   }
 
   vertexProperty(...args) {
-    this.shapeBuilder.vertexProperty(...args);
+    this.currentShape.vertexProperty(...args);
   }
 
   normal(xorv, y, z) {
@@ -497,6 +523,7 @@ class RendererGL extends Renderer {
     } else {
       this.states._currentNormal = new Vector(xorv, y, z);
     }
+    this.updateShapeVertexProperties();
   }
 
   //////////////////////////////////////////////
@@ -512,14 +539,14 @@ class RendererGL extends Renderer {
     }
 
     if (
-      this.states.doFill &&
+      this.states.fillColor &&
       geometry.vertices.length >= 3 &&
       ![constants.LINES, constants.POINTS].includes(mode)
     ) {
       this._drawFills(geometry, { mode, count });
     }
 
-    if (this.states.doStroke && geometry.lineVertices.length >= 1) {
+    if (this.states.strokeColor && geometry.lineVertices.length >= 1) {
       this._drawStrokes(geometry, { count });
     }
 
@@ -970,7 +997,7 @@ class RendererGL extends Renderer {
     super.fill(...args);
     //see material.js for more info on color blending in webgl
     // const color = fn.color.apply(this._pInst, arguments);
-    const color = this._pInst.color(...args);
+    const color = this.states.fillColor;
     this.states.curFillColor = color._array;
     this.states.drawMode = constants.FILL;
     this.states._useNormalMaterial = false;
@@ -1009,8 +1036,22 @@ class RendererGL extends Renderer {
   stroke(...args) {
     super.stroke(...args);
     // const color = fn.color.apply(this._pInst, arguments);
-    const color = this._pInst.color(...args);
-    this.states.curStrokeColor = color._array;
+    this.states.curStrokeColor = this.states.strokeColor._array;
+  }
+
+  getCommonVertexProperties() {
+    return {
+      ...super.getCommonVertexProperties(),
+      stroke: this.states.strokeColor,
+      fill: this.states.fillColor,
+      normal: this.states._currentNormal,
+    }
+  }
+
+  getSupportedIndividualVertexProperties() {
+    return {
+      textureCoordinates: true,
+    }
   }
 
   strokeCap(cap) {
@@ -1100,7 +1141,7 @@ class RendererGL extends Renderer {
       this.matchSize(tmp, target);
       // setup
       this.push();
-      this.states.doStroke = false;
+      this.states.strokeColor = null;
       this.blendMode(constants.BLEND);
 
       // draw main to temp buffer
@@ -1134,7 +1175,7 @@ class RendererGL extends Renderer {
     // every other non-blur shader uses single pass
     else {
       fbo.draw(() => {
-        this.states.doStroke = false;
+        this.states.strokeColor = null;
         this.blendMode(constants.BLEND);
         this.shader(this.states.filterShader);
         this.states.filterShader.setUniform('tex0', target);
@@ -1150,7 +1191,7 @@ class RendererGL extends Renderer {
     }
     // draw fbo contents onto main renderer.
     this.push();
-    this.states.doStroke = false;
+    this.states.strokeColor = null;
     this.clear();
     this.push();
     this.states.imageMode = constants.CORNER;
@@ -1263,8 +1304,8 @@ class RendererGL extends Renderer {
 
     this.push();
     this.resetShader();
-    if (this.states.doFill) this.fill(0, 0);
-    if (this.states.doStroke) this.stroke(0, 0);
+    if (this.states.fillColor) this.fill(0, 0);
+    if (this.states.strokeColor) this.stroke(0, 0);
   }
 
   endClip() {
@@ -2041,7 +2082,7 @@ class RendererGL extends Renderer {
     newFramebuffer.draw(() => {
       this.shader(this.states.diffusedShader);
       this.states.diffusedShader.setUniform('environmentMap', input);
-      this.states.doStroke = false;
+      this.states.strokeColor = null;
       this.noLights();
       this.plane(width, height);
     });
@@ -2092,7 +2133,7 @@ class RendererGL extends Renderer {
         this.clear();
         this.states.specularShader.setUniform('environmentMap', input);
         this.states.specularShader.setUniform('roughness', roughness);
-        this.states.doStroke = false;
+        this.states.strokeColor = null;
         this.noLights();
         this.plane(w, w);
       });

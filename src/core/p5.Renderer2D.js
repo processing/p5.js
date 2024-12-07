@@ -5,6 +5,7 @@ import { Graphics } from './p5.Graphics';
 import { Image } from '../image/p5.Image';
 import { Element } from '../dom/p5.Element';
 import { MediaElement } from '../dom/p5.MediaElement';
+import { PrimitiveToPath2DConverter } from '../shape/custom_shapes';
 
 const styleEmpty = 'rgba(0,0,0,0)';
 // const alphaThreshold = 0.00125; // minimum visible
@@ -201,7 +202,7 @@ class Renderer2D extends Renderer {
 
   fill(...args) {
     super.fill(...args);
-    const color = this._pInst.color(...args);
+    const color = this.states.fillColor;
     this._setFill(color.toString());
 
     //accessible Outputs
@@ -212,7 +213,7 @@ class Renderer2D extends Renderer {
 
   stroke(...args) {
     super.stroke(...args);
-    const color = this._pInst.color(...args);
+    const color = this.states.strokeColor;
     this._setStroke(color.toString());
 
     //accessible Outputs
@@ -249,6 +250,17 @@ class Renderer2D extends Renderer {
 
       this.blendMode(this._cachedBlendMode);
       this._isErasing = false;
+    }
+  }
+
+  drawShape(shape) {
+    const visitor = new PrimitiveToPath2DConverter();
+    shape.accept(visitor);
+    if (this.states.fillColor) {
+      this.drawingContext.fill(visitor.path);
+    }
+    if (this.states.strokeColor) {
+      this.drawingContext.stroke(visitor.path);
     }
   }
 
@@ -672,7 +684,7 @@ class Renderer2D extends Renderer {
     }
 
     // Fill curves
-    if (this.states.doFill) {
+    if (this.states.fillColor) {
       if (!this._clipping) ctx.beginPath();
       curves.forEach((curve, index) => {
         if (index === 0) {
@@ -692,7 +704,7 @@ class Renderer2D extends Renderer {
     }
 
     // Stroke curves
-    if (this.states.doStroke) {
+    if (this.states.strokeColor) {
       if (!this._clipping) ctx.beginPath();
       curves.forEach((curve, index) => {
         if (index === 0) {
@@ -717,8 +729,8 @@ class Renderer2D extends Renderer {
 
   ellipse(args) {
     const ctx = this.drawingContext;
-    const doFill = this.states.doFill,
-      doStroke = this.states.doStroke;
+    const doFill = !!this.states.fillColor,
+      doStroke = this.states.strokeColor;
     const x = parseFloat(args[0]),
       y = parseFloat(args[1]),
       w = parseFloat(args[2]),
@@ -750,7 +762,7 @@ class Renderer2D extends Renderer {
 
   line(x1, y1, x2, y2) {
     const ctx = this.drawingContext;
-    if (!this.states.doStroke) {
+    if (!this.states.strokeColor) {
       return this;
     } else if (this._getStroke() === styleEmpty) {
       return this;
@@ -764,7 +776,7 @@ class Renderer2D extends Renderer {
 
   point(x, y) {
     const ctx = this.drawingContext;
-    if (!this.states.doStroke) {
+    if (!this.states.strokeColor) {
       return this;
     } else if (this._getStroke() === styleEmpty) {
       return this;
@@ -785,8 +797,8 @@ class Renderer2D extends Renderer {
 
   quad(x1, y1, x2, y2, x3, y3, x4, y4) {
     const ctx = this.drawingContext;
-    const doFill = this.states.doFill,
-      doStroke = this.states.doStroke;
+    const doFill = !!this.states.fillColor,
+      doStroke = this.states.strokeColor;
     if (doFill && !doStroke) {
       if (this._getFill() === styleEmpty) {
         return this;
@@ -821,8 +833,8 @@ class Renderer2D extends Renderer {
     let br = args[6];
     let bl = args[7];
     const ctx = this.drawingContext;
-    const doFill = this.states.doFill,
-      doStroke = this.states.doStroke;
+    const doFill = !!this.states.fillColor,
+      doStroke = this.states.strokeColor;
     if (doFill && !doStroke) {
       if (this._getFill() === styleEmpty) {
         return this;
@@ -891,10 +903,10 @@ class Renderer2D extends Renderer {
       ctx.arcTo(x, y, x + w, y, tl);
       ctx.closePath();
     }
-    if (!this._clipping && this.states.doFill) {
+    if (!this._clipping && this.states.fillColor) {
       ctx.fill();
     }
-    if (!this._clipping && this.states.doStroke) {
+    if (!this._clipping && this.states.strokeColor) {
       ctx.stroke();
     }
     return this;
@@ -903,8 +915,8 @@ class Renderer2D extends Renderer {
 
   triangle(args) {
     const ctx = this.drawingContext;
-    const doFill = this.states.doFill,
-      doStroke = this.states.doStroke;
+    const doFill = !!this.states.fillColor,
+      doStroke = this.states.strokeColor;
     const x1 = args[0],
       y1 = args[1];
     const x2 = args[2],
@@ -933,7 +945,7 @@ class Renderer2D extends Renderer {
     }
   }
 
-  endShape(
+  legacyEndShape(
     mode,
     vertices,
     isCurve,
@@ -945,7 +957,7 @@ class Renderer2D extends Renderer {
     if (vertices.length === 0) {
       return this;
     }
-    if (!this.states.doStroke && !this.states.doFill) {
+    if (!this.states.strokeColor && !this.states.fillColor) {
       return this;
     }
     const closeShape = mode === constants.CLOSE;
@@ -1039,7 +1051,7 @@ class Renderer2D extends Renderer {
       if (shapeKind === constants.POINTS) {
         for (i = 0; i < numVerts; i++) {
           v = vertices[i];
-          if (this.states.doStroke) {
+          if (this.states.strokeColor) {
             this._pInst.stroke(v[6]);
           }
           this._pInst.point(v[0], v[1]);
@@ -1047,7 +1059,7 @@ class Renderer2D extends Renderer {
       } else if (shapeKind === constants.LINES) {
         for (i = 0; i + 1 < numVerts; i += 2) {
           v = vertices[i];
-          if (this.states.doStroke) {
+          if (this.states.strokeColor) {
             this._pInst.stroke(vertices[i + 1][6]);
           }
           this._pInst.line(v[0], v[1], vertices[i + 1][0], vertices[i + 1][1]);
@@ -1060,11 +1072,11 @@ class Renderer2D extends Renderer {
           this.drawingContext.lineTo(vertices[i + 1][0], vertices[i + 1][1]);
           this.drawingContext.lineTo(vertices[i + 2][0], vertices[i + 2][1]);
           this.drawingContext.closePath();
-          if (!this._clipping && this.states.doFill) {
+          if (!this._clipping && this.states.fillColor) {
             this._pInst.fill(vertices[i + 2][5]);
             this.drawingContext.fill();
           }
-          if (!this._clipping && this.states.doStroke) {
+          if (!this._clipping && this.states.strokeColor) {
             this._pInst.stroke(vertices[i + 2][6]);
             this.drawingContext.stroke();
           }
@@ -1075,18 +1087,18 @@ class Renderer2D extends Renderer {
           if (!this._clipping) this.drawingContext.beginPath();
           this.drawingContext.moveTo(vertices[i + 1][0], vertices[i + 1][1]);
           this.drawingContext.lineTo(v[0], v[1]);
-          if (!this._clipping && this.states.doStroke) {
+          if (!this._clipping && this.states.strokeColor) {
             this._pInst.stroke(vertices[i + 1][6]);
           }
-          if (!this._clipping && this.states.doFill) {
+          if (!this._clipping && this.states.fillColor) {
             this._pInst.fill(vertices[i + 1][5]);
           }
           if (i + 2 < numVerts) {
             this.drawingContext.lineTo(vertices[i + 2][0], vertices[i + 2][1]);
-            if (!this._clipping && this.states.doStroke) {
+            if (!this._clipping && this.states.strokeColor) {
               this._pInst.stroke(vertices[i + 2][6]);
             }
-            if (!this._clipping && this.states.doFill) {
+            if (!this._clipping && this.states.fillColor) {
               this._pInst.fill(vertices[i + 2][5]);
             }
           }
@@ -1106,15 +1118,15 @@ class Renderer2D extends Renderer {
             // If the next colour is going to be different, stroke / fill now
             if (i < numVerts - 1) {
               if (
-                (this.states.doFill && v[5] !== vertices[i + 1][5]) ||
-                (this.states.doStroke && v[6] !== vertices[i + 1][6])
+                (this.states.fillColor && v[5] !== vertices[i + 1][5]) ||
+                (this.states.strokeColor && v[6] !== vertices[i + 1][6])
               ) {
-                if (!this._clipping && this.states.doFill) {
+                if (!this._clipping && this.states.fillColor) {
                   this._pInst.fill(v[5]);
                   this.drawingContext.fill();
                   this._pInst.fill(vertices[i + 1][5]);
                 }
-                if (!this._clipping && this.states.doStroke) {
+                if (!this._clipping && this.states.strokeColor) {
                   this._pInst.stroke(v[6]);
                   this.drawingContext.stroke();
                   this._pInst.stroke(vertices[i + 1][6]);
@@ -1135,10 +1147,10 @@ class Renderer2D extends Renderer {
             this.drawingContext.lineTo(vertices[i + j][0], vertices[i + j][1]);
           }
           this.drawingContext.lineTo(v[0], v[1]);
-          if (!this._clipping && this.states.doFill) {
+          if (!this._clipping && this.states.fillColor) {
             this._pInst.fill(vertices[i + 3][5]);
           }
-          if (!this._clipping && this.states.doStroke) {
+          if (!this._clipping && this.states.strokeColor) {
             this._pInst.stroke(vertices[i + 3][6]);
           }
           this._doFillStrokeClose(closeShape);
@@ -1156,10 +1168,10 @@ class Renderer2D extends Renderer {
                 vertices[i + 1][0], vertices[i + 1][1]);
               this.drawingContext.lineTo(
                 vertices[i + 3][0], vertices[i + 3][1]);
-              if (!this._clipping && this.states.doFill) {
+              if (!this._clipping && this.states.fillColor) {
                 this._pInst.fill(vertices[i + 3][5]);
               }
-              if (!this._clipping && this.states.doStroke) {
+              if (!this._clipping && this.states.strokeColor) {
                 this._pInst.stroke(vertices[i + 3][6]);
               }
             } else {
@@ -1290,10 +1302,10 @@ class Renderer2D extends Renderer {
     if (closeShape) {
       this.drawingContext.closePath();
     }
-    if (!this._clipping && this.states.doFill) {
+    if (!this._clipping && this.states.fillColor) {
       this.drawingContext.fill();
     }
-    if (!this._clipping && this.states.doStroke) {
+    if (!this._clipping && this.states.strokeColor) {
       this.drawingContext.stroke();
     }
   }
@@ -1352,11 +1364,11 @@ class Renderer2D extends Renderer {
       // a system/browser font
 
       // no stroke unless specified by user
-      if (this.states.doStroke && this.states.strokeSet) {
+      if (this.states.strokeColor && this.states.strokeSet) {
         this.drawingContext.strokeText(line, x, y);
       }
 
-      if (!this._clipping && this.states.doFill) {
+      if (!this._clipping && this.states.fillColor) {
         // if fill hasn't been set by user, use default text fill
         if (!this.states.fillSet) {
           this._setFill(constants._DEFAULT_TEXT_FILL);

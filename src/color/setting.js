@@ -1269,7 +1269,7 @@ function setting(p5, fn){
    * </div>
    */
   fn.noFill = function() {
-    this._renderer.states.doFill = false;
+    this._renderer.noFill();
     return this;
   };
 
@@ -1325,7 +1325,7 @@ function setting(p5, fn){
    * </div>
    */
   fn.noStroke = function() {
-    this._renderer.states.doStroke = false;
+    this._renderer.states.strokeColor = null;
     return this;
   };
 

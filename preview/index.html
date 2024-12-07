@@ -20,25 +20,32 @@
     import p5 from '../src/app.js';
 
     const sketch = function (p) {
-      let g, f;
-
       p.setup = function () {
-        p.createCanvas(200, 200);
-        g = p.createGraphics(200, 200);
-        f = p.createGraphics(200, 200, p.WEBGL);
+        p.createCanvas(200, 200, p.WEBGL);
+        p.strokeJoin(p.MITER);
       };
 
       p.draw = function () {
         p.background(0, 50, 50);
-        p.circle(100, 100, 50);
+        p.translate(-p.width/2, -p.height/2);
+        p.fill('red');
+        p.stroke('white');
+        p.strokeWeight(10);
+        p.beginShape();
 
-        p.fill('white');
-        p.textSize(30);
-        p.text('hello', 10, 30);
+        p.vertex(10, 10);
+        p.vertex(10, 150);
+        p.vertex(150, 150);
+        p.vertex(150, 10);
 
-        // f.fill('red');
-        f.sphere();
-        p.image(f, 0, 0);
+        p.beginContour();
+        p.vertex(50, 50);
+        p.splineVertex(100, 50);
+        p.splineVertex(100, 100);
+        p.splineVertex(50, 100);
+        p.splineVertex(70, 70);
+        p.endContour(p.CLOSE);
+        p.endShape(p.CLOSE);
       };
     };
 

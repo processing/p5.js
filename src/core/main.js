@@ -414,9 +414,6 @@ class p5 {
 
     this._styles = [];
 
-    this._bezierDetail = 20;
-    this._curveDetail = 20;
-
     this._colorMode = constants.RGB;
     this._colorMaxes = {
       rgb: [255, 255, 255, 255],
