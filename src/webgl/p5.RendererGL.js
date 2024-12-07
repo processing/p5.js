@@ -1043,10 +1043,18 @@ class RendererGL extends Renderer {
     this.states.curStrokeColor = this.states.strokeColor._array;
   }
 
-  vertexProperties() {
+  getCommonVertexProperties() {
     return {
-      ...super.vertexProperties(),
+      ...super.getCommonVertexProperties(),
+      stroke: this.states.strokeColor,
+      fill: this.states.fillColor,
       normal: this.states._currentNormal,
+    }
+  }
+
+  getSupportedIndividualVertexProperties() {
+    return {
+      textureCoordinates: true,
     }
   }
 

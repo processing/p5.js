@@ -64,7 +64,7 @@ class Renderer {
     this._clipInvert = false;
     this._curveTightness = 0;
 
-    this.currentShape = new Shape(this.vertexProperties());
+    this.currentShape = new Shape(this.getCommonVertexProperties());
   }
 
   remove() {
@@ -122,7 +122,9 @@ class Renderer {
 
   bezierVertex(x, y, z = 0, u = 0, v = 0) {
     const position = new Vector(x, y, z);
-    const textureCoordinates = new Vector(u, v);
+    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+      ? new Vector(u, v)
+      : undefined;
     this.currentShape.bezierVertex(position, textureCoordinates);
   }
 
@@ -137,7 +139,9 @@ class Renderer {
 
   splineVertex(x, y, z = 0, u = 0, v = 0) {
     const position = new Vector(x, y, z);
-    const textureCoordinates = new Vector(u, v);
+    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+      ? new Vector(u, v)
+      : undefined;
     this.currentShape.splineVertex(position, textureCoordinates);
   }
 
@@ -163,27 +167,11 @@ class Renderer {
     throw new Error('Unimplemented')
   }
 
-  vertex(x, y) {
-    let z, u, v;
-
-    // default to (x, y) mode: all other arguments assumed to be 0.
-    z = u = v = 0;
-
-    if (arguments.length === 3) {
-      // (x, y, z) mode: (u, v) assumed to be 0.
-      z = arguments[2];
-    } else if (arguments.length === 4) {
-      // (x, y, u, v) mode: z assumed to be 0.
-      u = arguments[2];
-      v = arguments[3];
-    } else if (arguments.length === 5) {
-      // (x, y, z, u, v) mode
-      z = arguments[2];
-      u = arguments[3];
-      v = arguments[4];
-    }
+  vertex(x, y, z = 0, u = 0, v = 0) {
     const position = new Vector(x, y, z);
-    const textureCoordinates = new Vector(u, v);
+    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+      ? new Vector(u, v)
+      : undefined;
     this.currentShape.vertex(position, textureCoordinates);
   }
 
@@ -267,10 +255,13 @@ class Renderer {
     this.states.strokeColor = null;
   }
 
-  vertexProperties() {
+  getCommonVertexProperties() {
+    return {}
+  }
+
+  getSupportedIndividualVertexProperties() {
     return {
-      stroke: this.states.strokeColor,
-      fill: this.states.fillColor,
+      textureCoordinates: false,
     }
   }
 
@@ -280,7 +271,7 @@ class Renderer {
   }
 
   updateShapeVertexProperties() {
-    const props = this.vertexProperties();
+    const props = this.getCommonVertexProperties();
     for (const key in props) {
       this.currentShape[key](props[key]);
     }

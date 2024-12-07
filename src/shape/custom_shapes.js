@@ -1410,6 +1410,216 @@ function customShapes(p5, fn) {
     return this._renderer.splineEnds(mode);
   };
 
+  /**
+   * Adds a vertex to a custom shape.
+   *
+   * `vertex()` sets the coordinates of vertices drawn between the
+   * <a href="#/p5/beginShape">beginShape()</a> and
+   * <a href="#/p5/endShape">endShape()</a> functions.
+   *
+   * The first two parameters, `x` and `y`, set the x- and y-coordinates of the
+   * vertex.
+   *
+   * The third parameter, `z`, is optional. It sets the z-coordinate of the
+   * vertex in WebGL mode. By default, `z` is 0.
+   *
+   * The fourth and fifth parameters, `u` and `v`, are also optional. They set
+   * the u- and v-coordinates for the vertex’s texture when used with
+   * <a href="#/p5/endShape">endShape()</a>. By default, `u` and `v` are both 0.
+   *
+   * @method vertex
+   * @param  {Number} x x-coordinate of the vertex.
+   * @param  {Number} y y-coordinate of the vertex.
+   * @chainable
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Style the shape.
+   *   strokeWeight(3);
+   *
+   *   // Start drawing the shape.
+   *   // Only draw the vertices.
+   *   beginShape(POINTS);
+   *
+   *   // Add the vertices.
+   *   vertex(30, 20);
+   *   vertex(85, 20);
+   *   vertex(85, 75);
+   *   vertex(30, 75);
+   *
+   *   // Stop drawing the shape.
+   *   endShape();
+   *
+   *   describe('Four black dots that form a square are drawn on a gray background.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Start drawing the shape.
+   *   beginShape();
+   *
+   *   // Add vertices.
+   *   vertex(30, 20);
+   *   vertex(85, 20);
+   *   vertex(85, 75);
+   *   vertex(30, 75);
+   *
+   *   // Stop drawing the shape.
+   *   endShape(CLOSE);
+   *
+   *   describe('A white square on a gray background.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   background(200);
+   *
+   *   // Start drawing the shape.
+   *   beginShape();
+   *
+   *   // Add vertices.
+   *   vertex(-20, -30, 0);
+   *   vertex(35, -30, 0);
+   *   vertex(35, 25, 0);
+   *   vertex(-20, 25, 0);
+   *
+   *   // Stop drawing the shape.
+   *   endShape(CLOSE);
+   *
+   *   describe('A white square on a gray background.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   describe('A white square spins around slowly on a gray background.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Rotate around the y-axis.
+   *   rotateY(frameCount * 0.01);
+   *
+   *   // Start drawing the shape.
+   *   beginShape();
+   *
+   *   // Add vertices.
+   *   vertex(-20, -30, 0);
+   *   vertex(35, -30, 0);
+   *   vertex(35, 25, 0);
+   *   vertex(-20, 25, 0);
+   *
+   *   // Stop drawing the shape.
+   *   endShape(CLOSE);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let img;
+   *
+   * // Load an image to apply as a texture.
+   * function preload() {
+   *   img = loadImage('assets/laDefense.jpg');
+   * }
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   describe('A photograph of a ceiling rotates slowly against a gray background.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Rotate around the y-axis.
+   *   rotateY(frameCount * 0.01);
+   *
+   *   // Style the shape.
+   *   noStroke();
+   *
+   *   // Apply the texture.
+   *   texture(img);
+   *   textureMode(NORMAL);
+   *
+   *   // Start drawing the shape
+   *   beginShape();
+   *
+   *   // Add vertices.
+   *   vertex(-20, -30, 0, 0, 0);
+   *   vertex(35, -30, 0, 1, 0);
+   *   vertex(35, 25, 0, 1, 1);
+   *   vertex(-20, 25, 0, 0, 1);
+   *
+   *   // Stop drawing the shape.
+   *   endShape();
+   * }
+   * </code>
+   * </div>
+   */
+  /**
+   * @method vertex
+   * @param  {Number} x
+   * @param  {Number} y
+   * @param  {Number} [z]   z-coordinate of the vertex. Defaults to 0.
+   * @chainable
+   */
+  /**
+   * @method vertex
+   * @param  {Number} x
+   * @param  {Number} y
+   * @param  {Number} [z]
+   * @param  {Number} [u]   u-coordinate of the vertex's texture. Defaults to 0.
+   * @param  {Number} [v]   v-coordinate of the vertex's texture. Defaults to 0.
+   * @chainable
+   */
+  fn.vertex = function(x, y) {
+    let z, u, v;
+
+    // default to (x, y) mode: all other arguments assumed to be 0.
+    z = u = v = 0;
+
+    if (arguments.length === 3) {
+      // (x, y, z) mode: (u, v) assumed to be 0.
+      z = arguments[2];
+    } else if (arguments.length === 4) {
+      // (x, y, u, v) mode: z assumed to be 0.
+      u = arguments[2];
+      v = arguments[3];
+    } else if (arguments.length === 5) {
+      // (x, y, z, u, v) mode
+      z = arguments[2];
+      u = arguments[3];
+      v = arguments[4];
+    }
+    this._renderer.vertex(x, y, z, u, v);
+    return;
+  }
+
   // Note: Code is commented out for now, to avoid conflicts with the existing implementation.
 
   /**
