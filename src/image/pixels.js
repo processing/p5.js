@@ -6,7 +6,7 @@
  */
 
 import Filters from './filters';
-import FilterRenderer2D from './filter-2d-renderer';
+import FilterRenderer2D from './filterRenderer2D';
 
 function pixels(p5, fn){
   /**
@@ -723,7 +723,7 @@ function pixels(p5, fn){
    */
   fn.filter = function(...args) {
     p5._validateParameters('filter', args);
-    
+
     let { shader, operation, value, useWebGL } = parseFilterArgs(...args);
 
     // when passed a shader, use it directly
@@ -750,60 +750,15 @@ function pixels(p5, fn){
     if (this._renderer.isP3D) {
       this._renderer.filter(operation, value);
     }
-    
+
     // when this is P2D renderer, create/use hidden webgl renderer
     else {
-
-      // TODO-1: 2 PASS BLUR (currently only works in horizontal blurring)
-      // TODO-2: ADDING CONDITIONS FOR shifting rendererGL filter for webgl and filterREnderer2D for 2d build filters
-      // TODO-3: PASSING p5.Shader, p5.Texture and fragment shader to expose an addon function that sets p5.Renderer2D.prototype.filter
-      // TODO-4: ADDING projection, modelView and necessary matrix
-      // TODO-5: code cleanups, adjusting the peices where they belong to.    
-
-
-
-
-      // console.log(this._renderer.wrappedElt);
-      // this._renderer.clear();
-      if (!this.filterRenderer) {
-        // console.log(this._renderer._pInst.canvas);
-        this.filterRenderer = new FilterRenderer2D(this, operation);
-      }
-
-      const filterGraphicsLayer = this.getFilterGraphicsLayer();
-      // copy p2d canvas contents to secondary webgl renderer
-      // dest
-      filterGraphicsLayer.copy(
-        this._renderer,
-        0, 0, this.width, this.height,
-        0, 0, this.width, this.height
-      );
-      //clearing the main canvas
-      this.filterRenderer.render();
-      this.drawingContext.drawImage(this.filterRenderer.canvas, 0, 0, this.width, this.height);
-      // this._renderer.clear();
-      // this.filterRenderer.renderAgain();
-      // this.drawingContext.drawImage(this.filterRenderer.canvas, 0, 0, this.width, this.height);
-
-      // this._pInst.image(filterRenderer.canvas, 0, 0, width, height);
-
-
-      // this._renderer.resetMatrix();
-      // filter it with shaders
-      // filterGraphicsLayer.filter(...args);
-      // console.log(this._renderer.image);
-      // console.log(this.filterRenderer.canvas);
-      // this._renderer.image(this.filterRenderer, 0, 0, this.width, this.height);
-      // copy secondary webgl renderer back to original p2d canvas
-      // this.copy(
-      //   // src
-      //   filterGraphicsLayer,
-      //   // src coods
-      //   0, 0, this.width, this.height,
-      //   // dest coords
-      //   0, 0, this.width, this.height
-      // );
-      // filterGraphicsLayer.clear(); // prevent feedback effects on p2d canvas
+    
+     if (!this.filterRenderer) { 
+        this.filterRenderer = new FilterRenderer2D(this, operation, value);     
+      }   
+             
+      this.filterRenderer.applyFilter();
     }
   };
 
@@ -820,12 +775,6 @@ function pixels(p5, fn){
       useWebGL: true
     };
 
-    // console.log("hi");
-    // if(args[0] instanceof FilterRenderer2D){
-    //   console.log("hii");
-    // }
-    // console.log(args);
-    // console.log(this);
     if (args[0] instanceof p5.Shader) {
       result.shader = args[0];
       return result;
