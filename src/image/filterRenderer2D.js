@@ -73,6 +73,21 @@ class FilterRenderer2D {
 
     this._shader = null;
     this._initializeShader();
+
+    // Create buffers once
+    this.vertexBuffer = this.gl.createBuffer();
+    this.texcoordBuffer = this.gl.createBuffer();
+
+    // Set up the vertices and texture coordinates for a full-screen quad
+    this.vertices = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
+    this.texcoords = new Float32Array([0, 1, 1, 1, 0, 0, 1, 0]);
+
+    // Upload vertex data once
+    this._bindBufferData(this.vertexBuffer, this.gl.ARRAY_BUFFER, this.vertices, Float32Array, this.gl.STATIC_DRAW);
+
+    // Upload texcoord data once
+    this._bindBufferData(this.texcoordBuffer, this.gl.ARRAY_BUFFER, this.texcoords, Float32Array, this.gl.STATIC_DRAW);
+
   }
   
   /**
@@ -124,30 +139,21 @@ class FilterRenderer2D {
     this._shader.setUniform('canvasSize', [this.pInst.width, this.pInst.height]);
     this._shader.setUniform('radius', Math.max(1, this.filterParameter));
 
-    // Identity matrices for projection/model-view (unsure)
-
-    // TODO: FIX IT
     const identityMatrix = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1];
     this._shader.setUniform('uModelViewMatrix', identityMatrix);
     this._shader.setUniform('uProjectionMatrix', identityMatrix);
 
-    // Set up the vertices and texture coordinates for a full-screen quad
-    const vertices = [-1, -1, 1, -1, -1, 1, 1, 1];
-    const texcoords = [0, 1, 1, 1, 0, 0, 1, 0];
-
-    // Create and bind buffers
-    const vertexBuffer = gl.createBuffer();
-    this._bindBufferData(vertexBuffer, gl.ARRAY_BUFFER, vertices, Float32Array, gl.STATIC_DRAW);
+    // Bind and enable vertex attributes
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
     this._shader.enableAttrib(this._shader.attributes.aPosition, 2);
 
-    const texcoordBuffer = gl.createBuffer();
-    this._bindBufferData(texcoordBuffer, gl.ARRAY_BUFFER, texcoords, Float32Array, gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.texcoordBuffer);
     this._shader.enableAttrib(this._shader.attributes.aTexCoord, 2);
 
     // Draw the quad
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
-    // Unbind the shader and texture
+    // Unbind the shader
     this._shader.unbindShader();
   }
 
@@ -164,16 +170,16 @@ class FilterRenderer2D {
     // For blur, we typically do two passes: one horizontal, one vertical.
     if (this.operation === constants.BLUR) {
       // Horizontal pass
+      this._shader.setUniform('direction', [1,0]);
       this._renderPass();
-      this._shader.setUniform('direction', [0,1]);
       
       // Draw the result onto itself
       this.pInst.clear();
       this.pInst.drawingContext.drawImage(this.canvas, 0, 0, this.pInst.width, this.pInst.height);
 
       // Vertical pass
+      this._shader.setUniform('direction', [0,1]);
       this._renderPass();
-      this._shader.setUniform('direction', [1,0]);
       
       this.pInst.clear();
       this.pInst.drawingContext.drawImage(this.canvas, 0, 0, this.pInst.width, this.pInst.height);
