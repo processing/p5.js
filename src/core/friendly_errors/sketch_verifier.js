@@ -1,11 +1,44 @@
-import * as acorn from 'acorn';
-import * as walk from 'acorn-walk';
+import { parse } from 'acorn';
+import { simple as walk } from 'acorn-walk';
+import * as constants from '../constants';
+import { loadP5Constructors } from './friendly_errors_utils';
 
 /**
  * @for p5
  * @requires core
  */
 function sketchVerifier(p5, fn) {
+  // List of functions to ignore as they either are meant to be re-defined or
+  // generate false positive outputs.
+  const ignoreFunction = [
+    'setup',
+    'draw',
+    'preload',
+    'deviceMoved',
+    'deviceTurned',
+    'deviceShaken',
+    'doubleClicked',
+    'mousePressed',
+    'mouseReleased',
+    'mouseMoved',
+    'mouseDragged',
+    'mouseClicked',
+    'mouseWheel',
+    'touchStarted',
+    'touchMoved',
+    'touchEnded',
+    'keyPressed',
+    'keyReleased',
+    'keyTyped',
+    'windowResized',
+    'name',
+    'parent',
+    'toString',
+    'print',
+    'stop',
+    'onended'
+  ];
+
   /**
    * Fetches the contents of a script element in the user's sketch.
    * 
@@ -66,13 +99,13 @@ function sketchVerifier(p5, fn) {
     const lineOffset = -1;
 
     try {
-      const ast = acorn.parse(code, {
+      const ast = parse(code, {
         ecmaVersion: 2021,
         sourceType: 'module',
         locations: true  // This helps us get the line number.
       });
 
-      walk.simple(ast, {
+      walk(ast, {
         VariableDeclarator(node) {
           if (node.id.type === 'Identifier') {
             const category = node.init && ['ArrowFunctionExpression', 'FunctionExpression'].includes(node.init.type)
@@ -111,11 +144,101 @@ function sketchVerifier(p5, fn) {
     return userDefinitions;
   }
 
+  /**
+   * Checks user-defined variables and functions for conflicts with p5.js
+   * constants and global functions.
+   * 
+   * This function performs two main checks:
+   * 1. Verifies if any user definition conflicts with p5.js constants.
+   * 2. Checks if any user definition conflicts with global functions from
+   * p5.js renderer classes.
+   * 
+   * If a conflict is found, it reports a friendly error message and halts
+   * further checking.
+   * 
+   * @param {Object} userDefinitions - An object containing user-defined variables and functions.
+   * @param {Array<{name: string, line: number}>} userDefinitions.variables - Array of user-defined variable names and their line numbers.
+   * @param {Array<{name: string, line: number}>} userDefinitions.functions - Array of user-defined function names and their line numbers.
+   * @returns {boolean} - Returns true if a conflict is found, false otherwise.
+   */
+  fn.checkForConstsAndFuncs = function (userDefinitions, p5Constructors) {
+    const allDefinitions = [
+      ...userDefinitions.variables,
+      ...userDefinitions.functions
+    ];
+
+    // Helper function that generates a friendly error message that contains
+    // the type of redefinition (constant or function), the name of the
+    // redefinition, the line number in user's code, and a link to its
+    // reference on the p5.js website.
+    function generateFriendlyError(errorType, name, line) {
+      const url = `https://p5js.org/reference/#/p5/${name}`;
+      const message = `${errorType} "${name}" on line ${line} is being redeclared and conflicts with a p5.js ${errorType.toLowerCase()}. JavaScript does not support declaring a ${errorType.toLowerCase()} more than once. p5.js reference: ${url}.`;
+      return message;
+    }
+
+    // Helper function that checks if a user definition has already been defined
+    // in the p5.js library, either as a constant or as a function.
+    function checkForRedefinition(name, libValue, line, type) {
+      try {
+        const userValue = eval("name");
+        if (libValue !== userValue) {
+          let message = generateFriendlyError(type, name, line);
+          console.log(message);
+          return true;
+        }
+      } catch (e) {
+        // If eval fails, the function hasn't been redefined
+        return false;
+      }
+      return false;
+    }
+
+    // Checks for constant redefinitions.
+    for (let { name, line } of allDefinitions) {
+      const libDefinition = constants[name];
+      if (libDefinition !== undefined) {
+        if (checkForRedefinition(name, libDefinition, line, "Constant")) {
+          return true;
+        }
+      }
+    }
+
+    // The new rules for attaching anything to global are (if true for both of
+    // the following):
+    //    - It is a member of p5.prototype
+    //   - Its name does not start with `_`
+    const globalFunctions = new Set(
+      Object.keys(p5.prototype).filter(key => !key.startsWith('_'))
+    );
+
+    for (let { name, line } of allDefinitions) {
+      if (!ignoreFunction.includes(name) && globalFunctions.has(name)) {
+        const prototypeFunc = p5.prototype[name];
+        if (prototypeFunc && checkForRedefinition(name, prototypeFunc, line, "Function")) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
   fn.run = async function () {
+    const p5Constructors = await new Promise(resolve => {
+      if (document.readyState === 'complete') {
+        resolve(loadP5Constructors(p5));
+      } else {
+        window.addEventListener('load', () => resolve(loadP5Constructors(p5)));
+      }
+    });
+
     const userCode = await fn.getUserCode();
     const userDefinedVariablesAndFuncs = fn.extractUserDefinedVariablesAndFuncs(userCode);
 
-    return userDefinedVariablesAndFuncs;
+    if (fn.checkForConstsAndFuncs(userDefinedVariablesAndFuncs, p5Constructors)) {
+      return;
+    }
   }
 }
 
