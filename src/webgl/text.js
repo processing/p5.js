@@ -14,7 +14,7 @@ function text(p5, fn){
 
   RendererGL.prototype.textWidth = function(s) {
     if (this._isOpenType()) {
-      return this._textFont._textWidth(s, this._textSize);
+      return this.states.textFont._textWidth(s, this.states.textSize);
     }
 
     return 0; // TODO: error
@@ -635,14 +635,14 @@ function text(p5, fn){
     }
   }
 
-  RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
-    if (!this._textFont || typeof this._textFont === 'string') {
+  RendererGL.prototype._renderText = function(line, x, y, maxY, minY) {
+    if (!this.states.textFont || typeof this.states.textFont === 'string') {
       console.log(
         'WEBGL: you must load and set a font before drawing text. See `loadFont` and `textFont` for more details.'
       );
       return;
     }
-    if (y >= maxY || !this.states.doFill) {
+    if (y > maxY || y < minY || !this.states.doFill) {
       return; // don't render lines beyond our maxY position
     }
 
@@ -653,7 +653,7 @@ function text(p5, fn){
       return p;
     }
 
-    p.push(); // fix to #803
+    this.push(); // fix to #803
 
     // remember this state, so it can be restored later
     const doStroke = this.states.doStroke;
@@ -663,16 +663,17 @@ function text(p5, fn){
     this.states.drawMode = constants.TEXTURE;
 
     // get the cached FontInfo object
-    const font = this._textFont.font;
-    let fontInfo = this._textFont._fontInfo;
+    const font = this.states.textFont;
+    let fontInfo = this.states.textFont._fontInfo;
     if (!fontInfo) {
-      fontInfo = this._textFont._fontInfo = new FontInfo(font);
+      fontInfo = this.states.textFont._fontInfo = new FontInfo(font);
     }
 
     // calculate the alignment and move/scale the view accordingly
-    const pos = this._textFont._handleAlignment(this, line, x, y);
-    const fontSize = this._textSize;
-    const scale = fontSize / font.unitsPerEm;
+    // TODO: check this
+    const pos = { x, y } // this.states.textFont._handleAlignment(this, line, x, y);
+    const fontSize = this.states.textSize;
+    const scale = fontSize / font.data.head.unitsPerEm;
     this.translate(pos.x, pos.y, 0);
     this.scale(scale, scale, 1);
 
@@ -692,10 +693,10 @@ function text(p5, fn){
     }
     this._applyColorBlend(this.states.curFillColor);
 
-    let g = this.retainedMode.geometry['glyph'];
+    let g = this.geometryBufferCache.getGeometryByID('glyph');
     if (!g) {
       // create the geometry for rendering a quad
-      const geom = (this._textGeom = new Geometry(1, 1, function() {
+      g = (this._textGeom = new Geometry(1, 1, function() {
         for (let i = 0; i <= 1; i++) {
           for (let j = 0; j <= 1; j++) {
             this.vertices.push(new Vector(j, i, 0));
@@ -703,12 +704,13 @@ function text(p5, fn){
           }
         }
       }, this) );
-      geom.computeFaces().computeNormals();
-      g = this.geometryBufferCache.ensureCached(geom);
+      g.gid = 'glyph';
+      g.computeFaces().computeNormals();
+      this.geometryBufferCache.ensureCached(g);
     }
 
     // bind the shader buffers
-    for (const buff of this.retainedMode.buffers.text) {
+    for (const buff of this.buffers.text) {
       buff._prepareBuffer(g, sh);
     }
     this._bindBuffer(g.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
@@ -721,6 +723,7 @@ function text(p5, fn){
       let dx = 0; // the x position in the line
       let glyphPrev = null; // the previous glyph, used for kerning
       // fetch the glyphs in the line of text
+      // TODO: replace with Typr.U.shape(font, str, ltr)
       const glyphs = font.stringToGlyphs(line);
 
       for (const glyph of glyphs) {
@@ -756,10 +759,8 @@ function text(p5, fn){
       this.states.drawMode = drawMode;
       gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 
-      p.pop();
+      this.pop();
     }
-
-    return p;
   };
 }
 

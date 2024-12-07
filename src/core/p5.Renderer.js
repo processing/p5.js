@@ -486,7 +486,7 @@ class Renderer {
  * Helper function to check font type (system or otf)
  */
   _isOpenType(f = this.states.textFont) {
-    return typeof f === 'object' && f.font && f.font.supported;
+    return typeof f === 'object' && f.data;
   }
 
   _updateTextMetrics() {
