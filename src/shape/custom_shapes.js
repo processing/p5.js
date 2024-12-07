@@ -405,6 +405,7 @@ class SplineSegment extends Segment {
     // and the check wouldn't be needed yet.
 
     // TODO: Consider case where positions match but other vertex properties don't.
+    return added;
   }
 
   // override method on base class
@@ -439,6 +440,19 @@ class SplineSegment extends Segment {
     }
 
     return points;
+  }
+
+  handlesClose() {
+    if (!this._belongsToShape) return false;
+
+    // Only handle closing if the spline is the only thing in its contour after
+    // the anchor
+    const contour = this._shape.at(this._contoursIndex);
+    return contour.primitives.length === 2 && this._primitivesIndex === 1;
+  }
+
+  close() {
+    this._splineEnds = constants.JOIN;
   }
 }
 
@@ -1422,6 +1436,7 @@ function customShapes(p5, fn) {
 
   /**
    * TODO: documentation
+   * @param {SHOW|HIDE} mode
    */
   fn.splineEnds = function(mode) {
     return this._renderer.splineEnds(mode);

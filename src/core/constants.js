@@ -1364,8 +1364,10 @@ export const HIDE = Symbol('hide');
 
 /**
  * The `splineEnds` mode where the spline loops back to its first point.
+ * Only used internally.
  * @typedef {unique symbol} JOIN
  * @property {JOIN} JOIN
  * @final
+ * @private
  */
 export const JOIN = Symbol('join');
