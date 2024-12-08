@@ -61,8 +61,33 @@ class Color {
     }
   }
 
+  // TODO: memoize map/unmap methods
   // Convert from p5 color range to color.js color range
-  #mapColorRange(origin, target){
+  #mapColorRange(origin){
+    const p5Maxes = Color.colorMaxes[this.mode];
+    const key = Color.colorMap[this.mode];
+    const colorjsMaxes = Object.values(ColorSpace.registry[key].coords).reduce((acc, v) => {
+      acc.push(v.refRange?.[1] || v.range[1]);
+      return acc;
+    }, []);
+
+    return origin.map((channel, i) => {
+      return channel / p5Maxes[i] * colorjsMaxes[i];
+    });
+  }
+
+  #unmapColorRange(origin){
+    const p5Maxes = Color.colorMaxes[this.mode];
+    const key = Color.colorMap[this.mode];
+    const colorjsMaxes = Object.values(ColorSpace.registry[key].coords).reduce((acc, v) => {
+      acc.push(v.refRange?.[1] || v.range[1]);
+      return acc;
+    }, []);
+    colorjsMaxes.push(1);
+
+    return origin.map((channel, i) => {
+      return channel / colorjsMaxes[i] * p5Maxes[i];
+    });
   }
 
   #toColorMode(mode){
@@ -89,7 +114,7 @@ class Color {
       let alpha;
 
       if(vals.length === 4){
-        alpha = vals[vals.length-1];
+        alpha = vals.pop();
       }else if (vals.length === 2){
         alpha = vals[1];
         vals = [vals[0], vals[0], vals[0]];
@@ -100,39 +125,8 @@ class Color {
         ? alpha / Color.colorMaxes[this.mode][3]
         : 1;
 
-      // _colorMode can be 'rgb', 'hsb', or 'hsl'
-      // These should map to color.js color space
-      let space = 'srgb';
-      let coords = vals;
-      switch(this.mode){
-        case 'rgb':
-          space = 'srgb';
-          coords = [
-            vals[0] / Color.colorMaxes[this.mode][0],
-            vals[1] / Color.colorMaxes[this.mode][1],
-            vals[2] / Color.colorMaxes[this.mode][2]
-          ];
-          break;
-        case 'hsb':
-          // TODO: need implementation
-          space = 'hsb';
-          coords = [
-            vals[0] / Color.colorMaxes[this.mode][0] * 360,
-            vals[1] / Color.colorMaxes[this.mode][1] * 100,
-            vals[2] / Color.colorMaxes[this.mode][2] * 100
-          ];
-          break;
-        case 'hsl':
-          space = 'hsl';
-          coords = [
-            vals[0] / Color.colorMaxes[this.mode][0] * 360,
-            vals[1] / Color.colorMaxes[this.mode][1] * 100,
-            vals[2] / Color.colorMaxes[this.mode][2] * 100
-          ];
-          break;
-        default:
-          console.error('Invalid color mode');
-      }
+      const space = Color.colorMap[this.mode] || console.error('Invalid color mode');
+      const coords = this.#mapColorRange(vals);
 
       const color = {
         space,
@@ -143,15 +137,23 @@ class Color {
     }
   }
 
+  // Get raw coordinates of underlying library, can differ between libraries
   get _array() {
     return [...this._color.coords, this._color.alpha];
   }
 
+  // Get coordinates mapped to current color maxes
+  get values() {
+    return this.#unmapColorRange(this._array);
+  }
+
+  // NOTE: WebGL uses this and assumes RGB [255, 255, 255, 255]
+  // Consider alternative implementation
   get levels() {
     return this._array.map(v => v * 255);
   }
 
-  lerp(color, amt, mode, maxes){
+  lerp(color, amt, mode){
     // Find the closest common ancestor color space
     let spaceIndex = -1;
     while(
@@ -173,7 +175,7 @@ class Color {
       space: this._color.space.path[spaceIndex].id
     })(amt);
 
-    return new Color(obj, mode || this.mode, maxes || Color.colorMaxes);
+    return new Color(obj, mode || this.mode);
   }
 
   /**
@@ -262,6 +264,7 @@ class Color {
    */
   setRed(new_red) {
     const red_val = new_red / Color.colorMaxes[RGB][0];
+
     if(this.mode === RGB){
       this._color.coords[0] = red_val;
     }else{

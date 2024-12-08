@@ -1484,7 +1484,7 @@ function creatingReading(p5, fn){
    */
   fn.lerpColor = function(c1, c2, amt) {
     p5._validateParameters('lerpColor', arguments);
-    return c1.lerp(c2, amt, this._colorMode, this._colorMaxes);
+    return c1.lerp(c2, amt, this._colorMode);
   };
 }
 
