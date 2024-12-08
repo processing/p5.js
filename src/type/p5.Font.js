@@ -1,23 +1,23 @@
-/** 
+/**
  * API:
  *    loadFont("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap")
  *    loadFont("{ font-family: "Bricolage Grotesque", serif; font-optical-sizing: auto; font-weight: <weight> font-style: normal; font-variation-settings: "wdth" 100; });
- *    loadFont({ 
- *        fontFamily: '"Bricolage Grotesque", serif'; 
+ *    loadFont({
+ *        fontFamily: '"Bricolage Grotesque", serif';
  *        fontOpticalSizing: 'auto';
  *        fontWeight: '<weight>';
  *        fontStyle: 'normal';
- *        fontVariationSettings: '"wdth" 100'; 
+ *        fontVariationSettings: '"wdth" 100';
  *    });
  *    loadFont("https://fonts.gstatic.com/s/bricolagegrotesque/v1/pxiAZBhjZQIdd8jGnEotWQ.woff2");
  *    loadFont("./path/to/localFont.ttf");
  *    loadFont("system-font-name");
- * 
- *   
+ *
+ *
  *   NEXT:
  *     extract axes from font file
- * 
- *   TEST: 
+ *
+ *   TEST:
  *    const font = new FontFace("Inter", "url(./fonts/inter-latin-variable-full-font.woff2)", {
         style: "oblique 0deg 10deg",
         weight: "100 900",
@@ -254,20 +254,63 @@ function font(p5, fn) {
       return lines.map(coordify);
     }
 
-    _lineToGlyphs(line, scale) {
+    _lineToGlyphs(line, scale = 1) {
 
       if (!this.data) {
         throw Error('No font data available for "' + this.name
           + '"\nTry downloading a local copy of the font file');
       }
       let glyphShapes = Typr.U.shape(this.data, line.text);
+      line.glyphShapes = glyphShapes;
       line.glyphs = this._shapeToPaths(glyphShapes, line, scale);
 
       return line;
     }
 
-    _shapeToPaths(glyphs, line, scale) {
+    _positionGlyphs(text) {
+      const glyphShapes = Typr.U.shape(this.data, text);
+      const positionedGlyphs = [];
+      let x = 0;
+      for (const glyph of glyphShapes) {
+        positionedGlyphs.push({ x, index: glyph.g, shape: glyph });
+        x += glyph.ax;
+      }
+      return positionedGlyphs;
+    }
+
+    _singleShapeToPath(shape, { scale = 1, x = 0, y = 0, lineX = 0, lineY = 0 } = {}) {
       let font = this.data;
+      let crdIdx = 0;
+      let { g, ax, ay, dx, dy } = shape;
+      let { crds, cmds } = Typr.U.glyphToPath(font, g);
+
+      // can get simple points for each glyph here, but we don't need them ?
+      let glyph = { /*g: line.text[i], points: [],*/ path: { commands: [] } };
+
+      for (let j = 0; j < cmds.length; j++) {
+        let type = cmds[j], command = [type];
+        if (type in pathArgCounts) {
+          let argCount = pathArgCounts[type];
+          for (let k = 0; k < argCount; k += 2) {
+            let gx = crds[k + crdIdx] + x + dx;
+            let gy = crds[k + crdIdx + 1] + y + dy;
+            let fx = lineX + gx * scale;
+            let fy = lineY + gy * -scale;
+            command.push(fx);
+            command.push(fy);
+            /*if (k === argCount - 2) {
+              glyph.points.push({ x: fx, y: fy });
+            }*/
+          }
+          crdIdx += argCount;
+        }
+        glyph.path.commands.push(command);
+      }
+
+      return { glyph, ax, ay };
+    }
+
+    _shapeToPaths(glyphs, line, scale = 1) {
       let x = 0, y = 0, paths = [];
 
       if (glyphs.length !== line.text.length) {
@@ -277,32 +320,14 @@ function font(p5, fn) {
       // iterate over the glyphs, converting each to a glyph object
       // with a path property containing an array of commands
       for (let i = 0; i < glyphs.length; i++) {
-        let crdIdx = 0;
-        let { g, ax, ay, dx, dy } = glyphs[i];
-        let { crds, cmds } = Typr.U.glyphToPath(font, g);
+        const { glyph, ax, ay } = this._singleShapeToPath(glyphs[i], {
+          scale,
+          x,
+          y,
+          lineX: line.x,
+          lineY: line.y,
+        });
 
-        // can get simple points for each glyph here, but we don't need them ?
-        let glyph = { g: line.text[i], /*points: [],*/ path: { commands: [] } };
-
-        for (let j = 0; j < cmds.length; j++) {
-          let type = cmds[j], command = [type];
-          if (type in pathArgCounts) {
-            let argCount = pathArgCounts[type];
-            for (let k = 0; k < argCount; k += 2) {
-              let gx = crds[k + crdIdx] + x + dx;
-              let gy = crds[k + crdIdx + 1] + y + dy;
-              let fx = line.x + gx * scale;
-              let fy = line.y + gy * -scale;
-              command.push(fx);
-              command.push(fy);
-              /*if (k === argCount - 2) {
-                glyph.points.push({ x: fx, y: fy });
-              }*/
-            }
-            crdIdx += argCount;
-          }
-          glyph.path.commands.push(command);
-        }
         paths.push(glyph);
         x += ax; y += ay;
       }
@@ -411,7 +436,7 @@ function font(p5, fn) {
 
   /**
    * Load a font and returns a p5.Font instance. The font can be specified by its path or a url.
-   * Optional arguments include the font name, descriptors for the FontFace object, 
+   * Optional arguments include the font name, descriptors for the FontFace object,
    * and callbacks for success and error.
    * @param  {...any} args - path, name, onSuccess, onError, descriptors
    * @returns a Promise that resolves with a p5.Font instance
@@ -430,7 +455,7 @@ function font(p5, fn) {
 
       // parse the font data
       let fonts = Typr.parse(result);
-      
+
       if (fonts.length !== 1 || fonts[0].cmap === undefined) {
         throw Error(23);
       }

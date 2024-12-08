@@ -21,20 +21,23 @@
 
     const sketch = function (p) {
       let f;
+      const testWebgl = true
 
       p.setup = async function () {
         // TODO: make this work without a name
         f = await p.loadFont('font/BricolageGrotesque-Variable.ttf', 'Bricolage')
-        p.createCanvas(200, 200, p.WEBGL);
+        p.createCanvas(200, 200, testWebgl ? p.WEBGL : undefined);
       };
 
       p.draw = function () {
         p.background(0, 50, 50);
+        if (testWebgl) p.translate(-p.width/2, -p.height/2);
 
         p.fill('white');
-        p.textSize(30);
+        p.textSize(80);
+        p.textAlign(p.LEFT, p.TOP)
         p.textFont(f)
-        p.text('hello', 10, 30);
+        p.text('hello,\nworld!', 10, 30, p.width);
       };
     };
 
