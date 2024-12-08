@@ -2,11 +2,13 @@ import { mockP5, mockP5Prototype } from '../../js/mocks';
 import creatingReading from '../../../src/color/creating_reading';
 import setting from '../../../src/color/setting';
 import { Color } from '../../../src/color/p5.Color';
+import p5Color from '../../../src/color/p5.Color';
 
 suite('p5.Color', function() {
   beforeAll(() => {
     creatingReading(mockP5, mockP5Prototype);
     setting(mockP5, mockP5Prototype);
+    p5Color(mockP5, mockP5Prototype);
   });
 
   var c;

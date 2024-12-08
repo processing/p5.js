@@ -7,12 +7,18 @@
  */
 
 import { Color } from './p5.Color';
-import { range } from 'colorjs.io/fn';
 
 export const RGB = 'rgb';
 export const HSB = 'hsb';
 export const HSL = 'hsl';
+export const RGBHDR = 'rgbhdr';
 export const RGBA = 'rgba';
+export const colorMaxes = {
+  [RGB]: [255, 255, 255, 255],
+  [RGBHDR]: [255, 255, 255, 255],
+  [HSB]: [360, 100, 100, 1],
+  [HSL]: [360, 100, 100, 1]
+};
 
 function creatingReading(p5, fn){
   fn.RGB = RGB;
@@ -22,11 +28,8 @@ function creatingReading(p5, fn){
 
   // Set color related defaults
   fn._colorMode = RGB;
-  fn._colorMaxes = {
-    [RGB]: [255, 255, 255, 255],
-    [HSB]: [360, 100, 100, 1],
-    [HSL]: [360, 100, 100, 1]
-  };
+  // Structured cloning the default to make this per instance
+  fn._colorMaxes = structuredClone(colorMaxes);
 
   /**
    * Creates a <a href="#/p5/p5.Color">p5.Color</a> object.
@@ -315,6 +318,7 @@ function creatingReading(p5, fn){
   fn.color = function(...args) {
     p5._validateParameters('color', args);
     if (args[0] instanceof Color) {
+      // TODO: perhaps change color mode to match instance mode?
       return args[0]; // Do nothing if argument is already a color object.
     }
 
@@ -1480,30 +1484,7 @@ function creatingReading(p5, fn){
    */
   fn.lerpColor = function(c1, c2, amt) {
     p5._validateParameters('lerpColor', arguments);
-
-    // Find the closest common ancestor color space
-    let spaceIndex = -1;
-    while(
-      (
-        spaceIndex+1 < c1._color.space.path.length ||
-        spaceIndex+1 < c2._color.space.path.length
-      ) &&
-      c1._color.space.path[spaceIndex+1] === c2._color.space.path[spaceIndex+1]
-    ){
-      spaceIndex += 1;
-    }
-
-    if (spaceIndex === -1) {
-      // This probably will not occur in practice
-      throw new Error('Cannot lerp colors. No common color space found');
-    }
-
-    // Get lerp value as a color in the common ancestor color space
-    const lerpColor = range(c1._color, c2._color, {
-      space: c1._color.space.path[spaceIndex].id
-    })(amt);
-
-    return new Color(lerpColor, this._colorMode, this._colorMaxes);
+    return c1.lerp(c2, amt, this._colorMode, this._colorMaxes);
   };
 }
 
