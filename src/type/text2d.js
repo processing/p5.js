@@ -103,7 +103,7 @@ function text2d(p5, fn) {
   const RendererTextProps = {
     textAlign: { default: fn.LEFT, type: 'Context2d' },
     textBaseline: { default: fn.BASELINE, type: 'Context2d' },
-    textFont: { default: 'sans-serif' },
+    textFont: { default: { family: 'sans-serif' } },
     textLeading: { default: 15 },
     textSize: { default: 12 },
     textWrap: { default: fn.WORD },
@@ -301,7 +301,7 @@ function text2d(p5, fn) {
     }
 
     // update font properties in this.states
-    this.states.textFont = this.textFontState(font, family, size);
+    this.states.textFont = { font, family, size };
 
     // convert/update the size in this.states
     if (typeof size !== 'undefined') {
@@ -703,7 +703,7 @@ function text2d(p5, fn) {
     @param {string} size - the font-size string to compute
     @returns {number} - the computed font-size in pixels
    */
-  Renderer.prototype._fontSizePx = function (theSize, family = this.states.textFont) {
+  Renderer.prototype._fontSizePx = function (theSize, { family } = this.states.textFont) {
 
     const isNumString = (num) => !isNaN(num) && num.trim() !== '';
 
@@ -1088,7 +1088,7 @@ function text2d(p5, fn) {
       - font-family must be the last value specified.
     */
     let { textFont, textSize, lineHeight, fontStyle, fontWeight, fontVariant } = this.states;
-    let family = this._parseFontFamily(textFont);
+    let family = this._parseFontFamily(textFont.family);
     let style = fontStyle !== fn.NORMAL ? `${fontStyle} ` : '';
     let weight = fontWeight !== fn.NORMAL ? `${fontWeight} ` : '';
     let variant = fontVariant !== fn.NORMAL ? `${fontVariant} ` : '';
@@ -1152,9 +1152,6 @@ function text2d(p5, fn) {
     p5.Renderer2D.prototype.textDrawingContext = function() {
       return this.drawingContext;
     };
-    p5.Renderer2D.prototype.textFontState = function(font, family, size) {
-      return family;
-    };
     p5.Renderer2D.prototype._renderText = function (text, x, y, maxY, minY) {
       let states = this.states;
 
@@ -1192,14 +1189,6 @@ function text2d(p5, fn) {
         this._textDrawingContext = this._textCanvas.getContext('2d');
       }
       return this._textDrawingContext;
-    };
-    p5.RendererGL.prototype.textFontState = function(font, family, size) {
-      if (typeof font === 'string' || font instanceof String) {
-        throw new Error(
-          'In WebGL mode, textFont() needs to be given the result of loadFont() instead of a font family name.'
-        );
-      }
-      return font;
     };
   }
 }

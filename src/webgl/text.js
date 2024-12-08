@@ -7,14 +7,14 @@ import { Geometry } from './p5.Geometry';
 function text(p5, fn){
   // Text/Typography
   // @TODO:
-  RendererGL.prototype._applyTextProperties = function() {
+  //RendererGL.prototype._applyTextProperties = function() {
     //@TODO finish implementation
     //console.error('text commands not yet implemented in webgl');
-  };
+  //};
 
   RendererGL.prototype.textWidth = function(s) {
     if (this._isOpenType()) {
-      return this.states.textFont._textWidth(s, this.states.textSize);
+      return this.states.textFont.font._textWidth(s, this.states.textSize);
     }
 
     return 0; // TODO: error
@@ -700,7 +700,12 @@ function text(p5, fn){
     this.states.drawMode = constants.TEXTURE;
 
     // get the cached FontInfo object
-    const font = this.states.textFont;
+    const { font } = this.states.textFont;
+    if (!font) {
+      throw new Error(
+        'In WebGL mode, textFont() needs to be given the result of loadFont() instead of a font family name.'
+      );
+    }
     let fontInfo = this.states.textFont._fontInfo;
     if (!fontInfo) {
       fontInfo = this.states.textFont._fontInfo = new FontInfo(font);
