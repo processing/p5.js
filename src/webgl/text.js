@@ -207,11 +207,11 @@ function text(p5, fn){
           }
           case 'Q': {
             const [, x1, y1, x, y] = command;
-            return { type, x, y, x1, y1 };
+            return { type, x1, y1, x, y };
           }
           case 'C': {
             const [, x1, y1, x2, y2, x, y] = command;
-            return { type, x, y, x1, y1, x2, y2 };
+            return { type, x1, y1, x2, y2, x, y };
           }
           default: {
             throw new Error(`Unexpected path command: ${type}`);
