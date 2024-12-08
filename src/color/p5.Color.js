@@ -6,7 +6,7 @@
  * @requires color_conversion
  */
 
-import { RGB, RGBHDR, HSL, HSB, colorMaxes } from './creating_reading';
+import { RGB, RGBHDR, HSL, HSB } from './creating_reading';
 
 import {
   ColorSpace,

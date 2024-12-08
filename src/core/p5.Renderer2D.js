@@ -5,6 +5,7 @@ import { Graphics } from './p5.Graphics';
 import { Image } from '../image/p5.Image';
 import { Element } from '../dom/p5.Element';
 import { MediaElement } from '../dom/p5.MediaElement';
+import { RGBHDR } from '../color/creating_reading';
 
 const styleEmpty = 'rgba(0,0,0,0)';
 // const alphaThreshold = 0.00125; // minimum visible
@@ -60,6 +61,9 @@ class Renderer2D extends Renderer {
 
     // Get and store drawing context
     this.drawingContext = this.canvas.getContext('2d', attributes);
+    if(attributes.colorSpace === 'display-p3'){
+      this._pInst._colorMode = RGBHDR;
+    }
     if (isMainCanvas) {
       this._pInst.drawingContext = this.drawingContext;
     }

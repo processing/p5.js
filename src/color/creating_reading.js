@@ -13,12 +13,6 @@ export const HSB = 'hsb';
 export const HSL = 'hsl';
 export const RGBHDR = 'rgbhdr';
 export const RGBA = 'rgba';
-export const colorMaxes = {
-  [RGB]: [255, 255, 255, 255],
-  [RGBHDR]: [255, 255, 255, 255],
-  [HSB]: [360, 100, 100, 1],
-  [HSL]: [360, 100, 100, 1]
-};
 
 function creatingReading(p5, fn){
   fn.RGB = RGB;
@@ -29,7 +23,12 @@ function creatingReading(p5, fn){
   // Set color related defaults
   fn._colorMode = RGB;
   // Structured cloning the default to make this per instance
-  fn._colorMaxes = structuredClone(colorMaxes);
+  fn._colorMaxes = {
+    [RGB]: [255, 255, 255, 255],
+    [RGBHDR]: [255, 255, 255, 255],
+    [HSB]: [360, 100, 100, 1],
+    [HSL]: [360, 100, 100, 1]
+  };
 
   /**
    * Creates a <a href="#/p5/p5.Color">p5.Color</a> object.
