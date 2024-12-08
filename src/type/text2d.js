@@ -763,38 +763,6 @@ function text2d(p5, fn) {
   // };
 
   /*
-    Position the lines of text based on their textAlign/textBaseline properties
-  */
-  Renderer.prototype._positionLines = function (x, y, width, height, lines) {
-
-    let { textLeading, textAlign } = this.states;
-    let adjustedX, lineData = new Array(lines.length);
-    let adjustedW = typeof width === 'undefined' ? 0 : width;
-    let adjustedH = typeof height === 'undefined' ? 0 : height;
-
-    for (let i = 0; i < lines.length; i++) {
-      switch (textAlign) {
-        case fn.START:
-          throw new Error('textBounds: START not yet supported for textAlign'); // default to LEFT
-        case fn.LEFT:
-          adjustedX = x;
-          break;
-        case fn.CENTER:
-          adjustedX = x + adjustedW / 2;
-          break;
-        case fn.RIGHT:
-          adjustedX = x + adjustedW;
-          break;
-        case fn.END: // TODO: add fn.END:
-          throw new Error('textBounds: END not yet supported for textAlign');
-      }
-      lineData[i] = { text: lines[i], x: adjustedX, y: y + i * textLeading };
-    }
-
-    return this._yAlignOffset(lineData, adjustedH);
-  };
-
-  /*
     Process the text string to handle line-breaks and text wrapping
     @param {string} str - the text to process
     @param {number} width - the width to wrap the text to
@@ -858,40 +826,6 @@ function text2d(p5, fn) {
       default:
         return 0;
     }
-  }
-
-  /*
-    Get the y-offset for text given the height, leading, line-count and textBaseline property
-  */
-  Renderer.prototype._yAlignOffset = function (dataArr, height) {
-
-    if (typeof height === 'undefined') {
-      throw Error('_yAlignOffset: height is required');
-    }
-
-    let { textLeading, textBaseline } = this.states;
-    let yOff = 0, numLines = dataArr.length;
-    let ydiff = height - (textLeading * (numLines - 1));
-    switch (textBaseline) { // drawingContext ?
-      case fn.TOP:
-        break; // ??
-      case fn.BASELINE:
-        break;
-      case fn._CTX_MIDDLE:
-        yOff = ydiff / 2;
-        break;
-      case fn.BOTTOM:
-        yOff = ydiff;
-        break;
-      case fn.IDEOGRAPHIC:
-        console.warn('textBounds: IDEOGRAPHIC not yet supported for textBaseline'); // FES?
-        break;
-      case fn.HANGING:
-        console.warn('textBounds: HANGING not yet supported for textBaseline'); // FES?
-        break;
-    }
-    dataArr.forEach(ele => ele.y += yOff);
-    return dataArr;
   }
 
   /*
@@ -1179,6 +1113,72 @@ function text2d(p5, fn) {
 
       this.pop();
     };
+
+    /*
+      Position the lines of text based on their textAlign/textBaseline properties
+    */
+    p5.Renderer2D.prototype._positionLines = function (x, y, width, height, lines) {
+
+      let { textLeading, textAlign } = this.states;
+      let adjustedX, lineData = new Array(lines.length);
+      let adjustedW = typeof width === 'undefined' ? 0 : width;
+      let adjustedH = typeof height === 'undefined' ? 0 : height;
+
+      for (let i = 0; i < lines.length; i++) {
+        switch (textAlign) {
+          case fn.START:
+            throw new Error('textBounds: START not yet supported for textAlign'); // default to LEFT
+          case fn.LEFT:
+            adjustedX = x;
+            break;
+          case fn.CENTER:
+            adjustedX = x + adjustedW / 2;
+            break;
+          case fn.RIGHT:
+            adjustedX = x + adjustedW;
+            break;
+          case fn.END: // TODO: add fn.END:
+            throw new Error('textBounds: END not yet supported for textAlign');
+        }
+        lineData[i] = { text: lines[i], x: adjustedX, y: y + i * textLeading };
+      }
+
+      return this._yAlignOffset(lineData, adjustedH);
+    };
+
+    /*
+      Get the y-offset for text given the height, leading, line-count and textBaseline property
+    */
+    p5.Renderer2D.prototype._yAlignOffset = function (dataArr, height) {
+
+      if (typeof height === 'undefined') {
+        throw Error('_yAlignOffset: height is required');
+      }
+
+      let { textLeading, textBaseline } = this.states;
+      let yOff = 0, numLines = dataArr.length;
+      let ydiff = height - (textLeading * (numLines - 1));
+      switch (textBaseline) { // drawingContext ?
+        case fn.TOP:
+          break; // ??
+        case fn.BASELINE:
+          break;
+        case fn._CTX_MIDDLE:
+          yOff = ydiff / 2;
+          break;
+        case fn.BOTTOM:
+          yOff = ydiff;
+          break;
+        case fn.IDEOGRAPHIC:
+          console.warn('textBounds: IDEOGRAPHIC not yet supported for textBaseline'); // FES?
+          break;
+        case fn.HANGING:
+          console.warn('textBounds: HANGING not yet supported for textBaseline'); // FES?
+          break;
+      }
+      dataArr.forEach(ele => ele.y += yOff);
+      return dataArr;
+    }
   }
   if (p5.RendererGL) {
     p5.RendererGL.prototype.textDrawingContext = function() {
@@ -1190,6 +1190,66 @@ function text2d(p5, fn) {
       }
       return this._textDrawingContext;
     };
+
+    p5.RendererGL.prototype._positionLines = function (x, y, width, height, lines) {
+
+      let { textLeading, textAlign } = this.states;
+      const widths = lines.map((line) => this._fontWidthSingle(line));
+      let adjustedX, lineData = new Array(lines.length);
+      let adjustedW = typeof width === 'undefined' ? Math.max(0, ...widths) : width;
+      let adjustedH = typeof height === 'undefined' ? 0 : height;
+
+      for (let i = 0; i < lines.length; i++) {
+        switch (textAlign) {
+          case fn.START:
+            throw new Error('textBounds: START not yet supported for textAlign'); // default to LEFT
+          case fn.LEFT:
+            adjustedX = x;
+            break;
+          case fn._CTX_MIDDLE:
+            adjustedX = x + (adjustedW - widths[i]) / 2;
+            break;
+          case fn.RIGHT:
+            adjustedX = x + adjustedW - widths[i];
+            break;
+          case fn.END: // TODO: add fn.END:
+            throw new Error('textBounds: END not yet supported for textAlign');
+        }
+        lineData[i] = { text: lines[i], x: adjustedX, y: y + i * textLeading };
+      }
+
+      return this._yAlignOffset(lineData, adjustedH);
+    };
+
+    p5.RendererGL.prototype._yAlignOffset = function (dataArr, height) {
+
+      if (typeof height === 'undefined') {
+        throw Error('_yAlignOffset: height is required');
+      }
+
+      let { textLeading, textBaseline, textSize, textFont } = this.states;
+      let yOff = 0, numLines = dataArr.length;
+      let totalHeight = textSize * numLines + ((textLeading - textSize) * (numLines - 1));
+      switch (textBaseline) { // drawingContext ?
+        case fn.TOP:
+          yOff = textSize;
+          break;
+        case fn.BASELINE:
+          break;
+        case fn._CTX_MIDDLE:
+          yOff = -totalHeight / 2 + textSize;
+          break;
+        case fn.BOTTOM:
+          yOff = -(totalHeight - textSize);
+          break;
+        default:
+          console.warn(`${textBaseline} is not supported in WebGL mode.`); // FES?
+          break;
+      }
+      yOff += this.states.textFont.font?.verticalAlign(textSize) || 0;
+      dataArr.forEach(ele => ele.y += yOff);
+      return dataArr;
+    }
   }
 }
 

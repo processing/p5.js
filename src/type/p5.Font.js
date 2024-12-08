@@ -53,6 +53,16 @@ function font(p5, fn) {
       this.face = fontFace;
     }
 
+    verticalAlign(size) {
+      const { sCapHeight } = this.data?.['OS/2'] || {};
+      const { unitsPerEm = 1000 } = this.data?.head || {};
+      const { ascender = 0, descender = 0 } = this.data?.hhea || {};
+      const current = ascender / 2;
+      const target = (sCapHeight || (ascender + descender)) / 2;
+      const offset = target - current;
+      return offset * size / unitsPerEm;
+    }
+
     variations() {
       let vars = {};
       if (this.data) {

@@ -25,7 +25,7 @@
 
       p.setup = async function () {
         // TODO: make this work without a name
-        f = await p.loadFont('font/BricolageGrotesque-Variable.ttf', 'Bricolage')
+        f = await p.loadFont('font/Lato-Black.ttf', 'Lato')
         p.createCanvas(200, 200, testWebgl ? p.WEBGL : undefined);
       };
 
@@ -34,15 +34,16 @@
         if (testWebgl) p.translate(-p.width/2, -p.height/2);
 
         p.fill('white');
-        p.textSize(80);
-        p.textAlign(p.LEFT, p.TOP)
+        p.textSize(60);
+        p.textAlign(p.RIGHT, p.CENTER)
         p.textFont(f)
-        p.text('hello, world!', 10, 30, p.width);
+        p.text('hello, world!', 0, p.height/2, p.width);
       };
     };
 
     new p5(sketch);
   </script>
+  <p style="font-family: Lato">hello, world!</p>
 </body>
 
 </html>
