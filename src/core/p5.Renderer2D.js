@@ -5,12 +5,13 @@ import { Graphics } from './p5.Graphics';
 import { Image } from '../image/p5.Image';
 import { Element } from '../dom/p5.Element';
 import { MediaElement } from '../dom/p5.MediaElement';
+import { RGBHDR } from '../color/creating_reading';
 
 const styleEmpty = 'rgba(0,0,0,0)';
 // const alphaThreshold = 0.00125; // minimum visible
 
 class Renderer2D extends Renderer {
-  constructor(pInst, w, h, isMainCanvas, elt) {
+  constructor(pInst, w, h, isMainCanvas, elt, attributes = {}) {
     super(pInst, w, h, isMainCanvas);
 
     this.canvas = this.elt = elt || document.createElement('canvas');
@@ -28,7 +29,6 @@ class Renderer2D extends Renderer {
     this.elt.classList.add('p5Canvas');
 
     // Extend renderer with methods of p5.Element with getters
-    // this.wrappedElt = new p5.Element(elt, pInst);
     for (const p of Object.getOwnPropertyNames(Element.prototype)) {
       if (p !== 'constructor' && p[0] !== '_') {
         Object.defineProperty(this, p, {
@@ -60,7 +60,10 @@ class Renderer2D extends Renderer {
     }
 
     // Get and store drawing context
-    this.drawingContext = this.canvas.getContext('2d');
+    this.drawingContext = this.canvas.getContext('2d', attributes);
+    if(attributes.colorSpace === 'display-p3'){
+      this._pInst._colorMode = RGBHDR;
+    }
     if (isMainCanvas) {
       this._pInst.drawingContext = this.drawingContext;
     }
@@ -1477,6 +1480,11 @@ function renderer2D(p5, fn){
    */
   p5.Renderer2D = Renderer2D;
   p5.renderers[constants.P2D] = Renderer2D;
+  p5.renderers['p2d-hdr'] = new Proxy(Renderer2D, {
+    construct(target, [pInst, w, h, isMainCanvas, elt]){
+      return new target(pInst, w, h, isMainCanvas, elt, {colorSpace: "display-p3"})
+    }
+  })
 }
 
 export default renderer2D;
