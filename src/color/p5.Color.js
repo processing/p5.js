@@ -6,7 +6,7 @@
  * @requires color_conversion
  */
 
-import { RGB, RGBHDR, HSL, HSB } from './creating_reading';
+import { RGB, RGBHDR, HSL, HSB, LCH, OKLCH } from './creating_reading';
 
 import {
   ColorSpace,
@@ -21,10 +21,10 @@ import {
   HSV,
 
   Lab,
-  LCH,
+  LCH as LCHSpace,
 
   OKLab,
-  OKLCH,
+  OKLCH as OKLCHSpace,
 
   P3,
 
@@ -532,27 +532,13 @@ function color(p5, fn){
    */
   p5.Color = Color;
 
-  // ColorSpace.register(sRGB);
-  // ColorSpace.register(HSLSpace);
-  // ColorSpace.register(HSV);
-  // ColorSpace.register(HSBSpace);
-
-  // ColorSpace.register(Lab);
-  // ColorSpace.register(LCH);
-
-  // ColorSpace.register(OKLab);
-  // ColorSpace.register(OKLCH);
-
-  // ColorSpace.register(P3);
-
-  // ColorSpace.register(A98RGB_Linear);
-  // ColorSpace.register(A98RGB);
-
   // Register color modes and initialize Color maxes to what p5 has set for itself
   p5.Color.addColorMode(RGB, sRGB, fn._colorMaxes?.[RGB]);
   p5.Color.addColorMode(RGBHDR, P3, fn._colorMaxes?.[RGBHDR]);
   p5.Color.addColorMode(HSB, HSBSpace, fn._colorMaxes?.[HSB]);
   p5.Color.addColorMode(HSL, HSLSpace, fn._colorMaxes?.[HSL]);
+  p5.Color.addColorMode(LCH, LCHSpace, fn._colorMaxes?.[LCH]);
+  p5.Color.addColorMode(OKLCH, OKLCHSpace, fn._colorMaxes?.[OKLCH]);
 }
 
 export default color;
