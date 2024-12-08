@@ -1405,7 +1405,7 @@ class Renderer2D extends Renderer {
     return p;
   }
 
-  _applyTextProperties() {
+  /*_applyTextProperties() {
     let font;
     const p = this._pInst;
 
@@ -1435,7 +1435,7 @@ class Renderer2D extends Renderer {
     }
 
     return p;
-  }
+  }*/
 
   //////////////////////////////////////////////
   // STRUCTURE

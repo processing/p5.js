@@ -24,7 +24,7 @@ void main() {
     1. / length(newOrigin - newDX),
     1. / length(newOrigin - newDY)
   );
-  vec2 offset = pixelScale * normalize(aTexCoord - vec2(0.5, 0.5)) * vec2(1., -1.);
+  vec2 offset = pixelScale * normalize(aTexCoord - vec2(0.5, 0.5));
   vec2 textureOffset = offset * (1. / vec2(
     uGlyphRect.z - uGlyphRect.x,
     uGlyphRect.w - uGlyphRect.y
