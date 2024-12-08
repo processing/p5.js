@@ -19,11 +19,14 @@ class FilterRenderer2D {
    * @param {p5} pInst - The p5.js instance.
    * @param {string} operation - The filter operation type (e.g., constants.BLUR).
    * @param {string} filterParameter - The strength of applying filter.
+   * @param {p5.Shader} customShader - Optional custom shader; if provided, ignore operation-based loading.
    */
-  constructor(pInst, operation, filterParameter) {
+  constructor(pInst, operation, filterParameter, customShader) {
     this.pInst = pInst;
-    this.filterParameter = filterParameter;    
+    this.filterParameter = filterParameter;
     this.operation = operation;
+    this.customShader = customShader;
+
 
     // Create a canvas for applying WebGL-based filters
     this.canvas = document.createElement('canvas');
@@ -83,18 +86,28 @@ class FilterRenderer2D {
     this.texcoords = new Float32Array([0, 1, 1, 1, 0, 0, 1, 0]);
 
     // Upload vertex data once
-    this._bindBufferData(this.vertexBuffer, this.gl.ARRAY_BUFFER, this.vertices, Float32Array, this.gl.STATIC_DRAW);
+    this._bindBufferData(this.vertexBuffer, this.gl.ARRAY_BUFFER, this.vertices);
 
     // Upload texcoord data once
-    this._bindBufferData(this.texcoordBuffer, this.gl.ARRAY_BUFFER, this.texcoords, Float32Array, this.gl.STATIC_DRAW);
+    this._bindBufferData(this.texcoordBuffer, this.gl.ARRAY_BUFFER, this.texcoords);
 
   }
-  
+
+  updateFilterParameter(newFilterParameter) {
+    // Operation is the same, just update parameter if changed
+    this.filterParameter = newFilterParameter;
+  }
+
   /**
    * Initializes the shader program if it hasn't been already.
    */
   _initializeShader() {
     if (this._shader) return; // Already initialized
+
+    if (this.customShader) {
+      this._shader = this.customShader;
+      return;
+    }
 
     const fragShaderSrc = this.filterShaders[this.operation];
     if (!fragShaderSrc) {
@@ -110,11 +123,10 @@ class FilterRenderer2D {
    * when passed more than two arguments it also updates or initializes
    * the data associated with the buffer
    */
-  _bindBufferData(buffer, target, values, type, usage) {
+  _bindBufferData(buffer, target, values) {
     const gl = this.gl;
     gl.bindBuffer(target, buffer);
-    let data = values instanceof (type || Float32Array) ? values : new (type || Float32Array)(values);
-    gl.bufferData(target, data, usage || gl.STATIC_DRAW);
+    gl.bufferData(target, values, gl.STATIC_DRAW);
   }
 
   /**
@@ -139,7 +151,7 @@ class FilterRenderer2D {
     this._shader.setUniform('canvasSize', [this.pInst.width, this.pInst.height]);
     this._shader.setUniform('radius', Math.max(1, this.filterParameter));
 
-    const identityMatrix = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1];
+    const identityMatrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
     this._shader.setUniform('uModelViewMatrix', identityMatrix);
     this._shader.setUniform('uProjectionMatrix', identityMatrix);
 
@@ -168,19 +180,19 @@ class FilterRenderer2D {
     }
 
     // For blur, we typically do two passes: one horizontal, one vertical.
-    if (this.operation === constants.BLUR) {
+    if (this.operation === constants.BLUR  && !this.customShader) {
       // Horizontal pass
-      this._shader.setUniform('direction', [1,0]);
+      this._shader.setUniform('direction', [1, 0]);
       this._renderPass();
-      
+
       // Draw the result onto itself
       this.pInst.clear();
       this.pInst.drawingContext.drawImage(this.canvas, 0, 0, this.pInst.width, this.pInst.height);
 
       // Vertical pass
-      this._shader.setUniform('direction', [0,1]);
+      this._shader.setUniform('direction', [0, 1]);
       this._renderPass();
-      
+
       this.pInst.clear();
       this.pInst.drawingContext.drawImage(this.canvas, 0, 0, this.pInst.width, this.pInst.height);
     } else {
