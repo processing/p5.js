@@ -691,24 +691,29 @@ function pointer(p5, fn){
   fn.pwinMouseY = 0;
 
   /**
-   * A String system variable that contains the value of the last mouse button
-   * pressed.
+   * An object that tracks the current state of mouse buttons, showing which
+   * buttons are pressed at any given moment.
    *
-   * The `mouseButton` variable is either `LEFT`, `RIGHT`, or `CENTER`,
-   * depending on which button was pressed last.
+   * The `mouseButton` object has three properties:
+   * - `left`: A boolean indicating whether the left mouse button is pressed.
+   * - `right`: A boolean indicating whether the right mouse button is pressed.
+   * - `center`: A boolean indicating whether the middle mouse button (scroll wheel button) is pressed.
    *
    * Note: Different browsers may track `mouseButton` differently. See
    * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/buttons" target="_blank">MDN</a>
    * for more information.
    *
-   * @property {(LEFT|RIGHT|CENTER)} mouseButton
+   * @property {Object} mouseButton
+   * @property {boolean} mouseButton.left - Whether the left mouse button is pressed.
+   * @property {boolean} mouseButton.right - Whether the right mouse button is pressed.
+   * @property {boolean} mouseButton.center - Whether the middle mouse button is pressed.
    * @readOnly
    *
    * @example
    * <div>
    * <code>
    * function setup() {
-   *   createCanvas(100, 100);
+   *   createCanvas(200, 200);
    *
    *   describe(
    *     'A gray square with black text at its center. The text changes from 0 to either "left" or "right" when the user clicks a mouse button.'
@@ -719,11 +724,13 @@ function pointer(p5, fn){
    *   background(200);
    *
    *   // Style the text.
-   *   textAlign(CENTER);
+   *   textAlign(CENTER, CENTER);
    *   textSize(16);
    *
    *   // Display the mouse button.
-   *   text(mouseButton, 50, 50);
+   *   text(`Left: ${mouseButton.left}`, width / 2, height / 2 - 20);
+   *   text(`Right: ${mouseButton.right}`, width / 2, height / 2);
+   *   text(`Center: ${mouseButton.center}`, width / 2, height / 2 + 20);
    * }
    * </code>
    * </div>
@@ -742,13 +749,13 @@ function pointer(p5, fn){
    *   background(200);
    *
    *   if (mouseIsPressed === true) {
-   *     if (mouseButton === LEFT) {
+   *     if (mouseButton.left) {
    *       circle(50, 50, 50);
    *     }
-   *     if (mouseButton === RIGHT) {
+   *     if (mouseButton.right) {
    *       square(25, 25, 50);
    *     }
-   *     if (mouseButton === CENTER) {
+   *     if (mouseButton.center) {
    *       triangle(23, 75, 50, 20, 78, 75);
    *     }
    *   }
@@ -756,7 +763,11 @@ function pointer(p5, fn){
    * </code>
    * </div>
    */
-  fn.mouseButton = 0;
+  fn.mouseButton = {
+    left: false,
+    right: false,
+    center: false
+  };
 
    /**
    * An `Array` of all the current touch points on a touchscreen device.
@@ -842,7 +853,7 @@ function pointer(p5, fn){
    * </div>
    */
    fn.touches = [];
-   fn._activeTouches = new Map();
+   fn._activePointers = new Map();
 
   /**
    * A `Boolean` system variable that's `true` if the mouse is pressed and
@@ -911,7 +922,7 @@ function pointer(p5, fn){
 
        if (e.pointerType == 'touch') {
           const touches = [];
-          for (const touch of this._activeTouches.values()) {
+          for (const touch of this._activePointers.values()) {
              touches.push(getTouchInfo(canvas, sx, sy, touch));
           }
           this.touches = touches;
@@ -961,15 +972,18 @@ function pointer(p5, fn){
   };
 }
 
-  fn._setMouseButton = function(e) {
-    if (e.button === 1) {
-      this.mouseButton = constants.CENTER;
-    } else if (e.button === 2) {
-      this.mouseButton = constants.RIGHT;
-    } else {
-      this.mouseButton = constants.LEFT;
-    }
-  };
+fn._setMouseButton = function(e) {
+  // Check all active touches to determine button states
+  this.mouseButton.left = Array.from(this._activePointers.values()).some(touch => 
+    (touch.buttons & 1) !== 0
+  );
+  this.mouseButton.center = Array.from(this._activePointers.values()).some(touch =>
+    (touch.buttons & 4) !== 0
+  );
+  this.mouseButton.right = Array.from(this._activePointers.values()).some(touch =>
+    (touch.buttons & 2) !== 0
+  );
+};
 
   /**
    * A function that's called when the mouse moves.
@@ -1148,10 +1162,9 @@ function pointer(p5, fn){
     const context = this._isGlobal ? window : this;
     let executeDefault;
     this._updatePointerCoords(e);
-
-    if(e.pointerType === 'touch') {
-      this._activeTouches.set(e.pointerId, e);
-    }
+    this._activePointers.set(e.pointerId, e);
+    this._setMouseButton(e);
+    
 
       if (!this.mouseIsPressed && typeof context.mouseMoved === 'function') {
         executeDefault = context.mouseMoved(e);
@@ -1163,7 +1176,7 @@ function pointer(p5, fn){
         if (executeDefault === false) {
           e.preventDefault();
         }
-      } 
+      }
   };
 
   /**
@@ -1313,13 +1326,9 @@ function pointer(p5, fn){
     let executeDefault;
     this.mouseIsPressed = true;
 
-    if (e.pointerType === 'touch') {
-      this._activeTouches.set(e.pointerId, e);
-   } else {
-      this._setMouseButton(e);
-   }
-
-   this._updatePointerCoords(e);
+    this._activePointers.set(e.pointerId, e);
+    this._setMouseButton(e);
+    this._updatePointerCoords(e);
 
     if (typeof context.mousePressed === 'function') {
       executeDefault = context.mousePressed(e);
@@ -1477,9 +1486,8 @@ function pointer(p5, fn){
     let executeDefault;
     this.mouseIsPressed = false;
 
-    if(e.pointerType == 'touch'){
-      this._activeTouches.delete(e.pointerId);
-    }
+    this._activePointers.delete(e.pointerId);
+    this._setMouseButton(e);
 
     this._updatePointerCoords(e);
    
