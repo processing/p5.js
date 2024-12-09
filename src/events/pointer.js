@@ -713,7 +713,7 @@ function pointer(p5, fn){
    * <div>
    * <code>
    * function setup() {
-   *   createCanvas(400, 400);
+   *   createCanvas(200, 200);
    *
    *   describe(
    *     'A gray square with black text at its center. The text changes from 0 to either "left" or "right" when the user clicks a mouse button.'
@@ -728,7 +728,9 @@ function pointer(p5, fn){
    *   textSize(16);
    *
    *   // Display the mouse button.
-   *   text(JSON.stringify(mouseButton), 50, 50);
+   *   text(`Left: ${mouseButton.left}`, width / 2, height / 2 - 20);
+   *   text(`Right: ${mouseButton.right}`, width / 2, height / 2);
+   *   text(`Center: ${mouseButton.center}`, width / 2, height / 2 + 20);
    * }
    * </code>
    * </div>
