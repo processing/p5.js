@@ -625,11 +625,13 @@ class Shader {
         'The shader being run is attached to a different context. Do you need to copy it to this context first with .copyToContext()?'
       );
     } else if (this._glProgram === 0) {
-      this._renderer = context;
+      this._renderer = context._renderer.filterRenderer
+        ? context._renderer.filterRenderer._renderer
+        : context._renderer;
       this.init();
     }
   }
-
+  
   /**
    * Queries the active attributes for this shader and loads
    * their names and locations into the attributes array.

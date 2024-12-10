@@ -5,6 +5,7 @@ import { Graphics } from './p5.Graphics';
 import { Image } from '../image/p5.Image';
 import { Element } from '../dom/p5.Element';
 import { MediaElement } from '../dom/p5.MediaElement';
+import FilterRenderer2D from '../image/filterRenderer2D';
 
 const styleEmpty = 'rgba(0,0,0,0)';
 // const alphaThreshold = 0.00125; // minimum visible
@@ -66,6 +67,9 @@ class Renderer2D extends Renderer {
     }
     this.scale(this._pixelDensity, this._pixelDensity);
 
+    if(!this.filterRenderer){
+      this.filterRenderer = new FilterRenderer2D(this);
+    }
     // Set and return p5.Element
     this.wrappedElt = new Element(this.elt, this._pInst);
   }

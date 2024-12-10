@@ -17,17 +17,9 @@ class FilterRenderer2D {
   /**
    * Creates a new FilterRenderer2D instance.
    * @param {p5} pInst - The p5.js instance.
-   * @param {string} operation - The filter operation type (e.g., constants.BLUR).
-   * @param {string} filterParameter - The strength of applying filter.
-   * @param {p5.Shader} customShader - Optional custom shader; if provided, ignore operation-based loading.
    */
-  constructor(pInst, operation, filterParameter, customShader) {
+  constructor(pInst) {
     this.pInst = pInst;
-    this.filterParameter = filterParameter;
-    this.operation = operation;
-    this.customShader = customShader;
-
-
     // Create a canvas for applying WebGL-based filters
     this.canvas = document.createElement('canvas');
     this.canvas.width = pInst.width;
@@ -39,7 +31,6 @@ class FilterRenderer2D {
       console.error("WebGL not supported, cannot apply filter.");
       return;
     }
-
     // Minimal renderer object required by p5.Shader and p5.Texture
     this._renderer = {
       GL: this.gl,
@@ -62,8 +53,8 @@ class FilterRenderer2D {
       },
     };
 
-    // Fragment shaders mapped to filter operations
-    this.filterShaders = {
+    // Store the fragment shader sources
+    this.filterShaderSources = {
       [constants.BLUR]: filterBlurFrag,
       [constants.INVERT]: filterInvertFrag,
       [constants.THRESHOLD]: filterThresholdFrag,
@@ -74,8 +65,14 @@ class FilterRenderer2D {
       [constants.OPAQUE]: filterOpaqueFrag,
     };
 
+    // Store initialized shaders for each operation
+    this.filterShaders = {};
+
+    // These will be set by setOperation
+    this.operation = null;
+    this.filterParameter = 1;
+    this.customShader = null;
     this._shader = null;
-    this._initializeShader();
 
     // Create buffers once
     this.vertexBuffer = this.gl.createBuffer();
@@ -90,32 +87,54 @@ class FilterRenderer2D {
 
     // Upload texcoord data once
     this._bindBufferData(this.texcoordBuffer, this.gl.ARRAY_BUFFER, this.texcoords);
-
-  }
-
-  updateFilterParameter(newFilterParameter) {
-    // Operation is the same, just update parameter if changed
-    this.filterParameter = newFilterParameter;
   }
 
   /**
-   * Initializes the shader program if it hasn't been already.
+   * Set the current filter operation and parameter. If a customShader is provided,
+   * that overrides the operation-based shader.
+   * @param {string} operation - The filter operation type (e.g., constants.BLUR).
+   * @param {number} filterParameter - The strength of the filter.
+   * @param {p5.Shader} customShader - Optional custom shader.
+   */
+  setOperation(operation, filterParameter, customShader = null) {
+    this.operation = operation;
+    this.filterParameter = filterParameter;
+    this.customShader = customShader;
+    this._initializeShader();
+  }
+
+  /**
+   * Initializes or retrieves the shader program for the current operation.
+   * If a customShader is provided, that is used.
+   * Otherwise, returns a cached shader if available, or creates a new one, caches it, and sets it as current.
    */
   _initializeShader() {
-    if (this._shader) return; // Already initialized
-
     if (this.customShader) {
       this._shader = this.customShader;
       return;
     }
 
-    const fragShaderSrc = this.filterShaders[this.operation];
+    if (!this.operation) {
+      console.error("No operation set for FilterRenderer2D, cannot initialize shader.");
+      return;
+    }
+
+    // If we already have a compiled shader for this operation, reuse it
+    if (this.filterShaders[this.operation]) {
+      this._shader = this.filterShaders[this.operation];
+      return;
+    }
+
+    const fragShaderSrc = this.filterShaderSources[this.operation];
     if (!fragShaderSrc) {
       console.error("No shader available for this operation:", this.operation);
       return;
     }
 
-    this._shader = new Shader(this._renderer, filterShaderVert, fragShaderSrc);
+    // Create and store the new shader
+    const newShader = new Shader(this._renderer, filterShaderVert, fragShaderSrc);
+    this.filterShaders[this.operation] = newShader;
+    this._shader = newShader;
   }
 
   /**
@@ -151,36 +170,37 @@ class FilterRenderer2D {
     this._shader.setUniform('canvasSize', [this.pInst.width, this.pInst.height]);
     this._shader.setUniform('radius', Math.max(1, this.filterParameter));
 
-    const identityMatrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+    const identityMatrix = [1, 0, 0, 0,
+                            0, 1, 0, 0,
+                            0, 0, 1, 0,
+                            0, 0, 0, 1];
     this._shader.setUniform('uModelViewMatrix', identityMatrix);
     this._shader.setUniform('uProjectionMatrix', identityMatrix);
 
     // Bind and enable vertex attributes
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
     this._shader.enableAttrib(this._shader.attributes.aPosition, 2);
-
+    
     gl.bindBuffer(gl.ARRAY_BUFFER, this.texcoordBuffer);
     this._shader.enableAttrib(this._shader.attributes.aTexCoord, 2);
-
+    
     // Draw the quad
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
     // Unbind the shader
     this._shader.unbindShader();
   }
 
   /**
-   * Applies the filter operation. If the filter requires multiple passes (e.g. blur),
-   * it handles those internally.
+   * Applies the current filter operation. If the filter requires multiple passes (e.g. blur),
+   * it handles those internally. Make sure setOperation() has been called before applyFilter().
    */
   applyFilter() {
     if (!this._shader) {
       console.error("Cannot apply filter: shader not initialized.");
       return;
     }
-
     // For blur, we typically do two passes: one horizontal, one vertical.
-    if (this.operation === constants.BLUR  && !this.customShader) {
+    if (this.operation === constants.BLUR && !this.customShader) {
       // Horizontal pass
       this._shader.setUniform('direction', [1, 0]);
       this._renderPass();

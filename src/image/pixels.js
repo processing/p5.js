@@ -750,29 +750,23 @@ function pixels(p5, fn){
     if (this._renderer.isP3D) {
       this._renderer.filter(operation, value);
     }
-
+    
     // when this is P2D renderer, create/use hidden webgl renderer
     else {
-      if (shader) {
-        const customFilterRenderer = new FilterRenderer2D(this, operation, value, shader);
-        customFilterRenderer.applyFilter();
-      } else {
-        if (!this._filterRenderers) {
-          this._filterRenderers = {};
-        }
-
-        // Check if we have a cached renderer for this operation
-        if (!this._filterRenderers[operation]) {
-          // If no cached renderer for this filter, create and cache it
-          this._filterRenderers[operation] = new FilterRenderer2D(this, operation, value);
-        } else {
-          // If we already have a renderer for this operation and value is different, update it.
-          this._filterRenderers[operation].updateFilterParameter(value);
-        }
-        // Use the currently requested operation's renderer
-        this.filterRenderer = this._filterRenderers[operation];
-        this.filterRenderer.applyFilter();
+      if (!this.filterRenderer) {
+        this.filterRenderer = new FilterRenderer2D(this);
+        this._renderer.filterRenderer = this.filterRenderer;
       }
+      if (shader) {
+        this.filterRenderer.setOperation(operation, value, shader);
+      } else {
+        // No custom shader, just a built-in filter
+        this.filterRenderer.setOperation(operation, value);
+      }
+
+      // Apply the current filter
+      this.filterRenderer.applyFilter();
+
     }
   };
 
