@@ -43,22 +43,24 @@ class Color {
 
   static colorMap = {};
   static colorMaxes = {};
+  static #colorjsMaxes = {};
 
   // Used to add additional color modes to p5.js
   // Uses underlying library's definition
   static addColorMode(mode, definition, maxes){
     ColorSpace.register(definition);
     Color.colorMap[mode] = definition.id;
+    // Get colorjs maxes
+    Color.#colorjsMaxes[mode] = Object.values(definition.coords).reduce((acc, v) => {
+        acc.push(v.refRange || v.range);
+        return acc;
+      }, []);
+    Color.#colorjsMaxes[mode].push([0, 1]);
 
     if(maxes){
       Color.colorMaxes[mode] = maxes;
     }else{
-      Color.colorMaxes[mode] = Object.values(definition.coords).reduce((acc, v) => {
-        acc.push(v.refRange?.[1] || v.range[1]);
-        return acc;
-      }, []);
-
-      Color.colorMaxes[mode].push(1);
+      Color.colorMaxes[mode] = structuredClone(Color.#colorjsMaxes[mode]);
     }
   }
 
@@ -72,13 +74,7 @@ class Color {
         return max;
       }
     });
-    const key = Color.colorMap[this.mode];
-
-    const colorjsMaxes = Object.values(ColorSpace.registry[key].coords).reduce((acc, v) => {
-      acc.push(v.refRange || v.range);
-      return acc;
-    }, []);
-    colorjsMaxes.push([0, 1]);
+    const colorjsMaxes = Color.#colorjsMaxes[this.mode];
 
     return origin.map((channel, i) => {
       const newval = map(channel, p5Maxes[i][0], p5Maxes[i][1], colorjsMaxes[i][0], colorjsMaxes[i][1]);
@@ -86,6 +82,7 @@ class Color {
     });
   }
 
+  // Convert from color.js color range to p5 color range
   #unmapColorRange(origin){
     const p5Maxes = Color.colorMaxes[this.mode].map((max) => {
       if(!Array.isArray(max)){
@@ -94,12 +91,7 @@ class Color {
         return max;
       }
     });
-    const key = Color.colorMap[this.mode];
-    const colorjsMaxes = Object.values(ColorSpace.registry[key].coords).reduce((acc, v) => {
-      acc.push(v.refRange || v.range);
-      return acc;
-    }, []);
-    colorjsMaxes.push([0, 1]);
+    const colorjsMaxes = Color.#colorjsMaxes[this.mode];
 
     return origin.map((channel, i) => {
       const newval = map(channel, colorjsMaxes[i][0], colorjsMaxes[i][1], p5Maxes[i][0], p5Maxes[i][1]);
@@ -169,14 +161,8 @@ class Color {
   }
 
   // Get coordinates mapped to current color maxes
-  get values() {
+  get _levels() {
     return this.#unmapColorRange(this._array);
-  }
-
-  // NOTE: WebGL uses this and assumes RGB [255, 255, 255, 255]
-  // Consider alternative implementation
-  get levels() {
-    return this._array.map(v => v * 255);
   }
 
   lerp(color, amt, mode){
@@ -474,12 +460,7 @@ class Color {
 
   _getRGBA(maxes=[1, 1, 1, 1]) {
     // Get colorjs maxes
-    const key = Color.colorMap[this.mode];
-    const colorjsMaxes = Object.values(ColorSpace.registry[key].coords).reduce((acc, v) => {
-      acc.push(v.refRange || v.range);
-      return acc;
-    }, []);
-    colorjsMaxes.push([0, 1]);
+    const colorjsMaxes = Color.#colorjsMaxes[this.mode];
 
     // Normalize everything to 0,1 or the provided range (map)
     let coords = structuredClone(toGamut(this._color, 'srgb').coords);
@@ -550,7 +531,7 @@ class Color {
     if(this.mode === HSL){
       return this._color.coords[2] / 100 * Color.colorMaxes[this.mode][2];
     }else{
-      // Will do an imprecise conversion to 'HSB', not recommended
+      // Will do an imprecise conversion to 'HSL', not recommended
       return to(this._color, 'hsl').coords[2] / 100 * Color.colorMaxes[this.mode][2];
     }
   }
