@@ -154,15 +154,14 @@ class FilterRenderer2D {
   _renderPass() {
     const gl = this.gl;
     this._shader.bindShader();
-
-    const pixelDensity = this.pInst._renderer.pixelDensity ? this.pInst._renderer.pixelDensity() : 1;
+    const pixelDensity = this.pInst.pixelDensity ? this.pInst.pixelDensity() : 1;
 
     const texelSize = [
       1 / (this.pInst.width * pixelDensity),
       1 / (this.pInst.height * pixelDensity)
     ];
 
-    const canvasTexture = new Texture(this._renderer, this.pInst._renderer.wrappedElt);
+    const canvasTexture = new Texture(this._renderer, this.pInst.wrappedElt);
 
     // Set uniforms for the shader
     this._shader.setUniform('tex0', canvasTexture);
