@@ -18,7 +18,6 @@ import {
 
   sRGB,
   HSL as HSLSpace,
-  HSV,
   HWB as HWBSpace,
 
   Lab,
