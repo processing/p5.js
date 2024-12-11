@@ -6,7 +6,7 @@
  * @requires color_conversion
  */
 
-import { RGB, RGBHDR, HSL, HSB, LAB, LCH, OKLAB, OKLCH } from './creating_reading';
+import { RGB, RGBHDR, HSL, HSB, HWB, LAB, LCH, OKLAB, OKLCH } from './creating_reading';
 
 import {
   ColorSpace,
@@ -19,6 +19,7 @@ import {
   sRGB,
   HSL as HSLSpace,
   HSV,
+  HWB as HWBSpace,
 
   Lab,
   LCH as LCHSpace,
@@ -26,12 +27,9 @@ import {
   OKLab,
   OKLCH as OKLCHSpace,
 
-  P3,
-
-  A98RGB_Linear,
-  A98RGB
+  P3
 } from 'colorjs.io/fn';
-import { default as HSBSpace } from './color_spaces/hsb.js';
+import HSBSpace from './color_spaces/hsb.js';
 
 const map = (n, start1, stop1, start2, stop2) =>
   ((n - start1) / (stop1 - start1) * (stop2 - start2) + start2);
@@ -561,6 +559,7 @@ function color(p5, fn){
   p5.Color.addColorMode(RGBHDR, P3, fn._colorMaxes?.[RGBHDR]);
   p5.Color.addColorMode(HSB, HSBSpace, fn._colorMaxes?.[HSB]);
   p5.Color.addColorMode(HSL, HSLSpace, fn._colorMaxes?.[HSL]);
+  p5.Color.addColorMode(HWB, HWBSpace, fn._colorMaxes?.[HWB]);
   p5.Color.addColorMode(LAB, Lab, fn._colorMaxes?.[LAB]);
   p5.Color.addColorMode(LCH, LCHSpace, fn._colorMaxes?.[LCH]);
   p5.Color.addColorMode(OKLAB, OKLab, fn._colorMaxes?.[OKLAB]);

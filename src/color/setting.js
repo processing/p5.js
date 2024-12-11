@@ -7,7 +7,7 @@
  */
 
 import * as constants from '../core/constants';
-import { RGB, RGBHDR, HSL, HSB, LAB, LCH, OKLAB, OKLCH } from './creating_reading';
+import { RGB, RGBHDR, HSL, HSB, HWB, LAB, LCH, OKLAB, OKLCH } from './creating_reading';
 
 function setting(p5, fn){
   /**
@@ -956,6 +956,7 @@ function setting(p5, fn){
         RGBHDR,
         HSB,
         HSL,
+        HWB,
         LAB,
         LCH,
         OKLAB,

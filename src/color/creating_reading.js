@@ -27,6 +27,7 @@ function creatingReading(p5, fn){
   fn.RGBHDR = RGBHDR;
   fn.HSB = HSB;
   fn.HSL = HSL;
+  fn.HWB = HWB;
 
   fn.LAB = LAB;
   fn.LCH = LCH;
@@ -44,11 +45,12 @@ function creatingReading(p5, fn){
     [RGBHDR]: [255, 255, 255, 255],
     [HSB]: [360, 100, 100, 1],
     [HSL]: [360, 100, 100, 1],
+    [HWB]: [360, 100, 100, 1],
 
-    [LAB]: [100, [-125, 125], [-125, 125]],
+    [LAB]: [100, [-125, 125], [-125, 125], 1],
     [LCH]: [100, 150, 360, 1],
 
-    [OKLAB]: [100, [-125, 125], [-125, 125]],
+    [OKLAB]: [100, [-125, 125], [-125, 125], 1],
     [OKLCH]: [100, 150, 360, 1]
   };
 
