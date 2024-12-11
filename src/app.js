@@ -49,10 +49,6 @@ io(p5);
 import math from './math';
 math(p5);
 
-// typography
-import type from './type'
-type(p5);
-
 // utilities
 import utilities from './utilities';
 utilities(p5);
@@ -60,6 +56,10 @@ utilities(p5);
 // webgl
 import webgl from './webgl';
 webgl(p5);
+
+// typography
+import type from './type'
+type(p5);
 
 import './core/init';
 
