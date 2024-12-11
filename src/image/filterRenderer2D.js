@@ -168,6 +168,7 @@ class FilterRenderer2D {
     this._shader.setUniform('texelSize', texelSize);
     this._shader.setUniform('canvasSize', [this.pInst.width, this.pInst.height]);
     this._shader.setUniform('radius', Math.max(1, this.filterParameter));
+    this._shader.setUniform('filterParameter', this.filterParameter);
 
     const identityMatrix = [1, 0, 0, 0,
                             0, 1, 0, 0,
