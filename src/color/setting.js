@@ -7,7 +7,7 @@
  */
 
 import * as constants from '../core/constants';
-import { RGB, RGBHDR, HSL, HSB, LCH, OKLCH } from './creating_reading';
+import { RGB, RGBHDR, HSL, HSB, LAB, LCH, OKLAB, OKLCH } from './creating_reading';
 
 function setting(p5, fn){
   /**
@@ -951,7 +951,16 @@ function setting(p5, fn){
   fn.colorMode = function(mode, max1, max2, max3, maxA) {
     p5._validateParameters('colorMode', arguments);
     if (
-      [RGB, RGBHDR, HSB, HSL, LCH, OKLCH].includes(mode)
+      [
+        RGB,
+        RGBHDR,
+        HSB,
+        HSL,
+        LAB,
+        LCH,
+        OKLAB,
+        OKLCH
+      ].includes(mode)
     ) {
       // Set color mode.
       this._colorMode = mode;

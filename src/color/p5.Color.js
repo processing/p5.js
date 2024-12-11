@@ -6,7 +6,7 @@
  * @requires color_conversion
  */
 
-import { RGB, RGBHDR, HSL, HSB, LCH, OKLCH } from './creating_reading';
+import { RGB, RGBHDR, HSL, HSB, LAB, LCH, OKLAB, OKLCH } from './creating_reading';
 
 import {
   ColorSpace,
@@ -32,6 +32,9 @@ import {
   A98RGB
 } from 'colorjs.io/fn';
 import { default as HSBSpace } from './color_spaces/hsb.js';
+
+const map = (n, start1, stop1, start2, stop2) =>
+  ((n - start1) / (stop1 - start1) * (stop2 - start2) + start2);
 
 class Color {
   // Reference to underlying color object depending on implementation
@@ -62,34 +65,52 @@ class Color {
   }
 
   // TODO: memoize map/unmap methods
+  // TODO: color space coordinate can be negative
   // Convert from p5 color range to color.js color range
   #mapColorRange(origin){
-    const p5Maxes = Color.colorMaxes[this.mode];
-    const key = Color.colorMap[this.mode];
-    const colorjsMaxes = Object.values(ColorSpace.registry[key].coords).reduce((acc, v) => {
-      acc.push(v.refRange?.[1] || v.range[1]);
-      return acc;
-    }, []);
-
-    return origin.map((channel, i) => {
-      return channel / p5Maxes[i] * colorjsMaxes[i];
+    const p5Maxes = Color.colorMaxes[this.mode].map((max) => {
+      if(!Array.isArray(max)){
+        return [0, max];
+      }else{
+        return max;
+      }
     });
-  }
-
-  #unmapColorRange(origin){
-    const p5Maxes = Color.colorMaxes[this.mode];
     const key = Color.colorMap[this.mode];
+
     const colorjsMaxes = Object.values(ColorSpace.registry[key].coords).reduce((acc, v) => {
-      acc.push(v.refRange?.[1] || v.range[1]);
+      acc.push(v.refRange || v.range);
       return acc;
     }, []);
     colorjsMaxes.push(1);
 
     return origin.map((channel, i) => {
-      return channel / colorjsMaxes[i] * p5Maxes[i];
+      const newval = map(channel, p5Maxes[i][0], p5Maxes[i][1], colorjsMaxes[i][0], colorjsMaxes[i][1]);
+      return newval;
     });
   }
 
+  #unmapColorRange(origin){
+    const p5Maxes = Color.colorMaxes[this.mode].map((max) => {
+      if(!Array.isArray(max)){
+        return [0, max];
+      }else{
+        return max;
+      }
+    });
+    const key = Color.colorMap[this.mode];
+    const colorjsMaxes = Object.values(ColorSpace.registry[key].coords).reduce((acc, v) => {
+      acc.push(v.refRange || v.range);
+      return acc;
+    }, []);
+    colorjsMaxes.push(1);
+
+    return origin.map((channel, i) => {
+      const newval = map(channel, colorjsMaxes[i][0], colorjsMaxes[i][1], p5Maxes[i][0], p5Maxes[i][1]);
+      return newval;
+    });
+  }
+
+  // Will do conversion in-Gamut as out of Gamut conversion is only really useful for futher conversions
   #toColorMode(mode){
 
   }
@@ -121,8 +142,11 @@ class Color {
       }else if(vals.length === 1){
         vals = [vals[0], vals[0], vals[0]];
       }
-      alpha = alpha !== undefined
-        ? alpha / Color.colorMaxes[this.mode][3]
+      const alphaMaxes = Array.isArray(Color.colorMaxes[this.mode][3]) ?
+        Color.colorMaxes[this.mode][3] :
+        [0, Color.colorMaxes[this.mode][3]];
+      alpha = alpha !== undefined ?
+        map(alpha, alphaMaxes[0], alphaMaxes[1], 0, 1)
         : 1;
 
       const space = Color.colorMap[this.mode] || console.error('Invalid color mode');
@@ -537,7 +561,9 @@ function color(p5, fn){
   p5.Color.addColorMode(RGBHDR, P3, fn._colorMaxes?.[RGBHDR]);
   p5.Color.addColorMode(HSB, HSBSpace, fn._colorMaxes?.[HSB]);
   p5.Color.addColorMode(HSL, HSLSpace, fn._colorMaxes?.[HSL]);
+  p5.Color.addColorMode(LAB, Lab, fn._colorMaxes?.[LAB]);
   p5.Color.addColorMode(LCH, LCHSpace, fn._colorMaxes?.[LCH]);
+  p5.Color.addColorMode(OKLAB, OKLab, fn._colorMaxes?.[OKLAB]);
   p5.Color.addColorMode(OKLCH, OKLCHSpace, fn._colorMaxes?.[OKLCH]);
 }
 

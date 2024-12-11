@@ -12,16 +12,28 @@ export const RGB = 'rgb';
 export const RGBHDR = 'rgbhdr';
 export const HSB = 'hsb';
 export const HSL = 'hsl';
+export const HWB = 'hwb';
+
+export const LAB = 'lab';
 export const LCH = 'lch';
+
+export const OKLAB = 'oklab';
 export const OKLCH = 'oklch';
+
 export const RGBA = 'rgba';
 
 function creatingReading(p5, fn){
   fn.RGB = RGB;
+  fn.RGBHDR = RGBHDR;
   fn.HSB = HSB;
   fn.HSL = HSL;
+
+  fn.LAB = LAB;
   fn.LCH = LCH;
+
+  fn.OKLAB = OKLAB;
   fn.OKLCH = OKLCH;
+
   fn.RGBA = RGBA;
 
   // Set color related defaults
@@ -32,7 +44,11 @@ function creatingReading(p5, fn){
     [RGBHDR]: [255, 255, 255, 255],
     [HSB]: [360, 100, 100, 1],
     [HSL]: [360, 100, 100, 1],
+
+    [LAB]: [100, [-125, 125], [-125, 125]],
     [LCH]: [100, 150, 360, 1],
+
+    [OKLAB]: [100, [-125, 125], [-125, 125]],
     [OKLCH]: [100, 150, 360, 1]
   };
 
