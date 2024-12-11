@@ -1122,6 +1122,30 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
       startVertex = array[2];
     }
   }
+  visitPoint(point) {
+    this.contours.push(point.vertices.slice());
+  }
+  visitLine(line) {
+    this.contours.push(line.vertices.slice());
+  }
+  visitTriangle(triangle) {
+    this.contours.push(triangle.vertices.slice());
+  }
+  visitQuad(quad) {
+    this.contours.push(quad.vertices.slice());
+  }
+  visitTriangleFan(triangleFan) {
+    // WebGL itself interprets the vertices as a fan, no reformatting needed
+    this.contours.push(triangleFan.vertices.slice());
+  }
+  visitTriangleStrip(triangleStrip) {
+    // WebGL itself interprets the vertices as a strip, no reformatting needed
+    this.contours.push(triangleStrip.vertices.slice());
+  }
+  visitQuadStrip(quadStrip) {
+    // WebGL itself interprets the vertices as a strip, no reformatting needed
+    this.contours.push(quadStrip.vertices.slice());
+  }
 }
 
 class PointAtLengthGetter extends PrimitiveVisitor {

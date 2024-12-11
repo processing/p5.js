@@ -467,10 +467,14 @@ class RendererGL extends Renderer {
         this.shapeBuilder.shapeMode
       );
     } else if (this.states.fillColor || this.states.strokeColor) {
-      this._drawGeometry(
-        this.shapeBuilder.geometry,
-        { mode: this.shapeBuilder.shapeMode, count: this.drawShapeCount }
-      );
+      if (this.shapeBuilder.shapeMode === constants.POINTS) {
+        this._drawPoints(this.shapeBuilder.geometry.vertices, this.buffers.point);
+      } else {
+        this._drawGeometry(
+          this.shapeBuilder.geometry,
+          { mode: this.shapeBuilder.shapeMode, count: this.drawShapeCount }
+        );
+      }
     }
     this.drawShapeCount = 1;
   }
