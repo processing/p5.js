@@ -6,7 +6,6 @@
  */
 
 import Filters from './filters';
-import FilterRenderer2D from './filterRenderer2D';
 
 function pixels(p5, fn){
   /**
