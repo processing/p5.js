@@ -752,21 +752,14 @@ function pixels(p5, fn){
     }
     
     // when this is P2D renderer, create/use hidden webgl renderer
-    else {
-      if (!this.filterRenderer) {
-        this.filterRenderer = new FilterRenderer2D(this);
-        this._renderer.filterRenderer = this.filterRenderer;
-      }
+    else {      
       if (shader) {
-        this.filterRenderer.setOperation(operation, value, shader);
+        this._renderer.filterRenderer.setOperation(operation, value, shader);
       } else {
-        // No custom shader, just a built-in filter
-        this.filterRenderer.setOperation(operation, value);
+        this._renderer.filterRenderer.setOperation(operation, value);
       }
-
-      // Apply the current filter
-      this.filterRenderer.applyFilter();
-
+      
+      this._renderer.filterRenderer.applyFilter();
     }
   };
 
