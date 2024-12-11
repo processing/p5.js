@@ -668,10 +668,7 @@ class Image {
         }
       } else if (imgOrCol instanceof p5.Color) {
         if (idx < pixelsState.pixels.length) {
-          r = imgOrCol.levels[0];
-          g = imgOrCol.levels[1];
-          b = imgOrCol.levels[2];
-          a = imgOrCol.levels[3];
+          [r, g, b, a] = imgOrCol._getRGBA([255, 255, 255, 255]);
           //this.updatePixels.call(this);
         }
       }

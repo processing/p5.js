@@ -11,7 +11,7 @@ import { RGB, RGBHDR, HSL, HSB, HWB, LAB, LCH, OKLAB, OKLCH } from './creating_r
 import {
   ColorSpace,
   to,
-  // toGamut,
+  toGamut,
   serialize,
   parse,
   range,
@@ -63,7 +63,6 @@ class Color {
   }
 
   // TODO: memoize map/unmap methods
-  // TODO: color space coordinate can be negative
   // Convert from p5 color range to color.js color range
   #mapColorRange(origin){
     const p5Maxes = Color.colorMaxes[this.mode].map((max) => {
@@ -79,7 +78,7 @@ class Color {
       acc.push(v.refRange || v.range);
       return acc;
     }, []);
-    colorjsMaxes.push(1);
+    colorjsMaxes.push([0, 1]);
 
     return origin.map((channel, i) => {
       const newval = map(channel, p5Maxes[i][0], p5Maxes[i][1], colorjsMaxes[i][0], colorjsMaxes[i][1]);
@@ -100,7 +99,7 @@ class Color {
       acc.push(v.refRange || v.range);
       return acc;
     }, []);
-    colorjsMaxes.push(1);
+    colorjsMaxes.push([0, 1]);
 
     return origin.map((channel, i) => {
       const newval = map(channel, colorjsMaxes[i][0], colorjsMaxes[i][1], p5Maxes[i][0], p5Maxes[i][1]);
@@ -119,11 +118,16 @@ class Color {
 
     if (typeof vals === 'object' && !Array.isArray(vals) && vals !== null){
       this._color = vals;
+      this.mode = vals.mode;
 
     } else if(typeof vals[0] === 'string') {
       try{
-        // NOTE: this will not necessarily have the right color mode
         this._color = parse(vals[0]);
+        const [mode] = Object.entries(Color.colorMap).find(([key, val]) => {
+          return val === this._color.spaceId;
+        });
+        this.mode = mode;
+        this._color = to(this._color, this._color.spaceId);
       }catch(err){
         // TODO: Invalid color string
         console.error('Invalid color string');
@@ -155,7 +159,7 @@ class Color {
         coords,
         alpha
       };
-      this._color = to(color, space);
+      this._color = toGamut(color, space);
     }
   }
 
@@ -442,7 +446,7 @@ class Color {
       return this._color.coords[0] * Color.colorMaxes[RGB][0];
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
-      return to(this._color, 'srgb').coords[0] * Color.colorMaxes[RGB][0];
+      return toGamut(this._color, 'srgb').coords[0] * Color.colorMaxes[RGB][0];
     }
   }
 
@@ -451,7 +455,7 @@ class Color {
       return this._color.coords[1] * Color.colorMaxes[RGB][1];
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
-      return to(this._color, 'srgb').coords[1]  * Color.colorMaxes[RGB][1];
+      return toGamut(this._color, 'srgb').coords[1]  * Color.colorMaxes[RGB][1];
     }
   }
 
@@ -460,12 +464,40 @@ class Color {
       return this._color.coords[2]  * Color.colorMaxes[RGB][2];
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
-      return to(this._color, 'srgb').coords[2]  * Color.colorMaxes[RGB][2];
+      return toGamut(this._color, 'srgb').coords[2]  * Color.colorMaxes[RGB][2];
     }
   }
 
   _getAlpha() {
     return this._color.alpha * Color.colorMaxes[this.mode][3];
+  }
+
+  _getRGBA(maxes=[1, 1, 1, 1]) {
+    // Get colorjs maxes
+    const key = Color.colorMap[this.mode];
+    const colorjsMaxes = Object.values(ColorSpace.registry[key].coords).reduce((acc, v) => {
+      acc.push(v.refRange || v.range);
+      return acc;
+    }, []);
+    colorjsMaxes.push([0, 1]);
+
+    // Normalize everything to 0,1 or the provided range (map)
+    let coords = structuredClone(toGamut(this._color, 'srgb').coords);
+    coords.push(this._color.alpha);
+
+    const rangeMaxes = maxes.map((v) => {
+      if(!Array.isArray(v)){
+        return [0, v];
+      }else{
+        return v
+      }
+    });
+
+    coords = coords.map((coord, i) => {
+      return map(coord, colorjsMaxes[i][0], colorjsMaxes[i][1], rangeMaxes[i][0], rangeMaxes[i][1]);
+    });
+
+    return coords;
   }
 
   _getMode() {

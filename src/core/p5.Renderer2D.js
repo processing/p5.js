@@ -174,7 +174,7 @@ class Renderer2D extends Renderer {
 
       //accessible Outputs
       if (this._pInst._addAccsOutput()) {
-        this._pInst._accsBackground(color.levels);
+        this._pInst._accsBackground(color._getRGBA([255, 255, 255, 255]));
       }
 
       const newFill = color.toString();
@@ -209,7 +209,7 @@ class Renderer2D extends Renderer {
 
     //accessible Outputs
     if (this._pInst._addAccsOutput()) {
-      this._pInst._accsCanvasColors('fill', color.levels);
+      this._pInst._accsCanvasColors('fill', color._getRGBA([255, 255, 255, 255]));
     }
   }
 
@@ -220,7 +220,7 @@ class Renderer2D extends Renderer {
 
     //accessible Outputs
     if (this._pInst._addAccsOutput()) {
-      this._pInst._accsCanvasColors('stroke', color.levels);
+      this._pInst._accsCanvasColors('stroke', color._getRGBA([255, 255, 255, 255]));
     }
   }
 
@@ -557,10 +557,7 @@ class Renderer2D extends Renderer {
         }
       } else if (imgOrCol instanceof p5.Color) {
         if (idx < this.pixels.length) {
-          r = imgOrCol.levels[0];
-          g = imgOrCol.levels[1];
-          b = imgOrCol.levels[2];
-          a = imgOrCol.levels[3];
+          [r, g, b, a] = imgOrCol._getRGBA([255, 255, 255, 255]);
           //this.updatePixels.call(this);
         }
       }
