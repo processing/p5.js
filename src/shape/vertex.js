@@ -9,15 +9,6 @@
 import * as constants from '../core/constants';
 
 function vertex(p5, fn){
-  let shapeKind = null;
-  let vertices = [];
-  let contourVertices = [];
-  let isBezier = false;
-  let isCurve = false;
-  let isQuadratic = false;
-  let isContour = false;
-  let isFirstContour = true;
-
   /**
    * Begins adding vertices to a custom shape.
    *
@@ -410,28 +401,6 @@ function vertex(p5, fn){
   fn.beginShape = function(kind) {
     p5._validateParameters('beginShape', arguments);
     this._renderer.beginShape(...arguments);
-    return;
-
-    // TODO remove this once shape implementation is complete
-    if (!this._renderer.isP3D) {
-      if (
-        kind === constants.POINTS ||
-        kind === constants.LINES ||
-        kind === constants.TRIANGLES ||
-        kind === constants.TRIANGLE_FAN ||
-        kind === constants.TRIANGLE_STRIP ||
-        kind === constants.QUADS ||
-        kind === constants.QUAD_STRIP
-      ) {
-        shapeKind = kind;
-      } else {
-        shapeKind = null;
-      }
-
-      vertices = [];
-      contourVertices = [];
-    }
-    return this;
   };
 
   /**
@@ -1094,12 +1063,7 @@ function vertex(p5, fn){
    */
   fn.curveVertex = function(...args) {
     p5._validateParameters('curveVertex', args);
-    if (this._renderer.isP3D) {
-      this._renderer.curveVertex(...args);
-    } else {
-      isCurve = true;
-      this.vertex(args[0], args[1]);
-    }
+    this._renderer.curveVertex(...args);
     return this;
   };
 
@@ -1274,62 +1238,6 @@ function vertex(p5, fn){
     }
 
     this._renderer.endShape(mode, count);
-    return;
-
-    // TODO remove once shape refactor is complete
-    if (this._renderer.isP3D) {
-      this._renderer.legacyEndShape(
-        mode,
-        isCurve,
-        isBezier,
-        isQuadratic,
-        isContour,
-        shapeKind,
-        count
-      );
-    } else {
-      if (count !== 1) {
-        console.log('🌸 p5.js says: Instancing is only supported in WebGL2 mode');
-      }
-      if (vertices.length === 0) {
-        return this;
-      }
-      if (!this._renderer.states.strokeColor && !this._renderer.states.fillColor) {
-        return this;
-      }
-
-      const closeShape = mode === constants.CLOSE;
-
-      // if the shape is closed, the first element is also the last element
-      if (closeShape && !isContour) {
-        vertices.push(vertices[0]);
-      }
-
-      this._renderer.legacyEndShape(
-        mode,
-        vertices,
-        isCurve,
-        isBezier,
-        isQuadratic,
-        isContour,
-        shapeKind
-      );
-
-      // Reset some settings
-      isCurve = false;
-      isBezier = false;
-      isQuadratic = false;
-      isContour = false;
-      isFirstContour = true;
-
-      // If the shape is closed, the first element was added as last element.
-      // We must remove it again to prevent the list of vertices from growing
-      // over successive calls to endShape(CLOSE)
-      if (closeShape) {
-        vertices.pop();
-      }
-    }
-    return this;
   };
 
   /**
@@ -1574,42 +1482,18 @@ function vertex(p5, fn){
    * @param  {Number} z3 z-coordinate of the anchor point.
    */
   fn.quadraticVertex = function(...args) {
-    p5._validateParameters('quadraticVertex', args);
-    if (this._renderer.isP3D) {
-      this._renderer.quadraticVertex(...args);
+    let x1, y1, z1, x2, y2, z2 = 0;
+    if (args.length === 4) {
+      [x1, y1, x2, y2] = args;
     } else {
-      //if we're drawing a contour, put the points into an
-      // array for inside drawing
-      if (this._contourInited) {
-        const pt = {};
-        pt.x = args[0];
-        pt.y = args[1];
-        pt.x3 = args[2];
-        pt.y3 = args[3];
-        pt.type = constants.QUADRATIC;
-        this._contourVertices.push(pt);
-
-        return this;
-      }
-      if (vertices.length > 0) {
-        isQuadratic = true;
-        const vert = [];
-        for (let i = 0; i < args.length; i++) {
-          vert[i] = args[i];
-        }
-        vert.isVert = false;
-        if (isContour) {
-          contourVertices.push(vert);
-        } else {
-          vertices.push(vert);
-        }
-      } else {
-        p5._friendlyError(
-          'vertex() must be used once before calling quadraticVertex()',
-          'quadraticVertex'
-        );
-      }
+      [x1, y1, z1, x2, y2, z2] = args;
     }
+    p5._validateParameters('quadraticVertex', args);
+    const prevOrder = this.bezierOrder();
+    this.bezierOrder(2);
+    this.bezierVertex(x1, y1, z1);
+    this.bezierVertex(x2, y2, z2);
+    this.bezierOrder(prevOrder);
     return this;
   };
 
