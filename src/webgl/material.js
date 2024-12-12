@@ -647,7 +647,11 @@ function material(p5, fn){
     `;
     let vertSrc = fragSrc.includes('#version 300 es') ? defaultVertV2 : defaultVertV1;
     const shader = new Shader(this._renderer, vertSrc, fragSrc);
-    shader.ensureCompiledOnContext(this);
+    if (this._renderer.GL) {
+      shader.ensureCompiledOnContext(this._renderer);
+    } else {
+      shader.ensureCompiledOnContext(this);
+    }
     return shader;
   };
 
