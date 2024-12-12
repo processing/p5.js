@@ -749,37 +749,19 @@ function pixels(p5, fn){
     if (this._renderer.isP3D) {
       this._renderer.filter(operation, value);
     }
-
+    
     // when this is P2D renderer, create/use hidden webgl renderer
-    else {
-      const filterGraphicsLayer = this.getFilterGraphicsLayer();
-      // copy p2d canvas contents to secondary webgl renderer
-      // dest
-      filterGraphicsLayer.copy(
-        // src
-        this._renderer,
-        // src coods
-        0, 0, this.width, this.height,
-        // dest coords
-        -this.width/2, -this.height/2, this.width, this.height
-      );
-      //clearing the main canvas
-      this._renderer.clear();
+    else {      
 
       this._renderer.resetMatrix();
-      // filter it with shaders
-      filterGraphicsLayer.filter(...args);
 
-      // copy secondary webgl renderer back to original p2d canvas
-      this.copy(
-        // src
-        filterGraphicsLayer._renderer,
-        // src coods
-        0, 0, this.width, this.height,
-        // dest coords
-        0, 0, this.width, this.height
-      );
-      filterGraphicsLayer.clear(); // prevent feedback effects on p2d canvas
+      if (shader) {
+        this._renderer.filterRenderer.setOperation(operation, value, shader);
+      } else {
+        this._renderer.filterRenderer.setOperation(operation, value);
+      }
+      
+      this._renderer.filterRenderer.applyFilter();
     }
   };
 
