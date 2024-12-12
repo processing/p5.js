@@ -63,7 +63,73 @@ class Color {
     }
   }
 
-  // TODO: memoize map/unmap methods
+  constructor(vals, colorMode) {
+    // This changes with the color object
+    this.mode = colorMode || RGB;
+
+    if(vals instanceof Color){
+      // Received Color object to be used for color mode conversion
+      const mode = colorMode ?
+        Color.colorMap[colorMode] :
+        Color.colorMap[vals.mode];
+      this._color = toGamut(vals._color, mode);
+      this.mode = mode;
+
+    }else if (typeof vals === 'object' && !Array.isArray(vals) && vals !== null){
+      // Received color.js object to be used internally
+      const mode = colorMode ?
+        Color.colorMap[colorMode] :
+        vals.spaceId;
+      this._color = toGamut(vals, mode);
+      this.mode = colorMode || Object.entries(Color.colorMap).find(([key, val]) => {
+          return val === this._color.spaceId;
+        });
+
+    } else if(typeof vals[0] === 'string') {
+      // Received string
+      try{
+        this._color = parse(vals[0]);
+        const [mode] = Object.entries(Color.colorMap).find(([key, val]) => {
+          return val === this._color.spaceId;
+        });
+        this.mode = mode;
+        this._color = to(this._color, this._color.spaceId);
+      }catch(err){
+        // TODO: Invalid color string
+        console.error('Invalid color string');
+      }
+
+    }else{
+      // Received individual channel values
+      let alpha;
+
+      if(vals.length === 4){
+        alpha = vals.pop();
+      }else if (vals.length === 2){
+        alpha = vals[1];
+        vals = [vals[0], vals[0], vals[0]];
+      }else if(vals.length === 1){
+        vals = [vals[0], vals[0], vals[0]];
+      }
+      const alphaMaxes = Array.isArray(Color.colorMaxes[this.mode][3]) ?
+        Color.colorMaxes[this.mode][3] :
+        [0, Color.colorMaxes[this.mode][3]];
+      alpha = alpha !== undefined ?
+        map(alpha, alphaMaxes[0], alphaMaxes[1], 0, 1)
+        : 1;
+
+      const space = Color.colorMap[this.mode] || console.error('Invalid color mode');
+      const coords = this.#mapColorRange(vals);
+
+      const color = {
+        space,
+        coords,
+        alpha
+      };
+      this._color = toGamut(color, space);
+    }
+  }
+
   // Convert from p5 color range to color.js color range
   #mapColorRange(origin){
     const p5Maxes = Color.colorMaxes[this.mode].map((max) => {
@@ -100,58 +166,7 @@ class Color {
 
   // Will do conversion in-Gamut as out of Gamut conversion is only really useful for futher conversions
   #toColorMode(mode){
-
-  }
-
-  constructor(vals, colorMode=RGB) {
-    // This changes with the color object
-    this.mode = colorMode;
-
-    if (typeof vals === 'object' && !Array.isArray(vals) && vals !== null){
-      this._color = vals;
-      this.mode = vals.mode;
-
-    } else if(typeof vals[0] === 'string') {
-      try{
-        this._color = parse(vals[0]);
-        const [mode] = Object.entries(Color.colorMap).find(([key, val]) => {
-          return val === this._color.spaceId;
-        });
-        this.mode = mode;
-        this._color = to(this._color, this._color.spaceId);
-      }catch(err){
-        // TODO: Invalid color string
-        console.error('Invalid color string');
-      }
-
-    }else{
-      let alpha;
-
-      if(vals.length === 4){
-        alpha = vals.pop();
-      }else if (vals.length === 2){
-        alpha = vals[1];
-        vals = [vals[0], vals[0], vals[0]];
-      }else if(vals.length === 1){
-        vals = [vals[0], vals[0], vals[0]];
-      }
-      const alphaMaxes = Array.isArray(Color.colorMaxes[this.mode][3]) ?
-        Color.colorMaxes[this.mode][3] :
-        [0, Color.colorMaxes[this.mode][3]];
-      alpha = alpha !== undefined ?
-        map(alpha, alphaMaxes[0], alphaMaxes[1], 0, 1)
-        : 1;
-
-      const space = Color.colorMap[this.mode] || console.error('Invalid color mode');
-      const coords = this.#mapColorRange(vals);
-
-      const color = {
-        space,
-        coords,
-        alpha
-      };
-      this._color = toGamut(color, space);
-    }
+    return new Color(this._color, mode);
   }
 
   // Get raw coordinates of underlying library, can differ between libraries
