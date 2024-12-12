@@ -170,6 +170,12 @@ class FilterRenderer2D {
     this._shader.setUniform('radius', Math.max(1, this.filterParameter));
     this._shader.setUniform('filterParameter', this.filterParameter);
 
+    this.pInst.states.rectMode = constants.CORNER;
+    this.pInst.states.imageMode = constants.CORNER;
+    this.pInst.blendMode(constants.BLEND);
+    this.pInst.resetMatrix();
+
+
     const identityMatrix = [1, 0, 0, 0,
                             0, 1, 0, 0,
                             0, 0, 1, 0,
@@ -188,6 +194,7 @@ class FilterRenderer2D {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     // Unbind the shader
     this._shader.unbindShader();
+    
   }
 
   /**
@@ -217,8 +224,13 @@ class FilterRenderer2D {
       this.pInst.drawingContext.drawImage(this.canvas, 0, 0, this.pInst.width, this.pInst.height);
     } else {
       // Single-pass filters
+
       this._renderPass();
       this.pInst.clear();
+      // con
+      this.pInst.blendMode(constants.BLEND);
+
+      
       this.pInst.drawingContext.drawImage(this.canvas, 0, 0, this.pInst.width, this.pInst.height);
     }
   }

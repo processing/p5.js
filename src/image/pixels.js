@@ -752,6 +752,9 @@ function pixels(p5, fn){
     
     // when this is P2D renderer, create/use hidden webgl renderer
     else {      
+
+      this._renderer.resetMatrix();
+
       if (shader) {
         this._renderer.filterRenderer.setOperation(operation, value, shader);
       } else {
