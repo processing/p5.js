@@ -999,6 +999,12 @@ class PrimitiveVisitor {
 // requires testing
 class PrimitiveToPath2DConverter extends PrimitiveVisitor {
   path = new Path2D();
+  strokeWeight;
+
+  constructor({ strokeWeight }) {
+    super()
+    this.strokeWeight = strokeWeight;
+  }
 
   // path primitives
   visitAnchor(anchor) {
@@ -1056,6 +1062,67 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
     for (const array of bezierArrays) {
       const points = array.flatMap((vert) => [vert.position.x, vert.position.y]);
       this.path.bezierCurveTo(...points);
+    }
+  }
+  visitPoint(point) {
+    const { x, y } = point.getStartVertex().position;
+    this.path.arc(x, y, this.strokeWeight / 2, 0, constants.TWO_PI, false);
+  }
+  visitLine(line) {
+    const { x: x0, y: y0 } = line.getStartVertex().position;
+    const { x: x1, y: y1 } = line.getEndVertex().position;
+    this.path.moveTo(x0, y0);
+    this.path.lineTo(x1, y1);
+  }
+  visitTriangle(triangle) {
+    const [v0, v1, v2] = triangle.vertices;
+    this.path.moveTo(v0.position.x, v0.position.y);
+    this.path.lineTo(v1.position.x, v1.position.y);
+    this.path.lineTo(v2.position.x, v2.position.y);
+    this.path.close();
+  }
+  visitQuad(quad) {
+    const [v0, v1, v2, v3] = quad.vertices;
+    this.path.moveTo(v0.position.x, v0.position.y);
+    this.path.lineTo(v1.position.x, v1.position.y);
+    this.path.lineTo(v2.position.x, v2.position.y);
+    this.path.lineTo(v3.position.x, v3.position.y);
+    this.path.close();
+  }
+  visitTriangleFan(triangleFan) {
+    const [v0, ...rest] = triangleFan.vertices;
+    for (let i = 0; i < rest.length - 1; i++) {
+      const v1 = rest[i];
+      const v2 = rest[i + 1];
+      this.path.moveTo(v0.position.x, v0.position.y);
+      this.path.lineTo(v1.position.x, v1.position.y);
+      this.path.lineTo(v2.position.x, v2.position.y);
+      this.path.close();
+    }
+  }
+  visitTriangleStrip(triangleStrip) {
+    for (let i = 0; i < triangleStrip.vertices.length - 2; i++) {
+      const v0 = triangleStrip.vertices[i];
+      const v1 = triangleStrip.vertices[i + 1];
+      const v2 = triangleStrip.vertices[i + 2];
+      this.path.moveTo(v0.position.x, v0.position.y);
+      this.path.lineTo(v1.position.x, v1.position.y);
+      this.path.lineTo(v2.position.x, v2.position.y);
+      this.path.close();
+    }
+  }
+  visitQuadStrip(quadStrip) {
+    for (let i = 0; i < quadStrip.vertices.length - 2; i++) {
+      const v0 = quadStrip.vertices[i];
+      const v1 = quadStrip.vertices[i + 1];
+      const v2 = quadStrip.vertices[i + 2];
+      const v3 = quadStrip.vertices[i + 3];
+      this.path.moveTo(v0.position.x, v0.position.y);
+      this.path.lineTo(v1.position.x, v1.position.y);
+      // These are intentionally out of order to go around the contour
+      this.path.lineTo(v3.position.x, v3.position.y);
+      this.path.lineTo(v2.position.x, v2.position.y);
+      this.path.close();
     }
   }
 }

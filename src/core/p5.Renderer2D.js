@@ -254,7 +254,7 @@ class Renderer2D extends Renderer {
   }
 
   drawShape(shape) {
-    const visitor = new PrimitiveToPath2DConverter();
+    const visitor = new PrimitiveToPath2DConverter({ strokeWeight: this.states.strokeWeight });
     shape.accept(visitor);
     if (this.states.fillColor) {
       this.drawingContext.fill(visitor.path);
