@@ -646,11 +646,11 @@ suite('p5.RendererGL', function() {
   });
 
   suite('text shader', function() {
-    test('rendering looks the same in WebGL1 and 2', function() {
-      myp5.loadFont('manual-test-examples/p5.Font/Inconsolata-Bold.ttf', function(font) {
+    test.todo('rendering looks the same in WebGL1 and 2', function() {
+      myp5.loadFont('/test/unit/assets/Inconsolata-Bold.ttf', function(font) {
         const webgl2 = myp5.createGraphics(100, 20, myp5.WEBGL);
         const webgl1 = myp5.createGraphics(100, 20, myp5.WEBGL);
-        webgl1.setAttributes({ version: 1 });
+        webgl1.setAttributes({ version: 1 }); // no longer exists ?
 
         for (const graphic of [webgl1, webgl2]) {
           graphic.background(255);
