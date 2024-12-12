@@ -7,6 +7,7 @@
  */
 
 import * as constants from '../core/constants';
+import { RGB, RGBHDR, HSL, HSB, HWB, LAB, LCH, OKLAB, OKLCH } from './creating_reading';
 
 function setting(p5, fn){
   /**
@@ -944,14 +945,23 @@ function setting(p5, fn){
    * @param {Number} max3     range for the blue or brightness/lightness
    *                              depending on the current color mode.
    * @param {Number} [maxA]   range for the alpha.
-   * @chainable
+   *
+   * @return {String}      The current color mode.
    */
   fn.colorMode = function(mode, max1, max2, max3, maxA) {
     p5._validateParameters('colorMode', arguments);
     if (
-      mode === constants.RGB ||
-      mode === constants.HSB ||
-      mode === constants.HSL
+      [
+        RGB,
+        RGBHDR,
+        HSB,
+        HSL,
+        HWB,
+        LAB,
+        LCH,
+        OKLAB,
+        OKLCH
+      ].includes(mode)
     ) {
       // Set color mode.
       this._colorMode = mode;
@@ -975,7 +985,7 @@ function setting(p5, fn){
       }
     }
 
-    return this;
+    return this._colorMode;
   };
 
   /**

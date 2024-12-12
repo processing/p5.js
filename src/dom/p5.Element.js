@@ -1215,16 +1215,7 @@ class Element {
     const self = this;
 
     if (val instanceof Color) {
-      val =
-        'rgba(' +
-        val.levels[0] +
-        ',' +
-        val.levels[1] +
-        ',' +
-        val.levels[2] +
-        ',' +
-        val.levels[3] / 255 +
-        ')';
+      val = val.toString();
     }
 
     if (typeof val === 'undefined') {
