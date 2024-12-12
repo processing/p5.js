@@ -17,7 +17,8 @@ export default defineWorkspace([
       name: 'unit',
       root: './',
       include: [
-        './test/unit/**/*.js'
+        './test/unit/**/*.js',
+        './test/bench/**/*.js'
       ],
       exclude: [
         './test/unit/spec.js',
