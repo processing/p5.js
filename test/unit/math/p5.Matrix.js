@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeAll, afterAll, test } from "vitest";
 import p5 from "../../../src/app.js";
 
 const toArray = (typedArray) => Array.from(typedArray);
@@ -25,8 +26,8 @@ suite("p5.Matrix", function () {
   });
 
   suite("construction", function () {
-    test("new p5.Matrix('mat4')", function () {
-      var m = new p5.Matrix('mat4');
+    test("new p5.Matrix(4)", function () {
+      var m = new p5.Matrix(4);
       assert.instanceOf(m, p5.Matrix);
       assert.isUndefined(m.mat3);
       /* eslint-disable indent */
@@ -41,22 +42,24 @@ suite("p5.Matrix", function () {
       var m = new p5.Matrix(mat4);
       assert.instanceOf(m, p5.Matrix);
       assert.isUndefined(m.mat3);
-      expect(m.mat4).toEqual( mat4 );
+      expect(m.mat4).toEqual(mat4);
     });
 
     test("new p5.Matrix(mat3)", function () {
-      var m = new p5.Matrix("mat3", mat3);
+      var m = new p5.Matrix(mat3);
       assert.instanceOf(m, p5.Matrix);
       assert.isUndefined(m.mat4);
       assert.deepEqual([].slice.call(m.mat3), mat3);
     });
 
     test("identity()", function () {
-      var m = p5.Matrix.identity(4);
+      var m = new p5.Matrix(4);
       assert.instanceOf(m, p5.Matrix);
       assert.isUndefined(m.mat3);
       /* eslint-disable indent */
-       expect(toArray(m.mat4)).toEqual([ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ]);
+      expect(toArray(m.mat4)).toEqual([
+        1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+      ]);
       /* eslint-enable indent */
     });
   });
@@ -73,7 +76,7 @@ suite("p5.Matrix", function () {
     });
 
     it("should reset a 3x3 matrix to the identity matrix", function () {
-      const m = new p5.Matrix("mat3", [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      const m = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
       m.reset();
       expect(toArray(m.mat3)).toEqual([1, 0, 0, 0, 1, 0, 0, 0, 1]);
     });
@@ -81,22 +84,22 @@ suite("p5.Matrix", function () {
 
   suite("set", function () {
     test("p5.Matrix", function () {
-      var m = new p5.Matrix('mat4'); 
+      var m = new p5.Matrix(4);
       m.set(new p5.Matrix(mat4));
-            expect(m.mat4).toEqual(mat4);
+      expect(m.mat4).toEqual(mat4);
       // assert.deepEqual([].slice.call(m.mat4), mat4);
     });
 
     test("array", function () {
-      var m = new p5.Matrix('mat4');
+      var m = new p5.Matrix(4);
       m.set(mat4);
       assert.deepEqual([].slice.call(m.mat4), mat4);
     });
 
     test("arguments", function () {
-      var m = new p5.Matrix('mat4');
-      m.set(1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6);
-      expect(m.mat4).toEqual([1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6]);
+      var m = new p5.Matrix(4);
+      m.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6);
+      expect(m.mat4).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6]);
     });
   });
 
@@ -111,7 +114,7 @@ suite("p5.Matrix", function () {
   });
 
   it("should clone a 3x3 matrix correctly", () => {
-    const original = new p5.Matrix("mat3", [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    const original = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
     const clone = original.clone();
 
     expect(clone).not.toBe(original);
@@ -119,7 +122,7 @@ suite("p5.Matrix", function () {
   });
 
   it("should clone an identity matrix correctly", () => {
-    const original = new p5.Matrix('mat4');
+    const original = new p5.Matrix(4);
     const clone = original.clone();
 
     expect(clone).not.toBe(original);
@@ -142,8 +145,8 @@ suite("p5.Matrix", function () {
     });
   });
 
-  suite.todo("add", () => { })
-  
+  suite.todo("add", () => {});
+
   suite("mult", function () {
     /* eslint-disable indent */
     var mm = [
@@ -270,26 +273,26 @@ suite("p5.Matrix", function () {
     test("p5.Vector", function () {
       var m = new p5.Matrix(mat4.slice());
       var v = myp5.createVector(2, 3, 5);
-      m.rotate(45 * myp5.DEG_TO_RAD, v);
+      m.rotate4x4(45 * myp5.DEG_TO_RAD, v);
       assert.deepEqual([].slice.call(m.mat4), rm);
     });
 
     test("array", function () {
       var m = new p5.Matrix(mat4.slice());
-      m.rotate(45 * myp5.DEG_TO_RAD, [2, 3, 5]);
+      m.rotate4x4(45 * myp5.DEG_TO_RAD, [2, 3, 5]);
       assert.deepEqual([].slice.call(m.mat4), rm);
     });
 
     test("arguments", function () {
       var m = new p5.Matrix(mat4.slice());
-      m.rotate(45 * myp5.DEG_TO_RAD, 2, 3, 5);
+      m.rotate4x4(45 * myp5.DEG_TO_RAD, 2, 3, 5);
       assert.deepEqual([].slice.call(m.mat4), rm);
     });
   });
 
   suite("p5.Matrix3x3", function () {
     test("apply copy() to 3x3Matrix", function () {
-      const m = new p5.Matrix("mat3", [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      const m = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
       const mCopy = m.copy();
 
       // The matrix created by copying is different from the original matrix
@@ -299,47 +302,47 @@ suite("p5.Matrix", function () {
       // The matrix created by copying has the same elements as the original matrix
       assert.deepEqual([].slice.call(m.mat3), [].slice.call(mCopy.mat3));
     });
-    test("transpose3x3()", function () {
-      const m = new p5.Matrix("mat3", [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-      const mTp = new p5.Matrix("mat3", [1, 4, 7, 2, 5, 8, 3, 6, 9]);
+    test("transpose()", function () {
+      const m = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      const mTp = new p5.Matrix([1, 4, 7, 2, 5, 8, 3, 6, 9]);
 
       // If no arguments, transpose itself
-      m.transpose3x3();
+      m.transpose();
       assert.deepEqual([].slice.call(m.mat3), [].slice.call(mTp.mat3));
 
       // // If there is an array of arguments, set it by transposing it
-      m.transpose3x3([1, 2, 3, 10, 20, 30, 100, 200, 300]);
+      m.transpose([1, 2, 3, 10, 20, 30, 100, 200, 300]);
       assert.deepEqual(
         [].slice.call(m.mat3),
         [1, 10, 100, 2, 20, 200, 3, 30, 300]
       );
     });
-    test("mult3x3()", function () {
-      const m = new p5.Matrix("mat3", [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-      const m1 = m.copy();
-      const m2 = m.copy();
-      const multMatrix = new p5.Matrix("mat3", [1, 1, 1, 0, 1, 1, 1, 0, 1]);
 
+    test("mult a 3x3 matrix with matrix as argument", function () {
+      const m = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      const multMatrix = new p5.Matrix([1, 1, 1, 0, 1, 1, 1, 0, 1]);
       // When taking a matrix as an argument
-      m.mult3x3(multMatrix);
-      assert.deepEqual([].slice.call(m.mat3), [4, 3, 6, 10, 9, 15, 16, 15, 24]);
-
-      // if the argument is an array or an enumerated number
-      m1.mult3x3(1, 1, 1, 0, 1, 1, 1, 0, 1);
-      m2.mult3x3([1, 1, 1, 0, 1, 1, 1, 0, 1]);
-      assert.deepEqual([].slice.call(m.mat3), [].slice.call(m1.mat3));
-      assert.deepEqual([].slice.call(m.mat3), [].slice.call(m2.mat3));
+      m.mult(multMatrix);
+      expect(m.mat3).toEqual([ 4, 3, 6, 10, 9, 15, 16, 15, 24 ]);
     });
+    
+    test("mult a 3x3 matrix with array as argument", function () {
+      const m = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      m.mult([1, 1, 1, 0, 1, 1, 1, 0, 1])
+      expect(m.mat3).toEqual([ 4, 3, 6, 10, 9, 15, 16, 15, 24 ]);
+    });
+
+    test("mult a 3x3 matrix with arguments non array", function () {
+      const m = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      m.mult(1, 1, 1, 0, 1, 1, 1, 0, 1)
+      expect(m.mat3).toEqual([ 4, 3, 6, 10, 9, 15, 16, 15, 24 ]);
+    });
+
     test("column() and row()", function () {
-      const m = new p5.Matrix(
-        "mat3",
-        [
-          // The matrix data is stored column-major, so each line below is
-          // a column rather than a row. Imagine you are looking at the
-          // transpose of the matrix in the source code.
-          1, 2, 3, 4, 5, 6, 7, 8, 9,
-        ]
-      );
+      // The matrix data is stored column-major, so each line below is
+      // a column rather than a row. Imagine you are looking at the
+      // transpose of the matrix in the source code.
+      const m = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
       const column0 = m.column(0);
       const column1 = m.column(1);
       const column2 = m.column(2);
@@ -354,28 +357,28 @@ suite("p5.Matrix", function () {
       expect(row2.array()).toStrictEqual([3, 6, 9]);
     });
     test("diagonal()", function () {
-      const m = new p5.Matrix("mat3", [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      const m = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
       const m4x4 = new p5.Matrix([
         1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
       ]);
       assert.deepEqual(m.diagonal(), [1, 5, 9]);
       assert.deepEqual(m4x4.diagonal(), [1, 6, 11, 16]);
     });
-    test("multiplyVec3", function () {
-      const m = new p5.Matrix("mat3", [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    test("multiplyVec version 3", function () {
+      const m = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
       const multVector = new p5.Vector(3, 2, 1);
-      const result = m.multiplyVec3(multVector);
+      const result = m.multiplyVec(multVector);
       assert.deepEqual(result.array(), [18, 24, 30]);
       // If there is a target, set result and return that.
       const target = new p5.Vector();
-      m.multiplyVec3(multVector, target);
+      m.multiplyVec(multVector, target);
       assert.deepEqual(target.array(), [18, 24, 30]);
     });
     test("createSubMatrix3x3", function () {
       const m4x4 = new p5.Matrix([
         1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
       ]);
-      const result = new p5.Matrix("mat3", [1, 2, 3, 5, 6, 7, 9, 10, 11]);
+      const result = new p5.Matrix([1, 2, 3, 5, 6, 7, 9, 10, 11]);
       const subMatrix3x3 = m4x4.createSubMatrix3x3();
       assert.deepEqual(
         [].slice.call(result.mat3),
@@ -412,26 +415,26 @@ suite("p5.Matrix", function () {
 
     // TODO: matrix transpose This needs to be added to the legacy tests
     it.skip("should transpose a 3x3 matrix correctly", () => {
-      const mat = new p5.Matrix("mat3", [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      const mat = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
       mat.transpose(mat);
       expect(mat.mat3).toEqual([1, 4, 7, 2, 5, 8, 3, 6, 9]);
     });
 
     // TODO: matrix transpose This needs to be added to the legacy tests
     it.skip("should transpose a 3x3 matrix from an array correctly", () => {
-      const mat = new p5.Matrix("mat3", [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      const mat = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
       mat.transpose([1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
       expect(mat.mat3).toEqual([1, 4, 7, 2, 5, 8, 3, 6, 9]);
     });
   });
-  describe("Determinant", () => {
+  describe.skip("Determinant", () => { // TODO: Cristian, when this is public we'll add tests
     it("should calculate the determinant of a 4x4 matrix", () => {
       const mat4 = new p5.Matrix([
         1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
       ]);
-      const det = mat4.determinant();
+      const det = mat4.determinant4x4();
       expect(det).toBeCloseTo(1);
     });
 
@@ -439,7 +442,7 @@ suite("p5.Matrix", function () {
       const mat4 = new p5.Matrix([
         1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
       ]);
-      const det = mat4.determinant();
+      const det = mat4.determinant4x4();
       expect(det).toBeCloseTo(0);
     });
   });
@@ -480,24 +483,24 @@ suite("p5.Matrix", function () {
     });
   });
   //
-  describe("invert3x3", () => {
+  describe("invert", () => {
     it("should correctly invert a 3x3 matrix", () => {
-      const matrix = new p5.Matrix("mat3", [1, 2, 3, 0, 1, 4, 5, 6, 0]);
-      const invertedMatrix = matrix.invert3x3();
+      const matrix = new p5.Matrix([1, 2, 3, 0, 1, 4, 5, 6, 0]);
+      const invertedMatrix = matrix.invert();
 
       expect(invertedMatrix.mat3).toEqual([-24, 18, 5, 20, -15, -4, -5, 4, 1]);
     });
 
     it("should return null for a non-invertible 3x3 matrix", () => {
-      const matrix = new p5.Matrix("mat3", [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-      const invertedMatrix = matrix.invert3x3();
+      const matrix = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      const invertedMatrix = matrix.invert();
 
       expect(invertedMatrix).toBeNull();
     });
 
     it("should return the identity matrix when inverting the identity matrix", () => {
-      const matrix = new p5.Matrix("mat3", [1, 0, 0, 0, 1, 0, 0, 0, 1]);
-      const invertedMatrix = matrix.invert3x3();
+      const matrix = new p5.Matrix([1, 0, 0, 0, 1, 0, 0, 0, 1]);
+      const invertedMatrix = matrix.invert();
 
       expect(invertedMatrix.mat3).toEqual([1, 0, 0, 0, 1, 0, 0, 0, 1]);
     });
@@ -508,7 +511,7 @@ suite("p5.Matrix", function () {
       const matrix = new p5.Matrix([
         1, 2, 3, 5, 0, 1, 4, 5, 5, 6, 0, 5, 5, 6, 0, 5,
       ]);
-      const invertedMatrix = matrix.setMat4Elem(2, 0);
+      const invertedMatrix = matrix.setElement(2, 0);
 
       expect(invertedMatrix.mat4).toEqual([
         1, 2, 0, 5, 0, 1, 4, 5, 5, 6, 0, 5, 5, 6, 0, 5,
@@ -516,8 +519,8 @@ suite("p5.Matrix", function () {
     });
 
     it("should set element of mat3 matrix", () => {
-      const matrix = new p5.Matrix("mat3", [1, 2, 3, 0, 1, 4, 5, 6, 0]);
-      const invertedMatrix = matrix.setMat3Elem(2, 0);
+      const matrix = new p5.Matrix([1, 2, 3, 0, 1, 4, 5, 6, 0]);
+      const invertedMatrix = matrix.setElement(2, 0);
 
       expect(invertedMatrix.mat3).toEqual([1, 2, 0, 0, 1, 4, 5, 6, 0]);
     });

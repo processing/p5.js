@@ -51,7 +51,7 @@ export class MatrixNumjs extends MatrixInterface{
     // This is default behavior when object
     super(...args)
 
-    if (args[0] === "mat3") {
+    if (args[0] === 3) {
       this._mat3 = Array.isArray(args[1]) ? nj.array(args[1]) : nj.identity(3);
     } else {
       this._mat4 = Array.isArray(args[0]) ? nj.array(args[0]) : nj.identity(4);
@@ -123,19 +123,13 @@ export class MatrixNumjs extends MatrixInterface{
     return this;
   }
 
-  setMat3Elem(index, value) {
+  setElement(index, value) {
     if (this._mat3) {
       this._mat3.set(index, value);
     }
     return this;
   }
 
-  setMat4Elem(index, value) {
-    if (this._mat4) {
-      this._mat4.set(index, value);
-    }
-    return this;
-  }
 
   /**
    * Gets a copy of the vector, returns a MatrixNumjs object.
@@ -156,7 +150,7 @@ export class MatrixNumjs extends MatrixInterface{
    */
   copy() {
     if (this._mat3 !== undefined) {
-      const copied3x3 = new MatrixNumjs("mat3", this._mat3.tolist());
+      const copied3x3 = new MatrixNumjs(3, this._mat3.tolist());
       copied3x3._mat3 = copied3x3._mat3.flatten();
       return copied3x3;
     }
@@ -198,7 +192,7 @@ export class MatrixNumjs extends MatrixInterface{
       }
     } else if (isMatrixArray(a)) {
       if (a.length === 9) {
-        let temp3 = new MatrixNumjs("mat3", a);
+        let temp3 = new MatrixNumjs(3, a);
         this._mat3 = nj.array(temp3.mat3).reshape(3, 3).transpose().flatten();
       } else if (a.length === 16) {
         let temp4 = new MatrixNumjs(a);
@@ -345,7 +339,7 @@ export class MatrixNumjs extends MatrixInterface{
       mat3 = this._mat3;
       this._mat3 = this._mat3.reshape(3, 3).transpose().flatten();
     } else {
-      const temp = new MatrixNumjs("mat3", mat3);
+      const temp = new MatrixNumjs(3, mat3);
       temp._mat3 = temp._mat3.reshape(3, 3).transpose().flatten();
       this._mat3 = temp._mat3;
     }
@@ -826,7 +820,7 @@ export class MatrixNumjs extends MatrixInterface{
     } else if (isMatrixArray(multMatrix)) {
       multMatrix._mat3 = nj.array(arguments);
     } else if (arguments.length === 9) {
-      tempMatrix = new MatrixNumjs("mat3", Array.from(arguments));
+      tempMatrix = new MatrixNumjs(3, Array.from(arguments));
     } else {
       return; // nothing to do.
     }
@@ -909,7 +903,7 @@ export class MatrixNumjs extends MatrixInterface{
    * @return {MatrixNumjs}
    */
   createSubMatrix3x3() {
-    const result = new MatrixNumjs("mat3");
+    const result = new MatrixNumjs(3);
     result._mat3 = result._mat3.flatten();
     result._mat3.set(0, this._mat4.get(0));
     result._mat3.set(1, this._mat4.get(1));
