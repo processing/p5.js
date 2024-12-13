@@ -201,10 +201,6 @@ class Contour {
 class Anchor extends ShapePrimitive {
   #vertexCapacity = 1;
 
-  constructor(...vertices) {
-    super(...vertices);
-  }
-
   get vertexCapacity() {
     return this.#vertexCapacity;
   }
@@ -246,10 +242,6 @@ class Segment extends ShapePrimitive {
 
 class LineSegment extends Segment {
   #vertexCapacity = 1;
-
-  constructor(...vertices) {
-    super(...vertices);
-  }
 
   get vertexCapacity() {
     return this.#vertexCapacity;
@@ -313,10 +305,6 @@ class SplineSegment extends Segment {
   #vertexCapacity = Infinity;
   _splineEnds = constants.SHOW;
   _splineTightness = 0;
-
-  constructor(...vertices) {
-    super(...vertices);
-  }
 
   get vertexCapacity() {
     return this.#vertexCapacity;
