@@ -50,9 +50,8 @@ import math from './math';
 math(p5);
 
 // typography
-import './typography/attributes';
-import './typography/loading_displaying';
-import './typography/p5.Font';
+import type from './type'
+type(p5);
 
 // utilities
 import utilities from './utilities';

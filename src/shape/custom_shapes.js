@@ -7,40 +7,19 @@
  */
 
 // REMINDER: remove .js extension (currently using it to run file locally)
-import * as constants from '../core/constants.js';
+import { Color } from '../color/p5.Color';
+import { Vector } from '../math/p5.Vector';
+import * as constants from '../core/constants';
 
 // ---- UTILITY FUNCTIONS ----
+function polylineLength(vertices) {
+  let length = 0
+  for (let i = 1; i < vertices.length; i++) {
+    length += vertices[i-1].position.dist(vertices[i].position);
+  }
+  return length;
+}
 
-/*
-catmullRomToBezier(vertices, tightness)
-
-Abbreviated description:
-Converts a Catmull-Rom spline to a sequence of Bezier curves.
-
-Parameters:
-vertices -> Array [x1, y1, x2, y2, ...] of at least four vertices
-tightness -> Number affecting shape of curve
-
-Returns:
-array of Bezier curves, each represented as [x1, y1, x2, y2, x3, y3]
-*/
-
-/*
-TODO:
-1. It seems p5 contains code for converting from Catmull-Rom to Bezier in at least two places:
-
-catmullRomToBezier() is based on code in the legacy endShape() function:
-https://github.com/processing/p5.js/blob/1b66f097761d3c2057c0cec4349247d6125f93ca/src/core/p5.Renderer2D.js#L859C1-L886C1
-
-A different conversion can be found elsewhere in p5:
-https://github.com/processing/p5.js/blob/17304ce9e9ef3f967bd828102a51b62a2d39d4f4/src/typography/p5.Font.js#L1179
-
-A more careful review and comparison of both implementations would be helpful. They're different. I put
-catmullRomToBezier() together quickly without checking the math/algorithm, when I made the proof of concept
-for the refactor.
-
-2. It may be possible to replace the code in p5.Font.js with the code here, to reduce duplication.
-*/
 function catmullRomToBezier(vertices, tightness) {
   let X0, Y0, X1, Y1, X2, Y2, X3, Y3;
   let s = 1 - tightness;
@@ -88,6 +67,10 @@ class Vertex {
 
 class ShapePrimitive {
   vertices;
+  _shape = null;
+  _primitivesIndex = null;
+  _contoursIndex = null;
+  isClosing = false;
 
   constructor(...vertices) {
     if (this.constructor === ShapePrimitive) {
@@ -109,6 +92,14 @@ class ShapePrimitive {
     throw new Error('Getter vertexCapacity must be implemented.');
   }
 
+  get _firstInterpolatedVertex() {
+    return this.startVertex();
+  }
+
+  get canOverrideAnchor() {
+    return false;
+  }
+
   accept(visitor) {
     throw new Error('Method accept() must be implemented.');
   }
@@ -124,32 +115,65 @@ class ShapePrimitive {
 
     if (lastContour.primitives.length === 0) {
       lastContour.primitives.push(this);
-      return;
-    }
+    } else {
+      // last primitive in shape
+      let lastPrimitive = shape.at(-1, -1);
+      let hasSameType = lastPrimitive instanceof this.constructor;
+      let spareCapacity = lastPrimitive.vertexCapacity -
+                          lastPrimitive.vertexCount;
 
-    // last primitive in shape
-    let lastPrimitive = shape.at(-1, -1);
-    let hasSameType = lastPrimitive instanceof this.constructor;
-    let spareCapacity = lastPrimitive.vertexCapacity -
-                        lastPrimitive.vertexCount;
+      // this primitive
+      let pushableVertices;
+      let remainingVertices;
 
-    // this primitive
-    let pushableVertices;
-    let remainingVertices;
+      if (hasSameType && spareCapacity > 0) {
 
-    if (hasSameType && spareCapacity > 0) {
+        pushableVertices = this.vertices.splice(0, spareCapacity);
+        remainingVertices = this.vertices;
+        lastPrimitive.vertices.push(...pushableVertices);
 
-      pushableVertices = this.vertices.splice(0, spareCapacity);
-      remainingVertices = this.vertices;
-      lastPrimitive.vertices.push(...pushableVertices);
-
-      if (remainingVertices.length > 0) {
+        if (remainingVertices.length > 0) {
+          lastContour.primitives.push(this);
+        }
+      }
+      else {
         lastContour.primitives.push(this);
       }
     }
-    else {
-      lastContour.primitives.push(this);
+
+    // if primitive itself was added
+    // (i.e. its individual vertices weren't all added to an existing primitive)
+    // give it a reference to the shape and store its location within the shape
+    if (this.shouldAddToShape) {
+      let lastContour = shape.at(-1);
+      this._primitivesIndex = lastContour.primitives.length - 1;
+      this._contoursIndex = shape.contours.length - 1;
+      this._shape = shape;
     }
+
+    return shape.at(-1, -1);
+  }
+
+  get shouldAddToShape() {
+    return false;
+  }
+
+  get _nextPrimitive() {
+    return this._belongsToShape ?
+      this._shape.at(this._contoursIndex, this._primitivesIndex + 1) :
+      null;
+  }
+
+  get _belongsToShape() {
+    return this._shape !== null;
+  }
+
+  handlesClose() {
+    return false;
+  }
+
+  close(vertex) {
+    throw new Error('Unimplemented!');
   }
 }
 
@@ -188,6 +212,10 @@ class Anchor extends ShapePrimitive {
     return this.#vertexCapacity;
   }
 
+  get shouldAddToShape() {
+    return true;
+  }
+
   accept(visitor) {
     visitor.visitAnchor(this);
   }
@@ -199,10 +227,6 @@ class Anchor extends ShapePrimitive {
 
 // abstract class
 class Segment extends ShapePrimitive {
-  _primitivesIndex = null;
-  _contoursIndex = null;
-  _shape = null;
-
   constructor(...vertices) {
     super(...vertices);
     if (this.constructor === Segment) {
@@ -210,22 +234,8 @@ class Segment extends ShapePrimitive {
     }
   }
 
-  addToShape(shape) {
-    super.addToShape(shape);
-
-    // if primitive itself was added
-    // (i.e. its individual vertices weren't all added to an existing primitive)
-    // give it a reference to the shape and store its location within the shape
-    if (this.vertices.length > 0) {
-      let lastContour = shape.at(-1);
-      this._primitivesIndex = lastContour.primitives.length - 1;
-      this._contoursIndex = shape.contours.length - 1;
-      this._shape = shape;
-    }
-  }
-
-  get _belongsToShape() {
-    return this._shape !== null;
+  get shouldAddToShape() {
+    return this.vertices.length > 0;
   }
 
   // segments in a shape always have a predecessor
@@ -285,6 +295,14 @@ class BezierSegment extends Segment {
     return this.#vertexCapacity;
   }
 
+  #_hullLength;
+  hullLength() {
+    if (this.#_hullLength === undefined) {
+      this.#_hullLength = polylineLength([this.getStartVertex(), ...this.vertices]);
+    }
+    return this.#_hullLength;
+  }
+
   accept(visitor) {
     visitor.visitBezierSegment(this);
   }
@@ -301,6 +319,8 @@ to interpolated endpoints (a breaking change)
 */
 class SplineSegment extends Segment {
   #vertexCapacity = Infinity;
+  _splineEnds = constants.SHOW;
+  _splineTightness = 0;
 
   constructor(...vertices) {
     super(...vertices);
@@ -318,14 +338,22 @@ class SplineSegment extends Segment {
     return this._previousPrimitive instanceof Segment;
   }
 
+  get canOverrideAnchor() {
+    return this._splineEnds === constants.HIDE;
+  }
+
   // assuming for now that the first interpolated vertex is always
   // the second vertex passed to splineVertex()
   // if this spline segment doesn't follow another segment,
   // the first vertex is in an anchor
   get _firstInterpolatedVertex() {
-    return this._comesAfterSegment ?
-      this.vertices[1] :
-      this.vertices[0];
+    if (this._splineEnds === constants.HIDE) {
+      return this._comesAfterSegment ?
+        this.vertices[1] :
+        this.vertices[0];
+    } else {
+      return this.vertices[0];
+    }
   }
 
   get _chainedToSegment() {
@@ -342,17 +370,23 @@ class SplineSegment extends Segment {
   // extend addToShape() with a warning in case second vertex
   // doesn't line up with end of last segment
   addToShape(shape) {
-    super.addToShape(shape);
+    const added = super.addToShape(shape);
+    this._splineEnds = shape._splineEnds;
+    this._splineTightness = shape._splineTightness;
+
+    if (this._splineEnds !== constants.HIDE) return added;
 
     let verticesPushed = !this._belongsToShape;
     let lastPrimitive = shape.at(-1, -1);
 
     let message = (array1, array2) =>
-      `Spline does not start where previous path segment ends: 
+      `Spline does not start where previous path segment ends:
       second spline vertex at (${array1})
       expected to be at (${array2}).`;
 
     if (verticesPushed &&
+      // Only check once the first interpolated vertex has been added
+      lastPrimitive.vertices.length === 2 &&
       lastPrimitive._comesAfterSegment &&
       !lastPrimitive._chainedToSegment
     ) {
@@ -371,11 +405,54 @@ class SplineSegment extends Segment {
     // and the check wouldn't be needed yet.
 
     // TODO: Consider case where positions match but other vertex properties don't.
+    return added;
   }
 
   // override method on base class
   getEndVertex() {
-    return this.vertices.at(-2);
+    if (this._splineEnds === constants.SHOW) {
+      return super.getEndVertex()
+    } else if (this._splineEnds === constants.HIDE) {
+      return this.vertices.at(-2);
+    } else {
+      return this.getStartVertex();
+    }
+  }
+
+  getControlPoints() {
+    let points = [];
+
+    if (this._comesAfterSegment) {
+      points.push(this.getStartVertex());
+    }
+
+    for (const vertex of this.vertices) {
+      points.push(vertex);
+    }
+
+    const prevVertex = this.getStartVertex()
+    if (this._splineEnds === constants.SHOW) {
+      points.unshift(prevVertex);
+      points.push(this.vertices.at(-1));
+    } else if (this._splineEnds === constants.JOIN) {
+      points.unshift(this.vertices.at(-1), prevVertex);
+      points.push(prevVertex, this.vertices.at(0));
+    }
+
+    return points;
+  }
+
+  handlesClose() {
+    if (!this._belongsToShape) return false;
+
+    // Only handle closing if the spline is the only thing in its contour after
+    // the anchor
+    const contour = this._shape.at(this._contoursIndex);
+    return contour.primitives.length === 2 && this._primitivesIndex === 1;
+  }
+
+  close() {
+    this._splineEnds = constants.JOIN;
   }
 }
 
@@ -507,6 +584,8 @@ class Shape {
   _splineTightness = 0;
   kind = null;
   contours = [];
+  _splineEnds = constants.SHOW;
+  userVertexProperties = null;
 
   constructor(
     vertexProperties,
@@ -523,6 +602,156 @@ class Shape {
         };
       }
     }
+  }
+
+  serializeToArray(val) {
+    if (val instanceof Number) {
+      return [val];
+    } else if (val instanceof Array) {
+      return val;
+    } else if (val.array instanceof Function) {
+      return val.array();
+    } else {
+      throw new Error(`Can't convert ${val} to array!`);
+    }
+  }
+
+  vertexToArray(vertex) {
+    const array = [];
+    for (const key in this.#vertexProperties) {
+      if (this.userVertexProperties && key in this.userVertexProperties) continue;
+      const val = vertex[key];
+      array.push(...this.serializeToArray(val));
+    }
+    for (const key in this.userVertexProperties) {
+      if (key in vertex) {
+        array.push(...this.serializeToArray(vertex[key]));
+      } else {
+        array.push(...new Array(this.userVertexProperties[key]).fill(0));
+      }
+    }
+    return array;
+  }
+
+  hydrateValue(queue, original) {
+    if (original instanceof Number) {
+      return queue.shift();
+    } else if (original instanceof Array) {
+      const array = [];
+      for (let i = 0; i < original.length; i++) {
+        array.push(queue.shift());
+      }
+      return array;
+    } else if (original instanceof Vector) {
+      return new Vector(queue.shift(), queue.shift(), queue.shift());
+    } else if (original instanceof Color) {
+      const array = [queue.shift(), queue.shift(), queue.shift(), queue.shift()];
+      return new Color(
+        array.map((v, i) => v * original.maxes[original.mode][i]),
+        original.mode,
+        original.maxes
+      );
+    }
+  }
+
+  arrayToVertex(array) {
+    const vertex = {};
+    const queue = [...array];
+
+    for (const key in this.#vertexProperties) {
+      if (this.userVertexProperties && key in this.userVertexProperties) continue;
+      const original = this.#vertexProperties[key];
+      vertex[key] = this.hydrateValue(queue, original);
+    }
+    for (const key in this.userVertexProperties) {
+      const original = this.#vertexProperties[key];
+      vertex[key] = this.hydrateValue(queue, original);
+    }
+    return vertex;
+  }
+
+  arrayScale(array, scale) {
+    return array.map((v) => v * scale);
+  }
+
+  arraySum(first, ...rest) {
+    return first.map((v, i) => {
+      let result = v;
+      for (let j = 0; j < rest.length; j++) {
+        result += rest[j][i];
+      }
+      return result;
+    });
+  }
+
+  arrayMinus(a, b) {
+    return a.map((v, i) => v - b[i]);
+  }
+
+  evaluateCubicBezier([a, b, c, d], t) {
+    return this.arraySum(
+      this.arrayScale(a, Math.pow(1 - t, 3)),
+      this.arrayScale(b, 3 * Math.pow(1 - t, 2) * t),
+      this.arrayScale(c, 3 * (1 - t) * Math.pow(t, 2)),
+      this.arrayScale(d, Math.pow(t, 3)),
+    );
+  }
+
+  evaluateQuadraticBezier([a, b, c], t) {
+    return this.arraySum(
+      this.arrayScale(a, Math.pow(1 - t, 2)),
+      this.arrayScale(b, 2 * (1 - t) * t),
+      this.arrayScale(c, t * t),
+    );
+  }
+
+  /*
+  catmullRomToBezier(vertices, tightness)
+
+  Abbreviated description:
+  Converts a Catmull-Rom spline to a sequence of Bezier curveTo points.
+
+  Parameters:
+  vertices -> Array [v0, v1, v2, v3, ...] of at least four vertices
+  tightness -> Number affecting shape of curve
+
+  Returns:
+  array of Bezier curveTo control points, each represented as [c1, c2, c3][]
+
+  TODO:
+  1. It seems p5 contains code for converting from Catmull-Rom to Bezier in at least two places:
+
+  catmullRomToBezier() is based on code in the legacy endShape() function:
+  https://github.com/processing/p5.js/blob/1b66f097761d3c2057c0cec4349247d6125f93ca/src/core/p5.Renderer2D.js#L859C1-L886C1
+
+  A different conversion can be found elsewhere in p5:
+  https://github.com/processing/p5.js/blob/17304ce9e9ef3f967bd828102a51b62a2d39d4f4/src/typography/p5.Font.js#L1179
+
+  A more careful review and comparison of both implementations would be helpful. They're different. I put
+  catmullRomToBezier() together quickly without checking the math/algorithm, when I made the proof of concept
+  for the refactor.
+
+  2. It may be possible to replace the code in p5.Font.js with the code here, to reduce duplication.
+  */
+  catmullRomToBezier(vertices, tightness) {
+    let s = 1 - tightness;
+    let bezArrays = [];
+
+    for (let i = 0; i + 3 < vertices.length; i++) {
+      const [a, b, c, d] = vertices.slice(i, i + 4);
+      const bezB = this.arraySum(
+        b,
+        this.arrayScale(this.arrayMinus(c, a), s / 6)
+      );
+      const bezC = this.arraySum(
+        c,
+        this.arrayScale(this.arrayMinus(b, d), s / 6)
+      );
+      const bezD = c;
+
+      bezArrays.push([bezB, bezC, bezD]);
+    }
+    return bezArrays;
   }
 
   // TODO for at() method:
@@ -562,6 +791,22 @@ class Shape {
     this.#vertexProperties = { ...this.#initialVertexProperties };
     this.kind = null;
     this.contours = [];
+    this.userVertexProperties = null;
+  }
+
+  vertexProperty(name, data) {
+    this.userVertexProperties = this.userVertexProperties || {};
+    const key = this.vertexPropertyKey(name);
+    if (!this.userVertexProperties[key]) {
+      this.userVertexProperties[key] = data.length ? data.length : 1;
+    }
+    this.#vertexProperties[key] = data;
+  }
+  vertexPropertyName(key) {
+    return key.replace(/Src$/, '');
+  }
+  vertexPropertyKey(name) {
+    return name + 'Src';
   }
 
   /*
@@ -572,6 +817,10 @@ class Shape {
 
   bezierOrder(...order) {
     this.#bezierOrder = order;
+  }
+
+  splineEnds(mode) {
+    this._splineEnds = mode;
   }
 
   splineTightness(tightness) {
@@ -620,11 +869,12 @@ class Shape {
       vertex
     );
 
-    primitiveShape.addToShape(this);
+    return primitiveShape.addToShape(this);
   }
 
-  vertex(position, textureCoordinates) {
-    this.#generalVertex('vertex', position, textureCoordinates);
+  vertex(position, textureCoordinates, { isClosing = false } = {}) {
+    const added = this.#generalVertex('vertex', position, textureCoordinates);
+    added.isClosing = isClosing;
   }
 
   bezierVertex(position, textureCoordinates) {
@@ -639,9 +889,43 @@ class Shape {
     this.#generalVertex('arcVertex', position, textureCoordinates);
   }
 
+  beginContour(shapeKind = constants.PATH) {
+    if (this.at(-1)?.kind === constants.EMPTY_PATH) {
+      this.contours.pop();
+    }
+    this.contours.push(new Contour(shapeKind));
+  }
+
+  endContour(closeMode = constants.OPEN, _index = -1) {
+    const contour = this.at(_index);
+    if (closeMode === constants.CLOSE) {
+      // shape characteristics
+      const isPath = contour.kind === constants.PATH;
+
+      // anchor characteristics
+      const anchorVertex = this.at(_index, 0, 0);
+      const anchorHasPosition = Object.hasOwn(anchorVertex, 'position');
+      const lastSegment = this.at(_index, -1);
+
+      // close path
+      if (isPath && anchorHasPosition) {
+        if (lastSegment.handlesClose()) {
+          lastSegment.close(anchorVertex);
+        } else {
+          // Temporarily remove contours after the current one so that we add to the original
+          // contour again
+          const rest = this.contours.splice(_index + 1, this.contours.length - _index - 1);
+          this.vertex(anchorVertex.position, anchorVertex.textureCoordinates, { isClosing: true });
+          this.contours.push(...rest);
+        }
+      }
+    }
+  }
+
   beginShape(shapeKind = constants.PATH) {
     this.kind = shapeKind;
-    this.contours.push(new Contour(shapeKind));
+    // Implicitly start a contour
+    this.beginContour(shapeKind);
   }
   /* TO-DO:
      Refactor?
@@ -651,24 +935,9 @@ class Shape {
   */
   endShape(closeMode = constants.OPEN) {
     if (closeMode === constants.CLOSE) {
-      // shape characteristics
-      const shapeIsPath = this.kind === constants.PATH;
-      const shapeHasOneContour = this.contours.length === 1;
-
-      // anchor characteristics
-      const anchorVertex = this.at(0, 0, 0);
-      const anchorHasPosition = Object.hasOwn(anchorVertex, 'position');
-      const anchorHasTextureCoordinates = Object.hasOwn(anchorVertex, 'textureCoordinates');
-
-      // close path
-      if (shapeIsPath && shapeHasOneContour && anchorHasPosition) {
-        if (anchorHasTextureCoordinates) {
-          this.vertex(anchorVertex.position, anchorVertex.textureCoordinates);
-        }
-        else {
-          this.vertex(anchorVertex.position);
-        }
-      }
+      // Close the first contour, the one implicitly used for shape data
+      // added without an explicit contour
+      this.endContour(closeMode, 0);
     }
   }
 
@@ -734,6 +1003,12 @@ class PrimitiveVisitor {
 // requires testing
 class PrimitiveToPath2DConverter extends PrimitiveVisitor {
   path = new Path2D();
+  strokeWeight;
+
+  constructor({ strokeWeight }) {
+    super()
+    this.strokeWeight = strokeWeight;
+  }
 
   // path primitives
   visitAnchor(anchor) {
@@ -741,8 +1016,14 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
     this.path.moveTo(vertex.position.x, vertex.position.y);
   }
   visitLineSegment(lineSegment) {
-    let vertex = lineSegment.getEndVertex();
-    this.path.lineTo(vertex.position.x, vertex.position.y);
+    if (lineSegment.isClosing) {
+      // The same as lineTo, but it adds a stroke join between this
+      // and the starting vertex rather than having two caps
+      this.path.closePath();
+    } else {
+      let vertex = lineSegment.getEndVertex();
+      this.path.lineTo(vertex.position.x, vertex.position.y);
+    }
   }
   visitBezierSegment(bezierSegment) {
     let [v1, v2, v3] = bezierSegment.vertices;
@@ -769,27 +1050,95 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
     }
   }
   visitSplineSegment(splineSegment) {
-    let shape = splineSegment._shape;
-    let flatVertices = [];
+    const shape = splineSegment._shape;
 
-    for (const vertex of splineSegment.vertices) {
-      flatVertices.push(vertex.position.x, vertex.position.y);
-    }
-
-    if (!splineSegment._comesAfterSegment) {
+    if (
+      splineSegment._splineEnds === constants.HIDE &&
+      !splineSegment._comesAfterSegment
+    ) {
       let startVertex = splineSegment._firstInterpolatedVertex;
       this.path.moveTo(startVertex.position.x, startVertex.position.y);
     }
 
-    let bezierArrays = catmullRomToBezier(flatVertices, shape._splineTightness);
+    const arrayVertices = splineSegment.getControlPoints().map((v) => shape.vertexToArray(v));
+    let bezierArrays = shape.catmullRomToBezier(arrayVertices, splineSegment._splineTightness)
+      .map((arr) => arr.map((vertArr) => shape.arrayToVertex(vertArr)));
     for (const array of bezierArrays) {
-      this.path.bezierCurveTo(...array);
+      const points = array.flatMap((vert) => [vert.position.x, vert.position.y]);
+      this.path.bezierCurveTo(...points);
+    }
+  }
+  visitPoint(point) {
+    const { x, y } = point.getStartVertex().position;
+    this.path.arc(x, y, this.strokeWeight / 2, 0, constants.TWO_PI, false);
+  }
+  visitLine(line) {
+    const { x: x0, y: y0 } = line.getStartVertex().position;
+    const { x: x1, y: y1 } = line.getEndVertex().position;
+    this.path.moveTo(x0, y0);
+    this.path.lineTo(x1, y1);
+  }
+  visitTriangle(triangle) {
+    const [v0, v1, v2] = triangle.vertices;
+    this.path.moveTo(v0.position.x, v0.position.y);
+    this.path.lineTo(v1.position.x, v1.position.y);
+    this.path.lineTo(v2.position.x, v2.position.y);
+    this.path.close();
+  }
+  visitQuad(quad) {
+    const [v0, v1, v2, v3] = quad.vertices;
+    this.path.moveTo(v0.position.x, v0.position.y);
+    this.path.lineTo(v1.position.x, v1.position.y);
+    this.path.lineTo(v2.position.x, v2.position.y);
+    this.path.lineTo(v3.position.x, v3.position.y);
+    this.path.close();
+  }
+  visitTriangleFan(triangleFan) {
+    const [v0, ...rest] = triangleFan.vertices;
+    for (let i = 0; i < rest.length - 1; i++) {
+      const v1 = rest[i];
+      const v2 = rest[i + 1];
+      this.path.moveTo(v0.position.x, v0.position.y);
+      this.path.lineTo(v1.position.x, v1.position.y);
+      this.path.lineTo(v2.position.x, v2.position.y);
+      this.path.close();
+    }
+  }
+  visitTriangleStrip(triangleStrip) {
+    for (let i = 0; i < triangleStrip.vertices.length - 2; i++) {
+      const v0 = triangleStrip.vertices[i];
+      const v1 = triangleStrip.vertices[i + 1];
+      const v2 = triangleStrip.vertices[i + 2];
+      this.path.moveTo(v0.position.x, v0.position.y);
+      this.path.lineTo(v1.position.x, v1.position.y);
+      this.path.lineTo(v2.position.x, v2.position.y);
+      this.path.close();
+    }
+  }
+  visitQuadStrip(quadStrip) {
+    for (let i = 0; i < quadStrip.vertices.length - 2; i++) {
+      const v0 = quadStrip.vertices[i];
+      const v1 = quadStrip.vertices[i + 1];
+      const v2 = quadStrip.vertices[i + 2];
+      const v3 = quadStrip.vertices[i + 3];
+      this.path.moveTo(v0.position.x, v0.position.y);
+      this.path.lineTo(v1.position.x, v1.position.y);
+      // These are intentionally out of order to go around the contour
+      this.path.lineTo(v3.position.x, v3.position.y);
+      this.path.lineTo(v2.position.x, v2.position.y);
+      this.path.close();
     }
   }
 }
 
 class PrimitiveToVerticesConverter extends PrimitiveVisitor {
   contours = [];
+  curveDetail;
+
+  constructor({ curveDetail = 1 } = {}) {
+    super();
+    this.curveDetail = curveDetail;
+  }
 
   lastContour() {
     return this.contours[this.contours.length - 1];
@@ -797,10 +1146,76 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
 
   visitAnchor(anchor) {
     this.contours.push([]);
-    this.lastContour().push(anchor.getEndVertex());
+    // Weird edge case: if the next segment is a spline, we might
+    // need to jump to a different vertex.
+    const next = anchor._nextPrimitive;
+    if (next?.canOverrideAnchor) {
+      this.lastContour().push(next._firstInterpolatedVertex);
+    } else {
+      this.lastContour().push(anchor.getEndVertex());
+    }
   }
   visitLineSegment(lineSegment) {
     this.lastContour().push(lineSegment.getEndVertex());
+  }
+  visitBezierSegment(bezierSegment) {
+    const contour = this.lastContour();
+    const numPoints = Math.max(1, Math.ceil(bezierSegment.hullLength() * this.curveDetail));
+    const vertexArrays = [
+      bezierSegment.getStartVertex(),
+      ...bezierSegment.vertices
+    ].map((v) => bezierSegment._shape.vertexToArray(v));
+    for (let i = 0; i < numPoints; i++) {
+      const t = (i + 1) / numPoints;
+      contour.push(
+        bezierSegment._shape.arrayToVertex(
+          bezierSegment.order === 3
+            ? bezierSegment._shape.evaluateCubicBezier(vertexArrays, t)
+            : bezierSegment._shape.evaluateQuadraticBezier(vertexArrays, t)
+        )
+      )
+    }
+  }
+  visitSplineSegment(splineSegment) {
+    const shape = splineSegment._shape;
+    const contour = this.lastContour();
+
+    const arrayVertices = splineSegment.getControlPoints().map((v) => shape.vertexToArray(v));
+    let bezierArrays = shape.catmullRomToBezier(arrayVertices, splineSegment._splineTightness)
+    let startVertex = shape.vertexToArray(splineSegment.getStartVertex());
+    for (const array of bezierArrays) {
+      const bezierControls = [startVertex, ...array];
+      const numPoints = Math.max(1, Math.ceil(polylineLength(bezierControls.map(v => shape.arrayToVertex(v))) * this.curveDetail));
+      for (let i = 0; i < numPoints; i++) {
+        const t = (i + 1) / numPoints;
+        contour.push(shape.arrayToVertex(shape.evaluateCubicBezier(bezierControls, t)));
+      }
+      startVertex = array[2];
+    }
+  }
+  visitPoint(point) {
+    this.contours.push(point.vertices.slice());
+  }
+  visitLine(line) {
+    this.contours.push(line.vertices.slice());
+  }
+  visitTriangle(triangle) {
+    this.contours.push(triangle.vertices.slice());
+  }
+  visitQuad(quad) {
+    this.contours.push(quad.vertices.slice());
+  }
+  visitTriangleFan(triangleFan) {
+    // WebGL itself interprets the vertices as a fan, no reformatting needed
+    this.contours.push(triangleFan.vertices.slice());
+  }
+  visitTriangleStrip(triangleStrip) {
+    // WebGL itself interprets the vertices as a strip, no reformatting needed
+    this.contours.push(triangleStrip.vertices.slice());
+  }
+  visitQuadStrip(quadStrip) {
+    // WebGL itself interprets the vertices as a strip, no reformatting needed
+    this.contours.push(quadStrip.vertices.slice());
   }
 }
 
@@ -1110,18 +1525,246 @@ function customShapes(p5, fn) {
 
   // ---- FUNCTIONS ----
 
-  // Note: Code is commented out for now, to avoid conflicts with the existing implementation.
+  /**
+   * TODO: documentation
+   */
+  fn.bezierOrder = function(order) {
+    return this._renderer.bezierOrder(order);
+  };
 
   /**
-     * Top-line description
-     *
-     * More details...
-     */
+   * TODO: documentation
+   */
+  fn.splineVertex = function(...args) {
+    let x = 0, y = 0, z = 0, u = 0, v = 0;
+    if (args.length === 2) {
+      [x, y] = args;
+    } else if (args.length === 4) {
+      [x, y, u, v] = args;
+    } else if (args.length === 3) {
+      [x, y, z] = args;
+    } else if (args.length === 5) {
+      [x, y, z, u, v] = args;
+    }
+    this._renderer.splineVertex(x, y, z, u, v);
+  };
 
-  // fn.beginContour = function() {
-  //     // example of how to call an existing p5 function:
-  //     // this.background('yellow');
-  // };
+  /**
+   * TODO: documentation
+   * @param {SHOW|HIDE} mode
+   */
+  fn.splineEnds = function(mode) {
+    return this._renderer.splineEnds(mode);
+  };
+
+  /**
+   * Adds a vertex to a custom shape.
+   *
+   * `vertex()` sets the coordinates of vertices drawn between the
+   * <a href="#/p5/beginShape">beginShape()</a> and
+   * <a href="#/p5/endShape">endShape()</a> functions.
+   *
+   * The first two parameters, `x` and `y`, set the x- and y-coordinates of the
+   * vertex.
+   *
+   * The third parameter, `z`, is optional. It sets the z-coordinate of the
+   * vertex in WebGL mode. By default, `z` is 0.
+   *
+   * The fourth and fifth parameters, `u` and `v`, are also optional. They set
+   * the u- and v-coordinates for the vertex’s texture when used with
+   * <a href="#/p5/endShape">endShape()</a>. By default, `u` and `v` are both 0.
+   *
+   * @method vertex
+   * @param  {Number} x x-coordinate of the vertex.
+   * @param  {Number} y y-coordinate of the vertex.
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Style the shape.
+   *   strokeWeight(3);
+   *
+   *   // Start drawing the shape.
+   *   // Only draw the vertices.
+   *   beginShape(POINTS);
+   *
+   *   // Add the vertices.
+   *   vertex(30, 20);
+   *   vertex(85, 20);
+   *   vertex(85, 75);
+   *   vertex(30, 75);
+   *
+   *   // Stop drawing the shape.
+   *   endShape();
+   *
+   *   describe('Four black dots that form a square are drawn on a gray background.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Start drawing the shape.
+   *   beginShape();
+   *
+   *   // Add vertices.
+   *   vertex(30, 20);
+   *   vertex(85, 20);
+   *   vertex(85, 75);
+   *   vertex(30, 75);
+   *
+   *   // Stop drawing the shape.
+   *   endShape(CLOSE);
+   *
+   *   describe('A white square on a gray background.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   background(200);
+   *
+   *   // Start drawing the shape.
+   *   beginShape();
+   *
+   *   // Add vertices.
+   *   vertex(-20, -30, 0);
+   *   vertex(35, -30, 0);
+   *   vertex(35, 25, 0);
+   *   vertex(-20, 25, 0);
+   *
+   *   // Stop drawing the shape.
+   *   endShape(CLOSE);
+   *
+   *   describe('A white square on a gray background.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   describe('A white square spins around slowly on a gray background.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Rotate around the y-axis.
+   *   rotateY(frameCount * 0.01);
+   *
+   *   // Start drawing the shape.
+   *   beginShape();
+   *
+   *   // Add vertices.
+   *   vertex(-20, -30, 0);
+   *   vertex(35, -30, 0);
+   *   vertex(35, 25, 0);
+   *   vertex(-20, 25, 0);
+   *
+   *   // Stop drawing the shape.
+   *   endShape(CLOSE);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let img;
+   *
+   * // Load an image to apply as a texture.
+   * function preload() {
+   *   img = loadImage('assets/laDefense.jpg');
+   * }
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   describe('A photograph of a ceiling rotates slowly against a gray background.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Rotate around the y-axis.
+   *   rotateY(frameCount * 0.01);
+   *
+   *   // Style the shape.
+   *   noStroke();
+   *
+   *   // Apply the texture.
+   *   texture(img);
+   *   textureMode(NORMAL);
+   *
+   *   // Start drawing the shape
+   *   beginShape();
+   *
+   *   // Add vertices.
+   *   vertex(-20, -30, 0, 0, 0);
+   *   vertex(35, -30, 0, 1, 0);
+   *   vertex(35, 25, 0, 1, 1);
+   *   vertex(-20, 25, 0, 0, 1);
+   *
+   *   // Stop drawing the shape.
+   *   endShape();
+   * }
+   * </code>
+   * </div>
+   */
+  /**
+   * @method vertex
+   * @param  {Number} x
+   * @param  {Number} y
+   * @param  {Number} [z]   z-coordinate of the vertex. Defaults to 0.
+   */
+  /**
+   * @method vertex
+   * @param  {Number} x
+   * @param  {Number} y
+   * @param  {Number} [z]
+   * @param  {Number} [u]   u-coordinate of the vertex's texture. Defaults to 0.
+   * @param  {Number} [v]   v-coordinate of the vertex's texture. Defaults to 0.
+   */
+  fn.vertex = function(x, y) {
+    let z, u, v;
+
+    // default to (x, y) mode: all other arguments assumed to be 0.
+    z = u = v = 0;
+
+    if (arguments.length === 3) {
+      // (x, y, z) mode: (u, v) assumed to be 0.
+      z = arguments[2];
+    } else if (arguments.length === 4) {
+      // (x, y, u, v) mode: z assumed to be 0.
+      u = arguments[2];
+      v = arguments[3];
+    } else if (arguments.length === 5) {
+      // (x, y, z, u, v) mode
+      z = arguments[2];
+      u = arguments[3];
+      v = arguments[4];
+    }
+    this._renderer.vertex(x, y, z, u, v);
+    return;
+  }
+
+  // Note: Code is commented out for now, to avoid conflicts with the existing implementation.
 
   /**
      * Top-line description
@@ -1154,14 +1797,207 @@ function customShapes(p5, fn) {
   // };
 
   /**
-     * Top-line description
-     *
-     * More details...
-     */
+   * Begins creating a hole within a flat shape.
+   *
+   * The `beginContour()` and <a href="#/p5/endContour">endContour()</a>
+   * functions allow for creating negative space within custom shapes that are
+   * flat. `beginContour()` begins adding vertices to a negative space and
+   * <a href="#/p5/endContour">endContour()</a> stops adding them.
+   * `beginContour()` and <a href="#/p5/endContour">endContour()</a> must be
+   * called between <a href="#/p5/beginShape">beginShape()</a> and
+   * <a href="#/p5/endShape">endShape()</a>.
+   *
+   * Transformations such as <a href="#/p5/translate">translate()</a>,
+   * <a href="#/p5/rotate">rotate()</a>, and <a href="#/p5/scale">scale()</a>
+   * don't work between `beginContour()` and
+   * <a href="#/p5/endContour">endContour()</a>. It's also not possible to use
+   * other shapes, such as <a href="#/p5/ellipse">ellipse()</a> or
+   * <a href="#/p5/rect">rect()</a>, between `beginContour()` and
+   * <a href="#/p5/endContour">endContour()</a>.
+   *
+   * Note: The vertices that define a negative space must "wind" in the opposite
+   * direction from the outer shape. First, draw vertices for the outer shape
+   * clockwise order. Then, draw vertices for the negative space in
+   * counter-clockwise order.
+   *
+   * @method beginContour
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Start drawing the shape.
+   *   beginShape();
+   *
+   *   // Exterior vertices, clockwise winding.
+   *   vertex(10, 10);
+   *   vertex(90, 10);
+   *   vertex(90, 90);
+   *   vertex(10, 90);
+   *
+   *   // Interior vertices, counter-clockwise winding.
+   *   beginContour();
+   *   vertex(30, 30);
+   *   vertex(30, 70);
+   *   vertex(70, 70);
+   *   vertex(70, 30);
+   *   endContour();
+   *
+   *   // Stop drawing the shape.
+   *   endShape(CLOSE);
+   *
+   *   describe('A white square with a square hole in its center drawn on a gray background.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   describe('A white square with a square hole in its center drawn on a gray background.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Start drawing the shape.
+   *   beginShape();
+   *
+   *   // Exterior vertices, clockwise winding.
+   *   vertex(-40, -40);
+   *   vertex(40, -40);
+   *   vertex(40, 40);
+   *   vertex(-40, 40);
+   *
+   *   // Interior vertices, counter-clockwise winding.
+   *   beginContour();
+   *   vertex(-20, -20);
+   *   vertex(-20, 20);
+   *   vertex(20, 20);
+   *   vertex(20, -20);
+   *   endContour();
+   *
+   *   // Stop drawing the shape.
+   *   endShape(CLOSE);
+   * }
+   * </code>
+   * </div>
+   */
+  fn.beginContour = function(kind) {
+    this._renderer.beginContour(kind);
+  };
 
-  // fn.endContour = function() {
-
-  // };
+  /**
+   * Stops creating a hole within a flat shape.
+   *
+   * The <a href="#/p5/beginContour">beginContour()</a> and `endContour()`
+   * functions allow for creating negative space within custom shapes that are
+   * flat. <a href="#/p5/beginContour">beginContour()</a> begins adding vertices
+   * to a negative space and `endContour()` stops adding them.
+   * <a href="#/p5/beginContour">beginContour()</a> and `endContour()` must be
+   * called between <a href="#/p5/beginShape">beginShape()</a> and
+   * <a href="#/p5/endShape">endShape()</a>.
+   *
+   * Transformations such as <a href="#/p5/translate">translate()</a>,
+   * <a href="#/p5/rotate">rotate()</a>, and <a href="#/p5/scale">scale()</a>
+   * don't work between <a href="#/p5/beginContour">beginContour()</a> and
+   * `endContour()`. It's also not possible to use other shapes, such as
+   * <a href="#/p5/ellipse">ellipse()</a> or <a href="#/p5/rect">rect()</a>,
+   * between <a href="#/p5/beginContour">beginContour()</a> and `endContour()`.
+   *
+   * Note: The vertices that define a negative space must "wind" in the opposite
+   * direction from the outer shape. First, draw vertices for the outer shape
+   * clockwise order. Then, draw vertices for the negative space in
+   * counter-clockwise order.
+   *
+   * @method endContour
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Start drawing the shape.
+   *   beginShape();
+   *
+   *   // Exterior vertices, clockwise winding.
+   *   vertex(10, 10);
+   *   vertex(90, 10);
+   *   vertex(90, 90);
+   *   vertex(10, 90);
+   *
+   *   // Interior vertices, counter-clockwise winding.
+   *   beginContour();
+   *   vertex(30, 30);
+   *   vertex(30, 70);
+   *   vertex(70, 70);
+   *   vertex(70, 30);
+   *   endContour();
+   *
+   *   // Stop drawing the shape.
+   *   endShape(CLOSE);
+   *
+   *   describe('A white square with a square hole in its center drawn on a gray background.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   describe('A white square with a square hole in its center drawn on a gray background.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Start drawing the shape.
+   *   beginShape();
+   *
+   *   // Exterior vertices, clockwise winding.
+   *   vertex(-40, -40);
+   *   vertex(40, -40);
+   *   vertex(40, 40);
+   *   vertex(-40, 40);
+   *
+   *   // Interior vertices, counter-clockwise winding.
+   *   beginContour();
+   *   vertex(-20, -20);
+   *   vertex(-20, 20);
+   *   vertex(20, 20);
+   *   vertex(20, -20);
+   *   endContour();
+   *
+   *   // Stop drawing the shape.
+   *   endShape(CLOSE);
+   * }
+   * </code>
+   * </div>
+   */
+  fn.endContour = function(mode = constants.OPEN) {
+    this._renderer.endContour(mode);
+  };
 
   /**
      * Top-line description

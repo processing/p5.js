@@ -69,6 +69,8 @@ class Renderer2D extends Renderer {
 
     // Set and return p5.Element
     this.wrappedElt = new Element(this.elt, this._pInst);
+
+    this.clipPath = null;
   }
 
   remove(){
@@ -254,13 +256,17 @@ class Renderer2D extends Renderer {
   }
 
   drawShape(shape) {
-    const visitor = new PrimitiveToPath2DConverter();
+    const visitor = new PrimitiveToPath2DConverter({ strokeWeight: this.states.strokeWeight });
     shape.accept(visitor);
-    if (this.states.fillColor) {
-      this.drawingContext.fill(visitor.path);
-    }
-    if (this.states.strokeColor) {
-      this.drawingContext.stroke(visitor.path);
+    if (this._clipping) {
+      this.clipPath.addPath(visitor.path);
+    } else {
+      if (this.states.fillColor) {
+        this.drawingContext.fill(visitor.path);
+      }
+      if (this.states.strokeColor) {
+        this.drawingContext.stroke(visitor.path);
+      }
     }
   }
 
@@ -282,36 +288,37 @@ class Renderer2D extends Renderer {
     this.blendMode(constants.BLEND);
     this._cachedBlendMode = tempBlendMode;
 
+    // Since everything must be in one path, create a new single Path2D to chain all shapes onto.
     // Start a new path. Everything from here on out should become part of this
     // one path so that we can clip to the whole thing.
-    this.drawingContext.beginPath();
+    this.clipPath = new Path2D();
 
     if (this._clipInvert) {
       // Slight hack: draw a big rectangle over everything with reverse winding
       // order. This is hopefully large enough to cover most things.
-      this.drawingContext.moveTo(
+      this.clipPath.moveTo(
         -2 * this.width,
         -2 * this.height
       );
-      this.drawingContext.lineTo(
+      this.clipPath.lineTo(
         -2 * this.width,
         2 * this.height
       );
-      this.drawingContext.lineTo(
+      this.clipPath.lineTo(
         2 * this.width,
         2 * this.height
       );
-      this.drawingContext.lineTo(
+      this.clipPath.lineTo(
         2 * this.width,
         -2 * this.height
       );
-      this.drawingContext.closePath();
+      this.clipPath.closePath();
     }
   }
 
   endClip() {
-    this._doFillStrokeClose();
-    this.drawingContext.clip();
+    this.drawingContext.clip(this.clipPath);
+    this.clipPath = null;
 
     super.endClip();
 
@@ -666,7 +673,7 @@ class Renderer2D extends Renderer {
    *   start <= stop < start + TWO_PI
    */
   arc(x, y, w, h, start, stop, mode) {
-    const ctx = this.drawingContext;
+    const ctx = this.clipPa || this.drawingContext;
     const rx = w / 2.0;
     const ry = h / 2.0;
     const epsilon = 0.00001; // Smallest visible angle on displays up to 4K.
@@ -728,7 +735,7 @@ class Renderer2D extends Renderer {
   }
 
   ellipse(args) {
-    const ctx = this.drawingContext;
+    const ctx = this.clipPath || this.drawingContext;
     const doFill = !!this.states.fillColor,
       doStroke = this.states.strokeColor;
     const x = parseFloat(args[0]),
@@ -761,7 +768,7 @@ class Renderer2D extends Renderer {
   }
 
   line(x1, y1, x2, y2) {
-    const ctx = this.drawingContext;
+    const ctx = this.clipPath || this.drawingContext;
     if (!this.states.strokeColor) {
       return this;
     } else if (this._getStroke() === styleEmpty) {
@@ -775,7 +782,7 @@ class Renderer2D extends Renderer {
   }
 
   point(x, y) {
-    const ctx = this.drawingContext;
+    const ctx = this.clipPath || this.drawingContext;
     if (!this.states.strokeColor) {
       return this;
     } else if (this._getStroke() === styleEmpty) {
@@ -796,7 +803,7 @@ class Renderer2D extends Renderer {
   }
 
   quad(x1, y1, x2, y2, x3, y3, x4, y4) {
-    const ctx = this.drawingContext;
+    const ctx = this.clipPath || this.drawingContext;
     const doFill = !!this.states.fillColor,
       doStroke = this.states.strokeColor;
     if (doFill && !doStroke) {
@@ -832,7 +839,7 @@ class Renderer2D extends Renderer {
     let tr = args[5];
     let br = args[6];
     let bl = args[7];
-    const ctx = this.drawingContext;
+    const ctx = this.clipPath || this.drawingContext;
     const doFill = !!this.states.fillColor,
       doStroke = this.states.strokeColor;
     if (doFill && !doStroke) {
@@ -914,7 +921,7 @@ class Renderer2D extends Renderer {
 
 
   triangle(args) {
-    const ctx = this.drawingContext;
+    const ctx = this.clipPath || this.drawingContext;
     const doFill = !!this.states.fillColor,
       doStroke = this.states.strokeColor;
     const x1 = args[0],
@@ -945,270 +952,6 @@ class Renderer2D extends Renderer {
     }
   }
 
-  legacyEndShape(
-    mode,
-    vertices,
-    isCurve,
-    isBezier,
-    isQuadratic,
-    isContour,
-    shapeKind
-  ) {
-    if (vertices.length === 0) {
-      return this;
-    }
-    if (!this.states.strokeColor && !this.states.fillColor) {
-      return this;
-    }
-    const closeShape = mode === constants.CLOSE;
-    let v;
-    if (closeShape && !isContour) {
-      vertices.push(vertices[0]);
-    }
-    let i, j;
-    const numVerts = vertices.length;
-    if (isCurve && shapeKind === null) {
-      if (numVerts > 3) {
-        const b = [],
-          s = 1 - this._curveTightness;
-        if (!this._clipping) this.drawingContext.beginPath();
-        this.drawingContext.moveTo(vertices[1][0], vertices[1][1]);
-        for (i = 1; i + 2 < numVerts; i++) {
-          v = vertices[i];
-          b[0] = [v[0], v[1]];
-          b[1] = [
-            v[0] + (s * vertices[i + 1][0] - s * vertices[i - 1][0]) / 6,
-            v[1] + (s * vertices[i + 1][1] - s * vertices[i - 1][1]) / 6
-          ];
-          b[2] = [
-            vertices[i + 1][0] +
-            (s * vertices[i][0] - s * vertices[i + 2][0]) / 6,
-            vertices[i + 1][1] +
-            (s * vertices[i][1] - s * vertices[i + 2][1]) / 6
-          ];
-          b[3] = [vertices[i + 1][0], vertices[i + 1][1]];
-          this.drawingContext.bezierCurveTo(
-            b[1][0],
-            b[1][1],
-            b[2][0],
-            b[2][1],
-            b[3][0],
-            b[3][1]
-          );
-        }
-        if (closeShape) {
-          this.drawingContext.lineTo(vertices[i + 1][0], vertices[i + 1][1]);
-        }
-        this._doFillStrokeClose(closeShape);
-      }
-    } else if (
-      isBezier &&
-      shapeKind === null
-    ) {
-      if (!this._clipping) this.drawingContext.beginPath();
-      for (i = 0; i < numVerts; i++) {
-        if (vertices[i].isVert) {
-          if (vertices[i].moveTo) {
-            this.drawingContext.moveTo(vertices[i][0], vertices[i][1]);
-          } else {
-            this.drawingContext.lineTo(vertices[i][0], vertices[i][1]);
-          }
-        } else {
-          this.drawingContext.bezierCurveTo(
-            vertices[i][0],
-            vertices[i][1],
-            vertices[i][2],
-            vertices[i][3],
-            vertices[i][4],
-            vertices[i][5]
-          );
-        }
-      }
-      this._doFillStrokeClose(closeShape);
-    } else if (
-      isQuadratic &&
-      shapeKind === null
-    ) {
-      if (!this._clipping) this.drawingContext.beginPath();
-      for (i = 0; i < numVerts; i++) {
-        if (vertices[i].isVert) {
-          if (vertices[i].moveTo) {
-            this.drawingContext.moveTo(vertices[i][0], vertices[i][1]);
-          } else {
-            this.drawingContext.lineTo(vertices[i][0], vertices[i][1]);
-          }
-        } else {
-          this.drawingContext.quadraticCurveTo(
-            vertices[i][0],
-            vertices[i][1],
-            vertices[i][2],
-            vertices[i][3]
-          );
-        }
-      }
-      this._doFillStrokeClose(closeShape);
-    } else {
-      if (shapeKind === constants.POINTS) {
-        for (i = 0; i < numVerts; i++) {
-          v = vertices[i];
-          if (this.states.strokeColor) {
-            this._pInst.stroke(v[6]);
-          }
-          this._pInst.point(v[0], v[1]);
-        }
-      } else if (shapeKind === constants.LINES) {
-        for (i = 0; i + 1 < numVerts; i += 2) {
-          v = vertices[i];
-          if (this.states.strokeColor) {
-            this._pInst.stroke(vertices[i + 1][6]);
-          }
-          this._pInst.line(v[0], v[1], vertices[i + 1][0], vertices[i + 1][1]);
-        }
-      } else if (shapeKind === constants.TRIANGLES) {
-        for (i = 0; i + 2 < numVerts; i += 3) {
-          v = vertices[i];
-          if (!this._clipping) this.drawingContext.beginPath();
-          this.drawingContext.moveTo(v[0], v[1]);
-          this.drawingContext.lineTo(vertices[i + 1][0], vertices[i + 1][1]);
-          this.drawingContext.lineTo(vertices[i + 2][0], vertices[i + 2][1]);
-          this.drawingContext.closePath();
-          if (!this._clipping && this.states.fillColor) {
-            this._pInst.fill(vertices[i + 2][5]);
-            this.drawingContext.fill();
-          }
-          if (!this._clipping && this.states.strokeColor) {
-            this._pInst.stroke(vertices[i + 2][6]);
-            this.drawingContext.stroke();
-          }
-        }
-      } else if (shapeKind === constants.TRIANGLE_STRIP) {
-        for (i = 0; i + 1 < numVerts; i++) {
-          v = vertices[i];
-          if (!this._clipping) this.drawingContext.beginPath();
-          this.drawingContext.moveTo(vertices[i + 1][0], vertices[i + 1][1]);
-          this.drawingContext.lineTo(v[0], v[1]);
-          if (!this._clipping && this.states.strokeColor) {
-            this._pInst.stroke(vertices[i + 1][6]);
-          }
-          if (!this._clipping && this.states.fillColor) {
-            this._pInst.fill(vertices[i + 1][5]);
-          }
-          if (i + 2 < numVerts) {
-            this.drawingContext.lineTo(vertices[i + 2][0], vertices[i + 2][1]);
-            if (!this._clipping && this.states.strokeColor) {
-              this._pInst.stroke(vertices[i + 2][6]);
-            }
-            if (!this._clipping && this.states.fillColor) {
-              this._pInst.fill(vertices[i + 2][5]);
-            }
-          }
-          this._doFillStrokeClose(closeShape);
-        }
-      } else if (shapeKind === constants.TRIANGLE_FAN) {
-        if (numVerts > 2) {
-          // For performance reasons, try to batch as many of the
-          // fill and stroke calls as possible.
-          if (!this._clipping) this.drawingContext.beginPath();
-          for (i = 2; i < numVerts; i++) {
-            v = vertices[i];
-            this.drawingContext.moveTo(vertices[0][0], vertices[0][1]);
-            this.drawingContext.lineTo(vertices[i - 1][0], vertices[i - 1][1]);
-            this.drawingContext.lineTo(v[0], v[1]);
-            this.drawingContext.lineTo(vertices[0][0], vertices[0][1]);
-            // If the next colour is going to be different, stroke / fill now
-            if (i < numVerts - 1) {
-              if (
-                (this.states.fillColor && v[5] !== vertices[i + 1][5]) ||
-                (this.states.strokeColor && v[6] !== vertices[i + 1][6])
-              ) {
-                if (!this._clipping && this.states.fillColor) {
-                  this._pInst.fill(v[5]);
-                  this.drawingContext.fill();
-                  this._pInst.fill(vertices[i + 1][5]);
-                }
-                if (!this._clipping && this.states.strokeColor) {
-                  this._pInst.stroke(v[6]);
-                  this.drawingContext.stroke();
-                  this._pInst.stroke(vertices[i + 1][6]);
-                }
-                this.drawingContext.closePath();
-                if (!this._clipping) this.drawingContext.beginPath(); // Begin the next one
-              }
-            }
-          }
-          this._doFillStrokeClose(closeShape);
-        }
-      } else if (shapeKind === constants.QUADS) {
-        for (i = 0; i + 3 < numVerts; i += 4) {
-          v = vertices[i];
-          if (!this._clipping) this.drawingContext.beginPath();
-          this.drawingContext.moveTo(v[0], v[1]);
-          for (j = 1; j < 4; j++) {
-            this.drawingContext.lineTo(vertices[i + j][0], vertices[i + j][1]);
-          }
-          this.drawingContext.lineTo(v[0], v[1]);
-          if (!this._clipping && this.states.fillColor) {
-            this._pInst.fill(vertices[i + 3][5]);
-          }
-          if (!this._clipping && this.states.strokeColor) {
-            this._pInst.stroke(vertices[i + 3][6]);
-          }
-          this._doFillStrokeClose(closeShape);
-        }
-      } else if (shapeKind === constants.QUAD_STRIP) {
-        if (numVerts > 3) {
-          for (i = 0; i + 1 < numVerts; i += 2) {
-            v = vertices[i];
-            if (!this._clipping) this.drawingContext.beginPath();
-            if (i + 3 < numVerts) {
-              this.drawingContext.moveTo(
-                vertices[i + 2][0], vertices[i + 2][1]);
-              this.drawingContext.lineTo(v[0], v[1]);
-              this.drawingContext.lineTo(
-                vertices[i + 1][0], vertices[i + 1][1]);
-              this.drawingContext.lineTo(
-                vertices[i + 3][0], vertices[i + 3][1]);
-              if (!this._clipping && this.states.fillColor) {
-                this._pInst.fill(vertices[i + 3][5]);
-              }
-              if (!this._clipping && this.states.strokeColor) {
-                this._pInst.stroke(vertices[i + 3][6]);
-              }
-            } else {
-              this.drawingContext.moveTo(v[0], v[1]);
-              this.drawingContext.lineTo(
-                vertices[i + 1][0], vertices[i + 1][1]);
-            }
-            this._doFillStrokeClose(closeShape);
-          }
-        }
-      } else {
-        if (!this._clipping) this.drawingContext.beginPath();
-        this.drawingContext.moveTo(vertices[0][0], vertices[0][1]);
-        for (i = 1; i < numVerts; i++) {
-          v = vertices[i];
-          if (v.isVert) {
-            if (v.moveTo) {
-              if (closeShape) this.drawingContext.closePath();
-              this.drawingContext.moveTo(v[0], v[1]);
-            } else {
-              this.drawingContext.lineTo(v[0], v[1]);
-            }
-          }
-        }
-        this._doFillStrokeClose(closeShape);
-      }
-    }
-    isCurve = false;
-    isBezier = false;
-    isQuadratic = false;
-    isContour = false;
-    if (closeShape) {
-      vertices.pop();
-    }
-
-    return this;
-  }
   //////////////////////////////////////////////
   // SHAPE | Attributes
   //////////////////////////////////////////////
@@ -1292,22 +1035,6 @@ class Renderer2D extends Renderer {
     this._pInst.curveVertex(x4, y4);
     this._pInst.endShape();
     return this;
-  }
-
-  //////////////////////////////////////////////
-  // SHAPE | Vertex
-  //////////////////////////////////////////////
-
-  _doFillStrokeClose(closeShape) {
-    if (closeShape) {
-      this.drawingContext.closePath();
-    }
-    if (!this._clipping && this.states.fillColor) {
-      this.drawingContext.fill();
-    }
-    if (!this._clipping && this.states.strokeColor) {
-      this.drawingContext.stroke();
-    }
   }
 
   //////////////////////////////////////////////

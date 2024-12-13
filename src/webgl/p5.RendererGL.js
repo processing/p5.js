@@ -311,6 +311,8 @@ class RendererGL extends Renderer {
     this.states.userPointShader = undefined;
     this.states.userImageShader = undefined;
 
+    this.states.curveDetail = 1 / 4;
+
     // Used by beginShape/endShape functions to construct a p5.Geometry
     this.shapeBuilder = new ShapeBuilder(this);
 
@@ -360,16 +362,6 @@ class RendererGL extends Renderer {
 
     this._curveTightness = 6;
 
-    // lookUpTable for coefficients needed to be calculated for bezierVertex, same are used for curveVertex
-    this._lookUpTableBezier = [];
-    // lookUpTable for coefficients needed to be calculated for quadraticVertex
-    this._lookUpTableQuadratic = [];
-
-    // current curveDetail in the Bezier lookUpTable
-    this._lutBezierDetail = 0;
-    // current curveDetail in the Quadratic lookUpTable
-    this._lutQuadraticDetail = 0;
-
 
     this.fontInfos = {};
 
@@ -382,15 +374,16 @@ class RendererGL extends Renderer {
   //////////////////////////////////////////////
 
   /**
-    * Starts creating a new p5.Geometry. Subsequent shapes drawn will be added
-     * to the geometry and then returned when
-     * <a href="#/p5/endGeometry">endGeometry()</a> is called. One can also use
-     * <a href="#/p5/buildGeometry">buildGeometry()</a> to pass a function that
-     * draws shapes.
-     *
-     * If you need to draw complex shapes every frame which don't change over time,
-     * combining them upfront with `beginGeometry()` and `endGeometry()` and then
-     * drawing that will run faster than repeatedly drawing the individual pieces.
+   * Starts creating a new p5.Geometry. Subsequent shapes drawn will be added
+   * to the geometry and then returned when
+   * <a href="#/p5/endGeometry">endGeometry()</a> is called. One can also use
+   * <a href="#/p5/buildGeometry">buildGeometry()</a> to pass a function that
+   * draws shapes.
+   *
+   * If you need to draw complex shapes every frame which don't change over time,
+   * combining them upfront with `beginGeometry()` and `endGeometry()` and then
+   * drawing that will run faster than repeatedly drawing the individual pieces.
+   * @private
    */
   beginGeometry() {
     if (this.geometryBuilder) {
@@ -406,6 +399,7 @@ class RendererGL extends Renderer {
    * started using <a href="#/p5/beginGeometry">beginGeometry()</a>. One can also
    * use <a href="#/p5/buildGeometry">buildGeometry()</a> to pass a function that
    * draws shapes.
+   * @private
    *
    * @returns {p5.Geometry} The model that was built.
    */
@@ -452,8 +446,18 @@ class RendererGL extends Renderer {
     // this.shapeBuilder.beginShape(...args);
   }
 
+  curveDetail(d) {
+    if (d === undefined) {
+      return this.states.curveDetail;
+    } else {
+      this.states.curveDetail = d;
+    }
+  }
+
   drawShape(shape) {
-    const visitor = new PrimitiveToVerticesConverter();
+    const visitor = new PrimitiveToVerticesConverter({
+      curveDetail: this.states.curveDetail,
+    });
     shape.accept(visitor);
     this.shapeBuilder.constructFromContours(shape, visitor.contours);
 
@@ -463,10 +467,14 @@ class RendererGL extends Renderer {
         this.shapeBuilder.shapeMode
       );
     } else if (this.states.fillColor || this.states.strokeColor) {
-      this._drawGeometry(
-        this.shapeBuilder.geometry,
-        { mode: this.shapeBuilder.shapeMode, count: this.drawShapeCount }
-      );
+      if (this.shapeBuilder.shapeMode === constants.POINTS) {
+        this._drawPoints(this.shapeBuilder.geometry.vertices, this.buffers.point);
+      } else {
+        this._drawGeometry(
+          this.shapeBuilder.geometry,
+          { mode: this.shapeBuilder.shapeMode, count: this.drawShapeCount }
+        );
+      }
     }
     this.drawShapeCount = 1;
   }
@@ -507,16 +515,12 @@ class RendererGL extends Renderer {
     }
   }
 
-  beginContour(...args) {
-    this.shapeBuilder.beginContour(...args);
-  }
-
   legacyVertex(...args) {
     this.shapeBuilder.vertex(...args);
   }
 
   vertexProperty(...args) {
-    this.shapeBuilder.vertexProperty(...args);
+    this.currentShape.vertexProperty(...args);
   }
 
   normal(xorv, y, z) {
@@ -1041,10 +1045,18 @@ class RendererGL extends Renderer {
     this.states.curStrokeColor = this.states.strokeColor._array;
   }
 
-  vertexProperties() {
+  getCommonVertexProperties() {
     return {
-      ...super.vertexProperties(),
+      ...super.getCommonVertexProperties(),
+      stroke: this.states.strokeColor,
+      fill: this.states.fillColor,
       normal: this.states._currentNormal,
+    }
+  }
+
+  getSupportedIndividualVertexProperties() {
+    return {
+      textureCoordinates: true,
     }
   }
 

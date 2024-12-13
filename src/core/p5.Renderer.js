@@ -36,14 +36,25 @@ class Renderer {
       imageMode: constants.CORNER,
       rectMode: constants.CORNER,
       ellipseMode: constants.CENTER,
+
       textFont: 'sans-serif',
       textLeading: 15,
       leadingSet: false,
       textSize: 12,
       textAlign: constants.LEFT,
       textBaseline: constants.BASELINE,
-      textStyle: constants.NORMAL,
-      textWrap: constants.WORD
+      bezierOrder: 3,
+      splineEnds: constants.SHOW,
+
+      textWrap: constants.WORD,
+
+      // added v2.0
+      fontStyle: constants.NORMAL, // v1: textStyle
+      fontStretch: constants.NORMAL,
+      fontWeight: constants.NORMAL,
+      lineHeight: constants.NORMAL,
+      fontVariant: constants.NORMAL,
+      direction: 'inherit'
     };
     this._pushPopStack = [];
     // NOTE: can use the length of the push pop stack instead
@@ -53,7 +64,7 @@ class Renderer {
     this._clipInvert = false;
     this._curveTightness = 0;
 
-    this.currentShape = new Shape(this.vertexProperties());
+    this.currentShape = new Shape(this.getCommonVertexProperties());
   }
 
   remove() {
@@ -97,6 +108,49 @@ class Renderer {
     this._pushPopDepth--;
     Object.assign(this.states, this._pushPopStack.pop());
     this.updateShapeVertexProperties();
+    this.updateShapeProperties();
+  }
+
+  bezierOrder(order) {
+    if (order === undefined) {
+      return this.states.bezierOrder;
+    } else {
+      this.states.bezierOrder = order;
+      this.updateShapeProperties();
+    }
+  }
+
+  bezierVertex(x, y, z = 0, u = 0, v = 0) {
+    const position = new Vector(x, y, z);
+    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+      ? new Vector(u, v)
+      : undefined;
+    this.currentShape.bezierVertex(position, textureCoordinates);
+  }
+
+  splineEnds(mode) {
+    if (mode === undefined) {
+      return this.states.splineEnds;
+    } else {
+      this.states.splineEnds = mode;
+    }
+    this.updateShapeProperties();
+  }
+
+  splineVertex(x, y, z = 0, u = 0, v = 0) {
+    const position = new Vector(x, y, z);
+    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+      ? new Vector(u, v)
+      : undefined;
+    this.currentShape.splineVertex(position, textureCoordinates);
+  }
+
+  curveDetail(d) {
+    if (d === undefined) {
+      return this.states.curveDetail;
+    } else {
+      this.states.curveDetail = d;
+    }
   }
 
   beginShape(...args) {
@@ -109,31 +163,23 @@ class Renderer {
     this.drawShape(this.currentShape);
   }
 
+  beginContour(shapeKind) {
+    this.currentShape.beginContour(shapeKind);
+  }
+
+  endContour(mode) {
+    this.currentShape.endContour(mode);
+  }
+
   drawShape(shape, count) {
     throw new Error('Unimplemented')
   }
 
-  vertex(x, y) {
-    let z, u, v;
-
-    // default to (x, y) mode: all other arguments assumed to be 0.
-    z = u = v = 0;
-
-    if (arguments.length === 3) {
-      // (x, y, z) mode: (u, v) assumed to be 0.
-      z = arguments[2];
-    } else if (arguments.length === 4) {
-      // (x, y, u, v) mode: z assumed to be 0.
-      u = arguments[2];
-      v = arguments[3];
-    } else if (arguments.length === 5) {
-      // (x, y, z, u, v) mode
-      z = arguments[2];
-      u = arguments[3];
-      v = arguments[4];
-    }
+  vertex(x, y, z = 0, u = 0, v = 0) {
     const position = new Vector(x, y, z);
-    const textureCoordinates = new Vector(u, v);
+    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+      ? new Vector(u, v)
+      : undefined;
     this.currentShape.vertex(position, textureCoordinates);
   }
 
@@ -217,15 +263,23 @@ class Renderer {
     this.states.strokeColor = null;
   }
 
-  vertexProperties() {
+  getCommonVertexProperties() {
+    return {}
+  }
+
+  getSupportedIndividualVertexProperties() {
     return {
-      stroke: this.states.strokeColor,
-      fill: this.states.fillColor,
+      textureCoordinates: false,
     }
   }
 
+  updateShapeProperties() {
+    this.currentShape.bezierOrder(this.states.bezierOrder);
+    this.currentShape.splineEnds(this.states.splineEnds);
+  }
+
   updateShapeVertexProperties() {
-    const props = this.vertexProperties();
+    const props = this.getCommonVertexProperties();
     for (const key in props) {
       this.currentShape[key](props[key]);
     }
@@ -262,13 +316,13 @@ class Renderer {
         s === constants.BOLD ||
         s === constants.BOLDITALIC
       ) {
-        this.states.textStyle = s;
+        this.states.fontStyle = s;
       }
 
       return this._applyTextProperties();
     }
 
-    return this.states.textStyle;
+    return this.states.fontStyle;
   }
 
   textAscent () {

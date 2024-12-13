@@ -1343,3 +1343,31 @@ export const HALF_FLOAT = 'half-float';
  * @final
  */
 export const RGBA = 'rgba';
+
+/**
+ * The `splineEnds` mode where splines curve through
+ * their first and last points.
+ * @typedef {unique symbol} SHOW
+ * @property {SHOW} SHOW
+ * @final
+ */
+export const SHOW = Symbol('show');
+
+/**
+ * The `splineEnds` mode where the first and last points in a spline
+ * affect the direction of the curve, but are not rendered.
+ * @typedef {unique symbol} HIDE
+ * @property {HIDE} HIDE
+ * @final
+ */
+export const HIDE = Symbol('hide');
+
+/**
+ * The `splineEnds` mode where the spline loops back to its first point.
+ * Only used internally.
+ * @typedef {unique symbol} JOIN
+ * @property {JOIN} JOIN
+ * @final
+ * @private
+ */
+export const JOIN = Symbol('join');

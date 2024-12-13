@@ -9,6 +9,7 @@ import * as constants from '../core/constants';
 import { RendererGL } from './p5.RendererGL';
 import { Shader } from './p5.Shader';
 import { request } from '../io/files';
+import { Color } from '../color/p5.Color';
 
 function material(p5, fn){
   /**
@@ -3625,7 +3626,7 @@ function material(p5, fn){
     this.states.drawMode = constants.TEXTURE;
     this.states._useNormalMaterial = false;
     this.states._tex = tex;
-    this.states.fillColor = true;
+    this.states.fillColor = new Color(255);
   };
 
   RendererGL.prototype.normalMaterial = function(...args) {
@@ -3634,7 +3635,7 @@ function material(p5, fn){
     this.states._useEmissiveMaterial = false;
     this.states._useNormalMaterial = true;
     this.states.curFillColor = [1, 1, 1, 1];
-    this.states.fillColor = true;
+    this.states.fillColor = new Color(255);
     this.states.strokeColor = null;
   }
 

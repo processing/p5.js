@@ -1,0 +1,85 @@
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- <script language="javascript" type="text/javascript" src="img/../../../../lib/p5.js"></script>
+  <script language="javascript" type="text/javascript" src="img/sketch.js"></script> -->
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+    }
+
+    canvas {
+      border: 1px solid #f0f0f0;
+      display: block;
+    }
+
+    img {
+      border: 1px solid #fff;
+    }
+
+    div {
+      margin: 100px 0px;
+    }
+
+    .times {
+      font-family: Times, serif;
+      font-size: 14px;
+    }
+
+    .verdana {
+      font-family: Verdana, sans-serif;
+      font-size: 14px;
+    }
+
+    .adj-times-ex-height {
+      font-size-adjust: 0.545;
+    }
+
+    .adj-times-cap-height {
+      font-size-adjust: cap-height 0.73;
+    }
+  </style>
+</head>
+
+
+
+<body>
+  <script type="module">
+    import p5 from '../../../../src/app.js';
+
+    const sketch = function (p) {
+
+      // font-size-adjust property is not set, regardless of whether it is set directly or via p5
+      // see example at: https://developer.mozilla.org/en-US/docs/Web/CSS/font-size-adjust
+
+      p.setup = async function () {
+        p.createCanvas(650, 375);
+
+        p.textFont('Verdana, sans-serif', '14px');
+        p.text('A: This text uses the Verdana font (14px), which has relatively large lowercase letters.', 5, 20);
+
+        p.textFont('Times, Serif', '14px');
+        p.text('B: This text uses the Times font (14px), which is hard to read in small sizes.', 5, 45);
+
+        // p.drawingContext.canvas.style['font-size-adjust'] = '0.1';
+        // console.log(p.drawingContext.canvas.style['font-size-adjust']);
+        
+        p.textProperty('fontSizeAdjust', '0.2');
+        //console.log(p.drawingContext.canvas.style['font-size-adjust']);
+        p.text('C: This text in 14px Times font is adjusted to the same aspect value as the Verdana font, so lowercase letters are normalized across the two fonts.', 5, 60, 640, 100);
+
+        p.textProperty('fontSizeAdjust', 'cap-height 0.73');
+        p.text('D: This text in 14px Times font is adjusted to the same cap-height to font size ratio as the Verdana font, so uppercase letters are normalized across the two fonts.', 5, 100, 640, 100);
+      };
+    };
+
+    new p5(sketch);
+
+  </script>
+
+</body>
+
+
+</html>

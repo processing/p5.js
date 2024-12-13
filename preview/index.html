@@ -22,6 +22,7 @@
     const sketch = function (p) {
       p.setup = function () {
         p.createCanvas(200, 200, p.WEBGL);
+        p.strokeJoin(p.MITER);
       };
 
       p.draw = function () {
@@ -31,13 +32,19 @@
         p.stroke('white');
         p.strokeWeight(10);
         p.beginShape();
+
+        p.vertex(10, 10);
+        p.vertex(10, 150);
+        p.vertex(150, 150);
+        p.vertex(150, 10);
+
+        p.beginContour();
         p.vertex(50, 50);
-        p.vertex(100, 50);
-        p.stroke('blue');
-        p.vertex(100, 100);
-        p.vertex(50, 100);
-        p.vertex(70, 70);
-        p.stroke('white');
+        p.splineVertex(100, 50);
+        p.splineVertex(100, 100);
+        p.splineVertex(50, 100);
+        p.splineVertex(70, 70);
+        p.endContour(p.CLOSE);
         p.endShape(p.CLOSE);
       };
     };

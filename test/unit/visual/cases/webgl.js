@@ -272,9 +272,9 @@ visualSuite('WebGL', function() {
       p5.strokeWeight(15);
       p5.line(
         -p5.width / 3,
-        p5.sin(p5.millis() * 0.001) * p5.height / 4,
+        p5.sin(0.2) * p5.height / 4,
         p5.width / 3,
-        p5.sin(p5.millis() * 0.001 + 1) * p5.height / 4
+        p5.sin(1.2) * p5.height / 4
       );
       screenshot();
     });

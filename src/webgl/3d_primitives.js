@@ -13,514 +13,6 @@ import { Geometry } from './p5.Geometry';
 import { Matrix } from './p5.Matrix';
 
 function primitives3D(p5, fn){
-  /**
-   * Begins adding shapes to a new
-   * <a href="#/p5.Geometry">p5.Geometry</a> object.
-   *
-   * The `beginGeometry()` and <a href="#/p5/endGeometry">endGeometry()</a>
-   * functions help with creating complex 3D shapes from simpler ones such as
-   * <a href="#/p5/sphere">sphere()</a>. `beginGeometry()` begins adding shapes
-   * to a custom <a href="#/p5.Geometry">p5.Geometry</a> object and
-   * <a href="#/p5/endGeometry">endGeometry()</a> stops adding them.
-   *
-   * `beginGeometry()` and <a href="#/p5/endGeometry">endGeometry()</a> can help
-   * to make sketches more performant. For example, if a complex 3D shape
-   * doesn’t change while a sketch runs, then it can be created with
-   * `beginGeometry()` and <a href="#/p5/endGeometry">endGeometry()</a>.
-   * Creating a <a href="#/p5.Geometry">p5.Geometry</a> object once and then
-   * drawing it will run faster than repeatedly drawing the individual pieces.
-   *
-   * See <a href="#/p5/buildGeometry">buildGeometry()</a> for another way to
-   * build 3D shapes.
-   *
-   * Note: `beginGeometry()` can only be used in WebGL mode.
-   *
-   * @method beginGeometry
-   *
-   * @example
-   * <div>
-   * <code>
-   * // Click and drag the mouse to view the scene from different angles.
-   *
-   * let shape;
-   *
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Start building the p5.Geometry object.
-   *   beginGeometry();
-   *
-   *   // Add a cone.
-   *   cone();
-   *
-   *   // Stop building the p5.Geometry object.
-   *   shape = endGeometry();
-   *
-   *   describe('A white cone drawn on a gray background.');
-   * }
-   *
-   * function draw() {
-   *   background(50);
-   *
-   *   // Enable orbiting with the mouse.
-   *   orbitControl();
-   *
-   *   // Turn on the lights.
-   *   lights();
-   *
-   *   // Style the p5.Geometry object.
-   *   noStroke();
-   *
-   *   // Draw the p5.Geometry object.
-   *   model(shape);
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * // Click and drag the mouse to view the scene from different angles.
-   *
-   * let shape;
-   *
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create the p5.Geometry object.
-   *   createArrow();
-   *
-   *   describe('A white arrow drawn on a gray background.');
-   * }
-   *
-   * function draw() {
-   *   background(50);
-   *
-   *   // Enable orbiting with the mouse.
-   *   orbitControl();
-   *
-   *   // Turn on the lights.
-   *   lights();
-   *
-   *   // Style the p5.Geometry object.
-   *   noStroke();
-   *
-   *   // Draw the p5.Geometry object.
-   *   model(shape);
-   * }
-   *
-   * function createArrow() {
-   *   // Start building the p5.Geometry object.
-   *   beginGeometry();
-   *
-   *   // Add shapes.
-   *   push();
-   *   rotateX(PI);
-   *   cone(10);
-   *   translate(0, -10, 0);
-   *   cylinder(3, 20);
-   *   pop();
-   *
-   *   // Stop building the p5.Geometry object.
-   *   shape = endGeometry();
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * // Click and drag the mouse to view the scene from different angles.
-   *
-   * let blueArrow;
-   * let redArrow;
-   *
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create the arrows.
-   *   redArrow = createArrow('red');
-   *   blueArrow = createArrow('blue');
-   *
-   *   describe('A red arrow and a blue arrow drawn on a gray background. The blue arrow rotates slowly.');
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Enable orbiting with the mouse.
-   *   orbitControl();
-   *
-   *   // Turn on the lights.
-   *   lights();
-   *
-   *   // Style the arrows.
-   *   noStroke();
-   *
-   *   // Draw the red arrow.
-   *   model(redArrow);
-   *
-   *   // Translate and rotate the coordinate system.
-   *   translate(30, 0, 0);
-   *   rotateZ(frameCount * 0.01);
-   *
-   *   // Draw the blue arrow.
-   *   model(blueArrow);
-   * }
-   *
-   * function createArrow(fillColor) {
-   *   // Start building the p5.Geometry object.
-   *   beginGeometry();
-   *
-   *   fill(fillColor);
-   *
-   *   // Add shapes to the p5.Geometry object.
-   *   push();
-   *   rotateX(PI);
-   *   cone(10);
-   *   translate(0, -10, 0);
-   *   cylinder(3, 20);
-   *   pop();
-   *
-   *   // Stop building the p5.Geometry object.
-   *   let shape = endGeometry();
-   *
-   *   return shape;
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * // Click and drag the mouse to view the scene from different angles.
-   *
-   * let button;
-   * let particles;
-   *
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create a button to reset the particle system.
-   *   button = createButton('Reset');
-   *
-   *   // Call resetModel() when the user presses the button.
-   *   button.mousePressed(resetModel);
-   *
-   *   // Add the original set of particles.
-   *   resetModel();
-   * }
-   *
-   * function draw() {
-   *   background(50);
-   *
-   *   // Enable orbiting with the mouse.
-   *   orbitControl();
-   *
-   *   // Turn on the lights.
-   *   lights();
-   *
-   *   // Style the particles.
-   *   noStroke();
-   *
-   *   // Draw the particles.
-   *   model(particles);
-   * }
-   *
-   * function resetModel() {
-   *   // If the p5.Geometry object has already been created,
-   *   // free those resources.
-   *   if (particles) {
-   *     freeGeometry(particles);
-   *   }
-   *
-   *   // Create a new p5.Geometry object with random spheres.
-   *   particles = createParticles();
-   * }
-   *
-   * function createParticles() {
-   *   // Start building the p5.Geometry object.
-   *   beginGeometry();
-   *
-   *   // Add shapes.
-   *   for (let i = 0; i < 60; i += 1) {
-   *     // Calculate random coordinates.
-   *     let x = randomGaussian(0, 20);
-   *     let y = randomGaussian(0, 20);
-   *     let z = randomGaussian(0, 20);
-   *
-   *     push();
-   *     // Translate to the particle's coordinates.
-   *     translate(x, y, z);
-   *     // Draw the particle.
-   *     sphere(5);
-   *     pop();
-   *   }
-   *
-   *   // Stop building the p5.Geometry object.
-   *   let shape = endGeometry();
-   *
-   *   return shape;
-   * }
-   * </code>
-   * </div>
-   */
-  fn.beginGeometry = function() {
-    return this._renderer.beginGeometry();
-  };
-
-  /**
-   * Stops adding shapes to a new
-   * <a href="#/p5.Geometry">p5.Geometry</a> object and returns the object.
-   *
-   * The `beginGeometry()` and <a href="#/p5/endGeometry">endGeometry()</a>
-   * functions help with creating complex 3D shapes from simpler ones such as
-   * <a href="#/p5/sphere">sphere()</a>. `beginGeometry()` begins adding shapes
-   * to a custom <a href="#/p5.Geometry">p5.Geometry</a> object and
-   * <a href="#/p5/endGeometry">endGeometry()</a> stops adding them.
-   *
-   * `beginGeometry()` and <a href="#/p5/endGeometry">endGeometry()</a> can help
-   * to make sketches more performant. For example, if a complex 3D shape
-   * doesn’t change while a sketch runs, then it can be created with
-   * `beginGeometry()` and <a href="#/p5/endGeometry">endGeometry()</a>.
-   * Creating a <a href="#/p5.Geometry">p5.Geometry</a> object once and then
-   * drawing it will run faster than repeatedly drawing the individual pieces.
-   *
-   * See <a href="#/p5/buildGeometry">buildGeometry()</a> for another way to
-   * build 3D shapes.
-   *
-   * Note: `endGeometry()` can only be used in WebGL mode.
-   *
-   * @method endGeometry
-   * @returns {p5.Geometry} new 3D shape.
-   *
-   * @example
-   * <div>
-   * <code>
-   * // Click and drag the mouse to view the scene from different angles.
-   *
-   * let shape;
-   *
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Start building the p5.Geometry object.
-   *   beginGeometry();
-   *
-   *   // Add a cone.
-   *   cone();
-   *
-   *   // Stop building the p5.Geometry object.
-   *   shape = endGeometry();
-   *
-   *   describe('A white cone drawn on a gray background.');
-   * }
-   *
-   * function draw() {
-   *   background(50);
-   *
-   *   // Enable orbiting with the mouse.
-   *   orbitControl();
-   *
-   *   // Turn on the lights.
-   *   lights();
-   *
-   *   // Style the p5.Geometry object.
-   *   noStroke();
-   *
-   *   // Draw the p5.Geometry object.
-   *   model(shape);
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * // Click and drag the mouse to view the scene from different angles.
-   *
-   * let shape;
-   *
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create the p5.Geometry object.
-   *   createArrow();
-   *
-   *   describe('A white arrow drawn on a gray background.');
-   * }
-   *
-   * function draw() {
-   *   background(50);
-   *
-   *   // Enable orbiting with the mouse.
-   *   orbitControl();
-   *
-   *   // Turn on the lights.
-   *   lights();
-   *
-   *   // Style the p5.Geometry object.
-   *   noStroke();
-   *
-   *   // Draw the p5.Geometry object.
-   *   model(shape);
-   * }
-   *
-   * function createArrow() {
-   *   // Start building the p5.Geometry object.
-   *   beginGeometry();
-   *
-   *   // Add shapes.
-   *   push();
-   *   rotateX(PI);
-   *   cone(10);
-   *   translate(0, -10, 0);
-   *   cylinder(3, 20);
-   *   pop();
-   *
-   *   // Stop building the p5.Geometry object.
-   *   shape = endGeometry();
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * // Click and drag the mouse to view the scene from different angles.
-   *
-   * let blueArrow;
-   * let redArrow;
-   *
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create the arrows.
-   *   redArrow = createArrow('red');
-   *   blueArrow = createArrow('blue');
-   *
-   *   describe('A red arrow and a blue arrow drawn on a gray background. The blue arrow rotates slowly.');
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Enable orbiting with the mouse.
-   *   orbitControl();
-   *
-   *   // Turn on the lights.
-   *   lights();
-   *
-   *   // Style the arrows.
-   *   noStroke();
-   *
-   *   // Draw the red arrow.
-   *   model(redArrow);
-   *
-   *   // Translate and rotate the coordinate system.
-   *   translate(30, 0, 0);
-   *   rotateZ(frameCount * 0.01);
-   *
-   *   // Draw the blue arrow.
-   *   model(blueArrow);
-   * }
-   *
-   * function createArrow(fillColor) {
-   *   // Start building the p5.Geometry object.
-   *   beginGeometry();
-   *
-   *   fill(fillColor);
-   *
-   *   // Add shapes to the p5.Geometry object.
-   *   push();
-   *   rotateX(PI);
-   *   cone(10);
-   *   translate(0, -10, 0);
-   *   cylinder(3, 20);
-   *   pop();
-   *
-   *   // Stop building the p5.Geometry object.
-   *   let shape = endGeometry();
-   *
-   *   return shape;
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * // Click and drag the mouse to view the scene from different angles.
-   *
-   * let button;
-   * let particles;
-   *
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create a button to reset the particle system.
-   *   button = createButton('Reset');
-   *
-   *   // Call resetModel() when the user presses the button.
-   *   button.mousePressed(resetModel);
-   *
-   *   // Add the original set of particles.
-   *   resetModel();
-   * }
-   *
-   * function draw() {
-   *   background(50);
-   *
-   *   // Enable orbiting with the mouse.
-   *   orbitControl();
-   *
-   *   // Turn on the lights.
-   *   lights();
-   *
-   *   // Style the particles.
-   *   noStroke();
-   *
-   *   // Draw the particles.
-   *   model(particles);
-   * }
-   *
-   * function resetModel() {
-   *   // If the p5.Geometry object has already been created,
-   *   // free those resources.
-   *   if (particles) {
-   *     freeGeometry(particles);
-   *   }
-   *
-   *   // Create a new p5.Geometry object with random spheres.
-   *   particles = createParticles();
-   * }
-   *
-   * function createParticles() {
-   *   // Start building the p5.Geometry object.
-   *   beginGeometry();
-   *
-   *   // Add shapes.
-   *   for (let i = 0; i < 60; i += 1) {
-   *     // Calculate random coordinates.
-   *     let x = randomGaussian(0, 20);
-   *     let y = randomGaussian(0, 20);
-   *     let z = randomGaussian(0, 20);
-   *
-   *     push();
-   *     // Translate to the particle's coordinates.
-   *     translate(x, y, z);
-   *     // Draw the particle.
-   *     sphere(5);
-   *     pop();
-   *   }
-   *
-   *   // Stop building the p5.Geometry object.
-   *   let shape = endGeometry();
-   *
-   *   return shape;
-   * }
-   * </code>
-   * </div>
-   */
-  fn.endGeometry = function() {
-    return this._renderer.endGeometry();
-  };
-
-
 /**
  * Sets the stroke rendering mode to balance performance and visual features when drawing lines.
  *
@@ -543,10 +35,10 @@ function primitives3D(p5, fn){
  * <code>
  * function setup() {
  *   createCanvas(300, 300, WEBGL);
- * 
- *  describe('A sphere with red stroke and a red, wavy line on a gray background.');
+ *
+ *   describe('A sphere with red stroke and a red, wavy line on a gray background.');
  * }
- * 
+ *
  * function draw() {
  *   background(128);
  *   strokeMode(FULL); // Enables detailed rendering with caps, joins, and stroke color.
@@ -554,8 +46,8 @@ function primitives3D(p5, fn){
  *   strokeWeight(1);
  *   translate(0, -50, 0);
  *   sphere(50);
- *   pop(); 
- * 
+ *   pop();
+ *
  *   noFill();
  *   strokeWeight(15);
  *   beginShape();
@@ -566,15 +58,15 @@ function primitives3D(p5, fn){
  * }
  * </code>
  * </div>
- * 
+ *
  * <div>
  * <code>
  * function setup() {
  *   createCanvas(300, 300, WEBGL);
- * 
- *  describe('A sphere with red stroke and a  wavy line without full curve decorations without caps and color on a gray background.');
+ *
+ *   describe('A sphere with red stroke and a  wavy line without full curve decorations without caps and color on a gray background.');
  * }
- * 
+ *
  * function draw() {
  *   background(128);
  *   strokeMode(SIMPLE); // Enables simple rendering without caps, joins, and stroke color.
@@ -582,8 +74,8 @@ function primitives3D(p5, fn){
  *   strokeWeight(1);
  *   translate(0, -50, 0);
  *   sphere(50);
- *   pop(); 
- * 
+ *   pop();
+ *
  *   noFill();
  *   strokeWeight(15);
  *   beginShape();
@@ -595,7 +87,7 @@ function primitives3D(p5, fn){
  * </code>
  * </div>
  */
-  
+
   fn.strokeMode = function (mode) {
     if (mode === undefined) {
       return this._renderer._simpleLines ? constants.SIMPLE : constants.FULL;
@@ -2456,41 +1948,44 @@ function primitives3D(p5, fn){
       let x2 = c;
       let y2 = d;
 
-      // TODO shapes refactor
+      const prevMode = this.states.textureMode;
+      this.states.textureMode = constants.NORMAL;
+      const prevOrder = this.bezierOrder();
+      this.bezierOrder(2);
       this.beginShape();
+      const addUVs = (x, y) => [x, y, (x - x1)/width, (y - y1)/height];
       if (tr !== 0) {
-        this.legacyVertex(x2 - tr, y1);
-        this.quadraticVertex(x2, y1, x2, y1 + tr);
+        this.vertex(...addUVs(x2 - tr, y1));
+        this.bezierVertex(...addUVs(x2, y1))
+        this.bezierVertex(...addUVs(x2, y1 + tr));
       } else {
-        this.legacyVertex(x2, y1);
+        this.vertex(...addUVs(x2, y1));
       }
       if (br !== 0) {
-        this.legacyVertex(x2, y2 - br);
-        this.quadraticVertex(x2, y2, x2 - br, y2);
+        this.vertex(...addUVs(x2, y2 - br));
+        this.bezierVertex(...addUVs(x2, y2));
+        this.bezierVertex(...addUVs(x2 - br, y2))
       } else {
-        this.legacyVertex(x2, y2);
+        this.vertex(...addUVs(x2, y2));
       }
       if (bl !== 0) {
-        this.legacyVertex(x1 + bl, y2);
-        this.quadraticVertex(x1, y2, x1, y2 - bl);
+        this.vertex(...addUVs(x1 + bl, y2));
+        this.bezierVertex(...addUVs(x1, y2));
+        this.bezierVertex(...addUVs(x1, y2 - bl));
       } else {
-        this.legacyVertex(x1, y2);
+        this.vertex(...addUVs(x1, y2));
       }
       if (tl !== 0) {
-        this.legacyVertex(x1, y1 + tl);
-        this.quadraticVertex(x1, y1, x1 + tl, y1);
+        this.vertex(...addUVs(x1, y1 + tl));
+        this.bezierVertex(...addUVs(x1, y1));
+        this.bezierVertex(...addUVs(x1 + tl, y1));
       } else {
-        this.legacyVertex(x1, y1);
+        this.vertex(...addUVs(x1, y1));
       }
 
-      this.shapeBuilder.geometry.uvs.length = 0;
-      for (const vert of this.shapeBuilder.geometry.vertices) {
-        const u = (vert.x - x1) / width;
-        const v = (vert.y - y1) / height;
-        this.shapeBuilder.geometry.uvs.push(u, v);
-      }
-
-      this.legacyEndShape(constants.CLOSE);
+      this.endShape(constants.CLOSE);
+      this.states.textureMode = prevMode;
+      this.bezierOrder(prevOrder);
     }
     return this;
   };
@@ -2583,22 +2078,15 @@ function primitives3D(p5, fn){
       x2 = z1;
       z1 = z2 = z3 = z4 = 0;
     }
-    const bezierDetail = this._pInst._bezierDetail || 20; //value of Bezier detail
-    // TODO shapes refactor
+    // TODO: handle quadratic?
+    const prevOrder = this.bezierOrder();
+    this.bezierOrder(3);
     this.beginShape();
-    for (let i = 0; i <= bezierDetail; i++) {
-      const c1 = Math.pow(1 - i / bezierDetail, 3);
-      const c2 = 3 * (i / bezierDetail) * Math.pow(1 - i / bezierDetail, 2);
-      const c3 = 3 * Math.pow(i / bezierDetail, 2) * (1 - i / bezierDetail);
-      const c4 = Math.pow(i / bezierDetail, 3);
-      this.legacyVertex(
-        x1 * c1 + x2 * c2 + x3 * c3 + x4 * c4,
-        y1 * c1 + y2 * c2 + y3 * c3 + y4 * c4,
-        z1 * c1 + z2 * c2 + z3 * c3 + z4 * c4
-      );
-    }
-    this.legacyEndShape();
-    return this;
+    this.vertex(x1, y1, z1);
+    this.bezierVertex(x2, y2, z2);
+    this.bezierVertex(x3, y3, z3);
+    this.bezierVertex(x4, y4, z4);
+    this.endShape();
   };
 
   // pretier-ignore
@@ -2625,33 +2113,12 @@ function primitives3D(p5, fn){
       y2 = x2;
       z1 = z2 = z3 = z4 = 0;
     }
-    const curveDetail = this._pInst._curveDetail;
-    // TODO shapes refactor
     this.beginShape();
-    for (let i = 0; i <= curveDetail; i++) {
-      const c1 = Math.pow(i / curveDetail, 3) * 0.5;
-      const c2 = Math.pow(i / curveDetail, 2) * 0.5;
-      const c3 = i / curveDetail * 0.5;
-      const c4 = 0.5;
-      const vx =
-        c1 * (-x1 + 3 * x2 - 3 * x3 + x4) +
-        c2 * (2 * x1 - 5 * x2 + 4 * x3 - x4) +
-        c3 * (-x1 + x3) +
-        c4 * (2 * x2);
-      const vy =
-        c1 * (-y1 + 3 * y2 - 3 * y3 + y4) +
-        c2 * (2 * y1 - 5 * y2 + 4 * y3 - y4) +
-        c3 * (-y1 + y3) +
-        c4 * (2 * y2);
-      const vz =
-        c1 * (-z1 + 3 * z2 - 3 * z3 + z4) +
-        c2 * (2 * z1 - 5 * z2 + 4 * z3 - z4) +
-        c3 * (-z1 + z3) +
-        c4 * (2 * z2);
-      this.legacyVertex(vx, vy, vz);
-    }
-    this.legacyEndShape();
-    return this;
+    this.curveVertex(x1, y1, z1);
+    this.curveVertex(x2, y2, z2);
+    this.curveVertex(x3, y3, z3);
+    this.curveVertex(x4, y4, z4);
+    this.endShape();
   };
 
   /**
@@ -2687,569 +2154,16 @@ function primitives3D(p5, fn){
     if (args.length === 6) {
       // TODO shapes refactor
       this.beginShape(constants.LINES);
-      this.legacyVertex(args[0], args[1], args[2]);
-      this.legacyVertex(args[3], args[4], args[5]);
-      this.legacyEndShape();
+      this.vertex(args[0], args[1], args[2]);
+      this.vertex(args[3], args[4], args[5]);
+      this.endShape();
     } else if (args.length === 4) {
       this.beginShape(constants.LINES);
-      this.legacyVertex(args[0], args[1], 0);
-      this.legacyVertex(args[2], args[3], 0);
-      this.legacyEndShape();
+      this.vertex(args[0], args[1], 0);
+      this.vertex(args[2], args[3], 0);
+      this.endShape();
     }
     return this;
-  };
-
-  RendererGL.prototype.bezierVertex = function(...args) {
-    if (this.shapeBuilder._bezierVertex.length === 0) {
-      throw Error('vertex() must be used once before calling bezierVertex()');
-    } else {
-      let w_x = [];
-      let w_y = [];
-      let w_z = [];
-      let t, _x, _y, _z, i, k, m;
-      // variable i for bezierPoints, k for components, and m for anchor points.
-      const argLength = args.length;
-
-      t = 0;
-
-      if (
-        this._lookUpTableBezier.length === 0 ||
-        this._lutBezierDetail !== this._pInst._curveDetail
-      ) {
-        this._lookUpTableBezier = [];
-        this._lutBezierDetail = this._pInst._curveDetail;
-        const step = 1 / this._lutBezierDetail;
-        let start = 0;
-        let end = 1;
-        let j = 0;
-        while (start < 1) {
-          t = parseFloat(start.toFixed(6));
-          this._lookUpTableBezier[j] = this._bezierCoefficients(t);
-          if (end.toFixed(6) === step.toFixed(6)) {
-            t = parseFloat(end.toFixed(6)) + parseFloat(start.toFixed(6));
-            ++j;
-            this._lookUpTableBezier[j] = this._bezierCoefficients(t);
-            break;
-          }
-          start += step;
-          end -= step;
-          ++j;
-        }
-      }
-
-      const LUTLength = this._lookUpTableBezier.length;
-      const immediateGeometry = this.shapeBuilder.geometry;
-
-      // fillColors[0]: start point color
-      // fillColors[1],[2]: control point color
-      // fillColors[3]: end point color
-      const fillColors = [];
-      for (m = 0; m < 4; m++) fillColors.push([]);
-      fillColors[0] = immediateGeometry.vertexColors.slice(-4);
-      fillColors[3] = this.states.curFillColor.slice();
-
-      // Do the same for strokeColor.
-      const strokeColors = [];
-      for (m = 0; m < 4; m++) strokeColors.push([]);
-      strokeColors[0] = immediateGeometry.vertexStrokeColors.slice(-4);
-      strokeColors[3] = this.states.curStrokeColor.slice();
-
-      // Do the same for custom vertex properties
-      const userVertexProperties = {};
-      for (const propName in immediateGeometry.userVertexProperties){
-        const prop = immediateGeometry.userVertexProperties[propName];
-        const size = prop.getDataSize();
-        userVertexProperties[propName] = [];
-        for (m = 0; m < 4; m++) userVertexProperties[propName].push([]);
-        userVertexProperties[propName][0] = prop.getSrcArray().slice(-size);
-        userVertexProperties[propName][3] = prop.getCurrentData();
-      }
-
-      if (argLength === 6) {
-        this.isBezier = true;
-
-        w_x = [this.shapeBuilder._bezierVertex[0], args[0], args[2], args[4]];
-        w_y = [this.shapeBuilder._bezierVertex[1], args[1], args[3], args[5]];
-        // The ratio of the distance between the start point, the two control-
-        // points, and the end point determines the intermediate color.
-        let d0 = Math.hypot(w_x[0]-w_x[1], w_y[0]-w_y[1]);
-        let d1 = Math.hypot(w_x[1]-w_x[2], w_y[1]-w_y[2]);
-        let d2 = Math.hypot(w_x[2]-w_x[3], w_y[2]-w_y[3]);
-        const totalLength = d0 + d1 + d2;
-        d0 /= totalLength;
-        d2 /= totalLength;
-        for (k = 0; k < 4; k++) {
-          fillColors[1].push(
-            fillColors[0][k] * (1-d0) + fillColors[3][k] * d0
-          );
-          fillColors[2].push(
-            fillColors[0][k] * d2 + fillColors[3][k] * (1-d2)
-          );
-          strokeColors[1].push(
-            strokeColors[0][k] * (1-d0) + strokeColors[3][k] * d0
-          );
-          strokeColors[2].push(
-            strokeColors[0][k] * d2 + strokeColors[3][k] * (1-d2)
-          );
-        }
-        for (const propName in immediateGeometry.userVertexProperties){
-          const size = immediateGeometry.userVertexProperties[propName].getDataSize();
-          for (k = 0; k < size; k++){
-            userVertexProperties[propName][1].push(
-              userVertexProperties[propName][0][k] * (1-d0) + userVertexProperties[propName][3][k] * d0
-            );
-            userVertexProperties[propName][2].push(
-              userVertexProperties[propName][0][k] * (1-d2) + userVertexProperties[propName][3][k] * d2
-            );
-          }
-        }
-
-        for (let i = 0; i < LUTLength; i++) {
-          // Interpolate colors using control points
-          this.states.curFillColor = [0, 0, 0, 0];
-          this.states.curStrokeColor = [0, 0, 0, 0];
-          _x = _y = 0;
-          for (let m = 0; m < 4; m++) {
-            for (let k = 0; k < 4; k++) {
-              this.states.curFillColor[k] +=
-                this._lookUpTableBezier[i][m] * fillColors[m][k];
-              this.states.curStrokeColor[k] +=
-                this._lookUpTableBezier[i][m] * strokeColors[m][k];
-            }
-            _x += w_x[m] * this._lookUpTableBezier[i][m];
-            _y += w_y[m] * this._lookUpTableBezier[i][m];
-          }
-          for (const propName in immediateGeometry.userVertexProperties){
-            const prop = immediateGeometry.userVertexProperties[propName];
-            const size = prop.getDataSize();
-            let newValues = Array(size).fill(0);
-            for (let m = 0; m < 4; m++){
-              for (let k = 0; k < size; k++){
-                newValues[k] += this._lookUpTableBezier[i][m] * userVertexProperties[propName][m][k];
-              }
-            }
-            prop.setCurrentData(newValues);
-          }
-          this.legacyVertex(_x, _y);
-        }
-        // so that we leave currentColor with the last value the user set it to
-        this.states.curFillColor = fillColors[3];
-        this.states.curStrokeColor = strokeColors[3];
-        for (const propName in immediateGeometry.userVertexProperties) {
-          const prop = immediateGeometry.userVertexProperties[propName];
-          prop.setCurrentData(userVertexProperties[propName][2]);
-        }
-        this.shapeBuilder._bezierVertex[0] = args[4];
-        this.shapeBuilder._bezierVertex[1] = args[5];
-      } else if (argLength === 9) {
-        this.isBezier = true;
-
-        w_x = [this.shapeBuilder._bezierVertex[0], args[0], args[3], args[6]];
-        w_y = [this.shapeBuilder._bezierVertex[1], args[1], args[4], args[7]];
-        w_z = [this.shapeBuilder._bezierVertex[2], args[2], args[5], args[8]];
-        // The ratio of the distance between the start point, the two control-
-        // points, and the end point determines the intermediate color.
-        let d0 = Math.hypot(w_x[0]-w_x[1], w_y[0]-w_y[1], w_z[0]-w_z[1]);
-        let d1 = Math.hypot(w_x[1]-w_x[2], w_y[1]-w_y[2], w_z[1]-w_z[2]);
-        let d2 = Math.hypot(w_x[2]-w_x[3], w_y[2]-w_y[3], w_z[2]-w_z[3]);
-        const totalLength = d0 + d1 + d2;
-        d0 /= totalLength;
-        d2 /= totalLength;
-        for (let k = 0; k < 4; k++) {
-          fillColors[1].push(
-            fillColors[0][k] * (1-d0) + fillColors[3][k] * d0
-          );
-          fillColors[2].push(
-            fillColors[0][k] * d2 + fillColors[3][k] * (1-d2)
-          );
-          strokeColors[1].push(
-            strokeColors[0][k] * (1-d0) + strokeColors[3][k] * d0
-          );
-          strokeColors[2].push(
-            strokeColors[0][k] * d2 + strokeColors[3][k] * (1-d2)
-          );
-        }
-        for (const propName in immediateGeometry.userVertexProperties){
-          const size = immediateGeometry.userVertexProperties[propName].getDataSize();
-          for (k = 0; k < size; k++){
-            userVertexProperties[propName][1].push(
-              userVertexProperties[propName][0][k] * (1-d0) + userVertexProperties[propName][3][k] * d0
-            );
-            userVertexProperties[propName][2].push(
-              userVertexProperties[propName][0][k] * (1-d2) + userVertexProperties[propName][3][k] * d2
-            );
-          }
-        }
-        for (let i = 0; i < LUTLength; i++) {
-          // Interpolate colors using control points
-          this.states.curFillColor = [0, 0, 0, 0];
-          this.states.curStrokeColor = [0, 0, 0, 0];
-          _x = _y = _z = 0;
-          for (m = 0; m < 4; m++) {
-            for (k = 0; k < 4; k++) {
-              this.states.curFillColor[k] +=
-                this._lookUpTableBezier[i][m] * fillColors[m][k];
-              this.states.curStrokeColor[k] +=
-                this._lookUpTableBezier[i][m] * strokeColors[m][k];
-            }
-            _x += w_x[m] * this._lookUpTableBezier[i][m];
-            _y += w_y[m] * this._lookUpTableBezier[i][m];
-            _z += w_z[m] * this._lookUpTableBezier[i][m];
-          }
-          for (const propName in immediateGeometry.userVertexProperties){
-            const prop = immediateGeometry.userVertexProperties[propName];
-            const size = prop.getDataSize();
-            let newValues = Array(size).fill(0);
-            for (let m = 0; m < 4; m++){
-              for (let k = 0; k < size; k++){
-                newValues[k] += this._lookUpTableBezier[i][m] * userVertexProperties[propName][m][k];
-              }
-            }
-            prop.setCurrentData(newValues);
-          }
-          this.legacyVertex(_x, _y, _z);
-        }
-        // so that we leave currentColor with the last value the user set it to
-        this.states.curFillColor = fillColors[3];
-        this.states.curStrokeColor = strokeColors[3];
-        for (const propName in immediateGeometry.userVertexProperties) {
-          const prop = immediateGeometry.userVertexProperties[propName];
-          prop.setCurrentData(userVertexProperties[propName][2]);
-        }
-        this.shapeBuilder._bezierVertex[0] = args[6];
-        this.shapeBuilder._bezierVertex[1] = args[7];
-        this.shapeBuilder._bezierVertex[2] = args[8];
-      }
-    }
-  };
-
-  RendererGL.prototype.quadraticVertex = function(...args) {
-    if (this.shapeBuilder._quadraticVertex.length === 0) {
-      throw Error('vertex() must be used once before calling quadraticVertex()');
-    } else {
-      let w_x = [];
-      let w_y = [];
-      let w_z = [];
-      let t, _x, _y, _z, i, k, m;
-      // variable i for bezierPoints, k for components, and m for anchor points.
-      const argLength = args.length;
-
-      t = 0;
-
-      if (
-        this._lookUpTableQuadratic.length === 0 ||
-        this._lutQuadraticDetail !== this._pInst._curveDetail
-      ) {
-        this._lookUpTableQuadratic = [];
-        this._lutQuadraticDetail = this._pInst._curveDetail;
-        const step = 1 / this._lutQuadraticDetail;
-        let start = 0;
-        let end = 1;
-        let j = 0;
-        while (start < 1) {
-          t = parseFloat(start.toFixed(6));
-          this._lookUpTableQuadratic[j] = this._quadraticCoefficients(t);
-          if (end.toFixed(6) === step.toFixed(6)) {
-            t = parseFloat(end.toFixed(6)) + parseFloat(start.toFixed(6));
-            ++j;
-            this._lookUpTableQuadratic[j] = this._quadraticCoefficients(t);
-            break;
-          }
-          start += step;
-          end -= step;
-          ++j;
-        }
-      }
-
-      const LUTLength = this._lookUpTableQuadratic.length;
-      const immediateGeometry = this.shapeBuilder.geometry;
-
-      // fillColors[0]: start point color
-      // fillColors[1]: control point color
-      // fillColors[2]: end point color
-      const fillColors = [];
-      for (m = 0; m < 3; m++) fillColors.push([]);
-      fillColors[0] = immediateGeometry.vertexColors.slice(-4);
-      fillColors[2] = this.states.curFillColor.slice();
-
-      // Do the same for strokeColor.
-      const strokeColors = [];
-      for (m = 0; m < 3; m++) strokeColors.push([]);
-      strokeColors[0] = immediateGeometry.vertexStrokeColors.slice(-4);
-      strokeColors[2] = this.states.curStrokeColor.slice();
-
-      // Do the same for user defined vertex properties
-      const userVertexProperties = {};
-      for (const propName in immediateGeometry.userVertexProperties){
-        const prop = immediateGeometry.userVertexProperties[propName];
-        const size = prop.getDataSize();
-        userVertexProperties[propName] = [];
-        for (m = 0; m < 3; m++) userVertexProperties[propName].push([]);
-        userVertexProperties[propName][0] = prop.getSrcArray().slice(-size);
-        userVertexProperties[propName][2] = prop.getCurrentData();
-      }
-
-      if (argLength === 4) {
-        this.isQuadratic = true;
-
-        w_x = [this.shapeBuilder._quadraticVertex[0], args[0], args[2]];
-        w_y = [this.shapeBuilder._quadraticVertex[1], args[1], args[3]];
-
-        // The ratio of the distance between the start point, the control-
-        // point, and the end point determines the intermediate color.
-        let d0 = Math.hypot(w_x[0]-w_x[1], w_y[0]-w_y[1]);
-        let d1 = Math.hypot(w_x[1]-w_x[2], w_y[1]-w_y[2]);
-        const totalLength = d0 + d1;
-        d0 /= totalLength;
-        for (let k = 0; k < 4; k++) {
-          fillColors[1].push(
-            fillColors[0][k] * (1-d0) + fillColors[2][k] * d0
-          );
-          strokeColors[1].push(
-            strokeColors[0][k] * (1-d0) + strokeColors[2][k] * d0
-          );
-        }
-        for (const propName in immediateGeometry.userVertexProperties){
-          const prop = immediateGeometry.userVertexProperties[propName];
-          const size = prop.getDataSize();
-          for (let k = 0; k < size; k++){
-            userVertexProperties[propName][1].push(
-              userVertexProperties[propName][0][k] * (1-d0) + userVertexProperties[propName][2][k] * d0
-            );
-          }
-        }
-
-        for (let i = 0; i < LUTLength; i++) {
-          // Interpolate colors using control points
-          this.states.curFillColor = [0, 0, 0, 0];
-          this.states.curStrokeColor = [0, 0, 0, 0];
-          _x = _y = 0;
-          for (let m = 0; m < 3; m++) {
-            for (let k = 0; k < 4; k++) {
-              this.states.curFillColor[k] +=
-                this._lookUpTableQuadratic[i][m] * fillColors[m][k];
-              this.states.curStrokeColor[k] +=
-                this._lookUpTableQuadratic[i][m] * strokeColors[m][k];
-            }
-            _x += w_x[m] * this._lookUpTableQuadratic[i][m];
-            _y += w_y[m] * this._lookUpTableQuadratic[i][m];
-          }
-
-          for (const propName in immediateGeometry.userVertexProperties) {
-            const prop = immediateGeometry.userVertexProperties[propName];
-            const size = prop.getDataSize();
-            let newValues = Array(size).fill(0);
-            for (let m = 0; m < 3; m++){
-              for (let k = 0; k < size; k++){
-                newValues[k] += this._lookUpTableQuadratic[i][m] * userVertexProperties[propName][m][k];
-              }
-            }
-            prop.setCurrentData(newValues);
-          }
-          this.legacyVertex(_x, _y);
-        }
-
-        // so that we leave currentColor with the last value the user set it to
-        this.states.curFillColor = fillColors[2];
-        this.states.curStrokeColor = strokeColors[2];
-        for (const propName in immediateGeometry.userVertexProperties) {
-          const prop = immediateGeometry.userVertexProperties[propName];
-          prop.setCurrentData(userVertexProperties[propName][2]);
-        }
-        this.shapeBuilder._quadraticVertex[0] = args[2];
-        this.shapeBuilder._quadraticVertex[1] = args[3];
-      } else if (argLength === 6) {
-        this.isQuadratic = true;
-
-        w_x = [this.shapeBuilder._quadraticVertex[0], args[0], args[3]];
-        w_y = [this.shapeBuilder._quadraticVertex[1], args[1], args[4]];
-        w_z = [this.shapeBuilder._quadraticVertex[2], args[2], args[5]];
-
-        // The ratio of the distance between the start point, the control-
-        // point, and the end point determines the intermediate color.
-        let d0 = Math.hypot(w_x[0]-w_x[1], w_y[0]-w_y[1], w_z[0]-w_z[1]);
-        let d1 = Math.hypot(w_x[1]-w_x[2], w_y[1]-w_y[2], w_z[1]-w_z[2]);
-        const totalLength = d0 + d1;
-        d0 /= totalLength;
-        for (k = 0; k < 4; k++) {
-          fillColors[1].push(
-            fillColors[0][k] * (1-d0) + fillColors[2][k] * d0
-          );
-          strokeColors[1].push(
-            strokeColors[0][k] * (1-d0) + strokeColors[2][k] * d0
-          );
-        }
-
-        for (const propName in immediateGeometry.userVertexProperties){
-          const prop = immediateGeometry.userVertexProperties[propName];
-          const size = prop.getDataSize();
-          for (let k = 0; k < size; k++){
-            userVertexProperties[propName][1].push(
-              userVertexProperties[propName][0][k] * (1-d0) + userVertexProperties[propName][2][k] * d0
-            );
-          }
-        }
-
-        for (i = 0; i < LUTLength; i++) {
-          // Interpolate colors using control points
-          this.states.curFillColor = [0, 0, 0, 0];
-          this.states.curStrokeColor = [0, 0, 0, 0];
-          _x = _y = _z = 0;
-          for (m = 0; m < 3; m++) {
-            for (k = 0; k < 4; k++) {
-              this.states.curFillColor[k] +=
-                this._lookUpTableQuadratic[i][m] * fillColors[m][k];
-              this.states.curStrokeColor[k] +=
-                this._lookUpTableQuadratic[i][m] * strokeColors[m][k];
-            }
-            _x += w_x[m] * this._lookUpTableQuadratic[i][m];
-            _y += w_y[m] * this._lookUpTableQuadratic[i][m];
-            _z += w_z[m] * this._lookUpTableQuadratic[i][m];
-          }
-          for (const propName in immediateGeometry.userVertexProperties) {
-            const prop = immediateGeometry.userVertexProperties[propName];
-            const size = prop.getDataSize();
-            let newValues = Array(size).fill(0);
-            for (let m = 0; m < 3; m++){
-              for (let k = 0; k < size; k++){
-                newValues[k] += this._lookUpTableQuadratic[i][m] * userVertexProperties[propName][m][k];
-              }
-            }
-            prop.setCurrentData(newValues);
-          }
-          this.legacyVertex(_x, _y, _z);
-        }
-
-        // so that we leave currentColor with the last value the user set it to
-        this.states.curFillColor = fillColors[2];
-        this.states.curStrokeColor = strokeColors[2];
-        for (const propName in immediateGeometry.userVertexProperties) {
-          const prop = immediateGeometry.userVertexProperties[propName];
-          prop.setCurrentData(userVertexProperties[propName][2]);
-        }
-        this.shapeBuilder._quadraticVertex[0] = args[3];
-        this.shapeBuilder._quadraticVertex[1] = args[4];
-        this.shapeBuilder._quadraticVertex[2] = args[5];
-      }
-    }
-  };
-
-  RendererGL.prototype.curveVertex = function(...args) {
-    let w_x = [];
-    let w_y = [];
-    let w_z = [];
-    let t, _x, _y, _z, i;
-    t = 0;
-    const argLength = args.length;
-
-    if (
-      this._lookUpTableBezier.length === 0 ||
-      this._lutBezierDetail !== this._pInst._curveDetail
-    ) {
-      this._lookUpTableBezier = [];
-      this._lutBezierDetail = this._pInst._curveDetail;
-      const step = 1 / this._lutBezierDetail;
-      let start = 0;
-      let end = 1;
-      let j = 0;
-      while (start < 1) {
-        t = parseFloat(start.toFixed(6));
-        this._lookUpTableBezier[j] = this._bezierCoefficients(t);
-        if (end.toFixed(6) === step.toFixed(6)) {
-          t = parseFloat(end.toFixed(6)) + parseFloat(start.toFixed(6));
-          ++j;
-          this._lookUpTableBezier[j] = this._bezierCoefficients(t);
-          break;
-        }
-        start += step;
-        end -= step;
-        ++j;
-      }
-    }
-
-    const LUTLength = this._lookUpTableBezier.length;
-
-    if (argLength === 2) {
-      this.shapeBuilder._curveVertex.push(args[0]);
-      this.shapeBuilder._curveVertex.push(args[1]);
-      if (this.shapeBuilder._curveVertex.length === 8) {
-        this.isCurve = true;
-        w_x = this._bezierToCatmull([
-          this.shapeBuilder._curveVertex[0],
-          this.shapeBuilder._curveVertex[2],
-          this.shapeBuilder._curveVertex[4],
-          this.shapeBuilder._curveVertex[6]
-        ]);
-        w_y = this._bezierToCatmull([
-          this.shapeBuilder._curveVertex[1],
-          this.shapeBuilder._curveVertex[3],
-          this.shapeBuilder._curveVertex[5],
-          this.shapeBuilder._curveVertex[7]
-        ]);
-        for (i = 0; i < LUTLength; i++) {
-          _x =
-            w_x[0] * this._lookUpTableBezier[i][0] +
-            w_x[1] * this._lookUpTableBezier[i][1] +
-            w_x[2] * this._lookUpTableBezier[i][2] +
-            w_x[3] * this._lookUpTableBezier[i][3];
-          _y =
-            w_y[0] * this._lookUpTableBezier[i][0] +
-            w_y[1] * this._lookUpTableBezier[i][1] +
-            w_y[2] * this._lookUpTableBezier[i][2] +
-            w_y[3] * this._lookUpTableBezier[i][3];
-          this.legacyVertex(_x, _y);
-        }
-        for (i = 0; i < argLength; i++) {
-          this.shapeBuilder._curveVertex.shift();
-        }
-      }
-    } else if (argLength === 3) {
-      this.shapeBuilder._curveVertex.push(args[0]);
-      this.shapeBuilder._curveVertex.push(args[1]);
-      this.shapeBuilder._curveVertex.push(args[2]);
-      if (this.shapeBuilder._curveVertex.length === 12) {
-        this.isCurve = true;
-        w_x = this._bezierToCatmull([
-          this.shapeBuilder._curveVertex[0],
-          this.shapeBuilder._curveVertex[3],
-          this.shapeBuilder._curveVertex[6],
-          this.shapeBuilder._curveVertex[9]
-        ]);
-        w_y = this._bezierToCatmull([
-          this.shapeBuilder._curveVertex[1],
-          this.shapeBuilder._curveVertex[4],
-          this.shapeBuilder._curveVertex[7],
-          this.shapeBuilder._curveVertex[10]
-        ]);
-        w_z = this._bezierToCatmull([
-          this.shapeBuilder._curveVertex[2],
-          this.shapeBuilder._curveVertex[5],
-          this.shapeBuilder._curveVertex[8],
-          this.shapeBuilder._curveVertex[11]
-        ]);
-        for (i = 0; i < LUTLength; i++) {
-          _x =
-            w_x[0] * this._lookUpTableBezier[i][0] +
-            w_x[1] * this._lookUpTableBezier[i][1] +
-            w_x[2] * this._lookUpTableBezier[i][2] +
-            w_x[3] * this._lookUpTableBezier[i][3];
-          _y =
-            w_y[0] * this._lookUpTableBezier[i][0] +
-            w_y[1] * this._lookUpTableBezier[i][1] +
-            w_y[2] * this._lookUpTableBezier[i][2] +
-            w_y[3] * this._lookUpTableBezier[i][3];
-          _z =
-            w_z[0] * this._lookUpTableBezier[i][0] +
-            w_z[1] * this._lookUpTableBezier[i][1] +
-            w_z[2] * this._lookUpTableBezier[i][2] +
-            w_z[3] * this._lookUpTableBezier[i][3];
-          this.legacyVertex(_x, _y, _z);
-        }
-        for (i = 0; i < argLength; i++) {
-          this.shapeBuilder._curveVertex.shift();
-        }
-      }
-    }
   };
 
   RendererGL.prototype.image = function(
@@ -3296,13 +2210,12 @@ function primitives3D(p5, fn){
     }
 
     this._drawingImage = true;
-    // TODO shape refactor
     this.beginShape();
-    this.legacyVertex(dx, dy, 0, u0, v0);
-    this.legacyVertex(dx + dWidth, dy, 0, u1, v0);
-    this.legacyVertex(dx + dWidth, dy + dHeight, 0, u1, v1);
-    this.legacyVertex(dx, dy + dHeight, 0, u0, v1);
-    this.legacyEndShape(constants.CLOSE);
+    this.vertex(dx, dy, 0, u0, v0);
+    this.vertex(dx + dWidth, dy, 0, u1, v0);
+    this.vertex(dx + dWidth, dy + dHeight, 0, u1, v1);
+    this.vertex(dx, dy + dHeight, 0, u0, v1);
+    this.endShape(constants.CLOSE);
     this._drawingImage = false;
 
     this.pop();
@@ -3659,11 +2572,11 @@ function primitives3D(p5, fn){
           this,
           1,
           0,
-          1, 
+          1,
           detailX,
           detailY,
-          cap,   
-          false 
+          cap,
+          false
         );
       }, this);
       if (detailX <= 24 && detailY <= 16) {
@@ -3742,6 +2655,108 @@ function primitives3D(p5, fn){
     }
     this._drawGeometryScaled(this.geometryBufferCache.getGeometryByID(gid), radius, radius, radius);
   }
+
+  /**
+   * Sets the number of segments used to draw spline curves in WebGL mode.
+   *
+   * In WebGL mode, smooth shapes are drawn using many flat segments. Adding
+   * more flat segments makes shapes appear smoother.
+   *
+   * The parameter, `detail`, is the number of segments to use while drawing a
+   * spline curve. For example, calling `curveDetail(5)` will use 5 segments to
+   * draw curves with the <a href="#/p5/curve">curve()</a> function. By
+   * default,`detail` is 20.
+   *
+   * Note: `curveDetail()` has no effect in 2D mode.
+   *
+   * @method curveDetail
+   * @param {Number} resolution number of segments to use. Defaults to 20.
+   * @chainable
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Draw a black spline curve.
+   *   noFill();
+   *   strokeWeight(1);
+   *   stroke(0);
+   *   curve(5, 26, 73, 24, 73, 61, 15, 65);
+   *
+   *   // Draw red spline curves from the anchor points to the control points.
+   *   stroke(255, 0, 0);
+   *   curve(5, 26, 5, 26, 73, 24, 73, 61);
+   *   curve(73, 24, 73, 61, 15, 65, 15, 65);
+   *
+   *   // Draw the anchor points in black.
+   *   strokeWeight(5);
+   *   stroke(0);
+   *   point(73, 24);
+   *   point(73, 61);
+   *
+   *   // Draw the control points in red.
+   *   stroke(255, 0, 0);
+   *   point(5, 26);
+   *   point(15, 65);
+   *
+   *   describe(
+   *     'A gray square with a curve drawn in three segments. The curve is a sideways U shape with red segments on top and bottom, and a black segment on the right. The endpoints of all the segments are marked with dots.'
+   *   );
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   background(200);
+   *
+   *   // Set the curveDetail() to 3.
+   *   curveDetail(3);
+   *
+   *   // Draw a black spline curve.
+   *   noFill();
+   *   strokeWeight(1);
+   *   stroke(0);
+   *   curve(-45, -24, 0, 23, -26, 0, 23, 11, 0, -35, 15, 0);
+   *
+   *   // Draw red spline curves from the anchor points to the control points.
+   *   stroke(255, 0, 0);
+   *   curve(-45, -24, 0, -45, -24, 0, 23, -26, 0, 23, 11, 0);
+   *   curve(23, -26, 0, 23, 11, 0, -35, 15, 0, -35, 15, 0);
+   *
+   *   // Draw the anchor points in black.
+   *   strokeWeight(5);
+   *   stroke(0);
+   *   point(23, -26);
+   *   point(23, 11);
+   *
+   *   // Draw the control points in red.
+   *   stroke(255, 0, 0);
+   *   point(-45, -24);
+   *   point(-35, 15);
+   *
+   *   describe(
+   *     'A gray square with a jagged curve drawn in three segments. The curve is a sideways U shape with red segments on top and bottom, and a black segment on the right. The endpoints of all the segments are marked with dots.'
+   *   );
+   * }
+   * </code>
+   * </div>
+   */
+  fn.curveDetail = function(d) {
+    if (!(this._renderer instanceof RendererGL)) {
+      throw new Error(
+        'curveDetail() only works in WebGL mode. Did you mean to call createCanvas(width, height, WEBGL)?'
+      );
+    }
+    return this._renderer.curveDetail(d);
+  };
 }
 
 export default primitives3D;
