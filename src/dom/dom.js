@@ -2023,7 +2023,7 @@ p5.prototype.createInput = function (value = '', type = 'text') {
  *     let y = i * 20;
  *
  *     // Draw the image.
- *     image(img, 0, y, 100, 100);
+ *     image(images[i], 0, y, 100, 100);
  *   }
  *
  *   describe('A gray square with a file input beneath it. If the user selects multiple image files to load, they are displayed on the square.');
