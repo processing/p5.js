@@ -144,7 +144,7 @@ class ShapePrimitive {
     // if primitive itself was added
     // (i.e. its individual vertices weren't all added to an existing primitive)
     // give it a reference to the shape and store its location within the shape
-    if (this.shouldAddToShape) {
+    if (this.addedToShape) {
       let lastContour = shape.at(-1);
       this._primitivesIndex = lastContour.primitives.length - 1;
       this._contoursIndex = shape.contours.length - 1;
@@ -154,8 +154,8 @@ class ShapePrimitive {
     return shape.at(-1, -1);
   }
 
-  get shouldAddToShape() {
-    return false;
+  get addedToShape() {
+    return this.vertices.length > 0;
   }
 
   get _nextPrimitive() {
@@ -212,10 +212,6 @@ class Anchor extends ShapePrimitive {
     return this.#vertexCapacity;
   }
 
-  get shouldAddToShape() {
-    return true;
-  }
-
   accept(visitor) {
     visitor.visitAnchor(this);
   }
@@ -232,10 +228,6 @@ class Segment extends ShapePrimitive {
     if (this.constructor === Segment) {
       throw new Error('Segment is an abstract class: it cannot be instantiated.');
     }
-  }
-
-  get shouldAddToShape() {
-    return this.vertices.length > 0;
   }
 
   // segments in a shape always have a predecessor
