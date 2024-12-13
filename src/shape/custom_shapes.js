@@ -13,7 +13,7 @@ import * as constants from '../core/constants';
 
 // ---- UTILITY FUNCTIONS ----
 function polylineLength(vertices) {
-  let length = 0
+  let length = 0;
   for (let i = 1; i < vertices.length; i++) {
     length += vertices[i-1].position.dist(vertices[i].position);
   }
@@ -298,7 +298,10 @@ class BezierSegment extends Segment {
   #_hullLength;
   hullLength() {
     if (this.#_hullLength === undefined) {
-      this.#_hullLength = polylineLength([this.getStartVertex(), ...this.vertices]);
+      this.#_hullLength = polylineLength([
+        this.getStartVertex(),
+        ...this.vertices
+      ]);
     }
     return this.#_hullLength;
   }
@@ -411,7 +414,7 @@ class SplineSegment extends Segment {
   // override method on base class
   getEndVertex() {
     if (this._splineEnds === constants.SHOW) {
-      return super.getEndVertex()
+      return super.getEndVertex();
     } else if (this._splineEnds === constants.HIDE) {
       return this.vertices.at(-2);
     } else {
@@ -430,7 +433,7 @@ class SplineSegment extends Segment {
       points.push(vertex);
     }
 
-    const prevVertex = this.getStartVertex()
+    const prevVertex = this.getStartVertex();
     if (this._splineEnds === constants.SHOW) {
       points.unshift(prevVertex);
       points.push(this.vertices.at(-1));
@@ -619,7 +622,8 @@ class Shape {
   vertexToArray(vertex) {
     const array = [];
     for (const key in this.#vertexProperties) {
-      if (this.userVertexProperties && key in this.userVertexProperties) continue;
+      if (this.userVertexProperties && key in this.userVertexProperties)
+        continue;
       const val = vertex[key];
       array.push(...this.serializeToArray(val));
     }
@@ -645,7 +649,12 @@ class Shape {
     } else if (original instanceof Vector) {
       return new Vector(queue.shift(), queue.shift(), queue.shift());
     } else if (original instanceof Color) {
-      const array = [queue.shift(), queue.shift(), queue.shift(), queue.shift()];
+      const array = [
+        queue.shift(),
+        queue.shift(),
+        queue.shift(),
+        queue.shift()
+      ];
       return new Color(
         array.map((v, i) => v * original.maxes[original.mode][i]),
         original.mode,
@@ -659,7 +668,8 @@ class Shape {
     const queue = [...array];
 
     for (const key in this.#vertexProperties) {
-      if (this.userVertexProperties && key in this.userVertexProperties) continue;
+      if (this.userVertexProperties && key in this.userVertexProperties)
+        continue;
       const original = this.#vertexProperties[key];
       vertex[key] = this.hydrateValue(queue, original);
     }
@@ -671,7 +681,7 @@ class Shape {
   }
 
   arrayScale(array, scale) {
-    return array.map((v) => v * scale);
+    return array.map(v => v * scale);
   }
 
   arraySum(first, ...rest) {
@@ -693,7 +703,7 @@ class Shape {
       this.arrayScale(a, Math.pow(1 - t, 3)),
       this.arrayScale(b, 3 * Math.pow(1 - t, 2) * t),
       this.arrayScale(c, 3 * (1 - t) * Math.pow(t, 2)),
-      this.arrayScale(d, Math.pow(t, 3)),
+      this.arrayScale(d, Math.pow(t, 3))
     );
   }
 
@@ -701,7 +711,7 @@ class Shape {
     return this.arraySum(
       this.arrayScale(a, Math.pow(1 - t, 2)),
       this.arrayScale(b, 2 * (1 - t) * t),
-      this.arrayScale(c, t * t),
+      this.arrayScale(c, t * t)
     );
   }
 
@@ -914,8 +924,15 @@ class Shape {
         } else {
           // Temporarily remove contours after the current one so that we add to the original
           // contour again
-          const rest = this.contours.splice(_index + 1, this.contours.length - _index - 1);
-          this.vertex(anchorVertex.position, anchorVertex.textureCoordinates, { isClosing: true });
+          const rest = this.contours.splice(
+            _index + 1,
+            this.contours.length - _index - 1
+          );
+          this.vertex(
+            anchorVertex.position,
+            anchorVertex.textureCoordinates,
+            { isClosing: true }
+          );
           this.contours.push(...rest);
         }
       }
@@ -1006,7 +1023,7 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
   strokeWeight;
 
   constructor({ strokeWeight }) {
-    super()
+    super();
     this.strokeWeight = strokeWeight;
   }
 
@@ -1060,11 +1077,15 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
       this.path.moveTo(startVertex.position.x, startVertex.position.y);
     }
 
-    const arrayVertices = splineSegment.getControlPoints().map((v) => shape.vertexToArray(v));
-    let bezierArrays = shape.catmullRomToBezier(arrayVertices, splineSegment._splineTightness)
-      .map((arr) => arr.map((vertArr) => shape.arrayToVertex(vertArr)));
+    const arrayVertices = splineSegment.getControlPoints().map(
+      v => shape.vertexToArray(v)
+    );
+    let bezierArrays = shape.catmullRomToBezier(
+      arrayVertices,
+      splineSegment._splineTightness
+    ).map(arr => arr.map(vertArr => shape.arrayToVertex(vertArr)));
     for (const array of bezierArrays) {
-      const points = array.flatMap((vert) => [vert.position.x, vert.position.y]);
+      const points = array.flatMap(vert => [vert.position.x, vert.position.y]);
       this.path.bezierCurveTo(...points);
     }
   }
@@ -1160,11 +1181,14 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
   }
   visitBezierSegment(bezierSegment) {
     const contour = this.lastContour();
-    const numPoints = Math.max(1, Math.ceil(bezierSegment.hullLength() * this.curveDetail));
+    const numPoints = Math.max(
+      1,
+      Math.ceil(bezierSegment.hullLength() * this.curveDetail)
+    );
     const vertexArrays = [
       bezierSegment.getStartVertex(),
       ...bezierSegment.vertices
-    ].map((v) => bezierSegment._shape.vertexToArray(v));
+    ].map(v => bezierSegment._shape.vertexToArray(v));
     for (let i = 0; i < numPoints; i++) {
       const t = (i + 1) / numPoints;
       contour.push(
@@ -1173,22 +1197,35 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
             ? bezierSegment._shape.evaluateCubicBezier(vertexArrays, t)
             : bezierSegment._shape.evaluateQuadraticBezier(vertexArrays, t)
         )
-      )
+      );
     }
   }
   visitSplineSegment(splineSegment) {
     const shape = splineSegment._shape;
     const contour = this.lastContour();
 
-    const arrayVertices = splineSegment.getControlPoints().map((v) => shape.vertexToArray(v));
-    let bezierArrays = shape.catmullRomToBezier(arrayVertices, splineSegment._splineTightness)
+    const arrayVertices = splineSegment.getControlPoints().map(
+      v => shape.vertexToArray(v)
+    );
+    let bezierArrays = shape.catmullRomToBezier(
+      arrayVertices,
+      splineSegment._splineTightness
+    );
     let startVertex = shape.vertexToArray(splineSegment.getStartVertex());
     for (const array of bezierArrays) {
       const bezierControls = [startVertex, ...array];
-      const numPoints = Math.max(1, Math.ceil(polylineLength(bezierControls.map(v => shape.arrayToVertex(v))) * this.curveDetail));
+      const numPoints = Math.max(
+        1,
+        Math.ceil(
+          polylineLength(bezierControls.map(v => shape.arrayToVertex(v))) *
+          this.curveDetail
+        )
+      );
       for (let i = 0; i < numPoints; i++) {
         const t = (i + 1) / numPoints;
-        contour.push(shape.arrayToVertex(shape.evaluateCubicBezier(bezierControls, t)));
+        contour.push(
+          shape.arrayToVertex(shape.evaluateCubicBezier(bezierControls, t))
+        );
       }
       startVertex = array[2];
     }
@@ -1762,7 +1799,7 @@ function customShapes(p5, fn) {
     }
     this._renderer.vertex(x, y, z, u, v);
     return;
-  }
+  };
 
   // Note: Code is commented out for now, to avoid conflicts with the existing implementation.
 
