@@ -578,6 +578,10 @@ class Shape {
     this._splineTightness = tightness;
   }
 
+  /*
+  To-do: Maybe refactor #createVertex() since this has side effects that aren't advertised
+  in the method name?
+  */
   #createVertex(position, textureCoordinates) {
     this.#vertexProperties.position = position;
 
@@ -627,11 +631,11 @@ class Shape {
     this.#generalVertex('bezierVertex', position, textureCoordinates);
   }
 
-  splineVertex() {
+  splineVertex(position, textureCoordinates) {
     this.#generalVertex('splineVertex', position, textureCoordinates);
   }
 
-  arcVertex() {
+  arcVertex(position, textureCoordinates) {
     this.#generalVertex('arcVertex', position, textureCoordinates);
   }
 
