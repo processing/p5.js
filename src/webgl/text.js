@@ -7,14 +7,14 @@ import { Geometry } from './p5.Geometry';
 function text(p5, fn){
   // Text/Typography
   // @TODO:
-  RendererGL.prototype._applyTextProperties = function() {
+  //RendererGL.prototype._applyTextProperties = function() {
     //@TODO finish implementation
     //console.error('text commands not yet implemented in webgl');
-  };
+  //};
 
   RendererGL.prototype.textWidth = function(s) {
     if (this._isOpenType()) {
-      return this._textFont._textWidth(s, this._textSize);
+      return this.states.textFont.font._textWidth(s, this.states.textSize);
     }
 
     return 0; // TODO: error
@@ -165,22 +165,59 @@ function text(p5, fn){
        * calculates rendering info for a glyph, including the curve information,
        * row & column stripes compiled into textures.
        */
-    getGlyphInfo (glyph) {
+    getGlyphInfo(glyph) {
       // check the cache
       let gi = this.glyphInfos[glyph.index];
       if (gi) return gi;
 
-      // get the bounding box of the glyph from opentype.js
-      const bb = glyph.getBoundingBox();
-      const xMin = bb.x1;
-      const yMin = bb.y1;
-      const gWidth = bb.x2 - xMin;
-      const gHeight = bb.y2 - yMin;
-      const cmds = glyph.path.commands;
+      const { glyph: { path: { commands } } } = this.font._singleShapeToPath(glyph.shape);
+      let xMin = Infinity;
+      let xMax = -Infinity;
+      let yMin = Infinity;
+      let yMax = -Infinity;
+
+      for (const cmd of commands) {
+        for (let i = 1; i < cmd.length; i += 2) {
+          xMin = Math.min(xMin, cmd[i]);
+          xMax = Math.max(xMax, cmd[i]);
+          yMin = Math.min(yMin, cmd[i + 1]);
+          yMax = Math.max(yMax, cmd[i + 1]);
+        }
+      }
+
       // don't bother rendering invisible glyphs
-      if (gWidth === 0 || gHeight === 0 || !cmds.length) {
+      if (xMin >= xMax || yMin >= yMax || !commands.length) {
         return (this.glyphInfos[glyph.index] = {});
       }
+
+      const gWidth = xMax - xMin;
+      const gHeight = yMax - yMin;
+
+      // Convert arrays to named objects
+      const cmds = commands.map((command) => {
+        const type = command[0];
+        switch (type) {
+          case 'Z': {
+            return { type };
+          }
+          case 'M':
+          case 'L': {
+            const [, x, y] = command;
+            return { type, x, y };
+          }
+          case 'Q': {
+            const [, x1, y1, x, y] = command;
+            return { type, x1, y1, x, y };
+          }
+          case 'C': {
+            const [, x1, y1, x2, y2, x, y] = command;
+            return { type, x1, y1, x2, y2, x, y };
+          }
+          default: {
+            throw new Error(`Unexpected path command: ${type}`);
+          }
+        }
+      })
 
       let i;
       const strokes = []; // the strokes in this glyph
@@ -624,7 +661,7 @@ function text(p5, fn){
       // initialize the info for this glyph
       gi = this.glyphInfos[glyph.index] = {
         glyph,
-        uGlyphRect: [bb.x1, -bb.y1, bb.x2, -bb.y2],
+        uGlyphRect: [xMin, yMin, xMax, yMax],
         strokeImageInfo,
         strokes,
         colInfo: layout(cols, this.colDimImageInfos, this.colCellImageInfos),
@@ -635,8 +672,8 @@ function text(p5, fn){
     }
   }
 
-  RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
-    if (!this._textFont || typeof this._textFont === 'string') {
+  RendererGL.prototype._renderText = function(line, x, y, maxY, minY) {
+    if (!this.states.textFont || typeof this.states.textFont === 'string') {
       console.log(
         'WEBGL: you must load and set a font before drawing text. See `loadFont` and `textFont` for more details.'
       );
@@ -653,7 +690,7 @@ function text(p5, fn){
       return p;
     }
 
-    p.push(); // fix to #803
+    this.push(); // fix to #803
 
     // remember this state, so it can be restored later
     const doStroke = this.states.strokeColor;
@@ -663,16 +700,22 @@ function text(p5, fn){
     this.states.drawMode = constants.TEXTURE;
 
     // get the cached FontInfo object
-    const font = this._textFont.font;
-    let fontInfo = this._textFont._fontInfo;
+    const { font } = this.states.textFont;
+    if (!font) {
+      throw new Error(
+        'In WebGL mode, textFont() needs to be given the result of loadFont() instead of a font family name.'
+      );
+    }
+    let fontInfo = this.states.textFont._fontInfo;
     if (!fontInfo) {
-      fontInfo = this._textFont._fontInfo = new FontInfo(font);
+      fontInfo = this.states.textFont._fontInfo = new FontInfo(font);
     }
 
     // calculate the alignment and move/scale the view accordingly
-    const pos = this._textFont._handleAlignment(this, line, x, y);
-    const fontSize = this._textSize;
-    const scale = fontSize / font.unitsPerEm;
+    // TODO: check this
+    const pos = { x, y } // this.states.textFont._handleAlignment(this, line, x, y);
+    const fontSize = this.states.textSize;
+    const scale = fontSize / (font.data?.head?.unitsPerEm || 1000);
     this.translate(pos.x, pos.y, 0);
     this.scale(scale, scale, 1);
 
@@ -690,12 +733,13 @@ function text(p5, fn){
       sh.setUniform('uStrokeImageSize', [strokeImageWidth, strokeImageHeight]);
       sh.setUniform('uGridSize', [charGridWidth, charGridHeight]);
     }
+    this._setGlobalUniforms(sh);
     this._applyColorBlend(this.states.curFillColor);
 
-    let g = this.retainedMode.geometry['glyph'];
+    let g = this.geometryBufferCache.getGeometryByID('glyph');
     if (!g) {
       // create the geometry for rendering a quad
-      const geom = (this._textGeom = new Geometry(1, 1, function() {
+      g = (this._textGeom = new Geometry(1, 1, function() {
         for (let i = 0; i <= 1; i++) {
           for (let j = 0; j <= 1; j++) {
             this.vertices.push(new Vector(j, i, 0));
@@ -703,30 +747,26 @@ function text(p5, fn){
           }
         }
       }, this) );
-      geom.computeFaces().computeNormals();
-      g = this.geometryBufferCache.ensureCached(geom);
+      g.gid = 'glyph';
+      g.computeFaces().computeNormals();
+      this.geometryBufferCache.ensureCached(g);
     }
 
     // bind the shader buffers
-    for (const buff of this.retainedMode.buffers.text) {
+    for (const buff of this.buffers.text) {
       buff._prepareBuffer(g, sh);
     }
-    this._bindBuffer(g.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
+    this._bindBuffer(this.geometryBufferCache.cache.glyph.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
 
     // this will have to do for now...
     sh.setUniform('uMaterialColor', this.states.curFillColor);
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
 
     try {
-      let dx = 0; // the x position in the line
-      let glyphPrev = null; // the previous glyph, used for kerning
       // fetch the glyphs in the line of text
-      const glyphs = font.stringToGlyphs(line);
+      const glyphs = font._positionGlyphs(line);
 
       for (const glyph of glyphs) {
-        // kern
-        if (glyphPrev) dx += font.getKerningValue(glyphPrev, glyph);
-
         const gi = fontInfo.getGlyphInfo(glyph);
         if (gi.uGlyphRect) {
           const rowInfo = gi.rowInfo;
@@ -738,15 +778,13 @@ function text(p5, fn){
           sh.setUniform('uSamplerCols', colInfo.dimImageInfo.imageData);
           sh.setUniform('uGridOffset', gi.uGridOffset);
           sh.setUniform('uGlyphRect', gi.uGlyphRect);
-          sh.setUniform('uGlyphOffset', dx);
+          sh.setUniform('uGlyphOffset', glyph.x);
 
           sh.bindTextures(); // afterwards, only textures need updating
 
           // draw it
           gl.drawElements(gl.TRIANGLES, 6, this.GL.UNSIGNED_SHORT, 0);
         }
-        dx += glyph.advanceWidth;
-        glyphPrev = glyph;
       }
     } finally {
       // clean up
@@ -756,10 +794,8 @@ function text(p5, fn){
       this.states.drawMode = drawMode;
       gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 
-      p.pop();
+      this.pop();
     }
-
-    return p;
   };
 }
 

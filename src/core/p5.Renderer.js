@@ -37,7 +37,7 @@ class Renderer {
       rectMode: constants.CORNER,
       ellipseMode: constants.CENTER,
 
-      textFont: 'sans-serif',
+      textFont: { family: 'sans-serif' },
       textLeading: 15,
       leadingSet: false,
       textSize: 12,
@@ -599,8 +599,8 @@ class Renderer {
   /**
  * Helper function to check font type (system or otf)
  */
-  _isOpenType(f = this.states.textFont) {
-    return typeof f === 'object' && f.font && f.font.supported;
+  _isOpenType({ font: f } = this.states.textFont) {
+    return typeof f === 'object' && f.data;
   }
 
   _updateTextMetrics() {
