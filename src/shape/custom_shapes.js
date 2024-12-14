@@ -280,7 +280,7 @@ to interpolated endpoints (a breaking change)
 */
 class SplineSegment extends Segment {
   #vertexCapacity = Infinity;
-  _splineEnds = constants.SHOW;
+  _splineEnds = constants.INCLUDE;
   _splineTightness = 0;
 
   get vertexCapacity() {
@@ -296,7 +296,7 @@ class SplineSegment extends Segment {
   }
 
   get canOverrideAnchor() {
-    return this._splineEnds === constants.HIDE;
+    return this._splineEnds === constants.EXCLUDE;
   }
 
   // assuming for now that the first interpolated vertex is always
@@ -304,7 +304,7 @@ class SplineSegment extends Segment {
   // if this spline segment doesn't follow another segment,
   // the first vertex is in an anchor
   get _firstInterpolatedVertex() {
-    if (this._splineEnds === constants.HIDE) {
+    if (this._splineEnds === constants.EXCLUDE) {
       return this._comesAfterSegment ?
         this.vertices[1] :
         this.vertices[0];
@@ -331,7 +331,7 @@ class SplineSegment extends Segment {
     this._splineEnds = shape._splineEnds;
     this._splineTightness = shape._splineTightness;
 
-    if (this._splineEnds !== constants.HIDE) return added;
+    if (this._splineEnds !== constants.EXCLUDE) return added;
 
     let verticesPushed = !this._belongsToShape;
     let lastPrimitive = shape.at(-1, -1);
@@ -367,9 +367,9 @@ class SplineSegment extends Segment {
 
   // override method on base class
   getEndVertex() {
-    if (this._splineEnds === constants.SHOW) {
+    if (this._splineEnds === constants.INCLUDE) {
       return super.getEndVertex();
-    } else if (this._splineEnds === constants.HIDE) {
+    } else if (this._splineEnds === constants.EXCLUDE) {
       return this.vertices.at(-2);
     } else {
       return this.getStartVertex();
@@ -389,7 +389,7 @@ class SplineSegment extends Segment {
     }
 
     const prevVertex = this.getStartVertex();
-    if (this._splineEnds === constants.SHOW) {
+    if (this._splineEnds === constants.INCLUDE) {
       points.unshift(prevVertex);
       points.push(this.vertices.at(-1));
     } else if (this._splineEnds === constants.JOIN) {
@@ -584,7 +584,7 @@ class Shape {
   _splineTightness = 0;
   kind = null;
   contours = [];
-  _splineEnds = constants.SHOW;
+  _splineEnds = constants.INCLUDE;
   userVertexProperties = null;
 
   constructor(
@@ -1078,7 +1078,7 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
     const shape = splineSegment._shape;
 
     if (
-      splineSegment._splineEnds === constants.HIDE &&
+      splineSegment._splineEnds === constants.EXCLUDE &&
       !splineSegment._comesAfterSegment
     ) {
       let startVertex = splineSegment._firstInterpolatedVertex;

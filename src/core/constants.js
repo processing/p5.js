@@ -1347,20 +1347,20 @@ export const RGBA = 'rgba';
 /**
  * The `splineEnds` mode where splines curve through
  * their first and last points.
- * @typedef {unique symbol} SHOW
- * @property {SHOW} SHOW
+ * @typedef {unique symbol} INCLUDE
+ * @property {INCLUDE} INCLUDE
  * @final
  */
-export const SHOW = Symbol('show');
+export const INCLUDE = Symbol('include');
 
 /**
  * The `splineEnds` mode where the first and last points in a spline
  * affect the direction of the curve, but are not rendered.
- * @typedef {unique symbol} HIDE
- * @property {HIDE} HIDE
+ * @typedef {unique symbol} EXCLUDE
+ * @property {EXCLUDE} EXCLUDE
  * @final
  */
-export const HIDE = Symbol('hide');
+export const EXCLUDE = Symbol('exclude');
 
 /**
  * The `splineEnds` mode where the spline loops back to its first point.

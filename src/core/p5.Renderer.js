@@ -45,7 +45,7 @@ class Renderer {
       textAlign: constants.LEFT,
       textBaseline: constants.BASELINE,
       bezierOrder: 3,
-      splineEnds: constants.SHOW,
+      splineEnds: constants.INCLUDE,
 
       textWrap: constants.WORD,
 
