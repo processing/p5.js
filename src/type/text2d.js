@@ -1096,11 +1096,11 @@ function text2d(p5, fn) {
       this.push();
 
       // no stroke unless specified by user
-      if (states.doStroke && states.strokeSet) {
+      if (states.strokeColor && states.strokeSet) {
         this.textDrawingContext().strokeText(text, x, y);
       }
 
-      if (!this._clipping && states.doFill) {
+      if (!this._clipping && states.fillColor) {
 
         // if fill hasn't been set by user, use default text fill
         if (!states.fillSet) {
