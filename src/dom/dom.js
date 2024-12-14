@@ -1716,6 +1716,8 @@ function dom(p5, fn){
    */
   fn.createColorPicker = function (value) {
     p5._validateParameters('createColorPicker', arguments);
+    // TODO: This implementation needs to be rechecked or reimplemented
+    // The way it worked with color is a bit too complex
     const elt = document.createElement('input');
     let self;
     elt.type = 'color';
@@ -1723,29 +1725,27 @@ function dom(p5, fn){
       if (value instanceof p5.Color) {
         elt.value = value.toString('#rrggbb');
       } else {
-        fn._colorMode = 'rgb';
-        fn._colorMaxes = {
-          rgb: [255, 255, 255, 255],
-          hsb: [360, 100, 100, 1],
-          hsl: [360, 100, 100, 1]
-        };
-        elt.value = fn.color(value).toString('#rrggbb');
+        this.push();
+        this.colorMode('rgb');
+        elt.value = this.color(value).toString('#rrggbb');
+        this.pop();
       }
     } else {
       elt.value = '#000000';
     }
     self = addElement(elt, this);
     // Method to return a p5.Color object for the given color.
+    const inst = this;
     self.color = function () {
+      inst.push();
       if (value) {
         if (value.mode) {
-          fn._colorMode = value.mode;
-        }
-        if (value.maxes) {
-          fn._colorMaxes = value.maxes;
+          inst.colorMode(value.mode, ...value?.maxes[value.mode]);
         }
       }
-      return fn.color(this.elt.value);
+      const c = inst.color(this.elt.value);
+      inst.pop();
+      return c;
     };
     return self;
   };

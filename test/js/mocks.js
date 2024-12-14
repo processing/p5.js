@@ -18,11 +18,15 @@ const httpMocks = [
 export const httpMock = setupWorker(...httpMocks);
 
 // p5.js module mocks
+const rendererStates = {};
 export const mockP5 = vi.fn();
 Object.assign(mockP5, {
   _validateParameters: vi.fn(),
   _friendlyFileLoadError: vi.fn(),
-  _friendlyError: vi.fn()
+  _friendlyError: vi.fn(),
+  Renderer: {
+    states: rendererStates
+  }
 });
 
 const mockCanvas = document.createElement('canvas');
@@ -38,5 +42,8 @@ export const mockP5Prototype = {
   canvas: {
     id: 'myCanvasID'
   },
-  _elements: []
+  _elements: [],
+  _renderer: {
+    states: rendererStates
+  }
 };

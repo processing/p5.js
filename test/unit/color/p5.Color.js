@@ -267,7 +267,7 @@ suite('p5.Color', function() {
       let cc = mockP5Prototype.color(255, 0, 102, 204);
       assert.deepEqual(cc._color.coords, [1, 0, 0.4]);
       assert.equal(cc._color.alpha, 0.8);
-      cc.setAlpha(98);
+      cc.setAlpha(98/255);
       assert.deepEqual(cc._color.coords, [1, 0, 0.4]);
       assert.equal(cc._color.alpha, 98/255);
     });
@@ -276,13 +276,13 @@ suite('p5.Color', function() {
       var cc = mockP5Prototype.color(255, 0, 102, 204);
       assert.deepEqual(cc._color.coords, [1, 0, 0.4]);
       assert.equal(cc._color.alpha, 0.8);
-      cc.setRed(98);
+      cc.setRed(98/255);
       assert.deepEqual(cc._color.coords, [98/255, 0, 0.4]);
       assert.equal(cc._color.alpha, 0.8);
-      cc.setGreen(44);
+      cc.setGreen(44/255);
       assert.deepEqual(cc._color.coords, [98/255, 44/255, 0.4]);
       assert.equal(cc._color.alpha, 0.8);
-      cc.setBlue(244);
+      cc.setBlue(244/255);
       assert.deepEqual(cc._color.coords, [98/255, 44/255, 244/255]);
       assert.equal(cc._color.alpha, 0.8);
     });
@@ -313,10 +313,10 @@ suite('p5.Color', function() {
 
     test('should correctly get RGBA property after overwrite', function() {
       mockP5Prototype.colorMode(mockP5Prototype.RGB, 255, 255, 255, 255);
-      assert.equal(c._getRed(), 255);
-      assert.equal(c._getGreen(), 0);
-      assert.equal(c._getBlue(), 102);
-      assert.equal(c._getAlpha(), 204);
+      assert.equal(c._getRed(), 255/255);
+      assert.equal(c._getGreen(), 0/255);
+      assert.equal(c._getBlue(), 102/255);
+      assert.equal(c._getAlpha(), 204/255);
     });
   });
 
@@ -348,19 +348,19 @@ suite('p5.Color', function() {
       assert.equal(cc._color.alpha, 1);
 
       // TODO: separately check these values are correct (not in test here)
-      cc.setRed(98);
+      cc.setRed(98/255);
       assert.closeTo(cc._color.coords[0], 297, 1);
       assert.closeTo(cc._color.coords[1], 100, 1);
       assert.closeTo(cc._color.coords[2], 20, 1);
       assert.equal(cc._color.alpha, 1);
 
-      cc.setGreen(44);
+      cc.setGreen(44/255);
       assert.closeTo(cc._color.coords[0], 295, 1);
       assert.closeTo(cc._color.coords[1], 39, 1);
       assert.closeTo(cc._color.coords[2], 28, 1);
       assert.equal(cc._color.alpha, 1);
 
-      cc.setBlue(244);
+      cc.setBlue(244/255);
       assert.closeTo(cc._color.coords[0], 256, 1);
       assert.closeTo(cc._color.coords[1], 90, 1);
       assert.closeTo(cc._color.coords[2], 56, 1);
@@ -398,10 +398,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get HSLA property', function() {
-      assert.approximately(c._getHue(), 93, 0.5);
-      assert.approximately(c._getSaturation(), 200, 0.5);
-      assert.approximately(c._getLightness(), 150, 0.5);
-      assert.approximately(c._getAlpha(), 8, 0.5);
+      assert.approximately(c._getHue(), 336, 0.5);
+      assert.approximately(c._getSaturation(), 100, 0.5);
+      assert.approximately(c._getLightness(), 50, 0.5);
+      assert.approximately(c._getAlpha(), 0.8, 0.5);
     });
 
     test('should correctly convert to RGBA', function() {
@@ -417,7 +417,7 @@ suite('p5.Color', function() {
 
     test('can be modified with alpha setter', function() {
       let cc = mockP5Prototype.color(93.33, 200, 150, 8);
-      cc.setAlpha(7.3);
+      cc.setAlpha(0.73);
       assert.closeTo(cc._color.coords[0], 336, 1);
       assert.equal(cc._color.coords[1], 100);
       assert.equal(cc._color.coords[2], 50);
@@ -431,19 +431,19 @@ suite('p5.Color', function() {
       assert.equal(c._color.coords[2], 50);
       assert.equal(c._color.alpha, 0.8);
 
-      cc.setRed(98);
+      cc.setRed(98/255);
       assert.closeTo(cc._color.coords[0], 297, 1);
       assert.closeTo(cc._color.coords[1], 100, 1);
       assert.closeTo(cc._color.coords[2], 20, 1);
       assert.equal(cc._color.alpha, 0.8);
 
-      cc.setGreen(44);
+      cc.setGreen(44/255);
       assert.closeTo(cc._color.coords[0], 295, 1);
       assert.closeTo(cc._color.coords[1], 39, 1);
       assert.closeTo(cc._color.coords[2], 28, 1);
       assert.equal(cc._color.alpha, 0.8);
 
-      cc.setBlue(244);
+      cc.setBlue(244/255);
       assert.closeTo(cc._color.coords[0], 256, 1);
       assert.closeTo(cc._color.coords[1], 90, 1);
       assert.closeTo(cc._color.coords[2], 56, 1);
@@ -556,19 +556,19 @@ suite('p5.Color', function() {
       assert.deepEqual(cc._color.coords, [336, 100, 100]);
       assert.equal(cc._color.alpha, 1);
 
-      cc.setRed(98);
+      cc.setRed(98/255);
       assert.closeTo(cc._color.coords[0], 297, 1);
       assert.closeTo(cc._color.coords[1], 100, 1);
       assert.closeTo(cc._color.coords[2], 40, 1);
       assert.equal(cc._color.alpha, 1);
 
-      cc.setGreen(44);
+      cc.setGreen(44/255);
       assert.closeTo(cc._color.coords[0], 295, 1);
       assert.closeTo(cc._color.coords[1], 56, 1);
       assert.closeTo(cc._color.coords[2], 40, 1);
       assert.equal(cc._color.alpha, 1);
 
-      cc.setBlue(244);
+      cc.setBlue(244/255);
       assert.closeTo(cc._color.coords[0], 256, 1);
       assert.closeTo(cc._color.coords[1], 81, 1);
       assert.closeTo(cc._color.coords[2], 95, 1);
@@ -604,10 +604,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get HSBA property', function() {
-      assert.approximately(c._getHue(), 93, 0.5);
-      assert.approximately(c._getSaturation(), 200, 0.5);
-      assert.approximately(c._getBrightness(), 300, 0.5);
-      assert.approximately(c._getAlpha(), 8, 0.5);
+      assert.approximately(c._getHue(), 336, 0.5);
+      assert.approximately(c._getSaturation(), 100, 0.5);
+      assert.approximately(c._getBrightness(), 100, 0.5);
+      assert.approximately(c._getAlpha(), 0.8, 0.5);
     });
 
     test('should correctly convert to RGBA', function() {

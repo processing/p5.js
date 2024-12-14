@@ -8,6 +8,25 @@ import * as constants from '../core/constants';
 import { Image } from '../image/p5.Image';
 
 class Renderer {
+  static states = {
+    doStroke: true,
+    strokeSet: false,
+    doFill: true,
+    fillSet: false,
+    tint: null,
+    imageMode: constants.CORNER,
+    rectMode: constants.CORNER,
+    ellipseMode: constants.CENTER,
+    textFont: 'sans-serif',
+    textLeading: 15,
+    leadingSet: false,
+    textSize: 12,
+    textAlign: constants.LEFT,
+    textBaseline: constants.BASELINE,
+    textStyle: constants.NORMAL,
+    textWrap: constants.WORD
+  }
+
   constructor(pInst, w, h, isMainCanvas) {
     this._pInst = pInst;
     this._isMainCanvas = isMainCanvas;
@@ -24,24 +43,16 @@ class Renderer {
     }
 
     // Renderer state machine
-    this.states = {
-      doStroke: true,
-      strokeSet: false,
-      doFill: true,
-      fillSet: false,
-      tint: null,
-      imageMode: constants.CORNER,
-      rectMode: constants.CORNER,
-      ellipseMode: constants.CENTER,
-      textFont: 'sans-serif',
-      textLeading: 15,
-      leadingSet: false,
-      textSize: 12,
-      textAlign: constants.LEFT,
-      textBaseline: constants.BASELINE,
-      textStyle: constants.NORMAL,
-      textWrap: constants.WORD
-    };
+    this.states = Object.assign({}, Renderer.states);
+    // Clone properties that support it
+    for (const key in this.states) {
+      if (this.states[key] instanceof Array) {
+        this.states[key] = this.states[key].slice();
+      } else if (this.states[key] && this.states[key].clone instanceof Function) {
+        this.states[key] = this.states[key].clone();
+      }
+    }
+
     this._pushPopStack = [];
     // NOTE: can use the length of the push pop stack instead
     this._pushPopDepth = 0;

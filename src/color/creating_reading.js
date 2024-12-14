@@ -37,10 +37,9 @@ function creatingReading(p5, fn){
 
   fn.RGBA = RGBA;
 
-  // Set color related defaults
-  fn._colorMode = RGB;
-  // Structured cloning the default to make this per instance
-  fn._colorMaxes = {
+  // Add color states to renderer state machine
+  p5.Renderer.states.colorMode = RGB;
+  p5.Renderer.states.colorMaxes = {
     [RGB]: [255, 255, 255, 255],
     [RGBHDR]: [255, 255, 255, 255],
     [HSB]: [360, 100, 100, 1],
@@ -51,7 +50,18 @@ function creatingReading(p5, fn){
     [LCH]: [100, 150, 360, 1],
 
     [OKLAB]: [100, [-125, 125], [-125, 125], 1],
-    [OKLCH]: [100, 150, 360, 1]
+    [OKLCH]: [100, 150, 360, 1],
+    clone: function(){
+      let ret = {};
+      for(const key in this){
+        if(typeof this[key] !== 'function'){
+          ret[key] = structuredClone(this[key]);
+        }else{
+          ret[key] = this[key];
+        }
+      }
+      return ret;
+    }
   };
 
   /**
@@ -346,7 +356,11 @@ function creatingReading(p5, fn){
     }
 
     const arg = Array.isArray(args[0]) ? args[0] : args;
-    return new Color(arg, this._colorMode, this._colorMaxes);
+    return new Color(
+      arg,
+      this._renderer.states.colorMode,
+      this._renderer.states.colorMaxes[this._renderer.states.colorMode]
+    );
   };
 
   /**
@@ -1507,7 +1521,7 @@ function creatingReading(p5, fn){
    */
   fn.lerpColor = function(c1, c2, amt) {
     p5._validateParameters('lerpColor', arguments);
-    return c1.lerp(c2, amt, this._colorMode);
+    return c1.lerp(c2, amt, this._renderer.states.colorMode);
   };
 }
 

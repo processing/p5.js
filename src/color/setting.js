@@ -964,10 +964,10 @@ function setting(p5, fn){
       ].includes(mode)
     ) {
       // Set color mode.
-      this._colorMode = mode;
+      this._renderer.states.colorMode = mode;
 
       // Set color maxes.
-      const maxes = this._colorMaxes[mode];
+      const maxes = this._renderer.states.colorMaxes[mode];
       if (arguments.length === 2) {
         maxes[0] = max1; // Red
         maxes[1] = max1; // Green
@@ -985,7 +985,7 @@ function setting(p5, fn){
       }
     }
 
-    return this._colorMode;
+    return this._renderer.states.colorMode;
   };
 
   /**
@@ -1587,7 +1587,6 @@ function setting(p5, fn){
    * @param  {p5.Color}      color   the stroke color.
    * @chainable
    */
-
   fn.stroke = function(...args) {
     this._renderer.stroke(...args);
     return this;

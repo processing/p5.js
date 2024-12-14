@@ -41,12 +41,11 @@ class Color {
   mode;
 
   static colorMap = {};
-  static colorMaxes = {};
   static #colorjsMaxes = {};
 
   // Used to add additional color modes to p5.js
   // Uses underlying library's definition
-  static addColorMode(mode, definition, maxes){
+  static addColorMode(mode, definition){
     ColorSpace.register(definition);
     Color.colorMap[mode] = definition.id;
     // Get colorjs maxes
@@ -55,15 +54,9 @@ class Color {
         return acc;
       }, []);
     Color.#colorjsMaxes[mode].push([0, 1]);
-
-    if(maxes){
-      Color.colorMaxes[mode] = maxes;
-    }else{
-      Color.colorMaxes[mode] = structuredClone(Color.#colorjsMaxes[mode]);
-    }
   }
 
-  constructor(vals, colorMode) {
+  constructor(vals, colorMode, colorMaxes) {
     // This changes with the color object
     this.mode = colorMode || RGB;
 
@@ -101,45 +94,46 @@ class Color {
 
     }else{
       // Received individual channel values
-      let alpha;
+      let mappedVals;
 
-      if(vals.length === 4){
-        alpha = vals.pop();
-      }else if (vals.length === 2){
-        alpha = vals[1];
-        vals = [vals[0], vals[0], vals[0]];
-      }else if(vals.length === 1){
-        vals = [vals[0], vals[0], vals[0]];
+      if(colorMaxes){
+        if(vals.length === 4){
+          mappedVals = Color.mapColorRange(vals, this.mode, colorMaxes);
+        }else if(vals.length === 3){
+          mappedVals = Color.mapColorRange([vals[0], vals[1], vals[2]], this.mode, colorMaxes);
+          mappedVals.push(1);
+        }else if(vals.length === 2){
+          mappedVals = Color.mapColorRange([vals[0], vals[0], vals[0], vals[1]], this.mode, colorMaxes);
+        }else if(vals.length === 1){
+          mappedVals = Color.mapColorRange([vals[0], vals[0], vals[0]], this.mode, colorMaxes);
+          mappedVals.push(1);
+        }
+      }else{
+        mappedVals = vals;
       }
-      const alphaMaxes = Array.isArray(Color.colorMaxes[this.mode][3]) ?
-        Color.colorMaxes[this.mode][3] :
-        [0, Color.colorMaxes[this.mode][3]];
-      alpha = alpha !== undefined ?
-        map(alpha, alphaMaxes[0], alphaMaxes[1], 0, 1)
-        : 1;
 
       const space = Color.colorMap[this.mode] || console.error('Invalid color mode');
-      const coords = this.#mapColorRange(vals);
+      const coords = mappedVals.slice(0, 3);
 
       const color = {
         space,
         coords,
-        alpha
+        alpha: mappedVals[3]
       };
       this._color = toGamut(color, space);
     }
   }
 
   // Convert from p5 color range to color.js color range
-  #mapColorRange(origin){
-    const p5Maxes = Color.colorMaxes[this.mode].map((max) => {
+  static mapColorRange(origin, mode, maxes){
+    const p5Maxes = maxes.map((max) => {
       if(!Array.isArray(max)){
         return [0, max];
       }else{
         return max;
       }
     });
-    const colorjsMaxes = Color.#colorjsMaxes[this.mode];
+    const colorjsMaxes = Color.#colorjsMaxes[mode];
 
     return origin.map((channel, i) => {
       const newval = map(channel, p5Maxes[i][0], p5Maxes[i][1], colorjsMaxes[i][0], colorjsMaxes[i][1]);
@@ -148,15 +142,15 @@ class Color {
   }
 
   // Convert from color.js color range to p5 color range
-  #unmapColorRange(origin){
-    const p5Maxes = Color.colorMaxes[this.mode].map((max) => {
+  static unmapColorRange(origin, mode, maxes){
+    const p5Maxes = maxes.map((max) => {
       if(!Array.isArray(max)){
         return [0, max];
       }else{
         return max;
       }
     });
-    const colorjsMaxes = Color.#colorjsMaxes[this.mode];
+    const colorjsMaxes = Color.#colorjsMaxes[mode];
 
     return origin.map((channel, i) => {
       const newval = map(channel, colorjsMaxes[i][0], colorjsMaxes[i][1], p5Maxes[i][0], p5Maxes[i][1]);
@@ -172,11 +166,6 @@ class Color {
   // Get raw coordinates of underlying library, can differ between libraries
   get _array() {
     return [...this._color.coords, this._color.alpha];
-  }
-
-  // Get coordinates mapped to current color maxes
-  get _levels() {
-    return this.#unmapColorRange(this._array);
   }
 
   lerp(color, amt, mode){
@@ -289,15 +278,14 @@ class Color {
    * </div>
    */
   setRed(new_red) {
-    const red_val = new_red / Color.colorMaxes[RGB][0];
-
+    // DOCS: Should update range
     if(this.mode === RGB){
-      this._color.coords[0] = red_val;
+      this._color.coords[0] = new_red;
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
       const space = this._color.space.id;
       const representation = to(this._color, 'srgb');
-      representation.coords[0] = red_val;
+      representation.coords[0] = new_red;
       this._color = to(representation, space);
     }
   }
@@ -339,14 +327,14 @@ class Color {
    * </div>
    **/
   setGreen(new_green) {
-    const green_val = new_green / Color.colorMaxes[RGB][1];
+    // DOCS: Should update range
     if(this.mode === RGB){
-      this._color.coords[1] = green_val;
+      this._color.coords[1] = new_green;
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
       const space = this._color.space.id;
       const representation = to(this._color, 'srgb');
-      representation.coords[1] = green_val;
+      representation.coords[1] = new_green;
       this._color = to(representation, space);
     }
   }
@@ -388,14 +376,14 @@ class Color {
    * </div>
    **/
   setBlue(new_blue) {
-    const blue_val = new_blue / Color.colorMaxes[RGB][2];
+    // DOCS: Should update range
     if(this.mode === RGB){
-      this._color.coords[2] = blue_val;
+      this._color.coords[2] = new_blue;
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
       const space = this._color.space.id;
       const representation = to(this._color, 'srgb');
-      representation.coords[2] = blue_val;
+      representation.coords[2] = new_blue;
       this._color = to(representation, space);
     }
   }
@@ -438,38 +426,39 @@ class Color {
    * </div>
    **/
   setAlpha(new_alpha) {
-    this._color.alpha = new_alpha / Color.colorMaxes[this.mode][3];
+    // DOCS: Should update range
+    this._color.alpha = new_alpha;
   }
 
   _getRed() {
     if(this.mode === RGB){
-      return this._color.coords[0] * Color.colorMaxes[RGB][0];
+      return this._color.coords[0];
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
-      return toGamut(this._color, 'srgb').coords[0] * Color.colorMaxes[RGB][0];
+      return toGamut(this._color, 'srgb').coords[0];
     }
   }
 
   _getGreen() {
     if(this.mode === RGB){
-      return this._color.coords[1] * Color.colorMaxes[RGB][1];
+      return this._color.coords[1];
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
-      return toGamut(this._color, 'srgb').coords[1]  * Color.colorMaxes[RGB][1];
+      return toGamut(this._color, 'srgb').coords[1];
     }
   }
 
   _getBlue() {
     if(this.mode === RGB){
-      return this._color.coords[2]  * Color.colorMaxes[RGB][2];
+      return this._color.coords[2];
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
-      return toGamut(this._color, 'srgb').coords[2]  * Color.colorMaxes[RGB][2];
+      return toGamut(this._color, 'srgb').coords[2];
     }
   }
 
   _getAlpha() {
-    return this._color.alpha * Color.colorMaxes[this.mode][3];
+    return this._color.alpha;
   }
 
   _getRGBA(maxes=[1, 1, 1, 1]) {
@@ -499,10 +488,6 @@ class Color {
     return this.mode;
   }
 
-  _getMaxes() {
-    return Color.colorMaxes;
-  }
-
   /**
    * Hue is the same in HSB and HSL, but the maximum value may be different.
    * This function will return the HSB-normalized saturation when supplied with
@@ -511,10 +496,10 @@ class Color {
    */
   _getHue() {
     if(this.mode === HSB || this.mode === HSL){
-      return this._color.coords[0] / 360 * Color.colorMaxes[this.mode][0];
+      return this._color.coords[0];
     }else{
       // Will do an imprecise conversion to 'HSL', not recommended
-      return to(this._color, 'hsl').coords[0] / 360 * Color.colorMaxes[this.mode][0];
+      return to(this._color, 'hsl').coords[0];
     }
   }
 
@@ -525,28 +510,28 @@ class Color {
    */
   _getSaturation() {
     if(this.mode === HSB || this.mode === HSL){
-      return this._color.coords[1] / 100 * Color.colorMaxes[this.mode][1];
+      return this._color.coords[1];
     }else{
       // Will do an imprecise conversion to 'HSL', not recommended
-      return to(this._color, 'hsl').coords[1] / 100 * Color.colorMaxes[this.mode][1];
+      return to(this._color, 'hsl').coords[1];
     }
   }
 
   _getBrightness() {
     if(this.mode === HSB){
-      return this._color.coords[2] / 100 * Color.colorMaxes[this.mode][2];
+      return this._color.coords[2];
     }else{
       // Will do an imprecise conversion to 'HSB', not recommended
-      return to(this._color, 'hsb').coords[2] / 100 * Color.colorMaxes[this.mode][2];
+      return to(this._color, 'hsb').coords[2];
     }
   }
 
   _getLightness() {
     if(this.mode === HSL){
-      return this._color.coords[2] / 100 * Color.colorMaxes[this.mode][2];
+      return this._color.coords[2];
     }else{
       // Will do an imprecise conversion to 'HSL', not recommended
-      return to(this._color, 'hsl').coords[2] / 100 * Color.colorMaxes[this.mode][2];
+      return to(this._color, 'hsl').coords[2];
     }
   }
 }
@@ -582,15 +567,15 @@ function color(p5, fn){
   p5.Color = Color;
 
   // Register color modes and initialize Color maxes to what p5 has set for itself
-  p5.Color.addColorMode(RGB, sRGB, fn._colorMaxes?.[RGB]);
-  p5.Color.addColorMode(RGBHDR, P3, fn._colorMaxes?.[RGBHDR]);
-  p5.Color.addColorMode(HSB, HSBSpace, fn._colorMaxes?.[HSB]);
-  p5.Color.addColorMode(HSL, HSLSpace, fn._colorMaxes?.[HSL]);
-  p5.Color.addColorMode(HWB, HWBSpace, fn._colorMaxes?.[HWB]);
-  p5.Color.addColorMode(LAB, Lab, fn._colorMaxes?.[LAB]);
-  p5.Color.addColorMode(LCH, LCHSpace, fn._colorMaxes?.[LCH]);
-  p5.Color.addColorMode(OKLAB, OKLab, fn._colorMaxes?.[OKLAB]);
-  p5.Color.addColorMode(OKLCH, OKLCHSpace, fn._colorMaxes?.[OKLCH]);
+  p5.Color.addColorMode(RGB, sRGB);
+  p5.Color.addColorMode(RGBHDR, P3);
+  p5.Color.addColorMode(HSB, HSBSpace);
+  p5.Color.addColorMode(HSL, HSLSpace);
+  p5.Color.addColorMode(HWB, HWBSpace);
+  p5.Color.addColorMode(LAB, Lab);
+  p5.Color.addColorMode(LCH, LCHSpace);
+  p5.Color.addColorMode(OKLAB, OKLab);
+  p5.Color.addColorMode(OKLCH, OKLCHSpace);
 }
 
 export default color;

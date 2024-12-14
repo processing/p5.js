@@ -13,11 +13,14 @@ suite('color/Setting', function() {
   beforeAll(() => {
     creatingReading(mockP5, mockP5Prototype);
     setting(mockP5, mockP5Prototype);
-    mockP5Prototype._colorMaxes = {
-      rgb: [255, 255, 255, 255],
-      hsb: [360, 100, 100, 1],
-      hsl: [360, 100, 100, 1]
-    }
+    // mockP5Prototype.states = {
+    //   colorMode: 'rgb',
+    //   colorMaxes: {
+    //     rgb: [255, 255, 255, 255],
+    //     hsb: [360, 100, 100, 1],
+    //     hsl: [360, 100, 100, 1]
+    //   }
+    // }
   });
 
   afterAll(() => {
@@ -53,7 +56,15 @@ suite('color/Setting', function() {
   suite('p5.prototype.erase', function() {
     beforeEach(() => {
       mockP5Prototype._renderer = {
-        erase: vi.fn()
+        erase: vi.fn(),
+        states: {
+          colorMode: 'rgb',
+          colorMaxes: {
+            rgb: [255, 255, 255, 255],
+            hsb: [360, 100, 100, 1],
+            hsl: [360, 100, 100, 1]
+          }
+        }
       }
     });
 
@@ -210,49 +221,50 @@ suite('color/Setting', function() {
     });
 
     test('should set mode to RGB', function() {
+      console.log(mockP5Prototype);
       mockP5Prototype.colorMode('rgb');
-      assert.equal(mockP5Prototype._colorMode, 'rgb');
+      assert.equal(mockP5Prototype._renderer.states.colorMode, 'rgb');
     });
 
     test('should correctly set color RGB maxes', function() {
-      assert.deepEqual(mockP5Prototype._colorMaxes['rgb'], [255, 255, 255, 255]);
+      assert.deepEqual(mockP5Prototype._renderer.states.colorMaxes['rgb'], [255, 255, 255, 255]);
       mockP5Prototype.colorMode('rgb', 1, 1, 1);
-      assert.deepEqual(mockP5Prototype._colorMaxes['rgb'], [1, 1, 1, 255]);
+      assert.deepEqual(mockP5Prototype._renderer.states.colorMaxes['rgb'], [1, 1, 1, 255]);
       mockP5Prototype.colorMode('rgb', 1);
-      assert.deepEqual(mockP5Prototype._colorMaxes['rgb'], [1, 1, 1, 1]);
+      assert.deepEqual(mockP5Prototype._renderer.states.colorMaxes['rgb'], [1, 1, 1, 1]);
       mockP5Prototype.colorMode('rgb', 255, 255, 255, 1);
-      assert.deepEqual(mockP5Prototype._colorMaxes['rgb'], [255, 255, 255, 1]);
+      assert.deepEqual(mockP5Prototype._renderer.states.colorMaxes['rgb'], [255, 255, 255, 1]);
       mockP5Prototype.colorMode('rgb', 255);
     });
 
     test('should set mode to HSL', function() {
       mockP5Prototype.colorMode('hsl');
-      assert.equal(mockP5Prototype._colorMode, 'hsl');
+      assert.equal(mockP5Prototype._renderer.states.colorMode, 'hsl');
     });
 
     test('should correctly set color HSL maxes', function() {
-      assert.deepEqual(mockP5Prototype._colorMaxes['hsl'], [360, 100, 100, 1]);
+      assert.deepEqual(mockP5Prototype._renderer.states.colorMaxes['hsl'], [360, 100, 100, 1]);
       mockP5Prototype.colorMode('hsl', 255, 255, 255);
-      assert.deepEqual(mockP5Prototype._colorMaxes['hsl'], [255, 255, 255, 1]);
+      assert.deepEqual(mockP5Prototype._renderer.states.colorMaxes['hsl'], [255, 255, 255, 1]);
       mockP5Prototype.colorMode('hsl', 360);
-      assert.deepEqual(mockP5Prototype._colorMaxes['hsl'], [360, 360, 360, 360]);
+      assert.deepEqual(mockP5Prototype._renderer.states.colorMaxes['hsl'], [360, 360, 360, 360]);
       mockP5Prototype.colorMode('hsl', 360, 100, 100, 1);
-      assert.deepEqual(mockP5Prototype._colorMaxes['hsl'], [360, 100, 100, 1]);
+      assert.deepEqual(mockP5Prototype._renderer.states.colorMaxes['hsl'], [360, 100, 100, 1]);
     });
 
     test('should set mode to HSB', function() {
       mockP5Prototype.colorMode('hsb');
-      assert.equal(mockP5Prototype._colorMode, 'hsb');
+      assert.equal(mockP5Prototype._renderer.states.colorMode, 'hsb');
     });
 
     test('should correctly set color HSB maxes', function() {
-      assert.deepEqual(mockP5Prototype._colorMaxes['hsb'], [360, 100, 100, 1]);
+      assert.deepEqual(mockP5Prototype._renderer.states.colorMaxes['hsb'], [360, 100, 100, 1]);
       mockP5Prototype.colorMode('hsb', 255, 255, 255);
-      assert.deepEqual(mockP5Prototype._colorMaxes['hsb'], [255, 255, 255, 1]);
+      assert.deepEqual(mockP5Prototype._renderer.states.colorMaxes['hsb'], [255, 255, 255, 1]);
       mockP5Prototype.colorMode('hsb', 360);
-      assert.deepEqual(mockP5Prototype._colorMaxes['hsb'], [360, 360, 360, 360]);
+      assert.deepEqual(mockP5Prototype._renderer.states.colorMaxes['hsb'], [360, 360, 360, 360]);
       mockP5Prototype.colorMode('hsb', 360, 100, 100, 1);
-      assert.deepEqual(mockP5Prototype._colorMaxes['hsb'], [360, 100, 100, 1]);
+      assert.deepEqual(mockP5Prototype._renderer.states.colorMaxes['hsb'], [360, 100, 100, 1]);
     });
   });
 
@@ -260,41 +272,41 @@ suite('color/Setting', function() {
     test('setRed() correctly sets red component', function() {
       mockP5Prototype.colorMode('rgb', 255);
       const c = mockP5Prototype.color(0, 162, 205, 255);
-      c.setRed(100);
-      assert.equal(mockP5Prototype.red(c), 100);
-      assert.equal(mockP5Prototype.green(c), 162);
-      assert.equal(mockP5Prototype.blue(c), 205);
-      assert.equal(mockP5Prototype.alpha(c), 255);
+      c.setRed(100/255);
+      assert.equal(mockP5Prototype.red(c), 100/255);
+      assert.equal(mockP5Prototype.green(c), 162/255);
+      assert.equal(mockP5Prototype.blue(c), 205/255);
+      assert.equal(mockP5Prototype.alpha(c), 255/255);
     });
 
     test('setGreen() correctly sets green component', function() {
       mockP5Prototype.colorMode('rgb', 255);
       const c = mockP5Prototype.color(0, 162, 205, 255);
-      c.setGreen(100);
+      c.setGreen(100/255);
       assert.equal(mockP5Prototype.red(c), 0);
-      assert.equal(mockP5Prototype.green(c), 100);
-      assert.equal(mockP5Prototype.blue(c), 205);
-      assert.equal(mockP5Prototype.alpha(c), 255);
+      assert.equal(mockP5Prototype.green(c), 100/255);
+      assert.equal(mockP5Prototype.blue(c), 205/255);
+      assert.equal(mockP5Prototype.alpha(c), 255/255);
     });
 
     test('setBlue() correctly sets blue component', function() {
       mockP5Prototype.colorMode('rgb', 255);
       const c = mockP5Prototype.color(0, 162, 205, 255);
-      c.setBlue(100);
+      c.setBlue(100/255);
       assert.equal(mockP5Prototype.red(c), 0);
-      assert.equal(mockP5Prototype.green(c), 162);
-      assert.equal(mockP5Prototype.blue(c), 100);
-      assert.equal(mockP5Prototype.alpha(c), 255);
+      assert.equal(mockP5Prototype.green(c), 162/255);
+      assert.equal(mockP5Prototype.blue(c), 100/255);
+      assert.equal(mockP5Prototype.alpha(c), 255/255);
     });
 
     test('setAlpha correctly sets alpha component', function() {
       mockP5Prototype.colorMode('rgb', 255);
       const c = mockP5Prototype.color(0, 162, 205, 255);
-      c.setAlpha(100);
-      assert.equal(mockP5Prototype.red(c), 0);
-      assert.equal(mockP5Prototype.green(c), 162);
-      assert.equal(mockP5Prototype.blue(c), 205);
-      assert.equal(mockP5Prototype.alpha(c), 100);
+      c.setAlpha(100/255);
+      assert.equal(mockP5Prototype.red(c), 0/255);
+      assert.equal(mockP5Prototype.green(c), 162/255);
+      assert.equal(mockP5Prototype.blue(c), 205/255);
+      assert.equal(mockP5Prototype.alpha(c), 100/255);
     });
 
     test('changing the red/green/blue/alpha components should clear the cached HSL/HSB values', function() {
@@ -304,25 +316,25 @@ suite('color/Setting', function() {
       // create HSL/HSB values
       mockP5Prototype.lightness(c);
       mockP5Prototype.brightness(c);
-      c.setRed(100);
+      c.setRed(100/255);
       assert(!c.hsba);
       assert(!c.hsla);
 
       mockP5Prototype.lightness(c);
       mockP5Prototype.brightness(c);
-      c.setGreen(100);
+      c.setGreen(100/255);
       assert(!c.hsba);
       assert(!c.hsla);
 
       mockP5Prototype.lightness(c);
       mockP5Prototype.brightness(c);
-      c.setBlue(100);
+      c.setBlue(100/255);
       assert(!c.hsba);
       assert(!c.hsla);
 
       mockP5Prototype.lightness(c);
       mockP5Prototype.brightness(c);
-      c.setAlpha(100);
+      c.setAlpha(100/255);
       assert(!c.hsba);
       assert(!c.hsla);
     });
