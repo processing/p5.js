@@ -439,46 +439,88 @@ class SplineSegment extends Segment {
 // ---- ISOLATED PRIMITIVES ----
 
 class Point extends ShapePrimitive {
-  constructor(...vertices) {
-    super(...vertices);
+  #vertexCapacity = 1;
+
+  get vertexCapacity() {
+    return this.#vertexCapacity;
+  }
+
+  accept(visitor) {
+    visitor.visitPoint(this);
   }
 }
 
 class Line extends ShapePrimitive {
-  constructor(...vertices) {
-    super(...vertices);
+  #vertexCapacity = 2;
+
+  get vertexCapacity() {
+    return this.#vertexCapacity;
+  }
+
+  accept(visitor) {
+    visitor.visitLine(this);
   }
 }
 
 class Triangle extends ShapePrimitive {
-  constructor(...vertices) {
-    super(...vertices);
+  #vertexCapacity = 3;
+
+  get vertexCapacity() {
+    return this.#vertexCapacity;
+  }
+
+  accept(visitor) {
+    visitor.visitTriangle(this);
   }
 }
 
 class Quad extends ShapePrimitive {
-  constructor(...vertices) {
-    super(...vertices);
+  #vertexCapacity = 4;
+
+  get vertexCapacity() {
+    return this.#vertexCapacity;
+  }
+
+  accept(visitor) {
+    visitor.visitQuad(this);
   }
 }
 
 // ---- TESSELLATION PRIMITIVES ----
 
 class TriangleFan extends ShapePrimitive {
-  constructor(...vertices) {
-    super(...vertices);
+  #vertexCapacity = Infinity;
+
+  get vertexCapacity() {
+    return this.#vertexCapacity;
+  }
+
+  accept(visitor) {
+    visitor.visitTriangleFan(this);
   }
 }
 
 class TriangleStrip extends ShapePrimitive {
-  constructor(...vertices) {
-    super(...vertices);
+  #vertexCapacity = Infinity;
+
+  get vertexCapacity() {
+    return this.#vertexCapacity;
+  }
+
+  accept(visitor) {
+    visitor.visitTriangleStrip(this);
   }
 }
 
 class QuadStrip extends ShapePrimitive {
-  constructor(...vertices) {
-    super(...vertices);
+  #vertexCapacity = Infinity;
+
+  get vertexCapacity() {
+    return this.#vertexCapacity;
+  }
+
+  accept(visitor) {
+    visitor.visitQuadStrip(this);
   }
 }
 
@@ -1067,12 +1109,12 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
     }
   }
   visitPoint(point) {
-    const { x, y } = point.getStartVertex().position;
-    this.path.arc(x, y, this.strokeWeight / 2, 0, constants.TWO_PI, false);
+    const { x, y } = point.vertices[0].position;
+    this.path.arc(x, y, this.strokeWeight / 2, 0, constants.TWO_PI);
   }
   visitLine(line) {
-    const { x: x0, y: y0 } = line.getStartVertex().position;
-    const { x: x1, y: y1 } = line.getEndVertex().position;
+    const { x: x0, y: y0 } = line.vertices[0].position;
+    const { x: x1, y: y1 } = line.vertices[1].position;
     this.path.moveTo(x0, y0);
     this.path.lineTo(x1, y1);
   }
@@ -1114,14 +1156,14 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
     }
   }
   visitQuadStrip(quadStrip) {
-    for (let i = 0; i < quadStrip.vertices.length - 2; i++) {
+    for (let i = 0; i < quadStrip.vertices.length - 3; i += 2) {
       const v0 = quadStrip.vertices[i];
       const v1 = quadStrip.vertices[i + 1];
       const v2 = quadStrip.vertices[i + 2];
       const v3 = quadStrip.vertices[i + 3];
       this.path.moveTo(v0.position.x, v0.position.y);
       this.path.lineTo(v1.position.x, v1.position.y);
-      // These are intentionally out of order to go around the contour
+      // These are intentionally out of order to go around the quad
       this.path.lineTo(v3.position.x, v3.position.y);
       this.path.lineTo(v2.position.x, v2.position.y);
       this.path.close();
