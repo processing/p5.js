@@ -90,7 +90,7 @@ export class ShapeBuilder {
                   buffer.length - 3 * stride,
                   buffer.length - 2 * stride
                 ),
-                ...buffer.slice(buffer.length - stride, buffer.length)
+                ...buffer.slice(buffer.length - stride, buffer.length),
               );
             }
           }
@@ -107,7 +107,7 @@ export class ShapeBuilder {
         if (this.renderer.states.strokeColor) {
           this.geometry.vertexStrokeColors.push(...vertex.stroke.array());
         } else {
-          this.geometry.vertexColors.push(0, 0, 0, 0);
+          this.geometry.vertexStrokeColors.push(0, 0, 0, 0);
         }
         for (const key in userVertexPropertyHelpers) {
           const prop = userVertexPropertyHelpers[key];

@@ -979,6 +979,7 @@ class Renderer2D extends Renderer {
   }
 
   strokeWeight(w) {
+    super.strokeWeight(w);
     if (typeof w === 'undefined' || w === 0) {
       // hack because lineWidth 0 doesn't work
       this.drawingContext.lineWidth = 0.0001;
