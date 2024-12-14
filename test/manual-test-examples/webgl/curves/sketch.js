@@ -39,16 +39,16 @@ function draw() {
   fill(0, 77, 64);
 
   beginShape();
-  curveVertex(10, 150, -4);
-  curveVertex(10, 150, -4);
-  curveVertex(60, 80, -4);
-  curveVertex(140, 100, -4);
-  curveVertex(200, 100, -4);
-  curveVertex(200, 110, -4);
-  curveVertex(160, 140, -4);
-  curveVertex(80, 160, -4);
-  curveVertex(10, 150, -4);
-  curveVertex(10, 150, -4);
+  splineVertex(10, 150, -4);
+  splineVertex(10, 150, -4);
+  splineVertex(60, 80, -4);
+  splineVertex(140, 100, -4);
+  splineVertex(200, 100, -4);
+  splineVertex(200, 110, -4);
+  splineVertex(160, 140, -4);
+  splineVertex(80, 160, -4);
+  splineVertex(10, 150, -4);
+  splineVertex(10, 150, -4);
   endShape();
 
   angle += 0.01;

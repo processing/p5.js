@@ -2114,10 +2114,10 @@ function primitives3D(p5, fn){
       z1 = z2 = z3 = z4 = 0;
     }
     this.beginShape();
-    this.curveVertex(x1, y1, z1);
-    this.curveVertex(x2, y2, z2);
-    this.curveVertex(x3, y3, z3);
-    this.curveVertex(x4, y4, z4);
+    this.splineVertex(x1, y1, z1);
+    this.splineVertex(x2, y2, z2);
+    this.splineVertex(x3, y3, z3);
+    this.splineVertex(x4, y4, z4);
     this.endShape();
   };
 

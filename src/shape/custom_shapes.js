@@ -20,29 +20,6 @@ function polylineLength(vertices) {
   return length;
 }
 
-function catmullRomToBezier(vertices, tightness) {
-  let X0, Y0, X1, Y1, X2, Y2, X3, Y3;
-  let s = 1 - tightness;
-  let bezX1, bezY1, bezX2, bezY2, bezX3, bezY3;
-  let bezArrays = [];
-
-  for (let i = 0; i + 6 < vertices.length; i += 2) {
-    [X0, Y0, X1, Y1, X2, Y2, X3, Y3] = vertices.slice(i, i + 8);
-
-    bezX1 = X1 + s * (X2 - X0) / 6;
-    bezY1 = Y1 + s * (Y2 - Y0) / 6;
-
-    bezX2 = X2 + s * (X1 - X3) / 6;
-    bezY2 = Y2 + s * (Y1 - Y3) / 6;
-
-    bezX3 = X2;
-    bezY3 = Y2;
-
-    bezArrays.push([bezX1, bezY1, bezX2, bezY2, bezX3, bezY3]);
-  }
-  return bezArrays;
-}
-
 // ---- GENERAL BUILDING BLOCKS ----
 
 class Vertex {
@@ -332,7 +309,7 @@ class SplineSegment extends Segment {
         this.vertices[1] :
         this.vertices[0];
     } else {
-      return this.vertices[0];
+      return this.getStartVertex()
     }
   }
 
@@ -405,6 +382,7 @@ class SplineSegment extends Segment {
     if (this._comesAfterSegment) {
       points.push(this.getStartVertex());
     }
+    points.push(this.getStartVertex());
 
     for (const vertex of this.vertices) {
       points.push(vertex);
@@ -1232,7 +1210,7 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
       arrayVertices,
       splineSegment._splineTightness
     );
-    let startVertex = shape.vertexToArray(splineSegment.getStartVertex());
+    let startVertex = shape.vertexToArray(splineSegment._firstInterpolatedVertex);
     for (const array of bezierArrays) {
       const bezierControls = [startVertex, ...array];
       const numPoints = Math.max(
@@ -2100,7 +2078,6 @@ function customShapes(p5, fn) {
 
 export default customShapes;
 export {
-  catmullRomToBezier,
   Shape,
   Contour,
   ShapePrimitive,

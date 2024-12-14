@@ -33,7 +33,7 @@ function vertex(p5, fn){
    * <a href="#/p5/vertex">vertex()</a>,
    * <a href="#/p5/bezierVertex">bezierVertex()</a>,
    * <a href="#/p5/quadraticVertex">quadraticVertex()</a>, and/or
-   * <a href="#/p5/curveVertex">curveVertex()</a>. Calling
+   * <a href="#/p5/curveVertex">splineVertex()</a>. Calling
    * <a href="#/p5/endShape">endShape()</a> will stop adding vertices to the
    * shape. Each shape will be outlined with the current stroke color and filled
    * with the current fill color.
@@ -683,15 +683,15 @@ function vertex(p5, fn){
   /**
    * Adds a spline curve segment to a custom shape.
    *
-   * `curveVertex()` adds a curved segment to custom shapes. The spline curves
+   * `splineVertex()` adds a curved segment to custom shapes. The spline curves
    * it creates are defined like those made by the
-   * <a href="#/p5/curve">curve()</a> function. `curveVertex()` must be called
+   * <a href="#/p5/curve">curve()</a> function. `splineVertex()` must be called
    * between the <a href="#/p5/beginShape">beginShape()</a> and
    * <a href="#/p5/endShape">endShape()</a> functions.
    *
    * Spline curves can form shapes and curves that slope gently. They’re like
    * cables that are attached to a set of points. Splines are defined by two
-   * anchor points and two control points. `curveVertex()` must be called at
+   * anchor points and two control points. `splineVertex()` must be called at
    * least four times between
    * <a href="#/p5/beginShape">beginShape()</a> and
    * <a href="#/p5/endShape">endShape()</a> in order to draw a curve:
@@ -700,14 +700,14 @@ function vertex(p5, fn){
    * beginShape();
    *
    * // Add the first control point.
-   * curveVertex(84, 91);
+   * splineVertex(84, 91);
    *
    * // Add the anchor points to draw between.
-   * curveVertex(68, 19);
-   * curveVertex(21, 17);
+   * splineVertex(68, 19);
+   * splineVertex(21, 17);
    *
    * // Add the second control point.
-   * curveVertex(32, 91);
+   * splineVertex(32, 91);
    *
    * endShape();
    * </code>
@@ -715,37 +715,37 @@ function vertex(p5, fn){
    * The code snippet above would only draw the curve between the anchor points,
    * similar to the <a href="#/p5/curve">curve()</a> function. The segments
    * between the control and anchor points can be drawn by calling
-   * `curveVertex()` with the coordinates of the control points:
+   * `splineVertex()` with the coordinates of the control points:
    *
    * <code>
    * beginShape();
    *
    * // Add the first control point and draw a segment to it.
-   * curveVertex(84, 91);
-   * curveVertex(84, 91);
+   * splineVertex(84, 91);
+   * splineVertex(84, 91);
    *
    * // Add the anchor points to draw between.
-   * curveVertex(68, 19);
-   * curveVertex(21, 17);
+   * splineVertex(68, 19);
+   * splineVertex(21, 17);
    *
    * // Add the second control point.
-   * curveVertex(32, 91);
+   * splineVertex(32, 91);
    *
    * // Uncomment the next line to draw the segment to the second control point.
-   * // curveVertex(32, 91);
+   * // splineVertex(32, 91);
    *
    * endShape();
    * </code>
    *
    * The first two parameters, `x` and `y`, set the vertex’s location. For
-   * example, calling `curveVertex(10, 10)` adds a point to the curve at
+   * example, calling `splineVertex(10, 10)` adds a point to the curve at
    * `(10, 10)`.
    *
    * Spline curves can also be drawn in 3D using WebGL mode. The 3D version of
-   * `curveVertex()` has three arguments because each point has x-, y-, and
+   * `splineVertex()` has three arguments because each point has x-, y-, and
    * z-coordinates. By default, the vertex’s z-coordinate is set to 0.
    *
-   * Note: `curveVertex()` won’t work when an argument is passed to
+   * Note: `splineVertex()` won’t work when an argument is passed to
    * <a href="#/p5/beginShape">beginShape()</a>.
    *
    * @method curveVertex
@@ -769,14 +769,14 @@ function vertex(p5, fn){
    *   beginShape();
    *
    *   // Add the first control point.
-   *   curveVertex(32, 91);
+   *   splineVertex(32, 91);
    *
    *   // Add the anchor points.
-   *   curveVertex(21, 17);
-   *   curveVertex(68, 19);
+   *   splineVertex(21, 17);
+   *   splineVertex(68, 19);
    *
    *   // Add the second control point.
-   *   curveVertex(84, 91);
+   *   splineVertex(84, 91);
    *
    *   // Stop drawing the shape.
    *   endShape();
@@ -816,15 +816,15 @@ function vertex(p5, fn){
    *   beginShape();
    *
    *   // Add the first control point and draw a segment to it.
-   *   curveVertex(32, 91);
-   *   curveVertex(32, 91);
+   *   splineVertex(32, 91);
+   *   splineVertex(32, 91);
    *
    *   // Add the anchor points.
-   *   curveVertex(21, 17);
-   *   curveVertex(68, 19);
+   *   splineVertex(21, 17);
+   *   splineVertex(68, 19);
    *
    *   // Add the second control point.
-   *   curveVertex(84, 91);
+   *   splineVertex(84, 91);
    *
    *   // Stop drawing the shape.
    *   endShape();
@@ -864,16 +864,16 @@ function vertex(p5, fn){
    *   beginShape();
    *
    *   // Add the first control point and draw a segment to it.
-   *   curveVertex(32, 91);
-   *   curveVertex(32, 91);
+   *   splineVertex(32, 91);
+   *   splineVertex(32, 91);
    *
    *   // Add the anchor points.
-   *   curveVertex(21, 17);
-   *   curveVertex(68, 19);
+   *   splineVertex(21, 17);
+   *   splineVertex(68, 19);
    *
    *   // Add the second control point and draw a segment to it.
-   *   curveVertex(84, 91);
-   *   curveVertex(84, 91);
+   *   splineVertex(84, 91);
+   *   splineVertex(84, 91);
    *
    *   // Stop drawing the shape.
    *   endShape();
@@ -927,16 +927,16 @@ function vertex(p5, fn){
    *   beginShape();
    *
    *   // Add the first control point and draw a segment to it.
-   *   curveVertex(x1, y1);
-   *   curveVertex(x1, y1);
+   *   splineVertex(x1, y1);
+   *   splineVertex(x1, y1);
    *
    *   // Add the anchor points.
-   *   curveVertex(21, 17);
-   *   curveVertex(68, 19);
+   *   splineVertex(21, 17);
+   *   splineVertex(68, 19);
    *
    *   // Add the second control point and draw a segment to it.
-   *   curveVertex(84, 91);
-   *   curveVertex(84, 91);
+   *   splineVertex(84, 91);
+   *   splineVertex(84, 91);
    *
    *   // Stop drawing the shape.
    *   endShape();
@@ -988,16 +988,16 @@ function vertex(p5, fn){
    *   beginShape();
    *
    *   // Add the first control point and draw a segment to it.
-   *   curveVertex(32, 91);
-   *   curveVertex(32, 91);
+   *   splineVertex(32, 91);
+   *   splineVertex(32, 91);
    *
    *   // Add the anchor points.
-   *   curveVertex(21, 17);
-   *   curveVertex(68, 19);
+   *   splineVertex(21, 17);
+   *   splineVertex(68, 19);
    *
    *   // Add the second control point.
-   *   curveVertex(84, 91);
-   *   curveVertex(84, 91);
+   *   splineVertex(84, 91);
+   *   splineVertex(84, 91);
    *
    *   // Stop drawing the shape.
    *   endShape();
@@ -1037,12 +1037,12 @@ function vertex(p5, fn){
    *   fill('ghostwhite');
    *
    *   beginShape();
-   *   curveVertex(-28, 41, 0);
-   *   curveVertex(-28, 41, 0);
-   *   curveVertex(-29, -33, 0);
-   *   curveVertex(18, -31, 0);
-   *   curveVertex(34, 41, 0);
-   *   curveVertex(34, 41, 0);
+   *   splineVertex(-28, 41, 0);
+   *   splineVertex(-28, 41, 0);
+   *   splineVertex(-29, -33, 0);
+   *   splineVertex(18, -31, 0);
+   *   splineVertex(34, 41, 0);
+   *   splineVertex(34, 41, 0);
    *   endShape();
    *
    *   // Draw the second ghost.
@@ -1050,12 +1050,12 @@ function vertex(p5, fn){
    *   stroke('ghostwhite');
    *
    *   beginShape();
-   *   curveVertex(-28, 41, -20);
-   *   curveVertex(-28, 41, -20);
-   *   curveVertex(-29, -33, -20);
-   *   curveVertex(18, -31, -20);
-   *   curveVertex(34, 41, -20);
-   *   curveVertex(34, 41, -20);
+   *   splineVertex(-28, 41, -20);
+   *   splineVertex(-28, 41, -20);
+   *   splineVertex(-29, -33, -20);
+   *   splineVertex(18, -31, -20);
+   *   splineVertex(34, 41, -20);
+   *   splineVertex(34, 41, -20);
    *   endShape();
    * }
    * </code>
@@ -1063,7 +1063,7 @@ function vertex(p5, fn){
    */
   fn.curveVertex = function(...args) {
     p5._validateParameters('curveVertex', args);
-    this._renderer.curveVertex(...args);
+    this._renderer.splineVertex(...args);
     return this;
   };
 
@@ -1091,7 +1091,7 @@ function vertex(p5, fn){
    * built by calling <a href="#/p5/vertex">vertex()</a>,
    * <a href="#/p5/bezierVertex">bezierVertex()</a>,
    * <a href="#/p5/quadraticVertex">quadraticVertex()</a>, and/or
-   * <a href="#/p5/curveVertex">curveVertex()</a>. Calling
+   * <a href="#/p5/curveVertex">splineVertex()</a>. Calling
    * `endShape()` will stop adding vertices to the
    * shape. Each shape will be outlined with the current stroke color and filled
    * with the current fill color.

@@ -767,7 +767,7 @@ function curves(p5, fn){
 
   /**
    * Adjusts the way <a href="#/p5/curve">curve()</a> and
-   * <a href="#/p5/curveVertex">curveVertex()</a> draw.
+   * <a href="#/p5/curveVertex">splineVertex()</a> draw.
    *
    * Spline curves are like cables that are attached to a set of points.
    * `curveTightness()` adjusts how tightly the cable is attached to the points.
@@ -803,12 +803,12 @@ function curves(p5, fn){
    *   // Draw the curve.
    *   noFill();
    *   beginShape();
-   *   curveVertex(10, 26);
-   *   curveVertex(10, 26);
-   *   curveVertex(83, 24);
-   *   curveVertex(83, 61);
-   *   curveVertex(25, 65);
-   *   curveVertex(25, 65);
+   *   splineVertex(10, 26);
+   *   splineVertex(10, 26);
+   *   splineVertex(83, 24);
+   *   splineVertex(83, 61);
+   *   splineVertex(25, 65);
+   *   splineVertex(25, 65);
    *   endShape();
    * }
    * </code>

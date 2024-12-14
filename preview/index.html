@@ -27,16 +27,17 @@
       p.draw = function () {
         p.background(200);
         //p.translate(-p.width/2, -p.height/2);
-        p.strokeWeight(3);
-        p.beginShape(p.POINTS);
-        p.vertex(30, 20);
-        p.vertex(30, 75);
-        p.vertex(50, 20);
-        p.vertex(50, 75);
-        p.vertex(65, 20);
-        p.vertex(65, 75);
-        p.vertex(85, 20);
-        p.vertex(85, 75);
+        p.scale(2)
+        p.beginShape();
+        p.vertex(0, 0)
+        p.vertex(5, 5)
+        //p.splineEnds(p.HIDE);
+        p.splineVertex(10, 10);
+        p.splineVertex(15, 40);
+        p.splineVertex(40, 35);
+        p.splineVertex(25, 15);
+        p.splineVertex(15, 25);
+        p.splineVertex(0, 0);
         p.endShape();
       };
     };

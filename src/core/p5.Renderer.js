@@ -65,7 +65,14 @@ class Renderer {
     this._clipInvert = false;
     this._curveTightness = 0;
 
-    this.currentShape = new Shape(this.getCommonVertexProperties());
+    this._currentShape = undefined; // Lazily generate current shape
+  }
+
+  get currentShape() {
+    if (!this._currentShape) {
+      this._currentShape = new Shape(this.getCommonVertexProperties());
+    }
+    return this._currentShape;
   }
 
   remove() {

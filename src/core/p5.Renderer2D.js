@@ -1030,10 +1030,10 @@ class Renderer2D extends Renderer {
 
   curve(x1, y1, x2, y2, x3, y3, x4, y4) {
     this._pInst.beginShape();
-    this._pInst.curveVertex(x1, y1);
-    this._pInst.curveVertex(x2, y2);
-    this._pInst.curveVertex(x3, y3);
-    this._pInst.curveVertex(x4, y4);
+    this._pInst.splineVertex(x1, y1);
+    this._pInst.splineVertex(x2, y2);
+    this._pInst.splineVertex(x3, y3);
+    this._pInst.splineVertex(x4, y4);
     this._pInst.endShape();
     return this;
   }

@@ -105,13 +105,13 @@ visualSuite('Shape drawing', function() {
       visualTest('Drawing with curves', function(p5, screenshot) {
         setup(p5);
         p5.beginShape();
-        p5.curveVertex(10, 10);
-        p5.curveVertex(10, 10);
-        p5.curveVertex(15, 40);
-        p5.curveVertex(40, 35);
-        p5.curveVertex(25, 15);
-        p5.curveVertex(15, 25);
-        p5.curveVertex(15, 25);
+        p5.splineVertex(10, 10);
+        p5.splineVertex(10, 10);
+        p5.splineVertex(15, 40);
+        p5.splineVertex(40, 35);
+        p5.splineVertex(25, 15);
+        p5.splineVertex(15, 25);
+        p5.splineVertex(15, 25);
         p5.endShape();
         screenshot();
       });
@@ -120,13 +120,14 @@ visualSuite('Shape drawing', function() {
         setup(p5);
         p5.curveTightness(0.5);
         p5.beginShape();
-        p5.curveVertex(10, 10);
-        p5.curveVertex(10, 10);
-        p5.curveVertex(15, 40);
-        p5.curveVertex(40, 35);
-        p5.curveVertex(25, 15);
-        p5.curveVertex(15, 25);
-        p5.curveVertex(15, 25);
+        p5.splineEnds(p5.HIDE);
+        p5.splineVertex(10, 10);
+        p5.splineVertex(10, 10);
+        p5.splineVertex(15, 40);
+        p5.splineVertex(40, 35);
+        p5.splineVertex(25, 15);
+        p5.splineVertex(15, 25);
+        p5.splineVertex(15, 25);
         p5.endShape();
         screenshot();
       });
@@ -134,15 +135,26 @@ visualSuite('Shape drawing', function() {
       visualTest('Drawing closed curve loops', function(p5, screenshot) {
         setup(p5);
         p5.beginShape();
-        p5.curveVertex(10, 10);
-        p5.curveVertex(15, 40);
-        p5.curveVertex(40, 35);
-        p5.curveVertex(25, 15);
-        p5.curveVertex(15, 25);
+        p5.splineEnds(p5.HIDE);
+        p5.splineVertex(10, 10);
+        p5.splineVertex(15, 40);
+        p5.splineVertex(40, 35);
+        p5.splineVertex(25, 15);
+        p5.splineVertex(15, 25);
         // Repeat first 3 points
-        p5.curveVertex(10, 10);
-        p5.curveVertex(15, 40);
-        p5.curveVertex(40, 35);
+        p5.splineVertex(10, 10);
+        p5.splineVertex(15, 40);
+        p5.splineVertex(40, 35);
+        p5.endShape();
+
+        p5.strokeWeight(10);
+        p5.stroke('red')
+        p5.beginShape(p5.POINTS)
+        p5.vertex(10, 10);
+        p5.vertex(15, 40);
+        p5.vertex(40, 35);
+        p5.vertex(25, 15);
+        p5.vertex(15, 25);
         p5.endShape();
         screenshot();
       });
