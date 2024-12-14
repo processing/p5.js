@@ -184,6 +184,7 @@ export class ShapeBuilder {
     const res = [];
     let i = 0;
     const contourIndices = this.contourIndices.slice();
+    let contourStart = -1;
     switch (shapeMode) {
       case constants.TRIANGLE_STRIP:
         for (i = 0; i < verts.length - 2; i++) {
@@ -237,10 +238,15 @@ export class ShapeBuilder {
       default:
         // TODO: handle contours in other modes too
         for (i = 0; i < verts.length; i++) {
-          if (i !== contourIndices[0]) {
-            res.push([i - 1, i]);
+          if (i === contourIndices[0]) {
+            contourStart = contourIndices.shift();
+          } else if (
+            verts[contourStart] &&
+            verts[i].equals(verts[contourStart])
+          ) {
+            res.push([i - 1, contourStart]);
           } else {
-            contourIndices.shift();
+            res.push([i - 1, i]);
           }
         }
         break;

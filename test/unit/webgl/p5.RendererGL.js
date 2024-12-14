@@ -638,10 +638,22 @@ suite('p5.RendererGL', function() {
       myp5.endContour();
       myp5.endShape(myp5.CLOSE);
       myp5.loadPixels();
-      return [...myp5.pixels];
+      const img = myp5._renderer.canvas.toDataURL();
+      return { pixels: [...myp5.pixels], img };
     };
 
-    assert.deepEqual(getColors(myp5.P2D), getColors(myp5.WEBGL));
+    let ok = true;
+    const colors2D = getColors(myp5.P2D);
+    const colorsGL = getColors(myp5.WEBGL);
+    for (let i = 0; i < colors2D.pixels.length; i++) {
+      if (colors2D.pixels[i] !== colorsGL.pixels[i]) {
+        ok = false;
+        break;
+      }
+    }
+    if (!ok) {
+      throw new Error(`Expected match:\n\n2D: ${colors2D.img}\n\nWebGL: ${colorsGL.img}`);
+    }
   });
 
   suite('text shader', function() {

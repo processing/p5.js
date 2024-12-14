@@ -21,24 +21,32 @@
 
     const sketch = function (p) {
       p.setup = function () {
-        p.createCanvas(100, 100);
+        p.createCanvas(100, 100, p.WEBGL);
       };
 
       p.draw = function () {
         p.background(200);
-        //p.translate(-p.width/2, -p.height/2);
-        p.scale(2)
+        p.strokeCap(p.SQUARE);
+        p.strokeJoin(p.MITER);
+        p.translate(-p.width/2, -p.height/2);
+        p.scale(2);
+        p.stroke('black');
+        p.strokeWeight(4);
+        p.translate(25, 25);
         p.beginShape();
-        p.vertex(0, 0)
-        p.vertex(5, 5)
-        //p.splineEnds(p.HIDE);
-        p.splineVertex(10, 10);
-        p.splineVertex(15, 40);
-        p.splineVertex(40, 35);
-        p.splineVertex(25, 15);
-        p.splineVertex(15, 25);
-        p.splineVertex(0, 0);
-        p.endShape();
+        // Exterior part of shape, clockwise winding
+        p.vertex(-20, -20);
+        p.vertex(20, -20);
+        p.vertex(20, 20);
+        p.vertex(-20, 20);
+        // Interior part of shape, counter-clockwise winding
+        p.beginContour();
+        p.vertex(-10, -10);
+        p.vertex(-10, 10);
+        p.vertex(10, 10);
+        p.vertex(10, -10);
+        p.endContour();
+        p.endShape(p.CLOSE);
       };
     };
 
