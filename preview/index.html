@@ -29,24 +29,16 @@
         p.strokeCap(p.SQUARE);
         p.strokeJoin(p.MITER);
         p.translate(-p.width/2, -p.height/2);
-        p.scale(2);
-        p.stroke('black');
-        p.strokeWeight(4);
-        p.translate(25, 25);
+        p.noStroke();
         p.beginShape();
-        // Exterior part of shape, clockwise winding
-        p.vertex(-20, -20);
-        p.vertex(20, -20);
-        p.vertex(20, 20);
-        p.vertex(-20, 20);
-        // Interior part of shape, counter-clockwise winding
-        p.beginContour();
-        p.vertex(-10, -10);
-        p.vertex(-10, 10);
+        p.bezierOrder(2);
+        p.fill('red');
         p.vertex(10, 10);
-        p.vertex(10, -10);
-        p.endContour();
-        p.endShape(p.CLOSE);
+        p.fill('lime');
+        p.bezierVertex(40, 25);
+        p.fill('blue');
+        p.bezierVertex(10, 40);
+        p.endShape();
       };
     };
 

@@ -605,7 +605,9 @@ class Shape {
   }
 
   serializeToArray(val) {
-    if (val instanceof Number) {
+    if (val === null) {
+      return [];
+    } if (val instanceof Number) {
       return [val];
     } else if (val instanceof Array) {
       return val;
@@ -635,7 +637,9 @@ class Shape {
   }
 
   hydrateValue(queue, original) {
-    if (original instanceof Number) {
+    if (original === null) {
+      return null;
+    } else if (original instanceof Number) {
       return queue.shift();
     } else if (original instanceof Array) {
       const array = [];
@@ -925,11 +929,18 @@ class Shape {
             _index + 1,
             this.contours.length - _index - 1
           );
+          const prevVertexProperties = this.#vertexProperties;
+          this.#vertexProperties = { ...prevVertexProperties };
+          for (const key in anchorVertex) {
+            if (['position', 'textureCoordinates'].includes(key)) continue;
+            this.#vertexProperties[key] = anchorVertex[key];
+          }
           this.vertex(
             anchorVertex.position,
             anchorVertex.textureCoordinates,
             { isClosing: true }
           );
+          this.#vertexProperties = prevVertexProperties;
           this.contours.push(...rest);
         }
       }

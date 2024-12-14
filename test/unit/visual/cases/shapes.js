@@ -338,6 +338,41 @@ visualSuite('Shape drawing', function() {
 
           screenshot();
         });
+
+        visualTest('Per-control point fills', async function (p5, screenshot) {
+          setup(p5);
+
+          p5.noStroke();
+          p5.beginShape();
+          p5.bezierOrder(2);
+          p5.fill('red');
+          p5.vertex(10, 10);
+          p5.fill('lime');
+          p5.bezierVertex(40, 25);
+          p5.fill('blue');
+          p5.bezierVertex(10, 40);
+          p5.endShape();
+
+          screenshot();
+        });
+
+        visualTest('Per-control point strokes', async function (p5, screenshot) {
+          setup(p5);
+
+          p5.noFill();
+          p5.strokeWeight(5);
+          p5.beginShape();
+          p5.bezierOrder(2);
+          p5.stroke('red');
+          p5.vertex(10, 10);
+          p5.stroke('lime');
+          p5.bezierVertex(40, 25);
+          p5.stroke('blue');
+          p5.bezierVertex(10, 40);
+          p5.endShape();
+
+          screenshot();
+        });
       }
     });
   }

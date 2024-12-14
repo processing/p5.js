@@ -1772,12 +1772,13 @@ suite('p5.RendererGL', function() {
       myp5.vertex(-10, 10, 0, 1);
       myp5.endShape(myp5.CLOSE);
 
-      // Vertex colors are not run through tessy
+      // Vertex stroke colors are not run through libtess
       assert.deepEqual(renderer.shapeBuilder.geometry.vertexStrokeColors, [
         1, 1, 1, 1,
         1, 0, 0, 1,
         0, 1, 0, 1,
-        0, 0, 1, 1
+        0, 0, 1, 1,
+        1, 1, 1, 1,
       ]);
     });
 
@@ -1795,12 +1796,15 @@ suite('p5.RendererGL', function() {
       myp5.vertex(-10, 10, 0, 25);
       myp5.endShape(myp5.CLOSE);
 
-      // UVs are correctly translated through tessy
+      // UVs are correctly translated through libtess
       assert.deepEqual(renderer.shapeBuilder.geometry.uvs, [
-        0, 0,
         1, 0,
-        1, 1,
-        0, 1
+        0, 1,
+        0, 0,
+
+        0, 1,
+        1, 0,
+        1, 1
       ]);
     });
 
@@ -1962,78 +1966,6 @@ suite('p5.RendererGL', function() {
       assert.deepEqual(myp5.get(0, 2), [242, 236, 40, 255]);
       assert.deepEqual(myp5.get(256, 2), [142, 136, 140, 255]);
       assert.deepEqual(myp5.get(511, 2), [42, 36, 240, 255]);
-    });
-
-    test('bezierVertex() should interpolate curFillColor', function() {
-      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
-
-      // start color: (255, 255, 255)
-      // end color: (255, 0, 0)
-      // Intermediate values are expected to be approximately half the value.
-
-      myp5.beginShape();
-      myp5.fill(255);
-      myp5.vertex(-128, -128);
-      myp5.fill(255, 0, 0);
-      myp5.bezierVertex(128, -128, 128, 128, -128, 128);
-      myp5.endShape();
-
-      assert.deepEqual(myp5.get(128, 127), [255, 129, 129, 255]);
-    });
-
-    test('bezierVertex() should interpolate curStrokeColor', function() {
-      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
-
-      // start color: (255, 255, 255)
-      // end color: (255, 0, 0)
-      // Intermediate values are expected to be approximately half the value.
-
-      myp5.strokeWeight(5);
-      myp5.beginShape();
-      myp5.noFill();
-      myp5.stroke(255);
-      myp5.vertex(-128, -128);
-      myp5.stroke(255, 0, 0);
-      myp5.bezierVertex(128, -128, 128, 128, -128, 128);
-      myp5.endShape();
-
-      assert.arrayApproximately(myp5.get(190, 127), [255, 128, 128, 255], 10);
-    });
-
-    test('quadraticVertex() should interpolate curFillColor', function() {
-      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
-
-      // start color: (255, 255, 255)
-      // end color: (255, 0, 0)
-      // Intermediate values are expected to be approximately half the value.
-
-      myp5.beginShape();
-      myp5.fill(255);
-      myp5.vertex(-128, -128);
-      myp5.fill(255, 0, 0);
-      myp5.quadraticVertex(256, 0, -128, 128);
-      myp5.endShape();
-
-      assert.arrayApproximately(myp5.get(128, 127), [255, 128, 128, 255], 10);
-    });
-
-    test('quadraticVertex() should interpolate curStrokeColor', function() {
-      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
-
-      // start color: (255, 255, 255)
-      // end color: (255, 0, 0)
-      // Intermediate values are expected to be approximately half the value.
-
-      myp5.strokeWeight(5);
-      myp5.beginShape();
-      myp5.noFill();
-      myp5.stroke(255);
-      myp5.vertex(-128, -128);
-      myp5.stroke(255, 0, 0);
-      myp5.quadraticVertex(256, 0, -128, 128);
-      myp5.endShape();
-
-      assert.deepEqual(myp5.get(190, 127), [255, 128, 128, 255]);
     });
 
     test('geometry without stroke colors use curStrokeColor', function() {

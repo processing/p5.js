@@ -534,8 +534,8 @@ class RendererGL extends Renderer {
   }
 
   endShape(mode, count) {
-    super.endShape(mode, count);
     this.drawShapeCount = count;
+    super.endShape(mode, count);
   }
 
   legacyEndShape(
