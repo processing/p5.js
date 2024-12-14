@@ -679,7 +679,7 @@ function text(p5, fn){
       );
       return;
     }
-    if (y > maxY || y < minY || !this.states.doFill) {
+    if (y >= maxY || !this.states.fillColor) {
       return; // don't render lines beyond our maxY position
     }
 
@@ -693,10 +693,10 @@ function text(p5, fn){
     this.push(); // fix to #803
 
     // remember this state, so it can be restored later
-    const doStroke = this.states.doStroke;
+    const doStroke = this.states.strokeColor;
     const drawMode = this.states.drawMode;
 
-    this.states.doStroke = false;
+    this.states.strokeColor = null;
     this.states.drawMode = constants.TEXTURE;
 
     // get the cached FontInfo object
@@ -790,7 +790,7 @@ function text(p5, fn){
       // clean up
       sh.unbindShader();
 
-      this.states.doStroke = doStroke;
+      this.states.strokeColor = doStroke;
       this.states.drawMode = drawMode;
       gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 

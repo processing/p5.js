@@ -141,21 +141,21 @@ suite('p5.RendererGL', function() {
     test('check activate and deactivating fill and stroke', function() {
       myp5.noStroke();
       assert(
-        !myp5._renderer.states.doStroke,
+        !myp5._renderer.states.strokeColor,
         'stroke shader still active after noStroke()'
       );
-      assert.isTrue(
-        myp5._renderer.states.doFill,
+      assert(
+        !myp5._renderer.states.doFill,
         'fill shader deactivated by noStroke()'
       );
       myp5.stroke(0);
       myp5.noFill();
       assert(
-        myp5._renderer.states.doStroke,
+        !!myp5._renderer.states.strokeColor,
         'stroke shader not active after stroke()'
       );
       assert.isTrue(
-        !myp5._renderer.states.doFill,
+        !myp5._renderer.states.fillColor,
         'fill shader still active after noFill()'
       );
     });
@@ -638,10 +638,22 @@ suite('p5.RendererGL', function() {
       myp5.endContour();
       myp5.endShape(myp5.CLOSE);
       myp5.loadPixels();
-      return [...myp5.pixels];
+      const img = myp5._renderer.canvas.toDataURL();
+      return { pixels: [...myp5.pixels], img };
     };
 
-    assert.deepEqual(getColors(myp5.P2D), getColors(myp5.WEBGL));
+    let ok = true;
+    const colors2D = getColors(myp5.P2D);
+    const colorsGL = getColors(myp5.WEBGL);
+    for (let i = 0; i < colors2D.pixels.length; i++) {
+      if (colors2D.pixels[i] !== colorsGL.pixels[i]) {
+        ok = false;
+        break;
+      }
+    }
+    if (!ok) {
+      throw new Error(`Expected match:\n\n2D: ${colors2D.img}\n\nWebGL: ${colorsGL.img}`);
+    }
   });
 
   suite('text shader', function() {
@@ -1465,33 +1477,33 @@ suite('p5.RendererGL', function() {
     test('QUADS mode converts into triangles', function() {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.textureMode(myp5.NORMAL);
-      renderer.beginShape(myp5.QUADS);
-      renderer.fill(255, 0, 0);
-      renderer.normal(0, 1, 2);
-      renderer.vertex(0, 0, 0, 0, 0);
-      renderer.fill(0, 255, 0);
-      renderer.normal(3, 4, 5);
-      renderer.vertex(0, 1, 1, 0, 1);
-      renderer.fill(0, 0, 255);
-      renderer.normal(6, 7, 8);
-      renderer.vertex(1, 0, 2, 1, 0);
-      renderer.fill(255, 0, 255);
-      renderer.normal(9, 10, 11);
-      renderer.vertex(1, 1, 3, 1, 1);
+      myp5.beginShape(myp5.QUADS);
+      myp5.fill(255, 0, 0);
+      myp5.normal(0, 1, 2);
+      myp5.vertex(0, 0, 0, 0, 0);
+      myp5.fill(0, 255, 0);
+      myp5.normal(3, 4, 5);
+      myp5.vertex(0, 1, 1, 0, 1);
+      myp5.fill(0, 0, 255);
+      myp5.normal(6, 7, 8);
+      myp5.vertex(1, 0, 2, 1, 0);
+      myp5.fill(255, 0, 255);
+      myp5.normal(9, 10, 11);
+      myp5.vertex(1, 1, 3, 1, 1);
 
-      renderer.fill(255, 0, 0);
-      renderer.normal(12, 13, 14);
-      renderer.vertex(2, 0, 4, 0, 0);
-      renderer.fill(0, 255, 0);
-      renderer.normal(15, 16, 17);
-      renderer.vertex(2, 1, 5, 0, 1);
-      renderer.fill(0, 0, 255);
-      renderer.normal(18, 19, 20);
-      renderer.vertex(3, 0, 6, 1, 0);
-      renderer.fill(255, 0, 255);
-      renderer.normal(21, 22, 23);
-      renderer.vertex(3, 1, 7, 1, 1);
-      renderer.endShape();
+      myp5.fill(255, 0, 0);
+      myp5.normal(12, 13, 14);
+      myp5.vertex(2, 0, 4, 0, 0);
+      myp5.fill(0, 255, 0);
+      myp5.normal(15, 16, 17);
+      myp5.vertex(2, 1, 5, 0, 1);
+      myp5.fill(0, 0, 255);
+      myp5.normal(18, 19, 20);
+      myp5.vertex(3, 0, 6, 1, 0);
+      myp5.fill(255, 0, 255);
+      myp5.normal(21, 22, 23);
+      myp5.vertex(3, 1, 7, 1, 1);
+      myp5.endShape();
 
       const expectedVerts = [
         [0, 0, 0],
@@ -1591,33 +1603,33 @@ suite('p5.RendererGL', function() {
 
     test('QUADS mode makes edges for quad outlines', function() {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
-      renderer.beginShape(myp5.QUADS);
-      renderer.vertex(0, 0);
-      renderer.vertex(0, 1);
-      renderer.vertex(1, 0);
-      renderer.vertex(1, 1);
+      myp5.beginShape(myp5.QUADS);
+      myp5.vertex(0, 0);
+      myp5.vertex(0, 1);
+      myp5.vertex(1, 0);
+      myp5.vertex(1, 1);
 
-      renderer.vertex(2, 0);
-      renderer.vertex(2, 1);
-      renderer.vertex(3, 0);
-      renderer.vertex(3, 1);
-      renderer.endShape();
+      myp5.vertex(2, 0);
+      myp5.vertex(2, 1);
+      myp5.vertex(3, 0);
+      myp5.vertex(3, 1);
+      myp5.endShape();
 
       assert.equal(renderer.shapeBuilder.geometry.edges.length, 8);
     });
 
     test('QUAD_STRIP mode makes edges for strip outlines', function() {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
-      renderer.beginShape(myp5.QUAD_STRIP);
-      renderer.vertex(0, 0);
-      renderer.vertex(0, 1);
-      renderer.vertex(1, 0);
-      renderer.vertex(1, 1);
-      renderer.vertex(2, 0);
-      renderer.vertex(2, 1);
-      renderer.vertex(3, 0);
-      renderer.vertex(3, 1);
-      renderer.endShape();
+      myp5.beginShape(myp5.QUAD_STRIP);
+      myp5.vertex(0, 0);
+      myp5.vertex(0, 1);
+      myp5.vertex(1, 0);
+      myp5.vertex(1, 1);
+      myp5.vertex(2, 0);
+      myp5.vertex(2, 1);
+      myp5.vertex(3, 0);
+      myp5.vertex(3, 1);
+      myp5.endShape();
 
       // Two full quads (2 * 4) plus two edges connecting them
       assert.equal(renderer.shapeBuilder.geometry.edges.length, 10);
@@ -1630,39 +1642,39 @@ suite('p5.RendererGL', function() {
       // x--x--x
       //  \ | /
       //    x
-      renderer.beginShape(myp5.TRIANGLE_FAN);
-      renderer.vertex(0, 0);
-      renderer.vertex(0, -5);
-      renderer.vertex(5, 0);
-      renderer.vertex(0, 5);
-      renderer.vertex(-5, 0);
-      renderer.endShape();
+      myp5.beginShape(myp5.TRIANGLE_FAN);
+      myp5.vertex(0, 0);
+      myp5.vertex(0, -5);
+      myp5.vertex(5, 0);
+      myp5.vertex(0, 5);
+      myp5.vertex(-5, 0);
+      myp5.endShape();
 
       assert.equal(renderer.shapeBuilder.geometry.edges.length, 7);
     });
 
-    test('TESS preserves vertex data', function() {
+    test('PATH preserves vertex data', function() {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
 
       myp5.textureMode(myp5.NORMAL);
-      renderer.beginShape(myp5.TESS);
-      renderer.fill(255, 255, 255);
-      renderer.normal(-1, -1, 1);
-      renderer.vertexProperty('aCustom', [1, 1, 1])
-      renderer.vertex(-10, -10, 0, 0);
-      renderer.fill(255, 0, 0);
-      renderer.normal(1, -1, 1);
-      renderer.vertexProperty('aCustom', [1, 0, 0])
-      renderer.vertex(10, -10, 1, 0);
-      renderer.fill(0, 255, 0);
-      renderer.normal(1, 1, 1);
-      renderer.vertexProperty('aCustom', [0, 1, 0])
-      renderer.vertex(10, 10, 1, 1);
-      renderer.fill(0, 0, 255);
-      renderer.normal(-1, 1, 1);
-      renderer.vertexProperty('aCustom', [0, 0, 1])
-      renderer.vertex(-10, 10, 0, 1);
-      renderer.endShape(myp5.CLOSE);
+      myp5.beginShape(myp5.PATH);
+      myp5.fill(255, 255, 255);
+      myp5.normal(-1, -1, 1);
+      myp5.vertexProperty('aCustom', [1, 1, 1])
+      myp5.vertex(-10, -10, 0, 0);
+      myp5.fill(255, 0, 0);
+      myp5.normal(1, -1, 1);
+      myp5.vertexProperty('aCustom', [1, 0, 0])
+      myp5.vertex(10, -10, 1, 0);
+      myp5.fill(0, 255, 0);
+      myp5.normal(1, 1, 1);
+      myp5.vertexProperty('aCustom', [0, 1, 0])
+      myp5.vertex(10, 10, 1, 1);
+      myp5.fill(0, 0, 255);
+      myp5.normal(-1, 1, 1);
+      myp5.vertexProperty('aCustom', [0, 0, 1])
+      myp5.vertex(-10, 10, 0, 1);
+      myp5.endShape(myp5.CLOSE);
 
       assert.equal(renderer.shapeBuilder.geometry.vertices.length, 6);
       assert.deepEqual(
@@ -1744,55 +1756,59 @@ suite('p5.RendererGL', function() {
       ]);
     });
 
-    test('TESS does not affect stroke colors', function() {
+    test('PATH does not affect stroke colors', function() {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
 
       myp5.textureMode(myp5.NORMAL);
-      renderer.beginShape(myp5.TESS);
+      myp5.beginShape(myp5.PATH);
       myp5.noFill();
-      renderer.stroke(255, 255, 255);
-      renderer.vertex(-10, -10, 0, 0);
-      renderer.stroke(255, 0, 0);
-      renderer.vertex(10, -10, 1, 0);
-      renderer.stroke(0, 255, 0);
-      renderer.vertex(10, 10, 1, 1);
-      renderer.stroke(0, 0, 255);
-      renderer.vertex(-10, 10, 0, 1);
-      renderer.endShape(myp5.CLOSE);
+      myp5.stroke(255, 255, 255);
+      myp5.vertex(-10, -10, 0, 0);
+      myp5.stroke(255, 0, 0);
+      myp5.vertex(10, -10, 1, 0);
+      myp5.stroke(0, 255, 0);
+      myp5.vertex(10, 10, 1, 1);
+      myp5.stroke(0, 0, 255);
+      myp5.vertex(-10, 10, 0, 1);
+      myp5.endShape(myp5.CLOSE);
 
-      // Vertex colors are not run through tessy
+      // Vertex stroke colors are not run through libtess
       assert.deepEqual(renderer.shapeBuilder.geometry.vertexStrokeColors, [
         1, 1, 1, 1,
         1, 0, 0, 1,
         0, 1, 0, 1,
-        0, 0, 1, 1
+        0, 0, 1, 1,
+        1, 1, 1, 1,
       ]);
     });
 
-    test('TESS does not affect texture coordinates', function() {
+    test('PATH does not affect texture coordinates', function() {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
       const texture = new p5.Image(25, 25);
 
       myp5.textureMode(myp5.IMAGE);
       myp5.texture(texture);
-      renderer.beginShape(myp5.TESS);
+      myp5.beginShape(myp5.PATH);
       myp5.noFill();
-      renderer.vertex(-10, -10, 0, 0);
-      renderer.vertex(10, -10, 25, 0);
-      renderer.vertex(10, 10, 25, 25);
-      renderer.vertex(-10, 10, 0, 25);
-      renderer.endShape(myp5.CLOSE);
+      myp5.vertex(-10, -10, 0, 0);
+      myp5.vertex(10, -10, 25, 0);
+      myp5.vertex(10, 10, 25, 25);
+      myp5.vertex(-10, 10, 0, 25);
+      myp5.endShape(myp5.CLOSE);
 
-      // UVs are correctly translated through tessy
+      // UVs are correctly translated through libtess
       assert.deepEqual(renderer.shapeBuilder.geometry.uvs, [
-        0, 0,
         1, 0,
-        1, 1,
-        0, 1
+        0, 1,
+        0, 0,
+
+        0, 1,
+        1, 0,
+        1, 1
       ]);
     });
 
-    test('TESS interpolates vertex data at intersections', function() {
+    test('PATH interpolates vertex data at intersections', function() {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
 
       // Hourglass shape:
@@ -1806,20 +1822,20 @@ suite('p5.RendererGL', function() {
       //
       // Tessy will add a vertex in the middle
       myp5.textureMode(myp5.NORMAL);
-      renderer.beginShape(myp5.TESS);
-      renderer.fill(255, 255, 255);
-      renderer.normal(-1, -1, 1);
-      renderer.vertex(-10, -10, 0, 0);
-      renderer.fill(0, 255, 0);
-      renderer.normal(1, 1, 1);
-      renderer.vertex(10, 10, 1, 1);
-      renderer.fill(255, 0, 0);
-      renderer.normal(1, -1, 1);
-      renderer.vertex(10, -10, 1, 0);
-      renderer.fill(0, 0, 255);
-      renderer.normal(-1, 1, 1);
-      renderer.vertex(-10, 10, 0, 1);
-      renderer.endShape(myp5.CLOSE);
+      myp5.beginShape(myp5.PATH);
+      myp5.fill(255, 255, 255);
+      myp5.normal(-1, -1, 1);
+      myp5.vertex(-10, -10, 0, 0);
+      myp5.fill(0, 255, 0);
+      myp5.normal(1, 1, 1);
+      myp5.vertex(10, 10, 1, 1);
+      myp5.fill(255, 0, 0);
+      myp5.normal(1, -1, 1);
+      myp5.vertex(10, -10, 1, 0);
+      myp5.fill(0, 0, 255);
+      myp5.normal(-1, 1, 1);
+      myp5.vertex(-10, 10, 0, 1);
+      myp5.endShape(myp5.CLOSE);
 
       assert.equal(renderer.shapeBuilder.geometry.vertices.length, 6);
       assert.deepEqual(
@@ -1892,16 +1908,16 @@ suite('p5.RendererGL', function() {
       ]);
     });
 
-    test('TESS handles vertex data perpendicular to the camera', function() {
+    test('PATH handles vertex data perpendicular to the camera', function() {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
 
       myp5.textureMode(myp5.NORMAL);
-      renderer.beginShape(myp5.TESS);
-      renderer.vertex(-10, 0, -10);
-      renderer.vertex(10, 0, -10);
-      renderer.vertex(10, 0, 10);
-      renderer.vertex(-10, 0, 10);
-      renderer.endShape(myp5.CLOSE);
+      myp5.beginShape(myp5.PATH);
+      myp5.vertex(-10, 0, -10);
+      myp5.vertex(10, 0, -10);
+      myp5.vertex(10, 0, 10);
+      myp5.vertex(-10, 0, 10);
+      myp5.endShape(myp5.CLOSE);
 
       assert.equal(renderer.shapeBuilder.geometry.vertices.length, 6);
       assert.deepEqual(
@@ -1939,89 +1955,17 @@ suite('p5.RendererGL', function() {
       // far right color: (42, 36, 240)
       // expected middle color: (142, 136, 140)
 
-      renderer.strokeWeight(4);
-      renderer.beginShape();
-      renderer.stroke(242, 236, 40);
-      renderer.vertex(-256, 0);
-      renderer.stroke(42, 36, 240);
-      renderer.vertex(256, 0);
-      renderer.endShape();
+      myp5.strokeWeight(4);
+      myp5.beginShape();
+      myp5.stroke(242, 236, 40);
+      myp5.vertex(-256, 0);
+      myp5.stroke(42, 36, 240);
+      myp5.vertex(256, 0);
+      myp5.endShape();
 
       assert.deepEqual(myp5.get(0, 2), [242, 236, 40, 255]);
       assert.deepEqual(myp5.get(256, 2), [142, 136, 140, 255]);
       assert.deepEqual(myp5.get(511, 2), [42, 36, 240, 255]);
-    });
-
-    test('bezierVertex() should interpolate curFillColor', function() {
-      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
-
-      // start color: (255, 255, 255)
-      // end color: (255, 0, 0)
-      // Intermediate values are expected to be approximately half the value.
-
-      renderer.beginShape();
-      renderer.fill(255);
-      renderer.vertex(-128, -128);
-      renderer.fill(255, 0, 0);
-      renderer.bezierVertex(128, -128, 128, 128, -128, 128);
-      renderer.endShape();
-
-      assert.deepEqual(myp5.get(128, 127), [255, 129, 129, 255]);
-    });
-
-    test('bezierVertex() should interpolate curStrokeColor', function() {
-      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
-
-      // start color: (255, 255, 255)
-      // end color: (255, 0, 0)
-      // Intermediate values are expected to be approximately half the value.
-
-      renderer.strokeWeight(5);
-      renderer.beginShape();
-      myp5.noFill();
-      renderer.stroke(255);
-      renderer.vertex(-128, -128);
-      renderer.stroke(255, 0, 0);
-      renderer.bezierVertex(128, -128, 128, 128, -128, 128);
-      renderer.endShape();
-
-      assert.arrayApproximately(myp5.get(190, 127), [255, 128, 128, 255], 10);
-    });
-
-    test('quadraticVertex() should interpolate curFillColor', function() {
-      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
-
-      // start color: (255, 255, 255)
-      // end color: (255, 0, 0)
-      // Intermediate values are expected to be approximately half the value.
-
-      renderer.beginShape();
-      renderer.fill(255);
-      renderer.vertex(-128, -128);
-      renderer.fill(255, 0, 0);
-      renderer.quadraticVertex(256, 0, -128, 128);
-      renderer.endShape();
-
-      assert.arrayApproximately(myp5.get(128, 127), [255, 128, 128, 255], 10);
-    });
-
-    test('quadraticVertex() should interpolate curStrokeColor', function() {
-      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
-
-      // start color: (255, 255, 255)
-      // end color: (255, 0, 0)
-      // Intermediate values are expected to be approximately half the value.
-
-      renderer.strokeWeight(5);
-      renderer.beginShape();
-      myp5.noFill();
-      renderer.stroke(255);
-      renderer.vertex(-128, -128);
-      renderer.stroke(255, 0, 0);
-      renderer.quadraticVertex(256, 0, -128, 128);
-      renderer.endShape();
-
-      assert.deepEqual(myp5.get(190, 127), [255, 128, 128, 255]);
     });
 
     test('geometry without stroke colors use curStrokeColor', function() {
@@ -2580,13 +2524,18 @@ suite('p5.RendererGL', function() {
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
 
+        myp5.noStroke();
         myp5.beginShape();
         myp5.vertexProperty('aCustom', 1);
         myp5.vertexProperty('aCustomVec3', [1, 2, 3]);
         myp5.vertex(0,0,0);
+        myp5.vertex(0,1,0);
+        myp5.vertex(1,1,0);
+        myp5.endShape();
+
         expect(myp5._renderer.shapeBuilder.geometry.userVertexProperties.aCustom).to.containSubset({
           name: 'aCustom',
-          currentData: 1,
+          currentData: [1],
           dataSize: 1
         });
         expect(myp5._renderer.shapeBuilder.geometry.userVertexProperties.aCustomVec3).to.containSubset({
@@ -2594,23 +2543,6 @@ suite('p5.RendererGL', function() {
           currentData: [1, 2, 3],
           dataSize: 3
         });
-        assert.deepEqual(myp5._renderer.shapeBuilder.geometry.aCustomSrc, [1]);
-        assert.deepEqual(myp5._renderer.shapeBuilder.geometry.aCustomVec3Src, [1,2,3]);
-        expect(myp5._renderer.buffers.user).to.containSubset([
-          {
-            size: 1,
-            src: 'aCustomSrc',
-            dst: 'aCustomBuffer',
-            attr: 'aCustom',
-          },
-          {
-            size: 3,
-            src: 'aCustomVec3Src',
-            dst: 'aCustomVec3Buffer',
-            attr: 'aCustomVec3',
-          }
-        ]);
-        myp5.endShape();
       }
     );
     test('Immediate mode data and buffers deleted after beginShape',
@@ -2624,28 +2556,27 @@ suite('p5.RendererGL', function() {
         myp5.endShape();
 
         myp5.beginShape();
+        myp5.endShape();
         assert.isUndefined(myp5._renderer.shapeBuilder.geometry.aCustomSrc);
         assert.isUndefined(myp5._renderer.shapeBuilder.geometry.aCustomVec3Src);
         assert.deepEqual(myp5._renderer.shapeBuilder.geometry.userVertexProperties, {});
         assert.deepEqual(myp5._renderer.buffers.user, []);
-        myp5.endShape();
       }
     );
     test('Data copied over from beginGeometry',
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
-        myp5.beginGeometry();
-        myp5.beginShape();
-        myp5.vertexProperty('aCustom', 1);
-        myp5.vertexProperty('aCustomVec3', [1,2,3]);
-        myp5.vertex(0,1,0);
-        myp5.vertex(-1,0,0);
-        myp5.vertex(1,0,0);
-        const immediateCopy = myp5._renderer.shapeBuilder.geometry;
-        myp5.endShape();
-        const myGeo = myp5.endGeometry();
-        assert.deepEqual(immediateCopy.aCustomSrc, myGeo.aCustomSrc);
-        assert.deepEqual(immediateCopy.aCustomVec3Src, myGeo.aCustomVec3Src);
+        const myGeo = myp5.buildGeometry(() => {
+          myp5.beginShape();
+          myp5.vertexProperty('aCustom', 1);
+          myp5.vertexProperty('aCustomVec3', [1,2,3]);
+          myp5.vertex(0,1,0);
+          myp5.vertex(-1,0,0);
+          myp5.vertex(1,0,0);
+          myp5.endShape();
+        });
+        assert.deepEqual(myGeo.aCustomSrc, [1,1,1]);
+        assert.deepEqual(myGeo.aCustomVec3Src, [1,2,3,1,2,3,1,2,3]);
       }
     );
     test('Retained mode buffers are created for rendering',
@@ -2675,15 +2606,15 @@ suite('p5.RendererGL', function() {
         }
 
         try {
-          myp5.beginGeometry();
-          myp5.beginShape();
-          myp5.vertexProperty('aCustom', 1);
-          myp5.vertexProperty('aCustomVec3', [1,2,3]);
-          myp5.vertex(0,0,0);
-          myp5.vertex(1,0,0);
-          myp5.vertex(1,1,0);
-          myp5.endShape();
-          const myGeo = myp5.endGeometry();
+          const myGeo = myp5.buildGeometry(() => {
+            myp5.beginShape();
+            myp5.vertexProperty('aCustom', 1);
+            myp5.vertexProperty('aCustomVec3', [1,2,3]);
+            myp5.vertex(0,0,0);
+            myp5.vertex(1,0,0);
+            myp5.vertex(1,1,0);
+            myp5.endShape();
+          });
           myp5.model(myGeo);
           expect(called).to.equal(true);
         } finally {
@@ -2694,15 +2625,15 @@ suite('p5.RendererGL', function() {
     test('Retained mode buffers deleted after rendering',
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
-        myp5.beginGeometry();
-        myp5.beginShape();
-        myp5.vertexProperty('aCustom', 1);
-        myp5.vertexProperty('aCustomVec3', [1,2,3]);
-        myp5.vertex(0,0,0);
-        myp5.vertex(1,0,0);
-        myp5.vertex(1,1,0);
-        myp5.endShape();
-        const myGeo = myp5.endGeometry();
+        const myGeo = myp5.buildGeometry(() => {
+          myp5.beginShape();
+          myp5.vertexProperty('aCustom', 1);
+          myp5.vertexProperty('aCustomVec3', [1,2,3]);
+          myp5.vertex(0,0,0);
+          myp5.vertex(1,0,0);
+          myp5.vertex(1,1,0);
+          myp5.endShape();
+        });
         myp5.model(myGeo);
         assert.equal(myp5._renderer.buffers.user.length, 0);
       }

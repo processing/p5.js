@@ -36,7 +36,7 @@ function draw() {
   for (var i = 0; i < corrBuff.length; i++) {
     var w = map(i, 0, corrBuff.length, 0, width);
     var h = map(corrBuff[i], -1, 1, height, 0);
-    curveVertex(w, h);
+    splineVertex(w, h);
   }
   endShape();
 }
