@@ -1110,7 +1110,9 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
   }
   visitPoint(point) {
     const { x, y } = point.vertices[0].position;
-    this.path.arc(x, y, this.strokeWeight / 2, 0, constants.TWO_PI);
+    this.path.moveTo(x, y);
+    // Hack: to draw just strokes and not fills, draw a very very tiny line
+    this.path.lineTo(x + 0.00001, y);
   }
   visitLine(line) {
     const { x: x0, y: y0 } = line.vertices[0].position;

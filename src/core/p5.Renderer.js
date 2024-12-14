@@ -36,6 +36,7 @@ class Renderer {
       imageMode: constants.CORNER,
       rectMode: constants.CORNER,
       ellipseMode: constants.CENTER,
+      strokeWeight: 1,
 
       textFont: { family: 'sans-serif' },
       textLeading: 15,
@@ -251,6 +252,14 @@ class Renderer {
 
   noFill() {
     this.states.fillColor = null;
+  }
+
+  strokeWeight(w) {
+    if (w === undefined) {
+      return this.states.strokeWeight;
+    } else {
+      this.states.strokeWeight = w;
+    }
   }
 
   stroke(...args) {

@@ -341,8 +341,6 @@ class RendererGL extends Renderer {
 
     this.geometryBufferCache = new GeometryBufferCache(this);
 
-    this.pointSize = 5.0; //default point size
-    this.curStrokeWeight = 1;
     this.curStrokeCap = constants.ROUND;
     this.curStrokeJoin = constants.ROUND;
 
@@ -1346,51 +1344,6 @@ class RendererGL extends Renderer {
     this.drawTarget()._isClipApplied = false;
   }
 
-  /**
-   * Change weight of stroke
-   * @param  {Number} stroke weight to be used for drawing
-   * @example
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(200, 400, WEBGL);
-   *   setAttributes('antialias', true);
-   * }
-   *
-   * function draw() {
-   *   background(0);
-   *   noStroke();
-   *   translate(0, -100, 0);
-   *   stroke(240, 150, 150);
-   *   fill(100, 100, 240);
-   *   push();
-   *   strokeWeight(8);
-   *   rotateX(frameCount * 0.01);
-   *   rotateY(frameCount * 0.01);
-   *   sphere(75);
-   *   pop();
-   *   push();
-   *   translate(0, 200, 0);
-   *   strokeWeight(1);
-   *   rotateX(frameCount * 0.01);
-   *   rotateY(frameCount * 0.01);
-   *   sphere(75);
-   *   pop();
-   * }
-   * </code>
-   * </div>
-   *
-   * @alt
-   * black canvas with two purple rotating spheres with pink
-   * outlines the sphere on top has much heavier outlines,
-   */
-  strokeWeight(w) {
-    if (this.curStrokeWeight !== w) {
-      this.pointSize = w;
-      this.curStrokeWeight = w;
-    }
-  }
-
   // x,y are canvas-relative (pre-scaled by _pixelDensity)
   _getPixel(x, y) {
     const gl = this.GL;
@@ -2203,7 +2156,7 @@ class RendererGL extends Renderer {
     strokeShader.setUniform('uSimpleLines', this._simpleLines);
     strokeShader.setUniform('uUseLineColor', this._useLineColor);
     strokeShader.setUniform('uMaterialColor', this.states.curStrokeColor);
-    strokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
+    strokeShader.setUniform('uStrokeWeight', this.states.strokeWeight);
     strokeShader.setUniform('uStrokeCap', STROKE_CAP_ENUM[this.curStrokeCap]);
     strokeShader.setUniform('uStrokeJoin', STROKE_JOIN_ENUM[this.curStrokeJoin]);
   }
@@ -2318,7 +2271,7 @@ class RendererGL extends Renderer {
     // should be they be same var?
     pointShader.setUniform(
       'uPointSize',
-      this.pointSize * this._pixelDensity
+      this.states.strokeWeight * this._pixelDensity
     );
   }
 
