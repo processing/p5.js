@@ -2524,13 +2524,18 @@ suite('p5.RendererGL', function() {
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
 
+        myp5.noStroke();
         myp5.beginShape();
         myp5.vertexProperty('aCustom', 1);
         myp5.vertexProperty('aCustomVec3', [1, 2, 3]);
         myp5.vertex(0,0,0);
+        myp5.vertex(0,1,0);
+        myp5.vertex(1,1,0);
+        myp5.endShape();
+
         expect(myp5._renderer.shapeBuilder.geometry.userVertexProperties.aCustom).to.containSubset({
           name: 'aCustom',
-          currentData: 1,
+          currentData: [1],
           dataSize: 1
         });
         expect(myp5._renderer.shapeBuilder.geometry.userVertexProperties.aCustomVec3).to.containSubset({
@@ -2538,23 +2543,6 @@ suite('p5.RendererGL', function() {
           currentData: [1, 2, 3],
           dataSize: 3
         });
-        assert.deepEqual(myp5._renderer.shapeBuilder.geometry.aCustomSrc, [1]);
-        assert.deepEqual(myp5._renderer.shapeBuilder.geometry.aCustomVec3Src, [1,2,3]);
-        expect(myp5._renderer.buffers.user).to.containSubset([
-          {
-            size: 1,
-            src: 'aCustomSrc',
-            dst: 'aCustomBuffer',
-            attr: 'aCustom',
-          },
-          {
-            size: 3,
-            src: 'aCustomVec3Src',
-            dst: 'aCustomVec3Buffer',
-            attr: 'aCustomVec3',
-          }
-        ]);
-        myp5.endShape();
       }
     );
     test('Immediate mode data and buffers deleted after beginShape',
@@ -2568,28 +2556,27 @@ suite('p5.RendererGL', function() {
         myp5.endShape();
 
         myp5.beginShape();
+        myp5.endShape();
         assert.isUndefined(myp5._renderer.shapeBuilder.geometry.aCustomSrc);
         assert.isUndefined(myp5._renderer.shapeBuilder.geometry.aCustomVec3Src);
         assert.deepEqual(myp5._renderer.shapeBuilder.geometry.userVertexProperties, {});
         assert.deepEqual(myp5._renderer.buffers.user, []);
-        myp5.endShape();
       }
     );
     test('Data copied over from beginGeometry',
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
-        myp5.beginGeometry();
-        myp5.beginShape();
-        myp5.vertexProperty('aCustom', 1);
-        myp5.vertexProperty('aCustomVec3', [1,2,3]);
-        myp5.vertex(0,1,0);
-        myp5.vertex(-1,0,0);
-        myp5.vertex(1,0,0);
-        const immediateCopy = myp5._renderer.shapeBuilder.geometry;
-        myp5.endShape();
-        const myGeo = myp5.endGeometry();
-        assert.deepEqual(immediateCopy.aCustomSrc, myGeo.aCustomSrc);
-        assert.deepEqual(immediateCopy.aCustomVec3Src, myGeo.aCustomVec3Src);
+        const myGeo = myp5.buildGeometry(() => {
+          myp5.beginShape();
+          myp5.vertexProperty('aCustom', 1);
+          myp5.vertexProperty('aCustomVec3', [1,2,3]);
+          myp5.vertex(0,1,0);
+          myp5.vertex(-1,0,0);
+          myp5.vertex(1,0,0);
+          myp5.endShape();
+        });
+        assert.deepEqual(myGeo.aCustomSrc, [1,1,1]);
+        assert.deepEqual(myGeo.aCustomVec3Src, [1,2,3,1,2,3,1,2,3]);
       }
     );
     test('Retained mode buffers are created for rendering',
@@ -2619,15 +2606,15 @@ suite('p5.RendererGL', function() {
         }
 
         try {
-          myp5.beginGeometry();
-          myp5.beginShape();
-          myp5.vertexProperty('aCustom', 1);
-          myp5.vertexProperty('aCustomVec3', [1,2,3]);
-          myp5.vertex(0,0,0);
-          myp5.vertex(1,0,0);
-          myp5.vertex(1,1,0);
-          myp5.endShape();
-          const myGeo = myp5.endGeometry();
+          const myGeo = myp5.buildGeometry(() => {
+            myp5.beginShape();
+            myp5.vertexProperty('aCustom', 1);
+            myp5.vertexProperty('aCustomVec3', [1,2,3]);
+            myp5.vertex(0,0,0);
+            myp5.vertex(1,0,0);
+            myp5.vertex(1,1,0);
+            myp5.endShape();
+          });
           myp5.model(myGeo);
           expect(called).to.equal(true);
         } finally {
@@ -2638,15 +2625,15 @@ suite('p5.RendererGL', function() {
     test('Retained mode buffers deleted after rendering',
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
-        myp5.beginGeometry();
-        myp5.beginShape();
-        myp5.vertexProperty('aCustom', 1);
-        myp5.vertexProperty('aCustomVec3', [1,2,3]);
-        myp5.vertex(0,0,0);
-        myp5.vertex(1,0,0);
-        myp5.vertex(1,1,0);
-        myp5.endShape();
-        const myGeo = myp5.endGeometry();
+        const myGeo = myp5.buildGeometry(() => {
+          myp5.beginShape();
+          myp5.vertexProperty('aCustom', 1);
+          myp5.vertexProperty('aCustomVec3', [1,2,3]);
+          myp5.vertex(0,0,0);
+          myp5.vertex(1,0,0);
+          myp5.vertex(1,1,0);
+          myp5.endShape();
+        });
         myp5.model(myGeo);
         assert.equal(myp5._renderer.buffers.user.length, 0);
       }
