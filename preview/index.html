@@ -21,13 +21,13 @@
 
     const sketch = function (p) {
       p.setup = function () {
-        p.createCanvas(100, 100, p.WEBGL);
+        p.createCanvas(100, 100);
       };
 
       p.draw = function () {
         p.background(200);
-        p.translate(-p.width/2, -p.height/2);
-        p.fill(255);
+        //p.translate(-p.width/2, -p.height/2);
+        p.strokeWeight(3);
         p.beginShape(p.QUAD_STRIP);
         p.vertex(30, 20);
         p.vertex(30, 75);

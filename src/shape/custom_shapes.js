@@ -1123,7 +1123,7 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
     this.path.moveTo(v0.position.x, v0.position.y);
     this.path.lineTo(v1.position.x, v1.position.y);
     this.path.lineTo(v2.position.x, v2.position.y);
-    this.path.close();
+    this.path.closePath();
   }
   visitQuad(quad) {
     const [v0, v1, v2, v3] = quad.vertices;
@@ -1131,7 +1131,7 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
     this.path.lineTo(v1.position.x, v1.position.y);
     this.path.lineTo(v2.position.x, v2.position.y);
     this.path.lineTo(v3.position.x, v3.position.y);
-    this.path.close();
+    this.path.closePath();
   }
   visitTriangleFan(triangleFan) {
     const [v0, ...rest] = triangleFan.vertices;
@@ -1141,7 +1141,7 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
       this.path.moveTo(v0.position.x, v0.position.y);
       this.path.lineTo(v1.position.x, v1.position.y);
       this.path.lineTo(v2.position.x, v2.position.y);
-      this.path.close();
+      this.path.closePath();
     }
   }
   visitTriangleStrip(triangleStrip) {
@@ -1152,7 +1152,7 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
       this.path.moveTo(v0.position.x, v0.position.y);
       this.path.lineTo(v1.position.x, v1.position.y);
       this.path.lineTo(v2.position.x, v2.position.y);
-      this.path.close();
+      this.path.closePath();
     }
   }
   visitQuadStrip(quadStrip) {
@@ -1166,7 +1166,7 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
       // These are intentionally out of order to go around the quad
       this.path.lineTo(v3.position.x, v3.position.y);
       this.path.lineTo(v2.position.x, v2.position.y);
-      this.path.close();
+      this.path.closePath();
     }
   }
 }

@@ -219,8 +219,8 @@ export class ShapeBuilder {
         for (i = 0; i < verts.length - 5; i += 6) {
           res.push([i, i + 1]);
           res.push([i + 1, i + 2]);
-          res.push([i + 3, i + 5]);
-          res.push([i + 4, i + 5]);
+          res.push([i + 2, i + 5]);
+          res.push([i + 5, i]);
         }
         break;
       case constants.QUAD_STRIP:
@@ -229,8 +229,8 @@ export class ShapeBuilder {
         // 1---3---5
         for (i = 0; i < verts.length - 2; i += 2) {
           res.push([i, i + 1]);
-          res.push([i, i + 2]);
           res.push([i + 1, i + 3]);
+          res.push([i, i + 2]);
         }
         res.push([i, i + 1]);
         break;
