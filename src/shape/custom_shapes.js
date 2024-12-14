@@ -871,6 +871,8 @@ class Shape {
   */
   #generalVertex(kind, position, textureCoordinates) {
     let vertexKind = kind;
+    console.log(this.contours)
+    console.log(this.at(-1))
     let lastContourKind = this.at(-1).kind;
     let vertex = this.#createVertex(position, textureCoordinates);
 
@@ -907,7 +909,7 @@ class Shape {
     this.contours.push(new Contour(shapeKind));
   }
 
-  endContour(closeMode = constants.OPEN, _index = -1) {
+  endContour(closeMode = constants.OPEN, _index = this.contours.length - 1) {
     const contour = this.at(_index);
     if (closeMode === constants.CLOSE) {
       // shape characteristics
