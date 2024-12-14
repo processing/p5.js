@@ -871,8 +871,6 @@ class Shape {
   */
   #generalVertex(kind, position, textureCoordinates) {
     let vertexKind = kind;
-    console.log(this.contours)
-    console.log(this.at(-1))
     let lastContourKind = this.at(-1).kind;
     let vertex = this.#createVertex(position, textureCoordinates);
 
