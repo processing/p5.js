@@ -146,16 +146,6 @@ visualSuite('Shape drawing', function() {
         p5.splineVertex(15, 40);
         p5.splineVertex(40, 35);
         p5.endShape();
-
-        p5.strokeWeight(10);
-        p5.stroke('red')
-        p5.beginShape(p5.POINTS)
-        p5.vertex(10, 10);
-        p5.vertex(15, 40);
-        p5.vertex(40, 35);
-        p5.vertex(25, 15);
-        p5.vertex(15, 25);
-        p5.endShape();
         screenshot();
       });
 
@@ -211,8 +201,8 @@ visualSuite('Shape drawing', function() {
         p5.vertex(15, 40);
         p5.vertex(40, 35);
         p5.vertex(25, 15);
-        p5.vertex(15, 25);
         p5.vertex(10, 10);
+        p5.vertex(15, 25);
         p5.endShape();
         screenshot();
       });

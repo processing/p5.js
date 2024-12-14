@@ -20,7 +20,7 @@ const INITIAL_VERTEX_SIZE =
 export class ShapeBuilder {
   constructor(renderer) {
     this.renderer = renderer;
-    this.shapeMode = constants.TESS;
+    this.shapeMode = constants.PATH;
     this.geometry = new Geometry(undefined, undefined, undefined, this.renderer);
     this.geometry.gid = '__IMMEDIATE_MODE_GEOMETRY__';
 
@@ -253,7 +253,7 @@ export class ShapeBuilder {
    * @private
    */
   _tesselateShape() {
-    // TODO: handle non-TESS shape modes that have contours
+    // TODO: handle non-PATH shape modes that have contours
     this.shapeMode = constants.TRIANGLES;
     // const contours = [[]];
     const contours = [];

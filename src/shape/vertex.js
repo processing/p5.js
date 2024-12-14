@@ -17,9 +17,9 @@ function vertex(p5, fn){
    * vertices to a custom shape and <a href="#/p5/endShape">endShape()</a> stops
    * adding them.
    *
-   * The parameter, `kind`, sets the kind of shape to make. By default, any
-   * irregular polygon can be drawn. The available modes for kind are:
+   * The parameter, `kind`, sets the kind of shape to make. The available kinds are:
    *
+   * - `PATH` (the default) to draw shapes by tracing out the path along their edges.
    * - `POINTS` to draw a series of points.
    * - `LINES` to draw a series of unconnected line segments.
    * - `TRIANGLES` to draw a series of separate triangles.
@@ -27,13 +27,12 @@ function vertex(p5, fn){
    * - `TRIANGLE_STRIP` to draw a series of connected triangles in strip fashion.
    * - `QUADS` to draw a series of separate quadrilaterals (quads).
    * - `QUAD_STRIP` to draw quad strip using adjacent edges to form the next quad.
-   * - `TESS` to create a filling curve by explicit tessellation (WebGL only).
    *
    * After calling `beginShape()`, shapes can be built by calling
    * <a href="#/p5/vertex">vertex()</a>,
    * <a href="#/p5/bezierVertex">bezierVertex()</a>,
-   * <a href="#/p5/quadraticVertex">quadraticVertex()</a>, and/or
-   * <a href="#/p5/curveVertex">splineVertex()</a>. Calling
+   * <a href="#/p5/bezierVertex">bezierVertex()</a>, and/or
+   * <a href="#/p5/splineVertex">splineVertex()</a>. Calling
    * <a href="#/p5/endShape">endShape()</a> will stop adding vertices to the
    * shape. Each shape will be outlined with the current stroke color and filled
    * with the current fill color.
@@ -47,8 +46,8 @@ function vertex(p5, fn){
    * <a href="#/p5/endShape">endShape()</a>.
    *
    * @method beginShape
-   * @param  {(POINTS|LINES|TRIANGLES|TRIANGLE_FAN|TRIANGLE_STRIP|QUADS|QUAD_STRIP|TESS)} [kind] either POINTS, LINES, TRIANGLES, TRIANGLE_FAN
-   *                                TRIANGLE_STRIP, QUADS, QUAD_STRIP or TESS.
+   * @param  {(POINTS|LINES|TRIANGLES|TRIANGLE_FAN|TRIANGLE_STRIP|QUADS|QUAD_STRIP|PATH)} [kind=PATH] either POINTS, LINES, TRIANGLES, TRIANGLE_FAN
+   *                                TRIANGLE_STRIP, QUADS, QUAD_STRIP or PATH. Defaults to PATH.
    * @chainable
    *
    * @example
@@ -334,7 +333,7 @@ function vertex(p5, fn){
    *
    *   // Start drawing the shape.
    *   // Draw a series of quadrilaterals.
-   *   beginShape(TESS);
+   *   beginShape(PATH);
    *
    *   // Add the vertices.
    *   vertex(-30, -30, 0);
@@ -373,7 +372,7 @@ function vertex(p5, fn){
    *
    *   // Start drawing the shape.
    *   // Draw a series of quadrilaterals.
-   *   beginShape(TESS);
+   *   beginShape(PATH);
    *
    *   // Add the vertices.
    *   fill('red');

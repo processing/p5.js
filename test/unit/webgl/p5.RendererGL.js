@@ -1641,11 +1641,11 @@ suite('p5.RendererGL', function() {
       assert.equal(renderer.shapeBuilder.geometry.edges.length, 7);
     });
 
-    test('TESS preserves vertex data', function() {
+    test('PATH preserves vertex data', function() {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
 
       myp5.textureMode(myp5.NORMAL);
-      myp5.beginShape(myp5.TESS);
+      myp5.beginShape(myp5.PATH);
       myp5.fill(255, 255, 255);
       myp5.normal(-1, -1, 1);
       myp5.vertexProperty('aCustom', [1, 1, 1])
@@ -1744,11 +1744,11 @@ suite('p5.RendererGL', function() {
       ]);
     });
 
-    test('TESS does not affect stroke colors', function() {
+    test('PATH does not affect stroke colors', function() {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
 
       myp5.textureMode(myp5.NORMAL);
-      myp5.beginShape(myp5.TESS);
+      myp5.beginShape(myp5.PATH);
       myp5.noFill();
       myp5.stroke(255, 255, 255);
       myp5.vertex(-10, -10, 0, 0);
@@ -1769,13 +1769,13 @@ suite('p5.RendererGL', function() {
       ]);
     });
 
-    test('TESS does not affect texture coordinates', function() {
+    test('PATH does not affect texture coordinates', function() {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
       const texture = new p5.Image(25, 25);
 
       myp5.textureMode(myp5.IMAGE);
       myp5.texture(texture);
-      myp5.beginShape(myp5.TESS);
+      myp5.beginShape(myp5.PATH);
       myp5.noFill();
       myp5.vertex(-10, -10, 0, 0);
       myp5.vertex(10, -10, 25, 0);
@@ -1792,7 +1792,7 @@ suite('p5.RendererGL', function() {
       ]);
     });
 
-    test('TESS interpolates vertex data at intersections', function() {
+    test('PATH interpolates vertex data at intersections', function() {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
 
       // Hourglass shape:
@@ -1806,7 +1806,7 @@ suite('p5.RendererGL', function() {
       //
       // Tessy will add a vertex in the middle
       myp5.textureMode(myp5.NORMAL);
-      myp5.beginShape(myp5.TESS);
+      myp5.beginShape(myp5.PATH);
       myp5.fill(255, 255, 255);
       myp5.normal(-1, -1, 1);
       myp5.vertex(-10, -10, 0, 0);
@@ -1892,11 +1892,11 @@ suite('p5.RendererGL', function() {
       ]);
     });
 
-    test('TESS handles vertex data perpendicular to the camera', function() {
+    test('PATH handles vertex data perpendicular to the camera', function() {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
 
       myp5.textureMode(myp5.NORMAL);
-      myp5.beginShape(myp5.TESS);
+      myp5.beginShape(myp5.PATH);
       myp5.vertex(-10, 0, -10);
       myp5.vertex(10, 0, -10);
       myp5.vertex(10, 0, 10);
