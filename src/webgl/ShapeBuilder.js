@@ -130,6 +130,17 @@ export class ShapeBuilder {
       this.isProcessingVertices = true;
       this._tesselateShape();
       this.isProcessingVertices = false;
+    } else if (this.shapeMode === constants.QUAD_STRIP) {
+      // The only difference between these two modes is which edges are
+      // displayed, so after we've updated the edges, we switch the mode
+      // to one that native WebGL knows how to render.
+      this.shapeMode = constants.TRIANGLE_STRIP;
+    } else if (this.shapeMode === constants.QUADS) {
+      // We translate QUADS to TRIANGLES when vertices are being added,
+      // since QUADS is just a p5 mode, whereas TRIANGLES is also a mode
+      // that native WebGL knows how to render. Once we've processed edges,
+      // everything should be set up for TRIANGLES mode.
+      this.shapeMode = constants.TRIANGLES;
     }
 
     if (
