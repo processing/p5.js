@@ -451,7 +451,7 @@ visualSuite("Typography", function () {
       p5.background(200);
       p5.strokeWeight(2);
       p5.textSize(50);
-      const contours = font.textToContours('p5*js', 0, 50, { samplingDensity: 0.5 })
+      const contours = font.textToContours('p5*js', 0, 50, { sampleFactor: 0.5 })
       p5.beginShape();
       for (const pts of contours) {
         p5.beginContour();
