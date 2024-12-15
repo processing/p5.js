@@ -409,4 +409,87 @@ visualSuite("Typography", function () {
       screenshot();
     });
   });
+
+  visualSuite('textToPoints', function() {
+    visualTest('Fonts can be converted to points', async function(p5, screenshot) {
+      p5.createCanvas(100, 100);
+      const font = await p5.loadFont(
+        '/unit/assets/Inconsolata-Bold.ttf'
+      );
+      p5.background(255);
+      p5.strokeWeight(2);
+      p5.textSize(50);
+      const pts = font.textToPoints('p5*js', 0, 50);
+      p5.beginShape(p5.POINTS);
+      for (const { x, y } of pts) p5.vertex(x, y);
+      p5.endShape();
+      screenshot();
+    });
+
+    visualTest('Sampling density can be changed', async function(p5, screenshot) {
+      p5.createCanvas(100, 100);
+      const font = await p5.loadFont(
+        '/unit/assets/Inconsolata-Bold.ttf'
+      );
+      p5.background(255);
+      p5.strokeWeight(2);
+      p5.textSize(50);
+      const pts = font.textToPoints('p5*js', 0, 50, { sampleFactor: 0.5 });
+      p5.beginShape(p5.POINTS);
+      for (const { x, y } of pts) p5.vertex(x, y);
+      p5.endShape();
+      screenshot();
+    });
+  });
+
+  visualSuite('textToContours', function() {
+    visualTest('Fonts can be converted to points grouped by contour', async function(p5, screenshot) {
+      p5.createCanvas(100, 100);
+      const font = await p5.loadFont(
+        '/unit/assets/Inconsolata-Bold.ttf'
+      );
+      p5.background(200);
+      p5.strokeWeight(2);
+      p5.textSize(50);
+      const contours = font.textToContours('p5*js', 0, 50, { samplingDensity: 0.5 })
+      p5.beginShape();
+      for (const pts of contours) {
+        p5.beginContour();
+        for (const { x, y } of pts) p5.vertex(x, y);
+        p5.endContour(p5.CLOSE);
+      }
+      p5.endShape();
+      screenshot();
+    });
+  });
+
+  visualSuite('textToPaths', function() {
+    visualTest('Fonts can be converted to drawing context commands', async function(p5, screenshot) {
+      p5.createCanvas(100, 100);
+      const font = await p5.loadFont(
+        '/unit/assets/Inconsolata-Bold.ttf'
+      );
+      p5.background(200);
+      p5.strokeWeight(2);
+      p5.textSize(50);
+      const cmds = font.textToPaths('p5*js', 0, 50)
+      p5.drawingContext.beginPath();
+      for (const [type, ...args] of cmds) {
+        if (type === 'M') {
+          p5.drawingContext.moveTo(...args);
+        } else if (type === 'L') {
+          p5.drawingContext.lineTo(...args);
+        } else if (type === 'C') {
+          p5.drawingContext.bezierCurveTo(...args);
+        } else if (type === 'Q') {
+          p5.drawingContext.quadraticCurveTo(...args);
+        } else if (type === 'Z') {
+          p5.drawingContext.closePath();
+        }
+      }
+      p5.drawingContext.fill();
+      p5.drawingContext.stroke();
+      screenshot();
+    });
+  });
 });
