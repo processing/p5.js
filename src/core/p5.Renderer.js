@@ -4,27 +4,42 @@
  * @for p5
  */
 
+import { Color } from '../color/p5.Color';
 import * as constants from '../core/constants';
 import { Image } from '../image/p5.Image';
+import { Vector } from '../math/p5.Vector';
+import { Shape } from '../shape/custom_shapes';
 
 class Renderer {
   static states = {
-    doStroke: true,
+    strokeColor: null,
     strokeSet: false,
-    doFill: true,
+    fillColor: null,
     fillSet: false,
     tint: null,
+
     imageMode: constants.CORNER,
     rectMode: constants.CORNER,
     ellipseMode: constants.CENTER,
-    textFont: 'sans-serif',
+    strokeWeight: 1,
+
+    textFont: { family: 'sans-serif' },
     textLeading: 15,
     leadingSet: false,
     textSize: 12,
     textAlign: constants.LEFT,
     textBaseline: constants.BASELINE,
-    textStyle: constants.NORMAL,
-    textWrap: constants.WORD
+    bezierOrder: 3,
+    splineEnds: constants.INCLUDE,
+    textWrap: constants.WORD,
+
+    // added v2.0
+    fontStyle: constants.NORMAL, // v1: textStyle
+    fontStretch: constants.NORMAL,
+    fontWeight: constants.NORMAL,
+    lineHeight: constants.NORMAL,
+    fontVariant: constants.NORMAL,
+    direction: 'inherit'
   }
 
   constructor(pInst, w, h, isMainCanvas) {
@@ -53,6 +68,9 @@ class Renderer {
       }
     }
 
+    this.states.strokeColor = new Color([0, 0, 0]);
+    this.states.fillColor = new Color([255, 255, 255]);
+
     this._pushPopStack = [];
     // NOTE: can use the length of the push pop stack instead
     this._pushPopDepth = 0;
@@ -60,6 +78,15 @@ class Renderer {
     this._clipping = false;
     this._clipInvert = false;
     this._curveTightness = 0;
+
+    this._currentShape = undefined; // Lazily generate current shape
+  }
+
+  get currentShape() {
+    if (!this._currentShape) {
+      this._currentShape = new Shape(this.getCommonVertexProperties());
+    }
+    return this._currentShape;
   }
 
   remove() {
@@ -102,6 +129,80 @@ class Renderer {
   pop() {
     this._pushPopDepth--;
     Object.assign(this.states, this._pushPopStack.pop());
+    this.updateShapeVertexProperties();
+    this.updateShapeProperties();
+  }
+
+  bezierOrder(order) {
+    if (order === undefined) {
+      return this.states.bezierOrder;
+    } else {
+      this.states.bezierOrder = order;
+      this.updateShapeProperties();
+    }
+  }
+
+  bezierVertex(x, y, z = 0, u = 0, v = 0) {
+    const position = new Vector(x, y, z);
+    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+      ? new Vector(u, v)
+      : undefined;
+    this.currentShape.bezierVertex(position, textureCoordinates);
+  }
+
+  splineEnds(mode) {
+    if (mode === undefined) {
+      return this.states.splineEnds;
+    } else {
+      this.states.splineEnds = mode;
+    }
+    this.updateShapeProperties();
+  }
+
+  splineVertex(x, y, z = 0, u = 0, v = 0) {
+    const position = new Vector(x, y, z);
+    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+      ? new Vector(u, v)
+      : undefined;
+    this.currentShape.splineVertex(position, textureCoordinates);
+  }
+
+  curveDetail(d) {
+    if (d === undefined) {
+      return this.states.curveDetail;
+    } else {
+      this.states.curveDetail = d;
+    }
+  }
+
+  beginShape(...args) {
+    this.currentShape.reset();
+    this.currentShape.beginShape(...args);
+  }
+
+  endShape(...args) {
+    this.currentShape.endShape(...args);
+    this.drawShape(this.currentShape);
+  }
+
+  beginContour(shapeKind) {
+    this.currentShape.beginContour(shapeKind);
+  }
+
+  endContour(mode) {
+    this.currentShape.endContour(mode);
+  }
+
+  drawShape(shape, count) {
+    throw new Error('Unimplemented')
+  }
+
+  vertex(x, y, z = 0, u = 0, v = 0) {
+    const position = new Vector(x, y, z);
+    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+      ? new Vector(u, v)
+      : undefined;
+    this.currentShape.vertex(position, textureCoordinates);
   }
 
   beginClip(options = {}) {
@@ -164,14 +265,54 @@ class Renderer {
 
   }
 
-  fill() {
+  fill(...args) {
     this.states.fillSet = true;
-    this.states.doFill = true;
+    this.states.fillColor = this._pInst.color(...args);
+    this.updateShapeVertexProperties();
   }
 
-  stroke() {
+  noFill() {
+    this.states.fillColor = null;
+  }
+
+  strokeWeight(w) {
+    if (w === undefined) {
+      return this.states.strokeWeight;
+    } else {
+      this.states.strokeWeight = w;
+    }
+  }
+
+  stroke(...args) {
     this.states.strokeSet = true;
-    this.states.doStroke = true;
+    this.states.strokeColor = this._pInst.color(...args);
+    this.updateShapeVertexProperties();
+  }
+
+  noStroke() {
+    this.states.strokeColor = null;
+  }
+
+  getCommonVertexProperties() {
+    return {}
+  }
+
+  getSupportedIndividualVertexProperties() {
+    return {
+      textureCoordinates: false,
+    }
+  }
+
+  updateShapeProperties() {
+    this.currentShape.bezierOrder(this.states.bezierOrder);
+    this.currentShape.splineEnds(this.states.splineEnds);
+  }
+
+  updateShapeVertexProperties() {
+    const props = this.getCommonVertexProperties();
+    for (const key in props) {
+      this.currentShape[key](props[key]);
+    }
   }
 
   textSize(s) {
@@ -205,13 +346,13 @@ class Renderer {
         s === constants.BOLD ||
         s === constants.BOLDITALIC
       ) {
-        this.states.textStyle = s;
+        this.states.fontStyle = s;
       }
 
       return this._applyTextProperties();
     }
 
-    return this.states.textStyle;
+    return this.states.fontStyle;
   }
 
   textAscent () {
@@ -265,7 +406,7 @@ class Renderer {
     // fix for #5785 (top of bounding box)
     let finalMinHeight = y;
 
-    if (!(this.states.doFill || this.states.doStroke)) {
+    if (!(this.states.fillColor || this.states.strokeColor)) {
       return;
     }
 
@@ -488,8 +629,8 @@ class Renderer {
   /**
  * Helper function to check font type (system or otf)
  */
-  _isOpenType(f = this.states.textFont) {
-    return typeof f === 'object' && f.font && f.font.supported;
+  _isOpenType({ font: f } = this.states.textFont) {
+    return typeof f === 'object' && f.data;
   }
 
   _updateTextMetrics() {

@@ -413,10 +413,6 @@ class p5 {
     };
 
     this._styles = [];
-
-    this._bezierDetail = 20;
-    this._curveDetail = 20;
-
     this._downKeys = {}; //Holds the key codes of currently pressed keys
   }
 }

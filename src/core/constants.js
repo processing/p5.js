@@ -772,6 +772,18 @@ export const QUAD_STRIP = 'quad_strip';
  */
 export const TESS = 'tess';
 /**
+ * @typedef {0x0007} EMPTY_PATH
+ * @property {EMPTY_PATH} EMPTY_PATH
+ * @final
+ */
+export const EMPTY_PATH = 0x0007;
+/**
+ * @typedef {0x0008} PATH
+ * @property {PATH} PATH
+ * @final
+ */
+export const PATH = 0x0008;
+/**
  * @typedef {'close'} CLOSE
  * @property {CLOSE} CLOSE
  * @final
@@ -1333,3 +1345,31 @@ export const FLOAT = 'float';
  * @final
  */
 export const HALF_FLOAT = 'half-float';
+
+/**
+ * The `splineEnds` mode where splines curve through
+ * their first and last points.
+ * @typedef {unique symbol} INCLUDE
+ * @property {INCLUDE} INCLUDE
+ * @final
+ */
+export const INCLUDE = Symbol('include');
+
+/**
+ * The `splineEnds` mode where the first and last points in a spline
+ * affect the direction of the curve, but are not rendered.
+ * @typedef {unique symbol} EXCLUDE
+ * @property {EXCLUDE} EXCLUDE
+ * @final
+ */
+export const EXCLUDE = Symbol('exclude');
+
+/**
+ * The `splineEnds` mode where the spline loops back to its first point.
+ * Only used internally.
+ * @typedef {unique symbol} JOIN
+ * @property {JOIN} JOIN
+ * @final
+ * @private
+ */
+export const JOIN = Symbol('join');
