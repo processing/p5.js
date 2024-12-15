@@ -8,7 +8,7 @@ suite('p5.Color', function() {
   beforeAll(() => {
     creatingReading(mockP5, mockP5Prototype);
     setting(mockP5, mockP5Prototype);
-    p5Color(mockP5, mockP5Prototype);
+    p5Color(mockP5, mockP5Prototype, {});
   });
 
   var c;

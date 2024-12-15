@@ -65,7 +65,7 @@ class Color {
       const mode = colorMode ?
         Color.colorMap[colorMode] :
         Color.colorMap[vals.mode];
-      this._color = toGamut(vals._color, mode);
+      this._color = to(vals._color, mode);
       this.mode = mode;
 
     }else if (typeof vals === 'object' && !Array.isArray(vals) && vals !== null){
@@ -73,7 +73,7 @@ class Color {
       const mode = colorMode ?
         Color.colorMap[colorMode] :
         vals.spaceId;
-      this._color = toGamut(vals, mode);
+      this._color = to(vals, mode);
       this.mode = colorMode || Object.entries(Color.colorMap).find(([key, val]) => {
           return val === this._color.spaceId;
         });
@@ -120,7 +120,7 @@ class Color {
         coords,
         alpha: mappedVals[3]
       };
-      this._color = toGamut(color, space);
+      this._color = to(color, space);
     }
   }
 
@@ -277,15 +277,21 @@ class Color {
    * </code>
    * </div>
    */
-  setRed(new_red) {
-    // DOCS: Should update range
+  setRed(new_red, max=[0, 1]) {
+    if(!Array.isArray(max)){
+      max = [0, max];
+    }
+
+    const colorjsMax = Color.#colorjsMaxes[RGB][0];
+    const newval = map(new_red, max[0], max[1], colorjsMax[0], colorjsMax[1]);
+
     if(this.mode === RGB){
-      this._color.coords[0] = new_red;
+      this._color.coords[0] = newval;
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
       const space = this._color.space.id;
       const representation = to(this._color, 'srgb');
-      representation.coords[0] = new_red;
+      representation.coords[0] = newval;
       this._color = to(representation, space);
     }
   }
@@ -326,15 +332,21 @@ class Color {
    * </code>
    * </div>
    **/
-  setGreen(new_green) {
-    // DOCS: Should update range
+  setGreen(new_green, max=[0, 1]) {
+    if(!Array.isArray(max)){
+      max = [0, max];
+    }
+
+    const colorjsMax = Color.#colorjsMaxes[RGB][1];
+    const newval = map(new_green, max[0], max[1], colorjsMax[0], colorjsMax[1]);
+
     if(this.mode === RGB){
-      this._color.coords[1] = new_green;
+      this._color.coords[1] = newval;
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
       const space = this._color.space.id;
       const representation = to(this._color, 'srgb');
-      representation.coords[1] = new_green;
+      representation.coords[1] = newval;
       this._color = to(representation, space);
     }
   }
@@ -375,15 +387,21 @@ class Color {
    * </code>
    * </div>
    **/
-  setBlue(new_blue) {
-    // DOCS: Should update range
+  setBlue(new_blue, max=[0, 1]) {
+    if(!Array.isArray(max)){
+      max = [0, max];
+    }
+
+    const colorjsMax = Color.#colorjsMaxes[RGB][2];
+    const newval = map(new_blue, max[0], max[1], colorjsMax[0], colorjsMax[1]);
+
     if(this.mode === RGB){
-      this._color.coords[2] = new_blue;
+      this._color.coords[2] = newval;
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
       const space = this._color.space.id;
       const representation = to(this._color, 'srgb');
-      representation.coords[2] = new_blue;
+      representation.coords[2] = newval;
       this._color = to(representation, space);
     }
   }
@@ -425,40 +443,15 @@ class Color {
    * </code>
    * </div>
    **/
-  setAlpha(new_alpha) {
-    // DOCS: Should update range
-    this._color.alpha = new_alpha;
-  }
-
-  _getRed() {
-    if(this.mode === RGB){
-      return this._color.coords[0];
-    }else{
-      // Will do an imprecise conversion to 'srgb', not recommended
-      return toGamut(this._color, 'srgb').coords[0];
+  setAlpha(new_alpha, max=[0, 1]) {
+    if(!Array.isArray(max)){
+      max = [0, max];
     }
-  }
 
-  _getGreen() {
-    if(this.mode === RGB){
-      return this._color.coords[1];
-    }else{
-      // Will do an imprecise conversion to 'srgb', not recommended
-      return toGamut(this._color, 'srgb').coords[1];
-    }
-  }
+    const colorjsMax = Color.#colorjsMaxes[this.mode][3];
+    const newval = map(new_alpha, max[0], max[1], colorjsMax[0], colorjsMax[1]);
 
-  _getBlue() {
-    if(this.mode === RGB){
-      return this._color.coords[2];
-    }else{
-      // Will do an imprecise conversion to 'srgb', not recommended
-      return toGamut(this._color, 'srgb').coords[2];
-    }
-  }
-
-  _getAlpha() {
-    return this._color.alpha;
+    this._color.alpha = newval;
   }
 
   _getRGBA(maxes=[1, 1, 1, 1]) {
@@ -466,7 +459,7 @@ class Color {
     const colorjsMaxes = Color.#colorjsMaxes[this.mode];
 
     // Normalize everything to 0,1 or the provided range (map)
-    let coords = structuredClone(toGamut(this._color, 'srgb').coords);
+    let coords = structuredClone(to(this._color, 'srgb').coords);
     coords.push(this._color.alpha);
 
     const rangeMaxes = maxes.map((v) => {
@@ -488,18 +481,78 @@ class Color {
     return this.mode;
   }
 
+  _getRed(max=[0, 1]) {
+    if(!Array.isArray(max)){
+      max = [0, max];
+    }
+
+    if(this.mode === RGB || this.mode === RGBHDR){
+      const colorjsMax = Color.#colorjsMaxes[this.mode][0];
+      return map(this._color.coords[0], colorjsMax[0], colorjsMax[1], max[0], max[1]);
+    }else{
+      // Will do an imprecise conversion to 'srgb', not recommended
+      const colorjsMax = Color.#colorjsMaxes[RGB][0];
+      return map(to(this._color, 'srgb').coords[0], colorjsMax[0], colorjsMax[1], max[0], max[1]);
+    }
+  }
+
+  _getGreen(max=[0, 1]) {
+    if(!Array.isArray(max)){
+      max = [0, max];
+    }
+
+    if(this.mode === RGB || this.mode === RGBHDR){
+      const colorjsMax = Color.#colorjsMaxes[this.mode][1];
+      return map(this._color.coords[1], colorjsMax[0], colorjsMax[1], max[0], max[1]);
+    }else{
+      // Will do an imprecise conversion to 'srgb', not recommended
+      const colorjsMax = Color.#colorjsMaxes[RGB][1];
+      return map(to(this._color, 'srgb').coords[1], colorjsMax[0], colorjsMax[1], max[0], max[1]);
+    }
+  }
+
+  _getBlue(max=[0, 1]) {
+    if(!Array.isArray(max)){
+      max = [0, max];
+    }
+
+    if(this.mode === RGB || this.mode === RGBHDR){
+      const colorjsMax = Color.#colorjsMaxes[this.mode][2];
+      return map(this._color.coords[2], colorjsMax[0], colorjsMax[1], max[0], max[1]);
+    }else{
+      // Will do an imprecise conversion to 'srgb', not recommended
+      const colorjsMax = Color.#colorjsMaxes[RGB][2];
+      return map(to(this._color, 'srgb').coords[2], colorjsMax[0], colorjsMax[1], max[0], max[1]);
+    }
+  }
+
+  _getAlpha(max=[0, 1]) {
+    if(!Array.isArray(max)){
+      max = [0, max];
+    }
+
+    const colorjsMax = Color.#colorjsMaxes[this.mode][3];
+    return map(this._color.alpha, colorjsMax[0], colorjsMax[1], max[0], max[1]);
+  }
+
   /**
    * Hue is the same in HSB and HSL, but the maximum value may be different.
    * This function will return the HSB-normalized saturation when supplied with
    * an HSB color object, but will default to the HSL-normalized saturation
    * otherwise.
    */
-  _getHue() {
+  _getHue(max=[0, 360]) {
+    if(!Array.isArray(max)){
+      max = [0, max];
+    }
+
     if(this.mode === HSB || this.mode === HSL){
-      return this._color.coords[0];
+      const colorjsMax = Color.#colorjsMaxes[this.mode][0];
+      return map(this._color.coords[0], colorjsMax[0], colorjsMax[1], max[0], max[1]);
     }else{
       // Will do an imprecise conversion to 'HSL', not recommended
-      return to(this._color, 'hsl').coords[0];
+      const colorjsMax = Color.#colorjsMaxes[HSL][0];
+      return map(to(this._color, 'hsl').coords[0], colorjsMax[0], colorjsMax[1], max[0], max[1]);
     }
   }
 
@@ -508,35 +561,53 @@ class Color {
    * the HSB saturation when supplied with an HSB color object, but will default
    * to the HSL saturation otherwise.
    */
-  _getSaturation() {
+  _getSaturation(max=[0, 100]) {
+    if(!Array.isArray(max)){
+      max = [0, max];
+    }
+
     if(this.mode === HSB || this.mode === HSL){
-      return this._color.coords[1];
+      const colorjsMax = Color.#colorjsMaxes[this.mode][1];
+      return map(this._color.coords[1], colorjsMax[0], colorjsMax[1], max[0], max[1]);
     }else{
       // Will do an imprecise conversion to 'HSL', not recommended
-      return to(this._color, 'hsl').coords[1];
+      const colorjsMax = Color.#colorjsMaxes[HSL][1];
+      return map(to(this._color, 'hsl').coords[1], colorjsMax[0], colorjsMax[1], max[0], max[1]);
     }
   }
 
-  _getBrightness() {
+  _getBrightness(max=[0, 100]) {
+    if(!Array.isArray(max)){
+      max = [0, max];
+    }
+
     if(this.mode === HSB){
-      return this._color.coords[2];
+      const colorjsMax = Color.#colorjsMaxes[this.mode][2];
+      return map(this._color.coords[2], colorjsMax[0], colorjsMax[1], max[0], max[1]);
     }else{
       // Will do an imprecise conversion to 'HSB', not recommended
-      return to(this._color, 'hsb').coords[2];
+      const colorjsMax = Color.#colorjsMaxes[HSB][2];
+      return map(to(this._color, 'hsb').coords[2], colorjsMax[0], colorjsMax[1], max[0], max[1]);
     }
   }
 
-  _getLightness() {
+  _getLightness(max=[0, 100]) {
+    if(!Array.isArray(max)){
+      max = [0, max];
+    }
+
     if(this.mode === HSL){
-      return this._color.coords[2];
+      const colorjsMax = Color.#colorjsMaxes[this.mode][2];
+      return map(this._color.coords[2], colorjsMax[0], colorjsMax[1], max[0], max[1]);
     }else{
       // Will do an imprecise conversion to 'HSL', not recommended
-      return to(this._color, 'hsl').coords[2];
+      const colorjsMax = Color.#colorjsMaxes[HSL][2];
+      return map(to(this._color, 'hsl').coords[2], colorjsMax[0], colorjsMax[1], max[0], max[1]);
     }
   }
 }
 
-function color(p5, fn){
+function color(p5, fn, lifecycles){
   /**
    * A class to describe a color.
    *
@@ -576,6 +647,78 @@ function color(p5, fn){
   p5.Color.addColorMode(LCH, LCHSpace);
   p5.Color.addColorMode(OKLAB, OKLab);
   p5.Color.addColorMode(OKLCH, OKLCHSpace);
+
+  lifecycles.presetup = function(){
+    const pInst = this;
+
+    // Decorate set methods
+    const setMethods = ['Red', 'Green', 'Blue', 'Alpha'];
+    for(let i in setMethods){
+      const method = setMethods[i];
+      const setCopy = p5.Color.prototype['set' + method];
+      p5.Color.prototype['set' + method] = function(newval, max){
+        max = max || pInst?._renderer?.states?.colorMaxes?.[RGB][i];
+        return setCopy.call(this, newval, max);
+      }
+    }
+
+    // Decorate get methods
+    function decorateGet(channel, modes){
+      const getCopy = p5.Color.prototype['_get' + channel];
+      p5.Color.prototype['_get' + channel] = function(max){
+        if(Object.keys(modes).includes(this.mode)){
+          max = max || pInst?._renderer?.states?.colorMaxes?.[this.mode][modes[this.mode]];
+        }else{
+          const defaultMode = Object.keys(modes)[0];
+          max = max || pInst?._renderer?.states?.colorMaxes?.[defaultMode][modes[defaultMode]];
+        }
+
+        return getCopy.call(this, max);
+      }
+    }
+
+    decorateGet('Red', {
+      [RGB]: 0,
+      [RGBHDR]: 0
+    });
+    decorateGet('Green', {
+      [RGB]: 1,
+      [RGBHDR]: 1
+    });
+    decorateGet('Blue', {
+      [RGB]: 2,
+      [RGBHDR]: 2
+    });
+    decorateGet('Alpha', {
+      [RGB]: 3,
+      [RGBHDR]: 3,
+      [HSB]: 3,
+      [HSL]: 3,
+      [HWB]: 3,
+      [LAB]: 3,
+      [LCH]: 3,
+      [OKLAB]: 3,
+      [OKLCH]: 3
+    });
+
+    decorateGet('Hue', {
+      [HSL]: 0,
+      [HSB]: 0,
+      [HWB]: 0,
+      [LCH]: 2,
+      [OKLCH]: 2
+    });
+    decorateGet('Saturation', {
+      [HSL]: 1,
+      [HSB]: 1
+    });
+    decorateGet('Brightness', {
+      [HSB]: 2
+    });
+    decorateGet('Lightness', {
+      [HSL]: 2
+    });
+  };
 }
 
 export default color;

@@ -10,7 +10,7 @@ suite('DOM', function() {
   beforeAll(() => {
     dom(mockP5, mockP5Prototype);
     creatingReading(mockP5, mockP5Prototype);
-    p5Color(mockP5, mockP5Prototype);
+    p5Color(mockP5, mockP5Prototype, {});
   });
 
   // Selectors

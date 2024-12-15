@@ -221,7 +221,6 @@ suite('color/Setting', function() {
     });
 
     test('should set mode to RGB', function() {
-      console.log(mockP5Prototype);
       mockP5Prototype.colorMode('rgb');
       assert.equal(mockP5Prototype._renderer.states.colorMode, 'rgb');
     });
@@ -272,41 +271,41 @@ suite('color/Setting', function() {
     test('setRed() correctly sets red component', function() {
       mockP5Prototype.colorMode('rgb', 255);
       const c = mockP5Prototype.color(0, 162, 205, 255);
-      c.setRed(100/255);
-      assert.equal(mockP5Prototype.red(c), 100/255);
-      assert.equal(mockP5Prototype.green(c), 162/255);
-      assert.equal(mockP5Prototype.blue(c), 205/255);
-      assert.equal(mockP5Prototype.alpha(c), 255/255);
+      c.setRed(100);
+      assert.equal(mockP5Prototype.red(c), 100);
+      assert.equal(mockP5Prototype.green(c), 162);
+      assert.equal(mockP5Prototype.blue(c), 205);
+      assert.equal(mockP5Prototype.alpha(c), 255);
     });
 
     test('setGreen() correctly sets green component', function() {
       mockP5Prototype.colorMode('rgb', 255);
       const c = mockP5Prototype.color(0, 162, 205, 255);
-      c.setGreen(100/255);
+      c.setGreen(100);
       assert.equal(mockP5Prototype.red(c), 0);
-      assert.equal(mockP5Prototype.green(c), 100/255);
-      assert.equal(mockP5Prototype.blue(c), 205/255);
-      assert.equal(mockP5Prototype.alpha(c), 255/255);
+      assert.equal(mockP5Prototype.green(c), 100);
+      assert.equal(mockP5Prototype.blue(c), 205);
+      assert.equal(mockP5Prototype.alpha(c), 255);
     });
 
     test('setBlue() correctly sets blue component', function() {
       mockP5Prototype.colorMode('rgb', 255);
       const c = mockP5Prototype.color(0, 162, 205, 255);
-      c.setBlue(100/255);
+      c.setBlue(100);
       assert.equal(mockP5Prototype.red(c), 0);
-      assert.equal(mockP5Prototype.green(c), 162/255);
-      assert.equal(mockP5Prototype.blue(c), 100/255);
-      assert.equal(mockP5Prototype.alpha(c), 255/255);
+      assert.equal(mockP5Prototype.green(c), 162);
+      assert.equal(mockP5Prototype.blue(c), 100);
+      assert.equal(mockP5Prototype.alpha(c), 255);
     });
 
     test('setAlpha correctly sets alpha component', function() {
       mockP5Prototype.colorMode('rgb', 255);
       const c = mockP5Prototype.color(0, 162, 205, 255);
-      c.setAlpha(100/255);
-      assert.equal(mockP5Prototype.red(c), 0/255);
-      assert.equal(mockP5Prototype.green(c), 162/255);
-      assert.equal(mockP5Prototype.blue(c), 205/255);
-      assert.equal(mockP5Prototype.alpha(c), 100/255);
+      c.setAlpha(100);
+      assert.equal(mockP5Prototype.red(c), 0);
+      assert.equal(mockP5Prototype.green(c), 162);
+      assert.equal(mockP5Prototype.blue(c), 205);
+      assert.equal(mockP5Prototype.alpha(c), 100);
     });
 
     test('changing the red/green/blue/alpha components should clear the cached HSL/HSB values', function() {
