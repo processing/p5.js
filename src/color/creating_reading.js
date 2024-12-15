@@ -496,7 +496,6 @@ function creatingReading(p5, fn){
    */
   fn.red = function(c) {
     p5._validateParameters('red', arguments);
-    // TODO: Need to account for RGBHDR and other potential RGB spaces
     // Get current red max
     return this.color(c)._getRed();
   };

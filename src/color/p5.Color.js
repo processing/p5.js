@@ -285,7 +285,7 @@ class Color {
     const colorjsMax = Color.#colorjsMaxes[RGB][0];
     const newval = map(new_red, max[0], max[1], colorjsMax[0], colorjsMax[1]);
 
-    if(this.mode === RGB){
+    if(this.mode === RGB || this.mode === RGBHDR){
       this._color.coords[0] = newval;
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
@@ -340,7 +340,7 @@ class Color {
     const colorjsMax = Color.#colorjsMaxes[RGB][1];
     const newval = map(new_green, max[0], max[1], colorjsMax[0], colorjsMax[1]);
 
-    if(this.mode === RGB){
+    if(this.mode === RGB || this.mode === RGBHDR){
       this._color.coords[1] = newval;
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
@@ -395,7 +395,7 @@ class Color {
     const colorjsMax = Color.#colorjsMaxes[RGB][2];
     const newval = map(new_blue, max[0], max[1], colorjsMax[0], colorjsMax[1]);
 
-    if(this.mode === RGB){
+    if(this.mode === RGB || this.mode === RGBHDR){
       this._color.coords[2] = newval;
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
