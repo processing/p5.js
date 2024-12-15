@@ -30,6 +30,30 @@ visualSuite("Typography", function () {
       p5.text('p5*js', 0, 10, p5.width);
       screenshot();
     });
+
+    visualTest('with a font file', async function(p5, screenshot) {
+      p5.createCanvas(100, 100);
+      const font = await p5.loadFont(
+        '/unit/assets/Inconsolata-Bold.ttf'
+      );
+      p5.textFont(font);
+      p5.textAlign(p5.LEFT, p5.TOP);
+      p5.textSize(35);
+      p5.text('p5*js', 0, 10, p5.width);
+      screenshot();
+    });
+
+    visualTest('with a font file in WebGL', async function(p5, screenshot) {
+      p5.createCanvas(100, 100, p5.WEBGL);
+      const font = await p5.loadFont(
+        '/unit/assets/Inconsolata-Bold.ttf'
+      );
+      p5.textFont(font);
+      p5.textAlign(p5.LEFT, p5.TOP);
+      p5.textSize(35);
+      p5.text('p5*js', -p5.width/2, -p5.height/2 + 10, p5.width);
+      screenshot();
+    });
   });
 
   visualSuite('textWeight', function() {
