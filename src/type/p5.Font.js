@@ -130,16 +130,17 @@ function font(p5, fn) {
     }
 
     textToPoints(str, x, y, width, height, options) {
-      ({ width, height, options } = this._parseArgs(width, height, options));
-
-      // lineate and get the glyphs for each line
-      let commands = this.textToPaths(str, x, y, width, height, options);
-
-      // convert glyphs to points array with {sampleFactor, simplifyThreshold}
-      return pathToPoints(commands, options);
+      // By segmenting per contour, pointAtLength becomes much faster
+      const contourPoints = this.textToContours(str, x, y, width, height, options);
+      return contourPoints.reduce((acc, next) => {
+        acc.push(...next);
+        return acc;
+      }, []);
     }
 
     textToContours(str, x, y, width, height, options) {
+      ({ width, height, options } = this._parseArgs(width, height, options));
+
       const cmds = this.textToPaths(str, x, y, width, height, options);
       const cmdContours = [];
       for (const cmd of cmds) {
@@ -1135,7 +1136,7 @@ function font(p5, fn) {
     }
 
     let opts = parseOpts(options, {
-      sampleFactor: 0.25,
+      sampleFactor: 0.1,
       simplifyThreshold: 0
     });
 
