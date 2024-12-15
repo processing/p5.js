@@ -3,6 +3,7 @@ import * as constants from '../core/constants';
 import { RendererGL } from './p5.RendererGL';
 import { Vector } from '../math/p5.Vector';
 import { Geometry } from './p5.Geometry';
+import { arrayCommandsToObjects } from '../type/p5.Font';
 
 function text(p5, fn){
   // Text/Typography
@@ -194,30 +195,7 @@ function text(p5, fn){
       const gHeight = yMax - yMin;
 
       // Convert arrays to named objects
-      const cmds = commands.map((command) => {
-        const type = command[0];
-        switch (type) {
-          case 'Z': {
-            return { type };
-          }
-          case 'M':
-          case 'L': {
-            const [, x, y] = command;
-            return { type, x, y };
-          }
-          case 'Q': {
-            const [, x1, y1, x, y] = command;
-            return { type, x1, y1, x, y };
-          }
-          case 'C': {
-            const [, x1, y1, x2, y2, x, y] = command;
-            return { type, x1, y1, x2, y2, x, y };
-          }
-          default: {
-            throw new Error(`Unexpected path command: ${type}`);
-          }
-        }
-      })
+      const cmds = arrayCommandsToObjects(commands);
 
       let i;
       const strokes = []; // the strokes in this glyph
