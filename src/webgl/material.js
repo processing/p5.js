@@ -3626,7 +3626,7 @@ function material(p5, fn){
     this.states.drawMode = constants.TEXTURE;
     this.states._useNormalMaterial = false;
     this.states._tex = tex;
-    this.states.fillColor = new Color(255);
+    this.states.fillColor = new Color([1, 1, 1]);
   };
 
   RendererGL.prototype.normalMaterial = function(...args) {
@@ -3635,7 +3635,7 @@ function material(p5, fn){
     this.states._useEmissiveMaterial = false;
     this.states._useNormalMaterial = true;
     this.states.curFillColor = [1, 1, 1, 1];
-    this.states.fillColor = new Color(255);
+    this.states.fillColor = new Color([1, 1, 1]);
     this.states.strokeColor = null;
   }
 
