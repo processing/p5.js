@@ -151,12 +151,12 @@ visualSuite('WebGL', function() {
         outColor = vec4(vCol, 1.0);
       }`;
     visualTest(
-      'on TESS shape mode', function(p5, screenshot) {
+      'on PATH shape mode', function(p5, screenshot) {
         p5.createCanvas(50, 50, p5.WEBGL);
         p5.background('white');
         const myShader = p5.createShader(vertSrc, fragSrc);
         p5.shader(myShader);
-        p5.beginShape(p5.TESS);
+        p5.beginShape(p5.PATH);
         p5.noStroke();
         for (let i = 0; i < 20; i++){
           let x = 20 * p5.sin(i/20*p5.TWO_PI);
@@ -272,9 +272,9 @@ visualSuite('WebGL', function() {
       p5.strokeWeight(15);
       p5.line(
         -p5.width / 3,
-        p5.sin(p5.millis() * 0.001) * p5.height / 4,
+        p5.sin(0.2) * p5.height / 4,
         p5.width / 3,
-        p5.sin(p5.millis() * 0.001 + 1) * p5.height / 4
+        p5.sin(1.2) * p5.height / 4
       );
       screenshot();
     });

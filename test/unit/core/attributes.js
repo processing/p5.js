@@ -1,66 +1,57 @@
-import p5 from '../../../src/app.js';
+import { mockP5, mockP5Prototype } from '../../js/mocks';
+import attributes from '../../../src/shape/attributes';
 
 suite('Attributes', function() {
-  var myp5;
-
   beforeAll(function() {
-    new p5(function(p) {
-      p.setup = function() {
-        myp5 = p;
-      };
-    });
-  });
-
-  afterAll(function() {
-    myp5.remove();
+    attributes(mockP5, mockP5Prototype);
   });
 
   suite('p5.prototype.ellipseMode', function() {
     test('should be a function', function() {
-      assert.ok(myp5.ellipseMode);
-      assert.typeOf(myp5.ellipseMode, 'function');
+      assert.ok(mockP5Prototype.ellipseMode);
+      assert.typeOf(mockP5Prototype.ellipseMode, 'function');
     });
   });
 
   suite('p5.prototype.rectMode', function() {
     test('should be a function', function() {
-      assert.ok(myp5.rectMode);
-      assert.typeOf(myp5.rectMode, 'function');
+      assert.ok(mockP5Prototype.rectMode);
+      assert.typeOf(mockP5Prototype.rectMode, 'function');
     });
   });
 
   suite('p5.prototype.noSmooth', function() {
     test('should be a function', function() {
-      assert.ok(myp5.noSmooth);
-      assert.typeOf(myp5.noSmooth, 'function');
+      assert.ok(mockP5Prototype.noSmooth);
+      assert.typeOf(mockP5Prototype.noSmooth, 'function');
     });
   });
 
   suite('p5.prototype.smooth', function() {
     test('should be a function', function() {
-      assert.ok(myp5.smooth);
-      assert.typeOf(myp5.smooth, 'function');
+      assert.ok(mockP5Prototype.smooth);
+      assert.typeOf(mockP5Prototype.smooth, 'function');
     });
   });
 
   suite('p5.prototype.strokeCap', function() {
     test('should be a function', function() {
-      assert.ok(myp5.strokeCap);
-      assert.typeOf(myp5.strokeCap, 'function');
+      assert.ok(mockP5Prototype.strokeCap);
+      assert.typeOf(mockP5Prototype.strokeCap, 'function');
     });
   });
 
   suite('p5.prototype.strokeJoin', function() {
     test('should be a function', function() {
-      assert.ok(myp5.strokeJoin);
-      assert.typeOf(myp5.strokeJoin, 'function');
+      assert.ok(mockP5Prototype.strokeJoin);
+      assert.typeOf(mockP5Prototype.strokeJoin, 'function');
     });
   });
 
   suite('p5.prototype.strokeWeight', function() {
     test('should be a function', function() {
-      assert.ok(myp5.strokeWeight);
-      assert.typeOf(myp5.strokeWeight, 'function');
+      assert.ok(mockP5Prototype.strokeWeight);
+      assert.typeOf(mockP5Prototype.strokeWeight, 'function');
     });
   });
 });

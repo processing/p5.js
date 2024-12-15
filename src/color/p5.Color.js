@@ -466,6 +466,10 @@ class Color {
   }
 
   get _array() {
+    return this.array();
+  }
+
+  array() {
     return [...this.color.coords, this.color.alpha];
   }
 
