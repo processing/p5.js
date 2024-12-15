@@ -133,10 +133,23 @@ function font(p5, fn) {
       ({ width, height, options } = this._parseArgs(width, height, options));
 
       // lineate and get the glyphs for each line
-      let glyphs = this.textToPaths(str, x, y, width, height, options);
+      let commands = this.textToPaths(str, x, y, width, height, options);
 
       // convert glyphs to points array with {sampleFactor, simplifyThreshold}
-      return pathToPoints(glyphs, options);
+      return pathToPoints(commands, options);
+    }
+
+    textToContours(str, x, y, width, height, options) {
+      const cmds = this.textToPaths(str, x, y, width, height, options);
+      const cmdContours = [];
+      for (const cmd of cmds) {
+        if (cmd[0] === 'M') {
+          cmdContours.push([]);
+        }
+        cmdContours[cmdContours.length - 1].push(cmd);
+      }
+
+      return cmdContours.map((commands) => pathToPoints(commands, options));
     }
 
     static async list(log = false) { // tmp
@@ -1122,7 +1135,7 @@ function font(p5, fn) {
     }
 
     let opts = parseOpts(options, {
-      sampleFactor: 0.05,
+      sampleFactor: 0.25,
       simplifyThreshold: 0
     });
 
