@@ -26,19 +26,11 @@
 */
 
 /**
- * This module defines the <a href="#/p5.Font">p5.Font</a> class and P5 methods for
+ * This module defines the <a href="#/p5.Font">p5.Font</a> class and p5 methods for
  * loading fonts from files and urls, and extracting points from their paths.
  */
 import Typr from './lib/Typr.js';
 import { createFromCommands } from '@davepagurek/bezier-path';
-
-function unquote(name) {
-  // Unquote name from CSS
-  if ((name.startsWith('"') || name.startsWith("'")) && name.at(0) === name.at(-1)) {
-    return name.slice(1, -1).replace(/\/(['"])/g, '$1');
-  }
-  return name;
-}
 
 function font(p5, fn) {
 
@@ -662,7 +654,6 @@ function font(p5, fn) {
       simplifyThreshold: 0
     });
 
-
     const totalPoints = Math.ceil(path.getTotalLength() * opts.sampleFactor);
     let points = [];
 
@@ -678,6 +669,15 @@ function font(p5, fn) {
 
     return points;
   }
+
+  function unquote(name) {
+    // Unquote name from CSS
+    if ((name.startsWith('"') || name.startsWith("'")) && name.at(0) === name.at(-1)) {
+      return name.slice(1, -1).replace(/\/(['"])/g, '$1');
+    }
+    return name;
+  }
+
 };
 
 // Convert arrays to named objects

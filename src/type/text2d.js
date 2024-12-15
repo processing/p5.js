@@ -29,8 +29,6 @@ import { Renderer } from '../core/p5.Renderer';
  *   - add 'justify' alignment
  */
 
-import { Graphics } from '../core/p5.Graphics';
-
 /**
  * @module Type
  * @submodule text2d
@@ -73,7 +71,6 @@ function text2d(p5, fn) {
     'textStyle',
     'textWidth',
     'textWrap',
-
     'textBounds',
     'textToPoints',
     'textDirection',
@@ -94,7 +91,7 @@ function text2d(p5, fn) {
       }
       return this._renderer[func](...args);
     };
-    // TODO: is this necessary?
+    // do the same for p5.Graphics prototype
     p5.Graphics.prototype[func] = function (...args) {
       return this._renderer[func](...args);
     };
@@ -114,7 +111,6 @@ function text2d(p5, fn) {
     lineHeight: { default: fn.NORMAL, isShorthand: true },   // line-height: { default:  normal | number | length | percentage }
     fontVariant: { default: fn.NORMAL, isShorthand: true },  // font-variant: { default:  normal | small-caps }
     fontStyle: { default: fn.NORMAL, isShorthand: true },    // font-style: { default:  normal | italic | oblique } [was 'textStyle' in v1]
-
     direction: { default: 'inherit' }, // direction: { default: inherit | ltr | rtl }
   };
 
@@ -160,7 +156,6 @@ function text2d(p5, fn) {
    * @returns - a bounding box object for the text block: {x,y,w,h}
    */
   Renderer.prototype.textBounds = function (str, x, y, width, height) {
-    //console.log('TEXT BOUNDS: ', str, x, y, width, height);
     // delegate to _textBoundsSingle measure function
     return this._computeBounds(fn._TEXT_BOUNDS, str, x, y, width, height).bounds;
   };
@@ -187,8 +182,7 @@ function text2d(p5, fn) {
   Renderer.prototype.textWidth = function (theText) {
     let lines = this._processLines(theText, null, null);
     // return the max width of the lines (using tight bounds)
-    let widths = lines.map(l => this._textWidthSingle(l));
-    return Math.max(...widths);
+    return Math.max(...lines.map(l => this._textWidthSingle(l)));
   };
 
   /**
@@ -199,12 +193,10 @@ function text2d(p5, fn) {
   Renderer.prototype.fontWidth = function (theText) {
     // return the max width of the lines (using loose bounds)
     let lines = this._processLines(theText, null, null);
-    let widths = lines.map(l => this._fontWidthSingle(l));
-    return Math.max(...widths);
+    return Math.max(...lines.map(l => this._fontWidthSingle(l)));
   };
 
   /**
-   *
    * @param {*} txt - optional text to measure, if provided will be
    * used to compute the ascent, otherwise the font's ascent will be used
    * @returns - the ascent of the text
@@ -260,10 +252,6 @@ function text2d(p5, fn) {
     };
   };
 
-  Renderer.prototype._currentTextFont = function() {
-    return this.states.textFont.font || this.states.textFont.family;
-  }
-
   /**
    * Set the font and [size] and [options] for rendering text
    * @param {p5.Font | string} font - the font to use for rendering text
@@ -317,17 +305,17 @@ function text2d(p5, fn) {
       this.textProperties(options);
     }
 
-    this._applyTextProperties();
-    //console.log('ctx.font="' + this.textDrawingContext().font + '"');
-    return this._pInst;
+   return this._applyTextProperties();
   }
 
   Renderer.prototype._directSetFontString = function (font, debug = 0) {
     if (debug) console.log('_directSetFontString"' + font + '"');
+
     let defaults = ShorthandFontProps.reduce((props, p) => {
       props[p] = RendererTextProps[p].default;
       return props;
     }, {});
+    
     let el = this._cachedDiv(defaults);
     el.style.font = font;
     let style = getComputedStyle(el);
@@ -335,8 +323,10 @@ function text2d(p5, fn) {
       this.states[prop] = style[prop];
       if (debug) console.log('  this.states.' + prop + '="' + style[prop] + '"');
     });
+    
     if (debug) console.log('  this.states.textFont="' + style.fontFamily + '"');
     if (debug) console.log('  this.states.textSize="' + style.fontSize + '"');
+    
     return { family: style.fontFamily, size: style.fontSize };
   }
 
@@ -484,6 +474,9 @@ function text2d(p5, fn) {
 
   /////////////////////////////// end API ////////////////////////////////
 
+  Renderer.prototype._currentTextFont = function () {
+    return this.states.textFont.font || this.states.textFont.family;
+  }
 
   /*
     Compute the bounds for a block of text based on the specified
@@ -1112,8 +1105,6 @@ function text2d(p5, fn) {
         if (!states.fillSet) {
           this._setFill(DefaultFill);
         }
-
-        //console.log(`fillText(${x},${y},'${text}') font='${this.textDrawingContext().font}'`);
         this.textDrawingContext().fillText(text, x, y);
       }
 
@@ -1143,7 +1134,7 @@ function text2d(p5, fn) {
           case fn.RIGHT:
             adjustedX = x + adjustedW;
             break;
-          case fn.END: // TODO: add fn.END:
+          case fn.END:
             throw new Error('textBounds: END not yet supported for textAlign');
         }
         lineData[i] = { text: lines[i], x: adjustedX, y: y + i * textLeading };
@@ -1186,6 +1177,7 @@ function text2d(p5, fn) {
       return dataArr;
     }
   }
+
   if (p5.RendererGL) {
     p5.RendererGL.prototype.textDrawingContext = function() {
       if (!this._textDrawingContext) {
@@ -1218,7 +1210,7 @@ function text2d(p5, fn) {
           case fn.RIGHT:
             adjustedX = x + adjustedW - widths[i];
             break;
-          case fn.END: // TODO: add fn.END:
+          case fn.END:
             throw new Error('textBounds: END not yet supported for textAlign');
         }
         lineData[i] = { text: lines[i], x: adjustedX, y: y + i * textLeading };
