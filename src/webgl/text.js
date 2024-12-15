@@ -733,8 +733,11 @@ function text(p5, fn){
       sh.setUniform('uStrokeImageSize', [strokeImageWidth, strokeImageHeight]);
       sh.setUniform('uGridSize', [charGridWidth, charGridHeight]);
     }
+
+    const curFillColor = this.states.fillSet ? this.states.curFillColor : [0, 0, 0, 255];
+
     this._setGlobalUniforms(sh);
-    this._applyColorBlend(this.states.curFillColor);
+    this._applyColorBlend(curFillColor);
 
     let g = this.geometryBufferCache.getGeometryByID('glyph');
     if (!g) {
@@ -759,7 +762,7 @@ function text(p5, fn){
     this._bindBuffer(this.geometryBufferCache.cache.glyph.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
 
     // this will have to do for now...
-    sh.setUniform('uMaterialColor', this.states.curFillColor);
+    sh.setUniform('uMaterialColor', curFillColor);
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
 
     try {
