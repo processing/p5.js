@@ -1092,6 +1092,11 @@ class RendererGL extends Renderer {
       1 / (target.height * target.pixelDensity())
     ];
 
+    this.blendMode(constants.BLEND);
+    this.states.rectMode = constants.CORNER;
+    this.states.imageMode = constants.CORNER;
+
+
     // apply blur shader with multiple passes.
     if (operation === constants.BLUR) {
       // Treating 'tmp' as a framebuffer.
@@ -1101,7 +1106,6 @@ class RendererGL extends Renderer {
       // setup
       this.push();
       this.states.doStroke = false;
-      this.blendMode(constants.BLEND);
 
       // draw main to temp buffer
       this.shader(this.states.filterShader);
@@ -1135,7 +1139,6 @@ class RendererGL extends Renderer {
     else {
       fbo.draw(() => {
         this.states.doStroke = false;
-        this.blendMode(constants.BLEND);
         this.shader(this.states.filterShader);
         this.states.filterShader.setUniform('tex0', target);
         this.states.filterShader.setUniform('texelSize', texelSize);
@@ -1153,8 +1156,6 @@ class RendererGL extends Renderer {
     this.states.doStroke = false;
     this.clear();
     this.push();
-    this.states.imageMode = constants.CORNER;
-    this.blendMode(constants.BLEND);
     target.filterCamera._resize();
     this.setCamera(target.filterCamera);
     this.resetMatrix();
