@@ -1,7 +1,7 @@
 /**
  * API:
  *    loadFont("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap")
- *    loadFont("{ font-family: "Bricolage Grotesque", serif; font-optical-sizing: auto; font-weight: <weight> font-style: normal; font-variation-settings: "wdth" 100; });
+ *    loadFont("@font-face { font-family: "Bricolage Grotesque", serif; font-optical-sizing: auto; font-weight: <weight> font-style: normal; font-variation-settings: "wdth" 100; });
  *    loadFont({
  *        fontFamily: '"Bricolage Grotesque", serif';
  *        fontOpticalSizing: 'auto';
@@ -30,6 +30,14 @@
  * loading fonts from files and urls, and extracting points from their paths.
  */
 import Typr from './lib/Typr.js';
+
+function unquote(name) {
+  // Unquote name from CSS
+  if ((name.startsWith('"') || name.startsWith("'")) && name.at(0) === name.at(-1)) {
+    return name.slice(1, -1).replace(/\/(['"])/g, '$1');
+  }
+  return name;
+}
 
 function font(p5, fn) {
 
@@ -455,6 +463,43 @@ function font(p5, fn) {
 
     let { path, name, success, error, descriptors } = parseCreateArgs(...args);
 
+    let isCSS = path.includes('@font-face');
+
+    if (!isCSS) {
+      const info = await fetch(path, { method: 'HEAD' });
+      const isCSSFile = info.headers.get('content-type')?.startsWith('text/css');
+      if (isCSSFile) {
+        isCSS = true;
+        path = await fetch(path).then((res) => res.text());
+      }
+    }
+
+    if (isCSS) {
+      const stylesheet = new CSSStyleSheet();
+      await stylesheet.replace(path);
+      const fontPromises = [];
+      for (const rule of stylesheet.cssRules) {
+        if (rule instanceof CSSFontFaceRule) {
+          const style = rule.style;
+          let name = unquote(style.getPropertyValue('font-family'));
+          const src = style.getPropertyValue('src');
+          const fontDescriptors = { ...(descriptors || {}) };
+          for (const key of style) {
+            if (key === 'font-family' || key === 'src') continue;
+            const camelCaseKey = key
+              .replace(/^font-/, '')
+              .split('-')
+              .map((v, i) => i === 0 ? v : `${v[0].toUpperCase()}${v.slice(1)}`)
+              .join('');
+            fontDescriptors[camelCaseKey] = style.getPropertyValue(key);
+          }
+          fontPromises.push(create(this, name, src, fontDescriptors));
+        }
+      }
+      const fonts = await Promise.all(fontPromises);
+      return fonts[0]; // TODO: handle multiple faces?
+    }
+
     let pfont;
     try {
       // load the raw font bytes
@@ -465,13 +510,20 @@ function font(p5, fn) {
 
       // parse the font data
       let fonts = Typr.parse(result);
+      console.log(fonts[0])
+      // TODO: generate descriptors from font in the future
 
       if (fonts.length !== 1 || fonts[0].cmap === undefined) {
         throw Error(23);
       }
 
       // make sure we have a valid name
-      name = name || extractFontName(fonts[0], path);
+      if (!name) {
+        name = extractFontName(fonts[0], path);
+        if (name.includes(' ')) {
+          name = name.replace(/ /g, '_');
+        }
+      }
 
       // create a FontFace object and pass it to the p5.Font constructor
       pfont = await create(this, name, path, descriptors, fonts[0]);

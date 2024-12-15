@@ -18,6 +18,72 @@ visualSuite("Typography", function () {
       p5.text("test", 0, 0);
       screenshot();
     });
+
+    visualTest('with a Google Font URL', async function(p5, screenshot) {
+      p5.createCanvas(100, 100);
+      const font = await p5.loadFont(
+        'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap'
+      );
+      p5.textFont(font);
+      p5.textAlign(p5.LEFT, p5.TOP);
+      p5.textSize(35);
+      p5.text('p5*js', 0, 10, p5.width);
+      screenshot();
+    });
+  });
+
+  visualSuite('textWeight', function() {
+    visualTest('can control non-variable fonts', async function (p5, screenshot) {
+      p5.createCanvas(100, 100);
+      const font = await p5.loadFont(
+        'https://fonts.googleapis.com/css2?family=Sniglet:wght@400;800&display=swap'
+      );
+
+      for (const weight of [400, 800]) {
+        p5.background(255);
+        p5.textFont(font);
+        p5.textAlign(p5.LEFT, p5.TOP);
+        p5.textSize(35);
+        p5.textWeight(weight);
+        p5.text('p5*js', 0, 10, p5.width);
+        screenshot();
+      }
+    });
+
+    visualTest('can control variable fonts', async function (p5, screenshot) {
+      p5.createCanvas(100, 100);
+      const font = await p5.loadFont(
+        'https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap'
+      );
+
+      for (let weight = 400; weight <= 800; weight += 100) {
+        p5.background(255);
+        p5.textFont(font);
+        p5.textAlign(p5.LEFT, p5.TOP);
+        p5.textSize(35);
+        p5.textWeight(weight);
+        p5.text('p5*js', 0, 10, p5.width);
+        screenshot();
+      }
+    });
+
+    visualTest('can control variable fonts from files', async function (p5, screenshot) {
+      p5.createCanvas(100, 100);
+      const font = await p5.loadFont(
+        '/unit/assets/BricolageGrotesque-Variable.ttf',
+        { weight: '200 800' }
+      );
+
+      for (let weight = 400; weight <= 800; weight += 100) {
+        p5.background(255);
+        p5.textFont(font);
+        p5.textAlign(p5.LEFT, p5.TOP);
+        p5.textSize(35);
+        p5.textWeight(weight);
+        p5.text('p5*js', 0, 10, p5.width);
+        screenshot();
+      }
+    });
   });
 
   visualSuite("textAlign", function () { // TEMPORARY SKIP

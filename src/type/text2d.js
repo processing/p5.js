@@ -260,6 +260,10 @@ function text2d(p5, fn) {
     };
   };
 
+  Renderer.prototype._currentTextFont = function() {
+    return this.states.textFont.font || this.states.textFont.family;
+  }
+
   /**
    * Set the font and [size] and [options] for rendering text
    * @param {p5.Font | string} font - the font to use for rendering text
@@ -269,7 +273,7 @@ function text2d(p5, fn) {
   Renderer.prototype.textFont = function (font, size, options) {
 
     if (arguments.length === 0) {
-      return this.states.textFont;
+      return this._currentTextFont();
     }
 
     let family = font;
@@ -296,7 +300,7 @@ function text2d(p5, fn) {
     }
 
     // check for font-string with size in first arg
-    if (typeof size === 'undefined' && /[.0-9]+(%|em|p[xt])/.test(family)) {
+    if (typeof size === 'undefined' && /^[.0-9]+(%|em|p[xt])/.test(family)) {
       ({ family, size } = this._directSetFontString(family));
     }
 
@@ -351,7 +355,9 @@ function text2d(p5, fn) {
     // the setter
     if (typeof weight === 'number') {
       this.states.fontWeight = weight;
-      return this._applyTextProperties();
+      this._applyTextProperties();
+      this._setCanvasStyleProperty('font-variation-settings', `"wght" ${weight}`);
+      return;
     }
     // the getter
     return this.states.fontWeight;
@@ -410,6 +416,7 @@ function text2d(p5, fn) {
   Renderer.prototype.textProperty = function (prop, value, opts) {
 
     let modified = false, debug = opts?.debug || false;
+    console.log({ prop, value })
 
     // getter: return option from this.states or this.textDrawingContext()
     if (typeof value === 'undefined') {
@@ -605,7 +612,7 @@ function text2d(p5, fn) {
           case 'wght':
             if (debug) console.log('setting font-weight=' + val);
             // manually set the font-weight via the font string
-            this.textWeight(val);
+            if (this.states.fontWeight !== val) this.textWeight(val);
             return val;
           case 'wdth':
             if (0) { // attempt to map font-stretch to allowed keywords
