@@ -418,9 +418,8 @@ visualSuite("Typography", function () {
       );
       p5.background(255);
       p5.strokeWeight(2);
-      p5.textAlign(p5.LEFT, p5.TOP);
       p5.textSize(50);
-      const pts = font.textToPoints('p5*js', 0, 0);
+      const pts = font.textToPoints('p5*js', 0, 50);
       p5.beginShape(p5.POINTS);
       for (const { x, y } of pts) p5.vertex(x, y);
       p5.endShape();
@@ -434,9 +433,8 @@ visualSuite("Typography", function () {
       );
       p5.background(255);
       p5.strokeWeight(2);
-      p5.textAlign(p5.LEFT, p5.TOP);
       p5.textSize(50);
-      const pts = font.textToPoints('p5*js', 0, 0, { sampleFactor: 0.5 });
+      const pts = font.textToPoints('p5*js', 0, 50, { sampleFactor: 0.5 });
       p5.beginShape(p5.POINTS);
       for (const { x, y } of pts) p5.vertex(x, y);
       p5.endShape();
@@ -452,9 +450,8 @@ visualSuite("Typography", function () {
       );
       p5.background(200);
       p5.strokeWeight(2);
-      p5.textAlign(p5.LEFT, p5.TOP);
       p5.textSize(50);
-      const contours = font.textToContours('p5*js', 0, 0, { samplingDensity: 0.5 })
+      const contours = font.textToContours('p5*js', 0, 50, { samplingDensity: 0.5 })
       p5.beginShape();
       for (const pts of contours) {
         p5.beginContour();
@@ -474,9 +471,8 @@ visualSuite("Typography", function () {
       );
       p5.background(200);
       p5.strokeWeight(2);
-      p5.textAlign(p5.LEFT, p5.TOP);
       p5.textSize(50);
-      const cmds = font.textToPaths('p5*js', 0, 0)
+      const cmds = font.textToPaths('p5*js', 0, 50)
       p5.drawingContext.beginPath();
       for (const [type, ...args] of cmds) {
         if (type === 'M') {
