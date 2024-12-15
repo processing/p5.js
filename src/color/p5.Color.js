@@ -168,6 +168,10 @@ class Color {
     return [...this._color.coords, this._color.alpha];
   }
 
+  array(){
+    return this._array;
+  }
+
   lerp(color, amt, mode){
     // Find the closest common ancestor color space
     let spaceIndex = -1;
