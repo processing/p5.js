@@ -416,7 +416,6 @@ function text2d(p5, fn) {
   Renderer.prototype.textProperty = function (prop, value, opts) {
 
     let modified = false, debug = opts?.debug || false;
-    console.log({ prop, value })
 
     // getter: return option from this.states or this.textDrawingContext()
     if (typeof value === 'undefined') {
