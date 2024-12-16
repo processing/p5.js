@@ -658,7 +658,7 @@ class Shape {
         queue.shift(),
         queue.shift()
       ];
-      return new Color(original);
+      return new Color(array);
     }
   }
 
