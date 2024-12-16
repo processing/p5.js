@@ -297,7 +297,6 @@ visualSuite("Type", function () {
       }
     );
   });
-
   visualSuite("textStyle", function () {
     visualTest("all text styles", function (p5, screenshot) {
       p5.createCanvas(300, 100);
