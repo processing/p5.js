@@ -1,6 +1,6 @@
 import { bench, describe } from "vitest";
 
-describe.skip("sort", () => {
+describe.only("sort", () => {
   bench(
     "normal",
     () => {

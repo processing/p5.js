@@ -54,7 +54,7 @@ describe("Rendering bench test", () => {
         myp5.createCanvas(13, 15);
         myp5.fill(0, 100, 0);
         myp5.rect(20, 20, 20, 20);
-        for (let i = 0; i < 1000; i++) {
+        for (let i = 0; i < 10000; i++) {
           myp5.rect(20, 20, 20, 20);
         }
 
@@ -100,7 +100,8 @@ describe("Rendering bench test", () => {
     options
   );
 });
-describe("Another suire", () => {
+
+describe("Another suite", () => {
   bench(
     "normal v2",
     async () => {
