@@ -327,7 +327,6 @@ function image(p5, fn){
     }
 
     htmlCanvas.toBlob(blob => {
-      console.log("here");
       fn.downloadFile(blob, filename, extension);
       if(temporaryGraphics) temporaryGraphics.remove();
     }, mimeType);

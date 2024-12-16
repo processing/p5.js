@@ -3,6 +3,7 @@ import * as constants from '../core/constants';
 import { RendererGL } from './p5.RendererGL';
 import { Vector } from '../math/p5.Vector';
 import { Geometry } from './p5.Geometry';
+import { arrayCommandsToObjects } from '../type/p5.Font';
 
 function text(p5, fn){
   // Text/Typography
@@ -194,30 +195,7 @@ function text(p5, fn){
       const gHeight = yMax - yMin;
 
       // Convert arrays to named objects
-      const cmds = commands.map((command) => {
-        const type = command[0];
-        switch (type) {
-          case 'Z': {
-            return { type };
-          }
-          case 'M':
-          case 'L': {
-            const [, x, y] = command;
-            return { type, x, y };
-          }
-          case 'Q': {
-            const [, x1, y1, x, y] = command;
-            return { type, x1, y1, x, y };
-          }
-          case 'C': {
-            const [, x1, y1, x2, y2, x, y] = command;
-            return { type, x1, y1, x2, y2, x, y };
-          }
-          default: {
-            throw new Error(`Unexpected path command: ${type}`);
-          }
-        }
-      })
+      const cmds = arrayCommandsToObjects(commands);
 
       let i;
       const strokes = []; // the strokes in this glyph
@@ -679,7 +657,7 @@ function text(p5, fn){
       );
       return;
     }
-    if (y > maxY || y < minY || !this.states.doFill) {
+    if (y >= maxY || !this.states.fillColor) {
       return; // don't render lines beyond our maxY position
     }
 
@@ -693,10 +671,10 @@ function text(p5, fn){
     this.push(); // fix to #803
 
     // remember this state, so it can be restored later
-    const doStroke = this.states.doStroke;
+    const doStroke = this.states.strokeColor;
     const drawMode = this.states.drawMode;
 
-    this.states.doStroke = false;
+    this.states.strokeColor = null;
     this.states.drawMode = constants.TEXTURE;
 
     // get the cached FontInfo object
@@ -733,8 +711,11 @@ function text(p5, fn){
       sh.setUniform('uStrokeImageSize', [strokeImageWidth, strokeImageHeight]);
       sh.setUniform('uGridSize', [charGridWidth, charGridHeight]);
     }
+
+    const curFillColor = this.states.fillSet ? this.states.curFillColor : [0, 0, 0, 255];
+
     this._setGlobalUniforms(sh);
-    this._applyColorBlend(this.states.curFillColor);
+    this._applyColorBlend(curFillColor);
 
     let g = this.geometryBufferCache.getGeometryByID('glyph');
     if (!g) {
@@ -759,7 +740,7 @@ function text(p5, fn){
     this._bindBuffer(this.geometryBufferCache.cache.glyph.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
 
     // this will have to do for now...
-    sh.setUniform('uMaterialColor', this.states.curFillColor);
+    sh.setUniform('uMaterialColor', curFillColor);
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
 
     try {
@@ -790,7 +771,7 @@ function text(p5, fn){
       // clean up
       sh.unbindShader();
 
-      this.states.doStroke = doStroke;
+      this.states.strokeColor = doStroke;
       this.states.drawMode = drawMode;
       gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 

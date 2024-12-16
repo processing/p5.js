@@ -9,124 +9,6 @@
 import * as constants from '../core/constants';
 
 function vertex(p5, fn){
-  let shapeKind = null;
-  let vertices = [];
-  let contourVertices = [];
-  let isBezier = false;
-  let isCurve = false;
-  let isQuadratic = false;
-  let isContour = false;
-  let isFirstContour = true;
-
-  /**
-   * Begins creating a hole within a flat shape.
-   *
-   * The `beginContour()` and <a href="#/p5/endContour">endContour()</a>
-   * functions allow for creating negative space within custom shapes that are
-   * flat. `beginContour()` begins adding vertices to a negative space and
-   * <a href="#/p5/endContour">endContour()</a> stops adding them.
-   * `beginContour()` and <a href="#/p5/endContour">endContour()</a> must be
-   * called between <a href="#/p5/beginShape">beginShape()</a> and
-   * <a href="#/p5/endShape">endShape()</a>.
-   *
-   * Transformations such as <a href="#/p5/translate">translate()</a>,
-   * <a href="#/p5/rotate">rotate()</a>, and <a href="#/p5/scale">scale()</a>
-   * don't work between `beginContour()` and
-   * <a href="#/p5/endContour">endContour()</a>. It's also not possible to use
-   * other shapes, such as <a href="#/p5/ellipse">ellipse()</a> or
-   * <a href="#/p5/rect">rect()</a>, between `beginContour()` and
-   * <a href="#/p5/endContour">endContour()</a>.
-   *
-   * Note: The vertices that define a negative space must "wind" in the opposite
-   * direction from the outer shape. First, draw vertices for the outer shape
-   * clockwise order. Then, draw vertices for the negative space in
-   * counter-clockwise order.
-   *
-   * @method beginContour
-   * @chainable
-   *
-   * @example
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Start drawing the shape.
-   *   beginShape();
-   *
-   *   // Exterior vertices, clockwise winding.
-   *   vertex(10, 10);
-   *   vertex(90, 10);
-   *   vertex(90, 90);
-   *   vertex(10, 90);
-   *
-   *   // Interior vertices, counter-clockwise winding.
-   *   beginContour();
-   *   vertex(30, 30);
-   *   vertex(30, 70);
-   *   vertex(70, 70);
-   *   vertex(70, 30);
-   *   endContour();
-   *
-   *   // Stop drawing the shape.
-   *   endShape(CLOSE);
-   *
-   *   describe('A white square with a square hole in its center drawn on a gray background.');
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * // Click and drag the mouse to view the scene from different angles.
-   *
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   describe('A white square with a square hole in its center drawn on a gray background.');
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Enable orbiting with the mouse.
-   *   orbitControl();
-   *
-   *   // Start drawing the shape.
-   *   beginShape();
-   *
-   *   // Exterior vertices, clockwise winding.
-   *   vertex(-40, -40);
-   *   vertex(40, -40);
-   *   vertex(40, 40);
-   *   vertex(-40, 40);
-   *
-   *   // Interior vertices, counter-clockwise winding.
-   *   beginContour();
-   *   vertex(-20, -20);
-   *   vertex(-20, 20);
-   *   vertex(20, 20);
-   *   vertex(20, -20);
-   *   endContour();
-   *
-   *   // Stop drawing the shape.
-   *   endShape(CLOSE);
-   * }
-   * </code>
-   * </div>
-   */
-  fn.beginContour = function() {
-    if (this._renderer.isP3D) {
-      this._renderer.beginContour();
-    } else {
-      contourVertices = [];
-      isContour = true;
-    }
-    return this;
-  };
-
   /**
    * Begins adding vertices to a custom shape.
    *
@@ -135,9 +17,9 @@ function vertex(p5, fn){
    * vertices to a custom shape and <a href="#/p5/endShape">endShape()</a> stops
    * adding them.
    *
-   * The parameter, `kind`, sets the kind of shape to make. By default, any
-   * irregular polygon can be drawn. The available modes for kind are:
+   * The parameter, `kind`, sets the kind of shape to make. The available kinds are:
    *
+   * - `PATH` (the default) to draw shapes by tracing out the path along their edges.
    * - `POINTS` to draw a series of points.
    * - `LINES` to draw a series of unconnected line segments.
    * - `TRIANGLES` to draw a series of separate triangles.
@@ -145,13 +27,12 @@ function vertex(p5, fn){
    * - `TRIANGLE_STRIP` to draw a series of connected triangles in strip fashion.
    * - `QUADS` to draw a series of separate quadrilaterals (quads).
    * - `QUAD_STRIP` to draw quad strip using adjacent edges to form the next quad.
-   * - `TESS` to create a filling curve by explicit tessellation (WebGL only).
    *
    * After calling `beginShape()`, shapes can be built by calling
    * <a href="#/p5/vertex">vertex()</a>,
    * <a href="#/p5/bezierVertex">bezierVertex()</a>,
-   * <a href="#/p5/quadraticVertex">quadraticVertex()</a>, and/or
-   * <a href="#/p5/curveVertex">curveVertex()</a>. Calling
+   * <a href="#/p5/bezierVertex">bezierVertex()</a>, and/or
+   * <a href="#/p5/splineVertex">splineVertex()</a>. Calling
    * <a href="#/p5/endShape">endShape()</a> will stop adding vertices to the
    * shape. Each shape will be outlined with the current stroke color and filled
    * with the current fill color.
@@ -165,8 +46,8 @@ function vertex(p5, fn){
    * <a href="#/p5/endShape">endShape()</a>.
    *
    * @method beginShape
-   * @param  {(POINTS|LINES|TRIANGLES|TRIANGLE_FAN|TRIANGLE_STRIP|QUADS|QUAD_STRIP|TESS)} [kind] either POINTS, LINES, TRIANGLES, TRIANGLE_FAN
-   *                                TRIANGLE_STRIP, QUADS, QUAD_STRIP or TESS.
+   * @param  {(POINTS|LINES|TRIANGLES|TRIANGLE_FAN|TRIANGLE_STRIP|QUADS|QUAD_STRIP|PATH)} [kind=PATH] either POINTS, LINES, TRIANGLES, TRIANGLE_FAN
+   *                                TRIANGLE_STRIP, QUADS, QUAD_STRIP or PATH. Defaults to PATH.
    * @chainable
    *
    * @example
@@ -452,7 +333,7 @@ function vertex(p5, fn){
    *
    *   // Start drawing the shape.
    *   // Draw a series of quadrilaterals.
-   *   beginShape(TESS);
+   *   beginShape(PATH);
    *
    *   // Add the vertices.
    *   vertex(-30, -30, 0);
@@ -491,7 +372,7 @@ function vertex(p5, fn){
    *
    *   // Start drawing the shape.
    *   // Draw a series of quadrilaterals.
-   *   beginShape(TESS);
+   *   beginShape(PATH);
    *
    *   // Add the vertices.
    *   fill('red');
@@ -518,27 +399,7 @@ function vertex(p5, fn){
    */
   fn.beginShape = function(kind) {
     p5._validateParameters('beginShape', arguments);
-    if (this._renderer.isP3D) {
-      this._renderer.beginShape(...arguments);
-    } else {
-      if (
-        kind === constants.POINTS ||
-        kind === constants.LINES ||
-        kind === constants.TRIANGLES ||
-        kind === constants.TRIANGLE_FAN ||
-        kind === constants.TRIANGLE_STRIP ||
-        kind === constants.QUADS ||
-        kind === constants.QUAD_STRIP
-      ) {
-        shapeKind = kind;
-      } else {
-        shapeKind = null;
-      }
-
-      vertices = [];
-      contourVertices = [];
-    }
-    return this;
+    this._renderer.beginShape(...arguments);
   };
 
   /**
@@ -574,7 +435,6 @@ function vertex(p5, fn){
    * @param  {Number} y3 y-coordinate of the second control point.
    * @param  {Number} x4 x-coordinate of the anchor point.
    * @param  {Number} y4 y-coordinate of the anchor point.
-   * @chainable
    *
    * @example
    * <div>
@@ -801,47 +661,36 @@ function vertex(p5, fn){
    * @param  {Number} x4
    * @param  {Number} y4
    * @param  {Number} z4 z-coordinate of the anchor point.
-   * @chainable
    */
   fn.bezierVertex = function(...args) {
-    p5._validateParameters('bezierVertex', args);
-    if (this._renderer.isP3D) {
-      this._renderer.bezierVertex(...args);
-    } else {
-      if (vertices.length === 0) {
-        p5._friendlyError(
-          'vertex() must be used once before calling bezierVertex()',
-          'bezierVertex'
-        );
-      } else {
-        isBezier = true;
-        const vert = [];
-        for (let i = 0; i < args.length; i++) {
-          vert[i] = args[i];
-        }
-        vert.isVert = false;
-        if (isContour) {
-          contourVertices.push(vert);
-        } else {
-          vertices.push(vert);
-        }
+    if (args.length === 2 * 3 || args.length === 3 * 3) {
+      // Handle the legacy case where all bezier control points are provided
+      // at once. We'll translate them into 3 individual calls.
+      const stride = args.length / 3;
+
+      const prevOrder = this._renderer.bezierOrder();
+      this._renderer.bezierOrder(3);
+      for (let i = 0; i < args.length; i += stride) {
+        this._renderer.bezierVertex(...args.slice(i, i + stride));
       }
+      this._renderer.bezierOrder(prevOrder);
+    } else {
+      this._renderer.bezierVertex(...args);
     }
-    return this;
   };
 
   /**
    * Adds a spline curve segment to a custom shape.
    *
-   * `curveVertex()` adds a curved segment to custom shapes. The spline curves
+   * `splineVertex()` adds a curved segment to custom shapes. The spline curves
    * it creates are defined like those made by the
-   * <a href="#/p5/curve">curve()</a> function. `curveVertex()` must be called
+   * <a href="#/p5/curve">curve()</a> function. `splineVertex()` must be called
    * between the <a href="#/p5/beginShape">beginShape()</a> and
    * <a href="#/p5/endShape">endShape()</a> functions.
    *
    * Spline curves can form shapes and curves that slope gently. They’re like
    * cables that are attached to a set of points. Splines are defined by two
-   * anchor points and two control points. `curveVertex()` must be called at
+   * anchor points and two control points. `splineVertex()` must be called at
    * least four times between
    * <a href="#/p5/beginShape">beginShape()</a> and
    * <a href="#/p5/endShape">endShape()</a> in order to draw a curve:
@@ -850,14 +699,14 @@ function vertex(p5, fn){
    * beginShape();
    *
    * // Add the first control point.
-   * curveVertex(84, 91);
+   * splineVertex(84, 91);
    *
    * // Add the anchor points to draw between.
-   * curveVertex(68, 19);
-   * curveVertex(21, 17);
+   * splineVertex(68, 19);
+   * splineVertex(21, 17);
    *
    * // Add the second control point.
-   * curveVertex(32, 91);
+   * splineVertex(32, 91);
    *
    * endShape();
    * </code>
@@ -865,37 +714,37 @@ function vertex(p5, fn){
    * The code snippet above would only draw the curve between the anchor points,
    * similar to the <a href="#/p5/curve">curve()</a> function. The segments
    * between the control and anchor points can be drawn by calling
-   * `curveVertex()` with the coordinates of the control points:
+   * `splineVertex()` with the coordinates of the control points:
    *
    * <code>
    * beginShape();
    *
    * // Add the first control point and draw a segment to it.
-   * curveVertex(84, 91);
-   * curveVertex(84, 91);
+   * splineVertex(84, 91);
+   * splineVertex(84, 91);
    *
    * // Add the anchor points to draw between.
-   * curveVertex(68, 19);
-   * curveVertex(21, 17);
+   * splineVertex(68, 19);
+   * splineVertex(21, 17);
    *
    * // Add the second control point.
-   * curveVertex(32, 91);
+   * splineVertex(32, 91);
    *
    * // Uncomment the next line to draw the segment to the second control point.
-   * // curveVertex(32, 91);
+   * // splineVertex(32, 91);
    *
    * endShape();
    * </code>
    *
    * The first two parameters, `x` and `y`, set the vertex’s location. For
-   * example, calling `curveVertex(10, 10)` adds a point to the curve at
+   * example, calling `splineVertex(10, 10)` adds a point to the curve at
    * `(10, 10)`.
    *
    * Spline curves can also be drawn in 3D using WebGL mode. The 3D version of
-   * `curveVertex()` has three arguments because each point has x-, y-, and
+   * `splineVertex()` has three arguments because each point has x-, y-, and
    * z-coordinates. By default, the vertex’s z-coordinate is set to 0.
    *
-   * Note: `curveVertex()` won’t work when an argument is passed to
+   * Note: `splineVertex()` won’t work when an argument is passed to
    * <a href="#/p5/beginShape">beginShape()</a>.
    *
    * @method curveVertex
@@ -919,14 +768,14 @@ function vertex(p5, fn){
    *   beginShape();
    *
    *   // Add the first control point.
-   *   curveVertex(32, 91);
+   *   splineVertex(32, 91);
    *
    *   // Add the anchor points.
-   *   curveVertex(21, 17);
-   *   curveVertex(68, 19);
+   *   splineVertex(21, 17);
+   *   splineVertex(68, 19);
    *
    *   // Add the second control point.
-   *   curveVertex(84, 91);
+   *   splineVertex(84, 91);
    *
    *   // Stop drawing the shape.
    *   endShape();
@@ -966,15 +815,15 @@ function vertex(p5, fn){
    *   beginShape();
    *
    *   // Add the first control point and draw a segment to it.
-   *   curveVertex(32, 91);
-   *   curveVertex(32, 91);
+   *   splineVertex(32, 91);
+   *   splineVertex(32, 91);
    *
    *   // Add the anchor points.
-   *   curveVertex(21, 17);
-   *   curveVertex(68, 19);
+   *   splineVertex(21, 17);
+   *   splineVertex(68, 19);
    *
    *   // Add the second control point.
-   *   curveVertex(84, 91);
+   *   splineVertex(84, 91);
    *
    *   // Stop drawing the shape.
    *   endShape();
@@ -1014,16 +863,16 @@ function vertex(p5, fn){
    *   beginShape();
    *
    *   // Add the first control point and draw a segment to it.
-   *   curveVertex(32, 91);
-   *   curveVertex(32, 91);
+   *   splineVertex(32, 91);
+   *   splineVertex(32, 91);
    *
    *   // Add the anchor points.
-   *   curveVertex(21, 17);
-   *   curveVertex(68, 19);
+   *   splineVertex(21, 17);
+   *   splineVertex(68, 19);
    *
    *   // Add the second control point and draw a segment to it.
-   *   curveVertex(84, 91);
-   *   curveVertex(84, 91);
+   *   splineVertex(84, 91);
+   *   splineVertex(84, 91);
    *
    *   // Stop drawing the shape.
    *   endShape();
@@ -1077,16 +926,16 @@ function vertex(p5, fn){
    *   beginShape();
    *
    *   // Add the first control point and draw a segment to it.
-   *   curveVertex(x1, y1);
-   *   curveVertex(x1, y1);
+   *   splineVertex(x1, y1);
+   *   splineVertex(x1, y1);
    *
    *   // Add the anchor points.
-   *   curveVertex(21, 17);
-   *   curveVertex(68, 19);
+   *   splineVertex(21, 17);
+   *   splineVertex(68, 19);
    *
    *   // Add the second control point and draw a segment to it.
-   *   curveVertex(84, 91);
-   *   curveVertex(84, 91);
+   *   splineVertex(84, 91);
+   *   splineVertex(84, 91);
    *
    *   // Stop drawing the shape.
    *   endShape();
@@ -1138,16 +987,16 @@ function vertex(p5, fn){
    *   beginShape();
    *
    *   // Add the first control point and draw a segment to it.
-   *   curveVertex(32, 91);
-   *   curveVertex(32, 91);
+   *   splineVertex(32, 91);
+   *   splineVertex(32, 91);
    *
    *   // Add the anchor points.
-   *   curveVertex(21, 17);
-   *   curveVertex(68, 19);
+   *   splineVertex(21, 17);
+   *   splineVertex(68, 19);
    *
    *   // Add the second control point.
-   *   curveVertex(84, 91);
-   *   curveVertex(84, 91);
+   *   splineVertex(84, 91);
+   *   splineVertex(84, 91);
    *
    *   // Stop drawing the shape.
    *   endShape();
@@ -1187,12 +1036,12 @@ function vertex(p5, fn){
    *   fill('ghostwhite');
    *
    *   beginShape();
-   *   curveVertex(-28, 41, 0);
-   *   curveVertex(-28, 41, 0);
-   *   curveVertex(-29, -33, 0);
-   *   curveVertex(18, -31, 0);
-   *   curveVertex(34, 41, 0);
-   *   curveVertex(34, 41, 0);
+   *   splineVertex(-28, 41, 0);
+   *   splineVertex(-28, 41, 0);
+   *   splineVertex(-29, -33, 0);
+   *   splineVertex(18, -31, 0);
+   *   splineVertex(34, 41, 0);
+   *   splineVertex(34, 41, 0);
    *   endShape();
    *
    *   // Draw the second ghost.
@@ -1200,12 +1049,12 @@ function vertex(p5, fn){
    *   stroke('ghostwhite');
    *
    *   beginShape();
-   *   curveVertex(-28, 41, -20);
-   *   curveVertex(-28, 41, -20);
-   *   curveVertex(-29, -33, -20);
-   *   curveVertex(18, -31, -20);
-   *   curveVertex(34, 41, -20);
-   *   curveVertex(34, 41, -20);
+   *   splineVertex(-28, 41, -20);
+   *   splineVertex(-28, 41, -20);
+   *   splineVertex(-29, -33, -20);
+   *   splineVertex(18, -31, -20);
+   *   splineVertex(34, 41, -20);
+   *   splineVertex(34, 41, -20);
    *   endShape();
    * }
    * </code>
@@ -1213,132 +1062,7 @@ function vertex(p5, fn){
    */
   fn.curveVertex = function(...args) {
     p5._validateParameters('curveVertex', args);
-    if (this._renderer.isP3D) {
-      this._renderer.curveVertex(...args);
-    } else {
-      isCurve = true;
-      this.vertex(args[0], args[1]);
-    }
-    return this;
-  };
-
-  /**
-   * Stops creating a hole within a flat shape.
-   *
-   * The <a href="#/p5/beginContour">beginContour()</a> and `endContour()`
-   * functions allow for creating negative space within custom shapes that are
-   * flat. <a href="#/p5/beginContour">beginContour()</a> begins adding vertices
-   * to a negative space and `endContour()` stops adding them.
-   * <a href="#/p5/beginContour">beginContour()</a> and `endContour()` must be
-   * called between <a href="#/p5/beginShape">beginShape()</a> and
-   * <a href="#/p5/endShape">endShape()</a>.
-   *
-   * Transformations such as <a href="#/p5/translate">translate()</a>,
-   * <a href="#/p5/rotate">rotate()</a>, and <a href="#/p5/scale">scale()</a>
-   * don't work between <a href="#/p5/beginContour">beginContour()</a> and
-   * `endContour()`. It's also not possible to use other shapes, such as
-   * <a href="#/p5/ellipse">ellipse()</a> or <a href="#/p5/rect">rect()</a>,
-   * between <a href="#/p5/beginContour">beginContour()</a> and `endContour()`.
-   *
-   * Note: The vertices that define a negative space must "wind" in the opposite
-   * direction from the outer shape. First, draw vertices for the outer shape
-   * clockwise order. Then, draw vertices for the negative space in
-   * counter-clockwise order.
-   *
-   * @method endContour
-   * @chainable
-   *
-   * @example
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Start drawing the shape.
-   *   beginShape();
-   *
-   *   // Exterior vertices, clockwise winding.
-   *   vertex(10, 10);
-   *   vertex(90, 10);
-   *   vertex(90, 90);
-   *   vertex(10, 90);
-   *
-   *   // Interior vertices, counter-clockwise winding.
-   *   beginContour();
-   *   vertex(30, 30);
-   *   vertex(30, 70);
-   *   vertex(70, 70);
-   *   vertex(70, 30);
-   *   endContour();
-   *
-   *   // Stop drawing the shape.
-   *   endShape(CLOSE);
-   *
-   *   describe('A white square with a square hole in its center drawn on a gray background.');
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * // Click and drag the mouse to view the scene from different angles.
-   *
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   describe('A white square with a square hole in its center drawn on a gray background.');
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Enable orbiting with the mouse.
-   *   orbitControl();
-   *
-   *   // Start drawing the shape.
-   *   beginShape();
-   *
-   *   // Exterior vertices, clockwise winding.
-   *   vertex(-40, -40);
-   *   vertex(40, -40);
-   *   vertex(40, 40);
-   *   vertex(-40, 40);
-   *
-   *   // Interior vertices, counter-clockwise winding.
-   *   beginContour();
-   *   vertex(-20, -20);
-   *   vertex(-20, 20);
-   *   vertex(20, 20);
-   *   vertex(20, -20);
-   *   endContour();
-   *
-   *   // Stop drawing the shape.
-   *   endShape(CLOSE);
-   * }
-   * </code>
-   * </div>
-   */
-  fn.endContour = function() {
-    if (this._renderer.isP3D) {
-      return this;
-    }
-
-    const vert = contourVertices[0].slice(); // copy all data
-    vert.isVert = contourVertices[0].isVert;
-    vert.moveTo = false;
-    contourVertices.push(vert);
-
-    // prevent stray lines with multiple contours
-    if (isFirstContour) {
-      vertices.push(vertices[0]);
-      isFirstContour = false;
-    }
-
-    for (let i = 0; i < contourVertices.length; i++) {
-      vertices.push(contourVertices[i]);
-    }
+    this._renderer.splineVertex(...args);
     return this;
   };
 
@@ -1366,7 +1090,7 @@ function vertex(p5, fn){
    * built by calling <a href="#/p5/vertex">vertex()</a>,
    * <a href="#/p5/bezierVertex">bezierVertex()</a>,
    * <a href="#/p5/quadraticVertex">quadraticVertex()</a>, and/or
-   * <a href="#/p5/curveVertex">curveVertex()</a>. Calling
+   * <a href="#/p5/curveVertex">splineVertex()</a>. Calling
    * `endShape()` will stop adding vertices to the
    * shape. Each shape will be outlined with the current stroke color and filled
    * with the current fill color.
@@ -1512,59 +1236,7 @@ function vertex(p5, fn){
       count = 1;
     }
 
-    if (this._renderer.isP3D) {
-      this._renderer.endShape(
-        mode,
-        isCurve,
-        isBezier,
-        isQuadratic,
-        isContour,
-        shapeKind,
-        count
-      );
-    } else {
-      if (count !== 1) {
-        console.log('🌸 p5.js says: Instancing is only supported in WebGL2 mode');
-      }
-      if (vertices.length === 0) {
-        return this;
-      }
-      if (!this._renderer.states.doStroke && !this._renderer.states.doFill) {
-        return this;
-      }
-
-      const closeShape = mode === constants.CLOSE;
-
-      // if the shape is closed, the first element is also the last element
-      if (closeShape && !isContour) {
-        vertices.push(vertices[0]);
-      }
-
-      this._renderer.endShape(
-        mode,
-        vertices,
-        isCurve,
-        isBezier,
-        isQuadratic,
-        isContour,
-        shapeKind
-      );
-
-      // Reset some settings
-      isCurve = false;
-      isBezier = false;
-      isQuadratic = false;
-      isContour = false;
-      isFirstContour = true;
-
-      // If the shape is closed, the first element was added as last element.
-      // We must remove it again to prevent the list of vertices from growing
-      // over successive calls to endShape(CLOSE)
-      if (closeShape) {
-        vertices.pop();
-      }
-    }
-    return this;
+    this._renderer.endShape(mode, count);
   };
 
   /**
@@ -1809,258 +1481,18 @@ function vertex(p5, fn){
    * @param  {Number} z3 z-coordinate of the anchor point.
    */
   fn.quadraticVertex = function(...args) {
+    let x1, y1, z1, x2, y2, z2 = 0;
+    if (args.length === 4) {
+      [x1, y1, x2, y2] = args;
+    } else {
+      [x1, y1, z1, x2, y2, z2] = args;
+    }
     p5._validateParameters('quadraticVertex', args);
-    if (this._renderer.isP3D) {
-      this._renderer.quadraticVertex(...args);
-    } else {
-      //if we're drawing a contour, put the points into an
-      // array for inside drawing
-      if (this._contourInited) {
-        const pt = {};
-        pt.x = args[0];
-        pt.y = args[1];
-        pt.x3 = args[2];
-        pt.y3 = args[3];
-        pt.type = constants.QUADRATIC;
-        this._contourVertices.push(pt);
-
-        return this;
-      }
-      if (vertices.length > 0) {
-        isQuadratic = true;
-        const vert = [];
-        for (let i = 0; i < args.length; i++) {
-          vert[i] = args[i];
-        }
-        vert.isVert = false;
-        if (isContour) {
-          contourVertices.push(vert);
-        } else {
-          vertices.push(vert);
-        }
-      } else {
-        p5._friendlyError(
-          'vertex() must be used once before calling quadraticVertex()',
-          'quadraticVertex'
-        );
-      }
-    }
-    return this;
-  };
-
-  /**
-   * Adds a vertex to a custom shape.
-   *
-   * `vertex()` sets the coordinates of vertices drawn between the
-   * <a href="#/p5/beginShape">beginShape()</a> and
-   * <a href="#/p5/endShape">endShape()</a> functions.
-   *
-   * The first two parameters, `x` and `y`, set the x- and y-coordinates of the
-   * vertex.
-   *
-   * The third parameter, `z`, is optional. It sets the z-coordinate of the
-   * vertex in WebGL mode. By default, `z` is 0.
-   *
-   * The fourth and fifth parameters, `u` and `v`, are also optional. They set
-   * the u- and v-coordinates for the vertex’s texture when used with
-   * <a href="#/p5/endShape">endShape()</a>. By default, `u` and `v` are both 0.
-   *
-   * @method vertex
-   * @param  {Number} x x-coordinate of the vertex.
-   * @param  {Number} y y-coordinate of the vertex.
-   * @chainable
-   *
-   * @example
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Style the shape.
-   *   strokeWeight(3);
-   *
-   *   // Start drawing the shape.
-   *   // Only draw the vertices.
-   *   beginShape(POINTS);
-   *
-   *   // Add the vertices.
-   *   vertex(30, 20);
-   *   vertex(85, 20);
-   *   vertex(85, 75);
-   *   vertex(30, 75);
-   *
-   *   // Stop drawing the shape.
-   *   endShape();
-   *
-   *   describe('Four black dots that form a square are drawn on a gray background.');
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Start drawing the shape.
-   *   beginShape();
-   *
-   *   // Add vertices.
-   *   vertex(30, 20);
-   *   vertex(85, 20);
-   *   vertex(85, 75);
-   *   vertex(30, 75);
-   *
-   *   // Stop drawing the shape.
-   *   endShape(CLOSE);
-   *
-   *   describe('A white square on a gray background.');
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   background(200);
-   *
-   *   // Start drawing the shape.
-   *   beginShape();
-   *
-   *   // Add vertices.
-   *   vertex(-20, -30, 0);
-   *   vertex(35, -30, 0);
-   *   vertex(35, 25, 0);
-   *   vertex(-20, 25, 0);
-   *
-   *   // Stop drawing the shape.
-   *   endShape(CLOSE);
-   *
-   *   describe('A white square on a gray background.');
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   describe('A white square spins around slowly on a gray background.');
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Rotate around the y-axis.
-   *   rotateY(frameCount * 0.01);
-   *
-   *   // Start drawing the shape.
-   *   beginShape();
-   *
-   *   // Add vertices.
-   *   vertex(-20, -30, 0);
-   *   vertex(35, -30, 0);
-   *   vertex(35, 25, 0);
-   *   vertex(-20, 25, 0);
-   *
-   *   // Stop drawing the shape.
-   *   endShape(CLOSE);
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * let img;
-   *
-   * // Load an image to apply as a texture.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
-   *
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   describe('A photograph of a ceiling rotates slowly against a gray background.');
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Rotate around the y-axis.
-   *   rotateY(frameCount * 0.01);
-   *
-   *   // Style the shape.
-   *   noStroke();
-   *
-   *   // Apply the texture.
-   *   texture(img);
-   *   textureMode(NORMAL);
-   *
-   *   // Start drawing the shape
-   *   beginShape();
-   *
-   *   // Add vertices.
-   *   vertex(-20, -30, 0, 0, 0);
-   *   vertex(35, -30, 0, 1, 0);
-   *   vertex(35, 25, 0, 1, 1);
-   *   vertex(-20, 25, 0, 0, 1);
-   *
-   *   // Stop drawing the shape.
-   *   endShape();
-   * }
-   * </code>
-   * </div>
-   */
-  /**
-   * @method vertex
-   * @param  {Number} x
-   * @param  {Number} y
-   * @param  {Number} [z]   z-coordinate of the vertex. Defaults to 0.
-   * @chainable
-   */
-  /**
-   * @method vertex
-   * @param  {Number} x
-   * @param  {Number} y
-   * @param  {Number} [z]
-   * @param  {Number} [u]   u-coordinate of the vertex's texture. Defaults to 0.
-   * @param  {Number} [v]   v-coordinate of the vertex's texture. Defaults to 0.
-   * @chainable
-   */
-  fn.vertex = function(x, y, moveTo, u, v) {
-    if (this._renderer.isP3D) {
-      this._renderer.vertex(...arguments);
-    } else {
-      const vert = [];
-      vert.isVert = true;
-      vert[0] = x;
-      vert[1] = y;
-      vert[2] = 0;
-      vert[3] = 0;
-      vert[4] = 0;
-      vert[5] = this._renderer._getFill();
-      vert[6] = this._renderer._getStroke();
-
-      if (moveTo) {
-        vert.moveTo = moveTo;
-      }
-      if (isContour) {
-        if (contourVertices.length === 0) {
-          vert.moveTo = true;
-        }
-        contourVertices.push(vert);
-      } else {
-        vertices.push(vert);
-      }
-    }
+    const prevOrder = this.bezierOrder();
+    this.bezierOrder(2);
+    this.bezierVertex(x1, y1, z1);
+    this.bezierVertex(x2, y2, z2);
+    this.bezierOrder(prevOrder);
     return this;
   };
 
@@ -2255,27 +1687,27 @@ function vertex(p5, fn){
   };
 
   /** Sets the shader's vertex property or attribute variables.
-   * 
+   *
    * An vertex property or vertex attribute is a variable belonging to a vertex in a shader. p5.js provides some
    * default properties, such as `aPosition`, `aNormal`, `aVertexColor`, etc. These are
-   * set using <a href="#/p5/vertex">vertex()</a>, <a href="#/p5/normal">normal()</a> 
+   * set using <a href="#/p5/vertex">vertex()</a>, <a href="#/p5/normal">normal()</a>
    * and <a href="#/p5/fill">fill()</a> respectively. Custom properties can also
-   * be defined within <a href="#/p5/beginShape">beginShape()</a> and 
+   * be defined within <a href="#/p5/beginShape">beginShape()</a> and
    * <a href="#/p5/endShape">endShape()</a>.
-   * 
+   *
    * The first parameter, `propertyName`, is a string with the property's name.
    * This is the same variable name which should be declared in the shader, such as
    * `in vec3 aProperty`, similar to .`setUniform()`.
-   * 
-   * The second parameter, `data`, is the value assigned to the shader variable. This 
-   * value will be applied to subsequent vertices created with 
+   *
+   * The second parameter, `data`, is the value assigned to the shader variable. This
+   * value will be applied to subsequent vertices created with
    * <a href="#/p5/vertex">vertex()</a>. It can be a Number or an array of numbers,
    * and in the shader program the type can be declared according to the WebGL
    * specification. Common types include `float`, `vec2`, `vec3`, `vec4` or matrices.
-   * 
-   * See also the <a href="#/p5/vertexProperty">vertexProperty()</a> method on 
+   *
+   * See also the <a href="#/p5/vertexProperty">vertexProperty()</a> method on
    * <a href="#/p5/Geometry">Geometry</a> objects.
-   * 
+   *
    * @example
    * <div>
    * <code>
@@ -2283,40 +1715,40 @@ function vertex(p5, fn){
    *  precision mediump float;
    *  uniform mat4 uModelViewMatrix;
    *  uniform mat4 uProjectionMatrix;
-   *  
+   *
    *  in vec3 aPosition;
    *  in vec2 aOffset;
-   * 
+   *
    *  void main(){
    *    vec4 positionVec4 = vec4(aPosition.xyz, 1.0);
-   *    positionVec4.xy += aOffset;   
+   *    positionVec4.xy += aOffset;
    *    gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
    *  }
    * `;
-   * 
+   *
    * const fragSrc = `#version 300 es
    *  precision mediump float;
-   *  out vec4 outColor;  
+   *  out vec4 outColor;
    *  void main(){
-   *    outColor = vec4(0.0, 1.0, 1.0, 1.0);    
+   *    outColor = vec4(0.0, 1.0, 1.0, 1.0);
    *  }
    * `;
-   * 
+   *
    * function setup(){
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create and use the custom shader.
    *   const myShader = createShader(vertSrc, fragSrc);
    *   shader(myShader);
-   * 
+   *
    *   describe('A wobbly, cyan circle on a gray background.');
    * }
-   * 
+   *
    * function draw(){
    *   // Set the styles
    *   background(125);
    *   noStroke();
-   * 
+   *
    *   // Draw the circle.
    *   beginShape();
    *   for (let i = 0; i < 30; i++){
@@ -2326,7 +1758,7 @@ function vertex(p5, fn){
    *     // Apply some noise to the coordinates.
    *     const xOff = 10 * noise(x + millis()/1000) - 5;
    *     const yOff = 10 * noise(y + millis()/1000) - 5;
-   * 
+   *
    *     // Apply these noise values to the following vertex.
    *     vertexProperty('aOffset', [xOff, yOff]);
    *     vertex(x, y);
@@ -2335,26 +1767,26 @@ function vertex(p5, fn){
    * }
    * </code>
    * </div>
-   * 
+   *
    * <div>
    * <code>
    * let myShader;
    * const cols = 10;
    * const rows = 10;
    * const cellSize = 6;
-   * 
+   *
    * const vertSrc = `#version 300 es
    *   precision mediump float;
    *   uniform mat4 uProjectionMatrix;
    *   uniform mat4 uModelViewMatrix;
-   * 
+   *
    *   in vec3 aPosition;
    *   in vec3 aNormal;
    *   in vec3 aVertexColor;
    *   in float aDistance;
-   * 
+   *
    *   out vec3 vVertexColor;
-   *   
+   *
    *   void main(){
    *     vec4 positionVec4 = vec4(aPosition, 1.0);
    *     positionVec4.xyz += aDistance * aNormal * 2.0;;
@@ -2362,49 +1794,49 @@ function vertex(p5, fn){
    *     gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
    *   }
    * `;
-   * 
+   *
    * const fragSrc = `#version 300 es
    *   precision mediump float;
-   *   
+   *
    *   in vec3 vVertexColor;
    *   out vec4 outColor;
-   *   
+   *
    *   void main(){
    *     outColor = vec4(vVertexColor, 1.0);
    *   }
    * `;
-   * 
+   *
    * function setup(){
    *   createCanvas(100, 100, WEBGL);
-   * 
+   *
    *   // Create and apply the custom shader.
    *   myShader = createShader(vertSrc, fragSrc);
    *   shader(myShader);
    *   noStroke();
    *   describe('A blue grid, which moves away from the mouse position, on a gray background.');
    * }
-   * 
+   *
    * function draw(){
    *   background(200);
-   * 
+   *
    *   // Draw the grid in the middle of the screen.
    *   translate(-cols*cellSize/2, -rows*cellSize/2);
    *   beginShape(QUADS);
    *   for (let i = 0; i < cols; i++) {
    *     for (let j = 0; j < rows; j++) {
-   * 
+   *
    *       // Calculate the cell position.
    *       let x = i * cellSize;
    *       let y = j * cellSize;
-   * 
+   *
    *       fill(j/rows*255, j/cols*255, 255);
-   * 
+   *
    *       // Calculate the distance from the corner of each cell to the mouse.
-   *       let distance = dist(x1,y1, mouseX, mouseY);
-   * 
+   *       let distance = dist(x, y, mouseX, mouseY);
+   *
    *       // Send the distance to the shader.
    *       vertexProperty('aDistance', min(distance, 100));
-   * 
+   *
    *       vertex(x, y);
    *       vertex(x + cellSize, y);
    *       vertex(x + cellSize, y + cellSize);
