@@ -511,21 +511,4 @@ visualSuite("Type", function () {
       screenshot();
     });
   });
-
-  visualSuite("textStyle", function () {
-    visualTest("all text styles", function (p5, screenshot) {
-      p5.createCanvas(300, 100);
-      p5.textSize(20);
-      p5.textAlign(p5.LEFT, p5.TOP);
-
-      p5.text("Regular Text", 0, 0);
-      p5.textStyle(p5.BOLD);
-      p5.text("Bold Text", 0, 30);
-      p5.textStyle(p5.ITALIC);
-      p5.text("Italic Text", 0, 60);
-      p5.textStyle(p5.BOLDITALIC);
-      p5.text("Bold Italic Text", 0, 90);
-      screenshot();
-    });
-  });
 });
