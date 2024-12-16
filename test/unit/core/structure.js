@@ -58,18 +58,7 @@ suite('Structure', function() {
 
   suite('p5.prototype.push and p5.prototype.pop', function() {
     function getRenderState() {
-      var state = {};
-      for (var key in myp5._renderer) {
-        var value = myp5._renderer[key];
-        if (
-          typeof value !== 'function' &&
-          key !== '_cachedFillStyle' &&
-          key !== '_cachedStrokeStyle'
-        ) {
-          state[key] = value;
-        }
-      }
-      return state;
+      return { ...myp5._renderer.states };
     }
 
     function assertCanPreserveRenderState(work) {

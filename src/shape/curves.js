@@ -205,7 +205,7 @@ function curves(p5, fn){
 
     // if the current stroke and fill settings wouldn't result in something
     // visible, exit immediately
-    if (!this._renderer.states.doStroke && !this._renderer.states.doFill) {
+    if (!this._renderer.states.strokeColor && !this._renderer.states.fillColor) {
       return this;
     }
 
@@ -758,7 +758,7 @@ function curves(p5, fn){
   fn.curve = function(...args) {
     p5._validateParameters('curve', args);
 
-    if (this._renderer.states.doStroke) {
+    if (this._renderer.states.strokeColor) {
       this._renderer.curve(...args);
     }
 
@@ -766,111 +766,8 @@ function curves(p5, fn){
   };
 
   /**
-   * Sets the number of segments used to draw spline curves in WebGL mode.
-   *
-   * In WebGL mode, smooth shapes are drawn using many flat segments. Adding
-   * more flat segments makes shapes appear smoother.
-   *
-   * The parameter, `detail`, is the number of segments to use while drawing a
-   * spline curve. For example, calling `curveDetail(5)` will use 5 segments to
-   * draw curves with the <a href="#/p5/curve">curve()</a> function. By
-   * default,`detail` is 20.
-   *
-   * Note: `curveDetail()` has no effect in 2D mode.
-   *
-   * @method curveDetail
-   * @param {Number} resolution number of segments to use. Defaults to 20.
-   * @chainable
-   *
-   * @example
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Draw a black spline curve.
-   *   noFill();
-   *   strokeWeight(1);
-   *   stroke(0);
-   *   curve(5, 26, 73, 24, 73, 61, 15, 65);
-   *
-   *   // Draw red spline curves from the anchor points to the control points.
-   *   stroke(255, 0, 0);
-   *   curve(5, 26, 5, 26, 73, 24, 73, 61);
-   *   curve(73, 24, 73, 61, 15, 65, 15, 65);
-   *
-   *   // Draw the anchor points in black.
-   *   strokeWeight(5);
-   *   stroke(0);
-   *   point(73, 24);
-   *   point(73, 61);
-   *
-   *   // Draw the control points in red.
-   *   stroke(255, 0, 0);
-   *   point(5, 26);
-   *   point(15, 65);
-   *
-   *   describe(
-   *     'A gray square with a curve drawn in three segments. The curve is a sideways U shape with red segments on top and bottom, and a black segment on the right. The endpoints of all the segments are marked with dots.'
-   *   );
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   background(200);
-   *
-   *   // Set the curveDetail() to 3.
-   *   curveDetail(3);
-   *
-   *   // Draw a black spline curve.
-   *   noFill();
-   *   strokeWeight(1);
-   *   stroke(0);
-   *   curve(-45, -24, 0, 23, -26, 0, 23, 11, 0, -35, 15, 0);
-   *
-   *   // Draw red spline curves from the anchor points to the control points.
-   *   stroke(255, 0, 0);
-   *   curve(-45, -24, 0, -45, -24, 0, 23, -26, 0, 23, 11, 0);
-   *   curve(23, -26, 0, 23, 11, 0, -35, 15, 0, -35, 15, 0);
-   *
-   *   // Draw the anchor points in black.
-   *   strokeWeight(5);
-   *   stroke(0);
-   *   point(23, -26);
-   *   point(23, 11);
-   *
-   *   // Draw the control points in red.
-   *   stroke(255, 0, 0);
-   *   point(-45, -24);
-   *   point(-35, 15);
-   *
-   *   describe(
-   *     'A gray square with a jagged curve drawn in three segments. The curve is a sideways U shape with red segments on top and bottom, and a black segment on the right. The endpoints of all the segments are marked with dots.'
-   *   );
-   * }
-   * </code>
-   * </div>
-   */
-  fn.curveDetail = function(d) {
-    p5._validateParameters('curveDetail', arguments);
-    if (d < 3) {
-      this._curveDetail = 3;
-    } else {
-      this._curveDetail = d;
-    }
-    return this;
-  };
-
-  /**
    * Adjusts the way <a href="#/p5/curve">curve()</a> and
-   * <a href="#/p5/curveVertex">curveVertex()</a> draw.
+   * <a href="#/p5/curveVertex">splineVertex()</a> draw.
    *
    * Spline curves are like cables that are attached to a set of points.
    * `curveTightness()` adjusts how tightly the cable is attached to the points.
@@ -906,12 +803,12 @@ function curves(p5, fn){
    *   // Draw the curve.
    *   noFill();
    *   beginShape();
-   *   curveVertex(10, 26);
-   *   curveVertex(10, 26);
-   *   curveVertex(83, 24);
-   *   curveVertex(83, 61);
-   *   curveVertex(25, 65);
-   *   curveVertex(25, 65);
+   *   splineVertex(10, 26);
+   *   splineVertex(10, 26);
+   *   splineVertex(83, 24);
+   *   splineVertex(83, 61);
+   *   splineVertex(25, 65);
+   *   splineVertex(25, 65);
    *   endShape();
    * }
    * </code>
