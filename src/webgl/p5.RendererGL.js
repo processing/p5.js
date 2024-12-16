@@ -1,7 +1,7 @@
 import * as constants from "../core/constants";
 import GeometryBuilder from "./GeometryBuilder";
 import { Renderer } from "../core/p5.Renderer";
-import { Matrix } from "./p5.Matrix";
+import { Matrix } from "../math/p5.Matrix";
 import { Camera } from "./p5.Camera";
 import { Vector } from "../math/p5.Vector";
 import { RenderBuffer } from "./p5.RenderBuffer";
