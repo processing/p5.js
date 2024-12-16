@@ -20,7 +20,7 @@ const INITIAL_VERTEX_SIZE =
 export class ShapeBuilder {
   constructor(renderer) {
     this.renderer = renderer;
-    this.shapeMode = constants.TESS;
+    this.shapeMode = constants.PATH;
     this.geometry = new Geometry(undefined, undefined, undefined, this.renderer);
     this.geometry.gid = '__IMMEDIATE_MODE_GEOMETRY__';
 
@@ -40,203 +40,123 @@ export class ShapeBuilder {
     this.bufferStrides = { ...INITIAL_BUFFER_STRIDES };
   }
 
-  beginShape(mode = constants.TESS) {
-    this.shapeMode = mode;
-    if (this._useUserVertexProperties === true){
+  constructFromContours(shape, contours) {
+    if (this._useUserVertexProperties){
       this._resetUserVertexProperties();
     }
     this.geometry.reset();
     this.contourIndices = [];
-  }
+    // TODO: handle just some contours having non-PATH mode
+    this.shapeMode = shape.contours[0].kind;
+    const shouldProcessEdges = !!this.renderer.states.strokeColor;
 
-  endShape = function(
-    mode,
-    isCurve,
-    isBezier,
-    isQuadratic,
-    isContour,
-    shapeKind,
-    count = 1
-  ) {
-    if (this.shapeMode === constants.POINTS) {
-      // @TODO(dave) move to renderer directly
-      this.renderer._drawPoints(
-        this.geometry.vertices,
-        this.renderer.buffers.point
-      );
-      return this;
-    }
-    // When we are drawing a shape then the shape mode is TESS,
-    // but in case of triangle we can skip the breaking into small triangle
-    // this can optimize performance by skipping the step of breaking it into triangles
-    if (this.geometry.vertices.length === 3 &&
-        this.shapeMode === constants.TESS
-    ) {
-      this.shapeMode === constants.TRIANGLES;
-    }
-
-    this.isProcessingVertices = true;
-    this._processVertices(...arguments);
-    this.isProcessingVertices = false;
-
-    // WebGL doesn't support the QUADS and QUAD_STRIP modes, so we
-    // need to convert them to a supported format. In `vertex()`, we reformat
-    // the input data into the formats specified below.
-    if (this.shapeMode === constants.QUADS) {
-      this.shapeMode = constants.TRIANGLES;
-    } else if (this.shapeMode === constants.QUAD_STRIP) {
-      this.shapeMode = constants.TRIANGLE_STRIP;
-    }
-
-    this.isBezier = false;
-    this.isQuadratic = false;
-    this.isCurve = false;
-    this._bezierVertex.length = 0;
-    this._quadraticVertex.length = 0;
-    this._curveVertex.length = 0;
-  }
-
-  beginContour() {
-    if (this.shapeMode !== constants.TESS) {
-      throw new Error('WebGL mode can only use contours with beginShape(TESS).');
-    }
-    this.contourIndices.push(
-      this.geometry.vertices.length
-    );
-  }
-
-  vertex(x, y) {
-    // WebGL doesn't support QUADS or QUAD_STRIP, so we duplicate data to turn
-    // QUADS into TRIANGLES and QUAD_STRIP into TRIANGLE_STRIP. (There is no extra
-    // work to convert QUAD_STRIP here, since the only difference is in how edges
-    // are rendered.)
-    if (this.shapeMode === constants.QUADS) {
-      // A finished quad turned into triangles should leave 6 vertices in the
-      // buffer:
-      // 0--3     0   3--5
-      // |  | --> | \  \ |
-      // 1--2     1--2   4
-      // When vertex index 3 is being added, add the necessary duplicates.
-      if (this.geometry.vertices.length % 6 === 3) {
-        for (const key in this.bufferStrides) {
-          const stride = this.bufferStrides[key];
-          const buffer = this.geometry[key];
-          buffer.push(
-            ...buffer.slice(
-              buffer.length - 3 * stride,
-              buffer.length - 2 * stride
-            ),
-            ...buffer.slice(buffer.length - stride, buffer.length)
-          );
-        }
-      }
-    }
-
-    let z, u, v;
-
-    // default to (x, y) mode: all other arguments assumed to be 0.
-    z = u = v = 0;
-
-    if (arguments.length === 3) {
-      // (x, y, z) mode: (u, v) assumed to be 0.
-      z = arguments[2];
-    } else if (arguments.length === 4) {
-      // (x, y, u, v) mode: z assumed to be 0.
-      u = arguments[2];
-      v = arguments[3];
-    } else if (arguments.length === 5) {
-      // (x, y, z, u, v) mode
-      z = arguments[2];
-      u = arguments[3];
-      v = arguments[4];
-    }
-    const vert = new Vector(x, y, z);
-    this.geometry.vertices.push(vert);
-    this.geometry.vertexNormals.push(this.renderer.states._currentNormal);
-
-    for (const propName in this.geometry.userVertexProperties){
-      const geom = this.geometry;
-      const prop = geom.userVertexProperties[propName];
-      const verts = geom.vertices;
-      if (prop.getSrcArray().length === 0 && verts.length > 1) {
-        const numMissingValues = prop.getDataSize() * (verts.length - 1);
-        const missingValues = Array(numMissingValues).fill(0);
-        prop.pushDirect(missingValues);
-      }
-      prop.pushCurrentData();
-    }
-
-    const vertexColor = this.renderer.states.curFillColor || [0.5, 0.5, 0.5, 1.0];
-    this.geometry.vertexColors.push(
-      vertexColor[0],
-      vertexColor[1],
-      vertexColor[2],
-      vertexColor[3]
-    );
-    const lineVertexColor = this.renderer.states.curStrokeColor || [0.5, 0.5, 0.5, 1];
-    this.geometry.vertexStrokeColors.push(
-      lineVertexColor[0],
-      lineVertexColor[1],
-      lineVertexColor[2],
-      lineVertexColor[3]
-    );
-
-    if (this.renderer.states.textureMode === constants.IMAGE && !this.isProcessingVertices) {
-      if (this.renderer.states._tex !== null) {
-        if (this.renderer.states._tex.width > 0 && this.renderer.states._tex.height > 0) {
-          u /= this.renderer.states._tex.width;
-          v /= this.renderer.states._tex.height;
-        }
-      } else if (
-        this.renderer.states.userFillShader !== undefined ||
-        this.renderer.states.userStrokeShader !== undefined ||
-        this.renderer.states.userPointShader !== undefined ||
-        this.renderer.states.userImageShader !== undefined
-      ) {
-      // Do nothing if user-defined shaders are present
-      } else if (
-        this.renderer.states._tex === null &&
-        arguments.length >= 4
-      ) {
-        // Only throw this warning if custom uv's have  been provided
-        console.warn(
-          'You must first call texture() before using' +
-            ' vertex() with image based u and v coordinates'
+    const userVertexPropertyHelpers = {};
+    if (shape.userVertexProperties) {
+      this._useUserVertexProperties = true;
+      for (const key in shape.userVertexProperties) {
+        const name = shape.vertexPropertyName(key);
+        const prop = this.geometry._userVertexPropertyHelper(name, [], shape.userVertexProperties[key]);
+        userVertexPropertyHelpers[key] = prop;
+        this.tessyVertexSize += prop.getDataSize();
+        this.bufferStrides[prop.getSrcName()] = prop.getDataSize();
+        this.renderer.buffers.user.push(
+          new RenderBuffer(prop.getDataSize(), prop.getSrcName(), prop.getDstName(), name, this.renderer)
         );
       }
-    }
-
-    this.geometry.uvs.push(u, v);
-
-    this._bezierVertex[0] = x;
-    this._bezierVertex[1] = y;
-    this._bezierVertex[2] = z;
-
-    this._quadraticVertex[0] = x;
-    this._quadraticVertex[1] = y;
-    this._quadraticVertex[2] = z;
-
-    return this;
-  }
-
-  vertexProperty(propertyName, data) {
-    if (!this._useUserVertexProperties) {
-      this._useUserVertexProperties = true;
-      this.geometry.userVertexProperties = {};
-    }
-    const propertyExists = this.geometry.userVertexProperties[propertyName];
-    let prop;
-    if (propertyExists){
-      prop = this.geometry.userVertexProperties[propertyName];
     } else {
-      prop = this.geometry._userVertexPropertyHelper(propertyName, data);
-      this.tessyVertexSize += prop.getDataSize();
-      this.bufferStrides[prop.getSrcName()] = prop.getDataSize();
-      this.renderer.buffers.user.push(
-        new RenderBuffer(prop.getDataSize(), prop.getSrcName(), prop.getDstName(), propertyName, this.renderer)
-      );
+      this._useUserVertexProperties = false;
     }
-    prop.setCurrentData(data);
+
+    for (const contour of contours) {
+      this.contourIndices.push(this.geometry.vertices.length);
+      for (const vertex of contour) {
+        // WebGL doesn't support QUADS or QUAD_STRIP, so we duplicate data to turn
+        // QUADS into TRIANGLES and QUAD_STRIP into TRIANGLE_STRIP. (There is no extra
+        // work to convert QUAD_STRIP here, since the only difference is in how edges
+        // are rendered.)
+        if (this.shapeMode === constants.QUADS) {
+          // A finished quad turned into triangles should leave 6 vertices in the
+          // buffer:
+          // 0--3     0   3--5
+          // |  | --> | \  \ |
+          // 1--2     1--2   4
+          // When vertex index 3 is being added, add the necessary duplicates.
+          if (this.geometry.vertices.length % 6 === 3) {
+            for (const key in this.bufferStrides) {
+              const stride = this.bufferStrides[key];
+              const buffer = this.geometry[key];
+              buffer.push(
+                ...buffer.slice(
+                  buffer.length - 3 * stride,
+                  buffer.length - 2 * stride
+                ),
+                ...buffer.slice(buffer.length - stride, buffer.length),
+              );
+            }
+          }
+        }
+
+        this.geometry.vertices.push(vertex.position);
+        this.geometry.vertexNormals.push(vertex.normal || new Vector(0, 0, 0));
+        this.geometry.uvs.push(vertex.textureCoordinates.x, vertex.textureCoordinates.y);
+        if (this.renderer.states.fillColor) {
+          this.geometry.vertexColors.push(...vertex.fill.array());
+        } else {
+          this.geometry.vertexColors.push(0, 0, 0, 0);
+        }
+        if (this.renderer.states.strokeColor) {
+          this.geometry.vertexStrokeColors.push(...vertex.stroke.array());
+        } else {
+          this.geometry.vertexStrokeColors.push(0, 0, 0, 0);
+        }
+        for (const key in userVertexPropertyHelpers) {
+          const prop = userVertexPropertyHelpers[key];
+          if (key in vertex) {
+            prop.setCurrentData(vertex[key]);
+          }
+          prop.pushCurrentData();
+        }
+      }
+    }
+
+    if (shouldProcessEdges) {
+      this.geometry.edges = this._calculateEdges(this.shapeMode, this.geometry.vertices);
+    }
+    if (shouldProcessEdges && !this.renderer.geometryBuilder) {
+      this.geometry._edgesToVertices();
+    }
+
+    if (this.shapeMode === constants.PATH) {
+      this.isProcessingVertices = true;
+      this._tesselateShape();
+      this.isProcessingVertices = false;
+    } else if (this.shapeMode === constants.QUAD_STRIP) {
+      // The only difference between these two modes is which edges are
+      // displayed, so after we've updated the edges, we switch the mode
+      // to one that native WebGL knows how to render.
+      this.shapeMode = constants.TRIANGLE_STRIP;
+    } else if (this.shapeMode === constants.QUADS) {
+      // We translate QUADS to TRIANGLES when vertices are being added,
+      // since QUADS is just a p5 mode, whereas TRIANGLES is also a mode
+      // that native WebGL knows how to render. Once we've processed edges,
+      // everything should be set up for TRIANGLES mode.
+      this.shapeMode = constants.TRIANGLES;
+    }
+
+    if (
+      this.renderer.states.textureMode === constants.IMAGE &&
+      this.renderer.states._tex !== null &&
+      this.renderer.states._tex.width > 0 &&
+      this.renderer.states._tex.height > 0
+    ) {
+      this.geometry.uvs = this.geometry.uvs.map((val, i) => {
+        if (i % 2 === 0) {
+          return val / this.renderer.states._tex.width;
+        } else {
+          return val / this.renderer.states._tex.height;
+        }
+      })
+    }
   }
 
   _resetUserVertexProperties() {
@@ -252,50 +172,6 @@ export class ShapeBuilder {
   }
 
   /**
-   * Interpret the vertices of the current geometry according to
-   * the current shape mode, and convert them to something renderable (either
-   * triangles or lines.)
-   * @private
-   */
-  _processVertices(mode) {
-    if (this.geometry.vertices.length === 0) return;
-
-    const calculateStroke = this.renderer.states.doStroke;
-    const shouldClose = mode === constants.CLOSE;
-    if (calculateStroke) {
-      this.geometry.edges = this._calculateEdges(
-        this.shapeMode,
-        this.geometry.vertices,
-        shouldClose
-      );
-      if (!this.renderer.geometryBuilder) {
-        this.geometry._edgesToVertices();
-      }
-    }
-
-    // For hollow shapes, user must set mode to TESS
-    const convexShape = this.shapeMode === constants.TESS;
-    // If the shape has a contour, we have to re-triangulate to cut out the
-    // contour region
-    const hasContour = this.contourIndices.length > 0;
-    // We tesselate when drawing curves or convex shapes
-    const shouldTess =
-      this.renderer.states.doFill &&
-      (
-        this.isBezier ||
-        this.isQuadratic ||
-        this.isCurve ||
-        convexShape ||
-        hasContour
-      ) &&
-      this.shapeMode !== constants.LINES;
-
-    if (shouldTess) {
-      this._tesselateShape();
-    }
-  }
-
-  /**
    * Called from _processVertices(). This function calculates the stroke vertices for custom shapes and
    * tesselates shapes when applicable.
    * @private
@@ -304,12 +180,11 @@ export class ShapeBuilder {
   _calculateEdges(
     shapeMode,
     verts,
-    shouldClose
   ) {
     const res = [];
     let i = 0;
     const contourIndices = this.contourIndices.slice();
-    let contourStart = 0;
+    let contourStart = -1;
     switch (shapeMode) {
       case constants.TRIANGLE_STRIP:
         for (i = 0; i < verts.length - 2; i++) {
@@ -345,8 +220,8 @@ export class ShapeBuilder {
         for (i = 0; i < verts.length - 5; i += 6) {
           res.push([i, i + 1]);
           res.push([i + 1, i + 2]);
-          res.push([i + 3, i + 5]);
-          res.push([i + 4, i + 5]);
+          res.push([i + 2, i + 5]);
+          res.push([i + 5, i]);
         }
         break;
       case constants.QUAD_STRIP:
@@ -355,30 +230,26 @@ export class ShapeBuilder {
         // 1---3---5
         for (i = 0; i < verts.length - 2; i += 2) {
           res.push([i, i + 1]);
-          res.push([i, i + 2]);
           res.push([i + 1, i + 3]);
+          res.push([i, i + 2]);
         }
         res.push([i, i + 1]);
         break;
       default:
         // TODO: handle contours in other modes too
         for (i = 0; i < verts.length; i++) {
-          // Handle breaks between contours
-          if (i + 1 < verts.length && i + 1 !== contourIndices[0]) {
-            res.push([i, i + 1]);
+          if (i === contourIndices[0]) {
+            contourStart = contourIndices.shift();
+          } else if (
+            verts[contourStart] &&
+            verts[i].equals(verts[contourStart])
+          ) {
+            res.push([i - 1, contourStart]);
           } else {
-            if (shouldClose || contourStart) {
-              res.push([i, contourStart]);
-            }
-            if (contourIndices.length > 0) {
-              contourStart = contourIndices.shift();
-            }
+            res.push([i - 1, i]);
           }
         }
         break;
-    }
-    if (shapeMode !== constants.TESS && shouldClose) {
-      res.push([verts.length - 1, 0]);
     }
     return res;
   }
@@ -388,9 +259,10 @@ export class ShapeBuilder {
    * @private
    */
   _tesselateShape() {
-    // TODO: handle non-TESS shape modes that have contours
+    // TODO: handle non-PATH shape modes that have contours
     this.shapeMode = constants.TRIANGLES;
-    const contours = [[]];
+    // const contours = [[]];
+    const contours = [];
     for (let i = 0; i < this.geometry.vertices.length; i++) {
       if (
         this.contourIndices.length > 0 &&
@@ -438,19 +310,21 @@ export class ShapeBuilder {
       j = j + this.tessyVertexSize
     ) {
       colors.push(...polyTriangles.slice(j + 5, j + 9));
-      this.renderer.normal(...polyTriangles.slice(j + 9, j + 12));
+      this.geometry.vertexNormals.push(new Vector(...polyTriangles.slice(j + 9, j + 12)));
       {
         let offset = 12;
         for (const propName in this.geometry.userVertexProperties){
-            const prop = this.geometry.userVertexProperties[propName];
-            const size = prop.getDataSize();
-            const start = j + offset;
-            const end = start + size;
-            prop.setCurrentData(polyTriangles.slice(start, end));
-            offset += size;
+          const prop = this.geometry.userVertexProperties[propName];
+          const size = prop.getDataSize();
+          const start = j + offset;
+          const end = start + size;
+          prop.setCurrentData(polyTriangles.slice(start, end));
+          prop.pushCurrentData();
+          offset += size;
         }
       }
-      this.vertex(...polyTriangles.slice(j, j + 5));
+      this.geometry.vertices.push(new Vector(...polyTriangles.slice(j, j + 3)));
+      this.geometry.uvs.push(...polyTriangles.slice(j + 3, j + 5));
     }
     if (this.renderer.geometryBuilder) {
       // Tesselating the face causes the indices of edge vertices to stop being

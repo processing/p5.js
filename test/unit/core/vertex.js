@@ -31,20 +31,12 @@ suite('Vertex', function() {
       assert.ok(myp5.quadraticVertex);
       assert.typeOf(myp5.quadraticVertex, 'function');
     });
-    test('_friendlyError is called. vertex() should be used once before quadraticVertex()', function() {
-      myp5.quadraticVertex(80, 20, 50, 50, 10, 20);
-      expect(_friendlyErrorSpy).toHaveBeenCalledTimes(1);
-    });
   });
 
   suite('p5.prototype.bezierVertex', function() {
     test('should be a function', function() {
       assert.ok(myp5.bezierVertex);
       assert.typeOf(myp5.bezierVertex, 'function');
-    });
-    test('_friendlyError is called. vertex() should be used once before bezierVertex()', function() {
-      myp5.bezierVertex(25, 30, 25, -30, -25, 30);
-      expect(_friendlyErrorSpy).toHaveBeenCalledTimes(1);
     });
   });
 

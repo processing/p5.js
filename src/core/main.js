@@ -59,9 +59,9 @@ class p5 {
     this._initializeInstanceVariables();
     this._events = {
       // keep track of user-events for unregistering later
-      mousemove: null,
-      mousedown: null,
-      mouseup: null,
+      pointerdown: null,
+      pointerup: null,
+      pointermove: null,
       dragend: null,
       dragover: null,
       click: null,
@@ -72,16 +72,11 @@ class p5 {
       keyup: null,
       keypress: null,
       wheel: null,
-      touchstart: null,
-      touchmove: null,
-      touchend: null,
       resize: null,
       blur: null
     };
     this._millisStart = -1;
     this._recording = false;
-    this._touchstart = false;
-    this._touchend = false;
 
     // States used in the custom random generators
     this._lcg_random_state = null; // NOTE: move to random.js
@@ -232,6 +227,14 @@ class p5 {
 
     // unhide any hidden canvases that were created
     const canvases = document.getElementsByTagName('canvas');
+
+    // Apply touchAction = 'none' to canvases if pointer events exist
+    if (Object.keys(this._events).some(event => event.startsWith('pointer'))) {
+      for (const k of canvases) {
+        k.style.touchAction = 'none';
+      }
+    }
+
 
     for (const k of canvases) {
       if (k.dataset.hidden === 'true') {
@@ -410,9 +413,6 @@ class p5 {
     };
 
     this._styles = [];
-
-    this._bezierDetail = 20;
-    this._curveDetail = 20;
 
     this._colorMode = constants.RGB;
     this._colorMaxes = {
